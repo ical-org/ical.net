@@ -1,0 +1,170 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F88DB6D3-CB95-4707-9C88-B53403AADC61}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DDay.iCal</RootNamespace>
+    <AssemblyName>DDay.iCal</AssemblyName>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <PublishUrl>http://localhost/DDay.iCal/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationVersion>0.0.0.%2a</ApplicationVersion>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\DDay.iCal.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\DDay.iCal.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="antlr.runtime, Version=2.7.6.2, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\antlr.runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Components\Event.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Components\Timezone\TimeZoneInfo.cs" />
+    <Compile Include="DataTypes\Alarm\Trigger.cs" />
+    <Compile Include="DataTypes\Binary.cs" />
+    <Compile Include="DataTypes\AlarmAction.cs" />
+    <Compile Include="DataTypes\EncodableAttribute.cs" />
+    <Compile Include="DataTypes\EncodableDataType.cs" />
+    <Compile Include="DataTypes\Float.cs" />
+    <Compile Include="DataTypes\JournalStatus.cs" />
+    <Compile Include="DataTypes\Integer.cs" />
+    <Compile Include="DataTypes\TodoStatus.cs" />
+    <Compile Include="DataTypes\TextCollection.cs" />
+    <Compile Include="DataTypes\StatusCode.cs" />
+    <Compile Include="DataTypes\RequestStatus.cs" />
+    <Compile Include="DataTypes\Text.cs" />
+    <Compile Include="DataTypes\TZID.cs" />
+    <Compile Include="DataTypes\Recur\DaySpecifier.cs" />
+    <Compile Include="DataTypes\Cal_Address.cs" />
+    <Compile Include="DataTypes\Geo.cs" />
+    <Compile Include="DataTypes\iCalDataType.cs" />
+    <Compile Include="DataTypes\RDate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DataTypes\EventStatus.cs" />
+    <Compile Include="DataTypes\Transparency.cs" />
+    <Compile Include="DataTypes\UTC_Offset.cs" />
+    <Compile Include="DataTypes\URI.cs" />
+    <Compile Include="DataTypes\Recur.cs" />
+    <Compile Include="DataTypes\Period.cs" />
+    <Compile Include="DataTypes\Duration.cs" />
+    <Compile Include="DataTypes\Date_Time.cs" />
+    <Compile Include="iCalParserHelper.cs" />
+    <Compile Include="Objects\ComponentBase.cs" />
+    <Compile Include="ComponentBaseTypeAttribute.cs" />
+    <Compile Include="Objects\ContentLine.cs" />
+    <Compile Include="Components\Alarm.cs" />
+    <Compile Include="Objects\DefaultValueAttribute.cs" />
+    <Compile Include="Objects\DefaultValueTypeAttribute.cs" />
+    <Compile Include="Objects\UniqueComponentList.cs" />
+    <Compile Include="Objects\UniqueComponent.cs" />
+    <Compile Include="Objects\RecurringComponent.cs" />
+    <Compile Include="Objects\iCalObject.cs" />
+    <Compile Include="Objects\Parameter.cs" />
+    <Compile Include="Components\FreeBusy.cs" />
+    <Compile Include="Components\Journal.cs" />
+    <Compile Include="Objects\Property.cs" />
+    <Compile Include="Components\Timezone\TimeZone.cs" />
+    <Compile Include="Components\Todo.cs" />
+    <Compile Include="iCalendar.cs" />
+    <Compile Include="iCalLexer.cs" />
+    <Compile Include="iCalParser.cs" />
+    <Compile Include="iCalParserTokenTypes.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serialization\Serialized.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\ArraySerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\ContentLineSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\BinarySerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\Date_TimeUTCSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\EnumSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\TriggerSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\PeriodSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\FieldSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\RDateSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\DaySpecifierSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\RecurSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\TextCollectionSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\Date_TimeSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Objects\ComponentBaseSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\TextSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Objects\UniqueComponentSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Objects\PropertySerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Objects\ParameterSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Objects\iCalObjectSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\DataTypeSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\iCalendarSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\SerializerFactory.cs" />
+    <Compile Include="Serialization\IParameterSerializable.cs" />
+    <Compile Include="Serialization\ISerializable.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="iCal.g" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="License.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Xml\Bugs.xml" />
+    <Content Include="Xml\Todo.xml" />
+    <EmbeddedResource Include="Xml\ChangeLog.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

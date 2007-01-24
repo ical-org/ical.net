@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<todos xmlns="http://ddaysoftware.com/Todo">
+    <todo complete="0.17">
+        <summary>
+            Implement a framework for basic serialization of iCalendars.
+        </summary>
+    </todo>
+    <todo complete="0.17">
+        <summary>Discard ContentLine objects once handled.</summary>
+        <details>
+            This will assist in handling of user-made calendars,
+            as well as keep things organized all-round.
+        </details>
+    </todo>    
+    <todo complete="0.17">
+        <summary>
+            Implement creation of iCalendar (.ics) files.
+        </summary>
+    </todo>
+    <todo>
+        <summary>
+            Implement creation of xcal files.
+        </summary>
+    </todo>
+    <todo>
+        <summary>
+            Implement creation of RSS files.
+        </summary>
+    </todo>
+    <todo>
+        <summary>
+            Implement creation of Atom files.
+        </summary>
+    </todo>
+    <todo>
+        <summary>
+            Automatically generate time zone information for newly created iCalendar objects.
+        </summary>
+    </todo>
+    <todo>
+        <summary>
+            Add time zone information into recurrence parsing tests.
+        </summary>
+    </todo>
+</todos>

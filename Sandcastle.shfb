@@ -1,0 +1,48 @@
+﻿<project schemaVersion="1.3.3.1">
+    <assemblies>
+        <assembly assemblyPath=".\DDay.iCal\bin\Release\DDay.iCal.dll" xmlCommentsPath=".\DDay.iCal\bin\Release\DDay.iCal.xml" commentsOnly="False" />
+    </assemblies>
+    <namespaceSummaries>
+        <namespaceSummaryItem name="" isDocumented="False" />
+        <namespaceSummaryItem name="DDay.iCal" isDocumented="True" />
+        <namespaceSummaryItem name="DDay.iCal.Components" isDocumented="True" />
+        <namespaceSummaryItem name="DDay.iCal.DataTypes" isDocumented="True" />
+        <namespaceSummaryItem name="DDay.iCal.Objects" isDocumented="True" />
+        <namespaceSummaryItem name="DDay.iCal.Serialization" isDocumented="True" />
+        <namespaceSummaryItem name="DDay.iCal.Serialization.iCalendar" isDocumented="False" />
+        <namespaceSummaryItem name="DDay.iCal.Serialization.iCalendar.DataTypes" isDocumented="False" />
+        <namespaceSummaryItem name="DDay.iCal.Serialization.iCalendar.Objects" isDocumented="False" />
+    </namespaceSummaries>
+    <contentPlacement>AboveNamespaces</contentPlacement>
+    <dependencies>
+        <dependencyItem depPath=".\DDay.iCal\bin\Release\antlr.runtime.dll" />
+    </dependencies>
+    <projectSummary />
+    <sandcastlePath />
+    <hhcPath />
+    <hxcompPath />
+    <outputPath>.\Help\</outputPath>
+    <helpFileFormat>HtmlHelp1x</helpFileFormat>
+    <cleanIntermediates>True</cleanIntermediates>
+    <purgeDuplicateTopics>True</purgeDuplicateTopics>
+    <cppCommentsFixup>False</cppCommentsFixup>
+    <frameworkVersion>2.0.50727</frameworkVersion>
+    <binaryTOC>True</binaryTOC>
+    <includeFavorites>False</includeFavorites>
+    <preliminary>False</preliminary>
+    <rootNSContainer>False</rootNSContainer>
+    <helpTitle>DDay.iCal Version 0.19</helpTitle>
+    <htmlHelpName>Documentation</htmlHelpName>
+    <language>en-US</language>
+    <copyrightHref />
+    <copyrightText>Copyright 2007 Douglas Day</copyrightText>
+    <feedbackEMailAddress>doug@ddaysoftware.com</feedbackEMailAddress>
+    <headerText>DDay.iCal Version 0.19</headerText>
+    <projectLinks>Local</projectLinks>
+    <sdkLinks>Msdn</sdkLinks>
+    <presentationStyle>Prototype</presentationStyle>
+    <namingMethod>Guid</namingMethod>
+    <syntaxFilters>Standard</syntaxFilters>
+    <missingTags>AutoDocumentCtors</missingTags>
+    <visibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, SealedProtected</visibleItems>
+</project>

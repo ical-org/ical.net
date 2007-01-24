@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<bugs xmlns="http://ddaysoftware.com/Bugs">
+    <bug id="1" known="0.16" fixed="0.16">
+        <summary>
+            RDATE and EXDATE properties malfunction when using a time zone instead of UTC.
+        </summary>
+    </bug>
+    <bug id="2" known="0.16" fixed="0.16">
+        <summary>DURATION data types misbehave when parsing an iCalendar.</summary>
+        <details>
+            DURATION data types currently accept "full" durations, with day and time components,
+            but reject a duration with only the day component (i.e. "-P2D").
+            Also, DURATION data types are not automatically assigned when parsing
+            a content line.
+        </details>
+    </bug>
+    <bug id="3" known="0.16" fixed="0.17">        
+        <summary>Alarms will not trigger relative to the END of a component</summary>
+        <details>
+            Alarms are currently only able to trigger relative to the START date of a component,
+            whereas it should be able to trigger relative to the START or END of the component.
+        </details>
+    </bug>
+    <bug id="4" known="0.16" fixed="0.17">
+        <summary>Calendar properties cannot have user-defined parameters</summary>
+        <details>
+            Calendar properties, such as PRODID, VERSION, CALSCALE, and METHOD, do not allow
+            custom parameters to be used.  For example, PRODID;RELEASE=BETA:1.2            
+        </details>
+    </bug>
+    <bug id="5" known="0.16" fixed="0.17">
+        <summary>Calendar components do not directly have parameters associated with them</summary>
+        <details>
+            Calendar components, such as Event components, Todo components, etc. cannot have
+            parameters directly associated with them.  The parameters are associated to the
+            component via a ContentLine object, which is only populated when reading an iCalendar file;
+            however, if generating an iCalendar from scratch, ContentLine objects are generally 
+            unused.
+        </details>
+    </bug>
+    <bug id="6" known="0.17" fixed="0.17">
+        <summary>A value-type is always specified for certain fields when serializing.</summary>
+        <details>
+            When certain fields are serialized, a VALUE parameter is always specified;
+            however, most of these fields have a default value-type.  If the value
+            is already of the default value-type, a VALUE parameter should not
+            be specified.
+        </details>
+    </bug>
+    <bug id="7" known="0.17" fixed="0.17">
+        <summary>When saving data to an .ics file, lines are not "folded" at 75 characters</summary>
+        <details>
+            As per RFC 2445, lines that exceed 75 characters in length should
+            be "folded" by adding a line feed followed by a whitespace character.
+        </details>
+    </bug>
+    <bug id="8" known="0.17" fixed="0.17">
+        <summary>Non-standard properties (X-properties) are not saved</summary>
+        <details>
+            When loading an iCalendar with non-standard properties, such as
+            Apple iCal's "X-WR-" properties (X-WR-CALNAME, X-WR-TIMEZONE, etc.),
+            they are discarded. Hence, when serializing, those properties are
+            never re-serialized.
+        </details>
+    </bug>
+    <bug id="9" known="0.17">
+        <summary>Special characters, such as 'ç' and other international characters are not parsed correctly.</summary>
+        <details>
+            Some international characters, such as 'ç' do not parse correctly.  The parsing engine
+            does not allow these types of characters to be in Text fields.
+        </details>
+    </bug>
+    <bug id="10" known="0.17" fixed="0.18">
+        <summary>Failure to assign a Duration to an Event will cause the Evaluate() method to crash with an ArgumentOutOfRangeException</summary>
+        <details>
+            Events do not (currently) automatically assign a Duration to an Event when you assign both a
+            start and end time.  The Duration must be assigned manually for the Evaluate() method to
+            operate properly.
+        </details>
+    </bug>    
+    <bug id="11" known="0.18" fixed="0.18">
+        <summary>
+            Unique component lists (Events, Todos, Journals, UniqueComponents) do not properly
+            index components by UID.
+        </summary>
+        <details>
+            Unique component lists store UIDs in a dictionary upon creation; however, UIDs are usually set
+            after the the unique component is created.  When the UID is properly loaded, the Dictionary
+            the references this UID is not updated as well.
+        </details>
+    </bug>
+    <bug id="12" known="0.18" fixed="0.18">
+        <summary>
+            EvalEnd and EvalStart are serialized with iCalendars, but they should not be.
+        </summary>        
+    </bug>
+    <bug id="13" known="0.18" fixed="0.18">
+        <summary>
+            Recurring components are not correctly limited by a certain number of instances.
+        </summary>
+        <details>
+            The COUNT property of iCalendars does not always correctly limit the number
+            of instances when evaluated.
+        </details>
+    </bug>
+    <bug id="14" known="0.18" fixed="0.18">
+        <summary>
+            Empty iCalendars are not parsed correctly and cause the parser to hang.
+        </summary>
+    </bug>
+    <bug id="15" known="0.18" fixed="0.18">
+        <summary>
+            iCalendars with missing parts (i.e. properties, components, etc.) are not parsed correctly
+            and cause the parser to hang.
+        </summary>
+    </bug>
+    <bug id="16" known="0.19" fixed="0.19">
+        <summary>
+            Recurring events, todos, and journals still don't always correctly limit
+            the number of recurrences when using the COUNT property.
+        </summary>
+        <details>
+            When the recurring item is evaluated, and the list of recurrences doesn't
+            include the original date/time of the event/todo/journal, the COUNT property
+            doesn't work correctly.  To solve this problem, a StaticOccurrences list
+            must be provided to each Recur object to allow a component to declare
+            its original occurence date/time.  This way, the COUNT should always work
+            as intended.
+        </details>
+    </bug>
+    <bug id="17" known="0.19" fixed="0.19">
+        <summary>
+            Time zone information is changed when finding information for a specific
+            time zone.
+        </summary>
+        <details>
+            Calling GetTimeZoneInfo() causes the DTStart property of the
+            time zone to change.
+        </details>
+    </bug>
+    <bug id="18" known="0.19" fixed="0.19">
+        <summary>
+            Some recurrence rules do not correctly ignore whitespace, causing
+            the program to throw an exception.
+        </summary>
+    </bug>
+    <bug id="19" known="0.19" fixed="0.19">
+        <summary>
+            Recurrence rules that restrict to a certain COUNT do not correctly
+            filter by unique occurrences.
+        </summary>
+    </bug>
+    <bug id="20" known="0.19" fixed="0.19">
+        <summary>
+            With certain events, event occurences are evaluated twice.
+            This is due to a differentiation between UTC and Local time
+            (i.e. DateTimeKind.Local and DateTimeKind.UTC).
+        </summary>
+    </bug>
+</bugs>
