@@ -19,9 +19,14 @@ namespace DDay.iCal.Objects
     /// </remarks>
     public class RecurringComponent : UniqueComponent
     {
+        #region Private Fields
+
+        private Date_Time m_DTStart;
+
+        #endregion
+
         #region Public Fields
                 
-        [Serialized, DefaultValueType("DATE-TIME")] public Date_Time DTStart;        
         public Date_Time EvalStart;        
         public Date_Time EvalEnd;
         public Date_Time Until;
@@ -48,10 +53,20 @@ namespace DDay.iCal.Objects
         #region Public Properties
 
         /// <summary>
+        /// The start date/time of the component.
+        /// </summary>
+        [Serialized, DefaultValueType("DATE-TIME")]
+        virtual public Date_Time DTStart
+        {
+            get { return m_DTStart; }
+            set { m_DTStart = value; }
+        }
+
+        /// <summary>
         /// A collection of <see cref="Period"/> objects that contain the dates and times
         /// when each item occurs/recurs.
         /// </summary>
-        public List<Period> Periods
+        virtual public List<Period> Periods
         {
             get { return m_Periods; }
             set { m_Periods = value; }
@@ -69,7 +84,7 @@ namespace DDay.iCal.Objects
         /// <summary>
         /// A list of <see cref="Alarm"/>s for this recurring component.
         /// </summary>
-        public List<Alarm> Alarms
+        virtual public List<Alarm> Alarms
         {
             get { return m_Alarms; }
             set { m_Alarms = value; }
@@ -177,8 +192,7 @@ namespace DDay.iCal.Objects
             {                
                 if (p.StartTime.Kind != DTStart.Kind)
                 {
-                    p.StartTime.Value = new DateTime(p.StartTime.Year, p.StartTime.Month, p.StartTime.Day,
-                        p.StartTime.Hour, p.StartTime.Minute, p.StartTime.Second, DTStart.Kind);
+                    p.StartTime.Value = DateTime.SpecifyKind(p.StartTime.Value, DTStart.Kind);
                 }
             }
 

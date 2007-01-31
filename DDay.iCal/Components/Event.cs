@@ -27,20 +27,48 @@ namespace DDay.iCal.Components
     [DebuggerDisplay("{Summary}: {Start} {Duration}")]
     public class Event : RecurringComponent
     {
+        #region Private Fields
+
+        private Date_Time m_DTEnd;
+        private Duration m_Duration;
+
+        #endregion
+
         #region Public Fields
                 
-        [Serialized, DefaultValueType("DATE-TIME")]
-        public Date_Time DTEnd;
-        [Serialized, DefaultValue("P")]
-        public Duration Duration;
+        /// <summary>
+        /// The geographic location (lat/long) of the event.
+        /// </summary>
         [Serialized]
         public Geo Geo;
+
+        /// <summary>
+        /// The location of the event.
+        /// </summary>
         [Serialized]
-        public Text Location;        
+        public Text Location;
+
+        /// <summary>
+        /// Resources that will be used during the event.
+        /// <example>Conference room #2</example>
+        /// <example>Projector</example>
+        /// </summary>
         [Serialized]
         public TextCollection[] Resources;        
+
+        /// <summary>
+        /// The status of the event.
+        /// </summary>
         [Serialized, DefaultValue("TENTATIVE\r\n")]
-        public EventStatus Status;        
+        public EventStatus Status;
+
+        /// <summary>
+        /// The transparency of the event.  In other words,
+        /// whether or not the period of time this event
+        /// occupies can contain other events (transparent),
+        /// or if the time cannot be scheduled for anything
+        /// else (opaque).
+        /// </summary>
         [Serialized, DefaultValue("OPAQUE\r\n")]
         public Transparency Transp;        
 
@@ -49,40 +77,86 @@ namespace DDay.iCal.Components
         #region Public Properties
 
         /// <summary>
-        /// An alias to the DTEnd field (i.e. end date/time).
+        /// The start date/time of the event.
+        /// <note>
+        /// If the duration has not been set, but
+        /// the start/end time of the event is available,
+        /// the duration is automatically determined.
+        /// Likewise, if the end date/time has not been
+        /// set, but a start and duration are available,
+        /// the end date/time will be extrapolated.
+        /// </note>
         /// </summary>
-        public Date_Time End
+        public override Date_Time DTStart
         {
-            get { return DTEnd; }
+            get
+            {
+                return base.DTStart;
+            }
             set
             {
-                DTEnd = value;
-                if (DTStart != null && DTEnd != null)
-                    Duration = DTEnd - DTStart;
+                base.DTStart = value;
+                ExtrapolateTimes();
             }
         }
 
         /// <summary>
-        /// An alias to the DTStart field (i.e. start date/time).
+        /// The end date/time of the event.
+        /// <note>
+        /// If the duration has not been set, but
+        /// the start/end time of the event is available,
+        /// the duration is automatically determined.
+        /// Likewise, if an end time and duration are available,
+        /// but a start time has not been set, the start time
+        /// will be extrapolated.
+        /// </note>
         /// </summary>
-        public override Date_Time Start
+        [Serialized, DefaultValueType("DATE-TIME")]
+        virtual public Date_Time DTEnd
         {
-            get
-            {
-                return base.Start;
-            }
+            get { return m_DTEnd; }
             set
             {
-                base.Start = value;
-                if (base.Start != null && End != null)
-                    Duration = End - base.Start;
+                m_DTEnd = value;
+                ExtrapolateTimes();
             }
+        }
+
+        /// <summary>
+        /// The duration of the event.
+        /// <note>
+        /// If a start time and duration is available,
+        /// the end time is automatically determined.
+        /// Likewise, if the end time and duration is
+        /// available, but a start time is not determined,
+        /// the start time will be extrapolated from
+        /// available information.
+        /// </note>
+        /// </summary>
+        [Serialized, DefaultValue("P")]
+        virtual public Duration Duration
+        {
+            get { return m_Duration; }
+            set
+            {
+                m_Duration = value;
+                ExtrapolateTimes();
+            }
+        }
+
+        /// <summary>
+        /// An alias to the DTEnd field (i.e. end date/time).
+        /// </summary>
+        virtual public Date_Time End
+        {
+            get { return DTEnd; }
+            set { DTEnd = value; }
         }
 
         /// <summary>
         /// Returns true of the event is an all-day event.
         /// </summary>
-        public bool IsAllDay
+        virtual public bool IsAllDay
         {
             get { return Start != null && !Start.HasTime; }
         }
@@ -187,19 +261,11 @@ namespace DDay.iCal.Components
         /// <returns></returns>                
         public override List<Period> Evaluate(Date_Time FromDate, Date_Time ToDate)
         {
-            // Make sure Duration is not null by now
-            if (Duration == null)
-            {
-                // If a DTEnd was not provided, set one!
-                if (DTEnd == null)
-                    DTEnd = DTStart.Copy();
-                Duration = DTEnd - DTStart;
-            }
-
             // Add the event itself, before recurrence rules are evaluated
             // NOTE: this fixes a bug where (if evaluated multiple times)
             // a period can be added to the Periods collection multiple times.
             Period period = new Period(DTStart, Duration);
+            // Ensure the period does not already exist in our collection
             if (!Periods.Contains(period))
                 Periods.Add(period);
 
@@ -217,33 +283,13 @@ namespace DDay.iCal.Components
                 // Ensure the Kind of time is consistent with DTStart
                 else if (p.EndTime.Kind != DTStart.Kind)
                 {
-                    p.EndTime.Value = new DateTime(p.EndTime.Year, p.EndTime.Month, p.EndTime.Day,
-                        p.EndTime.Hour, p.EndTime.Minute, p.EndTime.Second, DTStart.Kind);
+                    p.EndTime.Value = DateTime.SpecifyKind(p.EndTime.Value, DTStart.Kind);;
                 }
             }
                         
             return Periods;
         }
-                
-        /// <summary>
-        /// Automatically derives property values based on others it
-        /// contains, to provide a more "complete" object.
-        /// </summary>
-        /// <param name="e"></param>        
-        public override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            // Automatically determine Duration from DTEnd, or DTEnd from Duration
-            if (DTStart != null)
-            {
-                if (DTEnd != null && Duration == null)
-                    Duration = new Duration(DTEnd.Value - DTStart.Value);
-                else if (DTEnd == null && Duration != null)                
-                    DTEnd = DTStart + Duration;
-            }
-        }
-
+        
         /// <summary>
         /// Returns a typed copy of the Event object.
         /// </summary>
@@ -254,5 +300,19 @@ namespace DDay.iCal.Components
         }
 
         #endregion        
+
+        #region Private Methods
+
+        private void ExtrapolateTimes()
+        {
+            if (DTEnd == null && DTStart != null && Duration != null)
+                DTEnd = DTStart + Duration;
+            else if (Duration == null && DTStart != null && DTEnd != null)
+                Duration = DTEnd - DTStart;
+            else if (DTStart == null && Duration != null && DTEnd != null)
+                DTStart = DTEnd - Duration;
+        }
+
+        #endregion
     }
 }

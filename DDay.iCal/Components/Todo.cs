@@ -16,14 +16,19 @@ namespace DDay.iCal.Components
     [DebuggerDisplay("{Summary} - {Status}")]
     public class Todo : RecurringComponent
     {
+        #region Private Fields
+
+        private Date_Time m_Due;
+        private Duration m_Duration;
+        private bool m_Loaded = false;
+        private TodoStatus m_Status;
+
+        #endregion
+
         #region Public Fields
                
         [Serialized, DefaultValueType("DATE-TIME")]
         public Date_Time Completed;        
-        [Serialized, DefaultValueType("DATE-TIME")]
-        public Date_Time Due;
-        [Serialized, DefaultValue("P")]
-        public Duration Duration;
         [Serialized]
         public Geo Geo;
         [Serialized]
@@ -35,17 +40,57 @@ namespace DDay.iCal.Components
 
         #endregion
 
-        #region Private Fields
-
-        private bool m_Loaded = false;
-        private TodoStatus m_Status;
-
-        #endregion
-
         #region Public Properties
 
+        /// <summary>
+        /// The start date/time of the todo item.
+        /// </summary>
+        public override Date_Time DTStart
+        {
+            get
+            {
+                return base.DTStart;
+            }
+            set
+            {
+                base.DTStart = value;
+                ExtrapolateTimes();
+            }
+        }
+
+        /// <summary>
+        /// The due date of the todo item.
+        /// </summary>
+        [Serialized, DefaultValueType("DATE-TIME")]
+        virtual public Date_Time Due
+        {
+            get { return m_Due; }
+            set
+            {
+                m_Due = value;
+                ExtrapolateTimes();
+            }
+        }
+
+        /// <summary>
+        /// The duration of the todo item.
+        /// </summary>
+        [Serialized, DefaultValue("P")]
+        virtual public Duration Duration
+        {
+            get { return m_Duration; }
+            set
+            {
+                m_Duration = value;
+                ExtrapolateTimes();
+            }
+        }
+
+        /// <summary>
+        /// The status of the todo item.
+        /// </summary>
         [Serialized, DefaultValue("NEEDS_ACTION\r\n")]
-        public TodoStatus Status
+        virtual public TodoStatus Status
         {
             get { return m_Status; }
             set
@@ -53,8 +98,9 @@ namespace DDay.iCal.Components
                 if (m_Status != value)
                 {
                     // Automatically set/unset the Completed time, once the
-                    // component is fully loaded (When deserializing, it doesn't
-                    // automatically track the completed time).
+                    // component is fully loaded (When deserializing, it shouldn't
+                    // automatically track the completed time just because the
+                    // status was changed).
                     if (m_Loaded)
                     {
                         if (value == TodoStatus.COMPLETED)
@@ -151,7 +197,7 @@ namespace DDay.iCal.Components
 
         public override List<Period> Evaluate(Date_Time FromDate, Date_Time ToDate)
         {
-            // Add the event itself, before recurrence rules are evaluated
+            // Add the todo itself, before recurrence rules are evaluated
             if (DTStart != null)
                 Periods.Add(new Period(DTStart));
 
@@ -166,16 +212,7 @@ namespace DDay.iCal.Components
         public override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            m_Loaded = true;
-
-            // Automatically determine Duration from Due, or Due from Duration
-            if (DTStart != null)
-            {
-                if (Due != null && Duration == null)
-                    Duration = new Duration(Due - DTStart);
-                else if (Due == null && Duration != null)
-                    Due = DTStart + Duration;                
-            }
+            m_Loaded = true;            
         }
 
         /// <summary>
@@ -185,6 +222,20 @@ namespace DDay.iCal.Components
         public Todo Copy()
         {
             return (Todo)base.Copy();
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void ExtrapolateTimes()
+        {
+            if (Due == null && DTStart != null && Duration != null)
+                Due = DTStart + Duration;
+            else if (Duration == null && DTStart != null && Due != null)
+                Duration = Due - DTStart;
+            else if (DTStart == null && Duration != null && Due != null)
+                DTStart = Due - Duration;            
         }
 
         #endregion
