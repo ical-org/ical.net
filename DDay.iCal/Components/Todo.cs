@@ -45,6 +45,7 @@ namespace DDay.iCal.Components
         /// <summary>
         /// The start date/time of the todo item.
         /// </summary>
+        [Serialized]
         public override Date_Time DTStart
         {
             get
