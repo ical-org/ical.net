@@ -87,6 +87,7 @@ namespace DDay.iCal.Components
         /// the end date/time will be extrapolated.
         /// </note>
         /// </summary>
+        [Serialized]
         public override Date_Time DTStart
         {
             get
@@ -159,6 +160,13 @@ namespace DDay.iCal.Components
         virtual public bool IsAllDay
         {
             get { return Start != null && !Start.HasTime; }
+            set
+            {
+                // Set whether or not the start date/time
+                // has a time value.
+                if (Start != null)
+                    Start.HasTime = !value;
+            }
         }
 
         #endregion
