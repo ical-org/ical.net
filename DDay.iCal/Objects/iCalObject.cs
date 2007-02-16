@@ -179,8 +179,18 @@ namespace DDay.iCal.Objects
         {
             if (cl.Name != null)
             {
-                string name = cl.Name.Replace("-","");
+                string name = cl.Name;
                 Type type = GetType();
+
+                // Remove X- from the property name, since
+                // non-standard properties are named like
+                // everything else, but also have the NonstandardAttribute
+                // attached.
+                if (name.StartsWith("X-"))
+                    name = name.Remove(0, 2);
+                
+                // Replace invalid characters
+                name = name.Replace("-","");
 
                 //
                 // Find the public field that matches the name of our content line (ignoring case)
