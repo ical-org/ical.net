@@ -18,7 +18,8 @@ namespace DDay.iCal.DataTypes
         public Text() { }
         public Text(string value) : this()
         {
-            CopyFrom(Parse(value));
+            if (value != null)
+                CopyFrom(Parse(value));
         }
 
         #endregion
