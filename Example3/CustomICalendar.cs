@@ -9,13 +9,6 @@ namespace Example3
     /// </summary>
     [ComponentBaseType(typeof(CustomComponentBase))]
     class CustomICalendar : iCalendar
-    {
-        private string m_CreatedBy;
-        
-        public string CreatedBy
-        {
-            get { return m_CreatedBy; }
-            set { m_CreatedBy = value; }
-        }
+    {        
     }
 }
