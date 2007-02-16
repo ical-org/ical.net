@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -93,7 +90,7 @@ namespace DDay.iCal.Test
             
             foreach (FieldInfo field in fields)
             {
-                if (field.GetCustomAttributes(typeof(Serialized), true).Length > 0)
+                if (field.GetCustomAttributes(typeof(SerializedAttribute), true).Length > 0)
                 {
                     object obj1 = field.GetValue(cb1);
                     object obj2 = field.GetValue(cb2);
@@ -106,7 +103,7 @@ namespace DDay.iCal.Test
 
             foreach (PropertyInfo prop in properties)
             {
-                if (prop.GetCustomAttributes(typeof(Serialized), true).Length > 0)
+                if (prop.GetCustomAttributes(typeof(SerializedAttribute), true).Length > 0)
                 {
                     object obj1 = prop.GetValue(cb1, null);
                     object obj2 = prop.GetValue(cb2, null);

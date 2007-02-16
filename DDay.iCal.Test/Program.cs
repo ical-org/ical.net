@@ -400,20 +400,12 @@ namespace DDay.iCal.Test
         {
             public MyComponentBase(iCalObject parent) : base(parent) { }
 
-            static public ComponentBase Create(iCalObject parent, string name)
+            static public new ComponentBase Create(iCalObject parent, string name)
             {
                 switch (name)
                 {
-                    case "VALARM": return new DDay.iCal.Components.Alarm(parent); break;
-                    case "VEVENT": return new MyEvent(parent); break;
-                    case "VFREEBUSY": return new DDay.iCal.Components.FreeBusy(parent); break;
-                    case "VJOURNAL": return new DDay.iCal.Components.Journal(parent); break;
-                    case "VTIMEZONE": return new DDay.iCal.Components.TimeZone(parent); break;
-                    case "VTODO": return new DDay.iCal.Components.Todo(parent); break;
-                    case "DAYLIGHT":
-                    case "STANDARD":
-                        return new DDay.iCal.Components.TimeZone.TimeZoneInfo(name.ToUpper(), parent); break;
-                    default: return new ComponentBase(parent, name); break;
+                    case "VEVENT": return new MyEvent(parent); 
+                    default: return ComponentBase.Create(parent, name);
                 }
             }
         }
