@@ -9,7 +9,7 @@ namespace Example3
     class CustomComponentBase : ComponentBase
     {
         public CustomComponentBase(iCalObject parent) : base(parent) { }
-        static public ComponentBase Create(iCalObject parent, string name)
+        static public new ComponentBase Create(iCalObject parent, string name)
         {            
             switch (name)
             {
