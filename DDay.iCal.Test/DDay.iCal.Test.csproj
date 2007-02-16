@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Alarm.cs" />
     <Compile Include="Copy.cs" />
+    <Compile Include="Custom\Custom1.cs" />
     <Compile Include="Serialize.cs" />
     <Compile Include="Journal.cs" />
     <Compile Include="Recurrence.cs" />
