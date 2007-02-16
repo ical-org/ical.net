@@ -9,6 +9,9 @@ namespace Example3
     {
         private string m_AdditionalInformation;
 
+        /// <summary>
+        /// Additional information about our event
+        /// </summary>
         public string AdditionalInformation
         {
             get { return m_AdditionalInformation; }
