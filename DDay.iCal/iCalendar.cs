@@ -6,6 +6,7 @@ using System.Net;
 using System.Configuration;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Objects;
@@ -97,7 +98,7 @@ namespace DDay.iCal
     /// </para>
     /// </remarks>
     public class iCalendar : ComponentBase, IDisposable
-    {
+    {        
         #region Constructors
 
         /// <summary>
@@ -217,6 +218,9 @@ namespace DDay.iCal
         private List<DDay.iCal.Components.TimeZone> m_TimeZone;
         private UniqueComponentList<Todo> m_Todo;
         private MethodInfo m_ComponentBaseCreate;
+
+        // The buffer size used to convert streams from UTF-8 to Unicode
+        private const int bufferSize = 8096;
 
         #endregion
 
@@ -356,6 +360,9 @@ namespace DDay.iCal
         static public iCalendar LoadFromStream(Stream s) { return LoadFromStream(typeof(iCalendar), s); }
         static public iCalendar LoadFromStream(Type iCalendarType, Stream s)
         {
+            // FIXME: convert stream to Unicode here
+
+            // Create a lexer for our memory stream
             iCalLexer lexer = new iCalLexer(s);
             iCalParser parser = new iCalParser(lexer);
             parser.iCalendarType = iCalendarType;
