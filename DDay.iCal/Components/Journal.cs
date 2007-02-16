@@ -16,7 +16,7 @@ namespace DDay.iCal.Components
     {
         #region Public Fields
                              
-        [Serialized]
+        [SerializedAttribute]
         public JournalStatus Status;        
 
         #endregion

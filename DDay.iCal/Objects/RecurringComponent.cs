@@ -30,15 +30,15 @@ namespace DDay.iCal.Objects
         public Date_Time EvalStart;        
         public Date_Time EvalEnd;
         public Date_Time Until;
-        [Serialized]
+        [SerializedAttribute]
         public RDate[] ExDate;
-        [Serialized]
+        [SerializedAttribute]
         public Recur[] ExRule;
-        [Serialized]
+        [SerializedAttribute]
         public RDate[] RDate;
-        [Serialized]
+        [SerializedAttribute]
         public Recur[] RRule;
-        [Serialized]
+        [SerializedAttribute]
         public Date_Time RecurID;
 
         #endregion
@@ -55,7 +55,7 @@ namespace DDay.iCal.Objects
         /// <summary>
         /// The start date/time of the component.
         /// </summary>
-        [Serialized, DefaultValueType("DATE-TIME")]
+        [SerializedAttribute, DefaultValueType("DATE-TIME")]
         virtual public Date_Time DTStart
         {
             get { return m_DTStart; }

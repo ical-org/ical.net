@@ -15,13 +15,13 @@ namespace DDay.iCal.Components
     {
         #region Public Fields
 
-        [Serialized]
+        [SerializedAttribute]
         public TZID TZID;
-        [Serialized]
+        [SerializedAttribute]
         public Date_Time LastModified;
-        [Serialized]
+        [SerializedAttribute]
         public URI TZUrl;
-        [Serialized]
+        [SerializedAttribute]
         public ArrayList TimeZoneInfos = new ArrayList();
 
         #endregion

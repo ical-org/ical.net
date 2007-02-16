@@ -36,46 +36,46 @@ namespace DDay.iCal.Objects
 
         #region Public Fields
 
-        [Serialized]
+        [SerializedAttribute]
         public Binary[] Attach;
-        [Serialized]
+        [SerializedAttribute]
         public Cal_Address[] Attendee;
-        [Serialized]
+        [SerializedAttribute]
         public TextCollection[] Categories;
-        [Serialized]
+        [SerializedAttribute]
         public Text Class;
-        [Serialized]
+        [SerializedAttribute]
         public Text[] Comment;
-        [Serialized]
+        [SerializedAttribute]
         public Text[] Contact;
-        [Serialized, DefaultValueType("DATE-TIME")]
+        [SerializedAttribute, DefaultValueType("DATE-TIME")]
         public Date_Time Created; 
-        [Serialized]
+        [SerializedAttribute]
         public Text Description;
-        [Serialized, DefaultValueType("DATE-TIME")]
+        [SerializedAttribute, DefaultValueType("DATE-TIME")]
         public Date_Time DTStamp;
-        [Serialized, DefaultValueType("DATE-TIME")]
+        [SerializedAttribute, DefaultValueType("DATE-TIME")]
         public Date_Time LastModified;
-        [Serialized]
+        [SerializedAttribute]
         public Cal_Address Organizer;
-        [Serialized]
+        [SerializedAttribute]
         public Integer Priority;
-        [Serialized]
+        [SerializedAttribute]
         public Text[] Related_To;
-        [Serialized]
+        [SerializedAttribute]
         public RequestStatus[] RequestStatus;
-        [Serialized]
+        [SerializedAttribute]
         public Integer Sequence;
-        [Serialized]
+        [SerializedAttribute]
         public Text Summary;
-        [Serialized]
+        [SerializedAttribute]
         public URI Url;
 
         #endregion        
 
         #region Public Properties
 
-        [Serialized]
+        [SerializedAttribute]
         public Text UID
         {
             get

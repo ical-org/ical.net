@@ -27,15 +27,15 @@ namespace DDay.iCal.Components
 
         #region Public Fields
                
-        [Serialized, DefaultValueType("DATE-TIME")]
+        [SerializedAttribute, DefaultValueType("DATE-TIME")]
         public Date_Time Completed;        
-        [Serialized]
+        [SerializedAttribute]
         public Geo Geo;
-        [Serialized]
+        [SerializedAttribute]
         public Text Location;        
-        [Serialized]
+        [SerializedAttribute]
         public Integer PercentComplete;        
-        [Serialized]
+        [SerializedAttribute]
         public TextCollection[] Resources;        
 
         #endregion
@@ -45,7 +45,7 @@ namespace DDay.iCal.Components
         /// <summary>
         /// The start date/time of the todo item.
         /// </summary>
-        [Serialized]
+        [SerializedAttribute]
         public override Date_Time DTStart
         {
             get
@@ -62,7 +62,7 @@ namespace DDay.iCal.Components
         /// <summary>
         /// The due date of the todo item.
         /// </summary>
-        [Serialized, DefaultValueType("DATE-TIME")]
+        [SerializedAttribute, DefaultValueType("DATE-TIME")]
         virtual public Date_Time Due
         {
             get { return m_Due; }
@@ -76,7 +76,7 @@ namespace DDay.iCal.Components
         /// <summary>
         /// The duration of the todo item.
         /// </summary>
-        [Serialized, DefaultValue("P")]
+        [SerializedAttribute, DefaultValue("P")]
         virtual public Duration Duration
         {
             get { return m_Duration; }
@@ -90,7 +90,7 @@ namespace DDay.iCal.Components
         /// <summary>
         /// The status of the todo item.
         /// </summary>
-        [Serialized, DefaultValue("NEEDS_ACTION\r\n")]
+        [SerializedAttribute, DefaultValue("NEEDS_ACTION\r\n")]
         virtual public TodoStatus Status
         {
             get { return m_Status; }

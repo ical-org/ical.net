@@ -22,21 +22,21 @@ namespace DDay.iCal.Components
 
         #region Public Fields
 
-        [Serialized]
+        [SerializedAttribute]
         public AlarmAction Action;
-        [Serialized]
+        [SerializedAttribute]
         public Binary Attach;
-        [Serialized]
+        [SerializedAttribute]
         public Cal_Address[] Attendee;
-        [Serialized]
+        [SerializedAttribute]
         public Text Description;
-        [Serialized, DefaultValue("P")]
+        [SerializedAttribute, DefaultValue("P")]
         public Duration Duration;
-        [Serialized]
+        [SerializedAttribute]
         public Integer Repeat;
-        [Serialized]
+        [SerializedAttribute]
         public Text Summary;
-        [Serialized]
+        [SerializedAttribute]
         public Trigger Trigger;        
 
         #endregion

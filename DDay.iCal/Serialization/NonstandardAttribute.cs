@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DDay.iCal.Serialization
 {
-    public class Serialized : Attribute
+    public class NonstandardAttribute : Attribute
     {
     }
 }

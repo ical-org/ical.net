@@ -39,13 +39,13 @@ namespace DDay.iCal.Components
         /// <summary>
         /// The geographic location (lat/long) of the event.
         /// </summary>
-        [Serialized]
+        [SerializedAttribute]
         public Geo Geo;
 
         /// <summary>
         /// The location of the event.
         /// </summary>
-        [Serialized]
+        [SerializedAttribute]
         public Text Location;
 
         /// <summary>
@@ -53,13 +53,13 @@ namespace DDay.iCal.Components
         /// <example>Conference room #2</example>
         /// <example>Projector</example>
         /// </summary>
-        [Serialized]
+        [SerializedAttribute]
         public TextCollection[] Resources;        
 
         /// <summary>
         /// The status of the event.
         /// </summary>
-        [Serialized, DefaultValue("TENTATIVE\r\n")]
+        [SerializedAttribute, DefaultValue("TENTATIVE\r\n")]
         public EventStatus Status;
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace DDay.iCal.Components
         /// or if the time cannot be scheduled for anything
         /// else (opaque).
         /// </summary>
-        [Serialized, DefaultValue("OPAQUE\r\n")]
+        [SerializedAttribute, DefaultValue("OPAQUE\r\n")]
         public Transparency Transp;        
 
         #endregion
@@ -87,7 +87,7 @@ namespace DDay.iCal.Components
         /// the end date/time will be extrapolated.
         /// </note>
         /// </summary>
-        [Serialized]
+        [SerializedAttribute]
         public override Date_Time DTStart
         {
             get
@@ -112,7 +112,7 @@ namespace DDay.iCal.Components
         /// will be extrapolated.
         /// </note>
         /// </summary>
-        [Serialized, DefaultValueType("DATE-TIME")]
+        [SerializedAttribute, DefaultValueType("DATE-TIME")]
         virtual public Date_Time DTEnd
         {
             get { return m_DTEnd; }
@@ -134,7 +134,7 @@ namespace DDay.iCal.Components
         /// available information.
         /// </note>
         /// </summary>
-        [Serialized, DefaultValue("P")]
+        [SerializedAttribute, DefaultValue("P")]
         virtual public Duration Duration
         {
             get { return m_Duration; }

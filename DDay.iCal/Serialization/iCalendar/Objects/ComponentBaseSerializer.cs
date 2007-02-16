@@ -30,10 +30,10 @@ namespace DDay.iCal.Serialization.iCalendar.Objects
             {
                 List<object> List = new List<object>();
                 foreach (FieldInfo fi in m_component.GetType().GetFields())
-                    if (fi.GetCustomAttributes(typeof(Serialized), true).Length > 0)
+                    if (fi.GetCustomAttributes(typeof(SerializedAttribute), true).Length > 0)
                         List.Add(fi);
                 foreach (PropertyInfo pi in m_component.GetType().GetProperties())
-                    if (pi.GetCustomAttributes(typeof(Serialized), true).Length > 0)
+                    if (pi.GetCustomAttributes(typeof(SerializedAttribute), true).Length > 0)
                         List.Add(pi);
                 return List;
             }
@@ -97,7 +97,13 @@ namespace DDay.iCal.Serialization.iCalendar.Objects
                 {
                     iCalObject ico = (iCalObject)obj;
                     if (ico.Name == null)
-                        ico.Name = itemName.ToUpper().Replace("_", "-");                    
+                        ico.Name = itemName.ToUpper().Replace("_", "-");
+
+                    // If the property is non-standard, then replace
+                    // it with an X-name
+                    foreach (object attr in itemAttrs)
+                        if (attr is NonstandardAttribute)
+                            ico.Name = "X-" + ico.Name;
                 }
 
                 // Retrieve custom attributes for this field/property

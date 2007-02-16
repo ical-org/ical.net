@@ -19,11 +19,11 @@ namespace DDay.iCal.Components
         {
             #region Public Fields
 
-            [Serialized]
+            [SerializedAttribute]
             public UTC_Offset TZOffsetFrom;
-            [Serialized]
+            [SerializedAttribute]
             public UTC_Offset TZOffsetTo;            
-            [Serialized]
+            [SerializedAttribute]
             public Text[] TZName;
 
             #endregion

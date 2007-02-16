@@ -57,10 +57,10 @@ namespace DDay.iCal.Objects
                 //
                 List<object> List = new List<object>();
                 foreach (FieldInfo fi in GetType().GetFields())
-                    if (fi.GetCustomAttributes(typeof(Serialized), true).Length > 0)
+                    if (fi.GetCustomAttributes(typeof(SerializedAttribute), true).Length > 0)
                         List.Add(fi);
                 foreach (PropertyInfo pi in GetType().GetProperties())
-                    if (pi.GetCustomAttributes(typeof(Serialized), true).Length > 0)
+                    if (pi.GetCustomAttributes(typeof(SerializedAttribute), true).Length > 0)
                         List.Add(pi);
                 return List;
             }
