@@ -47,6 +47,7 @@ namespace DDay.iCal.Test
             s.SERIALIZE14();
             s.SERIALIZE15();
             s.SERIALIZE16();
+            s.LANGUAGE1();
 
             s.USHOLIDAYS();
         }
