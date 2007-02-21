@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("DDay.iCal")]
 [assembly: AssemblyDescription("An iCalendar (RFC 2445) control library. See ddaysoftware.com for details.")]
-[assembly: AssemblyConfiguration("Alpha")]
+[assembly: AssemblyConfiguration("Beta")]
 [assembly: AssemblyCompany("DDay Software - ddaysoftware.com")]
 [assembly: AssemblyProduct("DDay.iCal")]
 [assembly: AssemblyCopyright("Copyright © 2006 Douglas Day")]
@@ -29,5 +29,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("0.19.2.0")]
-[assembly: AssemblyFileVersion("0.19.2.0")]
+[assembly: AssemblyVersion("0.20.0.0")]
+[assembly: AssemblyFileVersion("0.20.0.0")]
