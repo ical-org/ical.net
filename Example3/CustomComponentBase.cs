@@ -10,7 +10,7 @@ namespace Example3
     {
         public CustomComponentBase(iCalObject parent) : base(parent) { }
         static public new ComponentBase Create(iCalObject parent, string name)
-        {            
+        {
             switch (name)
             {
                 case "VEVENT":
