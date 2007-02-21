@@ -1,7 +1,6 @@
-
-DDay.iCal is an iCalendar, also known as RFC2445, class library for .NET 2.0
-and above. It's aimed at providing full RFC 2445 compliance, while providing
-the highest level of compatibility with popular calendaring applications.
+DDay.iCal is an iCalendar (RFC2445) class library for .NET 2.0 and
+above. It's aimed at providing full RFC 2445 compliance, while providing
+full compatibility with popular calendaring applications.
 
 ===============================================================
 
