@@ -359,14 +359,25 @@ namespace DDay.iCal
         /// <returns>An <see cref="iCalendar"/> object</returns>
         static public iCalendar LoadFromStream(Stream s) { return LoadFromStream(typeof(iCalendar), s); }
         static public iCalendar LoadFromStream(Type iCalendarType, Stream s)
-        {
-            // FIXME: convert stream to Unicode here
+        {            
+            TextReader tr = new StreamReader(s, Encoding.UTF8);
 
             // Create a lexer for our memory stream
-            iCalLexer lexer = new iCalLexer(s);
+            iCalLexer lexer = new iCalLexer(tr);
             iCalParser parser = new iCalParser(lexer);
+
+            // Determine the calendar type we'll be using when constructing
+            // iCalendar objects...
             parser.iCalendarType = iCalendarType;
-            return parser.icalobject();
+
+            // Parse the iCalendar!
+            iCalendar iCal = parser.icalobject();
+
+            // Close our memory stream
+            tr.Close();
+
+            // Return the parsed iCalendar
+            return iCal;
         }
 
         /// <summary>
