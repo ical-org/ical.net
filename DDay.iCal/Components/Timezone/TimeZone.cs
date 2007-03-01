@@ -5,6 +5,7 @@ using System.Configuration;
 using DDay.iCal.Objects;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
+using DDay.iCal.Serialization.iCalendar.DataTypes;
 
 namespace DDay.iCal.Components
 {
@@ -17,7 +18,7 @@ namespace DDay.iCal.Components
 
         [SerializedAttribute]
         public TZID TZID;
-        [SerializedAttribute]
+        [SerializedAttribute, DefaultValueType("DATE-TIME"), ForceUTC]
         public Date_Time Last_Modified;
         [SerializedAttribute]
         public URI TZUrl;
