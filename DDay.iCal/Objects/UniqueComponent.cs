@@ -4,6 +4,7 @@ using System.Text;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
+using DDay.iCal.Serialization.iCalendar.DataTypes;
 
 namespace DDay.iCal.Objects
 {
@@ -48,13 +49,13 @@ namespace DDay.iCal.Objects
         public Text[] Comment;
         [SerializedAttribute]
         public Text[] Contact;
-        [SerializedAttribute, DefaultValueType("DATE-TIME")]
+        [SerializedAttribute, DefaultValueType("DATE-TIME"), ForceUTC]
         public Date_Time Created; 
         [SerializedAttribute]
         public Text Description;
-        [SerializedAttribute, DefaultValueType("DATE-TIME")]
+        [SerializedAttribute, DefaultValueType("DATE-TIME"), ForceUTC]
         public Date_Time DTStamp;
-        [SerializedAttribute, DefaultValueType("DATE-TIME")]
+        [SerializedAttribute, DefaultValueType("DATE-TIME"), ForceUTC]
         public Date_Time Last_Modified;
         [SerializedAttribute]
         public Cal_Address Organizer;
