@@ -72,6 +72,34 @@ namespace DDay.iCal.Components
             }
 
             /// <summary>
+            /// Force the DTSTART into a local date-time value.
+            /// 
+            /// From RFC 2445:
+            /// The mandatory "DTSTART" property gives the effective onset date and 
+            /// local time for the time zone sub-component definition. "DTSTART" in
+            /// this usage MUST be specified as a local DATE-TIME value.
+            /// 
+            /// Also from RFC 2445:
+            /// The date with local time form is simply a date-time value that does
+            /// not contain the UTC designator nor does it reference a time zone. For
+            /// example, the following represents Janurary 18, 1998, at 11 PM:
+            /// 
+            /// DTSTART:19980118T230000
+            /// </summary>
+            [Serialized, DefaultValueType("DATE-TIME"), DisallowedTypes("DATE", "DATE-TIME")]
+            public override Date_Time DTStart
+            {
+                get
+                {
+                    return base.DTStart;
+                }
+                set
+                {
+                    base.DTStart = value;
+                }
+            }
+
+            /// <summary>
             /// Returns a typed copy of the TimeZoneInfo object.
             /// </summary>
             /// <returns>A typed copy of the TimeZoneInfo object.</returns>
