@@ -98,7 +98,14 @@ namespace DDay.iCal
     /// </para>
     /// </remarks>
     public class iCalendar : ComponentBase, IDisposable
-    {        
+    {
+        #region Readonly Fields
+
+        static private readonly string _Version = "2.0";
+        static private readonly string _ProdID = "-//DDay.iCal//NONSGML ddaysoftware.com//EN";
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
@@ -119,6 +126,11 @@ namespace DDay.iCal
             Journals = new UniqueComponentList<Journal>(this);
             TimeZones = new List<DDay.iCal.Components.TimeZone>();
             Todos = new UniqueComponentList<Todo>(this);
+
+            // Set default values for these required properties
+            // NOTE: fixes bug #1672047
+            Version = new Property(this, "VERSION", _Version);
+            ProductID = new Property(this, "PRODID", _ProdID);
             
             object[] attrs = GetType().GetCustomAttributes(typeof(ComponentBaseTypeAttribute), false);
             if (attrs.Length > 0)
@@ -277,59 +289,63 @@ namespace DDay.iCal
             set { m_Todo = value; }
         }
 
-        public Property Version
+        public string Version
         {
             get
             {
                 if (Properties.ContainsKey("VERSION"))
-                    return (Property)Properties["VERSION"];
+                    return ((Property)Properties["VERSION"]).Value;
                 return null;
             }
             set
-            {                
-                Properties["VERSION"] = value;
+            {
+                if (string.IsNullOrEmpty(value))
+                    Properties["VERSION"] = new Property(this, "VERSION", _Version);
+                else Properties["VERSION"] = new Property(this, "VERSION", value);
             }
         }
 
-        public Property ProductID
+        public string ProductID
         {
             get
             {
                 if (Properties.ContainsKey("PRODID"))
-                    return (Property)Properties["PRODID"];
+                    return ((Property)Properties["PRODID"]).Value;
                 return null;
             }
             set
-            {                
-                Properties["PRODID"] = value;
+            {
+                if (string.IsNullOrEmpty(value))
+                    Properties["PRODID"] = new Property(this, "PRODID", _ProdID);
+                else Properties["PRODID"] = new Property(this, "PRODID", value);
             }            
         }
 
-        public Property Scale
+        public string Scale
         {
             get
             {
                 if (Properties.ContainsKey("CALSCALE"))
-                    return (Property)Properties["CALSCALE"];
+                    return ((Property)Properties["CALSCALE"]).Value;
                 return null;
             }
             set
             {                
-                Properties["CALSCALE"] = value;
+                Properties["CALSCALE"] = new Property(this, "CALSCALE", value);
             }             
         }
 
-        public Property Method
+        public string Method
         {
             get
             {
                 if (Properties.ContainsKey("METHOD"))
-                    return (Property)Properties["METHOD"];
+                    return ((Property)Properties["METHOD"]).Value;
                 return null;
             }
             set
             {
-                Properties["METHOD"] = value;
+                Properties["METHOD"] = new Property(this, "METHOD", value);
             }
         }
 
