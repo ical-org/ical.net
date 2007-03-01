@@ -129,8 +129,8 @@ namespace DDay.iCal
 
             // Set default values for these required properties
             // NOTE: fixes bug #1672047
-            Version = new Property(this, "VERSION", _Version);
-            ProductID = new Property(this, "PRODID", _ProdID);
+            Version = _Version;
+            ProductID = _ProdID;
             
             object[] attrs = GetType().GetCustomAttributes(typeof(ComponentBaseTypeAttribute), false);
             if (attrs.Length > 0)
