@@ -190,7 +190,7 @@ namespace DDay.iCal.Objects
                     name = name.Remove(0, 2);
                 
                 // Replace invalid characters
-                name = name.Replace("-","");
+                name = name.Replace("-","_");
 
                 //
                 // Find the public field that matches the name of our content line (ignoring case)
