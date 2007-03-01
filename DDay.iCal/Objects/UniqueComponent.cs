@@ -55,7 +55,7 @@ namespace DDay.iCal.Objects
         [SerializedAttribute, DefaultValueType("DATE-TIME")]
         public Date_Time DTStamp;
         [SerializedAttribute, DefaultValueType("DATE-TIME")]
-        public Date_Time LastModified;
+        public Date_Time Last_Modified;
         [SerializedAttribute]
         public Cal_Address Organizer;
         [SerializedAttribute]

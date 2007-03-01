@@ -18,7 +18,7 @@ namespace DDay.iCal.Components
         [SerializedAttribute]
         public TZID TZID;
         [SerializedAttribute]
-        public Date_Time LastModified;
+        public Date_Time Last_Modified;
         [SerializedAttribute]
         public URI TZUrl;
         [SerializedAttribute]
