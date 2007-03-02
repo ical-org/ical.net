@@ -12,16 +12,11 @@ namespace DDay.iCal.DataTypes
     [DebuggerDisplay("{StatusCode} - {StatusDesc}")]
     public class RequestStatus : iCalDataType
     {
-        #region Public Fields
-
-        public StatusCode StatusCode;
-
-        #endregion
-
         #region Private Fields
 
         private Text m_StatusDesc;
         private Text m_ExtData;
+        private StatusCode m_StatusCode;
         
         #endregion
 
@@ -37,6 +32,12 @@ namespace DDay.iCal.DataTypes
         {
             get { return m_ExtData; }
             set { m_ExtData = value; }
+        }
+
+        public StatusCode StatusCode
+        {
+            get { return m_StatusCode; }
+            set { m_StatusCode = value; }
         }
 
         #endregion

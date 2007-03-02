@@ -12,10 +12,27 @@ namespace DDay.iCal.DataTypes
     /// </summary>
     public class TZID : iCalDataType
     {
-        #region Public Fields
+        #region Private Fields
 
-        public bool GloballyUnique = false;
-        public string ID = string.Empty;
+        private bool m_GloballyUnique = false;
+        private string m_ID = string.Empty;
+                
+        #endregion
+
+        #region Public Properties
+
+        public bool GloballyUnique
+        {
+            get { return m_GloballyUnique; }
+            set { m_GloballyUnique = value; }
+        }
+
+        public string ID
+        {
+            get { return m_ID; }
+            set { m_ID = value; }
+        }
+
 
         #endregion
 
