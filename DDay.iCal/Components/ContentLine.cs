@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Text;
 
-namespace DDay.iCal.Objects
+namespace DDay.iCal.Components
 {
     /// <summary>
     /// This class represents a single line of text in an <see cref="iCalendar"/>

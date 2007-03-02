@@ -7,7 +7,7 @@ using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
 
-namespace DDay.iCal.Objects
+namespace DDay.iCal.Components
 {
     /// <summary>
     /// This class is used by the parsing framework as a factory class

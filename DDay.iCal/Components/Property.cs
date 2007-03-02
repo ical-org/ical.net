@@ -2,9 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using DDay.iCal.Objects;
+using DDay.iCal.Components;
 
-namespace DDay.iCal.Objects
+namespace DDay.iCal.Components
 {
     /// <summary>
     /// A class that represents a property of the <see cref="iCalendar"/>

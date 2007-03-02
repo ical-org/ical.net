@@ -1,6 +1,6 @@
 header
 {
-    using DDay.iCal.Objects;
+    using DDay.iCal.Components;
     using DDay.iCal.Components;
 }
 

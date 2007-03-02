@@ -1,7 +1,7 @@
 using System;
 using System.Data;
 using System.Configuration;
-using DDay.iCal.Objects;
+using DDay.iCal.Components;
 
 namespace DDay.iCal.Components
 {

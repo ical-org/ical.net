@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DDay.iCal.Objects
+namespace DDay.iCal.Components
 {
     /// <summary>
     /// A class that provides additional information about a <see cref="ContentLine"/>.

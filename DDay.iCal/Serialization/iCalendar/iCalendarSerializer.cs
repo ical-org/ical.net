@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using DDay.iCal.Serialization.iCalendar;
-using DDay.iCal.Serialization.iCalendar.Objects;
+using DDay.iCal.Serialization.iCalendar.Components;
 
 namespace DDay.iCal.Serialization
 {

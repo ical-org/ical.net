@@ -5,7 +5,7 @@ using System.Text;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 
-namespace DDay.iCal.Objects
+namespace DDay.iCal.Components
 {
     /// <summary>
     /// A collection of iCalendar components.  This class is used by the 

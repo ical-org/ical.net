@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Reflection;
-using DDay.iCal.Objects;
+using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 
-namespace DDay.iCal.Serialization.iCalendar.Objects
+namespace DDay.iCal.Serialization.iCalendar.Components
 {
     public class ComponentBaseSerializer : iCalObjectSerializer
     {
         #region Private Fields
 
-        private DDay.iCal.Objects.ComponentBase m_component;
+        private DDay.iCal.Components.ComponentBase m_component;
 
         #endregion
 
@@ -43,7 +43,7 @@ namespace DDay.iCal.Serialization.iCalendar.Objects
 
         #region Constructors
 
-        public ComponentBaseSerializer(DDay.iCal.Objects.ComponentBase component) : base(component)
+        public ComponentBaseSerializer(DDay.iCal.Components.ComponentBase component) : base(component)
         {
             this.m_component = component;
         }

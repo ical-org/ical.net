@@ -6,7 +6,7 @@ using System.Reflection;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
 
-namespace DDay.iCal.Objects
+namespace DDay.iCal.Components
 {
     /// <summary>
     /// The base class for all iCalendar objects, components, and data types.

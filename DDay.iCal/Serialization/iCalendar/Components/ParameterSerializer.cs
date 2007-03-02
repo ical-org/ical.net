@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using DDay.iCal.DataTypes;
-using DDay.iCal.Objects;
+using DDay.iCal.Components;
 
-namespace DDay.iCal.Serialization.iCalendar.Objects
+namespace DDay.iCal.Serialization.iCalendar.Components
 {
     public class ParameterSerializer : ISerializable
     {

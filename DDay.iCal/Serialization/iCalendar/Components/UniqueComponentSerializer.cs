@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Reflection;
-using DDay.iCal.Objects;
+using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 
-namespace DDay.iCal.Serialization.iCalendar.Objects
+namespace DDay.iCal.Serialization.iCalendar.Components
 {
     public class UniqueComponentSerializer : ComponentBaseSerializer
     {

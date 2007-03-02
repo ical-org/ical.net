@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DDay.iCal.Objects;
+using DDay.iCal.Components;
 
 namespace DDay.iCal.DataTypes
 {

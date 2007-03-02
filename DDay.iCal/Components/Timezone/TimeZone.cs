@@ -2,10 +2,9 @@ using System;
 using System.Data;
 using System.Collections;
 using System.Configuration;
-using DDay.iCal.Objects;
+using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
-using DDay.iCal.Serialization.iCalendar.DataTypes;
 
 namespace DDay.iCal.Components
 {

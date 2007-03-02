@@ -4,9 +4,8 @@ using System.Text;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
-using DDay.iCal.Serialization.iCalendar.DataTypes;
 
-namespace DDay.iCal.Objects
+namespace DDay.iCal.Components
 {
     /// <summary>
     /// Represents a unique component, a component with a unique UID,

@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
-using DDay.iCal.Objects;
+using DDay.iCal.Components;
 
 namespace DDay.iCal.DataTypes
 {

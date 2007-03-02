@@ -2,31 +2,31 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DDay.iCal.Objects
+namespace DDay.iCal
 {
-    public class DefaultValueTypeAttribute : Attribute
+    public class DefaultValueAttribute : Attribute
     {
         #region Private Fields
 
-        private string m_Type;
+        private object m_Value;
 
         #endregion
 
         #region Public Properties
 
-        public string Type
+        public object Value
         {
-            get { return m_Type; }
-            set { m_Type = value; }
+            get { return m_Value; }
+            set { m_Value = value; }
         }
 
         #endregion
 
         #region Constructors
 
-        public DefaultValueTypeAttribute(string type)
+        public DefaultValueAttribute(object value)
         {
-            Type = type;
+            Value = value;
         }
 
         #endregion

@@ -1,6 +1,6 @@
 // $ANTLR 2.7.6 (2005-12-22): "iCal.g" -> "iCalParser.cs"$
 
-    using DDay.iCal.Objects;
+    using DDay.iCal.Components;
     using DDay.iCal.Components;
 
 namespace DDay.iCal

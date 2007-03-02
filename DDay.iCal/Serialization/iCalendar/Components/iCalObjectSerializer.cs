@@ -3,21 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using DDay.iCal.Objects;
+using DDay.iCal.Components;
 
-namespace DDay.iCal.Serialization.iCalendar.Objects
+namespace DDay.iCal.Serialization.iCalendar.Components
 {
     public class iCalObjectSerializer : ISerializable
     {
         #region Private Fields
 
-        private DDay.iCal.Objects.iCalObject m_object;
+        private DDay.iCal.Components.iCalObject m_object;
 
         #endregion
 
         #region Constructors
 
-        public iCalObjectSerializer(DDay.iCal.Objects.iCalObject iCalObject)
+        public iCalObjectSerializer(DDay.iCal.Components.iCalObject iCalObject)
         {
             this.m_object = iCalObject;
         }
@@ -57,7 +57,7 @@ namespace DDay.iCal.Serialization.iCalendar.Objects
                     serializer.Serialize(stream, encoding);
             }
 
-            foreach (DDay.iCal.Objects.iCalObject obj in m_object.Children)
+            foreach (DDay.iCal.Components.iCalObject obj in m_object.Children)
             {
                 ISerializable serializer = SerializerFactory.Create(obj);
                 if (serializer != null)
