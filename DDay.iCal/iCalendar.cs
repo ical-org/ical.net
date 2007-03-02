@@ -471,10 +471,22 @@ namespace DDay.iCal
         /// <param name="ToDate">The end date/time of the range to test.</param>                
         public void Evaluate(Date_Time FromDate, Date_Time ToDate)
         {
-            foreach (iCalObject obj in Children)
+            foreach (UniqueComponent uc in UniqueComponents)
             {
-                if (obj is RecurringComponent)
-                    ((RecurringComponent)obj).Evaluate(FromDate, ToDate);
+                if (uc is RecurringComponent)
+                    ((RecurringComponent)uc).Evaluate(FromDate, ToDate);
+            }
+        }
+
+        /// <summary>
+        /// Clears recurrence evaluations for recurring components.        
+        /// </summary>        
+        public void ClearEvaluation()
+        {
+            foreach (UniqueComponent uc in UniqueComponents)
+            {
+                if (uc is RecurringComponent)
+                    ((RecurringComponent)uc).ClearEvaluation();
             }
         }
 

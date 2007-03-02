@@ -273,8 +273,10 @@ namespace DDay.iCal.DataTypes
             {
                 if (match.Groups["Interval"].Success)
                 {
-                    if (!int.TryParse(match.Groups["Interval"].Value, out r.Interval))
+                    int interval;
+                    if (!int.TryParse(match.Groups["Interval"].Value, out interval))
                         r.Interval = 2; // "other"
+                    else r.Interval = interval;
                 }
                 else r.Interval = 1;
 
@@ -388,8 +390,10 @@ namespace DDay.iCal.DataTypes
                     }
                     else if ((match = Regex.Match(item, @"^\s*for\s+(?<Count>\d+)\s+occurrences\s*$", RegexOptions.IgnoreCase)).Success)
                     {
-                        if (!int.TryParse(match.Groups["Count"].Value, out r.Count))
+                        int count;
+                        if (!int.TryParse(match.Groups["Count"].Value, out count))
                             return false;
+                        else r.Count = count;
                     }
                 }
             }
