@@ -22,7 +22,7 @@ namespace DDay.iCal.Components
 
         #region Public Properties
         
-        [SerializedAttribute]
+        [Serialized]
         public JournalStatus Status
         {
             get { return m_Status; }

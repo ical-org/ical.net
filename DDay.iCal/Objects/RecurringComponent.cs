@@ -23,43 +23,56 @@ namespace DDay.iCal.Objects
 
         private Date_Time m_DTStart;
 
-        #endregion
-
-        #region Public Fields
-                
-        public Date_Time EvalStart;        
-        public Date_Time EvalEnd;
-        public Date_Time Until;
-        [SerializedAttribute]
-        public RDate[] ExDate;
-        [SerializedAttribute]
-        public Recur[] ExRule;
-        [SerializedAttribute]
-        public RDate[] RDate;
-        [SerializedAttribute]
-        public Recur[] RRule;
-        [SerializedAttribute]
-        public Date_Time RecurID;
-
-        #endregion
-
-        #region Private Fields
+        private Date_Time m_EvalStart;
+        private Date_Time m_EvalEnd;
+        private Date_Time m_Until;
+        private RDate[] m_ExDate;
+        private Recur[] m_ExRule;
+        private RDate[] m_RDate;
+        private Recur[] m_RRule;
+        private Date_Time m_RecurID;
 
         private List<Period> m_Periods;
         private List<Alarm> m_Alarms;
 
-        #endregion
+        #endregion        
 
         #region Public Properties
 
         /// <summary>
         /// The start date/time of the component.
         /// </summary>
-        [SerializedAttribute, DefaultValueType("DATE-TIME")]
+        [Serialized, DefaultValueType("DATE-TIME")]
         virtual public Date_Time DTStart
         {
             get { return m_DTStart; }
             set { m_DTStart = value; }
+        }
+
+        public Date_Time EvalStart
+        {
+            get { return m_EvalStart; }
+            set { m_EvalStart = value; }
+        }
+
+        public Date_Time EvalEnd
+        {
+            get { return m_EvalEnd; }
+            set { m_EvalEnd = value; }
+        }
+
+        [Serialized]
+        public RDate[] ExDate
+        {
+            get { return m_ExDate; }
+            set { m_ExDate = value; }
+        }
+
+        [Serialized]
+        public Recur[] ExRule
+        {
+            get { return m_ExRule; }
+            set { m_ExRule = value; }
         }
 
         /// <summary>
@@ -72,6 +85,27 @@ namespace DDay.iCal.Objects
             set { m_Periods = value; }
         }
 
+        [Serialized]
+        public RDate[] RDate
+        {
+            get { return m_RDate; }
+            set { m_RDate = value; }
+        }
+
+        [Serialized]
+        public Date_Time RecurID
+        {
+            get { return m_RecurID; }
+            set { m_RecurID = value; }
+        }
+
+        [Serialized]
+        public Recur[] RRule
+        {
+            get { return m_RRule; }
+            set { m_RRule = value; }
+        }
+
         /// <summary>
         /// An alias to the DTStart field (i.e. start date/time).
         /// </summary>
@@ -79,6 +113,12 @@ namespace DDay.iCal.Objects
         {
             get { return DTStart; }
             set { DTStart = value; }
+        }
+
+        public Date_Time Until
+        {
+            get { return m_Until; }
+            set { m_Until = value; }
         }
 
         /// <summary>
@@ -139,6 +179,77 @@ namespace DDay.iCal.Objects
                 ExRule = rules;
             }
             else ExRule = new Recur[] { recur };
+        }
+
+        /// <summary>
+        /// "Flattens" component recurrences into a series of equivalent objects.
+        /// </summary>        
+        /// <returns>A list of <see cref="Event"/>s if they could be flattened, null otherwise.</returns>
+        virtual public IEnumerable<RecurringComponent> FlattenRecurrences()
+        {
+            // Create a dummy iCalendar to hold our flattened component
+            iCalendar iCal = new iCalendar();
+
+            if (Start.TZID != null)
+            {
+                // Place the time zone into our dummy iCalendar
+                DDay.iCal.Components.TimeZone tz = iCalendar.GetTimeZone(Start.TZID);
+                if (tz != null)
+                    tz.Copy(iCal);
+            }
+
+            // Iterate through each period to find all occurrences on this date
+            foreach (Period p in Periods)
+            {
+                // Copy the component into the dummy iCalendar
+                RecurringComponent rc = (RecurringComponent)Copy(iCal);
+
+                rc.Start = p.StartTime.Copy();                
+                rc.RRule = new Recur[0];
+                rc.RDate = new RDate[0];
+                rc.ExRule = new Recur[0];
+                rc.ExDate = new RDate[0];
+
+                yield return rc;
+            }
+        }
+
+        /// <summary>
+        /// "Flattens" component recurrences that occur in the given date into a series of equivalent objects.
+        /// </summary>
+        /// <param name="dt">The date on which the event recurs</param>
+        /// <returns>A list of <see cref="Event"/>s if they could be flattened, null otherwise.</returns>
+        virtual public IEnumerable<RecurringComponent> FlattenRecurrencesOn(Date_Time dt)
+        {            
+            // Create a dummy iCalendar to hold our flattened component
+            iCalendar iCal = new iCalendar();
+
+            if (Start.TZID != null)
+            {
+                // Place the time zone into our dummy iCalendar
+                DDay.iCal.Components.TimeZone tz = iCalendar.GetTimeZone(Start.TZID);
+                if (tz != null)
+                    tz.Copy(iCal);
+            }
+
+            // Iterate through each period to find all occurrences on this date
+            foreach (Period p in Periods)
+            {
+                // Check to see if this occurrence is on the same date
+                if (p.StartTime.Date.Equals(dt.Date))
+                {
+                    // Copy the component into the dummy iCalendar
+                    RecurringComponent rc = (RecurringComponent)Copy(iCal);
+
+                    rc.Start = p.StartTime.Copy();
+                    rc.RRule = new Recur[0];
+                    rc.RDate = new RDate[0];
+                    rc.ExRule = new Recur[0];
+                    rc.ExDate = new RDate[0];
+
+                    yield return rc;
+                }
+            }
         }
 
         #endregion

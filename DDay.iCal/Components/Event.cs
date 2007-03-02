@@ -31,46 +31,11 @@ namespace DDay.iCal.Components
 
         private Date_Time m_DTEnd;
         private Duration m_Duration;
-
-        #endregion
-
-        #region Public Fields
-                
-        /// <summary>
-        /// The geographic location (lat/long) of the event.
-        /// </summary>
-        [SerializedAttribute]
-        public Geo Geo;
-
-        /// <summary>
-        /// The location of the event.
-        /// </summary>
-        [SerializedAttribute]
-        public Text Location;
-
-        /// <summary>
-        /// Resources that will be used during the event.
-        /// <example>Conference room #2</example>
-        /// <example>Projector</example>
-        /// </summary>
-        [SerializedAttribute]
-        public TextCollection[] Resources;        
-
-        /// <summary>
-        /// The status of the event.
-        /// </summary>
-        [SerializedAttribute, DefaultValue("TENTATIVE\r\n")]
-        public EventStatus Status;
-
-        /// <summary>
-        /// The transparency of the event.  In other words,
-        /// whether or not the period of time this event
-        /// occupies can contain other events (transparent),
-        /// or if the time cannot be scheduled for anything
-        /// else (opaque).
-        /// </summary>
-        [SerializedAttribute, DefaultValue("OPAQUE\r\n")]
-        public Transparency Transp;        
+        private Geo m_Geo;
+        private Text m_Location;
+        private TextCollection[] m_Resources;
+        private EventStatus m_Status;
+        private Transparency m_Transp;
 
         #endregion
          
@@ -87,7 +52,7 @@ namespace DDay.iCal.Components
         /// the end date/time will be extrapolated.
         /// </note>
         /// </summary>
-        [SerializedAttribute]
+        [Serialized]
         public override Date_Time DTStart
         {
             get
@@ -112,7 +77,7 @@ namespace DDay.iCal.Components
         /// will be extrapolated.
         /// </note>
         /// </summary>
-        [SerializedAttribute, DefaultValueType("DATE-TIME")]
+        [Serialized, DefaultValueType("DATE-TIME")]
         virtual public Date_Time DTEnd
         {
             get { return m_DTEnd; }
@@ -134,7 +99,7 @@ namespace DDay.iCal.Components
         /// available information.
         /// </note>
         /// </summary>
-        [SerializedAttribute, DefaultValue("P")]
+        [Serialized, DefaultValue("P")]
         virtual public Duration Duration
         {
             get { return m_Duration; }
@@ -168,6 +133,62 @@ namespace DDay.iCal.Components
                     Start.HasTime = !value;
             }
         }
+
+        /// <summary>
+        /// The geographic location (lat/long) of the event.
+        /// </summary>
+        [Serialized]
+        public Geo Geo
+        {
+            get { return m_Geo; }
+            set { m_Geo = value; }
+        }
+
+        /// <summary>
+        /// The location of the event.
+        /// </summary>
+        [Serialized]
+        public Text Location
+        {
+            get { return m_Location; }
+            set { m_Location = value; }
+        }
+
+        /// <summary>
+        /// Resources that will be used during the event.
+        /// <example>Conference room #2</example>
+        /// <example>Projector</example>
+        /// </summary>
+        [Serialized]
+        public TextCollection[] Resources
+        {
+            get { return m_Resources; }
+            set { m_Resources = value; }
+        }
+
+        /// <summary>
+        /// The status of the event.
+        /// </summary>
+        [Serialized, DefaultValue("TENTATIVE\r\n")]        
+        public EventStatus Status
+        {
+            get { return m_Status; }
+            set { m_Status = value; }
+        }
+
+        /// <summary>
+        /// The transparency of the event.  In other words,
+        /// whether or not the period of time this event
+        /// occupies can contain other events (transparent),
+        /// or if the time cannot be scheduled for anything
+        /// else (opaque).
+        /// </summary>
+        [Serialized, DefaultValue("OPAQUE\r\n")]
+        public Transparency Transp
+        {
+            get { return m_Transp; }
+            set { m_Transp = value; }
+        }       
 
         #endregion
 
