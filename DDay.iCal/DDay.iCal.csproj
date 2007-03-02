@@ -110,6 +110,8 @@
     <Compile Include="iCalParser.cs" />
     <Compile Include="iCalParserTokenTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serialization\DisallowedTypes.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\ForceUTCAttribute.cs" />
     <Compile Include="Serialization\iCalendar\iCalendarSerializer.cs" />
     <Compile Include="Serialization\NonstandardAttribute.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\ArraySerializer.cs" />
@@ -153,9 +155,6 @@
     <Content Include="License.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Xml\Bugs.xml" />
-    <Content Include="Xml\Todo.xml" />
-    <EmbeddedResource Include="Xml\ChangeLog.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

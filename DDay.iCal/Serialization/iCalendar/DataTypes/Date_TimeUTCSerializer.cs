@@ -20,7 +20,10 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
             DateTime = dt.Copy();
 
             // Set the Date_Time object to UTC time
-            DateTime.SetKind(DateTimeKind.Utc);            
+            DateTime = DateTime.UTC;
+
+            // FIXME: this is the old way we did it; remove when verified
+            //DateTime.SetKind(DateTimeKind.Utc);            
         }
 
         #endregion

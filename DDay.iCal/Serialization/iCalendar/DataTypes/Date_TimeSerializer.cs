@@ -60,20 +60,35 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
                 List<string> Params = base.Parameters;
 
                 if (m_DateTime.TZID != null)
-                    Params.Add("TZID=" + m_DateTime.TZID.ToString());
+                    Params.Add("TZID=" + m_DateTime.TZID.ToString());                
 
                 string valueType = null;
                 if (!m_DateTime.HasTime)
                     valueType = "DATE";
                 else valueType = "DATE-TIME";
 
+                // Check to see if one of the value types is
+                // disallowed; if so, then invert the value type
+                foreach (object obj in m_DateTime.Attributes)
+                {
+                    if (obj is DisallowedTypes)
+                    {
+                        DisallowedTypes dt = (DisallowedTypes)obj;
+                        if (dt.Types.Contains(valueType) && dt.Types.Contains(InvertType(valueType)))
+                            valueType = null;
+                        else if (dt.Types.Contains(valueType))
+                            valueType = InvertType(valueType);
+                    }
+                }
+
+                // Check to see if the value type is the default value type for this item                
                 foreach (object obj in m_DateTime.Attributes)
                 {
                     if (obj is DefaultValueTypeAttribute)
-                    {
+                    {                        
                         if (((DefaultValueTypeAttribute)obj).Type == valueType)
                             valueType = null;
-                    }
+                    }                    
                 }
 
                 // If the value type is already the default value type, don't worry about displaying it
@@ -86,6 +101,22 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
         public override string SerializeToString()
         {
+            Type type = GetType();            
+
+            // Let's first see if we need to force this
+            // date-time value into UTC time
+            if (type != typeof(Date_TimeUTCSerializer) && !type.IsSubclassOf(typeof(Date_TimeUTCSerializer)))
+            {
+                foreach (object obj in m_DateTime.Attributes)
+                {
+                    if (obj is ForceUTCAttribute)
+                    {
+                        Date_TimeUTCSerializer serializer = new Date_TimeUTCSerializer(m_DateTime);
+                        return serializer.SerializeToString();
+                    }
+                }
+            }
+
             string value = string.Empty;
             value += string.Format("{0:0000}{1:00}{2:00}", m_DateTime.Year, m_DateTime.Month, m_DateTime.Day);
             if (m_DateTime.HasTime)
@@ -96,6 +127,20 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
             }
             return value;
         }        
+
+        #endregion
+
+        #region Private Methods
+
+        private string InvertType(string type)
+        {
+            switch (type)
+            {
+                case "DATE": return "DATE-TIME";
+                case "DATE-TIME": return "DATE";
+                default: return "DATE-TIME";
+            }
+        }
 
         #endregion
     }
