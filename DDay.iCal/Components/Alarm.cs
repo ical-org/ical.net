@@ -232,11 +232,33 @@ namespace DDay.iCal.Components
         /// </remarks>
         public class AlarmOccurrence
         {
-            #region Public Fields
+            #region Private Fields
 
-            public Alarm Alarm;
-            public Date_Time DateTime;
-            public RecurringComponent Component;
+            private Alarm m_Alarm;            
+            private Date_Time m_DateTime;            
+            private RecurringComponent m_Component;            
+
+            #endregion
+
+            #region Public Properties
+
+            public Alarm Alarm
+            {
+                get { return m_Alarm; }
+                set { m_Alarm = value; }
+            }
+
+            public Date_Time DateTime
+            {
+                get { return m_DateTime; }
+                set { m_DateTime = value; }
+            }
+
+            public RecurringComponent Component
+            {
+                get { return m_Component; }
+                set { m_Component = value; }
+            }
 
             #endregion
 
