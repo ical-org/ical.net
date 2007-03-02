@@ -15,9 +15,19 @@ namespace DDay.iCal.Objects
     /// </remarks>
     public class Parameter : iCalObject
     {
-        #region Public Fields
+        #region Private Fields
 
-        public List<string> Values = new List<string>();
+        private List<string> m_Values = new List<string>();
+        
+        #endregion
+
+        #region Public Properties
+
+        public List<string> Values
+        {
+            get { return m_Values; }
+            set { m_Values = value; }
+        }
 
         #endregion
 
