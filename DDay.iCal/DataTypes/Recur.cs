@@ -23,29 +23,122 @@ namespace DDay.iCal.DataTypes
             YEARLY
         };
 
-        #endregion
-
-        #region Public Fields
-        public FrequencyType Frequency;
-        public Date_Time Until;
-        public int Count = int.MinValue;
-        public int Interval = int.MinValue;
-        public ArrayList BySecond = new ArrayList();
-        public ArrayList ByMinute = new ArrayList();
-        public ArrayList ByHour = new ArrayList();
-        public ArrayList ByDay = new ArrayList();
-        public ArrayList ByMonthDay = new ArrayList();
-        public ArrayList ByYearDay = new ArrayList();
-        public ArrayList ByWeekNo = new ArrayList();
-        public ArrayList ByMonth = new ArrayList();
-        public ArrayList BySetPos = new ArrayList();
-        public DayOfWeek Wkst = DayOfWeek.Monday;
-        public List<Date_Time> StaticOccurrences = new List<Date_Time>();
-        #endregion
+        #endregion       
 
         #region Private Fields
         public System.Globalization.CultureInfo m_Culture;
         public System.Globalization.Calendar m_Calendar;
+
+        private FrequencyType m_Frequency;
+        private Date_Time m_Until;
+        private int m_Count = int.MinValue;
+        private int m_Interval = int.MinValue;
+        private ArrayList m_BySecond = new ArrayList();
+        private ArrayList m_ByMinute = new ArrayList();
+        private ArrayList m_ByHour = new ArrayList();
+        private ArrayList m_ByDay = new ArrayList();
+        private ArrayList m_ByMonthDay = new ArrayList();
+        private ArrayList m_ByYearDay = new ArrayList();
+        private ArrayList m_ByWeekNo = new ArrayList();
+        private ArrayList m_ByMonth = new ArrayList();
+        private ArrayList m_BySetPos = new ArrayList();
+        private DayOfWeek m_Wkst = DayOfWeek.Monday;
+        private List<Date_Time> m_StaticOccurrences = new List<Date_Time>();
+                
+        #endregion
+
+        #region Public Properties
+
+        public FrequencyType Frequency
+        {
+            get { return m_Frequency; }
+            set { m_Frequency = value; }
+        }
+
+        public Date_Time Until
+        {
+            get { return m_Until; }
+            set { m_Until = value; }
+        }
+
+        public int Count
+        {
+            get { return m_Count; }
+            set { m_Count = value; }
+        }
+
+        public int Interval
+        {
+            get { return m_Interval; }
+            set { m_Interval = value; }
+        }
+
+        public ArrayList BySecond
+        {
+            get { return m_BySecond; }
+            set { m_BySecond = value; }
+        }
+
+        public ArrayList ByMinute
+        {
+            get { return m_ByMinute; }
+            set { m_ByMinute = value; }
+        }
+
+        public ArrayList ByHour
+        {
+            get { return m_ByHour; }
+            set { m_ByHour = value; }
+        }
+
+        public ArrayList ByDay
+        {
+            get { return m_ByDay; }
+            set { m_ByDay = value; }
+        }
+
+        public ArrayList ByMonthDay
+        {
+            get { return m_ByMonthDay; }
+            set { m_ByMonthDay = value; }
+        }
+
+        public ArrayList ByYearDay
+        {
+            get { return m_ByYearDay; }
+            set { m_ByYearDay = value; }
+        }
+
+        public ArrayList ByWeekNo
+        {
+            get { return m_ByWeekNo; }
+            set { m_ByWeekNo = value; }
+        }
+
+        public ArrayList ByMonth
+        {
+            get { return m_ByMonth; }
+            set { m_ByMonth = value; }
+        }
+
+        public ArrayList BySetPos
+        {
+            get { return m_BySetPos; }
+            set { m_BySetPos = value; }
+        }
+
+        public DayOfWeek Wkst
+        {
+            get { return m_Wkst; }
+            set { m_Wkst = value; }
+        }
+
+        public List<Date_Time> StaticOccurrences
+        {
+            get { return m_StaticOccurrences; }
+            set { m_StaticOccurrences = value; }
+        }
+
         #endregion
 
         #region Constructors
