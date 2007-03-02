@@ -10,12 +10,40 @@ namespace DDay.iCal.DataTypes
     /// </summary>
     public class UTC_Offset : iCalDataType
     {
-        #region Public Fields
+        #region Private Fields
 
-        public bool Positive = false;
-        public int Hours;
-        public int Minutes;
-        public int Seconds = 0;
+        private bool m_Positive = false;
+        private int m_Hours;
+        private int m_Minutes;
+        private int m_Seconds = 0;
+        
+        #endregion
+
+        #region Public Properties
+
+        public bool Positive
+        {
+            get { return m_Positive; }
+            set { m_Positive = value; }
+        }
+
+        public int Hours
+        {
+            get { return m_Hours; }
+            set { m_Hours = value; }
+        }
+
+        public int Minutes
+        {
+            get { return m_Minutes; }
+            set { m_Minutes = value; }
+        }
+
+        public int Seconds
+        {
+            get { return m_Seconds; }
+            set { m_Seconds = value; }
+        }
 
         #endregion
 
