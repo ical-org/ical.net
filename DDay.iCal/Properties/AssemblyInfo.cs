@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("Beta")]
 [assembly: AssemblyCompany("DDay Software - ddaysoftware.com")]
 [assembly: AssemblyProduct("DDay.iCal")]
-[assembly: AssemblyCopyright("Copyright © 2006 Douglas Day")]
+[assembly: AssemblyCopyright("Copyright © 2007 Douglas Day")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
