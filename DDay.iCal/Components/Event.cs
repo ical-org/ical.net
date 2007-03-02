@@ -210,7 +210,7 @@ namespace DDay.iCal.Components
         /// </summary>
         /// <param name="DateTime">The date to test.</param>
         /// <returns>True if the event occurs on the <paramref name="DateTime"/> provided, False otherwise.</returns>
-        public bool OccursOn(Date_Time DateTime)
+        virtual public bool OccursOn(Date_Time DateTime)
         {            
             foreach (Period p in Periods)
                 // NOTE: removed UTC from date checks, since a date is a date.
@@ -231,7 +231,7 @@ namespace DDay.iCal.Components
         /// </summary>
         /// <param name="DateTime">The date and time to test.</param>
         /// <returns>True if the event begins at the given date and time</returns>
-        public bool OccursAt(Date_Time DateTime)
+        virtual public bool OccursAt(Date_Time DateTime)
         {            
             foreach (Period p in Periods)
                 if (p.StartTime.Equals(DateTime))
@@ -244,7 +244,7 @@ namespace DDay.iCal.Components
         /// as an upcoming or occurred event.
         /// </summary>
         /// <returns>True if the event has not been cancelled, False otherwise.</returns>
-        public bool IsActive()
+        virtual public bool IsActive()
         {
             return (Status != EventStatus.CANCELLED);
         }
