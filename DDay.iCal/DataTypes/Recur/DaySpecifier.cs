@@ -12,10 +12,26 @@ namespace DDay.iCal.DataTypes
     {
         public class DaySpecifier : iCalDataType, IComparable
         {
-            #region Public Fields
+            #region Private Fields
 
-            public int Num;
-            public DayOfWeek DayOfWeek;
+            private int m_Num;            
+            private DayOfWeek m_DayOfWeek;            
+
+            #endregion
+
+            #region Public Properties
+
+            public int Num
+            {
+                get { return m_Num; }
+                set { m_Num = value; }
+            }
+
+            public DayOfWeek DayOfWeek
+            {
+                get { return m_DayOfWeek; }
+                set { m_DayOfWeek = value; }
+            }
 
             #endregion
 
