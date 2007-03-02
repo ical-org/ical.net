@@ -14,10 +14,20 @@ namespace DDay.iCal.Components
     [DebuggerDisplay("{Summary}: {(Description.ToString().Length < 32) ? Description.ToString() : Description.ToString().Substring(0, 32)}")]
     public class Journal : RecurringComponent
     {
-        #region Public Fields
-                             
+        #region Private Fields
+        
+        private JournalStatus m_Status;               
+
+        #endregion
+
+        #region Public Properties
+        
         [SerializedAttribute]
-        public JournalStatus Status;        
+        public JournalStatus Status
+        {
+            get { return m_Status; }
+            set { m_Status = value; }
+        } 
 
         #endregion
 
