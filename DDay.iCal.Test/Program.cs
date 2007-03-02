@@ -453,6 +453,6 @@ namespace DDay.iCal.Test
                 Assert.IsTrue(evt.OccursAt(dt), "Event should occur at " + dt);
 
             Assert.IsTrue(evt.Periods.Count == DateTimes.Length, "There should be exactly " + DateTimes.Length + " occurrences; there were " + evt.Periods.Count);
-        }
+        }        
     }
 }

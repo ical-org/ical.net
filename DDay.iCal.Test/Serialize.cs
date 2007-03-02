@@ -48,6 +48,10 @@ namespace DDay.iCal.Test
             s.SERIALIZE15();
             s.SERIALIZE16();
             s.LANGUAGE1();
+            s.LANGUAGE2();
+            s.REQUIREDPARAMETERS1();
+            s.TIMEZONE1();
+            s.TIMEZONE2();
 
             s.USHOLIDAYS();
         }
@@ -253,7 +257,95 @@ namespace DDay.iCal.Test
         [Test, Category("Serialization")]
         public void LANGUAGE1()
         {
-            SerializeTest("Barça 2006 - 2007.ics");
+            SerializeTest("LANGUAGE1.ics");
+        }
+
+        [Test, Category("Serialization")]
+        public void LANGUAGE2()
+        {
+            SerializeTest("LANGUAGE2.ics");
+        }
+
+        [Test]
+        public void REQUIREDPARAMETERS1()
+        {
+            iCalendar iCal = new iCalendar();
+            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
+            serializer.Serialize(@"Calendars\Serialization\Temp\REQUIREDPARAMETERS1.ics");
+
+            iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\REQUIREDPARAMETERS1.ics");
+            Assert.IsNotEmpty(iCal.Version);
+            Assert.IsNotEmpty(iCal.ProductID);
+
+            iCal.Version = string.Empty;
+            iCal.ProductID = null;
+            Assert.IsNotEmpty(iCal.Version, "VERSION is required");
+            Assert.IsNotEmpty(iCal.ProductID, "PRODID is required");
+        }
+
+        [Test]
+        public void TIMEZONE1()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\TIMEZONE1.ics");
+            
+            DDay.iCal.Components.TimeZone tz = iCal.TimeZones[0];
+            tz.Last_Modified = new Date_Time(2007, 1, 1);
+
+            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
+            serializer.Serialize(@"Calendars\Serialization\Temp\TIMEZONE1.ics");
+
+            iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\TIMEZONE1.ics");
+            tz = iCal.TimeZones[0];
+
+            ContentLine cl = tz.Last_Modified.ContentLine;
+            Assert.IsFalse(cl.Parameters.ContainsKey("VALUE"), "The \"VALUE\" parameter is not allowed on \"LAST-MODIFIED\"");
+        }
+
+        [Test]
+        public void TIMEZONE2()
+        {
+            //
+            // First, check against the VALUE parameter; it must be absent in DTSTART
+            //
+
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\TIMEZONE2.ics");
+
+            DDay.iCal.Components.TimeZone tz = iCal.TimeZones[0];
+            foreach (DDay.iCal.Components.TimeZone.TimeZoneInfo tzi in tz.TimeZoneInfos)
+                tzi.Start = new Date_Time(2007, 1, 1);
+
+            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
+            serializer.Serialize(@"Calendars\Serialization\Temp\TIMEZONE2.ics");
+
+            iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\TIMEZONE2.ics");
+            tz = iCal.TimeZones[0];
+
+            foreach (DDay.iCal.Components.TimeZone.TimeZoneInfo tzi in tz.TimeZoneInfos)
+            {
+                ContentLine cl = tzi.Start.ContentLine;
+                Assert.IsFalse(cl.Parameters.ContainsKey("VALUE"), "\"DTSTART\" property MUST be represented in local time in timezones");
+            }
+
+            //
+            // Next, check against UTC time; DTSTART must be presented in local time
+            //
+            iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\TIMEZONE2.ics");
+
+            tz = iCal.TimeZones[0];
+            foreach (DDay.iCal.Components.TimeZone.TimeZoneInfo tzi in tz.TimeZoneInfos)
+                tzi.Start = DateTime.Now.ToUniversalTime();
+
+            serializer = new iCalendarSerializer(iCal);
+            serializer.Serialize(@"Calendars\Serialization\Temp\TIMEZONE2.ics");
+
+            iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\TIMEZONE2.ics");
+            tz = iCal.TimeZones[0];
+
+            foreach (DDay.iCal.Components.TimeZone.TimeZoneInfo tzi in tz.TimeZoneInfos)
+            {
+                ContentLine cl = tzi.Start.ContentLine;
+                Assert.IsFalse(cl.Parameters.ContainsKey("VALUE"), "\"DTSTART\" property MUST be represented in local time in timezones");
+            }
         }
     }
 }

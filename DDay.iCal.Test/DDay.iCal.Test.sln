@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDay.iCal.Test", "DDay.iCal.Test.csproj", "{C72FB9D4-C875-44D0-8856-C7B59D184334}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDay.iCal", "..\DDay.iCal\DDay.iCal.csproj", "{F88DB6D3-CB95-4707-9C88-B53403AADC61}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,10 +13,6 @@ Global
 		{C72FB9D4-C875-44D0-8856-C7B59D184334}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C72FB9D4-C875-44D0-8856-C7B59D184334}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C72FB9D4-C875-44D0-8856-C7B59D184334}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F88DB6D3-CB95-4707-9C88-B53403AADC61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F88DB6D3-CB95-4707-9C88-B53403AADC61}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F88DB6D3-CB95-4707-9C88-B53403AADC61}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F88DB6D3-CB95-4707-9C88-B53403AADC61}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
