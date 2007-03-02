@@ -13,12 +13,6 @@ namespace DDay.iCal.Objects
     /// </summary>
     public class iCalObject
     {
-        #region Public Fields
-
-        public iCalObject Parent = null;
-
-        #endregion
-
         #region Public Events
 
         public event EventHandler Load;
@@ -27,6 +21,7 @@ namespace DDay.iCal.Objects
 
         #region Private Fields
 
+        private iCalObject m_Parent = null;
         private ArrayList m_Children = new ArrayList();
         private string m_name;
         private Hashtable m_Properties = new Hashtable();
@@ -35,6 +30,15 @@ namespace DDay.iCal.Objects
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// Returns the parent <see cref="iCalObject"/> that owns this one.
+        /// </summary>
+        public iCalObject Parent
+        {
+            get { return m_Parent; }
+            set { m_Parent = value; }
+        }
 
         /// <summary>
         /// Returns a list of properties that are associated with the iCalendar object.
