@@ -16,28 +16,16 @@ namespace DDay.iCal.Components
     {
         #region Private Fields
 
-        private List<AlarmOccurrence> m_Occurrences;        
+        private List<AlarmOccurrence> m_Occurrences;
 
-        #endregion
-
-        #region Public Fields
-
-        [SerializedAttribute]
-        public AlarmAction Action;
-        [SerializedAttribute]
-        public Binary Attach;
-        [SerializedAttribute]
-        public Cal_Address[] Attendee;
-        [SerializedAttribute]
-        public Text Description;
-        [SerializedAttribute, DefaultValue("P")]
-        public Duration Duration;
-        [SerializedAttribute]
-        public Integer Repeat;
-        [SerializedAttribute]
-        public Text Summary;
-        [SerializedAttribute]
-        public Trigger Trigger;        
+        private AlarmAction m_Action;        
+        private Binary m_Attach;        
+        private Cal_Address[] m_Attendee;        
+        private Text m_Description;        
+        private Duration m_Duration;        
+        private Integer m_Repeat;        
+        private Text m_Summary;        
+        private Trigger m_Trigger;        
 
         #endregion
 
@@ -47,6 +35,62 @@ namespace DDay.iCal.Components
         {
             get { return m_Occurrences; }
             set { m_Occurrences = value; }
+        }
+
+        [Serialized]
+        public AlarmAction Action
+        {
+            get { return m_Action; }
+            set { m_Action = value; }
+        }
+
+        [Serialized]
+        public Binary Attach
+        {
+            get { return m_Attach; }
+            set { m_Attach = value; }
+        }
+
+        [Serialized]
+        public Cal_Address[] Attendee
+        {
+            get { return m_Attendee; }
+            set { m_Attendee = value; }
+        }
+
+        [Serialized]
+        public Text Description
+        {
+            get { return m_Description; }
+            set { m_Description = value; }
+        }
+
+        [Serialized, DefaultValue("P")]
+        public Duration Duration
+        {
+            get { return m_Duration; }
+            set { m_Duration = value; }
+        }
+
+        [Serialized]
+        public Integer Repeat
+        {
+            get { return m_Repeat; }
+            set { m_Repeat = value; }
+        }
+
+        [Serialized]
+        public Text Summary
+        {
+            get { return m_Summary; }
+            set { m_Summary = value; }
+        }
+
+        [Serialized]
+        public Trigger Trigger
+        {
+            get { return m_Trigger; }
+            set { m_Trigger = value; }
         }
 
         #endregion
