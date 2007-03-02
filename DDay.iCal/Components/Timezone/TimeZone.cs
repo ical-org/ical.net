@@ -14,19 +14,47 @@ namespace DDay.iCal.Components
     /// </summary>
     public partial class TimeZone : ComponentBase
     {
-        #region Public Fields
+        #region Private Fields
 
-        [SerializedAttribute]
-        public TZID TZID;
-        [SerializedAttribute, DefaultValueType("DATE-TIME"), ForceUTC]
-        public Date_Time Last_Modified;
-        [SerializedAttribute]
-        public URI TZUrl;
-        [SerializedAttribute]
-        public ArrayList TimeZoneInfos = new ArrayList();
+        private TZID m_TZID;        
+        private Date_Time m_Last_Modified;        
+        private URI m_TZUrl;        
+        private ArrayList m_TimeZoneInfos = new ArrayList();        
 
         #endregion
-        
+
+        #region Public Properties
+
+        [Serialized]
+        public TZID TZID
+        {
+            get { return m_TZID; }
+            set { m_TZID = value; }
+        }
+
+        [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
+        public Date_Time Last_Modified
+        {
+            get { return m_Last_Modified; }
+            set { m_Last_Modified = value; }
+        }
+
+        [Serialized]
+        public URI TZUrl
+        {
+            get { return m_TZUrl; }
+            set { m_TZUrl = value; }
+        }
+
+        [Serialized]
+        public ArrayList TimeZoneInfos
+        {
+            get { return m_TimeZoneInfos; }
+            set { m_TimeZoneInfos = value; }
+        }
+
+        #endregion
+
         #region Constructors
 
         public TimeZone() : base()

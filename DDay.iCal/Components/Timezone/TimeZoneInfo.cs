@@ -17,17 +17,39 @@ namespace DDay.iCal.Components
         /// </summary>
         public class TimeZoneInfo : RecurringComponent
         {
-            #region Public Fields
+            #region Private Fields
 
-            [SerializedAttribute]
-            public UTC_Offset TZOffsetFrom;
-            [SerializedAttribute]
-            public UTC_Offset TZOffsetTo;            
-            [SerializedAttribute]
-            public Text[] TZName;
+            private UTC_Offset m_TZOffsetFrom;            
+            private UTC_Offset m_TZOffsetTo;            
+            private Text[] m_TZName;
 
             #endregion
-            
+
+            #region Public Properties
+
+            [Serialized]
+            public UTC_Offset TZOffsetFrom
+            {
+                get { return m_TZOffsetFrom; }
+                set { m_TZOffsetFrom = value; }
+            }
+
+            [Serialized]
+            public UTC_Offset TZOffsetTo
+            {
+                get { return m_TZOffsetTo; }
+                set { m_TZOffsetTo = value; }
+            }
+
+            [Serialized]
+            public Text[] TZName
+            {
+                get { return m_TZName; }
+                set { m_TZName = value; }
+            }
+
+            #endregion
+
             #region Constructors
 
             public TimeZoneInfo() : base() { }
