@@ -18,34 +18,31 @@ namespace DDay.iCal.Components
     {
         #region Private Fields
 
+        private Date_Time m_Completed;
         private Date_Time m_Due;
         private Duration m_Duration;
+        private Geo m_Geo;
         private bool m_Loaded = false;
+        private Text m_Location;
+        private Integer m_PercentComplete;
+        private TextCollection[] m_Resources;
         private TodoStatus m_Status;
-
-        #endregion
-
-        #region Public Fields
-               
-        [SerializedAttribute, DefaultValueType("DATE-TIME")]
-        public Date_Time Completed;        
-        [SerializedAttribute]
-        public Geo Geo;
-        [SerializedAttribute]
-        public Text Location;        
-        [SerializedAttribute]
-        public Integer PercentComplete;        
-        [SerializedAttribute]
-        public TextCollection[] Resources;        
 
         #endregion
 
         #region Public Properties
 
+        [Serialized, DefaultValueType("DATE-TIME")]
+        public Date_Time Completed
+        {
+            get { return m_Completed; }
+            set { m_Completed = value; }
+        }
+
         /// <summary>
         /// The start date/time of the todo item.
         /// </summary>
-        [SerializedAttribute]
+        [Serialized]
         public override Date_Time DTStart
         {
             get
@@ -85,6 +82,34 @@ namespace DDay.iCal.Components
                 m_Duration = value;
                 ExtrapolateTimes();
             }
+        }
+
+        [Serialized]
+        public Geo Geo
+        {
+            get { return m_Geo; }
+            set { m_Geo = value; }
+        }
+
+        [Serialized]
+        public Text Location
+        {
+            get { return m_Location; }
+            set { m_Location = value; }
+        }
+
+        [Serialized]
+        public Integer PercentComplete
+        {
+            get { return m_PercentComplete; }
+            set { m_PercentComplete = value; }
+        }
+
+        [Serialized]
+        public TextCollection[] Resources
+        {
+            get { return m_Resources; }
+            set { m_Resources = value; }
         }
 
         /// <summary>
