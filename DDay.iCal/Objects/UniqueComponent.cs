@@ -25,6 +25,23 @@ namespace DDay.iCal.Objects
         #region Private Fields
 
         private Text m_UID;
+        private Binary[] m_Attach;
+        private Cal_Address[] m_Attendee;        
+        private TextCollection[] m_Categories;
+        private Text m_Class;        
+        private Text[] m_Comment;        
+        private Text[] m_Contact;
+        private Date_Time m_Created;        
+        private Text m_Description;        
+        private Date_Time m_DTStamp;        
+        private Date_Time m_Last_Modified;        
+        private Cal_Address m_Organizer;        
+        private Integer m_Priority;        
+        private Text[] m_Related_To;        
+        private RequestStatus[] m_RequestStatus;        
+        private Integer m_Sequence;
+        private Text m_Summary;
+        private URI m_Url;        
         
         #endregion
 
@@ -35,48 +52,121 @@ namespace DDay.iCal.Objects
 
         #endregion
 
-        #region Public Fields
-
-        [SerializedAttribute]
-        public Binary[] Attach;
-        [SerializedAttribute]
-        public Cal_Address[] Attendee;
-        [SerializedAttribute]
-        public TextCollection[] Categories;
-        [SerializedAttribute]
-        public Text Class;
-        [SerializedAttribute]
-        public Text[] Comment;
-        [SerializedAttribute]
-        public Text[] Contact;
-        [SerializedAttribute, DefaultValueType("DATE-TIME"), ForceUTC]
-        public Date_Time Created; 
-        [SerializedAttribute]
-        public Text Description;
-        [SerializedAttribute, DefaultValueType("DATE-TIME"), ForceUTC]
-        public Date_Time DTStamp;
-        [SerializedAttribute, DefaultValueType("DATE-TIME"), ForceUTC]
-        public Date_Time Last_Modified;
-        [SerializedAttribute]
-        public Cal_Address Organizer;
-        [SerializedAttribute]
-        public Integer Priority;
-        [SerializedAttribute]
-        public Text[] Related_To;
-        [SerializedAttribute]
-        public RequestStatus[] RequestStatus;
-        [SerializedAttribute]
-        public Integer Sequence;
-        [SerializedAttribute]
-        public Text Summary;
-        [SerializedAttribute]
-        public URI Url;
-
-        #endregion        
-
         #region Public Properties
 
-        [SerializedAttribute]
+        [Serialized]
+        public Binary[] Attach
+        {
+            get { return m_Attach; }
+            set { m_Attach = value; }
+        }
+
+        [Serialized]
+        public Cal_Address[] Attendee
+        {
+            get { return m_Attendee; }
+            set { m_Attendee = value; }
+        }
+
+        [Serialized]
+        public TextCollection[] Categories
+        {
+            get { return m_Categories; }
+            set { m_Categories = value; }
+        }
+
+        [Serialized]
+        public Text Class
+        {
+            get { return m_Class; }
+            set { m_Class = value; }
+        }
+
+        [Serialized]
+        public Text[] Comment
+        {
+            get { return m_Comment; }
+            set { m_Comment = value; }
+        }
+
+        [Serialized]
+        public Text[] Contact
+        {
+            get { return m_Contact; }
+            set { m_Contact = value; }
+        }
+
+        [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
+        public Date_Time Created
+        {
+            get { return m_Created; }
+            set { m_Created = value; }
+        }
+
+        [Serialized]
+        public Text Description
+        {
+            get { return m_Description; }
+            set { m_Description = value; }
+        }
+
+        [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
+        public Date_Time DTStamp
+        {
+            get { return m_DTStamp; }
+            set { m_DTStamp = value; }
+        }
+
+        [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
+        public Date_Time Last_Modified
+        {
+            get { return m_Last_Modified; }
+            set { m_Last_Modified = value; }
+        }
+
+        [Serialized]
+        public Cal_Address Organizer
+        {
+            get { return m_Organizer; }
+            set { m_Organizer = value; }
+        }
+
+        [Serialized]
+        public Integer Priority
+        {
+            get { return m_Priority; }
+            set { m_Priority = value; }
+        }
+
+        [Serialized]
+        public Text[] Related_To
+        {
+            get { return m_Related_To; }
+            set { m_Related_To = value; }
+        }
+
+        [Serialized]
+        public RequestStatus[] RequestStatus
+        {
+            get { return m_RequestStatus; }
+            set { m_RequestStatus = value; }
+        }
+
+        [Serialized]
+        public Integer Sequence
+        {
+            get { return m_Sequence; }
+            set { m_Sequence = value; }
+        }
+
+        [Serialized]
+        public Text Summary
+        {
+            get { return m_Summary; }
+            set { m_Summary = value; }
+        }
+
+        [Serialized]
         public Text UID
         {
             get
@@ -85,7 +175,7 @@ namespace DDay.iCal.Objects
             }
             set
             {
-                if ((UID == null && value != null) || 
+                if ((UID == null && value != null) ||
                     (UID != null && !UID.Equals(value)))
                 {
                     Text oldUID = m_UID;
@@ -99,6 +189,13 @@ namespace DDay.iCal.Objects
                         UIDChanged(this, oldUID, UID);
                 }
             }
+        }
+
+        [Serialized]
+        public URI Url
+        {
+            get { return m_Url; }
+            set { m_Url = value; }
         }
 
         public string Category
