@@ -1,0 +1,34 @@
+﻿body {}
+.bold { font-weight: bold; }
+
+.CalendarArea
+{
+    float:left;
+    margin:5px;
+    font-family: Lucida Sans, Trebuchet MS, Tahoma, Arial;
+    font-size: 10pt;
+    background: #dddddd;  
+    padding:1px;
+}
+
+.CalendarArea .title
+{
+    font-size: 12pt;
+    font-weight: bold;
+    margin:3px;    
+}
+
+.CalendarArea .item
+{
+    background:white;
+    margin:5px;
+    padding:2px;
+}
+
+.CalendarArea .time
+{
+    float:left;
+    margin-right:5px;
+    text-align:right;
+    width:65px;
+}
