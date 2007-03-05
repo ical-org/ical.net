@@ -22,6 +22,9 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
             // Set the Date_Time object to UTC time
             DateTime = DateTime.UTC;
 
+            // Ensure time is serialized
+            DateTime.HasTime = true;
+
             // FIXME: this is the old way we did it; remove when verified
             //DateTime.SetKind(DateTimeKind.Utc);            
         }

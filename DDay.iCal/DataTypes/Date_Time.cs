@@ -53,10 +53,16 @@ namespace DDay.iCal.DataTypes
         public DateTime UTC
         {
             get
-            {
-                if (!HasTime)
+            {                
+                // FIXME: ensure this works properly.
+                // This fixes a bug that causes all-day events to
+                // "occur" *before* events that occur late in the
+                // previous day.
+                /*if (!HasTime)
+                {
                     return DateTime.SpecifyKind(Value, DateTimeKind.Utc);
-                else if (Value.Kind == DateTimeKind.Local)
+                }
+                else */if (Value.Kind == DateTimeKind.Local)
                 {
                     DateTime value = Value;
                     if (TimeZoneInfo != null)
