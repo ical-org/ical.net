@@ -65,12 +65,7 @@ namespace DDay.iCal.DataTypes
             {
                 EndTime = end.Copy();
                 Duration = new Duration(end.Value - start.Value);
-            }
-            else
-            {
-                EndTime = StartTime;
-                Duration = new Duration(new TimeSpan(0));
-            }
+            }            
         }
         public Period(Date_Time start, TimeSpan duration)
             : this()
@@ -80,12 +75,7 @@ namespace DDay.iCal.DataTypes
             {
                 Duration = new Duration(duration);
                 EndTime = start + duration;
-            }
-            else
-            {
-                Duration = new Duration(new TimeSpan(0));
-                EndTime = StartTime;                
-            }
+            }            
         }
         public Period(string value)
             : this()
