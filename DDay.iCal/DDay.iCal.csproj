@@ -58,8 +58,10 @@
     <Compile Include="Components\Event.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Components\Timezone\TimeZoneInfo.cs" />
-    <Compile Include="DataTypes\Alarm\Trigger.cs" />
+    <Compile Include="Components\TimeZoneInfo.cs">
+        <DependentUpon>TimeZone.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataTypes\Trigger.cs" />
     <Compile Include="DataTypes\Binary.cs" />
     <Compile Include="DataTypes\AlarmAction.cs" />
     <Compile Include="DataTypes\EncodableAttribute.cs" />
@@ -73,7 +75,9 @@
     <Compile Include="DataTypes\RequestStatus.cs" />
     <Compile Include="DataTypes\Text.cs" />
     <Compile Include="DataTypes\TZID.cs" />
-    <Compile Include="DataTypes\Recur\DaySpecifier.cs" />
+    <Compile Include="DataTypes\DaySpecifier.cs">
+        <DependentUpon>Recur.cs</DependentUpon>
+    </Compile>
     <Compile Include="DataTypes\Cal_Address.cs" />
     <Compile Include="DataTypes\Geo.cs" />
     <Compile Include="DataTypes\iCalDataType.cs" />
@@ -89,21 +93,21 @@
     <Compile Include="DataTypes\Duration.cs" />
     <Compile Include="DataTypes\Date_Time.cs" />
     <Compile Include="iCalParserHelper.cs" />
-    <Compile Include="Objects\ComponentBase.cs" />
+    <Compile Include="Components\ComponentBase.cs" />
     <Compile Include="ComponentBaseTypeAttribute.cs" />
-    <Compile Include="Objects\ContentLine.cs" />
+    <Compile Include="Components\ContentLine.cs" />
     <Compile Include="Components\Alarm.cs" />
-    <Compile Include="Objects\DefaultValueAttribute.cs" />
-    <Compile Include="Objects\DefaultValueTypeAttribute.cs" />
-    <Compile Include="Objects\UniqueComponentList.cs" />
-    <Compile Include="Objects\UniqueComponent.cs" />
-    <Compile Include="Objects\RecurringComponent.cs" />
-    <Compile Include="Objects\iCalObject.cs" />
-    <Compile Include="Objects\Parameter.cs" />
+    <Compile Include="DefaultValueAttribute.cs" />
+    <Compile Include="DefaultValueTypeAttribute.cs" />
+    <Compile Include="Components\UniqueComponentList.cs" />
+    <Compile Include="Components\UniqueComponent.cs" />
+    <Compile Include="Components\RecurringComponent.cs" />
+    <Compile Include="Components\iCalObject.cs" />
+    <Compile Include="Components\Parameter.cs" />
     <Compile Include="Components\FreeBusy.cs" />
     <Compile Include="Components\Journal.cs" />
-    <Compile Include="Objects\Property.cs" />
-    <Compile Include="Components\Timezone\TimeZone.cs" />
+    <Compile Include="Components\Property.cs" />
+    <Compile Include="Components\TimeZone.cs" />
     <Compile Include="Components\Todo.cs" />
     <Compile Include="iCalendar.cs" />
     <Compile Include="iCalLexer.cs" />
@@ -115,7 +119,7 @@
     <Compile Include="Serialization\iCalendar\iCalendarSerializer.cs" />
     <Compile Include="Serialization\NonstandardAttribute.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\ArraySerializer.cs" />
-    <Compile Include="Serialization\iCalendar\DataTypes\ContentLineSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\ContentLineSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\BinarySerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\Date_TimeUTCSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\EnumSerializer.cs" />
@@ -127,12 +131,12 @@
     <Compile Include="Serialization\iCalendar\DataTypes\RecurSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\TextCollectionSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\Date_TimeSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Objects\ComponentBaseSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\ComponentBaseSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\TextSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Objects\UniqueComponentSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Objects\PropertySerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Objects\ParameterSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Objects\iCalObjectSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\UniqueComponentSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\PropertySerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\ParameterSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\iCalObjectSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\DataTypeSerializer.cs" />
     <Compile Include="Serialization\iCalendar\SerializerFactory.cs" />
     <Compile Include="Serialization\IParameterSerializable.cs" />

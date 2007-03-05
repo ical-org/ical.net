@@ -27,43 +27,6 @@ namespace DDay.iCal.Components
 
             #region Public Properties
 
-            [Serialized]
-            public UTC_Offset TZOffsetFrom
-            {
-                get { return m_TZOffsetFrom; }
-                set { m_TZOffsetFrom = value; }
-            }
-
-            [Serialized]
-            public UTC_Offset TZOffsetTo
-            {
-                get { return m_TZOffsetTo; }
-                set { m_TZOffsetTo = value; }
-            }
-
-            [Serialized]
-            public Text[] TZName
-            {
-                get { return m_TZName; }
-                set { m_TZName = value; }
-            }
-
-            #endregion
-
-            #region Constructors
-
-            public TimeZoneInfo() : base() { }
-            public TimeZoneInfo(iCalObject parent) : base(parent) { }
-            public TimeZoneInfo(string name, iCalObject parent)
-                : base(parent)
-            {
-                this.Name = name;
-            }
-
-            #endregion
-
-            #region Overrides
-
             /// <summary>
             /// Returns the name of the current Time Zone.
             /// <example>
@@ -93,6 +56,29 @@ namespace DDay.iCal.Components
                 }
             }
 
+            [Serialized]
+            public UTC_Offset TZOffsetFrom
+            {
+                get { return m_TZOffsetFrom; }
+                set { m_TZOffsetFrom = value; }
+            }
+
+            [Serialized]
+            public UTC_Offset TZOffsetTo
+            {
+                get { return m_TZOffsetTo; }
+                set { m_TZOffsetTo = value; }
+            }
+
+            [Serialized]
+            public Text[] TZName
+            {
+                get { return m_TZName; }
+                set { m_TZName = value; }
+            }
+
+            #region Overrides
+
             /// <summary>
             /// Force the DTSTART into a local date-time value.
             /// 
@@ -120,6 +106,32 @@ namespace DDay.iCal.Components
                     base.DTStart = value;
                 }
             }
+
+            #endregion
+
+            #endregion
+
+            #region Constructors
+
+            public TimeZoneInfo() : base() { }
+            public TimeZoneInfo(iCalObject parent) : base(parent) { }
+            public TimeZoneInfo(string name, iCalObject parent)
+                : base(parent)
+            {
+                this.Name = name;
+            }
+
+            #endregion
+
+            #region Overrides
+
+            public override List<Period> Evaluate(Date_Time FromDate, Date_Time ToDate)
+            {
+                List<Period> periods = base.Evaluate(FromDate, ToDate);
+                // Add the initial specified date/time for the time zone entry
+                periods.Insert(0, new Period(Start, null));
+                return periods;
+            }            
 
             /// <summary>
             /// Returns a typed copy of the TimeZoneInfo object.

@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
+using DDay.iCal.Serialization.iCalendar.Components;
 
 namespace DDay.iCal.Serialization.iCalendar.DataTypes
 {
