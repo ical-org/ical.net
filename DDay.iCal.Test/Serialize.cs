@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using NUnit.Framework;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
-using DDay.iCal.Objects;
+using DDay.iCal.Components;
 using DDay.iCal.Serialization;
 
 namespace DDay.iCal.Test
