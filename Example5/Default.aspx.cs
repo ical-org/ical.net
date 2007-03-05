@@ -31,7 +31,8 @@ public partial class _Default : System.Web.UI.Page
 
         public int Compare(Event x, Event y)
         {
-            return x.Start.CompareTo(y.Start);
+            int i = x.Start.CompareTo(y.Start);
+            return i;
         }
 
         #endregion
@@ -78,19 +79,31 @@ public partial class _Default : System.Web.UI.Page
 
     #region Protected Methods
 
+    /// <summary>
+    /// Gets a list of iCalendars that are in the "Calendars" directory.
+    /// </summary>
+    /// <returns>
+    /// A list of filenames, without extensions, of the iCalendars 
+    /// in the "Calendars" directory
+    /// </returns>
     protected IEnumerable<string> LoadCalendarList()
-    {        
+    {
         foreach (string file in Directory.GetFiles(_CalendarAbsPath, "*.ics"))
             yield return Path.GetFileNameWithoutExtension(file);
     }
 
+    /// <summary>
+    /// Loads and parses the selected calendars.
+    /// </summary>
     protected void LoadSelectedCalendars()
     {
         _Calendars = new List<iCalendar>();
         foreach (ListItem li in CalendarList.Items)
         {
+            // Make sure the item is selected
             if (li.Selected)
             {
+                // Load the calendar from the file system
                 iCalendar iCal = iCalendar.LoadFromFile(Path.Combine(_CalendarAbsPath, li.Text + @".ics"));
                 if (iCal != null)
                     _Calendars.Add(iCal);
@@ -98,23 +111,28 @@ public partial class _Default : System.Web.UI.Page
         }
     }
 
+    /// <summary>
+    /// Gets a list of events that occur today.
+    /// </summary>
+    /// <returns>A list of events that occur today</returns>
     protected IEnumerable<Event> GetTodaysEvents()
     {
         // Load selected calendars, if we haven't already
         if (_Calendars == null)
             LoadSelectedCalendars();
-
-        // Evaluate today's date to see if any events occur on it
+                
+        // Iterate through each loaded calendar
         foreach (iCalendar iCal in _Calendars)
         {
+            // Evaluate today's date to see if any events occur on it
             iCal.Evaluate(DateTime.Today, DateTime.Today.AddDays(1));
 
             // Iterate through each event in the calendar
             foreach(Event evt in iCal.Events)
             {
-                // Check to see if the event occurs today
-                if (evt.OccursOn(DateTime.Today))
-                    yield return evt;
+                // Get all event recurrences for today
+                foreach(Event e in evt.FlattenRecurrencesOn(DateTime.Today))                
+                    yield return e;
             }
         }
     }
@@ -125,27 +143,42 @@ public partial class _Default : System.Web.UI.Page
         if (_Calendars == null)
             LoadSelectedCalendars();
 
-        // Evaluate events within the next week to see if any events occur
+        // Determine the range of events we're interested in (1 week)
+        DateTime startDate = DateTime.Today.AddDays(1);
+        DateTime endDate = startDate.AddDays(7);
+        
+        // Iterate through each loaded calendar
         foreach (iCalendar iCal in _Calendars)
         {
-            iCal.Evaluate(DateTime.Today.AddDays(1), DateTime.Today.AddDays(8));
+            // Evaluate events within our selected period to see if any events occur
+            iCal.Evaluate(startDate, endDate);
 
-            for (DateTime dt = DateTime.Today.AddDays(1); dt < DateTime.Today.AddDays(8); dt = dt.AddDays(1))
+            foreach (Event evt in iCal.Events)
             {
-                // Iterate through each event in the calendar
-                foreach (Event evt in iCal.Events)
+                // Return flattened occurences of the event,
+                // so the start time is equal to the time it
+                // recurred (not the original start time of the event)
+                foreach (Event e in evt.FlattenRecurrences())
                 {
-                    // Check to see if the event occurs on the day we're testing
-                    if (evt.OccursOn(dt))
-                    {
-                        // Return a flattened occurence of the event,
-                        // so the start time is equal to the time it
-                        // recurred                        
-                        yield return evt.FlattenRecurrenceOn(dt);
-                    }
+                    // Make sure the flattened events occur within our designated period
+                    if (e.Start.Date >= startDate &&
+                        e.Start.Date <= endDate)
+                        yield return e;
                 }
-            }
+            }                    
         }
+    }
+
+    protected string GetTimeDisplay(object obj)
+    {
+        if (obj is Event)
+        {
+            Event evt = (Event)obj;
+            if (evt.IsAllDay)
+                return "All Day";
+            else return evt.Start.Local.ToString("h:mm tt");
+        }
+        return string.Empty;
     }
 
     #endregion

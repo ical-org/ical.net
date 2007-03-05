@@ -9,36 +9,36 @@
             A class that represents an RFC 2445 VALARM component.
             </summary>
         </member>
-        <member name="T:DDay.iCal.Objects.ComponentBase">
+        <member name="T:DDay.iCal.Components.ComponentBase">
             <summary>
             This class is used by the parsing framework as a factory class
             for <see cref="T:DDay.iCal.iCalendar"/> components.  Generally, you should
             not need to use this class directly.
             </summary>
         </member>
-        <member name="T:DDay.iCal.Objects.iCalObject">
+        <member name="T:DDay.iCal.Components.iCalObject">
             <summary>
             The base class for all iCalendar objects, components, and data types.
             </summary>
         </member>
-        <member name="M:DDay.iCal.Objects.iCalObject.AddChild(DDay.iCal.Objects.iCalObject)">
+        <member name="M:DDay.iCal.Components.iCalObject.AddChild(DDay.iCal.Components.iCalObject)">
             <summary>
-            Adds an <see cref="T:DDay.iCal.Objects.iCalObject"/>-based object as a child
+            Adds an <see cref="T:DDay.iCal.Components.iCalObject"/>-based object as a child
             of the current object.
             </summary>
-            <param name="child">The <see cref="T:DDay.iCal.Objects.iCalObject"/>-based object to add.</param>
+            <param name="child">The <see cref="T:DDay.iCal.Components.iCalObject"/>-based object to add.</param>
         </member>
-        <member name="M:DDay.iCal.Objects.iCalObject.RemoveChild(DDay.iCal.Objects.iCalObject)">
+        <member name="M:DDay.iCal.Components.iCalObject.RemoveChild(DDay.iCal.Components.iCalObject)">
             <summary>
-            Removed an <see cref="T:DDay.iCal.Objects.iCalObject"/>-based object from the <see cref="P:DDay.iCal.Objects.iCalObject.Children"/>
+            Removed an <see cref="T:DDay.iCal.Components.iCalObject"/>-based object from the <see cref="P:DDay.iCal.Components.iCalObject.Children"/>
             collection.
             </summary>
             <param name="child"></param>
         </member>
-        <member name="M:DDay.iCal.Objects.iCalObject.SetContentLineValue(DDay.iCal.Objects.ContentLine)">
+        <member name="M:DDay.iCal.Components.iCalObject.SetContentLineValue(DDay.iCal.Components.ContentLine)">
             <summary>
             For iCalendar components, automatically finds and retrieves fields that
-            match the field specified in the <see cref="T:DDay.iCal.Objects.ContentLine"/>, and sets
+            match the field specified in the <see cref="T:DDay.iCal.Components.ContentLine"/>, and sets
             their value.
             <example>
             For example, if a public DTStart field exists in the specified component,
@@ -52,40 +52,45 @@
                 is handled automatically during the iCalendar parsing.
             </note>
             </summary>
-            <param name="cl">The <see cref="T:DDay.iCal.Objects.ContentLine"/> to process.</param>
+            <param name="cl">The <see cref="T:DDay.iCal.Components.ContentLine"/> to process.</param>
         </member>
-        <member name="M:DDay.iCal.Objects.iCalObject.OnLoad(System.EventArgs)">
+        <member name="M:DDay.iCal.Components.iCalObject.OnLoad(System.EventArgs)">
             <summary>
-            Invokes the <see cref="E:DDay.iCal.Objects.iCalObject.Load"/> event handler when the object has been fully loaded.
+            Invokes the <see cref="E:DDay.iCal.Components.iCalObject.Load"/> event handler when the object has been fully loaded.
             This is automatically called when processing objects that inherit from 
-            <see cref="T:DDay.iCal.Objects.ComponentBase"/> (i.e. all iCalendar components).
+            <see cref="T:DDay.iCal.Components.ComponentBase"/> (i.e. all iCalendar components).
             </summary>
         </member>
-        <member name="M:DDay.iCal.Objects.iCalObject.Copy">
+        <member name="M:DDay.iCal.Components.iCalObject.Copy">
             <summary>
-            Creates a copy of the <see cref="T:DDay.iCal.Objects.iCalObject"/>.
+            Creates a copy of the <see cref="T:DDay.iCal.Components.iCalObject"/>.
             </summary>
-            <returns>The copy of the <see cref="T:DDay.iCal.Objects.iCalObject"/>.</returns>
+            <returns>The copy of the <see cref="T:DDay.iCal.Components.iCalObject"/>.</returns>
         </member>
-        <member name="P:DDay.iCal.Objects.iCalObject.Properties">
+        <member name="P:DDay.iCal.Components.iCalObject.Parent">
+            <summary>
+            Returns the parent <see cref="T:DDay.iCal.Components.iCalObject"/> that owns this one.
+            </summary>
+        </member>
+        <member name="P:DDay.iCal.Components.iCalObject.Properties">
             <summary>
             Returns a list of properties that are associated with the iCalendar object.
             </summary>
         </member>
-        <member name="P:DDay.iCal.Objects.iCalObject.Parameters">
+        <member name="P:DDay.iCal.Components.iCalObject.Parameters">
             <summary>
             Returns a list of parameters that are associated with the iCalendar object.
             </summary>
         </member>
-        <member name="P:DDay.iCal.Objects.iCalObject.Children">
+        <member name="P:DDay.iCal.Components.iCalObject.Children">
             <summary>
-            A collection of <see cref="T:DDay.iCal.Objects.iCalObject"/>s that are children 
+            A collection of <see cref="T:DDay.iCal.Components.iCalObject"/>s that are children 
             of the current object.
             </summary>
         </member>
-        <member name="P:DDay.iCal.Objects.iCalObject.Name">
+        <member name="P:DDay.iCal.Components.iCalObject.Name">
             <summary>
-            Gets or sets the name of the <see cref="T:DDay.iCal.Objects.iCalObject"/>.  For iCalendar components,
+            Gets or sets the name of the <see cref="T:DDay.iCal.Components.iCalObject"/>.  For iCalendar components,
             this is the RFC 2445 name of the component.
             <example>
                 <list type="bullet">
@@ -97,16 +102,16 @@
             </example>
             </summary>        
         </member>
-        <member name="P:DDay.iCal.Objects.iCalObject.iCalendar">
+        <member name="P:DDay.iCal.Components.iCalObject.iCalendar">
             <summary>
-            Returns the <see cref="T:DDay.iCal.iCalendar"/> that this <see cref="T:DDay.iCal.Objects.iCalObject"/>
+            Returns the <see cref="T:DDay.iCal.iCalendar"/> that this <see cref="T:DDay.iCal.Components.iCalObject"/>
             belongs to.
             </summary>
         </member>
-        <member name="M:DDay.iCal.Components.Alarm.Evaluate(DDay.iCal.Objects.RecurringComponent)">
+        <member name="M:DDay.iCal.Components.Alarm.Evaluate(DDay.iCal.Components.RecurringComponent)">
             <summary>
             Evaluates <see cref="T:DDay.iCal.Components.Alarm"/>s for the given recurring component, <paramref name="rc"/>.
-            This evaluation is based on the evaluation period for the <see cref="T:DDay.iCal.Objects.RecurringComponent"/>.        
+            This evaluation is based on the evaluation period for the <see cref="T:DDay.iCal.Components.RecurringComponent"/>.        
             </summary>
             <param name="rc">The </param>
             <returns></returns>
@@ -135,25 +140,12 @@
         </member>
         <member name="T:DDay.iCal.Components.Alarm.AlarmOccurrence">
             <summary>
-            A class that represents a specific occurrence of an <see cref="F:DDay.iCal.Components.Alarm.AlarmOccurrence.Alarm"/>.        
+            A class that represents a specific occurrence of an <see cref="P:DDay.iCal.Components.Alarm.AlarmOccurrence.Alarm"/>.        
             </summary>
             <remarks>
             The <see cref="T:DDay.iCal.Components.Alarm.AlarmOccurrence"/> contains the <see cref="T:DDay.iCal.DataTypes.Date_Time"/> when
-            the alarm occurs, the <see cref="F:DDay.iCal.Components.Alarm.AlarmOccurrence.Alarm"/> that fired, and the 
+            the alarm occurs, the <see cref="P:DDay.iCal.Components.Alarm.AlarmOccurrence.Alarm"/> that fired, and the 
             component on which the alarm fired.
-            </remarks>
-        </member>
-        <member name="T:DDay.iCal.Objects.ContentLine">
-            <summary>
-            This class represents a single line of text in an <see cref="T:DDay.iCal.iCalendar"/>
-            (.ics) file.
-            </summary>
-            <remarks>
-            In the RFC 2445 specification, content lines are wrapped
-            with a newline, followed by a whitespace character, after they surpass
-            75 characters in length.  Therefore, a <see cref="T:DDay.iCal.Objects.ContentLine"/> represents
-            this entire line, after "unwrapping" the newline + whitespace character
-            sequence.
             </remarks>
         </member>
         <member name="T:DDay.iCal.DataTypes.URI">
@@ -210,32 +202,24 @@
             </note>
             </summary>
         </member>
-        <member name="T:DDay.iCal.Objects.Property">
+        <member name="T:DDay.iCal.DataTypes.Trigger">
             <summary>
-            A class that represents a property of the <see cref="T:DDay.iCal.iCalendar"/>
-            itself, or a non-standard (X-) property of an iCalendar component,
-            as seen with many applications, such as with Apple's iCal.
-            X-WR-CALNAME:US Holidays
+            A class that is used to specify exactly when an <see cref="T:DDay.iCal.Components.Alarm"/> component will trigger.
+            Usually this date/time is relative to the component to which the Alarm is associated.
+            </summary>    
+        </member>
+        <member name="T:DDay.iCal.Components.UniqueComponent">
+            <summary>
+            Represents a unique component, a component with a unique UID,
+            which can be used to uniquely identify the component.
             </summary>
-            <remarks>
-            Currently, the "known" properties for an iCalendar are as
-            follows:
-            <list type="bullet">
-                <item>ProdID</item>
-                <item>Version</item>
-                <item>CalScale</item>
-                <item>Method</item>
-            </list>
-            There may be other, custom X-properties applied to the calendar,
-            and X-properties may be applied to calendar components.
-            </remarks>
         </member>
         <member name="T:DDay.iCal.Components.Journal">
             <summary>
             A class that represents an RFC 2445 VJOURNAL component.
             </summary>
         </member>
-        <member name="T:DDay.iCal.Objects.RecurringComponent">
+        <member name="T:DDay.iCal.Components.RecurringComponent">
             <summary>
             An iCalendar component that recurs.
             </summary>
@@ -246,25 +230,32 @@
             for the recurring item (all recurring items must have a DTSTART).
             </remarks>
         </member>
-        <member name="T:DDay.iCal.Objects.UniqueComponent">
-            <summary>
-            Represents a unique component, a component with a unique UID,
-            which can be used to uniquely identify the component.
-            </summary>
-        </member>
-        <member name="M:DDay.iCal.Objects.RecurringComponent.AddRecurrence(DDay.iCal.DataTypes.Recur)">
+        <member name="M:DDay.iCal.Components.RecurringComponent.AddRecurrence(DDay.iCal.DataTypes.Recur)">
             <summary>
             Adds a recurrence rule to the recurring component
             </summary>
             <param name="recur">The recurrence rule to add</param>
         </member>
-        <member name="M:DDay.iCal.Objects.RecurringComponent.AddException(DDay.iCal.DataTypes.Recur)">
+        <member name="M:DDay.iCal.Components.RecurringComponent.AddException(DDay.iCal.DataTypes.Recur)">
             <summary>
             Adds an exception recurrence rule to the recurring component
             </summary>
             <param name="recur">The recurrence rule to add</param>
         </member>
-        <member name="M:DDay.iCal.Objects.RecurringComponent.Evaluate(DDay.iCal.DataTypes.Date_Time,DDay.iCal.DataTypes.Date_Time)">
+        <member name="M:DDay.iCal.Components.RecurringComponent.FlattenRecurrences">
+            <summary>
+            "Flattens" component recurrences into a series of equivalent objects.
+            </summary>        
+            <returns>A list of <see cref="T:DDay.iCal.Components.Event"/>s if they could be flattened, null otherwise.</returns>
+        </member>
+        <member name="M:DDay.iCal.Components.RecurringComponent.FlattenRecurrencesOn(DDay.iCal.DataTypes.Date_Time)">
+            <summary>
+            "Flattens" component recurrences that occur in the given date into a series of equivalent objects.
+            </summary>
+            <param name="dt">The date on which the event recurs</param>
+            <returns>A list of <see cref="T:DDay.iCal.Components.Event"/>s if they could be flattened, null otherwise.</returns>
+        </member>
+        <member name="M:DDay.iCal.Components.RecurringComponent.Evaluate(DDay.iCal.DataTypes.Date_Time,DDay.iCal.DataTypes.Date_Time)">
             <summary>
             Evaluates this item to determine the dates and times for which it occurs/recurs.
             This method only evaluates items which occur/recur between <paramref name="FromDate"/>
@@ -284,63 +275,63 @@
                 each date/time this item occurs/recurs.
             </returns>
         </member>
-        <member name="M:DDay.iCal.Objects.RecurringComponent.ClearEvaluation">
+        <member name="M:DDay.iCal.Components.RecurringComponent.ClearEvaluation">
             <summary>
             Clears a previous evaluation, usually because one of the 
             key elements used for evaluation has changed 
             (Start, End, Duration, recurrence rules, exceptions, etc.).
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:DDay.iCal.Objects.RecurringComponent.PollAlarms(DDay.iCal.DataTypes.Date_Time)" -->
-        <member name="M:DDay.iCal.Objects.RecurringComponent.EvaluateRRule(DDay.iCal.DataTypes.Date_Time,DDay.iCal.DataTypes.Date_Time)">
+        <!-- Badly formed XML comment ignored for member "M:DDay.iCal.Components.RecurringComponent.PollAlarms(DDay.iCal.DataTypes.Date_Time)" -->
+        <member name="M:DDay.iCal.Components.RecurringComponent.EvaluateRRule(DDay.iCal.DataTypes.Date_Time,DDay.iCal.DataTypes.Date_Time)">
             <summary>
             Evaulates the RRule component, and adds each specified Period
-            to the <see cref="P:DDay.iCal.Objects.RecurringComponent.Periods"/> collection.
+            to the <see cref="P:DDay.iCal.Components.RecurringComponent.Periods"/> collection.
             </summary>
             <param name="FromDate">The beginning date of the range to evaluate.</param>
             <param name="ToDate">The end date of the range to evaluate.</param>
         </member>
-        <member name="M:DDay.iCal.Objects.RecurringComponent.EvaluateRDate(DDay.iCal.DataTypes.Date_Time,DDay.iCal.DataTypes.Date_Time)">
+        <member name="M:DDay.iCal.Components.RecurringComponent.EvaluateRDate(DDay.iCal.DataTypes.Date_Time,DDay.iCal.DataTypes.Date_Time)">
             <summary>
             Evalates the RDate component, and adds each specified DateTime or
-            Period to the <see cref="P:DDay.iCal.Objects.RecurringComponent.Periods"/> collection.
+            Period to the <see cref="P:DDay.iCal.Components.RecurringComponent.Periods"/> collection.
             </summary>
             <param name="FromDate">The beginning date of the range to evaluate.</param>
             <param name="ToDate">The end date of the range to evaluate.</param>
         </member>
-        <member name="M:DDay.iCal.Objects.RecurringComponent.EvaluateExRule(DDay.iCal.DataTypes.Date_Time,DDay.iCal.DataTypes.Date_Time)">
+        <member name="M:DDay.iCal.Components.RecurringComponent.EvaluateExRule(DDay.iCal.DataTypes.Date_Time,DDay.iCal.DataTypes.Date_Time)">
             <summary>
             Evaulates the ExRule component, and excludes each specified DateTime
-            from the <see cref="P:DDay.iCal.Objects.RecurringComponent.Periods"/> collection.
+            from the <see cref="P:DDay.iCal.Components.RecurringComponent.Periods"/> collection.
             </summary>
             <param name="FromDate">The beginning date of the range to evaluate.</param>
             <param name="ToDate">The end date of the range to evaluate.</param>
         </member>
-        <member name="M:DDay.iCal.Objects.RecurringComponent.EvaluateExDate(DDay.iCal.DataTypes.Date_Time,DDay.iCal.DataTypes.Date_Time)">
+        <member name="M:DDay.iCal.Components.RecurringComponent.EvaluateExDate(DDay.iCal.DataTypes.Date_Time,DDay.iCal.DataTypes.Date_Time)">
             <summary>
             Evalates the ExDate component, and excludes each specified DateTime or
-            Period from the <see cref="P:DDay.iCal.Objects.RecurringComponent.Periods"/> collection.
+            Period from the <see cref="P:DDay.iCal.Components.RecurringComponent.Periods"/> collection.
             </summary>
             <param name="FromDate">The beginning date of the range to evaluate.</param>
             <param name="ToDate">The end date of the range to evaluate.</param>
         </member>
-        <member name="P:DDay.iCal.Objects.RecurringComponent.DTStart">
+        <member name="P:DDay.iCal.Components.RecurringComponent.DTStart">
             <summary>
             The start date/time of the component.
             </summary>
         </member>
-        <member name="P:DDay.iCal.Objects.RecurringComponent.Periods">
+        <member name="P:DDay.iCal.Components.RecurringComponent.Periods">
             <summary>
             A collection of <see cref="T:DDay.iCal.DataTypes.Period"/> objects that contain the dates and times
             when each item occurs/recurs.
             </summary>
         </member>
-        <member name="P:DDay.iCal.Objects.RecurringComponent.Start">
+        <member name="P:DDay.iCal.Components.RecurringComponent.Start">
             <summary>
             An alias to the DTStart field (i.e. start date/time).
             </summary>
         </member>
-        <member name="P:DDay.iCal.Objects.RecurringComponent.Alarms">
+        <member name="P:DDay.iCal.Components.RecurringComponent.Alarms">
             <summary>
             A list of <see cref="T:DDay.iCal.Components.Alarm"/>s for this recurring component.
             </summary>
@@ -357,79 +348,32 @@
             as "busy"-time, or "free"-time.
             </summary>
         </member>
-        <member name="T:DDay.iCal.DataTypes.Trigger">
+        <member name="T:DDay.iCal.Components.UniqueComponentList`1">
             <summary>
-            A class that is used to specify exactly when an <see cref="!:Alarm"/> component will trigger.
-            Usually this date/time is relative to the component to which the Alarm is associated.
-            </summary>    
-        </member>
-        <member name="T:DDay.iCal.Components.TimeZone">
-            <summary>
-            A class that represents an RFC 2445 VTIMEZONE component.
+            A collection of iCalendar components.  This class is used by the 
+            <see cref="T:DDay.iCal.iCalendar"/> class to maintain a collection of events,
+            to-do items, journal entries, and free/busy times.
             </summary>
         </member>
-        <member name="M:DDay.iCal.Components.TimeZone.Copy">
+        <member name="M:DDay.iCal.Components.UniqueComponentList`1.ResolveUIDs">
             <summary>
-            Returns a typed copy of the TimeZone object.
-            </summary>
-            <returns>A typed copy of the TimeZone object</returns>
+            Re-links the UID dictionary to the actual components in our list.
+            Also, if any items do not have a UID assigned to them, they will
+            automatically have a UID assigned.
+            </summary> 
         </member>
-        <member name="M:DDay.iCal.Components.TimeZone.GetTimeZoneInfo(DDay.iCal.DataTypes.Date_Time)">
+        <member name="T:DDay.iCal.Components.ContentLine">
             <summary>
-            Retrieves the TimeZoneInfo object that contains information
-            about the TimeZone, with the name of the current timezone,
-            offset from UTC, etc.
+            This class represents a single line of text in an <see cref="T:DDay.iCal.iCalendar"/>
+            (.ics) file.
             </summary>
-            <param name="dt">The Date_Time object for which to retrieve the TimeZoneInfo</param>
-            <returns>A TimeZoneInfo object for the specified Date_Time</returns>
-        </member>
-        <member name="T:DDay.iCal.Components.TimeZone.TimeZoneInfo">
-            <summary>
-            A class that contains time zone information, and is usually accessed
-            from an iCalendar object using the <see cref="M:DDay.iCal.iCalendar.GetTimeZone(DDay.iCal.DataTypes.TZID)"/> method.        
-            </summary>
-        </member>
-        <member name="M:DDay.iCal.Components.TimeZone.TimeZoneInfo.Copy">
-            <summary>
-            Returns a typed copy of the TimeZoneInfo object.
-            </summary>
-            <returns>A typed copy of the TimeZoneInfo object.</returns>
-        </member>
-        <member name="M:DDay.iCal.Components.TimeZone.TimeZoneInfo.Copy(DDay.iCal.Objects.iCalObject)">
-            <summary>
-            Creates a copy of the <see cref="T:DDay.iCal.Components.TimeZone.TimeZoneInfo"/> object.
-            </summary>
-        </member>
-        <member name="P:DDay.iCal.Components.TimeZone.TimeZoneInfo.TimeZoneName">
-            <summary>
-            Returns the name of the current Time Zone.
-            <example>
-                The following are examples:
-                <list type="bullet">
-                    <item>EST</item>
-                    <item>EDT</item>
-                    <item>MST</item>
-                    <item>MDT</item>
-                </list>
-            </example>
-            </summary>
-        </member>
-        <member name="P:DDay.iCal.Components.TimeZone.TimeZoneInfo.DTStart">
-            <summary>
-            Force the DTSTART into a local date-time value.
-            
-            From RFC 2445:
-            The mandatory "DTSTART" property gives the effective onset date and 
-            local time for the time zone sub-component definition. "DTSTART" in
-            this usage MUST be specified as a local DATE-TIME value.
-            
-            Also from RFC 2445:
-            The date with local time form is simply a date-time value that does
-            not contain the UTC designator nor does it reference a time zone. For
-            example, the following represents Janurary 18, 1998, at 11 PM:
-            
-            DTSTART:19980118T230000
-            </summary>
+            <remarks>
+            In the RFC 2445 specification, content lines are wrapped
+            with a newline, followed by a whitespace character, after they surpass
+            75 characters in length.  Therefore, a <see cref="T:DDay.iCal.Components.ContentLine"/> represents
+            this entire line, after "unwrapping" the newline + whitespace character
+            sequence.
+            </remarks>
         </member>
         <member name="T:DDay.iCal.DataTypes.Cal_Address">
             <summary>
@@ -444,36 +388,30 @@
             Status codes available to an <see cref="!:Event"/> item
             </summary>
         </member>
-        <member name="T:DDay.iCal.DataTypes.Recur">
-            <summary>
-            Represents an RFC 2445 "BYDAY" value.
-            </summary>
-            <summary>
-            An iCalendar representation of the <c>RRULE</c> property.
-            </summary>
-        </member>
-        <member name="M:DDay.iCal.DataTypes.Recur.Copy">
-            <summary>
-            Returns a typed copy of the object.
-            </summary>
-            <returns>A typed copy of the object.</returns>
-        </member>
-        <member name="M:DDay.iCal.DataTypes.Recur.FillYearDays(DDay.iCal.DataTypes.Recur.TimeCalculation)">
-            <summary>
-            NOTE: fixes RRULE25
-            </summary>
-            <param name="TC"></param>
-        </member>
-        <member name="M:DDay.iCal.DataTypes.Recur.FillByDay(DDay.iCal.DataTypes.Recur.TimeCalculation)">
-            <summary>
-            NOTE: fixes RRULE26
-            </summary>
-            <param name="TC"></param>
-        </member>
         <member name="T:DDay.iCal.DataTypes.RequestStatus">
             <summary>
             A class that represents the return status of an iCalendar request.
             </summary>
+        </member>
+        <member name="T:DDay.iCal.Components.Property">
+            <summary>
+            A class that represents a property of the <see cref="T:DDay.iCal.iCalendar"/>
+            itself, or a non-standard (X-) property of an iCalendar component,
+            as seen with many applications, such as with Apple's iCal.
+            X-WR-CALNAME:US Holidays
+            </summary>
+            <remarks>
+            Currently, the "known" properties for an iCalendar are as
+            follows:
+            <list type="bullet">
+                <item>ProdID</item>
+                <item>Version</item>
+                <item>CalScale</item>
+                <item>Method</item>
+            </list>
+            There may be other, custom X-properties applied to the calendar,
+            and X-properties may be applied to calendar components.
+            </remarks>
         </member>
         <member name="T:DDay.iCal.Components.FreeBusy">
             <summary>
@@ -638,9 +576,9 @@
             </example>
             </summary>
         </member>
-        <member name="M:DDay.iCal.iCalendar.AddChild(DDay.iCal.Objects.iCalObject)">
+        <member name="M:DDay.iCal.iCalendar.AddChild(DDay.iCal.Components.iCalObject)">
             <summary>
-            Adds an <see cref="T:DDay.iCal.Objects.iCalObject"/>-based component to the
+            Adds an <see cref="T:DDay.iCal.Components.iCalObject"/>-based component to the
             appropriate collection.  Currently, the iCalendar component
             supports the following components:
                 <list type="bullet">        
@@ -653,9 +591,9 @@
             </summary>
             <param name="child"></param>
         </member>
-        <member name="M:DDay.iCal.iCalendar.RemoveChild(DDay.iCal.Objects.iCalObject)">
+        <member name="M:DDay.iCal.iCalendar.RemoveChild(DDay.iCal.Components.iCalObject)">
             <summary>
-            Removes an <see cref="T:DDay.iCal.Objects.iCalObject"/>-based component from all
+            Removes an <see cref="T:DDay.iCal.Components.iCalObject"/>-based component from all
             of the collections that this object may be contained in within
             the iCalendar.
             </summary>
@@ -725,6 +663,11 @@
             <param name="FromDate">The beginning date/time of the range to test.</param>
             <param name="ToDate">The end date/time of the range to test.</param>                
         </member>
+        <member name="M:DDay.iCal.iCalendar.ClearEvaluation">
+            <summary>
+            Clears recurrence evaluations for recurring components.        
+            </summary>        
+        </member>
         <member name="M:DDay.iCal.iCalendar.MergeWith(DDay.iCal.iCalendar)">
             <summary>
             Merges the current <see cref="T:DDay.iCal.iCalendar"/> with another iCalendar.
@@ -736,7 +679,7 @@
             </summary>
             <param name="iCal">The iCalendar to merge with the current <see cref="T:DDay.iCal.iCalendar"/></param>
         </member>
-        <member name="M:DDay.iCal.iCalendar.Create(DDay.iCal.Objects.iCalObject,System.String)">
+        <member name="M:DDay.iCal.iCalendar.Create(DDay.iCal.Components.iCalObject,System.String)">
             <summary>
             Invokes the object creation of the selected ComponentBase class.  By default,
             this is the ComponentBase class itself; however, this can be changed to allow
@@ -791,6 +734,74 @@
             <summary>
             Status codes available to a <see cref="!:Journal"/> entry.
             </summary>    
+        </member>
+        <member name="T:DDay.iCal.Components.TimeZone">
+            <summary>
+            A class that represents an RFC 2445 VTIMEZONE component.
+            </summary>
+        </member>
+        <member name="M:DDay.iCal.Components.TimeZone.Copy">
+            <summary>
+            Returns a typed copy of the TimeZone object.
+            </summary>
+            <returns>A typed copy of the TimeZone object</returns>
+        </member>
+        <member name="M:DDay.iCal.Components.TimeZone.GetTimeZoneInfo(DDay.iCal.DataTypes.Date_Time)">
+            <summary>
+            Retrieves the TimeZoneInfo object that contains information
+            about the TimeZone, with the name of the current timezone,
+            offset from UTC, etc.
+            </summary>
+            <param name="dt">The Date_Time object for which to retrieve the TimeZoneInfo</param>
+            <returns>A TimeZoneInfo object for the specified Date_Time</returns>
+        </member>
+        <member name="T:DDay.iCal.Components.TimeZone.TimeZoneInfo">
+            <summary>
+            A class that contains time zone information, and is usually accessed
+            from an iCalendar object using the <see cref="M:DDay.iCal.iCalendar.GetTimeZone(DDay.iCal.DataTypes.TZID)"/> method.        
+            </summary>
+        </member>
+        <member name="M:DDay.iCal.Components.TimeZone.TimeZoneInfo.Copy">
+            <summary>
+            Returns a typed copy of the TimeZoneInfo object.
+            </summary>
+            <returns>A typed copy of the TimeZoneInfo object.</returns>
+        </member>
+        <member name="M:DDay.iCal.Components.TimeZone.TimeZoneInfo.Copy(DDay.iCal.Components.iCalObject)">
+            <summary>
+            Creates a copy of the <see cref="T:DDay.iCal.Components.TimeZone.TimeZoneInfo"/> object.
+            </summary>
+        </member>
+        <member name="P:DDay.iCal.Components.TimeZone.TimeZoneInfo.TimeZoneName">
+            <summary>
+            Returns the name of the current Time Zone.
+            <example>
+                The following are examples:
+                <list type="bullet">
+                    <item>EST</item>
+                    <item>EDT</item>
+                    <item>MST</item>
+                    <item>MDT</item>
+                </list>
+            </example>
+            </summary>
+        </member>
+        <member name="P:DDay.iCal.Components.TimeZone.TimeZoneInfo.DTStart">
+            <summary>
+            Force the DTSTART into a local date-time value.
+            
+            From RFC 2445:
+            The mandatory "DTSTART" property gives the effective onset date and 
+            local time for the time zone sub-component definition. "DTSTART" in
+            this usage MUST be specified as a local DATE-TIME value.
+            
+            Also from RFC 2445:
+            The date with local time form is simply a date-time value that does
+            not contain the UTC designator nor does it reference a time zone. For
+            example, the following represents Janurary 18, 1998, at 11 PM:
+            
+            DTSTART:19980118T230000
+            </summary>
         </member>
         <member name="T:DDay.iCal.Components.Todo">
             <summary>
@@ -853,19 +864,16 @@
             The status of the todo item.
             </summary>
         </member>
-        <member name="T:DDay.iCal.Objects.UniqueComponentList`1">
+        <member name="T:DDay.iCal.Components.Parameter">
             <summary>
-            A collection of iCalendar components.  This class is used by the 
-            <see cref="T:DDay.iCal.iCalendar"/> class to maintain a collection of events,
-            to-do items, journal entries, and free/busy times.
+            A class that provides additional information about a <see cref="T:DDay.iCal.Components.ContentLine"/>.
             </summary>
-        </member>
-        <member name="M:DDay.iCal.Objects.UniqueComponentList`1.ResolveUIDs">
-            <summary>
-            Re-links the UID dictionary to the actual components in our list.
-            Also, if any items do not have a UID assigned to them, they will
-            automatically have a UID assigned.
-            </summary> 
+            <remarks>
+            <example>
+            For example, a DTSTART line may look like this: <c>DTSTART;VALUE=DATE:20060116</c>.  
+            The <c>VALUE=DATE</c> portion is a <see cref="T:DDay.iCal.Components.Parameter"/> of the DTSTART value.
+            </example>
+            </remarks>
         </member>
         <member name="T:DDay.iCal.DataTypes.Duration">
             <summary>
@@ -881,6 +889,32 @@
             <see cref="!:Event"/> or <see cref="!:Todo"/> item.
             </summary>
         </member>
+        <member name="T:DDay.iCal.DataTypes.Recur">
+            <summary>
+            An iCalendar representation of the <c>RRULE</c> property.
+            </summary>
+            <summary>
+            Represents an RFC 2445 "BYDAY" value.
+            </summary>
+        </member>
+        <member name="M:DDay.iCal.DataTypes.Recur.Copy">
+            <summary>
+            Returns a typed copy of the object.
+            </summary>
+            <returns>A typed copy of the object.</returns>
+        </member>
+        <member name="M:DDay.iCal.DataTypes.Recur.FillYearDays(DDay.iCal.DataTypes.Recur.TimeCalculation)">
+            <summary>
+            NOTE: fixes RRULE25
+            </summary>
+            <param name="TC"></param>
+        </member>
+        <member name="M:DDay.iCal.DataTypes.Recur.FillByDay(DDay.iCal.DataTypes.Recur.TimeCalculation)">
+            <summary>
+            NOTE: fixes RRULE26
+            </summary>
+            <param name="TC"></param>
+        </member>
         <member name="T:DDay.iCal.DataTypes.Float">
             <summary>
             Represents an RFC 2445 floating-point decimal value.
@@ -891,7 +925,7 @@
             Represents an iCalendar period of time.
             </summary>
         </member>
-        <member name="F:DDay.iCal.DataTypes.Period.MatchesDateOnly">
+        <member name="P:DDay.iCal.DataTypes.Period.MatchesDateOnly">
             <summary>
             When true, comparisons between this and other <see cref="T:DDay.iCal.DataTypes.Period"/>
             objects are matched against the date only, and
@@ -907,17 +941,6 @@
             <summary>
             An iCalendar status code.
             </summary>
-        </member>
-        <member name="T:DDay.iCal.Objects.Parameter">
-            <summary>
-            A class that provides additional information about a <see cref="T:DDay.iCal.Objects.ContentLine"/>.
-            </summary>
-            <remarks>
-            <example>
-            For example, a DTSTART line may look like this: <c>DTSTART;VALUE=DATE:20060116</c>.  
-            The <c>VALUE=DATE</c> portion is a <see cref="T:DDay.iCal.Objects.Parameter"/> of the DTSTART value.
-            </example>
-            </remarks>
         </member>
         <member name="T:DDay.iCal.DataTypes.TodoStatus">
             <summary>
@@ -940,43 +963,12 @@
                 </list>
             </note>
         </member>
-        <member name="F:DDay.iCal.Components.Event.Geo">
+        <member name="M:DDay.iCal.Components.Event.#ctor(DDay.iCal.Components.iCalObject)">
             <summary>
-            The geographic location (lat/long) of the event.
-            </summary>
-        </member>
-        <member name="F:DDay.iCal.Components.Event.Location">
-            <summary>
-            The location of the event.
-            </summary>
-        </member>
-        <member name="F:DDay.iCal.Components.Event.Resources">
-            <summary>
-            Resources that will be used during the event.
-            <example>Conference room #2</example>
-            <example>Projector</example>
-            </summary>
-        </member>
-        <member name="F:DDay.iCal.Components.Event.Status">
-            <summary>
-            The status of the event.
-            </summary>
-        </member>
-        <member name="F:DDay.iCal.Components.Event.Transp">
-            <summary>
-            The transparency of the event.  In other words,
-            whether or not the period of time this event
-            occupies can contain other events (transparent),
-            or if the time cannot be scheduled for anything
-            else (opaque).
-            </summary>
-        </member>
-        <member name="M:DDay.iCal.Components.Event.#ctor(DDay.iCal.Objects.iCalObject)">
-            <summary>
-            Constructs an Event object, with an <see cref="T:DDay.iCal.Objects.iCalObject"/>
+            Constructs an Event object, with an <see cref="T:DDay.iCal.Components.iCalObject"/>
             (usually an iCalendar object) as its parent.
             </summary>
-            <param name="parent">An <see cref="T:DDay.iCal.Objects.iCalObject"/>, usually an iCalendar object.</param>
+            <param name="parent">An <see cref="T:DDay.iCal.Components.iCalObject"/>, usually an iCalendar object.</param>
         </member>
         <member name="M:DDay.iCal.Components.Event.OccursOn(DDay.iCal.DataTypes.Date_Time)">
             <summary>
@@ -1002,14 +994,6 @@
             as an upcoming or occurred event.
             </summary>
             <returns>True if the event has not been cancelled, False otherwise.</returns>
-        </member>
-        <member name="M:DDay.iCal.Components.Event.FlattenRecurrenceOn(DDay.iCal.DataTypes.Date_Time)">
-            <summary>
-            "Flattens" an event recurrence so it contains a non-recurring
-            event on the specific day of the recurrence.
-            </summary>
-            <param name="dt">The date on which the event recurs</param>
-            <returns>An event if it could be flattened, null otherwise.</returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:DDay.iCal.Components.Event.Evaluate(DDay.iCal.DataTypes.Date_Time,DDay.iCal.DataTypes.Date_Time)" -->
         <member name="M:DDay.iCal.Components.Event.Copy">
@@ -1065,6 +1049,37 @@
         <member name="P:DDay.iCal.Components.Event.IsAllDay">
             <summary>
             Returns true of the event is an all-day event.
+            </summary>
+        </member>
+        <member name="P:DDay.iCal.Components.Event.Geo">
+            <summary>
+            The geographic location (lat/long) of the event.
+            </summary>
+        </member>
+        <member name="P:DDay.iCal.Components.Event.Location">
+            <summary>
+            The location of the event.
+            </summary>
+        </member>
+        <member name="P:DDay.iCal.Components.Event.Resources">
+            <summary>
+            Resources that will be used during the event.
+            <example>Conference room #2</example>
+            <example>Projector</example>
+            </summary>
+        </member>
+        <member name="P:DDay.iCal.Components.Event.Status">
+            <summary>
+            The status of the event.
+            </summary>
+        </member>
+        <member name="P:DDay.iCal.Components.Event.Transp">
+            <summary>
+            The transparency of the event.  In other words,
+            whether or not the period of time this event
+            occupies can contain other events (transparent),
+            or if the time cannot be scheduled for anything
+            else (opaque).
             </summary>
         </member>
     </members>

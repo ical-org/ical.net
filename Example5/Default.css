@@ -25,10 +25,18 @@
     padding:2px;
 }
 
-.CalendarArea .time
+.CalendarArea .date
 {
     float:left;
     margin-right:5px;
     text-align:right;
+    width:65px;
+}
+
+.CalendarArea .time
+{
+    float:left;
+    margin-right:5px;
+    text-align:left;
     width:65px;
 }
