@@ -45,7 +45,6 @@ namespace Example2
             evt.Start = DateTime.Today;
             evt.Start = evt.Start.AddHours(8);
             evt.End = evt.Start.AddHours(18); // This also sets the duration            
-            evt.DTStamp = DateTime.Now;
             evt.Description = "The event description";
             evt.Location = "Event location";
             evt.Summary = "18 hour event summary";
@@ -54,8 +53,7 @@ namespace Example2
             evt = Event.Create(iCal);
             evt.Start = DateTime.Today.AddDays(5);            
             evt.End = evt.Start.AddDays(1);
-            evt.IsAllDay = true;
-            evt.DTStamp = DateTime.Now;
+            evt.IsAllDay = true;            
             evt.Summary = "All-day event";
 
             // Display each event
@@ -67,8 +65,12 @@ namespace Example2
             serializer.Serialize(@"iCalendar.ics");
             Console.WriteLine("iCalendar file saved." + Environment.NewLine);
             
+            // Load the calendar from the file we just saved
             iCal = iCalendar.LoadFromFile(@"iCalendar.ics");
             Console.WriteLine("iCalendar file loaded.");
+
+            // Iterate through each event to display its description
+            // (and verify the file saved correctly)
             foreach (Event e in iCal.Events)
                 Console.WriteLine("Event loaded: " + GetDescription(e));
         }
