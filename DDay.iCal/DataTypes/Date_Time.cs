@@ -62,7 +62,8 @@ namespace DDay.iCal.DataTypes
                 {
                     return DateTime.SpecifyKind(Value, DateTimeKind.Utc);
                 }
-                else */if (Value.Kind == DateTimeKind.Local)
+                else */
+                if (Value.Kind == DateTimeKind.Local)
                 {
                     DateTime value = Value;
                     if (TimeZoneInfo != null)
@@ -73,10 +74,19 @@ namespace DDay.iCal.DataTypes
                         value = value.AddSeconds(TimeZoneInfo.TZOffsetTo.Seconds * mult);
                         value = DateTime.SpecifyKind(value, DateTimeKind.Utc);
                     }
-                    else value = value.ToUniversalTime();
+                    else
+                    {
+                        // Fallback to the OS built-in time zone information
+                        value = value.ToUniversalTime();
+                    }
                     return value;
                 }
-                else return Value.ToUniversalTime();
+                else
+                {
+                    // We don't have enough information to determine time zone information;
+                    // let's use the OS built-in time zone info instead.
+                    return Value.ToUniversalTime();
+                }
             }
         }
 
