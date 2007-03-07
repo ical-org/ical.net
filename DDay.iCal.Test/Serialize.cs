@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 using NUnit.Framework;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
-using DDay.iCal.Components;
 using DDay.iCal.Serialization;
 
 namespace DDay.iCal.Test
@@ -234,7 +233,7 @@ namespace DDay.iCal.Test
             CustomICal1 iCal = new CustomICal1();
             string nonstandardText = "Some nonstandard property we want to serialize";
 
-            CustomEvent1 evt = (CustomEvent1)Event.Create(iCal);
+            CustomEvent1 evt = iCal.Create<CustomEvent1>();
             evt.Summary = "Test event";
             evt.Start = new DateTime(2007, 02, 15);
             evt.NonstandardProperty = nonstandardText;
@@ -256,7 +255,7 @@ namespace DDay.iCal.Test
             // Create a normal iCalendar, serialize it, and load it as a custom calendar
             iCalendar iCal = new iCalendar();            
 
-            Event evt = Event.Create(iCal);
+            Event evt = iCal.Create<Event>();
             evt.Summary = "Test event";
             evt.Start = new DateTime(2007, 02, 15, 8, 0, 0);            
 

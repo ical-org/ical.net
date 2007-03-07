@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
-using DDay.iCal.Components;
 using DDay.iCal.Serialization;
 
 namespace DDay.iCal.Test
@@ -20,7 +19,7 @@ namespace DDay.iCal.Test
         {
             switch (name)
             {
-                case "VEVENT": return new CustomEvent1(parent);
+                case EVENT: return new CustomEvent1(parent);
                 default: return ComponentBase.Create(parent, name);
             }
         }

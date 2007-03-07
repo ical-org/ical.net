@@ -1889,8 +1889,8 @@ namespace DDay.iCal.Test
         public void RECURPARSE1()
         {
             iCalendar iCal = new iCalendar();
-            
-            Event evt = Event.Create(iCal);
+
+            Event evt = iCal.Create<Event>();
             evt.Summary = "Test event";
             evt.Start = new Date_Time(2006, 10, 1, 9, 0, 0);
             evt.Duration = new TimeSpan(1, 0, 0);
@@ -1923,7 +1923,7 @@ namespace DDay.iCal.Test
         {
             iCalendar iCal = new iCalendar();
 
-            Event evt = Event.Create(iCal);
+            Event evt = iCal.Create<Event>();
             evt.Summary = "Test event";
             evt.Start = new Date_Time(2006, 10, 1, 9, 0, 0);
             evt.Duration = new TimeSpan(1, 0, 0);
@@ -1955,7 +1955,7 @@ namespace DDay.iCal.Test
         {
             iCalendar iCal = new iCalendar();
 
-            Event evt = Event.Create(iCal);
+            Event evt = iCal.Create<Event>();
             evt.Summary = "Test event";
             evt.Start = new Date_Time(2006, 1, 1, 9, 0, 0);
             evt.Duration = new TimeSpan(1, 0, 0);
@@ -1988,7 +1988,7 @@ namespace DDay.iCal.Test
         {
             iCalendar iCal = new iCalendar();
 
-            Event evt = Event.Create(iCal);
+            Event evt = iCal.Create<Event>();
             evt.Summary = "Test event";
             evt.Start = new Date_Time(2006, 1, 1, 9, 0, 0);
             evt.Duration = new TimeSpan(1, 0, 0);
@@ -2019,7 +2019,7 @@ namespace DDay.iCal.Test
         {
             iCalendar iCal = new iCalendar();
 
-            Event evt = Event.Create(iCal);
+            Event evt = iCal.Create<Event>();
             evt.Summary = "Test event";
             evt.Start = new Date_Time(2006, 1, 1, 9, 0, 0);
             evt.Duration = new TimeSpan(1, 0, 0);
@@ -2051,7 +2051,7 @@ namespace DDay.iCal.Test
         {
             iCalendar iCal = new iCalendar();
 
-            Event evt = Event.Create(iCal);
+            Event evt = iCal.Create<Event>();
             evt.Summary = "Test event";
             evt.Start = new Date_Time(2006, 1, 1, 9, 0, 0);
             evt.Duration = new TimeSpan(1, 0, 0);

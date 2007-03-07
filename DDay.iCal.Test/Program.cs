@@ -6,13 +6,13 @@ using System.IO;
 using System.Resources;
 using System.Web;
 using System.Web.UI;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
-using DDay.iCal.Test;
+
 using DDay.iCal.Components;
+using DDay.iCal.DataTypes;
+using DDay.iCal.Test;
 using DDay.iCal.Serialization;
 
 namespace DDay.iCal.Test
@@ -377,7 +377,7 @@ namespace DDay.iCal.Test
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\GEO1.ics");
             Program.TestCal(iCal);
 
-            Event evt = Event.Create(iCal);
+            Event evt = iCal.Create<Event>();
             evt.Summary = "Test event";
             evt.Description = "This is an event to see if event creation works";
             evt.Start = new Date_Time(2006, 12, 15, "US-Eastern", iCal);
