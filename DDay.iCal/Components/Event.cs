@@ -52,7 +52,7 @@ namespace DDay.iCal.Components
         /// the end date/time will be extrapolated.
         /// </note>
         /// </summary>
-        [Serialized]
+        [Serialized, DefaultValueType("DATE-TIME")]
         public override Date_Time DTStart
         {
             get
