@@ -101,9 +101,17 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
                     // If the property is non-standard, then replace
                     // it with an X-name
-                    foreach (object attr in itemAttrs)
-                        if (attr is NonstandardAttribute)
-                            ico.Name = "X-" + ico.Name;
+                    if (!ico.Name.StartsWith("X-"))
+                    {
+                        foreach (object attr in itemAttrs)
+                        {
+                            if (attr is NonstandardAttribute)
+                            {
+                                ico.Name = "X-" + ico.Name;
+                                break;
+                            }
+                        }
+                    }
                 }
 
                 // Retrieve custom attributes for this field/property
