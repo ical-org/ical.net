@@ -418,7 +418,8 @@ namespace DDay.iCal.Test
         [Test]
         public void CustomClasses()
         {
-            iCalendarWithDifferentComponents iCal = (iCalendarWithDifferentComponents)iCalendar.LoadFromFile(typeof(iCalendarWithDifferentComponents), @"Calendars\General\GEO1.ics");
+            iCalendarWithDifferentComponents iCal = iCalendar.LoadFromFile<iCalendarWithDifferentComponents>(@"Calendars\General\GEO1.ics");
+            // FIXME: do some tests here
         }
 
         [Test]

@@ -242,7 +242,7 @@ namespace DDay.iCal.Test
             iCalendarSerializer serializer = new iCalendarSerializer(iCal);
             serializer.Serialize(@"Calendars\Serialization\SERIALIZE16.ics");
 
-            iCal = (CustomICal1)iCalendar.LoadFromFile(typeof(CustomICal1), @"Calendars\Serialization\SERIALIZE16.ics");
+            iCal = iCalendar.LoadFromFile<CustomICal1>(@"Calendars\Serialization\SERIALIZE16.ics");
             foreach (CustomEvent1 evt1 in iCal.Events)
                 Assert.IsTrue(evt1.NonstandardProperty.Equals(nonstandardText));
 
