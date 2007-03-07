@@ -59,7 +59,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Components\TimeZoneInfo.cs">
-        <DependentUpon>TimeZone.cs</DependentUpon>
+      <DependentUpon>TimeZone.cs</DependentUpon>
     </Compile>
     <Compile Include="DataTypes\Trigger.cs" />
     <Compile Include="DataTypes\Binary.cs" />
@@ -76,7 +76,7 @@
     <Compile Include="DataTypes\Text.cs" />
     <Compile Include="DataTypes\TZID.cs" />
     <Compile Include="DataTypes\DaySpecifier.cs">
-        <DependentUpon>Recur.cs</DependentUpon>
+      <DependentUpon>Recur.cs</DependentUpon>
     </Compile>
     <Compile Include="DataTypes\Cal_Address.cs" />
     <Compile Include="DataTypes\Geo.cs" />
@@ -92,6 +92,7 @@
     <Compile Include="DataTypes\Period.cs" />
     <Compile Include="DataTypes\Duration.cs" />
     <Compile Include="DataTypes\Date_Time.cs" />
+    <Compile Include="iCalendarCollection.cs" />
     <Compile Include="iCalParserHelper.cs" />
     <Compile Include="Components\ComponentBase.cs" />
     <Compile Include="ComponentBaseTypeAttribute.cs" />
