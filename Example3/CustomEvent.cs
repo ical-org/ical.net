@@ -22,6 +22,6 @@ namespace Example3
         /// A default constructor for iCalendar objects
         /// </summary>
         /// <param name="parent">The parent object that contains this one, or NULL.</param>
-        public CustomEvent(DDay.iCal.Objects.iCalObject parent) : base(parent) { }
+        public CustomEvent(DDay.iCal.Components.iCalObject parent) : base(parent) { }
     }
 }

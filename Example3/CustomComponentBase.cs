@@ -1,5 +1,5 @@
 using System;
-using DDay.iCal.Objects;
+using DDay.iCal.Components;
 
 namespace Example3
 {
