@@ -58,11 +58,11 @@ namespace DDay.iCal.Components
 
         public TimeZone() : base()
         {
-            this.Name = "VTIMEZONE";
+            this.Name = ComponentBase.TIMEZONE;
         }
         public TimeZone(iCalObject parent) : base(parent)
         {
-            this.Name = "VTIMEZONE";
+            this.Name = ComponentBase.TIMEZONE;
         }
 
         #endregion

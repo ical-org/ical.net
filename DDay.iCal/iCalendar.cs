@@ -9,7 +9,6 @@ using System.Reflection;
 using System.Text;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
-using DDay.iCal.Components;
 
 namespace DDay.iCal
 {

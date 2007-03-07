@@ -146,7 +146,7 @@ namespace DDay.iCal.Components
         public Todo(iCalObject parent)
             : base(parent)
         {
-            this.Name = "VTODO";
+            this.Name = ComponentBase.TODO;
         }
 
         #endregion
@@ -155,7 +155,7 @@ namespace DDay.iCal.Components
 
         static public Todo Create(iCalendar iCal)
         {
-            Todo t = (Todo)iCal.Create(iCal, "VTODO");
+            Todo t = (Todo)iCal.Create(iCal, ComponentBase.TODO);
             t.UID = UniqueComponent.NewUID();
             t.Created = DateTime.Now;
             t.DTStamp = DateTime.Now;

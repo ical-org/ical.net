@@ -12,7 +12,7 @@ namespace DDay.iCal.Components
     {
         public FreeBusy(iCalObject parent) : base(parent)
         {
-            this.Name = "VFREEBUSY";
+            this.Name = ComponentBase.FREEBUSY;
         }
 
         #region Overrides

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
-using DDay.iCal.Components;
 using DDay.iCal.Serialization.iCalendar.DataTypes;
 using DDay.iCal.Serialization.iCalendar.Components;
 

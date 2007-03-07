@@ -99,7 +99,7 @@ namespace DDay.iCal.Components
 
         static public Alarm Create(RecurringComponent rc)
         {
-            Alarm alarm = (Alarm)rc.iCalendar.Create(rc, "VALARM");
+            Alarm alarm = (Alarm)rc.iCalendar.Create(rc, ComponentBase.ALARM);
             return alarm;
         }
 
@@ -110,7 +110,7 @@ namespace DDay.iCal.Components
         public Alarm(iCalObject parent)
             : base(parent)
         {            
-            this.Name = "VALARM";
+            this.Name = ComponentBase.ALARM;
             Occurrences = new List<AlarmOccurrence>();
         }
 

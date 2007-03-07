@@ -35,7 +35,7 @@ namespace DDay.iCal.Components
 
         static public Journal Create(iCalendar iCal)
         {
-            Journal j = (Journal)iCal.Create(iCal, "VJOURNAL");
+            Journal j = (Journal)iCal.Create(iCal, ComponentBase.JOURNAL);
             j.UID = UniqueComponent.NewUID();
             j.Created = DateTime.Now;
             j.DTStamp = DateTime.Now;
@@ -49,7 +49,7 @@ namespace DDay.iCal.Components
 
         public Journal(iCalObject parent) : base(parent)
         {
-            this.Name = "VJOURNAL";
+            this.Name = ComponentBase.JOURNAL;
         }
 
         #endregion

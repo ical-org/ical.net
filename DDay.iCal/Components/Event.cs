@@ -196,7 +196,7 @@ namespace DDay.iCal.Components
 
         static public Event Create(iCalendar iCal)
         {
-            Event evt = (Event)iCal.Create(iCal, "VEVENT");
+            Event evt = (Event)iCal.Create(iCal, ComponentBase.EVENT);
             evt.UID = UniqueComponent.NewUID();
             evt.Created = DateTime.Now;
             evt.DTStamp = DateTime.Now;
@@ -215,7 +215,7 @@ namespace DDay.iCal.Components
         /// <param name="parent">An <see cref="iCalObject"/>, usually an iCalendar object.</param>
         public Event(iCalObject parent) : base(parent)
         {
-            this.Name = "VEVENT";            
+            this.Name = ComponentBase.EVENT;            
         }
 
         #endregion

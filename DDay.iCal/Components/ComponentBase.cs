@@ -16,6 +16,15 @@ namespace DDay.iCal.Components
     /// </summary>
     public class ComponentBase : iCalObject
     {
+        public const string ALARM = "VALARM";
+        public const string EVENT = "VEVENT";
+        public const string FREEBUSY = "VFREEBUSY";
+        public const string TODO = "VTODO";
+        public const string JOURNAL = "VJOURNAL";
+        public const string TIMEZONE = "VTIMEZONE";
+        public const string DAYLIGHT = "DAYLIGHT";
+        public const string STANDARD = "STANDARD";        
+
         #region Constructors
 
         public ComponentBase() : base() { }
@@ -30,14 +39,14 @@ namespace DDay.iCal.Components
         {
             switch(name.ToUpper())
             {
-                case "VALARM": return new Alarm(parent); break;
-                case "VEVENT": return new Event(parent); break;
-                case "VFREEBUSY": return new FreeBusy(parent); break;
-                case "VJOURNAL": return new Journal(parent); break;
-                case "VTIMEZONE": return new DDay.iCal.Components.TimeZone(parent); break;
-                case "VTODO": return new Todo(parent); break;
-                case "DAYLIGHT":
-                case "STANDARD":
+                case ALARM: return new Alarm(parent); break;
+                case EVENT: return new Event(parent); break;
+                case FREEBUSY: return new FreeBusy(parent); break;
+                case JOURNAL: return new Journal(parent); break;
+                case TIMEZONE: return new DDay.iCal.Components.TimeZone(parent); break;
+                case TODO: return new Todo(parent); break;
+                case DAYLIGHT:
+                case STANDARD:
                     return new DDay.iCal.Components.TimeZone.TimeZoneInfo(name.ToUpper(), parent); break;
                 default: return new ComponentBase(parent, name); break;
             }
