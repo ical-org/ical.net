@@ -358,6 +358,16 @@ namespace DDay.iCal
         /// <param name="Filepath">The path to the file to load.</param>
         /// <returns>An <see cref="iCalendar"/> object</returns>
         static public iCalendar LoadFromFile(string Filepath) { return LoadFromFile(typeof(iCalendar), Filepath); }
+        static public T LoadFromFile<T>(string Filepath)
+        {
+            if (typeof(T) == typeof(iCalendar) ||
+                typeof(T).IsSubclassOf(typeof(iCalendar)))
+            {
+                object obj = LoadFromFile(typeof(T), Filepath);
+                return (T)obj;
+            }
+            else return default(T);
+        }
         static public iCalendar LoadFromFile(Type iCalendarType, string Filepath)
         {            
             FileStream fs = new FileStream(Filepath, FileMode.Open);
@@ -373,6 +383,16 @@ namespace DDay.iCal
         /// <param name="s">The stream from which to load the <see cref="iCalendar"/> object</param>
         /// <returns>An <see cref="iCalendar"/> object</returns>
         static public iCalendar LoadFromStream(Stream s) { return LoadFromStream(typeof(iCalendar), s); }
+        static public T LoadFromStream<T>(Stream s)
+        {
+            if (typeof(T) == typeof(iCalendar) ||
+                typeof(T).IsSubclassOf(typeof(iCalendar)))
+            {
+                object obj = LoadFromStream(typeof(T), s);
+                return (T)obj;
+            }
+            else return default(T);
+        }
         static public iCalendar LoadFromStream(Type iCalendarType, Stream s)
         {            
             TextReader tr = new StreamReader(s, Encoding.UTF8);
@@ -401,6 +421,16 @@ namespace DDay.iCal
         /// <param name="url">The Uri from which to load the <see cref="iCalendar"/> object</param>
         /// <returns>An <see cref="iCalendar"/> object</returns>
         static public iCalendar LoadFromUri(Uri uri) { return LoadFromUri(typeof(iCalendar), uri); }
+        static public T LoadFromUri<T>(Uri uri)
+        {
+            if (typeof(T) == typeof(iCalendar) ||
+                typeof(T).IsSubclassOf(typeof(iCalendar)))
+            {
+                object obj = LoadFromUri(typeof(T), uri);
+                return (T)obj;
+            }
+            else return default(T);
+        }
         static public iCalendar LoadFromUri(Type iCalendarType, Uri uri)
         {
             return LoadFromUri(uri, null, null);            
@@ -414,6 +444,16 @@ namespace DDay.iCal
         /// <param name="url">The Uri from which to load the <see cref="iCalendar"/> object</param>
         /// <returns>an <see cref="iCalendar"/> object</returns>
         static public iCalendar LoadFromUri(Uri uri, string username, string password) { return LoadFromUri(typeof(iCalendar), uri, username, password); }
+        static public T LoadFromUri<T>(Uri uri, string username, string password)
+        {
+            if (typeof(T) == typeof(iCalendar) ||
+                typeof(T).IsSubclassOf(typeof(iCalendar)))
+            {
+                object obj = LoadFromUri(typeof(T), uri, username, password);
+                return (T)obj;
+            }
+            else return default(T);
+        }
         static public iCalendar LoadFromUri(Type iCalendarType, Uri uri, string username, string password)
         {
             try
@@ -549,6 +589,16 @@ namespace DDay.iCal
         /// you would invoke this method to create an Event, Todo, Journal, TimeZone, FreeBusy,
         /// or other base component type.
         /// </summary>
+        /// <example>
+        /// To create an event, use the following:
+        /// <code>
+        /// iCalendar iCal = new iCalendar();
+        /// 
+        /// Event evt = iCal.Create&lt;Event&gt;();
+        /// </code>
+        /// 
+        /// This creates the event, and adds it to the Events list of the iCalendar.
+        /// </example>
         /// <typeparam name="T">The type of object to create</typeparam>
         /// <returns>An object of the type specified</returns>
         public T Create<T>()
@@ -556,10 +606,15 @@ namespace DDay.iCal
             if (m_ComponentBaseCreate == null)
                 throw new ArgumentException("Create() cannot be called without a valid ComponentBase Create() method attached");
 
-            object t = Activator.CreateInstance(typeof(T), this);
+            // Create a dummy object with a null parent
+            iCalObject obj = null;
+            object t = Activator.CreateInstance(typeof(T), obj);
+
             if (t is iCalObject)
-            {
+            {                
                 iCalObject ico = (iCalObject)t;
+
+                // Create the type of object that we're looking for...
                 return (T)m_ComponentBaseCreate.Invoke(null, new object[] { this, ico.Name });
             }
             else return default(T);
