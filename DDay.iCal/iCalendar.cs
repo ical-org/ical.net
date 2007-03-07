@@ -544,6 +544,27 @@ namespace DDay.iCal
             else return (ComponentBase)m_ComponentBaseCreate.Invoke(null, new object[] { parent, name });
         }
 
+        /// <summary>
+        /// Creates a typed object that is a direct child of the iCalendar itself.  Generally,
+        /// you would invoke this method to create an Event, Todo, Journal, TimeZone, FreeBusy,
+        /// or other non-standard, base component type.
+        /// </summary>
+        /// <typeparam name="T">The type of object to create</typeparam>
+        /// <returns>An object of the type specified</returns>
+        public T Create<T>()
+        {
+            if (m_ComponentBaseCreate == null)
+                throw new ArgumentException("Create() cannot be called without a valid ComponentBase Create() method attached");
+
+            object t = Activator.CreateInstance(typeof(T), this);
+            if (t is iCalObject)
+            {
+                iCalObject ico = (iCalObject)t;
+                return (T)m_ComponentBaseCreate.Invoke(null, new object[] { this, ico.Name });
+            }
+            else return default(T);
+        }
+
         #endregion
 
         #region IDisposable Members
