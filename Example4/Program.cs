@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using DDay.iCal;
-using DDay.iCal.Objects;
+using DDay.iCal.Components;
 using DDay.iCal.Serialization;
 
 namespace Example4
