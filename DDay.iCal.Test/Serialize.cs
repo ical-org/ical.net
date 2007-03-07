@@ -28,6 +28,8 @@ namespace DDay.iCal.Test
 
         static public void DoTests()
         {
+            // FIXME: add test case for merging calendars and then serializing/deserializing, vs. simply merging
+
             Serialization s = new Serialization();
             s.InitAll();
             s.SERIALIZE1();
