@@ -12,7 +12,7 @@ namespace Example3
         static void Main(string[] args)
         {
             // Create an empty list of iCalendars
-            List<iCalendar> iCalendars = new List<iCalendar>();
+            iCalendarCollection iCalendars = new iCalendarCollection();
 
             // First, load the example iCalendar file normally
             iCalendars.Add(iCalendar.LoadFromFile(@"Example3.ics"));
@@ -20,7 +20,7 @@ namespace Example3
             // Next, load the example iCalendar file into our CustomICalendar object,
             // so we can show the difference between loading it normally and loading
             // it into a custom object.
-            iCalendars.Add(iCalendar.LoadFromFile(typeof(CustomICalendar), @"Example3.ics"));
+            iCalendars.Add(iCalendar.LoadFromFile<CustomICalendar>(@"Example3.ics"));
 
             // Since our CustomICalendar objects has its ComponentBaseTypeAttribute set
             // to our CustomComponentBase class, all of our objects are created with it.
