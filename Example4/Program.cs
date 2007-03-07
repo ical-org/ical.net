@@ -16,7 +16,7 @@ namespace Example4
         static void Main(string[] args)
         {
             // Load the example iCalendar file into our CustomICalendar object
-            CustomICalendar iCal = (CustomICalendar)iCalendar.LoadFromFile(typeof(CustomICalendar), @"Example4.ics");
+            CustomICalendar iCal = iCalendar.LoadFromFile<CustomICalendar>(@"Example4.ics");
                         
             // Set the additional information on our custom events
             Console.WriteLine("Adding additional information to each event from Example4.ics...");
@@ -32,8 +32,8 @@ namespace Example4
             // and display the event summary for each event, along
             // with the additional information we saved.
             Console.WriteLine("Loading Example4_Serialized.ics to display saved events...");
-            iCal = (CustomICalendar)iCalendar.LoadFromFile(typeof(CustomICalendar), @"Example4_Serialized.ics");
-            foreach (CustomEvent evt in iCal.Events)                
+            iCal = iCalendar.LoadFromFile<CustomICalendar>(@"Example4_Serialized.ics");
+            foreach (CustomEvent evt in iCal.Events)
                 Console.WriteLine("\t" + evt.Summary + ": " + evt.AdditionalInformation);
         }
     }
