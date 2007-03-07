@@ -18,21 +18,30 @@ public partial class _Default : System.Web.UI.Page
 {
     #region Protected Fields
 
+    /// <summary>
+    /// The absolute path to the folder that contains our iCalendars
+    /// </summary>
     protected string _CalendarAbsPath;
+
+    /// <summary>
+    /// A list of calendars that have been loaded from file
+    /// </summary>
     protected List<iCalendar> _Calendars = null;
 
     #endregion
 
     #region Event Sorting Class
 
+    /// <summary>
+    /// A class that sorts Events by start date.
+    /// </summary>
     class EventDateSorter : IComparer<Event>
     {
         #region IComparer<Event> Members
 
         public int Compare(Event x, Event y)
         {
-            int i = x.Start.CompareTo(y.Start);
-            return i;
+            return x.Start.CompareTo(y.Start);            
         }
 
         #endregion
@@ -60,17 +69,23 @@ public partial class _Default : System.Web.UI.Page
         // Create an object that will sort our events by date
         EventDateSorter eventDateSorter = new EventDateSorter();
 
-        // Build a list of today's events, sort that list by date
-        // and bind it to the repeater that will display the events.
+        // Build a list of today's events        
         List<Event> todaysEvents = new List<Event>(GetTodaysEvents());
+
+        // Sort our list by start date
         todaysEvents.Sort(eventDateSorter);
+
+        // Bind our list to the repeater that will display the events.
         TodaysEvents.DataSource = todaysEvents;
         TodaysEvents.DataBind();
 
-        // Build a list of upcoming events, sort that list by date
-        // and bind it to the repeater that will display the events.
+        // Build a list of upcoming events        
         List<Event> upcomingEvents = new List<Event>(GetUpcomingEvents());
+
+        // Sort that list by start date
         upcomingEvents.Sort(eventDateSorter);
+
+        // Bind our list to the repeater that will display the events.
         UpcomingEvents.DataSource = upcomingEvents;
         UpcomingEvents.DataBind();
     }
@@ -137,6 +152,11 @@ public partial class _Default : System.Web.UI.Page
         }
     }
 
+    /// <summary>
+    /// Gets a list of upcoming events (event that will occur within the
+    /// next week).
+    /// </summary>
+    /// <returns>A list of events that will occur within the next week</returns>
     protected IEnumerable<Event> GetUpcomingEvents()
     {
         // Load selected calendars, if we haven't already
@@ -169,6 +189,12 @@ public partial class _Default : System.Web.UI.Page
         }
     }
 
+    /// <summary>
+    /// Returns a string representation of the start
+    /// time of an event.
+    /// </summary>
+    /// <param name="obj">The event for which to display the start time</param>
+    /// <returns>A string representation of the start time of an event</returns>
     protected string GetTimeDisplay(object obj)
     {
         if (obj is Event)
