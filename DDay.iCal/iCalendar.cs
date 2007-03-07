@@ -547,7 +547,7 @@ namespace DDay.iCal
         /// <summary>
         /// Creates a typed object that is a direct child of the iCalendar itself.  Generally,
         /// you would invoke this method to create an Event, Todo, Journal, TimeZone, FreeBusy,
-        /// or other non-standard, base component type.
+        /// or other base component type.
         /// </summary>
         /// <typeparam name="T">The type of object to create</typeparam>
         /// <returns>An object of the type specified</returns>
