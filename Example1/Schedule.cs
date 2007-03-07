@@ -14,80 +14,90 @@ namespace Example1
 {
     public partial class Schedule : Form
     {
-        private iCalendar iCal;
+        private iCalendarCollection _Calendars = new iCalendarCollection();
+        private DateTime _StartDate;
+        private DateTime _EndDate;
 
         public Schedule()
         {
-            InitializeComponent();            
+            InitializeComponent();
         }
 
+        /// <summary>
+        /// Loads each iCalendar into our iCalendarCollection.
+        /// </summary>        
         private void Schedule_Load(object sender, EventArgs e)
-        {
-            iCal = iCalendar.LoadFromFile(@"Calendars\USHolidays.ics");
-            iCal.MergeWith(iCalendar.LoadFromFile(@"Calendars\lotr.ics"));
-            iCal.MergeWith(iCalendar.LoadFromFile(@"Calendars\To-do.ics"));
-            iCal.MergeWith(iCalendar.LoadFromFile(@"Calendars\Barça 2006 - 2007.ics"));
-            if (iCal == null)
-                throw new ApplicationException("iCalendar could not be loaded.");
+        {            
+            _Calendars.Add(iCalendar.LoadFromFile(@"Calendars\USHolidays.ics"));
+            _Calendars.Add(iCalendar.LoadFromFile(@"Calendars\lotr.ics"));
+            _Calendars.Add(iCalendar.LoadFromFile(@"Calendars\To-do.ics"));
+            _Calendars.Add(iCalendar.LoadFromFile(@"Calendars\Barça 2006 - 2007.ics"));            
         }
 
+        /// <summary>
+        /// Occurs each time a new month is selected.
+        /// </summary>        
         private void cbMonth_SelectedIndexChanged(object sender, EventArgs e)
         {
+            EvaluateSelectedMonth();
             FillEventList();
             FillTodoList();
         }
 
-        private void FillTodoList()
+        /// <summary>
+        /// Evaluates the selected month for recurring items
+        /// </summary>
+        private void EvaluateSelectedMonth()
         {
             int currentMonth = cbMonth.SelectedIndex + 1;
 
             // First day of the month
-            DateTime start = new DateTime(DateTime.Now.Year, currentMonth, 1);
+            _StartDate = new DateTime(2006, currentMonth, 1);
             // First day of the next month
-            DateTime end = start.AddMonths(1);
+            _EndDate = _StartDate.AddMonths(1);
 
-            // For each todo, determine if there are any occurrences in the selected month
-            foreach (Todo todo in iCal.Todos)
-                todo.Evaluate(start, end);
+            // Evaluate each recurring item in each calendar
+            // for the time period we're interested in
+            _Calendars.Evaluate(_StartDate, _EndDate);            
+        }
 
+        /// <summary>
+        /// Fills the todo list with active items for
+        /// the selected month.
+        /// </summary>
+        private void FillTodoList()
+        {
             // Clear the list
             clbTodo.Items.Clear();
 
-            // Our test date is the last day of the month, at 11:59:59 PM
-            DateTime testDate = new DateTime(DateTime.Now.Year, currentMonth, 1).AddMonths(1).AddSeconds(-1);
-            foreach (Todo todo in iCal.Todos)
-            {
-                if (todo.IsActive(testDate))
+            DateTime lastDayOfMonth = _EndDate.AddSeconds(-1);
+            foreach (Todo todo in _Calendars.Todos)            
+            {                
+                // Ensure the todo item is active as of 11:59 PM on the last day of the month
+                if (todo.IsActive(lastDayOfMonth))
                 {
                     clbTodo.Items.Add(todo.Summary.Value);
-                }
+                }                
             }
         }
 
+        /// <summary>
+        /// Fills the event list with active items for
+        /// the selected month.
+        /// </summary>
         private void FillEventList()
         {
-            int currentMonth = cbMonth.SelectedIndex + 1;
-
-            // First day of the month
-            DateTime start = new DateTime(DateTime.Now.Year, currentMonth, 1);
-            // First day of the next month
-            DateTime end = start.AddMonths(1);
-
-            // For each event, determine if there are any occurrences in the selected month
-            foreach (Event evt in iCal.Events)
-                evt.Evaluate(start, end);
-
             // Clear the list
             listEvents.Clear();
 
             // Start at the first day of the month
-            DateTime testDate = new DateTime(DateTime.Now.Year, currentMonth, 1);
-
+            DateTime testDate = _StartDate;            
+            
             // Cycle through each day of the month
-            while (testDate < end)
+            while (testDate < _EndDate)
             {
                 // Cycle through each event
-                foreach (Event evt in iCal.Events)
+                foreach (Event evt in _Calendars.Events)
                 {
                     // Determine if the event occurs on the current test date
                     if (evt.IsActive() && evt.OccursOn(testDate))
