@@ -47,6 +47,7 @@ namespace DDay.iCal.Test
             s.SERIALIZE14();
             s.SERIALIZE15();
             s.SERIALIZE16();
+            s.SERIALIZE17();
             s.LANGUAGE1();
             s.LANGUAGE2();
             s.REQUIREDPARAMETERS1();
@@ -56,16 +57,17 @@ namespace DDay.iCal.Test
             s.USHOLIDAYS();
         }
 
-        private void SerializeTest(string filename)
+        private void SerializeTest(string filename) { SerializeTest(filename, typeof(iCalendar)); }
+        private void SerializeTest(string filename, Type iCalType)
         {
-            iCalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Serialization\" + filename);
+            iCalendar iCal1 = iCalendar.LoadFromFile(iCalType, @"Calendars\Serialization\" + filename);
             iCalendarSerializer serializer = new iCalendarSerializer(iCal1);
 
             if (!Directory.Exists(@"Calendars\Serialization\Temp"))
                 Directory.CreateDirectory(@"Calendars\Serialization\Temp");
 
             serializer.Serialize(@"Calendars\Serialization\Temp\" + Path.GetFileNameWithoutExtension(filename) + "_Serialized.ics");
-            iCalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\" + Path.GetFileNameWithoutExtension(filename) + "_Serialized.ics");
+            iCalendar iCal2 = iCalendar.LoadFromFile(iCalType, @"Calendars\Serialization\Temp\" + Path.GetFileNameWithoutExtension(filename) + "_Serialized.ics");
 
             CompareCalendars(iCal1, iCal2);
         }
@@ -245,7 +247,23 @@ namespace DDay.iCal.Test
             foreach (CustomEvent1 evt1 in iCal.Events)
                 Assert.IsTrue(evt1.NonstandardProperty.Equals(nonstandardText));
 
-            SerializeTest("SERIALIZE16.ics");
+            SerializeTest("SERIALIZE16.ics", typeof(CustomICal1));
+        }
+
+        [Test, Category("Serialization")]
+        public void SERIALIZE17()
+        {
+            // Create a normal iCalendar, serialize it, and load it as a custom calendar
+            iCalendar iCal = new iCalendar();            
+
+            Event evt = Event.Create(iCal);
+            evt.Summary = "Test event";
+            evt.Start = new DateTime(2007, 02, 15, 8, 0, 0);            
+
+            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
+            serializer.Serialize(@"Calendars\Serialization\SERIALIZE17.ics");
+
+            SerializeTest("SERIALIZE17.ics", typeof(CustomICal1));
         }
         
         [Test, Category("Serialization")]
