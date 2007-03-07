@@ -26,7 +26,7 @@ public partial class _Default : System.Web.UI.Page
     /// <summary>
     /// A list of calendars that have been loaded from file
     /// </summary>
-    protected List<iCalendar> _Calendars = null;
+    protected iCalendarCollection _Calendars = null;
 
     #endregion
 
@@ -112,16 +112,14 @@ public partial class _Default : System.Web.UI.Page
     /// </summary>
     protected void LoadSelectedCalendars()
     {
-        _Calendars = new List<iCalendar>();
+        _Calendars = new iCalendarCollection();
         foreach (ListItem li in CalendarList.Items)
         {
             // Make sure the item is selected
             if (li.Selected)
             {
                 // Load the calendar from the file system
-                iCalendar iCal = iCalendar.LoadFromFile(Path.Combine(_CalendarAbsPath, li.Text + @".ics"));
-                if (iCal != null)
-                    _Calendars.Add(iCal);
+                _Calendars.Add(iCalendar.LoadFromFile(Path.Combine(_CalendarAbsPath, li.Text + @".ics")));                
             }
         }
     }
@@ -135,21 +133,17 @@ public partial class _Default : System.Web.UI.Page
         // Load selected calendars, if we haven't already
         if (_Calendars == null)
             LoadSelectedCalendars();
-                
-        // Iterate through each loaded calendar
-        foreach (iCalendar iCal in _Calendars)
-        {
-            // Evaluate today's date to see if any events occur on it
-            iCal.Evaluate(DateTime.Today, DateTime.Today.AddDays(1));
 
-            // Iterate through each event in the calendar
-            foreach(Event evt in iCal.Events)
-            {
-                // Get all event recurrences for today
-                foreach(Event e in evt.FlattenRecurrencesOn(DateTime.Today))                
-                    yield return e;
-            }
-        }
+        // Evaluate today's date to see if any events occur on it
+        _Calendars.Evaluate(DateTime.Today, DateTime.Today.AddDays(1));
+
+        // Iterate through each event in the calendar
+        foreach (Event evt in _Calendars.Events)
+        {
+            // Get all event recurrences for today
+            foreach(Event e in evt.FlattenRecurrencesOn(DateTime.Today))                
+                yield return e;
+        }        
     }
 
     /// <summary>
@@ -166,26 +160,22 @@ public partial class _Default : System.Web.UI.Page
         // Determine the range of events we're interested in (1 week)
         DateTime startDate = DateTime.Today.AddDays(1);
         DateTime endDate = startDate.AddDays(7);
-        
-        // Iterate through each loaded calendar
-        foreach (iCalendar iCal in _Calendars)
-        {
-            // Evaluate events within our selected period to see if any events occur
-            iCal.Evaluate(startDate, endDate);
 
-            foreach (Event evt in iCal.Events)
+        // Evaluate events within our selected period to see if any events occur
+        _Calendars.Evaluate(startDate, endDate);
+
+        foreach (Event evt in _Calendars.Events)
+        {
+            // Return flattened occurences of the event,
+            // so the start time is equal to the time it
+            // recurred (not the original start time of the event)
+            foreach (Event e in evt.FlattenRecurrences())
             {
-                // Return flattened occurences of the event,
-                // so the start time is equal to the time it
-                // recurred (not the original start time of the event)
-                foreach (Event e in evt.FlattenRecurrences())
-                {
-                    // Make sure the flattened events occur within our designated period
-                    if (e.Start.Date >= startDate &&
-                        e.Start.Date <= endDate)
-                        yield return e;
-                }
-            }                    
+                // Make sure the flattened events occur within our designated period
+                if (e.Start.Date >= startDate &&
+                    e.Start.Date <= endDate)
+                    yield return e;
+            }
         }
     }
 
