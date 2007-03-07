@@ -39,18 +39,17 @@ namespace Example2
             iCalendar iCal = new iCalendar();
             
             // Create the event, and add it to the iCalendar
-            Event evt = Event.Create(iCal);
+            Event evt = iCal.Create<Event>();
 
             // Set information about the event
-            evt.Start = DateTime.Today;
-            evt.Start = evt.Start.AddHours(8);
+            evt.Start = DateTime.Today.AddHours(8);            
             evt.End = evt.Start.AddHours(18); // This also sets the duration            
             evt.Description = "The event description";
             evt.Location = "Event location";
             evt.Summary = "18 hour event summary";
 
             // Set information about the second event
-            evt = Event.Create(iCal);
+            evt = iCal.Create<Event>();
             evt.Start = DateTime.Today.AddDays(5);            
             evt.End = evt.Start.AddDays(1);
             evt.IsAllDay = true;            
