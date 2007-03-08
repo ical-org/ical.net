@@ -196,7 +196,7 @@ namespace DDay.iCal.Components
 
         static public Event Create(iCalendar iCal)
         {
-            Event evt = (Event)iCal.Create(iCal, ComponentBase.EVENT);
+            Event evt = iCal.Create<Event>();
             evt.UID = UniqueComponent.NewUID();
             evt.Created = DateTime.Now;
             evt.DTStamp = DateTime.Now;
@@ -317,6 +317,21 @@ namespace DDay.iCal.Components
             }
                         
             return Periods;
+        }
+
+        /// <summary>
+        /// "Flattens" a single event recurrence into a copy of the
+        /// event.  This essentially "extracts" a recurrence into
+        /// a fully-fledged non-recurring event (a single instance).
+        /// </summary>
+        /// <param name="obj">The iCalObject that will contain the flattened event</param>
+        /// <param name="p">The period (instance) to be flattened</param>
+        /// <returns>An event which represents a single flattened event instance</returns>
+        protected override RecurringComponent FlattenInstance(iCalObject obj, Period p)
+        {
+            Event evt = (Event)base.FlattenInstance(obj, p);
+            evt.Duration = p.Duration;
+            return evt;
         }
         
         /// <summary>

@@ -99,7 +99,7 @@ namespace DDay.iCal.Components
 
         static public Alarm Create(RecurringComponent rc)
         {
-            Alarm alarm = (Alarm)rc.iCalendar.Create(rc, ComponentBase.ALARM);
+            Alarm alarm = rc.iCalendar.Create<Alarm>();
             return alarm;
         }
 

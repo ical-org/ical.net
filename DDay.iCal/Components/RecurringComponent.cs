@@ -22,7 +22,6 @@ namespace DDay.iCal.Components
         #region Private Fields
 
         private Date_Time m_DTStart;
-
         private Date_Time m_EvalStart;
         private Date_Time m_EvalEnd;
         private Date_Time m_Until;
@@ -35,7 +34,10 @@ namespace DDay.iCal.Components
         private List<Period> m_Periods;
         private List<Alarm> m_Alarms;
 
-        #endregion        
+        private bool m_IsOriginal = true;        
+        private RecurringComponent m_Original = null;        
+
+        #endregion
 
         #region Public Properties
 
@@ -130,6 +132,38 @@ namespace DDay.iCal.Components
             set { m_Alarms = value; }
         }
 
+        /// <summary>
+        /// Returns true if the component is a original object.
+        /// A flattened instance of a component (one returned by
+        /// FlattenXXX() methods) are not original, but are copies
+        /// of an original object.
+        /// </summary>
+        public bool IsOriginal
+        {
+            get { return m_IsOriginal; }            
+        }
+
+        /// <summary>
+        /// Returns the original object for this component.
+        /// If this component represents a single recurrence instance
+        /// of another component, this will return the original
+        /// component which generated the current instance.  If
+        /// the current component is the original component, <code>this</code>
+        /// will be returned.
+        /// </summary>
+        public RecurringComponent Original
+        {
+            get
+            {
+                // Find the original component
+                RecurringComponent rc = this;
+                while (rc.m_Original != null)
+                    rc = rc.m_Original;
+
+                return rc;                
+            }
+        }
+
         #endregion
 
         #region Constructors
@@ -182,6 +216,30 @@ namespace DDay.iCal.Components
         }
 
         /// <summary>
+        /// "Flattens" a single component recurrence into a copy of the
+        /// component.  This essentially "extracts" a recurrence into
+        /// a fully-fledged non-recurring object (a single instance).
+        /// </summary>
+        /// <param name="obj">The iCalObject that will contain this recurring component</param>
+        /// <param name="p">The period (recurrence instance) to be flattened</param>
+        /// <returns>A recurring component which represents a single flattened recurrence instance</returns>
+        virtual protected RecurringComponent FlattenInstance(iCalObject obj, Period p)
+        {            
+            // Copy the component into the dummy iCalendar
+            RecurringComponent rc = (RecurringComponent)Copy(obj);
+
+            rc.m_IsOriginal = false;
+            rc.m_Original = this;
+            rc.Start = p.StartTime.Copy();
+            rc.RRule = new Recur[0];
+            rc.RDate = new RDate[0];
+            rc.ExRule = new Recur[0];
+            rc.ExDate = new RDate[0];
+
+            return rc;
+        }
+
+        /// <summary>
         /// "Flattens" component recurrences into a series of equivalent objects.
         /// </summary>        
         /// <returns>A list of <see cref="Event"/>s if they could be flattened, null otherwise.</returns>
@@ -200,18 +258,7 @@ namespace DDay.iCal.Components
 
             // Iterate through each period to find all occurrences on this date
             foreach (Period p in Periods)
-            {
-                // Copy the component into the dummy iCalendar
-                RecurringComponent rc = (RecurringComponent)Copy(iCal);
-
-                rc.Start = p.StartTime.Copy();                
-                rc.RRule = new Recur[0];
-                rc.RDate = new RDate[0];
-                rc.ExRule = new Recur[0];
-                rc.ExDate = new RDate[0];
-
-                yield return rc;
-            }
+                yield return FlattenInstance(iCal, p);            
         }
 
         /// <summary>
@@ -250,6 +297,30 @@ namespace DDay.iCal.Components
                     yield return rc;
                 }
             }
+        }
+
+        #endregion
+
+        #region Static Public Methods
+
+        static public IEnumerable<RecurringComponent> SortByDate(IEnumerable<RecurringComponent> list)
+        {
+            return SortByDate<RecurringComponent>(list);
+        }
+
+        static public IEnumerable<T> SortByDate<T>(IEnumerable<T> list)
+        {
+            List<RecurringComponent> items = new List<RecurringComponent>();
+            foreach (T t in list)
+            {
+                if (t is RecurringComponent)
+                    items.Add((RecurringComponent)(object)t);
+            }
+
+            // Sort the list by date
+            items.Sort(new RecurringComponentDateSorter());
+            foreach (RecurringComponent rc in items)
+                yield return (T)(object)rc;
         }
 
         #endregion
@@ -300,7 +371,7 @@ namespace DDay.iCal.Components
 
             // Ensure the Kind of time is consistent with DTStart
             foreach (Period p in Periods)
-            {                
+            {
                 if (p.StartTime.Kind != DTStart.Kind)
                 {
                     p.StartTime.Value = DateTime.SpecifyKind(p.StartTime.Value, DTStart.Kind);
@@ -522,6 +593,21 @@ namespace DDay.iCal.Components
             if (child is Alarm)
                 Alarms.Remove((Alarm)child);
             base.RemoveChild(child);
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Sorts recurring components by their start dates
+    /// </summary>
+    public class RecurringComponentDateSorter : IComparer<RecurringComponent>
+    {
+        #region IComparer<RecurringComponent> Members
+
+        public int Compare(RecurringComponent x, RecurringComponent y)
+        {
+            return x.Start.CompareTo(y.Start);            
         }
 
         #endregion

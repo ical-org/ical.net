@@ -155,7 +155,7 @@ namespace DDay.iCal.Components
 
         static public Todo Create(iCalendar iCal)
         {
-            Todo t = (Todo)iCal.Create(iCal, ComponentBase.TODO);
+            Todo t = iCal.Create<Todo>();
             t.UID = UniqueComponent.NewUID();
             t.Created = DateTime.Now;
             t.DTStamp = DateTime.Now;
@@ -239,6 +239,21 @@ namespace DDay.iCal.Components
         {
             base.OnLoad(e);
             m_Loaded = true;            
+        }
+
+        /// <summary>
+        /// "Flattens" a single todo recurrence into a copy of the
+        /// todo.  This essentially "extracts" a recurrence into
+        /// a fully-fledged non-recurring todo (a single instance).
+        /// </summary>
+        /// <param name="obj">The iCalObject that will contain the flattened todo</param>
+        /// <param name="p">The period (instance) to be flattened</param>
+        /// <returns>A todo which represents a single flattened todo instance</returns>
+        protected override RecurringComponent FlattenInstance(iCalObject obj, Period p)
+        {
+            Todo todo = (Todo)base.FlattenInstance(obj, p);            
+            todo.Duration = p.Duration;
+            return todo;
         }
 
         /// <summary>
