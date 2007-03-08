@@ -243,6 +243,18 @@ namespace DDay.iCal
             set { m_UniqueComponents = value; }
         }
 
+        public IEnumerable<RecurringComponent> RecurringComponents
+        {
+            get
+            {
+                foreach (UniqueComponent uc in UniqueComponents)
+                {
+                    if (uc is RecurringComponent)
+                        yield return (RecurringComponent)uc;
+                }
+            }
+        }
+
         /// <summary>
         /// A collection of <see cref="Event"/> components in the iCalendar.
         /// </summary>
@@ -510,10 +522,22 @@ namespace DDay.iCal
         /// <param name="ToDate">The end date/time of the range to test.</param>                
         public void Evaluate(Date_Time FromDate, Date_Time ToDate)
         {
-            foreach (UniqueComponent uc in UniqueComponents)
+            Evaluate<object>(FromDate, ToDate);
+        }
+
+        /// <summary>
+        /// Evaluates component recurrences for the given range of time, for
+        /// the type of recurring component specified.
+        /// </summary>
+        /// <typeparam name="T">The type of component to be evaluated for recurrences.</typeparam>
+        /// <param name="FromDate">The beginning date/time of the range to test.</param>
+        /// <param name="ToDate">The end date/time of the range to test.</param>
+        public void Evaluate<T>(Date_Time FromDate, Date_Time ToDate)
+        {
+            foreach (RecurringComponent rc in RecurringComponents)
             {
-                if (uc is RecurringComponent)
-                    ((RecurringComponent)uc).Evaluate(FromDate, ToDate);
+                if (rc is T)
+                    rc.Evaluate(FromDate, ToDate);
             }
         }
 
@@ -522,33 +546,9 @@ namespace DDay.iCal
         /// </summary>        
         public void ClearEvaluation()
         {
-            foreach (UniqueComponent uc in UniqueComponents)
-            {
-                if (uc is RecurringComponent)
-                    ((RecurringComponent)uc).ClearEvaluation();
-            }
+            foreach (RecurringComponent rc in RecurringComponents)
+                rc.ClearEvaluation();            
         }
-
-        //public ArrayList GetTodos(string category)
-        //{
-        //    ArrayList t = new ArrayList();
-        //    foreach (Todo todo in Todos)
-        //    {
-        //        if (todo.Categories != null)
-        //        {
-        //            foreach (TextCollection cat in todo.Categories)
-        //            {
-        //                foreach (Text text in cat.Values)
-        //                {
-        //                    if (text.Value == category)
-        //                        t.Add(todo);
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    return t;
-        //}
 
         /// <summary>
         /// Merges the current <see cref="iCalendar"/> with another iCalendar.
@@ -563,8 +563,11 @@ namespace DDay.iCal
         {
             if (iCal != null)
             {
+                // Merge all unique components
                 foreach (UniqueComponent uc in iCal.UniqueComponents)
                     this.AddChild(uc);
+
+                // Dispose of the calendar, since we just siphoned the components from it.
                 iCal.Dispose();
             }
         }
@@ -573,11 +576,14 @@ namespace DDay.iCal
         /// Invokes the object creation of the selected ComponentBase class.  By default,
         /// this is the ComponentBase class itself; however, this can be changed to allow
         /// for custom objects to be created in lieu of Event, Todo, Journal, etc. components.
+        /// <note>
+        /// This method is used internally by the parsing engine to create iCalendar objects.
+        /// </note>
         /// </summary>
         /// <param name="parent">The parent of the object to create.</param>
         /// <param name="name">The name of the iCal object.</param>
-        /// <returns></returns>
-        public ComponentBase Create(iCalObject parent, string name)
+        /// <returns>A newly created object</returns>
+        internal ComponentBase Create(iCalObject parent, string name)
         {
             if (m_ComponentBaseCreate == null)
                 throw new ArgumentException("Create() cannot be called without a valid ComponentBase Create() method attached");
@@ -620,6 +626,68 @@ namespace DDay.iCal
             else return default(T);
         }
 
+        ///// <summary>
+        ///// Returns a list of flattened recurrences for all recurring components
+        ///// in the iCalendar.
+        ///// </summary>
+        ///// <returns>A list of flattened recurrences for all recurring components</returns>
+        //public IEnumerable<RecurringComponent> FlattenRecurrences()
+        //{
+        //    foreach (RecurringComponent rc in RecurringComponents)
+        //        foreach (RecurringComponent instance in rc.FlattenRecurrences())
+        //            yield return instance;
+        //}
+
+        ///// <summary>
+        ///// Returns a list of flattened recurrences of type T.
+        ///// </summary>
+        ///// <typeparam name="T">The type for which to return flattened recurrences</typeparam>
+        ///// <returns>A list of flattened recurrences of type T</returns>
+        //public IEnumerable<T> FlattenRecurrences<T>()
+        //{
+        //    foreach (RecurringComponent rc in FlattenRecurrences())
+        //    {
+        //        if (rc is T)
+        //        {
+        //            object obj = rc;
+        //            yield return (T)obj;
+        //        }
+        //    }
+        //}
+
+        ///// <summary>
+        ///// Returns a list of flattened recurrence instances for the given date range.
+        ///// </summary>
+        ///// <param name="startDate">The starting date of the date range</param>
+        ///// <param name="endDate">The ending date of the date range</param>
+        ///// <returns>A list of flattened recurrences for the date range</returns>
+        //public IEnumerable<RecurringComponent> GetRecurrencesForRange(Date_Time startDate, Date_Time endDate)
+        //{
+        //    foreach (RecurringComponent rc in GetRecurrencesForRange<RecurringComponent>(startDate, endDate))
+        //        yield return rc;
+        //}
+
+        ///// <summary>
+        ///// Returns a list of flattened recurrence instances of type T for the given date range.
+        ///// </summary>
+        ///// <param name="startDate">The starting date of the date range</param>
+        ///// <param name="endDate">The ending date of the date range</param>
+        ///// <returns>A list of flattened recurrences of type T for the date range</returns>
+        //public IEnumerable<T> GetRecurrencesForRange<T>(Date_Time startDate, Date_Time endDate)
+        //{
+        //    Evaluate<T>(startDate, endDate);
+
+        //    foreach (T t in FlattenRecurrences<T>())
+        //    {
+        //        if (t is RecurringComponent)
+        //        {
+        //            RecurringComponent rc = (RecurringComponent)(object)t;
+        //            if (rc.Start >= startDate && rc.Start <= endDate)
+        //                yield return t;
+        //        }
+        //    }
+        //}
+
         #endregion
 
         #region IDisposable Members
@@ -631,6 +699,10 @@ namespace DDay.iCal
             FreeBusy.Clear();
             Journals.Clear();
             Todos.Clear();
+            // FIXME: disposing of time zones currently causes problems when merging calendars.
+            // There are probably problems anyway when serializing, but for now...
+            //TimeZones.Clear();
+            //UniqueComponents.Clear();
         }
 
         #endregion
