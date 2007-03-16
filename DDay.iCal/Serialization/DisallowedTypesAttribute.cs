@@ -13,7 +13,7 @@ namespace DDay.iCal.Serialization
     /// DATE-TIME.
     /// </example>
     /// </summary>
-    public class DisallowedTypes : Attribute
+    public class DisallowedTypesAttribute : Attribute
     {
         #region Private Fields
 
@@ -33,15 +33,16 @@ namespace DDay.iCal.Serialization
 
         #region Constructors
 
-        public DisallowedTypes() : base()
+        public DisallowedTypesAttribute() : base()
         {
             Types = new List<string>();
         }
-        public DisallowedTypes(string type) : this()
+        public DisallowedTypesAttribute(string type) : this()
         {            
             Types.Add(type);
         }
-        public DisallowedTypes(params string[] types) : this()
+        public DisallowedTypesAttribute(params string[] types)
+            : this()
         {
             Types.AddRange(types);
         }
