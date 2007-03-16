@@ -71,9 +71,9 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
                 // disallowed; if so, then invert the value type
                 foreach (object obj in m_DateTime.Attributes)
                 {
-                    if (obj is DisallowedTypes)
+                    if (obj is DisallowedTypesAttribute)
                     {
-                        DisallowedTypes dt = (DisallowedTypes)obj;
+                        DisallowedTypesAttribute dt = (DisallowedTypesAttribute)obj;
                         if (dt.Types.Contains(valueType) && dt.Types.Contains(InvertType(valueType)))
                             valueType = null;
                         else if (dt.Types.Contains(valueType))
