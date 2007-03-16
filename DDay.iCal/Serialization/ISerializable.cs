@@ -5,6 +5,9 @@ using System.IO;
 
 namespace DDay.iCal.Serialization
 {
+    /// <summary>
+    /// Indicates that the item can be serialized
+    /// </summary>
     public interface ISerializable
     {
         string SerializeToString();
