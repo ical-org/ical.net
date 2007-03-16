@@ -395,6 +395,7 @@ namespace DDay.iCal
         /// <param name="s">The stream from which to load the <see cref="iCalendar"/> object</param>
         /// <returns>An <see cref="iCalendar"/> object</returns>
         static public iCalendar LoadFromStream(Stream s) { return LoadFromStream(typeof(iCalendar), s); }
+        static public iCalendar LoadFromStream(TextReader tr) { return LoadFromStream(typeof(iCalendar), tr); }
         static public T LoadFromStream<T>(Stream s)
         {
             if (typeof(T) == typeof(iCalendar) ||
@@ -408,8 +409,11 @@ namespace DDay.iCal
         static public iCalendar LoadFromStream(Type iCalendarType, Stream s)
         {            
             TextReader tr = new StreamReader(s, Encoding.UTF8);
-
-            // Create a lexer for our memory stream
+            return LoadFromStream(iCalendarType, tr);
+        }
+        static public iCalendar LoadFromStream(Type iCalendarType, TextReader tr)
+        {
+            // Create a lexer for our text stream
             iCalLexer lexer = new iCalLexer(tr);
             iCalParser parser = new iCalParser(lexer);
 
@@ -420,7 +424,7 @@ namespace DDay.iCal
             // Parse the iCalendar!
             iCalendar iCal = parser.icalobject();
 
-            // Close our memory stream
+            // Close our text stream
             tr.Close();
 
             // Return the parsed iCalendar
