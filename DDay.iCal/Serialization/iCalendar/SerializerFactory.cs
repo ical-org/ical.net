@@ -8,6 +8,9 @@ using DDay.iCal.Serialization.iCalendar.Components;
 
 namespace DDay.iCal.Serialization.iCalendar
 {
+    /// <summary>
+    /// A class that generates serialization objects for iCalendar components.
+    /// </summary>
     public class SerializerFactory
     {
         static public ISerializable Create(object obj)
@@ -33,7 +36,7 @@ namespace DDay.iCal.Serialization.iCalendar
                     return new PropertySerializer(obj as Property);
                 // We don't allow ContentLines to directly serialize, as
                 // they're likely a byproduct of loading a calendar, and we
-                // are already going to reproduce the content line anyway.
+                // are already going to reproduce the content line(s) anyway.
                 else if (type == typeof(ContentLine) || type.IsSubclassOf(typeof(ContentLine)))
                     return null;
                 else if (type == typeof(iCalObject) || type.IsSubclassOf(typeof(iCalObject)))
