@@ -6,6 +6,7 @@ using System.Reflection;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
+using System.IO;
 
 namespace DDay.iCal.Components
 {
@@ -50,6 +51,58 @@ namespace DDay.iCal.Components
                     return new DDay.iCal.Components.TimeZone.TimeZoneInfo(name.ToUpper(), parent); break;
                 default: return new ComponentBase(parent, name); break;
             }
+        }
+
+        /// <summary>
+        /// Loads an iCalendar component (Event, Todo, Journal, etc.) from an open stream.
+        /// </summary>
+        /// <param name="s">The stream from which to load the iCalendar component</param>
+        /// <returns>A <see cref="ComponentBase"/> object</returns>
+        static public ComponentBase LoadFromStream(Stream s) { return LoadFromStream(null, s); }
+        static public ComponentBase LoadFromStream(TextReader tr) { return LoadFromStream(null, tr); }
+        static public T LoadFromStream<T>(TextReader tr)
+        {
+            if (typeof(T) == typeof(ComponentBase) ||
+                typeof(T).IsSubclassOf(typeof(ComponentBase)))
+                return (T)(object)LoadFromStream(null, tr);
+            else return default(T);
+        }
+        static public T LoadFromStream<T>(Stream s)
+        {
+            if (typeof(T) == typeof(ComponentBase) ||
+                typeof(T).IsSubclassOf(typeof(ComponentBase)))
+                return (T)(object)LoadFromStream(null, s);
+            else return default(T);
+        }
+        static public ComponentBase LoadFromStream(iCalObject parent, Stream s)
+        {
+            TextReader tr = new StreamReader(s, Encoding.UTF8);
+            return LoadFromStream(parent, tr);
+        }
+        static public ComponentBase LoadFromStream(iCalObject parent, TextReader tr)
+        {
+            // Create a lexer for our text stream
+            iCalLexer lexer = new iCalLexer(tr);
+            iCalParser parser = new iCalParser(lexer);
+
+            // Determine the calendar type we'll be using when constructing
+            // iCalendar components...
+            if (parent != null)
+                parser.iCalendarType = parent.iCalendar.GetType();
+            else
+            {
+                parent = new iCalendar();
+                parser.iCalendarType = typeof(iCalendar);
+            }
+
+            // Parse the iCalendar!
+            ComponentBase comp = (ComponentBase)parser.component(parent);
+
+            // Close our text stream
+            tr.Close();
+
+            // Return the parsed component
+            return comp;
         }
 
         #endregion
