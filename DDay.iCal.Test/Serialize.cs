@@ -12,6 +12,7 @@ using NUnit.Framework;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
+using DDay.iCal.Serialization.iCalendar.Components;
 
 namespace DDay.iCal.Test
 {
@@ -49,6 +50,7 @@ namespace DDay.iCal.Test
             s.SERIALIZE15();
             s.SERIALIZE16();
             s.SERIALIZE17();
+            s.SERIALIZE18();
             s.LANGUAGE1();
             s.LANGUAGE2();
             s.REQUIREDPARAMETERS1();
@@ -265,6 +267,31 @@ namespace DDay.iCal.Test
             serializer.Serialize(@"Calendars\Serialization\SERIALIZE17.ics");
 
             SerializeTest("SERIALIZE17.ics", typeof(CustomICal1));
+        }
+
+        [Test, Category("Serialization")]
+        public void SERIALIZE18()
+        {
+            iCalendar iCal = new iCalendar();
+
+            Event evt = iCal.Create<Event>();
+            evt.Summary = "Test event title";
+            evt.Start = DateTime.Today;
+            evt.End = DateTime.Today.AddDays(1);
+            evt.IsAllDay = true;            
+
+            Recur rec = new Recur("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4");
+            evt.AddRecurrence(rec);
+
+            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
+            string icalString = serializer.SerializeToString();
+
+            Assert.IsNotEmpty(icalString, "iCalendarSerializer.SerializeToString() must not be empty");
+
+            ComponentBaseSerializer compSerializer = new ComponentBaseSerializer(evt);
+            string evtString = compSerializer.SerializeToString();
+
+            Assert.IsTrue(evtString.Equals("BEGIN:VEVENT\r\nDTEND:20070320T060000Z\r\nDTSTART;VALUE=DATE:20070319\r\nDURATION:P1D\r\n:FREQ=WEEKLY;INTERVAL=3;COUNT=4;BYDAY=TU,FR,SU\r\nSUMMARY:Test event title\r\nEND:VEVENT\r\n"), "ComponentBaseSerializer.SerializeToString() serialized incorrectly");
         }
         
         [Test, Category("Serialization")]
