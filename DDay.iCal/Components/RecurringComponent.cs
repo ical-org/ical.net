@@ -189,6 +189,9 @@ namespace DDay.iCal.Components
         /// <param name="recur">The recurrence rule to add</param>
         public void AddRecurrence(Recur recur)
         {
+            if (string.IsNullOrEmpty(recur.Name))
+                recur.Name = "RRULE";
+
             if (RRule != null)
             {
                 Recur[] rules = new Recur[RRule.Length + 1];
@@ -205,6 +208,9 @@ namespace DDay.iCal.Components
         /// <param name="recur">The recurrence rule to add</param>
         public void AddException(Recur recur)
         {
+            if (string.IsNullOrEmpty(recur.Name))
+                recur.Name = "EXRULE";
+
             if (ExRule != null)
             {
                 Recur[] rules = new Recur[ExRule.Length + 1];
