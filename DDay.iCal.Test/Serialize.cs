@@ -51,6 +51,7 @@ namespace DDay.iCal.Test
             s.SERIALIZE16();
             s.SERIALIZE17();
             s.SERIALIZE18();
+            s.SERIALIZE19();
             s.LANGUAGE1();
             s.LANGUAGE2();
             s.REQUIREDPARAMETERS1();
@@ -291,7 +292,36 @@ namespace DDay.iCal.Test
             ComponentBaseSerializer compSerializer = new ComponentBaseSerializer(evt);
             string evtString = compSerializer.SerializeToString();
 
-            Assert.IsTrue(evtString.Equals("BEGIN:VEVENT\r\nDTEND:20070320T060000Z\r\nDTSTART;VALUE=DATE:20070319\r\nDURATION:P1D\r\n:FREQ=WEEKLY;INTERVAL=3;COUNT=4;BYDAY=TU,FR,SU\r\nSUMMARY:Test event title\r\nEND:VEVENT\r\n"), "ComponentBaseSerializer.SerializeToString() serialized incorrectly");
+            Assert.IsTrue(evtString.Equals("BEGIN:VEVENT\r\nDTEND:20070320T060000Z\r\nDTSTART;VALUE=DATE:20070319\r\nDURATION:P1D\r\nRRULE:FREQ=WEEKLY;INTERVAL=3;COUNT=4;BYDAY=TU,FR,SU\r\nSUMMARY:Test event title\r\nEND:VEVENT\r\n"), "ComponentBaseSerializer.SerializeToString() serialized incorrectly");
+        }
+
+        [Test, Category("Serialization")]
+        public void SERIALIZE19()
+        {
+            iCalendar iCal = new iCalendar();
+
+            Event evt = iCal.Create<Event>();
+            evt.Summary = "Test event title";
+            evt.Start = DateTime.Today;
+            evt.End = DateTime.Today.AddDays(1);
+            evt.IsAllDay = true;
+
+            Recur rec = new Recur("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4");
+            evt.AddRecurrence(rec);
+
+            ComponentBaseSerializer compSerializer = new ComponentBaseSerializer(evt);
+
+            FileStream fs = new FileStream(@"Calendars\Serialization\SERIALIZE19.ics", FileMode.Create, FileAccess.Write);
+            compSerializer.Serialize(fs, Encoding.UTF8);
+            fs.Close();
+
+            iCalendar iCal1 = new iCalendar();
+            
+            fs = new FileStream(@"Calendars\Serialization\SERIALIZE19.ics", FileMode.Open, FileAccess.Read);
+            Event evt1 = ComponentBase.LoadFromStream<Event>(fs);
+            fs.Close();
+
+            CompareComponents(evt, evt1);
         }
         
         [Test, Category("Serialization")]
