@@ -1,6 +1,6 @@
 // $ANTLR 2.7.6 (2005-12-22): "iCal.g" -> "iCalParser.cs"$
 
-    using DDay.iCal.Components;
+    using DDay.iCal.Components;    
 
 namespace DDay.iCal
 {
@@ -217,10 +217,11 @@ _loop18_breakloop:				;
 		}
 	}
 	
-	public void component(
+	public ComponentBase  component(
 		iCalObject o
 	) //throws RecognitionException, TokenStreamException
 {
+		ComponentBase c = null;;
 		
 		
 		try {      // for error handling
@@ -230,10 +231,10 @@ _loop18_breakloop:				;
 				{
 					if ((LA(1)==BEGIN) && (LA(2)==COLON) && (LA(3)==IANA_TOKEN))
 					{
-						iana_comp(o);
+						c=iana_comp(o);
 					}
 					else if ((LA(1)==BEGIN) && (LA(2)==COLON) && (LA(3)==X_NAME)) {
-						x_comp(o);
+						c=x_comp(o);
 					}
 					else
 					{
@@ -250,15 +251,16 @@ _loop9_breakloop:				;
 			reportError(ex);
 			recover(ex,tokenSet_4_);
 		}
+		return c;
 	}
 	
-	public void iana_comp(
+	public ComponentBase  iana_comp(
 		iCalObject o
 	) //throws RecognitionException, TokenStreamException
 {
+		ComponentBase c = null;;
 		
 		IToken  n = null;
-		ComponentBase c;
 		
 		try {      // for error handling
 			match(BEGIN);
@@ -295,15 +297,16 @@ _loop12_breakloop:				;
 			reportError(ex);
 			recover(ex,tokenSet_4_);
 		}
+		return c;
 	}
 	
-	public void x_comp(
+	public ComponentBase  x_comp(
 		iCalObject o
 	) //throws RecognitionException, TokenStreamException
 {
+		ComponentBase c = null;;
 		
 		IToken  n = null;
-		ComponentBase c;
 		
 		try {      // for error handling
 			match(BEGIN);
@@ -340,6 +343,7 @@ _loop15_breakloop:				;
 			reportError(ex);
 			recover(ex,tokenSet_4_);
 		}
+		return c;
 	}
 	
 	public void calendarline(
