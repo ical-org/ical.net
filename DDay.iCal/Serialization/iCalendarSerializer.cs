@@ -54,6 +54,6 @@ namespace DDay.iCal.Serialization
             fs.Close();
         }
 
-        #endregion        
+        #endregion
     }
 }

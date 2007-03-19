@@ -50,7 +50,16 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
         #endregion
 
-        #region ISerializable Members
+        #region Overrides
+
+        public override string SerializeToString()
+        {
+            MemoryStream ms = new MemoryStream();
+            Serialize(ms, Encoding.UTF8);
+            
+            ms.Position = 0;
+            return Encoding.UTF8.GetString(ms.GetBuffer(), 0, (int)ms.Length);
+        }
 
         public override void Serialize(Stream stream, Encoding encoding)
         {
