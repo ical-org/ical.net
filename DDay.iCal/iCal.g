@@ -25,9 +25,9 @@ icalobject returns [iCalendar iCal = (iCalendar)Activator.CreateInstance(iCalend
 ;
     
 icalbody[iCalendar iCal]: (calprops[iCal])? (component[iCal])?;
-component[iCalObject o]: (iana_comp[o] | x_comp[o])+;
-iana_comp[iCalObject o] { ComponentBase c; }: BEGIN COLON n:IANA_TOKEN {c = o.iCalendar.Create(o, n.getText());} CRLF (calendarline[c])+ END COLON IANA_TOKEN CRLF { c.OnLoad(EventArgs.Empty); };
-x_comp[iCalObject o] { ComponentBase c; }: BEGIN COLON n:X_NAME {c = o.iCalendar.Create(o, n.getText());} CRLF (calendarline[c])+ END COLON X_NAME CRLF { c.OnLoad(EventArgs.Empty); };
+component[iCalObject o] returns [ComponentBase c = null;]: (c=iana_comp[o] | c=x_comp[o])+;
+iana_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:IANA_TOKEN {c = o.iCalendar.Create(o, n.getText());} CRLF (calendarline[c])+ END COLON IANA_TOKEN CRLF { c.OnLoad(EventArgs.Empty); };
+x_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:X_NAME {c = o.iCalendar.Create(o, n.getText());} CRLF (calendarline[c])+ END COLON X_NAME CRLF { c.OnLoad(EventArgs.Empty); };
 
 // iCalendar Properties
 calprops[iCalendar iCal]: calprop[iCal] (calprop[iCal])+;
