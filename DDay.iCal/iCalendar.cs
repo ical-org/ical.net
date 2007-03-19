@@ -396,14 +396,18 @@ namespace DDay.iCal
         /// <returns>An <see cref="iCalendar"/> object</returns>
         static public iCalendar LoadFromStream(Stream s) { return LoadFromStream(typeof(iCalendar), s); }
         static public iCalendar LoadFromStream(TextReader tr) { return LoadFromStream(typeof(iCalendar), tr); }
+        static public T LoadFromStream<T>(TextReader tr)
+        {
+            if (typeof(T) == typeof(iCalendar) ||
+                typeof(T).IsSubclassOf(typeof(iCalendar)))
+                return (T)(object)LoadFromStream(typeof(T), tr);
+            else return default(T);
+        }
         static public T LoadFromStream<T>(Stream s)
         {
             if (typeof(T) == typeof(iCalendar) ||
                 typeof(T).IsSubclassOf(typeof(iCalendar)))
-            {
-                object obj = LoadFromStream(typeof(T), s);
-                return (T)obj;
-            }
+                return (T)(object)LoadFromStream(typeof(T), s);
             else return default(T);
         }
         static public iCalendar LoadFromStream(Type iCalendarType, Stream s)
