@@ -197,10 +197,6 @@ namespace DDay.iCal.Components
         static public Event Create(iCalendar iCal)
         {
             Event evt = iCal.Create<Event>();
-            evt.UID = UniqueComponent.NewUID();
-            evt.Created = DateTime.Now;
-            evt.DTStamp = DateTime.Now;
-
             return evt;
         }
 
@@ -307,7 +303,9 @@ namespace DDay.iCal.Components
                 if (p.EndTime == null)
                 {
                     p.Duration = Duration;
-                    p.EndTime = p.StartTime + Duration;
+                    if (p.Duration != null)
+                        p.EndTime = p.StartTime + Duration;
+                    else p.EndTime = p.StartTime;
                 }
                 // Ensure the Kind of time is consistent with DTStart
                 else if (p.EndTime.Kind != DTStart.Kind)
