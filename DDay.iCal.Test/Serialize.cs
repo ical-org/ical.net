@@ -56,7 +56,7 @@ namespace DDay.iCal.Test
             s.LANGUAGE2();
             s.REQUIREDPARAMETERS1();
             s.TIMEZONE1();
-            s.TIMEZONE2();
+            s.TIMEZONE2();        
 
             s.USHOLIDAYS();
         }

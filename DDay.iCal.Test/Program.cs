@@ -45,6 +45,7 @@ namespace DDay.iCal.Test
             p.LANGUAGE1();
             p.GOOGLE1();
             p.EVALUATION1();
+            p.LOAD1();
             p.LoadAndDisplayCalendar();
 
             p.DisposeAll();
@@ -423,6 +424,45 @@ namespace DDay.iCal.Test
                 Assert.IsTrue(evt.OccursAt(dt), "Event should occur at " + dt);
 
             Assert.IsTrue(evt.Periods.Count == DateTimes.Length, "There should be exactly " + DateTimes.Length + " occurrences; there were " + evt.Periods.Count);
+        }
+
+        [Test]
+        public void LOAD1()
+        {
+            StringReader sr = new StringReader(@"BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Apple Computer\, Inc//iCal 1.0//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+CREATED:20070404T211714Z
+DTEND:20070407T010000Z
+DTSTAMP:20070404T211714Z
+DTSTART:20070406T230000Z
+DURATION:PT2H
+RRULE:FREQ=WEEKLY;UNTIL=20070801T070000Z;BYDAY=FR
+SUMMARY:Friday Meetings
+DTSTAMP:20040103T033800Z
+SEQUENCE:1
+UID:fd940618-45e2-4d19-b118-37fd7a8e3906
+END:VEVENT
+BEGIN:VEVENT
+CREATED:20070404T204310Z
+DTEND:20070416T030000Z
+DTSTAMP:20070404T204310Z
+DTSTART:20070414T200000Z
+DURATION:P1DT7H
+RRULE:FREQ=DAILY;COUNT=12;BYDAY=SA,SU
+SUMMARY:Weekend Yea!
+DTSTAMP:20040103T033800Z
+SEQUENCE:1
+UID:ebfbd3e3-cc1e-4a64-98eb-ced2598b3908
+END:VEVENT
+END:VCALENDAR
+");
+            iCalendar iCal = iCalendar.LoadFromStream(sr);
+            Assert.IsTrue(iCal.Events.Count == 2, "There should be 2 events in the parsed calendar");
+            Assert.IsNotNull(iCal.Events["fd940618-45e2-4d19-b118-37fd7a8e3906"], "Event fd940618-45e2-4d19-b118-37fd7a8e3906 should exist in the calendar");
+            Assert.IsNotNull(iCal.Events["ebfbd3e3-cc1e-4a64-98eb-ced2598b3908"], "Event ebfbd3e3-cc1e-4a64-98eb-ced2598b3908 should exist in the calendar");
         }
 
         [Test]
