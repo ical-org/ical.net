@@ -79,6 +79,11 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
                         else if (dt.Types.Contains(valueType))
                             valueType = InvertType(valueType);
                     }
+                    else if (obj is ForceUTCAttribute)
+                    {
+                        valueType = "DATE-TIME";
+                        break;
+                    }
                 }
 
                 // Check to see if the value type is the default value type for this item                
