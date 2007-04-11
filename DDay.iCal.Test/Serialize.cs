@@ -122,7 +122,8 @@ namespace DDay.iCal.Test
 
                     if (prop.PropertyType.IsArray)
                         CompareArrays(obj1 as Array, obj2 as Array, prop.Name);
-                    else Assert.IsTrue(object.Equals(obj1, obj2), prop.Name + " does not match");
+                    else
+                        Assert.IsTrue(object.Equals(obj1, obj2), prop.Name + " does not match");
                 }
             }
         }
@@ -277,8 +278,12 @@ namespace DDay.iCal.Test
 
             Event evt = iCal.Create<Event>();
             evt.Summary = "Test event title";
-            evt.Start = DateTime.Today;
-            evt.End = DateTime.Today.AddDays(1);
+            evt.Start = new Date_Time(2007, 3, 19);
+            evt.Start.Kind = DateTimeKind.Utc;
+            evt.Duration = new TimeSpan(24, 0, 0);
+            evt.Created = evt.Start.Copy();
+            evt.DTStamp = evt.Start.Copy();
+            evt.UID = "123456789";
             evt.IsAllDay = true;            
 
             Recur rec = new Recur("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4");
@@ -292,7 +297,7 @@ namespace DDay.iCal.Test
             ComponentBaseSerializer compSerializer = new ComponentBaseSerializer(evt);
             string evtString = compSerializer.SerializeToString();
 
-            Assert.IsTrue(evtString.Equals("BEGIN:VEVENT\r\nDTEND:20070320T060000Z\r\nDTSTART;VALUE=DATE:20070319\r\nDURATION:P1D\r\nRRULE:FREQ=WEEKLY;INTERVAL=3;COUNT=4;BYDAY=TU,FR,SU\r\nSUMMARY:Test event title\r\nEND:VEVENT\r\n"), "ComponentBaseSerializer.SerializeToString() serialized incorrectly");
+            Assert.IsTrue(evtString.Equals("BEGIN:VEVENT\r\nCREATED:20070319T000000Z\r\nDTEND:20070320T000000Z\r\nDTSTAMP:20070319T000000Z\r\nDTSTART;VALUE=DATE:20070319\r\nDURATION:P1D\r\nRRULE:FREQ=WEEKLY;INTERVAL=3;COUNT=4;BYDAY=TU,FR,SU\r\nSUMMARY:Test event title\r\nUID:123456789\r\nEND:VEVENT\r\n"), "ComponentBaseSerializer.SerializeToString() serialized incorrectly");
         }
 
         [Test, Category("Serialization")]
@@ -302,8 +307,8 @@ namespace DDay.iCal.Test
 
             Event evt = iCal.Create<Event>();
             evt.Summary = "Test event title";
-            evt.Start = DateTime.Today;
-            evt.End = DateTime.Today.AddDays(1);
+            evt.Start = new Date_Time(2007, 4, 29);
+            evt.End = evt.Start.AddDays(1);
             evt.IsAllDay = true;
 
             Recur rec = new Recur("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4");
