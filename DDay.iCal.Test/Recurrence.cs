@@ -79,7 +79,9 @@ namespace DDay.iCal.Test
             r.RRULE38();
             r.RRULE39();
             r.RRULE40();
-            r.RRULE41();            
+            r.RRULE41();
+
+            r.EVALUATE1();
         }
 
         /// <summary>
@@ -2076,6 +2078,26 @@ namespace DDay.iCal.Test
             Assert.IsTrue(evt.Periods.Count == DateTimes.Length, "There should be exactly " + DateTimes.Length + " occurrences; there were " + evt.Periods.Count);
         }
 
-        
+        /// <summary>
+        /// Ensures that the StartTime and EndTime of periods have
+        /// HasTime set to true if the beginning time had HasTime set
+        /// to false.
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void EVALUATE1()
+        {
+            iCalendar iCal = new iCalendar();
+            Event evt = iCal.Create<Event>();
+            evt.Summary = "Event summary";
+
+            // Start at midnight, UTC time
+            evt.Start = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
+
+            evt.AddRecurrence(new Recur("FREQ=MINUTELY;INTERVAL=10;COUNT=5"));
+            List<Period> periods = evt.Evaluate(DateTime.Today.AddDays(1), DateTime.Today.AddDays(2));
+
+            foreach (Period p in periods)
+                Assert.IsTrue(p.StartTime.HasTime, "All recurrences of this event should have a time set.");
+        }
     }
 }
