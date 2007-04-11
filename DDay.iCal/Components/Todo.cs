@@ -156,10 +156,6 @@ namespace DDay.iCal.Components
         static public Todo Create(iCalendar iCal)
         {
             Todo t = iCal.Create<Todo>();
-            t.UID = UniqueComponent.NewUID();
-            t.Created = DateTime.Now;
-            t.DTStamp = DateTime.Now;
-
             return t;
         }
 

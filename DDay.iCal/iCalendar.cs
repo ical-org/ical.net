@@ -629,7 +629,9 @@ namespace DDay.iCal
                 iCalObject ico = (iCalObject)t;
 
                 // Create the type of object that we're looking for...
-                return (T)m_ComponentBaseCreate.Invoke(null, new object[] { this, ico.Name });
+                iCalObject resultObject = m_ComponentBaseCreate.Invoke(null, new object[] { this, ico.Name }) as iCalObject;
+                resultObject.CreateInitialize();
+                return (T)(object)resultObject;
             }
             else return default(T);
         }

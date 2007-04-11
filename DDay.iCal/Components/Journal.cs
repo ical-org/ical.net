@@ -36,10 +36,6 @@ namespace DDay.iCal.Components
         static public Journal Create(iCalendar iCal)
         {
             Journal j = iCal.Create<Journal>();
-            j.UID = UniqueComponent.NewUID();
-            j.Created = DateTime.Now;
-            j.DTStamp = DateTime.Now;
-
             return j;
         }
 

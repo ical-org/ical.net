@@ -17,7 +17,7 @@ namespace DDay.iCal.Components
 
         public UniqueComponent() : base() { }
         public UniqueComponent(iCalObject parent) : base(parent) { }
-        public UniqueComponent(iCalObject parent, string name) : base(parent, name) { }
+        public UniqueComponent(iCalObject parent, string name) : base(parent, name) { }        
 
         #endregion
 
@@ -250,6 +250,21 @@ namespace DDay.iCal.Components
                 text.ContentLine = cl;
                 UID = text.Value;
             }
+        }
+
+        public override void CreateInitialize()
+        {
+            base.CreateInitialize();
+
+            // Create a new UID for the component
+            UID = UniqueComponent.NewUID();
+
+            // Here, we don't simply set to DateTime.Now because DateTime.Now contains milliseconds, and
+            // the iCalendar standard doesn't care at all about milliseconds.  Therefore, when comparing
+            // two calendars, one generated, and one loaded from file, they may be functionally identical,
+            // but be determined to be different due to millisecond differences.
+            Created = new Date_Time(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            DTStamp = Created.Copy();
         }
 
         #endregion
