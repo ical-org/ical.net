@@ -515,8 +515,8 @@ namespace DDay.iCal.DataTypes
                 }
 
                 IncrementDate(StartDate);
-            }            
-
+            }
+            
             return DateTimes;
         }
 
@@ -849,6 +849,13 @@ namespace DDay.iCal.DataTypes
             foreach (Date_Time dt in DateTimes)
                 dt.MergeWith(StartDate);
 
+            // Ensure that DateTimes have an assigned time if they occur less than dailyB
+            foreach (Date_Time dt in DateTimes)
+            {
+                if (Frequency < FrequencyType.DAILY)
+                    dt.HasTime = true;
+            }
+            
             return DateTimes;
         }
 
