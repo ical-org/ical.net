@@ -392,6 +392,13 @@ namespace DDay.iCal.Components
             return obj;
         }
 
+        /// <summary>
+        /// Initializes an object that has just been created.
+        /// </summary>
+        virtual public void CreateInitialize()
+        {
+        }
+
         #endregion
     }
 }
