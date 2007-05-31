@@ -52,6 +52,7 @@ namespace DDay.iCal.Test
             s.SERIALIZE17();
             s.SERIALIZE18();
             s.SERIALIZE19();
+            s.SERIALIZE20();
             s.LANGUAGE1();
             s.LANGUAGE2();
             s.REQUIREDPARAMETERS1();
@@ -327,6 +328,52 @@ namespace DDay.iCal.Test
             fs.Close();
 
             CompareComponents(evt, evt1);
+        }
+
+        [Test, Category("Serialization")]
+        public void SERIALIZE20()
+        {
+            string iCalString = @"BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Apple Computer\, Inc//iCal 1.0//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+CREATED:20070404T211714Z
+DTEND:20070407T010000Z
+DTSTAMP:20070404T211714Z
+DTSTART:20070406T230000Z
+DURATION:PT2H
+RRULE:FREQ=WEEKLY;UNTIL=20070801T070000Z;BYDAY=FR
+SUMMARY:Friday Meetings
+DTSTAMP:20040103T033800Z
+SEQUENCE:1
+UID:fd940618-45e2-4d19-b118-37fd7a8e3906
+END:VEVENT
+BEGIN:VEVENT
+CREATED:20070404T204310Z
+DTEND:20070416T030000Z
+DTSTAMP:20070404T204310Z
+DTSTART:20070414T200000Z
+DURATION:P1DT7H
+RRULE:FREQ=DAILY;COUNT=12;BYDAY=SA,SU
+SUMMARY:Weekend Yea!
+DTSTAMP:20040103T033800Z
+SEQUENCE:1
+UID:ebfbd3e3-cc1e-4a64-98eb-ced2598b3908
+END:VEVENT
+END:VCALENDAR
+";
+            StringReader sr = new StringReader(iCalString);
+            iCalendar calendar = iCalendar.LoadFromStream(sr);
+
+            Assert.IsTrue(calendar.Events.Count == 2, "There should be 2 events in the loaded iCalendar.");
+            Assert.IsNotNull(calendar.Events["fd940618-45e2-4d19-b118-37fd7a8e3906"], "There should be an event with UID: fd940618-45e2-4d19-b118-37fd7a8e3906");
+            Assert.IsNotNull(calendar.Events["ebfbd3e3-cc1e-4a64-98eb-ced2598b3908"], "There should be an event with UID: ebfbd3e3-cc1e-4a64-98eb-ced2598b3908");
+
+            iCalendarSerializer serializer = new iCalendarSerializer(calendar);
+            serializer.Serialize(@"Calendars\Serialization\SERIALIZE20.ics");
+
+            SerializeTest("SERIALIZE20.ics");
         }
         
         [Test, Category("Serialization")]
