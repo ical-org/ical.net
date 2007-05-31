@@ -187,7 +187,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
                     yName = ((PropertyInfo)y).Name;
 
                 if (xName == null || yName == null)
-                    return 0;
+                    return 0;                
                 else return xName.CompareTo(yName);
             }
 

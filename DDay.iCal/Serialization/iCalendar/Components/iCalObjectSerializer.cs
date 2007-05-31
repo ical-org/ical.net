@@ -41,8 +41,21 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
         virtual public void Serialize(Stream stream, Encoding encoding)
         {
+            // Serialize "VERSION" before any other properties
+            if (m_object.Properties.ContainsKey("VERSION"))
+            {
+                Property p = (Property)m_object.Properties["VERSION"];
+                ISerializable serializer = SerializerFactory.Create(p);
+                if (serializer != null)
+                    serializer.Serialize(stream, encoding);
+            }
+
             foreach (DictionaryEntry de in m_object.Properties)
             {
+                // Don't serialize "VERSION" again, we've already done it above.
+                if (de.Key.Equals("VERSION"))
+                    continue; 
+
                 Property p = (Property)de.Value;
                 ISerializable serializer = SerializerFactory.Create(p);
                 if (serializer != null)
