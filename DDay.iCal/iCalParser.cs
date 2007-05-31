@@ -267,7 +267,7 @@ _loop9_breakloop:				;
 			match(COLON);
 			n = LT(1);
 			match(IANA_TOKEN);
-			c = o.iCalendar.Create(o, n.getText());
+			c = o.iCalendar.Create(o, n.getText().ToLower());
 			match(CRLF);
 			{ // ( ... )+
 				int _cnt12=0;
@@ -313,7 +313,7 @@ _loop12_breakloop:				;
 			match(COLON);
 			n = LT(1);
 			match(X_NAME);
-			c = o.iCalendar.Create(o, n.getText());
+			c = o.iCalendar.Create(o, n.getText().ToLower());
 			match(CRLF);
 			{ // ( ... )+
 				int _cnt15=0;

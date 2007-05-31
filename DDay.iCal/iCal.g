@@ -26,8 +26,8 @@ icalobject returns [iCalendar iCal = (iCalendar)Activator.CreateInstance(iCalend
     
 icalbody[iCalendar iCal]: (calprops[iCal])? (component[iCal])?;
 component[iCalObject o] returns [ComponentBase c = null;]: (c=iana_comp[o] | c=x_comp[o])+;
-iana_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:IANA_TOKEN {c = o.iCalendar.Create(o, n.getText());} CRLF (calendarline[c])+ END COLON IANA_TOKEN CRLF { c.OnLoad(EventArgs.Empty); };
-x_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:X_NAME {c = o.iCalendar.Create(o, n.getText());} CRLF (calendarline[c])+ END COLON X_NAME CRLF { c.OnLoad(EventArgs.Empty); };
+iana_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:IANA_TOKEN {c = o.iCalendar.Create(o, n.getText().ToLower());} CRLF (calendarline[c])+ END COLON IANA_TOKEN CRLF { c.OnLoad(EventArgs.Empty); };
+x_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:X_NAME {c = o.iCalendar.Create(o, n.getText().ToLower());} CRLF (calendarline[c])+ END COLON X_NAME CRLF { c.OnLoad(EventArgs.Empty); };
 
 // iCalendar Properties
 calprops[iCalendar iCal]: calprop[iCal] (calprop[iCal])+;
@@ -78,17 +78,7 @@ class iCalLexer extends Lexer;
 options
 {
     k=3; // k=2 for CRLF, k=3 to handle LINEFOLDER        
-    charVocabulary = '\u0000'..'\ufffe';
-}
-tokens
-{
-    BEGIN = "BEGIN";
-    END = "END";    
-    VCALENDAR = "VCALENDAR";
-    PRODID = "PRODID";
-    VERSION = "VERSION";
-    CALSCALE = "CALSCALE";
-    METHOD = "METHOD";    
+    charVocabulary = '\u0000'..'\ufffe';    
 }
 
 protected CR: '\u000d';
@@ -116,12 +106,22 @@ IANA_TOKEN: (ALPHA | DIGIT | DASH)+
     int val;
     if (int.TryParse(s, out val))
         $setType(NUMBER);
-    else if (s.Length > 2)
+    else
     {
-        switch (s.Substring(0,2))
+        switch(s.ToUpper())
         {
-            case "X-": $setType(X_NAME); break;
-        }
+            case "BEGIN": $setType(BEGIN); break;
+            case "END": $setType(END); break;
+            case "VCALENDAR": $setType(VCALENDAR); break;
+            case "PRODID": $setType(PRODID); break;
+            case "VERSION": $setType(VERSION); break;
+            case "CALSCALE": $setType(CALSCALE); break;
+            case "METHOD": $setType(METHOD); break;
+            default: 
+                if (s.Length > 2 && s.Substring(0,2).Equals("X-"))
+                    $setType(X_NAME);
+                break;                
+        }        
     }
 };
 LINEFOLDER: CRLF (SPACE | HTAB) {$setType(Token.SKIP);};

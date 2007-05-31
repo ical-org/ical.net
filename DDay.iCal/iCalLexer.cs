@@ -1,6 +1,6 @@
 // $ANTLR 2.7.6 (2005-12-22): "iCal.g" -> "iCalLexer.cs"$
 
-    using DDay.iCal.Components;
+    using DDay.iCal.Components;    
 
 namespace DDay.iCal
 {
@@ -89,13 +89,6 @@ namespace DDay.iCal
 			caseSensitiveLiterals = true;
 			setCaseSensitive(true);
 			literals = new Hashtable(100, (float) 0.4, null, Comparer.Default);
-			literals.Add("VCALENDAR", 6);
-			literals.Add("BEGIN", 4);
-			literals.Add("METHOD", 15);
-			literals.Add("END", 8);
-			literals.Add("PRODID", 11);
-			literals.Add("CALSCALE", 14);
-			literals.Add("VERSION", 13);
 		}
 		
 		override public IToken nextToken()			//throws TokenStreamException
@@ -680,12 +673,22 @@ _loop98_breakloop:			;
 		int val;
 		if (int.TryParse(s, out val))
 		_ttype = NUMBER;
-		else if (s.Length > 2)
+		else
 		{
-		switch (s.Substring(0,2))
+		switch(s.ToUpper())
 		{
-		case "X-": _ttype = X_NAME; break;
-		}
+		case "BEGIN": _ttype = BEGIN; break;
+		case "END": _ttype = END; break;
+		case "VCALENDAR": _ttype = VCALENDAR; break;
+		case "PRODID": _ttype = PRODID; break;
+		case "VERSION": _ttype = VERSION; break;
+		case "CALSCALE": _ttype = CALSCALE; break;
+		case "METHOD": _ttype = METHOD; break;
+		default: 
+		if (s.Length > 2 && s.Substring(0,2).Equals("X-"))
+		_ttype = X_NAME;
+		break;                
+		}        
 		}
 		
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
