@@ -65,11 +65,14 @@ namespace DDay.iCal.Test
         private void SerializeTest(string filename) { SerializeTest(filename, typeof(iCalendar)); }
         private void SerializeTest(string filename, Type iCalType)
         {
+            if (!Directory.Exists(@"Calendars\Serialization\Temp"))
+                Directory.CreateDirectory(@"Calendars\Serialization\Temp");
+            
             iCalendar iCal1 = iCalendar.LoadFromFile(iCalType, @"Calendars\Serialization\" + filename);
             iCalendarSerializer serializer = new iCalendarSerializer(iCal1);
 
-            if (!Directory.Exists(@"Calendars\Serialization\Temp"))
-                Directory.CreateDirectory(@"Calendars\Serialization\Temp");
+            Assert.IsTrue(iCal1.Properties.Count > 0, "iCalendar has no properties; did it load correctly?");
+            Assert.IsTrue(iCal1.UniqueComponents.Count > 0, "iCalendar has no unique components; it must to be used in SerializeTest(). Did it load correctly?");            
 
             serializer.Serialize(@"Calendars\Serialization\Temp\" + Path.GetFileNameWithoutExtension(filename) + "_Serialized.ics");
             iCalendar iCal2 = iCalendar.LoadFromFile(iCalType, @"Calendars\Serialization\Temp\" + Path.GetFileNameWithoutExtension(filename) + "_Serialized.ics");
@@ -374,6 +377,24 @@ END:VCALENDAR
             serializer.Serialize(@"Calendars\Serialization\SERIALIZE20.ics");
 
             SerializeTest("SERIALIZE20.ics");
+        }
+
+        [Test, Category("Serialization")]
+        public void SERIALIZE21()
+        {
+            SerializeTest("SERIALIZE21.ics");
+        }
+
+        [Test, Category("Serialization")]
+        public void SERIALIZE22()
+        {
+            SerializeTest("SERIALIZE22.ics");
+        }
+
+        [Test, Category("Serialization")]
+        public void SERIALIZE23()
+        {
+            SerializeTest("SERIALIZE23.ics");
         }
         
         [Test, Category("Serialization")]

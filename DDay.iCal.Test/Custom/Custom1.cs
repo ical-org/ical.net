@@ -17,7 +17,7 @@ namespace DDay.iCal.Test
         public CustomComponentBase1(iCalObject obj) : base(obj) { }
         static public new ComponentBase Create(iCalObject parent, string name)
         {
-            switch (name)
+            switch (name.ToUpper())
             {
                 case EVENT: return new CustomEvent1(parent);
                 default: return ComponentBase.Create(parent, name);
