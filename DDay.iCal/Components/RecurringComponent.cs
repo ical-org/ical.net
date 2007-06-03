@@ -13,8 +13,7 @@ namespace DDay.iCal.Components
     /// </summary>
     /// <remarks>
     /// This component automatically handles
-    /// <see cref="RRULE"/>s, <see cref="RDATE"/>s, <see cref="EXRULE"/>s, and
-    /// <see cref="EXDATE"/>s, as well as the <see cref="DTSTART"/>
+    /// RRULEs, RDATE, EXRULEs, and EXDATEs, as well as the DTSTART
     /// for the recurring item (all recurring items must have a DTSTART).
     /// </remarks>
     public class RecurringComponent : UniqueComponent
@@ -348,7 +347,7 @@ namespace DDay.iCal.Components
         /// <param name="FromDate">The beginning date of the range to evaluate.</param>
         /// <param name="ToDate">The end date of the range to evaluate.</param>
         /// <returns>
-        ///     An <see cref="ArrayList"/> containing a <see cref="Date_Time"/> object for
+        ///     A <see cref="List<Period>"/> containing a <see cref="Period"/> object for
         ///     each date/time this item occurs/recurs.
         /// </returns>
         virtual public List<Period> Evaluate(Date_Time FromDate, Date_Time ToDate)
@@ -507,15 +506,9 @@ namespace DDay.iCal.Components
             {
                 foreach (RDate rdate in RDate)
                 {
-                    ArrayList Items = rdate.Evaluate(DTStart, FromDate, ToDate);
-                    foreach (object obj in Items)
-                    {
-                        Period p = null;
-                        if (obj is Period)
-                            p = (Period)obj;
-                        else if (obj is Date_Time)                        
-                            p = new Period((Date_Time)obj);                            
-
+                    List<Period> periods = rdate.Evaluate(DTStart, FromDate, ToDate);
+                    foreach (Period p in periods)
+                    {   
                         if (p != null && !Periods.Contains(p))
                             Periods.Add(p);
                     }
@@ -560,15 +553,9 @@ namespace DDay.iCal.Components
             {
                 foreach (RDate exdate in ExDate)
                 {
-                    ArrayList Items = exdate.Evaluate(DTStart, FromDate, ToDate);
-                    foreach (object obj in Items)
+                    List<Period> periods = exdate.Evaluate(DTStart, FromDate, ToDate);
+                    foreach(Period p in periods)
                     {
-                        Period p = null;
-                        if (obj is Period)
-                            p = (Period)obj;
-                        else if (obj is Date_Time)
-                            p = new Period((Date_Time)obj);
-
                         // If no time was provided for the ExDate, then it excludes the entire day
                         if (!p.StartTime.HasTime || (p.EndTime != null && !p.EndTime.HasTime))
                             p.MatchesDateOnly = true;

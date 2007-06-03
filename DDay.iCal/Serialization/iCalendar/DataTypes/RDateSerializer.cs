@@ -30,9 +30,9 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
         public override string SerializeToString()
         {
             List<string> values = new List<string>();                        
-            foreach (object obj in m_RDate.Items)
+            foreach (Period p in m_RDate.Periods)
             {
-                ISerializable serializer = SerializerFactory.Create(obj);
+                ISerializable serializer = SerializerFactory.Create(p);
                 if (serializer != null)
                     values.Add(serializer.SerializeToString());
             }

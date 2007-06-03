@@ -280,6 +280,7 @@ namespace DDay.iCal.Components
         ///     For events with very complex recurrence rules, this method may be a bottleneck
         ///     during processing time, especially when this method in called for a large number
         ///     of events, in sequence, or for a very large time span.
+        /// </note>
         /// </summary>
         /// <param name="FromDate">The beginning date of the range to evaluate.</param>
         /// <param name="ToDate">The end date of the range to evaluate.</param>
@@ -336,7 +337,7 @@ namespace DDay.iCal.Components
         /// Returns a typed copy of the Event object.
         /// </summary>
         /// <returns>A typed copy of the Event object.</returns>
-        public Event Copy()
+        public new Event Copy()
         {
             return (Event)base.Copy();
         }

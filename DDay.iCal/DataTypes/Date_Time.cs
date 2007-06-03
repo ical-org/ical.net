@@ -114,11 +114,11 @@ namespace DDay.iCal.DataTypes
         /// <summary>
         /// Sets/Gets the iCalendar associated with this <see cref="Date_Time"/>.
         /// <note>
-        /// This property cannot be <see cref="null"/> when the <see cref="TZID"/>
+        /// This property cannot be null when the <see cref="TZID"/>
         /// has been set for this <see cref="Date_Time"/> object.
         /// </note>
         /// </summary>
-        public iCalendar iCalendar
+        public new iCalendar iCalendar
         {
             get { return base.iCalendar; }
             set { Parent = value; }
@@ -355,6 +355,11 @@ namespace DDay.iCal.DataTypes
             return false;            
         }
 
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
+        }
+
         public override string ToString()
         {
             if (HasDate)
@@ -422,7 +427,7 @@ namespace DDay.iCal.DataTypes
 
         #region Public Methods
 
-        public Date_Time Copy()
+        public new Date_Time Copy()
         {
             return (Date_Time)base.Copy();
         }

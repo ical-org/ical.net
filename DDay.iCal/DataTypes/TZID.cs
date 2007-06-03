@@ -81,7 +81,7 @@ namespace DDay.iCal.DataTypes
             if (obj is TZID)
             {
                 TZID tzid = (TZID)obj;
-                return (this.GloballyUnique == tzid.GloballyUnique && this.ID == tzid.ID);
+                return (this.GloballyUnique.Equals(tzid.GloballyUnique) && this.ID.Equals(tzid.ID));
             }
             else if (obj is string)
             {
@@ -90,6 +90,11 @@ namespace DDay.iCal.DataTypes
                     return tzid.Equals(this);                
             }
             return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return GloballyUnique.GetHashCode() ^ ID.GetHashCode();
         }
 
         public override string ToString()

@@ -21,7 +21,7 @@ namespace DDay.iCal.Components
         /// Returns a typed copy of the FreeBusy object.
         /// </summary>
         /// <returns>A typed copy of the FreeBusy object.</returns>
-        public FreeBusy Copy()
+        public new FreeBusy Copy()
         {
             return (FreeBusy)base.Copy();
         }

@@ -48,6 +48,11 @@ namespace DDay.iCal.DataTypes
             return base.Equals(obj);
         }
 
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
+        }
+
         public override void CopyFrom(object obj)
         {
             if (obj is Integer)

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace DDay.iCal.DataTypes
 {
@@ -67,6 +68,11 @@ namespace DDay.iCal.DataTypes
                         ds.DayOfWeek == DayOfWeek;
                 }
                 return base.Equals(obj);
+            }
+
+            public override int GetHashCode()
+            {
+                return Num.GetHashCode() ^ DayOfWeek.GetHashCode();
             }
 
             public override void CopyFrom(object obj)
@@ -140,7 +146,7 @@ namespace DDay.iCal.DataTypes
                                 // If BYMONTH is specified, then offset our tests
                                 // by those months; otherwise, begin with Jan. 1st.
                                 // NOTE: fixes USHolidays.ics eval
-                                ArrayList months = new ArrayList();
+                                List<int> months = new List<int>();
                                 if (r.ByMonth.Count == 0)
                                     months.Add(1);
                                 else months = r.ByMonth;

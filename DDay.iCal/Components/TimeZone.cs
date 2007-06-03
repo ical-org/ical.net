@@ -5,6 +5,7 @@ using System.Configuration;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
+using System.Collections.Generic;
 
 namespace DDay.iCal.Components
 {
@@ -18,7 +19,7 @@ namespace DDay.iCal.Components
         private TZID m_TZID;        
         private Date_Time m_Last_Modified;        
         private URI m_TZUrl;        
-        private ArrayList m_TimeZoneInfos = new ArrayList();        
+        private List<TimeZoneInfo> m_TimeZoneInfos = new List<TimeZoneInfo>();        
 
         #endregion
 
@@ -46,7 +47,7 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
-        public ArrayList TimeZoneInfos
+        public List<TimeZoneInfo> TimeZoneInfos
         {
             get { return m_TimeZoneInfos; }
             set { m_TimeZoneInfos = value; }
@@ -72,7 +73,7 @@ namespace DDay.iCal.Components
         public override void AddChild(iCalObject child)
         {
             if (child is TimeZoneInfo)
-                TimeZoneInfos.Add(child);
+                TimeZoneInfos.Add((TimeZoneInfo)child);
 
             base.AddChild(child);
         }
@@ -80,8 +81,8 @@ namespace DDay.iCal.Components
         public override void RemoveChild(iCalObject child)
         {
             if (child is TimeZoneInfo &&
-                TimeZoneInfos.Contains(child))
-                TimeZoneInfos.Remove(child);
+                TimeZoneInfos.Contains((TimeZoneInfo)child))
+                TimeZoneInfos.Remove((TimeZoneInfo)child);
 
             base.RemoveChild(child);
         }
@@ -90,7 +91,7 @@ namespace DDay.iCal.Components
         /// Returns a typed copy of the TimeZone object.
         /// </summary>
         /// <returns>A typed copy of the TimeZone object</returns>
-        public TimeZone Copy()
+        public new TimeZone Copy()
         {
             return (TimeZone)base.Copy();
         }

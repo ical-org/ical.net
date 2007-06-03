@@ -68,6 +68,14 @@ namespace DDay.iCal.DataTypes
             return base.Equals(obj);
         }
 
+        public override int GetHashCode()
+        {
+            int hashCode = 0;
+            foreach (Text t in Values)
+                hashCode ^= t.GetHashCode();
+            return hashCode;
+        }
+
         public override string ToString()
         {
             string[] values = new string[Values.Count];

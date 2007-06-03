@@ -256,7 +256,7 @@ namespace DDay.iCal.Components
         /// Returns a typed copy of the Todo object.
         /// </summary>
         /// <returns>A typed copy of the Todo object.</returns>
-        public Todo Copy()
+        public new Todo Copy()
         {
             return (Todo)base.Copy();
         }

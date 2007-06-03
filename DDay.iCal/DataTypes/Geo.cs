@@ -58,6 +58,11 @@ namespace DDay.iCal.DataTypes
             return base.Equals(obj);
         }
 
+        public override int GetHashCode()
+        {
+            return Latitude.GetHashCode() ^ Longitude.GetHashCode();
+        }
+
         public override bool TryParse(string value, ref object obj)
         {
             Geo g = (Geo)obj;

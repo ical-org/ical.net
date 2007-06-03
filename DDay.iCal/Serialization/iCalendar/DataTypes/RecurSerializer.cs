@@ -88,7 +88,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
             return string.Join(";", values.ToArray());
         }
 
-        private void SerializeByValue(List<string> Aggregate, ArrayList ByValue, string Name)
+        private void SerializeByValue(List<string> Aggregate, List<int> ByValue, string Name)
         {
             if (ByValue.Count > 0)
             {

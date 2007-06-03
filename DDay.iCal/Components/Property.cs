@@ -77,6 +77,12 @@ namespace DDay.iCal.Components
             return base.Equals(obj);
         }
 
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode() ^
+                (Value != null ? Value.GetHashCode() : 0);
+        }
+
         public override iCalObject Copy(iCalObject parent)
         {
             Property p = (Property)base.Copy(parent);

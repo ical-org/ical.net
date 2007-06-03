@@ -40,16 +40,16 @@ namespace DDay.iCal.Components
         {
             switch(name.ToUpper())
             {
-                case ALARM: return new Alarm(parent); break;
-                case EVENT: return new Event(parent); break;
-                case FREEBUSY: return new FreeBusy(parent); break;
-                case JOURNAL: return new Journal(parent); break;
-                case TIMEZONE: return new DDay.iCal.Components.TimeZone(parent); break;
-                case TODO: return new Todo(parent); break;
+                case ALARM: return new Alarm(parent); 
+                case EVENT: return new Event(parent); 
+                case FREEBUSY: return new FreeBusy(parent);
+                case JOURNAL: return new Journal(parent); 
+                case TIMEZONE: return new DDay.iCal.Components.TimeZone(parent); 
+                case TODO: return new Todo(parent); 
                 case DAYLIGHT:
                 case STANDARD:
-                    return new DDay.iCal.Components.TimeZone.TimeZoneInfo(name.ToUpper(), parent); break;
-                default: return new ComponentBase(parent, name); break;
+                    return new DDay.iCal.Components.TimeZone.TimeZoneInfo(name.ToUpper(), parent);
+                default: return new ComponentBase(parent, name);
             }
         }
 

@@ -185,7 +185,7 @@ namespace DDay.iCal.Components
         /// Returns a typed copy of the Alarm.
         /// </summary>
         /// <returns>A typed copy of the Alarm object.</returns>
-        public Alarm Copy()
+        public new Alarm Copy()
         {
             return (Alarm)base.Copy();
         }

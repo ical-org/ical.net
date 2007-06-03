@@ -56,7 +56,7 @@ namespace DDay.iCal.Components
         /// Returns a typed copy of the Journal object.
         /// </summary>
         /// <returns>A typed copy of the Journal object.</returns>
-        public Journal Copy()
+        public new Journal Copy()
         {
             return (Journal)base.Copy();
         }

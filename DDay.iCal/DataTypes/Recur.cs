@@ -26,6 +26,7 @@ namespace DDay.iCal.DataTypes
         #endregion       
 
         #region Private Fields
+
         public System.Globalization.CultureInfo m_Culture;
         public System.Globalization.Calendar m_Calendar;
 
@@ -33,15 +34,15 @@ namespace DDay.iCal.DataTypes
         private Date_Time m_Until;
         private int m_Count = int.MinValue;
         private int m_Interval = int.MinValue;
-        private ArrayList m_BySecond = new ArrayList();
-        private ArrayList m_ByMinute = new ArrayList();
-        private ArrayList m_ByHour = new ArrayList();
-        private ArrayList m_ByDay = new ArrayList();
-        private ArrayList m_ByMonthDay = new ArrayList();
-        private ArrayList m_ByYearDay = new ArrayList();
-        private ArrayList m_ByWeekNo = new ArrayList();
-        private ArrayList m_ByMonth = new ArrayList();
-        private ArrayList m_BySetPos = new ArrayList();
+        private List<int> m_BySecond = new List<int>();
+        private List<int> m_ByMinute = new List<int>();
+        private List<int> m_ByHour = new List<int>();
+        private List<DaySpecifier> m_ByDay = new List<DaySpecifier>();
+        private List<int> m_ByMonthDay = new List<int>();
+        private List<int> m_ByYearDay = new List<int>();
+        private List<int> m_ByWeekNo = new List<int>();
+        private List<int> m_ByMonth = new List<int>();
+        private List<int> m_BySetPos = new List<int>();
         private DayOfWeek m_Wkst = DayOfWeek.Monday;
         private List<Date_Time> m_StaticOccurrences = new List<Date_Time>();
                 
@@ -73,55 +74,55 @@ namespace DDay.iCal.DataTypes
             set { m_Interval = value; }
         }
 
-        public ArrayList BySecond
+        public List<int> BySecond
         {
             get { return m_BySecond; }
             set { m_BySecond = value; }
         }
 
-        public ArrayList ByMinute
+        public List<int> ByMinute
         {
             get { return m_ByMinute; }
             set { m_ByMinute = value; }
         }
 
-        public ArrayList ByHour
+        public List<int> ByHour
         {
             get { return m_ByHour; }
             set { m_ByHour = value; }
         }
 
-        public ArrayList ByDay
+        public List<DaySpecifier> ByDay
         {
             get { return m_ByDay; }
             set { m_ByDay = value; }
         }
 
-        public ArrayList ByMonthDay
+        public List<int> ByMonthDay
         {
             get { return m_ByMonthDay; }
             set { m_ByMonthDay = value; }
         }
 
-        public ArrayList ByYearDay
+        public List<int> ByYearDay
         {
             get { return m_ByYearDay; }
             set { m_ByYearDay = value; }
         }
 
-        public ArrayList ByWeekNo
+        public List<int> ByWeekNo
         {
             get { return m_ByWeekNo; }
             set { m_ByWeekNo = value; }
         }
 
-        public ArrayList ByMonth
+        public List<int> ByMonth
         {
             get { return m_ByMonth; }
             set { m_ByMonth = value; }
         }
 
-        public ArrayList BySetPos
+        public List<int> BySetPos
         {
             get { return m_BySetPos; }
             set { m_BySetPos = value; }
@@ -165,15 +166,15 @@ namespace DDay.iCal.DataTypes
                 Until = r.Until;
                 Count = r.Count;
                 Interval = r.Interval;
-                BySecond = new ArrayList(r.BySecond);
-                ByMinute = new ArrayList(r.ByMinute);
-                ByHour = new ArrayList(r.ByHour);
-                ByDay = new ArrayList(r.ByDay);
-                ByMonthDay = new ArrayList(r.ByMonthDay);
-                ByYearDay = new ArrayList(r.ByYearDay);
-                ByWeekNo = new ArrayList(r.ByWeekNo);
-                ByMonth = new ArrayList(r.ByMonth);
-                BySetPos = new ArrayList(r.BySetPos);
+                BySecond = new List<int>(r.BySecond);
+                ByMinute = new List<int>(r.ByMinute);
+                ByHour = new List<int>(r.ByHour);
+                ByDay = new List<DaySpecifier>(r.ByDay);
+                ByMonthDay = new List<int>(r.ByMonthDay);
+                ByYearDay = new List<int>(r.ByYearDay);
+                ByWeekNo = new List<int>(r.ByWeekNo);
+                ByMonth = new List<int>(r.ByMonth);
+                BySetPos = new List<int>(r.BySetPos);
                 Wkst = r.Wkst;
             }
             base.CopyFrom(obj);
@@ -184,15 +185,15 @@ namespace DDay.iCal.DataTypes
             if (obj is Recur)
             {
                 Recur r = (Recur)obj;
-                if (!ArrayEquals(r.ByDay, ByDay) ||
-                    !ArrayEquals(r.ByHour, ByHour) ||
-                    !ArrayEquals(r.ByMinute, ByMinute) ||
-                    !ArrayEquals(r.ByMonth, ByMonth) ||
-                    !ArrayEquals(r.ByMonthDay, ByMonthDay) ||
-                    !ArrayEquals(r.BySecond, BySecond) ||
-                    !ArrayEquals(r.BySetPos, BySetPos) ||
-                    !ArrayEquals(r.ByWeekNo, ByWeekNo) ||
-                    !ArrayEquals(r.ByYearDay, ByYearDay))
+                if (!ArrayEquals(r.ByDay.ToArray(), ByDay.ToArray()) ||
+                    !ArrayEquals(r.ByHour.ToArray(), ByHour.ToArray()) ||
+                    !ArrayEquals(r.ByMinute.ToArray(), ByMinute.ToArray()) ||
+                    !ArrayEquals(r.ByMonth.ToArray(), ByMonth.ToArray()) ||
+                    !ArrayEquals(r.ByMonthDay.ToArray(), ByMonthDay.ToArray()) ||
+                    !ArrayEquals(r.BySecond.ToArray(), BySecond.ToArray()) ||
+                    !ArrayEquals(r.BySetPos.ToArray(), BySetPos.ToArray()) ||
+                    !ArrayEquals(r.ByWeekNo.ToArray(), ByWeekNo.ToArray()) ||
+                    !ArrayEquals(r.ByYearDay.ToArray(), ByYearDay.ToArray()))
                     return false;
                 if (r.Count != Count) return false;
                 if (r.Frequency != Frequency) return false;
@@ -214,10 +215,27 @@ namespace DDay.iCal.DataTypes
             return base.Equals(obj);
         }
 
-        private bool ArrayEquals(ArrayList a1, ArrayList a2)
+        public override int GetHashCode()
         {
-            for (int i = 0; i < a1.Count; i++)
-                if (!a1[i].Equals(a2[i]))
+            int hashCode = 
+                ByDay.GetHashCode() ^ ByHour.GetHashCode() ^ ByMinute.GetHashCode() ^
+                ByMonth.GetHashCode() ^ ByMonthDay.GetHashCode() ^ BySecond.GetHashCode() ^
+                BySetPos.GetHashCode() ^ ByWeekNo.GetHashCode() ^ ByYearDay.GetHashCode() ^
+                Count.GetHashCode() ^ Frequency.GetHashCode();
+
+            if (Interval.Equals(1) || Interval.Equals(int.MinValue))
+                hashCode ^= 0x1;
+            else hashCode ^= Interval.GetHashCode();
+
+            hashCode ^= Until.GetHashCode();
+            hashCode ^= Wkst.GetHashCode();
+            return hashCode;
+        }
+
+        private bool ArrayEquals(Array a1, Array a2)
+        {            
+            for (int i = 0; i < a1.Length; i++)
+                if (!a1.GetValue(i).Equals(a2.GetValue(i)))
                     return false;
             return true;
         }
@@ -300,7 +318,6 @@ namespace DDay.iCal.DataTypes
                         int num;
                         if (int.TryParse(match.Groups["Num"].Value, out num))
                         {
-                            ArrayList al = null;
                             switch (match.Groups["Type"].Value.ToLower())
                             {
                                 case "second":
@@ -417,7 +434,7 @@ namespace DDay.iCal.DataTypes
         /// Returns a typed copy of the object.
         /// </summary>
         /// <returns>A typed copy of the object.</returns>
-        public Recur Copy()
+        public new Recur Copy()
         {
             return (Recur)base.Copy();
         }
@@ -440,7 +457,7 @@ namespace DDay.iCal.DataTypes
             throw new ArgumentException(value + " is not a valid iCal day-of-week indicator.");
         }
 
-        static protected void AddInt32Values(ArrayList array, string value)
+        static protected void AddInt32Values(List<int> array, string value)
         {
             string[] values = value.Split(',');
             foreach (string v in values)
@@ -566,9 +583,9 @@ namespace DDay.iCal.DataTypes
 
         #region Calculating Extra Occurrences
 
-        protected ArrayList GetExtraOccurrences(Date_Time StartDate, Date_Time AbsEndDate)
+        protected List<Date_Time> GetExtraOccurrences(Date_Time StartDate, Date_Time AbsEndDate)
         {
-            ArrayList DateTimes = new ArrayList();
+            List<Date_Time> DateTimes = new List<Date_Time>();
             Date_Time EndDate = new Date_Time(StartDate);
             AbsEndDate = AbsEndDate.AddSeconds(-1);
             IncrementDate(EndDate, 1);
@@ -610,7 +627,7 @@ namespace DDay.iCal.DataTypes
             // If BYMONTH is specified, offset each day into those months,
             // otherwise, use Jan. 1st as a reference date.
             // NOTE: fixes USHolidays.ics eval
-            ArrayList months = new ArrayList();
+            List<int> months = new List<int>();
             if (TC.Recur.ByMonth.Count == 0)
                 months.Add(1);
             else months = TC.Months;
@@ -707,7 +724,7 @@ namespace DDay.iCal.DataTypes
             }
         }
 
-        protected ArrayList CalculateChildOccurrences(Date_Time StartDate, Date_Time EndDate)
+        protected List<Date_Time> CalculateChildOccurrences(Date_Time StartDate, Date_Time EndDate)
         {
             TimeCalculation TC = new TimeCalculation(StartDate, EndDate, this);                        
             switch (Frequency)
@@ -743,7 +760,7 @@ namespace DDay.iCal.DataTypes
             // NOTE: fixes RRULE33 eval
             if (BySetPos.Count != 0)
             {
-                ArrayList newDateTimes = new ArrayList();
+                List<Date_Time> newDateTimes = new List<Date_Time>();
                 foreach (int pos in BySetPos)
                 {
                     if (Math.Abs(pos) <= TC.DateTimes.Count)
@@ -941,19 +958,19 @@ namespace DDay.iCal.DataTypes
             public Date_Time EndDate;
             public Recur Recur;
             public int Year;
-            public ArrayList ByDays;
-            public ArrayList YearDays;
-            public ArrayList Months;
-            public ArrayList Days;
-            public ArrayList Hours;
-            public ArrayList Minutes;
-            public ArrayList Seconds;
+            public List<DaySpecifier> ByDays;
+            public List<int> YearDays;
+            public List<int> Months;
+            public List<int> Days;
+            public List<int> Hours;
+            public List<int> Minutes;
+            public List<int> Seconds;
             public int Month;
             public int Day;
             public int Hour;
             public int Minute;
             public int Second;
-            public ArrayList DateTimes;
+            public List<Date_Time> DateTimes;
 
             public TimeCalculation(Date_Time StartDate, Date_Time EndDate, Recur Recur)
             {
@@ -968,14 +985,14 @@ namespace DDay.iCal.DataTypes
                 Minute = StartDate.Value.Minute;
                 Second = StartDate.Value.Second;
 
-                YearDays = new ArrayList(Recur.ByYearDay);
-                ByDays = new ArrayList(Recur.ByDay);
-                Months = new ArrayList(Recur.ByMonth);
-                Days = new ArrayList(Recur.ByMonthDay);
-                Hours = new ArrayList(Recur.ByHour);
-                Minutes = new ArrayList(Recur.ByMinute);
-                Seconds = new ArrayList(Recur.BySecond);
-                DateTimes = new ArrayList();
+                YearDays = new List<int>(Recur.ByYearDay);
+                ByDays = new List<DaySpecifier>(Recur.ByDay);
+                Months = new List<int>(Recur.ByMonth);
+                Days = new List<int>(Recur.ByMonthDay);
+                Hours = new List<int>(Recur.ByHour);
+                Minutes = new List<int>(Recur.ByMinute);
+                Seconds = new List<int>(Recur.BySecond);
+                DateTimes = new List<Date_Time>();
 
                 // Only check what months and days are possible for
                 // the week's period of time we're evaluating

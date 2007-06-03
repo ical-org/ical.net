@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using DDay.iCal.Components;
 
 namespace DDay.iCal.DataTypes
@@ -13,7 +14,7 @@ namespace DDay.iCal.DataTypes
     {
         #region Private Fields
 
-        private ArrayList m_Items = new ArrayList();
+        private List<Period> m_Periods = new List<Period>();
         private TZID m_TZID;
 
         #endregion
@@ -31,10 +32,10 @@ namespace DDay.iCal.DataTypes
             set { m_TZID = value; }
         }
 
-        public ArrayList Items
+        public List<Period> Periods
         {
-          get { return m_Items; }
-          set { m_Items = value; }
+            get { return m_Periods; }
+            set { m_Periods = value; }
         }
 
         #endregion
@@ -56,12 +57,25 @@ namespace DDay.iCal.DataTypes
             if (obj is RDate)
             {
                 RDate r = (RDate)obj;
-                for (int i = 0; i < m_Items.Count; i++)
-                    if (!Items[i].Equals(r.Items[i]))
+
+                if (!Periods.Count.Equals(r.Periods.Count))
+                    return false;
+
+                for (int i = 0; i < Periods.Count; i++)
+                    if (!Periods[i].Equals(r.Periods[i]))
                         return false;
+
                 return true;
             }
             return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = 0;
+            foreach (Period p in Periods)
+                hashCode ^= p.GetHashCode();
+            return hashCode;
         }
  
         public override void CopyFrom(object obj)
@@ -69,8 +83,8 @@ namespace DDay.iCal.DataTypes
             if (obj is RDate)
             {
                 RDate rdt = (RDate)obj;
-                foreach (object o in rdt.Items)
-                    Items.Add(o);
+                foreach (Period p in rdt.Periods)
+                    Periods.Add(p.Copy());
             }
             base.CopyFrom(obj);
         }
@@ -97,13 +111,13 @@ namespace DDay.iCal.DataTypes
                 {
                     ((Date_Time)dt).iCalendar = iCalendar;
                     ((Date_Time)dt).TZID = TZID;
-                    Items.Add(dt);
+                    Periods.Add(new Period((Date_Time)dt));
                 }
                 else if (((Period)p).TryParse(v, ref p))
                 {
                     ((Period)p).StartTime.iCalendar = ((Period)p).EndTime.iCalendar = iCalendar;
                     ((Period)p).StartTime.TZID = ((Period)p).EndTime.TZID = TZID;
-                    Items.Add(p);
+                    Periods.Add((Period)p);
                 }
                 else return false;
             }
@@ -112,24 +126,26 @@ namespace DDay.iCal.DataTypes
 
         #endregion
 
-        #region public Methods
+        #region Public Methods
 
-        public ArrayList Evaluate(Date_Time StartDate, Date_Time FromDate, Date_Time EndDate)
+        public List<Period> Evaluate(Date_Time StartDate, Date_Time FromDate, Date_Time EndDate)
         {
-            ArrayList Periods = new ArrayList();
+            List<Period> periods = new List<Period>();
 
             if (StartDate > FromDate)
                 FromDate = StartDate;
 
             if (EndDate < FromDate ||
                 FromDate > EndDate)
-                return Periods;
-            
-            foreach (object obj in Items)
-                if (!Periods.Contains(obj))
-                    Periods.Add(obj);                
+                return periods;
 
-            return Periods;
+            // FIXME: should we be checking which dates are returned here?
+            // Perhaps we should only return dates between FromDate and EndDate?
+            foreach (Period p in Periods)
+                if (!periods.Contains(p))
+                    periods.Add(p);
+
+            return periods;
         }
 
         #endregion

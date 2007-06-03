@@ -240,6 +240,13 @@ namespace DDay.iCal.Components
             return base.Equals(obj);
         }
 
+        public override int GetHashCode()
+        {
+            if (UID != null)
+                return UID.GetHashCode();
+            return base.GetHashCode();
+        }
+
         public override void SetContentLineValue(ContentLine cl)
         {
             base.SetContentLineValue(cl);

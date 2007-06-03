@@ -137,7 +137,7 @@ namespace DDay.iCal.Components
             /// Returns a typed copy of the TimeZoneInfo object.
             /// </summary>
             /// <returns>A typed copy of the TimeZoneInfo object.</returns>
-            public TimeZoneInfo Copy()
+            public new TimeZoneInfo Copy()
             {
                 return (TimeZoneInfo)base.Copy();
             }

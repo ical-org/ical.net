@@ -117,8 +117,8 @@ namespace DDay.iCal.DataTypes
         }
 
         public override int GetHashCode()
-        {            
-            return (StartTime.GetHashCode() & 0xFF00) + (EndTime.GetHashCode() & 0xFF);
+        {
+            return StartTime.GetHashCode() ^ EndTime.GetHashCode();
         }
 
         public override void CopyFrom(object obj)
@@ -162,7 +162,12 @@ namespace DDay.iCal.DataTypes
                 p.Duration = new Duration(p.EndTime.Value - p.StartTime.Value);
 
             return retVal;
-        }        
+        }
+
+        public new Period Copy()
+        {
+            return (Period)base.Copy();
+        }
 
         #endregion
 

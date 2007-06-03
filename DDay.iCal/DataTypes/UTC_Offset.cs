@@ -110,7 +110,7 @@ namespace DDay.iCal.DataTypes
         /// Returns a typed copy of the object.
         /// </summary>
         /// <returns>A typed copy of the object.</returns>
-        public UTC_Offset Copy()
+        public new UTC_Offset Copy()
         {
             return (UTC_Offset)base.Copy();
         }

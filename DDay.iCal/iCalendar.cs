@@ -213,7 +213,7 @@ namespace DDay.iCal
         /// Creates a typed copy of the iCalendar.
         /// </summary>
         /// <returns>An iCalendar object.</returns>
-        public iCalendar Copy()
+        public new iCalendar Copy()
         {
             return (iCalendar)base.Copy();
         }
@@ -394,16 +394,16 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="s">The stream from which to load the <see cref="iCalendar"/> object</param>
         /// <returns>An <see cref="iCalendar"/> object</returns>
-        static public iCalendar LoadFromStream(Stream s) { return LoadFromStream(typeof(iCalendar), s); }
-        static public iCalendar LoadFromStream(TextReader tr) { return LoadFromStream(typeof(iCalendar), tr); }
-        static public T LoadFromStream<T>(TextReader tr)
+        static new public iCalendar LoadFromStream(Stream s) { return LoadFromStream(typeof(iCalendar), s); }
+        static new public iCalendar LoadFromStream(TextReader tr) { return LoadFromStream(typeof(iCalendar), tr); }
+        static new public T LoadFromStream<T>(TextReader tr)
         {
             if (typeof(T) == typeof(iCalendar) ||
                 typeof(T).IsSubclassOf(typeof(iCalendar)))
                 return (T)(object)LoadFromStream(typeof(T), tr);
             else return default(T);
         }
-        static public T LoadFromStream<T>(Stream s)
+        static new public T LoadFromStream<T>(Stream s)
         {
             if (typeof(T) == typeof(iCalendar) ||
                 typeof(T).IsSubclassOf(typeof(iCalendar)))
@@ -591,7 +591,7 @@ namespace DDay.iCal
         /// <param name="parent">The parent of the object to create.</param>
         /// <param name="name">The name of the iCal object.</param>
         /// <returns>A newly created object</returns>
-        internal ComponentBase Create(iCalObject parent, string name)
+        internal new ComponentBase Create(iCalObject parent, string name)
         {
             if (m_ComponentBaseCreate == null)
                 throw new ArgumentException("Create() cannot be called without a valid ComponentBase Create() method attached");

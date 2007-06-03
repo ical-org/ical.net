@@ -76,6 +76,13 @@ namespace DDay.iCal.DataTypes
             return base.Equals(obj);
         }
 
+        public override int GetHashCode()
+        {
+            if (Uri != null)
+                return Uri.GetHashCode();
+            return base.GetHashCode();
+        }
+
         public override bool TryParse(string value, ref object obj)
         {
             if (Encoding != null)

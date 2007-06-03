@@ -69,6 +69,11 @@ namespace DDay.iCal.DataTypes
             return base.Equals(obj);
         }
 
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
+        }
+
         public override bool TryParse(string value, ref object obj)
         {
             Match match = Regex.Match(value, @"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?))$");

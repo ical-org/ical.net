@@ -22,7 +22,7 @@ namespace DDay.iCal.Components
         #region Private Fields
 
         private iCalObject m_Parent = null;
-        private ArrayList m_Children = new ArrayList();
+        private List<iCalObject> m_Children = new List<iCalObject>();
         private string m_name;
         private Hashtable m_Properties = new Hashtable();
         private Hashtable m_Parameters = new Hashtable();
@@ -62,7 +62,7 @@ namespace DDay.iCal.Components
         /// A collection of <see cref="iCalObject"/>s that are children 
         /// of the current object.
         /// </summary>
-        public ArrayList Children
+        public List<iCalObject> Children
         {
             get { return m_Children; }
             set { m_Children = value; }
@@ -234,7 +234,7 @@ namespace DDay.iCal.Components
 
                         // It's an array, let's add an item to the end
                         if (itemType.IsArray)
-                        {
+                        {   
                             ArrayList arr = new ArrayList();
                             if (value != null)
                                 arr.AddRange((ICollection)value);
