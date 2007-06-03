@@ -122,6 +122,15 @@
     <None Include="Calendars\Serialization\LANGUAGE2.ics">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Calendars\Serialization\SERIALIZE21.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Calendars\Serialization\SERIALIZE22.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Calendars\Serialization\SERIALIZE23.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Calendars\Serialization\TIMEZONE2.ics">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
