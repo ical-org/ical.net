@@ -7,6 +7,7 @@ using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
 using System.IO;
+using DDay.iCal.Serialization.iCalendar.Components;
 
 namespace DDay.iCal.Components
 {
@@ -58,52 +59,52 @@ namespace DDay.iCal.Components
         /// </summary>
         /// <param name="s">The stream from which to load the iCalendar component</param>
         /// <returns>A <see cref="ComponentBase"/> object</returns>
-        static public ComponentBase LoadFromStream(Stream s) { return LoadFromStream(null, s); }
-        static public ComponentBase LoadFromStream(TextReader tr) { return LoadFromStream(null, tr); }
-        static public T LoadFromStream<T>(TextReader tr)
+        static public ComponentBase LoadFromStream(Stream s) { return LoadFromStream<ComponentBaseSerializer>(null, s, Encoding.UTF8); }        
+        static public ComponentBase LoadFromStream(TextReader tr) { return LoadFromStream<ComponentBaseSerializer>(null, tr); }
+        static public T LoadFromStream<T>(TextReader tr) { return LoadFromStream<T, ComponentBaseSerializer>(tr); }
+        static public T LoadFromStream<T>(Stream s, Encoding encoding) { return LoadFromStream<T, ComponentBaseSerializer>(s, encoding); }
+        static public T LoadFromStream<T, U>(TextReader tr)
         {
             if (typeof(T) == typeof(ComponentBase) ||
                 typeof(T).IsSubclassOf(typeof(ComponentBase)))
-                return (T)(object)LoadFromStream(null, tr);
+                return (T)(object)LoadFromStream<U>(null, tr);
             else return default(T);
         }
-        static public T LoadFromStream<T>(Stream s)
+        static public T LoadFromStream<T, U>(Stream s, Encoding encoding)
         {
             if (typeof(T) == typeof(ComponentBase) ||
                 typeof(T).IsSubclassOf(typeof(ComponentBase)))
-                return (T)(object)LoadFromStream(null, s);
+                return (T)(object)LoadFromStream<U>(null, s, encoding);
             else return default(T);
-        }
-        static public ComponentBase LoadFromStream(iCalObject parent, Stream s)
+        }       
+        static public ComponentBase LoadFromStream<T>(iCalObject parent, TextReader tr)
         {
-            TextReader tr = new StreamReader(s, Encoding.UTF8);
-            return LoadFromStream(parent, tr);
-        }
-        static public ComponentBase LoadFromStream(iCalObject parent, TextReader tr)
-        {
-            // Create a lexer for our text stream
-            iCalLexer lexer = new iCalLexer(tr);
-            iCalParser parser = new iCalParser(lexer);
-
-            // Determine the calendar type we'll be using when constructing
-            // iCalendar components...
-            if (parent != null)
-                parser.iCalendarType = parent.iCalendar.GetType();
-            else
-            {
-                parent = new iCalendar();
-                parser.iCalendarType = typeof(iCalendar);
-            }
-
-            // Parse the iCalendar!
-            ComponentBase comp = (ComponentBase)parser.component(parent);
-
-            // Close our text stream
+            string text = tr.ReadToEnd();
             tr.Close();
 
-            // Return the parsed component
-            return comp;
+            byte[] memoryBlock = Encoding.UTF8.GetBytes(text);
+            MemoryStream ms = new MemoryStream(memoryBlock);
+            return LoadFromStream<T>(parent, ms, Encoding.UTF8);
+        }      
+        static public ComponentBase LoadFromStream<T>(iCalObject parent, Stream s, Encoding encoding)
+        {
+            ISerializable serializable = (ISerializable)Activator.CreateInstance(typeof(T));
+            return LoadFromStream(parent, s, encoding, serializable);
         }
+        static public ComponentBase LoadFromStream(iCalObject parent, Stream s, Encoding encoding, ISerializable serializer)
+        {
+            Type iCalendarType = typeof(iCalendar);
+            if (parent != null)
+                iCalendarType = parent.iCalendar.GetType();
+
+            ComponentBase component = (ComponentBase)
+                serializer.Deserialize(s, encoding, iCalendarType);
+
+            if (parent != null)
+                parent.AddChild(component);
+
+            return component;
+        }        
 
         #endregion
 
