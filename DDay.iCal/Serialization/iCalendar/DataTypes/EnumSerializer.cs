@@ -37,8 +37,13 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
             byte[] data = encoding.GetBytes(SerializeToString());
             if (data.Length > 0)
                 stream.Write(data, 0, data.Length);
-        }        
+        }
 
-        #endregion
+        public iCalObject Deserialize(Stream stream, Encoding encoding, Type iCalendarType)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        #endregion        
     }
 }

@@ -247,18 +247,6 @@ namespace DDay.iCal.Components
             return base.GetHashCode();
         }
 
-        public override void SetContentLineValue(ContentLine cl)
-        {
-            base.SetContentLineValue(cl);
-
-            if (cl.Name == "UID")
-            {
-                Text text = new Text();
-                text.ContentLine = cl;
-                UID = text.Value;
-            }
-        }
-
         public override void CreateInitialize()
         {
             base.CreateInitialize();

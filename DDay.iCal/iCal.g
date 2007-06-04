@@ -16,6 +16,7 @@ class iCalParser extends Parser;
 options
 {
     k=3;
+    defaultErrorHandler=false;
 }
 
 // iCalendar object
@@ -46,7 +47,7 @@ contentline[iCalObject o]
     ContentLine c = new ContentLine(o);
     string n;
     string v;
-}: n=name {c.Name = n;} (SEMICOLON param[c])* COLON v=value {c.Value = v; o.SetContentLineValue(c); } CRLF;
+}: n=name {c.Name = n;} (SEMICOLON param[c])* COLON v=value {c.Value = v; DDay.iCal.Serialization.iCalendar.Components.ContentLineSerializer.DeserializeToObject(c, o); } CRLF;
 
 name returns [string s = string.Empty;]: x:X_NAME {s = x.getText();} | i:IANA_TOKEN {s = i.getText();};
 param[iCalObject o] {Parameter p; string n; string v;}: n=param_name {p = new Parameter(o, n);} EQUAL v=param_value {p.Values.Add(v);} (COMMA v=param_value {p.Values.Add(v);})*;

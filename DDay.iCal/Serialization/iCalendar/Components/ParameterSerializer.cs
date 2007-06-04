@@ -42,6 +42,11 @@ namespace DDay.iCal.Serialization.iCalendar.Components
             stream.Write(param, 0, param.Length);
         }
 
-        #endregion
+        public iCalObject Deserialize(Stream stream, Encoding encoding, Type iCalendarType)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        #endregion        
     }
 }

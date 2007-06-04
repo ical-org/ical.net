@@ -93,37 +93,30 @@ namespace DDay.iCal
 		iCalendar iCal = (iCalendar)Activator.CreateInstance(iCalendarType);;
 		
 		
-		try {      // for error handling
-			{    // ( ... )*
-				for (;;)
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((LA(1)==BEGIN))
 				{
-					if ((LA(1)==BEGIN))
-					{
-						match(BEGIN);
-						match(COLON);
-						match(VCALENDAR);
-						match(CRLF);
-						icalbody(iCal);
-						match(END);
-						match(COLON);
-						match(VCALENDAR);
-						match(CRLF);
-					}
-					else
-					{
-						goto _loop3_breakloop;
-					}
-					
+					match(BEGIN);
+					match(COLON);
+					match(VCALENDAR);
+					match(CRLF);
+					icalbody(iCal);
+					match(END);
+					match(COLON);
+					match(VCALENDAR);
+					match(CRLF);
 				}
-_loop3_breakloop:				;
-			}    // ( ... )*
-			iCal.OnLoad(EventArgs.Empty);
-		}
-		catch (RecognitionException ex)
-		{
-			reportError(ex);
-			recover(ex,tokenSet_0_);
-		}
+				else
+				{
+					goto _loop3_breakloop;
+				}
+				
+			}
+_loop3_breakloop:			;
+		}    // ( ... )*
+		iCal.OnLoad(EventArgs.Empty);
 		return iCal;
 	}
 	
@@ -133,54 +126,47 @@ _loop3_breakloop:				;
 {
 		
 		
-		try {      // for error handling
-			{
-				switch ( LA(1) )
-				{
-				case IANA_TOKEN:
-				case X_NAME:
-				case PRODID:
-				case VERSION:
-				case CALSCALE:
-				case METHOD:
-				{
-					calprops(iCal);
-					break;
-				}
-				case BEGIN:
-				case END:
-				{
-					break;
-				}
-				default:
-				{
-					throw new NoViableAltException(LT(1), getFilename());
-				}
-				 }
-			}
-			{
-				switch ( LA(1) )
-				{
-				case BEGIN:
-				{
-					component(iCal);
-					break;
-				}
-				case END:
-				{
-					break;
-				}
-				default:
-				{
-					throw new NoViableAltException(LT(1), getFilename());
-				}
-				 }
-			}
-		}
-		catch (RecognitionException ex)
 		{
-			reportError(ex);
-			recover(ex,tokenSet_1_);
+			switch ( LA(1) )
+			{
+			case IANA_TOKEN:
+			case X_NAME:
+			case PRODID:
+			case VERSION:
+			case CALSCALE:
+			case METHOD:
+			{
+				calprops(iCal);
+				break;
+			}
+			case BEGIN:
+			case END:
+			{
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			 }
+		}
+		{
+			switch ( LA(1) )
+			{
+			case BEGIN:
+			{
+				component(iCal);
+				break;
+			}
+			case END:
+			{
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			 }
 		}
 	}
 	
@@ -190,31 +176,24 @@ _loop3_breakloop:				;
 {
 		
 		
-		try {      // for error handling
-			calprop(iCal);
-			{ // ( ... )+
-				int _cnt18=0;
-				for (;;)
+		calprop(iCal);
+		{ // ( ... )+
+			int _cnt18=0;
+			for (;;)
+			{
+				if ((tokenSet_0_.member(LA(1))))
 				{
-					if ((tokenSet_2_.member(LA(1))))
-					{
-						calprop(iCal);
-					}
-					else
-					{
-						if (_cnt18 >= 1) { goto _loop18_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
-					}
-					
-					_cnt18++;
+					calprop(iCal);
 				}
-_loop18_breakloop:				;
-			}    // ( ... )+
-		}
-		catch (RecognitionException ex)
-		{
-			reportError(ex);
-			recover(ex,tokenSet_3_);
-		}
+				else
+				{
+					if (_cnt18 >= 1) { goto _loop18_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
+				}
+				
+				_cnt18++;
+			}
+_loop18_breakloop:			;
+		}    // ( ... )+
 	}
 	
 	public ComponentBase  component(
@@ -224,33 +203,26 @@ _loop18_breakloop:				;
 		ComponentBase c = null;;
 		
 		
-		try {      // for error handling
-			{ // ( ... )+
-				int _cnt9=0;
-				for (;;)
+		{ // ( ... )+
+			int _cnt9=0;
+			for (;;)
+			{
+				if ((LA(1)==BEGIN) && (LA(2)==COLON) && (LA(3)==IANA_TOKEN))
 				{
-					if ((LA(1)==BEGIN) && (LA(2)==COLON) && (LA(3)==IANA_TOKEN))
-					{
-						c=iana_comp(o);
-					}
-					else if ((LA(1)==BEGIN) && (LA(2)==COLON) && (LA(3)==X_NAME)) {
-						c=x_comp(o);
-					}
-					else
-					{
-						if (_cnt9 >= 1) { goto _loop9_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
-					}
-					
-					_cnt9++;
+					c=iana_comp(o);
 				}
-_loop9_breakloop:				;
-			}    // ( ... )+
-		}
-		catch (RecognitionException ex)
-		{
-			reportError(ex);
-			recover(ex,tokenSet_4_);
-		}
+				else if ((LA(1)==BEGIN) && (LA(2)==COLON) && (LA(3)==X_NAME)) {
+					c=x_comp(o);
+				}
+				else
+				{
+					if (_cnt9 >= 1) { goto _loop9_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
+				}
+				
+				_cnt9++;
+			}
+_loop9_breakloop:			;
+		}    // ( ... )+
 		return c;
 	}
 	
@@ -262,41 +234,34 @@ _loop9_breakloop:				;
 		
 		IToken  n = null;
 		
-		try {      // for error handling
-			match(BEGIN);
-			match(COLON);
-			n = LT(1);
-			match(IANA_TOKEN);
-			c = o.iCalendar.Create(o, n.getText().ToLower());
-			match(CRLF);
-			{ // ( ... )+
-				int _cnt12=0;
-				for (;;)
+		match(BEGIN);
+		match(COLON);
+		n = LT(1);
+		match(IANA_TOKEN);
+		c = o.iCalendar.Create(o, n.getText().ToLower());
+		match(CRLF);
+		{ // ( ... )+
+			int _cnt12=0;
+			for (;;)
+			{
+				if ((LA(1)==BEGIN||LA(1)==IANA_TOKEN||LA(1)==X_NAME))
 				{
-					if ((LA(1)==BEGIN||LA(1)==IANA_TOKEN||LA(1)==X_NAME))
-					{
-						calendarline(c);
-					}
-					else
-					{
-						if (_cnt12 >= 1) { goto _loop12_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
-					}
-					
-					_cnt12++;
+					calendarline(c);
 				}
-_loop12_breakloop:				;
-			}    // ( ... )+
-			match(END);
-			match(COLON);
-			match(IANA_TOKEN);
-			match(CRLF);
-			c.OnLoad(EventArgs.Empty);
-		}
-		catch (RecognitionException ex)
-		{
-			reportError(ex);
-			recover(ex,tokenSet_4_);
-		}
+				else
+				{
+					if (_cnt12 >= 1) { goto _loop12_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
+				}
+				
+				_cnt12++;
+			}
+_loop12_breakloop:			;
+		}    // ( ... )+
+		match(END);
+		match(COLON);
+		match(IANA_TOKEN);
+		match(CRLF);
+		c.OnLoad(EventArgs.Empty);
 		return c;
 	}
 	
@@ -308,41 +273,34 @@ _loop12_breakloop:				;
 		
 		IToken  n = null;
 		
-		try {      // for error handling
-			match(BEGIN);
-			match(COLON);
-			n = LT(1);
-			match(X_NAME);
-			c = o.iCalendar.Create(o, n.getText().ToLower());
-			match(CRLF);
-			{ // ( ... )+
-				int _cnt15=0;
-				for (;;)
+		match(BEGIN);
+		match(COLON);
+		n = LT(1);
+		match(X_NAME);
+		c = o.iCalendar.Create(o, n.getText().ToLower());
+		match(CRLF);
+		{ // ( ... )+
+			int _cnt15=0;
+			for (;;)
+			{
+				if ((LA(1)==BEGIN||LA(1)==IANA_TOKEN||LA(1)==X_NAME))
 				{
-					if ((LA(1)==BEGIN||LA(1)==IANA_TOKEN||LA(1)==X_NAME))
-					{
-						calendarline(c);
-					}
-					else
-					{
-						if (_cnt15 >= 1) { goto _loop15_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
-					}
-					
-					_cnt15++;
+					calendarline(c);
 				}
-_loop15_breakloop:				;
-			}    // ( ... )+
-			match(END);
-			match(COLON);
-			match(X_NAME);
-			match(CRLF);
-			c.OnLoad(EventArgs.Empty);
-		}
-		catch (RecognitionException ex)
-		{
-			reportError(ex);
-			recover(ex,tokenSet_4_);
-		}
+				else
+				{
+					if (_cnt15 >= 1) { goto _loop15_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
+				}
+				
+				_cnt15++;
+			}
+_loop15_breakloop:			;
+		}    // ( ... )+
+		match(END);
+		match(COLON);
+		match(X_NAME);
+		match(CRLF);
+		c.OnLoad(EventArgs.Empty);
 		return c;
 	}
 	
@@ -352,31 +310,24 @@ _loop15_breakloop:				;
 {
 		
 		
-		try {      // for error handling
-			switch ( LA(1) )
-			{
-			case IANA_TOKEN:
-			case X_NAME:
-			{
-				contentline(o);
-				break;
-			}
-			case BEGIN:
-			{
-				component(o);
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			 }
-		}
-		catch (RecognitionException ex)
+		switch ( LA(1) )
 		{
-			reportError(ex);
-			recover(ex,tokenSet_4_);
+		case IANA_TOKEN:
+		case X_NAME:
+		{
+			contentline(o);
+			break;
 		}
+		case BEGIN:
+		{
+			component(o);
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		 }
 	}
 	
 	public void calprop(
@@ -385,50 +336,43 @@ _loop15_breakloop:				;
 {
 		
 		
-		try {      // for error handling
-			switch ( LA(1) )
-			{
-			case PRODID:
-			{
-				prodid(o);
-				break;
-			}
-			case VERSION:
-			{
-				version(o);
-				break;
-			}
-			case CALSCALE:
-			{
-				calscale(o);
-				break;
-			}
-			case METHOD:
-			{
-				method(o);
-				break;
-			}
-			case IANA_TOKEN:
-			{
-				iana_prop(o);
-				break;
-			}
-			case X_NAME:
-			{
-				x_prop(o);
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			 }
-		}
-		catch (RecognitionException ex)
+		switch ( LA(1) )
 		{
-			reportError(ex);
-			recover(ex,tokenSet_5_);
+		case PRODID:
+		{
+			prodid(o);
+			break;
 		}
+		case VERSION:
+		{
+			version(o);
+			break;
+		}
+		case CALSCALE:
+		{
+			calscale(o);
+			break;
+		}
+		case METHOD:
+		{
+			method(o);
+			break;
+		}
+		case IANA_TOKEN:
+		{
+			iana_prop(o);
+			break;
+		}
+		case X_NAME:
+		{
+			x_prop(o);
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		 }
 	}
 	
 	public void prodid(
@@ -439,36 +383,29 @@ _loop15_breakloop:				;
 		IToken  n = null;
 		Property p; string v;
 		
-		try {      // for error handling
-			n = LT(1);
-			match(PRODID);
-			p = new Property(o);
-			{    // ( ... )*
-				for (;;)
+		n = LT(1);
+		match(PRODID);
+		p = new Property(o);
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((LA(1)==SEMICOLON))
 				{
-					if ((LA(1)==SEMICOLON))
-					{
-						match(SEMICOLON);
-						xparam(p);
-					}
-					else
-					{
-						goto _loop22_breakloop;
-					}
-					
+					match(SEMICOLON);
+					xparam(p);
 				}
-_loop22_breakloop:				;
-			}    // ( ... )*
-			match(COLON);
-			v=text();
-			p.Name = n.getText(); p.Value = v; p.AddToParent();
-			match(CRLF);
-		}
-		catch (RecognitionException ex)
-		{
-			reportError(ex);
-			recover(ex,tokenSet_5_);
-		}
+				else
+				{
+					goto _loop22_breakloop;
+				}
+				
+			}
+_loop22_breakloop:			;
+		}    // ( ... )*
+		match(COLON);
+		v=text();
+		p.Name = n.getText(); p.Value = v; p.AddToParent();
+		match(CRLF);
 	}
 	
 	public void version(
@@ -479,36 +416,29 @@ _loop22_breakloop:				;
 		IToken  n = null;
 		Property p; string v;
 		
-		try {      // for error handling
-			n = LT(1);
-			match(VERSION);
-			p = new Property(o);
-			{    // ( ... )*
-				for (;;)
+		n = LT(1);
+		match(VERSION);
+		p = new Property(o);
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((LA(1)==SEMICOLON))
 				{
-					if ((LA(1)==SEMICOLON))
-					{
-						match(SEMICOLON);
-						xparam(p);
-					}
-					else
-					{
-						goto _loop25_breakloop;
-					}
-					
+					match(SEMICOLON);
+					xparam(p);
 				}
-_loop25_breakloop:				;
-			}    // ( ... )*
-			match(COLON);
-			v=version_number();
-			p.Name = n.getText(); p.Value = v; p.AddToParent();
-			match(CRLF);
-		}
-		catch (RecognitionException ex)
-		{
-			reportError(ex);
-			recover(ex,tokenSet_5_);
-		}
+				else
+				{
+					goto _loop25_breakloop;
+				}
+				
+			}
+_loop25_breakloop:			;
+		}    // ( ... )*
+		match(COLON);
+		v=version_number();
+		p.Name = n.getText(); p.Value = v; p.AddToParent();
+		match(CRLF);
 	}
 	
 	public void calscale(
@@ -520,37 +450,30 @@ _loop25_breakloop:				;
 		IToken  v = null;
 		Property p;
 		
-		try {      // for error handling
-			n = LT(1);
-			match(CALSCALE);
-			p = new Property(o);
-			{    // ( ... )*
-				for (;;)
+		n = LT(1);
+		match(CALSCALE);
+		p = new Property(o);
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((LA(1)==SEMICOLON))
 				{
-					if ((LA(1)==SEMICOLON))
-					{
-						match(SEMICOLON);
-						xparam(p);
-					}
-					else
-					{
-						goto _loop28_breakloop;
-					}
-					
+					match(SEMICOLON);
+					xparam(p);
 				}
-_loop28_breakloop:				;
-			}    // ( ... )*
-			match(COLON);
-			v = LT(1);
-			match(IANA_TOKEN);
-			p.Name = n.getText(); p.Value = v.getText(); p.AddToParent();
-			match(CRLF);
-		}
-		catch (RecognitionException ex)
-		{
-			reportError(ex);
-			recover(ex,tokenSet_5_);
-		}
+				else
+				{
+					goto _loop28_breakloop;
+				}
+				
+			}
+_loop28_breakloop:			;
+		}    // ( ... )*
+		match(COLON);
+		v = LT(1);
+		match(IANA_TOKEN);
+		p.Name = n.getText(); p.Value = v.getText(); p.AddToParent();
+		match(CRLF);
 	}
 	
 	public void method(
@@ -562,37 +485,30 @@ _loop28_breakloop:				;
 		IToken  v = null;
 		Property p;
 		
-		try {      // for error handling
-			n = LT(1);
-			match(METHOD);
-			p = new Property(o);
-			{    // ( ... )*
-				for (;;)
+		n = LT(1);
+		match(METHOD);
+		p = new Property(o);
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((LA(1)==SEMICOLON))
 				{
-					if ((LA(1)==SEMICOLON))
-					{
-						match(SEMICOLON);
-						xparam(p);
-					}
-					else
-					{
-						goto _loop31_breakloop;
-					}
-					
+					match(SEMICOLON);
+					xparam(p);
 				}
-_loop31_breakloop:				;
-			}    // ( ... )*
-			match(COLON);
-			v = LT(1);
-			match(IANA_TOKEN);
-			p.Name = n.getText(); p.Value = v.getText(); p.AddToParent();
-			match(CRLF);
-		}
-		catch (RecognitionException ex)
-		{
-			reportError(ex);
-			recover(ex,tokenSet_5_);
-		}
+				else
+				{
+					goto _loop31_breakloop;
+				}
+				
+			}
+_loop31_breakloop:			;
+		}    // ( ... )*
+		match(COLON);
+		v = LT(1);
+		match(IANA_TOKEN);
+		p.Name = n.getText(); p.Value = v.getText(); p.AddToParent();
+		match(CRLF);
 	}
 	
 	public void iana_prop(
@@ -603,36 +519,29 @@ _loop31_breakloop:				;
 		IToken  n = null;
 		Property p; string v;
 		
-		try {      // for error handling
-			n = LT(1);
-			match(IANA_TOKEN);
-			p = new Property(o);
-			{    // ( ... )*
-				for (;;)
+		n = LT(1);
+		match(IANA_TOKEN);
+		p = new Property(o);
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((LA(1)==SEMICOLON))
 				{
-					if ((LA(1)==SEMICOLON))
-					{
-						match(SEMICOLON);
-						xparam(p);
-					}
-					else
-					{
-						goto _loop34_breakloop;
-					}
-					
+					match(SEMICOLON);
+					xparam(p);
 				}
-_loop34_breakloop:				;
-			}    // ( ... )*
-			match(COLON);
-			v=text();
-			p.Name = n.getText(); p.Value = v; p.AddToParent();
-			match(CRLF);
-		}
-		catch (RecognitionException ex)
-		{
-			reportError(ex);
-			recover(ex,tokenSet_5_);
-		}
+				else
+				{
+					goto _loop34_breakloop;
+				}
+				
+			}
+_loop34_breakloop:			;
+		}    // ( ... )*
+		match(COLON);
+		v=text();
+		p.Name = n.getText(); p.Value = v; p.AddToParent();
+		match(CRLF);
 	}
 	
 	public void x_prop(
@@ -643,36 +552,29 @@ _loop34_breakloop:				;
 		IToken  n = null;
 		Property p; string v;
 		
-		try {      // for error handling
-			n = LT(1);
-			match(X_NAME);
-			p = new Property(o);
-			{    // ( ... )*
-				for (;;)
+		n = LT(1);
+		match(X_NAME);
+		p = new Property(o);
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((LA(1)==SEMICOLON))
 				{
-					if ((LA(1)==SEMICOLON))
-					{
-						match(SEMICOLON);
-						xparam(p);
-					}
-					else
-					{
-						goto _loop37_breakloop;
-					}
-					
+					match(SEMICOLON);
+					xparam(p);
 				}
-_loop37_breakloop:				;
-			}    // ( ... )*
-			match(COLON);
-			v=text();
-			p.Name = n.getText(); p.Value = v; p.AddToParent();
-			match(CRLF);
-		}
-		catch (RecognitionException ex)
-		{
-			reportError(ex);
-			recover(ex,tokenSet_5_);
-		}
+				else
+				{
+					goto _loop37_breakloop;
+				}
+				
+			}
+_loop37_breakloop:			;
+		}    // ( ... )*
+		match(COLON);
+		v=text();
+		p.Name = n.getText(); p.Value = v; p.AddToParent();
+		match(CRLF);
 	}
 	
 	public void xparam(
@@ -683,36 +585,29 @@ _loop37_breakloop:				;
 		IToken  n = null;
 		Parameter p; string v;
 		
-		try {      // for error handling
-			n = LT(1);
-			match(X_NAME);
-			p = new Parameter(o, n.getText());
-			match(EQUAL);
-			v=param_value();
-			p.Values.Add(v);
-			{    // ( ... )*
-				for (;;)
+		n = LT(1);
+		match(X_NAME);
+		p = new Parameter(o, n.getText());
+		match(EQUAL);
+		v=param_value();
+		p.Values.Add(v);
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((LA(1)==COMMA))
 				{
-					if ((LA(1)==COMMA))
-					{
-						match(COMMA);
-						v=param_value();
-						p.Values.Add(v);
-					}
-					else
-					{
-						goto _loop75_breakloop;
-					}
-					
+					match(COMMA);
+					v=param_value();
+					p.Values.Add(v);
 				}
-_loop75_breakloop:				;
-			}    // ( ... )*
-		}
-		catch (RecognitionException ex)
-		{
-			reportError(ex);
-			recover(ex,tokenSet_6_);
-		}
+				else
+				{
+					goto _loop75_breakloop;
+				}
+				
+			}
+_loop75_breakloop:			;
+		}    // ( ... )*
 	}
 	
 	public string  text() //throws RecognitionException, TokenStreamException
@@ -721,29 +616,22 @@ _loop75_breakloop:				;
 		
 		string t;
 		
-		try {      // for error handling
-			{    // ( ... )*
-				for (;;)
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((tokenSet_1_.member(LA(1))))
 				{
-					if ((tokenSet_7_.member(LA(1))))
-					{
-						t=text_char();
-						s += t;
-					}
-					else
-					{
-						goto _loop68_breakloop;
-					}
-					
+					t=text_char();
+					s += t;
 				}
-_loop68_breakloop:				;
-			}    // ( ... )*
-		}
-		catch (RecognitionException ex)
-		{
-			reportError(ex);
-			recover(ex,tokenSet_8_);
-		}
+				else
+				{
+					goto _loop68_breakloop;
+				}
+				
+			}
+_loop68_breakloop:			;
+		}    // ( ... )*
 		return s;
 	}
 	
@@ -753,35 +641,28 @@ _loop68_breakloop:				;
 		
 		string t;
 		
-		try {      // for error handling
-			t=number();
-			s += t;
-			{
-				switch ( LA(1) )
-				{
-				case SEMICOLON:
-				{
-					match(SEMICOLON);
-					s += ";";
-					t=number();
-					s += t;
-					break;
-				}
-				case CRLF:
-				{
-					break;
-				}
-				default:
-				{
-					throw new NoViableAltException(LT(1), getFilename());
-				}
-				 }
-			}
-		}
-		catch (RecognitionException ex)
+		t=number();
+		s += t;
 		{
-			reportError(ex);
-			recover(ex,tokenSet_8_);
+			switch ( LA(1) )
+			{
+			case SEMICOLON:
+			{
+				match(SEMICOLON);
+				s += ";";
+				t=number();
+				s += t;
+				break;
+			}
+			case CRLF:
+			{
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			 }
 		}
 		return s;
 	}
@@ -797,35 +678,28 @@ _loop68_breakloop:				;
 		string v;
 		
 		
-		try {      // for error handling
-			n=name();
-			c.Name = n;
-			{    // ( ... )*
-				for (;;)
+		n=name();
+		c.Name = n;
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((LA(1)==SEMICOLON))
 				{
-					if ((LA(1)==SEMICOLON))
-					{
-						match(SEMICOLON);
-						param(c);
-					}
-					else
-					{
-						goto _loop41_breakloop;
-					}
-					
+					match(SEMICOLON);
+					param(c);
 				}
-_loop41_breakloop:				;
-			}    // ( ... )*
-			match(COLON);
-			v=value();
-			c.Value = v; o.SetContentLineValue(c);
-			match(CRLF);
-		}
-		catch (RecognitionException ex)
-		{
-			reportError(ex);
-			recover(ex,tokenSet_4_);
-		}
+				else
+				{
+					goto _loop41_breakloop;
+				}
+				
+			}
+_loop41_breakloop:			;
+		}    // ( ... )*
+		match(COLON);
+		v=value();
+		c.Value = v; DDay.iCal.Serialization.iCalendar.Components.ContentLineSerializer.DeserializeToObject(c, o);
+		match(CRLF);
 	}
 	
 	public string  name() //throws RecognitionException, TokenStreamException
@@ -835,34 +709,27 @@ _loop41_breakloop:				;
 		IToken  x = null;
 		IToken  i = null;
 		
-		try {      // for error handling
-			switch ( LA(1) )
-			{
-			case X_NAME:
-			{
-				x = LT(1);
-				match(X_NAME);
-				s = x.getText();
-				break;
-			}
-			case IANA_TOKEN:
-			{
-				i = LT(1);
-				match(IANA_TOKEN);
-				s = i.getText();
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			 }
-		}
-		catch (RecognitionException ex)
+		switch ( LA(1) )
 		{
-			reportError(ex);
-			recover(ex,tokenSet_6_);
+		case X_NAME:
+		{
+			x = LT(1);
+			match(X_NAME);
+			s = x.getText();
+			break;
 		}
+		case IANA_TOKEN:
+		{
+			i = LT(1);
+			match(IANA_TOKEN);
+			s = i.getText();
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		 }
 		return s;
 	}
 	
@@ -873,35 +740,28 @@ _loop41_breakloop:				;
 		
 		Parameter p; string n; string v;
 		
-		try {      // for error handling
-			n=param_name();
-			p = new Parameter(o, n);
-			match(EQUAL);
-			v=param_value();
-			p.Values.Add(v);
-			{    // ( ... )*
-				for (;;)
+		n=param_name();
+		p = new Parameter(o, n);
+		match(EQUAL);
+		v=param_value();
+		p.Values.Add(v);
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((LA(1)==COMMA))
 				{
-					if ((LA(1)==COMMA))
-					{
-						match(COMMA);
-						v=param_value();
-						p.Values.Add(v);
-					}
-					else
-					{
-						goto _loop45_breakloop;
-					}
-					
+					match(COMMA);
+					v=param_value();
+					p.Values.Add(v);
 				}
-_loop45_breakloop:				;
-			}    // ( ... )*
-		}
-		catch (RecognitionException ex)
-		{
-			reportError(ex);
-			recover(ex,tokenSet_6_);
-		}
+				else
+				{
+					goto _loop45_breakloop;
+				}
+				
+			}
+_loop45_breakloop:			;
+		}    // ( ... )*
 	}
 	
 	public string  value() //throws RecognitionException, TokenStreamException
@@ -910,29 +770,22 @@ _loop45_breakloop:				;
 		
 		string c;
 		
-		try {      // for error handling
-			{    // ( ... )*
-				for (;;)
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((tokenSet_2_.member(LA(1))))
 				{
-					if ((tokenSet_9_.member(LA(1))))
-					{
-						c=value_char();
-						v += c;
-					}
-					else
-					{
-						goto _loop53_breakloop;
-					}
-					
+					c=value_char();
+					v += c;
 				}
-_loop53_breakloop:				;
-			}    // ( ... )*
-		}
-		catch (RecognitionException ex)
-		{
-			reportError(ex);
-			recover(ex,tokenSet_8_);
-		}
+				else
+				{
+					goto _loop53_breakloop;
+				}
+				
+			}
+_loop53_breakloop:			;
+		}    // ( ... )*
 		return v;
 	}
 	
@@ -943,34 +796,27 @@ _loop53_breakloop:				;
 		IToken  i = null;
 		IToken  x = null;
 		
-		try {      // for error handling
-			switch ( LA(1) )
-			{
-			case IANA_TOKEN:
-			{
-				i = LT(1);
-				match(IANA_TOKEN);
-				n = i.getText();
-				break;
-			}
-			case X_NAME:
-			{
-				x = LT(1);
-				match(X_NAME);
-				n = x.getText();
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			 }
-		}
-		catch (RecognitionException ex)
+		switch ( LA(1) )
 		{
-			reportError(ex);
-			recover(ex,tokenSet_10_);
+		case IANA_TOKEN:
+		{
+			i = LT(1);
+			match(IANA_TOKEN);
+			n = i.getText();
+			break;
 		}
+		case X_NAME:
+		{
+			x = LT(1);
+			match(X_NAME);
+			n = x.getText();
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		 }
 		return n;
 	}
 	
@@ -979,57 +825,50 @@ _loop53_breakloop:				;
 		string v = string.Empty;;
 		
 		
-		try {      // for error handling
-			switch ( LA(1) )
-			{
-			case BEGIN:
-			case COLON:
-			case VCALENDAR:
-			case END:
-			case IANA_TOKEN:
-			case X_NAME:
-			case PRODID:
-			case SEMICOLON:
-			case VERSION:
-			case CALSCALE:
-			case METHOD:
-			case EQUAL:
-			case COMMA:
-			case BACKSLASH:
-			case ESCAPED_CHAR:
-			case NUMBER:
-			case DOT:
-			case CR:
-			case LF:
-			case ALPHA:
-			case DIGIT:
-			case DASH:
-			case SPECIAL:
-			case UNICODE:
-			case SPACE:
-			case HTAB:
-			case SLASH:
-			case LINEFOLDER:
-			{
-				v=paramtext();
-				break;
-			}
-			case DQUOTE:
-			{
-				v=quoted_string();
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			 }
-		}
-		catch (RecognitionException ex)
+		switch ( LA(1) )
 		{
-			reportError(ex);
-			recover(ex,tokenSet_11_);
+		case BEGIN:
+		case COLON:
+		case VCALENDAR:
+		case END:
+		case IANA_TOKEN:
+		case X_NAME:
+		case PRODID:
+		case SEMICOLON:
+		case VERSION:
+		case CALSCALE:
+		case METHOD:
+		case EQUAL:
+		case COMMA:
+		case BACKSLASH:
+		case ESCAPED_CHAR:
+		case NUMBER:
+		case DOT:
+		case CR:
+		case LF:
+		case ALPHA:
+		case DIGIT:
+		case DASH:
+		case SPECIAL:
+		case UNICODE:
+		case SPACE:
+		case HTAB:
+		case SLASH:
+		case LINEFOLDER:
+		{
+			v=paramtext();
+			break;
 		}
+		case DQUOTE:
+		{
+			v=quoted_string();
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		 }
 		return v;
 	}
 	
@@ -1039,29 +878,22 @@ _loop53_breakloop:				;
 		
 		string c;
 		
-		try {      // for error handling
-			{    // ( ... )*
-				for (;;)
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((tokenSet_3_.member(LA(1))))
 				{
-					if ((tokenSet_12_.member(LA(1))))
-					{
-						c=safe_char();
-						t += c;
-					}
-					else
-					{
-						goto _loop50_breakloop;
-					}
-					
+					c=safe_char();
+					t += c;
 				}
-_loop50_breakloop:				;
-			}    // ( ... )*
-		}
-		catch (RecognitionException ex)
-		{
-			reportError(ex);
-			recover(ex,tokenSet_11_);
-		}
+				else
+				{
+					goto _loop50_breakloop;
+				}
+				
+			}
+_loop50_breakloop:			;
+		}    // ( ... )*
 		return t;
 	}
 	
@@ -1071,31 +903,24 @@ _loop50_breakloop:				;
 		
 		string c;
 		
-		try {      // for error handling
-			match(DQUOTE);
-			{    // ( ... )*
-				for (;;)
+		match(DQUOTE);
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((tokenSet_4_.member(LA(1))))
 				{
-					if ((tokenSet_13_.member(LA(1))))
-					{
-						c=qsafe_char();
-						s += c;
-					}
-					else
-					{
-						goto _loop56_breakloop;
-					}
-					
+					c=qsafe_char();
+					s += c;
 				}
-_loop56_breakloop:				;
-			}    // ( ... )*
-			match(DQUOTE);
-		}
-		catch (RecognitionException ex)
-		{
-			reportError(ex);
-			recover(ex,tokenSet_11_);
-		}
+				else
+				{
+					goto _loop56_breakloop;
+				}
+				
+			}
+_loop56_breakloop:			;
+		}    // ( ... )*
+		match(DQUOTE);
 		return s;
 	}
 	
@@ -1105,18 +930,11 @@ _loop56_breakloop:				;
 		
 		IToken  a = null;
 		
-		try {      // for error handling
-			{
-				a = LT(1);
-				match(tokenSet_12_);
-			}
-			c = a.getText();
-		}
-		catch (RecognitionException ex)
 		{
-			reportError(ex);
-			recover(ex,tokenSet_13_);
+			a = LT(1);
+			match(tokenSet_3_);
 		}
+		c = a.getText();
 		return c;
 	}
 	
@@ -1126,18 +944,11 @@ _loop56_breakloop:				;
 		
 		IToken  a = null;
 		
-		try {      // for error handling
-			{
-				a = LT(1);
-				match(tokenSet_9_);
-			}
-			c = a.getText();
-		}
-		catch (RecognitionException ex)
 		{
-			reportError(ex);
-			recover(ex,tokenSet_14_);
+			a = LT(1);
+			match(tokenSet_2_);
 		}
+		c = a.getText();
 		return c;
 	}
 	
@@ -1147,18 +958,11 @@ _loop56_breakloop:				;
 		
 		IToken  a = null;
 		
-		try {      // for error handling
-			{
-				a = LT(1);
-				match(tokenSet_13_);
-			}
-			c = a.getText();
-		}
-		catch (RecognitionException ex)
 		{
-			reportError(ex);
-			recover(ex,tokenSet_9_);
+			a = LT(1);
+			match(tokenSet_4_);
 		}
+		c = a.getText();
 		return c;
 	}
 	
@@ -1168,18 +972,11 @@ _loop56_breakloop:				;
 		
 		IToken  a = null;
 		
-		try {      // for error handling
-			{
-				a = LT(1);
-				match(tokenSet_15_);
-			}
-			s = a.getText();
-		}
-		catch (RecognitionException ex)
 		{
-			reportError(ex);
-			recover(ex,tokenSet_16_);
+			a = LT(1);
+			match(tokenSet_5_);
 		}
+		s = a.getText();
 		return s;
 	}
 	
@@ -1191,44 +988,37 @@ _loop56_breakloop:				;
 		IToken  q = null;
 		IToken  e = null;
 		
-		try {      // for error handling
-			switch ( LA(1) )
-			{
-			case COLON:
-			{
-				c = LT(1);
-				match(COLON);
-				s = c.getText();
-				break;
-			}
-			case DQUOTE:
-			{
-				q = LT(1);
-				match(DQUOTE);
-				s = q.getText();
-				break;
-			}
-			default:
-				if ((tokenSet_15_.member(LA(1))) && (tokenSet_16_.member(LA(2))) && (tokenSet_16_.member(LA(3))))
-				{
-					s=tsafe_char();
-				}
-				else if ((LA(1)==ESCAPED_CHAR) && (tokenSet_16_.member(LA(2))) && (tokenSet_16_.member(LA(3)))) {
-					e = LT(1);
-					match(ESCAPED_CHAR);
-					s = e.getText();
-				}
-			else
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			break; }
-		}
-		catch (RecognitionException ex)
+		switch ( LA(1) )
 		{
-			reportError(ex);
-			recover(ex,tokenSet_16_);
+		case COLON:
+		{
+			c = LT(1);
+			match(COLON);
+			s = c.getText();
+			break;
 		}
+		case DQUOTE:
+		{
+			q = LT(1);
+			match(DQUOTE);
+			s = q.getText();
+			break;
+		}
+		default:
+			if ((tokenSet_5_.member(LA(1))) && (tokenSet_6_.member(LA(2))) && (tokenSet_6_.member(LA(3))))
+			{
+				s=tsafe_char();
+			}
+			else if ((LA(1)==ESCAPED_CHAR) && (tokenSet_6_.member(LA(2))) && (tokenSet_6_.member(LA(3)))) {
+				e = LT(1);
+				match(ESCAPED_CHAR);
+				s = e.getText();
+			}
+		else
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		break; }
 		return s;
 	}
 	
@@ -1239,38 +1029,31 @@ _loop56_breakloop:				;
 		IToken  n1 = null;
 		IToken  n2 = null;
 		
-		try {      // for error handling
-			n1 = LT(1);
-			match(NUMBER);
-			s += n1.getText();
-			{
-				switch ( LA(1) )
-				{
-				case DOT:
-				{
-					match(DOT);
-					s += ".";
-					n2 = LT(1);
-					match(NUMBER);
-					s += n2.getText();
-					break;
-				}
-				case CRLF:
-				case SEMICOLON:
-				{
-					break;
-				}
-				default:
-				{
-					throw new NoViableAltException(LT(1), getFilename());
-				}
-				 }
-			}
-		}
-		catch (RecognitionException ex)
+		n1 = LT(1);
+		match(NUMBER);
+		s += n1.getText();
 		{
-			reportError(ex);
-			recover(ex,tokenSet_17_);
+			switch ( LA(1) )
+			{
+			case DOT:
+			{
+				match(DOT);
+				s += ".";
+				n2 = LT(1);
+				match(NUMBER);
+				s += n2.getText();
+				break;
+			}
+			case CRLF:
+			case SEMICOLON:
+			{
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			 }
 		}
 		return s;
 	}
@@ -1319,112 +1102,46 @@ _loop56_breakloop:				;
 	
 	private static long[] mk_tokenSet_0_()
 	{
-		long[] data = { 2L, 0L};
+		long[] data = { 60928L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_0_ = new BitSet(mk_tokenSet_0_());
 	private static long[] mk_tokenSet_1_()
 	{
-		long[] data = { 256L, 0L};
+		long[] data = { 34358030192L, 0L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_1_ = new BitSet(mk_tokenSet_1_());
 	private static long[] mk_tokenSet_2_()
 	{
-		long[] data = { 60928L, 0L};
+		long[] data = { 34359213936L, 0L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_2_ = new BitSet(mk_tokenSet_2_());
 	private static long[] mk_tokenSet_3_()
 	{
-		long[] data = { 272L, 0L};
+		long[] data = { 34358816592L, 0L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_3_ = new BitSet(mk_tokenSet_3_());
 	private static long[] mk_tokenSet_4_()
 	{
-		long[] data = { 1808L, 0L};
+		long[] data = { 34358951792L, 0L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_4_ = new BitSet(mk_tokenSet_4_());
 	private static long[] mk_tokenSet_5_()
 	{
-		long[] data = { 61200L, 0L};
+		long[] data = { 34357768016L, 0L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_5_ = new BitSet(mk_tokenSet_5_());
 	private static long[] mk_tokenSet_6_()
 	{
-		long[] data = { 4128L, 0L};
-		return data;
-	}
-	public static readonly BitSet tokenSet_6_ = new BitSet(mk_tokenSet_6_());
-	private static long[] mk_tokenSet_7_()
-	{
-		long[] data = { 34358030192L, 0L, 0L, 0L};
-		return data;
-	}
-	public static readonly BitSet tokenSet_7_ = new BitSet(mk_tokenSet_7_());
-	private static long[] mk_tokenSet_8_()
-	{
-		long[] data = { 128L, 0L};
-		return data;
-	}
-	public static readonly BitSet tokenSet_8_ = new BitSet(mk_tokenSet_8_());
-	private static long[] mk_tokenSet_9_()
-	{
-		long[] data = { 34359213936L, 0L, 0L, 0L};
-		return data;
-	}
-	public static readonly BitSet tokenSet_9_ = new BitSet(mk_tokenSet_9_());
-	private static long[] mk_tokenSet_10_()
-	{
-		long[] data = { 65536L, 0L};
-		return data;
-	}
-	public static readonly BitSet tokenSet_10_ = new BitSet(mk_tokenSet_10_());
-	private static long[] mk_tokenSet_11_()
-	{
-		long[] data = { 135200L, 0L};
-		return data;
-	}
-	public static readonly BitSet tokenSet_11_ = new BitSet(mk_tokenSet_11_());
-	private static long[] mk_tokenSet_12_()
-	{
-		long[] data = { 34358816592L, 0L, 0L, 0L};
-		return data;
-	}
-	public static readonly BitSet tokenSet_12_ = new BitSet(mk_tokenSet_12_());
-	private static long[] mk_tokenSet_13_()
-	{
-		long[] data = { 34358951792L, 0L, 0L, 0L};
-		return data;
-	}
-	public static readonly BitSet tokenSet_13_ = new BitSet(mk_tokenSet_13_());
-	private static long[] mk_tokenSet_14_()
-	{
-		long[] data = { 34359214064L, 0L, 0L, 0L};
-		return data;
-	}
-	public static readonly BitSet tokenSet_14_ = new BitSet(mk_tokenSet_14_());
-	private static long[] mk_tokenSet_15_()
-	{
-		long[] data = { 34357768016L, 0L, 0L, 0L};
-		return data;
-	}
-	public static readonly BitSet tokenSet_15_ = new BitSet(mk_tokenSet_15_());
-	private static long[] mk_tokenSet_16_()
-	{
 		long[] data = { 34358030320L, 0L, 0L, 0L};
 		return data;
 	}
-	public static readonly BitSet tokenSet_16_ = new BitSet(mk_tokenSet_16_());
-	private static long[] mk_tokenSet_17_()
-	{
-		long[] data = { 4224L, 0L};
-		return data;
-	}
-	public static readonly BitSet tokenSet_17_ = new BitSet(mk_tokenSet_17_());
+	public static readonly BitSet tokenSet_6_ = new BitSet(mk_tokenSet_6_());
 	
 }
 }

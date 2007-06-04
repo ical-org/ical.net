@@ -17,6 +17,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
         #region Constructors
 
+        public iCalObjectSerializer() { }
         public iCalObjectSerializer(DDay.iCal.Components.iCalObject iCalObject)
         {
             this.m_object = iCalObject;
@@ -78,6 +79,17 @@ namespace DDay.iCal.Serialization.iCalendar.Components
             }
         }
 
-        #endregion
+        virtual public iCalObject Deserialize(Stream stream, Encoding encoding, Type iCalendarType)
+        {
+            TextReader tr = new StreamReader(stream, encoding);
+            return Deserialize(tr, iCalendarType);            
+        }
+
+        virtual public iCalObject Deserialize(TextReader tr, Type iCalendarType)
+        {
+            return null;
+        }
+
+        #endregion        
     }
 }

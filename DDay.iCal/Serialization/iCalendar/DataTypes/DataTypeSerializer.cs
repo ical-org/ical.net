@@ -117,6 +117,11 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
             }
         }
 
-        #endregion
+        public iCalObject Deserialize(Stream stream, Encoding encoding, Type iCalendarType)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        #endregion        
     }
 }

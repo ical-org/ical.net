@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using DDay.iCal.Components;
 
 namespace DDay.iCal.Serialization
 {
@@ -11,6 +12,7 @@ namespace DDay.iCal.Serialization
     public interface ISerializable
     {
         string SerializeToString();
-        void Serialize(Stream stream, Encoding encoding);        
+        void Serialize(Stream stream, Encoding encoding);
+        iCalObject Deserialize(Stream stream, Encoding encoding, Type iCalendarType);
     }
 }

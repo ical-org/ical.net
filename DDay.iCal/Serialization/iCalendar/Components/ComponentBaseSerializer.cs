@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Reflection;
+using DDay.iCal;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 
@@ -43,6 +44,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
         #region Constructors
 
+        public ComponentBaseSerializer() {}
         public ComponentBaseSerializer(DDay.iCal.Components.ComponentBase component) : base(component)
         {
             this.m_component = component;
@@ -164,7 +166,28 @@ namespace DDay.iCal.Serialization.iCalendar.Components
             stream.Write(close, 0, close.Length);
         }
 
-        #endregion
+        public override iCalObject Deserialize(TextReader tr, Type iCalendarType)
+        {
+            // Create a lexer for our text stream
+            iCalLexer lexer = new iCalLexer(tr);
+            iCalParser parser = new iCalParser(lexer);
+
+            // Determine the calendar type we'll be using when constructing
+            // iCalendar objects...
+            parser.iCalendarType = iCalendarType;
+
+            // Parse the component!
+            DDay.iCal.iCalendar iCal = new DDay.iCal.iCalendar();
+            iCalObject component = parser.component(iCal);
+
+            // Close our text stream
+            tr.Close();
+
+            // Return the parsed component
+            return component;
+        }
+
+        #endregion        
 
         #region Helper Classes
 
