@@ -327,7 +327,7 @@ namespace DDay.iCal.Test
             iCalendar iCal1 = new iCalendar();
             
             fs = new FileStream(@"Calendars\Serialization\SERIALIZE19.ics", FileMode.Open, FileAccess.Read);
-            Event evt1 = ComponentBase.LoadFromStream<Event>(fs);
+            Event evt1 = ComponentBase.LoadFromStream<Event>(fs, Encoding.UTF8);            
             fs.Close();
 
             CompareComponents(evt, evt1);
