@@ -27,11 +27,11 @@ namespace Example1
         /// Loads each iCalendar into our iCalendarCollection.
         /// </summary>        
         private void Schedule_Load(object sender, EventArgs e)
-        {            
+        {
             _Calendars.Add(iCalendar.LoadFromFile(@"Calendars\USHolidays.ics"));
             _Calendars.Add(iCalendar.LoadFromFile(@"Calendars\lotr.ics"));
             _Calendars.Add(iCalendar.LoadFromFile(@"Calendars\To-do.ics"));
-            _Calendars.Add(iCalendar.LoadFromFile(@"Calendars\Barça 2006 - 2007.ics"));            
+            _Calendars.Add(iCalendar.LoadFromFile(@"Calendars\Barça 2006 - 2007.ics"));
         }
 
         /// <summary>

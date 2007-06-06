@@ -55,7 +55,8 @@ namespace DDay.iCal.Test
             s.SERIALIZE20();
             s.SERIALIZE21();
             s.SERIALIZE22();
-            s.SERIALIZE23();            
+            s.SERIALIZE23();
+            s.SERIALIZE24();
             s.LANGUAGE1();
             s.LANGUAGE2();
             s.REQUIREDPARAMETERS1();
@@ -398,6 +399,21 @@ END:VCALENDAR
         public void SERIALIZE23()
         {
             SerializeTest("SERIALIZE23.ics");
+        }
+
+        [Test, Category("Serialization")]
+        public void SERIALIZE24()
+        {
+            //
+            // Ensures that custom iCalendars are loaded correctly
+            //
+            iCalendar calendar = iCalendar.LoadFromFile<iCalendar>(@"Calendars\Serialization\SERIALIZE1.ics");
+            CustomICal1 customiCal = iCalendar.LoadFromFile<CustomICal1>(@"Calendars\Serialization\SERIALIZE1.ics");
+
+            Assert.IsTrue(calendar.Events.Count == 1, "Calendar should have 1 event");
+            Assert.IsTrue(customiCal.Events.Count == 1, "Custom calendar should have 1 event");
+            Assert.IsTrue(calendar.Events[0].GetType() == typeof(Event), "Calendar event should be of type Event");
+            Assert.IsTrue(customiCal.Events[0].GetType() == typeof(CustomEvent1), "Custom calendar event should be of type CustomEvent1");
         }
         
         [Test, Category("Serialization")]

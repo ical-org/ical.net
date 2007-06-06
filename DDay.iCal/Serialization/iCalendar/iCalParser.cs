@@ -392,15 +392,33 @@ _loop15_breakloop:			;
 				if ((LA(1)==SEMICOLON))
 				{
 					match(SEMICOLON);
-					xparam(p);
+					{
+						switch ( LA(1) )
+						{
+						case IANA_TOKEN:
+						{
+							param(p);
+							break;
+						}
+						case X_NAME:
+						{
+							xparam(p);
+							break;
+						}
+						default:
+						{
+							throw new NoViableAltException(LT(1), getFilename());
+						}
+						 }
+					}
 				}
 				else
 				{
-					goto _loop22_breakloop;
+					goto _loop23_breakloop;
 				}
 				
 			}
-_loop22_breakloop:			;
+_loop23_breakloop:			;
 		}    // ( ... )*
 		match(COLON);
 		v=text();
@@ -425,15 +443,33 @@ _loop22_breakloop:			;
 				if ((LA(1)==SEMICOLON))
 				{
 					match(SEMICOLON);
-					xparam(p);
+					{
+						switch ( LA(1) )
+						{
+						case IANA_TOKEN:
+						{
+							param(p);
+							break;
+						}
+						case X_NAME:
+						{
+							xparam(p);
+							break;
+						}
+						default:
+						{
+							throw new NoViableAltException(LT(1), getFilename());
+						}
+						 }
+					}
 				}
 				else
 				{
-					goto _loop25_breakloop;
+					goto _loop27_breakloop;
 				}
 				
 			}
-_loop25_breakloop:			;
+_loop27_breakloop:			;
 		}    // ( ... )*
 		match(COLON);
 		v=version_number();
@@ -459,15 +495,33 @@ _loop25_breakloop:			;
 				if ((LA(1)==SEMICOLON))
 				{
 					match(SEMICOLON);
-					xparam(p);
+					{
+						switch ( LA(1) )
+						{
+						case IANA_TOKEN:
+						{
+							param(p);
+							break;
+						}
+						case X_NAME:
+						{
+							xparam(p);
+							break;
+						}
+						default:
+						{
+							throw new NoViableAltException(LT(1), getFilename());
+						}
+						 }
+					}
 				}
 				else
 				{
-					goto _loop28_breakloop;
+					goto _loop31_breakloop;
 				}
 				
 			}
-_loop28_breakloop:			;
+_loop31_breakloop:			;
 		}    // ( ... )*
 		match(COLON);
 		v = LT(1);
@@ -494,15 +548,33 @@ _loop28_breakloop:			;
 				if ((LA(1)==SEMICOLON))
 				{
 					match(SEMICOLON);
-					xparam(p);
+					{
+						switch ( LA(1) )
+						{
+						case IANA_TOKEN:
+						{
+							param(p);
+							break;
+						}
+						case X_NAME:
+						{
+							xparam(p);
+							break;
+						}
+						default:
+						{
+							throw new NoViableAltException(LT(1), getFilename());
+						}
+						 }
+					}
 				}
 				else
 				{
-					goto _loop31_breakloop;
+					goto _loop35_breakloop;
 				}
 				
 			}
-_loop31_breakloop:			;
+_loop35_breakloop:			;
 		}    // ( ... )*
 		match(COLON);
 		v = LT(1);
@@ -528,15 +600,33 @@ _loop31_breakloop:			;
 				if ((LA(1)==SEMICOLON))
 				{
 					match(SEMICOLON);
-					xparam(p);
+					{
+						switch ( LA(1) )
+						{
+						case IANA_TOKEN:
+						{
+							param(p);
+							break;
+						}
+						case X_NAME:
+						{
+							xparam(p);
+							break;
+						}
+						default:
+						{
+							throw new NoViableAltException(LT(1), getFilename());
+						}
+						 }
+					}
 				}
 				else
 				{
-					goto _loop34_breakloop;
+					goto _loop39_breakloop;
 				}
 				
 			}
-_loop34_breakloop:			;
+_loop39_breakloop:			;
 		}    // ( ... )*
 		match(COLON);
 		v=text();
@@ -561,20 +651,69 @@ _loop34_breakloop:			;
 				if ((LA(1)==SEMICOLON))
 				{
 					match(SEMICOLON);
-					xparam(p);
+					{
+						switch ( LA(1) )
+						{
+						case IANA_TOKEN:
+						{
+							param(p);
+							break;
+						}
+						case X_NAME:
+						{
+							xparam(p);
+							break;
+						}
+						default:
+						{
+							throw new NoViableAltException(LT(1), getFilename());
+						}
+						 }
+					}
 				}
 				else
 				{
-					goto _loop37_breakloop;
+					goto _loop43_breakloop;
 				}
 				
 			}
-_loop37_breakloop:			;
+_loop43_breakloop:			;
 		}    // ( ... )*
 		match(COLON);
 		v=text();
 		p.Name = n.getText(); p.Value = v; p.AddToParent();
 		match(CRLF);
+	}
+	
+	public void param(
+		iCalObject o
+	) //throws RecognitionException, TokenStreamException
+{
+		
+		Parameter p; string n; string v;
+		
+		n=param_name();
+		p = new Parameter(o, n);
+		match(EQUAL);
+		v=param_value();
+		p.Values.Add(v);
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((LA(1)==COMMA))
+				{
+					match(COMMA);
+					v=param_value();
+					p.Values.Add(v);
+				}
+				else
+				{
+					goto _loop52_breakloop;
+				}
+				
+			}
+_loop52_breakloop:			;
+		}    // ( ... )*
 	}
 	
 	public void xparam(
@@ -602,11 +741,11 @@ _loop37_breakloop:			;
 				}
 				else
 				{
-					goto _loop75_breakloop;
+					goto _loop82_breakloop;
 				}
 				
 			}
-_loop75_breakloop:			;
+_loop82_breakloop:			;
 		}    // ( ... )*
 	}
 	
@@ -626,11 +765,11 @@ _loop75_breakloop:			;
 				}
 				else
 				{
-					goto _loop68_breakloop;
+					goto _loop75_breakloop;
 				}
 				
 			}
-_loop68_breakloop:			;
+_loop75_breakloop:			;
 		}    // ( ... )*
 		return s;
 	}
@@ -686,15 +825,33 @@ _loop68_breakloop:			;
 				if ((LA(1)==SEMICOLON))
 				{
 					match(SEMICOLON);
-					param(c);
+					{
+						switch ( LA(1) )
+						{
+						case IANA_TOKEN:
+						{
+							param(c);
+							break;
+						}
+						case X_NAME:
+						{
+							xparam(c);
+							break;
+						}
+						default:
+						{
+							throw new NoViableAltException(LT(1), getFilename());
+						}
+						 }
+					}
 				}
 				else
 				{
-					goto _loop41_breakloop;
+					goto _loop48_breakloop;
 				}
 				
 			}
-_loop41_breakloop:			;
+_loop48_breakloop:			;
 		}    // ( ... )*
 		match(COLON);
 		v=value();
@@ -733,37 +890,6 @@ _loop41_breakloop:			;
 		return s;
 	}
 	
-	public void param(
-		iCalObject o
-	) //throws RecognitionException, TokenStreamException
-{
-		
-		Parameter p; string n; string v;
-		
-		n=param_name();
-		p = new Parameter(o, n);
-		match(EQUAL);
-		v=param_value();
-		p.Values.Add(v);
-		{    // ( ... )*
-			for (;;)
-			{
-				if ((LA(1)==COMMA))
-				{
-					match(COMMA);
-					v=param_value();
-					p.Values.Add(v);
-				}
-				else
-				{
-					goto _loop45_breakloop;
-				}
-				
-			}
-_loop45_breakloop:			;
-		}    // ( ... )*
-	}
-	
 	public string  value() //throws RecognitionException, TokenStreamException
 {
 		string v = string.Empty;
@@ -780,11 +906,11 @@ _loop45_breakloop:			;
 				}
 				else
 				{
-					goto _loop53_breakloop;
+					goto _loop60_breakloop;
 				}
 				
 			}
-_loop53_breakloop:			;
+_loop60_breakloop:			;
 		}    // ( ... )*
 		return v;
 	}
@@ -794,29 +920,10 @@ _loop53_breakloop:			;
 		string n = string.Empty;;
 		
 		IToken  i = null;
-		IToken  x = null;
 		
-		switch ( LA(1) )
-		{
-		case IANA_TOKEN:
-		{
-			i = LT(1);
-			match(IANA_TOKEN);
-			n = i.getText();
-			break;
-		}
-		case X_NAME:
-		{
-			x = LT(1);
-			match(X_NAME);
-			n = x.getText();
-			break;
-		}
-		default:
-		{
-			throw new NoViableAltException(LT(1), getFilename());
-		}
-		 }
+		i = LT(1);
+		match(IANA_TOKEN);
+		n = i.getText();
 		return n;
 	}
 	
@@ -888,11 +995,11 @@ _loop53_breakloop:			;
 				}
 				else
 				{
-					goto _loop50_breakloop;
+					goto _loop57_breakloop;
 				}
 				
 			}
-_loop50_breakloop:			;
+_loop57_breakloop:			;
 		}    // ( ... )*
 		return t;
 	}
@@ -914,11 +1021,11 @@ _loop50_breakloop:			;
 				}
 				else
 				{
-					goto _loop56_breakloop;
+					goto _loop63_breakloop;
 				}
 				
 			}
-_loop56_breakloop:			;
+_loop63_breakloop:			;
 		}    // ( ... )*
 		match(DQUOTE);
 		return s;

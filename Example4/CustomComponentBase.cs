@@ -11,9 +11,9 @@ namespace Example4
         public CustomComponentBase(iCalObject parent) : base(parent) { }
         static public ComponentBase Create(iCalObject parent, string name)
         {            
-            switch (name)
+            switch (name.ToUpper())
             {
-                case "VEVENT":
+                case EVENT:
                     // For event objects, use our custom event class
                     return new CustomEvent(parent);                    
                 default:

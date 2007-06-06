@@ -33,12 +33,12 @@ x_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:X_NAME {c 
 // iCalendar Properties
 calprops[DDay.iCal.iCalendar iCal]: calprop[iCal] (calprop[iCal])+;
 calprop[iCalObject o]: prodid[o] | version[o] | calscale[o] | method[o] | iana_prop[o] | x_prop[o];
-prodid[iCalObject o] {Property p; string v;}: n:PRODID { p = new Property(o); } (SEMICOLON xparam[p])* COLON v=text {p.Name = n.getText(); p.Value = v; p.AddToParent(); } CRLF;
-version[iCalObject o] {Property p; string v;}: n:VERSION { p = new Property(o); } (SEMICOLON xparam[p])* COLON v=version_number {p.Name = n.getText(); p.Value = v; p.AddToParent(); } CRLF;
-calscale[iCalObject o] {Property p;}: n:CALSCALE { p = new Property(o); } (SEMICOLON xparam[p])* COLON v:IANA_TOKEN {p.Name = n.getText(); p.Value = v.getText(); p.AddToParent(); } CRLF;
-method[iCalObject o] {Property p;}: n:METHOD { p = new Property(o); } (SEMICOLON xparam[p])* COLON v:IANA_TOKEN {p.Name = n.getText(); p.Value = v.getText(); p.AddToParent(); } CRLF;
-iana_prop[iCalObject o] {Property p; string v;}: n:IANA_TOKEN { p = new Property(o); } (SEMICOLON xparam[p])* COLON v=text {p.Name = n.getText(); p.Value = v; p.AddToParent(); } CRLF;
-x_prop[iCalObject o] {Property p; string v;}: n:X_NAME { p = new Property(o); } (SEMICOLON xparam[p])* COLON v=text {p.Name = n.getText(); p.Value = v; p.AddToParent(); } CRLF;
+prodid[iCalObject o] {Property p; string v;}: n:PRODID { p = new Property(o); } (SEMICOLON (param[p] | xparam[p]))* COLON v=text {p.Name = n.getText(); p.Value = v; p.AddToParent(); } CRLF;
+version[iCalObject o] {Property p; string v;}: n:VERSION { p = new Property(o); } (SEMICOLON (param[p] | xparam[p]))* COLON v=version_number {p.Name = n.getText(); p.Value = v; p.AddToParent(); } CRLF;
+calscale[iCalObject o] {Property p;}: n:CALSCALE { p = new Property(o); } (SEMICOLON (param[p] | xparam[p]))* COLON v:IANA_TOKEN {p.Name = n.getText(); p.Value = v.getText(); p.AddToParent(); } CRLF;
+method[iCalObject o] {Property p;}: n:METHOD { p = new Property(o); } (SEMICOLON (param[p] | xparam[p]))* COLON v:IANA_TOKEN {p.Name = n.getText(); p.Value = v.getText(); p.AddToParent(); } CRLF;
+iana_prop[iCalObject o] {Property p; string v;}: n:IANA_TOKEN { p = new Property(o); } (SEMICOLON (param[p] | xparam[p]))* COLON v=text {p.Name = n.getText(); p.Value = v; p.AddToParent(); } CRLF;
+x_prop[iCalObject o] {Property p; string v;}: n:X_NAME { p = new Property(o); } (SEMICOLON (param[p] | xparam[p]))* COLON v=text {p.Name = n.getText(); p.Value = v; p.AddToParent(); } CRLF;
 
 // Content Line
 calendarline[iCalObject o]: contentline[o] | component[o]; // Allow for embedded components here (VALARM)
@@ -47,11 +47,11 @@ contentline[iCalObject o]
     ContentLine c = new ContentLine(o);
     string n;
     string v;
-}: n=name {c.Name = n;} (SEMICOLON param[c])* COLON v=value {c.Value = v; DDay.iCal.Serialization.iCalendar.Components.ContentLineSerializer.DeserializeToObject(c, o); } CRLF;
+}: n=name {c.Name = n;} (SEMICOLON (param[c] | xparam[c]))* COLON v=value {c.Value = v; DDay.iCal.Serialization.iCalendar.Components.ContentLineSerializer.DeserializeToObject(c, o); } CRLF;
 
 name returns [string s = string.Empty;]: x:X_NAME {s = x.getText();} | i:IANA_TOKEN {s = i.getText();};
 param[iCalObject o] {Parameter p; string n; string v;}: n=param_name {p = new Parameter(o, n);} EQUAL v=param_value {p.Values.Add(v);} (COMMA v=param_value {p.Values.Add(v);})*;
-param_name returns [string n = string.Empty;]: i:IANA_TOKEN {n = i.getText();} | x:X_NAME {n = x.getText();}; // FIXME: in rfc 32445, X_NAME was x-token, but x-token was not defined.
+param_name returns [string n = string.Empty;]: i:IANA_TOKEN {n = i.getText();};
 param_value returns [string v = string.Empty;]: v=paramtext | v=quoted_string;
 paramtext returns [string t = string.Empty] {string c;}: (c=safe_char {t += c;})*;
 value returns [string v = string.Empty] {string c;}: (c=value_char {v += c;})*;
