@@ -14,26 +14,38 @@ namespace DDay.iCal.Serialization.iCalendar.Components
     {
         #region Private Fields
 
-        private DDay.iCal.Components.ComponentBase m_component;
+        private DDay.iCal.Components.ComponentBase m_Component;
+        
+        #endregion
+
+        #region Public Properties
+
+        protected ComponentBase Component
+        {
+            get { return m_Component; }
+            set
+            {
+                if (!object.Equals(m_Component, value))
+                {
+                    m_Component = value;
+                    base.Object = value;
+                }
+            }
+        }
 
         #endregion
 
         #region Protected Properties
-
-        protected ComponentBase Component
-        {
-            get { return m_component; }
-        }
 
         virtual protected List<object> FieldsAndProperties
         {
             get
             {
                 List<object> List = new List<object>();
-                foreach (FieldInfo fi in m_component.GetType().GetFields())
+                foreach (FieldInfo fi in Component.GetType().GetFields())
                     if (fi.GetCustomAttributes(typeof(SerializedAttribute), true).Length > 0)
                         List.Add(fi);
-                foreach (PropertyInfo pi in m_component.GetType().GetProperties())
+                foreach (PropertyInfo pi in Component.GetType().GetProperties())
                     if (pi.GetCustomAttributes(typeof(SerializedAttribute), true).Length > 0)
                         List.Add(pi);
                 return List;
@@ -47,7 +59,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
         public ComponentBaseSerializer() {}
         public ComponentBaseSerializer(DDay.iCal.Components.ComponentBase component) : base(component)
         {
-            this.m_component = component;
+            Component = component;
         }
 
         #endregion
@@ -66,7 +78,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
         public override void Serialize(Stream stream, Encoding encoding)
         {
             // Open the component
-            byte[] open = encoding.GetBytes("BEGIN:" + m_component.Name + "\r\n");
+            byte[] open = encoding.GetBytes("BEGIN:" + Component.Name + "\r\n");
             stream.Write(open, 0, open.Length);
                         
             // Get a list of fields and properties
@@ -101,7 +113,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
                 itemAttrs = (field != null) ? field.GetCustomAttributes(true) : prop.GetCustomAttributes(true);
 
                 // Get the item's value
-                object obj = (field == null) ? prop.GetValue(m_component, null) : field.GetValue(m_component);
+                object obj = (field == null) ? prop.GetValue(Component, null) : field.GetValue(Component);
 
                 // Adjust the items' name to be iCal-compliant
                 if (obj is iCalObject)
@@ -162,7 +174,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
             base.Serialize(stream, encoding);
 
             // Close the component
-            byte[] close = encoding.GetBytes("END:" + m_component.Name + "\r\n");
+            byte[] close = encoding.GetBytes("END:" + Component.Name + "\r\n");
             stream.Write(close, 0, close.Length);
         }
 

@@ -93,7 +93,6 @@
     <Compile Include="DataTypes\Duration.cs" />
     <Compile Include="DataTypes\Date_Time.cs" />
     <Compile Include="iCalendarCollection.cs" />
-    <Compile Include="iCalParserHelper.cs" />
     <Compile Include="Components\ComponentBase.cs" />
     <Compile Include="ComponentBaseTypeAttribute.cs" />
     <Compile Include="Components\ContentLine.cs" />
@@ -111,13 +110,14 @@
     <Compile Include="Components\TimeZone.cs" />
     <Compile Include="Components\Todo.cs" />
     <Compile Include="iCalendar.cs" />
-    <Compile Include="iCalLexer.cs" />
-    <Compile Include="iCalParser.cs" />
-    <Compile Include="iCalParserTokenTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\DisallowedTypesAttribute.cs" />
     <Compile Include="Serialization\ForceUTCAttribute.cs" />
     <Compile Include="Serialization\iCalendarSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\iCalLexer.cs" />
+    <Compile Include="Serialization\iCalendar\iCalParser.cs" />
+    <Compile Include="Serialization\iCalendar\iCalParserHelper.cs" />
+    <Compile Include="Serialization\iCalendar\iCalParserTokenTypes.cs" />
     <Compile Include="Serialization\NonstandardAttribute.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\ArraySerializer.cs" />
     <Compile Include="Serialization\iCalendar\Components\ContentLineSerializer.cs" />
@@ -147,9 +147,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="iCal.g" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
       <Visible>False</Visible>
       <ProductName>.NET Framework 2.0</ProductName>
@@ -160,6 +157,9 @@
     <Content Include="License.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Serialization\iCalendar\iCal.g" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

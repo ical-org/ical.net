@@ -32,15 +32,33 @@ namespace DDay.iCal.Serialization
     {
         #region Private Fields
 
-        private DDay.iCal.iCalendar m_iCal;
+        private DDay.iCal.iCalendar m_iCalendar;        
+
+        #endregion
+
+        #region Public Properties
+
+        public DDay.iCal.iCalendar iCalendar
+        {
+            get { return m_iCalendar; }
+            set
+            {
+                if (!object.Equals(m_iCalendar, value))
+                {
+                    m_iCalendar = value;
+                    base.Component = value;
+                }
+            }
+        }
 
         #endregion
 
         #region Constructors
 
+        public iCalendarSerializer() { }
         public iCalendarSerializer(DDay.iCal.iCalendar iCal) : base(iCal)
         {
-            this.m_iCal = iCal;
+            iCalendar = iCal;
         }
 
         #endregion

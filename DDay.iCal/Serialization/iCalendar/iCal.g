@@ -1,12 +1,12 @@
 header
-{
+{    
     using DDay.iCal.Components;    
 }
 
 options
 {    
 	language = "CSharp";
-	namespace = "DDay.iCal";	
+	namespace = "DDay.iCal.Serialization.iCalendar";	
 }
 
 //
@@ -20,18 +20,18 @@ options
 }
 
 // iCalendar object
-icalobject returns [iCalendar iCal = (iCalendar)Activator.CreateInstance(iCalendarType);]
+icalobject returns [DDay.iCal.iCalendar iCal = (DDay.iCal.iCalendar)Activator.CreateInstance(iCalendarType);]
 :
     (BEGIN COLON VCALENDAR CRLF icalbody[iCal] END COLON VCALENDAR CRLF)* {iCal.OnLoad(EventArgs.Empty);}
 ;
     
-icalbody[iCalendar iCal]: (calprops[iCal])? (component[iCal])?;
+icalbody[DDay.iCal.iCalendar iCal]: (calprops[iCal])? (component[iCal])?;
 component[iCalObject o] returns [ComponentBase c = null;]: (c=iana_comp[o] | c=x_comp[o])+;
 iana_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:IANA_TOKEN {c = o.iCalendar.Create(o, n.getText().ToLower());} CRLF (calendarline[c])+ END COLON IANA_TOKEN CRLF { c.OnLoad(EventArgs.Empty); };
 x_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:X_NAME {c = o.iCalendar.Create(o, n.getText().ToLower());} CRLF (calendarline[c])+ END COLON X_NAME CRLF { c.OnLoad(EventArgs.Empty); };
 
 // iCalendar Properties
-calprops[iCalendar iCal]: calprop[iCal] (calprop[iCal])+;
+calprops[DDay.iCal.iCalendar iCal]: calprop[iCal] (calprop[iCal])+;
 calprop[iCalObject o]: prodid[o] | version[o] | calscale[o] | method[o] | iana_prop[o] | x_prop[o];
 prodid[iCalObject o] {Property p; string v;}: n:PRODID { p = new Property(o); } (SEMICOLON xparam[p])* COLON v=text {p.Name = n.getText(); p.Value = v; p.AddToParent(); } CRLF;
 version[iCalObject o] {Property p; string v;}: n:VERSION { p = new Property(o); } (SEMICOLON xparam[p])* COLON v=version_number {p.Name = n.getText(); p.Value = v; p.AddToParent(); } CRLF;

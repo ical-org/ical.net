@@ -1,8 +1,8 @@
 // $ANTLR 2.7.6 (2005-12-22): "iCal.g" -> "iCalParser.cs"$
-
+    
     using DDay.iCal.Components;    
 
-namespace DDay.iCal
+namespace DDay.iCal.Serialization.iCalendar
 {
 	// Generate the header common to all output files.
 	using System;
@@ -88,9 +88,9 @@ namespace DDay.iCal
 			initialize();
 		}
 		
-	public iCalendar  icalobject() //throws RecognitionException, TokenStreamException
+	public DDay.iCal.iCalendar  icalobject() //throws RecognitionException, TokenStreamException
 {
-		iCalendar iCal = (iCalendar)Activator.CreateInstance(iCalendarType);;
+		DDay.iCal.iCalendar iCal = (DDay.iCal.iCalendar)Activator.CreateInstance(iCalendarType);;
 		
 		
 		{    // ( ... )*
@@ -121,7 +121,7 @@ _loop3_breakloop:			;
 	}
 	
 	public void icalbody(
-		iCalendar iCal
+		DDay.iCal.iCalendar iCal
 	) //throws RecognitionException, TokenStreamException
 {
 		
@@ -171,7 +171,7 @@ _loop3_breakloop:			;
 	}
 	
 	public void calprops(
-		iCalendar iCal
+		DDay.iCal.iCalendar iCal
 	) //throws RecognitionException, TokenStreamException
 {
 		
