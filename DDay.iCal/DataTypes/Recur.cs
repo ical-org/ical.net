@@ -575,7 +575,7 @@ namespace DDay.iCal.DataTypes
                     {
                         old = old.AddDays(1);
                         current = m_Calendar.GetWeekOfYear(old, System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
-                    }                        
+                    }
                     dt.Value = old;
                     break;
                 case FrequencyType.MONTHLY: dt.Value = old.AddDays(-old.Day + 1).AddMonths(Interval); break;

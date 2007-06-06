@@ -81,6 +81,8 @@ namespace DDay.iCal.Test
             r.RRULE40();
             r.RRULE41();
 
+            r.TEST1();
+
             r.EVALUATE1();
         }
 
@@ -2098,6 +2100,25 @@ namespace DDay.iCal.Test
 
             foreach (Period p in periods)
                 Assert.IsTrue(p.StartTime.HasTime, "All recurrences of this event should have a time set.");
+        }
+
+        [Test, Category("Recurrence")]
+        public void TEST1()
+        {
+            iCalendar iCal = new iCalendar();
+            Event evt = iCal.Create<Event>();
+            evt.Summary = "Event summary";
+            evt.Start = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
+
+            Recur recur = new Recur();
+            evt.AddRecurrence(recur);
+
+            try
+            {
+                List<Period> periods = evt.Evaluate(DateTime.Today.AddDays(1), DateTime.Today.AddDays(2));
+                Assert.Fail("An exception should be thrown when evaluating a recurrence with no specified FREQUENCY");
+            }
+            catch { }
         }
     }
 }
