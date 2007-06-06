@@ -12,8 +12,10 @@ namespace DDay.iCal.DataTypes
     public partial class Recur : iCalDataType
     {
         #region Public Enums and Classes
+
         public enum FrequencyType
         {
+            NONE,
             SECONDLY,
             MINUTELY,
             HOURLY,
@@ -491,14 +493,17 @@ namespace DDay.iCal.DataTypes
             if (Frequency > FrequencyType.HOURLY &&
                 this.ByHour.Count == 0)
                 this.ByHour.Add(StartDate.Value.Hour);
-            // If neither BYDAY, BYMONTHDAY, or BYYEARDAY is specified, default to the current day of month
-            // NOTE: fixes RRULE23 handling, added BYYEARDAY exclusion to fix RRULE25 handling
+            // If neither BYDAY, BYMONTHDAY, or BYYEARDAY is specified,
+            // default to the current day of month
+            // NOTE: fixes RRULE23 handling, added BYYEARDAY exclusion
+            // to fix RRULE25 handling
             if (Frequency > FrequencyType.WEEKLY &&
                 this.ByMonthDay.Count == 0 && 
                 this.ByYearDay.Count == 0 && 
                 this.ByDay.Count == 0) 
                 this.ByMonthDay.Add(StartDate.Value.Day);
-            // If neither BYMONTH or BYYEARDAY is specified, default to the current month
+            // If neither BYMONTH nor BYYEARDAY is specified, default to
+            // the current month
             // NOTE: fixes RRULE25 handling
             if (Frequency > FrequencyType.MONTHLY &&
                 this.ByYearDay.Count == 0 && 
@@ -548,9 +553,9 @@ namespace DDay.iCal.DataTypes
             switch (Frequency)
             {
                 case FrequencyType.SECONDLY: dt.Value = old.AddSeconds(Interval); break;
-                case FrequencyType.MINUTELY: dt.Value = new DateTime(old.Year, old.Month, old.Day, old.Hour, old.Minute, old.Second, old.Kind).AddMinutes(Interval); break;
-                case FrequencyType.HOURLY: dt.Value = new DateTime(old.Year, old.Month, old.Day, old.Hour, old.Minute, old.Second, old.Kind).AddHours(Interval); break;
-                case FrequencyType.DAILY: dt.Value = new DateTime(old.Year, old.Month, old.Day, old.Hour, old.Minute, old.Second, old.Kind).AddDays(Interval); break;
+                case FrequencyType.MINUTELY: dt.Value = old.AddMinutes(Interval); break;
+                case FrequencyType.HOURLY: dt.Value = old.AddHours(Interval); break;
+                case FrequencyType.DAILY: dt.Value = old.AddDays(Interval); break;
                 case FrequencyType.WEEKLY:
                     // How the week increments depends on the WKST indicated (defaults to Monday)
                     // So, basically, we determine the week of year using the necessary rules,
@@ -573,8 +578,8 @@ namespace DDay.iCal.DataTypes
                     }                        
                     dt.Value = old;
                     break;
-                case FrequencyType.MONTHLY: dt.Value = new DateTime(old.Year, old.Month, 1, old.Hour, old.Minute, old.Second, old.Kind).AddMonths(Interval); break;
-                case FrequencyType.YEARLY: dt.Value = new DateTime(old.Year, 1, 1, old.Hour, old.Minute, old.Second, old.Kind).AddYears(Interval); break;
+                case FrequencyType.MONTHLY: dt.Value = old.AddDays(-old.Day + 1).AddMonths(Interval); break;
+                case FrequencyType.YEARLY: dt.Value = old.AddDays(-old.DayOfYear + 1).AddYears(Interval); break;
                 default: throw new Exception("IncrementDate() failed.");
             }
         }
@@ -734,7 +739,9 @@ namespace DDay.iCal.DataTypes
                     FillByDay(TC);
                     FillMonths(TC);
                     break;
-                case FrequencyType.WEEKLY: // Weeks can span across months, so we must fill months (Note: fixes RRULE10 eval)                    
+                case FrequencyType.WEEKLY: 
+                    // Weeks can span across months, so we must
+                    // fill months (Note: fixes RRULE10 eval)                    
                     FillMonths(TC);
                     break;
                 case FrequencyType.MONTHLY:

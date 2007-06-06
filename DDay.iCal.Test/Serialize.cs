@@ -53,11 +53,14 @@ namespace DDay.iCal.Test
             s.SERIALIZE18();
             s.SERIALIZE19();
             s.SERIALIZE20();
+            s.SERIALIZE21();
+            s.SERIALIZE22();
+            s.SERIALIZE23();            
             s.LANGUAGE1();
             s.LANGUAGE2();
             s.REQUIREDPARAMETERS1();
             s.TIMEZONE1();
-            s.TIMEZONE2();        
+            s.TIMEZONE2();
 
             s.USHOLIDAYS();
         }
