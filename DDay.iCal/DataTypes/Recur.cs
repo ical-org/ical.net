@@ -580,7 +580,7 @@ namespace DDay.iCal.DataTypes
                     break;
                 case FrequencyType.MONTHLY: dt.Value = old.AddDays(-old.Day + 1).AddMonths(Interval); break;
                 case FrequencyType.YEARLY: dt.Value = old.AddDays(-old.DayOfYear + 1).AddYears(Interval); break;
-                default: throw new Exception("IncrementDate() failed.");
+                default: throw new Exception("FrequencyType.NONE cannot be evaluated. Please specify a FrequencyType before evaluating the recurrence.");
             }
         }
 
