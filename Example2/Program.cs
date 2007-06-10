@@ -50,9 +50,9 @@ namespace Example2
 
             // Set information about the second event
             evt = iCal.Create<Event>();
-            evt.Start = DateTime.Today.AddDays(5);            
+            evt.Start = DateTime.Today.AddDays(5);
             evt.End = evt.Start.AddDays(1);
-            evt.IsAllDay = true;            
+            evt.IsAllDay = true;
             evt.Summary = "All-day event";
 
             // Display each event

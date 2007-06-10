@@ -8,7 +8,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <StartAction>Program</StartAction>
-    <StartProgram>C:\Program Files\NUnit-Net-2.0 2.2.8\bin\nunit-gui.exe</StartProgram>
+    <StartProgram>C:\Documents and Settings\dougd\My Documents\Visual Studio Projects\Classes\NUnit-2.4.1-net-2.0\bin\nunit.exe</StartProgram>
     <StartArguments>DDay.iCal.Test.exe</StartArguments>
   </PropertyGroup>
 </Project>
