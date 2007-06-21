@@ -80,6 +80,7 @@ namespace DDay.iCal.Test
             r.RRULE39();
             r.RRULE40();
             r.RRULE41();
+            r.RRULE42();
 
             r.TEST1();
 
@@ -1813,6 +1814,44 @@ namespace DDay.iCal.Test
                 new Date_Time(1997, 8, 17, 9, 0, 0, tzid, iCal),
                 new Date_Time(1997, 8, 19, 9, 0, 0, tzid, iCal),
                 new Date_Time(1997, 8, 31, 9, 0, 0, tzid, iCal)
+            };
+
+            foreach (Date_Time dt in DateTimes)
+            {
+                Assert.IsTrue(evt.OccursAt(dt), "Event should occur on " + dt);
+                Assert.IsTrue(dt.TimeZoneInfo.TimeZoneName == "EDT", "Event " + dt + " should occur in the EDT TimeZone");
+            }
+
+            Assert.IsTrue(evt.Periods.Count == DateTimes.Length, "There should be exactly " + DateTimes.Length + " occurrences; there were " + evt.Periods.Count);
+        }
+
+        /// <summary>
+        /// Tests WEEKLY Frequencies to ensure that those with an INTERVAL > 1
+        /// are correctly handled.  See Bug #1741093 - WEEKLY frequency eval behaves strangely.
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE42()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE42.ics");
+            Program.TestCal(iCal);
+            Event evt = iCal.Events[0];
+            evt.Evaluate(new Date_Time(2007, 7, 1, tzid, iCal), new Date_Time(2007, 8, 1, tzid, iCal));
+
+            Date_Time[] DateTimes = new Date_Time[]
+            {
+                new Date_Time(2007, 6, 21, 8, 0, 0, tzid, iCal),
+                new Date_Time(2007, 7, 2, 8, 0, 0, tzid, iCal),
+                new Date_Time(2007, 7, 3, 8, 0, 0, tzid, iCal),
+                new Date_Time(2007, 7, 4, 8, 0, 0, tzid, iCal),
+                new Date_Time(2007, 7, 5, 8, 0, 0, tzid, iCal),
+                new Date_Time(2007, 7, 6, 8, 0, 0, tzid, iCal),
+                new Date_Time(2007, 7, 16, 8, 0, 0, tzid, iCal),
+                new Date_Time(2007, 7, 17, 8, 0, 0, tzid, iCal),
+                new Date_Time(2007, 7, 18, 8, 0, 0, tzid, iCal),
+                new Date_Time(2007, 7, 19, 8, 0, 0, tzid, iCal),
+                new Date_Time(2007, 7, 20, 8, 0, 0, tzid, iCal),
+                new Date_Time(2007, 7, 30, 8, 0, 0, tzid, iCal),
+                new Date_Time(2007, 7, 31, 8, 0, 0, tzid, iCal)
             };
 
             foreach (Date_Time dt in DateTimes)
