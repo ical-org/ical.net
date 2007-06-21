@@ -535,7 +535,7 @@ namespace DDay.iCal.DataTypes
                             DateTimes.Add(dt.Copy());
                     }
                 }
-
+                                
                 IncrementDate(StartDate);
             }
             
@@ -813,9 +813,9 @@ namespace DDay.iCal.DataTypes
                 foreach (Date_Time dt in StaticOccurrences)
                 {
                     if (FromDate < dt)
-                        FromDate = dt.AddSeconds(1);                    
+                        FromDate = dt.AddSeconds(1);
                 }
-            }
+            }            
 
             // Handle "UNTIL" values that are date-only. If we didn't change values here, "UNTIL" would
             // exclude the day it specifies, instead of the inclusive behaviour it should exhibit.
@@ -832,6 +832,42 @@ namespace DDay.iCal.DataTypes
                 ToDate = Until;
             if (StartDate > FromDate)
                 FromDate = StartDate;
+
+            // If the frequency is WEEKLY, and the interval is greater than 1,
+            // then we need to ensure that the StartDate occurs in one of the
+            // "active" weeks, to ensure that we properly "step" through weeks.
+            // NOTE: Fixes bug #1741093 - WEEKLY frequency eval behaves strangely
+            if (Frequency == FrequencyType.WEEKLY &&
+                Interval > 1)
+            {   
+                // Get the week of year of the time frame we want to calculate          
+                int firstEvalWeek = m_Calendar.GetWeekOfYear(FromDate.Value, System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
+
+                // Count backwards in years, calculating how many weeks' difference we have between
+                // start date and evaluation period.
+                Date_Time evalDate = FromDate;
+                while (evalDate.Year > StartDate.Year)
+                {
+                    firstEvalWeek += m_Calendar.GetWeekOfYear(new DateTime(evalDate.Year - 1, 12, 31), System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
+                    evalDate = evalDate.AddYears(-1);
+                }
+
+                // Determine the difference, in weeks, between the start date and the evaluation period.
+                int startWeek = m_Calendar.GetWeekOfYear(StartDate.Value, System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
+                int weeksDifference = firstEvalWeek - startWeek;
+
+                // Determine how many weeks the evaluation period needs to change
+                // in order to "align" to the start date week, given the specified interval.
+                int offset = 0;
+                while (weeksDifference % Interval != 0)
+                {
+                    weeksDifference--;
+                    offset++;
+                }
+
+                // Offset the week back to a "compatible" week for evaluation
+                FromDate = FromDate.AddDays(-offset * 7);
+            }
 
             // Create a temporary recurrence for populating 
             // missing information using the 'StartDate'.
