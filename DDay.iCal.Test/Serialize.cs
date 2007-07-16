@@ -57,6 +57,7 @@ namespace DDay.iCal.Test
             s.SERIALIZE22();
             s.SERIALIZE23();
             s.SERIALIZE24();
+            s.SERIALIZE25();
             s.LANGUAGE1();
             s.LANGUAGE2();
             s.REQUIREDPARAMETERS1();
@@ -414,6 +415,57 @@ END:VCALENDAR
             Assert.IsTrue(customiCal.Events.Count == 1, "Custom calendar should have 1 event");
             Assert.IsTrue(calendar.Events[0].GetType() == typeof(Event), "Calendar event should be of type Event");
             Assert.IsTrue(customiCal.Events[0].GetType() == typeof(CustomEvent1), "Custom calendar event should be of type CustomEvent1");
+        }
+
+        [Test, Category("Serialization")]
+        public void SERIALIZE25()
+        {
+            iCalendar iCal = new iCalendar();
+            Event evt = iCal.Create<Event>();
+            evt.Start = DateTime.Now;
+            evt.Duration = TimeSpan.FromHours(1);
+            evt.Summary = @"
+Thank you for purchasing tickets on Ticketmaster.
+Your order number for this purchase is 19-36919/UK1.
+
+Tickets will be despatched as soon as possible, but may not be received until 7-10 days before the event. Please do not contact us unless you have not received your tickets within 7 days of the event.
+
+
+You purchased 2 tickets to: 
+_____________________________________________________________________________________________ 
+Prince
+The O2, London, UK
+Fri 31 Aug 2007, 18:00 
+
+Seat location: section BK 419, row M, seats 912-913
+Total Charge: £69.42
+
+http://ads.as4x.tmcs.ticketmaster.com/click.ng/site=tm&pagepos=531&adsize=336x102&lang=en-uk&majorcatid=10001&minorcatid=1&event_id=12003EA8AD65189AD&venueid=148826&artistid=135895&promoter=161&TransactionID=0902229695751936911UKA
+Thanks again for using Ticketmaster.
+Show complete  HYPERLINK ""http://ntr.ticketmaster.com:80/ssp/?&C=%39%33%30%30%35%5F%33%30%33&R=%6F%6C%5F%31%33%31&U=%31%39%2D%33%36%41%31%39%2F%55%4B%31&M=%35&B=%32%2E%30&S=%68%80%74%70%73%3A%2F%3F%77%77%77%2E%74%80%63%6B%65%71%6D%61%73%74%65%72%2E%63%6F%2E"" \t ""_blank"" order detail.
+You can always check your order and manage your preferences in  HYPERLINK ""http://ntr.ticketmaster.com:80/ssp/?&C=%39%33%30%30%30%5F%33%30%33&R=%6F%6C%5F%6D%65%6D%62%65%72&U=%31%39%2D%33%36%39%31%39%2F%55%4B%31&M=%31&B=%32%2E%30&S=%68%74%74%70%73%3A%2F%2F%77%"" \t ""_blank"" My Ticketmaster. 
+
+_____________________________________________________________________________________________
+
+C  U  S  T  O  M  E  R      S  E  R  V  I  C  E 
+_____________________________________________________________________________________________
+
+If you have any questions regarding your booking you can search for answers using our online helpdesk at http://ticketmaster.custhelp.com
+
+You can search our extensive range of answers and in the unlikely event that you cannot find an answer to your query, you can use 'Ask a Question' to contact us directly.
+
+
+
+_____________________________________________________________________________________________
+This email confirms your ticket order, so print/save it for future reference. All purchases are subject to credit card approval and billing address verification. We make every effort to be accurate, but we cannot be responsible for changes, cancellations, or postponements announced after this email is sent. 
+Please do not reply to this email. Replies to this email will not be responded to or read. If you have any questions or comments,  HYPERLINK ""http://ntr.ticketmaster.com:80/ssp/?&C=%39%33%30%30%30%5F%33%30%33&R=%32&U=%31%39%2D%33%36%39%31%39%2F%55%4B%31&M=%31&B=%32%2E%30&S=%68%74%74%70%3A%2F%2F%77%77%77%2E%74%69%63%6B%65%74%6D%61%73%74%65%72%2E%63%6F%2E%75%6B%2F%68%2F%63%75%73%74%6F%6D%65%72%5F%73%65%72%76%65%2E%68%74%6D%6C"" \t ""_blank"" contact us.
+
+Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 48 Leicester Square, London WC2H 7LR ";
+
+            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
+            serializer.Serialize(@"Calendars\Serialization\SERIALIZE25.ics");
+
+            SerializeTest("SERIALIZE25.ics");
         }
         
         [Test, Category("Serialization")]

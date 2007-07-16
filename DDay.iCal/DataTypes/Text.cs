@@ -60,17 +60,28 @@ namespace DDay.iCal.DataTypes
             Text t = (Text)obj;
             if (t.Value != null)
                 value = t.Value;
+
+            // NOTE: fixed a bug that caused text parsing to fail on
+            // programmatically entered strings.
+            // SEE unit test SERIALIZE25().
+            value = value.Replace("\r\n", @"\n");
+            value = value.Replace("\r", @"\n");
+            value = value.Replace("\n", @"\n");
             value = value.Replace(@"\n", "\n");
             value = value.Replace(@"\N", "\n");            
             value = value.Replace(@"\;", ";");
             value = value.Replace(@"\,", ",");
             // FIXME: double quotes aren't escaped in RFC2445, but are in Mozilla
             value = value.Replace("\\\"", "\"");
-            
+
+            // Replace all single-backslashes with double-backslashes.
+            value = Regex.Replace(value, @"[^\\]\\[^\\]", @"\\");
+                        
             // Everything but backslashes has been unescaped. Validate this...
             if (Regex.IsMatch(value, @"[^\\]\\[^\\]"))
                 return false;
 
+            // Unescape double backslashes
             value = value.Replace(@"\\", @"\");
             t.Value = value;
 
