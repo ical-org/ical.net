@@ -6,10 +6,12 @@ using System.IO;
 using System.Resources;
 using System.Web;
 using System.Web.UI;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
 using System.Reflection;
 using System.Text.RegularExpressions;
+
+using DDay.iCal.Components;
+using DDay.iCal.DataTypes;
+using DDay.iCal.Serialization;
 using NUnit.Framework;
 
 namespace DDay.iCal.Test
@@ -83,6 +85,7 @@ namespace DDay.iCal.Test
             r.RRULE42();
 
             r.TEST1();
+            r.TEST2();
 
             r.EVALUATE1();
         }
@@ -2158,6 +2161,28 @@ namespace DDay.iCal.Test
                 Assert.Fail("An exception should be thrown when evaluating a recurrence with no specified FREQUENCY");
             }
             catch { }
+        }
+
+        [Test, Category("Recurrence")]
+        public void TEST2()
+        {
+            iCalendar iCal = new iCalendar();
+            Event evt = iCal.Create<Event>();
+            evt.Summary = "Event summary";
+            evt.Start = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);            
+
+            Recur recur = new Recur();
+            recur.Frequency = Recur.FrequencyType.DAILY;
+            recur.Count = 3;
+            recur.ByDay.Add(new Recur.DaySpecifier(DayOfWeek.Monday));
+            recur.ByDay.Add(new Recur.DaySpecifier(DayOfWeek.Wednesday));
+            recur.ByDay.Add(new Recur.DaySpecifier(DayOfWeek.Friday));
+            evt.AddRecurrence(recur);
+
+            DDay.iCal.Serialization.iCalendar.DataTypes.RecurSerializer serializer =
+                new DDay.iCal.Serialization.iCalendar.DataTypes.RecurSerializer(recur);
+            Assert.IsTrue(string.Compare(serializer.SerializeToString(), "FREQ=DAILY;COUNT=3;BYDAY=MO,WE,FR") == 0,
+                "Serialized recurrence string is incorrect");
         }
     }
 }
