@@ -22,11 +22,11 @@ options
 // iCalendar object
 icalobject returns [DDay.iCal.iCalendar iCal = (DDay.iCal.iCalendar)Activator.CreateInstance(iCalendarType);]
 :
-    (BEGIN COLON VCALENDAR CRLF icalbody[iCal] END COLON VCALENDAR CRLF)* {iCal.OnLoad(EventArgs.Empty);}
+    (BEGIN COLON VCALENDAR CRLF icalbody[iCal] END COLON VCALENDAR (CRLF)*)* {iCal.OnLoad(EventArgs.Empty);}
 ;
     
 icalbody[DDay.iCal.iCalendar iCal]: (calprops[iCal])? (component[iCal])?;
-component[iCalObject o] returns [ComponentBase c = null;]: (c=iana_comp[o] | c=x_comp[o])+;
+component[iCalObject o] returns [ComponentBase c = null;]: (c=iana_comp[o] | c=x_comp[o] | CRLF)+;
 iana_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:IANA_TOKEN {c = o.iCalendar.Create(o, n.getText().ToLower());} CRLF (calendarline[c])+ END COLON IANA_TOKEN CRLF { c.OnLoad(EventArgs.Empty); };
 x_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:X_NAME {c = o.iCalendar.Create(o, n.getText().ToLower());} CRLF (calendarline[c])+ END COLON X_NAME CRLF { c.OnLoad(EventArgs.Empty); };
 

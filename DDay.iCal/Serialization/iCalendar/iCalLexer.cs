@@ -625,7 +625,7 @@ tryAgain:
 		_ttype = IANA_TOKEN;
 		
 		{ // ( ... )+
-			int _cnt105=0;
+			int _cnt107=0;
 			for (;;)
 			{
 				switch ( cached_LA1 )
@@ -661,12 +661,12 @@ tryAgain:
 				}
 				default:
 				{
-					if (_cnt105 >= 1) { goto _loop105_breakloop; } else { throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());; }
+					if (_cnt107 >= 1) { goto _loop107_breakloop; } else { throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());; }
 				}
 				break; }
-				_cnt105++;
+				_cnt107++;
 			}
-_loop105_breakloop:			;
+_loop107_breakloop:			;
 		}    // ( ... )+
 		
 		string s = text.ToString(_begin, text.Length-_begin);
