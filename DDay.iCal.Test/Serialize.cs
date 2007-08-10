@@ -63,6 +63,8 @@ namespace DDay.iCal.Test
             s.REQUIREDPARAMETERS1();
             s.TIMEZONE1();
             s.TIMEZONE2();
+            s.PARSE1();
+            s.PARSE2();
 
             s.USHOLIDAYS();
         }
@@ -566,6 +568,20 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
                 ContentLine cl = tzi.Start.ContentLine;
                 Assert.IsFalse(cl.Parameters.ContainsKey("VALUE"), "\"DTSTART\" property MUST be represented in local time in timezones");
             }
+        }
+
+        [Test, Category("Serialization")]
+        public void PARSE1()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE1.ics");
+            Assert.IsTrue(iCal.Events.Count == 2, "iCalendar should have 2 events");
+        }
+
+        [Test, Category("Serialization")]
+        public void PARSE2()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE2.ics");
+            Assert.IsTrue(iCal.Events.Count == 4, "iCalendar should have 4 events");
         }
     }
 }
