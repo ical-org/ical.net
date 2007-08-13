@@ -180,9 +180,13 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
         public override iCalObject Deserialize(TextReader tr, Type iCalendarType)
         {
+            // Normalize line endings, so "\r" is treated the same as "\r\n"
+            // NOTE: fixed bug #1773194 - Some applications emit mixed line endings
+            TextReader textReader = NormalizeLineEndings(tr);
+
             // Create a lexer for our text stream
-            iCalLexer lexer = new iCalLexer(tr);
-            iCalParser parser = new iCalParser(lexer);
+            iCalLexer lexer = new iCalLexer(textReader);
+            iCalParser parser = new iCalParser(lexer);            
 
             // Determine the calendar type we'll be using when constructing
             // iCalendar objects...
@@ -194,6 +198,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
             // Close our text stream
             tr.Close();
+            textReader.Close();
 
             // Return the parsed component
             return component;

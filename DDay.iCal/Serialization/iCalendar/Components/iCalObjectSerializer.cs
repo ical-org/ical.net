@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.IO;
 using DDay.iCal.Components;
 
@@ -9,6 +10,25 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 {
     public class iCalObjectSerializer : ISerializable
     {
+        #region Static Public Methods
+
+        static public TextReader NormalizeLineEndings(string s)
+        {
+            // Replace \r and \n with \r\n.
+            return new StringReader(Regex.Replace(s, @"((\r(?=[^\n]))|((?<=[^\r])\n))", "\r\n"));            
+        }
+
+        static public TextReader NormalizeLineEndings(TextReader tr)
+        {
+            string s = tr.ReadToEnd();
+            TextReader reader = NormalizeLineEndings(s);
+            tr.Close();
+
+            return reader;
+        }
+
+        #endregion
+
         #region Private Fields
 
         private DDay.iCal.Components.iCalObject m_Object;        

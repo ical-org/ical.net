@@ -30,7 +30,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DDay.iCal, Version=0.20.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="DDay.iCal, Version=0.40.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\DDay.iCal.dll</HintPath>
     </Reference>
@@ -335,6 +335,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Calendars\Recurrence\RRULE42.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Calendars\Serialization\PARSE3.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Calendars\Serialization\PARSE1.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Calendars\Serialization\PARSE2.ics">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
