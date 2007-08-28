@@ -420,7 +420,7 @@ namespace DDay.iCal
         {
             return LoadFromStream(typeof(iCalendar), s, Encoding.UTF8);
         }
-        static new public iCalendar LoadFromStream(Stream s, Encoding encoding)
+        static public iCalendar LoadFromStream(Stream s, Encoding encoding)
         {
             return LoadFromStream(typeof(iCalendar), s, encoding);
         }
@@ -432,14 +432,14 @@ namespace DDay.iCal
         {
             return LoadFromStream<T>(tr, new iCalendarSerializer());
         }
-        static new public T LoadFromStream<T>(TextReader tr, ISerializable serializer)
+        static public T LoadFromStream<T>(TextReader tr, ISerializable serializer)
         {
             if (typeof(T) == typeof(iCalendar) ||
                 typeof(T).IsSubclassOf(typeof(iCalendar)))
                 return (T)(object)LoadFromStream(typeof(T), tr, serializer);
             else return default(T);
         }
-        static new public T LoadFromStream<T>(Stream s)
+        static public T LoadFromStream<T>(Stream s)
         {
             return LoadFromStream<T>(s, Encoding.UTF8, new iCalendarSerializer());
         }
@@ -447,7 +447,7 @@ namespace DDay.iCal
         {
             return LoadFromStream<T>(s, encoding, new iCalendarSerializer());
         }
-        static new public T LoadFromStream<T>(Stream s, Encoding encoding, ISerializable serializer)
+        static public T LoadFromStream<T>(Stream s, Encoding encoding, ISerializable serializer)
         {
             if (typeof(T) == typeof(iCalendar) ||
                 typeof(T).IsSubclassOf(typeof(iCalendar)))

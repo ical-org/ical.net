@@ -47,7 +47,7 @@
   <ItemGroup>
     <Reference Include="antlr.runtime, Version=2.7.6.2, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\antlr.runtime.dll</HintPath>
+      <HintPath>..\antlr.runtime.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -145,6 +145,11 @@
     <Compile Include="Serialization\SerializedAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Serialization\xCalSerializer.cs" />
+    <Compile Include="Serialization\xCal\Components\ComponentBaseSerializer.cs" />
+    <Compile Include="Serialization\xCal\Components\iCalObjectSerializer.cs" />
+    <Compile Include="Serialization\xCal\IXCalSerializable.cs" />
+    <Compile Include="Serialization\xCal\SerializerFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
@@ -160,6 +165,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Serialization\iCalendar\iCal.g" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Serialization\xCal\DataTypes\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
