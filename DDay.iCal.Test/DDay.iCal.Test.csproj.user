@@ -1,14 +1,12 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <StartArguments>
-    </StartArguments>
-    <StartAction>Project</StartAction>
-    <StartProgram>
-    </StartProgram>
+    <StartArguments>DDay.iCal.Test.exe</StartArguments>
+    <StartAction>Program</StartAction>
+    <StartProgram>C:\Program Files\NUnit 2.4.3\bin\nunit.exe</StartProgram>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <StartAction>Program</StartAction>
-    <StartProgram>C:\Documents and Settings\dougd\My Documents\Visual Studio Projects\Classes\NUnit-2.4.1-net-2.0\bin\nunit.exe</StartProgram>
+    <StartProgram>C:\Program Files\NUnit 2.4.3\bin\nunit.exe</StartProgram>
     <StartArguments>DDay.iCal.Test.exe</StartArguments>
   </PropertyGroup>
 </Project>
