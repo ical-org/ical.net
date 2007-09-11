@@ -149,6 +149,11 @@
     <Compile Include="Serialization\xCal\Components\ComponentBaseSerializer.cs" />
     <Compile Include="Serialization\xCal\Components\iCalObjectSerializer.cs" />
     <Compile Include="Serialization\xCal\Components\PropertySerializer.cs" />
+    <Compile Include="Serialization\xCal\Components\UniqueComponentSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\ArraySerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\DataTypeSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\EnumSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\FieldSerializer.cs" />
     <Compile Include="Serialization\xCal\IXCalSerializable.cs" />
     <Compile Include="Serialization\xCal\SerializerFactory.cs" />
   </ItemGroup>
@@ -166,9 +171,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Serialization\iCalendar\iCal.g" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Serialization\xCal\DataTypes\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

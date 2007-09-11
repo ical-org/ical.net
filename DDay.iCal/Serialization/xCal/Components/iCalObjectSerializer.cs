@@ -63,46 +63,49 @@ namespace DDay.iCal.Serialization.xCal.Components
 
         virtual public void Serialize(XmlTextWriter xtw)
         {
-            xtw.WriteStartElement(Object.Name.ToLower());
-
-            // Serialize "VERSION" before any other properties
-            if (Object.Properties.ContainsKey("VERSION"))
+            if (Object.Name != null)
             {
-                Property p = (Property)Object.Properties["VERSION"];
-                IXCalSerializable serializer = SerializerFactory.Create(p);
-                if (serializer != null)
-                    serializer.Serialize(xtw);
-            }
+                xtw.WriteStartElement(Object.Name.ToLower());
 
-            foreach (DictionaryEntry de in Object.Properties)
-            {
-                // Don't serialize "VERSION" again, we've already done it above.
-                if (de.Key.Equals("VERSION"))
-                    continue;
+                // Serialize "VERSION" before any other properties
+                if (Object.Properties.ContainsKey("VERSION"))
+                {
+                    Property p = (Property)Object.Properties["VERSION"];
+                    IXCalSerializable serializer = SerializerFactory.Create(p);
+                    if (serializer != null)
+                        serializer.Serialize(xtw);
+                }
 
-                Property p = (Property)de.Value;
-                IXCalSerializable serializer = SerializerFactory.Create(p);
-                if (serializer != null)
-                    serializer.Serialize(xtw);
-            }
+                foreach (DictionaryEntry de in Object.Properties)
+                {
+                    // Don't serialize "VERSION" again, we've already done it above.
+                    if (de.Key.Equals("VERSION"))
+                        continue;
 
-            foreach (DictionaryEntry de in Object.Parameters)
-            {
-                Parameter p = (Parameter)de.Value;
-                IXCalSerializable serializer = SerializerFactory.Create(p);
-                if (serializer != null)
-                    serializer.Serialize(xtw);
+                    Property p = (Property)de.Value;
+                    IXCalSerializable serializer = SerializerFactory.Create(p);
+                    if (serializer != null)
+                        serializer.Serialize(xtw);
+                }
+
+                foreach (DictionaryEntry de in Object.Parameters)
+                {
+                    Parameter p = (Parameter)de.Value;
+                    IXCalSerializable serializer = SerializerFactory.Create(p);
+                    if (serializer != null)
+                        serializer.Serialize(xtw);
+                }
             }
-                        
-            /* FIXME: handle children objects
+            
             foreach (DDay.iCal.Components.iCalObject obj in Object.Children)
             {
                 IXCalSerializable serializer = SerializerFactory.Create(obj);
                 if (serializer != null)
                     serializer.Serialize(xtw);
-            }*/
+            }
 
-            xtw.WriteEndElement();
+            if (Object.Name != null)
+                xtw.WriteEndElement();
         }
 
         virtual public iCalObject Deserialize(XmlTextReader xtr, Type iCalendarType)
