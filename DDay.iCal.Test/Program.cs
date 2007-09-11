@@ -20,37 +20,6 @@ namespace DDay.iCal.Test
     [TestFixture]
     public class Program
     {
-        static public void Main(string[] args)
-        {
-            Program p = new Program();
-            p.InitAll();
-            p.LoadFromFile();
-            p.LoadFromUri();
-
-            DDay.iCal.Test.Alarm.DoTests();
-            DDay.iCal.Test.Copy.DoTests();
-            DDay.iCal.Test.Journal.DoTests();
-            DDay.iCal.Test.Recurrence.DoTests();
-            DDay.iCal.Test.Serialization.DoTests();
-            DDay.iCal.Test.Todo.DoTests();            
-
-            p.CATEGORIES();
-            p.GEO1();
-            p.BASE64();
-            p.BASE64_1();
-            p.BINARY();
-            p.MERGE();
-            p.UID1();
-            p.ADDEVENT1();            
-            p.LANGUAGE1();
-            p.GOOGLE1();
-            p.EVALUATION1();
-            p.LOAD1();
-            p.LoadAndDisplayCalendar();
-
-            p.DisposeAll();
-        }
-                
         [Test]
         public void LoadAndDisplayCalendar()
         {

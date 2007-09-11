@@ -46,7 +46,10 @@ namespace DDay.iCal.Serialization.xCal.Components
         virtual public void Serialize(Stream stream, Encoding encoding)
         {
             XmlTextWriter xtw = new XmlTextWriter(stream, encoding);
+            xtw.Formatting = Formatting.Indented;
+            xtw.IndentChar = ' ';            
             Serialize(xtw);
+            xtw.Close();
         }
 
         virtual public iCalObject Deserialize(Stream stream, Encoding encoding, Type iCalendarType)
@@ -90,13 +93,14 @@ namespace DDay.iCal.Serialization.xCal.Components
                 if (serializer != null)
                     serializer.Serialize(xtw);
             }
-
+                        
+            /* FIXME: handle children objects
             foreach (DDay.iCal.Components.iCalObject obj in Object.Children)
             {
                 IXCalSerializable serializer = SerializerFactory.Create(obj);
                 if (serializer != null)
                     serializer.Serialize(xtw);
-            }
+            }*/
 
             xtw.WriteEndElement();
         }

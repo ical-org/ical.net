@@ -58,6 +58,7 @@ namespace DDay.iCal.Test
             s.SERIALIZE23();
             s.SERIALIZE24();
             s.SERIALIZE25();
+            s.XCAL1();
             s.LANGUAGE1();
             s.LANGUAGE2();
             s.REQUIREDPARAMETERS1();
@@ -468,6 +469,24 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             serializer.Serialize(@"Calendars\Serialization\SERIALIZE25.ics");
 
             SerializeTest("SERIALIZE25.ics");
+        }
+
+        [Test, Category("Serialization")]
+        public void XCAL1()
+        {
+            iCalendar iCal = new iCalendar();
+
+            Event evt = iCal.Create<Event>();
+            evt.Summary = "Test event title";
+            evt.Start = new Date_Time(2007, 4, 29);
+            evt.End = evt.Start.AddDays(1);
+            evt.IsAllDay = true;
+
+            Recur rec = new Recur("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4");
+            evt.AddRecurrence(rec);
+
+            xCalSerializer serializer = new xCalSerializer(iCal);
+            serializer.Serialize(@"c:\test.xcal");
         }
         
         [Test, Category("Serialization")]

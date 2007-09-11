@@ -148,6 +148,7 @@
     <Compile Include="Serialization\xCalSerializer.cs" />
     <Compile Include="Serialization\xCal\Components\ComponentBaseSerializer.cs" />
     <Compile Include="Serialization\xCal\Components\iCalObjectSerializer.cs" />
+    <Compile Include="Serialization\xCal\Components\PropertySerializer.cs" />
     <Compile Include="Serialization\xCal\IXCalSerializable.cs" />
     <Compile Include="Serialization\xCal\SerializerFactory.cs" />
   </ItemGroup>

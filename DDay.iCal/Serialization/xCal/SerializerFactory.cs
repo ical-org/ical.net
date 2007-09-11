@@ -32,9 +32,9 @@ namespace DDay.iCal.Serialization.xCal
                 /*else if (type == typeof(iCalDataType) || type.IsSubclassOf(typeof(iCalDataType)))
                     return new DataTypeSerializer(obj as iCalDataType);
                 else if (type == typeof(Parameter) || type.IsSubclassOf(typeof(Parameter)))
-                    return new ParameterSerializer(obj as Parameter);
+                    return new ParameterSerializer(obj as Parameter);*/
                 else if (type == typeof(Property) || type.IsSubclassOf(typeof(Property)))
-                    return new PropertySerializer(obj as Property);
+                    return new PropertySerializer(obj as Property);/*
                 // We don't allow ContentLines to directly serialize, as
                 // they're likely a byproduct of loading a calendar, and we
                 // are already going to reproduce the content line(s) anyway.
