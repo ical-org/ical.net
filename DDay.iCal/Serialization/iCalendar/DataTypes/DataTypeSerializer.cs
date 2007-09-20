@@ -48,7 +48,11 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
                 serializer = (ISerializable)Activator.CreateInstance(serializerType, new object[] { m_dataType });
 
             if (serializer == null)
-                serializer = new FieldSerializer(m_dataType);
+            {
+                if (m_dataType is EncodableDataType)
+                    serializer = new EncodableDataTypeSerializer(m_dataType as EncodableDataType);
+                else serializer = new FieldSerializer(m_dataType);
+            }
 
             if (serializer != null)
             {
@@ -57,9 +61,18 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
                 if (serializer is IParameterSerializable)
                 {
                     IParameterSerializable paramSerializer = (IParameterSerializable)serializer;
-                    List<string> Parameters = paramSerializer.Parameters;
+                    List<Parameter> Parameters = paramSerializer.Parameters;
                     if (Parameters.Count > 0)
-                        value += ";" + string.Join(";", Parameters.ToArray());
+                    {                        
+                        List<string> values = new List<string>();
+                        foreach (Parameter p in Parameters)
+                        {
+                            ParameterSerializer pSerializer = new ParameterSerializer(p);
+                            values.Add(pSerializer.SerializeToString());
+                        }
+
+                        value += ";" + string.Join(";", values.ToArray());
+                    }
                 }
 
                 value += ":";
@@ -93,27 +106,25 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
         #region IParameterSerializable Members
 
-        virtual public List<string> Parameters
+        virtual public List<Parameter> Parameters
         {
             get
             {
-                List<string> Parameters = new List<string>();
+                List<Parameter> Parameters = new List<Parameter>();
                 foreach (DictionaryEntry de in m_dataType.Parameters)
                 {
-                    if (!this.DisallowedParameters.Contains(de.Key.ToString()))
-                    {
-                        Parameters.Add(de.Key + "=" + string.Join(",", ((Parameter)de.Value).Values.ToArray()));
-                    }
+                    if (!this.DisallowedParameters.Contains(de.Value as Parameter))
+                        Parameters.Add(de.Value as Parameter);
                 }
-                return new List<string>();
+                return Parameters;
             }
         }
 
-        virtual public List<string> DisallowedParameters
+        virtual public List<Parameter> DisallowedParameters
         {
             get
             {
-                return new List<string>();
+                return new List<Parameter>();
             }
         }
 

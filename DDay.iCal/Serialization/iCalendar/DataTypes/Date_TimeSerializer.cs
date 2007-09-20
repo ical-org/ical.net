@@ -13,7 +13,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
         #region Private Fields
 
         private Date_Time m_DateTime;
-        static private List<string> m_DisallowedParameters;
+        static private List<Parameter> m_DisallowedParameters;
 
         #endregion
 
@@ -31,9 +31,10 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
         static Date_TimeSerializer()
         {
-            m_DisallowedParameters = new List<string>();
-            m_DisallowedParameters.Add("TZID");
-            m_DisallowedParameters.Add("VALUE");
+            m_DisallowedParameters = new List<Parameter>();
+
+            m_DisallowedParameters.Add(new Parameter("TZID"));
+            m_DisallowedParameters.Add(new Parameter("VALUE"));
         }
 
         public Date_TimeSerializer(Date_Time dt) : base(dt)
@@ -45,7 +46,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
         #region ISerializable Members
 
-        public override List<string> DisallowedParameters
+        public override List<Parameter> DisallowedParameters
         {
             get
             {
@@ -53,14 +54,14 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
             }
         }
 
-        public override List<string> Parameters
+        public override List<Parameter> Parameters
         {
             get
             {
-                List<string> Params = base.Parameters;
+                List<Parameter> Params = base.Parameters;
 
                 if (m_DateTime.TZID != null)
-                    Params.Add("TZID=" + m_DateTime.TZID.ToString());                
+                    Params.Add(new Parameter("TZID", m_DateTime.TZID.ToString()));
 
                 string valueType = null;
                 if (!m_DateTime.HasTime)
@@ -98,7 +99,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
                 // If the value type is already the default value type, don't worry about displaying it
                 if (valueType != null)
-                    Params.Add("VALUE=" + valueType);
+                    Params.Add(new Parameter("VALUE", valueType));
                 
                 return Params;
             }

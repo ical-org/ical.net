@@ -7,7 +7,7 @@ using DDay.iCal.Components;
 
 namespace DDay.iCal.Serialization.iCalendar.DataTypes
 {
-    public class TextCollectionSerializer : FieldSerializer 
+    public class TextCollectionSerializer : EncodableDataTypeSerializer 
     {
         #region Private Fields
 
@@ -42,7 +42,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
                 }
             }
 
-            return value;
+            return Encode(value);
         }
 
         #endregion

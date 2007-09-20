@@ -50,23 +50,23 @@ namespace DDay.iCal.Serialization.xCal.Components
 
         #region IParameterSerializable Members
 
-        public List<string> Parameters
+        public List<Parameter> Parameters
         {
             get
             {
-                List<string> Parameters = new List<string>();
+                List<Parameter> Parameters = new List<Parameter>();
                 foreach (DictionaryEntry de in m_Property.Parameters)
                 {
-                    if (!DisallowedParameters.Contains(de.Key.ToString()))
-                        Parameters.Add(de.Key + "=" + string.Join(",", ((Parameter)de.Value).Values.ToArray()));
+                    if (!DisallowedParameters.Contains(de.Value as Parameter))
+                        Parameters.Add(de.Value as Parameter);
                 }
                 return Parameters;
             }
         }
 
-        public List<string> DisallowedParameters
+        public List<Parameter> DisallowedParameters
         {
-            get { return new List<string>(); }
+            get { return new List<Parameter>(); }
         }
 
         #endregion        

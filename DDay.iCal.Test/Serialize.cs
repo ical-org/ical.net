@@ -27,49 +27,6 @@ namespace DDay.iCal.Test
             tzid = new TZID("US-Eastern");
         }
 
-        static public void DoTests()
-        {
-            // FIXME: add test case for merging calendars and then serializing/deserializing, vs. simply merging
-
-            Serialization s = new Serialization();
-            s.InitAll();
-            s.SERIALIZE1();
-            s.SERIALIZE2();
-            s.SERIALIZE3();
-            s.SERIALIZE4();
-            s.SERIALIZE5();
-            s.SERIALIZE6();
-            s.SERIALIZE7();
-            s.SERIALIZE8();
-            s.SERIALIZE9();
-            s.SERIALIZE10();
-            s.SERIALIZE11();
-            s.SERIALIZE12();
-            s.SERIALIZE13();
-            s.SERIALIZE14();
-            s.SERIALIZE15();
-            s.SERIALIZE16();
-            s.SERIALIZE17();
-            s.SERIALIZE18();
-            s.SERIALIZE19();
-            s.SERIALIZE20();
-            s.SERIALIZE21();
-            s.SERIALIZE22();
-            s.SERIALIZE23();
-            s.SERIALIZE24();
-            s.SERIALIZE25();
-            s.XCAL1();
-            s.LANGUAGE1();
-            s.LANGUAGE2();
-            s.REQUIREDPARAMETERS1();
-            s.TIMEZONE1();
-            s.TIMEZONE2();
-            s.PARSE1();
-            s.PARSE2();
-
-            s.USHOLIDAYS();
-        }
-
         private void SerializeTest(string filename) { SerializeTest(filename, typeof(iCalendar)); }
         private void SerializeTest(string filename, Type iCalType)
         {

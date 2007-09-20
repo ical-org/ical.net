@@ -33,6 +33,15 @@ namespace DDay.iCal.Components
 
         #region Constructors
 
+        public Parameter(string name)
+            : base()
+        {
+            Name = name;
+        }
+        public Parameter(string name, string value) : this(name)
+        {            
+            Values.Add(value);
+        }
         public Parameter(iCalObject parent) : base(parent) { }
         public Parameter(iCalObject parent, string name) : base(parent, name)
         {
@@ -75,6 +84,21 @@ namespace DDay.iCal.Components
             return p;
         }
 
+        public override bool Equals(object obj)
+        {
+            Parameter p = obj as Parameter;
+            if (p != null)
+                return object.Equals(p.Name, Name);
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            if (Name != null)
+                return Name.GetHashCode();
+            else return base.GetHashCode();
+        }
+        
         #endregion
     }
 }

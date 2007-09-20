@@ -28,26 +28,26 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
         #region ISerializable Members
 
-        public override List<string> Parameters
+        public override List<Parameter> Parameters
         {
             get
             {
-                List<string> Parameters = base.Parameters;
+                List<Parameter> Parameters = base.Parameters;
                 if (m_Trigger.ValueType() == typeof(Date_Time))
-                    Parameters.Add("VALUE=DATE-TIME");
+                    Parameters.Add(new Parameter("VALUE", "DATE-TIME"));
                 if (m_Trigger.Related == Trigger.TriggerRelation.END)
-                    Parameters.Add("RELATED=END");
+                    Parameters.Add(new Parameter("RELATED", "END"));
                 return Parameters;
             }
         }
 
-        public override List<string> DisallowedParameters
+        public override List<Parameter> DisallowedParameters
         {
             get
             {
-                List<string> disallowed = base.DisallowedParameters;
-                disallowed.Add("VALUE");
-                disallowed.Add("RELATED");
+                List<Parameter> disallowed = base.DisallowedParameters;
+                disallowed.Add(new Parameter("VALUE"));
+                disallowed.Add(new Parameter("RELATED"));
                 return disallowed;
             }
         }

@@ -29,9 +29,15 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
         public string SerializeToString()
         {
-            string value = m_Property.Name;            
+            string value = m_Property.Name;
             if (m_Property.Parameters.Count > 0)
-                value += ";" + string.Join(";", Parameters.ToArray());            
+            {
+                List<string> parameters = new List<string>();
+                foreach (Parameter p in m_Property.Parameters)
+                    parameters.Add(p.Name + "=" + string.Join(",", p.Values.ToArray()));
+
+                value += ";" + string.Join(";", parameters.ToArray());
+            }
             return value + ":" + m_Property.Value + "\r\n";
         }
 
@@ -50,23 +56,23 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
         #region IParameterSerializable Members
 
-        public List<string> Parameters
+        public List<Parameter> Parameters
         {
             get
             {
-                List<string> Parameters = new List<string>();
+                List<Parameter> Parameters = new List<Parameter>();
                 foreach (DictionaryEntry de in m_Property.Parameters)
                 {
-                    if (!DisallowedParameters.Contains(de.Key.ToString()))
-                        Parameters.Add(de.Key + "=" + string.Join(",", ((Parameter)de.Value).Values.ToArray()));
+                    if (!DisallowedParameters.Contains(de.Value as Parameter))
+                        Parameters.Add(de.Value as Parameter);
                 }
                 return Parameters;
             }
         }
 
-        public List<string> DisallowedParameters
+        public List<Parameter> DisallowedParameters
         {
-            get { return new List<string>(); }
+            get { return new List<Parameter>(); }
         }
 
         #endregion        

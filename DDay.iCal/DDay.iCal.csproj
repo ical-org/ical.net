@@ -114,6 +114,7 @@
     <Compile Include="Serialization\DisallowedTypesAttribute.cs" />
     <Compile Include="Serialization\ForceUTCAttribute.cs" />
     <Compile Include="Serialization\iCalendarSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\EncodableDataTypeSerializer.cs" />
     <Compile Include="Serialization\iCalendar\iCalLexer.cs" />
     <Compile Include="Serialization\iCalendar\iCalParser.cs" />
     <Compile Include="Serialization\iCalendar\iCalParserHelper.cs" />
@@ -152,6 +153,8 @@
     <Compile Include="Serialization\xCal\Components\UniqueComponentSerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\ArraySerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\DataTypeSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\Date_TimeSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\Date_TimeUTCSerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\EnumSerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\FieldSerializer.cs" />
     <Compile Include="Serialization\xCal\IXCalSerializable.cs" />

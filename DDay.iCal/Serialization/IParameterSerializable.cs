@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using DDay.iCal.Components;
 
 namespace DDay.iCal.Serialization
 {
@@ -9,7 +10,7 @@ namespace DDay.iCal.Serialization
     /// </summary>
     public interface IParameterSerializable
     {
-        List<string> Parameters { get; }
-        List<string> DisallowedParameters { get; }
+        List<Parameter> Parameters { get; }
+        List<Parameter> DisallowedParameters { get; }
     }
 }

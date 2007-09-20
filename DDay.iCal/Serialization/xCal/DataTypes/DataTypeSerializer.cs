@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Xml;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization.xCal.Components;
-using System.Xml;
 
 namespace DDay.iCal.Serialization.xCal.DataTypes
 {
@@ -66,34 +66,6 @@ namespace DDay.iCal.Serialization.xCal.DataTypes
             else return string.Empty;
         }
 
-        #endregion
-
-        #region IParameterSerializable Members
-
-        virtual public List<string> Parameters
-        {
-            get
-            {
-                List<string> Parameters = new List<string>();
-                foreach (DictionaryEntry de in m_dataType.Parameters)
-                {
-                    if (!this.DisallowedParameters.Contains(de.Key.ToString()))
-                    {
-                        Parameters.Add(de.Key + "=" + string.Join(",", ((Parameter)de.Value).Values.ToArray()));
-                    }
-                }
-                return new List<string>();
-            }
-        }
-
-        virtual public List<string> DisallowedParameters
-        {
-            get
-            {
-                return new List<string>();
-            }
-        }
-
         #endregion        
     
         #region IXCalSerializable Members
@@ -117,12 +89,10 @@ namespace DDay.iCal.Serialization.xCal.DataTypes
                 if (serializer is IParameterSerializable)
                 {
                     IParameterSerializable paramSerializer = (IParameterSerializable)serializer;
-                    List<string> Parameters = paramSerializer.Parameters;
-                    foreach (string param in paramSerializer.Parameters)
-                    {
-                        Parameter p = m_dataType.Parameters[param] as Parameter;
-                        if (p != null)
-                            xtw.WriteAttributeString(p.Name, string.Join(",", p.Values.ToArray()));
+                    List<Parameter> Parameters = paramSerializer.Parameters;
+                    foreach (Parameter param in paramSerializer.Parameters)
+                    {                        
+                        xtw.WriteAttributeString(param.Name, string.Join(",", param.Values.ToArray()));
                     }
                 }
                                 
@@ -137,5 +107,31 @@ namespace DDay.iCal.Serialization.xCal.DataTypes
         }
 
         #endregion
+
+        #region IParameterSerializable Members
+
+        virtual public List<Parameter> Parameters
+        {
+            get
+            {
+                List<Parameter> Parameters = new List<Parameter>();
+                foreach (DictionaryEntry de in m_dataType.Parameters)
+                {
+                    if (!this.DisallowedParameters.Contains(de.Value as Parameter))
+                        Parameters.Add(de.Value as Parameter);
+                }
+                return Parameters;
+            }
+        }
+
+        virtual public List<Parameter> DisallowedParameters
+        {
+            get
+            {
+                return new List<Parameter>();
+            }
+        }
+
+        #endregion        
     }
 }

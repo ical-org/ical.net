@@ -8,7 +8,7 @@ using DDay.iCal.Components;
 
 namespace DDay.iCal.Serialization.iCalendar.DataTypes
 {
-    public class BinarySerializer : FieldSerializer
+    public class BinarySerializer : EncodableDataTypeSerializer
     {
         #region Private Fields
 
@@ -28,24 +28,33 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
         #region Overrides
 
-        public override List<string> DisallowedParameters
+        public override List<Parameter> DisallowedParameters
         {
             get
             {
-                List<string> disallowed = new List<string>();
-                disallowed.Add("ENCODING");
+                List<Parameter> disallowed = new List<Parameter>();
+                disallowed.Add(new Parameter("ENCODING"));
                 return disallowed;
             }
         }
 
-        public override List<string> Parameters
+        public override List<Parameter> Parameters
         {
             get
             {
-                List<string> Parameters = base.Parameters;
+                List<Parameter> parameters = base.Parameters;
                 if (m_Binary.Uri == null)
-                    Parameters.Add("ENCODING=BASE64");
-                return Parameters;
+                {                    
+                    if (!m_Binary.Parameters.ContainsKey("ENCODING"))
+                    {
+                        Parameter p = new Parameter(m_Binary);
+                        p.Name = "ENCODING";
+                        p.Values.Add("BASE64");
+                    }
+
+                    parameters.Add(m_Binary.Parameters["ENCODING"] as Parameter);
+                }
+                return parameters;
             }
         }
 
@@ -58,7 +67,8 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
             }
             else
             {
-                return Convert.ToBase64String(m_Binary.Data);                
+                UTF8Encoding encoding = new UTF8Encoding();
+                return Encode(encoding.GetString(m_Binary.Data));                
             }
         }        
 
