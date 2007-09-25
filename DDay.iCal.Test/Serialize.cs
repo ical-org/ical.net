@@ -27,20 +27,25 @@ namespace DDay.iCal.Test
             tzid = new TZID("US-Eastern");
         }
 
-        private void SerializeTest(string filename) { SerializeTest(filename, typeof(iCalendar)); }
-        private void SerializeTest(string filename, Type iCalType)
+        private void SerializeTest(string filename, Type iCalSerializerType) { SerializeTest(filename, typeof(iCalendar), iCalSerializerType); }
+        private void SerializeTest(string filename, Type iCalType, Type iCalSerializerType)
         {
             if (!Directory.Exists(@"Calendars\Serialization\Temp"))
                 Directory.CreateDirectory(@"Calendars\Serialization\Temp");
-            
+
             iCalendar iCal1 = iCalendar.LoadFromFile(iCalType, @"Calendars\Serialization\" + filename);
-            iCalendarSerializer serializer = new iCalendarSerializer(iCal1);
-
+            
+            ConstructorInfo ci = iCalSerializerType.GetConstructor(new Type[] { typeof(iCalendar) });
+            ISerializable serializer = ci.Invoke(new object[] { iCal1 }) as ISerializable;
+            
             Assert.IsTrue(iCal1.Properties.Count > 0, "iCalendar has no properties; did it load correctly?");
-            Assert.IsTrue(iCal1.UniqueComponents.Count > 0, "iCalendar has no unique components; it must to be used in SerializeTest(). Did it load correctly?");            
+            Assert.IsTrue(iCal1.UniqueComponents.Count > 0, "iCalendar has no unique components; it must to be used in SerializeTest(). Did it load correctly?");
 
-            serializer.Serialize(@"Calendars\Serialization\Temp\" + Path.GetFileNameWithoutExtension(filename) + "_Serialized.ics");
-            iCalendar iCal2 = iCalendar.LoadFromFile(iCalType, @"Calendars\Serialization\Temp\" + Path.GetFileNameWithoutExtension(filename) + "_Serialized.ics");
+            FileStream fs = new FileStream(@"Calendars\Serialization\Temp\" + Path.GetFileNameWithoutExtension(filename) + "_Serialized." + Path.GetExtension(filename), FileMode.Create, FileAccess.Write);                        
+            serializer.Serialize(fs, Encoding.UTF8);
+            fs.Close();
+
+            iCalendar iCal2 = iCalendar.LoadFromFile(iCalType, @"Calendars\Serialization\Temp\" + Path.GetFileNameWithoutExtension(filename) + "_Serialized.ics", Encoding.UTF8, serializer);
 
             CompareCalendars(iCal1, iCal2);
         }
@@ -115,91 +120,91 @@ namespace DDay.iCal.Test
         [Test, Category("Serialization")]
         public void SERIALIZE1()
         {
-            SerializeTest("SERIALIZE1.ics");            
+            SerializeTest("SERIALIZE1.ics", typeof(iCalendarSerializer));            
         }
 
         [Test, Category("Serialization")]
         public void SERIALIZE2()
         {
-            SerializeTest("SERIALIZE2.ics");
+            SerializeTest("SERIALIZE2.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void SERIALIZE3()
         {
-            SerializeTest("SERIALIZE3.ics");
+            SerializeTest("SERIALIZE3.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void SERIALIZE4()
         {
-            SerializeTest("SERIALIZE4.ics");
+            SerializeTest("SERIALIZE4.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void SERIALIZE5()
         {
-            SerializeTest("SERIALIZE5.ics");
+            SerializeTest("SERIALIZE5.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void SERIALIZE6()
         {
-            SerializeTest("SERIALIZE6.ics");
+            SerializeTest("SERIALIZE6.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void SERIALIZE7()
         {
-            SerializeTest("SERIALIZE7.ics");
+            SerializeTest("SERIALIZE7.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void SERIALIZE8()
         {
-            SerializeTest("SERIALIZE8.ics");
+            SerializeTest("SERIALIZE8.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void SERIALIZE9()
         {
-            SerializeTest("SERIALIZE9.ics");
+            SerializeTest("SERIALIZE9.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void SERIALIZE10()
         {
-            SerializeTest("SERIALIZE10.ics");
+            SerializeTest("SERIALIZE10.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void SERIALIZE11()
         {
-            SerializeTest("SERIALIZE11.ics");
+            SerializeTest("SERIALIZE11.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void SERIALIZE12()
         {
-            SerializeTest("SERIALIZE12.ics");
+            SerializeTest("SERIALIZE12.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void SERIALIZE13()
         {
-            SerializeTest("SERIALIZE13.ics");
+            SerializeTest("SERIALIZE13.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void SERIALIZE14()
         {
-            SerializeTest("SERIALIZE14.ics");
+            SerializeTest("SERIALIZE14.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void SERIALIZE15()
         {
-            SerializeTest("SERIALIZE15.ics");
+            SerializeTest("SERIALIZE15.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
@@ -221,7 +226,7 @@ namespace DDay.iCal.Test
             foreach (CustomEvent1 evt1 in iCal.Events)
                 Assert.IsTrue(evt1.NonstandardProperty.Equals(nonstandardText));
 
-            SerializeTest("SERIALIZE16.ics", typeof(CustomICal1));
+            SerializeTest("SERIALIZE16.ics", typeof(CustomICal1), typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
@@ -237,7 +242,7 @@ namespace DDay.iCal.Test
             iCalendarSerializer serializer = new iCalendarSerializer(iCal);
             serializer.Serialize(@"Calendars\Serialization\SERIALIZE17.ics");
 
-            SerializeTest("SERIALIZE17.ics", typeof(CustomICal1));
+            SerializeTest("SERIALIZE17.ics", typeof(CustomICal1), typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
@@ -341,25 +346,25 @@ END:VCALENDAR
             iCalendarSerializer serializer = new iCalendarSerializer(calendar);
             serializer.Serialize(@"Calendars\Serialization\SERIALIZE20.ics");
 
-            SerializeTest("SERIALIZE20.ics");
+            SerializeTest("SERIALIZE20.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void SERIALIZE21()
         {
-            SerializeTest("SERIALIZE21.ics");
+            SerializeTest("SERIALIZE21.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void SERIALIZE22()
         {
-            SerializeTest("SERIALIZE22.ics");
+            SerializeTest("SERIALIZE22.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void SERIALIZE23()
         {
-            SerializeTest("SERIALIZE23.ics");
+            SerializeTest("SERIALIZE23.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
@@ -425,7 +430,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             iCalendarSerializer serializer = new iCalendarSerializer(iCal);
             serializer.Serialize(@"Calendars\Serialization\SERIALIZE25.ics");
 
-            SerializeTest("SERIALIZE25.ics");
+            SerializeTest("SERIALIZE25.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
@@ -443,25 +448,27 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             evt.AddRecurrence(rec);
 
             xCalSerializer serializer = new xCalSerializer(iCal);
-            serializer.Serialize(@"c:\test.xcal");
+            serializer.Serialize(@"Calendars\Serialization\XCAL1.xcal");
+
+            SerializeTest("XCAL1.xcal", typeof(xCalSerializer));
         }
         
         [Test, Category("Serialization")]
         public void USHOLIDAYS()
         {
-            SerializeTest("USHolidays.ics");
+            SerializeTest("USHolidays.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void LANGUAGE1()
         {
-            SerializeTest("LANGUAGE1.ics");
+            SerializeTest("LANGUAGE1.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void LANGUAGE2()
         {
-            SerializeTest("LANGUAGE2.ics");
+            SerializeTest("LANGUAGE2.ics", typeof(iCalendarSerializer));
         }
 
         [Test]

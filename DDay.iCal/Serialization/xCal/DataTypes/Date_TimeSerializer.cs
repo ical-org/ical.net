@@ -33,13 +33,78 @@ namespace DDay.iCal.Serialization.xCal.DataTypes
             this.m_DateTime = dt;
         }
 
+        #endregion        
+
+        #region Private Methods
+
+        private string InvertType(string type)
+        {
+            switch (type)
+            {
+                case "DATE": return "DATE-TIME";
+                case "DATE-TIME": return "DATE";
+                default: return "DATE-TIME";
+            }
+        }
+
         #endregion
 
-        #region ISerializable Members
+        #region Overrides
+
+        public override List<Parameter> Parameters
+        {
+            get
+            {
+                List<Parameter> Params = base.Parameters;
+
+                if (m_DateTime.TZID != null)
+                    Params.Add(new Parameter("TZID", m_DateTime.TZID.ToString()));
+
+                string valueType = null;
+                if (!m_DateTime.HasTime)
+                    valueType = "DATE";
+                else valueType = "DATE-TIME";
+
+                // Check to see if one of the value types is
+                // disallowed; if so, then invert the value type
+                foreach (object obj in m_DateTime.Attributes)
+                {
+                    if (obj is DisallowedTypesAttribute)
+                    {
+                        DisallowedTypesAttribute dt = (DisallowedTypesAttribute)obj;
+                        if (dt.Types.Contains(valueType) && dt.Types.Contains(InvertType(valueType)))
+                            valueType = null;
+                        else if (dt.Types.Contains(valueType))
+                            valueType = InvertType(valueType);
+                    }
+                    else if (obj is ForceUTCAttribute)
+                    {
+                        valueType = "DATE-TIME";
+                        break;
+                    }
+                }
+
+                // Check to see if the value type is the default value type for this item                
+                foreach (object obj in m_DateTime.Attributes)
+                {
+                    if (obj is DefaultValueTypeAttribute)
+                    {
+                        if (((DefaultValueTypeAttribute)obj).Type == valueType)
+                            valueType = null;
+                    }
+                }
+
+                // If the value type is already the default value type, don't worry about displaying it
+                if (valueType != null)
+                    Params.Add(new Parameter("VALUE", valueType));
+
+                return Params;
+            }
+        }
 
         public override string SerializeToString()
         {
-            Type type = GetType();            
+            Type type = GetType();
 
             // Let's first see if we need to force this
             // date-time value into UTC time
@@ -64,20 +129,6 @@ namespace DDay.iCal.Serialization.xCal.DataTypes
                     value += "Z";
             }
             return value;
-        }        
-
-        #endregion
-
-        #region Private Methods
-
-        private string InvertType(string type)
-        {
-            switch (type)
-            {
-                case "DATE": return "DATE-TIME";
-                case "DATE-TIME": return "DATE";
-                default: return "DATE-TIME";
-            }
         }
 
         #endregion

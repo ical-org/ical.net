@@ -65,8 +65,6 @@ namespace DDay.iCal.Serialization.xCal.Components
         {
             if (Object.Name != null)
             {
-                xtw.WriteStartElement(Object.Name.ToLower());
-
                 // Serialize "VERSION" before any other properties
                 if (Object.Properties.ContainsKey("VERSION"))
                 {
@@ -102,10 +100,7 @@ namespace DDay.iCal.Serialization.xCal.Components
                 IXCalSerializable serializer = SerializerFactory.Create(obj);
                 if (serializer != null)
                     serializer.Serialize(xtw);
-            }
-
-            if (Object.Name != null)
-                xtw.WriteEndElement();
+            }            
         }
 
         virtual public iCalObject Deserialize(XmlTextReader xtr, Type iCalendarType)

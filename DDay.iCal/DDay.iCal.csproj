@@ -147,16 +147,26 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Serialization\xCalSerializer.cs" />
+    <Compile Include="Serialization\xCal\CDataAttribute.cs" />
     <Compile Include="Serialization\xCal\Components\ComponentBaseSerializer.cs" />
     <Compile Include="Serialization\xCal\Components\iCalObjectSerializer.cs" />
     <Compile Include="Serialization\xCal\Components\PropertySerializer.cs" />
     <Compile Include="Serialization\xCal\Components\UniqueComponentSerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\ArraySerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\BinarySerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\DataTypeSerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\Date_TimeSerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\Date_TimeUTCSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\DaySpecifierSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\EncodableDataTypeSerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\EnumSerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\FieldSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\PeriodSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\RDateSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\RecurSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\TextCollectionSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\TextSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\TriggerSerializer.cs" />
     <Compile Include="Serialization\xCal\IXCalSerializable.cs" />
     <Compile Include="Serialization\xCal\SerializerFactory.cs" />
   </ItemGroup>

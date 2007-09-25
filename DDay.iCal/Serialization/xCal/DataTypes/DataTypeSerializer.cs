@@ -92,11 +92,16 @@ namespace DDay.iCal.Serialization.xCal.DataTypes
                     List<Parameter> Parameters = paramSerializer.Parameters;
                     foreach (Parameter param in paramSerializer.Parameters)
                     {                        
-                        xtw.WriteAttributeString(param.Name, string.Join(",", param.Values.ToArray()));
+                        xtw.WriteAttributeString(param.Name.ToLower(), string.Join(",", param.Values.ToArray()));
                     }
                 }
-                                
-                xtw.WriteString(serializer.SerializeToString());
+
+                // Determine if we should serialize the data of this serializer
+                // as CDATA instead of a standard string.
+                if (serializer.GetType().GetCustomAttributes(typeof(CDataAttribute), true).Length > 0)
+                    xtw.WriteCData(serializer.SerializeToString());
+                else xtw.WriteString(serializer.SerializeToString());
+                
                 xtw.WriteEndElement();                
             }
         }
