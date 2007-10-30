@@ -69,9 +69,9 @@ namespace DDay.iCal.DataTypes
             get
             {
                 if (Value != null &&
-                    Value.Scheme == Uri.UriSchemeMailto)
+                    Scheme == Uri.UriSchemeMailto)
                 {
-                    return Value.AbsoluteUri.Replace("mailto:", "");
+                    return Authority;
                 }
                 return null;
             }
@@ -97,7 +97,7 @@ namespace DDay.iCal.DataTypes
 
         static public implicit operator string(Cal_Address addr)
         {
-            return addr.Value.OriginalString;
+            return addr.Value;
         }
 
         static public implicit operator Cal_Address(string s)

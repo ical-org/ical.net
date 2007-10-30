@@ -57,8 +57,18 @@ namespace DDay.iCal.Test
             Assert.IsTrue(j.Status == JournalStatus.FINAL, "Journal entry should have been in FINAL status, but it was in " + j.Status.ToString() + " status.");
             Assert.IsTrue(j.Class.Value == "PRIVATE", "Journal class should have been PRIVATE, but was " + j.Class + ".");
             Assert.IsTrue(j.Organizer.CommonName.Value == "JohnSmith", "Organizer common name should have been JohnSmith, but was " + j.Organizer.CommonName.ToString());
-            Assert.IsTrue(j.Organizer.SentBy.Value.AbsoluteUri == "mailto:jane_doe@host.com", "Organizer should have had been SENT-BY 'mailto:jane_doe@host.com'; it was sent by '" + j.Organizer.SentBy.Value.AbsoluteUri + "'");
-            Assert.IsTrue(j.Organizer.DirectoryEntry.Value.OriginalString == "ldap://host.com:6666/o=3DDC%20Associates,c=3DUS??(cn=3DJohn%20Smith)", "Organizer's directory entry should have been 'ldap://host.com:6666/o=3DDC%20Associates,c=3DUS??(cn=3DJohn%20Smith)', but it was '" + j.Organizer.DirectoryEntry.Value.OriginalString + "'");
+            Assert.IsTrue(
+                string.Equals(
+                    j.Organizer.SentBy.Value,
+                    "mailto:jane_doe@host.com",
+                    StringComparison.InvariantCultureIgnoreCase),
+                "Organizer should have had been SENT-BY 'mailto:jane_doe@host.com'; it was sent by '" + j.Organizer.SentBy.Value + "'");
+            Assert.IsTrue(
+                string.Equals(
+                    j.Organizer.DirectoryEntry.Value,
+                    "ldap://host.com:6666/o=3DDC%20Associates,c=3DUS??(cn=3DJohn%20Smith)",
+                    StringComparison.InvariantCultureIgnoreCase),
+                "Organizer's directory entry should have been 'ldap://host.com:6666/o=3DDC%20Associates,c=3DUS??(cn=3DJohn%20Smith)', but it was '" + j.Organizer.DirectoryEntry.Value + "'");
             Assert.IsNull(j.DTStart);
         }
     }

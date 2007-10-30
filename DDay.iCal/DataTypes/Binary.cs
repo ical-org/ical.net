@@ -155,7 +155,7 @@ namespace DDay.iCal.DataTypes
             {
                 if (Uri == null)
                     throw new ArgumentException("A URI was not provided for the Binary::LoadDataFromUri() method");
-                uri = Uri.Value;
+                uri = new Uri(Uri.Value);
             }
 
             Data = client.DownloadData(uri);

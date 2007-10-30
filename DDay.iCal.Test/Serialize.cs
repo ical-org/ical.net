@@ -41,11 +41,11 @@ namespace DDay.iCal.Test
             Assert.IsTrue(iCal1.Properties.Count > 0, "iCalendar has no properties; did it load correctly?");
             Assert.IsTrue(iCal1.UniqueComponents.Count > 0, "iCalendar has no unique components; it must to be used in SerializeTest(). Did it load correctly?");
 
-            FileStream fs = new FileStream(@"Calendars\Serialization\Temp\" + Path.GetFileNameWithoutExtension(filename) + "_Serialized." + Path.GetExtension(filename), FileMode.Create, FileAccess.Write);                        
+            FileStream fs = new FileStream(@"Calendars\Serialization\Temp\" + Path.GetFileNameWithoutExtension(filename) + "_Serialized" + Path.GetExtension(filename), FileMode.Create, FileAccess.Write);
             serializer.Serialize(fs, Encoding.UTF8);
             fs.Close();
 
-            iCalendar iCal2 = iCalendar.LoadFromFile(iCalType, @"Calendars\Serialization\Temp\" + Path.GetFileNameWithoutExtension(filename) + "_Serialized.ics", Encoding.UTF8, serializer);
+            iCalendar iCal2 = iCalendar.LoadFromFile(iCalType, @"Calendars\Serialization\Temp\" + Path.GetFileNameWithoutExtension(filename) + "_Serialized" + Path.GetExtension(filename), Encoding.UTF8, serializer);
 
             CompareCalendars(iCal1, iCal2);
         }
@@ -431,6 +431,20 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             serializer.Serialize(@"Calendars\Serialization\SERIALIZE25.ics");
 
             SerializeTest("SERIALIZE25.ics", typeof(iCalendarSerializer));
+        }
+
+        [Test, Category("Serialization")]
+        public void SERIALIZE26()
+        {
+            URI uri = new URI("addressbook://D263B4AF-823F-4D1C-BBFE-9F11491F1559:ABPerson");
+            Assert.AreEqual("addressbook", uri.Scheme);
+            Assert.AreEqual("D263B4AF-823F-4D1C-BBFE-9F11491F1559:ABPerson", uri.Authority);
+        }
+
+        [Test, Category("Serialization")]
+        public void SERIALIZE27()
+        {
+            SerializeTest("SERIALIZE27.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
