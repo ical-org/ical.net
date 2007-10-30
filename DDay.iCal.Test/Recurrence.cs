@@ -27,69 +27,6 @@ namespace DDay.iCal.Test
             tzid = new TZID("US-Eastern");
         }
 
-        static public void DoTests()
-        {
-            Recurrence r = new Recurrence();
-            r.InitAll();
-
-            r.RECURPARSE1();
-            r.RECURPARSE2();
-            r.RECURPARSE3();
-            r.RECURPARSE4();
-            r.RECURPARSE5();
-            r.RECURPARSE6();
-
-            r.USHOLIDAYS();
-            r.RRULE1();
-            r.RRULE2();
-            r.RRULE3();
-            r.RRULE4();
-            r.RRULE5();
-            r.RRULE6();
-            r.RRULE6_1();
-            r.RRULE7();
-            r.RRULE8();
-            r.RRULE9();
-            r.RRULE10();
-            r.RRULE11();
-            r.RRULE12();
-            r.RRULE13();
-            r.RRULE14();
-            r.RRULE15();
-            r.RRULE16();
-            r.RRULE17();
-            r.RRULE18();
-            r.RRULE19();
-            r.RRULE20();
-            r.RRULE21();
-            r.RRULE22();
-            r.RRULE23();
-            r.RRULE24();
-            r.RRULE25();
-            r.RRULE26();
-            r.RRULE27();
-            r.RRULE28();
-            r.RRULE29();
-            r.RRULE30();
-            r.RRULE31();
-            r.RRULE32();
-            r.RRULE33();
-            r.RRULE34();
-            r.RRULE35();
-            r.RRULE36();
-            r.RRULE37();
-            r.RRULE38();
-            r.RRULE39();
-            r.RRULE40();
-            r.RRULE41();
-            r.RRULE42();
-
-            r.TEST1();
-            r.TEST2();
-
-            r.EVALUATE1();
-        }
-
         /// <summary>
         /// See Page 118 of RFC 2445 - RRULE:FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30
         /// </summary>
@@ -1864,6 +1801,63 @@ namespace DDay.iCal.Test
             }
 
             Assert.IsTrue(evt.Periods.Count == DateTimes.Length, "There should be exactly " + DateTimes.Length + " occurrences; there were " + evt.Periods.Count);
+        }
+
+        /// <summary>
+        /// Tests recurrence rule issue noted in
+        /// Bug #1821721 - Recur for every-other-month doesn't evaluate correctly
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE43()
+        {
+            iCalendar iCal = new iCalendar();
+
+            DDay.iCal.Components.TimeZone tz = iCal.Create<DDay.iCal.Components.TimeZone>();
+            
+            tz.TZID = "US-Eastern";
+            tz.Last_Modified = new DateTime(1987, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            DDay.iCal.Components.TimeZone.TimeZoneInfo standard = new DDay.iCal.Components.TimeZone.TimeZoneInfo(DDay.iCal.Components.TimeZone.STANDARD, tz);
+            standard.Start = new DateTime(1967, 10, 29, 2, 0, 0, DateTimeKind.Utc);            
+            standard.AddRecurrence(new Recur("FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10"));
+            standard.TZOffsetFrom = new UTC_Offset("-0400");
+            standard.TZOffsetTo = new UTC_Offset("-0500");
+            standard.TimeZoneName = "EST";            
+
+            DDay.iCal.Components.TimeZone.TimeZoneInfo daylight = new DDay.iCal.Components.TimeZone.TimeZoneInfo(DDay.iCal.Components.TimeZone.DAYLIGHT, tz);
+            daylight.Start = new DateTime(1987, 4, 5, 2, 0, 0, DateTimeKind.Utc);
+            daylight.AddRecurrence(new Recur("FREQ=YEARLY;BYDAY=1SU;BYMONTH=4"));
+            daylight.TZOffsetFrom = new UTC_Offset("-0500");
+            daylight.TZOffsetTo = new UTC_Offset("-0400");
+            daylight.TimeZoneName = "EDT";
+
+            Event evt = iCal.Create<Event>();
+            evt.Summary = "Test event";
+            evt.Start = new Date_Time(2007, 1, 24, 8, 0, 0, tzid, iCal);
+            evt.Duration = TimeSpan.FromHours(1);
+            evt.End = new Date_Time(2007, 1, 24, 9, 0, 0, tzid, iCal);
+            Recur recur = new Recur("FREQ=MONTHLY;INTERVAL=2;BYDAY=4WE");
+            evt.AddRecurrence(recur);
+
+            evt.Evaluate(new DateTime(2007, 1, 24), new DateTime(2007, 12, 31));
+
+            Date_Time[] DateTimes = new Date_Time[]
+            {                
+                new Date_Time(2007, 1, 24, 8, 0, 0, tzid, iCal),
+                new Date_Time(2007, 3, 28, 8, 0, 0, tzid, iCal),
+                new Date_Time(2007, 5, 23, 8, 0, 0, tzid, iCal),
+                new Date_Time(2007, 7, 25, 8, 0, 0, tzid, iCal),
+                new Date_Time(2007, 9, 26, 8, 0, 0, tzid, iCal),
+                new Date_Time(2007, 11, 28, 8, 0, 0, tzid, iCal)
+            };
+
+            foreach (Date_Time dt in DateTimes)
+                Assert.IsTrue(evt.OccursAt(dt), "Event should occur on " + dt);
+
+            Assert.IsTrue(
+                evt.Periods.Count == DateTimes.Length,
+                "There should be exactly " + DateTimes.Length +
+                " occurrences; there were " + evt.Periods.Count);
         }
 
         /// <summary>
