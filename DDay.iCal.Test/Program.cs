@@ -23,46 +23,39 @@ namespace DDay.iCal.Test
         [Test]
         public void LoadAndDisplayCalendar()
         {
-             // The following code loads and displays an iCalendar
-             // with US Holidays for 2006.
-             //
-             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\USHolidays.ics");
-             Assert.IsNotNull(iCal, "iCalendar did not load.  Are you connected to the internet?");
-             iCal.Evaluate(
-                 new Date_Time(2006, 1, 1, "US-Eastern", iCal),
-                 new Date_Time(2006, 12, 31, "US-Eastern", iCal));
- 
-             Date_Time dt = new Date_Time(2006, 1, 1, "US-Eastern", iCal);
-             while (dt.Year == 2006)
-             {
-                 // First, display the current date we're evaluating
-                 Console.WriteLine(dt.Local.ToShortDateString());
- 
-                 // Then, iterate through each event in our iCalendar
-                 foreach (Event evt in iCal.Events)
-                 {
-                     // Determine if the event occurs on the specified date
-                     if (evt.OccursOn(dt))
-                     {
-                         // Display the event summary
-                         Console.Write("\t" + evt.Summary);
- 
-                         // Display the time the event happens (unless it's an all-day event)
-                         if (evt.Start.HasTime)
-                         {
-                             Console.Write(" (" + evt.Start.Local.ToShortTimeString() + " - " + evt.End.Local.ToShortTimeString());
-                             if (evt.Start.TimeZoneInfo != null)
-                                 Console.Write(" " + evt.Start.TimeZoneInfo.TimeZoneName);
-                             Console.Write(")");
-                         }
- 
-                         Console.Write(Environment.NewLine);
-                     }
-                 }
- 
-                 // Move to the next day
-                 dt = dt.AddDays(1);
-             }
+            // The following code loads and displays an iCalendar
+            // with US Holidays for 2006.
+            //
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\USHolidays.ics");
+            Assert.IsNotNull(iCal, "iCalendar did not load.  Are you connected to the internet?");
+
+            List<Occurrence> occurrences = iCal.GetOccurrences(
+             new Date_Time(2006, 1, 1, "US-Eastern", iCal),
+             new Date_Time(2006, 12, 31, "US-Eastern", iCal));
+
+            foreach (Occurrence o in occurrences)
+            {
+                Event evt = o.Component as Event;
+                if (evt != null)
+                {
+                    // Display the date of the event
+                    Console.Write(o.Period.StartTime.Local.Date.ToString("MM/dd/yyyy") + " -\t");
+
+                    // Display the event summary
+                    Console.Write(evt.Summary);
+
+                    // Display the time the event happens (unless it's an all-day event)
+                    if (evt.Start.HasTime)
+                    {
+                        Console.Write(" (" + evt.Start.Local.ToShortTimeString() + " - " + evt.End.Local.ToShortTimeString());
+                        if (evt.Start.TimeZoneInfo != null)
+                            Console.Write(" " + evt.Start.TimeZoneInfo.TimeZoneName);
+                        Console.Write(")");
+                    }
+
+                    Console.Write(Environment.NewLine);
+                }
+            }
         }
 
         private DateTime Start;
@@ -236,7 +229,11 @@ namespace DDay.iCal.Test
             
             Event evt1 = iCal1.Events[0];
             Event evt2 = iCal1.Events[1];
-            evt1.Evaluate(new Date_Time(1996, 1, 1, tzid, iCal1), new Date_Time(2000, 1, 1, tzid, iCal1));
+
+            // Get occurrences for the first event
+            List<Occurrence> occurrences = evt1.GetOccurrences(
+                new Date_Time(1996, 1, 1, tzid, iCal1),
+                new Date_Time(2000, 1, 1, tzid, iCal1));            
 
             Date_Time[] DateTimes = new Date_Time[]
             {
@@ -265,17 +262,21 @@ namespace DDay.iCal.Test
                 "EST",
                 "EST"                
             };
-
+                        
             for (int i = 0; i < DateTimes.Length; i++)
-            {
+            {                
                 Date_Time dt = (Date_Time)DateTimes[i];
-                Assert.IsTrue(evt1.OccursAt(dt), "Event should occur on " + dt);
+                Date_Time start = occurrences[i].Period.StartTime;
+                Assert.IsTrue(dt.Equals(start), "Event should occur at " + dt);
                 Assert.IsTrue(dt.TimeZoneInfo.TimeZoneName == TimeZones[i], "Event " + dt + " should occur in the " + TimeZones[i] + " timezone");
             }
 
-            Assert.IsTrue(evt1.Periods.Count == DateTimes.Length, "There should be exactly " + DateTimes.Length + " occurrences; there were " + evt1.Periods.Count);
+            Assert.IsTrue(occurrences.Count == DateTimes.Length, "There should be exactly " + DateTimes.Length + " occurrences; there were " + occurrences.Count);
 
-            evt2.Evaluate(new Date_Time(1996, 1, 1, tzid, iCal1), new Date_Time(1998, 4, 1, tzid, iCal1));
+            // Get occurrences for the 2nd event
+            occurrences = evt2.GetOccurrences(
+                new Date_Time(1996, 1, 1, tzid, iCal1),
+                new Date_Time(1998, 4, 1, tzid, iCal1));
 
             Date_Time[] DateTimes1 = new Date_Time[]
             {
@@ -324,11 +325,12 @@ namespace DDay.iCal.Test
             for (int i = 0; i < DateTimes1.Length; i++)
             {
                 Date_Time dt = (Date_Time)DateTimes1[i];
-                Assert.IsTrue(evt2.OccursAt(dt), "Event should occur on " + dt);
+                Date_Time start = occurrences[i].Period.StartTime;
+                Assert.IsTrue(dt.Equals(start), "Event should occur at " + dt);                
                 Assert.IsTrue(dt.TimeZoneInfo.TimeZoneName == TimeZones1[i], "Event " + dt + " should occur in the " + TimeZones1[i] + " timezone");
             }
 
-            Assert.IsTrue(evt2.Periods.Count == DateTimes1.Length, "There should be exactly " + DateTimes1.Length + " occurrences; there were " + evt2.Periods.Count);
+            Assert.IsTrue(occurrences.Count == DateTimes1.Length, "There should be exactly " + DateTimes1.Length + " occurrences; there were " + occurrences.Count);
         }
 
         [Test]
@@ -377,11 +379,10 @@ namespace DDay.iCal.Test
 
             Date_Time dtStart = new Date_Time(2006, 12, 18, tzid, iCal);
             Date_Time dtEnd = new Date_Time(2006, 12, 23, tzid, iCal);
-            iCal.Evaluate(dtStart, dtEnd);
+            List<Occurrence> occurrences = iCal.GetOccurrences(dtStart, dtEnd);
 
             Date_Time[] DateTimes = new Date_Time[]
             {
-                new Date_Time(2006, 12, 11, 7, 0, 0, tzid, iCal),
                 new Date_Time(2006, 12, 18, 7, 0, 0, tzid, iCal),
                 new Date_Time(2006, 12, 19, 7, 0, 0, tzid, iCal),
                 new Date_Time(2006, 12, 20, 7, 0, 0, tzid, iCal),
@@ -389,10 +390,10 @@ namespace DDay.iCal.Test
                 new Date_Time(2006, 12, 22, 7, 0, 0, tzid, iCal)
             };
 
-            foreach (Date_Time dt in DateTimes)
-                Assert.IsTrue(evt.OccursAt(dt), "Event should occur at " + dt);
+            for (int i = 0; i < DateTimes.Length; i++)            
+                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur at " + DateTimes[i]);
 
-            Assert.IsTrue(evt.Periods.Count == DateTimes.Length, "There should be exactly " + DateTimes.Length + " occurrences; there were " + evt.Periods.Count);
+            Assert.IsTrue(occurrences.Count == DateTimes.Length, "There should be exactly " + DateTimes.Length + " occurrences; there were " + occurrences.Count);
         }
 
         [Test]

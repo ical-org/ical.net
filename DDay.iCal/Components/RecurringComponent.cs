@@ -405,7 +405,54 @@ namespace DDay.iCal.Components
                 alarm.Occurrences.Clear();
         }
 
-        public List<Alarm.AlarmOccurrence> PollAlarms()
+        /// <summary>
+        /// Returns all occurrences of this component that start on the date provided.
+        /// All events starting between 12:00:00AM and 11:59:59 PM will be
+        /// returned.
+        /// <note>
+        /// This will first Evaluate() the date range required in order to
+        /// determine the occurrences for the date provided, and then return
+        /// the occurrences.
+        /// </note>
+        /// </summary>
+        /// <param name="dt">The date for which to return occurrences.</param>
+        /// <returns>A list of Periods representing the occurrences of this object.</returns>
+        virtual public List<Occurrence> GetOccurrences(Date_Time dt)
+        {
+            return GetOccurrences(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
+        }
+
+        /// <summary>
+        /// Returns all occurrences of this component that start within the date range provided.
+        /// All events occurring between <paramref name="startTime"/> and <paramref name="endTime"/>
+        /// will be returned.
+        /// </summary>
+        /// <param name="startTime">The starting date range</param>
+        /// <param name="endTime">The ending date range</param>
+        virtual public List<Occurrence> GetOccurrences(Date_Time startTime, Date_Time endTime)
+        {
+            List<Occurrence> occurrences = new List<Occurrence>();
+            List<Period> periods = Evaluate(startTime, endTime);
+
+            foreach (Period p in periods)
+            {
+                if (p.StartTime >= startTime &&
+                    p.StartTime <= endTime)
+                    occurrences.Add(new Occurrence(this, p));
+            }
+
+            occurrences.Sort();
+            return occurrences;
+        }
+
+        /// <summary>
+        /// Polls alarms for the current evaluation period.  This period is defined by the 
+        /// range indicated in EvalStart and EvalEnd properties.  These properties are automatically
+        /// set when calling the Evaluate() method with a given date range, and indicate the date
+        /// range currently "known" by the recurring component.
+        /// </summary>
+        /// <returns>A list of AlarmOccurrence objects, representing each alarm that has fired.</returns>
+        virtual public List<Alarm.AlarmOccurrence> PollAlarms()
         {
             return PollAlarms(null);
         }
@@ -428,7 +475,7 @@ namespace DDay.iCal.Components
         ///     new Date_Time(2006, 1, 31, "US-Eastern", iCal));
         /// 
         /// // Poll all alarms that occurred in January, 2006.
-        /// List<Alarm.AlarmOccurrence> alarms = evt.PollAlarms(null);
+        /// List<Alarm.AlarmOccurrence> alarms = evt.PollAlarms();
         /// 
         /// // Here, you would eliminate alarms that the user has already dismissed.
         /// // This information should be stored somewhere outside of the .ics file.

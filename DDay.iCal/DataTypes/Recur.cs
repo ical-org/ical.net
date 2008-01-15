@@ -592,7 +592,10 @@ namespace DDay.iCal.DataTypes
         {
             List<Date_Time> DateTimes = new List<Date_Time>();
             Date_Time EndDate = new Date_Time(StartDate);
-            AbsEndDate = AbsEndDate.AddSeconds(-1);
+            
+            // FIXME: is there a reason for this?
+            //AbsEndDate = AbsEndDate.AddSeconds(-1);
+
             IncrementDate(EndDate, 1);
             EndDate = EndDate.AddSeconds(-1);
             if (EndDate > AbsEndDate)

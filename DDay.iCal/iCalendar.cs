@@ -35,40 +35,33 @@ namespace DDay.iCal
     /// // with US Holidays for 2006.
     /// //
     /// iCalendar iCal = iCalendar.LoadFromUri(new Uri("http://www.applegatehomecare.com/Calendars/USHolidays.ics"));
-    /// iCal.Evaluate(
+    /// 
+    /// List&lt;Occurrence&gt; occurrences = iCal.GetOccurrences(
     ///     new Date_Time(2006, 1, 1, "US-Eastern", iCal),
     ///     new Date_Time(2006, 12, 31, "US-Eastern", iCal));
     /// 
-    /// Date_Time dt = new Date_Time(2006, 1, 1, "US-Eastern", iCal);
-    /// while (dt.Year == 2006)
+    /// foreach (Occurrence o in occurrences)
     /// {
-    ///     // First, display the current date we're evaluating
-    ///     Console.WriteLine(dt.Local.ToShortDateString());
-    /// 
-    ///     // Then, iterate through each event in our iCalendar
-    ///     foreach (Event evt in iCal.Events)
+    ///     Event evt = o.Component as Event;
+    ///     if (evt != null)
     ///     {
-    ///         // Determine if the event occurs on the specified date
-    ///         if (evt.OccursOn(dt))
+    ///         // Display the date of the event
+    ///         Console.Write(o.Period.StartTime.Local.Date.ToString("MM/dd/yyyy") + " -\t");
+    ///
+    ///         // Display the event summary
+    ///         Console.Write(evt.Summary);
+    ///
+    ///         // Display the time the event happens (unless it's an all-day event)
+    ///         if (evt.Start.HasTime)
     ///         {
-    ///             // Display the event summary
-    ///             Console.Write("\t" + evt.Summary);
-    /// 
-    ///             // Display the time the event happens (unless it's an all-day event)
-    ///             if (evt.Start.HasTime)
-    ///             {
-    ///                 Console.Write(" (" + evt.Start.Local.ToShortTimeString() + " - " + evt.End.Local.ToShortTimeString());
-    ///                 if (evt.Start.TimeZoneInfo != null)
-    ///                     Console.Write(" " + evt.Start.TimeZoneInfo.TimeZoneName);
-    ///                 Console.Write(")");
-    ///             }
-    /// 
-    ///             Console.Write(Environment.NewLine);
+    ///             Console.Write(" (" + evt.Start.Local.ToShortTimeString() + " - " + evt.End.Local.ToShortTimeString());
+    ///             if (evt.Start.TimeZoneInfo != null)
+    ///                 Console.Write(" " + evt.Start.TimeZoneInfo.TimeZoneName);
+    ///             Console.Write(")");
     ///         }
+    ///
+    ///         Console.Write(Environment.NewLine);
     ///     }
-    /// 
-    ///     // Move to the next day
-    ///     dt = dt.AddDays(1);
     /// }
     /// </code>
     /// </para>
@@ -79,6 +72,7 @@ namespace DDay.iCal
     /// //
     /// // The following code loads and displays active todo items from an iCalendar
     /// // for January 6th, 2006.
+    /// // FIXME: update this example to use GetOccurrences() instead
     /// //
     /// iCalendar iCal = iCalendar.LoadFromUri(new Uri("http://somesite.com/calendar.ics"));
     /// iCal.Evaluate(
@@ -600,6 +594,30 @@ namespace DDay.iCal
         {
             foreach (RecurringComponent rc in RecurringComponents)
                 rc.ClearEvaluation();            
+        }
+
+        public List<Occurrence> GetOccurrences(Date_Time dt)
+        {
+            return GetOccurrences(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
+        }
+
+        /// <summary>
+        /// Returns a list of occurrences of each recurring component
+        /// that occur between <paramref name="FromDate"/> and <paramref name="ToDate"/>.
+        /// </summary>
+        /// <param name="FromDate">The beginning date/time of the range.</param>
+        /// <param name="ToDate">The end date/time of the range.</param>
+        /// <returns>A list of occurrences that fall between the dates provided.</returns>
+        public List<Occurrence> GetOccurrences(Date_Time FromDate, Date_Time ToDate)
+        {
+            List<Occurrence> occurrences = new List<Occurrence>();
+            foreach (RecurringComponent rc in RecurringComponents)
+            {
+                occurrences.AddRange(rc.GetOccurrences(FromDate, ToDate));
+            }
+
+            occurrences.Sort();
+            return occurrences;
         }
 
         /// <summary>

@@ -7,6 +7,6 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <StartAction>Program</StartAction>
     <StartProgram>C:\Program Files\NUnit 2.4.3\bin\nunit.exe</StartProgram>
-    <StartArguments>DDay.iCal.Test.exe</StartArguments>
+    <StartArguments>DDay.iCal.Test.dll</StartArguments>
   </PropertyGroup>
 </Project>

@@ -58,6 +58,7 @@
     <Compile Include="Components\Event.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Components\Occurrence.cs" />
     <Compile Include="Components\TimeZoneInfo.cs">
       <DependentUpon>TimeZone.cs</DependentUpon>
     </Compile>
