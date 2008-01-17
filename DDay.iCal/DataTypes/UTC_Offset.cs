@@ -62,6 +62,7 @@ namespace DDay.iCal.DataTypes
 
         public override void CopyFrom(object obj)
         {
+            base.CopyFrom(obj);
             if (obj is UTC_Offset)
             {
                 UTC_Offset utco = (UTC_Offset)obj;

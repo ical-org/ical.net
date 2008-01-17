@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\AlarmOccurrence.cs" />
     <Compile Include="Components\Event.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -62,6 +63,7 @@
     <Compile Include="Components\TimeZoneInfo.cs">
       <DependentUpon>TimeZone.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataTypes\EvaluationEngineException.cs" />
     <Compile Include="DataTypes\Trigger.cs" />
     <Compile Include="DataTypes\Binary.cs" />
     <Compile Include="DataTypes\AlarmAction.cs" />

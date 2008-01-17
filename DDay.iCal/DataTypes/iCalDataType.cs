@@ -52,15 +52,23 @@ namespace DDay.iCal.DataTypes
                         this.Parent = value.iCalendar;
 
                     // Parse the content line
-                    CopyFrom(Parse(value.Value));
+                    iCalDataType icdt = Parse(value.Value) as iCalDataType;
+                    if (icdt != null)
+                    {
+                        // Set the parent on the copied object
+                        icdt.Parent = value.iCalendar;
 
-                    // Assign a parent to the object if it doesn't already have one
-                    // NOTE: this makes sure that some objects have a parent
-                    // in case they lost it while parsing
-                    if (this.Parent == null)
-                        this.Parent = value.iCalendar;
+                        CopyFrom(icdt);
 
-                    OnLoad(EventArgs.Empty);
+                        // FIXME: is there a way to avoid having to do this twice?
+                        // Assign a parent to the object if it doesn't already have one
+                        // NOTE: this makes sure that some objects have a parent
+                        // in case they lost it while parsing
+                        if (this.Parent == null)
+                            this.Parent = value.iCalendar;
+
+                        OnLoaded(EventArgs.Empty);
+                    }
                 }
             }
         }        
@@ -76,6 +84,9 @@ namespace DDay.iCal.DataTypes
 
         virtual public void CopyFrom(object obj)
         {
+            iCalDataType icdt = obj as iCalDataType;
+            if (icdt != null)
+                this.Parent = icdt.Parent;
         }
         
         virtual public bool TryParse(string value, ref object obj) { return false; }        

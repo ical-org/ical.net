@@ -15,6 +15,9 @@ namespace DDay.iCal.DataTypes
     [DebuggerDisplay("{Value}")]
     public class Cal_Address : URI
     {
+        public const string ORGANIZER = "ORGANIZER";
+        public const string ATTENDEE = "ATTENDEE";
+
         #region Private Fields
 
         private Cal_Address m_SentBy;
@@ -82,8 +85,8 @@ namespace DDay.iCal.DataTypes
         #region Constructors
 
         public Cal_Address() : base() { }
-        public Cal_Address(string value) : this("ATTENDEE", value) { }
-        public Cal_Address(string name, string value) : this()
+        public Cal_Address(string value) : this(string.Empty, value) { }
+        protected Cal_Address(string name, string value) : this()
         {
             this.Name = name;
             object obj = this;

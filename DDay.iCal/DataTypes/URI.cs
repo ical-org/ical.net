@@ -121,6 +121,7 @@ namespace DDay.iCal.DataTypes
 
         public override void CopyFrom(object obj)
         {
+            base.CopyFrom(obj);
             if (obj is URI)
             {
                 URI uri = (URI)obj;
@@ -147,7 +148,7 @@ namespace DDay.iCal.DataTypes
         /// FIXME: create a TypeConverter from string to URI so strings will automatically
         /// be converted to URI objects when using late-binding means of setting the value.
         /// i.e. reflection - PropertyInfo.SetValue(...).
-        /// </summary>        
+        /// </summary>
         static public implicit operator URI(string txt)
         {
             return new URI(txt);

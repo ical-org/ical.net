@@ -175,55 +175,62 @@ namespace DDay.iCal
                 iCal.ClearEvaluation();            
         }
 
-        ///// <summary>
-        ///// Returns a list of flattened recurrences for all recurring components
-        ///// in the iCalendar.
-        ///// </summary>
-        ///// <returns>A list of flattened recurrences for all recurring components</returns>
-        //public IEnumerable<RecurringComponent> FlattenRecurrences()
-        //{
-        //    foreach (iCalendar iCal in _Calendars)
-        //        foreach (RecurringComponent rc in iCal.FlattenRecurrences())
-        //            yield return rc;
-        //}
+        /// <summary>
+        /// Returns a list of occurrences of each recurring component
+        /// for the date provided (<paramref name="dt"/>).
+        /// </summary>
+        /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
+        /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
+        public List<Occurrence> GetOccurrences(Date_Time dt)
+        {
+            return GetOccurrences(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
+        }
 
-        ///// <summary>
-        ///// Returns a list of flattened recurrences of type T.
-        ///// </summary>
-        ///// <typeparam name="T">The type for which to return flattened recurrences</typeparam>
-        ///// <returns>A list of flattened recurrences of type T</returns>
-        //public IEnumerable<T> FlattenRecurrences<T>()
-        //{
-        //    foreach (iCalendar iCal in _Calendars)
-        //        foreach (T t in iCal.FlattenRecurrences<T>())
-        //            yield return t;
-        //}
+        /// <summary>
+        /// Returns a list of occurrences of each recurring component
+        /// that occur between <paramref name="FromDate"/> and <paramref name="ToDate"/>.
+        /// </summary>
+        /// <param name="FromDate">The beginning date/time of the range.</param>
+        /// <param name="ToDate">The end date/time of the range.</param>
+        /// <returns>A list of occurrences that fall between the dates provided.</returns>
+        public List<Occurrence> GetOccurrences(Date_Time FromDate, Date_Time ToDate)
+        {
+            return GetOccurrences<RecurringComponent>(FromDate, ToDate);
+        }
 
-        ///// <summary>
-        ///// Returns a list of flattened recurrence instances for the given date range.
-        ///// </summary>
-        ///// <param name="startDate">The starting date of the date range</param>
-        ///// <param name="endDate">The ending date of the date range</param>
-        ///// <returns>A list of flattened recurrences for the date range</returns>
-        //public IEnumerable<RecurringComponent> GetRecurrencesForRange(Date_Time startDate, Date_Time endDate)
-        //{
-        //    foreach(iCalendar iCal in _Calendars)
-        //        foreach (RecurringComponent rc in iCal.GetRecurrencesForRange(startDate, endDate))
-        //            yield return rc;
-        //}
+        /// <summary>
+        /// Returns all occurrences of components of type T that start on the date provided.
+        /// All components starting between 12:00:00AM and 11:59:59 PM will be
+        /// returned.
+        /// <note>
+        /// This will first Evaluate() the date range required in order to
+        /// determine the occurrences for the date provided, and then return
+        /// the occurrences.
+        /// </note>
+        /// </summary>
+        /// <param name="dt">The date for which to return occurrences.</param>
+        /// <returns>A list of Periods representing the occurrences of this object.</returns>
+        virtual public List<Occurrence> GetOccurrences<T>(Date_Time dt) where T : RecurringComponent
+        {
+            return GetOccurrences<T>(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
+        }
 
-        ///// <summary>
-        ///// Returns a list of flattened recurrence instances of type T for the given date range.
-        ///// </summary>
-        ///// <param name="startDate">The starting date of the date range</param>
-        ///// <param name="endDate">The ending date of the date range</param>
-        ///// <returns>A list of flattened recurrences of type T for the date range</returns>
-        //public IEnumerable<T> GetRecurrencesForRange<T>(Date_Time startDate, Date_Time endDate)
-        //{
-        //    foreach (iCalendar iCal in _Calendars)
-        //        foreach (T t in iCal.GetRecurrencesForRange<T>(startDate, endDate))
-        //            yield return t;
-        //}
+        /// <summary>
+        /// Returns all occurrences of components of type T that start within the date range provided.
+        /// All components occurring between <paramref name="startTime"/> and <paramref name="endTime"/>
+        /// will be returned.
+        /// </summary>
+        /// <param name="startTime">The starting date range</param>
+        /// <param name="endTime">The ending date range</param>
+        virtual public List<Occurrence> GetOccurrences<T>(Date_Time startTime, Date_Time endTime) where T : RecurringComponent
+        {
+            List<Occurrence> occurrences = new List<Occurrence>();
+            foreach (iCalendar iCal in _Calendars)
+                occurrences.AddRange(iCal.GetOccurrences<T>(startTime, endTime));
+
+            occurrences.Sort();
+            return occurrences;
+        }
 
         #endregion
 

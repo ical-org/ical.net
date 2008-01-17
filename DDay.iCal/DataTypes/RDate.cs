@@ -50,6 +50,30 @@ namespace DDay.iCal.DataTypes
 
         #endregion
 
+        #region Public Methods
+
+        public void Add(Date_Time dt)
+        {
+            Periods.Add(new Period(dt));
+        }
+
+        public void Add(Period p)
+        {
+            Periods.Add(p);
+        }
+
+        public void Remove(Date_Time dt)
+        {
+            Periods.Remove(new Period(dt));
+        }
+
+        public void Remove(Period p)
+        {
+            Periods.Remove(p);
+        }
+
+        #endregion
+
         #region Overrides
 
         public override bool Equals(object obj)
@@ -80,6 +104,7 @@ namespace DDay.iCal.DataTypes
  
         public override void CopyFrom(object obj)
         {
+            base.CopyFrom(obj);
             if (obj is RDate)
             {
                 RDate rdt = (RDate)obj;
@@ -139,8 +164,6 @@ namespace DDay.iCal.DataTypes
                 FromDate > EndDate)
                 return periods;
 
-            // FIXME: should we be checking which dates are returned here?
-            // Perhaps we should only return dates between FromDate and EndDate?
             foreach (Period p in Periods)
                 if (!periods.Contains(p))
                     periods.Add(p);

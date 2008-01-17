@@ -16,7 +16,10 @@ namespace DDay.iCal.DataTypes
     /// </remarks>
     /// </summary>
     [DebuggerDisplay("{HasTime ? Value.ToString() : Value.ToShortDateString()}")]
-    public class Date_Time : iCalDataType, IComparable
+    public class Date_Time : 
+        iCalDataType,
+        IComparable,
+        IFormattable
     {
         #region Private Fields
 
@@ -52,16 +55,7 @@ namespace DDay.iCal.DataTypes
         public DateTime UTC
         {
             get
-            {                
-                // FIXME: ensure this works properly.
-                // This fixes a bug that causes all-day events to
-                // "occur" *before* events that occur late in the
-                // previous day.
-                /*if (!HasTime)
-                {
-                    return DateTime.SpecifyKind(Value, DateTimeKind.Utc);
-                }
-                else */
+            {   
                 if (Value.Kind == DateTimeKind.Local)
                 {
                     DateTime value = Value;
@@ -279,6 +273,7 @@ namespace DDay.iCal.DataTypes
                
         public override void CopyFrom(object obj)
         {
+            base.CopyFrom(obj);
             if (obj is Date_Time)
             {
                 Date_Time dt = (Date_Time)obj;
@@ -511,6 +506,20 @@ namespace DDay.iCal.DataTypes
                     return 1;
             }
             throw new ArgumentException("obj must be a Date_Time");
+        }
+
+        #endregion
+
+        #region IFormattable Members
+
+        public string ToString(string format)
+        {
+            return ToString(format, null);
+        }
+
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            return Value.ToString(format, formatProvider);
         }
 
         #endregion

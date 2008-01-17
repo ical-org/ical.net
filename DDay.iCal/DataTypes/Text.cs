@@ -28,6 +28,7 @@ namespace DDay.iCal.DataTypes
 
         public override void CopyFrom(object obj)
         {
+            base.CopyFrom(obj);
             if (obj is Text)
             {
                 Text t = (Text)obj;
@@ -71,7 +72,7 @@ namespace DDay.iCal.DataTypes
             value = value.Replace(@"\N", "\n");            
             value = value.Replace(@"\;", ";");
             value = value.Replace(@"\,", ",");
-            // FIXME: double quotes aren't escaped in RFC2445, but are in Mozilla
+            // FIXME: double quotes aren't escaped in RFC2445, but are in Mozilla Sunbird (0.5-)
             value = value.Replace("\\\"", "\"");
 
             // Replace all single-backslashes with double-backslashes.

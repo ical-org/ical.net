@@ -83,6 +83,7 @@ namespace DDay.iCal.DataTypes
 
         public override void CopyFrom(object obj)
         {
+            base.CopyFrom(obj);
             if (obj is Trigger)
             {
                 Trigger t = (Trigger)obj;
