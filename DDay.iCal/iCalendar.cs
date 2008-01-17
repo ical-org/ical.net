@@ -332,9 +332,16 @@ namespace DDay.iCal
                 return null;
             }
             set
-            {                
-                Properties["CALSCALE"] = new Property(this, "CALSCALE", value);
-            }             
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    Properties["CALSCALE"] = new Property(this, "CALSCALE", value);
+                }
+                else
+                {
+                    Properties.Remove("CALSCALE");
+                }
+            }
         }
 
         virtual public string Method
@@ -347,7 +354,15 @@ namespace DDay.iCal
             }
             set
             {
-                Properties["METHOD"] = new Property(this, "METHOD", value);
+                // NOTE: Fixes bug #1874089 - iCalendar.Method property
+                if (!string.IsNullOrEmpty(value))
+                {
+                    Properties["METHOD"] = new Property(this, "METHOD", value);
+                }
+                else
+                {
+                    Properties.Remove("METHOD");
+                }
             }
         }
 
