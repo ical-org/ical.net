@@ -22,7 +22,7 @@ options
 // iCalendar object
 icalobject returns [DDay.iCal.iCalendar iCal = (DDay.iCal.iCalendar)Activator.CreateInstance(iCalendarType);]
 :
-    (BEGIN COLON VCALENDAR CRLF icalbody[iCal] END COLON VCALENDAR (CRLF)*)* {iCal.OnLoad(EventArgs.Empty);}
+    (BEGIN COLON VCALENDAR CRLF icalbody[iCal] END COLON VCALENDAR (CRLF)*)* {iCal.OnLoaded(EventArgs.Empty);}
 ;
     
 icalbody[DDay.iCal.iCalendar iCal]: (calprops[iCal])? (component[iCal])?;
