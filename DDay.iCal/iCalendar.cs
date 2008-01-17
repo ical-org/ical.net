@@ -71,13 +71,9 @@ namespace DDay.iCal
     /// <code>
     /// //
     /// // The following code loads and displays active todo items from an iCalendar
-    /// // for January 6th, 2006.
-    /// // FIXME: update this example to use GetOccurrences() instead
+    /// // for January 6th, 2006.    
     /// //
-    /// iCalendar iCal = iCalendar.LoadFromUri(new Uri("http://somesite.com/calendar.ics"));
-    /// iCal.Evaluate(
-    ///     new Date_Time(2006, 1, 1, "US-Eastern", iCal),
-    ///     new Date_Time(2006, 1, 31, "US-Eastern", iCal));
+    /// iCalendar iCal = iCalendar.LoadFromUri(new Uri("http://somesite.com/calendar.ics"));    
     /// 
     /// Date_Time dt = new Date_Time(2006, 1, 6, "US-Eastern", iCal);
     /// foreach(Todo todo in iCal.Todos)
@@ -146,11 +142,11 @@ namespace DDay.iCal
         /// appropriate collection.  Currently, the iCalendar component
         /// supports the following components:
         ///     <list type="bullet">        
-        ///         <item><see cref="Event"/></item>
-        ///         <item><see cref="FreeBusy"/></item>
-        ///         <item><see cref="Journal"/></item>
+        ///         <item><see cref="DDay.iCal.Components.Event"/></item>
+        ///         <item><see cref="DDay.iCal.Components.FreeBusy"/></item>
+        ///         <item><see cref="DDay.iCal.Components.Journal"/></item>
         ///         <item><see cref="DDay.iCal.Components.TimeZone"/></item>
-        ///         <item><see cref="Todo"/></item>
+        ///         <item><see cref="DDay.iCal.Components.Todo"/></item>
         ///     </list>
         /// </summary>
         /// <param name="child"></param>
@@ -197,11 +193,11 @@ namespace DDay.iCal
         /// UniqueComponentList that contains the UniqueComponent
         /// will be updated as well.
         /// </summary>
-        public override void OnLoad(EventArgs e)
+        public override void OnLoaded(EventArgs e)
         {
             UniqueComponents.ResolveUIDs();
 
-            base.OnLoad(e);            
+            base.OnLoaded(e);            
         }
 
         /// <summary>
@@ -224,7 +220,7 @@ namespace DDay.iCal
         private List<DDay.iCal.Components.TimeZone> m_TimeZone;
         private UniqueComponentList<Todo> m_Todo;
         private MethodInfo m_ComponentBaseCreate;
-
+        
         // The buffer size used to convert streams from UTF-8 to Unicode
         private const int bufferSize = 8096;
 
@@ -232,13 +228,13 @@ namespace DDay.iCal
 
         #region Public Properties
 
-        public UniqueComponentList<UniqueComponent> UniqueComponents
+        virtual public UniqueComponentList<UniqueComponent> UniqueComponents
         {
             get { return m_UniqueComponents; }
             set { m_UniqueComponents = value; }
         }
 
-        public IEnumerable<RecurringComponent> RecurringComponents
+        virtual public IEnumerable<RecurringComponent> RecurringComponents
         {
             get
             {
@@ -253,7 +249,7 @@ namespace DDay.iCal
         /// <summary>
         /// A collection of <see cref="Event"/> components in the iCalendar.
         /// </summary>
-        public UniqueComponentList<Event> Events
+        virtual public UniqueComponentList<Event> Events
         {
             get { return m_Events; }
             set { m_Events = value; }
@@ -262,7 +258,7 @@ namespace DDay.iCal
         /// <summary>
         /// A collection of <see cref="DDay.iCal.Components.FreeBusy"/> components in the iCalendar.
         /// </summary>
-        public List<FreeBusy> FreeBusy
+        virtual public List<FreeBusy> FreeBusy
         {
             get { return m_FreeBusy; }
             set { m_FreeBusy = value; }
@@ -271,7 +267,7 @@ namespace DDay.iCal
         /// <summary>
         /// A collection of <see cref="Journal"/> components in the iCalendar.
         /// </summary>
-        public UniqueComponentList<Journal> Journals
+        virtual public UniqueComponentList<Journal> Journals
         {
             get { return m_Journal; }
             set { m_Journal = value; }
@@ -280,7 +276,7 @@ namespace DDay.iCal
         /// <summary>
         /// A collection of <see cref="DDay.iCal.Components.TimeZone"/> components in the iCalendar.
         /// </summary>
-        public List<DDay.iCal.Components.TimeZone> TimeZones
+        virtual public List<DDay.iCal.Components.TimeZone> TimeZones
         {
             get { return m_TimeZone; }
             set { m_TimeZone = value; }
@@ -289,13 +285,13 @@ namespace DDay.iCal
         /// <summary>
         /// A collection of <see cref="Todo"/> components in the iCalendar.
         /// </summary>
-        public UniqueComponentList<Todo> Todos
+        virtual public UniqueComponentList<Todo> Todos
         {
             get { return m_Todo; }
             set { m_Todo = value; }
         }
 
-        public string Version
+        virtual public string Version
         {
             get
             {
@@ -311,7 +307,7 @@ namespace DDay.iCal
             }
         }
 
-        public string ProductID
+        virtual public string ProductID
         {
             get
             {
@@ -327,7 +323,7 @@ namespace DDay.iCal
             }            
         }
 
-        public string Scale
+        virtual public string Scale
         {
             get
             {
@@ -341,7 +337,7 @@ namespace DDay.iCal
             }             
         }
 
-        public string Method
+        virtual public string Method
         {
             get
             {
@@ -352,6 +348,42 @@ namespace DDay.iCal
             set
             {
                 Properties["METHOD"] = new Property(this, "METHOD", value);
+            }
+        }
+
+        virtual public RecurrenceRestrictionType RecurrenceRestriction
+        {
+            get
+            {
+                if (Properties.ContainsKey("X-DDAY-ICAL-RECURRENCE-RESTRICTION"))
+                    return 
+                        (RecurrenceRestrictionType)Enum.Parse(
+                            typeof(RecurrenceRestrictionType), 
+                            ((Property)Properties["X-DDAY-ICAL-RECURRENCE-RESTRICTION"]).Value
+                        );
+                return RecurrenceRestrictionType.Default;
+            }
+            set
+            {
+                Properties["X-DDAY-ICAL-RECURRENCE-RESTRICTION"] = new Property(this, "X-DDAY-ICAL-RECURRENCE-RESTRICTION", value.ToString());                
+            }
+        }
+
+        virtual public RecurrenceEvaluationModeType RecurrenceEvaluationMode
+        {
+            get
+            {
+                if (Properties.ContainsKey("X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE"))
+                    return
+                        (RecurrenceEvaluationModeType)Enum.Parse(
+                            typeof(RecurrenceEvaluationModeType),
+                            ((Property)Properties["X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE"]).Value
+                        );
+                return RecurrenceEvaluationModeType.Default;
+            }
+            set
+            {
+                Properties["X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE"] = new Property(this, "X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE", value.ToString());
             }
         }
 
@@ -596,9 +628,15 @@ namespace DDay.iCal
                 rc.ClearEvaluation();            
         }
 
+        /// <summary>
+        /// Returns a list of occurrences of each recurring component
+        /// for the date provided (<paramref name="dt"/>).
+        /// </summary>
+        /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
+        /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
         public List<Occurrence> GetOccurrences(Date_Time dt)
         {
-            return GetOccurrences(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
+            return GetOccurrences<RecurringComponent>(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
         }
 
         /// <summary>
@@ -610,10 +648,40 @@ namespace DDay.iCal
         /// <returns>A list of occurrences that fall between the dates provided.</returns>
         public List<Occurrence> GetOccurrences(Date_Time FromDate, Date_Time ToDate)
         {
+            return GetOccurrences<RecurringComponent>(FromDate, ToDate);
+        }
+
+        /// <summary>
+        /// Returns all occurrences of components of type T that start on the date provided.
+        /// All components starting between 12:00:00AM and 11:59:59 PM will be
+        /// returned.
+        /// <note>
+        /// This will first Evaluate() the date range required in order to
+        /// determine the occurrences for the date provided, and then return
+        /// the occurrences.
+        /// </note>
+        /// </summary>
+        /// <param name="dt">The date for which to return occurrences.</param>
+        /// <returns>A list of Periods representing the occurrences of this object.</returns>
+        virtual public List<Occurrence> GetOccurrences<T>(Date_Time dt) where T : RecurringComponent
+        {
+            return GetOccurrences<T>(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
+        }
+
+        /// <summary>
+        /// Returns all occurrences of components of type T that start within the date range provided.
+        /// All components occurring between <paramref name="startTime"/> and <paramref name="endTime"/>
+        /// will be returned.
+        /// </summary>
+        /// <param name="startTime">The starting date range</param>
+        /// <param name="endTime">The ending date range</param>
+        virtual public List<Occurrence> GetOccurrences<T>(Date_Time startTime, Date_Time endTime) where T : RecurringComponent
+        {
             List<Occurrence> occurrences = new List<Occurrence>();
             foreach (RecurringComponent rc in RecurringComponents)
             {
-                occurrences.AddRange(rc.GetOccurrences(FromDate, ToDate));
+                if (rc is T)
+                    occurrences.AddRange(rc.GetOccurrences(startTime, endTime));
             }
 
             occurrences.Sort();
@@ -677,88 +745,25 @@ namespace DDay.iCal
         /// </example>
         /// <typeparam name="T">The type of object to create</typeparam>
         /// <returns>An object of the type specified</returns>
-        public T Create<T>()
+        public T Create<T>() where T : iCalObject
         {
             if (m_ComponentBaseCreate == null)
                 throw new ArgumentException("Create() cannot be called without a valid ComponentBase Create() method attached");
-
-            // Create a dummy object with a null parent
-            iCalObject obj = null;
-            object t = Activator.CreateInstance(typeof(T), obj);
-
-            if (t is iCalObject)
-            {                
-                iCalObject ico = (iCalObject)t;
-
-                // Create the type of object that we're looking for...
-                iCalObject resultObject = m_ComponentBaseCreate.Invoke(null, new object[] { this, ico.Name }) as iCalObject;
-                resultObject.CreateInitialize();
-                return (T)(object)resultObject;
+                        
+            ConstructorInfo ci = typeof(T).GetConstructor(new Type[] { typeof(iCalObject) });
+            if (ci != null)
+            {
+                // Create a dummy object with a null parent
+                iCalObject ico = ci.Invoke(new object[] { null }) as iCalObject;
+                if (ico != null)
+                {
+                    iCalObject resultObject = m_ComponentBaseCreate.Invoke(null, new object[] { this, ico.Name }) as iCalObject;
+                    resultObject.CreateInitialize();
+                    return (T)(object)resultObject;
+                }
             }
-            else return default(T);
+            return default(T);
         }
-
-        ///// <summary>
-        ///// Returns a list of flattened recurrences for all recurring components
-        ///// in the iCalendar.
-        ///// </summary>
-        ///// <returns>A list of flattened recurrences for all recurring components</returns>
-        //public IEnumerable<RecurringComponent> FlattenRecurrences()
-        //{
-        //    foreach (RecurringComponent rc in RecurringComponents)
-        //        foreach (RecurringComponent instance in rc.FlattenRecurrences())
-        //            yield return instance;
-        //}
-
-        ///// <summary>
-        ///// Returns a list of flattened recurrences of type T.
-        ///// </summary>
-        ///// <typeparam name="T">The type for which to return flattened recurrences</typeparam>
-        ///// <returns>A list of flattened recurrences of type T</returns>
-        //public IEnumerable<T> FlattenRecurrences<T>()
-        //{
-        //    foreach (RecurringComponent rc in FlattenRecurrences())
-        //    {
-        //        if (rc is T)
-        //        {
-        //            object obj = rc;
-        //            yield return (T)obj;
-        //        }
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Returns a list of flattened recurrence instances for the given date range.
-        ///// </summary>
-        ///// <param name="startDate">The starting date of the date range</param>
-        ///// <param name="endDate">The ending date of the date range</param>
-        ///// <returns>A list of flattened recurrences for the date range</returns>
-        //public IEnumerable<RecurringComponent> GetRecurrencesForRange(Date_Time startDate, Date_Time endDate)
-        //{
-        //    foreach (RecurringComponent rc in GetRecurrencesForRange<RecurringComponent>(startDate, endDate))
-        //        yield return rc;
-        //}
-
-        ///// <summary>
-        ///// Returns a list of flattened recurrence instances of type T for the given date range.
-        ///// </summary>
-        ///// <param name="startDate">The starting date of the date range</param>
-        ///// <param name="endDate">The ending date of the date range</param>
-        ///// <returns>A list of flattened recurrences of type T for the date range</returns>
-        //public IEnumerable<T> GetRecurrencesForRange<T>(Date_Time startDate, Date_Time endDate)
-        //{
-        //    Evaluate<T>(startDate, endDate);
-
-        //    foreach (T t in FlattenRecurrences<T>())
-        //    {
-        //        if (t is RecurringComponent)
-        //        {
-        //            RecurringComponent rc = (RecurringComponent)(object)t;
-        //            if (rc.Start >= startDate && rc.Start <= endDate)
-        //                yield return t;
-        //        }
-        //    }
-        //}
 
         #endregion
 

@@ -82,7 +82,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
                         // Set the content line for the object.                        
                         icdt.ContentLine = cl;
-
+                        
                         // It's an array, let's add an item to the end
                         if (itemType.IsArray)
                         {

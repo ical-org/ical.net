@@ -24,9 +24,6 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
             // Ensure time is serialized
             DateTime.HasTime = true;
-
-            // FIXME: this is the old way we did it; remove when verified
-            //DateTime.SetKind(DateTimeKind.Utc);            
         }
 
         #endregion

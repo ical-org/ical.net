@@ -130,7 +130,7 @@ _loop4_breakloop:						;
 			}
 _loop5_breakloop:			;
 		}    // ( ... )*
-		iCal.OnLoad(EventArgs.Empty);
+		iCal.OnLoaded(EventArgs.Empty);
 		return iCal;
 	}
 	
@@ -280,7 +280,7 @@ _loop14_breakloop:			;
 		match(COLON);
 		match(IANA_TOKEN);
 		match(CRLF);
-		c.OnLoad(EventArgs.Empty);
+		c.OnLoaded(EventArgs.Empty);
 		return c;
 	}
 	
@@ -319,7 +319,7 @@ _loop17_breakloop:			;
 		match(COLON);
 		match(X_NAME);
 		match(CRLF);
-		c.OnLoad(EventArgs.Empty);
+		c.OnLoaded(EventArgs.Empty);
 		return c;
 	}
 	

@@ -29,137 +29,171 @@ namespace DDay.iCal.DataTypes
 
         #region Private Fields
 
-        public System.Globalization.CultureInfo m_Culture;
-        public System.Globalization.Calendar m_Calendar;
+        public System.Globalization.CultureInfo _Culture;
+        public System.Globalization.Calendar _Calendar;
 
-        private FrequencyType m_Frequency;
-        private Date_Time m_Until;
-        private int m_Count = int.MinValue;
-        private int m_Interval = int.MinValue;
-        private List<int> m_BySecond = new List<int>();
-        private List<int> m_ByMinute = new List<int>();
-        private List<int> m_ByHour = new List<int>();
-        private List<DaySpecifier> m_ByDay = new List<DaySpecifier>();
-        private List<int> m_ByMonthDay = new List<int>();
-        private List<int> m_ByYearDay = new List<int>();
-        private List<int> m_ByWeekNo = new List<int>();
-        private List<int> m_ByMonth = new List<int>();
-        private List<int> m_BySetPos = new List<int>();
-        private DayOfWeek m_Wkst = DayOfWeek.Monday;
-        private List<Date_Time> m_StaticOccurrences = new List<Date_Time>();
-                
+        private FrequencyType _Frequency;
+        private Date_Time _Until;
+        private int _Count = int.MinValue;
+        private int _Interval = int.MinValue;
+        private List<int> _BySecond = new List<int>();
+        private List<int> _ByMinute = new List<int>();
+        private List<int> _ByHour = new List<int>();
+        private List<DaySpecifier> _ByDay = new List<DaySpecifier>();
+        private List<int> _ByMonthDay = new List<int>();
+        private List<int> _ByYearDay = new List<int>();
+        private List<int> _ByWeekNo = new List<int>();
+        private List<int> _ByMonth = new List<int>();
+        private List<int> _BySetPos = new List<int>();
+        private DayOfWeek _Wkst = DayOfWeek.Monday;
+        private List<Date_Time> _StaticOccurrences = new List<Date_Time>();
+        private RecurrenceRestrictionType? _RestrictionType = null;
+        private RecurrenceEvaluationModeType? _EvaluationMode = null;
+
         #endregion
 
         #region Public Properties
 
         public FrequencyType Frequency
         {
-            get { return m_Frequency; }
-            set { m_Frequency = value; }
+            get { return _Frequency; }
+            set { _Frequency = value; }
         }
 
         public Date_Time Until
         {
-            get { return m_Until; }
-            set { m_Until = value; }
+            get { return _Until; }
+            set { _Until = value; }
         }
 
         public int Count
         {
-            get { return m_Count; }
-            set { m_Count = value; }
+            get { return _Count; }
+            set { _Count = value; }
         }
 
         public int Interval
         {
-            get { return m_Interval; }
-            set { m_Interval = value; }
+            get
+            {
+                if (_Interval == int.MinValue)
+                    return 1;
+                return _Interval;
+            }
+            set { _Interval = value; }
         }
 
         public List<int> BySecond
         {
-            get { return m_BySecond; }
-            set { m_BySecond = value; }
+            get { return _BySecond; }
+            set { _BySecond = value; }
         }
 
         public List<int> ByMinute
         {
-            get { return m_ByMinute; }
-            set { m_ByMinute = value; }
+            get { return _ByMinute; }
+            set { _ByMinute = value; }
         }
 
         public List<int> ByHour
         {
-            get { return m_ByHour; }
-            set { m_ByHour = value; }
+            get { return _ByHour; }
+            set { _ByHour = value; }
         }
 
         public List<DaySpecifier> ByDay
         {
-            get { return m_ByDay; }
-            set { m_ByDay = value; }
+            get { return _ByDay; }
+            set { _ByDay = value; }
         }
 
         public List<int> ByMonthDay
         {
-            get { return m_ByMonthDay; }
-            set { m_ByMonthDay = value; }
+            get { return _ByMonthDay; }
+            set { _ByMonthDay = value; }
         }
 
         public List<int> ByYearDay
         {
-            get { return m_ByYearDay; }
-            set { m_ByYearDay = value; }
+            get { return _ByYearDay; }
+            set { _ByYearDay = value; }
         }
 
         public List<int> ByWeekNo
         {
-            get { return m_ByWeekNo; }
-            set { m_ByWeekNo = value; }
+            get { return _ByWeekNo; }
+            set { _ByWeekNo = value; }
         }
 
         public List<int> ByMonth
         {
-            get { return m_ByMonth; }
-            set { m_ByMonth = value; }
+            get { return _ByMonth; }
+            set { _ByMonth = value; }
         }
 
         public List<int> BySetPos
         {
-            get { return m_BySetPos; }
-            set { m_BySetPos = value; }
+            get { return _BySetPos; }
+            set { _BySetPos = value; }
         }
 
         public DayOfWeek Wkst
         {
-            get { return m_Wkst; }
-            set { m_Wkst = value; }
+            get { return _Wkst; }
+            set { _Wkst = value; }
         }
 
         public List<Date_Time> StaticOccurrences
         {
-            get { return m_StaticOccurrences; }
-            set { m_StaticOccurrences = value; }
+            get { return _StaticOccurrences; }
+            set { _StaticOccurrences = value; }
+        }
+
+        public RecurrenceRestrictionType RestrictionType
+        {
+            get
+            {
+                if (_RestrictionType == null &&
+                    iCalendar != null)
+                    return iCalendar.RecurrenceRestriction;
+                return RecurrenceRestrictionType.Default;
+            }
+            set { _RestrictionType = value; }
+        }
+
+        public RecurrenceEvaluationModeType? EvaluationMode
+        {
+            get
+            {
+                if (_EvaluationMode == null &&
+                    iCalendar != null)
+                    return iCalendar.RecurrenceEvaluationMode;
+                return RecurrenceEvaluationModeType.Default;
+            }
+            set { _EvaluationMode = value; }
         }
 
         #endregion
 
         #region Constructors
+
         public Recur()
         {            
-            m_Calendar = System.Globalization.CultureInfo.CurrentCulture.Calendar;
+            _Calendar = System.Globalization.CultureInfo.CurrentCulture.Calendar;
         }
         public Recur(string value)
             : this()
         {
             CopyFrom((Recur)Parse(value));
         }
+
         #endregion
 
         #region Overrides
 
         public override void CopyFrom(object obj)
         {
+            base.CopyFrom(obj);
             if (obj is Recur)
             {
                 Recur r = (Recur)obj;
@@ -178,6 +212,8 @@ namespace DDay.iCal.DataTypes
                 ByMonth = new List<int>(r.ByMonth);
                 BySetPos = new List<int>(r.BySetPos);
                 Wkst = r.Wkst;
+                _RestrictionType = r._RestrictionType;
+                _EvaluationMode = r._EvaluationMode;                
             }
             base.CopyFrom(obj);
         }
@@ -199,11 +235,7 @@ namespace DDay.iCal.DataTypes
                     return false;
                 if (r.Count != Count) return false;
                 if (r.Frequency != Frequency) return false;
-                if (r.Interval != Interval &&
-                    // MinValue and 1 are treated as identical for Interval
-                    ((r.Interval != int.MinValue && r.Interval != 1) ||
-                     (Interval != int.MinValue && Interval != 1)))
-                    return false;
+                if (r.Interval != Interval) return false;
                 if (r.Until != null)
                 {
                     if (!r.Until.Equals(Until))
@@ -225,7 +257,7 @@ namespace DDay.iCal.DataTypes
                 BySetPos.GetHashCode() ^ ByWeekNo.GetHashCode() ^ ByYearDay.GetHashCode() ^
                 Count.GetHashCode() ^ Frequency.GetHashCode();
 
-            if (Interval.Equals(1) || Interval.Equals(int.MinValue))
+            if (Interval.Equals(1))
                 hashCode ^= 0x1;
             else hashCode ^= Interval.GetHashCode();
 
@@ -469,12 +501,6 @@ namespace DDay.iCal.DataTypes
 
         #region Protected Methods
 
-        protected void EnsureInterval()
-        {
-            if (Interval == int.MinValue)
-                Interval = 1;
-        }
-
         protected void EnsureByXXXValues(Date_Time StartDate)
         {
             // If the frequency is weekly, and
@@ -512,6 +538,83 @@ namespace DDay.iCal.DataTypes
                 this.ByMonth.Add(StartDate.Value.Month);
         }
 
+        protected void EnforceEvaluationRestrictions()
+        {
+            RecurrenceEvaluationModeType? evaluationMode = EvaluationMode;
+            RecurrenceRestrictionType? evaluationRestriction = RestrictionType;
+
+            if (evaluationRestriction != RecurrenceRestrictionType.NoRestriction)
+            {
+                switch (evaluationMode)
+                {
+                    case RecurrenceEvaluationModeType.AdjustAutomatically:
+                        switch (Frequency)
+                        {
+                            case FrequencyType.SECONDLY:
+                                {
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.Default:
+                                        case RecurrenceRestrictionType.RestrictSecondly: Frequency = FrequencyType.MINUTELY; break;
+                                        case RecurrenceRestrictionType.RestrictMinutely: Frequency = FrequencyType.HOURLY; break;
+                                        case RecurrenceRestrictionType.RestrictHourly: Frequency = FrequencyType.DAILY; break;
+                                    }
+                                } break;
+                            case FrequencyType.MINUTELY:
+                                {
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.RestrictMinutely: Frequency = FrequencyType.HOURLY; break;
+                                        case RecurrenceRestrictionType.RestrictHourly: Frequency = FrequencyType.DAILY; break;
+                                    }
+                                } break;
+                            case FrequencyType.HOURLY:
+                                {
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.RestrictHourly: Frequency = FrequencyType.DAILY; break;
+                                    }
+                                } break;
+                            default: break;
+                        } break;
+                    case RecurrenceEvaluationModeType.ThrowException:
+                    case RecurrenceEvaluationModeType.Default:
+                        switch (Frequency)
+                        {
+                            case FrequencyType.SECONDLY:
+                                {
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.Default:
+                                        case RecurrenceRestrictionType.RestrictSecondly:
+                                        case RecurrenceRestrictionType.RestrictMinutely:
+                                        case RecurrenceRestrictionType.RestrictHourly:
+                                            throw new EvaluationEngineException();
+                                    }
+                                } break;
+                            case FrequencyType.MINUTELY:
+                                {
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.RestrictMinutely: 
+                                        case RecurrenceRestrictionType.RestrictHourly:
+                                            throw new EvaluationEngineException();
+                                    }
+                                } break;
+                            case FrequencyType.HOURLY:
+                                {
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.RestrictHourly:
+                                            throw new EvaluationEngineException();
+                                    }
+                                } break;
+                            default: break;
+                        } break;                        
+                }
+            }             
+        }
+
         #region Calculating Occurrences
 
         protected List<Date_Time> GetOccurrences(Date_Time StartDate, Date_Time EndDate, int Count)
@@ -522,7 +625,7 @@ namespace DDay.iCal.DataTypes
                 DateTimes.Count <= Count))
             {
                 // Retrieve occurrences that occur on our interval period
-                if (BySetPos.Count == 0 && CheckValidDate(StartDate) && !DateTimes.Contains(StartDate.Value))
+                if (BySetPos.Count == 0 && IsValidDate(StartDate) && !DateTimes.Contains(StartDate.Value))
                     DateTimes.Add(StartDate.Copy());
 
                 // Retrieve "extra" occurrences that happen within our interval period
@@ -542,12 +645,12 @@ namespace DDay.iCal.DataTypes
             return DateTimes;
         }
 
-        protected void IncrementDate(Date_Time dt)
+        public void IncrementDate(Date_Time dt)
         {
             IncrementDate(dt, this.Interval);
         }
 
-        protected void IncrementDate(Date_Time dt, int Interval)
+        public void IncrementDate(Date_Time dt, int Interval)
         {
             DateTime old = dt.Value;
             switch (Frequency)
@@ -563,18 +666,22 @@ namespace DDay.iCal.DataTypes
                     // So, if the current week number is 36, and our Interval is 2, then our goal
                     // week number is 38.
                     // NOTE: fixes RRULE12 eval.
-                    int current = m_Calendar.GetWeekOfYear(old, System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst),
-                        last = m_Calendar.GetWeekOfYear(new DateTime(old.Year, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst),
+                    int current = _Calendar.GetWeekOfYear(old, System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst),
+                        lastLastYear = _Calendar.GetWeekOfYear(new DateTime(old.Year-1, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst),
+                        last = _Calendar.GetWeekOfYear(new DateTime(old.Year, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst),
                         goal = current + Interval;
 
                     // If the goal week is greater than the last week of the year, wrap it!
                     if (goal > last)
                         goal = goal - last;
+                    else if (goal <= 0)
+                        goal = lastLastYear + goal;
 
+                    int interval = Interval > 0 ? 1 : -1;
                     while (current != goal)
                     {
-                        old = old.AddDays(1);
-                        current = m_Calendar.GetWeekOfYear(old, System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
+                        old = old.AddDays(interval);
+                        current = _Calendar.GetWeekOfYear(old, System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
                     }
                     dt.Value = old;
                     break;
@@ -816,7 +923,7 @@ namespace DDay.iCal.DataTypes
                 foreach (Date_Time dt in StaticOccurrences)
                 {
                     if (FromDate < dt)
-                        FromDate = dt.AddSeconds(1);
+                        FromDate = dt;
                 }
             }            
 
@@ -844,19 +951,19 @@ namespace DDay.iCal.DataTypes
                 Interval > 1)
             {   
                 // Get the week of year of the time frame we want to calculate          
-                int firstEvalWeek = m_Calendar.GetWeekOfYear(FromDate.Value, System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
+                int firstEvalWeek = _Calendar.GetWeekOfYear(FromDate.Value, System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
 
                 // Count backwards in years, calculating how many weeks' difference we have between
                 // start date and evaluation period.
                 Date_Time evalDate = FromDate;
                 while (evalDate.Year > StartDate.Year)
                 {
-                    firstEvalWeek += m_Calendar.GetWeekOfYear(new DateTime(evalDate.Year - 1, 12, 31), System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
+                    firstEvalWeek += _Calendar.GetWeekOfYear(new DateTime(evalDate.Year - 1, 12, 31), System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
                     evalDate = evalDate.AddYears(-1);
                 }
 
                 // Determine the difference, in weeks, between the start date and the evaluation period.
-                int startWeek = m_Calendar.GetWeekOfYear(StartDate.Value, System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
+                int startWeek = _Calendar.GetWeekOfYear(StartDate.Value, System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
                 int weeksDifference = firstEvalWeek - startWeek;
 
                 // Determine how many weeks the evaluation period needs to change
@@ -877,9 +984,9 @@ namespace DDay.iCal.DataTypes
             Recur r = new Recur();
             r.CopyFrom(this);
 
-            // If an INTERVAL was not specified, default to 1
-            r.EnsureInterval();
-            
+            // Enforce evaluation engine rules
+            r.EnforceEvaluationRestrictions();
+
             // Fill in missing, necessary ByXXX values
             r.EnsureByXXXValues(StartDate);
                         
@@ -922,7 +1029,16 @@ namespace DDay.iCal.DataTypes
             return DateTimes;
         }
 
-        public bool CheckValidDate(Date_Time dt)
+        /// <summary>
+        /// [Deprecated]: Use IsValidDate() instead.
+        /// </summary>
+        public bool CheckValidDate(Date_Time dt) { return IsValidDate(dt); }
+
+        /// <summary>
+        /// Returns true if <paramref name="dt"/> is a date/time that aligns to (occurs within)
+        /// the recurrence pattern of this Recur, false otherwise.
+        /// </summary>
+        public bool IsValidDate(Date_Time dt)
         {
             if (BySecond.Count != 0 && !BySecond.Contains(dt.Value.Second)) return false;
             if (ByMinute.Count != 0 && !ByMinute.Contains(dt.Value.Minute)) return false;
@@ -944,8 +1060,8 @@ namespace DDay.iCal.DataTypes
             if (ByWeekNo.Count != 0)
             {
                 bool found = false;
-                int lastWeekOfYear = m_Calendar.GetWeekOfYear(new DateTime(dt.Value.Year, 12, 31), System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
-                int currWeekNo = m_Calendar.GetWeekOfYear(dt.Value, System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
+                int lastWeekOfYear = _Calendar.GetWeekOfYear(new DateTime(dt.Value.Year, 12, 31), System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
+                int currWeekNo = _Calendar.GetWeekOfYear(dt.Value, System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
                 foreach (int WeekNo in ByWeekNo)
                 {
                     if ((WeekNo > 0 && WeekNo == currWeekNo) ||
@@ -961,7 +1077,7 @@ namespace DDay.iCal.DataTypes
                 // Handle negative days of month (count backwards from the end)
                 // NOTE: fixes RRULE18 eval
                 bool found = false;
-                int DaysInMonth = m_Calendar.GetDaysInMonth(dt.Value.Year, dt.Value.Month);
+                int DaysInMonth = _Calendar.GetDaysInMonth(dt.Value.Year, dt.Value.Month);
                 foreach (int Day in ByMonthDay)
                 {
                     if ((Day > 0) && (Day == dt.Value.Day))
@@ -978,7 +1094,7 @@ namespace DDay.iCal.DataTypes
                 // Handle negative days of year (count backwards from the end)
                 // NOTE: fixes RRULE25 eval
                 bool found = false;
-                int DaysInYear = m_Calendar.GetDaysInYear(dt.Value.Year);
+                int DaysInYear = _Calendar.GetDaysInYear(dt.Value.Year);
                 DateTime baseDate = new DateTime(dt.Value.Year, 1, 1);
 
                 foreach (int Day in ByYearDay)
@@ -1094,7 +1210,7 @@ namespace DDay.iCal.DataTypes
                 try
                 {
                     // Make sure our day falls in the valid date range
-                    if (Recur.CheckValidDate(CurrentDateTime) &&
+                    if (Recur.IsValidDate(CurrentDateTime) &&
                         // Ensure the DateTime hasn't already been calculated (NOTE: fixes RRULE34 eval)
                         !DateTimes.Contains(CurrentDateTime))
                         DateTimes.Add(CurrentDateTime);
@@ -1104,5 +1220,25 @@ namespace DDay.iCal.DataTypes
         }
 
         #endregion
+    }
+
+    public enum RecurrenceRestrictionType
+    {
+        Default, /// Same as RestrictSecondly.
+        NoRestriction, /// Does not restrict recurrence evaluation - WARNING: this may cause very slow performance!
+        RestrictSecondly, /// Disallows use of the SECONDLY frequency for recurrence evaluation
+        RestrictMinutely, /// Disallows use of the MINUTELY and SECONDLY frequencies for recurrence evaluation
+        RestrictHourly /// Disallows use of the HOURLY, MINUTELY, and SECONDLY frequencies for recurrence evaluation
+    }
+
+    public enum RecurrenceEvaluationModeType
+    {
+        Default,             /// Same as ThrowException.
+        AdjustAutomatically, /// Automatically adjusts the evaluation to the next-best frequency based on the restriction type.
+                             /// For example, if the restriction were IgnoreSeconds, and the frequency were SECONDLY, then
+                             /// this would cause the frequency to be adjusted to MINUTELY, the next closest thing.
+        ThrowException       /// This will throw an exception if a recurrence rule is evaluated that does not meet the minimum
+                             /// restrictions.  For example, if the restriction were IgnoreSeconds, and a SECONDLY frequency
+                             /// were evaluated, an exception would be thrown.
     }
 }
