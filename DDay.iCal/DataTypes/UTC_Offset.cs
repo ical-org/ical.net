@@ -82,7 +82,8 @@ namespace DDay.iCal.DataTypes
             {
                 try
                 {
-                    if (match.Groups[0].Value == "+")
+                    // NOTE: Fixes bug #1874174 - TimeZone positive UTC_Offsets don't parse correctly
+                    if (match.Groups[1].Value == "+")
                         utco.Positive = true;
                     utco.Hours = Int32.Parse(match.Groups[2].Value);
                     utco.Minutes = Int32.Parse(match.Groups[3].Value);
