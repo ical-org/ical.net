@@ -330,6 +330,18 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Calendars\Recurrence\RRULE50.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Calendars\Recurrence\RRULE49.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Calendars\Recurrence\RRULE48.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Calendars\Recurrence\RRULE47.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Calendars\Recurrence\RRULE46.ics">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

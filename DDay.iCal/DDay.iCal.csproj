@@ -63,6 +63,7 @@
     <Compile Include="Components\TimeZoneInfo.cs">
       <DependentUpon>TimeZone.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataTypes\DateUtils.cs" />
     <Compile Include="DataTypes\EvaluationEngineException.cs" />
     <Compile Include="DataTypes\Trigger.cs" />
     <Compile Include="DataTypes\Binary.cs" />

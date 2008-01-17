@@ -943,6 +943,7 @@ namespace DDay.iCal.DataTypes
             if (StartDate > FromDate)
                 FromDate = StartDate;
 
+            /*
             // If the frequency is WEEKLY, and the interval is greater than 1,
             // then we need to ensure that the StartDate occurs in one of the
             // "active" weeks, to ensure that we properly "step" through weeks.
@@ -977,6 +978,21 @@ namespace DDay.iCal.DataTypes
 
                 // Offset the week back to a "compatible" week for evaluation
                 FromDate = FromDate.AddDays(-offset * 7);
+            }*/
+
+            // If the interval is greater than 1, then we need to ensure that the StartDate occurs in one of the
+            // "active" days/weeks/months/years/etc. to ensure that we properly "step" through the interval.
+            // NOTE: Fixes bug #1741093 - WEEKLY frequency eval behaves strangely
+            if (Interval > 1)
+            {
+                // Determine the difference between our two dates, using our frequency as the UNIT.
+                long difference = DateUtils.DateDiff(this.Frequency, StartDate, FromDate, Wkst);
+
+                while (difference % Interval > 0)
+                {
+                    FromDate = DateUtils.AddFrequency(this.Frequency, FromDate, -1);
+                    difference--;
+                }
             }
 
             // Create a temporary recurrence for populating 

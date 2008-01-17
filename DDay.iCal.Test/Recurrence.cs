@@ -28,7 +28,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 118 of RFC 2445 - RRULE:FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30
+        /// See Page 45 of RFC 2445 - RRULE:FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE1()
@@ -46,7 +46,7 @@ namespace DDay.iCal.Test
             while (dt.Year < 2011)
             {
                 if ((dt > evt.Start) &&
-                    (dt.Year % 2 == 0) &&
+                    (dt.Year % 2 == 1) && // Every-other year from 2005
                     (dt.Month == 1) &&
                     (dt.DayOfWeek == DayOfWeek.Sunday))
                 {
@@ -632,6 +632,85 @@ namespace DDay.iCal.Test
                 "EDT",
                 "EDT",
                 "EDT",
+                "EDT",
+                "EDT",
+                "EDT",
+                "EDT",
+                "EDT",
+                "EDT",
+                "EDT",
+                "EDT",
+                "EDT",
+                "EST",
+                "EST",
+                "EST",
+                "EST",
+                "EST",
+                "EST",
+                "EST",
+                "EST",
+                "EST",
+                "EST",
+                "EST",
+                "EST",                
+                "EST"
+            };
+
+            for (int i = 0; i < DateTimes.Length; i++)
+            {
+                Date_Time dt = (Date_Time)DateTimes[i];
+                Assert.AreEqual(dt, occurrences[i].Period.StartTime, "Event should occur on " + dt);
+                Assert.AreEqual(TimeZones[i], dt.TimeZoneInfo.TimeZoneName, "Event " + dt + " should occur in the " + TimeZones[i] + " timezone");
+            }
+
+            Assert.AreEqual(
+                DateTimes.Length,
+                occurrences.Count,
+                "There should be exactly " + DateTimes.Length + " occurrences; there were " + occurrences.Count);
+        }
+
+        /// <summary>
+        /// Tests to ensure FREQUENCY=WEEKLY with INTERVAL=2 works when starting evaluation from an "off" week
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE12_1()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE12.ics");
+            Program.TestCal(iCal);
+            Event evt = iCal.Events[0];
+
+            List<Occurrence> occurrences = evt.GetOccurrences(
+                new Date_Time(1997, 9, 9, tzid, iCal),
+                new Date_Time(1999, 1, 1, tzid, iCal));
+
+            Date_Time[] DateTimes = new Date_Time[]
+            {
+                new Date_Time(1997, 9, 15, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 9, 17, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 9, 19, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 9, 29, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 10, 1, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 10, 3, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 10, 13, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 10, 15, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 10, 17, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 10, 27, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 10, 29, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 10, 31, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 11, 10, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 11, 12, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 11, 14, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 11, 24, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 11, 26, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 11, 28, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 12, 8, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 12, 10, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 12, 12, 9, 0, 0, tzid, iCal),
+                new Date_Time(1997, 12, 22, 9, 0, 0, tzid, iCal)
+            };
+
+            string[] TimeZones = new string[]
+            {
                 "EDT",
                 "EDT",
                 "EDT",
@@ -2256,6 +2335,120 @@ namespace DDay.iCal.Test
                 "There should be exactly " + DateTimes.Length +
                 " occurrences; there were " + occurrences.Count);
 
+        }
+
+        /// <summary>
+        /// Ensures that "off-month" calculation works correctly
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE47()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE47.ics");
+
+            List<Occurrence> occurrences = iCal.GetOccurrences(
+                new Date_Time(2008, 1, 1, 7, 0, 0, tzid, iCal),
+                new Date_Time(2008, 2, 29, 7, 0, 0, tzid, iCal));
+
+            Date_Time[] DateTimes = new Date_Time[]
+            {
+                new Date_Time(2008, 2, 11, 7, 0, 0, tzid, iCal),
+                new Date_Time(2008, 2, 12, 7, 0, 0, tzid, iCal)
+            };
+
+            for (int i = 0; i < DateTimes.Length; i++)
+                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);
+
+            Assert.AreEqual(
+                DateTimes.Length,
+                occurrences.Count,
+                "There should be exactly " + DateTimes.Length +
+                " occurrences; there were " + occurrences.Count);
+
+        }
+
+        /// <summary>
+        /// Ensures that "off-year" calculation works correctly
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE48()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE48.ics");
+
+            List<Occurrence> occurrences = iCal.GetOccurrences(
+                new Date_Time(2006, 1, 1, 7, 0, 0, tzid, iCal),
+                new Date_Time(2007, 1, 31, 7, 0, 0, tzid, iCal));
+
+            Date_Time[] DateTimes = new Date_Time[]
+            {
+                new Date_Time(2007, 1, 8, 7, 0, 0, tzid, iCal),
+                new Date_Time(2007, 1, 9, 7, 0, 0, tzid, iCal)
+            };
+
+            Assert.AreEqual(
+                DateTimes.Length,
+                occurrences.Count,
+                "There should be exactly " + DateTimes.Length +
+                " occurrences; there were " + occurrences.Count);
+
+            for (int i = 0; i < DateTimes.Length; i++)
+                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);            
+        }
+
+        /// <summary>
+        /// Ensures that "off-day" calcuation works correctly
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE49()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE49.ics");
+
+            List<Occurrence> occurrences = iCal.GetOccurrences(
+                new Date_Time(2007, 4, 11, 7, 0, 0, tzid, iCal),
+                new Date_Time(2007, 4, 16, 7, 0, 0, tzid, iCal));
+
+            Date_Time[] DateTimes = new Date_Time[]
+            {
+                new Date_Time(2007, 4, 12, 7, 0, 0, tzid, iCal),
+                new Date_Time(2007, 4, 15, 7, 0, 0, tzid, iCal)
+            };
+
+            Assert.AreEqual(
+                DateTimes.Length,
+                occurrences.Count,
+                "There should be exactly " + DateTimes.Length +
+                " occurrences; there were " + occurrences.Count);
+
+            for (int i = 0; i < DateTimes.Length; i++)
+                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);
+        }
+
+        /// <summary>
+        /// Ensures that "off-hour" calculation works correctly
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE50()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE50.ics");
+
+            List<Occurrence> occurrences = iCal.GetOccurrences(
+                new Date_Time(2007, 4, 9, 10, 0, 0, tzid, iCal),
+                new Date_Time(2007, 4, 10, 20, 0, 0, tzid, iCal));
+
+            Date_Time[] DateTimes = new Date_Time[]
+            {
+                new Date_Time(2007, 4, 10, 1, 0, 0, tzid, iCal),
+                new Date_Time(2007, 4, 10, 19, 0, 0, tzid, iCal)
+            };
+
+            Assert.AreEqual(
+                DateTimes.Length,
+                occurrences.Count,
+                "There should be exactly " + DateTimes.Length +
+                " occurrences; there were " + occurrences.Count);
+
+
+            for (int i = 0; i < DateTimes.Length; i++)
+                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);            
         }
 
         /// <summary>
