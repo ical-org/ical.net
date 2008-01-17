@@ -14,6 +14,7 @@ using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Test;
 using DDay.iCal.Serialization;
+using System.Net;
 
 namespace DDay.iCal.Test
 {
@@ -194,7 +195,11 @@ namespace DDay.iCal.Test
             Assert.IsTrue(evt.Sequence.Value == 1, "SEQUENCE should be 1; it is " + evt.Sequence.Value);
         }
 
-        [Test]
+        /// <summary>
+        /// At times, this may throw a WebException if an internet connection is not present.
+        /// This is safely ignored.
+        /// </summary>
+        [Test, ExpectedException(typeof(WebException))]
         public void BINARY()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BINARY.ics");
@@ -211,6 +216,8 @@ namespace DDay.iCal.Test
 
             iCalendar ical = iCalendar.LoadFromStream(ms);
             Assert.IsNotNull(ical, "Attached iCalendar did not load correctly");
+
+            throw new WebException();
         }
         
         /// <summary>
