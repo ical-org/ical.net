@@ -4,6 +4,7 @@ using System.Text;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
+using System.Collections.Generic;
 
 namespace DDay.iCal.Components
 {
@@ -23,24 +24,24 @@ namespace DDay.iCal.Components
 
         #region Private Fields
 
-        private Text m_UID;
-        private Binary[] m_Attach;
-        private Cal_Address[] m_Attendee;        
-        private TextCollection[] m_Categories;
-        private Text m_Class;        
-        private Text[] m_Comment;        
-        private Text[] m_Contact;
-        private Date_Time m_Created;        
-        private Text m_Description;        
-        private Date_Time m_DTStamp;        
-        private Date_Time m_Last_Modified;        
-        private Cal_Address m_Organizer;        
-        private Integer m_Priority;        
-        private Text[] m_Related_To;        
-        private RequestStatus[] m_RequestStatus;        
-        private Integer m_Sequence;
-        private Text m_Summary;
-        private URI m_Url;        
+        private Text _UID;
+        private Binary[] _Attach;
+        private Cal_Address[] _Attendee;
+        private TextCollection[] _Categories;
+        private Text _Class;
+        private Text[] _Comment;
+        private Text[] _Contact;
+        private Date_Time _Created;
+        private Text _Description;
+        private Date_Time _DTStamp;
+        private Date_Time _Last_Modified;
+        private Cal_Address _Organizer;
+        private Integer _Priority;
+        private Text[] _Related_To;
+        private RequestStatus[] _RequestStatus;
+        private Integer _Sequence;
+        private Text _Summary;
+        private URI _Url;
         
         #endregion
 
@@ -56,113 +57,136 @@ namespace DDay.iCal.Components
         [Serialized]
         public Binary[] Attach
         {
-            get { return m_Attach; }
-            set { m_Attach = value; }
+            get { return _Attach; }
+            set { _Attach = value; }
         }
 
         [Serialized]
         public Cal_Address[] Attendee
         {
-            get { return m_Attendee; }
-            set { m_Attendee = value; }
+            get { return _Attendee; }
+            set
+            {
+                if (!object.Equals(_Attendee, value))
+                {
+                    _Attendee = value;
+
+                    // NOTE: Fixes bug #1835469 - Organizer property not serializing correctly
+                    if (_Attendee != null)
+                    {
+                        foreach (Cal_Address addr in _Attendee)
+                            addr.Name = Cal_Address.ATTENDEE;
+                    }
+                }
+            }
         }
 
         [Serialized]
         public TextCollection[] Categories
         {
-            get { return m_Categories; }
-            set { m_Categories = value; }
+            get { return _Categories; }                    
+            set { _Categories = value; }            
         }
 
         [Serialized]
         public Text Class
         {
-            get { return m_Class; }
-            set { m_Class = value; }
+            get { return _Class; }
+            set { _Class = value; }
         }
 
         [Serialized]
         public Text[] Comment
         {
-            get { return m_Comment; }
-            set { m_Comment = value; }
+            get { return _Comment; }
+            set { _Comment = value; }
         }
 
         [Serialized]
         public Text[] Contact
         {
-            get { return m_Contact; }
-            set { m_Contact = value; }
+            get { return _Contact; }
+            set { _Contact = value; }
         }
 
         [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
         public Date_Time Created
         {
-            get { return m_Created; }
-            set { m_Created = value; }
+            get { return _Created; }
+            set { _Created = value; }
         }
 
         [Serialized]
         public Text Description
         {
-            get { return m_Description; }
-            set { m_Description = value; }
+            get { return _Description; }
+            set { _Description = value; }
         }
 
         [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
         public Date_Time DTStamp
         {
-            get { return m_DTStamp; }
-            set { m_DTStamp = value; }
+            get { return _DTStamp; }
+            set { _DTStamp = value; }
         }
 
         [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
         public Date_Time Last_Modified
         {
-            get { return m_Last_Modified; }
-            set { m_Last_Modified = value; }
+            get { return _Last_Modified; }
+            set { _Last_Modified = value; }
         }
 
         [Serialized]
         public Cal_Address Organizer
         {
-            get { return m_Organizer; }
-            set { m_Organizer = value; }
+            get { return _Organizer; }
+            set
+            {
+                if (!object.Equals(_Organizer, value))
+                {
+                    _Organizer = value;
+
+                    // NOTE: Fixes bug #1835469 - Organizer property not serializing correctly
+                    if (_Organizer != null)
+                        _Organizer.Name = Cal_Address.ORGANIZER;
+                }
+            }
         }
 
         [Serialized]
         public Integer Priority
         {
-            get { return m_Priority; }
-            set { m_Priority = value; }
+            get { return _Priority; }
+            set { _Priority = value; }
         }
 
         [Serialized]
         public Text[] Related_To
         {
-            get { return m_Related_To; }
-            set { m_Related_To = value; }
+            get { return _Related_To; }
+            set { _Related_To = value; }
         }
 
         [Serialized]
         public RequestStatus[] RequestStatus
         {
-            get { return m_RequestStatus; }
-            set { m_RequestStatus = value; }
+            get { return _RequestStatus; }
+            set { _RequestStatus = value; }
         }
 
         [Serialized]
         public Integer Sequence
         {
-            get { return m_Sequence; }
-            set { m_Sequence = value; }
+            get { return _Sequence; }
+            set { _Sequence = value; }
         }
 
         [Serialized]
         public Text Summary
         {
-            get { return m_Summary; }
-            set { m_Summary = value; }
+            get { return _Summary; }
+            set { _Summary = value; }
         }
 
         [Serialized]
@@ -170,22 +194,19 @@ namespace DDay.iCal.Components
         {
             get
             {
-                return m_UID;
+                return _UID;
             }
             set
             {
-                if ((UID == null && value != null) ||
-                    (UID != null && !UID.Equals(value)))
+                if (!object.Equals(_UID, value))
                 {
-                    Text oldUID = m_UID;
+                    Text oldUID = _UID;
 
-                    // If the value of UID is somehow null, then set our value to null
-                    if (value == null || value.Value == null)
-                        m_UID = null;
-                    else m_UID = new Text(value.Value);
+                    _UID = value;
+                    if (_UID.Value == null)
+                        _UID = null;
 
-                    if (UIDChanged != null)
-                        UIDChanged(this, oldUID, UID);
+                    OnUIDChanged(oldUID, _UID);
                 }
             }
         }
@@ -193,8 +214,8 @@ namespace DDay.iCal.Components
         [Serialized]
         public URI Url
         {
-            get { return m_Url; }
-            set { m_Url = value; }
+            get { return _Url; }
+            set { _Url = value; }
         }
 
         public string Category
@@ -207,14 +228,55 @@ namespace DDay.iCal.Components
             }
             set
             {
-                if (Categories == null || Categories.Length == 0)
-                    Categories = new TextCollection[1];
-                Categories[0] = new TextCollection(value);
-                Categories[0].Name = "CATEGORY";
+                if (!object.Equals(Category, value))
+                {
+                    if (Categories == null || Categories.Length == 0)
+                        Categories = new TextCollection[1];
+                    Categories[0] = new TextCollection(value);
+                    Categories[0].Name = "CATEGORY";
+                }                
             }
         }
 
-        #endregion      
+        #endregion
+
+        #region Protected Methods
+
+        protected void OnUIDChanged(Text oldUID, Text newUID)
+        {
+            if (UIDChanged != null)
+                UIDChanged(this, oldUID, newUID);
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public void AddAttendee(Cal_Address attendee)
+        {
+            List<Cal_Address> attendees = new List<Cal_Address>();
+            if (Attendee != null)
+                attendees.AddRange(Attendee);
+
+            // NOTE: Fixes bug #1835469 - Organizer property not serializing correctly
+            attendee.Name = Cal_Address.ATTENDEE;
+            attendees.Add(attendee);
+            Attendee = attendees.ToArray();
+        }
+
+        public void RemoveAttendee(Cal_Address attendee)
+        {
+            List<Cal_Address> attendees = new List<Cal_Address>();
+            if (Attendee != null)
+                attendees.AddRange(Attendee);
+
+            attendees.Remove(attendee);
+            if (attendees.Count > 0)
+                Attendee = attendees.ToArray();
+            else Attendee = null;
+        }
+
+        #endregion
 
         #region Static Public Methods
 
@@ -258,7 +320,8 @@ namespace DDay.iCal.Components
             // the iCalendar standard doesn't care at all about milliseconds.  Therefore, when comparing
             // two calendars, one generated, and one loaded from file, they may be functionally identical,
             // but be determined to be different due to millisecond differences.
-            Created = new Date_Time(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            DateTime now = DateTime.Now;
+            Created = new Date_Time(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
             DTStamp = Created.Copy();
         }
 
