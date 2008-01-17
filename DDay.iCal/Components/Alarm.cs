@@ -170,8 +170,19 @@ namespace DDay.iCal.Components
         /// </summary>
         /// <param name="Start">The earliest date/time to poll trigerred alarms for.</param>
         /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
-        public List<AlarmOccurrence> Poll(Date_Time Start)
+        public List<AlarmOccurrence> Poll(Date_Time Start, Date_Time End)
         {
+            // Ensure the recurring component that owns this
+            // alarm has evaluated the time frame in question
+            // before polling alarms
+            RecurringComponent rc = Parent as RecurringComponent;
+            if (rc != null)
+            {
+                rc.Evaluate(
+                    Start ?? rc.Start, 
+                    End ?? DateTime.Now);
+            }
+
             List<AlarmOccurrence> Results = new List<AlarmOccurrence>();
             foreach (AlarmOccurrence ao in Occurrences)
             {
@@ -207,89 +218,17 @@ namespace DDay.iCal.Components
                 for (int i = 0; i < len; i++)
                 {
                     AlarmOccurrence ao = Occurrences[i];
-                    Date_Time AlarmTime = ao.DateTime.Copy();
+                    Date_Time alarmTime = ao.DateTime.Copy();
 
                     for (int j = 0; j < Repeat; j++)
                     {
-                        AlarmTime += Duration;
-                        Occurrences.Add(new AlarmOccurrence(this, AlarmTime.Copy(), ao.Component));
+                        alarmTime += Duration;
+                        Occurrences.Add(new AlarmOccurrence(this, alarmTime.Copy(), ao.Component));
                     }
                 }
             }
         }
 
-        #endregion
-
-        #region Helper Classes
-
-        /// <summary>
-        /// A class that represents a specific occurrence of an <see cref="Alarm"/>.        
-        /// </summary>
-        /// <remarks>
-        /// The <see cref="AlarmOccurrence"/> contains the <see cref="Date_Time"/> when
-        /// the alarm occurs, the <see cref="Alarm"/> that fired, and the 
-        /// component on which the alarm fired.
-        /// </remarks>
-        public class AlarmOccurrence
-        {
-            #region Private Fields
-
-            private Alarm m_Alarm;            
-            private Date_Time m_DateTime;            
-            private RecurringComponent m_Component;            
-
-            #endregion
-
-            #region Public Properties
-
-            public Alarm Alarm
-            {
-                get { return m_Alarm; }
-                set { m_Alarm = value; }
-            }
-
-            public Date_Time DateTime
-            {
-                get { return m_DateTime; }
-                set { m_DateTime = value; }
-            }
-
-            public RecurringComponent Component
-            {
-                get { return m_Component; }
-                set { m_Component = value; }
-            }
-
-            #endregion
-
-            #region Constructors
-
-            public AlarmOccurrence(AlarmOccurrence ao)
-            {
-                this.Alarm = ao.Alarm;
-                this.DateTime = ao.DateTime.Copy();
-                this.Component = ao.Component;
-            }
-            public AlarmOccurrence(Alarm a, Date_Time dt, RecurringComponent rc)
-            {
-                this.Alarm = a;
-                this.DateTime = dt;
-                this.Component = rc;
-            }
-
-            #endregion
-
-            #region Public Methods
-
-            public AlarmOccurrence Copy()
-            {
-                AlarmOccurrence ao = new AlarmOccurrence(this);
-                return ao;
-            }
-
-            #endregion
-        }
-        
         #endregion
     }
 }

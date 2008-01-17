@@ -5,27 +5,28 @@ using System.Text;
 using System.Reflection;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
+using System.ComponentModel;
 
 namespace DDay.iCal.Components
 {
     /// <summary>
     /// The base class for all iCalendar objects, components, and data types.
     /// </summary>
-    public class iCalObject
+    public class iCalObject        
     {
         #region Public Events
 
-        public event EventHandler Load;
+        public event EventHandler Loaded;
 
         #endregion
 
         #region Private Fields
 
-        private iCalObject m_Parent = null;
-        private List<iCalObject> m_Children = new List<iCalObject>();
-        private string m_name;
-        private Hashtable m_Properties = new Hashtable();
-        private Hashtable m_Parameters = new Hashtable();
+        private iCalObject _Parent = null;
+        private List<iCalObject> _Children = new List<iCalObject>();
+        private string _Name;
+        private Hashtable _Properties = new Hashtable();
+        private Hashtable _Parameters = new Hashtable();
 
         #endregion
 
@@ -36,8 +37,8 @@ namespace DDay.iCal.Components
         /// </summary>
         public iCalObject Parent
         {
-            get { return m_Parent; }
-            set { m_Parent = value; }
+            get { return _Parent; }
+            set { _Parent = value; }
         }
 
         /// <summary>
@@ -45,8 +46,8 @@ namespace DDay.iCal.Components
         /// </summary>
         public Hashtable Properties
         {
-            get { return m_Properties; }
-            set { m_Properties = value; }
+            get { return _Properties; }
+            set { _Properties = value; }
         }
 
         /// <summary>
@@ -54,8 +55,8 @@ namespace DDay.iCal.Components
         /// </summary>
         public Hashtable Parameters
         {
-            get { return m_Parameters; }
-            set { m_Parameters = value; }
+            get { return _Parameters; }
+            set { _Parameters = value; }
         }
 
         /// <summary>
@@ -64,8 +65,8 @@ namespace DDay.iCal.Components
         /// </summary>
         public List<iCalObject> Children
         {
-            get { return m_Children; }
-            set { m_Children = value; }
+            get { return _Children; }
+            set { _Children = value; }
         }
 
         /// <summary>
@@ -82,8 +83,8 @@ namespace DDay.iCal.Components
         /// </summary>        
         virtual public string Name
         {
-            get { return m_name; }
-            set { m_name = value; }
+            get { return _Name; }
+            set { _Name = value; } 
         }
 
         /// <summary>
@@ -167,10 +168,10 @@ namespace DDay.iCal.Components
         /// This is automatically called when processing objects that inherit from 
         /// <see cref="ComponentBase"/> (i.e. all iCalendar components).
         /// </summary>
-        virtual public void OnLoad(EventArgs e)
+        virtual public void OnLoaded(EventArgs e)
         {
-            if (this.Load != null)
-                this.Load(this, e);
+            if (this.Loaded != null)
+                this.Loaded(this, e);
         }
 
         /// <summary>
@@ -182,7 +183,7 @@ namespace DDay.iCal.Components
         {
             iCalObject obj = null;
             Type type = GetType();
-            ConstructorInfo[] constructors = type.GetConstructors();
+            ConstructorInfo[] constructors = type.GetConstructors();            
             foreach (ConstructorInfo ci in constructors)
             {
                 // Try to find a constructor with the following signature:
@@ -191,8 +192,8 @@ namespace DDay.iCal.Components
                 if (parms.Length == 2 &&
                     parms[0].ParameterType == typeof(iCalObject) &&
                     parms[1].ParameterType == typeof(string))
-                {                    
-                    obj = (iCalObject)Activator.CreateInstance(type, parent, Name);
+                {
+                    obj = ci.Invoke(new object[] { parent, Name }) as iCalObject;
                 }
             }
             if (obj == null)
@@ -205,7 +206,7 @@ namespace DDay.iCal.Components
                     if (parms.Length == 1 &&
                         parms[0].ParameterType == typeof(iCalObject))
                     {
-                        obj = (iCalObject)Activator.CreateInstance(type, parent);
+                        obj = ci.Invoke(new object[] { parent }) as iCalObject;
                     }
                 }
             }

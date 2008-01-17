@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DDay.iCal.DataTypes;
+using System.Diagnostics;
 
 namespace DDay.iCal.Components
 {
+    [DebuggerDisplay("{Component.Summary} ({Period.StartTime} - {Period.EndTime})")]
     public class Occurrence :
         IComparable<Occurrence>
     {
@@ -17,13 +19,13 @@ namespace DDay.iCal.Components
 
         #region Public Properties
 
-        public Period Period
+        virtual public Period Period
         {
             get { return _Period; }
             set { _Period = value; }
         }
 
-        public RecurringComponent Component
+        virtual public RecurringComponent Component
         {
             get { return _Component; }
             set { _Component = value; }

@@ -16,7 +16,8 @@ namespace DDay.iCal.Components
     /// for <see cref="iCalendar"/> components.  Generally, you should
     /// not need to use this class directly.
     /// </summary>
-    public class ComponentBase : iCalObject
+    public class ComponentBase :
+        iCalObject
     {
         public const string ALARM = "VALARM";
         public const string EVENT = "VEVENT";
@@ -61,9 +62,17 @@ namespace DDay.iCal.Components
         /// <returns>A <see cref="ComponentBase"/> object</returns>
         static public ComponentBase LoadFromStream(Stream s) { return LoadFromStream<ComponentBaseSerializer>(null, s, Encoding.UTF8); }        
         static public ComponentBase LoadFromStream(TextReader tr) { return LoadFromStream<ComponentBaseSerializer>(null, tr); }
-        static public T LoadFromStream<T>(TextReader tr) { return LoadFromStream<T, ComponentBaseSerializer>(tr); }
-        static public T LoadFromStream<T>(Stream s, Encoding encoding) { return LoadFromStream<T, ComponentBaseSerializer>(s, encoding); }
+        static public T LoadFromStream<T>(TextReader tr) where T : ComponentBase 
+        {
+            return LoadFromStream<T, ComponentBaseSerializer>(tr);
+        }
+        static public T LoadFromStream<T>(Stream s, Encoding encoding) where T : ComponentBase
+        {
+            return LoadFromStream<T, ComponentBaseSerializer>(s, encoding);
+        }
         static public T LoadFromStream<T, U>(TextReader tr)
+            where T : ComponentBase
+            where U : ISerializable
         {
             if (typeof(T) == typeof(ComponentBase) ||
                 typeof(T).IsSubclassOf(typeof(ComponentBase)))
@@ -71,13 +80,15 @@ namespace DDay.iCal.Components
             else return default(T);
         }
         static public T LoadFromStream<T, U>(Stream s, Encoding encoding)
+            where T : ComponentBase
+            where U : ISerializable
         {
             if (typeof(T) == typeof(ComponentBase) ||
                 typeof(T).IsSubclassOf(typeof(ComponentBase)))
                 return (T)(object)LoadFromStream<U>(null, s, encoding);
             else return default(T);
-        }       
-        static public ComponentBase LoadFromStream<T>(iCalObject parent, TextReader tr)
+        }
+        static public ComponentBase LoadFromStream<T>(iCalObject parent, TextReader tr) where T : ISerializable            
         {
             string text = tr.ReadToEnd();
             tr.Close();
@@ -85,8 +96,8 @@ namespace DDay.iCal.Components
             byte[] memoryBlock = Encoding.UTF8.GetBytes(text);
             MemoryStream ms = new MemoryStream(memoryBlock);
             return LoadFromStream<T>(parent, ms, Encoding.UTF8);
-        }      
-        static public ComponentBase LoadFromStream<T>(iCalObject parent, Stream s, Encoding encoding)
+        }
+        static public ComponentBase LoadFromStream<T>(iCalObject parent, Stream s, Encoding encoding) where T : ISerializable
         {
             ISerializable serializable = (ISerializable)Activator.CreateInstance(typeof(T));
             return LoadFromStream(parent, s, encoding, serializable);

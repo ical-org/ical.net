@@ -29,13 +29,13 @@ namespace DDay.iCal.Components
     {
         #region Private Fields
 
-        private Date_Time m_DTEnd;
-        private Duration m_Duration;
-        private Geo m_Geo;
-        private Text m_Location;
-        private TextCollection[] m_Resources;
-        private EventStatus m_Status;
-        private Transparency m_Transp;
+        private Date_Time _DTEnd;
+        private Duration _Duration;
+        private Geo _Geo;
+        private Text _Location;
+        private TextCollection[] _Resources;
+        private EventStatus _Status;
+        private Transparency _Transp;
 
         #endregion
          
@@ -80,11 +80,14 @@ namespace DDay.iCal.Components
         [Serialized, DefaultValueType("DATE-TIME")]
         virtual public Date_Time DTEnd
         {
-            get { return m_DTEnd; }
+            get { return _DTEnd; }
             set
             {
-                m_DTEnd = value;
-                ExtrapolateTimes();
+                if (!object.Equals(_DTEnd, value))
+                {
+                    _DTEnd = value;
+                    ExtrapolateTimes();
+                }
             }
         }
 
@@ -102,11 +105,14 @@ namespace DDay.iCal.Components
         [Serialized, DefaultValue("P")]
         virtual public Duration Duration
         {
-            get { return m_Duration; }
+            get { return _Duration; }
             set
             {
-                m_Duration = value;
-                ExtrapolateTimes();
+                if (!object.Equals(_Duration, value))
+                {
+                    _Duration = value;
+                    ExtrapolateTimes();
+                }                
             }
         }
 
@@ -140,8 +146,8 @@ namespace DDay.iCal.Components
         [Serialized]
         public Geo Geo
         {
-            get { return m_Geo; }
-            set { m_Geo = value; }
+            get { return _Geo; }
+            set { _Geo = value; }
         }
 
         /// <summary>
@@ -150,8 +156,8 @@ namespace DDay.iCal.Components
         [Serialized]
         public Text Location
         {
-            get { return m_Location; }
-            set { m_Location = value; }
+            get { return _Location; }
+            set { _Location = value; }
         }
 
         /// <summary>
@@ -162,8 +168,8 @@ namespace DDay.iCal.Components
         [Serialized]
         public TextCollection[] Resources
         {
-            get { return m_Resources; }
-            set { m_Resources = value; }
+            get { return _Resources; }
+            set { _Resources = value; }
         }
 
         /// <summary>
@@ -172,8 +178,8 @@ namespace DDay.iCal.Components
         [Serialized, DefaultValue("TENTATIVE\r\n")]        
         public EventStatus Status
         {
-            get { return m_Status; }
-            set { m_Status = value; }
+            get { return _Status; }
+            set { _Status = value; }
         }
 
         /// <summary>
@@ -186,9 +192,9 @@ namespace DDay.iCal.Components
         [Serialized, DefaultValue("OPAQUE\r\n")]
         public Transparency Transp
         {
-            get { return m_Transp; }
-            set { m_Transp = value; }
-        }       
+            get { return _Transp; }
+            set { _Transp = value; }
+        }
 
         #endregion
 
@@ -263,7 +269,7 @@ namespace DDay.iCal.Components
         /// <returns>True if the event has not been cancelled, False otherwise.</returns>
         virtual public bool IsActive()
         {
-            return (Status != EventStatus.CANCELLED);
+            return (Status != EventStatus.CANCELLED);            
         }
 
         #endregion
@@ -294,7 +300,7 @@ namespace DDay.iCal.Components
             // Ensure the period does not already exist in our collection
             if (!Periods.Contains(period))
                 Periods.Add(period);
-
+            
             // Evaluate recurrences normally
             base.Evaluate(FromDate, ToDate);
 
@@ -316,21 +322,6 @@ namespace DDay.iCal.Components
             }
                         
             return Periods;
-        }
-
-        /// <summary>
-        /// "Flattens" a single event recurrence into a copy of the
-        /// event.  This essentially "extracts" a recurrence into
-        /// a fully-fledged non-recurring event (a single instance).
-        /// </summary>
-        /// <param name="obj">The iCalObject that will contain the flattened event</param>
-        /// <param name="p">The period (instance) to be flattened</param>
-        /// <returns>An event which represents a single flattened event instance</returns>
-        protected override RecurringComponent FlattenInstance(iCalObject obj, Period p)
-        {
-            Event evt = (Event)base.FlattenInstance(obj, p);
-            evt.Duration = p.Duration;
-            return evt;
         }
         
         /// <summary>
