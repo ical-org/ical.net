@@ -49,8 +49,6 @@ namespace DDay.iCal.Test
             End.iCalendar = iCal;
             End.TZID = tzid;
 
-            evt.Evaluate(Start, End);
-
             for (int i = 0; i < Dates.Count; i++)
             {
                 Dates[i].TZID = tzid;
@@ -58,10 +56,10 @@ namespace DDay.iCal.Test
             }
 
             // Poll all alarms that occurred between Start and End
-            List<DDay.iCal.Components.Alarm.AlarmOccurrence> alarms = evt.PollAlarms();
+            List<AlarmOccurrence> alarms = evt.PollAlarms(Start, End);
 
-            foreach (DDay.iCal.Components.Alarm.AlarmOccurrence alarm in alarms)
-                Assert.IsTrue(Dates.Contains(alarm.DateTime), "Alarm triggers at " + alarm.DateTime + ", but it should not.");
+            foreach (AlarmOccurrence alarm in alarms)
+                Assert.IsTrue(Dates.Contains(alarm.DateTime), "Alarm triggers at " + alarm.Period.StartTime + ", but it should not.");
             Assert.IsTrue(Dates.Count == alarms.Count, "There were " + alarms.Count + " alarm occurrences; there should have been " + Dates.Count + ".");
         }
 
