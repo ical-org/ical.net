@@ -29,26 +29,7 @@ public partial class _Default : System.Web.UI.Page
     protected iCalendarCollection _Calendars = null;
 
     #endregion
-
-    #region Event Sorting Class
-
-    /// <summary>
-    /// A class that sorts Events by start date.
-    /// </summary>
-    class EventDateSorter : IComparer<Event>
-    {
-        #region IComparer<Event> Members
-
-        public int Compare(Event x, Event y)
-        {
-            return x.Start.CompareTo(y.Start);            
-        }
-
-        #endregion
-    }
-
-    #endregion
-
+    
     #region Event Handlers
 
     protected void Page_Load(object sender, EventArgs e)
@@ -66,24 +47,13 @@ public partial class _Default : System.Web.UI.Page
                 li.Selected = true;            
         }
 
-        // Create an object that will sort our events by date
-        EventDateSorter eventDateSorter = new EventDateSorter();
-
-        // Build a list of today's events        
-        List<Event> todaysEvents = new List<Event>(GetTodaysEvents());
-
-        // Sort our list by start date
-        todaysEvents.Sort(eventDateSorter);
+        // Get a list of todays events and upcoming events
+        List<Occurrence> todaysEvents = GetTodaysEvents();
+        List<Occurrence> upcomingEvents = GetUpcomingEvents();
 
         // Bind our list to the repeater that will display the events.
         TodaysEvents.DataSource = todaysEvents;
         TodaysEvents.DataBind();
-
-        // Build a list of upcoming events        
-        List<Event> upcomingEvents = new List<Event>(GetUpcomingEvents());
-
-        // Sort that list by start date
-        upcomingEvents.Sort(eventDateSorter);
 
         // Bind our list to the repeater that will display the events.
         UpcomingEvents.DataSource = upcomingEvents;
@@ -128,22 +98,14 @@ public partial class _Default : System.Web.UI.Page
     /// Gets a list of events that occur today.
     /// </summary>
     /// <returns>A list of events that occur today</returns>
-    protected IEnumerable<Event> GetTodaysEvents()
+    protected List<Occurrence> GetTodaysEvents()
     {
         // Load selected calendars, if we haven't already
         if (_Calendars == null)
             LoadSelectedCalendars();
 
-        // Evaluate today's date to see if any events occur on it
-        _Calendars.Evaluate(DateTime.Today, DateTime.Today.AddDays(1));
-
-        // Iterate through each event in the calendar
-        foreach (Event evt in _Calendars.Events)
-        {
-            // Get all event recurrences for today
-            foreach(Event e in evt.FlattenRecurrencesOn(DateTime.Today))                
-                yield return e;
-        }        
+        // Get all event occurrences for today
+        return _Calendars.GetOccurrences<Event>(DateTime.Today, DateTime.Today.AddDays(1));
     }
 
     /// <summary>
@@ -151,32 +113,20 @@ public partial class _Default : System.Web.UI.Page
     /// next week).
     /// </summary>
     /// <returns>A list of events that will occur within the next week</returns>
-    protected IEnumerable<Event> GetUpcomingEvents()
+    protected List<Occurrence> GetUpcomingEvents()
     {
         // Load selected calendars, if we haven't already
         if (_Calendars == null)
             LoadSelectedCalendars();
 
+        int daysInFuture = Convert.ToInt32(ddlDaysInFuture.SelectedValue);
+
         // Determine the range of events we're interested in (1 week)
-        DateTime startDate = DateTime.Today.AddDays(1);
-        DateTime endDate = startDate.AddDays(7);
+        DateTime startDate = DateTime.Today.AddDays(1);                           // 12:00:00 A.M. tomorrow
+        DateTime endDate = DateTime.Today.AddDays(daysInFuture+1).AddSeconds(-1); // 11:59:59 P.M. on the last day
 
-        // Evaluate events within our selected period to see if any events occur
-        _Calendars.Evaluate(startDate, endDate);
-
-        foreach (Event evt in _Calendars.Events)
-        {
-            // Return flattened occurences of the event,
-            // so the start time is equal to the time it
-            // recurred (not the original start time of the event)
-            foreach (Event e in evt.FlattenRecurrences())
-            {
-                // Make sure the flattened events occur within our designated period
-                if (e.Start.Date >= startDate &&
-                    e.Start.Date <= endDate)
-                    yield return e;
-            }
-        }
+        // Get all upcoming events for the next week
+        return _Calendars.GetOccurrences<Event>(startDate, endDate);
     }
 
     /// <summary>
@@ -187,12 +137,16 @@ public partial class _Default : System.Web.UI.Page
     /// <returns>A string representation of the start time of an event</returns>
     protected string GetTimeDisplay(object obj)
     {
-        if (obj is Event)
+        Occurrence occurrence = obj as Occurrence;
+        if (occurrence != null)
         {
-            Event evt = (Event)obj;
-            if (evt.IsAllDay)
-                return "All Day";
-            else return evt.Start.Local.ToString("h:mm tt");
+            Event evt = occurrence.Component as Event;
+            if (evt != null)
+            {
+                if (evt.IsAllDay)
+                    return "All Day";
+                else return evt.Start.Local.ToString("h:mm tt");
+            }
         }
         return string.Empty;
     }

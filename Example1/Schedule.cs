@@ -18,6 +18,23 @@ namespace Example1
         private DateTime _StartDate;
         private DateTime _EndDate;
 
+        /// <summary>
+        /// Returns 12:00 AM of the first day of the current month
+        /// </summary>
+        public DateTime StartOfMonth
+        {
+            get { return new DateTime(2006, cbMonth.SelectedIndex + 1, 1); }            
+        }
+
+        /// <summary>
+        /// Returns 11:59 PM of the last day of the current month
+        /// </summary>
+        public DateTime EndOfMonth
+        {
+            get { return StartOfMonth.AddMonths(1).AddSeconds(-1); }
+        }
+
+
         public Schedule()
         {
             InitializeComponent();
@@ -39,26 +56,8 @@ namespace Example1
         /// </summary>        
         private void cbMonth_SelectedIndexChanged(object sender, EventArgs e)
         {
-            EvaluateSelectedMonth();
             FillEventList();
             FillTodoList();
-        }
-
-        /// <summary>
-        /// Evaluates the selected month for recurring items
-        /// </summary>
-        private void EvaluateSelectedMonth()
-        {
-            int currentMonth = cbMonth.SelectedIndex + 1;
-
-            // First day of the month
-            _StartDate = new DateTime(2006, currentMonth, 1);
-            // First day of the next month
-            _EndDate = _StartDate.AddMonths(1);
-
-            // Evaluate each recurring item in each calendar
-            // for the time period we're interested in
-            _Calendars.Evaluate(_StartDate, _EndDate);            
         }
 
         /// <summary>
@@ -69,12 +68,11 @@ namespace Example1
         {
             // Clear the list
             clbTodo.Items.Clear();
-
-            DateTime lastDayOfMonth = _EndDate.AddSeconds(-1);
+                        
             foreach (Todo todo in _Calendars.Todos)            
-            {                
+            {
                 // Ensure the todo item is active as of 11:59 PM on the last day of the month
-                if (todo.IsActive(lastDayOfMonth))
+                if (todo.IsActive(EndOfMonth))
                 {
                     clbTodo.Items.Add(todo.Summary.Value);
                 }                
@@ -87,31 +85,31 @@ namespace Example1
         /// </summary>
         private void FillEventList()
         {
-            // Clear the list
-            listEvents.Clear();
+            // Clear our list of items
+            listEvents.Items.Clear();
 
-            // Start at the first day of the month
-            DateTime testDate = _StartDate;            
-            
-            // Cycle through each day of the month
-            while (testDate < _EndDate)
+            // Get a list of event occurrences from each of our calendars.            
+            List<Occurrence> occurrences = _Calendars.GetOccurrences<Event>(StartOfMonth, EndOfMonth);
+
+            // Iterate through each occurrence
+            foreach (Occurrence o in occurrences)
             {
-                // Cycle through each event
-                foreach (Event evt in _Calendars.Events)
+                // Cast the component to an event
+                Event evt = o.Component as Event;
+                if (evt != null)
                 {
-                    // Determine if the event occurs on the current test date
-                    if (evt.IsActive() && evt.OccursOn(testDate))
+                    // Make sure the event is active (hasn't been cancelled)
+                    if (evt.IsActive())
                     {
-                        // Add an item to our list view
-                        string summary = testDate.ToShortDateString() + " - " + evt.Summary.Value;
+                        // Get a string that represents our event
+                        string summary = o.Period.StartTime.ToString("d") + " - " + evt.Summary.Value;
                         if (evt.IsAllDay)
                             summary += " (All Day)";
+                        
+                        // Add the occurrence to the list view
                         listEvents.Items.Add(new ListViewItem(summary));
                     }
                 }
-
-                // Move to the next day
-                testDate = testDate.AddDays(1);
             }
         }
     }
