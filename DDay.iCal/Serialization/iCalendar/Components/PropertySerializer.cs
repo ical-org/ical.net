@@ -33,8 +33,20 @@ namespace DDay.iCal.Serialization.iCalendar.Components
             if (m_Property.Parameters.Count > 0)
             {
                 List<string> parameters = new List<string>();
-                foreach (Parameter p in m_Property.Parameters)
-                    parameters.Add(p.Name + "=" + string.Join(",", p.Values.ToArray()));
+
+                // NOTE: fixed a bug where the SerializeToString() did not function properly
+                // It used the following line instead:
+                // foreach (Parameter p in m_Property.Parameters)
+                // { ...
+                // }
+                //
+                // Since m_Property.Parameters is a Hashtable, this would always fail.
+                foreach (DictionaryEntry de in m_Property.Parameters)
+                {
+                    Parameter p = de.Value as Parameter;
+                    if (p != null)
+                        parameters.Add(p.Name + "=" + string.Join(",", p.Values.ToArray()));
+                }
 
                 value += ";" + string.Join(";", parameters.ToArray());
             }
