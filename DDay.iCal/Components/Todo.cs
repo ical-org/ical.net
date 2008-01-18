@@ -226,13 +226,18 @@ namespace DDay.iCal.Components
 
         public override List<Period> Evaluate(Date_Time FromDate, Date_Time ToDate)
         {
-            // Add the todo itself, before recurrence rules are evaluated
-            Period startPeriod = new Period(DTStart);
-            if (DTStart != null &&
-                !Periods.Contains(startPeriod))
-                Periods.Add(startPeriod);
+            // TODO items can only recur if a start date is specified
+            if (DTStart != null)
+            {
+                // Add the todo itself, before recurrence rules are evaluated
+                Period startPeriod = new Period(DTStart);
+                if (DTStart != null &&
+                    !Periods.Contains(startPeriod))
+                    Periods.Add(startPeriod);
 
-            return base.Evaluate(FromDate, ToDate);
+                return base.Evaluate(FromDate, ToDate);
+            }
+            return new List<Period>();
         }
 
         /// <summary>
