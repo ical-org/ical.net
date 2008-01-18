@@ -511,13 +511,16 @@ namespace DDay.iCal.DataTypes
                 ByDay.Count == 0)
                 this.ByDay.Add(new DaySpecifier(StartDate.Value.DayOfWeek));            
             if (Frequency > FrequencyType.SECONDLY &&
-                this.BySecond.Count == 0)
+                this.BySecond.Count == 0 &&
+                StartDate.HasTime /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
                 this.BySecond.Add(StartDate.Value.Second);
             if (Frequency > FrequencyType.MINUTELY &&
-                this.ByMinute.Count == 0)
+                this.ByMinute.Count == 0 &&
+                StartDate.HasTime /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
                 this.ByMinute.Add(StartDate.Value.Minute);
-            if (Frequency > FrequencyType.HOURLY &&
-                this.ByHour.Count == 0)
+            if (Frequency > FrequencyType.HOURLY &&                
+                this.ByHour.Count == 0 &&
+                StartDate.HasTime /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
                 this.ByHour.Add(StartDate.Value.Hour);
             // If neither BYDAY, BYMONTHDAY, or BYYEARDAY is specified,
             // default to the current day of month
@@ -804,7 +807,7 @@ namespace DDay.iCal.DataTypes
         }
 
         protected void FillDays(TimeCalculation TC)
-        {
+        {            
             foreach (int day in TC.Days)
             {
                 TC.Day = day;
@@ -814,27 +817,51 @@ namespace DDay.iCal.DataTypes
 
         protected void FillHours(TimeCalculation TC)
         {
-            foreach (int hour in TC.Hours)
+            if (TC.Hours.Count > 0)
             {
-                TC.Hour = hour;
+                foreach (int hour in TC.Hours)
+                {
+                    TC.Hour = hour;
+                    FillMinutes(TC);
+                }
+            }
+            else
+            {
+                TC.Hour = 0;
                 FillMinutes(TC);
             }
         }
 
         protected void FillMinutes(TimeCalculation TC)
         {
-            foreach (int minute in TC.Minutes)
+            if (TC.Minutes.Count > 0)
             {
-                TC.Minute = minute;
+                foreach (int minute in TC.Minutes)
+                {
+                    TC.Minute = minute;
+                    FillSeconds(TC);
+                }
+            }
+            else
+            {
+                TC.Minute = 0;
                 FillSeconds(TC);
             }
         }
 
         protected void FillSeconds(TimeCalculation TC)
         {
-            foreach (int second in TC.Seconds)
+            if (TC.Seconds.Count > 0)
             {
-                TC.Second = second;
+                foreach (int second in TC.Seconds)
+                {
+                    TC.Second = second;
+                    TC.Calculate();
+                }
+            }
+            else
+            {
+                TC.Second = 0;
                 TC.Calculate();
             }
         }
@@ -943,47 +970,9 @@ namespace DDay.iCal.DataTypes
             if (StartDate > FromDate)
                 FromDate = StartDate;
 
-            /*
-            // If the frequency is WEEKLY, and the interval is greater than 1,
-            // then we need to ensure that the StartDate occurs in one of the
-            // "active" weeks, to ensure that we properly "step" through weeks.
-            // NOTE: Fixes bug #1741093 - WEEKLY frequency eval behaves strangely
-            if (Frequency == FrequencyType.WEEKLY &&
-                Interval > 1)
-            {   
-                // Get the week of year of the time frame we want to calculate          
-                int firstEvalWeek = _Calendar.GetWeekOfYear(FromDate.Value, System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
-
-                // Count backwards in years, calculating how many weeks' difference we have between
-                // start date and evaluation period.
-                Date_Time evalDate = FromDate;
-                while (evalDate.Year > StartDate.Year)
-                {
-                    firstEvalWeek += _Calendar.GetWeekOfYear(new DateTime(evalDate.Year - 1, 12, 31), System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
-                    evalDate = evalDate.AddYears(-1);
-                }
-
-                // Determine the difference, in weeks, between the start date and the evaluation period.
-                int startWeek = _Calendar.GetWeekOfYear(StartDate.Value, System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst);
-                int weeksDifference = firstEvalWeek - startWeek;
-
-                // Determine how many weeks the evaluation period needs to change
-                // in order to "align" to the start date week, given the specified interval.
-                int offset = 0;
-                while (weeksDifference % Interval != 0)
-                {
-                    weeksDifference--;
-                    offset++;
-                }
-
-                // Offset the week back to a "compatible" week for evaluation
-                FromDate = FromDate.AddDays(-offset * 7);
-            }*/
-
             // If the interval is greater than 1, then we need to ensure that the StartDate occurs in one of the
             // "active" days/weeks/months/years/etc. to ensure that we properly "step" through the interval.
             // NOTE: Fixes bug #1741093 - WEEKLY frequency eval behaves strangely
-            if (Interval > 1)
             {
                 // Determine the difference between our two dates, using our frequency as the UNIT.
                 long difference = DateUtils.DateDiff(this.Frequency, StartDate, FromDate, Wkst);
@@ -1010,7 +999,7 @@ namespace DDay.iCal.DataTypes
             foreach (Date_Time occurrence in r.GetOccurrences(FromDate.Copy(), ToDate, r.Count))
             {
                 // NOTE:
-                // Used to be DateTime.AddRange(r.GetOccurrences(FromDate.Copy(), ToDate, r.Count))
+                // Used to be DateTimes.AddRange(r.GetOccurrences(FromDate.Copy(), ToDate, r.Count))
                 // By doing it this way, fixes bug #19.
                 if (!DateTimes.Contains(occurrence))
                     DateTimes.Add(occurrence);
@@ -1035,7 +1024,7 @@ namespace DDay.iCal.DataTypes
             foreach (Date_Time dt in DateTimes)
                 dt.MergeWith(StartDate);
 
-            // Ensure that DateTimes have an assigned time if they occur less than dailyB
+            // Ensure that DateTimes have an assigned time if they occur less than daily
             foreach (Date_Time dt in DateTimes)
             {
                 if (Frequency < FrequencyType.DAILY)
