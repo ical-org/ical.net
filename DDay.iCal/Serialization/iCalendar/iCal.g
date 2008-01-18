@@ -24,21 +24,25 @@ icalobject returns [DDay.iCal.iCalendar iCal = (DDay.iCal.iCalendar)Activator.Cr
 :
     (BEGIN COLON VCALENDAR CRLF icalbody[iCal] END COLON VCALENDAR (CRLF)*)* {iCal.OnLoaded(EventArgs.Empty);}
 ;
-    
+
 icalbody[DDay.iCal.iCalendar iCal]: (calprops[iCal])? (component[iCal])?;
-component[iCalObject o] returns [ComponentBase c = null;]: (c=iana_comp[o] | c=x_comp[o] | CRLF)+;
-iana_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:IANA_TOKEN {c = o.iCalendar.Create(o, n.getText().ToLower());} CRLF (calendarline[c])+ END COLON IANA_TOKEN CRLF { c.OnLoad(EventArgs.Empty); };
-x_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:X_NAME {c = o.iCalendar.Create(o, n.getText().ToLower());} CRLF (calendarline[c])+ END COLON X_NAME CRLF { c.OnLoad(EventArgs.Empty); };
+component[iCalObject o] returns [ComponentBase c = null;]: (c=x_comp[o] | c=iana_comp[o] | CRLF)+;
+iana_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:IANA_TOKEN {c = o.iCalendar.Create(o, n.getText().ToLower());} CRLF (calendarline[c])+ END COLON IANA_TOKEN CRLF { c.OnLoaded(EventArgs.Empty); };
+x_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:X_NAME {c = o.iCalendar.Create(o, n.getText().ToLower());} CRLF (calendarline[c])+ END COLON X_NAME CRLF { c.OnLoaded(EventArgs.Empty); };
 
 // iCalendar Properties
 calprops[DDay.iCal.iCalendar iCal]: calprop[iCal] (calprop[iCal])+;
-calprop[iCalObject o]: prodid[o] | version[o] | calscale[o] | method[o] | iana_prop[o] | x_prop[o];
+calprop[iCalObject o]: prodid[o] | version[o] | calscale[o] | method[o] | x_prop[o] | iana_prop[o];
 prodid[iCalObject o] {Property p; string v;}: n:PRODID { p = new Property(o); } (SEMICOLON (param[p] | xparam[p]))* COLON v=text {p.Name = n.getText(); p.Value = v; p.AddToParent(); } CRLF;
 version[iCalObject o] {Property p; string v;}: n:VERSION { p = new Property(o); } (SEMICOLON (param[p] | xparam[p]))* COLON v=version_number {p.Name = n.getText(); p.Value = v; p.AddToParent(); } CRLF;
 calscale[iCalObject o] {Property p;}: n:CALSCALE { p = new Property(o); } (SEMICOLON (param[p] | xparam[p]))* COLON v:IANA_TOKEN {p.Name = n.getText(); p.Value = v.getText(); p.AddToParent(); } CRLF;
 method[iCalObject o] {Property p;}: n:METHOD { p = new Property(o); } (SEMICOLON (param[p] | xparam[p]))* COLON v:IANA_TOKEN {p.Name = n.getText(); p.Value = v.getText(); p.AddToParent(); } CRLF;
-iana_prop[iCalObject o] {Property p; string v;}: n:IANA_TOKEN { p = new Property(o); } (SEMICOLON (param[p] | xparam[p]))* COLON v=text {p.Name = n.getText(); p.Value = v; p.AddToParent(); } CRLF;
-x_prop[iCalObject o] {Property p; string v;}: n:X_NAME { p = new Property(o); } (SEMICOLON (param[p] | xparam[p]))* COLON v=text {p.Name = n.getText(); p.Value = v; p.AddToParent(); } CRLF;
+
+// NOTE: RFC2445 states that for properties, the value should be a "text" value, not a "value" value.
+// Outlook 2007, however, uses a "value" value in some instances, and will require this for proper
+// parsing.  NOTE: Fixes bug #1874977 - X-MS-OLK-WKHRDAYS won't parse correctly
+iana_prop[iCalObject o] {Property p; string v;}: n:IANA_TOKEN { p = new Property(o); } (SEMICOLON (param[p] | xparam[p]))* COLON v=value {p.Name = n.getText(); p.Value = v; p.AddToParent(); } CRLF;
+x_prop[iCalObject o] {Property p; string v;}: n:X_NAME { p = new Property(o); } (SEMICOLON (param[p] | xparam[p]))* COLON v=value {p.Name = n.getText(); p.Value = v; p.AddToParent(); } CRLF;
 
 // Content Line
 calendarline[iCalObject o]: contentline[o] | component[o]; // Allow for embedded components here (VALARM)
