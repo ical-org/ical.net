@@ -2116,17 +2116,17 @@ namespace DDay.iCal.Test
                 new Date_Time(2007, 7, 31, 8, 0, 0, tzid, iCal)
             };
 
+            Assert.AreEqual(
+                DateTimes.Length,
+                occurrences.Count,
+                "There should be exactly " + DateTimes.Length + " occurrences; there were " + occurrences.Count);
+
             for (int i = 0; i < DateTimes.Length; i++)
             {
                 Date_Time dt = (Date_Time)DateTimes[i];
                 Assert.AreEqual(dt, occurrences[i].Period.StartTime, "Event should occur on " + dt);
                 Assert.AreEqual("EDT", dt.TimeZoneInfo.TimeZoneName, "Event " + dt + " should occur in the EDT timezone");
             }
-
-            Assert.AreEqual(
-                DateTimes.Length,
-                occurrences.Count,
-                "There should be exactly " + DateTimes.Length + " occurrences; there were " + occurrences.Count);
         }
 
         /// <summary>

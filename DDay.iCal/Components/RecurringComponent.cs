@@ -305,9 +305,7 @@ namespace DDay.iCal.Components
             {
                 // Ensure the Kind of time is consistent with DTStart
                 if (p.StartTime.Kind != DTStart.Kind)
-                {
-                    p.StartTime.Value = DateTime.SpecifyKind(p.StartTime.Value, DTStart.Kind);
-                }
+                    p.StartTime.Kind = DTStart.Kind;
             }
             
             // Evaluate all Alarms for this component.

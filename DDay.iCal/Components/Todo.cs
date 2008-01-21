@@ -288,7 +288,7 @@ namespace DDay.iCal.Components
         {
             if (recur.Count != int.MinValue)
                 dt = DTStart.Copy();
-            else recur.IncrementDate(dt, -recur.Interval);
+            else recur.IncrementDate(ref dt, -recur.Interval);
         }
 
         private void ExtrapolateTimes()
