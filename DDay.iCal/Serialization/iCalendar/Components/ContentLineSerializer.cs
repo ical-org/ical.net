@@ -35,6 +35,9 @@ namespace DDay.iCal.Serialization.iCalendar.Components
         {
             if (cl.Name != null)
             {
+                // Set the parent of the ContentLine to the object
+                cl.Parent = obj;
+
                 string name = cl.Name;
                 Type type = obj.GetType();
 

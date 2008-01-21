@@ -26,27 +26,6 @@ namespace DDay.iCal.Test
             tzid = new TZID("US-Eastern");
         }
 
-        static public void DoTests()
-        {
-            Copy c = new Copy();
-            c.InitAll();
-            c.COPY1();
-            c.COPY2();
-            c.COPY3();
-            c.COPY4();
-            c.COPY5();
-            c.COPY6();
-            c.COPY7();
-            c.COPY8();
-            c.COPY9();
-            c.COPY10();
-            c.COPY11();
-            c.COPY12();
-            c.COPY13();
-            c.COPY14();
-            c.COPY15();
-        }
-
         private void CopyTest(string filename)
         {
             iCalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Serialization\" + filename);

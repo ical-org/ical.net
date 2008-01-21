@@ -330,6 +330,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Calendars\General\MERGE2.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Calendars\Recurrence\RRULE50.ics">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -352,6 +355,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Calendars\Recurrence\RRULE42.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Calendars\Serialization\TIMEZONE3.ics">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Calendars\Serialization\SERIALIZE29.ics">

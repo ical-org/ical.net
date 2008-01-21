@@ -225,7 +225,7 @@ namespace DDay.iCal.Test
         /// <see cref="Recurrence"/> class.
         /// </summary>
         [Test]
-        public void MERGE()
+        public void MERGE1()
         {
             iCalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics");
             iCalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE22.ics");
@@ -274,7 +274,7 @@ namespace DDay.iCal.Test
             {                
                 Date_Time dt = (Date_Time)DateTimes[i];
                 Date_Time start = occurrences[i].Period.StartTime;
-                Assert.IsTrue(dt.Equals(start), "Event should occur at " + dt);
+                Assert.AreEqual(dt.Local, start.Local);
                 Assert.IsTrue(dt.TimeZoneInfo.TimeZoneName == TimeZones[i], "Event " + dt + " should occur in the " + TimeZones[i] + " timezone");
             }
 
@@ -333,11 +333,24 @@ namespace DDay.iCal.Test
             {
                 Date_Time dt = (Date_Time)DateTimes1[i];
                 Date_Time start = occurrences[i].Period.StartTime;
-                Assert.IsTrue(dt.Equals(start), "Event should occur at " + dt);                
+                Assert.AreEqual(dt.Local, start.Local);
                 Assert.IsTrue(dt.TimeZoneInfo.TimeZoneName == TimeZones1[i], "Event " + dt + " should occur in the " + TimeZones1[i] + " timezone");
             }
 
-            Assert.IsTrue(occurrences.Count == DateTimes1.Length, "There should be exactly " + DateTimes1.Length + " occurrences; there were " + occurrences.Count);
+            Assert.AreEqual(DateTimes1.Length, occurrences.Count, "There should be exactly " + DateTimes1.Length + " occurrences; there were " + occurrences.Count);
+        }
+
+        [Test]
+        public void MERGE2()
+        {
+            iCalendar iCal = new iCalendar();
+            iCalendar tmp_cal = iCalendar.LoadFromFile(@"Calendars\General\MERGE2.ics");
+            iCal.MergeWith(tmp_cal);
+
+            tmp_cal = iCalendar.LoadFromFile(@"Calendars\General\MERGE2.ics");
+
+            // Compare the two calendars -- they should match exactly
+            Serialization.CompareCalendars(iCal, tmp_cal);
         }
 
         [Test]

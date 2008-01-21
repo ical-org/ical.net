@@ -49,14 +49,14 @@ namespace DDay.iCal.DataTypes
                     // NOTE: This assures that some data types will load correctly
                     // by being associated to an iCalendar.
                     if (this.Parent == null)
-                        this.Parent = value.iCalendar;
+                        this.Parent = value.Parent;
 
                     // Parse the content line
                     iCalDataType icdt = Parse(value.Value) as iCalDataType;
                     if (icdt != null)
                     {
                         // Set the parent on the copied object
-                        icdt.Parent = value.iCalendar;
+                        icdt.Parent = value.Parent;
 
                         CopyFrom(icdt);
 
@@ -65,7 +65,7 @@ namespace DDay.iCal.DataTypes
                         // NOTE: this makes sure that some objects have a parent
                         // in case they lost it while parsing
                         if (this.Parent == null)
-                            this.Parent = value.iCalendar;
+                            this.Parent = value.Parent;
 
                         OnLoaded(EventArgs.Empty);
                     }

@@ -720,6 +720,14 @@ namespace DDay.iCal
                 foreach (UniqueComponent uc in iCal.UniqueComponents)
                     this.AddChild(uc);
 
+                // Add all time zones
+                foreach (DDay.iCal.Components.TimeZone tz in iCal.TimeZones)
+                {
+                    // Only add the time zone if it doesn't already exist
+                    if (this.GetTimeZone(tz.TZID) == null)
+                        this.AddChild(tz);
+                }
+
                 // Dispose of the calendar, since we just siphoned the components from it.
                 iCal.Dispose();
             }
@@ -791,10 +799,8 @@ namespace DDay.iCal
             FreeBusy.Clear();
             Journals.Clear();
             Todos.Clear();
-            // FIXME: disposing of time zones currently causes problems when merging calendars.
-            // There are probably problems anyway when serializing, but for now...
-            //TimeZones.Clear();
-            //UniqueComponents.Clear();
+            TimeZones.Clear();
+            UniqueComponents.Clear();
         }
 
         #endregion

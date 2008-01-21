@@ -65,6 +65,8 @@ namespace DDay.iCal.Test
                 CompareComponents(iCal1.Journals[i], iCal2.Journals[i]);
             for (int i = 0; i < iCal1.Todos.Count; i++)
                 CompareComponents(iCal1.Todos[i], iCal2.Todos[i]);
+            for (int i = 0; i < iCal1.TimeZones.Count; i++)
+                CompareComponents(iCal1.TimeZones[i], iCal2.TimeZones[i]);
         }
 
         static public void CompareComponents(ComponentBase cb1, ComponentBase cb2)
@@ -82,7 +84,7 @@ namespace DDay.iCal.Test
                     object obj2 = field.GetValue(cb2);
 
                     if (field.FieldType.IsArray)
-                        CompareArrays(obj1 as Array, obj2 as Array, field.Name);
+                        CompareEnumerables(obj1 as Array, obj2 as Array, field.Name);
                     else Assert.IsTrue(object.Equals(obj1, obj2), field.Name + " does not match");
                 }                
             }
@@ -94,27 +96,26 @@ namespace DDay.iCal.Test
                     object obj1 = prop.GetValue(cb1, null);
                     object obj2 = prop.GetValue(cb2, null);
 
-                    if (prop.PropertyType.IsArray)
-                        CompareArrays(obj1 as Array, obj2 as Array, prop.Name);
+                    if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType))
+                        CompareEnumerables(obj1 as Array, obj2 as Array, prop.Name);
                     else
                         Assert.IsTrue(object.Equals(obj1, obj2), prop.Name + " does not match");
                 }
             }
         }
 
-        static public void CompareArrays(Array a1, Array a2, string value)
+        static public void CompareEnumerables(IEnumerable a1, IEnumerable a2, string value)
         {
-            if (a1 == null &&
-                a2 == null)
+            if (a1 == null && a2 == null)
                 return;
-            Assert.IsFalse((a1 == null && a2 != null) || (a1 != null && a2 == null), value + " do not match - one array is null");
-            Assert.IsTrue(a1.Length == a2.Length, value + " do not match - array lengths do not match");
 
-
+            Assert.IsFalse((a1 == null && a2 != null) || (a1 != null && a2 == null), value + " do not match - one item is null");
+            
             IEnumerator enum1 = a1.GetEnumerator();
             IEnumerator enum2 = a2.GetEnumerator();
+            
             while (enum1.MoveNext() && enum2.MoveNext())
-                Assert.IsTrue(enum1.Current.Equals(enum2.Current), value + " do not match");                
+                Assert.AreEqual(enum1.Current, enum2.Current, value + " do not match");
         }
 
         [Test, Category("Serialization")]
@@ -590,6 +591,19 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
                 ContentLine cl = tzi.Start.ContentLine;
                 Assert.IsFalse(cl.Parameters.ContainsKey("VALUE"), "\"DTSTART\" property MUST be represented in local time in timezones");
             }
+        }
+
+        [Test, Category("Serialization")]
+        public void TIMEZONE3()
+        {
+            SerializeTest("TIMEZONE3.ics", typeof(iCalendarSerializer));
+
+            iCalendar iCal = new iCalendar();
+            iCalendar tmp_cal = iCalendar.LoadFromFile(@"Calendars\Serialization\TIMEZONE3.ics");
+            iCal.MergeWith(tmp_cal);
+
+            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
+            serializer.Serialize(@"Calendars\Serialization\testMeOut.ics");
         }
 
         [Test, Category("Serialization")]
