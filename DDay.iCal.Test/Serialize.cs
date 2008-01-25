@@ -253,16 +253,16 @@ namespace DDay.iCal.Test
 
             Event evt = iCal.Create<Event>();
             evt.Summary = "Test event title";
-            evt.Start = new Date_Time(2007, 3, 19);
-            evt.Start.Kind = DateTimeKind.Utc;
+            evt.Start = new iCalDateTime(2007, 3, 19);
+            evt.Start.IsUniversalTime = true;
             evt.Duration = new TimeSpan(24, 0, 0);
             evt.Created = evt.Start.Copy();
             evt.DTStamp = evt.Start.Copy();
             evt.UID = "123456789";
-            evt.IsAllDay = true;            
+            evt.IsAllDay = true;
 
-            Recur rec = new Recur("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4");
-            evt.AddRecurrence(rec);
+            RecurrencePattern rec = new RecurrencePattern("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4");
+            evt.AddRecurrencePattern(rec);
 
             iCalendarSerializer serializer = new iCalendarSerializer(iCal);
             string icalString = serializer.SerializeToString();
@@ -272,7 +272,7 @@ namespace DDay.iCal.Test
             ComponentBaseSerializer compSerializer = new ComponentBaseSerializer(evt);
             string evtString = compSerializer.SerializeToString();
 
-            Assert.IsTrue(evtString.Equals("BEGIN:VEVENT\r\nCREATED:20070319T000000Z\r\nDTEND:20070320T000000Z\r\nDTSTAMP:20070319T000000Z\r\nDTSTART;VALUE=DATE:20070319\r\nDURATION:P1D\r\nRRULE:FREQ=WEEKLY;INTERVAL=3;COUNT=4;BYDAY=TU,FR,SU\r\nSUMMARY:Test event title\r\nUID:123456789\r\nEND:VEVENT\r\n"), "ComponentBaseSerializer.SerializeToString() serialized incorrectly");
+            Assert.IsTrue(evtString.Equals("BEGIN:VEVENT\r\nCREATED:20070319T000000Z\r\nDTEND;VALUE=DATE:20070320\r\nDTSTAMP:20070319T000000Z\r\nDTSTART;VALUE=DATE:20070319\r\nDURATION:P1D\r\nRRULE:FREQ=WEEKLY;INTERVAL=3;COUNT=4;BYDAY=TU,FR,SU\r\nSEQUENCE:0\r\nSUMMARY:Test event title\r\nUID:123456789\r\nEND:VEVENT\r\n"), "ComponentBaseSerializer.SerializeToString() serialized incorrectly");
         }
 
         [Test, Category("Serialization")]
@@ -282,12 +282,12 @@ namespace DDay.iCal.Test
 
             Event evt = iCal.Create<Event>();
             evt.Summary = "Test event title";
-            evt.Start = new Date_Time(2007, 4, 29);
+            evt.Start = new iCalDateTime(2007, 4, 29);
             evt.End = evt.Start.AddDays(1);
             evt.IsAllDay = true;
 
-            Recur rec = new Recur("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4");
-            evt.AddRecurrence(rec);
+            RecurrencePattern rec = new RecurrencePattern("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4");
+            evt.AddRecurrencePattern(rec);
 
             ComponentBaseSerializer compSerializer = new ComponentBaseSerializer(evt);
 
@@ -480,12 +480,12 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
 
             Event evt = iCal.Create<Event>();
             evt.Summary = "Test event title";
-            evt.Start = new Date_Time(2007, 4, 29);
+            evt.Start = new iCalDateTime(2007, 4, 29);
             evt.End = evt.Start.AddDays(1);
             evt.IsAllDay = true;
 
-            Recur rec = new Recur("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4");
-            evt.AddRecurrence(rec);
+            RecurrencePattern rec = new RecurrencePattern("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4");
+            evt.AddRecurrencePattern(rec);
 
             xCalSerializer serializer = new xCalSerializer(iCal);
             serializer.Serialize(@"Calendars\Serialization\XCAL1.xcal");
@@ -533,8 +533,8 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\TIMEZONE1.ics");
             
-            DDay.iCal.Components.TimeZone tz = iCal.TimeZones[0];
-            tz.Last_Modified = new Date_Time(2007, 1, 1);
+            iCalTimeZone tz = iCal.TimeZones[0];
+            tz.Last_Modified = new iCalDateTime(2007, 1, 1);
 
             iCalendarSerializer serializer = new iCalendarSerializer(iCal);
             serializer.Serialize(@"Calendars\Serialization\Temp\TIMEZONE1.ics");
@@ -555,9 +555,9 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
 
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\TIMEZONE2.ics");
 
-            DDay.iCal.Components.TimeZone tz = iCal.TimeZones[0];
-            foreach (DDay.iCal.Components.TimeZone.TimeZoneInfo tzi in tz.TimeZoneInfos)
-                tzi.Start = new Date_Time(2007, 1, 1);
+            iCalTimeZone tz = iCal.TimeZones[0];
+            foreach (TimeZoneInfo tzi in tz.TimeZoneInfos)
+                tzi.Start = new iCalDateTime(2007, 1, 1);
 
             iCalendarSerializer serializer = new iCalendarSerializer(iCal);
             serializer.Serialize(@"Calendars\Serialization\Temp\TIMEZONE2.ics");
@@ -565,7 +565,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\TIMEZONE2.ics");
             tz = iCal.TimeZones[0];
 
-            foreach (DDay.iCal.Components.TimeZone.TimeZoneInfo tzi in tz.TimeZoneInfos)
+            foreach (TimeZoneInfo tzi in tz.TimeZoneInfos)
             {
                 ContentLine cl = tzi.Start.ContentLine;
                 Assert.IsFalse(cl.Parameters.ContainsKey("VALUE"), "\"DTSTART\" property MUST be represented in local time in timezones");
@@ -577,7 +577,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\TIMEZONE2.ics");
 
             tz = iCal.TimeZones[0];
-            foreach (DDay.iCal.Components.TimeZone.TimeZoneInfo tzi in tz.TimeZoneInfos)
+            foreach (TimeZoneInfo tzi in tz.TimeZoneInfos)
                 tzi.Start = DateTime.Now.ToUniversalTime();
 
             serializer = new iCalendarSerializer(iCal);
@@ -586,7 +586,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\TIMEZONE2.ics");
             tz = iCal.TimeZones[0];
 
-            foreach (DDay.iCal.Components.TimeZone.TimeZoneInfo tzi in tz.TimeZoneInfos)
+            foreach (TimeZoneInfo tzi in tz.TimeZoneInfos)
             {
                 ContentLine cl = tzi.Start.ContentLine;
                 Assert.IsFalse(cl.Parameters.ContainsKey("VALUE"), "\"DTSTART\" property MUST be represented in local time in timezones");

@@ -6,24 +6,24 @@ using System.IO;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Components;
 
-namespace DDay.iCal.Serialization.xCal.DataTypes
+namespace DDay.iCal.Serialization.iCalendar.DataTypes
 {
-    public class Date_TimeUTCSerializer : Date_TimeSerializer
+    public class iCalDateTimeUTCSerializer : iCalDateTimeSerializer
     {
         #region Constructors
 
-        public Date_TimeUTCSerializer(Date_Time dt)
+        public iCalDateTimeUTCSerializer(iCalDateTime dt)
             : base(dt)
         {
-            // Make a copy of the Date_Time object, so we don't alter
+            // Make a copy of the iCalDateTime object, so we don't alter
             // the original
             DateTime = dt.Copy();
 
-            // Set the Date_Time object to UTC time
+            // Set the iCalDateTime object to UTC time
             DateTime = DateTime.UTC;
 
             // Ensure time is serialized
-            DateTime.HasTime = true;                    
+            DateTime.HasTime = true;
         }
 
         #endregion

@@ -13,21 +13,21 @@ namespace DDay.iCal.DataTypes
     {
         public enum TriggerRelation
         {
-            START,
-            END
+            Start,
+            End
         }
 
         #region Private Fields
 
-        private Date_Time m_DateTime;
+        private iCalDateTime m_DateTime;
         private Duration m_Duration;
-        private TriggerRelation m_Related = TriggerRelation.START;
+        private TriggerRelation m_Related = TriggerRelation.Start;
                 
         #endregion
 
         #region Public Properties
 
-        public Date_Time DateTime
+        public iCalDateTime DateTime
         {
             get { return m_DateTime; }
             set { m_DateTime = value; }
@@ -47,7 +47,7 @@ namespace DDay.iCal.DataTypes
                 {
                     Parameter p = (Parameter)Parameters["RELATED"];
                     if (p.Values.Count > 0)
-                        m_Related = (TriggerRelation)Enum.Parse(typeof(TriggerRelation), p.Values[0].ToString());
+                        m_Related = (TriggerRelation)Enum.Parse(typeof(TriggerRelation), p.Values[0].ToString(), true);
                 }                
                 return m_Related;
             }
@@ -97,9 +97,9 @@ namespace DDay.iCal.DataTypes
         {
             Trigger t = (Trigger)obj;
             
-            if (ValueType() == typeof(Date_Time))
+            if (ValueType() == typeof(iCalDateTime))
             {
-                t.DateTime = new Date_Time();
+                t.DateTime = new iCalDateTime();
                 object dt = t.DateTime;
                 return t.DateTime.TryParse(value, ref dt);
             }

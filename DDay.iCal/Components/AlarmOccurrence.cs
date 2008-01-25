@@ -13,7 +13,9 @@ namespace DDay.iCal.Components
     /// the alarm occurs, the <see cref="Alarm"/> that fired, and the 
     /// component on which the alarm fired.
     /// </remarks>
-    public class AlarmOccurrence : Occurrence
+    public class AlarmOccurrence : 
+        Occurrence,
+        IComparable<AlarmOccurrence>
     {
         #region Private Fields
 
@@ -29,13 +31,13 @@ namespace DDay.iCal.Components
             set { m_Alarm = value; }
         }
 
-        public Date_Time DateTime
+        public iCalDateTime DateTime
         {
             get
             {
                 if (Period != null)
                     return Period.StartTime;
-                return default(Date_Time);
+                return default(iCalDateTime);
             }
             set
             {
@@ -49,14 +51,12 @@ namespace DDay.iCal.Components
 
         #region Constructors
 
-        public AlarmOccurrence(AlarmOccurrence ao)
+        public AlarmOccurrence(AlarmOccurrence ao) : base(ao)
         {
             this.Alarm = ao.Alarm;
-            this.Period = ao.Period.Copy();
-            this.Component = ao.Component;
         }
 
-        public AlarmOccurrence(Alarm a, Date_Time dt, RecurringComponent rc)
+        public AlarmOccurrence(Alarm a, iCalDateTime dt, RecurringComponent rc)
         {
             this.Alarm = a;
             this.Period = new Period(dt);
@@ -67,10 +67,19 @@ namespace DDay.iCal.Components
 
         #region Public Methods
 
-        public AlarmOccurrence Copy()
+        public override Occurrence Copy()
         {
             AlarmOccurrence ao = new AlarmOccurrence(this);
             return ao;
+        }
+
+        #endregion
+
+        #region IComparable<AlarmOccurrence> Members
+
+        public int CompareTo(AlarmOccurrence other)
+        {
+            return base.CompareTo(other);
         }
 
         #endregion

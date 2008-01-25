@@ -36,11 +36,14 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
             if (serializer != null)
                 value += serializer.SerializeToString();
 
-            value += "/";
+            if (m_Period.Duration != null)
+            {
+                value += "/";
 
-            serializer = SerializerFactory.Create(m_Period.Duration);
-            if (serializer != null)
-                value += serializer.SerializeToString();
+                serializer = SerializerFactory.Create(m_Period.Duration);
+                if (serializer != null)
+                    value += serializer.SerializeToString();
+            }
 
             return value;
         }        

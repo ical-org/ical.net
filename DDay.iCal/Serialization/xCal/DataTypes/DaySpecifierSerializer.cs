@@ -11,13 +11,13 @@ namespace DDay.iCal.Serialization.xCal.DataTypes
     {
         #region Private Fields
 
-        private Recur.DaySpecifier m_DaySpecifier;
+        private DaySpecifier m_DaySpecifier;
 
         #endregion
 
         #region Constructors
 
-        public DaySpecifierSerializer(Recur.DaySpecifier byday)
+        public DaySpecifierSerializer(DaySpecifier byday)
             : base(byday)
         {
             this.m_DaySpecifier = byday;

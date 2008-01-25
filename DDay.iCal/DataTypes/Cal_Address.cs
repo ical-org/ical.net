@@ -90,7 +90,8 @@ namespace DDay.iCal.DataTypes
         {
             this.Name = name;
             object obj = this;
-            if (!base.TryParse(value, ref obj))
+            if (!base.TryParse(value, ref obj) ||
+                string.IsNullOrEmpty(this.Scheme))
                 CopyFrom(Parse("MAILTO:" + value));
         }
 

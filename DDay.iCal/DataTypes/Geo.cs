@@ -43,6 +43,11 @@ namespace DDay.iCal.DataTypes
         {
             CopyFrom(Parse(value));
         }
+        public Geo(Float latitude, Float longitude)
+        {
+            Latitude = latitude;
+            Longitude = longitude;
+        }
 
         #endregion
 

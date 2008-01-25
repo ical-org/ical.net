@@ -8,17 +8,17 @@ using DDay.iCal.Components;
 
 namespace DDay.iCal.Serialization.iCalendar.DataTypes
 {
-    public class RecurSerializer : FieldSerializer
+    public class RecurrencePatternSerializer : FieldSerializer
     {
         #region Private Fields
 
-        private DDay.iCal.DataTypes.Recur m_Recur;
+        private DDay.iCal.DataTypes.RecurrencePattern m_Recur;
 
         #endregion
 
         #region Constructors
 
-        public RecurSerializer(DDay.iCal.DataTypes.Recur recur)
+        public RecurrencePatternSerializer(DDay.iCal.DataTypes.RecurrencePattern recur)
             : base(recur)
         {
             this.m_Recur = recur;
@@ -32,7 +32,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
         {
             List<string> values = new List<string>();
 
-            values.Add("FREQ=" + Enum.GetName(typeof(Recur.FrequencyType), m_Recur.Frequency));
+            values.Add("FREQ=" + Enum.GetName(typeof(FrequencyType), m_Recur.Frequency).ToUpper());
 
             //-- FROM RFC2445 --
             //The INTERVAL rule part contains a positive integer representing how
@@ -51,7 +51,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
             if (m_Recur.Until != null)
             {
-                ISerializable serializer = new Date_TimeUTCSerializer(m_Recur.Until);
+                ISerializable serializer = new iCalDateTimeUTCSerializer(m_Recur.Until);
                 if (serializer != null)
                     values.Add("UNTIL=" + serializer.SerializeToString());
             }
@@ -66,7 +66,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
             {
                 List<string> bydayValues = new List<string>();
 
-                foreach (Recur.DaySpecifier byday in m_Recur.ByDay)
+                foreach (DaySpecifier byday in m_Recur.ByDay)
                 {
                     ISerializable serializer = new DaySpecifierSerializer(byday);
                     if (serializer != null)

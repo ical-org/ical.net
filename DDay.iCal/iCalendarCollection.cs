@@ -93,12 +93,12 @@ namespace DDay.iCal
         /// <summary>
         /// A collection of <see cref="DDay.iCal.Components.TimeZone"/> components in the iCalendar.
         /// </summary>
-        public IEnumerable<DDay.iCal.Components.TimeZone> TimeZones
+        public IEnumerable<iCalTimeZone> TimeZones
         {
             get
             {
                 foreach (iCalendar iCal in this)
-                    foreach (DDay.iCal.Components.TimeZone tz in iCal.TimeZones)
+                    foreach (iCalTimeZone tz in iCal.TimeZones)
                         yield return tz;
             }
         }
@@ -126,11 +126,11 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="tzid">A valid <see cref="TZID"/> object, or a valid <see cref="TZID"/> string.</param>
         /// <returns>A <see cref="TimeZone"/> object for the <see cref="TZID"/>.</returns>
-        public DDay.iCal.Components.TimeZone GetTimeZone(TZID tzid)
+        public iCalTimeZone GetTimeZone(TZID tzid)
         {
             foreach (iCalendar iCal in this)
             {
-                DDay.iCal.Components.TimeZone tz = iCal.GetTimeZone(tzid);
+                iCalTimeZone tz = iCal.GetTimeZone(tzid);
                 if (tz != null)
                     return tz;                
             }
@@ -147,7 +147,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="FromDate">The beginning date/time of the range to test.</param>
         /// <param name="ToDate">The end date/time of the range to test.</param>                
-        public void Evaluate(Date_Time FromDate, Date_Time ToDate)
+        public void Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             foreach (iCalendar iCal in _Calendars)
                 iCal.Evaluate(FromDate, ToDate);
@@ -160,7 +160,7 @@ namespace DDay.iCal
         /// <typeparam name="T">The type of component to be evaluated for recurrences.</typeparam>
         /// <param name="FromDate">The beginning date/time of the range to test.</param>
         /// <param name="ToDate">The end date/time of the range to test.</param>
-        public void Evaluate<T>(Date_Time FromDate, Date_Time ToDate)
+        public void Evaluate<T>(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             foreach (iCalendar iCal in _Calendars)
                 iCal.Evaluate<T>(FromDate, ToDate);            
@@ -181,7 +181,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
         /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
-        public List<Occurrence> GetOccurrences(Date_Time dt)
+        public List<Occurrence> GetOccurrences(iCalDateTime dt)
         {
             return GetOccurrences(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
         }
@@ -193,7 +193,7 @@ namespace DDay.iCal
         /// <param name="FromDate">The beginning date/time of the range.</param>
         /// <param name="ToDate">The end date/time of the range.</param>
         /// <returns>A list of occurrences that fall between the dates provided.</returns>
-        public List<Occurrence> GetOccurrences(Date_Time FromDate, Date_Time ToDate)
+        public List<Occurrence> GetOccurrences(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             return GetOccurrences<RecurringComponent>(FromDate, ToDate);
         }
@@ -210,7 +210,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences.</param>
         /// <returns>A list of Periods representing the occurrences of this object.</returns>
-        virtual public List<Occurrence> GetOccurrences<T>(Date_Time dt) where T : RecurringComponent
+        virtual public List<Occurrence> GetOccurrences<T>(iCalDateTime dt) where T : RecurringComponent
         {
             return GetOccurrences<T>(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
         }
@@ -222,7 +222,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="startTime">The starting date range</param>
         /// <param name="endTime">The ending date range</param>
-        virtual public List<Occurrence> GetOccurrences<T>(Date_Time startTime, Date_Time endTime) where T : RecurringComponent
+        virtual public List<Occurrence> GetOccurrences<T>(iCalDateTime startTime, iCalDateTime endTime) where T : RecurringComponent
         {
             List<Occurrence> occurrences = new List<Occurrence>();
             foreach (iCalendar iCal in _Calendars)

@@ -9,8 +9,8 @@ namespace DDay.iCal.DataTypes
     /// </summary>
     public enum EventStatus
     {        
-        TENTATIVE, 
-        CONFIRMED,        
-        CANCELLED
+        Tentative,
+        Confirmed,
+        Cancelled
     };        
 }

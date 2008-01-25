@@ -5,19 +5,23 @@ using System.IO;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Components;
 
-namespace DDay.iCal.Serialization.xCal.DataTypes
+namespace DDay.iCal.Serialization.iCalendar.DataTypes
 {
-    public class RDateSerializer : FieldSerializer
+    /// <summary>
+    /// FIXME: Add "VALUE=PERIOD" when serializing a
+    /// RecurrenceDate that contains periods.
+    /// </summary>
+    public class RecurrenceDatesSerializer : FieldSerializer
     {
         #region Private Fields
 
-        private RDate m_RDate;
+        private RecurrenceDates m_RDate;
 
         #endregion
 
         #region Constructors
 
-        public RDateSerializer(RDate rdate)
+        public RecurrenceDatesSerializer(RecurrenceDates rdate)
             : base(rdate)
         {
             this.m_RDate = rdate;
@@ -32,7 +36,7 @@ namespace DDay.iCal.Serialization.xCal.DataTypes
             List<string> values = new List<string>();                        
             foreach (Period p in m_RDate.Periods)
             {
-                IXCalSerializable serializer = SerializerFactory.Create(p);
+                ISerializable serializer = SerializerFactory.Create(p);
                 if (serializer != null)
                     values.Add(serializer.SerializeToString());
             }

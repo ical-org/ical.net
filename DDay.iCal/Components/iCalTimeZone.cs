@@ -12,12 +12,12 @@ namespace DDay.iCal.Components
     /// <summary>
     /// A class that represents an RFC 2445 VTIMEZONE component.
     /// </summary>
-    public partial class TimeZone : ComponentBase
+    public partial class iCalTimeZone : ComponentBase
     {
         #region Private Fields
 
         private TZID m_TZID;        
-        private Date_Time m_Last_Modified;        
+        private iCalDateTime m_Last_Modified;        
         private URI m_TZUrl;        
         private List<TimeZoneInfo> m_TimeZoneInfos = new List<TimeZoneInfo>();        
 
@@ -33,7 +33,7 @@ namespace DDay.iCal.Components
         }
 
         [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
-        public Date_Time Last_Modified
+        public iCalDateTime Last_Modified
         {
             get { return m_Last_Modified; }
             set { m_Last_Modified = value; }
@@ -57,11 +57,11 @@ namespace DDay.iCal.Components
 
         #region Constructors
 
-        public TimeZone() : base()
+        public iCalTimeZone() : base()
         {
             this.Name = ComponentBase.TIMEZONE;
         }
-        public TimeZone(iCalObject parent) : base(parent)
+        public iCalTimeZone(iCalObject parent) : base(parent)
         {
             this.Name = ComponentBase.TIMEZONE;
         }
@@ -91,9 +91,9 @@ namespace DDay.iCal.Components
         /// Returns a typed copy of the TimeZone object.
         /// </summary>
         /// <returns>A typed copy of the TimeZone object</returns>
-        public new TimeZone Copy()
+        public new iCalTimeZone Copy()
         {
-            return (TimeZone)base.Copy();
+            return (iCalTimeZone)base.Copy();
         }
 
         #endregion
@@ -105,9 +105,9 @@ namespace DDay.iCal.Components
         /// about the TimeZone, with the name of the current timezone,
         /// offset from UTC, etc.
         /// </summary>
-        /// <param name="dt">The Date_Time object for which to retrieve the TimeZoneInfo</param>
-        /// <returns>A TimeZoneInfo object for the specified Date_Time</returns>
-        public TimeZoneInfo GetTimeZoneInfo(Date_Time dt)
+        /// <param name="dt">The iCalDateTime object for which to retrieve the TimeZoneInfo</param>
+        /// <returns>A TimeZoneInfo object for the specified iCalDateTime</returns>
+        public TimeZoneInfo GetTimeZoneInfo(iCalDateTime dt)
         {
             TimeZoneInfo tzi = null;
             
@@ -125,7 +125,7 @@ namespace DDay.iCal.Components
                     continue;
 
                 // Make a copy of the current start value
-                Date_Time currStart = curr.Start.Copy();
+                iCalDateTime currStart = curr.Start.Copy();
                 if (curr.TZOffsetTo != null)
                 {
                     int mult = curr.TZOffsetTo.Positive ? -1 : 1;
@@ -152,9 +152,12 @@ namespace DDay.iCal.Components
                 // (the last occurrence), and the next begins in Apr. 2007.  If we didn't
                 // add 1 year to the "Until" time, the 6 month period between Oct. 2006
                 // and Apr. 2007 would be unhandled.
-                if (curr.Until != null &&
-                    dtUTC > curr.Until.AddYears(1))
-                    continue;
+                
+                // FIXME: this thinking may be flawed. We should try to find some other way...
+                //
+                //if (curr.Until != null &&
+                //    dtUTC > curr.Until.AddYears(1))
+                //    continue;
 
                 foreach (Period p in curr.Periods)
                 {

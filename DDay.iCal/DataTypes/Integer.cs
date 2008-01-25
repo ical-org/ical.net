@@ -36,6 +36,11 @@ namespace DDay.iCal.DataTypes
         {
             CopyFrom(Parse(value));
         }
+        public Integer(int value)
+            : this()
+        {
+            this.Value = value;
+        }
 
         #endregion
 
@@ -91,6 +96,11 @@ namespace DDay.iCal.DataTypes
         static public implicit operator int(Integer i)
         {
             return i.Value;
+        }
+
+        static public implicit operator Integer(int i)
+        {
+            return new Integer(i);
         }
 
         #endregion

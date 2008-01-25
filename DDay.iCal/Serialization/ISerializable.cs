@@ -10,7 +10,7 @@ namespace DDay.iCal.Serialization
     /// Indicates that the item can be serialized
     /// </summary>
     public interface ISerializable
-    {
+    {        
         string SerializeToString();
         void Serialize(Stream stream, Encoding encoding);
         iCalObject Deserialize(Stream stream, Encoding encoding, Type iCalendarType);

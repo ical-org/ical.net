@@ -8,18 +8,18 @@ using DDay.iCal.Components;
 
 namespace DDay.iCal.Serialization.iCalendar.DataTypes
 {
-    public class Date_TimeSerializer : FieldSerializer
+    public class iCalDateTimeSerializer : FieldSerializer
     {
         #region Private Fields
 
-        private Date_Time m_DateTime;
+        private iCalDateTime m_DateTime;
         static private List<Parameter> m_DisallowedParameters;
 
         #endregion
 
         #region Public Properties
 
-        public Date_Time DateTime
+        public iCalDateTime DateTime
         {
             get { return m_DateTime; }
             set { m_DateTime = value; }
@@ -29,7 +29,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
         #region Constructors
 
-        static Date_TimeSerializer()
+        static iCalDateTimeSerializer()
         {
             m_DisallowedParameters = new List<Parameter>();
 
@@ -37,7 +37,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
             m_DisallowedParameters.Add(new Parameter("VALUE"));
         }
 
-        public Date_TimeSerializer(Date_Time dt) : base(dt)
+        public iCalDateTimeSerializer(iCalDateTime dt) : base(dt)
         {
             this.m_DateTime = dt;
         }
@@ -111,13 +111,13 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
             // Let's first see if we need to force this
             // date-time value into UTC time
-            if (type != typeof(Date_TimeUTCSerializer) && !type.IsSubclassOf(typeof(Date_TimeUTCSerializer)))
+            if (type != typeof(iCalDateTimeUTCSerializer) && !type.IsSubclassOf(typeof(iCalDateTimeUTCSerializer)))
             {
                 foreach (object obj in m_DateTime.Attributes)
                 {
                     if (obj is ForceUTCAttribute)
                     {
-                        Date_TimeUTCSerializer serializer = new Date_TimeUTCSerializer(m_DateTime);
+                        iCalDateTimeUTCSerializer serializer = new iCalDateTimeUTCSerializer(m_DateTime);
                         return serializer.SerializeToString();
                     }
                 }
@@ -128,7 +128,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
             if (m_DateTime.HasTime)
             {
                 value += string.Format("T{0:00}{1:00}{2:00}", m_DateTime.Hour, m_DateTime.Minute, m_DateTime.Second);
-                if (m_DateTime.Kind == DateTimeKind.Utc)
+                if (m_DateTime.IsUniversalTime)
                     value += "Z";
             }
             return value;

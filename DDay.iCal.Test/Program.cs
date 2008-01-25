@@ -31,8 +31,8 @@ namespace DDay.iCal.Test
             Assert.IsNotNull(iCal, "iCalendar did not load.  Are you connected to the internet?");
 
             List<Occurrence> occurrences = iCal.GetOccurrences(
-             new Date_Time(2006, 1, 1, "US-Eastern", iCal),
-             new Date_Time(2006, 12, 31, "US-Eastern", iCal));
+             new iCalDateTime(2006, 1, 1, "US-Eastern", iCal),
+             new iCalDateTime(2006, 12, 31, "US-Eastern", iCal));
 
             foreach (Occurrence o in occurrences)
             {
@@ -239,21 +239,21 @@ namespace DDay.iCal.Test
 
             // Get occurrences for the first event
             List<Occurrence> occurrences = evt1.GetOccurrences(
-                new Date_Time(1996, 1, 1, tzid, iCal1),
-                new Date_Time(2000, 1, 1, tzid, iCal1));            
+                new iCalDateTime(1996, 1, 1, tzid, iCal1),
+                new iCalDateTime(2000, 1, 1, tzid, iCal1));            
 
-            Date_Time[] DateTimes = new Date_Time[]
+            iCalDateTime[] DateTimes = new iCalDateTime[]
             {
-                new Date_Time(1997, 9, 10, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1997, 9, 11, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1997, 9, 12, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1997, 9, 13, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1997, 9, 14, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1997, 9, 15, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1999, 3, 10, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1999, 3, 11, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1999, 3, 12, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1999, 3, 13, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1997, 9, 10, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1997, 9, 11, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1997, 9, 12, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1997, 9, 13, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1997, 9, 14, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1997, 9, 15, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1999, 3, 10, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1999, 3, 11, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1999, 3, 12, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1999, 3, 13, 9, 0, 0, tzid, iCal1),
             };
 
             string[] TimeZones = new string[]
@@ -272,8 +272,8 @@ namespace DDay.iCal.Test
                         
             for (int i = 0; i < DateTimes.Length; i++)
             {                
-                Date_Time dt = (Date_Time)DateTimes[i];
-                Date_Time start = occurrences[i].Period.StartTime;
+                iCalDateTime dt = (iCalDateTime)DateTimes[i];
+                iCalDateTime start = occurrences[i].Period.StartTime;
                 Assert.AreEqual(dt.Local, start.Local);
                 Assert.IsTrue(dt.TimeZoneInfo.TimeZoneName == TimeZones[i], "Event " + dt + " should occur in the " + TimeZones[i] + " timezone");
             }
@@ -282,29 +282,29 @@ namespace DDay.iCal.Test
 
             // Get occurrences for the 2nd event
             occurrences = evt2.GetOccurrences(
-                new Date_Time(1996, 1, 1, tzid, iCal1),
-                new Date_Time(1998, 4, 1, tzid, iCal1));
+                new iCalDateTime(1996, 1, 1, tzid, iCal1),
+                new iCalDateTime(1998, 4, 1, tzid, iCal1));
 
-            Date_Time[] DateTimes1 = new Date_Time[]
+            iCalDateTime[] DateTimes1 = new iCalDateTime[]
             {
-                new Date_Time(1997, 9, 2, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1997, 9, 9, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1997, 9, 16, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1997, 9, 23, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1997, 9, 30, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1997, 11, 4, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1997, 11, 11, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1997, 11, 18, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1997, 11, 25, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1998, 1, 6, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1998, 1, 13, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1998, 1, 20, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1998, 1, 27, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1998, 3, 3, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1998, 3, 10, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1998, 3, 17, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1998, 3, 24, 9, 0, 0, tzid, iCal1),
-                new Date_Time(1998, 3, 31, 9, 0, 0, tzid, iCal1)
+                new iCalDateTime(1997, 9, 2, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1997, 9, 9, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1997, 9, 16, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1997, 9, 23, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1997, 9, 30, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1997, 11, 4, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1997, 11, 11, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1997, 11, 18, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1997, 11, 25, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1998, 1, 6, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1998, 1, 13, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1998, 1, 20, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1998, 1, 27, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1998, 3, 3, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1998, 3, 10, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1998, 3, 17, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1998, 3, 24, 9, 0, 0, tzid, iCal1),
+                new iCalDateTime(1998, 3, 31, 9, 0, 0, tzid, iCal1)
             };
 
             string[] TimeZones1 = new string[]
@@ -331,8 +331,8 @@ namespace DDay.iCal.Test
 
             for (int i = 0; i < DateTimes1.Length; i++)
             {
-                Date_Time dt = (Date_Time)DateTimes1[i];
-                Date_Time start = occurrences[i].Period.StartTime;
+                iCalDateTime dt = (iCalDateTime)DateTimes1[i];
+                iCalDateTime start = occurrences[i].Period.StartTime;
                 Assert.AreEqual(dt.Local, start.Local);
                 Assert.IsTrue(dt.TimeZoneInfo.TimeZoneName == TimeZones1[i], "Event " + dt + " should occur in the " + TimeZones1[i] + " timezone");
             }
@@ -372,7 +372,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Create<Event>();
             evt.Summary = "Test event";
             evt.Description = "This is an event to see if event creation works";
-            evt.Start = new Date_Time(2006, 12, 15, "US-Eastern", iCal);
+            evt.Start = new iCalDateTime(2006, 12, 15, "US-Eastern", iCal);
             evt.Duration = new TimeSpan(1, 0, 0);
             evt.Organizer = "dougd@daywesthealthcare.com";
 
@@ -397,17 +397,17 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events["594oeajmftl3r9qlkb476rpr3c@google.com"];
             Assert.IsNotNull(evt);
 
-            Date_Time dtStart = new Date_Time(2006, 12, 18, tzid, iCal);
-            Date_Time dtEnd = new Date_Time(2006, 12, 23, tzid, iCal);
+            iCalDateTime dtStart = new iCalDateTime(2006, 12, 18, tzid, iCal);
+            iCalDateTime dtEnd = new iCalDateTime(2006, 12, 23, tzid, iCal);
             List<Occurrence> occurrences = iCal.GetOccurrences(dtStart, dtEnd);
 
-            Date_Time[] DateTimes = new Date_Time[]
+            iCalDateTime[] DateTimes = new iCalDateTime[]
             {
-                new Date_Time(2006, 12, 18, 7, 0, 0, tzid, iCal),
-                new Date_Time(2006, 12, 19, 7, 0, 0, tzid, iCal),
-                new Date_Time(2006, 12, 20, 7, 0, 0, tzid, iCal),
-                new Date_Time(2006, 12, 21, 7, 0, 0, tzid, iCal),
-                new Date_Time(2006, 12, 22, 7, 0, 0, tzid, iCal)
+                new iCalDateTime(2006, 12, 18, 7, 0, 0, tzid, iCal),
+                new iCalDateTime(2006, 12, 19, 7, 0, 0, tzid, iCal),
+                new iCalDateTime(2006, 12, 20, 7, 0, 0, tzid, iCal),
+                new iCalDateTime(2006, 12, 21, 7, 0, 0, tzid, iCal),
+                new iCalDateTime(2006, 12, 22, 7, 0, 0, tzid, iCal)
             };
 
             for (int i = 0; i < DateTimes.Length; i++)            
@@ -462,41 +462,41 @@ END:VCALENDAR
             //calendars.Add(iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics"));
             //calendars.Add(iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE22.ics"));
 
-            //Date_Time startDate = new Date_Time(1996, 1, 1, tzid, calendars[0]);
-            //Date_Time endDate = new Date_Time(1998, 4, 1, tzid, calendars[0]);
+            //iCalDateTime startDate = new iCalDateTime(1996, 1, 1, tzid, calendars[0]);
+            //iCalDateTime endDate = new iCalDateTime(1998, 4, 1, tzid, calendars[0]);
             
-            //List<Date_Time> DateTimes = new List<Date_Time>(new Date_Time[]
+            //List<iCalDateTime> DateTimes = new List<iCalDateTime>(new iCalDateTime[]
             //{
-            //    new Date_Time(1997, 9, 2, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1997, 9, 9, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1997, 9, 16, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1997, 9, 23, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1997, 9, 30, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1997, 11, 4, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1997, 11, 11, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1997, 11, 18, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1997, 11, 25, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1998, 1, 6, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1998, 1, 13, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1998, 1, 20, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1998, 1, 27, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1998, 3, 3, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1998, 3, 10, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1998, 3, 17, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1998, 3, 24, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1998, 3, 31, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1997, 9, 10, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1997, 9, 11, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1997, 9, 12, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1997, 9, 13, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1997, 9, 14, 9, 0, 0, tzid, calendars[0]),
-            //    new Date_Time(1997, 9, 15, 9, 0, 0, tzid, calendars[0]),                
+            //    new iCalDateTime(1997, 9, 2, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1997, 9, 9, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1997, 9, 16, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1997, 9, 23, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1997, 9, 30, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1997, 11, 4, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1997, 11, 11, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1997, 11, 18, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1997, 11, 25, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1998, 1, 6, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1998, 1, 13, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1998, 1, 20, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1998, 1, 27, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1998, 3, 3, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1998, 3, 10, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1998, 3, 17, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1998, 3, 24, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1998, 3, 31, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1997, 9, 10, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1997, 9, 11, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1997, 9, 12, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1997, 9, 13, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1997, 9, 14, 9, 0, 0, tzid, calendars[0]),
+            //    new iCalDateTime(1997, 9, 15, 9, 0, 0, tzid, calendars[0]),                
             //});
             
             //List<Event> occurrences = new List<Event>(calendars.GetRecurrencesForRange<Event>(startDate, endDate));
             //foreach (Event evt in occurrences)
             //    Assert.IsTrue(DateTimes.Contains(evt.Start), "Event occurred on " + evt.Start + "; it should not have");
-            //foreach(Date_Time dt in DateTimes)
+            //foreach(iCalDateTime dt in DateTimes)
             //{
             //    bool isFound = false;
             //    foreach (Event evt in occurrences)

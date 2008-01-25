@@ -33,9 +33,9 @@ namespace DDay.iCal.Serialization.xCal.DataTypes
             get
             {
                 List<Parameter> Parameters = base.Parameters;
-                if (m_Trigger.ValueType() == typeof(Date_Time))
+                if (m_Trigger.ValueType() == typeof(iCalDateTime))
                     Parameters.Add(new Parameter("VALUE", "DATE-TIME"));
-                if (m_Trigger.Related == Trigger.TriggerRelation.END)
+                if (m_Trigger.Related == Trigger.TriggerRelation.End)
                     Parameters.Add(new Parameter("RELATED", "END"));
                 return Parameters;
             }
@@ -56,8 +56,8 @@ namespace DDay.iCal.Serialization.xCal.DataTypes
         {
             string value = string.Empty;
             ISerializable serializer = null;
-            if (m_Trigger.ValueType() == typeof(Date_Time))            
-                serializer = new Date_TimeSerializer(m_Trigger.DateTime);                
+            if (m_Trigger.ValueType() == typeof(iCalDateTime))            
+                serializer = new iCalDateTimeSerializer(m_Trigger.DateTime);                
             else
                 serializer = new FieldSerializer(m_Trigger.Duration);
 

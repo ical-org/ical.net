@@ -20,15 +20,15 @@ namespace DDay.iCal.Components
     {
         #region Private Fields
 
-        private Date_Time _DTStart;
-        private Date_Time _EvalStart;
-        private Date_Time _EvalEnd;
-        private Date_Time _Until;
-        private RDate[] _ExDate;
-        private Recur[] _ExRule;
-        private RDate[] _RDate;
-        private Recur[] _RRule;
-        private Date_Time _RecurID;
+        private iCalDateTime _DTStart;
+        private iCalDateTime _EvalStart;
+        private iCalDateTime _EvalEnd;
+        private iCalDateTime _Until;
+        private RecurrenceDates[] _ExDate;
+        private RecurrencePattern[] _ExRule;
+        private RecurrenceDates[] _RDate;
+        private RecurrencePattern[] _RRule;
+        private iCalDateTime _RecurID;
 
         private List<Period> _Periods;
         private List<Alarm> _Alarms;
@@ -41,36 +41,92 @@ namespace DDay.iCal.Components
         /// The start date/time of the component.
         /// </summary>
         [Serialized, DefaultValueType("DATE-TIME")]
-        virtual public Date_Time DTStart
+        virtual public iCalDateTime DTStart
         {
             get { return _DTStart; }
-            set { _DTStart = value; }
+            set
+            {
+                _DTStart = value;
+                if (_DTStart != null)
+                    _DTStart.Name = "DTSTART";
+            }
         }
 
-        public Date_Time EvalStart
+        virtual public iCalDateTime EvalStart
         {
             get { return _EvalStart; }
             set { _EvalStart = value; }
         }
 
-        public Date_Time EvalEnd
+        virtual public iCalDateTime EvalEnd
         {
             get { return _EvalEnd; }
             set { _EvalEnd = value; }
         }
 
         [Serialized]
-        public RDate[] ExDate
+        virtual public RecurrenceDates[] ExDate
         {
             get { return _ExDate; }
             set { _ExDate = value; }
         }
 
         [Serialized]
-        public Recur[] ExRule
+        virtual public RecurrencePattern[] ExRule
         {
             get { return _ExRule; }
             set { _ExRule = value; }
+        }
+
+        [Serialized]
+        virtual public RecurrenceDates[] RDate
+        {
+            get { return _RDate; }
+            set { _RDate = value; }
+        }
+
+        [Serialized]
+        virtual public iCalDateTime Recurrence_ID
+        {
+            get { return _RecurID; }
+            set
+            {
+                _RecurID = value;
+                if (_RecurID != null)
+                    _RecurID.Name = "RECURRENCE-ID";
+            }
+        }
+
+        [Serialized]
+        virtual public RecurrencePattern[] RRule
+        {
+            get { return _RRule; }
+            set { _RRule = value; }
+        }
+
+        /// <summary>
+        /// An alias to the DTStart field (i.e. start date/time).
+        /// </summary>
+        virtual public iCalDateTime Start
+        {
+            get { return DTStart; }
+            set { DTStart = value; }
+        }
+
+        /// <summary>
+        /// Gets/sets the UNTIL value that is specified in the
+        /// recurrence pattern of the component.  NOTE: This isn't
+        /// set until the recurrence pattern is evaluated.
+        /// </summary>
+        virtual public iCalDateTime Until
+        {
+            get { return _Until; }
+            set
+            {
+                _Until = value;
+                if (_Until != null)
+                    _Until.Name = "UNTIL";
+            }
         }
 
         /// <summary>
@@ -81,42 +137,6 @@ namespace DDay.iCal.Components
         {
             get { return _Periods; }
             set { _Periods = value; }
-        }
-
-        [Serialized]
-        public RDate[] RDate
-        {
-            get { return _RDate; }
-            set { _RDate = value; }
-        }
-
-        [Serialized]
-        public Date_Time RecurID
-        {
-            get { return _RecurID; }
-            set { _RecurID = value; }
-        }
-
-        [Serialized]
-        public Recur[] RRule
-        {
-            get { return _RRule; }
-            set { _RRule = value; }
-        }
-
-        /// <summary>
-        /// An alias to the DTStart field (i.e. start date/time).
-        /// </summary>
-        virtual public Date_Time Start
-        {
-            get { return DTStart; }
-            set { DTStart = value; }
-        }
-
-        public Date_Time Until
-        {
-            get { return _Until; }
-            set { _Until = value; }
         }
 
         /// <summary>
@@ -146,10 +166,20 @@ namespace DDay.iCal.Components
         #region Public Methods
 
         /// <summary>
+        /// Adds an alarm to the recurring component
+        /// </summary>        
+        virtual public void AddAlarm(Alarm alarm)
+        {
+            alarm.Name = ComponentBase.ALARM;
+            alarm.Parent = this;
+            this.AddChild(alarm);
+        }        
+
+        /// <summary>
         /// Adds a recurrence rule to the recurring component
         /// </summary>
         /// <param name="recur">The recurrence rule to add</param>
-        public void AddRecurrence(Recur recur)
+        virtual public void AddRecurrencePattern(RecurrencePattern recur)
         {
             if (string.IsNullOrEmpty(recur.Name))
                 recur.Name = "RRULE";
@@ -158,41 +188,59 @@ namespace DDay.iCal.Components
 
             if (RRule != null)
             {
-                Recur[] rules = new Recur[RRule.Length + 1];
+                RecurrencePattern[] rules = new RecurrencePattern[RRule.Length + 1];
                 RRule.CopyTo(rules, 0);
                 rules[rules.Length - 1] = recur;
                 RRule = rules;
             }
-            else RRule = new Recur[] { recur };
+            else RRule = new RecurrencePattern[] { recur };
         }
 
         /// <summary>
         /// Adds a single recurrence for this recurring component.
         /// </summary>
         /// <param name="dt">The date/time when this component will recur.</param>
-        public void AddSingleRecurrence(Date_Time dt)
+        virtual public void AddSingleRecurrence(iCalDateTime dt)
         {
-            RDate rdate = new RDate();
+            RecurrenceDates rdate = new RecurrenceDates();
             rdate.Name = "RDATE";
             rdate.Add(dt);
 
             rdate.Parent = this;
 
-            if (RDate != null)
+            if (RDate != null &&
+                RDate.Length > 0)
             {
-                RDate[] dates = new RDate[RDate.Length + 1];
-                RDate.CopyTo(dates, 0);
-                dates[dates.Length - 1] = rdate;
-                RDate = dates;
+                RDate[0].Add(dt);
             }
-            else RDate = new RDate[] { rdate };
+            else RDate = new RecurrenceDates[] { rdate };
+        }
+
+        /// <summary>
+        /// Adds a single recurrence for this recurring component.
+        /// </summary>
+        /// <param name="p">The period of time when this component will recur.</param>
+        virtual public void AddSingleRecurrence(Period p)
+        {
+            RecurrenceDates rdate = new RecurrenceDates();
+            rdate.Name = "RDATE";
+            rdate.Add(p);
+
+            rdate.Parent = this;
+
+            if (RDate != null &&
+                RDate.Length > 0)
+            {
+                RDate[0].Add(p);
+            }
+            else RDate = new RecurrenceDates[] { rdate };
         }
 
         /// <summary>
         /// Adds an exception recurrence rule to the recurring component
         /// </summary>
         /// <param name="recur">The recurrence rule to add</param>
-        public void AddException(Recur recur)
+        virtual public void AddExceptionPattern(RecurrencePattern recur)
         {
             if (string.IsNullOrEmpty(recur.Name))
                 recur.Name = "EXRULE";
@@ -201,21 +249,21 @@ namespace DDay.iCal.Components
 
             if (ExRule != null)
             {
-                Recur[] rules = new Recur[ExRule.Length + 1];
+                RecurrencePattern[] rules = new RecurrencePattern[ExRule.Length + 1];
                 ExRule.CopyTo(rules, 0);
                 rules[rules.Length - 1] = recur;
                 ExRule = rules;
             }
-            else ExRule = new Recur[] { recur };
+            else ExRule = new RecurrencePattern[] { recur };
         }
 
         /// <summary>
         /// Adds a single exception for this recurring component
         /// </summary>
         /// <param name="recur">The date/time when this component will NOT recur.</param>
-        public void AddSingleException(Date_Time dt)
+        virtual public void AddSingleException(iCalDateTime dt)
         {
-            RDate exdate = new RDate();
+            RecurrenceDates exdate = new RecurrenceDates();
             exdate.Name = "EXDATE";
             exdate.Add(dt);
 
@@ -223,12 +271,12 @@ namespace DDay.iCal.Components
 
             if (ExDate != null)
             {
-                RDate[] dates = new RDate[ExDate.Length + 1];
+                RecurrenceDates[] dates = new RecurrenceDates[ExDate.Length + 1];
                 ExDate.CopyTo(dates, 0);
                 dates[dates.Length - 1] = exdate;
                 ExDate = dates;
             }
-            else ExDate = new RDate[] { exdate };
+            else ExDate = new RecurrenceDates[] { exdate };
         }
 
         #endregion
@@ -277,7 +325,7 @@ namespace DDay.iCal.Components
         ///     A <see cref="List<Period>"/> containing a <see cref="Period"/> object for
         ///     each date/time this item occurs/recurs.
         /// </returns>
-        virtual public List<Period> Evaluate(Date_Time FromDate, Date_Time ToDate)
+        virtual public List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             // Evaluate extra time periods, without re-evaluating ones that were already evaluated
             if ((EvalStart == null && EvalEnd == null) ||
@@ -304,14 +352,9 @@ namespace DDay.iCal.Components
             foreach(Period p in Periods)
             {
                 // Ensure the Kind of time is consistent with DTStart
-                if (p.StartTime.Kind != DTStart.Kind)
-                    p.StartTime.Kind = DTStart.Kind;
+                p.StartTime.IsUniversalTime = DTStart.IsUniversalTime;
             }
             
-            // Evaluate all Alarms for this component.
-            foreach (Alarm alarm in Alarms)
-                alarm.Evaluate(this);
-
             return Periods;
         }
 
@@ -325,9 +368,6 @@ namespace DDay.iCal.Components
             EvalStart = null;
             EvalEnd = null;
             Periods.Clear();
-
-            foreach (Alarm alarm in Alarms)
-                alarm.Occurrences.Clear();
         }
 
         /// <summary>
@@ -342,7 +382,7 @@ namespace DDay.iCal.Components
         /// </summary>
         /// <param name="dt">The date for which to return occurrences.</param>
         /// <returns>A list of Periods representing the occurrences of this object.</returns>
-        virtual public List<Occurrence> GetOccurrences(Date_Time dt)
+        virtual public List<Occurrence> GetOccurrences(iCalDateTime dt)
         {
             return GetOccurrences(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
         }
@@ -354,7 +394,7 @@ namespace DDay.iCal.Components
         /// </summary>
         /// <param name="startTime">The starting date range</param>
         /// <param name="endTime">The ending date range</param>
-        virtual public List<Occurrence> GetOccurrences(Date_Time startTime, Date_Time endTime)
+        virtual public List<Occurrence> GetOccurrences(iCalDateTime startTime, iCalDateTime endTime)
         {
             List<Occurrence> occurrences = new List<Occurrence>();
             List<Period> periods = Evaluate(startTime, endTime);
@@ -410,7 +450,7 @@ namespace DDay.iCal.Components
         /// </summary>
         /// <param name="Start">The earliest allowable alarm occurrence to poll, or <c>null</c>.</param>
         /// <returns>A List of <see cref="Alarm.AlarmOccurrence"/> objects, one for each occurrence of the <see cref="Alarm"/>.</returns>
-        virtual public List<AlarmOccurrence> PollAlarms(Date_Time Start, Date_Time End)
+        virtual public List<AlarmOccurrence> PollAlarms(iCalDateTime Start, iCalDateTime End)
         {
             List<AlarmOccurrence> Occurrences = new List<AlarmOccurrence>();
             foreach (Alarm alarm in Alarms)
@@ -428,17 +468,17 @@ namespace DDay.iCal.Components
         /// </summary>
         /// <param name="FromDate">The beginning date of the range to evaluate.</param>
         /// <param name="ToDate">The end date of the range to evaluate.</param>
-        virtual protected void EvaluateRRule(Date_Time FromDate, Date_Time ToDate)
+        virtual protected void EvaluateRRule(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             // Handle RRULEs
             if (RRule != null)
             {
-                foreach (Recur rrule in RRule)
+                foreach (RecurrencePattern rrule in RRule)
                 {
                     // Get a list of static occurrences
                     // This is important to correctly calculate
                     // recurrences with COUNT.
-                    rrule.StaticOccurrences = new List<Date_Time>();
+                    rrule.StaticOccurrences = new List<iCalDateTime>();
                     foreach(Period p in Periods)
                         rrule.StaticOccurrences.Add(p.StartTime);
 
@@ -448,13 +488,16 @@ namespace DDay.iCal.Components
                     if (rrule.Until != null && (Until == null || Until < rrule.Until))
                         Until = rrule.Until.Copy();
 
-                    List<Date_Time> DateTimes = rrule.Evaluate(DTStart, FromDate, ToDate);
-                    foreach (Date_Time dt in DateTimes)
+                    List<iCalDateTime> DateTimes = rrule.Evaluate(DTStart, FromDate, ToDate);
+                    foreach (iCalDateTime dt in DateTimes)
                     {
+                        dt.TZID = Start.TZID;
                         Period p = new Period(dt);
 
                         if (!Periods.Contains(p))
+                        {
                             this.Periods.Add(p);
+                        }
                     }
                 }
             }
@@ -466,18 +509,20 @@ namespace DDay.iCal.Components
         /// </summary>
         /// <param name="FromDate">The beginning date of the range to evaluate.</param>
         /// <param name="ToDate">The end date of the range to evaluate.</param>
-        virtual protected void EvaluateRDate(Date_Time FromDate, Date_Time ToDate)
+        virtual protected void EvaluateRDate(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             // Handle RDATEs
             if (RDate != null)
             {
-                foreach (RDate rdate in RDate)
+                foreach (RecurrenceDates rdate in RDate)
                 {
                     List<Period> periods = rdate.Evaluate(DTStart, FromDate, ToDate);
                     foreach (Period p in periods)
-                    {   
+                    {
                         if (p != null && !Periods.Contains(p))
+                        {                            
                             Periods.Add(p);
+                        }
                     }
                 }
             }
@@ -489,16 +534,18 @@ namespace DDay.iCal.Components
         /// </summary>
         /// <param name="FromDate">The beginning date of the range to evaluate.</param>
         /// <param name="ToDate">The end date of the range to evaluate.</param>
-        virtual protected void EvaluateExRule(Date_Time FromDate, Date_Time ToDate)
+        virtual protected void EvaluateExRule(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             // Handle EXRULEs
             if (ExRule != null)
             {
-                foreach (Recur exrule in ExRule)
+                foreach (RecurrencePattern exrule in ExRule)
                 {
-                    List<Date_Time> DateTimes = exrule.Evaluate(DTStart, FromDate, ToDate);
-                    foreach (Date_Time dt in DateTimes)
+                    List<iCalDateTime> DateTimes = exrule.Evaluate(DTStart, FromDate, ToDate);
+                    foreach (iCalDateTime dt in DateTimes)
                     {
+                        dt.TZID = Start.TZID;
+
                         Period p = new Period(dt);
                         if (this.Periods.Contains(p))
                             this.Periods.Remove(p);
@@ -513,12 +560,12 @@ namespace DDay.iCal.Components
         /// </summary>
         /// <param name="FromDate">The beginning date of the range to evaluate.</param>
         /// <param name="ToDate">The end date of the range to evaluate.</param>
-        virtual protected void EvaluateExDate(Date_Time FromDate, Date_Time ToDate)
+        virtual protected void EvaluateExDate(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             // Handle EXDATEs
             if (ExDate != null)
             {
-                foreach (RDate exdate in ExDate)
+                foreach (RecurrenceDates exdate in ExDate)
                 {
                     List<Period> periods = exdate.Evaluate(DTStart, FromDate, ToDate);
                     foreach(Period p in periods)

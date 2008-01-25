@@ -10,7 +10,7 @@ namespace DDay.iCal.DataTypes
     /// </summary>
     public enum Transparency
     {
-        OPAQUE,
-        TRANSPARENT
+        Opaque,     /// Opaque (busy) on busy time searches.
+        Transparent /// Transparent (not busy) on busy time searches.
     };    
 }

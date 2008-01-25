@@ -61,7 +61,7 @@ namespace DDay.iCal.Components
             return (Journal)base.Copy();
         }
 
-        public override System.Collections.Generic.List<Period> Evaluate(Date_Time FromDate, Date_Time ToDate)
+        public override System.Collections.Generic.List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             if (Start != null)
             {

@@ -267,6 +267,23 @@ namespace DDay.iCal.Components
         {
         }
 
+        /// <summary>
+        /// Adds a parameter to the iCalendar object.
+        /// </summary>
+        virtual public void AddParameter(string name, string value)
+        {
+            Parameter p = new Parameter(name, value);
+            AddParameter(p);
+        }
+
+        /// <summary>
+        /// Adds a parameter to the iCalendar object.
+        /// </summary>
+        virtual public void AddParameter(Parameter p)
+        {
+            Parameters[p.Name] = p;
+        }
+
         #endregion
     }
 }

@@ -39,10 +39,26 @@ namespace DDay.iCal.Components
         {
         }
 
+        public Occurrence(Occurrence ao)
+        {
+            this.Period = ao.Period.Copy();
+            this.Component = ao.Component;
+        }
+
         public Occurrence(RecurringComponent component, Period period)
         {
             Component = component;
             Period = period;
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        virtual public Occurrence Copy()
+        {
+            Occurrence o = new Occurrence(this);
+            return o;
         }
 
         #endregion

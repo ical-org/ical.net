@@ -36,6 +36,10 @@ namespace DDay.iCal.DataTypes
         {
             CopyFrom(Parse(value));
         }
+        public Float(double value)
+        {
+            Value = value;
+        }
 
         #endregion
 
@@ -91,6 +95,11 @@ namespace DDay.iCal.DataTypes
         static public implicit operator double(Float i)
         {
             return i.Value;
+        }
+
+        static public implicit operator Float(double d)
+        {
+            return new Float(d);
         }
 
         #endregion

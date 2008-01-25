@@ -125,8 +125,6 @@ public partial class _Default : System.Web.UI.Page
         DateTime startDate = DateTime.Today.AddDays(1);                           // 12:00:00 A.M. tomorrow
         DateTime endDate = DateTime.Today.AddDays(daysInFuture+1).AddSeconds(-1); // 11:59:59 P.M. on the last day
 
-        List<Occurrence> occurrences = _Calendars.GetOccurrences<Event>(DateTime.Today, DateTime.Today.AddDays(90));
-
         // Get all upcoming events for the next week
         return _Calendars.GetOccurrences<Event>(startDate, endDate);
     }

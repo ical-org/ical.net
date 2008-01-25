@@ -55,10 +55,31 @@ namespace DDay.iCal.DataTypes
         {
             CopyFrom((UTC_Offset)Parse(value));
         }
+        public UTC_Offset(TimeSpan ts)
+        {            
+            if (ts.Ticks >= 0)
+                Positive = true;
+            Hours = Math.Abs(ts.Hours);
+            Minutes = Math.Abs(ts.Minutes);
+            Seconds = Math.Abs(ts.Seconds);
+        }
 
         #endregion
 
         #region Overrides
+
+        public override bool Equals(object obj)
+        {
+            UTC_Offset o = obj as UTC_Offset;
+            if (o != null)
+            {
+                return object.Equals(Positive, o.Positive) &&
+                    object.Equals(Hours, o.Hours) &&
+                    object.Equals(Minutes, o.Minutes) &&
+                    object.Equals(Seconds, o.Seconds);
+            }
+            return base.Equals(obj);
+        }
 
         public override void CopyFrom(object obj)
         {
@@ -123,13 +144,16 @@ namespace DDay.iCal.DataTypes
 
         static public implicit operator UTC_Offset(TimeSpan ts)
         {
-            UTC_Offset off = new UTC_Offset();
-            if (ts.Ticks >= 0)
-                off.Positive = true;
-            off.Hours = Math.Abs(ts.Hours);
-            off.Minutes = Math.Abs(ts.Minutes);
-            off.Seconds = Math.Abs(ts.Seconds);
-            return off;
+            return new UTC_Offset(ts);
+        }
+
+        static public explicit operator TimeSpan(UTC_Offset o)
+        {
+            TimeSpan ts = new TimeSpan(0);
+            ts = ts.Add(TimeSpan.FromHours(o.Positive ? o.Hours : -o.Hours));
+            ts = ts.Add(TimeSpan.FromMinutes(o.Positive ? o.Minutes : -o.Minutes));
+            ts = ts.Add(TimeSpan.FromSeconds(o.Positive ? o.Seconds : -o.Seconds));
+            return ts;
         }
 
         #endregion

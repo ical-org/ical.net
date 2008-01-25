@@ -22,24 +22,28 @@ namespace DDay.iCal.Serialization.iCalendar
                     return new ArraySerializer(obj as Array);
                 else if (type.IsEnum)
                     return new EnumSerializer(obj as Enum);
-                else if (type == typeof(DDay.iCal.iCalendar) || type.IsSubclassOf(typeof(DDay.iCal.iCalendar)))
+                else if (typeof(DDay.iCal.iCalendar).IsAssignableFrom(type))
                     return new iCalendarSerializer(obj as DDay.iCal.iCalendar);
-                else if (type == typeof(UniqueComponent) || type.IsSubclassOf(typeof(UniqueComponent)))
+                else if (typeof(Event).IsAssignableFrom(type))
+                    return new EventSerializer(obj as Event);
+                else if (typeof(RecurringComponent).IsAssignableFrom(type))
+                    return new RecurringComponentSerializer(obj as RecurringComponent);
+                else if (typeof(UniqueComponent).IsAssignableFrom(type))
                     return new UniqueComponentSerializer(obj as UniqueComponent);
-                else if (type == typeof(ComponentBase) || type.IsSubclassOf(typeof(ComponentBase)))
+                else if (typeof(ComponentBase).IsAssignableFrom(type))
                     return new ComponentBaseSerializer(obj as ComponentBase);
-                else if (type == typeof(iCalDataType) || type.IsSubclassOf(typeof(iCalDataType)))
+                else if (typeof(iCalDataType).IsAssignableFrom(type))
                     return new DataTypeSerializer(obj as iCalDataType);
-                else if (type == typeof(Parameter) || type.IsSubclassOf(typeof(Parameter)))
+                else if (typeof(Parameter).IsAssignableFrom(type))
                     return new ParameterSerializer(obj as Parameter);
-                else if (type == typeof(Property) || type.IsSubclassOf(typeof(Property)))
+                else if (typeof(Property).IsAssignableFrom(type))
                     return new PropertySerializer(obj as Property);
                 // We don't allow ContentLines to directly serialize, as
                 // they're likely a byproduct of loading a calendar, and we
                 // are already going to reproduce the content line(s) anyway.
-                else if (type == typeof(ContentLine) || type.IsSubclassOf(typeof(ContentLine)))
+                else if (typeof(ContentLine).IsAssignableFrom(type))
                     return null;
-                else if (type == typeof(iCalObject) || type.IsSubclassOf(typeof(iCalObject)))
+                else if (typeof(iCalObject).IsAssignableFrom(type))
                     return new iCalObjectSerializer(obj as iCalObject);
             }
             return null;

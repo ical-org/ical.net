@@ -19,7 +19,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
         /// their value.
         /// <example>
         /// For example, if a public DTStart field exists in the specified component,
-        /// (i.e. <c>public Date_Time DTStart;</c>)
+        /// (i.e. <c>public iCalDateTime DTStart;</c>)
         /// and a content line of <c>DTSTART;TZID=US-Eastern:20060830T090000</c> is
         /// encountered, this method will automatically set the value of the
         /// DTStart field to Aug. 30, 2006, 9:00 AM in the US-Eastern TimeZone.
@@ -126,8 +126,8 @@ namespace DDay.iCal.Serialization.iCalendar.Components
                         else if (itemType.IsEnum)
                         {
                             if (field != null)
-                                field.SetValue(obj, Enum.Parse(itemType, cl.Value.Replace("-", "_")));
-                            else property.SetValue(obj, Enum.Parse(itemType, cl.Value.Replace("-", "_")), null);
+                                field.SetValue(obj, Enum.Parse(itemType, cl.Value.Replace("-", "_"), true));
+                            else property.SetValue(obj, Enum.Parse(itemType, cl.Value.Replace("-", "_"), true), null);
                         }
                         // Otherwise, set the value directly!
                         else if (value == null || value.Equals(minVal))
@@ -172,13 +172,12 @@ namespace DDay.iCal.Serialization.iCalendar.Components
         {
             List<string> values = new List<string>();
             string value = m_text;
+
             // Wrap lines at 75 characters, per RFC 2445 "folding" technique
-            while (value.Length > 75 &&
-                value[74] != '\r' &&
-                value[74] != '\n')
+            while (value.Length > 75)
             {
-                values.Add(value.Substring(0, 74));
-                value = "\r\n " + value.Substring(74);
+                values.Add(value.Substring(0, 75) + "\r\n");
+                value = " " + value.Substring(75);                
             }
             values.Add(value);
 

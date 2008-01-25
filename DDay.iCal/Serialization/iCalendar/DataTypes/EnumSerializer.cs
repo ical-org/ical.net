@@ -29,7 +29,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
         virtual public string SerializeToString()
         {
-            return Enum.GetName(m_Enum.GetType(), m_Enum).ToUpper() + "\r\n";
+            return Enum.GetName(m_Enum.GetType(), m_Enum).ToUpper().Replace("_", "-") + "\r\n";
         }
 
         virtual public void Serialize(Stream stream, Encoding encoding)

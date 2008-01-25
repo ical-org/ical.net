@@ -13,8 +13,8 @@ namespace DDay.iCal.DataTypes
     {
         #region Private Fields
 
-        private Date_Time m_StartTime = new Date_Time();        
-        private Date_Time m_EndTime;        
+        private iCalDateTime m_StartTime = new iCalDateTime();        
+        private iCalDateTime m_EndTime;        
         private Duration m_Duration;
         private bool m_MatchesDateOnly = false;
 
@@ -22,13 +22,13 @@ namespace DDay.iCal.DataTypes
 
         #region Public Properties
 
-        public Date_Time StartTime
+        public iCalDateTime StartTime
         {
             get { return m_StartTime; }
             set { m_StartTime = value; }
         }
 
-        public Date_Time EndTime
+        public iCalDateTime EndTime
         {
             get { return m_EndTime; }
             set { m_EndTime = value; }
@@ -56,8 +56,8 @@ namespace DDay.iCal.DataTypes
         #region Constructors
 
         public Period() { }
-        public Period(Date_Time occurs) : this(occurs, null) { }
-        public Period(Date_Time start, Date_Time end)
+        public Period(iCalDateTime occurs) : this(occurs, null) { }
+        public Period(iCalDateTime start, iCalDateTime end)
             : this()
         {
             StartTime = start.Copy();
@@ -67,7 +67,7 @@ namespace DDay.iCal.DataTypes
                 Duration = new Duration(end.Value - start.Value);
             }            
         }
-        public Period(Date_Time start, TimeSpan duration)
+        public Period(iCalDateTime start, TimeSpan duration)
             : this()
         {
             StartTime = start.Copy();
@@ -142,8 +142,8 @@ namespace DDay.iCal.DataTypes
             if (values.Length != 2)
                 return false;
 
-            p.StartTime = new Date_Time();
-            p.EndTime = new Date_Time();
+            p.StartTime = new iCalDateTime();
+            p.EndTime = new iCalDateTime();
             p.Duration = new Duration();
 
             object st = p.StartTime;

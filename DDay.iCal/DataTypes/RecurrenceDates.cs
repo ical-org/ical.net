@@ -10,7 +10,7 @@ namespace DDay.iCal.DataTypes
     /// <summary>
     /// An iCalendar list of recurring dates (or date exclusions)
     /// </summary>
-    public class RDate : iCalDataType
+    public class RecurrenceDates : iCalDataType
     {
         #region Private Fields
 
@@ -42,17 +42,17 @@ namespace DDay.iCal.DataTypes
 
         #region Constructors
 
-        public RDate() { }
-        public RDate(string value) : this()
+        public RecurrenceDates() { }
+        public RecurrenceDates(string value) : this()
         {
-            CopyFrom((RDate)Parse(value));
+            CopyFrom((RecurrenceDates)Parse(value));
         }
 
         #endregion
 
         #region Public Methods
 
-        public void Add(Date_Time dt)
+        public void Add(iCalDateTime dt)
         {
             Periods.Add(new Period(dt));
         }
@@ -62,7 +62,7 @@ namespace DDay.iCal.DataTypes
             Periods.Add(p);
         }
 
-        public void Remove(Date_Time dt)
+        public void Remove(iCalDateTime dt)
         {
             Periods.Remove(new Period(dt));
         }
@@ -78,9 +78,9 @@ namespace DDay.iCal.DataTypes
 
         public override bool Equals(object obj)
         {
-            if (obj is RDate)
+            if (obj is RecurrenceDates)
             {
-                RDate r = (RDate)obj;
+                RecurrenceDates r = (RecurrenceDates)obj;
 
                 if (!Periods.Count.Equals(r.Periods.Count))
                     return false;
@@ -105,9 +105,9 @@ namespace DDay.iCal.DataTypes
         public override void CopyFrom(object obj)
         {
             base.CopyFrom(obj);
-            if (obj is RDate)
+            if (obj is RecurrenceDates)
             {
-                RDate rdt = (RDate)obj;
+                RecurrenceDates rdt = (RecurrenceDates)obj;
                 foreach (Period p in rdt.Periods)
                     Periods.Add(p.Copy());
             }
@@ -119,11 +119,11 @@ namespace DDay.iCal.DataTypes
             string[] values = value.Split(',');
             foreach (string v in values)
             {
-                object dt = new Date_Time();
+                object dt = new iCalDateTime();
                 object p = new Period();
                 
                 //
-                // Set the iCalendar for each Date_Time object here,
+                // Set the iCalendar for each iCalDateTime object here,
                 // so that any time zones applied to these objects will be
                 // handled correctly.
                 // NOTE: fixes RRULE30 eval, where EXDATE references a 
@@ -132,11 +132,11 @@ namespace DDay.iCal.DataTypes
                 // time zone lookup, because it wasn't assigned an iCalendar
                 // object.
                 //
-                if (((Date_Time)dt).TryParse(v, ref dt))
+                if (((iCalDateTime)dt).TryParse(v, ref dt))
                 {
-                    ((Date_Time)dt).iCalendar = iCalendar;
-                    ((Date_Time)dt).TZID = TZID;
-                    Periods.Add(new Period((Date_Time)dt));
+                    ((iCalDateTime)dt).iCalendar = iCalendar;
+                    ((iCalDateTime)dt).TZID = TZID;
+                    Periods.Add(new Period((iCalDateTime)dt));
                 }
                 else if (((Period)p).TryParse(v, ref p))
                 {
@@ -153,7 +153,7 @@ namespace DDay.iCal.DataTypes
 
         #region Public Methods
 
-        public List<Period> Evaluate(Date_Time StartDate, Date_Time FromDate, Date_Time EndDate)
+        public List<Period> Evaluate(iCalDateTime StartDate, iCalDateTime FromDate, iCalDateTime EndDate)
         {
             List<Period> periods = new List<Period>();
 

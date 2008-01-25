@@ -9,9 +9,9 @@ namespace DDay.iCal.DataTypes
     /// </summary>    
     public enum TodoStatus
     {        
-        NEEDS_ACTION,
-        COMPLETED,
-        IN_PROCESS,
-        CANCELLED
+        Needs_Action,
+        Completed,
+        In_Process,
+        Cancelled
     };
 }

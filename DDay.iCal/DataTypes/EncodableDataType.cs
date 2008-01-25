@@ -3,6 +3,7 @@ using System.Collections;
 using System.Text;
 using System.Reflection;
 using DDay.iCal.Components;
+using System.Collections.Generic;
 
 namespace DDay.iCal.DataTypes
 {    
@@ -14,7 +15,6 @@ namespace DDay.iCal.DataTypes
     {
         #region Private Fields
 
-        private string m_Encoding;
         private string m_Value;
         private byte[] m_Data;
 
@@ -30,25 +30,46 @@ namespace DDay.iCal.DataTypes
                 {
                     Parameter p = (Parameter)Parameters["ENCODING"];
                     if (p.Values.Count > 0)                        
-                        Encoding = p.Values[0].ToString();
+                        return p.Values[0].ToString();
                 }
-
-                return m_Encoding;
+                return null;
             }
             set
-            {                
-                bool encodable = false;
-                foreach (EncodableAttribute ea in GetType().GetCustomAttributes(typeof(EncodableAttribute), true))
+            {
+                if (!string.IsNullOrEmpty(value))
                 {
-                    foreach (string Name in ea.Values)
-                        if (Name.ToUpper().Equals(value.ToUpper()))
-                            encodable = true;
+                    // Ensure the data type can be encoded in this manner
+                    bool encodable = false;
+                    foreach (EncodableAttribute ea in GetType().GetCustomAttributes(typeof(EncodableAttribute), true))
+                    {
+                        foreach (string Name in ea.Values)
+                            if (Name.ToUpper().Equals(value.ToUpper()))
+                                encodable = true;
+                    }
+
+                    if (!encodable)
+                        throw new NotSupportedException("The " + GetType().Name + " data type does not support " + value.ToUpper() + " encoding.");
+
+                    // Set the encoding via the "ENCODING" parameter
+                    Parameter p = null;
+                    if (Parameters.ContainsKey("ENCODING"))
+                    {
+                        p = (Parameter)Parameters["ENCODING"];
+                        p.Values = new List<string>();
+                        p.Values.Add(value.ToUpper());
+                    }
+                    else
+                    {
+                        p = new Parameter("ENCODING", value.ToUpper());
+                        AddParameter(p);
+                    }
                 }
-
-                if (!encodable)
-                    throw new NotSupportedException("The " + GetType().Name + " data type does not support " + value.ToUpper() + " encoding.");
-
-                m_Encoding = value.ToUpper();
+                else
+                {
+                    // Remove the "ENCODING" parameter
+                    if (Parameters.ContainsKey("ENCODING"))
+                        Parameters.Remove("ENCODING");
+                }
             }
         }
 
@@ -175,9 +196,43 @@ namespace DDay.iCal.DataTypes
             catch
             {
                 return false;
+            }            
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public void SetEncoding(EncodingType encoding)
+        {
+            Encoding = GetEncodingName(encoding);   
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        public string GetEncodingName(EncodingType encoding)
+        {
+            switch (encoding)
+            {                
+                case EncodingType.Base64: return "BASE64";
+                case EncodingType.Bit7: return "7BIT";
+                case EncodingType.Bit8: return "8BIT";
+                case EncodingType.None:
+                default:
+                    return null;
             }
         }
 
         #endregion
+    }
+
+    public enum EncodingType
+    {
+        None,
+        Base64,
+        Bit7,
+        Bit8
     }
 }

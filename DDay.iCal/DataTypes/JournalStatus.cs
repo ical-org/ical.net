@@ -9,8 +9,8 @@ namespace DDay.iCal.DataTypes
     /// </summary>    
     public enum JournalStatus
     {
-        DRAFT,      // Indicates journal is draft.
-        FINAL,      // Indicates journal is final.
-        CANCELLED   // Indicates journal is removed.
+        Draft,      // Indicates journal is draft.
+        Final,      // Indicates journal is final.
+        Cancelled   // Indicates journal is removed.
     };
 }

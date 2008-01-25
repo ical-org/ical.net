@@ -14,22 +14,22 @@ namespace DDay.iCal.DataTypes
             _Calendar = System.Globalization.CultureInfo.CurrentCulture.Calendar;
         }
 
-        public static long DateDiff(Recur.FrequencyType frequency, Date_Time dt1, Date_Time dt2, DayOfWeek firstDayOfWeek) 
+        public static long DateDiff(FrequencyType frequency, iCalDateTime dt1, iCalDateTime dt2, DayOfWeek firstDayOfWeek) 
         {
-            if (frequency == Recur.FrequencyType.YEARLY) 
+            if (frequency == FrequencyType.Yearly) 
                 return dt2.Year - dt1.Year;
 
-            if (frequency == Recur.FrequencyType.MONTHLY)
+            if (frequency == FrequencyType.Monthly)
                 return (dt2.Month - dt1.Month) + (12 * (dt2.Year - dt1.Year));
 
-            if (frequency == Recur.FrequencyType.WEEKLY)
+            if (frequency == FrequencyType.Weekly)
             {
                 // Get the week of year of the time frame we want to calculate
                 int firstEvalWeek = _Calendar.GetWeekOfYear(dt2.Value, System.Globalization.CalendarWeekRule.FirstFourDayWeek, firstDayOfWeek);
 
                 // Count backwards in years, calculating how many weeks' difference we have between
                 // first and second dates
-                Date_Time evalDate = dt2.Copy();
+                iCalDateTime evalDate = dt2.Copy();
                 while (evalDate.Year > dt1.Year)
                 {
                     firstEvalWeek += _Calendar.GetWeekOfYear(new DateTime(evalDate.Year - 1, 12, 31), System.Globalization.CalendarWeekRule.FirstFourDayWeek, firstDayOfWeek);
@@ -43,32 +43,32 @@ namespace DDay.iCal.DataTypes
  
             TimeSpan ts = dt2 - dt1;
 
-            if (frequency == Recur.FrequencyType.DAILY) 
+            if (frequency == FrequencyType.Daily) 
                 return Round(ts.TotalDays);
 
-            if (frequency == Recur.FrequencyType.HOURLY) 
+            if (frequency == FrequencyType.Hourly) 
                 return Round(ts.TotalHours);
 
-            if (frequency == Recur.FrequencyType.MINUTELY) 
+            if (frequency == FrequencyType.Minutely) 
                 return Round(ts.TotalMinutes);
 
-            if (frequency == Recur.FrequencyType.SECONDLY) 
+            if (frequency == FrequencyType.Secondly) 
                 return Round(ts.TotalSeconds); 
  
             return 0;  
         }
 
-        public static Date_Time AddFrequency(Recur.FrequencyType frequency, Date_Time dt, int interval)
+        public static iCalDateTime AddFrequency(FrequencyType frequency, iCalDateTime dt, int interval)
         {
             switch (frequency)
             {
-                case Recur.FrequencyType.YEARLY: return dt.AddYears(interval);
-                case Recur.FrequencyType.MONTHLY: return dt.AddMonths(interval);
-                case Recur.FrequencyType.WEEKLY: return dt.AddDays(interval * 7);
-                case Recur.FrequencyType.DAILY: return dt.AddDays(interval);
-                case Recur.FrequencyType.HOURLY: return dt.AddHours(interval);
-                case Recur.FrequencyType.MINUTELY: return dt.AddMinutes(interval);
-                case Recur.FrequencyType.SECONDLY: return dt.AddSeconds(interval);
+                case FrequencyType.Yearly: return dt.AddYears(interval);
+                case FrequencyType.Monthly: return dt.AddMonths(interval);
+                case FrequencyType.Weekly: return dt.AddDays(interval * 7);
+                case FrequencyType.Daily: return dt.AddDays(interval);
+                case FrequencyType.Hourly: return dt.AddHours(interval);
+                case FrequencyType.Minutely: return dt.AddMinutes(interval);
+                case FrequencyType.Secondly: return dt.AddSeconds(interval);
                 default: return dt;
             }
         }

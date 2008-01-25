@@ -98,15 +98,17 @@ namespace DDay.iCal.DataTypes
                 Parameter p = (Parameter)Parameters["VALUE"];
                 if (p.Values.Count > 0)
                 {
-                    string type = p.Values[0].ToString();
-                    if (type == "DATE") // We have no "DATE" type; it's combined with DATE-TIME.
-                        type = "DATE-TIME";
-
-                    type = type.Replace("-", "_");
-                    Type iCalType = System.Type.GetType("DDay.iCal.DataTypes." + type, false, true);
-
-                    if (iCalType != null)
-                        return iCalType;
+                    string type = p.Values[0].ToString().ToUpper();
+                    switch (type)
+                    {
+                        case "DATE":
+                        case "DATE-TIME":
+                            return typeof(iCalDateTime);
+                        case "DURATION":
+                            return typeof(Duration);
+                        default:
+                            return null;
+                    }
                 }
             }
 
@@ -121,6 +123,11 @@ namespace DDay.iCal.DataTypes
         {
             iCalDataType icdt = (iCalDataType)Activator.CreateInstance(GetType());
             icdt.CopyFrom(this);
+
+            // Add parameters
+            foreach (DictionaryEntry de in Parameters)
+                ((Parameter)(de.Value)).Copy(icdt);
+
             icdt.Parent = parent;
             return icdt;            
         }

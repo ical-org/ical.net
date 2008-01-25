@@ -9,7 +9,7 @@ namespace DDay.iCal.Serialization
     /// allowed on the property.
     /// <example>
     /// For example, if "DATE" were a disallowed type on a
-    /// Date_Time object, it would always be serialized as
+    /// iCalDateTime object, it would always be serialized as
     /// DATE-TIME.
     /// </example>
     /// </summary>

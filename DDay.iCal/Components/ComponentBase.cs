@@ -46,11 +46,11 @@ namespace DDay.iCal.Components
                 case EVENT: return new Event(parent); 
                 case FREEBUSY: return new FreeBusy(parent);
                 case JOURNAL: return new Journal(parent); 
-                case TIMEZONE: return new DDay.iCal.Components.TimeZone(parent); 
+                case TIMEZONE: return new iCalTimeZone(parent); 
                 case TODO: return new Todo(parent); 
                 case DAYLIGHT:
                 case STANDARD:
-                    return new DDay.iCal.Components.TimeZone.TimeZoneInfo(name.ToUpper(), parent);
+                    return new TimeZoneInfo(name.ToUpper(), parent);
                 default: return new ComponentBase(parent, name);
             }
         }
@@ -116,6 +116,27 @@ namespace DDay.iCal.Components
 
             return component;
         }        
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Adds a property to this component.
+        /// </summary>
+        virtual public void AddProperty(string name, string value)
+        {
+            Property p = new Property(this, name, value);
+            AddProperty(p);
+        }
+
+        /// <summary>
+        /// Adds a property to this component.
+        /// </summary>
+        virtual public void AddProperty(Property p)
+        {
+            Properties[p.Name] = p;
+        }
 
         #endregion
 

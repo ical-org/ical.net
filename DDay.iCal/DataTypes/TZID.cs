@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 namespace DDay.iCal.DataTypes
 {    
     /// <summary>
-    /// A time zone identifier, used to associate <see cref="Date_Time"/> (and other) objects
+    /// A time zone identifier, used to associate <see cref="iCalDateTime"/> (and other) objects
     /// with a specific time zone.
     /// </summary>
     public class TZID : iCalDataType

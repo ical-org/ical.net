@@ -60,9 +60,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Components\Occurrence.cs" />
-    <Compile Include="Components\TimeZoneInfo.cs">
-      <DependentUpon>TimeZone.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Components\TimeZoneInfo.cs" />
     <Compile Include="DataTypes\DateUtils.cs" />
     <Compile Include="DataTypes\EvaluationEngineException.cs" />
     <Compile Include="DataTypes\Trigger.cs" />
@@ -79,23 +77,19 @@
     <Compile Include="DataTypes\RequestStatus.cs" />
     <Compile Include="DataTypes\Text.cs" />
     <Compile Include="DataTypes\TZID.cs" />
-    <Compile Include="DataTypes\DaySpecifier.cs">
-      <DependentUpon>Recur.cs</DependentUpon>
-    </Compile>
+    <Compile Include="DataTypes\DaySpecifier.cs" />
     <Compile Include="DataTypes\Cal_Address.cs" />
     <Compile Include="DataTypes\Geo.cs" />
     <Compile Include="DataTypes\iCalDataType.cs" />
-    <Compile Include="DataTypes\RDate.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="DataTypes\RecurrenceDates.cs" />
     <Compile Include="DataTypes\EventStatus.cs" />
     <Compile Include="DataTypes\Transparency.cs" />
     <Compile Include="DataTypes\UTC_Offset.cs" />
     <Compile Include="DataTypes\URI.cs" />
-    <Compile Include="DataTypes\Recur.cs" />
+    <Compile Include="DataTypes\RecurrencePattern.cs" />
     <Compile Include="DataTypes\Period.cs" />
     <Compile Include="DataTypes\Duration.cs" />
-    <Compile Include="DataTypes\Date_Time.cs" />
+    <Compile Include="DataTypes\iCalDateTime.cs" />
     <Compile Include="iCalendarCollection.cs" />
     <Compile Include="Components\ComponentBase.cs" />
     <Compile Include="ComponentBaseTypeAttribute.cs" />
@@ -111,13 +105,15 @@
     <Compile Include="Components\FreeBusy.cs" />
     <Compile Include="Components\Journal.cs" />
     <Compile Include="Components\Property.cs" />
-    <Compile Include="Components\TimeZone.cs" />
+    <Compile Include="Components\iCalTimeZone.cs" />
     <Compile Include="Components\Todo.cs" />
     <Compile Include="iCalendar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\DisallowedTypesAttribute.cs" />
     <Compile Include="Serialization\ForceUTCAttribute.cs" />
     <Compile Include="Serialization\iCalendarSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\EventSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\RecurringComponentSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\EncodableDataTypeSerializer.cs" />
     <Compile Include="Serialization\iCalendar\iCalLexer.cs" />
     <Compile Include="Serialization\iCalendar\iCalParser.cs" />
@@ -127,16 +123,16 @@
     <Compile Include="Serialization\iCalendar\DataTypes\ArraySerializer.cs" />
     <Compile Include="Serialization\iCalendar\Components\ContentLineSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\BinarySerializer.cs" />
-    <Compile Include="Serialization\iCalendar\DataTypes\Date_TimeUTCSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\iCalDateTimeUTCSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\EnumSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\TriggerSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\PeriodSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\FieldSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\DataTypes\RDateSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\RecurrenceDatesSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\DaySpecifierSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\DataTypes\RecurSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\RecurrencePatternSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\TextCollectionSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\DataTypes\Date_TimeSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\iCalDateTimeSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Components\ComponentBaseSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\TextSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Components\UniqueComponentSerializer.cs" />
@@ -159,15 +155,15 @@
     <Compile Include="Serialization\xCal\DataTypes\ArraySerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\BinarySerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\DataTypeSerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\Date_TimeSerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\Date_TimeUTCSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\iCalDateTimeSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\iCalDateTimeUTCSerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\DaySpecifierSerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\EncodableDataTypeSerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\EnumSerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\FieldSerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\PeriodSerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\RDateSerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\RecurSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\RecurrenceDatesSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\RecurrencePatternSerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\TextCollectionSerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\TextSerializer.cs" />
     <Compile Include="Serialization\xCal\DataTypes\TriggerSerializer.cs" />
