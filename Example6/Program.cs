@@ -23,7 +23,6 @@ namespace Example6
             // Show the calendar in a specific time zone
             ShowCalendar(iCal, "America/New_York");
             ShowCalendar(iCal, "America/Denver");
-            ShowCalendar(iCal, "MST7MDT");
 
             // Save the calendar to file
             SaveCalendar("Output.ics", iCal);
