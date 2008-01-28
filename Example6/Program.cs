@@ -23,6 +23,7 @@ namespace Example6
             // Show the calendar in a specific time zone
             ShowCalendar(iCal, "America/New_York");
             ShowCalendar(iCal, "America/Denver");
+            ShowCalendar(iCal, "MST7MDT");
 
             // Save the calendar to file
             SaveCalendar("Output.ics", iCal);
@@ -60,7 +61,7 @@ namespace Example6
             evt.Description = "A more in-depth description of this event.";
             
             // Set the event to start at 11:00 A.M. New York time on January 2, 2007.
-            evt.Start = new Date_Time(2007, 1, 2, 11, 0, 0, "America/New_York", iCal);
+            evt.Start = new iCalDateTime(2007, 1, 2, 11, 0, 0, "America/New_York", iCal);
 
             // Set the duration of the event to 1 hour.
             // NOTE: this will automatically set the End time of the event
@@ -141,7 +142,7 @@ namespace Example6
             evt = iCal.Create<Event>();
             evt.Summary = "Every month on the 21st";
             evt.Description = "A more in-depth description of this event.";
-            evt.Start = new Date_Time(2007, 1, 21, 16, 0, 0, "America/New_York", iCal);
+            evt.Start = new iCalDateTime(2007, 1, 21, 16, 0, 0, "America/New_York", iCal);
             evt.Duration = TimeSpan.FromHours(1.5);
 
             rp = new RecurrencePattern();
@@ -176,26 +177,29 @@ namespace Example6
         /// </summary>
         static void ShowCalendar(iCalendar iCal, string tzid)
         {
-            Date_Time start = new Date_Time(2007, 3, 1);
-            Date_Time end = new Date_Time(2007, 4, 1).AddSeconds(-1);
+            iCalDateTime start = new iCalDateTime(2007, 3, 1);
+            iCalDateTime end = new iCalDateTime(2007, 4, 1).AddSeconds(-1);
 
             List<Occurrence> occurrences = iCal.GetOccurrences(start, end);
 
-            Console.WriteLine("====Events/Todos/Journal Entries for " + tzid + "====");
+            Console.WriteLine("====Events/Todos/Journal Entries in " + tzid + "====");
             foreach (Occurrence o in occurrences)
             {
                 Console.WriteLine(
                     o.Period.StartTime.ToTimeZone(tzid).ToString("ddd, MMM d - h:mm") + " to " +
-                    o.Period.EndTime.ToTimeZone(tzid).ToString("h:mm tt\n") +
-                    o.Component.Summary + "\n");
+                    o.Period.EndTime.ToTimeZone(tzid).ToString("h:mm tt") + Environment.NewLine +
+                    o.Component.Summary + Environment.NewLine);
             }
 
-            Console.WriteLine("====Alarms for  " + tzid + "====");
+            Console.WriteLine("====Alarms in " + tzid + "====");
             foreach (RecurringComponent rc in iCal.RecurringComponents)
             {
                 foreach (AlarmOccurrence ao in rc.PollAlarms(start, end))
                 {
-                    Console.WriteLine("Alarm: " + ao.DateTime.ToTimeZone(tzid).ToString("ddd, MMM d - h:mm") + ": " + ao.Alarm.Summary);
+                    Console.WriteLine(
+                        "Alarm: " +
+                        ao.DateTime.ToTimeZone(tzid).ToString("ddd, MMM d - h:mm") + ": " +
+                        ao.Alarm.Summary);
                 }
             }
 
