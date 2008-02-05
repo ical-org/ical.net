@@ -30,13 +30,39 @@ namespace DDay.iCal.DataTypes
         public iCalDateTime DateTime
         {
             get { return m_DateTime; }
-            set { m_DateTime = value; }
+            set
+            {
+                m_DateTime = value;
+                if (m_DateTime != null)
+                {
+                    // NOTE: this, along with the "Duration" setter, fixes the bug tested in
+                    // TODO11(), as well as this thread: https://sourceforge.net/forum/forum.php?thread_id=1926742&forum_id=656447
+
+                    // DateTime and Duration are mutually exclusive
+                    Duration = null;
+
+                    // Do not allow timeless date/time values
+                    m_DateTime.HasTime = true;
+                    AddParameter("VALUE", "DATE-TIME");
+                }
+                else Parameters.Remove("VALUE");
+            }
         }
 
         public Duration Duration
         {
             get { return m_Duration; }
-            set { m_Duration = value; }
+            set
+            {
+                m_Duration = value;
+                if (m_Duration != null)
+                {
+                    // NOTE: see above.
+
+                    // DateTime and Duration are mutually exclusive
+                    DateTime = null;
+                }
+            }
         }
 
         public TriggerRelation Related

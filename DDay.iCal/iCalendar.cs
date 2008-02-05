@@ -197,7 +197,7 @@ namespace DDay.iCal
         {
             UniqueComponents.ResolveUIDs();
 
-            base.OnLoaded(e);            
+            base.OnLoaded(e);
         }
 
         /// <summary>

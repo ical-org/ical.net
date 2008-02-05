@@ -19,7 +19,7 @@ using System.Net;
 namespace DDay.iCal.Test
 {
     [TestFixture]
-    public class Program
+    public class ProgramTest
     {
         [Test]
         public void LoadAndDisplayCalendar()
@@ -107,7 +107,7 @@ namespace DDay.iCal.Test
             Assert.IsTrue(File.Exists(path), "File '" + path + "' does not exist.");
             
             iCalendar iCal = iCalendar.LoadFromFile(path);
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
         }
 
         [Test]
@@ -118,14 +118,14 @@ namespace DDay.iCal.Test
             path = "file:///" + path;            
             Uri uri = new Uri(path);
             iCalendar iCal = iCalendar.LoadFromUri(uri);
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
         }
 
         [Test]
         public void CATEGORIES()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\CATEGORIES.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             ArrayList items = new ArrayList();
@@ -155,7 +155,7 @@ namespace DDay.iCal.Test
         public void GEO1()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\GEO1.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             Assert.IsTrue(evt.Geo.Latitude.Value == 37.386013, "Latitude should be 37.386013; it is not.");
@@ -166,7 +166,7 @@ namespace DDay.iCal.Test
         public void BASE64()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BASE64.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             Assert.IsTrue(evt.Attach[0].Value ==
@@ -188,7 +188,7 @@ namespace DDay.iCal.Test
         public void BASE64_1()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BASE64_1.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             Assert.IsTrue(evt.UID.Value == "uuid1153170430406", "UID should be 'uuid1153170430406'; it is " + evt.UID.Value);
@@ -203,7 +203,7 @@ namespace DDay.iCal.Test
         public void BINARY()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BINARY.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             Binary b = evt.Attach[0];
@@ -350,14 +350,14 @@ namespace DDay.iCal.Test
             tmp_cal = iCalendar.LoadFromFile(@"Calendars\General\MERGE2.ics");
 
             // Compare the two calendars -- they should match exactly
-            Serialization.CompareCalendars(iCal, tmp_cal);
+            SerializationTest.CompareCalendars(iCal, tmp_cal);
         }
 
         [Test]
         public void UID1()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BINARY.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             
             Event evt = iCal.Events["uuid1153170430406"];
             Assert.IsNotNull(evt, "Event could not be accessed by UID");
@@ -367,7 +367,7 @@ namespace DDay.iCal.Test
         public void ADDEVENT1()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\GEO1.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
 
             Event evt = iCal.Create<Event>();
             evt.Summary = "Test event";

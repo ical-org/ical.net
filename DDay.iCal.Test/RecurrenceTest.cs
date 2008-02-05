@@ -17,7 +17,7 @@ using NUnit.Framework;
 namespace DDay.iCal.Test
 {
     [TestFixture]
-    public class Recurrence
+    public class RecurrenceTest
     {
         private TZID tzid;
 
@@ -34,7 +34,7 @@ namespace DDay.iCal.Test
         public void RRULE1()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE1.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
             List<Occurrence> occurrences = evt.GetOccurrences(
                 new iCalDateTime(2006, 1, 1, tzid, iCal),
@@ -67,7 +67,7 @@ namespace DDay.iCal.Test
         public void RRULE2()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE2.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -104,7 +104,7 @@ namespace DDay.iCal.Test
         public void RRULE3()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE3.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -137,7 +137,7 @@ namespace DDay.iCal.Test
         public void RRULE4()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE4.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -266,7 +266,7 @@ namespace DDay.iCal.Test
         public void RRULE5()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE5.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -298,7 +298,7 @@ namespace DDay.iCal.Test
         public void RRULE6()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE6.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -334,8 +334,8 @@ namespace DDay.iCal.Test
         {
             iCalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE6.ics");
             iCalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE6_1.ics");
-            Program.TestCal(iCal1);
-            Program.TestCal(iCal2);
+            ProgramTest.TestCal(iCal1);
+            ProgramTest.TestCal(iCal2);
             Event evt1 = (Event)iCal1.Events[0];
             Event evt2 = (Event)iCal2.Events[0];
 
@@ -353,7 +353,7 @@ namespace DDay.iCal.Test
         public void RRULE7()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE7.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -408,7 +408,7 @@ namespace DDay.iCal.Test
         public void RRULE8()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE8.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -477,7 +477,7 @@ namespace DDay.iCal.Test
         public void RRULE9()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE9.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -534,7 +534,7 @@ namespace DDay.iCal.Test
         public void RRULE10()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE10.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
             
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -572,8 +572,8 @@ namespace DDay.iCal.Test
         {
             iCalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE10.ics");
             iCalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE11.ics");
-            Program.TestCal(iCal1);
-            Program.TestCal(iCal2);
+            ProgramTest.TestCal(iCal1);
+            ProgramTest.TestCal(iCal2);
             Event evt1 = (Event)iCal1.Events[0];
             Event evt2 = (Event)iCal2.Events[0];
 
@@ -591,7 +591,7 @@ namespace DDay.iCal.Test
         public void RRULE12()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE12.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -676,7 +676,7 @@ namespace DDay.iCal.Test
         public void RRULE12_1()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE12.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -755,7 +755,7 @@ namespace DDay.iCal.Test
         public void RRULE13()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE13.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -790,7 +790,7 @@ namespace DDay.iCal.Test
         public void RRULE14()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE14.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -845,7 +845,7 @@ namespace DDay.iCal.Test
         public void RRULE15()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE15.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
             
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -888,7 +888,7 @@ namespace DDay.iCal.Test
         public void RRULE16()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE16.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -943,7 +943,7 @@ namespace DDay.iCal.Test
         public void RRULE17()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE17.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
             
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -990,7 +990,7 @@ namespace DDay.iCal.Test
         public void RRULE18()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE18.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1037,7 +1037,7 @@ namespace DDay.iCal.Test
         public void RRULE19()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE19.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
             
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1092,7 +1092,7 @@ namespace DDay.iCal.Test
         public void RRULE20()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE20.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1147,7 +1147,7 @@ namespace DDay.iCal.Test
         public void RRULE21()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1202,7 +1202,7 @@ namespace DDay.iCal.Test
         public void RRULE22()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE22.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1273,7 +1273,7 @@ namespace DDay.iCal.Test
         public void RRULE23()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE23.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1314,7 +1314,7 @@ namespace DDay.iCal.Test
         public void RRULE24()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE24.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1355,7 +1355,7 @@ namespace DDay.iCal.Test
         public void RRULE25()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE25.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1410,7 +1410,7 @@ namespace DDay.iCal.Test
         public void RRULE26()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE26.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1444,7 +1444,7 @@ namespace DDay.iCal.Test
         public void RRULE27()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE27.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1478,7 +1478,7 @@ namespace DDay.iCal.Test
         public void RRULE28()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE28.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1520,7 +1520,7 @@ namespace DDay.iCal.Test
         public void RRULE29()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE29.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1592,7 +1592,7 @@ namespace DDay.iCal.Test
         public void RRULE30()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE30.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1637,7 +1637,7 @@ namespace DDay.iCal.Test
         public void RRULE31()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE31.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1692,7 +1692,7 @@ namespace DDay.iCal.Test
         public void RRULE32()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE32.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1726,7 +1726,7 @@ namespace DDay.iCal.Test
         public void RRULE33()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE33.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1767,7 +1767,7 @@ namespace DDay.iCal.Test
         public void RRULE34()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE34.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1818,7 +1818,7 @@ namespace DDay.iCal.Test
         public void RRULE35()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE35.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1852,7 +1852,7 @@ namespace DDay.iCal.Test
         public void RRULE36()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE36.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1889,7 +1889,7 @@ namespace DDay.iCal.Test
         public void RRULE37()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE37.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -1924,7 +1924,7 @@ namespace DDay.iCal.Test
         public void RRULE38()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE38.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -2004,8 +2004,8 @@ namespace DDay.iCal.Test
         {
             iCalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE38.ics");
             iCalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE39.ics");
-            Program.TestCal(iCal1);
-            Program.TestCal(iCal2);
+            ProgramTest.TestCal(iCal1);
+            ProgramTest.TestCal(iCal2);
             Event evt1 = (Event)iCal1.Events[0];
             Event evt2 = (Event)iCal2.Events[0];
 
@@ -2023,7 +2023,7 @@ namespace DDay.iCal.Test
         public void RRULE40()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE40.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -2059,7 +2059,7 @@ namespace DDay.iCal.Test
         public void RRULE41()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE41.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
@@ -2095,7 +2095,7 @@ namespace DDay.iCal.Test
         public void RRULE42()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE42.ics");
-            Program.TestCal(iCal);
+            ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
