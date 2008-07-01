@@ -132,15 +132,19 @@ namespace DDay.iCal.DataTypes
             get { return _StaticOccurrences; }
             set { _StaticOccurrences = value; }
         }
-
+                
         public RecurrenceRestrictionType RestrictionType
         {
             get
             {
-                if (_RestrictionType == null &&
-                    iCalendar != null)
+                // NOTE: Fixes bug #1924358 - Cannot evaluate Secondly patterns
+                if (_RestrictionType != null &&
+                    _RestrictionType.HasValue)
+                    return _RestrictionType.Value;
+                else if (iCalendar != null)
                     return iCalendar.RecurrenceRestriction;
-                return RecurrenceRestrictionType.Default;
+                else
+                    return RecurrenceRestrictionType.Default;
             }
             set { _RestrictionType = value; }
         }
@@ -149,10 +153,14 @@ namespace DDay.iCal.DataTypes
         {
             get
             {
-                if (_EvaluationMode == null &&
-                    iCalendar != null)
+                // NOTE: Fixes bug #1924358 - Cannot evaluate Secondly patterns
+                if (_EvaluationMode != null &&
+                    _EvaluationMode.HasValue)
+                    return _EvaluationMode.Value;
+                else if (iCalendar != null)
                     return iCalendar.RecurrenceEvaluationMode;
-                return RecurrenceEvaluationModeType.Default;
+                else
+                    return RecurrenceEvaluationModeType.Default;
             }
             set { _EvaluationMode = value; }
         }
