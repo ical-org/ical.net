@@ -334,6 +334,12 @@
     <None Include="Calendars\General\MERGE2.ics">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Calendars\General\PRODID1.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Calendars\General\PRODID2.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Calendars\Recurrence\RRULE50.ics">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

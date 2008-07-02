@@ -43,19 +43,19 @@ namespace DDay.iCal.Serialization.iCalendar
 		public const int DQUOTE = 18;
 		public const int CTL = 19;
 		public const int BACKSLASH = 20;
-		public const int ESCAPED_CHAR = 21;
-		public const int NUMBER = 22;
-		public const int DOT = 23;
-		public const int CR = 24;
-		public const int LF = 25;
-		public const int ALPHA = 26;
-		public const int DIGIT = 27;
-		public const int DASH = 28;
-		public const int SPECIAL = 29;
-		public const int UNICODE = 30;
-		public const int SPACE = 31;
-		public const int HTAB = 32;
-		public const int SLASH = 33;
+		public const int NUMBER = 21;
+		public const int DOT = 22;
+		public const int CR = 23;
+		public const int LF = 24;
+		public const int ALPHA = 25;
+		public const int DIGIT = 26;
+		public const int DASH = 27;
+		public const int SPECIAL = 28;
+		public const int UNICODE = 29;
+		public const int SPACE = 30;
+		public const int HTAB = 31;
+		public const int SLASH = 32;
+		public const int ESCAPED_CHAR = 33;
 		public const int LINEFOLDER = 34;
 		
 		
@@ -761,11 +761,11 @@ _loop54_breakloop:			;
 				}
 				else
 				{
-					goto _loop84_breakloop;
+					goto _loop85_breakloop;
 				}
 				
 			}
-_loop84_breakloop:			;
+_loop85_breakloop:			;
 		}    // ( ... )*
 	}
 	
@@ -785,11 +785,11 @@ _loop84_breakloop:			;
 				}
 				else
 				{
-					goto _loop77_breakloop;
+					goto _loop78_breakloop;
 				}
 				
 			}
-_loop77_breakloop:			;
+_loop78_breakloop:			;
 		}    // ( ... )*
 		return s;
 	}
@@ -968,7 +968,6 @@ _loop50_breakloop:			;
 		case EQUAL:
 		case COMMA:
 		case BACKSLASH:
-		case ESCAPED_CHAR:
 		case NUMBER:
 		case DOT:
 		case CR:
@@ -981,6 +980,7 @@ _loop50_breakloop:			;
 		case SPACE:
 		case HTAB:
 		case SLASH:
+		case ESCAPED_CHAR:
 		case LINEFOLDER:
 		{
 			v=paramtext();
@@ -1111,41 +1111,13 @@ _loop65_breakloop:			;
 {
 		string s = string.Empty;
 		
-		IToken  c = null;
-		IToken  q = null;
-		IToken  e = null;
+		IToken  a = null;
 		
-		switch ( LA(1) )
 		{
-		case COLON:
-		{
-			c = LT(1);
-			match(COLON);
-			s = c.getText();
-			break;
+			a = LT(1);
+			match(tokenSet_4_);
 		}
-		case DQUOTE:
-		{
-			q = LT(1);
-			match(DQUOTE);
-			s = q.getText();
-			break;
-		}
-		default:
-			if ((tokenSet_8_.member(LA(1))) && (tokenSet_9_.member(LA(2))) && (tokenSet_9_.member(LA(3))))
-			{
-				s=tsafe_char();
-			}
-			else if ((LA(1)==ESCAPED_CHAR) && (tokenSet_9_.member(LA(2))) && (tokenSet_9_.member(LA(3)))) {
-				e = LT(1);
-				match(ESCAPED_CHAR);
-				s = e.getText();
-			}
-		else
-		{
-			throw new NoViableAltException(LT(1), getFilename());
-		}
-		break; }
+		s = a.getText();
 		return s;
 	}
 	
@@ -1211,7 +1183,6 @@ _loop65_breakloop:			;
 		@"""DQUOTE""",
 		@"""CTL""",
 		@"""BACKSLASH""",
-		@"""ESCAPED_CHAR""",
 		@"""NUMBER""",
 		@"""DOT""",
 		@"""CR""",
@@ -1224,6 +1195,7 @@ _loop65_breakloop:			;
 		@"""SPACE""",
 		@"""HTAB""",
 		@"""SLASH""",
+		@"""ESCAPED_CHAR""",
 		@"""LINEFOLDER"""
 	};
 	
@@ -1253,7 +1225,7 @@ _loop65_breakloop:			;
 	public static readonly BitSet tokenSet_3_ = new BitSet(mk_tokenSet_3_());
 	private static long[] mk_tokenSet_4_()
 	{
-		long[] data = { 34358030192L, 0L, 0L, 0L};
+		long[] data = { 34358165360L, 0L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_4_ = new BitSet(mk_tokenSet_4_());
@@ -1281,12 +1253,6 @@ _loop65_breakloop:			;
 		return data;
 	}
 	public static readonly BitSet tokenSet_8_ = new BitSet(mk_tokenSet_8_());
-	private static long[] mk_tokenSet_9_()
-	{
-		long[] data = { 34358030320L, 0L, 0L, 0L};
-		return data;
-	}
-	public static readonly BitSet tokenSet_9_ = new BitSet(mk_tokenSet_9_());
 	
 }
 }

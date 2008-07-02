@@ -25,19 +25,19 @@ namespace DDay.iCal.Serialization.iCalendar
 		public const int DQUOTE = 18;
 		public const int CTL = 19;
 		public const int BACKSLASH = 20;
-		public const int ESCAPED_CHAR = 21;
-		public const int NUMBER = 22;
-		public const int DOT = 23;
-		public const int CR = 24;
-		public const int LF = 25;
-		public const int ALPHA = 26;
-		public const int DIGIT = 27;
-		public const int DASH = 28;
-		public const int SPECIAL = 29;
-		public const int UNICODE = 30;
-		public const int SPACE = 31;
-		public const int HTAB = 32;
-		public const int SLASH = 33;
+		public const int NUMBER = 21;
+		public const int DOT = 22;
+		public const int CR = 23;
+		public const int LF = 24;
+		public const int ALPHA = 25;
+		public const int DIGIT = 26;
+		public const int DASH = 27;
+		public const int SPECIAL = 28;
+		public const int UNICODE = 29;
+		public const int SPACE = 30;
+		public const int HTAB = 31;
+		public const int SLASH = 32;
+		public const int ESCAPED_CHAR = 33;
 		public const int LINEFOLDER = 34;
 		
 	}

@@ -23,7 +23,7 @@ namespace DDay.iCal.Test
 
         [TestFixtureSetUp]
         public void InitAll()
-        {            
+        {
             tzid = new TZID("US-Eastern");
         }
 
@@ -54,7 +54,7 @@ namespace DDay.iCal.Test
                     Assert.AreEqual(dt, occurrences[i].Period.StartTime, "Event should occur at " + dt);
                     Assert.AreEqual(dt1, occurrences[i + 1].Period.StartTime, "Event should occur at " + dt);
                     i += 2;
-                }                
+                }
 
                 dt = dt.AddDays(1);
             }
@@ -124,7 +124,7 @@ namespace DDay.iCal.Test
                         (dt > new iCalDateTime(1997, 10, 26, tzid, iCal) && dt.TimeZoneInfo.TimeZoneName == "EST"),
                         "Event " + dt + " doesn't occur in the correct time zone (including Daylight & Standard time zones)");
                     i++;
-                }                
+                }
 
                 dt = dt.AddDays(1);
             }
@@ -141,7 +141,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1997, 9, 1, tzid, iCal), 
+                new iCalDateTime(1997, 9, 1, tzid, iCal),
                 new iCalDateTime(1997, 12, 4, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -281,7 +281,7 @@ namespace DDay.iCal.Test
                 new iCalDateTime(1997, 10, 2, 9, 0, 0, tzid, iCal),
                 new iCalDateTime(1997, 10, 12, 9, 0, 0, tzid, iCal)
             };
-            
+
             for (int i = 0; i < DateTimes.Length; i++)
                 Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);
 
@@ -302,7 +302,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1998, 1, 1, tzid, iCal), 
+                new iCalDateTime(1998, 1, 1, tzid, iCal),
                 new iCalDateTime(2000, 12, 31, tzid, iCal));
 
             iCalDateTime dt = new iCalDateTime(1998, 1, 1, 9, 0, 0, tzid, iCal);
@@ -412,7 +412,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1997, 9, 1, tzid, iCal), 
+                new iCalDateTime(1997, 9, 1, tzid, iCal),
                 new iCalDateTime(1999, 1, 1, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -481,7 +481,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1997, 9, 1, tzid, iCal), 
+                new iCalDateTime(1997, 9, 1, tzid, iCal),
                 new iCalDateTime(1998, 1, 31, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -536,7 +536,7 @@ namespace DDay.iCal.Test
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE10.ics");
             ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
-            
+
             List<Occurrence> occurrences = evt.GetOccurrences(
                 new iCalDateTime(1997, 9, 1, tzid, iCal),
                 new iCalDateTime(1999, 1, 1, tzid, iCal));
@@ -759,7 +759,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1999, 1, 1, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -794,7 +794,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1999, 1, 1, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -847,9 +847,9 @@ namespace DDay.iCal.Test
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE15.ics");
             ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
-            
+
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1999, 1, 1, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -892,7 +892,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1999, 1, 1, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -945,9 +945,9 @@ namespace DDay.iCal.Test
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE17.ics");
             ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
-            
+
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1999, 1, 1, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -994,7 +994,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1998, 3, 1, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1039,9 +1039,9 @@ namespace DDay.iCal.Test
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE19.ics");
             ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
-            
+
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1998, 3, 1, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1096,7 +1096,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1998, 3, 1, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1151,7 +1151,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(2000, 1, 1, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1206,7 +1206,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1998, 4, 1, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1277,7 +1277,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(2002, 1, 1, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1318,7 +1318,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(2003, 4, 1, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1359,7 +1359,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(2007, 1, 1, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1414,7 +1414,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1999, 12, 31, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1448,7 +1448,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1999, 12, 31, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1482,7 +1482,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1999, 12, 31, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1524,7 +1524,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1999, 12, 31, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1596,7 +1596,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(2000, 12, 31, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1641,7 +1641,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1998, 6, 30, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1696,7 +1696,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(2004, 12, 31, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1730,7 +1730,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(2004, 12, 31, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1771,7 +1771,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1998, 3, 31, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1822,7 +1822,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1998, 3, 31, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1836,7 +1836,7 @@ namespace DDay.iCal.Test
             {
                 iCalDateTime dt = (iCalDateTime)DateTimes[i];
                 Assert.AreEqual(dt, occurrences[i].Period.StartTime, "Event should occur on " + dt);
-                Assert.AreEqual("EDT", dt.TimeZoneInfo.TimeZoneName, "Event " + dt + " should occur in the EDT timezone");                
+                Assert.AreEqual("EDT", dt.TimeZoneInfo.TimeZoneName, "Event " + dt + " should occur in the EDT timezone");
             }
 
             Assert.AreEqual(
@@ -1856,7 +1856,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1997, 9, 2, tzid, iCal), 
+                new iCalDateTime(1997, 9, 2, tzid, iCal),
                 new iCalDateTime(1997, 9, 3, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1893,7 +1893,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1998, 12, 31, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -1928,7 +1928,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1997, 9, 2, tzid, iCal), 
+                new iCalDateTime(1997, 9, 2, tzid, iCal),
                 new iCalDateTime(1997, 9, 4, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -2027,7 +2027,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1998, 12, 31, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -2063,7 +2063,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid, iCal), 
+                new iCalDateTime(1996, 1, 1, tzid, iCal),
                 new iCalDateTime(1998, 12, 31, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -2099,7 +2099,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Events[0];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(2007, 7, 1, tzid, iCal), 
+                new iCalDateTime(2007, 7, 1, tzid, iCal),
                 new iCalDateTime(2007, 8, 1, tzid, iCal));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -2141,16 +2141,16 @@ namespace DDay.iCal.Test
             iCalendar iCal = new iCalendar();
 
             iCalTimeZone tz = iCal.Create<iCalTimeZone>();
-            
+
             tz.TZID = "US-Eastern";
             tz.Last_Modified = new DateTime(1987, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
             TimeZoneInfo standard = new TimeZoneInfo(iCalTimeZone.STANDARD, tz);
-            standard.Start = new DateTime(1967, 10, 29, 2, 0, 0, DateTimeKind.Utc);            
+            standard.Start = new DateTime(1967, 10, 29, 2, 0, 0, DateTimeKind.Utc);
             standard.AddRecurrencePattern(new RecurrencePattern("FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10"));
             standard.TZOffsetFrom = new UTC_Offset("-0400");
             standard.TZOffsetTo = new UTC_Offset("-0500");
-            standard.TimeZoneName = "EST";            
+            standard.TimeZoneName = "EST";
 
             TimeZoneInfo daylight = new TimeZoneInfo(iCalTimeZone.DAYLIGHT, tz);
             daylight.Start = new DateTime(1987, 4, 5, 2, 0, 0, DateTimeKind.Utc);
@@ -2168,7 +2168,7 @@ namespace DDay.iCal.Test
             evt.AddRecurrencePattern(recur);
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new DateTime(2007, 1, 24), 
+                new DateTime(2007, 1, 24),
                 new DateTime(2007, 12, 31));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -2180,13 +2180,13 @@ namespace DDay.iCal.Test
                 new iCalDateTime(2007, 9, 26, 8, 0, 0, tzid, iCal),
                 new iCalDateTime(2007, 11, 28, 8, 0, 0, tzid, iCal)
             };
-            
+
             for (int i = 0; i < DateTimes.Length; i++)
                 Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);
 
             Assert.AreEqual(
                 DateTimes.Length,
-                occurrences.Count,                
+                occurrences.Count,
                 "There should be exactly " + DateTimes.Length +
                 " occurrences; there were " + occurrences.Count);
         }
@@ -2393,7 +2393,7 @@ namespace DDay.iCal.Test
                 " occurrences; there were " + occurrences.Count);
 
             for (int i = 0; i < DateTimes.Length; i++)
-                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);            
+                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);
         }
 
         /// <summary>
@@ -2450,7 +2450,7 @@ namespace DDay.iCal.Test
 
 
             for (int i = 0; i < DateTimes.Length; i++)
-                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);            
+                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);
         }
 
         /// <summary>
@@ -2492,11 +2492,11 @@ namespace DDay.iCal.Test
             items["New Year's Day"] = new iCalDateTime(2006, 1, 1);
 
             List<Occurrence> occurrences = iCal.GetOccurrences(
-                new iCalDateTime(2006, 1, 1), 
+                new iCalDateTime(2006, 1, 1),
                 new iCalDateTime(2006, 12, 31));
 
             Assert.AreEqual(items.Count, occurrences.Count, "The number of holidays did not evaluate correctly.");
-            foreach(Occurrence o in occurrences)
+            foreach (Occurrence o in occurrences)
             {
                 Assert.IsTrue(items.ContainsKey(o.Component.Summary.ToString()), "Holiday text did not match known holidays.");
                 Assert.AreEqual(items[o.Component.Summary.ToString()], o.Period.StartTime, "Date/time of holiday '" + o.Component.Summary.ToString() + "' did not match.");
@@ -2518,7 +2518,7 @@ namespace DDay.iCal.Test
             evt.AddRecurrencePattern(new RecurrencePattern("Every 3rd month on the last tuesday and wednesday"));
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(2006, 10, 1), 
+                new iCalDateTime(2006, 10, 1),
                 new iCalDateTime(2007, 4, 30));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -2557,7 +2557,7 @@ namespace DDay.iCal.Test
             evt.AddRecurrencePattern(new RecurrencePattern("Every day at 6:00PM"));
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(2006, 10, 1), 
+                new iCalDateTime(2006, 10, 1),
                 new iCalDateTime(2006, 10, 6));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -2595,7 +2595,7 @@ namespace DDay.iCal.Test
             evt.AddRecurrencePattern(new RecurrencePattern("Every other month, on day 21"));
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(2006, 1, 1), 
+                new iCalDateTime(2006, 1, 1),
                 new iCalDateTime(2006, 12, 31));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -2634,7 +2634,7 @@ namespace DDay.iCal.Test
             evt.AddRecurrencePattern(new RecurrencePattern("Every 10 minutes for 5 occurrences"));
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(2006, 1, 1), 
+                new iCalDateTime(2006, 1, 1),
                 new iCalDateTime(2006, 1, 31));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -2671,7 +2671,7 @@ namespace DDay.iCal.Test
             evt.AddRecurrencePattern(new RecurrencePattern("Every 10 minutes until 1/1/2006 9:50"));
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(2006, 1, 1), 
+                new iCalDateTime(2006, 1, 1),
                 new iCalDateTime(2006, 1, 31));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -2709,7 +2709,7 @@ namespace DDay.iCal.Test
             evt.AddRecurrencePattern(new RecurrencePattern("Every month on the first sunday, at 5:00PM, and at 7:00PM"));
 
             List<Occurrence> occurrences = evt.GetOccurrences(
-                new iCalDateTime(2006, 1, 1), 
+                new iCalDateTime(2006, 1, 1),
                 new iCalDateTime(2006, 3, 31));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -2753,6 +2753,42 @@ namespace DDay.iCal.Test
 
             foreach (Occurrence o in occurrences)
                 Assert.IsTrue(o.Period.StartTime.HasTime, "All recurrences of this event should have a time set.");
+        }
+
+        [Test, Category("Recurrence")]
+        public void RECURRENCEPATTERN1()
+        {
+            // NOTE: recurrence patterns are not meant to be used directly like this.
+            // However, this does make a good test to ensure they behave as they should.
+            RecurrencePattern pattern = new
+            RecurrencePattern("FREQ=SECONDLY;INTERVAL=10");
+            pattern.RestrictionType = RecurrenceRestrictionType.NoRestriction;
+
+            DateTime fromDate = DateTime.Parse("3/30/08 11:59:40 PM");
+            DateTime toDate = DateTime.Parse("3/31/08 12:00:10 AM");
+            DateTime startDate = DateTime.Parse("3/30/08 11:59:40 PM");
+
+            List<iCalDateTime> occurrences = pattern.Evaluate(startDate, fromDate, toDate);
+            Assert.AreEqual(4, occurrences.Count);
+            Assert.AreEqual(DateTime.Parse("03/30/08 11:59:40 PM"), occurrences[0].Value);
+            Assert.AreEqual(DateTime.Parse("03/30/08 11:59:50 PM"), occurrences[1].Value);
+            Assert.AreEqual(DateTime.Parse("03/31/08 12:00:00 AM"), occurrences[2].Value);
+            Assert.AreEqual(DateTime.Parse("03/31/08 12:00:10 AM"), occurrences[3].Value);
+        }
+
+        [Test, Category("Recurrence")]
+        public void RECURRENCEPATTERN2()
+        {
+            // NOTE: recurrence patterns are not meant to be used directly like this.
+            // However, this does make a good test to ensure they behave as they should.
+            RecurrencePattern pattern = new RecurrencePattern("FREQ=MINUTELY;INTERVAL=1");
+
+            DateTime fromDate = DateTime.Parse("4/1/2008 10:08:10 AM");
+            DateTime toDate = DateTime.Parse("4/1/2008 10:43:23 AM");
+            DateTime startDate = DateTime.Parse("3/31/2008 12:00:10 AM");
+
+            List<iCalDateTime> occurrences = pattern.Evaluate(startDate, fromDate, toDate);
+            Assert.AreNotEqual(0, occurrences.Count);
         }
 
         [Test, Category("Recurrence")]

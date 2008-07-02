@@ -513,5 +513,17 @@ END:VCALENDAR
 
             //Assert.IsTrue(occurrences.Count == DateTimes.Count, "There should be exactly " + DateTimes.Count + " occurrences; there were " + occurrences.Count);
         }
+
+        [Test]
+        public void PRODID1()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/PRODID1.ics");
+        }
+
+        [Test]
+        public void PRODID2()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/PRODID2.ics");
+        }
     }
 }

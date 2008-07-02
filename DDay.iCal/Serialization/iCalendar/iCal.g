@@ -66,7 +66,7 @@ qsafe_char returns [string c = string.Empty]: a:~(CTL | DQUOTE | CRLF) {c = a.ge
 safe_char returns [string c = string.Empty]: a:~(CTL | DQUOTE | SEMICOLON | COLON | COMMA | CRLF) {c = a.getText();};
 value_char returns [string c = string.Empty]: a:~(CTL | CRLF) {c = a.getText();};
 tsafe_char returns [string s = string.Empty]: a:~(CTL | DQUOTE | SEMICOLON | COLON | BACKSLASH | COMMA | CRLF) {s = a.getText();};
-text_char returns [string s = string.Empty]: s=tsafe_char | c:COLON { s = c.getText(); } | q:DQUOTE { s = q.getText(); } | e:ESCAPED_CHAR { s = e.getText(); };
+text_char returns [string s = string.Empty]: a:~(CTL | BACKSLASH | CRLF) {s = a.getText();}; // NOTE: Fixes bug #1975624 - Spaces in ProdID break
 text returns [string s = string.Empty] {string t;}: (t=text_char {s += t;})*;
 
 // Number handling
@@ -91,7 +91,7 @@ LF: '\u000a' {$setType(Token.SKIP);};
 protected ALPHA: '\u0041'..'\u005a' | '\u0061'..'\u007a';
 protected DIGIT: '\u0030'..'\u0039';
 protected DASH: '\u002d';
-SPECIAL: '\u0021' | '\u0023'..'\u002b' | '\u003c' | '\u003e'..'\u0040' | '\u005b' | '\u005d'..'\u0060' | '\u007b'..'\u00ff';
+SPECIAL: '\u0021' | '\u0023'..'\u002b' | '\u003c' | '\u003e'..'\u0040' | '\u005b' | '\u005d'..'\u0060' | '\u007b'..'\u007e' | '\u0080'..'\u00ff';
 UNICODE: '\u0100'..'\uFFFE';
 SPACE: '\u0020';
 HTAB: '\u0009';
@@ -104,6 +104,7 @@ BACKSLASH: '\u005c';
 SLASH: '\u002f';
 DQUOTE: '\u0022';
 CRLF: CR LF {newline();};
+CTL: '\u0000'..'\u0008' | '\u000b'..'\u001F' | '\u007F';
 ESCAPED_CHAR: BACKSLASH (BACKSLASH | DQUOTE | SEMICOLON | COMMA | "N" | "n");
 IANA_TOKEN: (ALPHA | DIGIT | DASH)+
 { 
@@ -129,4 +130,5 @@ IANA_TOKEN: (ALPHA | DIGIT | DASH)+
         }        
     }
 };
+
 LINEFOLDER: CRLF (SPACE | HTAB) {$setType(Token.SKIP);};

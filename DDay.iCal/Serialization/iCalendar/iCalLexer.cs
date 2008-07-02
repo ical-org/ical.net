@@ -53,19 +53,19 @@ namespace DDay.iCal.Serialization.iCalendar
 		public const int DQUOTE = 18;
 		public const int CTL = 19;
 		public const int BACKSLASH = 20;
-		public const int ESCAPED_CHAR = 21;
-		public const int NUMBER = 22;
-		public const int DOT = 23;
-		public const int CR = 24;
-		public const int LF = 25;
-		public const int ALPHA = 26;
-		public const int DIGIT = 27;
-		public const int DASH = 28;
-		public const int SPECIAL = 29;
-		public const int UNICODE = 30;
-		public const int SPACE = 31;
-		public const int HTAB = 32;
-		public const int SLASH = 33;
+		public const int NUMBER = 21;
+		public const int DOT = 22;
+		public const int CR = 23;
+		public const int LF = 24;
+		public const int ALPHA = 25;
+		public const int DIGIT = 26;
+		public const int DASH = 27;
+		public const int SPECIAL = 28;
+		public const int UNICODE = 29;
+		public const int SPACE = 30;
+		public const int HTAB = 31;
+		public const int SLASH = 32;
+		public const int ESCAPED_CHAR = 33;
 		public const int LINEFOLDER = 34;
 		
 		public iCalLexer(Stream ins) : this(new ByteBuffer(ins))
@@ -211,6 +211,10 @@ tryAgain:
 							}
 							else if ((cached_LA1=='\\') && (true)) {
 								mBACKSLASH(true);
+								theRetToken = returnToken_;
+							}
+							else if ((tokenSet_2_.member(cached_LA1)) && (true)) {
+								mCTL(true);
 								theRetToken = returnToken_;
 							}
 						else
@@ -378,10 +382,15 @@ tryAgain:
 			matchRange('\u005d','\u0060');
 			break;
 		}
+		case '{':  case '|':  case '}':  case '~':
+		{
+			matchRange('\u007b','\u007e');
+			break;
+		}
 		default:
-			if (((cached_LA1 >= '{' && cached_LA1 <= '\u00ff')))
+			if (((cached_LA1 >= '\u0080' && cached_LA1 <= '\u00ff')))
 			{
-				matchRange('\u007b','\u00ff');
+				matchRange('\u0080','\u00ff');
 			}
 		else
 		{
@@ -566,6 +575,48 @@ tryAgain:
 		returnToken_ = _token;
 	}
 	
+	public void mCTL(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; IToken _token=null; int _begin=text.Length;
+		_ttype = CTL;
+		
+		switch ( cached_LA1 )
+		{
+		case '\u0000':  case '\u0001':  case '\u0002':  case '\u0003':
+		case '\u0004':  case '\u0005':  case '\u0006':  case '\u0007':
+		case '\u0008':
+		{
+			matchRange('\u0000','\u0008');
+			break;
+		}
+		case '\u000b':  case '\u000c':  case '\r':  case '\u000e':
+		case '\u000f':  case '\u0010':  case '\u0011':  case '\u0012':
+		case '\u0013':  case '\u0014':  case '\u0015':  case '\u0016':
+		case '\u0017':  case '\u0018':  case '\u0019':  case '\u001a':
+		case '\u001b':  case '\u001c':  case '\u001d':  case '\u001e':
+		case '\u001f':
+		{
+			matchRange('\u000b','\u001F');
+			break;
+		}
+		case '\u007f':
+		{
+			match('\u007F');
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());
+		}
+		 }
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
 	public void mESCAPED_CHAR(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
 		int _ttype; IToken _token=null; int _begin=text.Length;
@@ -625,7 +676,7 @@ tryAgain:
 		_ttype = IANA_TOKEN;
 		
 		{ // ( ... )+
-			int _cnt107=0;
+			int _cnt109=0;
 			for (;;)
 			{
 				switch ( cached_LA1 )
@@ -661,12 +712,12 @@ tryAgain:
 				}
 				default:
 				{
-					if (_cnt107 >= 1) { goto _loop107_breakloop; } else { throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());; }
+					if (_cnt109 >= 1) { goto _loop109_breakloop; } else { throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());; }
 				}
 				break; }
-				_cnt107++;
+				_cnt109++;
 			}
-_loop107_breakloop:			;
+_loop109_breakloop:			;
 		}    // ( ... )+
 		
 		string s = text.ToString(_begin, text.Length-_begin);
@@ -747,12 +798,21 @@ _loop107_breakloop:			;
 	{
 		long[] data = new long[1025];
 		data[0]=-3458746947404300288L;
-		data[1]=-576460744116142079L;
+		data[1]=8646911292738633729L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
 		for (int i = 4; i<=1024; i++) { data[i]=0L; }
 		return data;
 	}
 	public static readonly BitSet tokenSet_1_ = new BitSet(mk_tokenSet_1_());
+	private static long[] mk_tokenSet_2_()
+	{
+		long[] data = new long[1025];
+		data[0]=4294965759L;
+		data[1]=-9223372036854775808L;
+		for (int i = 2; i<=1024; i++) { data[i]=0L; }
+		return data;
+	}
+	public static readonly BitSet tokenSet_2_ = new BitSet(mk_tokenSet_2_());
 	
 }
 }
