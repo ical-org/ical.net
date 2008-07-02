@@ -1,4 +1,4 @@
-﻿<project schemaVersion="1.6.0.2">
+﻿<project schemaVersion="1.6.0.7">
     <assemblies>
         <assembly assemblyPath=".\DDay.iCal\bin\Release\DDay.iCal.dll" xmlCommentsPath=".\DDay.iCal\bin\Release\DDay.iCal.xml" commentsOnly="False" />
     </assemblies>
@@ -7,7 +7,6 @@
         <namespaceSummaryItem name="DDay.iCal" isDocumented="True">The main namespace for DDay.iCal.  All projects should include this namespace.</namespaceSummaryItem>
         <namespaceSummaryItem name="DDay.iCal.Components" isDocumented="True">Contains the main components and storage structures for DDay.iCal.  Include this namespace if you're interested in creating events, todo items, journal entries, etc.</namespaceSummaryItem>
         <namespaceSummaryItem name="DDay.iCal.DataTypes" isDocumented="True">iCalendar data types.  Include this namespace if you need to work directly with the iCalendar data types, or if you would like to extend an existing data type.</namespaceSummaryItem>
-        <namespaceSummaryItem name="DDay.iCal.Objects" isDocumented="False" />
         <namespaceSummaryItem name="DDay.iCal.Serialization" isDocumented="True">Include this namespace if you'd like to serialize (load/save) your iCalendar.</namespaceSummaryItem>
         <namespaceSummaryItem name="DDay.iCal.Serialization.iCalendar" isDocumented="False" />
         <namespaceSummaryItem name="DDay.iCal.Serialization.iCalendar.Components" isDocumented="False" />
@@ -20,8 +19,8 @@
     <dependencies>
         <dependencyItem depPath=".\antlr.runtime.dll" />
     </dependencies>
-    <ProjectSummary />
-    <MissingTags>AutoDocumentCtors, Namespace</MissingTags>
+    <ProjectSummary>Welcome to the DDay.iCal documentation.  If you're not already familiar with the DDay.iCal library, the best place to start is with the examples, located in the "Examples" folder in the distribution.</ProjectSummary>
+    <MissingTags>AutoDocumentCtors, Namespace, TypeParameter</MissingTags>
     <VisibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, SealedProtected</VisibleItems>
     <HtmlHelp1xCompilerPath path="" />
     <HtmlHelp2xCompilerPath path="" />
@@ -30,12 +29,11 @@
     <WorkingPath path="" />
     <CleanIntermediates>True</CleanIntermediates>
     <KeepLogFile>True</KeepLogFile>
+    <BuildLogFile path="" />
     <HelpFileFormat>Help1xAndWebsite</HelpFileFormat>
-    <PurgeDuplicateTopics>True</PurgeDuplicateTopics>
     <CppCommentsFixup>False</CppCommentsFixup>
     <FrameworkVersion>2.0.50727</FrameworkVersion>
-    <BinaryTOC>True</BinaryTOC>
-    <IncludeFavorites>False</IncludeFavorites>
+    <IndentHtml>False</IndentHtml>
     <Preliminary>True</Preliminary>
     <RootNamespaceContainer>True</RootNamespaceContainer>
     <RootNamespaceTitle>DDay.iCal - iCalendar Class Library</RootNamespaceTitle>
@@ -45,6 +43,7 @@
     <CopyrightHref />
     <CopyrightText>Copyright 2007 Douglas Day</CopyrightText>
     <FeedbackEMailAddress>doug@ddaysoftware.com</FeedbackEMailAddress>
+    <FeedbackEMailLinkText />
     <HeaderText>DDay.iCal Version 0.60</HeaderText>
     <FooterText />
     <ProjectLinkType>Local</ProjectLinkType>
@@ -54,7 +53,11 @@
     <NamingMethod>Guid</NamingMethod>
     <SyntaxFilters>CSharp</SyntaxFilters>
     <ShowFeedbackControl>False</ShowFeedbackControl>
+    <BinaryTOC>True</BinaryTOC>
+    <IncludeFavorites>False</IncludeFavorites>
+    <CollectionTocStyle>Hierarchical</CollectionTocStyle>
+    <IncludeStopWordList>True</IncludeStopWordList>
+    <PlugInNamespaces>ms.vsipcc+, ms.vsexpresscc+</PlugInNamespaces>
+    <HelpFileVersion>1.0.0.0</HelpFileVersion>
     <ContentPlacement>AboveNamespaces</ContentPlacement>
-    <ContentSiteMap path="" />
-    <TopicFileTransform path="" />
 </project>
