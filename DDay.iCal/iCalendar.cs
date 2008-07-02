@@ -528,6 +528,7 @@ namespace DDay.iCal
         /// <param name="url">The Uri from which to load the <see cref="iCalendar"/> object</param>
         /// <returns>An <see cref="iCalendar"/> object</returns>
         static public iCalendar LoadFromUri(Uri uri) { return LoadFromUri(typeof(iCalendar), uri); }
+        static public iCalendar LoadFromUri(Uri uri, WebProxy proxy) { return LoadFromUri(typeof(iCalendar), uri, null, null, proxy); }
         static public T LoadFromUri<T>(Uri uri)
         {
             if (typeof(T) == typeof(iCalendar) ||
@@ -561,7 +562,9 @@ namespace DDay.iCal
             }
             else return default(T);
         }
+        static public iCalendar LoadFromUri(Uri uri, string username, string password, WebProxy proxy) { return LoadFromUri(typeof(iCalendar), uri, username, password, proxy); }
         static public iCalendar LoadFromUri(Type iCalendarType, Uri uri, string username, string password)
+        static public iCalendar LoadFromUri(Type iCalendarType, Uri uri, string username, string password, WebProxy proxy)
         {
             try
             {
@@ -569,6 +572,9 @@ namespace DDay.iCal
                 if (username != null &&
                     password != null)
                     client.Credentials = new System.Net.NetworkCredential(username, password);
+
+                if (proxy != null)
+                    client.Proxy = proxy;
 
                 byte[] bytes = client.DownloadData(uri);
                 MemoryStream ms = new MemoryStream();
