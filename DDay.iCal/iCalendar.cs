@@ -527,21 +527,21 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="url">The Uri from which to load the <see cref="iCalendar"/> object</param>
         /// <returns>An <see cref="iCalendar"/> object</returns>
-        static public iCalendar LoadFromUri(Uri uri) { return LoadFromUri(typeof(iCalendar), uri); }
+        static public iCalendar LoadFromUri(Uri uri) { return LoadFromUri(typeof(iCalendar), uri, null, null, null); }
         static public iCalendar LoadFromUri(Uri uri, WebProxy proxy) { return LoadFromUri(typeof(iCalendar), uri, null, null, proxy); }
         static public T LoadFromUri<T>(Uri uri)
         {
             if (typeof(T) == typeof(iCalendar) ||
                 typeof(T).IsSubclassOf(typeof(iCalendar)))
             {
-                object obj = LoadFromUri(typeof(T), uri);
+                object obj = LoadFromUri(typeof(T), uri, null, null, null);
                 return (T)obj;
             }
             else return default(T);
         }
         static public iCalendar LoadFromUri(Type iCalendarType, Uri uri)
         {
-            return LoadFromUri(uri, null, null);            
+            return LoadFromUri(iCalendarType, uri, null, null, null);
         }
 
         /// <summary>
@@ -551,19 +551,19 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="url">The Uri from which to load the <see cref="iCalendar"/> object</param>
         /// <returns>an <see cref="iCalendar"/> object</returns>
-        static public iCalendar LoadFromUri(Uri uri, string username, string password) { return LoadFromUri(typeof(iCalendar), uri, username, password); }
+        static public iCalendar LoadFromUri(Uri uri, string username, string password) { return LoadFromUri(typeof(iCalendar), uri, username, password, null); }
         static public T LoadFromUri<T>(Uri uri, string username, string password)
         {
             if (typeof(T) == typeof(iCalendar) ||
                 typeof(T).IsSubclassOf(typeof(iCalendar)))
             {
-                object obj = LoadFromUri(typeof(T), uri, username, password);
+                object obj = LoadFromUri(typeof(T), uri, username, password, null);
                 return (T)obj;
             }
             else return default(T);
         }
         static public iCalendar LoadFromUri(Uri uri, string username, string password, WebProxy proxy) { return LoadFromUri(typeof(iCalendar), uri, username, password, proxy); }
-        static public iCalendar LoadFromUri(Type iCalendarType, Uri uri, string username, string password)
+        static public iCalendar LoadFromUri(Type iCalendarType, Uri uri, string username, string password) { return LoadFromUri(iCalendarType, uri, username, password, null); }
         static public iCalendar LoadFromUri(Type iCalendarType, Uri uri, string username, string password, WebProxy proxy)
         {
             try
