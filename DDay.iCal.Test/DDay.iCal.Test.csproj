@@ -388,6 +388,9 @@
     <None Include="Calendars\Todo\TODO8.ics">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Test.doc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DDay.iCal\DDay.iCal.csproj">

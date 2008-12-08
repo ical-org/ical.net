@@ -44,12 +44,14 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
             {
                 List<Parameter> parameters = base.Parameters;
                 if (m_Binary.Uri == null)
-                {                    
+                {                 
+                    // NOTE: fixed a bug here that caused the ENCODING parameter
+                    // to not be properly serialized if it was not included
+                    // in the original object.
                     if (!m_Binary.Parameters.ContainsKey("ENCODING"))
                     {
-                        Parameter p = new Parameter(m_Binary);
-                        p.Name = "ENCODING";
-                        p.Values.Add("BASE64");
+                        Parameter p = new Parameter("ENCODING", "BASE64");
+                        m_Binary.Parameters.Add("ENCODING", p);
                     }
 
                     parameters.Add(m_Binary.Parameters["ENCODING"] as Parameter);
@@ -66,9 +68,11 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
                 return serializer.SerializeToString();
             }
             else
-            {
-                UTF8Encoding encoding = new UTF8Encoding();
-                return Encode(encoding.GetString(m_Binary.Data));                
+            {             
+                // NOTE: fixed a bug pointed out by Tony Dubey that caused binary data
+                // to be converted to a UTF8 string before being serialized into
+                // a BASE64 char array (which caused data loss).
+                return Encode(m_Binary.Data);
             }
         }        
 

@@ -38,7 +38,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
                 case "7BIT":
                 case "8BIT":                
                     value = Regex.Replace(value, @"[^\r]\n", "\r\n");
-                    value = Regex.Replace(value, @"\r[^\n]", "\r\n");                    
+                    value = Regex.Replace(value, @"\r[^\n]", "\r\n");
 
                     bool is7Bit = _DataType.Encoding.Equals("7BIT");
 
@@ -55,6 +55,19 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
                     return encoding.GetString(data.ToArray());
                 default:
                     return value;
+            }
+        }
+
+        protected string Encode(byte[] data)
+        {
+            // NOTE: we can only properly serialize a byte array
+            // into BASE64 - anything else will have the chance
+            // of data loss.
+            switch (_DataType.Encoding)
+            {
+                case "BASE64": return Convert.ToBase64String(data);
+                default:
+                    return null;
             }
         }
 

@@ -2831,5 +2831,23 @@ namespace DDay.iCal.Test
             Assert.IsTrue(string.Compare(serializer.SerializeToString(), "FREQ=DAILY;COUNT=3;BYDAY=MO,WE,FR") == 0,
                 "Serialized recurrence string is incorrect");
         }
+
+        [Test, Category("Recurrence")]
+        public void TEST3()
+        {
+            iCalendar iCal = new iCalendar();
+            Event evt = iCal.Create<Event>();
+
+            evt.Start = new iCalDateTime(2008, 10, 18, 10, 30, 0);
+            evt.Summary = "Test Event";
+            evt.Duration = TimeSpan.FromHours(1);
+            evt.AddRecurrencePattern(new RecurrencePattern("RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH"));
+
+            iCalDateTime doomsdayDate = new iCalDateTime(2010, 12, 31, 10, 30, 0);
+            List<Occurrence> allOcc = evt.GetOccurrences(evt.Start, doomsdayDate);
+
+            foreach (Occurrence occ in allOcc)
+                Console.WriteLine(occ.Period.StartTime.ToString("d") + " " + occ.Period.StartTime.ToString("t"));
+        }
     }
 }

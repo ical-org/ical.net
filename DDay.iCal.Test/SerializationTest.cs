@@ -625,5 +625,67 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE3.ics");            
         }
+
+        private static byte[] ReadBinary(string fileName)
+        {
+            byte[] binaryData = null;
+            using (FileStream reader = new FileStream(fileName, FileMode.Open, FileAccess.Read))            
+            {   
+                binaryData = new byte[reader.Length];
+                reader.Read(binaryData, 0, (int)reader.Length);                
+            }
+
+            return binaryData;
+        }
+
+        private static bool CompareBinary(string fileName, byte[] data)
+        {
+            byte[] binaryData = null;
+            using (FileStream reader = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+            {
+                binaryData = new byte[reader.Length];
+                reader.Read(binaryData, 0, (int)reader.Length);
+            }
+
+            if (binaryData == null && data == null)
+                return true;
+            else if (binaryData == null || data == null)
+                return false;
+                                    
+            for (int i = 0; i < data.Length; i++)
+            {
+                if (binaryData[i] != data[i])
+                    return false;
+            }
+
+            return true;
+        }
+
+        [Test, Category("Serialization")]
+        public void BINARY1()
+        {
+            iCalendar iCal = new iCalendar();
+            
+            // Create a test event
+            Event evt = iCal.Create<Event>();
+            evt.Summary = "Test Event";
+            evt.Start = new iCalDateTime(2007, 10, 15, 8, 0, 0);
+            evt.Duration = TimeSpan.FromHours(1);
+
+            // Add an attachment to this event
+            Binary binary = new Binary();
+            binary.AddParameter("X-FILENAME", "WordDocument.doc");
+            binary.Data = ReadBinary(@"Data\Test.doc");
+            evt.AddAttachment(binary);
+
+            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
+            serializer.Serialize(@"Calendars\Serialization\Temp\BINARY1.ics");
+
+            iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\BINARY1.ics");
+            evt = iCal.Events[0];
+            binary = evt.Attach[0];
+
+            Assert.IsTrue(CompareBinary(@"Data\Test.doc", binary.Data), "Serialized version of Test.doc did not match the deserialized version.");
+        }
     }
 }

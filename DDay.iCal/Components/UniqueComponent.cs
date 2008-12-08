@@ -444,6 +444,48 @@ namespace DDay.iCal.Components
             }
         }
 
+        virtual public void AddAttachment(byte[] data)
+        {
+            Binary binary = new Binary();
+            binary.Data = data;
+
+            AddAttachment(binary);
+        }
+
+        virtual public void AddAttachment(Binary binary)
+        {
+            binary.Name = "ATTACH";
+
+            if (Attach == null)
+            {
+                Attach = new Binary[] { binary };                
+            }
+            else
+            {
+                Binary[] attachments = Attach;
+                Attach = new Binary[Attach.Length + 1];
+                attachments.CopyTo(Attach, 0);
+                Attach[Attach.Length - 1] = binary;                
+            }
+        }
+
+        virtual public void RemoveAttachment(Binary binary)
+        {
+            if (Attach == null)
+                return;
+            else
+            {
+                int index = Array.IndexOf<Binary>(Attach, binary);
+                if (index >= 0)
+                {
+                    Binary[] attachments = new Binary[Attach.Length - 1];
+                    Array.Copy(Attach, 0, attachments, 0, index);
+                    Array.Copy(Attach, index + 1, attachments, index, attachments.Length - index);
+                    Attach = attachments;
+                }
+            }
+        }
+
         #endregion
 
         #region Static Public Methods
