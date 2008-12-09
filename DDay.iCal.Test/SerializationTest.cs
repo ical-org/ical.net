@@ -661,6 +661,9 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             return true;
         }
 
+        /// <summary>
+        /// Ensures that a basic, binary attachment functions as it should.
+        /// </summary>
         [Test, Category("Serialization")]
         public void BINARY1()
         {
@@ -679,6 +682,8 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             evt.AddAttachment(binary);
 
             iCalendarSerializer serializer = new iCalendarSerializer(iCal);
+            if (!Directory.Exists(@"Calendars\Serialization\Temp"))
+                Directory.CreateDirectory(@"Calendars\Serialization\Temp");
             serializer.Serialize(@"Calendars\Serialization\Temp\BINARY1.ics");
 
             iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\BINARY1.ics");
@@ -686,6 +691,80 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             binary = evt.Attach[0];
 
             Assert.IsTrue(CompareBinary(@"Data\Test.doc", binary.Data), "Serialized version of Test.doc did not match the deserialized version.");
+        }
+
+        /// <summary>
+        /// Ensures that very large attachments function as they should.
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void BINARY2()
+        {
+            iCalendar iCal = new iCalendar();
+
+            // Create a test event
+            Event evt = iCal.Create<Event>();
+            evt.Summary = "Test Event";
+            evt.Start = new iCalDateTime(2007, 10, 15, 8, 0, 0);
+            evt.Duration = TimeSpan.FromHours(1);
+            
+            // Get a data file
+            string loremIpsum = UnicodeEncoding.Default.GetString(ReadBinary(@"Data\LoremIpsum.txt"));
+            StringBuilder sb = new StringBuilder();
+            // If we copy it 100 times, we should end up with a file over 5MB in size.
+            for (int i = 0; i < 100; i++)
+                sb.AppendLine(loremIpsum);
+
+            // Add an attachment to this event
+            Binary binary = new Binary();            
+            binary.Data = UnicodeEncoding.Default.GetBytes(sb.ToString());
+            evt.AddAttachment(binary);
+
+            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
+            if (!Directory.Exists(@"Calendars\Serialization\Temp"))
+                Directory.CreateDirectory(@"Calendars\Serialization\Temp");
+            serializer.Serialize(@"Calendars\Serialization\Temp\BINARY2.ics");
+
+            iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\BINARY2.ics");
+            evt = iCal.Events[0];
+            binary = evt.Attach[0];
+
+            // Ensure the generated and serialized strings match
+            Assert.AreEqual(sb.ToString(), UnicodeEncoding.Default.GetString(binary.Data));
+
+            // Times to finish the test for attachment file sizes (on my computer): 
+            //  0.92MB = 1.2 seconds
+            //  2.76MB = 6 seconds
+            //  4.6MB = 15.1 seconds
+            //  9.2MB = 54 seconds
+        }
+
+        [Test, Category("Serialization")]
+        public void RELATED_TO1()
+        {
+            iCalendar iCal = new iCalendar();
+
+            // Create a test event
+            Event evt1 = iCal.Create<Event>();
+            evt1.Summary = "Work Party";
+            evt1.Start = new iCalDateTime(2007, 10, 15, 8, 0, 0);
+            evt1.Duration = TimeSpan.FromHours(1);
+
+            // Create another event that relates to evt1
+            Event evt2 = iCal.Create<Event>();
+            evt2.Summary = "Water Polo";
+            evt2.Start = new iCalDateTime(2007, 10, 15, 10, 0, 0);
+            evt2.Duration = TimeSpan.FromHours(1);
+            evt2.AddRelatedTo(evt1.UID, RelationshipTypes.Parent); // evt1 is the parent of evt2
+            
+            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
+            serializer.Serialize(@"Calendars\Serialization\Temp\RELATED_TO1.ics");
+
+            iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\RELATED_TO1.ics");
+            evt2 = iCal.Events[evt2.UID];
+
+            Assert.AreEqual(1, evt2.Related_To.Length);
+            Assert.AreEqual("<" + evt1.UID + ">", evt2.Related_To[0].Value);
+            Assert.AreEqual(((Parameter)evt2.Related_To[0].Parameters["RELTYPE"]).Values[0], RelationshipTypes.Parent);
         }
     }
 }

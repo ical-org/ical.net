@@ -169,19 +169,25 @@ namespace DDay.iCal.Serialization.iCalendar.Components
         #region ISerializable Members
 
         public string SerializeToString()
-        {
-            List<string> values = new List<string>();
-            string value = m_text;
+        {   
+            // NOTE: Made this method more efficient by removing
+            // the use of strings, and only using StringBuilders.
+            // Also, the "while" loop was removed, and StringBuilder
+            // modifications are kept at a minimum.
+            StringBuilder result = new StringBuilder();
+            StringBuilder current = new StringBuilder(m_text);
 
             // Wrap lines at 75 characters, per RFC 2445 "folding" technique
-            while (value.Length > 75)
-            {
-                values.Add(value.Substring(0, 75) + "\r\n");
-                value = " " + value.Substring(75);                
+            int i = 0;
+            if (current.Length > 75)
+            {                
+                result.Append(current.ToString(0, 75) + "\r\n ");
+                for (i = 75; i < current.Length - 74; i += 74)
+                    result.Append(current.ToString(i, 74) + "\r\n ");
             }
-            values.Add(value);
+            result.Append(current.ToString(i, current.Length - i));
 
-            return string.Join(string.Empty, values.ToArray());
+            return result.ToString();
         }
 
         public void Serialize(Stream stream, Encoding encoding)

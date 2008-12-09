@@ -307,6 +307,49 @@ namespace DDay.iCal.Components
 
         #region Public Methods
 
+        virtual public void AddAttachment(byte[] data)
+        {
+            Binary binary = new Binary();
+            binary.Data = data;
+
+            AddAttachment(binary);
+        }
+
+        virtual public void AddAttachment(Binary binary)
+        {
+            binary.Name = "ATTACH";
+
+            if (Attach == null)
+            {
+                Attach = new Binary[] { binary };
+            }
+            else
+            {
+                Binary[] attachments = Attach;
+                Attach = new Binary[Attach.Length + 1];
+                attachments.CopyTo(Attach, 0);
+                Attach[Attach.Length - 1] = binary;
+            }
+        }
+
+        virtual public void RemoveAttachment(Binary binary)
+        {
+            if (Attach == null)
+                return;
+            else
+            {
+                int index = Array.IndexOf<Binary>(Attach, binary);
+                if (index >= 0)
+                {
+                    Binary[] attachments = new Binary[Attach.Length - 1];
+                    Array.Copy(Attach, 0, attachments, 0, index);
+                    Array.Copy(Attach, index + 1, attachments, index, attachments.Length - index);
+                    Attach = attachments;
+                }
+            }
+        }
+
+
         virtual public void AddAttendee(Cal_Address attendee)
         {
             List<Cal_Address> attendees = new List<Cal_Address>();
@@ -444,44 +487,53 @@ namespace DDay.iCal.Components
             }
         }
 
-        virtual public void AddAttachment(byte[] data)
+        virtual public void AddRelatedTo(string uid)
         {
-            Binary binary = new Binary();
-            binary.Data = data;
-
-            AddAttachment(binary);
+            AddRelatedTo(uid, null);
         }
 
-        virtual public void AddAttachment(Binary binary)
+        virtual public void AddRelatedTo(string uid, string relationshipType)
         {
-            binary.Name = "ATTACH";
+            Text text = new Text("<" + uid + ">");
+            if (relationshipType != null)
+                text.AddParameter(new Parameter("RELTYPE", relationshipType));
 
-            if (Attach == null)
+            if (Related_To == null)
             {
-                Attach = new Binary[] { binary };                
+                Related_To = new Text[] { text };
             }
             else
             {
-                Binary[] attachments = Attach;
-                Attach = new Binary[Attach.Length + 1];
-                attachments.CopyTo(Attach, 0);
-                Attach[Attach.Length - 1] = binary;                
+                Text[] related_to = Related_To;
+                Related_To = new Text[Related_To.Length + 1];
+                related_to.CopyTo(Related_To, 0);
+                Related_To[Related_To.Length - 1] = text;                
             }
         }
 
-        virtual public void RemoveAttachment(Binary binary)
+        virtual public void RemoveRelatedTo(string uid)
         {
-            if (Attach == null)
+            if (Related_To == null)
                 return;
             else
             {
-                int index = Array.IndexOf<Binary>(Attach, binary);
+                int index = -1;
+                for (int i = 0; i < Related_To.Length; i++)
+                {
+                    if (Related_To[i].Value.Equals(uid) ||
+                        Related_To[i].Value.Equals("<" + uid + ">"))
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+                
                 if (index >= 0)
                 {
-                    Binary[] attachments = new Binary[Attach.Length - 1];
-                    Array.Copy(Attach, 0, attachments, 0, index);
-                    Array.Copy(Attach, index + 1, attachments, index, attachments.Length - index);
-                    Attach = attachments;
+                    Text[] related_to = new Text[Related_To.Length - 1];
+                    Array.Copy(Related_To, 0, related_to, 0, index);
+                    Array.Copy(Related_To, index + 1, related_to, index, related_to.Length - index);
+                    Related_To = related_to;
                 }
             }
         }

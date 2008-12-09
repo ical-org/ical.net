@@ -62,6 +62,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Components\Occurrence.cs" />
+    <Compile Include="Components\RelationshipTypes.cs" />
     <Compile Include="Components\TimeZoneInfo.cs" />
     <Compile Include="DataTypes\DateUtils.cs" />
     <Compile Include="DataTypes\EvaluationEngineException.cs" />

@@ -12,10 +12,21 @@ namespace DDay.iCal.Serialization.iCalendar.Components
     {
         #region Static Public Methods
 
+        /// <summary>
+        /// Unwraps lines from the RFC 2445 "line folding" technique.
+        /// </summary>        
+        static public string UnwrapLines(string s)
+        {
+            return Regex.Replace(s, @"(\r\n )", string.Empty);
+        }
+
+        /// <summary>
+        /// Normalizes line endings, converting "\r" into "\r\n" and "\n" into "\r\n".
+        /// </summary>
         static public TextReader NormalizeLineEndings(string s)
         {
             // Replace \r and \n with \r\n.
-            return new StringReader(Regex.Replace(s, @"((\r(?=[^\n]))|((?<=[^\r])\n))", "\r\n"));            
+            return new StringReader(UnwrapLines(Regex.Replace(s, @"((\r(?=[^\n]))|((?<=[^\r])\n))", "\r\n")));
         }
 
         static public TextReader NormalizeLineEndings(TextReader tr)
