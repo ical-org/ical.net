@@ -24,7 +24,7 @@ namespace DDay.iCal.Components
         private Geo m_Geo;
         private bool m_Loaded = false;
         private Text m_Location;
-        private Integer m_PercentComplete;
+        private Integer m_Percent_Complete;
         private TextCollection[] m_Resources;
         private TodoStatus m_Status;
 
@@ -99,10 +99,10 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
-        public Integer PercentComplete
+        public Integer Percent_Complete
         {
-            get { return m_PercentComplete; }
-            set { m_PercentComplete = value; }
+            get { return m_Percent_Complete; }
+            set { m_Percent_Complete = value; }
         }
 
         [Serialized]
