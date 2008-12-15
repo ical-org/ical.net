@@ -473,6 +473,9 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             SerializeTest("SERIALIZE29.ics", typeof(iCalendarSerializer));
         }
 
+        /// <summary>
+        /// Tests bug #2148092 - Percent compelete serialization error
+        /// </summary>
         [Test, Category("Serialization")]
         public void SERIALIZE30()
         {
