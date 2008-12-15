@@ -710,8 +710,8 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             // Get a data file
             string loremIpsum = UnicodeEncoding.Default.GetString(ReadBinary(@"Data\LoremIpsum.txt"));
             StringBuilder sb = new StringBuilder();
-            // If we copy it 100 times, we should end up with a file over 5MB in size.
-            for (int i = 0; i < 100; i++)
+            // If we copy it 300 times, we should end up with a file over 2.5MB in size.
+            for (int i = 0; i < 300; i++)
                 sb.AppendLine(loremIpsum);
 
             // Add an attachment to this event
@@ -763,7 +763,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             evt2 = iCal.Events[evt2.UID];
 
             Assert.AreEqual(1, evt2.Related_To.Length);
-            Assert.AreEqual("<" + evt1.UID + ">", evt2.Related_To[0].Value);
+            Assert.AreEqual(evt1.UID, evt2.Related_To[0].Value);
             Assert.AreEqual(((Parameter)evt2.Related_To[0].Parameters["RELTYPE"]).Values[0], RelationshipTypes.Parent);
         }
     }

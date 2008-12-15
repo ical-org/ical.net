@@ -494,7 +494,7 @@ namespace DDay.iCal.Components
 
         virtual public void AddRelatedTo(string uid, string relationshipType)
         {
-            Text text = new Text("<" + uid + ">");
+            Text text = new Text(uid);
             if (relationshipType != null)
                 text.AddParameter(new Parameter("RELTYPE", relationshipType));
 
