@@ -399,6 +399,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Calendars\Serialization\SERIALIZE30.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Data\LoremIpsum.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
