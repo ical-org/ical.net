@@ -31,5 +31,5 @@ using System.Security;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("0.62.0.0")]
-[assembly: AssemblyFileVersion("0.62.0.0")]
+[assembly: AssemblyVersion("0.70.0.0")]
+[assembly: AssemblyFileVersion("0.70.0.0")]
