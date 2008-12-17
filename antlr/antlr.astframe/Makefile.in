@@ -1,0 +1,65 @@
+##xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@stdvars@
+##xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+## do not change this value 
+subdir=lib/csharp/antlr.astframe
+
+all :: lib
+
+lib: @astframe_net@
+
+antlr_cs_FILES = \
+	$(_srcdir)/antlr.debug.misc/ASTFrame.cs \
+	$(_srcdir)/antlr.debug.misc/JTreeASTPanel.cs \
+  $(eof)
+
+## Next rule is about to compile antlr.astframe.dll. The  whole
+## rule looks bit complicated.
+## - First we remove the target. Later we check then  wether the
+## target has really been created. Due  to  experience  we don't
+## trust our tool's exit code.
+## - Our target depends on antlr.runtime.dll and  so  we need to
+## add (+) it via appropriate environment variable  CSHARPCFLAGS.
+## - Then we check whether target really has been made.
+## - Finally we  make  sure to update ASTFRAME_NET. ASTFRAME_NET 
+## may point anywhere in the filesystem, especially also in this
+## directory. We can't therefore remove ASTFRAME_NET as astframe_
+## net and ASTFRAME_NET can be identical. To avoid this we make
+## a copy of astframe_net which dies not clash with ASTFRAME_NET
+## by adding the  process  id  to  the filename. Finally we copy 
+## and remove temporaries.
+ @astframe_net@ : $(antlr_cs_FILES) @ANTLR_NET@
+	@-rm -f $@
+	@ CSHARPCFLAGS="+ /r:`@CYGPATH_W@ @ANTLR_NET@`" \
+	  @CSHARP_COMPILE_CMD@  $@ $(antlr_cs_FILES)
+	@test -f $@ || exit 1
+	@ cp $@ $@.$$$$ && rm -f @ASTFRAME_NET@ ; \
+		cp $@.$$$$ @ASTFRAME_NET@ ; \
+		cp @ASTFRAME_NET@ $@ ; \
+	  rm -rf $@.$$$$
+
+clean ::
+	rm -rf *.obj *.o *.a  *.lib *.so *.dll *~ @astframe_net@ @ASTFRAME_NET@
+
+distclean :: clean
+	$(RM) Makefile
+
+## install our target ..
+install :: @ASTFRAME_NET@ 
+	@$(MKDIR) -p "$(libdir)"
+	@echo "install C# core files .. "
+	@for f in @ASTFRAME_NET@  ; do \
+		echo "install $${f}" ; \
+		if test -f "$${f}" ; then \
+			$(INSTALL) -m 444 "$${f}" "$(libdir)" ; \
+			$(INSTALL) -m 444 "$${f}" "$(datadir)/$(versioneddir)" ; \
+		fi ;\
+	done
+
+## dependencies
+@astframe_net@        : Makefile
+@astframe_net@        : @abs_this_builddir@/scripts/csc.sh
+
+## other dependencies to be listed below
+@stddeps@

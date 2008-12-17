@@ -1,0 +1,153 @@
+##xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@stdvars@
+##xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+## do not change this value 
+subdir=lib/csharp/antlr.runtime
+
+all :: lib
+
+lib: @ANTLR_NET@
+
+antlr_cs_FILES = \
+  @abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/ANTLRException.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/ANTLRPanicException.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/ASTFactory.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/ASTNodeCreator.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/ASTNULLType.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/ASTPair.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/ASTVisitor.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/BaseAST.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/ByteBuffer.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/CharBuffer.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/CharQueue.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/CharScanner.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/CharStreamException.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/CharStreamIOException.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/CommonAST.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/CommonASTWithHiddenTokens.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/CommonHiddenStreamToken.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/CommonToken.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/DefaultFileLineFormatter.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/DumpASTVisitor.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/FileLineFormatter.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/IHiddenStreamToken.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/InputBuffer.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/IToken.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/LexerSharedInputState.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/LLkParser.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/MismatchedCharException.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/MismatchedTokenException.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/NoViableAltException.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/NoViableAltForCharException.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/Parser.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/ParserSharedInputState.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/ParseTree.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/ParseTreeRule.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/ParseTreeToken.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/RecognitionException.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/SemanticException.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/StringUtils.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/TokenBuffer.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/Token.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/TokenCreator.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/TokenQueue.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/TokenStreamBasicFilter.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/TokenStream.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/TokenStreamException.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/TokenStreamHiddenTokenFilter.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/TokenStreamIOException.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/TokenStreamRecognitionException.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/TokenStreamRetryException.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/TokenStreamRewriteEngine.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/TokenStreamSelector.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/TokenWithIndex.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/TreeParser.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr/TreeParserSharedInputState.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.collections/AST.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.collections.impl/ASTArray.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.collections.impl/BitSet.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/ANTLREventArgs.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/DebuggingCharScanner.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/DebuggingInputBuffer.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/DebuggingParser.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/GuessingEventArgs.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/ICharScannerDebugSubject.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/IDebugSubject.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/InputBufferEventArgs.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/InputBufferEventSupport.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/InputBufferListenerBase.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/InputBufferListener.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/InputBufferReporter.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/IParserDebugSubject.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/Listener.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/LLkDebuggingParser.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/MessageEventArgs.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/MessageListenerBase.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/MessageListener.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/NewLineEventArgs.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/NewLineListener.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/ParserController.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/ParserEventSupport.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/ParserListenerBase.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/ParserListener.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/ParserMatchEventArgs.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/ParserMatchListenerBase.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/ParserMatchListener.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/ParserReporter.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/ParserTokenEventArgs.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/ParserTokenListenerBase.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/ParserTokenListener.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/ParseTreeDebugParser.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/ScannerEventSupport.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/SemanticPredicateEventArgs.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/SemanticPredicateListenerBase.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/SemanticPredicateListener.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/SyntacticPredicateEventArgs.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/SyntacticPredicateListenerBase.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/SyntacticPredicateListener.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/TraceEventArgs.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/TraceListenerBase.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/TraceListener.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/antlr.debug/Tracer.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/SupportClass.cs\
+	@abs_top_srcdir@/lib/csharp/antlr.runtime/AssemblyInfo.cs\
+  $(eof)
+
+
+clean-target ::
+	@ rm @ANTLR_NET@
+
+@ANTLR_NET@ :: $(antlr_cs_FILES) 
+	 @- rm -f $@
+	 @  @CSHARP_COMPILE_CMD@  $@ $(antlr_cs_FILES)
+	 @  test -f  $@ || exit 1
+
+clean ::
+	rm -rf *.obj *.o *.a  *.lib *.so *.dll *~ @ANTLR_NET@
+
+## use this target if you just want to rebuild the lib without
+## compiling again.
+clean-lib :
+	rm -f @ANTLR_NET@
+
+distclean :: clean
+	$(RM) Makefile
+
+install :: @ANTLR_NET@ 
+	@$(MKDIR) -p "$(libdir)"
+	@echo "install C# core files .. "
+	@for f in @ANTLR_NET@  ; do \
+		echo "install $${f}" ; \
+		if test -f "$${f}" ; then \
+			$(INSTALL) -m 444 "$${f}" "$(libdir)" ; \
+			$(INSTALL) -m 444 "$${f}" "$(datadir)/$(versioneddir)" ; \
+		fi ;\
+	done
+
+## dependencies
+@ANTLR_NET@        :: Makefile
+@ANTLR_NET@        :: @abs_this_builddir@/scripts/csc.sh
+
+## other dependencies to be listed below
+@stddeps@
