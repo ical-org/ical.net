@@ -14,25 +14,47 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
         /// <summary>
         /// Unwraps lines from the RFC 2445 "line folding" technique.
-        /// </summary>        
+        /// NOTE: this method makes the line/col numbers output from
+        /// antlr incorrect.
+        /// </summary>
         static public string UnwrapLines(string s)
-        {
+        {            
             return Regex.Replace(s, @"(\r\n )", string.Empty);
         }
 
         /// <summary>
-        /// Normalizes line endings, converting "\r" into "\r\n" and "\n" into "\r\n".
+        /// Removes blank lines from a string with normalized (\r\n)
+        /// line endings.
+        /// NOTE: this method makes the line/col numbers output from
+        /// antlr incorrect.
         /// </summary>
-        static public TextReader NormalizeLineEndings(string s)
+        static public string RemoveEmptyLines(string s)
         {
-            // Replace \r and \n with \r\n.
-            return new StringReader(UnwrapLines(Regex.Replace(s, @"((\r(?=[^\n]))|((?<=[^\r])\n))", "\r\n")));
+            int len = -1;
+            while (len != s.Length)
+            {
+                s = s.Replace("\r\n\r\n", "\r\n");
+                len = s.Length;
+            }
+            return s;
         }
 
-        static public TextReader NormalizeLineEndings(TextReader tr)
+        /// <summary>
+        /// Normalizes line endings, converting "\r" into "\r\n" and "\n" into "\r\n".        
+        /// </summary>
+        static public TextReader NormalizeLineEndings(string s, bool maintainLineAccuracy)
+        {
+            // Replace \r and \n with \r\n.
+            s = Regex.Replace(s, @"((\r(?=[^\n]))|((?<=[^\r])\n))", "\r\n");
+            if (!maintainLineAccuracy)
+                s = RemoveEmptyLines(UnwrapLines(s));
+            return new StringReader(s);
+        }
+
+        static public TextReader NormalizeLineEndings(TextReader tr, bool maintainLineAccuracy)
         {
             string s = tr.ReadToEnd();
-            TextReader reader = NormalizeLineEndings(s);
+            TextReader reader = NormalizeLineEndings(s, maintainLineAccuracy);
             tr.Close();
 
             return reader;

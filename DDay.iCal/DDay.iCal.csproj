@@ -184,6 +184,7 @@
     <Content Include="License.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Serialization\iCalendar\iCalParserTokenTypes.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DDay.iCal.pfx" />

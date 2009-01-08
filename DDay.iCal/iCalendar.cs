@@ -89,13 +89,6 @@ namespace DDay.iCal
     /// </remarks>
     public class iCalendar : ComponentBase, IDisposable
     {
-        #region Readonly Fields
-
-        static private readonly string _Version = "2.0";
-        static private readonly string _ProdID = "-//DDay.iCal//NONSGML ddaysoftware.com//EN";
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
@@ -115,12 +108,7 @@ namespace DDay.iCal
             FreeBusy = new List<FreeBusy>();
             Journals = new UniqueComponentList<Journal>(this);
             TimeZones = new List<iCalTimeZone>();
-            Todos = new UniqueComponentList<Todo>(this);
-
-            // Set default values for these required properties
-            // NOTE: fixes bug #1672047
-            Version = _Version;
-            ProductID = _ProdID;
+            Todos = new UniqueComponentList<Todo>(this);            
             
             object[] attrs = GetType().GetCustomAttributes(typeof(ComponentBaseTypeAttribute), false);
             if (attrs.Length > 0)
@@ -300,9 +288,10 @@ namespace DDay.iCal
                 return null;
             }
             set
-            {
-                if (string.IsNullOrEmpty(value))
-                    Properties["VERSION"] = new Property(this, "VERSION", _Version);
+            {                
+                if (string.IsNullOrEmpty(value) &&
+                    Properties.ContainsKey("VERSION"))
+                    Properties.Remove("VERSION");                    
                 else Properties["VERSION"] = new Property(this, "VERSION", value);
             }
         }
@@ -317,8 +306,9 @@ namespace DDay.iCal
             }
             set
             {
-                if (string.IsNullOrEmpty(value))
-                    Properties["PRODID"] = new Property(this, "PRODID", _ProdID);
+                if (string.IsNullOrEmpty(value) &&
+                    Properties.ContainsKey("PRODID"))
+                    Properties.Remove("PRODID"); 
                 else Properties["PRODID"] = new Property(this, "PRODID", value);
             }            
         }
@@ -576,12 +566,8 @@ namespace DDay.iCal
                 if (proxy != null)
                     client.Proxy = proxy;
 
-                byte[] bytes = client.DownloadData(uri);
-                MemoryStream ms = new MemoryStream();
-                ms.SetLength(bytes.Length);
-                bytes.CopyTo(ms.GetBuffer(), 0);
-
-                return LoadFromStream(iCalendarType, ms, Encoding.UTF8);
+                string str = client.DownloadString(uri);
+                return LoadFromStream(new StringReader(str));
             }
             catch (System.Net.WebException ex)
             {
@@ -724,9 +710,26 @@ namespace DDay.iCal
         {
             if (iCal != null)
             {
+                // Merge all parameters
+                foreach (DictionaryEntry de in iCal.Parameters)
+                {
+                    if (!this.Parameters.ContainsKey(de))
+                        this.Parameters[de.Key] = de.Value;
+                }
+
+                // Merge all properties
+                foreach (DictionaryEntry de in iCal.Properties)
+                {
+                    if (!this.Properties.ContainsKey(de.Key))
+                        this.Properties[de.Key] = de.Value;
+                }
+
                 // Merge all unique components
                 foreach (UniqueComponent uc in iCal.UniqueComponents)
-                    this.AddChild(uc);
+                {
+                    if (!this.UniqueComponents.ContainsKey(uc.UID))
+                        this.AddChild(uc);
+                }
 
                 // Add all time zones
                 foreach (iCalTimeZone tz in iCal.TimeZones)

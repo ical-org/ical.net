@@ -30,6 +30,13 @@ namespace DDay.iCal.Serialization
     /// </summary>
     public class iCalendarSerializer : ComponentBaseSerializer 
     {
+        #region Readonly Fields
+
+        static private readonly string _Version = "2.0";
+        static private readonly string _ProdID = "-//DDay.iCal//NONSGML ddaysoftware.com//EN";
+
+        #endregion
+
         #region Private Fields
 
         private DDay.iCal.iCalendar m_iCalendar;        
@@ -49,7 +56,7 @@ namespace DDay.iCal.Serialization
                     base.Component = value;
                 }
             }
-        }
+        }       
 
         #endregion
 
@@ -73,11 +80,23 @@ namespace DDay.iCal.Serialization
             fs.Close();
         }
 
+        public override void Serialize(Stream stream, Encoding encoding)
+        {
+            // Set default values for these required properties
+            // NOTE: fixes bug #1672047            
+            if (string.IsNullOrEmpty(iCalendar.Version))
+                iCalendar.Version = _Version;
+            if (string.IsNullOrEmpty(iCalendar.ProductID))
+                iCalendar.ProductID = _ProdID;
+
+            base.Serialize(stream, encoding);
+        }
+
         public override iCalObject Deserialize(TextReader tr, Type iCalendarType)
         {
             // Normalize line endings, so "\r" is treated the same as "\r\n"
             // NOTE: fixed bug #1773194 - Some applications emit mixed line endings
-            TextReader textReader = NormalizeLineEndings(tr);
+            TextReader textReader = NormalizeLineEndings(tr, !OptimizeForSpeed);
 
             // Create a lexer for our text stream
             iCalLexer lexer = new iCalLexer(textReader);

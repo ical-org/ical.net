@@ -1,0 +1,28 @@
+BEGIN:VCALENDAR
+X-WR-CALNAME:GKCC
+BEGIN:VEVENT
+UID:fadc65bd4f5d746ce4a581f072ca66ea
+DTSTART;VALUE=DATE:20090117T200000
+SUMMARY:Apple Hill Chamber Players
+DESCRIPTION:THis is a really long 
+ description that should take multiple 
+ lines. There's a lot
+ of lines that can be
+ made just like this one.
+DTEND;VALUE=DATE:20090117T220000
+LOCATION:The Colonial Theatre
+URL;VALUE=URI:http://www.keenechamber.com/events.html?date=1232164801#eventid2377
+CREATED:20080716T070640Z
+END:VEVENT
+
+a
+BEGIN:VEVENT
+UID:8a435f4360e7e7b3ba5cc38d65791b55
+DTSTART;VALUE=DATE:20090120T193000
+SUMMARY:Hairspray
+DTEND;VALUE=DATE:20090120T220000
+LOCATION:The Colonial Theatre
+URL;VALUE=URI:http://www.keenechamber.com/events.html?date=1232424001#eventid2378
+CREATED:20080716T070640Z
+END:VEVENT
+END:VCALENDAR

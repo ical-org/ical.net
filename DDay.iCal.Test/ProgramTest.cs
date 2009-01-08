@@ -353,6 +353,21 @@ namespace DDay.iCal.Test
             SerializationTest.CompareCalendars(iCal, tmp_cal);
         }
 
+        /// <summary>
+        /// The following tests the MergeWith() method of iCalendar to
+        /// ensure that unique component merging happens as expected.
+        /// </summary>
+        [Test]
+        public void MERGE3()
+        {
+            iCalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics");
+            iCalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE23.ics");
+
+            iCal1.MergeWith(iCal2);
+
+            Assert.AreEqual(1, iCal1.Events.Count);
+        }
+
         [Test]
         public void UID1()
         {

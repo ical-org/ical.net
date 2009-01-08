@@ -11,9 +11,8 @@ namespace DDay.iCal.Components
     /// <remarks>
     /// In the RFC 2445 specification, content lines are wrapped
     /// with a newline, followed by a whitespace character, after they surpass
-    /// 75 characters in length.  Therefore, a <see cref="ContentLine"/> represents
-    /// this entire line, after "unwrapping" the newline + whitespace character
-    /// sequence.
+    /// 75 characters in length.  A <see cref="ContentLine"/> represents
+    /// this entire line, including potential line wrap sequences ("\r\n ").
     /// </remarks>
     public class ContentLine : iCalObject
     {

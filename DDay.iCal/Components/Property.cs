@@ -98,9 +98,14 @@ namespace DDay.iCal.Components
         public void AddToParent()
         {
             if (Parent != null &&
-                Name != null &&
-                !Parent.Properties.ContainsKey(Name))
+                Name != null)
+            {
+                // Remove a previous property, if it exists
+                if (Parent.Properties.ContainsKey(Name))
+                    Parent.Properties.Remove(Name);
+
                 Parent.Properties[Name] = this;
+            }
         }
 
         #endregion

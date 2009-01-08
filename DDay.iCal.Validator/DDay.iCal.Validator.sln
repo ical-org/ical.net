@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDay.iCal.Validator", "DDay.iCal.Validator\DDay.iCal.Validator.csproj", "{CFC7E23A-D49B-42F5-8AC2-12D6C86D3914}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iCalValid", "iCalValid\iCalValid.csproj", "{EA6BA8D9-5520-4810-B9A0-88B80EEED3AA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CFC7E23A-D49B-42F5-8AC2-12D6C86D3914}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFC7E23A-D49B-42F5-8AC2-12D6C86D3914}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFC7E23A-D49B-42F5-8AC2-12D6C86D3914}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFC7E23A-D49B-42F5-8AC2-12D6C86D3914}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA6BA8D9-5520-4810-B9A0-88B80EEED3AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA6BA8D9-5520-4810-B9A0-88B80EEED3AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA6BA8D9-5520-4810-B9A0-88B80EEED3AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA6BA8D9-5520-4810-B9A0-88B80EEED3AA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

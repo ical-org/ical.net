@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{CFC7E23A-D49B-42F5-8AC2-12D6C86D3914}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DDay.iCal.Validator</RootNamespace>
+    <AssemblyName>DDay.iCal.Validator</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="antlr.runtime, Version=2.7.6.2, Culture=neutral, PublicKeyToken=1790ba318ebc5d56, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\antlr.runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="DDay.iCal, Version=0.70.0.0, Culture=neutral, PublicKeyToken=1790ba318ebc5d56, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DDay.iCal.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Messages.en-US.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Messages.en-US.resx</DependentUpon>
+    </None>
+    <None Include="Resources\Messages.Designer.cs">
+      <DependentUpon>Messages.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </None>
+    <Compile Include="ValidationErrors\CalendarNotLoadedError.cs" />
+    <Compile Include="ValidationErrors\CalendarParseError.cs" />
+    <Compile Include="ValidationErrors\MissingVersionError.cs" />
+    <Compile Include="Interfaces\IValidator.cs" />
+    <Compile Include="Interfaces\IValidationError.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceManager.cs" />
+    <Compile Include="ValidationErrors\Errors.cs" />
+    <Compile Include="RFC2445\Strict2_0\Calendar\CalendarVersionValidator.cs" />
+    <Compile Include="RFC2445\Strict2_0\Strict2_0Validator.cs" />
+    <Compile Include="ValidationError.cs" />
+    <Compile Include="ValidationErrors\VersionMismatchError.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Messages.en-US.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Messages.en-US.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Messages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="RFC2445\Strict2_0\Alarm\" />
+    <Folder Include="RFC2445\Strict2_0\Component\" />
+    <Folder Include="RFC2445\Strict2_0\Event\" />
+    <Folder Include="RFC2445\Strict2_0\FreeBusy\" />
+    <Folder Include="RFC2445\Strict2_0\Journal\" />
+    <Folder Include="RFC2445\Strict2_0\TimeZone\" />
+    <Folder Include="RFC2445\Strict2_0\Todo\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>"C:\Program Files\Microsoft Visual Studio 8\SDK\v2.0\Bin\resgen.exe" /compile "$(ProjectDir)Resources\Messages.resx"
+"C:\Program Files\Microsoft Visual Studio 8\SDK\v2.0\Bin\resgen.exe" /compile "$(ProjectDir)Resources\Messages.en-US.resx"</PostBuildEvent>
+  </PropertyGroup>
+</Project>

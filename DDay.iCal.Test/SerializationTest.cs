@@ -635,6 +635,54 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE3.ics");            
         }
 
+        /// <summary>
+        /// Verifies that blank lines between components are allowed
+        /// (as occurs with some applications/parsers - i.e. KOrganizer)
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void PARSE4()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE4.ics");
+        }
+
+        /// <summary>
+        /// Verifies that a calendar will load without a VERSION or PRODID
+        /// specification.
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void PARSE5()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE5.ics");
+        }
+
+        /// <summary>
+        /// Tests a calendar that should fail to properly parse.
+        /// </summary>
+        [Test, Category("Serialization"), ExpectedException("antlr.MismatchedTokenException")]
+        public void PARSE6()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE6.ics");
+        }
+
+        /// <summary>
+        /// Similar to PARSE4 and PARSE5 tests.
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void PARSE7()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE7.ics");
+        }
+
+        /// <summary>
+        /// Tests that a mixed-case VERSION property is loaded properly
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void PARSE8()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE8.ics");
+            Assert.AreEqual("2.5", iCal.Version);
+        }
+
         private static byte[] ReadBinary(string fileName)
         {
             byte[] binaryData = null;

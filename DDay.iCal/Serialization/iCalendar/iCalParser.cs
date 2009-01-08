@@ -1,4 +1,4 @@
-// $ANTLR 2.7.6 (2005-12-22): "iCal.g" -> "iCalParser.cs"$
+// $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalParser.cs"$
     
     using DDay.iCal.Components;    
 
@@ -26,37 +26,33 @@ namespace DDay.iCal.Serialization.iCalendar
 	{
 		public const int EOF = 1;
 		public const int NULL_TREE_LOOKAHEAD = 3;
-		public const int BEGIN = 4;
-		public const int COLON = 5;
-		public const int VCALENDAR = 6;
-		public const int CRLF = 7;
+		public const int CRLF = 4;
+		public const int BEGIN = 5;
+		public const int COLON = 6;
+		public const int VCALENDAR = 7;
 		public const int END = 8;
 		public const int IANA_TOKEN = 9;
 		public const int X_NAME = 10;
-		public const int PRODID = 11;
-		public const int SEMICOLON = 12;
-		public const int VERSION = 13;
-		public const int CALSCALE = 14;
-		public const int METHOD = 15;
-		public const int EQUAL = 16;
-		public const int COMMA = 17;
-		public const int DQUOTE = 18;
-		public const int CTL = 19;
-		public const int BACKSLASH = 20;
-		public const int NUMBER = 21;
-		public const int DOT = 22;
-		public const int CR = 23;
-		public const int LF = 24;
-		public const int ALPHA = 25;
-		public const int DIGIT = 26;
-		public const int DASH = 27;
-		public const int SPECIAL = 28;
-		public const int UNICODE = 29;
-		public const int SPACE = 30;
-		public const int HTAB = 31;
-		public const int SLASH = 32;
-		public const int ESCAPED_CHAR = 33;
-		public const int LINEFOLDER = 34;
+		public const int SEMICOLON = 11;
+		public const int EQUAL = 12;
+		public const int COMMA = 13;
+		public const int DQUOTE = 14;
+		public const int CTL = 15;
+		public const int BACKSLASH = 16;
+		public const int NUMBER = 17;
+		public const int DOT = 18;
+		public const int CR = 19;
+		public const int LF = 20;
+		public const int ALPHA = 21;
+		public const int DIGIT = 22;
+		public const int DASH = 23;
+		public const int SPECIAL = 24;
+		public const int UNICODE = 25;
+		public const int SPACE = 26;
+		public const int HTAB = 27;
+		public const int SLASH = 28;
+		public const int ESCAPED_CHAR = 29;
+		public const int LINEFOLDER = 30;
 		
 		
 		protected void initialize()
@@ -96,16 +92,8 @@ namespace DDay.iCal.Serialization.iCalendar
 		{    // ( ... )*
 			for (;;)
 			{
-				if ((LA(1)==BEGIN))
+				if ((LA(1)==CRLF||LA(1)==BEGIN))
 				{
-					match(BEGIN);
-					match(COLON);
-					match(VCALENDAR);
-					match(CRLF);
-					icalbody(iCal);
-					match(END);
-					match(COLON);
-					match(VCALENDAR);
 					{    // ( ... )*
 						for (;;)
 						{
@@ -121,14 +109,51 @@ namespace DDay.iCal.Serialization.iCalendar
 						}
 _loop4_breakloop:						;
 					}    // ( ... )*
+					match(BEGIN);
+					match(COLON);
+					match(VCALENDAR);
+					{    // ( ... )*
+						for (;;)
+						{
+							if ((LA(1)==CRLF))
+							{
+								match(CRLF);
+							}
+							else
+							{
+								goto _loop6_breakloop;
+							}
+							
+						}
+_loop6_breakloop:						;
+					}    // ( ... )*
+					icalbody(iCal);
+					match(END);
+					match(COLON);
+					match(VCALENDAR);
+					{    // ( ... )*
+						for (;;)
+						{
+							if ((LA(1)==CRLF) && (LA(2)==EOF||LA(2)==CRLF||LA(2)==BEGIN) && (tokenSet_0_.member(LA(3))))
+							{
+								match(CRLF);
+							}
+							else
+							{
+								goto _loop8_breakloop;
+							}
+							
+						}
+_loop8_breakloop:						;
+					}    // ( ... )*
 				}
 				else
 				{
-					goto _loop5_breakloop;
+					goto _loop9_breakloop;
 				}
 				
 			}
-_loop5_breakloop:			;
+_loop9_breakloop:			;
 		}    // ( ... )*
 		iCal.OnLoaded(EventArgs.Empty);
 		return iCal;
@@ -140,36 +165,25 @@ _loop5_breakloop:			;
 {
 		
 		
-		{
-			switch ( LA(1) )
+		{    // ( ... )*
+			for (;;)
 			{
-			case IANA_TOKEN:
-			case X_NAME:
-			case PRODID:
-			case VERSION:
-			case CALSCALE:
-			case METHOD:
-			{
-				calprops(iCal);
-				break;
+				if ((LA(1)==IANA_TOKEN||LA(1)==X_NAME))
+				{
+					calprop(iCal);
+				}
+				else
+				{
+					goto _loop12_breakloop;
+				}
+				
 			}
-			case BEGIN:
-			case CRLF:
-			case END:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			 }
-		}
+_loop12_breakloop:			;
+		}    // ( ... )*
 		{
 			switch ( LA(1) )
 			{
 			case BEGIN:
-			case CRLF:
 			{
 				component(iCal);
 				break;
@@ -186,30 +200,29 @@ _loop5_breakloop:			;
 		}
 	}
 	
-	public void calprops(
-		DDay.iCal.iCalendar iCal
+	public void calprop(
+		iCalObject o
 	) //throws RecognitionException, TokenStreamException
 {
 		
 		
-		calprop(iCal);
-		{ // ( ... )+
-			int _cnt20=0;
-			for (;;)
-			{
-				if ((tokenSet_0_.member(LA(1))))
-				{
-					calprop(iCal);
-				}
-				else
-				{
-					if (_cnt20 >= 1) { goto _loop20_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
-				}
-				
-				_cnt20++;
-			}
-_loop20_breakloop:			;
-		}    // ( ... )+
+		switch ( LA(1) )
+		{
+		case X_NAME:
+		{
+			x_prop(o);
+			break;
+		}
+		case IANA_TOKEN:
+		{
+			iana_prop(o);
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltException(LT(1), getFilename());
+		}
+		 }
 	}
 	
 	public ComponentBase  component(
@@ -220,7 +233,7 @@ _loop20_breakloop:			;
 		
 		
 		{ // ( ... )+
-			int _cnt11=0;
+			int _cnt16=0;
 			for (;;)
 			{
 				if ((LA(1)==BEGIN) && (LA(2)==COLON) && (LA(3)==X_NAME))
@@ -230,17 +243,14 @@ _loop20_breakloop:			;
 				else if ((LA(1)==BEGIN) && (LA(2)==COLON) && (LA(3)==IANA_TOKEN)) {
 					c=iana_comp(o);
 				}
-				else if ((LA(1)==CRLF) && (tokenSet_1_.member(LA(2))) && (tokenSet_2_.member(LA(3)))) {
-					match(CRLF);
-				}
 				else
 				{
-					if (_cnt11 >= 1) { goto _loop11_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
+					if (_cnt16 >= 1) { goto _loop16_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
 				}
 				
-				_cnt11++;
+				_cnt16++;
 			}
-_loop11_breakloop:			;
+_loop16_breakloop:			;
 		}    // ( ... )+
 		return c;
 	}
@@ -258,28 +268,56 @@ _loop11_breakloop:			;
 		n = LT(1);
 		match(X_NAME);
 		c = o.iCalendar.Create(o, n.getText().ToLower());
-		match(CRLF);
-		{ // ( ... )+
-			int _cnt17=0;
+		{    // ( ... )*
 			for (;;)
 			{
-				if ((tokenSet_3_.member(LA(1))))
+				if ((LA(1)==CRLF))
+				{
+					match(CRLF);
+				}
+				else
+				{
+					goto _loop26_breakloop;
+				}
+				
+			}
+_loop26_breakloop:			;
+		}    // ( ... )*
+		{ // ( ... )+
+			int _cnt28=0;
+			for (;;)
+			{
+				if ((LA(1)==BEGIN||LA(1)==IANA_TOKEN||LA(1)==X_NAME))
 				{
 					calendarline(c);
 				}
 				else
 				{
-					if (_cnt17 >= 1) { goto _loop17_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
+					if (_cnt28 >= 1) { goto _loop28_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
 				}
 				
-				_cnt17++;
+				_cnt28++;
 			}
-_loop17_breakloop:			;
+_loop28_breakloop:			;
 		}    // ( ... )+
 		match(END);
 		match(COLON);
 		match(X_NAME);
-		match(CRLF);
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((LA(1)==CRLF))
+				{
+					match(CRLF);
+				}
+				else
+				{
+					goto _loop30_breakloop;
+				}
+				
+			}
+_loop30_breakloop:			;
+		}    // ( ... )*
 		c.OnLoaded(EventArgs.Empty);
 		return c;
 	}
@@ -297,28 +335,56 @@ _loop17_breakloop:			;
 		n = LT(1);
 		match(IANA_TOKEN);
 		c = o.iCalendar.Create(o, n.getText().ToLower());
-		match(CRLF);
-		{ // ( ... )+
-			int _cnt14=0;
+		{    // ( ... )*
 			for (;;)
 			{
-				if ((tokenSet_3_.member(LA(1))))
+				if ((LA(1)==CRLF))
+				{
+					match(CRLF);
+				}
+				else
+				{
+					goto _loop19_breakloop;
+				}
+				
+			}
+_loop19_breakloop:			;
+		}    // ( ... )*
+		{ // ( ... )+
+			int _cnt21=0;
+			for (;;)
+			{
+				if ((LA(1)==BEGIN||LA(1)==IANA_TOKEN||LA(1)==X_NAME))
 				{
 					calendarline(c);
 				}
 				else
 				{
-					if (_cnt14 >= 1) { goto _loop14_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
+					if (_cnt21 >= 1) { goto _loop21_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
 				}
 				
-				_cnt14++;
+				_cnt21++;
 			}
-_loop14_breakloop:			;
+_loop21_breakloop:			;
 		}    // ( ... )+
 		match(END);
 		match(COLON);
 		match(IANA_TOKEN);
-		match(CRLF);
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((LA(1)==CRLF))
+				{
+					match(CRLF);
+				}
+				else
+				{
+					goto _loop23_breakloop;
+				}
+				
+			}
+_loop23_breakloop:			;
+		}    // ( ... )*
 		c.OnLoaded(EventArgs.Empty);
 		return c;
 	}
@@ -338,7 +404,6 @@ _loop14_breakloop:			;
 			break;
 		}
 		case BEGIN:
-		case CRLF:
 		{
 			component(o);
 			break;
@@ -348,259 +413,6 @@ _loop14_breakloop:			;
 			throw new NoViableAltException(LT(1), getFilename());
 		}
 		 }
-	}
-	
-	public void calprop(
-		iCalObject o
-	) //throws RecognitionException, TokenStreamException
-{
-		
-		
-		switch ( LA(1) )
-		{
-		case PRODID:
-		{
-			prodid(o);
-			break;
-		}
-		case VERSION:
-		{
-			version(o);
-			break;
-		}
-		case CALSCALE:
-		{
-			calscale(o);
-			break;
-		}
-		case METHOD:
-		{
-			method(o);
-			break;
-		}
-		case X_NAME:
-		{
-			x_prop(o);
-			break;
-		}
-		case IANA_TOKEN:
-		{
-			iana_prop(o);
-			break;
-		}
-		default:
-		{
-			throw new NoViableAltException(LT(1), getFilename());
-		}
-		 }
-	}
-	
-	public void prodid(
-		iCalObject o
-	) //throws RecognitionException, TokenStreamException
-{
-		
-		IToken  n = null;
-		Property p; string v;
-		
-		n = LT(1);
-		match(PRODID);
-		p = new Property(o);
-		{    // ( ... )*
-			for (;;)
-			{
-				if ((LA(1)==SEMICOLON))
-				{
-					match(SEMICOLON);
-					{
-						switch ( LA(1) )
-						{
-						case IANA_TOKEN:
-						{
-							param(p);
-							break;
-						}
-						case X_NAME:
-						{
-							xparam(p);
-							break;
-						}
-						default:
-						{
-							throw new NoViableAltException(LT(1), getFilename());
-						}
-						 }
-					}
-				}
-				else
-				{
-					goto _loop25_breakloop;
-				}
-				
-			}
-_loop25_breakloop:			;
-		}    // ( ... )*
-		match(COLON);
-		v=text();
-		p.Name = n.getText(); p.Value = v; p.AddToParent();
-		match(CRLF);
-	}
-	
-	public void version(
-		iCalObject o
-	) //throws RecognitionException, TokenStreamException
-{
-		
-		IToken  n = null;
-		Property p; string v;
-		
-		n = LT(1);
-		match(VERSION);
-		p = new Property(o);
-		{    // ( ... )*
-			for (;;)
-			{
-				if ((LA(1)==SEMICOLON))
-				{
-					match(SEMICOLON);
-					{
-						switch ( LA(1) )
-						{
-						case IANA_TOKEN:
-						{
-							param(p);
-							break;
-						}
-						case X_NAME:
-						{
-							xparam(p);
-							break;
-						}
-						default:
-						{
-							throw new NoViableAltException(LT(1), getFilename());
-						}
-						 }
-					}
-				}
-				else
-				{
-					goto _loop29_breakloop;
-				}
-				
-			}
-_loop29_breakloop:			;
-		}    // ( ... )*
-		match(COLON);
-		v=version_number();
-		p.Name = n.getText(); p.Value = v; p.AddToParent();
-		match(CRLF);
-	}
-	
-	public void calscale(
-		iCalObject o
-	) //throws RecognitionException, TokenStreamException
-{
-		
-		IToken  n = null;
-		IToken  v = null;
-		Property p;
-		
-		n = LT(1);
-		match(CALSCALE);
-		p = new Property(o);
-		{    // ( ... )*
-			for (;;)
-			{
-				if ((LA(1)==SEMICOLON))
-				{
-					match(SEMICOLON);
-					{
-						switch ( LA(1) )
-						{
-						case IANA_TOKEN:
-						{
-							param(p);
-							break;
-						}
-						case X_NAME:
-						{
-							xparam(p);
-							break;
-						}
-						default:
-						{
-							throw new NoViableAltException(LT(1), getFilename());
-						}
-						 }
-					}
-				}
-				else
-				{
-					goto _loop33_breakloop;
-				}
-				
-			}
-_loop33_breakloop:			;
-		}    // ( ... )*
-		match(COLON);
-		v = LT(1);
-		match(IANA_TOKEN);
-		p.Name = n.getText(); p.Value = v.getText(); p.AddToParent();
-		match(CRLF);
-	}
-	
-	public void method(
-		iCalObject o
-	) //throws RecognitionException, TokenStreamException
-{
-		
-		IToken  n = null;
-		IToken  v = null;
-		Property p;
-		
-		n = LT(1);
-		match(METHOD);
-		p = new Property(o);
-		{    // ( ... )*
-			for (;;)
-			{
-				if ((LA(1)==SEMICOLON))
-				{
-					match(SEMICOLON);
-					{
-						switch ( LA(1) )
-						{
-						case IANA_TOKEN:
-						{
-							param(p);
-							break;
-						}
-						case X_NAME:
-						{
-							xparam(p);
-							break;
-						}
-						default:
-						{
-							throw new NoViableAltException(LT(1), getFilename());
-						}
-						 }
-					}
-				}
-				else
-				{
-					goto _loop37_breakloop;
-				}
-				
-			}
-_loop37_breakloop:			;
-		}    // ( ... )*
-		match(COLON);
-		v = LT(1);
-		match(IANA_TOKEN);
-		p.Name = n.getText(); p.Value = v.getText(); p.AddToParent();
-		match(CRLF);
 	}
 	
 	public void x_prop(
@@ -642,16 +454,30 @@ _loop37_breakloop:			;
 				}
 				else
 				{
-					goto _loop45_breakloop;
+					goto _loop41_breakloop;
 				}
 				
 			}
-_loop45_breakloop:			;
+_loop41_breakloop:			;
 		}    // ( ... )*
 		match(COLON);
 		v=value();
-		p.Name = n.getText(); p.Value = v; p.AddToParent();
-		match(CRLF);
+		p.Name = n.getText().ToUpper(); p.Value = v; p.AddToParent();
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((LA(1)==CRLF))
+				{
+					match(CRLF);
+				}
+				else
+				{
+					goto _loop43_breakloop;
+				}
+				
+			}
+_loop43_breakloop:			;
+		}    // ( ... )*
 	}
 	
 	public void iana_prop(
@@ -693,16 +519,30 @@ _loop45_breakloop:			;
 				}
 				else
 				{
-					goto _loop41_breakloop;
+					goto _loop35_breakloop;
 				}
 				
 			}
-_loop41_breakloop:			;
+_loop35_breakloop:			;
 		}    // ( ... )*
 		match(COLON);
 		v=value();
-		p.Name = n.getText(); p.Value = v; p.AddToParent();
-		match(CRLF);
+		p.Name = n.getText().ToUpper(); p.Value = v; p.AddToParent();
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((LA(1)==CRLF))
+				{
+					match(CRLF);
+				}
+				else
+				{
+					goto _loop37_breakloop;
+				}
+				
+			}
+_loop37_breakloop:			;
+		}    // ( ... )*
 	}
 	
 	public void param(
@@ -769,63 +609,6 @@ _loop85_breakloop:			;
 		}    // ( ... )*
 	}
 	
-	public string  text() //throws RecognitionException, TokenStreamException
-{
-		string s = string.Empty;
-		
-		string t;
-		
-		{    // ( ... )*
-			for (;;)
-			{
-				if ((tokenSet_4_.member(LA(1))))
-				{
-					t=text_char();
-					s += t;
-				}
-				else
-				{
-					goto _loop78_breakloop;
-				}
-				
-			}
-_loop78_breakloop:			;
-		}    // ( ... )*
-		return s;
-	}
-	
-	public string  version_number() //throws RecognitionException, TokenStreamException
-{
-		string s = string.Empty;
-		
-		string t;
-		
-		t=number();
-		s += t;
-		{
-			switch ( LA(1) )
-			{
-			case SEMICOLON:
-			{
-				match(SEMICOLON);
-				s += ";";
-				t=number();
-				s += t;
-				break;
-			}
-			case CRLF:
-			{
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			 }
-		}
-		return s;
-	}
-	
 	public string  value() //throws RecognitionException, TokenStreamException
 {
 		string v = string.Empty;
@@ -835,7 +618,7 @@ _loop78_breakloop:			;
 		{    // ( ... )*
 			for (;;)
 			{
-				if ((tokenSet_5_.member(LA(1))))
+				if ((tokenSet_1_.member(LA(1))) && (tokenSet_2_.member(LA(2))) && (tokenSet_2_.member(LA(3))))
 				{
 					c=value_char();
 					v += c;
@@ -892,16 +675,30 @@ _loop62_breakloop:			;
 				}
 				else
 				{
+					goto _loop48_breakloop;
+				}
+				
+			}
+_loop48_breakloop:			;
+		}    // ( ... )*
+		match(COLON);
+		v=value();
+		c.Value = v; DDay.iCal.Serialization.iCalendar.Components.ContentLineSerializer.DeserializeToObject(c, o);
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((LA(1)==CRLF))
+				{
+					match(CRLF);
+				}
+				else
+				{
 					goto _loop50_breakloop;
 				}
 				
 			}
 _loop50_breakloop:			;
 		}    // ( ... )*
-		match(COLON);
-		v=value();
-		c.Value = v; DDay.iCal.Serialization.iCalendar.Components.ContentLineSerializer.DeserializeToObject(c, o);
-		match(CRLF);
 	}
 	
 	public string  name() //throws RecognitionException, TokenStreamException
@@ -960,11 +757,7 @@ _loop50_breakloop:			;
 		case END:
 		case IANA_TOKEN:
 		case X_NAME:
-		case PRODID:
 		case SEMICOLON:
-		case VERSION:
-		case CALSCALE:
-		case METHOD:
 		case EQUAL:
 		case COMMA:
 		case BACKSLASH:
@@ -1008,7 +801,7 @@ _loop50_breakloop:			;
 		{    // ( ... )*
 			for (;;)
 			{
-				if ((tokenSet_6_.member(LA(1))))
+				if ((tokenSet_3_.member(LA(1))))
 				{
 					c=safe_char();
 					t += c;
@@ -1034,7 +827,7 @@ _loop59_breakloop:			;
 		{    // ( ... )*
 			for (;;)
 			{
-				if ((tokenSet_7_.member(LA(1))))
+				if ((tokenSet_4_.member(LA(1))))
 				{
 					c=qsafe_char();
 					s += c;
@@ -1059,7 +852,7 @@ _loop65_breakloop:			;
 		
 		{
 			a = LT(1);
-			match(tokenSet_6_);
+			match(tokenSet_3_);
 		}
 		c = a.getText();
 		return c;
@@ -1073,7 +866,7 @@ _loop65_breakloop:			;
 		
 		{
 			a = LT(1);
-			match(tokenSet_5_);
+			match(tokenSet_1_);
 		}
 		c = a.getText();
 		return c;
@@ -1087,7 +880,7 @@ _loop65_breakloop:			;
 		
 		{
 			a = LT(1);
-			match(tokenSet_7_);
+			match(tokenSet_4_);
 		}
 		c = a.getText();
 		return c;
@@ -1101,7 +894,7 @@ _loop65_breakloop:			;
 		
 		{
 			a = LT(1);
-			match(tokenSet_8_);
+			match(tokenSet_5_);
 		}
 		s = a.getText();
 		return s;
@@ -1115,9 +908,34 @@ _loop65_breakloop:			;
 		
 		{
 			a = LT(1);
-			match(tokenSet_4_);
+			match(tokenSet_6_);
 		}
 		s = a.getText();
+		return s;
+	}
+	
+	public string  text() //throws RecognitionException, TokenStreamException
+{
+		string s = string.Empty;
+		
+		string t;
+		
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((tokenSet_6_.member(LA(1))))
+				{
+					t=text_char();
+					s += t;
+				}
+				else
+				{
+					goto _loop78_breakloop;
+				}
+				
+			}
+_loop78_breakloop:			;
+		}    // ( ... )*
 		return s;
 	}
 	
@@ -1143,8 +961,40 @@ _loop65_breakloop:			;
 				s += n2.getText();
 				break;
 			}
-			case CRLF:
+			case EOF:
 			case SEMICOLON:
+			{
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			 }
+		}
+		return s;
+	}
+	
+	public string  version_number() //throws RecognitionException, TokenStreamException
+{
+		string s = string.Empty;
+		
+		string t;
+		
+		t=number();
+		s += t;
+		{
+			switch ( LA(1) )
+			{
+			case SEMICOLON:
+			{
+				match(SEMICOLON);
+				s += ";";
+				t=number();
+				s += t;
+				break;
+			}
+			case EOF:
 			{
 				break;
 			}
@@ -1166,18 +1016,14 @@ _loop65_breakloop:			;
 		@"""EOF""",
 		@"""<2>""",
 		@"""NULL_TREE_LOOKAHEAD""",
+		@"""CRLF""",
 		@"""BEGIN""",
 		@"""COLON""",
 		@"""VCALENDAR""",
-		@"""CRLF""",
 		@"""END""",
 		@"""IANA_TOKEN""",
 		@"""X_NAME""",
-		@"""PRODID""",
 		@"""SEMICOLON""",
-		@"""VERSION""",
-		@"""CALSCALE""",
-		@"""METHOD""",
 		@"""EQUAL""",
 		@"""COMMA""",
 		@"""DQUOTE""",
@@ -1201,58 +1047,46 @@ _loop65_breakloop:			;
 	
 	private static long[] mk_tokenSet_0_()
 	{
-		long[] data = { 60928L, 0L};
+		long[] data = { 114L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_0_ = new BitSet(mk_tokenSet_0_());
 	private static long[] mk_tokenSet_1_()
 	{
-		long[] data = { 1936L, 0L};
+		long[] data = { 2147450848L, 0L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_1_ = new BitSet(mk_tokenSet_1_());
 	private static long[] mk_tokenSet_2_()
 	{
-		long[] data = { 6064L, 0L};
+		long[] data = { 2147450864L, 0L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_2_ = new BitSet(mk_tokenSet_2_());
 	private static long[] mk_tokenSet_3_()
 	{
-		long[] data = { 1680L, 0L};
+		long[] data = { 2147424160L, 0L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_3_ = new BitSet(mk_tokenSet_3_());
 	private static long[] mk_tokenSet_4_()
 	{
-		long[] data = { 34358165360L, 0L, 0L, 0L};
+		long[] data = { 2147434464L, 0L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_4_ = new BitSet(mk_tokenSet_4_());
 	private static long[] mk_tokenSet_5_()
 	{
-		long[] data = { 34359213936L, 0L, 0L, 0L};
+		long[] data = { 2147358624L, 0L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_5_ = new BitSet(mk_tokenSet_5_());
 	private static long[] mk_tokenSet_6_()
 	{
-		long[] data = { 34358816592L, 0L, 0L, 0L};
+		long[] data = { 2147385312L, 0L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_6_ = new BitSet(mk_tokenSet_6_());
-	private static long[] mk_tokenSet_7_()
-	{
-		long[] data = { 34358951792L, 0L, 0L, 0L};
-		return data;
-	}
-	public static readonly BitSet tokenSet_7_ = new BitSet(mk_tokenSet_7_());
-	private static long[] mk_tokenSet_8_()
-	{
-		long[] data = { 34357768016L, 0L, 0L, 0L};
-		return data;
-	}
-	public static readonly BitSet tokenSet_8_ = new BitSet(mk_tokenSet_8_());
 	
 }
 }

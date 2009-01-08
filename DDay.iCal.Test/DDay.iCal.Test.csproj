@@ -402,6 +402,21 @@
     <None Include="Calendars\Serialization\SERIALIZE30.ics">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Calendars\Serialization\PARSE4.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Calendars\Serialization\PARSE5.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Calendars\Serialization\PARSE6.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Calendars\Serialization\PARSE7.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Calendars\Serialization\PARSE8.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Data\LoremIpsum.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
