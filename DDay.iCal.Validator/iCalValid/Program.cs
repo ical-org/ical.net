@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using DDay.Util;
-using DDay.iCal.Validator.RFC2445;
-using System.Reflection;
 using System.Net;
+using DDay.Util;
+using DDay.iCal.Validator.Xml;
+using System.Collections.Generic;
+using DDay.iCal.Validator.RFC2445;
 
 namespace DDay.iCal.Validator
 {
@@ -28,82 +26,92 @@ namespace DDay.iCal.Validator
 
                 _Arguments = new CommandLineArgumentList(args, StringComparison.CurrentCultureIgnoreCase);
 
-                Type validatorType = typeof(Strict2_0Validator);
-                if (_Arguments.Contains(_ValidatorArgument))
-                {
-                    string validatorTypeString = _Arguments[_ValidatorArgument].Value;
-                    validatorType = Type.GetType(validatorTypeString, false);
-                    if (validatorType == null)
-                        validatorType = Type.GetType("DDay.iCal.Validator.RFC2445." + validatorTypeString + ", DDay.iCal.Validator", false);
+                // Initialize our xml document provider
+                XmlDocumentZipExtractor ze = new XmlDocumentZipExtractor("icalvalidSchema.zip");
+                // Initialize our resource manager using the provider
+                ResourceManager.Initialize(ze);
 
-                    if (validatorType == null)
-                        throw new Exception("A validator of type '" + validatorTypeString + "' could not be determined!");
-                    else if (!typeof(IValidator).IsAssignableFrom(validatorType))
-                        throw new Exception("The validator type '" + validatorTypeString + "' was not a validator type!");
-                }
+                // Load some rulesets
+                XmlValidationRulesetLoader loader = new XmlValidationRulesetLoader(ze);
+                List<IValidationRuleset> rulesets = new List<IValidationRuleset>(loader.Load());
+
+                // Auto-select a ruleset
+                // FIXME: allow the user to choose a ruleset
+                IValidationRuleset selectedRuleset = rulesets.Find(
+                    delegate(IValidationRuleset rs)
+                    {
+                        return string.Equals(rs.Name, "Strict2_0", StringComparison.CurrentCultureIgnoreCase);
+                    }
+                );
+
+                // If we couldn't find the Strict 2.0 validation, then get the first
+                // one available!
+                if (selectedRuleset == null && rulesets.Count > 0)
+                    selectedRuleset = rulesets[0];
 
                 string iCalText = null;
-
-                if (_Arguments.Contains(_FileArgument))
+                if (selectedRuleset != null)
                 {
-                    Console.Write("Loading calendar...");
-                    FileStream fs = new FileStream(_Arguments[_FileArgument].Value, FileMode.Open, FileAccess.Read);
-                    if (fs != null)
+                    if (_Arguments.Contains(_FileArgument))
                     {
-                        StreamReader sr = new StreamReader(fs);
-                        iCalText = sr.ReadToEnd();
-                        sr.Close();
+                        // Load the calendar from a local file
+                        Console.Write("Loading calendar...");
+                        FileStream fs = new FileStream(_Arguments[_FileArgument].Value, FileMode.Open, FileAccess.Read);
+                        if (fs != null)
+                        {
+                            StreamReader sr = new StreamReader(fs);
+                            iCalText = sr.ReadToEnd();
+                            sr.Close();
+                        }
+                        Console.WriteLine("done.");
                     }
-                    Console.WriteLine("done.");
-                }
-                else if (_Arguments.Contains(_UriArgument))
-                {
-                    Console.Write("Loading calendar...");
-                    Uri uri = new Uri(_Arguments[_UriArgument].Value);
-                    string
-                        username = null,
-                        password = null;
-
-                    if (_Arguments.Contains(_UsernameArgument))
+                    else if (_Arguments.Contains(_UriArgument))
                     {
-                        username = _Arguments[_UsernameArgument].Value;
-                        if (_Arguments.Contains(_PasswordArgument))
-                            password = _Arguments[_PasswordArgument].Value;
-                    }
+                        // Load the calendar from a Uri
+                        Console.Write("Loading calendar...");
+                        Uri uri = new Uri(_Arguments[_UriArgument].Value);
+                        string
+                            username = null,
+                            password = null;
 
-                    WebClient client = new WebClient();
-                    if (username != null && password != null)
-                        client.Credentials = new System.Net.NetworkCredential(username, password);
+                        if (_Arguments.Contains(_UsernameArgument))
+                        {
+                            username = _Arguments[_UsernameArgument].Value;
+                            if (_Arguments.Contains(_PasswordArgument))
+                                password = _Arguments[_PasswordArgument].Value;
+                        }
 
-                    iCalText = client.DownloadString(uri);
-                    Console.WriteLine("done.");
-                }
-                else
-                {
-                    needsMoreArguments = true;
-                }
+                        WebClient client = new WebClient();
+                        if (username != null && password != null)
+                            client.Credentials = new System.Net.NetworkCredential(username, password);
 
-                if (needsMoreArguments)
-                {
-                    WriteDescription();
-                }
-                else
-                {
-                    if (iCalText == null)
-                    {
-                        throw new Exception("The calendar could not be found!");
+                        iCalText = client.DownloadString(uri);
+                        Console.WriteLine("done.");
                     }
                     else
                     {
-                        ConstructorInfo ci = validatorType.GetConstructor(new Type[] { typeof(string) });
-                        if (ci != null)
+                        needsMoreArguments = true;
+                    }
+
+                    if (needsMoreArguments)
+                    {
+                        WriteDescription();
+                    }
+                    else
+                    {
+                        if (iCalText == null)
                         {
-                            IValidator validator = ci.Invoke(new object[] { iCalText }) as IValidator; 
-                            if (validator != null)
+                            throw new Exception("The calendar could not be found!");
+                        }
+                        else
+                        {
+                            RFC2445Validator rfc2445Validator = new RFC2445Validator(selectedRuleset, iCalText);
+
+                            if (rfc2445Validator != null)
                             {
                                 Console.WriteLine("Validating calendar...");
 
-                                IValidationError[] errors = validator.Validate();
+                                IValidationError[] errors = rfc2445Validator.Validate();
                                 if (errors != null &&
                                     errors.Length > 0)
                                 {
@@ -114,11 +122,14 @@ namespace DDay.iCal.Validator
                                 {
                                     Console.WriteLine("The calendar is valid!");
                                 }
-                            }
+                            }                            
                         }
-                        // FIXME: throw an exception
                     }
                 }
+                else
+                {
+                    Console.WriteLine("A validation ruleset could not be determined!");
+                }                
             }
             catch (Exception ex)
             {
