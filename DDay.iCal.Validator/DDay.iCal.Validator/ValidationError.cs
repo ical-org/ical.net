@@ -9,34 +9,47 @@ namespace DDay.iCal.Validator
     {
         #region IValidationError Members
 
-        public int ErrorNumber { get; set; }
         public ValidationErrorType Type { get; set; }
         public string Message { get; set; }
-        public string[] Resolutions { get; set; }
         public bool IsFatal { get; set; }
         public int Line { get; set; }
         public int Col { get; set; }
 
         #endregion
 
-        #region Protected Methods
+        #region Constructors
 
-        protected void LoadResolutions()
+        public ValidationError()
         {
-            if (!string.IsNullOrEmpty(Message))
-            {
-                List<string> resolutions = new List<string>();
-                try
-                {
-                    for (int i = 0; ; i++)
-                        resolutions.Add(ResourceManager.GetString(Message + "_Resolution" + i));
-                }
-                catch { }
-                finally
-                {
-                    Resolutions = resolutions.ToArray();
-                }
-            }
+        }
+
+        public ValidationError(string msg)
+        {
+            Message = msg;
+        }
+
+        public ValidationError(string msg, ValidationErrorType type) :
+            this(msg)
+        {
+            Type = type;
+        }
+
+        public ValidationError(string msg, ValidationErrorType type, bool isFatal) :
+            this(msg, type)
+        {
+            IsFatal = isFatal;
+        }
+
+        public ValidationError(string msg, ValidationErrorType type, bool isFatal, int line) :
+            this(msg, type, isFatal)
+        {
+            Line = line;
+        }
+
+        public ValidationError(string msg, ValidationErrorType type, bool isFatal, int line, int col) :
+            this(msg, type, isFatal, line)
+        {
+            Col = col;
         }
 
         #endregion
@@ -47,9 +60,7 @@ namespace DDay.iCal.Validator
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append(ResourceManager.GetString(Type.ToString() + "String"));
-            if (ErrorNumber != default(int))
-                sb.Append(" " + ErrorNumber);
+            sb.Append(ResourceManager.GetString(Type.ToString()));
 
             if (!string.IsNullOrEmpty(Message))
             {
@@ -59,23 +70,14 @@ namespace DDay.iCal.Validator
             
             if (Line != default(int))
             {
-                sb.Append(" (" + ResourceManager.GetString("LineString") + " ");
+                sb.Append(" (" + ResourceManager.GetString("Line") + " ");
                 sb.Append(Line);
                 if (Col != default(int))
                 {
-                    sb.Append(" " + ResourceManager.GetString("ColumnString") + " ");
+                    sb.Append(" " + ResourceManager.GetString("Column") + " ");
                     sb.Append(Col);
                 }
                 sb.Append(")");
-            }
-
-            if (Resolutions != null &&
-                Resolutions.Length > 0)
-            {
-                sb.AppendLine();
-                sb.AppendLine("Suggested actions:");
-                foreach (string ca in Resolutions)
-                    sb.AppendLine("    " + ca);
             }
 
             return sb.ToString();

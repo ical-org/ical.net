@@ -41,57 +41,51 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\DDay.iCal.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Messages.en-US.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Messages.en-US.resx</DependentUpon>
-    </None>
-    <None Include="Resources\Messages.Designer.cs">
-      <DependentUpon>Messages.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </None>
-    <Compile Include="ValidationErrors\CalendarNotLoadedError.cs" />
-    <Compile Include="ValidationErrors\CalendarParseError.cs" />
-    <Compile Include="ValidationErrors\MissingVersionError.cs" />
+    <Compile Include="Interfaces\IValidationRule.cs" />
+    <Compile Include="Interfaces\IValidationRuleset.cs" />
+    <Compile Include="Interfaces\IValidationRulesetProvider.cs" />
+    <Compile Include="RFC2445\Calendar\LineEndingsValidator.cs" />
+    <Compile Include="RFC2445\Calendar\ReqProdIDValidator.cs" />
+    <Compile Include="RFC2445\Calendar\EmptyLineValidator.cs" />
+    <Compile Include="RFC2445\DataTypes\BinaryValidator.cs" />
+    <Compile Include="RFC2445\RFC2445Validator.cs" />
     <Compile Include="Interfaces\IValidator.cs" />
     <Compile Include="Interfaces\IValidationError.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourceManager.cs" />
-    <Compile Include="ValidationErrors\Errors.cs" />
-    <Compile Include="RFC2445\Strict2_0\Calendar\CalendarVersionValidator.cs" />
-    <Compile Include="RFC2445\Strict2_0\Strict2_0Validator.cs" />
+    <Compile Include="RFC2445\Calendar\ReqVersionValidator.cs" />
     <Compile Include="ValidationError.cs" />
-    <Compile Include="ValidationErrors\VersionMismatchError.cs" />
+    <Compile Include="ValidationErrorWithLookup.cs" />
+    <Compile Include="ValidationRule.cs" />
+    <Compile Include="ValidationRuleset.cs" />
+    <Compile Include="ValidatorActivator.cs" />
+    <Compile Include="Xml\IXmlDocumentProvider.cs" />
+    <Compile Include="Xml\XmlDocumentZipExtractor.cs" />
+    <Compile Include="Xml\XmlValidationRule.cs" />
+    <Compile Include="Xml\XmlValidationRuleset.cs" />
+    <Compile Include="Xml\XmlValidationRulesetLoader.cs" />
+    <Compile Include="Zip\ZipExtractor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Messages.en-US.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Messages.en-US.Designer.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Messages.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Messages.Designer.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="RFC2445\Strict2_0\Alarm\" />
-    <Folder Include="RFC2445\Strict2_0\Component\" />
-    <Folder Include="RFC2445\Strict2_0\Event\" />
-    <Folder Include="RFC2445\Strict2_0\FreeBusy\" />
-    <Folder Include="RFC2445\Strict2_0\Journal\" />
-    <Folder Include="RFC2445\Strict2_0\TimeZone\" />
-    <Folder Include="RFC2445\Strict2_0\Todo\" />
+    <Folder Include="RFC2445\Alarm\" />
+    <Folder Include="RFC2445\Component\" />
+    <Folder Include="RFC2445\Event\" />
+    <Folder Include="RFC2445\FreeBusy\" />
+    <Folder Include="RFC2445\Journal\" />
+    <Folder Include="RFC2445\TimeZone\" />
+    <Folder Include="RFC2445\Todo\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -102,7 +96,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>"C:\Program Files\Microsoft Visual Studio 8\SDK\v2.0\Bin\resgen.exe" /compile "$(ProjectDir)Resources\Messages.resx"
-"C:\Program Files\Microsoft Visual Studio 8\SDK\v2.0\Bin\resgen.exe" /compile "$(ProjectDir)Resources\Messages.en-US.resx"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
