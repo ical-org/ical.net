@@ -11,10 +11,10 @@ namespace DDay.iCal.Validator
     class Program
     {
         static CommandLineArgument _FileArgument = new CommandLineArgument(new string[] { "f", "file" });
-        static CommandLineArgument _UriArgument = new CommandLineArgument(new string[] { "u", "uri" });
+        static CommandLineArgument _UriArgument = new CommandLineArgument(new string[] { "uri" });
         static CommandLineArgument _ValidatorArgument = new CommandLineArgument(new string[] { "v", "validator" });
-        static CommandLineArgument _UsernameArgument = new CommandLineArgument(new string[] { "un", "username" });
-        static CommandLineArgument _PasswordArgument = new CommandLineArgument(new string[] { "pw", "password" });
+        static CommandLineArgument _UsernameArgument = new CommandLineArgument(new string[] { "u", "username" });
+        static CommandLineArgument _PasswordArgument = new CommandLineArgument(new string[] { "p", "password" });
 
         static CommandLineArgumentList _Arguments;
 
@@ -35,19 +35,18 @@ namespace DDay.iCal.Validator
                 XmlValidationRulesetLoader loader = new XmlValidationRulesetLoader(ze);
                 List<IValidationRuleset> rulesets = new List<IValidationRuleset>(loader.Load());
 
-                // Auto-select a ruleset
-                // FIXME: allow the user to choose a ruleset
+                // Determine a validation ruleset to use
+                string validatorName = "Strict2_0";
+                if (_Arguments.Contains(_ValidatorArgument))
+                    validatorName = _Arguments[_ValidatorArgument].Value;
+
+                // Select the ruleset                
                 IValidationRuleset selectedRuleset = rulesets.Find(
                     delegate(IValidationRuleset rs)
                     {
-                        return string.Equals(rs.Name, "Strict2_0", StringComparison.CurrentCultureIgnoreCase);
+                        return string.Equals(rs.Name, validatorName, StringComparison.CurrentCultureIgnoreCase);
                     }
                 );
-
-                // If we couldn't find the Strict 2.0 validation, then get the first
-                // one available!
-                if (selectedRuleset == null && rulesets.Count > 0)
-                    selectedRuleset = rulesets[0];
 
                 string iCalText = null;
                 if (selectedRuleset != null)
@@ -109,7 +108,7 @@ namespace DDay.iCal.Validator
 
                             if (rfc2445Validator != null)
                             {
-                                Console.WriteLine("Validating calendar...");
+                                Console.WriteLine("Validating calendar using '" + selectedRuleset.Description + "' ruleset...");
 
                                 IValidationError[] errors = rfc2445Validator.Validate();
                                 if (errors != null &&
@@ -147,13 +146,13 @@ namespace DDay.iCal.Validator
             Console.WriteLine("============================================================================");
             Console.WriteLine("/f:<filename>  | Loads an iCalendar from a file, where <filename> is");
             Console.WriteLine("               | the file path of the iCalendar file to validate.");
-            Console.WriteLine("/u:<uri>       | Loads an iCalendar from a uri, where <uri> is the");
+            Console.WriteLine("/uri:<uri>     | Loads an iCalendar from a uri, where <uri> is the");
             Console.WriteLine("               | Uri of the iCalendar file to validate.");
-            Console.WriteLine("/un:<username> | The username to use when retrieving a calendar via Uri.");
-            Console.WriteLine("/pw:<password> | The password to use when retrieving a calendar via Uri.");
+            Console.WriteLine("/u:<username>  | The username to use when retrieving a calendar via Uri.");
+            Console.WriteLine("/p:<password>  | The password to use when retrieving a calendar via Uri.");
             Console.WriteLine("/v:<validator> | The validator to use.  Possible values are:");
             Console.WriteLine("               |       Strict2_0");
-            Console.WriteLine("               |       Other fully-qualified validator typenames");
+            Console.WriteLine("               |       Other validator names");
         }
 
         static public string GetCalendarText(string calendarFilename)

@@ -13,7 +13,7 @@ namespace DDay.iCal.Validator.Xml
             if (node.Attributes["name"] != null)
                 this.Name = node.Attributes["name"].Value;
             if (node.Attributes["description"] != null)
-                this.Name = node.Attributes["description"].Value;
+                this.Description = node.Attributes["description"].Value;
         
             List<IValidationRule> rules = new List<IValidationRule>();
 

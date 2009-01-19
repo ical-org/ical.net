@@ -122,4 +122,4 @@ IANA_TOKEN: (ALPHA | DIGIT | DASH)+
     }
 };
 
-LINEFOLDER: CRLF (SPACE | HTAB) {$setType(Token.SKIP); newline();};
+LINEFOLDER: CRLF (SPACE | HTAB) {$setType(Token.SKIP);};

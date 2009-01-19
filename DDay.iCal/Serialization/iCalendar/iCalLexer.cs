@@ -767,7 +767,7 @@ _loop109_breakloop:			;
 			}
 			 }
 		}
-		_ttype = Token.SKIP; newline();
+		_ttype = Token.SKIP;
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
 			_token = makeToken(_ttype);
