@@ -54,7 +54,7 @@ namespace DDay.iCal.Components
         /// </summary>
         public IKeyedList<Parameter, string> Parameters
         {
-            get { return _Parameters; }            
+            get { return _Parameters; }
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 header
 {    
-    using DDay.iCal.Components;    
+    using DDay.iCal.Components; 
+    using System.Text;   
 }
 
 options
@@ -52,9 +53,9 @@ name returns [string s = string.Empty;]: x:X_NAME {s = x.getText();} | i:IANA_TO
 param[iCalObject o] {Parameter p; string n; string v;}: n=param_name {p = new Parameter(o, n);} EQUAL v=param_value {p.Values.Add(v);} (COMMA v=param_value {p.Values.Add(v);})*;
 param_name returns [string n = string.Empty;]: i:IANA_TOKEN {n = i.getText();};
 param_value returns [string v = string.Empty;]: v=paramtext | v=quoted_string;
-paramtext returns [string t = string.Empty] {string c;}: (c=safe_char {t += c;})*;
-value returns [string v = string.Empty] {string c;}: (c=value_char {v += c;})*;
-quoted_string returns [string s = string.Empty] {string c;}: DQUOTE (c=qsafe_char {s += c;})* DQUOTE;
+paramtext returns [string s = null;] {StringBuilder sb = new StringBuilder(); string c;}: (c=safe_char {sb.Append(c);})* { s = sb.ToString(); };
+value returns [string v = string.Empty] {StringBuilder sb = new StringBuilder(); string c;}: (c=value_char {sb.Append(c);})* { v = sb.ToString(); };
+quoted_string returns [string s = string.Empty] {StringBuilder sb = new StringBuilder(); string c;}: DQUOTE (c=qsafe_char {sb.Append(c);})* DQUOTE {s = sb.ToString(); };
 
 // Character Productions
 qsafe_char returns [string c = string.Empty]: a:~(CTL | DQUOTE | CRLF) {c = a.getText();};
@@ -77,8 +78,8 @@ xparam[iCalObject o] { Parameter p; string v;}: n:X_NAME {p = new Parameter(o, n
 class iCalLexer extends Lexer;
 options
 {
-    k=3; // k=2 for CRLF, k=3 to handle LINEFOLDER        
-    charVocabulary = '\u0000'..'\ufffe';    
+    k=3; // k=2 for CRLF and ESCAPED_CHAR, k=3 to handle LINEFOLDER
+    charVocabulary = '\u0000'..'\ufffe';
 }
 
 protected CR: '\u000d';
@@ -101,7 +102,7 @@ DQUOTE: '\u0022';
 CRLF: CR LF { newline(); };
 CTL: '\u0000'..'\u0008' | '\u000b'..'\u001F' | '\u007F';
 ESCAPED_CHAR: BACKSLASH (BACKSLASH | DQUOTE | SEMICOLON | COMMA | "N" | "n");
-IANA_TOKEN: (ALPHA | DIGIT | DASH)+
+IANA_TOKEN: (ALPHA | DIGIT | DASH | SPECIAL | UNICODE)+
 { 
     string s = $getText;
     int val;

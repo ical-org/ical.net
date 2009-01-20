@@ -1,6 +1,7 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalLexer.cs"$
     
-    using DDay.iCal.Components;    
+    using DDay.iCal.Components; 
+    using System.Text;   
 
 namespace DDay.iCal.Serialization.iCalendar
 {
@@ -162,27 +163,6 @@ tryAgain:
 							theRetToken = returnToken_;
 							break;
 						}
-						case '-':  case '0':  case '1':  case '2':
-						case '3':  case '4':  case '5':  case '6':
-						case '7':  case '8':  case '9':  case 'A':
-						case 'B':  case 'C':  case 'D':  case 'E':
-						case 'F':  case 'G':  case 'H':  case 'I':
-						case 'J':  case 'K':  case 'L':  case 'M':
-						case 'N':  case 'O':  case 'P':  case 'Q':
-						case 'R':  case 'S':  case 'T':  case 'U':
-						case 'V':  case 'W':  case 'X':  case 'Y':
-						case 'Z':  case 'a':  case 'b':  case 'c':
-						case 'd':  case 'e':  case 'f':  case 'g':
-						case 'h':  case 'i':  case 'j':  case 'k':
-						case 'l':  case 'm':  case 'n':  case 'o':
-						case 'p':  case 'q':  case 'r':  case 's':
-						case 't':  case 'u':  case 'v':  case 'w':
-						case 'x':  case 'y':  case 'z':
-						{
-							mIANA_TOKEN(true);
-							theRetToken = returnToken_;
-							break;
-						}
 						default:
 							if ((cached_LA1=='\r') && (cached_LA2=='\n') && (LA(3)=='\t'||LA(3)==' '))
 							{
@@ -197,11 +177,11 @@ tryAgain:
 								mESCAPED_CHAR(true);
 								theRetToken = returnToken_;
 							}
-							else if ((tokenSet_1_.member(cached_LA1))) {
+							else if ((tokenSet_1_.member(cached_LA1)) && (true) && (true)) {
 								mSPECIAL(true);
 								theRetToken = returnToken_;
 							}
-							else if (((cached_LA1 >= '\u0100' && cached_LA1 <= '\ufffe'))) {
+							else if (((cached_LA1 >= '\u0100' && cached_LA1 <= '\ufffe')) && (true) && (true)) {
 								mUNICODE(true);
 								theRetToken = returnToken_;
 							}
@@ -211,6 +191,10 @@ tryAgain:
 							}
 							else if ((tokenSet_2_.member(cached_LA1)) && (true)) {
 								mCTL(true);
+								theRetToken = returnToken_;
+							}
+							else if ((tokenSet_3_.member(cached_LA1)) && (true) && (true)) {
+								mIANA_TOKEN(true);
 								theRetToken = returnToken_;
 							}
 						else
@@ -707,6 +691,14 @@ tryAgain:
 					break;
 				}
 				default:
+					if ((tokenSet_1_.member(cached_LA1)))
+					{
+						mSPECIAL(false);
+					}
+					else if (((cached_LA1 >= '\u0100' && cached_LA1 <= '\ufffe'))) {
+						mUNICODE(false);
+					}
+				else
 				{
 					if (_cnt109 >= 1) { goto _loop109_breakloop; } else { throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());; }
 				}
@@ -805,6 +797,17 @@ _loop109_breakloop:			;
 		return data;
 	}
 	public static readonly BitSet tokenSet_2_ = new BitSet(mk_tokenSet_2_());
+	private static long[] mk_tokenSet_3_()
+	{
+		long[] data = new long[2560];
+		data[0]=-3170762861857210368L;
+		data[1]=9223372036586340351L;
+		for (int i = 2; i<=1022; i++) { data[i]=-1L; }
+		data[1023]=9223372036854775807L;
+		for (int i = 1024; i<=2559; i++) { data[i]=0L; }
+		return data;
+	}
+	public static readonly BitSet tokenSet_3_ = new BitSet(mk_tokenSet_3_());
 	
 }
 }

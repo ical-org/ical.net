@@ -37,13 +37,21 @@ namespace DDay.iCal
             );
         }
 
-        /// <summary>
-        /// Gets/sets an object with the matching key to
-        /// the provided value.  When setting the value,
-        /// if another object with a matching key exists,
-        /// it will be overwritten.  If overwriting is
-        /// not desired, use the Add() method instead.
-        /// </summary>        
+        public int CountOf(U key)
+        {
+            return AllOf(key).Count;
+        }
+
+        public IList<T> AllOf(U key)
+        {
+            return FindAll(
+                delegate(T ko)
+                {
+                    return object.Equals(ko.Key, key);
+                }
+            );
+        }
+
         public T this[U key]
         {
             get
@@ -62,10 +70,6 @@ namespace DDay.iCal
             }
         }       
 
-        /// <summary>
-        /// Removes all objects with the matching <paramref name="key"/>.
-        /// </summary>
-        /// <returns>True if any objects were removed, false otherwise.</returns>
         public bool Remove(U key)
         {
             int index = IndexOf(key);

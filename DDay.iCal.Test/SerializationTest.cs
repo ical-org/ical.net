@@ -683,6 +683,36 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             Assert.AreEqual("2.5", iCal.Version);
         }
 
+        /// <summary>
+        /// Tests that multiple properties are allowed in iCalObjects
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void PARSE9()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE9.ics");
+            
+            IList<Property> props = iCal.Properties.AllOf("VERSION");
+            Assert.AreEqual(2, props.Count);
+
+            for (int i = 0; i < props.Count; i++)
+                Assert.AreEqual("2." + i, props[i].Value);
+        }
+
+        /// <summary>
+        /// Tests that multiple parameters are allowed in iCalObjects
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void PARSE10()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE10.ics");
+
+            Event evt = iCal.Events[0];
+            IList<Parameter> parms = evt.DTStart.Parameters.AllOf("VALUE");
+            Assert.AreEqual(2, parms.Count);
+            Assert.AreEqual("DATE", parms[0].Values[0]);
+            Assert.AreEqual("OTHER", parms[1].Values[0]);
+        }
+
         private static byte[] ReadBinary(string fileName)
         {
             byte[] binaryData = null;

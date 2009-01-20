@@ -102,11 +102,7 @@ namespace DDay.iCal.Components
             if (Parent != null &&
                 Name != null)
             {
-                // Remove a previous property, if it exists
-                if (Parent.Properties.ContainsKey(Name))
-                    Parent.Properties.Remove(Name);
-
-                Parent.Properties[Name] = this;
+                Parent.Properties.Add(this);
             }
         }
 

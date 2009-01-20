@@ -69,9 +69,8 @@ namespace DDay.iCal.Components
         public void AddToParent()
         {
             if (Parent != null &&
-                Name != null &&
-                !Parent.Parameters.ContainsKey(Name))
-                Parent.Parameters[Name] = this;
+                Name != null)
+                Parent.Parameters.Add(this);
         }
 
         #endregion

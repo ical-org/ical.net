@@ -393,12 +393,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DDay.iCal\DDay.iCal.csproj">
-      <Project>{F88DB6D3-CB95-4707-9C88-B53403AADC61}</Project>
-      <Name>DDay.iCal</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Calendars\Serialization\SERIALIZE30.ics">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -417,9 +411,21 @@
     <None Include="Calendars\Serialization\PARSE8.ics">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Calendars\Serialization\PARSE9.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Calendars\Serialization\PARSE10.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Data\LoremIpsum.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DDay.iCal\DDay.iCal.csproj">
+      <Project>{F88DB6D3-CB95-4707-9C88-B53403AADC61}</Project>
+      <Name>DDay.iCal</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

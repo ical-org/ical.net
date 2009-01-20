@@ -1,6 +1,7 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalParser.cs"$
     
-    using DDay.iCal.Components;    
+    using DDay.iCal.Components; 
+    using System.Text;   
 
 namespace DDay.iCal.Serialization.iCalendar
 {
@@ -613,7 +614,7 @@ _loop85_breakloop:			;
 {
 		string v = string.Empty;
 		
-		string c;
+		StringBuilder sb = new StringBuilder(); string c;
 		
 		{    // ( ... )*
 			for (;;)
@@ -621,7 +622,7 @@ _loop85_breakloop:			;
 				if ((tokenSet_1_.member(LA(1))) && (tokenSet_2_.member(LA(2))) && (tokenSet_2_.member(LA(3))))
 				{
 					c=value_char();
-					v += c;
+					sb.Append(c);
 				}
 				else
 				{
@@ -631,6 +632,7 @@ _loop85_breakloop:			;
 			}
 _loop62_breakloop:			;
 		}    // ( ... )*
+		v = sb.ToString();
 		return v;
 	}
 	
@@ -794,9 +796,9 @@ _loop50_breakloop:			;
 	
 	public string  paramtext() //throws RecognitionException, TokenStreamException
 {
-		string t = string.Empty;
+		string s = null;;
 		
-		string c;
+		StringBuilder sb = new StringBuilder(); string c;
 		
 		{    // ( ... )*
 			for (;;)
@@ -804,7 +806,7 @@ _loop50_breakloop:			;
 				if ((tokenSet_3_.member(LA(1))))
 				{
 					c=safe_char();
-					t += c;
+					sb.Append(c);
 				}
 				else
 				{
@@ -814,14 +816,15 @@ _loop50_breakloop:			;
 			}
 _loop59_breakloop:			;
 		}    // ( ... )*
-		return t;
+		s = sb.ToString();
+		return s;
 	}
 	
 	public string  quoted_string() //throws RecognitionException, TokenStreamException
 {
 		string s = string.Empty;
 		
-		string c;
+		StringBuilder sb = new StringBuilder(); string c;
 		
 		match(DQUOTE);
 		{    // ( ... )*
@@ -830,7 +833,7 @@ _loop59_breakloop:			;
 				if ((tokenSet_4_.member(LA(1))))
 				{
 					c=qsafe_char();
-					s += c;
+					sb.Append(c);
 				}
 				else
 				{
@@ -841,6 +844,7 @@ _loop59_breakloop:			;
 _loop65_breakloop:			;
 		}    // ( ... )*
 		match(DQUOTE);
+		s = sb.ToString();
 		return s;
 	}
 	
