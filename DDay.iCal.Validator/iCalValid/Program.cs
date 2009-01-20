@@ -84,9 +84,18 @@ namespace DDay.iCal.Validator
                             numTestsExpected - results.Length
                         ));
                     }
-                    
+
+                    bool allSucceeded = true;
                     foreach (ICalendarTestResult result in results)
+                    {
+                        if (!result.Passed)
+                            allSucceeded = false;
+
                         Console.WriteLine(result.ToString());
+                    }
+
+                    if (allSucceeded)
+                        Console.WriteLine("All tests passed!");
                 }
                 else
                 {
