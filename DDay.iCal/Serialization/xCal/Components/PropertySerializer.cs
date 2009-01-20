@@ -55,10 +55,10 @@ namespace DDay.iCal.Serialization.xCal.Components
             get
             {
                 List<Parameter> Parameters = new List<Parameter>();
-                foreach (DictionaryEntry de in m_Property.Parameters)
+                foreach (Parameter p in m_Property.Parameters)
                 {
-                    if (!DisallowedParameters.Contains(de.Value as Parameter))
-                        Parameters.Add(de.Value as Parameter);
+                    if (!DisallowedParameters.Contains(p))
+                        Parameters.Add(p);
                 }
                 return Parameters;
             }

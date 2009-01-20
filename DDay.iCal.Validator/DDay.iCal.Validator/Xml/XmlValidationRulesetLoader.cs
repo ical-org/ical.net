@@ -36,7 +36,7 @@ namespace DDay.iCal.Validator.Xml
                 // Build a list of rulesets
                 List<IValidationRuleset> rulesets = new List<IValidationRuleset>();
                 foreach (XmlNode node in xmlDoc.SelectNodes("/v:rulesets/v:ruleset", nsmgr))
-                    rulesets.Add(new XmlValidationRuleset(node, nsmgr));
+                    rulesets.Add(new XmlValidationRuleset(_DocumentProvider, node, nsmgr));
                 
                 return rulesets.ToArray();
             }

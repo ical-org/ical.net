@@ -114,21 +114,19 @@ namespace DDay.iCal.Serialization.iCalendar.Components
                     serializer.Serialize(stream, encoding);
             }
 
-            foreach (DictionaryEntry de in Object.Properties)
+            foreach (Property p in Object.Properties)
             {
                 // Don't serialize "VERSION" again, we've already done it above.
-                if (de.Key.Equals("VERSION"))
-                    continue; 
-
-                Property p = (Property)de.Value;
+                if (p.Key.Equals("VERSION"))
+                    continue;
+                                
                 ISerializable serializer = SerializerFactory.Create(p);
                 if (serializer != null)
                     serializer.Serialize(stream, encoding);
             }
 
-            foreach (DictionaryEntry de in Object.Parameters)
-            {
-                Parameter p = (Parameter)de.Value;
+            foreach (Parameter p in Object.Parameters)
+            {                
                 ISerializable serializer = SerializerFactory.Create(p);
                 if (serializer != null)
                     serializer.Serialize(stream, encoding);

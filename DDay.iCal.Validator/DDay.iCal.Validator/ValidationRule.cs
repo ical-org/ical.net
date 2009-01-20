@@ -7,23 +7,25 @@ namespace DDay.iCal.Validator
     public class ValidationRule : 
         IValidationRule
     {
+        #region Private Fields
+
+        private ICalendarTest[] _Tests;        
+
+        #endregion
+
         #region IValidationRule Members
 
         virtual public string Name { get; protected set; }
         virtual public Type ValidatorType { get; protected set; }
 
-        #endregion
+        #endregion        
+    
+        #region ICalendarTestProvider Members
 
-        #region IValidator Members
-
-        virtual public IValidationError[] Validate()
+        virtual public ICalendarTest[] Tests
         {
-            if (ValidatorType != null)
-            {
-                // FIXME: how do we get the ICS contents here for validation?
-                //IValidator validator = ValidatorActivator.Create(ValidatorType);
-            }            
-            return new IValidationError[0];
+            get { return _Tests; }
+            protected set { _Tests = value; }
         }
 
         #endregion

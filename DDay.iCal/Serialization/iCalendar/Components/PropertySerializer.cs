@@ -41,11 +41,9 @@ namespace DDay.iCal.Serialization.iCalendar.Components
                 // }
                 //
                 // Since m_Property.Parameters is a Hashtable, this would always fail.
-                foreach (DictionaryEntry de in m_Property.Parameters)
-                {
-                    Parameter p = de.Value as Parameter;
-                    if (p != null)
-                        parameters.Add(p.Name + "=" + string.Join(",", p.Values.ToArray()));
+                foreach (Parameter p in m_Property.Parameters)
+                {   
+                    parameters.Add(p.Name + "=" + string.Join(",", p.Values.ToArray()));
                 }
 
                 value += ";" + string.Join(";", parameters.ToArray());
@@ -73,10 +71,10 @@ namespace DDay.iCal.Serialization.iCalendar.Components
             get
             {
                 List<Parameter> Parameters = new List<Parameter>();
-                foreach (DictionaryEntry de in m_Property.Parameters)
+                foreach (Parameter p in m_Property.Parameters)
                 {
-                    if (!DisallowedParameters.Contains(de.Value as Parameter))
-                        Parameters.Add(de.Value as Parameter);
+                    if (!DisallowedParameters.Contains(p))
+                        Parameters.Add(p);
                 }
                 return Parameters;
             }

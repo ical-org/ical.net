@@ -39,8 +39,8 @@ namespace DDay.iCal.DataTypes
                 if (value != null)
                 {
                     // Assign parameters from the content line
-                    foreach (DictionaryEntry de in value.Parameters)
-                        Parameters[de.Key] = de.Value;
+                    foreach (Parameter p in value.Parameters)
+                        Parameters.Add(p);
 
                     // Assign the NAME of the object from the content line
                     Name = value.Name;
@@ -95,7 +95,7 @@ namespace DDay.iCal.DataTypes
         {
             if (Parameters.ContainsKey("VALUE"))
             {
-                Parameter p = (Parameter)Parameters["VALUE"];
+                Parameter p = Parameters["VALUE"];
                 if (p.Values.Count > 0)
                 {
                     string type = p.Values[0].ToString().ToUpper();
@@ -125,8 +125,8 @@ namespace DDay.iCal.DataTypes
             icdt.CopyFrom(this);
 
             // Add parameters
-            foreach (DictionaryEntry de in Parameters)
-                ((Parameter)(de.Value)).Copy(icdt);
+            foreach (Parameter p in Parameters)
+                p.Copy(icdt);
 
             icdt.Parent = parent;
             return icdt;            

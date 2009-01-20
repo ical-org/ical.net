@@ -25,8 +25,8 @@ namespace DDay.iCal.Components
         private iCalObject _Parent = null;
         private List<iCalObject> _Children = new List<iCalObject>();
         private string _Name;
-        private Hashtable _Properties = new Hashtable();
-        private Hashtable _Parameters = new Hashtable();
+        private KeyedList<Property, string> _Properties = new KeyedList<Property, string>();
+        private KeyedList<Parameter, string> _Parameters = new KeyedList<Parameter, string>();
 
         #endregion
 
@@ -44,19 +44,17 @@ namespace DDay.iCal.Components
         /// <summary>
         /// Returns a list of properties that are associated with the iCalendar object.
         /// </summary>
-        public Hashtable Properties
+        public IKeyedList<Property, string> Properties
         {
             get { return _Properties; }
-            set { _Properties = value; }
         }
 
         /// <summary>
         /// Returns a list of parameters that are associated with the iCalendar object.
         /// </summary>
-        public Hashtable Parameters
+        public IKeyedList<Parameter, string> Parameters
         {
-            get { return _Parameters; }
-            set { _Parameters = value; }
+            get { return _Parameters; }            
         }
 
         /// <summary>
@@ -65,8 +63,7 @@ namespace DDay.iCal.Components
         /// </summary>
         public List<iCalObject> Children
         {
-            get { return _Children; }
-            set { _Children = value; }
+            get { return _Children; }            
         }
 
         /// <summary>
@@ -215,12 +212,12 @@ namespace DDay.iCal.Components
                 obj = (iCalObject)Activator.CreateInstance(type);
 
             // Add properties
-            foreach (DictionaryEntry de in Properties)
-                ((Property)(de.Value)).Copy(obj);
+            foreach (Property p in Properties)
+                p.Copy(obj);
 
             // Add parameters
-            foreach (DictionaryEntry de in Parameters)
-                ((Parameter)(de.Value)).Copy(obj);
+            foreach (Parameter p in Parameters)
+                p.Copy(obj);
 
             // Add each child
             foreach (iCalObject child in Children)
@@ -281,7 +278,7 @@ namespace DDay.iCal.Components
         /// </summary>
         virtual public void AddParameter(Parameter p)
         {
-            Parameters[p.Name] = p;
+            Parameters.Add(p);
         }
 
         #endregion

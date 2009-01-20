@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDay.iCal.Validator", "DDay.iCal.Validator\DDay.iCal.Validator.csproj", "{CFC7E23A-D49B-42F5-8AC2-12D6C86D3914}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iCalValid", "iCalValid\iCalValid.csproj", "{EA6BA8D9-5520-4810-B9A0-88B80EEED3AA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "icalvalid", "iCalValid\icalvalid.csproj", "{EA6BA8D9-5520-4810-B9A0-88B80EEED3AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

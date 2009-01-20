@@ -111,10 +111,10 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
             get
             {
                 List<Parameter> Parameters = new List<Parameter>();
-                foreach (DictionaryEntry de in m_dataType.Parameters)
+                foreach (Parameter p in m_dataType.Parameters)
                 {
-                    if (!this.DisallowedParameters.Contains(de.Value as Parameter))
-                        Parameters.Add(de.Value as Parameter);
+                    if (!this.DisallowedParameters.Contains(p))
+                        Parameters.Add(p);
                 }
                 return Parameters;
             }

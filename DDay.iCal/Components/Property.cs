@@ -24,7 +24,9 @@ namespace DDay.iCal.Components
     /// There may be other, custom X-properties applied to the calendar,
     /// and X-properties may be applied to calendar components.
     /// </remarks>
-    public class Property : iCalObject
+    public class Property : 
+        iCalObject,
+        IKeyedObject<string>
     {
         #region Private Fields
 
@@ -48,8 +50,8 @@ namespace DDay.iCal.Components
         {
             this.Name = cl.Name;
             this.Value = cl.Value;
-            foreach (DictionaryEntry de in cl.Parameters)
-                this.Parameters[de.Key] = de.Value;
+            foreach (Parameter p in cl.Parameters)
+                AddParameter(p);
         }
         public Property(iCalObject parent) : base(parent) { }
         public Property(iCalObject parent, string name) : base(parent, name)
@@ -106,6 +108,15 @@ namespace DDay.iCal.Components
 
                 Parent.Properties[Name] = this;
             }
+        }
+
+        #endregion
+
+        #region IKeyedObject Members
+
+        public string Key
+        {
+            get { return Name; }
         }
 
         #endregion

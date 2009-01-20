@@ -50,6 +50,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CalendarTest.cs" />
+    <Compile Include="CalendarTestError.cs" />
+    <Compile Include="CalendarTestResult.cs" />
+    <Compile Include="Interfaces\ICalendarTest.cs" />
+    <Compile Include="Interfaces\ICalendarTestError.cs" />
+    <Compile Include="Interfaces\ICalendarTestProvider.cs" />
+    <Compile Include="Interfaces\ICalendarTestable.cs" />
+    <Compile Include="Interfaces\ICalendarTestResult.cs" />
     <Compile Include="Interfaces\IValidationRule.cs" />
     <Compile Include="Interfaces\IValidationRuleset.cs" />
     <Compile Include="Interfaces\IValidationRulesetProvider.cs" />
@@ -57,7 +65,7 @@
     <Compile Include="RFC2445\Calendar\ReqProdIDValidator.cs" />
     <Compile Include="RFC2445\Calendar\EmptyLineValidator.cs" />
     <Compile Include="RFC2445\DataTypes\BinaryValidator.cs" />
-    <Compile Include="RFC2445\RFC2445Validator.cs" />
+    <Compile Include="RulesetValidator.cs" />
     <Compile Include="Interfaces\IValidator.cs" />
     <Compile Include="Interfaces\IValidationError.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -69,6 +77,7 @@
     <Compile Include="ValidationRuleset.cs" />
     <Compile Include="ValidatorActivator.cs" />
     <Compile Include="Xml\IXmlDocumentProvider.cs" />
+    <Compile Include="Xml\XmlCalendarTest.cs" />
     <Compile Include="Xml\XmlDocumentZipExtractor.cs" />
     <Compile Include="Xml\XmlValidationRule.cs" />
     <Compile Include="Xml\XmlValidationRuleset.cs" />

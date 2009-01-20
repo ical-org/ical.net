@@ -8,10 +8,37 @@ namespace DDay.iCal.Validator.Xml
     public class XmlValidationRule :
         ValidationRule
     {
-        public XmlValidationRule(XmlNode node, XmlNamespaceManager nsmgr)
+        string _File;
+
+        public string File
+        {
+            get { return _File; }
+            protected set { _File = value; }
+        }
+
+        public XmlValidationRule(IXmlDocumentProvider docProvider, XmlNode node, XmlNamespaceManager nsmgr)
         {
             if (node.Attributes["name"] != null)
                 Name = node.Attributes["name"].Value;
+            if (node.Attributes["file"] != null)
+                File = node.Attributes["file"].Value;
+
+            if (!string.IsNullOrEmpty(File))
+            {
+                XmlDocument doc = docProvider.Load(File);
+                if (doc != null)
+                {
+                    List<ICalendarTest> tests = new List<ICalendarTest>();
+
+                    string prefix = nsmgr.LookupPrefix("http://icalvalid.wikidot.com/validation");
+                    foreach (XmlNode passNode in doc.SelectNodes("/" + prefix + ":rule/" + prefix + ":pass", nsmgr))
+                        tests.Add(new XmlCalendarTest(passNode, nsmgr));
+                    foreach (XmlNode failNode in doc.SelectNodes("/" + prefix + ":rule/" + prefix + ":fail", nsmgr))
+                        tests.Add(new XmlCalendarTest(failNode, nsmgr));
+
+                    Tests = tests.ToArray();
+                }
+            }            
         }
 
         public override Type ValidatorType

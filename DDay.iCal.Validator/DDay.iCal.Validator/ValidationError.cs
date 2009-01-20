@@ -9,6 +9,7 @@ namespace DDay.iCal.Validator
     {
         #region IValidationError Members
 
+        public string Name { get; set; }
         public ValidationErrorType Type { get; set; }
         public string Message { get; set; }
         public bool IsFatal { get; set; }
@@ -18,36 +19,42 @@ namespace DDay.iCal.Validator
         #endregion
 
         #region Constructors
-
+        
         public ValidationError()
         {
         }
 
-        public ValidationError(string msg)
+        public ValidationError(string name)
+        {
+            Name = name;
+        }
+
+        public ValidationError(string name, string msg) :
+            this(name)
         {
             Message = msg;
         }
 
-        public ValidationError(string msg, ValidationErrorType type) :
-            this(msg)
+        public ValidationError(string name, string msg, ValidationErrorType type) :
+            this(name, msg)
         {
             Type = type;
         }
 
-        public ValidationError(string msg, ValidationErrorType type, bool isFatal) :
-            this(msg, type)
+        public ValidationError(string name, string msg, ValidationErrorType type, bool isFatal) :
+            this(name, msg, type)
         {
             IsFatal = isFatal;
         }
 
-        public ValidationError(string msg, ValidationErrorType type, bool isFatal, int line) :
-            this(msg, type, isFatal)
+        public ValidationError(string name, string msg, ValidationErrorType type, bool isFatal, int line) :
+            this(name, msg, type, isFatal)
         {
             Line = line;
         }
 
-        public ValidationError(string msg, ValidationErrorType type, bool isFatal, int line, int col) :
-            this(msg, type, isFatal, line)
+        public ValidationError(string name, string msg, ValidationErrorType type, bool isFatal, int line, int col) :
+            this(name, msg, type, isFatal, line)
         {
             Col = col;
         }

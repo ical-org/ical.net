@@ -13,7 +13,9 @@ namespace DDay.iCal.Components
     /// The <c>VALUE=DATE</c> portion is a <see cref="Parameter"/> of the DTSTART value.
     /// </example>
     /// </remarks>
-    public class Parameter : iCalObject
+    public class Parameter : 
+        iCalObject,
+        IKeyedObject<string>
     {
         #region Private Fields
 
@@ -99,6 +101,15 @@ namespace DDay.iCal.Components
             else return base.GetHashCode();
         }
         
+        #endregion
+
+        #region IKeyedObject Members
+
+        public string Key
+        {
+            get { return Name; }
+        }
+
         #endregion
     }
 }

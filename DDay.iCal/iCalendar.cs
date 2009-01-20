@@ -711,17 +711,17 @@ namespace DDay.iCal
             if (iCal != null)
             {
                 // Merge all parameters
-                foreach (DictionaryEntry de in iCal.Parameters)
+                foreach (Parameter p in iCal.Parameters)
                 {
-                    if (!this.Parameters.ContainsKey(de))
-                        this.Parameters[de.Key] = de.Value;
+                    if (!Parameters.ContainsKey(p.Key))
+                        AddParameter(p);                        
                 }
 
                 // Merge all properties
-                foreach (DictionaryEntry de in iCal.Properties)
+                foreach (Property p in iCal.Properties)
                 {
-                    if (!this.Properties.ContainsKey(de.Key))
-                        this.Properties[de.Key] = de.Value;
+                    if (!Properties.ContainsKey(p.Key))
+                        AddProperty(p);
                 }
 
                 // Merge all unique components

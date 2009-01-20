@@ -111,6 +111,9 @@
     <Compile Include="Components\iCalTimeZone.cs" />
     <Compile Include="Components\Todo.cs" />
     <Compile Include="iCalendar.cs" />
+    <Compile Include="Interfaces\IKeyedList.cs" />
+    <Compile Include="Interfaces\IKeyedObject.cs" />
+    <Compile Include="KeyedList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\DisallowedTypesAttribute.cs" />
     <Compile Include="Serialization\ForceUTCAttribute.cs" />

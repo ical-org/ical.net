@@ -7,6 +7,12 @@ namespace DDay.iCal.Validator
     public interface IValidationError
     {
         /// <summary>
+        /// The name of the validation error, as per
+        /// the icalvalid spec.
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
         /// Gets the type of validation error.
         /// </summary>
         ValidationErrorType Type { get; }

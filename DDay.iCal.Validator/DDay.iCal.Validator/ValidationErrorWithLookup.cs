@@ -7,31 +7,31 @@ namespace DDay.iCal.Validator
     public class ValidationErrorWithLookup :
         ValidationError
     {
-        public ValidationErrorWithLookup(string errorName)
-        {
-            Message = ResourceManager.GetError(errorName);
+        public ValidationErrorWithLookup(string name) : base(name)
+        {            
+            Message = ResourceManager.GetError(name);
         }
 
-        public ValidationErrorWithLookup(string errorName, ValidationErrorType type) :
-            this(errorName)
+        public ValidationErrorWithLookup(string name, ValidationErrorType type) :
+            this(name)
         {
             Type = type;
         }
 
-        public ValidationErrorWithLookup(string errorName, ValidationErrorType type, bool isFatal) :
-            this(errorName, type)
+        public ValidationErrorWithLookup(string name, ValidationErrorType type, bool isFatal) :
+            this(name, type)
         {
             IsFatal = isFatal;
         }
 
-        public ValidationErrorWithLookup(string errorName, ValidationErrorType type, bool isFatal, int line) :
-            this(errorName, type, isFatal)
+        public ValidationErrorWithLookup(string name, ValidationErrorType type, bool isFatal, int line) :
+            this(name, type, isFatal)
         {
             Line = line;
         }
 
-        public ValidationErrorWithLookup(string errorName, ValidationErrorType type, bool isFatal, int line, int col) :
-            this(errorName, type, isFatal, line)
+        public ValidationErrorWithLookup(string name, ValidationErrorType type, bool isFatal, int line, int col) :
+            this(name, type, isFatal, line)
         {
             Col = col;
         }
