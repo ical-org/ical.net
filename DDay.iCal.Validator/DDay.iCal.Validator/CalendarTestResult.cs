@@ -30,7 +30,7 @@ namespace DDay.iCal.Validator
             StringBuilder sb = new StringBuilder();
             sb.Append(Source ?? "Unknown");
             sb.Append(": ");
-            sb.Append(Passed ? "Pass" : "Fail");
+            sb.Append(Passed ? ResourceManager.GetString("pass") : ResourceManager.GetString("fail"));
             if (Error != null)
                 sb.Append(Environment.NewLine + Error.ToString());
 

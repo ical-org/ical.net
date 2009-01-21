@@ -16,6 +16,7 @@ namespace DDay.iCal.Validator
         static CommandLineArgument _UsernameArgument = new CommandLineArgument(new string[] { "u", "username" });
         static CommandLineArgument _PasswordArgument = new CommandLineArgument(new string[] { "p", "password" });
         static CommandLineArgument _TestArgument = new CommandLineArgument(new string[] { "t", "test" });
+        static CommandLineArgument _LanguageArgument = new CommandLineArgument(new string[] { "l", "language" });
 
         static CommandLineArgumentList _Arguments;
 
@@ -27,8 +28,27 @@ namespace DDay.iCal.Validator
 
                 // Initialize our xml document provider
                 XmlDocumentZipExtractor ze = new XmlDocumentZipExtractor("icalvalidSchema.zip");
-                // Initialize our resource manager using the provider
-                ResourceManager.Initialize(ze);
+                
+                bool foundLanguage = false;
+
+                // Determine what language we're using...
+                if (_Arguments.Contains(_LanguageArgument))
+                {
+                    // Initialize our resource manager with a user-defined culture
+                    foundLanguage = ResourceManager.Initialize(ze, _Arguments[_LanguageArgument].Value);
+                }
+                else
+                {
+                    // Initialize our resource manager with our current culture
+                    foundLanguage = ResourceManager.Initialize(ze, false);
+                }
+
+                if (!foundLanguage)
+                {
+                    // Force initialization to English
+                    ResourceManager.Initialize(ze, true);
+                    Console.WriteLine("Could not find the selected language; using English instead...");
+                }                
 
                 // Load some rulesets
                 XmlValidationRulesetLoader loader = new XmlValidationRulesetLoader(ze);
@@ -69,8 +89,11 @@ namespace DDay.iCal.Validator
             if (selectedRuleset != null)
             {
                 RulesetValidator validator = new RulesetValidator(selectedRuleset);
-                
-                Console.WriteLine("Performing self test...");
+
+                Console.WriteLine(string.Format(
+                    ResourceManager.GetString("performingSelfTest"),
+                    selectedRuleset.Description));
+
                 ICalendarTestResult[] results = validator.Test();
                 if (results != null &&
                     results.Length > 0)
@@ -78,33 +101,38 @@ namespace DDay.iCal.Validator
                     int numTestsExpected = validator.Tests.Length;
                     if (!object.Equals(numTestsExpected, results.Length))
                     {
-                        Console.WriteLine(string.Format("There were {0} tests, and only {1} were run; {2} tests did not run.",
+                        Console.WriteLine(string.Format(
+                            ResourceManager.GetString("notAllTestsPerformed"),                            
                             numTestsExpected,
                             results.Length,
                             numTestsExpected - results.Length
                         ));
                     }
 
-                    bool allSucceeded = true;
+                    int passed = 0;
                     foreach (ICalendarTestResult result in results)
                     {
-                        if (!result.Passed)
-                            allSucceeded = false;
+                        if (result.Passed)
+                            passed++;
 
                         Console.WriteLine(result.ToString());
                     }
 
-                    if (allSucceeded)
-                        Console.WriteLine("All tests passed!");
+                    Console.WriteLine(string.Format(
+                        ResourceManager.GetString("passVsFail"),
+                        passed,
+                        results.Length,
+                        string.Format("{0:0.0}", ((double)passed / (double)results.Length) * 100)
+                    ));
                 }
                 else
                 {
-                    Console.WriteLine("No tests were performed!");
+                    Console.WriteLine(ResourceManager.GetString("noTestsPerformed"));
                 }                
             }
             else
             {
-                Console.WriteLine("A validation ruleset could not be determined!");
+                Console.WriteLine(ResourceManager.GetString("noValidationRuleset"));
             }
         }
 
@@ -118,7 +146,7 @@ namespace DDay.iCal.Validator
                 if (_Arguments.Contains(_FileArgument))
                 {
                     // Load the calendar from a local file
-                    Console.Write("Loading calendar...");
+                    Console.Write(ResourceManager.GetString("loadingCalendar"));
                     FileStream fs = new FileStream(_Arguments[_FileArgument].Value, FileMode.Open, FileAccess.Read);
                     if (fs != null)
                     {
@@ -126,12 +154,12 @@ namespace DDay.iCal.Validator
                         iCalText = sr.ReadToEnd();
                         sr.Close();
                     }
-                    Console.WriteLine("done.");
+                    Console.WriteLine(ResourceManager.GetString("Done"));
                 }
                 else if (_Arguments.Contains(_UriArgument))
                 {
                     // Load the calendar from a Uri
-                    Console.Write("Loading calendar...");
+                    Console.Write(ResourceManager.GetString("loadingCalendar"));
                     Uri uri = new Uri(_Arguments[_UriArgument].Value);
                     string
                         username = null,
@@ -149,7 +177,7 @@ namespace DDay.iCal.Validator
                         client.Credentials = new System.Net.NetworkCredential(username, password);
 
                     iCalText = client.DownloadString(uri);
-                    Console.WriteLine("done.");
+                    Console.WriteLine(ResourceManager.GetString("Done"));
                 }
                 else
                 {
@@ -164,7 +192,7 @@ namespace DDay.iCal.Validator
                 {
                     if (iCalText == null)
                     {
-                        throw new Exception("The calendar could not be found!");
+                        throw new Exception(ResourceManager.GetString("calendarNotFound"));
                     }
                     else
                     {
@@ -172,7 +200,7 @@ namespace DDay.iCal.Validator
 
                         if (rulesetValidator != null)
                         {
-                            Console.WriteLine("Validating calendar using '" + selectedRuleset.Description + "' ruleset...");
+                            Console.WriteLine(ResourceManager.GetString("validatingCalendar"));
 
                             IValidationError[] errors = rulesetValidator.Validate();
                             if (errors != null &&
@@ -183,7 +211,7 @@ namespace DDay.iCal.Validator
                             }
                             else
                             {
-                                Console.WriteLine("The calendar is valid!");
+                                Console.WriteLine(ResourceManager.GetString("calendarValid"));
                             }
                         }
                     }
@@ -191,7 +219,7 @@ namespace DDay.iCal.Validator
             }
             else
             {
-                Console.WriteLine("A validation ruleset could not be determined!");
+                Console.WriteLine(ResourceManager.GetString("noValidationRuleset"));
             }
         }
 
@@ -216,13 +244,14 @@ namespace DDay.iCal.Validator
             Console.WriteLine("/v:<validator> | The validator to use.  Possible values are:");
             Console.WriteLine("               |       Strict2_0");
             Console.WriteLine("               |       Other validator names");
+            Console.WriteLine("/l:<language>  | The language to use when validating (i.e. en-US, es-MX, etc.)");
             Console.WriteLine();
             Console.WriteLine("Examples:");
             Console.WriteLine();
             Console.WriteLine("icalvalid /t");
             Console.WriteLine(@"icalvalid /f:c:\calendar.ics");
             Console.WriteLine(@"icalvalid /uri:http://www.someuri.com/calendar.ics");
-            Console.WriteLine(@"icalvalid /uri:http://www.someuri.com/calendar.ics /u:myuser /p:mypassword");
+            Console.WriteLine(@"icalvalid /uri:http://www.someuri.com/calendar.ics /u:myuser /p:mypassword /l:es-MX");
         }
 
         static public string GetCalendarText(string calendarFilename)

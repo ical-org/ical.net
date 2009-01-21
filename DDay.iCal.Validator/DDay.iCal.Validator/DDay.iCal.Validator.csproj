@@ -58,6 +58,7 @@
     <Compile Include="Interfaces\ICalendarTestProvider.cs" />
     <Compile Include="Interfaces\ICalendarTestable.cs" />
     <Compile Include="Interfaces\ICalendarTestResult.cs" />
+    <Compile Include="Interfaces\ICalendarTestResultSerializer.cs" />
     <Compile Include="Interfaces\IValidationRule.cs" />
     <Compile Include="Interfaces\IValidationRuleset.cs" />
     <Compile Include="Interfaces\IValidationRulesetProvider.cs" />
