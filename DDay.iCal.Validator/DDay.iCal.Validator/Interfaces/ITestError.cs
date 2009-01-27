@@ -4,11 +4,11 @@ using System.Text;
 
 namespace DDay.iCal.Validator
 {
-    public interface ICalendarTestResult
+    public interface ITestError
     {
+        string Name { get; }
+        string Message { get; }
         string Source { get; }
-        ICalendarTest Test { get; }
-        bool Passed { get; }
-        ICalendarTestError Error { get; }
+        IValidationResult[] ValidationResults { get; }
     }
 }

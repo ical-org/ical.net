@@ -1,0 +1,294 @@
+﻿<?xml version="1.0"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://icalvalid.wikidot.com/validation"
+    xmlns="http://icalvalid.wikidot.com/validation"
+    elementFormDefault="qualified">
+
+    <xs:simpleType
+        name="datetimeType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="(-)?[0-9]{4}-?[0-9]{2}-?[0-9]{2}T[0-9]{2}:?[0-9]{2}:?[0-9]{1,2}(\.[0-9]+)?(Z|((\+|-)[0-9]{2}(:?[0-9]{2})?))?" />
+        </xs:restriction>        
+    </xs:simpleType>
+
+    <xs:simpleType
+        name="langIDType">
+        <xs:restriction base="xs:token">
+            <xs:minLength value="2"/>
+            <xs:maxLength value="7"/>
+            <xs:pattern value="[a-zA-Z0-9]{2,3}(-[a-zA-Z0-9]{2,3})?"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType
+        name="nameIDType">
+        <xs:restriction base="xs:token">
+            <xs:minLength value="2"/>
+            <xs:pattern value="[a-zA-Z0-9_]{2,}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType
+        name="rulesetRuleType">
+        <xs:attribute
+            name="name"
+            type="nameIDType"
+            use="required" />
+        <xs:attribute
+            name="file"
+            type="xs:string"
+            use="required" />
+    </xs:complexType>
+
+    <xs:complexType
+        name="rulesetType">
+        <xs:sequence>
+            <xs:element
+                name="rule"
+                type="rulesetRuleType"
+                minOccurs="0"
+                maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute
+            name="name"
+            type="nameIDType"
+            use="required" />
+        <xs:attribute
+            name="description"
+            type="xs:string"
+            use="optional" />
+    </xs:complexType>
+
+    <xs:complexType
+        name="rulesetsType">
+        <xs:sequence>
+            <xs:element
+                name="ruleset"
+                type="rulesetType"
+                minOccurs="1"
+                maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType
+        name="stringType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="name"
+                              type="nameIDType"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType
+        name="errorType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute
+                    name="name"
+                    type="nameIDType"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType
+        name="resolutionType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute
+                    name="error"
+                    type="nameIDType"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType
+        name="languageType">
+        <xs:sequence>
+            <xs:element
+                name="string"
+                type="stringType"
+                minOccurs="0"
+                maxOccurs="unbounded" />
+
+            <xs:element
+                name="errors"
+                minOccurs="1"
+                maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element
+                            name="error"
+                            type="errorType"
+                            minOccurs="0"
+                            maxOccurs="unbounded" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element
+                name="resolutions"
+                minOccurs="1"
+                maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element
+                            name="resolution"
+                            type="resolutionType"
+                            minOccurs="0"
+                            maxOccurs="unbounded" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute
+            name="name"
+            type="langIDType"
+            use="required" />
+        <xs:attribute
+            name="description"
+            type="xs:string"
+            use="optional" />
+    </xs:complexType>
+
+    <xs:complexType
+        name="failType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="error"
+                              type="nameIDType"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:simpleType 
+        name="passFailStringType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="pass"/>
+            <xs:enumeration value="fail"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType
+        name="ruleType">
+        <xs:choice
+            minOccurs="0"
+            maxOccurs="unbounded">
+            <xs:element
+                name="pass"
+                type="xs:string" />
+            <xs:element
+                name="fail"
+                type="failType" />
+        </xs:choice>
+        <xs:attribute
+            name="name"
+            type="nameIDType"
+            use="required" />
+    </xs:complexType>
+
+    <xs:complexType
+        name="testResultType">        
+        <xs:attribute
+            name="rule"
+            type="nameIDType"
+            use="optional" />
+        <xs:attribute
+            name="expected"
+            type="passFailStringType"
+            use="optional">            
+        </xs:attribute>
+        <xs:attribute 
+            name="actual"
+            type="passFailStringType"
+            use="optional">            
+        </xs:attribute>
+        <xs:attribute
+            name="error"
+            type="xs:string"
+            use="optional" />
+        <xs:attribute
+            name="errorName"
+            type="nameIDType"
+            use="optional" />
+    </xs:complexType>
+
+    <xs:complexType
+        name="validationResultType">
+        <xs:sequence>
+            <xs:element
+                name="errors"
+                minOccurs="0"
+                maxOccurs="1">
+                <xs:complexType>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>            
+        <xs:attribute
+            name="rule"
+            type="nameIDType"
+            use="optional" />        
+    </xs:complexType>
+
+    <xs:complexType
+        name="resultsType">
+        <xs:sequence>
+            <xs:element
+                name="testResults"
+                minOccurs="0"
+                maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element
+                            name="testResult"
+                            type="testResultType"
+                            minOccurs="0"
+                            maxOccurs="unbounded" />
+                    </xs:sequence>
+                    <xs:attribute
+                        name="ruleset"
+                        type="nameIDType" />
+                </xs:complexType>
+            </xs:element>
+            <xs:element
+                name="validationResults"
+                minOccurs="0"
+                maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element
+                            name="validationResult"
+                            type="validationResultType"
+                            minOccurs="0"
+                            maxOccurs="unbounded" />
+                    </xs:sequence>
+                    <xs:attribute
+                        name="ruleset"
+                        type="nameIDType" />
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute
+            name="datetime"
+            type="datetimeType" 
+            use="optional"/>
+        <xs:attribute
+            name="language"
+            type="langIDType"
+            use="optional" />
+    </xs:complexType>
+
+    <xs:element
+        name="rulesets"
+        type="rulesetsType" />
+    <xs:element
+        name="language"
+        type="languageType" />
+    <xs:element
+        name="rule"
+        type="ruleType" />
+    <xs:element
+        name="results"
+        type="resultsType" />
+</xs:schema>

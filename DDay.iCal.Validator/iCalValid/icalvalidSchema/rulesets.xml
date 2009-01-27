@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<rulesets
+    xmlns="http://icalvalid.wikidot.com/validation"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://icalvalid.wikidot.com/validation schema.xsd">
+    <!-- 
+        Defines the available rulesets for iCalendar validation.
+        - "Strict" rulesets enforce RFC 2445 as closely as possible.
+        - "Loose" rulesets allow for some variation from the standard,
+          inasmuch as calendaring applications generally accept those
+          variations.
+    -->
+    <ruleset
+        name="Strict2_0"
+        description="iCalendar 2.0 Strict">
+        <rule name="emptyLine" file="rules/RFC2445/emptyLine.xml" />
+        <rule name="crlfPairs" file="rules/RFC2445/4.1/crlfPairs.xml" />
+        <rule name="reqVersion" file="rules/RFC2445/4.6/reqVersion.xml" />
+        <rule name="reqProdID" file="rules/RFC2445/4.6/reqProdID.xml" />
+    </ruleset>
+
+    <ruleset
+        name="Loose2_0"
+        description="iCalendar 2.0 Loose">
+    </ruleset>
+
+    <ruleset
+        name="StrictMIME2_0"
+        description="iCalendar 2.0 Strict with MIME attachments">
+    </ruleset>
+</rulesets>

@@ -4,8 +4,8 @@ using System.Text;
 
 namespace DDay.iCal.Validator
 {
-    public interface ICalendarTestProvider
+    public interface ITestProvider
     {
-        ICalendarTest[] Tests { get; }
+        ITest[] Tests { get; }
     }
 }

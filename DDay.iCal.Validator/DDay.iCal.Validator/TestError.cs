@@ -5,17 +5,17 @@ using System.IO;
 
 namespace DDay.iCal.Validator
 {
-    public class CalendarTestError :
-        ICalendarTestError
+    public class TestError :
+        ITestError
     {
         #region Constructors
 
-        public CalendarTestError(string name, string source, IValidationError[] errors)
+        public TestError(string name, string source, IValidationResult[] validationResults)
         {
             Name = name;
             Message = ResourceManager.GetError(name);
             Source = source;
-            Errors = errors;
+            ValidationResults = validationResults;
         }
 
         #endregion
@@ -27,10 +27,10 @@ namespace DDay.iCal.Validator
             StringBuilder sb = new StringBuilder();            
             sb.Append(Message);
             int i = 1;
-            foreach (IValidationError error in Errors)
+            foreach (IValidationResult result in ValidationResults)
             {
                 sb.Append(Environment.NewLine + i + ": ");
-                StringReader sr = new StringReader(error.ToString());
+                StringReader sr = new StringReader(result.ToString());
                 string s = sr.ReadLine();
                 bool isFirstLine = true;
                 while (!string.IsNullOrEmpty(s))
@@ -56,7 +56,7 @@ namespace DDay.iCal.Validator
         virtual public string Name { get; protected set; }
         virtual public string Message { get; protected set; }
         virtual public string Source { get; protected set; }
-        virtual public IValidationError[] Errors { get; protected set; }
+        virtual public IValidationResult[] ValidationResults { get; protected set; }
 
         #endregion
     }

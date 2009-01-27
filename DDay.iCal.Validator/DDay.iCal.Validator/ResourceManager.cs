@@ -1,26 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Reflection;
 using System.Globalization;
-using DDay.iCal.Validator.Xml;
-using System.Xml;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
+using DDay.iCal.Validator.Xml;
 
 namespace DDay.iCal.Validator
 {
     static public class ResourceManager
     {
+        #region Static Private Fields
+
         static private IXmlDocumentProvider _XmlDocumentProvider;
         static private XmlDocument _XmlDocument;
         static private XmlNamespaceManager _Nsmgr;
         static private string _Prefix;
         static private string[] _LanguageIdentifiers = null;
-        static private bool _IsInitialized = false;
+        static private string _CurrentLanguageIdentifier = null;        
+        static private bool _IsInitialized = false; 
+
+        #endregion
+
+        #region Static Public Properties
+
+        public static string CurrentLanguageIdentifier
+        {
+            get
+            {
+                if (_CurrentLanguageIdentifier == null)
+                    EnsureXmlDocument();
+                return _CurrentLanguageIdentifier;
+            }
+        }
+
+        #endregion
+
+        #region Static Constructor
 
         static ResourceManager()
-        {            
+        {
             CultureInfo ci = CultureInfo.CurrentCulture;
             _LanguageIdentifiers = new string[3]
             {
@@ -28,26 +47,11 @@ namespace DDay.iCal.Validator
                 ci.TwoLetterISOLanguageName,
                 ci.ThreeLetterISOLanguageName
             };
-        }
+        } 
 
-        static public bool Initialize(IXmlDocumentProvider docProvider, bool forceLanguage)
-        {
-            _XmlDocumentProvider = docProvider;
-            _IsInitialized = EnsureXmlDocument();
+        #endregion
 
-            if (forceLanguage && !_IsInitialized)
-            {
-                _LanguageIdentifiers = new string[] { "en-US", "en" };
-                _IsInitialized = EnsureXmlDocument();
-            }
-            return _IsInitialized;
-        }
-
-        static public bool Initialize(IXmlDocumentProvider docProvider, string language)
-        {            
-            ParseLanguageIdentifiers(language);
-            return Initialize(docProvider, false);
-        }
+        #region Static Private Methods
 
         static private void ParseLanguageIdentifiers(string language)
         {
@@ -100,36 +104,65 @@ namespace DDay.iCal.Validator
 
         static private bool EnsureXmlDocument()
         {
-            _XmlDocument = null;
-            _Nsmgr = null;
-            _Prefix = null;
-
-            foreach (string id in _LanguageIdentifiers)
+            if (_XmlDocument == null)
             {
-                _XmlDocument = _XmlDocumentProvider.Load("languages/" + id + ".xml");
-                if (_XmlDocument != null)
-                    break;
-            }            
+                _XmlDocument = null;
+                _Nsmgr = null;
+                _Prefix = null;
 
-            if (_XmlDocument != null)
-            {
-                _Nsmgr = new XmlNamespaceManager(_XmlDocument.NameTable);
-                _Prefix = _Nsmgr.LookupPrefix("http://icalvalid.wikidot.com/validation");
-                if (_Prefix == null)
+                foreach (string id in _LanguageIdentifiers)
                 {
-                    _Nsmgr.AddNamespace("v", "http://icalvalid.wikidot.com/validation");
-                    _Prefix = "v";
+                    _XmlDocument = _XmlDocumentProvider.Load("languages/" + id + ".xml");
+                    if (_XmlDocument != null)
+                    {
+                        _CurrentLanguageIdentifier = id;
+                        break;
+                    }
+                }
+
+                if (_XmlDocument != null)
+                {
+                    _Nsmgr = new XmlNamespaceManager(_XmlDocument.NameTable);
+                    _Prefix = _Nsmgr.LookupPrefix("http://icalvalid.wikidot.com/validation");
+                    if (_Prefix == null)
+                    {
+                        _Nsmgr.AddNamespace("v", "http://icalvalid.wikidot.com/validation");
+                        _Prefix = "v";
+                    }
                 }
             }
 
             return _XmlDocument != null;
+        } 
+
+        #endregion
+
+        #region Static Public Methods
+
+        static public bool Initialize(IXmlDocumentProvider docProvider, bool forceEnglishOnNotFound)
+        {
+            _XmlDocumentProvider = docProvider;
+            _IsInitialized = EnsureXmlDocument();
+
+            if (forceEnglishOnNotFound && !_IsInitialized)
+            {
+                _LanguageIdentifiers = new string[] { "en-US", "en" };
+                _IsInitialized = EnsureXmlDocument();
+            }
+            return _IsInitialized;
+        }
+
+        static public bool Initialize(IXmlDocumentProvider docProvider, string language)
+        {
+            ParseLanguageIdentifiers(language);
+            return Initialize(docProvider, false);
         }
 
         static public string GetString(string key)
         {
             if (EnsureXmlDocument())
             {
-                XmlNode node = _XmlDocument.SelectSingleNode("/" + 
+                XmlNode node = _XmlDocument.SelectSingleNode("/" +
                     _Prefix + ":language/" +
                     _Prefix + ":string[@name='" + ToCamelCase(key) + "']", _Nsmgr);
 
@@ -143,8 +176,8 @@ namespace DDay.iCal.Validator
         {
             if (EnsureXmlDocument())
             {
-                XmlNode node = _XmlDocument.SelectSingleNode("/" + 
-                    _Prefix + ":language/" + 
+                XmlNode node = _XmlDocument.SelectSingleNode("/" +
+                    _Prefix + ":language/" +
                     _Prefix + ":errors/" +
                     _Prefix + ":error[@name='" + ToCamelCase(key) + "']", _Nsmgr);
 
@@ -158,8 +191,8 @@ namespace DDay.iCal.Validator
         {
             if (EnsureXmlDocument())
             {
-                XmlNode node = _XmlDocument.SelectSingleNode("/" + 
-                    _Prefix + ":language/" + 
+                XmlNode node = _XmlDocument.SelectSingleNode("/" +
+                    _Prefix + ":language/" +
                     _Prefix + ":resolutions/" +
                     _Prefix + ":resolution[@error='" + ToCamelCase(key) + "']", _Nsmgr);
 
@@ -167,6 +200,8 @@ namespace DDay.iCal.Validator
                     return PrepareForStringFormatting(node.InnerText);
             }
             return null;
-        }
+        } 
+
+        #endregion
     }
 }

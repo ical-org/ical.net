@@ -10,7 +10,7 @@ namespace DDay.iCal.Validator.RFC2445
 {
     public class RulesetValidator :
         IValidator,
-        ICalendarTestable
+        ITestable
     {
         #region Private Fields
 
@@ -64,11 +64,11 @@ namespace DDay.iCal.Validator.RFC2445
 
         #region IValidator Members
 
-        public IValidationError[] Validate()
+        public IValidationResult[] Validate()
         {
             if (Ruleset != null)
             {
-                List<IValidationError> errors = new List<IValidationError>();
+                List<IValidationResult> results = new List<IValidationResult>();
                 foreach (IValidationRule rule in Ruleset.Rules)
                 {
                     IValidator validator = null;
@@ -79,78 +79,103 @@ namespace DDay.iCal.Validator.RFC2445
 
                     if (validator == null)
                     {
-                        errors.Add(new ValidationError("Validator for rule '" + rule.Name + "' could not be determined!"));
+                        results.Add(
+                            new ValidationResult(
+                                rule.Name,
+                                false,
+                                new IValidationError[] { 
+                                    new ValidationError(null, "Validator for rule '" + rule.Name + "' could not be determined!")
+                                }
+                            )
+                        );
                     }
                     else
                     {
-                        errors.AddRange(validator.Validate());
+                        results.AddRange(validator.Validate());
                     }
                 }
 
-                return errors.ToArray();
+                return results.ToArray();
             }
-            else return new IValidationError[]
-            {
-                new ValidationError("No ruleset was selected for validation.")
-            };
+            else return new IValidationResult[0];            
         }
 
         #endregion
 
         #region ICalendarTestable Members
 
-        public ICalendarTest[] Tests
+        public ITest[] Tests
         {
             get
             {
                 if (Ruleset != null)
                 {
-                    List<ICalendarTest> tests = new List<ICalendarTest>();
+                    List<ITest> tests = new List<ITest>();
                     foreach (IValidationRule rule in Ruleset.Rules)
                     {
-                        foreach (ICalendarTest test in rule.Tests)
+                        foreach (ITest test in rule.Tests)
                             tests.Add(test);
                     }
 
                     return tests.ToArray();
                 }
-                return new ICalendarTest[0];
+                return new ITest[0];
             }
         }
 
-        public ICalendarTestResult[] Test()
+        public ITestResult[] Test()
         {
             if (Ruleset != null)
             {
-                List<ICalendarTestResult> results = new List<ICalendarTestResult>();
+                List<ITestResult> results = new List<ITestResult>();
                 foreach (IValidationRule rule in Ruleset.Rules)
                 {
-                    foreach (ICalendarTest test in rule.Tests)
+                    foreach (ITest test in rule.Tests)
                     {
                         RulesetValidator validator = new RulesetValidator(Ruleset, test.iCalendarText);
 
-                        List<IValidationError> errors = new List<IValidationError>();
-                        errors.AddRange(validator.Validate());
+                        List<IValidationResult> validationResults = new List<IValidationResult>();
+                        validationResults.AddRange(validator.Validate());
 
-                        CalendarTestResult result = new CalendarTestResult(rule.Name, test);
-
+                        TestResult result = new TestResult(rule.Name, test, false);
                         if (test.Type == TestType.Fail)
                         {
-                            if (errors.Count == 1 && !string.Equals(errors[0].Name, test.ExpectedError))
-                                result.Error = new CalendarTestError("failWithIncorrectError", rule.Name, errors.ToArray());
-                            else if (errors.Count == 0)
-                                result.Error = new CalendarTestError("failExpectedError", rule.Name, errors.ToArray());
-                            else if (errors.Count > 1)
-                                result.Error = new CalendarTestError("failWithMoreThanOneError", rule.Name, errors.ToArray());
-                            else
-                                result.Passed = true;
+                            List<IValidationResult> badResults = validationResults.FindAll(
+                                delegate(IValidationResult r)
+                                {
+                                    return !BoolUtil.IsTrue(r.Passed);
+                                });
+
+                            // On a failing test, there should always be bad results.
+                            if (badResults.Count > 0)
+                            {
+                                // Get a list of errors from our results
+                                List<IValidationError> errors = new List<IValidationError>();
+                                foreach (IValidationResult r in badResults)
+                                    errors.AddRange(r.Errors);
+
+                                if (errors.Count == 1 && !string.Equals(errors[0].Name, test.ExpectedError))
+                                    result.Error = new TestError("failWithIncorrectError", rule.Name, validationResults.ToArray());
+                                else if (errors.Count == 0)
+                                    result.Error = new TestError("failExpectedError", rule.Name, validationResults.ToArray());
+                                else if (errors.Count > 1)
+                                    result.Error = new TestError("failWithMoreThanOneError", rule.Name, validationResults.ToArray());
+                                else
+                                    result.Passed = true;
+                            }
                         }
                         else 
                         {
-                            if (errors.Count > 0)
-                                result.Error = new CalendarTestError("passExpectedError", rule.Name, errors.ToArray());
-                            else
-                                result.Passed = true;
+                            result.Passed = true;
+                            if (validationResults.FindIndex(
+                                delegate(IValidationResult r)
+                                {
+                                    return !BoolUtil.IsTrue(r.Passed);
+                                }) >= 0)
+                            {
+                                result.Passed = false;
+                                result.Error = new TestError("passExpectedError", rule.Name, validationResults.ToArray());
+                            }
                         }
 
                         results.Add(result);
@@ -160,7 +185,7 @@ namespace DDay.iCal.Validator.RFC2445
                 return results.ToArray();
             }
             // FIXME: else throw exception?
-            else return new ICalendarTestResult[0];            
+            else return new ITestResult[0];            
         }
 
         #endregion

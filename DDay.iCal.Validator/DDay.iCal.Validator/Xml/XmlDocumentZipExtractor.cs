@@ -17,7 +17,7 @@ namespace DDay.iCal.Validator.Xml
 
         public XmlDocument Load(string pathToFileWithinZip)
         {
-            string contents = GetFileContents(pathToFileWithinZip);
+            string contents = LoadXml(pathToFileWithinZip);
             if (contents != null)
             {
                 XmlDocument xmlDoc = new XmlDocument();
@@ -26,6 +26,11 @@ namespace DDay.iCal.Validator.Xml
             }
 
             return null;
+        }
+
+        public string LoadXml(string pathToFileWithinZip)
+        {
+            return GetFileContents(pathToFileWithinZip);
         }
 
         #endregion

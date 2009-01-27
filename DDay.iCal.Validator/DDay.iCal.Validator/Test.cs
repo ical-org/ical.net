@@ -4,8 +4,8 @@ using System.Text;
 
 namespace DDay.iCal.Validator
 {
-    public class CalendarTest : 
-        ICalendarTest
+    public class Test : 
+        ITest
     {
         #region ICalendarTest Members
 

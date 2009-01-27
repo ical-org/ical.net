@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<language
+    xmlns="http://icalvalid.wikidot.com/validation"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://icalvalid.wikidot.com/validation ../schema.xsd"
+    name="en"
+    description="English">
+    <string name="error">Error</string>
+    <string name="warning">Warning</string>
+    <string name="line">Line</string>
+    <string name="column">Column</string>
+    <string name="pass">Pass</string>
+    <string name="fail">Fail</string>
+    <string name="didNotRun">Did Not Run</string>   
+    <string name="done">Done</string>
+    <string name="loadingCalendar">Loading calendar...</string>
+    <string name="calendarNotFound">The calendar could not be found!</string>
+    <string name="noTestsPerformed">No tests were performed.</string>
+    <string name="noValidationRuleset">A validation ruleset could not be determined; Please check the validator name.</string>
+    <string name="performingSelfTest">Performing self test using '%1' ruleset...</string>
+    <string name="notAllTestsPerformed">There were %1 tests, and only %2 were run; %3 tests did not run.</string>
+    <string name="passVsFail">%1 of %2 tests passed (%3%)</string>
+    <string name="validatingCalendar">Validating calendar using '%1' ruleset...</string>
+    <string name="calendarValid">The calendar is valid!</string>
+
+    <errors>
+        <error name="passExpectedError">The calendar test expected no errors, but one or more errors occurred:</error>
+        <error name="failExpectedError">The calendar test expected exactly one error, but none occurred.</error>
+        <error name="failWithIncorrectError">The calendar test expected an error, but failed with a different error than was expected.</error>
+        <error name="failWithMoreThanOneError">The calendar test expected exactly one error, but received more than one.</error>
+        <error name="calendarNotLoadedError">The calendar could not be loaded.</error>
+        <error name="calendarParseError">The calendar could not be parsed due to a serious error in the structure of the calendar.</error>
+        <error name="emptyLineError">Empty lines are not allowed, and may not be accepted by all applications.</error>
+        <error name="crlfPairError">Line endings must be a Carriage Return/Line Feed (CRLF) pair.</error>
+        <error name="versionRequiredError">The VERSION property is required on all VCALENDAR components.</error>
+        <error name="versionOnlyOnceError">The VERSION property can only be defined once on a VCALENDAR component.</error>
+        <error name="versionNumberError">The VERSION property is invalid; it must be a version number (i.e. "2.0").</error>
+        <error name="versionGE2_0Error">Only calendars version 2.0 or higher are allowed.</error>
+        <error name="prodIDRequiredError">The PRODID property is required on all iCalendars.</error>
+        <error name="prodIDOnlyOnceError">The PRODID property can only be defined once on a VCALENDAR component.</error>
+    </errors>
+    <resolutions>
+        <resolution error="emptyLineError">Remove empty lines from the iCalendar.</resolution>
+        <resolution error="crlfPairError">Ensure all line endings are CRLF pairs (US-ASCII decimal 13, followed by US-ASCII decimal 10).</resolution>
+        <resolution error="versionRequiredError">Add a VERSION property to the VCALENDAR.  See RFC 2445 section 4.7.4 for details.</resolution>
+        <resolution error="versionOnlyOnceError">Remove the second VERSION property from the VCALENDAR component.  See RFC 2445 section 4.7.4 for details.</resolution>
+        <resolution error="prodIDRequiredError">Add a PRODID property to the VCALENDAR.  See RFC 2445 section 4.7.3 for details.</resolution>
+        <resolution error="prodIDOnlyOnceError">Remove the second PRODID property from the VCALENDAR component.  See RFC 2445 section 4.7.4 for details.</resolution>
+    </resolutions>    
+</language>

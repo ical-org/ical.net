@@ -9,7 +9,7 @@ namespace DDay.iCal.Validator
     {
         #region Private Fields
 
-        private ICalendarTest[] _Tests;        
+        private ITest[] _Tests;        
 
         #endregion
 
@@ -22,7 +22,7 @@ namespace DDay.iCal.Validator
     
         #region ICalendarTestProvider Members
 
-        virtual public ICalendarTest[] Tests
+        virtual public ITest[] Tests
         {
             get { return _Tests; }
             protected set { _Tests = value; }

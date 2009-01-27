@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DDay.iCal.Validator
 {
-    public interface ICalendarTest
+    public interface ITest
     {
         /// <summary>
         /// The type of test.  'Pass' indicates that the

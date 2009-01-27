@@ -4,10 +4,11 @@ using System.Text;
 using System.Resources;
 using System.Reflection;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace DDay.iCal.Validator.RFC2445
 {
-    public class EmptyLineValidator : 
+    public class CRLFPairsValidator : 
         IValidator
     {
         #region Public Properties
@@ -18,7 +19,7 @@ namespace DDay.iCal.Validator.RFC2445
 
         #region Constructors
 
-        public EmptyLineValidator(string cal_text)
+        public CRLFPairsValidator(string cal_text)
         {
             iCalText = cal_text;
         }
@@ -29,19 +30,18 @@ namespace DDay.iCal.Validator.RFC2445
 
         public IValidationResult[] Validate()
         {
-            ValidationResult result = new ValidationResult("emptyLine");
+            ValidationResult result = new ValidationResult("crlfPairs");            
 
-            // Convert all variations of newlines to a simple "\n" so
-            // we can easily detect empty lines.
-            string simpleNewlineCalendar = iCalText.Replace("\r\n", "\n");
-            simpleNewlineCalendar = simpleNewlineCalendar.Replace("\r", "\n");
-
-            if (simpleNewlineCalendar.Contains("\n\n"))
+            MatchCollection matches = Regex.Matches(iCalText, @"((\r(?=[^\n]))|((?<=[^\r])\n))");
+            if (matches.Count > 0)
             {
                 result.Passed = false;
-                result.Errors = new IValidationError[] { new ValidationErrorWithLookup("emptyLineError", ValidationErrorType.Warning) };
+                result.Errors = new IValidationError[] { new ValidationErrorWithLookup("crlfPairError", ValidationErrorType.Warning) };
             }
-            else result.Passed = true;
+            else
+            {
+                result.Passed = true;
+            }
 
             return new IValidationResult[] { result };
         }

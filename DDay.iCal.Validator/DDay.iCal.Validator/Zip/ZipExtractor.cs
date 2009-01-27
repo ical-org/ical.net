@@ -6,7 +6,9 @@ using System.IO;
 
 namespace DDay.iCal.Validator
 {
-    public class ZipExtractor : IDisposable
+    public class ZipExtractor : 
+        IDisposable,
+        IEnumerable<string>
     {
         FileStream _ZipFileStream = null;
         ZipFile _ZipFile = null;
@@ -61,6 +63,31 @@ namespace DDay.iCal.Validator
                 _ZipFileStream.Dispose();
                 _ZipFileStream = null;
             }
+        }
+
+        #endregion
+
+        #region IEnumerable<string> Members
+
+        public IEnumerator<string> GetEnumerator()
+        {
+            List<string> files = new List<string>();
+            if (_ZipFile != null)
+            {
+                foreach (ZipEntry ze in _ZipFile)
+                    files.Add(ze.Name);
+            }
+
+            return files.GetEnumerator();
+        }
+
+        #endregion
+
+        #region IEnumerable Members
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<string>)this).GetEnumerator();
         }
 
         #endregion

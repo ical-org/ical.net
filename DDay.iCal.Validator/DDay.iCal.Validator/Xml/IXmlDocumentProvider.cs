@@ -5,7 +5,8 @@ using System.Xml;
 
 namespace DDay.iCal.Validator.Xml
 {
-    public interface IXmlDocumentProvider
+    public interface IXmlDocumentProvider :
+        IEnumerable<string>
     {
         /// <summary>
         /// Returns an XmlDocument using the provided <paramref name="path"/>.
@@ -13,5 +14,10 @@ namespace DDay.iCal.Validator.Xml
         /// or a virtual path, depending on the implementation.
         /// </summary>
         XmlDocument Load(string path);
+
+        /// <summary>
+        /// Returns a string containing the contents of the XML file. <see cref="Load"/>
+        /// </summary>
+        string LoadXml(string path);
     }
 }

@@ -27,20 +27,28 @@ namespace DDay.iCal.Validator.RFC2445
 
         #region IValidator Members
 
-        public IValidationError[] Validate()
-        {       
+        public IValidationResult[] Validate()
+        {
+            ValidationResult result = new ValidationResult("reqProdID");
             List<IValidationError> errors = new List<IValidationError>();
             
             if (!iCalendar.Properties.ContainsKey("PRODID"))
             {
+                result.Passed = false;
                 errors.Add(new ValidationErrorWithLookup("prodIDRequiredError", ValidationErrorType.Warning, false));
             }
             else if (iCalendar.Properties.CountOf("PRODID") > 1)
             {
+                result.Passed = false;
                 errors.Add(new ValidationErrorWithLookup("prodIDOnlyOnceError", ValidationErrorType.Error, false));
             }
+            else
+            {
+                result.Passed = true;
+            }
 
-            return errors.ToArray();
+            result.Errors = errors.ToArray();
+            return new IValidationResult[] { result };
         }
 
         #endregion

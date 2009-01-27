@@ -22,18 +22,21 @@ namespace DDay.iCal.Validator.RFC2445.DataTypes
 
         #region IValidator Members
 
-        public IValidationError[] Validate()
+        public IValidationResult[] Validate()
         {
-            List<IValidationError> errors = new List<IValidationError>();
+            // FIXME: implement this
+            /*IValidationResult result = new ValidationResult(
+            List<IValidationResult> results = new List<IValidationResult>();
 
             if (Binary.Properties.ContainsKey("VALUE"))
             {
                 Property p = Binary.Properties["VALUE"] as Property;
                 if (!string.Equals(p.Value, "BINARY", StringComparison.InvariantCultureIgnoreCase))
-                    errors.Add(new ValidationError("ATTACH: The 'VALUE' property must be 'BINARY' for inline attachments."));
+                    results.Add(new ValidationError("ATTACH: The 'VALUE' property must be 'BINARY' for inline attachments."));
             }
 
-            return errors.ToArray();
+            return results.ToArray();*/
+            return new IValidationResult[0];
         }
 
         #endregion

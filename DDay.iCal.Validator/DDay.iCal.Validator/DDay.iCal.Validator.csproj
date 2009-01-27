@@ -50,19 +50,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CalendarTest.cs" />
-    <Compile Include="CalendarTestError.cs" />
-    <Compile Include="CalendarTestResult.cs" />
-    <Compile Include="Interfaces\ICalendarTest.cs" />
-    <Compile Include="Interfaces\ICalendarTestError.cs" />
-    <Compile Include="Interfaces\ICalendarTestProvider.cs" />
-    <Compile Include="Interfaces\ICalendarTestable.cs" />
-    <Compile Include="Interfaces\ICalendarTestResult.cs" />
-    <Compile Include="Interfaces\ICalendarTestResultSerializer.cs" />
+    <Compile Include="Interfaces\IValidationResult.cs" />
+    <Compile Include="Serialization\XmlValidationSerializer.cs" />
+    <Compile Include="Test.cs" />
+    <Compile Include="TestError.cs" />
+    <Compile Include="TestResult.cs" />
+    <Compile Include="Interfaces\ITest.cs" />
+    <Compile Include="Interfaces\ITestError.cs" />
+    <Compile Include="Interfaces\ITestProvider.cs" />
+    <Compile Include="Interfaces\ITestable.cs" />
+    <Compile Include="Interfaces\ITestResult.cs" />
+    <Compile Include="Interfaces\IValidationSerializer.cs" />
     <Compile Include="Interfaces\IValidationRule.cs" />
     <Compile Include="Interfaces\IValidationRuleset.cs" />
     <Compile Include="Interfaces\IValidationRulesetProvider.cs" />
-    <Compile Include="RFC2445\Calendar\LineEndingsValidator.cs" />
+    <Compile Include="RFC2445\Calendar\CRLFPairsValidator.cs" />
     <Compile Include="RFC2445\Calendar\ReqProdIDValidator.cs" />
     <Compile Include="RFC2445\Calendar\EmptyLineValidator.cs" />
     <Compile Include="RFC2445\DataTypes\BinaryValidator.cs" />
@@ -72,12 +74,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourceManager.cs" />
     <Compile Include="RFC2445\Calendar\ReqVersionValidator.cs" />
+    <Compile Include="Utils\BoolUtil.cs" />
     <Compile Include="ValidationError.cs" />
     <Compile Include="ValidationErrorWithLookup.cs" />
+    <Compile Include="ValidationResult.cs" />
     <Compile Include="ValidationRule.cs" />
     <Compile Include="ValidationRuleset.cs" />
     <Compile Include="ValidatorActivator.cs" />
     <Compile Include="Xml\IXmlDocumentProvider.cs" />
+    <Compile Include="Xml\LocalXmlDocumentProvider.cs" />
     <Compile Include="Xml\XmlCalendarTest.cs" />
     <Compile Include="Xml\XmlDocumentZipExtractor.cs" />
     <Compile Include="Xml\XmlValidationRule.cs" />

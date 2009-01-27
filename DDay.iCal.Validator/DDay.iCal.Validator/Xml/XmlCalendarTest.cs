@@ -6,7 +6,7 @@ using System.Xml;
 namespace DDay.iCal.Validator.Xml
 {
     public class XmlCalendarTest :
-        CalendarTest
+        Test
     {
         public XmlCalendarTest(XmlNode node, XmlNamespaceManager nsmgr)
         {

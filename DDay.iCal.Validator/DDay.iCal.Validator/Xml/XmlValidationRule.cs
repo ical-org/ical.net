@@ -28,7 +28,7 @@ namespace DDay.iCal.Validator.Xml
                 XmlDocument doc = docProvider.Load(File);
                 if (doc != null)
                 {
-                    List<ICalendarTest> tests = new List<ICalendarTest>();
+                    List<ITest> tests = new List<ITest>();
 
                     string prefix = nsmgr.LookupPrefix("http://icalvalid.wikidot.com/validation");
                     foreach (XmlNode passNode in doc.SelectNodes("/" + prefix + ":rule/" + prefix + ":pass", nsmgr))

@@ -4,8 +4,9 @@ using System.Text;
 
 namespace DDay.iCal.Validator
 {
-    public interface ICalendarTestResultSerializer
-    {
-        void Serialize(ICalendarTestResult[] results);
+    public interface ITestable :
+        ITestProvider
+    {        
+        ITestResult[] Test();
     }
 }
