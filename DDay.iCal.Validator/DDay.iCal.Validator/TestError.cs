@@ -29,21 +29,27 @@ namespace DDay.iCal.Validator
             int i = 1;
             foreach (IValidationResult result in ValidationResults)
             {
-                sb.Append(Environment.NewLine + i + ": ");
-                StringReader sr = new StringReader(result.ToString());
-                string s = sr.ReadLine();
-                bool isFirstLine = true;
-                while (!string.IsNullOrEmpty(s))
+                if (!BoolUtil.IsTrue(result.Passed))
                 {
-                    if (!isFirstLine)
-                        sb.Append(Environment.NewLine);
-                    sb.Append("\t" + s);
-                    isFirstLine = false;
-                    s = sr.ReadLine();
-                }                
-                sr.Close();
+                    foreach (IValidationError error in result.Errors)
+                    {
+                        sb.Append(Environment.NewLine + i + ": ");
+                        StringReader sr = new StringReader(error.ToString());
+                        string s = sr.ReadLine();
+                        bool isFirstLine = true;
+                        while (!string.IsNullOrEmpty(s))
+                        {
+                            if (!isFirstLine)
+                                sb.Append(Environment.NewLine);
+                            sb.Append("\t" + s);
+                            isFirstLine = false;
+                            s = sr.ReadLine();
+                        }
+                        sr.Close();
 
-                i++;
+                        i++;
+                    }
+                }
             }
 
             return sb.ToString();

@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using DDay.iCal.Validator.RFC2445;
-using DDay.iCal.Validator.Xml;
-using DDay.Util;
-using DDay.iCal.Validator.Serialization;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
+using DDay.iCal.Validator.RFC2445;
+using DDay.iCal.Validator.Serialization;
+using DDay.iCal.Validator.Xml;
+using DDay.Util;
 
 namespace DDay.iCal.Validator
 {
@@ -22,6 +23,9 @@ namespace DDay.iCal.Validator
         static CommandLineArgument _TestArgument = new CommandLineArgument(new string[] { "t", "test", "selftest" });
         static CommandLineArgument _LanguageArgument = new CommandLineArgument(new string[] { "l", "language" });
         static CommandLineArgument _SchemaValidationArgument = new CommandLineArgument(new string[] { "s", "schema", "schemaValidate", "schemaValidation" });
+        static CommandLineArgument _OutputArgument = new CommandLineArgument(new string[] { "o", "output" });
+        static CommandLineArgument _FormatArgument = new CommandLineArgument(new string[] { "format" });
+        static CommandLineArgument _OutputFile = new CommandLineArgument(new string[] { "of", "outputFile" });
 
         static CommandLineArgumentList _Arguments;
 
@@ -40,48 +44,15 @@ namespace DDay.iCal.Validator
                     docProvider = new LocalXmlDocumentProvider("icalvalidSchema");
                 else
                     throw new Exception("A valid schema directory or zip file could not be located!");
-                
-                bool foundLanguage = false;
 
-                // Determine what language we're using...
-                if (_Arguments.Contains(_LanguageArgument))
-                {
-                    // Initialize our resource manager with a user-defined culture
-                    foundLanguage = ResourceManager.Initialize(docProvider, _Arguments[_LanguageArgument].Value);
-                }
-                else
-                {
-                    // Initialize our resource manager with our current culture
-                    foundLanguage = ResourceManager.Initialize(docProvider, false);
-                }
-
-                if (!foundLanguage)
-                {
-                    // Force initialization to English
-                    ResourceManager.Initialize(docProvider, true);
-                    Console.WriteLine("Could not find the selected language; using English instead...");
-                }                
-
-                // Load some rulesets
-                XmlValidationRulesetLoader loader = new XmlValidationRulesetLoader(docProvider);
-                List<IValidationRuleset> rulesets = new List<IValidationRuleset>(loader.Load());
-
-                // Determine a validation ruleset to use
-                string validatorName = "Strict2_0";
-                if (_Arguments.Contains(_ValidatorArgument))
-                    validatorName = _Arguments[_ValidatorArgument].Value;
-
-                // Select the ruleset
-                IValidationRuleset selectedRuleset = rulesets.Find(
-                    delegate(IValidationRuleset rs)
-                    {
-                        return string.Equals(rs.Name, validatorName, StringComparison.CurrentCultureIgnoreCase);
-                    }
-                );
+                // Setup the language to use for validation/tests
+                SetupLanguage(docProvider);
+                IValidationRuleset selectedRuleset = LoadRuleset(docProvider);
 
                 if (_Arguments.Contains(_SchemaValidationArgument))
                 {
                     SchemaTest(docProvider);
+                    LanguageKeyValidation(docProvider);
                 }
                 else
                 {
@@ -101,6 +72,116 @@ namespace DDay.iCal.Validator
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        static void SetupLanguage(IXmlDocumentProvider docProvider)
+        {
+            bool foundLanguage = false;
+
+            // Determine what language we're using...
+            if (_Arguments.Contains(_LanguageArgument))
+            {
+                // Initialize our resource manager with a user-defined culture
+                foundLanguage = ResourceManager.Initialize(docProvider, _Arguments[_LanguageArgument].Value);
+            }
+            else
+            {
+                // Initialize our resource manager with our current culture
+                foundLanguage = ResourceManager.Initialize(docProvider, false);
+            }
+
+            if (!foundLanguage)
+            {
+                Console.WriteLine("Could not find the selected language; using English instead...");
+
+                // Force initialization to English
+                ResourceManager.Initialize(docProvider, true);                
+            }
+        }
+
+        static IValidationRuleset LoadRuleset(IXmlDocumentProvider docProvider)
+        {
+            // Load some rulesets
+            XmlValidationRulesetLoader loader = new XmlValidationRulesetLoader(docProvider);
+            List<IValidationRuleset> rulesets = new List<IValidationRuleset>(loader.Load());
+
+            // Determine a validation ruleset to use
+            string validatorName = "Strict2_0";
+            if (_Arguments.Contains(_ValidatorArgument))
+                validatorName = _Arguments[_ValidatorArgument].Value;
+
+            // Select the ruleset
+            IValidationRuleset selectedRuleset = rulesets.Find(
+                delegate(IValidationRuleset rs)
+                {
+                    return string.Equals(rs.Name, validatorName, StringComparison.CurrentCultureIgnoreCase);
+                }
+            );
+
+            return selectedRuleset;
+        }
+
+        static void SetupStream(IValidationSerializer serializer, out Stream stream, out Encoding encoding)
+        {            
+            bool useConsole = true;
+            bool unknown = false;
+
+            if (_Arguments.Contains(_OutputArgument))
+            {
+                if (_Arguments[_OutputArgument].Value.Equals("file", StringComparison.InvariantCultureIgnoreCase))
+                    useConsole = false;
+                else if (_Arguments[_OutputArgument].Value.Equals("console", StringComparison.InvariantCultureIgnoreCase) ||
+                    _Arguments[_OutputArgument].Value.Equals("screen", StringComparison.InvariantCultureIgnoreCase) ||
+                    _Arguments[_OutputArgument].Value.Equals("stdout", StringComparison.InvariantCultureIgnoreCase))
+                    useConsole = true;
+                else
+                    unknown = true;
+            }
+
+            // FIXME: what to do with an unknown output?
+            if (useConsole)
+            {
+                stream = Console.OpenStandardOutput();
+                encoding = Console.OutputEncoding;
+            }
+            else
+            {
+                // Determine the filename for our output
+                string filename = "output." + serializer.DefaultExtension;
+                if (_Arguments.Contains(_OutputFile))
+                {
+                    filename = _Arguments[_OutputFile].Value;
+                    if (object.Equals(filename, Path.GetFileNameWithoutExtension(filename)))
+                        filename = filename + "." + serializer.DefaultExtension;
+                }
+
+                // FIXME: what if the file exists?
+                stream = new FileStream(filename, FileMode.Create, FileAccess.Write);
+                encoding = serializer.DefaultEncoding;
+            }
+        }
+
+        static IValidationSerializer GetSerializer(IXmlDocumentProvider docProvider)
+        {
+            string format = "Text";
+            if (_Arguments.Contains(_FormatArgument))            
+                format = _Arguments[_FormatArgument].Value;
+
+            Type type = Type.GetType("DDay.iCal.Validator.Serialization." + format + "ValidationSerializer, DDay.iCal.Validator", false, true);
+            if (type != null)
+            {
+                ConstructorInfo ci = type.GetConstructor(Type.EmptyTypes);
+                if (ci != null)
+                    return ci.Invoke(new object[0]) as IValidationSerializer;
+                else
+                {
+                    ci = type.GetConstructor(new Type[] { typeof(IXmlDocumentProvider) });
+                    if (ci != null)
+                        return ci.Invoke(new object[] { docProvider }) as IValidationSerializer;
+                }
+            }
+
+            return null;
         }
 
         static void SchemaTest(IXmlDocumentProvider docProvider)
@@ -177,174 +258,213 @@ namespace DDay.iCal.Validator
             Console.WriteLine();
         }
 
-        static void SelfTest(IXmlDocumentProvider docProvider, IValidationRuleset selectedRuleset)
+        static void LanguageKeyValidation(IXmlDocumentProvider docProvider)
         {
-            IValidationSerializer serializer = new XmlValidationSerializer(docProvider);
-            if (selectedRuleset != null)
-            {
-                serializer.Ruleset = selectedRuleset;
-
-                RulesetValidator validator = new RulesetValidator(selectedRuleset);
-
-                Console.WriteLine(string.Format(
-                    ResourceManager.GetString("performingSelfTest"),
-                    selectedRuleset.Description));
-
-                serializer.TestResults = validator.Test();                
-                
-                //if (results != null &&
-                //    results.Length > 0)
-                //{
-                //    int numTestsExpected = validator.Tests.Length;
-                //    if (!object.Equals(numTestsExpected, results.Length))
-                //    {
-                //        Console.WriteLine(string.Format(
-                //            ResourceManager.GetString("notAllTestsPerformed"),                            
-                //            numTestsExpected,
-                //            results.Length,
-                //            numTestsExpected - results.Length
-                //        ));
-                //    }
-
-                //    int passed = 0;
-                //    foreach (ITestResult result in results)
-                //    {
-                //        if (BoolUtil.IsTrue(result.Passed))
-                //            passed++;
-
-                //        Console.WriteLine(result.ToString());
-                //    }
-
-                //    Console.WriteLine(string.Format(
-                //        ResourceManager.GetString("passVsFail"),
-                //        passed,
-                //        results.Length,
-                //        string.Format("{0:0.0}", ((double)passed / (double)results.Length) * 100)
-                //    ));
-                //}
-                //else
-                //{
-                //    Console.WriteLine(ResourceManager.GetString("noTestsPerformed"));
-                //}                
-            }
-            /*else
-            {
-                Console.WriteLine(ResourceManager.GetString("noValidationRuleset"));
-            }*/
-
-            FileStream fs = new FileStream(@"c:\test.xml", FileMode.Create, FileAccess.Write);
+            Console.Write(Environment.NewLine + "Validating language files for missing entries...");
             try
             {
-                serializer.Serialize(fs, UTF8Encoding.Default);
+                List<string> languageFiles = new List<string>();
+                foreach (string path in docProvider)
+                {
+                    if (path.Contains("languages"))
+                        languageFiles.Add(path);                    
+                }
+
+                List<string> masterEntries = new List<string>();
+                Dictionary<string, List<string>> entries = new Dictionary<string, List<string>>();
+                foreach (string xmlPath in languageFiles)
+                {
+                    XmlDocument doc = docProvider.Load(xmlPath);
+                    XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
+
+                    string prefix = nsmgr.LookupPrefix("http://icalvalid.wikidot.com/validation");
+                    if (string.IsNullOrEmpty(prefix))
+                    {
+                        prefix = "v";
+                        nsmgr.AddNamespace("v", "http://icalvalid.wikidot.com/validation");
+                    }
+
+                    entries[xmlPath] = new List<string>();
+                    foreach (XmlNode str in doc.SelectNodes("/" + prefix + ":language/" + prefix + ":string", nsmgr))
+                    {
+                        string name = str.Attributes["name"].Value;
+                        entries[xmlPath].Add("string/" + name);
+                        if (!masterEntries.Contains("string/" + name))
+                            masterEntries.Add("string/" + name);
+                    }
+                    foreach (XmlNode str in doc.SelectNodes("/" + prefix + ":language/" + prefix + ":errors/" + prefix + ":error", nsmgr))
+                    {
+                        string name = str.Attributes["name"].Value;
+                        entries[xmlPath].Add("error/" + name);
+                        if (!masterEntries.Contains("error/" + name))
+                            masterEntries.Add("error/" + name);
+                    }
+                    foreach (XmlNode str in doc.SelectNodes("/" + prefix + ":language/" + prefix + ":resolutions/" + prefix + ":resolution", nsmgr))
+                    {
+                        string name = str.Attributes["error"].Value;
+                        entries[xmlPath].Add("resolution/" + name);
+                        if (!masterEntries.Contains("resolution/" + name))
+                            masterEntries.Add("resolution/" + name);
+                    }
+                }
+
+                foreach (KeyValuePair<string, List<string>> kvp in entries)
+                {
+                    Console.Write(Environment.NewLine + "Validating '" + kvp.Key + "'...");
+                    List<string> missingEntries = new List<string>();
+                    foreach (string masterEntry in masterEntries)
+                    {
+                        if (!kvp.Value.Contains(masterEntry))
+                            missingEntries.Add(masterEntry);
+                    }
+
+                    if (missingEntries.Count > 0)
+                    {
+                        Console.Write("Missing " + missingEntries.Count + " entries!");
+                        foreach (string me in missingEntries)
+                            Console.Write(Environment.NewLine + "'" + me + "'");
+                    }
+                    else Console.Write("OK");
+                }
             }
-            finally
+            catch (Exception ex)
             {
-                fs.Close();
+                Console.WriteLine(ex);
             }
+
+            Console.WriteLine();
+        }
+
+        static void SelfTest(IXmlDocumentProvider docProvider, IValidationRuleset selectedRuleset)
+        {
+            IValidationSerializer serializer = GetSerializer(docProvider);
+            if (serializer != null)
+            {
+                Stream stream;
+                Encoding encoding;
+                SetupStream(serializer, out stream, out encoding);
+
+                if (selectedRuleset != null)
+                {
+                    serializer.Ruleset = selectedRuleset;
+
+                    RulesetValidator validator = new RulesetValidator(selectedRuleset);
+
+                    Console.Write(string.Format(
+                        ResourceManager.GetString("performingSelfTest"),
+                        ResourceManager.GetString(selectedRuleset.NameString))
+                    );
+
+                    serializer.TestResults = validator.Test();
+
+                    Console.WriteLine(ResourceManager.GetString("done"));
+                }
+
+                try
+                {
+                    serializer.Serialize(stream, encoding);
+                }
+                finally
+                {
+                    stream.Close();
+                }
+            }            
         }
 
         static void ValidateFile(IXmlDocumentProvider docProvider, IValidationRuleset selectedRuleset)
         {
-            IValidationSerializer serializer = new XmlValidationSerializer(docProvider);
-
+            IValidationSerializer serializer = GetSerializer(docProvider);
             bool needsMoreArguments = false;
 
-            string iCalText = null;
-            if (selectedRuleset != null)
+            if (serializer != null)
             {
-                serializer.Ruleset = selectedRuleset;
-
-                if (_Arguments.Contains(_FileArgument))
+                string iCalText = null;
+                if (selectedRuleset != null)
                 {
-                    // Load the calendar from a local file
-                    Console.Write(ResourceManager.GetString("loadingCalendar"));
-                    FileStream fs = new FileStream(_Arguments[_FileArgument].Value, FileMode.Open, FileAccess.Read);
-                    if (fs != null)
+                    serializer.Ruleset = selectedRuleset;
+
+                    if (_Arguments.Contains(_FileArgument))
                     {
-                        StreamReader sr = new StreamReader(fs);
-                        iCalText = sr.ReadToEnd();
-                        sr.Close();
+                        // Load the calendar from a local file
+                        Console.Write(ResourceManager.GetString("loadingCalendar"));
+                        FileStream fs = new FileStream(_Arguments[_FileArgument].Value, FileMode.Open, FileAccess.Read);
+                        if (fs != null)
+                        {
+                            StreamReader sr = new StreamReader(fs);
+                            iCalText = sr.ReadToEnd();
+                            sr.Close();
+                        }
+                        Console.WriteLine(ResourceManager.GetString("Done"));
                     }
-                    Console.WriteLine(ResourceManager.GetString("Done"));
-                }
-                else if (_Arguments.Contains(_UriArgument))
-                {
-                    // Load the calendar from a Uri
-                    Console.Write(ResourceManager.GetString("loadingCalendar"));
-                    Uri uri = new Uri(_Arguments[_UriArgument].Value);
-                    string
-                        username = null,
-                        password = null;
-
-                    if (_Arguments.Contains(_UsernameArgument))
+                    else if (_Arguments.Contains(_UriArgument))
                     {
-                        username = _Arguments[_UsernameArgument].Value;
-                        if (_Arguments.Contains(_PasswordArgument))
-                            password = _Arguments[_PasswordArgument].Value;
-                    }
+                        // Load the calendar from a Uri
+                        Console.Write(ResourceManager.GetString("loadingCalendar"));
+                        Uri uri = new Uri(_Arguments[_UriArgument].Value);
+                        string
+                            username = null,
+                            password = null;
 
-                    WebClient client = new WebClient();
-                    if (username != null && password != null)
-                        client.Credentials = new System.Net.NetworkCredential(username, password);
+                        if (_Arguments.Contains(_UsernameArgument))
+                        {
+                            username = _Arguments[_UsernameArgument].Value;
+                            if (_Arguments.Contains(_PasswordArgument))
+                                password = _Arguments[_PasswordArgument].Value;
+                        }
 
-                    iCalText = client.DownloadString(uri);
-                    Console.WriteLine(ResourceManager.GetString("Done"));
-                }
-                else
-                {
-                    needsMoreArguments = true;
-                }
+                        WebClient client = new WebClient();
+                        if (username != null && password != null)
+                            client.Credentials = new System.Net.NetworkCredential(username, password);
 
-                if (needsMoreArguments)
-                {
-                    WriteDescription();
-                }
-                else
-                {
-                    if (iCalText == null)
-                    {
-                        throw new Exception(ResourceManager.GetString("calendarNotFound"));
+                        iCalText = client.DownloadString(uri);
+                        Console.WriteLine(ResourceManager.GetString("Done"));
                     }
                     else
                     {
-                        RulesetValidator rulesetValidator = new RulesetValidator(selectedRuleset, iCalText);
+                        needsMoreArguments = true;
+                    }
 
-                        if (rulesetValidator != null)
+                    if (needsMoreArguments)
+                    {
+                        WriteDescription();
+                    }
+                    else
+                    {
+                        if (iCalText == null)
                         {
-                            Console.WriteLine(string.Format(
-                                ResourceManager.GetString("validatingCalendar"),
-                                selectedRuleset.Description
-                            ));
+                            throw new Exception(ResourceManager.GetString("calendarNotFound"));
+                        }
+                        else
+                        {
+                            RulesetValidator rulesetValidator = new RulesetValidator(selectedRuleset, iCalText);
 
-                            serializer.ValidationResults = rulesetValidator.Validate();
-                            //IValidationResult[] results = rulesetValidator.Validate();
-                            //if (results != null &&
-                            //    results.Length > 0)
-                            //{
-                            //    foreach (IValidationError error in results)
-                            //        Console.WriteLine(error.ToString());
-                            //}
-                            //else
-                            //{
-                            //    Console.WriteLine(ResourceManager.GetString("calendarValid"));
-                            //}
+                            if (rulesetValidator != null)
+                            {
+                                Console.Write(string.Format(
+                                    ResourceManager.GetString("validatingCalendar"),
+                                    ResourceManager.GetString(selectedRuleset.NameString)
+                                ));
+
+                                serializer.ValidationResults = rulesetValidator.Validate();
+
+                                Console.WriteLine(ResourceManager.GetString("done"));
+                            }
                         }
                     }
                 }
-            }
-            //else
-            //{
-            //    Console.WriteLine(ResourceManager.GetString("noValidationRuleset"));
-            //}
 
-            FileStream sfs = new FileStream(@"c:\test.xml", FileMode.Create, FileAccess.Write);
-            try
-            {
-                serializer.Serialize(sfs, UTF8Encoding.Default);
-            }
-            finally
-            {
-                sfs.Close();
+                Stream stream;
+                Encoding encoding;
+                SetupStream(serializer, out stream, out encoding);
+
+                try
+                {
+                    serializer.Serialize(stream, encoding);
+                }
+                finally
+                {
+                    stream.Close();
+                }
             }
         }
 
@@ -372,6 +492,10 @@ namespace DDay.iCal.Validator
             Console.WriteLine("/l:<language>  | The language to use when validating (i.e. en-US, es-MX, etc.)");
             Console.WriteLine("/s             | Performs schema validation against the icalvalidSchema.");
             Console.WriteLine("               | NOTE: most settings are ignored when using /s");
+            Console.WriteLine("/o:<output>    | Sets the output to use.  Possible values are: file, console");
+            Console.WriteLine("/f:<format>    | Sets the output format.  Possible values are: text, xml");
+            Console.WriteLine("/of:<format>   | Sets the file path to use when /o is set to 'file'.");
+            Console.WriteLine("               | Default is 'output.txt' or 'output.xml'.");
             Console.WriteLine();
             Console.WriteLine("Examples:");
             Console.WriteLine();

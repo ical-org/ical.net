@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\IValidationResult.cs" />
+    <Compile Include="Serialization\TextValidationSerializer.cs" />
     <Compile Include="Serialization\XmlValidationSerializer.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="TestError.cs" />

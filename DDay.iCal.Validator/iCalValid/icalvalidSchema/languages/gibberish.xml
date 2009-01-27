@@ -11,14 +11,22 @@
     <string name="column">asd</string>
     <string name="pass">ALSD*</string>
     <string name="fail">ZXCV$</string>
+    <string name="didNotRun">Alkdi##</string>
     <string name="done">bvaw</string>
+    <string name="validatingCalendar">oilk oijll oijlkjalj...</string>
     <string name="loadingCalendar">sdfalkjwe aoijsdf...</string>
     <string name="calendarNotFound">asdflk awljk asdf zxcklvjawer!</string>
+    <string name="calendarValid">qwerlkasjd lakjswer laskdfj!</string>
     <string name="noTestsPerformed">v alksdfj zlxckjas oriad.</string>
     <string name="noValidationRuleset">awelk dlkas doja sldkoiawej asdlf; pwyio lkdfja lkaw padoj.</string>
     <string name="performingSelfTest">asd faw;lelrkjas alskdj %1 asdflkjawlek...</string>
     <string name="notAllTestsPerformed">awer asdoija weoapsd asp %1 awerlk ajs, awe asd %2 asdflkja; %3 awsdj asldkfj aasdf.</string>
     <string name="passVsFail">%1 qwer %2 zxcv lkjsdf (%3%)</string>
+
+    <string name="ruleset_Strict2_0">RU AJL STRICT 2.0</string>
+    <string name="ruleset_Strict2_0_Description">asdlfjaw elkjas dflkajwe rlkasdjf oaiwer</string>
+    <string name="ruleset_Compatibility2_0">RU AJL COMPATIBILITY 2.0</string>
+    <string name="ruleset_Compatibility2_0_Description">a laskj laks poaiwjdlfkj apweiohj sk</string>    
 
     <errors>
         <error name="passExpectedError">asd fkal aspdoi xcsdf zxlkcvhpa</error>

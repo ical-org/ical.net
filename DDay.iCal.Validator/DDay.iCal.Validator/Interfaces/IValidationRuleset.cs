@@ -7,7 +7,8 @@ namespace DDay.iCal.Validator
     public interface IValidationRuleset
     {
         string Name { get; }
-        string Description { get; }
+        string NameString { get; }
+        string DescriptionString { get; }
         IValidationRule[] Rules { get; }
     }
 }

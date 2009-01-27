@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<results
+    language="en"
+    datetime="2009-01-27T12:13:43"
+    xmlns="http://icalvalid.wikidot.com/validation">
+    <validationResults
+        ruleset="Strict2_0">
+        <validationResult
+            rule="emptyLine"
+            result="fail">
+            <errors>
+                <error
+                    name="emptyLineError"
+                    type="warning"
+                    message="Empty lines are not allowed, and may not be accepted by all applications."
+                    isFatal="false" />
+            </errors>
+        </validationResult>
+        <validationResult
+            rule="crlfPairs"
+            result="fail">
+            <errors>
+                <error
+                    name="crlfPairError"
+                    type="warning"
+                    message="Line endings must be a Carriage Return/Line Feed (CRLF) pair."
+                    isFatal="false" />
+            </errors>
+        </validationResult>
+        <validationResult
+            rule="reqVersion"
+            result="pass" />
+        <validationResult
+            rule="reqProdID"
+            result="fail">
+            <errors>
+                <error
+                    name="prodIDRequiredError"
+                    type="warning"
+                    message="The PRODID property is required on all iCalendars."
+                    isFatal="false" />
+            </errors>
+        </validationResult>
+    </validationResults>
+</results>

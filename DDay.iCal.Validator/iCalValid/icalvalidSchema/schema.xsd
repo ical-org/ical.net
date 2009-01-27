@@ -55,8 +55,12 @@
             type="nameIDType"
             use="required" />
         <xs:attribute
-            name="description"
-            type="xs:string"
+            name="nameString"
+            type="nameIDType"
+            use="optional" />
+        <xs:attribute
+            name="descriptionString"
+            type="nameIDType"
             use="optional" />
     </xs:complexType>
 
@@ -165,8 +169,17 @@
     <xs:simpleType 
         name="passFailStringType">
         <xs:restriction base="xs:string">
+            <xs:enumeration value="none"/>
             <xs:enumeration value="pass"/>
             <xs:enumeration value="fail"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType
+        name="warningErrorStringType">
+        <xs:restriction base="xs:string">            
+            <xs:enumeration value="warning"/>
+            <xs:enumeration value="error"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -215,6 +228,34 @@
     </xs:complexType>
 
     <xs:complexType
+        name="validationErrorType">
+        <xs:attribute
+            name="name"
+            type="nameIDType"
+            use="required" />
+        <xs:attribute
+            name="type"
+            type="warningErrorStringType"
+            use="required" />
+        <xs:attribute
+            name="message"
+            type="xs:string"
+            use="optional" />
+        <xs:attribute
+            name="isFatal"
+            type="xs:boolean"
+            use="optional" />
+        <xs:attribute
+            name="line"
+            type="xs:integer"
+            use="optional" />
+        <xs:attribute
+            name="col"
+            type="xs:integer"
+            use="optional" />
+    </xs:complexType>
+
+    <xs:complexType
         name="validationResultType">
         <xs:sequence>
             <xs:element
@@ -222,13 +263,22 @@
                 minOccurs="0"
                 maxOccurs="1">
                 <xs:complexType>
+                    <xs:sequence
+                        minOccurs="0"
+                        maxOccurs="unbounded">
+                        <xs:element name="error" type="validationErrorType" />                        
+                    </xs:sequence>
                 </xs:complexType>
-            </xs:element>
-        </xs:sequence>            
+            </xs:element>                
+        </xs:sequence>
         <xs:attribute
             name="rule"
             type="nameIDType"
-            use="optional" />        
+            use="required" />
+        <xs:attribute
+            name="result"
+            type="passFailStringType"
+            use="required" />
     </xs:complexType>
 
     <xs:complexType

@@ -12,8 +12,10 @@ namespace DDay.iCal.Validator.Xml
         {
             if (node.Attributes["name"] != null)
                 this.Name = node.Attributes["name"].Value;
-            if (node.Attributes["description"] != null)
-                this.Description = node.Attributes["description"].Value;
+            if (node.Attributes["nameString"] != null)
+                this.NameString = node.Attributes["nameString"].Value;
+            if (node.Attributes["descriptionString"] != null)
+                this.DescriptionString = node.Attributes["descriptionString"].Value;
         
             List<IValidationRule> rules = new List<IValidationRule>();
             string prefix = nsmgr.LookupPrefix("http://icalvalid.wikidot.com/validation");

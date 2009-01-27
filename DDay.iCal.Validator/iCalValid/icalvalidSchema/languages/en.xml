@@ -23,6 +23,18 @@
     <string name="validatingCalendar">Validating calendar using '%1' ruleset...</string>
     <string name="calendarValid">The calendar is valid!</string>
 
+    <string name="ruleset_Strict2_0">iCalendar 2.0 Strict</string>
+    <string name="ruleset_Strict2_0_Description">
+        Validates iCalendars against the IETF standards in a strict fashion.  Any variations from the standard
+        will be reported.
+    </string>
+    <string name="ruleset_Compatibility2_0">iCalendar 2.0 Compatibility Mode</string>    
+    <string name="ruleset_Compatibility2_0_Description">
+        Validates iCalendars against the IETF standards, ensuring compatibility between known calendaring
+        applications whenever possible.  Any practices that are known to break certain calendaring applications
+        will be reported.
+    </string>
+
     <errors>
         <error name="passExpectedError">The calendar test expected no errors, but one or more errors occurred:</error>
         <error name="failExpectedError">The calendar test expected exactly one error, but none occurred.</error>
