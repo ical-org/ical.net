@@ -23,13 +23,13 @@
     <string name="validatingCalendar">Validating calendar using '%1' ruleset...</string>
     <string name="calendarValid">The calendar is valid!</string>
 
-    <string name="ruleset_Strict2_0">iCalendar 2.0 Strict</string>
-    <string name="ruleset_Strict2_0_Description">
+    <string name="ruleset_Strict_2_0">iCalendar 2.0 Strict</string>
+    <string name="ruleset_Strict_2_0_Description">
         Validates iCalendars against the IETF standards in a strict fashion.  Any variations from the standard
         will be reported.
     </string>
-    <string name="ruleset_Compatibility2_0">iCalendar 2.0 Compatibility Mode</string>    
-    <string name="ruleset_Compatibility2_0_Description">
+    <string name="ruleset_Compatibility_2_0">iCalendar 2.0 Compatibility Mode</string>    
+    <string name="ruleset_Compatibility_2_0_Description">
         Validates iCalendars against the IETF standards, ensuring compatibility between known calendaring
         applications whenever possible.  Any practices that are known to break certain calendaring applications
         will be reported.
@@ -50,6 +50,7 @@
         <error name="versionGE2_0Error">Only calendars version 2.0 or higher are allowed.</error>
         <error name="prodIDRequiredError">The PRODID property is required on all iCalendars.</error>
         <error name="prodIDOnlyOnceError">The PRODID property can only be defined once on a VCALENDAR component.</error>
+        <error name="inlineBinaryContentError">Inline binary content should only be used in special circumstances that demand the iCalendar be expressed as a single object.  See RFC 2445 Section 4.1.3 for details.</error>
     </errors>
     <resolutions>
         <resolution error="emptyLineError">Remove empty lines from the iCalendar.</resolution>

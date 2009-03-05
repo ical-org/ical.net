@@ -106,7 +106,7 @@ namespace DDay.iCal.Validator
             List<IValidationRuleset> rulesets = new List<IValidationRuleset>(loader.Load());
 
             // Determine a validation ruleset to use
-            string validatorName = "Strict2_0";
+            string validatorName = "Strict_2_0";
             if (_Arguments.Contains(_ValidatorArgument))
                 validatorName = _Arguments[_ValidatorArgument].Value;
 
@@ -487,7 +487,7 @@ namespace DDay.iCal.Validator
             Console.WriteLine("               | properly validating calendar files.");
             Console.WriteLine("               | NOTE: /f, /uri, /u, and /p are ignored when using /t.");
             Console.WriteLine("/v:<validator> | The validator to use.  Possible values are:");
-            Console.WriteLine("               |       Strict2_0");
+            Console.WriteLine("               |       Strict_2_0");
             Console.WriteLine("               |       Other validator names");
             Console.WriteLine("/l:<language>  | The language to use when validating (i.e. en-US, es-MX, etc.)");
             Console.WriteLine("/s             | Performs schema validation against the icalvalidSchema.");

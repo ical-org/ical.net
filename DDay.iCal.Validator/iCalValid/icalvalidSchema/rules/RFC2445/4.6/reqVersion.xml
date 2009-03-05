@@ -61,7 +61,7 @@ END:VEVENT
 END:VCALENDAR]]>
     </fail>    
 
-    <fail
+    <fail        
         error="versionGE2_0Error">
         <![CDATA[BEGIN:VCALENDAR
 VERSION:1.9
@@ -73,4 +73,9 @@ SUMMARY:Bastille Day Party
 END:VEVENT
 END:VCALENDAR]]>
     </fail>
+    
+    <!--
+    FIXME: Need another <fail> for VERSION being the first property on
+    the calendar, as with Google Calendars.
+     -->
 </rule>

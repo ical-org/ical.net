@@ -4,7 +4,7 @@
     datetime="2009-01-27T12:13:43"
     xmlns="http://icalvalid.wikidot.com/validation">
     <validationResults
-        ruleset="Strict2_0">
+        ruleset="Strict_2_0">
         <validationResult
             rule="emptyLine"
             result="fail">

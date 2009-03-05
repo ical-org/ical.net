@@ -30,7 +30,7 @@ namespace DDay.iCal.Validator.RFC2445
 
         public IValidationResult[] Validate()
         {
-            ValidationResult result = new ValidationResult("crlfPairs");            
+            ValidationResult result = new ValidationResult("crlfPairs");
 
             MatchCollection matches = Regex.Matches(iCalText, @"((\r(?=[^\n]))|((?<=[^\r])\n))");
             if (matches.Count > 0)

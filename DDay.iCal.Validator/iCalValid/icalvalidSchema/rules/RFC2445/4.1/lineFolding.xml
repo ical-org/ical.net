@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<rule
+    xmlns="http://icalvalid.wikidot.com/validation"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://icalvalid.wikidot.com/validation ../../schema.xsd"
+    name="lineFolding">
+    <pass>
+        <!-- See RFC 2445 section 4.4 (page 49) -->
+        <![CDATA[BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//hacksw/handcal//NONSGML v1.0//EN
+BEGIN:VEVENT
+DTSTART:19970714T170000Z
+DTEND:19970715T035959Z
+SUMMARY:Bastille Day Party
+ with some line folding going on
+END:VEVENT
+END:VCALENDAR
+]]>
+    </pass>
+
+    <pass>
+        <!-- See RFC 2445 section 4.4 (page 49) -->
+        <![CDATA[BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//hacksw/handcal//NONSGML v1.0//EN
+BEGIN:VEVENT
+DTSTART:19970714T170000Z
+DTEND:19970715T035959Z
+SUMMARY:Bastille Day Party with some really really long lines of text that should be allowed regardless of the 75 character line folding
+ with some line folding also going on
+END:VEVENT
+END:VCALENDAR
+]]>
+    </pass>
+
+    <pass>
+        <!-- See RFC 2445 section 4.4 (page 49) -->
+        <![CDATA[BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//hacksw/handcal//NONSGML v1.0//EN
+BEGIN:VEVENT
+DTSTART:19970714T170000Z
+DTEND:19970715T035959Z
+SUMMARY:Bastille Day Party with 
+    multiple spaces in the line folding.
+END:VEVENT
+END:VCALENDAR
+]]>
+    </pass>
+
+    <fail
+        error="calendarParseError">
+        <![CDATA[BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//hacksw/handcal//NONSGML v1.0//EN
+BEGIN:VEVENT
+DTSTART:19970714T170000Z
+DTEND:19970715T035959Z
+SUMMARY:Bastille Day Party
+with some invalid line folding
+END:VEVENT
+END:VCALENDAR
+]]>        
+    </fail>    
+</rule>

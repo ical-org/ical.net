@@ -4,7 +4,7 @@
     datetime="2008-01-15T08:15:01"
     language="en">
     <testResults
-        ruleset="Strict2_0">
+        ruleset="Strict_2_0">
         <testResult 
             rule="emptyLine"
             expected="pass"

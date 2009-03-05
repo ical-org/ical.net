@@ -51,6 +51,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\IValidationResult.cs" />
+    <Compile Include="RFC2445\4.1.1\LineFieldSeparatorsValidator.cs" />
+    <Compile Include="RFC2445\4.1.2\MultipleValuesValidator.cs" />
+    <Compile Include="RFC2445\4.1.3\InlineBinaryContentValidator.cs" />
+    <Compile Include="RFC2445\4.1\LineFoldingValidator.cs" />
     <Compile Include="Serialization\TextValidationSerializer.cs" />
     <Compile Include="Serialization\XmlValidationSerializer.cs" />
     <Compile Include="Test.cs" />
@@ -65,16 +69,15 @@
     <Compile Include="Interfaces\IValidationRule.cs" />
     <Compile Include="Interfaces\IValidationRuleset.cs" />
     <Compile Include="Interfaces\IValidationRulesetProvider.cs" />
-    <Compile Include="RFC2445\Calendar\CRLFPairsValidator.cs" />
-    <Compile Include="RFC2445\Calendar\ReqProdIDValidator.cs" />
-    <Compile Include="RFC2445\Calendar\EmptyLineValidator.cs" />
-    <Compile Include="RFC2445\DataTypes\BinaryValidator.cs" />
+    <Compile Include="RFC2445\4.1\CRLFPairsValidator.cs" />
+    <Compile Include="RFC2445\4.6\ReqProdIDValidator.cs" />
+    <Compile Include="RFC2445\EmptyLineValidator.cs" />
     <Compile Include="RulesetValidator.cs" />
     <Compile Include="Interfaces\IValidator.cs" />
     <Compile Include="Interfaces\IValidationError.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourceManager.cs" />
-    <Compile Include="RFC2445\Calendar\ReqVersionValidator.cs" />
+    <Compile Include="RFC2445\4.6\ReqVersionValidator.cs" />
     <Compile Include="Utils\BoolUtil.cs" />
     <Compile Include="ValidationError.cs" />
     <Compile Include="ValidationErrorWithLookup.cs" />
@@ -93,15 +96,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="RFC2445\Alarm\" />
-    <Folder Include="RFC2445\Component\" />
-    <Folder Include="RFC2445\Event\" />
-    <Folder Include="RFC2445\FreeBusy\" />
-    <Folder Include="RFC2445\Journal\" />
-    <Folder Include="RFC2445\TimeZone\" />
-    <Folder Include="RFC2445\Todo\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

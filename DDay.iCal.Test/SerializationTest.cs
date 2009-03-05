@@ -482,6 +482,30 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             SerializeTest("SERIALIZE30.ics", typeof(iCalendarSerializer));
         }
 
+        /// <summary>
+        /// Tests adding custom properties to a calendar.
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void SERIALIZE31()
+        {
+            iCalendar iCal = new iCalendar();
+            Event evt = iCal.Create<Event>();
+
+            StringBuilder htmlBuilder = new StringBuilder();
+            htmlBuilder.Append("<HTML><HEAD><META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html;charset=iso-8859-1\"></HEAD><BODY>");
+            htmlBuilder.Append("<B>Test</B>");
+            htmlBuilder.Append("</BODY></HTML>");
+
+            // This adds the property to the event automatically
+            Property p = new Property(evt, "X-ALT-DESC", htmlBuilder.ToString());
+            p.AddParameter("FMTTYPE", "text/html");
+
+            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
+            serializer.Serialize(@"Calendars\Serialization\SERIALIZE31.ics");
+
+            SerializeTest("SERIALIZE31.ics", typeof(iCalendarSerializer));
+        }
+
         //[Test, Category("Serialization")]
         public void XCAL1()
         {

@@ -152,7 +152,25 @@ namespace DDay.iCal.Validator.RFC2445
                                 // Get a list of errors from our results
                                 List<IValidationError> errors = new List<IValidationError>();
                                 foreach (IValidationResult r in badResults)
-                                    errors.AddRange(r.Errors);
+                                {
+                                    // If we encounter a fatal error, then we cannot continue processing
+                                    // other errors. In other words, even though a single error was caused,
+                                    // the fact that it was fatal may have side effects and cause errors
+                                    // in almost every validator (i.e. a calendar with parsing errors).
+                                    bool fatal = false;
+                                    foreach (IValidationError error in r.Errors)
+                                    {
+                                        errors.Add(error);
+                                        if (error.IsFatal)
+                                        {
+                                            fatal = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (fatal)
+                                        break;
+                                }
 
                                 if (errors.Count == 1 && !string.Equals(errors[0].Name, test.ExpectedError))
                                     result.Error = new TestError("failWithIncorrectError", rule.Name, validationResults.ToArray());

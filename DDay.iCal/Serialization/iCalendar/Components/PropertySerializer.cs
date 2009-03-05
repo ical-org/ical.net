@@ -12,14 +12,14 @@ namespace DDay.iCal.Serialization.iCalendar.Components
     {
         #region Private Fields
 
-        private Property m_Property;
+        private Property m_Property;        
 
         #endregion
 
         #region Constructors
 
         public PropertySerializer(Property property)
-        {
+        {            
             this.m_Property = property;
         }
 
@@ -29,7 +29,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
         public string SerializeToString()
         {
-            string value = m_Property.Name;
+            StringBuilder sb = new StringBuilder(m_Property.Name);
             if (m_Property.Parameters.Count > 0)
             {
                 List<string> parameters = new List<string>();
@@ -46,9 +46,15 @@ namespace DDay.iCal.Serialization.iCalendar.Components
                     parameters.Add(p.Name + "=" + string.Join(",", p.Values.ToArray()));
                 }
 
-                value += ";" + string.Join(";", parameters.ToArray());
+                sb.Append(";");
+                sb.Append(string.Join(";", parameters.ToArray()));
             }
-            return value + ":" + m_Property.Value + "\r\n";
+            sb.Append(":");
+            sb.Append(m_Property.Value);
+            sb.Append("\r\n");
+
+            ContentLineSerializer serializer = new ContentLineSerializer(sb.ToString());
+            return serializer.SerializeToString();
         }
 
         public void Serialize(Stream stream, Encoding encoding)
