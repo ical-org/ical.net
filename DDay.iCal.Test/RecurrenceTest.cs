@@ -2759,7 +2759,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RECURRENCEPATTERN1()
         {
-            // NOTE: recurrence patterns are not meant to be used directly like this.
+            // NOTE: recurrence patterns are not generally meant to be used directly like this.
             // However, this does make a good test to ensure they behave as they should.
             RecurrencePattern pattern = new
             RecurrencePattern("FREQ=SECONDLY;INTERVAL=10");
@@ -2767,9 +2767,9 @@ namespace DDay.iCal.Test
 
 			CultureInfo us = CultureInfo.CreateSpecificCulture("en-US");
 
+            DateTime startDate = DateTime.Parse("3/30/08 11:59:40 PM", us);
             DateTime fromDate = DateTime.Parse("3/30/08 11:59:40 PM", us);
-			DateTime toDate = DateTime.Parse("3/31/08 12:00:10 AM", us);
-			DateTime startDate = DateTime.Parse("3/30/08 11:59:40 PM", us);
+			DateTime toDate = DateTime.Parse("3/31/08 12:00:10 AM", us);			
 
             List<iCalDateTime> occurrences = pattern.Evaluate(startDate, fromDate, toDate);
             Assert.AreEqual(4, occurrences.Count);
@@ -2782,15 +2782,15 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RECURRENCEPATTERN2()
         {
-            // NOTE: recurrence patterns are not meant to be used directly like this.
+            // NOTE: recurrence patterns are generally not meant to be used directly like this.
             // However, this does make a good test to ensure they behave as they should.
             RecurrencePattern pattern = new RecurrencePattern("FREQ=MINUTELY;INTERVAL=1");
 
 			CultureInfo us = CultureInfo.CreateSpecificCulture("en-US");
 
+            DateTime startDate = DateTime.Parse("3/31/2008 12:00:10 AM", us);
 			DateTime fromDate = DateTime.Parse("4/1/2008 10:08:10 AM", us);
-			DateTime toDate = DateTime.Parse("4/1/2008 10:43:23 AM", us);
-			DateTime startDate = DateTime.Parse("3/31/2008 12:00:10 AM", us);
+			DateTime toDate = DateTime.Parse("4/1/2008 10:43:23 AM", us);			
 
             List<iCalDateTime> occurrences = pattern.Evaluate(startDate, fromDate, toDate);
             Assert.AreNotEqual(0, occurrences.Count);

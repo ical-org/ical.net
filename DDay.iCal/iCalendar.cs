@@ -606,7 +606,8 @@ namespace DDay.iCal
         /// </example>
         /// </summary>
         /// <param name="FromDate">The beginning date/time of the range to test.</param>
-        /// <param name="ToDate">The end date/time of the range to test.</param>                
+        /// <param name="ToDate">The end date/time of the range to test.</param>
+        [Obsolete("This method is no longer supported.  Use GetOccurrences() instead.")]
         public void Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
@@ -619,6 +620,7 @@ namespace DDay.iCal
         /// <typeparam name="T">The type of component to be evaluated for recurrences.</typeparam>
         /// <param name="FromDate">The beginning date/time of the range to test.</param>
         /// <param name="ToDate">The end date/time of the range to test.</param>
+        [Obsolete("This method is no longer supported.  Use GetOccurrences() instead.")]
         public void Evaluate<T>(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
