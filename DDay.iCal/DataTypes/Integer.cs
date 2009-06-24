@@ -95,7 +95,7 @@ namespace DDay.iCal.DataTypes
 
         static public implicit operator int(Integer i)
         {
-            return i.Value;
+            return i != null ? i.Value : default(int);            
         }
 
         static public implicit operator Integer(int i)

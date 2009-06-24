@@ -5,6 +5,7 @@ using System.Configuration;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
+using System.Collections.Generic;
 
 namespace DDay.iCal.Components
 {
@@ -61,7 +62,7 @@ namespace DDay.iCal.Components
             return (Journal)base.Copy();
         }
 
-        public override System.Collections.Generic.List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
+        internal override List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             if (Start != null)
             {

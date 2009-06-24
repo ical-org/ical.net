@@ -79,7 +79,7 @@ namespace DDay.iCal.Test
 
         [SetUp]
         public void Init()
-        {            
+        {
             Start = DateTime.Now;
         }
 
@@ -105,7 +105,7 @@ namespace DDay.iCal.Test
         {
             string path = @"Calendars\General\Test1.ics";
             Assert.IsTrue(File.Exists(path), "File '" + path + "' does not exist.");
-            
+
             iCalendar iCal = iCalendar.LoadFromFile(path);
             ProgramTest.TestCal(iCal);
         }
@@ -113,9 +113,9 @@ namespace DDay.iCal.Test
         [Test]
         public void LoadFromUri()
         {
-            string path = Directory.GetCurrentDirectory();            
+            string path = Directory.GetCurrentDirectory();
             path = Path.Combine(path, "Calendars/General/Test1.ics").Replace(@"\", "/");
-            path = "file:///" + path;            
+            path = "file:///" + path;
             Uri uri = new Uri(path);
             iCalendar iCal = iCalendar.LoadFromUri(uri);
             ProgramTest.TestCal(iCal);
@@ -219,7 +219,7 @@ namespace DDay.iCal.Test
 
             throw new WebException();
         }
-        
+
         /// <summary>
         /// The following test is an aggregate of RRULE21() and RRULE22() in the
         /// <see cref="Recurrence"/> class.
@@ -233,14 +233,14 @@ namespace DDay.iCal.Test
             // Change the UID of the 2nd event to make sure it's different
             iCal2.Events[iCal1.Events[0].UID].UID = "1234567890";
             iCal1.MergeWith(iCal2);
-            
+
             Event evt1 = iCal1.Events[0];
             Event evt2 = iCal1.Events[1];
 
             // Get occurrences for the first event
             List<Occurrence> occurrences = evt1.GetOccurrences(
                 new iCalDateTime(1996, 1, 1, tzid, iCal1),
-                new iCalDateTime(2000, 1, 1, tzid, iCal1));            
+                new iCalDateTime(2000, 1, 1, tzid, iCal1));
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
             {
@@ -269,9 +269,9 @@ namespace DDay.iCal.Test
                 "EST",
                 "EST"                
             };
-                        
+
             for (int i = 0; i < DateTimes.Length; i++)
-            {                
+            {
                 iCalDateTime dt = (iCalDateTime)DateTimes[i];
                 iCalDateTime start = occurrences[i].Period.StartTime;
                 Assert.AreEqual(dt.Local, start.Local);
@@ -373,7 +373,7 @@ namespace DDay.iCal.Test
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BINARY.ics");
             ProgramTest.TestCal(iCal);
-            
+
             Event evt = iCal.Events["uuid1153170430406"];
             Assert.IsNotNull(evt, "Event could not be accessed by UID");
         }
@@ -396,8 +396,8 @@ namespace DDay.iCal.Test
 
             iCalendarSerializer serializer = new iCalendarSerializer(iCal);
             serializer.Serialize(@"Calendars\General\Temp\GEO1_Serialized.ics");
-        }        
-        
+        }
+
         [Test]
         public void LANGUAGE1()
         {
@@ -425,7 +425,7 @@ namespace DDay.iCal.Test
                 new iCalDateTime(2006, 12, 22, 7, 0, 0, tzid, iCal)
             };
 
-            for (int i = 0; i < DateTimes.Length; i++)            
+            for (int i = 0; i < DateTimes.Length; i++)
                 Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur at " + DateTimes[i]);
 
             Assert.IsTrue(occurrences.Count == DateTimes.Length, "There should be exactly " + DateTimes.Length + " occurrences; there were " + occurrences.Count);
@@ -479,7 +479,7 @@ END:VCALENDAR
 
             //iCalDateTime startDate = new iCalDateTime(1996, 1, 1, tzid, calendars[0]);
             //iCalDateTime endDate = new iCalDateTime(1998, 4, 1, tzid, calendars[0]);
-            
+
             //List<iCalDateTime> DateTimes = new List<iCalDateTime>(new iCalDateTime[]
             //{
             //    new iCalDateTime(1997, 9, 2, 9, 0, 0, tzid, calendars[0]),
@@ -507,7 +507,7 @@ END:VCALENDAR
             //    new iCalDateTime(1997, 9, 14, 9, 0, 0, tzid, calendars[0]),
             //    new iCalDateTime(1997, 9, 15, 9, 0, 0, tzid, calendars[0]),                
             //});
-            
+
             //List<Event> occurrences = new List<Event>(calendars.GetRecurrencesForRange<Event>(startDate, endDate));
             //foreach (Event evt in occurrences)
             //    Assert.IsTrue(DateTimes.Contains(evt.Start), "Event occurred on " + evt.Start + "; it should not have");
@@ -524,7 +524,7 @@ END:VCALENDAR
             //    }
             //    Assert.IsTrue(isFound, "Event should occur on " + dt);
             //}
-                    
+
 
             //Assert.IsTrue(occurrences.Count == DateTimes.Count, "There should be exactly " + DateTimes.Count + " occurrences; there were " + occurrences.Count);
         }
@@ -539,6 +539,23 @@ END:VCALENDAR
         public void PRODID2()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/PRODID2.ics");
+        }
+
+        [Test]
+        public void Outlook2007_With_Folded_Lines_Using_Tabs_Contains_One_Event()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Outlook2007LineFolds.ics");
+            List<Occurrence> events = iCal.GetOccurrences(new DateTime(2009, 06, 20), new DateTime(2009, 06, 22));
+            Assert.AreEqual(1, events.Count);
+        }
+
+        [Test]
+        public void Outlook2007_With_Folded_Lines_Using_Tabs_Is_Properly_Unwrapped()
+        {
+            string longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Outlook2007LineFolds.ics");
+            List<Occurrence> events = iCal.GetOccurrences<Event>(new DateTime(2009, 06, 20), new DateTime(2009, 06, 22));
+            Assert.AreEqual(longName, ((Event)events[0].Component).Location.Value);
         }
     }
 }

@@ -99,8 +99,8 @@ namespace DDay.iCal.DataTypes
         #region Operators
 
         public static implicit operator string(Text t)
-        {
-            return t.Value;
+        {            
+            return t != null ? t.Value : null;
         }
 
         public static implicit operator Text(string s)

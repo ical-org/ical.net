@@ -34,7 +34,7 @@ namespace DDay.iCal.Validator.RFC2445
                 StringReader sr = new StringReader(iCalText);
                 iCalendar calendar = iCalendar.LoadFromStream(sr);
 
-                result.Passed = true;                
+                result.Passed = true;
             }
             catch (antlr.MismatchedTokenException)
             {

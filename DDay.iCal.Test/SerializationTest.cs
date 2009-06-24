@@ -272,7 +272,10 @@ namespace DDay.iCal.Test
             ComponentBaseSerializer compSerializer = new ComponentBaseSerializer(evt);
             string evtString = compSerializer.SerializeToString();
 
-            Assert.IsTrue(evtString.Equals("BEGIN:VEVENT\r\nCREATED:20070319T000000Z\r\nDTEND;VALUE=DATE:20070320\r\nDTSTAMP:20070319T000000Z\r\nDTSTART;VALUE=DATE:20070319\r\nDURATION:P1D\r\nRRULE:FREQ=WEEKLY;INTERVAL=3;COUNT=4;BYDAY=TU,FR,SU\r\nSEQUENCE:0\r\nSUMMARY:Test event title\r\nUID:123456789\r\nEND:VEVENT\r\n"), "ComponentBaseSerializer.SerializeToString() serialized incorrectly");
+            Assert.IsTrue(evtString.Equals("BEGIN:VEVENT\r\nCREATED:20070319T000000Z\r\nDTEND;VALUE=DATE:20070320\r\nDTSTAMP:20070319T000000Z\r\nDTSTART;VALUE=DATE:20070319\r\nRRULE:FREQ=WEEKLY;INTERVAL=3;COUNT=4;BYDAY=TU,FR,SU\r\nSEQUENCE:0\r\nSUMMARY:Test event title\r\nUID:123456789\r\nEND:VEVENT\r\n"), "ComponentBaseSerializer.SerializeToString() serialized incorrectly");
+
+            serializer.Serialize(@"Calendars\Serialization\SERIALIZE18.ics");
+            SerializeTest("SERIALIZE18.ics", typeof(iCalendarSerializer));            
         }
 
         [Test, Category("Serialization")]
@@ -504,6 +507,46 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             serializer.Serialize(@"Calendars\Serialization\SERIALIZE31.ics");
 
             SerializeTest("SERIALIZE31.ics", typeof(iCalendarSerializer));
+        }
+
+        [Test, Category("Serialization")]
+        public void SERIALIZE32()
+        {
+            iCalendar iCal = new iCalendar();
+            iCal.AddProperty("X-WR-CALNAME", "DDay Test");
+            iCal.AddProperty("X-WR-CALDESC", "Events for a DDay Test");
+            iCal.AddProperty("X-PUBLISHED-TTL", "PT30M");
+            iCal.ProductID = "-//DDAYTEST//NONSGML www.test.com//EN";
+
+            // Create an event in the iCalendar
+            Event evt = iCal.Create<Event>();
+            
+            //Populate the properties
+            evt.Start = new iCalDateTime(2009, 6, 28, 8, 0, 0);
+            evt.Duration = TimeSpan.FromHours(1);
+            evt.Url = new URI("http://www.ftb.pl/news/59941_0_1/tunnel-electrocity-2008-timetable.htm");
+            evt.Summary = "This is a title";
+            evt.Description = "This is a description";
+
+            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
+            string output = serializer.SerializeToString();
+            serializer.Serialize(@"Calendars\Serialization\SERIALIZE32.ics");
+
+            Assert.IsFalse(Regex.IsMatch(output, @"\r\n[\r\n]"));
+
+            SerializeTest("SERIALIZE32.ics", typeof(iCalendarSerializer));
+        }
+
+        [Test, Category("Serialization")]
+        public void SERIALIZE33()
+        {            
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\SERIALIZE33.ics");
+            Event evt = iCal.Events["edb7a48a-d846-47f8-bad2-9ea3f29bcda5"];
+            
+            Assert.IsNotNull(evt);
+            Assert.AreEqual(new Duration(TimeSpan.FromDays(12) + TimeSpan.FromHours(1)), evt.Duration, "Duration should be 12 days, 1 hour");
+
+            SerializeTest("SERIALIZE33.ics", typeof(iCalendarSerializer));
         }
 
         //[Test, Category("Serialization")]

@@ -180,12 +180,13 @@ namespace DDay.iCal.Serialization.iCalendar.Components
             // Wrap lines at 75 characters, per RFC 2445 "folding" technique
             int i = 0;
             if (current.Length > 75)
-            {                
+            {
                 result.Append(current.ToString(0, 75) + "\r\n ");
                 for (i = 75; i < current.Length - 74; i += 74)
                     result.Append(current.ToString(i, 74) + "\r\n ");
             }
             result.Append(current.ToString(i, current.Length - i));
+            result.Append("\r\n");
 
             return result.ToString();
         }

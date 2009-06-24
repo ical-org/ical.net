@@ -596,7 +596,7 @@ namespace DDay.iCal
             }
             return null;
         }
-
+                
         /// <summary>
         /// Evaluates component recurrences for the given range of time.
         /// <example>
@@ -609,7 +609,7 @@ namespace DDay.iCal
         /// <param name="ToDate">The end date/time of the range to test.</param>                
         public void Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
         {
-            Evaluate<object>(FromDate, ToDate);
+            throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
         }
 
         /// <summary>
@@ -621,11 +621,7 @@ namespace DDay.iCal
         /// <param name="ToDate">The end date/time of the range to test.</param>
         public void Evaluate<T>(iCalDateTime FromDate, iCalDateTime ToDate)
         {
-            foreach (RecurringComponent rc in RecurringComponents)
-            {
-                if (rc is T)
-                    rc.Evaluate(FromDate, ToDate);
-            }
+            throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
         }
 
         /// <summary>

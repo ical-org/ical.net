@@ -101,7 +101,7 @@ namespace DDay.iCal.DataTypes
 
         static public implicit operator string(Cal_Address addr)
         {
-            return addr.Value;
+            return addr != null ? addr.Value : null;            
         }
 
         static public implicit operator Cal_Address(string s)

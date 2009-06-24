@@ -418,13 +418,13 @@ namespace DDay.iCal.Components
 
         #region Overrides
 
-        public override List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
+        internal override List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             List<Period> periods = base.Evaluate(FromDate, ToDate);
             // Add the initial specified date/time for the time zone entry
             periods.Insert(0, new Period(Start, null));
             return periods;
-        }            
+        }
 
         /// <summary>
         /// Returns a typed copy of the TimeZoneInfo object.

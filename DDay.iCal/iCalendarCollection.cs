@@ -149,8 +149,7 @@ namespace DDay.iCal
         /// <param name="ToDate">The end date/time of the range to test.</param>                
         public void Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
         {
-            foreach (iCalendar iCal in _Calendars)
-                iCal.Evaluate(FromDate, ToDate);
+            throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");            
         }
 
         /// <summary>
@@ -162,8 +161,7 @@ namespace DDay.iCal
         /// <param name="ToDate">The end date/time of the range to test.</param>
         public void Evaluate<T>(iCalDateTime FromDate, iCalDateTime ToDate)
         {
-            foreach (iCalendar iCal in _Calendars)
-                iCal.Evaluate<T>(FromDate, ToDate);            
+            throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
         }
 
         /// <summary>

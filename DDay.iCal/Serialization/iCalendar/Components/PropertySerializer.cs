@@ -50,8 +50,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
                 sb.Append(string.Join(";", parameters.ToArray()));
             }
             sb.Append(":");
-            sb.Append(m_Property.Value);
-            sb.Append("\r\n");
+            sb.Append(m_Property.Value);            
 
             ContentLineSerializer serializer = new ContentLineSerializer(sb.ToString());
             return serializer.SerializeToString();

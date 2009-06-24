@@ -50,19 +50,7 @@ namespace DDay.iCal.Components
                 if (_DTStart != null)
                     _DTStart.Name = "DTSTART";
             }
-        }
-
-        virtual public iCalDateTime EvalStart
-        {
-            get { return _EvalStart; }
-            set { _EvalStart = value; }
-        }
-
-        virtual public iCalDateTime EvalEnd
-        {
-            get { return _EvalEnd; }
-            set { _EvalEnd = value; }
-        }
+        }        
 
         [Serialized]
         virtual public RecurrenceDates[] ExDate
@@ -146,6 +134,22 @@ namespace DDay.iCal.Components
         {
             get { return _Alarms; }
             set { _Alarms = value; }
+        }
+
+        #endregion
+
+        #region Internal Properties
+
+        virtual internal iCalDateTime EvalStart
+        {
+            get { return _EvalStart; }
+            set { _EvalStart = value; }
+        }
+
+        virtual internal iCalDateTime EvalEnd
+        {
+            get { return _EvalEnd; }
+            set { _EvalEnd = value; }
         }
 
         #endregion
@@ -306,58 +310,7 @@ namespace DDay.iCal.Components
         #endregion
 
         #region Public Overridables
-
-        /// <summary>
-        /// Evaluates this item to determine the dates and times for which it occurs/recurs.
-        /// This method only evaluates items which occur/recur between <paramref name="FromDate"/>
-        /// and <paramref name="ToDate"/>; therefore, if you require a list of items which
-        /// occur outside of this range, you must specify a <paramref name="FromDate"/> and
-        /// <paramref name="ToDate"/> which encapsulate the date(s) of interest.
-        /// <note type="caution">
-        ///     For events with very complex recurrence rules, this method may be a bottleneck
-        ///     during processing time, especially when this method is called for a large number
-        ///     of items, in sequence, or for a very large time span.
-        /// </note>
-        /// </summary>
-        /// <param name="FromDate">The beginning date of the range to evaluate.</param>
-        /// <param name="ToDate">The end date of the range to evaluate.</param>
-        /// <returns>
-        ///     A <see cref="List<Period>"/> containing a <see cref="Period"/> object for
-        ///     each date/time this item occurs/recurs.
-        /// </returns>
-        virtual public List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
-        {
-            // Evaluate extra time periods, without re-evaluating ones that were already evaluated
-            if ((EvalStart == null && EvalEnd == null) ||
-                (ToDate == EvalStart) ||
-                (FromDate == EvalEnd))
-            {
-                EvaluateRRule(FromDate, ToDate);
-                EvaluateRDate(FromDate, ToDate);
-                EvaluateExRule(FromDate, ToDate);
-                EvaluateExDate(FromDate, ToDate);
-                if (EvalStart == null || EvalStart > FromDate)
-                    EvalStart = FromDate.Copy();
-                if (EvalEnd == null || EvalEnd < ToDate)
-                    EvalEnd = ToDate.Copy();
-            }
-
-            if (EvalStart != null && FromDate < EvalStart)
-                Evaluate(FromDate, EvalStart);
-            if (EvalEnd != null && ToDate > EvalEnd)
-                Evaluate(EvalEnd, ToDate);
-
-            Periods.Sort();
-
-            foreach(Period p in Periods)
-            {
-                // Ensure the Kind of time is consistent with DTStart
-                p.StartTime.IsUniversalTime = DTStart.IsUniversalTime;
-            }
-            
-            return Periods;
-        }
-
+                
         /// <summary>
         /// Clears a previous evaluation, usually because one of the 
         /// key elements used for evaluation has changed 
@@ -456,6 +409,61 @@ namespace DDay.iCal.Components
             foreach (Alarm alarm in Alarms)
                 Occurrences.AddRange(alarm.Poll(Start, End));
             return Occurrences;
+        }
+
+        #endregion
+
+        #region Internal Overridables
+
+        /// <summary>
+        /// Evaluates this item to determine the dates and times for which it occurs/recurs.
+        /// This method only evaluates items which occur/recur between <paramref name="FromDate"/>
+        /// and <paramref name="ToDate"/>; therefore, if you require a list of items which
+        /// occur outside of this range, you must specify a <paramref name="FromDate"/> and
+        /// <paramref name="ToDate"/> which encapsulate the date(s) of interest.
+        /// <note type="caution">
+        ///     For events with very complex recurrence rules, this method may be a bottleneck
+        ///     during processing time, especially when this method is called for a large number
+        ///     of items, in sequence, or for a very large time span.
+        /// </note>
+        /// </summary>
+        /// <param name="FromDate">The beginning date of the range to evaluate.</param>
+        /// <param name="ToDate">The end date of the range to evaluate.</param>
+        /// <returns>
+        ///     A <see cref="List<Period>"/> containing a <see cref="Period"/> object for
+        ///     each date/time this item occurs/recurs.
+        /// </returns>
+        virtual internal List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
+        {
+            // Evaluate extra time periods, without re-evaluating ones that were already evaluated
+            if ((EvalStart == null && EvalEnd == null) ||
+                (ToDate == EvalStart) ||
+                (FromDate == EvalEnd))
+            {
+                EvaluateRRule(FromDate, ToDate);
+                EvaluateRDate(FromDate, ToDate);
+                EvaluateExRule(FromDate, ToDate);
+                EvaluateExDate(FromDate, ToDate);
+                if (EvalStart == null || EvalStart > FromDate)
+                    EvalStart = FromDate.Copy();
+                if (EvalEnd == null || EvalEnd < ToDate)
+                    EvalEnd = ToDate.Copy();
+            }
+
+            if (EvalStart != null && FromDate < EvalStart)
+                Evaluate(FromDate, EvalStart);
+            if (EvalEnd != null && ToDate > EvalEnd)
+                Evaluate(EvalEnd, ToDate);
+
+            Periods.Sort();
+
+            foreach (Period p in Periods)
+            {
+                // Ensure the Kind of time is consistent with DTStart
+                p.StartTime.IsUniversalTime = DTStart.IsUniversalTime;
+            }
+
+            return Periods;
         }
 
         #endregion

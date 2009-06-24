@@ -266,7 +266,7 @@ namespace DDay.iCal.Components
 
         #region Overrides
 
-        public override List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
+        internal override List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             // TODO items can only recur if a start date is specified
             if (DTStart != null)

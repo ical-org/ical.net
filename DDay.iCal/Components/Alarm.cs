@@ -127,10 +127,10 @@ namespace DDay.iCal.Components
         #region Public Methods
 
         /// <summary>
-        /// Evaluates <see cref="Alarm"/>s for the given recurring component, <paramref name="rc"/>
+        /// Gets a list of alarm occurrences for the given recurring component, <paramref name="rc"/>
         /// that occur between <paramref name="FromDate"/> and <paramref name="ToDate"/>.
         /// </summary>
-        virtual public List<AlarmOccurrence> Evaluate(RecurringComponent rc, iCalDateTime FromDate, iCalDateTime ToDate)
+        virtual public List<AlarmOccurrence> GetOccurrences(RecurringComponent rc, iCalDateTime FromDate, iCalDateTime ToDate)
         {
             Occurrences.Clear();
 
@@ -188,7 +188,7 @@ namespace DDay.iCal.Components
             RecurringComponent rc = Parent as RecurringComponent;
             if (rc != null)
             {
-                Results.AddRange(Evaluate(rc, Start, End));
+                Results.AddRange(GetOccurrences(rc, Start, End));
                 Results.Sort();
             }
             return Results;

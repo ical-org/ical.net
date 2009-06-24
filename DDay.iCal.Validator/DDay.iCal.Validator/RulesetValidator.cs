@@ -68,6 +68,38 @@ namespace DDay.iCal.Validator.RFC2445
         {
             if (Ruleset != null)
             {
+                // If no iCalendar was provided, let's ensure it can
+                // at least be basically parsed before moving on to
+                // more in-depth validation rules.
+                if (iCalendar == null &&
+                    !string.IsNullOrEmpty(iCalendarText))
+                {
+                    try
+                    {
+                        StringReader sr = new StringReader(iCalendarText);
+                        
+                        // Turn off speed optimization to ensure we get proper
+                        // line/column numbers
+                        iCalendarSerializer serializer = new iCalendarSerializer();
+                        serializer.OptimizeForSpeed = false;
+
+                        iCalendar calendar = serializer.Deserialize(sr, typeof(iCalendar)) as iCalendar;
+                    }
+                    catch (antlr.MismatchedTokenException ex)
+                    {
+                        return new IValidationResult[]
+                        {
+                            new ValidationResult(
+                                null, 
+                                false,
+                                new IValidationError[] { new ValidationErrorWithLookup("calendarParseError", ValidationErrorType.Error, true, ex.line, ex.column) }
+                            )
+                        };
+                    }
+                }
+
+                // We've passed a basic parsing test, let's move
+                // on to the more complex tests!
                 List<IValidationResult> results = new List<IValidationResult>();
                 foreach (IValidationRule rule in Ruleset.Rules)
                 {
@@ -91,7 +123,32 @@ namespace DDay.iCal.Validator.RFC2445
                     }
                     else
                     {
-                        results.AddRange(validator.Validate());
+                        IValidationResult[] currentResults = validator.Validate();
+                        results.AddRange(currentResults);
+
+                        // Determine if there were any fatal errors in the results.
+                        // If there are, then we need to abort any further processing!
+                        bool isFatal = false;
+                        foreach (IValidationResult result in currentResults)
+                        {                            
+                            if (result.Errors != null)
+                            {
+                                foreach (IValidationError err in result.Errors)
+                                {
+                                    if (err.IsFatal)
+                                    {
+                                        isFatal = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (isFatal)
+                                break;
+                        }
+
+                        if (isFatal)
+                            break;
                     }
                 }
 

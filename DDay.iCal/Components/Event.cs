@@ -105,7 +105,16 @@ namespace DDay.iCal.Components
         /// available information.
         /// </note>
         /// </summary>
-        [Serialized, DefaultValue("P")]
+        // NOTE: Duration is not supported by all systems,
+        // (i.e. iPhone) and cannot co-exist with DTEnd.
+        // RFC 2445 states:
+        //
+        //      ; either 'dtend' or 'duration' may appear in
+        //      ; a 'eventprop', but 'dtend' and 'duration'
+        //      ; MUST NOT occur in the same 'eventprop'
+        //
+        // Therefore, Duration is not serialized, as DTEnd
+        // should always be extrapolated from the duration.
         virtual public Duration Duration
         {
             get { return _Duration; }
@@ -359,7 +368,7 @@ namespace DDay.iCal.Components
         /// <param name="FromDate">The beginning date of the range to evaluate.</param>
         /// <param name="ToDate">The end date of the range to evaluate.</param>
         /// <returns></returns>                
-        public override List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
+        internal override List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             // Add the event itself, before recurrence rules are evaluated
             // NOTE: this fixes a bug where (if evaluated multiple times)

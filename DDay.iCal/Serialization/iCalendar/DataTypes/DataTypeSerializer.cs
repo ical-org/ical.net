@@ -76,8 +76,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
                 }
 
                 value += ":";
-                value += serializer.SerializeToString();
-                value += "\r\n";
+                value += serializer.SerializeToString();                
 
                 ISerializable clSerializer = new ContentLineSerializer(value);
                 if (clSerializer != null)

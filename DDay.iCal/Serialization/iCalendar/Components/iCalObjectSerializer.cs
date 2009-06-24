@@ -18,8 +18,8 @@ namespace DDay.iCal.Serialization.iCalendar.Components
         /// antlr incorrect.
         /// </summary>
         static public string UnwrapLines(string s)
-        {            
-            return Regex.Replace(s, @"(\r\n )", string.Empty);
+        {
+            return Regex.Replace(s, @"(\r\n[ \t])", string.Empty);
         }
 
         /// <summary>

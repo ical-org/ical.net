@@ -13,6 +13,7 @@ using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
 using NUnit.Framework;
+using System.Globalization;
 
 namespace DDay.iCal.Test
 {
@@ -2764,16 +2765,18 @@ namespace DDay.iCal.Test
             RecurrencePattern("FREQ=SECONDLY;INTERVAL=10");
             pattern.RestrictionType = RecurrenceRestrictionType.NoRestriction;
 
-            DateTime fromDate = DateTime.Parse("3/30/08 11:59:40 PM");
-            DateTime toDate = DateTime.Parse("3/31/08 12:00:10 AM");
-            DateTime startDate = DateTime.Parse("3/30/08 11:59:40 PM");
+			CultureInfo us = CultureInfo.CreateSpecificCulture("en-US");
+
+            DateTime fromDate = DateTime.Parse("3/30/08 11:59:40 PM", us);
+			DateTime toDate = DateTime.Parse("3/31/08 12:00:10 AM", us);
+			DateTime startDate = DateTime.Parse("3/30/08 11:59:40 PM", us);
 
             List<iCalDateTime> occurrences = pattern.Evaluate(startDate, fromDate, toDate);
             Assert.AreEqual(4, occurrences.Count);
-            Assert.AreEqual(DateTime.Parse("03/30/08 11:59:40 PM"), occurrences[0].Value);
-            Assert.AreEqual(DateTime.Parse("03/30/08 11:59:50 PM"), occurrences[1].Value);
-            Assert.AreEqual(DateTime.Parse("03/31/08 12:00:00 AM"), occurrences[2].Value);
-            Assert.AreEqual(DateTime.Parse("03/31/08 12:00:10 AM"), occurrences[3].Value);
+			Assert.AreEqual(DateTime.Parse("03/30/08 11:59:40 PM", us), occurrences[0].Value);
+			Assert.AreEqual(DateTime.Parse("03/30/08 11:59:50 PM", us), occurrences[1].Value);
+			Assert.AreEqual(DateTime.Parse("03/31/08 12:00:00 AM", us), occurrences[2].Value);
+			Assert.AreEqual(DateTime.Parse("03/31/08 12:00:10 AM", us), occurrences[3].Value);
         }
 
         [Test, Category("Recurrence")]
@@ -2783,9 +2786,11 @@ namespace DDay.iCal.Test
             // However, this does make a good test to ensure they behave as they should.
             RecurrencePattern pattern = new RecurrencePattern("FREQ=MINUTELY;INTERVAL=1");
 
-            DateTime fromDate = DateTime.Parse("4/1/2008 10:08:10 AM");
-            DateTime toDate = DateTime.Parse("4/1/2008 10:43:23 AM");
-            DateTime startDate = DateTime.Parse("3/31/2008 12:00:10 AM");
+			CultureInfo us = CultureInfo.CreateSpecificCulture("en-US");
+
+			DateTime fromDate = DateTime.Parse("4/1/2008 10:08:10 AM", us);
+			DateTime toDate = DateTime.Parse("4/1/2008 10:43:23 AM", us);
+			DateTime startDate = DateTime.Parse("3/31/2008 12:00:10 AM", us);
 
             List<iCalDateTime> occurrences = pattern.Evaluate(startDate, fromDate, toDate);
             Assert.AreNotEqual(0, occurrences.Count);
@@ -2804,7 +2809,7 @@ namespace DDay.iCal.Test
 
             try
             {
-                List<Period> periods = evt.Evaluate(DateTime.Today.AddDays(1), DateTime.Today.AddDays(2));
+                List<Occurrence> occurrences = evt.GetOccurrences(DateTime.Today.AddDays(1), DateTime.Today.AddDays(2));                
                 Assert.Fail("An exception should be thrown when evaluating a recurrence with no specified FREQUENCY");
             }
             catch { }
