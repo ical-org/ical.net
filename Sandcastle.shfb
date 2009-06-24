@@ -30,21 +30,21 @@
     <CleanIntermediates>True</CleanIntermediates>
     <KeepLogFile>True</KeepLogFile>
     <BuildLogFile path="" />
-    <HelpFileFormat>Help1xAndWebsite</HelpFileFormat>
+    <HelpFileFormat>HtmlHelp1x</HelpFileFormat>
     <CppCommentsFixup>False</CppCommentsFixup>
     <FrameworkVersion>2.0.50727</FrameworkVersion>
     <IndentHtml>False</IndentHtml>
     <Preliminary>True</Preliminary>
     <RootNamespaceContainer>True</RootNamespaceContainer>
     <RootNamespaceTitle>DDay.iCal - iCalendar Class Library</RootNamespaceTitle>
-    <HelpTitle>DDay.iCal Version 0.70</HelpTitle>
+    <HelpTitle>DDay.iCal Version 0.71</HelpTitle>
     <HtmlHelpName>Documentation</HtmlHelpName>
     <Language>en-US</Language>
     <CopyrightHref />
     <CopyrightText>Copyright 2007 Douglas Day</CopyrightText>
     <FeedbackEMailAddress>doug@ddaysoftware.com</FeedbackEMailAddress>
     <FeedbackEMailLinkText />
-    <HeaderText>DDay.iCal Version 0.70</HeaderText>
+    <HeaderText>DDay.iCal Version 0.71</HeaderText>
     <FooterText />
     <ProjectLinkType>Local</ProjectLinkType>
     <SdkLinkType>Msdn</SdkLinkType>
