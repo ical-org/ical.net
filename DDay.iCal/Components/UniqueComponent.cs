@@ -14,11 +14,11 @@ namespace DDay.iCal.Components
     /// </summary>
     public class UniqueComponent : ComponentBase
     {
-        // FIXME: Add AddRelationship() public method.
+        // TODO: Add AddRelationship() public method.
         // This method will add the UID of a related component
         // to the Related_To property, along with any "RELTYPE"
         // parameter ("PARENT", "CHILD", "SIBLING", or other)
-        // FIXME: Add RemoveRelationship() public method.        
+        // TODO: Add RemoveRelationship() public method.        
 
         #region Constructors
 

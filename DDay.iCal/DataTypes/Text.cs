@@ -72,7 +72,7 @@ namespace DDay.iCal.DataTypes
             value = value.Replace(@"\N", "\n");            
             value = value.Replace(@"\;", ";");
             value = value.Replace(@"\,", ",");
-            // FIXME: double quotes aren't escaped in RFC2445, but are in Mozilla Sunbird (0.5-)
+            // NOTE: double quotes aren't escaped in RFC2445, but are in Mozilla Sunbird (0.5-)
             value = value.Replace("\\\"", "\"");
 
             // Replace all single-backslashes with double-backslashes.

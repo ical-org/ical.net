@@ -73,7 +73,16 @@ namespace DDay.iCal.Components
         /// <summary>
         /// The duration of the todo item.
         /// </summary>
-        [Serialized, DefaultValue("P")]
+        // NOTE: Duration is not supported by all systems,
+        // (i.e. iPhone) and cannot co-exist with Due.
+        // RFC 2445 states:
+        //
+        //      ; either 'due' or 'duration' may appear in
+        //      ; a 'todoprop', but 'due' and 'duration'
+        //      ; MUST NOT occur in the same 'todoprop'
+        //
+        // Therefore, Duration is not serialized, as Due
+        // should always be extrapolated from the duration.
         virtual public Duration Duration
         {
             get { return m_Duration; }

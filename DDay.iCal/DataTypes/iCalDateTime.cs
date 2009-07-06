@@ -437,8 +437,7 @@ namespace DDay.iCal.DataTypes
             value = DateTime.SpecifyKind(value, DateTimeKind.Unspecified);
             return value;
         }
-
-        // FIXME: what's wrong with this method?? Start here
+                
         public DateTime ToTimeZone(string tzid)
         {
             if (!string.IsNullOrEmpty(tzid))

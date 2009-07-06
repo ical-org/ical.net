@@ -760,9 +760,6 @@ namespace DDay.iCal.DataTypes
         {
             List<iCalDateTime> DateTimes = new List<iCalDateTime>();
             iCalDateTime EndDate = new iCalDateTime(StartDate);
-            
-            // FIXME: is there a reason for this?
-            //AbsEndDate = AbsEndDate.AddSeconds(-1);
 
             IncrementDate(ref EndDate, 1);
             EndDate = EndDate.AddSeconds(-1);
