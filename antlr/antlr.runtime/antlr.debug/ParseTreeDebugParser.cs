@@ -13,7 +13,7 @@ namespace antlr.debug
 	//
 
 	using System;
-	using Stack = System.Collections.Stack;
+	using Stack = System.Collections.Generic.Stack<object>;
 	using antlr;
 	using BitSet = antlr.collections.impl.BitSet;
 

@@ -1,6 +1,12 @@
 using System;
-using Hashtable		= System.Collections.Hashtable;
-using Stack    		= System.Collections.Stack;
+
+#if SILVERLIGHT
+    using Hashtable = SilverlightAdapter.Hashtable;
+#else
+    using Hashtable = System.Collections.Hashtable;
+#endif
+
+using Stack    		= System.Collections.Generic.Stack<object>;
 	
 namespace antlr
 {

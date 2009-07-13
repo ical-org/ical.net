@@ -4,6 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "antlr.runtime", "antlr.runt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "antlr.astframe", "antlr.astframe\antlr.astframe.csproj", "{AAFA5AC9-5967-443D-A564-71236163239D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "antlr.runtime.Silverlight", "antlr.runtime\antlr.runtime.Silverlight.csproj", "{C6930C54-03A9-4CA5-B73A-E444B2986A2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilverlightAdapter", "SilverlightAdapter\SilverlightAdapter.csproj", "{75569358-08FB-4DBB-AF60-0378A0A21547}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +22,14 @@ Global
 		{AAFA5AC9-5967-443D-A564-71236163239D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AAFA5AC9-5967-443D-A564-71236163239D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AAFA5AC9-5967-443D-A564-71236163239D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6930C54-03A9-4CA5-B73A-E444B2986A2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6930C54-03A9-4CA5-B73A-E444B2986A2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6930C54-03A9-4CA5-B73A-E444B2986A2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6930C54-03A9-4CA5-B73A-E444B2986A2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75569358-08FB-4DBB-AF60-0378A0A21547}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75569358-08FB-4DBB-AF60-0378A0A21547}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75569358-08FB-4DBB-AF60-0378A0A21547}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75569358-08FB-4DBB-AF60-0378A0A21547}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

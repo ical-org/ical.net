@@ -284,7 +284,7 @@ namespace antlr.debug
 			{
 				System.Console.Error.WriteLine("Error initializing ParseView: " + e);
 				System.Console.Error.WriteLine("Please report this to Scott Stanchfield, thetick@magelang.com");
-				System.Environment.Exit(1);
+				//System.Environment.Exit(1);
 			}
 		}
 

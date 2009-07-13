@@ -1,3 +1,7 @@
+#if SILVERLIGHT
+using SilverlightAdapter;
+#endif
+
 using System;
 using ArrayList					= System.Collections.ArrayList;
 

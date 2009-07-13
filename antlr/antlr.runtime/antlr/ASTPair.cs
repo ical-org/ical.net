@@ -1,7 +1,7 @@
 namespace antlr
 {
 	using System;
-	using Queue = System.Collections.Queue;
+	using Queue = System.Collections.Generic.Queue<object>;
 	using AST	= antlr.collections.AST;
 
 	/*ANTLR Translator Generator

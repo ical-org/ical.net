@@ -1,3 +1,7 @@
+#if SILVERLIGHT
+using SilverlightAdapter;
+#endif
+
 namespace antlr
 {
 	/*ANTLR Translator Generator

@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>8.0.30729</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{AAFA5AC9-5967-443D-A564-71236163239D}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -71,7 +71,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\antlr.runtime\antlr.runtime.csproj">
-      <Name>antlr.runtime-2.7.5</Name>
+      <Name>antlr.runtime</Name>
       <Project>{CB7CC882-ED47-46C0-AAAE-7A437F22F1C6}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>

@@ -1,8 +1,19 @@
+#if SILVERLIGHT
+using SilverlightAdapter;
+#endif
+
 using System;
 using System.Collections;
 using Assembly			= System.Reflection.Assembly;
-using ArrayList			= System.Collections.ArrayList;
-using Debug				= System.Diagnostics.Debug;
+
+#if SILVERLIGHT
+using Hashtable = SilverlightAdapter.Hashtable;
+#else
+using Hashtable = System.Collections.Hashtable;
+#endif
+
+using ArrayList = System.Collections.ArrayList;
+using Debug = System.Diagnostics.Debug;
 using AST				= antlr.collections.AST;
 using ASTArray			= antlr.collections.impl.ASTArray;
 using ANTLRException	= antlr.ANTLRException;
@@ -57,7 +68,7 @@ namespace antlr
 		/// Constructs an <c>ASTFactory</c> with the default AST node type of
 		/// <see cref="antlr.CommonAST"/>.
 		/// </summary>
-		public ASTFactory() : this("antlr.CommonAST")
+		public ASTFactory() : this(typeof(antlr.CommonAST))
 		{
 		}
 
@@ -69,9 +80,21 @@ namespace antlr
 		///		Name of default AST node type for this factory.
 		/// </param>
 		public ASTFactory(string nodeTypeName)
+			: this( loadNodeTypeObject(nodeTypeName) )
+		{	
+		}
+		
+		/// <summary>
+		/// Constructs an <c>ASTFactory</c> and use the specified AST node type
+		/// as the default.
+		/// </summary>
+		/// <param name="nodeType">
+		///		MetaType of default AST node type for this factory.
+		/// </param>
+		public ASTFactory(Type nodeType)
 		{
 			heteroList_					= new FactoryEntry[Token.MIN_USER_TYPE+1];
-			defaultASTNodeTypeObject_	= loadNodeTypeObject(nodeTypeName);
+			defaultASTNodeTypeObject_	= nodeType;
 			defaultCreator_				= null;
 			typename2creator_			= new Hashtable(32, (float) 0.3);
 			typename2creator_["antlr.CommonAST"]					= CommonAST.Creator;
@@ -553,11 +576,11 @@ namespace antlr
 		// PRIVATE FUNCTION MEMBERS
 		//---------------------------------------------------------------------
 
-		private Type loadNodeTypeObject(string nodeTypeName)
+		private static Type loadNodeTypeObject(string nodeTypeName)
 		{
 			Type	nodeTypeObject	= null;
 			bool	typeCreated		= false;
-
+            
 			if (nodeTypeName != null)
 			{
 				foreach (Assembly assem in AppDomain.CurrentDomain.GetAssemblies())

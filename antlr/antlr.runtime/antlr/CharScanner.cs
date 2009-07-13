@@ -1,8 +1,18 @@
+#if SILVERLIGHT
+using SilverlightAdapter;
+#endif
+
 using System;
 using Stream			= System.IO.Stream;
 using TextReader		= System.IO.TextReader;
 using StringBuilder		= System.Text.StringBuilder;
-using Hashtable			= System.Collections.Hashtable;
+
+#if SILVERLIGHT
+using Hashtable = SilverlightAdapter.Hashtable;
+#else
+using Hashtable	= System.Collections.Hashtable;
+#endif
+
 using Assembly			= System.Reflection.Assembly;
 using EventHandlerList	= System.ComponentModel.EventHandlerList;
 

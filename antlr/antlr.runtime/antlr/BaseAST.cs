@@ -1,9 +1,13 @@
+#if SILVERLIGHT
+using SilverlightAdapter;
+#endif
+
 using System;
 using StringBuilder		= System.Text.StringBuilder;
-using ISerializable		= System.Runtime.Serialization.ISerializable;
+//using ISerializable		= System.Runtime.Serialization.ISerializable;
 using TextWriter		= System.IO.TextWriter;
-using ArrayList			= System.Collections.ArrayList;
-using IEnumerator		= System.Collections.IEnumerator;
+using ArrayList = System.Collections.ArrayList;
+using IEnumerator = System.Collections.IEnumerator;
 
 using AST				= antlr.collections.AST;
 
@@ -368,8 +372,8 @@ namespace antlr
 			StringBuilder b = new StringBuilder();
 			// if verbose and type name not same as text (keyword probably)
 			if (verboseStringConversion && 
-					(0 != String.Compare(getText(), (tokenNames[Type]), true)) &&
-					(0 != String.Compare(getText(), StringUtils.stripFrontBack(tokenNames[Type], @"""", @""""), true)))
+					(0 != String.Compare(getText(), (tokenNames[Type]), StringComparison.InvariantCultureIgnoreCase)) &&
+					(0 != String.Compare(getText(), StringUtils.stripFrontBack(tokenNames[Type], @"""", @""""), StringComparison.InvariantCultureIgnoreCase)))
 			{
 				b.Append('[');
 				b.Append(getText());

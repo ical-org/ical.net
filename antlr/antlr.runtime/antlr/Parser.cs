@@ -353,7 +353,7 @@ namespace antlr
 		public static void  panic()
 		{
 			System.Console.Error.WriteLine("Parser: panic");
-			System.Environment.Exit(1);
+			//System.Environment.Exit(1);
 		}
 
 		public virtual void  removeMessageListener(MessageListener l)

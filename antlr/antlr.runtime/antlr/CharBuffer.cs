@@ -1,3 +1,7 @@
+#if SILVERLIGHT
+using SilverlightAdapter;
+#endif
+
 using System;
 using System.Runtime.InteropServices;
 using TextReader		= System.IO.TextReader;
