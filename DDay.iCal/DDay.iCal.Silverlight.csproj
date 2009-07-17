@@ -1,0 +1,199 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5BFF7DAC-E96B-4218-8952-1FCE5D9C016F}</ProjectGuid>
+    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DDay.iCal.Silverlight</RootNamespace>
+    <AssemblyName>DDay.iCal.Silverlight</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <SilverlightApplication>false</SilverlightApplication>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="antlr.runtime.Silverlight, Version=2.7.6.2, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\antlr.runtime.Silverlight.dll</HintPath>
+    </Reference>
+    <Reference Include="SilverlightAdapter, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\SilverlightAdapter.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows" />
+    <Reference Include="mscorlib" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Browser" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ComponentBaseTypeAttribute.cs" />
+    <Compile Include="Components\Alarm.cs" />
+    <Compile Include="Components\AlarmOccurrence.cs" />
+    <Compile Include="Components\ComponentBase.cs" />
+    <Compile Include="Components\ContentLine.cs" />
+    <Compile Include="Components\Event.cs" />
+    <Compile Include="Components\FreeBusy.cs" />
+    <Compile Include="Components\iCalObject.cs" />
+    <Compile Include="Components\iCalTimeZone.cs" />
+    <Compile Include="Components\Journal.cs" />
+    <Compile Include="Components\Occurrence.cs" />
+    <Compile Include="Components\Parameter.cs" />
+    <Compile Include="Components\Property.cs" />
+    <Compile Include="Components\RecurringComponent.cs" />
+    <Compile Include="Components\RelationshipTypes.cs" />
+    <Compile Include="Components\TimeZoneInfo.cs" />
+    <Compile Include="Components\Todo.cs" />
+    <Compile Include="Components\UniqueComponent.cs" />
+    <Compile Include="Components\UniqueComponentList.cs" />
+    <Compile Include="DataTypes\AlarmAction.cs" />
+    <Compile Include="DataTypes\Binary.cs" />
+    <Compile Include="DataTypes\Cal_Address.cs" />
+    <Compile Include="DataTypes\DateUtils.cs" />
+    <Compile Include="DataTypes\DaySpecifier.cs" />
+    <Compile Include="DataTypes\Duration.cs" />
+    <Compile Include="DataTypes\EncodableAttribute.cs" />
+    <Compile Include="DataTypes\EncodableDataType.cs" />
+    <Compile Include="DataTypes\EvaluationEngineException.cs" />
+    <Compile Include="DataTypes\EventStatus.cs" />
+    <Compile Include="DataTypes\Float.cs" />
+    <Compile Include="DataTypes\Geo.cs" />
+    <Compile Include="DataTypes\iCalDataType.cs" />
+    <Compile Include="DataTypes\iCalDateTime.cs" />
+    <Compile Include="DataTypes\Integer.cs" />
+    <Compile Include="DataTypes\JournalStatus.cs" />
+    <Compile Include="DataTypes\Period.cs" />
+    <Compile Include="DataTypes\RecurrenceDates.cs" />
+    <Compile Include="DataTypes\RecurrencePattern.cs" />
+    <Compile Include="DataTypes\RequestStatus.cs" />
+    <Compile Include="DataTypes\StatusCode.cs" />
+    <Compile Include="DataTypes\Text.cs" />
+    <Compile Include="DataTypes\TextCollection.cs" />
+    <Compile Include="DataTypes\TodoStatus.cs" />
+    <Compile Include="DataTypes\Transparency.cs" />
+    <Compile Include="DataTypes\Trigger.cs" />
+    <Compile Include="DataTypes\TZID.cs" />
+    <Compile Include="DataTypes\URI.cs" />
+    <Compile Include="DataTypes\UTC_Offset.cs" />
+    <Compile Include="DefaultValueAttribute.cs" />
+    <Compile Include="DefaultValueTypeAttribute.cs" />
+    <Compile Include="iCalendar.cs" />
+    <Compile Include="iCalendarCollection.cs" />
+    <Compile Include="Interfaces\IKeyedList.cs" />
+    <Compile Include="Interfaces\IKeyedObject.cs" />
+    <Compile Include="KeyedList.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serialization\DisallowedTypesAttribute.cs" />
+    <Compile Include="Serialization\ForceUTCAttribute.cs" />
+    <Compile Include="Serialization\iCalendarSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\ComponentBaseSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\ContentLineSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\EventSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\iCalObjectSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\ParameterSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\PropertySerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\RecurringComponentSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\UniqueComponentSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\ArraySerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\BinarySerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\DataTypeSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\DaySpecifierSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\EncodableDataTypeSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\EnumSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\FieldSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\iCalDateTimeSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\iCalDateTimeUTCSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\PeriodSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\RecurrenceDatesSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\RecurrencePatternSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\TextCollectionSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\TextSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\TriggerSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\iCalLexer.cs" />
+    <Compile Include="Serialization\iCalendar\iCalParser.cs" />
+    <Compile Include="Serialization\iCalendar\iCalParserHelper.cs" />
+    <Compile Include="Serialization\iCalendar\iCalParserTokenTypes.cs" />
+    <Compile Include="Serialization\iCalendar\SerializerFactory.cs" />
+    <Compile Include="Serialization\IParameterSerializable.cs" />
+    <Compile Include="Serialization\ISerializable.cs" />
+    <Compile Include="Serialization\NonstandardAttribute.cs" />
+    <Compile Include="Serialization\SerializedAttribute.cs" />
+    <Compile Include="Serialization\xCalSerializer.cs" />
+    <Compile Include="Serialization\xCal\CDataAttribute.cs" />
+    <Compile Include="Serialization\xCal\Components\ComponentBaseSerializer.cs" />
+    <Compile Include="Serialization\xCal\Components\iCalObjectSerializer.cs" />
+    <Compile Include="Serialization\xCal\Components\PropertySerializer.cs" />
+    <Compile Include="Serialization\xCal\Components\UniqueComponentSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\ArraySerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\BinarySerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\DataTypeSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\DaySpecifierSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\EncodableDataTypeSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\EnumSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\FieldSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\iCalDateTimeSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\iCalDateTimeUTCSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\PeriodSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\RecurrenceDatesSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\RecurrencePatternSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\TextCollectionSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\TextSerializer.cs" />
+    <Compile Include="Serialization\xCal\DataTypes\TriggerSerializer.cs" />
+    <Compile Include="Serialization\xCal\IXCalSerializable.cs" />
+    <Compile Include="Serialization\xCal\SerializerFactory.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="License.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Serialization\iCalendar\iCalParserTokenTypes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DDay.iCal.pfx" />
+    <None Include="Serialization\iCalendar\iCal.g" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\v3.0\Microsoft.Silverlight.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
+        <SilverlightProjectProperties />
+      </FlavorProperties>
+      <UserProperties ProjectLinkReference="f88db6d3-cb95-4707-9c88-b53403aadc61" ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

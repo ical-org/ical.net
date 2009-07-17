@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
 using DDay.iCal.Components;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.DataTypes
 {
@@ -13,6 +14,11 @@ namespace DDay.iCal.DataTypes
     /// <c>MAILTO:email.address@host.com</c>
     /// </summary>
     [DebuggerDisplay("{Value}")]
+#if SILVERLIGHT
+    [DataContract(Name = "Cal_Address", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#else
+    [Serializable]
+#endif
     public class Cal_Address : URI
     {
         public const string ORGANIZER = "ORGANIZER";

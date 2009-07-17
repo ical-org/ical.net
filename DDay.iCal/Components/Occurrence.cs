@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using System.Text;
 using DDay.iCal.DataTypes;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.Components
 {
     [DebuggerDisplay("{Component.Summary} ({Period.StartTime} - {Period.EndTime})")]
+#if SILVERLIGHT
+    [DataContract(Name = "Occurrence", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#else
+    [Serializable]
+#endif
     public class Occurrence :
         IComparable<Occurrence>
     {

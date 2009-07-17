@@ -3,12 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.DataTypes
 {
     /// <summary>
     /// An iCalendar representation of the <c>RRULE</c> property.
     /// </summary>
+#if SILVERLIGHT
+    [DataContract(Name = "RecurrencePattern", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#else
+    [Serializable]
+#endif
     public partial class RecurrencePattern : iCalDataType
     {
         #region Private Fields

@@ -2,13 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DDay.iCal.Components;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.DataTypes
 {
     /// <summary>
     /// A class that is used to specify exactly when an <see cref="Alarm"/> component will trigger.
     /// Usually this date/time is relative to the component to which the Alarm is associated.
-    /// </summary>    
+    /// </summary>
+#if SILVERLIGHT
+    [DataContract(Name = "Trigger", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#else
+    [Serializable]
+#endif
     public class Trigger : iCalDataType
     {
         public enum TriggerRelation

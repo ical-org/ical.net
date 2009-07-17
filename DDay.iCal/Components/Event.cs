@@ -7,6 +7,7 @@ using System.Configuration;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.Components
 {
@@ -25,6 +26,11 @@ namespace DDay.iCal.Components
     ///     </list>
     /// </note>
     [DebuggerDisplay("{Summary}: {Start} {Duration}")]
+#if SILVERLIGHT
+    [DataContract(Name = "Event", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#else
+    [Serializable]
+#endif
     public class Event : RecurringComponent
     {
         #region Private Fields

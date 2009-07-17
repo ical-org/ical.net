@@ -53,7 +53,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
                             data.RemoveAt(i);
                     }
 
-                    return encoding.GetString(data.ToArray());
+                    return encoding.GetString(data.ToArray(), 0, data.Count);
                 default:
                     return value;
             }

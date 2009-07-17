@@ -5,6 +5,7 @@ using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.Components
 {
@@ -12,6 +13,11 @@ namespace DDay.iCal.Components
     /// Represents a unique component, a component with a unique UID,
     /// which can be used to uniquely identify the component.    
     /// </summary>
+#if SILVERLIGHT
+    [DataContract(Name = "UniqueComponent", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#else
+    [Serializable]
+#endif
     public class UniqueComponent : ComponentBase
     {
         // TODO: Add AddRelationship() public method.

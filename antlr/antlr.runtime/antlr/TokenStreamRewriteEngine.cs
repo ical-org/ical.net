@@ -15,13 +15,7 @@ namespace antlr
 	using IList 		= System.Collections.IList;
 	using IDictionary 	= System.Collections.IDictionary;
 	using ArrayList 	= System.Collections.ArrayList;
-	
-#if SILVERLIGHT
-    using Hashtable		= SilverlightAdapter.Hashtable;
-#else
     using Hashtable     = System.Collections.Hashtable;
-#endif
-
 	using IComparer		= System.Collections.IComparer;
 	using StringBuilder = System.Text.StringBuilder;
 	using BitSet 		= antlr.collections.impl.BitSet;

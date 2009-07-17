@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DDay.iCal.DataTypes;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.Components
 {
@@ -13,6 +14,11 @@ namespace DDay.iCal.Components
     /// the alarm occurs, the <see cref="Alarm"/> that fired, and the 
     /// component on which the alarm fired.
     /// </remarks>
+#if SILVERLIGHT
+    [DataContract(Name = "AlarmOccurrence", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#else
+    [Serializable]
+#endif
     public class AlarmOccurrence : 
         Occurrence,
         IComparable<AlarmOccurrence>

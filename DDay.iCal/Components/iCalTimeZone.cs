@@ -6,12 +6,18 @@ using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.Components
 {
     /// <summary>
     /// A class that represents an RFC 2445 VTIMEZONE component.
     /// </summary>
+#if SILVERLIGHT
+    [DataContract(Name = "iCalTimeZone", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#else
+    [Serializable]
+#endif
     public partial class iCalTimeZone : ComponentBase
     {
         #region Private Fields

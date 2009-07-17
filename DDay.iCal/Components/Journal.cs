@@ -6,6 +6,7 @@ using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.Components
 {
@@ -13,6 +14,11 @@ namespace DDay.iCal.Components
     /// A class that represents an RFC 2445 VJOURNAL component.
     /// </summary>
     [DebuggerDisplay("{Summary}: {(Description.ToString().Length < 32) ? Description.ToString() : Description.ToString().Substring(0, 32)}")]
+#if SILVERLIGHT
+    [DataContract(Name = "Journal", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#else
+    [Serializable]
+#endif
     public class Journal : RecurringComponent
     {
         #region Private Fields

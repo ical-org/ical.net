@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.Components
 {
@@ -13,6 +14,11 @@ namespace DDay.iCal.Components
     /// The <c>VALUE=DATE</c> portion is a <see cref="Parameter"/> of the DTSTART value.
     /// </example>
     /// </remarks>
+#if SILVERLIGHT
+    [DataContract(Name = "Parameter", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#else
+    [Serializable]
+#endif
     public class Parameter : 
         iCalObject,
         IKeyedObject<string>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal
 {
@@ -8,6 +9,11 @@ namespace DDay.iCal
     /// A list of objects that are keyed.  This is similar to a 
     /// Dictionary<T,U> object, except 
     /// </summary>
+#if SILVERLIGHT
+    [DataContract(Name = "KeyedList", Namespace="http://www.ddaysoftware.com/dday.ical/2009/07/")]
+#else
+    [Serializable]
+#endif
     public class KeyedList<T, U> :
         List<T>,
         IKeyedList<T, U> where T : IKeyedObject<U>
@@ -20,7 +26,7 @@ namespace DDay.iCal
         /// </summary>
         public bool ContainsKey(U key)
         {
-            return IndexOf(key) >= 0;            
+            return IndexOf(key) >= 0;
         }
 
         /// <summary>
@@ -29,10 +35,10 @@ namespace DDay.iCal
         /// </summary>
         public int IndexOf(U key)
         {
-            return FindIndex(
-                delegate(T ko)
+            return ((List<T>)this).FindIndex(
+                delegate(T obj)
                 {
-                    return object.Equals(ko.Key, key);
+                    return object.Equals(obj.Key, key);
                 }
             );
         }
@@ -44,10 +50,10 @@ namespace DDay.iCal
 
         public IList<T> AllOf(U key)
         {
-            return FindAll(
-                delegate(T ko)
+            return ((List<T>)this).FindAll(
+                delegate(T obj)
                 {
-                    return object.Equals(ko.Key, key);
+                    return object.Equals(obj.Key, key);
                 }
             );
         }
@@ -68,7 +74,7 @@ namespace DDay.iCal
                 else
                     Add(value);
             }
-        }       
+        }
 
         public bool Remove(U key)
         {

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.DataTypes
 {
@@ -13,6 +14,11 @@ namespace DDay.iCal.DataTypes
     /// </remarks>
     /// </summary>
     [DebuggerDisplay("{Value}")]
+#if SILVERLIGHT
+    [DataContract(Name = "Duration", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#else
+    [Serializable]
+#endif
     public class Duration : iCalDataType
     {
         #region Private Fields

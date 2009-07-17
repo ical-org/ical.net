@@ -9,11 +9,21 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
-namespace SilverlightAdapter {
+namespace System
+{
     public class SerializableAttribute : Attribute { }
     public class NonSerializedAttribute : Attribute { }
-    public class AllowPartiallyTrustedCallersAttribute : Attribute { }
-    public class BrowsableAttribute : Attribute {
+}
+
+namespace System.ComponentModel
+{
+    public class BrowsableAttribute : Attribute
+    {
         public BrowsableAttribute(bool b) { }
     }
+}
+
+namespace System.Security
+{
+    public class AllowPartiallyTrustedCallersAttribute : Attribute { }
 }

@@ -68,7 +68,7 @@ namespace DDay.iCal.Serialization.xCal.DataTypes
             else
             {
                 UTF8Encoding encoding = new UTF8Encoding();
-                return Encode(encoding.GetString(m_Binary.Data));
+                return Encode(encoding.GetString(m_Binary.Data, 0, m_Binary.Data.Length));
             }
         }        
 

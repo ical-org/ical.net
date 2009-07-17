@@ -7,6 +7,7 @@ using System.Configuration;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.Components
 {
@@ -14,6 +15,11 @@ namespace DDay.iCal.Components
     /// A class that represents an RFC 2445 VTODO component.
     /// </summary> 
     [DebuggerDisplay("{Summary} - {Status}")]
+#if SILVERLIGHT
+    [DataContract(Name = "Todo", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#else
+    [Serializable]
+#endif
     public class Todo : RecurringComponent
     {
         #region Private Fields

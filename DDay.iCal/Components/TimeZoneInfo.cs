@@ -6,6 +6,7 @@ using System.Configuration;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.Components
 {    
@@ -13,6 +14,11 @@ namespace DDay.iCal.Components
     /// A class that contains time zone information, and is usually accessed
     /// from an iCalendar object using the <see cref="DDay.iCal.iCalendar.GetTimeZone"/> method.        
     /// </summary>
+#if SILVERLIGHT
+    [DataContract(Name = "TimeZoneInfo", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#else
+    [Serializable]
+#endif
     public class TimeZoneInfo : RecurringComponent
     {
         #region Disabled Properties and Methods

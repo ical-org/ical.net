@@ -10,6 +10,8 @@ using System.Text;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
+using System.Threading;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal
 {
@@ -87,6 +89,11 @@ namespace DDay.iCal
     /// </code>
     /// </para>
     /// </remarks>
+#if SILVERLIGHT
+    [DataContract(Name = "iCalendar", Namespace="http://www.ddaysoftware.com/dday.ical/2009/07/")]
+#else
+    [Serializable]
+#endif
     public class iCalendar : ComponentBase, IDisposable
     {
         #region Constructors
@@ -435,7 +442,7 @@ namespace DDay.iCal
             return LoadFromFile(
                 iCalendarType, Filepath, encoding, new iCalendarSerializer());
         }
-        static public iCalendar LoadFromFile(Type iCalendarType, string Filepath, Encoding encoding, ISerializable serializer)
+        static public iCalendar LoadFromFile(Type iCalendarType, string Filepath, Encoding encoding, DDay.iCal.Serialization.ISerializable serializer)
         {
             FileStream fs = new FileStream(Filepath, FileMode.Open);
 
@@ -465,7 +472,7 @@ namespace DDay.iCal
         {
             return LoadFromStream<T>(tr, new iCalendarSerializer());
         }
-        static public T LoadFromStream<T>(TextReader tr, ISerializable serializer)
+        static public T LoadFromStream<T>(TextReader tr, DDay.iCal.Serialization.ISerializable serializer)
         {
             if (typeof(T) == typeof(iCalendar) ||
                 typeof(T).IsSubclassOf(typeof(iCalendar)))
@@ -480,7 +487,7 @@ namespace DDay.iCal
         {
             return LoadFromStream<T>(s, encoding, new iCalendarSerializer());
         }
-        static public T LoadFromStream<T>(Stream s, Encoding encoding, ISerializable serializer)
+        static public T LoadFromStream<T>(Stream s, Encoding encoding, DDay.iCal.Serialization.ISerializable serializer)
         {
             if (typeof(T) == typeof(iCalendar) ||
                 typeof(T).IsSubclassOf(typeof(iCalendar)))
@@ -501,11 +508,11 @@ namespace DDay.iCal
             iCalendarSerializer serializer = new iCalendarSerializer();
             return (iCalendar)serializer.Deserialize(tr, iCalendarType);
         }
-        static public iCalendar LoadFromStream(Type iCalendarType, Stream s, Encoding e, ISerializable serializer)
+        static public iCalendar LoadFromStream(Type iCalendarType, Stream s, Encoding e, DDay.iCal.Serialization.ISerializable serializer)
         {            
             return (iCalendar)serializer.Deserialize(s, e, iCalendarType);
         }
-        static public iCalendar LoadFromStream(Type iCalendarType, TextReader tr, ISerializable serializer)
+        static public iCalendar LoadFromStream(Type iCalendarType, TextReader tr, DDay.iCal.Serialization.ISerializable serializer)
         {
             string text = tr.ReadToEnd();
             MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(text));
@@ -518,7 +525,11 @@ namespace DDay.iCal
         /// <param name="url">The Uri from which to load the <see cref="iCalendar"/> object</param>
         /// <returns>An <see cref="iCalendar"/> object</returns>
         static public iCalendar LoadFromUri(Uri uri) { return LoadFromUri(typeof(iCalendar), uri, null, null, null); }
+
+#if !SILVERLIGHT
         static public iCalendar LoadFromUri(Uri uri, WebProxy proxy) { return LoadFromUri(typeof(iCalendar), uri, null, null, proxy); }
+#endif
+
         static public T LoadFromUri<T>(Uri uri)
         {
             if (typeof(T) == typeof(iCalendar) ||
@@ -552,9 +563,18 @@ namespace DDay.iCal
             }
             else return default(T);
         }
+
+#if !SILVERLIGHT
         static public iCalendar LoadFromUri(Uri uri, string username, string password, WebProxy proxy) { return LoadFromUri(typeof(iCalendar), uri, username, password, proxy); }
+#endif
+
         static public iCalendar LoadFromUri(Type iCalendarType, Uri uri, string username, string password) { return LoadFromUri(iCalendarType, uri, username, password, null); }
+        
+#if SILVERLIGHT
+        static public iCalendar LoadFromUri(Type iCalendarType, Uri uri, string username, string password, object unusedProxy)
+#else
         static public iCalendar LoadFromUri(Type iCalendarType, Uri uri, string username, string password, WebProxy proxy)
+#endif
         {
             try
             {
@@ -563,17 +583,21 @@ namespace DDay.iCal
                     password != null)
                     client.Credentials = new System.Net.NetworkCredential(username, password);
 
+#if !SILVERLIGHT
                 if (proxy != null)
                     client.Proxy = proxy;
+#endif
 
                 string str = client.DownloadString(uri);
-                return LoadFromStream(new StringReader(str));
+                if (str != null)
+                    return LoadFromStream(new StringReader(str));
+                return null;
             }
             catch (System.Net.WebException ex)
             {
                 return null;
             }
-        }
+        }        
 
         #endregion
 

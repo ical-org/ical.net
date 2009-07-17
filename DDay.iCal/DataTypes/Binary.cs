@@ -3,6 +3,7 @@ using System.Net;
 using System.Collections.Generic;
 using System.Text;
 using DDay.iCal.Components;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.DataTypes
 {
@@ -10,6 +11,11 @@ namespace DDay.iCal.DataTypes
     /// A class to handle binary attachments, or URIs as binary attachments, within an iCalendar. 
     /// </summary>
     [Encodable("BASE64")]
+#if SILVERLIGHT
+    [DataContract(Name = "Binary", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#else
+    [Serializable]
+#endif
     public class Binary : EncodableDataType
     {
         #region Private Fields
@@ -157,10 +163,9 @@ namespace DDay.iCal.DataTypes
                 if (Uri == null)
                     throw new ArgumentException("A URI was not provided for the Binary::LoadDataFromUri() method");
                 uri = new Uri(Uri.Value);
-            }
-
-            Data = client.DownloadData(uri);
+            }                       
             
+            Data = client.DownloadData(uri);
         }
 
         #endregion

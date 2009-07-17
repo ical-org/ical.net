@@ -5,6 +5,7 @@ using System.Text;
 using DDay.iCal.Components;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.Components
 {
@@ -16,6 +17,11 @@ namespace DDay.iCal.Components
     /// RRULEs, RDATE, EXRULEs, and EXDATEs, as well as the DTSTART
     /// for the recurring item (all recurring items must have a DTSTART).
     /// </remarks>
+#if SILVERLIGHT
+    [DataContract(Name = "RecurringComponent", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#else
+    [Serializable]
+#endif
     public class RecurringComponent : UniqueComponent
     {
         #region Private Fields

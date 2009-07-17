@@ -3,12 +3,7 @@ namespace antlr.debug
 	using System;
 	using System.Reflection;
 
-#if SILVERLIGHT
-    using Hashtable = SilverlightAdapter.Hashtable;
-#else
-    using Hashtable	= System.Collections.Hashtable;
-#endif
-
+    using Hashtable	        = System.Collections.Hashtable;
 	using DictionaryEntry	= System.Collections.DictionaryEntry;
 	using ArrayList			= System.Collections.ArrayList;
 

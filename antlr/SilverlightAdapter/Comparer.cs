@@ -10,13 +10,17 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
-namespace SilverlightAdapter {
-    public class Comparer : IComparer {
-        public int Compare(object o1, object o2) {
+namespace System.Collections
+{
+    public class Comparer : IComparer
+    {
+        public int Compare(object o1, object o2)
+        {
             return ((IComparable)o1).CompareTo(o2);
         }
 
-        public static IComparer Default {
+        public static IComparer Default
+        {
             get { return new Comparer(); }
         }
     }

@@ -1,10 +1,6 @@
 using System;
 
-#if SILVERLIGHT
-    using Hashtable = SilverlightAdapter.Hashtable;
-#else
-    using Hashtable = System.Collections.Hashtable;
-#endif
+using Hashtable = System.Collections.Hashtable;
 
 using Stack    		= System.Collections.Generic.Stack<object>;
 	

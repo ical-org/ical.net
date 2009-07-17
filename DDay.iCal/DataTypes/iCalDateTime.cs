@@ -4,6 +4,8 @@ using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
 using DDay.iCal.Components;
+using TimeZoneInfo = DDay.iCal.Components.TimeZoneInfo;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.DataTypes
 {
@@ -15,6 +17,11 @@ namespace DDay.iCal.DataTypes
     /// the iCalendar framework.
     /// </remarks>
     /// </summary>
+#if SILVERLIGHT
+    [DataContract(Name = "iCalDateTime", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#else
+    [Serializable]
+#endif
     [DebuggerDisplay("{HasTime ? Value.ToString() : Value.ToShortDateString()}")]
     public class iCalDateTime : 
         iCalDataType,

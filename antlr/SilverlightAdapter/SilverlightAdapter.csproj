@@ -53,11 +53,13 @@
     <Compile Include="EventHandlerList.cs" />
     <Compile Include="Hashtable.cs" />
     <Compile Include="ICloneable.cs" />
+    <Compile Include="List.cs" />
     <Compile Include="NonGenericConverters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Attribute.cs" />
     <Compile Include="ThreadInterruptedException.cs" />
     <Compile Include="Encoding.cs" />
+    <Compile Include="WebClient.cs" />
     <Compile Include="XmlText.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight\v3.0\Microsoft.Silverlight.CSharp.targets" />

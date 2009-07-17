@@ -2,12 +2,18 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.DataTypes
 {
     /// <summary>
     /// Represents a time offset from UTC (Coordinated Universal Time).
     /// </summary>
+#if SILVERLIGHT
+    [DataContract(Name = "UTC_Offset", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#else
+    [Serializable]
+#endif
     public class UTC_Offset : iCalDataType
     {
         #region Private Fields

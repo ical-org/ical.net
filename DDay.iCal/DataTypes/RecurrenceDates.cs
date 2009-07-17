@@ -4,12 +4,18 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using DDay.iCal.Components;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.DataTypes
 {
     /// <summary>
     /// An iCalendar list of recurring dates (or date exclusions)
     /// </summary>
+#if SILVERLIGHT
+    [DataContract(Name = "RecurrenceDates", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#else
+    [Serializable]
+#endif
     public class RecurrenceDates : iCalDataType
     {
         #region Private Fields

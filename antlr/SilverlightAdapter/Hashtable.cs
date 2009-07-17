@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
-namespace SilverlightAdapter {
+namespace System.Collections {
     public class Hashtable : ICloneable, IDictionary {
         private Dictionary<object, object> map;
 

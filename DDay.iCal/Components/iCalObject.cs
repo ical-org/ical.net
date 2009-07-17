@@ -6,12 +6,18 @@ using System.Reflection;
 using DDay.iCal.DataTypes;
 using DDay.iCal.Serialization;
 using System.ComponentModel;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.Components
 {
     /// <summary>
     /// The base class for all iCalendar objects, components, and data types.
     /// </summary>
+#if SILVERLIGHT
+    [DataContract(Name = "iCalObject", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#else
+    [Serializable]
+#endif
     public class iCalObject        
     {
         #region Public Events
