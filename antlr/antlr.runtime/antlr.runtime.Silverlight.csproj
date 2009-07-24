@@ -37,6 +37,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SilverlightAdapter, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\SilverlightAdapter.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="mscorlib" />
     <Reference Include="system" />
@@ -151,12 +155,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="DDay.iCal.pfx" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SilverlightAdapter\SilverlightAdapter.csproj">
-      <Project>{75569358-08FB-4DBB-AF60-0378A0A21547}</Project>
-      <Name>SilverlightAdapter</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
