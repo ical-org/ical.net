@@ -13,8 +13,8 @@ namespace DDay.iCal
     /// several public properties for direct access to components
     /// from each individual iCalendar.
     /// </summary>
-#if SILVERLIGHT
-    [DataContract(Name = "iCalendarCollection", Namespace="http://www.ddaysoftware.com/dday.ical/2009/07/")]
+#if DATACONTRACT
+    [CollectionDataContract(Name = "iCalendarCollection", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #else
     [Serializable]
 #endif

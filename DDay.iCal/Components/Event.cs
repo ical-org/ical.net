@@ -25,12 +25,18 @@ namespace DDay.iCal.Components
     ///         <item>Create a TextCollection DataType for 'text' items separated by commas</item>
     ///     </list>
     /// </note>
-    [DebuggerDisplay("{Summary}: {Start} {Duration}")]
-#if SILVERLIGHT
-    [DataContract(Name = "Event", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "Event", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(iCalDateTime))]
+    [KnownType(typeof(Duration))]
+    [KnownType(typeof(Geo))]
+    [KnownType(typeof(Text))]
+    [KnownType(typeof(TextCollection))]
+    [KnownType(typeof(TextCollection[]))]
 #else
     [Serializable]
 #endif
+    [DebuggerDisplay("{Summary}: {Start} {Duration}")]
     public class Event : RecurringComponent
     {
         #region Private Fields
@@ -59,6 +65,9 @@ namespace DDay.iCal.Components
         /// </note>
         /// </summary>
         [Serialized, DefaultValueType("DATE-TIME")]
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         public override iCalDateTime DTStart
         {
             get
@@ -84,6 +93,9 @@ namespace DDay.iCal.Components
         /// </note>
         /// </summary>
         [Serialized, DefaultValueType("DATE-TIME")]
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
         virtual public iCalDateTime DTEnd
         {
             get { return _DTEnd; }
@@ -121,6 +133,9 @@ namespace DDay.iCal.Components
         //
         // Therefore, Duration is not serialized, as DTEnd
         // should always be extrapolated from the duration.
+#if DATACONTRACT
+        [DataMember(Order = 3)]
+#endif
         virtual public Duration Duration
         {
             get { return _Duration; }
@@ -140,6 +155,9 @@ namespace DDay.iCal.Components
         /// <summary>
         /// An alias to the DTEnd field (i.e. end date/time).
         /// </summary>
+#if DATACONTRACT
+        [DataMember(Order = 4)]
+#endif
         virtual public iCalDateTime End
         {
             get { return DTEnd; }
@@ -149,6 +167,9 @@ namespace DDay.iCal.Components
         /// <summary>
         /// Returns true if the event is an all-day event.
         /// </summary>
+#if DATACONTRACT
+        [DataMember(Order = 5)]
+#endif
         virtual public bool IsAllDay
         {
             get { return Start != null && !Start.HasTime; }
@@ -175,6 +196,9 @@ namespace DDay.iCal.Components
         /// The geographic location (lat/long) of the event.
         /// </summary>
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 6)]
+#endif
         public Geo Geo
         {
             get { return _Geo; }
@@ -190,6 +214,9 @@ namespace DDay.iCal.Components
         /// The location of the event.
         /// </summary>
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 7)]
+#endif
         public Text Location
         {
             get { return _Location; }
@@ -207,6 +234,9 @@ namespace DDay.iCal.Components
         /// <example>Projector</example>
         /// </summary>
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 8)]
+#endif
         public TextCollection[] Resources
         {
             get { return _Resources; }
@@ -216,7 +246,10 @@ namespace DDay.iCal.Components
         /// <summary>
         /// The status of the event.
         /// </summary>
-        [Serialized, DefaultValue("TENTATIVE\r\n")]        
+        [Serialized, DefaultValue("TENTATIVE\r\n")]
+#if DATACONTRACT
+        [DataMember(Order = 9)]
+#endif
         public EventStatus Status
         {
             get { return _Status; }
@@ -231,6 +264,9 @@ namespace DDay.iCal.Components
         /// else (opaque).
         /// </summary>
         [Serialized, DefaultValue("OPAQUE\r\n")]
+#if DATACONTRACT
+        [DataMember(Order = 10)]
+#endif
         public Transparency Transp
         {
             get { return _Transp; }

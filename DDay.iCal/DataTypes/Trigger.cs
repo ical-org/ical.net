@@ -9,9 +9,11 @@ namespace DDay.iCal.DataTypes
     /// <summary>
     /// A class that is used to specify exactly when an <see cref="Alarm"/> component will trigger.
     /// Usually this date/time is relative to the component to which the Alarm is associated.
-    /// </summary>
-#if SILVERLIGHT
-    [DataContract(Name = "Trigger", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+    /// </summary>    
+#if DATACONTRACT
+    [DataContract(Name = "Trigger", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(iCalDateTime))]
+    [KnownType(typeof(Duration))]
 #else
     [Serializable]
 #endif
@@ -33,7 +35,10 @@ namespace DDay.iCal.DataTypes
 
         #region Public Properties
 
-        public iCalDateTime DateTime
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
+        virtual public iCalDateTime DateTime
         {
             get { return m_DateTime; }
             set
@@ -55,7 +60,10 @@ namespace DDay.iCal.DataTypes
             }
         }
 
-        public Duration Duration
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
+        virtual public Duration Duration
         {
             get { return m_Duration; }
             set
@@ -71,7 +79,10 @@ namespace DDay.iCal.DataTypes
             }
         }
 
-        public TriggerRelation Related
+#if DATACONTRACT
+        [DataMember(Order = 3)]
+#endif
+        virtual public TriggerRelation Related
         {
             get
             {       
@@ -88,7 +99,7 @@ namespace DDay.iCal.DataTypes
                 m_Related = value;
             }
         }
-
+        
         public bool IsRelative
         {
             get { return m_Duration != null; }

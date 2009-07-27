@@ -14,8 +14,8 @@ namespace DDay.iCal.Components
     /// A class that represents an RFC 2445 VJOURNAL component.
     /// </summary>
     [DebuggerDisplay("{Summary}: {(Description.ToString().Length < 32) ? Description.ToString() : Description.ToString().Substring(0, 32)}")]
-#if SILVERLIGHT
-    [DataContract(Name = "Journal", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "Journal", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #else
     [Serializable]
 #endif
@@ -30,6 +30,9 @@ namespace DDay.iCal.Components
         #region Public Properties
         
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         public JournalStatus Status
         {
             get { return m_Status; }

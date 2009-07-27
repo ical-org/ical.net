@@ -14,8 +14,8 @@ namespace DDay.iCal.DataTypes
     /// </remarks>
     /// </summary>
     [DebuggerDisplay("{Value}")]
-#if SILVERLIGHT
-    [DataContract(Name = "Duration", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "Duration", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #else
     [Serializable]
 #endif
@@ -29,6 +29,9 @@ namespace DDay.iCal.DataTypes
 
         #region Public Properties
 
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         public TimeSpan Value
         {
             get { return m_Value; }

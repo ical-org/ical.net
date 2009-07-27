@@ -9,8 +9,8 @@ namespace DDay.iCal.DataTypes
     /// <summary>
     /// Represents a time offset from UTC (Coordinated Universal Time).
     /// </summary>
-#if SILVERLIGHT
-    [DataContract(Name = "UTC_Offset", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "UTC_Offset", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #else
     [Serializable]
 #endif
@@ -27,24 +27,36 @@ namespace DDay.iCal.DataTypes
 
         #region Public Properties
 
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         public bool Positive
         {
             get { return m_Positive; }
             set { m_Positive = value; }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
         public int Hours
         {
             get { return m_Hours; }
             set { m_Hours = value; }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 3)]
+#endif
         public int Minutes
         {
             get { return m_Minutes; }
             set { m_Minutes = value; }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 4)]
+#endif
         public int Seconds
         {
             get { return m_Seconds; }

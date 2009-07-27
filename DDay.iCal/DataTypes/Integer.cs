@@ -11,8 +11,8 @@ namespace DDay.iCal.DataTypes
     /// </summary>
     [DebuggerDisplay("{Value}")]
     [Encodable("BASE64,8BIT,7BIT")]
-#if SILVERLIGHT
-    [DataContract(Name = "Integer", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "Integer", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #else
     [Serializable]
 #endif

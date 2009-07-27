@@ -18,8 +18,10 @@ namespace DDay.iCal.DataTypes
     /// </example>
     /// </summary>   
     [Encodable("BASE64,8BIT,7BIT")]
-#if SILVERLIGHT
-    [DataContract(Name = "TextCollection", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#if DATACONTRACT
+    [CollectionDataContract(Name = "TextCollection", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(List<Text>))]
+    [KnownType(typeof(Text))]
 #else
     [Serializable]
 #endif
@@ -33,6 +35,9 @@ namespace DDay.iCal.DataTypes
 
         #region Public Properties
 
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         public List<Text> Values
         {
             get { return m_Values; }

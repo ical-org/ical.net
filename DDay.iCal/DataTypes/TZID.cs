@@ -11,8 +11,8 @@ namespace DDay.iCal.DataTypes
     /// A time zone identifier, used to associate <see cref="iCalDateTime"/> (and other) objects
     /// with a specific time zone.
     /// </summary>
-#if SILVERLIGHT
-    [DataContract(Name = "TZID", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "TZID", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #else
     [Serializable]
 #endif
@@ -27,18 +27,23 @@ namespace DDay.iCal.DataTypes
 
         #region Public Properties
 
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         public bool GloballyUnique
         {
             get { return m_GloballyUnique; }
             set { m_GloballyUnique = value; }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
         public string ID
         {
             get { return m_ID; }
             set { m_ID = value; }
         }
-
 
         #endregion
 

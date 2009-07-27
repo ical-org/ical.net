@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{C72FB9D4-C875-44D0-8856-C7B59D184334}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -11,6 +11,9 @@
     <AssemblyName>DDay.iCal.Test</AssemblyName>
     <StartupObject>
     </StartupObject>
+    <TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,6 +39,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -43,6 +49,7 @@
     <Compile Include="AlarmTest.cs" />
     <Compile Include="CopyTest.cs" />
     <Compile Include="Custom\Custom1.cs" />
+    <Compile Include="DataContractSeralizationTest.cs" />
     <Compile Include="SerializationTest.cs" />
     <Compile Include="JournalTest.cs" />
     <Compile Include="RecurrenceTest.cs" />

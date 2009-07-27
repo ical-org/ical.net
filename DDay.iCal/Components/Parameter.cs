@@ -14,8 +14,9 @@ namespace DDay.iCal.Components
     /// The <c>VALUE=DATE</c> portion is a <see cref="Parameter"/> of the DTSTART value.
     /// </example>
     /// </remarks>
-#if SILVERLIGHT
-    [DataContract(Name = "Parameter", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "Parameter", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(List<string>))]
 #else
     [Serializable]
 #endif
@@ -31,6 +32,9 @@ namespace DDay.iCal.Components
 
         #region Public Properties
 
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         public List<string> Values
         {
             get { return m_Values; }

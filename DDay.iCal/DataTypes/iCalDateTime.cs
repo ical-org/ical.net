@@ -17,12 +17,14 @@ namespace DDay.iCal.DataTypes
     /// the iCalendar framework.
     /// </remarks>
     /// </summary>
-#if SILVERLIGHT
-    [DataContract(Name = "iCalDateTime", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+    [DebuggerDisplay("{HasTime ? Value.ToString() : Value.ToShortDateString()}")]
+#if DATACONTRACT
+    [DataContract(Name = "iCalDateTime", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(iCalendar))]
+    [KnownType(typeof(TZID))]
 #else
     [Serializable]
 #endif
-    [DebuggerDisplay("{HasTime ? Value.ToString() : Value.ToShortDateString()}")]
     public class iCalDateTime : 
         iCalDataType,
         IComparable,
@@ -111,6 +113,9 @@ namespace DDay.iCal.DataTypes
             }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         public bool IsUniversalTime
         {
             get { return _IsUniversalTime; }
@@ -124,6 +129,9 @@ namespace DDay.iCal.DataTypes
         /// has been set for this <see cref="iCalDateTime"/> object.
         /// </note>
         /// </summary>
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
         public new iCalendar iCalendar
         {
             get { return base.iCalendar; }
@@ -143,24 +151,36 @@ namespace DDay.iCal.DataTypes
             }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 3)]
+#endif
         public DateTime Value
         {
             get { return _Value; }
             set { _Value = value; }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 4)]
+#endif
         public bool HasDate
         {
             get { return _HasDate; }
             set { _HasDate = value; }
-        }        
+        }
 
+#if DATACONTRACT
+        [DataMember(Order = 5)]
+#endif
         public bool HasTime
         {
             get { return _HasTime; }
             set { _HasTime = value; }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 6)]
+#endif
         public TZID TZID
         {
             get

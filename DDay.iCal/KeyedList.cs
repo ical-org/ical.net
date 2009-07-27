@@ -9,8 +9,8 @@ namespace DDay.iCal
     /// A list of objects that are keyed.  This is similar to a 
     /// Dictionary<T,U> object, except 
     /// </summary>
-#if SILVERLIGHT
-    [DataContract(Name = "KeyedList", Namespace="http://www.ddaysoftware.com/dday.ical/2009/07/")]
+#if DATACONTRACT
+    [CollectionDataContract(Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #else
     [Serializable]
 #endif

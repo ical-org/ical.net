@@ -12,9 +12,16 @@ namespace DDay.iCal.Components
 {
     /// <summary>
     /// A class that represents an RFC 2445 VALARM component.
-    /// </summary>
-#if SILVERLIGHT
-    [DataContract(Name = "Alarm", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+    /// </summary>    
+#if DATACONTRACT
+    [DataContract(Name = "Alarm", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(Binary))]
+    [KnownType(typeof(Cal_Address))]
+    [KnownType(typeof(Cal_Address[]))]
+    [KnownType(typeof(Text))]
+    [KnownType(typeof(Duration))]
+    [KnownType(typeof(Integer))]
+    [KnownType(typeof(Trigger))]    
 #else
     [Serializable]
 #endif
@@ -48,6 +55,9 @@ namespace DDay.iCal.Components
         #region Public Properties
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         virtual public AlarmAction Action
         {
             get { return m_Action; }
@@ -55,6 +65,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
         virtual public Binary Attach
         {
             get { return m_Attach; }
@@ -62,6 +75,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 3)]
+#endif
         virtual public Cal_Address[] Attendee
         {
             get { return m_Attendee; }
@@ -69,6 +85,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 4)]
+#endif
         virtual public Text Description
         {
             get { return m_Description; }
@@ -76,6 +95,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized, DefaultValue("P")]
+#if DATACONTRACT
+        [DataMember(Order = 5)]
+#endif
         virtual public Duration Duration
         {
             get { return m_Duration; }
@@ -83,6 +105,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 6)]
+#endif
         virtual public Integer Repeat
         {
             get { return m_Repeat; }
@@ -90,6 +115,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 7)]
+#endif
         virtual public Text Summary
         {
             get { return m_Summary; }
@@ -97,6 +125,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 8)]
+#endif
         virtual public Trigger Trigger
         {
             get { return m_Trigger; }
@@ -121,6 +152,7 @@ namespace DDay.iCal.Components
         {
             Occurrences = new List<AlarmOccurrence>();
         }
+
         public Alarm(iCalObject parent)
             : base(parent)
         {

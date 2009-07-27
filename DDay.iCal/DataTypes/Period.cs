@@ -10,8 +10,10 @@ namespace DDay.iCal.DataTypes
     /// Represents an iCalendar period of time.
     /// </summary>
     [DebuggerDisplay("Period ( {StartTime} - {EndTime} )")]
-#if SILVERLIGHT
-    [DataContract(Name = "Period", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "Period", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(iCalDateTime))]
+    [KnownType(typeof(Duration))]
 #else
     [Serializable]
 #endif
@@ -28,18 +30,27 @@ namespace DDay.iCal.DataTypes
 
         #region Public Properties
 
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         public iCalDateTime StartTime
         {
             get { return m_StartTime; }
             set { m_StartTime = value; }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
         public iCalDateTime EndTime
         {
             get { return m_EndTime; }
             set { m_EndTime = value; }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 3)]
+#endif
         public Duration Duration
         {
             get { return m_Duration; }
@@ -51,6 +62,9 @@ namespace DDay.iCal.DataTypes
         /// objects are matched against the date only, and
         /// not the date-time combination.
         /// </summary>
+#if DATACONTRACT
+        [DataMember(Order = 4)]
+#endif
         public bool MatchesDateOnly
         {
             get { return m_MatchesDateOnly; }

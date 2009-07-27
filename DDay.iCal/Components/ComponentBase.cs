@@ -17,8 +17,8 @@ namespace DDay.iCal.Components
     /// for <see cref="iCalendar"/> components.  Generally, you should
     /// not need to use this class directly.
     /// </summary>
-#if SILVERLIGHT
-    [DataContract(Name = "ComponentBase", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "ComponentBase", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #else
     [Serializable]
 #endif

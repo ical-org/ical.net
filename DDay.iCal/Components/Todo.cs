@@ -15,8 +15,15 @@ namespace DDay.iCal.Components
     /// A class that represents an RFC 2445 VTODO component.
     /// </summary> 
     [DebuggerDisplay("{Summary} - {Status}")]
-#if SILVERLIGHT
-    [DataContract(Name = "Todo", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "Todo", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(iCalDateTime))]
+    [KnownType(typeof(Duration))]
+    [KnownType(typeof(Geo))]
+    [KnownType(typeof(Text))]
+    [KnownType(typeof(Integer))]
+    [KnownType(typeof(TextCollection))]
+    [KnownType(typeof(TextCollection[]))]
 #else
     [Serializable]
 #endif
@@ -39,6 +46,9 @@ namespace DDay.iCal.Components
         #region Public Properties
 
         [Serialized, DefaultValueType("DATE-TIME")]
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         public iCalDateTime Completed
         {
             get { return m_Completed; }
@@ -49,6 +59,9 @@ namespace DDay.iCal.Components
         /// The start date/time of the todo item.
         /// </summary>
         [Serialized, DefaultValueType("DATE-TIME")]
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
         public override iCalDateTime DTStart
         {
             get
@@ -66,6 +79,9 @@ namespace DDay.iCal.Components
         /// The due date of the todo item.
         /// </summary>
         [Serialized, DefaultValueType("DATE-TIME")]
+#if DATACONTRACT
+        [DataMember(Order = 3)]
+#endif
         virtual public iCalDateTime Due
         {
             get { return m_Due; }
@@ -89,6 +105,9 @@ namespace DDay.iCal.Components
         //
         // Therefore, Duration is not serialized, as Due
         // should always be extrapolated from the duration.
+#if DATACONTRACT
+        [DataMember(Order = 4)]
+#endif
         virtual public Duration Duration
         {
             get { return m_Duration; }
@@ -100,6 +119,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 5)]
+#endif
         public Geo Geo
         {
             get { return m_Geo; }
@@ -107,6 +129,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 6)]
+#endif
         public Text Location
         {
             get { return m_Location; }
@@ -114,6 +139,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 7)]
+#endif
         public Integer Percent_Complete
         {
             get { return m_Percent_Complete; }
@@ -121,6 +149,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 8)]
+#endif
         public TextCollection[] Resources
         {
             get { return m_Resources; }
@@ -131,6 +162,9 @@ namespace DDay.iCal.Components
         /// The status of the todo item.
         /// </summary>
         [Serialized, DefaultValue("NEEDS_ACTION\r\n")]
+#if DATACONTRACT
+        [DataMember(Order = 9)]
+#endif
         virtual public TodoStatus Status
         {
             get { return m_Status; }

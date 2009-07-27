@@ -13,8 +13,13 @@ namespace DDay.iCal.Components
     /// <summary>
     /// A class that represents an RFC 2445 VTIMEZONE component.
     /// </summary>
-#if SILVERLIGHT
-    [DataContract(Name = "iCalTimeZone", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "iCalTimeZone", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(TZID))]
+    [KnownType(typeof(iCalDateTime))]
+    [KnownType(typeof(URI))]
+    [KnownType(typeof(TimeZoneInfo))]
+    [KnownType(typeof(List<TimeZoneInfo>))]
 #else
     [Serializable]
 #endif
@@ -32,6 +37,9 @@ namespace DDay.iCal.Components
         #region Public Properties
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         public TZID TZID
         {
             get { return m_TZID; }
@@ -39,6 +47,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
         public iCalDateTime Last_Modified
         {
             get { return m_Last_Modified; }
@@ -46,6 +57,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 3)]
+#endif
         public URI TZUrl
         {
             get { return m_TZUrl; }
@@ -53,6 +67,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 4)]
+#endif
         public List<TimeZoneInfo> TimeZoneInfos
         {
             get { return m_TimeZoneInfos; }

@@ -10,8 +10,8 @@ namespace DDay.iCal.DataTypes
     /// <summary>
     /// Represents an RFC 2445 "BYDAY" value.
     /// </summary>
-#if SILVERLIGHT
-    [DataContract(Name = "DaySpecifier", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "DaySpecifier", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]    
 #else
     [Serializable]
 #endif
@@ -26,13 +26,19 @@ namespace DDay.iCal.DataTypes
 
         #region Public Properties
 
-        public int Num
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
+        virtual public int Num
         {
             get { return m_Num; }
             set { m_Num = value; }
         }
 
-        public DayOfWeek DayOfWeek
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
+        virtual public DayOfWeek DayOfWeek
         {
             get { return m_DayOfWeek; }
             set { m_DayOfWeek = value; }

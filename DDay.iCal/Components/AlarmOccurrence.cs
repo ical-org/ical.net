@@ -14,8 +14,10 @@ namespace DDay.iCal.Components
     /// the alarm occurs, the <see cref="Alarm"/> that fired, and the 
     /// component on which the alarm fired.
     /// </remarks>
-#if SILVERLIGHT
-    [DataContract(Name = "AlarmOccurrence", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "AlarmOccurrence", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(Alarm))]
+    [KnownType(typeof(iCalDateTime))]
 #else
     [Serializable]
 #endif
@@ -31,13 +33,19 @@ namespace DDay.iCal.Components
 
         #region Public Properties
 
-        public Alarm Alarm
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
+        virtual public Alarm Alarm
         {
             get { return m_Alarm; }
             set { m_Alarm = value; }
         }
 
-        public iCalDateTime DateTime
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
+        virtual public iCalDateTime DateTime
         {
             get
             {

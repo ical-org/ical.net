@@ -9,8 +9,8 @@ namespace DDay.iCal.Components
     /// <summary>
     /// <note>This class has not yet been implemented.</note>
     /// </summary>
-#if SILVERLIGHT
-    [DataContract(Name = "FreeBusy", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "FreeBusy", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #else
     [Serializable]
 #endif

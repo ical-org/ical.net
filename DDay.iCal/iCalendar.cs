@@ -89,8 +89,8 @@ namespace DDay.iCal
     /// </code>
     /// </para>
     /// </remarks>
-#if SILVERLIGHT
-    [DataContract(Name = "iCalendar", Namespace="http://www.ddaysoftware.com/dday.ical/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "iCalendar", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #else
     [Serializable]
 #endif
@@ -569,7 +569,7 @@ namespace DDay.iCal
 #endif
 
         static public iCalendar LoadFromUri(Type iCalendarType, Uri uri, string username, string password) { return LoadFromUri(iCalendarType, uri, username, password, null); }
-        
+
 #if SILVERLIGHT
         static public iCalendar LoadFromUri(Type iCalendarType, Uri uri, string username, string password, object unusedProxy)
 #else

@@ -12,8 +12,8 @@ namespace DDay.iCal.DataTypes
     /// An iCalendar URI (Universal Resource Identifier) value.
     /// </summary>
     [DebuggerDisplay("{Value}")]
-#if SILVERLIGHT
-    [DataContract(Name = "URI", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "URI", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #else
     [Serializable]
 #endif
@@ -32,40 +32,46 @@ namespace DDay.iCal.DataTypes
 
         #region Public Properties
 
-        public string Value
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
+        virtual public string Value
         {
             get { return m_Value; }
-            set { m_Value = value; }
+            set
+            {                
+                CopyFrom(Parse(value));                
+            }
         }
 
-        public string Scheme
+        virtual public string Scheme
         {
             get { return m_Scheme; }
-            set { m_Scheme = value; }
+            protected set { m_Scheme = value; }
         }
 
-        public string Authority
+        virtual public string Authority
         {
             get { return m_Authority; }
-            set { m_Authority = value; }
+            protected set { m_Authority = value; }
         }
 
-        public string Path
+        virtual public string Path
         {
             get { return m_Path; }
-            set { m_Path = value; }
+            protected set { m_Path = value; }
         }
 
-        public string Query
+        virtual public string Query
         {
             get { return m_Query; }
-            set { m_Query = value; }
+            protected set { m_Query = value; }
         }
 
-        public string Fragment
+        virtual public string Fragment
         {
             get { return m_Fragment; }
-            set { m_Fragment = value; }
+            protected set { m_Fragment = value; }
         }
 
         #endregion
@@ -75,7 +81,7 @@ namespace DDay.iCal.DataTypes
         public URI() { }
         public URI(string value)
             : this()
-        {
+        {            
             CopyFrom(Parse(value));
         }
 
@@ -110,7 +116,7 @@ namespace DDay.iCal.DataTypes
                 Regex re = new Regex(regexPattern, RegexOptions.ExplicitCapture);
                 Match m = re.Match(value);
 
-                uri.Value = m.Value;
+                uri.m_Value = m.Value;
                 uri.Scheme = m.Groups["scheme"].Value.ToLower();
                 uri.Authority = m.Groups["authority"].Value;
                 uri.Path = m.Groups["path"].Value;
@@ -131,12 +137,21 @@ namespace DDay.iCal.DataTypes
             if (obj is URI)
             {
                 URI uri = (URI)obj;
-                Value = uri.Value;
+                m_Value = uri.Value;
                 Scheme = uri.Scheme;
                 Authority = uri.Authority;
                 Path = uri.Path;
                 Query = uri.Query;
                 Fragment = uri.Fragment;
+            }
+            else
+            {
+                Value = null;
+                Scheme = null;
+                Authority = null;
+                Path = null;
+                Query = null;
+                Fragment = null;
             }
             base.CopyFrom(obj);
         }

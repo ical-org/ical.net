@@ -14,8 +14,11 @@ namespace DDay.iCal.Components
     /// A class that contains time zone information, and is usually accessed
     /// from an iCalendar object using the <see cref="DDay.iCal.iCalendar.GetTimeZone"/> method.        
     /// </summary>
-#if SILVERLIGHT
-    [DataContract(Name = "TimeZoneInfo", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "TimeZoneInfo", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(UTC_Offset))]
+    [KnownType(typeof(Text[]))]
+    [KnownType(typeof(Text))]    
 #else
     [Serializable]
 #endif
@@ -331,6 +334,9 @@ namespace DDay.iCal.Components
         ///     </list>
         /// </example>
         /// </summary>
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         public string TimeZoneName
         {
             get
@@ -349,6 +355,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
         public UTC_Offset TZOffsetFrom
         {
             get { return m_TZOffsetFrom; }
@@ -356,6 +365,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 3)]
+#endif
         public UTC_Offset TZOffsetTo
         {
             get { return m_TZOffsetTo; }
@@ -363,6 +375,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 4)]
+#endif
         public Text[] TZName
         {
             get { return m_TZName; }

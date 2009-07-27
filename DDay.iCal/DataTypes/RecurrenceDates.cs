@@ -11,8 +11,11 @@ namespace DDay.iCal.DataTypes
     /// <summary>
     /// An iCalendar list of recurring dates (or date exclusions)
     /// </summary>
-#if SILVERLIGHT
-    [DataContract(Name = "RecurrenceDates", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "RecurrenceDates", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(TZID))]
+    [KnownType(typeof(Period))]
+    [KnownType(typeof(List<Period>))]    
 #else
     [Serializable]
 #endif
@@ -27,6 +30,9 @@ namespace DDay.iCal.DataTypes
 
         #region Public Properties
 
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         public TZID TZID
         {
             get
@@ -38,6 +44,9 @@ namespace DDay.iCal.DataTypes
             set { m_TZID = value; }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
         public List<Period> Periods
         {
             get { return m_Periods; }

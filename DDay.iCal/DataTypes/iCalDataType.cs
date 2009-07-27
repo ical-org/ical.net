@@ -10,8 +10,8 @@ namespace DDay.iCal.DataTypes
     /// <summary>
     /// An abstract class from which all iCalendar data types inherit.
     /// </summary>
-#if SILVERLIGHT
-    [DataContract(Name = "iCalDataType", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "iCalDataType", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #else
     [Serializable]
 #endif
@@ -26,6 +26,9 @@ namespace DDay.iCal.DataTypes
 
         #region Public Properties
 
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         public object[] Attributes
         {
             get { return m_Attributes; }

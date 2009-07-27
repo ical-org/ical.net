@@ -13,8 +13,13 @@ namespace DDay.iCal.Components
     /// <summary>
     /// The base class for all iCalendar objects, components, and data types.
     /// </summary>
-#if SILVERLIGHT
-    [DataContract(Name = "iCalObject", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "iCalObject", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(iCalObject))]
+    [KnownType(typeof(KeyedList<Property, string>))]
+    [KnownType(typeof(KeyedList<Parameter, string>))]
+    [KnownType(typeof(List<iCalObject>))]
+    [KnownType(typeof(iCalendar))]    
 #else
     [Serializable]
 #endif
@@ -31,8 +36,8 @@ namespace DDay.iCal.Components
         private iCalObject _Parent = null;
         private List<iCalObject> _Children = new List<iCalObject>();
         private string _Name;
-        private KeyedList<Property, string> _Properties = new KeyedList<Property, string>();
-        private KeyedList<Parameter, string> _Parameters = new KeyedList<Parameter, string>();
+        private IKeyedList<Property, string> _Properties = new KeyedList<Property, string>();
+        private IKeyedList<Parameter, string> _Parameters = new KeyedList<Parameter, string>();
 
         #endregion
 
@@ -41,7 +46,10 @@ namespace DDay.iCal.Components
         /// <summary>
         /// Returns the parent <see cref="iCalObject"/> that owns this one.
         /// </summary>
-        public iCalObject Parent
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
+        virtual public iCalObject Parent
         {
             get { return _Parent; }
             set { _Parent = value; }
@@ -50,26 +58,47 @@ namespace DDay.iCal.Components
         /// <summary>
         /// Returns a list of properties that are associated with the iCalendar object.
         /// </summary>
-        public IKeyedList<Property, string> Properties
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
+        virtual public IKeyedList<Property, string> Properties
         {
             get { return _Properties; }
+            protected set
+            {
+                this._Properties = value;
+            }
         }
 
         /// <summary>
         /// Returns a list of parameters that are associated with the iCalendar object.
         /// </summary>
-        public IKeyedList<Parameter, string> Parameters
+#if DATACONTRACT
+        [DataMember(Order = 3)]
+#endif
+        virtual public IKeyedList<Parameter, string> Parameters
         {
             get { return _Parameters; }
+            protected set
+            {
+                this._Parameters = value;
+            }
         }
 
         /// <summary>
         /// A collection of <see cref="iCalObject"/>s that are children 
         /// of the current object.
         /// </summary>
-        public List<iCalObject> Children
+#if DATACONTRACT
+        [DataMember(Order = 4)]
+#endif
+        virtual public List<iCalObject> Children
         {
-            get { return _Children; }            
+            get { return _Children; }
+            protected set
+            {
+                this._Children = value;
+            }
         }
 
         /// <summary>
@@ -84,6 +113,9 @@ namespace DDay.iCal.Components
         ///     </list>
         /// </example>
         /// </summary>        
+#if DATACONTRACT
+        [DataMember(Order = 5)]
+#endif
         virtual public string Name
         {
             get { return _Name; }
@@ -94,7 +126,10 @@ namespace DDay.iCal.Components
         /// Returns the <see cref="DDay.iCal.iCalendar"/> that this <see cref="iCalObject"/>
         /// belongs to.
         /// </summary>
-        public iCalendar iCalendar
+#if DATACONTRACT
+        [DataMember(Order = 6)]
+#endif
+        virtual public iCalendar iCalendar
         {
             get
             {
@@ -105,6 +140,10 @@ namespace DDay.iCal.Components
                 if (obj is iCalendar)
                     return obj as iCalendar;
                 return null;
+            }
+            protected set
+            {
+                this._Parent = value;
             }
         }
 

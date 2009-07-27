@@ -11,8 +11,9 @@ namespace DDay.iCal.DataTypes
     /// <see cref="Event"/> or <see cref="Todo"/> item.
     /// </summary>
     [DebuggerDisplay("{Latitude};{Longitude}")]
-#if SILVERLIGHT
-    [DataContract(Name = "Geo", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "Geo", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(Float))]
 #else
     [Serializable]
 #endif
@@ -27,12 +28,18 @@ namespace DDay.iCal.DataTypes
 
         #region Public Properties
 
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         public Float Latitude
         {
             get { return m_Latitude; }
             set { m_Latitude = value; }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
         public Float Longitude
         {
             get { return m_Longitude; }

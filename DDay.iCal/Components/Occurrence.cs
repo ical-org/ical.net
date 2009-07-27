@@ -8,8 +8,10 @@ using System.Runtime.Serialization;
 namespace DDay.iCal.Components
 {
     [DebuggerDisplay("{Component.Summary} ({Period.StartTime} - {Period.EndTime})")]
-#if SILVERLIGHT
-    [DataContract(Name = "Occurrence", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "Occurrence", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(Period))]
+    [KnownType(typeof(RecurringComponent))]
 #else
     [Serializable]
 #endif
@@ -25,12 +27,18 @@ namespace DDay.iCal.Components
 
         #region Public Properties
 
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         virtual public Period Period
         {
             get { return _Period; }
             set { _Period = value; }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
         virtual public RecurringComponent Component
         {
             get { return _Component; }

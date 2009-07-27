@@ -13,8 +13,21 @@ namespace DDay.iCal.Components
     /// Represents a unique component, a component with a unique UID,
     /// which can be used to uniquely identify the component.    
     /// </summary>
-#if SILVERLIGHT
-    [DataContract(Name = "UniqueComponent", Namespace="http://www.ddaysoftware.com/dday.ical/components/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "UniqueComponent", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(Text))]
+    [KnownType(typeof(Binary))]
+    [KnownType(typeof(Binary[]))]
+    [KnownType(typeof(Cal_Address))]
+    [KnownType(typeof(Cal_Address[]))]
+    [KnownType(typeof(TextCollection))]
+    [KnownType(typeof(TextCollection[]))]
+    [KnownType(typeof(iCalDateTime))]
+    [KnownType(typeof(Integer))]
+    [KnownType(typeof(Text[]))]
+    [KnownType(typeof(RequestStatus))]
+    [KnownType(typeof(RequestStatus[]))]
+    [KnownType(typeof(URI))]
 #else
     [Serializable]
 #endif
@@ -67,6 +80,9 @@ namespace DDay.iCal.Components
         #region Public Properties
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         virtual public Binary[] Attach
         {
             get { return _Attach; }
@@ -74,6 +90,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
         virtual public Cal_Address[] Attendee
         {
             get { return _Attendee; }
@@ -94,6 +113,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 3)]
+#endif
         virtual public TextCollection[] Categories
         {
             get { return _Categories; }                    
@@ -101,6 +123,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 4)]
+#endif
         virtual public Text Class
         {
             get { return _Class; }
@@ -113,6 +138,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 5)]
+#endif
         virtual public Text[] Comment
         {
             get { return _Comment; }
@@ -120,6 +148,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 6)]
+#endif
         virtual public Text[] Contact
         {
             get { return _Contact; }
@@ -127,6 +158,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
+#if DATACONTRACT
+        [DataMember(Order = 7)]
+#endif
         virtual public iCalDateTime Created
         {
             get { return _Created; }
@@ -139,6 +173,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 8)]
+#endif
         virtual public Text Description
         {
             get { return _Description; }
@@ -151,6 +188,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
+#if DATACONTRACT
+        [DataMember(Order = 9)]
+#endif
         virtual public iCalDateTime DTStamp
         {
             get { return _DTStamp; }
@@ -163,6 +203,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
+#if DATACONTRACT
+        [DataMember(Order = 10)]
+#endif
         virtual public iCalDateTime Last_Modified
         {
             get { return _Last_Modified; }
@@ -175,6 +218,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 11)]
+#endif
         virtual public Cal_Address Organizer
         {
             get { return _Organizer; }
@@ -192,6 +238,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 12)]
+#endif
         virtual public Integer Priority
         {
             get { return _Priority; }
@@ -204,6 +253,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 13)]
+#endif
         virtual public Text[] Related_To
         {
             get { return _Related_To; }
@@ -211,6 +263,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 14)]
+#endif
         virtual public RequestStatus[] Request_Status
         {
             get { return _Request_Status; }
@@ -218,6 +273,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 15)]
+#endif
         virtual public Integer Sequence
         {
             get { return _Sequence; }
@@ -230,6 +288,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 16)]
+#endif
         virtual public Text Summary
         {
             get { return _Summary; }
@@ -242,6 +303,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 17)]
+#endif
         virtual public Text UID
         {
             get
@@ -268,6 +332,9 @@ namespace DDay.iCal.Components
         }
 
         [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 18)]
+#endif
         virtual public URI Url
         {
             get { return _Url; }

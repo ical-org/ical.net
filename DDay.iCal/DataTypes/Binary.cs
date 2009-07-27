@@ -11,8 +11,10 @@ namespace DDay.iCal.DataTypes
     /// A class to handle binary attachments, or URIs as binary attachments, within an iCalendar. 
     /// </summary>
     [Encodable("BASE64")]
-#if SILVERLIGHT
-    [DataContract(Name = "Binary", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "Binary", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(URI))]
+    [KnownType(typeof(Text))]
 #else
     [Serializable]
 #endif
@@ -26,13 +28,19 @@ namespace DDay.iCal.DataTypes
 
         #region Public Properties
 
-        public URI Uri
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
+        virtual public URI Uri
         {
             get { return m_Uri; }
             set { m_Uri = value; }
         }
 
-        public Text FormatType
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
+        virtual public Text FormatType
         {
             get
             {                
@@ -43,6 +51,13 @@ namespace DDay.iCal.DataTypes
                     return fmtype;
                 }
                 return null;
+            }
+            protected set
+            {
+                if (value != null)
+                    Parameters["FMTYPE"] = new Parameter("FMTYPE", value);
+                else
+                    Parameters.Remove("FMTYPE");
             }
         }
 

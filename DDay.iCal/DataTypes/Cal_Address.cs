@@ -14,8 +14,11 @@ namespace DDay.iCal.DataTypes
     /// <c>MAILTO:email.address@host.com</c>
     /// </summary>
     [DebuggerDisplay("{Value}")]
-#if SILVERLIGHT
-    [DataContract(Name = "Cal_Address", Namespace="http://www.ddaysoftware.com/dday.ical/datatypes/2009/07/")]
+#if DATACONTRACT
+    [DataContract(Name = "Cal_Address", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(Cal_Address))]
+    [KnownType(typeof(Text))]
+    [KnownType(typeof(URI))]
 #else
     [Serializable]
 #endif
@@ -34,7 +37,10 @@ namespace DDay.iCal.DataTypes
 
         #region Public Properties
 
-        public Cal_Address SentBy
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
+        virtual public Cal_Address SentBy
         {
             get
             {
@@ -45,9 +51,19 @@ namespace DDay.iCal.DataTypes
                 }
                 return m_SentBy;
             }
+            protected set
+            {
+                if (value != null)
+                    Parameters["SENT-BY"] = new Parameter("SENT-BY", value);
+                else
+                    Parameters.Remove("SENT-BY");
+            }
         }
 
-        public Text CommonName
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
+        virtual public Text CommonName
         {
             get
             {
@@ -58,9 +74,19 @@ namespace DDay.iCal.DataTypes
                 }
                 return m_CN;
             }
+            protected set
+            {
+                if (value != null)
+                    Parameters["CN"] = new Parameter("CN", value);
+                else
+                    Parameters.Remove("CN");
+            }
         }
 
-        public URI DirectoryEntry
+#if DATACONTRACT
+        [DataMember(Order = 3)]
+#endif
+        virtual public URI DirectoryEntry
         {
             get
             {
@@ -71,9 +97,16 @@ namespace DDay.iCal.DataTypes
                 }
                 return m_DirectoryEntry;
             }
+            protected set
+            {
+                if (value != null)
+                    Parameters["DIR"] = new Parameter("DIR", value.ToString());
+                else
+                    Parameters.Remove("DIR");
+            }
         }
 
-        public string EmailAddress
+        virtual public string EmailAddress
         {
             get
             {
@@ -83,7 +116,7 @@ namespace DDay.iCal.DataTypes
                     return Authority;
                 }
                 return null;
-            }
+            }            
         }
 
         #endregion
