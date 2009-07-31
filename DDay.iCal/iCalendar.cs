@@ -107,7 +107,8 @@ namespace DDay.iCal
         /// </code>
         /// </example>
         /// </summary>
-        public iCalendar() : base(null)
+        public iCalendar()
+            : base(null)
         {
             this.Name = "VCALENDAR";
             UniqueComponents = new UniqueComponentList<UniqueComponent>(this);
@@ -115,17 +116,17 @@ namespace DDay.iCal
             FreeBusy = new List<FreeBusy>();
             Journals = new UniqueComponentList<Journal>(this);
             TimeZones = new List<iCalTimeZone>();
-            Todos = new UniqueComponentList<Todo>(this);            
-            
+            Todos = new UniqueComponentList<Todo>(this);
+
             object[] attrs = GetType().GetCustomAttributes(typeof(ComponentBaseTypeAttribute), false);
             if (attrs.Length > 0)
             {
                 foreach (ComponentBaseTypeAttribute attr in attrs)
                     m_ComponentBaseCreate = attr.Type.GetMethod("Create", BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
             }
-            
+
             if (m_ComponentBaseCreate == null)
-                m_ComponentBaseCreate = typeof(ComponentBase).GetMethod("Create", BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);            
+                m_ComponentBaseCreate = typeof(ComponentBase).GetMethod("Create", BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
         }
 
         #endregion
@@ -203,7 +204,7 @@ namespace DDay.iCal
         {
             return (iCalendar)base.Copy();
         }
-        
+
         #endregion
 
         #region Private Fields
@@ -215,7 +216,7 @@ namespace DDay.iCal
         private List<iCalTimeZone> m_TimeZone;
         private UniqueComponentList<Todo> m_Todo;
         private MethodInfo m_ComponentBaseCreate;
-        
+
         // The buffer size used to convert streams from UTF-8 to Unicode
         private const int bufferSize = 8096;
 
@@ -258,7 +259,7 @@ namespace DDay.iCal
             get { return m_FreeBusy; }
             set { m_FreeBusy = value; }
         }
-        
+
         /// <summary>
         /// A collection of <see cref="Journal"/> components in the iCalendar.
         /// </summary>
@@ -295,10 +296,10 @@ namespace DDay.iCal
                 return null;
             }
             set
-            {                
+            {
                 if (string.IsNullOrEmpty(value) &&
                     Properties.ContainsKey("VERSION"))
-                    Properties.Remove("VERSION");                    
+                    Properties.Remove("VERSION");
                 else Properties["VERSION"] = new Property(this, "VERSION", value);
             }
         }
@@ -315,9 +316,9 @@ namespace DDay.iCal
             {
                 if (string.IsNullOrEmpty(value) &&
                     Properties.ContainsKey("PRODID"))
-                    Properties.Remove("PRODID"); 
+                    Properties.Remove("PRODID");
                 else Properties["PRODID"] = new Property(this, "PRODID", value);
-            }            
+            }
         }
 
         virtual public string Scale
@@ -368,9 +369,9 @@ namespace DDay.iCal
             get
             {
                 if (Properties.ContainsKey("X-DDAY-ICAL-RECURRENCE-RESTRICTION"))
-                    return 
+                    return
                         (RecurrenceRestrictionType)Enum.Parse(
-                            typeof(RecurrenceRestrictionType), 
+                            typeof(RecurrenceRestrictionType),
                             ((Property)Properties["X-DDAY-ICAL-RECURRENCE-RESTRICTION"]).Value,
                             true
                         );
@@ -378,7 +379,7 @@ namespace DDay.iCal
             }
             set
             {
-                Properties["X-DDAY-ICAL-RECURRENCE-RESTRICTION"] = new Property(this, "X-DDAY-ICAL-RECURRENCE-RESTRICTION", value.ToString());                
+                Properties["X-DDAY-ICAL-RECURRENCE-RESTRICTION"] = new Property(this, "X-DDAY-ICAL-RECURRENCE-RESTRICTION", value.ToString());
             }
         }
 
@@ -509,7 +510,7 @@ namespace DDay.iCal
             return (iCalendar)serializer.Deserialize(tr, iCalendarType);
         }
         static public iCalendar LoadFromStream(Type iCalendarType, Stream s, Encoding e, DDay.iCal.Serialization.ISerializable serializer)
-        {            
+        {
             return (iCalendar)serializer.Deserialize(s, e, iCalendarType);
         }
         static public iCalendar LoadFromStream(Type iCalendarType, TextReader tr, DDay.iCal.Serialization.ISerializable serializer)
@@ -578,17 +579,56 @@ namespace DDay.iCal
         {
             try
             {
-                WebClient client = new WebClient();
-                if (username != null &&
-                    password != null)
-                    client.Credentials = new System.Net.NetworkCredential(username, password);
+                WebRequest request = WebRequest.Create(uri);                
+
+                if (username != null && password != null)
+                    request.Credentials = new System.Net.NetworkCredential(username, password);
 
 #if !SILVERLIGHT
                 if (proxy != null)
-                    client.Proxy = proxy;
+                    request.Proxy = proxy;
 #endif
 
-                string str = client.DownloadString(uri);
+                AutoResetEvent evt = new AutoResetEvent(false);
+
+                string str = null;
+                request.BeginGetResponse(new AsyncCallback(
+                    delegate(IAsyncResult result)
+                    {
+                        Encoding e = Encoding.UTF8;
+
+                        try
+                        {
+                            using (WebResponse resp = request.EndGetResponse(result))
+                            {
+                                // Try to determine the content encoding
+                                try
+                                {
+                                    List<string> keys = new List<string>(resp.Headers.AllKeys);
+                                    if (keys.Contains("Content-Encoding"))
+                                        e = Encoding.GetEncoding(resp.Headers["Content-Encoding"]);
+                                }
+                                catch
+                                {
+                                    // Fail gracefully back to UTF-8
+                                }
+
+                                using (Stream stream = resp.GetResponseStream())
+                                using (StreamReader sr = new StreamReader(stream, e))
+                                {
+                                    str = sr.ReadToEnd();
+                                }
+                            }
+                        }
+                        finally
+                        {
+                            evt.Set();
+                        }
+                    }
+                ), null);
+
+                evt.WaitOne();
+
                 if (str != null)
                     return LoadFromStream(new StringReader(str));
                 return null;
@@ -597,7 +637,7 @@ namespace DDay.iCal
             {
                 return null;
             }
-        }        
+        }
 
         #endregion
 
@@ -620,7 +660,7 @@ namespace DDay.iCal
             }
             return null;
         }
-                
+
         /// <summary>
         /// Evaluates component recurrences for the given range of time.
         /// <example>
@@ -656,7 +696,7 @@ namespace DDay.iCal
         public void ClearEvaluation()
         {
             foreach (RecurringComponent rc in RecurringComponents)
-                rc.ClearEvaluation();            
+                rc.ClearEvaluation();
         }
 
         /// <summary>
@@ -736,7 +776,7 @@ namespace DDay.iCal
                 foreach (Parameter p in iCal.Parameters)
                 {
                     if (!Parameters.ContainsKey(p.Key))
-                        AddParameter(p);                        
+                        AddParameter(p);
                 }
 
                 // Merge all properties
@@ -805,7 +845,7 @@ namespace DDay.iCal
         {
             if (m_ComponentBaseCreate == null)
                 throw new ArgumentException("Create() cannot be called without a valid ComponentBase Create() method attached");
-                        
+
             ConstructorInfo ci = typeof(T).GetConstructor(new Type[] { typeof(iCalObject) });
             if (ci != null)
             {

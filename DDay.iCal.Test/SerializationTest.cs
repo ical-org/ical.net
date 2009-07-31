@@ -587,6 +587,35 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             SerializeTest("LANGUAGE2.ics", typeof(iCalendarSerializer));
         }
 
+        [Test, Category("Serialization")]
+        public void LANGUAGE3()
+        {
+            SerializeTest("RussiaHolidays.ics", typeof(iCalendarSerializer));
+
+            string calendarPath = Path.Combine(Environment.CurrentDirectory, "Calendars");
+            calendarPath = Path.Combine(calendarPath, "Serialization");
+
+            // Ensure that LoadFromUri() and LoadFromFile() produce identical results.
+            // Thanks to Eugene, a student from Russia, who helped track down this bug.
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            iCalendar russia1 = iCalendar.LoadFromUri(new Uri(Path.Combine(calendarPath, "RussiaHolidays.ics")));
+            iCalendar russia2 = iCalendar.LoadFromFile(Path.Combine(calendarPath, "RussiaHolidays.ics"));
+
+            CompareCalendars(russia1, russia2);
+        }
+
+        [Test, Category("Serialization")]
+        public void LANGUAGE4()
+        {
+            string calendarPath = Path.Combine(Environment.CurrentDirectory, "Calendars");
+            calendarPath = Path.Combine(calendarPath, "Serialization");
+
+            iCalendar russia1 = iCalendar.LoadFromUri(new Uri("http://www.mozilla.org/projects/calendar/caldata/RussiaHolidays.ics"));
+            iCalendar russia2 = iCalendar.LoadFromFile(Path.Combine(calendarPath, "RussiaHolidays.ics"));
+
+            CompareCalendars(russia1, russia2);
+        }
+
         [Test]
         public void REQUIREDPARAMETERS1()
         {

@@ -37,9 +37,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SilverlightAdapter, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SilverlightAdapter, Version=1.0.0.0, Culture=neutral, PublicKeyToken=80468f9d6a1d92a4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\SilverlightAdapter.dll</HintPath>
+      <HintPath>..\..\SilverlightAdapter.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="mscorlib" />
