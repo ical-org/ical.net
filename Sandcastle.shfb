@@ -37,14 +37,14 @@
     <Preliminary>True</Preliminary>
     <RootNamespaceContainer>True</RootNamespaceContainer>
     <RootNamespaceTitle>DDay.iCal - iCalendar Class Library</RootNamespaceTitle>
-    <HelpTitle>DDay.iCal Version 0.71</HelpTitle>
+    <HelpTitle>DDay.iCal Version 0.80</HelpTitle>
     <HtmlHelpName>Documentation</HtmlHelpName>
     <Language>en-US</Language>
     <CopyrightHref />
     <CopyrightText>Copyright 2007 Douglas Day</CopyrightText>
     <FeedbackEMailAddress>doug@ddaysoftware.com</FeedbackEMailAddress>
     <FeedbackEMailLinkText />
-    <HeaderText>DDay.iCal Version 0.71</HeaderText>
+    <HeaderText>DDay.iCal Version 0.80</HeaderText>
     <FooterText />
     <ProjectLinkType>Local</ProjectLinkType>
     <SdkLinkType>Msdn</SdkLinkType>
