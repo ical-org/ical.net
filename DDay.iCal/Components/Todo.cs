@@ -271,7 +271,7 @@ namespace DDay.iCal.Components
 
         virtual public void AddResource(string resource)
         {
-            Text r = new Text(resource);
+            Text r = resource;
             if (Resources != null)
             {
                 foreach (TextCollection tc in Resources)
@@ -299,7 +299,7 @@ namespace DDay.iCal.Components
         {
             if (Resources != null)
             {
-                Text r = new Text(resource);
+                Text r = resource;
                 foreach (TextCollection tc in Resources)
                 {
                     if (tc.Values.Contains(r))

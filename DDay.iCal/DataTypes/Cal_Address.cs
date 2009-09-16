@@ -70,7 +70,7 @@ namespace DDay.iCal.DataTypes
                 if (m_CN == null && Parameters.ContainsKey("CN"))
                 {
                     Parameter p = (Parameter)Parameters["CN"];
-                    m_CN = new Text(p.Values[0].ToString());                    
+                    m_CN = new Text(p.Values[0].ToString(), true);                    
                 }
                 return m_CN;
             }

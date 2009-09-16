@@ -67,6 +67,10 @@ namespace DDay.iCal.DataTypes
                         // Set the parent on the copied object
                         icdt.Parent = value.Parent;
 
+                        // Unescape values within the data type.
+                        if (icdt is IEscapable)
+                            ((IEscapable)icdt).Unescape();
+
                         CopyFrom(icdt);
 
                         // FIXME: is there a way to avoid having to do this twice?

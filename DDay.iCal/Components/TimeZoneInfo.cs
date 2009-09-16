@@ -349,7 +349,7 @@ namespace DDay.iCal.Components
             {
                 if (TZName == null)
                     TZName = new Text[1];
-                TZName[0] = new Text(value);
+                TZName[0] = (Text)value;
                 TZName[0].Name = "TZNAME";
             }
         }

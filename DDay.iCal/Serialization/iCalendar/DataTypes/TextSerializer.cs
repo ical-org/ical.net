@@ -28,17 +28,10 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
         public override string SerializeToString()
         {
-            string value = m_Text.Value;
-            // added null check - you can't call .Replace on a null
-            // string, but you can just return null as a string
-            if (value != null) 
-            {
-                value = value.Replace(@"\", @"\\");
-                value = value.Replace("\n", @"\n");
-                value = value.Replace(";", @"\;");
-                value = value.Replace(",", @"\,");
-            }
-            return Encode(value);
+            Text t = (Text)m_Text.Copy();
+            t.Escape();
+
+            return Encode(t.Value);            
         }        
 
         #endregion

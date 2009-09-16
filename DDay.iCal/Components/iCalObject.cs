@@ -19,7 +19,7 @@ namespace DDay.iCal.Components
     [KnownType(typeof(KeyedList<Property, string>))]
     [KnownType(typeof(KeyedList<Parameter, string>))]
     [KnownType(typeof(List<iCalObject>))]
-    [KnownType(typeof(iCalendar))]    
+    [KnownType(typeof(iCalendar))]
 #else
     [Serializable]
 #endif

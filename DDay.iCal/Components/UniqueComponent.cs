@@ -449,7 +449,7 @@ namespace DDay.iCal.Components
 
         virtual public void AddCategory(string categoryName)
         {
-            Text cn = new Text(categoryName);
+            Text cn = categoryName;
             if (Categories != null)
             {
                 foreach (TextCollection tc in Categories)
@@ -477,7 +477,7 @@ namespace DDay.iCal.Components
         {
             if (Categories != null)
             {
-                Text cn = new Text(categoryName);
+                Text cn = categoryName;
                 foreach (TextCollection tc in Categories)
                 {
                     if (tc.Values.Contains(cn))
@@ -567,7 +567,7 @@ namespace DDay.iCal.Components
 
         virtual public void AddRelatedTo(string uid, string relationshipType)
         {
-            Text text = new Text(uid);
+            Text text = uid;
             if (relationshipType != null)
                 text.AddParameter(new Parameter("RELTYPE", relationshipType));
 
@@ -617,7 +617,7 @@ namespace DDay.iCal.Components
 
         static public Text NewUID()
         {
-            return new Text(Guid.NewGuid().ToString());
+            return Guid.NewGuid().ToString();
         }
 
         #endregion

@@ -47,8 +47,8 @@ namespace DDay.iCal.Serialization.iCalendar
 		public const int ALPHA = 21;
 		public const int DIGIT = 22;
 		public const int DASH = 23;
-		public const int SPECIAL = 24;
-		public const int UNICODE = 25;
+		public const int UNICODE = 24;
+		public const int SPECIAL = 25;
 		public const int SPACE = 26;
 		public const int HTAB = 27;
 		public const int SLASH = 28;
@@ -770,8 +770,8 @@ _loop50_breakloop:			;
 		case ALPHA:
 		case DIGIT:
 		case DASH:
-		case SPECIAL:
 		case UNICODE:
+		case SPECIAL:
 		case SPACE:
 		case HTAB:
 		case SLASH:
@@ -1040,8 +1040,8 @@ _loop78_breakloop:			;
 		@"""ALPHA""",
 		@"""DIGIT""",
 		@"""DASH""",
-		@"""SPECIAL""",
 		@"""UNICODE""",
+		@"""SPECIAL""",
 		@"""SPACE""",
 		@"""HTAB""",
 		@"""SLASH""",

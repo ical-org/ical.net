@@ -128,14 +128,14 @@ namespace DDay.iCal.DataTypes
             {
                 if (match.Success)
                 {
-                    tc.Values.Add(new Text(value.Substring(i, match.Index - i + 1)));                    
+                    tc.Values.Add(new Text(value.Substring(i, match.Index - i + 1), true));                    
                     i = match.Index + 2;
                 }
                 else return false;
             }
 
             if (i < value.Length)
-                tc.Values.Add(new Text(value.Substring(i, value.Length - i)));
+                tc.Values.Add(new Text(value.Substring(i, value.Length - i), true));
 
             return true;            
         }

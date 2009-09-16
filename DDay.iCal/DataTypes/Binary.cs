@@ -47,7 +47,7 @@ namespace DDay.iCal.DataTypes
                 if (Parameters.ContainsKey("FMTYPE"))
                 {
                     Parameter p = (Parameter)Parameters["FMTYPE"];
-                    Text fmtype = new Text(p.Values[0].ToString());
+                    Text fmtype = new Text(p.Values[0].ToString(), true);
                     return fmtype;
                 }
                 return null;

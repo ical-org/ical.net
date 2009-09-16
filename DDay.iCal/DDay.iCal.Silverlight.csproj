@@ -107,6 +107,7 @@
     <Compile Include="DefaultValueTypeAttribute.cs" />
     <Compile Include="iCalendar.cs" />
     <Compile Include="iCalendarCollection.cs" />
+    <Compile Include="Interfaces\IEscapable.cs" />
     <Compile Include="Interfaces\IKeyedList.cs" />
     <Compile Include="Interfaces\IKeyedObject.cs" />
     <Compile Include="KeyedList.cs" />
@@ -177,6 +178,7 @@
     <Content Include="Serialization\iCalendar\iCalParserTokenTypes.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="DDay.iCal.pfx" />
     <None Include="Serialization\iCalendar\iCal.g" />
   </ItemGroup>

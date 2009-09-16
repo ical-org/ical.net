@@ -25,12 +25,72 @@ namespace DDay.iCal.Components
 #endif
     public partial class iCalTimeZone : ComponentBase
     {
+        #region Static Public Methods
+
+#if !SILVERLIGHT
+        static public iCalTimeZone FromLocalTimeZone()
+        {
+            TimeZone timeZone = System.TimeZone.CurrentTimeZone;
+            TimeSpan utcOffset = timeZone.GetUtcOffset(DateTime.Now);
+
+            iCalTimeZone tz = new iCalTimeZone();
+            tz.TZID = "UTC" + (utcOffset.TotalHours >= 0 ? "+" : "") + utcOffset.Hours.ToString("00") + utcOffset.Minutes.ToString("00");
+            
+            return tz;
+        }
+#endif
+
+#if DATACONTRACT
+        public static iCalTimeZone FromSystemTimeZone(System.TimeZoneInfo tzinfo)
+        {
+            var adjustment_rule = tzinfo.GetAdjustmentRules().Last();
+            var utc_offset = tzinfo.BaseUtcOffset;
+            var delta = adjustment_rule.DaylightDelta;
+            var dday_tz = new DDay.iCal.Components.iCalTimeZone();
+
+            dday_tz.TZID = tzinfo.Id;
+
+            var dday_tzinfo_standard = new DDay.iCal.Components.TimeZoneInfo();
+            dday_tzinfo_standard.Name = "STANDARD";
+            dday_tzinfo_standard.TZOffsetFrom = new DDay.iCal.DataTypes.UTC_Offset(utc_offset + delta);
+            dday_tzinfo_standard.TZOffsetTo = new DDay.iCal.DataTypes.UTC_Offset(utc_offset);
+
+            RecurrencePattern standard_recurrence_pattern = new RecurrencePattern();
+            var standard_day_specifier = new DaySpecifier(adjustment_rule.DaylightTransitionEnd.DayOfWeek, adjustment_rule.DaylightTransitionEnd.Week);
+            standard_recurrence_pattern.ByDay = new List<DaySpecifier>() { standard_day_specifier };
+            standard_recurrence_pattern.Frequency = DDay.iCal.DataTypes.FrequencyType.Yearly;
+            standard_recurrence_pattern.ByMonth = new List<int>() { adjustment_rule.DaylightTransitionEnd.Month };
+
+            dday_tzinfo_standard.RRule = new RecurrencePattern[1];
+            dday_tzinfo_standard.RRule[0] = standard_recurrence_pattern;
+            dday_tz.AddChild(dday_tzinfo_standard);
+
+            var dday_tzinfo_daylight = new DDay.iCal.Components.TimeZoneInfo();
+            dday_tzinfo_daylight.Name = "DAYLIGHT";
+            dday_tzinfo_daylight.TZOffsetFrom = new DDay.iCal.DataTypes.UTC_Offset(utc_offset);
+            dday_tzinfo_daylight.TZOffsetTo = new DDay.iCal.DataTypes.UTC_Offset(utc_offset + delta);
+
+            RecurrencePattern daylight_recurrence_pattern = new RecurrencePattern();
+            var daylight_day_specifier = new DaySpecifier(adjustment_rule.DaylightTransitionStart.DayOfWeek, adjustment_rule.DaylightTransitionStart.Week);
+            daylight_recurrence_pattern.ByDay = new List<DaySpecifier>() { daylight_day_specifier };
+            daylight_recurrence_pattern.Frequency = DDay.iCal.DataTypes.FrequencyType.Yearly;
+            daylight_recurrence_pattern.ByMonth = new List<int>() { adjustment_rule.DaylightTransitionStart.Month };
+            dday_tzinfo_daylight.RRule = new RecurrencePattern[1];
+            dday_tzinfo_daylight.RRule[0] = daylight_recurrence_pattern;
+            dday_tz.AddChild(dday_tzinfo_daylight);
+
+            return dday_tz;
+        }
+#endif
+
+        #endregion
+
         #region Private Fields
 
-        private TZID m_TZID;        
-        private iCalDateTime m_Last_Modified;        
-        private URI m_TZUrl;        
-        private List<TimeZoneInfo> m_TimeZoneInfos = new List<TimeZoneInfo>();        
+        private TZID m_TZID;
+        private iCalDateTime m_Last_Modified;
+        private URI m_TZUrl;
+        private List<TimeZoneInfo> m_TimeZoneInfos = new List<TimeZoneInfo>();
 
         #endregion
 
@@ -80,11 +140,13 @@ namespace DDay.iCal.Components
 
         #region Constructors
 
-        public iCalTimeZone() : base()
+        public iCalTimeZone()
+            : base()
         {
             this.Name = ComponentBase.TIMEZONE;
         }
-        public iCalTimeZone(iCalObject parent) : base(parent)
+        public iCalTimeZone(iCalObject parent)
+            : base(parent)
         {
             this.Name = ComponentBase.TIMEZONE;
         }
@@ -133,13 +195,13 @@ namespace DDay.iCal.Components
         public TimeZoneInfo GetTimeZoneInfo(iCalDateTime dt)
         {
             TimeZoneInfo tzi = null;
-            
+
             TimeSpan mostRecent = TimeSpan.MaxValue;
             foreach (TimeZoneInfo curr in TimeZoneInfos)
             {
                 DateTime Start = new DateTime(dt.Year - 1, 1, 1, 0, 0, 0, DateTimeKind.Utc);
                 DateTime End = new DateTime(dt.Year + 1, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-                
+
                 DateTime dtUTC = dt.Value;
                 dtUTC = DateTime.SpecifyKind(dtUTC, DateTimeKind.Utc);
 
@@ -160,7 +222,7 @@ namespace DDay.iCal.Components
                     currStart = currStart.AddMinutes(curr.TZOffsetTo.Minutes * mult);
                     currStart = currStart.AddSeconds(curr.TZOffsetTo.Seconds * mult);
                 }
-                                
+
                 // Determine the UTC occurrences of the Time Zone changes                
                 if (curr.EvalStart == null ||
                     curr.EvalEnd == null ||
@@ -175,7 +237,7 @@ namespace DDay.iCal.Components
                 // (the last occurrence), and the next begins in Apr. 2007.  If we didn't
                 // add 1 year to the "Until" time, the 6 month period between Oct. 2006
                 // and Apr. 2007 would be unhandled.
-                
+
                 // FIXME: this thinking may be flawed. We should try to find some other way...
                 //
                 //if (curr.Until != null &&

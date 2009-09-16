@@ -57,8 +57,8 @@ namespace DDay.iCal.Serialization.iCalendar
 		public const int ALPHA = 21;
 		public const int DIGIT = 22;
 		public const int DASH = 23;
-		public const int SPECIAL = 24;
-		public const int UNICODE = 25;
+		public const int UNICODE = 24;
+		public const int SPECIAL = 25;
 		public const int SPACE = 26;
 		public const int HTAB = 27;
 		public const int SLASH = 28;
@@ -177,23 +177,15 @@ tryAgain:
 								mESCAPED_CHAR(true);
 								theRetToken = returnToken_;
 							}
-							else if ((tokenSet_1_.member(cached_LA1)) && (true) && (true)) {
-								mSPECIAL(true);
-								theRetToken = returnToken_;
-							}
-							else if (((cached_LA1 >= '\u0100' && cached_LA1 <= '\ufffe')) && (true) && (true)) {
-								mUNICODE(true);
-								theRetToken = returnToken_;
-							}
 							else if ((cached_LA1=='\\') && (true)) {
 								mBACKSLASH(true);
 								theRetToken = returnToken_;
 							}
-							else if ((tokenSet_2_.member(cached_LA1)) && (true)) {
+							else if ((tokenSet_1_.member(cached_LA1)) && (true)) {
 								mCTL(true);
 								theRetToken = returnToken_;
 							}
-							else if ((tokenSet_3_.member(cached_LA1)) && (true) && (true)) {
+							else if ((tokenSet_2_.member(cached_LA1))) {
 								mIANA_TOKEN(true);
 								theRetToken = returnToken_;
 							}
@@ -323,7 +315,21 @@ tryAgain:
 		returnToken_ = _token;
 	}
 	
-	public void mSPECIAL(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+	protected void mUNICODE(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; IToken _token=null; int _begin=text.Length;
+		_ttype = UNICODE;
+		
+		matchRange('\u0100','\uFFFE');
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
+	protected void mSPECIAL(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
 		int _ttype; IToken _token=null; int _begin=text.Length;
 		_ttype = SPECIAL;
@@ -377,20 +383,6 @@ tryAgain:
 			throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());
 		}
 		break; }
-		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
-		{
-			_token = makeToken(_ttype);
-			_token.setText(text.ToString(_begin, text.Length-_begin));
-		}
-		returnToken_ = _token;
-	}
-	
-	public void mUNICODE(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
-{
-		int _ttype; IToken _token=null; int _begin=text.Length;
-		_ttype = UNICODE;
-		
-		matchRange('\u0100','\uFFFE');
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
 			_token = makeToken(_ttype);
@@ -691,7 +683,7 @@ tryAgain:
 					break;
 				}
 				default:
-					if ((tokenSet_1_.member(cached_LA1)))
+					if ((tokenSet_3_.member(cached_LA1)))
 					{
 						mSPECIAL(false);
 					}
@@ -781,23 +773,13 @@ _loop109_breakloop:			;
 	private static long[] mk_tokenSet_1_()
 	{
 		long[] data = new long[1025];
-		data[0]=-3458746947404300288L;
-		data[1]=8646911292738633729L;
-		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		for (int i = 4; i<=1024; i++) { data[i]=0L; }
-		return data;
-	}
-	public static readonly BitSet tokenSet_1_ = new BitSet(mk_tokenSet_1_());
-	private static long[] mk_tokenSet_2_()
-	{
-		long[] data = new long[1025];
 		data[0]=4294965759L;
 		data[1]=-9223372036854775808L;
 		for (int i = 2; i<=1024; i++) { data[i]=0L; }
 		return data;
 	}
-	public static readonly BitSet tokenSet_2_ = new BitSet(mk_tokenSet_2_());
-	private static long[] mk_tokenSet_3_()
+	public static readonly BitSet tokenSet_1_ = new BitSet(mk_tokenSet_1_());
+	private static long[] mk_tokenSet_2_()
 	{
 		long[] data = new long[2560];
 		data[0]=-3170762861857210368L;
@@ -805,6 +787,16 @@ _loop109_breakloop:			;
 		for (int i = 2; i<=1022; i++) { data[i]=-1L; }
 		data[1023]=9223372036854775807L;
 		for (int i = 1024; i<=2559; i++) { data[i]=0L; }
+		return data;
+	}
+	public static readonly BitSet tokenSet_2_ = new BitSet(mk_tokenSet_2_());
+	private static long[] mk_tokenSet_3_()
+	{
+		long[] data = new long[1025];
+		data[0]=-3458746947404300288L;
+		data[1]=8646911292738633729L;
+		for (int i = 2; i<=3; i++) { data[i]=-1L; }
+		for (int i = 4; i<=1024; i++) { data[i]=0L; }
 		return data;
 	}
 	public static readonly BitSet tokenSet_3_ = new BitSet(mk_tokenSet_3_());
