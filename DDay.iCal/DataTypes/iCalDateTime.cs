@@ -4,7 +4,6 @@ using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
 using DDay.iCal.Components;
-using TimeZoneInfo = DDay.iCal.Components.TimeZoneInfo;
 using System.Runtime.Serialization;
 
 namespace DDay.iCal.DataTypes
@@ -36,7 +35,7 @@ namespace DDay.iCal.DataTypes
         private bool _HasDate = false;
         private bool _HasTime = false;
         private TZID _TZID = null;
-        private TimeZoneInfo _TimeZoneInfo = null;
+        private iCalTimeZoneInfo _TimeZoneInfo = null;
         private bool _IsUniversalTime = false;
 
         #endregion
@@ -71,7 +70,7 @@ namespace DDay.iCal.DataTypes
                 else
                 {
                     DateTime value = Value;
-                    TimeZoneInfo tzi = TimeZoneInfo;
+                    iCalTimeZoneInfo tzi = TimeZoneInfo;
                     if (tzi != null)
                     {
                         int mult = tzi.TZOffsetTo.Positive ? -1 : 1;
@@ -92,10 +91,10 @@ namespace DDay.iCal.DataTypes
         }
 
         /// <summary>
-        /// Retrieves the <see cref="TimeZoneInfo"/> object for the time
+        /// Retrieves the <see cref="iCalTimeZoneInfo"/> object for the time
         /// zone set by <see cref="TZID"/>.
         /// </summary>
-        public TimeZoneInfo TimeZoneInfo
+        public iCalTimeZoneInfo TimeZoneInfo
         {
             get
             {
@@ -453,7 +452,7 @@ namespace DDay.iCal.DataTypes
             return (iCalDateTime)base.Copy();
         }
 
-        public DateTime ToTimeZone(TimeZoneInfo tzi)
+        public DateTime ToTimeZone(iCalTimeZoneInfo tzi)
         {
             DateTime value = UTC;
 
@@ -474,7 +473,7 @@ namespace DDay.iCal.DataTypes
                     iCalTimeZone tz = iCalendar.GetTimeZone(tzid);
                     if (tz != null)
                     {
-                        TimeZoneInfo tzi = tz.GetTimeZoneInfo(this);
+                        iCalTimeZoneInfo tzi = tz.GetTimeZoneInfo(this);
                         if (tzi != null)
                             return ToTimeZone(tzi);
                     }

@@ -56,7 +56,7 @@ namespace DDay.iCal.Components
                 case TODO: return new Todo(parent); 
                 case DAYLIGHT:
                 case STANDARD:
-                    return new TimeZoneInfo(name.ToUpper(), parent);
+                    return new iCalTimeZoneInfo(name.ToUpper(), parent);
                 default: return new ComponentBase(parent, name);
             }
         }

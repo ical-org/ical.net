@@ -2146,14 +2146,14 @@ namespace DDay.iCal.Test
             tz.TZID = "US-Eastern";
             tz.Last_Modified = new DateTime(1987, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-            TimeZoneInfo standard = new TimeZoneInfo(iCalTimeZone.STANDARD, tz);
+            iCalTimeZoneInfo standard = new iCalTimeZoneInfo(iCalTimeZone.STANDARD, tz);
             standard.Start = new DateTime(1967, 10, 29, 2, 0, 0, DateTimeKind.Utc);
             standard.AddRecurrencePattern(new RecurrencePattern("FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10"));
             standard.TZOffsetFrom = new UTC_Offset("-0400");
             standard.TZOffsetTo = new UTC_Offset("-0500");
             standard.TimeZoneName = "EST";
 
-            TimeZoneInfo daylight = new TimeZoneInfo(iCalTimeZone.DAYLIGHT, tz);
+            iCalTimeZoneInfo daylight = new iCalTimeZoneInfo(iCalTimeZone.DAYLIGHT, tz);
             daylight.Start = new DateTime(1987, 4, 5, 2, 0, 0, DateTimeKind.Utc);
             daylight.AddRecurrencePattern(new RecurrencePattern("FREQ=YEARLY;BYDAY=1SU;BYMONTH=4"));
             daylight.TZOffsetFrom = new UTC_Offset("-0500");

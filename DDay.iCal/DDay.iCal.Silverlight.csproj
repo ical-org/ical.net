@@ -64,13 +64,13 @@
     <Compile Include="Components\FreeBusy.cs" />
     <Compile Include="Components\iCalObject.cs" />
     <Compile Include="Components\iCalTimeZone.cs" />
+    <Compile Include="Components\iCalTimeZoneInfo.cs" />
     <Compile Include="Components\Journal.cs" />
     <Compile Include="Components\Occurrence.cs" />
     <Compile Include="Components\Parameter.cs" />
     <Compile Include="Components\Property.cs" />
     <Compile Include="Components\RecurringComponent.cs" />
     <Compile Include="Components\RelationshipTypes.cs" />
-    <Compile Include="Components\TimeZoneInfo.cs" />
     <Compile Include="Components\Todo.cs" />
     <Compile Include="Components\UniqueComponent.cs" />
     <Compile Include="Components\UniqueComponentList.cs" />
@@ -194,7 +194,7 @@
       <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
         <SilverlightProjectProperties />
       </FlavorProperties>
-      <UserProperties ProjectLinkReference="f88db6d3-cb95-4707-9c88-b53403aadc61" ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" />
+      <UserProperties ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" ProjectLinkReference="f88db6d3-cb95-4707-9c88-b53403aadc61" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

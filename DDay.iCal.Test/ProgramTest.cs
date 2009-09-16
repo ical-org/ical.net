@@ -557,5 +557,34 @@ END:VCALENDAR
             List<Occurrence> events = iCal.GetOccurrences<Event>(new DateTime(2009, 06, 20), new DateTime(2009, 06, 22));
             Assert.AreEqual(longName, ((Event)events[0].Component).Location.Value);
         }
+
+#if DATACONTRACT && !SILVERLIGHT
+        /// <summary>
+        /// Tests conversion of the system time zone to one compatible with DDay.iCal.
+        /// Also tests the gaining/loss of an hour over time zone boundaries.
+        /// </summary>
+        [Test]
+        public void SystemTimeZone1()
+        {
+            System.TimeZoneInfo tzi = System.TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time");
+            Assert.IsNotNull(tzi);
+
+            iCalendar iCal = new iCalendar();
+            iCalTimeZone tz = iCalTimeZone.FromSystemTimeZone(tzi);
+            Assert.IsNotNull(tz);
+
+            iCal.AddChild(tz);
+
+            iCalDateTime dt1 = new iCalDateTime(2003, 10, 26, 0, 59, 59, tz.TZID, iCal);
+            iCalDateTime dt2 = new iCalDateTime(2003, 10, 26, 1, 0, 0, tz.TZID, iCal);
+            TimeSpan result = dt2 - dt1;
+            Assert.AreEqual(TimeSpan.FromHours(1) + TimeSpan.FromSeconds(1), result);
+
+            dt1 = new iCalDateTime(2004, 4, 4, 1, 59, 59, tz.TZID, iCal);
+            dt2 = new iCalDateTime(2004, 4, 4, 2, 0, 0, tz.TZID, iCal);
+            result = dt2 - dt1;
+            Assert.AreEqual(TimeSpan.FromHours(-1) + TimeSpan.FromSeconds(1), result);            
+        }
+#endif
     }
 }

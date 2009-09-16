@@ -661,7 +661,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\TIMEZONE2.ics");
 
             iCalTimeZone tz = iCal.TimeZones[0];
-            foreach (TimeZoneInfo tzi in tz.TimeZoneInfos)
+            foreach (iCalTimeZoneInfo tzi in tz.TimeZoneInfos)
                 tzi.Start = new iCalDateTime(2007, 1, 1);
 
             iCalendarSerializer serializer = new iCalendarSerializer(iCal);
@@ -670,7 +670,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\TIMEZONE2.ics");
             tz = iCal.TimeZones[0];
 
-            foreach (TimeZoneInfo tzi in tz.TimeZoneInfos)
+            foreach (iCalTimeZoneInfo tzi in tz.TimeZoneInfos)
             {
                 ContentLine cl = tzi.Start.ContentLine;
                 Assert.IsFalse(cl.Parameters.ContainsKey("VALUE"), "\"DTSTART\" property MUST be represented in local time in timezones");
@@ -682,7 +682,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\TIMEZONE2.ics");
 
             tz = iCal.TimeZones[0];
-            foreach (TimeZoneInfo tzi in tz.TimeZoneInfos)
+            foreach (iCalTimeZoneInfo tzi in tz.TimeZoneInfos)
                 tzi.Start = DateTime.Now.ToUniversalTime();
 
             serializer = new iCalendarSerializer(iCal);
@@ -691,7 +691,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\TIMEZONE2.ics");
             tz = iCal.TimeZones[0];
 
-            foreach (TimeZoneInfo tzi in tz.TimeZoneInfos)
+            foreach (iCalTimeZoneInfo tzi in tz.TimeZoneInfos)
             {
                 ContentLine cl = tzi.Start.ContentLine;
                 Assert.IsFalse(cl.Parameters.ContainsKey("VALUE"), "\"DTSTART\" property MUST be represented in local time in timezones");
