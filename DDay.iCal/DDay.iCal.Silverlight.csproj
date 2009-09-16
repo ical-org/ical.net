@@ -178,7 +178,6 @@
     <Content Include="Serialization\iCalendar\iCalParserTokenTypes.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="DDay.iCal.pfx" />
     <None Include="Serialization\iCalendar\iCal.g" />
   </ItemGroup>

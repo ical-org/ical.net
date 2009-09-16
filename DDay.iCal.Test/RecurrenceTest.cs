@@ -2854,5 +2854,32 @@ namespace DDay.iCal.Test
             foreach (Occurrence occ in allOcc)
                 Console.WriteLine(occ.Period.StartTime.ToString("d") + " " + occ.Period.StartTime.ToString("t"));
         }
+
+        [Test, Category("Recurrence")]
+        public void TEST4()
+        {
+            RecurrencePattern rpattern = new RecurrencePattern();
+            rpattern.ByDay.Add(new DaySpecifier(DayOfWeek.Saturday));
+            rpattern.ByDay.Add(new DaySpecifier(DayOfWeek.Sunday));
+
+            rpattern.Frequency = FrequencyType.Weekly;
+
+            DateTime evtStart = new DateTime(2006, 12, 1);
+            DateTime evtEnd = new DateTime(2007, 1, 1);
+
+            // Add the exception dates
+            List<iCalDateTime> listOfDateTime = rpattern.Evaluate(evtStart, evtStart, evtEnd);
+            Assert.AreEqual(10, listOfDateTime.Count);
+            Assert.AreEqual(2, listOfDateTime[0].Day);
+            Assert.AreEqual(3, listOfDateTime[1].Day);
+            Assert.AreEqual(9, listOfDateTime[2].Day);
+            Assert.AreEqual(10, listOfDateTime[3].Day);
+            Assert.AreEqual(16, listOfDateTime[4].Day);
+            Assert.AreEqual(17, listOfDateTime[5].Day);
+            Assert.AreEqual(23, listOfDateTime[6].Day);
+            Assert.AreEqual(24, listOfDateTime[7].Day);
+            Assert.AreEqual(30, listOfDateTime[8].Day);
+            Assert.AreEqual(31, listOfDateTime[9].Day);
+        }
     }
 }
