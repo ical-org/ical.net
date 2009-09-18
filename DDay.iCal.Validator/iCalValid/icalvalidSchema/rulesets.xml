@@ -10,13 +10,23 @@
         name="Strict_2_0"
         nameString="ruleset_Strict_2_0"
         descriptionString="ruleset_Strict_2_0_Description">
+        
+        <!-- General Rules -->
         <rule name="emptyLine" file="rules/RFC2445/emptyLine.xml" />
         <rule name="crlfPairs" file="rules/RFC2445/4.1/crlfPairs.xml" />
         <rule name="lineFolding" file="rules/RFC2445/4.1/lineFolding.xml" />
         <rule name="lineFieldSeparators" file="rules/RFC2445/4.1.1/lineFieldSeparators.xml" />
         <rule name="multipleValues" file="rules/RFC2445/4.1.2/multipleValues.xml" />
-        <rule name="reqVersion" file="rules/RFC2445/4.6/reqVersion.xml" />
-        <rule name="reqProdID" file="rules/RFC2445/4.6/reqProdID.xml" />
+
+        <!-- Calendar Properties -->
+        <rule name="version" file="rules/RFC2445/4.6/version.xml" />
+        <rule name="prodID" file="rules/RFC2445/4.6/prodID.xml" />
+        <rule name="calScale" file="rules/RFC2445/4.6/calScale.xml" />
+        <rule name="method" file="rules/RFC2445/4.6/method.xml" />
+        
+        <!-- Events -->
+        <rule name="eventClassProperty" file="rules/RFC2445/4.6.1/eventClassProperty.xml" />
+        <rule name="eventCreatedProperty" file="rules/RFC2445/4.6.1/eventCreatedProperty.xml" />
         <rule name="eventEndDurationConflict" file="rules/RFC2445/4.6.1/eventEndDurationConflict.xml" />
     </ruleset>
 
@@ -24,13 +34,24 @@
         name="Compatibility_2_0"
         nameString="ruleset_Compatibility_2_0"
         descriptionString="ruleset_Compatibility_2_0_Description">
+        
+        <!-- General Rules -->        
         <rule name="emptyLine" file="rules/RFC2445/emptyLine.xml" />
         <rule name="crlfPairs" file="rules/RFC2445/4.1/crlfPairs.xml" />
         <rule name="lineFolding" file="rules/RFC2445/4.1/lineFolding.xml" />
         <rule name="lineFieldSeparators" file="rules/RFC2445/4.1.1/lineFieldSeparators.xml" />
         <rule name="multipleValues" file="rules/RFC2445/4.1.2/multipleValues.xml" />
         <rule name="inlineBinaryContent" file="rules/RFC2445/4.1.3/inlineBinaryContent.xml" />
-        <rule name="reqVersion" file="rules/RFC2445/4.6/reqVersion.xml" />
+        
+        <!-- Calendar Properties -->
+        <rule name="version" file="rules/RFC2445/4.6/version.xml" />
+        <rule name="prodID" file="rules/RFC2445/4.6/prodID.xml" />
+        <rule name="calScale" file="rules/RFC2445/4.6/calScale.xml" />
+        <rule name="method" file="rules/RFC2445/4.6/method.xml" />
+
+        <!-- Events -->
+        <rule name="eventClassProperty" file="rules/RFC2445/4.6.1/eventClassProperty.xml" />
+        <rule name="eventCreatedProperty" file="rules/RFC2445/4.6.1/eventCreatedProperty.xml" />
         <rule name="eventEndDurationConflict" file="rules/RFC2445/4.6.1/eventEndDurationConflict.xml" />
     </ruleset>    
 </rulesets>

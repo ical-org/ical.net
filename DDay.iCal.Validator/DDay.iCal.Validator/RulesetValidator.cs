@@ -215,13 +215,16 @@ namespace DDay.iCal.Validator.RFC2445
                                     // the fact that it was fatal may have side effects and cause errors
                                     // in almost every validator (i.e. a calendar with parsing errors).
                                     bool fatal = false;
-                                    foreach (IValidationError error in r.Errors)
+                                    if (r.Errors != null)
                                     {
-                                        errors.Add(error);
-                                        if (error.IsFatal)
+                                        foreach (IValidationError error in r.Errors)
                                         {
-                                            fatal = true;
-                                            break;
+                                            errors.Add(error);
+                                            if (error.IsFatal)
+                                            {
+                                                fatal = true;
+                                                break;
+                                            }
                                         }
                                     }
 

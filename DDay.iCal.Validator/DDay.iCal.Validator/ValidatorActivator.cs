@@ -35,7 +35,13 @@ namespace DDay.iCal.Validator
                         ci = validatorType.GetConstructor(new Type[] { typeof(string) });
                     if (ci != null)
                         validator = ci.Invoke(new object[] { iCalendarText }) as IValidator;
-                }
+                    else if (iCalendar != null)
+                    {
+                        ci = validatorType.GetConstructor(new Type[] { typeof(string), typeof(iCalendar) });
+                        if (ci != null)
+                            validator = ci.Invoke(new object[] { iCalendarText, iCalendar }) as IValidator;
+                    }
+                }                
             }
 
             return validator;

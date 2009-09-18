@@ -6,11 +6,10 @@
     xsi:schemaLocation="http://icalvalid.wikidot.com/validation ../../../schema.xsd">
     <!--
     Section 4.6:
-    "; 'prodid' and 'version' are both REQUIRED,
-     ; but MUST NOT occur more than once"
-    -->    
+    ; 'calscale' and 'method' are optional,
+    ; but MUST NOT occur more than once
+    -->
     <pass>
-        <!-- See RFC 2445 section 4.4 (page 49) -->
         <![CDATA[BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//hacksw/handcal//NONSGML v1.0//EN
@@ -23,10 +22,11 @@ END:VCALENDAR
 ]]>
     </pass>
 
-    <fail
-        error="prodIDRequiredError">
+    <pass>
         <![CDATA[BEGIN:VCALENDAR
 VERSION:2.0
+CALSCALE:GREGORIAN
+PRODID:-//hacksw/handcal//NONSGML v1.0//EN
 BEGIN:VEVENT
 DTSTART:19970714T170000Z
 DTEND:19970715T035959Z
@@ -34,14 +34,15 @@ SUMMARY:Bastille Day Party
 END:VEVENT
 END:VCALENDAR
 ]]>
-    </fail>
+    </pass>
 
     <fail
-        error="prodIDOnlyOnceError">
+        error="propertyOnlyOnceError">
         <![CDATA[BEGIN:VCALENDAR
 VERSION:2.0
+CALSCALE:GREGORIAN
+CALSCALE:ANOTHER
 PRODID:-//hacksw/handcal//NONSGML v1.0//EN
-PRODID:Another
 BEGIN:VEVENT
 DTSTART:19970714T170000Z
 DTEND:19970715T035959Z

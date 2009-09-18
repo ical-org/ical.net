@@ -31,23 +31,26 @@ namespace DDay.iCal.Validator
             {
                 if (!BoolUtil.IsTrue(result.Passed))
                 {
-                    foreach (IValidationError error in result.Errors)
+                    if (result.Errors != null)
                     {
-                        sb.Append(Environment.NewLine + i + ": ");
-                        StringReader sr = new StringReader(error.ToString());
-                        string s = sr.ReadLine();
-                        bool isFirstLine = true;
-                        while (!string.IsNullOrEmpty(s))
+                        foreach (IValidationError error in result.Errors)
                         {
-                            if (!isFirstLine)
-                                sb.Append(Environment.NewLine);
-                            sb.Append("\t" + s);
-                            isFirstLine = false;
-                            s = sr.ReadLine();
-                        }
-                        sr.Close();
+                            sb.Append(Environment.NewLine + i + ": ");
+                            StringReader sr = new StringReader(error.ToString());
+                            string s = sr.ReadLine();
+                            bool isFirstLine = true;
+                            while (!string.IsNullOrEmpty(s))
+                            {
+                                if (!isFirstLine)
+                                    sb.Append(Environment.NewLine);
+                                sb.Append("\t" + s);
+                                isFirstLine = false;
+                                s = sr.ReadLine();
+                            }
+                            sr.Close();
 
-                        i++;
+                            i++;
+                        }
                     }
                 }
             }

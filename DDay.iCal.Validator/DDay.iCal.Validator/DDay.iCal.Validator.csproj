@@ -55,7 +55,11 @@
     <Compile Include="RFC2445\4.1.2\MultipleValuesValidator.cs" />
     <Compile Include="RFC2445\4.1.3\InlineBinaryContentValidator.cs" />
     <Compile Include="RFC2445\4.1\LineFoldingValidator.cs" />
+    <Compile Include="RFC2445\4.6.1\EventCreatedPropertyValidator.cs" />
+    <Compile Include="RFC2445\4.6.1\EventClassPropertyValidator.cs" />
     <Compile Include="RFC2445\4.6.1\EventEndDurationConflictValidator.cs" />
+    <Compile Include="RFC2445\4.6\CalScaleValidator.cs" />
+    <Compile Include="RFC2445\4.6\MethodValidator.cs" />
     <Compile Include="Serialization\TextValidationSerializer.cs" />
     <Compile Include="Serialization\XmlValidationSerializer.cs" />
     <Compile Include="Test.cs" />
@@ -71,14 +75,14 @@
     <Compile Include="Interfaces\IValidationRuleset.cs" />
     <Compile Include="Interfaces\IValidationRulesetProvider.cs" />
     <Compile Include="RFC2445\4.1\CRLFPairsValidator.cs" />
-    <Compile Include="RFC2445\4.6\ReqProdIDValidator.cs" />
+    <Compile Include="RFC2445\4.6\ProdIDValidator.cs" />
     <Compile Include="RFC2445\EmptyLineValidator.cs" />
     <Compile Include="RulesetValidator.cs" />
     <Compile Include="Interfaces\IValidator.cs" />
     <Compile Include="Interfaces\IValidationError.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourceManager.cs" />
-    <Compile Include="RFC2445\4.6\ReqVersionValidator.cs" />
+    <Compile Include="RFC2445\4.6\VersionValidator.cs" />
     <Compile Include="Utils\BoolUtil.cs" />
     <Compile Include="ValidationError.cs" />
     <Compile Include="ValidationErrorWithLookup.cs" />
@@ -86,6 +90,7 @@
     <Compile Include="ValidationRule.cs" />
     <Compile Include="ValidationRuleset.cs" />
     <Compile Include="ValidatorActivator.cs" />
+    <Compile Include="Validators\PropertyCountValidator.cs" />
     <Compile Include="Xml\IXmlDocumentProvider.cs" />
     <Compile Include="Xml\LocalXmlDocumentProvider.cs" />
     <Compile Include="Xml\XmlCalendarTest.cs" />

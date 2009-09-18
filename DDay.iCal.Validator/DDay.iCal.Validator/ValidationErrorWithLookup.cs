@@ -20,7 +20,7 @@ namespace DDay.iCal.Validator
 
         public ValidationErrorWithLookup(string name, ValidationErrorType type, bool isFatal) :
             this(name, type)
-        {
+        {            
             IsFatal = isFatal;
         }
 

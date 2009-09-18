@@ -473,7 +473,7 @@ namespace DDay.iCal.Validator
             Console.WriteLine();
             Console.WriteLine("icalvalid - iCalendar validator");
             Console.WriteLine("----------------------------------------------------------------------------");
-            Console.WriteLine("Usage: iCalValid.exe [options]");
+            Console.WriteLine("Usage: icalvalid.exe [options]");
             Console.WriteLine();
             Console.WriteLine("Options");
             Console.WriteLine("============================================================================");
