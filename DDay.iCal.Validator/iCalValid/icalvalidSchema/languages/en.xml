@@ -51,6 +51,7 @@
         <error name="prodIDRequiredError">The PRODID property is required on all iCalendars.</error>
         <error name="prodIDOnlyOnceError">The PRODID property can only be defined once on a VCALENDAR component.</error>
         <error name="inlineBinaryContentError">Inline binary content should only be used in special circumstances that demand the iCalendar be expressed as a single object.  See RFC 2445 Section 4.1.3 for details.</error>
+        <error name="eventEndDurationConflictError">Events MUST only have a DTEND or DURATION, they cannot have both.</error>
     </errors>
     <resolutions>
         <resolution error="emptyLineError">Remove empty lines from the iCalendar.</resolution>
