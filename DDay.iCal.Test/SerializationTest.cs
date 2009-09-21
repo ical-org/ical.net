@@ -858,6 +858,17 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             Assert.AreEqual("\"This\\r\nis\na, test\";\\;,", v2.Value, "String escaping was incorrect.");
         }
 
+        /// <summary>
+        /// Tests that empty parameters are allowed in iCalObjects
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void PARSE13()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE13.ics");
+
+            Assert.AreEqual(2, iCal.Events.Count);            
+        }
+
         private static byte[] ReadBinary(string fileName)
         {
             byte[] binaryData = null;
