@@ -585,6 +585,30 @@ END:VCALENDAR
             result = dt2 - dt1;
             Assert.AreEqual(TimeSpan.FromHours(-1) + TimeSpan.FromSeconds(1), result);            
         }
+
+        /// <summary>
+        /// Ensures the AddTimeZone() method works as expected.
+        /// </summary>
+        [Test]
+        public void SystemTimeZone2()
+        {
+            System.TimeZoneInfo tzi = System.TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time");
+            Assert.IsNotNull(tzi);
+
+            iCalendar iCal = new iCalendar();
+            iCalTimeZone tz = iCal.AddTimeZone(tzi);
+            Assert.IsNotNull(tz);
+            
+            iCalDateTime dt1 = new iCalDateTime(2003, 10, 26, 0, 59, 59, tz.TZID, iCal);
+            iCalDateTime dt2 = new iCalDateTime(2003, 10, 26, 1, 0, 0, tz.TZID, iCal);
+            TimeSpan result = dt2 - dt1;
+            Assert.AreEqual(TimeSpan.FromHours(1) + TimeSpan.FromSeconds(1), result);
+
+            dt1 = new iCalDateTime(2004, 4, 4, 1, 59, 59, tz.TZID, iCal);
+            dt2 = new iCalDateTime(2004, 4, 4, 2, 0, 0, tz.TZID, iCal);
+            result = dt2 - dt1;
+            Assert.AreEqual(TimeSpan.FromHours(-1) + TimeSpan.FromSeconds(1), result);
+        }
 #endif
     }
 }

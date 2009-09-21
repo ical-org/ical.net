@@ -52,10 +52,10 @@ namespace DDay.iCal.Test
 
         static public void CompareCalendars(iCalendar iCal1, iCalendar iCal2)
         {
-            Assert.IsTrue(object.Equals(iCal1.Method, iCal2.Method), "Methods do not match");
-            Assert.IsTrue(object.Equals(iCal1.ProductID, iCal2.ProductID), "ProductIDs do not match");
-            Assert.IsTrue(object.Equals(iCal1.Scale, iCal2.Scale), "Scales do not match");
-            Assert.IsTrue(object.Equals(iCal1.Version, iCal2.Version), "Versions do not match");
+            Assert.AreEqual(iCal1.Method, iCal2.Method, "Methods do not match");
+            Assert.AreEqual(iCal1.ProductID, iCal2.ProductID, "ProductIDs do not match");
+            Assert.AreEqual(iCal1.Scale, iCal2.Scale, "Scales do not match");
+            Assert.AreEqual(iCal1.Version, iCal2.Version, "Versions do not match");
             
             for (int i = 0; i < iCal1.Events.Count; i++)
                 CompareComponents(iCal1.Events[i], iCal2.Events[i]);

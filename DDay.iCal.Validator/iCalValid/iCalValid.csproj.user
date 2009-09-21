@@ -1,5 +1,5 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <StartArguments>/t /f:ical_club_7423.ics</StartArguments>
+    <StartArguments>/f:Calendars\Test3.ics</StartArguments>
   </PropertyGroup>
 </Project>

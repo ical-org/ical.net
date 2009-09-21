@@ -63,6 +63,11 @@ namespace DDay.iCal.Serialization.iCalendar.Components
                 if (field != null ||
                     property != null)
                 {
+                    // This is a non-standard property.  Let's load it into memory,
+                    // So we can serialize it later
+                    Property p = new Property(cl);
+                    p.AddToParent();
+
                     // Get the field/property's value
                     object value = field == null ? property.GetValue(obj, null) : field.GetValue(obj);
                     Type itemType = field == null ? property.PropertyType : field.FieldType;
@@ -138,14 +143,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
                         }
                         else ;// FIXME: throw single-value exception, if "strict" parsing is enabled
                     }
-                }
-                else
-                {
-                    // This is a non-standard property.  Let's load it into memory,
-                    // So we can serialize it later
-                    Property p = new Property(cl);
-                    p.AddToParent();
-                }
+                }              
             }
         }
 

@@ -36,12 +36,20 @@ namespace DDay.iCal.Validator.RFC2445
             string simpleNewlineCalendar = iCalText.Replace("\r\n", "\n");
             simpleNewlineCalendar = simpleNewlineCalendar.Replace("\r", "\n");
 
-            if (simpleNewlineCalendar.Contains("\n\n"))
+            StringReader sr = new StringReader(simpleNewlineCalendar);
+            string line = sr.ReadLine();
+            int lineNumber = 0;
+            while (line != null)
             {
-                result.Passed = false;
-                result.Errors = new IValidationError[] { new ValidationErrorWithLookup("emptyLineError", ValidationErrorType.Warning) };
+                lineNumber++;
+                if (string.IsNullOrEmpty(line))
+                {
+                    result.Passed = false;
+                    result.Errors = new IValidationError[] { new ValidationErrorWithLookup("emptyLineError", ValidationErrorType.Warning, false, lineNumber) };
+                    break;
+                }
+                line = sr.ReadLine();
             }
-            else result.Passed = true;
 
             return new IValidationResult[] { result };
         }

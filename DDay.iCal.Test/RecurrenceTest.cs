@@ -2455,6 +2455,44 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
+        /// Ensures that the following recurrence functions properly.
+        /// The desired result is "The last Weekend-day of September for the next 10 years."
+        /// This specifically tests the BYSETPOS=-1 to accomplish this.
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE51()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE51.ics");
+
+            List<Occurrence> occurrences = iCal.GetOccurrences(
+                new iCalDateTime(2009, 1, 1, 0, 0, 0, tzid, iCal),
+                new iCalDateTime(2020, 1, 1, 0, 0, 0, tzid, iCal));            
+
+            iCalDateTime[] DateTimes = new iCalDateTime[]
+            {
+                new iCalDateTime(2009, 9, 27, 5, 30, 0),
+                new iCalDateTime(2010, 9, 26, 5, 30, 0),
+                new iCalDateTime(2011, 9, 25, 5, 30, 0),
+                new iCalDateTime(2012, 9, 30, 5, 30, 0),
+                new iCalDateTime(2013, 9, 29, 5, 30, 0),
+                new iCalDateTime(2014, 9, 28, 5, 30, 0),
+                new iCalDateTime(2015, 9, 27, 5, 30, 0),
+                new iCalDateTime(2016, 9, 25, 5, 30, 0),
+                new iCalDateTime(2017, 9, 30, 5, 30, 0),
+                new iCalDateTime(2018, 9, 30, 5, 30, 0)                
+            };
+
+            Assert.AreEqual(
+                DateTimes.Length,
+                occurrences.Count,
+                "There should be exactly " + DateTimes.Length +
+                " occurrences; there were " + occurrences.Count);
+            
+            for (int i = 0; i < DateTimes.Length; i++)
+                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);
+        }
+
+        /// <summary>
         /// Tests the iCal holidays downloaded from apple.com
         /// </summary>
         [Test, Category("Recurrence")]

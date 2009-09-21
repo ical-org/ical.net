@@ -867,7 +867,7 @@ namespace DDay.iCal.DataTypes
             if (TC.Recur.ByMonth.Count == 0)
                 months.Add(1);
             else months = TC.Months;
-
+            
             foreach (int month in months)
             {
                 DateTime baseDate = new DateTime(TC.StartDate.Value.Year, month, 1);
@@ -884,7 +884,7 @@ namespace DDay.iCal.DataTypes
                             curr = curr.AddYears(1).AddDays(-1);
                         else curr = curr.AddMonths(1).AddDays(-1);
                     }
-
+                    
                     while (curr.DayOfWeek != day.DayOfWeek)
                         curr = curr.AddDays(inc);
 
@@ -912,7 +912,7 @@ namespace DDay.iCal.DataTypes
                         }
                     }
                 }
-            }
+            }            
         }
 
         protected void FillMonths(TimeCalculation TC)
@@ -1016,12 +1016,17 @@ namespace DDay.iCal.DataTypes
                     throw new NotSupportedException("CalculateChildOccurrences() is not supported for a frequency of " + Frequency.ToString());                    
             }
 
+            // Sort the Date/Time values in ascending order, to ensure they
+            // occur in the correct order.  This is critical for BYSETPOS
+            // values, such as BYSETPOS=-1.
+            TC.DateTimes.Sort();
+
             // Apply the BYSETPOS to the list of child occurrences
             // We do this before the dates are filtered by Start and End date
             // so that the BYSETPOS calculates correctly.
             // NOTE: fixes RRULE33 eval
             if (BySetPos.Count != 0)
-            {
+            {                
                 List<iCalDateTime> newDateTimes = new List<iCalDateTime>();
                 foreach (int pos in BySetPos)
                 {

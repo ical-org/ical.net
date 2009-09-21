@@ -644,6 +644,47 @@ namespace DDay.iCal
         #region Public Methods
 
         /// <summary>
+        /// Adds a time zone to the iCalendar.  This time zone may
+        /// then be used in date/time objects contained in the 
+        /// calendar.
+        /// </summary>        
+        /// <returns>The time zone added to the calendar.</returns>
+        public iCalTimeZone AddTimeZone(iCalTimeZone tz)
+        {
+            AddChild(tz);
+            return tz;
+        }
+
+#if DATACONTRACT && !SILVERLIGHT
+        /// <summary>
+        /// Adds a system time zone to the iCalendar.  This time zone may
+        /// then be used in date/time objects contained in the 
+        /// calendar.
+        /// </summary>
+        /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>
+        /// <returns>The time zone added to the calendar.</returns>
+        public iCalTimeZone AddTimeZone(System.TimeZoneInfo tzi)
+        {
+            iCalTimeZone tz = iCalTimeZone.FromSystemTimeZone(tzi);
+            AddChild(tz);
+            return tz;
+        }
+
+        /// <summary>
+        /// Adds the local system time zone to the iCalendar.  
+        /// This time zone may then be used in date/time
+        /// objects contained in the calendar.
+        /// </summary>
+        /// <returns>The time zone added to the calendar.</returns>
+        public iCalTimeZone AddLocalTimeZone()
+        {
+            iCalTimeZone tz = iCalTimeZone.FromLocalTimeZone();
+            AddChild(tz);
+            return tz;
+        }
+#endif
+
+        /// <summary>
         /// Retrieves the <see cref="DDay.iCal.Components.TimeZone" /> object for the specified
         /// <see cref="TZID"/> (Time Zone Identifier).
         /// </summary>
