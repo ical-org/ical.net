@@ -866,7 +866,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE13.ics");
 
-            Assert.AreEqual(2, iCal.Events.Count);            
+            Assert.AreEqual(2, iCal.Events.Count);
         }
 
         private static byte[] ReadBinary(string fileName)
