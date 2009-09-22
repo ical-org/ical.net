@@ -45,9 +45,18 @@ namespace DDay.iCal.Validator
                 else
                     throw new Exception("A valid schema directory or zip file could not be located!");
 
-                // Setup the language to use for validation/tests
-                SetupLanguage(docProvider);
-                IValidationRuleset selectedRuleset = LoadRuleset(docProvider);
+                IValidationRuleset selectedRuleset = null;
+                bool successfulLoad = true;
+                try
+                {
+                    // Setup the language to use for validation/tests
+                    SetupLanguage(docProvider);
+                    selectedRuleset = LoadRuleset(docProvider);
+                }
+                catch (ValidationRuleLoadException)
+                {
+                    successfulLoad = false;
+                }
 
                 if (_Arguments.Contains(_SchemaValidationArgument))
                 {
@@ -211,42 +220,49 @@ namespace DDay.iCal.Validator
                 foreach (string xmlPath in filesToValidate)
                 {
                     Console.Write(Environment.NewLine + "Validating '" + xmlPath + "'...");
-                    string xmlText = docProvider.LoadXml(xmlPath);
-                    
-                    int errors = 0;
-                    bool needsNewline = true;
-                    XmlReaderSettings readSettings = new XmlReaderSettings();
-                    readSettings.ValidationType = ValidationType.Schema;
-                    readSettings.Schemas.Add(sc);
-                    readSettings.ConformanceLevel = ConformanceLevel.Document;
-                    readSettings.ValidationEventHandler += new ValidationEventHandler(
-                        delegate(object s, ValidationEventArgs e)
-                        {
-                            errors++;
-                            if (needsNewline)
+                    try
+                    {
+                        string xmlText = docProvider.LoadXml(xmlPath);
+
+                        int errors = 0;
+                        bool needsNewline = true;
+                        XmlReaderSettings readSettings = new XmlReaderSettings();
+                        readSettings.ValidationType = ValidationType.Schema;
+                        readSettings.Schemas.Add(sc);
+                        readSettings.ConformanceLevel = ConformanceLevel.Document;
+                        readSettings.ValidationEventHandler += new ValidationEventHandler(
+                            delegate(object s, ValidationEventArgs e)
                             {
-                                Console.WriteLine();
-                                needsNewline = false;
+                                errors++;
+                                if (needsNewline)
+                                {
+                                    Console.WriteLine();
+                                    needsNewline = false;
+                                }
+                                Console.Write(Environment.NewLine + e.Message + " (line " + e.Exception.LineNumber + " col " + e.Exception.LinePosition + ")");
                             }
-                            Console.Write(Environment.NewLine + e.Message + " (line " + e.Exception.LineNumber + " col " + e.Exception.LinePosition + ")");
+                        );
+
+                        XmlReader reader = XmlReader.Create(new StringReader(xmlText), readSettings);
+                        while (reader.Read()) { }
+                        reader.Close();
+
+                        if (errors > 0)
+                        {
+                            Console.WriteLine(
+                                Environment.NewLine +
+                                Environment.NewLine +
+                                (errors == 1 ? "There was 1 error" : "There were " + errors + " errors") +
+                                " in '" + xmlPath + "'; please correct before using this file.");
                         }
-                    );
-
-                    XmlReader reader = XmlReader.Create(new StringReader(xmlText), readSettings);
-                    while (reader.Read()) { }
-                    reader.Close();
-
-                    if (errors > 0)
-                    {
-                        Console.WriteLine(
-                            Environment.NewLine +
-                            Environment.NewLine +
-                            (errors == 1 ? "There was 1 error" : "There were " + errors + " errors") +
-                            " in '" + xmlPath + "'; please correct before using this file.");
+                        else
+                        {
+                            Console.Write("OK.");
+                        }
                     }
-                    else
+                    catch
                     {
-                        Console.Write("OK.");
+                        Console.Write("Error loading file.");
                     }
                 }                
             }

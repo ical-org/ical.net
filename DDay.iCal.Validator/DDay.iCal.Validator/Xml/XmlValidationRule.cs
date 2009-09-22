@@ -25,18 +25,25 @@ namespace DDay.iCal.Validator.Xml
 
             if (!string.IsNullOrEmpty(File))
             {
-                XmlDocument doc = docProvider.Load(File);
-                if (doc != null)
+                try
                 {
-                    List<ITest> tests = new List<ITest>();
+                    XmlDocument doc = docProvider.Load(File);
+                    if (doc != null)
+                    {
+                        List<ITest> tests = new List<ITest>();
 
-                    string prefix = nsmgr.LookupPrefix("http://icalvalid.wikidot.com/validation");
-                    foreach (XmlNode passNode in doc.SelectNodes("/" + prefix + ":rule/" + prefix + ":pass", nsmgr))
-                        tests.Add(new XmlCalendarTest(passNode, nsmgr));
-                    foreach (XmlNode failNode in doc.SelectNodes("/" + prefix + ":rule/" + prefix + ":fail", nsmgr))
-                        tests.Add(new XmlCalendarTest(failNode, nsmgr));
+                        string prefix = nsmgr.LookupPrefix("http://icalvalid.wikidot.com/validation");
+                        foreach (XmlNode passNode in doc.SelectNodes("/" + prefix + ":rule/" + prefix + ":pass", nsmgr))
+                            tests.Add(new XmlCalendarTest(passNode, nsmgr));
+                        foreach (XmlNode failNode in doc.SelectNodes("/" + prefix + ":rule/" + prefix + ":fail", nsmgr))
+                            tests.Add(new XmlCalendarTest(failNode, nsmgr));
 
-                    Tests = tests.ToArray();
+                        Tests = tests.ToArray();
+                    }
+                }
+                catch
+                {
+                    throw new ValidationRuleLoadException(this);
                 }
             }            
         }
