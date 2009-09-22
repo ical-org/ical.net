@@ -63,7 +63,7 @@ namespace DDay.iCal.Validator
                     SchemaTest(docProvider);
                     LanguageKeyValidation(docProvider);
                 }
-                else
+                else if (successfulLoad)
                 {
                     // Determine whether we are performing a self test, or
                     // validating an iCalendar file...
@@ -75,6 +75,10 @@ namespace DDay.iCal.Validator
                     {
                         ValidateFile(docProvider, selectedRuleset);
                     }
+                }
+                else
+                {
+                    Console.WriteLine("The icalvalid schema did not load successfully.  Try 'icalvalid /s' for more information.");
                 }
             }
             catch (Exception ex)
