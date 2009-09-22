@@ -6,44 +6,41 @@
     xsi:schemaLocation="http://icalvalid.wikidot.com/validation ../../../schema.xsd">
     <!--
     Section 4.6.1:
-    ; either 'dtend' or 'duration' may appear in
-    ; a 'eventprop', but 'dtend' and 'duration'
-    ; MUST NOT occur in the same 'eventprop'
-    -->
+    ; the following are optional,
+    ; but MUST NOT occur more than once
+
+    class / created / description / dtstart / geo /
+    last-mod / location / organizer / priority /
+    dtstamp / seq / status / summary / transp /
+    uid / url / recurid /
+    -->    
     <pass>
         <![CDATA[BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//hacksw/handcal//NONSGML v1.0//EN
 BEGIN:VEVENT
-DTSTART:19970714T170000Z
-DTEND:19970714T180000Z
-SUMMARY:Bastille Day Party
 END:VEVENT
 END:VCALENDAR]]>
     </pass>
-    
+
     <pass>
         <![CDATA[BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//hacksw/handcal//NONSGML v1.0//EN
 BEGIN:VEVENT
-DTSTART:19970714T170000Z
-DURATION:PT1H
-SUMMARY:Bastille Day Party
+LAST-MODIFIED:19960817T133000Z
 END:VEVENT
 END:VCALENDAR]]>
     </pass>
 
     <fail
-        error="eventEndDurationConflictError">
+        error="propertyOnlyOnceError">
         <![CDATA[BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//hacksw/handcal//NONSGML v1.0//EN
 BEGIN:VEVENT
-DTSTART:19970714T170000Z
-DTEND:19970714T180000Z
-DURATION:PT1H
-SUMMARY:Bastille Day Party
+LAST-MODIFIED:19960817T133000Z
+LAST-MODIFIED:19960817T133000Z
 END:VEVENT
 END:VCALENDAR]]>
     </fail>

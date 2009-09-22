@@ -28,8 +28,8 @@ icalobject returns [DDay.iCal.iCalendar iCal = (DDay.iCal.iCalendar)Activator.Cr
 
 icalbody[DDay.iCal.iCalendar iCal]: (calprop[iCal])* (component[iCal])?;
 component[iCalObject o] returns [ComponentBase c = null;]: (c=x_comp[o] | c=iana_comp[o])+;
-iana_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:IANA_TOKEN {c = o.iCalendar.Create(o, n.getText().ToLower());} (CRLF)* (calendarline[c])+ END COLON IANA_TOKEN (CRLF)* { c.OnLoaded(EventArgs.Empty); };
-x_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:X_NAME {c = o.iCalendar.Create(o, n.getText().ToLower());} (CRLF)* (calendarline[c])+ END COLON X_NAME (CRLF)* { c.OnLoaded(EventArgs.Empty); };
+iana_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:IANA_TOKEN {c = o.iCalendar.Create(o, n.getText().ToLower());} (CRLF)* (calendarline[c])* END COLON IANA_TOKEN (CRLF)* { c.OnLoaded(EventArgs.Empty); };
+x_comp[iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:X_NAME {c = o.iCalendar.Create(o, n.getText().ToLower());} (CRLF)* (calendarline[c])* END COLON X_NAME (CRLF)* { c.OnLoaded(EventArgs.Empty); };
 
 // iCalendar Properties
 calprop[iCalObject o]: x_prop[o] | iana_prop[o];

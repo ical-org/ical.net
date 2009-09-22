@@ -110,13 +110,46 @@
     <Content Include="icalvalidSchema\rules\RFC2445\4.1\lineFolding.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventSummaryProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventStatusProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventSeqProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventDTStampProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventPriorityProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventOrganizerProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventLocationProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventLastModProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventGeoProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventDTStartProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventDescriptionProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventCreatedProperty.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventClassProperty.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventEndDurationConflict.xml">
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventDTEndDurationConflict.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="icalvalidSchema\rules\RFC2445\4.6\calScale.xml">

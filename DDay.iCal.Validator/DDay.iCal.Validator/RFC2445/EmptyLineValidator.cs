@@ -30,6 +30,7 @@ namespace DDay.iCal.Validator.RFC2445
         public IValidationResult[] Validate()
         {
             ValidationResult result = new ValidationResult("emptyLine");
+            result.Passed = true;
 
             // Convert all variations of newlines to a simple "\n" so
             // we can easily detect empty lines.

@@ -5,7 +5,7 @@ using DDay.iCal.Components;
 
 namespace DDay.iCal.Validator.RFC2445
 {
-	public class EventClassPropertyValidator :
+	public class EventDTStartPropertyValidator :
         IValidator
 	{
         #region Public Properties
@@ -16,7 +16,7 @@ namespace DDay.iCal.Validator.RFC2445
 
         #region Constructors
 
-        public EventClassPropertyValidator(iCalendar cal)
+        public EventDTStartPropertyValidator(iCalendar cal)
         {
             iCalendar = cal;
         }
@@ -27,17 +27,16 @@ namespace DDay.iCal.Validator.RFC2445
 
         public IValidationResult[] Validate()
         {
-            ValidationResult result = new ValidationResult("eventClassProperty");
+            ValidationResult result = new ValidationResult("eventDTStartProperty");
             result.Passed = true;
 
             List<IValidationError> errors = new List<IValidationError>();
 
             foreach (Event evt in iCalendar.Events)
-            {                
+            {
                 ValidationResult evtResult = ValidationResult.GetCompositeResults(
-                    "eventClassProperty",
-                    new PropertyCountValidator(evt, "VEVENT", "CLASS"),
-                    new PropertyValuesValidator(evt, "VEVENT", "CLASS", "PUBLIC", "PRIVATE", "CONFIDENTIAL")
+                    "eventDTStartProperty",
+                    new PropertyCountValidator(evt, "VEVENT", "DTSTART")                    
                 );
 
                 if (!evtResult.Passed.Value)

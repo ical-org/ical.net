@@ -284,8 +284,7 @@ _loop16_breakloop:			;
 			}
 _loop26_breakloop:			;
 		}    // ( ... )*
-		{ // ( ... )+
-			int _cnt28=0;
+		{    // ( ... )*
 			for (;;)
 			{
 				if ((LA(1)==BEGIN||LA(1)==IANA_TOKEN||LA(1)==X_NAME))
@@ -294,13 +293,12 @@ _loop26_breakloop:			;
 				}
 				else
 				{
-					if (_cnt28 >= 1) { goto _loop28_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
+					goto _loop28_breakloop;
 				}
 				
-				_cnt28++;
 			}
 _loop28_breakloop:			;
-		}    // ( ... )+
+		}    // ( ... )*
 		match(END);
 		match(COLON);
 		match(X_NAME);
@@ -351,8 +349,7 @@ _loop30_breakloop:			;
 			}
 _loop19_breakloop:			;
 		}    // ( ... )*
-		{ // ( ... )+
-			int _cnt21=0;
+		{    // ( ... )*
 			for (;;)
 			{
 				if ((LA(1)==BEGIN||LA(1)==IANA_TOKEN||LA(1)==X_NAME))
@@ -361,13 +358,12 @@ _loop19_breakloop:			;
 				}
 				else
 				{
-					if (_cnt21 >= 1) { goto _loop21_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
+					goto _loop21_breakloop;
 				}
 				
-				_cnt21++;
 			}
 _loop21_breakloop:			;
-		}    // ( ... )+
+		}    // ( ... )*
 		match(END);
 		match(COLON);
 		match(IANA_TOKEN);

@@ -47,13 +47,14 @@
         <error name="propertyRequiredError">The %1 property is required on all %2 components.</error>
         <error name="propertyOnlyOnceError">The %1 property may only be defined once on a %2 component.</error>
         <error name="propertyCountRangeError">The %1 property may only be defined between %3 and %4 times on a %2 component.</error>
+        <error name="propertyInvalidValueWarning">The %1 property on %2 components does not officially support the value %3.  The following are defined values: %4.</error>
         <error name="versionRequiredError">The VERSION property is required on all VCALENDAR components.</error>
         <error name="versionOnlyOnceError">The VERSION property may only be defined once on a VCALENDAR component.</error>
         <error name="versionNumberError">The VERSION property is invalid; it must be a version number (i.e. "2.0").</error>
         <error name="versionFirstError">The VERSION property should be the first property on the calendar. Some calendar clients cannot properly parse the calendar otherwise.</error>
         <error name="versionGE2_0Error">Only calendars version 2.0 or higher are allowed.</error>        
         <error name="inlineBinaryContentError">Inline binary content should only be used in special circumstances that demand the iCalendar be expressed as a single object.  See RFC 2445 Section 4.1.3 for details.</error>
-        <error name="eventEndDurationConflictError">Events MUST only have a DTEND or DURATION, they cannot have both.</error>
+        <error name="eventDTEndDurationConflictError">Events MUST only have a DTEND or DURATION, they cannot have both.</error>
     </errors>
     <resolutions>
         <resolution error="emptyLineError">Remove empty lines from the iCalendar.</resolution>

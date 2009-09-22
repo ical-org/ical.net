@@ -7,7 +7,7 @@ using System.IO;
 
 namespace DDay.iCal.Validator.RFC2445
 {
-    public class EventEndDurationConflictValidator : 
+    public class EventDTEndDurationConflictValidator : 
         IValidator
     {
         #region Public Properties
@@ -18,7 +18,7 @@ namespace DDay.iCal.Validator.RFC2445
 
         #region Constructors
 
-        public EventEndDurationConflictValidator(string cal_text)
+        public EventDTEndDurationConflictValidator(string cal_text)
         {
             iCalText = cal_text;
         }
@@ -35,7 +35,7 @@ namespace DDay.iCal.Validator.RFC2445
             bool errorAdded = false;
             int lineNumber = 0;
 
-            ValidationResult result = new ValidationResult("eventEndDurationConflict");
+            ValidationResult result = new ValidationResult("eventDTEndDurationConflict");
             List<IValidationError> errors = new List<IValidationError>();
 
             StringReader sr = new StringReader(iCalText);
@@ -73,7 +73,7 @@ namespace DDay.iCal.Validator.RFC2445
 
                     if (!errorAdded && hasEnd && hasDuration)
                     {
-                        errors.Add(new ValidationErrorWithLookup("eventEndDurationConflictError", ValidationErrorType.Error, false, lineNumber, 0));
+                        errors.Add(new ValidationErrorWithLookup("eventDTEndDurationConflictError", ValidationErrorType.Error, false, lineNumber, 0));
                         errorAdded = true;
                     }
                 }

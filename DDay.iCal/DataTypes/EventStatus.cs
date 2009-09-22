@@ -8,7 +8,7 @@ namespace DDay.iCal.DataTypes
     /// Status codes available to an <see cref="Event"/> item
     /// </summary>
     public enum EventStatus
-    {        
+    {
         Tentative,
         Confirmed,
         Cancelled

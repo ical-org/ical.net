@@ -130,9 +130,20 @@ namespace DDay.iCal.Serialization.iCalendar.Components
                         // Always assign enum values
                         else if (itemType.IsEnum)
                         {
-                            if (field != null)
-                                field.SetValue(obj, Enum.Parse(itemType, cl.Value.Replace("-", "_"), true));
-                            else property.SetValue(obj, Enum.Parse(itemType, cl.Value.Replace("-", "_"), true), null);
+                            object enumValue;
+                            // Allow the object to continue parsing, and store the invalid
+                            // enum value as a property.
+                            try
+                            {
+                                if (field != null)
+                                    field.SetValue(obj, Enum.Parse(itemType, cl.Value.Replace("-", "_"), true));
+                                else property.SetValue(obj, Enum.Parse(itemType, cl.Value.Replace("-", "_"), true), null);
+                            }
+                            catch
+                            {
+                                // FIXME: Do this another way so we don't have
+                                // to try/catch it - better performance.
+                            }
                         }
                         // Otherwise, set the value directly!
                         else if (value == null || value.Equals(minVal))
