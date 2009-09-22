@@ -1,18 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <rule
-    name="eventDTStampProperty"
+    name="eventAttachProperty"
     xmlns="http://icalvalid.wikidot.com/validation"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://icalvalid.wikidot.com/validation ../../../schema.xsd">
     <!--
     Section 4.6.1:
     ; the following are optional,
-    ; but MUST NOT occur more than once
+    ; and MAY occur more than once
 
-    class / created / description / dtstart / geo /
-    last-mod / location / organizer / priority /
-    dtstamp / seq / status / summary / transp /
-    uid / url / recurid /
+    attach / attendee / categories / comment /
+    contact / exdate / exrule / rstatus / related /
+    resources / rdate / rrule / x-prop
     -->    
     <pass>
         <![CDATA[BEGIN:VCALENDAR
@@ -28,20 +27,20 @@ END:VCALENDAR]]>
 VERSION:2.0
 PRODID:-//hacksw/handcal//NONSGML v1.0//EN
 BEGIN:VEVENT
-DTSTAMP:19971210T080000Z
+ATTACH:CID:jsmith.part3.960817T083000.xyzMail@host1.com
 END:VEVENT
 END:VCALENDAR]]>
     </pass>
 
-    <fail
-        error="propertyOnlyOnceError">
+    <pass>
         <![CDATA[BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//hacksw/handcal//NONSGML v1.0//EN
 BEGIN:VEVENT
-DTSTAMP:19971210T080000Z
-DTSTAMP:19971210T080000Z
+ATTACH:CID:jsmith.part3.960817T083000.xyzMail@host1.com
+ATTACH;FMTTYPE=application/postscript:ftp://xyzCorp.com/pub/
+ reports/r-960812.ps
 END:VEVENT
 END:VCALENDAR]]>
-    </fail>
+    </pass>
 </rule>

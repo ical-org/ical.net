@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <rule
-    name="eventDTStampProperty"
+    name="eventTranspProperty"
     xmlns="http://icalvalid.wikidot.com/validation"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://icalvalid.wikidot.com/validation ../../../schema.xsd">
@@ -28,7 +28,7 @@ END:VCALENDAR]]>
 VERSION:2.0
 PRODID:-//hacksw/handcal//NONSGML v1.0//EN
 BEGIN:VEVENT
-DTSTAMP:19971210T080000Z
+TRANSP:TRANSPARENT
 END:VEVENT
 END:VCALENDAR]]>
     </pass>
@@ -39,8 +39,8 @@ END:VCALENDAR]]>
 VERSION:2.0
 PRODID:-//hacksw/handcal//NONSGML v1.0//EN
 BEGIN:VEVENT
-DTSTAMP:19971210T080000Z
-DTSTAMP:19971210T080000Z
+TRANSP:TRANSPARENT
+TRANSP:OPAQUE
 END:VEVENT
 END:VCALENDAR]]>
     </fail>

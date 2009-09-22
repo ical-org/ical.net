@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <rule
-    name="reqVersion"
+    name="eventGeoProperty"
     xmlns="http://icalvalid.wikidot.com/validation"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://icalvalid.wikidot.com/validation ../../../schema.xsd">
