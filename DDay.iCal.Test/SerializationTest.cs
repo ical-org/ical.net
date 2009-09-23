@@ -888,6 +888,31 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             Assert.AreEqual(1, iCal.Events[0].Request_Status[3].StatusCode.Secondary);
         }
 
+        /// <summary>
+        /// Tests that valid RDATE properties are parsed correctly.
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void PARSE15()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE15.ics");
+            Assert.AreEqual(1, iCal.Events.Count);
+            Assert.AreEqual(3, iCal.Events[0].RDate.Length);
+            Assert.AreEqual((iCalDateTime)new DateTime(1997, 7, 14, 12, 30, 0, DateTimeKind.Utc), iCal.Events[0].RDate[0].Periods[0].StartTime);
+            Assert.AreEqual((iCalDateTime)new DateTime(1996, 4, 3, 2, 0, 0, DateTimeKind.Utc), iCal.Events[0].RDate[1].Periods[0].StartTime);
+            Assert.AreEqual((iCalDateTime)new DateTime(1996, 4, 3, 4, 0, 0, DateTimeKind.Utc), iCal.Events[0].RDate[1].Periods[0].EndTime);
+            Assert.AreEqual(new iCalDateTime(1997, 1, 1), iCal.Events[0].RDate[2].Periods[0].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 1, 20), iCal.Events[0].RDate[2].Periods[1].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 2, 17), iCal.Events[0].RDate[2].Periods[2].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 4, 21), iCal.Events[0].RDate[2].Periods[3].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 5, 26), iCal.Events[0].RDate[2].Periods[4].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 7, 4), iCal.Events[0].RDate[2].Periods[5].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 9, 1), iCal.Events[0].RDate[2].Periods[6].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 10, 14), iCal.Events[0].RDate[2].Periods[7].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 11, 28), iCal.Events[0].RDate[2].Periods[8].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 11, 29), iCal.Events[0].RDate[2].Periods[9].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 12, 25), iCal.Events[0].RDate[2].Periods[10].StartTime);
+        }
+
         private static byte[] ReadBinary(string fileName)
         {
             byte[] binaryData = null;

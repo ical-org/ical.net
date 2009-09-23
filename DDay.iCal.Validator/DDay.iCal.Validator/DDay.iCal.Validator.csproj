@@ -56,6 +56,11 @@
     <Compile Include="RFC2445\4.1.2\MultipleValuesValidator.cs" />
     <Compile Include="RFC2445\4.1.3\InlineBinaryContentValidator.cs" />
     <Compile Include="RFC2445\4.1\LineFoldingValidator.cs" />
+    <Compile Include="RFC2445\4.6.1\EventXPropertyValidator.cs" />
+    <Compile Include="RFC2445\4.6.1\EventRRulePropertyValidator.cs" />
+    <Compile Include="RFC2445\4.6.1\EventRDatePropertyValidator.cs" />
+    <Compile Include="RFC2445\4.6.1\EventResourcesPropertyValidator.cs" />
+    <Compile Include="RFC2445\4.6.1\EventRelatedPropertyValidator.cs" />
     <Compile Include="RFC2445\4.6.1\EventRStatusPropertyValidator.cs" />
     <Compile Include="RFC2445\4.6.1\EventExRulePropertyValidator.cs" />
     <Compile Include="RFC2445\4.6.1\EventExDatePropertyValidator.cs" />
@@ -116,8 +121,10 @@
     <Compile Include="ValidationRule.cs" />
     <Compile Include="ValidationRuleset.cs" />
     <Compile Include="ValidatorActivator.cs" />
+    <Compile Include="Validators\PropertyTypeValidator.cs" />
     <Compile Include="Validators\PropertyValuesValidator.cs" />
     <Compile Include="Validators\PropertyCountValidator.cs" />
+    <Compile Include="Validators\Types\TextValidator.cs" />
     <Compile Include="Xml\IXmlDocumentProvider.cs" />
     <Compile Include="Xml\LocalXmlDocumentProvider.cs" />
     <Compile Include="Xml\XmlCalendarTest.cs" />

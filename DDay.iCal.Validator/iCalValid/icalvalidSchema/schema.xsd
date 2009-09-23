@@ -55,6 +55,10 @@
             type="nameIDType"
             use="required" />
         <xs:attribute
+            name="basedOn"
+            type="nameIDType"
+            use="optional" />
+        <xs:attribute
             name="nameString"
             type="nameIDType"
             use="optional" />

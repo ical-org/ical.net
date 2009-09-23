@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<rule
+    name="eventRelatedProperty"
+    xmlns="http://icalvalid.wikidot.com/validation"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://icalvalid.wikidot.com/validation ../../../schema.xsd">
+    <!--
+    Section 4.6.1:
+    ; the following are optional,
+    ; and MAY occur more than once
+
+    attach / attendee / categories / comment /
+    contact / exdate / exrule / rstatus / related /
+    resources / rdate / rrule / x-prop
+    -->    
+    <pass>
+        <![CDATA[BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//hacksw/handcal//NONSGML v1.0//EN
+BEGIN:VEVENT
+END:VEVENT
+END:VCALENDAR]]>
+    </pass>
+
+    <pass>
+        <![CDATA[BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//hacksw/handcal//NONSGML v1.0//EN
+BEGIN:VEVENT
+RELATED-TO:<jsmith.part7.19960817T083000.xyzMail@host3.com>
+END:VEVENT
+END:VCALENDAR]]>
+    </pass>
+
+    <pass>
+        <![CDATA[BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//hacksw/handcal//NONSGML v1.0//EN
+BEGIN:VEVENT
+RELATED-TO:<jsmith.part7.19960817T083000.xyzMail@host3.com>
+RELATED-TO:<19960401-080045-4000F192713-0052@host1.com>
+END:VEVENT
+END:VCALENDAR]]>
+    </pass>
+</rule>

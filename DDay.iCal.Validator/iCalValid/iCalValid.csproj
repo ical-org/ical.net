@@ -110,6 +110,21 @@
     <Content Include="icalvalidSchema\rules\RFC2445\4.1\lineFolding.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventXProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventRRuleProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventRDateProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventResourcesProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventRelatedProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventRStatusProperty.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

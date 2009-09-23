@@ -55,6 +55,9 @@
         <error name="versionGE2_0Error">Only calendars version 2.0 or higher are allowed.</error>        
         <error name="inlineBinaryContentError">Inline binary content should only be used in special circumstances that demand the iCalendar be expressed as a single object.  See RFC 2445 Section 4.1.3 for details.</error>
         <error name="eventDTEndDurationConflictError">Events MUST only have a DTEND or DURATION, they cannot have both.</error>
+        <error name="textEscapeBackslashesError">The %1 property is invalid; backslashes must be escaped in text fields (i.e. "\\")</error>
+        <error name="textEscapeCommasError">The %1 property is invalid; commas must be escaped in text fields (i.e. "\,")</error>
+        <error name="textEscapeSemicolonsError">The %1 property is invalid; semicolons must be escaped in text fields (i.e. "\;")</error>        
     </errors>
     <resolutions>
         <resolution error="emptyLineError">Remove empty lines from the iCalendar.</resolution>        

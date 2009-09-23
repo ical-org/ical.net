@@ -27,9 +27,9 @@ END:VCALENDAR]]>
 VERSION:2.0
 PRODID:-//hacksw/handcal//NONSGML v1.0//EN
 BEGIN:VEVENT
-COMMENT:The meeting really needs to include both ourselves
- and the customer. We can't hold this  meeting without them.
- As a matter of fact\, the venue for the meeting ought to be at
+COMMENT:The meeting really needs to include both ourselves 
+ and the customer. We can't hold this  meeting without them. 
+ As a matter of fact\, the venue for the meeting ought to be at 
  their site. - - John
 END:VEVENT
 END:VCALENDAR]]>
@@ -40,12 +40,63 @@ END:VCALENDAR]]>
 VERSION:2.0
 PRODID:-//hacksw/handcal//NONSGML v1.0//EN
 BEGIN:VEVENT
-COMMENT:The meeting really needs to include both ourselves
- and the customer. We can't hold this  meeting without them.
- As a matter of fact\, the venue for the meeting ought to be at
+COMMENT:The meeting really needs to include both ourselves 
+ and the customer. We can't hold this  meeting without them. 
+ As a matter of fact\, the venue for the meeting ought to be at 
  their site. - - John
 COMMENT:Another.
 END:VEVENT
 END:VCALENDAR]]>
     </pass>
+
+    <pass>
+        <![CDATA[BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//hacksw/handcal//NONSGML v1.0//EN
+BEGIN:VEVENT
+COMMENT:The chancellor responded with a courteous\, "No comment."
+END:VEVENT
+END:VCALENDAR]]>
+    </pass>
+
+    <!-- 
+    Section 4.3.11:
+    text       = *(TSAFE-CHAR / ":" / DQUOTE / ESCAPED-CHAR)
+    -->
+    
+    <!-- Backslashes must be escaped -->
+    <fail
+        error="textEscapeBackslashesError">
+        <![CDATA[BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//hacksw/handcal//NONSGML v1.0//EN
+BEGIN:VEVENT
+COMMENT:Find at C:\Some\Path\To\A\File.txt
+END:VEVENT
+END:VCALENDAR]]>
+    </fail>
+
+    <!-- Commas must be escaped -->
+    <fail
+        error="textEscapeCommasError">
+        <![CDATA[BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//hacksw/handcal//NONSGML v1.0//EN
+BEGIN:VEVENT
+COMMENT:The Lion, the Witch, and the Wardrobe
+END:VEVENT
+END:VCALENDAR]]>
+    </fail>
+
+    <!-- Semicolons must be escaped -->
+    <fail
+        error="textEscapeSemicolonsError">
+        <![CDATA[BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//hacksw/handcal//NONSGML v1.0//EN
+BEGIN:VEVENT
+COMMENT:My comment;with a semicolon.
+END:VEVENT
+END:VCALENDAR]]>
+    </fail>
 </rule>
