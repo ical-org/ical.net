@@ -26,7 +26,11 @@
         
         <!-- Events -->
         <rule name="eventAttachProperty" file="rules/RFC2445/4.6.1/eventAttachProperty.xml" />
+        <rule name="eventAttendeeProperty" file="rules/RFC2445/4.6.1/eventAttendeeProperty.xml" />
+        <rule name="eventCategoriesProperty" file="rules/RFC2445/4.6.1/eventCategoriesProperty.xml" />
         <rule name="eventClassProperty" file="rules/RFC2445/4.6.1/eventClassProperty.xml" />
+        <rule name="eventCommentProperty" file="rules/RFC2445/4.6.1/eventCommentProperty.xml" />
+        <rule name="eventContactProperty" file="rules/RFC2445/4.6.1/eventContactProperty.xml" />
         <rule name="eventCreatedProperty" file="rules/RFC2445/4.6.1/eventCreatedProperty.xml" />
         <rule name="eventDescriptionProperty" file="rules/RFC2445/4.6.1/eventDescriptionProperty.xml" />
         <rule name="eventDTEndDurationConflict" file="rules/RFC2445/4.6.1/eventDTEndDurationConflict.xml" />
@@ -34,12 +38,15 @@
         <rule name="eventDTStartProperty" file="rules/RFC2445/4.6.1/eventDTStartProperty.xml" />
         <rule name="eventDTStampProperty" file="rules/RFC2445/4.6.1/eventDTStampProperty.xml" />
         <rule name="eventDurationProperty" file="rules/RFC2445/4.6.1/eventDurationProperty.xml" />
+        <rule name="eventExDateProperty" file="rules/RFC2445/4.6.1/eventExDateProperty.xml" />
+        <rule name="eventExRuleProperty" file="rules/RFC2445/4.6.1/eventExRuleProperty.xml" />
         <rule name="eventGeoProperty" file="rules/RFC2445/4.6.1/eventGeoProperty.xml" />
         <rule name="eventLastModProperty" file="rules/RFC2445/4.6.1/eventLastModProperty.xml" />
         <rule name="eventLocationProperty" file="rules/RFC2445/4.6.1/eventLocationProperty.xml" />
         <rule name="eventOrganizerProperty" file="rules/RFC2445/4.6.1/eventOrganizerProperty.xml" />
         <rule name="eventPriorityProperty" file="rules/RFC2445/4.6.1/eventPriorityProperty.xml" />
         <rule name="eventRecurIDProperty" file="rules/RFC2445/4.6.1/eventRecurIDProperty.xml" />
+        <rule name="eventRStatusProperty" file="rules/RFC2445/4.6.1/eventRStatusProperty.xml" />
         <rule name="eventSeqProperty" file="rules/RFC2445/4.6.1/eventSeqProperty.xml" />
         <rule name="eventStatusProperty" file="rules/RFC2445/4.6.1/eventStatusProperty.xml" />
         <rule name="eventSummaryProperty" file="rules/RFC2445/4.6.1/eventSummaryProperty.xml" />
@@ -69,7 +76,11 @@
 
         <!-- Events -->
         <rule name="eventAttachProperty" file="rules/RFC2445/4.6.1/eventAttachProperty.xml" />
+        <rule name="eventAttendeeProperty" file="rules/RFC2445/4.6.1/eventAttendeeProperty.xml" />
+        <rule name="eventCategoriesProperty" file="rules/RFC2445/4.6.1/eventCategoriesProperty.xml" />
         <rule name="eventClassProperty" file="rules/RFC2445/4.6.1/eventClassProperty.xml" />
+        <rule name="eventCommentProperty" file="rules/RFC2445/4.6.1/eventCommentProperty.xml" />
+        <rule name="eventContactProperty" file="rules/RFC2445/4.6.1/eventContactProperty.xml" />
         <rule name="eventCreatedProperty" file="rules/RFC2445/4.6.1/eventCreatedProperty.xml" />
         <rule name="eventDescriptionProperty" file="rules/RFC2445/4.6.1/eventDescriptionProperty.xml" />
         <rule name="eventDTEndDurationConflict" file="rules/RFC2445/4.6.1/eventDTEndDurationConflict.xml" />
@@ -77,12 +88,15 @@
         <rule name="eventDTStartProperty" file="rules/RFC2445/4.6.1/eventDTStartProperty.xml" />
         <rule name="eventDTStampProperty" file="rules/RFC2445/4.6.1/eventDTStampProperty.xml" />
         <rule name="eventDurationProperty" file="rules/RFC2445/4.6.1/eventDurationProperty.xml" />
+        <rule name="eventExDateProperty" file="rules/RFC2445/4.6.1/eventExDateProperty.xml" />
+        <rule name="eventExRuleProperty" file="rules/RFC2445/4.6.1/eventExRuleProperty.xml" />
         <rule name="eventGeoProperty" file="rules/RFC2445/4.6.1/eventGeoProperty.xml" />
         <rule name="eventLastModProperty" file="rules/RFC2445/4.6.1/eventLastModProperty.xml" />
         <rule name="eventLocationProperty" file="rules/RFC2445/4.6.1/eventLocationProperty.xml" />
         <rule name="eventOrganizerProperty" file="rules/RFC2445/4.6.1/eventOrganizerProperty.xml" />
         <rule name="eventPriorityProperty" file="rules/RFC2445/4.6.1/eventPriorityProperty.xml" />
         <rule name="eventRecurIDProperty" file="rules/RFC2445/4.6.1/eventRecurIDProperty.xml" />
+        <rule name="eventRStatusProperty" file="rules/RFC2445/4.6.1/eventRStatusProperty.xml" />
         <rule name="eventSeqProperty" file="rules/RFC2445/4.6.1/eventSeqProperty.xml" />
         <rule name="eventStatusProperty" file="rules/RFC2445/4.6.1/eventStatusProperty.xml" />
         <rule name="eventSummaryProperty" file="rules/RFC2445/4.6.1/eventSummaryProperty.xml" />

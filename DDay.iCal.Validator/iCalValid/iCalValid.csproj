@@ -110,6 +110,27 @@
     <Content Include="icalvalidSchema\rules\RFC2445\4.1\lineFolding.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventRStatusProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventExRuleProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventExDateProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventContactProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventCommentProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventCategoriesProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventAttendeeProperty.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="icalvalidSchema\rules\RFC2445\4.6.1\eventAttachProperty.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

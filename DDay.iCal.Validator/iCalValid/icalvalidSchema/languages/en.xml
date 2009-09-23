@@ -57,7 +57,7 @@
         <error name="eventDTEndDurationConflictError">Events MUST only have a DTEND or DURATION, they cannot have both.</error>
     </errors>
     <resolutions>
-        <resolution error="emptyLineError">Remove empty lines from the iCalendar.</resolution>
+        <resolution error="emptyLineError">Remove empty lines from the iCalendar.</resolution>        
         <resolution error="crlfPairError">Ensure all line endings are CRLF pairs (US-ASCII decimal 13, followed by US-ASCII decimal 10).</resolution>
         <resolution error="versionRequiredError">Add a VERSION property to the VCALENDAR.  See RFC 2445 section 4.7.4 for details.</resolution>
         <resolution error="versionOnlyOnceError">Remove the second VERSION property from the VCALENDAR component.  See RFC 2445 section 4.7.4 for details.</resolution>

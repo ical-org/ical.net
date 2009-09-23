@@ -869,6 +869,25 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             Assert.AreEqual(2, iCal.Events.Count);
         }
 
+        /// <summary>
+        /// Tests that valid REQUEST-STATUS properties are parsed correctly.
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void PARSE14()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE14.ics");
+            Assert.AreEqual(1, iCal.Events.Count);
+            Assert.AreEqual(4, iCal.Events[0].Request_Status.Length);
+            Assert.AreEqual(2, iCal.Events[0].Request_Status[0].StatusCode.Primary);
+            Assert.AreEqual(0, iCal.Events[0].Request_Status[0].StatusCode.Secondary);
+            Assert.AreEqual(3, iCal.Events[0].Request_Status[1].StatusCode.Primary);
+            Assert.AreEqual(1, iCal.Events[0].Request_Status[1].StatusCode.Secondary);
+            Assert.AreEqual(2, iCal.Events[0].Request_Status[2].StatusCode.Primary);
+            Assert.AreEqual(8, iCal.Events[0].Request_Status[2].StatusCode.Secondary);
+            Assert.AreEqual(4, iCal.Events[0].Request_Status[3].StatusCode.Primary);
+            Assert.AreEqual(1, iCal.Events[0].Request_Status[3].StatusCode.Secondary);
+        }
+
         private static byte[] ReadBinary(string fileName)
         {
             byte[] binaryData = null;

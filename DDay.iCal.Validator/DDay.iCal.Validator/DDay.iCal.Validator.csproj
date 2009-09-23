@@ -56,6 +56,13 @@
     <Compile Include="RFC2445\4.1.2\MultipleValuesValidator.cs" />
     <Compile Include="RFC2445\4.1.3\InlineBinaryContentValidator.cs" />
     <Compile Include="RFC2445\4.1\LineFoldingValidator.cs" />
+    <Compile Include="RFC2445\4.6.1\EventRStatusPropertyValidator.cs" />
+    <Compile Include="RFC2445\4.6.1\EventExRulePropertyValidator.cs" />
+    <Compile Include="RFC2445\4.6.1\EventExDatePropertyValidator.cs" />
+    <Compile Include="RFC2445\4.6.1\EventContactPropertyValidator.cs" />
+    <Compile Include="RFC2445\4.6.1\EventCommentPropertyValidator.cs" />
+    <Compile Include="RFC2445\4.6.1\EventCategoriesPropertyValidator.cs" />
+    <Compile Include="RFC2445\4.6.1\EventAttendeePropertyValidator.cs" />
     <Compile Include="RFC2445\4.6.1\EventAttachPropertyValidator.cs" />
     <Compile Include="RFC2445\4.6.1\EventDurationPropertyValidator.cs" />
     <Compile Include="RFC2445\4.6.1\EventDTEndPropertyValidator.cs" />

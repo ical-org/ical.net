@@ -61,11 +61,12 @@ namespace DDay.iCal.DataTypes
             if (obj is RequestStatus)
             {
                 RequestStatus rs = (RequestStatus)obj;
-                StatusCode = new StatusCode();
-                StatusCode.CopyFrom(rs.StatusCode);
-                StatusDesc = new Text(rs.StatusDesc.Value, true);
+                if (rs.StatusCode != null)
+                    StatusCode = (StatusCode)rs.StatusCode.Copy();
+                if (rs.StatusDesc != null)
+                    StatusDesc = (Text)rs.StatusDesc.Copy();
                 if (rs.ExtData != null)
-                    ExtData = new Text(rs.ExtData.Value, true);
+                    ExtData = (Text)rs.ExtData.Copy();
             }
             base.CopyFrom(obj);
         }
@@ -73,7 +74,7 @@ namespace DDay.iCal.DataTypes
         public override bool TryParse(string value, ref object obj)
         {
             RequestStatus rs = (RequestStatus)obj;
-            Match match = Regex.Match(value, @"(\.*[^\\]);(\.*[^\\])(;(\.*))?");
+            Match match = Regex.Match(value, @"(.+);(.+)(;(.*))?");
             if (match.Success)
             {
                 if (!match.Groups[1].Success || 
@@ -84,6 +85,8 @@ namespace DDay.iCal.DataTypes
                 StatusDesc = new Text(match.Groups[1].Value, true);
                 if (match.Groups[3].Success)
                     ExtData = new Text(match.Groups[4].Value, true);
+
+                return true;
             }
             return false;            
         }
