@@ -121,10 +121,9 @@
     <Compile Include="ValidationRule.cs" />
     <Compile Include="ValidationRuleset.cs" />
     <Compile Include="ValidatorActivator.cs" />
-    <Compile Include="Validators\PropertyTypeValidator.cs" />
     <Compile Include="Validators\PropertyValuesValidator.cs" />
     <Compile Include="Validators\PropertyCountValidator.cs" />
-    <Compile Include="Validators\Types\TextValidator.cs" />
+    <Compile Include="Validators\Types\TextValueValidator.cs" />
     <Compile Include="Xml\IXmlDocumentProvider.cs" />
     <Compile Include="Xml\LocalXmlDocumentProvider.cs" />
     <Compile Include="Xml\XmlCalendarTest.cs" />
