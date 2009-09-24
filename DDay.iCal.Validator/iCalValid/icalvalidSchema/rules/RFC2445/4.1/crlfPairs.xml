@@ -1,40 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<rule
-	name="crlfPairs"
-    xmlns="http://icalvalid.wikidot.com/validation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://icalvalid.wikidot.com/validation ../../../schema.xsd">
-	<!--
-	See RFC 2445 Section 4.1 (Page 14)
-	-->
-    <pass>        
-        <![CDATA[BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//hacksw/handcal//NONSGML v1.0//EN
-BEGIN:VEVENT
-DTSTART:19970714T170000Z
-DTEND:19970715T035959Z
-SUMMARY:Bastille Day Party
-END:VEVENT
-END:VCALENDAR
-]]>
-    </pass>
-
-    <fail
-        error="crlfPairError">
-        <![CDATA[BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//hacksw/handcal//NONSGML v1.0//EN
-BEGIN:VEVENT
-DTSTART:19970714T170000Z
-DTEND:19970715T035959Z
-SUMMARY:Bastille Day Party
-END:VEVENT
-END:VCALENDAR
-]]>
-    </fail>
-    <fail
-        error="crlfPairError">
-        <![CDATA[BEGIN:VCALENDARVERSION:2.0PRODID:-//hacksw/handcal//NONSGML v1.0//ENBEGIN:VEVENTDTSTART:19970714T170000ZDTEND:19970715T035959ZSUMMARY:Bastille Day PartyEND:VEVENTEND:VCALENDAR]]>
-    </fail>
-</rule>
