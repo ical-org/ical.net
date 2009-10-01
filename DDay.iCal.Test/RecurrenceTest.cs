@@ -2493,6 +2493,381 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
+        /// Ensures that GetOccurrences() always returns a single occurrence
+        /// for a non-recurring event.
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE52()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE52.ics");
+
+            List<Occurrence> occurrences = iCal.GetOccurrences(
+                new iCalDateTime(2009, 1, 1, 0, 0, 0, tzid, iCal),
+                new iCalDateTime(2010, 1, 1, 0, 0, 0, tzid, iCal));
+
+            iCalDateTime[] DateTimes = new iCalDateTime[]
+            {
+                new iCalDateTime(2009, 9, 27, 5, 30, 0)
+            };
+
+            Assert.AreEqual(
+                DateTimes.Length,
+                occurrences.Count,
+                "There should be exactly " + DateTimes.Length +
+                " occurrences; there were " + occurrences.Count);
+
+            for (int i = 0; i < DateTimes.Length; i++)
+                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);
+        }
+
+        /// <summary>
+        /// Ensures that RecurrencePattern.GetNextOccurrence() functions properly for an HOURLY frequency.
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE53()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE53.ics");
+
+            List<Occurrence> occurrences = iCal.GetOccurrences(
+                new iCalDateTime(2007, 4, 9, 7, 0, 0),
+                new iCalDateTime(2007, 4, 10, 23, 0, 0)
+            );
+
+            iCalDateTime[] DateTimes = new iCalDateTime[]
+            {
+                new iCalDateTime(2007, 4, 9, 7, 0, 0),
+                new iCalDateTime(2007, 4, 9, 11, 0, 0),
+                new iCalDateTime(2007, 4, 9, 15, 0, 0),
+                new iCalDateTime(2007, 4, 9, 19, 0, 0),
+                new iCalDateTime(2007, 4, 9, 23, 0, 0),
+                new iCalDateTime(2007, 4, 10, 3, 0, 0),
+                new iCalDateTime(2007, 4, 10, 7, 0, 0),
+                new iCalDateTime(2007, 4, 10, 11, 0, 0),
+                new iCalDateTime(2007, 4, 10, 15, 0, 0),
+                new iCalDateTime(2007, 4, 10, 19, 0, 0),
+                new iCalDateTime(2007, 4, 10, 23, 0, 0)
+            };
+
+            Assert.AreEqual(
+                DateTimes.Length,
+                occurrences.Count,
+                "There should be exactly " + DateTimes.Length +
+                " occurrences; there were " + occurrences.Count);
+
+            for (int i = 0; i < DateTimes.Length; i++)
+                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);
+
+            // Now, verify that GetNextOccurrence() returns accurate results.
+            Assert.AreEqual(1, iCal.Events.Count);
+            Event evt = iCal.Events[0];
+            Assert.AreEqual(1, evt.RRule.Length);
+            RecurrencePattern rp = evt.RRule[0];
+
+            for (int i = 0; i < DateTimes.Length - 1; i++)
+            {
+                iCalDateTime nextOccurrence = rp.GetNextOccurrence(DateTimes[i]);
+                Assert.AreEqual(DateTimes[i + 1], nextOccurrence, "Next occurence should be " + DateTimes[i]);
+            }
+        }
+
+        /// <summary>
+        /// Ensures that RecurrencePattern.GetNextOccurrence() functions properly for an MINUTELY frequency.
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE54()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE54.ics");
+
+            List<Occurrence> occurrences = iCal.GetOccurrences(
+                new iCalDateTime(2007, 4, 9, 7, 0, 0),
+                new iCalDateTime(2007, 4, 9, 12, 0, 0)
+            );
+
+            iCalDateTime[] DateTimes = new iCalDateTime[]
+            {
+                new iCalDateTime(2007, 4, 9, 7, 0, 0),
+                new iCalDateTime(2007, 4, 9, 7, 30, 0),
+                new iCalDateTime(2007, 4, 9, 8, 0, 0),
+                new iCalDateTime(2007, 4, 9, 8, 30, 0),
+                new iCalDateTime(2007, 4, 9, 9, 0, 0),
+                new iCalDateTime(2007, 4, 9, 9, 30, 0),
+                new iCalDateTime(2007, 4, 9, 10, 0, 0),
+                new iCalDateTime(2007, 4, 9, 10, 30, 0),
+                new iCalDateTime(2007, 4, 9, 11, 0, 0),
+                new iCalDateTime(2007, 4, 9, 11, 30, 0),
+                new iCalDateTime(2007, 4, 9, 12, 0, 0),
+            };
+
+            Assert.AreEqual(
+                DateTimes.Length,
+                occurrences.Count,
+                "There should be exactly " + DateTimes.Length +
+                " occurrences; there were " + occurrences.Count);
+
+            for (int i = 0; i < DateTimes.Length; i++)
+                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);
+
+            // Now, verify that GetNextOccurrence() returns accurate results.
+            Assert.AreEqual(1, iCal.Events.Count);
+            Event evt = iCal.Events[0];
+            Assert.AreEqual(1, evt.RRule.Length);
+            RecurrencePattern rp = evt.RRule[0];
+
+            for (int i = 0; i < DateTimes.Length - 1; i++)
+            {
+                iCalDateTime nextOccurrence = rp.GetNextOccurrence(DateTimes[i]);
+                Assert.AreEqual(DateTimes[i + 1], nextOccurrence, "Next occurence should be " + DateTimes[i]);
+            }
+        }
+
+        /// <summary>
+        /// Ensures that RecurrencePattern.GetNextOccurrence() functions properly for an DAILY frequency with an INTERVAL.
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE55()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE55.ics");
+
+            List<Occurrence> occurrences = iCal.GetOccurrences(
+                new iCalDateTime(2007, 4, 9, 7, 0, 0),
+                new iCalDateTime(2007, 4, 27, 7, 0, 0)
+            );
+
+            iCalDateTime[] DateTimes = new iCalDateTime[]
+            {
+                new iCalDateTime(2007, 4, 9, 7, 0, 0),
+                new iCalDateTime(2007, 4, 11, 7, 0, 0),
+                new iCalDateTime(2007, 4, 13, 7, 0, 0),
+                new iCalDateTime(2007, 4, 15, 7, 0, 0),
+                new iCalDateTime(2007, 4, 17, 7, 0, 0),
+                new iCalDateTime(2007, 4, 19, 7, 0, 0),
+                new iCalDateTime(2007, 4, 21, 7, 0, 0),
+                new iCalDateTime(2007, 4, 23, 7, 0, 0),
+                new iCalDateTime(2007, 4, 25, 7, 0, 0),
+                new iCalDateTime(2007, 4, 27, 7, 0, 0)
+            };
+
+            Assert.AreEqual(
+                DateTimes.Length,
+                occurrences.Count,
+                "There should be exactly " + DateTimes.Length +
+                " occurrences; there were " + occurrences.Count);
+
+            for (int i = 0; i < DateTimes.Length; i++)
+                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);
+
+            // Now, verify that GetNextOccurrence() returns accurate results.
+            Assert.AreEqual(1, iCal.Events.Count);
+            Event evt = iCal.Events[0];
+            Assert.AreEqual(1, evt.RRule.Length);
+            RecurrencePattern rp = evt.RRule[0];
+
+            for (int i = 0; i < DateTimes.Length - 1; i++)
+            {
+                iCalDateTime nextOccurrence = rp.GetNextOccurrence(DateTimes[i]);
+                Assert.AreEqual(DateTimes[i + 1], nextOccurrence, "Next occurence should be " + DateTimes[i]);
+            }
+        }
+
+        /// <summary>
+        /// Ensures that RecurrencePattern.GetNextOccurrence() functions properly for an DAILY frequency with a BYDAY value.
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE56()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE56.ics");
+
+            List<Occurrence> occurrences = iCal.GetOccurrences(
+                new iCalDateTime(2007, 9, 10, 7, 0, 0),
+                new iCalDateTime(2007, 9, 27, 7, 0, 0)
+            );
+
+            iCalDateTime[] DateTimes = new iCalDateTime[]
+            {
+                new iCalDateTime(2007, 9, 10, 7, 0, 0),
+                new iCalDateTime(2007, 9, 13, 7, 0, 0),
+                new iCalDateTime(2007, 9, 17, 7, 0, 0),
+                new iCalDateTime(2007, 9, 20, 7, 0, 0),
+                new iCalDateTime(2007, 9, 24, 7, 0, 0),
+                new iCalDateTime(2007, 9, 27, 7, 0, 0)
+            };
+
+            Assert.AreEqual(
+                DateTimes.Length,
+                occurrences.Count,
+                "There should be exactly " + DateTimes.Length +
+                " occurrences; there were " + occurrences.Count);
+
+            for (int i = 0; i < DateTimes.Length; i++)
+                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);
+
+            // Now, verify that GetNextOccurrence() returns accurate results.
+            Assert.AreEqual(1, iCal.Events.Count);
+            Event evt = iCal.Events[0];
+            Assert.AreEqual(1, evt.RRule.Length);
+            RecurrencePattern rp = evt.RRule[0];
+
+            for (int i = 0; i < DateTimes.Length - 1; i++)
+            {
+                iCalDateTime nextOccurrence = rp.GetNextOccurrence(DateTimes[i]);
+                Assert.AreEqual(DateTimes[i + 1], nextOccurrence, "Next occurence should be " + DateTimes[i]);
+            }
+        }
+
+        /// <summary>
+        /// Ensures that RecurrencePattern.GetNextOccurrence() functions properly for a WEEKLY frequency with an INTERVAL.
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE57()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE57.ics");
+
+            List<Occurrence> occurrences = iCal.GetOccurrences(
+                new iCalDateTime(2007, 9, 10, 7, 0, 0),
+                new iCalDateTime(2007, 12, 31, 11, 59, 59)
+            );
+
+            iCalDateTime[] DateTimes = new iCalDateTime[]
+            {
+                new iCalDateTime(2007, 9, 10, 7, 0, 0),
+                new iCalDateTime(2007, 9, 24, 7, 0, 0),
+                new iCalDateTime(2007, 10, 8, 7, 0, 0),
+                new iCalDateTime(2007, 10, 22, 7, 0, 0),
+                new iCalDateTime(2007, 11, 5, 7, 0, 0),
+                new iCalDateTime(2007, 11, 19, 7, 0, 0),
+                new iCalDateTime(2007, 12, 3, 7, 0, 0),
+                new iCalDateTime(2007, 12, 17, 7, 0, 0),
+                new iCalDateTime(2007, 12, 31, 7, 0, 0),
+            };
+
+            Assert.AreEqual(
+                DateTimes.Length,
+                occurrences.Count,
+                "There should be exactly " + DateTimes.Length +
+                " occurrences; there were " + occurrences.Count);
+
+            for (int i = 0; i < DateTimes.Length; i++)
+                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);
+
+            // Now, verify that GetNextOccurrence() returns accurate results.
+            Assert.AreEqual(1, iCal.Events.Count);
+            Event evt = iCal.Events[0];
+            Assert.AreEqual(1, evt.RRule.Length);
+            RecurrencePattern rp = evt.RRule[0];
+
+            for (int i = 0; i < DateTimes.Length - 1; i++)
+            {
+                iCalDateTime nextOccurrence = rp.GetNextOccurrence(DateTimes[i]);
+                Assert.AreEqual(DateTimes[i + 1], nextOccurrence, "Next occurence should be " + DateTimes[i]);
+            }
+        }
+
+        /// <summary>
+        /// Ensures that RecurrencePattern.GetNextOccurrence() functions properly for a MONTHLY frequency.
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE58()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE58.ics");
+
+            List<Occurrence> occurrences = iCal.GetOccurrences(
+                new iCalDateTime(2007, 9, 10, 7, 0, 0),
+                new iCalDateTime(2008, 9, 10, 7, 0, 0)
+            );
+
+            iCalDateTime[] DateTimes = new iCalDateTime[]
+            {
+                new iCalDateTime(2007, 9, 10, 7, 0, 0),
+                new iCalDateTime(2007, 10, 10, 7, 0, 0),
+                new iCalDateTime(2007, 11, 10, 7, 0, 0),
+                new iCalDateTime(2007, 12, 10, 7, 0, 0),
+                new iCalDateTime(2008, 1, 10, 7, 0, 0),
+                new iCalDateTime(2008, 2, 10, 7, 0, 0),
+                new iCalDateTime(2008, 3, 10, 7, 0, 0),
+                new iCalDateTime(2008, 4, 10, 7, 0, 0),
+                new iCalDateTime(2008, 5, 10, 7, 0, 0),
+                new iCalDateTime(2008, 6, 10, 7, 0, 0),
+                new iCalDateTime(2008, 7, 10, 7, 0, 0),
+                new iCalDateTime(2008, 8, 10, 7, 0, 0),
+                new iCalDateTime(2008, 9, 10, 7, 0, 0)
+            };
+
+            Assert.AreEqual(
+                DateTimes.Length,
+                occurrences.Count,
+                "There should be exactly " + DateTimes.Length +
+                " occurrences; there were " + occurrences.Count);
+
+            for (int i = 0; i < DateTimes.Length; i++)
+                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);
+
+            // Now, verify that GetNextOccurrence() returns accurate results.
+            Assert.AreEqual(1, iCal.Events.Count);
+            Event evt = iCal.Events[0];
+            Assert.AreEqual(1, evt.RRule.Length);
+            RecurrencePattern rp = evt.RRule[0];
+
+            for (int i = 0; i < DateTimes.Length - 1; i++)
+            {
+                iCalDateTime nextOccurrence = rp.GetNextOccurrence(DateTimes[i]);
+                Assert.AreEqual(DateTimes[i + 1], nextOccurrence, "Next occurence should be " + DateTimes[i]);
+            }
+        }
+
+        /// <summary>
+        /// Ensures that RecurrencePattern.GetNextOccurrence() functions properly for a YEARLY frequency.
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE59()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE59.ics");
+
+            List<Occurrence> occurrences = iCal.GetOccurrences(
+                new iCalDateTime(2007, 9, 10, 7, 0, 0),
+                new iCalDateTime(2020, 9, 10, 7, 0, 0)
+            );
+
+            iCalDateTime[] DateTimes = new iCalDateTime[]
+            {
+                new iCalDateTime(2007, 9, 10, 7, 0, 0),
+                new iCalDateTime(2008, 9, 10, 7, 0, 0),
+                new iCalDateTime(2009, 9, 10, 7, 0, 0),
+                new iCalDateTime(2010, 9, 10, 7, 0, 0),
+                new iCalDateTime(2011, 9, 10, 7, 0, 0),
+                new iCalDateTime(2012, 9, 10, 7, 0, 0),
+                new iCalDateTime(2013, 9, 10, 7, 0, 0),
+                new iCalDateTime(2014, 9, 10, 7, 0, 0),
+                new iCalDateTime(2015, 9, 10, 7, 0, 0),
+                new iCalDateTime(2016, 9, 10, 7, 0, 0),
+                new iCalDateTime(2017, 9, 10, 7, 0, 0),
+                new iCalDateTime(2018, 9, 10, 7, 0, 0),
+                new iCalDateTime(2019, 9, 10, 7, 0, 0),
+                new iCalDateTime(2020, 9, 10, 7, 0, 0)
+            };
+
+            Assert.AreEqual(
+                DateTimes.Length,
+                occurrences.Count,
+                "There should be exactly " + DateTimes.Length +
+                " occurrences; there were " + occurrences.Count);
+
+            for (int i = 0; i < DateTimes.Length; i++)
+                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur on " + DateTimes[i]);
+
+            // Now, verify that GetNextOccurrence() returns accurate results.
+            Assert.AreEqual(1, iCal.Events.Count);
+            Event evt = iCal.Events[0];
+            Assert.AreEqual(1, evt.RRule.Length);
+            RecurrencePattern rp = evt.RRule[0];
+
+            for (int i = 0; i < DateTimes.Length - 1; i++)
+            {
+                iCalDateTime nextOccurrence = rp.GetNextOccurrence(DateTimes[i]);
+                Assert.AreEqual(DateTimes[i + 1], nextOccurrence, "Next occurence should be " + DateTimes[i]);
+            }
+        }
+
+        /// <summary>
         /// Tests the iCal holidays downloaded from apple.com
         /// </summary>
         [Test, Category("Recurrence")]
@@ -2918,6 +3293,31 @@ namespace DDay.iCal.Test
             Assert.AreEqual(24, listOfDateTime[7].Day);
             Assert.AreEqual(30, listOfDateTime[8].Day);
             Assert.AreEqual(31, listOfDateTime[9].Day);
+        }
+
+        [Test, Category("Recurrence")]
+        public void TEST5()
+        {
+            RecurrencePattern rpattern = new RecurrencePattern();
+            rpattern.ByHour.Add(8);
+            rpattern.ByHour.Add(17);
+
+            rpattern.Frequency = FrequencyType.Daily;
+
+            iCalDateTime lastOccurrence = new iCalDateTime(2006, 10, 1, 11, 15, 0);
+
+            for (int i = 0; i < 20; i++)
+            {
+                iCalDateTime nextOccurrence = rpattern.GetNextOccurrence(lastOccurrence);
+                iCalDateTime expectedNextOccurrence;
+                if (lastOccurrence.Hour > 17)
+                    expectedNextOccurrence = DateTime.SpecifyKind(lastOccurrence.Date, DateTimeKind.Local).AddDays(1).AddHours(8).AddMinutes(15);
+                else
+                    expectedNextOccurrence = DateTime.SpecifyKind(lastOccurrence.Date, DateTimeKind.Local).Date.AddHours(17).AddMinutes(15);
+
+                Assert.AreEqual(expectedNextOccurrence, nextOccurrence);
+                lastOccurrence = lastOccurrence.AddHours(12);
+            }
         }
     }
 }

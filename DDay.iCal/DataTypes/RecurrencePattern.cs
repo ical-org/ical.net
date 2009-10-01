@@ -11,8 +11,8 @@ namespace DDay.iCal.DataTypes
     /// An iCalendar representation of the <c>RRULE</c> property.
     /// </summary>
 #if DATACONTRACT
-    [DataContract(Name = "RecurrencePattern", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]    
-    [KnownType(typeof(DaySpecifier))]    
+    [DataContract(Name = "RecurrencePattern", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(DaySpecifier))]
     [KnownType(typeof(List<int>))]
     [KnownType(typeof(List<DaySpecifier>))]
     [KnownType(typeof(List<iCalDateTime>))]
@@ -22,7 +22,7 @@ namespace DDay.iCal.DataTypes
     public partial class RecurrencePattern : iCalDataType
     {
         #region Private Fields
-        
+
 #if !SILVERLIGHT
         [NonSerialized]
 #endif
@@ -233,7 +233,7 @@ namespace DDay.iCal.DataTypes
         #region Constructors
 
         public RecurrencePattern()
-        {            
+        {
             _Calendar = System.Globalization.CultureInfo.CurrentCulture.Calendar;
         }
         public RecurrencePattern(string value)
@@ -268,7 +268,7 @@ namespace DDay.iCal.DataTypes
                 BySetPos = new List<int>(r.BySetPos);
                 Wkst = r.Wkst;
                 _RestrictionType = r._RestrictionType;
-                _EvaluationMode = r._EvaluationMode;                
+                _EvaluationMode = r._EvaluationMode;
             }
             base.CopyFrom(obj);
         }
@@ -306,7 +306,7 @@ namespace DDay.iCal.DataTypes
 
         public override int GetHashCode()
         {
-            int hashCode = 
+            int hashCode =
                 ByDay.GetHashCode() ^ ByHour.GetHashCode() ^ ByMinute.GetHashCode() ^
                 ByMonth.GetHashCode() ^ ByMonthDay.GetHashCode() ^ BySecond.GetHashCode() ^
                 BySetPos.GetHashCode() ^ ByWeekNo.GetHashCode() ^ ByYearDay.GetHashCode() ^
@@ -343,7 +343,7 @@ namespace DDay.iCal.DataTypes
         public override bool TryParse(string value, ref object obj)
         {
             RecurrencePattern r = (RecurrencePattern)obj;
-                        
+
             Match match = Regex.Match(value, @"FREQ=(SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY);?(.*)", RegexOptions.IgnoreCase);
             if (match.Success)
             {
@@ -359,7 +359,7 @@ namespace DDay.iCal.DataTypes
                     string[] keywordPairs = match.Groups[2].Value.Split(';');
                     foreach (string keywordPair in keywordPairs)
                     {
-                        string[] keyValues = keywordPair.Split('=');                        
+                        string[] keyValues = keywordPair.Split('=');
                         string keyword = keyValues[0];
                         string keyValue = keyValues[1];
 
@@ -382,7 +382,7 @@ namespace DDay.iCal.DataTypes
                             case "BYWEEKNO": AddInt32Values(r.ByWeekNo, keyValue); break;
                             case "BYMONTH": AddInt32Values(r.ByMonth, keyValue); break;
                             case "BYSETPOS": AddInt32Values(r.BySetPos, keyValue); break;
-                            case "WKST": r.Wkst = GetDayOfWeek(keyValue); break;                                
+                            case "WKST": r.Wkst = GetDayOfWeek(keyValue); break;
                         }
                     }
                 }
@@ -469,23 +469,23 @@ namespace DDay.iCal.DataTypes
                             num = 1;
 
                         foreach (Capture capture in match.Groups["Day"].Captures)
-                        {                            
+                        {
                             DaySpecifier ds = new DaySpecifier((DayOfWeek)Enum.Parse(typeof(DayOfWeek), capture.Value, true));
                             ds.Num = num;
                             r.ByDay.Add(ds);
-                        }                        
+                        }
                     }
                     else if ((match = Regex.Match(item, @"at\s+(?<Hour>\d{1,2})(:(?<Minute>\d{2})((:|\.)(?<Second>\d{2}))?)?\s*(?<Meridian>(a|p)m?)?", RegexOptions.IgnoreCase)).Success)
                     {
                         int hour, minute, second;
-                        
+
                         if (int.TryParse(match.Groups["Hour"].Value, out hour))
                         {
                             // Adjust for PM
-                            if (match.Groups["Meridian"].Success && 
+                            if (match.Groups["Meridian"].Success &&
                                 match.Groups["Meridian"].Value.ToUpper().StartsWith("P"))
                                 hour += 12;
-                            
+
                             r.ByHour.Add(hour);
 
                             if (match.Groups["Minute"].Success &&
@@ -575,7 +575,7 @@ namespace DDay.iCal.DataTypes
             // NOTE: fixes RRULE7 and RRULE8 handling
             if (Frequency == FrequencyType.Weekly &&
                 ByDay.Count == 0)
-                this.ByDay.Add(new DaySpecifier(StartDate.Value.DayOfWeek));            
+                this.ByDay.Add(new DaySpecifier(StartDate.Value.DayOfWeek));
             if (Frequency > FrequencyType.Secondly &&
                 this.BySecond.Count == 0 &&
                 StartDate.HasTime /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
@@ -584,7 +584,7 @@ namespace DDay.iCal.DataTypes
                 this.ByMinute.Count == 0 &&
                 StartDate.HasTime /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
                 this.ByMinute.Add(StartDate.Value.Minute);
-            if (Frequency > FrequencyType.Hourly &&                
+            if (Frequency > FrequencyType.Hourly &&
                 this.ByHour.Count == 0 &&
                 StartDate.HasTime /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
                 this.ByHour.Add(StartDate.Value.Hour);
@@ -593,15 +593,15 @@ namespace DDay.iCal.DataTypes
             // NOTE: fixes RRULE23 handling, added BYYEARDAY exclusion
             // to fix RRULE25 handling
             if (Frequency > FrequencyType.Weekly &&
-                this.ByMonthDay.Count == 0 && 
-                this.ByYearDay.Count == 0 && 
-                this.ByDay.Count == 0) 
+                this.ByMonthDay.Count == 0 &&
+                this.ByYearDay.Count == 0 &&
+                this.ByDay.Count == 0)
                 this.ByMonthDay.Add(StartDate.Value.Day);
             // If neither BYMONTH nor BYYEARDAY is specified, default to
             // the current month
             // NOTE: fixes RRULE25 handling
             if (Frequency > FrequencyType.Monthly &&
-                this.ByYearDay.Count == 0 && 
+                this.ByYearDay.Count == 0 &&
                 this.ByDay.Count == 0 &&
                 this.ByMonth.Count == 0)
                 this.ByMonth.Add(StartDate.Value.Month);
@@ -665,7 +665,7 @@ namespace DDay.iCal.DataTypes
                                 {
                                     switch (evaluationRestriction)
                                     {
-                                        case RecurrenceRestrictionType.RestrictMinutely: 
+                                        case RecurrenceRestrictionType.RestrictMinutely:
                                         case RecurrenceRestrictionType.RestrictHourly:
                                             throw new EvaluationEngineException();
                                     }
@@ -679,9 +679,9 @@ namespace DDay.iCal.DataTypes
                                     }
                                 } break;
                             default: break;
-                        } break;                        
+                        } break;
                 }
-            }             
+            }
         }
 
         #region Calculating Occurrences
@@ -728,7 +728,7 @@ namespace DDay.iCal.DataTypes
                 {
                     FromDate = DateUtils.AddFrequency(Frequency, FromDate, -1);
                     difference--;
-                }                
+                }
             }
 
             // If the start date has no time, then our "From" date should not either 
@@ -790,7 +790,7 @@ namespace DDay.iCal.DataTypes
                     // week number is 38.
                     // NOTE: fixes RRULE12 eval.
                     int current = _Calendar.GetWeekOfYear(old.Value, System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst),
-                        lastLastYear = _Calendar.GetWeekOfYear(new DateTime(old.Year-1, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst),
+                        lastLastYear = _Calendar.GetWeekOfYear(new DateTime(old.Year - 1, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst),
                         last = _Calendar.GetWeekOfYear(new DateTime(old.Year, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, Wkst),
                         goal = current + Interval;
 
@@ -859,7 +859,7 @@ namespace DDay.iCal.DataTypes
         /// </summary>
         /// <param name="TC"></param>
         protected void FillByDay(TimeCalculation TC)
-        {       
+        {
             // If BYMONTH is specified, offset each day into those months,
             // otherwise, use Jan. 1st as a reference date.
             // NOTE: fixes USHolidays.ics eval
@@ -867,7 +867,7 @@ namespace DDay.iCal.DataTypes
             if (TC.Recur.ByMonth.Count == 0)
                 months.Add(1);
             else months = TC.Months;
-            
+
             foreach (int month in months)
             {
                 DateTime baseDate = new DateTime(TC.StartDate.Value.Year, month, 1);
@@ -884,7 +884,7 @@ namespace DDay.iCal.DataTypes
                             curr = curr.AddYears(1).AddDays(-1);
                         else curr = curr.AddMonths(1).AddDays(-1);
                     }
-                    
+
                     while (curr.DayOfWeek != day.DayOfWeek)
                         curr = curr.AddDays(inc);
 
@@ -912,7 +912,7 @@ namespace DDay.iCal.DataTypes
                         }
                     }
                 }
-            }            
+            }
         }
 
         protected void FillMonths(TimeCalculation TC)
@@ -925,7 +925,7 @@ namespace DDay.iCal.DataTypes
         }
 
         protected void FillDays(TimeCalculation TC)
-        {            
+        {
             foreach (int day in TC.Days)
             {
                 TC.Day = day;
@@ -936,9 +936,14 @@ namespace DDay.iCal.DataTypes
         protected void FillHours(TimeCalculation TC)
         {
             if (TC.Hours.Count > 0)
-            {
+            {                
                 foreach (int hour in TC.Hours)
                 {
+                    //if (current.Hour > hour)
+                    //    TC.CurrentDateTime = current.AddDays(1);
+                    //else
+                    //    TC.CurrentDateTime = current;
+
                     TC.Hour = hour;
                     FillMinutes(TC);
                 }
@@ -986,7 +991,7 @@ namespace DDay.iCal.DataTypes
 
         protected List<iCalDateTime> CalculateChildOccurrences(iCalDateTime StartDate, iCalDateTime EndDate)
         {
-            TimeCalculation TC = new TimeCalculation(StartDate, EndDate, this);                        
+            TimeCalculation TC = new TimeCalculation(StartDate, EndDate, this);
             switch (Frequency)
             {
                 case FrequencyType.Yearly:
@@ -994,7 +999,7 @@ namespace DDay.iCal.DataTypes
                     FillByDay(TC);
                     FillMonths(TC);
                     break;
-                case FrequencyType.Weekly: 
+                case FrequencyType.Weekly:
                     // Weeks can span across months, so we must
                     // fill months (Note: fixes RRULE10 eval)                    
                     FillMonths(TC);
@@ -1004,7 +1009,37 @@ namespace DDay.iCal.DataTypes
                     FillByDay(TC);
                     break;
                 case FrequencyType.Daily:
-                    FillHours(TC);
+                    // Ensures that ByHour values are properly processed for the upcoming day.
+                    // NOTE: fixes the bug tested in TEST5() in RecurrenceTest.
+                    // This bug occurs in a situation like the following:
+                    // An event occurs at 11:15 PM, but recurs every day at
+                    // 8:00 AM and 5:00 PM.  When checking for occurrences,
+                    // normally only same-day BYHOUR values are calculated.
+                    // In this case, the same-day values are out-of-range,
+                    // and hence aren't included in the result set.  To solve
+                    // this problem, the following day is also included in the
+                    // result set, causing this special case to work as expected.
+                    TC.Days.Add(TC.Day);
+                    
+                    int startHour = TC.StartDate.Hour;
+                    foreach (int hour in ByHour)
+                    {
+                        if (startHour > hour)
+                        {
+                            if (TC.Day > 27)
+                            {
+                                // Account for the "next" day for any
+                                // given month.
+                                TC.Days.Add(29);
+                                TC.Days.Add(30);
+                                TC.Days.Add(30);
+                                TC.Days.Add(1);
+                            }
+                            else TC.Days.Add(TC.Day + 1);
+                            break;
+                        }
+                    }
+                    FillDays(TC);
                     break;
                 case FrequencyType.Hourly:
                     FillMinutes(TC);
@@ -1013,7 +1048,7 @@ namespace DDay.iCal.DataTypes
                     FillSeconds(TC);
                     break;
                 default:
-                    throw new NotSupportedException("CalculateChildOccurrences() is not supported for a frequency of " + Frequency.ToString());                    
+                    throw new NotSupportedException("CalculateChildOccurrences() is not supported for a frequency of " + Frequency.ToString());
             }
 
             // Sort the Date/Time values in ascending order, to ensure they
@@ -1026,7 +1061,7 @@ namespace DDay.iCal.DataTypes
             // so that the BYSETPOS calculates correctly.
             // NOTE: fixes RRULE33 eval
             if (BySetPos.Count != 0)
-            {                
+            {
                 List<iCalDateTime> newDateTimes = new List<iCalDateTime>();
                 foreach (int pos in BySetPos)
                 {
@@ -1053,7 +1088,7 @@ namespace DDay.iCal.DataTypes
             return TC.DateTimes;
         }
 
-        #endregion        
+        #endregion
 
         #endregion
 
@@ -1074,7 +1109,7 @@ namespace DDay.iCal.DataTypes
 
             // Fill in missing, necessary ByXXX values
             r.EnsureByXXXValues(StartDate);
-                        
+
             // Get the occurrences
             foreach (iCalDateTime occurrence in r.GetOccurrences(StartDate, FromDate.Copy(), ToDate.Copy(), r.Count))
             {
@@ -1110,13 +1145,88 @@ namespace DDay.iCal.DataTypes
                 if (Frequency < FrequencyType.Daily)
                     dt.HasTime = true;
             }
-            
+
             return DateTimes;
+        }
+
+        /// <summary>
+        /// Returns the next occurrence of the pattern,
+        /// given a valid previous occurrence, <paramref name="lastOccurrence"/>.
+        /// As long as the recurrence pattern is valid, and
+        /// <paramref name="lastOccurrence"/> is a valid previous 
+        /// occurrence within the pattern, this will return the
+        /// next occurrence.
+        /// </summary>
+        public iCalDateTime GetNextOccurrence(iCalDateTime lastOccurrence)
+        {
+            if (lastOccurrence != null)
+            {
+                iCalDateTime fromDate = lastOccurrence;
+                iCalDateTime toDate = null;
+
+                switch (Frequency)
+                {
+                    case FrequencyType.Yearly:
+                        toDate = fromDate.AddYears(Interval);
+                        break;
+                    case FrequencyType.Monthly:                        
+                        if (ByMonth.Count > 0)
+                            toDate = fromDate.AddYears(1);
+                        else
+                            toDate = fromDate.AddMonths(Interval);
+                        break;
+                    case FrequencyType.Weekly:
+                        toDate = fromDate.AddDays(Interval * 7);
+                        break;
+                    case FrequencyType.Daily:
+                        if (ByDay.Count > 0)
+                            toDate = fromDate.AddDays(7);
+                        else
+                            toDate = fromDate.AddDays(Interval);
+                        break;
+                    case FrequencyType.Hourly:
+                        if (ByHour.Count > 0)
+                            toDate = fromDate.AddDays(1);
+                        else
+                            toDate = fromDate.AddHours(Interval);
+                        break;
+                    case FrequencyType.Minutely:
+                        if (ByMinute.Count > 0)
+                            toDate = fromDate.AddHours(1);
+                        else
+                            toDate = fromDate.AddMinutes(Interval);
+                        break;
+                    case FrequencyType.Secondly:
+                        return null;
+                }
+
+                if (toDate != null)
+                {
+                    // Get the first occurence within the interval we just evaluated, if available.
+                    List<iCalDateTime> occurrences = Evaluate(lastOccurrence, fromDate, toDate);
+                    if (occurrences != null &&
+                        occurrences.Count > 0)
+                    {
+                        // NOTE: the lastOccurrence may or may not be contained in the
+                        // result list of occurrence.  If it is, grab the next occurence
+                        // if it is available.
+                        if (occurrences[0].Equals(lastOccurrence))
+                        {
+                            if (occurrences.Count > 1)
+                                return occurrences[1];
+                        }
+                        else return occurrences[0];
+                    }
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
         /// [Deprecated]: Use IsValidDate() instead.
         /// </summary>
+        [Obsolete("Use IsValidDate() instead.")]
         public bool CheckValidDate(iCalDateTime dt) { return IsValidDate(dt); }
 
         /// <summary>
@@ -1219,18 +1329,49 @@ namespace DDay.iCal.DataTypes
             public int Second;
             public List<iCalDateTime> DateTimes;
 
+            #region Public Properties
+
+            public iCalDateTime CurrentDateTime
+            {
+                get
+                {
+                    iCalDateTime dt = null;
+                     
+                    // Account for negative days of month (count backwards from the end of the month)
+                    // NOTE: fixes RRULE18 evaluation
+                    if (Day > 0)
+                        // Changed from DateTimeKind.Local to StartDate.Kind
+                        // NOTE: fixes bug #20
+                        dt = new iCalDateTime(new DateTime(Year, Month, Day, Hour, Minute, Second, DateTimeKind.Utc));
+                    else
+                        dt = new iCalDateTime(new DateTime(Year, Month, 1, Hour, Minute, Second, DateTimeKind.Utc).AddMonths(1).AddDays(Day));
+
+                    // Inherit time zone info, etc. from the start date
+                    dt.MergeWith(StartDate);
+                    return dt;
+                }
+                set
+                {
+                    Year = value.Value.Year;
+                    Month = value.Value.Month;
+                    Day = value.Value.Day;
+                    Hour = value.Value.Hour;
+                    Minute = value.Value.Minute;
+                    Second = value.Value.Second;
+                }
+            }
+
+            #endregion
+
+            #region Constructor
+
             public TimeCalculation(iCalDateTime StartDate, iCalDateTime EndDate, RecurrencePattern Recur)
             {
                 this.StartDate = StartDate;
                 this.EndDate = EndDate;
                 this.Recur = Recur;
 
-                Year = StartDate.Value.Year;
-                Month = StartDate.Value.Month;
-                Day = StartDate.Value.Day;
-                Hour = StartDate.Value.Hour;
-                Minute = StartDate.Value.Minute;
-                Second = StartDate.Value.Second;
+                CurrentDateTime = StartDate;
 
                 YearDays = new List<int>(Recur.ByYearDay);
                 ByDays = new List<DaySpecifier>(Recur.ByDay);
@@ -1243,9 +1384,9 @@ namespace DDay.iCal.DataTypes
 
                 // Only check what months and days are possible for
                 // the week's period of time we're evaluating
-                // NOTE: fixes RRULE10 evaluation                
+                // NOTE: fixes RRULE10 evaluation
                 if (Recur.Frequency == FrequencyType.Weekly)
-                {                    
+                {
                     if (Months.Count == 0)
                     {
                         Months.Add(StartDate.Value.Month);
@@ -1263,32 +1404,16 @@ namespace DDay.iCal.DataTypes
                         Days.Add(EndDate.Value.Day);
                     }
                 }
-                else
+                else if (Recur.Frequency > FrequencyType.Daily)
                 {
-                    if (Months.Count == 0) Months.AddRange(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 });                                
+                    if (Months.Count == 0) Months.AddRange(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 });                    
                     if (Days.Count == 0) Days.AddRange(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 });
                 }
-            }
+            } 
 
-            public iCalDateTime CurrentDateTime
-            {
-                get
-                {
-                    iCalDateTime dt = null;
-                    // Account for negative days of month (count backwards from the end of the month)
-                    // NOTE: fixes RRULE18 evaluation
-                    if (Day > 0)
-                        // Changed from DateTimeKind.Local to StartDate.Kind
-                        // NOTE: fixes bug #20
-                        dt = new iCalDateTime(new DateTime(Year, Month, Day, Hour, Minute, Second, DateTimeKind.Utc));
-                    else
-                        dt = new iCalDateTime(new DateTime(Year, Month, 1, Hour, Minute, Second, DateTimeKind.Utc).AddMonths(1).AddDays(Day));
+            #endregion            
 
-                    // Inherit time zone info, etc. from the start date
-                    dt.MergeWith(StartDate);
-                    return dt;
-                }
-            }
+            #region Public Methods
 
             public void Calculate()
             {
@@ -1301,7 +1426,9 @@ namespace DDay.iCal.DataTypes
                         DateTimes.Add(CurrentDateTime);
                 }
                 catch (ArgumentOutOfRangeException ex) { }
-            }
+            } 
+
+            #endregion
         }
 
         #endregion
@@ -1332,10 +1459,10 @@ namespace DDay.iCal.DataTypes
     {
         Default,             /// Same as ThrowException.
         AdjustAutomatically, /// Automatically adjusts the evaluation to the next-best frequency based on the restriction type.
-                             /// For example, if the restriction were IgnoreSeconds, and the frequency were SECONDLY, then
-                             /// this would cause the frequency to be adjusted to MINUTELY, the next closest thing.
+        /// For example, if the restriction were IgnoreSeconds, and the frequency were SECONDLY, then
+        /// this would cause the frequency to be adjusted to MINUTELY, the next closest thing.
         ThrowException       /// This will throw an exception if a recurrence rule is evaluated that does not meet the minimum
-                             /// restrictions.  For example, if the restriction were IgnoreSeconds, and a SECONDLY frequency
-                             /// were evaluated, an exception would be thrown.
+        /// restrictions.  For example, if the restriction were IgnoreSeconds, and a SECONDLY frequency
+        /// were evaluated, an exception would be thrown.
     }
 }
