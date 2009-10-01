@@ -1020,7 +1020,8 @@ namespace DDay.iCal.DataTypes
                     // this problem, the following day is also included in the
                     // result set, causing this special case to work as expected.
                     TC.Days.Add(TC.Day);
-                    
+
+                    bool isCalculated = false;
                     int startHour = TC.StartDate.Hour;
                     foreach (int hour in ByHour)
                     {
@@ -1034,12 +1035,31 @@ namespace DDay.iCal.DataTypes
                                 TC.Days.Add(30);
                                 TC.Days.Add(30);
                                 TC.Days.Add(1);
+
+                                TC.Months.Add(TC.Month);
+                                FillDays(TC);
+
+                                if (TC.Month == 12)                                    
+                                {
+                                    TC.Year++;
+                                    TC.Month = 1;
+                                }
+                                else
+                                {
+                                    TC.Month++;
+                                }
+
+                                FillDays(TC);
+
+                                isCalculated = true;
                             }
                             else TC.Days.Add(TC.Day + 1);
                             break;
                         }
                     }
-                    FillDays(TC);
+
+                    if (!isCalculated)
+                        FillDays(TC);
                     break;
                 case FrequencyType.Hourly:
                     FillMinutes(TC);

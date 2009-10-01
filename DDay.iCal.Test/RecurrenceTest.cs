@@ -3295,6 +3295,10 @@ namespace DDay.iCal.Test
             Assert.AreEqual(31, listOfDateTime[9].Day);
         }
 
+        /// <summary>
+        /// Tests that BYHOUR values work properly with GetNextOccurrence()
+        /// when the LastOccurrence is somewhat randomized between BYHOUR values.
+        /// </summary>
         [Test, Category("Recurrence")]
         public void TEST5()
         {
@@ -3314,6 +3318,61 @@ namespace DDay.iCal.Test
                     expectedNextOccurrence = DateTime.SpecifyKind(lastOccurrence.Date, DateTimeKind.Local).AddDays(1).AddHours(8).AddMinutes(15);
                 else
                     expectedNextOccurrence = DateTime.SpecifyKind(lastOccurrence.Date, DateTimeKind.Local).Date.AddHours(17).AddMinutes(15);
+
+                Assert.AreEqual(expectedNextOccurrence, nextOccurrence);
+                lastOccurrence = lastOccurrence.AddHours(12);
+            }
+        }
+
+        /// <summary>
+        /// Similar to TEST5(), except on the last day of the month.
+        /// This ensures the "next day" values are properly calculated.
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void TEST6()
+        {
+            RecurrencePattern rpattern = new RecurrencePattern();
+            rpattern.ByHour.Add(8);
+            rpattern.ByHour.Add(17);
+            rpattern.Frequency = FrequencyType.Daily;
+
+            iCalDateTime lastOccurrence = new iCalDateTime(2009, 9, 30, 11, 42, 53);
+
+            for (int i = 0; i < 20; i++)
+            {
+                iCalDateTime nextOccurrence = rpattern.GetNextOccurrence(lastOccurrence);
+                iCalDateTime expectedNextOccurrence;
+                if (lastOccurrence.Hour > 17)
+                    expectedNextOccurrence = DateTime.SpecifyKind(lastOccurrence.Date, DateTimeKind.Local).AddDays(1).AddHours(8).AddMinutes(42).AddSeconds(53);
+                else
+                    expectedNextOccurrence = DateTime.SpecifyKind(lastOccurrence.Date, DateTimeKind.Local).Date.AddHours(17).AddMinutes(42).AddSeconds(53);
+
+                Assert.AreEqual(expectedNextOccurrence, nextOccurrence);
+                lastOccurrence = lastOccurrence.AddHours(12);
+            }
+        }
+
+        /// <summary>
+        /// Similar to TEST6(), except on the last day of the year.        
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void TEST7()
+        {
+            RecurrencePattern rpattern = new RecurrencePattern();
+            rpattern.ByHour.Add(8);
+            rpattern.ByHour.Add(17);
+            rpattern.Frequency = FrequencyType.Daily;
+
+            iCalDateTime lastOccurrence = new iCalDateTime(2009, 12, 31, 11, 42, 53);
+
+            for (int i = 0; i < 20; i++)
+            {
+                iCalDateTime nextOccurrence = rpattern.GetNextOccurrence(lastOccurrence);
+                iCalDateTime expectedNextOccurrence;
+                if (lastOccurrence.Hour > 17)
+                    expectedNextOccurrence = DateTime.SpecifyKind(lastOccurrence.Date, DateTimeKind.Local).AddDays(1).AddHours(8).AddMinutes(42).AddSeconds(53);
+                else
+                    expectedNextOccurrence = DateTime.SpecifyKind(lastOccurrence.Date, DateTimeKind.Local).Date.AddHours(17).AddMinutes(42).AddSeconds(53);
 
                 Assert.AreEqual(expectedNextOccurrence, nextOccurrence);
                 lastOccurrence = lastOccurrence.AddHours(12);
