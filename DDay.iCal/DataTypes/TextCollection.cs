@@ -19,12 +19,9 @@ namespace DDay.iCal.DataTypes
     /// </summary>   
     [Encodable("BASE64,8BIT,7BIT")]
 #if DATACONTRACT
-    [CollectionDataContract(Name = "TextCollection", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(List<Text>))]
-    [KnownType(typeof(Text))]
-#else
-    [Serializable]
+    [DataContract(Name = "TextCollection", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
+    [Serializable]
     public class TextCollection : EncodableDataType, ICollection
     {
         #region Private Fields

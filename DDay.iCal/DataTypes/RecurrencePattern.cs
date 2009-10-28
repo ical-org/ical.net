@@ -12,13 +12,8 @@ namespace DDay.iCal.DataTypes
     /// </summary>
 #if DATACONTRACT
     [DataContract(Name = "RecurrencePattern", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(DaySpecifier))]
-    [KnownType(typeof(List<int>))]
-    [KnownType(typeof(List<DaySpecifier>))]
-    [KnownType(typeof(List<iCalDateTime>))]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public partial class RecurrencePattern : iCalDataType
     {
         #region Private Fields
@@ -1175,7 +1170,8 @@ namespace DDay.iCal.DataTypes
         /// As long as the recurrence pattern is valid, and
         /// <paramref name="lastOccurrence"/> is a valid previous 
         /// occurrence within the pattern, this will return the
-        /// next occurrence.
+        /// next occurrence.  NOTE: This will not give accurate results
+        /// when COUNT or BYSETVAL are used.
         /// </summary>
         public iCalDateTime GetNextOccurrence(iCalDateTime lastOccurrence)
         {
@@ -1184,46 +1180,70 @@ namespace DDay.iCal.DataTypes
                 iCalDateTime fromDate = lastOccurrence;
                 iCalDateTime toDate = null;
 
-                switch (Frequency)
+                RecurrencePattern r = new RecurrencePattern();
+                r.CopyFrom(this);
+
+                // Enforce evaluation engine rules
+                r.EnforceEvaluationRestrictions();
+
+                switch (r.Frequency)
                 {
                     case FrequencyType.Yearly:
-                        toDate = fromDate.AddYears(Interval);
+                        toDate = fromDate.YearDate.AddYears(Interval + 1);
                         break;
-                    case FrequencyType.Monthly:                        
-                        if (ByMonth.Count > 0)
-                            toDate = fromDate.AddYears(1);
+                    case FrequencyType.Monthly:
+                        // Determine how far into the future we need to scan
+                        // to get the next occurrence.
+                        int yearsByInterval = (int)Math.Ceiling((double)Interval / 12.0);
+                        if (ByMonthDay.Count > 0)
+                            toDate = fromDate.YearDate.AddYears(yearsByInterval + 1);
+                        else if (ByMonth.Count > 0)
+                            toDate = fromDate.AddYears(yearsByInterval);
                         else
-                            toDate = fromDate.AddMonths(Interval);
+                            toDate = fromDate.MonthDate.AddMonths(Interval + 1);
                         break;
                     case FrequencyType.Weekly:
-                        toDate = fromDate.AddDays(Interval * 7);
+                        toDate = fromDate.AddDays((Interval + 1) * 7);
                         break;
                     case FrequencyType.Daily:
                         if (ByDay.Count > 0)
                             toDate = fromDate.AddDays(7);
                         else
-                            toDate = fromDate.AddDays(Interval);
+                            toDate = fromDate.AddDays(Interval + 1);
                         break;
                     case FrequencyType.Hourly:
                         if (ByHour.Count > 0)
-                            toDate = fromDate.AddDays(1);
+                        {
+                            int daysByInterval = (int)Math.Ceiling((double)Interval / 24.0);
+                            toDate = fromDate.AddDays(daysByInterval + 1);
+                        }
                         else
-                            toDate = fromDate.AddHours(Interval);
+                            toDate = fromDate.AddHours(Interval + 1);
                         break;
                     case FrequencyType.Minutely:
                         if (ByMinute.Count > 0)
-                            toDate = fromDate.AddHours(1);
+                        {
+                            int hoursByInterval = (int)Math.Ceiling((double)Interval / 60.0);
+                            toDate = fromDate.AddHours(hoursByInterval + 1);
+                        }
                         else
-                            toDate = fromDate.AddMinutes(Interval);
+                            toDate = fromDate.AddMinutes(Interval + 1);
                         break;
                     case FrequencyType.Secondly:
-                        return null;
+                        if (BySecond.Count > 0)
+                        {
+                            int minutesByInterval = (int)Math.Ceiling((double)Interval / 60.0);
+                            toDate = fromDate.AddMinutes(minutesByInterval + 1);
+                        }
+                        else
+                            toDate = fromDate.AddMinutes(Interval + 1);
+                        break;
                 }
 
                 if (toDate != null)
                 {
                     // Get the first occurence within the interval we just evaluated, if available.
-                    List<iCalDateTime> occurrences = Evaluate(lastOccurrence, fromDate, toDate);
+                    List<iCalDateTime> occurrences = r.Evaluate(lastOccurrence, fromDate, toDate);
                     if (occurrences != null &&
                         occurrences.Count > 0)
                     {
@@ -1468,21 +1488,51 @@ namespace DDay.iCal.DataTypes
 
     public enum RecurrenceRestrictionType
     {
-        Default, /// Same as RestrictSecondly.
-        NoRestriction, /// Does not restrict recurrence evaluation - WARNING: this may cause very slow performance!
-        RestrictSecondly, /// Disallows use of the SECONDLY frequency for recurrence evaluation
-        RestrictMinutely, /// Disallows use of the MINUTELY and SECONDLY frequencies for recurrence evaluation
-        RestrictHourly /// Disallows use of the HOURLY, MINUTELY, and SECONDLY frequencies for recurrence evaluation
+        /// <summary>
+        /// Same as RestrictSecondly.
+        /// </summary>
+        Default,
+
+        /// <summary>
+        /// Does not restrict recurrence evaluation - WARNING: this may cause very slow performance!
+        /// </summary>
+        NoRestriction,
+
+        /// <summary>
+        /// Disallows use of the SECONDLY frequency for recurrence evaluation
+        /// </summary>
+        RestrictSecondly,
+
+        /// <summary>
+        /// Disallows use of the MINUTELY and SECONDLY frequencies for recurrence evaluation
+        /// </summary>
+        RestrictMinutely,
+
+        /// <summary>
+        /// Disallows use of the HOURLY, MINUTELY, and SECONDLY frequencies for recurrence evaluation
+        /// </summary>
+        RestrictHourly
     }
 
     public enum RecurrenceEvaluationModeType
     {
-        Default,             /// Same as ThrowException.
-        AdjustAutomatically, /// Automatically adjusts the evaluation to the next-best frequency based on the restriction type.
+        /// <summary>
+        /// Same as ThrowException.
+        /// </summary>
+        Default,
+
+        /// <summary>
+        /// Automatically adjusts the evaluation to the next-best frequency based on the restriction type.
         /// For example, if the restriction were IgnoreSeconds, and the frequency were SECONDLY, then
         /// this would cause the frequency to be adjusted to MINUTELY, the next closest thing.
-        ThrowException       /// This will throw an exception if a recurrence rule is evaluated that does not meet the minimum
+        /// </summary>
+        AdjustAutomatically, 
+        
+        /// <summary>
+        /// This will throw an exception if a recurrence rule is evaluated that does not meet the minimum
         /// restrictions.  For example, if the restriction were IgnoreSeconds, and a SECONDLY frequency
         /// were evaluated, an exception would be thrown.
+        /// </summary>
+        ThrowException
     }
 }

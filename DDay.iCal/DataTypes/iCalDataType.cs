@@ -12,9 +12,8 @@ namespace DDay.iCal.DataTypes
     /// </summary>
 #if DATACONTRACT
     [DataContract(Name = "iCalDataType", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public abstract class iCalDataType : iCalObject
     {
         #region Protected Fields

@@ -19,18 +19,8 @@ namespace DDay.iCal.Components
     /// </remarks>
 #if DATACONTRACT
     [DataContract(Name = "RecurringComponent", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(iCalDateTime))]
-    [KnownType(typeof(RecurrenceDates))]
-    [KnownType(typeof(RecurrenceDates[]))]
-    [KnownType(typeof(RecurrencePattern))]
-    [KnownType(typeof(RecurrencePattern[]))]
-    [KnownType(typeof(List<Period>))]
-    [KnownType(typeof(List<Alarm>))]
-    [KnownType(typeof(Period))]
-    [KnownType(typeof(Alarm))]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class RecurringComponent : UniqueComponent
     {
         #region Private Fields

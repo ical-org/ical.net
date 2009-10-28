@@ -127,6 +127,7 @@
     <Compile Include="Interfaces\IKeyedList.cs" />
     <Compile Include="Interfaces\IKeyedObject.cs" />
     <Compile Include="KeyedList.cs" />
+    <Compile Include="KnownTypeHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\DisallowedTypesAttribute.cs" />
     <Compile Include="Serialization\ForceUTCAttribute.cs" />

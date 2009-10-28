@@ -16,12 +16,8 @@ namespace DDay.iCal.Components
     /// </summary>
 #if DATACONTRACT
     [DataContract(Name = "iCalTimeZoneInfo", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(UTC_Offset))]
-    [KnownType(typeof(Text[]))]
-    [KnownType(typeof(Text))]    
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class iCalTimeZoneInfo : RecurringComponent
     {
         #region Disabled Properties and Methods

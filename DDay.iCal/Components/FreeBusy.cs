@@ -11,9 +11,8 @@ namespace DDay.iCal.Components
     /// </summary>
 #if DATACONTRACT
     [DataContract(Name = "FreeBusy", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class FreeBusy : ComponentBase
     {
         public FreeBusy(iCalObject parent) : base(parent)

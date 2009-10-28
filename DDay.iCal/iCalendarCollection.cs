@@ -15,9 +15,8 @@ namespace DDay.iCal
     /// </summary>
 #if DATACONTRACT
     [CollectionDataContract(Name = "iCalendarCollection", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class iCalendarCollection : ICollection<iCalendar>
     {
         #region Private Fields

@@ -15,22 +15,8 @@ namespace DDay.iCal.Components
     /// </summary>
 #if DATACONTRACT
     [DataContract(Name = "UniqueComponent", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(Text))]
-    [KnownType(typeof(Binary))]
-    [KnownType(typeof(Binary[]))]
-    [KnownType(typeof(Cal_Address))]
-    [KnownType(typeof(Cal_Address[]))]
-    [KnownType(typeof(TextCollection))]
-    [KnownType(typeof(TextCollection[]))]
-    [KnownType(typeof(iCalDateTime))]
-    [KnownType(typeof(Integer))]
-    [KnownType(typeof(Text[]))]
-    [KnownType(typeof(RequestStatus))]
-    [KnownType(typeof(RequestStatus[]))]
-    [KnownType(typeof(URI))]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class UniqueComponent : ComponentBase
     {
         // TODO: Add AddRelationship() public method.
@@ -73,6 +59,8 @@ namespace DDay.iCal.Components
         #region Public Events
 
         public delegate void UIDChangedEventHandler(object sender, Text OldUID, Text NewUID);
+
+        [field: NonSerialized]
         public event UIDChangedEventHandler UIDChanged;
 
         #endregion

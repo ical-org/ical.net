@@ -13,10 +13,8 @@ namespace DDay.iCal.DataTypes
     [DebuggerDisplay("{Latitude};{Longitude}")]
 #if DATACONTRACT
     [DataContract(Name = "Geo", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(Float))]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class Geo : iCalDataType
     {
         #region Private Fields

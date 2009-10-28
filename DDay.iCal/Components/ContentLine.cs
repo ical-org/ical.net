@@ -17,9 +17,8 @@ namespace DDay.iCal.Components
     /// </remarks>
 #if DATACONTRACT
     [DataContract(Name = "ContentLine", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]    
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class ContentLine : iCalObject
     {
         #region Private Fields

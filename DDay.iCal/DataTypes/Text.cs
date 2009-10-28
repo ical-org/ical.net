@@ -14,9 +14,8 @@ namespace DDay.iCal.DataTypes
     [Encodable("BASE64,8BIT,7BIT")]
 #if DATACONTRACT
     [DataContract(Name = "Text", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class Text : 
         EncodableDataType,
         IEscapable

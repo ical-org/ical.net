@@ -16,9 +16,8 @@ namespace DDay.iCal.DataTypes
     [DebuggerDisplay("{Value}")]
 #if DATACONTRACT
     [DataContract(Name = "Duration", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class Duration : iCalDataType
     {
         #region Private Fields

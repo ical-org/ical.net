@@ -13,9 +13,8 @@ namespace DDay.iCal.DataTypes
     /// </summary>
 #if DATACONTRACT
     [DataContract(Name = "TZID", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class TZID : iCalDataType
     {
         #region Private Fields

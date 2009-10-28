@@ -12,11 +12,8 @@ namespace DDay.iCal.DataTypes
     /// </summary>    
 #if DATACONTRACT
     [DataContract(Name = "Trigger", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(iCalDateTime))]
-    [KnownType(typeof(Duration))]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class Trigger : iCalDataType
     {
         public enum TriggerRelation
@@ -152,6 +149,19 @@ namespace DDay.iCal.DataTypes
                 object d = t.Duration;
                 return t.Duration.TryParse(value, ref d);
             }
+        }
+
+        public override bool Equals(object obj)
+        {
+            Trigger t = obj as Trigger;
+            if (t != null)
+            {
+                return
+                    object.Equals(DateTime, t.DateTime) &&
+                    object.Equals(Duration, t.Duration) &&
+                    object.Equals(Related, t.Related);
+            }
+            return base.Equals(obj);
         }
 
         #endregion

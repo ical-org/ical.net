@@ -11,9 +11,8 @@ namespace DDay.iCal
     /// </summary>
 #if DATACONTRACT
     [CollectionDataContract(Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class KeyedList<T, U> :
         List<T>,
         IKeyedList<T, U> where T : IKeyedObject<U>

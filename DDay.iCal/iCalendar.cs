@@ -90,119 +90,252 @@ namespace DDay.iCal
     /// </para>
     /// </remarks>
 #if DATACONTRACT
-    [DataContract(Name = "iCalendar", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#else
-    [Serializable]
+    [DataContract(IsReference = true, Name = "iCalendar", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [KnownType(typeof(UniqueComponentList<UniqueComponent>))]
+    [KnownType(typeof(UniqueComponentList<Event>))]
+    [KnownType(typeof(UniqueComponentList<Todo>))]
+    [KnownType(typeof(UniqueComponentList<Journal>))]
+    [KnownType(typeof(Event))]
+    [KnownType(typeof(Todo))]
+    [KnownType(typeof(Journal))]
+    [KnownType(typeof(FreeBusy))]
 #endif
+    [Serializable]
     public class iCalendar : ComponentBase, IDisposable
     {
-        #region Constructors
+        #region Static Public Methods
 
         /// <summary>
-        /// To load an existing an iCalendar object, use one of the provided LoadFromXXX methods.
-        /// <example>
-        /// For example, use the following code to load an iCalendar object from a URL:
-        /// <code>
-        ///     iCalendar iCal = iCalendar.LoadFromUri(new Uri("http://somesite.com/calendar.ics"));
-        /// </code>
-        /// </example>
+        /// Loads an <see cref="iCalendar"/> from the file system.
         /// </summary>
-        public iCalendar()
-            : base(null)
+        /// <param name="Filepath">The path to the file to load.</param>
+        /// <returns>An <see cref="iCalendar"/> object</returns>
+        static public iCalendar LoadFromFile(string Filepath)
         {
-            this.Name = "VCALENDAR";
-            UniqueComponents = new UniqueComponentList<UniqueComponent>(this);
-            Events = new UniqueComponentList<Event>(this);
-            FreeBusy = new List<FreeBusy>();
-            Journals = new UniqueComponentList<Journal>(this);
-            TimeZones = new List<iCalTimeZone>();
-            Todos = new UniqueComponentList<Todo>(this);
-
-            object[] attrs = GetType().GetCustomAttributes(typeof(ComponentBaseTypeAttribute), false);
-            if (attrs.Length > 0)
+            return LoadFromFile(
+                typeof(iCalendar),
+                Filepath,
+                Encoding.UTF8,
+                new iCalendarSerializer());
+        }
+        static public T LoadFromFile<T>(string Filepath)
+        {
+            if (typeof(T) == typeof(iCalendar) ||
+                typeof(T).IsSubclassOf(typeof(iCalendar)))
             {
-                foreach (ComponentBaseTypeAttribute attr in attrs)
-                    m_ComponentBaseCreate = attr.Type.GetMethod("Create", BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
+                object obj = LoadFromFile(
+                    typeof(T),
+                    Filepath,
+                    Encoding.UTF8,
+                    new iCalendarSerializer());
+                return (T)obj;
             }
-
-            if (m_ComponentBaseCreate == null)
-                m_ComponentBaseCreate = typeof(ComponentBase).GetMethod("Create", BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
+            else return default(T);
         }
-
-        #endregion
-
-        #region Overrides
-
-        /// <summary>
-        /// Adds an <see cref="iCalObject"/>-based component to the
-        /// appropriate collection.  Currently, the iCalendar component
-        /// supports the following components:
-        ///     <list type="bullet">        
-        ///         <item><see cref="DDay.iCal.Components.Event"/></item>
-        ///         <item><see cref="DDay.iCal.Components.FreeBusy"/></item>
-        ///         <item><see cref="DDay.iCal.Components.Journal"/></item>
-        ///         <item><see cref="DDay.iCal.Components.TimeZone"/></item>
-        ///         <item><see cref="DDay.iCal.Components.Todo"/></item>
-        ///     </list>
-        /// </summary>
-        /// <param name="child"></param>
-        public override void AddChild(iCalObject child)
+        static public iCalendar LoadFromFile(Type iCalendarType, string Filepath)
         {
-            base.AddChild(child);
-            child.Parent = this;
+            return LoadFromFile(
+                iCalendarType, Filepath, Encoding.UTF8, new iCalendarSerializer());
+        }
+        static public iCalendar LoadFromFile(Type iCalendarType, string Filepath, Encoding encoding)
+        {
+            return LoadFromFile(
+                iCalendarType, Filepath, encoding, new iCalendarSerializer());
+        }
+        static public iCalendar LoadFromFile(Type iCalendarType, string Filepath, Encoding encoding, DDay.iCal.Serialization.ISerializable serializer)
+        {
+            FileStream fs = new FileStream(Filepath, FileMode.Open);
 
-            if (child is UniqueComponent)
-                UniqueComponents.Add((UniqueComponent)child);
-
-            Type type = child.GetType();
-            if (type == typeof(Event) || type.IsSubclassOf(typeof(Event))) Events.Add((Event)child);
-            else if (type == typeof(FreeBusy) || type.IsSubclassOf(typeof(FreeBusy))) FreeBusy.Add((FreeBusy)child);
-            else if (type == typeof(Journal) || type.IsSubclassOf(typeof(Journal))) Journals.Add((Journal)child);
-            else if (type == typeof(iCalTimeZone) || type.IsSubclassOf(typeof(iCalTimeZone))) TimeZones.Add((iCalTimeZone)child);
-            else if (type == typeof(Todo) || type.IsSubclassOf(typeof(Todo))) Todos.Add((Todo)child);
+            iCalendar iCal = LoadFromStream(iCalendarType, fs, encoding, serializer);
+            fs.Close();
+            return iCal;
         }
 
         /// <summary>
-        /// Removes an <see cref="iCalObject"/>-based component from all
-        /// of the collections that this object may be contained in within
-        /// the iCalendar.
+        /// Loads an <see cref="iCalendar"/> from an open stream.
         /// </summary>
-        /// <param name="child"></param>
-        public override void RemoveChild(iCalObject child)
+        /// <param name="s">The stream from which to load the <see cref="iCalendar"/> object</param>
+        /// <returns>An <see cref="iCalendar"/> object</returns>
+        static new public iCalendar LoadFromStream(Stream s)
         {
-            base.RemoveChild(child);
-
-            if (child is UniqueComponent)
-                UniqueComponents.Remove((UniqueComponent)child);
-
-            Type type = child.GetType();
-            if (type == typeof(Event) || type.IsSubclassOf(typeof(Event))) Events.Remove((Event)child);
-            else if (type == typeof(FreeBusy) || type.IsSubclassOf(typeof(FreeBusy))) FreeBusy.Remove((FreeBusy)child);
-            else if (type == typeof(Journal) || type.IsSubclassOf(typeof(Journal))) Journals.Remove((Journal)child);
-            else if (type == typeof(iCalTimeZone) || type.IsSubclassOf(typeof(iCalTimeZone))) TimeZones.Remove((iCalTimeZone)child);
-            else if (type == typeof(Todo) || type.IsSubclassOf(typeof(Todo))) Todos.Remove((Todo)child);
+            return LoadFromStream(typeof(iCalendar), s, Encoding.UTF8);
+        }
+        static public iCalendar LoadFromStream(Stream s, Encoding encoding)
+        {
+            return LoadFromStream(typeof(iCalendar), s, encoding);
+        }
+        static new public iCalendar LoadFromStream(TextReader tr)
+        {
+            return LoadFromStream(typeof(iCalendar), tr);
+        }
+        static new public T LoadFromStream<T>(TextReader tr)
+        {
+            return LoadFromStream<T>(tr, new iCalendarSerializer());
+        }
+        static public T LoadFromStream<T>(TextReader tr, DDay.iCal.Serialization.ISerializable serializer)
+        {
+            if (typeof(T) == typeof(iCalendar) ||
+                typeof(T).IsSubclassOf(typeof(iCalendar)))
+                return (T)(object)LoadFromStream(typeof(T), tr, serializer);
+            else return default(T);
+        }
+        static public T LoadFromStream<T>(Stream s)
+        {
+            return LoadFromStream<T>(s, Encoding.UTF8, new iCalendarSerializer());
+        }
+        static new public T LoadFromStream<T>(Stream s, Encoding encoding)
+        {
+            return LoadFromStream<T>(s, encoding, new iCalendarSerializer());
+        }
+        static public T LoadFromStream<T>(Stream s, Encoding encoding, DDay.iCal.Serialization.ISerializable serializer)
+        {
+            if (typeof(T) == typeof(iCalendar) ||
+                typeof(T).IsSubclassOf(typeof(iCalendar)))
+                return (T)(object)LoadFromStream(typeof(T), s, encoding, serializer);
+            else return default(T);
+        }
+        static public iCalendar LoadFromStream(Type iCalendarType, Stream s)
+        {
+            return LoadFromStream(iCalendarType, s, Encoding.UTF8);
+        }
+        static public iCalendar LoadFromStream(Type iCalendarType, Stream s, Encoding e)
+        {
+            iCalendarSerializer serializer = new iCalendarSerializer();
+            return (iCalendar)serializer.Deserialize(s, e, iCalendarType);
+        }
+        static public iCalendar LoadFromStream(Type iCalendarType, TextReader tr)
+        {
+            iCalendarSerializer serializer = new iCalendarSerializer();
+            return (iCalendar)serializer.Deserialize(tr, iCalendarType);
+        }
+        static public iCalendar LoadFromStream(Type iCalendarType, Stream s, Encoding e, DDay.iCal.Serialization.ISerializable serializer)
+        {
+            return (iCalendar)serializer.Deserialize(s, e, iCalendarType);
+        }
+        static public iCalendar LoadFromStream(Type iCalendarType, TextReader tr, DDay.iCal.Serialization.ISerializable serializer)
+        {
+            string text = tr.ReadToEnd();
+            MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(text));
+            return LoadFromStream(iCalendarType, ms, Encoding.UTF8, serializer);
         }
 
         /// <summary>
-        /// Resolves each UID in the UniqueComponents list
-        /// to a valid UID.  When the UIDs are updated, each
-        /// UniqueComponentList that contains the UniqueComponent
-        /// will be updated as well.
+        /// Loads an <see cref="iCalendar"/> from a given Uri.
         /// </summary>
-        public override void OnLoaded(EventArgs e)
-        {
-            UniqueComponents.ResolveUIDs();
+        /// <param name="url">The Uri from which to load the <see cref="iCalendar"/> object</param>
+        /// <returns>An <see cref="iCalendar"/> object</returns>
+        static public iCalendar LoadFromUri(Uri uri) { return LoadFromUri(typeof(iCalendar), uri, null, null, null); }
 
-            base.OnLoaded(e);
+#if !SILVERLIGHT
+        static public iCalendar LoadFromUri(Uri uri, WebProxy proxy) { return LoadFromUri(typeof(iCalendar), uri, null, null, proxy); }
+#endif
+
+        static public T LoadFromUri<T>(Uri uri)
+        {
+            if (typeof(T) == typeof(iCalendar) ||
+                typeof(T).IsSubclassOf(typeof(iCalendar)))
+            {
+                object obj = LoadFromUri(typeof(T), uri, null, null, null);
+                return (T)obj;
+            }
+            else return default(T);
+        }
+        static public iCalendar LoadFromUri(Type iCalendarType, Uri uri)
+        {
+            return LoadFromUri(iCalendarType, uri, null, null, null);
         }
 
         /// <summary>
-        /// Creates a typed copy of the iCalendar.
+        /// Loads an <see cref="iCalendar"/> from a given Uri, using a 
+        /// specified <paramref name="username"/> and <paramref name="password"/>
+        /// for credentials.
         /// </summary>
-        /// <returns>An iCalendar object.</returns>
-        public new iCalendar Copy()
+        /// <param name="url">The Uri from which to load the <see cref="iCalendar"/> object</param>
+        /// <returns>an <see cref="iCalendar"/> object</returns>
+        static public iCalendar LoadFromUri(Uri uri, string username, string password) { return LoadFromUri(typeof(iCalendar), uri, username, password, null); }
+        static public T LoadFromUri<T>(Uri uri, string username, string password)
         {
-            return (iCalendar)base.Copy();
+            if (typeof(T) == typeof(iCalendar) ||
+                typeof(T).IsSubclassOf(typeof(iCalendar)))
+            {
+                object obj = LoadFromUri(typeof(T), uri, username, password, null);
+                return (T)obj;
+            }
+            else return default(T);
+        }
+
+#if !SILVERLIGHT
+        static public iCalendar LoadFromUri(Uri uri, string username, string password, WebProxy proxy) { return LoadFromUri(typeof(iCalendar), uri, username, password, proxy); }
+#endif
+
+        static public iCalendar LoadFromUri(Type iCalendarType, Uri uri, string username, string password) { return LoadFromUri(iCalendarType, uri, username, password, null); }
+
+#if SILVERLIGHT
+        static public iCalendar LoadFromUri(Type iCalendarType, Uri uri, string username, string password, object unusedProxy)
+#else
+        static public iCalendar LoadFromUri(Type iCalendarType, Uri uri, string username, string password, WebProxy proxy)
+#endif
+        {
+            try
+            {
+                WebRequest request = WebRequest.Create(uri);
+
+                if (username != null && password != null)
+                    request.Credentials = new System.Net.NetworkCredential(username, password);
+
+#if !SILVERLIGHT
+                if (proxy != null)
+                    request.Proxy = proxy;
+#endif
+
+                AutoResetEvent evt = new AutoResetEvent(false);
+
+                string str = null;
+                request.BeginGetResponse(new AsyncCallback(
+                    delegate(IAsyncResult result)
+                    {
+                        Encoding e = Encoding.UTF8;
+
+                        try
+                        {
+                            using (WebResponse resp = request.EndGetResponse(result))
+                            {
+                                // Try to determine the content encoding
+                                try
+                                {
+                                    List<string> keys = new List<string>(resp.Headers.AllKeys);
+                                    if (keys.Contains("Content-Encoding"))
+                                        e = Encoding.GetEncoding(resp.Headers["Content-Encoding"]);
+                                }
+                                catch
+                                {
+                                    // Fail gracefully back to UTF-8
+                                }
+
+                                using (Stream stream = resp.GetResponseStream())
+                                using (StreamReader sr = new StreamReader(stream, e))
+                                {
+                                    str = sr.ReadToEnd();
+                                }
+                            }
+                        }
+                        finally
+                        {
+                            evt.Set();
+                        }
+                    }
+                ), null);
+
+                evt.WaitOne();
+
+                if (str != null)
+                    return LoadFromStream(new StringReader(str));
+                return null;
+            }
+            catch (System.Net.WebException ex)
+            {
+                return null;
+            }
         }
 
         #endregion
@@ -215,6 +348,8 @@ namespace DDay.iCal
         private UniqueComponentList<Journal> m_Journal;
         private List<iCalTimeZone> m_TimeZone;
         private UniqueComponentList<Todo> m_Todo;
+
+        [field: NonSerialized]
         private MethodInfo m_ComponentBaseCreate;
 
         // The buffer size used to convert streams from UTF-8 to Unicode
@@ -404,239 +539,42 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Static Public Methods
+        #region Constructors
 
         /// <summary>
-        /// Loads an <see cref="iCalendar"/> from the file system.
+        /// To load an existing an iCalendar object, use one of the provided LoadFromXXX methods.
+        /// <example>
+        /// For example, use the following code to load an iCalendar object from a URL:
+        /// <code>
+        ///     iCalendar iCal = iCalendar.LoadFromUri(new Uri("http://somesite.com/calendar.ics"));
+        /// </code>
+        /// </example>
         /// </summary>
-        /// <param name="Filepath">The path to the file to load.</param>
-        /// <returns>An <see cref="iCalendar"/> object</returns>
-        static public iCalendar LoadFromFile(string Filepath)
+        public iCalendar()
+            : base(null)
         {
-            return LoadFromFile(
-                typeof(iCalendar),
-                Filepath,
-                Encoding.UTF8,
-                new iCalendarSerializer());
+            this.Name = "VCALENDAR";
+            Initialize();
         }
-        static public T LoadFromFile<T>(string Filepath)
+
+        private void Initialize()
         {
-            if (typeof(T) == typeof(iCalendar) ||
-                typeof(T).IsSubclassOf(typeof(iCalendar)))
+            UniqueComponents = new UniqueComponentList<UniqueComponent>(this);
+            Events = new UniqueComponentList<Event>(this);
+            FreeBusy = new List<FreeBusy>();
+            Journals = new UniqueComponentList<Journal>(this);
+            TimeZones = new List<iCalTimeZone>();
+            Todos = new UniqueComponentList<Todo>(this);
+
+            object[] attrs = GetType().GetCustomAttributes(typeof(ComponentBaseTypeAttribute), false);
+            if (attrs.Length > 0)
             {
-                object obj = LoadFromFile(
-                    typeof(T),
-                    Filepath,
-                    Encoding.UTF8,
-                    new iCalendarSerializer());
-                return (T)obj;
+                foreach (ComponentBaseTypeAttribute attr in attrs)
+                    m_ComponentBaseCreate = attr.Type.GetMethod("Create", BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
             }
-            else return default(T);
-        }
-        static public iCalendar LoadFromFile(Type iCalendarType, string Filepath)
-        {
-            return LoadFromFile(
-                iCalendarType, Filepath, Encoding.UTF8, new iCalendarSerializer());
-        }
-        static public iCalendar LoadFromFile(Type iCalendarType, string Filepath, Encoding encoding)
-        {
-            return LoadFromFile(
-                iCalendarType, Filepath, encoding, new iCalendarSerializer());
-        }
-        static public iCalendar LoadFromFile(Type iCalendarType, string Filepath, Encoding encoding, DDay.iCal.Serialization.ISerializable serializer)
-        {
-            FileStream fs = new FileStream(Filepath, FileMode.Open);
 
-            iCalendar iCal = LoadFromStream(iCalendarType, fs, encoding, serializer);
-            fs.Close();
-            return iCal;
-        }
-
-        /// <summary>
-        /// Loads an <see cref="iCalendar"/> from an open stream.
-        /// </summary>
-        /// <param name="s">The stream from which to load the <see cref="iCalendar"/> object</param>
-        /// <returns>An <see cref="iCalendar"/> object</returns>
-        static new public iCalendar LoadFromStream(Stream s)
-        {
-            return LoadFromStream(typeof(iCalendar), s, Encoding.UTF8);
-        }
-        static public iCalendar LoadFromStream(Stream s, Encoding encoding)
-        {
-            return LoadFromStream(typeof(iCalendar), s, encoding);
-        }
-        static new public iCalendar LoadFromStream(TextReader tr)
-        {
-            return LoadFromStream(typeof(iCalendar), tr);
-        }
-        static new public T LoadFromStream<T>(TextReader tr)
-        {
-            return LoadFromStream<T>(tr, new iCalendarSerializer());
-        }
-        static public T LoadFromStream<T>(TextReader tr, DDay.iCal.Serialization.ISerializable serializer)
-        {
-            if (typeof(T) == typeof(iCalendar) ||
-                typeof(T).IsSubclassOf(typeof(iCalendar)))
-                return (T)(object)LoadFromStream(typeof(T), tr, serializer);
-            else return default(T);
-        }
-        static public T LoadFromStream<T>(Stream s)
-        {
-            return LoadFromStream<T>(s, Encoding.UTF8, new iCalendarSerializer());
-        }
-        static new public T LoadFromStream<T>(Stream s, Encoding encoding)
-        {
-            return LoadFromStream<T>(s, encoding, new iCalendarSerializer());
-        }
-        static public T LoadFromStream<T>(Stream s, Encoding encoding, DDay.iCal.Serialization.ISerializable serializer)
-        {
-            if (typeof(T) == typeof(iCalendar) ||
-                typeof(T).IsSubclassOf(typeof(iCalendar)))
-                return (T)(object)LoadFromStream(typeof(T), s, encoding, serializer);
-            else return default(T);
-        }
-        static public iCalendar LoadFromStream(Type iCalendarType, Stream s)
-        {
-            return LoadFromStream(iCalendarType, s, Encoding.UTF8);
-        }
-        static public iCalendar LoadFromStream(Type iCalendarType, Stream s, Encoding e)
-        {
-            iCalendarSerializer serializer = new iCalendarSerializer();
-            return (iCalendar)serializer.Deserialize(s, e, iCalendarType);
-        }
-        static public iCalendar LoadFromStream(Type iCalendarType, TextReader tr)
-        {
-            iCalendarSerializer serializer = new iCalendarSerializer();
-            return (iCalendar)serializer.Deserialize(tr, iCalendarType);
-        }
-        static public iCalendar LoadFromStream(Type iCalendarType, Stream s, Encoding e, DDay.iCal.Serialization.ISerializable serializer)
-        {
-            return (iCalendar)serializer.Deserialize(s, e, iCalendarType);
-        }
-        static public iCalendar LoadFromStream(Type iCalendarType, TextReader tr, DDay.iCal.Serialization.ISerializable serializer)
-        {
-            string text = tr.ReadToEnd();
-            MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(text));
-            return LoadFromStream(iCalendarType, ms, Encoding.UTF8, serializer);
-        }
-
-        /// <summary>
-        /// Loads an <see cref="iCalendar"/> from a given Uri.
-        /// </summary>
-        /// <param name="url">The Uri from which to load the <see cref="iCalendar"/> object</param>
-        /// <returns>An <see cref="iCalendar"/> object</returns>
-        static public iCalendar LoadFromUri(Uri uri) { return LoadFromUri(typeof(iCalendar), uri, null, null, null); }
-
-#if !SILVERLIGHT
-        static public iCalendar LoadFromUri(Uri uri, WebProxy proxy) { return LoadFromUri(typeof(iCalendar), uri, null, null, proxy); }
-#endif
-
-        static public T LoadFromUri<T>(Uri uri)
-        {
-            if (typeof(T) == typeof(iCalendar) ||
-                typeof(T).IsSubclassOf(typeof(iCalendar)))
-            {
-                object obj = LoadFromUri(typeof(T), uri, null, null, null);
-                return (T)obj;
-            }
-            else return default(T);
-        }
-        static public iCalendar LoadFromUri(Type iCalendarType, Uri uri)
-        {
-            return LoadFromUri(iCalendarType, uri, null, null, null);
-        }
-
-        /// <summary>
-        /// Loads an <see cref="iCalendar"/> from a given Uri, using a 
-        /// specified <paramref name="username"/> and <paramref name="password"/>
-        /// for credentials.
-        /// </summary>
-        /// <param name="url">The Uri from which to load the <see cref="iCalendar"/> object</param>
-        /// <returns>an <see cref="iCalendar"/> object</returns>
-        static public iCalendar LoadFromUri(Uri uri, string username, string password) { return LoadFromUri(typeof(iCalendar), uri, username, password, null); }
-        static public T LoadFromUri<T>(Uri uri, string username, string password)
-        {
-            if (typeof(T) == typeof(iCalendar) ||
-                typeof(T).IsSubclassOf(typeof(iCalendar)))
-            {
-                object obj = LoadFromUri(typeof(T), uri, username, password, null);
-                return (T)obj;
-            }
-            else return default(T);
-        }
-
-#if !SILVERLIGHT
-        static public iCalendar LoadFromUri(Uri uri, string username, string password, WebProxy proxy) { return LoadFromUri(typeof(iCalendar), uri, username, password, proxy); }
-#endif
-
-        static public iCalendar LoadFromUri(Type iCalendarType, Uri uri, string username, string password) { return LoadFromUri(iCalendarType, uri, username, password, null); }
-
-#if SILVERLIGHT
-        static public iCalendar LoadFromUri(Type iCalendarType, Uri uri, string username, string password, object unusedProxy)
-#else
-        static public iCalendar LoadFromUri(Type iCalendarType, Uri uri, string username, string password, WebProxy proxy)
-#endif
-        {
-            try
-            {
-                WebRequest request = WebRequest.Create(uri);                
-
-                if (username != null && password != null)
-                    request.Credentials = new System.Net.NetworkCredential(username, password);
-
-#if !SILVERLIGHT
-                if (proxy != null)
-                    request.Proxy = proxy;
-#endif
-
-                AutoResetEvent evt = new AutoResetEvent(false);
-
-                string str = null;
-                request.BeginGetResponse(new AsyncCallback(
-                    delegate(IAsyncResult result)
-                    {
-                        Encoding e = Encoding.UTF8;
-
-                        try
-                        {
-                            using (WebResponse resp = request.EndGetResponse(result))
-                            {
-                                // Try to determine the content encoding
-                                try
-                                {
-                                    List<string> keys = new List<string>(resp.Headers.AllKeys);
-                                    if (keys.Contains("Content-Encoding"))
-                                        e = Encoding.GetEncoding(resp.Headers["Content-Encoding"]);
-                                }
-                                catch
-                                {
-                                    // Fail gracefully back to UTF-8
-                                }
-
-                                using (Stream stream = resp.GetResponseStream())
-                                using (StreamReader sr = new StreamReader(stream, e))
-                                {
-                                    str = sr.ReadToEnd();
-                                }
-                            }
-                        }
-                        finally
-                        {
-                            evt.Set();
-                        }
-                    }
-                ), null);
-
-                evt.WaitOne();
-
-                if (str != null)
-                    return LoadFromStream(new StringReader(str));
-                return null;
-            }
-            catch (System.Net.WebException ex)
-            {
-                return null;
-            }
+            if (m_ComponentBaseCreate == null)
+                m_ComponentBaseCreate = typeof(ComponentBase).GetMethod("Create", BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
         }
 
         #endregion
@@ -903,6 +841,140 @@ namespace DDay.iCal
         }
 
         #endregion
+
+        #region Private Methods
+
+#if DATACONTRACT
+        [OnDeserializing]
+        private void OnDeserializing(StreamingContext context)
+        {
+            Initialize();
+        }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            foreach (object child in Children)
+            {
+                if (child is UniqueComponent)
+                    UniqueComponents.Add((UniqueComponent)child);
+
+                Type type = child.GetType();
+                if (typeof(Event).IsAssignableFrom(type)) Events.Add((Event)child);
+                else if (typeof(FreeBusy).IsAssignableFrom(type)) FreeBusy.Add((FreeBusy)child);
+                else if (typeof(Journal).IsAssignableFrom(type)) Journals.Add((Journal)child);
+                else if (typeof(iCalTimeZone).IsAssignableFrom(type)) TimeZones.Add((iCalTimeZone)child);
+                else if (typeof(Todo).IsAssignableFrom(type)) Todos.Add((Todo)child);
+            }
+        }
+#endif
+
+        #endregion
+
+        #region Overrides
+
+        /// <summary>
+        /// Adds an <see cref="iCalObject"/>-based component to the
+        /// appropriate collection.  Currently, the iCalendar component
+        /// supports the following components:
+        ///     <list type="bullet">        
+        ///         <item><see cref="DDay.iCal.Components.Event"/></item>
+        ///         <item><see cref="DDay.iCal.Components.FreeBusy"/></item>
+        ///         <item><see cref="DDay.iCal.Components.Journal"/></item>
+        ///         <item><see cref="DDay.iCal.Components.TimeZone"/></item>
+        ///         <item><see cref="DDay.iCal.Components.Todo"/></item>
+        ///     </list>
+        /// </summary>
+        /// <param name="child"></param>
+        public override void AddChild(iCalObject child)
+        {
+            base.AddChild(child);
+            child.Parent = this;
+
+            if (child is UniqueComponent)
+                UniqueComponents.Add((UniqueComponent)child);
+
+            Type type = child.GetType();
+            if (typeof(Event).IsAssignableFrom(type)) Events.Add((Event)child);
+            else if (typeof(FreeBusy).IsAssignableFrom(type)) FreeBusy.Add((FreeBusy)child);
+            else if (typeof(Journal).IsAssignableFrom(type)) Journals.Add((Journal)child);
+            else if (typeof(iCalTimeZone).IsAssignableFrom(type)) TimeZones.Add((iCalTimeZone)child);
+            else if (typeof(Todo).IsAssignableFrom(type)) Todos.Add((Todo)child);
+        }
+
+        /// <summary>
+        /// Removes an <see cref="iCalObject"/>-based component from all
+        /// of the collections that this object may be contained in within
+        /// the iCalendar.
+        /// </summary>
+        /// <param name="child"></param>
+        public override void RemoveChild(iCalObject child)
+        {
+            base.RemoveChild(child);
+
+            if (child is UniqueComponent)
+                UniqueComponents.Remove((UniqueComponent)child);
+
+            Type type = child.GetType();
+            if (type == typeof(Event) || type.IsSubclassOf(typeof(Event))) Events.Remove((Event)child);
+            else if (type == typeof(FreeBusy) || type.IsSubclassOf(typeof(FreeBusy))) FreeBusy.Remove((FreeBusy)child);
+            else if (type == typeof(Journal) || type.IsSubclassOf(typeof(Journal))) Journals.Remove((Journal)child);
+            else if (type == typeof(iCalTimeZone) || type.IsSubclassOf(typeof(iCalTimeZone))) TimeZones.Remove((iCalTimeZone)child);
+            else if (type == typeof(Todo) || type.IsSubclassOf(typeof(Todo))) Todos.Remove((Todo)child);
+        }
+
+        /// <summary>
+        /// Resolves each UID in the UniqueComponents list
+        /// to a valid UID.  When the UIDs are updated, each
+        /// UniqueComponentList that contains the UniqueComponent
+        /// will be updated as well.
+        /// </summary>
+        public override void OnLoaded(EventArgs e)
+        {
+            UniqueComponents.ResolveUIDs();
+
+            base.OnLoaded(e);
+        }
+
+        /// <summary>
+        /// Creates a typed copy of the iCalendar.
+        /// </summary>
+        /// <returns>An iCalendar object.</returns>
+        public new iCalendar Copy()
+        {
+            return (iCalendar)base.Copy();
+        }
+
+        public override bool Equals(object obj)
+        {
+            iCalendar iCal = obj as iCalendar;
+            if (iCal != null)
+            {
+                bool isEqual =
+                    object.Equals(Version, iCal.Version) &&
+                    object.Equals(ProductID, iCal.ProductID) &&
+                    object.Equals(Scale, iCal.Scale) &&
+                    object.Equals(Method, iCal.Method) &&
+                    (
+                        (UniqueComponents == null && iCal.UniqueComponents == null) ||
+                        (UniqueComponents != null && iCal.UniqueComponents != null && object.Equals(UniqueComponents.Count, iCal.UniqueComponents.Count))
+                    );
+
+                if (isEqual)
+                {
+                    for (int i = 0; i < UniqueComponents.Count; i++)
+                    {
+                        if (!object.Equals(UniqueComponents[i], iCal.UniqueComponents[i]))
+                            return false;
+                    }
+                    return true;
+                }
+                return false;
+            }
+            return base.Equals(obj);
+        }
+
+        #endregion        
 
         #region IDisposable Members
 

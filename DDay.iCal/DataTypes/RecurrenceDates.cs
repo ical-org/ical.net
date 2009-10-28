@@ -13,12 +13,8 @@ namespace DDay.iCal.DataTypes
     /// </summary>
 #if DATACONTRACT
     [DataContract(Name = "RecurrenceDates", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(TZID))]
-    [KnownType(typeof(Period))]
-    [KnownType(typeof(List<Period>))]    
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class RecurrenceDates : iCalDataType
     {
         #region Private Fields

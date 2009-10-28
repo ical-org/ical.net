@@ -12,11 +12,8 @@ namespace DDay.iCal.DataTypes
     [DebuggerDisplay("Period ( {StartTime} - {EndTime} )")]
 #if DATACONTRACT
     [DataContract(Name = "Period", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(iCalDateTime))]
-    [KnownType(typeof(Duration))]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class Period : iCalDataType, IComparable
     {
         #region Private Fields

@@ -27,9 +27,8 @@ namespace DDay.iCal.Components
     /// </remarks>
 #if DATACONTRACT
     [DataContract(Name = "Property", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class Property : 
         iCalObject,
         IKeyedObject<string>

@@ -14,10 +14,9 @@ namespace DDay.iCal.Components
     /// to-do items, journal entries, and free/busy times.
     /// </summary>
 #if DATACONTRACT
-    [CollectionDataContract(Name = "UniqueComponentList", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#else
-    [Serializable]
+    [DataContract(Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
+    [Serializable]
     public class UniqueComponentList<T> : iCalObject, IList<T>
     {
         #region Private Fields

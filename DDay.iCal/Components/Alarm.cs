@@ -15,16 +15,8 @@ namespace DDay.iCal.Components
     /// </summary>    
 #if DATACONTRACT
     [DataContract(Name = "Alarm", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(Binary))]
-    [KnownType(typeof(Cal_Address))]
-    [KnownType(typeof(Cal_Address[]))]
-    [KnownType(typeof(Text))]
-    [KnownType(typeof(Duration))]
-    [KnownType(typeof(Integer))]
-    [KnownType(typeof(Trigger))]    
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class Alarm : ComponentBase
     {
         #region Static Public Methods
@@ -217,6 +209,7 @@ namespace DDay.iCal.Components
         /// is null, all triggered alarms will be returned.
         /// </summary>
         /// <param name="Start">The earliest date/time to poll trigerred alarms for.</param>
+        /// <param name="End">The latest date/time to poll trigerred alarms for.</param>
         /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
         public List<AlarmOccurrence> Poll(iCalDateTime Start, iCalDateTime End)
         {

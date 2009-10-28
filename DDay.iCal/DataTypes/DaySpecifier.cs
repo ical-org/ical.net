@@ -11,10 +11,9 @@ namespace DDay.iCal.DataTypes
     /// Represents an RFC 2445 "BYDAY" value.
     /// </summary>
 #if DATACONTRACT
-    [DataContract(Name = "DaySpecifier", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]    
-#else
-    [Serializable]
+    [DataContract(Name = "DaySpecifier", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
+    [Serializable]
     public class DaySpecifier : iCalDataType, IComparable
     {
         #region Private Fields
@@ -257,8 +256,10 @@ namespace DDay.iCal.DataTypes
         Last = -1,
         SecondToLast = -2,
         ThirdToLast = -3,
+        FourthToLast = -4,
         First = 1,
         Second = 2,
-        Third = 3
+        Third = 3,
+        Fourth = 4        
     }
 }

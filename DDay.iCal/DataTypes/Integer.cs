@@ -13,9 +13,8 @@ namespace DDay.iCal.DataTypes
     [Encodable("BASE64,8BIT,7BIT")]
 #if DATACONTRACT
     [DataContract(Name = "Integer", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class Integer : EncodableDataType
     {
         #region Private Fields
@@ -26,6 +25,9 @@ namespace DDay.iCal.DataTypes
 
         #region Public Properties
 
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         public new int Value
         {
             get { return m_Value; }

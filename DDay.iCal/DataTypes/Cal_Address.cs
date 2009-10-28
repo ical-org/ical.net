@@ -16,12 +16,8 @@ namespace DDay.iCal.DataTypes
     [DebuggerDisplay("{Value}")]
 #if DATACONTRACT
     [DataContract(Name = "Cal_Address", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(Cal_Address))]
-    [KnownType(typeof(Text))]
-    [KnownType(typeof(URI))]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class Cal_Address : URI
     {
         public const string ORGANIZER = "ORGANIZER";
@@ -51,7 +47,7 @@ namespace DDay.iCal.DataTypes
                 }
                 return m_SentBy;
             }
-            protected set
+            set
             {
                 if (value != null)
                     Parameters["SENT-BY"] = new Parameter("SENT-BY", value);
@@ -74,7 +70,7 @@ namespace DDay.iCal.DataTypes
                 }
                 return m_CN;
             }
-            protected set
+            set
             {
                 if (value != null)
                     Parameters["CN"] = new Parameter("CN", value);
@@ -97,7 +93,7 @@ namespace DDay.iCal.DataTypes
                 }
                 return m_DirectoryEntry;
             }
-            protected set
+            set
             {
                 if (value != null)
                     Parameters["DIR"] = new Parameter("DIR", value.ToString());

@@ -16,14 +16,8 @@ namespace DDay.iCal.Components
     /// </summary>
 #if DATACONTRACT
     [DataContract(Name = "iCalTimeZone", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(TZID))]
-    [KnownType(typeof(iCalDateTime))]
-    [KnownType(typeof(URI))]
-    [KnownType(typeof(iCalTimeZoneInfo))]
-    [KnownType(typeof(List<iCalTimeZoneInfo>))]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public partial class iCalTimeZone : ComponentBase
     {
         #region Static Public Methods

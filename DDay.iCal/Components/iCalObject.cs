@@ -14,19 +14,16 @@ namespace DDay.iCal.Components
     /// The base class for all iCalendar objects, components, and data types.
     /// </summary>
 #if DATACONTRACT
-    [DataContract(Name = "iCalObject", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(iCalObject))]
+    [DataContract(IsReference = true, Name = "iCalObject", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
     [KnownType(typeof(KeyedList<Property, string>))]
     [KnownType(typeof(KeyedList<Parameter, string>))]
-    [KnownType(typeof(List<iCalObject>))]
-    [KnownType(typeof(iCalendar))]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class iCalObject        
     {
         #region Public Events
 
+        [field: NonSerialized]
         public event EventHandler Loaded;
 
         #endregion
@@ -34,10 +31,10 @@ namespace DDay.iCal.Components
         #region Private Fields
 
         private iCalObject _Parent = null;
-        private List<iCalObject> _Children = new List<iCalObject>();
+        private List<iCalObject> _Children;
         private string _Name;
-        private IKeyedList<Property, string> _Properties = new KeyedList<Property, string>();
-        private IKeyedList<Parameter, string> _Parameters = new KeyedList<Parameter, string>();
+        private IKeyedList<Property, string> _Properties;
+        private IKeyedList<Parameter, string> _Parameters;
 
         #endregion
 
@@ -163,8 +160,11 @@ namespace DDay.iCal.Components
 
         #region Constructors
 
-        internal iCalObject() { }
-        public iCalObject(iCalObject parent)
+        internal iCalObject()
+        {
+            Initialize();
+        }
+        public iCalObject(iCalObject parent) : this()
         {
             Parent = parent;
             if (parent != null)
@@ -178,6 +178,13 @@ namespace DDay.iCal.Components
             : this(parent)
         {
             Name = name;
+        }
+
+        private void Initialize()
+        {
+            _Children = new List<iCalObject>();
+            _Properties = new KeyedList<Property, string>();
+            _Parameters = new KeyedList<Parameter, string>();
         }
 
         #endregion
@@ -325,6 +332,18 @@ namespace DDay.iCal.Components
         {
             Parameters.Add(p);
         }
+
+        #endregion
+
+        #region Private Methods
+
+#if DATACONTRACT
+        [OnDeserializing]
+        private void OnDeserializing(StreamingContext context)
+        {
+            Initialize();
+        }
+#endif
 
         #endregion
     }

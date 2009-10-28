@@ -17,16 +17,8 @@ namespace DDay.iCal.Components
     [DebuggerDisplay("{Summary} - {Status}")]
 #if DATACONTRACT
     [DataContract(Name = "Todo", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(iCalDateTime))]
-    [KnownType(typeof(Duration))]
-    [KnownType(typeof(Geo))]
-    [KnownType(typeof(Text))]
-    [KnownType(typeof(Integer))]
-    [KnownType(typeof(TextCollection))]
-    [KnownType(typeof(TextCollection[]))]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class Todo : RecurringComponent
     {
         #region Private Fields

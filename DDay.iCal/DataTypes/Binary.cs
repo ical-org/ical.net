@@ -13,11 +13,8 @@ namespace DDay.iCal.DataTypes
     [Encodable("BASE64")]
 #if DATACONTRACT
     [DataContract(Name = "Binary", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(URI))]
-    [KnownType(typeof(Text))]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class Binary : EncodableDataType
     {
         #region Private Fields
@@ -52,7 +49,7 @@ namespace DDay.iCal.DataTypes
                 }
                 return null;
             }
-            protected set
+            set
             {
                 if (value != null)
                     Parameters["FMTYPE"] = new Parameter("FMTYPE", value);
@@ -65,7 +62,10 @@ namespace DDay.iCal.DataTypes
 
         #region Constructors
 
-        public Binary() { }
+        public Binary()
+        {
+            Name = "ATTACH";
+        }
         public Binary(string value)
             : this()
         {

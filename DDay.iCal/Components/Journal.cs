@@ -16,9 +16,8 @@ namespace DDay.iCal.Components
     [DebuggerDisplay("{Summary}: {(Description.ToString().Length < 32) ? Description.ToString() : Description.ToString().Substring(0, 32)}")]
 #if DATACONTRACT
     [DataContract(Name = "Journal", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class Journal : RecurringComponent
     {
         #region Private Fields

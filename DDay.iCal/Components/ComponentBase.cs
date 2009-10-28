@@ -18,10 +18,9 @@ namespace DDay.iCal.Components
     /// not need to use this class directly.
     /// </summary>
 #if DATACONTRACT
-    [DataContract(Name = "ComponentBase", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#else
-    [Serializable]
+    [DataContract(IsReference = true, Name = "ComponentBase", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
+    [Serializable]
     public class ComponentBase :
         iCalObject
     {

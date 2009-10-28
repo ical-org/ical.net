@@ -27,15 +27,9 @@ namespace DDay.iCal.Components
     /// </note>
 #if DATACONTRACT
     [DataContract(Name = "Event", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(iCalDateTime))]
-    [KnownType(typeof(Duration))]
-    [KnownType(typeof(Geo))]
-    [KnownType(typeof(Text))]
-    [KnownType(typeof(TextCollection))]
-    [KnownType(typeof(TextCollection[]))]
-#else
-    [Serializable]
+    [KnownType(typeof(Alarm))]
 #endif
+    [Serializable]
     [DebuggerDisplay("{Summary}: {Start} {Duration}")]
     public class Event : RecurringComponent
     {

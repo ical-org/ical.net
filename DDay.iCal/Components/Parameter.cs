@@ -16,10 +16,8 @@ namespace DDay.iCal.Components
     /// </remarks>
 #if DATACONTRACT
     [DataContract(Name = "Parameter", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(List<string>))]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class Parameter : 
         iCalObject,
         IKeyedObject<string>

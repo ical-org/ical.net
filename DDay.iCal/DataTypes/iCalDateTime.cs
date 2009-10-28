@@ -19,11 +19,8 @@ namespace DDay.iCal.DataTypes
     [DebuggerDisplay("{HasTime ? Value.ToString() : Value.ToShortDateString()}")]
 #if DATACONTRACT
     [DataContract(Name = "iCalDateTime", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(iCalendar))]
-    [KnownType(typeof(TZID))]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class iCalDateTime : 
         iCalDataType,
         IComparable,
@@ -249,6 +246,22 @@ namespace DDay.iCal.DataTypes
         public TimeSpan TimeOfDay
         {
             get { return Value.TimeOfDay; }
+        }
+
+        public iCalDateTime YearDate
+        {
+            get
+            {
+                return Copy().AddMonths(-Month + 1).AddDays(-Day + 1).AddHours(-Hour + 1).AddMinutes(-Minute + 1).AddSeconds(-Second + 1);
+            }
+        }
+
+        public iCalDateTime MonthDate
+        {
+            get
+            {
+                return Copy().AddDays(-Day + 1).AddHours(-Hour + 1).AddMinutes(-Minute + 1).AddSeconds(-Second + 1);
+            }
         }
 
         #endregion

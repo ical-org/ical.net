@@ -10,11 +10,8 @@ namespace DDay.iCal.Components
     [DebuggerDisplay("{Component.Summary} ({Period.StartTime} - {Period.EndTime})")]
 #if DATACONTRACT
     [DataContract(Name = "Occurrence", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(Period))]
-    [KnownType(typeof(RecurringComponent))]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class Occurrence :
         IComparable<Occurrence>
     {

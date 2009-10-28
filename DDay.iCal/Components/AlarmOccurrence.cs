@@ -16,11 +16,8 @@ namespace DDay.iCal.Components
     /// </remarks>
 #if DATACONTRACT
     [DataContract(Name = "AlarmOccurrence", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(Alarm))]
-    [KnownType(typeof(iCalDateTime))]
-#else
-    [Serializable]
 #endif
+    [Serializable]
     public class AlarmOccurrence : 
         Occurrence,
         IComparable<AlarmOccurrence>
