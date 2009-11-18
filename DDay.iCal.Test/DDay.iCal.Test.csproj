@@ -53,6 +53,7 @@
     <Compile Include="CopyTest.cs" />
     <Compile Include="Custom\Custom1.cs" />
     <Compile Include="DataContractSeralizationTest.cs" />
+    <None Include="Properties\AssemblyInfo.cs.template" />
     <Compile Include="SerializationTest.cs" />
     <Compile Include="JournalTest.cs" />
     <Compile Include="RecurrenceTest.cs" />
@@ -496,5 +497,6 @@
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
+    <PreBuildEvent>$(SolutionDir)subwcrev.exe $(ProjectDir). $(ProjectDir)Properties\AssemblyInfo.cs.template $(ProjectDir)Properties\AssemblyInfo.cs</PreBuildEvent>
   </PropertyGroup>
 </Project>
