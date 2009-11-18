@@ -280,6 +280,30 @@ namespace DDay.iCal.DataTypes
         public iCalDateTime(DateTime value) : this(value, null, null) {}
         public iCalDateTime(DateTime value, TZID tzid, iCalendar iCal) : this()
         {
+            Initialize(value, tzid, iCal);
+        }
+        public iCalDateTime(int year, int month, int day, int hour, int minute, int second) : this()
+        {
+            Initialize(year, month, day, hour, minute, second, null, null);
+            HasTime = true;
+        }
+        public iCalDateTime(int year, int month, int day, int hour, int minute, int second, TZID tzid, iCalendar iCal) : this()            
+        {
+            Initialize(year, month, day, hour, minute, second, tzid, iCal);
+            HasTime = true;
+        }
+        public iCalDateTime(int year, int month, int day)
+            : this(year, month, day, 0, 0, 0) { }
+        public iCalDateTime(int year, int month, int day, TZID tzid, iCalendar iCal)
+            : this(year, month, day, 0, 0, 0, tzid, iCal) { }
+
+        private void Initialize(int year, int month, int day, int hour, int minute, int second, TZID tzid, iCalendar iCal)
+        {
+            Initialize(CoerceDateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzid, iCal);            
+        }
+
+        private void Initialize(DateTime value, TZID tzid, iCalendar iCal)
+        {
             if (value.Kind == DateTimeKind.Utc)
                 this.IsUniversalTime = true;
 
@@ -289,20 +313,29 @@ namespace DDay.iCal.DataTypes
             this.TZID = tzid;
             this.iCalendar = iCal;
         }
-        public iCalDateTime(int year, int month, int day, int hour, int minute, int second)
-            : this(new DateTime(year, month, day, hour, minute, second, DateTimeKind.Local))
+
+        private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
         {
-            HasTime = true;
+            DateTime dt = DateTime.MinValue;
+
+            // NOTE: determine if a date/time value exceeds the representable date/time values in .NET.
+            // If so, let's automatically adjust the date/time to compensate.
+            // FIXME: should we have a parsing setting that will throw an exception
+            // instead of automatically adjusting the date/time value to the
+            // closest representable date/time?
+            try
+            {
+                if (year > 9999)
+                    dt = DateTime.MaxValue;
+                else if (year > 0)
+                    dt = new DateTime(year, month, day, hour, minute, second, kind);                
+            }
+            catch
+            {                
+            }
+
+            return dt;
         }
-        public iCalDateTime(int year, int month, int day, int hour, int minute, int second, TZID tzid, iCalendar iCal)
-            : this(new DateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzid, iCal)
-        {
-            HasTime = true;
-        }
-        public iCalDateTime(int year, int month, int day)
-            : this(year, month, day, 0, 0, 0) { }
-        public iCalDateTime(int year, int month, int day, TZID tzid, iCalendar iCal)
-            : this(year, month, day, 0, 0, 0, tzid, iCal) { }
         
         #endregion
 
@@ -372,8 +405,8 @@ namespace DDay.iCal.DataTypes
                 
                 if (match.Groups[9].Success)
                     dt.IsUniversalTime = true;
-                DateTime setDateTime = new DateTime(year, month, date, hour, minute, second, DateTimeKind.Utc);                               
 
+                DateTime setDateTime = CoerceDateTime(year, month, date, hour, minute, second, DateTimeKind.Utc);
                 dt.Value = setDateTime;
             }
             return true;

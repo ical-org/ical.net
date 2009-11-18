@@ -913,6 +913,24 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             Assert.AreEqual(new iCalDateTime(1997, 12, 25), iCal.Events[0].RDate[2].Periods[10].StartTime);
         }
 
+        /// <summary>
+        /// Tests that DateTime values that are out-of-range are still parsed correctly
+        /// and set to the closest representable date/time in .NET.
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void PARSE16()
+        {            
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE16.ics");            
+            Assert.AreEqual(6, iCal.Events.Count);
+
+            Event evt = iCal.Events["nc2o66s0u36iesitl2l0b8inn8@google.com"];
+            Assert.IsNotNull(evt);
+
+            // The "Created" date is out-of-bounds.  It should be coerced to the
+            // closest representable date/time.
+            Assert.AreEqual(DateTime.MinValue, evt.Created.Value);
+        }
+
         private static byte[] ReadBinary(string fileName)
         {
             byte[] binaryData = null;

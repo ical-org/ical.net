@@ -472,6 +472,9 @@
     <None Include="Calendars\Recurrence\RRULE59.ics">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Calendars\Serialization\PARSE16.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Data\LoremIpsum.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
