@@ -163,6 +163,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
         #region Private Fields
 
         private string m_text;
+        private ISerializationContext m_SerializationContext;
 
         #endregion
 
@@ -170,12 +171,19 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
         public ContentLineSerializer(string s)            
         {
+            this.m_SerializationContext = DDay.iCal.Serialization.SerializationContext.Default;
             this.m_text = s;
         }
 
         #endregion
 
         #region ISerializable Members
+
+        public ISerializationContext SerializationContext
+        {
+            get { return m_SerializationContext; }
+            set { m_SerializationContext = value; }
+        }
 
         public string SerializeToString()
         {   

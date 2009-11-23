@@ -13,6 +13,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
         #region Private Fields
 
         private Enum m_Enum;
+        private ISerializationContext m_SerializationContext;
 
         #endregion
 
@@ -20,12 +21,19 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
         public EnumSerializer(Enum e)
         {
+            this.m_SerializationContext = DDay.iCal.Serialization.SerializationContext.Default;
             this.m_Enum = e;
         }
 
         #endregion
 
         #region ISerializable Members
+
+        virtual public ISerializationContext SerializationContext
+        {
+            get { return m_SerializationContext; }
+            set { m_SerializationContext = value; }
+        }
 
         virtual public string SerializeToString()
         {

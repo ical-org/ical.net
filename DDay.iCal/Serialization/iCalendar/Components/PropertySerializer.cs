@@ -12,20 +12,28 @@ namespace DDay.iCal.Serialization.iCalendar.Components
     {
         #region Private Fields
 
-        private Property m_Property;        
+        private Property m_Property;
+        private ISerializationContext m_SerializationContext;
 
         #endregion
 
         #region Constructors
 
         public PropertySerializer(Property property)
-        {            
+        {
+            this.m_SerializationContext = DDay.iCal.Serialization.SerializationContext.Default;
             this.m_Property = property;
         }
 
         #endregion
 
         #region ISerializable Members
+
+        public ISerializationContext SerializationContext
+        {
+            get { return m_SerializationContext; }
+            set { m_SerializationContext = value; }
+        }
 
         public string SerializeToString()
         {

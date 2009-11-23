@@ -5,12 +5,11 @@ using System.IO;
 using DDay.iCal.Components;
 
 namespace DDay.iCal.Serialization
-{
-    /// <summary>
-    /// Indicates that the item can be serialized
-    /// </summary>
+{    
     public interface ISerializable
-    {        
+    {
+        ISerializationContext SerializationContext { get; set; }
+
         string SerializeToString();
         void Serialize(Stream stream, Encoding encoding);
         iCalObject Deserialize(Stream stream, Encoding encoding, Type iCalendarType);

@@ -36,7 +36,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
             List<string> values = new List<string>();                        
             foreach (Period p in m_RDate.Periods)
             {
-                ISerializable serializer = SerializerFactory.Create(p);
+                ISerializable serializer = SerializerFactory.Create(p, SerializationContext);
                 if (serializer != null)
                     values.Add(serializer.SerializeToString());
             }

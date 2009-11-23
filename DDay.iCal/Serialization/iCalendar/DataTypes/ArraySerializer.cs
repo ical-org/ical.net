@@ -13,6 +13,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
         #region Private Fields
 
         private Array m_Array;
+        private ISerializationContext m_SerializationContext;
 
         #endregion
 
@@ -20,12 +21,19 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
         public ArraySerializer(Array array)
         {
+            this.m_SerializationContext = DDay.iCal.Serialization.SerializationContext.Default;
             this.m_Array = array;
         }
 
         #endregion
 
         #region ISerializable Members
+
+        virtual public ISerializationContext SerializationContext
+        {
+            get { return m_SerializationContext; }
+            set { m_SerializationContext = value; }
+        }
 
         virtual public string SerializeToString()
         {
@@ -36,7 +44,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
         {
             foreach (object obj in m_Array)
             {
-                ISerializable serializer = SerializerFactory.Create(obj);
+                ISerializable serializer = SerializerFactory.Create(obj, SerializationContext);
                 if (serializer != null)
                     serializer.Serialize(stream, encoding);
             }

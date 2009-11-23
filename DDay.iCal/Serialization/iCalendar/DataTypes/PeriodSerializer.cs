@@ -31,8 +31,8 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
         public override string SerializeToString()
         {
             string value = string.Empty;
-            
-            ISerializable serializer = SerializerFactory.Create(m_Period.StartTime);
+
+            ISerializable serializer = SerializerFactory.Create(m_Period.StartTime, SerializationContext);
             if (serializer != null)
                 value += serializer.SerializeToString();
 
@@ -40,7 +40,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
             {
                 value += "/";
 
-                serializer = SerializerFactory.Create(m_Period.Duration);
+                serializer = SerializerFactory.Create(m_Period.Duration, SerializationContext);
                 if (serializer != null)
                     value += serializer.SerializeToString();
             }

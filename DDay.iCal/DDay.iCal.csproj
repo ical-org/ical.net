@@ -129,12 +129,13 @@
     <Compile Include="Interfaces\IEscapable.cs" />
     <Compile Include="Interfaces\IKeyedList.cs" />
     <Compile Include="Interfaces\IKeyedObject.cs" />
+    <Compile Include="Interfaces\Serialization\ISerializationContext.cs" />
     <Compile Include="KeyedList.cs" />
     <Compile Include="KnownTypeHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Properties\AssemblyInfo.cs.template" />
-    <Compile Include="Serialization\DisallowedTypesAttribute.cs" />
-    <Compile Include="Serialization\ForceUTCAttribute.cs" />
+    <Compile Include="Serialization\Attributes\DisallowedTypesAttribute.cs" />
+    <Compile Include="Serialization\Attributes\ForceUTCAttribute.cs" />
     <Compile Include="Serialization\iCalendarSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Components\EventSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Components\RecurringComponentSerializer.cs" />
@@ -143,7 +144,7 @@
     <Compile Include="Serialization\iCalendar\iCalParser.cs" />
     <Compile Include="Serialization\iCalendar\iCalParserHelper.cs" />
     <Compile Include="Serialization\iCalendar\iCalParserTokenTypes.cs" />
-    <Compile Include="Serialization\NonstandardAttribute.cs" />
+    <Compile Include="Serialization\Attributes\NonstandardAttribute.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\ArraySerializer.cs" />
     <Compile Include="Serialization\iCalendar\Components\ContentLineSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\BinarySerializer.cs" />
@@ -165,34 +166,12 @@
     <Compile Include="Serialization\iCalendar\Components\iCalObjectSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\DataTypeSerializer.cs" />
     <Compile Include="Serialization\iCalendar\SerializerFactory.cs" />
-    <Compile Include="Serialization\IParameterSerializable.cs" />
-    <Compile Include="Serialization\ISerializable.cs" />
-    <Compile Include="Serialization\SerializedAttribute.cs">
+    <Compile Include="Interfaces\Serialization\IParameterSerializable.cs" />
+    <Compile Include="Interfaces\Serialization\ISerializable.cs" />
+    <Compile Include="Serialization\Attributes\SerializedAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Serialization\xCalSerializer.cs" />
-    <Compile Include="Serialization\xCal\CDataAttribute.cs" />
-    <Compile Include="Serialization\xCal\Components\ComponentBaseSerializer.cs" />
-    <Compile Include="Serialization\xCal\Components\iCalObjectSerializer.cs" />
-    <Compile Include="Serialization\xCal\Components\PropertySerializer.cs" />
-    <Compile Include="Serialization\xCal\Components\UniqueComponentSerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\ArraySerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\BinarySerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\DataTypeSerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\iCalDateTimeSerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\iCalDateTimeUTCSerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\DaySpecifierSerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\EncodableDataTypeSerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\EnumSerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\FieldSerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\PeriodSerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\RecurrenceDatesSerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\RecurrencePatternSerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\TextCollectionSerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\TextSerializer.cs" />
-    <Compile Include="Serialization\xCal\DataTypes\TriggerSerializer.cs" />
-    <Compile Include="Serialization\xCal\IXCalSerializable.cs" />
-    <Compile Include="Serialization\xCal\SerializerFactory.cs" />
+    <Compile Include="Serialization\SerializationContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

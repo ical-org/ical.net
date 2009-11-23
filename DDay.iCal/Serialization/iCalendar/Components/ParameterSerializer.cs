@@ -12,6 +12,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
         #region Private Fields
 
         private Parameter m_Parameter;
+        private ISerializationContext m_SerializationContext;
 
         #endregion
 
@@ -19,12 +20,19 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
         public ParameterSerializer(Parameter parameter)
         {
+            this.m_SerializationContext = DDay.iCal.Serialization.SerializationContext.Default;
             this.m_Parameter = parameter;
         }
 
         #endregion
 
         #region ISerializable Members
+
+        public ISerializationContext SerializationContext
+        {
+            get { return m_SerializationContext; }
+            set { m_SerializationContext = value; }
+        }
 
         public string SerializeToString()
         {

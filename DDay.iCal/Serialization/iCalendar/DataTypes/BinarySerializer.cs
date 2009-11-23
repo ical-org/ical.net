@@ -64,7 +64,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
         {
             if (m_Binary.Uri != null)
             {
-                ISerializable serializer = SerializerFactory.Create(m_Binary.Uri);
+                ISerializable serializer = SerializerFactory.Create(m_Binary.Uri, SerializationContext);
                 return serializer.SerializeToString();
             }
             else

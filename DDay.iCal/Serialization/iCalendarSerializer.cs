@@ -96,7 +96,7 @@ namespace DDay.iCal.Serialization
         {
             // Normalize line endings, so "\r" is treated the same as "\r\n"
             // NOTE: fixed bug #1773194 - Some applications emit mixed line endings
-            TextReader textReader = NormalizeLineEndings(tr, !OptimizeForSpeed);
+            TextReader textReader = NormalizeLineEndings(tr, SerializationContext.EnsureAccurateLineNumbers);
 
             // Create a lexer for our text stream
             iCalLexer lexer = new iCalLexer(textReader);
