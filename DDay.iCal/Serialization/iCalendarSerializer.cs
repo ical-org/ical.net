@@ -107,7 +107,7 @@ namespace DDay.iCal.Serialization
             parser.iCalendarType = iCalendarType;
 
             // Parse the iCalendar!
-            DDay.iCal.iCalendar iCal = parser.icalobject();
+            DDay.iCal.iCalendar iCal = parser.icalobject(SerializationContext);
 
             // Close our text stream
             textReader.Close();

@@ -2506,6 +2506,54 @@ namespace DDay.iCal.Test
         }
 
         [Test, Category("Recurrence")]
+        public void GETOCCURRENCES1()
+        {
+            iCalendar iCal = new iCalendar();
+            Event evt = iCal.Create<Event>();
+            evt.Start = new iCalDateTime(2009, 11, 18, 5, 0, 0);
+            evt.End = new iCalDateTime(2009, 11, 18, 5, 10, 0);
+            evt.AddRecurrencePattern(new RecurrencePattern(FrequencyType.Daily));
+            evt.Summary = "xxxxxxxxxxxxx";
+ 
+            iCalDateTime previousDateAndTime = new iCalDateTime(2009, 11, 17, 0, 15, 0);
+            iCalDateTime previousDateOnly = new iCalDateTime(2009, 11, 17, 23, 15, 0);
+            iCalDateTime laterDateOnly = new iCalDateTime(2009, 11, 19, 3, 15, 0);
+            iCalDateTime laterDateAndTime = new iCalDateTime(2009, 11, 19, 11, 0, 0);
+            iCalDateTime end = new iCalDateTime(2009, 11, 23, 0, 0, 0);
+
+            List<Occurrence> occurrences = null;
+
+            occurrences = evt.GetOccurrences(previousDateAndTime, end);
+            Assert.AreEqual(5, occurrences.Count);
+
+            occurrences = evt.GetOccurrences(previousDateOnly, end);
+            Assert.AreEqual(5, occurrences.Count);
+
+            occurrences = evt.GetOccurrences(laterDateOnly, end);
+            Assert.AreEqual(4, occurrences.Count);
+
+            occurrences = evt.GetOccurrences(laterDateAndTime, end);
+            Assert.AreEqual(3, occurrences.Count);
+
+            // Add ByHour "9" and "12"            
+            evt.RRule[0].ByHour.Add(9);
+            evt.RRule[0].ByHour.Add(12);
+            evt.ClearEvaluation();
+
+            occurrences = evt.GetOccurrences(previousDateAndTime, end);
+            Assert.AreEqual(11, occurrences.Count);
+
+            occurrences = evt.GetOccurrences(previousDateOnly, end);
+            Assert.AreEqual(11, occurrences.Count);
+
+            occurrences = evt.GetOccurrences(laterDateOnly, end);
+            Assert.AreEqual(8, occurrences.Count);
+
+            occurrences = evt.GetOccurrences(laterDateAndTime, end);
+            Assert.AreEqual(7, occurrences.Count);
+        }
+
+        [Test, Category("Recurrence")]
         public void TEST1()
         {
             iCalendar iCal = new iCalendar();

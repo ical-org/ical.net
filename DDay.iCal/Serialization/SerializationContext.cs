@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace DDay.iCal.Serialization
@@ -34,7 +33,6 @@ namespace DDay.iCal.Serialization
         #region Private Fields
 
         private bool m_EnsureAccurateLineNumbers = false;
-        private bool m_CollectLineNumbers = false;        
         private ParsingModeType m_ParsingMode = ParsingModeType.Strict;
 
         #endregion
@@ -45,12 +43,6 @@ namespace DDay.iCal.Serialization
         {
             get { return m_EnsureAccurateLineNumbers; }
             set { m_EnsureAccurateLineNumbers = value; }
-        }
-
-        virtual public bool CollectLineNumbers
-        {
-            get { return m_CollectLineNumbers; }
-            set { m_CollectLineNumbers = value; }
         }
 
         virtual public ParsingModeType ParsingMode

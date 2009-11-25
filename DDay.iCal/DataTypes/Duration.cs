@@ -4,6 +4,7 @@ using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
+using DDay.iCal.Serialization;
 
 namespace DDay.iCal.DataTypes
 {
@@ -47,8 +48,7 @@ namespace DDay.iCal.DataTypes
         {
             this.Value = ts;
         }
-        public Duration(string value)
-            : this()
+        public Duration(string value) : this()
         {
             CopyFrom((Duration)Parse(value));
         }
@@ -117,7 +117,7 @@ namespace DDay.iCal.DataTypes
         }
 
         public override string ToString()
-        {            
+        {
             TimeSpan ts = new TimeSpan(0);
             string value = string.Empty;
             if (ts > Value)
@@ -130,7 +130,7 @@ namespace DDay.iCal.DataTypes
                 ts.Days % 7 == 0 &&
                 ts.Hours == 0 &&
                 ts.Minutes == 0 &&
-                ts.Seconds == 0)                
+                ts.Seconds == 0)
                 value += Math.Round((double)ts.Days / 7) + "W";
             else
             {

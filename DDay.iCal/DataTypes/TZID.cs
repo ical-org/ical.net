@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
+using DDay.iCal.Serialization;
 
 namespace DDay.iCal.DataTypes
-{    
+{
     /// <summary>
     /// A time zone identifier, used to associate <see cref="iCalDateTime"/> (and other) objects
     /// with a specific time zone.
@@ -21,7 +22,7 @@ namespace DDay.iCal.DataTypes
 
         private bool m_GloballyUnique = false;
         private string m_ID = string.Empty;
-                
+
         #endregion
 
         #region Public Properties
@@ -98,7 +99,7 @@ namespace DDay.iCal.DataTypes
             {
                 object tzid = new TZID();
                 if (((TZID)tzid).TryParse(obj.ToString(), ref tzid))
-                    return tzid.Equals(this);                
+                    return tzid.Equals(this);
             }
             return false;
         }

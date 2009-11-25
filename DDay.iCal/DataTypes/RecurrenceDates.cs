@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using DDay.iCal.Components;
 using System.Runtime.Serialization;
+using DDay.iCal.Serialization;
 
 namespace DDay.iCal.DataTypes
 {
@@ -54,7 +55,7 @@ namespace DDay.iCal.DataTypes
         #region Constructors
 
         public RecurrenceDates() { }
-        public RecurrenceDates(string value) : this()
+        public RecurrenceDates(string value) : this() 
         {
             CopyFrom((RecurrenceDates)Parse(value));
         }

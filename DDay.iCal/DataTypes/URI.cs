@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
+using DDay.iCal.Serialization;
 
 namespace DDay.iCal.DataTypes
 {
@@ -80,7 +81,7 @@ namespace DDay.iCal.DataTypes
         public URI() { }
         public URI(string value)
             : this()
-        {            
+        {
             CopyFrom(Parse(value));
         }
 

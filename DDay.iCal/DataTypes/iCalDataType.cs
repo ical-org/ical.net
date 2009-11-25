@@ -4,6 +4,7 @@ using System.Text;
 using System.Reflection;
 using DDay.iCal.Components;
 using System.Runtime.Serialization;
+using DDay.iCal.Serialization;
 
 namespace DDay.iCal.DataTypes
 {
@@ -20,6 +21,8 @@ namespace DDay.iCal.DataTypes
 
         protected ContentLine m_ContentLine = null;
         protected object[] m_Attributes = new object[0];
+        [NonSerialized]
+        private ISerializationContext m_SerializationContext = DDay.iCal.Serialization.SerializationContext.Default;        
 
         #endregion
 
@@ -32,6 +35,12 @@ namespace DDay.iCal.DataTypes
         {
             get { return m_Attributes; }
             set { m_Attributes = value; }
+        }
+
+        public ISerializationContext SerializationContext
+        {
+            get { return m_SerializationContext; }
+            set { m_SerializationContext = value; }
         }
 
         #endregion
@@ -60,7 +69,22 @@ namespace DDay.iCal.DataTypes
                         this.Parent = value.Parent;
 
                     // Parse the content line
-                    iCalDataType icdt = Parse(value.Value) as iCalDataType;
+                    // NOTE: Use the serialization context to determine
+                    // what method of parsing is enabled.
+                    iCalDataType icdt = null;                    
+                    switch(SerializationContext.ParsingMode)
+                    {
+                        case ParsingModeType.Loose:
+                            object obj = null;
+                            if (TryParseInternal(value.Value, ref obj))
+                                icdt = obj as iCalDataType;
+                            break;
+                        case ParsingModeType.Strict:
+                        default:
+                            icdt = Parse(value.Value) as iCalDataType;
+                            break;
+                    }
+                    
                     if (icdt != null)
                     {
                         // Set the parent on the copied object
@@ -87,10 +111,12 @@ namespace DDay.iCal.DataTypes
         
         virtual public object Parse(string value)
         {
-            Type t = GetType();
-            object obj = Activator.CreateInstance(t);
-            if (!TryParse(value, ref obj))
+            object obj = null;
+            if (!TryParseInternal(value, ref obj))
+            {
+                Type t = GetType();
                 throw new ArgumentException(t.Name + ".Parse cannot parse the value '" + value + "' because it is not formatted correctly.");
+            }
             return obj;
         }
 
@@ -100,8 +126,11 @@ namespace DDay.iCal.DataTypes
             if (icdt != null)
                 this.Parent = icdt.Parent;
         }
-        
-        virtual public bool TryParse(string value, ref object obj) { return false; }        
+
+        virtual public bool TryParse(string value, ref object obj)
+        {
+            return false;
+        }
 
         virtual public Type ValueType()
         {
@@ -127,6 +156,17 @@ namespace DDay.iCal.DataTypes
             return GetType();
         }
         
+        #endregion
+
+        #region Private Methods
+
+        bool TryParseInternal(string value, ref object obj)
+        {
+            Type t = GetType();
+            obj = Activator.CreateInstance(t);
+            return TryParse(value, ref obj);
+        }
+
         #endregion
 
         #region Overrides

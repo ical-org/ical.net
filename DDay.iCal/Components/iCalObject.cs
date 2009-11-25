@@ -19,7 +19,7 @@ namespace DDay.iCal.Components
     [KnownType(typeof(KeyedList<Parameter, string>))]
 #endif
     [Serializable]
-    public class iCalObject        
+    public class iCalObject
     {
         #region Public Events
 
@@ -35,6 +35,8 @@ namespace DDay.iCal.Components
         private string _Name;
         private IKeyedList<Property, string> _Properties;
         private IKeyedList<Parameter, string> _Parameters;
+        private int _Line;
+        private int _Column;
 
         #endregion
 
@@ -144,6 +146,24 @@ namespace DDay.iCal.Components
             }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 7)]
+#endif
+        virtual public int Line
+        {
+            get { return _Line; }
+            set { _Line = value; }
+        }
+
+#if DATACONTRACT
+        [DataMember(Order = 8)]
+#endif
+        virtual public int Column
+        {
+            get { return _Column; }
+            set { _Column = value; }
+        }
+
         #endregion
 
         #region Protected Properties
@@ -174,6 +194,13 @@ namespace DDay.iCal.Components
                     parent.AddChild(this);
             }
         }
+
+        public iCalObject(iCalObject parent, int line, int col) : this(parent)
+        {
+            Line = line;
+            Column = col;
+        }
+
         public iCalObject(iCalObject parent, string name)
             : this(parent)
         {

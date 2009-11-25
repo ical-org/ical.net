@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using DDay.iCal.Components;
 using System.Runtime.Serialization;
+using DDay.iCal.Serialization.iCalendar.Components;
 
 namespace DDay.iCal.DataTypes
 {
@@ -296,6 +297,15 @@ namespace DDay.iCal.DataTypes
             : this(year, month, day, 0, 0, 0) { }
         public iCalDateTime(int year, int month, int day, TZID tzid, iCalendar iCal)
             : this(year, month, day, 0, 0, 0, tzid, iCal) { }
+
+        public iCalDateTime(Property p) : this(p.Value)
+        {
+            this.iCalendar = p.iCalendar;
+            if (p.Parameters.ContainsKey("VALUE"))
+                this.Parameters["VALUE"] = p.Parameters["VALUE"];
+            if (p.Parameters.ContainsKey("TZID"))
+                this.TZID = p.Parameters["TZID"].Values[0];                
+        }
 
         private void Initialize(int year, int month, int day, int hour, int minute, int second, TZID tzid, iCalendar iCal)
         {

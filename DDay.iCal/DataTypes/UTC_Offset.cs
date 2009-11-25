@@ -3,6 +3,7 @@ using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
+using DDay.iCal.Serialization;
 
 namespace DDay.iCal.DataTypes
 {

@@ -5,6 +5,7 @@ using System.Reflection;
 using DDay.iCal.Components;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using DDay.iCal.Serialization;
 
 namespace DDay.iCal.DataTypes
 {    

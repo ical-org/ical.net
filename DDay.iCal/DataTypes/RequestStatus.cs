@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
+using DDay.iCal.Serialization;
 
 namespace DDay.iCal.DataTypes
 {
@@ -17,7 +18,7 @@ namespace DDay.iCal.DataTypes
         private Text m_StatusDesc;
         private Text m_ExtData;
         private StatusCode m_StatusCode;
-        
+
         #endregion
 
         #region Public Properties
@@ -77,7 +78,7 @@ namespace DDay.iCal.DataTypes
             Match match = Regex.Match(value, @"(.+);(.+)(;(.*))?");
             if (match.Success)
             {
-                if (!match.Groups[1].Success || 
+                if (!match.Groups[1].Success ||
                     !match.Groups[2].Success)
                     return false;
 
@@ -88,7 +89,7 @@ namespace DDay.iCal.DataTypes
 
                 return true;
             }
-            return false;            
+            return false;
         }
 
         #endregion

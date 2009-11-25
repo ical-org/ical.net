@@ -43,6 +43,7 @@ namespace DDay.iCal.Components
         #region Constructors
 
         public ContentLine(iCalObject parent) : base(parent) { }
+        public ContentLine(iCalObject parent, int line, int col) : base(parent, line, col) { }
 
         #endregion
     }

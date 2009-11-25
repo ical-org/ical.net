@@ -40,11 +40,18 @@ namespace DDay.iCal.Serialization.iCalendar
                     s = new ParameterSerializer(obj as Parameter);
                 else if (typeof(Property).IsAssignableFrom(type))
                     s = new PropertySerializer(obj as Property);
+                // We don't allow ContentLines to directly serialize, as
+                // they're likely a byproduct of loading a calendar, and we
+                // are already going to reproduce the content line(s) anyway.
+                else if (typeof(ContentLine).IsAssignableFrom(type))
+                    return null;
                 else if (typeof(iCalObject).IsAssignableFrom(type))
                     s = new iCalObjectSerializer(obj as iCalObject);
 
                 if (s != null && ctx != null)
                     s.SerializationContext = ctx;
+
+                return s;
             }
             return null;
         }

@@ -53,19 +53,33 @@ namespace DDay.iCal.Components
 
         public Property(ContentLine cl) : base(cl.Parent)
         {
+            Line = cl.Line;
+            Column = cl.Column;
+
             this.Name = cl.Name;
             this.Value = cl.Value;
             foreach (Parameter p in cl.Parameters)
                 AddParameter(p);
         }
-        public Property(iCalObject parent) : base(parent) { }
+        public Property(iCalObject parent) : base(parent)
+        {
+            Line = parent.Line + parent.Properties.Count + 1;
+            Column = 0;
+        }
         public Property(iCalObject parent, string name) : base(parent, name)
         {
+            Line = parent.Line + parent.Properties.Count + 1;
+            Column = 0;
+
             AddToParent();
         }
         public Property(iCalObject parent, string name, string value) : this(parent, name)
         {
             Value = value;            
+        }
+
+        public Property(iCalObject parent, int line, int col) : base(parent, line, col)
+        {
         }
 
         #endregion

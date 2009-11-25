@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using DDay.iCal.Components;
 using System.Runtime.Serialization;
+using DDay.iCal.Serialization;
 
 namespace DDay.iCal.DataTypes
 {
@@ -27,7 +28,7 @@ namespace DDay.iCal.DataTypes
         private iCalDateTime m_DateTime;
         private Duration m_Duration;
         private TriggerRelation m_Related = TriggerRelation.Start;
-                
+
         #endregion
 
         #region Public Properties
@@ -82,13 +83,13 @@ namespace DDay.iCal.DataTypes
         virtual public TriggerRelation Related
         {
             get
-            {       
+            {
                 if (Parameters.ContainsKey("RELATED"))
                 {
                     Parameter p = (Parameter)Parameters["RELATED"];
                     if (p.Values.Count > 0)
                         m_Related = (TriggerRelation)Enum.Parse(typeof(TriggerRelation), p.Values[0].ToString(), true);
-                }                
+                }
                 return m_Related;
             }
             set
@@ -96,7 +97,7 @@ namespace DDay.iCal.DataTypes
                 m_Related = value;
             }
         }
-        
+
         public bool IsRelative
         {
             get { return m_Duration != null; }
@@ -112,7 +113,6 @@ namespace DDay.iCal.DataTypes
             Duration = ts;
         }
         public Trigger(string value)
-            : this()
         {
             CopyFrom(Parse(value));
         }
@@ -136,7 +136,7 @@ namespace DDay.iCal.DataTypes
         public override bool TryParse(string value, ref object obj)
         {
             Trigger t = (Trigger)obj;
-            
+
             if (ValueType() == typeof(iCalDateTime))
             {
                 t.DateTime = new iCalDateTime();

@@ -194,7 +194,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
             // Parse the component!
             DDay.iCal.iCalendar iCal = new DDay.iCal.iCalendar();
-            iCalObject component = parser.component(iCal);
+            iCalObject component = parser.component(SerializationContext, iCal);
 
             // Close our text stream
             tr.Close();

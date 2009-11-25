@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
+using DDay.iCal.Serialization;
 
 namespace DDay.iCal.DataTypes
 {
@@ -49,8 +50,7 @@ namespace DDay.iCal.DataTypes
         #region Constructors
 
         public Geo() { }
-        public Geo(string value)
-            : this()
+        public Geo(string value) : this()
         {
             CopyFrom(Parse(value));
         }

@@ -31,7 +31,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
         /// </summary>
         /// <param name="cl">The <see cref="ContentLine"/> to process.</param>
         /// <param name="obj">The <see cref="iCalObject"/> to assign information to.</param>
-        static public void DeserializeToObject(ContentLine cl, iCalObject obj)
+        static public void DeserializeToObject(ContentLine cl, iCalObject obj, ISerializationContext ctx)
         {
             if (cl.Name != null)
             {
@@ -63,8 +63,14 @@ namespace DDay.iCal.Serialization.iCalendar.Components
                 if (field != null ||
                     property != null)
                 {
-                    // This is a non-standard property.  Let's load it into memory,
-                    // So we can serialize it later
+                    // Let's create a property for this content line,
+                    // so we can inspect both the field/property that gets
+                    // assigned, and the property itself.
+                    // i.e. for iCalDateTime properties, you may want to inspect
+                    // the iCal Property to see if it is formatted correctly,
+                    // because the assignment to the class property will have
+                    // failed due to an incorrect format.  This is useful
+                    // for validation purposes.
                     Property p = new Property(cl);
                     p.AddToParent();
 
@@ -87,10 +93,11 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
                         // Assign custom attributes for the specific field
                         icdt.Attributes = itemAttributes;
+                        icdt.SerializationContext = ctx;
 
                         // Set the content line for the object.                        
                         icdt.ContentLine = cl;
-                        
+
                         // It's an array, let's add an item to the end
                         if (itemType.IsArray)
                         {
@@ -154,7 +161,15 @@ namespace DDay.iCal.Serialization.iCalendar.Components
                         }
                         else ;// FIXME: throw single-value exception, if "strict" parsing is enabled
                     }
-                }              
+                }
+                else
+                {
+                    // There is no corresponding field/property value on the object to contain
+                    // the value of the content line.  Let's create a property value for it instead
+                    // so it can be serialized later.
+                    Property p = new Property(cl);
+                    p.AddToParent();
+                }
             }
         }
 

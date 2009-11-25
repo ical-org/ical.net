@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
+using DDay.iCal.Serialization;
 
 namespace DDay.iCal.DataTypes
 {
@@ -94,8 +95,7 @@ namespace DDay.iCal.DataTypes
                 EndTime = start + duration;
             }            
         }
-        public Period(string value)
-            : this()
+        public Period(string value) : this()
         {
             CopyFrom((Period)Parse(value));
         }

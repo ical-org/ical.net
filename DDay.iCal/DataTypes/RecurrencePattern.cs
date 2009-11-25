@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
+using DDay.iCal.Serialization;
 
 namespace DDay.iCal.DataTypes
 {
@@ -231,8 +232,18 @@ namespace DDay.iCal.DataTypes
         {
             _Calendar = System.Globalization.CultureInfo.CurrentCulture.Calendar;
         }
-        public RecurrencePattern(string value)
-            : this()
+
+        public RecurrencePattern(FrequencyType frequency) : this(frequency, 1)
+        {
+        }
+
+        public RecurrencePattern(FrequencyType frequency, int interval)
+        {
+            Frequency = frequency;
+            Interval = interval;
+        }
+
+        public RecurrencePattern(string value) : this()
         {
             CopyFrom((RecurrencePattern)Parse(value));
         }
