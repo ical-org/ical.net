@@ -754,7 +754,7 @@ namespace DDay.iCal.DataTypes
                 )
             {
                 // Retrieve occurrences that occur on our interval period
-                if (BySetPos.Count == 0 && IsValidDate(FromDate) && !DateTimes.Contains(FromDate.Value))
+                if (BySetPos.Count == 0 && IsValidDate(FromDate) && !DateTimes.Contains(FromDate))
                     DateTimes.Add(FromDate.Copy());
 
                 // Retrieve "extra" occurrences that happen within our interval period
@@ -1403,12 +1403,12 @@ namespace DDay.iCal.DataTypes
                 }
                 set
                 {
-                    Year = value.Value.Year;
-                    Month = value.Value.Month;
-                    Day = value.Value.Day;
-                    Hour = value.Value.Hour;
-                    Minute = value.Value.Minute;
-                    Second = value.Value.Second;
+                    Year = value.Year;
+                    Month = value.Month;
+                    Day = value.Day;
+                    Hour = value.Hour;
+                    Minute = value.Minute;
+                    Second = value.Second;
                 }
             }
 
@@ -1438,21 +1438,18 @@ namespace DDay.iCal.DataTypes
                 // NOTE: fixes RRULE10 evaluation
                 if (Recur.Frequency == FrequencyType.Weekly)
                 {
-                    if (Months.Count == 0)
+                    // Weekly patterns can at most affect
+                    // 7 days worth of scheduling.
+                    // NOTE: fixes bug #2912657 - missing occurrences
+                    iCalDateTime dt = StartDate.Copy();
+                    for (int i = 0; i < 7; i++)
                     {
-                        Months.Add(StartDate.Value.Month);
-                        if (StartDate.Value.Month != EndDate.Value.Month)
-                            Months.Add(EndDate.Value.Month);
-                    }
-                    if (Days.Count == 0)
-                    {
-                        DateTime dt = StartDate.Value;
-                        while (dt < EndDate.Value)
-                        {
+                        if (!Months.Contains(dt.Month))
+                            Months.Add(dt.Month);
+                        if (!Days.Contains(dt.Day))
                             Days.Add(dt.Day);
-                            dt = dt.AddDays(1);
-                        }
-                        Days.Add(EndDate.Value.Day);
+
+                        dt = dt.AddDays(1);
                     }
                 }
                 else if (Recur.Frequency > FrequencyType.Daily)

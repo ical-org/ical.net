@@ -37,13 +37,16 @@ namespace DDay.iCal.Test
             int eventIndex
         )
         {
-            // FIXME: remove?
-            //ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[eventIndex];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
                 fromDate,
                 toDate);
+
+            Assert.AreEqual(
+                dateTimes.Length,
+                occurrences.Count,
+                "There should be exactly " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
 
             for (int i = 0; i < dateTimes.Length; i++)
             {
@@ -51,12 +54,7 @@ namespace DDay.iCal.Test
                 Assert.AreEqual(dt, occurrences[i].Period.StartTime, "Event should occur on " + dt);
                 if (timeZones != null)
                     Assert.IsTrue(dt.TimeZoneInfo.TimeZoneName == timeZones[i], "Event " + dt + " should occur in the " + timeZones[i] + " timezone");
-            }
-
-            Assert.AreEqual(
-                dateTimes.Length,
-                occurrences.Count,
-                "There should be exactly " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
+            }            
 
             // Now, verify that GetNextOccurrence() returns accurate results.
             if (evt.RRule != null)
@@ -2185,22 +2183,23 @@ namespace DDay.iCal.Test
         public void RRULE60()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE60.ics");
+            TZID localTZID = iCal.TimeZones[0].TZID;
 
             // Daily recurrence
             EventOccurrenceTest(
                 iCal,
-                new iCalDateTime(2009, 12, 4, 0, 0, 0, tzid, iCal),
-                new iCalDateTime(2009, 12, 12, 0, 0, 0, tzid, iCal),
+                new iCalDateTime(2009, 12, 4, 0, 0, 0, localTZID, iCal),
+                new iCalDateTime(2009, 12, 12, 0, 0, 0, localTZID, iCal),
                 new iCalDateTime[]
                 {
-                    new iCalDateTime(2009, 12, 4, 2, 00, 00, tzid, iCal),
-                    new iCalDateTime(2009, 12, 5, 2, 00, 00, tzid, iCal),
-                    new iCalDateTime(2009, 12, 6, 2, 00, 00, tzid, iCal),
-                    new iCalDateTime(2009, 12, 7, 2, 00, 00, tzid, iCal),
-                    new iCalDateTime(2009, 12, 8, 2, 00, 00, tzid, iCal),
-                    new iCalDateTime(2009, 12, 9, 2, 00, 00, tzid, iCal),
-                    new iCalDateTime(2009, 12, 10, 2, 00, 00, tzid, iCal),
-                    new iCalDateTime(2009, 12, 11, 2, 00, 00, tzid, iCal)
+                    new iCalDateTime(2009, 12, 4, 2, 00, 00, localTZID, iCal),
+                    new iCalDateTime(2009, 12, 5, 2, 00, 00, localTZID, iCal),
+                    new iCalDateTime(2009, 12, 6, 2, 00, 00, localTZID, iCal),
+                    new iCalDateTime(2009, 12, 7, 2, 00, 00, localTZID, iCal),
+                    new iCalDateTime(2009, 12, 8, 2, 00, 00, localTZID, iCal),
+                    new iCalDateTime(2009, 12, 9, 2, 00, 00, localTZID, iCal),
+                    new iCalDateTime(2009, 12, 10, 2, 00, 00, localTZID, iCal),
+                    new iCalDateTime(2009, 12, 11, 2, 00, 00, localTZID, iCal)
                 },
                 null,
                 0
@@ -2209,12 +2208,12 @@ namespace DDay.iCal.Test
             // Weekly with UNTIL value
             EventOccurrenceTest(
                 iCal,
-                new iCalDateTime(2009, 12, 4, tzid, iCal),
-                new iCalDateTime(2009, 12, 12, tzid, iCal),
+                new iCalDateTime(2009, 12, 4, localTZID, iCal),
+                new iCalDateTime(2009, 12, 12, localTZID, iCal),
                 new iCalDateTime[]
                 {
-                    new iCalDateTime(2009, 12, 4, 2, 00, 00, tzid, iCal),
-                    new iCalDateTime(2009, 12, 11, 2, 00, 00, tzid, iCal),
+                    new iCalDateTime(2009, 12, 4, 2, 00, 00, localTZID, iCal),
+                    new iCalDateTime(2009, 12, 11, 2, 00, 00, localTZID, iCal),
                 },
                 null,
                 1
@@ -2223,12 +2222,12 @@ namespace DDay.iCal.Test
             // Weekly with COUNT=2
             EventOccurrenceTest(
                 iCal,
-                new iCalDateTime(2009, 12, 4, tzid, iCal),
-                new iCalDateTime(2009, 12, 12, tzid, iCal),
+                new iCalDateTime(2009, 12, 4, localTZID, iCal),
+                new iCalDateTime(2009, 12, 12, localTZID, iCal),
                 new iCalDateTime[]
                 {
-                    new iCalDateTime(2009, 12, 4, 2, 00, 00, tzid, iCal),
-                    new iCalDateTime(2009, 12, 11, 2, 00, 00, tzid, iCal),
+                    new iCalDateTime(2009, 12, 4, 2, 00, 00, localTZID, iCal),
+                    new iCalDateTime(2009, 12, 11, 2, 00, 00, localTZID, iCal),
                 },
                 null,
                 2
