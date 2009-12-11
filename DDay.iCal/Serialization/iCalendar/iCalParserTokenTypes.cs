@@ -30,13 +30,14 @@ namespace DDay.iCal.Serialization.iCalendar
 		public const int ALPHA = 21;
 		public const int DIGIT = 22;
 		public const int DASH = 23;
-		public const int UNICODE = 24;
-		public const int SPECIAL = 25;
-		public const int SPACE = 26;
-		public const int HTAB = 27;
-		public const int SLASH = 28;
-		public const int ESCAPED_CHAR = 29;
-		public const int LINEFOLDER = 30;
+		public const int UNDERSCORE = 24;
+		public const int UNICODE = 25;
+		public const int SPECIAL = 26;
+		public const int SPACE = 27;
+		public const int HTAB = 28;
+		public const int SLASH = 29;
+		public const int ESCAPED_CHAR = 30;
+		public const int LINEFOLDER = 31;
 		
 	}
 }

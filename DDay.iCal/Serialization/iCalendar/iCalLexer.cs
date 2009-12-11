@@ -58,13 +58,14 @@ namespace DDay.iCal.Serialization.iCalendar
 		public const int ALPHA = 21;
 		public const int DIGIT = 22;
 		public const int DASH = 23;
-		public const int UNICODE = 24;
-		public const int SPECIAL = 25;
-		public const int SPACE = 26;
-		public const int HTAB = 27;
-		public const int SLASH = 28;
-		public const int ESCAPED_CHAR = 29;
-		public const int LINEFOLDER = 30;
+		public const int UNDERSCORE = 24;
+		public const int UNICODE = 25;
+		public const int SPECIAL = 26;
+		public const int SPACE = 27;
+		public const int HTAB = 28;
+		public const int SLASH = 29;
+		public const int ESCAPED_CHAR = 30;
+		public const int LINEFOLDER = 31;
 		
 		public iCalLexer(Stream ins) : this(new ByteBuffer(ins))
 		{
@@ -316,6 +317,20 @@ tryAgain:
 		returnToken_ = _token;
 	}
 	
+	protected void mUNDERSCORE(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+{
+		int _ttype; IToken _token=null; int _begin=text.Length;
+		_ttype = UNDERSCORE;
+		
+		match('\u005F');
+		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+		{
+			_token = makeToken(_ttype);
+			_token.setText(text.ToString(_begin, text.Length-_begin));
+		}
+		returnToken_ = _token;
+	}
+	
 	protected void mUNICODE(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
 		int _ttype; IToken _token=null; int _begin=text.Length;
@@ -364,9 +379,14 @@ tryAgain:
 			match('\u005b');
 			break;
 		}
-		case ']':  case '^':  case '_':  case '`':
+		case ']':  case '^':
 		{
-			matchRange('\u005d','\u0060');
+			matchRange('\u005d','\u005e');
+			break;
+		}
+		case '`':
+		{
+			match('\u0060');
 			break;
 		}
 		case '{':  case '|':  case '}':  case '~':
@@ -649,7 +669,7 @@ tryAgain:
 		_ttype = IANA_TOKEN;
 		
 		{ // ( ... )+
-			int _cnt109=0;
+			int _cnt110=0;
 			for (;;)
 			{
 				switch ( cached_LA1 )
@@ -683,6 +703,11 @@ tryAgain:
 					mDASH(false);
 					break;
 				}
+				case '_':
+				{
+					mUNDERSCORE(false);
+					break;
+				}
 				default:
 					if ((tokenSet_3_.member(cached_LA1)))
 					{
@@ -693,12 +718,12 @@ tryAgain:
 					}
 				else
 				{
-					if (_cnt109 >= 1) { goto _loop109_breakloop; } else { throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());; }
+					if (_cnt110 >= 1) { goto _loop110_breakloop; } else { throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());; }
 				}
 				break; }
-				_cnt109++;
+				_cnt110++;
 			}
-_loop109_breakloop:			;
+_loop110_breakloop:			;
 		}    // ( ... )+
 		
 		string s = text.ToString(_begin, text.Length-_begin);
@@ -795,7 +820,7 @@ _loop109_breakloop:			;
 	{
 		long[] data = new long[1025];
 		data[0]=-3458746947404300288L;
-		data[1]=8646911292738633729L;
+		data[1]=8646911290591150081L;
 		for (int i = 2; i<=3; i++) { data[i]=-1L; }
 		for (int i = 4; i<=1024; i++) { data[i]=0L; }
 		return data;

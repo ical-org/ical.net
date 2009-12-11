@@ -929,6 +929,19 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             Assert.AreEqual(iCal.Events[0].Properties["DTSTART"].Value, "1234");
             Assert.AreEqual(iCal.Events[0].Properties["DTEND"].Value, "5678");
         }
+
+        /// <summary>
+        /// Tests that Lotus Notes-style properties are properly handled.
+        /// https://sourceforge.net/tracker/?func=detail&aid=2033495&group_id=187422&atid=921236
+        /// Sourceforge bug #2033495
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void PARSE18()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\PARSE18.ics", Encoding.UTF8);
+            Assert.AreEqual(1, iCal.Events.Count);
+            Assert.AreEqual(iCal.Properties["X-LOTUS-CHILD_UID"].Value, "XXX");
+        }
                        
         /// <summary>
         /// Tests that line/column numbers are correctly tracked for

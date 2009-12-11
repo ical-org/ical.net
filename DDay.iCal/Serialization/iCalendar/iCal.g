@@ -89,8 +89,9 @@ LF: '\u000a' {$setType(Token.SKIP);};
 protected ALPHA: '\u0041'..'\u005a' | '\u0061'..'\u007a';
 protected DIGIT: '\u0030'..'\u0039';
 protected DASH: '\u002d';
+protected UNDERSCORE: '\u005F';
 protected UNICODE: '\u0100'..'\uFFFE';
-protected SPECIAL: '\u0021' | '\u0023'..'\u002b' | '\u003c' | '\u003e'..'\u0040' | '\u005b' | '\u005d'..'\u0060' | '\u007b'..'\u007e' | '\u0080'..'\u00ff';
+protected SPECIAL: '\u0021' | '\u0023'..'\u002b' | '\u003c' | '\u003e'..'\u0040' | '\u005b' | '\u005d'..'\u005e' | '\u0060' | '\u007b'..'\u007e' | '\u0080'..'\u00ff';
 SPACE: '\u0020';
 HTAB: '\u0009';
 COLON: '\u003a';
@@ -104,7 +105,7 @@ DQUOTE: '\u0022';
 CRLF: CR LF { newline(); };
 CTL: '\u0000'..'\u0008' | '\u000b'..'\u001F' | '\u007F';
 ESCAPED_CHAR: BACKSLASH (BACKSLASH | DQUOTE | SEMICOLON | COMMA | "N" | "n");
-IANA_TOKEN: (ALPHA | DIGIT | DASH | SPECIAL | UNICODE)+
+IANA_TOKEN: (ALPHA | DIGIT | DASH | UNDERSCORE | SPECIAL | UNICODE)+
 { 
     string s = $getText;
     int val;

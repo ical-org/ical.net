@@ -48,13 +48,14 @@ namespace DDay.iCal.Serialization.iCalendar
 		public const int ALPHA = 21;
 		public const int DIGIT = 22;
 		public const int DASH = 23;
-		public const int UNICODE = 24;
-		public const int SPECIAL = 25;
-		public const int SPACE = 26;
-		public const int HTAB = 27;
-		public const int SLASH = 28;
-		public const int ESCAPED_CHAR = 29;
-		public const int LINEFOLDER = 30;
+		public const int UNDERSCORE = 24;
+		public const int UNICODE = 25;
+		public const int SPECIAL = 26;
+		public const int SPACE = 27;
+		public const int HTAB = 28;
+		public const int SLASH = 29;
+		public const int ESCAPED_CHAR = 30;
+		public const int LINEFOLDER = 31;
 		
 		
 		protected void initialize()
@@ -770,6 +771,7 @@ _loop50_breakloop:			;
 		case ALPHA:
 		case DIGIT:
 		case DASH:
+		case UNDERSCORE:
 		case UNICODE:
 		case SPECIAL:
 		case SPACE:
@@ -1040,6 +1042,7 @@ _loop78_breakloop:			;
 		@"""ALPHA""",
 		@"""DIGIT""",
 		@"""DASH""",
+		@"""UNDERSCORE""",
 		@"""UNICODE""",
 		@"""SPECIAL""",
 		@"""SPACE""",
@@ -1057,37 +1060,37 @@ _loop78_breakloop:			;
 	public static readonly BitSet tokenSet_0_ = new BitSet(mk_tokenSet_0_());
 	private static long[] mk_tokenSet_1_()
 	{
-		long[] data = { 2147450848L, 0L, 0L, 0L};
+		long[] data = { 4294934496L, 0L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_1_ = new BitSet(mk_tokenSet_1_());
 	private static long[] mk_tokenSet_2_()
 	{
-		long[] data = { 2147450864L, 0L, 0L, 0L};
+		long[] data = { 4294934512L, 0L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_2_ = new BitSet(mk_tokenSet_2_());
 	private static long[] mk_tokenSet_3_()
 	{
-		long[] data = { 2147424160L, 0L, 0L, 0L};
+		long[] data = { 4294907808L, 0L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_3_ = new BitSet(mk_tokenSet_3_());
 	private static long[] mk_tokenSet_4_()
 	{
-		long[] data = { 2147434464L, 0L, 0L, 0L};
+		long[] data = { 4294918112L, 0L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_4_ = new BitSet(mk_tokenSet_4_());
 	private static long[] mk_tokenSet_5_()
 	{
-		long[] data = { 2147358624L, 0L, 0L, 0L};
+		long[] data = { 4294842272L, 0L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_5_ = new BitSet(mk_tokenSet_5_());
 	private static long[] mk_tokenSet_6_()
 	{
-		long[] data = { 2147385312L, 0L, 0L, 0L};
+		long[] data = { 4294868960L, 0L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_6_ = new BitSet(mk_tokenSet_6_());

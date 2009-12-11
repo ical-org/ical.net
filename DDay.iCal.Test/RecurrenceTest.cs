@@ -33,11 +33,13 @@ namespace DDay.iCal.Test
             iCalDateTime fromDate,
             iCalDateTime toDate,
             iCalDateTime[] dateTimes,
-            string[] timeZones
+            string[] timeZones,
+            int eventIndex
         )
         {
-            ProgramTest.TestCal(iCal);
-            Event evt = iCal.Events[0];
+            // FIXME: remove?
+            //ProgramTest.TestCal(iCal);
+            Event evt = iCal.Events[eventIndex];
 
             List<Occurrence> occurrences = evt.GetOccurrences(
                 fromDate,
@@ -68,6 +70,17 @@ namespace DDay.iCal.Test
                     Assert.AreEqual(dateTimes[i + 1], nextOccurrence);
                 }
             }
+        }
+
+        private void EventOccurrenceTest(
+            iCalendar iCal,
+            iCalDateTime fromDate,
+            iCalDateTime toDate,
+            iCalDateTime[] dateTimes,
+            string[] timeZones
+        )
+        {
+            EventOccurrenceTest(iCal, fromDate, toDate, dateTimes, timeZones, 0);
         }
 
         /// <summary>
@@ -2160,6 +2173,65 @@ namespace DDay.iCal.Test
                     new iCalDateTime(2020, 9, 10, 7, 0, 0)
                 },
                 null
+            );
+        }
+
+        /// <summary>
+        /// Tests a bug with WEEKLY recurrence values used with UNTIL.
+        /// https://sourceforge.net/tracker/index.php?func=detail&aid=2912657&group_id=187422&atid=921236
+        /// Sourceforge.net bug #2912657
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE60()
+        {
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE60.ics");
+
+            // Daily recurrence
+            EventOccurrenceTest(
+                iCal,
+                new iCalDateTime(2009, 12, 4, 0, 0, 0, tzid, iCal),
+                new iCalDateTime(2009, 12, 12, 0, 0, 0, tzid, iCal),
+                new iCalDateTime[]
+                {
+                    new iCalDateTime(2009, 12, 4, 2, 00, 00, tzid, iCal),
+                    new iCalDateTime(2009, 12, 5, 2, 00, 00, tzid, iCal),
+                    new iCalDateTime(2009, 12, 6, 2, 00, 00, tzid, iCal),
+                    new iCalDateTime(2009, 12, 7, 2, 00, 00, tzid, iCal),
+                    new iCalDateTime(2009, 12, 8, 2, 00, 00, tzid, iCal),
+                    new iCalDateTime(2009, 12, 9, 2, 00, 00, tzid, iCal),
+                    new iCalDateTime(2009, 12, 10, 2, 00, 00, tzid, iCal),
+                    new iCalDateTime(2009, 12, 11, 2, 00, 00, tzid, iCal)
+                },
+                null,
+                0
+            );
+
+            // Weekly with UNTIL value
+            EventOccurrenceTest(
+                iCal,
+                new iCalDateTime(2009, 12, 4, tzid, iCal),
+                new iCalDateTime(2009, 12, 12, tzid, iCal),
+                new iCalDateTime[]
+                {
+                    new iCalDateTime(2009, 12, 4, 2, 00, 00, tzid, iCal),
+                    new iCalDateTime(2009, 12, 11, 2, 00, 00, tzid, iCal),
+                },
+                null,
+                1
+            );
+
+            // Weekly with COUNT=2
+            EventOccurrenceTest(
+                iCal,
+                new iCalDateTime(2009, 12, 4, tzid, iCal),
+                new iCalDateTime(2009, 12, 12, tzid, iCal),
+                new iCalDateTime[]
+                {
+                    new iCalDateTime(2009, 12, 4, 2, 00, 00, tzid, iCal),
+                    new iCalDateTime(2009, 12, 11, 2, 00, 00, tzid, iCal),
+                },
+                null,
+                2
             );
         }
 
