@@ -3,12 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 using System.Text.RegularExpressions;
-using DDay.iCal.Serialization.iCalendar.Components;
+using DDay.iCal.Serialization;
 
-namespace DDay.iCal.Serialization.iCalendar.DataTypes
+namespace DDay.iCal.Serialization
 {
     public class EncodableDataTypeSerializer : FieldSerializer
     {

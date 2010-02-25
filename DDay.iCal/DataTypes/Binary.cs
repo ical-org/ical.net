@@ -2,10 +2,10 @@ using System;
 using System.Net;
 using System.Collections.Generic;
 using System.Text;
-using DDay.iCal.Components;
+using DDay.iCal;
 using System.Runtime.Serialization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {
     /// <summary>
     /// A class to handle binary attachments, or URIs as binary attachments, within an iCalendar. 
@@ -43,7 +43,7 @@ namespace DDay.iCal.DataTypes
             {                
                 if (Parameters.ContainsKey("FMTYPE"))
                 {
-                    Parameter p = (Parameter)Parameters["FMTYPE"];
+                    CalendarParameter p = (CalendarParameter)Parameters["FMTYPE"];
                     Text fmtype = new Text(p.Values[0].ToString(), true);
                     return fmtype;
                 }
@@ -52,7 +52,7 @@ namespace DDay.iCal.DataTypes
             set
             {
                 if (value != null)
-                    Parameters["FMTYPE"] = new Parameter("FMTYPE", value);
+                    Parameters["FMTYPE"] = new CalendarParameter("FMTYPE", value);
                 else
                     Parameters.Remove("FMTYPE");
             }
@@ -104,7 +104,7 @@ namespace DDay.iCal.DataTypes
             return base.GetHashCode();
         }
 
-        public override bool TryParse(string value, ref object obj)
+        public override bool TryParse(string value, ref ICalendarObject obj)
         {
             if (Encoding != null)
                 return base.TryParse(value, ref obj);
@@ -112,12 +112,12 @@ namespace DDay.iCal.DataTypes
             {
                 Binary b = (Binary)obj;
                 b.m_Uri = new URI();
-                object o = b.m_Uri;
+                ICalendarObject o = b.m_Uri;
                 return b.m_Uri.TryParse(value, ref o);                
             }
         }
-        
-        public override void CopyFrom(object obj)
+
+        public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
             if (obj is Binary)

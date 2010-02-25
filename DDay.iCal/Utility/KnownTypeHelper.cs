@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 using System.Reflection;
 using DDay.iCal.Serialization;
 
@@ -13,8 +13,8 @@ namespace DDay.iCal
         static public IList<Type> GetKnownTypes()
         {
             List<Type> types = new List<Type>();
-            types.Add(typeof(KeyedList<Property, string>));
-            types.Add(typeof(KeyedList<Parameter, string>));
+            types.Add(typeof(KeyedList<CalendarProperty, string>));
+            types.Add(typeof(KeyedList<CalendarParameter, string>));
             types.Add(typeof(UniqueComponentList<UniqueComponent>));
             types.Add(typeof(UniqueComponentList<Event>));
             types.Add(typeof(UniqueComponentList<Todo>));

@@ -2,12 +2,12 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Reflection;
-using DDay.iCal.Components;
+using DDay.iCal;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using DDay.iCal.Serialization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {    
     /// <summary>
     /// An abstract class that represents an iCalendar data type which
@@ -37,7 +37,7 @@ namespace DDay.iCal.DataTypes
             {
                 if (Parameters.ContainsKey("ENCODING"))
                 {
-                    Parameter p = (Parameter)Parameters["ENCODING"];
+                    CalendarParameter p = (CalendarParameter)Parameters["ENCODING"];
                     if (p.Values.Count > 0)                        
                         return p.Values[0].ToString();
                 }
@@ -60,16 +60,16 @@ namespace DDay.iCal.DataTypes
                         throw new NotSupportedException("The " + GetType().Name + " data type does not support " + value.ToUpper() + " encoding.");
 
                     // Set the encoding via the "ENCODING" parameter
-                    Parameter p = null;
+                    CalendarParameter p = null;
                     if (Parameters.ContainsKey("ENCODING"))
                     {
-                        p = (Parameter)Parameters["ENCODING"];
+                        p = (CalendarParameter)Parameters["ENCODING"];
                         p.Values = new List<string>();
                         p.Values.Add(value.ToUpper());
                     }
                     else
                     {
-                        p = new Parameter("ENCODING", value.ToUpper());
+                        p = new CalendarParameter("ENCODING", value.ToUpper());
                         AddParameter(p);
                     }
                 }
@@ -104,7 +104,7 @@ namespace DDay.iCal.DataTypes
 
         #region Overrides
 
-        public override bool TryParse(string value, ref object obj)
+        public override bool TryParse(string value, ref ICalendarObject obj)
         {
             if (Encoding != null)
             {
@@ -123,7 +123,7 @@ namespace DDay.iCal.DataTypes
 
         #region Private Methods
 
-        private bool TryParse7BIT(string value, ref object obj)
+        private bool TryParse7BIT(string value, ref ICalendarObject obj)
         {
             EncodableDataType edt = (EncodableDataType)obj;
 
@@ -158,7 +158,7 @@ namespace DDay.iCal.DataTypes
             }
         }
 
-        private bool TryParse8BIT(string value, ref object obj)
+        private bool TryParse8BIT(string value, ref ICalendarObject obj)
         {
             EncodableDataType edt = (EncodableDataType)obj;
 
@@ -193,7 +193,7 @@ namespace DDay.iCal.DataTypes
             }
         }
 
-        private bool TryParseBASE64(string value, ref object obj)
+        private bool TryParseBASE64(string value, ref ICalendarObject obj)
         {
             EncodableDataType edt = (EncodableDataType)obj;
             try

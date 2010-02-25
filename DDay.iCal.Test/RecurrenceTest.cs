@@ -9,8 +9,8 @@ using System.Web.UI;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 using DDay.iCal.Serialization;
 using NUnit.Framework;
 using System.Globalization;
@@ -1741,6 +1741,16 @@ namespace DDay.iCal.Test
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE44.ics");
             iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
+            
+            // FIXME: move these relationship tests to another unit test?
+            // Ensure the parent/child relationships are intact
+            Assert.AreSame(iCal, iCal.Events[0].Parent, "Event's parent was not the expected iCalendar");
+            Assert.AreSame(iCal.Events[0], iCal.Events[0].RRule[0].Parent, "RecurrencePattern's parent was not the expected Event.");
+
+            // Ensure iCalendar references are intact
+            Assert.AreSame(iCal, iCal.Events[0].Calendar, "iCalendar reference does not match.");
+            Assert.AreSame(iCal.Events[0].Calendar, iCal.Events[0].RRule[0].Calendar, "iCalendar reference does not match.");
+            Assert.AreSame(iCal, iCal.Events[0].RRule[0].Calendar, "iCalendar reference does not match.");
 
             EventOccurrenceTest(
                 iCal,

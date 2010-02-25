@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Collections;
-using DDay.iCal.Components;
+using DDay.iCal;
 
 namespace DDay.iCal.Test
 {
@@ -74,6 +74,16 @@ namespace DDay.iCal.Test
         }
 
         [Test, Category("DataContractSerialization")]
+        public void Attendee1()
+        {
+            Attendee a = new Attendee();
+            a.CommonName = "The Postmaster";
+            a.DirectoryEntry = "ldap://host.com:6666/o=eDABC%20Industries,c=3DUS??(cn=3DBJim%20Dolittle)";
+            a.Value = "mailto:test123@test.com";
+            SerializeTest(a, "Attendee1.xml");
+        }
+
+        [Test, Category("DataContractSerialization")]
         public void Binary1()
         {
             Binary b = new Binary();
@@ -81,16 +91,6 @@ namespace DDay.iCal.Test
             b.Data = new byte[] { 1, 2, 3, 4 };
             b.Name = "ATTACH";
             SerializeTest(b, "Binary1.xml");
-        }
-
-        [Test, Category("DataContractSerialization")]
-        public void Cal_Address1()
-        {
-            Cal_Address ca = new Cal_Address();
-            ca.CommonName = "The Postmaster";
-            ca.DirectoryEntry = "ldap://host.com:6666/o=eDABC%20Industries,c=3DUS??(cn=3DBJim%20Dolittle)";
-            ca.Value = "mailto:test123@test.com";
-            SerializeTest(ca, "Cal_Address1.xml");
         }
 
         [Test, Category("DataContractionSerialization")]

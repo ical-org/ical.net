@@ -434,9 +434,6 @@
     <None Include="Calendars\Serialization\SERIALIZE33.ics">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Serialization\RussiaHolidays.ics">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="Calendars\Recurrence\RRULE51.ics">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -483,6 +480,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Calendars\Serialization\PARSE18.ics">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Calendars\Serialization\RussiaHolidays.ics">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Data\LoremIpsum.txt">

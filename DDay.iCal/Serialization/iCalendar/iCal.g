@@ -1,6 +1,9 @@
+// The following is a grammar file for ANTLR 2.7.6.
+// Copyright (c) 2010 Douglas Day
+//
 header
 {    
-    using DDay.iCal.Components; 
+    using DDay.iCal; 
     using DDay.iCal.Serialization;
     using System.Text;   
 }
@@ -22,31 +25,43 @@ options
 }
 
 // iCalendar object
-icalobject[ISerializationContext ctx] returns [DDay.iCal.iCalendar iCal = (DDay.iCal.iCalendar)Activator.CreateInstance(iCalendarType);]
+icalobject[ISerializationContext ctx] returns [iCalendarCollection iCalendars = new iCalendarCollection();]
 :	
-    ((CRLF)* BEGIN COLON VCALENDAR (CRLF)* icalbody[ctx, iCal] END COLON VCALENDAR (CRLF)*)* {iCal.OnLoaded(EventArgs.Empty);}
+	{ IICalendar iCal = null; }
+    (
+		(CRLF)* BEGIN COLON VCALENDAR (CRLF)* {iCal = (IICalendar)Activator.CreateInstance(iCalendarType);}
+		icalbody[ctx, iCal]
+		END COLON VCALENDAR (CRLF)*
+		{
+			if (iCal != null)
+			{
+				iCal.OnLoaded();
+				iCalendars.Add(iCal);
+			}
+		}
+	)* 	
 ;
 
-icalbody[ISerializationContext ctx, DDay.iCal.iCalendar iCal]: (calprop[iCal])* (component[ctx, iCal])?;
-component[ISerializationContext ctx, iCalObject o] returns [ComponentBase c = null;]: (c=x_comp[ctx, o] | c=iana_comp[ctx, o])+;
-iana_comp[ISerializationContext ctx, iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:IANA_TOKEN {c = o.iCalendar.Create(o, n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn(); } (CRLF)* (calendarline[ctx, c])* END COLON IANA_TOKEN (CRLF)* { c.OnLoaded(EventArgs.Empty); };
-x_comp[ISerializationContext ctx, iCalObject o] returns [ComponentBase c = null;]: BEGIN COLON n:X_NAME {c = o.iCalendar.Create(o, n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn(); } (CRLF)* (calendarline[ctx, c])* END COLON X_NAME (CRLF)* { c.OnLoaded(EventArgs.Empty); };
+icalbody[ISerializationContext ctx, IICalendar iCal]: (calprop[iCal])* (component[ctx, iCal])?;
+component[ISerializationContext ctx, ICalendarObject o] returns [ICalendarComponent c = null;]: (c=x_comp[ctx, o] | c=iana_comp[ctx, o])+;
+iana_comp[ISerializationContext ctx, ICalendarObject o] returns [ICalendarComponent c = null;]: BEGIN COLON n:IANA_TOKEN {c = o.iCalendar.Create(n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn(); } (CRLF)* (calendarline[ctx, c])* END COLON IANA_TOKEN (CRLF)* { o.AddChild(c); c.OnLoaded(); };
+x_comp[ISerializationContext ctx, ICalendarObject o] returns [ICalendarComponent c = null;]: BEGIN COLON n:X_NAME {c = o.iCalendar.Create(n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn(); } (CRLF)* (calendarline[ctx, c])* END COLON X_NAME (CRLF)* { o.AddChild(c); c.OnLoaded(); };
 
 // iCalendar Properties
-calprop[iCalObject o]: x_prop[o] | iana_prop[o];
+calprop[IICalendar iCal]: x_prop[iCal] | iana_prop[iCal];
 
 // NOTE: RFC2445 states that for properties, the value should be a "text" value, not a "value" value.
 // Outlook 2007, however, uses a "value" value in some instances, and will require this for proper
 // parsing.  NOTE: Fixes bug #1874977 - X-MS-OLK-WKHRDAYS won't parse correctly
-iana_prop[iCalObject o] {Property p; string v;}: n:IANA_TOKEN { p = new Property(o, n.getLine(), n.getColumn()); } (SEMICOLON (param[p] | xparam[p]))* COLON v=value {p.Name = n.getText().ToUpper(); p.Value = v; p.AddToParent(); } (CRLF)*;
-x_prop[iCalObject o] {Property p; string v;}: n:X_NAME { p = new Property(o, n.getLine(), n.getColumn()); } (SEMICOLON (param[p] | xparam[p]))* COLON v=value {p.Name = n.getText().ToUpper(); p.Value = v; p.AddToParent(); } (CRLF)*;
+iana_prop[IICalendar iCal] {Property p; string v;}: n:IANA_TOKEN { p = new Property(n.getLine(), n.getColumn()); } (SEMICOLON (param[p] | xparam[p]))* COLON v=value {p.Name = n.getText().ToUpper(); p.Value = v; iCal.Properties.Add(p); } (CRLF)*;
+x_prop[IICalendar iCal] {Property p; string v;}: n:X_NAME { p = new Property(n.getLine(), n.getColumn()); } (SEMICOLON (param[p] | xparam[p]))* COLON v=value {p.Name = n.getText().ToUpper(); p.Value = v; iCal.Properties.Add(p); } (CRLF)*;
 
 // Content Line
-calendarline[ISerializationContext ctx, iCalObject o]: contentline[ctx, o] | component[ctx, o]; // Allow for embedded components here (VALARM)
-contentline[ISerializationContext ctx, iCalObject o]
+calendarline[ISerializationContext ctx, ICalendarObject o]: contentline[ctx, o] | component[ctx, o]; // Allow for embedded components here (i.e. VALARM)
+contentline[ISerializationContext ctx, ICalendarObject o]
 {
 	IToken currToken = LT(0);
-    ContentLine c = new ContentLine(o, currToken.getLine() + 1, 0);
+    ContentLine c = new ContentLine(currToken.getLine() + 1, 0);
     string n;
     string v;
 }: n=name {c.Name = n;} (SEMICOLON (param[c] | xparam[c]))* COLON v=value {c.Value = v; DDay.iCal.Serialization.iCalendar.Components.ContentLineSerializer.DeserializeToObject(c, o, ctx); } (CRLF)*;

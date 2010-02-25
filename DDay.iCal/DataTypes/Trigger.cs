@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DDay.iCal.Components;
+using DDay.iCal;
 using System.Runtime.Serialization;
 using DDay.iCal.Serialization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {
     /// <summary>
     /// A class that is used to specify exactly when an <see cref="Alarm"/> component will trigger.
@@ -86,7 +86,7 @@ namespace DDay.iCal.DataTypes
             {
                 if (Parameters.ContainsKey("RELATED"))
                 {
-                    Parameter p = (Parameter)Parameters["RELATED"];
+                    CalendarParameter p = (CalendarParameter)Parameters["RELATED"];
                     if (p.Values.Count > 0)
                         m_Related = (TriggerRelation)Enum.Parse(typeof(TriggerRelation), p.Values[0].ToString(), true);
                 }
@@ -121,7 +121,7 @@ namespace DDay.iCal.DataTypes
 
         #region Overrides
 
-        public override void CopyFrom(object obj)
+        public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
             if (obj is Trigger)
@@ -133,20 +133,20 @@ namespace DDay.iCal.DataTypes
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref object obj)
+        public override bool TryParse(string value, ref ICalendarObject obj)
         {
             Trigger t = (Trigger)obj;
 
             if (ValueType() == typeof(iCalDateTime))
             {
                 t.DateTime = new iCalDateTime();
-                object dt = t.DateTime;
+                ICalendarObject dt = t.DateTime;
                 return t.DateTime.TryParse(value, ref dt);
             }
             else
             {
                 t.Duration = new Duration();
-                object d = t.Duration;
+                ICalendarObject d = t.Duration;
                 return t.Duration.TryParse(value, ref d);
             }
         }

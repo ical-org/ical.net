@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using DDay.iCal.Components;
+using DDay.iCal;
 
 namespace DDay.iCal.Test
 {

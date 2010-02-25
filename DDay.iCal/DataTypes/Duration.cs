@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
 using DDay.iCal.Serialization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {
     /// <summary>
     /// The iCalendar equivalent of the .NET <see cref="TimeSpan"/> class.
@@ -57,7 +57,7 @@ namespace DDay.iCal.DataTypes
 
         #region Overrides
 
-        public override void CopyFrom(object obj)
+        public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
             if (obj is Duration)
@@ -83,7 +83,7 @@ namespace DDay.iCal.DataTypes
             return Value.GetHashCode();
         }
 
-        public override bool TryParse(string value, ref object obj)
+        public override bool TryParse(string value, ref ICalendarObject obj)
         {
             Match match = Regex.Match(value, @"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?))$");
             int days = 0;

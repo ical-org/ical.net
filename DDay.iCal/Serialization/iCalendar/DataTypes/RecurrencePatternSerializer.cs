@@ -3,22 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using DDay.iCal.DataTypes;
-using DDay.iCal.Components;
 
-namespace DDay.iCal.Serialization.iCalendar.DataTypes
+namespace DDay.iCal.Serialization
 {
     public class RecurrencePatternSerializer : FieldSerializer
     {
         #region Private Fields
 
-        private DDay.iCal.DataTypes.RecurrencePattern m_Recur;
+        private RecurrencePattern m_Recur;
 
         #endregion
 
         #region Constructors
 
-        public RecurrencePatternSerializer(DDay.iCal.DataTypes.RecurrencePattern recur)
+        public RecurrencePatternSerializer(RecurrencePattern recur)
             : base(recur)
         {
             this.m_Recur = recur;

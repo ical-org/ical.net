@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {
     public class EvaluationEngineException : Exception
     {

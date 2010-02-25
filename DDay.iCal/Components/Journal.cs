@@ -2,13 +2,13 @@ using System;
 using System.Diagnostics;
 using System.Data;
 using System.Configuration;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 using DDay.iCal.Serialization;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace DDay.iCal.Components
+namespace DDay.iCal
 {
     /// <summary>
     /// A class that represents an RFC 2445 VJOURNAL component.
@@ -52,9 +52,9 @@ namespace DDay.iCal.Components
 
         #region Constructors
 
-        public Journal(iCalObject parent) : base(parent)
+        public Journal()
         {
-            this.Name = ComponentBase.JOURNAL;
+            this.Name = ComponentFactory.JOURNAL;
         }
 
         #endregion
@@ -67,7 +67,7 @@ namespace DDay.iCal.Components
         /// <returns>A typed copy of the Journal object.</returns>
         public new Journal Copy()
         {
-            return (Journal)base.Copy();
+            return base.Copy<Journal>();
         }
 
         internal override List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)

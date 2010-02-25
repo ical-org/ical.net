@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 
-namespace DDay.iCal.Components
+namespace DDay.iCal
 {
     [DebuggerDisplay("{Component.Summary} ({Period.StartTime} - {Period.EndTime})")]
 #if DATACONTRACT
@@ -52,7 +52,7 @@ namespace DDay.iCal.Components
 
         public Occurrence(Occurrence ao)
         {
-            this.Period = ao.Period.Copy();
+            this.Period = ao.Period.Copy<Period>();
             this.Component = ao.Component;
         }
 

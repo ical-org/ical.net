@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using DDay.iCal.DataTypes;
-using DDay.iCal.Components;
+using DDay.iCal;
+using DDay.iCal;
 
-namespace DDay.iCal.Serialization.iCalendar.DataTypes
+namespace DDay.iCal.Serialization
 {
     /// <summary>
     /// FIXME: Add "VALUE=PERIOD" when serializing a

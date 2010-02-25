@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DDay.iCal.Serialization.iCalendar
+namespace DDay.iCal.Serialization
 {
     public partial class iCalParser
     {

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
 using System.Runtime.Serialization;
 
-namespace DDay.iCal.Components
+namespace DDay.iCal
 {
     /// <summary>
     /// A class that represents a specific occurrence of an <see cref="Alarm"/>.        

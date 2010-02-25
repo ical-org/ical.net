@@ -9,10 +9,10 @@ using System.Web.UI;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 using DDay.iCal.Serialization;
-using DDay.iCal.Serialization.iCalendar.Components;
+using DDay.iCal.Serialization;
 
 namespace DDay.iCal.Test
 {
@@ -33,7 +33,7 @@ namespace DDay.iCal.Test
             if (!Directory.Exists(@"Calendars\Serialization\Temp"))
                 Directory.CreateDirectory(@"Calendars\Serialization\Temp");
 
-            iCalendar iCal1 = iCalendar.LoadFromFile(iCalType, @"Calendars\Serialization\" + filename);
+            iCalendar iCal1 = iCalendar.LoadFromFile(iCalType, @"Calendars\Serialization\" + filename)[0];
 
             ConstructorInfo ci = iCalSerializerType.GetConstructor(new Type[] { typeof(iCalendar) });
             ISerializable serializer = ci.Invoke(new object[] { iCal1 }) as ISerializable;
@@ -45,7 +45,7 @@ namespace DDay.iCal.Test
             serializer.Serialize(fs, Encoding.UTF8);
             fs.Close();
 
-            iCalendar iCal2 = iCalendar.LoadFromFile(iCalType, @"Calendars\Serialization\Temp\" + Path.GetFileNameWithoutExtension(filename) + "_Serialized" + Path.GetExtension(filename), Encoding.UTF8, serializer);
+            iCalendar iCal2 = iCalendar.LoadFromFile(iCalType, @"Calendars\Serialization\Temp\" + Path.GetFileNameWithoutExtension(filename) + "_Serialized" + Path.GetExtension(filename), Encoding.UTF8, serializer)[0];
 
             CompareCalendars(iCal1, iCal2);
         }
@@ -69,7 +69,7 @@ namespace DDay.iCal.Test
                 CompareComponents(iCal1.TimeZones[i], iCal2.TimeZones[i]);
         }
 
-        static public void CompareComponents(ComponentBase cb1, ComponentBase cb2)
+        static public void CompareComponents(Component cb1, Component cb2)
         {
             Type type = cb1.GetType();
             Assert.IsTrue(type == cb2.GetType(), "Types do not match");
@@ -223,7 +223,7 @@ namespace DDay.iCal.Test
             iCalendarSerializer serializer = new iCalendarSerializer(iCal);
             serializer.Serialize(@"Calendars\Serialization\SERIALIZE16.ics");
 
-            iCal = iCalendar.LoadFromFile<CustomICal1>(@"Calendars\Serialization\SERIALIZE16.ics");
+            iCal = (CustomICal1)iCalendar.LoadFromFile<CustomICal1>(@"Calendars\Serialization\SERIALIZE16.ics");
             foreach (CustomEvent1 evt1 in iCal.Events)
                 Assert.IsTrue(evt1.NonstandardProperty.Equals(nonstandardText));
 
@@ -301,7 +301,7 @@ namespace DDay.iCal.Test
             iCalendar iCal1 = new iCalendar();
 
             fs = new FileStream(@"Calendars\Serialization\SERIALIZE19.ics", FileMode.Open, FileAccess.Read);
-            Event evt1 = ComponentBase.LoadFromStream<Event>(fs, Encoding.UTF8);
+            Event evt1 = Component.LoadFromStream<Event>(fs, Encoding.UTF8);
             fs.Close();
 
             CompareComponents(evt, evt1);
@@ -341,7 +341,7 @@ END:VEVENT
 END:VCALENDAR
 ";
             StringReader sr = new StringReader(iCalString);
-            iCalendar calendar = iCalendar.LoadFromStream(sr);
+            iCalendar calendar = iCalendar.LoadFromStream(sr)[0];
 
             Assert.IsTrue(calendar.Events.Count == 2, "There should be 2 events in the loaded iCalendar.");
             Assert.IsNotNull(calendar.Events["fd940618-45e2-4d19-b118-37fd7a8e3906"], "There should be an event with UID: fd940618-45e2-4d19-b118-37fd7a8e3906");
@@ -378,7 +378,7 @@ END:VCALENDAR
             // Ensures that custom iCalendars are loaded correctly
             //
             iCalendar calendar = iCalendar.LoadFromFile<iCalendar>(@"Calendars\Serialization\SERIALIZE1.ics");
-            CustomICal1 customiCal = iCalendar.LoadFromFile<CustomICal1>(@"Calendars\Serialization\SERIALIZE1.ics");
+            CustomICal1 customiCal = (CustomICal1)iCalendar.LoadFromFile<CustomICal1>(@"Calendars\Serialization\SERIALIZE1.ics");
 
             Assert.IsTrue(calendar.Events.Count == 1, "Calendar should have 1 event");
             Assert.IsTrue(customiCal.Events.Count == 1, "Custom calendar should have 1 event");
@@ -459,7 +459,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             evt.Summary = "Test event";
             evt.Start = DateTime.Now;
             evt.Duration = TimeSpan.FromMinutes(30);
-            evt.Organizer = new Cal_Address("doug@ddaysoftware.com");
+            evt.Organizer = new Organizer("doug@ddaysoftware.com");
             evt.AddAttendee("someone@someurl.com");
             evt.AddAttendee("another@someurl.com");
             evt.AddAttendee("lastone@someurl.com");
@@ -500,7 +500,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             htmlBuilder.Append("</BODY></HTML>");
 
             // This adds the property to the event automatically
-            Property p = new Property(evt, "X-ALT-DESC", htmlBuilder.ToString());
+            CalendarProperty p = new CalendarProperty(evt, "X-ALT-DESC", htmlBuilder.ToString());
             p.AddParameter("FMTTYPE", "text/html");
 
             iCalendarSerializer serializer = new iCalendarSerializer(iCal);
@@ -578,8 +578,8 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             // Ensure that LoadFromUri() and LoadFromFile() produce identical results.
             // Thanks to Eugene, a student from Russia, who helped track down this bug.
             Assembly assembly = Assembly.GetExecutingAssembly();
-            iCalendar russia1 = iCalendar.LoadFromUri(new Uri(Path.Combine(calendarPath, "RussiaHolidays.ics")));
-            iCalendar russia2 = iCalendar.LoadFromFile(Path.Combine(calendarPath, "RussiaHolidays.ics"));
+            iCalendar russia1 = iCalendar.LoadFromUri(new Uri(Path.Combine(calendarPath, "RussiaHolidays.ics")))[0];
+            iCalendar russia2 = iCalendar.LoadFromFile(Path.Combine(calendarPath, "RussiaHolidays.ics"))[0];
 
             CompareCalendars(russia1, russia2);
         }
@@ -590,8 +590,8 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             string calendarPath = Path.Combine(Environment.CurrentDirectory, "Calendars");
             calendarPath = Path.Combine(calendarPath, "Serialization");
 
-            iCalendar russia1 = iCalendar.LoadFromUri(new Uri("http://www.mozilla.org/projects/calendar/caldata/RussiaHolidays.ics"));
-            iCalendar russia2 = iCalendar.LoadFromFile(Path.Combine(calendarPath, "RussiaHolidays.ics"));
+            iCalendar russia1 = iCalendar.LoadFromUri(new Uri("http://www.mozilla.org/projects/calendar/caldata/RussiaHolidays.ics"))[0];
+            iCalendar russia2 = iCalendar.LoadFromFile(Path.Combine(calendarPath, "RussiaHolidays.ics"))[0];
 
             CompareCalendars(russia1, russia2);
         }
@@ -701,8 +701,10 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         [Test, Category("Serialization")]
         public void PARSE2()
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE2.ics");
-            Assert.IsTrue(iCal.Events.Count == 4, "iCalendar should have 4 events");
+            iCalendarCollection calendars = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE2.ics");
+            Assert.AreEqual(2, calendars.Count);
+            Assert.AreEqual(2, calendars[0].Events.Count);
+            Assert.AreEqual(2, calendars[1].Events.Count);
         }
 
         [Test, Category("Serialization")]
@@ -767,7 +769,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE9.ics");
 
-            IList<Property> props = iCal.Properties.AllOf("VERSION");
+            IList<CalendarProperty> props = iCal.Properties.AllOf("VERSION");
             Assert.AreEqual(2, props.Count);
 
             for (int i = 0; i < props.Count; i++)
@@ -783,7 +785,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE10.ics");
 
             Event evt = iCal.Events[0];
-            IList<Parameter> parms = evt.DTStart.Parameters.AllOf("VALUE");
+            IList<CalendarParameter> parms = evt.DTStart.Parameters.AllOf("VALUE");
             Assert.AreEqual(2, parms.Count);
             Assert.AreEqual("DATE", parms[0].Values[0]);
             Assert.AreEqual("OTHER", parms[1].Values[0]);
@@ -795,7 +797,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         [Test, Category("Serialization")]
         public void PARSE11()
         {
-            iCalendar iCal = iCalendar.LoadFromUri(new Uri("http://www.google.com/calendar/ical/tvhot064q4p48frqdalgo3fb2k%40group.calendar.google.com/public/basic.ics"));
+            iCalendar iCal = iCalendar.LoadFromUri(new Uri("http://www.google.com/calendar/ical/tvhot064q4p48frqdalgo3fb2k%40group.calendar.google.com/public/basic.ics"))[0];
             Assert.IsNotNull(iCal);
             Assert.AreEqual(1, iCal.Events.Count);
             Assert.AreEqual(1, iCal.TimeZones.Count);
@@ -923,7 +925,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
 
             iCalendarSerializer serializer = new iCalendarSerializer();
             serializer.SerializationContext = ctx;
-            iCalendar iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\PARSE17.ics", Encoding.UTF8, serializer);
+            iCalendar iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\PARSE17.ics", Encoding.UTF8, serializer)[0];
 
             Assert.AreEqual(1, iCal.Events.Count);
             Assert.AreEqual(iCal.Events[0].Properties["DTSTART"].Value, "1234");
@@ -938,7 +940,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         [Test, Category("Serialization")]
         public void PARSE18()
         {
-            iCalendar iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\PARSE18.ics", Encoding.UTF8);
+            iCalendar iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\PARSE18.ics", Encoding.UTF8)[0];
             Assert.AreEqual(1, iCal.Events.Count);
             Assert.AreEqual(iCal.Properties["X-LOTUS-CHILD_UID"].Value, "XXX");
         }
@@ -955,7 +957,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
 
             iCalendarSerializer serializer = new iCalendarSerializer();
             serializer.SerializationContext = ctx;
-            iCalendar iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\PARSE1.ics", Encoding.UTF8, serializer);
+            iCalendar iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\PARSE1.ics", Encoding.UTF8, serializer)[0];
 
             Assert.AreEqual(2, iCal.Events.Count);
             Assert.AreEqual(4, iCal.Events[0].Line);
@@ -985,7 +987,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
 
             iCalendarSerializer serializer = new iCalendarSerializer();
             serializer.SerializationContext = ctx;
-            iCalendar iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\PARSE3.ics", Encoding.UTF8, serializer);
+            iCalendar iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\PARSE3.ics", Encoding.UTF8, serializer)[0];
 
             Assert.IsNotNull(iCal.Todos["2df60496-1e73-11db-ba96-e3cfe6793b5f"]);
             Assert.IsNotNull(iCal.Todos["4836c236-1e75-11db-835f-a024e2a6131f"]);
@@ -1131,7 +1133,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
 
             Assert.AreEqual(1, evt2.Related_To.Length);
             Assert.AreEqual(evt1.UID, evt2.Related_To[0].Value);
-            Assert.AreEqual(((Parameter)evt2.Related_To[0].Parameters["RELTYPE"]).Values[0], RelationshipTypes.Parent);
+            Assert.AreEqual(((CalendarParameter)evt2.Related_To[0].Parameters["RELTYPE"]).Values[0], RelationshipTypes.Parent);
         }
     }
 }

@@ -3,12 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Configuration;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 using DDay.iCal.Serialization;
 using System.Runtime.Serialization;
 
-namespace DDay.iCal.Components
+namespace DDay.iCal
 {
     /// <summary>
     /// A class that represents an RFC 2445 VALARM component.
@@ -17,13 +17,13 @@ namespace DDay.iCal.Components
     [DataContract(Name = "Alarm", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public class Alarm : ComponentBase
+    public class Alarm : Component
     {
         #region Static Public Methods
 
         static public Alarm Create(RecurringComponent rc)
         {
-            Alarm alarm = rc.iCalendar.Create<Alarm>();
+            Alarm alarm = rc.Calendar.Create<Alarm>();
             return alarm;
         }
 
@@ -33,9 +33,6 @@ namespace DDay.iCal.Components
 
         private List<AlarmOccurrence> m_Occurrences;
 
-        private AlarmAction m_Action;        
-        private Binary m_Attach;        
-        private Cal_Address[] m_Attendee;        
         private Text m_Description;        
         private Duration m_Duration;        
         private Integer m_Repeat;        
@@ -46,84 +43,77 @@ namespace DDay.iCal.Components
 
         #region Public Properties
 
-        [Serialized]
 #if DATACONTRACT
         [DataMember(Order = 1)]
 #endif
         virtual public AlarmAction Action
         {
-            get { return m_Action; }
-            set { m_Action = value; }
+            get { return Properties.Get<AlarmAction>("ACTION"); }
+            set { Properties.Set("ACTION", value); }
         }
 
-        [Serialized]
 #if DATACONTRACT
         [DataMember(Order = 2)]
 #endif
         virtual public Binary Attach
         {
-            get { return m_Attach; }
-            set { m_Attach = value; }
+            get { return Properties.Get<Binary>("ATTACH"); }
+            set { Properties.Set("ATTACH", value); }
         }
 
-        [Serialized]
 #if DATACONTRACT
         [DataMember(Order = 3)]
 #endif
-        virtual public Cal_Address[] Attendee
+        virtual public Attendee[] Attendee
         {
-            get { return m_Attendee; }
-            set { m_Attendee = value; }
+            get { return Properties.Get<Attendee[]>("ATTENDEE"); }
+            set { Properties.Set("ATTENDEE", value); }
         }
 
-        [Serialized]
 #if DATACONTRACT
         [DataMember(Order = 4)]
 #endif
         virtual public Text Description
         {
-            get { return m_Description; }
-            set { m_Description = value; }
+            get { return Properties.Get<Text>("DESCRIPTION"); }
+            set { Properties.Set("DESCRIPTION", value); }
         }
 
-        [Serialized, DefaultValue("P")]
+        [DefaultValue("P")]
 #if DATACONTRACT
         [DataMember(Order = 5)]
 #endif
         virtual public Duration Duration
         {
-            get { return m_Duration; }
-            set { m_Duration = value; }
+            get { return Properties.Get<Duration>("DURATION"); }
+            set { Properties.Set("DURATION", value); }
         }
 
-        [Serialized]
 #if DATACONTRACT
         [DataMember(Order = 6)]
 #endif
         virtual public Integer Repeat
         {
-            get { return m_Repeat; }
-            set { m_Repeat = value; }
+            get { return Properties.Get<Integer>("REPEAT"); }
+            set { Properties.Set("REPEAT", value); }
         }
 
-        [Serialized]
 #if DATACONTRACT
         [DataMember(Order = 7)]
 #endif
         virtual public Text Summary
         {
-            get { return m_Summary; }
-            set { m_Summary = value; }
+            get { return Properties.Get<Text>("SUMMARY"); }
+            set { Properties.Set("SUMMARY", value); }
         }
 
-        [Serialized]
 #if DATACONTRACT
         [DataMember(Order = 8)]
 #endif
         virtual public Trigger Trigger
         {
-            get { return m_Trigger; }
-            set { m_Trigger = value; }
+            get { return Properties.Get<Trigger>("TRIGGER"); }
+            set { Properties.Set("TRIGGER", value); }
         }
 
         #endregion
@@ -142,13 +132,12 @@ namespace DDay.iCal.Components
 
         public Alarm()
         {
-            Occurrences = new List<AlarmOccurrence>();
+            Initialize();
         }
 
-        public Alarm(iCalObject parent)
-            : base(parent)
+        private void Initialize()
         {
-            this.Name = ComponentBase.ALARM;
+            this.Name = ComponentFactory.ALARM;
             Occurrences = new List<AlarmOccurrence>();
         }
 
@@ -223,15 +212,6 @@ namespace DDay.iCal.Components
                 Results.Sort();
             }
             return Results;
-        }
-
-        /// <summary>
-        /// Returns a typed copy of the Alarm.
-        /// </summary>
-        /// <returns>A typed copy of the Alarm object.</returns>
-        public new Alarm Copy()
-        {
-            return (Alarm)base.Copy();
         }
 
         #endregion

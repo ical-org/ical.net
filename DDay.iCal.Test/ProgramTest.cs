@@ -10,8 +10,8 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 using DDay.iCal.Test;
 using DDay.iCal.Serialization;
 using System.Net;
@@ -27,8 +27,10 @@ namespace DDay.iCal.Test
             // The following code loads and displays an iCalendar
             // with US Holidays for 2006.
             //
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\USHolidays.ics");
-            Assert.IsNotNull(iCal, "iCalendar did not load.  Are you connected to the internet?");
+            iCalendarCollection iCalendars = iCalendar.LoadFromFile(@"Calendars\General\USHolidays.ics");
+            Assert.IsNotNull(iCalendars, "iCalendar did not load.  Are you connected to the internet?");
+            Assert.AreEqual(1, iCalendars.Count, "iCalendar did not load.  Are you connected to the internet?");            
+            iCalendar iCal = iCalendars[0];
 
             List<Occurrence> occurrences = iCal.GetOccurrences(
              new iCalDateTime(2006, 1, 1, "US-Eastern", iCal),
@@ -106,7 +108,7 @@ namespace DDay.iCal.Test
             string path = @"Calendars\General\Test1.ics";
             Assert.IsTrue(File.Exists(path), "File '" + path + "' does not exist.");
 
-            iCalendar iCal = iCalendar.LoadFromFile(path);
+            iCalendar iCal = iCalendar.LoadFromFile(path)[0];
             ProgramTest.TestCal(iCal);
         }
 
@@ -117,7 +119,7 @@ namespace DDay.iCal.Test
             path = Path.Combine(path, "Calendars/General/Test1.ics").Replace(@"\", "/");
             path = "file:///" + path;
             Uri uri = new Uri(path);
-            iCalendar iCal = iCalendar.LoadFromUri(uri);
+            iCalendar iCal = iCalendar.LoadFromUri(uri)[0];
             ProgramTest.TestCal(iCal);
         }
 
@@ -214,7 +216,7 @@ namespace DDay.iCal.Test
             ms.SetLength(b.Data.Length);
             b.Data.CopyTo(ms.GetBuffer(), 0);
 
-            iCalendar ical = iCalendar.LoadFromStream(ms);
+            iCalendar ical = iCalendar.LoadFromStream(ms)[0];
             Assert.IsNotNull(ical, "Attached iCalendar did not load correctly");
 
             throw new WebException();
@@ -464,7 +466,7 @@ UID:ebfbd3e3-cc1e-4a64-98eb-ced2598b3908
 END:VEVENT
 END:VCALENDAR
 ");
-            iCalendar iCal = iCalendar.LoadFromStream(sr);
+            iCalendar iCal = iCalendar.LoadFromStream(sr)[0];
             Assert.IsTrue(iCal.Events.Count == 2, "There should be 2 events in the parsed calendar");
             Assert.IsNotNull(iCal.Events["fd940618-45e2-4d19-b118-37fd7a8e3906"], "Event fd940618-45e2-4d19-b118-37fd7a8e3906 should exist in the calendar");
             Assert.IsNotNull(iCal.Events["ebfbd3e3-cc1e-4a64-98eb-ced2598b3908"], "Event ebfbd3e3-cc1e-4a64-98eb-ced2598b3908 should exist in the calendar");

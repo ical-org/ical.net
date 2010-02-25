@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using System.Runtime.Serialization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {
     /// <summary>
     /// Contains a collection of <see cref="Text"/> objects.
@@ -39,6 +39,15 @@ namespace DDay.iCal.DataTypes
         {
             get { return m_Values; }
             set { m_Values = value; }
+        }
+
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
+        virtual public string Language
+        {
+            get { return Parameters.Get<string>("LANGUAGE"); }
+            set { Parameters.Set("LANGUAGE", value); }
         }
 
         #endregion
@@ -93,7 +102,7 @@ namespace DDay.iCal.DataTypes
             return string.Join(",", values);
         }
 
-        public override void CopyFrom(object obj)
+        public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
             if (obj is TextCollection)
@@ -108,7 +117,7 @@ namespace DDay.iCal.DataTypes
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref object obj)
+        public override bool TryParse(string value, ref ICalendarObject obj)
         {
             if (!base.TryParse(value, ref obj))
                 return false;
@@ -118,7 +127,7 @@ namespace DDay.iCal.DataTypes
                 value = tc.Value;
             
             MatchCollection matches = Regex.Matches(value, @"[^\\](,)");
-            Values.Clear();
+            tc.Values.Clear();
             
             int i = 0;            
             foreach (Match match in matches)
@@ -145,7 +154,7 @@ namespace DDay.iCal.DataTypes
         {
             Text t = new Text();
             t.Encoding = Encoding;
-            object obj = t;
+            ICalendarObject obj = t;
             if (t.TryParse(value, ref obj))
                 return t;
             return null;

@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
 using DDay.iCal.Serialization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {
     /// <summary>
     /// A time zone identifier, used to associate <see cref="iCalDateTime"/> (and other) objects
@@ -60,7 +60,7 @@ namespace DDay.iCal.DataTypes
 
         #region Overrides
 
-        public override void CopyFrom(object obj)
+        public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
             if (obj is TZID)
@@ -72,7 +72,7 @@ namespace DDay.iCal.DataTypes
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref object obj)
+        public override bool TryParse(string value, ref ICalendarObject obj)
         {
             TZID tzid = (TZID)obj;
 
@@ -97,7 +97,7 @@ namespace DDay.iCal.DataTypes
             }
             else if (obj is string)
             {
-                object tzid = new TZID();
+                ICalendarObject tzid = new TZID();
                 if (((TZID)tzid).TryParse(obj.ToString(), ref tzid))
                     return tzid.Equals(this);
             }

@@ -4,12 +4,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Configuration;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 using DDay.iCal.Serialization;
 using System.Runtime.Serialization;
 
-namespace DDay.iCal.Components
+namespace DDay.iCal
 {
     /// <summary>
     /// A class that represents an RFC 2445 VTODO component.
@@ -168,7 +168,7 @@ namespace DDay.iCal.Components
                     // component is fully loaded (When deserializing, it shouldn't
                     // automatically track the completed time just because the
                     // status was changed).
-                    if (m_Loaded)
+                    if (IsLoaded)
                     {
                         if (value == TodoStatus.Completed)
                             Completed = DateTime.Now;
@@ -184,10 +184,14 @@ namespace DDay.iCal.Components
 
         #region Constructors
 
-        public Todo(iCalObject parent)
-            : base(parent)
+        public Todo()
         {
-            this.Name = ComponentBase.TODO;
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            this.Name = ComponentFactory.TODO;
         }
 
         #endregion
@@ -337,26 +341,6 @@ namespace DDay.iCal.Components
                 return Periods;
             }
             return new List<Period>();
-        }
-
-        /// <summary>
-        /// Automatically derives property values based on others it
-        /// contains, to provide a more "complete" object.
-        /// </summary>
-        /// <param name="e"></param>        
-        public override void OnLoaded(EventArgs e)
-        {
-            base.OnLoaded(e);
-            m_Loaded = true;            
-        }
-         
-        /// <summary>
-        /// Returns a typed copy of the Todo object.
-        /// </summary>
-        /// <returns>A typed copy of the Todo object.</returns>
-        public new Todo Copy()
-        {
-            return (Todo)base.Copy();
         }
 
         #endregion

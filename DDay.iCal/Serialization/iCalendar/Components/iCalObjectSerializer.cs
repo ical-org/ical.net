@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
-using DDay.iCal.Components;
+using DDay.iCal;
 
-namespace DDay.iCal.Serialization.iCalendar.Components
+namespace DDay.iCal.Serialization
 {
     public class iCalObjectSerializer : ISerializable
     {
@@ -64,14 +64,14 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
         #region Private Fields
 
-        private DDay.iCal.Components.iCalObject m_Object;
+        private DDay.iCal.CalendarObject m_Object;
         private ISerializationContext m_SerializationContext;        
 
         #endregion
 
         #region Public Properties
 
-        public DDay.iCal.Components.iCalObject Object
+        public DDay.iCal.CalendarObject Object
         {
             get { return m_Object; }
             set { m_Object = value; }
@@ -85,7 +85,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
         {
             m_SerializationContext = DDay.iCal.Serialization.SerializationContext.Default;
         }
-        public iCalObjectSerializer(DDay.iCal.Components.iCalObject iCalObject) : this()
+        public iCalObjectSerializer(DDay.iCal.CalendarObject iCalObject) : this()
         {
             Object = iCalObject;
         }
@@ -115,34 +115,39 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
         virtual public void Serialize(Stream stream, Encoding encoding)
         {
-            // Serialize "VERSION" before any other properties
-            if (Object.Properties.ContainsKey("VERSION"))
-            {
-                Property p = (Property)Object.Properties["VERSION"];
-                ISerializable serializer = SerializerFactory.Create(p, SerializationContext);
-                if (serializer != null)
-                    serializer.Serialize(stream, encoding);
-            }
+            // FIXME: serialize properties of components elsewhere!
 
-            foreach (Property p in Object.Properties)
-            {
-                // Don't serialize "VERSION" again, we've already done it above.
-                if (p.Key.Equals("VERSION"))
-                    continue;
+            //// Serialize "VERSION" before any other properties
+            //if (Object.Properties.ContainsKey("VERSION"))
+            //{
+            //    CalendarProperty p = (CalendarProperty)Object.Properties["VERSION"];
+            //    ISerializable serializer = SerializerFactory.Create(p, SerializationContext);
+            //    if (serializer != null)
+            //        serializer.Serialize(stream, encoding);
+            //}
 
-                ISerializable serializer = SerializerFactory.Create(p, SerializationContext);
-                if (serializer != null)
-                    serializer.Serialize(stream, encoding);
-            }
+            //foreach (CalendarProperty p in Object.Properties)
+            //{
+            //    // Don't serialize "VERSION" again, we've already done it above.
+            //    if (p.Key.Equals("VERSION"))
+            //        continue;
 
-            foreach (Parameter p in Object.Parameters)
-            {
-                ISerializable serializer = SerializerFactory.Create(p, SerializationContext);
-                if (serializer != null)
-                    serializer.Serialize(stream, encoding);
-            }
+            //    ISerializable serializer = SerializerFactory.Create(p, SerializationContext);
+            //    if (serializer != null)
+            //        serializer.Serialize(stream, encoding);
+            //}
 
-            foreach (DDay.iCal.Components.iCalObject obj in Object.Children)
+
+            // FIXME: serialize parameters elsewhere!
+
+            //foreach (CalendarParameter p in Object.Parameters)
+            //{
+            //    ISerializable serializer = SerializerFactory.Create(p, SerializationContext);
+            //    if (serializer != null)
+            //        serializer.Serialize(stream, encoding);
+            //}
+
+            foreach (DDay.iCal.CalendarObject obj in Object.Children)
             {
                 ISerializable serializer = SerializerFactory.Create(obj, SerializationContext);
                 if (serializer != null)
@@ -150,13 +155,13 @@ namespace DDay.iCal.Serialization.iCalendar.Components
             }
         }
 
-        virtual public iCalObject Deserialize(Stream stream, Encoding encoding, Type iCalendarType)
+        virtual public object Deserialize(Stream stream, Encoding encoding, Type iCalendarType)
         {
             TextReader tr = new StreamReader(stream, encoding);
             return Deserialize(tr, iCalendarType);            
         }
 
-        virtual public iCalObject Deserialize(TextReader tr, Type iCalendarType)
+        virtual public object Deserialize(TextReader tr, Type iCalendarType)
         {
             return null;
         }

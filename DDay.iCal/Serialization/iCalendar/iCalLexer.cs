@@ -1,10 +1,10 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalLexer.cs"$
     
-    using DDay.iCal.Components; 
+    using DDay.iCal; 
     using DDay.iCal.Serialization;
     using System.Text;   
 
-namespace DDay.iCal.Serialization.iCalendar
+namespace DDay.iCal.Serialization
 {
 	// Generate header specific to lexer CSharp file
 	using System;

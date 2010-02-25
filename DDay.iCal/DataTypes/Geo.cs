@@ -5,7 +5,7 @@ using System.Text;
 using System.Runtime.Serialization;
 using DDay.iCal.Serialization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {
     /// <summary>
     /// A class that represents the geographical location of an
@@ -79,7 +79,7 @@ namespace DDay.iCal.DataTypes
             return Latitude.GetHashCode() ^ Longitude.GetHashCode();
         }
 
-        public override bool TryParse(string value, ref object obj)
+        public override bool TryParse(string value, ref ICalendarObject obj)
         {
             Geo g = (Geo)obj;
             string[] values = value.Split(';');
@@ -88,8 +88,8 @@ namespace DDay.iCal.DataTypes
 
             g.Latitude = new Float();
             g.Longitude = new Float();
-            object lat = g.Latitude;
-            object lon = g.Longitude;
+            ICalendarObject lat = g.Latitude;
+            ICalendarObject lon = g.Longitude;
 
             if (!g.Latitude.TryParse(values[0], ref lat))
                 return false;
@@ -99,7 +99,7 @@ namespace DDay.iCal.DataTypes
             return true;
         }
 
-        public override void CopyFrom(object obj)
+        public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
             if (obj is Geo)

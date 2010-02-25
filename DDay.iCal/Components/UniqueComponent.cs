@@ -1,13 +1,13 @@
 using System;
 using System.Collections;
 using System.Text;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 using DDay.iCal.Serialization;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace DDay.iCal.Components
+namespace DDay.iCal
 {
     /// <summary>
     /// Represents a unique component, a component with a unique UID,
@@ -17,7 +17,7 @@ namespace DDay.iCal.Components
     [DataContract(Name = "UniqueComponent", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public class UniqueComponent : ComponentBase
+    public class UniqueComponent : Component
     {
         // TODO: Add AddRelationship() public method.
         // This method will add the UID of a related component
@@ -28,8 +28,7 @@ namespace DDay.iCal.Components
         #region Constructors
 
         public UniqueComponent() : base() { }
-        public UniqueComponent(iCalObject parent) : base(parent) { }
-        public UniqueComponent(iCalObject parent, string name) : base(parent, name) { }        
+        public UniqueComponent(string name) : base(name) { }        
 
         #endregion
 
@@ -37,7 +36,7 @@ namespace DDay.iCal.Components
 
         private Text _UID;
         private Binary[] _Attach;
-        private Cal_Address[] _Attendee;
+        private Attendee[] _Attendee;
         private TextCollection[] _Categories;
         private Text _Class;
         private Text[] _Comment;
@@ -46,7 +45,7 @@ namespace DDay.iCal.Components
         private Text _Description;
         private iCalDateTime _DTStamp;
         private iCalDateTime _Last_Modified;
-        private Cal_Address _Organizer;
+        private Organizer _Organizer;
         private Integer _Priority;
         private Text[] _Related_To;
         private RequestStatus[] _Request_Status;
@@ -81,22 +80,13 @@ namespace DDay.iCal.Components
 #if DATACONTRACT
         [DataMember(Order = 2)]
 #endif
-        virtual public Cal_Address[] Attendee
+        virtual public Attendee[] Attendee
         {
             get { return _Attendee; }
             set
             {
                 if (!object.Equals(_Attendee, value))
-                {
                     _Attendee = value;
-
-                    // NOTE: Fixes bug #1835469 - Organizer property not serializing correctly
-                    if (_Attendee != null)
-                    {
-                        foreach (Cal_Address addr in _Attendee)
-                            addr.Name = Cal_Address.ATTENDEE;
-                    }
-                }
             }
         }
 
@@ -209,19 +199,13 @@ namespace DDay.iCal.Components
 #if DATACONTRACT
         [DataMember(Order = 11)]
 #endif
-        virtual public Cal_Address Organizer
+        virtual public Organizer Organizer
         {
             get { return _Organizer; }
             set
             {
                 if (!object.Equals(_Organizer, value))
-                {
                     _Organizer = value;
-
-                    // NOTE: Fixes bug #1835469 - Organizer property not serializing correctly
-                    if (_Organizer != null)
-                        _Organizer.Name = Cal_Address.ORGANIZER;
-                }
             }
         }
 
@@ -411,21 +395,19 @@ namespace DDay.iCal.Components
         }
 
 
-        virtual public void AddAttendee(Cal_Address attendee)
+        virtual public void AddAttendee(Attendee attendee)
         {
-            List<Cal_Address> attendees = new List<Cal_Address>();
+            List<Attendee> attendees = new List<Attendee>();
             if (Attendee != null)
                 attendees.AddRange(Attendee);
 
-            // NOTE: Fixes bug #1835469 - Organizer property not serializing correctly
-            attendee.Name = Cal_Address.ATTENDEE;
             attendees.Add(attendee);
             Attendee = attendees.ToArray();
         }
 
-        virtual public void RemoveAttendee(Cal_Address attendee)
+        virtual public void RemoveAttendee(Attendee attendee)
         {
-            List<Cal_Address> attendees = new List<Cal_Address>();
+            List<Attendee> attendees = new List<Attendee>();
             if (Attendee != null)
                 attendees.AddRange(Attendee);
 
@@ -557,7 +539,7 @@ namespace DDay.iCal.Components
         {
             Text text = uid;
             if (relationshipType != null)
-                text.AddParameter(new Parameter("RELTYPE", relationshipType));
+                text.AddParameter(new CalendarParameter("RELTYPE", relationshipType));
 
             if (Related_To == null)
             {

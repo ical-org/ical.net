@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
 using DDay.iCal.Serialization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {    
     /// <summary>
     /// An iCalendar status code.
@@ -78,7 +78,7 @@ namespace DDay.iCal.DataTypes
 
         #region Overrides
 
-        public override void CopyFrom(object obj)
+        public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
             if (obj is StatusCode)
@@ -90,7 +90,7 @@ namespace DDay.iCal.DataTypes
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref object obj)
+        public override bool TryParse(string value, ref ICalendarObject obj)
         {
             StatusCode sc = (StatusCode)obj;
             Match match = Regex.Match(value, @"\d(\.\d+)*");

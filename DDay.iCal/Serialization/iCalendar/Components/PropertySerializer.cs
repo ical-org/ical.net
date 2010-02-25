@@ -3,23 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using DDay.iCal.DataTypes;
-using DDay.iCal.Components;
+using DDay.iCal;
+using DDay.iCal;
 
-namespace DDay.iCal.Serialization.iCalendar.Components
+namespace DDay.iCal.Serialization
 {
     public class PropertySerializer : ISerializable, IParameterSerializable
     {
         #region Private Fields
 
-        private Property m_Property;
+        private CalendarProperty m_Property;
         private ISerializationContext m_SerializationContext;
 
         #endregion
 
         #region Constructors
 
-        public PropertySerializer(Property property)
+        public PropertySerializer(CalendarProperty property)
         {
             this.m_SerializationContext = DDay.iCal.Serialization.SerializationContext.Default;
             this.m_Property = property;
@@ -42,16 +42,11 @@ namespace DDay.iCal.Serialization.iCalendar.Components
             {
                 List<string> parameters = new List<string>();
 
-                // NOTE: fixed a bug where the SerializeToString() did not function properly
-                // It used the following line instead:
-                // foreach (Parameter p in m_Property.Parameters)
-                // { ...
-                // }
-                //
-                // Since m_Property.Parameters is a Hashtable, this would always fail.
-                foreach (Parameter p in m_Property.Parameters)
-                {   
-                    parameters.Add(p.Name + "=" + string.Join(",", p.Values.ToArray()));
+                // Serialize parameters
+                foreach (CalendarParameter p in m_Property.Parameters)
+                {
+                    ParameterSerializer paramSerializer = new ParameterSerializer(p);
+                    parameters.Add(paramSerializer.SerializeToString());
                 }
 
                 sb.Append(";");
@@ -60,8 +55,10 @@ namespace DDay.iCal.Serialization.iCalendar.Components
             sb.Append(":");
             sb.Append(m_Property.Value);            
 
-            ContentLineSerializer serializer = new ContentLineSerializer(sb.ToString());
-            return serializer.SerializeToString();
+            // FIXME: serialize the line
+            //ContentLineSerializer serializer = new ContentLineSerializer(sb.ToString());
+            //return serializer.SerializeToString();
+            return null;
         }
 
         public void Serialize(Stream stream, Encoding encoding)
@@ -70,7 +67,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
             stream.Write(prop, 0, prop.Length);
         }
 
-        public iCalObject Deserialize(Stream stream, Encoding encoding, Type iCalendarType)
+        public object Deserialize(Stream stream, Encoding encoding, Type iCalendarType)
         {
             throw new Exception("The method or operation is not implemented.");
         }
@@ -79,12 +76,12 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
         #region IParameterSerializable Members
 
-        public List<Parameter> Parameters
+        public List<ICalendarParameter> Parameters
         {
             get
             {
-                List<Parameter> Parameters = new List<Parameter>();
-                foreach (Parameter p in m_Property.Parameters)
+                List<ICalendarParameter> Parameters = new List<ICalendarParameter>();
+                foreach (ICalendarParameter p in m_Property.Parameters)
                 {
                     if (!DisallowedParameters.Contains(p))
                         Parameters.Add(p);
@@ -93,9 +90,9 @@ namespace DDay.iCal.Serialization.iCalendar.Components
             }
         }
 
-        public List<Parameter> DisallowedParameters
+        public List<ICalendarParameter> DisallowedParameters
         {
-            get { return new List<Parameter>(); }
+            get { return new List<ICalendarParameter>(); }
         }
 
         #endregion        

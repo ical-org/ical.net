@@ -6,8 +6,8 @@ using System.IO;
 using System.Resources;
 using System.Web;
 using System.Web.UI;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
@@ -41,9 +41,9 @@ namespace DDay.iCal.Test
                 
         public void TestTodoActive(string calendar, ArrayList items, params int[] numPeriods)
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar);
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
             ProgramTest.TestCal(iCal);
-            DDay.iCal.Components.Todo todo = (DDay.iCal.Components.Todo)iCal.Todos[0];
+            DDay.iCal.Todo todo = (DDay.iCal.Todo)iCal.Todos[0];
             
             for (int i = 0; i < items.Count; i += 2)
             {
@@ -69,9 +69,9 @@ namespace DDay.iCal.Test
 
         public void TestTodoCompleted(string calendar, ArrayList items)
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar);
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
             ProgramTest.TestCal(iCal);
-            DDay.iCal.Components.Todo todo = (DDay.iCal.Components.Todo)iCal.Todos[0];
+            DDay.iCal.Todo todo = (DDay.iCal.Todo)iCal.Todos[0];
             
             for (int i = 0; i < items.Count; i += 2)
             {
@@ -196,7 +196,7 @@ namespace DDay.iCal.Test
         public void TODO7_1()
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\TODO7.ics");
-            DDay.iCal.Components.Todo todo = iCal.Todos[0];
+            DDay.iCal.Todo todo = iCal.Todos[0];
 
             ArrayList items = new ArrayList();
             items.Add(new iCalDateTime(2006, 7, 28, 9, 0, 0, tzid, iCal)); 

@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
 using DDay.iCal.Serialization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {
     /// <summary>
     /// An iCalendar URI (Universal Resource Identifier) value.
@@ -101,9 +101,13 @@ namespace DDay.iCal.DataTypes
             return Value.GetHashCode();
         }
 
-        public override bool TryParse(string value, ref object obj)
+        public override bool TryParse(string value, ref ICalendarObject obj)
         {
-            URI uri = (URI)obj;            
+            URI uri = (URI)obj;
+
+            // Ensure the value can be parsed, even if empty
+            if (value == null)
+                value = string.Empty;
 
             try
             {
@@ -131,7 +135,7 @@ namespace DDay.iCal.DataTypes
             }            
         }
 
-        public override void CopyFrom(object obj)
+        public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
             if (obj is URI)
@@ -173,6 +177,11 @@ namespace DDay.iCal.DataTypes
         static public implicit operator URI(string txt)
         {
             return new URI(txt);
+        }
+
+        static public implicit operator string(URI uri)
+        {
+            return uri != null ? uri.Value : null;
         }
 
         #endregion

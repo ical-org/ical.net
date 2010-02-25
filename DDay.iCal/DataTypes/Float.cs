@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {
     /// <summary>
     /// Represents an RFC 2445 floating-point decimal value.
@@ -65,10 +65,10 @@ namespace DDay.iCal.DataTypes
             return Value.GetHashCode();
         }
 
-        public override void CopyFrom(object obj)
+        public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (obj is double)
+            if (obj is Float)
             {
                 Float i = (Float)obj;
                 Value = i.Value;
@@ -76,11 +76,12 @@ namespace DDay.iCal.DataTypes
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref object obj)
+        public override bool TryParse(string value, ref ICalendarObject obj)
         {
             if (!base.TryParse(value, ref obj))
                 return false;
 
+            // Retrieve the encoded value
             EncodableDataType ecd = (EncodableDataType)obj;
             if (ecd.Value != null)
                 value = ecd.Value;

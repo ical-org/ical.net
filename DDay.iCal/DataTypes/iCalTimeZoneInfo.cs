@@ -3,12 +3,12 @@ using System.Data;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 using DDay.iCal.Serialization;
 using System.Runtime.Serialization;
 
-namespace DDay.iCal.Components
+namespace DDay.iCal
 {    
     /// <summary>
     /// A class that contains time zone information, and is usually accessed
@@ -44,7 +44,7 @@ namespace DDay.iCal.Components
             }
         }
 
-        public override Cal_Address[] Attendee
+        public override Attendee[] Attendee
         {
             get
             {
@@ -165,7 +165,7 @@ namespace DDay.iCal.Components
             }
         }
 
-        public override Cal_Address Organizer
+        public override Organizer Organizer
         {
             get
             {
@@ -278,7 +278,7 @@ namespace DDay.iCal.Components
         {
         }
 
-        public override void AddAttendee(Cal_Address attendee)
+        public override void AddAttendee(Attendee attendee)
         {
         }
 
@@ -418,16 +418,10 @@ namespace DDay.iCal.Components
 
         public iCalTimeZoneInfo() : base()
         {
-            base.Sequence = null; // iCalTimeZoneInfo does not allow for sequence numbers
+            base.Sequence = null; // iCalTimeZoneInfo does not allow sequence numbers
         }
-        public iCalTimeZoneInfo(iCalObject parent) : base(parent)
+        public iCalTimeZoneInfo(string name) : this()
         {
-            base.Sequence = null; // iCalTimeZoneInfo does not allow for sequence numbers
-        }
-        public iCalTimeZoneInfo(string name, iCalObject parent)
-            : base(parent)
-        {
-            base.Sequence = null; // iCalTimeZoneInfo does not allow for sequence numbers
             this.Name = name;
         }
 
@@ -450,21 +444,6 @@ namespace DDay.iCal.Components
         public new iCalTimeZoneInfo Copy()
         {
             return (iCalTimeZoneInfo)base.Copy();
-        }
-
-        /// <summary>
-        /// Creates a copy of the <see cref="iCalTimeZoneInfo"/> object.
-        /// </summary>
-        public override iCalObject Copy(iCalObject parent)
-        {
-            // Create a copy
-            iCalObject obj = base.Copy(parent);
-
-            // Copy the name, since the .ctor(iCalObject) constructor
-            // doesn't handle it
-            obj.Name = this.Name;
-            
-            return obj;
         }
 
         public override bool Equals(object obj)

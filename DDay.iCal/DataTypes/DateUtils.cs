@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Globalization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {
     public class DateUtils
     {

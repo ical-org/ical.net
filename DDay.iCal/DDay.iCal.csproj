@@ -31,7 +31,7 @@
     <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkSubset>
     </TargetFrameworkSubset>
   </PropertyGroup>
@@ -49,7 +49,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;DATACONTRACT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\DDay.iCal.XML</DocumentationFile>
@@ -61,20 +61,30 @@
       <HintPath>..\antlr.runtime.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\AlarmOccurrence.cs" />
+    <Compile Include="DataTypes\AlarmOccurrence.cs" />
+    <Compile Include="Factory\ComponentFactory.cs" />
     <Compile Include="Components\Event.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Components\Occurrence.cs" />
-    <Compile Include="Components\RelationshipTypes.cs" />
-    <Compile Include="Components\iCalTimeZoneInfo.cs" />
+    <Compile Include="DataTypes\iCalTimeZoneInfo.cs" />
+    <Compile Include="DataTypes\RelationshipTypes.cs" />
+    <Compile Include="DataTypes\Attendee.cs" />
+    <Compile Include="DataTypes\CalendarAddressCollection.cs" />
     <Compile Include="DataTypes\DateUtils.cs" />
     <Compile Include="DataTypes\EvaluationEngineException.cs" />
+    <Compile Include="DataTypes\Occurrence.cs" />
+    <Compile Include="DataTypes\Organizer.cs" />
     <Compile Include="DataTypes\Trigger.cs" />
     <Compile Include="DataTypes\Binary.cs" />
     <Compile Include="DataTypes\AlarmAction.cs" />
@@ -90,7 +100,7 @@
     <Compile Include="DataTypes\Text.cs" />
     <Compile Include="DataTypes\TZID.cs" />
     <Compile Include="DataTypes\DaySpecifier.cs" />
-    <Compile Include="DataTypes\Cal_Address.cs" />
+    <Compile Include="DataTypes\CalendarAddress.cs" />
     <Compile Include="DataTypes\Geo.cs" />
     <Compile Include="DataTypes\iCalDataType.cs" />
     <Compile Include="DataTypes\RecurrenceDates.cs" />
@@ -102,30 +112,50 @@
     <Compile Include="DataTypes\Period.cs" />
     <Compile Include="DataTypes\Duration.cs" />
     <Compile Include="DataTypes\iCalDateTime.cs" />
+    <Compile Include="General\CalendarParameterList.cs" />
+    <Compile Include="General\CalendarPropertyList.cs" />
+    <Compile Include="General\CalendarObjectBase.cs" />
     <Compile Include="iCalendarCollection.cs" />
-    <Compile Include="Components\ComponentBase.cs" />
-    <Compile Include="ComponentBaseTypeAttribute.cs" />
-    <Compile Include="Components\ContentLine.cs" />
+    <Compile Include="Components\Component.cs" />
+    <Compile Include="Attributes\ComponentBaseTypeAttribute.cs" />
     <Compile Include="Components\Alarm.cs" />
-    <Compile Include="DefaultValueAttribute.cs" />
-    <Compile Include="DefaultValueTypeAttribute.cs" />
+    <Compile Include="Attributes\DefaultValueAttribute.cs" />
+    <Compile Include="Attributes\DefaultValueTypeAttribute.cs" />
     <Compile Include="Components\UniqueComponentList.cs" />
     <Compile Include="Components\UniqueComponent.cs" />
     <Compile Include="Components\RecurringComponent.cs" />
-    <Compile Include="Components\iCalObject.cs" />
-    <Compile Include="Components\Parameter.cs" />
+    <Compile Include="General\CalendarObject.cs" />
+    <Compile Include="Interfaces\Components\ICalendarTimeZone.cs" />
+    <Compile Include="Interfaces\Components\IRecurringComponent.cs" />
+    <Compile Include="Interfaces\Components\IUniqueComponent.cs" />
+    <Compile Include="General\CalendarParameter.cs" />
     <Compile Include="Components\FreeBusy.cs" />
     <Compile Include="Components\Journal.cs" />
-    <Compile Include="Components\Property.cs" />
+    <Compile Include="General\CalendarProperty.cs" />
     <Compile Include="Components\iCalTimeZone.cs" />
     <Compile Include="Components\Todo.cs" />
     <Compile Include="iCalendar.cs" />
-    <Compile Include="Interfaces\IEscapable.cs" />
-    <Compile Include="Interfaces\IKeyedList.cs" />
-    <Compile Include="Interfaces\IKeyedObject.cs" />
+    <Compile Include="Interfaces\DataTypes\ICalendarDataType.cs" />
+    <Compile Include="Interfaces\Components\ICalendarComponent.cs" />
+    <Compile Include="Interfaces\DataTypes\IEscapable.cs" />
+    <Compile Include="Interfaces\Factory\ICalendarComponentFactory.cs" />
+    <Compile Include="Interfaces\General\ICalendarObjectList.cs" />
+    <Compile Include="Interfaces\General\ICalendarPropertyList.cs" />
+    <Compile Include="Interfaces\General\ICalendarObject.cs" />
+    <Compile Include="Interfaces\General\ICalendarParameter.cs" />
+    <Compile Include="Interfaces\General\ICalendarParameterList.cs" />
+    <Compile Include="Interfaces\General\ICalendarParameterListContainer.cs" />
+    <Compile Include="Interfaces\General\ICalendarProperty.cs" />
+    <Compile Include="Interfaces\General\ICalendarPropertyListContainer.cs" />
+    <Compile Include="Interfaces\Utility\ICopyable.cs" />
+    <Compile Include="Interfaces\Utility\ILoadable.cs" />
+    <Compile Include="Interfaces\Utility\IMergeable.cs" />
+    <Compile Include="Interfaces\IICalendar.cs" />
     <Compile Include="Interfaces\Serialization\ISerializationContext.cs" />
-    <Compile Include="KeyedList.cs" />
-    <Compile Include="KnownTypeHelper.cs" />
+    <Compile Include="Interfaces\Utility\IKeyedList.cs" />
+    <Compile Include="Interfaces\Utility\IKeyedObject.cs" />
+    <Compile Include="Utility\KeyedList.cs" />
+    <Compile Include="Utility\KnownTypeHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Properties\AssemblyInfo.cs.template" />
     <Compile Include="Serialization\Attributes\DisallowedTypesAttribute.cs" />
@@ -140,7 +170,6 @@
     <Compile Include="Serialization\iCalendar\iCalParserTokenTypes.cs" />
     <Compile Include="Serialization\Attributes\NonstandardAttribute.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\ArraySerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Components\ContentLineSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\BinarySerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\iCalDateTimeUTCSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\EnumSerializer.cs" />
@@ -152,7 +181,7 @@
     <Compile Include="Serialization\iCalendar\DataTypes\RecurrencePatternSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\TextCollectionSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\iCalDateTimeSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Components\ComponentBaseSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\ComponentSerializer.cs" />
     <Compile Include="Serialization\iCalendar\DataTypes\TextSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Components\UniqueComponentSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Components\PropertySerializer.cs" />

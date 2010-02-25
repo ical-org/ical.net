@@ -2,9 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using DDay.iCal.Components;
-using DDay.iCal.Serialization.iCalendar;
-using DDay.iCal.Serialization.iCalendar.Components;
 
 namespace DDay.iCal.Serialization
 {
@@ -28,7 +25,7 @@ namespace DDay.iCal.Serialization
     /// </code>
     /// </example>
     /// </summary>
-    public class iCalendarSerializer : ComponentBaseSerializer 
+    public class iCalendarSerializer : ComponentSerializer 
     {
         #region Readonly Fields
 
@@ -92,7 +89,7 @@ namespace DDay.iCal.Serialization
             base.Serialize(stream, encoding);
         }
 
-        public override iCalObject Deserialize(TextReader tr, Type iCalendarType)
+        public override object Deserialize(TextReader tr, Type iCalendarType)
         {
             // Normalize line endings, so "\r" is treated the same as "\r\n"
             // NOTE: fixed bug #1773194 - Some applications emit mixed line endings
@@ -107,13 +104,13 @@ namespace DDay.iCal.Serialization
             parser.iCalendarType = iCalendarType;
 
             // Parse the iCalendar!
-            DDay.iCal.iCalendar iCal = parser.icalobject(SerializationContext);
+            iCalendarCollection calendarCollection = parser.icalobject(SerializationContext);
 
             // Close our text stream
             textReader.Close();
 
             // Return the parsed iCalendar
-            return iCal;
+            return calendarCollection;
         }
 
         #endregion

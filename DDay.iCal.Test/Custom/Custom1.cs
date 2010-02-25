@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
-using DDay.iCal.Serialization;
 
 namespace DDay.iCal.Test
 {
@@ -12,15 +9,15 @@ namespace DDay.iCal.Test
     {
     }
 
-    public class CustomComponentBase1 : ComponentBase
+    public class CustomComponentBase1 : Component
     {
-        public CustomComponentBase1(iCalObject obj) : base(obj) { }
-        static public new ComponentBase Create(iCalObject parent, string name)
+        public CustomComponentBase1(CalendarObject obj) : base(obj) { }
+        static public new Component Create(CalendarObject parent, string name)
         {
             switch (name.ToUpper())
             {
                 case EVENT: return new CustomEvent1(parent);
-                default: return ComponentBase.Create(parent, name);
+                default: return Component.Create(parent, name);
             }
         }
     }
@@ -36,6 +33,6 @@ namespace DDay.iCal.Test
             set { nonstandardProperty = value; }
         }
 
-        public CustomEvent1(iCalObject parent) : base(parent) { }
+        public CustomEvent1(CalendarObject parent) : base(parent) { }
     }
 }

@@ -4,23 +4,20 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Reflection;
-using DDay.iCal;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
 
-namespace DDay.iCal.Serialization.iCalendar.Components
+namespace DDay.iCal.Serialization
 {
-    public class ComponentBaseSerializer : iCalObjectSerializer
+    public class ComponentSerializer : iCalObjectSerializer
     {
         #region Private Fields
 
-        private DDay.iCal.Components.ComponentBase m_Component;
+        private DDay.iCal.Component m_Component;
         
         #endregion
 
         #region Public Properties
 
-        protected ComponentBase Component
+        protected Component Component
         {
             get { return m_Component; }
             set
@@ -56,8 +53,8 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
         #region Constructors
 
-        public ComponentBaseSerializer() {}
-        public ComponentBaseSerializer(DDay.iCal.Components.ComponentBase component) : base(component)
+        public ComponentSerializer() {}
+        public ComponentSerializer(DDay.iCal.Component component) : base(component)
         {
             Component = component;
         }
@@ -116,9 +113,9 @@ namespace DDay.iCal.Serialization.iCalendar.Components
                 object obj = (field == null) ? prop.GetValue(Component, null) : field.GetValue(Component);
 
                 // Adjust the items' name to be iCal-compliant
-                if (obj is iCalObject)
+                if (obj is CalendarObject)
                 {
-                    iCalObject ico = (iCalObject)obj;
+                    CalendarObject ico = (CalendarObject)obj;
                     if (ico.Name == null)
                         ico.Name = itemName.ToUpper().Replace("_", "-");
 
@@ -178,7 +175,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
             stream.Write(close, 0, close.Length);
         }
 
-        public override iCalObject Deserialize(TextReader tr, Type iCalendarType)
+        public override object Deserialize(TextReader tr, Type iCalendarType)
         {
             // Normalize line endings, so "\r" is treated the same as "\r\n"
             // NOTE: fixed bug #1773194 - Some applications emit mixed line endings
@@ -194,7 +191,7 @@ namespace DDay.iCal.Serialization.iCalendar.Components
 
             // Parse the component!
             DDay.iCal.iCalendar iCal = new DDay.iCal.iCalendar();
-            iCalObject component = parser.component(SerializationContext, iCal);
+            CalendarObject component = parser.component(SerializationContext, iCal);
 
             // Close our text stream
             tr.Close();

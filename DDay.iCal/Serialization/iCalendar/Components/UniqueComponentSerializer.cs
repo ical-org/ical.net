@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Reflection;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 
-namespace DDay.iCal.Serialization.iCalendar.Components
+namespace DDay.iCal.Serialization
 {
-    public class UniqueComponentSerializer : ComponentBaseSerializer
+    public class UniqueComponentSerializer : ComponentSerializer
     {
         #region Protected Properties
 

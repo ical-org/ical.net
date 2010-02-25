@@ -3,11 +3,11 @@ using System.Diagnostics;
 using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
-using DDay.iCal.Components;
+using DDay.iCal;
 using System.Runtime.Serialization;
-using DDay.iCal.Serialization.iCalendar.Components;
+using DDay.iCal.Serialization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {
     /// <summary>
     /// The iCalendar equivalent of the .NET <see cref="DateTime"/> class.
@@ -98,9 +98,9 @@ namespace DDay.iCal.DataTypes
             {
                 if (_TimeZoneInfo == null && TZID != null)
                 {
-                    if (iCalendar != null)
+                    if (Calendar != null)
                     {
-                        iCalTimeZone tz = iCalendar.GetTimeZone(TZID);
+                        ICalendarTimeZone tz = Calendar.GetTimeZone(TZID);
                         if (tz != null)
                             _TimeZoneInfo = tz.GetTimeZoneInfo(this);
                     }
@@ -117,22 +117,6 @@ namespace DDay.iCal.DataTypes
         {
             get { return _IsUniversalTime; }
             set { _IsUniversalTime = value; }
-        }
-
-        /// <summary>
-        /// Sets/Gets the iCalendar associated with this <see cref="iCalDateTime"/>.
-        /// <note>
-        /// This property cannot be null when the <see cref="TZID"/>
-        /// has been set for this <see cref="iCalDateTime"/> object.
-        /// </note>
-        /// </summary>
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
-        public new iCalendar iCalendar
-        {
-            get { return base.iCalendar; }
-            set { Parent = value; }
         }
 
         public string TimeZoneName
@@ -183,7 +167,7 @@ namespace DDay.iCal.DataTypes
             get
             {
                 if (_TZID == null && Parameters.ContainsKey("TZID"))
-                    _TZID = new TZID(((Parameter)Parameters["TZID"]).Values[0]);
+                    _TZID = new TZID(((CalendarParameter)Parameters["TZID"]).Values[0]);
                 return _TZID;
             }
             set { _TZID = value; }
@@ -298,14 +282,17 @@ namespace DDay.iCal.DataTypes
         public iCalDateTime(int year, int month, int day, TZID tzid, iCalendar iCal)
             : this(year, month, day, 0, 0, 0, tzid, iCal) { }
 
-        public iCalDateTime(Property p) : this(p.Value)
-        {
-            this.iCalendar = p.iCalendar;
-            if (p.Parameters.ContainsKey("VALUE"))
-                this.Parameters["VALUE"] = p.Parameters["VALUE"];
-            if (p.Parameters.ContainsKey("TZID"))
-                this.TZID = p.Parameters["TZID"].Values[0];                
-        }
+        // FIXME: what do we do with this constructor?
+        // I don't really like it...
+
+        //public iCalDateTime(CalendarProperty p) : this(p.Value)
+        //{
+        //    this.iCalendar = p.Calendar;
+        //    if (p.Parameters.ContainsKey("VALUE"))
+        //        this.Parameters["VALUE"] = p.Parameters["VALUE"];
+        //    if (p.Parameters.ContainsKey("TZID"))
+        //        this.TZID = p.Parameters["TZID"].Values[0];                
+        //}
 
         private void Initialize(int year, int month, int day, int hour, int minute, int second, TZID tzid, iCalendar iCal)
         {
@@ -350,8 +337,8 @@ namespace DDay.iCal.DataTypes
         #endregion
 
         #region Overrides
-               
-        public override void CopyFrom(object obj)
+
+        public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
             if (obj is iCalDateTime)
@@ -376,7 +363,7 @@ namespace DDay.iCal.DataTypes
             IsUniversalTime = dt.IsUniversalTime;
         }
 
-        public override bool TryParse(string value, ref object obj)
+        public override bool TryParse(string value, ref ICalendarObject obj)
         {
             string[] values = value.Split('T');
 

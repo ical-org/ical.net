@@ -2,11 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 using System.Runtime.Serialization;
 
-namespace DDay.iCal.Components
+namespace DDay.iCal
 {
     /// <summary>
     /// A collection of iCalendar components.  This class is used by the 
@@ -17,19 +17,12 @@ namespace DDay.iCal.Components
     [DataContract(Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public class UniqueComponentList<T> : iCalObject, IList<T>
+    public class UniqueComponentList<T> : IList<T>
     {
         #region Private Fields
 
         private List<T> m_Components = new List<T>();
         private Dictionary<string, T> m_Dictionary = new Dictionary<string, T>();
-
-        #endregion
-
-        #region Constructors
-
-        public UniqueComponentList(iCalObject parent) : base(parent) { }
-        public UniqueComponentList(iCalObject parent, string name) : base(parent, name) { }
 
         #endregion
 

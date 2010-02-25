@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 using System.Runtime.Serialization;
 
 namespace DDay.iCal
@@ -57,7 +57,7 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// A collection of <see cref="DDay.iCal.Components.Event"/> components in the iCalendar.
+        /// A collection of <see cref="DDay.iCal.Event"/> components in the iCalendar.
         /// </summary>
         public IEnumerable<Event> Events
         {
@@ -70,7 +70,7 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// A collection of <see cref="DDay.iCal.Components.FreeBusy"/> components in the iCalendar.
+        /// A collection of <see cref="DDay.iCal.FreeBusy"/> components in the iCalendar.
         /// </summary>
         public IEnumerable<FreeBusy> FreeBusy
         {
@@ -83,7 +83,7 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// A collection of <see cref="DDay.iCal.Components.Journal"/> components in the iCalendar.
+        /// A collection of <see cref="DDay.iCal.Journal"/> components in the iCalendar.
         /// </summary>
         public IEnumerable<Journal> Journals
         {
@@ -96,7 +96,7 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// A collection of <see cref="DDay.iCal.Components.TimeZone"/> components in the iCalendar.
+        /// A collection of <see cref="DDay.iCal.TimeZone"/> components in the iCalendar.
         /// </summary>
         public IEnumerable<iCalTimeZone> TimeZones
         {
@@ -126,7 +126,7 @@ namespace DDay.iCal
         #region Public Methods
 
         /// <summary>
-        /// Retrieves the <see cref="DDay.iCal.Components.TimeZone" /> object for the specified
+        /// Retrieves the <see cref="DDay.iCal.TimeZone" /> object for the specified
         /// <see cref="TZID"/> (Time Zone Identifier).
         /// </summary>
         /// <param name="tzid">A valid <see cref="TZID"/> object, or a valid <see cref="TZID"/> string.</param>
@@ -306,5 +306,27 @@ namespace DDay.iCal
         }
 
         #endregion        
+
+        #region Operators
+
+        /// <summary>
+        /// Implicitly converts an iCalendar collection into a single,
+        /// merged version of each iCalendar.
+        /// </summary>
+        static public implicit operator iCalendar(iCalendarCollection calendars)
+        {
+            if (calendars != null &&
+                calendars.Count > 0)
+            {
+                iCalendar first = calendars[0].Copy();
+                for (int i = 1; i < calendars.Count; i++)
+                    first.MergeWith(calendars[i].Copy());
+
+                return first;
+            }
+            return null;
+        }
+
+        #endregion
     }
 }

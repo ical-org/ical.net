@@ -5,7 +5,7 @@ using System.Text;
 using System.Runtime.Serialization;
 using DDay.iCal.Serialization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {
     /// <summary>
     /// Represents an iCalendar period of time.
@@ -138,7 +138,7 @@ namespace DDay.iCal.DataTypes
             return StartTime.GetHashCode() ^ EndTime.GetHashCode();
         }
 
-        public override void CopyFrom(object obj)
+        public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
             if (obj is Period)
@@ -150,8 +150,8 @@ namespace DDay.iCal.DataTypes
             }
             base.CopyFrom(obj);
         }
-               
-        public override bool TryParse(string value, ref object obj)
+
+        public override bool TryParse(string value, ref ICalendarObject obj)
         {
             Period p = (Period)obj;
 
@@ -163,9 +163,9 @@ namespace DDay.iCal.DataTypes
             p.EndTime = new iCalDateTime();
             p.Duration = new Duration();
 
-            object st = p.StartTime;
-            object et = p.EndTime;
-            object d = p.Duration;
+            ICalendarObject st = p.StartTime;
+            ICalendarObject et = p.EndTime;
+            ICalendarObject d = p.Duration;
 
             bool retVal = p.StartTime.TryParse(values[0], ref st) &&
                 (
@@ -180,11 +180,6 @@ namespace DDay.iCal.DataTypes
                 p.Duration = new Duration(p.EndTime.Value - p.StartTime.Value);
 
             return retVal;
-        }
-
-        public new Period Copy()
-        {
-            return (Period)base.Copy();
         }
 
         #endregion

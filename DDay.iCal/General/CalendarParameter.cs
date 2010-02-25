@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
 
-namespace DDay.iCal.Components
+namespace DDay.iCal
 {
     /// <summary>
     /// A class that provides additional information about a <see cref="ContentLine"/>.
@@ -18,13 +18,13 @@ namespace DDay.iCal.Components
     [DataContract(Name = "Parameter", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public class Parameter : 
-        iCalObject,
-        IKeyedObject<string>
+    public class CalendarParameter : 
+        CalendarObject,
+        ICalendarParameter
     {
         #region Private Fields
 
-        private List<string> m_Values = new List<string>();
+        private IList<string> m_Values = new List<string>();
         
         #endregion
 
@@ -33,7 +33,7 @@ namespace DDay.iCal.Components
 #if DATACONTRACT
         [DataMember(Order = 1)]
 #endif
-        public List<string> Values
+        public IList<string> Values
         {
             get { return m_Values; }
             set { m_Values = value; }
@@ -43,19 +43,11 @@ namespace DDay.iCal.Components
 
         #region Constructors
 
-        public Parameter(string name)
-            : base()
+        public CalendarParameter() {}
+        public CalendarParameter(string name) : base(name) {}
+        public CalendarParameter(string name, string value) : this(name)
         {
-            Name = name;
-        }
-        public Parameter(string name, string value) : this(name)
-        {            
             Values.Add(value);
-        }
-        public Parameter(iCalObject parent) : base(parent) { }
-        public Parameter(iCalObject parent, string name) : base(parent, name)
-        {
-            AddToParent();
         }
 
         #endregion
@@ -64,38 +56,23 @@ namespace DDay.iCal.Components
 
         public void CopyFrom(object obj)
         {
-            if (obj is Parameter)
+            if (obj is CalendarParameter)
             {
                 Values.Clear();
 
-                Parameter p = (Parameter)obj;
+                CalendarParameter p = (CalendarParameter)obj;
                 foreach (string value in p.Values)
                     Values.Add(value);
             }
-        }
-
-        public void AddToParent()
-        {
-            if (Parent != null &&
-                Name != null)
-                Parent.Parameters.Add(this);
         }
 
         #endregion
 
         #region Overrides
 
-        public override iCalObject Copy(iCalObject parent)
-        {
-            Parameter p = (Parameter)base.Copy(parent);
-            foreach (string s in Values)
-                p.Values.Add(s);
-            return p;
-        }
-
         public override bool Equals(object obj)
         {
-            Parameter p = obj as Parameter;
+            CalendarParameter p = obj as CalendarParameter;
             if (p != null)
                 return object.Equals(p.Name, Name);
             return base.Equals(obj);
@@ -106,6 +83,19 @@ namespace DDay.iCal.Components
             if (Name != null)
                 return Name.GetHashCode();
             else return base.GetHashCode();
+        }
+
+        public override void CopyFrom(ICopyable obj)
+        {
+            base.CopyFrom(obj);
+
+            ICalendarParameter p = obj as ICalendarParameter;
+            if (p != null)
+            {
+                Values.Clear();
+                foreach (string s in p.Values)
+                    Values.Add(s);
+            }
         }
         
         #endregion

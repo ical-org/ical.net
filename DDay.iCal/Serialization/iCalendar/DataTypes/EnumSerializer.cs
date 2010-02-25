@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 
-namespace DDay.iCal.Serialization.iCalendar.DataTypes
+namespace DDay.iCal.Serialization
 {
     public class EnumSerializer : ISerializable 
     {
@@ -47,7 +47,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
                 stream.Write(data, 0, data.Length);
         }
 
-        public iCalObject Deserialize(Stream stream, Encoding encoding, Type iCalendarType)
+        public object Deserialize(Stream stream, Encoding encoding, Type iCalendarType)
         {
             throw new Exception("The method or operation is not implemented.");
         }

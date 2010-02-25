@@ -4,12 +4,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Configuration;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 using DDay.iCal.Serialization;
 using System.Runtime.Serialization;
 
-namespace DDay.iCal.Components
+namespace DDay.iCal
 {
     /// <summary>
     /// A class that represents an RFC 2445 VEVENT component.
@@ -58,7 +58,7 @@ namespace DDay.iCal.Components
         /// the end date/time will be extrapolated.
         /// </note>
         /// </summary>
-        [Serialized, DefaultValueType("DATE-TIME")]
+        [DefaultValueType("DATE-TIME")]
 #if DATACONTRACT
         [DataMember(Order = 1)]
 #endif
@@ -86,7 +86,7 @@ namespace DDay.iCal.Components
         /// will be extrapolated.
         /// </note>
         /// </summary>
-        [Serialized, DefaultValueType("DATE-TIME")]
+        [DefaultValueType("DATE-TIME")]
 #if DATACONTRACT
         [DataMember(Order = 2)]
 #endif
@@ -127,9 +127,6 @@ namespace DDay.iCal.Components
         //
         // Therefore, Duration is not serialized, as DTEnd
         // should always be extrapolated from the duration.
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
         virtual public Duration Duration
         {
             get { return _Duration; }
@@ -149,9 +146,6 @@ namespace DDay.iCal.Components
         /// <summary>
         /// An alias to the DTEnd field (i.e. end date/time).
         /// </summary>
-#if DATACONTRACT
-        [DataMember(Order = 4)]
-#endif
         virtual public iCalDateTime End
         {
             get { return DTEnd; }
@@ -161,9 +155,6 @@ namespace DDay.iCal.Components
         /// <summary>
         /// Returns true if the event is an all-day event.
         /// </summary>
-#if DATACONTRACT
-        [DataMember(Order = 5)]
-#endif
         virtual public bool IsAllDay
         {
             get { return Start != null && !Start.HasTime; }
@@ -189,37 +180,25 @@ namespace DDay.iCal.Components
         /// <summary>
         /// The geographic location (lat/long) of the event.
         /// </summary>
-        [Serialized]
 #if DATACONTRACT
-        [DataMember(Order = 6)]
+        [DataMember(Order = 3)]
 #endif
         public Geo Geo
         {
-            get { return _Geo; }
-            set
-            {
-                _Geo = value;
-                if (_Geo != null)
-                    _Geo.Name = "GEO";
-            }
+            get { return Properties.Get<Geo>("GEO"); }
+            set { Properties.Set("GEO", value); }
         }
 
         /// <summary>
         /// The location of the event.
         /// </summary>
-        [Serialized]
 #if DATACONTRACT
-        [DataMember(Order = 7)]
+        [DataMember(Order = 4)]
 #endif
         public Text Location
         {
-            get { return _Location; }
-            set
-            {
-                _Location = value;
-                if (_Location != null)
-                    _Location.Name = "LOCATION";
-            }
+            get { return Properties.Get<Text>("LOCATION"); }
+            set { Properties.Set("LOCATION", value); }
         }
 
         /// <summary>
@@ -227,27 +206,26 @@ namespace DDay.iCal.Components
         /// <example>Conference room #2</example>
         /// <example>Projector</example>
         /// </summary>
-        [Serialized]
 #if DATACONTRACT
-        [DataMember(Order = 8)]
+        [DataMember(Order = 5)]
 #endif
         public TextCollection[] Resources
         {
-            get { return _Resources; }
-            set { _Resources = value; }
+            get { return Properties.Get<TextCollection[]>("RESOURCES"); }
+            set { Properties.Set("RESOURCES", value); }
         }
 
         /// <summary>
         /// The status of the event.
         /// </summary>
-        [Serialized, DefaultValue("TENTATIVE\r\n")]
+        [DefaultValue("TENTATIVE\r\n")]
 #if DATACONTRACT
-        [DataMember(Order = 9)]
+        [DataMember(Order = 6)]
 #endif
         public EventStatus Status
         {
-            get { return _Status; }
-            set { _Status = value; }
+            get { return Properties.Get<EventStatus>("STATUS"); }
+            set { Properties.Set("STATUS", value); }
         }
 
         /// <summary>
@@ -263,8 +241,8 @@ namespace DDay.iCal.Components
 #endif
         public Transparency Transp
         {
-            get { return _Transp; }
-            set { _Transp = value; }
+            get { return Properties.Get<Transparency>("TRANSP"); }
+            set { Properties.Set("TRANSP", value); }
         }
 
         #endregion
@@ -286,9 +264,14 @@ namespace DDay.iCal.Components
         /// (usually an iCalendar object) as its parent.
         /// </summary>
         /// <param name="parent">An <see cref="iCalObject"/>, usually an iCalendar object.</param>
-        public Event(iCalObject parent) : base(parent)
+        public Event() : base()
         {
-            this.Name = ComponentBase.EVENT;            
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            this.Name = ComponentFactory.EVENT;
         }
 
         #endregion

@@ -4,8 +4,9 @@ using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
 using DDay.iCal.Serialization;
+using System.Runtime.Serialization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {
     /// <summary>
     /// A class that represents the return status of an iCalendar request.
@@ -23,22 +24,40 @@ namespace DDay.iCal.DataTypes
 
         #region Public Properties
 
-        public Text StatusDesc
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
+        virtual public Text StatusDesc
         {
             get { return m_StatusDesc; }
             set { m_StatusDesc = value; }
         }
 
-        public Text ExtData
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
+        virtual public Text ExtData
         {
             get { return m_ExtData; }
             set { m_ExtData = value; }
         }
 
-        public StatusCode StatusCode
+#if DATACONTRACT
+        [DataMember(Order = 3)]
+#endif
+        virtual public StatusCode StatusCode
         {
             get { return m_StatusCode; }
             set { m_StatusCode = value; }
+        }
+
+#if DATACONTRACT
+        [DataMember(Order = 4)]
+#endif
+        virtual public string Language
+        {
+            get { return Parameters.Get<string>("LANGUAGE"); }
+            set { Parameters.Set("LANGUAGE", value); }
         }
 
         #endregion
@@ -56,23 +75,23 @@ namespace DDay.iCal.DataTypes
 
         #region Overrides
 
-        public override void CopyFrom(object obj)
+        public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
             if (obj is RequestStatus)
             {
                 RequestStatus rs = (RequestStatus)obj;
                 if (rs.StatusCode != null)
-                    StatusCode = (StatusCode)rs.StatusCode.Copy();
+                    StatusCode = rs.StatusCode.Copy<StatusCode>();
                 if (rs.StatusDesc != null)
-                    StatusDesc = (Text)rs.StatusDesc.Copy();
+                    StatusDesc = rs.StatusDesc.Copy<Text>();
                 if (rs.ExtData != null)
-                    ExtData = (Text)rs.ExtData.Copy();
+                    ExtData = rs.ExtData.Copy<Text>();
             }
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref object obj)
+        public override bool TryParse(string value, ref ICalendarObject obj)
         {
             RequestStatus rs = (RequestStatus)obj;
             Match match = Regex.Match(value, @"(.+);(.+)(;(.*))?");

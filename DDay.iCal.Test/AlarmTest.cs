@@ -6,8 +6,8 @@ using System.IO;
 using System.Resources;
 using System.Web;
 using System.Web.UI;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
@@ -27,7 +27,7 @@ namespace DDay.iCal.Test
 
         public void TestAlarm(string Calendar, List<iCalDateTime> Dates, iCalDateTime Start, iCalDateTime End)
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Alarm\" + Calendar);
+            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Alarm\" + Calendar)[0];
             ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 

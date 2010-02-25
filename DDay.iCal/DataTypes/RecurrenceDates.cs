@@ -3,11 +3,11 @@ using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
-using DDay.iCal.Components;
+using DDay.iCal;
 using System.Runtime.Serialization;
 using DDay.iCal.Serialization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {
     /// <summary>
     /// An iCalendar list of recurring dates (or date exclusions)
@@ -35,7 +35,7 @@ namespace DDay.iCal.DataTypes
             get
             {
                 if (m_TZID == null && Parameters.ContainsKey("TZID"))
-                    m_TZID = new TZID(((Parameter)Parameters["TZID"]).Values[0]);
+                    m_TZID = new TZID(((CalendarParameter)Parameters["TZID"]).Values[0]);
                 return m_TZID;
             }
             set { m_TZID = value; }
@@ -113,26 +113,29 @@ namespace DDay.iCal.DataTypes
                 hashCode ^= p.GetHashCode();
             return hashCode;
         }
- 
-        public override void CopyFrom(object obj)
+
+        public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
             if (obj is RecurrenceDates)
             {
                 RecurrenceDates rdt = (RecurrenceDates)obj;
                 foreach (Period p in rdt.Periods)
-                    Periods.Add(p.Copy());
+                    Periods.Add(p.Copy<Period>());
             }
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref object obj)
+        public override bool TryParse(string value, ref ICalendarObject obj)
         {
             string[] values = value.Split(',');
             foreach (string v in values)
             {
-                object dt = new iCalDateTime();
-                object p = new Period();
+                ICalendarObject dt = new iCalDateTime();
+                ICalendarObject p = new Period();
+                
+                // FIXME: can we remove the following comment?
+                // Seems like it no longer applies...
                 
                 //
                 // Set the iCalendar for each iCalDateTime object here,
@@ -146,13 +149,11 @@ namespace DDay.iCal.DataTypes
                 //
                 if (((iCalDateTime)dt).TryParse(v, ref dt))
                 {
-                    ((iCalDateTime)dt).iCalendar = iCalendar;
                     ((iCalDateTime)dt).TZID = TZID;
                     Periods.Add(new Period((iCalDateTime)dt));
                 }
                 else if (((Period)p).TryParse(v, ref p))
                 {
-                    ((Period)p).StartTime.iCalendar = ((Period)p).EndTime.iCalendar = iCalendar;
                     ((Period)p).StartTime.TZID = ((Period)p).EndTime.TZID = TZID;
                     Periods.Add((Period)p);
                 }

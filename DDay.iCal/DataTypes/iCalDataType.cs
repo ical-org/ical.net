@@ -2,11 +2,11 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Reflection;
-using DDay.iCal.Components;
+using DDay.iCal;
 using System.Runtime.Serialization;
 using DDay.iCal.Serialization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {
     /// <summary>
     /// An abstract class from which all iCalendar data types inherit.
@@ -15,11 +15,11 @@ namespace DDay.iCal.DataTypes
     [DataContract(Name = "iCalDataType", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public abstract class iCalDataType : iCalObject
+    public abstract class iCalDataType : CalendarProperty
     {
         #region Protected Fields
 
-        protected ContentLine m_ContentLine = null;
+        protected CalendarProperty m_Property = null;
         protected object[] m_Attributes = new object[0];
         [NonSerialized]
         private ISerializationContext m_SerializationContext = DDay.iCal.Serialization.SerializationContext.Default;        
@@ -47,16 +47,16 @@ namespace DDay.iCal.DataTypes
 
         #region Overridable Properties & Methods
 
-        virtual public ContentLine ContentLine
+        virtual public CalendarProperty Property
         {
-            get { return m_ContentLine; }
+            get { return m_Property; }
             set
             {
-                m_ContentLine = value;
+                m_Property = value;
                 if (value != null)
                 {
                     // Assign parameters from the content line
-                    foreach (Parameter p in value.Parameters)
+                    foreach (CalendarParameter p in value.Parameters)
                         Parameters.Add(p);
 
                     // Assign the NAME of the object from the content line
@@ -75,8 +75,8 @@ namespace DDay.iCal.DataTypes
                     switch(SerializationContext.ParsingMode)
                     {
                         case ParsingModeType.Loose:
-                            object obj = null;
-                            if (TryParseInternal(value.Value, ref obj))
+                            iCalDataType obj = null;
+                            if (TryParseInternal(value.Value, out obj))
                                 icdt = obj as iCalDataType;
                             break;
                         case ParsingModeType.Strict:
@@ -103,16 +103,16 @@ namespace DDay.iCal.DataTypes
                         if (this.Parent == null)
                             this.Parent = value.Parent;
 
-                        OnLoaded(EventArgs.Empty);
+                        OnLoaded();
                     }
                 }
             }
         }        
         
-        virtual public object Parse(string value)
+        virtual public ICalendarObject Parse(string value)
         {
-            object obj = null;
-            if (!TryParseInternal(value, ref obj))
+            iCalDataType obj = null;
+            if (!TryParseInternal(value, out obj))
             {
                 Type t = GetType();
                 throw new ArgumentException(t.Name + ".Parse cannot parse the value '" + value + "' because it is not formatted correctly.");
@@ -120,39 +120,28 @@ namespace DDay.iCal.DataTypes
             return obj;
         }
 
-        virtual public void CopyFrom(object obj)
-        {
-            iCalDataType icdt = obj as iCalDataType;
-            if (icdt != null)
-                this.Parent = icdt.Parent;
-        }
-
-        virtual public bool TryParse(string value, ref object obj)
+        virtual public bool TryParse(string value, ref ICalendarObject obj)
         {
             return false;
         }
 
         virtual public Type ValueType()
         {
-            if (Parameters.ContainsKey("VALUE"))
+            string valueTypeParam = Parameters.Get<string>("VALUE");
+            if (valueTypeParam != null)
             {
-                Parameter p = Parameters["VALUE"];
-                if (p.Values.Count > 0)
+                valueTypeParam = valueTypeParam.ToUpper();
+                switch (valueTypeParam)
                 {
-                    string type = p.Values[0].ToString().ToUpper();
-                    switch (type)
-                    {
-                        case "DATE":
-                        case "DATE-TIME":
-                            return typeof(iCalDateTime);
-                        case "DURATION":
-                            return typeof(Duration);
-                        default:
-                            return null;
-                    }
+                    case "DATE":
+                    case "DATE-TIME":
+                        return typeof(iCalDateTime);
+                    case "DURATION":
+                        return typeof(Duration);
+                    default:
+                        return null;
                 }
             }
-
             return GetType();
         }
         
@@ -160,28 +149,17 @@ namespace DDay.iCal.DataTypes
 
         #region Private Methods
 
-        bool TryParseInternal(string value, ref object obj)
+        bool TryParseInternal(string value, out iCalDataType obj)
         {
             Type t = GetType();
-            obj = Activator.CreateInstance(t);
-            return TryParse(value, ref obj);
-        }
-
-        #endregion
-
-        #region Overrides
-
-        public override iCalObject Copy(iCalObject parent)
-        {
-            iCalDataType icdt = (iCalDataType)Activator.CreateInstance(GetType());
-            icdt.CopyFrom(this);
-
-            // Add parameters
-            foreach (Parameter p in Parameters)
-                p.Copy(icdt);
-
-            icdt.Parent = parent;
-            return icdt;            
+            obj = Activator.CreateInstance(t) as iCalDataType;
+            if (obj != null)
+            {
+                obj.Parent = Parent;
+                ICalendarObject objToParse = obj;
+                return TryParse(value, ref objToParse);
+            }
+            return false;
         }
 
         #endregion

@@ -2,14 +2,14 @@ using System;
 using System.Data;
 using System.Collections;
 using System.Configuration;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 using DDay.iCal.Serialization;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Globalization;
 
-namespace DDay.iCal.Components
+namespace DDay.iCal
 {
     /// <summary>
     /// A class that represents an RFC 2445 VTIMEZONE component.
@@ -18,7 +18,9 @@ namespace DDay.iCal.Components
     [DataContract(Name = "iCalTimeZone", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public partial class iCalTimeZone : ComponentBase
+    public partial class iCalTimeZone : 
+        Component,
+        ICalendarTimeZone
     {
         #region Static Public Methods
 
@@ -69,25 +71,25 @@ namespace DDay.iCal.Components
                 var delta = adjustmentRule.DaylightDelta;
                 dday_tz.TZID = tzinfo.Id;                
 
-                var dday_tzinfo_standard = new DDay.iCal.Components.iCalTimeZoneInfo();
+                var dday_tzinfo_standard = new DDay.iCal.iCalTimeZoneInfo();
                 dday_tzinfo_standard.Name = "STANDARD";
                 dday_tzinfo_standard.Start = adjustmentRule.DateStart;
                 if (dday_tzinfo_standard.Start.Year < 1800)
                     dday_tzinfo_standard.Start = dday_tzinfo_standard.Start.AddYears(1800 - dday_tzinfo_standard.Start.Year);
-                dday_tzinfo_standard.TZOffsetFrom = new DDay.iCal.DataTypes.UTC_Offset(utcOffset + delta);
-                dday_tzinfo_standard.TZOffsetTo = new DDay.iCal.DataTypes.UTC_Offset(utcOffset);
+                dday_tzinfo_standard.TZOffsetFrom = new DDay.iCal.UTC_Offset(utcOffset + delta);
+                dday_tzinfo_standard.TZOffsetTo = new DDay.iCal.UTC_Offset(utcOffset);
                 PopulateiCalTimeZoneInfo(dday_tzinfo_standard, adjustmentRule.DaylightTransitionEnd, adjustmentRule.DateStart.Year);
 
                 // Add the "standard" time rule to the time zone
                 dday_tz.AddChild(dday_tzinfo_standard);
 
-                var dday_tzinfo_daylight = new DDay.iCal.Components.iCalTimeZoneInfo();
+                var dday_tzinfo_daylight = new DDay.iCal.iCalTimeZoneInfo();
                 dday_tzinfo_daylight.Name = "DAYLIGHT";
                 dday_tzinfo_daylight.Start = adjustmentRule.DateStart;
                 if (dday_tzinfo_daylight.Start.Year < 1800)
                     dday_tzinfo_daylight.Start = dday_tzinfo_daylight.Start.AddYears(1800 - dday_tzinfo_daylight.Start.Year);
-                dday_tzinfo_daylight.TZOffsetFrom = new DDay.iCal.DataTypes.UTC_Offset(utcOffset);
-                dday_tzinfo_daylight.TZOffsetTo = new DDay.iCal.DataTypes.UTC_Offset(utcOffset + delta);
+                dday_tzinfo_daylight.TZOffsetFrom = new DDay.iCal.UTC_Offset(utcOffset);
+                dday_tzinfo_daylight.TZOffsetTo = new DDay.iCal.UTC_Offset(utcOffset + delta);
                 PopulateiCalTimeZoneInfo(dday_tzinfo_daylight, adjustmentRule.DaylightTransitionStart, adjustmentRule.DateStart.Year);
 
                 // Add the "daylight" time rule to the time zone
@@ -105,11 +107,46 @@ namespace DDay.iCal.Components
         private TZID m_TZID;
         private iCalDateTime m_Last_Modified;
         private URI m_TZUrl;
-        private List<iCalTimeZoneInfo> m_TimeZoneInfos = new List<iCalTimeZoneInfo>();
+        private IList<iCalTimeZoneInfo> m_TimeZoneInfos = new List<iCalTimeZoneInfo>();
+
+        #endregion        
+
+        #region Constructors
+
+        public iCalTimeZone()
+        {
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            this.Name = ComponentFactory.TIMEZONE;
+        }
 
         #endregion
 
-        #region Public Properties
+        #region Overrides
+
+        public override void AddChild(ICalendarObject child)
+        {
+            if (child is iCalTimeZoneInfo)
+                TimeZoneInfos.Add((iCalTimeZoneInfo)child);
+
+            base.AddChild(child);
+        }
+
+        public override void RemoveChild(ICalendarObject child)
+        {
+            if (child is iCalTimeZoneInfo &&
+                TimeZoneInfos.Contains((iCalTimeZoneInfo)child))
+                TimeZoneInfos.Remove((iCalTimeZoneInfo)child);
+
+            base.RemoveChild(child);
+        }
+
+        #endregion
+
+        #region ICalendarTimeZone Members
 
         [Serialized]
 #if DATACONTRACT
@@ -145,60 +182,11 @@ namespace DDay.iCal.Components
 #if DATACONTRACT
         [DataMember(Order = 4)]
 #endif
-        public List<iCalTimeZoneInfo> TimeZoneInfos
+        public IList<iCalTimeZoneInfo> TimeZoneInfos
         {
             get { return m_TimeZoneInfos; }
             set { m_TimeZoneInfos = value; }
         }
-
-        #endregion
-
-        #region Constructors
-
-        public iCalTimeZone()
-            : base()
-        {
-            this.Name = ComponentBase.TIMEZONE;
-        }
-        public iCalTimeZone(iCalObject parent)
-            : base(parent)
-        {
-            this.Name = ComponentBase.TIMEZONE;
-        }
-
-        #endregion
-
-        #region Overrides
-
-        public override void AddChild(iCalObject child)
-        {
-            if (child is iCalTimeZoneInfo)
-                TimeZoneInfos.Add((iCalTimeZoneInfo)child);
-
-            base.AddChild(child);
-        }
-
-        public override void RemoveChild(iCalObject child)
-        {
-            if (child is iCalTimeZoneInfo &&
-                TimeZoneInfos.Contains((iCalTimeZoneInfo)child))
-                TimeZoneInfos.Remove((iCalTimeZoneInfo)child);
-
-            base.RemoveChild(child);
-        }
-
-        /// <summary>
-        /// Returns a typed copy of the TimeZone object.
-        /// </summary>
-        /// <returns>A typed copy of the TimeZone object</returns>
-        public new iCalTimeZone Copy()
-        {
-            return (iCalTimeZone)base.Copy();
-        }
-
-        #endregion
-
-        #region Public Methods
 
         /// <summary>
         /// Retrieves the iCalTimeZoneInfo object that contains information

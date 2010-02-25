@@ -3,24 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
-using DDay.iCal.Serialization.iCalendar.Components;
 
-namespace DDay.iCal.Serialization.iCalendar.DataTypes
+namespace DDay.iCal.Serialization
 {
     public class DataTypeSerializer : ISerializable, IParameterSerializable
     {
         #region Private Fields
 
-        private DDay.iCal.DataTypes.iCalDataType m_dataType;
+        private iCalDataType m_dataType;
         private ISerializationContext m_SerializationContext;
 
         #endregion
 
         #region Protected Properties
 
-        protected DDay.iCal.DataTypes.iCalDataType DataType
+        protected iCalDataType DataType
         {
             get { return m_dataType; }
             set { m_dataType = value; }
@@ -30,7 +27,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
         #region Constructors
 
-        public DataTypeSerializer(DDay.iCal.DataTypes.iCalDataType dataType)
+        public DataTypeSerializer(iCalDataType dataType)
         {
             this.m_SerializationContext = DDay.iCal.Serialization.SerializationContext.Default;
             this.m_dataType = dataType;
@@ -69,11 +66,11 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
                 if (serializer is IParameterSerializable)
                 {
                     IParameterSerializable paramSerializer = (IParameterSerializable)serializer;
-                    List<Parameter> Parameters = paramSerializer.Parameters;
+                    List<ICalendarParameter> Parameters = paramSerializer.Parameters;
                     if (Parameters.Count > 0)
                     {                        
                         List<string> values = new List<string>();
-                        foreach (Parameter p in Parameters)
+                        foreach (ICalendarParameter p in Parameters)
                         {
                             ParameterSerializer pSerializer = new ParameterSerializer(p);
                             values.Add(pSerializer.SerializeToString());
@@ -86,9 +83,11 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
                 value += ":";
                 value += serializer.SerializeToString();                
 
-                ISerializable clSerializer = new ContentLineSerializer(value);
+                // FIXME: serialize the line.
+                /*ISerializable clSerializer = new ContentLineSerializer(value);
                 if (clSerializer != null)
                     clSerializer.Serialize(stream, encoding);
+                 */
             }
         }
 
@@ -113,12 +112,12 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
         #region IParameterSerializable Members
 
-        virtual public List<Parameter> Parameters
+        virtual public List<ICalendarParameter> Parameters
         {
             get
             {
-                List<Parameter> Parameters = new List<Parameter>();
-                foreach (Parameter p in m_dataType.Parameters)
+                List<ICalendarParameter> Parameters = new List<ICalendarParameter>();
+                foreach (ICalendarParameter p in m_dataType.Parameters)
                 {
                     if (!this.DisallowedParameters.Contains(p))
                         Parameters.Add(p);
@@ -127,15 +126,15 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
             }
         }
 
-        virtual public List<Parameter> DisallowedParameters
+        virtual public List<ICalendarParameter> DisallowedParameters
         {
             get
             {
-                return new List<Parameter>();
+                return new List<ICalendarParameter>();
             }
         }
 
-        public iCalObject Deserialize(Stream stream, Encoding encoding, Type iCalendarType)
+        public object Deserialize(Stream stream, Encoding encoding, Type iCalendarType)
         {
             throw new Exception("The method or operation is not implemented.");
         }

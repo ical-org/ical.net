@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DDay.iCal.Components;
+using DDay.iCal;
 
 namespace DDay.iCal
 {
@@ -11,8 +11,8 @@ namespace DDay.iCal
 
         public ComponentBaseTypeAttribute(Type ComponentBaseType)
         {
-            if (ComponentBaseType == typeof(ComponentBase) ||
-                ComponentBaseType.IsSubclassOf(typeof(ComponentBase)))
+            if (ComponentBaseType == typeof(Component) ||
+                ComponentBaseType.IsSubclassOf(typeof(Component)))
                 Type = ComponentBaseType;
         }
     }

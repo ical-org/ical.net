@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
 using DDay.iCal.Serialization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {
     /// <summary>
     /// Represents a time offset from UTC (Coordinated Universal Time).
@@ -99,7 +99,7 @@ namespace DDay.iCal.DataTypes
             return base.Equals(obj);
         }
 
-        public override void CopyFrom(object obj)
+        public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
             if (obj is UTC_Offset)
@@ -113,7 +113,7 @@ namespace DDay.iCal.DataTypes
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref object obj)
+        public override bool TryParse(string value, ref ICalendarObject obj)
         {
             UTC_Offset utco = (UTC_Offset)obj;
             Match match = Regex.Match(value, @"(\+|-)(\d{2})(\d{2})(\d{2})?");
@@ -145,15 +145,6 @@ namespace DDay.iCal.DataTypes
                 this.Hours.ToString("00") +
                 this.Minutes.ToString("00") +
                 (this.Seconds != 0 ? this.Seconds.ToString("00") : string.Empty);
-        }
-
-        /// <summary>
-        /// Returns a typed copy of the object.
-        /// </summary>
-        /// <returns>A typed copy of the object.</returns>
-        public new UTC_Offset Copy()
-        {
-            return (UTC_Offset)base.Copy();
         }
 
         #endregion

@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
 using DDay.iCal.Serialization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {
     /// <summary>
     /// An iCalendar representation of the <c>RRULE</c> property.
@@ -197,8 +197,8 @@ namespace DDay.iCal.DataTypes
                 if (_RestrictionType != null &&
                     _RestrictionType.HasValue)
                     return _RestrictionType.Value;
-                else if (iCalendar != null)
-                    return iCalendar.RecurrenceRestriction;
+                else if (Calendar != null)
+                    return Calendar.RecurrenceRestriction;
                 else
                     return RecurrenceRestrictionType.Default;
             }
@@ -216,8 +216,8 @@ namespace DDay.iCal.DataTypes
                 if (_EvaluationMode != null &&
                     _EvaluationMode.HasValue)
                     return _EvaluationMode.Value;
-                else if (iCalendar != null)
-                    return iCalendar.RecurrenceEvaluationMode;
+                else if (Calendar != null)
+                    return Calendar.RecurrenceEvaluationMode;
                 else
                     return RecurrenceEvaluationModeType.Default;
             }
@@ -252,7 +252,7 @@ namespace DDay.iCal.DataTypes
 
         #region Overrides
 
-        public override void CopyFrom(object obj)
+        public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
             if (obj is RecurrencePattern)
@@ -346,7 +346,7 @@ namespace DDay.iCal.DataTypes
             return true;
         }
 
-        public override bool TryParse(string value, ref object obj)
+        public override bool TryParse(string value, ref ICalendarObject obj)
         {
             RecurrencePattern r = (RecurrencePattern)obj;
 

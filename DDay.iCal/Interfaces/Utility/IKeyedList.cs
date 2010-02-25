@@ -45,5 +45,10 @@ namespace DDay.iCal
         /// </summary>
         /// <returns>True if any objects were removed, false otherwise.</returns>
         bool Remove(U key);
+
+        /// <summary>
+        /// Converts the list to an array of the values contained therein.
+        /// </summary>
+        T[] ToArray();
     }
 }

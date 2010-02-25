@@ -3,17 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using DDay.iCal.DataTypes;
-using DDay.iCal.Components;
+using DDay.iCal;
+using DDay.iCal;
 
-namespace DDay.iCal.Serialization.iCalendar.DataTypes
+namespace DDay.iCal.Serialization
 {
     public class iCalDateTimeSerializer : FieldSerializer
     {
         #region Private Fields
 
         private iCalDateTime m_DateTime;
-        static private List<Parameter> m_DisallowedParameters;
+        static private List<ICalendarParameter> m_DisallowedParameters;
 
         #endregion
 
@@ -31,10 +31,10 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
         static iCalDateTimeSerializer()
         {
-            m_DisallowedParameters = new List<Parameter>();
+            m_DisallowedParameters = new List<ICalendarParameter>();
 
-            m_DisallowedParameters.Add(new Parameter("TZID"));
-            m_DisallowedParameters.Add(new Parameter("VALUE"));
+            m_DisallowedParameters.Add(new CalendarParameter("TZID"));
+            m_DisallowedParameters.Add(new CalendarParameter("VALUE"));
         }
 
         public iCalDateTimeSerializer(iCalDateTime dt) : base(dt)
@@ -46,7 +46,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
         #region ISerializable Members
 
-        public override List<Parameter> DisallowedParameters
+        public override List<ICalendarParameter> DisallowedParameters
         {
             get
             {
@@ -54,14 +54,14 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
             }
         }
 
-        public override List<Parameter> Parameters
+        public override List<ICalendarParameter> Parameters
         {
             get
             {
-                List<Parameter> Params = base.Parameters;
+                List<ICalendarParameter> Params = base.Parameters;
 
                 if (m_DateTime.TZID != null)
-                    Params.Add(new Parameter("TZID", m_DateTime.TZID.ToString()));
+                    Params.Add(new CalendarParameter("TZID", m_DateTime.TZID.ToString()));
 
                 string valueType = null;
                 if (!m_DateTime.HasTime)
@@ -99,7 +99,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
                 // If the value type is already the default value type, don't worry about displaying it
                 if (valueType != null)
-                    Params.Add(new Parameter("VALUE", valueType));
+                    Params.Add(new CalendarParameter("VALUE", valueType));
                 
                 return Params;
             }

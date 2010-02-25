@@ -6,8 +6,8 @@ using System.IO;
 using System.Resources;
 using System.Web;
 using System.Web.UI;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
@@ -38,7 +38,7 @@ namespace DDay.iCal.Test
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL1.ics");
             ProgramTest.TestCal(iCal);
-            DDay.iCal.Components.Journal j = (DDay.iCal.Components.Journal)iCal.Journals[0];
+            DDay.iCal.Journal j = (DDay.iCal.Journal)iCal.Journals[0];
 
             Assert.IsNotNull(j, "Journal entry was null");
             Assert.IsTrue(j.Status == JournalStatus.Draft, "Journal entry should have been in DRAFT status, but it was in " + j.Status.ToString() + " status.");
@@ -51,7 +51,7 @@ namespace DDay.iCal.Test
         {
             iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL2.ics");
             ProgramTest.TestCal(iCal);
-            DDay.iCal.Components.Journal j = (DDay.iCal.Components.Journal)iCal.Journals[0];
+            DDay.iCal.Journal j = (DDay.iCal.Journal)iCal.Journals[0];
 
             Assert.IsNotNull(j, "Journal entry was null");
             Assert.IsTrue(j.Status == JournalStatus.Final, "Journal entry should have been in FINAL status, but it was in " + j.Status.ToString() + " status.");

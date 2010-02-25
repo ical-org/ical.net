@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using DDay.iCal.DataTypes;
-using DDay.iCal.Components;
+using DDay.iCal;
+using DDay.iCal;
 
-namespace DDay.iCal.Serialization.iCalendar.DataTypes
+namespace DDay.iCal.Serialization
 {
     public class BinarySerializer : EncodableDataTypeSerializer
     {
@@ -28,21 +28,21 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
         #region Overrides
 
-        public override List<Parameter> DisallowedParameters
+        public override List<ICalendarParameter> DisallowedParameters
         {
             get
             {
-                List<Parameter> disallowed = new List<Parameter>();
-                disallowed.Add(new Parameter("ENCODING"));
+                List<ICalendarParameter> disallowed = new List<ICalendarParameter>();
+                disallowed.Add(new CalendarParameter("ENCODING"));
                 return disallowed;
             }
         }
 
-        public override List<Parameter> Parameters
+        public override List<ICalendarParameter> Parameters
         {
             get
             {
-                List<Parameter> parameters = base.Parameters;
+                List<ICalendarParameter> parameters = base.Parameters;
                 if (m_Binary.Uri == null)
                 {                 
                     // NOTE: fixed a bug here that caused the ENCODING parameter
@@ -50,7 +50,7 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
                     // in the original object.
                     if (!m_Binary.Parameters.ContainsKey("ENCODING"))
                     {
-                        Parameter p = new Parameter("ENCODING", "BASE64");
+                        ICalendarParameter p = new CalendarParameter("ENCODING", "BASE64");
                         m_Binary.Parameters.Add(p);
                     }
 

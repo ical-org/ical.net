@@ -1,6 +1,6 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalParser.cs"$
     
-    using DDay.iCal.Components; 
+    using DDay.iCal; 
     using DDay.iCal.Serialization;
     using System.Text;   
 
@@ -87,13 +87,14 @@ namespace DDay.iCal.Serialization.iCalendar
 			initialize();
 		}
 		
-	public DDay.iCal.iCalendar  icalobject(
+	public iCalendarCollection  icalobject(
 		ISerializationContext ctx
 	) //throws RecognitionException, TokenStreamException
 {
-		DDay.iCal.iCalendar iCal = (DDay.iCal.iCalendar)Activator.CreateInstance(iCalendarType);;
+		iCalendarCollection iCalendars = new iCalendarCollection();;
 		
 		
+		IICalendar iCal = null;
 		{    // ( ... )*
 			for (;;)
 			{
@@ -132,6 +133,7 @@ _loop4_breakloop:						;
 						}
 _loop6_breakloop:						;
 					}    // ( ... )*
+					iCal = (IICalendar)Activator.CreateInstance(iCalendarType);
 					icalbody(ctx, iCal);
 					match(END);
 					match(COLON);
@@ -151,6 +153,13 @@ _loop6_breakloop:						;
 						}
 _loop8_breakloop:						;
 					}    // ( ... )*
+					
+								if (iCal != null)
+								{
+									iCal.OnLoaded();
+									iCalendars.Add(iCal);
+								}
+							
 				}
 				else
 				{
@@ -160,12 +169,11 @@ _loop8_breakloop:						;
 			}
 _loop9_breakloop:			;
 		}    // ( ... )*
-		iCal.OnLoaded(EventArgs.Empty);
-		return iCal;
+		return iCalendars;
 	}
 	
 	public void icalbody(
-		ISerializationContext ctx, DDay.iCal.iCalendar iCal
+		ISerializationContext ctx, IICalendar iCal
 	) //throws RecognitionException, TokenStreamException
 {
 		
@@ -206,7 +214,7 @@ _loop12_breakloop:			;
 	}
 	
 	public void calprop(
-		iCalObject o
+		IICalendar iCal
 	) //throws RecognitionException, TokenStreamException
 {
 		
@@ -215,12 +223,12 @@ _loop12_breakloop:			;
 		{
 		case X_NAME:
 		{
-			x_prop(o);
+			x_prop(iCal);
 			break;
 		}
 		case IANA_TOKEN:
 		{
-			iana_prop(o);
+			iana_prop(iCal);
 			break;
 		}
 		default:
@@ -230,11 +238,11 @@ _loop12_breakloop:			;
 		 }
 	}
 	
-	public ComponentBase  component(
-		ISerializationContext ctx, iCalObject o
+	public ICalendarComponent  component(
+		ISerializationContext ctx, ICalendarObject o
 	) //throws RecognitionException, TokenStreamException
 {
-		ComponentBase c = null;;
+		ICalendarComponent c = null;;
 		
 		
 		{ // ( ... )+
@@ -260,11 +268,11 @@ _loop16_breakloop:			;
 		return c;
 	}
 	
-	public ComponentBase  x_comp(
-		ISerializationContext ctx, iCalObject o
+	public ICalendarComponent  x_comp(
+		ISerializationContext ctx, ICalendarObject o
 	) //throws RecognitionException, TokenStreamException
 {
-		ComponentBase c = null;;
+		ICalendarComponent c = null;;
 		
 		IToken  n = null;
 		
@@ -272,7 +280,7 @@ _loop16_breakloop:			;
 		match(COLON);
 		n = LT(1);
 		match(X_NAME);
-		c = o.iCalendar.Create(o, n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn();
+		c = o.iCalendar.Create(n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn();
 		{    // ( ... )*
 			for (;;)
 			{
@@ -321,15 +329,15 @@ _loop28_breakloop:			;
 			}
 _loop30_breakloop:			;
 		}    // ( ... )*
-		c.OnLoaded(EventArgs.Empty);
+		o.AddChild(c); c.OnLoaded();
 		return c;
 	}
 	
-	public ComponentBase  iana_comp(
-		ISerializationContext ctx, iCalObject o
+	public ICalendarComponent  iana_comp(
+		ISerializationContext ctx, ICalendarObject o
 	) //throws RecognitionException, TokenStreamException
 {
-		ComponentBase c = null;;
+		ICalendarComponent c = null;;
 		
 		IToken  n = null;
 		
@@ -337,7 +345,7 @@ _loop30_breakloop:			;
 		match(COLON);
 		n = LT(1);
 		match(IANA_TOKEN);
-		c = o.iCalendar.Create(o, n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn();
+		c = o.iCalendar.Create(n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn();
 		{    // ( ... )*
 			for (;;)
 			{
@@ -386,12 +394,12 @@ _loop21_breakloop:			;
 			}
 _loop23_breakloop:			;
 		}    // ( ... )*
-		c.OnLoaded(EventArgs.Empty);
+		o.AddChild(c); c.OnLoaded();
 		return c;
 	}
 	
 	public void calendarline(
-		ISerializationContext ctx, iCalObject o
+		ISerializationContext ctx, ICalendarObject o
 	) //throws RecognitionException, TokenStreamException
 {
 		
@@ -417,7 +425,7 @@ _loop23_breakloop:			;
 	}
 	
 	public void x_prop(
-		iCalObject o
+		IICalendar iCal
 	) //throws RecognitionException, TokenStreamException
 {
 		
@@ -426,7 +434,7 @@ _loop23_breakloop:			;
 		
 		n = LT(1);
 		match(X_NAME);
-		p = new Property(o, n.getLine(), n.getColumn());
+		p = new Property(n.getLine(), n.getColumn());
 		{    // ( ... )*
 			for (;;)
 			{
@@ -463,7 +471,7 @@ _loop41_breakloop:			;
 		}    // ( ... )*
 		match(COLON);
 		v=value();
-		p.Name = n.getText().ToUpper(); p.Value = v; p.AddToParent();
+		p.Name = n.getText().ToUpper(); p.Value = v; iCal.Properties.Add(p);
 		{    // ( ... )*
 			for (;;)
 			{
@@ -482,7 +490,7 @@ _loop43_breakloop:			;
 	}
 	
 	public void iana_prop(
-		iCalObject o
+		IICalendar iCal
 	) //throws RecognitionException, TokenStreamException
 {
 		
@@ -491,7 +499,7 @@ _loop43_breakloop:			;
 		
 		n = LT(1);
 		match(IANA_TOKEN);
-		p = new Property(o, n.getLine(), n.getColumn());
+		p = new Property(n.getLine(), n.getColumn());
 		{    // ( ... )*
 			for (;;)
 			{
@@ -528,7 +536,7 @@ _loop35_breakloop:			;
 		}    // ( ... )*
 		match(COLON);
 		v=value();
-		p.Name = n.getText().ToUpper(); p.Value = v; p.AddToParent();
+		p.Name = n.getText().ToUpper(); p.Value = v; iCal.Properties.Add(p);
 		{    // ( ... )*
 			for (;;)
 			{
@@ -637,13 +645,13 @@ _loop62_breakloop:			;
 	}
 	
 	public void contentline(
-		ISerializationContext ctx, iCalObject o
+		ISerializationContext ctx, ICalendarObject o
 	) //throws RecognitionException, TokenStreamException
 {
 		
 		
 			IToken currToken = LT(0);
-		ContentLine c = new ContentLine(o, currToken.getLine() + 1, 0);
+		ContentLine c = new ContentLine(currToken.getLine() + 1, 0);
 		string n;
 		string v;
 		

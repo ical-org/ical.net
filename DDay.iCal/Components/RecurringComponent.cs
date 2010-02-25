@@ -2,12 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
+using DDay.iCal;
+using DDay.iCal;
 using DDay.iCal.Serialization;
 using System.Runtime.Serialization;
 
-namespace DDay.iCal.Components
+namespace DDay.iCal
 {
     /// <summary>
     /// An iCalendar component that recurs.
@@ -192,9 +192,8 @@ namespace DDay.iCal.Components
         #region Constructors
 
         public RecurringComponent() : base() { Initialize(); }
-        public RecurringComponent(iCalObject parent) : base(parent) { Initialize(); }
-        public RecurringComponent(iCalObject parent, string name) : base(parent, name) { Initialize(); }
-        public void Initialize()
+        public RecurringComponent(string name) : base(name) { Initialize(); }
+        private void Initialize()
         {
             Periods = new List<Period>();
             Alarms = new List<Alarm>();
@@ -209,9 +208,8 @@ namespace DDay.iCal.Components
         /// </summary>        
         virtual public void AddAlarm(Alarm alarm)
         {
-            alarm.Name = ComponentBase.ALARM;
-            alarm.Parent = this;
-            this.AddChild(alarm);
+            alarm.Name = ComponentFactory.ALARM;            
+            AddChild(alarm);
         }        
 
         /// <summary>
@@ -631,14 +629,14 @@ namespace DDay.iCal.Components
 
         #region Overrides
 
-        public override void AddChild(iCalObject child)
+        public override void AddChild(ICalendarObject child)
         {
             if (child is Alarm)
                 Alarms.Add((Alarm)child);
             base.AddChild(child);
         }
 
-        public override void RemoveChild(iCalObject child)
+        public override void RemoveChild(ICalendarObject child)
         {
             if (child is Alarm)
                 Alarms.Remove((Alarm)child);

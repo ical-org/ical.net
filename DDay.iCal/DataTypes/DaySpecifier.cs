@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using DDay.iCal.Serialization;
 
-namespace DDay.iCal.DataTypes
+namespace DDay.iCal
 {
     /// <summary>
     /// Represents an RFC 2445 "BYDAY" value.
@@ -96,7 +96,7 @@ namespace DDay.iCal.DataTypes
             return Num.GetHashCode() ^ DayOfWeek.GetHashCode();
         }
 
-        public override void CopyFrom(object obj)
+        public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
             if (obj is DaySpecifier)
@@ -108,7 +108,7 @@ namespace DDay.iCal.DataTypes
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref object obj)
+        public override bool TryParse(string value, ref ICalendarObject obj)
         {
             DaySpecifier bd = (DaySpecifier)obj;
 

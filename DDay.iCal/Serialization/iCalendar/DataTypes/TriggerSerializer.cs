@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using DDay.iCal.DataTypes;
-using DDay.iCal.Components;
+using DDay.iCal;
+using DDay.iCal;
 
-namespace DDay.iCal.Serialization.iCalendar.DataTypes
+namespace DDay.iCal.Serialization
 {
     public class TriggerSerializer : FieldSerializer
     {
@@ -28,26 +28,26 @@ namespace DDay.iCal.Serialization.iCalendar.DataTypes
 
         #region ISerializable Members
 
-        public override List<Parameter> Parameters
+        public override List<ICalendarParameter> Parameters
         {
             get
             {
-                List<Parameter> Parameters = base.Parameters;
+                List<ICalendarParameter> Parameters = base.Parameters;
                 if (m_Trigger.ValueType() == typeof(iCalDateTime))
-                    Parameters.Add(new Parameter("VALUE", "DATE-TIME"));
+                    Parameters.Add(new CalendarParameter("VALUE", "DATE-TIME"));
                 if (m_Trigger.Related == Trigger.TriggerRelation.End)
-                    Parameters.Add(new Parameter("RELATED", "END"));
+                    Parameters.Add(new CalendarParameter("RELATED", "END"));
                 return Parameters;
             }
         }
 
-        public override List<Parameter> DisallowedParameters
+        public override List<ICalendarParameter> DisallowedParameters
         {
             get
             {
-                List<Parameter> disallowed = base.DisallowedParameters;
-                disallowed.Add(new Parameter("VALUE"));
-                disallowed.Add(new Parameter("RELATED"));
+                List<ICalendarParameter> disallowed = base.DisallowedParameters;
+                disallowed.Add(new CalendarParameter("VALUE"));
+                disallowed.Add(new CalendarParameter("RELATED"));
                 return disallowed;
             }
         }
