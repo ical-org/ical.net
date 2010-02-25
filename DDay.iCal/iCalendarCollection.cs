@@ -17,11 +17,14 @@ namespace DDay.iCal
     [CollectionDataContract(Name = "iCalendarCollection", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public class iCalendarCollection : ICollection<iCalendar>
+    public class iCalendarCollection : 
+        CalendarObject,
+        ICollection<IICalendar>,
+        IICalendar
     {
         #region Private Fields
 
-        private List<iCalendar> _Calendars;
+        private IList<IICalendar> _Calendars;
 
         #endregion
 
@@ -29,154 +32,19 @@ namespace DDay.iCal
 
         public iCalendarCollection()
         {
-            _Calendars = new List<iCalendar>();
+            _Calendars = new List<IICalendar>();
         }
 
         #endregion
 
-        #region Public Properties
-
-        public IEnumerable<UniqueComponent> UniqueComponents
-        {
-            get
-            {
-                foreach (iCalendar iCal in this)
-                    foreach (UniqueComponent uc in iCal.UniqueComponents)
-                        yield return uc;
-            }
-        }
-
-        public IEnumerable<RecurringComponent> RecurringComponents
-        {
-            get
-            {
-                foreach (iCalendar iCal in this)
-                    foreach (RecurringComponent rc in iCal.RecurringComponents)
-                        yield return rc;
-            }
-        }
-
-        /// <summary>
-        /// A collection of <see cref="DDay.iCal.Event"/> components in the iCalendar.
-        /// </summary>
-        public IEnumerable<Event> Events
-        {
-            get
-            {
-                foreach (iCalendar iCal in this)
-                    foreach (Event evt in iCal.Events)
-                        yield return evt;
-            }
-        }
-
-        /// <summary>
-        /// A collection of <see cref="DDay.iCal.FreeBusy"/> components in the iCalendar.
-        /// </summary>
-        public IEnumerable<FreeBusy> FreeBusy
-        {
-            get
-            {
-                foreach (iCalendar iCal in this)
-                    foreach (FreeBusy fb in iCal.FreeBusy)
-                        yield return fb;
-            }
-        }
-
-        /// <summary>
-        /// A collection of <see cref="DDay.iCal.Journal"/> components in the iCalendar.
-        /// </summary>
-        public IEnumerable<Journal> Journals
-        {
-            get
-            {
-                foreach (iCalendar iCal in this)
-                    foreach (Journal jnl in iCal.Journals)
-                        yield return jnl;
-            }
-        }
-
-        /// <summary>
-        /// A collection of <see cref="DDay.iCal.TimeZone"/> components in the iCalendar.
-        /// </summary>
-        public IEnumerable<iCalTimeZone> TimeZones
-        {
-            get
-            {
-                foreach (iCalendar iCal in this)
-                    foreach (iCalTimeZone tz in iCal.TimeZones)
-                        yield return tz;
-            }
-        }
-
-        /// <summary>
-        /// A collection of <see cref="Todo"/> components in the iCalendar.
-        /// </summary>
-        public IEnumerable<Todo> Todos
-        {
-            get
-            {
-                foreach (iCalendar iCal in this)
-                    foreach (Todo td in iCal.Todos)
-                        yield return td;
-            }
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        /// <summary>
-        /// Retrieves the <see cref="DDay.iCal.TimeZone" /> object for the specified
-        /// <see cref="TZID"/> (Time Zone Identifier).
-        /// </summary>
-        /// <param name="tzid">A valid <see cref="TZID"/> object, or a valid <see cref="TZID"/> string.</param>
-        /// <returns>A <see cref="TimeZone"/> object for the <see cref="TZID"/>.</returns>
-        public iCalTimeZone GetTimeZone(TZID tzid)
-        {
-            foreach (iCalendar iCal in this)
-            {
-                iCalTimeZone tz = iCal.GetTimeZone(tzid);
-                if (tz != null)
-                    return tz;                
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Evaluates component recurrences for the given range of time.
-        /// <example>
-        ///     For example, if you are displaying a month-view for January 2007,
-        ///     you would want to evaluate recurrences for Jan. 1, 2007 to Jan. 31, 2007
-        ///     to display relevant information for those dates.
-        /// </example>
-        /// </summary>
-        /// <param name="FromDate">The beginning date/time of the range to test.</param>
-        /// <param name="ToDate">The end date/time of the range to test.</param>                
-        [Obsolete("This method is no longer supported.  Use GetOccurrences() instead.")]
-        public void Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
-        {
-            throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");            
-        }
-
-        /// <summary>
-        /// Evaluates component recurrences for the given range of time, for
-        /// the type of recurring component specified.
-        /// </summary>
-        /// <typeparam name="T">The type of component to be evaluated for recurrences.</typeparam>
-        /// <param name="FromDate">The beginning date/time of the range to test.</param>
-        /// <param name="ToDate">The end date/time of the range to test.</param>
-        [Obsolete("This method is no longer supported.  Use GetOccurrences() instead.")]
-        public void Evaluate<T>(iCalDateTime FromDate, iCalDateTime ToDate)
-        {
-            throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
-        }
-
+        #region Public Methods               
+        
         /// <summary>
         /// Clears recurrence evaluations for recurring components.        
         /// </summary>        
-        public void ClearEvaluation()
+        virtual public void ClearEvaluation()
         {
-            foreach (iCalendar iCal in _Calendars)
+            foreach (IICalendar iCal in _Calendars)
                 iCal.ClearEvaluation();            
         }
 
@@ -186,7 +54,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
         /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
-        public List<Occurrence> GetOccurrences(iCalDateTime dt)
+        virtual public IList<Occurrence> GetOccurrences(iCalDateTime dt)
         {
             return GetOccurrences(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
         }
@@ -198,9 +66,9 @@ namespace DDay.iCal
         /// <param name="FromDate">The beginning date/time of the range.</param>
         /// <param name="ToDate">The end date/time of the range.</param>
         /// <returns>A list of occurrences that fall between the dates provided.</returns>
-        public List<Occurrence> GetOccurrences(iCalDateTime FromDate, iCalDateTime ToDate)
+        virtual public IList<Occurrence> GetOccurrences(iCalDateTime FromDate, iCalDateTime ToDate)
         {
-            return GetOccurrences<RecurringComponent>(FromDate, ToDate);
+            return GetOccurrences<IRecurringComponent>(FromDate, ToDate);
         }
 
         /// <summary>
@@ -215,7 +83,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences.</param>
         /// <returns>A list of Periods representing the occurrences of this object.</returns>
-        virtual public List<Occurrence> GetOccurrences<T>(iCalDateTime dt) where T : RecurringComponent
+        virtual public IList<Occurrence> GetOccurrences<T>(iCalDateTime dt) where T : IRecurringComponent
         {
             return GetOccurrences<T>(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
         }
@@ -227,10 +95,10 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="startTime">The starting date range</param>
         /// <param name="endTime">The ending date range</param>
-        virtual public List<Occurrence> GetOccurrences<T>(iCalDateTime startTime, iCalDateTime endTime) where T : RecurringComponent
+        virtual public IList<Occurrence> GetOccurrences<T>(iCalDateTime startTime, iCalDateTime endTime) where T : IRecurringComponent
         {
             List<Occurrence> occurrences = new List<Occurrence>();
-            foreach (iCalendar iCal in _Calendars)
+            foreach (IICalendar iCal in _Calendars)
                 occurrences.AddRange(iCal.GetOccurrences<T>(startTime, endTime));
 
             occurrences.Sort();
@@ -241,7 +109,7 @@ namespace DDay.iCal
 
         #region Indexer
 
-        public iCalendar this[int index]
+        public IICalendar this[int index]
         {
             get { return _Calendars[index]; }
             set { _Calendars[index] = value; }
@@ -249,9 +117,9 @@ namespace DDay.iCal
 
         #endregion
 
-        #region ICollection<iCalendar> Members
+        #region ICollection<IICalendar> Members
 
-        public void Add(iCalendar item)
+        public void Add(IICalendar item)
         {
             if (item != null && !Contains(item))
                 _Calendars.Add(item);
@@ -262,12 +130,12 @@ namespace DDay.iCal
             _Calendars.Clear();
         }
 
-        public bool Contains(iCalendar item)
+        public bool Contains(IICalendar item)
         {
             return _Calendars.Contains(item);
         }
 
-        public void CopyTo(iCalendar[] array, int arrayIndex)
+        public void CopyTo(IICalendar[] array, int arrayIndex)
         {
             _Calendars.CopyTo(array, arrayIndex);
         }
@@ -282,16 +150,16 @@ namespace DDay.iCal
             get { return false; }
         }
 
-        public bool Remove(iCalendar item)
+        public bool Remove(IICalendar item)
         {
             return _Calendars.Remove(item);
         }
 
         #endregion
 
-        #region IEnumerable<iCalendar> Members
+        #region IEnumerable<IICalendar> Members
 
-        public IEnumerator<iCalendar> GetEnumerator()
+        public IEnumerator<IICalendar> GetEnumerator()
         {
             return _Calendars.GetEnumerator();
         }
@@ -307,24 +175,250 @@ namespace DDay.iCal
 
         #endregion        
 
-        #region Operators
+        #region IICalendar Members
+
+        virtual public string Version
+        {
+            get
+            {
+                if (_Calendars.Count > 0)
+                    return _Calendars[0].Version;
+                return null;
+            }
+            set
+            {
+                foreach (IICalendar c in _Calendars)
+                    c.Version = value;
+            }
+        }
+
+        virtual public string ProductID
+        {
+            get
+            {
+                if (_Calendars.Count > 0)
+                    return _Calendars[0].ProductID;
+                return null;
+            }
+            set
+            {
+                foreach (IICalendar c in _Calendars)
+                    c.ProductID = value;
+            }
+        }
+
+        virtual public string Scale
+        {
+            get
+            {
+                if (_Calendars.Count > 0)
+                    return _Calendars[0].Scale;
+                return null;
+            }
+            set
+            {
+                foreach (IICalendar c in _Calendars)
+                    c.Scale = value;
+            }
+        }
+
+        virtual public string Method
+        {
+            get
+            {
+                if (_Calendars.Count > 0)
+                    return _Calendars[0].Method;
+                return null;
+            }
+            set
+            {
+                foreach (IICalendar c in _Calendars)
+                    c.Method = value;
+            }
+        }
 
         /// <summary>
-        /// Implicitly converts an iCalendar collection into a single,
-        /// merged version of each iCalendar.
+        /// A calendar collection cannot create components directly!
         /// </summary>
-        static public implicit operator iCalendar(iCalendarCollection calendars)
+        virtual public ICalendarComponentFactory ComponentFactory
         {
-            if (calendars != null &&
-                calendars.Count > 0)
-            {
-                iCalendar first = calendars[0].Copy();
-                for (int i = 1; i < calendars.Count; i++)
-                    first.MergeWith(calendars[i].Copy());
+            get { return null; }
+            set { }
+        }
 
-                return first;
+        virtual public RecurrenceRestrictionType RecurrenceRestriction
+        {
+            get
+            {
+                if (_Calendars.Count > 0)
+                    return _Calendars[0].RecurrenceRestriction;
+                return RecurrenceRestrictionType.Default;
+            }
+            set
+            {
+                foreach (IICalendar c in _Calendars)
+                    c.RecurrenceRestriction = value;
+            }
+        }
+
+        virtual public RecurrenceEvaluationModeType RecurrenceEvaluationMode
+        {
+            get
+            {
+                if (_Calendars.Count > 0)
+                    return _Calendars[0].RecurrenceEvaluationMode;
+                return RecurrenceEvaluationModeType.Default;
+            }
+            set
+            {
+                foreach (IICalendar c in _Calendars)
+                    c.RecurrenceEvaluationMode = value;
+            }
+        }
+
+        virtual public T Create<T>() where T : ICalendarComponent
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Retrieves the <see cref="DDay.iCal.TimeZone" /> object for the specified
+        /// <see cref="TZID"/> (Time Zone Identifier).
+        /// </summary>
+        /// <param name="tzid">A valid <see cref="TZID"/> object, or a valid <see cref="TZID"/> string.</param>
+        /// <returns>A <see cref="TimeZone"/> object for the <see cref="TZID"/>.</returns>
+        virtual public ICalendarTimeZone GetTimeZone(TZID tzid)
+        {
+            foreach (IICalendar c in _Calendars)
+            {
+                ICalendarTimeZone tz = c.GetTimeZone(tzid);
+                if (tz != null)
+                    return tz;
             }
             return null;
+        }
+
+        virtual public IEnumerable<IUniqueComponent> UniqueComponents
+        {
+            get
+            {
+                foreach (IICalendar iCal in this)
+                    foreach (IUniqueComponent uc in iCal.UniqueComponents)
+                        yield return uc;
+            }
+        }
+
+        virtual public IEnumerable<IRecurringComponent> RecurringComponents
+        {
+            get
+            {
+                foreach (IICalendar iCal in this)
+                    foreach (IRecurringComponent rc in iCal.RecurringComponents)
+                        yield return rc;
+            }
+        }
+
+        /// <summary>
+        /// A collection of <see cref="DDay.iCal.Event"/> components in the iCalendar.
+        /// </summary>
+        virtual public IEnumerable<Event> Events
+        {
+            get
+            {
+                foreach (IICalendar iCal in this)
+                    foreach (Event evt in iCal.Events)
+                        yield return evt;
+            }
+        }
+
+        /// <summary>
+        /// A collection of <see cref="DDay.iCal.FreeBusy"/> components in the iCalendar.
+        /// </summary>
+        public IEnumerable<FreeBusy> FreeBusy
+        {
+            get
+            {
+                foreach (IICalendar iCal in this)
+                    foreach (FreeBusy fb in iCal.FreeBusy)
+                        yield return fb;
+            }
+        }
+
+        /// <summary>
+        /// A collection of <see cref="DDay.iCal.Journal"/> components in the iCalendar.
+        /// </summary>
+        public IEnumerable<Journal> Journals
+        {
+            get
+            {
+                foreach (IICalendar iCal in this)
+                    foreach (Journal jnl in iCal.Journals)
+                        yield return jnl;
+            }
+        }
+
+        /// <summary>
+        /// A collection of <see cref="DDay.iCal.TimeZone"/> components in the iCalendar.
+        /// </summary>
+        public IEnumerable<iCalTimeZone> TimeZones
+        {
+            get
+            {
+                foreach (IICalendar iCal in this)
+                    foreach (iCalTimeZone tz in iCal.TimeZones)
+                        yield return tz;
+            }
+        }
+
+        /// <summary>
+        /// A collection of <see cref="Todo"/> components in the iCalendar.
+        /// </summary>
+        public IEnumerable<Todo> Todos
+        {
+            get
+            {
+                foreach (IICalendar iCal in this)
+                    foreach (Todo td in iCal.Todos)
+                        yield return td;
+            }
+        }
+
+#if DATACONTRACT && !SILVERLIGHT
+        /// <summary>
+        /// Adds a system time zone to the iCalendar.  This time zone may
+        /// then be used in date/time objects contained in the 
+        /// calendar.
+        /// </summary>
+        /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>
+        /// <returns>The time zone added to the calendar.</returns>
+        public ICalendarTimeZone AddTimeZone(System.TimeZoneInfo tzi)
+        {
+            ICalendarTimeZone tz = iCalTimeZone.FromSystemTimeZone(tzi);
+            AddChild(tz);
+            return tz;
+        }
+
+        /// <summary>
+        /// Adds the local system time zone to the iCalendar.  
+        /// This time zone may then be used in date/time
+        /// objects contained in the calendar.
+        /// </summary>
+        /// <returns>The time zone added to the calendar.</returns>
+        public ICalendarTimeZone AddLocalTimeZone()
+        {
+            ICalendarTimeZone tz = iCalTimeZone.FromLocalTimeZone();
+            AddChild(tz);
+            return tz;
+        }
+#endif
+
+        #endregion
+
+        #region ICalendarPropertyListContainer Members
+
+        public ICalendarPropertyList Properties
+        {
+            get { throw new NotImplementedException(); }
         }
 
         #endregion

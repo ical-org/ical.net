@@ -417,15 +417,6 @@ namespace DDay.iCal
             return Periods;
         }
         
-        /// <summary>
-        /// Returns a typed copy of the Event object.
-        /// </summary>
-        /// <returns>A typed copy of the Event object.</returns>
-        public new Event Copy()
-        {
-            return (Event)base.Copy();
-        }
-
         #endregion        
 
         #region Private Methods

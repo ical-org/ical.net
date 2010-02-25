@@ -437,15 +437,6 @@ namespace DDay.iCal
             return periods;
         }
 
-        /// <summary>
-        /// Returns a typed copy of the iCalTimeZoneInfo object.
-        /// </summary>
-        /// <returns>A typed copy of the iCalTimeZoneInfo object.</returns>
-        public new iCalTimeZoneInfo Copy()
-        {
-            return (iCalTimeZoneInfo)base.Copy();
-        }
-
         public override bool Equals(object obj)
         {
             iCalTimeZoneInfo tzi = obj as iCalTimeZoneInfo;

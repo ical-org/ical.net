@@ -101,7 +101,10 @@ namespace DDay.iCal
     [KnownType(typeof(FreeBusy))]
 #endif
     [Serializable]
-    public class iCalendar : Component, IDisposable
+    public class iCalendar : 
+        Component,
+        IICalendar,
+        IDisposable
     {
         #region Public Classes
 
@@ -454,7 +457,7 @@ namespace DDay.iCal
         /// <summary>
         /// A collection of <see cref="Event"/> components in the iCalendar.
         /// </summary>
-        virtual public UniqueComponentList<Event> Events
+        virtual public IEnumerable<Event> Events
         {
             get { return m_Events; }
             set { m_Events = value; }
@@ -463,7 +466,7 @@ namespace DDay.iCal
         /// <summary>
         /// A collection of <see cref="DDay.iCal.FreeBusy"/> components in the iCalendar.
         /// </summary>
-        virtual public List<FreeBusy> FreeBusy
+        virtual public IEnumerable<FreeBusy> FreeBusy
         {
             get { return m_FreeBusy; }
             set { m_FreeBusy = value; }
@@ -472,7 +475,7 @@ namespace DDay.iCal
         /// <summary>
         /// A collection of <see cref="Journal"/> components in the iCalendar.
         /// </summary>
-        virtual public UniqueComponentList<Journal> Journals
+        virtual public IEnumerable<Journal> Journals
         {
             get { return m_Journal; }
             set { m_Journal = value; }
@@ -481,7 +484,7 @@ namespace DDay.iCal
         /// <summary>
         /// A collection of <see cref="DDay.iCal.TimeZone"/> components in the iCalendar.
         /// </summary>
-        virtual public List<iCalTimeZone> TimeZones
+        virtual public IEnumerable<iCalTimeZone> TimeZones
         {
             get { return m_TimeZone; }
             set { m_TimeZone = value; }
@@ -490,7 +493,7 @@ namespace DDay.iCal
         /// <summary>
         /// A collection of <see cref="Todo"/> components in the iCalendar.
         /// </summary>
-        virtual public UniqueComponentList<Todo> Todos
+        virtual public IEnumerable<Todo> Todos
         {
             get { return m_Todo; }
             set { m_Todo = value; }
@@ -498,117 +501,38 @@ namespace DDay.iCal
 
         virtual public string Version
         {
-            get
-            {
-                if (Properties.ContainsKey("VERSION"))
-                    return ((CalendarProperty)Properties["VERSION"]).Value;
-                return null;
-            }
-            set
-            {
-                if (string.IsNullOrEmpty(value) &&
-                    Properties.ContainsKey("VERSION"))
-                    Properties.Remove("VERSION");
-                else Properties["VERSION"] = new CalendarProperty(this, "VERSION", value);
-            }
+            get { return Properties.Get<string>("VERSION"); }
+            set { Properties.Set("VERSION", value); }
         }
 
         virtual public string ProductID
         {
-            get
-            {
-                if (Properties.ContainsKey("PRODID"))
-                    return ((CalendarProperty)Properties["PRODID"]).Value;
-                return null;
-            }
-            set
-            {
-                if (string.IsNullOrEmpty(value) &&
-                    Properties.ContainsKey("PRODID"))
-                    Properties.Remove("PRODID");
-                else Properties["PRODID"] = new CalendarProperty(this, "PRODID", value);
-            }
+            get { return Properties.Get<string>("PRODID"); }
+            set { Properties.Set("PRODID", value); }
         }
 
         virtual public string Scale
         {
-            get
-            {
-                if (Properties.ContainsKey("CALSCALE"))
-                    return ((CalendarProperty)Properties["CALSCALE"]).Value;
-                return null;
-            }
-            set
-            {
-                if (!string.IsNullOrEmpty(value))
-                {
-                    Properties["CALSCALE"] = new CalendarProperty(this, "CALSCALE", value);
-                }
-                else
-                {
-                    Properties.Remove("CALSCALE");
-                }
-            }
+            get { return Properties.Get<string>("CALSCALE"); }
+            set { Properties.Set("CALSCALE", value); }
         }
 
         virtual public string Method
         {
-            get
-            {
-                if (Properties.ContainsKey("METHOD"))
-                    return ((CalendarProperty)Properties["METHOD"]).Value;
-                return null;
-            }
-            set
-            {
-                // NOTE: Fixes bug #1874089 - iCalendar.Method property
-                if (!string.IsNullOrEmpty(value))
-                {
-                    Properties["METHOD"] = new CalendarProperty(this, "METHOD", value);
-                }
-                else
-                {
-                    Properties.Remove("METHOD");
-                }
-            }
+            get { return Properties.Get<string>("METHOD"); }
+            set { Properties.Set("METHOD", value); }
         }
 
         virtual public RecurrenceRestrictionType RecurrenceRestriction
         {
-            get
-            {
-                if (Properties.ContainsKey("X-DDAY-ICAL-RECURRENCE-RESTRICTION"))
-                    return
-                        (RecurrenceRestrictionType)Enum.Parse(
-                            typeof(RecurrenceRestrictionType),
-                            ((CalendarProperty)Properties["X-DDAY-ICAL-RECURRENCE-RESTRICTION"]).Value,
-                            true
-                        );
-                return RecurrenceRestrictionType.Default;
-            }
-            set
-            {
-                Properties["X-DDAY-ICAL-RECURRENCE-RESTRICTION"] = new CalendarProperty(this, "X-DDAY-ICAL-RECURRENCE-RESTRICTION", value.ToString());
-            }
+            get { return Properties.Get<RecurrenceRestrictionType>("X-DDAY-ICAL-RECURRENCE-RESTRICTION"); }
+            set { Properties.Set("X-DDAY-ICAL-RECURRENCE-RESTRICTION", value); }
         }
 
         virtual public RecurrenceEvaluationModeType RecurrenceEvaluationMode
         {
-            get
-            {
-                if (Properties.ContainsKey("X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE"))
-                    return
-                        (RecurrenceEvaluationModeType)Enum.Parse(
-                            typeof(RecurrenceEvaluationModeType),
-                            ((CalendarProperty)Properties["X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE"]).Value,
-                            true
-                        );
-                return RecurrenceEvaluationModeType.Default;
-            }
-            set
-            {
-                Properties["X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE"] = new CalendarProperty(this, "X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE", value.ToString());
-            }
+            get { return Properties.Get<RecurrenceRestrictionType>("X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE"); }
+            set { Properties.Set("X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE", value); }
         }
 
         #endregion
@@ -633,12 +557,12 @@ namespace DDay.iCal
 
         private void Initialize()
         {
-            UniqueComponents = new UniqueComponentList<UniqueComponent>(this);
-            Events = new UniqueComponentList<Event>(this);
+            UniqueComponents = new UniqueComponentList<UniqueComponent>();
+            Events = new UniqueComponentList<Event>();
             FreeBusy = new List<FreeBusy>();
-            Journals = new UniqueComponentList<Journal>(this);
+            Journals = new UniqueComponentList<Journal>();
             TimeZones = new List<iCalTimeZone>();
-            Todos = new UniqueComponentList<Todo>(this);
+            Todos = new UniqueComponentList<Todo>();
 
             object[] attrs = GetType().GetCustomAttributes(typeof(ComponentBaseTypeAttribute), false);
             if (attrs.Length > 0)
@@ -675,9 +599,9 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>
         /// <returns>The time zone added to the calendar.</returns>
-        public iCalTimeZone AddTimeZone(System.TimeZoneInfo tzi)
+        public ICalendarTimeZone AddTimeZone(System.TimeZoneInfo tzi)
         {
-            iCalTimeZone tz = iCalTimeZone.FromSystemTimeZone(tzi);
+            ICalendarTimeZone tz = iCalTimeZone.FromSystemTimeZone(tzi);
             AddChild(tz);
             return tz;
         }
@@ -688,9 +612,9 @@ namespace DDay.iCal
         /// objects contained in the calendar.
         /// </summary>
         /// <returns>The time zone added to the calendar.</returns>
-        public iCalTimeZone AddLocalTimeZone()
+        public ICalendarTimeZone AddLocalTimeZone()
         {
-            iCalTimeZone tz = iCalTimeZone.FromLocalTimeZone();
+            ICalendarTimeZone tz = iCalTimeZone.FromLocalTimeZone();
             AddChild(tz);
             return tz;
         }
@@ -702,9 +626,9 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="tzid">A valid <see cref="TZID"/> object, or a valid <see cref="TZID"/> string.</param>
         /// <returns>A <see cref="TimeZone"/> object for the <see cref="TZID"/>.</returns>
-        public iCalTimeZone GetTimeZone(TZID tzid)
+        public ICalendarTimeZone GetTimeZone(TZID tzid)
         {
-            foreach (iCalTimeZone tz in TimeZones)
+            foreach (ICalendarTimeZone tz in TimeZones)
             {
                 if (tz.TZID.Equals(tzid))
                 {
@@ -758,9 +682,9 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
         /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
-        public List<Occurrence> GetOccurrences(iCalDateTime dt)
+        public IList<Occurrence> GetOccurrences(iCalDateTime dt)
         {
-            return GetOccurrences<RecurringComponent>(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
+            return GetOccurrences<IRecurringComponent>(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
         }
 
         /// <summary>
@@ -770,9 +694,9 @@ namespace DDay.iCal
         /// <param name="FromDate">The beginning date/time of the range.</param>
         /// <param name="ToDate">The end date/time of the range.</param>
         /// <returns>A list of occurrences that fall between the dates provided.</returns>
-        public List<Occurrence> GetOccurrences(iCalDateTime FromDate, iCalDateTime ToDate)
+        public IList<Occurrence> GetOccurrences(iCalDateTime FromDate, iCalDateTime ToDate)
         {
-            return GetOccurrences<RecurringComponent>(FromDate, ToDate);
+            return GetOccurrences<IRecurringComponent>(FromDate, ToDate);
         }
 
         /// <summary>
@@ -787,7 +711,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences.</param>
         /// <returns>A list of Periods representing the occurrences of this object.</returns>
-        virtual public List<Occurrence> GetOccurrences<T>(iCalDateTime dt) where T : RecurringComponent
+        virtual public IList<Occurrence> GetOccurrences<T>(iCalDateTime dt) where T : IRecurringComponent
         {
             return GetOccurrences<T>(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
         }
@@ -799,10 +723,10 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="startTime">The starting date range</param>
         /// <param name="endTime">The ending date range</param>
-        virtual public List<Occurrence> GetOccurrences<T>(iCalDateTime startTime, iCalDateTime endTime) where T : RecurringComponent
+        virtual public IList<Occurrence> GetOccurrences<T>(iCalDateTime startTime, iCalDateTime endTime) where T : IRecurringComponent
         {
             List<Occurrence> occurrences = new List<Occurrence>();
-            foreach (RecurringComponent rc in RecurringComponents)
+            foreach (IRecurringComponent rc in RecurringComponents)
             {
                 if (rc is T)
                     occurrences.AddRange(rc.GetOccurrences(startTime, endTime));
@@ -847,7 +771,7 @@ namespace DDay.iCal
         /// </example>
         /// <typeparam name="T">The type of object to create</typeparam>
         /// <returns>An object of the type specified</returns>
-        public T Create<T>() where T : ICalendarObject
+        public T Create<T>() where T : ICalendarComponent
         {
             if (m_ComponentBaseCreate == null)
                 throw new ArgumentException("Create() cannot be called without a valid ComponentBase Create() method attached");
@@ -1012,6 +936,22 @@ namespace DDay.iCal
             Todos.Clear();
             TimeZones.Clear();
             UniqueComponents.Clear();
+        }
+
+        #endregion
+
+        #region IICalendar Members
+
+        public ICalendarComponentFactory ComponentFactory
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
         }
 
         #endregion

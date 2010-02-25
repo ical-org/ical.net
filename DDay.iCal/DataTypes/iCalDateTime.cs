@@ -263,7 +263,7 @@ namespace DDay.iCal
             CopyFrom(Parse(value));
         }
         public iCalDateTime(DateTime value) : this(value, null, null) {}
-        public iCalDateTime(DateTime value, TZID tzid, iCalendar iCal) : this()
+        public iCalDateTime(DateTime value, TZID tzid, IICalendar iCal) : this()
         {
             Initialize(value, tzid, iCal);
         }
@@ -272,14 +272,14 @@ namespace DDay.iCal
             Initialize(year, month, day, hour, minute, second, null, null);
             HasTime = true;
         }
-        public iCalDateTime(int year, int month, int day, int hour, int minute, int second, TZID tzid, iCalendar iCal) : this()            
+        public iCalDateTime(int year, int month, int day, int hour, int minute, int second, TZID tzid, IICalendar iCal) : this()            
         {
             Initialize(year, month, day, hour, minute, second, tzid, iCal);
             HasTime = true;
         }
         public iCalDateTime(int year, int month, int day)
             : this(year, month, day, 0, 0, 0) { }
-        public iCalDateTime(int year, int month, int day, TZID tzid, iCalendar iCal)
+        public iCalDateTime(int year, int month, int day, TZID tzid, IICalendar iCal)
             : this(year, month, day, 0, 0, 0, tzid, iCal) { }
 
         // FIXME: what do we do with this constructor?
@@ -294,12 +294,12 @@ namespace DDay.iCal
         //        this.TZID = p.Parameters["TZID"].Values[0];                
         //}
 
-        private void Initialize(int year, int month, int day, int hour, int minute, int second, TZID tzid, iCalendar iCal)
+        private void Initialize(int year, int month, int day, int hour, int minute, int second, TZID tzid, IICalendar iCal)
         {
             Initialize(CoerceDateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzid, iCal);            
         }
 
-        private void Initialize(DateTime value, TZID tzid, iCalendar iCal)
+        private void Initialize(DateTime value, TZID tzid, IICalendar iCal)
         {
             if (value.Kind == DateTimeKind.Utc)
                 this.IsUniversalTime = true;
@@ -308,7 +308,7 @@ namespace DDay.iCal
             this.HasDate = true;
             this.HasTime = (value.Second == 0 && value.Minute == 0 && value.Hour == 0) ? false : true;
             this.TZID = tzid;
-            this.iCalendar = iCal;
+            this.Calendar = iCal;
         }
 
         private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
@@ -348,7 +348,7 @@ namespace DDay.iCal
                 this.HasDate = dt.HasDate;
                 this.HasTime = dt.HasTime;
                 this.TZID = dt.TZID;
-                this.iCalendar = dt.iCalendar;
+                this.Calendar = dt.Calendar;
                 this.IsUniversalTime = dt.IsUniversalTime;
             }
             base.CopyFrom(obj);
@@ -356,8 +356,8 @@ namespace DDay.iCal
 
         virtual public void MergeWith(iCalDateTime dt)
         {
-            if (iCalendar == null)
-                iCalendar = dt.iCalendar;
+            if (Calendar == null)
+                Calendar = dt.Calendar;
             if (TZID == null)
                 TZID = dt.TZID;
             IsUniversalTime = dt.IsUniversalTime;

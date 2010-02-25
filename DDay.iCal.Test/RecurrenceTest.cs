@@ -87,7 +87,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE1()
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE1.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE1.ics");
             ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
             List<Occurrence> occurrences = evt.GetOccurrences(

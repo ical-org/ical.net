@@ -1,10 +1,8 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalParser.cs"$
-    
-    using DDay.iCal; 
-    using DDay.iCal.Serialization;
+        
     using System.Text;   
 
-namespace DDay.iCal.Serialization.iCalendar
+namespace DDay.iCal.Serialization
 {
 	// Generate the header common to all output files.
 	using System;
@@ -280,7 +278,7 @@ _loop16_breakloop:			;
 		match(COLON);
 		n = LT(1);
 		match(X_NAME);
-		c = o.iCalendar.Create(n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn();
+		c = o.Calendar.ComponentFactory.Create(n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn();
 		{    // ( ... )*
 			for (;;)
 			{
@@ -345,7 +343,7 @@ _loop30_breakloop:			;
 		match(COLON);
 		n = LT(1);
 		match(IANA_TOKEN);
-		c = o.iCalendar.Create(n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn();
+		c = o.Calendar.ComponentFactory.Create(n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn();
 		{    // ( ... )*
 			for (;;)
 			{
@@ -430,11 +428,11 @@ _loop23_breakloop:			;
 {
 		
 		IToken  n = null;
-		Property p; string v;
+		CalendarProperty p; string v;
 		
 		n = LT(1);
 		match(X_NAME);
-		p = new Property(n.getLine(), n.getColumn());
+        p = new CalendarProperty(n.getLine(), n.getColumn());
 		{    // ( ... )*
 			for (;;)
 			{
@@ -495,11 +493,11 @@ _loop43_breakloop:			;
 {
 		
 		IToken  n = null;
-		Property p; string v;
+        CalendarProperty p; string v;
 		
 		n = LT(1);
 		match(IANA_TOKEN);
-		p = new Property(n.getLine(), n.getColumn());
+        p = new CalendarProperty(n.getLine(), n.getColumn());
 		{    // ( ... )*
 			for (;;)
 			{
@@ -555,14 +553,14 @@ _loop37_breakloop:			;
 	}
 	
 	public void param(
-		iCalObject o
+		ICalendarObject o
 	) //throws RecognitionException, TokenStreamException
 {
 		
 		Parameter p; string n; string v;
 		
 		n=param_name();
-		p = new Parameter(o, n);
+		p = new Parameter(n);
 		match(EQUAL);
 		v=param_value();
 		p.Values.Add(v);
@@ -583,10 +581,11 @@ _loop37_breakloop:			;
 			}
 _loop54_breakloop:			;
 		}    // ( ... )*
+		o.Parameters.Add(p);
 	}
 	
 	public void xparam(
-		iCalObject o
+		ICalendarObject o
 	) //throws RecognitionException, TokenStreamException
 {
 		
@@ -595,7 +594,7 @@ _loop54_breakloop:			;
 		
 		n = LT(1);
 		match(X_NAME);
-		p = new Parameter(o, n.getText());
+		p = new Parameter(n.getText());
 		match(EQUAL);
 		v=param_value();
 		p.Values.Add(v);
@@ -616,6 +615,7 @@ _loop54_breakloop:			;
 			}
 _loop85_breakloop:			;
 		}    // ( ... )*
+		o.Parameters.Add(p);
 	}
 	
 	public string  value() //throws RecognitionException, TokenStreamException
