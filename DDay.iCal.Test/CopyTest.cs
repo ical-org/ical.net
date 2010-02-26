@@ -28,8 +28,8 @@ namespace DDay.iCal.Test
 
         private void CopyCalendarTest(string filename)
         {
-            iCalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Serialization\" + filename)[0];
-            iCalendar iCal2 = iCal1.Copy();
+            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Serialization\" + filename)[0];
+            IICalendar iCal2 = iCal1.Copy<IICalendar>();
             SerializationTest.CompareCalendars(iCal1, iCal2);
         }
 

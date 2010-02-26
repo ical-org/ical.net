@@ -19,7 +19,7 @@ namespace DDay.iCal
 #endif
     [Serializable]
     public partial class iCalTimeZone : 
-        Component,
+        CalendarComponent,
         ICalendarTimeZone
     {
         #region Static Public Methods
@@ -213,7 +213,7 @@ namespace DDay.iCal
                     continue;
 
                 // Make a copy of the current start value
-                iCalDateTime currStart = curr.Start.Copy();
+                iCalDateTime currStart = curr.Start.Copy<iCalDateTime>();
                 if (curr.TZOffsetTo != null)
                 {
                     int mult = curr.TZOffsetTo.Positive ? -1 : 1;

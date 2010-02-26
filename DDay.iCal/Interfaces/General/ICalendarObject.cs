@@ -31,6 +31,7 @@ namespace DDay.iCal
         /// is associated with.
         /// </summary>
         IICalendar Calendar { get; }
+        IICalendar iCalendar { get; }
 
         /// <summary>
         /// Returns the line number where this calendar

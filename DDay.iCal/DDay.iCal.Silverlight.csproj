@@ -69,7 +69,6 @@
     <Compile Include="Components\RecurringComponent.cs" />
     <Compile Include="Components\Todo.cs" />
     <Compile Include="Components\UniqueComponent.cs" />
-    <Compile Include="Components\UniqueComponentList.cs" />
     <Compile Include="DataTypes\AlarmAction.cs" />
     <Compile Include="DataTypes\AlarmOccurrence.cs" />
     <Compile Include="DataTypes\Attendee.cs" />
@@ -129,6 +128,7 @@
     <Compile Include="Interfaces\General\ICalendarPropertyList.cs" />
     <Compile Include="Interfaces\General\ICalendarPropertyListContainer.cs" />
     <Compile Include="Interfaces\IICalendar.cs" />
+    <Compile Include="Interfaces\IICalendarCollection.cs" />
     <Compile Include="Interfaces\Serialization\IParameterSerializable.cs" />
     <Compile Include="Interfaces\Serialization\ISerializable.cs" />
     <Compile Include="Interfaces\Serialization\ISerializationContext.cs" />
@@ -137,6 +137,7 @@
     <Compile Include="Interfaces\Utility\IKeyedObject.cs" />
     <Compile Include="Interfaces\Utility\ILoadable.cs" />
     <Compile Include="Interfaces\Utility\IMergeable.cs" />
+    <Compile Include="Interfaces\Utility\IUniqueComponentList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Properties\AssemblyInfo.cs.template" />
     <Compile Include="Serialization\Attributes\DisallowedTypesAttribute.cs" />
@@ -174,6 +175,7 @@
     <Compile Include="Serialization\SerializationContext.cs" />
     <Compile Include="Utility\KeyedList.cs" />
     <Compile Include="Utility\KnownTypeHelper.cs" />
+    <Compile Include="Utility\UniqueComponentList.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="License.txt">

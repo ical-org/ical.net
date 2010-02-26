@@ -29,7 +29,7 @@ namespace DDay.iCal
 
                 // Count backwards in years, calculating how many weeks' difference we have between
                 // first and second dates
-                iCalDateTime evalDate = dt2.Copy();
+                iCalDateTime evalDate = dt2.Copy<iCalDateTime>();
                 while (evalDate.Year > dt1.Year)
                 {
                     firstEvalWeek += _Calendar.GetWeekOfYear(new DateTime(evalDate.Year - 1, 12, 31), System.Globalization.CalendarWeekRule.FirstFourDayWeek, firstDayOfWeek);

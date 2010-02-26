@@ -27,20 +27,15 @@ namespace DDay.iCal.Test
 
         public void TestAlarm(string Calendar, List<iCalDateTime> Dates, iCalDateTime Start, iCalDateTime End)
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Alarm\" + Calendar)[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Alarm\" + Calendar)[0];
             ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
-            Start.iCalendar = iCal;
             Start.TZID = tzid;
-            End.iCalendar = iCal;
             End.TZID = tzid;
 
             for (int i = 0; i < Dates.Count; i++)
-            {
                 Dates[i].TZID = tzid;
-                Dates[i].iCalendar = iCal;
-            }
 
             // Poll all alarms that occurred between Start and End
             List<AlarmOccurrence> alarms = evt.PollAlarms(Start, End);

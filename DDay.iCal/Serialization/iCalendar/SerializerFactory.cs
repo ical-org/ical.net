@@ -28,8 +28,8 @@ namespace DDay.iCal.Serialization
                     s = new RecurringComponentSerializer(obj as RecurringComponent);
                 else if (typeof(UniqueComponent).IsAssignableFrom(type))
                     s = new UniqueComponentSerializer(obj as UniqueComponent);
-                else if (typeof(Component).IsAssignableFrom(type))
-                    s = new ComponentSerializer(obj as Component);
+                else if (typeof(CalendarComponent).IsAssignableFrom(type))
+                    s = new ComponentSerializer(obj as CalendarComponent);
                 else if (typeof(iCalDataType).IsAssignableFrom(type))
                     s = new DataTypeSerializer(obj as iCalDataType);
                 else if (typeof(CalendarParameter).IsAssignableFrom(type))

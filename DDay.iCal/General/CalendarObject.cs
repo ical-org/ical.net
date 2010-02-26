@@ -278,6 +278,12 @@ namespace DDay.iCal
             }
         }
 
+        virtual public IICalendar iCalendar
+        {
+            get { return Calendar; }
+            protected set { Calendar = value; }
+        }
+
 #if DATACONTRACT
         [DataMember(Order = 5)]
 #endif

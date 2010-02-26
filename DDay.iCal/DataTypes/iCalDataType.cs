@@ -15,10 +15,13 @@ namespace DDay.iCal
     [DataContract(Name = "iCalDataType", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public abstract class iCalDataType : CalendarProperty
+    public abstract class iCalDataType :
+        CalendarProperty,
+        ICalendarDataType
     {
         #region Protected Fields
 
+        protected IICalendar m_Calendar = null;
         protected CalendarProperty m_Property = null;
         protected object[] m_Attributes = new object[0];
         [NonSerialized]
@@ -205,5 +208,14 @@ namespace DDay.iCal
         }
 
         #endregion        
+    
+        #region ICalendarDataType Members
+
+        virtual public void SetCalendar(IICalendar calendar)
+        {
+            Calendar = calendar;
+        }
+
+        #endregion
     }
 }

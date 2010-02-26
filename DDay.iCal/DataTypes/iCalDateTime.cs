@@ -237,7 +237,7 @@ namespace DDay.iCal
         {
             get
             {
-                return Copy().AddMonths(-Month + 1).AddDays(-Day + 1).AddHours(-Hour + 1).AddMinutes(-Minute + 1).AddSeconds(-Second + 1);
+                return Copy<iCalDateTime>().AddMonths(-Month + 1).AddDays(-Day + 1).AddHours(-Hour + 1).AddMinutes(-Minute + 1).AddSeconds(-Second + 1);
             }
         }
 
@@ -245,7 +245,7 @@ namespace DDay.iCal
         {
             get
             {
-                return Copy().AddDays(-Day + 1).AddHours(-Hour + 1).AddMinutes(-Minute + 1).AddSeconds(-Second + 1);
+                return Copy<iCalDateTime>().AddDays(-Day + 1).AddHours(-Hour + 1).AddMinutes(-Minute + 1).AddSeconds(-Second + 1);
             }
         }
 
@@ -469,14 +469,14 @@ namespace DDay.iCal
 
         public static iCalDateTime operator -(iCalDateTime left, TimeSpan right)
         {
-            iCalDateTime copy = left.Copy();
+            iCalDateTime copy = left.Copy<iCalDateTime>();
             copy.Value -= right;
             return copy;
         }
 
         public static iCalDateTime operator +(iCalDateTime left, TimeSpan right)
         {
-            iCalDateTime copy = left.Copy();
+            iCalDateTime copy = left.Copy<iCalDateTime>();
             copy.Value += right;
             return copy;
         }
@@ -489,11 +489,6 @@ namespace DDay.iCal
         #endregion
 
         #region Public Methods
-
-        public new iCalDateTime Copy()
-        {
-            return (iCalDateTime)base.Copy();
-        }
 
         public DateTime ToTimeZone(iCalTimeZoneInfo tzi)
         {
@@ -511,9 +506,9 @@ namespace DDay.iCal
         {
             if (!string.IsNullOrEmpty(tzid))
             {
-                if (iCalendar != null)
+                if (Calendar != null)
                 {
-                    iCalTimeZone tz = iCalendar.GetTimeZone(tzid);
+                    ICalendarTimeZone tz = Calendar.GetTimeZone(tzid);
                     if (tz != null)
                     {
                         iCalTimeZoneInfo tzi = tz.GetTimeZoneInfo(this);
@@ -529,49 +524,49 @@ namespace DDay.iCal
 
         public iCalDateTime AddYears(int years)
         {
-            iCalDateTime dt = Copy();
+            iCalDateTime dt = Copy<iCalDateTime>();
             dt.Value = Value.AddYears(years);
             return dt;
         }
 
         public iCalDateTime AddMonths(int months)
         {
-            iCalDateTime dt = Copy();
+            iCalDateTime dt = Copy<iCalDateTime>();
             dt.Value = Value.AddMonths(months);
             return dt;
         }
 
         public iCalDateTime AddDays(int days)
         {
-            iCalDateTime dt = Copy();
+            iCalDateTime dt = Copy<iCalDateTime>();
             dt.Value = Value.AddDays(days);
             return dt;
         }
 
         public iCalDateTime AddHours(int hours)
         {
-            iCalDateTime dt = Copy();
+            iCalDateTime dt = Copy<iCalDateTime>();
             dt.Value = Value.AddHours(hours);
             return dt;
         }
 
         public iCalDateTime AddMinutes(int minutes)
         {
-            iCalDateTime dt = Copy();
+            iCalDateTime dt = Copy<iCalDateTime>();
             dt.Value = Value.AddMinutes(minutes);
             return dt;
         }
 
         public iCalDateTime AddSeconds(int seconds)
         {
-            iCalDateTime dt = Copy();
+            iCalDateTime dt = Copy<iCalDateTime>();
             dt.Value = Value.AddSeconds(seconds);
             return dt;
         }
 
         public iCalDateTime AddMilliseconds(int milliseconds)
         {
-            iCalDateTime dt = Copy();
+            iCalDateTime dt = Copy<iCalDateTime>();
             dt.Value = Value.AddMilliseconds(milliseconds);
             return dt;
         }

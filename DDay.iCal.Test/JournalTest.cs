@@ -36,7 +36,7 @@ namespace DDay.iCal.Test
         [Test, Category("Journal")]
         public void JOURNAL1()
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL1.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL1.ics");
             ProgramTest.TestCal(iCal);
             DDay.iCal.Journal j = (DDay.iCal.Journal)iCal.Journals[0];
 
@@ -49,7 +49,7 @@ namespace DDay.iCal.Test
         [Test, Category("Journal")]
         public void JOURNAL2()
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL2.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL2.ics");
             ProgramTest.TestCal(iCal);
             DDay.iCal.Journal j = (DDay.iCal.Journal)iCal.Journals[0];
 

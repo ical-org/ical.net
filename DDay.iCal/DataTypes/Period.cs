@@ -78,17 +78,17 @@ namespace DDay.iCal
         public Period(iCalDateTime start, iCalDateTime end)
             : this()
         {
-            StartTime = start.Copy();
+            StartTime = start.Copy<iCalDateTime>();
             if (end != null)
             {
-                EndTime = end.Copy();
+                EndTime = end.Copy<iCalDateTime>();
                 Duration = new Duration(end.Value - start.Value);
             }            
         }
         public Period(iCalDateTime start, TimeSpan duration)
             : this()
         {
-            StartTime = start.Copy();
+            StartTime = start.Copy<iCalDateTime>();
             if (duration != TimeSpan.MinValue)
             {
                 Duration = new Duration(duration);

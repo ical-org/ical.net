@@ -29,8 +29,8 @@ namespace DDay.iCal.Test
             //
             iCalendarCollection iCalendars = iCalendar.LoadFromFile(@"Calendars\General\USHolidays.ics");
             Assert.IsNotNull(iCalendars, "iCalendar did not load.  Are you connected to the internet?");
-            Assert.AreEqual(1, iCalendars.Count, "iCalendar did not load.  Are you connected to the internet?");            
-            iCalendar iCal = iCalendars[0];
+            Assert.AreEqual(1, iCalendars.Count, "iCalendar did not load.  Are you connected to the internet?");
+            IICalendar iCal = iCalendars[0];
 
             List<Occurrence> occurrences = iCal.GetOccurrences(
              new iCalDateTime(2006, 1, 1, "US-Eastern", iCal),
@@ -93,7 +93,7 @@ namespace DDay.iCal.Test
             Console.WriteLine("Time: " + Math.Round(End.Subtract(Start).TotalMilliseconds) + "ms");
         }
 
-        static public void TestCal(iCalendar iCal)
+        static public void TestCal(IICalendar iCal)
         {
             Assert.IsNotNull(iCal, "The iCalendar was not loaded");
             if (iCal.Events.Count > 0)
@@ -108,7 +108,7 @@ namespace DDay.iCal.Test
             string path = @"Calendars\General\Test1.ics";
             Assert.IsTrue(File.Exists(path), "File '" + path + "' does not exist.");
 
-            iCalendar iCal = iCalendar.LoadFromFile(path)[0];
+            IICalendar iCal = iCalendar.LoadFromFile(path)[0];
             ProgramTest.TestCal(iCal);
         }
 
@@ -119,14 +119,14 @@ namespace DDay.iCal.Test
             path = Path.Combine(path, "Calendars/General/Test1.ics").Replace(@"\", "/");
             path = "file:///" + path;
             Uri uri = new Uri(path);
-            iCalendar iCal = iCalendar.LoadFromUri(uri)[0];
+            IICalendar iCal = iCalendar.LoadFromUri(uri)[0];
             ProgramTest.TestCal(iCal);
         }
 
         [Test]
         public void CATEGORIES()
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\CATEGORIES.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\CATEGORIES.ics");
             ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
@@ -156,7 +156,7 @@ namespace DDay.iCal.Test
         [Test]
         public void GEO1()
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\GEO1.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\GEO1.ics");
             ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
@@ -167,7 +167,7 @@ namespace DDay.iCal.Test
         [Test]
         public void BASE64()
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BASE64.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BASE64.ics");
             ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
@@ -189,7 +189,7 @@ namespace DDay.iCal.Test
         [Test]
         public void BASE64_1()
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BASE64_1.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BASE64_1.ics");
             ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
@@ -204,7 +204,7 @@ namespace DDay.iCal.Test
         [Test, ExpectedException(typeof(WebException))]
         public void BINARY()
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BINARY.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BINARY.ics");
             ProgramTest.TestCal(iCal);
             Event evt = iCal.Events[0];
 
@@ -216,8 +216,8 @@ namespace DDay.iCal.Test
             ms.SetLength(b.Data.Length);
             b.Data.CopyTo(ms.GetBuffer(), 0);
 
-            iCalendar ical = iCalendar.LoadFromStream(ms)[0];
-            Assert.IsNotNull(ical, "Attached iCalendar did not load correctly");
+            IICalendar attachedCal = iCalendar.LoadFromStream(ms)[0];
+            Assert.IsNotNull(attachedCal, "Attached iCalendar did not load correctly");
 
             throw new WebException();
         }
@@ -229,8 +229,8 @@ namespace DDay.iCal.Test
         [Test]
         public void MERGE1()
         {
-            iCalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics");
-            iCalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE22.ics");
+            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics");
+            IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE22.ics");
 
             // Change the UID of the 2nd event to make sure it's different
             iCal2.Events[iCal1.Events[0].UID].UID = "1234567890";
@@ -345,8 +345,8 @@ namespace DDay.iCal.Test
         [Test]
         public void MERGE2()
         {
-            iCalendar iCal = new iCalendar();
-            iCalendar tmp_cal = iCalendar.LoadFromFile(@"Calendars\General\MERGE2.ics");
+            IICalendar iCal = new iCalendar();
+            IICalendar tmp_cal = iCalendar.LoadFromFile(@"Calendars\General\MERGE2.ics");
             iCal.MergeWith(tmp_cal);
 
             tmp_cal = iCalendar.LoadFromFile(@"Calendars\General\MERGE2.ics");
@@ -362,8 +362,8 @@ namespace DDay.iCal.Test
         [Test]
         public void MERGE3()
         {
-            iCalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics");
-            iCalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE23.ics");
+            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics");
+            IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE23.ics");
 
             iCal1.MergeWith(iCal2);
 
@@ -373,7 +373,7 @@ namespace DDay.iCal.Test
         [Test]
         public void UID1()
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BINARY.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BINARY.ics");
             ProgramTest.TestCal(iCal);
 
             Event evt = iCal.Events["uuid1153170430406"];
@@ -383,7 +383,7 @@ namespace DDay.iCal.Test
         [Test]
         public void ADDEVENT1()
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\GEO1.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\GEO1.ics");
             ProgramTest.TestCal(iCal);
 
             Event evt = iCal.Create<Event>();
@@ -403,14 +403,14 @@ namespace DDay.iCal.Test
         [Test]
         public void LANGUAGE1()
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Barça 2006 - 2007.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Barça 2006 - 2007.ics");
         }
 
         [Test]
         public void GOOGLE1()
         {
             TZID tzid = "Europe/Berlin";
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/GoogleCalendar.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/GoogleCalendar.ics");
             Event evt = iCal.Events["594oeajmftl3r9qlkb476rpr3c@google.com"];
             Assert.IsNotNull(evt);
 
@@ -466,7 +466,7 @@ UID:ebfbd3e3-cc1e-4a64-98eb-ced2598b3908
 END:VEVENT
 END:VCALENDAR
 ");
-            iCalendar iCal = iCalendar.LoadFromStream(sr)[0];
+            IICalendar iCal = iCalendar.LoadFromStream(sr)[0];
             Assert.IsTrue(iCal.Events.Count == 2, "There should be 2 events in the parsed calendar");
             Assert.IsNotNull(iCal.Events["fd940618-45e2-4d19-b118-37fd7a8e3906"], "Event fd940618-45e2-4d19-b118-37fd7a8e3906 should exist in the calendar");
             Assert.IsNotNull(iCal.Events["ebfbd3e3-cc1e-4a64-98eb-ced2598b3908"], "Event ebfbd3e3-cc1e-4a64-98eb-ced2598b3908 should exist in the calendar");
@@ -534,19 +534,19 @@ END:VCALENDAR
         [Test]
         public void PRODID1()
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/PRODID1.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/PRODID1.ics");
         }
 
         [Test]
         public void PRODID2()
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/PRODID2.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/PRODID2.ics");
         }
 
         [Test]
         public void Outlook2007_With_Folded_Lines_Using_Tabs_Contains_One_Event()
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Outlook2007LineFolds.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Outlook2007LineFolds.ics");
             List<Occurrence> events = iCal.GetOccurrences(new DateTime(2009, 06, 20), new DateTime(2009, 06, 22));
             Assert.AreEqual(1, events.Count);
         }
@@ -555,7 +555,7 @@ END:VCALENDAR
         public void Outlook2007_With_Folded_Lines_Using_Tabs_Is_Properly_Unwrapped()
         {
             string longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Outlook2007LineFolds.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Outlook2007LineFolds.ics");
             List<Occurrence> events = iCal.GetOccurrences<Event>(new DateTime(2009, 06, 20), new DateTime(2009, 06, 22));
             Assert.AreEqual(longName, ((Event)events[0].Component).Location.Value);
         }

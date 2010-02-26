@@ -17,7 +17,7 @@ namespace DDay.iCal
     [DataContract(Name = "Alarm", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public class Alarm : Component
+    public class Alarm : CalendarComponent
     {
         #region Static Public Methods
 
@@ -160,7 +160,7 @@ namespace DDay.iCal
             {
                 // Ensure that "FromDate" has already been set
                 if (FromDate == null)
-                    FromDate = rc.Start.Copy();
+                    FromDate = rc.Start.Copy<iCalDateTime>();
 
                 Duration d = null;
                 foreach (Occurrence o in rc.GetOccurrences(FromDate, ToDate))
@@ -183,7 +183,16 @@ namespace DDay.iCal
                     Occurrences.Add(new AlarmOccurrence(this, dt + Trigger.Duration, rc));
                 }
             }
-            else Occurrences.Add(new AlarmOccurrence(this, Trigger.DateTime.Copy(), rc));
+            else
+            {
+                Occurrences.Add(
+                    new AlarmOccurrence(
+                        this,
+                        Trigger.DateTime.Copy<iCalDateTime>(),
+                        rc
+                    )
+                );
+            }
 
             // If a REPEAT and DURATION value were specified,
             // then handle those repetitions here.
@@ -231,12 +240,12 @@ namespace DDay.iCal
                 for (int i = 0; i < len; i++)
                 {
                     AlarmOccurrence ao = Occurrences[i];
-                    iCalDateTime alarmTime = ao.DateTime.Copy();
+                    iCalDateTime alarmTime = ao.DateTime.Copy<iCalDateTime>();
 
                     for (int j = 0; j < Repeat; j++)
                     {
                         alarmTime += Duration;
-                        Occurrences.Add(new AlarmOccurrence(this, alarmTime.Copy(), ao.Component));
+                        Occurrences.Add(new AlarmOccurrence(this, alarmTime.Copy<iCalDateTime>(), ao.Component));
                     }
                 }
             }

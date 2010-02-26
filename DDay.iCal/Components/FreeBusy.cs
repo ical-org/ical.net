@@ -13,7 +13,7 @@ namespace DDay.iCal
     [DataContract(Name = "FreeBusy", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public class FreeBusy : Component
+    public class FreeBusy : UniqueComponent
     {
         public FreeBusy()
         {

@@ -36,13 +36,13 @@ namespace DDay.iCal.Serialization
 
         #region Private Fields
 
-        private DDay.iCal.iCalendar m_iCalendar;        
+        private IICalendar m_iCalendar;        
 
         #endregion
 
         #region Public Properties
 
-        public DDay.iCal.iCalendar iCalendar
+        public IICalendar iCalendar
         {
             get { return m_iCalendar; }
             set
@@ -60,7 +60,7 @@ namespace DDay.iCal.Serialization
         #region Constructors
 
         public iCalendarSerializer() { }
-        public iCalendarSerializer(DDay.iCal.iCalendar iCal) : base(iCal)
+        public iCalendarSerializer(IICalendar iCal) : base(iCal)
         {
             iCalendar = iCal;
         }

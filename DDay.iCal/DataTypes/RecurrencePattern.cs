@@ -536,15 +536,6 @@ namespace DDay.iCal
             return true;
         }
 
-        /// <summary>
-        /// Returns a typed copy of the object.
-        /// </summary>
-        /// <returns>A typed copy of the object.</returns>
-        public new RecurrencePattern Copy()
-        {
-            return (RecurrencePattern)base.Copy();
-        }
-
         #endregion
 
         #region Static Methods
@@ -755,7 +746,7 @@ namespace DDay.iCal
             {
                 // Retrieve occurrences that occur on our interval period
                 if (BySetPos.Count == 0 && IsValidDate(FromDate) && !DateTimes.Contains(FromDate))
-                    DateTimes.Add(FromDate.Copy());
+                    DateTimes.Add(FromDate.Copy<iCalDateTime>());
 
                 // Retrieve "extra" occurrences that happen within our interval period
                 if (Frequency > FrequencyType.Secondly)
@@ -764,7 +755,7 @@ namespace DDay.iCal
                     {
                         // Don't add duplicates
                         if (!DateTimes.Contains(dt))
-                            DateTimes.Add(dt.Copy());
+                            DateTimes.Add(dt.Copy<iCalDateTime>());
                     }
                 }
 
@@ -781,7 +772,7 @@ namespace DDay.iCal
 
         public void IncrementDate(ref iCalDateTime dt, int Interval)
         {
-            iCalDateTime old = dt.Copy();
+            iCalDateTime old = dt.Copy<iCalDateTime>();
             switch (Frequency)
             {
                 case FrequencyType.Secondly: dt = old.AddSeconds(Interval); break;
@@ -1137,7 +1128,8 @@ namespace DDay.iCal
             r.EnsureByXXXValues(StartDate);
 
             // Get the occurrences
-            foreach (iCalDateTime occurrence in r.GetOccurrences(StartDate, FromDate.Copy(), ToDate.Copy(), r.Count))
+            foreach (iCalDateTime occurrence in
+                r.GetOccurrences(StartDate, FromDate.Copy<iCalDateTime>(), ToDate.Copy<iCalDateTime>(), r.Count))
             {
                 // NOTE:
                 // Used to be DateTimes.AddRange(r.GetOccurrences(FromDate.Copy(), ToDate, r.Count))
@@ -1441,7 +1433,7 @@ namespace DDay.iCal
                     // Weekly patterns can at most affect
                     // 7 days worth of scheduling.
                     // NOTE: fixes bug #2912657 - missing occurrences
-                    iCalDateTime dt = StartDate.Copy();
+                    iCalDateTime dt = StartDate.Copy<iCalDateTime>();
                     for (int i = 0; i < 7; i++)
                     {
                         if (!Months.Contains(dt.Month))

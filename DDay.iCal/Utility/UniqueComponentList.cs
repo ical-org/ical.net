@@ -17,7 +17,7 @@ namespace DDay.iCal
     [DataContract(Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public class UniqueComponentList<T> : IList<T>
+    public class UniqueComponentList<T> : IUniqueComponentList<T> where T : IUniqueComponent
     {
         #region Private Fields
 
@@ -38,9 +38,9 @@ namespace DDay.iCal
             m_Dictionary.Clear();
             foreach (T item in m_Components)
             {
-                if ((item as UniqueComponent).UID == null)
-                    (item as UniqueComponent).UID = UniqueComponent.NewUID();                
-                m_Dictionary[(item as UniqueComponent).UID] = item;
+                if (item.UID == null)
+                    item.UID = UniqueComponent.NewUID();                
+                m_Dictionary[item.UID] = item;
             }
         }
 
@@ -61,15 +61,15 @@ namespace DDay.iCal
         public void Insert(int index, T item)
         {   
             m_Components.Insert(index, item);
-            if ((item as UniqueComponent).UID != null)
-                m_Dictionary[(item as UniqueComponent).UID] = item;
+            if (item.UID != null)
+                m_Dictionary[item.UID] = item;
         }
 
         public void RemoveAt(int index)
         {
             T item = m_Components[index];
-            if ((item as UniqueComponent).UID != null)
-                m_Dictionary.Remove((item as UniqueComponent).UID);
+            if (item.UID != null)
+                m_Dictionary.Remove(item.UID);
             m_Components.RemoveAt(index);
         }
 
@@ -93,10 +93,10 @@ namespace DDay.iCal
             set
             {
                 T item = m_Components[index];
-                if ((item as UniqueComponent).UID != null)
+                if (item.UID != null)
                 {
-                    m_Dictionary.Remove((item as UniqueComponent).UID);
-                    m_Dictionary[(value as UniqueComponent).UID] = value;
+                    m_Dictionary.Remove(item.UID);
+                    m_Dictionary[(value as IUniqueComponent).UID] = value;
                 }
                 m_Components[index] = value;
             }
@@ -135,8 +135,8 @@ namespace DDay.iCal
             {                
                 m_Components.Add(item);
 
-                UniqueComponent uc = item as UniqueComponent;
-                uc.UIDChanged += new UniqueComponent.UIDChangedEventHandler(UIDChangedHandler);
+                IUniqueComponent uc = item as IUniqueComponent;
+                uc.UIDChanged += new UIDChangedEventHandler(UIDChangedHandler);
 
                 if (uc.UID != null)
                     m_Dictionary[uc.UID] = item;
@@ -155,7 +155,7 @@ namespace DDay.iCal
 
         public bool Remove(T item)
         {
-            return m_Components.Remove(item) && ((item as UniqueComponent).UID == null || m_Dictionary.Remove((item as UniqueComponent).UID));
+            return m_Components.Remove(item) && (item.UID == null || m_Dictionary.Remove(item.UID));
         }
 
         public void Clear()

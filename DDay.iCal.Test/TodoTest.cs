@@ -41,14 +41,13 @@ namespace DDay.iCal.Test
                 
         public void TestTodoActive(string calendar, ArrayList items, params int[] numPeriods)
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
             ProgramTest.TestCal(iCal);
             DDay.iCal.Todo todo = (DDay.iCal.Todo)iCal.Todos[0];
             
             for (int i = 0; i < items.Count; i += 2)
             {
-                iCalDateTime dt = (iCalDateTime)items[i];
-                dt.iCalendar = iCal;
+                iCalDateTime dt = (iCalDateTime)items[i];                
                 dt.TZID = tzid;
 
                 bool tf = (bool)items[i + 1];
@@ -69,14 +68,13 @@ namespace DDay.iCal.Test
 
         public void TestTodoCompleted(string calendar, ArrayList items)
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
             ProgramTest.TestCal(iCal);
             DDay.iCal.Todo todo = (DDay.iCal.Todo)iCal.Todos[0];
             
             for (int i = 0; i < items.Count; i += 2)
             {
-                iCalDateTime dt = (iCalDateTime)items[i];
-                dt.iCalendar = iCal;
+                iCalDateTime dt = (iCalDateTime)items[i];                
                 dt.TZID = tzid;
 
                 bool tf = (bool)items[i + 1];
@@ -195,7 +193,7 @@ namespace DDay.iCal.Test
         [Test, Category("Todo")]
         public void TODO7_1()
         {
-            iCalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\TODO7.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\TODO7.ics");
             DDay.iCal.Todo todo = iCal.Todos[0];
 
             ArrayList items = new ArrayList();
@@ -337,10 +335,11 @@ namespace DDay.iCal.Test
             todo.UID = "b6709c95-5523-46aa-a7e5-1b5ea034b86a";
 
             // Add an alarm in my task 
-            Alarm al = new Alarm(todo);
+            Alarm al = new Alarm();
             al.Action = AlarmAction.Display;
             al.Description = "Reminder";
             al.Trigger = new Trigger();
+            todo.AddAlarm(al);
 
             // Set reminder time 
             al.Trigger.DateTime = new DateTime(2007, 1, 6, 8, 0, 0);

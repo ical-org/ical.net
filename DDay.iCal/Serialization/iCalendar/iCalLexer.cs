@@ -1,4 +1,5 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalLexer.cs"$
+
     using System.Text;   
 
 namespace DDay.iCal.Serialization
@@ -666,7 +667,7 @@ tryAgain:
 		_ttype = IANA_TOKEN;
 		
 		{ // ( ... )+
-			int _cnt110=0;
+			int _cnt103=0;
 			for (;;)
 			{
 				switch ( cached_LA1 )
@@ -715,12 +716,12 @@ tryAgain:
 					}
 				else
 				{
-					if (_cnt110 >= 1) { goto _loop110_breakloop; } else { throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());; }
+					if (_cnt103 >= 1) { goto _loop103_breakloop; } else { throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());; }
 				}
 				break; }
-				_cnt110++;
+				_cnt103++;
 			}
-_loop110_breakloop:			;
+_loop103_breakloop:			;
 		}    // ( ... )+
 		
 		string s = text.ToString(_begin, text.Length-_begin);

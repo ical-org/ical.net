@@ -64,14 +64,14 @@ namespace DDay.iCal.Serialization
 
         #region Private Fields
 
-        private DDay.iCal.CalendarObject m_Object;
+        private ICalendarObject m_Object;
         private ISerializationContext m_SerializationContext;        
 
         #endregion
 
         #region Public Properties
 
-        public DDay.iCal.CalendarObject Object
+        public ICalendarObject Object
         {
             get { return m_Object; }
             set { m_Object = value; }
@@ -85,9 +85,9 @@ namespace DDay.iCal.Serialization
         {
             m_SerializationContext = DDay.iCal.Serialization.SerializationContext.Default;
         }
-        public iCalObjectSerializer(DDay.iCal.CalendarObject iCalObject) : this()
+        public iCalObjectSerializer(ICalendarObject obj) : this()
         {
-            Object = iCalObject;
+            Object = obj;
         }
 
         #endregion

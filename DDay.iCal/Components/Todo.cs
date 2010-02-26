@@ -349,7 +349,7 @@ namespace DDay.iCal
 
         private void EvaluateToPreviousOccurrence(iCalDateTime completedDate, iCalDateTime currDt)
         {
-            iCalDateTime beginningDate = completedDate.Copy();
+            iCalDateTime beginningDate = completedDate.Copy<iCalDateTime>();
             if (RRule != null) foreach (RecurrencePattern rrule in RRule) DetermineStartingRecurrence(rrule, ref beginningDate);
             if (RDate != null) foreach (RecurrenceDates rdate in RDate) DetermineStartingRecurrence(rdate, ref beginningDate);
             if (ExRule != null) foreach (RecurrencePattern exrule in ExRule) DetermineStartingRecurrence(exrule, ref beginningDate);
@@ -363,14 +363,14 @@ namespace DDay.iCal
             foreach (Period p in rdate.Periods)
             {
                 if (p.StartTime < dt)
-                    dt = p.StartTime.Copy();
+                    dt = p.StartTime.Copy<iCalDateTime>();
             }
         }
 
         private void DetermineStartingRecurrence(RecurrencePattern recur, ref iCalDateTime dt)
         {
             if (recur.Count != int.MinValue)
-                dt = DTStart.Copy();
+                dt = DTStart.Copy<iCalDateTime>();
             else recur.IncrementDate(ref dt, -recur.Interval);
         }
 

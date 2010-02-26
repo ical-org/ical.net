@@ -17,7 +17,9 @@ namespace DDay.iCal
     [DataContract(Name = "UniqueComponent", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public class UniqueComponent : Component
+    public class UniqueComponent : 
+        CalendarComponent,
+        IUniqueComponent
     {
         // TODO: Add AddRelationship() public method.
         // This method will add the UID of a related component
@@ -55,228 +57,14 @@ namespace DDay.iCal
         
         #endregion
 
-        #region Public Events
-
-        public delegate void UIDChangedEventHandler(object sender, Text OldUID, Text NewUID);
-
+        #region IUniqueComponent Members
+        
         [field: NonSerialized]
         public event UIDChangedEventHandler UIDChanged;
-
-        #endregion
-
-        #region Public Properties
 
         [Serialized]
 #if DATACONTRACT
         [DataMember(Order = 1)]
-#endif
-        virtual public Binary[] Attach
-        {
-            get { return _Attach; }
-            set { _Attach = value; }
-        }
-
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
-        virtual public Attendee[] Attendee
-        {
-            get { return _Attendee; }
-            set
-            {
-                if (!object.Equals(_Attendee, value))
-                    _Attendee = value;
-            }
-        }
-
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
-        virtual public TextCollection[] Categories
-        {
-            get { return _Categories; }                    
-            set { _Categories = value; }            
-        }
-
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 4)]
-#endif
-        virtual public Text Class
-        {
-            get { return _Class; }
-            set
-            {
-                _Class = value;
-                if (_Class != null)
-                    _Class.Name = "CLASS";
-            }
-        }
-
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 5)]
-#endif
-        virtual public Text[] Comment
-        {
-            get { return _Comment; }
-            set { _Comment = value; }
-        }
-
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 6)]
-#endif
-        virtual public Text[] Contact
-        {
-            get { return _Contact; }
-            set { _Contact = value; }
-        }
-
-        [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
-#if DATACONTRACT
-        [DataMember(Order = 7)]
-#endif
-        virtual public iCalDateTime Created
-        {
-            get { return _Created; }
-            set
-            {
-                _Created = value;
-                if (_Created != null)
-                    _Created.Name = "CREATED";
-            }
-        }
-
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 8)]
-#endif
-        virtual public Text Description
-        {
-            get { return _Description; }
-            set
-            {
-                _Description = value;
-                if (_Description != null)
-                    _Description.Name = "DESCRIPTION";
-            }
-        }
-
-        [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
-#if DATACONTRACT
-        [DataMember(Order = 9)]
-#endif
-        virtual public iCalDateTime DTStamp
-        {
-            get { return _DTStamp; }
-            set
-            {
-                _DTStamp = value;
-                if (_DTStamp != null)
-                    _DTStamp.Name = "DTSTAMP";
-            }
-        }
-
-        [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
-#if DATACONTRACT
-        [DataMember(Order = 10)]
-#endif
-        virtual public iCalDateTime Last_Modified
-        {
-            get { return _Last_Modified; }
-            set
-            {
-                _Last_Modified = value;
-                if (_Last_Modified != null)
-                    _Last_Modified.Name = "LAST-MODIFIED";
-            }
-        }
-
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 11)]
-#endif
-        virtual public Organizer Organizer
-        {
-            get { return _Organizer; }
-            set
-            {
-                if (!object.Equals(_Organizer, value))
-                    _Organizer = value;
-            }
-        }
-
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 12)]
-#endif
-        virtual public Integer Priority
-        {
-            get { return _Priority; }
-            set
-            {
-                _Priority = value;
-                if (_Priority != null)
-                    _Priority.Name = "PRIORITY";
-            }
-        }
-
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 13)]
-#endif
-        virtual public Text[] Related_To
-        {
-            get { return _Related_To; }
-            set { _Related_To = value; }
-        }
-
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 14)]
-#endif
-        virtual public RequestStatus[] Request_Status
-        {
-            get { return _Request_Status; }
-            set { _Request_Status = value; }
-        }
-
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 15)]
-#endif
-        virtual public Integer Sequence
-        {
-            get { return _Sequence; }
-            set
-            {
-                _Sequence = value;
-                if (_Sequence != null)
-                    _Sequence.Name = "SEQUENCE";
-            }
-        }
-
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 16)]
-#endif
-        virtual public Text Summary
-        {
-            get { return _Summary; }
-            set
-            {
-                _Summary = value;
-                if (_Summary != null)
-                    _Summary.Name = "SUMMARY";
-            }
-        }
-
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 17)]
 #endif
         virtual public Text UID
         {
@@ -300,6 +88,218 @@ namespace DDay.iCal
 
                     OnUIDChanged(oldUID, _UID);
                 }
+            }
+        }
+
+        #endregion
+
+        #region Public Properties
+
+        [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
+        virtual public Binary[] Attach
+        {
+            get { return _Attach; }
+            set { _Attach = value; }
+        }
+
+        [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 3)]
+#endif
+        virtual public Attendee[] Attendee
+        {
+            get { return _Attendee; }
+            set
+            {
+                if (!object.Equals(_Attendee, value))
+                    _Attendee = value;
+            }
+        }
+
+        [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 4)]
+#endif
+        virtual public TextCollection[] Categories
+        {
+            get { return _Categories; }                    
+            set { _Categories = value; }            
+        }
+
+        [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 5)]
+#endif
+        virtual public Text Class
+        {
+            get { return _Class; }
+            set
+            {
+                _Class = value;
+                if (_Class != null)
+                    _Class.Name = "CLASS";
+            }
+        }
+
+        [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 6)]
+#endif
+        virtual public Text[] Comment
+        {
+            get { return _Comment; }
+            set { _Comment = value; }
+        }
+
+        [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 7)]
+#endif
+        virtual public Text[] Contact
+        {
+            get { return _Contact; }
+            set { _Contact = value; }
+        }
+
+        [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
+#if DATACONTRACT
+        [DataMember(Order = 8)]
+#endif
+        virtual public iCalDateTime Created
+        {
+            get { return _Created; }
+            set
+            {
+                _Created = value;
+                if (_Created != null)
+                    _Created.Name = "CREATED";
+            }
+        }
+
+        [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 9)]
+#endif
+        virtual public Text Description
+        {
+            get { return _Description; }
+            set
+            {
+                _Description = value;
+                if (_Description != null)
+                    _Description.Name = "DESCRIPTION";
+            }
+        }
+
+        [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
+#if DATACONTRACT
+        [DataMember(Order = 10)]
+#endif
+        virtual public iCalDateTime DTStamp
+        {
+            get { return _DTStamp; }
+            set
+            {
+                _DTStamp = value;
+                if (_DTStamp != null)
+                    _DTStamp.Name = "DTSTAMP";
+            }
+        }
+
+        [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
+#if DATACONTRACT
+        [DataMember(Order = 11)]
+#endif
+        virtual public iCalDateTime Last_Modified
+        {
+            get { return _Last_Modified; }
+            set
+            {
+                _Last_Modified = value;
+                if (_Last_Modified != null)
+                    _Last_Modified.Name = "LAST-MODIFIED";
+            }
+        }
+
+        [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 12)]
+#endif
+        virtual public Organizer Organizer
+        {
+            get { return _Organizer; }
+            set
+            {
+                if (!object.Equals(_Organizer, value))
+                    _Organizer = value;
+            }
+        }
+
+        [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 13)]
+#endif
+        virtual public Integer Priority
+        {
+            get { return _Priority; }
+            set
+            {
+                _Priority = value;
+                if (_Priority != null)
+                    _Priority.Name = "PRIORITY";
+            }
+        }
+
+        [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 14)]
+#endif
+        virtual public Text[] Related_To
+        {
+            get { return _Related_To; }
+            set { _Related_To = value; }
+        }
+
+        [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 15)]
+#endif
+        virtual public RequestStatus[] Request_Status
+        {
+            get { return _Request_Status; }
+            set { _Request_Status = value; }
+        }
+
+        [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 16)]
+#endif
+        virtual public Integer Sequence
+        {
+            get { return _Sequence; }
+            set
+            {
+                _Sequence = value;
+                if (_Sequence != null)
+                    _Sequence.Name = "SEQUENCE";
+            }
+        }
+
+        [Serialized]
+#if DATACONTRACT
+        [DataMember(Order = 17)]
+#endif
+        virtual public Text Summary
+        {
+            get { return _Summary; }
+            set
+            {
+                _Summary = value;
+                if (_Summary != null)
+                    _Summary.Name = "SUMMARY";
             }
         }
 
@@ -627,7 +627,7 @@ namespace DDay.iCal
             // but be determined to be different due to millisecond differences.
             DateTime now = DateTime.Now;
             Created = new iCalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
-            DTStamp = Created.Copy();
+            DTStamp = Created.Copy<iCalDateTime>();
         }
 
         #endregion

@@ -11,8 +11,8 @@ namespace DDay.iCal
 
         public ComponentBaseTypeAttribute(Type ComponentBaseType)
         {
-            if (ComponentBaseType == typeof(Component) ||
-                ComponentBaseType.IsSubclassOf(typeof(Component)))
+            if (ComponentBaseType == typeof(CalendarComponent) ||
+                ComponentBaseType.IsSubclassOf(typeof(CalendarComponent)))
                 Type = ComponentBaseType;
         }
     }

@@ -11,13 +11,13 @@ namespace DDay.iCal.Serialization
     {
         #region Private Fields
 
-        private DDay.iCal.Component m_Component;
+        private ICalendarComponent m_Component;
         
         #endregion
 
         #region Public Properties
 
-        protected Component Component
+        protected ICalendarComponent Component
         {
             get { return m_Component; }
             set
@@ -54,7 +54,7 @@ namespace DDay.iCal.Serialization
         #region Constructors
 
         public ComponentSerializer() {}
-        public ComponentSerializer(DDay.iCal.Component component) : base(component)
+        public ComponentSerializer(ICalendarComponent component) : base(component)
         {
             Component = component;
         }

@@ -40,10 +40,10 @@ icalobject[ISerializationContext ctx] returns [iCalendarCollection iCalendars = 
 	)* 	
 ;
 
-icalbody[ISerializationContext ctx, IICalendar iCal]: (calprop[iCal])* (component[ctx, iCal])?;
+icalbody[ISerializationContext ctx, IICalendar iCal]: (calprop[iCal] | component[ctx, iCal])*; // Allow intermixture of calendar components and calendar properties
 component[ISerializationContext ctx, ICalendarObject o] returns [ICalendarComponent c = null;]: (c=x_comp[ctx, o] | c=iana_comp[ctx, o])+;
-iana_comp[ISerializationContext ctx, ICalendarObject o] returns [ICalendarComponent c = null;]: BEGIN COLON n:IANA_TOKEN {c = o.Calendar.ComponentFactory.Create(n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn(); } (CRLF)* (calendarline[ctx, c])* END COLON IANA_TOKEN (CRLF)* { o.AddChild(c); c.OnLoaded(); };
-x_comp[ISerializationContext ctx, ICalendarObject o] returns [ICalendarComponent c = null;]: BEGIN COLON n:X_NAME {c = o.Calendar.ComponentFactory.Create(n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn(); } (CRLF)* (calendarline[ctx, c])* END COLON X_NAME (CRLF)* { o.AddChild(c); c.OnLoaded(); };
+iana_comp[ISerializationContext ctx, ICalendarObject o] returns [ICalendarComponent c = null;]: BEGIN COLON n:IANA_TOKEN {c = o.Calendar.ComponentFactory.Create(n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn(); } (CRLF)* (contentline[ctx, c])* END COLON IANA_TOKEN (CRLF)* { o.AddChild(c); c.OnLoaded(); };
+x_comp[ISerializationContext ctx, ICalendarObject o] returns [ICalendarComponent c = null;]: BEGIN COLON n:X_NAME {c = o.Calendar.ComponentFactory.Create(n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn(); } (CRLF)* (contentline[ctx, c])* END COLON X_NAME (CRLF)* { o.AddChild(c); c.OnLoaded(); };
 
 // iCalendar Properties
 calprop[IICalendar iCal]: x_prop[iCal] | iana_prop[iCal];
@@ -51,21 +51,22 @@ calprop[IICalendar iCal]: x_prop[iCal] | iana_prop[iCal];
 // NOTE: RFC2445 states that for properties, the value should be a "text" value, not a "value" value.
 // Outlook 2007, however, uses a "value" value in some instances, and will require this for proper
 // parsing.  NOTE: Fixes bug #1874977 - X-MS-OLK-WKHRDAYS won't parse correctly
-iana_prop[IICalendar iCal] {CalendarProperty p; string v;}: n:IANA_TOKEN { p = new CalendarProperty(n.getLine(), n.getColumn()); } (SEMICOLON (param[p] | xparam[p]))* COLON v=value {p.Name = n.getText().ToUpper(); p.Value = v; iCal.Properties.Add(p); } (CRLF)*;
-x_prop[IICalendar iCal] {CalendarProperty p; string v;}: n:X_NAME { p = new CalendarProperty(n.getLine(), n.getColumn()); } (SEMICOLON (param[p] | xparam[p]))* COLON v=value {p.Name = n.getText().ToUpper(); p.Value = v; iCal.Properties.Add(p); } (CRLF)*;
+//
+// Properties:
+iana_prop[ICalendarPropertyListContainer c] {CalendarProperty p; string v;}: n:IANA_TOKEN { p = new CalendarProperty(n.getLine(), n.getColumn()); } (SEMICOLON (param[p] | xparam[p]))* COLON v=value {p.Name = n.getText().ToUpper(); p.Value = v; c.Properties.Add(p); } (CRLF)*;
+x_prop[ICalendarPropertyListContainer c] {CalendarProperty p; string v;}: n:X_NAME { p = new CalendarProperty(n.getLine(), n.getColumn()); } (SEMICOLON (param[p] | xparam[p]))* COLON v=value {p.Name = n.getText().ToUpper(); p.Value = v; c.Properties.Add(p); } (CRLF)*;
 
 // Content Line
-calendarline[ISerializationContext ctx, ICalendarObject o]: contentline[ctx, o] | component[ctx, o]; // Allow for embedded components here (i.e. VALARM)
-contentline[ISerializationContext ctx, ICalendarObject o]
-{
-	IToken currToken = LT(0);
-    ContentLine c = new ContentLine(currToken.getLine() + 1, 0);
-    string n;
-    string v;
-}: n=name {c.Name = n;} (SEMICOLON (param[c] | xparam[c]))* COLON v=value {c.Value = v; DDay.iCal.Serialization.iCalendar.Components.ContentLineSerializer.DeserializeToObject(c, o, ctx); } (CRLF)*;
+contentline[ISerializationContext ctx, ICalendarPropertyListContainer c]:
+(
+	iana_prop[c] |
+	x_prop[c] |
+	component[ctx, c] // Allow for embedded components here (i.e. VALARM)
+); 
 
-name returns [string s = string.Empty;]: x:X_NAME {s = x.getText();} | i:IANA_TOKEN {s = i.getText();};
-param[ICalendarObject o] {Parameter p; string n; string v;}: n=param_name {p = new Parameter(n);} EQUAL v=param_value {p.Values.Add(v);} (COMMA v=param_value {p.Values.Add(v);})* { o.Parameters.Add(p); };
+// Parameters:
+param[ICalendarProperty prop] {CalendarParameter p; string n; string v;}: n=param_name {p = new CalendarParameter(n);} EQUAL v=param_value {p.Values.Add(v);} (COMMA v=param_value {p.Values.Add(v);})* { prop.Parameters.Add(p); };
+xparam[ICalendarProperty prop] { CalendarParameter p; string v;}: n:X_NAME {p = new CalendarParameter(n.getText());} EQUAL v=param_value {p.Values.Add(v);} (COMMA v=param_value {p.Values.Add(v);})* { prop.Parameters.Add(p); };
 param_name returns [string n = string.Empty;]: i:IANA_TOKEN {n = i.getText();};
 param_value returns [string v = string.Empty;]: v=paramtext | v=quoted_string;
 paramtext returns [string s = null;] {StringBuilder sb = new StringBuilder(); string c;}: (c=safe_char {sb.Append(c);})* { s = sb.ToString(); };
@@ -83,9 +84,6 @@ text returns [string s = string.Empty] {string t;}: (t=text_char {s += t;})*;
 // Number handling
 number returns [string s = string.Empty]: n1:NUMBER { s += n1.getText(); } (DOT { s += "."; } n2:NUMBER {s += n2.getText();})?;
 version_number returns [string s = string.Empty] {string t;}: t=number {s += t;} (SEMICOLON {s += ";";} t=number {s += t;})?;
-
-// Parameters
-xparam[ICalendarObject o] { Parameter p; string v;}: n:X_NAME {p = new Parameter(n.getText());} EQUAL v=param_value {p.Values.Add(v);} (COMMA v=param_value {p.Values.Add(v);})* { o.Parameters.Add(p); };
 
 //
 // iCalLexer

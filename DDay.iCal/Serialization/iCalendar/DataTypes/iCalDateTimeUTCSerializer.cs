@@ -17,7 +17,7 @@ namespace DDay.iCal.Serialization
         {
             // Make a copy of the iCalDateTime object, so we don't alter
             // the original
-            DateTime = dt.Copy();
+            DateTime = dt.Copy<iCalDateTime>();
 
             // Set the iCalDateTime object to UTC time
             DateTime = DateTime.UTC;

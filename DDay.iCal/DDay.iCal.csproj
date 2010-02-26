@@ -121,7 +121,9 @@
     <Compile Include="Components\Alarm.cs" />
     <Compile Include="Attributes\DefaultValueAttribute.cs" />
     <Compile Include="Attributes\DefaultValueTypeAttribute.cs" />
-    <Compile Include="Components\UniqueComponentList.cs" />
+    <Compile Include="Interfaces\IICalendarCollection.cs" />
+    <Compile Include="Interfaces\Utility\IUniqueComponentList.cs" />
+    <Compile Include="Utility\UniqueComponentList.cs" />
     <Compile Include="Components\UniqueComponent.cs" />
     <Compile Include="Components\RecurringComponent.cs" />
     <Compile Include="General\CalendarObject.cs" />
