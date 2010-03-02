@@ -21,28 +21,19 @@ namespace DDay.iCal
         #region Private Fields
 
         private List<Period> m_Periods = new List<Period>();
-        private TZID m_TZID;
 
         #endregion
 
         #region Public Properties
 
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         public TZID TZID
         {
-            get
-            {
-                if (m_TZID == null && Parameters.ContainsKey("TZID"))
-                    m_TZID = new TZID(((CalendarParameter)Parameters["TZID"]).Values[0]);
-                return m_TZID;
-            }
-            set { m_TZID = value; }
+            get { return Parameters.Get<TZID>("TZID"); }
+            set { Parameters.Set("TZID", value); }
         }
 
 #if DATACONTRACT
-        [DataMember(Order = 2)]
+        [DataMember(Order = 1)]
 #endif
         public List<Period> Periods
         {

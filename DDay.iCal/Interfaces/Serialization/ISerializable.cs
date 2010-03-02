@@ -10,8 +10,9 @@ namespace DDay.iCal.Serialization
     {
         ISerializationContext SerializationContext { get; set; }
 
-        string SerializeToString();
-        void Serialize(Stream stream, Encoding encoding);
+        string SerializeToString(ICalendarObject obj);
+        void Serialize(ICalendarObject obj, Stream stream, Encoding encoding);
+        object Deserialize(TextReader tr, Type iCalendarType);
         object Deserialize(Stream stream, Encoding encoding, Type iCalendarType);
     }
 }

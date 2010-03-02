@@ -7,8 +7,7 @@ namespace DDay.iCal
     public interface ICalendarValueObject :
         ICalendarObject
     {
-        string Value { get; set; }
-        IList<string> Values { get; set; }
-        string[] ValueArray { get; set; }
+        object Value { get; set; }
+        IList<object> Values { get; set; }
     }
 }

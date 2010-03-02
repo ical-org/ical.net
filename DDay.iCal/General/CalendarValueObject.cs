@@ -14,7 +14,7 @@ namespace DDay.iCal
     {
         #region Private Fields
 
-        private IList<string> m_Values;
+        private IList<object> m_Values;
 
         #endregion
 
@@ -23,19 +23,21 @@ namespace DDay.iCal
         public CalendarValueObject() { Initialize(); }
         public CalendarValueObject(string name) : base(name) { Initialize(); }
         public CalendarValueObject(int line, int col) : base(line, col) { Initialize(); }
-        public CalendarValueObject(string name, string value) : base(name)
+        public CalendarValueObject(string name, object value)
+            : base(name)
         {
             Initialize();
             Value = value;
         }
-        public CalendarValueObject(string name, IList<string> values) : base(name)
+        public CalendarValueObject(string name, IList<object> values)
+            : base(name)
         {
             Values = values;
         }
 
         void Initialize()
         {
-            m_Values = new List<string>();
+            m_Values = new List<object>();
         }
 
         #endregion
@@ -70,7 +72,7 @@ namespace DDay.iCal
 
         #region ICalendarData Members
 
-        virtual public string Value
+        virtual public object Value
         {
             get
             {
@@ -81,35 +83,17 @@ namespace DDay.iCal
             }
             set
             {
-                m_Values = new List<string>(new string[] { value } );
+                m_Values = new List<object>(new object[] { value });
             }
         }
 
 #if DATACONTRACT
         [DataMember(Order = 1)]
 #endif
-        virtual public IList<string> Values
+        virtual public IList<object> Values
         {
             get { return m_Values; }
             set { m_Values = value; }
-        }
-
-        virtual public string[] ValueArray
-        {
-            get
-            {
-                if (m_Values != null)
-                {
-                    string[] values = new string[m_Values.Count];
-                    m_Values.CopyTo(values, 0);
-                    return values;
-                }
-                return null;
-            }
-            set
-            {
-                m_Values = new List<string>(value);
-            }
         }
 
         #endregion

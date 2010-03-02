@@ -6,6 +6,6 @@ namespace DDay.iCal
 {
     public interface ICalendarPropertyList : 
         ICalendarDataList<ICalendarProperty>
-    {
+    {        
     }
 }

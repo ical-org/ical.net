@@ -31,13 +31,18 @@ namespace DDay.iCal
 
         #region Private Methods
 
-        private string[] GetPrivate(string name)
+        private object[] GetPrivate(string name)
         {
             if (name != null && ContainsKey(name))
             {
                 T data = this[name];
-                if (data != null)
-                    return data.ValueArray;
+                if (data != null &&
+                    data.Values != null)
+                {
+                    object[] objs = new object[data.Values.Count];
+                    data.Values.CopyTo(objs, 0);
+                    return objs;
+                }
             }
             return null;
         }
@@ -46,7 +51,7 @@ namespace DDay.iCal
 
         #region ICalendarDataList<T> Members
 
-        public void Set(string name, object value)
+        virtual public void Set(string name, object value)
         {
             if (name != null)
             {
@@ -54,7 +59,7 @@ namespace DDay.iCal
                 {
                     T data = new U();
                     data.Name = name;
-                    data.Value = value.ToString();
+                    data.Value = value;
                 }
                 else
                 {
@@ -63,7 +68,7 @@ namespace DDay.iCal
             }
         }
 
-        public T Get<T>(string name)
+        virtual public T Get<T>(string name)
         {
             object obj = Get(name, typeof(T));
             if (obj is T)
@@ -71,7 +76,7 @@ namespace DDay.iCal
             return default(T);
         }
 
-        public object Get(string name, Type returnType)
+        virtual public object Get(string name, Type returnType)
         {
             if (name != null && ContainsKey(name))
             {
@@ -80,7 +85,7 @@ namespace DDay.iCal
             return null;
         }
 
-        public T[] GetAll<T>(string name)
+        virtual public T[] GetAll<T>(string name)
         {
             object obj = GetAll(name, typeof(T));
             if (obj is T[])
@@ -88,7 +93,7 @@ namespace DDay.iCal
             return null;
         }
 
-        public object[] GetAll(string name, Type returnType)
+        virtual public object[] GetAll(string name, Type returnType)
         {
             if (name != null && ContainsKey(name))
             {

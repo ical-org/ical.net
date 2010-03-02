@@ -26,7 +26,6 @@ namespace DDay.iCal.Test
     {
         private Text nonstandardProperty;
 
-        [Serialized, Nonstandard]
         public Text NonstandardProperty
         {
             get { return nonstandardProperty; }

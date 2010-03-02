@@ -77,25 +77,10 @@ namespace DDay.iCal
             }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
         virtual public TriggerRelation Related
         {
-            get
-            {
-                if (Parameters.ContainsKey("RELATED"))
-                {
-                    CalendarParameter p = (CalendarParameter)Parameters["RELATED"];
-                    if (!string.IsNullOrEmpty(p.Value))
-                        m_Related = (TriggerRelation)Enum.Parse(typeof(TriggerRelation), p.Value, true);
-                }
-                return m_Related;
-            }
-            set
-            {
-                m_Related = value;
-            }
+            get { return Parameters.Get<TriggerRelation>("RELATED"); }
+            set { Parameters.Set("RELATED", value); }
         }
 
         public bool IsRelative

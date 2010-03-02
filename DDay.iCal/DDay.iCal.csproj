@@ -65,6 +65,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -128,7 +129,15 @@
     <Compile Include="Interfaces\General\ICalendarValueObject.cs" />
     <Compile Include="Interfaces\General\ICalendarValueObjectList.cs" />
     <Compile Include="Interfaces\IICalendarCollection.cs" />
+    <Compile Include="Interfaces\Factory\ISerializerFactory.cs" />
     <Compile Include="Interfaces\Utility\IUniqueComponentList.cs" />
+    <Compile Include="Serialization\iCalendarSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\ComponentSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\ParameterSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\PropertySerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\SerializableBase.cs" />
+    <Compile Include="Serialization\iCalendar\DataTypes\DateTimeSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Factory\SerializerFactory.cs" />
     <Compile Include="Utility\UniqueComponentList.cs" />
     <Compile Include="Components\UniqueComponent.cs" />
     <Compile Include="Components\RecurringComponent.cs" />
@@ -170,7 +179,6 @@
     <Compile Include="Serialization\iCalendar\iCalParser.cs" />
     <Compile Include="Serialization\iCalendar\iCalParserHelper.cs" />
     <Compile Include="Serialization\iCalendar\iCalParserTokenTypes.cs" />
-    <Compile Include="Interfaces\Serialization\IParameterSerializable.cs" />
     <Compile Include="Interfaces\Serialization\ISerializable.cs" />
     <Compile Include="Serialization\SerializationContext.cs" />
   </ItemGroup>

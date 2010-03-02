@@ -28,60 +28,14 @@ namespace DDay.iCal
 
         #region Public Properties
 
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         virtual public string Encoding
         {
-            get
-            {
-                if (Parameters.ContainsKey("ENCODING"))
-                {
-                    ICalendarParameter p = (ICalendarParameter)Parameters["ENCODING"];
-                    return p.Value;
-                }
-                return null;
-            }
-            set
-            {
-                if (!string.IsNullOrEmpty(value))
-                {
-                    // Ensure the data type can be encoded in this manner
-                    bool encodable = false;
-                    foreach (EncodableAttribute ea in GetType().GetCustomAttributes(typeof(EncodableAttribute), true))
-                    {
-                        foreach (string Name in ea.Values)
-                            if (Name.ToUpper().Equals(value.ToUpper()))
-                                encodable = true;
-                    }
-
-                    if (!encodable)
-                        throw new NotSupportedException("The " + GetType().Name + " data type does not support " + value.ToUpper() + " encoding.");
-
-                    // Set the encoding via the "ENCODING" parameter
-                    ICalendarParameter p = null;
-                    if (Parameters.ContainsKey("ENCODING"))
-                    {
-                        p = (ICalendarParameter)Parameters["ENCODING"];
-                        p.Value = value.ToUpper();
-                    }
-                    else
-                    {
-                        p = new CalendarParameter("ENCODING", value.ToUpper());
-                        AddParameter(p);
-                    }
-                }
-                else
-                {
-                    // Remove the "ENCODING" parameter
-                    if (Parameters.ContainsKey("ENCODING"))
-                        Parameters.Remove("ENCODING");
-                }
-            }
+            get { return Parameters.Get<string>("ENCODING"); }
+            set { Parameters.Set("ENCODING", value); }
         }
 
 #if DATACONTRACT
-        [DataMember(Order = 2)]
+        [DataMember(Order = 1)]
 #endif
         public string Value
         {
@@ -90,7 +44,7 @@ namespace DDay.iCal
         }
 
 #if DATACONTRACT
-        [DataMember(Order = 3)]
+        [DataMember(Order = 2)]
 #endif
         public byte[] Data
         {

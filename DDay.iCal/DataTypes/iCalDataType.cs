@@ -19,90 +19,69 @@ namespace DDay.iCal
         CalendarProperty,
         ICalendarDataType
     {
-        #region Protected Fields
-
-        protected IICalendar m_Calendar = null;
-        protected CalendarProperty m_Property = null;
-        protected object[] m_Attributes = new object[0];
-
-        #endregion
-
-        #region Public Properties
-
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
-        public object[] Attributes
-        {
-            get { return m_Attributes; }
-            set { m_Attributes = value; }
-        }
-
-        #endregion
-
         #region Overridable Properties & Methods
 
-        virtual public CalendarProperty Property
-        {
-            get { return m_Property; }
-            set
-            {
-                m_Property = value;
-                if (value != null)
-                {
-                    // Assign parameters from the content line
-                    foreach (CalendarParameter p in value.Parameters)
-                        Parameters.Add(p);
+        //virtual public CalendarProperty Property
+        //{
+        //    get { return m_Property; }
+        //    set
+        //    {
+        //        m_Property = value;
+        //        if (value != null)
+        //        {
+        //            // Assign parameters from the content line
+        //            foreach (CalendarParameter p in value.Parameters)
+        //                Parameters.Add(p);
 
-                    // Assign the NAME of the object from the content line
-                    Name = value.Name;
+        //            // Assign the NAME of the object from the content line
+        //            Name = value.Name;
 
-                    // Assign a parent to the object if it doesn't already have one
-                    // NOTE: This assures that some data types will load correctly
-                    // by being associated to an iCalendar.
-                    if (this.Parent == null)
-                        this.Parent = value.Parent;
+        //            // Assign a parent to the object if it doesn't already have one
+        //            // NOTE: This assures that some data types will load correctly
+        //            // by being associated to an iCalendar.
+        //            if (this.Parent == null)
+        //                this.Parent = value.Parent;
 
-                    // Parse the content line
-                    // NOTE: Use the serialization context to determine
-                    // what method of parsing is enabled.
-                    ICalendarDataType icdt = null;
-                    switch(SerializationContext.ParsingMode)
-                    {
-                        case ParsingModeType.Loose:
-                            ICalendarDataType obj = null;
-                            if (TryParseInternal(value.Value, out obj))
-                                icdt = obj as iCalDataType;
-                            break;
-                        case ParsingModeType.Strict:
-                        default:
-                            icdt = Parse(value.Value) as iCalDataType;
-                            break;
-                    }
+        //            // Parse the content line
+        //            // NOTE: Use the serialization context to determine
+        //            // what method of parsing is enabled.
+        //            ICalendarDataType icdt = null;
+        //            switch(SerializationContext.ParsingMode)
+        //            {
+        //                case ParsingModeType.Loose:
+        //                    ICalendarDataType obj = null;
+        //                    if (TryParseInternal(value.Value, out obj))
+        //                        icdt = obj as iCalDataType;
+        //                    break;
+        //                case ParsingModeType.Strict:
+        //                default:
+        //                    icdt = Parse(value.Value) as iCalDataType;
+        //                    break;
+        //            }
                     
-                    if (icdt != null)
-                    {
-                        // Set the parent on the copied object
-                        icdt.Parent = value.Parent;
+        //            if (icdt != null)
+        //            {
+        //                // Set the parent on the copied object
+        //                icdt.Parent = value.Parent;
 
-                        // Unescape values within the data type.
-                        if (icdt is IEscapable)
-                            ((IEscapable)icdt).Unescape();
+        //                // Unescape values within the data type.
+        //                if (icdt is IEscapable)
+        //                    ((IEscapable)icdt).Unescape();
 
-                        CopyFrom(icdt);
+        //                CopyFrom(icdt);
 
-                        // FIXME: is there a way to avoid having to do this twice?
-                        // Assign a parent to the object if it doesn't already have one
-                        // NOTE: this makes sure that some objects have a parent
-                        // in case they lost it while parsing
-                        if (this.Parent == null)
-                            this.Parent = value.Parent;
+        //                // FIXME: is there a way to avoid having to do this twice?
+        //                // Assign a parent to the object if it doesn't already have one
+        //                // NOTE: this makes sure that some objects have a parent
+        //                // in case they lost it while parsing
+        //                if (this.Parent == null)
+        //                    this.Parent = value.Parent;
 
-                        OnLoaded();
-                    }
-                }
-            }
-        }        
+        //                OnLoaded();
+        //            }
+        //        }
+        //    }
+        //}        
         
         virtual public ICalendarDataType Parse(string value)
         {
