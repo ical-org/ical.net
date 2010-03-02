@@ -189,7 +189,7 @@ _loop9_breakloop:			;
 				}
 				case BEGIN:
 				{
-					component(ctx, iCal);
+					components(ctx, iCal);
 					break;
 				}
 				default:
@@ -227,23 +227,19 @@ _loop12_breakloop:			;
 		 }
 	}
 	
-	public ICalendarComponent  component(
+	public void components(
 		ISerializationContext ctx, ICalendarObject o
 	) //throws RecognitionException, TokenStreamException
 {
-		ICalendarComponent c = null;;
 		
 		
 		{ // ( ... )+
 			int _cnt15=0;
 			for (;;)
 			{
-				if ((LA(1)==BEGIN) && (LA(2)==COLON) && (LA(3)==X_NAME))
+				if ((LA(1)==BEGIN) && (LA(2)==COLON) && (LA(3)==IANA_TOKEN||LA(3)==X_NAME))
 				{
-					c=x_comp(ctx, o);
-				}
-				else if ((LA(1)==BEGIN) && (LA(2)==COLON) && (LA(3)==IANA_TOKEN)) {
-					c=iana_comp(ctx, o);
+					component(ctx, o);
 				}
 				else
 				{
@@ -254,22 +250,51 @@ _loop12_breakloop:			;
 			}
 _loop15_breakloop:			;
 		}    // ( ... )+
-		return c;
 	}
 	
-	public ICalendarComponent  x_comp(
+	public ICalendarComponent  component(
 		ISerializationContext ctx, ICalendarObject o
 	) //throws RecognitionException, TokenStreamException
 {
 		ICalendarComponent c = null;;
 		
 		IToken  n = null;
+		IToken  m = null;
 		
 		match(BEGIN);
 		match(COLON);
-		n = LT(1);
-		match(X_NAME);
-		c = o.Calendar.ComponentFactory.Create(n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn();
+		{
+			switch ( LA(1) )
+			{
+			case IANA_TOKEN:
+			{
+				n = LT(1);
+				match(IANA_TOKEN);
+				c = o.Calendar.ComponentFactory.Create(n.getText().ToLower());
+				break;
+			}
+			case X_NAME:
+			{
+				m = LT(1);
+				match(X_NAME);
+				c = o.Calendar.ComponentFactory.Create(m.getText().ToLower());
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			 }
+		}
+		
+			// Add the component as a child immediately, in case
+			// embedded components need to access this component,
+			// or the iCalendar itself.
+			o.AddChild(c); 
+			
+			c.Line = n.getLine();
+			c.Column = n.getColumn();
+		
 		{    // ( ... )*
 			for (;;)
 			{
@@ -279,11 +304,11 @@ _loop15_breakloop:			;
 				}
 				else
 				{
-					goto _loop25_breakloop;
+					goto _loop19_breakloop;
 				}
 				
 			}
-_loop25_breakloop:			;
+_loop19_breakloop:			;
 		}    // ( ... )*
 		{    // ( ... )*
 			for (;;)
@@ -294,76 +319,11 @@ _loop25_breakloop:			;
 				}
 				else
 				{
-					goto _loop27_breakloop;
+					goto _loop21_breakloop;
 				}
 				
 			}
-_loop27_breakloop:			;
-		}    // ( ... )*
-		match(END);
-		match(COLON);
-		match(X_NAME);
-		{    // ( ... )*
-			for (;;)
-			{
-				if ((LA(1)==CRLF))
-				{
-					match(CRLF);
-				}
-				else
-				{
-					goto _loop29_breakloop;
-				}
-				
-			}
-_loop29_breakloop:			;
-		}    // ( ... )*
-		o.AddChild(c); c.OnLoaded();
-		return c;
-	}
-	
-	public ICalendarComponent  iana_comp(
-		ISerializationContext ctx, ICalendarObject o
-	) //throws RecognitionException, TokenStreamException
-{
-		ICalendarComponent c = null;;
-		
-		IToken  n = null;
-		
-		match(BEGIN);
-		match(COLON);
-		n = LT(1);
-		match(IANA_TOKEN);
-		c = o.Calendar.ComponentFactory.Create(n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn();
-		{    // ( ... )*
-			for (;;)
-			{
-				if ((LA(1)==CRLF))
-				{
-					match(CRLF);
-				}
-				else
-				{
-					goto _loop18_breakloop;
-				}
-				
-			}
-_loop18_breakloop:			;
-		}    // ( ... )*
-		{    // ( ... )*
-			for (;;)
-			{
-				if ((LA(1)==BEGIN||LA(1)==IANA_TOKEN||LA(1)==X_NAME))
-				{
-					contentline(ctx, c);
-				}
-				else
-				{
-					goto _loop20_breakloop;
-				}
-				
-			}
-_loop20_breakloop:			;
+_loop21_breakloop:			;
 		}    // ( ... )*
 		match(END);
 		match(COLON);
@@ -377,13 +337,13 @@ _loop20_breakloop:			;
 				}
 				else
 				{
-					goto _loop22_breakloop;
+					goto _loop23_breakloop;
 				}
 				
 			}
-_loop22_breakloop:			;
+_loop23_breakloop:			;
 		}    // ( ... )*
-		o.AddChild(c); c.OnLoaded();
+		c.OnLoaded();
 		return c;
 	}
 	
@@ -458,11 +418,11 @@ _loop22_breakloop:			;
 				}
 				else
 				{
-					goto _loop40_breakloop;
+					goto _loop34_breakloop;
 				}
 				
 			}
-_loop40_breakloop:			;
+_loop34_breakloop:			;
 		}    // ( ... )*
 		match(COLON);
 		v=value();
@@ -476,11 +436,11 @@ _loop40_breakloop:			;
 				}
 				else
 				{
-					goto _loop42_breakloop;
+					goto _loop36_breakloop;
 				}
 				
 			}
-_loop42_breakloop:			;
+_loop36_breakloop:			;
 		}    // ( ... )*
 	}
 	
@@ -523,11 +483,11 @@ _loop42_breakloop:			;
 				}
 				else
 				{
-					goto _loop34_breakloop;
+					goto _loop28_breakloop;
 				}
 				
 			}
-_loop34_breakloop:			;
+_loop28_breakloop:			;
 		}    // ( ... )*
 		match(COLON);
 		v=value();
@@ -541,11 +501,11 @@ _loop34_breakloop:			;
 				}
 				else
 				{
-					goto _loop36_breakloop;
+					goto _loop30_breakloop;
 				}
 				
 			}
-_loop36_breakloop:			;
+_loop30_breakloop:			;
 		}    // ( ... )*
 	}
 	
@@ -572,11 +532,11 @@ _loop36_breakloop:			;
 				}
 				else
 				{
-					goto _loop47_breakloop;
+					goto _loop41_breakloop;
 				}
 				
 			}
-_loop47_breakloop:			;
+_loop41_breakloop:			;
 		}    // ( ... )*
 		prop.Parameters.Add(p);
 	}
@@ -606,11 +566,11 @@ _loop47_breakloop:			;
 				}
 				else
 				{
-					goto _loop50_breakloop;
+					goto _loop44_breakloop;
 				}
 				
 			}
-_loop50_breakloop:			;
+_loop44_breakloop:			;
 		}    // ( ... )*
 		prop.Parameters.Add(p);
 	}
@@ -631,11 +591,11 @@ _loop50_breakloop:			;
 				}
 				else
 				{
-					goto _loop58_breakloop;
+					goto _loop52_breakloop;
 				}
 				
 			}
-_loop58_breakloop:			;
+_loop52_breakloop:			;
 		}    // ( ... )*
 		v = sb.ToString();
 		return v;
@@ -718,11 +678,11 @@ _loop58_breakloop:			;
 				}
 				else
 				{
-					goto _loop55_breakloop;
+					goto _loop49_breakloop;
 				}
 				
 			}
-_loop55_breakloop:			;
+_loop49_breakloop:			;
 		}    // ( ... )*
 		s = sb.ToString();
 		return s;
@@ -745,11 +705,11 @@ _loop55_breakloop:			;
 				}
 				else
 				{
-					goto _loop61_breakloop;
+					goto _loop55_breakloop;
 				}
 				
 			}
-_loop61_breakloop:			;
+_loop55_breakloop:			;
 		}    // ( ... )*
 		match(DQUOTE);
 		s = sb.ToString();
@@ -842,11 +802,11 @@ _loop61_breakloop:			;
 				}
 				else
 				{
-					goto _loop74_breakloop;
+					goto _loop68_breakloop;
 				}
 				
 			}
-_loop74_breakloop:			;
+_loop68_breakloop:			;
 		}    // ( ... )*
 		return s;
 	}

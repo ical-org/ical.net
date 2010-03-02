@@ -1,4 +1,7 @@
-// The following is a grammar file for ANTLR 2.7.6.
+// The following is a grammar file to parse
+// iCalendar (.ics) files.  This grammar is
+// designed for ANTLR 2.7.6.
+//
 // Copyright (c) 2010 Douglas Day
 //
 header
@@ -31,32 +34,49 @@ icalobject[ISerializationContext ctx] returns [iCalendarCollection iCalendars = 
 		icalbody[ctx, iCal]
 		END COLON VCALENDAR (CRLF)*
 		{
-			if (iCal != null)
-			{
-				iCal.OnLoaded();
-				iCalendars.Add(iCal);
-			}
+			iCal.OnLoaded();
+			iCalendars.Add(iCal);
 		}
 	)* 	
 ;
 
-icalbody[ISerializationContext ctx, IICalendar iCal]: (calprop[iCal] | component[ctx, iCal])*; // Allow intermixture of calendar components and calendar properties
-component[ISerializationContext ctx, ICalendarObject o] returns [ICalendarComponent c = null;]: (c=x_comp[ctx, o] | c=iana_comp[ctx, o])+;
-iana_comp[ISerializationContext ctx, ICalendarObject o] returns [ICalendarComponent c = null;]: BEGIN COLON n:IANA_TOKEN {c = o.Calendar.ComponentFactory.Create(n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn(); } (CRLF)* (contentline[ctx, c])* END COLON IANA_TOKEN (CRLF)* { o.AddChild(c); c.OnLoaded(); };
-x_comp[ISerializationContext ctx, ICalendarObject o] returns [ICalendarComponent c = null;]: BEGIN COLON n:X_NAME {c = o.Calendar.ComponentFactory.Create(n.getText().ToLower()); c.Line = n.getLine(); c.Column = n.getColumn(); } (CRLF)* (contentline[ctx, c])* END COLON X_NAME (CRLF)* { o.AddChild(c); c.OnLoaded(); };
+// iCalendar body
+// NOTE: We allow intermixture of calendar components and calendar properties
+icalbody[ISerializationContext ctx, IICalendar iCal]: (calprop[iCal] | components[ctx, iCal])*;
+
+// iCalendar components
+components[ISerializationContext ctx, ICalendarObject o]: (component[ctx, o])+;
+component[ISerializationContext ctx, ICalendarObject o] returns [ICalendarComponent c = null;]:
+BEGIN COLON
+(
+	n:IANA_TOKEN { c = o.Calendar.ComponentFactory.Create(n.getText().ToLower()); } | 
+	m:X_NAME { c = o.Calendar.ComponentFactory.Create(m.getText().ToLower()); }
+)
+{
+	// Add the component as a child immediately, in case
+	// embedded components need to access this component,
+	// or the iCalendar itself.
+	o.AddChild(c); 
+	
+	c.Line = n.getLine();
+	c.Column = n.getColumn();
+}
+(CRLF)*
+(contentline[ctx, c])*
+END COLON IANA_TOKEN (CRLF)* { c.OnLoaded(); };
 
 // iCalendar Properties
-calprop[IICalendar iCal]: x_prop[iCal] | iana_prop[iCal];
+calprop[ISerializationContext ctx, IICalendar iCal]: x_prop[ctx, iCal] | iana_prop[ctx, iCal];
 
-// NOTE: RFC2445 states that for properties, the value should be a "text" value, not a "value" value.
+// NOTE: RFC5545 states that for properties, the value should be a "text" value, not a "value" value.
 // Outlook 2007, however, uses a "value" value in some instances, and will require this for proper
 // parsing.  NOTE: Fixes bug #1874977 - X-MS-OLK-WKHRDAYS won't parse correctly
 //
 // Properties:
-iana_prop[ICalendarPropertyListContainer c] {CalendarProperty p; string v;}: n:IANA_TOKEN { p = new CalendarProperty(n.getLine(), n.getColumn()); } (SEMICOLON (param[p] | xparam[p]))* COLON v=value {p.Name = n.getText().ToUpper(); p.Value = v; c.Properties.Add(p); } (CRLF)*;
-x_prop[ICalendarPropertyListContainer c] {CalendarProperty p; string v;}: n:X_NAME { p = new CalendarProperty(n.getLine(), n.getColumn()); } (SEMICOLON (param[p] | xparam[p]))* COLON v=value {p.Name = n.getText().ToUpper(); p.Value = v; c.Properties.Add(p); } (CRLF)*;
+iana_prop[ISerializationContext ctx, ICalendarPropertyListContainer c] {CalendarProperty p; string v;}: n:IANA_TOKEN { p = new CalendarProperty(n.getLine(), n.getColumn()); } (SEMICOLON (param[p] | xparam[p]))* COLON v=value {p.Name = n.getText().ToUpper(); p.Value = v; c.Properties.Add(p); } (CRLF)*;
+x_prop[ISerializationContext ctx, ICalendarPropertyListContainer c] {CalendarProperty p; string v;}: n:X_NAME { p = new CalendarProperty(n.getLine(), n.getColumn()); } (SEMICOLON (param[p] | xparam[p]))* COLON v=value {p.Name = n.getText().ToUpper(); p.Value = v; c.Properties.Add(p); } (CRLF)*;
 
-// Content Line
+// Content Lines
 contentline[ISerializationContext ctx, ICalendarPropertyListContainer c]:
 (
 	iana_prop[c] |
