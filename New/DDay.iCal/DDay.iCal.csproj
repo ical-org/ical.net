@@ -1,0 +1,152 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F88DB6D3-CB95-4707-9C88-B53403AADC61}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DDay.iCal</RootNamespace>
+    <AssemblyName>DDay.iCal</AssemblyName>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <PublishUrl>http://localhost/DDay.iCal/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationVersion>0.0.0.%2a</ApplicationVersion>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <StartupObject>
+    </StartupObject>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;DATACONTRACT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\DDay.iCal.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;DATACONTRACT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\DDay.iCal.XML</DocumentationFile>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="antlr.runtime, Version=2.7.6.2, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\antlr.runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="General\CalendarObject.cs" />
+    <Compile Include="General\CalendarObjectBase.cs" />
+    <Compile Include="General\CalendarParameter.cs" />
+    <Compile Include="General\CalendarParameterList.cs" />
+    <Compile Include="General\CalendarProperty.cs" />
+    <Compile Include="General\CalendarPropertyList.cs" />
+    <Compile Include="Interfaces\Components\IEvent.cs" />
+    <Compile Include="Interfaces\Components\IFreeBusy.cs" />
+    <Compile Include="Interfaces\Components\IJournal.cs" />
+    <Compile Include="Interfaces\Components\ITimeZone.cs" />
+    <Compile Include="Interfaces\Components\ITodo.cs" />
+    <Compile Include="Interfaces\DataTypes\IAlarmOccurrence.cs" />
+    <Compile Include="Interfaces\DataTypes\IDateTime.cs" />
+    <Compile Include="Interfaces\DataTypes\IOccurrence.cs" />
+    <Compile Include="Interfaces\DataTypes\IText.cs" />
+    <Compile Include="Interfaces\Components\ITimeZoneInfo.cs" />
+    <Compile Include="Interfaces\DataTypes\ITZID.cs" />
+    <Compile Include="Interfaces\DataTypes\IURI.cs" />
+    <Compile Include="Interfaces\Factory\IObjectFactory.cs" />
+    <Compile Include="Interfaces\IICalendarCollection.cs" />
+    <Compile Include="Interfaces\Factory\ISerializerFactory.cs" />
+    <Compile Include="Interfaces\Utility\IUniqueComponentList.cs" />
+    <Compile Include="Interfaces\Components\IRecurringComponent.cs" />
+    <Compile Include="Interfaces\Components\IUniqueComponent.cs" />
+    <Compile Include="Interfaces\DataTypes\ICalendarDataType.cs" />
+    <Compile Include="Interfaces\Components\ICalendarComponent.cs" />
+    <Compile Include="Interfaces\DataTypes\IEscapable.cs" />
+    <Compile Include="Interfaces\Factory\ICalendarComponentFactory.cs" />
+    <Compile Include="Interfaces\General\ICalendarObjectList.cs" />
+    <Compile Include="Interfaces\General\ICalendarPropertyList.cs" />
+    <Compile Include="Interfaces\General\ICalendarObject.cs" />
+    <Compile Include="Interfaces\General\ICalendarParameter.cs" />
+    <Compile Include="Interfaces\General\ICalendarParameterList.cs" />
+    <Compile Include="Interfaces\General\ICalendarParameterListContainer.cs" />
+    <Compile Include="Interfaces\General\ICalendarProperty.cs" />
+    <Compile Include="Interfaces\General\ICalendarPropertyListContainer.cs" />
+    <Compile Include="Interfaces\Utility\ICopyable.cs" />
+    <Compile Include="Interfaces\Utility\ILoadable.cs" />
+    <Compile Include="Interfaces\Utility\IMergeable.cs" />
+    <Compile Include="Interfaces\IICalendar.cs" />
+    <Compile Include="Interfaces\Serialization\ISerializationContext.cs" />
+    <Compile Include="Interfaces\Utility\IKeyedList.cs" />
+    <Compile Include="Interfaces\Utility\IKeyedObject.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Properties\AssemblyInfo.cs.template" />
+    <Compile Include="Interfaces\Serialization\ISerializable.cs" />
+    <Compile Include="Utility\KeyedList.cs" />
+    <Compile Include="Utility\KnownTypeHelper.cs" />
+    <Compile Include="Utility\UniqueComponentList.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="License.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent>$(SolutionDir)subwcrev.exe $(ProjectDir). $(ProjectDir)Properties\AssemblyInfo.cs.template $(ProjectDir)Properties\AssemblyInfo.cs</PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
