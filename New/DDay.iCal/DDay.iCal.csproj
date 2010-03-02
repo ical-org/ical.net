@@ -74,12 +74,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\ComponentFactoryAttribute.cs" />
+    <Compile Include="Components\CalendarComponent.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="DataTypes\EncodableDataType.cs" />
+    <Compile Include="DataTypes\CalendarDataType.cs" />
+    <Compile Include="DataTypes\Text.cs" />
+    <Compile Include="Factory\UIDFactory.cs" />
     <Compile Include="General\CalendarObject.cs" />
     <Compile Include="General\CalendarObjectBase.cs" />
     <Compile Include="General\CalendarParameter.cs" />
     <Compile Include="General\CalendarParameterList.cs" />
     <Compile Include="General\CalendarProperty.cs" />
     <Compile Include="General\CalendarPropertyList.cs" />
+    <Compile Include="iCalendar.cs" />
+    <Compile Include="iCalendarCollection.cs" />
     <Compile Include="Interfaces\Components\IEvent.cs" />
     <Compile Include="Interfaces\Components\IFreeBusy.cs" />
     <Compile Include="Interfaces\Components\IJournal.cs" />
@@ -88,6 +97,7 @@
     <Compile Include="Interfaces\DataTypes\IAlarmOccurrence.cs" />
     <Compile Include="Interfaces\DataTypes\IDateTime.cs" />
     <Compile Include="Interfaces\DataTypes\IOccurrence.cs" />
+    <Compile Include="Interfaces\DataTypes\IRecurrencePattern.cs" />
     <Compile Include="Interfaces\DataTypes\IText.cs" />
     <Compile Include="Interfaces\Components\ITimeZoneInfo.cs" />
     <Compile Include="Interfaces\DataTypes\ITZID.cs" />
@@ -119,7 +129,19 @@
     <Compile Include="Interfaces\Utility\IKeyedObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Properties\AssemblyInfo.cs.template" />
+    <None Include="Serialization\iCalendar\iCal.g" />
     <Compile Include="Interfaces\Serialization\ISerializable.cs" />
+    <Compile Include="Serialization\iCalendarSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\ComponentSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\ParameterSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\PropertySerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Components\SerializableBase.cs" />
+    <Compile Include="Serialization\iCalendar\Factory\SerializerFactory.cs" />
+    <Compile Include="Serialization\iCalendar\iCalLexer.cs" />
+    <Compile Include="Serialization\iCalendar\iCalParser.cs" />
+    <Compile Include="Serialization\iCalendar\iCalParserHelper.cs" />
+    <Compile Include="Serialization\iCalendar\iCalParserTokenTypes.cs" />
+    <Compile Include="Serialization\SerializationContext.cs" />
     <Compile Include="Utility\KeyedList.cs" />
     <Compile Include="Utility\KnownTypeHelper.cs" />
     <Compile Include="Utility\UniqueComponentList.cs" />
@@ -135,6 +157,7 @@
     <Content Include="License.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Serialization\iCalendar\iCalParserTokenTypes.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

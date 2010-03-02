@@ -31,7 +31,14 @@ namespace DDay.iCal
             Set(name, new string[] { value });
         }
 
-        public string[] Get(string name)
+        public string Get(string name)
+        {
+            if (name != null && ContainsKey(name))
+                return this[name].Value;
+            return null;
+        }
+
+        public string[] GetAll(string name)
         {
             if (name != null && ContainsKey(name))
             {

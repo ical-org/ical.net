@@ -9,6 +9,7 @@ namespace DDay.iCal
     {
         void Set(string name, string[] values);
         void Set(string name, string value);
-        string[] Get(string name);
+        string Get(string name);
+        string[] GetAll(string name);
     }
 }

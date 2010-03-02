@@ -5,7 +5,8 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface IText :
-        ICalendarDataType
+        ICalendarDataType,
+        IEscapable
     {
         string Value { get; set; }
     }
