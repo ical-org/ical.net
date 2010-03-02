@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace DDay.iCal
+{
+    public interface ICalendarParameter :
+        ICalendarObject,
+        IKeyedObject<string>
+    {
+        string Value { get; set; }
+        string[] Values { get; set; }
+    }
+}
