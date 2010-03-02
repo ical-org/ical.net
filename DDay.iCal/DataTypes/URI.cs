@@ -101,7 +101,7 @@ namespace DDay.iCal
             return Value.GetHashCode();
         }
 
-        public override bool TryParse(string value, ref ICalendarObject obj)
+        public override bool TryParse(string value, ref ICalendarDataType obj)
         {
             URI uri = (URI)obj;
 

@@ -151,7 +151,7 @@ namespace DDay.iCal
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref ICalendarObject obj)
+        public override bool TryParse(string value, ref ICalendarDataType obj)
         {
             Period p = (Period)obj;
 
@@ -163,9 +163,9 @@ namespace DDay.iCal
             p.EndTime = new iCalDateTime();
             p.Duration = new Duration();
 
-            ICalendarObject st = p.StartTime;
-            ICalendarObject et = p.EndTime;
-            ICalendarObject d = p.Duration;
+            ICalendarDataType st = p.StartTime;
+            ICalendarDataType et = p.EndTime;
+            ICalendarDataType d = p.Duration;
 
             bool retVal = p.StartTime.TryParse(values[0], ref st) &&
                 (

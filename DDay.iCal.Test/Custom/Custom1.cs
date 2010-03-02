@@ -5,7 +5,7 @@ using DDay.iCal.Serialization;
 
 namespace DDay.iCal.Test
 {
-    [ComponentBaseType(typeof(CustomComponentBase1))]
+    [ComponentFactory(typeof(CustomComponentBase1))]
     public class CustomICal1 : iCalendar
     {
     }

@@ -91,28 +91,5 @@ namespace DDay.iCal
 #endif
 
         #endregion
-
-        #region Overrides
-
-        protected override System.Collections.Generic.List<object> SerializedItems
-        {
-            get
-            {
-                //
-                // Get a list of all the public fields and properties
-                // that are marked as Serialized.
-                //
-                List<object> List = new List<object>();
-                foreach (FieldInfo fi in GetType().GetFields())
-                    if (fi.GetCustomAttributes(typeof(SerializedAttribute), true).Length > 0)
-                        List.Add(fi);
-                foreach (PropertyInfo pi in GetType().GetProperties())
-                    if (pi.GetCustomAttributes(typeof(SerializedAttribute), true).Length > 0)
-                        List.Add(pi);
-                return List;
-            }
-        }
-
-        #endregion
     }
 }

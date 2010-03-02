@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace DDay.iCal
 {
     /// <summary>
-    /// Represents an RFC 2445 floating-point decimal value.
+    /// Represents an RFC 5545 floating-point decimal value.
     /// </summary>
     [DebuggerDisplay("{Value}")]
     [Encodable("BASE64,8BIT,7BIT")]
@@ -76,7 +76,7 @@ namespace DDay.iCal
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref ICalendarObject obj)
+        public override bool TryParse(string value, ref ICalendarDataType obj)
         {
             if (!base.TryParse(value, ref obj))
                 return false;

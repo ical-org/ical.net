@@ -11,7 +11,7 @@ using System.Runtime.Serialization;
 namespace DDay.iCal
 {
     /// <summary>
-    /// A class that represents an RFC 2445 VJOURNAL component.
+    /// A class that represents an RFC 5545 VJOURNAL component.
     /// </summary>
     [DebuggerDisplay("{Summary}: {(Description.ToString().Length < 32) ? Description.ToString() : Description.ToString().Substring(0, 32)}")]
 #if DATACONTRACT
@@ -20,22 +20,12 @@ namespace DDay.iCal
     [Serializable]
     public class Journal : RecurringComponent
     {
-        #region Private Fields
-        
-        private JournalStatus m_Status;               
-
-        #endregion
-
         #region Public Properties
         
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         public JournalStatus Status
         {
-            get { return m_Status; }
-            set { m_Status = value; }
+            get { return Properties.Get<JournalStatus>("STATUS"); }
+            set { Properties.Set("STATUS", value); }
         } 
 
         #endregion
@@ -44,8 +34,7 @@ namespace DDay.iCal
 
         static public Journal Create(iCalendar iCal)
         {
-            Journal j = iCal.Create<Journal>();
-            return j;
+            return iCal.Create<Journal>();
         }
 
         #endregion

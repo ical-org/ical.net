@@ -113,7 +113,7 @@ namespace DDay.iCal
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref ICalendarObject obj)
+        public override bool TryParse(string value, ref ICalendarDataType obj)
         {
             UTC_Offset utco = (UTC_Offset)obj;
             Match match = Regex.Match(value, @"(\+|-)(\d{2})(\d{2})(\d{2})?");

@@ -117,7 +117,7 @@ namespace DDay.iCal
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref ICalendarObject obj)
+        public override bool TryParse(string value, ref ICalendarDataType obj)
         {
             if (!base.TryParse(value, ref obj))
                 return false;
@@ -154,7 +154,7 @@ namespace DDay.iCal
         {
             Text t = new Text();
             t.Encoding = Encoding;
-            ICalendarObject obj = t;
+            ICalendarDataType obj = t;
             if (t.TryParse(value, ref obj))
                 return t;
             return null;

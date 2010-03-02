@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("DDay.iCal.Test")]
-[assembly: AssemblyDescription("An iCalendar (RFC 2445) testing application.")]
+[assembly: AssemblyDescription("An iCalendar (RFC 5545) testing application.")]
 [assembly: AssemblyConfiguration("Beta")]
 [assembly: AssemblyCompany("DDay Software - ddaysoftware.com")]
 [assembly: AssemblyProduct("DDay.iCal.Test")]

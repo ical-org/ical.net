@@ -4,11 +4,8 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public interface ICalendarPropertyList :
-        IKeyedList<ICalendarProperty, string> 
+    public interface ICalendarPropertyList : 
+        ICalendarDataList<ICalendarProperty>
     {
-        void Set(string name, object value);
-        T Get<T>(string name);        
-        object Get(string name, Type returnType);
     }
 }

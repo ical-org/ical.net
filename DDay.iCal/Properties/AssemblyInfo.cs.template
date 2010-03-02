@@ -7,7 +7,7 @@ using System.Security;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("DDay.iCal")]
-[assembly: AssemblyDescription("An iCalendar (RFC 2445) control library. See ddaysoftware.com for details.")]
+[assembly: AssemblyDescription("An iCalendar (RFC 5545) control library. See ddaysoftware.com for details.")]
 [assembly: AssemblyConfiguration("Beta")]
 [assembly: AssemblyCompany("DDay Software - ddaysoftware.com")]
 [assembly: AssemblyProduct("DDay.iCal")]

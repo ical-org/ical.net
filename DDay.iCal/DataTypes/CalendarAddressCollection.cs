@@ -107,7 +107,7 @@ namespace DDay.iCal
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref ICalendarObject obj)
+        public override bool TryParse(string value, ref ICalendarDataType obj)
         {
             CalendarAddressCollection cac = obj as CalendarAddressCollection;
             if (cac != null)

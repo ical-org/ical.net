@@ -43,70 +43,70 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Static Public Methods
+        //#region Static Public Methods
 
-        /// <summary>
-        /// Loads an iCalendar component (Event, Todo, Journal, etc.) from an open stream.
-        /// </summary>
-        /// <param name="s">The stream from which to load the iCalendar component</param>
-        /// <returns>A <see cref="ComponentBase"/> object</returns>
-        static public CalendarComponent LoadFromStream(Stream s) { return LoadFromStream<ComponentSerializer>(null, s, Encoding.UTF8); }
-        static public CalendarComponent LoadFromStream(TextReader tr) { return LoadFromStream<ComponentSerializer>(null, tr); }
-        static public T LoadFromStream<T>(TextReader tr) where T : CalendarComponent
-        {
-            return LoadFromStream<T, ComponentSerializer>(tr);
-        }
-        static public T LoadFromStream<T>(Stream s, Encoding encoding) where T : CalendarComponent
-        {
-            return LoadFromStream<T, ComponentSerializer>(s, encoding);
-        }
-        static public T LoadFromStream<T, U>(TextReader tr)
-            where T : CalendarComponent
-            where U : DDay.iCal.Serialization.ISerializable
-        {
-            if (typeof(T) == typeof(CalendarComponent) ||
-                typeof(T).IsSubclassOf(typeof(CalendarComponent)))
-                return (T)(object)LoadFromStream<U>(null, tr);
-            else return default(T);
-        }
-        static public T LoadFromStream<T, U>(Stream s, Encoding encoding)
-            where T : CalendarComponent
-            where U : DDay.iCal.Serialization.ISerializable
-        {
-            if (typeof(T) == typeof(CalendarComponent) ||
-                typeof(T).IsSubclassOf(typeof(CalendarComponent)))
-                return (T)(object)LoadFromStream<U>(null, s, encoding);
-            else return default(T);
-        }
-        static public CalendarComponent LoadFromStream<T>(CalendarObject parent, TextReader tr) where T : DDay.iCal.Serialization.ISerializable
-        {
-            string text = tr.ReadToEnd();
-            tr.Close();
+        ///// <summary>
+        ///// Loads an iCalendar component (Event, Todo, Journal, etc.) from an open stream.
+        ///// </summary>
+        ///// <param name="s">The stream from which to load the iCalendar component</param>
+        ///// <returns>A <see cref="ComponentBase"/> object</returns>
+        //static public CalendarComponent LoadFromStream(Stream s) { return LoadFromStream<ComponentSerializer>(null, s, Encoding.UTF8); }
+        //static public CalendarComponent LoadFromStream(TextReader tr) { return LoadFromStream<ComponentSerializer>(null, tr); }
+        //static public T LoadFromStream<T>(TextReader tr) where T : CalendarComponent
+        //{
+        //    return LoadFromStream<T, ComponentSerializer>(tr);
+        //}
+        //static public T LoadFromStream<T>(Stream s, Encoding encoding) where T : CalendarComponent
+        //{
+        //    return LoadFromStream<T, ComponentSerializer>(s, encoding);
+        //}
+        //static public T LoadFromStream<T, U>(TextReader tr)
+        //    where T : CalendarComponent
+        //    where U : DDay.iCal.Serialization.ISerializable
+        //{
+        //    if (typeof(T) == typeof(CalendarComponent) ||
+        //        typeof(T).IsSubclassOf(typeof(CalendarComponent)))
+        //        return (T)(object)LoadFromStream<U>(null, tr);
+        //    else return default(T);
+        //}
+        //static public T LoadFromStream<T, U>(Stream s, Encoding encoding)
+        //    where T : CalendarComponent
+        //    where U : DDay.iCal.Serialization.ISerializable
+        //{
+        //    if (typeof(T) == typeof(CalendarComponent) ||
+        //        typeof(T).IsSubclassOf(typeof(CalendarComponent)))
+        //        return (T)(object)LoadFromStream<U>(null, s, encoding);
+        //    else return default(T);
+        //}
+        //static public CalendarComponent LoadFromStream<T>(CalendarObject parent, TextReader tr) where T : DDay.iCal.Serialization.ISerializable
+        //{
+        //    string text = tr.ReadToEnd();
+        //    tr.Close();
 
-            byte[] memoryBlock = Encoding.UTF8.GetBytes(text);
-            MemoryStream ms = new MemoryStream(memoryBlock);
-            return LoadFromStream<T>(parent, ms, Encoding.UTF8);
-        }
-        static public CalendarComponent LoadFromStream<T>(CalendarObject parent, Stream s, Encoding encoding) where T : DDay.iCal.Serialization.ISerializable
-        {
-            DDay.iCal.Serialization.ISerializable serializable = (DDay.iCal.Serialization.ISerializable)Activator.CreateInstance(typeof(T));
-            return LoadFromStream(parent, s, encoding, serializable);
-        }
-        static public CalendarComponent LoadFromStream(CalendarObject parent, Stream s, Encoding encoding, DDay.iCal.Serialization.ISerializable serializer)
-        {
-            Type iCalendarType = typeof(iCalendar);
-            if (parent != null)
-                iCalendarType = parent.Calendar.GetType();
+        //    byte[] memoryBlock = Encoding.UTF8.GetBytes(text);
+        //    MemoryStream ms = new MemoryStream(memoryBlock);
+        //    return LoadFromStream<T>(parent, ms, Encoding.UTF8);
+        //}
+        //static public CalendarComponent LoadFromStream<T>(CalendarObject parent, Stream s, Encoding encoding) where T : DDay.iCal.Serialization.ISerializable
+        //{
+        //    DDay.iCal.Serialization.ISerializable serializable = (DDay.iCal.Serialization.ISerializable)Activator.CreateInstance(typeof(T));
+        //    return LoadFromStream(parent, s, encoding, serializable);
+        //}
+        //static public CalendarComponent LoadFromStream(CalendarObject parent, Stream s, Encoding encoding, DDay.iCal.Serialization.ISerializable serializer)
+        //{
+        //    Type iCalendarType = typeof(iCalendar);
+        //    if (parent != null)
+        //        iCalendarType = parent.Calendar.GetType();
 
-            CalendarComponent component = (CalendarComponent)
-                serializer.Deserialize(s, encoding, iCalendarType);
+        //    CalendarComponent component = (CalendarComponent)
+        //        serializer.Deserialize(s, encoding, iCalendarType);
 
-            if (parent != null)
-                parent.AddChild(component);
+        //    if (parent != null)
+        //        parent.AddChild(component);
 
-            return component;
-        }
+        //    return component;
+        //}
 
-        #endregion
+        //#endregion
     }
 }

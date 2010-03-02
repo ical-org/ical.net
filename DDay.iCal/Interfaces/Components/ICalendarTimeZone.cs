@@ -8,7 +8,7 @@ namespace DDay.iCal
         ICalendarComponent
     {
         TZID TZID { get; set; }
-        iCalDateTime Last_Modified { get; set; }
+        iCalDateTime LastModified { get; set; }
         URI TZUrl { get; set; }
         IList<iCalTimeZoneInfo> TimeZoneInfos { get; set; }
 

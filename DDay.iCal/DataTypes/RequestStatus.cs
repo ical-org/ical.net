@@ -91,7 +91,7 @@ namespace DDay.iCal
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref ICalendarObject obj)
+        public override bool TryParse(string value, ref ICalendarDataType obj)
         {
             RequestStatus rs = (RequestStatus)obj;
             Match match = Regex.Match(value, @"(.+);(.+)(;(.*))?");

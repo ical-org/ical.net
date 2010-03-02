@@ -11,7 +11,7 @@ using System.Runtime.Serialization;
 namespace DDay.iCal
 {
     /// <summary>
-    /// A class that represents an RFC 2445 VALARM component.
+    /// A class that represents an RFC 5545 VALARM component.
     /// </summary>    
 #if DATACONTRACT
     [DataContract(Name = "Alarm", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]

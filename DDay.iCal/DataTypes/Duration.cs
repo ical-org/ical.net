@@ -11,7 +11,7 @@ namespace DDay.iCal
     /// <summary>
     /// The iCalendar equivalent of the .NET <see cref="TimeSpan"/> class.
     /// <remarks>
-    /// This class handles parsing an RFC 2445 Duration.
+    /// This class handles parsing an RFC 5545 Duration.
     /// </remarks>
     /// </summary>
     [DebuggerDisplay("{Value}")]
@@ -83,7 +83,7 @@ namespace DDay.iCal
             return Value.GetHashCode();
         }
 
-        public override bool TryParse(string value, ref ICalendarObject obj)
+        public override bool TryParse(string value, ref ICalendarDataType obj)
         {
             Match match = Regex.Match(value, @"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?))$");
             int days = 0;

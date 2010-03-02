@@ -363,7 +363,7 @@ namespace DDay.iCal
             IsUniversalTime = dt.IsUniversalTime;
         }
 
-        public override bool TryParse(string value, ref ICalendarObject obj)
+        public override bool TryParse(string value, ref ICalendarDataType obj)
         {
             string[] values = value.Split('T');
 

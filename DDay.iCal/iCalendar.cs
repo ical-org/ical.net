@@ -422,14 +422,182 @@ namespace DDay.iCal
         private UniqueComponentList<Todo> m_Todo;
 
         [field: NonSerialized]
-        private MethodInfo m_ComponentBaseCreate;
+        private ICalendarComponentFactory m_ComponentFactory;
 
         // The buffer size used to convert streams from UTF-8 to Unicode
         private const int bufferSize = 8096;
 
         #endregion
 
-        #region Public Properties
+        #region Constructors
+
+        /// <summary>
+        /// To load an existing an iCalendar object, use one of the provided LoadFromXXX methods.
+        /// <example>
+        /// For example, use the following code to load an iCalendar object from a URL:
+        /// <code>
+        ///     IICalendar iCal = iCalendar.LoadFromUri(new Uri("http://somesite.com/calendar.ics"));
+        /// </code>
+        /// </example>
+        /// </summary>
+        public iCalendar() : base("VCALENDAR")
+        {
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            m_UniqueComponents = new UniqueComponentList<IUniqueComponent>();
+            m_Events = new UniqueComponentList<Event>();
+            m_FreeBusy = new UniqueComponentList<FreeBusy>();
+            m_Journal = new UniqueComponentList<Journal>();
+            m_TimeZone = new List<ICalendarTimeZone>();
+            m_Todo = new UniqueComponentList<Todo>();
+
+            object[] attrs = GetType().GetCustomAttributes(typeof(ComponentFactoryAttribute), false);
+            if (attrs.Length > 0)
+            {
+                foreach (ComponentFactoryAttribute attr in attrs)
+                    m_ComponentFactory = Activator.CreateInstance(attr.Type) as ICalendarComponentFactory;
+            }
+
+            if (m_ComponentFactory == null)
+                m_ComponentFactory = new ComponentFactory();
+        }
+
+        #endregion
+
+        #region Private Methods
+
+#if DATACONTRACT
+        [OnDeserializing]
+        private void OnDeserializing(StreamingContext context)
+        {
+            Initialize();
+        }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            foreach (object child in Children)
+            {
+                if (child is UniqueComponent)
+                    m_UniqueComponents.Add((IUniqueComponent)child);
+
+                Type type = child.GetType();
+                if (typeof(Event).IsAssignableFrom(type)) m_Events.Add((Event)child);
+                else if (typeof(FreeBusy).IsAssignableFrom(type)) m_FreeBusy.Add((FreeBusy)child);
+                else if (typeof(Journal).IsAssignableFrom(type)) m_Journal.Add((Journal)child);
+                else if (typeof(ICalendarTimeZone).IsAssignableFrom(type)) m_TimeZone.Add((ICalendarTimeZone)child);
+                else if (typeof(Todo).IsAssignableFrom(type)) m_Todo.Add((Todo)child);
+            }
+        }
+#endif
+
+        #endregion
+
+        #region Overrides
+
+        /// <summary>
+        /// Adds an <see cref="iCalObject"/>-based component to the
+        /// appropriate collection.  Currently, the iCalendar component
+        /// supports the following components:
+        ///     <list type="bullet">        
+        ///         <item><see cref="DDay.iCal.Event"/></item>
+        ///         <item><see cref="DDay.iCal.FreeBusy"/></item>
+        ///         <item><see cref="DDay.iCal.Journal"/></item>
+        ///         <item><see cref="DDay.iCal.TimeZone"/></item>
+        ///         <item><see cref="DDay.iCal.Todo"/></item>
+        ///     </list>
+        /// </summary>
+        /// <param name="child"></param>
+        public override void AddChild(ICalendarObject child)
+        {
+            base.AddChild(child);
+            child.Parent = this;
+
+            if (child is IUniqueComponent)
+                m_UniqueComponents.Add((IUniqueComponent)child);
+
+            Type type = child.GetType();
+            if (typeof(Event).IsAssignableFrom(type)) m_Events.Add((Event)child);
+            else if (typeof(FreeBusy).IsAssignableFrom(type)) m_FreeBusy.Add((FreeBusy)child);
+            else if (typeof(Journal).IsAssignableFrom(type)) m_Journal.Add((Journal)child);
+            else if (typeof(ICalendarTimeZone).IsAssignableFrom(type)) m_TimeZone.Add((ICalendarTimeZone)child);
+            else if (typeof(Todo).IsAssignableFrom(type)) m_Todo.Add((Todo)child);
+        }
+
+        /// <summary>
+        /// Removes an <see cref="iCalObject"/>-based component from all
+        /// of the collections that this object may be contained in within
+        /// the iCalendar.
+        /// </summary>
+        /// <param name="child"></param>
+        public override void RemoveChild(ICalendarObject child)
+        {
+            base.RemoveChild(child);
+
+            if (child is IUniqueComponent)
+                m_UniqueComponents.Remove((IUniqueComponent)child);
+
+            Type type = child.GetType();
+            if (typeof(Event).IsAssignableFrom(type)) m_Events.Remove((Event)child);
+            else if (typeof(FreeBusy).IsAssignableFrom(type)) m_FreeBusy.Remove((FreeBusy)child);
+            else if (typeof(Journal).IsAssignableFrom(type)) m_Journal.Remove((Journal)child);
+            else if (typeof(ICalendarTimeZone).IsAssignableFrom(type)) m_TimeZone.Remove((ICalendarTimeZone)child);
+            else if (typeof(Todo).IsAssignableFrom(type)) m_Todo.Remove((Todo)child);
+        }
+
+        /// <summary>
+        /// Resolves each UID in the UniqueComponents list
+        /// to a valid UID.  When the UIDs are updated, each
+        /// UniqueComponentList that contains the UniqueComponent
+        /// will be updated as well.
+        /// </summary>
+        public override void OnLoaded()
+        {
+            m_UniqueComponents.ResolveUIDs();
+            base.OnLoaded();
+        }
+
+        public override bool Equals(object obj)
+        {
+            iCalendar iCal = obj as iCalendar;
+            if (iCal != null)
+            {
+                bool isEqual =
+                    object.Equals(Version, iCal.Version) &&
+                    object.Equals(ProductID, iCal.ProductID) &&
+                    object.Equals(Scale, iCal.Scale) &&
+                    object.Equals(Method, iCal.Method) &&
+                    (
+                        (UniqueComponents == null && iCal.UniqueComponents == null) ||
+                        (UniqueComponents != null && iCal.UniqueComponents != null && object.Equals(UniqueComponents.Count, iCal.UniqueComponents.Count))
+                    );
+
+                if (isEqual)
+                {
+                    for (int i = 0; i < UniqueComponents.Count; i++)
+                    {
+                        if (!object.Equals(UniqueComponents[i], iCal.UniqueComponents[i]))
+                            return false;
+                    }
+                    return true;
+                }
+                return false;
+            }
+            return base.Equals(obj);
+        }
+
+        #endregion        
+
+        #region IICalendar Members
+                
+        virtual public ICalendarComponentFactory ComponentFactory
+        {
+            get { return m_ComponentFactory; }
+            set { m_ComponentFactory = value; }
+        }
 
         virtual public IUniqueComponentListReadonly<IUniqueComponent> UniqueComponents
         {
@@ -523,50 +691,6 @@ namespace DDay.iCal
             get { return Properties.Get<RecurrenceEvaluationModeType>("X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE"); }
             set { Properties.Set("X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE", value); }
         }
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// To load an existing an iCalendar object, use one of the provided LoadFromXXX methods.
-        /// <example>
-        /// For example, use the following code to load an iCalendar object from a URL:
-        /// <code>
-        ///     IICalendar iCal = iCalendar.LoadFromUri(new Uri("http://somesite.com/calendar.ics"));
-        /// </code>
-        /// </example>
-        /// </summary>
-        public iCalendar()
-            : base(null)
-        {
-            this.Name = "VCALENDAR";
-            Initialize();
-        }
-
-        private void Initialize()
-        {
-            m_UniqueComponents = new UniqueComponentList<IUniqueComponent>();
-            m_Events = new UniqueComponentList<Event>();
-            m_FreeBusy = new UniqueComponentList<FreeBusy>();
-            m_Journal = new UniqueComponentList<Journal>();
-            m_TimeZone = new List<ICalendarTimeZone>();
-            m_Todo = new UniqueComponentList<Todo>();
-
-            object[] attrs = GetType().GetCustomAttributes(typeof(ComponentBaseTypeAttribute), false);
-            if (attrs.Length > 0)
-            {
-                foreach (ComponentBaseTypeAttribute attr in attrs)
-                    m_ComponentBaseCreate = attr.Type.GetMethod("Create", BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
-            }
-
-            if (m_ComponentBaseCreate == null)
-                m_ComponentBaseCreate = typeof(CalendarComponent).GetMethod("Create", BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
-        }
-
-        #endregion
-
-        #region Public Methods
 
         /// <summary>
         /// Adds a time zone to the iCalendar.  This time zone may
@@ -726,24 +850,6 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// Invokes the object creation of the selected ComponentBase class.  By default,
-        /// this is the ComponentBase class itself; however, this can be changed to allow
-        /// for custom objects to be created in lieu of Event, Todo, Journal, etc. components.
-        /// <note>
-        /// This method is used internally by the parsing engine to create iCalendar objects.
-        /// </note>
-        /// </summary>
-        /// <param name="parent">The parent of the object to create.</param>
-        /// <param name="name">The name of the iCal object.</param>
-        /// <returns>A newly created object</returns>
-        internal new CalendarComponent Create(CalendarObject parent, string name)
-        {
-            if (m_ComponentBaseCreate == null)
-                throw new ArgumentException("Create() cannot be called without a valid ComponentBase Create() method attached");
-            else return (CalendarComponent)m_ComponentBaseCreate.Invoke(null, new object[] { parent, name });
-        }
-
-        /// <summary>
         /// Creates a typed object that is a direct child of the iCalendar itself.  Generally,
         /// you would invoke this method to create an Event, Todo, Journal, TimeZone, FreeBusy,
         /// or other base component type.
@@ -762,8 +868,8 @@ namespace DDay.iCal
         /// <returns>An object of the type specified</returns>
         public T Create<T>() where T : ICalendarComponent
         {
-            if (m_ComponentBaseCreate == null)
-                throw new ArgumentException("Create() cannot be called without a valid ComponentBase Create() method attached");
+            if (m_ComponentFactory == null)
+                throw new ArgumentException("Create() cannot be called without a valid ComponentFactory assigned to the calendar.");
 
             ICalendarObject obj = Activator.CreateInstance(typeof(T)) as ICalendarObject;
             if (obj is T)
@@ -780,130 +886,6 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Private Methods
-
-#if DATACONTRACT
-        [OnDeserializing]
-        private void OnDeserializing(StreamingContext context)
-        {
-            Initialize();
-        }
-
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            foreach (object child in Children)
-            {
-                if (child is UniqueComponent)
-                    m_UniqueComponents.Add((IUniqueComponent)child);
-
-                Type type = child.GetType();
-                if (typeof(Event).IsAssignableFrom(type)) m_Events.Add((Event)child);
-                else if (typeof(FreeBusy).IsAssignableFrom(type)) m_FreeBusy.Add((FreeBusy)child);
-                else if (typeof(Journal).IsAssignableFrom(type)) m_Journal.Add((Journal)child);
-                else if (typeof(ICalendarTimeZone).IsAssignableFrom(type)) m_TimeZone.Add((ICalendarTimeZone)child);
-                else if (typeof(Todo).IsAssignableFrom(type)) m_Todo.Add((Todo)child);
-            }
-        }
-#endif
-
-        #endregion
-
-        #region Overrides
-
-        /// <summary>
-        /// Adds an <see cref="iCalObject"/>-based component to the
-        /// appropriate collection.  Currently, the iCalendar component
-        /// supports the following components:
-        ///     <list type="bullet">        
-        ///         <item><see cref="DDay.iCal.Event"/></item>
-        ///         <item><see cref="DDay.iCal.FreeBusy"/></item>
-        ///         <item><see cref="DDay.iCal.Journal"/></item>
-        ///         <item><see cref="DDay.iCal.TimeZone"/></item>
-        ///         <item><see cref="DDay.iCal.Todo"/></item>
-        ///     </list>
-        /// </summary>
-        /// <param name="child"></param>
-        public override void AddChild(ICalendarObject child)
-        {
-            base.AddChild(child);
-            child.Parent = this;
-
-            if (child is IUniqueComponent)
-                m_UniqueComponents.Add((IUniqueComponent)child);
-
-            Type type = child.GetType();
-            if (typeof(Event).IsAssignableFrom(type)) m_Events.Add((Event)child);
-            else if (typeof(FreeBusy).IsAssignableFrom(type)) m_FreeBusy.Add((FreeBusy)child);
-            else if (typeof(Journal).IsAssignableFrom(type)) m_Journal.Add((Journal)child);
-            else if (typeof(ICalendarTimeZone).IsAssignableFrom(type)) m_TimeZone.Add((ICalendarTimeZone)child);
-            else if (typeof(Todo).IsAssignableFrom(type)) m_Todo.Add((Todo)child);
-        }
-
-        /// <summary>
-        /// Removes an <see cref="iCalObject"/>-based component from all
-        /// of the collections that this object may be contained in within
-        /// the iCalendar.
-        /// </summary>
-        /// <param name="child"></param>
-        public override void RemoveChild(ICalendarObject child)
-        {
-            base.RemoveChild(child);
-
-            if (child is IUniqueComponent)
-                m_UniqueComponents.Remove((IUniqueComponent)child);
-
-            Type type = child.GetType();
-            if (typeof(Event).IsAssignableFrom(type)) m_Events.Remove((Event)child);
-            else if (typeof(FreeBusy).IsAssignableFrom(type)) m_FreeBusy.Remove((FreeBusy)child);
-            else if (typeof(Journal).IsAssignableFrom(type)) m_Journal.Remove((Journal)child);
-            else if (typeof(ICalendarTimeZone).IsAssignableFrom(type)) m_TimeZone.Remove((ICalendarTimeZone)child);
-            else if (typeof(Todo).IsAssignableFrom(type)) m_Todo.Remove((Todo)child);
-        }
-
-        /// <summary>
-        /// Resolves each UID in the UniqueComponents list
-        /// to a valid UID.  When the UIDs are updated, each
-        /// UniqueComponentList that contains the UniqueComponent
-        /// will be updated as well.
-        /// </summary>
-        public override void OnLoaded()
-        {
-            m_UniqueComponents.ResolveUIDs();
-            base.OnLoaded();
-        }
-
-        public override bool Equals(object obj)
-        {
-            iCalendar iCal = obj as iCalendar;
-            if (iCal != null)
-            {
-                bool isEqual =
-                    object.Equals(Version, iCal.Version) &&
-                    object.Equals(ProductID, iCal.ProductID) &&
-                    object.Equals(Scale, iCal.Scale) &&
-                    object.Equals(Method, iCal.Method) &&
-                    (
-                        (UniqueComponents == null && iCal.UniqueComponents == null) ||
-                        (UniqueComponents != null && iCal.UniqueComponents != null && object.Equals(UniqueComponents.Count, iCal.UniqueComponents.Count))
-                    );
-
-                if (isEqual)
-                {
-                    for (int i = 0; i < UniqueComponents.Count; i++)
-                    {
-                        if (!object.Equals(UniqueComponents[i], iCal.UniqueComponents[i]))
-                            return false;
-                    }
-                    return true;
-                }
-                return false;
-            }
-            return base.Equals(obj);
-        }
-
-        #endregion        
-
         #region IDisposable Members
 
         public void Dispose()
@@ -917,22 +899,6 @@ namespace DDay.iCal
             m_UniqueComponents.Clear();
         }
 
-        #endregion
-
-        #region IICalendar Members
-
-        public ICalendarComponentFactory ComponentFactory
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        #endregion
+        #endregion        
     }
 }

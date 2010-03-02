@@ -9,7 +9,7 @@ using DDay.iCal.Serialization;
 namespace DDay.iCal
 {
     /// <summary>
-    /// Represents an RFC 2445 "BYDAY" value.
+    /// Represents an RFC 5545 "BYDAY" value.
     /// </summary>
 #if DATACONTRACT
     [DataContract(Name = "DaySpecifier", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
@@ -108,7 +108,7 @@ namespace DDay.iCal
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref ICalendarObject obj)
+        public override bool TryParse(string value, ref ICalendarDataType obj)
         {
             DaySpecifier bd = (DaySpecifier)obj;
 

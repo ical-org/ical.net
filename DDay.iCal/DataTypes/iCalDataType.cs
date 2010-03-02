@@ -24,8 +24,6 @@ namespace DDay.iCal
         protected IICalendar m_Calendar = null;
         protected CalendarProperty m_Property = null;
         protected object[] m_Attributes = new object[0];
-        [NonSerialized]
-        private ISerializationContext m_SerializationContext = DDay.iCal.Serialization.SerializationContext.Default;        
 
         #endregion
 
@@ -38,12 +36,6 @@ namespace DDay.iCal
         {
             get { return m_Attributes; }
             set { m_Attributes = value; }
-        }
-
-        public ISerializationContext SerializationContext
-        {
-            get { return m_SerializationContext; }
-            set { m_SerializationContext = value; }
         }
 
         #endregion
@@ -74,11 +66,11 @@ namespace DDay.iCal
                     // Parse the content line
                     // NOTE: Use the serialization context to determine
                     // what method of parsing is enabled.
-                    iCalDataType icdt = null;                    
+                    ICalendarDataType icdt = null;
                     switch(SerializationContext.ParsingMode)
                     {
                         case ParsingModeType.Loose:
-                            iCalDataType obj = null;
+                            ICalendarDataType obj = null;
                             if (TryParseInternal(value.Value, out obj))
                                 icdt = obj as iCalDataType;
                             break;
@@ -112,9 +104,9 @@ namespace DDay.iCal
             }
         }        
         
-        virtual public ICalendarObject Parse(string value)
+        virtual public ICalendarDataType Parse(string value)
         {
-            iCalDataType obj = null;
+            ICalendarDataType obj = null;
             if (!TryParseInternal(value, out obj))
             {
                 Type t = GetType();
@@ -123,43 +115,46 @@ namespace DDay.iCal
             return obj;
         }
 
-        virtual public bool TryParse(string value, ref ICalendarObject obj)
+        virtual public bool TryParse(string value, ref ICalendarDataType obj)
         {
             return false;
         }
 
-        virtual public Type ValueType()
+        virtual public Type ValueType
         {
-            string valueTypeParam = Parameters.Get<string>("VALUE");
-            if (valueTypeParam != null)
+            get
             {
-                valueTypeParam = valueTypeParam.ToUpper();
-                switch (valueTypeParam)
+                string valueTypeParam = Parameters.Get<string>("VALUE");
+                if (valueTypeParam != null)
                 {
-                    case "DATE":
-                    case "DATE-TIME":
-                        return typeof(iCalDateTime);
-                    case "DURATION":
-                        return typeof(Duration);
-                    default:
-                        return null;
+                    valueTypeParam = valueTypeParam.ToUpper();
+                    switch (valueTypeParam)
+                    {
+                        case "DATE":
+                        case "DATE-TIME":
+                            return typeof(iCalDateTime);
+                        case "DURATION":
+                            return typeof(Duration);
+                        default:
+                            return null;
+                    }
                 }
-            }
-            return GetType();
+                return GetType();
+            }            
         }
         
         #endregion
 
         #region Private Methods
 
-        bool TryParseInternal(string value, out iCalDataType obj)
+        bool TryParseInternal(string value, out ICalendarDataType obj)
         {
             Type t = GetType();
-            obj = Activator.CreateInstance(t) as iCalDataType;
+            obj = Activator.CreateInstance(t) as ICalendarDataType;
             if (obj != null)
             {
                 obj.Parent = Parent;
-                ICalendarObject objToParse = obj;
+                ICalendarDataType objToParse = obj;
                 return TryParse(value, ref objToParse);
             }
             return false;

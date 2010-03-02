@@ -104,7 +104,7 @@ namespace DDay.iCal
             return base.GetHashCode();
         }
 
-        public override bool TryParse(string value, ref ICalendarObject obj)
+        public override bool TryParse(string value, ref ICalendarDataType obj)
         {
             if (Encoding != null)
                 return base.TryParse(value, ref obj);
@@ -112,7 +112,7 @@ namespace DDay.iCal
             {
                 Binary b = (Binary)obj;
                 b.m_Uri = new URI();
-                ICalendarObject o = b.m_Uri;
+                ICalendarDataType o = b.m_Uri;
                 return b.m_Uri.TryParse(value, ref o);                
             }
         }

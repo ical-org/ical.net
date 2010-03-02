@@ -79,7 +79,7 @@ namespace DDay.iCal
             return Latitude.GetHashCode() ^ Longitude.GetHashCode();
         }
 
-        public override bool TryParse(string value, ref ICalendarObject obj)
+        public override bool TryParse(string value, ref ICalendarDataType obj)
         {
             Geo g = (Geo)obj;
             string[] values = value.Split(';');
@@ -88,8 +88,8 @@ namespace DDay.iCal
 
             g.Latitude = new Float();
             g.Longitude = new Float();
-            ICalendarObject lat = g.Latitude;
-            ICalendarObject lon = g.Longitude;
+            ICalendarDataType lat = g.Latitude;
+            ICalendarDataType lon = g.Longitude;
 
             if (!g.Latitude.TryParse(values[0], ref lat))
                 return false;

@@ -12,7 +12,7 @@ using System.Runtime.Serialization;
 namespace DDay.iCal
 {
     /// <summary>
-    /// A class that represents an RFC 2445 VTODO component.
+    /// A class that represents an RFC 5545 VTODO component.
     /// </summary> 
     [DebuggerDisplay("{Summary} - {Status}")]
 #if DATACONTRACT
@@ -37,23 +37,18 @@ namespace DDay.iCal
 
         #region Public Properties
 
-        [Serialized, DefaultValueType("DATE-TIME")]
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
-        public iCalDateTime Completed
+        /// <summary>
+        /// The date/time the todo was completed.
+        /// </summary>
+        virtual public iCalDateTime Completed
         {
-            get { return m_Completed; }
-            set { m_Completed = value; }
+            get { return Properties.Get<iCalDateTime>("COMPLETED"); }
+            set { Properties.Set("COMPLETED", value); }
         }
 
         /// <summary>
         /// The start date/time of the todo item.
         /// </summary>
-        [Serialized, DefaultValueType("DATE-TIME")]
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
         public override iCalDateTime DTStart
         {
             get
@@ -70,16 +65,12 @@ namespace DDay.iCal
         /// <summary>
         /// The due date of the todo item.
         /// </summary>
-        [Serialized, DefaultValueType("DATE-TIME")]
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
         virtual public iCalDateTime Due
         {
-            get { return m_Due; }
+            get { return Properties.Get<iCalDateTime>("DUE"); }
             set
             {
-                m_Due = value;
+                Properties.Set("DUE", value);
                 ExtrapolateTimes();
             }
         }
@@ -89,7 +80,7 @@ namespace DDay.iCal
         /// </summary>
         // NOTE: Duration is not supported by all systems,
         // (i.e. iPhone) and cannot co-exist with Due.
-        // RFC 2445 states:
+        // RFC 5545 states:
         //
         //      ; either 'due' or 'duration' may appear in
         //      ; a 'todoprop', but 'due' and 'duration'
@@ -97,76 +88,53 @@ namespace DDay.iCal
         //
         // Therefore, Duration is not serialized, as Due
         // should always be extrapolated from the duration.
-#if DATACONTRACT
-        [DataMember(Order = 4)]
-#endif
         virtual public Duration Duration
         {
-            get { return m_Duration; }
+            get { return Properties.Get<Duration>("DURATION"); }
             set
             {
-                m_Duration = value;
+                Properties.Set("DURATION", value);
                 ExtrapolateTimes();
             }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 5)]
-#endif
-        public Geo Geo
+        virtual public Geo Geo
         {
-            get { return m_Geo; }
-            set { m_Geo = value; }
+            get { return Properties.Get<Geo>("GEO"); }
+            set { Properties.Set("GEO", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 6)]
-#endif
-        public Text Location
+        virtual public Text Location
         {
-            get { return m_Location; }
-            set { m_Location = value; }
+            get { return Properties.Get<Text>("LOCATION"); }
+            set { Properties.Set("LOCATION", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 7)]
-#endif
-        public Integer Percent_Complete
+        virtual public Integer PercentComplete
         {
-            get { return m_Percent_Complete; }
-            set { m_Percent_Complete = value; }
+            get { return Properties.Get<Integer>("PERCENT-COMPLETE"); }
+            set { Properties.Set("PERCENT-COMPLETE", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 8)]
-#endif
-        public TextCollection[] Resources
+        virtual public TextCollection[] Resources
         {
-            get { return m_Resources; }
-            set { m_Resources = value; }
+            get { return Properties.Get<TextCollection[]>("RESOURCES"); }
+            set { Properties.Set("RESOURCES", value); }
         }
 
         /// <summary>
         /// The status of the todo item.
         /// </summary>
-        [Serialized, DefaultValue("NEEDS_ACTION\r\n")]
-#if DATACONTRACT
-        [DataMember(Order = 9)]
-#endif
         virtual public TodoStatus Status
         {
-            get { return m_Status; }
+            get { return Properties.Get<TodoStatus>("STATUS"); }
             set
             {
-                if (m_Status != value)
+                if (Status != value)
                 {
                     // Automatically set/unset the Completed time, once the
                     // component is fully loaded (When deserializing, it shouldn't
-                    // automatically track the completed time just because the
+                    // automatically set the completed time just because the
                     // status was changed).
                     if (IsLoaded)
                     {
@@ -175,7 +143,7 @@ namespace DDay.iCal
                         else Completed = null;
                     }
 
-                    m_Status = value;
+                    Properties.Set("STATUS", value);
                 }
             }
         }
@@ -196,16 +164,6 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Static Public Methods
-
-        static public Todo Create(iCalendar iCal)
-        {
-            Todo t = iCal.Create<Todo>();
-            return t;
-        }
-
-        #endregion
-
         #region Public Methods
 
         /// <summary>
@@ -220,7 +178,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="DateTime">The date and time to test.</param>
         /// <returns>True if the todo item has been completed</returns>
-        public bool IsCompleted(iCalDateTime currDt)
+        virtual public bool IsCompleted(iCalDateTime currDt)
         {
             if (Status == TodoStatus.Completed)
             {
@@ -247,7 +205,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="currDt">The date and time to test.</param>
         /// <returns>True if the item is Active as of <paramref name="currDt"/>, False otherwise.</returns>
-        public bool IsActive(iCalDateTime currDt)
+        virtual public bool IsActive(iCalDateTime currDt)
         {
             if (DTStart == null)
                 return !IsCompleted(currDt) && !IsCancelled();
@@ -260,7 +218,7 @@ namespace DDay.iCal
         /// Returns True if the todo item was cancelled.
         /// </summary>
         /// <returns>True if the todo was cancelled, False otherwise.</returns>
-        public bool IsCancelled()
+        virtual public bool IsCancelled()
         {
             return Status == TodoStatus.Cancelled;
         }

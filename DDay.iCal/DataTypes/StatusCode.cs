@@ -90,7 +90,7 @@ namespace DDay.iCal
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref ICalendarObject obj)
+        public override bool TryParse(string value, ref ICalendarDataType obj)
         {
             StatusCode sc = (StatusCode)obj;
             Match match = Regex.Match(value, @"\d(\.\d+)*");

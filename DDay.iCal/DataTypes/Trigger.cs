@@ -87,8 +87,8 @@ namespace DDay.iCal
                 if (Parameters.ContainsKey("RELATED"))
                 {
                     CalendarParameter p = (CalendarParameter)Parameters["RELATED"];
-                    if (p.Values.Count > 0)
-                        m_Related = (TriggerRelation)Enum.Parse(typeof(TriggerRelation), p.Values[0].ToString(), true);
+                    if (!string.IsNullOrEmpty(p.Value))
+                        m_Related = (TriggerRelation)Enum.Parse(typeof(TriggerRelation), p.Value, true);
                 }
                 return m_Related;
             }
@@ -133,20 +133,20 @@ namespace DDay.iCal
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref ICalendarObject obj)
+        public override bool TryParse(string value, ref ICalendarDataType obj)
         {
             Trigger t = (Trigger)obj;
 
-            if (ValueType() == typeof(iCalDateTime))
+            if (ValueType == typeof(iCalDateTime))
             {
                 t.DateTime = new iCalDateTime();
-                ICalendarObject dt = t.DateTime;
+                ICalendarDataType dt = t.DateTime;
                 return t.DateTime.TryParse(value, ref dt);
             }
             else
             {
                 t.Duration = new Duration();
-                ICalendarObject d = t.Duration;
+                ICalendarDataType d = t.Duration;
                 return t.Duration.TryParse(value, ref d);
             }
         }

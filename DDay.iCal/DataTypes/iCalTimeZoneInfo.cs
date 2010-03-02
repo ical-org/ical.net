@@ -154,11 +154,11 @@ namespace DDay.iCal
             }
         }
 
-        public override iCalDateTime Last_Modified
+        public override iCalDateTime LastModified
         {
             get
             {
-                return base.Last_Modified;
+                return base.LastModified;
             }
             set
             {
@@ -187,33 +187,33 @@ namespace DDay.iCal
             }
         }
 
-        public override iCalDateTime Recurrence_ID
+        public override iCalDateTime RecurrenceID
         {
             get
             {
-                return base.Recurrence_ID;
+                return base.RecurrenceID;
             }
             set
             {
             }
         }
 
-        public override Text[] Related_To
+        public override Text[] RelatedTo
         {
             get
             {
-                return base.Related_To;
+                return base.RelatedTo;
             }
             set
             {
             }
         }
 
-        public override RequestStatus[] Request_Status
+        public override RequestStatus[] RequestStatus
         {
             get
             {
-                return base.Request_Status;
+                return base.RequestStatus;
             }
             set
             {
@@ -330,10 +330,7 @@ namespace DDay.iCal
         ///     </list>
         /// </example>
         /// </summary>
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
-        public string TimeZoneName
+        virtual public string TimeZoneName
         {
             get
             {
@@ -350,34 +347,22 @@ namespace DDay.iCal
             }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
-        public UTC_Offset TZOffsetFrom
+        virtual public UTC_Offset TZOffsetFrom
         {
-            get { return m_TZOffsetFrom; }
-            set { m_TZOffsetFrom = value; }
+            get { return Properties.Get<UTC_Offset>("TZOFFSETFROM"); }
+            set { Properties.Set("TZOFFSETFROM", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
-        public UTC_Offset TZOffsetTo
+        virtual public UTC_Offset TZOffsetTo
         {
-            get { return m_TZOffsetTo; }
-            set { m_TZOffsetTo = value; }
+            get { return Properties.Get<UTC_Offset>("TZOFFSETTO"); }
+            set { Properties.Set("TZOFFSETTO", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 4)]
-#endif
-        public Text[] TZName
+        virtual public Text[] TZName
         {
-            get { return m_TZName; }
-            set { m_TZName = value; }
+            get { return Properties.Get<Text[]>("TZNAME"); }
+            set { Properties.Set("TZNAME", value); }
         }
 
         #region Overrides
@@ -385,19 +370,18 @@ namespace DDay.iCal
         /// <summary>
         /// Force the DTSTART into a local date-time value.
         /// 
-        /// From RFC 2445:
+        /// From RFC 5545:
         /// The mandatory "DTSTART" property gives the effective onset date and 
         /// local time for the time zone sub-component definition. "DTSTART" in
         /// this usage MUST be specified as a local DATE-TIME value.
         /// 
-        /// Also from RFC 2445:
+        /// Also from RFC 5545:
         /// The date with local time form is simply a date-time value that does
         /// not contain the UTC designator nor does it reference a time zone. For
         /// example, the following represents Janurary 18, 1998, at 11 PM:
         /// 
         /// DTSTART:19980118T230000
-        /// </summary>
-        [Serialized, DefaultValueType("DATE-TIME"), DisallowedTypes("DATE", "DATE-TIME")]
+        /// </summary>        
         public override iCalDateTime DTStart
         {
             get

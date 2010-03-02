@@ -346,7 +346,7 @@ namespace DDay.iCal
             return true;
         }
 
-        public override bool TryParse(string value, ref ICalendarObject obj)
+        public override bool TryParse(string value, ref ICalendarDataType obj)
         {
             RecurrencePattern r = (RecurrencePattern)obj;
 

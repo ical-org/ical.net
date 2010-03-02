@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 namespace DDay.iCal
 {
     /// <summary>
-    /// Represents an RFC 2445 "text" value.
+    /// Represents an RFC 5545 "text" value.
     /// </summary>
     [DebuggerDisplay("{Value}")]
     [Encodable("BASE64,8BIT,7BIT")]
@@ -61,7 +61,7 @@ namespace DDay.iCal
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref ICalendarObject obj)
+        public override bool TryParse(string value, ref ICalendarDataType obj)
         {
             if (base.TryParse(value, ref obj))
             {
@@ -125,7 +125,7 @@ namespace DDay.iCal
                 value = value.Replace(@"\N", "\n");
                 value = value.Replace(@"\;", ";");
                 value = value.Replace(@"\,", ",");
-                // NOTE: double quotes aren't escaped in RFC2445, but are in Mozilla Sunbird (0.5-)
+                // NOTE: double quotes aren't escaped in RFC5545, but are in Mozilla Sunbird (0.5-)
                 value = value.Replace("\\\"", "\"");
 
                 // Replace all single-backslashes with double-backslashes.

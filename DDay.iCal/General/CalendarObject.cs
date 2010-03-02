@@ -39,18 +39,6 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Protected Properties
-
-        virtual protected List<object> SerializedItems
-        {
-            get
-            {
-                return new List<object>();
-            }
-        }
-
-        #endregion
-
         #region Constructors
 
         internal CalendarObject()
@@ -125,6 +113,21 @@ namespace DDay.iCal
         #endregion
 
         #region Overrides
+
+        public override bool Equals(object obj)
+        {
+            ICalendarObject o = obj as ICalendarObject;
+            if (o != null)
+                return object.Equals(o.Name, Name);
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            if (Name != null)
+                return Name.GetHashCode();
+            else return base.GetHashCode();
+        }
 
         public override void CopyFrom(ICopyable c)
         {
@@ -234,7 +237,7 @@ namespace DDay.iCal
 
         /// <summary>
         /// Gets or sets the name of the <see cref="iCalObject"/>.  For iCalendar components,
-        /// this is the RFC 2445 name of the component.
+        /// this is the RFC 5545 name of the component.
         /// <example>
         ///     <list type="bullet">
         ///         <item>Event - "VEVENT"</item>

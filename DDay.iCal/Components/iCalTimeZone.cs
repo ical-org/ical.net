@@ -12,7 +12,7 @@ using System.Globalization;
 namespace DDay.iCal
 {
     /// <summary>
-    /// A class that represents an RFC 2445 VTIMEZONE component.
+    /// A class that represents an RFC 5545 VTIMEZONE component.
     /// </summary>
 #if DATACONTRACT
     [DataContract(Name = "iCalTimeZone", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
@@ -148,40 +148,24 @@ namespace DDay.iCal
 
         #region ICalendarTimeZone Members
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         public TZID TZID
         {
-            get { return m_TZID; }
-            set { m_TZID = value; }
+            get { return Properties.Get<TZID>("TZID"); }
+            set { Properties.Set("TZID", value); }
         }
 
-        [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
-        public iCalDateTime Last_Modified
+        public iCalDateTime LastModified
         {
-            get { return m_Last_Modified; }
-            set { m_Last_Modified = value; }
+            get { return Properties.Get<iCalDateTime>("LAST-MODIFIED"); }
+            set { Properties.Set("LAST-MODIFIED", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
         public URI TZUrl
         {
-            get { return m_TZUrl; }
-            set { m_TZUrl = value; }
+            get { return Properties.Get<URI>("TZURL"); }
+            set { Properties.Set("TZURL", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 4)]
-#endif
         public IList<iCalTimeZoneInfo> TimeZoneInfos
         {
             get { return m_TimeZoneInfos; }

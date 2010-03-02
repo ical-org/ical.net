@@ -9,8 +9,9 @@ namespace DDay.iCal
 {
     /// <summary>
     /// A class that represents a property of the <see cref="iCalendar"/>
-    /// itself, or a non-standard (X-) property of an iCalendar component,
-    /// as seen with many applications, such as with Apple's iCal.
+    /// itself or one of its components.  It can also represent non-standard
+    /// (X-) properties of an iCalendar component, as seen with many
+    /// applications, such as with Apple's iCal.
     /// X-WR-CALNAME:US Holidays
     /// </summary>
     /// <remarks>
@@ -26,36 +27,26 @@ namespace DDay.iCal
     /// and X-properties may be applied to calendar components.
     /// </remarks>
 #if DATACONTRACT
-    [DataContract(Name = "Property", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [DataContract(Name = "CalendarProperty", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
     public class CalendarProperty : 
-        CalendarObject,
+        CalendarValueObject,
         ICalendarProperty
     {
         #region Private Fields
 
-        private string m_Value = null;
         private ICalendarParameterList m_Parameters;
 
         #endregion
 
         #region Public Properties
 
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
-        public string Value
-        {
-            get { return m_Value; }
-            set { m_Value = value; }
-        }
-
         /// <summary>
         /// Returns a list of parameters that are associated with the iCalendar object.
         /// </summary>
 #if DATACONTRACT
-        [DataMember(Order = 2)]
+        [DataMember(Order = 1)]
 #endif
         virtual public ICalendarParameterList Parameters
         {
@@ -73,7 +64,6 @@ namespace DDay.iCal
         public CalendarProperty() : base()
         {
             Initialize();
-
         }
 
         public CalendarProperty(ICalendarProperty other) : this()
@@ -86,9 +76,8 @@ namespace DDay.iCal
             Initialize();
         }
 
-        public CalendarProperty(string name, string value) : this(name)
+        public CalendarProperty(string name, string value) : base(name, value)
         {
-            Value = value;
         }
 
         public CalendarProperty(int line, int col) : base(line, col)
@@ -105,34 +94,13 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override bool Equals(object obj)
-        {
-            if (obj is ICalendarProperty)
-            {
-                ICalendarProperty p = (ICalendarProperty)obj;
-                return p.Name.Equals(Name) &&
-                    ((p.Value == null && Value == null) ||
-                    (p.Value != null && p.Value.Equals(Value)));
-            }
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return Name.GetHashCode() ^
-                (Value != null ? Value.GetHashCode() : 0);
-        }
-
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
 
             ICalendarProperty p = obj as ICalendarProperty;
             if (p != null)
-            {
-                // Copy the value
-                Value = p.Value;
-
+            {               
                 // Copy parameters
                 foreach (ICalendarParameter parm in p.Parameters)
                     AddChild(parm.Copy<ICalendarParameter>());
@@ -149,7 +117,7 @@ namespace DDay.iCal
         virtual public void AddParameter(string name, string value)
         {
             CalendarParameter p = new CalendarParameter(name, value);
-            AddParameter(p);
+            Parameters.Add(p);
         }
 
         /// <summary>
@@ -176,7 +144,7 @@ namespace DDay.iCal
 
         #region IKeyedObject Members
 
-        public string Key
+        virtual public string Key
         {
             get { return Name; }
         }

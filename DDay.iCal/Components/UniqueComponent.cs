@@ -36,7 +36,6 @@ namespace DDay.iCal
 
         #region Private Fields
 
-        private Text _UID;
         private Binary[] _Attach;
         private Attendee[] _Attendee;
         private TextCollection[] _Categories;
@@ -62,31 +61,20 @@ namespace DDay.iCal
         [field: NonSerialized]
         public event UIDChangedEventHandler UIDChanged;
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         virtual public Text UID
         {
             get
             {
-                return _UID;
+                return Properties.Get<Text>("UID");
             }
             set
             {
-                if (!object.Equals(_UID, value))
+                if (!object.Equals(UID, value))
                 {
-                    Text oldUID = _UID;
+                    Text oldUID = UID;
 
-                    _UID = value;
-                    if (_UID != null)
-                    {
-                        if (_UID.Value == null)
-                            _UID = null;
-                        else _UID.Name = "UID";
-                    }
-
-                    OnUIDChanged(oldUID, _UID);
+                    Properties.Set("UID", value);
+                    OnUIDChanged(oldUID, value);
                 }
             }
         }
@@ -95,227 +83,106 @@ namespace DDay.iCal
 
         #region Public Properties
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
         virtual public Binary[] Attach
         {
-            get { return _Attach; }
-            set { _Attach = value; }
+            get { return Properties.Get<Binary[]>("ATTACH"); }
+            set { Properties.Set("ATTACH", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
         virtual public Attendee[] Attendee
         {
-            get { return _Attendee; }
-            set
-            {
-                if (!object.Equals(_Attendee, value))
-                    _Attendee = value;
-            }
+            get { return Properties.Get<Attendee[]>("ATTENDEE"); }
+            set { Properties.Set("ATTENDEE", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 4)]
-#endif
         virtual public TextCollection[] Categories
         {
-            get { return _Categories; }                    
-            set { _Categories = value; }            
+            get { return Properties.Get<TextCollection[]>("CATEGORIES"); }
+            set { Properties.Set("CATEGORIES", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 5)]
-#endif
         virtual public Text Class
         {
-            get { return _Class; }
-            set
-            {
-                _Class = value;
-                if (_Class != null)
-                    _Class.Name = "CLASS";
-            }
+            get { return Properties.Get<Text>("CLASS"); }
+            set { Properties.Set("CLASS", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 6)]
-#endif
         virtual public Text[] Comment
         {
-            get { return _Comment; }
-            set { _Comment = value; }
+            get { return Properties.Get<Text[]>("COMMENT"); }
+            set { Properties.Set("COMMENT", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 7)]
-#endif
         virtual public Text[] Contact
         {
-            get { return _Contact; }
-            set { _Contact = value; }
+            get { return Properties.Get<Text[]>("CONTACT"); }
+            set { Properties.Set("CONTACT", value); }
         }
 
-        [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
-#if DATACONTRACT
-        [DataMember(Order = 8)]
-#endif
         virtual public iCalDateTime Created
         {
-            get { return _Created; }
-            set
-            {
-                _Created = value;
-                if (_Created != null)
-                    _Created.Name = "CREATED";
-            }
+            get { return Properties.Get<iCalDateTime>("CREATED"); }
+            set { Properties.Set("CREATED", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 9)]
-#endif
         virtual public Text Description
         {
-            get { return _Description; }
-            set
-            {
-                _Description = value;
-                if (_Description != null)
-                    _Description.Name = "DESCRIPTION";
-            }
+            get { return Properties.Get<Text>("DESCRIPTION"); }
+            set { Properties.Set("DESCRIPTION", value); }
         }
 
-        [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
-#if DATACONTRACT
-        [DataMember(Order = 10)]
-#endif
         virtual public iCalDateTime DTStamp
         {
-            get { return _DTStamp; }
-            set
-            {
-                _DTStamp = value;
-                if (_DTStamp != null)
-                    _DTStamp.Name = "DTSTAMP";
-            }
+            get { return Properties.Get<iCalDateTime>("DTSTAMP"); }
+            set { Properties.Set("DTSTAMP", value); }
         }
 
-        [Serialized, DefaultValueType("DATE-TIME"), ForceUTC]
-#if DATACONTRACT
-        [DataMember(Order = 11)]
-#endif
-        virtual public iCalDateTime Last_Modified
+        virtual public iCalDateTime LastModified
         {
-            get { return _Last_Modified; }
-            set
-            {
-                _Last_Modified = value;
-                if (_Last_Modified != null)
-                    _Last_Modified.Name = "LAST-MODIFIED";
-            }
+            get { return Properties.Get<iCalDateTime>("LAST-MODIFIED"); }
+            set { Properties.Set("LAST-MODIFIED", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 12)]
-#endif
         virtual public Organizer Organizer
         {
-            get { return _Organizer; }
-            set
-            {
-                if (!object.Equals(_Organizer, value))
-                    _Organizer = value;
-            }
+            get { return Properties.Get<Organizer>("ORGANIZER"); }
+            set { Properties.Set("ORGANIZER", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 13)]
-#endif
         virtual public Integer Priority
         {
-            get { return _Priority; }
-            set
-            {
-                _Priority = value;
-                if (_Priority != null)
-                    _Priority.Name = "PRIORITY";
-            }
+            get { return Properties.Get<Integer>("PRIORITY"); }
+            set { Properties.Set("PRIORITY", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 14)]
-#endif
-        virtual public Text[] Related_To
+        virtual public Text[] RelatedTo
         {
-            get { return _Related_To; }
-            set { _Related_To = value; }
+            get { return Properties.Get<Text[]>("RELATED-TO"); }
+            set { Properties.Set("RELATED-TO", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 15)]
-#endif
-        virtual public RequestStatus[] Request_Status
+        virtual public RequestStatus[] RequestStatus
         {
-            get { return _Request_Status; }
-            set { _Request_Status = value; }
+            get { return Properties.Get<RequestStatus[]>("REQUEST-STATUS"); }
+            set { Properties.Set("REQUEST-STATUS", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 16)]
-#endif
         virtual public Integer Sequence
         {
-            get { return _Sequence; }
-            set
-            {
-                _Sequence = value;
-                if (_Sequence != null)
-                    _Sequence.Name = "SEQUENCE";
-            }
+            get { return Properties.Get<Integer>("SEQUENCE"); }
+            set { Properties.Set("SEQUENCE", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 17)]
-#endif
         virtual public Text Summary
         {
-            get { return _Summary; }
-            set
-            {
-                _Summary = value;
-                if (_Summary != null)
-                    _Summary.Name = "SUMMARY";
-            }
+            get { return Properties.Get<Text>("SUMMARY"); }
+            set { Properties.Set("SUMMARY", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 18)]
-#endif
         virtual public URI Url
         {
-            get { return _Url; }
-            set
-            {
-                _Url = value;
-                if (_Url != null)
-                    _Url.Name = "URL";
-            }
+            get { return Properties.Get<URI>("URL"); }
+            set { Properties.Set("URL", value); }
         }
 
         virtual public string Category
@@ -333,7 +200,6 @@ namespace DDay.iCal
                     if (Categories == null || Categories.Length == 0)
                         Categories = new TextCollection[1];
                     Categories[0] = new TextCollection(value);
-                    Categories[0].Name = "CATEGORIES";
                 }                
             }
         }
@@ -362,8 +228,6 @@ namespace DDay.iCal
 
         virtual public void AddAttachment(Binary binary)
         {
-            binary.Name = "ATTACH";
-
             if (Attach == null)
             {
                 Attach = new Binary[] { binary };
@@ -541,30 +405,30 @@ namespace DDay.iCal
             if (relationshipType != null)
                 text.AddParameter(new CalendarParameter("RELTYPE", relationshipType));
 
-            if (Related_To == null)
+            if (RelatedTo == null)
             {
-                Related_To = new Text[] { text };
+                RelatedTo = new Text[] { text };
             }
             else
             {
-                Text[] related_to = Related_To;
-                Related_To = new Text[Related_To.Length + 1];
-                related_to.CopyTo(Related_To, 0);
-                Related_To[Related_To.Length - 1] = text;                
+                Text[] related_to = RelatedTo;
+                RelatedTo = new Text[RelatedTo.Length + 1];
+                related_to.CopyTo(RelatedTo, 0);
+                RelatedTo[RelatedTo.Length - 1] = text;                
             }
         }
 
         virtual public void RemoveRelatedTo(string uid)
         {
-            if (Related_To == null)
+            if (RelatedTo == null)
                 return;
             else
             {
                 int index = -1;
-                for (int i = 0; i < Related_To.Length; i++)
+                for (int i = 0; i < RelatedTo.Length; i++)
                 {
-                    if (Related_To[i].Value.Equals(uid) ||
-                        Related_To[i].Value.Equals("<" + uid + ">"))
+                    if (RelatedTo[i].Value.Equals(uid) ||
+                        RelatedTo[i].Value.Equals("<" + uid + ">"))
                     {
                         index = i;
                         break;
@@ -573,10 +437,10 @@ namespace DDay.iCal
                 
                 if (index >= 0)
                 {
-                    Text[] related_to = new Text[Related_To.Length - 1];
-                    Array.Copy(Related_To, 0, related_to, 0, index);
-                    Array.Copy(Related_To, index + 1, related_to, index, related_to.Length - index);
-                    Related_To = related_to;
+                    Text[] related_to = new Text[RelatedTo.Length - 1];
+                    Array.Copy(RelatedTo, 0, related_to, 0, index);
+                    Array.Copy(RelatedTo, index + 1, related_to, index, related_to.Length - index);
+                    RelatedTo = related_to;
                 }
             }
         }

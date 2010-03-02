@@ -72,7 +72,7 @@ namespace DDay.iCal
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref ICalendarObject obj)
+        public override bool TryParse(string value, ref ICalendarDataType obj)
         {
             TZID tzid = (TZID)obj;
 
@@ -97,7 +97,7 @@ namespace DDay.iCal
             }
             else if (obj is string)
             {
-                ICalendarObject tzid = new TZID();
+                ICalendarDataType tzid = new TZID();
                 if (((TZID)tzid).TryParse(obj.ToString(), ref tzid))
                     return tzid.Equals(this);
             }

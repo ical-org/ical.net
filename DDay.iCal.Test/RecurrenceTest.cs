@@ -82,7 +82,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 45 of RFC 2445 - RRULE:FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30
+        /// See Page 45 of RFC 5545 - RRULE:FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE1()
@@ -115,7 +115,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 118 of RFC 2445 - RRULE:FREQ=DAILY;COUNT=10;INTERVAL=2
+        /// See Page 118 of RFC 5545 - RRULE:FREQ=DAILY;COUNT=10;INTERVAL=2
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE2()
@@ -143,7 +143,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 118 of RFC 2445 - RRULE:FREQ=DAILY;UNTIL=19971224T000000Z
+        /// See Page 118 of RFC 5545 - RRULE:FREQ=DAILY;UNTIL=19971224T000000Z
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE3()
@@ -176,7 +176,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 118 of RFC 2445 - RRULE:FREQ=DAILY;INTERVAL=2
+        /// See Page 118 of RFC 5545 - RRULE:FREQ=DAILY;INTERVAL=2
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE4()
@@ -290,7 +290,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 119 of RFC 2445 - RRULE:FREQ=DAILY;INTERVAL=10;COUNT=5
+        /// See Page 119 of RFC 5545 - RRULE:FREQ=DAILY;INTERVAL=10;COUNT=5
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE5()
@@ -313,7 +313,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 119 of RFC 2445 - RRULE:FREQ=DAILY;UNTIL=20000131T090000Z;BYMONTH=1
+        /// See Page 119 of RFC 5545 - RRULE:FREQ=DAILY;UNTIL=20000131T090000Z;BYMONTH=1
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE6()
@@ -343,7 +343,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 119 of RFC 2445 - RRULE:FREQ=YEARLY;UNTIL=20000131T150000Z;BYMONTH=1;BYDAY=SU,MO,TU,WE,TH,FR,SA
+        /// See Page 119 of RFC 5545 - RRULE:FREQ=YEARLY;UNTIL=20000131T150000Z;BYMONTH=1;BYDAY=SU,MO,TU,WE,TH,FR,SA
         /// <note>
         ///     The example was slightly modified to fix a suspected flaw in the design of
         ///     the example RRULEs.  UNTIL is always UTC time, but it expected the actual
@@ -368,7 +368,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 119 of RFC 2445 - RRULE:FREQ=WEEKLY;COUNT=10
+        /// See Page 119 of RFC 5545 - RRULE:FREQ=WEEKLY;COUNT=10
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE7()
@@ -408,7 +408,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 119 of RFC 2445 - RRULE:FREQ=WEEKLY;UNTIL=19971224T000000Z
+        /// See Page 119 of RFC 5545 - RRULE:FREQ=WEEKLY;UNTIL=19971224T000000Z
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE8()
@@ -462,7 +462,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 119 of RFC 2445 - RRULE:FREQ=WEEKLY;INTERVAL=2;WKST=SU
+        /// See Page 119 of RFC 5545 - RRULE:FREQ=WEEKLY;INTERVAL=2;WKST=SU
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE9()
@@ -504,7 +504,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 119 of RFC 2445 - RRULE:FREQ=WEEKLY;UNTIL=19971007T000000Z;WKST=SU;BYDAY=TU,TH
+        /// See Page 119 of RFC 5545 - RRULE:FREQ=WEEKLY;UNTIL=19971007T000000Z;WKST=SU;BYDAY=TU,TH
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE10()
@@ -532,7 +532,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 120 of RFC 2445 - RRULE:FREQ=WEEKLY;COUNT=10;WKST=SU;BYDAY=TU,TH
+        /// See Page 120 of RFC 5545 - RRULE:FREQ=WEEKLY;COUNT=10;WKST=SU;BYDAY=TU,TH
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE11()
@@ -552,7 +552,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 120 of RFC 2445 - RRULE:FREQ=WEEKLY;INTERVAL=2;UNTIL=19971224T000000Z;WKST=SU;BYDAY=MO,WE,FR
+        /// See Page 120 of RFC 5545 - RRULE:FREQ=WEEKLY;INTERVAL=2;UNTIL=19971224T000000Z;WKST=SU;BYDAY=MO,WE,FR
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE12()
@@ -686,7 +686,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 120 of RFC 2445 - RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=8;WKST=SU;BYDAY=TU,TH
+        /// See Page 120 of RFC 5545 - RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=8;WKST=SU;BYDAY=TU,TH
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE13()
@@ -712,7 +712,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 120 of RFC 2445 - RRULE:FREQ=MONTHLY;COUNT=10;BYDAY=1FR
+        /// See Page 120 of RFC 5545 - RRULE:FREQ=MONTHLY;COUNT=10;BYDAY=1FR
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE14()
@@ -752,7 +752,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 120 of RFC 2445 - RRULE:FREQ=MONTHLY;UNTIL=19971224T000000Z;BYDAY=1FR
+        /// See Page 120 of RFC 5545 - RRULE:FREQ=MONTHLY;UNTIL=19971224T000000Z;BYDAY=1FR
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE15()
@@ -780,7 +780,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 120 of RFC 2445 - RRULE:FREQ=MONTHLY;INTERVAL=2;COUNT=10;BYDAY=1SU,-1SU
+        /// See Page 120 of RFC 5545 - RRULE:FREQ=MONTHLY;INTERVAL=2;COUNT=10;BYDAY=1SU,-1SU
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE16()
@@ -820,7 +820,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 121 of RFC 2445 - RRULE:FREQ=MONTHLY;COUNT=6;BYDAY=-2MO
+        /// See Page 121 of RFC 5545 - RRULE:FREQ=MONTHLY;COUNT=6;BYDAY=-2MO
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE17()
@@ -852,7 +852,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 121 of RFC 2445 - RRULE:FREQ=MONTHLY;BYMONTHDAY=-3
+        /// See Page 121 of RFC 5545 - RRULE:FREQ=MONTHLY;BYMONTHDAY=-3
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE18()
@@ -884,7 +884,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 121 of RFC 2445 - RRULE:FREQ=MONTHLY;COUNT=10;BYMONTHDAY=2,15
+        /// See Page 121 of RFC 5545 - RRULE:FREQ=MONTHLY;COUNT=10;BYMONTHDAY=2,15
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE19()
@@ -924,7 +924,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 121 of RFC 2445 - RRULE:FREQ=MONTHLY;COUNT=10;BYMONTHDAY=1,-1
+        /// See Page 121 of RFC 5545 - RRULE:FREQ=MONTHLY;COUNT=10;BYMONTHDAY=1,-1
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE20()
@@ -964,7 +964,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 121 of RFC 2445 - RRULE:FREQ=MONTHLY;INTERVAL=18;COUNT=10;BYMONTHDAY=10,11,12,13,14,15
+        /// See Page 121 of RFC 5545 - RRULE:FREQ=MONTHLY;INTERVAL=18;COUNT=10;BYMONTHDAY=10,11,12,13,14,15
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE21()
@@ -1004,7 +1004,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 122 of RFC 2445 - RRULE:FREQ=MONTHLY;INTERVAL=2;BYDAY=TU
+        /// See Page 122 of RFC 5545 - RRULE:FREQ=MONTHLY;INTERVAL=2;BYDAY=TU
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE22()
@@ -1060,7 +1060,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 122 of RFC 2445 - RRULE:FREQ=YEARLY;COUNT=10;BYMONTH=6,7
+        /// See Page 122 of RFC 5545 - RRULE:FREQ=YEARLY;COUNT=10;BYMONTH=6,7
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE23()
@@ -1088,7 +1088,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 122 of RFC 2445 - RRULE:FREQ=YEARLY;INTERVAL=2;COUNT=10;BYMONTH=1,2,3
+        /// See Page 122 of RFC 5545 - RRULE:FREQ=YEARLY;INTERVAL=2;COUNT=10;BYMONTH=1,2,3
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE24()
@@ -1116,7 +1116,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 122 of RFC 2445 - RRULE:FREQ=YEARLY;INTERVAL=3;COUNT=10;BYYEARDAY=1,100,200
+        /// See Page 122 of RFC 5545 - RRULE:FREQ=YEARLY;INTERVAL=3;COUNT=10;BYYEARDAY=1,100,200
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE25()
@@ -1156,7 +1156,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 123 of RFC 2445 - RRULE:FREQ=YEARLY;BYDAY=20MO
+        /// See Page 123 of RFC 5545 - RRULE:FREQ=YEARLY;BYDAY=20MO
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE26()
@@ -1177,7 +1177,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 123 of RFC 2445 - RRULE:FREQ=YEARLY;BYWEEKNO=20;BYDAY=MO
+        /// See Page 123 of RFC 5545 - RRULE:FREQ=YEARLY;BYWEEKNO=20;BYDAY=MO
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE27()
@@ -1198,7 +1198,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 123 of RFC 2445 - RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=TH
+        /// See Page 123 of RFC 5545 - RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=TH
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE28()
@@ -1227,7 +1227,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 123 of RFC 2445 - RRULE:FREQ=YEARLY;BYDAY=TH;BYMONTH=6,7,8
+        /// See Page 123 of RFC 5545 - RRULE:FREQ=YEARLY;BYDAY=TH;BYMONTH=6,7,8
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE29()
@@ -1284,7 +1284,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 123 of RFC 2445:
+        /// See Page 123 of RFC 5545:
         /// EXDATE;TZID=US-Eastern:19970902T090000
         /// RRULE:FREQ=MONTHLY;BYDAY=FR;BYMONTHDAY=13
         /// </summary>
@@ -1316,7 +1316,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 124 of RFC 2445 - RRULE:FREQ=MONTHLY;BYDAY=SA;BYMONTHDAY=7,8,9,10,11,12,13
+        /// See Page 124 of RFC 5545 - RRULE:FREQ=MONTHLY;BYDAY=SA;BYMONTHDAY=7,8,9,10,11,12,13
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE31()
@@ -1356,7 +1356,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 124 of RFC 2445 - RRULE:FREQ=YEARLY;INTERVAL=4;BYMONTH=11;BYDAY=TU;BYMONTHDAY=2,3,4,5,6,7,8
+        /// See Page 124 of RFC 5545 - RRULE:FREQ=YEARLY;INTERVAL=4;BYMONTH=11;BYDAY=TU;BYMONTHDAY=2,3,4,5,6,7,8
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE32()
@@ -1377,7 +1377,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 124 of RFC 2445 - RRULE:FREQ=MONTHLY;COUNT=3;BYDAY=TU,WE,TH;BYSETPOS=3
+        /// See Page 124 of RFC 5545 - RRULE:FREQ=MONTHLY;COUNT=3;BYDAY=TU,WE,TH;BYSETPOS=3
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE33()
@@ -1403,7 +1403,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 124 of RFC 2445 - RRULE:FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-2
+        /// See Page 124 of RFC 5545 - RRULE:FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-2
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE34()
@@ -1437,7 +1437,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 125 of RFC 2445 - RRULE:FREQ=HOURLY;INTERVAL=3;UNTIL=19970902T170000Z        
+        /// See Page 125 of RFC 5545 - RRULE:FREQ=HOURLY;INTERVAL=3;UNTIL=19970902T170000Z        
         /// FIXME: The UNTIL time on this item has been altered to 19970902T190000Z to
         /// match the local EDT time occurrence of 3:00pm.  Is the RFC example incorrect?
         /// </summary>
@@ -1460,7 +1460,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 125 of RFC 2445 - RRULE:FREQ=MINUTELY;INTERVAL=15;COUNT=6
+        /// See Page 125 of RFC 5545 - RRULE:FREQ=MINUTELY;INTERVAL=15;COUNT=6
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE36()
@@ -1484,7 +1484,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 125 of RFC 2445 - RRULE:FREQ=MINUTELY;INTERVAL=90;COUNT=4
+        /// See Page 125 of RFC 5545 - RRULE:FREQ=MINUTELY;INTERVAL=90;COUNT=4
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE37()
@@ -1506,7 +1506,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 125 of RFC 2445 - RRULE:FREQ=DAILY;BYHOUR=9,10,11,12,13,14,15,16;BYMINUTE=0,20,40
+        /// See Page 125 of RFC 5545 - RRULE:FREQ=DAILY;BYHOUR=9,10,11,12,13,14,15,16;BYMINUTE=0,20,40
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE38()
@@ -1572,7 +1572,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 125 of RFC 2445 - RRULE:FREQ=MINUTELY;INTERVAL=20;BYHOUR=9,10,11,12,13,14,15,16
+        /// See Page 125 of RFC 5545 - RRULE:FREQ=MINUTELY;INTERVAL=20;BYHOUR=9,10,11,12,13,14,15,16
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE39()
@@ -1592,7 +1592,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 125 of RFC 2445 - RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=MO
+        /// See Page 125 of RFC 5545 - RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=MO
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE40()
@@ -1614,7 +1614,7 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// See Page 125 of RFC 2445 - RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=SU
+        /// See Page 125 of RFC 5545 - RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=SU
         /// This is the same as RRULE40, except WKST is SU, which changes the results.
         /// </summary>
         [Test, Category("Recurrence")]

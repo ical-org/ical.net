@@ -27,7 +27,7 @@ namespace DDay.iCal
         protected CalendarAddress(string name, string value) : this()
         {
             this.Name = name;
-            ICalendarObject obj = this;
+            ICalendarDataType obj = this;
             if (!base.TryParse(value, ref obj) ||
                 string.IsNullOrEmpty(this.Scheme))
                 CopyFrom(Parse("MAILTO:" + value));

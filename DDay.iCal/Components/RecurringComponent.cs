@@ -27,15 +27,9 @@ namespace DDay.iCal
     {
         #region Private Fields
 
-        private iCalDateTime _DTStart;
         private iCalDateTime _EvalStart;
         private iCalDateTime _EvalEnd;
         private iCalDateTime _Until;
-        private RecurrenceDates[] _ExDate;
-        private RecurrencePattern[] _ExRule;
-        private RecurrenceDates[] _RDate;
-        private RecurrencePattern[] _RRule;
-        private iCalDateTime _RecurID;
 
         private List<Period> _Periods;
         private List<Alarm> _Alarms;
@@ -47,82 +41,45 @@ namespace DDay.iCal
         /// <summary>
         /// The start date/time of the component.
         /// </summary>
-        [Serialized, DefaultValueType("DATE-TIME")]
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         virtual public iCalDateTime DTStart
         {
-            get { return _DTStart; }
-            set
-            {
-                _DTStart = value;
-                if (_DTStart != null)
-                    _DTStart.Name = "DTSTART";
-            }
+            get { return Properties.Get<iCalDateTime>("DTSTART"); }            
+            set { Properties.Set("DTSTART", value); }
         }        
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
         virtual public RecurrenceDates[] ExDate
         {
-            get { return _ExDate; }
-            set { _ExDate = value; }
+            get { return Properties.Get<RecurrenceDates[]>("EXDATE"); }
+            set { Properties.Set("EXDATE", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
         virtual public RecurrencePattern[] ExRule
         {
-            get { return _ExRule; }
-            set { _ExRule = value; }
+            get { return Properties.Get<RecurrencePattern[]>("EXRULE"); }
+            set { Properties.Set("EXRULE", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 4)]
-#endif
         virtual public RecurrenceDates[] RDate
         {
-            get { return _RDate; }
-            set { _RDate = value; }
+            get { return Properties.Get<RecurrenceDates[]>("RDATE"); }
+            set { Properties.Set("RDATE", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 5)]
-#endif
-        virtual public iCalDateTime Recurrence_ID
+        virtual public iCalDateTime RecurrenceID
         {
-            get { return _RecurID; }
-            set
-            {
-                _RecurID = value;
-                if (_RecurID != null)
-                    _RecurID.Name = "RECURRENCE-ID";
-            }
+            get { return Properties.Get<iCalDateTime>("RECURRENCE-ID"); }
+            set { Properties.Set("RECURRENCE-ID", value); }
         }
 
-        [Serialized]
-#if DATACONTRACT
-        [DataMember(Order = 6)]
-#endif
         virtual public RecurrencePattern[] RRule
         {
-            get { return _RRule; }
-            set { _RRule = value; }
+            get { return Properties.Get<RecurrencePattern[]>("RRULE"); }
+            set { Properties.Set("RRULE", value); }
         }
 
         /// <summary>
         /// An alias to the DTStart field (i.e. start date/time).
         /// </summary>
-#if DATACONTRACT
-        [DataMember(Order = 7)]
-#endif
         virtual public iCalDateTime Start
         {
             get { return DTStart; }
@@ -134,9 +91,6 @@ namespace DDay.iCal
         /// recurrence pattern of the component.  NOTE: This isn't
         /// set until the recurrence pattern is evaluated.
         /// </summary>
-#if DATACONTRACT
-        [DataMember(Order = 8)]
-#endif
         virtual public iCalDateTime Until
         {
             get { return _Until; }
@@ -153,7 +107,7 @@ namespace DDay.iCal
         /// when each item occurs/recurs.
         /// </summary>
 #if DATACONTRACT
-        [DataMember(Order = 9)]
+        [DataMember(Order = 1)]
 #endif
         virtual public List<Period> Periods
         {
@@ -165,7 +119,7 @@ namespace DDay.iCal
         /// A list of <see cref="Alarm"/>s for this recurring component.
         /// </summary>
 #if DATACONTRACT
-        [DataMember(Order = 10)]
+        [DataMember(Order = 2)]
 #endif
         virtual public List<Alarm> Alarms
         {

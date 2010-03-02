@@ -12,7 +12,7 @@ using System.Runtime.Serialization;
 namespace DDay.iCal
 {
     /// <summary>
-    /// A class that represents an RFC 2445 VEVENT component.
+    /// A class that represents an RFC 5545 VEVENT component.
     /// </summary>
     /// <note>
     ///     TODO: Add support for the following properties:
@@ -58,10 +58,6 @@ namespace DDay.iCal
         /// the end date/time will be extrapolated.
         /// </note>
         /// </summary>
-        [DefaultValueType("DATE-TIME")]
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         public override iCalDateTime DTStart
         {
             get
@@ -86,22 +82,15 @@ namespace DDay.iCal
         /// will be extrapolated.
         /// </note>
         /// </summary>
-        [DefaultValueType("DATE-TIME")]
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
         virtual public iCalDateTime DTEnd
         {
-            get { return _DTEnd; }
+            get { return Properties.Get<iCalDateTime>("DTEND"); }
             set
             {
-                if (!object.Equals(_DTEnd, value))
+                if (!object.Equals(DTEnd, value))
                 {
-                    _DTEnd = value;
+                    Properties.Set("DTEND", value);
                     ExtrapolateTimes();
-
-                    if (_DTEnd != null)
-                        _DTEnd.Name = "DTEND";
                 }
             }
         }
@@ -119,7 +108,7 @@ namespace DDay.iCal
         /// </summary>
         // NOTE: Duration is not supported by all systems,
         // (i.e. iPhone) and cannot co-exist with DTEnd.
-        // RFC 2445 states:
+        // RFC 5545 states:
         //
         //      ; either 'dtend' or 'duration' may appear in
         //      ; a 'eventprop', but 'dtend' and 'duration'
@@ -129,16 +118,13 @@ namespace DDay.iCal
         // should always be extrapolated from the duration.
         virtual public Duration Duration
         {
-            get { return _Duration; }
+            get { return Properties.Get<Duration>("DURATION"); }
             set
             {
-                if (!object.Equals(_Duration, value))
+                if (!object.Equals(Duration, value))
                 {
-                    _Duration = value;
+                    Properties.Set("DURATION", value);
                     ExtrapolateTimes();
-
-                    if (_Duration != null)
-                        _Duration.Name = "DURATION";
                 }                
             }
         }
@@ -180,9 +166,6 @@ namespace DDay.iCal
         /// <summary>
         /// The geographic location (lat/long) of the event.
         /// </summary>
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
         public Geo Geo
         {
             get { return Properties.Get<Geo>("GEO"); }
@@ -192,9 +175,6 @@ namespace DDay.iCal
         /// <summary>
         /// The location of the event.
         /// </summary>
-#if DATACONTRACT
-        [DataMember(Order = 4)]
-#endif
         public Text Location
         {
             get { return Properties.Get<Text>("LOCATION"); }
@@ -206,9 +186,6 @@ namespace DDay.iCal
         /// <example>Conference room #2</example>
         /// <example>Projector</example>
         /// </summary>
-#if DATACONTRACT
-        [DataMember(Order = 5)]
-#endif
         public TextCollection[] Resources
         {
             get { return Properties.Get<TextCollection[]>("RESOURCES"); }
@@ -218,10 +195,6 @@ namespace DDay.iCal
         /// <summary>
         /// The status of the event.
         /// </summary>
-        [DefaultValue("TENTATIVE\r\n")]
-#if DATACONTRACT
-        [DataMember(Order = 6)]
-#endif
         public EventStatus Status
         {
             get { return Properties.Get<EventStatus>("STATUS"); }
@@ -235,10 +208,6 @@ namespace DDay.iCal
         /// or if the time cannot be scheduled for anything
         /// else (opaque).
         /// </summary>
-        [Serialized, DefaultValue("OPAQUE\r\n")]
-#if DATACONTRACT
-        [DataMember(Order = 10)]
-#endif
         public Transparency Transp
         {
             get { return Properties.Get<Transparency>("TRANSP"); }

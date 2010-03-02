@@ -126,13 +126,13 @@ namespace DDay.iCal
             base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref ICalendarObject obj)
+        public override bool TryParse(string value, ref ICalendarDataType obj)
         {
             string[] values = value.Split(',');
             foreach (string v in values)
             {
-                ICalendarObject dt = new iCalDateTime();
-                ICalendarObject p = new Period();
+                ICalendarDataType dt = new iCalDateTime();
+                ICalendarDataType p = new Period();
                 
                 // FIXME: can we remove the following comment?
                 // Seems like it no longer applies...

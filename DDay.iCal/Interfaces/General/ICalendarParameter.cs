@@ -5,9 +5,8 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface ICalendarParameter :
-        ICalendarObject,
+        ICalendarValueObject,
         IKeyedObject<string>
     {
-        IList<string> Values { get; set; }
     }
 }
