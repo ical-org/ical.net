@@ -343,9 +343,6 @@ namespace DDay.iCal
         private List<ITimeZone> m_TimeZone;
         private UniqueComponentList<ITodo> m_Todo;
 
-        [field: NonSerialized]
-        private ICalendarComponentFactory m_ComponentFactory;
-
         // The buffer size used to convert streams from UTF-8 to Unicode
         private const int bufferSize = 8096;
 
@@ -375,16 +372,6 @@ namespace DDay.iCal
             m_Journal = new UniqueComponentList<IJournal>();
             m_TimeZone = new List<ITimeZone>();
             m_Todo = new UniqueComponentList<ITodo>();
-
-            object[] attrs = GetType().GetCustomAttributes(typeof(ComponentFactoryAttribute), false);
-            if (attrs.Length > 0)
-            {
-                foreach (ComponentFactoryAttribute attr in attrs)
-                    m_ComponentFactory = Activator.CreateInstance(attr.Type) as ICalendarComponentFactory;
-            }
-
-            if (m_ComponentFactory == null)
-                m_ComponentFactory = new ComponentFactory();
         }
 
         #endregion
@@ -684,7 +671,7 @@ namespace DDay.iCal
         /// <param name="FromDate">The beginning date/time of the range to test.</param>
         /// <param name="ToDate">The end date/time of the range to test.</param>
         [Obsolete("This method is no longer supported.  Use GetOccurrences() instead.")]
-        public void Evaluate(IDateTime FromDate, IDateTime ToDate)
+        public void Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
         }
@@ -697,7 +684,7 @@ namespace DDay.iCal
         /// <param name="FromDate">The beginning date/time of the range to test.</param>
         /// <param name="ToDate">The end date/time of the range to test.</param>
         [Obsolete("This method is no longer supported.  Use GetOccurrences() instead.")]
-        public void Evaluate<T>(IDateTime FromDate, IDateTime ToDate)
+        public void Evaluate<T>(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
         }
@@ -717,7 +704,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
         /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
-        public IList<IOccurrence> GetOccurrences(IDateTime dt)
+        public IList<IOccurrence> GetOccurrences(iCalDateTime dt)
         {
             return GetOccurrences<IRecurringComponent>(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
         }
@@ -729,7 +716,7 @@ namespace DDay.iCal
         /// <param name="FromDate">The beginning date/time of the range.</param>
         /// <param name="ToDate">The end date/time of the range.</param>
         /// <returns>A list of occurrences that fall between the dates provided.</returns>
-        public IList<IOccurrence> GetOccurrences(IDateTime FromDate, IDateTime ToDate)
+        public IList<IOccurrence> GetOccurrences(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             return GetOccurrences<IRecurringComponent>(FromDate, ToDate);
         }
@@ -746,7 +733,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences.</param>
         /// <returns>A list of Periods representing the occurrences of this object.</returns>
-        virtual public IList<IOccurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
+        virtual public IList<IOccurrence> GetOccurrences<T>(iCalDateTime dt) where T : IRecurringComponent
         {
             return GetOccurrences<T>(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
         }
@@ -758,7 +745,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="startTime">The starting date range</param>
         /// <param name="endTime">The ending date range</param>
-        virtual public IList<IOccurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
+        virtual public IList<IOccurrence> GetOccurrences<T>(iCalDateTime startTime, iCalDateTime endTime) where T : IRecurringComponent
         {
             List<IOccurrence> occurrences = new List<IOccurrence>();
             foreach (IRecurringComponent rc in RecurringComponents)

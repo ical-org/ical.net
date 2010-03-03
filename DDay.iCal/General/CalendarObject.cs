@@ -305,6 +305,10 @@ namespace DDay.iCal
             set { _Column = value; }
         }
 
+        #endregion
+
+        #region IMergeable Members
+
         virtual public void MergeWith(ICalendarObject obj)
         {
             if (obj != null)
