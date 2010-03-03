@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public interface IDateTime :
+    public interface IUTCOffset :
         ICalendarDataType
     {
     }

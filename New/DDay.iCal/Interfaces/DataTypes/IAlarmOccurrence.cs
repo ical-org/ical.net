@@ -5,7 +5,10 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface IAlarmOccurrence :
-        IOccurrence
+        IOccurrence,
+        IComparable<IAlarmOccurrence>
     {
+        IAlarm Alarm { get; }
+        iCalDateTime DateTime { get; }
     }
 }

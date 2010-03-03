@@ -8,10 +8,10 @@ namespace DDay.iCal
         IRecurringComponent
     {
         ITZID TZID { get; set; }
-        IDateTime LastModified { get; set; }
+        iCalDateTime LastModified { get; set; }
         IURI TZUrl { get; set; }
         IList<ITimeZoneInfo> TimeZoneInfos { get; set; }
 
-        ITimeZoneInfo GetTimeZoneInfo(IDateTime dt);
+        ITimeZoneInfo GetTimeZoneInfo(iCalDateTime dt);
     }
 }

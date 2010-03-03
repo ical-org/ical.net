@@ -5,7 +5,10 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface IOccurrence :
-        ICalendarDataType
+        ICalendarDataType,
+        IComparable<IOccurrence>
     {
+        IPeriod Period { get; }
+        IRecurringComponent Component { get; }
     }
 }
