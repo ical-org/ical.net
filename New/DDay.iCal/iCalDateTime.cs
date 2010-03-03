@@ -71,10 +71,10 @@ namespace DDay.iCal
                     ITimeZoneInfo tzi = TimeZoneInfo;
                     if (tzi != null)
                     {
-                        int mult = tzi.TZOffsetTo.Positive ? -1 : 1;
-                        value = value.AddHours(tzi.TZOffsetTo.Hours * mult);
-                        value = value.AddMinutes(tzi.TZOffsetTo.Minutes * mult);
-                        value = value.AddSeconds(tzi.TZOffsetTo.Seconds * mult);
+                        int mult = tzi.OffsetTo.Positive ? -1 : 1;
+                        value = value.AddHours(tzi.OffsetTo.Hours * mult);
+                        value = value.AddMinutes(tzi.OffsetTo.Minutes * mult);
+                        value = value.AddSeconds(tzi.OffsetTo.Seconds * mult);
                         value = DateTime.SpecifyKind(value, DateTimeKind.Utc);
                         return value;
                     }
@@ -100,7 +100,7 @@ namespace DDay.iCal
                 {
                     if (Calendar != null)
                     {
-                        ITimeZoneInfo tz = Calendar.GetTimeZone(TZID);
+                        ITimeZone tz = Calendar.GetTimeZone(TZID);
                         if (tz != null)
                             _TimeZoneInfo = tz.GetTimeZoneInfo(this);
                     }
@@ -241,11 +241,9 @@ namespace DDay.iCal
                 
         public iCalDateTime(iCalDateTime value) : this()
         {
-            CopyFrom(value);
-        }
-        public iCalDateTime(string value) : this()
-        {
-            CopyFrom(Parse(value));
+            Value = value.Value;
+            TZID = value.TZID;
+            Calendar = value.Calendar;
         }
         public iCalDateTime(DateTime value) : this(value, null, null) {}
         public iCalDateTime(DateTime value, ITZID tzid, IICalendar iCal) : this()
@@ -334,10 +332,10 @@ namespace DDay.iCal
         
         public override bool Equals(object obj)
         {
-            if (obj is ITimeZone)
-                return ((ITimeZone)obj).UTC.Equals(UTC);
+            if (obj is iCalDateTime)
+                return ((iCalDateTime)obj).UTC.Equals(UTC);
             else if (obj is DateTime)
-                return object.Equals((ITimeZone)obj, UTC);
+                return object.Equals((iCalDateTime)obj, UTC);
             return false;            
         }
 
@@ -390,12 +388,12 @@ namespace DDay.iCal
             return left.UTC - right.UTC;
         }
 
-        public static ITimeZone operator -(iCalDateTime left, TimeSpan right)
+        public static iCalDateTime operator -(iCalDateTime left, TimeSpan right)
         {
             return new iCalDateTime(left.Value - right, left.TZID, left.Calendar);
         }
 
-        public static ITimeZone operator +(iCalDateTime left, TimeSpan right)
+        public static iCalDateTime operator +(iCalDateTime left, TimeSpan right)
         {
             return new iCalDateTime(left.Value + right, left.TZID, left.Calendar);
         }
@@ -413,24 +411,24 @@ namespace DDay.iCal
         {
             DateTime value = UTC;
 
-            int mult = tzi.TZOffsetTo.Positive ? 1 : -1;
-            value = value.AddHours(tzi.TZOffsetTo.Hours * mult);
-            value = value.AddMinutes(tzi.TZOffsetTo.Minutes * mult);
-            value = value.AddSeconds(tzi.TZOffsetTo.Seconds * mult);
+            int mult = tzi.OffsetTo.Positive ? 1 : -1;
+            value = value.AddHours(tzi.OffsetTo.Hours * mult);
+            value = value.AddMinutes(tzi.OffsetTo.Minutes * mult);
+            value = value.AddSeconds(tzi.OffsetTo.Seconds * mult);
             value = DateTime.SpecifyKind(value, DateTimeKind.Unspecified);
             return value;
         }
                 
-        public DateTime ToTimeZone(string tzid)
+        public DateTime ToTimeZone(ITZID tzid)
         {
-            if (!string.IsNullOrEmpty(tzid))
+            if (tzid != null)
             {
                 if (Calendar != null)
                 {
                     ITimeZone tz = Calendar.GetTimeZone(tzid);
                     if (tz != null)
                     {
-                        ITimeZone tzi = tz.GetTimeZoneInfo(this);
+                        ITimeZoneInfo tzi = tz.GetTimeZoneInfo(this);
                         if (tzi != null)
                             return ToTimeZone(tzi);
                     }

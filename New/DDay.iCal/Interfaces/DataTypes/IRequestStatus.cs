@@ -7,9 +7,9 @@ namespace DDay.iCal
     public interface IRequestStatus :
         ICalendarDataType
     {
-        Text StatusDesc { get; set; }
-        Text ExtData { get; set; }
-        StatusCode StatusCode { get; set; }
+        IText StatusDesc { get; set; }
+        IText ExtData { get; set; }
+        IStatusCode StatusCode { get; set; }
         string Language { get; set; }
     }
 }

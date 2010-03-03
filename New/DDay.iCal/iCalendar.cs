@@ -501,12 +501,6 @@ namespace DDay.iCal
         #endregion        
 
         #region IICalendar Members
-                
-        virtual public ICalendarComponentFactory ComponentFactory
-        {
-            get { return m_ComponentFactory; }
-            set { m_ComponentFactory = value; }
-        }
 
         virtual public IUniqueComponentListReadonly<IUniqueComponent> UniqueComponents
         {
@@ -613,34 +607,36 @@ namespace DDay.iCal
             return tz;
         }
 
-#if DATACONTRACT && !SILVERLIGHT
-        /// <summary>
-        /// Adds a system time zone to the iCalendar.  This time zone may
-        /// then be used in date/time objects contained in the 
-        /// calendar.
-        /// </summary>
-        /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>
-        /// <returns>The time zone added to the calendar.</returns>
-        public ITimeZone AddTimeZone(System.TimeZoneInfo tzi)
-        {
-            ITimeZone tz = iCalTimeZone.FromSystemTimeZone(tzi);
-            AddChild(tz);
-            return tz;
-        }
+        // FIXME: add this back in:
 
-        /// <summary>
-        /// Adds the local system time zone to the iCalendar.  
-        /// This time zone may then be used in date/time
-        /// objects contained in the calendar.
-        /// </summary>
-        /// <returns>The time zone added to the calendar.</returns>
-        public ITimeZone AddLocalTimeZone()
-        {
-            ITimeZone tz = iCalTimeZone.FromLocalTimeZone();
-            AddChild(tz);
-            return tz;
-        }
-#endif
+//#if DATACONTRACT && !SILVERLIGHT
+//        /// <summary>
+//        /// Adds a system time zone to the iCalendar.  This time zone may
+//        /// then be used in date/time objects contained in the 
+//        /// calendar.
+//        /// </summary>
+//        /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>
+//        /// <returns>The time zone added to the calendar.</returns>
+//        public ITimeZone AddTimeZone(System.TimeZoneInfo tzi)
+//        {
+//            ITimeZone tz = iCalTimeZone.FromSystemTimeZone(tzi);
+//            AddChild(tz);
+//            return tz;
+//        }
+
+//        /// <summary>
+//        /// Adds the local system time zone to the iCalendar.  
+//        /// This time zone may then be used in date/time
+//        /// objects contained in the calendar.
+//        /// </summary>
+//        /// <returns>The time zone added to the calendar.</returns>
+//        public ITimeZone AddLocalTimeZone()
+//        {
+//            ITimeZone tz = iCalTimeZone.FromLocalTimeZone();
+//            AddChild(tz);
+//            return tz;
+//        }
+//#endif
 
         /// <summary>
         /// Retrieves the <see cref="DDay.iCal.TimeZone" /> object for the specified
@@ -777,8 +773,9 @@ namespace DDay.iCal
         /// <returns>An object of the type specified</returns>
         public T Create<T>() where T : ICalendarComponent
         {
-            if (m_ComponentFactory == null)
-                throw new ArgumentException("Create() cannot be called without a valid ComponentFactory assigned to the calendar.");
+            // FIXME: remove?
+            //if (m_ComponentFactory == null)
+            //    throw new ArgumentException("Create() cannot be called without a valid ComponentFactory assigned to the calendar.");
 
             ICalendarObject obj = Activator.CreateInstance(typeof(T)) as ICalendarObject;
             if (obj is T)

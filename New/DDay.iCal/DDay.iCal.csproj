@@ -74,36 +74,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\ComponentFactoryAttribute.cs" />
-    <Compile Include="Components\Alarm.cs" />
-    <Compile Include="Components\CalendarComponent.cs" />
-    <Compile Include="Components\iCalTimeZone.cs" />
-    <Compile Include="Components\RecurringComponent.cs" />
-    <Compile Include="Components\UniqueComponent.cs" />
-    <Compile Include="DataTypes\AlarmAction.cs" />
-    <Compile Include="DataTypes\AlarmOccurrence.cs" />
-    <Compile Include="DataTypes\Duration.cs" />
-    <Compile Include="DataTypes\Integer.cs" />
-    <Compile Include="DataTypes\Occurrence.cs" />
-    <Compile Include="DataTypes\Period.cs" />
-    <Compile Include="DataTypes\RequestStatus.cs" />
-    <Compile Include="DataTypes\StatusCode.cs" />
-    <Compile Include="DataTypes\UTCOffset.cs" />
+    <Compile Include="Components\CalendarComponent.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Constants.cs" />
-    <Compile Include="DataTypes\EncodableDataType.cs" />
-    <Compile Include="DataTypes\CalendarDataType.cs" />
-    <Compile Include="DataTypes\TimeZoneInfo.cs" />
+    <Compile Include="General\CalendarObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="General\CalendarObjectBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="General\CalendarParameter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="General\CalendarParameterList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="General\CalendarProperty.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="General\CalendarPropertyList.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="iCalDateTime.cs" />
-    <Compile Include="DataTypes\Text.cs" />
     <Compile Include="Factory\UIDFactory.cs" />
-    <Compile Include="General\CalendarObject.cs" />
-    <Compile Include="General\CalendarObjectBase.cs" />
-    <Compile Include="General\CalendarParameter.cs" />
-    <Compile Include="General\CalendarParameterList.cs" />
-    <Compile Include="General\CalendarProperty.cs" />
-    <Compile Include="General\CalendarPropertyList.cs" />
     <Compile Include="iCalendar.cs" />
-    <Compile Include="iCalendarCollection.cs" />
+    <Compile Include="iCalendarCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Interfaces\Components\IAlarm.cs" />
     <Compile Include="Interfaces\Components\IEvent.cs" />
     <Compile Include="Interfaces\Components\IFreeBusy.cs" />
