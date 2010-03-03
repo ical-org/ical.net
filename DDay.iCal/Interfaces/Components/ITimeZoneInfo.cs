@@ -7,9 +7,9 @@ namespace DDay.iCal
     public interface ITimeZoneInfo :
         ICalendarDataType
     {
-        bool Positive { get; set; }
-        int Hours { get; set; }
-        int Minutes { get; set; }
-        int Seconds { get; set; }
+        string TimeZoneName { get; set; }
+        IUTCOffset OffsetFrom { get; set; }
+        IUTCOffset OffsetTo { get; set; }
+        string[] TimeZoneNames { get; set; }
     }
 }

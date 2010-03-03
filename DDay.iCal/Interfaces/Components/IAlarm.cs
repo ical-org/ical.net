@@ -32,4 +32,12 @@ namespace DDay.iCal
         /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
         IList<IAlarmOccurrence> Poll(iCalDateTime Start, iCalDateTime End);
     }
+
+    public enum AlarmAction
+    {
+        Audio,
+        Display,
+        Email,
+        Procedure
+    };
 }

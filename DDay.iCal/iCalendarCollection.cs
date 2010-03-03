@@ -17,7 +17,7 @@ namespace DDay.iCal
     [CollectionDataContract(Name = "iCalendarCollection", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public class iCalendarCollection : 
+    public class iCalendarCollection :
         CalendarComponent,
         ICollection<IICalendar>,
         IICalendar

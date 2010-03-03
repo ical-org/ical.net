@@ -27,24 +27,22 @@ namespace DDay.iCal
         /// </summary>
         string Method { get; set; }
 
-        /// <summary>
-        /// Gets/sets the component factory for this calendar.
-        /// </summary>
-        ICalendarComponentFactory ComponentFactory { get; set; }
+        ///// <summary>
+        ///// Gets/sets the component factory for this calendar.
+        ///// </summary>
+        //ICalendarComponentFactory ComponentFactory { get; set; }
         
-        // FIXME: add recurrence rules back in
+        /// <summary>
+        /// Gets/sets the restriction on how evaluation of 
+        /// recurrence patterns occurs within this calendar.
+        /// </summary>
+        RecurrenceRestrictionType RecurrenceRestriction { get; set; }
 
-        ///// <summary>
-        ///// Gets/sets the restriction on how evaluation of 
-        ///// recurrence patterns occurs within this calendar.
-        ///// </summary>
-        //RecurrenceRestrictionType RecurrenceRestriction { get; set; }
-
-        ///// <summary>
-        ///// Gets/sets the evaluation mode during recurrence
-        ///// evaluation.  Default is ThrowException.
-        ///// </summary>
-        //RecurrenceEvaluationModeType RecurrenceEvaluationMode { get; set; }
+        /// <summary>
+        /// Gets/sets the evaluation mode during recurrence
+        /// evaluation.  Default is ThrowException.
+        /// </summary>
+        RecurrenceEvaluationModeType RecurrenceEvaluationMode { get; set; }
 
         /// <summary>
         /// Creates a new component, and adds it
@@ -134,23 +132,24 @@ namespace DDay.iCal
         /// <param name="endTime">The ending date range</param>
         IList<IOccurrence> GetOccurrences<T>(iCalDateTime startTime, iCalDateTime endTime) where T : IRecurringComponent;
 
-#if DATACONTRACT && !SILVERLIGHT
-        /// <summary>
-        /// Adds a system time zone to the iCalendar.  This time zone may
-        /// then be used in date/time objects contained in the 
-        /// calendar.
-        /// </summary>
-        /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>
-        /// <returns>The time zone added to the calendar.</returns>
-        ITimeZone AddTimeZone(System.TimeZoneInfo tzi);        
+        // FIXME: add this back in:
+//#if DATACONTRACT && !SILVERLIGHT
+//        /// <summary>
+//        /// Adds a system time zone to the iCalendar.  This time zone may
+//        /// then be used in date/time objects contained in the 
+//        /// calendar.
+//        /// </summary>
+//        /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>
+//        /// <returns>The time zone added to the calendar.</returns>
+//        ITimeZone AddTimeZone(System.TimeZoneInfo tzi);        
 
-        /// <summary>
-        /// Adds the local system time zone to the iCalendar.  
-        /// This time zone may then be used in date/time
-        /// objects contained in the calendar.
-        /// </summary>
-        /// <returns>The time zone added to the calendar.</returns>
-        ITimeZone AddLocalTimeZone();
-#endif
+//        /// <summary>
+//        /// Adds the local system time zone to the iCalendar.  
+//        /// This time zone may then be used in date/time
+//        /// objects contained in the calendar.
+//        /// </summary>
+//        /// <returns>The time zone added to the calendar.</returns>
+//        ITimeZone AddLocalTimeZone();
+//#endif
     }
 }

@@ -8,7 +8,9 @@ namespace DDay.iCal
     {
         virtual public IText New()
         {
-            return (Text)Guid.NewGuid().ToString();
+            // FIXME: implement
+            //return (Text)Guid.NewGuid().ToString();
+            return null;
         }
     }
 }
