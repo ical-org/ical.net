@@ -20,11 +20,7 @@ namespace DDay.iCal.Serialization
                     s = new iCalendarSerializer();
                 else if (typeof(ICalendarComponent).IsAssignableFrom(type))
                     s = new ComponentSerializer();
-                else if (typeof(ICalendarProperty).IsAssignableFrom(type))
-                    s = new PropertySerializer();
-                else if (typeof(ICalendarParameter).IsAssignableFrom(type))
-                    s = new ParameterSerializer();
-
+                
                 // Set the serialization context
                 if (s != null)
                     s.SerializationContext = ctx;

@@ -40,7 +40,7 @@ namespace DDay.iCal
             {
                 if (item.UID == null)
                     item.UID = new UIDFactory().New();
-                m_Dictionary[item.UID.Value] = item;
+                m_Dictionary[item.UID] = item;
             }
         }
 
@@ -62,23 +62,23 @@ namespace DDay.iCal
         {   
             m_Components.Insert(index, item);
             if (item.UID != null)
-                m_Dictionary[item.UID.Value] = item;
+                m_Dictionary[item.UID] = item;
         }
 
         public void RemoveAt(int index)
         {
             T item = m_Components[index];
             if (item.UID != null)
-                m_Dictionary.Remove(item.UID.Value);
+                m_Dictionary.Remove(item.UID);
             m_Components.RemoveAt(index);
         }
 
-        public void UIDChangedHandler(object sender, IText oldUID, IText newUID)
+        public void UIDChangedHandler(object sender, string oldUID, string newUID)
         {
-            if (oldUID != null && ContainsKey(oldUID.Value))
-                m_Dictionary.Remove(oldUID.Value);
+            if (oldUID != null && ContainsKey(oldUID))
+                m_Dictionary.Remove(oldUID);
             if (newUID != null)
-                m_Dictionary[newUID.Value] = (T)sender;
+                m_Dictionary[newUID] = (T)sender;
         }
 
         public T this[int index]
@@ -95,8 +95,8 @@ namespace DDay.iCal
                 T item = m_Components[index];
                 if (item.UID != null)
                 {
-                    m_Dictionary.Remove(item.UID.Value);
-                    m_Dictionary[value.UID.Value] = value;
+                    m_Dictionary.Remove(item.UID);
+                    m_Dictionary[value.UID] = value;
                 }
                 m_Components[index] = value;
             }
@@ -139,7 +139,7 @@ namespace DDay.iCal
                 uc.UIDChanged += new UIDChangedEventHandler(UIDChangedHandler);
 
                 if (uc.UID != null)
-                    m_Dictionary[uc.UID.Value] = item;
+                    m_Dictionary[uc.UID] = item;
             }
         }
 
@@ -155,7 +155,7 @@ namespace DDay.iCal
 
         public bool Remove(T item)
         {
-            return m_Components.Remove(item) && (item.UID == null || m_Dictionary.Remove(item.UID.Value));
+            return m_Components.Remove(item) && (item.UID == null || m_Dictionary.Remove(item.UID));
         }
 
         public void Clear()
