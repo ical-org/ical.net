@@ -1,9 +1,10 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalParser.cs"$
 
     using System.Text;
+    using System.IO;
     using System.Collections.Generic;  
 
-namespace DDay.iCal.Serialization
+namespace DDay.iCal
 {
 	// Generate the header common to all output files.
 	using System;
@@ -135,7 +136,12 @@ _loop4_breakloop:						;
 						}
 _loop6_breakloop:						;
 					}    // ( ... )*
-					iCal = (IICalendar)Activator.CreateInstance(settings.iCalendarType);
+					
+								iCal = (IICalendar)Activator.CreateInstance(settings.iCalendarType);
+								
+								// Push the iCalendar onto the serialization context stack
+								ctx.Push(iCal);
+							
 					icalbody(ctx, iCal);
 					match(END);
 					match(COLON);
@@ -156,8 +162,12 @@ _loop6_breakloop:						;
 _loop8_breakloop:						;
 					}    // ( ... )*
 					
+								// Notify that the iCalendar has been loaded
 								iCal.OnLoaded();
 								iCalendars.Add(iCal);
+								
+								// Pop the iCalendar off the serialization context stack
+								ctx.Pop();
 							
 				}
 				else
@@ -178,8 +188,8 @@ _loop9_breakloop:			;
 		
 		
 		
+			ISerializerFactory sf = ctx.GetService(typeof(ISerializerFactory)) as ISerializerFactory;
 			ICalendarComponentFactory cf = ctx.GetService(typeof(ICalendarComponentFactory)) as ICalendarComponentFactory;
-			IStringParserFactory spf = ctx.GetService(typeof(IStringParserFactory)) as IStringParserFactory;
 			ICalendarComponent c;
 			ICalendarProperty p;
 		
@@ -191,12 +201,12 @@ _loop9_breakloop:			;
 				case IANA_TOKEN:
 				case X_NAME:
 				{
-					property(ctx, spf, iCal);
+					property(ctx, sf, iCal);
 					break;
 				}
 				case BEGIN:
 				{
-					component(ctx, spf, cf, iCal);
+					component(ctx, sf, cf, iCal);
 					break;
 				}
 				default:
@@ -209,21 +219,21 @@ _loop12_breakloop:			;
 		}    // ( ... )*
 	}
 	
-	public void property(
+	public ICalendarProperty  property(
 		
 	ISerializationContext ctx,
-	IStringParserFactory spf,
+	ISerializerFactory sf,
 	ICalendarPropertyListContainer c
 
 	) //throws RecognitionException, TokenStreamException
 {
+		ICalendarProperty p = null;;
 		
 		IToken  n = null;
 		IToken  m = null;
 		
-			ICalendarProperty p;
 			string v;
-			IStringParser sp = spf.Create(typeof(ICalendarProperty));
+			ISerializer serializer = sf.Create(typeof(ICalendarProperty), ctx);		
 		
 		
 		{
@@ -255,6 +265,11 @@ _loop12_breakloop:			;
 			}
 			 }
 		}
+		
+			// Push the property onto the serialization context stack
+			ctx.Push(p);
+			ISerializer valueSerializer = sf.Create(typeof(ICalendarDataType), ctx);
+		
 		{    // ( ... )*
 			for (;;)
 			{
@@ -274,8 +289,10 @@ _loop24_breakloop:			;
 		match(COLON);
 		v=value();
 		
-			// Parse the value of the property
-			sp.Parse(v, p);
+			// Deserialize the value of the property
+			// into a concrete iCalendar data type,
+			// or string value.
+			p.Value = valueSerializer.Deserialize(new StringReader(v));
 			
 			// Add the property to the container	
 			c.Properties.Add(p);
@@ -295,12 +312,20 @@ _loop24_breakloop:			;
 			}
 _loop26_breakloop:			;
 		}    // ( ... )*
+		
+			// Notify that the property has been loaded
+			p.OnLoaded();
+			
+			// Pop the property off the serialization context stack
+			ctx.Pop();
+		
+		return p;
 	}
 	
 	public ICalendarComponent  component(
 		
 	ISerializationContext ctx,
-	IStringParserFactory spf,
+	ISerializerFactory sf,
 	ICalendarComponentFactory cf,
 	ICalendarObject o
 
@@ -337,6 +362,9 @@ _loop26_breakloop:			;
 			 }
 		}
 		
+			// Push the component onto the serialization context stack
+			ctx.Push(c);
+		
 			// Add the component as a child immediately, in case
 			// embedded components need to access this component,
 			// or the iCalendar itself.
@@ -368,12 +396,12 @@ _loop16_breakloop:			;
 				case IANA_TOKEN:
 				case X_NAME:
 				{
-					property(ctx, spf, c);
+					property(ctx, sf, c);
 					break;
 				}
 				case BEGIN:
 				{
-					component(ctx, spf, cf, c);
+					component(ctx, sf, cf, c);
 					break;
 				}
 				default:
@@ -402,19 +430,28 @@ _loop18_breakloop:			;
 			}
 _loop20_breakloop:			;
 		}    // ( ... )*
-		c.OnLoaded();
+			
+			// Notify that the component has been loaded
+			c.OnLoaded();
+			
+			// Pop the component off the serialization context stack
+			ctx.Pop();
+		
 		return c;
 	}
 	
-	public void parameter(
-		ISerializationContext ctx, ICalendarProperty prop
+	public ICalendarParameter  parameter(
+		
+	ISerializationContext ctx,
+	ICalendarParameterListContainer container
+
 	) //throws RecognitionException, TokenStreamException
 {
+		ICalendarParameter p = null;;
 		
 		IToken  n = null;
 		IToken  m = null;
 		
-			ICalendarParameter p;	
 			string v;
 			List<string> values = new List<string>();
 		
@@ -442,6 +479,10 @@ _loop20_breakloop:			;
 			}
 			 }
 		}
+		
+			// Push the parameter onto the serialization context stack
+			ctx.Push(p);
+		
 		match(EQUAL);
 		v=param_value();
 		values.Add(v);
@@ -464,8 +505,15 @@ _loop30_breakloop:			;
 		}    // ( ... )*
 		
 			p.Values = values.ToArray();
-			prop.Parameters.Add(p);
+			container.Parameters.Add(p);
+			
+			// Notify that the parameter has been loaded
+			p.OnLoaded();
+			
+			// Pop the parameter off the serialization context stack
+			ctx.Pop();
 		
+		return p;
 	}
 	
 	public string  value() //throws RecognitionException, TokenStreamException

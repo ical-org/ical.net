@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-namespace DDay.iCal.Serialization
+namespace DDay.iCal.Serialization.iCalendar
 {
     public class iCalendarSerializer :
         ComponentSerializer
@@ -59,12 +59,6 @@ namespace DDay.iCal.Serialization
             // Create a lexer for our text stream
             iCalLexer lexer = new iCalLexer(tr);
             iCalParser parser = new iCalParser(lexer);
-
-            // Add a string parser factory to our serialization services,
-            // if one is not already present!
-            IStringParserFactory spf = GetService<IStringParserFactory>();
-            if (spf == null)
-                SerializationContext.SetService(new StringParserFactory());
 
             // Parse the iCalendar(s)!
             iCalendarCollection iCalendars = parser.icalendar(SerializationContext);

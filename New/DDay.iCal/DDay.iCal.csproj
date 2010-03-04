@@ -78,7 +78,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Constants.cs" />
-    <Compile Include="Interfaces\Serialization\iCalendar\IStringParser.cs" />
+    <Compile Include="Interfaces\DataTypes\IGeographicLocation.cs" />
+    <Compile Include="Interfaces\Serialization\IDataTypeMapper.cs" />
     <Compile Include="Interfaces\Serialization\ISerializationSettings.cs" />
     <Compile Include="Serialization\Factory\ComponentFactory.cs" />
     <Compile Include="General\CalendarObject.cs">
@@ -132,7 +133,6 @@
     <Compile Include="Interfaces\DataTypes\ITZID.cs" />
     <Compile Include="Interfaces\DataTypes\IURI.cs" />
     <Compile Include="Interfaces\DataTypes\IUTCOffset.cs" />
-    <Compile Include="Interfaces\Serialization\iCalendar\IStringParserFactory.cs" />
     <Compile Include="Interfaces\IICalendarCollection.cs" />
     <Compile Include="Interfaces\Serialization\Factory\ISerializerFactory.cs" />
     <Compile Include="Interfaces\Utility\IUniqueComponentList.cs" />
@@ -161,10 +161,15 @@
     <None Include="Properties\AssemblyInfo.cs.template" />
     <None Include="Serialization\iCalendar\iCal.g" />
     <Compile Include="Interfaces\Serialization\ISerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Factory\StringParserFactory.cs" />
-    <Compile Include="Serialization\iCalendar\Parsers\PropertyParser.cs" />
+    <Compile Include="Serialization\DataTypeMapper.cs" />
+    <Compile Include="Serialization\iCalendar\Factory\PropertyNameSerializerFactory.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataMapSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\DateTimeSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\ParameterSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\iCalendarSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\ComponentSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\PropertySerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\PropertyValueDataTypeSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\SerializerBase.cs" />
     <Compile Include="Serialization\iCalendar\Factory\SerializerFactory.cs" />
     <Compile Include="Serialization\iCalendar\iCalLexer.cs" />

@@ -4,8 +4,8 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public interface IStringParser
+    public interface IDataTypeMapper
     {
-        void Parse(string value, object obj);        
+        Type Map(object obj);
     }
 }

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-namespace DDay.iCal.Serialization
+namespace DDay.iCal.Serialization.iCalendar
 {
     public class ComponentSerializer :
         SerializerBase
     {
         #region Overrides
 
-        public override string SerializeToString(ICalendarObject obj)
+        public override string SerializeToString(object obj)
         {
             throw new NotImplementedException();
         }
@@ -24,22 +24,14 @@ namespace DDay.iCal.Serialization
             // Get our serialization context
             ISerializationContext ctx = SerializationContext;
 
-            // FIXME: what if the serialization context is null?
-
-            // Add a string parser factory to our serialization services,
-            // if one is not already present!
-            IStringParserFactory spf = GetService<IStringParserFactory>();
-            if (spf == null)
-            {
-                spf = new StringParserFactory();
-                ctx.SetService(spf);
-            }
+            // Get a serializer factory from our serialization services
+            ISerializerFactory sf = GetService<ISerializerFactory>();
             
             // Get a calendar component factory from our serialization services
             ICalendarComponentFactory cf = GetService<ICalendarComponentFactory>();
 
             // Parse the component!
-            ICalendarComponent component = parser.component(ctx, spf, cf, null);
+            ICalendarComponent component = parser.component(ctx, sf, cf, null);
 
             // Close our text stream
             tr.Close();

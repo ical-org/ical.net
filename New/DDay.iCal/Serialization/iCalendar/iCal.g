@@ -7,13 +7,14 @@
 header
 {
     using System.Text;
+    using System.IO;
     using System.Collections.Generic;  
 }
 
 options
 {    
 	language = "CSharp";
-	namespace = "DDay.iCal.Serialization";
+	namespace = "DDay.iCal";
 }
 
 //
@@ -34,12 +35,22 @@ icalendar[ISerializationContext ctx] returns [iCalendarCollection iCalendars = n
 	ISerializationSettings settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
 }
     (
-		(CRLF)* BEGIN COLON VCALENDAR (CRLF)* {iCal = (IICalendar)Activator.CreateInstance(settings.iCalendarType);}
+		(CRLF)* BEGIN COLON VCALENDAR (CRLF)*
+		{
+			iCal = (IICalendar)Activator.CreateInstance(settings.iCalendarType);
+			
+			// Push the iCalendar onto the serialization context stack
+			ctx.Push(iCal);
+		}
 		icalbody[ctx, iCal]
 		END COLON VCALENDAR (CRLF)*
 		{
+			// Notify that the iCalendar has been loaded
 			iCal.OnLoaded();
 			iCalendars.Add(iCal);
+			
+			// Pop the iCalendar off the serialization context stack
+			ctx.Pop();
 		}
 	)* 	
 ;
@@ -48,20 +59,20 @@ icalendar[ISerializationContext ctx] returns [iCalendarCollection iCalendars = n
 // NOTE: We allow intermixture of calendar components and calendar properties
 icalbody[ISerializationContext ctx, IICalendar iCal]:
 {
+	ISerializerFactory sf = ctx.GetService(typeof(ISerializerFactory)) as ISerializerFactory;
 	ICalendarComponentFactory cf = ctx.GetService(typeof(ICalendarComponentFactory)) as ICalendarComponentFactory;
-	IStringParserFactory spf = ctx.GetService(typeof(IStringParserFactory)) as IStringParserFactory;
 	ICalendarComponent c;
 	ICalendarProperty p;
 }
 (
-	property[ctx, spf, iCal] |
-	component[ctx, spf, cf, iCal]
+	property[ctx, sf, iCal] |
+	component[ctx, sf, cf, iCal]
 )*;
 
 // iCalendar components
 component[
 	ISerializationContext ctx,
-	IStringParserFactory spf,
+	ISerializerFactory sf,
 	ICalendarComponentFactory cf,
 	ICalendarObject o
 ] returns [ICalendarComponent c = null;]:
@@ -71,6 +82,9 @@ BEGIN COLON
 	m:X_NAME { c = cf.Create(m.getText().ToLower()); }
 )
 {
+	// Push the component onto the serialization context stack
+	ctx.Push(c);
+
 	// Add the component as a child immediately, in case
 	// embedded components need to access this component,
 	// or the iCalendar itself.
@@ -83,10 +97,17 @@ BEGIN COLON
 (
 	// Components can have properties, and other embedded components.
 	// (i.e. VALARM)	
-	property[ctx, spf, c] |
-	component[ctx, spf, cf, c]
+	property[ctx, sf, c] |
+	component[ctx, sf, cf, c]
 )*
-END COLON IANA_TOKEN (CRLF)* { c.OnLoaded(); };
+END COLON IANA_TOKEN (CRLF)*
+{	
+	// Notify that the component has been loaded
+	c.OnLoaded();
+	
+	// Pop the component off the serialization context stack
+	ctx.Pop();
+};
 
 //
 // Properties
@@ -97,13 +118,12 @@ END COLON IANA_TOKEN (CRLF)* { c.OnLoaded(); };
 //
 property[
 	ISerializationContext ctx,
-	IStringParserFactory spf,
+	ISerializerFactory sf,
 	ICalendarPropertyListContainer c
-]
+] returns [ICalendarProperty p = null;]
 {
-	ICalendarProperty p;
 	string v;
-	IStringParser sp = spf.Create(typeof(ICalendarProperty));
+	ISerializer serializer = sf.Create(typeof(ICalendarProperty), ctx);		
 }:
 (
 	n:IANA_TOKEN
@@ -117,22 +137,38 @@ property[
 		p.Name = m.getText().ToUpper();
 	}
 )
+{
+	// Push the property onto the serialization context stack
+	ctx.Push(p);
+	ISerializer valueSerializer = sf.Create(typeof(ICalendarDataType), ctx);
+}
 (SEMICOLON parameter[ctx, p])* COLON
 v=value
 {
-	// Parse the value of the property
-	sp.Parse(v, p);
+	// Deserialize the value of the property
+	// into a concrete iCalendar data type,
+	// or string value.
+	p.Value = valueSerializer.Deserialize(new StringReader(v));
 	
 	// Add the property to the container	
 	c.Properties.Add(p);
-} (CRLF)*;
+} (CRLF)*
+{
+	// Notify that the property has been loaded
+	p.OnLoaded();
+	
+	// Pop the property off the serialization context stack
+	ctx.Pop();
+};
 
 //
 // Parameters
 //
-parameter[ISerializationContext ctx, ICalendarProperty prop]
+parameter[
+	ISerializationContext ctx,
+	ICalendarParameterListContainer container
+] returns [ICalendarParameter p = null;]
 {
-	ICalendarParameter p;	
 	string v;
 	List<string> values = new List<string>();
 }:
@@ -140,13 +176,23 @@ parameter[ISerializationContext ctx, ICalendarProperty prop]
 	n:IANA_TOKEN { p = new CalendarParameter(n.getText()); } |
 	m:X_NAME { p = new CalendarParameter(m.getText()); }
 )
+{
+	// Push the parameter onto the serialization context stack
+	ctx.Push(p);
+}
 EQUAL v=param_value { values.Add(v); }
 (
 	COMMA v=param_value { values.Add(v); }
 )*
 {
 	p.Values = values.ToArray();
-	prop.Parameters.Add(p);
+	container.Parameters.Add(p);
+	
+	// Notify that the parameter has been loaded
+	p.OnLoaded();
+	
+	// Pop the parameter off the serialization context stack
+	ctx.Pop();
 };
 
 // Value productions
