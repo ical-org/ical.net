@@ -12,6 +12,8 @@ namespace DDay.iCal.Serialization
 
         virtual public IStringParser Create(Type objectType)
         {
+            if (typeof(ICalendarProperty).IsAssignableFrom(objectType))
+                return new PropertyParser();
             return null;
         }
 

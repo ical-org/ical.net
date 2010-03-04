@@ -265,18 +265,6 @@ namespace DDay.iCal
         public iCalDateTime(int year, int month, int day, ITZID tzid, IICalendar iCal)
             : this(year, month, day, 0, 0, 0, tzid, iCal) { }
 
-        // FIXME: what do we do with this constructor?
-        // I don't really like it...
-
-        //public iCalDateTime(CalendarProperty p) : this(p.Value)
-        //{
-        //    this.iCalendar = p.Calendar;
-        //    if (p.Parameters.ContainsKey("VALUE"))
-        //        this.Parameters["VALUE"] = p.Parameters["VALUE"];
-        //    if (p.Parameters.ContainsKey("TZID"))
-        //        this.TZID = p.Parameters["TZID"].Values[0];                
-        //}
-
         private void Initialize(int year, int month, int day, int hour, int minute, int second, ITZID tzid, IICalendar iCal)
         {
             Initialize(CoerceDateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzid, iCal);            

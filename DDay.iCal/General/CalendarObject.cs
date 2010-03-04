@@ -143,63 +143,6 @@ namespace DDay.iCal
                 // Add each child
                 foreach (ICalendarObject child in Children)
                     AddChild(child.Copy<ICalendarObject>());
-
-                // FIXME: remove the following?  If we copy all
-                // children we should be set, right?
-
-                ////
-                //// Get a list of serialized items,
-                //// iterate through each, make a copy
-                //// of each item, and assign it to our
-                //// copied object.
-                ////
-                //List<object> items = SerializedItems;
-                //foreach (object item in items)
-                //{
-                //    FieldInfo field = null;
-                //    PropertyInfo prop = null;
-
-                //    if (item is FieldInfo)
-                //        field = (FieldInfo)item;
-                //    else
-                //        prop = (PropertyInfo)item;
-
-                //    // Get the item's value
-                //    object itemValue = (field == null) ? prop.GetValue(this, null) : field.GetValue(this);
-                //    Type itemType = itemValue != null ? itemValue.GetType() : null;
-
-                //    if (itemType != null)
-                //    {
-                //        //
-                //        // Let's make a copy of the object
-                //        //
-                //        if (typeof(ICalendarObjectList).IsAssignableFrom(itemType))
-                //        {
-                //            // The object is an array type.  Let's copy each individual
-                //            // element in the array.
-                //            ArrayList al = new ArrayList();
-                //            foreach (object childObj in (IEnumerable)itemValue)
-                //            {
-                //                if (childObj is ICalendarObject)
-                //                    al.Add(((ICalendarObject)childObj).Copy(obj));
-                //                else al.Add(childObj);
-                //            }
-                //            // Convert the value back to an array of the same type.
-                //            itemValue = al.ToArray(itemType.GetElementType());
-                //        }
-                //        else if (typeof(ICalendarObject).IsAssignableFrom(itemType))
-                //        {
-                //            // Make a copy of the item, if it's copyable.
-                //            itemValue = ((ICalendarObject)itemValue).Copy(obj);
-                //        }
-                //        else { } // FIXME: make an exact copy, if possible.
-                //    }
-
-                //    // Set the item's value in our copied object
-                //    if (field == null)
-                //        prop.SetValue(obj, itemValue, null);
-                //    else field.SetValue(obj, itemValue);
-                //}
             }
         }
 
