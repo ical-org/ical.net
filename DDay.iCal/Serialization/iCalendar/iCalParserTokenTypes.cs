@@ -1,9 +1,10 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalParser.cs"$
 
     using System.Text;
+    using System.IO;
     using System.Collections.Generic;  
 
-namespace DDay.iCal.Serialization
+namespace DDay.iCal
 {
 	public class iCalParserTokenTypes
 	{

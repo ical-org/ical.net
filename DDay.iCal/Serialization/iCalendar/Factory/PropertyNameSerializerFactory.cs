@@ -4,8 +4,7 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public interface IStringParserFactory
+    public class PropertyNameSerializerFactory
     {
-        IStringParser Create(Type objectType);
     }
 }

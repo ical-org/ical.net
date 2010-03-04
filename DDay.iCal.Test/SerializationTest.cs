@@ -5,7 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using DDay.iCal.Serialization;
+using DDay.iCal;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DDay.iCal.Test

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DDay.iCal.Serialization
+namespace DDay.iCal
 {
     public class SerializationContext :        
         ISerializationContext
@@ -33,6 +33,7 @@ namespace DDay.iCal.Serialization
         #region Private Fields
 
         private IDictionary<Type, object> m_Services = new Dictionary<Type, object>();
+        private Stack<object> m_Stack = new Stack<object>();
 
         #endregion
 
@@ -42,12 +43,34 @@ namespace DDay.iCal.Serialization
         {
             // Add some services by default
             SetService(new SerializationSettings());
+            SetService(new SerializerFactory());
             SetService(new ComponentFactory());
+            SetService(new DataTypeMapper());
         }
 
         #endregion
 
         #region ISerializationContext Members
+
+        virtual public void Push(object item)
+        {
+            if (item != null)
+                m_Stack.Push(item);
+        }
+
+        virtual public object Pop()
+        {
+            if (m_Stack.Count > 0)
+                return m_Stack.Pop();
+            return null;
+        }
+
+        virtual public object Peek()
+        {
+            if (m_Stack.Count > 0)
+                return m_Stack.Peek();
+            return null;
+        }
 
         virtual public void SetService(object obj)
         {
@@ -89,6 +112,6 @@ namespace DDay.iCal.Serialization
             return null;
         }
 
-        #endregion       
+        #endregion    
     }
 }

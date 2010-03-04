@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DDay.iCal.Serialization
+namespace DDay.iCal
 {
     public class SerializationSettings :
         ISerializationSettings

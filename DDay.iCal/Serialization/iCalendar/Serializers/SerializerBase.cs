@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-namespace DDay.iCal.Serialization
+namespace DDay.iCal.Serialization.iCalendar
 {
     public abstract class SerializerBase :
         ISerializer
@@ -18,7 +18,7 @@ namespace DDay.iCal.Serialization
 
         public SerializerBase()
         {
-            m_SerializationContext = DDay.iCal.Serialization.SerializationContext.Default;
+            m_SerializationContext = DDay.iCal.SerializationContext.Default;
         }
 
         #endregion
@@ -42,7 +42,7 @@ namespace DDay.iCal.Serialization
             return default(T);
         }
 
-        public abstract string SerializeToString(ICalendarObject obj);
+        public abstract string SerializeToString(object obj);
         public abstract object Deserialize(TextReader tr);
 
         public object Deserialize(Stream stream, Encoding encoding)
@@ -55,7 +55,7 @@ namespace DDay.iCal.Serialization
             return obj;
         }
 
-        public void Serialize(ICalendarObject obj, Stream stream, Encoding encoding)
+        public void Serialize(object obj, Stream stream, Encoding encoding)
         {            
             using (StreamWriter sw = new StreamWriter(stream, encoding))
                 sw.Write(SerializeToString(obj));
