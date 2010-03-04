@@ -103,6 +103,10 @@ namespace DDay.iCal
     {
         #region Static Public Methods
 
+        #region LoadFromFile(...)
+
+        #region LoadFromFile(string filepath) variants
+
         /// <summary>
         /// Loads an <see cref="iCalendar"/> from the file system.
         /// </summary>
@@ -112,10 +116,40 @@ namespace DDay.iCal
         {
             return LoadFromFile(filepath, Encoding.UTF8, new iCalendarSerializer());
         }
+                
+        static public iCalendarCollection LoadFromFile<T>(string filepath) where T : IICalendar
+        {
+            return LoadFromFile(typeof(T), filepath);
+        }
+                
+        static public iCalendarCollection LoadFromFile(Type iCalendarType, string filepath)
+        {
+            ISerializer serializer = new iCalendarSerializer();
+            serializer.GetService<ISerializationSettings>().iCalendarType = iCalendarType;
+            return LoadFromFile(filepath, Encoding.UTF8, serializer);
+        }
+
+        #endregion
+
+        #region LoadFromFile(string filepath, Encoding encoding) variants
+
         static public iCalendarCollection LoadFromFile(string filepath, Encoding encoding)
         {
             return LoadFromFile(filepath, encoding, new iCalendarSerializer());
         }
+
+        static public iCalendarCollection LoadFromFile<T>(string filepath, Encoding encoding) where T : IICalendar
+        {
+            return LoadFromFile(typeof(T), filepath, encoding);
+        }
+        
+        static public iCalendarCollection LoadFromFile(Type iCalendarType, string filepath, Encoding encoding)
+        {
+            ISerializer serializer = new iCalendarSerializer();
+            serializer.GetService<ISerializationSettings>().iCalendarType = iCalendarType;
+            return LoadFromFile(filepath, encoding, serializer);
+        }
+
         static public iCalendarCollection LoadFromFile(string filepath, Encoding encoding, ISerializer serializer)
         {
             FileStream fs = new FileStream(filepath, FileMode.Open);
@@ -124,6 +158,14 @@ namespace DDay.iCal
             fs.Close();
             return calendars;
         }
+
+        #endregion
+
+        #endregion
+
+        #region LoadFromStream(...)
+
+        #region LoadFromStream(Stream s) variants
 
         /// <summary>
         /// Loads an <see cref="iCalendar"/> from an open stream.
@@ -134,18 +176,66 @@ namespace DDay.iCal
         {
             return LoadFromStream(s, Encoding.UTF8, new iCalendarSerializer());
         }
+
+        static public iCalendarCollection LoadFromStream<T>(Stream s) where T : IICalendar
+        {
+            return LoadFromStream(typeof(T), s);
+        }
+
+        static public iCalendarCollection LoadFromStream(Type iCalendarType, Stream s)
+        {
+            ISerializer serializer = new iCalendarSerializer();
+            serializer.GetService<ISerializationSettings>().iCalendarType = iCalendarType;
+            return LoadFromStream(s, Encoding.UTF8, serializer);
+        }
+
+        #endregion
+
+        #region LoadFromStream(Stream s, Encoding encoding) variants
+
         static public iCalendarCollection LoadFromStream(Stream s, Encoding encoding)
         {
             return LoadFromStream(s, encoding, new iCalendarSerializer());
         }
+
+        static public iCalendarCollection LoadFromStream<T>(Stream s, Encoding encoding) where T : IICalendar
+        {
+            return LoadFromStream(typeof(T), s, encoding);
+        }
+
+        static public iCalendarCollection LoadFromStream(Type iCalendarType, Stream s, Encoding encoding)
+        {
+            ISerializer serializer = new iCalendarSerializer();
+            serializer.GetService<ISerializationSettings>().iCalendarType = iCalendarType;
+            return LoadFromStream(s, encoding, serializer);
+        }
+
+        static public iCalendarCollection LoadFromStream(Stream s, Encoding e, ISerializer serializer)
+        {
+            return (iCalendarCollection)serializer.Deserialize(s, e);
+        }
+
+        #endregion
+
+        #region LoadFromStream(TextReader tr) variants
+
         static public iCalendarCollection LoadFromStream(TextReader tr)
         {
             return LoadFromStream(tr, new iCalendarSerializer());
         }
-        static public iCalendarCollection LoadFromStream(Stream s, Encoding e, ISerializer serializer)
+
+        static public iCalendarCollection LoadFromStream<T>(TextReader tr) where T : IICalendar
         {            
-            return (iCalendarCollection)serializer.Deserialize(s, e);
+            return LoadFromStream(typeof(T), tr);
         }
+
+        static public iCalendarCollection LoadFromStream(Type iCalendarType, TextReader tr)
+        {
+            ISerializer serializer = new iCalendarSerializer();
+            serializer.GetService<ISerializationSettings>().iCalendarType = iCalendarType;
+            return LoadFromStream(tr, serializer);
+        }
+
         static public iCalendarCollection LoadFromStream(TextReader tr, ISerializer serializer)
         {
             string text = tr.ReadToEnd();
@@ -153,31 +243,54 @@ namespace DDay.iCal
             return LoadFromStream(ms, Encoding.UTF8, serializer);
         }
 
+        #endregion
+
+        #endregion
+
+        #region LoadFromUri(...)
+
+        #region LoadFromUri(Uri uri) variants
+
         /// <summary>
         /// Loads an <see cref="iCalendar"/> from a given Uri.
         /// </summary>
         /// <param name="url">The Uri from which to load the <see cref="iCalendar"/> object</param>
         /// <returns>An <see cref="iCalendar"/> object</returns>
-        static public iCalendarCollection LoadFromUri(Uri uri) { return LoadFromUri(typeof(iCalendar), uri, null, null, null); }
-
-#if !SILVERLIGHT
-        static public iCalendarCollection LoadFromUri(Uri uri, WebProxy proxy) { return LoadFromUri(typeof(iCalendar), uri, null, null, proxy); }
-#endif
-
-        static public T LoadFromUri<T>(Uri uri)
+        static public iCalendarCollection LoadFromUri(Uri uri)
         {
-            if (typeof(T) == typeof(iCalendar) ||
-                typeof(T).IsSubclassOf(typeof(iCalendar)))
-            {
-                object obj = LoadFromUri(typeof(T), uri, null, null, null);
-                return (T)obj;
-            }
-            else return default(T);
+            return LoadFromUri(typeof(iCalendar), uri, null, null, null);
         }
+
+        static public iCalendarCollection LoadFromUri<T>(Uri uri) where T : IICalendar
+        {            
+            return LoadFromUri(typeof(T), uri, null, null, null);            
+        }
+
         static public iCalendarCollection LoadFromUri(Type iCalendarType, Uri uri)
         {
             return LoadFromUri(iCalendarType, uri, null, null, null);
         }
+
+#if !SILVERLIGHT
+        static public iCalendarCollection LoadFromUri(Uri uri, WebProxy proxy)
+        {
+            return LoadFromUri(typeof(iCalendar), uri, null, null, proxy);
+        }
+
+        static public iCalendarCollection LoadFromUri<T>(Uri uri, WebProxy proxy)
+        {
+            return LoadFromUri(typeof(T), uri, null, null, proxy);
+        }
+
+        static public iCalendarCollection LoadFromUri(Type iCalendarType, Uri uri, WebProxy proxy)
+        {
+            return LoadFromUri(iCalendarType, uri, null, null, proxy);
+        }
+#endif
+
+        #endregion
+
+        #region LoadFromUri(Uri uri, string username, string password) variants
 
         /// <summary>
         /// Loads an <see cref="iCalendar"/> from a given Uri, using a 
@@ -186,22 +299,31 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="url">The Uri from which to load the <see cref="iCalendar"/> object</param>
         /// <returns>an <see cref="iCalendar"/> object</returns>
-        static public iCalendarCollection LoadFromUri(Uri uri, string username, string password) { return LoadFromUri(typeof(iCalendar), uri, username, password, null); }
-        static public iCalendarCollection LoadFromUri<T>(Uri uri, string username, string password)
+        static public iCalendarCollection LoadFromUri(Uri uri, string username, string password)
         {
-            if (typeof(iCalendar).IsAssignableFrom(typeof(T)))
-            {
-                iCalendarCollection calendars = LoadFromUri(typeof(T), uri, username, password, null);
-                return calendars;
-            }
-            else return null;
+            return LoadFromUri(typeof(iCalendar), uri, username, password, null);
+        }
+
+        static public iCalendarCollection LoadFromUri<T>(Uri uri, string username, string password) where T : IICalendar
+        {
+            return LoadFromUri(typeof(T), uri, username, password, null);
+        }
+
+        static public iCalendarCollection LoadFromUri(Type iCalendarType, Uri uri, string username, string password)
+        {
+            return LoadFromUri(iCalendarType, uri, username, password, null);
         }
 
 #if !SILVERLIGHT
-        static public iCalendarCollection LoadFromUri(Uri uri, string username, string password, WebProxy proxy) { return LoadFromUri(typeof(iCalendar), uri, username, password, proxy); }
+        static public iCalendarCollection LoadFromUri(Uri uri, string username, string password, WebProxy proxy)
+        {
+            return LoadFromUri(typeof(iCalendar), uri, username, password, proxy);
+        }
 #endif
 
-        static public iCalendarCollection LoadFromUri(Type iCalendarType, Uri uri, string username, string password) { return LoadFromUri(iCalendarType, uri, username, password, null); }
+        #endregion
+
+        #region LoadFromUri(Type iCalendarType, Uri uri, string username, string password, WebProxy proxy)
 
 #if SILVERLIGHT
         static public iCalendarCollection LoadFromUri(Type iCalendarType, Uri uri, string username, string password, object unusedProxy)
@@ -270,6 +392,10 @@ namespace DDay.iCal
                 return null;
             }
         }
+
+        #endregion
+
+        #endregion
 
         #endregion
 
