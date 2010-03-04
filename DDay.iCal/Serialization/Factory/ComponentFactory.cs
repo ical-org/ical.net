@@ -51,7 +51,7 @@ namespace DDay.iCal.Serialization
         //}
         //static public T LoadFromStream<T, U>(TextReader tr)
         //    where T : CalendarComponent
-        //    where U : DDay.iCal.Serialization.ISerializable
+        //    where U : DDay.iCal.Serialization.ISerializer
         //{
         //    if (typeof(T) == typeof(CalendarComponent) ||
         //        typeof(T).IsSubclassOf(typeof(CalendarComponent)))
@@ -60,14 +60,14 @@ namespace DDay.iCal.Serialization
         //}
         //static public T LoadFromStream<T, U>(Stream s, Encoding encoding)
         //    where T : CalendarComponent
-        //    where U : DDay.iCal.Serialization.ISerializable
+        //    where U : DDay.iCal.Serialization.ISerializer
         //{
         //    if (typeof(T) == typeof(CalendarComponent) ||
         //        typeof(T).IsSubclassOf(typeof(CalendarComponent)))
         //        return (T)(object)LoadFromStream<U>(null, s, encoding);
         //    else return default(T);
         //}
-        //static public CalendarComponent LoadFromStream<T>(CalendarObject parent, TextReader tr) where T : DDay.iCal.Serialization.ISerializable
+        //static public CalendarComponent LoadFromStream<T>(CalendarObject parent, TextReader tr) where T : DDay.iCal.Serialization.ISerializer
         //{
         //    string text = tr.ReadToEnd();
         //    tr.Close();
@@ -76,12 +76,12 @@ namespace DDay.iCal.Serialization
         //    MemoryStream ms = new MemoryStream(memoryBlock);
         //    return LoadFromStream<T>(parent, ms, Encoding.UTF8);
         //}
-        //static public CalendarComponent LoadFromStream<T>(CalendarObject parent, Stream s, Encoding encoding) where T : DDay.iCal.Serialization.ISerializable
+        //static public CalendarComponent LoadFromStream<T>(CalendarObject parent, Stream s, Encoding encoding) where T : DDay.iCal.Serialization.ISerializer
         //{
-        //    DDay.iCal.Serialization.ISerializable serializable = (DDay.iCal.Serialization.ISerializable)Activator.CreateInstance(typeof(T));
-        //    return LoadFromStream(parent, s, encoding, serializable);
+        //    DDay.iCal.Serialization.ISerializer serializer = (DDay.iCal.Serialization.ISerializer)Activator.CreateInstance(typeof(T));
+        //    return LoadFromStream(parent, s, encoding, serializer);
         //}
-        //static public CalendarComponent LoadFromStream(CalendarObject parent, Stream s, Encoding encoding, DDay.iCal.Serialization.ISerializable serializer)
+        //static public CalendarComponent LoadFromStream(CalendarObject parent, Stream s, Encoding encoding, DDay.iCal.Serialization.ISerializer serializer)
         //{
         //    Type iCalendarType = typeof(iCalendar);
         //    if (parent != null)

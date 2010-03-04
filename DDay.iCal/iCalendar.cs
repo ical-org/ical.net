@@ -107,43 +107,20 @@ namespace DDay.iCal
         /// Loads an <see cref="iCalendar"/> from the file system.
         /// </summary>
         /// <param name="Filepath">The path to the file to load.</param>
-        /// <returns>An <see cref="iCalendar"/> object</returns>
-        static public iCalendarCollection LoadFromFile(string Filepath)
+        /// <returns>An <see cref="iCalendar"/> object</returns>        
+        static public iCalendarCollection LoadFromFile(string filepath)
         {
-            return LoadFromFile(
-                typeof(iCalendar),
-                Filepath,
-                Encoding.UTF8,
-                new iCalendarSerializer());
+            return LoadFromFile(filepath, Encoding.UTF8, new iCalendarSerializer());
         }
-        static public iCalendarCollection LoadFromFile<T>(string Filepath)
+        static public iCalendarCollection LoadFromFile(string filepath, Encoding encoding)
         {
-            if (typeof(iCalendar).IsAssignableFrom(typeof(T)))
-            {
-                iCalendarCollection calendars = LoadFromFile(
-                    typeof(T),
-                    Filepath,
-                    Encoding.UTF8,
-                    new iCalendarSerializer());
-                return calendars;
-            }
-            else return null;
+            return LoadFromFile(filepath, encoding, new iCalendarSerializer());
         }
-        static public iCalendarCollection LoadFromFile(Type iCalendarType, string Filepath)
+        static public iCalendarCollection LoadFromFile(string filepath, Encoding encoding, ISerializer serializer)
         {
-            return LoadFromFile(
-                iCalendarType, Filepath, Encoding.UTF8, new iCalendarSerializer());
-        }
-        static public iCalendarCollection LoadFromFile(Type iCalendarType, string Filepath, Encoding encoding)
-        {
-            return LoadFromFile(
-                iCalendarType, Filepath, encoding, new iCalendarSerializer());
-        }
-        static public iCalendarCollection LoadFromFile(Type iCalendarType, string Filepath, Encoding encoding, DDay.iCal.Serialization.ISerializable serializer)
-        {
-            FileStream fs = new FileStream(Filepath, FileMode.Open);
+            FileStream fs = new FileStream(filepath, FileMode.Open);
 
-            iCalendarCollection calendars = LoadFromStream(iCalendarType, fs, encoding, serializer);
+            iCalendarCollection calendars = LoadFromStream(fs, encoding, serializer);
             fs.Close();
             return calendars;
         }
@@ -153,65 +130,27 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="s">The stream from which to load the <see cref="iCalendar"/> object</param>
         /// <returns>An <see cref="iCalendar"/> object</returns>
-        static new public iCalendarCollection LoadFromStream(Stream s)
+        static public iCalendarCollection LoadFromStream(Stream s)
         {
-            return LoadFromStream(typeof(iCalendar), s, Encoding.UTF8);
+            return LoadFromStream(s, Encoding.UTF8, new iCalendarSerializer());
         }
         static public iCalendarCollection LoadFromStream(Stream s, Encoding encoding)
         {
-            return LoadFromStream(typeof(iCalendar), s, encoding);
+            return LoadFromStream(s, encoding, new iCalendarSerializer());
         }
-        static new public iCalendarCollection LoadFromStream(TextReader tr)
+        static public iCalendarCollection LoadFromStream(TextReader tr)
         {
-            return LoadFromStream(typeof(iCalendar), tr);
+            return LoadFromStream(tr, new iCalendarSerializer());
         }
-        static new public iCalendarCollection LoadFromStream<T>(TextReader tr)
-        {
-            return LoadFromStream<T>(tr, new iCalendarSerializer());
+        static public iCalendarCollection LoadFromStream(Stream s, Encoding e, ISerializer serializer)
+        {            
+            return (iCalendarCollection)serializer.Deserialize(s, e);
         }
-        static public iCalendarCollection LoadFromStream<T>(TextReader tr, DDay.iCal.Serialization.ISerializable serializer)
-        {
-            if (typeof(iCalendar).IsAssignableFrom(typeof(T)))
-                return LoadFromStream(typeof(T), tr, serializer);
-            else return null;
-        }
-        static public iCalendarCollection LoadFromStream<T>(Stream s)
-        {
-            return LoadFromStream<T>(s, Encoding.UTF8, new iCalendarSerializer());
-        }
-        static new public iCalendarCollection LoadFromStream<T>(Stream s, Encoding encoding)
-        {
-            return LoadFromStream<T>(s, encoding, new iCalendarSerializer());
-        }
-        static public iCalendarCollection LoadFromStream<T>(Stream s, Encoding encoding, DDay.iCal.Serialization.ISerializable serializer)
-        {
-            if (typeof(iCalendar).IsAssignableFrom(typeof(T)))
-                return LoadFromStream(typeof(T), s, encoding, serializer);
-            else return null;
-        }
-        static public iCalendarCollection LoadFromStream(Type iCalendarType, Stream s)
-        {
-            return LoadFromStream(iCalendarType, s, Encoding.UTF8);
-        }
-        static public iCalendarCollection LoadFromStream(Type iCalendarType, Stream s, Encoding e)
-        {
-            iCalendarSerializer serializer = new iCalendarSerializer();
-            return (iCalendarCollection)serializer.Deserialize(s, e, iCalendarType);
-        }
-        static public iCalendarCollection LoadFromStream(Type iCalendarType, TextReader tr)
-        {
-            iCalendarSerializer serializer = new iCalendarSerializer();
-            return (iCalendarCollection)serializer.Deserialize(tr, iCalendarType);
-        }
-        static public iCalendarCollection LoadFromStream(Type iCalendarType, Stream s, Encoding e, DDay.iCal.Serialization.ISerializable serializer)
-        {
-            return (iCalendarCollection)serializer.Deserialize(s, e, iCalendarType);
-        }
-        static public iCalendarCollection LoadFromStream(Type iCalendarType, TextReader tr, DDay.iCal.Serialization.ISerializable serializer)
+        static public iCalendarCollection LoadFromStream(TextReader tr, ISerializer serializer)
         {
             string text = tr.ReadToEnd();
             MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(text));
-            return LoadFromStream(iCalendarType, ms, Encoding.UTF8, serializer);
+            return LoadFromStream(ms, Encoding.UTF8, serializer);
         }
 
         /// <summary>

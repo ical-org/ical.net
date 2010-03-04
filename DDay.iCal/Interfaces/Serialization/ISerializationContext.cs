@@ -7,7 +7,7 @@ namespace DDay.iCal.Serialization
     public interface ISerializationContext : 
         IServiceProvider
     {
-        void AddService(object obj);
+        void SetService(object obj);
         void RemoveService(Type type);
     }
 }

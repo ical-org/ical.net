@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using DDay.iCal;
 using System.Runtime.Serialization;
+using System.Diagnostics;
 
 namespace DDay.iCal
 {
@@ -26,6 +27,7 @@ namespace DDay.iCal
     /// There may be other, custom X-properties applied to the calendar,
     /// and X-properties may be applied to calendar components.
     /// </remarks>
+    [DebuggerDisplay("{Name + \":\" + Value}")]
 #if DATACONTRACT
     [DataContract(Name = "CalendarProperty", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif

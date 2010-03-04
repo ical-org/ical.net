@@ -26,7 +26,7 @@ namespace DDay.iCal
         IComparable,
         IFormattable
     {
-        #region Private Fields        
+        #region Private Fields
 
         private DateTime _Value;
         private bool _HasDate;
@@ -34,7 +34,7 @@ namespace DDay.iCal
         private ITZID _TZID;
         private ITimeZoneInfo _TimeZoneInfo;
         private bool _IsUniversalTime;
-        private IICalendar _Calendar;        
+        private IICalendar _Calendar;
 
         #endregion
 
@@ -241,9 +241,7 @@ namespace DDay.iCal
                 
         public iCalDateTime(iCalDateTime value) : this()
         {
-            Value = value.Value;
-            TZID = value.TZID;
-            Calendar = value.Calendar;
+            Initialize(value.Value, value.TZID, value.Calendar);
         }
         public iCalDateTime(DateTime value) : this(value, null, null) {}
         public iCalDateTime(DateTime value, ITZID tzid, IICalendar iCal) : this()

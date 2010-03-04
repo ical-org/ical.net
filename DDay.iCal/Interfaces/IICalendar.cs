@@ -141,7 +141,7 @@ namespace DDay.iCal
 //        /// </summary>
 //        /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>
 //        /// <returns>The time zone added to the calendar.</returns>
-//        ITimeZone AddTimeZone(System.TimeZoneInfo tzi);        
+//        ITimeZone AddTimeZone(System.TimeZoneInfo tzi);
 
 //        /// <summary>
 //        /// Adds the local system time zone to the iCalendar.  

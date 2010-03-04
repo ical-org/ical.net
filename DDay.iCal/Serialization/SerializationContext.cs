@@ -41,26 +41,41 @@ namespace DDay.iCal.Serialization
         public SerializationContext()
         {
             // Add some services by default
-            AddService(new SerializationSettings());
-            AddService(new ComponentFactory());
+            SetService(new SerializationSettings());
+            SetService(new ComponentFactory());
         }
 
         #endregion
 
         #region ISerializationContext Members
 
-        virtual public void AddService(object obj)
+        virtual public void SetService(object obj)
         {
             if (obj != null)
             {
-                m_Services[obj.GetType()] = obj;
+                Type type = obj.GetType();
+                m_Services[type] = obj;
+
+                // Get interfaces for the given type
+                foreach (Type iface in type.GetInterfaces())
+                    m_Services[iface] = obj;
             }
         }
 
         virtual public void RemoveService(Type type)
         {
-            if (type != null && m_Services.ContainsKey(type))
-                m_Services.Remove(type);
+            if (type != null)
+            {
+                if (m_Services.ContainsKey(type))
+                     m_Services.Remove(type);
+
+                // Get interfaces for the given type
+                foreach (Type iface in type.GetInterfaces())
+                {
+                    if (m_Services.ContainsKey(iface))
+                     m_Services.Remove(iface);
+                }
+            }
         }
 
         #endregion

@@ -27,11 +27,14 @@ options
 }
 
 // iCalendar object
-icalobject[ISerializationContext ctx] returns [iCalendarCollection iCalendars = new iCalendarCollection();]
+icalendar[ISerializationContext ctx] returns [iCalendarCollection iCalendars = new iCalendarCollection();]
 :	
-	{ IICalendar iCal = null; }
+{
+	IICalendar iCal = null;
+	ISerializationSettings settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
+}
     (
-		(CRLF)* BEGIN COLON VCALENDAR (CRLF)* {iCal = (IICalendar)Activator.CreateInstance(iCalendarType);}
+		(CRLF)* BEGIN COLON VCALENDAR (CRLF)* {iCal = (IICalendar)Activator.CreateInstance(settings.iCalendarType);}
 		icalbody[ctx, iCal]
 		END COLON VCALENDAR (CRLF)*
 		{
@@ -47,21 +50,15 @@ icalbody[ISerializationContext ctx, IICalendar iCal]:
 {
 	ICalendarComponentFactory cf = ctx.GetService(typeof(ICalendarComponentFactory)) as ICalendarComponentFactory;
 	IStringParserFactory spf = ctx.GetService(typeof(IStringParserFactory)) as IStringParserFactory;
+	ICalendarComponent c;
+	ICalendarProperty p;
 }
 (
 	property[ctx, spf, iCal] |
-	components[ctx, spf, cf, iCal]
+	component[ctx, spf, cf, iCal]
 )*;
 
 // iCalendar components
-components[
-	ISerializationContext ctx,
-	IStringParserFactory spf,
-	ICalendarComponentFactory cf,
-	ICalendarObject o
-]: (component[ctx, spf, cf, o])+;
-
-// An individual iCalendar component
 component[
 	ISerializationContext ctx,
 	IStringParserFactory spf,
@@ -83,20 +80,13 @@ BEGIN COLON
 	c.Column = n.getColumn();
 }
 (CRLF)*
-(contentline[ctx, spf, cf, c])*
-END COLON IANA_TOKEN (CRLF)* { c.OnLoaded(); };
-
-// Content Lines
-contentline[
-	ISerializationContext ctx,
-	IStringParserFactory spf,
-	ICalendarComponentFactory cf,
-	ICalendarPropertyListContainer c
-]:
 (
+	// Components can have properties, and other embedded components.
+	// (i.e. VALARM)	
 	property[ctx, spf, c] |
-	component[ctx, spf, cf, c] // Allow for embedded components here (i.e. VALARM)
-); 
+	component[ctx, spf, cf, c]
+)*
+END COLON IANA_TOKEN (CRLF)* { c.OnLoaded(); };
 
 //
 // Properties

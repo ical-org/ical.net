@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
+using System.Diagnostics;
 
 namespace DDay.iCal
 {
@@ -14,6 +15,7 @@ namespace DDay.iCal
     /// The <c>VALUE=DATE</c> portion is a <see cref="Parameter"/> of the DTSTART value.
     /// </example>
     /// </remarks>
+    [DebuggerDisplay("{string.Join(\";\", Values)}")]
 #if DATACONTRACT
     [DataContract(Name = "CalendarParameter", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif

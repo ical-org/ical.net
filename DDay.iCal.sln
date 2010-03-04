@@ -3,7 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDay.iCal", "DDay.iCal\DDay.iCal.csproj", "{F88DB6D3-CB95-4707-9C88-B53403AADC61}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDay.iCal.Test", "DDay.iCal.Test\DDay.iCal.Test.csproj", "{38A02D06-15CC-436A-9C8F-07B84A7E2CE0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5809AEB2-CED9-4609-9366-3D34AC21DDA3}"
+	ProjectSection(SolutionItems) = preProject
+		DDay.iCal.vsmdi = DDay.iCal.vsmdi
+		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
+	EndProjectSection
+EndProject
 Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = DDay.iCal.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -13,6 +24,10 @@ Global
 		{F88DB6D3-CB95-4707-9C88-B53403AADC61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F88DB6D3-CB95-4707-9C88-B53403AADC61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F88DB6D3-CB95-4707-9C88-B53403AADC61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38A02D06-15CC-436A-9C8F-07B84A7E2CE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38A02D06-15CC-436A-9C8F-07B84A7E2CE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38A02D06-15CC-436A-9C8F-07B84A7E2CE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38A02D06-15CC-436A-9C8F-07B84A7E2CE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
