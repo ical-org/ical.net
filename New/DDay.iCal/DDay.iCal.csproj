@@ -169,7 +169,6 @@
     <Compile Include="Serialization\iCalendar\Serializers\iCalendarSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\ComponentSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\PropertySerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Serializers\PropertyValueDataTypeSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\SerializerBase.cs" />
     <Compile Include="Serialization\iCalendar\Factory\SerializerFactory.cs" />
     <Compile Include="Serialization\iCalendar\iCalLexer.cs" />
