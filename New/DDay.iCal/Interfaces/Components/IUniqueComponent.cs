@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public delegate void UIDChangedEventHandler(object sender, IText OldUID, IText NewUID);
+    public delegate void UIDChangedEventHandler(object sender, string OldUID, string NewUID);
 
     public interface IUniqueComponent :
         ICalendarComponent
@@ -15,6 +15,6 @@ namespace DDay.iCal
         /// </summary>
         event UIDChangedEventHandler UIDChanged;
 
-        IText UID { get; set; }
+        string UID { get; set; }
     }
 }

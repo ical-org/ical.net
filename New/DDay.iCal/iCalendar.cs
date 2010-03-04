@@ -33,13 +33,13 @@ namespace DDay.iCal
     /// //
     /// IICalendar iCal = iCalendar.LoadFromUri(new Uri("http://www.applegatehomecare.com/Calendars/USHolidays.ics"));
     /// 
-    /// List&lt;Occurrence&gt; occurrences = iCal.GetOccurrences(
+    /// IList&lt;IOccurrence&gt; occurrences = iCal.GetOccurrences(
     ///     new iCalDateTime(2006, 1, 1, "US-Eastern", iCal),
     ///     new iCalDateTime(2006, 12, 31, "US-Eastern", iCal));
     /// 
-    /// foreach (Occurrence o in occurrences)
+    /// foreach (IOccurrence o in occurrences)
     /// {
-    ///     Event evt = o.Component as Event;
+    ///     IEvent evt = o.Component as IEvent;
     ///     if (evt != null)
     ///     {
     ///         // Display the date of the event

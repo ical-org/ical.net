@@ -6,11 +6,9 @@ namespace DDay.iCal
 {
     public class UIDFactory
     {
-        virtual public IText New()
+        virtual public string New()
         {
-            // FIXME: implement
-            //return (Text)Guid.NewGuid().ToString();
-            return null;
+            return Guid.NewGuid().ToString();
         }
     }
 }
