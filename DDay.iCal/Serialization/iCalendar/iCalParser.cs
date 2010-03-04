@@ -21,6 +21,7 @@ namespace DDay.iCal.Serialization
 	using SemanticException        = antlr.SemanticException;
 	using ParserSharedInputState   = antlr.ParserSharedInputState;
 	using BitSet                   = antlr.collections.impl.BitSet;
+    using System.Collections.Generic;
 	
 	public partial class iCalParser : antlr.LLkParser
 	{
@@ -152,11 +153,8 @@ _loop6_breakloop:						;
 _loop8_breakloop:						;
 					}    // ( ... )*
 					
-								if (iCal != null)
-								{
-									iCal.OnLoaded();
-									iCalendars.Add(iCal);
-								}
+								iCal.OnLoaded();
+								iCalendars.Add(iCal);
 							
 				}
 				else
@@ -176,6 +174,10 @@ _loop9_breakloop:			;
 {
 		
 		
+		
+			ICalendarComponentFactory cf = ctx.GetService(typeof(ICalendarComponentFactory)) as ICalendarComponentFactory;
+			IStringParserFactory spf = ctx.GetService(typeof(IStringParserFactory)) as IStringParserFactory;
+		
 		{    // ( ... )*
 			for (;;)
 			{
@@ -184,12 +186,12 @@ _loop9_breakloop:			;
 				case IANA_TOKEN:
 				case X_NAME:
 				{
-					calprop(iCal);
+					property(ctx, spf, iCal);
 					break;
 				}
 				case BEGIN:
 				{
-					components(ctx, iCal);
+					components(ctx, spf, cf, iCal);
 					break;
 				}
 				default:
@@ -202,33 +204,101 @@ _loop12_breakloop:			;
 		}    // ( ... )*
 	}
 	
-	public void calprop(
-		IICalendar iCal
+	public void property(
+		
+	ISerializationContext ctx,
+	IStringParserFactory spf,
+	ICalendarPropertyListContainer c
+
 	) //throws RecognitionException, TokenStreamException
 {
 		
+		IToken  n = null;
+		IToken  m = null;
 		
-		switch ( LA(1) )
+			ICalendarProperty p;
+			string v;
+			IStringParser sp = spf.Create(typeof(ICalendarProperty));
+		
+		
 		{
-		case X_NAME:
-		{
-			x_prop(iCal);
-			break;
+			switch ( LA(1) )
+			{
+			case IANA_TOKEN:
+			{
+				n = LT(1);
+				match(IANA_TOKEN);
+				
+						p = new CalendarProperty(n.getLine(), n.getColumn());
+						p.Name = n.getText().ToUpper();
+					
+				break;
+			}
+			case X_NAME:
+			{
+				m = LT(1);
+				match(X_NAME);
+				
+						p = new CalendarProperty(m.getLine(), m.getColumn());
+						p.Name = m.getText().ToUpper();
+					
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			 }
 		}
-		case IANA_TOKEN:
-		{
-			iana_prop(iCal);
-			break;
-		}
-		default:
-		{
-			throw new NoViableAltException(LT(1), getFilename());
-		}
-		 }
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((LA(1)==SEMICOLON))
+				{
+					match(SEMICOLON);
+					parameter(ctx, p);
+				}
+				else
+				{
+					goto _loop29_breakloop;
+				}
+				
+			}
+_loop29_breakloop:			;
+		}    // ( ... )*
+		match(COLON);
+		v=value();
+		
+			// Parse the value of the property
+			sp.Parse(v, p);
+			
+			// Add the property to the container	
+			c.Properties.Add(p);
+		
+		{    // ( ... )*
+			for (;;)
+			{
+				if ((LA(1)==CRLF))
+				{
+					match(CRLF);
+				}
+				else
+				{
+					goto _loop31_breakloop;
+				}
+				
+			}
+_loop31_breakloop:			;
+		}    // ( ... )*
 	}
 	
 	public void components(
-		ISerializationContext ctx, ICalendarObject o
+		
+	ISerializationContext ctx,
+	IStringParserFactory spf,
+	ICalendarComponentFactory cf,
+	ICalendarObject o
+
 	) //throws RecognitionException, TokenStreamException
 {
 		
@@ -239,7 +309,7 @@ _loop12_breakloop:			;
 			{
 				if ((LA(1)==BEGIN) && (LA(2)==COLON) && (LA(3)==IANA_TOKEN||LA(3)==X_NAME))
 				{
-					component(ctx, o);
+					component(ctx, spf, cf, o);
 				}
 				else
 				{
@@ -253,7 +323,12 @@ _loop15_breakloop:			;
 	}
 	
 	public ICalendarComponent  component(
-		ISerializationContext ctx, ICalendarObject o
+		
+	ISerializationContext ctx,
+	IStringParserFactory spf,
+	ICalendarComponentFactory cf,
+	ICalendarObject o
+
 	) //throws RecognitionException, TokenStreamException
 {
 		ICalendarComponent c = null;;
@@ -270,14 +345,14 @@ _loop15_breakloop:			;
 			{
 				n = LT(1);
 				match(IANA_TOKEN);
-				c = o.Calendar.ComponentFactory.Create(n.getText().ToLower());
+				c = cf.Create(n.getText().ToLower());
 				break;
 			}
 			case X_NAME:
 			{
 				m = LT(1);
 				match(X_NAME);
-				c = o.Calendar.ComponentFactory.Create(m.getText().ToLower());
+				c = cf.Create(m.getText().ToLower());
 				break;
 			}
 			default:
@@ -315,7 +390,7 @@ _loop19_breakloop:			;
 			{
 				if ((LA(1)==BEGIN||LA(1)==IANA_TOKEN||LA(1)==X_NAME))
 				{
-					contentline(ctx, c);
+					contentline(ctx, spf, cf, c);
 				}
 				else
 				{
@@ -348,7 +423,12 @@ _loop23_breakloop:			;
 	}
 	
 	public void contentline(
-		ISerializationContext ctx, ICalendarPropertyListContainer c
+		
+	ISerializationContext ctx,
+	IStringParserFactory spf,
+	ICalendarComponentFactory cf,
+	ICalendarPropertyListContainer c
+
 	) //throws RecognitionException, TokenStreamException
 {
 		
@@ -357,18 +437,14 @@ _loop23_breakloop:			;
 			switch ( LA(1) )
 			{
 			case IANA_TOKEN:
-			{
-				iana_prop(c);
-				break;
-			}
 			case X_NAME:
 			{
-				x_prop(c);
+				property(ctx, spf, c);
 				break;
 			}
 			case BEGIN:
 			{
-				component(ctx, c);
+				component(ctx, spf, cf, c);
 				break;
 			}
 			default:
@@ -379,148 +455,45 @@ _loop23_breakloop:			;
 		}
 	}
 	
-	public void x_prop(
-		ICalendarPropertyListContainer c
+	public void parameter(
+		ISerializationContext ctx, ICalendarProperty prop
 	) //throws RecognitionException, TokenStreamException
 {
 		
 		IToken  n = null;
-		CalendarProperty p; string v;
+		IToken  m = null;
 		
-		n = LT(1);
-		match(X_NAME);
-		p = new CalendarProperty(n.getLine(), n.getColumn());
-		{    // ( ... )*
-			for (;;)
+			ICalendarParameter p;	
+			string v;
+			List<string> values = new List<string>();
+		
+		
+		{
+			switch ( LA(1) )
 			{
-				if ((LA(1)==SEMICOLON))
-				{
-					match(SEMICOLON);
-					{
-						switch ( LA(1) )
-						{
-						case IANA_TOKEN:
-						{
-							param(p);
-							break;
-						}
-						case X_NAME:
-						{
-							xparam(p);
-							break;
-						}
-						default:
-						{
-							throw new NoViableAltException(LT(1), getFilename());
-						}
-						 }
-					}
-				}
-				else
-				{
-					goto _loop34_breakloop;
-				}
-				
-			}
-_loop34_breakloop:			;
-		}    // ( ... )*
-		match(COLON);
-		v=value();
-		p.Name = n.getText().ToUpper(); p.Value = v; c.Properties.Add(p);
-		{    // ( ... )*
-			for (;;)
+			case IANA_TOKEN:
 			{
-				if ((LA(1)==CRLF))
-				{
-					match(CRLF);
-				}
-				else
-				{
-					goto _loop36_breakloop;
-				}
-				
+				n = LT(1);
+				match(IANA_TOKEN);
+				p = new CalendarParameter(n.getText());
+				break;
 			}
-_loop36_breakloop:			;
-		}    // ( ... )*
-	}
-	
-	public void iana_prop(
-		ICalendarPropertyListContainer c
-	) //throws RecognitionException, TokenStreamException
-{
-		
-		IToken  n = null;
-		CalendarProperty p; string v;
-		
-		n = LT(1);
-		match(IANA_TOKEN);
-		p = new CalendarProperty(n.getLine(), n.getColumn());
-		{    // ( ... )*
-			for (;;)
+			case X_NAME:
 			{
-				if ((LA(1)==SEMICOLON))
-				{
-					match(SEMICOLON);
-					{
-						switch ( LA(1) )
-						{
-						case IANA_TOKEN:
-						{
-							param(p);
-							break;
-						}
-						case X_NAME:
-						{
-							xparam(p);
-							break;
-						}
-						default:
-						{
-							throw new NoViableAltException(LT(1), getFilename());
-						}
-						 }
-					}
-				}
-				else
-				{
-					goto _loop28_breakloop;
-				}
-				
+				m = LT(1);
+				match(X_NAME);
+				p = new CalendarParameter(m.getText());
+				break;
 			}
-_loop28_breakloop:			;
-		}    // ( ... )*
-		match(COLON);
-		v=value();
-		p.Name = n.getText().ToUpper(); p.Value = v; c.Properties.Add(p);
-		{    // ( ... )*
-			for (;;)
+			default:
 			{
-				if ((LA(1)==CRLF))
-				{
-					match(CRLF);
-				}
-				else
-				{
-					goto _loop30_breakloop;
-				}
-				
+				throw new NoViableAltException(LT(1), getFilename());
 			}
-_loop30_breakloop:			;
-		}    // ( ... )*
-	}
-	
-	public void param(
-		ICalendarProperty prop
-	) //throws RecognitionException, TokenStreamException
-{
-		
-		CalendarParameter p; string n; string v;
-		
-		n=param_name();
-		p = new CalendarParameter(n);
+			 }
+		}
 		match(EQUAL);
 		v=param_value();
-		p.Values.Add(v);
+		values.Add(v);
 		{    // ( ... )*
 			for (;;)
 			{
@@ -528,51 +501,20 @@ _loop30_breakloop:			;
 				{
 					match(COMMA);
 					v=param_value();
-					p.Values.Add(v);
+					values.Add(v);
 				}
 				else
 				{
-					goto _loop41_breakloop;
+					goto _loop35_breakloop;
 				}
 				
 			}
-_loop41_breakloop:			;
+_loop35_breakloop:			;
 		}    // ( ... )*
-		prop.Parameters.Add(p);
-	}
-	
-	public void xparam(
-		ICalendarProperty prop
-	) //throws RecognitionException, TokenStreamException
-{
 		
-		IToken  n = null;
-		CalendarParameter p; string v;
+			p.Values = values.ToArray();
+			prop.Parameters.Add(p);
 		
-		n = LT(1);
-		match(X_NAME);
-		p = new CalendarParameter(n.getText());
-		match(EQUAL);
-		v=param_value();
-		p.Values.Add(v);
-		{    // ( ... )*
-			for (;;)
-			{
-				if ((LA(1)==COMMA))
-				{
-					match(COMMA);
-					v=param_value();
-					p.Values.Add(v);
-				}
-				else
-				{
-					goto _loop44_breakloop;
-				}
-				
-			}
-_loop44_breakloop:			;
-		}    // ( ... )*
-		prop.Parameters.Add(p);
 	}
 	
 	public string  value() //throws RecognitionException, TokenStreamException
@@ -591,26 +533,14 @@ _loop44_breakloop:			;
 				}
 				else
 				{
-					goto _loop52_breakloop;
+					goto _loop42_breakloop;
 				}
 				
 			}
-_loop52_breakloop:			;
+_loop42_breakloop:			;
 		}    // ( ... )*
 		v = sb.ToString();
 		return v;
-	}
-	
-	public string  param_name() //throws RecognitionException, TokenStreamException
-{
-		string n = string.Empty;;
-		
-		IToken  i = null;
-		
-		i = LT(1);
-		match(IANA_TOKEN);
-		n = i.getText();
-		return n;
 	}
 	
 	public string  param_value() //throws RecognitionException, TokenStreamException
@@ -678,11 +608,11 @@ _loop52_breakloop:			;
 				}
 				else
 				{
-					goto _loop49_breakloop;
+					goto _loop39_breakloop;
 				}
 				
 			}
-_loop49_breakloop:			;
+_loop39_breakloop:			;
 		}    // ( ... )*
 		s = sb.ToString();
 		return s;
@@ -705,11 +635,11 @@ _loop49_breakloop:			;
 				}
 				else
 				{
-					goto _loop55_breakloop;
+					goto _loop45_breakloop;
 				}
 				
 			}
-_loop55_breakloop:			;
+_loop45_breakloop:			;
 		}    // ( ... )*
 		match(DQUOTE);
 		s = sb.ToString();
@@ -802,11 +732,11 @@ _loop55_breakloop:			;
 				}
 				else
 				{
-					goto _loop68_breakloop;
+					goto _loop58_breakloop;
 				}
 				
 			}
-_loop68_breakloop:			;
+_loop58_breakloop:			;
 		}    // ( ... )*
 		return s;
 	}

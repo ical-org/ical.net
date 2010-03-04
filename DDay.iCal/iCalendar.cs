@@ -773,10 +773,6 @@ namespace DDay.iCal
         /// <returns>An object of the type specified</returns>
         public T Create<T>() where T : ICalendarComponent
         {
-            // FIXME: remove?
-            //if (m_ComponentFactory == null)
-            //    throw new ArgumentException("Create() cannot be called without a valid ComponentFactory assigned to the calendar.");
-
             ICalendarObject obj = Activator.CreateInstance(typeof(T)) as ICalendarObject;
             if (obj is T)
             {
