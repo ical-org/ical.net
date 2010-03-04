@@ -4,15 +4,10 @@ using System.Text;
 
 namespace DDay.iCal.Serialization
 {
-    public interface ISerializationContext
+    public interface ISerializationContext : 
+        IServiceProvider
     {
-        bool EnsureAccurateLineNumbers { get; set; }
-        ParsingModeType ParsingMode { get; set; }
-    }
-
-    public enum ParsingModeType
-    {
-        Strict,
-        Loose
+        void AddService(object obj);
+        void RemoveService(Type type);
     }
 }

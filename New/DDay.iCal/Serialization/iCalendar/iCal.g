@@ -6,7 +6,8 @@
 //
 header
 {
-    using System.Text;   
+    using System.Text;
+    using System.Collections.Generic;  
 }
 
 options
@@ -42,15 +43,35 @@ icalobject[ISerializationContext ctx] returns [iCalendarCollection iCalendars = 
 
 // iCalendar body
 // NOTE: We allow intermixture of calendar components and calendar properties
-icalbody[ISerializationContext ctx, IICalendar iCal]: (calprop[iCal] | components[ctx, iCal])*;
+icalbody[ISerializationContext ctx, IICalendar iCal]:
+{
+	ICalendarComponentFactory cf = ctx.GetService(typeof(ICalendarComponentFactory)) as ICalendarComponentFactory;
+	IStringParserFactory spf = ctx.GetService(typeof(IStringParserFactory)) as IStringParserFactory;
+}
+(
+	property[ctx, spf, iCal] |
+	components[ctx, spf, cf, iCal]
+)*;
 
 // iCalendar components
-components[ISerializationContext ctx, ICalendarObject o]: (component[ctx, o])+;
-component[ISerializationContext ctx, ICalendarObject o] returns [ICalendarComponent c = null;]:
+components[
+	ISerializationContext ctx,
+	IStringParserFactory spf,
+	ICalendarComponentFactory cf,
+	ICalendarObject o
+]: (component[ctx, spf, cf, o])+;
+
+// An individual iCalendar component
+component[
+	ISerializationContext ctx,
+	IStringParserFactory spf,
+	ICalendarComponentFactory cf,
+	ICalendarObject o
+] returns [ICalendarComponent c = null;]:
 BEGIN COLON
 (
-	n:IANA_TOKEN { c = o.Calendar.ComponentFactory.Create(n.getText().ToLower()); } | 
-	m:X_NAME { c = o.Calendar.ComponentFactory.Create(m.getText().ToLower()); }
+	n:IANA_TOKEN { c = cf.Create(n.getText().ToLower()); } | 
+	m:X_NAME { c = cf.Create(m.getText().ToLower()); }
 )
 {
 	// Add the component as a child immediately, in case
@@ -62,32 +83,83 @@ BEGIN COLON
 	c.Column = n.getColumn();
 }
 (CRLF)*
-(contentline[ctx, c])*
+(contentline[ctx, spf, cf, c])*
 END COLON IANA_TOKEN (CRLF)* { c.OnLoaded(); };
 
-// iCalendar Properties
-calprop[ISerializationContext ctx, IICalendar iCal]: x_prop[ctx, iCal] | iana_prop[ctx, iCal];
+// Content Lines
+contentline[
+	ISerializationContext ctx,
+	IStringParserFactory spf,
+	ICalendarComponentFactory cf,
+	ICalendarPropertyListContainer c
+]:
+(
+	property[ctx, spf, c] |
+	component[ctx, spf, cf, c] // Allow for embedded components here (i.e. VALARM)
+); 
 
+//
+// Properties
+//
 // NOTE: RFC5545 states that for properties, the value should be a "text" value, not a "value" value.
 // Outlook 2007, however, uses a "value" value in some instances, and will require this for proper
 // parsing.  NOTE: Fixes bug #1874977 - X-MS-OLK-WKHRDAYS won't parse correctly
 //
-// Properties:
-iana_prop[ISerializationContext ctx, ICalendarPropertyListContainer c] {CalendarProperty p; string v;}: n:IANA_TOKEN { p = new CalendarProperty(n.getLine(), n.getColumn()); } (SEMICOLON (param[p] | xparam[p]))* COLON v=value {p.Name = n.getText().ToUpper(); p.Value = v; c.Properties.Add(p); } (CRLF)*;
-x_prop[ISerializationContext ctx, ICalendarPropertyListContainer c] {CalendarProperty p; string v;}: n:X_NAME { p = new CalendarProperty(n.getLine(), n.getColumn()); } (SEMICOLON (param[p] | xparam[p]))* COLON v=value {p.Name = n.getText().ToUpper(); p.Value = v; c.Properties.Add(p); } (CRLF)*;
-
-// Content Lines
-contentline[ISerializationContext ctx, ICalendarPropertyListContainer c]:
+property[
+	ISerializationContext ctx,
+	IStringParserFactory spf,
+	ICalendarPropertyListContainer c
+]
+{
+	ICalendarProperty p;
+	string v;
+	IStringParser sp = spf.Create(typeof(ICalendarProperty));
+}:
 (
-	iana_prop[c] |
-	x_prop[c] |
-	component[ctx, c] // Allow for embedded components here (i.e. VALARM)
-); 
+	n:IANA_TOKEN
+	{
+		p = new CalendarProperty(n.getLine(), n.getColumn());
+		p.Name = n.getText().ToUpper();
+	} |
+	m:X_NAME
+	{
+		p = new CalendarProperty(m.getLine(), m.getColumn());
+		p.Name = m.getText().ToUpper();
+	}
+)
+(SEMICOLON parameter[ctx, p])* COLON
+v=value
+{
+	// Parse the value of the property
+	sp.Parse(v, p);
+	
+	// Add the property to the container	
+	c.Properties.Add(p);
+} (CRLF)*;
 
-// Parameters:
-param[ICalendarProperty prop] {CalendarParameter p; string n; string v;}: n=param_name {p = new CalendarParameter(n);} EQUAL v=param_value {p.Values.Add(v);} (COMMA v=param_value {p.Values.Add(v);})* { prop.Parameters.Add(p); };
-xparam[ICalendarProperty prop] { CalendarParameter p; string v;}: n:X_NAME {p = new CalendarParameter(n.getText());} EQUAL v=param_value {p.Values.Add(v);} (COMMA v=param_value {p.Values.Add(v);})* { prop.Parameters.Add(p); };
-param_name returns [string n = string.Empty;]: i:IANA_TOKEN {n = i.getText();};
+//
+// Parameters
+//
+parameter[ISerializationContext ctx, ICalendarProperty prop]
+{
+	ICalendarParameter p;	
+	string v;
+	List<string> values = new List<string>();
+}:
+(
+	n:IANA_TOKEN { p = new CalendarParameter(n.getText()); } |
+	m:X_NAME { p = new CalendarParameter(m.getText()); }
+)
+EQUAL v=param_value { values.Add(v); }
+(
+	COMMA v=param_value { values.Add(v); }
+)*
+{
+	p.Values = values.ToArray();
+	prop.Parameters.Add(p);
+};
+
+// Value productions
 param_value returns [string v = string.Empty;]: v=paramtext | v=quoted_string;
 paramtext returns [string s = null;] {StringBuilder sb = new StringBuilder(); string c;}: (c=safe_char {sb.Append(c);})* { s = sb.ToString(); };
 value returns [string v = string.Empty] {StringBuilder sb = new StringBuilder(); string c;}: (c=value_char {sb.Append(c);})* { v = sb.ToString(); };

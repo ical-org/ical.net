@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DDay.iCal.Serialization
 {
-    public class SerializationContext :
+    public class SerializationContext :        
         ISerializationContext
     {
         #region Static Private Fields
@@ -32,25 +32,48 @@ namespace DDay.iCal.Serialization
 
         #region Private Fields
 
-        private bool m_EnsureAccurateLineNumbers = false;
-        private ParsingModeType m_ParsingMode = ParsingModeType.Strict;
+        private IDictionary<Type, object> m_Services = new Dictionary<Type, object>();
+
+        #endregion
+
+        #region Constructors
+
+        public SerializationContext()
+        {
+            // Add some services by default
+            AddService(new SerializationSettings());
+            AddService(new ComponentFactory());
+        }
 
         #endregion
 
         #region ISerializationContext Members
 
-        virtual public bool EnsureAccurateLineNumbers
+        virtual public void AddService(object obj)
         {
-            get { return m_EnsureAccurateLineNumbers; }
-            set { m_EnsureAccurateLineNumbers = value; }
+            if (obj != null)
+            {
+                m_Services[obj.GetType()] = obj;
+            }
         }
 
-        virtual public ParsingModeType ParsingMode
+        virtual public void RemoveService(Type type)
         {
-            get { return m_ParsingMode; }
-            set { m_ParsingMode = value; }
+            if (type != null && m_Services.ContainsKey(type))
+                m_Services.Remove(type);
         }
 
         #endregion
+
+        #region IServiceProvider Members
+
+        virtual public object GetService(Type serviceType)
+        {
+            if (m_Services.ContainsKey(serviceType))
+                return m_Services[serviceType];
+            return null;
+        }
+
+        #endregion       
     }
 }
