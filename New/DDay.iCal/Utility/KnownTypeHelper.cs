@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using DDay.iCal;
-using DDay.iCal;
 using System.Reflection;
-using DDay.iCal.Serialization;
 
 namespace DDay.iCal
 {

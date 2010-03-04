@@ -6,6 +6,7 @@ namespace DDay.iCal
 {
     public interface ISerializationSettings
     {
+        Type iCalendarType { get; set; }
         bool EnsureAccurateLineNumbers { get; set; }
         ParsingModeType ParsingMode { get; set; }
     }

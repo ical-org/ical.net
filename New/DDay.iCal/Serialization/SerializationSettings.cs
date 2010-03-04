@@ -9,12 +9,19 @@ namespace DDay.iCal.Serialization
     {
         #region Private Fields
 
+        private Type m_iCalendarType = typeof(iCalendar);        
         private bool m_EnsureAccurateLineNumbers = false;
         private ParsingModeType m_ParsingMode = ParsingModeType.Strict;
 
         #endregion
 
         #region ISerializationSettings Members
+
+        virtual public Type iCalendarType
+        {
+            get { return m_iCalendarType; }
+            set { m_iCalendarType = value; }
+        }
 
         virtual public bool EnsureAccurateLineNumbers
         {

@@ -7,6 +7,6 @@ namespace DDay.iCal
 {
     public interface ISerializerFactory
     {
-        ISerializable Create(ICalendarObject obj, ISerializationContext ctx);
+        ISerializer Create(ICalendarObject obj, ISerializationContext ctx);
     }
 }

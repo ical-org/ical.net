@@ -5,8 +5,8 @@ using System.IO;
 
 namespace DDay.iCal.Serialization
 {
-    public abstract class SerializableBase :
-        ISerializable
+    public abstract class SerializerBase :
+        ISerializer
     {
         #region Private Fields
 
@@ -14,7 +14,16 @@ namespace DDay.iCal.Serialization
 
         #endregion
 
-        #region ISerializable Members
+        #region Constructors
+
+        public SerializerBase()
+        {
+            m_SerializationContext = DDay.iCal.Serialization.SerializationContext.Default;
+        }
+
+        #endregion
+
+        #region ISerializer Members
 
         virtual public ISerializationContext SerializationContext
         {
@@ -22,15 +31,26 @@ namespace DDay.iCal.Serialization
             set { m_SerializationContext = value; }
         }
 
-        public abstract string SerializeToString(ICalendarObject obj);
-        public abstract object Deserialize(TextReader tr, Type iCalendarType);
+        virtual public T GetService<T>()
+        {
+            if (SerializationContext != null)
+            {
+                object obj = SerializationContext.GetService(typeof(T));
+                if (obj != null)
+                    return (T)obj;
+            }
+            return default(T);
+        }
 
-        public object Deserialize(Stream stream, Encoding encoding, Type iCalendarType)
+        public abstract string SerializeToString(ICalendarObject obj);
+        public abstract object Deserialize(TextReader tr);
+
+        public object Deserialize(Stream stream, Encoding encoding)
         {
             object obj = null;
             using (StreamReader sr = new StreamReader(stream, encoding))
             {
-                obj = Deserialize(sr, iCalendarType);
+                obj = Deserialize(sr);
             }
             return obj;
         }

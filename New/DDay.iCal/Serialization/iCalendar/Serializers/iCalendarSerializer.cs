@@ -51,5 +51,31 @@ namespace DDay.iCal.Serialization
         }        
 
         #endregion
+
+        #region Overrides
+
+        public override object Deserialize(TextReader tr)
+        {
+            // Create a lexer for our text stream
+            iCalLexer lexer = new iCalLexer(tr);
+            iCalParser parser = new iCalParser(lexer);
+
+            // Add a string parser factory to our serialization services,
+            // if one is not already present!
+            IStringParserFactory spf = GetService<IStringParserFactory>();
+            if (spf == null)
+                SerializationContext.SetService(new StringParserFactory());
+
+            // Parse the iCalendar(s)!
+            iCalendarCollection iCalendars = parser.icalendar(SerializationContext);
+
+            // Close our text stream
+            tr.Close();
+
+            // Return the parsed iCalendar(s)
+            return iCalendars;
+        }
+
+        #endregion
     }
 }

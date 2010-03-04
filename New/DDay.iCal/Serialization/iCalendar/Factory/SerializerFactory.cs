@@ -9,11 +9,11 @@ namespace DDay.iCal.Serialization
     {
         #region ISerializerFactory Members
 
-        virtual public ISerializable Create(ICalendarObject obj, ISerializationContext ctx)
+        virtual public ISerializer Create(ICalendarObject obj, ISerializationContext ctx)
         {
             if (obj != null)
             {
-                ISerializable s = null;
+                ISerializer s = null;
 
                 Type type = obj.GetType();
                 if (typeof(IICalendar).IsAssignableFrom(type))
