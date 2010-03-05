@@ -3,6 +3,7 @@
     using System.Text;
     using System.IO;
     using System.Collections.Generic;  
+    using System.Runtime.Serialization;
     using DDay.iCal.Serialization;
     using DDay.iCal.Serialization.iCalendar;
 
@@ -93,9 +94,11 @@ namespace DDay.iCal
 		ISerializationContext ctx
 	) //throws RecognitionException, TokenStreamException
 {
-		iCalendarCollection iCalendars = new iCalendarCollection();;
+		iCalendarCollection iCalendars = (iCalendarCollection)SerializationUtil.GetUninitializedObject(typeof(iCalendarCollection));;
 		
 		
+		
+			SerializationUtil.OnDeserializing(iCalendars);
 		
 			IICalendar iCal = null;
 			ISerializationSettings settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
@@ -139,7 +142,8 @@ _loop4_breakloop:						;
 _loop6_breakloop:						;
 					}    // ( ... )*
 					
-								iCal = (IICalendar)Activator.CreateInstance(settings.iCalendarType);
+								iCal = (IICalendar)SerializationUtil.GetUninitializedObject(settings.iCalendarType);			
+								SerializationUtil.OnDeserializing(iCal);
 								
 								// Push the iCalendar onto the serialization context stack
 								ctx.Push(iCal);
@@ -168,6 +172,8 @@ _loop8_breakloop:						;
 								iCal.OnLoaded();
 								iCalendars.Add(iCal);
 								
+								SerializationUtil.OnDeserialized(iCal);
+								
 								// Pop the iCalendar off the serialization context stack
 								ctx.Pop();
 							
@@ -180,6 +186,9 @@ _loop8_breakloop:						;
 			}
 _loop9_breakloop:			;
 		}    // ( ... )*
+		
+				SerializationUtil.OnDeserialized(iCalendars);
+			
 		return iCalendars;
 	}
 	
@@ -235,7 +244,7 @@ _loop12_breakloop:			;
 		IToken  m = null;
 		
 			string v;
-			ISerializer serializer = sf.Create(typeof(ICalendarProperty), ctx);		
+			ISerializer serializer = sf.Build(typeof(ICalendarProperty), ctx);		
 		
 		
 		{
@@ -348,14 +357,14 @@ _loop26_breakloop:			;
 			{
 				n = LT(1);
 				match(IANA_TOKEN);
-				c = cf.Create(n.getText().ToLower());
+				c = cf.Build(n.getText().ToLower(), true);
 				break;
 			}
 			case X_NAME:
 			{
 				m = LT(1);
 				match(X_NAME);
-				c = cf.Create(m.getText().ToLower());
+				c = cf.Build(m.getText().ToLower(), true);
 				break;
 			}
 			default:
@@ -364,6 +373,8 @@ _loop26_breakloop:			;
 			}
 			 }
 		}
+		
+			SerializationUtil.OnDeserializing(c);
 		
 			// Push the component onto the serialization context stack
 			ctx.Push(c);
@@ -436,6 +447,8 @@ _loop20_breakloop:			;
 			
 			// Notify that the component has been loaded
 			c.OnLoaded();
+			
+			SerializationUtil.OnDeserialized(c);
 			
 			// Pop the component off the serialization context stack
 			ctx.Pop();

@@ -11,6 +11,7 @@ namespace DDay.iCal.Serialization
         ISerializationContext SerializationContext { get; set; }
         T GetService<T>();
 
+        Type TargetType { get; }
         string SerializeToString(object obj);
         void Serialize(object obj, Stream stream, Encoding encoding);
         object Deserialize(TextReader tr);

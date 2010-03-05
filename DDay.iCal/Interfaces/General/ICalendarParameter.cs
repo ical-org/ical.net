@@ -8,6 +8,8 @@ namespace DDay.iCal
         ICalendarObject,
         IKeyedObject<string>
     {
+        event EventHandler<ValueChangedEventArgs> ValueChanged;
+
         string Value { get; set; }
         string[] Values { get; set; }
     }

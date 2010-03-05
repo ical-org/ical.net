@@ -31,7 +31,7 @@ namespace DDay.iCal.Serialization.iCalendar
             {
                 Type mappedType = mapper.Get(SerializationContext.Peek());
                 if (mappedType != null)
-                    return sf.Create(mappedType, SerializationContext);
+                    return sf.Build(mappedType, SerializationContext);
                 else
                     return new StringSerializer(SerializationContext);
             }
@@ -41,6 +41,17 @@ namespace DDay.iCal.Serialization.iCalendar
         #endregion
 
         #region Overrides
+
+        public override Type TargetType
+        {
+            get
+            {
+                ISerializer serializer = GetMappedSerializer();
+                if (serializer != null)
+                    return serializer.TargetType;
+                return null;
+            }
+        }
 
         public override string SerializeToString(object obj)
         {

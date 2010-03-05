@@ -33,6 +33,11 @@ namespace DDay.iCal
 
         public iCalendarCollection()
         {
+            Initialize();
+        }
+
+        private void Initialize()
+        {
             _Calendars = new List<IICalendar>();
         }
 
@@ -104,6 +109,17 @@ namespace DDay.iCal
 
             occurrences.Sort();
             return occurrences;
+        }
+
+        #endregion
+
+        #region Overrides
+
+        protected override void OnDeserializing(StreamingContext context)
+        {
+            base.OnDeserializing(context);
+
+            Initialize();
         }
 
         #endregion

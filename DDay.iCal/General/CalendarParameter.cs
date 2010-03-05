@@ -47,6 +47,14 @@ namespace DDay.iCal
 
         #region ICalendarParameter Members
 
+        public event EventHandler<ValueChangedEventArgs> ValueChanged;
+
+        protected void OnValueChanged(object oldValue, object newValue)
+        {
+            if (ValueChanged != null)
+                ValueChanged(this, new ValueChangedEventArgs(oldValue, newValue));
+        }
+
         virtual public string Value
         {
             get
@@ -58,16 +66,35 @@ namespace DDay.iCal
             }
             set
             {
-                if (value != null)
-                    m_Values = new string[] { value };
-                else m_Values = null;                    
+                object oldValues = m_Values;
+
+                string oldValue = null;
+                if (m_Values != null && m_Values.Length > 0)
+                    oldValue = m_Values[0];
+
+                if (!object.Equals(oldValue, value))
+                {
+                    if (value != null)
+                        m_Values = new string[] { value };
+                    else m_Values = null;
+
+                    OnValueChanged(oldValues, m_Values);
+                }
             }
         }
 
         virtual public string[] Values
         {
             get { return m_Values; }
-            set { m_Values = value; }
+            set
+            {
+                if (!object.Equals(m_Values, value))
+                {
+                    object old = m_Values;
+                    m_Values = value;
+                    OnValueChanged(old, m_Values);
+                }
+            }
         }
 
         #endregion

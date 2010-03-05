@@ -64,6 +64,35 @@ namespace DDay.iCal
 
         #endregion
 
+        #region Private Methods
+
+        [OnDeserializing]
+        internal void DeserializingInternal(StreamingContext context)
+        {
+            OnDeserializing(context);
+        }
+
+        [OnDeserialized]
+        internal void DeserializedInternal(StreamingContext context)
+        {
+            OnDeserialized(context);
+        }
+
+        #endregion
+
+        #region Protected Methods
+
+        virtual protected void OnDeserializing(StreamingContext context)
+        {
+            Initialize();
+        }
+
+        virtual protected void OnDeserialized(StreamingContext context)
+        {
+        }
+
+        #endregion
+
         #region Public Overridable Methods
 
         /// <summary>
@@ -90,27 +119,8 @@ namespace DDay.iCal
                 child.Parent = null;
             }
         }
-
-        /// <summary>
-        /// Initializes an object that has just been created.
-        /// </summary>
-        virtual public void CreateInitialize()
-        {
-        }
-
+        
         #endregion        
-
-        #region Private Methods
-
-#if DATACONTRACT
-        [OnDeserializing]
-        private void OnDeserializing(StreamingContext context)
-        {
-            Initialize();
-        }
-#endif
-
-        #endregion
 
         #region Overrides
 

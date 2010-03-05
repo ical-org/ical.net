@@ -7,8 +7,8 @@ namespace DDay.iCal
     public interface IKeyedList<T, U> :
         IList<T> where T : IKeyedObject<U>
     {
-        event EventHandler<KeyedObjectEventArgs<T>> ItemAdded;
-        event EventHandler<KeyedObjectEventArgs<T>> ItemRemoved;
+        event EventHandler<ObjectEventArgs<T>> ItemAdded;
+        event EventHandler<ObjectEventArgs<T>> ItemRemoved;
 
         /// <summary>
         /// Returns true if the list contains at least one 
@@ -53,16 +53,5 @@ namespace DDay.iCal
         /// Converts the list to an array of the values contained therein.
         /// </summary>
         T[] ToArray();
-    }
-
-    public class KeyedObjectEventArgs<T> :
-        EventArgs
-    {
-        public T Object { get; set; }
-
-        public KeyedObjectEventArgs(T obj)
-        {
-            Object = obj;
-        }
-    }
+    }    
 }

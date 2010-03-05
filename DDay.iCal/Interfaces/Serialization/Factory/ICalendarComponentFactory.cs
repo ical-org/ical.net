@@ -6,6 +6,6 @@ namespace DDay.iCal.Serialization
 {
     public interface ICalendarComponentFactory
     {
-        ICalendarComponent Create(string objectName);
+        ICalendarComponent Build(string objectName, bool uninitialized);
     }
 }

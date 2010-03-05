@@ -152,7 +152,7 @@ namespace DDay.iCal
         /// <summary>
         /// The geographic location (lat/long) of the event.
         /// </summary>
-        public IGeographicLocation Geo
+        public IGeographicLocation GeographicLocation
         {
             get { return Properties.Get<IGeographicLocation>("GEO"); }
             set { Properties.Set("GEO", value); }
@@ -226,7 +226,7 @@ namespace DDay.iCal
 
         private void Initialize()
         {
-            this.Name = CalendarComponent.EVENT;
+            this.Name = Components.EVENT;
         }
 
         #endregion
@@ -285,6 +285,20 @@ namespace DDay.iCal
 
         #region Overrides
 
+        protected override void OnDeserializing(StreamingContext context)
+        {
+            base.OnDeserializing(context);
+
+            Initialize();
+        }
+
+        protected override void OnDeserialized(StreamingContext context)
+        {
+            base.OnDeserialized(context);
+
+            ExtrapolateTimes();
+        }
+
         /// <summary>
         /// Evaluates this event to determine the dates and times for which the event occurs.
         /// This method only evaluates events which occur between <paramref name="FromDate"/>
@@ -342,11 +356,11 @@ namespace DDay.iCal
 
         private void ExtrapolateTimes()
         {
-            if (DTEnd == null && DTStart != null && Duration != null)
+            if (!DTEnd.IsAssigned && DTStart.IsAssigned && Duration != default(TimeSpan))
                 DTEnd = DTStart + Duration;
-            else if (Duration == null && DTStart != null && DTEnd != null)
+            else if (Duration == default(TimeSpan) && DTStart.IsAssigned && DTEnd.IsAssigned)
                 Duration = DTEnd - DTStart;
-            else if (DTStart == null && Duration != null && DTEnd != null)
+            else if (!DTStart.IsAssigned && Duration != default(TimeSpan) && DTEnd.IsAssigned)
                 DTStart = DTEnd - Duration;
         }
 
