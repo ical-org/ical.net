@@ -14,10 +14,30 @@ namespace DDay.iCal
 #endif
     [Serializable]
     public class KeyedList<T, U> :
-        List<T>,
         IKeyedList<T, U> where T : IKeyedObject<U>
     {
+        #region Private Fields
+
+        List<T> _Items = new List<T>();
+
+        #endregion
+
         #region IKeyedList<T, U> Members
+
+        public event EventHandler<KeyedObjectEventArgs<T>> ItemAdded;
+        public event EventHandler<KeyedObjectEventArgs<T>> ItemRemoved;
+
+        protected void OnItemAdded(T obj)
+        {
+            if (ItemAdded != null)
+                ItemAdded(this, new KeyedObjectEventArgs<T>(obj));
+        }
+
+        protected void OnItemRemoved(T obj)
+        {
+            if (ItemRemoved != null)
+                ItemRemoved(this, new KeyedObjectEventArgs<T>(obj));
+        }
 
         /// <summary>
         /// Returns true if the list contains at least one 
@@ -34,7 +54,7 @@ namespace DDay.iCal
         /// </summary>
         public int IndexOf(U key)
         {
-            return ((List<T>)this).FindIndex(
+            return _Items.FindIndex(
                 delegate(T obj)
                 {
                     return object.Equals(obj.Key, key);
@@ -49,7 +69,7 @@ namespace DDay.iCal
 
         public IList<T> AllOf(U key)
         {
-            return ((List<T>)this).FindAll(
+            return _Items.FindAll(
                 delegate(T obj)
                 {
                     return object.Equals(obj.Key, key);
@@ -61,17 +81,27 @@ namespace DDay.iCal
         {
             get
             {
-                int index = IndexOf(key);
-                if (index >= 0)
-                    return this[IndexOf(key)];
+                for (int i = 0; i < Count; i++)
+                {
+                    T obj = _Items[i];
+                    if (object.Equals(obj.Key, key))
+                        return obj;
+                }
                 return default(T);
             }
             set
             {
-                if (ContainsKey(key))
-                    this[IndexOf(key)] = value;
+                int index = IndexOf(key);
+                if (index >= 0)
+                {
+                    OnItemRemoved(_Items[index]);
+                    _Items[index] = value;
+                    OnItemAdded(value);
+                }
                 else
+                {
                     Add(value);
+                }
             }
         }
 
@@ -82,12 +112,127 @@ namespace DDay.iCal
 
             while (index >= 0)
             {
+                T item = _Items[index];
                 RemoveAt(index);
+                OnItemRemoved(item);
                 removed = true;
                 index = IndexOf(key);
             }
 
             return removed;
+        }
+
+        #endregion
+
+        #region IKeyedList<T,U> Members
+
+        public T[] ToArray()
+        {
+            return _Items.ToArray();
+        }
+
+        #endregion
+
+        #region IList<T> Members
+
+        public int IndexOf(T item)
+        {
+            return _Items.IndexOf(item);
+        }
+
+        public void Insert(int index, T item)
+        {
+            _Items.Insert(index, item);
+            OnItemAdded(item);
+        }
+
+        public void RemoveAt(int index)
+        {
+            if (index >= 0 && index < Count)
+            {
+                T item = _Items[index];
+                _Items.RemoveAt(index);
+                OnItemRemoved(item);
+            }
+        }
+
+        public T this[int index]
+        {
+            get
+            {
+                return _Items[index];
+            }
+            set
+            {
+                if (index >= 0 && index < Count)
+                {
+                    OnItemRemoved(_Items[index]);
+                    _Items[index] = value;
+                    OnItemAdded(value);
+                }
+            }
+        }
+
+        #endregion
+
+        #region ICollection<T> Members
+
+        public void Add(T item)
+        {
+            _Items.Add(item);
+            OnItemAdded(item);
+        }
+
+        public void Clear()
+        {
+            foreach (T obj in _Items)
+                OnItemRemoved(obj);
+            _Items.Clear();
+        }
+
+        public bool Contains(T item)
+        {
+            return _Items.Contains(item);
+        }
+
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            _Items.CopyTo(array, arrayIndex);
+        }
+
+        public int Count
+        {
+            get { return _Items.Count; }
+        }
+
+        public bool IsReadOnly
+        {
+            get { return false; }
+        }
+
+        public bool Remove(T item)
+        {
+            bool removed = _Items.Remove(item);
+            OnItemRemoved(item);
+            return removed;
+        }
+
+        #endregion
+
+        #region IEnumerable<T> Members
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return _Items.GetEnumerator();
+        }
+
+        #endregion
+
+        #region IEnumerable Members
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return _Items.GetEnumerator();
         }
 
         #endregion

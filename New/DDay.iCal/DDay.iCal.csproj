@@ -85,6 +85,7 @@
     <Compile Include="Interfaces\DataTypes\ITransparency.cs" />
     <Compile Include="Interfaces\Serialization\IDataTypeMapper.cs" />
     <Compile Include="Interfaces\Serialization\ISerializationSettings.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\StringSerializer.cs" />
     <Compile Include="Structs\AlarmOccurrence.cs" />
     <Compile Include="Structs\Occurrence.cs" />
     <Compile Include="Structs\Period.cs" />
@@ -157,7 +158,6 @@
     <None Include="Serialization\iCalendar\iCal.g" />
     <Compile Include="Interfaces\Serialization\ISerializer.cs" />
     <Compile Include="Serialization\DataTypeMapper.cs" />
-    <Compile Include="Serialization\iCalendar\Factory\PropertyNameSerializerFactory.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataMapSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\DateTimeSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\ParameterSerializer.cs" />
@@ -173,6 +173,7 @@
     <Compile Include="Serialization\SerializationSettings.cs" />
     <Compile Include="Utility\KeyedList.cs" />
     <Compile Include="Utility\KnownTypeHelper.cs" />
+    <Compile Include="Utility\TextUtil.cs" />
     <Compile Include="Utility\UniqueComponentList.cs" />
   </ItemGroup>
   <ItemGroup>

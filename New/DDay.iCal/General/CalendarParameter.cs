@@ -15,7 +15,7 @@ namespace DDay.iCal
     /// The <c>VALUE=DATE</c> portion is a <see cref="Parameter"/> of the DTSTART value.
     /// </example>
     /// </remarks>
-    [DebuggerDisplay("{new DDay.iCal.Serialization.iCalendar.ParameterSerializer().SerializeToString(this)}")]
+    [DebuggerDisplay("{Name}={string.Join(\",\", Values)}")]
 #if DATACONTRACT
     [DataContract(Name = "CalendarParameter", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif

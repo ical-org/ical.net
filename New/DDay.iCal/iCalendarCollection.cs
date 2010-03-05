@@ -5,6 +5,7 @@ using System.Text;
 using DDay.iCal;
 using DDay.iCal;
 using System.Runtime.Serialization;
+using DDay.iCal.Serialization;
 
 namespace DDay.iCal
 {

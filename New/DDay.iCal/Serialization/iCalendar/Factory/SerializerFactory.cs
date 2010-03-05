@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using DDay.iCal.Serialization.iCalendar;
 
-namespace DDay.iCal
+namespace DDay.iCal.Serialization.iCalendar
 {
     public class SerializerFactory :
         ISerializerFactory
@@ -33,10 +33,8 @@ namespace DDay.iCal
                         s = new ParameterSerializer();
                     else if (typeof(iCalDateTime).IsAssignableFrom(objectType))
                         s = new DateTimeSerializer();
-                    // Catch general data types, and map them to their appropriate
-                    // type based on the available information.
-                    else if (typeof(object) == objectType)
-                        s = new DataMapSerializer();
+                    else if (typeof(string).IsAssignableFrom(objectType))
+                        s = new StringSerializer();
                 }
                 
                 // Set the serialization context

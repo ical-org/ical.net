@@ -6,6 +6,7 @@ using System.Reflection;
 using System.IO;
 using DDay.iCal;
 using System.Runtime.Serialization;
+using System.Diagnostics;
 
 namespace DDay.iCal
 {
@@ -17,6 +18,7 @@ namespace DDay.iCal
     [DataContract(IsReference = true, Name = "CalendarComponent", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
+    [DebuggerDisplay("Component: {Name}")]
     public class CalendarComponent :
         CalendarObject,
         ICalendarComponent
@@ -66,7 +68,7 @@ namespace DDay.iCal
 
         private void Initialize()
         {
-            m_Properties = new CalendarPropertyList();
+            m_Properties = new CalendarPropertyList(this);
         }
 
         #endregion        
