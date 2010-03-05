@@ -7,11 +7,14 @@ namespace DDay.iCal
     public interface ITimeZone :
         IRecurringComponent
     {
-        iCalDateTime Start { get; set; }
+        ITimeZoneID TZID { get; set; }
+        ITimeZoneID TimeZoneID { get; set; }
 
-        ITZID TZID { get; set; }
         iCalDateTime LastModified { get; set; }
-        IURI TZUrl { get; set; }
+
+        Uri TZUrl { get; set; }
+        Uri TimeZoneUrl { get; set; }
+
         IList<ITimeZoneInfo> TimeZoneInfos { get; set; }
 
         ITimeZoneInfo GetTimeZoneInfo(iCalDateTime dt);

@@ -21,7 +21,7 @@ namespace DDay.iCal
     /// </note>
 #if DATACONTRACT
     [DataContract(Name = "Event", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(Alarm))]
+    //[KnownType(typeof(Alarm))]
 #endif
     [Serializable]
     [DebuggerDisplay("Component: {Name}")]
@@ -100,9 +100,9 @@ namespace DDay.iCal
         //
         // Therefore, Duration is not serialized, as DTEnd
         // should always be extrapolated from the duration.
-        virtual public Duration Duration
+        virtual public TimeSpan Duration
         {
-            get { return Properties.Get<Duration>("DURATION"); }
+            get { return Properties.Get<TimeSpan>("DURATION"); }
             set
             {
                 if (!object.Equals(Duration, value))
@@ -127,41 +127,44 @@ namespace DDay.iCal
         /// </summary>
         virtual public bool IsAllDay
         {
-            get { return Start != null && !Start.HasTime; }
+            get { return !Start.HasTime; }
             set
             {
+                iCalDateTime start = Start;
+                iCalDateTime end = End;
+                TimeSpan duration = Duration;
+
                 // Set whether or not the start date/time
                 // has a time value.
-                if (Start != null)
-                    Start.HasTime = !value;
-                if (End != null)
+                start.HasTime = !value;
+                end.HasTime = !value;
+                if (value && start.Date.Equals(end.Date))
                 {
-                    End.HasTime = !value;
-                    if (value &&
-                        Start.Date.Equals(End.Date))
-                    {
-                        _Duration = null;
-                        End = Start.AddDays(1);
-                    }
+                    duration = default(TimeSpan);
+                    end = start.AddDays(1);
                 }
+
+                Start = start;
+                Duration = duration;
+                End = end;
             }
         }
 
         /// <summary>
         /// The geographic location (lat/long) of the event.
         /// </summary>
-        public Geo Geo
+        public IGeographicLocation Geo
         {
-            get { return Properties.Get<Geo>("GEO"); }
+            get { return Properties.Get<IGeographicLocation>("GEO"); }
             set { Properties.Set("GEO", value); }
         }
 
         /// <summary>
         /// The location of the event.
         /// </summary>
-        public Text Location
+        public string Location
         {
-            get { return Properties.Get<Text>("LOCATION"); }
+            get { return Properties.Get<string>("LOCATION"); }
             set { Properties.Set("LOCATION", value); }
         }
 
@@ -170,9 +173,9 @@ namespace DDay.iCal
         /// <example>Conference room #2</example>
         /// <example>Projector</example>
         /// </summary>
-        public TextCollection[] Resources
+        public IList<string> Resources
         {
-            get { return Properties.Get<TextCollection[]>("RESOURCES"); }
+            get { return Properties.Get<IList<string>>("RESOURCES"); }
             set { Properties.Set("RESOURCES", value); }
         }
 
@@ -192,9 +195,9 @@ namespace DDay.iCal
         /// or if the time cannot be scheduled for anything
         /// else (opaque).
         /// </summary>
-        public Transparency Transp
+        public ITransparency Transparency
         {
-            get { return Properties.Get<Transparency>("TRANSP"); }
+            get { return Properties.Get<ITransparency>("TRANSP"); }
             set { Properties.Set("TRANSP", value); }
         }
 
@@ -224,7 +227,7 @@ namespace DDay.iCal
 
         private void Initialize()
         {
-            this.Name = ComponentFactory.EVENT;
+            this.Name = CalendarComponent.EVENT;
         }
 
         #endregion
@@ -244,9 +247,9 @@ namespace DDay.iCal
         {            
             foreach (Period p in Periods)
                 // NOTE: removed UTC from date checks, since a date is a date.
-                if (p.StartTime.Date == DateTime.Date ||    // It's the start date
+                if (p.StartTime.Date == DateTime.Date ||    // It's the start date OR
                     (p.StartTime.Date <= DateTime.Date &&   // It's after the start date AND
-                    (p.EndTime.HasTime && p.EndTime.Date >= DateTime.Date || // an end time was specified, and it's before then
+                    (p.EndTime.HasTime && p.EndTime.Date >= DateTime.Date || // an end time was specified, and it's after the test date
                     (!p.EndTime.HasTime && p.EndTime.Date > DateTime.Date)))) // an end time was not specified, and it's before the end date
                     // NOTE: fixed bug as follows:
                     // DTSTART;VALUE=DATE:20060704
@@ -277,48 +280,6 @@ namespace DDay.iCal
         virtual public bool IsActive()
         {
             return (Status != EventStatus.Cancelled);            
-        }
-
-        virtual public void AddResource(string resource)
-        {
-            Text r = resource;
-            if (Resources != null)
-            {
-                foreach (TextCollection tc in Resources)
-                {
-                    if (tc.Values.Contains(r))
-                    {
-                        return;
-                    }
-                }
-            }
-
-            if (Resources == null ||
-                Resources.Length == 0)
-            {
-                Resources = new TextCollection[1] { new TextCollection(resource) };
-                Resources[0].Name = "RESOURCES";
-            }
-            else
-            {
-                Resources[0].Values.Add(r);
-            }
-        }
-
-        virtual public void RemoveResource(string resource)
-        {
-            if (Resources != null)
-            {
-                Text r = resource;
-                foreach (TextCollection tc in Resources)
-                {
-                    if (tc.Values.Contains(r))
-                    {
-                        tc.Values.Remove(r);
-                        return;
-                    }
-                }
-            }
         }
 
         #endregion
@@ -354,17 +315,23 @@ namespace DDay.iCal
             base.Evaluate(FromDate, ToDate);
 
             // Ensure each period has a duration
-            foreach(Period p in Periods)
+            for (int i = 0; i < Periods.Count; i++)
             {
-                if (p.EndTime == null)
+                Period p = Periods[i];
+                if (!p.EndTime.IsAssigned)
                 {
                     p.Duration = Duration;
                     if (p.Duration != null)
                         p.EndTime = p.StartTime + Duration;
                     else p.EndTime = p.StartTime;
                 }
+
                 // Ensure the Kind of time is consistent with DTStart
-                p.EndTime.IsUniversalTime = DTStart.IsUniversalTime;
+                iCalDateTime dt = p.EndTime;
+                dt.IsUniversalTime = DTStart.IsUniversalTime;
+                p.EndTime = dt;
+
+                Periods[i] = p;
             }
 
             return Periods;

@@ -4,8 +4,7 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public interface ITrigger :
-        ICalendarDataType
+    public interface ITrigger
     {
     }
 }

@@ -4,8 +4,7 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public interface IStatusCode :
-        ICalendarDataType
+    public interface IStatusCode
     {
         int[] Parts { get; set; }
         int Primary { get; }

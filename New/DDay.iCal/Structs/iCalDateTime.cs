@@ -28,10 +28,11 @@ namespace DDay.iCal
     {
         #region Private Fields
 
+        private bool _IsAssigned;        
         private DateTime _Value;
         private bool _HasDate;
         private bool _HasTime;
-        private ITZID _TZID;
+        private ITimeZoneID _TZID;
         private ITimeZoneInfo _TimeZoneInfo;
         private bool _IsUniversalTime;
         private IICalendar _Calendar;
@@ -39,6 +40,12 @@ namespace DDay.iCal
         #endregion
 
         #region Public Properties
+
+        public bool IsAssigned
+        {
+            get { return _IsAssigned; }
+            set { _IsAssigned = value; }
+        }
 
         /// <summary>
         /// Converts the date/time to this computer's local date/time.
@@ -153,7 +160,7 @@ namespace DDay.iCal
             set { _HasTime = value; }
         }
 
-        public ITZID TZID
+        public ITimeZoneID TZID
         {
             get { return _TZID; }
             set { _TZID = value; }
@@ -244,7 +251,7 @@ namespace DDay.iCal
             Initialize(value.Value, value.TZID, value.Calendar);
         }
         public iCalDateTime(DateTime value) : this(value, null, null) {}
-        public iCalDateTime(DateTime value, ITZID tzid, IICalendar iCal) : this()
+        public iCalDateTime(DateTime value, ITimeZoneID tzid, IICalendar iCal) : this()
         {
             Initialize(value, tzid, iCal);
         }
@@ -253,22 +260,22 @@ namespace DDay.iCal
             Initialize(year, month, day, hour, minute, second, null, null);
             HasTime = true;
         }
-        public iCalDateTime(int year, int month, int day, int hour, int minute, int second, ITZID tzid, IICalendar iCal) : this()            
+        public iCalDateTime(int year, int month, int day, int hour, int minute, int second, ITimeZoneID tzid, IICalendar iCal) : this()            
         {
             Initialize(year, month, day, hour, minute, second, tzid, iCal);
             HasTime = true;
         }
         public iCalDateTime(int year, int month, int day)
             : this(year, month, day, 0, 0, 0) { }
-        public iCalDateTime(int year, int month, int day, ITZID tzid, IICalendar iCal)
+        public iCalDateTime(int year, int month, int day, ITimeZoneID tzid, IICalendar iCal)
             : this(year, month, day, 0, 0, 0, tzid, iCal) { }
 
-        private void Initialize(int year, int month, int day, int hour, int minute, int second, ITZID tzid, IICalendar iCal)
+        private void Initialize(int year, int month, int day, int hour, int minute, int second, ITimeZoneID tzid, IICalendar iCal)
         {
             Initialize(CoerceDateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzid, iCal);            
         }
 
-        private void Initialize(DateTime value, ITZID tzid, IICalendar iCal)
+        private void Initialize(DateTime value, ITimeZoneID tzid, IICalendar iCal)
         {
             if (value.Kind == DateTimeKind.Utc)
                 this.IsUniversalTime = true;
@@ -278,6 +285,7 @@ namespace DDay.iCal
             this.HasTime = (value.Second == 0 && value.Minute == 0 && value.Hour == 0) ? false : true;
             this.TZID = tzid;
             this.Calendar = iCal;
+            this.IsAssigned = true;
         }
 
         private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
@@ -369,6 +377,20 @@ namespace DDay.iCal
             else return left.UTC.Date >= right.UTC.Date;
         }
 
+        public static bool operator ==(iCalDateTime left, iCalDateTime right)
+        {
+            if (left.HasTime || right.HasTime)
+                return left.UTC.Equals(right.UTC);
+            else return left.UTC.Date.Equals(right.UTC.Date);
+        }
+
+        public static bool operator !=(iCalDateTime left, iCalDateTime right)
+        {
+            if (left.HasTime || right.HasTime)
+                return !left.UTC.Equals(right.UTC);
+            else return !left.UTC.Date.Equals(right.UTC.Date);
+        }
+
         public static TimeSpan operator -(iCalDateTime left, iCalDateTime right)
         {
             return left.UTC - right.UTC;
@@ -405,7 +427,7 @@ namespace DDay.iCal
             return value;
         }
                 
-        public DateTime ToTimeZone(ITZID tzid)
+        public DateTime ToTimeZone(ITimeZoneID tzid)
         {
             if (tzid != null)
             {
