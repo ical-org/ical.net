@@ -79,12 +79,17 @@
     </Compile>
     <Compile Include="Components\Event.cs" />
     <Compile Include="Components\RecurringComponent.cs" />
+    <Compile Include="Components\Todo.cs" />
     <Compile Include="Components\UniqueComponent.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Interfaces\DataTypes\IGeographicLocation.cs" />
     <Compile Include="Interfaces\DataTypes\ITransparency.cs" />
     <Compile Include="Interfaces\Serialization\IDataTypeMapper.cs" />
     <Compile Include="Interfaces\Serialization\ISerializationSettings.cs" />
+    <Compile Include="Serialization\Attributes\OnDeserializedAttribute.cs" />
+    <Compile Include="Serialization\Attributes\OnDeserializingAttribute.cs" />
+    <Compile Include="Serialization\Attributes\StreamingContext.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\Components\EventSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\StringSerializer.cs" />
     <Compile Include="Structs\AlarmOccurrence.cs" />
     <Compile Include="Structs\Occurrence.cs" />
@@ -162,7 +167,7 @@
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\DateTimeSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\ParameterSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\iCalendarSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Serializers\ComponentSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\Components\ComponentSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\PropertySerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\SerializerBase.cs" />
     <Compile Include="Serialization\iCalendar\Factory\SerializerFactory.cs" />
@@ -173,6 +178,7 @@
     <Compile Include="Serialization\SerializationSettings.cs" />
     <Compile Include="Utility\KeyedList.cs" />
     <Compile Include="Utility\KnownTypeHelper.cs" />
+    <Compile Include="Utility\SerializationUtil.cs" />
     <Compile Include="Utility\TextUtil.cs" />
     <Compile Include="Utility\UniqueComponentList.cs" />
   </ItemGroup>

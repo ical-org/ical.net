@@ -22,6 +22,11 @@ namespace DDay.iCal.Serialization.iCalendar
 
         #region Overrides
 
+        public override Type TargetType
+        {
+            get { return typeof(CalendarProperty); }
+        }
+
         public override string SerializeToString(object obj)
         {
             ICalendarProperty prop = obj as ICalendarProperty;

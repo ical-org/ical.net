@@ -9,6 +9,7 @@ header
     using System.Text;
     using System.IO;
     using System.Collections.Generic;  
+    using System.Runtime.Serialization;
     using DDay.iCal.Serialization;
     using DDay.iCal.Serialization.iCalendar;
 }
@@ -30,16 +31,19 @@ options
 }
 
 // iCalendar object
-icalendar[ISerializationContext ctx] returns [iCalendarCollection iCalendars = new iCalendarCollection();]
+icalendar[ISerializationContext ctx] returns [iCalendarCollection iCalendars = (iCalendarCollection)SerializationUtil.GetUninitializedObject(typeof(iCalendarCollection));]
 :	
 {
+	SerializationUtil.OnDeserializing(iCalendars);
+
 	IICalendar iCal = null;
 	ISerializationSettings settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
 }
     (
 		(CRLF)* BEGIN COLON VCALENDAR (CRLF)*
 		{
-			iCal = (IICalendar)Activator.CreateInstance(settings.iCalendarType);
+			iCal = (IICalendar)SerializationUtil.GetUninitializedObject(settings.iCalendarType);			
+			SerializationUtil.OnDeserializing(iCal);
 			
 			// Push the iCalendar onto the serialization context stack
 			ctx.Push(iCal);
@@ -51,10 +55,15 @@ icalendar[ISerializationContext ctx] returns [iCalendarCollection iCalendars = n
 			iCal.OnLoaded();
 			iCalendars.Add(iCal);
 			
+			SerializationUtil.OnDeserialized(iCal);
+			
 			// Pop the iCalendar off the serialization context stack
 			ctx.Pop();
 		}
 	)* 	
+	{
+		SerializationUtil.OnDeserialized(iCalendars);
+	}
 ;
 
 // iCalendar body
@@ -80,10 +89,12 @@ component[
 ] returns [ICalendarComponent c = null;]:
 BEGIN COLON
 (
-	n:IANA_TOKEN { c = cf.Create(n.getText().ToLower()); } | 
-	m:X_NAME { c = cf.Create(m.getText().ToLower()); }
+	n:IANA_TOKEN { c = cf.Build(n.getText().ToLower(), true); } | 
+	m:X_NAME { c = cf.Build(m.getText().ToLower(), true); }
 )
 {
+	SerializationUtil.OnDeserializing(c);
+
 	// Push the component onto the serialization context stack
 	ctx.Push(c);
 
@@ -107,6 +118,8 @@ END COLON IANA_TOKEN (CRLF)*
 	// Notify that the component has been loaded
 	c.OnLoaded();
 	
+	SerializationUtil.OnDeserialized(c);
+	
 	// Pop the component off the serialization context stack
 	ctx.Pop();
 };
@@ -125,7 +138,7 @@ property[
 ] returns [ICalendarProperty p = null;]
 {
 	string v;
-	ISerializer serializer = sf.Create(typeof(ICalendarProperty), ctx);		
+	ISerializer serializer = sf.Build(typeof(ICalendarProperty), ctx);		
 }:
 (
 	n:IANA_TOKEN

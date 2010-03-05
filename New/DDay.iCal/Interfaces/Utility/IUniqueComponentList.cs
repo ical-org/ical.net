@@ -4,8 +4,6 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    
-
     public interface IUniqueComponentListReadonly<T> :
         IEnumerable<T>
         where T : IUniqueComponent

@@ -23,19 +23,6 @@ namespace DDay.iCal
         CalendarObject,
         ICalendarComponent
     {
-        #region Constants
-
-        public const string ALARM = "VALARM";
-        public const string EVENT = "VEVENT";
-        public const string FREEBUSY = "VFREEBUSY";
-        public const string TODO = "VTODO";
-        public const string JOURNAL = "VJOURNAL";
-        public const string TIMEZONE = "VTIMEZONE";
-        public const string DAYLIGHT = "DAYLIGHT";
-        public const string STANDARD = "STANDARD";
-
-        #endregion
-
         #region Private Fields
 
         private ICalendarPropertyList m_Properties;
@@ -71,7 +58,18 @@ namespace DDay.iCal
             m_Properties = new CalendarPropertyList(this);
         }
 
-        #endregion        
+        #endregion
+
+        #region Overrides
+
+        protected override void OnDeserializing(StreamingContext context)
+        {
+            base.OnDeserializing(context);
+
+            Initialize();
+        }
+
+        #endregion
 
         #region Public Methods
 
@@ -94,17 +92,5 @@ namespace DDay.iCal
         }
 
         #endregion        
-
-        #region Private Methods
-
-#if DATACONTRACT
-        [OnDeserializing]
-        private void OnDeserializing(StreamingContext context)
-        {
-            Initialize();
-        }
-#endif
-
-        #endregion
     }
 }

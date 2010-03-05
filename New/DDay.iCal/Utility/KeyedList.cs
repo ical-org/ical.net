@@ -24,19 +24,19 @@ namespace DDay.iCal
 
         #region IKeyedList<T, U> Members
 
-        public event EventHandler<KeyedObjectEventArgs<T>> ItemAdded;
-        public event EventHandler<KeyedObjectEventArgs<T>> ItemRemoved;
+        public event EventHandler<ObjectEventArgs<T>> ItemAdded;
+        public event EventHandler<ObjectEventArgs<T>> ItemRemoved;
 
         protected void OnItemAdded(T obj)
         {
             if (ItemAdded != null)
-                ItemAdded(this, new KeyedObjectEventArgs<T>(obj));
+                ItemAdded(this, new ObjectEventArgs<T>(obj));
         }
 
         protected void OnItemRemoved(T obj)
         {
             if (ItemRemoved != null)
-                ItemRemoved(this, new KeyedObjectEventArgs<T>(obj));
+                ItemRemoved(this, new ObjectEventArgs<T>(obj));
         }
 
         /// <summary>

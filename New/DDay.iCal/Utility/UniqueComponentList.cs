@@ -39,7 +39,7 @@ namespace DDay.iCal
             foreach (T item in m_Components)
             {
                 if (item.UID == null)
-                    item.UID = new UIDFactory().New();
+                    item.UID = new UIDFactory().Build();
                 m_Dictionary[item.UID] = item;
             }
         }

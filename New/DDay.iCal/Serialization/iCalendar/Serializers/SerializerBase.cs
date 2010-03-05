@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Runtime.Serialization;
+using System.Reflection;
 
 namespace DDay.iCal.Serialization.iCalendar
 {
@@ -47,6 +49,7 @@ namespace DDay.iCal.Serialization.iCalendar
             return default(T);
         }
 
+        public abstract Type TargetType { get; }
         public abstract string SerializeToString(object obj);
         public abstract object Deserialize(TextReader tr);
 
@@ -61,9 +64,15 @@ namespace DDay.iCal.Serialization.iCalendar
         }
 
         public void Serialize(object obj, Stream stream, Encoding encoding)
-        {            
+        {
             using (StreamWriter sw = new StreamWriter(stream, encoding))
+            {
+                SerializationContext.Push(obj);
+
                 sw.Write(SerializeToString(obj));
+
+                SerializationContext.Pop();
+            }
         }
 
         #endregion

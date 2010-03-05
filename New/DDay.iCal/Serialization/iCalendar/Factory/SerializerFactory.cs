@@ -10,7 +10,7 @@ namespace DDay.iCal.Serialization.iCalendar
     {
         #region ISerializerFactory Members
 
-        virtual public ISerializer Create(Type objectType, ISerializationContext ctx)
+        virtual public ISerializer Build(Type objectType, ISerializationContext ctx)
         {
             if (objectType != null)
             {

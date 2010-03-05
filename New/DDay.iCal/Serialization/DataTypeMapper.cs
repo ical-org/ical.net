@@ -29,17 +29,20 @@ namespace DDay.iCal.Serialization
             AddPropertyMapping("ATTENDEE", typeof(IList<IAttendee>));
             AddPropertyMapping("CATEGORIES", typeof(IList<string>));
             AddPropertyMapping("COMMENT", typeof(IList<string>));
+            AddPropertyMapping("COMPLETED", typeof(iCalDateTime));
             AddPropertyMapping("CONTACT", typeof(IList<string>));
             AddPropertyMapping("CREATED", typeof(iCalDateTime));
             AddPropertyMapping("DTEND", typeof(iCalDateTime));
             AddPropertyMapping("DTSTAMP", typeof(iCalDateTime));
             AddPropertyMapping("DTSTART", typeof(iCalDateTime));
+            AddPropertyMapping("DUE", typeof(iCalDateTime));
             AddPropertyMapping("DURATION", typeof(TimeSpan));
             AddPropertyMapping("EXDATE", typeof(IList<IRecurrenceDate>));
             AddPropertyMapping("EXRULE", typeof(IList<IRecurrencePattern>));
             AddPropertyMapping("GEO", typeof(IGeographicLocation));
             AddPropertyMapping("LAST-MODIFIED", typeof(iCalDateTime));
             AddPropertyMapping("ORGANIZER", typeof(IOrganizer));
+            AddPropertyMapping("PERCENT-COMPLETE", typeof(int));
             AddPropertyMapping("PRIORITY", typeof(int));
             AddPropertyMapping("RDATE", typeof(IList<IRecurrenceDate>));            
             AddPropertyMapping("RECURRENCE-ID", typeof(iCalDateTime));
@@ -64,6 +67,9 @@ namespace DDay.iCal.Serialization
             {
                 if (obj.Parent is IEvent)
                     return typeof(EventStatus);
+                else if (obj.Parent is ITodo)
+                    return typeof(TodoStatus);
+
                 // FIXME: return other status types here
             }
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal.Serialization.iCalendar
 {
@@ -39,6 +40,11 @@ namespace DDay.iCal.Serialization.iCalendar
 
         #region Overrides
 
+        public override Type TargetType
+        {
+            get { return typeof(iCalDateTime); }
+        }
+
         public override string SerializeToString(object obj)
         {
             string value = string.Empty;
@@ -62,6 +68,7 @@ namespace DDay.iCal.Serialization.iCalendar
             string[] values = value.Split('T');
 
             iCalDateTime dt = new iCalDateTime();
+            SerializationUtil.OnDeserializing(dt);
 
             Match match = Regex.Match(value, @"^((\d{4})(\d{2})(\d{2}))?T?((\d{2})(\d{2})(\d{2})(Z)?)?$", RegexOptions.IgnoreCase);
             if (!match.Success)
@@ -97,6 +104,9 @@ namespace DDay.iCal.Serialization.iCalendar
 
                 DateTime setDateTime = CoerceDateTime(year, month, date, hour, minute, second, DateTimeKind.Utc);
                 dt.Value = setDateTime;
+                dt.IsAssigned = true;
+
+                SerializationUtil.OnDeserialized(dt);
 
                 return dt;
             }

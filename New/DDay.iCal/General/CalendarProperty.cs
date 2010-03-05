@@ -81,6 +81,7 @@ namespace DDay.iCal
 
         public CalendarProperty(string name, object value) : base(name)
         {
+            Initialize();
             m_Value = value;
         }
 
@@ -96,7 +97,14 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Overrides
+        #region Overrides        
+
+        protected override void OnDeserializing(StreamingContext context)
+        {
+            base.OnDeserializing(context);
+
+            Initialize();
+        }
 
         public override void CopyFrom(ICopyable obj)
         {
@@ -134,24 +142,28 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Private Methods
-
-#if DATACONTRACT
-        [OnDeserializing]
-        private void OnDeserializing(StreamingContext context)
-        {
-            Initialize();
-        }
-#endif
-
-        #endregion
-
         #region ICalendarProperty Members
+
+        public event EventHandler<ValueChangedEventArgs> ValueChanged;
+
+        protected void OnValueChanged(object oldValue, object newValue)
+        {
+            if (ValueChanged != null)
+                ValueChanged(this, new ValueChangedEventArgs(oldValue, newValue));
+        }
 
         virtual public object Value
         {
             get { return m_Value; }
-            set { m_Value = value; }
+            set 
+            {
+                if (!object.Equals(m_Value, value))
+                {
+                    object old = m_Value;
+                    m_Value = value;
+                    OnValueChanged(old, m_Value);
+                }
+            }
         }
 
         #endregion

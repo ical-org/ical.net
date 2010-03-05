@@ -140,23 +140,23 @@ namespace DDay.iCal
 
         #region Static Public Methods
 
-        static public IEnumerable<RecurringComponent> SortByDate(IEnumerable<RecurringComponent> list)
+        static public IEnumerable<IRecurringComponent> SortByDate(IEnumerable<IRecurringComponent> list)
         {
-            return SortByDate<RecurringComponent>(list);
+            return SortByDate<IRecurringComponent>(list);
         }
 
         static public IEnumerable<T> SortByDate<T>(IEnumerable<T> list)
         {
-            List<RecurringComponent> items = new List<RecurringComponent>();
+            List<IRecurringComponent> items = new List<IRecurringComponent>();
             foreach (T t in list)
             {
-                if (t is RecurringComponent)
-                    items.Add((RecurringComponent)(object)t);
+                if (t is IRecurringComponent)
+                    items.Add((IRecurringComponent)(object)t);
             }
 
             // Sort the list by date
             items.Sort(new RecurringComponentDateSorter());
-            foreach (RecurringComponent rc in items)
+            foreach (IRecurringComponent rc in items)
                 yield return (T)(object)rc;
         }
 
@@ -420,11 +420,11 @@ namespace DDay.iCal
     /// <summary>
     /// Sorts recurring components by their start dates
     /// </summary>
-    public class RecurringComponentDateSorter : IComparer<RecurringComponent>
+    public class RecurringComponentDateSorter : IComparer<IRecurringComponent>
     {
         #region IComparer<RecurringComponent> Members
 
-        public int Compare(RecurringComponent x, RecurringComponent y)
+        public int Compare(IRecurringComponent x, IRecurringComponent y)
         {
             return x.Start.CompareTo(y.Start);            
         }

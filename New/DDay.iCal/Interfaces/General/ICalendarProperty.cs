@@ -9,6 +9,8 @@ namespace DDay.iCal
         ICalendarObject,
         IKeyedObject<string>
     {
+        event EventHandler<ValueChangedEventArgs> ValueChanged;
+
         object Value { get; set; }
-    }
+    }    
 }

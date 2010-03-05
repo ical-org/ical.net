@@ -25,20 +25,20 @@ namespace DDay.iCal
         {
             m_Parent = parent;
 
-            ItemAdded += new EventHandler<KeyedObjectEventArgs<ICalendarParameter>>(CalendarParameterList_ItemAdded);
-            ItemRemoved += new EventHandler<KeyedObjectEventArgs<ICalendarParameter>>(CalendarParameterList_ItemRemoved);
+            ItemAdded += new EventHandler<ObjectEventArgs<ICalendarParameter>>(CalendarParameterList_ItemAdded);
+            ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarParameter>>(CalendarParameterList_ItemRemoved);
         }
 
         #endregion
 
         #region Event Handlers
 
-        void CalendarParameterList_ItemRemoved(object sender, KeyedObjectEventArgs<ICalendarParameter> e)
+        void CalendarParameterList_ItemRemoved(object sender, ObjectEventArgs<ICalendarParameter> e)
         {
             e.Object.Parent = null;
         }
 
-        void CalendarParameterList_ItemAdded(object sender, KeyedObjectEventArgs<ICalendarParameter> e)
+        void CalendarParameterList_ItemAdded(object sender, ObjectEventArgs<ICalendarParameter> e)
         {
             e.Object.Parent = m_Parent;
         }

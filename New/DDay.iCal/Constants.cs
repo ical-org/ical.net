@@ -17,6 +17,27 @@ namespace DDay.iCal
 
     #endregion
 
+    #region Components
+
+    public class Components
+    {
+        #region Constants
+
+        public const string ALARM = "VALARM";
+        public const string CALENDAR = "VCALENDAR";
+        public const string EVENT = "VEVENT";
+        public const string FREEBUSY = "VFREEBUSY";
+        public const string TODO = "VTODO";
+        public const string JOURNAL = "VJOURNAL";
+        public const string TIMEZONE = "VTIMEZONE";
+        public const string DAYLIGHT = "DAYLIGHT";
+        public const string STANDARD = "STANDARD";
+
+        #endregion
+    }
+
+    #endregion
+
     #region Status Constants
 
     /// <summary>
@@ -27,11 +48,34 @@ namespace DDay.iCal
         Tentative,
         Confirmed,
         Cancelled
-    }; 
+    };
+
+    /// <summary>
+    /// Status codes available to a <see cref="Todo"/> item.
+    /// </summary>
+    public enum TodoStatus
+    {
+        Needs_Action,
+        Completed,
+        In_Process,
+        Cancelled
+    };
 
     #endregion
 
     #region Occurrence Evaluation
+
+    public enum FrequencyType
+    {
+        None,
+        Secondly,
+        Minutely,
+        Hourly,
+        Daily,
+        Weekly,
+        Monthly,
+        Yearly
+    };
 
     public enum RecurrenceRestrictionType
     {
@@ -160,6 +204,34 @@ namespace DDay.iCal
         /// </summary>
         public const string DeclineCounter = "DECLINECOUNTER";
     } 
+
+    #endregion
+
+    #region EventArgs
+
+    public class ObjectEventArgs<T> :
+        EventArgs
+    {
+        public T Object { get; set; }
+
+        public ObjectEventArgs(T obj)
+        {
+            Object = obj;
+        }
+    }
+
+    public class ValueChangedEventArgs :
+        EventArgs
+    {
+        public object OldValue { get; set; }
+        public object NewValue { get; set; }
+
+        public ValueChangedEventArgs(object oldValue, object newValue)
+        {
+            OldValue = oldValue;
+            NewValue = newValue;
+        }
+    }
 
     #endregion
 }

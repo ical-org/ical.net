@@ -56,7 +56,7 @@ namespace DDay.iCal
         /// <summary>
         /// The geographic location (lat/long) of the event.
         /// </summary>
-        IGeographicLocation Geo { get; set; }
+        IGeographicLocation GeographicLocation { get; set; }
 
         /// <summary>
         /// The location of the event.

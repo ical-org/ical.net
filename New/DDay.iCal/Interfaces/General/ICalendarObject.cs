@@ -53,11 +53,6 @@ namespace DDay.iCal
         /// <summary>
         /// Removes a child object from the current object.
         /// </summary>
-        void RemoveChild(ICalendarObject child);
-
-        /// <summary>
-        /// Initializes the object upon creation.
-        /// </summary>
-        void CreateInitialize();        
+        void RemoveChild(ICalendarObject child);        
     }
 }

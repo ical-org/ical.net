@@ -263,15 +263,14 @@ namespace DDay.iCal.Test
 
         //    IEvent evt = iCal.Create<Event>();
         //    evt.Summary = "Test event title";
-        //    evt.Start = new iCalDateTime(2007, 3, 19);
-        //    evt.Start.IsUniversalTime = true;
+        //    evt.Start = new DateTime(2007, 3, 19, 0, 0, 0, DateTimeKind.Utc);
         //    evt.Duration = new TimeSpan(24, 0, 0);
-        //    evt.Created = evt.Start.Copy<iCalDateTime>();
-        //    evt.DTStamp = evt.Start.Copy<iCalDateTime>();
+        //    evt.Created = evt.Start;
+        //    evt.DTStamp = evt.Start;
         //    evt.UID = "123456789";
         //    evt.IsAllDay = true;
 
-        //    RecurrencePattern rec = new RecurrencePattern("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4");
+        //    IRecurrencePattern rec = new RecurrencePattern("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4");
         //    evt.AddRecurrencePattern(rec);
 
         //    iCalendarSerializer serializer = new iCalendarSerializer(iCal);
@@ -356,6 +355,14 @@ END:VCALENDAR
             Assert.IsTrue(calendar.Events.Count == 2, "There should be 2 events in the loaded iCalendar.");
             Assert.IsNotNull(calendar.Events["fd940618-45e2-4d19-b118-37fd7a8e3906"], "There should be an event with UID: fd940618-45e2-4d19-b118-37fd7a8e3906");
             Assert.IsNotNull(calendar.Events["ebfbd3e3-cc1e-4a64-98eb-ced2598b3908"], "There should be an event with UID: ebfbd3e3-cc1e-4a64-98eb-ced2598b3908");
+
+            // Change the UID of the event
+            calendar.Events["fd940618-45e2-4d19-b118-37fd7a8e3906"].UID = "12345";
+
+            // Ensure the new UID has been recorded in the proper places
+            Assert.IsFalse(calendar.Events.ContainsKey("fd940618-45e2-4d19-b118-37fd7a8e3906"));
+            Assert.IsTrue(calendar.Events.ContainsKey("12345"));
+            Assert.AreEqual("12345", calendar.Events["12345"].UID);
 
             iCalendarSerializer serializer = new iCalendarSerializer(calendar);
             serializer.Serialize(@"Calendars\Serialization\SERIALIZE20.ics");

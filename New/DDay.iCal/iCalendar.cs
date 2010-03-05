@@ -426,13 +426,15 @@ namespace DDay.iCal
         /// </code>
         /// </example>
         /// </summary>
-        public iCalendar() : base("VCALENDAR")
+        public iCalendar()
         {
             Initialize();
         }
 
         private void Initialize()
         {
+            this.Name = Components.CALENDAR;
+
             m_UniqueComponents = new UniqueComponentList<IUniqueComponent>();
             m_Events = new UniqueComponentList<IEvent>();
             m_FreeBusy = new UniqueComponentList<IFreeBusy>();
@@ -443,18 +445,19 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Private Methods
+        #region Overrides
 
-#if DATACONTRACT
-        [OnDeserializing]
-        private void OnDeserializing(StreamingContext context)
+        protected override void OnDeserializing(StreamingContext context)
         {
+            base.OnDeserializing(context);
+
             Initialize();
         }
 
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
+        protected override void OnDeserialized(StreamingContext context)
         {
+            base.OnDeserialized(context);
+
             foreach (object child in Children)
             {
                 if (child is IUniqueComponent)
@@ -468,11 +471,6 @@ namespace DDay.iCal
                 else if (typeof(ITodo).IsAssignableFrom(type)) m_Todo.Add((ITodo)child);
             }
         }
-#endif
-
-        #endregion
-
-        #region Overrides
 
         /// <summary>
         /// Adds an <see cref="iCalObject"/>-based component to the
@@ -844,10 +842,6 @@ namespace DDay.iCal
             if (obj is T)
             {
                 AddChild(obj);
-
-                // Initialize the object
-                obj.CreateInitialize();
-
                 return (T)obj;
             }
             return default(T);

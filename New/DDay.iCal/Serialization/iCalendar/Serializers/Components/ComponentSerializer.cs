@@ -22,6 +22,11 @@ namespace DDay.iCal.Serialization.iCalendar
 
         #region Overrides
 
+        public override Type TargetType
+        {
+            get { return typeof(CalendarComponent); }
+        }
+
         public override string SerializeToString(object obj)
         {
             ICalendarComponent c = obj as ICalendarComponent;
@@ -39,7 +44,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 // Serialize properties
                 foreach (ICalendarProperty p in c.Properties)
                 {
-                    ISerializer serializer = sf.Create(p.GetType(), SerializationContext);
+                    ISerializer serializer = sf.Build(p.GetType(), SerializationContext);
                     if (serializer != null)
                         sb.Append(serializer.SerializeToString(p));
                 }
@@ -49,13 +54,14 @@ namespace DDay.iCal.Serialization.iCalendar
                 {
                     foreach (ICalendarObject child in c.Children)
                     {
-                        ISerializer serializer = sf.Create(child.GetType(), SerializationContext);
+                        ISerializer serializer = sf.Build(child.GetType(), SerializationContext);
                         if (serializer != null)
                             sb.Append(serializer.SerializeToString(child));
                     }
                 }
 
                 sb.Append(TextUtil.WrapLines("END:" + c.Name));
+                return sb.ToString();
             }
             return null;
         }

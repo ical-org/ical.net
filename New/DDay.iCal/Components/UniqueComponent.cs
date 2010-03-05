@@ -29,33 +29,36 @@ namespace DDay.iCal
 
         #region Constructors
 
-        public UniqueComponent() : base() { }
-        public UniqueComponent(string name) : base(name) { }        
-
-        #endregion
-
-        #region IUniqueComponent Members
-        
-        [field: NonSerialized]
-        public event UIDChangedEventHandler UIDChanged;
-
-        virtual public string UID
+        public UniqueComponent()
         {
-            get
-            {
-                return Properties.Get<string>("UID");
-            }
-            set
-            {
-                if (!object.Equals(UID, value))
-                {
-                    string oldUID = UID;
-
-                    Properties.Set("UID", value);
-                    OnUIDChanged(oldUID, value);
-                }
-            }
+            Initialize();
+            CreateInitialize();
         }
+        public UniqueComponent(string name) : base(name)
+        {
+            Initialize();
+            CreateInitialize();            
+        }
+
+        private void CreateInitialize()
+        {
+            // Create a new UID for the component
+            UID = new UIDFactory().Build();
+
+            // Here, we don't simply set to DateTime.Now because DateTime.Now contains milliseconds, and
+            // the iCalendar standard doesn't care at all about milliseconds.  Therefore, when comparing
+            // two calendars, one generated, and one loaded from file, they may be functionally identical,
+            // but be determined to be different due to millisecond differences.
+            DateTime now = DateTime.Now;
+            Created = new iCalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+            DTStamp = Created;
+        }
+
+        private void Initialize()
+        {
+            Properties.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarProperty>>(Properties_ItemAdded);
+            Properties.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarProperty>>(Properties_ItemRemoved);
+        }        
 
         #endregion
 
@@ -175,7 +178,48 @@ namespace DDay.iCal
 
         #endregion
 
+        #region Event Handlers
+
+        void Properties_ItemRemoved(object sender, ObjectEventArgs<ICalendarProperty> e)
+        {
+            if (e.Object != null &&
+                e.Object.Name != null &&
+                string.Equals(e.Object.Name.ToUpper(), "UID"))
+            {
+                OnUIDChanged(e.Object.Value != null ? e.Object.Value.ToString() : null, null);
+                e.Object.ValueChanged -= new EventHandler<ValueChangedEventArgs>(UID_ValueChanged);
+            }
+        }
+
+        void Properties_ItemAdded(object sender, ObjectEventArgs<ICalendarProperty> e)
+        {
+            if (e.Object != null &&
+                e.Object.Name != null &&
+                string.Equals(e.Object.Name.ToUpper(), "UID"))
+            {
+                OnUIDChanged(null, e.Object.Value != null ? e.Object.Value.ToString() : null);
+                e.Object.ValueChanged += new EventHandler<ValueChangedEventArgs>(UID_ValueChanged);
+            }
+        }
+
+        void UID_ValueChanged(object sender, ValueChangedEventArgs e)
+        {
+            OnUIDChanged(
+                e.OldValue != null ? e.OldValue.ToString() : null,
+                e.NewValue != null ? e.NewValue.ToString() : null
+            );
+        }
+
+        #endregion
+
         #region Overrides
+
+        protected override void OnDeserializing(StreamingContext context)
+        {
+            base.OnDeserializing(context);
+
+            Initialize();
+        }
 
         public override bool Equals(object obj)
         {
@@ -197,20 +241,17 @@ namespace DDay.iCal
             return base.GetHashCode();
         }
 
-        public override void CreateInitialize()
+        #endregion
+
+        #region IUniqueComponent Members
+
+        [field: NonSerialized]
+        public event UIDChangedEventHandler UIDChanged;
+
+        virtual public string UID
         {
-            base.CreateInitialize();
-
-            // Create a new UID for the component
-            UID = new UIDFactory().New();
-
-            // Here, we don't simply set to DateTime.Now because DateTime.Now contains milliseconds, and
-            // the iCalendar standard doesn't care at all about milliseconds.  Therefore, when comparing
-            // two calendars, one generated, and one loaded from file, they may be functionally identical,
-            // but be determined to be different due to millisecond differences.
-            DateTime now = DateTime.Now;
-            Created = new iCalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
-            DTStamp = Created;
+            get { return Properties.Get<string>("UID"); }
+            set { Properties.Set("UID", value); }
         }
 
         #endregion
