@@ -3,6 +3,8 @@
     using System.Text;
     using System.IO;
     using System.Collections.Generic;  
+    using DDay.iCal.Serialization;
+    using DDay.iCal.Serialization.iCalendar;
 
 namespace DDay.iCal
 {
@@ -266,9 +268,13 @@ _loop12_breakloop:			;
 			 }
 		}
 		
+			// Add the property to the container, as the parent object(s)
+			// may be needed during deserialization.
+			c.Properties.Add(p);
+		
 			// Push the property onto the serialization context stack
 			ctx.Push(p);
-			ISerializer valueSerializer = sf.Create(typeof(object), ctx);
+			ISerializer dataMapSerializer = new DataMapSerializer(ctx);
 		
 		{    // ( ... )*
 			for (;;)
@@ -292,10 +298,7 @@ _loop24_breakloop:			;
 			// Deserialize the value of the property
 			// into a concrete iCalendar data type,
 			// or string value.
-			p.Value = valueSerializer.Deserialize(new StringReader(v));
-			
-			// Add the property to the container	
-			c.Properties.Add(p);
+			p.Value = dataMapSerializer.Deserialize(new StringReader(v));
 		
 		{    // ( ... )*
 			for (;;)

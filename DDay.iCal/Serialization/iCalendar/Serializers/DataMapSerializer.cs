@@ -8,6 +8,18 @@ namespace DDay.iCal.Serialization.iCalendar
     public class DataMapSerializer :
         SerializerBase
     {
+        #region Constructors
+
+        public DataMapSerializer()
+        {            
+        }
+
+        public DataMapSerializer(ISerializationContext ctx) : base(ctx)
+        {
+        }
+
+        #endregion
+
         #region Protected Methods
 
         protected ISerializer GetMappedSerializer()
@@ -17,9 +29,11 @@ namespace DDay.iCal.Serialization.iCalendar
             if (sf != null &&
                 mapper != null)
             {
-                Type mappedType = mapper.Map(SerializationContext.Peek());
+                Type mappedType = mapper.Get(SerializationContext.Peek());
                 if (mappedType != null)
                     return sf.Create(mappedType, SerializationContext);
+                else
+                    return new StringSerializer(SerializationContext);
             }
             return null;
         }

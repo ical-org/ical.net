@@ -16,14 +16,18 @@ namespace DDay.iCal.Serialization.iCalendar
 
         #region Constructors
 
-        public iCalendarSerializer()
+        public iCalendarSerializer() : base()
         {
         }
 
         public iCalendarSerializer(IICalendar iCal)
         {
             m_ICalendar = iCal;
-        } 
+        }
+
+        public iCalendarSerializer(ISerializationContext ctx) : base(ctx)
+        {
+        }
 
         #endregion
 
@@ -56,18 +60,25 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override object Deserialize(TextReader tr)
         {
-            // Create a lexer for our text stream
-            iCalLexer lexer = new iCalLexer(tr);
-            iCalParser parser = new iCalParser(lexer);
+            if (tr != null)
+            {
+                // Normalize the text before parsing it
+                tr = TextUtil.Normalize(tr, SerializationContext);
 
-            // Parse the iCalendar(s)!
-            iCalendarCollection iCalendars = parser.icalendar(SerializationContext);
+                // Create a lexer for our text stream
+                iCalLexer lexer = new iCalLexer(tr);
+                iCalParser parser = new iCalParser(lexer);
 
-            // Close our text stream
-            tr.Close();
+                // Parse the iCalendar(s)!
+                iCalendarCollection iCalendars = parser.icalendar(SerializationContext);
 
-            // Return the parsed iCalendar(s)
-            return iCalendars;
+                // Close our text stream
+                tr.Close();
+
+                // Return the parsed iCalendar(s)
+                return iCalendars;
+            }
+            return null;
         }
 
         #endregion

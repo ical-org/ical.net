@@ -23,8 +23,7 @@ namespace DDay.iCal
     [DataContract(Name = "Event", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
     //[KnownType(typeof(Alarm))]
 #endif
-    [Serializable]
-    [DebuggerDisplay("Component: {Name}")]
+    [Serializable]    
     public class Event : 
         RecurringComponent,
         IEvent

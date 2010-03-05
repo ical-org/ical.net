@@ -4,7 +4,7 @@ using System.Text;
 using System.IO;
 using DDay.iCal;
 
-namespace DDay.iCal
+namespace DDay.iCal.Serialization
 {    
     public interface ISerializer
     {

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using DDay.iCal;
 using DDay.iCal.Serialization.iCalendar;
+using DDay.iCal.Serialization;
 
 namespace DDay.iCal
 {

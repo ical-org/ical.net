@@ -9,6 +9,42 @@ namespace DDay.iCal
         KeyedList<ICalendarParameter, string>,
         ICalendarParameterList
     {
+        #region Private Fields
+
+        ICalendarObject m_Parent;
+
+        #endregion
+
+        #region Constructors
+
+        public CalendarParameterList()
+        {
+        }
+
+        public CalendarParameterList(ICalendarObject parent)
+        {
+            m_Parent = parent;
+
+            ItemAdded += new EventHandler<KeyedObjectEventArgs<ICalendarParameter>>(CalendarParameterList_ItemAdded);
+            ItemRemoved += new EventHandler<KeyedObjectEventArgs<ICalendarParameter>>(CalendarParameterList_ItemRemoved);
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        void CalendarParameterList_ItemRemoved(object sender, KeyedObjectEventArgs<ICalendarParameter> e)
+        {
+            e.Object.Parent = null;
+        }
+
+        void CalendarParameterList_ItemAdded(object sender, KeyedObjectEventArgs<ICalendarParameter> e)
+        {
+            e.Object.Parent = m_Parent;
+        }
+
+        #endregion
+
         #region ICalendarParameterList Members
 
         public void Set(string name, string[] values)

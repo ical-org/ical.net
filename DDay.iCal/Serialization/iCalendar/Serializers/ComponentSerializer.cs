@@ -8,36 +8,88 @@ namespace DDay.iCal.Serialization.iCalendar
     public class ComponentSerializer :
         SerializerBase
     {
+        #region Constructor
+
+        public ComponentSerializer()
+        {
+        }
+
+        public ComponentSerializer(ISerializationContext ctx) : base(ctx)
+        {
+        }
+
+        #endregion
+
         #region Overrides
 
         public override string SerializeToString(object obj)
         {
-            throw new NotImplementedException();
+            ICalendarComponent c = obj as ICalendarComponent;
+            if (c != null)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(TextUtil.WrapLines("BEGIN:" + c.Name));
+
+                // Get a serializer factory
+                ISerializerFactory sf = GetService<ISerializerFactory>();
+
+                // FIXME: we should alphabetize the properties here first
+                // before serializing them.
+
+                // Serialize properties
+                foreach (ICalendarProperty p in c.Properties)
+                {
+                    ISerializer serializer = sf.Create(p.GetType(), SerializationContext);
+                    if (serializer != null)
+                        sb.Append(serializer.SerializeToString(p));
+                }
+
+                // Serialize child objects
+                if (sf != null)
+                {
+                    foreach (ICalendarObject child in c.Children)
+                    {
+                        ISerializer serializer = sf.Create(child.GetType(), SerializationContext);
+                        if (serializer != null)
+                            sb.Append(serializer.SerializeToString(child));
+                    }
+                }
+
+                sb.Append(TextUtil.WrapLines("END:" + c.Name));
+            }
+            return null;
         }
 
         public override object Deserialize(TextReader tr)
         {
-            // Create a lexer for our text stream
-            iCalLexer lexer = new iCalLexer(tr);
-            iCalParser parser = new iCalParser(lexer);
+            if (tr != null)
+            {
+                // Normalize the text before parsing it
+                tr = TextUtil.Normalize(tr, SerializationContext);
 
-            // Get our serialization context
-            ISerializationContext ctx = SerializationContext;
+                // Create a lexer for our text stream
+                iCalLexer lexer = new iCalLexer(tr);
+                iCalParser parser = new iCalParser(lexer);
 
-            // Get a serializer factory from our serialization services
-            ISerializerFactory sf = GetService<ISerializerFactory>();
-            
-            // Get a calendar component factory from our serialization services
-            ICalendarComponentFactory cf = GetService<ICalendarComponentFactory>();
+                // Get our serialization context
+                ISerializationContext ctx = SerializationContext;
 
-            // Parse the component!
-            ICalendarComponent component = parser.component(ctx, sf, cf, null);
+                // Get a serializer factory from our serialization services
+                ISerializerFactory sf = GetService<ISerializerFactory>();
 
-            // Close our text stream
-            tr.Close();
+                // Get a calendar component factory from our serialization services
+                ICalendarComponentFactory cf = GetService<ICalendarComponentFactory>();
 
-            // Return the parsed component
-            return component;
+                // Parse the component!
+                ICalendarComponent component = parser.component(ctx, sf, cf, null);
+
+                // Close our text stream
+                tr.Close();
+
+                // Return the parsed component
+                return component;
+            }
+            return null;
         }
 
         #endregion

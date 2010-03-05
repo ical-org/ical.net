@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DDay.iCal
+namespace DDay.iCal.Serialization
 {
     public interface IDataTypeMapper
     {
-        Type Map(object obj);
+        void AddPropertyMapping(string name, Type objectType);
+        void AddPropertyMapping(string name, TypeResolverDelegate resolver);
+        void RemovePropertyMapping(string name);
+
+        Type Get(object obj);
     }
 }

@@ -18,7 +18,12 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public SerializerBase()
         {
-            m_SerializationContext = DDay.iCal.SerializationContext.Default;
+            m_SerializationContext = DDay.iCal.Serialization.SerializationContext.Default;
+        }
+
+        public SerializerBase(ISerializationContext ctx)
+        {
+            m_SerializationContext = ctx;
         }
 
         #endregion

@@ -8,7 +8,43 @@ namespace DDay.iCal
         KeyedList<ICalendarProperty, string>,
         ICalendarPropertyList
     {
-        #region ICalendarDataList<T> Members
+        #region Private Fields
+
+        ICalendarObject m_Parent;
+
+        #endregion
+
+        #region Constructors
+
+        public CalendarPropertyList()
+        {
+        }
+
+        public CalendarPropertyList(ICalendarObject parent)
+        {
+            m_Parent = parent;
+
+            ItemAdded += new EventHandler<KeyedObjectEventArgs<ICalendarProperty>>(CalendarPropertyList_ItemAdded);
+            ItemRemoved += new EventHandler<KeyedObjectEventArgs<ICalendarProperty>>(CalendarPropertyList_ItemRemoved);
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        void CalendarPropertyList_ItemRemoved(object sender, KeyedObjectEventArgs<ICalendarProperty> e)
+        {
+            e.Object.Parent = null;
+        }
+
+        void CalendarPropertyList_ItemAdded(object sender, KeyedObjectEventArgs<ICalendarProperty> e)
+        {
+            e.Object.Parent = m_Parent;
+        }
+
+        #endregion
+
+        #region ICalendarPropertyList Members
 
         virtual public void Set(string name, object value)
         {

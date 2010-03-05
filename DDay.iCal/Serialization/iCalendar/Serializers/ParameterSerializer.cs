@@ -8,6 +8,20 @@ namespace DDay.iCal.Serialization.iCalendar
     public class ParameterSerializer :
         SerializerBase
     {
+        #region Constructors
+
+        public ParameterSerializer()
+        {
+        }
+
+        public ParameterSerializer(ISerializationContext ctx) : base(ctx)
+        {
+        }
+
+        #endregion
+
+        #region Overrides
+
         public override string SerializeToString(object obj)
         {
             ICalendarParameter p = obj as ICalendarParameter;
@@ -37,6 +51,8 @@ namespace DDay.iCal.Serialization.iCalendar
 
             // Return the parsed parameter
             return p;
-        }
+        } 
+
+        #endregion
     }
 }

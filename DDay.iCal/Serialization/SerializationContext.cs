@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using DDay.iCal.Serialization.iCalendar;
 
-namespace DDay.iCal
+namespace DDay.iCal.Serialization
 {
     public class SerializationContext :        
         ISerializationContext

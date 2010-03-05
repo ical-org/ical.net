@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using DDay.iCal.Serialization.iCalendar;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using DDay.iCal.Serialization;
 
 namespace DDay.iCal.Test
 {

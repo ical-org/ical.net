@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DDay.iCal
+namespace DDay.iCal.Serialization
 {
     public class SerializationSettings :
         ISerializationSettings
     {
         #region Private Fields
 
-        private Type m_iCalendarType = typeof(iCalendar);        
+        private Type m_iCalendarType = typeof(DDay.iCal.iCalendar);        
         private bool m_EnsureAccurateLineNumbers = false;
         private ParsingModeType m_ParsingMode = ParsingModeType.Strict;
 
