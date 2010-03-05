@@ -35,8 +35,8 @@ namespace DDay.iCal
                         s = new DateTimeSerializer();
                     // Catch general data types, and map them to their appropriate
                     // type based on the available information.
-                    else if (typeof(ICalendarDataType).IsAssignableFrom(objectType))
-                        s = new DataMapSerializer();                    
+                    else if (typeof(object) == objectType)
+                        s = new DataMapSerializer();
                 }
                 
                 // Set the serialization context

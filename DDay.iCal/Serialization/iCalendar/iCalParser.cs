@@ -268,7 +268,7 @@ _loop12_breakloop:			;
 		
 			// Push the property onto the serialization context stack
 			ctx.Push(p);
-			ISerializer valueSerializer = sf.Create(typeof(ICalendarDataType), ctx);
+			ISerializer valueSerializer = sf.Create(typeof(object), ctx);
 		
 		{    // ( ... )*
 			for (;;)

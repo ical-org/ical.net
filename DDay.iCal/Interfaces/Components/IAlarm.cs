@@ -10,17 +10,17 @@ namespace DDay.iCal
         AlarmAction Action { get; set; }
         IBinary Attach { get; set; }
         IAttendee[] Attendee { get; set; }
-        IText Description { get; set; }
-        IDuration Duration { get; set; }
-        IInteger Repeat { get; set; }
-        IText Summary { get; set; }
+        string Description { get; set; }
+        TimeSpan Duration { get; set; }
+        int Repeat { get; set; }
+        string Summary { get; set; }
         ITrigger Trigger { get; set; }
 
         /// <summary>
         /// Gets a list of alarm occurrences for the given recurring component, <paramref name="rc"/>
         /// that occur between <paramref name="FromDate"/> and <paramref name="ToDate"/>.
         /// </summary>
-        IList<IAlarmOccurrence> GetOccurrences(IRecurringComponent rc, iCalDateTime FromDate, iCalDateTime ToDate);
+        IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, iCalDateTime FromDate, iCalDateTime ToDate);
 
         /// <summary>
         /// Polls the <see cref="Alarm"/> component for alarms that have been triggered
@@ -30,14 +30,6 @@ namespace DDay.iCal
         /// <param name="Start">The earliest date/time to poll trigerred alarms for.</param>
         /// <param name="End">The latest date/time to poll trigerred alarms for.</param>
         /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
-        IList<IAlarmOccurrence> Poll(iCalDateTime Start, iCalDateTime End);
-    }
-
-    public enum AlarmAction
-    {
-        Audio,
-        Display,
-        Email,
-        Procedure
-    };
+        IList<AlarmOccurrence> Poll(iCalDateTime Start, iCalDateTime End);
+    }    
 }

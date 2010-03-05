@@ -55,7 +55,7 @@ namespace DDay.iCal
         /// to the provided TZID, or null of no matching
         /// time zone could be found.
         /// </summary>
-        ITimeZone GetTimeZone(ITZID tzid);
+        ITimeZone GetTimeZone(ITimeZoneID tzid);
 
         /// <summary>
         /// Gets a list of unique components contained in the calendar.
@@ -98,7 +98,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
         /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
-        IList<IOccurrence> GetOccurrences(iCalDateTime dt);
+        IList<Occurrence> GetOccurrences(iCalDateTime dt);
 
         /// <summary>
         /// Returns a list of occurrences of each recurring component
@@ -107,7 +107,7 @@ namespace DDay.iCal
         /// <param name="FromDate">The beginning date/time of the range.</param>
         /// <param name="ToDate">The end date/time of the range.</param>
         /// <returns>A list of occurrences that fall between the dates provided.</returns>
-        IList<IOccurrence> GetOccurrences(iCalDateTime FromDate, iCalDateTime ToDate);
+        IList<Occurrence> GetOccurrences(iCalDateTime FromDate, iCalDateTime ToDate);
 
         /// <summary>
         /// Returns all occurrences of components of type T that start on the date provided.
@@ -121,7 +121,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences.</param>
         /// <returns>A list of Periods representing the occurrences of this object.</returns>
-        IList<IOccurrence> GetOccurrences<T>(iCalDateTime dt) where T : IRecurringComponent;
+        IList<Occurrence> GetOccurrences<T>(iCalDateTime dt) where T : IRecurringComponent;
 
         /// <summary>
         /// Returns all occurrences of components of type T that start within the date range provided.
@@ -130,7 +130,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="startTime">The starting date range</param>
         /// <param name="endTime">The ending date range</param>
-        IList<IOccurrence> GetOccurrences<T>(iCalDateTime startTime, iCalDateTime endTime) where T : IRecurringComponent;
+        IList<Occurrence> GetOccurrences<T>(iCalDateTime startTime, iCalDateTime endTime) where T : IRecurringComponent;
 
         // FIXME: add this back in:
 //#if DATACONTRACT && !SILVERLIGHT

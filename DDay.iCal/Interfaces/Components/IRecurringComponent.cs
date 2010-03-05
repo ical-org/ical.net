@@ -9,6 +9,24 @@ namespace DDay.iCal
         IUniqueComponent
     {
         /// <summary>
+        /// The start date/time of the component.        
+        /// </summary>
+        iCalDateTime DTStart { get; set; }
+
+        /// <summary>
+        /// An alias to the DTStart field (i.e. start date/time).
+        /// </summary>
+        iCalDateTime Start { get; set; }
+
+        IList<IRecurrenceDate> ExceptionDates { get; set; }
+        IList<IRecurrencePattern> ExceptionRecurrenceRules { get; set; }
+        IList<IRecurrenceDate> RecurrenceDates { get; set; }
+        IList<IRecurrencePattern> RecurrenceRules { get; set; }
+        iCalDateTime RecurrenceID { get; set; }
+
+        #region Evaluation
+
+        /// <summary>
         /// Clears a previous evaluation, usually because one of the 
         /// key elements used for evaluation has changed 
         /// (Start, End, Duration, recurrence rules, exceptions, etc.).
@@ -27,7 +45,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences.</param>
         /// <returns>A list of Periods representing the occurrences of this object.</returns>
-        IList<IOccurrence> GetOccurrences(iCalDateTime dt);
+        IList<Occurrence> GetOccurrences(iCalDateTime dt);
 
         /// <summary>
         /// Returns all occurrences of this component that start within the date range provided.
@@ -36,7 +54,16 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="startTime">The starting date range</param>
         /// <param name="endTime">The ending date range</param>
-        IList<IOccurrence> GetOccurrences(iCalDateTime startTime, iCalDateTime endTime);
+        IList<Occurrence> GetOccurrences(iCalDateTime startTime, iCalDateTime endTime);
+
+        #endregion
+
+        #region Alarms
+
+        /// <summary>
+        /// A list of <see cref="Alarm"/>s for this recurring component.
+        /// </summary>
+        IList<IAlarm> Alarms { get; set; }
 
         /// <summary>
         /// Polls alarms for the current evaluation period.  This period is defined by the 
@@ -45,7 +72,7 @@ namespace DDay.iCal
         /// range currently "known" by the recurring component.
         /// </summary>
         /// <returns>A list of AlarmOccurrence objects, representing each alarm that has fired.</returns>
-        IList<IAlarmOccurrence> PollAlarms();
+        IList<AlarmOccurrence> PollAlarms();
 
         /// <summary>
         /// Polls <see cref="Alarm"/>s for occurrences within the <see cref="Evaluate"/>d
@@ -75,6 +102,8 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="Start">The earliest allowable alarm occurrence to poll, or <c>null</c>.</param>
         /// <returns>A List of <see cref="Alarm.AlarmOccurrence"/> objects, one for each occurrence of the <see cref="Alarm"/>.</returns>
-        IList<IAlarmOccurrence> PollAlarms(iCalDateTime Start, iCalDateTime End);
+        IList<AlarmOccurrence> PollAlarms(iCalDateTime Start, iCalDateTime End);
+
+        #endregion
     }
 }

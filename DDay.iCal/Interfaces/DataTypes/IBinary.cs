@@ -4,11 +4,10 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public interface IBinary :
-        ICalendarDataType
+    public interface IBinary        
     {
-        IURI Uri { get; set; }
-        IText FormatType { get; set; }
+        Uri Uri { get; set; }
+        string FormatType { get; set; }
 
         /// <summary>
         /// Loads (fills) the <c>Data</c> property with the file designated

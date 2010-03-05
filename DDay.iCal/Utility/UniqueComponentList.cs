@@ -127,7 +127,7 @@ namespace DDay.iCal
 
         #endregion
 
-        #region ICollection<T> Members
+        #region IList<T> Members
 
         public void Add(T item)
         {            

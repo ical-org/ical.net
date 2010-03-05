@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using DDay.iCal;
+using DDay.iCal.Serialization.iCalendar;
 
 namespace DDay.iCal
 {
@@ -33,11 +34,11 @@ namespace DDay.iCal
     /// //
     /// IICalendar iCal = iCalendar.LoadFromUri(new Uri("http://www.applegatehomecare.com/Calendars/USHolidays.ics"));
     /// 
-    /// IList&lt;IOccurrence&gt; occurrences = iCal.GetOccurrences(
+    /// IList&lt;Occurrence&gt; occurrences = iCal.GetOccurrences(
     ///     new iCalDateTime(2006, 1, 1, "US-Eastern", iCal),
     ///     new iCalDateTime(2006, 12, 31, "US-Eastern", iCal));
     /// 
-    /// foreach (IOccurrence o in occurrences)
+    /// foreach (Occurrence o in occurrences)
     /// {
     ///     IEvent evt = o.Component as IEvent;
     ///     if (evt != null)
@@ -709,7 +710,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="tzid">A valid <see cref="TZID"/> object, or a valid <see cref="TZID"/> string.</param>
         /// <returns>A <see cref="TimeZone"/> object for the <see cref="TZID"/>.</returns>
-        public ITimeZone GetTimeZone(ITZID tzid)
+        public ITimeZone GetTimeZone(ITimeZoneID tzid)
         {
             foreach (ITimeZone tz in TimeZones)
             {
@@ -765,7 +766,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
         /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
-        public IList<IOccurrence> GetOccurrences(iCalDateTime dt)
+        public IList<Occurrence> GetOccurrences(iCalDateTime dt)
         {
             return GetOccurrences<IRecurringComponent>(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
         }
@@ -777,7 +778,7 @@ namespace DDay.iCal
         /// <param name="FromDate">The beginning date/time of the range.</param>
         /// <param name="ToDate">The end date/time of the range.</param>
         /// <returns>A list of occurrences that fall between the dates provided.</returns>
-        public IList<IOccurrence> GetOccurrences(iCalDateTime FromDate, iCalDateTime ToDate)
+        public IList<Occurrence> GetOccurrences(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             return GetOccurrences<IRecurringComponent>(FromDate, ToDate);
         }
@@ -794,7 +795,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences.</param>
         /// <returns>A list of Periods representing the occurrences of this object.</returns>
-        virtual public IList<IOccurrence> GetOccurrences<T>(iCalDateTime dt) where T : IRecurringComponent
+        virtual public IList<Occurrence> GetOccurrences<T>(iCalDateTime dt) where T : IRecurringComponent
         {
             return GetOccurrences<T>(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
         }
@@ -806,9 +807,9 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="startTime">The starting date range</param>
         /// <param name="endTime">The ending date range</param>
-        virtual public IList<IOccurrence> GetOccurrences<T>(iCalDateTime startTime, iCalDateTime endTime) where T : IRecurringComponent
+        virtual public IList<Occurrence> GetOccurrences<T>(iCalDateTime startTime, iCalDateTime endTime) where T : IRecurringComponent
         {
-            List<IOccurrence> occurrences = new List<IOccurrence>();
+            List<Occurrence> occurrences = new List<Occurrence>();
             foreach (IRecurringComponent rc in RecurringComponents)
             {
                 if (rc is T)
