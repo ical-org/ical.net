@@ -10,12 +10,33 @@ namespace DDay.iCal.Serialization.iCalendar
     {
         public override string SerializeToString(object obj)
         {
-            throw new NotImplementedException();
+            ICalendarParameter p = obj as ICalendarParameter;
+            if (p != null)
+            {
+                string value = p.Name + "=";
+                value += string.Join(",", p.Values);
+                return value;
+            }
+            return string.Empty;
         }
 
         public override object Deserialize(TextReader tr)
         {
-            throw new NotImplementedException();
+            // Create a lexer for our text stream
+            iCalLexer lexer = new iCalLexer(tr);
+            iCalParser parser = new iCalParser(lexer);
+
+            // Get our serialization context
+            ISerializationContext ctx = SerializationContext;
+
+            // Parse the component!
+            ICalendarParameter p = parser.parameter(ctx, null);
+
+            // Close our text stream
+            tr.Close();
+
+            // Return the parsed parameter
+            return p;
         }
     }
 }

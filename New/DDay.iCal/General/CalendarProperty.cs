@@ -27,7 +27,7 @@ namespace DDay.iCal
     /// There may be other, custom X-properties applied to the calendar,
     /// and X-properties may be applied to calendar components.
     /// </remarks>
-    [DebuggerDisplay("{new PropertySerializer().SerializeToString(this)}")]
+    [DebuggerDisplay("{new DDay.iCal.Serialization.iCalendar.PropertySerializer().SerializeToString(this)}")]
 #if DATACONTRACT
     [DataContract(Name = "CalendarProperty", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
