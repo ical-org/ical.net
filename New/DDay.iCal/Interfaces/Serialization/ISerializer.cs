@@ -10,11 +10,10 @@ namespace DDay.iCal.Serialization
     {
         ISerializationContext SerializationContext { get; set; }
         T GetService<T>();
+        T GetService<T>(string name);
 
-        Type TargetType { get; }
-        string SerializeToString(object obj);
+        Type TargetType { get; }        
         void Serialize(object obj, Stream stream, Encoding encoding);
-        object Deserialize(TextReader tr);
         object Deserialize(Stream stream, Encoding encoding);
     }
 }

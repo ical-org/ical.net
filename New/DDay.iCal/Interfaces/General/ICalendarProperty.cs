@@ -7,7 +7,7 @@ namespace DDay.iCal
     public interface ICalendarProperty :        
         ICalendarParameterListContainer,
         ICalendarObject,
-        IKeyedObject<string>
+        IKeyedObject<string>        
     {
         event EventHandler<ValueChangedEventArgs> ValueChanged;
 

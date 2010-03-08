@@ -58,6 +58,14 @@ namespace DDay.iCal.Serialization.iCalendar
 
         #region Overrides
 
+        protected override IComparer<ICalendarProperty> PropertySorter
+        {
+            get
+            {
+                return new CalendarPropertySorter();
+            }
+        }
+
         public override object Deserialize(TextReader tr)
         {
             if (tr != null)
@@ -82,5 +90,32 @@ namespace DDay.iCal.Serialization.iCalendar
         }
 
         #endregion
+
+        private class CalendarPropertySorter :
+            IComparer<ICalendarProperty>
+        {
+            #region IComparer<ICalendarProperty> Members
+
+            public int Compare(ICalendarProperty x, ICalendarProperty y)
+            {
+                if (x == y || (x == null && y == null))
+                    return 0;
+                else if (x == null)
+                    return -1;
+                else if (y == null)
+                    return 1;
+                else
+                {
+                    // Alphabetize all properties except VERSION, which should appear first. 
+                    if (string.Equals("VERSION", x.Name, StringComparison.InvariantCultureIgnoreCase))
+                        return -1;
+                    else if (string.Equals("VERSION", y.Name, StringComparison.InvariantCultureIgnoreCase))
+                        return 1;
+                    return string.Compare(x.Name, y.Name);
+                }
+            }
+
+            #endregion
+        }
     }
 }

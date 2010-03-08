@@ -19,7 +19,7 @@ namespace DDay.iCal
         iCalDateTime Start { get; set; }
 
         IList<IRecurrenceDate> ExceptionDates { get; set; }
-        IList<IRecurrencePattern> ExceptionRecurrenceRules { get; set; }
+        IList<IRecurrencePattern> ExceptionRules { get; set; }
         IList<IRecurrenceDate> RecurrenceDates { get; set; }
         IList<IRecurrencePattern> RecurrenceRules { get; set; }
         iCalDateTime RecurrenceID { get; set; }

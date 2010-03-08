@@ -8,7 +8,9 @@ namespace DDay.iCal
         IKeyedList<ICalendarProperty, string>
     {
         void Set(string name, object value);
+        void SetList<U>(string name, IList<U> value);
         T Get<T>(string name);
         T[] GetAll<T>(string name);
+        IList<U> GetList<U>(string name);
     }
 }

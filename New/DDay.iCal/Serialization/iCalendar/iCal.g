@@ -51,6 +51,11 @@ icalendar[ISerializationContext ctx] returns [iCalendarCollection iCalendars = (
 		icalbody[ctx, iCal]
 		END COLON VCALENDAR (CRLF)*
 		{
+			// Do some final processing on the calendar:
+			ISerializationProcessor<IICalendar> processor = ctx.GetService(typeof(ISerializationProcessor<IICalendar>)) as ISerializationProcessor<IICalendar>;
+			if (processor != null)
+				processor.Process(iCal);
+		
 			// Notify that the iCalendar has been loaded
 			iCal.OnLoaded();
 			iCalendars.Add(iCal);
@@ -76,7 +81,7 @@ icalbody[ISerializationContext ctx, IICalendar iCal]:
 	ICalendarProperty p;
 }
 (
-	property[ctx, sf, iCal] |
+	property[ctx, iCal] |
 	component[ctx, sf, cf, iCal]
 )*;
 
@@ -98,10 +103,13 @@ BEGIN COLON
 	// Push the component onto the serialization context stack
 	ctx.Push(c);
 
-	// Add the component as a child immediately, in case
-	// embedded components need to access this component,
-	// or the iCalendar itself.
-	o.AddChild(c); 
+	if (o != null)
+	{
+		// Add the component as a child immediately, in case
+		// embedded components need to access this component,
+		// or the iCalendar itself.
+		o.AddChild(c); 
+	}
 	
 	c.Line = n.getLine();
 	c.Column = n.getColumn();
@@ -110,11 +118,16 @@ BEGIN COLON
 (
 	// Components can have properties, and other embedded components.
 	// (i.e. VALARM)	
-	property[ctx, sf, c] |
+	property[ctx, c] |
 	component[ctx, sf, cf, c]
 )*
 END COLON IANA_TOKEN (CRLF)*
 {	
+	// Do some final processing on the component:
+	ISerializationProcessor<ICalendarComponent> processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarComponent>)) as ISerializationProcessor<ICalendarComponent>;
+	if (processor != null)
+		processor.Process(c);
+
 	// Notify that the component has been loaded
 	c.OnLoaded();
 	
@@ -132,13 +145,11 @@ END COLON IANA_TOKEN (CRLF)*
 // parsing.  NOTE: Fixes bug #1874977 - X-MS-OLK-WKHRDAYS won't parse correctly
 //
 property[
-	ISerializationContext ctx,
-	ISerializerFactory sf,
+	ISerializationContext ctx,	
 	ICalendarPropertyListContainer c
 ] returns [ICalendarProperty p = null;]
 {
 	string v;
-	ISerializer serializer = sf.Build(typeof(ICalendarProperty), ctx);		
 }:
 (
 	n:IANA_TOKEN
@@ -153,13 +164,16 @@ property[
 	}
 )
 {
-	// Add the property to the container, as the parent object(s)
-	// may be needed during deserialization.
-	c.Properties.Add(p);
+	if (c != null)
+	{
+		// Add the property to the container, as the parent object(s)
+		// may be needed during deserialization.
+		c.Properties.Add(p);
+	}
 
 	// Push the property onto the serialization context stack
 	ctx.Push(p);
-	ISerializer dataMapSerializer = new DataMapSerializer(ctx);
+	IStringSerializer dataMapSerializer = new DataMapSerializer(ctx);
 }
 (SEMICOLON parameter[ctx, p])* COLON
 v=value
@@ -170,6 +184,11 @@ v=value
 	p.Value = dataMapSerializer.Deserialize(new StringReader(v));
 } (CRLF)*
 {
+	// Do some final processing on the property:
+	ISerializationProcessor<ICalendarProperty> processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarProperty>)) as ISerializationProcessor<ICalendarProperty>;
+	if (processor != null)
+		processor.Process(p);
+
 	// Notify that the property has been loaded
 	p.OnLoaded();
 	
@@ -202,7 +221,11 @@ EQUAL v=param_value { values.Add(v); }
 )*
 {
 	p.Values = values.ToArray();
-	container.Parameters.Add(p);
+	
+	if (container != null)
+	{
+		container.Parameters.Add(p);
+	}
 	
 	// Notify that the parameter has been loaded
 	p.OnLoaded();

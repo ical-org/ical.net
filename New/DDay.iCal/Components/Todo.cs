@@ -271,7 +271,7 @@ namespace DDay.iCal
             iCalDateTime beginningDate = completedDate;
             if (RecurrenceRules != null) foreach (IRecurrencePattern rrule in RecurrenceRules) DetermineStartingRecurrence(rrule, ref beginningDate);
             if (RecurrenceDates != null) foreach (IRecurrenceDate rdate in RecurrenceDates) DetermineStartingRecurrence(rdate, ref beginningDate);
-            if (ExceptionRecurrenceRules != null) foreach (IRecurrencePattern exrule in ExceptionRecurrenceRules) DetermineStartingRecurrence(exrule, ref beginningDate);
+            if (ExceptionRules != null) foreach (IRecurrencePattern exrule in ExceptionRules) DetermineStartingRecurrence(exrule, ref beginningDate);
             if (ExceptionDates != null) foreach (IRecurrenceDate exdate in ExceptionDates) DetermineStartingRecurrence(exdate, ref beginningDate);
 
             Evaluate(beginningDate, currDt);

@@ -70,42 +70,38 @@ namespace DDay.iCal.Test
 
         static public void CompareComponents(ICalendarComponent cb1, ICalendarComponent cb2)
         {
-            // FIXME: do a good comparison of components here.
-            // This should do a property-by-property comparison.
+            List<ICalendarProperty> c1Props = new List<ICalendarProperty>(cb1.Properties);
+            List<ICalendarProperty> c2Props = new List<ICalendarProperty>(cb2.Properties);
+            c1Props.Sort(new ComponentSerializer.PropertyAlphabetizer());
+            c2Props.Sort(new ComponentSerializer.PropertyAlphabetizer());
 
-            //Type type = cb1.GetType();
-            //Assert.IsTrue(type == cb2.GetType(), "Types do not match");
-            //FieldInfo[] fields = type.GetFields();
-            //PropertyInfo[] properties = type.GetProperties();
+            Assert.AreEqual(c1Props.Count, c2Props.Count, "The number of properties is not equal.");
 
-            //foreach (FieldInfo field in fields)
-            //{
-            //    if (field.GetCustomAttributes(typeof(SerializedAttribute), true).Length > 0)
-            //    {
-            //        object obj1 = field.GetValue(cb1);
-            //        object obj2 = field.GetValue(cb2);
+            for (int i = 0; i < c1Props.Count; i++)
+            {
+                ICalendarProperty p1 = c1Props[i];
+                ICalendarProperty p2 = c2Props[i];                
+                Assert.AreEqual(p1, p2, "The properties are not equal.");
 
-            //        if (field.FieldType.IsArray)
-            //            CompareEnumerables(obj1 as Array, obj2 as Array, field.Name);
-            //        else Assert.IsTrue(object.Equals(obj1, obj2), field.Name + " does not match");
-            //    }
-            //}
+                if (p1.Value is IEnumerable)
+                    CompareEnumerables((IEnumerable)p1.Value, (IEnumerable)p2.Value, p1.Name);
+                else
+                    Assert.AreEqual(p1.Value, p2.Value, "The property values are not equal.");
+            }
 
-            //foreach (PropertyInfo prop in properties)
-            //{
-            //    if (prop.GetCustomAttributes(typeof(SerializedAttribute), true).Length > 0)
-            //    {
-            //        object obj1 = prop.GetValue(cb1, null);
-            //        object obj2 = prop.GetValue(cb2, null);
-
-            //        if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType))
-            //            CompareEnumerables(obj1 as Array, obj2 as Array, prop.Name);
-            //        else
-            //            Assert.IsTrue(object.Equals(obj1, obj2), prop.Name + " does not match");
-            //    }
-            //}
+            Assert.AreEqual(cb1.Children.Count, cb2.Children.Count, "The number of children are not equal.");
+            for (int i = 0; i < cb1.Children.Count; i++)
+            {
+                ICalendarComponent child1 = cb1.Children[i] as ICalendarComponent;
+                ICalendarComponent child2 = cb2.Children[i] as ICalendarComponent;
+                if (child1 != null && child2 != null)
+                    CompareComponents(child1, child2);
+                else
+                    Assert.AreEqual(child1, child2, "The child objects are not equal.");
+            }
         }
 
+        // FIXME: are we still comparing enumerable values properly?
         static public void CompareEnumerables(IEnumerable a1, IEnumerable a2, string value)
         {
             if (a1 == null && a2 == null)
@@ -165,7 +161,12 @@ namespace DDay.iCal.Test
         [TestMethod]
         public void SERIALIZE8()
         {
-            SerializeTest("SERIALIZE8.ics", typeof(iCalendarSerializer));
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\SERIALIZE8.ics", Encoding.UTF8)[0];
+
+            // Ensure the CATEGORY properties were properly loaded
+            Assert.AreEqual(1, iCal.Events.Count);
+            Assert.AreEqual(4, iCal.Events[0].Properties.CountOf("CATEGORIES"));
+            Assert.AreEqual(4, iCal.Events[0].Categories.Count);
         }
 
         [TestMethod]

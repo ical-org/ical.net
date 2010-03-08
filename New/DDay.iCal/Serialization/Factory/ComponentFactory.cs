@@ -17,6 +17,7 @@ namespace DDay.iCal
         {
             Type type = null;
 
+            // Determine the type of component to build.
             switch (objectName.ToUpper())
             {
                 // FIXME: implement
@@ -41,12 +42,21 @@ namespace DDay.iCal
 
             ICalendarComponent c = null;
             if (uninitialized)
+            {
+                // Create a new, uninitialized object (i.e. no constructor has been called).
                 c = SerializationUtil.GetUninitializedObject(type) as ICalendarComponent;
+            }
             else
+            {
+                // Create a new, initialized object.
                 c = Activator.CreateInstance(type) as ICalendarComponent;
+            }
 
             if (c != null)
+            {
+                // Assign the name of this component.
                 c.Name = objectName.ToUpper();
+            }
 
             return c;
         }

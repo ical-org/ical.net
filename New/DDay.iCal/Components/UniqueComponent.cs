@@ -58,7 +58,15 @@ namespace DDay.iCal
         {
             Properties.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarProperty>>(Properties_ItemAdded);
             Properties.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarProperty>>(Properties_ItemRemoved);
-        }        
+
+            Attachments = new List<IBinary>();
+            Attendees = new List<IAttendee>();
+            Categories = new List<string>();
+            Comments = new List<string>();
+            Contacts = new List<string>();
+            RelatedComponents = new List<string>();
+            RequestStatuses = new List<IRequestStatus>();
+        }
 
         #endregion
 
@@ -66,20 +74,20 @@ namespace DDay.iCal
 
         virtual public IList<IBinary> Attachments
         {
-            get { return Properties.Get<IList<IBinary>>("ATTACH"); }
-            set { Properties.Set("ATTACH", value); }
+            get { return Properties.GetList<IBinary>("ATTACH"); }
+            set { Properties.SetList("ATTACH", value); }
         }
 
         virtual public IList<IAttendee> Attendees
         {
-            get { return Properties.Get<IList<IAttendee>>("ATTENDEE"); }
-            set { Properties.Set("ATTENDEE", value); }
+            get { return Properties.GetList<IAttendee>("ATTENDEE"); }
+            set { Properties.SetList("ATTENDEE", value); }
         }
 
         virtual public IList<string> Categories
         {
-            get { return Properties.Get<IList<string>>("CATEGORIES"); }
-            set { Properties.Set("CATEGORIES", value); }
+            get { return Properties.GetList<string>("CATEGORIES"); }
+            set { Properties.SetList("CATEGORIES", value); }            
         }
 
         virtual public string Class
@@ -90,14 +98,14 @@ namespace DDay.iCal
 
         virtual public IList<string> Comments
         {
-            get { return Properties.Get<IList<string>>("COMMENT"); }
-            set { Properties.Set("COMMENT", value); }
+            get { return Properties.GetList<string>("COMMENT"); }
+            set { Properties.SetList("COMMENT", value); }
         }
 
         virtual public IList<string> Contacts
         {
-            get { return Properties.Get<IList<string>>("CONTACT"); }
-            set { Properties.Set("CONTACT", value); }
+            get { return Properties.GetList<string>("CONTACT"); }
+            set { Properties.SetList("CONTACT", value); }
         }
 
         virtual public iCalDateTime Created
@@ -138,14 +146,14 @@ namespace DDay.iCal
 
         virtual public IList<string> RelatedComponents
         {
-            get { return Properties.Get<IList<string>>("RELATED-TO"); }
-            set { Properties.Set("RELATED-TO", value); }
+            get { return Properties.GetList<string>("RELATED-TO"); }
+            set { Properties.SetList("RELATED-TO", value); }
         }
 
         virtual public IList<IRequestStatus> RequestStatuses
         {
-            get { return Properties.Get<IList<IRequestStatus>>("REQUEST-STATUS"); }
-            set { Properties.Set("REQUEST-STATUS", value); }
+            get { return Properties.GetList<IRequestStatus>("REQUEST-STATUS"); }
+            set { Properties.SetList("REQUEST-STATUS", value); }
         }
 
         virtual public int Sequence
