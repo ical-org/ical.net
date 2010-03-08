@@ -7,6 +7,8 @@ using System.IO;
 using DDay.iCal;
 using System.Runtime.Serialization;
 using System.Diagnostics;
+using DDay.iCal.Serialization;
+using DDay.iCal.Serialization.iCalendar;
 
 namespace DDay.iCal
 {
@@ -23,6 +25,72 @@ namespace DDay.iCal
         CalendarObject,
         ICalendarComponent
     {
+        #region Static Public Methods
+
+        #region LoadFromStream(...)
+
+        #region LoadFromStream(Stream s) variants
+
+        /// <summary>
+        /// Loads an iCalendar component (Event, Todo, Journal, etc.) from an open stream.
+        /// </summary>
+        static public ICalendarComponent LoadFromStream(Stream s)
+        {
+            return LoadFromStream(s, Encoding.UTF8);
+        }
+
+        #endregion
+
+        #region LoadFromStream(Stream s, Encoding e) variants
+
+        static public ICalendarComponent LoadFromStream(Stream stream, Encoding encoding)
+        {
+            return LoadFromStream(stream, encoding, new ComponentSerializer());
+        }
+
+        static public T LoadFromStream<T>(Stream stream, Encoding encoding)
+            where T : ICalendarComponent
+        {
+            ComponentSerializer serializer = new ComponentSerializer();            
+            object obj = LoadFromStream(stream, encoding, serializer);
+            if (obj is T)
+                return (T)obj;
+            return default(T);
+        }
+
+        static public ICalendarComponent LoadFromStream(Stream stream, Encoding encoding, ISerializer serializer)
+        {
+            return serializer.Deserialize(stream, encoding) as ICalendarComponent;
+        }
+
+        #endregion
+
+        #region LoadFromStream(TextReader tr) variants
+
+        static public ICalendarComponent LoadFromStream(TextReader tr)
+        {
+            string text = tr.ReadToEnd();
+            tr.Close();
+
+            byte[] memoryBlock = Encoding.UTF8.GetBytes(text);
+            MemoryStream ms = new MemoryStream(memoryBlock);
+            return LoadFromStream(ms, Encoding.UTF8);
+        }
+
+        static public T LoadFromStream<T>(TextReader tr) where T : ICalendarComponent
+        {
+            object obj = LoadFromStream(tr);
+            if (obj is T)
+                return (T)obj;
+            return default(T);
+        }
+
+        #endregion        
+
+        #endregion
+
+        #endregion
+
         #region Private Fields
 
         private ICalendarPropertyList m_Properties;

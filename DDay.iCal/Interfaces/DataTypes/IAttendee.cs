@@ -4,7 +4,8 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public interface IAttendee
+    public interface IAttendee :
+        ICalendarDataType
     {
         Uri SentBy { get; set; }
         string CommonName { get; set; }

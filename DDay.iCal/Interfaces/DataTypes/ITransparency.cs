@@ -4,7 +4,8 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public interface ITransparency
+    public interface ITransparency :
+        ICalendarDataType
     {
     }
 }

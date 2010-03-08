@@ -77,6 +77,43 @@ namespace DDay.iCal
         Yearly
     };
 
+    /// <summary>
+    /// Indicates the occurrence of the specific day within a
+    /// MONTHLY or YEARLY recurrence frequency. For example, within
+    /// a MONTHLY frequency, consider the following:
+    /// 
+    /// Recur r = new Recur();
+    /// r.Frequency = FrequencyType.Monthly;
+    /// r.ByDay.Add(new DaySpecifier(DayOfWeek.Monday, FrequencyOccurrence.First));
+    /// 
+    /// The above example represents the first Monday within the month,
+    /// whereas if FrequencyOccurrence.Last were specified, it would 
+    /// represent the last Monday of the month.
+    /// 
+    /// For a YEARLY frequency, consider the following:
+    /// 
+    /// Recur r = new Recur();
+    /// r.Frequency = FrequencyType.Yearly;
+    /// r.ByDay.Add(new DaySpecifier(DayOfWeek.Monday, FrequencyOccurrence.Second));
+    /// 
+    /// The above example represents the second Monday of the year.  This can
+    /// also be represented with the following code:
+    /// 
+    /// r.ByDay.Add(new DaySpecifier(DayOfWeek.Monday, 2));
+    /// </summary>
+    public enum FrequencyOccurrence
+    {
+        None = int.MinValue,
+        Last = -1,
+        SecondToLast = -2,
+        ThirdToLast = -3,
+        FourthToLast = -4,
+        First = 1,
+        Second = 2,
+        Third = 3,
+        Fourth = 4
+    }
+
     public enum RecurrenceRestrictionType
     {
         /// <summary>

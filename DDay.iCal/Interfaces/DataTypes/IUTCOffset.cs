@@ -4,7 +4,8 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public interface IUTCOffset
+    public interface IUTCOffset :
+        ICalendarDataType
     {
         bool Positive { get; set; }
         int Hours { get; set; }

@@ -4,7 +4,8 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public interface IRequestStatus
+    public interface IRequestStatus :
+        ICalendarDataType
     {
         string StatusDescription { get; set; }
         string ExtraData { get; set; }

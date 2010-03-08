@@ -5,6 +5,7 @@ using System.Reflection;
 using DDay.iCal;
 using System.Runtime.Serialization;
 using DDay.iCal.Serialization;
+using System.Collections.Generic;
 
 namespace DDay.iCal
 {
@@ -16,28 +17,35 @@ namespace DDay.iCal
 #endif
     [Serializable]
     public abstract class CalendarDataType :
-        CalendarProperty,
         ICalendarDataType
-    {        
+    {
+        #region Private Fields
+
+        private Stack<ICalendarObject> _Associations = new Stack<ICalendarObject>();
+
+        #endregion
+
         #region Content Validation
 
-        public void CheckRange(string name, ICollection values, int min, int max)
+        virtual public void CheckRange(string name, ICollection values, int min, int max)
         {
             bool allowZero = (min == 0 || max == 0) ? true : false;
             foreach(int value in values)
                 CheckRange(name, value, min, max, allowZero);
         }
-        public void CheckRange(string name, int value, int min, int max)
+
+        virtual public void CheckRange(string name, int value, int min, int max)
         {
             CheckRange(name, value, min, max, (min == 0 || max == 0) ? true : false);
         }
-        public void CheckRange(string name, int value, int min, int max, bool allowZero)
+
+        virtual public void CheckRange(string name, int value, int min, int max, bool allowZero)
         {
             if (value != int.MinValue && (value < min || value > max || (!allowZero && value == 0)))
                 throw new ArgumentException(name + " value " + value + " is out of range. Valid values are between " + min + " and " + max + (allowZero ? "" : ", excluding zero (0)") + ".");
         }
 
-        public void CheckMutuallyExclusive(string name1, string name2, object obj1, object obj2)
+        virtual public void CheckMutuallyExclusive(string name1, string name2, object obj1, object obj2)
         {
             if (obj1 == null || obj2 == null)
                 return;
@@ -63,9 +71,62 @@ namespace DDay.iCal
     
         #region ICalendarDataType Members
 
-        virtual public void SetCalendar(IICalendar calendar)
+        virtual public IICalendar Calendar
         {
-            Calendar = calendar;
+            get
+            {
+                if (_Associations != null &&
+                    _Associations.Count > 0)
+                    return _Associations.Peek().Calendar;
+                return null;
+            }
+        }
+
+        virtual public void AssociateWith(ICalendarObject obj)
+        {
+            if (obj != null)
+                _Associations.Push(obj);
+        }
+
+        virtual public void Deassociate()
+        {
+            _Associations.Pop();
+        }
+
+        #endregion
+
+        #region ICopyable Members
+
+        /// <summary>
+        /// Copies values from the target object to the
+        /// current object.
+        /// </summary>
+        virtual public void CopyFrom(ICopyable obj)
+        {
+            if (obj is CalendarDataType)
+            {
+                CalendarDataType dt = (CalendarDataType)obj;
+                _Associations = new Stack<ICalendarObject>(dt._Associations);
+            }
+        }
+
+        /// <summary>
+        /// Creates a copy of the object.
+        /// </summary>
+        /// <returns>The copy of the object.</returns>
+        virtual public T Copy<T>()
+        {
+            ICopyable obj = null;
+            Type type = GetType();
+            obj = Activator.CreateInstance(type) as ICopyable;
+
+            // Duplicate our values
+            if (obj is T)
+            {
+                obj.CopyFrom(this);
+                return (T)obj;
+            }
+            return default(T);
         }
 
         #endregion

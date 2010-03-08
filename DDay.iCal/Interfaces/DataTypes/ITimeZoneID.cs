@@ -4,7 +4,8 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public interface ITimeZoneID
+    public interface ITimeZoneID :
+        ICalendarDataType
     {
         bool GloballyUnique { get; set; }
         string ID { get; set; }

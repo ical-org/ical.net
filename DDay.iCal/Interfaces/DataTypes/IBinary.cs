@@ -4,7 +4,8 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public interface IBinary        
+    public interface IBinary :
+        ICalendarDataType
     {
         Uri Uri { get; set; }
         string FormatType { get; set; }
