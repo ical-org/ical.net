@@ -22,7 +22,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
         #region Protected Methods
 
-        protected ISerializer GetMappedSerializer()
+        protected IStringSerializer GetMappedSerializer()
         {
             ISerializerFactory sf = GetService<ISerializerFactory>();
             IDataTypeMapper mapper = GetService<IDataTypeMapper>();
@@ -31,7 +31,7 @@ namespace DDay.iCal.Serialization.iCalendar
             {
                 Type mappedType = mapper.Get(SerializationContext.Peek());
                 if (mappedType != null)
-                    return sf.Build(mappedType, SerializationContext);
+                    return sf.Build(mappedType, SerializationContext) as IStringSerializer;
                 else
                     return new StringSerializer(SerializationContext);
             }
@@ -55,7 +55,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {
-            ISerializer serializer = GetMappedSerializer();
+            IStringSerializer serializer = GetMappedSerializer();
             if (serializer != null)
                 return serializer.SerializeToString(obj);
             return null;
@@ -63,7 +63,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override object Deserialize(TextReader tr)
         {
-            ISerializer serializer = GetMappedSerializer();
+            IStringSerializer serializer = GetMappedSerializer();
             if (serializer != null)
                 return serializer.Deserialize(tr);
             return null;

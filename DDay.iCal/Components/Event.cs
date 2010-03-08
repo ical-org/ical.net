@@ -227,6 +227,8 @@ namespace DDay.iCal
         private void Initialize()
         {
             this.Name = Components.EVENT;
+
+            Resources = new List<string>();            
         }
 
         #endregion

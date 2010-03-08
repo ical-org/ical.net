@@ -8,7 +8,7 @@ using System.Reflection;
 namespace DDay.iCal.Serialization.iCalendar
 {
     public abstract class SerializerBase :
-        ISerializer
+        IStringSerializer
     {
         #region Private Fields
 
@@ -43,6 +43,17 @@ namespace DDay.iCal.Serialization.iCalendar
             if (SerializationContext != null)
             {
                 object obj = SerializationContext.GetService(typeof(T));
+                if (obj != null)
+                    return (T)obj;
+            }
+            return default(T);
+        }
+
+        virtual public T GetService<T>(string name)
+        {
+            if (SerializationContext != null)
+            {
+                object obj = SerializationContext.GetService(name);
                 if (obj != null)
                     return (T)obj;
             }

@@ -311,6 +311,32 @@ namespace DDay.iCal
             return hashCode;
         }
 
+        public override void CopyFrom(ICopyable obj)
+        {
+            base.CopyFrom(obj);
+            if (obj is IRecurrencePattern)
+            {
+                IRecurrencePattern r = (IRecurrencePattern)obj;
+
+                Frequency = r.Frequency;
+                Until = r.Until;
+                Count = r.Count;
+                Interval = r.Interval;
+                BySecond = new List<int>(r.BySecond);
+                ByMinute = new List<int>(r.ByMinute);
+                ByHour = new List<int>(r.ByHour);
+                ByDay = new List<IDaySpecifier>(r.ByDay);
+                ByMonthDay = new List<int>(r.ByMonthDay);
+                ByYearDay = new List<int>(r.ByYearDay);
+                ByWeekNo = new List<int>(r.ByWeekNo);
+                ByMonth = new List<int>(r.ByMonth);
+                BySetPosition = new List<int>(r.BySetPosition);
+                WeekStart = r.WeekStart;
+                RestrictionType = r.RestrictionType;
+                EvaluationMode = r.EvaluationMode;
+            }            
+        }
+
         private bool CollectionEquals<T>(ICollection<T> c1, ICollection<T> c2)
         {
             // NOTE: fixes a bug where collections weren't properly compared

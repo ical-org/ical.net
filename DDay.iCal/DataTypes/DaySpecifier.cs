@@ -92,6 +92,17 @@ namespace DDay.iCal
             return Num.GetHashCode() ^ DayOfWeek.GetHashCode();
         }
 
+        public override void CopyFrom(ICopyable obj)
+        {
+            base.CopyFrom(obj);
+            if (obj is DaySpecifier)
+            {
+                DaySpecifier bd = (DaySpecifier)obj;
+                this.Num = bd.Num;
+                this.DayOfWeek = bd.DayOfWeek;
+            }
+        }
+
         #endregion
 
         #region Public Methods

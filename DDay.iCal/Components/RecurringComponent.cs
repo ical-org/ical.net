@@ -53,7 +53,7 @@ namespace DDay.iCal
             set { Properties.Set("EXDATE", value); }
         }
 
-        virtual public IList<IRecurrencePattern> ExceptionRecurrenceRules
+        virtual public IList<IRecurrencePattern> ExceptionRules
         {
             get { return Properties.Get<IList<IRecurrencePattern>>("EXRULE"); }
             set { Properties.Set("EXRULE", value); }
@@ -134,6 +134,11 @@ namespace DDay.iCal
         {
             Periods = new List<Period>();
             Alarms = new List<IAlarm>();
+
+            RecurrenceDates = new List<IRecurrenceDate>();
+            RecurrenceRules = new List<IRecurrencePattern>();
+            ExceptionDates = new List<IRecurrenceDate>();
+            ExceptionRules = new List<IRecurrencePattern>();
         }
 
         #endregion
@@ -348,9 +353,9 @@ namespace DDay.iCal
         virtual protected void EvaluateExRule(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             // Handle EXRULEs
-            if (ExceptionRecurrenceRules != null)
+            if (ExceptionRules != null)
             {
-                foreach (IRecurrencePattern exrule in ExceptionRecurrenceRules)
+                foreach (IRecurrencePattern exrule in ExceptionRules)
                 {
                     IList<iCalDateTime> dateTimes = exrule.Evaluate(DTStart, FromDate, ToDate);
                     for (int i = 0; i < dateTimes.Count; i++)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using DDay.iCal.Serialization.iCalendar;
+using System.Collections;
 
 namespace DDay.iCal.Serialization.iCalendar
 {
@@ -10,6 +11,15 @@ namespace DDay.iCal.Serialization.iCalendar
     {
         #region ISerializerFactory Members
 
+        /// <summary>
+        /// Returns a serializer that can be used to serialize and object
+        /// of type <paramref name="objectType"/>.
+        /// <note>
+        ///     TODO: Add support for caching.
+        /// </note>
+        /// </summary>
+        /// <param name="objectType">The type of object to be serialized.</param>
+        /// <param name="ctx">The serialization context.</param>
         virtual public ISerializer Build(Type objectType, ISerializationContext ctx)
         {
             if (objectType != null)
@@ -29,11 +39,17 @@ namespace DDay.iCal.Serialization.iCalendar
                 }
                 else if (contextObj is ICalendarProperty)
                 {
-                    if (typeof(ICalendarParameter).IsAssignableFrom(objectType))
+                    if (typeof(string).IsAssignableFrom(objectType))
+                        s = new StringSerializer();
+                    else if (objectType.IsGenericType && typeof(IList<>).IsAssignableFrom(objectType.GetGenericTypeDefinition()))
+                        s = new GenericListSerializer(objectType);
+                    else if (typeof(ICalendarParameter).IsAssignableFrom(objectType))
                         s = new ParameterSerializer();
                     else if (typeof(iCalDateTime).IsAssignableFrom(objectType))
                         s = new DateTimeSerializer();
-                    else if (typeof(string).IsAssignableFrom(objectType))
+                    // Default to a string serializer, which simply calls
+                    // ToString() on the value to serialize it.
+                    else
                         s = new StringSerializer();
                 }
                 
