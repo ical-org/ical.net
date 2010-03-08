@@ -287,34 +287,32 @@ namespace DDay.iCal.Test
         //    SerializeTest("SERIALIZE18.ics", typeof(iCalendarSerializer));
         //}
 
-        //[TestMethod]
-        //public void SERIALIZE19()
-        //{
-        //    iCalendar iCal = new iCalendar();
+        [TestMethod]
+        public void SERIALIZE19()
+        {
+            iCalendar iCal = new iCalendar();
 
-        //    Event evt = iCal.Create<Event>();
-        //    evt.Summary = "Test event title";
-        //    evt.Start = new iCalDateTime(2007, 4, 29);
-        //    evt.End = evt.Start.AddDays(1);
-        //    evt.IsAllDay = true;
+            Event evt = iCal.Create<Event>();
+            evt.Summary = "Test event title";
+            evt.Start = new iCalDateTime(2007, 4, 29);
+            evt.End = evt.Start.AddDays(1);
+            evt.IsAllDay = true;
 
-        //    RecurrencePattern rec = new RecurrencePattern("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4");
-        //    evt.AddRecurrencePattern(rec);
+            evt.RecurrenceRules.Add(new RecurrencePattern("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4"));
 
-        //    ComponentSerializer compSerializer = new ComponentSerializer();
+            ComponentSerializer compSerializer = new ComponentSerializer();
 
-        //    FileStream fs = new FileStream(@"Calendars\Serialization\SERIALIZE19.ics", FileMode.Create, FileAccess.Write);
-        //    compSerializer.Serialize(evt, fs, Encoding.UTF8);
-        //    fs.Close();
+            FileStream fs = new FileStream(@"Calendars\Serialization\SERIALIZE19.ics", FileMode.Create, FileAccess.Write);
+            compSerializer.Serialize(evt, fs, Encoding.UTF8);
+            fs.Close();
 
-        //    // FIXME: rewrite this to work again...
-        //    //iCalendar iCal1 = new iCalendar();            
-        //    //fs = new FileStream(@"Calendars\Serialization\SERIALIZE19.ics", FileMode.Open, FileAccess.Read);
-        //    //Event evt1 = ComponentFactory.LoadFromStream<Event>(fs, Encoding.UTF8);
-        //    //fs.Close();
+            IICalendar iCal1 = new iCalendar();
+            fs = new FileStream(@"Calendars\Serialization\SERIALIZE19.ics", FileMode.Open, FileAccess.Read);
+            Event evt1 = CalendarComponent.LoadFromStream<Event>(fs, Encoding.UTF8);
+            fs.Close();
 
-        //    //CompareComponents(evt, evt1);
-        //}
+            CompareComponents(evt, evt1);
+        }
 
         [TestMethod]
         public void SERIALIZE20()
