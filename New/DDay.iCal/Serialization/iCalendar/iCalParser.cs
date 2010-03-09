@@ -141,7 +141,13 @@ _loop4_breakloop:						;
 						}
 _loop6_breakloop:						;
 					}    // ( ... )*
-					
+								
+								ISerializationProcessor<IICalendar> processor = ctx.GetService(typeof(ISerializationProcessor<IICalendar>)) as ISerializationProcessor<IICalendar>;
+								
+								// Do some pre-processing on the calendar:
+								if (processor != null)
+									processor.PreDeserialization(iCal);
+							
 								iCal = (IICalendar)SerializationUtil.GetUninitializedObject(settings.iCalendarType);			
 								SerializationUtil.OnDeserializing(iCal);
 								
@@ -169,9 +175,8 @@ _loop8_breakloop:						;
 					}    // ( ... )*
 					
 								// Do some final processing on the calendar:
-								ISerializationProcessor<IICalendar> processor = ctx.GetService(typeof(ISerializationProcessor<IICalendar>)) as ISerializationProcessor<IICalendar>;
 								if (processor != null)
-									processor.Process(iCal);
+									processor.PostDeserialization(iCal);
 							
 								// Notify that the iCalendar has been loaded
 								iCal.OnLoaded();
@@ -280,6 +285,11 @@ _loop12_breakloop:			;
 			 }
 		}
 		
+			ISerializationProcessor<ICalendarProperty> processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarProperty>)) as ISerializationProcessor<ICalendarProperty>;
+			// Do some pre-processing on the property
+			if (processor != null)
+				processor.PreDeserialization(p);
+		
 			if (c != null)
 			{
 				// Add the property to the container, as the parent object(s)
@@ -332,9 +342,8 @@ _loop26_breakloop:			;
 		}    // ( ... )*
 		
 			// Do some final processing on the property:
-			ISerializationProcessor<ICalendarProperty> processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarProperty>)) as ISerializationProcessor<ICalendarProperty>;
 			if (processor != null)
-				processor.Process(p);
+				processor.PostDeserialization(p);
 		
 			// Notify that the property has been loaded
 			p.OnLoaded();
@@ -384,6 +393,11 @@ _loop26_breakloop:			;
 			}
 			 }
 		}
+		
+			ISerializationProcessor<ICalendarComponent> processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarComponent>)) as ISerializationProcessor<ICalendarComponent>;
+			// Do some pre-processing on the component
+			if (processor != null)
+				processor.PreDeserialization(c);
 		
 			SerializationUtil.OnDeserializing(c);
 		
@@ -459,10 +473,9 @@ _loop18_breakloop:			;
 _loop20_breakloop:			;
 		}    // ( ... )*
 			
-			// Do some final processing on the component:
-			ISerializationProcessor<ICalendarComponent> processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarComponent>)) as ISerializationProcessor<ICalendarComponent>;
+			// Do some final processing on the component
 			if (processor != null)
-				processor.Process(c);
+				processor.PostDeserialization(c);
 		
 			// Notify that the component has been loaded
 			c.OnLoaded();
