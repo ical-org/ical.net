@@ -37,7 +37,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {
-            // NOTE: this behavior is implemented in the ComponentSerializer.
+            // NOTE: this behavior is implemented in the PropertySerializer.
             throw new NotImplementedException();
         }
 

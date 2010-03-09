@@ -53,12 +53,13 @@ namespace DDay.iCal.Serialization.iCalendar
                 ISerializerFactory sf = GetService<ISerializerFactory>();
 
                 StringBuilder result = new StringBuilder();
-                // Get a serialize to serialize the property's value.
-                // If we can't serialize the property's value, the next step is worthless anyway.
-                IStringSerializer valueSerializer = sf.Build(prop.Value.GetType(), SerializationContext) as IStringSerializer;
-                if (valueSerializer != null)
-                {                   
-                    foreach (object v in objs)
+                               
+                foreach (object v in objs)
+                {
+                    // Get a serializer to serialize the property's value.
+                    // If we can't serialize the property's value, the next step is worthless anyway.
+                    IStringSerializer valueSerializer = sf.Build(v.GetType(), SerializationContext) as IStringSerializer;
+                    if (valueSerializer != null)
                     {
                         // Iterate through each value to be serialized,
                         // and give it a property (with parameters).
@@ -87,7 +88,7 @@ namespace DDay.iCal.Serialization.iCalendar
                         sb.Append(":");
 
                         // Serialize the property's value
-                        sb.Append(valueSerializer.SerializeToString(prop.Value));
+                        sb.Append(valueSerializer.SerializeToString(v));
 
                         result.Append(TextUtil.WrapLines(sb.ToString()));
                     }

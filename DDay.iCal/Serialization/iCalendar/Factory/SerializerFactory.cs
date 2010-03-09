@@ -47,6 +47,10 @@ namespace DDay.iCal.Serialization.iCalendar
                         s = new ParameterSerializer();
                     else if (typeof(iCalDateTime).IsAssignableFrom(objectType))
                         s = new DateTimeSerializer();
+                    else if (typeof(TimeSpan).IsAssignableFrom(objectType))
+                        s = new TimeSpanSerializer();
+                    else if (typeof(IRecurrencePattern).IsAssignableFrom(objectType))
+                        s = new RecurrencePatternSerializer();
                     // Default to a string serializer, which simply calls
                     // ToString() on the value to serialize it.
                     else

@@ -9,25 +9,20 @@ namespace DDay.iCal.Serialization.iCalendar
     {
         #region ISerializationProcessor<ICalendarComponent> Members
 
-        virtual public void Process(ICalendarComponent obj)
+        virtual public void PreSerialization(ICalendarComponent obj)
         {
-            // FIXME: this should probably have a lot more special-case-handling
-            // and smarts built into it?
+        }
 
-            //List<ICalendarProperty> resulting = new List<ICalendarProperty>();
-            //foreach (ICalendarProperty p in obj.Properties)
-            //{
-            //    if (obj.Properties.CountOf(p.Name) > 1)
-            //    {
-                    
-            //    }
-            //}
-            
-            //foreach (ICalendarProperty p in obj.Properties)
-            //{
-                
+        virtual public void PostSerialization(ICalendarComponent obj)
+        {
+        }
 
-            //}
+        virtual public void PreDeserialization(ICalendarComponent obj)
+        {
+        }
+
+        virtual public void PostDeserialization(ICalendarComponent obj)
+        {
         }
 
         #endregion

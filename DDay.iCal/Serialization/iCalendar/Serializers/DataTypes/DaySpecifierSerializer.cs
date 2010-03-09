@@ -15,7 +15,16 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {
-            throw new NotImplementedException();
+            IDaySpecifier ds = obj as IDaySpecifier;
+            if (ds != null)
+            {
+                string value = string.Empty;
+                if (ds.Num != int.MinValue)
+                    value += ds.Num;
+                value += Enum.GetName(typeof(DayOfWeek), ds.DayOfWeek).ToUpper().Substring(0, 2);
+                return value;
+            }
+            return null;
         }
 
         public override object Deserialize(System.IO.TextReader tr)
@@ -33,9 +42,9 @@ namespace DDay.iCal.Serialization.iCalendar
                         ds.Num *= -1;
                 }
                 ds.DayOfWeek = RecurrencePatternSerializer.GetDayOfWeek(match.Groups[3].Value);
-                return true;
+                return ds;
             }
-            return false;
+            return null;
         }
     }
 }

@@ -39,6 +39,24 @@ namespace DDay.iCal.Serialization.iCalendar
 
         #endregion
 
+        #region Private Methods
+
+        private void SerializeByValue(List<string> aggregate, IList<int> byValue, string name)
+        {
+            if (byValue.Count > 0)
+            {
+                List<string> byValues = new List<string>();
+                foreach (int i in byValue)
+                    byValues.Add(i.ToString());
+
+                aggregate.Add(name + "=" + string.Join(",", byValues.ToArray()));
+            }
+        }
+
+        #endregion
+
+        #region Overrides
+
         public override Type TargetType
         {
             get { return typeof(RecurrencePattern); }
@@ -46,7 +64,66 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {
-            throw new NotImplementedException();
+            IRecurrencePattern recur = obj as IRecurrencePattern;
+            if (recur != null)
+            {
+                List<string> values = new List<string>();
+
+                values.Add("FREQ=" + Enum.GetName(typeof(FrequencyType), recur.Frequency).ToUpper());
+
+                //-- FROM RFC2445 --
+                //The INTERVAL rule part contains a positive integer representing how
+                //often the recurrence rule repeats. The default value is "1", meaning
+                //every second for a SECONDLY rule, or every minute for a MINUTELY
+                //rule, every hour for an HOURLY rule, every day for a DAILY rule,
+                //every week for a WEEKLY rule, every month for a MONTHLY rule and
+                //every year for a YEARLY rule.
+                int interval = recur.Interval;
+                if (interval == int.MinValue)
+                    interval = 1;
+
+                if (interval != 1)
+                    values.Add("INTERVAL=" + interval);
+
+                if (recur.Until.IsAssigned)
+                {
+                    IStringSerializer serializer = new DateTimeSerializer();
+                    if (serializer != null)
+                        values.Add("UNTIL=" + serializer.SerializeToString(recur.Until));
+                }
+
+                if (recur.WeekStart != DayOfWeek.Monday)
+                    values.Add("WKST=" + Enum.GetName(typeof(DayOfWeek), recur.WeekStart).ToUpper().Substring(0, 2));
+
+                if (recur.Count != int.MinValue)
+                    values.Add("COUNT=" + recur.Count);
+
+                if (recur.ByDay.Count > 0)
+                {
+                    List<string> bydayValues = new List<string>();
+
+                    IStringSerializer serializer = new DaySpecifierSerializer();
+                    if (serializer != null)
+                    {
+                        foreach (DaySpecifier byday in recur.ByDay)
+                            bydayValues.Add(serializer.SerializeToString(byday));
+                    }
+
+                    values.Add("BYDAY=" + string.Join(",", bydayValues.ToArray()));
+                }
+
+                SerializeByValue(values, recur.ByHour, "BYHOUR");
+                SerializeByValue(values, recur.ByMinute, "BYMINUTE");
+                SerializeByValue(values, recur.ByMonth, "BYMONTH");
+                SerializeByValue(values, recur.ByMonthDay, "BYMONTHDAY");
+                SerializeByValue(values, recur.BySecond, "BYSECOND");
+                SerializeByValue(values, recur.BySetPosition, "BYSETPOS");
+                SerializeByValue(values, recur.ByWeekNo, "BYWEEKNO");
+                SerializeByValue(values, recur.ByYearDay, "BYYEARDAY");
+
+                return string.Join(";", values.ToArray());
+            }
+            return null;
         }
 
         public override object Deserialize(TextReader tr)
@@ -91,7 +168,7 @@ namespace DDay.iCal.Serialization.iCalendar
                                 {
                                     string[] days = keyValue.Split(',');
                                     foreach (string day in days)
-                                        r.ByDay.Add(new DaySpecifier(RecurrencePatternSerializer.GetDayOfWeek(day)));
+                                        r.ByDay.Add(new DaySpecifier(day));
                                 } break;
                             case "BYMONTHDAY": AddInt32Values(r.ByMonthDay, keyValue); break;
                             case "BYYEARDAY": AddInt32Values(r.ByYearDay, keyValue); break;
@@ -248,5 +325,7 @@ namespace DDay.iCal.Serialization.iCalendar
             //CheckRange("BYMONTH", r.ByMonth, 1, 12);
             //CheckRange("BYSETPOS", r.BySetPos, -366, 366);
         }
+
+        #endregion
     }
 }

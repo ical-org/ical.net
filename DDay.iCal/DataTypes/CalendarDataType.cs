@@ -71,6 +71,28 @@ namespace DDay.iCal
     
         #region ICalendarDataType Members
 
+        virtual public ICalendarParameterList AssociatedParameters
+        {
+            get
+            {
+                ICalendarParameterListContainer c = AssociatedObject as ICalendarParameterListContainer;
+                if (c != null)
+                    return c.Parameters;
+                return null;
+            }
+        }
+
+        virtual public ICalendarObject AssociatedObject
+        {
+            get
+            {
+                if (_Associations != null &&
+                    _Associations.Count > 0)
+                    return _Associations.Peek();
+                return null;
+            }
+        }
+
         virtual public IICalendar Calendar
         {
             get

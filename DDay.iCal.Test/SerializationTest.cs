@@ -75,18 +75,20 @@ namespace DDay.iCal.Test
             c1Props.Sort(new ComponentSerializer.PropertyAlphabetizer());
             c2Props.Sort(new ComponentSerializer.PropertyAlphabetizer());
 
-            Assert.AreEqual(c1Props.Count, c2Props.Count, "The number of properties is not equal.");
+            Assert.AreEqual(c1Props.Count, c2Props.Count, "The number of '" + cb1.Name + "' properties is not equal.");
 
             for (int i = 0; i < c1Props.Count; i++)
             {
                 ICalendarProperty p1 = c1Props[i];
                 ICalendarProperty p2 = c2Props[i];                
-                Assert.AreEqual(p1, p2, "The properties are not equal.");
+                Assert.AreEqual(p1, p2, "The properties '" + p1.Name + "' are not equal.");
 
-                if (p1.Value is IEnumerable)
+                if (p1.Value is IComparable)
+                    Assert.AreEqual(0, ((IComparable)p1.Value).CompareTo(p2.Value), "The '" + p1.Name + "' property values do not match.");
+                else if (p1.Value is IEnumerable)
                     CompareEnumerables((IEnumerable)p1.Value, (IEnumerable)p2.Value, p1.Name);
                 else
-                    Assert.AreEqual(p1.Value, p2.Value, "The property values are not equal.");
+                    Assert.AreEqual(p1.Value, p2.Value, "The '" + p1.Name + "' property values are not equal.");
             }
 
             Assert.AreEqual(cb1.Children.Count, cb2.Children.Count, "The number of children are not equal.");
@@ -112,8 +114,12 @@ namespace DDay.iCal.Test
             IEnumerator enum1 = a1.GetEnumerator();
             IEnumerator enum2 = a2.GetEnumerator();
 
-            while (enum1.MoveNext() && enum2.MoveNext())
+            while (enum1.MoveNext())
+            {
+                Assert.IsTrue(enum2.MoveNext(), "First enumeration had more elements than the second.");
                 Assert.AreEqual(enum1.Current, enum2.Current, value + " do not match");
+            }
+            Assert.IsFalse(enum2.MoveNext(), "Second enumeration had more elements than the first.");
         }
 
         [TestMethod]
@@ -161,9 +167,9 @@ namespace DDay.iCal.Test
         [TestMethod]
         public void SERIALIZE8()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\SERIALIZE8.ics", Encoding.UTF8)[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\SERIALIZE8.ics", Encoding.UTF8);
 
-            // Ensure the CATEGORY properties were properly loaded
+            // Ensure the CATEGORIES properties were properly loaded
             Assert.AreEqual(1, iCal.Events.Count);
             Assert.AreEqual(4, iCal.Events[0].Properties.CountOf("CATEGORIES"));
             Assert.AreEqual(4, iCal.Events[0].Categories.Count);
@@ -257,36 +263,36 @@ namespace DDay.iCal.Test
         //    SerializeTest("SERIALIZE17.ics", typeof(CustomICal1), typeof(iCalendarSerializer));
         //}
 
-        //[TestMethod]
-        //public void SERIALIZE18()
-        //{
-        //    IICalendar iCal = new iCalendar();
+        [TestMethod]
+        public void SERIALIZE18()
+        {
+            IICalendar iCal = new iCalendar();
 
-        //    IEvent evt = iCal.Create<Event>();
-        //    evt.Summary = "Test event title";
-        //    evt.Start = new DateTime(2007, 3, 19, 0, 0, 0, DateTimeKind.Utc);
-        //    evt.Duration = new TimeSpan(24, 0, 0);
-        //    evt.Created = evt.Start;
-        //    evt.DTStamp = evt.Start;
-        //    evt.UID = "123456789";
-        //    evt.IsAllDay = true;
+            IEvent evt = iCal.Create<Event>();
+            evt.Summary = "Test event title";
+            evt.Start = new DateTime(2007, 3, 19, 0, 0, 0, DateTimeKind.Utc);
+            evt.Duration = new TimeSpan(24, 0, 0);
+            evt.Created = evt.Start;
+            evt.DTStamp = evt.Start;
+            evt.UID = "123456789";
+            evt.IsAllDay = true;
 
-        //    IRecurrencePattern rec = new RecurrencePattern("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4");
-        //    evt.AddRecurrencePattern(rec);
+            IRecurrencePattern rec = new RecurrencePattern("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4");
+            evt.RecurrenceRules.Add(rec);
 
-        //    iCalendarSerializer serializer = new iCalendarSerializer(iCal);
-        //    string icalString = serializer.SerializeToString();
+            iCalendarSerializer serializer = new iCalendarSerializer();
+            string icalString = serializer.SerializeToString(iCal);
 
-        //    Assert.IsNotEmpty(icalString, "iCalendarSerializer.SerializeToString() must not be empty");
+            Assert.AreNotEqual(string.Empty, icalString, "iCalendarSerializer.SerializeToString() must not be empty");
 
-        //    ComponentSerializer compSerializer = new ComponentSerializer();
-        //    string evtString = compSerializer.SerializeToString(evt);
+            ComponentSerializer compSerializer = new ComponentSerializer();
+            string evtString = compSerializer.SerializeToString(evt);
 
-        //    Assert.IsTrue(evtString.Equals("BEGIN:VEVENT\r\nCREATED:20070319T000000Z\r\nDTEND;VALUE=DATE:20070320\r\nDTSTAMP:20070319T000000Z\r\nDTSTART;VALUE=DATE:20070319\r\nRRULE:FREQ=WEEKLY;INTERVAL=3;COUNT=4;BYDAY=TU,FR,SU\r\nSEQUENCE:0\r\nSUMMARY:Test event title\r\nUID:123456789\r\nEND:VEVENT\r\n"), "ComponentBaseSerializer.SerializeToString() serialized incorrectly");
+            Assert.IsTrue(evtString.Equals("BEGIN:VEVENT\r\nCREATED:20070319T000000Z\r\nDTEND;VALUE=DATE:20070320\r\nDTSTAMP:20070319T000000Z\r\nDTSTART;VALUE=DATE:20070319\r\nRRULE:FREQ=WEEKLY;INTERVAL=3;COUNT=4;BYDAY=TU,FR,SU\r\nSEQUENCE:0\r\nSUMMARY:Test event title\r\nUID:123456789\r\nEND:VEVENT\r\n"), "ComponentBaseSerializer.SerializeToString() serialized incorrectly");
 
-        //    serializer.Serialize(@"Calendars\Serialization\SERIALIZE18.ics");
-        //    SerializeTest("SERIALIZE18.ics", typeof(iCalendarSerializer));
-        //}
+            serializer.Serialize(iCal, @"Calendars\Serialization\SERIALIZE18.ics");
+            SerializeTest("SERIALIZE18.ics", typeof(iCalendarSerializer));
+        }
 
         [TestMethod]
         public void SERIALIZE19()

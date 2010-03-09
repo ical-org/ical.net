@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using DDay.iCal.Serialization;
+using System.IO;
 
 namespace DDay.iCal
 {
@@ -21,7 +22,7 @@ namespace DDay.iCal
     {
         #region Private Fields
 
-        private int m_Num;            
+        private int m_Num = int.MinValue;            
         private DayOfWeek m_DayOfWeek;            
 
         #endregion
@@ -72,6 +73,13 @@ namespace DDay.iCal
         {
         }
 
+        public DaySpecifier(string value)
+        {
+            DDay.iCal.Serialization.iCalendar.DaySpecifierSerializer serializer =
+                new DDay.iCal.Serialization.iCalendar.DaySpecifierSerializer();
+            CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
+        }
+
         #endregion
 
         #region Overrides
@@ -95,9 +103,9 @@ namespace DDay.iCal
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (obj is DaySpecifier)
+            if (obj is IDaySpecifier)
             {
-                DaySpecifier bd = (DaySpecifier)obj;
+                IDaySpecifier bd = (IDaySpecifier)obj;
                 this.Num = bd.Num;
                 this.DayOfWeek = bd.DayOfWeek;
             }
@@ -107,7 +115,7 @@ namespace DDay.iCal
 
         #region Public Methods
 
-        public bool CheckValidDate(RecurrencePattern r, iCalDateTime Date)
+        public bool CheckValidDate(IRecurrencePattern r, iCalDateTime Date)
         {
             bool valid = false;
 
@@ -191,7 +199,7 @@ namespace DDay.iCal
         {
             DaySpecifier bd = null;
             if (obj is string)
-                bd = new DaySpecifier(DDay.iCal.Serialization.iCalendar.RecurrencePatternSerializer.GetDayOfWeek((string)obj));
+                bd = new DaySpecifier(obj.ToString());
             else if (obj is DaySpecifier)
                 bd = (DaySpecifier)obj;
 
