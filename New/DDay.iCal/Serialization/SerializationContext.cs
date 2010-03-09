@@ -48,9 +48,11 @@ namespace DDay.iCal.Serialization
             SetService(new SerializerFactory());
             SetService(new ComponentFactory());
             SetService(new DataTypeMapper());
+            SetService(new EncodingStack());
+            SetService(new EncodingProvider(this));            
             SetService(new CompositeProcessor<IICalendar>());
             SetService(new CompositeProcessor<ICalendarComponent>());
-            SetService(new CompositeProcessor<ICalendarProperty>());
+            SetService(new CompositeProcessor<ICalendarProperty>());            
         }
 
         #endregion

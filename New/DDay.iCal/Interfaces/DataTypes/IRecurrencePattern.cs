@@ -5,7 +5,7 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface IRecurrencePattern :
-        ICalendarDataType
+        IEncodableDataType
     {
         FrequencyType Frequency { get; set; }
         iCalDateTime Until { get; set; }

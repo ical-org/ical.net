@@ -16,8 +16,8 @@ namespace DDay.iCal
     [DataContract(Name = "RecurrencePattern", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public partial class RecurrencePattern : 
-        CalendarDataType,
+    public partial class RecurrencePattern :
+        EncodableDataType,
         IRecurrencePattern
     {
         #region Private Fields
