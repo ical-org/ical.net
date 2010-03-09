@@ -5,7 +5,7 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface IDaySpecifier :
-        ICalendarDataType,
+        IEncodableDataType,
         IComparable
     {
         int Num { get; set; }

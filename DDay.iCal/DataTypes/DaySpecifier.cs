@@ -17,7 +17,7 @@ namespace DDay.iCal
 #endif
     [Serializable]
     public class DaySpecifier : 
-        CalendarDataType,
+        EncodableDataType,
         IDaySpecifier        
     {
         #region Private Fields

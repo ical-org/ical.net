@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 namespace DDay.iCal.Serialization.iCalendar
 {
     public class RecurrencePatternSerializer :
-        SerializerBase
+        EncodableDataTypeSerializer
     {
         #region Static Public Methods
 
@@ -120,8 +120,8 @@ namespace DDay.iCal.Serialization.iCalendar
                 SerializeByValue(values, recur.BySetPosition, "BYSETPOS");
                 SerializeByValue(values, recur.ByWeekNo, "BYWEEKNO");
                 SerializeByValue(values, recur.ByYearDay, "BYYEARDAY");
-
-                return string.Join(";", values.ToArray());
+                
+                return Encode(recur, string.Join(";", values.ToArray()));
             }
             return null;
         }
@@ -129,13 +129,16 @@ namespace DDay.iCal.Serialization.iCalendar
         public override object Deserialize(TextReader tr)
         {
             string value = tr.ReadToEnd();
-            RecurrencePattern r = null;
+
+            // Instantiate the data type
+            IRecurrencePattern r = CreateAndAssociate() as IRecurrencePattern;
+
+            // Decode the value, if necessary
+            value = Decode(r, value);
 
             Match match = Regex.Match(value, @"FREQ=(SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY);?(.*)", RegexOptions.IgnoreCase);
             if (match.Success)
             {
-                r = new RecurrencePattern();
-
                 // Parse the frequency type
                 r.Frequency = (FrequencyType)Enum.Parse(typeof(FrequencyType), match.Groups[1].Value, true);
 
@@ -309,21 +312,28 @@ namespace DDay.iCal.Serialization.iCalendar
                     }
                 }
             }
+            else
+            {
+                // Couldn't parse the object, return null!
+                r = null;
+            }
 
-            return r;
+            if (r != null)
+            {
+                CheckMutuallyExclusive("COUNT", "UNTIL", r.Count, r.Until);
+                CheckRange("INTERVAL", r.Interval, 1, int.MaxValue);
+                CheckRange("COUNT", r.Count, 1, int.MaxValue);
+                CheckRange("BYSECOND", r.BySecond, 0, 59);
+                CheckRange("BYMINUTE", r.ByMinute, 0, 59);
+                CheckRange("BYHOUR", r.ByHour, 0, 23);
+                CheckRange("BYMONTHDAY", r.ByMonthDay, -31, 31);
+                CheckRange("BYYEARDAY", r.ByYearDay, -366, 366);
+                CheckRange("BYWEEKNO", r.ByWeekNo, -53, 53);
+                CheckRange("BYMONTH", r.ByMonth, 1, 12);
+                CheckRange("BYSETPOS", r.BySetPosition, -366, 366);
+            }
 
-            //// FIXME: implement these checks again
-            //CheckMutuallyExclusive("COUNT", "UNTIL", r.Count, r.Until);
-            //CheckRange("INTERVAL", r.Interval, 1, int.MaxValue);
-            //CheckRange("COUNT", r.Count, 1, int.MaxValue);
-            //CheckRange("BYSECOND", r.BySecond, 0, 59);
-            //CheckRange("BYMINUTE", r.ByMinute, 0, 59);
-            //CheckRange("BYHOUR", r.ByHour, 0, 23);
-            //CheckRange("BYMONTHDAY", r.ByMonthDay, -31, 31);
-            //CheckRange("BYYEARDAY", r.ByYearDay, -366, 366);
-            //CheckRange("BYWEEKNO", r.ByWeekNo, -53, 53);
-            //CheckRange("BYMONTH", r.ByMonth, 1, 12);
-            //CheckRange("BYSETPOS", r.BySetPos, -366, 366);
+            return r;            
         }
 
         #endregion

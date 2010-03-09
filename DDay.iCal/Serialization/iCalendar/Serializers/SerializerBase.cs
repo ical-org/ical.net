@@ -69,7 +69,14 @@ namespace DDay.iCal.Serialization.iCalendar
             object obj = null;
             using (StreamReader sr = new StreamReader(stream, encoding))
             {
+                // Push the current encoding on the stack
+                IEncodingStack encodingStack = GetService<IEncodingStack>();
+                encodingStack.Push(encoding);
+
                 obj = Deserialize(sr);
+
+                // Pop the current encoding off the stack
+                encodingStack.Pop();
             }
             return obj;
         }
@@ -78,10 +85,19 @@ namespace DDay.iCal.Serialization.iCalendar
         {
             using (StreamWriter sw = new StreamWriter(stream, encoding))
             {
+                // Push the current object onto the serialization stack
                 SerializationContext.Push(obj);
+
+                // Push the current encoding on the stack
+                IEncodingStack encodingStack = GetService<IEncodingStack>();
+                encodingStack.Push(encoding);
 
                 sw.Write(SerializeToString(obj));
 
+                // Pop the current encoding off the serialization stack
+                encodingStack.Pop();
+
+                // Pop the current object off the serialization stack
                 SerializationContext.Pop();
             }
         }
