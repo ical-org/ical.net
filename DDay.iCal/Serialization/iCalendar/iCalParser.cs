@@ -299,7 +299,7 @@ _loop12_breakloop:			;
 		
 			// Push the property onto the serialization context stack
 			ctx.Push(p);
-			IStringSerializer dataMapSerializer = new DataMapSerializer(ctx);
+            IStringSerializer dataMapSerializer = new DataMapSerializer(ctx);
 		
 		{    // ( ... )*
 			for (;;)
@@ -323,7 +323,7 @@ _loop24_breakloop:			;
 			// Deserialize the value of the property
 			// into a concrete iCalendar data type,
 			// or string value.
-			p.Value = dataMapSerializer.Deserialize(new StringReader(v));
+            p.Value = dataMapSerializer.Deserialize(new StringReader(v));
 		
 		{    // ( ... )*
 			for (;;)

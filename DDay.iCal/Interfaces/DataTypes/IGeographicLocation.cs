@@ -5,7 +5,9 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface IGeographicLocation :
-        ICalendarDataType
+        IEncodableDataType
     {
+        double Latitude { get; set; }
+        double Longitude { get; set; }
     }
 }

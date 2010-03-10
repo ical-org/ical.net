@@ -74,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTypes\Attachment.cs" />
     <Compile Include="Components\CalendarComponent.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -85,6 +86,7 @@
     <Compile Include="DataTypes\CalendarDataType.cs" />
     <Compile Include="DataTypes\DaySpecifier.cs" />
     <Compile Include="DataTypes\EncodableDataType.cs" />
+    <Compile Include="DataTypes\GeographicLocation.cs" />
     <Compile Include="DataTypes\RecurrencePattern.cs" />
     <Compile Include="Exceptions\EvaluationEngineException.cs" />
     <Compile Include="Interfaces\DataTypes\ICalendarDataType.cs" />
@@ -98,16 +100,21 @@
     <Compile Include="Interfaces\Serialization\ISerializationProcessor.cs" />
     <Compile Include="Interfaces\Serialization\ISerializationSettings.cs" />
     <Compile Include="Interfaces\Serialization\IStringSerializer.cs" />
+    <Compile Include="Interfaces\Utility\ICompositeList.cs" />
     <Compile Include="Serialization\Attributes\OnDeserializedAttribute.cs" />
     <Compile Include="Serialization\Attributes\OnDeserializingAttribute.cs" />
     <Compile Include="Serialization\Attributes\StreamingContext.cs" />
     <Compile Include="Serialization\EncodingStack.cs" />
+    <Compile Include="Serialization\iCalendar\Factory\DataTypeSerializerFactory.cs" />
     <Compile Include="Serialization\iCalendar\Processors\ComponentPropertyConsolidator.cs" />
     <Compile Include="Serialization\iCalendar\Processors\CompositeProcessor.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\Components\EventSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\AttachmentSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\DataTypeSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\DaySpecifierSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\EncodableDataTypeSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\GeographicLocationSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\IntegerSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\RecurrencePatternSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\TimeSpanSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\GenericListSerializer.cs" />
@@ -148,7 +155,7 @@
     <Compile Include="Interfaces\Components\ITimeZone.cs" />
     <Compile Include="Interfaces\Components\ITodo.cs" />
     <Compile Include="Interfaces\DataTypes\IAttendee.cs" />
-    <Compile Include="Interfaces\DataTypes\IBinary.cs" />
+    <Compile Include="Interfaces\DataTypes\IAttachment.cs" />
     <Compile Include="Interfaces\DataTypes\IOrganizer.cs" />
     <Compile Include="Interfaces\DataTypes\IRecurrenceDate.cs" />
     <Compile Include="Interfaces\DataTypes\IRecurrencePattern.cs" />
@@ -156,7 +163,6 @@
     <Compile Include="Interfaces\DataTypes\IStatusCode.cs" />
     <Compile Include="Interfaces\Components\ITimeZoneInfo.cs" />
     <Compile Include="Interfaces\DataTypes\ITrigger.cs" />
-    <Compile Include="Interfaces\DataTypes\ITimeZoneID.cs" />
     <Compile Include="Interfaces\DataTypes\IUTCOffset.cs" />
     <Compile Include="Interfaces\IICalendarCollection.cs" />
     <Compile Include="Interfaces\Serialization\Factory\ISerializerFactory.cs" />
@@ -185,7 +191,7 @@
     <None Include="Serialization\iCalendar\iCal.g" />
     <Compile Include="Interfaces\Serialization\ISerializer.cs" />
     <Compile Include="Serialization\DataTypeMapper.cs" />
-    <Compile Include="Serialization\iCalendar\Serializers\DataMapSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\TypeMapSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\DateTimeSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\ParameterSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\iCalendarSerializer.cs" />
@@ -198,6 +204,7 @@
     <Compile Include="Serialization\iCalendar\iCalParserTokenTypes.cs" />
     <Compile Include="Serialization\SerializationContext.cs" />
     <Compile Include="Serialization\SerializationSettings.cs" />
+    <Compile Include="Utility\CompositeList.cs" />
     <Compile Include="Utility\DateUtils.cs" />
     <Compile Include="Utility\KeyedList.cs" />
     <Compile Include="Utility\KnownTypeHelper.cs" />

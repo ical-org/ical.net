@@ -59,7 +59,7 @@ namespace DDay.iCal
             Properties.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarProperty>>(Properties_ItemAdded);
             Properties.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarProperty>>(Properties_ItemRemoved);
 
-            Attachments = new List<IBinary>();
+            Attachments = new List<IAttachment>();
             Attendees = new List<IAttendee>();
             Categories = new List<string>();
             Comments = new List<string>();
@@ -72,9 +72,9 @@ namespace DDay.iCal
 
         #region Public Properties
 
-        virtual public IList<IBinary> Attachments
+        virtual public IList<IAttachment> Attachments
         {
-            get { return Properties.GetList<IBinary>("ATTACH"); }
+            get { return Properties.GetList<IAttachment>("ATTACH"); }
             set { Properties.SetList("ATTACH", value); }
         }
 

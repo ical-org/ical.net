@@ -103,10 +103,7 @@ namespace DDay.iCal
 
         virtual public IList<U> GetList<U>(string name)
         {
-            List<U> items = new List<U>();
-            foreach (IList<U> item in GetAll<IList<U>>(name))
-                items.AddRange(item);
-            return items;
+            return new CompositeList<U>(GetAll<IList<U>>(name));
         }
 
         #endregion

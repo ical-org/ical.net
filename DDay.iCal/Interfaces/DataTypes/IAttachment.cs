@@ -4,11 +4,30 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public interface IBinary :
+    public interface IAttachment :
         IEncodableDataType
     {
+        /// <summary>
+        /// The URI where the attachment information can be located.
+        /// </summary>
         Uri Uri { get; set; }
-        string FormatType { get; set; }
+
+        /// <summary>
+        /// A binary representation of the data that was loaded.
+        /// </summary>
+        byte[] Data { get; set; }
+
+        /// <summary>
+        /// A unicode-encoded version of the data that was loaded.
+        /// </summary>
+        string Value { get; set; }
+
+        /// <summary>
+        /// To specify the content type of a referenced object.
+        /// This optional value should be an IANA-registered
+        /// MIME type, if specified.
+        /// </summary>
+        string FormatType { get; set; }        
 
         /// <summary>
         /// Loads (fills) the <c>Data</c> property with the file designated

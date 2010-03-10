@@ -7,8 +7,8 @@ namespace DDay.iCal
     public interface ITimeZone :
         IRecurringComponent
     {
-        ITimeZoneID TZID { get; set; }
-        ITimeZoneID TimeZoneID { get; set; }
+        string TZID { get; set; }
+        string TimeZoneID { get; set; }
 
         iCalDateTime LastModified { get; set; }
 

@@ -17,7 +17,7 @@ namespace DDay.iCal
 
         string UID { get; set; }
 
-        IList<IBinary> Attachments { get; set; }
+        IList<IAttachment> Attachments { get; set; }
         IList<IAttendee> Attendees { get; set; }
         IList<string> Categories { get; set; }
         string Class { get; set; }

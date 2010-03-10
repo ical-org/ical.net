@@ -32,7 +32,7 @@ namespace DDay.iCal
         private DateTime _Value;
         private bool _HasDate;
         private bool _HasTime;
-        private ITimeZoneID _TZID;
+        private string _TZID;
         private ITimeZoneInfo _TimeZoneInfo;
         private bool _IsUniversalTime;
         private IICalendar _Calendar;
@@ -160,7 +160,7 @@ namespace DDay.iCal
             set { _HasTime = value; }
         }
 
-        public ITimeZoneID TZID
+        public string TZID
         {
             get { return _TZID; }
             set { _TZID = value; }
@@ -251,7 +251,7 @@ namespace DDay.iCal
             Initialize(value.Value, value.TZID, value.Calendar);
         }
         public iCalDateTime(DateTime value) : this(value, null, null) {}
-        public iCalDateTime(DateTime value, ITimeZoneID tzid, IICalendar iCal) : this()
+        public iCalDateTime(DateTime value, string tzid, IICalendar iCal) : this()
         {
             Initialize(value, tzid, iCal);
         }
@@ -260,22 +260,22 @@ namespace DDay.iCal
             Initialize(year, month, day, hour, minute, second, null, null);
             HasTime = true;
         }
-        public iCalDateTime(int year, int month, int day, int hour, int minute, int second, ITimeZoneID tzid, IICalendar iCal) : this()            
+        public iCalDateTime(int year, int month, int day, int hour, int minute, int second, string tzid, IICalendar iCal) : this()            
         {
             Initialize(year, month, day, hour, minute, second, tzid, iCal);
             HasTime = true;
         }
         public iCalDateTime(int year, int month, int day)
             : this(year, month, day, 0, 0, 0) { }
-        public iCalDateTime(int year, int month, int day, ITimeZoneID tzid, IICalendar iCal)
+        public iCalDateTime(int year, int month, int day, string tzid, IICalendar iCal)
             : this(year, month, day, 0, 0, 0, tzid, iCal) { }
 
-        private void Initialize(int year, int month, int day, int hour, int minute, int second, ITimeZoneID tzid, IICalendar iCal)
+        private void Initialize(int year, int month, int day, int hour, int minute, int second, string tzid, IICalendar iCal)
         {
             Initialize(CoerceDateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzid, iCal);            
         }
 
-        private void Initialize(DateTime value, ITimeZoneID tzid, IICalendar iCal)
+        private void Initialize(DateTime value, string tzid, IICalendar iCal)
         {
             if (value.Kind == DateTimeKind.Utc)
                 this.IsUniversalTime = true;
@@ -427,7 +427,7 @@ namespace DDay.iCal
             return value;
         }
                 
-        public DateTime ToTimeZone(ITimeZoneID tzid)
+        public DateTime ToTimeZone(string tzid)
         {
             if (tzid != null)
             {
