@@ -55,7 +55,7 @@ namespace DDay.iCal
         /// to the provided TZID, or null of no matching
         /// time zone could be found.
         /// </summary>
-        ITimeZone GetTimeZone(ITimeZoneID tzid);
+        ITimeZone GetTimeZone(string tzid);
 
         /// <summary>
         /// Gets a list of unique components contained in the calendar.

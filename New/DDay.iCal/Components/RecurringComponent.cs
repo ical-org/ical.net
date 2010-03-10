@@ -25,6 +25,30 @@ namespace DDay.iCal
         UniqueComponent,
         IRecurringComponent
     {
+        #region Static Public Methods
+
+        static public IEnumerable<IRecurringComponent> SortByDate(IEnumerable<IRecurringComponent> list)
+        {
+            return SortByDate<IRecurringComponent>(list);
+        }
+
+        static public IEnumerable<T> SortByDate<T>(IEnumerable<T> list)
+        {
+            List<IRecurringComponent> items = new List<IRecurringComponent>();
+            foreach (T t in list)
+            {
+                if (t is IRecurringComponent)
+                    items.Add((IRecurringComponent)(object)t);
+            }
+
+            // Sort the list by date
+            items.Sort(new RecurringComponentDateSorter());
+            foreach (IRecurringComponent rc in items)
+                yield return (T)(object)rc;
+        }
+
+        #endregion
+
         #region Private Fields
 
         private iCalDateTime m_EvalStart;
@@ -141,78 +165,9 @@ namespace DDay.iCal
             ExceptionRules = new List<IRecurrencePattern>();
         }
 
-        #endregion
+        #endregion        
 
-        #region Static Public Methods
-
-        static public IEnumerable<IRecurringComponent> SortByDate(IEnumerable<IRecurringComponent> list)
-        {
-            return SortByDate<IRecurringComponent>(list);
-        }
-
-        static public IEnumerable<T> SortByDate<T>(IEnumerable<T> list)
-        {
-            List<IRecurringComponent> items = new List<IRecurringComponent>();
-            foreach (T t in list)
-            {
-                if (t is IRecurringComponent)
-                    items.Add((IRecurringComponent)(object)t);
-            }
-
-            // Sort the list by date
-            items.Sort(new RecurringComponentDateSorter());
-            foreach (IRecurringComponent rc in items)
-                yield return (T)(object)rc;
-        }
-
-        #endregion
-
-        #region IRecurringComponent Members
-                
-        virtual public void ClearEvaluation()
-        {
-            EvalStart = DateTime.MaxValue;
-            EvalEnd = DateTime.MinValue;
-            Periods.Clear();
-        }
-
-        virtual public IList<Occurrence> GetOccurrences(iCalDateTime dt)
-        {
-            return GetOccurrences(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
-        }
-
-        virtual public IList<Occurrence> GetOccurrences(iCalDateTime startTime, iCalDateTime endTime)
-        {
-            List<Occurrence> occurrences = new List<Occurrence>();
-            List<Period> periods = Evaluate(startTime, endTime);
-
-            foreach (Period p in periods)
-            {
-                if (p.StartTime >= startTime &&
-                    p.StartTime <= endTime)
-                    occurrences.Add(new Occurrence(this, p));
-            }
-
-            occurrences.Sort();
-            return occurrences;
-        }
-
-        virtual public IList<AlarmOccurrence> PollAlarms()
-        {
-            return PollAlarms(default(iCalDateTime), default(iCalDateTime));
-        }
-      
-        virtual public IList<AlarmOccurrence> PollAlarms(iCalDateTime Start, iCalDateTime End)
-        {
-            List<AlarmOccurrence> Occurrences = new List<AlarmOccurrence>();
-            foreach (IAlarm alarm in Alarms)
-                Occurrences.AddRange(alarm.Poll(Start, End));
-            return Occurrences;
-        }
-
-        #endregion
-
-        #region Internal Overridables
+        #region Internal Methods
 
         /// <summary>
         /// Evaluates this item to determine the dates and times for which it occurs/recurs.
@@ -273,7 +228,7 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Protected Overridables
+        #region Protected Methods
 
         /// <summary>
         /// Evaulates the RRule component, and adds each specified Period
@@ -405,6 +360,13 @@ namespace DDay.iCal
 
         #region Overrides
 
+        protected override void OnDeserializing(StreamingContext context)
+        {
+            base.OnDeserializing(context);
+
+            Initialize();
+        }
+
         public override void AddChild(ICalendarObject child)
         {
             if (child is IAlarm)
@@ -417,6 +379,54 @@ namespace DDay.iCal
             if (child is IAlarm)
                 Alarms.Remove((IAlarm)child);
             base.RemoveChild(child);
+        }
+
+        #endregion
+
+        #region IRecurringComponent Members
+
+        virtual public void ClearEvaluation()
+        {
+            EvalStart = DateTime.MaxValue;
+            EvalEnd = DateTime.MinValue;
+            Periods.Clear();
+        }
+
+        virtual public IList<Occurrence> GetOccurrences(iCalDateTime dt)
+        {
+            return GetOccurrences(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
+        }
+
+        virtual public IList<Occurrence> GetOccurrences(iCalDateTime startTime, iCalDateTime endTime)
+        {
+            List<Occurrence> occurrences = new List<Occurrence>();
+            List<Period> periods = Evaluate(startTime, endTime);
+
+            foreach (Period p in periods)
+            {
+                if (p.StartTime >= startTime &&
+                    p.StartTime <= endTime)
+                    occurrences.Add(new Occurrence(this, p));
+            }
+
+            occurrences.Sort();
+            return occurrences;
+        }
+
+        virtual public IList<AlarmOccurrence> PollAlarms()
+        {
+            return PollAlarms(default(iCalDateTime), default(iCalDateTime));
+        }
+
+        virtual public IList<AlarmOccurrence> PollAlarms(iCalDateTime Start, iCalDateTime End)
+        {
+            List<AlarmOccurrence> Occurrences = new List<AlarmOccurrence>();
+            if (Alarms != null)
+            {
+                foreach (IAlarm alarm in Alarms)
+                    Occurrences.AddRange(alarm.Poll(Start, End));
+            }
+            return Occurrences;
         }
 
         #endregion

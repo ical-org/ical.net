@@ -29,9 +29,13 @@ namespace DDay.iCal.Serialization.iCalendar
             if (sf != null &&
                 mapper != null)
             {
-                Type mappedType = mapper.Get(SerializationContext.Peek());
-                if (mappedType != null)
-                    return sf.Build(mappedType, SerializationContext) as IStringSerializer;
+                object obj = SerializationContext.Peek();
+
+                // Get the data type for this object
+                Type type = mapper.Get(obj);
+                    
+                if (type != null)
+                    return sf.Build(type, SerializationContext) as IStringSerializer;
                 else
                     return new StringSerializer(SerializationContext);
             }

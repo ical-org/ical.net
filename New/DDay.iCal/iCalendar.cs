@@ -536,7 +536,7 @@ namespace DDay.iCal
 
         public override bool Equals(object obj)
         {
-            iCalendar iCal = obj as iCalendar;
+            IICalendar iCal = obj as iCalendar;
             if (iCal != null)
             {
                 bool isEqual =
@@ -709,7 +709,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="tzid">A valid <see cref="TZID"/> object, or a valid <see cref="TZID"/> string.</param>
         /// <returns>A <see cref="TimeZone"/> object for the <see cref="TZID"/>.</returns>
-        public ITimeZone GetTimeZone(ITimeZoneID tzid)
+        public ITimeZone GetTimeZone(string tzid)
         {
             foreach (ITimeZone tz in TimeZones)
             {
@@ -827,7 +827,7 @@ namespace DDay.iCal
         /// <example>
         /// To create an event, use the following:
         /// <code>
-        /// iCalendar iCal = new iCalendar();
+        /// IICalendar iCal = new iCalendar();
         /// 
         /// Event evt = iCal.Create&lt;Event&gt;();
         /// </code>

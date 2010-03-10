@@ -304,7 +304,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="tzid">A valid <see cref="TZID"/> object, or a valid <see cref="TZID"/> string.</param>
         /// <returns>A <see cref="TimeZone"/> object for the <see cref="TZID"/>.</returns>
-        virtual public ITimeZone GetTimeZone(ITimeZoneID tzid)
+        virtual public ITimeZone GetTimeZone(string tzid)
         {
             foreach (IICalendar c in _Calendars)
             {

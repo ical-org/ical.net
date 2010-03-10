@@ -14,10 +14,10 @@ namespace DDay.iCal.Test
     [DeploymentItem("Calendars", "Calendars")]
     public class SerializationTest
     {
-        private string tzid;
+        static private string tzid;
 
-        [TestInitialize]
-        public void InitAll()
+        [ClassInitialize]
+        static public void InitAll(TestContext context)
         {
             tzid = "US-Eastern";
         }
@@ -171,8 +171,18 @@ namespace DDay.iCal.Test
 
             // Ensure the CATEGORIES properties were properly loaded
             Assert.AreEqual(1, iCal.Events.Count);
-            Assert.AreEqual(4, iCal.Events[0].Properties.CountOf("CATEGORIES"));
-            Assert.AreEqual(4, iCal.Events[0].Categories.Count);
+            Assert.AreEqual(5, iCal.Events[0].Properties.CountOf("CATEGORIES"));
+
+            List<string> cats = new List<string>(new string[] 
+            {
+                "One", "Two", "Three",
+                "Four", "Five", "Six",
+                @"A string of text with nothing less than a comma\, semicolon\; and a newline\n."
+            });
+
+            Assert.AreEqual(cats.Count, iCal.Events[0].Categories.Count);
+            for (int i = 0; i < cats.Count; i++)
+                Assert.AreEqual(cats[i], iCal.Events[0].Categories[i], "Category did not match.");
         }
 
         [TestMethod]
@@ -251,7 +261,7 @@ namespace DDay.iCal.Test
         //public void SERIALIZE17()
         //{
         //    // Create a normal iCalendar, serialize it, and load it as a custom calendar
-        //    iCalendar iCal = new iCalendar();
+        //    IICalendar iCal = new iCalendar();
 
         //    Event evt = iCal.Create<Event>();
         //    evt.Summary = "Test event";
@@ -297,7 +307,7 @@ namespace DDay.iCal.Test
         [TestMethod]
         public void SERIALIZE19()
         {
-            iCalendar iCal = new iCalendar();
+            IICalendar iCal = new iCalendar();
 
             Event evt = iCal.Create<Event>();
             evt.Summary = "Test event title";
@@ -411,7 +421,7 @@ END:VCALENDAR
 //        [TestMethod]
 //        public void SERIALIZE25()
 //        {
-//            iCalendar iCal = new iCalendar();
+//            IICalendar iCal = new iCalendar();
 //            Event evt = iCal.Create<Event>();
 //            evt.Start = DateTime.Now;
 //            evt.Duration = TimeSpan.FromHours(1);
@@ -476,7 +486,7 @@ END:VCALENDAR
         //[TestMethod]
         //public void SERIALIZE28()
         //{
-        //    iCalendar iCal = new iCalendar();
+        //    IICalendar iCal = new iCalendar();
         //    Event evt = iCal.Create<Event>();
         //    evt.Summary = "Test event";
         //    evt.Start = DateTime.Now;
@@ -513,7 +523,7 @@ END:VCALENDAR
         //[TestMethod]
         //public void SERIALIZE31()
         //{
-        //    iCalendar iCal = new iCalendar();
+        //    IICalendar iCal = new iCalendar();
         //    Event evt = iCal.Create<Event>();
 
         //    StringBuilder htmlBuilder = new StringBuilder();
@@ -534,7 +544,7 @@ END:VCALENDAR
         //[TestMethod]
         //public void SERIALIZE32()
         //{
-        //    iCalendar iCal = new iCalendar();
+        //    IICalendar iCal = new iCalendar();
         //    iCal.AddProperty("X-WR-CALNAME", "DDay Test");
         //    iCal.AddProperty("X-WR-CALDESC", "Events for a DDay Test");
         //    iCal.AddProperty("X-PUBLISHED-TTL", "PT30M");

@@ -25,7 +25,7 @@ namespace DDay.iCal.Serialization
 
         public DataTypeMapper()
         {
-            AddPropertyMapping("ATTACH", typeof(IList<IBinary>));
+            AddPropertyMapping("ATTACH", typeof(IList<IAttachment>));
             AddPropertyMapping("ATTENDEE", typeof(IList<IAttendee>));
             AddPropertyMapping("CATEGORIES", typeof(IList<string>));
             AddPropertyMapping("COMMENT", typeof(IList<string>));
@@ -78,7 +78,7 @@ namespace DDay.iCal.Serialization
 
         #endregion
 
-        #region IDataTypeMapper Members
+        #region IDefaultTypeMapper Members
 
         public void AddPropertyMapping(string name, Type objectType)
         {

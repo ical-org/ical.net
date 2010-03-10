@@ -8,7 +8,7 @@ namespace DDay.iCal
         ICalendarComponent
     {
         AlarmAction Action { get; set; }
-        IBinary Attach { get; set; }
+        IAttachment Attach { get; set; }
         IAttendee[] Attendee { get; set; }
         string Description { get; set; }
         TimeSpan Duration { get; set; }

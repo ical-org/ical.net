@@ -9,6 +9,21 @@ namespace DDay.iCal.Serialization.iCalendar
     public class SerializerFactory :
         ISerializerFactory
     {
+        #region Private Fields
+
+        ISerializerFactory m_DataTypeSerializerFactory;
+
+        #endregion
+
+        #region Constructors
+
+        public SerializerFactory()
+        {
+            m_DataTypeSerializerFactory = new DataTypeSerializerFactory();
+        }
+
+        #endregion
+
         #region ISerializerFactory Members
 
         /// <summary>
@@ -49,8 +64,10 @@ namespace DDay.iCal.Serialization.iCalendar
                         s = new DateTimeSerializer();
                     else if (typeof(TimeSpan).IsAssignableFrom(objectType))
                         s = new TimeSpanSerializer();
-                    else if (typeof(IRecurrencePattern).IsAssignableFrom(objectType))
-                        s = new RecurrencePatternSerializer();
+                    else if (typeof(int).IsAssignableFrom(objectType))
+                        s = new IntegerSerializer();
+                    else if (typeof(ICalendarDataType).IsAssignableFrom(objectType))
+                        s = m_DataTypeSerializerFactory.Build(objectType, ctx);
                     // Default to a string serializer, which simply calls
                     // ToString() on the value to serialize it.
                     else
