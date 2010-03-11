@@ -16,6 +16,7 @@ using DDay.iCal.Serialization.iCalendar;
 namespace DDay.iCal.Test
 {
     [TestClass]
+    [DeploymentItem("Calendars", "Calendars")]
     public class RecurrenceTest
     {
         static private string tzid;

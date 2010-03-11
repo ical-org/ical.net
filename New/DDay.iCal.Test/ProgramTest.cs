@@ -15,6 +15,7 @@ using DDay.iCal.Serialization.iCalendar;
 namespace DDay.iCal.Test
 {
     [TestClass]
+    [DeploymentItem("Calendars", "Calendars")]
     public class ProgramTest
     {
         [TestMethod]

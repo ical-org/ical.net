@@ -13,6 +13,7 @@ using System.ComponentModel;
 namespace DDay.iCal.Test
 {
     [TestClass]
+    [DeploymentItem("Calendars", "Calendars")]
     public class JournalTest
     {
         static private string tzid;

@@ -73,25 +73,25 @@ namespace DDay.iCal
 
         virtual public IList<IRecurrenceDate> ExceptionDates
         {
-            get { return Properties.Get<IList<IRecurrenceDate>>("EXDATE"); }
+            get { return Properties.GetList<IRecurrenceDate>("EXDATE"); }
             set { Properties.Set("EXDATE", value); }
         }
 
         virtual public IList<IRecurrencePattern> ExceptionRules
         {
-            get { return Properties.Get<IList<IRecurrencePattern>>("EXRULE"); }
+            get { return Properties.GetList<IRecurrencePattern>("EXRULE"); }
             set { Properties.Set("EXRULE", value); }
         }
 
         virtual public IList<IRecurrenceDate> RecurrenceDates
         {
-            get { return Properties.Get<IList<IRecurrenceDate>>("RDATE"); }
+            get { return Properties.GetList<IRecurrenceDate>("RDATE"); }
             set { Properties.Set("RDATE", value); }
         }
 
         virtual public IList<IRecurrencePattern> RecurrenceRules
         {
-            get { return Properties.Get<IList<IRecurrencePattern>>("RRULE"); }
+            get { return Properties.GetList<IRecurrencePattern>("RRULE"); }
             set { Properties.Set("RRULE", value); }
         }
 

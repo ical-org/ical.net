@@ -191,7 +191,7 @@
     <None Include="Serialization\iCalendar\iCal.g" />
     <Compile Include="Interfaces\Serialization\ISerializer.cs" />
     <Compile Include="Serialization\DataTypeMapper.cs" />
-    <Compile Include="Serialization\iCalendar\Serializers\TypeMapSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataMapSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\DateTimeSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\ParameterSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\iCalendarSerializer.cs" />

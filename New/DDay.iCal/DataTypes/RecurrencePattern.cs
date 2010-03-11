@@ -281,12 +281,12 @@ namespace DDay.iCal
                 if (r.Count != Count) return false;
                 if (r.Frequency != Frequency) return false;
                 if (r.Interval != Interval) return false;
-                if (r.Until != null)
+                if (r.Until.IsAssigned)
                 {
                     if (!r.Until.Equals(Until))
                         return false;
                 }
-                else if (Until != null)
+                else if (Until.IsAssigned)
                     return false;
                 if (r.WeekStart != WeekStart) return false;
                 return true;
@@ -503,7 +503,7 @@ namespace DDay.iCal
 
             // Handle "UNTIL" values that are date-only. If we didn't change values here, "UNTIL" would
             // exclude the day it specifies, instead of the inclusive behaviour it should exhibit.
-            if (Until != null && !Until.HasTime)
+            if (Until.IsAssigned && !Until.HasTime)
             {
                 Until = new iCalDateTime(
                     new DateTime(Until.Year, Until.Month, Until.Day, 23, 59, 59, Until.Value.Kind),
@@ -512,12 +512,12 @@ namespace DDay.iCal
             }
 
             // Ignore recurrences that occur outside our time frame we're looking at
-            if ((Until != null && FromDate > Until) ||
+            if ((Until.IsAssigned && FromDate > Until) ||
                 ToDate < StartDate)
                 return DateTimes;
 
             // Narrow down our time range further to avoid over-processing
-            if (Until != null && Until < ToDate)
+            if (Until.IsAssigned && Until < ToDate)
                 ToDate = Until;
             if (StartDate > FromDate)
                 FromDate = StartDate;
@@ -836,7 +836,7 @@ namespace DDay.iCal
                                 // given month.
                                 TC.Days.Add(29);
                                 TC.Days.Add(30);
-                                TC.Days.Add(30);
+                                TC.Days.Add(31);
                                 TC.Days.Add(1);
 
                                 TC.Months.Add(TC.Month);
@@ -988,7 +988,7 @@ namespace DDay.iCal
         /// </summary>
         virtual public iCalDateTime? GetNextOccurrence(iCalDateTime lastOccurrence)
         {
-            if (lastOccurrence != null)
+            if (lastOccurrence.IsAssigned)
             {
                 iCalDateTime fromDate = lastOccurrence;
                 iCalDateTime? toDate = null;
