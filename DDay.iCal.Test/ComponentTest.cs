@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace DDay.iCal.Test
 {
     [TestClass]
+    [DeploymentItem("Calendars", "Calendars")]
     public class ComponentTest
     {
         [TestMethod, Category("Component")]

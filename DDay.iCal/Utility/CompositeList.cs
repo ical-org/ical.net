@@ -344,7 +344,7 @@ namespace DDay.iCal
                         if (m_CurrentListEnumerator != null)
                             return m_CurrentListEnumerator.MoveNext();
                     }
-                    return true;                    
+                    else return true;
                 }
                 return false;
             }

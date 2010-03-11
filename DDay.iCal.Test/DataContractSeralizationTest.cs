@@ -10,6 +10,7 @@ using System.ComponentModel;
 namespace DDay.iCal.Test
 {
     [TestClass]
+    [DeploymentItem("Calendars", "Calendars")]
     public class DataContractSeralizationTest
     {
         static public void SerializeTest(object obj, string filename)

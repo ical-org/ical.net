@@ -255,12 +255,14 @@ namespace DDay.iCal
         {
             Initialize(value, tzid, iCal);
         }
-        public iCalDateTime(int year, int month, int day, int hour, int minute, int second) : this()
+        public iCalDateTime(int year, int month, int day, int hour, int minute, int second)
+            : this()
         {
             Initialize(year, month, day, hour, minute, second, null, null);
             HasTime = true;
         }
-        public iCalDateTime(int year, int month, int day, int hour, int minute, int second, string tzid, IICalendar iCal) : this()            
+        public iCalDateTime(int year, int month, int day, int hour, int minute, int second, string tzid, IICalendar iCal)
+            : this()
         {
             Initialize(year, month, day, hour, minute, second, tzid, iCal);
             HasTime = true;
@@ -280,6 +282,7 @@ namespace DDay.iCal
             if (value.Kind == DateTimeKind.Utc)
                 this.IsUniversalTime = true;
 
+            // Convert all incoming values to UTC.
             this.Value = DateTime.SpecifyKind(value, DateTimeKind.Utc);
             this.HasDate = true;
             this.HasTime = (value.Second == 0 && value.Minute == 0 && value.Hour == 0) ? false : true;
@@ -448,38 +451,38 @@ namespace DDay.iCal
         }
 
         public iCalDateTime AddYears(int years)
-        {
-            return new iCalDateTime(Value.AddYears(years), TZID, Calendar);
+        {            
+            return new iCalDateTime(Local.AddYears(years), TZID, Calendar);
         }
 
         public iCalDateTime AddMonths(int months)
         {
-            return new iCalDateTime(Value.AddMonths(months), TZID, Calendar);
+            return new iCalDateTime(Local.AddMonths(months), TZID, Calendar);
         }
 
         public iCalDateTime AddDays(int days)
         {
-            return new iCalDateTime(Value.AddDays(days), TZID, Calendar);
+            return new iCalDateTime(Local.AddDays(days), TZID, Calendar);
         }
 
         public iCalDateTime AddHours(int hours)
         {
-            return new iCalDateTime(Value.AddHours(hours), TZID, Calendar);
+            return new iCalDateTime(Local.AddHours(hours), TZID, Calendar);
         }
 
         public iCalDateTime AddMinutes(int minutes)
         {
-            return new iCalDateTime(Value.AddMinutes(minutes), TZID, Calendar);
+            return new iCalDateTime(Local.AddMinutes(minutes), TZID, Calendar);
         }
 
         public iCalDateTime AddSeconds(int seconds)
         {
-            return new iCalDateTime(Value.AddSeconds(seconds), TZID, Calendar);
+            return new iCalDateTime(Local.AddSeconds(seconds), TZID, Calendar);
         }
 
         public iCalDateTime AddMilliseconds(int milliseconds)
         {
-            return new iCalDateTime(Value.AddMilliseconds(milliseconds), TZID, Calendar);
+            return new iCalDateTime(Local.AddMilliseconds(milliseconds), TZID, Calendar);
         }
 
         #endregion
