@@ -26,9 +26,22 @@ namespace DDay.iCal
         IComparable,
         IFormattable
     {
+        public static readonly iCalDateTime MaxValue;
+        public static readonly iCalDateTime MinValue;
+
+        #region Static Constructor
+
+        static iCalDateTime()
+        {
+            MinValue = default(iCalDateTime);
+            MaxValue = new iCalDateTime(DateTime.MaxValue);
+        }
+
+        #endregion
+
         #region Private Fields
 
-        private bool _IsAssigned;        
+        private bool _IsAssigned;
         private DateTime _Value;
         private bool _HasDate;
         private bool _HasTime;

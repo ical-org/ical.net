@@ -11,7 +11,7 @@ using System.Runtime.Serialization;
 namespace DDay.iCal
 {
     /// <summary>
-    /// The base class for all iCalendar objects, components, and data types.
+    /// The base class for all iCalendar objects and components.
     /// </summary>
 #if DATACONTRACT
     [DataContract(IsReference = true, Name = "CalendarObject", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
@@ -93,7 +93,7 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Public Overridable Methods
+        #region Public Methods
 
         /// <summary>
         /// Adds an <see cref="iCalObject"/>-based object as a child
@@ -272,6 +272,17 @@ namespace DDay.iCal
                 foreach (ICalendarObject child in obj.Children)
                     AddChild(child.Copy<ICalendarObject>());
             }
+        }
+
+        #endregion
+
+        #region IServiceProvider Members
+
+        virtual public object GetService(Type serviceType)
+        {
+            // Objects don't provide any services by default.
+            // Each object needs to provide its own services.
+            return null;
         }
 
         #endregion

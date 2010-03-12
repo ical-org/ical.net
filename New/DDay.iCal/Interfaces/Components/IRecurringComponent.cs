@@ -6,15 +6,13 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface IRecurringComponent :
-        IUniqueComponent
+        IUniqueComponent        
     {
-        /// <summary>
-        /// The start date/time of the component.        
-        /// </summary>
+        [Obsolete("Use the Start property instead.")]
         iCalDateTime DTStart { get; set; }
 
         /// <summary>
-        /// An alias to the DTStart field (i.e. start date/time).
+        /// The start date/time of the component.
         /// </summary>
         iCalDateTime Start { get; set; }
 

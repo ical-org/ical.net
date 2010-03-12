@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Reflection;
 
 namespace DDay.iCal.Serialization.iCalendar
 {
@@ -35,6 +36,56 @@ namespace DDay.iCal.Serialization.iCalendar
             string[] values = value.Split(',');
             foreach (string v in values)
                 list.Add(Convert.ToInt32(v));
+        }
+
+        #endregion
+
+        #region Content Validation
+
+        virtual public void CheckRange(string name, ICollection<int> values, int min, int max)
+        {
+            bool allowZero = (min == 0 || max == 0) ? true : false;
+            foreach (int value in values)
+                CheckRange(name, value, min, max, allowZero);
+        }
+
+        virtual public void CheckRange(string name, int value, int min, int max)
+        {
+            CheckRange(name, value, min, max, (min == 0 || max == 0) ? true : false);
+        }
+
+        virtual public void CheckRange(string name, int value, int min, int max, bool allowZero)
+        {
+            if (value != int.MinValue && (value < min || value > max || (!allowZero && value == 0)))
+                throw new ArgumentException(name + " value " + value + " is out of range. Valid values are between " + min + " and " + max + (allowZero ? "" : ", excluding zero (0)") + ".");
+        }
+
+        virtual public void CheckMutuallyExclusive<T, U>(string name1, string name2, T obj1, U obj2)
+        {
+            if (object.Equals(obj1, default(T)) || object.Equals(obj2, default(U)))
+                return;
+            else
+            {
+                // If the object is MinValue instead of its default, consider
+                // that to be unassigned.
+                bool 
+                    isMin1 = false,
+                    isMin2 = false;
+
+                Type 
+                    t1 = obj1.GetType(),
+                    t2 = obj2.GetType();
+
+                FieldInfo fi1 = t1.GetField("MinValue");
+                FieldInfo fi2 = t1.GetField("MinValue");
+                
+                isMin1 = fi1 != null && obj1.Equals(fi1.GetValue(null));
+                isMin2 = fi2 != null && obj2.Equals(fi2.GetValue(null));
+                if (isMin1 || isMin2)
+                    return;                    
+            }
+
+            throw new ArgumentException("Both " + name1 + " and " + name2 + " cannot be supplied together; they are mutually exclusive.");
         }
 
         #endregion

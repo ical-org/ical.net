@@ -53,6 +53,10 @@ namespace DDay.iCal.Serialization
             AddPropertyMapping("SEQUENCE", typeof(int));
             AddPropertyMapping("STATUS", ResolveStatusProperty);
             AddPropertyMapping("TRANSP", typeof(ITransparency));
+            AddPropertyMapping("TZNAME", typeof(IList<string>));
+            AddPropertyMapping("TZOFFSETFROM", typeof(IUTCOffset));
+            AddPropertyMapping("TZOFFSETTO", typeof(IUTCOffset));
+            AddPropertyMapping("TZURL", typeof(Uri));
             AddPropertyMapping("URL", typeof(Uri));
         }
 

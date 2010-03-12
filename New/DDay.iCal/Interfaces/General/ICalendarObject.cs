@@ -7,7 +7,8 @@ namespace DDay.iCal
     public interface ICalendarObject :
         ILoadable,
         ICopyable,
-        IMergeable
+        IMergeable,
+        IServiceProvider
     {
         /// <summary>
         /// The name of the calendar object.

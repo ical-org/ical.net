@@ -26,12 +26,14 @@ namespace DDay.iCal.Serialization.iCalendar
             {
                 ISerializer s = null;
 
-                if (typeof(IRecurrencePattern).IsAssignableFrom(objectType))
-                    s = new RecurrencePatternSerializer();
+                if (typeof(IAttachment).IsAssignableFrom(objectType))
+                    s = new AttachmentSerializer();
                 else if (typeof(IGeographicLocation).IsAssignableFrom(objectType))
                     s = new GeographicLocationSerializer();
-                else if (typeof(IAttachment).IsAssignableFrom(objectType))
-                    s = new AttachmentSerializer();
+                else if (typeof(IRecurrencePattern).IsAssignableFrom(objectType))
+                    s = new RecurrencePatternSerializer();
+                else if (typeof(IUTCOffset).IsAssignableFrom(objectType))
+                    s = new UTCOffsetSerializer();
                 // Default to a string serializer, which simply calls
                 // ToString() on the value to serialize it.
                 else

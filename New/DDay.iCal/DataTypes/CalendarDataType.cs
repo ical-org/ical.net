@@ -108,5 +108,21 @@ namespace DDay.iCal
         }
 
         #endregion
+
+        #region IServiceProvider Members
+
+        public object GetService(Type serviceType)
+        {
+            if (serviceType != null)
+            {
+                if (typeof(IPeriodEvaluator).IsAssignableFrom(serviceType))
+                {
+
+                }
+            }
+            return null;
+        }
+
+        #endregion
     }
 }

@@ -5,18 +5,14 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface ITimeZone :
-        IRecurringComponent
+        ICalendarComponent
     {
+        string ID { get; set; }
         string TZID { get; set; }
-        string TimeZoneID { get; set; }
-
         iCalDateTime LastModified { get; set; }
-
         Uri TZUrl { get; set; }
-        Uri TimeZoneUrl { get; set; }
-
+        Uri Url { get; set; }
         IList<ITimeZoneInfo> TimeZoneInfos { get; set; }
-
         ITimeZoneInfo GetTimeZoneInfo(iCalDateTime dt);
     }
 }
