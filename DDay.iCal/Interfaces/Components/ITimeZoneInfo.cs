@@ -5,11 +5,11 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface ITimeZoneInfo :
-        ICalendarComponent
+        IRecurringComponent
     {
         string TimeZoneName { get; set; }
+        IList<string> TimeZoneNames { get; set; }
         IUTCOffset OffsetFrom { get; set; }
         IUTCOffset OffsetTo { get; set; }
-        string[] TimeZoneNames { get; set; }
-    }
+    }    
 }

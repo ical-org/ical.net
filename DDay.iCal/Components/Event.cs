@@ -318,11 +318,11 @@ namespace DDay.iCal
         /// <returns></returns>                
         internal override List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
         {
-            // Add the event itself, before recurrence rules are evaluated
-            // NOTE: this fixes a bug where (if evaluated multiple times)
-            // a period can be added to the Periods collection multiple times.
+            // Add the event itself, before recurrence rules are evaluated           
             Period period = new Period(DTStart, Duration);
             // Ensure the period does not already exist in our collection
+            // NOTE: this fixes a bug where (if evaluated multiple times)
+            // a period can be added to the Periods collection multiple times.
             if (!Periods.Contains(period))
                 Periods.Add(period);
             

@@ -244,8 +244,8 @@ namespace DDay.iCal.Test
         //    evt.NonstandardProperty = nonstandardText;
         //    evt.IsAllDay = true;
 
-        //    iCalendarSerializer serializer = new iCalendarSerializer(iCal);
-        //    serializer.Serialize(@"Calendars\Serialization\SERIALIZE16.ics");
+        //    iCalendarSerializer serializer = new iCalendarSerializer();
+        //    serializer.Serialize(iCal, @"Calendars\Serialization\SERIALIZE16.ics");
 
         //    IICalendar calendars = iCalendar.LoadFromFile<CustomICal1>(@"Calendars\Serialization\SERIALIZE16.ics");
         //    foreach (Event evt1 in calendars.Events)
@@ -267,8 +267,8 @@ namespace DDay.iCal.Test
         //    evt.Summary = "Test event";
         //    evt.Start = new DateTime(2007, 02, 15, 8, 0, 0);
 
-        //    iCalendarSerializer serializer = new iCalendarSerializer(iCal);
-        //    serializer.Serialize(@"Calendars\Serialization\SERIALIZE17.ics");
+        //    iCalendarSerializer serializer = new iCalendarSerializer();
+        //    serializer.Serialize(iCal, @"Calendars\Serialization\SERIALIZE17.ics");
 
         //    SerializeTest("SERIALIZE17.ics", typeof(CustomICal1), typeof(iCalendarSerializer));
         //}
@@ -379,8 +379,8 @@ END:VCALENDAR
             Assert.IsTrue(calendar.Events.ContainsKey("12345"));
             Assert.AreEqual("12345", calendar.Events["12345"].UID);
 
-            iCalendarSerializer serializer = new iCalendarSerializer(calendar);
-            serializer.Serialize(@"Calendars\Serialization\SERIALIZE20.ics");
+            iCalendarSerializer serializer = new iCalendarSerializer();
+            serializer.Serialize(calendar, @"Calendars\Serialization\SERIALIZE20.ics");
 
             SerializeTest("SERIALIZE20.ics", typeof(iCalendarSerializer));
         }
@@ -463,8 +463,8 @@ END:VCALENDAR
 //
 //Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 48 Leicester Square, London WC2H 7LR ";
 
-//            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
-//            serializer.Serialize(@"Calendars\Serialization\SERIALIZE25.ics");
+//            iCalendarSerializer serializer = new iCalendarSerializer();
+        //            serializer.Serialize(iCal, @"Calendars\Serialization\SERIALIZE25.ics");
 
 //            SerializeTest("SERIALIZE25.ics", typeof(iCalendarSerializer));
 //        }
@@ -496,8 +496,8 @@ END:VCALENDAR
         //    evt.AddAttendee("another@someurl.com");
         //    evt.AddAttendee("lastone@someurl.com");
 
-        //    iCalendarSerializer serializer = new iCalendarSerializer(iCal);
-        //    serializer.Serialize(@"Calendars\Serialization\SERIALIZE28.ics");
+        //    iCalendarSerializer serializer = new iCalendarSerializer();
+        //    serializer.Serialize(iCal, @"Calendars\Serialization\SERIALIZE28.ics");
 
         //    SerializeTest("SERIALIZE28.ics", typeof(iCalendarSerializer));
         //}
@@ -535,8 +535,8 @@ END:VCALENDAR
         //    CalendarProperty p = new CalendarProperty("X-ALT-DESC", htmlBuilder.ToString());
         //    p.AddParameter("FMTTYPE", "text/html");
 
-        //    iCalendarSerializer serializer = new iCalendarSerializer(iCal);
-        //    serializer.Serialize(@"Calendars\Serialization\SERIALIZE31.ics");
+        //    iCalendarSerializer serializer = new iCalendarSerializer();
+        //    serializer.Serialize(iCal, @"Calendars\Serialization\SERIALIZE31.ics");
 
         //    SerializeTest("SERIALIZE31.ics", typeof(iCalendarSerializer));
         //}
@@ -560,9 +560,9 @@ END:VCALENDAR
         //    evt.Summary = "This is a title";
         //    evt.Description = "This is a description";
 
-        //    iCalendarSerializer serializer = new iCalendarSerializer(iCal);
-        //    string output = serializer.SerializeToString();
-        //    serializer.Serialize(@"Calendars\Serialization\SERIALIZE32.ics");
+        //    iCalendarSerializer serializer = new iCalendarSerializer();
+        //    string output = serializer.SerializeToString(iCal);
+        //    serializer.Serialize(iCal, @"Calendars\Serialization\SERIALIZE32.ics");
 
         //    Assert.IsFalse(Regex.IsMatch(output, @"\r\n[\r\n]"));
 
@@ -632,8 +632,8 @@ END:VCALENDAR
         public void REQUIREDPARAMETERS1()
         {
             IICalendar iCal = new iCalendar();
-            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
-            serializer.Serialize(@"Calendars\Serialization\Temp\REQUIREDPARAMETERS1.ics");
+            iCalendarSerializer serializer = new iCalendarSerializer();
+            serializer.Serialize(iCal, @"Calendars\Serialization\Temp\REQUIREDPARAMETERS1.ics");
 
             iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\REQUIREDPARAMETERS1.ics");
             Assert.IsNotNull(iCal.Version);
@@ -653,8 +653,8 @@ END:VCALENDAR
             ITimeZone tz = iCal.TimeZones[0];
             tz.LastModified = new iCalDateTime(2007, 1, 1);
 
-            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
-            serializer.Serialize(@"Calendars\Serialization\Temp\TIMEZONE1.ics");
+            iCalendarSerializer serializer = new iCalendarSerializer();
+            serializer.Serialize(iCal, @"Calendars\Serialization\Temp\TIMEZONE1.ics");
 
             iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\TIMEZONE1.ics");
             tz = iCal.TimeZones[0];
@@ -674,11 +674,11 @@ END:VCALENDAR
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\TIMEZONE2.ics");
 
             ITimeZone tz = iCal.TimeZones[0];
-            foreach (ITimeZone tzi in tz.TimeZoneInfos)
+            foreach (ITimeZoneInfo tzi in tz.TimeZoneInfos)
                 tzi.Start = new iCalDateTime(2007, 1, 1);
 
-            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
-            serializer.Serialize(@"Calendars\Serialization\Temp\TIMEZONE2.ics");
+            iCalendarSerializer serializer = new iCalendarSerializer();
+            serializer.Serialize(iCal, @"Calendars\Serialization\Temp\TIMEZONE2.ics");
 
             iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\TIMEZONE2.ics");
             tz = iCal.TimeZones[0];
@@ -700,8 +700,8 @@ END:VCALENDAR
             foreach (ITimeZone tzi in tz.TimeZoneInfos)
                 tzi.Start = DateTime.Now.ToUniversalTime();
 
-            serializer = new iCalendarSerializer(iCal);
-            serializer.Serialize(@"Calendars\Serialization\Temp\TIMEZONE2.ics");
+            serializer = new iCalendarSerializer();
+            serializer.Serialize(iCal, @"Calendars\Serialization\Temp\TIMEZONE2.ics");
 
             iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\TIMEZONE2.ics");
             tz = iCal.TimeZones[0];
@@ -724,8 +724,8 @@ END:VCALENDAR
             IICalendar tmp_cal = iCalendar.LoadFromFile(@"Calendars\Serialization\TIMEZONE3.ics");
             iCal.MergeWith(tmp_cal);
 
-            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
-            serializer.Serialize(@"Calendars\Serialization\testMeOut.ics");
+            iCalendarSerializer serializer = new iCalendarSerializer();
+            serializer.Serialize(iCal, @"Calendars\Serialization\testMeOut.ics");
         }
 
         [TestMethod]
@@ -1087,10 +1087,10 @@ END:VCALENDAR
         //    binary.Data = ReadBinary(@"Data\Test.doc");
         //    evt.AddAttachment(binary);
 
-        //    iCalendarSerializer serializer = new iCalendarSerializer(iCal);
+        //    iCalendarSerializer serializer = new iCalendarSerializer();
         //    if (!Directory.Exists(@"Calendars\Serialization\Temp"))
         //        Directory.CreateDirectory(@"Calendars\Serialization\Temp");
-        //    serializer.Serialize(@"Calendars\Serialization\Temp\BINARY1.ics");
+        //    serializer.Serialize(iCal, @"Calendars\Serialization\Temp\BINARY1.ics");
 
         //    iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\BINARY1.ics");
         //    evt = iCal.Events[0];
@@ -1125,10 +1125,10 @@ END:VCALENDAR
         //    binary.Data = UnicodeEncoding.Default.GetBytes(sb.ToString());
         //    evt.AddAttachment(binary);
 
-        //    iCalendarSerializer serializer = new iCalendarSerializer(iCal);
+        //    iCalendarSerializer serializer = new iCalendarSerializer();
         //    if (!Directory.Exists(@"Calendars\Serialization\Temp"))
         //        Directory.CreateDirectory(@"Calendars\Serialization\Temp");
-        //    serializer.Serialize(@"Calendars\Serialization\Temp\BINARY2.ics");
+        //    serializer.Serialize(iCal, @"Calendars\Serialization\Temp\BINARY2.ics");
 
         //    iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\BINARY2.ics");
         //    evt = iCal.Events[0];
@@ -1162,8 +1162,8 @@ END:VCALENDAR
         //    evt2.Duration = TimeSpan.FromHours(1);
         //    evt2.AddRelatedTo(evt1.UID, RelationshipTypes.Parent); // evt1 is the parent of evt2
 
-        //    iCalendarSerializer serializer = new iCalendarSerializer(iCal);
-        //    serializer.Serialize(@"Calendars\Serialization\Temp\RELATED_TO1.ics");
+        //    iCalendarSerializer serializer = new iCalendarSerializer();
+        //    serializer.Serialize(iCal, @"Calendars\Serialization\Temp\RELATED_TO1.ics");
 
         //    iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\RELATED_TO1.ics");
         //    evt2 = iCal.Events[evt2.UID];

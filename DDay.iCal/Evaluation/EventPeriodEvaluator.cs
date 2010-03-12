@@ -4,8 +4,8 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public interface IRecurrenceDate :
-        IEncodableDataType
-    {        
+    public class EventPeriodEvaluator :
+        RecurringComponentPeriodEvaluator
+    {
     }
 }

@@ -5,7 +5,8 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface ICalendarDataType :
-        ICopyable
+        ICopyable,
+        IServiceProvider
     {
         ICalendarParameterList AssociatedParameters { get; }
         ICalendarObject AssociatedObject { get; }

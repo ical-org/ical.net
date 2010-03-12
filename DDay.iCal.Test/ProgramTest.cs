@@ -277,7 +277,8 @@ namespace DDay.iCal.Test
                 iCalDateTime dt = (iCalDateTime)DateTimes[i];
                 iCalDateTime start = occurrences[i].Period.StartTime;
                 Assert.AreEqual(dt.Local, start.Local);
-                Assert.IsTrue(dt.TimeZoneInfo.TimeZoneName == TimeZones[i], "Event " + dt + " should occur in the " + TimeZones[i] + " timezone");
+                Assert.IsNotNull(dt.TimeZoneInfo, "Comparison TimeZoneInfo should not be null.");
+                Assert.AreEqual(TimeZones[i], dt.TimeZoneInfo.TimeZoneName, "Event " + dt + " should occur in the " + TimeZones[i] + " timezone");
             }
 
             Assert.IsTrue(occurrences.Count == DateTimes.Length, "There should be exactly " + DateTimes.Length + " occurrences; there were " + occurrences.Count);
@@ -345,8 +346,10 @@ namespace DDay.iCal.Test
         [TestMethod]
         public void MERGE2()
         {
+            // FIXME: should an iCalendarCollection be able to
+            // merge with other calendars?
             IICalendar iCal = new iCalendar();
-            IICalendar tmp_cal = iCalendar.LoadFromFile(@"Calendars\General\MERGE2.ics");
+            IICalendar tmp_cal = iCalendar.LoadFromFile(@"Calendars\General\MERGE2.ics")[0];
             iCal.MergeWith(tmp_cal);
 
             tmp_cal = iCalendar.LoadFromFile(@"Calendars\General\MERGE2.ics");

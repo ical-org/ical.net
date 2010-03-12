@@ -23,6 +23,12 @@ namespace DDay.iCal
         RecurringComponent,
         ITodo
     {
+        #region Private Fields
+
+        TodoPeriodEvaluator m_Evaluator;
+
+        #endregion
+
         #region Public Properties
 
         /// <summary>
@@ -148,6 +154,8 @@ namespace DDay.iCal
         private void Initialize()
         {
             this.Name = Components.TODO;
+
+            m_Evaluator = new TodoPeriodEvaluator(this);
         }
 
         #endregion
@@ -174,7 +182,8 @@ namespace DDay.iCal
                     Completed > currDt)
                     return true;
 
-                EvaluateToPreviousOccurrence(Completed, currDt);
+                // Evaluate to the previous occurrence.
+                m_Evaluator.EvaluateToPreviousOccurrence(Completed, currDt);
 
                 foreach (Period p in Periods)
                 {
@@ -222,76 +231,9 @@ namespace DDay.iCal
             Initialize();
         }
 
-        internal override List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
-        {
-            // TODO items can only recur if a start date is specified
-            if (DTStart != null)
-            {
-                // Add the todo itself, before recurrence rules are evaluated
-                Period startPeriod = new Period(DTStart);
-                if (DTStart != null &&
-                    !Periods.Contains(startPeriod))
-                    Periods.Add(startPeriod);
-
-                base.Evaluate(FromDate, ToDate);
-
-                // Ensure each period has a duration
-                for (int i = 0; i < Periods.Count; i++)
-                {
-                    Period p = Periods[i];
-                    if (p.EndTime == null)
-                    {
-                        p.Duration = Duration;
-                        if (p.Duration != null)
-                            p.EndTime = p.StartTime + Duration;
-                        else p.EndTime = p.StartTime;
-                    }                    
-                    else
-                    {
-                        // Ensure the Kind of time is consistent with DTStart
-                        iCalDateTime dt = p.EndTime;
-                        dt.IsUniversalTime = DTStart.IsUniversalTime;
-                        p.EndTime = dt;
-                    }
-
-                    Periods[i] = p;
-                }
-
-                return Periods;
-            }
-            return new List<Period>();
-        }
-
         #endregion
 
         #region Private Methods
-
-        private void EvaluateToPreviousOccurrence(iCalDateTime completedDate, iCalDateTime currDt)
-        {
-            iCalDateTime beginningDate = completedDate;
-            if (RecurrenceRules != null) foreach (IRecurrencePattern rrule in RecurrenceRules) DetermineStartingRecurrence(rrule, ref beginningDate);
-            if (RecurrenceDates != null) foreach (IRecurrenceDate rdate in RecurrenceDates) DetermineStartingRecurrence(rdate, ref beginningDate);
-            if (ExceptionRules != null) foreach (IRecurrencePattern exrule in ExceptionRules) DetermineStartingRecurrence(exrule, ref beginningDate);
-            if (ExceptionDates != null) foreach (IRecurrenceDate exdate in ExceptionDates) DetermineStartingRecurrence(exdate, ref beginningDate);
-
-            Evaluate(beginningDate, currDt);
-        }
-
-        private void DetermineStartingRecurrence(IRecurrenceDate rdate, ref iCalDateTime dt)
-        {
-            foreach (Period p in rdate.Periods)
-            {
-                if (p.StartTime < dt)
-                    dt = p.StartTime;
-            }
-        }
-
-        private void DetermineStartingRecurrence(IRecurrencePattern recur, ref iCalDateTime dt)
-        {
-            if (recur.Count != int.MinValue)
-                dt = DTStart;
-            else recur.IncrementDate(ref dt, -recur.Interval);
-        }
 
         private void ExtrapolateTimes()
         {
