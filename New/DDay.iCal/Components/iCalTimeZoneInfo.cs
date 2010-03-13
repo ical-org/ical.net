@@ -107,14 +107,6 @@ namespace DDay.iCal
 
         #region Overrides
 
-        internal override List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
-        {
-            List<Period> periods = base.Evaluate(FromDate, ToDate);
-            // Add the initial specified date/time for the time zone entry
-            periods.Insert(0, new Period(Start, default(iCalDateTime)));
-            return periods;
-        }
-
         public override bool Equals(object obj)
         {
             iCalTimeZoneInfo tzi = obj as iCalTimeZoneInfo;

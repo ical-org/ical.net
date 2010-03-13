@@ -194,8 +194,8 @@ namespace DDay.iCal
             TimeSpan mostRecent = TimeSpan.MaxValue;
             foreach (ITimeZoneInfo curr in TimeZoneInfos)
             {
-                DateTime Start = new DateTime(dt.Year - 1, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-                DateTime End = new DateTime(dt.Year + 1, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                DateTime start = new DateTime(dt.Year - 1, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                DateTime end = new DateTime(dt.Year + 1, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
                 // NOTE: dt.Value should always be a UTC type.
                 // This must be true for it to function properly here.
@@ -219,12 +219,9 @@ namespace DDay.iCal
                     currStart = currStart.AddSeconds(curr.OffsetTo.Seconds * mult);
                 }
 
-                // Determine the UTC occurrences of the Time Zone changes                
-                if (!curr.EvalStart.IsAssigned ||
-                    !curr.EvalEnd.IsAssigned ||
-                    dtUTC < curr.EvalStart ||
-                    dtUTC > curr.EvalEnd )
-                    curr.Evaluate(Start, End);
+                // Determine the UTC occurrences of the Time Zone changes
+                IPeriodEvaluator evaluator = GetService(typeof(IPeriodEvaluator)) as IPeriodEvaluator;
+                IList<Period> periods = evaluator.Evaluate(currStart, start, end);
 
                 // If the date is past the last allowed date, then don't consider it!
                 // NOTE: if this time zone ends as another begins, then there can
@@ -240,7 +237,7 @@ namespace DDay.iCal
                 //    dtUTC > curr.Until.AddYears(1))
                 //    continue;
 
-                foreach (Period p in curr.Periods)
+                foreach (Period p in periods)
                 {
                     TimeSpan currentSpan = dtUTC - p.StartTime;
                     if (currentSpan.Ticks >= 0 &&

@@ -150,16 +150,7 @@ namespace DDay.iCal
         }
 
         #endregion        
-
-        #region Internal Methods
         
-        virtual internal List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
-        {
-            
-        }
-
-        #endregion
-
         #region Overrides
 
         protected override void OnDeserializing(StreamingContext context)
@@ -188,7 +179,7 @@ namespace DDay.iCal
         #region IRecurringComponent Members
 
         virtual public void ClearEvaluation()
-        {
+        {            
             EvalStart = DateTime.MaxValue;
             EvalEnd = DateTime.MinValue;
             Periods.Clear();
