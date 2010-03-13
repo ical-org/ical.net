@@ -84,19 +84,23 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="FromDate">The beginning date of the range to evaluate.</param>
         /// <param name="ToDate">The end date of the range to evaluate.</param>
-        virtual protected void EvaluateRDate(iCalDateTime FromDate, iCalDateTime ToDate)
+        virtual protected void EvaluateRDate(iCalDateTime fromTime, iCalDateTime toTime)
         {
             // Handle RDATEs
             if (Component.RecurrenceDates != null)
             {
                 foreach (IRecurrenceDate rdate in Component.RecurrenceDates)
                 {
-                    IList<Period> periods = rdate.Evaluate(DTStart, FromDate, ToDate);
-                    foreach (Period p in periods)
+                    IPeriodEvaluator evaluator = rdate.GetService(typeof(IPeriodEvaluator)) as IPeriodEvaluator;
+                    if (evaluator != null)
                     {
-                        if (!Periods.Contains(p))
+                        IList<Period> periods = evaluator.Evaluate(Component.Start, fromTime, toTime);
+                        foreach (Period p in periods)
                         {
-                            Periods.Add(p);
+                            if (!Periods.Contains(p))
+                            {
+                                Periods.Add(p);
+                            }
                         }
                     }
                 }
@@ -144,17 +148,21 @@ namespace DDay.iCal
             {
                 foreach (IRecurrenceDate exdate in Component.ExceptionDates)
                 {
-                    IList<Period> periods = exdate.Evaluate(Component.Start, FromDate, ToDate);
-                    for (int i = 0; i < periods.Count; i++)
+                    IPeriodEvaluator evaluator = exdate.GetService(typeof(IPeriodEvaluator)) as IPeriodEvaluator;
+                    if (evaluator != null)
                     {
-                        Period p = periods[i];
+                        IList<Period> periods = evaluator.Evaluate(Component.Start, FromDate, ToDate);
+                        for (int i = 0; i < periods.Count; i++)
+                        {
+                            Period p = periods[i];
 
-                        // If no time was provided for the ExDate, then it excludes the entire day
-                        if (!p.StartTime.HasTime || (p.EndTime != null && !p.EndTime.HasTime))
-                            p.MatchesDateOnly = true;
+                            // If no time was provided for the ExDate, then it excludes the entire day
+                            if (!p.StartTime.HasTime || (p.EndTime != null && !p.EndTime.HasTime))
+                                p.MatchesDateOnly = true;
 
-                        while (Periods.Contains(p))
-                            Periods.Remove(p);
+                            while (Periods.Contains(p))
+                                Periods.Remove(p);
+                        }
                     }
                 }
             }
@@ -164,27 +172,27 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override IList<Period> Evaluate(iCalDateTime startDate, iCalDateTime fromDate, iCalDateTime toDate)
+        public override IList<Period> Evaluate(iCalDateTime startTime, iCalDateTime fromTime, iCalDateTime toTime)
         {
             // Evaluate extra time periods, without re-evaluating ones that were already evaluated
             if ((!EvaluationStartBounds.IsAssigned && !EvaluationEndBounds.IsAssigned) ||
-                (ToDate == EvaluationStartBounds) ||
-                (FromDate == EvaluationEndBounds))
+                (toTime == EvaluationStartBounds) ||
+                (fromTime == EvaluationEndBounds))
             {
-                EvaluateRRule(FromDate, ToDate);
-                EvaluateRDate(FromDate, ToDate);
-                EvaluateExRule(FromDate, ToDate);
-                EvaluateExDate(FromDate, ToDate);
-                if (!EvaluationStartBounds.IsAssigned || EvaluationStartBounds > FromDate)
-                    EvaluationStartBounds = FromDate;
-                if (!EvaluationEndBounds.IsAssigned || EvaluationEndBounds < ToDate)
-                    EvaluationEndBounds = ToDate;
+                EvaluateRRule(fromTime, toTime);
+                EvaluateRDate(fromTime, toTime);
+                EvaluateExRule(fromTime, toTime);
+                EvaluateExDate(fromTime, toTime);
+                if (!EvaluationStartBounds.IsAssigned || EvaluationStartBounds > fromTime)
+                    EvaluationStartBounds = fromTime;
+                if (!EvaluationEndBounds.IsAssigned || EvaluationEndBounds < toTime)
+                    EvaluationEndBounds = toTime;
             }
 
-            if (EvaluationStartBounds.IsAssigned && FromDate < EvaluationStartBounds)
-                Evaluate(FromDate, EvaluationStartBounds);
-            if (EvaluationEndBounds.IsAssigned && ToDate > EvaluationEndBounds)
-                Evaluate(EvaluationEndBounds, ToDate);
+            if (EvaluationStartBounds.IsAssigned && fromTime < EvaluationStartBounds)
+                Evaluate(startTime, fromTime, EvaluationStartBounds);
+            if (EvaluationEndBounds.IsAssigned && toTime > EvaluationEndBounds)
+                Evaluate(startTime, EvaluationEndBounds, toTime);
 
             // FIXME: can't sort an IList...
             Periods.Sort();
@@ -194,9 +202,9 @@ namespace DDay.iCal
                 Period p = Periods[i];
 
                 // Ensure the Kind of time is consistent with DTStart
-                iCalDateTime startTime = p.StartTime;
-                startTime.IsUniversalTime = Component.Start.IsUniversalTime;
-                p.StartTime = startTime;
+                iCalDateTime pStart = p.StartTime;
+                pStart.IsUniversalTime = Component.Start.IsUniversalTime;
+                p.StartTime = pStart;
 
                 Periods[i] = p;
             }

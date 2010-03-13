@@ -59,7 +59,14 @@ namespace DDay.iCal
 
         public void DetermineStartingRecurrence(IRecurrenceDate rdate, ref iCalDateTime dt)
         {
-            foreach (Period p in rdate.Periods)
+            IPeriodEvaluator evaluator = rdate.GetService(typeof(IPeriodEvaluator)) as IPeriodEvaluator;
+            if (evaluator == null)
+            {
+                // FIXME: throw a specific, typed exception here.
+                throw new Exception("Could not determine starting recurrence: a period evaluator could not be found!");
+            }
+
+            foreach (Period p in evaluator.Periods)
             {
                 if (p.StartTime < dt)
                     dt = p.StartTime;
