@@ -4,8 +4,8 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public class TodoPeriodEvaluator :
-        RecurringComponentPeriodEvaluator
+    public class TodoEvaluator :
+        RecurringObjectEvaluator
     {
         #region Protected Properties
 
@@ -13,7 +13,7 @@ namespace DDay.iCal
         {
             get
             {
-                return Component as ITodo;
+                return Recurrable as ITodo;
             }
         }
 
@@ -21,7 +21,7 @@ namespace DDay.iCal
 
         #region Constructors
 
-        public TodoPeriodEvaluator(ITodo todo) : base(todo)
+        public TodoEvaluator(ITodo todo) : base(todo)
         {
         }
 
@@ -59,7 +59,7 @@ namespace DDay.iCal
 
         public void DetermineStartingRecurrence(IRecurrenceDate rdate, ref iCalDateTime dt)
         {
-            IPeriodEvaluator evaluator = rdate.GetService(typeof(IPeriodEvaluator)) as IPeriodEvaluator;
+            IEvaluator evaluator = rdate.GetService(typeof(IEvaluator)) as IEvaluator;
             if (evaluator == null)
             {
                 // FIXME: throw a specific, typed exception here.

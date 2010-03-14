@@ -180,37 +180,17 @@ namespace DDay.iCal
 
         virtual public void ClearEvaluation()
         {
-            IPeriodEvaluator evaluator = GetService(typeof(IPeriodEvaluator)) as IPeriodEvaluator;
-            if (evaluator != null)
-                evaluator.Clear();
+            RecurrenceUtil.ClearEvaluation(this);
         }
 
         virtual public IList<Occurrence> GetOccurrences(iCalDateTime dt)
         {
-            return GetOccurrences(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
+            return RecurrenceUtil.GetOccurrences(this, dt);
         }
 
         virtual public IList<Occurrence> GetOccurrences(iCalDateTime startTime, iCalDateTime endTime)
         {
-            List<Occurrence> occurrences = new List<Occurrence>();
-
-            IPeriodEvaluator evaluator = GetService(typeof(IPeriodEvaluator)) as IPeriodEvaluator;
-            if (evaluator != null)
-            {
-                IList<Period> periods = evaluator.Evaluate(Start, startTime, endTime);
-
-                foreach (Period p in periods)
-                {
-                    // Filter the resulting periods to only contain those between
-                    // startTime and endTime.
-                    if (p.StartTime >= startTime &&
-                        p.StartTime <= endTime)
-                        occurrences.Add(new Occurrence(this, p));
-                }
-
-                occurrences.Sort();
-            }
-            return occurrences;
+            return RecurrenceUtil.GetOccurrences(this, startTime, endTime);
         }
 
         virtual public IList<AlarmOccurrence> PollAlarms()

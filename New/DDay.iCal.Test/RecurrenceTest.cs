@@ -2502,8 +2502,10 @@ namespace DDay.iCal.Test
             Assert.AreEqual(items.Count, occurrences.Count, "The number of holidays did not evaluate correctly.");
             foreach (Occurrence o in occurrences)
             {
-                Assert.IsTrue(items.ContainsKey(o.Component.Summary.ToString()), "Holiday text did not match known holidays.");
-                Assert.AreEqual(items[o.Component.Summary.ToString()], o.Period.StartTime, "Date/time of holiday '" + o.Component.Summary.ToString() + "' did not match.");
+                IEvent evt = o.Source as IEvent;
+                Assert.IsNotNull(evt);
+                Assert.IsTrue(items.ContainsKey(evt.Summary.ToString()), "Holiday text did not match known holidays.");
+                Assert.AreEqual(items[evt.Summary.ToString()], o.Period.StartTime, "Date/time of holiday '" + evt.Summary.ToString() + "' did not match.");
             }
         }
 
@@ -2772,14 +2774,15 @@ namespace DDay.iCal.Test
 
             DateTime startDate = DateTime.Parse("3/30/08 11:59:40 PM", us);
             DateTime fromDate = DateTime.Parse("3/30/08 11:59:40 PM", us);
-			DateTime toDate = DateTime.Parse("3/31/08 12:00:10 AM", us);			
+			DateTime toDate = DateTime.Parse("3/31/08 12:00:10 AM", us);
 
-            IList<iCalDateTime> occurrences = pattern.Evaluate(startDate, fromDate, toDate);
+            RecurrencePatternEvaluator evaluator = new RecurrencePatternEvaluator(pattern);
+            IList<Period> occurrences = evaluator.Evaluate(startDate, fromDate, toDate);
             Assert.AreEqual(4, occurrences.Count);
-			Assert.AreEqual(DateTime.Parse("03/30/08 11:59:40 PM", us), occurrences[0].Value);
-			Assert.AreEqual(DateTime.Parse("03/30/08 11:59:50 PM", us), occurrences[1].Value);
-			Assert.AreEqual(DateTime.Parse("03/31/08 12:00:00 AM", us), occurrences[2].Value);
-			Assert.AreEqual(DateTime.Parse("03/31/08 12:00:10 AM", us), occurrences[3].Value);
+			Assert.AreEqual(DateTime.Parse("03/30/08 11:59:40 PM", us), occurrences[0].StartTime.Value);
+            Assert.AreEqual(DateTime.Parse("03/30/08 11:59:50 PM", us), occurrences[1].StartTime.Value);
+            Assert.AreEqual(DateTime.Parse("03/31/08 12:00:00 AM", us), occurrences[2].StartTime.Value);
+            Assert.AreEqual(DateTime.Parse("03/31/08 12:00:10 AM", us), occurrences[3].StartTime.Value);
         }
 
         [TestMethod, Category("Recurrence")]
@@ -2793,9 +2796,10 @@ namespace DDay.iCal.Test
 
             DateTime startDate = DateTime.Parse("3/31/2008 12:00:10 AM", us);
 			DateTime fromDate = DateTime.Parse("4/1/2008 10:08:10 AM", us);
-			DateTime toDate = DateTime.Parse("4/1/2008 10:43:23 AM", us);			
+			DateTime toDate = DateTime.Parse("4/1/2008 10:43:23 AM", us);
 
-            IList<iCalDateTime> occurrences = pattern.Evaluate(startDate, fromDate, toDate);
+            RecurrencePatternEvaluator evaluator = new RecurrencePatternEvaluator(pattern);
+            IList<Period> occurrences = evaluator.Evaluate(startDate, fromDate, toDate);
             Assert.AreNotEqual(0, occurrences.Count);
         }
 
@@ -2860,28 +2864,29 @@ namespace DDay.iCal.Test
         [TestMethod, Category("Recurrence")]
         public void TEST4()
         {
-            IRecurrencePattern rpattern = new RecurrencePattern();
-            rpattern.ByDay.Add(new DaySpecifier(DayOfWeek.Saturday));
-            rpattern.ByDay.Add(new DaySpecifier(DayOfWeek.Sunday));
+            IRecurrencePattern pattern = new RecurrencePattern();
+            pattern.ByDay.Add(new DaySpecifier(DayOfWeek.Saturday));
+            pattern.ByDay.Add(new DaySpecifier(DayOfWeek.Sunday));
 
-            rpattern.Frequency = FrequencyType.Weekly;
+            pattern.Frequency = FrequencyType.Weekly;
 
             DateTime evtStart = new DateTime(2006, 12, 1);
             DateTime evtEnd = new DateTime(2007, 1, 1);
 
             // Add the exception dates
-            IList<iCalDateTime> listOfDateTime = rpattern.Evaluate(evtStart, evtStart, evtEnd);
-            Assert.AreEqual(10, listOfDateTime.Count);
-            Assert.AreEqual(2, listOfDateTime[0].Day);
-            Assert.AreEqual(3, listOfDateTime[1].Day);
-            Assert.AreEqual(9, listOfDateTime[2].Day);
-            Assert.AreEqual(10, listOfDateTime[3].Day);
-            Assert.AreEqual(16, listOfDateTime[4].Day);
-            Assert.AreEqual(17, listOfDateTime[5].Day);
-            Assert.AreEqual(23, listOfDateTime[6].Day);
-            Assert.AreEqual(24, listOfDateTime[7].Day);
-            Assert.AreEqual(30, listOfDateTime[8].Day);
-            Assert.AreEqual(31, listOfDateTime[9].Day);
+            RecurrencePatternEvaluator evaluator = new RecurrencePatternEvaluator(pattern);
+            IList<Period> periods = evaluator.Evaluate(evtStart, evtStart, evtEnd);
+            Assert.AreEqual(10, periods.Count);
+            Assert.AreEqual(2, periods[0].StartTime.Day);
+            Assert.AreEqual(3, periods[1].StartTime.Day);
+            Assert.AreEqual(9, periods[2].StartTime.Day);
+            Assert.AreEqual(10, periods[3].StartTime.Day);
+            Assert.AreEqual(16, periods[4].StartTime.Day);
+            Assert.AreEqual(17, periods[5].StartTime.Day);
+            Assert.AreEqual(23, periods[6].StartTime.Day);
+            Assert.AreEqual(24, periods[7].StartTime.Day);
+            Assert.AreEqual(30, periods[8].StartTime.Day);
+            Assert.AreEqual(31, periods[9].StartTime.Day);
         }
     }
 }

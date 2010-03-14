@@ -381,7 +381,7 @@ namespace DDay.iCal
         /// </summary>
         public bool IsValidDate(iCalDateTime dt)
         {
-            IPeriodEvaluator evaluator = GetService(typeof(IPeriodEvaluator)) as IPeriodEvaluator;
+            IEvaluator evaluator = GetService(typeof(IEvaluator)) as IEvaluator;
 
             if (BySecond.Count != 0 && !BySecond.Contains(dt.Value.Second)) return false;
             if (ByMinute.Count != 0 && !ByMinute.Contains(dt.Value.Minute)) return false;

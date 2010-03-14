@@ -4,22 +4,22 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public class TimeZoneInfoPeriodEvaluator :
-        RecurringComponentPeriodEvaluator
+    public class TimeZoneInfoEvaluator :
+        RecurringObjectEvaluator
     {
         #region Protected Properties
 
         protected ITimeZoneInfo TimeZoneInfo
         {
-            get { return Component as ITimeZoneInfo; }
-            set { Component = value; }
+            get { return Recurrable as ITimeZoneInfo; }
+            set { Recurrable = value; }
         }
 
         #endregion
 
         #region Constructors
 
-        public TimeZoneInfoPeriodEvaluator(ITimeZoneInfo tzi) : base(tzi)
+        public TimeZoneInfoEvaluator(ITimeZoneInfo tzi) : base(tzi)
         {
         } 
 
@@ -31,7 +31,7 @@ namespace DDay.iCal
         {
             // Add the initial specified date/time for the time zone entry
             IList<Period> periods = base.Evaluate(startTime, fromTime, toTime);
-            Period startPeriod = new Period(Component.Start, default(iCalDateTime));
+            Period startPeriod = new Period(Recurrable.Start, default(iCalDateTime));
             if (!periods.Contains(startPeriod))
                 periods.Insert(0, startPeriod);
 

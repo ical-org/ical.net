@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public interface IPeriodEvaluator
+    public interface IEvaluator
     {
         /// <summary>
         /// The system calendar that governs the evaluation rules.

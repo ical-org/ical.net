@@ -5,7 +5,8 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface ITimeZoneInfo :
-        IRecurringComponent
+        ICalendarComponent,
+        IRecurrable
     {
         string TimeZoneName { get; set; }
         IList<string> TimeZoneNames { get; set; }

@@ -115,7 +115,7 @@ namespace DDay.iCal
         {
             if (serviceType != null)
             {
-                if (typeof(IPeriodEvaluator).IsAssignableFrom(serviceType))
+                if (typeof(IEvaluator).IsAssignableFrom(serviceType))
                 {
 
                 }
