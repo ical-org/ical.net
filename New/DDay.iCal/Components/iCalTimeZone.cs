@@ -123,6 +123,13 @@ namespace DDay.iCal
 
         #region Overrides
 
+        protected override void OnDeserializing(StreamingContext context)
+        {
+            base.OnDeserializing(context);
+
+            Initialize();
+        }
+
         public override void AddChild(ICalendarObject child)
         {
             if (child is iCalTimeZoneInfo)
