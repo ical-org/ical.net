@@ -28,13 +28,16 @@ namespace DDay.iCal
                     break;
                 //case FREEBUSY: return new FreeBusy();
                 //case JOURNAL: return new Journal();
-                //case TIMEZONE: return new iCalTimeZone();
+                case Components.TIMEZONE:
+                    type = typeof(iCalTimeZone);
+                    break;
                 case Components.TODO:
                     type = typeof(Todo);
                     break;
-                //case DAYLIGHT:
-                //case STANDARD:
-                //    return new iCalTimeZoneInfo(objectName.ToUpper());
+                case Components.DAYLIGHT:
+                case Components.STANDARD:
+                    type = typeof(iCalTimeZoneInfo);
+                    break;
                 default:
                     type = typeof(CalendarComponent);
                     break;
