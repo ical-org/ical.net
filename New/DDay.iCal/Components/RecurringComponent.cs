@@ -179,10 +179,10 @@ namespace DDay.iCal
         #region IRecurringComponent Members
 
         virtual public void ClearEvaluation()
-        {            
-            EvalStart = DateTime.MaxValue;
-            EvalEnd = DateTime.MinValue;
-            Periods.Clear();
+        {
+            IPeriodEvaluator evaluator = GetService(typeof(IPeriodEvaluator)) as IPeriodEvaluator;
+            if (evaluator != null)
+                evaluator.Clear();
         }
 
         virtual public IList<Occurrence> GetOccurrences(iCalDateTime dt)
@@ -193,16 +193,23 @@ namespace DDay.iCal
         virtual public IList<Occurrence> GetOccurrences(iCalDateTime startTime, iCalDateTime endTime)
         {
             List<Occurrence> occurrences = new List<Occurrence>();
-            List<Period> periods = Evaluate(startTime, endTime);
 
-            foreach (Period p in periods)
+            IPeriodEvaluator evaluator = GetService(typeof(IPeriodEvaluator)) as IPeriodEvaluator;
+            if (evaluator != null)
             {
-                if (p.StartTime >= startTime &&
-                    p.StartTime <= endTime)
-                    occurrences.Add(new Occurrence(this, p));
-            }
+                IList<Period> periods = evaluator.Evaluate(Start, startTime, endTime);
 
-            occurrences.Sort();
+                foreach (Period p in periods)
+                {
+                    // Filter the resulting periods to only contain those between
+                    // startTime and endTime.
+                    if (p.StartTime >= startTime &&
+                        p.StartTime <= endTime)
+                        occurrences.Add(new Occurrence(this, p));
+                }
+
+                occurrences.Sort();
+            }
             return occurrences;
         }
 

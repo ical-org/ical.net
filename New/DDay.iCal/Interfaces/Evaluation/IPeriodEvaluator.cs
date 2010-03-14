@@ -7,6 +7,19 @@ namespace DDay.iCal
     public interface IPeriodEvaluator
     {
         /// <summary>
+        /// The system calendar that governs the evaluation rules.
+        /// </summary>
+        System.Globalization.Calendar Calendar { get; }
+
+        /// <summary>
+        /// Gets a list of occurences for this evaluator that
+        /// are static.  These occurrences do not change and
+        /// are not calculated, but are added to the resulting
+        /// evaluation.
+        /// </summary>
+        IList<iCalDateTime> StaticOccurrences { get; }
+
+        /// <summary>
         /// The start bounds of the evaluation.  This gives
         /// the first date/time that is covered by the evaluation.
         /// This together with EvaluationEndBounds determines
@@ -33,7 +46,7 @@ namespace DDay.iCal
         /// as needed, this method can be useful to gather information
         /// that is guaranteed to not be out-of-date.
         /// </summary>
-        void ClearEvaluation();
+        void Clear();
 
         /// <summary>
         /// Evaluates this item to determine the dates and times for which it occurs/recurs.

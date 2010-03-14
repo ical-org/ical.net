@@ -25,14 +25,7 @@ namespace DDay.iCal
         RecurrenceRestrictionType RestrictionType { get; set; }
         RecurrenceEvaluationModeType EvaluationMode { get; set; }
         
-        IList<iCalDateTime> Evaluate(iCalDateTime StartDate, iCalDateTime FromDate, iCalDateTime ToDate);
-        iCalDateTime? GetNextOccurrence(iCalDateTime lastOccurrence);
         bool CheckValidDate(iCalDateTime dt);
         bool IsValidDate(iCalDateTime dt);
-
-        // FIXME: these seem more like 'internal' items.
-        // What should we do with them?
-        IList<iCalDateTime> StaticOccurrences { get; set; }
-        void IncrementDate(ref iCalDateTime dt, int amount);
     }
 }
