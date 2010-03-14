@@ -76,8 +76,9 @@ namespace DDay.iCal
         public void DetermineStartingRecurrence(IRecurrencePattern recur, ref iCalDateTime dt)
         {
             if (recur.Count != int.MinValue)
-                dt = Todo.Start;
-            else recur.IncrementDate(ref dt, -recur.Interval);
+                dt = Todo.Start;                
+            else 
+                IncrementDate(ref dt, recur, -recur.Interval);
         }
 
         #endregion

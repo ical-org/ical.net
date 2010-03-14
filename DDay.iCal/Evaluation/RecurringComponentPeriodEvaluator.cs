@@ -40,38 +40,36 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="FromDate">The beginning date of the range to evaluate.</param>
         /// <param name="ToDate">The end date of the range to evaluate.</param>
-        virtual protected void EvaluateRRule(iCalDateTime FromDate, iCalDateTime ToDate)
+        virtual protected void EvaluateRRule(iCalDateTime from, iCalDateTime to)
         {
             // Handle RRULEs
             if (Component.RecurrenceRules != null)
             {
                 foreach (IRecurrencePattern rrule in Component.RecurrenceRules)
                 {
-                    // Get a list of static occurrences
-                    // This is important to correctly calculate
-                    // recurrences with COUNT.
-                    rrule.StaticOccurrences = new List<iCalDateTime>();
-                    foreach (Period p in Periods)
-                        rrule.StaticOccurrences.Add(p.StartTime);
-
-                    //
-                    // Determine the last allowed date in this recurrence
-                    //
-                    if (rrule.Until.IsAssigned && (!m_Until.IsAssigned || m_Until < rrule.Until))
-                        m_Until = rrule.Until;
-
-                    IList<iCalDateTime> DateTimes = rrule.Evaluate(Component.Start, FromDate, ToDate);
-                    for (int i = 0; i < DateTimes.Count; i++)
+                    IPeriodEvaluator evaluator = rrule.GetService(typeof(IPeriodEvaluator)) as IPeriodEvaluator;
+                    if (evaluator != null)
                     {
-                        iCalDateTime newDt = new iCalDateTime(DateTimes[i]);
-                        newDt.TZID = Component.Start.TZID;
+                        //// Get a list of static occurrences
+                        //// This is important to correctly calculate
+                        //// recurrences with COUNT.
+                        // FIXME: static occurrences can be added elsewhere.
+                        //evaluator.StaticOccurrences.Clear();
+                        //foreach (Period p in Periods)
+                        //    evaluator.StaticOccurrences.Add(p.StartTime);
 
-                        DateTimes[i] = newDt;
-                        Period p = new Period(newDt);
+                        ////
+                        //// Determine the last allowed date in this recurrence
+                        ////
+                        // FIXME: can this be removed?
+                        //if (rrule.Until.IsAssigned && (!m_Until.IsAssigned || m_Until < rrule.Until))
+                        //    m_Until = rrule.Until;
 
-                        if (!Periods.Contains(p))
+                        IList<Period> periods = evaluator.Evaluate(Component.Start, from, to);
+                        foreach (Period p in periods)
                         {
-                            this.Periods.Add(p);
+                            if (!Periods.Contains(p))
+                                this.Periods.Add(p);
                         }
                     }
                 }
@@ -113,23 +111,23 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="FromDate">The beginning date of the range to evaluate.</param>
         /// <param name="ToDate">The end date of the range to evaluate.</param>
-        virtual protected void EvaluateExRule(iCalDateTime FromDate, iCalDateTime ToDate)
+        virtual protected void EvaluateExRule(iCalDateTime from, iCalDateTime to)
         {
             // Handle EXRULEs
             if (Component.ExceptionRules != null)
             {
                 foreach (IRecurrencePattern exrule in Component.ExceptionRules)
                 {
-                    IList<iCalDateTime> dateTimes = exrule.Evaluate(Component.Start, FromDate, ToDate);
-                    for (int i = 0; i < dateTimes.Count; i++)
+                    IPeriodEvaluator evaluator = exrule.GetService(typeof(IPeriodEvaluator)) as IPeriodEvaluator;
+                    if (evaluator != null)
                     {
-                        iCalDateTime dt = dateTimes[i];
-                        dt.TZID = Component.Start.TZID;
-                        dateTimes[i] = dt;
-
-                        Period p = new Period(dt);
-                        if (this.Periods.Contains(p))
-                            this.Periods.Remove(p);
+                        IList<Period> periods = evaluator.Evaluate(Component.Start, from, to);
+                        for (int i = 0; i < periods.Count; i++)
+                        {
+                            Period p = periods[i];
+                            if (this.Periods.Contains(p))
+                                this.Periods.Remove(p);
+                        }
                     }
                 }
             }
@@ -194,8 +192,8 @@ namespace DDay.iCal
             if (EvaluationEndBounds.IsAssigned && toTime > EvaluationEndBounds)
                 Evaluate(startTime, EvaluationEndBounds, toTime);
 
-            // FIXME: can't sort an IList...
-            Periods.Sort();
+            // Sort the list
+            m_Periods.Sort();
 
             for (int i = 0; i < Periods.Count; i++)
             {

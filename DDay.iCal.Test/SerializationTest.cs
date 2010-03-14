@@ -697,7 +697,7 @@ END:VCALENDAR
             iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\TIMEZONE2.ics");
 
             tz = iCal.TimeZones[0];
-            foreach (ITimeZone tzi in tz.TimeZoneInfos)
+            foreach (ITimeZoneInfo tzi in tz.TimeZoneInfos)                
                 tzi.Start = DateTime.Now.ToUniversalTime();
 
             serializer = new iCalendarSerializer();
