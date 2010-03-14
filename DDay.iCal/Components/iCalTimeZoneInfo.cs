@@ -19,6 +19,56 @@ namespace DDay.iCal
         CalendarComponent,
         ITimeZoneInfo
     {
+        #region Private Fields
+
+        RecurringObjectEvaluator m_Evaluator;
+
+        #endregion
+
+        #region Constructors
+
+        public iCalTimeZoneInfo() : base()
+        {
+            // FIXME: how do we ensure SEQUENCE doesn't get serialized?
+            //base.Sequence = null; // iCalTimeZoneInfo does not allow sequence numbers
+
+            Initialize();
+        }
+        public iCalTimeZoneInfo(string name) : this()
+        {
+            this.Name = name;
+        }
+
+        void Initialize()
+        {
+            m_Evaluator = new RecurringObjectEvaluator(this);
+        }
+
+        #endregion
+
+        #region Overrides
+
+        public override object GetService(Type serviceType)
+        {
+            if (typeof(IEvaluator).IsAssignableFrom(serviceType))
+                return m_Evaluator;
+            return null;
+        }
+
+        public override bool Equals(object obj)
+        {
+            iCalTimeZoneInfo tzi = obj as iCalTimeZoneInfo;
+            if (tzi != null)
+            {
+                return object.Equals(TimeZoneName, tzi.TimeZoneName) &&
+                    object.Equals(OffsetFrom, tzi.OffsetFrom) &&
+                    object.Equals(OffsetTo, tzi.OffsetTo);
+            }
+            return base.Equals(obj);
+        }
+                              
+        #endregion
+
         #region ITimeZoneInfo Members
 
         /// <summary>
@@ -35,7 +85,7 @@ namespace DDay.iCal
         /// </summary>
         virtual public string TimeZoneName
         {
-            get 
+            get
             {
                 IList<string> tzNames = TimeZoneNames;
                 if (tzNames != null &&
@@ -91,120 +141,48 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Constructors
-
-        public iCalTimeZoneInfo() : base()
-        {
-            // FIXME: how do we ensure SEQUENCE doesn't get serialized?
-            //base.Sequence = null; // iCalTimeZoneInfo does not allow sequence numbers
-        }
-        public iCalTimeZoneInfo(string name) : this()
-        {
-            this.Name = name;
-        }
-
-        #endregion
-
-        #region Overrides
-
-        public override bool Equals(object obj)
-        {
-            iCalTimeZoneInfo tzi = obj as iCalTimeZoneInfo;
-            if (tzi != null)
-            {
-                return object.Equals(TimeZoneName, tzi.TimeZoneName) &&
-                    object.Equals(OffsetFrom, tzi.OffsetFrom) &&
-                    object.Equals(OffsetTo, tzi.OffsetTo);
-            }
-            return base.Equals(obj);
-        }
-                              
-        #endregion
-
         #region IRecurrable Members
 
-        public iCalDateTime DTStart
+        virtual public iCalDateTime DTStart
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get { return Start; }
+            set { Start = value; }
         }
 
-        public iCalDateTime Start
+        virtual public iCalDateTime Start
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get { return Properties.Get<iCalDateTime>("DTSTART"); }
+            set { Properties.Set("DTSTART", value); }
         }
 
-        public IList<IRecurrenceDate> ExceptionDates
+        virtual public IList<IRecurrenceDate> ExceptionDates
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get { return Properties.GetList<IRecurrenceDate>("EXDATE"); }
+            set { Properties.Set("EXDATE", value); }
         }
 
-        public IList<IRecurrencePattern> ExceptionRules
+        virtual public IList<IRecurrencePattern> ExceptionRules
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get { return Properties.GetList<IRecurrencePattern>("EXRULE"); }
+            set { Properties.Set("EXRULE", value); }
         }
 
-        public IList<IRecurrenceDate> RecurrenceDates
+        virtual public IList<IRecurrenceDate> RecurrenceDates
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get { return Properties.GetList<IRecurrenceDate>("RDATE"); }
+            set { Properties.Set("RDATE", value); }
         }
 
-        public IList<IRecurrencePattern> RecurrenceRules
+        virtual public IList<IRecurrencePattern> RecurrenceRules
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get { return Properties.GetList<IRecurrencePattern>("RRULE"); }
+            set { Properties.Set("RRULE", value); }
         }
 
-        public iCalDateTime RecurrenceID
+        virtual public iCalDateTime RecurrenceID
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get { return Properties.Get<iCalDateTime>("RECURRENCE-ID"); }
+            set { Properties.Set("RECURRENCE-ID", value); }
         }
 
         #endregion

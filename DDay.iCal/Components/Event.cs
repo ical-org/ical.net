@@ -28,6 +28,16 @@ namespace DDay.iCal
         RecurringComponent,
         IEvent
     {
+        #region Static Public Methods
+
+        static public Event Create(iCalendar iCal)
+        {
+            Event evt = iCal.Create<Event>();
+            return evt;
+        }
+
+        #endregion
+
         #region Public Properties
 
         /// <summary>
@@ -108,7 +118,7 @@ namespace DDay.iCal
                 {
                     Properties.Set("DURATION", value);
                     ExtrapolateTimes();
-                }                
+                }
             }
         }
 
@@ -202,13 +212,9 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Static Public Methods
+        #region Private Fields
 
-        static public Event Create(iCalendar iCal)
-        {
-            Event evt = iCal.Create<Event>();
-            return evt;
-        }
+        EventEvaluator m_Evaluator;
 
         #endregion
 
@@ -228,7 +234,8 @@ namespace DDay.iCal
         {
             this.Name = Components.EVENT;
 
-            Resources = new List<string>();            
+            Resources = new List<string>();
+            m_Evaluator = new EventEvaluator(this);
         }
 
         #endregion
@@ -286,6 +293,13 @@ namespace DDay.iCal
         #endregion
 
         #region Overrides
+
+        public override object GetService(Type serviceType)
+        {
+            if (typeof(IEvaluator).IsAssignableFrom(serviceType))
+                return m_Evaluator;
+            return null;
+        }
 
         protected override void OnDeserializing(StreamingContext context)
         {

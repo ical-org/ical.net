@@ -26,7 +26,7 @@ namespace DDay.iCal
         #region Private Fields
 
         TodoEvaluator m_Evaluator;
-
+        
         #endregion
 
         #region Public Properties
@@ -223,6 +223,13 @@ namespace DDay.iCal
         #endregion
 
         #region Overrides
+
+        public override object GetService(Type serviceType)
+        {
+            if (typeof(IEvaluator).IsAssignableFrom(serviceType))
+                return m_Evaluator;
+            return null;
+        }
 
         protected override void OnDeserializing(StreamingContext context)
         {
