@@ -4,30 +4,30 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public class RecurringComponentPeriodEvaluator :
-        PeriodEvaluator
+    public class RecurringObjectEvaluator :
+        Evaluator
     {
         #region Private Fields
 
-        private IRecurringComponent m_Component;
+        private IRecurrable m_Recurrable;
 
         #endregion
 
         #region Protected Properties
 
-        protected IRecurringComponent Component
+        protected IRecurrable Recurrable
         {
-            get { return m_Component; }
-            set { m_Component = value; }
+            get { return m_Recurrable; }
+            set { m_Recurrable = value; }
         }
 
         #endregion
 
         #region Constructors
 
-        public RecurringComponentPeriodEvaluator(IRecurringComponent comp)
+        public RecurringObjectEvaluator(IRecurrable obj)
         {
-            Component = comp;
+            Recurrable = obj;
         }
 
         #endregion
@@ -43,11 +43,11 @@ namespace DDay.iCal
         virtual protected void EvaluateRRule(iCalDateTime from, iCalDateTime to)
         {
             // Handle RRULEs
-            if (Component.RecurrenceRules != null)
+            if (Recurrable.RecurrenceRules != null)
             {
-                foreach (IRecurrencePattern rrule in Component.RecurrenceRules)
+                foreach (IRecurrencePattern rrule in Recurrable.RecurrenceRules)
                 {
-                    IPeriodEvaluator evaluator = rrule.GetService(typeof(IPeriodEvaluator)) as IPeriodEvaluator;
+                    IEvaluator evaluator = rrule.GetService(typeof(IEvaluator)) as IEvaluator;
                     if (evaluator != null)
                     {
                         //// Get a list of static occurrences
@@ -65,7 +65,7 @@ namespace DDay.iCal
                         //if (rrule.Until.IsAssigned && (!m_Until.IsAssigned || m_Until < rrule.Until))
                         //    m_Until = rrule.Until;
 
-                        IList<Period> periods = evaluator.Evaluate(Component.Start, from, to);
+                        IList<Period> periods = evaluator.Evaluate(Recurrable.Start, from, to);
                         foreach (Period p in periods)
                         {
                             if (!Periods.Contains(p))
@@ -85,14 +85,14 @@ namespace DDay.iCal
         virtual protected void EvaluateRDate(iCalDateTime fromTime, iCalDateTime toTime)
         {
             // Handle RDATEs
-            if (Component.RecurrenceDates != null)
+            if (Recurrable.RecurrenceDates != null)
             {
-                foreach (IRecurrenceDate rdate in Component.RecurrenceDates)
+                foreach (IRecurrenceDate rdate in Recurrable.RecurrenceDates)
                 {
-                    IPeriodEvaluator evaluator = rdate.GetService(typeof(IPeriodEvaluator)) as IPeriodEvaluator;
+                    IEvaluator evaluator = rdate.GetService(typeof(IEvaluator)) as IEvaluator;
                     if (evaluator != null)
                     {
-                        IList<Period> periods = evaluator.Evaluate(Component.Start, fromTime, toTime);
+                        IList<Period> periods = evaluator.Evaluate(Recurrable.Start, fromTime, toTime);
                         foreach (Period p in periods)
                         {
                             if (!Periods.Contains(p))
@@ -114,14 +114,14 @@ namespace DDay.iCal
         virtual protected void EvaluateExRule(iCalDateTime from, iCalDateTime to)
         {
             // Handle EXRULEs
-            if (Component.ExceptionRules != null)
+            if (Recurrable.ExceptionRules != null)
             {
-                foreach (IRecurrencePattern exrule in Component.ExceptionRules)
+                foreach (IRecurrencePattern exrule in Recurrable.ExceptionRules)
                 {
-                    IPeriodEvaluator evaluator = exrule.GetService(typeof(IPeriodEvaluator)) as IPeriodEvaluator;
+                    IEvaluator evaluator = exrule.GetService(typeof(IEvaluator)) as IEvaluator;
                     if (evaluator != null)
                     {
-                        IList<Period> periods = evaluator.Evaluate(Component.Start, from, to);
+                        IList<Period> periods = evaluator.Evaluate(Recurrable.Start, from, to);
                         for (int i = 0; i < periods.Count; i++)
                         {
                             Period p = periods[i];
@@ -142,14 +142,14 @@ namespace DDay.iCal
         virtual protected void EvaluateExDate(iCalDateTime FromDate, iCalDateTime ToDate)
         {
             // Handle EXDATEs
-            if (Component.ExceptionDates != null)
+            if (Recurrable.ExceptionDates != null)
             {
-                foreach (IRecurrenceDate exdate in Component.ExceptionDates)
+                foreach (IRecurrenceDate exdate in Recurrable.ExceptionDates)
                 {
-                    IPeriodEvaluator evaluator = exdate.GetService(typeof(IPeriodEvaluator)) as IPeriodEvaluator;
+                    IEvaluator evaluator = exdate.GetService(typeof(IEvaluator)) as IEvaluator;
                     if (evaluator != null)
                     {
-                        IList<Period> periods = evaluator.Evaluate(Component.Start, FromDate, ToDate);
+                        IList<Period> periods = evaluator.Evaluate(Recurrable.Start, FromDate, ToDate);
                         for (int i = 0; i < periods.Count; i++)
                         {
                             Period p = periods[i];
@@ -201,7 +201,7 @@ namespace DDay.iCal
 
                 // Ensure the Kind of time is consistent with DTStart
                 iCalDateTime pStart = p.StartTime;
-                pStart.IsUniversalTime = Component.Start.IsUniversalTime;
+                pStart.IsUniversalTime = Recurrable.Start.IsUniversalTime;
                 p.StartTime = pStart;
 
                 Periods[i] = p;

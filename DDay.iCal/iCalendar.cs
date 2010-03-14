@@ -572,14 +572,14 @@ namespace DDay.iCal
             get { return m_UniqueComponents; }
         }
 
-        virtual public IEnumerable<IRecurringComponent> RecurringComponents
+        virtual public IEnumerable<IRecurrable> RecurringItems
         {
             get
             {
-                foreach (IUniqueComponent uc in UniqueComponents)
+                foreach (object obj in Children)
                 {
-                    if (uc is IRecurringComponent)
-                        yield return (IRecurringComponent)uc;
+                    if (obj is IRecurrable)
+                        yield return (IRecurrable)obj;
                 }
             }
         }
@@ -755,8 +755,8 @@ namespace DDay.iCal
         /// </summary>        
         public void ClearEvaluation()
         {
-            foreach (IRecurringComponent rc in RecurringComponents)
-                rc.ClearEvaluation();
+            foreach (IRecurrable recurrable in RecurringItems)
+                recurrable.ClearEvaluation();
         }
 
         /// <summary>
@@ -809,10 +809,10 @@ namespace DDay.iCal
         virtual public IList<Occurrence> GetOccurrences<T>(iCalDateTime startTime, iCalDateTime endTime) where T : IRecurringComponent
         {
             List<Occurrence> occurrences = new List<Occurrence>();
-            foreach (IRecurringComponent rc in RecurringComponents)
+            foreach (IRecurrable recurrable in RecurringItems)
             {
-                if (rc is T)
-                    occurrences.AddRange(rc.GetOccurrences(startTime, endTime));
+                if (recurrable is T)
+                    occurrences.AddRange(recurrable.GetOccurrences(startTime, endTime));
             }
 
             occurrences.Sort();

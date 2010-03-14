@@ -33,7 +33,7 @@ namespace DDay.iCal.Test
 
             foreach (Occurrence o in occurrences)
             {
-                Event evt = o.Component as Event;
+                Event evt = o.Source as Event;
                 if (evt != null)
                 {
                     // Display the date of the event
@@ -561,7 +561,7 @@ END:VCALENDAR
             string longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Outlook2007LineFolds.ics");
             IList<Occurrence> occurrences = iCal.GetOccurrences<Event>(new DateTime(2009, 06, 20), new DateTime(2009, 06, 22));
-            Assert.AreEqual(longName, ((IEvent)occurrences[0].Component).Location);
+            Assert.AreEqual(longName, ((IEvent)occurrences[0].Source).Location);
         }
 
 #if DATACONTRACT && !SILVERLIGHT

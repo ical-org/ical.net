@@ -16,7 +16,7 @@ namespace DDay.iCal
 #endif
     [Serializable]
     public class iCalTimeZoneInfo : 
-        RecurringComponent,
+        CalendarComponent,
         ITimeZoneInfo
     {
         #region ITimeZoneInfo Members
@@ -119,6 +119,113 @@ namespace DDay.iCal
             return base.Equals(obj);
         }
                               
+        #endregion
+
+        #region IRecurrable Members
+
+        public iCalDateTime DTStart
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public iCalDateTime Start
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IList<IRecurrenceDate> ExceptionDates
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IList<IRecurrencePattern> ExceptionRules
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IList<IRecurrenceDate> RecurrenceDates
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public IList<IRecurrencePattern> RecurrenceRules
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public iCalDateTime RecurrenceID
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        #endregion
+
+        #region IRecurrable Members
+
+        virtual public void ClearEvaluation()
+        {
+            RecurrenceUtil.ClearEvaluation(this);
+        }
+
+        virtual public IList<Occurrence> GetOccurrences(iCalDateTime dt)
+        {
+            return RecurrenceUtil.GetOccurrences(this, dt);
+        }
+
+        virtual public IList<Occurrence> GetOccurrences(iCalDateTime startTime, iCalDateTime endTime)
+        {
+            return RecurrenceUtil.GetOccurrences(this, startTime, endTime);
+        }
+
         #endregion
     }    
 }

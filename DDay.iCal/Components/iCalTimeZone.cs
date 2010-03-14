@@ -220,7 +220,7 @@ namespace DDay.iCal
                 }
 
                 // Determine the UTC occurrences of the Time Zone changes
-                IPeriodEvaluator evaluator = GetService(typeof(IPeriodEvaluator)) as IPeriodEvaluator;
+                IEvaluator evaluator = GetService(typeof(IEvaluator)) as IEvaluator;
                 IList<Period> periods = evaluator.Evaluate(currStart, start, end);
 
                 // If the date is past the last allowed date, then don't consider it!

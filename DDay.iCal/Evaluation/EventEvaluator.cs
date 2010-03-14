@@ -4,22 +4,22 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public class EventPeriodEvaluator :
-        RecurringComponentPeriodEvaluator
+    public class EventEvaluator :
+        RecurringObjectEvaluator
     {
         #region Protected Properties
 
         protected IEvent Event
         {
-            get { return Component as IEvent; }
-            set { Component = value; }
+            get { return Recurrable as IEvent; }
+            set { Recurrable = value; }
         }
 
         #endregion
 
         #region Constructors
 
-        public EventPeriodEvaluator(IEvent evt) : base(evt)
+        public EventEvaluator(IEvent evt) : base(evt)
         {
         }
 

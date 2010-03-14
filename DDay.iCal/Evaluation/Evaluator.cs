@@ -4,8 +4,8 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public abstract class PeriodEvaluator :
-        IPeriodEvaluator
+    public abstract class Evaluator :
+        IEvaluator
     {
         #region Private Fields
 
@@ -19,7 +19,7 @@ namespace DDay.iCal
 
         #region Constructors
 
-        public PeriodEvaluator()
+        public Evaluator()
         {
             Initialize();
         }

@@ -25,7 +25,7 @@ namespace DDay.iCal
     {
         #region Private Fields
 
-        TodoPeriodEvaluator m_Evaluator;
+        TodoEvaluator m_Evaluator;
 
         #endregion
 
@@ -155,7 +155,7 @@ namespace DDay.iCal
         {
             this.Name = Components.TODO;
 
-            m_Evaluator = new TodoPeriodEvaluator(this);
+            m_Evaluator = new TodoEvaluator(this);
         }
 
         #endregion

@@ -4,8 +4,8 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public class RecurrencePatternPeriodEvaluator :
-        PeriodEvaluator
+    public class RecurrencePatternEvaluator :
+        Evaluator
     {
         #region Private Fields
 
@@ -25,7 +25,7 @@ namespace DDay.iCal
 
         #region Constructors
 
-        public RecurrencePatternPeriodEvaluator(IRecurrencePattern pattern)
+        public RecurrencePatternEvaluator(IRecurrencePattern pattern)
         {
             Initialize(pattern);
         }
