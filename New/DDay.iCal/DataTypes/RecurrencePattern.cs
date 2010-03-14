@@ -234,20 +234,22 @@ namespace DDay.iCal
         #region Constructors
 
         public RecurrencePattern()
-        {   
+        {
         }
 
         public RecurrencePattern(FrequencyType frequency) : this(frequency, 1)
         {
         }
 
-        public RecurrencePattern(FrequencyType frequency, int interval)
+        public RecurrencePattern(FrequencyType frequency, int interval) :
+            this()
         {
             Frequency = frequency;
             Interval = interval;
         }
 
-        public RecurrencePattern(string value)
+        public RecurrencePattern(string value) : 
+            this()
         {
             if (value != null)
             {
@@ -366,8 +368,6 @@ namespace DDay.iCal
         #endregion
 
         #region Public Methods
-        
-        
 
         /// <summary>
         /// [Deprecated]: Use IsValidDate() instead.
@@ -453,8 +453,6 @@ namespace DDay.iCal
             return true;
         }
 
-        #endregion
-
-        
+        #endregion        
     }
 }
