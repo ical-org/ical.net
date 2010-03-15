@@ -4,13 +4,11 @@ using System.Text;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Collections;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.ComponentModel;
+using NUnit.Framework;
 
 namespace DDay.iCal.Test
 {
-    [TestClass]
-    [DeploymentItem("Calendars", "Calendars")]
+    [TestFixture]
     public class DataContractSeralizationTest
     {
         static public void SerializeTest(object obj, string filename)
@@ -64,7 +62,7 @@ namespace DDay.iCal.Test
         }
 
         // FIXME: re-implement
-        //[TestMethod, Category("DataContractSerialization")]
+        //[Test, Category("DataContractSerialization")]
         //public void Attendee1()
         //{
         //    Attendee a = new Attendee();
@@ -75,7 +73,7 @@ namespace DDay.iCal.Test
         //}
 
         // FIXME: re-implement
-        //[TestMethod, Category("DataContractSerialization")]
+        //[Test, Category("DataContractSerialization")]
         //public void Binary1()
         //{
         //    Binary b = new Binary();
@@ -85,14 +83,14 @@ namespace DDay.iCal.Test
         //    SerializeTest(b, "Binary1.xml");
         //}
 
-        [TestMethod, Category("DataContractionSerialization")]
+        [Test, Category("DataContractionSerialization")]
         public void DaySpecifier1()
         {
             DaySpecifier ds = new DaySpecifier(DayOfWeek.Monday, FrequencyOccurrence.First);
             SerializeTest(ds, "DaySpecifier1.xml");
         }
 
-        [TestMethod, Category("DataContractionSerialization")]
+        [Test, Category("DataContractionSerialization")]
         public void Duration1()
         {
             TimeSpan ts = TimeSpan.FromHours(1.234);
@@ -100,7 +98,7 @@ namespace DDay.iCal.Test
         }
 
         // FIXME: re-implement
-        //[TestMethod, Category("DataContractionSerialization")]
+        //[Test, Category("DataContractionSerialization")]
         //public void Event1()
         //{
         //    iCalendar iCal = new iCalendar();
@@ -130,21 +128,21 @@ namespace DDay.iCal.Test
         //    SerializeTest(iCal, "Event1.xml");
         //}
 
-        [TestMethod, Category("DataContractionSerialization")]
+        [Test, Category("DataContractionSerialization")]
         public void Geo1()
         {
             GeographicLocation g = new GeographicLocation(123.143, 52.1234);
             SerializeTest(g, "Geo1.xml");
         }
 
-        [TestMethod, Category("DataContractionSerialization")]
+        [Test, Category("DataContractionSerialization")]
         public void iCalDateTime1()
         {
             iCalDateTime icdt = DateTime.Now;
             SerializeTest(icdt, "iCalDateTime1.xml");
         }
                 
-        [TestMethod, Category("DataContractionSerialization")]
+        [Test, Category("DataContractionSerialization")]
         public void Period1()
         {
             Period p = new Period();
@@ -154,7 +152,7 @@ namespace DDay.iCal.Test
         }
 
         // FIXME: re-implement
-        //[TestMethod, Category("DataContractionSerialization")]
+        //[Test, Category("DataContractionSerialization")]
         //public void RecurrenceDate1()
         //{
         //    IRecurrenceDate d = new RecurrenceDate();
@@ -163,7 +161,7 @@ namespace DDay.iCal.Test
         //    SerializeTest(d, "RecurrenceDate1.xml");
         //}
 
-        [TestMethod, Category("DataContractionSerialization")]
+        [Test, Category("DataContractionSerialization")]
         public void RecurrencePattern1()
         {
             IRecurrencePattern rp = new RecurrencePattern();
@@ -176,7 +174,7 @@ namespace DDay.iCal.Test
         }
 
         // FIXME: re-implement
-        //[TestMethod, Category("DataContractionSerialization")]
+        //[Test, Category("DataContractionSerialization")]
         //public void Trigger1()
         //{
         //    Trigger t = new Trigger(TimeSpan.FromHours(-1));
@@ -184,7 +182,7 @@ namespace DDay.iCal.Test
         //}
         
         // FIXME: re-implement
-        //[TestMethod, Category("DataContractionSerialization")]
+        //[Test, Category("DataContractionSerialization")]
         //public void UTCOffset1()
         //{
         //    IUTCOffset o = new UTC_Offset(TimeSpan.FromHours(-6));

@@ -7,24 +7,22 @@ using System.Resources;
 using System.Web;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.ComponentModel;
+using NUnit.Framework;
 
 namespace DDay.iCal.Test
 {
-    [TestClass]
-    [DeploymentItem("Calendars", "Calendars")]
+    [TestFixture]
     public class JournalTest
     {
         static private string tzid;
 
-        [ClassInitialize]
-        static public void InitAll(TestContext context)
+        [TestFixtureSetUp]
+        static public void InitAll()
         {
             tzid = "US-Eastern";
         }
 
-        [TestMethod, Category("Journal")]
+        [Test, Category("Journal")]
         public void JOURNAL1()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL1.ics");
@@ -37,7 +35,7 @@ namespace DDay.iCal.Test
             Assert.IsNull(j.DTStart);
         }
 
-        [TestMethod, Category("Journal")]
+        [Test, Category("Journal")]
         public void JOURNAL2()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL2.ics");

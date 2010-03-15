@@ -435,12 +435,18 @@ namespace DDay.iCal
 
         public static iCalDateTime operator -(iCalDateTime left, TimeSpan right)
         {
-            return new iCalDateTime(left.Value - right, left.TZID, left.Calendar);
+            return new iCalDateTime(
+                DateTime.SpecifyKind(left.Value - right, left.IsUniversalTime ? DateTimeKind.Utc : DateTimeKind.Local),
+                left.TZID,
+                left.Calendar);
         }
 
         public static iCalDateTime operator +(iCalDateTime left, TimeSpan right)
         {
-            return new iCalDateTime(left.Value + right, left.TZID, left.Calendar);
+            return new iCalDateTime(
+                DateTime.SpecifyKind(left.Value + right, left.IsUniversalTime ? DateTimeKind.Utc : DateTimeKind.Local),
+                left.TZID,
+                left.Calendar);
         }
 
         public static implicit operator iCalDateTime(DateTime left)
@@ -485,38 +491,59 @@ namespace DDay.iCal
         }
 
         public iCalDateTime AddYears(int years)
-        {            
-            return new iCalDateTime(Local.AddYears(years), TZID, Calendar);
+        {
+            return new iCalDateTime(
+                DateTime.SpecifyKind(Value.AddYears(years), IsUniversalTime ? DateTimeKind.Utc : DateTimeKind.Local),
+                TZID,
+                Calendar);
         }
 
         public iCalDateTime AddMonths(int months)
         {
-            return new iCalDateTime(Local.AddMonths(months), TZID, Calendar);
+            return new iCalDateTime(
+                DateTime.SpecifyKind(Value.AddMonths(months), IsUniversalTime ? DateTimeKind.Utc : DateTimeKind.Local),
+                TZID,
+                Calendar);
         }
 
         public iCalDateTime AddDays(int days)
         {
-            return new iCalDateTime(Local.AddDays(days), TZID, Calendar);
+            return new iCalDateTime(
+                DateTime.SpecifyKind(Value.AddDays(days), IsUniversalTime ? DateTimeKind.Utc : DateTimeKind.Local),
+                TZID,
+                Calendar);
         }
 
         public iCalDateTime AddHours(int hours)
         {
-            return new iCalDateTime(Local.AddHours(hours), TZID, Calendar);
+            return new iCalDateTime(
+                DateTime.SpecifyKind(Value.AddHours(hours), IsUniversalTime ? DateTimeKind.Utc : DateTimeKind.Local),
+                TZID,
+                Calendar);
         }
 
         public iCalDateTime AddMinutes(int minutes)
         {
-            return new iCalDateTime(Local.AddMinutes(minutes), TZID, Calendar);
+            return new iCalDateTime(
+                DateTime.SpecifyKind(Value.AddMinutes(minutes), IsUniversalTime ? DateTimeKind.Utc : DateTimeKind.Local),
+                TZID,
+                Calendar);
         }
 
         public iCalDateTime AddSeconds(int seconds)
         {
-            return new iCalDateTime(Local.AddSeconds(seconds), TZID, Calendar);
+            return new iCalDateTime(
+                DateTime.SpecifyKind(Value.AddSeconds(seconds), IsUniversalTime ? DateTimeKind.Utc : DateTimeKind.Local),
+                TZID,
+                Calendar);
         }
 
         public iCalDateTime AddMilliseconds(int milliseconds)
         {
-            return new iCalDateTime(Local.AddMilliseconds(milliseconds), TZID, Calendar);
+            return new iCalDateTime(
+                DateTime.SpecifyKind(Value.AddMilliseconds(milliseconds), IsUniversalTime ? DateTimeKind.Utc : DateTimeKind.Local),
+                TZID,
+                Calendar);
         }
 
         #endregion

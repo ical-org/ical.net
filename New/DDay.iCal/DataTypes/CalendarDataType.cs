@@ -111,15 +111,8 @@ namespace DDay.iCal
 
         #region IServiceProvider Members
 
-        public object GetService(Type serviceType)
+        virtual public object GetService(Type serviceType)
         {
-            if (serviceType != null)
-            {
-                if (typeof(IEvaluator).IsAssignableFrom(serviceType))
-                {
-
-                }
-            }
             return null;
         }
 

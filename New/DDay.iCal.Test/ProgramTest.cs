@@ -9,16 +9,15 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using DDay.iCal.Serialization;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DDay.iCal.Serialization.iCalendar;
+using NUnit.Framework;
 
 namespace DDay.iCal.Test
 {
-    [TestClass]
-    [DeploymentItem("Calendars", "Calendars")]
+    [TestFixture]
     public class ProgramTest
     {
-        [TestMethod]
+        [Test]
         public void LoadAndDisplayCalendar()
         {
             // The following code loads and displays an iCalendar
@@ -61,26 +60,26 @@ namespace DDay.iCal.Test
         static private TimeSpan TotalTime;
         static private string tzid;
 
-        [ClassInitialize]
-        static public void InitAll(TestContext context)
+        [TestFixtureSetUp]
+        static public void InitAll()
         {
             TotalTime = new TimeSpan(0);
             tzid = "US-Eastern";
         }
 
-        [ClassCleanup]
+        [TestFixtureTearDown]
         static public void DisposeAll()
         {
             Console.WriteLine("Total Processing Time: " + Math.Round(TotalTime.TotalMilliseconds) + "ms");
         }
 
-        [TestInitialize]
+        [SetUp]
         public void Init()
         {
             Start = DateTime.Now;
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Dispose()
         {
             End = DateTime.Now;
@@ -97,7 +96,7 @@ namespace DDay.iCal.Test
                 Assert.IsTrue(iCal.Todos.Count == 1, "Calendar should contain 1 todo; however, the iCalendar loaded " + iCal.Todos.Count + " todos");
         }
 
-        [TestMethod]
+        [Test]
         public void LoadFromFile()
         {
             string path = @"Calendars\General\Test1.ics";
@@ -107,7 +106,7 @@ namespace DDay.iCal.Test
             ProgramTest.TestCal(iCal);
         }
 
-        [TestMethod]
+        [Test]
         public void LoadFromUri()
         {
             string path = Directory.GetCurrentDirectory();
@@ -119,7 +118,7 @@ namespace DDay.iCal.Test
         }
 
         // FIXME: re-implement
-        //[TestMethod]
+        //[Test]
         //public void CATEGORIES()
         //{
         //    IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\CATEGORIES.ics");
@@ -149,7 +148,7 @@ namespace DDay.iCal.Test
         //        Assert.IsTrue(found.ContainsKey(item), "Event should contain CATEGORY '" + item + "', but it was not found.");
         //}
 
-        [TestMethod]
+        [Test]
         public void GEO1()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\GEO1.ics");
@@ -160,7 +159,7 @@ namespace DDay.iCal.Test
             Assert.IsTrue(evt.GeographicLocation.Longitude == -122.082932, "Longitude should be -122.082932; it is not.");
         }
 
-        [TestMethod]
+        [Test]
         public void BASE64()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BASE64.ics");
@@ -185,7 +184,7 @@ namespace DDay.iCal.Test
                 "Attached value does not match.");
         }
 
-        [TestMethod]
+        [Test]
         public void BASE64_1()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BASE64_1.ics");
@@ -200,7 +199,7 @@ namespace DDay.iCal.Test
         /// At times, this may throw a WebException if an internet connection is not present.
         /// This is safely ignored.
         /// </summary>
-        [TestMethod, ExpectedException(typeof(WebException))]
+        [Test, ExpectedException(typeof(WebException))]
         public void ATTACHMENT()
         {
             IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\General\BINARY.ics");
@@ -226,7 +225,7 @@ namespace DDay.iCal.Test
         /// The following test is an aggregate of RRULE21() and RRULE22() in the
         /// <see cref="Recurrence"/> class.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void MERGE1()
         {
             IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics");
@@ -343,7 +342,7 @@ namespace DDay.iCal.Test
             Assert.AreEqual(DateTimes1.Length, occurrences.Count, "There should be exactly " + DateTimes1.Length + " occurrences; there were " + occurrences.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void MERGE2()
         {
             // FIXME: should an iCalendarCollection be able to
@@ -362,7 +361,7 @@ namespace DDay.iCal.Test
         /// The following tests the MergeWith() method of iCalendar to
         /// ensure that unique component merging happens as expected.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void MERGE3()
         {
             IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics");
@@ -373,7 +372,7 @@ namespace DDay.iCal.Test
             Assert.AreEqual(1, iCal1.Events.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void UID1()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BINARY.ics");
@@ -384,7 +383,7 @@ namespace DDay.iCal.Test
         }
 
         // FIXME: re-implement
-        //[TestMethod]
+        //[Test]
         //public void ADDEVENT1()
         //{
         //    IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\GEO1.ics");
@@ -404,13 +403,13 @@ namespace DDay.iCal.Test
         //    serializer.Serialize(iCal, @"Calendars\General\Temp\GEO1_Serialized.ics");
         //}
 
-        [TestMethod]
+        [Test]
         public void LANGUAGE1()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Barça 2006 - 2007.ics");
         }
 
-        [TestMethod]
+        [Test]
         public void GOOGLE1()
         {
             string tzid = "Europe/Berlin";
@@ -437,7 +436,7 @@ namespace DDay.iCal.Test
             Assert.IsTrue(occurrences.Count == DateTimes.Length, "There should be exactly " + DateTimes.Length + " occurrences; there were " + occurrences.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void LOAD1()
         {
             StringReader sr = new StringReader(@"BEGIN:VCALENDAR
@@ -476,7 +475,7 @@ END:VCALENDAR
             Assert.IsNotNull(iCal.Events["ebfbd3e3-cc1e-4a64-98eb-ced2598b3908"], "Event ebfbd3e3-cc1e-4a64-98eb-ced2598b3908 should exist in the calendar");
         }
 
-        [TestMethod]
+        [Test]
         public void EVALUATION1()
         {
             //iCalendarCollection calendars = new iCalendarCollection();
@@ -535,19 +534,19 @@ END:VCALENDAR
             //Assert.IsTrue(occurrences.Count == DateTimes.Count, "There should be exactly " + DateTimes.Count + " occurrences; there were " + occurrences.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void PRODID1()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/PRODID1.ics");
         }
 
-        [TestMethod]
+        [Test]
         public void PRODID2()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/PRODID2.ics");
         }
 
-        [TestMethod]
+        [Test]
         public void Outlook2007_With_Folded_Lines_Using_Tabs_Contains_One_Event()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Outlook2007LineFolds.ics");
@@ -555,7 +554,7 @@ END:VCALENDAR
             Assert.AreEqual(1, events.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void Outlook2007_With_Folded_Lines_Using_Tabs_Is_Properly_Unwrapped()
         {
             string longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
@@ -569,7 +568,7 @@ END:VCALENDAR
         /// Tests conversion of the system time zone to one compatible with DDay.iCal.
         /// Also tests the gaining/loss of an hour over time zone boundaries.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void SystemTimeZone1()
         {
             System.TimeZoneInfo tzi = System.TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time");

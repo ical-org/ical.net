@@ -5,19 +5,18 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using DDay.iCal.Serialization.iCalendar;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DDay.iCal.Serialization;
+using NUnit.Framework;
 
 namespace DDay.iCal.Test
 {
-    [TestClass]
-    [DeploymentItem("Calendars", "Calendars")]
+    [TestFixture]
     public class SerializationTest
     {
         static private string tzid;
 
-        [ClassInitialize]
-        static public void InitAll(TestContext context)
+        [TestFixtureSetUp]
+        static public void InitAll()
         {
             tzid = "US-Eastern";
         }
@@ -122,49 +121,49 @@ namespace DDay.iCal.Test
             Assert.IsFalse(enum2.MoveNext(), "Second enumeration had more elements than the first.");
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE1()
         {
             SerializeTest("SERIALIZE1.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE2()
         {
             SerializeTest("SERIALIZE2.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE3()
         {
             SerializeTest("SERIALIZE3.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE4()
         {
             SerializeTest("SERIALIZE4.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE5()
         {
             SerializeTest("SERIALIZE5.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE6()
         {
             SerializeTest("SERIALIZE6.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE7()
         {
             SerializeTest("SERIALIZE7.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE8()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\SERIALIZE8.ics", Encoding.UTF8);
@@ -185,43 +184,43 @@ namespace DDay.iCal.Test
                 Assert.AreEqual(cats[i], iCal.Events[0].Categories[i], "Category did not match.");
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE9()
         {
             SerializeTest("SERIALIZE9.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE10()
         {
             SerializeTest("SERIALIZE10.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE11()
         {
             SerializeTest("SERIALIZE11.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE12()
         {
             SerializeTest("SERIALIZE12.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE13()
         {
             SerializeTest("SERIALIZE13.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE14()
         {
             SerializeTest("SERIALIZE14.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE15()
         {
             SerializeTest("SERIALIZE15.ics", typeof(iCalendarSerializer));
@@ -230,7 +229,7 @@ namespace DDay.iCal.Test
         // FIXME: implement this
         //
 
-        //[TestMethod]
+        //[Test]
         //public void SERIALIZE16()
         //{
         //    
@@ -257,7 +256,7 @@ namespace DDay.iCal.Test
         //    SerializeTest("SERIALIZE16.ics", typeof(CustomICal1), typeof(iCalendarSerializer));
         //}
 
-        //[TestMethod]
+        //[Test]
         //public void SERIALIZE17()
         //{
         //    // Create a normal iCalendar, serialize it, and load it as a custom calendar
@@ -273,7 +272,7 @@ namespace DDay.iCal.Test
         //    SerializeTest("SERIALIZE17.ics", typeof(CustomICal1), typeof(iCalendarSerializer));
         //}
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE18()
         {
             IICalendar iCal = new iCalendar();
@@ -304,7 +303,7 @@ namespace DDay.iCal.Test
             SerializeTest("SERIALIZE18.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE19()
         {
             IICalendar iCal = new iCalendar();
@@ -331,7 +330,7 @@ namespace DDay.iCal.Test
             CompareComponents(evt, evt1);
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE20()
         {
             string iCalString = @"BEGIN:VCALENDAR
@@ -385,25 +384,25 @@ END:VCALENDAR
             SerializeTest("SERIALIZE20.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE21()
         {
             SerializeTest("SERIALIZE21.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE22()
         {
             SerializeTest("SERIALIZE22.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE23()
         {
             SerializeTest("SERIALIZE23.ics", typeof(iCalendarSerializer));
         }
 
-        //[TestMethod]
+        //[Test]
         //public void SERIALIZE24()
         //{
         //    //
@@ -418,7 +417,7 @@ END:VCALENDAR
         //    Assert.IsTrue(customCalendar.Events[0].GetType() == typeof(CustomEvent1), "Custom calendar event should be of type CustomEvent1");
         //}
 
-//        [TestMethod]
+//        [Test]
 //        public void SERIALIZE25()
 //        {
 //            IICalendar iCal = new iCalendar();
@@ -469,7 +468,7 @@ END:VCALENDAR
 //            SerializeTest("SERIALIZE25.ics", typeof(iCalendarSerializer));
 //        }
 
-        //[TestMethod]
+        //[Test]
         //public void SERIALIZE26()
         //{
         //    URI uri = new URI("addressbook://D263B4AF-823F-4D1C-BBFE-9F11491F1559:ABPerson");
@@ -477,13 +476,13 @@ END:VCALENDAR
         //    Assert.AreEqual("D263B4AF-823F-4D1C-BBFE-9F11491F1559:ABPerson", uri.Authority);
         //}
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE27()
         {
             SerializeTest("SERIALIZE27.ics", typeof(iCalendarSerializer));
         }
 
-        //[TestMethod]
+        //[Test]
         //public void SERIALIZE28()
         //{
         //    IICalendar iCal = new iCalendar();
@@ -502,7 +501,7 @@ END:VCALENDAR
         //    SerializeTest("SERIALIZE28.ics", typeof(iCalendarSerializer));
         //}
 
-        [TestMethod]
+        [Test]
         public void SERIALIZE29()
         {
             SerializeTest("SERIALIZE29.ics", typeof(iCalendarSerializer));
@@ -511,7 +510,7 @@ END:VCALENDAR
         /// <summary>
         /// Tests bug #2148092 - Percent compelete serialization error
         /// </summary>
-        [TestMethod]
+        [Test]
         public void SERIALIZE30()
         {
             SerializeTest("SERIALIZE30.ics", typeof(iCalendarSerializer));
@@ -520,7 +519,7 @@ END:VCALENDAR
         ///// <summary>
         ///// Tests adding custom properties to a calendar.
         ///// </summary>
-        //[TestMethod]
+        //[Test]
         //public void SERIALIZE31()
         //{
         //    IICalendar iCal = new iCalendar();
@@ -541,7 +540,7 @@ END:VCALENDAR
         //    SerializeTest("SERIALIZE31.ics", typeof(iCalendarSerializer));
         //}
 
-        //[TestMethod]
+        //[Test]
         //public void SERIALIZE32()
         //{
         //    IICalendar iCal = new iCalendar();
@@ -569,7 +568,7 @@ END:VCALENDAR
         //    SerializeTest("SERIALIZE32.ics", typeof(iCalendarSerializer));
         //}
 
-        //[TestMethod]
+        //[Test]
         //public void SERIALIZE33()
         //{
         //    IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\SERIALIZE33.ics");
@@ -581,25 +580,25 @@ END:VCALENDAR
         //    SerializeTest("SERIALIZE33.ics", typeof(iCalendarSerializer));
         //}
 
-        [TestMethod]
+        [Test]
         public void USHOLIDAYS()
         {
             SerializeTest("USHolidays.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void LANGUAGE1()
         {
             SerializeTest("LANGUAGE1.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void LANGUAGE2()
         {
             SerializeTest("LANGUAGE2.ics", typeof(iCalendarSerializer));
         }
 
-        [TestMethod]
+        [Test]
         public void LANGUAGE3()
         {
             SerializeTest("RussiaHolidays.ics", typeof(iCalendarSerializer));
@@ -616,7 +615,7 @@ END:VCALENDAR
             CompareCalendars(russia1, russia2);
         }
 
-        [TestMethod]
+        [Test]
         public void LANGUAGE4()
         {
             string calendarPath = Path.Combine(Environment.CurrentDirectory, "Calendars");
@@ -628,7 +627,7 @@ END:VCALENDAR
             CompareCalendars(russia1, russia2);
         }
 
-        [TestMethod]
+        [Test]
         public void REQUIREDPARAMETERS1()
         {
             IICalendar iCal = new iCalendar();
@@ -645,7 +644,7 @@ END:VCALENDAR
             Assert.IsNotNull(iCal.ProductID, "PRODID is required");
         }
 
-        [TestMethod]
+        [Test]
         public void TIMEZONE1()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\TIMEZONE1.ics");
@@ -664,7 +663,7 @@ END:VCALENDAR
             //Assert.IsFalse(cl.Parameters.ContainsKey("VALUE"), "The \"VALUE\" parameter is not allowed on \"LAST-MODIFIED\"");
         }
 
-        [TestMethod]
+        [Test]
         public void TIMEZONE2()
         {
             //
@@ -715,7 +714,7 @@ END:VCALENDAR
             //}
         }
 
-        [TestMethod]
+        [Test]
         public void TIMEZONE3()
         {
             SerializeTest("TIMEZONE3.ics", typeof(iCalendarSerializer));
@@ -728,14 +727,14 @@ END:VCALENDAR
             serializer.Serialize(iCal, @"Calendars\Serialization\testMeOut.ics");
         }
 
-        [TestMethod]
+        [Test]
         public void PARSE1()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE1.ics");
             Assert.IsTrue(iCal.Events.Count == 2, "iCalendar should have 2 events");
         }
 
-        [TestMethod]
+        [Test]
         public void PARSE2()
         {
             iCalendarCollection calendars = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE2.ics");
@@ -744,7 +743,7 @@ END:VCALENDAR
             Assert.AreEqual(2, calendars[1].Events.Count);
         }
 
-        [TestMethod]
+        [Test]
         public void PARSE3()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE3.ics");
@@ -754,7 +753,7 @@ END:VCALENDAR
         /// Verifies that blank lines between components are allowed
         /// (as occurs with some applications/parsers - i.e. KOrganizer)
         /// </summary>
-        [TestMethod]
+        [Test]
         public void PARSE4()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE4.ics");
@@ -764,7 +763,7 @@ END:VCALENDAR
         /// Verifies that a calendar will load without a VERSION or PRODID
         /// specification.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void PARSE5()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE5.ics");
@@ -773,7 +772,7 @@ END:VCALENDAR
         /// <summary>
         /// Tests a calendar that should fail to properly parse.
         /// </summary>
-        [TestMethod, ExpectedException(typeof(antlr.MismatchedTokenException))]
+        [Test, ExpectedException(typeof(antlr.MismatchedTokenException))]
         public void PARSE6()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE6.ics");
@@ -782,7 +781,7 @@ END:VCALENDAR
         /// <summary>
         /// Similar to PARSE4 and PARSE5 tests.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void PARSE7()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE7.ics");
@@ -791,7 +790,7 @@ END:VCALENDAR
         /// <summary>
         /// Tests that a mixed-case VERSION property is loaded properly
         /// </summary>
-        [TestMethod]
+        [Test]
         public void PARSE8()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE8.ics");
@@ -801,7 +800,7 @@ END:VCALENDAR
         /// <summary>
         /// Tests that multiple properties are allowed in iCalObjects
         /// </summary>
-        [TestMethod]
+        [Test]
         public void PARSE9()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE9.ics");
@@ -816,7 +815,7 @@ END:VCALENDAR
         ///// <summary>
         ///// Tests that multiple parameters are allowed in iCalObjects
         ///// </summary>
-        //[TestMethod]
+        //[Test]
         //public void PARSE10()
         //{
         //    IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE10.ics");
@@ -831,7 +830,7 @@ END:VCALENDAR
         ///// <summary>
         ///// Tests that a Google calendar is correctly loaded and parsed.
         ///// </summary>
-        //[TestMethod]
+        //[Test]
         //public void PARSE11()
         //{
         //    IICalendar iCal = iCalendar.LoadFromUri(new Uri("http://www.google.com/calendar/ical/tvhot064q4p48frqdalgo3fb2k%40group.calendar.google.com/public/basic.ics"))[0];
@@ -853,7 +852,7 @@ END:VCALENDAR
         ///// <summary>
         ///// Tests that string escaping works with Text elements.
         ///// </summary>
-        //[TestMethod]
+        //[Test]
         //public void PARSE12()
         //{
         //    string value = @"test\with\;characters";
@@ -880,7 +879,7 @@ END:VCALENDAR
         ///// <summary>
         ///// Tests that empty parameters are allowed in iCalObjects
         ///// </summary>
-        //[TestMethod]
+        //[Test]
         //public void PARSE13()
         //{
         //    IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE13.ics");
@@ -891,7 +890,7 @@ END:VCALENDAR
         ///// <summary>
         ///// Tests that valid REQUEST-STATUS properties are parsed correctly.
         ///// </summary>
-        //[TestMethod]
+        //[Test]
         //public void PARSE14()
         //{
         //    IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE14.ics");
@@ -910,7 +909,7 @@ END:VCALENDAR
         ///// <summary>
         ///// Tests that valid RDATE properties are parsed correctly.
         ///// </summary>
-        //[TestMethod]
+        //[Test]
         //public void PARSE15()
         //{
         //    IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE15.ics");
@@ -936,7 +935,7 @@ END:VCALENDAR
         ///// Tests that DateTime values that are out-of-range are still parsed correctly
         ///// and set to the closest representable date/time in .NET.
         ///// </summary>
-        //[TestMethod]
+        //[Test]
         //public void PARSE16()
         //{
         //    IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE16.ics");
@@ -954,7 +953,7 @@ END:VCALENDAR
         ///// Tests that DateTime values that are not valid do not cause the
         ///// calendar to fail to parse when "Loose" parsing is enabled.
         ///// </summary>
-        //[TestMethod]
+        //[Test]
         //public void PARSE17()
         //{
         //    SerializationContext ctx = new SerializationContext();
@@ -974,7 +973,7 @@ END:VCALENDAR
         ///// https://sourceforge.net/tracker/?func=detail&aid=2033495&group_id=187422&atid=921236
         ///// Sourceforge bug #2033495
         ///// </summary>
-        //[TestMethod]
+        //[Test]
         //public void PARSE18()
         //{
         //    IICalendar iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\PARSE18.ics", Encoding.UTF8)[0];
@@ -986,7 +985,7 @@ END:VCALENDAR
         ///// Tests that line/column numbers are correctly tracked for
         ///// parsed (deserialized) calendars.
         ///// </summary>
-        //[TestMethod]
+        //[Test]
         //public void LineColumns1()
         //{
         //    SerializationContext ctx = new SerializationContext();
@@ -1016,7 +1015,7 @@ END:VCALENDAR
         ///// Tests that line/column numbers are correctly tracked for
         ///// parsed (deserialized) calendars.
         ///// </summary>
-        //[TestMethod]
+        //[Test]
         //public void LineColumns2()
         //{
         //    SerializationContext ctx = new SerializationContext();
@@ -1070,7 +1069,7 @@ END:VCALENDAR
         ///// <summary>
         ///// Ensures that a basic, binary attachment functions as it should.
         ///// </summary>
-        //[TestMethod]
+        //[Test]
         //public void BINARY1()
         //{
         //    IICalendar iCal = new iCalendar();
@@ -1102,7 +1101,7 @@ END:VCALENDAR
         ///// <summary>
         ///// Ensures that very large attachments function as they should.
         ///// </summary>
-        //[TestMethod]
+        //[Test]
         //public void BINARY2()
         //{
         //    IICalendar iCal = new iCalendar();
@@ -1144,7 +1143,7 @@ END:VCALENDAR
         //    //  9.2MB = 54 seconds
         //}
 
-        //[TestMethod]
+        //[Test]
         //public void RELATED_TO1()
         //{
         //    IICalendar iCal = new iCalendar();

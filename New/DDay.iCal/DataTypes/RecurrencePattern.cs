@@ -43,6 +43,8 @@ namespace DDay.iCal
         private RecurrenceRestrictionType? _RestrictionType = null;
         private RecurrenceEvaluationModeType? _EvaluationMode = null;
 
+        private RecurrencePatternEvaluator _Evaluator = null;
+
         #endregion
 
         #region Public Properties
@@ -235,6 +237,7 @@ namespace DDay.iCal
 
         public RecurrencePattern()
         {
+            _Evaluator = new RecurrencePatternEvaluator(this);
         }
 
         public RecurrencePattern(FrequencyType frequency) : this(frequency, 1)
@@ -454,5 +457,16 @@ namespace DDay.iCal
         }
 
         #endregion        
+
+        #region Overrides
+
+        public override object GetService(Type serviceType)
+        {
+            if (typeof(IEvaluator).IsAssignableFrom(serviceType))
+                return _Evaluator;
+            return null;
+        }
+
+        #endregion
     }
 }

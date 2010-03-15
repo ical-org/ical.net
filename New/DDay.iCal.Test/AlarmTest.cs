@@ -7,19 +7,17 @@ using System.Resources;
 using System.Web;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.ComponentModel;
+using NUnit.Framework;
 
 namespace DDay.iCal.Test
 {
-    [TestClass]
-    [DeploymentItem("Calendars", "Calendars")]
+    [TestFixture]
     public class AlarmTest
     {
         static private string tzid;
 
-        [ClassInitialize]
-        static public void InitAll(TestContext context)
+        [TestFixtureSetUp]
+        static public void InitAll()
         {
             tzid = "US-Eastern";
         }
@@ -51,7 +49,7 @@ namespace DDay.iCal.Test
             Assert.IsTrue(Dates.Count == alarms.Count, "There were " + alarms.Count + " alarm occurrences; there should have been " + Dates.Count + ".");
         }
 
-        [TestMethod, Category("Alarm")]
+        [Test, Category("Alarm")]
         public void ALARM1()
         {
             List<iCalDateTime> DateTimes = new List<iCalDateTime>();
@@ -63,7 +61,7 @@ namespace DDay.iCal.Test
             TestAlarm("ALARM1.ics", DateTimes, new iCalDateTime(2006, 7, 1), new iCalDateTime(2006, 9, 1));
         }
 
-        [TestMethod, Category("Alarm")]
+        [Test, Category("Alarm")]
         public void ALARM2()
         {
             List<iCalDateTime> DateTimes = new List<iCalDateTime>();
@@ -84,7 +82,7 @@ namespace DDay.iCal.Test
             TestAlarm("ALARM2.ics", DateTimes, new iCalDateTime(2006, 7, 1), new iCalDateTime(2006, 9, 1));
         }
 
-        [TestMethod, Category("Alarm")]
+        [Test, Category("Alarm")]
         public void ALARM3()
         {
             List<iCalDateTime> DateTimes = new List<iCalDateTime>();
@@ -100,7 +98,7 @@ namespace DDay.iCal.Test
             TestAlarm("ALARM3.ics", DateTimes, new iCalDateTime(1997, 1, 1), new iCalDateTime(2000, 12, 31));
         }
 
-        [TestMethod, Category("Alarm")]
+        [Test, Category("Alarm")]
         public void ALARM4()
         {
             List<iCalDateTime> DateTimes = new List<iCalDateTime>();
@@ -131,7 +129,7 @@ namespace DDay.iCal.Test
             TestAlarm("ALARM4.ics", DateTimes, new iCalDateTime(1997, 1, 1), new iCalDateTime(2000, 12, 31));
         }
 
-        [TestMethod, Category("Alarm")]
+        [Test, Category("Alarm")]
         public void ALARM5()
         {
             List<iCalDateTime> DateTimes = new List<iCalDateTime>();
@@ -143,7 +141,7 @@ namespace DDay.iCal.Test
             TestAlarm("ALARM5.ics", DateTimes, new iCalDateTime(1997, 7, 1), new iCalDateTime(2000, 12, 31));
         }
 
-        [TestMethod, Category("Alarm")]
+        [Test, Category("Alarm")]
         public void ALARM6()
         {
             List<iCalDateTime> DateTimes = new List<iCalDateTime>();
@@ -160,7 +158,7 @@ namespace DDay.iCal.Test
             TestAlarm("ALARM6.ics", DateTimes, new iCalDateTime(1997, 7, 1), new iCalDateTime(2000, 12, 31));
         }
 
-        [TestMethod, Category("Alarm")]
+        [Test, Category("Alarm")]
         public void ALARM7()
         {
             List<iCalDateTime> DateTimes = new List<iCalDateTime>();

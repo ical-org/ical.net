@@ -702,11 +702,6 @@ namespace DDay.iCal
                     periods.RemoveAt(i);
             }
 
-            // FIXME: do we still need to do this?
-            // Assign missing values
-            //foreach (iCalDateTime dt in periods)
-            //    dt.MergeWith(startDate);
-
             // FIXME: should this happen during serialization instead?
             // Ensure that DateTimes have an assigned time if they occur less than daily
             //if (r.Frequency < FrequencyType.Daily)
