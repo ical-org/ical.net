@@ -48,6 +48,13 @@ namespace DDay.iCal
 
         #region Overrides
 
+        protected override void OnDeserializing(StreamingContext context)
+        {
+            base.OnDeserializing(context);
+
+            Initialize();
+        }
+
         public override object GetService(Type serviceType)
         {
             if (typeof(IEvaluator).IsAssignableFrom(serviceType))

@@ -54,6 +54,9 @@ namespace DDay.iCal
 
         #region Public Properties
 
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
         public bool IsAssigned
         {
             get { return _IsAssigned; }
@@ -130,12 +133,18 @@ namespace DDay.iCal
             }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
         public IICalendar Calendar
         {
             get { return _Calendar; }
             set { _Calendar = value; }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 3)]
+#endif
         public bool IsUniversalTime
         {
             get { return _IsUniversalTime; }
@@ -155,24 +164,36 @@ namespace DDay.iCal
             }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 4)]
+#endif
         public DateTime Value
         {
             get { return _Value; }
             set { _Value = value; }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 5)]
+#endif
         public bool HasDate
         {
             get { return _HasDate; }
             set { _HasDate = value; }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 6)]
+#endif
         public bool HasTime
         {
             get { return _HasTime; }
             set { _HasTime = value; }
         }
 
+#if DATACONTRACT
+        [DataMember(Order = 7)]
+#endif
         public string TZID
         {
             get { return _TZID; }
