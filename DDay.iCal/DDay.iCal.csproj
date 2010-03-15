@@ -128,7 +128,7 @@
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\GeographicLocationSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\IntegerSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\RecurrencePatternSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\TimeSpanSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\Structs\TimeSpanSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\UTCOffsetSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\GenericListSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\StringSerializer.cs" />
@@ -205,7 +205,7 @@
     <Compile Include="Interfaces\Serialization\ISerializer.cs" />
     <Compile Include="Serialization\DataTypeMapper.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataMapSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\DateTimeSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\Structs\DateTimeSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\ParameterSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\iCalendarSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\Components\ComponentSerializer.cs" />

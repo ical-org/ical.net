@@ -8,20 +8,18 @@ using System.Web;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using DDay.iCal.Serialization;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.ComponentModel;
 using DDay.iCal.Serialization.iCalendar;
+using NUnit.Framework;
 
 namespace DDay.iCal.Test
 {
-    [TestClass]
-    [DeploymentItem("Calendars", "Calendars")]
+    [TestFixture]
     public class TodoTest
     {
         static private string tzid;
 
-        [ClassInitialize]
-        static public void InitAll(TestContext context)
+        [TestFixtureSetUp]
+        static public void InitAll()
         {
             tzid = "US-Eastern";
         }
@@ -75,7 +73,7 @@ namespace DDay.iCal.Test
             }
         }
 
-        [TestMethod, Category("Todo")]
+        [Test, Category("Todo")]
         public void TODO1()
         {
             ArrayList items = new ArrayList();
@@ -84,7 +82,7 @@ namespace DDay.iCal.Test
             TestTodoActive("TODO1.ics", items);
         }
 
-        [TestMethod, Category("Todo")]
+        [Test, Category("Todo")]
         public void TODO2()
         {
             ArrayList items = new ArrayList();
@@ -96,7 +94,7 @@ namespace DDay.iCal.Test
             TestTodoActive("TODO2.ics", items);
         }
 
-        [TestMethod, Category("Todo")]
+        [Test, Category("Todo")]
         public void TODO3()
         {
             ArrayList items = new ArrayList();
@@ -106,7 +104,7 @@ namespace DDay.iCal.Test
             TestTodoActive("TODO3.ics", items);
         }
 
-        [TestMethod, Category("Todo")]
+        [Test, Category("Todo")]
         public void TODO4()
         {
             ArrayList items = new ArrayList();
@@ -117,7 +115,7 @@ namespace DDay.iCal.Test
             TestTodoCompleted("TODO4.ics", items);
         }
 
-        [TestMethod, Category("Todo")]
+        [Test, Category("Todo")]
         public void TODO5()
         {
             ArrayList items = new ArrayList();
@@ -137,7 +135,7 @@ namespace DDay.iCal.Test
             TestTodoActive("TODO5.ics", items);
         }
 
-        [TestMethod, Category("Todo")]
+        [Test, Category("Todo")]
         public void TODO6()
         {
             ArrayList items = new ArrayList();
@@ -157,7 +155,7 @@ namespace DDay.iCal.Test
             TestTodoActive("TODO6.ics", items);
         }
 
-        [TestMethod, Category("Todo")]
+        [Test, Category("Todo")]
         public void TODO7()
         {
             ArrayList items = new ArrayList();
@@ -181,7 +179,7 @@ namespace DDay.iCal.Test
             TestTodoActive("TODO7.ics", items);
         }
 
-        [TestMethod, Category("Todo")]
+        [Test, Category("Todo")]
         public void TODO7_1()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\TODO7.ics");
@@ -212,7 +210,7 @@ namespace DDay.iCal.Test
                 "TODO should have " + items.Count + " occurrences; it has " + occurrences.Count);
         }
 
-        [TestMethod, Category("Todo")]
+        [Test, Category("Todo")]
         public void TODO8()
         {
             ArrayList items = new ArrayList();
@@ -249,7 +247,7 @@ namespace DDay.iCal.Test
             TestTodoActive("TODO8.ics", items);
         }
 
-        [TestMethod, Category("Todo")]
+        [Test, Category("Todo")]
         public void TODO9()
         {
             ArrayList items = new ArrayList();
@@ -268,7 +266,7 @@ namespace DDay.iCal.Test
         }
 
         // FIXME: re-implement
-        //[TestMethod, Category("Todo")]
+        //[Test, Category("Todo")]
         //public void TODO10()
         //{
         //    IICalendar iCal = new iCalendar();
@@ -311,7 +309,7 @@ namespace DDay.iCal.Test
         //}
 
         // FIXME: re-implement
-        //[TestMethod, Category("Todo")]
+        //[Test, Category("Todo")]
         //public void TODO11()
         //{
         //    IICalendar iCal = new iCalendar();

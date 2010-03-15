@@ -1,16 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.ComponentModel;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace DDay.iCal.Test
 {
-    [TestClass]
-    [DeploymentItem("Calendars", "Calendars")]
+    [TestFixture]
     public class ComponentTest
     {
-        [TestMethod, Category("Component")]
+        [Test, Category("Component")]
         public void UniqueComponent1()
         {
             IICalendar iCal = new iCalendar();

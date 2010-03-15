@@ -38,6 +38,28 @@ namespace DDay.iCal.Serialization.iCalendar
 
         #endregion
 
+        #region Protected Methods
+
+        protected void AssociateToCalendar(ref iCalDateTime dt)
+        {
+            ICalendarObject obj = SerializationContext.Peek() as ICalendarObject;
+            if (obj != null)
+                dt.Calendar = obj.Calendar;
+        }
+
+        protected void DeserializeParameters(ref iCalDateTime dt)
+        {
+            ICalendarParameterListContainer c = SerializationContext.Peek() as ICalendarParameterListContainer;
+            if (c != null)
+            {
+                // Deserialize properties that may involve this date/time value.
+                if (c.Parameters.ContainsKey("TZID"))
+                    dt.TZID = c.Parameters.Get("TZID");
+            }
+        }
+
+        #endregion
+
         #region Overrides
 
         public override Type TargetType
@@ -69,6 +91,12 @@ namespace DDay.iCal.Serialization.iCalendar
 
             iCalDateTime dt = new iCalDateTime();
             SerializationUtil.OnDeserializing(dt);
+
+            // Associate the date/time value to the calendar, if one exists.
+            AssociateToCalendar(ref dt);
+
+            // Deserialize parameters for our date/time value.
+            DeserializeParameters(ref dt);
 
             Match match = Regex.Match(value, @"^((\d{4})(\d{2})(\d{2}))?T?((\d{2})(\d{2})(\d{2})(Z)?)?$", RegexOptions.IgnoreCase);
             if (!match.Success)
