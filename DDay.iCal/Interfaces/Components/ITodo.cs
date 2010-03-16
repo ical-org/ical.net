@@ -10,17 +10,17 @@ namespace DDay.iCal
         /// <summary>
         /// The date/time the todo was completed.
         /// </summary>
-        iCalDateTime Completed { get; set; }
+        IDateTime Completed { get; set; }
 
         /// <summary>
         /// The start date/time of the todo item.
         /// </summary>
-        iCalDateTime DTStart { get; set; }
+        IDateTime DTStart { get; set; }
 
         /// <summary>
         /// The due date of the todo item.
         /// </summary>
-        iCalDateTime Due { get; set; }
+        IDateTime Due { get; set; }
 
         /// <summary>
         /// The duration of the todo item.
@@ -75,7 +75,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="DateTime">The date and time to test.</param>
         /// <returns>True if the todo item has been completed</returns>
-        bool IsCompleted(iCalDateTime currDt);
+        bool IsCompleted(IDateTime currDt);
 
         /// <summary>
         /// Returns 'True' if the todo item is Active as of <paramref name="currDt"/>.
@@ -83,7 +83,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="currDt">The date and time to test.</param>
         /// <returns>True if the item is Active as of <paramref name="currDt"/>, False otherwise.</returns>
-        bool IsActive(iCalDateTime currDt);
+        bool IsActive(IDateTime currDt);
 
         /// <summary>
         /// Returns True if the todo item was cancelled.

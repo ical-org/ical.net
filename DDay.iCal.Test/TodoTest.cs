@@ -33,7 +33,6 @@ namespace DDay.iCal.Test
             for (int i = 0; i < items.Count; i += 2)
             {
                 iCalDateTime dt = (iCalDateTime)items[i];
-                dt.Calendar = iCal;
                 dt.TZID = tzid;
 
                 bool tf = (bool)items[i + 1];
@@ -63,7 +62,6 @@ namespace DDay.iCal.Test
             for (int i = 0; i < items.Count; i += 2)
             {
                 iCalDateTime dt = (iCalDateTime)items[i];
-                dt.Calendar = iCal;
                 dt.TZID = tzid;
 
                 bool tf = (bool)items[i + 1];
@@ -186,16 +184,16 @@ namespace DDay.iCal.Test
             ITodo todo = iCal.Todos[0];
 
             ArrayList items = new ArrayList();
-            items.Add(new iCalDateTime(2006, 7, 28, 9, 0, 0, tzid, iCal)); 
-            items.Add(new iCalDateTime(2006, 8, 4, 9, 0, 0, tzid, iCal)); 
-            items.Add(new iCalDateTime(2006, 9, 1, 9, 0, 0, tzid, iCal));
-            items.Add(new iCalDateTime(2006, 10, 6, 9, 0, 0, tzid, iCal));
-            items.Add(new iCalDateTime(2006, 11, 3, 9, 0, 0, tzid, iCal));
-            items.Add(new iCalDateTime(2006, 12, 1, 9, 0, 0, tzid, iCal));
-            items.Add(new iCalDateTime(2007, 1, 5, 9, 0, 0, tzid, iCal));
-            items.Add(new iCalDateTime(2007, 2, 2, 9, 0, 0, tzid, iCal));
-            items.Add(new iCalDateTime(2007, 3, 2, 9, 0, 0, tzid, iCal));
-            items.Add(new iCalDateTime(2007, 4, 6, 9, 0, 0, tzid, iCal));
+            items.Add(new iCalDateTime(2006, 7, 28, 9, 0, 0, tzid)); 
+            items.Add(new iCalDateTime(2006, 8, 4, 9, 0, 0, tzid)); 
+            items.Add(new iCalDateTime(2006, 9, 1, 9, 0, 0, tzid));
+            items.Add(new iCalDateTime(2006, 10, 6, 9, 0, 0, tzid));
+            items.Add(new iCalDateTime(2006, 11, 3, 9, 0, 0, tzid));
+            items.Add(new iCalDateTime(2006, 12, 1, 9, 0, 0, tzid));
+            items.Add(new iCalDateTime(2007, 1, 5, 9, 0, 0, tzid));
+            items.Add(new iCalDateTime(2007, 2, 2, 9, 0, 0, tzid));
+            items.Add(new iCalDateTime(2007, 3, 2, 9, 0, 0, tzid));
+            items.Add(new iCalDateTime(2007, 4, 6, 9, 0, 0, tzid));
 
             IList<Occurrence> occurrences = todo.GetOccurrences(
                 new iCalDateTime(2006, 7, 1, 9, 0, 0),

@@ -15,13 +15,14 @@ namespace DDay.iCal
     [DataContract(Name = "Period", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public struct Period :
-        IComparable
+    public class Period :
+        EncodableDataType,
+        IPeriod
     {
         #region Private Fields
 
-        private iCalDateTime m_StartTime;        
-        private iCalDateTime m_EndTime;        
+        private IDateTime m_StartTime;
+        private IDateTime m_EndTime;        
         private TimeSpan m_Duration;
         private bool m_MatchesDateOnly;
 
@@ -32,7 +33,7 @@ namespace DDay.iCal
 #if DATACONTRACT
         [DataMember(Order = 1)]
 #endif
-        public iCalDateTime StartTime
+        public IDateTime StartTime
         {
             get { return m_StartTime; }
             set { m_StartTime = value; }
@@ -41,7 +42,7 @@ namespace DDay.iCal
 #if DATACONTRACT
         [DataMember(Order = 2)]
 #endif
-        public iCalDateTime EndTime
+        public IDateTime EndTime
         {
             get { return m_EndTime; }
             set { m_EndTime = value; }
@@ -74,25 +75,28 @@ namespace DDay.iCal
 
         #region Constructors
 
-        public Period(iCalDateTime occurs) : this(occurs, default(TimeSpan)) { }
-        public Period(iCalDateTime start, iCalDateTime end)
-            : this()
+        public Period()
+        {
+        }
+
+        public Period(IDateTime occurs) : this(occurs, default(TimeSpan)) { }
+        public Period(IDateTime start, IDateTime end) : this()
         {
             StartTime = start;
             if (end != null)
             {
                 EndTime = end;
-                Duration = end - start;
+                Duration = end.Subtract(start);
             }
         }
-        public Period(iCalDateTime start, TimeSpan duration)
+        public Period(IDateTime start, TimeSpan duration)
             : this()
         {
             StartTime = start;
             if (duration != default(TimeSpan))
             {
                 Duration = duration;
-                EndTime = start + duration;
+                EndTime = start.Add(duration);
             }
         }
 
@@ -102,16 +106,16 @@ namespace DDay.iCal
         
         public override bool Equals(object obj)
         {
-            if (obj is Period)
+            if (obj is IPeriod)
             {
-                Period p = (Period)obj;
+                IPeriod p = (IPeriod)obj;
                 if (MatchesDateOnly || p.MatchesDateOnly)
                 {
                     return
                         StartTime.Value.Date == p.StartTime.Value.Date &&
                         (
-                            !EndTime.IsAssigned ||
-                            !p.EndTime.IsAssigned == null ||
+                            EndTime == null ||
+                            p.EndTime == null ||
                             EndTime.Value.Date.Equals(p.EndTime.Value.Date)
                         );
                 }
@@ -120,8 +124,8 @@ namespace DDay.iCal
                     return
                         StartTime.Equals(p.StartTime) &&
                         (
-                            !EndTime.IsAssigned ||
-                            !p.EndTime.IsAssigned ||
+                            EndTime == null ||
+                            p.EndTime == null ||
                             EndTime.Equals(p.EndTime)
                         );
                 }
@@ -138,18 +142,17 @@ namespace DDay.iCal
 
         #region IComparable Members
 
-        public int CompareTo(object obj)
+        public int CompareTo(IPeriod p)
         {
-            if (obj is Period)
-            {
-                if (Equals(obj))
-                    return 0;
-                else if (StartTime < ((Period)obj).StartTime)
-                    return -1;
-                else if (StartTime >= ((Period)obj).StartTime)
-                    return 1;
-            }
-            throw new ArgumentException("obj must be a Period type");
+            if (p == null)
+                throw new ArgumentNullException("p");         
+            else if (Equals(p))
+                return 0;
+            else if (StartTime.LessThan(p.StartTime))
+                return -1;
+            else if (StartTime.GreaterThanOrEqual(p.StartTime))
+                return 1;
+            throw new Exception("An error occurred while comparing Period values.");
         }
 
         #endregion

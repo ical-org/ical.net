@@ -31,7 +31,7 @@ namespace DDay.iCal
         {
             Calendar c = CultureInfo.CurrentCulture.Calendar;
 
-            RecurrencePattern recurrence = new RecurrencePattern();
+            RecurrencePattern recurrence = new RecurrencePattern();            
             recurrence.Frequency = FrequencyType.Yearly;
             recurrence.ByMonth.Add(transition.Month);
             recurrence.ByHour.Add(transition.TimeOfDay.Hour);
@@ -70,7 +70,7 @@ namespace DDay.iCal
 
                 var dday_tzinfo_standard = new DDay.iCal.iCalTimeZoneInfo();
                 dday_tzinfo_standard.Name = "STANDARD";
-                dday_tzinfo_standard.Start = adjustmentRule.DateStart;
+                dday_tzinfo_standard.Start = new iCalDateTime(adjustmentRule.DateStart);
                 if (dday_tzinfo_standard.Start.Year < 1800)
                     dday_tzinfo_standard.Start = dday_tzinfo_standard.Start.AddYears(1800 - dday_tzinfo_standard.Start.Year);
                 dday_tzinfo_standard.OffsetFrom = new UTCOffset(utcOffset + delta);
@@ -82,7 +82,7 @@ namespace DDay.iCal
 
                 var dday_tzinfo_daylight = new DDay.iCal.iCalTimeZoneInfo();
                 dday_tzinfo_daylight.Name = "DAYLIGHT";
-                dday_tzinfo_daylight.Start = adjustmentRule.DateStart;
+                dday_tzinfo_daylight.Start = new iCalDateTime(adjustmentRule.DateStart);
                 if (dday_tzinfo_daylight.Start.Year < 1800)
                     dday_tzinfo_daylight.Start = dday_tzinfo_daylight.Start.AddYears(1800 - dday_tzinfo_daylight.Start.Year);
                 dday_tzinfo_daylight.OffsetFrom = new UTCOffset(utcOffset);
@@ -163,9 +163,9 @@ namespace DDay.iCal
             set { ID = value; }
         }
 
-        virtual public iCalDateTime LastModified
+        virtual public IDateTime LastModified
         {
-            get { return Properties.Get<iCalDateTime>("LAST-MODIFIED"); }
+            get { return Properties.Get<IDateTime>("LAST-MODIFIED"); }
             set { Properties.Set("LAST-MODIFIED", value); }
         }
 
@@ -194,15 +194,15 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The iCalDateTime object for which to retrieve the iCalTimeZoneInfo.</param>
         /// <returns>A TimeZoneInfo object for the specified iCalDateTime</returns>
-        virtual public ITimeZoneInfo GetTimeZoneInfo(iCalDateTime dt)
+        virtual public ITimeZoneInfo GetTimeZoneInfo(IDateTime dt)
         {
             ITimeZoneInfo tzi = null;
 
             TimeSpan mostRecent = TimeSpan.MaxValue;
             foreach (ITimeZoneInfo curr in TimeZoneInfos)
             {
-                DateTime start = new DateTime(dt.Year - 1, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-                DateTime end = new DateTime(dt.Year + 1, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                iCalDateTime start = new iCalDateTime(new DateTime(dt.Year - 1, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+                iCalDateTime end = new iCalDateTime(new DateTime(dt.Year + 1, 1, 1, 0, 0, 0, DateTimeKind.Utc));
 
                 // NOTE: dt.Value should always be a UTC type.
                 // This must be true for it to function properly here.
@@ -213,7 +213,7 @@ namespace DDay.iCal
                     continue;
 
                 // Make a copy of the current start value
-                iCalDateTime currStart = curr.Start;
+                IDateTime currStart = curr.Start.Copy<IDateTime>();
                 if (curr.OffsetTo != null)
                 {
                     int mult = curr.OffsetTo.Positive ? -1 : 1;
@@ -228,7 +228,7 @@ namespace DDay.iCal
 
                 // Determine the UTC occurrences of the Time Zone changes
                 IEvaluator evaluator = curr.GetService(typeof(IEvaluator)) as IEvaluator;
-                IList<Period> periods = evaluator.Evaluate(currStart, start, end);
+                IList<IPeriod> periods = evaluator.Evaluate(currStart, start, end);
 
                 // If the date is past the last allowed date, then don't consider it!
                 // NOTE: if this time zone ends as another begins, then there can
@@ -244,9 +244,9 @@ namespace DDay.iCal
                 //    dtUTC > curr.Until.AddYears(1))
                 //    continue;
 
-                foreach (Period p in periods)
+                foreach (IPeriod p in periods)
                 {
-                    TimeSpan currentSpan = dtUTC - p.StartTime;
+                    TimeSpan currentSpan = dtUTC.Subtract(p.StartTime.Value);
                     if (currentSpan.Ticks >= 0 &&
                         currentSpan.Ticks < mostRecent.Ticks)
                     {

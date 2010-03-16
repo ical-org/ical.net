@@ -5,7 +5,7 @@
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{38A02D06-15CC-436A-9C8F-07B84A7E2CE0}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DDay.iCal.Test</RootNamespace>
     <AssemblyName>DDay.iCal.Test</AssemblyName>

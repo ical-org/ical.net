@@ -50,12 +50,7 @@ namespace DDay.iCal
         #endregion
 
         #region Private Fields
-
-        private iCalDateTime m_EvalStart;
-        private iCalDateTime m_EvalEnd;
-        private iCalDateTime m_Until;
-
-        private List<Period> m_Periods;
+                
         private IList<IAlarm> m_Alarms;
         private RecurringObjectEvaluator m_Evaluator;
 
@@ -66,9 +61,9 @@ namespace DDay.iCal
         /// <summary>
         /// The start date/time of the component.
         /// </summary>
-        virtual public iCalDateTime DTStart
+        virtual public IDateTime DTStart
         {
-            get { return Properties.Get<iCalDateTime>("DTSTART"); }            
+            get { return Properties.Get<IDateTime>("DTSTART"); }            
             set { Properties.Set("DTSTART", value); }
         }        
 
@@ -96,29 +91,19 @@ namespace DDay.iCal
             set { Properties.Set("RRULE", value); }
         }
 
-        virtual public iCalDateTime RecurrenceID
+        virtual public IDateTime RecurrenceID
         {
-            get { return Properties.Get<iCalDateTime>("RECURRENCE-ID"); }
+            get { return Properties.Get<IDateTime>("RECURRENCE-ID"); }
             set { Properties.Set("RECURRENCE-ID", value); }
         }
 
         /// <summary>
         /// An alias to the DTStart field (i.e. start date/time).
         /// </summary>
-        virtual public iCalDateTime Start
+        virtual public IDateTime Start
         {
             get { return DTStart; }
             set { DTStart = value; }
-        }
-
-        /// <summary>
-        /// A collection of <see cref="Period"/> objects that contain the dates and times
-        /// when each item occurs/recurs.
-        /// </summary>
-        virtual protected List<Period> Periods
-        {
-            get { return m_Periods; }
-            set { m_Periods = value; }
         }
 
         /// <summary>
@@ -142,7 +127,6 @@ namespace DDay.iCal
         private void Initialize()
         {
             m_Evaluator = new RecurringObjectEvaluator(this);
-            Periods = new List<Period>();
             Alarms = new List<IAlarm>();
 
             RecurrenceDates = new List<IRecurrenceDate>();
@@ -192,28 +176,38 @@ namespace DDay.iCal
             RecurrenceUtil.ClearEvaluation(this);
         }
 
-        virtual public IList<Occurrence> GetOccurrences(iCalDateTime dt)
+        virtual public IList<Occurrence> GetOccurrences(IDateTime dt)
         {
             return RecurrenceUtil.GetOccurrences(this, dt);
         }
 
-        virtual public IList<Occurrence> GetOccurrences(iCalDateTime startTime, iCalDateTime endTime)
+        virtual public IList<Occurrence> GetOccurrences(DateTime dt)
+        {
+            return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(dt));
+        }
+
+        virtual public IList<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
         {
             return RecurrenceUtil.GetOccurrences(this, startTime, endTime);
         }
 
-        virtual public IList<AlarmOccurrence> PollAlarms()
+        virtual public IList<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
         {
-            return PollAlarms(default(iCalDateTime), default(iCalDateTime));
+            return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(startTime), new iCalDateTime(endTime));
         }
 
-        virtual public IList<AlarmOccurrence> PollAlarms(iCalDateTime Start, iCalDateTime End)
+        virtual public IList<AlarmOccurrence> PollAlarms()
+        {
+            return PollAlarms(null, null);
+        }
+
+        virtual public IList<AlarmOccurrence> PollAlarms(IDateTime startTime, IDateTime endTime)
         {
             List<AlarmOccurrence> Occurrences = new List<AlarmOccurrence>();
             if (Alarms != null)
             {
                 foreach (IAlarm alarm in Alarms)
-                    Occurrences.AddRange(alarm.Poll(Start, End));
+                    Occurrences.AddRange(alarm.Poll(startTime, endTime));
             }
             return Occurrences;
         }

@@ -12,8 +12,7 @@ namespace DDay.iCal.Test
         {
             NUnit.Gui.AppEntry.Main(new string[]
             {
-                Assembly.GetExecutingAssembly().Location, 
-                "/run"
+                Assembly.GetExecutingAssembly().Location
             });
         }
     }

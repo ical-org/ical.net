@@ -42,10 +42,10 @@ namespace DDay.iCal
         /// <param name="FromDate">The beginning date of the range to evaluate.</param>
         /// <param name="ToDate">The end date of the range to evaluate.</param>
         /// <returns></returns>
-        public override IList<Period> Evaluate(iCalDateTime startTime, iCalDateTime fromTime, iCalDateTime toTime)
+        public override IList<IPeriod> Evaluate(IDateTime startTime, IDateTime fromTime, IDateTime toTime)
         {
             // Add the event itself, before recurrence rules are evaluated           
-            Period period = new Period(startTime, Event.Duration);
+            IPeriod period = new Period(startTime, Event.Duration);
             // Ensure the period does not already exist in our collection
             // NOTE: this fixes a bug where (if evaluated multiple times)
             // a period can be added to the Periods collection multiple times.
@@ -58,21 +58,14 @@ namespace DDay.iCal
             // Ensure each period has a duration
             for (int i = 0; i < Periods.Count; i++)
             {
-                Period p = Periods[i];
-                if (!p.EndTime.IsAssigned)
+                IPeriod p = Periods[i];
+                if (p.EndTime == null)
                 {
                     p.Duration = Event.Duration;
                     if (p.Duration != null)
-                        p.EndTime = p.StartTime + Event.Duration;
+                        p.EndTime = p.StartTime.Add(Event.Duration);
                     else p.EndTime = p.StartTime;
                 }
-
-                // Ensure the Kind of time is consistent with the start time
-                iCalDateTime dt = p.EndTime;
-                dt.IsUniversalTime = startTime.IsUniversalTime;
-                p.EndTime = dt;
-
-                Periods[i] = p;
             }
 
             return Periods;

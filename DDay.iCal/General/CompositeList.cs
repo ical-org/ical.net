@@ -7,6 +7,25 @@ namespace DDay.iCal
     public class CompositeList<T> :
         ICompositeList<T>
     {
+        #region Public Events
+
+        public event EventHandler<ObjectEventArgs<object>> ItemAdded;
+        public event EventHandler<ObjectEventArgs<object>> ItemRemoved;
+
+        protected void OnItemAdded(object item)
+        {
+            if (ItemAdded != null)
+                ItemAdded(this, new ObjectEventArgs<object>(item));
+        }
+
+        protected void OnItemRemoved(object item)
+        {
+            if (ItemRemoved != null)
+                ItemRemoved(this, new ObjectEventArgs<object>(item));
+        }
+
+        #endregion
+
         #region Private Fields
 
         List<IList<T>> m_Lists;
@@ -89,12 +108,22 @@ namespace DDay.iCal
 
         virtual public void AddList(IList<T> list)
         {
-            m_Lists.Add(list);
+            if (list != null)
+            {
+                m_Lists.Add(list);
+                foreach (T item in list)
+                    OnItemAdded(item);
+            }
         }
 
         virtual public void RemoveList(IList<T> list)
         {
-            m_Lists.Remove(list);
+            if (list != null)
+            {
+                m_Lists.Remove(list);
+                foreach (T item in list)
+                    OnItemRemoved(item);
+            }
         }
 
         virtual public void AddListRange(IEnumerable<IList<T>> lists)
@@ -127,7 +156,10 @@ namespace DDay.iCal
             int indexInList;
             IList<T> list = ListForIndex(index, out indexInList);
             if (list != null)
+            {
                 list.Insert(indexInList, item);
+                OnItemAdded(item);
+            }
         }
 
         virtual public void RemoveAt(int index)
@@ -140,7 +172,11 @@ namespace DDay.iCal
             int indexInList;
             IList<T> list = ListForIndex(index, out indexInList);
             if (list != null)
+            {
+                T item = list[indexInList];
                 list.RemoveAt(indexInList);
+                OnItemRemoved(item);
+            }
         }
 
         virtual public T this[int index]
@@ -158,7 +194,12 @@ namespace DDay.iCal
                 int indexInList;
                 IList<T> list = ListForIndex(index, out indexInList);
                 if (list != null)
+                {
+                    T oldValue = list[indexInList];
                     list[indexInList] = value;
+                    OnItemRemoved(oldValue);
+                    OnItemAdded(value);
+                }
             }
         }
 
@@ -181,6 +222,7 @@ namespace DDay.iCal
 
                 // Add the item to the last list available.
                 m_Lists[m_Lists.Count - 1].Add(item);
+                OnItemAdded(item);
             }
         }
 
@@ -189,8 +231,16 @@ namespace DDay.iCal
             if (IsReadOnly)
                 throw new NotSupportedException();
 
+            List<T> items = new List<T>();
             foreach (IList<T> list in m_Lists)
+            {
+                foreach (T item in list)
+                    items.Add(item);
                 list.Clear();
+            }
+
+            foreach (T item in items)
+                OnItemRemoved(item);
         }
 
         virtual public bool Contains(T item)
@@ -240,8 +290,9 @@ namespace DDay.iCal
             IList<T> list = ListForItem(item, out indexInList);
             if (list != null &&
                 indexInList >= 0)
-            {
+            {                
                 list.RemoveAt(indexInList);
+                OnItemRemoved(item);
                 return true;
             }
             return false;

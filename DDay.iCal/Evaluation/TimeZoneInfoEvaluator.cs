@@ -27,11 +27,11 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override IList<Period> Evaluate(iCalDateTime startTime, iCalDateTime fromTime, iCalDateTime toTime)
+        public override IList<IPeriod> Evaluate(IDateTime startTime, IDateTime fromTime, IDateTime toTime)
         {
             // Add the initial specified date/time for the time zone entry
-            IList<Period> periods = base.Evaluate(startTime, fromTime, toTime);
-            Period startPeriod = new Period(Recurrable.Start, default(iCalDateTime));
+            IList<IPeriod> periods = base.Evaluate(startTime, fromTime, toTime);
+            IPeriod startPeriod = new Period(Recurrable.Start, null);
             if (!periods.Contains(startPeriod))
                 periods.Insert(0, startPeriod);
 

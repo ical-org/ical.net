@@ -23,7 +23,7 @@ namespace DDay.iCal
     {
         #region Private Fields
 
-        private Period m_Period;
+        private IPeriod m_Period;
         private IRecurringComponent m_Component; 
         private IAlarm m_Alarm;
 
@@ -34,7 +34,7 @@ namespace DDay.iCal
 #if DATACONTRACT
         [DataMember(Order = 1)]
 #endif
-        public Period Period
+        public IPeriod Period
         {
             get { return m_Period; }
             set { m_Period = value; }
@@ -61,7 +61,7 @@ namespace DDay.iCal
 #if DATACONTRACT
         [DataMember(Order = 2)]
 #endif
-        public iCalDateTime DateTime
+        public IDateTime DateTime
         {
             get { return Period.StartTime; }
             set { Period = new Period(value); }
@@ -78,7 +78,7 @@ namespace DDay.iCal
             m_Alarm = ao.Alarm;
         }
 
-        public AlarmOccurrence(IAlarm a, iCalDateTime dt, RecurringComponent rc)
+        public AlarmOccurrence(IAlarm a, IDateTime dt, IRecurringComponent rc)
         {
             m_Alarm = a;
             m_Period = new Period(dt);

@@ -145,9 +145,9 @@ namespace DDay.iCal.Test
         [Test, Category("DataContractionSerialization")]
         public void Period1()
         {
-            Period p = new Period();
-            p.StartTime = DateTime.Now.AddHours(2);
-            p.EndTime = DateTime.Now.AddHours(3);
+            IPeriod p = new Period();
+            p.StartTime = new iCalDateTime(DateTime.Now.AddHours(2));
+            p.EndTime = new iCalDateTime(DateTime.Now.AddHours(3));
             SerializeTest(p, "Period1.xml");
         }
 

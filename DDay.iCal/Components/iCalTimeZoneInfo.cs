@@ -150,15 +150,15 @@ namespace DDay.iCal
 
         #region IRecurrable Members
 
-        virtual public iCalDateTime DTStart
+        virtual public IDateTime DTStart
         {
             get { return Start; }
             set { Start = value; }
         }
 
-        virtual public iCalDateTime Start
+        virtual public IDateTime Start
         {
-            get { return Properties.Get<iCalDateTime>("DTSTART"); }
+            get { return Properties.Get<IDateTime>("DTSTART"); }
             set { Properties.Set("DTSTART", value); }
         }
 
@@ -186,9 +186,9 @@ namespace DDay.iCal
             set { Properties.Set("RRULE", value); }
         }
 
-        virtual public iCalDateTime RecurrenceID
+        virtual public IDateTime RecurrenceID
         {
-            get { return Properties.Get<iCalDateTime>("RECURRENCE-ID"); }
+            get { return Properties.Get<IDateTime>("RECURRENCE-ID"); }
             set { Properties.Set("RECURRENCE-ID", value); }
         }
 
@@ -201,14 +201,24 @@ namespace DDay.iCal
             RecurrenceUtil.ClearEvaluation(this);
         }
 
-        virtual public IList<Occurrence> GetOccurrences(iCalDateTime dt)
+        virtual public IList<Occurrence> GetOccurrences(IDateTime dt)
         {
             return RecurrenceUtil.GetOccurrences(this, dt);
         }
 
-        virtual public IList<Occurrence> GetOccurrences(iCalDateTime startTime, iCalDateTime endTime)
+        virtual public IList<Occurrence> GetOccurrences(DateTime dt)
+        {
+            return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(dt));
+        }
+
+        virtual public IList<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
         {
             return RecurrenceUtil.GetOccurrences(this, startTime, endTime);
+        }
+
+        virtual public IList<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
+        {
+            return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(startTime), new iCalDateTime(endTime));
         }
 
         #endregion

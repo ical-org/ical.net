@@ -97,25 +97,47 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Overrides        
+        #region Protected Methods
 
-        protected override void OnDeserializing(StreamingContext context)
+        protected void AssociateItem(object item)
         {
-            base.OnDeserializing(context);
-
-            Initialize();
+            if (item is ICalendarDataType)
+                ((ICalendarDataType)item).AssociateWith(Parent);
+            else if (item is ICalendarObject)
+                ((ICalendarObject)item).Parent = Parent;
         }
 
-        public override void CopyFrom(ICopyable obj)
+        protected void DeassociateItem(object item)
         {
-            base.CopyFrom(obj);
+            if (item is ICalendarDataType)
+                ((ICalendarDataType)item).Deassociate();
+            else if (item is ICalendarObject)
+                ((ICalendarObject)item).Parent = null;
+        }
 
-            ICalendarProperty p = obj as ICalendarProperty;
-            if (p != null)
-            {               
-                // Copy parameters
-                foreach (ICalendarParameter parm in p.Parameters)
-                    AddChild(parm.Copy<ICalendarParameter>());
+        protected void AssociateList(ICompositeList list)
+        {
+            if (list != null)
+            {
+                // Associate each item in the list with the parent
+                foreach (object obj in list)
+                    AssociateItem(obj);
+
+                list.ItemAdded += new EventHandler<ObjectEventArgs<object>>(list_ItemAdded);
+                list.ItemRemoved += new EventHandler<ObjectEventArgs<object>>(list_ItemRemoved);
+            }
+        }
+
+        protected void DeassociateList(ICompositeList list)
+        {
+            if (list != null)
+            {
+                // Deassociate each item in the list
+                foreach (object obj in list)
+                    DeassociateItem(obj);
+
+                list.ItemAdded -= new EventHandler<ObjectEventArgs<object>>(list_ItemAdded);
+                list.ItemRemoved -= new EventHandler<ObjectEventArgs<object>>(list_ItemRemoved);
             }
         }
 
@@ -142,6 +164,44 @@ namespace DDay.iCal
 
         #endregion
 
+        #region Overrides
+
+        protected override void OnDeserializing(StreamingContext context)
+        {
+            base.OnDeserializing(context);
+
+            Initialize();
+        }
+
+        public override void CopyFrom(ICopyable obj)
+        {
+            base.CopyFrom(obj);
+
+            ICalendarProperty p = obj as ICalendarProperty;
+            if (p != null)
+            {               
+                // Copy parameters
+                foreach (ICalendarParameter parm in p.Parameters)
+                    AddChild(parm.Copy<ICalendarParameter>());
+            }
+        }
+
+        #endregion        
+
+        #region Event Handlers
+        
+        void list_ItemAdded(object sender, ObjectEventArgs<object> e)
+        {
+            AssociateItem(e.Object);
+        }
+
+        void list_ItemRemoved(object sender, ObjectEventArgs<object> e)
+        {
+            DeassociateItem(e.Object);
+        }
+
+        #endregion
+
         #region ICalendarProperty Members
 
         public event EventHandler<ValueChangedEventArgs> ValueChanged;
@@ -161,6 +221,20 @@ namespace DDay.iCal
                 {
                     object old = m_Value;
                     m_Value = value;
+
+                    // Deassociate the old value
+                    if (old is ICompositeList)
+                        DeassociateList((ICompositeList)old);
+                    else if (old != null)
+                        DeassociateItem(old);
+
+                    // Associate the new value
+                    if (m_Value is ICompositeList)
+                        AssociateList((ICompositeList)m_Value);
+                    else if (m_Value != null)
+                        AssociateItem(m_Value);
+
+                    // Notify that the value changed
                     OnValueChanged(old, m_Value);
                 }
             }

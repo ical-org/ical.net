@@ -115,7 +115,7 @@ namespace DDay.iCal
 
         #region Public Methods
 
-        public bool CheckValidDate(IRecurrencePattern r, iCalDateTime Date)
+        public bool CheckValidDate(IRecurrencePattern r, IDateTime Date)
         {
             bool valid = false;
 

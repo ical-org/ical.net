@@ -13,26 +13,29 @@ namespace DDay.iCal
                 evaluator.Clear();
         }
 
-        static public IList<Occurrence> GetOccurrences(IRecurrable recurrable, iCalDateTime dt)
+        static public IList<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt)
         {
-            return GetOccurrences(recurrable, dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
+            return GetOccurrences(
+                recurrable, 
+                new iCalDateTime(dt.Local.Date), 
+                new iCalDateTime(dt.Local.Date.AddDays(1).AddSeconds(-1)));
         }
 
-        static public IList<Occurrence> GetOccurrences(IRecurrable recurrable, iCalDateTime startTime, iCalDateTime endTime)
+        static public IList<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime startTime, IDateTime endTime)
         {
             List<Occurrence> occurrences = new List<Occurrence>();
 
             IEvaluator evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
             if (evaluator != null)
             {
-                IList<Period> periods = evaluator.Evaluate(recurrable.Start, startTime, endTime);
+                IList<IPeriod> periods = evaluator.Evaluate(recurrable.Start, startTime, endTime);
 
-                foreach (Period p in periods)
+                foreach (IPeriod p in periods)
                 {
                     // Filter the resulting periods to only contain those between
                     // startTime and endTime.
-                    if (p.StartTime >= startTime &&
-                        p.StartTime <= endTime)
+                    if (p.StartTime.GreaterThanOrEqual(startTime) &&
+                        p.StartTime.LessThanOrEqual(endTime))
                         occurrences.Add(new Occurrence(recurrable, p));
                 }
 
