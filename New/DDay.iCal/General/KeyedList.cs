@@ -166,8 +166,9 @@ namespace DDay.iCal
             {
                 if (index >= 0 && index < Count)
                 {
-                    OnItemRemoved(_Items[index]);
+                    T item = _Items[index];                    
                     _Items[index] = value;
+                    OnItemRemoved(item);
                     OnItemAdded(value);
                 }
             }

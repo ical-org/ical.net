@@ -34,16 +34,16 @@ namespace DDay.iCal
         /// <summary>
         /// The date/time the todo was completed.
         /// </summary>
-        virtual public iCalDateTime Completed
+        virtual public IDateTime Completed
         {
-            get { return Properties.Get<iCalDateTime>("COMPLETED"); }
+            get { return Properties.Get<IDateTime>("COMPLETED"); }
             set { Properties.Set("COMPLETED", value); }
         }
 
         /// <summary>
         /// The start date/time of the todo item.
         /// </summary>
-        public override iCalDateTime DTStart
+        public override IDateTime DTStart
         {
             get
             {
@@ -59,9 +59,9 @@ namespace DDay.iCal
         /// <summary>
         /// The due date of the todo item.
         /// </summary>
-        virtual public iCalDateTime Due
+        virtual public IDateTime Due
         {
-            get { return Properties.Get<iCalDateTime>("DUE"); }
+            get { return Properties.Get<IDateTime>("DUE"); }
             set
             {
                 Properties.Set("DUE", value);
@@ -133,8 +133,8 @@ namespace DDay.iCal
                     if (IsLoaded)
                     {
                         if (value == TodoStatus.Completed)
-                            Completed = DateTime.Now;
-                        else Completed = default(iCalDateTime);
+                            Completed = new iCalDateTime(DateTime.Now);
+                        else Completed = null;
                     }
 
                     Properties.Set("STATUS", value);
@@ -174,21 +174,21 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="DateTime">The date and time to test.</param>
         /// <returns>True if the todo item has been completed</returns>
-        virtual public bool IsCompleted(iCalDateTime currDt)
+        virtual public bool IsCompleted(IDateTime currDt)
         {
             if (Status == TodoStatus.Completed)
             {
                 if (Completed == null ||
-                    Completed > currDt)
+                    Completed.GreaterThan(currDt))
                     return true;
 
                 // Evaluate to the previous occurrence.
                 m_Evaluator.EvaluateToPreviousOccurrence(Completed, currDt);
 
-                foreach (Period p in Periods)
+                foreach (Period p in m_Evaluator.Periods)
                 {
-                    if (p.StartTime > Completed && // The item has recurred after it was completed
-                        currDt >= p.StartTime)     // and the current date is after or on the recurrence date.
+                    if (p.StartTime.GreaterThan(Completed) && // The item has recurred after it was completed
+                        currDt.GreaterThanOrEqual(p.StartTime))     // and the current date is after or on the recurrence date.
                         return false;
                 }
                 return true;
@@ -202,11 +202,11 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="currDt">The date and time to test.</param>
         /// <returns>True if the item is Active as of <paramref name="currDt"/>, False otherwise.</returns>
-        virtual public bool IsActive(iCalDateTime currDt)
+        virtual public bool IsActive(IDateTime currDt)
         {
             if (DTStart == null)
                 return !IsCompleted(currDt) && !IsCancelled();
-            else if (currDt >= DTStart)
+            else if (currDt.GreaterThanOrEqual(DTStart))
                 return !IsCompleted(currDt) && !IsCancelled();
             else return false;
         }
@@ -244,12 +244,12 @@ namespace DDay.iCal
 
         private void ExtrapolateTimes()
         {
-            if (!Due.IsAssigned && DTStart.IsAssigned && Duration != default(TimeSpan))
-                Due = DTStart + Duration;
-            else if (Duration == default(TimeSpan) && DTStart.IsAssigned && Due.IsAssigned)
-                Duration = Due - DTStart;
-            else if (!DTStart.IsAssigned && Duration != default(TimeSpan) && Due.IsAssigned)
-                DTStart = Due - Duration;
+            if (Due == null && DTStart != null && Duration != default(TimeSpan))
+                Due = DTStart.Add(Duration);
+            else if (Duration == default(TimeSpan) && DTStart != null && Due != null)
+                Duration = Due.Subtract(DTStart);
+            else if (DTStart == null && Duration != default(TimeSpan) && Due != null)
+                DTStart = Due.Subtract(Duration);
         }
 
         #endregion

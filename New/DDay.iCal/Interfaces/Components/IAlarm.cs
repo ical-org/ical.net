@@ -20,7 +20,7 @@ namespace DDay.iCal
         /// Gets a list of alarm occurrences for the given recurring component, <paramref name="rc"/>
         /// that occur between <paramref name="FromDate"/> and <paramref name="ToDate"/>.
         /// </summary>
-        IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, iCalDateTime FromDate, iCalDateTime ToDate);
+        IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, IDateTime fromDate, IDateTime toDate);
 
         /// <summary>
         /// Polls the <see cref="Alarm"/> component for alarms that have been triggered
@@ -30,6 +30,6 @@ namespace DDay.iCal
         /// <param name="Start">The earliest date/time to poll trigerred alarms for.</param>
         /// <param name="End">The latest date/time to poll trigerred alarms for.</param>
         /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
-        IList<AlarmOccurrence> Poll(iCalDateTime Start, iCalDateTime End);
+        IList<AlarmOccurrence> Poll(IDateTime fromDate, IDateTime toDate);
     }    
 }

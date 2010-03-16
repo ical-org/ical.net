@@ -26,7 +26,7 @@ namespace DDay.iCal
         [NonSerialized]
 #endif
         private FrequencyType _Frequency;
-        private iCalDateTime _Until;
+        private IDateTime _Until;
         private int _Count = int.MinValue;
         private int _Interval = int.MinValue;
         private IList<int> _BySecond = new List<int>();
@@ -39,7 +39,7 @@ namespace DDay.iCal
         private IList<int> _ByMonth = new List<int>();
         private IList<int> _BySetPosition = new List<int>();
         private DayOfWeek _WeekStart = DayOfWeek.Monday;
-        private IList<iCalDateTime> _StaticOccurrences = new List<iCalDateTime>();
+        private IList<IDateTime> _StaticOccurrences = new List<IDateTime>();
         private RecurrenceRestrictionType? _RestrictionType = null;
         private RecurrenceEvaluationModeType? _EvaluationMode = null;
 
@@ -61,7 +61,7 @@ namespace DDay.iCal
 #if DATACONTRACT
         [DataMember(Order = 2)]
 #endif
-        public iCalDateTime Until
+        public IDateTime Until
         {
             get { return _Until; }
             set { _Until = value; }
@@ -183,7 +183,7 @@ namespace DDay.iCal
 #if DATACONTRACT
         [DataMember(Order = 15)]
 #endif
-        public IList<iCalDateTime> StaticOccurrences
+        public IList<IDateTime> StaticOccurrences
         {
             get { return _StaticOccurrences; }
             set { _StaticOccurrences = value; }
@@ -283,12 +283,12 @@ namespace DDay.iCal
                 if (r.Count != Count) return false;
                 if (r.Frequency != Frequency) return false;
                 if (r.Interval != Interval) return false;
-                if (r.Until.IsAssigned)
+                if (r.Until != null)
                 {
                     if (!r.Until.Equals(Until))
                         return false;
                 }
-                else if (Until.IsAssigned)
+                else if (Until != null)
                     return false;
                 if (r.WeekStart != WeekStart) return false;
                 return true;
@@ -376,13 +376,13 @@ namespace DDay.iCal
         /// [Deprecated]: Use IsValidDate() instead.
         /// </summary>
         [Obsolete("Use IsValidDate() instead.")]
-        public bool CheckValidDate(iCalDateTime dt) { return IsValidDate(dt); }
+        public bool CheckValidDate(IDateTime dt) { return IsValidDate(dt); }
 
         /// <summary>
         /// Returns true if <paramref name="dt"/> is a date/time that aligns to (occurs within)
         /// the recurrence pattern of this Recur, false otherwise.
         /// </summary>
-        public bool IsValidDate(iCalDateTime dt)
+        public bool IsValidDate(IDateTime dt)
         {
             IEvaluator evaluator = GetService(typeof(IEvaluator)) as IEvaluator;
 

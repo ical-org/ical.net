@@ -60,7 +60,7 @@ namespace DDay.iCal.Serialization.iCalendar
                         s = new GenericListSerializer(objectType);
                     else if (typeof(ICalendarParameter).IsAssignableFrom(objectType))
                         s = new ParameterSerializer();
-                    else if (typeof(iCalDateTime).IsAssignableFrom(objectType))
+                    else if (typeof(IDateTime).IsAssignableFrom(objectType))
                         s = new DateTimeSerializer();
                     else if (typeof(TimeSpan).IsAssignableFrom(objectType))
                         s = new TimeSpanSerializer();

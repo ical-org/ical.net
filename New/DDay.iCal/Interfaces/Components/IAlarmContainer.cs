@@ -39,6 +39,6 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="Start">The earliest allowable alarm occurrence to poll, or <c>null</c>.</param>
         /// <returns>A List of <see cref="Alarm.AlarmOccurrence"/> objects, one for each occurrence of the <see cref="Alarm"/>.</returns>
-        IList<AlarmOccurrence> PollAlarms(iCalDateTime startTime, iCalDateTime endTime);
+        IList<AlarmOccurrence> PollAlarms(IDateTime startTime, IDateTime endTime);
     }
 }

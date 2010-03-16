@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Globalization;
 
 namespace DDay.iCal
 {
@@ -10,10 +11,18 @@ namespace DDay.iCal
         #region Private Fields
 
         private System.Globalization.Calendar m_Calendar;
-        private IList<iCalDateTime> m_StaticOccurrences;        
-        private iCalDateTime m_EvaluationStartBounds;
-        private iCalDateTime m_EvaluationEndBounds;
-        protected List<Period> m_Periods;
+        private IList<IDateTime> m_StaticOccurrences;
+        private IDateTime m_EvaluationStartBounds;
+        private IDateTime m_EvaluationEndBounds;
+        
+        private ICalendarObject m_AssociatedObject;
+        private ICalendarDataType m_AssociatedDataType;
+
+        #endregion
+
+        #region Protected Fields
+
+        protected List<IPeriod> m_Periods;
 
         #endregion
 
@@ -24,20 +33,34 @@ namespace DDay.iCal
             Initialize();
         }
 
+        public Evaluator(ICalendarObject associatedObject)
+        {
+            m_AssociatedObject = associatedObject;
+
+            Initialize();
+        }
+
+        public Evaluator(ICalendarDataType dataType)
+        {
+            m_AssociatedDataType = dataType;
+
+            Initialize();
+        }
+
         void Initialize()
         {
             m_Calendar = System.Globalization.CultureInfo.CurrentCulture.Calendar;
-            m_StaticOccurrences = new List<iCalDateTime>();
-            m_Periods = new List<Period>();
+            m_StaticOccurrences = new List<IDateTime>();
+            m_Periods = new List<IPeriod>();
         }
 
         #endregion
 
         #region Protected Methods
 
-        protected void IncrementDate(ref iCalDateTime dt, IRecurrencePattern pattern, int interval)
+        protected void IncrementDate(ref IDateTime dt, IRecurrencePattern pattern, int interval)
         {
-            iCalDateTime old = dt;
+            IDateTime old = dt;
             switch (pattern.Frequency)
             {
                 case FrequencyType.Secondly: dt = old.AddSeconds(interval); break;
@@ -66,7 +89,7 @@ namespace DDay.iCal
                     while (current != goal)
                     {
                         old = old.AddDays(i);
-                        current = Calendar.GetWeekOfYear(old.Value, System.Globalization.CalendarWeekRule.FirstFourDayWeek, pattern.WeekStart);
+                        current = Calendar.GetWeekOfYear(old.Value, CalendarWeekRule.FirstFourDayWeek, pattern.WeekStart);
                     }
 
                     dt = old;
@@ -77,49 +100,81 @@ namespace DDay.iCal
             }
         }
 
+        protected void Associate(IDateTime startDate, IDateTime fromDate, IDateTime toDate)
+        {
+            ICalendarObject associatedObject = AssociatedObject;
+            if (associatedObject == null)
+                throw new Exception("An error occurred during evaluation: Cannot associate the date/time values with a calendar.");
+
+            startDate.AssociateWith(associatedObject);
+            fromDate.AssociateWith(associatedObject);
+            toDate.AssociateWith(associatedObject);
+        }
+
+        protected void Deassociate(IDateTime startDate, IDateTime fromDate, IDateTime toDate)
+        {
+            startDate.Deassociate();
+            fromDate.Deassociate();
+            toDate.Deassociate();
+        }
+
         #endregion
 
-        #region IPeriodEvaluator Members
+        #region IEvaluator Members
 
         public System.Globalization.Calendar Calendar
         {
             get { return m_Calendar; }
         }
 
-        public IList<iCalDateTime> StaticOccurrences
+        public IList<IDateTime> StaticOccurrences
         {
             get { return m_StaticOccurrences; }
         }
 
-        virtual public iCalDateTime EvaluationStartBounds
+        virtual public IDateTime EvaluationStartBounds
         {
             get { return m_EvaluationStartBounds; }
             set { m_EvaluationStartBounds = value; }
         }
 
-        virtual public iCalDateTime EvaluationEndBounds
+        virtual public IDateTime EvaluationEndBounds
         {
             get { return m_EvaluationEndBounds; }
             set { m_EvaluationEndBounds = value; }
         }
 
-        public IList<Period> Periods
+        virtual public ICalendarObject AssociatedObject
+        {
+            get
+            {
+                if (m_AssociatedObject != null)
+                    return m_AssociatedObject;
+                else if (m_AssociatedDataType != null)
+                    return m_AssociatedDataType.AssociatedObject;
+                else
+                    return null;
+            }
+            protected set { m_AssociatedObject = value; }
+        }
+
+        virtual public IList<IPeriod> Periods
         {
             get { return m_Periods; }
         }
 
-        public void Clear()
+        virtual public void Clear()
         {
-            m_EvaluationStartBounds = default(iCalDateTime);
-            m_EvaluationEndBounds = default(iCalDateTime);
+            m_EvaluationStartBounds = null;
+            m_EvaluationEndBounds = null;
             m_StaticOccurrences.Clear();
             m_Periods.Clear();
         }
 
-        abstract public IList<Period> Evaluate(
-            iCalDateTime startDate, 
-            iCalDateTime fromDate, 
-            iCalDateTime toDate);
+        abstract public IList<IPeriod> Evaluate(
+            IDateTime startDate,
+            IDateTime fromDate,
+            IDateTime toDate);
 
         #endregion
     }

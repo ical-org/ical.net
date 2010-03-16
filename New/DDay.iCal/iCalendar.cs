@@ -732,7 +732,7 @@ namespace DDay.iCal
         /// <param name="FromDate">The beginning date/time of the range to test.</param>
         /// <param name="ToDate">The end date/time of the range to test.</param>
         [Obsolete("This method is no longer supported.  Use GetOccurrences() instead.")]
-        public void Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
+        public void Evaluate(IDateTime FromDate, IDateTime ToDate)
         {
             throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
         }
@@ -745,7 +745,7 @@ namespace DDay.iCal
         /// <param name="FromDate">The beginning date/time of the range to test.</param>
         /// <param name="ToDate">The end date/time of the range to test.</param>
         [Obsolete("This method is no longer supported.  Use GetOccurrences() instead.")]
-        public void Evaluate<T>(iCalDateTime FromDate, iCalDateTime ToDate)
+        public void Evaluate<T>(IDateTime FromDate, IDateTime ToDate)
         {
             throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
         }
@@ -765,9 +765,11 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
         /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
-        public IList<Occurrence> GetOccurrences(iCalDateTime dt)
+        public IList<Occurrence> GetOccurrences(IDateTime dt)
         {
-            return GetOccurrences<IRecurringComponent>(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
+            return GetOccurrences<IRecurringComponent>(
+                new iCalDateTime(dt.Local.Date), 
+                new iCalDateTime(dt.Local.Date.AddDays(1).AddSeconds(-1)));
         }
 
         /// <summary>
@@ -777,9 +779,9 @@ namespace DDay.iCal
         /// <param name="FromDate">The beginning date/time of the range.</param>
         /// <param name="ToDate">The end date/time of the range.</param>
         /// <returns>A list of occurrences that fall between the dates provided.</returns>
-        public IList<Occurrence> GetOccurrences(iCalDateTime FromDate, iCalDateTime ToDate)
+        public IList<Occurrence> GetOccurrences(IDateTime fromDate, IDateTime toDate)
         {
-            return GetOccurrences<IRecurringComponent>(FromDate, ToDate);
+            return GetOccurrences<IRecurringComponent>(fromDate, toDate);
         }
 
         /// <summary>
@@ -794,9 +796,11 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences.</param>
         /// <returns>A list of Periods representing the occurrences of this object.</returns>
-        virtual public IList<Occurrence> GetOccurrences<T>(iCalDateTime dt) where T : IRecurringComponent
+        virtual public IList<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
         {
-            return GetOccurrences<T>(dt.Local.Date, dt.Local.Date.AddDays(1).AddSeconds(-1));
+            return GetOccurrences<T>(
+                new iCalDateTime(dt.Local.Date), 
+                new iCalDateTime(dt.Local.Date.AddDays(1).AddSeconds(-1)));
         }
 
         /// <summary>
@@ -806,7 +810,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="startTime">The starting date range</param>
         /// <param name="endTime">The ending date range</param>
-        virtual public IList<Occurrence> GetOccurrences<T>(iCalDateTime startTime, iCalDateTime endTime) where T : IRecurringComponent
+        virtual public IList<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
         {
             List<Occurrence> occurrences = new List<Occurrence>();
             foreach (IRecurrable recurrable in RecurringItems)

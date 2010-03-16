@@ -17,10 +17,6 @@ namespace DDay.iCal
 
         #region Constructors
 
-        public CalendarParameterList()
-        {
-        }
-
         public CalendarParameterList(ICalendarObject parent)
         {
             m_Parent = parent;

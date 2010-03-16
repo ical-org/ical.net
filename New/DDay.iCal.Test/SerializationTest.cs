@@ -279,7 +279,7 @@ namespace DDay.iCal.Test
 
             IEvent evt = iCal.Create<Event>();
             evt.Summary = "Test event title";
-            evt.Start = new DateTime(2007, 3, 19, 0, 0, 0, DateTimeKind.Utc);
+            evt.Start = new iCalDateTime(new DateTime(2007, 3, 19, 0, 0, 0, DateTimeKind.Utc));
             evt.Duration = new TimeSpan(24, 0, 0);
             evt.Created = evt.Start;
             evt.DTStamp = evt.Start;
@@ -697,7 +697,7 @@ END:VCALENDAR
 
             tz = iCal.TimeZones[0];
             foreach (ITimeZoneInfo tzi in tz.TimeZoneInfos)                
-                tzi.Start = DateTime.Now.ToUniversalTime();
+                tzi.Start = new iCalDateTime(DateTime.Now.ToUniversalTime());
 
             serializer = new iCalendarSerializer();
             serializer.Serialize(iCal, @"Calendars\Serialization\Temp\TIMEZONE2.ics");
@@ -839,14 +839,14 @@ END:VCALENDAR
         //    Assert.AreEqual(1, iCal.TimeZones.Count);
 
         //    TZID tzid = iCal.TimeZones[0].TZID;
-        //    IList<Occurrence> occurrences = iCal.GetOccurrences(new iCalDateTime(2009, 8, 24, tzid, iCal), new iCalDateTime(2009, 9, 28, tzid, iCal));
+        //    IList<Occurrence> occurrences = iCal.GetOccurrences(new iCalDateTime(2009, 8, 24, tzid), new iCalDateTime(2009, 9, 28, tzid));
         //    Assert.AreEqual(5, occurrences.Count);
-        //    Assert.AreEqual(new iCalDateTime(2009, 8, 26, 8, 0, 0, tzid, iCal), occurrences[0].Period.StartTime);
-        //    Assert.AreEqual(new iCalDateTime(2009, 9, 2, 8, 0, 0, tzid, iCal), occurrences[1].Period.StartTime);
-        //    Assert.AreEqual(new iCalDateTime(2009, 9, 9, 8, 0, 0, tzid, iCal), occurrences[2].Period.StartTime);
-        //    Assert.AreEqual(new iCalDateTime(2009, 9, 16, 8, 0, 0, tzid, iCal), occurrences[3].Period.StartTime);
-        //    Assert.AreEqual(new iCalDateTime(2009, 9, 23, 8, 0, 0, tzid, iCal), occurrences[4].Period.StartTime);
-        //    Assert.AreEqual(new iCalDateTime(2009, 8, 26, 10, 0, 0, tzid, iCal), occurrences[0].Period.EndTime);
+        //    Assert.AreEqual(new iCalDateTime(2009, 8, 26, 8, 0, 0, tzid), occurrences[0].Period.StartTime);
+        //    Assert.AreEqual(new iCalDateTime(2009, 9, 2, 8, 0, 0, tzid), occurrences[1].Period.StartTime);
+        //    Assert.AreEqual(new iCalDateTime(2009, 9, 9, 8, 0, 0, tzid), occurrences[2].Period.StartTime);
+        //    Assert.AreEqual(new iCalDateTime(2009, 9, 16, 8, 0, 0, tzid), occurrences[3].Period.StartTime);
+        //    Assert.AreEqual(new iCalDateTime(2009, 9, 23, 8, 0, 0, tzid), occurrences[4].Period.StartTime);
+        //    Assert.AreEqual(new iCalDateTime(2009, 8, 26, 10, 0, 0, tzid), occurrences[0].Period.EndTime);
         //}
 
         ///// <summary>

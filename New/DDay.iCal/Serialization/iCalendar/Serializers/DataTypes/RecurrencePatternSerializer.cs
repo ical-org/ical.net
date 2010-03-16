@@ -136,7 +136,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 if (interval != 1)
                     values.Add("INTERVAL=" + interval);
 
-                if (recur.Until.IsAssigned)
+                if (recur.Until != null)
                 {
                     IStringSerializer serializer = new DateTimeSerializer();
                     if (serializer != null)
@@ -211,7 +211,7 @@ namespace DDay.iCal.Serialization.iCalendar
                             case "UNTIL":
                                 {
                                     DateTimeSerializer serializer = new DateTimeSerializer();
-                                    r.Until = (iCalDateTime)serializer.Deserialize(new StringReader(keyValue));
+                                    r.Until = serializer.Deserialize(new StringReader(keyValue)) as IDateTime;
                                 } break;
                             case "COUNT": r.Count = Convert.ToInt32(keyValue); break;
                             case "INTERVAL": r.Interval = Convert.ToInt32(keyValue); break;
@@ -236,8 +236,6 @@ namespace DDay.iCal.Serialization.iCalendar
             }
             else if ((match = Regex.Match(value, @"every\s+(?<Interval>other|\d+)?\w{0,2}\s*(?<Freq>second|minute|hour|day|week|month|year)s?,?\s*(?<More>.+)", RegexOptions.IgnoreCase)).Success)
             {
-                r = new RecurrencePattern();
-
                 if (match.Groups["Interval"].Success)
                 {
                     int interval;

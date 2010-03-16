@@ -16,10 +16,6 @@ namespace DDay.iCal
 
         #region Constructors
 
-        public CalendarPropertyList()
-        {
-        }
-
         public CalendarPropertyList(ICalendarObject parent)
         {
             m_Parent = parent;
@@ -29,7 +25,7 @@ namespace DDay.iCal
         }
 
         #endregion
-
+        
         #region Event Handlers
 
         void CalendarPropertyList_ItemRemoved(object sender, ObjectEventArgs<ICalendarProperty> e)

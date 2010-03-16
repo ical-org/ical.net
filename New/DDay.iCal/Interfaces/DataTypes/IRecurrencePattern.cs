@@ -8,7 +8,7 @@ namespace DDay.iCal
         IEncodableDataType
     {
         FrequencyType Frequency { get; set; }
-        iCalDateTime Until { get; set; }
+        IDateTime Until { get; set; }
         int Count { get; set; }
         int Interval { get; set; }
         IList<int> BySecond { get; set; }
@@ -24,8 +24,8 @@ namespace DDay.iCal
 
         RecurrenceRestrictionType RestrictionType { get; set; }
         RecurrenceEvaluationModeType EvaluationMode { get; set; }
-        
-        bool CheckValidDate(iCalDateTime dt);
-        bool IsValidDate(iCalDateTime dt);
+
+        bool CheckValidDate(IDateTime dt);
+        bool IsValidDate(IDateTime dt);
     }
 }

@@ -19,9 +19,9 @@ namespace DDay.iCal
     public abstract class CalendarDataType :
         ICalendarDataType
     {
-        #region Private Fields
+        #region Protected Fields
 
-        private Stack<ICalendarObject> _Associations = new Stack<ICalendarObject>();
+        protected Stack<ICalendarObject> _Associations = new Stack<ICalendarObject>();
 
         #endregion        
     
@@ -68,7 +68,8 @@ namespace DDay.iCal
 
         virtual public void Deassociate()
         {
-            _Associations.Pop();
+            if (_Associations.Count > 0)
+                _Associations.Pop();
         }
 
         #endregion

@@ -23,10 +23,10 @@ namespace DDay.iCal
         string Class { get; set; }
         IList<string> Comments { get; set; }
         IList<string> Contacts { get; set; }
-        iCalDateTime Created { get; set; }
+        IDateTime Created { get; set; }
         string Description { get; set; }
-        iCalDateTime DTStamp { get; set; }
-        iCalDateTime LastModified { get; set; }
+        IDateTime DTStamp { get; set; }
+        IDateTime LastModified { get; set; }
         IOrganizer Organizer { get; set; }
         int Priority { get; set; }
         IList<string> RelatedComponents { get; set; }

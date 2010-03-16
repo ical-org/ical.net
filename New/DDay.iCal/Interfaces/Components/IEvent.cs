@@ -18,7 +18,7 @@ namespace DDay.iCal
         /// will be extrapolated.
         /// </note>
         /// </summary>
-        iCalDateTime DTEnd { get; set; }
+        IDateTime DTEnd { get; set; }
 
         /// <summary>
         /// The duration of the event.
@@ -46,7 +46,7 @@ namespace DDay.iCal
         /// <summary>
         /// An alias to the DTEnd field (i.e. end date/time).
         /// </summary>
-        iCalDateTime End { get; set; }
+        IDateTime End { get; set; }
 
         /// <summary>
         /// Returns true if the event is an all-day event.

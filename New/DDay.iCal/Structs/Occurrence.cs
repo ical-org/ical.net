@@ -17,7 +17,7 @@ namespace DDay.iCal
     {
         #region Private Fields
         
-        private Period m_Period;
+        private IPeriod m_Period;
         private IRecurrable m_Source; 
 
         #endregion
@@ -27,7 +27,7 @@ namespace DDay.iCal
 #if DATACONTRACT
         [DataMember(Order = 1)]
 #endif
-        public Period Period
+        public IPeriod Period
         {
             get { return m_Period; }
             set { m_Period = value; }
@@ -52,7 +52,7 @@ namespace DDay.iCal
             m_Source = ao.Source;
         }
 
-        public Occurrence(IRecurrable recurrable, Period period)
+        public Occurrence(IRecurrable recurrable, IPeriod period)
         {
             m_Source = recurrable;
             m_Period = period;

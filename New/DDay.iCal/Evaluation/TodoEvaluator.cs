@@ -29,9 +29,9 @@ namespace DDay.iCal
 
         #region Public Methods
 
-        public void EvaluateToPreviousOccurrence(iCalDateTime completedDate, iCalDateTime currDt)
+        public void EvaluateToPreviousOccurrence(IDateTime completedDate, IDateTime currDt)
         {
-            iCalDateTime beginningDate = completedDate;
+            IDateTime beginningDate = completedDate.Copy<IDateTime>();
 
             if (Todo.RecurrenceRules != null)
             {
@@ -57,7 +57,7 @@ namespace DDay.iCal
             Evaluate(Todo.Start, beginningDate, currDt);
         }
 
-        public void DetermineStartingRecurrence(IRecurrenceDate rdate, ref iCalDateTime dt)
+        public void DetermineStartingRecurrence(IRecurrenceDate rdate, ref IDateTime dt)
         {
             IEvaluator evaluator = rdate.GetService(typeof(IEvaluator)) as IEvaluator;
             if (evaluator == null)
@@ -66,17 +66,17 @@ namespace DDay.iCal
                 throw new Exception("Could not determine starting recurrence: a period evaluator could not be found!");
             }
 
-            foreach (Period p in evaluator.Periods)
+            foreach (IPeriod p in evaluator.Periods)
             {
-                if (p.StartTime < dt)
+                if (p.StartTime.LessThan(dt))
                     dt = p.StartTime;
             }
         }
 
-        public void DetermineStartingRecurrence(IRecurrencePattern recur, ref iCalDateTime dt)
+        public void DetermineStartingRecurrence(IRecurrencePattern recur, ref IDateTime dt)
         {
             if (recur.Count != int.MinValue)
-                dt = Todo.Start;                
+                dt = Todo.Start.Copy<IDateTime>();                
             else 
                 IncrementDate(ref dt, recur, -recur.Interval);
         }
@@ -85,13 +85,13 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override IList<Period> Evaluate(iCalDateTime startDate, iCalDateTime fromDate, iCalDateTime toDate)
+        public override IList<IPeriod> Evaluate(IDateTime startDate, IDateTime fromDate, IDateTime toDate)
         {
             // TODO items can only recur if a start date is specified
-            if (Todo.Start.IsAssigned)
+            if (Todo.Start != null)
             {
                 // Add the todo itself, before recurrence rules are evaluated
-                Period startPeriod = new Period(Todo.Start);
+                IPeriod startPeriod = new Period(Todo.Start);
                 if (!Periods.Contains(startPeriod))
                     Periods.Add(startPeriod);
 
@@ -100,28 +100,19 @@ namespace DDay.iCal
                 // Ensure each period has a duration
                 for (int i = 0; i < Periods.Count; i++)
                 {
-                    Period p = Periods[i];
+                    IPeriod p = Periods[i];
                     if (p.EndTime == null)
                     {
                         p.Duration = Todo.Duration;
                         if (p.Duration != null)
-                            p.EndTime = p.StartTime + Todo.Duration;
+                            p.EndTime = p.StartTime.Add(Todo.Duration);
                         else p.EndTime = p.StartTime;
-                    }
-                    else
-                    {
-                        // Ensure the Kind of time is consistent with Start
-                        iCalDateTime dt = p.EndTime;
-                        dt.IsUniversalTime = Todo.Start.IsUniversalTime;
-                        p.EndTime = dt;
-                    }
-
-                    Periods[i] = p;
+                    }                    
                 }
 
                 return Periods;
             }
-            return new List<Period>();
+            return new List<IPeriod>();
         }
 
         #endregion

@@ -8,18 +8,18 @@ namespace DDay.iCal
         IServiceProvider
     {
         [Obsolete("Use the Start property instead.")]
-        iCalDateTime DTStart { get; set; }
+        IDateTime DTStart { get; set; }
 
         /// <summary>
         /// Gets/sets the start date/time of the component.
         /// </summary>
-        iCalDateTime Start { get; set; }
+        IDateTime Start { get; set; }
 
         IList<IRecurrenceDate> ExceptionDates { get; set; }
         IList<IRecurrencePattern> ExceptionRules { get; set; }
         IList<IRecurrenceDate> RecurrenceDates { get; set; }
         IList<IRecurrencePattern> RecurrenceRules { get; set; }
-        iCalDateTime RecurrenceID { get; set; }
+        IDateTime RecurrenceID { get; set; }
 
         /// <summary>
         /// Clears a previous evaluation, usually because one of the 
@@ -40,7 +40,8 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences.</param>
         /// <returns>A list of Periods representing the occurrences of this object.</returns>
-        IList<Occurrence> GetOccurrences(iCalDateTime dt);
+        IList<Occurrence> GetOccurrences(IDateTime dt);
+        IList<Occurrence> GetOccurrences(DateTime dt);
 
         /// <summary>
         /// Returns all occurrences of this component that start within the date range provided.
@@ -49,6 +50,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="startTime">The starting date range</param>
         /// <param name="endTime">The ending date range</param>
-        IList<Occurrence> GetOccurrences(iCalDateTime startTime, iCalDateTime endTime);
+        IList<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime);
+        IList<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime);
     }
 }

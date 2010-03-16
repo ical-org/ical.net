@@ -51,7 +51,7 @@ namespace DDay.iCal
         /// the end date/time will be extrapolated.
         /// </note>
         /// </summary>
-        public override iCalDateTime DTStart
+        public override IDateTime DTStart
         {
             get
             {
@@ -75,9 +75,9 @@ namespace DDay.iCal
         /// will be extrapolated.
         /// </note>
         /// </summary>
-        virtual public iCalDateTime DTEnd
+        virtual public IDateTime DTEnd
         {
-            get { return Properties.Get<iCalDateTime>("DTEND"); }
+            get { return Properties.Get<IDateTime>("DTEND"); }
             set
             {
                 if (!object.Equals(DTEnd, value))
@@ -125,7 +125,7 @@ namespace DDay.iCal
         /// <summary>
         /// An alias to the DTEnd field (i.e. end date/time).
         /// </summary>
-        virtual public iCalDateTime End
+        virtual public IDateTime End
         {
             get { return DTEnd; }
             set { DTEnd = value; }
@@ -139,23 +139,21 @@ namespace DDay.iCal
             get { return !Start.HasTime; }
             set
             {
-                iCalDateTime start = Start;
-                iCalDateTime end = End;
-                TimeSpan duration = Duration;
-
                 // Set whether or not the start date/time
                 // has a time value.
-                start.HasTime = !value;
-                end.HasTime = !value;
-                if (value && start.Date.Equals(end.Date))
-                {
-                    duration = default(TimeSpan);
-                    end = start.AddDays(1);
-                }
+                if (Start != null)
+                    Start.HasTime = !value;
+                if (End != null)
+                    End.HasTime = !value;
 
-                Start = start;
-                Duration = duration;
-                End = end;
+                if (value && 
+                    Start != null &&
+                    End != null &&
+                    object.Equals(Start.Date, End.Date))
+                {
+                    Duration = default(TimeSpan);
+                    End = Start.AddDays(1);
+                }
             }
         }
 
@@ -251,9 +249,9 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="DateTime">The date to test.</param>
         /// <returns>True if the event occurs on the <paramref name="DateTime"/> provided, False otherwise.</returns>
-        virtual public bool OccursOn(iCalDateTime DateTime)
-        {            
-            foreach (Period p in Periods)
+        virtual public bool OccursOn(IDateTime DateTime)
+        {
+            foreach (IPeriod p in m_Evaluator.Periods)
                 // NOTE: removed UTC from date checks, since a date is a date.
                 if (p.StartTime.Date == DateTime.Date ||    // It's the start date OR
                     (p.StartTime.Date <= DateTime.Date &&   // It's after the start date AND
@@ -272,9 +270,9 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="DateTime">The date and time to test.</param>
         /// <returns>True if the event begins at the given date and time</returns>
-        virtual public bool OccursAt(iCalDateTime DateTime)
-        {            
-            foreach (Period p in Periods)
+        virtual public bool OccursAt(IDateTime DateTime)
+        {
+            foreach (IPeriod p in m_Evaluator.Periods)
                 if (p.StartTime.Equals(DateTime))
                     return true;
             return false;
@@ -321,12 +319,12 @@ namespace DDay.iCal
 
         private void ExtrapolateTimes()
         {
-            if (!DTEnd.IsAssigned && DTStart.IsAssigned && Duration != default(TimeSpan))
-                DTEnd = DTStart + Duration;
-            else if (Duration == default(TimeSpan) && DTStart.IsAssigned && DTEnd.IsAssigned)
-                Duration = DTEnd - DTStart;
-            else if (!DTStart.IsAssigned && Duration != default(TimeSpan) && DTEnd.IsAssigned)
-                DTStart = DTEnd - Duration;
+            if (DTEnd == null && DTStart != null && Duration != default(TimeSpan))
+                DTEnd = DTStart.Add(Duration);
+            else if (Duration == default(TimeSpan) && DTStart != null && DTEnd != null)
+                Duration = DTEnd.Subtract(DTStart);
+            else if (DTStart == null && Duration != default(TimeSpan) && DTEnd != null)
+                DTStart = DTEnd.Subtract(Duration);
         }
 
         #endregion

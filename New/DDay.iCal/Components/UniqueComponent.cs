@@ -51,7 +51,7 @@ namespace DDay.iCal
             // but be determined to be different due to millisecond differences.
             DateTime now = DateTime.Now;
             Created = new iCalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
-            DTStamp = Created;
+            DTStamp = Created.Copy<IDateTime>();
         }
 
         private void Initialize()
@@ -108,9 +108,9 @@ namespace DDay.iCal
             set { Properties.SetList("CONTACT", value); }
         }
 
-        virtual public iCalDateTime Created
+        virtual public IDateTime Created
         {
-            get { return Properties.Get<iCalDateTime>("CREATED"); }
+            get { return Properties.Get<IDateTime>("CREATED"); }
             set { Properties.Set("CREATED", value); }
         }
 
@@ -120,15 +120,15 @@ namespace DDay.iCal
             set { Properties.Set("DESCRIPTION", value); }
         }
 
-        virtual public iCalDateTime DTStamp
+        virtual public IDateTime DTStamp
         {
-            get { return Properties.Get<iCalDateTime>("DTSTAMP"); }
+            get { return Properties.Get<IDateTime>("DTSTAMP"); }
             set { Properties.Set("DTSTAMP", value); }
         }
 
-        virtual public iCalDateTime LastModified
+        virtual public IDateTime LastModified
         {
-            get { return Properties.Get<iCalDateTime>("LAST-MODIFIED"); }
+            get { return Properties.Get<IDateTime>("LAST-MODIFIED"); }
             set { Properties.Set("LAST-MODIFIED", value); }
         }
 

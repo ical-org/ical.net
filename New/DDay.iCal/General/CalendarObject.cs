@@ -221,7 +221,7 @@ namespace DDay.iCal
             get
             {
                 ICalendarObject obj = this;
-                while (obj.Parent != null && !(obj is IICalendar))
+                while (!(obj is IICalendar) && obj.Parent != null)
                     obj = obj.Parent;
 
                 if (obj is IICalendar)
