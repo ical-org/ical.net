@@ -1,9 +1,6 @@
 using System;
 using System.Collections;
 using System.Text;
-using DDay.iCal;
-using DDay.iCal;
-using DDay.iCal.Serialization;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 

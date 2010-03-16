@@ -29,22 +29,24 @@ namespace DDay.iCal
         #region Private Fields
 
         List<IList<T>> m_Lists;
+        ICalendarObject m_Parent;
 
         #endregion
 
         #region Constructors
 
-        public CompositeList()
-        {
+        public CompositeList(ICalendarObject parent)
+        {            
             m_Lists = new List<IList<T>>();
+            AssociationUtil.AssociateList(this, parent);
         }
 
-        public CompositeList(IList<T> list) : this()
+        public CompositeList(ICalendarObject parent, IList<T> list) : this(parent)
         {
             AddList(list);
         }
 
-        public CompositeList(IEnumerable<IList<T>> lists) : this()
+        public CompositeList(ICalendarObject parent, IEnumerable<IList<T>> lists) : this(parent)
         {
             AddListRange(lists);
         }
@@ -212,9 +214,9 @@ namespace DDay.iCal
             if (IsReadOnly)
                 throw new NotSupportedException();
 
-            // FIXME: do we create a list if none exists?
-            // Seems like we shouldn't, but should be looked into
-            // to determine the pros/cons.
+            // FIXME: what if there are no lists to add to?
+            // Do we add one for the user?  This could have
+            // many pros/cons, and should be looked at later.
             if (m_Lists.Count > 0)
             {
                 // FIXME: should we allow some customization as to 
@@ -341,7 +343,7 @@ namespace DDay.iCal
             #region Private Methods
 
             private void MoveNextList()
-            {                
+            {
                 if (m_ListIndex + 1 < m_Lists.Count)
                     m_CurrentListEnumerator = m_Lists[++m_ListIndex].GetEnumerator();
                 else

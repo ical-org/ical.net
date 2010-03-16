@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 using System.IO;
-using DDay.iCal;
 using System.Runtime.Serialization;
 using System.Diagnostics;
 using DDay.iCal.Serialization;

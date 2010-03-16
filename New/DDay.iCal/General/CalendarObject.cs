@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
-using DDay.iCal;
-using DDay.iCal;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 

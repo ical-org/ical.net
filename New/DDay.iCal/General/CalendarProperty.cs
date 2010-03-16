@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using DDay.iCal;
 using System.Runtime.Serialization;
 using System.Diagnostics;
 
@@ -96,53 +95,7 @@ namespace DDay.iCal
         }
 
         #endregion
-
-        #region Protected Methods
-
-        protected void AssociateItem(object item)
-        {
-            if (item is ICalendarDataType)
-                ((ICalendarDataType)item).AssociateWith(Parent);
-            else if (item is ICalendarObject)
-                ((ICalendarObject)item).Parent = Parent;
-        }
-
-        protected void DeassociateItem(object item)
-        {
-            if (item is ICalendarDataType)
-                ((ICalendarDataType)item).Deassociate();
-            else if (item is ICalendarObject)
-                ((ICalendarObject)item).Parent = null;
-        }
-
-        protected void AssociateList(ICompositeList list)
-        {
-            if (list != null)
-            {
-                // Associate each item in the list with the parent
-                foreach (object obj in list)
-                    AssociateItem(obj);
-
-                list.ItemAdded += new EventHandler<ObjectEventArgs<object>>(list_ItemAdded);
-                list.ItemRemoved += new EventHandler<ObjectEventArgs<object>>(list_ItemRemoved);
-            }
-        }
-
-        protected void DeassociateList(ICompositeList list)
-        {
-            if (list != null)
-            {
-                // Deassociate each item in the list
-                foreach (object obj in list)
-                    DeassociateItem(obj);
-
-                list.ItemAdded -= new EventHandler<ObjectEventArgs<object>>(list_ItemAdded);
-                list.ItemRemoved -= new EventHandler<ObjectEventArgs<object>>(list_ItemRemoved);
-            }
-        }
-
-        #endregion
-
+               
         #region Public Methods
 
         /// <summary>
@@ -186,20 +139,6 @@ namespace DDay.iCal
             }
         }
 
-        #endregion        
-
-        #region Event Handlers
-        
-        void list_ItemAdded(object sender, ObjectEventArgs<object> e)
-        {
-            AssociateItem(e.Object);
-        }
-
-        void list_ItemRemoved(object sender, ObjectEventArgs<object> e)
-        {
-            DeassociateItem(e.Object);
-        }
-
         #endregion
 
         #region ICalendarProperty Members
@@ -223,16 +162,12 @@ namespace DDay.iCal
                     m_Value = value;
 
                     // Deassociate the old value
-                    if (old is ICompositeList)
-                        DeassociateList((ICompositeList)old);
-                    else if (old != null)
-                        DeassociateItem(old);
+                    if (old != null)
+                        AssociationUtil.DeassociateItem(old);
 
                     // Associate the new value
-                    if (m_Value is ICompositeList)
-                        AssociateList((ICompositeList)m_Value);
-                    else if (m_Value != null)
-                        AssociateItem(m_Value);
+                    if (m_Value != null)
+                        AssociationUtil.AssociateItem(m_Value, Parent);
 
                     // Notify that the value changed
                     OnValueChanged(old, m_Value);

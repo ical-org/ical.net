@@ -4,9 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Configuration;
-using DDay.iCal;
-using DDay.iCal;
-using DDay.iCal.Serialization;
 using System.Runtime.Serialization;
 
 namespace DDay.iCal
