@@ -220,6 +220,7 @@
     <Compile Include="Serialization\SerializationContext.cs" />
     <Compile Include="Serialization\SerializationSettings.cs" />
     <Compile Include="General\CompositeList.cs" />
+    <Compile Include="Utility\AssociationUtil.cs" />
     <Compile Include="Utility\DateUtil.cs" />
     <Compile Include="General\KeyedList.cs" />
     <Compile Include="Utility\KnownTypeHelper.cs" />

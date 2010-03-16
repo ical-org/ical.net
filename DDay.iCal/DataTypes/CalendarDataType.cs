@@ -2,9 +2,7 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Reflection;
-using DDay.iCal;
 using System.Runtime.Serialization;
-using DDay.iCal.Serialization;
 using System.Collections.Generic;
 
 namespace DDay.iCal

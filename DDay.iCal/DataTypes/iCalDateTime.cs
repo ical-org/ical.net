@@ -3,9 +3,7 @@ using System.Diagnostics;
 using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
-using DDay.iCal;
 using System.Runtime.Serialization;
-using DDay.iCal;
 
 namespace DDay.iCal
 {
@@ -16,7 +14,7 @@ namespace DDay.iCal
     /// class handles time zone differences, and integrates seamlessly into
     /// the iCalendar framework.
     /// </remarks>
-    /// </summary>    
+    /// </summary>
 #if DATACONTRACT
     [DataContract(Name = "iCalDateTime", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
@@ -32,8 +30,7 @@ namespace DDay.iCal
         private bool _HasTime;
         private ITimeZoneInfo _TimeZoneInfo;
         private bool _IsUniversalTime;
-        private string _TZID;
-        private bool _IsCopying = false;
+        private string _TZID;        
 
         #endregion
 
@@ -110,7 +107,7 @@ namespace DDay.iCal
 
         protected ITimeZoneInfo GetTimeZoneInfo()
         {
-            if (!_IsCopying && _TimeZoneInfo == null && TZID != null && Calendar != null)
+            if (_TimeZoneInfo == null && TZID != null && Calendar != null)
             {
                 ITimeZone tz = Calendar.GetTimeZone(TZID);
                 if (tz != null)
@@ -129,15 +126,12 @@ namespace DDay.iCal
             {                
                 base.AssociateWith(obj);
                 
-                _TimeZoneInfo = null;
-                GetTimeZoneInfo();
+                _TimeZoneInfo = null;                
             }            
         }        
 
         public override void CopyFrom(ICopyable obj)
         {
-            _IsCopying = true;
-
             base.CopyFrom(obj);
 
             IDateTime dt = obj as IDateTime;
@@ -150,8 +144,6 @@ namespace DDay.iCal
                 HasTime = dt.HasTime;
                 _TimeZoneInfo = null;
             }
-
-            _IsCopying = false;
         }
         
         public override bool Equals(object obj)
@@ -414,8 +406,7 @@ namespace DDay.iCal
                 {
                     _TZID = value;
 
-                    _TimeZoneInfo = null;
-                    GetTimeZoneInfo();
+                    _TimeZoneInfo = null;                    
                 }
             }
         }

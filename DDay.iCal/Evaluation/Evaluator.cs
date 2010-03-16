@@ -103,7 +103,14 @@ namespace DDay.iCal
         protected void Associate(IDateTime startDate, IDateTime fromDate, IDateTime toDate)
         {
             ICalendarObject associatedObject = AssociatedObject;
-            if (associatedObject == null)
+            if (associatedObject == null && 
+                (
+                    // Only throw an exception of one of the date/time values requires an associated
+                    // object in order to evaluate properly.
+                    startDate.TZID != null ||
+                    fromDate.TZID != null ||
+                    toDate.TZID != null
+                ))
                 throw new Exception("An error occurred during evaluation: Cannot associate the date/time values with a calendar.");
 
             startDate.AssociateWith(associatedObject);
