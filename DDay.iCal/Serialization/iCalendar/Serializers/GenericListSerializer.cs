@@ -23,7 +23,7 @@ namespace DDay.iCal.Serialization.iCalendar
             _InnerType = objectType.GetGenericArguments()[0];
             
             Type listDef = typeof(List<>);
-            _ObjectType = listDef.MakeGenericType(_InnerType);
+            _ObjectType = listDef.MakeGenericType(typeof(object));
         }
 
         #endregion
@@ -52,14 +52,20 @@ namespace DDay.iCal.Serialization.iCalendar
                 object listObj = Activator.CreateInstance(_ObjectType);
                 if (listObj != null)
                 {
+                    // Get a serializer for the inner type
                     IStringSerializer stringSerializer = sf.Build(_InnerType, SerializationContext) as IStringSerializer;
                     if (stringSerializer != null)
                     {
                         // Deserialize the inner object
-                        object objToAdd = stringSerializer.Deserialize(tr);
+                        string value = tr.ReadToEnd();
+                        object objToAdd = stringSerializer.Deserialize(new StringReader(value));
 
-                        // Ensure the resulting object can be added to the list.
-                        if (objToAdd != null && _InnerType.IsAssignableFrom(objToAdd.GetType()))
+                        // If deserialization failed, pass the string value
+                        // into the list.
+                        if (objToAdd == null)
+                            objToAdd = value;
+
+                        if (objToAdd != null)
                         {
                             // FIXME: cache this
                             MethodInfo mi = _ObjectType.GetMethod("Add");

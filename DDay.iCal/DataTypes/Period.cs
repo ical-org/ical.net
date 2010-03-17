@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
+using DDay.iCal.Serialization.iCalendar;
 
 namespace DDay.iCal
 {
@@ -135,6 +136,12 @@ namespace DDay.iCal
         public override int GetHashCode()
         {
             return StartTime.GetHashCode() ^ EndTime.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            PeriodSerializer periodSerializer = new PeriodSerializer();
+            return periodSerializer.SerializeToString(this);
         }
 
         #endregion

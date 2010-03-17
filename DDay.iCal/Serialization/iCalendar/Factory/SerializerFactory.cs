@@ -58,9 +58,7 @@ namespace DDay.iCal.Serialization.iCalendar
                     else if (objectType.IsGenericType && typeof(IList<>).IsAssignableFrom(objectType.GetGenericTypeDefinition()))
                         s = new GenericListSerializer(objectType);
                     else if (typeof(ICalendarParameter).IsAssignableFrom(objectType))
-                        s = new ParameterSerializer();
-                    else if (typeof(IDateTime).IsAssignableFrom(objectType))
-                        s = new DateTimeSerializer();
+                        s = new ParameterSerializer();                    
                     else if (typeof(TimeSpan).IsAssignableFrom(objectType))
                         s = new TimeSpanSerializer();
                     else if (typeof(int).IsAssignableFrom(objectType))

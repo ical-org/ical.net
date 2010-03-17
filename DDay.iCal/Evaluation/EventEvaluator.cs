@@ -5,7 +5,7 @@ using System.Text;
 namespace DDay.iCal
 {
     public class EventEvaluator :
-        RecurringObjectEvaluator
+        RecurringEvaluator
     {
         #region Protected Properties
 

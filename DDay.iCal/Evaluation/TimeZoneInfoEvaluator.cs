@@ -5,7 +5,7 @@ using System.Text;
 namespace DDay.iCal
 {
     public class TimeZoneInfoEvaluator :
-        RecurringObjectEvaluator
+        RecurringEvaluator
     {
         #region Protected Properties
 

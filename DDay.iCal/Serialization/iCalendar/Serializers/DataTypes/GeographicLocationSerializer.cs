@@ -47,6 +47,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
                 return g;
             }
+
             return null;
         }
     }

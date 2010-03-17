@@ -27,8 +27,14 @@ namespace DDay.iCal.Serialization.iCalendar
 
                 if (typeof(IAttachment).IsAssignableFrom(objectType))
                     s = new AttachmentSerializer();
+                else if (typeof(IDateTime).IsAssignableFrom(objectType))
+                    s = new DateTimeSerializer();
                 else if (typeof(IGeographicLocation).IsAssignableFrom(objectType))
                     s = new GeographicLocationSerializer();
+                else if (typeof(IPeriod).IsAssignableFrom(objectType))
+                    s = new PeriodSerializer();
+                else if (typeof(IPeriodList).IsAssignableFrom(objectType))
+                    s = new PeriodListSerializer();
                 else if (typeof(IRecurrencePattern).IsAssignableFrom(objectType))
                     s = new RecurrencePatternSerializer();
                 else if (typeof(IUTCOffset).IsAssignableFrom(objectType))

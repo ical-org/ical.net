@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
 using System.IO;
+using DDay.iCal.Serialization.iCalendar;
 
 namespace DDay.iCal
 {
@@ -293,6 +294,12 @@ namespace DDay.iCal
                 return true;
             }
             return base.Equals(obj);
+        }
+
+        public override string ToString()
+        {
+            RecurrencePatternSerializer serializer = new RecurrencePatternSerializer();
+            return serializer.SerializeToString(this);
         }
 
         public override int GetHashCode()

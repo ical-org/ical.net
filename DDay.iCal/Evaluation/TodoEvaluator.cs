@@ -5,7 +5,7 @@ using System.Text;
 namespace DDay.iCal
 {
     public class TodoEvaluator :
-        RecurringObjectEvaluator
+        RecurringEvaluator
     {
         #region Protected Properties
 
@@ -40,7 +40,7 @@ namespace DDay.iCal
             }
             if (Todo.RecurrenceDates != null)
             {
-                foreach (IRecurrenceDate rdate in Todo.RecurrenceDates) 
+                foreach (IPeriodList rdate in Todo.RecurrenceDates) 
                     DetermineStartingRecurrence(rdate, ref beginningDate);
             }
             if (Todo.ExceptionRules != null)
@@ -50,14 +50,14 @@ namespace DDay.iCal
             }
             if (Todo.ExceptionDates != null)
             {
-                foreach (IRecurrenceDate exdate in Todo.ExceptionDates) 
+                foreach (IPeriodList exdate in Todo.ExceptionDates) 
                     DetermineStartingRecurrence(exdate, ref beginningDate);
             }
 
             Evaluate(Todo.Start, beginningDate, currDt);
         }
 
-        public void DetermineStartingRecurrence(IRecurrenceDate rdate, ref IDateTime dt)
+        public void DetermineStartingRecurrence(IPeriodList rdate, ref IDateTime dt)
         {
             IEvaluator evaluator = rdate.GetService(typeof(IEvaluator)) as IEvaluator;
             if (evaluator == null)
