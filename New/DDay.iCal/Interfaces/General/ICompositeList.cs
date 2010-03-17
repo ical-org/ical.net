@@ -16,8 +16,8 @@ namespace DDay.iCal
         IList<T>,
         ICompositeList
     {
-        void AddList(IList<T> list);
+        void AddList(IEnumerable list);
         void RemoveList(IList<T> list);
-        void AddListRange(IEnumerable<IList<T>> lists);
+        void AddListRange(IEnumerable<IEnumerable> lists);
     }
 }

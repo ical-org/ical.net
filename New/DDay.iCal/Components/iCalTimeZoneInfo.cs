@@ -21,7 +21,7 @@ namespace DDay.iCal
     {
         #region Private Fields
 
-        RecurringObjectEvaluator m_Evaluator;
+        RecurringEvaluator m_Evaluator;
 
         #endregion
 
@@ -41,7 +41,7 @@ namespace DDay.iCal
 
         void Initialize()
         {
-            m_Evaluator = new RecurringObjectEvaluator(this);
+            m_Evaluator = new RecurringEvaluator(this);
         }
 
         #endregion
@@ -162,9 +162,9 @@ namespace DDay.iCal
             set { Properties.Set("DTSTART", value); }
         }
 
-        virtual public IList<IRecurrenceDate> ExceptionDates
+        virtual public IList<IPeriodList> ExceptionDates
         {
-            get { return Properties.GetList<IRecurrenceDate>("EXDATE"); }
+            get { return Properties.GetList<IPeriodList>("EXDATE"); }
             set { Properties.Set("EXDATE", value); }
         }
 
@@ -174,9 +174,9 @@ namespace DDay.iCal
             set { Properties.Set("EXRULE", value); }
         }
 
-        virtual public IList<IRecurrenceDate> RecurrenceDates
+        virtual public IList<IPeriodList> RecurrenceDates
         {
-            get { return Properties.GetList<IRecurrenceDate>("RDATE"); }
+            get { return Properties.GetList<IPeriodList>("RDATE"); }
             set { Properties.Set("RDATE", value); }
         }
 

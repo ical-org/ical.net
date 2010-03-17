@@ -49,7 +49,7 @@ namespace DDay.iCal
         #region Private Fields
                 
         private IList<IAlarm> m_Alarms;
-        private RecurringObjectEvaluator m_Evaluator;
+        private RecurringEvaluator m_Evaluator;
 
         #endregion
 
@@ -64,9 +64,9 @@ namespace DDay.iCal
             set { Properties.Set("DTSTART", value); }
         }        
 
-        virtual public IList<IRecurrenceDate> ExceptionDates
+        virtual public IList<IPeriodList> ExceptionDates
         {
-            get { return Properties.GetList<IRecurrenceDate>("EXDATE"); }
+            get { return Properties.GetList<IPeriodList>("EXDATE"); }
             set { Properties.Set("EXDATE", value); }
         }
 
@@ -76,9 +76,9 @@ namespace DDay.iCal
             set { Properties.Set("EXRULE", value); }
         }
 
-        virtual public IList<IRecurrenceDate> RecurrenceDates
+        virtual public IList<IPeriodList> RecurrenceDates
         {
-            get { return Properties.GetList<IRecurrenceDate>("RDATE"); }
+            get { return Properties.GetList<IPeriodList>("RDATE"); }
             set { Properties.Set("RDATE", value); }
         }
 
@@ -123,12 +123,12 @@ namespace DDay.iCal
         public RecurringComponent(string name) : base(name) { Initialize(); }
         private void Initialize()
         {
-            m_Evaluator = new RecurringObjectEvaluator(this);
+            m_Evaluator = new RecurringEvaluator(this);
             Alarms = new List<IAlarm>();
 
-            RecurrenceDates = new List<IRecurrenceDate>();
+            RecurrenceDates = new List<IPeriodList>();
             RecurrenceRules = new List<IRecurrencePattern>();
-            ExceptionDates = new List<IRecurrenceDate>();
+            ExceptionDates = new List<IPeriodList>();
             ExceptionRules = new List<IRecurrencePattern>();
         }
 

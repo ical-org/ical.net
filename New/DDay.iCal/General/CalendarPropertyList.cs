@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Collections;
 
 namespace DDay.iCal
 {
@@ -99,7 +100,7 @@ namespace DDay.iCal
 
         virtual public IList<U> GetList<U>(string name)
         {
-            return new CompositeList<U>(m_Parent, GetAll<IList<U>>(name));            
+            return new CompositeList<U>(m_Parent, GetAll<IEnumerable>(name));            
         }
 
         #endregion

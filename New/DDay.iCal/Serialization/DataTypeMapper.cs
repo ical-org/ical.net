@@ -37,14 +37,14 @@ namespace DDay.iCal.Serialization
             AddPropertyMapping("DTSTART", typeof(IDateTime));
             AddPropertyMapping("DUE", typeof(IDateTime));
             AddPropertyMapping("DURATION", typeof(TimeSpan));
-            AddPropertyMapping("EXDATE", typeof(IList<IRecurrenceDate>));
+            AddPropertyMapping("EXDATE", typeof(IList<IPeriodList>));
             AddPropertyMapping("EXRULE", typeof(IList<IRecurrencePattern>));
             AddPropertyMapping("GEO", typeof(IGeographicLocation));
             AddPropertyMapping("LAST-MODIFIED", typeof(IDateTime));
             AddPropertyMapping("ORGANIZER", typeof(IOrganizer));
             AddPropertyMapping("PERCENT-COMPLETE", typeof(int));
             AddPropertyMapping("PRIORITY", typeof(int));
-            AddPropertyMapping("RDATE", typeof(IList<IRecurrenceDate>));
+            AddPropertyMapping("RDATE", typeof(IList<IPeriodList>));
             AddPropertyMapping("RECURRENCE-ID", typeof(IDateTime));
             AddPropertyMapping("RELATED-TO", typeof(IList<string>));
             AddPropertyMapping("REQUEST-STATUS", typeof(IList<IRequestStatus>));
@@ -113,7 +113,7 @@ namespace DDay.iCal.Serialization
                 _PropertyMap.Remove(name.ToUpper());
         }
         
-        virtual public Type Get(object obj)
+        virtual public Type GetPropertyMapping(object obj)
         {
             ICalendarProperty p = obj as ICalendarProperty;
             if (p != null && p.Name != null)

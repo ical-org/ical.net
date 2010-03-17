@@ -153,12 +153,12 @@ namespace DDay.iCal.Test
 
         // FIXME: re-implement
         //[Test, Category("DataContractionSerialization")]
-        //public void RecurrenceDate1()
+        //public void PeriodList1()
         //{
-        //    IRecurrenceDate d = new RecurrenceDate();
+        //    IPeriodList d = new PeriodList();
         //    d.Periods.Add(new Period(DateTime.Now.AddHours(2), DateTime.Now.AddHours(3)));
         //    d.Periods.Add(new Period(DateTime.Now.AddHours(4), DateTime.Now.AddHours(5)));
-        //    SerializeTest(d, "RecurrenceDate1.xml");
+        //    SerializeTest(d, "PeriodList1.xml");
         //}
 
         [Test, Category("DataContractionSerialization")]

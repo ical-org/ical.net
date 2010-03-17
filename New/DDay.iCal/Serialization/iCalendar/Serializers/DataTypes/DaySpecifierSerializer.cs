@@ -51,6 +51,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 ds.DayOfWeek = RecurrencePatternSerializer.GetDayOfWeek(match.Groups[3].Value);
                 return ds;
             }
+
             return null;
         }
     }

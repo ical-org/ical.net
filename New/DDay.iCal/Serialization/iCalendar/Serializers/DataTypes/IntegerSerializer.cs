@@ -51,6 +51,7 @@ namespace DDay.iCal.Serialization.iCalendar
             int i;
             if (Int32.TryParse(value, out i))
                 return i;
+
             return null;
         }
     }

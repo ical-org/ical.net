@@ -10,6 +10,6 @@ namespace DDay.iCal.Serialization
         void AddPropertyMapping(string name, TypeResolverDelegate resolver);
         void RemovePropertyMapping(string name);
 
-        Type Get(object obj);
+        Type GetPropertyMapping(object obj);
     }
 }

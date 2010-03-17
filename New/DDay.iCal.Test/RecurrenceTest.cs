@@ -1615,7 +1615,7 @@ namespace DDay.iCal.Test
                 "EST",
                 "EST",
                 "EDT",
-                "EDT"                
+                "EDT"
             };
 
             for (int i = 0; i < DateTimes.Length; i++)

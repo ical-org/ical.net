@@ -32,7 +32,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 object obj = SerializationContext.Peek();
 
                 // Get the data type for this object
-                Type type = mapper.Get(obj);
+                Type type = mapper.GetPropertyMapping(obj);
                     
                 if (type != null)
                     return sf.Build(type, SerializationContext) as IStringSerializer;
@@ -69,8 +69,18 @@ namespace DDay.iCal.Serialization.iCalendar
         {
             IStringSerializer serializer = GetMappedSerializer();
             if (serializer != null)
-                return serializer.Deserialize(tr);
-            return null;
+            {
+                string value = tr.ReadToEnd();
+                object returnValue = serializer.Deserialize(new StringReader(value));
+
+                // Default to returning the string representation of the value
+                // if the value wasn't formatted correctly.
+                // FIXME: should this be a try/catch?  Should serializers be throwing
+                // and InvalidFormatException?  This may have some performance issues
+                // as try/catch is much slower than other means.
+                return returnValue ?? value;
+            }
+            return null;            
         } 
 
         #endregion

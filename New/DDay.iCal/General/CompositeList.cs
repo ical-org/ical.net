@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Collections;
 
 namespace DDay.iCal
 {
@@ -41,12 +42,12 @@ namespace DDay.iCal
             AssociationUtil.AssociateList(this, parent);
         }
 
-        public CompositeList(ICalendarObject parent, IList<T> list) : this(parent)
+        public CompositeList(ICalendarObject parent, IEnumerable list) : this(parent)
         {
             AddList(list);
         }
 
-        public CompositeList(ICalendarObject parent, IEnumerable<IList<T>> lists) : this(parent)
+        public CompositeList(ICalendarObject parent, IEnumerable<IEnumerable> lists) : this(parent)
         {
             AddListRange(lists);
         }
@@ -104,12 +105,37 @@ namespace DDay.iCal
             return null;
         }
 
+        protected IList<T> GetListForEnumerable(IEnumerable list)
+        {
+            if (list == null)
+                return null;
+
+            if (list is IList<T>)
+            {
+                // The list is already of the correct type, return it!
+                return (IList<T>)list;
+            }
+            else
+            {
+                // Build a new list that contains only items that
+                // can be added to the list.
+                List<T> l = new List<T>();
+                foreach (object obj in list)
+                {
+                    if (obj is T)
+                        l.Add((T)obj);
+                }
+                return l;
+            }
+        }
+
         #endregion
 
         #region ICompositeList<T> Members
 
-        virtual public void AddList(IList<T> list)
+        virtual public void AddList(IEnumerable e)
         {
+            IList<T> list = GetListForEnumerable(e);
             if (list != null)
             {
                 m_Lists.Add(list);
@@ -128,12 +154,12 @@ namespace DDay.iCal
             }
         }
 
-        virtual public void AddListRange(IEnumerable<IList<T>> lists)
+        virtual public void AddListRange(IEnumerable<IEnumerable> lists)
         {
             if (lists != null)
             {
-                foreach (IList<T> list in lists)
-                    AddList(list);
+                foreach (IEnumerable item in lists)
+                    AddList(GetListForEnumerable(item));
             }
         }
 

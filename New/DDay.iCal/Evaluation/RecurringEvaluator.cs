@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public class RecurringObjectEvaluator :
+    public class RecurringEvaluator :
         Evaluator
     {
         #region Private Fields
@@ -25,7 +25,7 @@ namespace DDay.iCal
 
         #region Constructors
 
-        public RecurringObjectEvaluator(IRecurrable obj)
+        public RecurringEvaluator(IRecurrable obj)
         {
             Recurrable = obj;
 
@@ -98,7 +98,7 @@ namespace DDay.iCal
             // Handle RDATEs
             if (Recurrable.RecurrenceDates != null)
             {
-                foreach (IRecurrenceDate rdate in Recurrable.RecurrenceDates)
+                foreach (IPeriodList rdate in Recurrable.RecurrenceDates)
                 {
                     IEvaluator evaluator = rdate.GetService(typeof(IEvaluator)) as IEvaluator;
                     if (evaluator != null)
@@ -155,7 +155,7 @@ namespace DDay.iCal
             // Handle EXDATEs
             if (Recurrable.ExceptionDates != null)
             {
-                foreach (IRecurrenceDate exdate in Recurrable.ExceptionDates)
+                foreach (IPeriodList exdate in Recurrable.ExceptionDates)
                 {
                     IEvaluator evaluator = exdate.GetService(typeof(IEvaluator)) as IEvaluator;
                     if (evaluator != null)
