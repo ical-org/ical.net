@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using NUnit.Framework;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Collections;
-using NUnit.Framework;
 
 namespace DDay.iCal.Test
 {
@@ -19,7 +19,17 @@ namespace DDay.iCal.Test
 
             FileStream fs = new FileStream(Path.Combine(dir, filename), FileMode.Create, FileAccess.Write);
 
+#if DATACONTRACT
             DataContractSerializer serializer = new DataContractSerializer(obj.GetType());
+#else
+            DataContractSerializer serializer = new DataContractSerializer(
+                obj.GetType(), 
+                KnownTypeHelper.GetKnownTypes(), 
+                0x7fff, // Maximum number of items in the object graph
+                false,  // Don't ignore ExtensionDataObjects
+                true,   // Preserve object references
+                null);  // The DataContract surrogate
+#endif
             serializer.WriteObject(fs, obj);
 
             object deserializedObject = null;
@@ -61,26 +71,24 @@ namespace DDay.iCal.Test
             }
         }
 
+        [Test, Category("DataContractSerialization")]
+        public void Attachment1()
+        {
+            IAttachment a = new Attachment();
+            a.FormatType = "application/binary";
+            a.Data = new byte[] { 1, 2, 3, 4 };
+            SerializeTest(a, "Attachment1.xml");
+        }
+
         // FIXME: re-implement
         //[Test, Category("DataContractSerialization")]
         //public void Attendee1()
         //{
-        //    Attendee a = new Attendee();
+        //    IAttendee a = new Attendee();
         //    a.CommonName = "The Postmaster";
         //    a.DirectoryEntry = "ldap://host.com:6666/o=eDABC%20Industries,c=3DUS??(cn=3DBJim%20Dolittle)";
-        //    a.Value = "mailto:test123@test.com";
+        //    a.EmailAddress = "mailto:test123@test.com";
         //    SerializeTest(a, "Attendee1.xml");
-        //}
-
-        // FIXME: re-implement
-        //[Test, Category("DataContractSerialization")]
-        //public void Binary1()
-        //{
-        //    Binary b = new Binary();
-        //    b.FormatType = "application/binary";
-        //    b.Data = new byte[] { 1, 2, 3, 4 };
-        //    b.Name = "ATTACH";
-        //    SerializeTest(b, "Binary1.xml");
         //}
 
         [Test, Category("DataContractionSerialization")]
@@ -90,49 +98,42 @@ namespace DDay.iCal.Test
             SerializeTest(ds, "DaySpecifier1.xml");
         }
 
-        [Test, Category("DataContractionSerialization")]
-        public void Duration1()
-        {
-            TimeSpan ts = TimeSpan.FromHours(1.234);
-            SerializeTest(ts, "TimeSpan1.xml");
-        }
-
         // FIXME: re-implement
         //[Test, Category("DataContractionSerialization")]
         //public void Event1()
         //{
         //    iCalendar iCal = new iCalendar();
-
-        //    IEvent evt = iCal.Create<Event>();
+            
+        //    Event evt = iCal.Create<Event>();
         //    evt.Summary = "Summary";
         //    evt.Description = "Description";
         //    evt.Start = DateTime.Today.AddDays(1).AddHours(8).AddMinutes(30);
         //    evt.Duration = TimeSpan.FromHours(1);
         //    evt.Comments.Add("Comment 1");
         //    evt.Comments.Add("Comment 2");
-        //    evt.Comments.Add("Doug Day (555) 555-5555");
-
-        //    IAlarm a = new Alarm();
+        //    evt.Contacts.Add("Doug Day (555) 555-5555");
+            
+        //    Alarm a = new Alarm();
         //    a.Trigger = new Trigger(TimeSpan.FromHours(-2));
         //    a.Action = AlarmAction.Display;
         //    evt.Alarms.Add(a);
 
-        //    evt.Attachments.Add(new Binary(new byte[] { 1, 2, 3, 4 }));
+        //    evt.Attachments.Add(new Attachment(new byte[] { 1, 2, 3, 4 }));
         //    evt.Categories.Add("Work");
         //    evt.RecurrenceRules.Add(new RecurrencePattern("FREQ=DAILY,INTERVAL=3"));
         //    evt.Resources.Add("Projector");
-        //    evt.GeographicLocation = new GeographicLocation(40.766852, -111.963375);
+        //    evt.GeographicLocation = new Geo(40.766852,-111.963375);
         //    evt.Location = "SLC Airport";
-        //    evt.Organizer = new Organizer("mailto:doug@ddaysoftware.com");
+        //    evt.Organizer = "mailto:doug@ddaysoftware.com";
 
         //    SerializeTest(iCal, "Event1.xml");
         //}
-
+        
         [Test, Category("DataContractionSerialization")]
-        public void Geo1()
+        public void GeographicLocation1()
         {
-            GeographicLocation g = new GeographicLocation(123.143, 52.1234);
-            SerializeTest(g, "Geo1.xml");
+            IGeographicLocation g = new GeographicLocation(123.143, 52.1234);
+            SerializeTest(g, "GeographicLocation1.xml");
         }
 
         [Test, Category("DataContractionSerialization")]
@@ -141,30 +142,29 @@ namespace DDay.iCal.Test
             iCalDateTime icdt = DateTime.Now;
             SerializeTest(icdt, "iCalDateTime1.xml");
         }
-                
+
         [Test, Category("DataContractionSerialization")]
         public void Period1()
         {
-            IPeriod p = new Period();
+            Period p = new Period();
             p.StartTime = new iCalDateTime(DateTime.Now.AddHours(2));
             p.EndTime = new iCalDateTime(DateTime.Now.AddHours(3));
             SerializeTest(p, "Period1.xml");
         }
 
-        // FIXME: re-implement
-        //[Test, Category("DataContractionSerialization")]
-        //public void PeriodList1()
-        //{
-        //    IPeriodList d = new PeriodList();
-        //    d.Periods.Add(new Period(DateTime.Now.AddHours(2), DateTime.Now.AddHours(3)));
-        //    d.Periods.Add(new Period(DateTime.Now.AddHours(4), DateTime.Now.AddHours(5)));
-        //    SerializeTest(d, "PeriodList1.xml");
-        //}
+        [Test, Category("DataContractionSerialization")]
+        public void PeriodList1()
+        {
+            IPeriodList pl = new PeriodList();
+            pl.Add(new Period(new iCalDateTime(DateTime.Now.AddHours(2)), new iCalDateTime(DateTime.Now.AddHours(3))));
+            pl.Add(new Period(new iCalDateTime(DateTime.Now.AddHours(4)), new iCalDateTime(DateTime.Now.AddHours(5))));
+            SerializeTest(pl, "PeriodList1.xml");
+        }
 
         [Test, Category("DataContractionSerialization")]
         public void RecurrencePattern1()
         {
-            IRecurrencePattern rp = new RecurrencePattern();
+            RecurrencePattern rp = new RecurrencePattern();
             rp.ByMonthDay.Add(5);
             rp.ByMonth.Add(3);
             rp.ByHour.Add(8);
@@ -177,16 +177,15 @@ namespace DDay.iCal.Test
         //[Test, Category("DataContractionSerialization")]
         //public void Trigger1()
         //{
-        //    Trigger t = new Trigger(TimeSpan.FromHours(-1));
+        //    ITrigger t = new Trigger(TimeSpan.FromHours(-1));
         //    SerializeTest(t, "Trigger1.xml");
         //}
-        
-        // FIXME: re-implement
-        //[Test, Category("DataContractionSerialization")]
-        //public void UTCOffset1()
-        //{
-        //    IUTCOffset o = new UTC_Offset(TimeSpan.FromHours(-6));
-        //    SerializeTest(o, "UTCOffset1.xml");
-        //}
+
+        [Test, Category("DataContractionSerialization")]
+        public void UTCOffset1()
+        {
+            UTCOffset o = new UTCOffset(TimeSpan.FromHours(-6));
+            SerializeTest(o, "UTCOffset1.xml");
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace DDay.iCal.Test
         [Test, Category("Component")]
         public void UniqueComponent1()
         {
-            IICalendar iCal = new iCalendar();
+            iCalendar iCal = new iCalendar();
             Event evt = iCal.Create<Event>();
 
             Assert.IsNotNull(evt.UID);

@@ -21,8 +21,20 @@ namespace DDay.iCal
     [Serializable]
     public sealed class iCalDateTime :
         EncodableDataType,
-        IDateTime        
+        IDateTime
     {
+        #region Static Public Properties
+
+        static public iCalDateTime Now
+        {
+            get
+            {
+                return new iCalDateTime(DateTime.Now);
+            }
+        }
+
+        #endregion
+
         #region Private Fields
 
         private DateTime _Value;

@@ -7,8 +7,6 @@ using System.Resources;
 using System.Web;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using DDay.iCal.Serialization;
-using DDay.iCal.Serialization.iCalendar;
 using NUnit.Framework;
 
 namespace DDay.iCal.Test
@@ -16,14 +14,27 @@ namespace DDay.iCal.Test
     [TestFixture]
     public class TodoTest
     {
-        static private string tzid;
+        private string tzid;
 
         [TestFixtureSetUp]
-        static public void InitAll()
+        public void InitAll()
         {
             tzid = "US-Eastern";
         }
 
+        static public void DoTests()
+        {
+            TodoTest t = new TodoTest();
+            t.InitAll();
+            t.TODO1();
+            t.TODO2();
+            t.TODO3();
+            t.TODO4();
+            t.TODO5();
+            t.TODO6();
+            t.TODO7();
+        }
+                
         public void TestTodoActive(string calendar, ArrayList items, params int[] numPeriods)
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar);
@@ -32,7 +43,7 @@ namespace DDay.iCal.Test
             
             for (int i = 0; i < items.Count; i += 2)
             {
-                iCalDateTime dt = (iCalDateTime)items[i];
+                iCalDateTime dt = (iCalDateTime)items[i];                
                 dt.TZID = tzid;
 
                 bool tf = (bool)items[i + 1];
@@ -41,16 +52,16 @@ namespace DDay.iCal.Test
                 else Assert.IsFalse(todo.IsActive(dt), "Todo should not be active at " + dt);
             }
 
-            // FIXME: should this part of the test be removed altogether?
-            // Ideally, Periods should be internal/private.
-            //if (numPeriods != null &&
-            //    numPeriods.Length > 0)
-            //{
-            //    Assert.AreEqual(
-            //        numPeriods[0],
-            //        todo.Periods.Count,
-            //        "Todo should have " + numPeriods[0] + " occurrences after evaluation; it had " + todo.Periods.Count);
-            //}
+            if (numPeriods != null &&
+                numPeriods.Length > 0)
+            {
+                IEvaluator evaluator = todo.GetService(typeof(IEvaluator)) as IEvaluator;
+                Assert.IsNotNull(evaluator);
+                Assert.AreEqual(
+                    numPeriods[0],
+                    evaluator.Periods.Count,
+                    "Todo should have " + numPeriods[0] + " occurrences after evaluation; it had " + evaluator.Periods.Count);
+            }
         }
 
         public void TestTodoCompleted(string calendar, ArrayList items)
@@ -61,7 +72,7 @@ namespace DDay.iCal.Test
             
             for (int i = 0; i < items.Count; i += 2)
             {
-                iCalDateTime dt = (iCalDateTime)items[i];
+                IDateTime dt = (IDateTime)items[i];
                 dt.TZID = tzid;
 
                 bool tf = (bool)items[i + 1];
@@ -267,21 +278,21 @@ namespace DDay.iCal.Test
         //[Test, Category("Todo")]
         //public void TODO10()
         //{
-        //    IICalendar iCal = new iCalendar();
-        //    ITodo todo = iCal.Create<Todo>();
+        //    iCalendar iCal = new iCalendar();
+        //    Todo todo = iCal.Create<Todo>();
 
         //    todo.Summary = "xxxx";
         //    todo.Description = "fdsdsfds";
 
         //    // Set Start & Due date
-        //    todo.DTStart = new DateTime(2007, 1, 1, 8, 0, 0);
-        //    todo.Due = new DateTime(2007, 1, 7);
-        //    todo.Created = DateTime.SpecifyKind(new DateTime(2007, 1, 1), DateTimeKind.Utc);
-        //    todo.DTStamp = DateTime.SpecifyKind(new DateTime(2007, 1, 1), DateTimeKind.Utc);
+        //    todo.DTStart = new iCalDateTime(2007, 1, 1, 8, 0, 0);
+        //    todo.Due = new iCalDateTime(2007, 1, 7);
+        //    todo.Created = new iCalDateTime(DateTime.SpecifyKind(new DateTime(2007, 1, 1), DateTimeKind.Utc));
+        //    todo.DTStamp = new iCalDateTime(DateTime.SpecifyKind(new DateTime(2007, 1, 1), DateTimeKind.Utc));
         //    todo.UID = "b6709c95-5523-46aa-a7e5-1b5ea034b86a";
 
         //    // Create an alarm
-        //    IAlarm al = new Alarm();
+        //    Alarm al = new Alarm();
         //    al.Trigger = new Trigger(TimeSpan.FromMinutes(-30));
         //    al.Action = AlarmAction.Display;
         //    al.Description = "Reminder";
@@ -297,9 +308,9 @@ namespace DDay.iCal.Test
         //        "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//DDay.iCal//NONSGML ddaysoftware.com//EN\r\nBEGIN:VTODO\r\nCREATED:20070101T000000Z\r\nDESCRIPTION:fdsdsfds\r\nDTSTAMP:20070101T000000Z\r\nDTSTART:20070101T080000\r\nDUE;VALUE=DATE:20070107\r\nSEQUENCE:0\r\nSTATUS:NEEDS-ACTION\r\nSUMMARY:xxxx\r\nUID:b6709c95-5523-46aa-a7e5-1b5ea034b86a\r\nBEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:Reminder\r\nTRIGGER:-PT30M\r\nEND:VALARM\r\nEND:VTODO\r\nEND:VCALENDAR\r\n",
         //        serializedTodo);
 
-        //    IList<AlarmOccurrence> alarms = todo.PollAlarms(
-        //        new DateTime(2007, 1, 1),
-        //        new DateTime(2007, 2, 1));
+        //    List<AlarmOccurrence> alarms = todo.PollAlarms(
+        //        new iCalDateTime(2007, 1, 1),
+        //        new iCalDateTime(2007, 2, 1));
                         
         //    iCalDateTime expectedAlarm = new iCalDateTime(2007, 1, 1, 7, 30, 0);
         //    Assert.AreEqual(1, alarms.Count, "There should be exactly 1 alarm");
@@ -310,21 +321,21 @@ namespace DDay.iCal.Test
         //[Test, Category("Todo")]
         //public void TODO11()
         //{
-        //    IICalendar iCal = new iCalendar();
-        //    ITodo todo = iCal.Create<Todo>();
+        //    iCalendar iCal = new iCalendar();
+        //    Todo todo = iCal.Create<Todo>();
 
         //    todo.Summary = "xxxx";
         //    todo.Description = "fdsdsfds";
 
         //    // Set Start & Due date
-        //    todo.DTStart = new DateTime(2007, 1, 1, 8, 0, 0);
-        //    todo.Due = new DateTime(2007, 1, 7);
-        //    todo.Created = DateTime.SpecifyKind(new DateTime(2007, 1, 1), DateTimeKind.Utc);
-        //    todo.DTStamp = DateTime.SpecifyKind(new DateTime(2007, 1, 1), DateTimeKind.Utc);
+        //    todo.DTStart = new iCalDateTime(2007, 1, 1, 8, 0, 0);
+        //    todo.Due = new iCalDateTime(2007, 1, 7);
+        //    todo.Created = new iCalDateTime(DateTime.SpecifyKind(new DateTime(2007, 1, 1), DateTimeKind.Utc));
+        //    todo.DTStamp = new iCalDateTime(DateTime.SpecifyKind(new DateTime(2007, 1, 1), DateTimeKind.Utc));
         //    todo.UID = "b6709c95-5523-46aa-a7e5-1b5ea034b86a";
 
         //    // Add an alarm in my task 
-        //    IAlarm al = new Alarm(todo);
+        //    Alarm al = new Alarm(todo);
         //    al.Action = AlarmAction.Display;
         //    al.Description = "Reminder";
         //    al.Trigger = new Trigger();

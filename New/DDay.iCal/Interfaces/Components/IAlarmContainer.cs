@@ -21,7 +21,7 @@ namespace DDay.iCal
         /// The following is an example of polling alarms for an event.
         /// <code>
         /// IICalendar iCal = iCalendar.LoadFromUri(new Uri("http://somesite.com/calendar.ics"));
-        /// Event evt = iCal.Events[0];
+        /// IEvent evt = iCal.Events[0];
         ///
         /// // Poll the alarms on the event
         /// List<AlarmOccurrence> alarms = evt.PollAlarms();
