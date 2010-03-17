@@ -474,5 +474,16 @@ namespace DDay.iCal
         }
 
         #endregion
+
+        #region INextRecurrable Members
+
+        public IPeriod GetNextOccurrence(IDateTime lastOccurrence)
+        {
+            if (_Evaluator != null)
+                return _Evaluator.GetNextOccurrence(lastOccurrence);
+            return null;
+        }
+
+        #endregion
     }
 }

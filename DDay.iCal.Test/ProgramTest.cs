@@ -1,15 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Reflection;
-using System.Resources;
 using System.Text;
-using System.Text.RegularExpressions;
+using System.IO;
+using System.Resources;
 using System.Web;
-using DDay.iCal.Serialization;
-using DDay.iCal.Serialization.iCalendar;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Net;
 using NUnit.Framework;
 
 namespace DDay.iCal.Test
@@ -23,7 +21,7 @@ namespace DDay.iCal.Test
             // The following code loads and displays an iCalendar
             // with US Holidays for 2006.
             //
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\USHolidays.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\USHolidays.ics")[0];
             Assert.IsNotNull(iCal, "iCalendar did not load.  Are you connected to the internet?");
 
             IList<Occurrence> occurrences = iCal.GetOccurrences(
@@ -32,7 +30,7 @@ namespace DDay.iCal.Test
 
             foreach (Occurrence o in occurrences)
             {
-                Event evt = o.Source as Event;
+                IEvent evt = o.Source as IEvent;
                 if (evt != null)
                 {
                     // Display the date of the event
@@ -46,7 +44,7 @@ namespace DDay.iCal.Test
                     {
                         Console.Write(" (" + evt.Start.Local.ToShortTimeString() + " - " + evt.End.Local.ToShortTimeString());
                         if (evt.Start.TimeZoneInfo != null)
-                            Console.Write(" " + evt.Start.TimeZoneName);
+                            Console.Write(" " + evt.Start.TimeZoneInfo.TimeZoneName);
                         Console.Write(")");
                     }
 
@@ -57,18 +55,18 @@ namespace DDay.iCal.Test
 
         private DateTime Start;
         private DateTime End;
-        static private TimeSpan TotalTime;
-        static private string tzid;
+        private TimeSpan TotalTime;
+        private string tzid;
 
         [TestFixtureSetUp]
-        static public void InitAll()
+        public void InitAll()
         {
             TotalTime = new TimeSpan(0);
             tzid = "US-Eastern";
         }
 
         [TestFixtureTearDown]
-        static public void DisposeAll()
+        public void DisposeAll()
         {
             Console.WriteLine("Total Processing Time: " + Math.Round(TotalTime.TotalMilliseconds) + "ms");
         }
@@ -117,7 +115,7 @@ namespace DDay.iCal.Test
             ProgramTest.TestCal(iCal);
         }
 
-        // FIXME: re-implement
+        // FIXME: re-imeplement
         //[Test]
         //public void CATEGORIES()
         //{
@@ -149,24 +147,23 @@ namespace DDay.iCal.Test
         //}
 
         [Test]
-        public void GEO1()
+        public void GeographicLocation1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\GEO1.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\GeographicLocation1.ics");
             ProgramTest.TestCal(iCal);
             IEvent evt = iCal.Events[0];
 
-            Assert.IsTrue(evt.GeographicLocation.Latitude == 37.386013, "Latitude should be 37.386013; it is not.");
-            Assert.IsTrue(evt.GeographicLocation.Longitude == -122.082932, "Longitude should be -122.082932; it is not.");
+            Assert.AreEqual(37.386013, evt.GeographicLocation.Latitude, "Latitude should be 37.386013; it is not.");
+            Assert.AreEqual(-122.082932, evt.GeographicLocation.Longitude, "Longitude should be -122.082932; it is not.");
         }
 
         [Test]
-        public void BASE64()
+        public void Base64()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BASE64.ics");
             ProgramTest.TestCal(iCal);
             IEvent evt = iCal.Events[0];
 
-            Assert.AreEqual(1, evt.Attachments.Count, "No attachments were found on the event.");
             Assert.AreEqual(
 "This is a test to try out base64 encoding without being too large.\r\n" +
 "This is a test to try out base64 encoding without being too large.\r\n" +
@@ -180,12 +177,12 @@ namespace DDay.iCal.Test
 "This is a test to try out base64 encoding without being too large.\r\n" +
 "This is a test to try out base64 encoding without being too large.\r\n" +
 "This is a test to try out base64 encoding without being too large.", 
-                evt.Attachments[0].Value,
+                evt.Attachments[0],
                 "Attached value does not match.");
         }
 
         [Test]
-        public void BASE64_1()
+        public void Base64_1()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BASE64_1.ics");
             ProgramTest.TestCal(iCal);
@@ -200,23 +197,22 @@ namespace DDay.iCal.Test
         /// This is safely ignored.
         /// </summary>
         [Test, ExpectedException(typeof(WebException))]
-        public void ATTACHMENT()
+        public void Attachment()
         {
-            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\General\BINARY.ics");
-            ProgramTest.TestCal(iCal1);
-            IEvent evt = iCal1.Events[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BINARY.ics");
+            ProgramTest.TestCal(iCal);
+            IEvent evt = iCal.Events[0];
 
-            Assert.AreEqual(1, evt.Attachments.Count, "No attachments were found on the event.");
-            IAttachment b = evt.Attachments[0];
-            if (b.Uri != null)
-                b.LoadDataFromUri();
+            IAttachment a = evt.Attachments[0];
+            if (a.Uri != null)
+                a.LoadDataFromUri();
 
             MemoryStream ms = new MemoryStream();
-            ms.SetLength(b.Data.Length);
-            b.Data.CopyTo(ms.GetBuffer(), 0);
+            ms.SetLength(a.Data.Length);
+            a.Data.CopyTo(ms.GetBuffer(), 0);
 
-            IICalendar iCal2 = iCalendar.LoadFromStream(ms);
-            Assert.IsNotNull(iCal2, "Attached iCalendar did not load correctly");
+            IICalendar iCal1 = iCalendar.LoadFromStream(ms);
+            Assert.IsNotNull(iCal1, "Attached iCalendar did not load correctly");
 
             throw new WebException();
         }
@@ -228,8 +224,8 @@ namespace DDay.iCal.Test
         [Test]
         public void MERGE1()
         {
-            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics");
-            IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE22.ics");
+            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics")[0];
+            IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE22.ics")[0];
 
             // Change the UID of the 2nd event to make sure it's different
             iCal2.Events[iCal1.Events[0].UID].UID = "1234567890";
@@ -276,8 +272,7 @@ namespace DDay.iCal.Test
                 IDateTime dt = DateTimes[i];
                 IDateTime start = occurrences[i].Period.StartTime;
                 Assert.AreEqual(dt.Local, start.Local);
-                Assert.IsNotNull(dt.TimeZoneInfo, "Comparison TimeZoneInfo should not be null.");
-                Assert.AreEqual(TimeZones[i], dt.TimeZoneName, "Event " + dt + " should occur in the " + TimeZones[i] + " timezone");
+                Assert.IsTrue(dt.TimeZoneName == TimeZones[i], "Event " + dt + " should occur in the " + TimeZones[i] + " timezone");
             }
 
             Assert.IsTrue(occurrences.Count == DateTimes.Length, "There should be exactly " + DateTimes.Length + " occurrences; there were " + occurrences.Count);
@@ -345,13 +340,11 @@ namespace DDay.iCal.Test
         [Test]
         public void MERGE2()
         {
-            // FIXME: should an iCalendarCollection be able to
-            // merge with other calendars?
-            IICalendar iCal = new iCalendar();
+            iCalendar iCal = new iCalendar();
             IICalendar tmp_cal = iCalendar.LoadFromFile(@"Calendars\General\MERGE2.ics")[0];
             iCal.MergeWith(tmp_cal);
 
-            tmp_cal = iCalendar.LoadFromFile(@"Calendars\General\MERGE2.ics");
+            tmp_cal = iCalendar.LoadFromFile(@"Calendars\General\MERGE2.ics")[0];
 
             // Compare the two calendars -- they should match exactly
             SerializationTest.CompareCalendars(iCal, tmp_cal);
@@ -364,8 +357,8 @@ namespace DDay.iCal.Test
         [Test]
         public void MERGE3()
         {
-            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics");
-            IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE23.ics");
+            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics")[0];
+            IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE23.ics")[0];
 
             iCal1.MergeWith(iCal2);
 
@@ -384,7 +377,7 @@ namespace DDay.iCal.Test
 
         // FIXME: re-implement
         //[Test]
-        //public void ADDEVENT1()
+        //public void AddEvent1()
         //{
         //    IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\GEO1.ics");
         //    ProgramTest.TestCal(iCal);
@@ -394,7 +387,7 @@ namespace DDay.iCal.Test
         //    evt.Description = "This is an event to see if event creation works";
         //    evt.Start = new iCalDateTime(2006, 12, 15, "US-Eastern", iCal);
         //    evt.Duration = new TimeSpan(1, 0, 0);
-        //    evt.Organizer = "dougd@daywesthealthcare.com";
+        //    evt.Organizer = new Organizer("dougd@daywesthealthcare.com");
 
         //    if (!Directory.Exists(@"Calendars\General\Temp"))
         //        Directory.CreateDirectory(@"Calendars\General\Temp");
@@ -410,15 +403,15 @@ namespace DDay.iCal.Test
         }
 
         [Test]
-        public void GOOGLE1()
+        public void Google1()
         {
             string tzid = "Europe/Berlin";
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/GoogleCalendar.ics");
             IEvent evt = iCal.Events["594oeajmftl3r9qlkb476rpr3c@google.com"];
             Assert.IsNotNull(evt);
 
-            iCalDateTime dtStart = new iCalDateTime(2006, 12, 18, tzid);
-            iCalDateTime dtEnd = new iCalDateTime(2006, 12, 23, tzid);
+            IDateTime dtStart = new iCalDateTime(2006, 12, 18, tzid);
+            IDateTime dtEnd = new iCalDateTime(2006, 12, 23, tzid);
             IList<Occurrence> occurrences = iCal.GetOccurrences(dtStart, dtEnd);
 
             iCalDateTime[] DateTimes = new iCalDateTime[]
@@ -433,7 +426,7 @@ namespace DDay.iCal.Test
             for (int i = 0; i < DateTimes.Length; i++)
                 Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur at " + DateTimes[i]);
 
-            Assert.IsTrue(occurrences.Count == DateTimes.Length, "There should be exactly " + DateTimes.Length + " occurrences; there were " + occurrences.Count);
+            Assert.AreEqual(DateTimes.Length, occurrences.Count, "There should be exactly " + DateTimes.Length + " occurrences; there were " + occurrences.Count);
         }
 
         [Test]
@@ -485,7 +478,7 @@ END:VCALENDAR
             //iCalDateTime startDate = new iCalDateTime(1996, 1, 1, tzid, calendars[0]);
             //iCalDateTime endDate = new iCalDateTime(1998, 4, 1, tzid, calendars[0]);
 
-            //List<iCalDateTime> DateTimes = new List<iCalDateTime>(new iCalDateTime[]
+            //List<IDateTime> DateTimes = new List<IDateTime>(new iCalDateTime[]
             //{
             //    new iCalDateTime(1997, 9, 2, 9, 0, 0, tzid, calendars[0]),
             //    new iCalDateTime(1997, 9, 9, 9, 0, 0, tzid, calendars[0]),
@@ -559,8 +552,8 @@ END:VCALENDAR
         {
             string longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Outlook2007LineFolds.ics");
-            IList<Occurrence> occurrences = iCal.GetOccurrences<Event>(new iCalDateTime(2009, 06, 20), new iCalDateTime(2009, 06, 22));
-            Assert.AreEqual(longName, ((IEvent)occurrences[0].Source).Location);
+            IList<Occurrence> events = iCal.GetOccurrences<Event>(new iCalDateTime(2009, 06, 20), new iCalDateTime(2009, 06, 22));
+            Assert.AreEqual(longName, ((IEvent)events[0].Source).Location);
         }
 
 #if DATACONTRACT && !SILVERLIGHT
@@ -574,8 +567,8 @@ END:VCALENDAR
             System.TimeZoneInfo tzi = System.TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time");
             Assert.IsNotNull(tzi);
 
-            IICalendar iCal = new iCalendar();
-            ITimeZone tz = iCalTimeZone.FromSystemTimeZone(tzi);
+            iCalendar iCal = new iCalendar();
+            iCalTimeZone tz = iCalTimeZone.FromSystemTimeZone(tzi);
             Assert.IsNotNull(tz);
 
             iCal.AddChild(tz);
@@ -589,6 +582,30 @@ END:VCALENDAR
             dt2 = new iCalDateTime(2004, 4, 4, 2, 0, 0, tz.TZID, iCal);
             result = dt2 - dt1;
             Assert.AreEqual(TimeSpan.FromHours(-1) + TimeSpan.FromSeconds(1), result);            
+        }
+
+        /// <summary>
+        /// Ensures the AddTimeZone() method works as expected.
+        /// </summary>
+        [Test]
+        public void SystemTimeZone2()
+        {
+            System.TimeZoneInfo tzi = System.TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time");
+            Assert.IsNotNull(tzi);
+
+            iCalendar iCal = new iCalendar();
+            iCalTimeZone tz = iCal.AddTimeZone(tzi);
+            Assert.IsNotNull(tz);
+            
+            iCalDateTime dt1 = new iCalDateTime(2003, 10, 26, 0, 59, 59, tz.TZID, iCal);
+            iCalDateTime dt2 = new iCalDateTime(2003, 10, 26, 1, 0, 0, tz.TZID, iCal);
+            TimeSpan result = dt2 - dt1;
+            Assert.AreEqual(TimeSpan.FromHours(1) + TimeSpan.FromSeconds(1), result);
+
+            dt1 = new iCalDateTime(2004, 4, 4, 1, 59, 59, tz.TZID, iCal);
+            dt2 = new iCalDateTime(2004, 4, 4, 2, 0, 0, tz.TZID, iCal);
+            result = dt2 - dt1;
+            Assert.AreEqual(TimeSpan.FromHours(-1) + TimeSpan.FromSeconds(1), result);
         }
 #endif
     }

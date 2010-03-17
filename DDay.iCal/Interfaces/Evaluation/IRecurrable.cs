@@ -52,5 +52,5 @@ namespace DDay.iCal
         /// <param name="endTime">The ending date range</param>
         IList<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime);
         IList<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime);
-    }
+    }    
 }

@@ -130,7 +130,7 @@ namespace DDay.iCal
                     if (IsLoaded)
                     {
                         if (value == TodoStatus.Completed)
-                            Completed = new iCalDateTime(DateTime.Now);
+                            Completed = iCalDateTime.Now;
                         else Completed = null;
                     }
 

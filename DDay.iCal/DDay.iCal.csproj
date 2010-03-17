@@ -109,6 +109,7 @@
     <Compile Include="Interfaces\DataTypes\IPeriod.cs" />
     <Compile Include="Interfaces\DataTypes\ITransparency.cs" />
     <Compile Include="Interfaces\Evaluation\IEvaluator.cs" />
+    <Compile Include="Interfaces\Evaluation\INextRecurrable.cs" />
     <Compile Include="Interfaces\Evaluation\IRecurrable.cs" />
     <Compile Include="Interfaces\Serialization\IDataTypeMapper.cs" />
     <Compile Include="Interfaces\Serialization\IEncodingProvider.cs" />
@@ -176,7 +177,7 @@
     <Compile Include="Interfaces\DataTypes\IAttendee.cs" />
     <Compile Include="Interfaces\DataTypes\IAttachment.cs" />
     <Compile Include="Interfaces\DataTypes\IOrganizer.cs" />
-    <Compile Include="Interfaces\DataTypes\IRecurrenceDate.cs" />
+    <Compile Include="Interfaces\DataTypes\IPeriodList.cs" />
     <Compile Include="Interfaces\DataTypes\IRecurrencePattern.cs" />
     <Compile Include="Interfaces\DataTypes\IRequestStatus.cs" />
     <Compile Include="Interfaces\DataTypes\IStatusCode.cs" />

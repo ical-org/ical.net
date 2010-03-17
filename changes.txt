@@ -1,0 +1,78 @@
+1.  All types found in the following namespaces have been moved to the DDay.iCal namespace for simplicity:
+
+DDay.iCal.Components
+DDay.iCal.DataTypes
+
+2. 
+ComponentBase has been renamed to CalendarComponent.
+
+3. Most types now have a corresponding interface.  For example, iCalendar now implements IICalendar, CalendarComponent now implements ICalendarComponent, etc.  Most properties, lists, return values, and method parameters have been adjusted to use interface counterparts rather than concrete objects.
+
+4. Serialization has been completely rewritten to be more intuitive, flexible, extensible, and more consistent with already established serialization practices.
+
+5. Standard (.ics) iCalendar serialization classes are found in the DDay.iCal.Serialization.iCalendar namespace.
+
+6. Global serialization classes are found in the DDay.iCal.Serialization namespace
+
+7. iCalendar.LoadFromStream(...), iCalendar.LoadFromFile(...), and iCalendar.LoadFromUri(...) now return an object of type iCalendarCollection instead of iCalendar.
+
+8. 
+Occurrence.Component has been renamed to Occurrence.Source.
+
+9. iCalDateTime constructors that once accepted an instance of iCalendar have been altered to no longer accept (or require) an iCalendar instance.
+
+10. The TZID class has been removed.  All TZID identifier are now strings.
+
+11. Most methods that once returned a List<XXX> now return an IList<XXX>.  For example, GetOccurrences() now returns an IList<Occurrence>.
+
+12. ISerializable has been renamed to ISerializer.
+
+13. Abstracted recurrence pattern evaluation into different classes that provide evaluation services for their host objects.  For example, RecurrencePattern now has a RecurrencePatternSerializer that transparently provides evaluation services during a GetOccurrences() call.recurrence periods.  This should help reduce development errors by encouraging the use of GetOccurrences(), which is more accurate, rather than Evaluate(), which is less accurate when incorrectly called.
+
+14. RecurringComponent changes.
+
+	a. Removed the 'DTStart' Property.  Use 'Start' instead.
+	b. Renamed 'RRule' to 'RecurrenceRules'.
+	c. Renamed 'RDate' to 'RecurrenceDates'.
+	d. Renamed 'ExRule' to 'ExceptionRules'.
+	e. Renamed 'ExDate' to 'ExceptionDates'.
+
+15. The 'Binary' class has been renamed to 'Attachment'.
+
+16. Event changes.
+
+	a. 'Attach' has been renamed to 'Attachments'.
+
+17. The 'Cal_Address' class has been removed. All instances that previously used it will now use one of the following classes (or their corresponding interfaces, when applicable):
+
+	a. Uri
+	b. Attendee
+	c. Organizer
+
+18. The following classes have been removed.
+
+	a. 'Duration' - replaced with System.TimeSpan.
+	b. 'Integer' - replaced with System.Int32.
+	c. 'Float' - replaced with System.Double.
+	d. 'Text' - replaced with System.String.
+	e. 'TextCollection' - replaced with IList<string>.
+	f. 'URI' - replaced with System.Uri.
+
+19. All AddXXX() methods and RemoveXXX() methods have been removed.  Instead, a matching IList is provided to perform the same function.  For example, Event.AddComment(...) has been replaced with Event.Comments.Add(...).  Similar replacements have been made throughout DDay.iCal.
+
+20. 'Geo' properties have been renamed to 'GeographicLocation'.
+
+21. Since iCalDateTime has been replaced by IDateTime in most places it is used, date/time comparisons using operators is no longer always possible, since operators cannot be defined on interfaces.  Therefore, the following methods have been defined on IDateTime for comparing IDateTime values:
+
+	a. GreaterThan()
+	b. GreaterThanOrEqual()
+	c. LessThan()
+	d. LessThanOrEqual()
+
+You can still use Equals() to perform equality tests, as before.
+
+22. DataTypes have been re-implemented to be easier to use and less clunky.  They are now more closely mapped to standard CLR data types during serialization, requiring fewer custom classes to store values.  For example, the 'Integer' class no longer exists, and all properties that previously used it are now simple System.Int32 values.
+
+23. Since iCalDateTime-type properties and method parameters have changed to use IDateTime, many implicit conversions from DateTime to iCalDateTime will no longer work.  Simply wrap your DateTime value in an iCalDateTime constructor, i.e.:  new iCalDateTime(DateTime.Now).
+
+24. Renamed 'UTC_Offset' class to 'UTCOffset'.
