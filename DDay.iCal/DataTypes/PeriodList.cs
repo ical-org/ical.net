@@ -161,6 +161,18 @@ namespace DDay.iCal
             Periods.Remove(new Period(dt));
         }
 
+        public IPeriod this[int index]
+        {
+            get
+            {
+                return m_Periods[index];
+            }
+            set
+            {
+                m_Periods[index] = value;
+            }
+        }
+
         #endregion
 
         #region ICollection<IPeriod> Members
