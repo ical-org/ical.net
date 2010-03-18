@@ -33,6 +33,14 @@ namespace DDay.iCal
             }
         }
 
+        static public iCalDateTime Today
+        {
+            get
+            {
+                return new iCalDateTime(DateTime.Today);
+            }            
+        }
+
         #endregion
 
         #region Private Fields

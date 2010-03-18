@@ -762,6 +762,7 @@ namespace DDay.iCal
         {
             if (lastOccurrence != null)
             {
+                IPeriod lastPeriod = new Period(lastOccurrence);
                 IDateTime fromDate = lastOccurrence;
                 IDateTime toDate = null;
 
@@ -836,7 +837,7 @@ namespace DDay.iCal
                         // NOTE: the lastOccurrence may or may not be contained in the
                         // result list of occurrence.  If it is, grab the next occurence
                         // if it is available.
-                        if (periods[0].Equals(lastOccurrence))
+                        if (periods[0].Equals(lastPeriod))
                         {
                             if (periods.Count > 1)
                                 return periods[1];
