@@ -263,7 +263,7 @@ namespace DDay.iCal
             // Determine the actual range we're looking at
             IDateTime endTime = new iCalDateTime(currentTime);
             IncrementDate(ref endTime, r, 1);
-            endTime = endTime.AddMilliseconds(-1);
+            endTime = endTime.AddTicks(-1);
 
             // Ensure the end of the range doesn't exceed our absolute end.
             if (endTime.GreaterThan(absEndTime))
@@ -750,7 +750,7 @@ namespace DDay.iCal
             if (lastOccurrence != null)
             {
                 IPeriod lastPeriod = new Period(lastOccurrence);
-                IDateTime fromDate = lastOccurrence;
+                IDateTime fromDate = lastOccurrence.Copy<IDateTime>();
                 IDateTime toDate = null;
 
                 RecurrencePattern r = new RecurrencePattern();

@@ -51,7 +51,7 @@ namespace DDay.iCal.Serialization.iCalendar
                     else if (typeof(ICalendarProperty).IsAssignableFrom(objectType))
                         s = new PropertySerializer();                    
                 }
-                else if (contextObj is ICalendarProperty)
+                else
                 {
                     if (typeof(string).IsAssignableFrom(objectType))
                         s = new StringSerializer();

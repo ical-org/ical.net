@@ -60,7 +60,7 @@ namespace DDay.iCal
 
         public static IDateTime FirstDayOfYear(IDateTime dt)
         {
-            return FirstDayOfMonth(dt.AddMonths(-dt.Month - 1));
+            return FirstDayOfMonth(dt.AddMonths(-dt.Month + 1));
         }
 
         public static IDateTime FirstDayOfMonth(IDateTime dt)
@@ -71,14 +71,14 @@ namespace DDay.iCal
         public static IDateTime StartOfDay(IDateTime dt)
         {
             return dt.
-                AddHours(-dt.Hour + 1).
-                AddMinutes(-dt.Minute + 1).
-                AddSeconds(-dt.Second + 1);
+                AddHours(-dt.Hour).
+                AddMinutes(-dt.Minute).
+                AddSeconds(-dt.Second);
         }
 
         public static IDateTime EndOfDay(IDateTime dt)
         {
-            return StartOfDay(dt).AddDays(1).AddMilliseconds(-1);
+            return StartOfDay(dt).AddDays(1).AddTicks(-1);
         }
 
         public static IDateTime AddFrequency(FrequencyType frequency, IDateTime dt, int interval)

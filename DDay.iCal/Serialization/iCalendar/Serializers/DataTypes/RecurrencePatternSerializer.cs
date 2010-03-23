@@ -119,6 +119,9 @@ namespace DDay.iCal.Serialization.iCalendar
             ISerializerFactory factory = GetService<ISerializerFactory>();
             if (recur != null && factory != null)
             {
+                // Push the recurrence pattern onto the serialization stack
+                SerializationContext.Push(recur);
+
                 List<string> values = new List<string>();
 
                 values.Add("FREQ=" + Enum.GetName(typeof(FrequencyType), recur.Frequency).ToUpper());
@@ -172,6 +175,9 @@ namespace DDay.iCal.Serialization.iCalendar
                 SerializeByValue(values, recur.BySetPosition, "BYSETPOS");
                 SerializeByValue(values, recur.ByWeekNo, "BYWEEKNO");
                 SerializeByValue(values, recur.ByYearDay, "BYYEARDAY");
+
+                // Pop the recurrence pattern off the serialization stack
+                SerializationContext.Pop();
                 
                 return Encode(recur, string.Join(";", values.ToArray()));
             }

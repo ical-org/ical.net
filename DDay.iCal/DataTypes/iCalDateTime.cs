@@ -590,6 +590,13 @@ namespace DDay.iCal
             return dt;
         }
 
+        public IDateTime AddTicks(long ticks)
+        {
+            IDateTime dt = Copy<IDateTime>();
+            dt.Value = Value.AddTicks(ticks);
+            return dt;
+        }
+
         public bool LessThan(IDateTime dt)
         {
             return this < dt;
