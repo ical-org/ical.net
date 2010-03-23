@@ -53,7 +53,8 @@ namespace DDay.iCal.Test
             }            
 
             // Now, verify that GetNextOccurrence() returns accurate results.
-            if (evt.RecurrenceRules != null)
+            if (evt.RecurrenceRules != null &&
+                evt.RecurrenceRules.Count > 0)
             {
                 Assert.AreEqual(1, evt.RecurrenceRules.Count);
                 IRecurrencePattern rp = evt.RecurrenceRules[0];

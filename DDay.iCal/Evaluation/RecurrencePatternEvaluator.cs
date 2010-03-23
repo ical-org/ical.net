@@ -197,7 +197,7 @@ namespace DDay.iCal
 
             // Narrow down our time range further to avoid over-processing
             if (until != null && until.LessThan(endTime))
-                endTime = until;
+                endTime = until.Copy<IDateTime>();
 
             //// FIXME: remove?
             //// If the interval is greater than 1, then we need to ensure that the StartDate occurs in one of the
@@ -261,7 +261,7 @@ namespace DDay.iCal
         protected List<IDateTime> GetExtraOccurrences(IDateTime currentTime, IDateTime absEndTime, IRecurrencePattern r)
         {
             // Determine the actual range we're looking at
-            IDateTime endTime = new iCalDateTime(currentTime);
+            IDateTime endTime = currentTime.Copy<IDateTime>();
             IncrementDate(ref endTime, r, 1);
             endTime = endTime.AddTicks(-1);
 
