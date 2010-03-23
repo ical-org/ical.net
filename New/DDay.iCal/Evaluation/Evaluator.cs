@@ -113,16 +113,9 @@ namespace DDay.iCal
                 ))
                 throw new Exception("An error occurred during evaluation: Cannot associate the date/time values with a calendar.");
 
-            startDate.AssociateWith(associatedObject);
-            fromDate.AssociateWith(associatedObject);
-            toDate.AssociateWith(associatedObject);
-        }
-
-        protected void Deassociate(IDateTime startDate, IDateTime fromDate, IDateTime toDate)
-        {
-            startDate.Deassociate();
-            fromDate.Deassociate();
-            toDate.Deassociate();
+            startDate.AssociatedObject = associatedObject;
+            fromDate.AssociatedObject = associatedObject;
+            toDate.AssociatedObject = associatedObject;
         }
 
         #endregion

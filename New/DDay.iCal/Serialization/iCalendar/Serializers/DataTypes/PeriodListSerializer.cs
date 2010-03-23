@@ -25,10 +25,6 @@ namespace DDay.iCal.Serialization.iCalendar
                 IStringSerializer periodSerializer = factory.Build(typeof(IPeriod), SerializationContext) as IStringSerializer;
                 if (dtSerializer != null && periodSerializer != null)
                 {
-                    // Assign the TZID for the date/time value.
-                    if (rdt.AssociatedParameters != null)
-                        rdt.AssociatedParameters.Set("TZID", rdt.TZID);
-
                     List<string> parts = new List<string>();
 
                     foreach (IPeriod p in rdt)
@@ -54,10 +50,6 @@ namespace DDay.iCal.Serialization.iCalendar
             ISerializerFactory factory = GetService<ISerializerFactory>();
             if (rdt != null && factory != null)
             {
-                // Assign the TZID for the date/time value.
-                if (rdt.AssociatedParameters != null)
-                    rdt.TZID = rdt.AssociatedParameters.Get("TZID");
-
                 // Decode the value, if necessary
                 value = Decode(rdt, value);
 
@@ -73,12 +65,12 @@ namespace DDay.iCal.Serialization.iCalendar
 
                         if (dt != null)
                         {
-                            dt.AssociateWith(rdt.AssociatedObject);
+                            dt.AssociatedObject = rdt.AssociatedObject;
                             rdt.Add(dt);
                         }
                         else if (p != null)
                         {
-                            p.AssociateWith(rdt.AssociatedObject);
+                            p.AssociatedObject = rdt.AssociatedObject;
                             rdt.Add(p);
                         }
                     }

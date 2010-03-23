@@ -18,7 +18,7 @@ namespace DDay.iCal
         static public void AssociateItem(object item, ICalendarObject objectToAssociate)
         {
             if (item is ICalendarDataType)
-                ((ICalendarDataType)item).AssociateWith(objectToAssociate);
+                ((ICalendarDataType)item).AssociatedObject = objectToAssociate;
             else if (item is ICalendarObject)
                 ((ICalendarObject)item).Parent = objectToAssociate;
         }
@@ -26,7 +26,7 @@ namespace DDay.iCal
         static public void DeassociateItem(object item)
         {
             if (item is ICalendarDataType)
-                ((ICalendarDataType)item).Deassociate();
+                ((ICalendarDataType)item).AssociatedObject = null;
             else if (item is ICalendarObject)
                 ((ICalendarObject)item).Parent = null;
         }

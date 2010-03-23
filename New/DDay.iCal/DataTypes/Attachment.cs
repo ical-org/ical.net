@@ -129,18 +129,8 @@ namespace DDay.iCal
 
         virtual public string FormatType
         {
-            get
-            {
-                if (AssociatedParameters != null &&
-                    AssociatedParameters.ContainsKey("FMTYPE"))
-                    return AssociatedParameters.Get("FMTYPE");
-                return null;
-            }
-            set
-            {
-                if (AssociatedParameters != null)
-                    AssociatedParameters.Set("FMTYPE", value);
-            }
+            get { return Parameters.Get("FMTTYPE"); }
+            set { Parameters.Set("FMTTYPE", value); }
         }        
 
         /// <summary>

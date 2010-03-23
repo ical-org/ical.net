@@ -17,33 +17,30 @@ namespace DDay.iCal
     public abstract class CalendarDataType :
         ICalendarDataType
     {
+        #region Private Fields
+
+        ICalendarParameterList _Parameters = new AssociatedCalendarParameterList(null, null);
+
+        #endregion
+
         #region Protected Fields
 
-        protected Stack<ICalendarObject> _Associations = new Stack<ICalendarObject>();
+        protected ICalendarObject _AssociatedObject;
 
         #endregion        
     
         #region ICalendarDataType Members
 
-        virtual public ICalendarParameterList AssociatedParameters
-        {
-            get
-            {
-                ICalendarParameterListContainer c = AssociatedObject as ICalendarParameterListContainer;
-                if (c != null)
-                    return c.Parameters;
-                return null;
-            }
-        }
-
         virtual public ICalendarObject AssociatedObject
         {
-            get
+            get { return _AssociatedObject; }
+            set
             {
-                if (_Associations != null &&
-                    _Associations.Count > 0)
-                    return _Associations.Peek();
-                return null;
+                if (!object.Equals(_AssociatedObject, value))
+                {
+                    _AssociatedObject = value;
+                    _Parameters = new AssociatedCalendarParameterList(_Parameters, _AssociatedObject, _AssociatedObject as ICalendarParameterListContainer);
+                }
             }
         }
 
@@ -51,23 +48,10 @@ namespace DDay.iCal
         {
             get
             {
-                if (_Associations != null &&
-                    _Associations.Count > 0)
-                    return _Associations.Peek().Calendar;
+                if (_AssociatedObject != null)
+                    return _AssociatedObject.Calendar;
                 return null;
             }
-        }
-
-        virtual public void AssociateWith(ICalendarObject obj)
-        {
-            if (obj != null)
-                _Associations.Push(obj);
-        }
-
-        virtual public void Deassociate()
-        {
-            if (_Associations.Count > 0)
-                _Associations.Pop();
         }
 
         #endregion
@@ -80,10 +64,11 @@ namespace DDay.iCal
         /// </summary>
         virtual public void CopyFrom(ICopyable obj)
         {
-            if (obj is CalendarDataType)
+            if (obj is ICalendarDataType)
             {
-                CalendarDataType dt = (CalendarDataType)obj;
-                _Associations = new Stack<ICalendarObject>(dt._Associations);
+                ICalendarDataType dt = (ICalendarDataType)obj;
+                AssociatedObject = dt.AssociatedObject;
+                _Parameters = new AssociatedCalendarParameterList(dt.Parameters, _AssociatedObject, _AssociatedObject as ICalendarParameterListContainer);
             }
         }
 
@@ -113,6 +98,15 @@ namespace DDay.iCal
         virtual public object GetService(Type serviceType)
         {
             return null;
+        }
+
+        #endregion
+
+        #region ICalendarParameterListContainer Members
+
+        public ICalendarParameterList Parameters
+        {
+            get { return _Parameters; }
         }
 
         #endregion

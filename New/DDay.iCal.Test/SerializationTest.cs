@@ -1061,8 +1061,8 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             // Add an attachment to this event
             IAttachment attachment = new Attachment();            
             attachment.Data = ReadBinary(@"Data\Test.doc");
+            attachment.Parameters.Add("X-FILENAME", "WordDocument.doc");
             evt.Attachments.Add(attachment);
-            attachment.AssociatedParameters.Add(new CalendarParameter("X-FILENAME", "WordDocument.doc"));
 
             iCalendarSerializer serializer = new iCalendarSerializer();
             if (!Directory.Exists(@"Calendars\Serialization\Temp"))
@@ -1114,7 +1114,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             // Ensure the generated and serialized strings match
             Assert.AreEqual(sb.ToString(), UnicodeEncoding.Default.GetString(attachment.Data));
 
-            // Times to finish the test for attachment file sizes (on my computer): 
+            // Times to finish the test for attachment file sizes (on my computer, version 0.80): 
             //  0.92MB = 1.2 seconds
             //  2.76MB = 6 seconds
             //  4.6MB = 15.1 seconds

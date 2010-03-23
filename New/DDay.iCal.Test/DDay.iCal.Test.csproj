@@ -145,7 +145,7 @@
     <None Include="Calendars\General\dougd.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\General\GEO1.ics">
+    <None Include="Calendars\General\GeographicLocation1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Calendars\General\GoogleCalendar.ics">
@@ -518,10 +518,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="Copyright.txt" />
-    <Content Include="Data\LoremIpsum.txt" />
+    <None Include="Data\LoremIpsum.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Test.doc" />
+    <None Include="Data\Test.doc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
