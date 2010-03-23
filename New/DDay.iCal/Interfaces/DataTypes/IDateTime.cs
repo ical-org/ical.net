@@ -141,7 +141,8 @@ namespace DDay.iCal
         IDateTime AddHours(int hours);
         IDateTime AddMinutes(int minutes);
         IDateTime AddSeconds(int seconds);
-        IDateTime AddMilliseconds(int milliseconds);        
+        IDateTime AddMilliseconds(int milliseconds);
+        IDateTime AddTicks(long ticks);
 
         bool LessThan(IDateTime dt);
         bool GreaterThan(IDateTime dt);
