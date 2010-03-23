@@ -198,6 +198,20 @@ namespace DDay.iCal
         {
             ITimeZoneInfo tzi = null;
 
+            // Determine if there is only a single STANDARD/DAYLIGHT entry
+            // that represents the offset observed.
+            // NOTE: fixes a bug where a single STANDARD/DAYLIGHT entry is
+            // encountered that has no RRULE or RDATE specified.
+            if (TimeZoneInfos.Count == 1)
+            {
+                tzi = TimeZoneInfos[0];
+                if (tzi.RecurrenceDates.Count == 0 &&
+                    tzi.RecurrenceRules.Count == 0)
+                {
+                    return tzi;
+                }
+            }
+
             TimeSpan mostRecent = TimeSpan.MaxValue;
             foreach (ITimeZoneInfo curr in TimeZoneInfos)
             {
