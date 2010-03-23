@@ -33,12 +33,12 @@ namespace DDay.iCal.Serialization.iCalendar
             {
                 string value = obj.ToString();
 
-                ICalendarParameterListContainer c = SerializationContext.Peek() as ICalendarParameterListContainer;
-                if (c != null)
+                ICalendarObject co = SerializationContext.Peek() as ICalendarObject;
+                if (co != null)
                 {
-                    // Try to encode the string
+                    // Encode the string as needed.
                     EncodableDataType dt = new EncodableDataType();
-                    dt.AssociateWith(c);
+                    dt.AssociatedObject = co;
                     return Encode(dt, value);
                 }
                 return value;
@@ -52,12 +52,12 @@ namespace DDay.iCal.Serialization.iCalendar
             {
                 string value = tr.ReadToEnd();
 
-                ICalendarParameterListContainer c = SerializationContext.Peek() as ICalendarParameterListContainer;
-                if (c != null)
+                ICalendarObject co = SerializationContext.Peek() as ICalendarObject;
+                if (co != null)
                 {
                     // Try to decode the string
                     EncodableDataType dt = new EncodableDataType();
-                    dt.AssociateWith(c);
+                    dt.AssociatedObject = co;
                     value = Decode(dt, value);
                 }
 

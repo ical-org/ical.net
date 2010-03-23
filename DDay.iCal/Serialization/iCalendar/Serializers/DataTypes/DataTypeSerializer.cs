@@ -24,7 +24,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
         #region Protected Methods
 
-        protected ICalendarDataType CreateAndAssociate()
+        virtual protected ICalendarDataType CreateAndAssociate()
         {
             // Create an instance of the object
             ICalendarDataType dt = Activator.CreateInstance(TargetType) as ICalendarDataType;
@@ -32,8 +32,8 @@ namespace DDay.iCal.Serialization.iCalendar
             {
                 ICalendarObject associatedObject = SerializationContext.Peek() as ICalendarObject;
                 if (associatedObject != null)
-                    dt.AssociateWith(associatedObject);
-
+                    dt.AssociatedObject = associatedObject;
+                
                 return dt;
             }
             return null;

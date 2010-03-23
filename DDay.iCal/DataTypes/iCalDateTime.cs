@@ -50,7 +50,6 @@ namespace DDay.iCal
         private bool _HasTime;
         private ITimeZoneInfo _TimeZoneInfo;
         private bool _IsUniversalTime;
-        private string _TZID;        
 
         #endregion
 
@@ -140,15 +139,21 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override void AssociateWith(ICalendarObject obj)
+        public override ICalendarObject AssociatedObject
         {
-            if (!object.Equals(AssociatedObject, obj))
-            {                
-                base.AssociateWith(obj);
-                
-                _TimeZoneInfo = null;                
-            }            
-        }        
+            get
+            {
+                return base.AssociatedObject;
+            }
+            set
+            {
+                if (!object.Equals(AssociatedObject, value))
+                {
+                    base.AssociatedObject = value;
+                    _TimeZoneInfo = null;
+                }
+            }
+        }
 
         public override void CopyFrom(ICopyable obj)
         {
@@ -158,8 +163,7 @@ namespace DDay.iCal
             if (dt != null)
             {
                 Value = dt.Value;
-                IsUniversalTime = dt.IsUniversalTime;
-                TZID = dt.TZID;
+                IsUniversalTime = dt.IsUniversalTime;                
                 HasDate = dt.HasDate;
                 HasTime = dt.HasTime;
                 _TimeZoneInfo = null;
@@ -206,9 +210,9 @@ namespace DDay.iCal
         static private void Associate(IDateTime left, IDateTime right)
         {
             if (left.AssociatedObject == null && right.AssociatedObject != null)
-                left.AssociateWith(right.AssociatedObject);
+                left.AssociatedObject = right.AssociatedObject;
             else if (left.AssociatedObject != null && right.AssociatedObject == null)
-                right.AssociateWith(left.AssociatedObject);
+                right.AssociatedObject = left.AssociatedObject;
         }
 
         public static bool operator <(iCalDateTime left, IDateTime right)
@@ -419,13 +423,12 @@ namespace DDay.iCal
 #endif
         public string TZID
         {
-            get { return _TZID; }
+            get { return Parameters.Get("TZID"); }
             set
             {
-                if (!object.Equals(_TZID, value))
+                if (!object.Equals(TZID, value))
                 {
-                    _TZID = value;
-
+                    Parameters.Set("TZID", value);
                     _TimeZoneInfo = null;                    
                 }
             }

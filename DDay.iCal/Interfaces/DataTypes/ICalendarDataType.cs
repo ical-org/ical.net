@@ -5,13 +5,11 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface ICalendarDataType :
+        ICalendarParameterListContainer,
         ICopyable,
         IServiceProvider
     {
-        ICalendarParameterList AssociatedParameters { get; }
-        ICalendarObject AssociatedObject { get; }
+        ICalendarObject AssociatedObject { get; set; }
         IICalendar Calendar { get; }
-        void AssociateWith(ICalendarObject obj);
-        void Deassociate();
     }
 }

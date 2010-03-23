@@ -214,10 +214,8 @@ namespace DDay.iCal
 
                 // Ensure the time's properties are consistent with the start time
                 p.StartTime.TZID = Recurrable.Start.TZID;
-                p.StartTime.AssociateWith(Recurrable.Start.AssociatedObject);
+                p.StartTime.AssociatedObject = Recurrable.Start.AssociatedObject;
             }
-
-            Deassociate(startTime, fromTime, toTime);
 
             return Periods;
         }

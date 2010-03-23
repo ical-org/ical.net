@@ -572,7 +572,7 @@ namespace DDay.iCal
             // missing information using the 'StartDate'.
             RecurrencePattern r = new RecurrencePattern();
             r.CopyFrom(Pattern);
-            r.AssociateWith(Pattern.AssociatedObject);
+            r.AssociatedObject = Pattern.AssociatedObject;
 
             // Enforce evaluation engine rules
             EnforceEvaluationRestrictions();
@@ -595,25 +595,12 @@ namespace DDay.iCal
                 periods.Count > r.Count)
                 periods.RemoveRange(r.Count, periods.Count - r.Count);
 
-            // Process the UNTIL, and make sure the DateTimes
-            // occur between FromDate and ToDate
-            for (int i = periods.Count - 1; i >= 0; i--)
-            {
-                IDateTime dt = periods[i].StartTime;
-                if (dt.GreaterThan(toDate) ||
-                    dt.LessThan(fromDate))
-                    periods.RemoveAt(i);
-            }
-                        
             // Ensure that DateTimes have an assigned time if they occur less than daily
             if (r.Frequency < FrequencyType.Daily)
             {
                 foreach (IPeriod p in periods)
                     p.StartTime.HasTime = true;
             }
-
-            // Deassociate the date/time values.
-            Deassociate(startDate, fromDate, toDate);
 
             return periods;
         }
@@ -663,7 +650,7 @@ namespace DDay.iCal
                     // Inherit time zone info, from the start date and
                     // associate it with the same object.
                     dt.TZID = StartDate.TZID;
-                    dt.AssociateWith(StartDate.AssociatedObject);
+                    dt.AssociatedObject = StartDate.AssociatedObject;
 
                     return dt;
                 }
@@ -768,7 +755,7 @@ namespace DDay.iCal
 
                 RecurrencePattern r = new RecurrencePattern();
                 r.CopyFrom(Pattern);
-                r.AssociateWith(Pattern.AssociatedObject);
+                r.AssociatedObject = Pattern.AssociatedObject;
 
                 // Enforce evaluation engine rules
                 EnforceEvaluationRestrictions();

@@ -43,6 +43,16 @@ namespace DDay.iCal
 
         #region ICalendarParameterList Members
 
+        public void Add(string name, string value)
+        {
+            Add(new CalendarParameter(name, value));
+        }
+
+        public void Add(string name, string[] values)
+        {
+            Add(new CalendarParameter(name, values));
+        }
+
         public void Set(string name, string[] values)
         {
             if (name != null)

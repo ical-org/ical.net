@@ -52,8 +52,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 IDateTime dt = (IDateTime)obj;
 
                 // Assign the TZID for the date/time value.
-                if (dt.AssociatedParameters != null)
-                    dt.AssociatedParameters.Set("TZID", dt.TZID);
+                dt.Parameters.Set("TZID", dt.TZID);
 
                 string value = string.Format("{0:0000}{1:00}{2:00}", dt.Year, dt.Month, dt.Day);
                 if (dt.HasTime)
@@ -76,17 +75,6 @@ namespace DDay.iCal.Serialization.iCalendar
             IDateTime dt = CreateAndAssociate() as IDateTime;
             if (dt != null)
             {
-                // FIXME: can we have some kind of parameter mapping
-                // on the class itself?  i.e. [ParameterMap("TZID", "TZID")]
-                // where the first parameter is the local property name,
-                // and the second is the ICalendarParameter name?
-                // NOTE: this would likely only apply to ICalendarDataType-based
-                // objects.
-
-                // Assign the TZID for the date/time value.
-                if (dt.AssociatedParameters != null)
-                    dt.TZID = dt.AssociatedParameters.Get("TZID");
-
                 // Decode the value as necessary
                 value = Decode(dt, value);
                 string[] values = value.Split('T');

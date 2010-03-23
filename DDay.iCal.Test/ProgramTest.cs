@@ -177,7 +177,7 @@ namespace DDay.iCal.Test
 "This is a test to try out base64 encoding without being too large.\r\n" +
 "This is a test to try out base64 encoding without being too large.\r\n" +
 "This is a test to try out base64 encoding without being too large.", 
-                evt.Attachments[0],
+                evt.Attachments[0].Value,
                 "Attached value does not match.");
         }
 

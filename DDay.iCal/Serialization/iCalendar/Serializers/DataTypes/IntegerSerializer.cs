@@ -24,7 +24,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 {
                     // Encode the value as needed.
                     EncodableDataType dt = new EncodableDataType();
-                    dt.AssociateWith(obj);
+                    dt.AssociatedObject = obj;
                     return Encode(dt, i.ToString());
                 }
                 return i.ToString();
@@ -44,7 +44,7 @@ namespace DDay.iCal.Serialization.iCalendar
             {
                 // Decode the value, if necessary!
                 EncodableDataType dt = new EncodableDataType();
-                dt.AssociateWith(obj);
+                dt.AssociatedObject = obj;
                 value = Decode(dt, value);
             }
 

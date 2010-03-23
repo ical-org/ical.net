@@ -20,20 +20,18 @@ namespace DDay.iCal.Serialization.iCalendar
             {
                 if (a.Uri != null)
                 {
-                    // Ensure no VALUE type is provided
-                    if (a.AssociatedParameters != null)
-                        a.AssociatedParameters.Remove("VALUE");
+                    if (a.Parameters.ContainsKey("VALUE"))
+                    {
+                        // Ensure no VALUE type is provided
+                        a.Parameters.Remove("VALUE");
+                    }
 
                     return Encode(a, a.Uri.OriginalString);
                 }
                 else if (a.Data != null)
                 {
                     // Ensure the VALUE type is set to BINARY
-                    if (a.AssociatedParameters != null)
-                    {
-                        a.AssociatedParameters.Remove("VALUE");
-                        a.AssociatedParameters.Add(new CalendarParameter("VALUE", "BINARY"));
-                    }
+                    a.Parameters.Set("VALUE", "BINARY");
 
                     return Encode(a, a.Data);
                 }
@@ -51,12 +49,12 @@ namespace DDay.iCal.Serialization.iCalendar
                 // Decode the value, if necessary
                 value = Decode(a, value);
 
-                if (a.AssociatedParameters != null && 
-                    a.AssociatedParameters.ContainsKey("VALUE"))
+                // Get the format of the attachment
+                if (a.Parameters.ContainsKey("VALUE"))
                 {
                     // If the VALUE type is specifically set to BINARY,
                     // then set the Data property instead.
-                    string valueType = a.AssociatedParameters.Get("VALUE");
+                    string valueType = a.Parameters.Get("VALUE");
                     if (string.Compare(valueType, "BINARY", true) == 0)
                     {
                         if (value != null)
@@ -69,7 +67,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 // grab the URI by default.
                 if (value != null)
                     a.Uri = new Uri(value);
-                                
+
                 return a;
             }
 
