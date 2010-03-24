@@ -43,8 +43,8 @@ namespace DDay.iCal.Test
                     if (evt.Start.HasTime)
                     {
                         Console.Write(" (" + evt.Start.Local.ToShortTimeString() + " - " + evt.End.Local.ToShortTimeString());
-                        if (evt.Start.TimeZoneInfo != null)
-                            Console.Write(" " + evt.Start.TimeZoneInfo.TimeZoneName);
+                        if (evt.Start.TimeZoneObservance != null && evt.Start.TimeZoneObservance.HasValue)
+                            Console.Write(" " + evt.Start.TimeZoneObservance.Value.TimeZoneInfo.TimeZoneName);
                         Console.Write(")");
                     }
 

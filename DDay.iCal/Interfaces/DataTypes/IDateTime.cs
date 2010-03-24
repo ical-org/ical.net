@@ -23,7 +23,7 @@ namespace DDay.iCal
         /// Retrieves the <see cref="iCalTimeZoneInfo"/> object for the time
         /// zone set by <see cref="TZID"/>.
         /// </summary>
-        ITimeZoneInfo TimeZoneInfo { get; }
+        TimeZoneObservance? TimeZoneObservance { get; }
 
         /// <summary>
         /// Gets/sets whether the Value of this date/time represents
@@ -123,13 +123,13 @@ namespace DDay.iCal
         /// Converts the date/time value to a local time
         /// within the specified time zone.
         /// </summary>
-        DateTime ToTimeZone(ITimeZoneInfo tzi);
+        IDateTime ToTimeZone(ITimeZoneInfo tzi);
 
         /// <summary>
         /// Converts the date/time value to a local time
         /// within the specified time zone.
         /// </summary>
-        DateTime ToTimeZone(string tzid);
+        IDateTime ToTimeZone(string tzid);
 
         IDateTime Add(TimeSpan ts);
         IDateTime Subtract(TimeSpan ts);

@@ -91,35 +91,6 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Public Methods
-
-        /// <summary>
-        /// Adds an <see cref="iCalObject"/>-based object as a child
-        /// of the current object.
-        /// </summary>
-        /// <param name="child">The <see cref="iCalObject"/>-based object to add.</param>
-        virtual public void AddChild(ICalendarObject child)
-        {
-            child.Parent = this;
-            Children.Add(child);
-        }
-
-        /// <summary>
-        /// Removed an <see cref="iCalObject"/>-based object from the <see cref="Children"/>
-        /// collection.
-        /// </summary>
-        /// <param name="child"></param>
-        virtual public void RemoveChild(ICalendarObject child)
-        {
-            if (Children.Contains(child))
-            {
-                Children.Remove(child);
-                child.Parent = null;
-            }
-        }
-        
-        #endregion        
-
         #region Overrides
 
         public override bool Equals(object obj)
@@ -158,6 +129,21 @@ namespace DDay.iCal
 
         #region ICalendarObject Members
 
+        public event EventHandler<ObjectEventArgs<ICalendarObject>> ChildAdded;
+        public event EventHandler<ObjectEventArgs<ICalendarObject>> ChildRemoved;
+
+        protected void OnChildAdded(ICalendarObject child)
+        {
+            if (ChildAdded != null)
+                ChildAdded(this, new ObjectEventArgs<ICalendarObject>(child));
+        }
+
+        protected void OnChildRemoved(ICalendarObject child)
+        {
+            if (ChildRemoved != null)
+                ChildRemoved(this, new ObjectEventArgs<ICalendarObject>(child));
+        }
+
         /// <summary>
         /// Returns the parent <see cref="iCalObject"/> that owns this one.
         /// </summary>
@@ -180,10 +166,6 @@ namespace DDay.iCal
         virtual public IList<ICalendarObject> Children
         {
             get { return _Children; }
-            protected set
-            {
-                this._Children = value;
-            }
         }
 
         /// <summary>
@@ -254,6 +236,33 @@ namespace DDay.iCal
         {
             get { return _Column; }
             set { _Column = value; }
+        }
+
+        /// <summary>
+        /// Adds an <see cref="iCalObject"/>-based object as a child
+        /// of the current object.
+        /// </summary>
+        /// <param name="child">The <see cref="iCalObject"/>-based object to add.</param>
+        virtual public void AddChild(ICalendarObject child)
+        {
+            child.Parent = this;
+            Children.Add(child);
+            OnChildAdded(child);
+        }
+
+        /// <summary>
+        /// Removed an <see cref="iCalObject"/>-based object from the <see cref="Children"/>
+        /// collection.
+        /// </summary>
+        /// <param name="child"></param>
+        virtual public void RemoveChild(ICalendarObject child)
+        {
+            if (Children.Contains(child))
+            {
+                Children.Remove(child);
+                child.Parent = null;
+                OnChildRemoved(child);
+            }
         }
 
         #endregion

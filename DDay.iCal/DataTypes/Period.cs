@@ -9,8 +9,7 @@ namespace DDay.iCal
 {
     /// <summary>
     /// Represents an iCalendar period of time.
-    /// </summary>
-    [DebuggerDisplay("Period ( {StartTime} - {EndTime} )")]
+    /// </summary>    
 #if DATACONTRACT
     [DataContract(Name = "Period", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
@@ -26,52 +25,7 @@ namespace DDay.iCal
         private TimeSpan m_Duration;
         private bool m_MatchesDateOnly;
 
-        #endregion
-
-        #region Public Properties
-
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
-        public IDateTime StartTime
-        {
-            get { return m_StartTime; }
-            set { m_StartTime = value; }
-        }
-
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
-        public IDateTime EndTime
-        {
-            get { return m_EndTime; }
-            set { m_EndTime = value; }
-        }
-
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
-        public TimeSpan Duration
-        {
-            get { return m_Duration; }
-            set { m_Duration = value; }
-        }
-        
-        /// <summary>
-        /// When true, comparisons between this and other <see cref="Period"/>
-        /// objects are matched against the date only, and
-        /// not the date-time combination.
-        /// </summary>
-#if DATACONTRACT
-        [DataMember(Order = 4)]
-#endif
-        public bool MatchesDateOnly
-        {
-            get { return m_MatchesDateOnly; }
-            set { m_MatchesDateOnly = value; }
-        }
-
-        #endregion
+        #endregion        
 
         #region Constructors
 
@@ -146,12 +100,98 @@ namespace DDay.iCal
 
         #endregion
 
+        #region Private Methods
+
+        private void ExtrapolateTimes()
+        {
+            if (StartTime == null && StartTime != null && Duration != default(TimeSpan))
+                EndTime = StartTime.Add(Duration);
+            else if (Duration == default(TimeSpan) && StartTime != null && EndTime != null)
+                Duration = EndTime.Subtract(StartTime);
+            else if (StartTime == null && Duration != default(TimeSpan) && EndTime != null)
+                StartTime = EndTime.Subtract(Duration);
+        }
+
+        #endregion
+
+        #region IPeriod Members
+
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
+        virtual public IDateTime StartTime
+        {
+            get { return m_StartTime; }
+            set
+            {                
+                m_StartTime = value;
+                ExtrapolateTimes();
+            }
+        }
+
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
+        virtual public IDateTime EndTime
+        {
+            get { return m_EndTime; }
+            set
+            {
+                m_EndTime = value;
+                ExtrapolateTimes();
+            }
+        }
+
+#if DATACONTRACT
+        [DataMember(Order = 3)]
+#endif
+        virtual public TimeSpan Duration
+        {
+            get { return m_Duration; }
+            set
+            {
+                if (!object.Equals(m_Duration, value))
+                {
+                    m_Duration = value;
+                    ExtrapolateTimes();
+                }
+            }
+        }
+
+        /// <summary>
+        /// When true, comparisons between this and other <see cref="Period"/>
+        /// objects are matched against the date only, and
+        /// not the date-time combination.
+        /// </summary>
+#if DATACONTRACT
+        [DataMember(Order = 4)]
+#endif
+        virtual public bool MatchesDateOnly
+        {
+            get { return m_MatchesDateOnly; }
+            set { m_MatchesDateOnly = value; }
+        }
+
+        virtual public bool Contains(IDateTime dt)
+        {
+            if (dt != null &&
+                StartTime != null &&
+                StartTime.LessThanOrEqual(dt))
+            {
+                if (EndTime == null || EndTime.GreaterThanOrEqual(dt))
+                    return true;
+            }
+            return false;
+        }
+
+        #endregion
+
         #region IComparable Members
 
         public int CompareTo(IPeriod p)
         {
             if (p == null)
-                throw new ArgumentNullException("p");         
+                throw new ArgumentNullException("p");
             else if (Equals(p))
                 return 0;
             else if (StartTime.LessThan(p.StartTime))

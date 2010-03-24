@@ -5,8 +5,7 @@ using System.Diagnostics;
 using System.Runtime.Serialization;
 
 namespace DDay.iCal
-{
-    [DebuggerDisplay("{Source} ({Period.StartTime} - {Period.EndTime})")]
+{    
 #if DATACONTRACT
     [DataContract(Name = "Occurrence", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
@@ -55,6 +54,34 @@ namespace DDay.iCal
         {
             m_Source = recurrable;
             m_Period = period;
+        }
+
+        #endregion
+
+        #region Overrides
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Occurrence)
+            {
+                Occurrence o = (Occurrence)obj;
+                return 
+                    object.Equals(Source, o.Source) &&
+                    CompareTo(o) == 0;
+            }
+            return base.Equals(obj);
+        }
+
+        public override string ToString()
+        {
+            string s = "Occurrence";
+            if (Source != null)
+                s = Source.ToString() + " ";
+
+            if (Period != null)
+                s += "(" + Period.ToString() + ")";
+
+            return s;
         }
 
         #endregion

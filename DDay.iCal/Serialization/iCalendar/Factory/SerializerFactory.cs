@@ -47,7 +47,7 @@ namespace DDay.iCal.Serialization.iCalendar
                     if (typeof(IICalendar).IsAssignableFrom(objectType))
                         s = new iCalendarSerializer();
                     else if (typeof(ICalendarComponent).IsAssignableFrom(objectType))
-                        s = new ComponentSerializer();                    
+                        s = new ComponentSerializer();
                     else if (typeof(ICalendarProperty).IsAssignableFrom(objectType))
                         s = new PropertySerializer();                    
                 }

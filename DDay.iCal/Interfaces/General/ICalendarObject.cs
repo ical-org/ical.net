@@ -10,6 +10,9 @@ namespace DDay.iCal
         IMergeable,
         IServiceProvider
     {
+        event EventHandler<ObjectEventArgs<ICalendarObject>> ChildAdded;
+        event EventHandler<ObjectEventArgs<ICalendarObject>> ChildRemoved;
+
         /// <summary>
         /// The name of the calendar object.
         /// Every calendar object can be assigned

@@ -25,24 +25,35 @@ namespace DDay.iCal.Serialization.iCalendar
 
             if (p != null && factory != null)
             {
-                IStringSerializer dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
-                IStringSerializer durationSerializer = factory.Build(typeof(TimeSpan), SerializationContext) as IStringSerializer;
-                if (dtSerializer != null && durationSerializer != null)
+                // Push the period onto the serialization context stack
+                SerializationContext.Push(p);
+
+                try
                 {
-                    StringBuilder sb = new StringBuilder();
-
-                    // Serialize the start time                    
-                    sb.Append(dtSerializer.SerializeToString(p.StartTime));
-
-                    // Serialize the duration
-                    if (p.Duration != null)
+                    IStringSerializer dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
+                    IStringSerializer timeSpanSerializer = factory.Build(typeof(TimeSpan), SerializationContext) as IStringSerializer;
+                    if (dtSerializer != null && timeSpanSerializer != null)
                     {
-                        sb.Append("/");
-                        sb.Append(durationSerializer.SerializeToString(p.Duration));
-                    }
+                        StringBuilder sb = new StringBuilder();
 
-                    // Encode the value as necessary
-                    return Encode(p, sb.ToString());
+                        // Serialize the start time                    
+                        sb.Append(dtSerializer.SerializeToString(p.StartTime));
+
+                        // Serialize the duration
+                        if (p.Duration != null)
+                        {
+                            sb.Append("/");
+                            sb.Append(timeSpanSerializer.SerializeToString(p.Duration));
+                        }
+
+                        // Encode the value as necessary
+                        return Encode(p, sb.ToString());
+                    }
+                }
+                finally
+                {
+                    // Pop the period off the serialization context stack
+                    SerializationContext.Pop();
                 }
             }
             return null;
