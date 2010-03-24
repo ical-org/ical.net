@@ -126,7 +126,9 @@ namespace DDay.iCal
 
         protected TimeZoneObservance? GetTimeZoneObservance()
         {
-            if (_TimeZoneObservance == null && TZID != null && Calendar != null)
+            if (_TimeZoneObservance == null && 
+                TZID != null && 
+                Calendar != null)
             {
                 ITimeZone tz = Calendar.GetTimeZone(TZID);
                 if (tz != null)
@@ -162,10 +164,10 @@ namespace DDay.iCal
             IDateTime dt = obj as IDateTime;
             if (dt != null)
             {
-                Value = dt.Value;
-                IsUniversalTime = dt.IsUniversalTime;                
-                HasDate = dt.HasDate;
-                HasTime = dt.HasTime;
+                _Value = dt.Value;
+                _IsUniversalTime = dt.IsUniversalTime;                
+                _HasDate = dt.HasDate;
+                _HasTime = dt.HasTime;
 
                 // Copy time zone observance over if it applies
                 // to this date/time so we don't have to 
@@ -173,9 +175,12 @@ namespace DDay.iCal
                 // applies.
                 _TimeZoneObservance = null;
                 if (dt.TimeZoneObservance != null && 
-                    dt.TimeZoneObservance.HasValue &&
-                    dt.TimeZoneObservance.Value.Period.Contains(this))
-                    _TimeZoneObservance = dt.TimeZoneObservance;
+                    dt.TimeZoneObservance.HasValue)
+                {
+                    IDateTime normalizedThis = new iCalDateTime(dt.TimeZoneObservance.Value.TimeZoneInfo.OffsetTo.Offset(Value));
+                    if (dt.TimeZoneObservance.Value.Period.Contains(normalizedThis))
+                        _TimeZoneObservance = dt.TimeZoneObservance;
+                }
             }
         }
         
@@ -201,8 +206,10 @@ namespace DDay.iCal
         }
 
         public override string ToString()
-        {            
-            string tz = " " + TimeZoneName;
+        {
+            string tz = TimeZoneName;
+            if (!string.IsNullOrEmpty(tz))
+                tz = " " + tz;
 
             if (HasTime && HasDate)
                 return Value.ToString() + tz;
