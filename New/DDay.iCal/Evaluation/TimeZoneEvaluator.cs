@@ -71,7 +71,7 @@ namespace DDay.iCal
                     }
                     else
                     {
-                        curr.Period.EndTime = new iCalDateTime(DateTime.MaxValue);
+                        curr.Period.EndTime = EvaluationEndBounds;
                     }
                 }
             }
@@ -92,11 +92,9 @@ namespace DDay.iCal
             List<ITimeZoneInfo> infos = new List<ITimeZoneInfo>(TimeZone.TimeZoneInfos);
 
             bool evaluated = false;
-            for (int i = 0; i < infos.Count; i++)
+            IDateTime newEnd = EvaluationEndBounds;
+            foreach (ITimeZoneInfo curr in infos)
             {
-                ITimeZoneInfo curr = infos[i];
-                ITimeZoneInfo next = i < infos.Count - 1 ? infos[i + 1] : null;
-
                 IEvaluator evaluator = curr.GetService(typeof(IEvaluator)) as IEvaluator;
                 Debug.Assert(curr.Start != null, "TimeZoneInfo.Start must not be null.");
                 Debug.Assert(evaluator != null, "TimeZoneInfo.GetService(typeof(IEvaluator)) must not be null.");
@@ -110,7 +108,10 @@ namespace DDay.iCal
                         EvaluationStartBounds = curr.Start;
 
                     DateTime normalizedDt = curr.OffsetTo.Offset(startTime.Value);
-                    IDateTime newDt = new iCalDateTime(normalizedDt);
+                    // FIXME: is 1 year adequate for all situations?
+                    // Some time zones may not change each year.
+                    // This needs to be verified.
+                    IDateTime newDt = new iCalDateTime(normalizedDt.AddYears(1));
 
                     if (EvaluationEndBounds == null || EvaluationEndBounds.LessThan(newDt))
                     {
@@ -129,14 +130,17 @@ namespace DDay.iCal
                                 m_Occurrences.Add(o);
                         }
 
-                        EvaluationEndBounds = newDt;
+                        newEnd = newDt;
                         evaluated = true;
                     }
                 }
             }
 
             if (evaluated)
-                ProcessOccurrences();
+            {
+                EvaluationEndBounds = newEnd;
+                ProcessOccurrences();                
+            }
 
             return Periods;
         }

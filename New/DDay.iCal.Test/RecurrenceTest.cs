@@ -46,10 +46,13 @@ namespace DDay.iCal.Test
 
             for (int i = 0; i < dateTimes.Length; i++)
             {
+                // Associate each incoming date/time with the calendar.
+                dateTimes[i].AssociatedObject = iCal;
+
                 IDateTime dt = dateTimes[i];
                 Assert.AreEqual(dt, occurrences[i].Period.StartTime, "Event should occur on " + dt);
                 if (timeZones != null)
-                    Assert.IsTrue(dt.TimeZoneName == timeZones[i], "Event " + dt + " should occur in the " + timeZones[i] + " timezone");
+                    Assert.AreEqual(timeZones[i], dt.TimeZoneName, "Event " + dt + " should occur in the " + timeZones[i] + " timezone");
             }            
 
             // Now, verify that GetNextOccurrence() returns accurate results.
