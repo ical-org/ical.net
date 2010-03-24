@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 
 namespace DDay.iCal
 {
@@ -560,6 +561,8 @@ namespace DDay.iCal
             IDateTime fromDate,
             IDateTime toDate)
         {
+            Debug.WriteLine("Evaluating recurrence pattern starting at '" + startDate + "', from '" + fromDate + "' to '" + toDate + "'...");
+
             // Associate the date/time values with the calendar
             Associate(startDate, fromDate, toDate);
 

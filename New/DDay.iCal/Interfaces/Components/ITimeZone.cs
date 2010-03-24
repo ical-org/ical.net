@@ -13,6 +13,6 @@ namespace DDay.iCal
         Uri TZUrl { get; set; }
         Uri Url { get; set; }
         IList<ITimeZoneInfo> TimeZoneInfos { get; set; }
-        ITimeZoneInfo GetTimeZoneInfo(IDateTime dt);
+        TimeZoneObservance? GetTimeZoneObservance(IDateTime dt);
     }
 }

@@ -11,5 +11,7 @@ namespace DDay.iCal
         int Hours { get; set; }
         int Minutes { get; set; }
         int Seconds { get; set; }
+
+        DateTime Offset(DateTime dt);
     }
 }

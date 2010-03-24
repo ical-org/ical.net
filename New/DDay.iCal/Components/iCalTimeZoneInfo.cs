@@ -21,7 +21,8 @@ namespace DDay.iCal
     {
         #region Private Fields
 
-        RecurringEvaluator m_Evaluator;
+        TimeZoneInfoEvaluator m_Evaluator;
+        DateTime m_End;
 
         #endregion
 
@@ -41,7 +42,7 @@ namespace DDay.iCal
 
         void Initialize()
         {
-            m_Evaluator = new RecurringEvaluator(this);
+            m_Evaluator = new TimeZoneInfoEvaluator(this);
         }
 
         #endregion
@@ -77,6 +78,17 @@ namespace DDay.iCal
         #endregion
 
         #region ITimeZoneInfo Members
+
+        virtual public string TZID
+        {
+            get
+            {
+                ITimeZone tz = Parent as ITimeZone;
+                if (tz != null)
+                    return tz.TZID;
+                return null;
+            }
+        }
 
         /// <summary>
         /// Returns the name of the current Time Zone.
@@ -144,6 +156,35 @@ namespace DDay.iCal
         {
             get { return Properties.GetList<string>("TZNAME"); }
             set { Properties.SetList<string>("TZNAME", value); }
+        }
+
+        virtual public TimeZoneObservance? GetObservance(IDateTime dt)
+        {
+            if (Parent == null)
+                throw new Exception("Cannot call GetObservance() on a TimeZoneInfo whose Parent property is null.");
+
+            IEvaluator parentEval = Parent.GetService(typeof(IEvaluator)) as IEvaluator;
+            if (parentEval != null)
+            {
+                // Evaluate the date/time in question.
+                parentEval.Evaluate(dt, null, null);
+                foreach (IPeriod period in m_Evaluator.Periods)
+                {
+                    // Normalize date/time values within this time zone to a UTC value.
+                    if (string.Equals(dt.TZID, TZID))
+                        dt = new iCalDateTime(OffsetTo.Offset(dt.Value));
+                    
+                    if (period.Contains(dt))
+                        return new TimeZoneObservance(period, this);
+                }
+            }
+            return null;
+        }
+
+        virtual public bool Contains(IDateTime dt)
+        {
+            TimeZoneObservance? retval = GetObservance(dt);
+            return (retval != null && retval.HasValue);
         }
 
         #endregion

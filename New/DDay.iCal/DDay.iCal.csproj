@@ -92,6 +92,7 @@
     <Compile Include="DataTypes\PeriodList.cs" />
     <Compile Include="DataTypes\RecurrencePattern.cs" />
     <Compile Include="DataTypes\UTCOffset.cs" />
+    <Compile Include="Evaluation\TimeZoneEvaluator.cs" />
     <Compile Include="Evaluation\EventEvaluator.cs" />
     <Compile Include="Evaluation\Evaluator.cs" />
     <Compile Include="Evaluation\PeriodListEvaluator.cs" />
@@ -226,6 +227,7 @@
     <Compile Include="Serialization\SerializationContext.cs" />
     <Compile Include="Serialization\SerializationSettings.cs" />
     <Compile Include="General\CompositeList.cs" />
+    <Compile Include="Structs\TimeZoneObservance.cs" />
     <Compile Include="Utility\AssociationUtil.cs" />
     <Compile Include="Utility\DateUtil.cs" />
     <Compile Include="General\KeyedList.cs" />

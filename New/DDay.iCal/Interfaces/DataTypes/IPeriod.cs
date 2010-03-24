@@ -12,5 +12,7 @@ namespace DDay.iCal
         IDateTime EndTime { get; set; }
         TimeSpan Duration { get; set; }
         bool MatchesDateOnly { get; set; }
+
+        bool Contains(IDateTime dt);
     }
 }
