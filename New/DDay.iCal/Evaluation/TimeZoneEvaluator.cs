@@ -61,18 +61,18 @@ namespace DDay.iCal
                 Occurrence curr = m_Occurrences[i];
                 Occurrence? next = i < m_Occurrences.Count - 1 ? (Occurrence?)m_Occurrences[i + 1] : null;
 
-                // Determine end times for our periods
-                if (curr.Period.EndTime == null)
+                // Determine end times for our periods, overwriting previously calculated end times.
+                // This is important because we don't want to overcalculate our time zone information,
+                // but simply calculate enough to be accurate.  When date/time ranges that are out of
+                // normal working bounds are encountered, then occurrences are processed again, and
+                // new end times are determined.
+                if (next != null && next.HasValue)
                 {
-                    if (next != null &&
-                        next.HasValue)
-                    {
-                        curr.Period.EndTime = next.Value.Period.StartTime.AddTicks(-1);
-                    }
-                    else
-                    {
-                        curr.Period.EndTime = EvaluationEndBounds;
-                    }
+                    curr.Period.EndTime = next.Value.Period.StartTime.AddTicks(-1);
+                }
+                else
+                {
+                    curr.Period.EndTime = EvaluationEndBounds;
                 }
             }
         }
