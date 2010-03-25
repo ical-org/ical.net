@@ -19,5 +19,12 @@ namespace DDay.iCal
             Period = period;
             TimeZoneInfo = tzi;
         }
+
+        public bool Contains(IDateTime dt)
+        {
+            if (Period != null)
+                return Period.Contains(dt);
+            return false;
+        }
     }
 }

@@ -96,6 +96,11 @@ namespace DDay.iCal
             }
         }
 
+        public static DateTime GetSimpleDateTimeData(IDateTime dt)
+        {
+            return DateTime.SpecifyKind(dt.Value, dt.IsUniversalTime ? DateTimeKind.Utc : DateTimeKind.Local);
+        }
+
         private static long Round(double dVal) 
         { 
             if (dVal >= 0) 

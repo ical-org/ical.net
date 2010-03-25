@@ -42,23 +42,20 @@ namespace DDay.iCal
         /// <param name="FromDate">The beginning date of the range to evaluate.</param>
         /// <param name="ToDate">The end date of the range to evaluate.</param>
         /// <returns></returns>
-        public override IList<IPeriod> Evaluate(IDateTime startTime, IDateTime fromTime, IDateTime toTime)
+        public override IList<IPeriod> Evaluate(IDateTime referenceTime, DateTime startTime, DateTime fromTime, DateTime toTime)
         {
-            // Add the event itself, before recurrence rules are evaluated           
-            IPeriod period = new Period(startTime, Event.Duration);
-            // Ensure the period does not already exist in our collection
-            // NOTE: this fixes a bug where (if evaluated multiple times)
-            // a period can be added to the Periods collection multiple times.
-            if (!Periods.Contains(period))
-                Periods.Add(period);
+            // Add the event itself, before recurrence rules are evaluated
+            IPeriod p = new Period(ConvertToIDateTime(startTime, referenceTime));
+            if (!Periods.Contains(p))
+                Periods.Add(p);
             
             // Evaluate recurrences normally
-            base.Evaluate(startTime, fromTime, toTime);
+            base.Evaluate(referenceTime, startTime, fromTime, toTime);
 
             // Ensure each period has a duration
             for (int i = 0; i < Periods.Count; i++)
             {
-                IPeriod p = Periods[i];
+                p = Periods[i];
                 if (p.EndTime == null)
                 {
                     p.Duration = Event.Duration;

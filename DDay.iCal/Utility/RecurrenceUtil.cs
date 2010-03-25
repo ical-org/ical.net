@@ -28,7 +28,11 @@ namespace DDay.iCal
             IEvaluator evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
             if (evaluator != null)
             {
-                IList<IPeriod> periods = evaluator.Evaluate(recurrable.Start, startTime, endTime);
+                IList<IPeriod> periods = evaluator.Evaluate(
+                    recurrable.Start,
+                    DateUtil.GetSimpleDateTimeData(recurrable.Start),
+                    startTime.UTC, 
+                    endTime.UTC);
 
                 foreach (IPeriod p in periods)
                 {
