@@ -11,9 +11,9 @@ namespace DDay.iCal
         #region Private Fields
 
         private System.Globalization.Calendar m_Calendar;
-        private IList<IDateTime> m_StaticOccurrences;
-        private IDateTime m_EvaluationStartBounds;
-        private IDateTime m_EvaluationEndBounds;
+        private IList<DateTime> m_StaticOccurrences;
+        private DateTime m_EvaluationStartBounds = DateTime.MaxValue;
+        private DateTime m_EvaluationEndBounds = DateTime.MinValue;
         
         private ICalendarObject m_AssociatedObject;
         private ICalendarDataType m_AssociatedDataType;
@@ -50,7 +50,7 @@ namespace DDay.iCal
         void Initialize()
         {
             m_Calendar = System.Globalization.CultureInfo.CurrentCulture.Calendar;
-            m_StaticOccurrences = new List<IDateTime>();
+            m_StaticOccurrences = new List<DateTime>();
             m_Periods = new List<IPeriod>();
         }
 
@@ -58,9 +58,14 @@ namespace DDay.iCal
 
         #region Protected Methods
 
-        protected void IncrementDate(ref IDateTime dt, IRecurrencePattern pattern, int interval)
+        protected IDateTime ConvertToIDateTime(DateTime dt, IDateTime referenceDate)
         {
-            IDateTime old = dt;
+            return new iCalDateTime(dt, referenceDate.TZID);
+        }
+
+        protected void IncrementDate(ref DateTime dt, IRecurrencePattern pattern, int interval)
+        {
+            DateTime old = dt;
             switch (pattern.Frequency)
             {
                 case FrequencyType.Secondly: dt = old.AddSeconds(interval); break;
@@ -74,7 +79,7 @@ namespace DDay.iCal
                     // So, if the current week number is 36, and our Interval is 2, then our goal
                     // week number is 38.
                     // NOTE: fixes RRULE12 eval.
-                    int current = Calendar.GetWeekOfYear(old.Value, System.Globalization.CalendarWeekRule.FirstFourDayWeek, pattern.WeekStart),
+                    int current = Calendar.GetWeekOfYear(old, System.Globalization.CalendarWeekRule.FirstFourDayWeek, pattern.WeekStart),
                         lastLastYear = Calendar.GetWeekOfYear(new DateTime(old.Year - 1, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, pattern.WeekStart),
                         last = Calendar.GetWeekOfYear(new DateTime(old.Year, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, pattern.WeekStart),
                         goal = current + interval;
@@ -89,7 +94,7 @@ namespace DDay.iCal
                     while (current != goal)
                     {
                         old = old.AddDays(i);
-                        current = Calendar.GetWeekOfYear(old.Value, CalendarWeekRule.FirstFourDayWeek, pattern.WeekStart);
+                        current = Calendar.GetWeekOfYear(old, CalendarWeekRule.FirstFourDayWeek, pattern.WeekStart);
                     }
 
                     dt = old;
@@ -98,24 +103,6 @@ namespace DDay.iCal
                 case FrequencyType.Yearly: dt = old.AddDays(-old.DayOfYear + 1).AddYears(interval); break;
                 default: throw new Exception("FrequencyType.NONE cannot be evaluated. Please specify a FrequencyType before evaluating the recurrence.");
             }
-        }
-
-        protected void Associate(IDateTime startDate, IDateTime fromDate, IDateTime toDate)
-        {
-            ICalendarObject associatedObject = AssociatedObject;
-            if (associatedObject == null && 
-                (
-                    // Only throw an exception of one of the date/time values requires an associated
-                    // object in order to evaluate properly.
-                    startDate.TZID != null ||
-                    fromDate.TZID != null ||
-                    toDate.TZID != null
-                ))
-                throw new Exception("An error occurred during evaluation: Cannot associate the date/time values with a calendar.");
-
-            startDate.AssociatedObject = associatedObject;
-            fromDate.AssociatedObject = associatedObject;
-            toDate.AssociatedObject = associatedObject;
         }
 
         #endregion
@@ -127,18 +114,18 @@ namespace DDay.iCal
             get { return m_Calendar; }
         }
 
-        public IList<IDateTime> StaticOccurrences
+        public IList<DateTime> StaticOccurrences
         {
             get { return m_StaticOccurrences; }
         }
 
-        virtual public IDateTime EvaluationStartBounds
+        virtual public DateTime EvaluationStartBounds
         {
             get { return m_EvaluationStartBounds; }
             set { m_EvaluationStartBounds = value; }
         }
 
-        virtual public IDateTime EvaluationEndBounds
+        virtual public DateTime EvaluationEndBounds
         {
             get { return m_EvaluationEndBounds; }
             set { m_EvaluationEndBounds = value; }
@@ -165,16 +152,17 @@ namespace DDay.iCal
 
         virtual public void Clear()
         {
-            m_EvaluationStartBounds = null;
-            m_EvaluationEndBounds = null;
+            m_EvaluationStartBounds = DateTime.MaxValue;
+            m_EvaluationEndBounds = DateTime.MinValue;
             m_StaticOccurrences.Clear();
             m_Periods.Clear();
         }
 
         abstract public IList<IPeriod> Evaluate(
-            IDateTime startDate,
-            IDateTime fromDate,
-            IDateTime toDate);
+            IDateTime referenceDate,
+            DateTime startDate,
+            DateTime fromDate,
+            DateTime toDate);
 
         #endregion
     }

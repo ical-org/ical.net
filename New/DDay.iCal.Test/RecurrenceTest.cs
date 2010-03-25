@@ -2563,7 +2563,7 @@ namespace DDay.iCal.Test
             IEvaluator evaluator = pattern.GetService(typeof(IEvaluator)) as IEvaluator;
             Assert.IsNotNull(evaluator);
 
-            IList<IPeriod> occurrences = evaluator.Evaluate(startDate, fromDate, toDate);
+            IList<IPeriod> occurrences = evaluator.Evaluate(startDate, DateUtil.GetSimpleDateTimeData(startDate), fromDate.UTC, toDate.UTC);
             Assert.AreEqual(4, occurrences.Count);
             Assert.AreEqual(new iCalDateTime(DateTime.Parse("03/30/08 11:59:40 PM", us)), occurrences[0].StartTime);
             Assert.AreEqual(new iCalDateTime(DateTime.Parse("03/30/08 11:59:50 PM", us)), occurrences[1].StartTime);
@@ -2587,7 +2587,7 @@ namespace DDay.iCal.Test
             IEvaluator evaluator = pattern.GetService(typeof(IEvaluator)) as IEvaluator;
             Assert.IsNotNull(evaluator);
 
-            IList<IPeriod> occurrences = evaluator.Evaluate(startDate, fromDate, toDate);
+            IList<IPeriod> occurrences = evaluator.Evaluate(startDate, DateUtil.GetSimpleDateTimeData(startDate), fromDate.UTC, toDate.UTC);
             Assert.AreNotEqual(0, occurrences.Count);
         }
 
@@ -2715,7 +2715,7 @@ namespace DDay.iCal.Test
             Assert.IsNotNull(evaluator);
 
             // Add the exception dates
-            IList<IPeriod> periods = evaluator.Evaluate(evtStart, evtStart, evtEnd);
+            IList<IPeriod> periods = evaluator.Evaluate(evtStart, DateUtil.GetSimpleDateTimeData(evtStart), evtStart.UTC, evtEnd.UTC);
             Assert.AreEqual(10, periods.Count);
             Assert.AreEqual(2, periods[0].StartTime.Day);
             Assert.AreEqual(3, periods[1].StartTime.Day);

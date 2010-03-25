@@ -163,17 +163,19 @@ namespace DDay.iCal
             if (Parent == null)
                 throw new Exception("Cannot call GetObservance() on a TimeZoneInfo whose Parent property is null.");
 
+            // Normalize date/time values within this time zone to a UTC value.
+            if (string.Equals(dt.TZID, TZID))
+                dt = new iCalDateTime(OffsetTo.Offset(dt.Value));
+                        
+            // Let's evaluate our time zone observances to find the 
+            // observance that applies to this date/time value.
             IEvaluator parentEval = Parent.GetService(typeof(IEvaluator)) as IEvaluator;
             if (parentEval != null)
             {
                 // Evaluate the date/time in question.
-                parentEval.Evaluate(dt, null, null);
+                parentEval.Evaluate(dt, DateUtil.GetSimpleDateTimeData(dt), default(DateTime), default(DateTime));
                 foreach (IPeriod period in m_Evaluator.Periods)
-                {
-                    // Normalize date/time values within this time zone to a UTC value.
-                    if (string.Equals(dt.TZID, TZID))
-                        dt = new iCalDateTime(OffsetTo.Offset(dt.Value));
-                    
+                {   
                     if (period.Contains(dt))
                         return new TimeZoneObservance(period, this);
                 }

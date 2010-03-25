@@ -42,7 +42,7 @@ namespace DDay.iCal
 
         #region Private Methods
 
-        void ProcessOccurrences()
+        void ProcessOccurrences(IDateTime referenceDate)
         {
             // Sort the occurrences by start time
             m_Occurrences.Sort(
@@ -72,7 +72,7 @@ namespace DDay.iCal
                 }
                 else
                 {
-                    curr.Period.EndTime = EvaluationEndBounds;
+                    curr.Period.EndTime = ConvertToIDateTime(EvaluationEndBounds, referenceDate);
                 }
             }
         }
@@ -87,16 +87,17 @@ namespace DDay.iCal
             m_Occurrences.Clear();
         }
 
-        public override IList<IPeriod> Evaluate(IDateTime startTime, IDateTime fromTime, IDateTime toTime)
+        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime startTime, DateTime fromTime, DateTime toTime)
         {
             List<ITimeZoneInfo> infos = new List<ITimeZoneInfo>(TimeZone.TimeZoneInfos);
 
             bool evaluated = false;
-            IDateTime newEnd = EvaluationEndBounds;
+            DateTime newEnd = EvaluationEndBounds;
             foreach (ITimeZoneInfo curr in infos)
             {
                 IEvaluator evaluator = curr.GetService(typeof(IEvaluator)) as IEvaluator;
                 Debug.Assert(curr.Start != null, "TimeZoneInfo.Start must not be null.");
+                Debug.Assert(curr.Start.TZID == null, "TimeZoneInfo.Start must not have a time zone reference.");
                 Debug.Assert(evaluator != null, "TimeZoneInfo.GetService(typeof(IEvaluator)) must not be null.");
 
                 // Time zones must include an effective start date/time
@@ -104,22 +105,25 @@ namespace DDay.iCal
                 if (curr.Start != null && evaluator != null)
                 {
                     // Set the start bounds of our evaluation.
-                    if (EvaluationStartBounds == null || curr.Start.LessThan(EvaluationStartBounds))
-                        EvaluationStartBounds = curr.Start;
-
-                    DateTime normalizedDt = curr.OffsetTo.Offset(startTime.Value);
-                    // FIXME: is 1 year adequate for all situations?
-                    // Some time zones may not change each year.
-                    // This needs to be verified.
-                    IDateTime newDt = new iCalDateTime(normalizedDt.AddYears(1));
-
-                    if (EvaluationEndBounds == null || EvaluationEndBounds.LessThan(newDt))
+                    if (EvaluationStartBounds == null || curr.Start.Value < EvaluationStartBounds)
+                        EvaluationStartBounds = curr.Start.Value;
+                                        
+                    // Normalize the start time to the current time zone
+                    DateTime normalizedDt = curr.OffsetTo.Offset(startTime);
+                    if (EvaluationEndBounds == null || EvaluationEndBounds < normalizedDt)
                     {
+                        // FIXME: 10 years is totally arbitrary.  Is there a better way 
+                        // to handle this?  Essentially this ensures that date/times 
+                        // up to 10 years in the future don't cause a re-evaluation of the
+                        // time zone information.
+                        normalizedDt = normalizedDt.AddYears(10);
+
                         // Determine the UTC occurrences of the Time Zone observances
                         IList<IPeriod> periods = evaluator.Evaluate(
-                            curr.Start.Copy<IDateTime>(),
-                            curr.Start.Copy<IDateTime>(),
-                            newDt.Copy<IDateTime>());
+                            referenceDate,
+                            curr.Start.Value,
+                            curr.Start.Value,
+                            normalizedDt);
 
                         foreach (IPeriod period in periods)
                         {
@@ -130,7 +134,7 @@ namespace DDay.iCal
                                 m_Occurrences.Add(o);
                         }
 
-                        newEnd = newDt;
+                        newEnd = normalizedDt;
                         evaluated = true;
                     }
                 }
@@ -139,7 +143,7 @@ namespace DDay.iCal
             if (evaluated)
             {
                 EvaluationEndBounds = newEnd;
-                ProcessOccurrences();                
+                ProcessOccurrences(referenceDate);                
             }
 
             return Periods;

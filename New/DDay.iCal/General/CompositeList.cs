@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Collections;
+using System.Diagnostics;
 
 namespace DDay.iCal
 {
@@ -243,6 +244,7 @@ namespace DDay.iCal
             // FIXME: what if there are no lists to add to?
             // Do we add one for the user?  This could have
             // many pros/cons, and should be looked at later.
+            Debug.Assert(m_Lists != null && m_Lists.Count > 0);
             if (m_Lists.Count > 0)
             {
                 // FIXME: should we allow some customization as to 

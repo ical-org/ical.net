@@ -24,15 +24,14 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override IList<IPeriod> Evaluate(IDateTime startDate, IDateTime fromDate, IDateTime toDate)
+        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime startDate, DateTime fromDate, DateTime toDate)
         {
             List<IPeriod> periods = new List<IPeriod>();
 
-            if (startDate.GreaterThan(fromDate))
+            if (startDate > fromDate)
                 fromDate = startDate;
 
-            if (toDate.LessThan(fromDate) ||
-                fromDate.GreaterThan(toDate))
+            if (toDate < fromDate || fromDate > toDate)
                 return periods;
 
             foreach (IPeriod p in m_PeriodList)

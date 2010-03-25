@@ -23,7 +23,7 @@ namespace DDay.iCal
         /// Retrieves the <see cref="iCalTimeZoneInfo"/> object for the time
         /// zone set by <see cref="TZID"/>.
         /// </summary>
-        TimeZoneObservance? TimeZoneObservance { get; }
+        TimeZoneObservance? TimeZoneObservance { get; set; }
 
         /// <summary>
         /// Gets/sets whether the Value of this date/time represents
@@ -150,5 +150,6 @@ namespace DDay.iCal
         bool GreaterThanOrEqual(IDateTime dt);
 
         string ToString(string format);
+        void AssociateWith(IDateTime dt);
     }
 }

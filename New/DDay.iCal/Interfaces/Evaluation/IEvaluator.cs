@@ -17,7 +17,7 @@ namespace DDay.iCal
         /// are not calculated, but are added to the resulting
         /// evaluation.
         /// </summary>
-        IList<IDateTime> StaticOccurrences { get; }
+        IList<DateTime> StaticOccurrences { get; }
 
         /// <summary>
         /// The start bounds of the evaluation.  This gives
@@ -26,16 +26,16 @@ namespace DDay.iCal
         /// what time frames have already been evaluated, so
         /// duplicate evaluation doesn't occur.
         /// </summary>
-        IDateTime EvaluationStartBounds { get; }
+        DateTime EvaluationStartBounds { get; }
 
         /// <summary>
         /// The end bounds of the evaluation.
         /// See <see cref="EvaluationStartBounds"/> for more info.
         /// </summary>
-        IDateTime EvaluationEndBounds { get; }
+        DateTime EvaluationEndBounds { get; }
 
         /// <summary>
-        /// Gets a list of periods currently collected during
+        /// Gets a list of periods collected so far during
         /// the evaluation process.
         /// </summary>
         IList<IPeriod> Periods { get; }
@@ -72,9 +72,9 @@ namespace DDay.iCal
         /// <param name="fromDate">The beginning date of the range to evaluate.</param>
         /// <param name="toDate">The end date of the range to evaluate.</param>
         /// <returns>
-        ///     A <see cref="List<Period>"/> containing a <see cref="Period"/> object for
-        ///     each date/time this item occurs/recurs.
+        ///     A list of <see cref="System.DateTime"/> objects for
+        ///     each date/time when this item occurs/recurs.
         /// </returns>
-        IList<IPeriod> Evaluate(IDateTime startDate, IDateTime fromDate, IDateTime toDate);
+        IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime startDate, DateTime fromDate, DateTime toDate);
     }
 }
