@@ -2549,7 +2549,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RecurrencePattern1()
         {
-            // NOTE: recurrence patterns are not generally meant to be used directly like this.
+            // NOTE: evaluators are not generally meant to be used directly like this.
             // However, this does make a good test to ensure they behave as they should.
             IRecurrencePattern pattern = new RecurrencePattern("FREQ=SECONDLY;INTERVAL=10");
             pattern.RestrictionType = RecurrenceRestrictionType.NoRestriction;
@@ -2563,7 +2563,11 @@ namespace DDay.iCal.Test
             IEvaluator evaluator = pattern.GetService(typeof(IEvaluator)) as IEvaluator;
             Assert.IsNotNull(evaluator);
 
-            IList<IPeriod> occurrences = evaluator.Evaluate(startDate, DateUtil.GetSimpleDateTimeData(startDate), fromDate.UTC, toDate.UTC);
+            IList<IPeriod> occurrences = evaluator.Evaluate(
+                startDate, 
+                DateUtil.GetSimpleDateTimeData(startDate),
+                DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
+                DateUtil.SimpleDateTimeToMatch(toDate, startDate));
             Assert.AreEqual(4, occurrences.Count);
             Assert.AreEqual(new iCalDateTime(DateTime.Parse("03/30/08 11:59:40 PM", us)), occurrences[0].StartTime);
             Assert.AreEqual(new iCalDateTime(DateTime.Parse("03/30/08 11:59:50 PM", us)), occurrences[1].StartTime);
@@ -2574,7 +2578,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RecurrencePattern2()
         {
-            // NOTE: recurrence patterns are generally not meant to be used directly like this.
+            // NOTE: evaluators are generally not meant to be used directly like this.
             // However, this does make a good test to ensure they behave as they should.
             RecurrencePattern pattern = new RecurrencePattern("FREQ=MINUTELY;INTERVAL=1");
 
@@ -2587,7 +2591,11 @@ namespace DDay.iCal.Test
             IEvaluator evaluator = pattern.GetService(typeof(IEvaluator)) as IEvaluator;
             Assert.IsNotNull(evaluator);
 
-            IList<IPeriod> occurrences = evaluator.Evaluate(startDate, DateUtil.GetSimpleDateTimeData(startDate), fromDate.UTC, toDate.UTC);
+            IList<IPeriod> occurrences = evaluator.Evaluate(
+                startDate, 
+                DateUtil.GetSimpleDateTimeData(startDate), 
+                DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
+                DateUtil.SimpleDateTimeToMatch(toDate, startDate));
             Assert.AreNotEqual(0, occurrences.Count);
         }
 
@@ -2715,7 +2723,11 @@ namespace DDay.iCal.Test
             Assert.IsNotNull(evaluator);
 
             // Add the exception dates
-            IList<IPeriod> periods = evaluator.Evaluate(evtStart, DateUtil.GetSimpleDateTimeData(evtStart), evtStart.UTC, evtEnd.UTC);
+            IList<IPeriod> periods = evaluator.Evaluate(
+                evtStart, 
+                DateUtil.GetSimpleDateTimeData(evtStart), 
+                DateUtil.GetSimpleDateTimeData(evtStart), 
+                DateUtil.SimpleDateTimeToMatch(evtEnd, evtStart));
             Assert.AreEqual(10, periods.Count);
             Assert.AreEqual(2, periods[0].StartTime.Day);
             Assert.AreEqual(3, periods[1].StartTime.Day);
