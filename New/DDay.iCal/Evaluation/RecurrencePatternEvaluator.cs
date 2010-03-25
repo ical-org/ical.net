@@ -41,7 +41,7 @@ namespace DDay.iCal
 
         #region Protected Methods
 
-        protected void EnsureByXXXValues(IDateTime startDate, ref RecurrencePattern r)
+        protected void EnsureByXXXValues(IDateTime originDate, ref RecurrencePattern r)
         {
             // If the frequency is weekly, and
             // no day of week is specified, use
@@ -49,19 +49,19 @@ namespace DDay.iCal
             // NOTE: fixes RRULE7 and RRULE8 handling
             if (r.Frequency == FrequencyType.Weekly &&
                 r.ByDay.Count == 0)
-                r.ByDay.Add(new DaySpecifier(startDate.Value.DayOfWeek));
+                r.ByDay.Add(new DaySpecifier(originDate.Value.DayOfWeek));
             if (r.Frequency > FrequencyType.Secondly &&
                 r.BySecond.Count == 0 &&
-                startDate.HasTime /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
-                r.BySecond.Add(startDate.Value.Second);
+                originDate.HasTime /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
+                r.BySecond.Add(originDate.Value.Second);
             if (r.Frequency > FrequencyType.Minutely &&
                 r.ByMinute.Count == 0 &&
-                startDate.HasTime /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
-                r.ByMinute.Add(startDate.Value.Minute);
+                originDate.HasTime /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
+                r.ByMinute.Add(originDate.Value.Minute);
             if (r.Frequency > FrequencyType.Hourly &&
                 r.ByHour.Count == 0 &&
-                startDate.HasTime /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
-                r.ByHour.Add(startDate.Value.Hour);
+                originDate.HasTime /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
+                r.ByHour.Add(originDate.Value.Hour);
             // If neither BYDAY, BYMONTHDAY, or BYYEARDAY is specified,
             // default to the current day of month
             // NOTE: fixes RRULE23 handling, added BYYEARDAY exclusion
@@ -70,7 +70,7 @@ namespace DDay.iCal
                 r.ByMonthDay.Count == 0 &&
                 r.ByYearDay.Count == 0 &&
                 r.ByDay.Count == 0)
-                r.ByMonthDay.Add(startDate.Value.Day);
+                r.ByMonthDay.Add(originDate.Value.Day);
             // If neither BYMONTH nor BYYEARDAY is specified, default to
             // the current month
             // NOTE: fixes RRULE25 handling
@@ -78,7 +78,7 @@ namespace DDay.iCal
                 r.ByYearDay.Count == 0 &&
                 r.ByDay.Count == 0 &&
                 r.ByMonth.Count == 0)
-                r.ByMonth.Add(startDate.Value.Month);
+                r.ByMonth.Add(originDate.Value.Month);
         }
 
         protected void EnforceEvaluationRestrictions()
@@ -303,7 +303,7 @@ namespace DDay.iCal
         /// <param name="TC"></param>
         protected void FillByDay(TimeCalculation TC)
         {
-            IRecurrencePattern r = TC.Evaluator.Pattern;
+            IRecurrencePattern r = TC.Pattern;
 
             // If BYMONTH is specified, offset each day into those months,
             // otherwise, use Jan. 1st as a reference date.
@@ -436,7 +436,7 @@ namespace DDay.iCal
 
         protected List<DateTime> CalculateChildOccurrences(DateTime startDate, DateTime endDate, IRecurrencePattern r)
         {
-            TimeCalculation TC = new TimeCalculation(startDate, endDate, this);
+            TimeCalculation TC = new TimeCalculation(startDate, endDate, r, this);
             switch (r.Frequency)
             {
                 case FrequencyType.Yearly:
@@ -783,7 +783,7 @@ namespace DDay.iCal
         {
             public DateTime StartDate;
             public DateTime EndDate;
-            public RecurrencePatternEvaluator Evaluator;
+            public IRecurrencePattern Pattern;            public RecurrencePatternEvaluator Evaluator;
             public int Year;
             public List<IDaySpecifier> ByDays;
             public List<int> YearDays;
@@ -834,28 +834,27 @@ namespace DDay.iCal
 
             #region Constructor
 
-            public TimeCalculation(DateTime startDate, DateTime endDate, RecurrencePatternEvaluator evaluator)
+            public TimeCalculation(DateTime startDate, DateTime endDate, IRecurrencePattern pattern, RecurrencePatternEvaluator evaluator)
             {
                 this.StartDate = startDate;
                 this.EndDate = endDate;
-                this.Evaluator = evaluator;
+                this.Pattern = pattern;                this.Evaluator = evaluator;
 
                 CurrentDateTime = startDate;
 
-                IRecurrencePattern recur = evaluator.Pattern;
-                YearDays = new List<int>(recur.ByYearDay);
-                ByDays = new List<IDaySpecifier>(recur.ByDay);
-                Months = new List<int>(recur.ByMonth);
-                Days = new List<int>(recur.ByMonthDay);
-                Hours = new List<int>(recur.ByHour);
-                Minutes = new List<int>(recur.ByMinute);
-                Seconds = new List<int>(recur.BySecond);
+                YearDays = new List<int>(Pattern.ByYearDay);
+                ByDays = new List<IDaySpecifier>(Pattern.ByDay);
+                Months = new List<int>(Pattern.ByMonth);
+                Days = new List<int>(Pattern.ByMonthDay);
+                Hours = new List<int>(Pattern.ByHour);
+                Minutes = new List<int>(Pattern.ByMinute);
+                Seconds = new List<int>(Pattern.BySecond);
                 DateTimes = new List<DateTime>();
 
                 // Only check what months and days are possible for
                 // the week's period of time we're evaluating
                 // NOTE: fixes RRULE10 evaluation
-                if (recur.Frequency == FrequencyType.Weekly)
+                if (Pattern.Frequency == FrequencyType.Weekly)
                 {
                     // Weekly patterns can at most affect
                     // 7 days worth of scheduling.
@@ -871,7 +870,7 @@ namespace DDay.iCal
                         dt = dt.AddDays(1);
                     }
                 }
-                else if (recur.Frequency > FrequencyType.Daily)
+                else if (Pattern.Frequency > FrequencyType.Daily)
                 {
                     if (Months.Count == 0) Months.AddRange(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 });
                     if (Days.Count == 0) Days.AddRange(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 });
