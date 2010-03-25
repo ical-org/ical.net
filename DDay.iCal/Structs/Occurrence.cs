@@ -76,10 +76,10 @@ namespace DDay.iCal
         {
             string s = "Occurrence";
             if (Source != null)
-                s = Source.ToString() + " ";
+                s = Source.GetType().Name + " ";
 
             if (Period != null)
-                s += "(" + Period.ToString() + ")";
+                s += "(" + Period.StartTime.ToString() + ")";
 
             return s;
         }
