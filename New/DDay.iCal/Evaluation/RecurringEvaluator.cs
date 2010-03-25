@@ -172,16 +172,18 @@ namespace DDay.iCal
                 EvaluateRDate(referenceDate, startTime, fromTime, toTime);
                 EvaluateExRule(referenceDate, startTime, fromTime, toTime);
                 EvaluateExDate(referenceDate, startTime, fromTime, toTime);
-                if (EvaluationStartBounds == null || EvaluationStartBounds > fromTime)
+                if (EvaluationStartBounds == DateTime.MaxValue || EvaluationStartBounds > fromTime)
                     EvaluationStartBounds = fromTime;
-                if (EvaluationEndBounds == null || EvaluationEndBounds < toTime)
+                if (EvaluationEndBounds == DateTime.MinValue || EvaluationEndBounds < toTime)
                     EvaluationEndBounds = toTime;
             }
-
-            if (EvaluationStartBounds != null && fromTime < EvaluationStartBounds)
-                Evaluate(referenceDate, startTime, fromTime, EvaluationStartBounds);
-            if (EvaluationEndBounds != null && toTime > EvaluationEndBounds)
-                Evaluate(referenceDate, startTime, EvaluationEndBounds, toTime);
+            else 
+            {
+                if (EvaluationStartBounds != DateTime.MaxValue && fromTime < EvaluationStartBounds)
+                    Evaluate(referenceDate, startTime, fromTime, EvaluationStartBounds);
+                if (EvaluationEndBounds != DateTime.MinValue && toTime > EvaluationEndBounds)
+                    Evaluate(referenceDate, startTime, EvaluationEndBounds, toTime);
+            }
 
             // Sort the list
             m_Periods.Sort();

@@ -202,20 +202,7 @@ namespace DDay.iCal
 
             // Narrow down our time range further to avoid over-processing
             if (until != null && until < endTime)
-                endTime = until;
-
-            //// FIXME: remove?
-            //// If the interval is greater than 1, then we need to ensure that the 'startTime' occurs in one of the
-            //// "active" days/weeks/months/years/etc. to ensure that we properly "step" through the interval.
-            //// NOTE: Fixes bug #1741093 - WEEKLY frequency eval behaves strangely
-            //{
-            //    long difference = DateUtil.DateDiff(Pattern.Frequency, startTime, fromTime, Pattern.WeekStart);
-            //    while (difference % Pattern.Interval > 0)
-            //    {
-            //        fromTime = DateUtil.AddFrequency(Pattern.Frequency, fromTime, -1);
-            //        difference--;
-            //    }
-            //}
+                endTime = until;            
 
             //// FIXME: remove?
             //// If the 'startTime' has no time, then our 'fromTime' should not either 
@@ -229,7 +216,7 @@ namespace DDay.iCal
 
             DateTime current = startTime;
             while (
-                current < endTime &&
+                current <= endTime &&
                 (
                     r.Count == int.MinValue ||
                     dateTimes.Count <= r.Count)
@@ -719,7 +706,9 @@ namespace DDay.iCal
             DateTime fromDate,
             DateTime toDate)
         {
-            Debug.WriteLine("Evaluating recurrence pattern starting at '" + startDate + "', from '" + fromDate + "' to '" + toDate + "'...");
+            Trace.TraceInformation("Evaluating recurrence pattern starting at '" + startDate + "', from '" + fromDate + "' to '" + toDate + "'...");
+
+            // Advance the start date along the interval
             
             // Add any static occurrences to our list of periods
             Periods.Clear();
@@ -738,6 +727,18 @@ namespace DDay.iCal
             // Fill in missing, necessary ByXXX values
             // FIXME: is referenceDate okay to use here?
             EnsureByXXXValues(referenceDate, ref r);
+
+            // Advance the 'startDate' along the recurrence interval toward the 'fromDate'
+            // NOTE: Theoretically, this fixes bug #1741093 - WEEKLY frequency eval behaves strangely.
+            // However, it has not been tested or specifically proven to do so singlehandedly.
+            // NOTE: this code is part of the major evaluation refactoring.
+            DateTime nextDate = startDate;
+            IncrementDate(ref nextDate, r, r.Interval);
+            while (nextDate < fromDate)
+            {
+                startDate = nextDate;
+                IncrementDate(ref nextDate, r, r.Interval);
+            }
 
             // Get the occurrences
             foreach (DateTime dt in GetOccurrences(startDate, toDate, r))

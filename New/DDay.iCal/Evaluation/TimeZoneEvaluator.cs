@@ -87,43 +87,44 @@ namespace DDay.iCal
             m_Occurrences.Clear();
         }
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime startTime, DateTime fromTime, DateTime toTime)
+        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime startDate, DateTime fromDate, DateTime toDate)
         {
             List<ITimeZoneInfo> infos = new List<ITimeZoneInfo>(TimeZone.TimeZoneInfos);
 
-            bool evaluated = false;
-            DateTime newEnd = EvaluationEndBounds;
-            foreach (ITimeZoneInfo curr in infos)
+            // Evaluate extra time periods, without re-evaluating ones that were already evaluated
+            if ((EvaluationStartBounds == DateTime.MaxValue && EvaluationEndBounds == DateTime.MinValue) ||
+                (toDate.Equals(EvaluationStartBounds)) ||
+                (fromDate.Equals(EvaluationEndBounds)))
             {
-                IEvaluator evaluator = curr.GetService(typeof(IEvaluator)) as IEvaluator;
-                Debug.Assert(curr.Start != null, "TimeZoneInfo.Start must not be null.");
-                Debug.Assert(curr.Start.TZID == null, "TimeZoneInfo.Start must not have a time zone reference.");
-                Debug.Assert(evaluator != null, "TimeZoneInfo.GetService(typeof(IEvaluator)) must not be null.");
-
-                // Time zones must include an effective start date/time
-                // and must provide an evaluator.
-                if (curr.Start != null && evaluator != null)
+                foreach (ITimeZoneInfo curr in infos)
                 {
-                    // Set the start bounds of our evaluation.
-                    if (EvaluationStartBounds == null || curr.Start.Value < EvaluationStartBounds)
-                        EvaluationStartBounds = curr.Start.Value;
-                                        
-                    // Normalize the start time to the current time zone
-                    DateTime normalizedDt = curr.OffsetTo.Offset(startTime);
-                    if (EvaluationEndBounds == null || EvaluationEndBounds < normalizedDt)
+                    IEvaluator evaluator = curr.GetService(typeof(IEvaluator)) as IEvaluator;
+                    Debug.Assert(curr.Start != null, "TimeZoneInfo.Start must not be null.");
+                    Debug.Assert(curr.Start.TZID == null, "TimeZoneInfo.Start must not have a time zone reference.");
+                    Debug.Assert(evaluator != null, "TimeZoneInfo.GetService(typeof(IEvaluator)) must not be null.");
+
+                    // Time zones must include an effective start date/time
+                    // and must provide an evaluator.
+                    if (curr.Start != null && evaluator != null)
                     {
-                        // FIXME: 10 years is totally arbitrary.  Is there a better way 
-                        // to handle this?  Essentially this ensures that date/times 
-                        // up to 10 years in the future don't cause a re-evaluation of the
-                        // time zone information.
-                        normalizedDt = normalizedDt.AddYears(10);
+                        // Set the start bounds
+                        EvaluationStartBounds = curr.Start.Value;
+
+                        // Normalize the start time to the current time zone
+                        DateTime tziEnd = curr.OffsetTo.Offset(startDate);
+                        DateTime tziStart = DateUtil.GetSimpleDateTimeData(curr.Start);
+
+                        // FIXME: 5 years is an arbitrary number, to eliminate the need
+                        // to recalculate time zone information as much as possible.
+                        DateTime tziFrom = tziStart.AddYears(-10);
+                        tziEnd = tziEnd.AddYears(10);
 
                         // Determine the UTC occurrences of the Time Zone observances
                         IList<IPeriod> periods = evaluator.Evaluate(
                             referenceDate,
-                            curr.Start.Value,
-                            curr.Start.Value,
-                            normalizedDt);
+                            tziStart,
+                            tziFrom,
+                            tziEnd);
 
                         foreach (IPeriod period in periods)
                         {
@@ -134,16 +135,17 @@ namespace DDay.iCal
                                 m_Occurrences.Add(o);
                         }
 
-                        newEnd = normalizedDt;
-                        evaluated = true;
+                        if (EvaluationEndBounds == DateTime.MinValue || EvaluationEndBounds < tziEnd)
+                            EvaluationEndBounds = tziEnd;
                     }
                 }
-            }
 
-            if (evaluated)
+                ProcessOccurrences(referenceDate);
+            }
+            else
             {
-                EvaluationEndBounds = newEnd;
-                ProcessOccurrences(referenceDate);                
+                if (EvaluationEndBounds != DateTime.MinValue && toDate > EvaluationEndBounds)
+                    Evaluate(referenceDate, startDate, EvaluationEndBounds, toDate);
             }
 
             return Periods;

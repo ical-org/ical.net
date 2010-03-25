@@ -60,7 +60,9 @@ namespace DDay.iCal
 
         protected IDateTime ConvertToIDateTime(DateTime dt, IDateTime referenceDate)
         {
-            return new iCalDateTime(dt, referenceDate.TZID);
+            IDateTime newDt = new iCalDateTime(dt, referenceDate.TZID);
+            newDt.AssociateWith(referenceDate);
+            return newDt;
         }
 
         protected void IncrementDate(ref DateTime dt, IRecurrencePattern pattern, int interval)
