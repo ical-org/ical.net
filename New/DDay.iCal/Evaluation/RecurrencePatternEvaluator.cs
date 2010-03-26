@@ -139,8 +139,13 @@ namespace DDay.iCal
             // (only applicable where a COUNT is not specified)
             if (Pattern.Count == int.MinValue)
             {
-                while (seedCopy < periodStart)
-                    IncrementDate(ref seedCopy, pattern, pattern.Interval);
+                DateTime incremented = seedCopy;
+                IncrementDate(ref incremented, pattern, pattern.Interval);
+                while (incremented < periodStart)
+                {
+                    seedCopy = incremented;
+                    IncrementDate(ref incremented, pattern, pattern.Interval);
+                }
             }
 
             int invalidCandidateCount = 0;
@@ -220,8 +225,13 @@ namespace DDay.iCal
             // (only applicable where a COUNT is not specified)
             if (Pattern.Count == int.MinValue)
             {
-                while (seedCopy < startDate)
-                    IncrementDate(ref seedCopy, pattern, pattern.Interval);
+                DateTime incremented = seedCopy;
+                IncrementDate(ref incremented, pattern, pattern.Interval);
+                while (incremented < startDate)
+                {
+                    seedCopy = incremented;
+                    IncrementDate(ref incremented, pattern, pattern.Interval);
+                }
             }
 
             int invalidCandidateCount = 0;
@@ -497,8 +507,63 @@ namespace DDay.iCal
                     // list..
                     if (pattern.ByYearDay.Count > 0 || pattern.ByMonthDay.Count > 0)
                     {
-                        if (weekDay.Equals((WeekDay)date))
-                            weekDayDates.Add(date);
+                        //int offset = weekDay.Offset;
+                        //if (offset != int.MinValue)
+                        //{
+                        //    if (!weekDay.DayOfWeek.Equals(date.DayOfWeek))
+                        //        continue;
+
+                        //    int inc = offset > 0 ? 1 : -1;
+                        //    int abs = Math.Abs(offset);
+                        //    if (pattern.ByMonthDay.Count > 0)
+                        //    {
+                        //        // Get the start/end of the month
+                        //        DateTime mondt = date.AddDays(-date.Day + 1);
+                        //        if (offset > 0)
+                        //            mondt = mondt.AddMonths(1).AddDays(-1);
+
+                        //        // Navigate to the correct day of week
+                        //        while (mondt.DayOfWeek != weekDay.DayOfWeek)
+                        //            mondt = mondt.AddDays(inc);
+
+                        //        // Navigate to the correct offset
+                        //        mondt = mondt.AddDays((abs - 1) * inc);
+
+                        //        // If equal, it's valid!
+                        //        if (mondt.Equals(date))
+                        //            weekDayDates.Add(date);
+                        //    }
+                        //    else
+                        //    {
+                        //        DateTime yeardt = date.AddDays(-date.DayOfYear + 1);
+                        //        if (offset > 0)
+                        //        {
+                        //            // Start at end of year, or end of month if BYMONTH is specified
+                        //            if (pattern.ByMonth.Count == 0)
+                        //                yeardt = yeardt.AddYears(1).AddDays(-1);
+                        //            else 
+                        //                yeardt = yeardt.AddMonths(1).AddDays(-1);
+                        //        }
+
+                        //        // Navigate to the correct day of week
+                        //        while (yeardt.DayOfWeek != weekDay.DayOfWeek)
+                        //            yeardt = yeardt.AddDays(inc);
+
+                        //        // Navigate to the correct offset
+                        //        yeardt = yeardt.AddDays((abs - 1) * inc);
+
+                        //        // If equal, it's valid!
+                        //        if (yeardt.Equals(date))
+                        //            weekDayDates.Add(date);
+                        //    }
+                        //}
+                        //else 
+                            
+                        if (weekDay.DayOfWeek.Equals(date.DayOfWeek))
+                        {
+                            // If no offset is specified, simply test the day of week!
+                            weekDayDates.Add(date);                          
+                        }
                     }
                     else
                     {
@@ -506,6 +571,7 @@ namespace DDay.iCal
                     }
                 }
             }
+
             return weekDayDates;
         }
 
@@ -517,7 +583,7 @@ namespace DDay.iCal
          * @return
          */
         private List<DateTime> GetAbsWeekDays(DateTime date, IWeekDay weekDay, IRecurrencePattern pattern)
-        {            
+        {
             List<DateTime> days = new List<DateTime>();
 
             DayOfWeek dayOfWeek = weekDay.DayOfWeek;

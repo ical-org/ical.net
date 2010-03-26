@@ -134,14 +134,5 @@ namespace DDay.iCal
         }
 
         #endregion
-
-        #region Operators
-
-        public static implicit operator WeekDay(DateTime dt)
-        {
-            return new WeekDay(dt.DayOfWeek, 0);
-        }
-
-        #endregion
     }    
 }

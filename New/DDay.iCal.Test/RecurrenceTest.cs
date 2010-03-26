@@ -35,6 +35,8 @@ namespace DDay.iCal.Test
         )
         {
             IEvent evt = iCal.Events[eventIndex];
+            fromDate.AssociatedObject = iCal;
+            toDate.AssociatedObject = iCal;
 
             IList<Occurrence> occurrences = evt.GetOccurrences(
                 fromDate,
@@ -54,7 +56,7 @@ namespace DDay.iCal.Test
                 Assert.AreEqual(dt, occurrences[i].Period.StartTime, "Event should occur on " + dt);
                 if (timeZones != null)
                     Assert.AreEqual(timeZones[i], dt.TimeZoneName, "Event " + dt + " should occur in the " + timeZones[i] + " timezone");
-            }            
+            }
 
             //// FIXME: re-implement this
             //// Now, verify that GetNextOccurrence() returns accurate results.
@@ -1441,8 +1443,6 @@ namespace DDay.iCal.Test
 
         /// <summary>
         /// See Page 125 of RFC 2445 - RRULE:FREQ=HOURLY;INTERVAL=3;UNTIL=19970902T170000Z        
-        /// FIXME: The UNTIL time on this item has been altered to 19970902T190000Z to
-        /// match the local EDT time occurrence of 3:00pm.  Is the RFC example incorrect?
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE35()
@@ -2011,7 +2011,7 @@ namespace DDay.iCal.Test
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 4, 9, 7, 0, 0),
-                new iCalDateTime(2007, 4, 10, 23, 0, 0),
+                new iCalDateTime(2007, 4, 10, 23, 0, 1), // End time is exclusive, not inclusive
                 new iCalDateTime[]
                 {
                     new iCalDateTime(2007, 4, 9, 7, 0, 0),
@@ -2040,7 +2040,7 @@ namespace DDay.iCal.Test
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 4, 9, 7, 0, 0),
-                new iCalDateTime(2007, 4, 9, 12, 0, 0),
+                new iCalDateTime(2007, 4, 9, 12, 0, 1), // End time is exclusive, not inclusive
                 new iCalDateTime[]
                 {
                     new iCalDateTime(2007, 4, 9, 7, 0, 0),
@@ -2069,7 +2069,7 @@ namespace DDay.iCal.Test
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 4, 9, 7, 0, 0),
-                new iCalDateTime(2007, 4, 27, 7, 0, 0),
+                new iCalDateTime(2007, 4, 27, 7, 0, 1), // End time is exclusive, not inclusive
                 new iCalDateTime[]
                 {
                     new iCalDateTime(2007, 4, 9, 7, 0, 0),
@@ -2097,7 +2097,7 @@ namespace DDay.iCal.Test
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 9, 10, 7, 0, 0),
-                new iCalDateTime(2007, 9, 27, 7, 0, 0),
+                new iCalDateTime(2007, 9, 27, 7, 0, 1), // End time is exclusive, not inclusive
                 new iCalDateTime[]
                 {
                     new iCalDateTime(2007, 9, 10, 7, 0, 0),
@@ -2148,7 +2148,7 @@ namespace DDay.iCal.Test
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 9, 10, 7, 0, 0),
-                new iCalDateTime(2008, 9, 10, 7, 0, 0),
+                new iCalDateTime(2008, 9, 10, 7, 0, 1), // Period end is exclusive, not inclusive
                 new iCalDateTime[]
                 {
                     new iCalDateTime(2007, 9, 10, 7, 0, 0),
@@ -2179,7 +2179,7 @@ namespace DDay.iCal.Test
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 9, 10, 7, 0, 0),
-                new iCalDateTime(2020, 9, 10, 7, 0, 0),
+                new iCalDateTime(2020, 9, 10, 7, 0, 1), // Period end is exclusive, not inclusive
                 new iCalDateTime[]
                 {
                     new iCalDateTime(2007, 9, 10, 7, 0, 0),

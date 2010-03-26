@@ -108,7 +108,8 @@ namespace DDay.iCal
                     if (evaluator != null)
                     {
                         // Set the start bounds
-                        EvaluationStartBounds = periodStart;
+                        if (EvaluationStartBounds > periodStart)
+                            EvaluationStartBounds = periodStart;
 
                         // FIXME: 5 years is an arbitrary number, to eliminate the need
                         // to recalculate time zone information as much as possible.
@@ -122,7 +123,8 @@ namespace DDay.iCal
 
                         foreach (IPeriod period in periods)
                         {
-                            Periods.Add(period);
+                            if (!Periods.Contains(period))
+                                Periods.Add(period);
 
                             Occurrence o = new Occurrence(curr, period);
                             if (!m_Occurrences.Contains(o))
