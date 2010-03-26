@@ -6,22 +6,22 @@ using System.IO;
 
 namespace DDay.iCal.Serialization.iCalendar
 {
-    public class DaySpecifierSerializer :
+    public class WeekDaySerializer :
         EncodableDataTypeSerializer
     {
         public override Type TargetType
         {
-            get { return typeof(DaySpecifier); }
+            get { return typeof(WeekDay); }
         }
 
         public override string SerializeToString(object obj)
         {
-            IDaySpecifier ds = obj as IDaySpecifier;
+            IWeekDay ds = obj as IWeekDay;
             if (ds != null)
             {
                 string value = string.Empty;
-                if (ds.Num != int.MinValue)
-                    value += ds.Num;
+                if (ds.Offset != int.MinValue)
+                    value += ds.Offset;
                 value += Enum.GetName(typeof(DayOfWeek), ds.DayOfWeek).ToUpper().Substring(0, 2);
 
                 return Encode(ds, value);
@@ -34,7 +34,7 @@ namespace DDay.iCal.Serialization.iCalendar
             string value = tr.ReadToEnd();
 
             // Create the day specifier and associate it with a calendar object
-            IDaySpecifier ds = CreateAndAssociate() as IDaySpecifier;
+            IWeekDay ds = CreateAndAssociate() as IWeekDay;
 
             // Decode the value, if necessary
             value = Decode(ds, value);
@@ -44,9 +44,9 @@ namespace DDay.iCal.Serialization.iCalendar
             {
                 if (match.Groups[2].Success)
                 {
-                    ds.Num = Convert.ToInt32(match.Groups[2].Value);
+                    ds.Offset = Convert.ToInt32(match.Groups[2].Value);
                     if (match.Groups[1].Success && match.Groups[1].Value.Contains("-"))
-                        ds.Num *= -1;
+                        ds.Offset *= -1;
                 }
                 ds.DayOfWeek = RecurrencePatternSerializer.GetDayOfWeek(match.Groups[3].Value);
                 return ds;

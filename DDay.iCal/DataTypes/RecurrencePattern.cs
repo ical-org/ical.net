@@ -32,13 +32,13 @@ namespace DDay.iCal
         private IList<int> _BySecond = new List<int>();
         private IList<int> _ByMinute = new List<int>();
         private IList<int> _ByHour = new List<int>();
-        private IList<IDaySpecifier> _ByDay = new List<IDaySpecifier>();
+        private IList<IWeekDay> _ByDay = new List<IWeekDay>();
         private IList<int> _ByMonthDay = new List<int>();
         private IList<int> _ByYearDay = new List<int>();
         private IList<int> _ByWeekNo = new List<int>();
         private IList<int> _ByMonth = new List<int>();
         private IList<int> _BySetPosition = new List<int>();
-        private DayOfWeek _WeekStart = DayOfWeek.Monday;
+        private DayOfWeek _FirstDayOfWeek = DayOfWeek.Monday;
         private IList<IDateTime> _StaticOccurrences = new List<IDateTime>();
         private RecurrenceRestrictionType? _RestrictionType = null;
         private RecurrenceEvaluationModeType? _EvaluationMode = null;
@@ -120,7 +120,7 @@ namespace DDay.iCal
 #if DATACONTRACT
         [DataMember(Order = 8)]
 #endif
-        public IList<IDaySpecifier> ByDay
+        public IList<IWeekDay> ByDay
         {
             get { return _ByDay; }
             set { _ByDay = value; }
@@ -174,10 +174,10 @@ namespace DDay.iCal
 #if DATACONTRACT
         [DataMember(Order = 14)]
 #endif
-        public DayOfWeek WeekStart
+        public DayOfWeek FirstDayOfWeek
         {
-            get { return _WeekStart; }
-            set { _WeekStart = value; }
+            get { return _FirstDayOfWeek; }
+            set { _FirstDayOfWeek = value; }
         }
 
 #if DATACONTRACT
@@ -290,7 +290,7 @@ namespace DDay.iCal
                 }
                 else if (Until != null)
                     return false;
-                if (r.WeekStart != WeekStart) return false;
+                if (r.FirstDayOfWeek != FirstDayOfWeek) return false;
                 return true;
             }
             return base.Equals(obj);
@@ -315,7 +315,7 @@ namespace DDay.iCal
             else hashCode ^= Interval.GetHashCode();
 
             hashCode ^= Until.GetHashCode();
-            hashCode ^= WeekStart.GetHashCode();
+            hashCode ^= FirstDayOfWeek.GetHashCode();
             return hashCode;
         }
 
@@ -333,13 +333,13 @@ namespace DDay.iCal
                 BySecond = new List<int>(r.BySecond);
                 ByMinute = new List<int>(r.ByMinute);
                 ByHour = new List<int>(r.ByHour);
-                ByDay = new List<IDaySpecifier>(r.ByDay);
+                ByDay = new List<IWeekDay>(r.ByDay);
                 ByMonthDay = new List<int>(r.ByMonthDay);
                 ByYearDay = new List<int>(r.ByYearDay);
                 ByWeekNo = new List<int>(r.ByWeekNo);
                 ByMonth = new List<int>(r.ByMonth);
                 BySetPosition = new List<int>(r.BySetPosition);
-                WeekStart = r.WeekStart;
+                FirstDayOfWeek = r.FirstDayOfWeek;
                 RestrictionType = r.RestrictionType;
                 EvaluationMode = r.EvaluationMode;
             }            
@@ -387,15 +387,15 @@ namespace DDay.iCal
 
         #endregion
 
-        #region INextRecurrable Members
+        //#region INextRecurrable Members
 
-        public IPeriod GetNextOccurrence(IDateTime lastOccurrence)
-        {
-            if (_Evaluator != null)
-                return _Evaluator.GetNextOccurrence(lastOccurrence);
-            return null;
-        }
+        //public IPeriod GetNextOccurrence(IDateTime lastOccurrence)
+        //{
+        //    if (_Evaluator != null)
+        //        return _Evaluator.GetNextOccurrence(lastOccurrence);
+        //    return null;
+        //}
 
-        #endregion
+        //#endregion
     }
 }

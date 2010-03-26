@@ -44,7 +44,7 @@ namespace DDay.iCal
             }
             else
             {
-                recurrence.ByDay.Add(new DaySpecifier(transition.DayOfWeek));
+                recurrence.ByDay.Add(new WeekDay(transition.DayOfWeek));
                 int daysInMonth = c.GetDaysInMonth(year, transition.Month);
                 int offset = (transition.Week * 7) - 7;
                 if (offset + 7 > daysInMonth)
