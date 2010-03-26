@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 using NUnit.Framework;
 using DDay.iCal.Serialization.iCalendar;
+using System.Threading;
 
 namespace DDay.iCal.Test
 {
@@ -1727,13 +1728,30 @@ namespace DDay.iCal.Test
         /// <summary>
         /// Ensures that, by default, SECONDLY recurrence rules are not allowed.
         /// </summary>
-        [Test, Category("Recurrence"), ExpectedException(typeof(EvaluationEngineException))]
+        [Test, Category("Recurrence")]
         public void RRULE44()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE44.ics");
-            IList<Occurrence> occurrences = iCal.GetOccurrences(
-                new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
-                new iCalDateTime(2007, 7, 21, 8, 0, 0, tzid));
+            AutoResetEvent evt = new AutoResetEvent(false);
+
+            Thread thread = new Thread((ThreadStart)
+                delegate
+                {
+                    try
+                    {
+                        IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE44.ics");
+                        IList<Occurrence> occurrences = iCal.GetOccurrences(
+                            new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
+                            new iCalDateTime(2007, 7, 21, 8, 0, 0, tzid));
+                    }
+                    catch(EvaluationEngineException)
+                    {
+                        evt.Set();
+                    }
+                }
+            );
+            thread.Start();
+
+            Assert.IsTrue(evt.WaitOne(500), "Evaluation engine should have failed.");
         }
 
         // FIXME: re-implement
