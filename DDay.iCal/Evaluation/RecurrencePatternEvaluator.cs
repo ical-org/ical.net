@@ -396,7 +396,7 @@ namespace DDay.iCal
             for (int i = 0; i < dates.Count; i++)
             {
                 DateTime date = dates[i];
-                for (int j = 0; j < r.ByMonth.Count; j++)
+                for (int j = 0; j < r.ByMonthDay.Count; j++)
                 {
                     int monthDay = r.ByMonthDay[j];
                         
@@ -466,12 +466,13 @@ namespace DDay.iCal
                     days.Add(date);
             }
             else if (r.Frequency == FrequencyType.Weekly || r.ByWeekNo.Count > 0)
-            {                
+            {
+                int weekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, r.FirstDayOfWeek);
+
                 // construct a list of possible week days..
                 while (date.DayOfWeek != dayOfWeek)
                     date = date.AddDays(1);
-
-                int weekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, r.FirstDayOfWeek);
+                
                 while (Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, r.FirstDayOfWeek) == weekNo)
                 {
                     days.Add(date);

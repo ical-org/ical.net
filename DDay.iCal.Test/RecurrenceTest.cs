@@ -2559,7 +2559,7 @@ namespace DDay.iCal.Test
 
             iCalDateTime startDate = new iCalDateTime(DateTime.Parse("3/30/08 11:59:40 PM", us));
             iCalDateTime fromDate = new iCalDateTime(DateTime.Parse("3/30/08 11:59:40 PM", us));
-            iCalDateTime toDate = new iCalDateTime(DateTime.Parse("3/31/08 12:00:10 AM", us));
+            iCalDateTime toDate = new iCalDateTime(DateTime.Parse("3/31/08 12:00:11 AM", us));
 
             IEvaluator evaluator = pattern.GetService(typeof(IEvaluator)) as IEvaluator;
             Assert.IsNotNull(evaluator);
