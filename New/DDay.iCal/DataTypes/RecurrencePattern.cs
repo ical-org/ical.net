@@ -26,7 +26,7 @@ namespace DDay.iCal
         [NonSerialized]
 #endif
         private FrequencyType _Frequency;
-        private IDateTime _Until;
+        private DateTime _Until = DateTime.MinValue;
         private int _Count = int.MinValue;
         private int _Interval = int.MinValue;
         private IList<int> _BySecond = new List<int>();
@@ -61,7 +61,7 @@ namespace DDay.iCal
 #if DATACONTRACT
         [DataMember(Order = 2)]
 #endif
-        public IDateTime Until
+        public DateTime Until
         {
             get { return _Until; }
             set { _Until = value; }
@@ -200,10 +200,8 @@ namespace DDay.iCal
                 if (_RestrictionType != null &&
                     _RestrictionType.HasValue)
                     return _RestrictionType.Value;
-
-                // FIXME: use defaults from the calendar instead
-                //else if (Calendar != null)
-                //    return Calendar.RecurrenceRestriction;
+                else if (Calendar != null)
+                    return Calendar.RecurrenceRestriction;
                 else
                     return RecurrenceRestrictionType.Default;
             }
@@ -221,10 +219,8 @@ namespace DDay.iCal
                 if (_EvaluationMode != null &&
                     _EvaluationMode.HasValue)
                     return _EvaluationMode.Value;
-                // FIXME: use calendar settings instead.
-                // (reimplement this)
-                //else if (Calendar != null)
-                //    return Calendar.RecurrenceEvaluationMode;
+                else if (Calendar != null)
+                    return Calendar.RecurrenceEvaluationMode;
                 else
                     return RecurrenceEvaluationModeType.Default;
             }
@@ -283,12 +279,12 @@ namespace DDay.iCal
                 if (r.Count != Count) return false;
                 if (r.Frequency != Frequency) return false;
                 if (r.Interval != Interval) return false;
-                if (r.Until != null)
+                if (r.Until != DateTime.MinValue)
                 {
                     if (!r.Until.Equals(Until))
                         return false;
                 }
-                else if (Until != null)
+                else if (Until != DateTime.MinValue)
                     return false;
                 if (r.FirstDayOfWeek != FirstDayOfWeek) return false;
                 return true;
@@ -386,16 +382,5 @@ namespace DDay.iCal
         }
 
         #endregion
-
-        //#region INextRecurrable Members
-
-        //public IPeriod GetNextOccurrence(IDateTime lastOccurrence)
-        //{
-        //    if (_Evaluator != null)
-        //        return _Evaluator.GetNextOccurrence(lastOccurrence);
-        //    return null;
-        //}
-
-        //#endregion
     }
 }

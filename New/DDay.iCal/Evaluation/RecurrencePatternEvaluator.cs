@@ -33,6 +33,10 @@ namespace DDay.iCal
             RecurrencePattern r = new RecurrencePattern();
             r.CopyFrom(Pattern);
 
+            // Convert the UNTIL value to one that matches the same time information as the reference date
+            if (r.Until != DateTime.MinValue)
+                r.Until = DateUtil.MatchTimeZone(referenceDate, new iCalDateTime(r.Until)).Value;
+
             // If the frequency is weekly, and
             // no day of week is specified, use
             // the original date's day of week.
@@ -71,6 +75,83 @@ namespace DDay.iCal
                 r.ByMonth.Add(referenceDate.Month);
 
             return r;
+        }
+
+        private void EnforceEvaluationRestrictions(IRecurrencePattern pattern)
+        {
+            RecurrenceEvaluationModeType? evaluationMode = pattern.EvaluationMode;
+            RecurrenceRestrictionType? evaluationRestriction = pattern.RestrictionType;
+
+            if (evaluationRestriction != RecurrenceRestrictionType.NoRestriction)
+            {
+                switch (evaluationMode)
+                {
+                    case RecurrenceEvaluationModeType.AdjustAutomatically:
+                        switch (pattern.Frequency)
+                        {
+                            case FrequencyType.Secondly:
+                                {
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.Default:
+                                        case RecurrenceRestrictionType.RestrictSecondly: pattern.Frequency = FrequencyType.Minutely; break;
+                                        case RecurrenceRestrictionType.RestrictMinutely: pattern.Frequency = FrequencyType.Hourly; break;
+                                        case RecurrenceRestrictionType.RestrictHourly: pattern.Frequency = FrequencyType.Daily; break;
+                                    }
+                                } break;
+                            case FrequencyType.Minutely:
+                                {
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.RestrictMinutely: pattern.Frequency = FrequencyType.Hourly; break;
+                                        case RecurrenceRestrictionType.RestrictHourly: pattern.Frequency = FrequencyType.Daily; break;
+                                    }
+                                } break;
+                            case FrequencyType.Hourly:
+                                {
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.RestrictHourly: pattern.Frequency = FrequencyType.Daily; break;
+                                    }
+                                } break;
+                            default: break;
+                        } break;
+                    case RecurrenceEvaluationModeType.ThrowException:
+                    case RecurrenceEvaluationModeType.Default:
+                        switch (pattern.Frequency)
+                        {
+                            case FrequencyType.Secondly:
+                                {
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.Default:
+                                        case RecurrenceRestrictionType.RestrictSecondly:
+                                        case RecurrenceRestrictionType.RestrictMinutely:
+                                        case RecurrenceRestrictionType.RestrictHourly:
+                                            throw new EvaluationEngineException();
+                                    }
+                                } break;
+                            case FrequencyType.Minutely:
+                                {
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.RestrictMinutely:
+                                        case RecurrenceRestrictionType.RestrictHourly:
+                                            throw new EvaluationEngineException();
+                                    }
+                                } break;
+                            case FrequencyType.Hourly:
+                                {
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.RestrictHourly:
+                                            throw new EvaluationEngineException();
+                                    }
+                                } break;
+                            default: break;
+                        } break;
+                }
+            }
         }
 
         /**
@@ -153,7 +234,7 @@ namespace DDay.iCal
             DateTime candidate = DateTime.MinValue;
             while ((maxCount < 0) || (dates.Count < maxCount))
             {
-                if (pattern.Until != null && candidate != DateTime.MinValue && candidate > pattern.Until.Value)
+                if (pattern.Until != DateTime.MinValue && candidate != DateTime.MinValue && candidate > pattern.Until)
                     break;
 
                 if (periodEnd != null && candidate != DateTime.MinValue && candidate > periodEnd)
@@ -186,7 +267,7 @@ namespace DDay.iCal
                             {
                                 break;
                             }
-                            else if (!(pattern.Until != null && candidate > pattern.Until.Value))
+                            else if (!(pattern.Until != DateTime.MinValue && candidate > pattern.Until))
                             {
                                 dates.Add(candidate);
                             }
@@ -240,7 +321,7 @@ namespace DDay.iCal
             
             while (true)
             {
-                if (pattern.Until != null && candidate != DateTime.MinValue && candidate > pattern.Until.Value)
+                if (pattern.Until != DateTime.MinValue && candidate != DateTime.MinValue && candidate > pattern.Until)
                     break;
                 
                 if (pattern.Count > 0 && invalidCandidateCount >= pattern.Count)
@@ -271,7 +352,7 @@ namespace DDay.iCal
                             {
                                 break;
                             }
-                            else if (!(pattern.Until != null && candidate > pattern.Until.Value))
+                            else if (!(pattern.Until != DateTime.MinValue && candidate > pattern.Until))
                             {
                                 return candidate;
                             }
@@ -746,14 +827,21 @@ namespace DDay.iCal
 
         public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
+            // Create a recurrence pattern suitable for use during evaluation.
             IRecurrencePattern pattern = ProcessRecurrencePattern(referenceDate);
+
+            // Enforce evaluation restrictions on the pattern.
+            EnforceEvaluationRestrictions(pattern);
 
             Periods.Clear();
             foreach (DateTime dt in GetDates(referenceDate, periodStart, periodEnd, pattern))
             {
+                // Turn each resulting date/time into an IDateTime and associate it
+                // with the reference date.
                 IDateTime newDt = new iCalDateTime(dt, referenceDate.TZID);
                 newDt.AssociateWith(referenceDate);
 
+                // Create a period from the new date/time.
                 IPeriod p = new Period(newDt);
                 if (!Periods.Contains(p))
                     Periods.Add(p);

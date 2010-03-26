@@ -332,7 +332,7 @@ namespace DDay.iCal
                     if (tzi != null && tzi.HasValue)
                     {
                         Debug.Assert(tzi.Value.TimeZoneInfo.OffsetTo != null);
-                        return DateTime.SpecifyKind(tzi.Value.TimeZoneInfo.OffsetTo.Offset(value), DateTimeKind.Utc);
+                        return DateTime.SpecifyKind(tzi.Value.TimeZoneInfo.OffsetTo.ToUTC(value), DateTimeKind.Utc);
                     }                    
                 }
                  
@@ -497,7 +497,7 @@ namespace DDay.iCal
 
         public IDateTime ToTimeZone(ITimeZoneInfo tzi)
         {
-            return new iCalDateTime(tzi.OffsetTo.Offset(UTC));
+            return new iCalDateTime(tzi.OffsetTo.ToLocal(UTC));
         }
 
         public IDateTime ToTimeZone(string tzid)
@@ -624,13 +624,13 @@ namespace DDay.iCal
             {
                 if (TimeZoneObservance != null && dt.TimeZoneObservance == null)
                 {
-                    IDateTime normalizedDt = new iCalDateTime(TimeZoneObservance.Value.TimeZoneInfo.OffsetTo.Offset(dt.Value));
+                    IDateTime normalizedDt = new iCalDateTime(TimeZoneObservance.Value.TimeZoneInfo.OffsetTo.ToUTC(dt.Value));
                     if (TimeZoneObservance.Value.Contains(normalizedDt))
                         dt.TimeZoneObservance = TimeZoneObservance;
                 }
                 else if (dt.TimeZoneObservance != null && TimeZoneObservance == null)
                 {
-                    IDateTime normalizedDt = new iCalDateTime(dt.TimeZoneObservance.Value.TimeZoneInfo.OffsetTo.Offset(Value));
+                    IDateTime normalizedDt = new iCalDateTime(dt.TimeZoneObservance.Value.TimeZoneInfo.OffsetTo.ToUTC(Value));
                     if (dt.TimeZoneObservance.Value.Contains(normalizedDt))
                         TimeZoneObservance = dt.TimeZoneObservance;
                 }

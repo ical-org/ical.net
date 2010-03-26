@@ -111,7 +111,6 @@
     <Compile Include="Interfaces\DataTypes\IPeriod.cs" />
     <Compile Include="Interfaces\DataTypes\ITransparency.cs" />
     <Compile Include="Interfaces\Evaluation\IEvaluator.cs" />
-    <Compile Include="Interfaces\Evaluation\INextRecurrable.cs" />
     <Compile Include="Interfaces\Evaluation\IRecurrable.cs" />
     <Compile Include="Interfaces\Serialization\IDataTypeMapper.cs" />
     <Compile Include="Interfaces\Serialization\IEncodingProvider.cs" />

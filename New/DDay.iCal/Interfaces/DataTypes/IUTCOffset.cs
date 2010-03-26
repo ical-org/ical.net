@@ -12,6 +12,7 @@ namespace DDay.iCal
         int Minutes { get; set; }
         int Seconds { get; set; }
 
-        DateTime Offset(DateTime dt);
+        DateTime ToUTC(DateTime dt);
+        DateTime ToLocal(DateTime dt);
     }
 }
