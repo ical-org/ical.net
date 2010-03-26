@@ -92,10 +92,10 @@ namespace DDay.iCal.Test
         //}
 
         [Test, Category("DataContractionSerialization")]
-        public void DaySpecifier1()
+        public void WeekDay1()
         {
-            DaySpecifier ds = new DaySpecifier(DayOfWeek.Monday, FrequencyOccurrence.First);
-            SerializeTest(ds, "DaySpecifier1.xml");
+            WeekDay ds = new WeekDay(DayOfWeek.Monday, FrequencyOccurrence.First);
+            SerializeTest(ds, "WeekDay1.xml");
         }
 
         // FIXME: re-implement

@@ -29,8 +29,8 @@ namespace DDay.iCal.Serialization.iCalendar
                     s = new AttachmentSerializer();
                 else if (typeof(IDateTime).IsAssignableFrom(objectType))
                     s = new DateTimeSerializer();
-                else if (typeof(IDaySpecifier).IsAssignableFrom(objectType))
-                    s = new DaySpecifierSerializer();
+                else if (typeof(IWeekDay).IsAssignableFrom(objectType))
+                    s = new WeekDaySerializer();
                 else if (typeof(IGeographicLocation).IsAssignableFrom(objectType))
                     s = new GeographicLocationSerializer();
                 else if (typeof(IPeriod).IsAssignableFrom(objectType))

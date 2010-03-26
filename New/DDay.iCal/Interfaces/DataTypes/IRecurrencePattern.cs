@@ -5,8 +5,8 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface IRecurrencePattern :
-        IEncodableDataType,
-        INextRecurrable
+        IEncodableDataType//,
+        //INextRecurrable
     {
         FrequencyType Frequency { get; set; }
         IDateTime Until { get; set; }
@@ -15,13 +15,13 @@ namespace DDay.iCal
         IList<int> BySecond { get; set; }
         IList<int> ByMinute { get; set; }
         IList<int> ByHour { get; set; }
-        IList<IDaySpecifier> ByDay { get; set; }
+        IList<IWeekDay> ByDay { get; set; }
         IList<int> ByMonthDay { get; set; }
         IList<int> ByYearDay { get; set; }
         IList<int> ByWeekNo { get; set; }
         IList<int> ByMonth { get; set; }
         IList<int> BySetPosition { get; set; }
-        DayOfWeek WeekStart { get; set; }
+        DayOfWeek FirstDayOfWeek { get; set; }
 
         RecurrenceRestrictionType RestrictionType { get; set; }
         RecurrenceEvaluationModeType EvaluationMode { get; set; }

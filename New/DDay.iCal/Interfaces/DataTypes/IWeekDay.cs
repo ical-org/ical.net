@@ -4,11 +4,11 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public interface IDaySpecifier :
+    public interface IWeekDay :
         IEncodableDataType,
         IComparable
     {
-        int Num { get; set; }
+        int Offset { get; set; }
         DayOfWeek DayOfWeek { get; set; }
     }
 }

@@ -147,8 +147,8 @@ namespace DDay.iCal.Serialization.iCalendar
                         values.Add("UNTIL=" + serializer.SerializeToString(recur.Until));
                 }
 
-                if (recur.WeekStart != DayOfWeek.Monday)
-                    values.Add("WKST=" + Enum.GetName(typeof(DayOfWeek), recur.WeekStart).ToUpper().Substring(0, 2));
+                if (recur.FirstDayOfWeek != DayOfWeek.Monday)
+                    values.Add("WKST=" + Enum.GetName(typeof(DayOfWeek), recur.FirstDayOfWeek).ToUpper().Substring(0, 2));
 
                 if (recur.Count != int.MinValue)
                     values.Add("COUNT=" + recur.Count);
@@ -157,10 +157,10 @@ namespace DDay.iCal.Serialization.iCalendar
                 {
                     List<string> bydayValues = new List<string>();
 
-                    IStringSerializer serializer = factory.Build(typeof(IDaySpecifier), SerializationContext) as IStringSerializer;
+                    IStringSerializer serializer = factory.Build(typeof(IWeekDay), SerializationContext) as IStringSerializer;
                     if (serializer != null)
                     {
-                        foreach (DaySpecifier byday in recur.ByDay)
+                        foreach (WeekDay byday in recur.ByDay)
                             bydayValues.Add(serializer.SerializeToString(byday));
                     }
 
@@ -233,14 +233,14 @@ namespace DDay.iCal.Serialization.iCalendar
                                     {
                                         string[] days = keyValue.Split(',');
                                         foreach (string day in days)
-                                            r.ByDay.Add(new DaySpecifier(day));
+                                            r.ByDay.Add(new WeekDay(day));
                                     } break;
                                 case "BYMONTHDAY": AddInt32Values(r.ByMonthDay, keyValue); break;
                                 case "BYYEARDAY": AddInt32Values(r.ByYearDay, keyValue); break;
                                 case "BYWEEKNO": AddInt32Values(r.ByWeekNo, keyValue); break;
                                 case "BYMONTH": AddInt32Values(r.ByMonth, keyValue); break;
                                 case "BYSETPOS": AddInt32Values(r.BySetPosition, keyValue); break;
-                                case "WKST": r.WeekStart = GetDayOfWeek(keyValue); break;
+                                case "WKST": r.FirstDayOfWeek = GetDayOfWeek(keyValue); break;
                             }
                         }
                     }
@@ -328,8 +328,8 @@ namespace DDay.iCal.Serialization.iCalendar
 
                             foreach (Capture capture in match.Groups["Day"].Captures)
                             {
-                                DaySpecifier ds = new DaySpecifier((DayOfWeek)Enum.Parse(typeof(DayOfWeek), capture.Value, true));
-                                ds.Num = num;
+                                WeekDay ds = new WeekDay((DayOfWeek)Enum.Parse(typeof(DayOfWeek), capture.Value, true));
+                                ds.Offset = num;
                                 r.ByDay.Add(ds);
                             }
                         }

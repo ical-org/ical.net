@@ -81,9 +81,9 @@ namespace DDay.iCal
                     // So, if the current week number is 36, and our Interval is 2, then our goal
                     // week number is 38.
                     // NOTE: fixes RRULE12 eval.
-                    int current = Calendar.GetWeekOfYear(old, System.Globalization.CalendarWeekRule.FirstFourDayWeek, pattern.WeekStart),
-                        lastLastYear = Calendar.GetWeekOfYear(new DateTime(old.Year - 1, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, pattern.WeekStart),
-                        last = Calendar.GetWeekOfYear(new DateTime(old.Year, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, pattern.WeekStart),
+                    int current = Calendar.GetWeekOfYear(old, System.Globalization.CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek),
+                        lastLastYear = Calendar.GetWeekOfYear(new DateTime(old.Year - 1, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek),
+                        last = Calendar.GetWeekOfYear(new DateTime(old.Year, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek),
                         goal = current + interval;
 
                     // If the goal week is greater than the last week of the year, wrap it!
@@ -96,7 +96,7 @@ namespace DDay.iCal
                     while (current != goal)
                     {
                         old = old.AddDays(i);
-                        current = Calendar.GetWeekOfYear(old, CalendarWeekRule.FirstFourDayWeek, pattern.WeekStart);
+                        current = Calendar.GetWeekOfYear(old, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
                     }
 
                     dt = old;

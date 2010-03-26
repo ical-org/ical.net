@@ -12,12 +12,12 @@ namespace DDay.iCal
     /// Represents an RFC 5545 "BYDAY" value.
     /// </summary>
 #if DATACONTRACT
-    [DataContract(Name = "DaySpecifier", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+    [DataContract(Name = "WeekDay", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public class DaySpecifier : 
+    public class WeekDay : 
         EncodableDataType,
-        IDaySpecifier        
+        IWeekDay        
     {
         #region Private Fields
 
@@ -31,7 +31,7 @@ namespace DDay.iCal
 #if DATACONTRACT
         [DataMember(Order = 1)]
 #endif
-        virtual public int Num
+        virtual public int Offset
         {
             get { return m_Num; }
             set { m_Num = value; }
@@ -50,32 +50,32 @@ namespace DDay.iCal
 
         #region Constructors
 
-        public DaySpecifier()
+        public WeekDay()
         {
-            Num = int.MinValue;
+            Offset = int.MinValue;
         }
 
-        public DaySpecifier(DayOfWeek day)
+        public WeekDay(DayOfWeek day)
             : this()
         {
             this.DayOfWeek = day;
         }
 
-        public DaySpecifier(DayOfWeek day, int num)
+        public WeekDay(DayOfWeek day, int num)
             : this(day)
         {
-            this.Num = num;
+            this.Offset = num;
         }
 
-        public DaySpecifier(DayOfWeek day, FrequencyOccurrence type)
+        public WeekDay(DayOfWeek day, FrequencyOccurrence type)
             : this(day, (int)type)
         {
         }
 
-        public DaySpecifier(string value)
+        public WeekDay(string value)
         {
-            DDay.iCal.Serialization.iCalendar.DaySpecifierSerializer serializer =
-                new DDay.iCal.Serialization.iCalendar.DaySpecifierSerializer();
+            DDay.iCal.Serialization.iCalendar.WeekDaySerializer serializer =
+                new DDay.iCal.Serialization.iCalendar.WeekDaySerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
@@ -85,10 +85,10 @@ namespace DDay.iCal
 
         public override bool Equals(object obj)
         {
-            if (obj is DaySpecifier)
+            if (obj is WeekDay)
             {
-                DaySpecifier ds = (DaySpecifier)obj;
-                return ds.Num == Num &&
+                WeekDay ds = (WeekDay)obj;
+                return ds.Offset == Offset &&
                     ds.DayOfWeek == DayOfWeek;
             }
             return base.Equals(obj);
@@ -96,16 +96,16 @@ namespace DDay.iCal
 
         public override int GetHashCode()
         {
-            return Num.GetHashCode() ^ DayOfWeek.GetHashCode();
+            return Offset.GetHashCode() ^ DayOfWeek.GetHashCode();
         }
 
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (obj is IDaySpecifier)
+            if (obj is IWeekDay)
             {
-                IDaySpecifier bd = (IDaySpecifier)obj;
-                this.Num = bd.Num;
+                IWeekDay bd = (IWeekDay)obj;
+                this.Offset = bd.Offset;
                 this.DayOfWeek = bd.DayOfWeek;
             }
         }
@@ -116,11 +116,11 @@ namespace DDay.iCal
 
         public int CompareTo(object obj)
         {
-            DaySpecifier bd = null;
+            IWeekDay bd = null;
             if (obj is string)
-                bd = new DaySpecifier(obj.ToString());
-            else if (obj is DaySpecifier)
-                bd = (DaySpecifier)obj;
+                bd = new WeekDay(obj.ToString());
+            else if (obj is IWeekDay)
+                bd = (IWeekDay)obj;
 
             if (bd == null)
                 throw new ArgumentException();
@@ -128,9 +128,18 @@ namespace DDay.iCal
             {
                 int compare = this.DayOfWeek.CompareTo(bd.DayOfWeek);
                 if (compare == 0)
-                    compare = this.Num.CompareTo(bd.Num);
+                    compare = this.Offset.CompareTo(bd.Offset);
                 return compare;
             }
+        }
+
+        #endregion
+
+        #region Operators
+
+        public static implicit operator WeekDay(DateTime dt)
+        {
+            return new WeekDay(dt.DayOfWeek, 0);
         }
 
         #endregion
