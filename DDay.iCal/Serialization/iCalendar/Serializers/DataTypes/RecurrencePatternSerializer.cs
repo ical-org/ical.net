@@ -4,6 +4,7 @@ using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace DDay.iCal.Serialization.iCalendar
 {
@@ -140,7 +141,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 if (interval != 1)
                     values.Add("INTERVAL=" + interval);
 
-                if (recur.Until != null)
+                if (recur.Until != DateTime.MinValue)
                 {
                     IStringSerializer serializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
                     if (serializer != null)
@@ -222,7 +223,11 @@ namespace DDay.iCal.Serialization.iCalendar
                                     {
                                         IStringSerializer serializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
                                         if (serializer != null)
-                                            r.Until = serializer.Deserialize(new StringReader(keyValue)) as IDateTime;
+                                        {
+                                            IDateTime dt = serializer.Deserialize(new StringReader(keyValue)) as IDateTime;
+                                            Debug.Assert(dt.IsUniversalTime);
+                                            r.Until = dt.Value;
+                                        }
                                     } break;
                                 case "COUNT": r.Count = Convert.ToInt32(keyValue); break;
                                 case "INTERVAL": r.Interval = Convert.ToInt32(keyValue); break;
@@ -361,7 +366,7 @@ namespace DDay.iCal.Serialization.iCalendar
                             DateTime dt = DateTime.Parse(match.Groups["DateTime"].Value);
                             DateTime.SpecifyKind(dt, DateTimeKind.Utc);
 
-                            r.Until = new iCalDateTime(dt);
+                            r.Until = dt;
                         }
                         else if ((match = Regex.Match(item, @"^\s*for\s+(?<Count>\d+)\s+occurrences\s*$", RegexOptions.IgnoreCase)).Success)
                         {

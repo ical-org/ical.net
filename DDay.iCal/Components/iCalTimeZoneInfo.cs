@@ -172,8 +172,8 @@ namespace DDay.iCal
             DateTime normalizedDt = dt.Value;
             if (string.Equals(dt.TZID, TZID))
             {
-                dt = new iCalDateTime(OffsetTo.Offset(dt.Value));
-                normalizedDt = OffsetTo.Offset(normalizedDt);
+                dt = new iCalDateTime(OffsetTo.ToUTC(dt.Value));
+                normalizedDt = OffsetTo.ToUTC(normalizedDt);
             }
                         
             // Let's evaluate our time zone observances to find the 

@@ -145,19 +145,33 @@ namespace DDay.iCal
 
         #endregion
 
-        #region IUTCOffset Members
+        #region Private Methods
 
-        virtual public DateTime Offset(DateTime dt)
+        private DateTime Offset(DateTime dt, bool positive)
         {
-            if ((dt == DateTime.MinValue && !Positive) ||
-                (dt == DateTime.MaxValue && Positive))
+            if ((dt == DateTime.MinValue && positive) ||
+                (dt == DateTime.MaxValue && !positive))
                 return dt;
 
-            int mult = Positive ? -1 : 1;
+            int mult = positive ? 1 : -1;
             dt = dt.AddHours(Hours * mult);
             dt = dt.AddMinutes(Minutes * mult);
             dt = dt.AddSeconds(Seconds * mult);
             return dt;
+        }
+
+        #endregion
+
+        #region IUTCOffset Members
+
+        virtual public DateTime ToUTC(DateTime dt)
+        {
+            return Offset(dt, !Positive);
+        }
+
+        virtual public DateTime ToLocal(DateTime dt)
+        {
+            return Offset(dt, Positive);
         }
 
         #endregion

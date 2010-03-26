@@ -57,22 +57,6 @@ namespace DDay.iCal.Test
                 if (timeZones != null)
                     Assert.AreEqual(timeZones[i], dt.TimeZoneName, "Event " + dt + " should occur in the " + timeZones[i] + " timezone");
             }
-
-            //// FIXME: re-implement this
-            //// Now, verify that GetNextOccurrence() returns accurate results.
-            //if (evt.RecurrenceRules != null &&
-            //    evt.RecurrenceRules.Count > 0)
-            //{
-            //    Assert.AreEqual(1, evt.RecurrenceRules.Count);
-            //    IRecurrencePattern rp = evt.RecurrenceRules[0];
-
-            //    for (int i = 0; i < dateTimes.Length - 1; i++)
-            //    {
-            //        IPeriod nextOccurrence = rp.GetNextOccurrence(dateTimes[i]);
-            //        IPeriod p = new Period(dateTimes[i + 1]);
-            //        Assert.AreEqual(p, nextOccurrence, "Next occurrence did not match the results of RecurrencePattern.GetNextOccurrence()");
-            //    }
-            //}
         }
 
         private void EventOccurrenceTest(
@@ -1443,6 +1427,8 @@ namespace DDay.iCal.Test
 
         /// <summary>
         /// See Page 125 of RFC 2445 - RRULE:FREQ=HOURLY;INTERVAL=3;UNTIL=19970902T170000Z        
+        /// FIXME: The UNTIL time on this item has been altered to 19970902T190000Z to
+        /// match the local EDT time occurrence of 3:00pm.  Is the RFC example incorrect?
         /// </summary>
         [Test, Category("Recurrence")]
         public void RRULE35()
@@ -1751,125 +1737,120 @@ namespace DDay.iCal.Test
             );
             thread.Start();
 
-            Assert.IsTrue(evt.WaitOne(500), "Evaluation engine should have failed.");
+            Assert.IsTrue(evt.WaitOne(2000), "Evaluation engine should have failed.");
         }
 
-        // FIXME: re-implement
-        ///// <summary>
-        ///// Ensures that the proper behavior occurs when the evaluation
-        ///// mode is set to adjust automatically for SECONDLY evaluation
-        ///// </summary>
-        //[Test, Category("Recurrence")]
-        //public void RRULE44_1()
-        //{
-        //    IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE44.ics");
-        //    iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
+        /// <summary>
+        /// Ensures that the proper behavior occurs when the evaluation
+        /// mode is set to adjust automatically for SECONDLY evaluation
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE44_1()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE44.ics");
+            iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
 
-        //    EventOccurrenceTest(
-        //        iCal,
-        //        new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
-        //        new iCalDateTime(2007, 6, 21, 8, 10, 0, tzid),
-        //        new iCalDateTime[]
-        //        {
-        //            new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
-        //            new iCalDateTime(2007, 6, 21, 8, 1, 0, tzid),
-        //            new iCalDateTime(2007, 6, 21, 8, 2, 0, tzid),
-        //            new iCalDateTime(2007, 6, 21, 8, 3, 0, tzid),
-        //            new iCalDateTime(2007, 6, 21, 8, 4, 0, tzid),
-        //            new iCalDateTime(2007, 6, 21, 8, 5, 0, tzid),
-        //            new iCalDateTime(2007, 6, 21, 8, 6, 0, tzid),
-        //            new iCalDateTime(2007, 6, 21, 8, 7, 0, tzid),
-        //            new iCalDateTime(2007, 6, 21, 8, 8, 0, tzid),
-        //            new iCalDateTime(2007, 6, 21, 8, 9, 0, tzid),
-        //            new iCalDateTime(2007, 6, 21, 8, 10, 0, tzid)
-        //        },
-        //        null
-        //    );
-        //}
+            EventOccurrenceTest(
+                iCal,
+                new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
+                new iCalDateTime(2007, 6, 21, 8, 10, 1, tzid), // End period is exclusive, not inclusive.
+                new iCalDateTime[]
+                {
+                    new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
+                    new iCalDateTime(2007, 6, 21, 8, 1, 0, tzid),
+                    new iCalDateTime(2007, 6, 21, 8, 2, 0, tzid),
+                    new iCalDateTime(2007, 6, 21, 8, 3, 0, tzid),
+                    new iCalDateTime(2007, 6, 21, 8, 4, 0, tzid),
+                    new iCalDateTime(2007, 6, 21, 8, 5, 0, tzid),
+                    new iCalDateTime(2007, 6, 21, 8, 6, 0, tzid),
+                    new iCalDateTime(2007, 6, 21, 8, 7, 0, tzid),
+                    new iCalDateTime(2007, 6, 21, 8, 8, 0, tzid),
+                    new iCalDateTime(2007, 6, 21, 8, 9, 0, tzid),
+                    new iCalDateTime(2007, 6, 21, 8, 10, 0, tzid)
+                },
+                null
+            );
+        }
 
-        // FIXME: re-implement
-        ///// <summary>
-        ///// Ensures that if configured, MINUTELY recurrence rules are not allowed.
-        ///// </summary>
-        //[Test, Category("Recurrence"), ExpectedException(typeof(EvaluationEngineException))]
-        //public void RRULE45()
-        //{
-        //    IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE45.ics");
-        //    iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictMinutely;
-        //    IList<Occurrence> occurrences = iCal.GetOccurrences(
-        //        new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
-        //        new iCalDateTime(2007, 7, 21, 8, 0, 0, tzid));
-        //}
+        /// <summary>
+        /// Ensures that if configured, MINUTELY recurrence rules are not allowed.
+        /// </summary>
+        [Test, Category("Recurrence"), ExpectedException(typeof(EvaluationEngineException))]
+        public void RRULE45()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE45.ics");
+            iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictMinutely;
+            IList<Occurrence> occurrences = iCal.GetOccurrences(
+                new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
+                new iCalDateTime(2007, 7, 21, 8, 0, 0, tzid));
+        }
 
-        // FIXME: re-implement
-        ///// <summary>
-        ///// Ensures that the proper behavior occurs when the evaluation
-        ///// mode is set to adjust automatically for MINUTELY evaluation
-        ///// </summary>
-        //[Test, Category("Recurrence")]
-        //public void RRULE45_1()
-        //{
-        //    IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE45.ics");
-        //    iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictMinutely;
-        //    iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
+        /// <summary>
+        /// Ensures that the proper behavior occurs when the evaluation
+        /// mode is set to adjust automatically for MINUTELY evaluation
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE45_1()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE45.ics");
+            iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictMinutely;
+            iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
 
-        //    EventOccurrenceTest(
-        //        iCal,
-        //        new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
-        //        new iCalDateTime(2007, 6, 21, 12, 0, 0, tzid),
-        //        new iCalDateTime[]
-        //        {
-        //            new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
-        //            new iCalDateTime(2007, 6, 21, 9, 0, 0, tzid),
-        //            new iCalDateTime(2007, 6, 21, 10, 0, 0, tzid),
-        //            new iCalDateTime(2007, 6, 21, 11, 0, 0, tzid),
-        //            new iCalDateTime(2007, 6, 21, 12, 0, 0, tzid)
-        //        },
-        //        null
-        //    );
-        //}
+            EventOccurrenceTest(
+                iCal,
+                new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
+                new iCalDateTime(2007, 6, 21, 12, 0, 1, tzid), // End period is exclusive, not inclusive.
+                new iCalDateTime[]
+                {
+                    new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
+                    new iCalDateTime(2007, 6, 21, 9, 0, 0, tzid),
+                    new iCalDateTime(2007, 6, 21, 10, 0, 0, tzid),
+                    new iCalDateTime(2007, 6, 21, 11, 0, 0, tzid),
+                    new iCalDateTime(2007, 6, 21, 12, 0, 0, tzid)
+                },
+                null
+            );
+        }
 
-        // FIXME: re-implement
-        ///// <summary>
-        ///// Ensures that if configured, HOURLY recurrence rules are not allowed.
-        ///// </summary>
-        //[Test, Category("Recurrence"), ExpectedException(typeof(EvaluationEngineException))]
-        //public void RRULE46()
-        //{
-        //    IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE46.ics");
-        //    iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictHourly;
-        //    IList<Occurrence> occurrences = iCal.GetOccurrences(
-        //        new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
-        //        new iCalDateTime(2007, 7, 21, 8, 0, 0, tzid));
-        //}
+        /// <summary>
+        /// Ensures that if configured, HOURLY recurrence rules are not allowed.
+        /// </summary>
+        [Test, Category("Recurrence"), ExpectedException(typeof(EvaluationEngineException))]
+        public void RRULE46()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE46.ics");
+            iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictHourly;
+            IList<Occurrence> occurrences = iCal.GetOccurrences(
+                new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
+                new iCalDateTime(2007, 7, 21, 8, 0, 0, tzid));
+        }
 
-        // FIXME: re-implement
-        ///// <summary>
-        ///// Ensures that the proper behavior occurs when the evaluation
-        ///// mode is set to adjust automatically for HOURLY evaluation
-        ///// </summary>
-        //[Test, Category("Recurrence")]
-        //public void RRULE46_1()
-        //{
-        //    IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE46.ics");
-        //    iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictHourly;
-        //    iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
+        /// <summary>
+        /// Ensures that the proper behavior occurs when the evaluation
+        /// mode is set to adjust automatically for HOURLY evaluation
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void RRULE46_1()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE46.ics");
+            iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictHourly;
+            iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
 
-        //    EventOccurrenceTest(
-        //        iCal,
-        //        new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
-        //        new iCalDateTime(2007, 6, 25, 8, 0, 0, tzid),
-        //        new iCalDateTime[]
-        //        {
-        //            new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
-        //            new iCalDateTime(2007, 6, 22, 8, 0, 0, tzid),
-        //            new iCalDateTime(2007, 6, 23, 8, 0, 0, tzid),
-        //            new iCalDateTime(2007, 6, 24, 8, 0, 0, tzid),
-        //            new iCalDateTime(2007, 6, 25, 8, 0, 0, tzid)
-        //        },
-        //        null
-        //    );
-        //}
+            EventOccurrenceTest(
+                iCal,
+                new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
+                new iCalDateTime(2007, 6, 25, 8, 0, 1, tzid), // End period is exclusive, not inclusive.
+                new iCalDateTime[]
+                {
+                    new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
+                    new iCalDateTime(2007, 6, 22, 8, 0, 0, tzid),
+                    new iCalDateTime(2007, 6, 23, 8, 0, 0, tzid),
+                    new iCalDateTime(2007, 6, 24, 8, 0, 0, tzid),
+                    new iCalDateTime(2007, 6, 25, 8, 0, 0, tzid)
+                },
+                null
+            );
+        }
 
         /// <summary>
         /// Ensures that "off-month" calculation works correctly
@@ -2308,8 +2289,8 @@ namespace DDay.iCal.Test
             {
                 IEvent evt = o.Source as IEvent;
                 Assert.IsNotNull(evt);
-                Assert.IsTrue(items.ContainsKey(evt.Summary.ToString()), "Holiday text did not match known holidays.");
-                Assert.AreEqual(items[evt.Summary.ToString()], o.Period.StartTime, "Date/time of holiday '" + evt.Summary.ToString() + "' did not match.");
+                Assert.IsTrue(items.ContainsKey(evt.Summary), "Holiday text '" + evt.Summary + "' did not match known holidays.");
+                Assert.AreEqual(items[evt.Summary], o.Period.StartTime, "Date/time of holiday '" + evt.Summary + "' did not match.");
             }
         }
 
