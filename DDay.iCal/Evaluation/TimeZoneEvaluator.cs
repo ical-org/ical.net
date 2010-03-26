@@ -105,24 +105,20 @@ namespace DDay.iCal
 
                     // Time zones must include an effective start date/time
                     // and must provide an evaluator.
-                    if (curr.Start != null && evaluator != null)
+                    if (evaluator != null)
                     {
                         // Set the start bounds
-                        EvaluationStartBounds = curr.Start.Value;
-
-                        // Normalize the start time to the current time zone
-                        DateTime tziEnd = curr.OffsetTo.Offset(DateUtil.GetSimpleDateTimeData(referenceDate));
-                        DateTime tziStart = DateUtil.GetSimpleDateTimeData(curr.Start);
+                        EvaluationStartBounds = periodStart;
 
                         // FIXME: 5 years is an arbitrary number, to eliminate the need
                         // to recalculate time zone information as much as possible.
-                        tziEnd = tziEnd.AddYears(5);
+                        DateTime offsetEnd = periodEnd.AddYears(5); 
 
                         // Determine the UTC occurrences of the Time Zone observances
                         IList<IPeriod> periods = evaluator.Evaluate(
                             referenceDate,
-                            tziStart,
-                            tziEnd);
+                            periodStart,
+                            offsetEnd);
 
                         foreach (IPeriod period in periods)
                         {
@@ -133,8 +129,8 @@ namespace DDay.iCal
                                 m_Occurrences.Add(o);
                         }
 
-                        if (EvaluationEndBounds == DateTime.MinValue || EvaluationEndBounds < tziEnd)
-                            EvaluationEndBounds = tziEnd;
+                        if (EvaluationEndBounds == DateTime.MinValue || EvaluationEndBounds < offsetEnd)
+                            EvaluationEndBounds = offsetEnd;
                     }
                 }
 

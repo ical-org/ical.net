@@ -34,18 +34,6 @@ namespace DDay.iCal
             // and must provide an evaluator.
             if (TimeZoneInfo != null)
             {
-                // Normalize the date/time values because we don't want
-                // to be doing time zone lookups *while* we're evaluating
-                // time zone occurrences.  This could cause an infinite loop.
-
-                IUTCOffset offset = TimeZoneInfo.OffsetTo;
-                Debug.Assert(offset != null);
-                if (string.Equals(referenceTime.TZID, TimeZoneInfo.TZID))
-                {
-                    periodStart = offset.Offset(periodStart);
-                    periodEnd = offset.Offset(periodEnd);
-                }
-
                 IList<IPeriod> periods = base.Evaluate(referenceTime, periodStart, periodEnd);
                 
                 // Add the initial specified date/time for the time zone entry
