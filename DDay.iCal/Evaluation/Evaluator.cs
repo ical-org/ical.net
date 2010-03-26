@@ -92,12 +92,14 @@ namespace DDay.iCal
                     else if (goal <= 0)
                         goal = lastLastYear + goal;
 
-                    int i = interval > 0 ? 1 : -1;
+                    int i = interval > 0 ? 7 : -7;
                     while (current != goal)
                     {
                         old = old.AddDays(i);
                         current = Calendar.GetWeekOfYear(old, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
                     }
+                    while (old.DayOfWeek != pattern.FirstDayOfWeek)
+                        old = old.AddDays(-1);
 
                     dt = old;
                     break;
