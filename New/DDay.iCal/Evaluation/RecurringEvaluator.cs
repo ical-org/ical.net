@@ -51,7 +51,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="FromDate">The beginning date of the range to evaluate.</param>
         /// <param name="ToDate">The end date of the range to evaluate.</param>
-        virtual protected void EvaluateRRule(IDateTime referenceDate, DateTime startTime, DateTime fromTime, DateTime toTime)
+        virtual protected void EvaluateRRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             // Handle RRULEs
             if (Recurrable.RecurrenceRules != null)
@@ -61,7 +61,7 @@ namespace DDay.iCal
                     IEvaluator evaluator = rrule.GetService(typeof(IEvaluator)) as IEvaluator;
                     if (evaluator != null)
                     {
-                        IList<IPeriod> periods = evaluator.Evaluate(referenceDate, startTime, fromTime, toTime);
+                        IList<IPeriod> periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd);
                         foreach (IPeriod p in periods)
                         {
                             if (!Periods.Contains(p))
@@ -78,7 +78,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="FromDate">The beginning date of the range to evaluate.</param>
         /// <param name="ToDate">The end date of the range to evaluate.</param>
-        virtual protected void EvaluateRDate(IDateTime referenceDate, DateTime startTime, DateTime fromTime, DateTime toTime)
+        virtual protected void EvaluateRDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             // Handle RDATEs
             if (Recurrable.RecurrenceDates != null)
@@ -88,7 +88,7 @@ namespace DDay.iCal
                     IEvaluator evaluator = rdate.GetService(typeof(IEvaluator)) as IEvaluator;
                     if (evaluator != null)
                     {
-                        IList<IPeriod> periods = evaluator.Evaluate(referenceDate, startTime, fromTime, toTime);
+                        IList<IPeriod> periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd);
                         foreach (IPeriod p in periods)
                         {
                             if (!Periods.Contains(p))
@@ -105,7 +105,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="FromDate">The beginning date of the range to evaluate.</param>
         /// <param name="ToDate">The end date of the range to evaluate.</param>
-        virtual protected void EvaluateExRule(IDateTime referenceDate, DateTime startTime, DateTime fromTime, DateTime toTime)
+        virtual protected void EvaluateExRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             // Handle EXRULEs
             if (Recurrable.ExceptionRules != null)
@@ -115,7 +115,7 @@ namespace DDay.iCal
                     IEvaluator evaluator = exrule.GetService(typeof(IEvaluator)) as IEvaluator;
                     if (evaluator != null)
                     {
-                        IList<IPeriod> periods = evaluator.Evaluate(referenceDate, startTime, fromTime, toTime);
+                        IList<IPeriod> periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd);
                         foreach (IPeriod p in periods)                        
                         {                            
                             if (this.Periods.Contains(p))
@@ -132,7 +132,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="FromDate">The beginning date of the range to evaluate.</param>
         /// <param name="ToDate">The end date of the range to evaluate.</param>
-        virtual protected void EvaluateExDate(IDateTime referenceDate, DateTime startTime, DateTime fromTime, DateTime toTime)
+        virtual protected void EvaluateExDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             // Handle EXDATEs
             if (Recurrable.ExceptionDates != null)
@@ -142,7 +142,7 @@ namespace DDay.iCal
                     IEvaluator evaluator = exdate.GetService(typeof(IEvaluator)) as IEvaluator;
                     if (evaluator != null)
                     {
-                        IList<IPeriod> periods = evaluator.Evaluate(referenceDate, startTime, fromTime, toTime);
+                        IList<IPeriod> periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd);
                         foreach (IPeriod p in periods)                        
                         {
                             // If no time was provided for the ExDate, then it excludes the entire day
@@ -161,28 +161,28 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime startTime, DateTime fromTime, DateTime toTime)
+        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             // Evaluate extra time periods, without re-evaluating ones that were already evaluated
             if ((EvaluationStartBounds == DateTime.MaxValue && EvaluationEndBounds == DateTime.MinValue) ||
-                (toTime.Equals(EvaluationStartBounds)) ||
-                (fromTime.Equals(EvaluationEndBounds)))
+                (periodEnd.Equals(EvaluationStartBounds)) ||
+                (periodStart.Equals(EvaluationEndBounds)))
             {
-                EvaluateRRule(referenceDate, startTime, fromTime, toTime);
-                EvaluateRDate(referenceDate, startTime, fromTime, toTime);
-                EvaluateExRule(referenceDate, startTime, fromTime, toTime);
-                EvaluateExDate(referenceDate, startTime, fromTime, toTime);
-                if (EvaluationStartBounds == DateTime.MaxValue || EvaluationStartBounds > fromTime)
-                    EvaluationStartBounds = fromTime;
-                if (EvaluationEndBounds == DateTime.MinValue || EvaluationEndBounds < toTime)
-                    EvaluationEndBounds = toTime;
+                EvaluateRRule(referenceDate, periodStart, periodEnd);
+                EvaluateRDate(referenceDate, periodStart, periodEnd);
+                EvaluateExRule(referenceDate, periodStart, periodEnd);
+                EvaluateExDate(referenceDate, periodStart, periodEnd);
+                if (EvaluationStartBounds == DateTime.MaxValue || EvaluationStartBounds > periodStart)
+                    EvaluationStartBounds = periodStart;
+                if (EvaluationEndBounds == DateTime.MinValue || EvaluationEndBounds < periodEnd)
+                    EvaluationEndBounds = periodEnd;
             }
             else 
             {
-                if (EvaluationStartBounds != DateTime.MaxValue && fromTime < EvaluationStartBounds)
-                    Evaluate(referenceDate, startTime, fromTime, EvaluationStartBounds);
-                if (EvaluationEndBounds != DateTime.MinValue && toTime > EvaluationEndBounds)
-                    Evaluate(referenceDate, startTime, EvaluationEndBounds, toTime);
+                if (EvaluationStartBounds != DateTime.MaxValue && periodStart < EvaluationStartBounds)
+                    Evaluate(referenceDate, periodStart, EvaluationStartBounds);
+                if (EvaluationEndBounds != DateTime.MinValue && periodEnd > EvaluationEndBounds)
+                    Evaluate(referenceDate, EvaluationEndBounds, periodEnd);
             }
 
             // Sort the list

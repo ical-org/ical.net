@@ -87,14 +87,14 @@ namespace DDay.iCal
             m_Occurrences.Clear();
         }
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime startDate, DateTime fromDate, DateTime toDate)
+        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             List<ITimeZoneInfo> infos = new List<ITimeZoneInfo>(TimeZone.TimeZoneInfos);
 
             // Evaluate extra time periods, without re-evaluating ones that were already evaluated
             if ((EvaluationStartBounds == DateTime.MaxValue && EvaluationEndBounds == DateTime.MinValue) ||
-                (toDate.Equals(EvaluationStartBounds)) ||
-                (fromDate.Equals(EvaluationEndBounds)))
+                (periodEnd.Equals(EvaluationStartBounds)) ||
+                (periodStart.Equals(EvaluationEndBounds)))
             {
                 foreach (ITimeZoneInfo curr in infos)
                 {
@@ -111,19 +111,17 @@ namespace DDay.iCal
                         EvaluationStartBounds = curr.Start.Value;
 
                         // Normalize the start time to the current time zone
-                        DateTime tziEnd = curr.OffsetTo.Offset(startDate);
+                        DateTime tziEnd = curr.OffsetTo.Offset(DateUtil.GetSimpleDateTimeData(referenceDate));
                         DateTime tziStart = DateUtil.GetSimpleDateTimeData(curr.Start);
 
                         // FIXME: 5 years is an arbitrary number, to eliminate the need
                         // to recalculate time zone information as much as possible.
-                        DateTime tziFrom = tziStart.AddYears(-10);
-                        tziEnd = tziEnd.AddYears(10);
+                        tziEnd = tziEnd.AddYears(5);
 
                         // Determine the UTC occurrences of the Time Zone observances
                         IList<IPeriod> periods = evaluator.Evaluate(
                             referenceDate,
                             tziStart,
-                            tziFrom,
                             tziEnd);
 
                         foreach (IPeriod period in periods)
@@ -144,8 +142,8 @@ namespace DDay.iCal
             }
             else
             {
-                if (EvaluationEndBounds != DateTime.MinValue && toDate > EvaluationEndBounds)
-                    Evaluate(referenceDate, startDate, EvaluationEndBounds, toDate);
+                if (EvaluationEndBounds != DateTime.MinValue && periodEnd > EvaluationEndBounds)
+                    Evaluate(referenceDate, EvaluationEndBounds, periodEnd);
             }
 
             return Periods;

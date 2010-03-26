@@ -178,7 +178,7 @@ namespace DDay.iCal
             if (parentEval != null)
             {
                 // Evaluate the date/time in question.
-                parentEval.Evaluate(dt, DateUtil.GetSimpleDateTimeData(dt), default(DateTime), default(DateTime));
+                parentEval.Evaluate(dt, default(DateTime), default(DateTime));
                 foreach (IPeriod period in m_Evaluator.Periods)
                 {   
                     if (period.Contains(dt))

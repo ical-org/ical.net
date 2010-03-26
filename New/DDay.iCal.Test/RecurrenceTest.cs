@@ -2584,7 +2584,6 @@ namespace DDay.iCal.Test
 
             IList<IPeriod> occurrences = evaluator.Evaluate(
                 startDate, 
-                DateUtil.GetSimpleDateTimeData(startDate),
                 DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
                 DateUtil.SimpleDateTimeToMatch(toDate, startDate));
             Assert.AreEqual(4, occurrences.Count);
@@ -2612,7 +2611,6 @@ namespace DDay.iCal.Test
 
             IList<IPeriod> occurrences = evaluator.Evaluate(
                 startDate, 
-                DateUtil.GetSimpleDateTimeData(startDate), 
                 DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
                 DateUtil.SimpleDateTimeToMatch(toDate, startDate));
             Assert.AreNotEqual(0, occurrences.Count);
@@ -2743,8 +2741,7 @@ namespace DDay.iCal.Test
 
             // Add the exception dates
             IList<IPeriod> periods = evaluator.Evaluate(
-                evtStart, 
-                DateUtil.GetSimpleDateTimeData(evtStart), 
+                evtStart,
                 DateUtil.GetSimpleDateTimeData(evtStart), 
                 DateUtil.SimpleDateTimeToMatch(evtEnd, evtStart));
             Assert.AreEqual(10, periods.Count);

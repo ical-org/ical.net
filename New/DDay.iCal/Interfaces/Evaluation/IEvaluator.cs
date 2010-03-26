@@ -75,6 +75,6 @@ namespace DDay.iCal
         ///     A list of <see cref="System.DateTime"/> objects for
         ///     each date/time when this item occurs/recurs.
         /// </returns>
-        IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime startDate, DateTime fromDate, DateTime toDate);
+        IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd);
     }
 }

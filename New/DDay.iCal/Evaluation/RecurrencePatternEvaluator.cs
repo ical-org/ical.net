@@ -37,9 +37,9 @@ namespace DDay.iCal
          * @param value the type of dates to generate (i.e. date/date-time)
          * @return a list of dates
          */
-        private List<DateTime> GetDates(DateTime startDate, DateTime endDate)
+        private List<DateTime> GetDates(DateTime periodStart, DateTime periodEnd)
         {
-            return GetDates(new iCalDateTime(startDate), startDate, endDate, -1);
+            return GetDates(new iCalDateTime(periodStart), periodStart, periodEnd, -1);
         }
 
         /**
@@ -66,9 +66,9 @@ namespace DDay.iCal
          * @param periodEnd the end of the period
          * @param value the type of dates to generate (i.e. date/date-time)
          */
-        private List<DateTime> GetDates(IDateTime seed, DateTime startDate, DateTime endDate)
+        private List<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd)
         {
-             return GetDates(seed, startDate, endDate, -1);
+             return GetDates(seed, periodStart, periodEnd, -1);
         }
 
         /**
@@ -337,12 +337,32 @@ namespace DDay.iCal
                 DateTime date = dates[i];
                 for (int j = 0; j < r.ByWeekNo.Count; j++)
                 {
-                    // FIXME: not sure we're supposed to be doing an if() statement here to check.
-                    // From the original code, looks like we're supposed to simply change the week number
-                    // of 'date' and add it to weekNoDates.
+                    // Determine our target week number
                     int weekNo = r.ByWeekNo[j];
-                    if (Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, r.FirstDayOfWeek) == weekNo)
+                    
+                    // Determine our current week number
+                    int currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, r.FirstDayOfWeek);
+                    while (currWeekNo > weekNo)
+                    {                        
+                        // If currWeekNo > weekNo, then we're likely at the start of a year
+                        // where currWeekNo could be 52 or 53.  If we simply step ahead 7 days
+                        // we should be back to week 1, where we can easily make the calculation
+                        // to move to weekNo.
+                        date = date.AddDays(7);
+                        currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, r.FirstDayOfWeek);
+                    }
+                    
+                    // Move ahead to the correct week of the year
+                    date = date.AddDays((weekNo - currWeekNo) * 7);
+                    // Step backward single days until we're at the correct DayOfWeek
+                    while (date.DayOfWeek != r.FirstDayOfWeek)
+                        date = date.AddDays(-1);
+
+                    for (int k = 0; k < 7; k++)
+                    {
                         weekNoDates.Add(date);
+                        date = date.AddDays(1);
+                    }
                 }
             }
             return weekNoDates;
@@ -401,10 +421,16 @@ namespace DDay.iCal
                     int monthDay = r.ByMonthDay[j];
                         
                     int daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
-                    if (monthDay > daysInMonth)
+                    if (Math.Abs(monthDay) > daysInMonth)
                         throw new ArgumentException("Invalid day of month: " + date + " (day " + monthDay + ")");
 
-                    DateTime newDate = new DateTime(date.Year, date.Month, monthDay, date.Hour, date.Minute, date.Second, date.Kind);
+                    // Account for positive or negative numbers
+                    DateTime newDate;
+                    if (monthDay > 0)
+                        newDate = date.AddDays(-date.Day + monthDay);
+                    else
+                        newDate = date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay);
+
                     monthDayDates.Add(newDate);
                 }
             }
@@ -623,10 +649,10 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime startDate, DateTime fromDate, DateTime toDate)
+        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             Periods.Clear();
-            foreach (DateTime dt in GetDates(referenceDate, fromDate, toDate))
+            foreach (DateTime dt in GetDates(referenceDate, periodStart, periodEnd))
             {
                 IDateTime newDt = new iCalDateTime(dt, referenceDate.TZID);
                 newDt.AssociateWith(referenceDate);

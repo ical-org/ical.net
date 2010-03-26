@@ -87,7 +87,7 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime startDate, DateTime fromDate, DateTime toDate)
+        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             // TODO items can only recur if a start date is specified
             if (Todo.Start != null)
@@ -97,7 +97,7 @@ namespace DDay.iCal
                 if (!Periods.Contains(startPeriod))
                     Periods.Add(startPeriod);
 
-                base.Evaluate(referenceDate, startDate, fromDate, toDate);
+                base.Evaluate(referenceDate, periodStart, periodEnd);
 
                 // Ensure each period has a duration
                 for (int i = 0; i < Periods.Count; i++)
