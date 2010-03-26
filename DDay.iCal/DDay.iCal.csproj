@@ -97,7 +97,6 @@
     <Compile Include="Evaluation\EventEvaluator.cs" />
     <Compile Include="Evaluation\Evaluator.cs" />
     <Compile Include="Evaluation\PeriodListEvaluator.cs" />
-    <Compile Include="Evaluation\OldRecurrencePatternEvaluator.cs" />
     <Compile Include="Evaluation\RecurringEvaluator.cs" />
     <Compile Include="Evaluation\TimeZoneInfoEvaluator.cs" />
     <Compile Include="Evaluation\TodoEvaluator.cs" />

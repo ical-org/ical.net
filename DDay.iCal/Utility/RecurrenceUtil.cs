@@ -30,8 +30,7 @@ namespace DDay.iCal
             {
                 IList<IPeriod> periods = evaluator.Evaluate(
                     recurrable.Start,
-                    DateUtil.GetSimpleDateTimeData(recurrable.Start),
-                    startTime.UTC, 
+                    startTime.UTC,
                     endTime.UTC);
 
                 foreach (IPeriod p in periods)

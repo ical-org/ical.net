@@ -28,7 +28,7 @@ namespace DDay.iCal
  
         #region Overrides
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceTime, DateTime startTime, DateTime fromTime, DateTime toTime)
+        public override IList<IPeriod> Evaluate(IDateTime referenceTime, DateTime periodStart, DateTime periodEnd)
         {
             // Time zones must include an effective start date/time
             // and must provide an evaluator.
@@ -42,12 +42,11 @@ namespace DDay.iCal
                 Debug.Assert(offset != null);
                 if (string.Equals(referenceTime.TZID, TimeZoneInfo.TZID))
                 {
-                    startTime = offset.Offset(startTime);
-                    fromTime = offset.Offset(fromTime);
-                    toTime = offset.Offset(toTime);
+                    periodStart = offset.Offset(periodStart);
+                    periodEnd = offset.Offset(periodEnd);
                 }
 
-                IList<IPeriod> periods = base.Evaluate(referenceTime, startTime, fromTime, toTime);
+                IList<IPeriod> periods = base.Evaluate(referenceTime, periodStart, periodEnd);
                 
                 // Add the initial specified date/time for the time zone entry
                 IPeriod startPeriod = new Period(Recurrable.Start, null);
