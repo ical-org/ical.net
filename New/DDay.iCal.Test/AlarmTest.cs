@@ -24,7 +24,7 @@ namespace DDay.iCal.Test
 
         public void TestAlarm(string calendar, List<IDateTime> dates, iCalDateTime start, iCalDateTime end)
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Alarm\" + calendar);
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Alarm\" + calendar)[0];
             ProgramTest.TestCal(iCal);
             IEvent evt = iCal.Events[0];
 

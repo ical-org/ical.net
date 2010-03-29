@@ -76,7 +76,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE1.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE1.ics")[0];
             ProgramTest.TestCal(iCal);
             IEvent evt = iCal.Events[0];
             IList<Occurrence> occurrences = evt.GetOccurrences(
@@ -109,7 +109,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE2()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE2.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE2.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2006, 7, 1, tzid),
@@ -137,7 +137,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE3()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE3.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE3.ics")[0];
             ProgramTest.TestCal(iCal);
             IEvent evt = iCal.Events[0];
 
@@ -170,7 +170,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE4()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE4.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE4.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1997, 9, 1, tzid),
@@ -284,7 +284,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE5()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE5.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE5.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1997, 9, 1, tzid),
@@ -307,7 +307,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE6()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE6.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE6.ics")[0];
             ProgramTest.TestCal(iCal);
             IEvent evt = iCal.Events[0];
 
@@ -342,8 +342,8 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE6_1()
         {
-            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE6.ics");
-            IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE6_1.ics");
+            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE6.ics")[0];
+            IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE6_1.ics")[0];
             ProgramTest.TestCal(iCal1);
             ProgramTest.TestCal(iCal2);
             IEvent evt1 = (Event)iCal1.Events[0];
@@ -362,7 +362,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE7()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE7.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE7.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1997, 9, 1, tzid),
@@ -402,7 +402,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE8()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE8.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE8.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1997, 9, 1, tzid),
@@ -456,7 +456,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE9()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE9.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE9.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1997, 9, 1, tzid),
@@ -498,7 +498,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE10()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE10.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE10.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1997, 9, 1, tzid),
@@ -526,8 +526,8 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE11()
         {
-            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE10.ics");
-            IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE11.ics");
+            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE10.ics")[0];
+            IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE11.ics")[0];
             ProgramTest.TestCal(iCal1);
             ProgramTest.TestCal(iCal2);
             IEvent evt1 = iCal1.Events[0];
@@ -546,7 +546,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE12()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE12.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE12.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -616,7 +616,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE12_1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE12.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE12.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1997, 9, 9, tzid),
@@ -680,7 +680,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE13()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE13.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE13.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -706,7 +706,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE14()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE14.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE14.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -746,7 +746,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE15()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE15.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE15.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -774,7 +774,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE16()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE16.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE16.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -814,7 +814,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE17()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE17.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE17.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -846,7 +846,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE18()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE18.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE18.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -878,7 +878,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE19()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE19.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE19.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -918,7 +918,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE20()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE20.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE20.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -958,7 +958,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE21()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -998,7 +998,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE22()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE22.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE22.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1054,7 +1054,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE23()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE23.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE23.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1082,7 +1082,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE24()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE24.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE24.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1110,7 +1110,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE25()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE25.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE25.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1150,7 +1150,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE26()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE26.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE26.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1171,7 +1171,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE27()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE27.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE27.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1192,7 +1192,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE28()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE28.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE28.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1221,7 +1221,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE29()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE29.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE29.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1280,7 +1280,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE30()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE30.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE30.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1310,7 +1310,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE31()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE31.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE31.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1350,7 +1350,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE32()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE32.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE32.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1371,7 +1371,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE33()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE33.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE33.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1397,7 +1397,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE34()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE34.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE34.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1433,7 +1433,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE35()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE35.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE35.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1454,7 +1454,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE36()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE36.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE36.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1997, 9, 2, tzid),
@@ -1478,7 +1478,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE37()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE37.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE37.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1500,7 +1500,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE38()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE38.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE38.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1997, 9, 2, tzid),
@@ -1566,8 +1566,8 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE39()
         {
-            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE38.ics");
-            IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE39.ics");
+            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE38.ics")[0];
+            IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE39.ics")[0];
             ProgramTest.TestCal(iCal1);
             ProgramTest.TestCal(iCal2);
             IEvent evt1 = iCal1.Events[0];
@@ -1586,7 +1586,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE40()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE40.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE40.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1609,7 +1609,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE41()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE41.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE41.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1632,7 +1632,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE42()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE42.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE42.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 7, 1, tzid),
@@ -1724,7 +1724,7 @@ namespace DDay.iCal.Test
                 {
                     try
                     {
-                        IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE44.ics");
+                        IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE44.ics")[0];
                         IList<Occurrence> occurrences = iCal.GetOccurrences(
                             new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
                             new iCalDateTime(2007, 7, 21, 8, 0, 0, tzid));
@@ -1747,7 +1747,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE44_1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE44.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE44.ics")[0];
             iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
 
             EventOccurrenceTest(
@@ -1778,7 +1778,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence"), ExpectedException(typeof(EvaluationEngineException))]
         public void RRULE45()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE45.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE45.ics")[0];
             iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictMinutely;
             IList<Occurrence> occurrences = iCal.GetOccurrences(
                 new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
@@ -1792,7 +1792,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE45_1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE45.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE45.ics")[0];
             iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictMinutely;
             iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
 
@@ -1818,7 +1818,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence"), ExpectedException(typeof(EvaluationEngineException))]
         public void RRULE46()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE46.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE46.ics")[0];
             iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictHourly;
             IList<Occurrence> occurrences = iCal.GetOccurrences(
                 new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
@@ -1832,7 +1832,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE46_1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE46.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE46.ics")[0];
             iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictHourly;
             iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
 
@@ -1858,7 +1858,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE47()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE47.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE47.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2008, 1, 1, 7, 0, 0, tzid),
@@ -1878,7 +1878,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE48()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE48.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE48.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2006, 1, 1, 7, 0, 0, tzid),
@@ -1898,7 +1898,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE49()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE49.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE49.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 4, 11, 7, 0, 0, tzid),
@@ -1918,7 +1918,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE50()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE50.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE50.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 4, 9, 10, 0, 0, tzid),
@@ -1940,7 +1940,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE51()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE51.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE51.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2009, 1, 1, 0, 0, 0, tzid),
@@ -1969,7 +1969,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE52()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE52.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE52.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2009, 1, 1, 0, 0, 0, tzid),
@@ -1988,7 +1988,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE53()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE53.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE53.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 4, 9, 7, 0, 0),
@@ -2017,7 +2017,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE54()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE54.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE54.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 4, 9, 7, 0, 0),
@@ -2046,7 +2046,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE55()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE55.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE55.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 4, 9, 7, 0, 0),
@@ -2074,7 +2074,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE56()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE56.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE56.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 9, 10, 7, 0, 0),
@@ -2098,7 +2098,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE57()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE57.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE57.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 9, 10, 7, 0, 0),
@@ -2125,7 +2125,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE58()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE58.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE58.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 9, 10, 7, 0, 0),
@@ -2156,7 +2156,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE59()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE59.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE59.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 9, 10, 7, 0, 0),
@@ -2190,7 +2190,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void RRULE60()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE60.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE60.ics")[0];
             string localTZID = iCal.TimeZones[0].TZID;
 
             // Daily recurrence
@@ -2248,7 +2248,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void USHOLIDAYS()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\USHolidays.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\USHolidays.ics")[0];
 
             Assert.IsNotNull(iCal, "iCalendar was not loaded.");
             Hashtable items = new Hashtable();

@@ -145,7 +145,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 {
                     IStringSerializer serializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
                     if (serializer != null)
-                        values.Add("UNTIL=" + serializer.SerializeToString(recur.Until));
+                        values.Add("UNTIL=" + serializer.SerializeToString(new iCalDateTime(recur.Until)));
                 }
 
                 if (recur.FirstDayOfWeek != DayOfWeek.Monday)
@@ -225,8 +225,8 @@ namespace DDay.iCal.Serialization.iCalendar
                                         if (serializer != null)
                                         {
                                             IDateTime dt = serializer.Deserialize(new StringReader(keyValue)) as IDateTime;
-                                            Debug.Assert(dt.IsUniversalTime);
-                                            r.Until = dt.Value;
+                                            if (dt != null)
+                                                r.Until = dt.Value;                                            
                                         }
                                     } break;
                                 case "COUNT": r.Count = Convert.ToInt32(keyValue); break;

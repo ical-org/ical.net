@@ -21,23 +21,10 @@ namespace DDay.iCal.Test
         {
             tzid = "US-Eastern";
         }
-
-        static public void DoTests()
-        {
-            TodoTest t = new TodoTest();
-            t.InitAll();
-            t.TODO1();
-            t.TODO2();
-            t.TODO3();
-            t.TODO4();
-            t.TODO5();
-            t.TODO6();
-            t.TODO7();
-        }
                 
         public void TestTodoActive(string calendar, ArrayList items, params int[] numPeriods)
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar);
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
             ProgramTest.TestCal(iCal);
             ITodo todo = iCal.Todos[0];
             
@@ -66,7 +53,7 @@ namespace DDay.iCal.Test
 
         public void TestTodoCompleted(string calendar, ArrayList items)
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar);
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
             ProgramTest.TestCal(iCal);
             ITodo todo = iCal.Todos[0];
             
@@ -191,7 +178,7 @@ namespace DDay.iCal.Test
         [Test, Category("Todo")]
         public void TODO7_1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\TODO7.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\TODO7.ics")[0];
             ITodo todo = iCal.Todos[0];
 
             ArrayList items = new ArrayList();

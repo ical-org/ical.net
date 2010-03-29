@@ -22,18 +22,10 @@ namespace DDay.iCal.Test
             tzid = "US-Eastern";
         }
 
-        static public void DoTests()
-        {
-            JournalTest j = new JournalTest();
-            j.InitAll();
-            j.JOURNAL1();
-            j.JOURNAL2();
-        }
-
         [Test, Category("Journal")]
         public void JOURNAL1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL1.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL1.ics")[0];
             ProgramTest.TestCal(iCal);
             IJournal j = iCal.Journals[0];
 
@@ -46,7 +38,7 @@ namespace DDay.iCal.Test
         [Test, Category("Journal")]
         public void JOURNAL2()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL2.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL2.ics")[0];
             ProgramTest.TestCal(iCal);
             IJournal j = iCal.Journals[0];
 

@@ -45,6 +45,25 @@ namespace DDay.iCal
 
         #endregion
 
+        #region Overrides
+
+        public override void CopyFrom(ICopyable c)
+        {
+            base.CopyFrom(c);
+
+            ICalendarParameter p = c as ICalendarParameter;
+            if (p != null)
+            {
+                if (p.Values != null)
+                {
+                    Values = new string[p.Values.Length];
+                    Array.Copy(p.Values, Values, p.Values.Length);
+                }
+            }
+        }
+
+        #endregion
+
         #region ICalendarParameter Members
 
         public event EventHandler<ValueChangedEventArgs> ValueChanged;

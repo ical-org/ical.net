@@ -132,7 +132,12 @@ namespace DDay.iCal
 
             ICalendarProperty p = obj as ICalendarProperty;
             if (p != null)
-            {               
+            {
+                if (p.Value is ICopyable)
+                    Value = ((ICopyable)p.Value).Copy<object>();
+                else
+                    Value = p.Value;
+
                 // Copy parameters
                 foreach (ICalendarParameter parm in p.Parameters)
                     AddChild(parm.Copy<ICalendarParameter>());
