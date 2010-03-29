@@ -103,7 +103,7 @@ namespace DDay.iCal
         #region Private Fields
 
         TimeZoneEvaluator m_Evaluator;
-        IList<ITimeZoneInfo> m_TimeZoneInfos;
+        IFilteredCalendarObjectList<ITimeZoneInfo> m_TimeZoneInfos;
         
         #endregion
 
@@ -119,7 +119,7 @@ namespace DDay.iCal
             this.Name = Components.TIMEZONE;
 
             m_Evaluator = new TimeZoneEvaluator(this);
-            m_TimeZoneInfos = new List<ITimeZoneInfo>();
+            m_TimeZoneInfos = new FilteredCalendarObjectList<ITimeZoneInfo>(this);
             ChildAdded += new EventHandler<ObjectEventArgs<ICalendarObject>>(iCalTimeZone_ChildAdded);
             ChildRemoved += new EventHandler<ObjectEventArgs<ICalendarObject>>(iCalTimeZone_ChildRemoved);
         }        
@@ -156,23 +156,6 @@ namespace DDay.iCal
             return null;
         }
 
-        public override void AddChild(ICalendarObject child)
-        {
-            if (child is iCalTimeZoneInfo)
-                TimeZoneInfos.Add((iCalTimeZoneInfo)child);
-
-            base.AddChild(child);
-        }
-
-        public override void RemoveChild(ICalendarObject child)
-        {
-            if (child is iCalTimeZoneInfo &&
-                TimeZoneInfos.Contains((iCalTimeZoneInfo)child))
-                TimeZoneInfos.Remove((iCalTimeZoneInfo)child);
-
-            base.RemoveChild(child);
-        }
-
         #endregion
 
         #region ITimeZone Members
@@ -207,7 +190,7 @@ namespace DDay.iCal
             set { Url = value; }
         }
 
-        virtual public IList<ITimeZoneInfo> TimeZoneInfos
+        virtual public IFilteredCalendarObjectList<ITimeZoneInfo> TimeZoneInfos
         {
             get { return m_TimeZoneInfos; }
             set { m_TimeZoneInfos = value; }

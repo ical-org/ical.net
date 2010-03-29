@@ -1683,7 +1683,7 @@ namespace DDay.iCal.Test
             daylight.RecurrenceRules.Add(new RecurrencePattern("FREQ=YEARLY;BYDAY=1SU;BYMONTH=4"));
             daylight.OffsetFrom = new UTCOffset("-0500");
             daylight.OffsetTo = new UTCOffset("-0400");
-            daylight.TimeZoneName = "EDT";
+            daylight.TimeZoneName = "EDT";            
             tz.AddChild(daylight);
 
             IEvent evt = iCal.Create<Event>();

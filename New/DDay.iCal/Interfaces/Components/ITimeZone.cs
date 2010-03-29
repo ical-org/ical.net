@@ -12,7 +12,7 @@ namespace DDay.iCal
         IDateTime LastModified { get; set; }
         Uri TZUrl { get; set; }
         Uri Url { get; set; }
-        IList<ITimeZoneInfo> TimeZoneInfos { get; set; }
+        IFilteredCalendarObjectList<ITimeZoneInfo> TimeZoneInfos { get; set; }
         TimeZoneObservance? GetTimeZoneObservance(IDateTime dt);
     }
 }
