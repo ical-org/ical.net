@@ -118,9 +118,9 @@ namespace DDay.iCal
                 this.Parent = obj.Parent;
                 this.Line = obj.Line;
                 this.Column = obj.Column;
-
+                
                 // Add each child
-                foreach (ICalendarObject child in Children)
+                foreach (ICalendarObject child in obj.Children)
                     AddChild(child.Copy<ICalendarObject>());
             }
         }

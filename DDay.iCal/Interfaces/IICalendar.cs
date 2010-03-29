@@ -27,11 +27,6 @@ namespace DDay.iCal
         /// </summary>
         string Method { get; set; }
 
-        ///// <summary>
-        ///// Gets/sets the component factory for this calendar.
-        ///// </summary>
-        //ICalendarComponentFactory ComponentFactory { get; set; }
-        
         /// <summary>
         /// Gets/sets the restriction on how evaluation of 
         /// recurrence patterns occurs within this calendar.
@@ -60,32 +55,32 @@ namespace DDay.iCal
         /// <summary>
         /// Gets a list of unique components contained in the calendar.
         /// </summary>
-        IUniqueComponentListReadonly<IUniqueComponent> UniqueComponents { get; }
+        IUniqueComponentList<IUniqueComponent> UniqueComponents { get; }
 
         /// <summary>
         /// Gets a list of Events contained in the calendar.
         /// </summary>
-        IUniqueComponentListReadonly<IEvent> Events { get; }
+        IUniqueComponentList<IEvent> Events { get; }
 
         /// <summary>
         /// Gets a list of Free/Busy components contained in the calendar.
         /// </summary>
-        IUniqueComponentListReadonly<IFreeBusy> FreeBusy { get; }
+        IUniqueComponentList<IFreeBusy> FreeBusy { get; }
 
         /// <summary>
         /// Gets a list of Journal entries contained in the calendar.
         /// </summary>
-        IUniqueComponentListReadonly<IJournal> Journals { get; }
+        IUniqueComponentList<IJournal> Journals { get; }
 
         /// <summary>
         /// Gets a list of time zones contained in the calendar.
         /// </summary>
-        IList<ITimeZone> TimeZones { get; }
+        IFilteredCalendarObjectList<ITimeZone> TimeZones { get; }
 
         /// <summary>
         /// Gets a list of To-do items contained in the calendar.
         /// </summary>
-        IUniqueComponentListReadonly<ITodo> Todos { get; }
+        IUniqueComponentList<ITodo> Todos { get; }
 
         /// <summary>
         /// Clears recurrence evaluations for recurring components.        

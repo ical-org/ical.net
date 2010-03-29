@@ -78,7 +78,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 iCalParser parser = new iCalParser(lexer);
 
                 // Parse the iCalendar(s)!
-                iCalendarCollection iCalendars = parser.icalendar(SerializationContext);
+                IICalendarCollection iCalendars = parser.icalendar(SerializationContext);
 
                 // Close our text stream
                 tr.Close();

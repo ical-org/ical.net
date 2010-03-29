@@ -136,6 +136,19 @@ namespace DDay.iCal
             Initialize();
         }
 
+        public override void CopyFrom(ICopyable obj)
+        {
+            base.CopyFrom(obj);
+
+            ICalendarComponent c = obj as ICalendarComponent;
+            if (c != null)
+            {
+                Properties.Clear();
+                foreach (ICalendarProperty p in c.Properties)
+                    Properties.Add(p.Copy<ICalendarProperty>());
+            }
+        }
+
         #endregion
 
         #region Public Methods

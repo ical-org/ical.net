@@ -1,26 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Collections;
 
 namespace DDay.iCal
 {
-    public interface IUniqueComponentListReadonly<T> :
-        IEnumerable<T>
+    public interface IUniqueComponentList<T> :
+        IFilteredCalendarObjectList<T>
         where T : IUniqueComponent
     {
         bool ContainsKey(string UID);
-
-        int Count { get; }
-
-        // Indexers
-        T this[int index] { get; set; }
         T this[string uid] { get; set; }
-    }
-
-    public interface IUniqueComponentList<T> :
-        IList<T>,
-        IUniqueComponentListReadonly<T>
-        where T : IUniqueComponent
-    {        
     }
 }

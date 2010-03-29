@@ -100,7 +100,7 @@ namespace DDay.iCal.Test
             string path = @"Calendars\General\Test1.ics";
             Assert.IsTrue(File.Exists(path), "File '" + path + "' does not exist.");
 
-            IICalendar iCal = iCalendar.LoadFromFile(path);
+            IICalendar iCal = iCalendar.LoadFromFile(path)[0];
             ProgramTest.TestCal(iCal);
         }
 
@@ -111,7 +111,7 @@ namespace DDay.iCal.Test
             path = Path.Combine(path, "Calendars/General/Test1.ics").Replace(@"\", "/");
             path = "file:///" + path;
             Uri uri = new Uri(path);
-            IICalendar iCal = iCalendar.LoadFromUri(uri);
+            IICalendar iCal = iCalendar.LoadFromUri(uri)[0];
             ProgramTest.TestCal(iCal);
         }
 
@@ -149,7 +149,7 @@ namespace DDay.iCal.Test
         [Test]
         public void GeographicLocation1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\GeographicLocation1.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\GeographicLocation1.ics")[0];
             ProgramTest.TestCal(iCal);
             IEvent evt = iCal.Events[0];
 
@@ -160,7 +160,7 @@ namespace DDay.iCal.Test
         [Test]
         public void Base64()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BASE64.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BASE64.ics")[0];
             ProgramTest.TestCal(iCal);
             IEvent evt = iCal.Events[0];
 
@@ -184,7 +184,7 @@ namespace DDay.iCal.Test
         [Test]
         public void Base64_1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BASE64_1.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BASE64_1.ics")[0];
             ProgramTest.TestCal(iCal);
             IEvent evt = iCal.Events[0];
 
@@ -199,7 +199,7 @@ namespace DDay.iCal.Test
         [Test, ExpectedException(typeof(WebException))]
         public void Attachment()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BINARY.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BINARY.ics")[0];
             ProgramTest.TestCal(iCal);
             IEvent evt = iCal.Events[0];
 
@@ -211,7 +211,7 @@ namespace DDay.iCal.Test
             ms.SetLength(a.Data.Length);
             a.Data.CopyTo(ms.GetBuffer(), 0);
 
-            IICalendar iCal1 = iCalendar.LoadFromStream(ms);
+            IICalendar iCal1 = iCalendar.LoadFromStream(ms)[0];
             Assert.IsNotNull(iCal1, "Attached iCalendar did not load correctly");
 
             throw new WebException();
@@ -368,7 +368,7 @@ namespace DDay.iCal.Test
         [Test]
         public void UID1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BINARY.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BINARY.ics")[0];
             ProgramTest.TestCal(iCal);
 
             IEvent evt = iCal.Events["uuid1153170430406"];
@@ -399,14 +399,14 @@ namespace DDay.iCal.Test
         [Test]
         public void LANGUAGE1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Barça 2006 - 2007.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Barça 2006 - 2007.ics")[0];
         }
 
         [Test]
         public void Google1()
         {
             string tzid = "Europe/Berlin";
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/GoogleCalendar.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/GoogleCalendar.ics")[0];
             IEvent evt = iCal.Events["594oeajmftl3r9qlkb476rpr3c@google.com"];
             Assert.IsNotNull(evt);
 
@@ -462,87 +462,87 @@ UID:ebfbd3e3-cc1e-4a64-98eb-ced2598b3908
 END:VEVENT
 END:VCALENDAR
 ");
-            IICalendar iCal = iCalendar.LoadFromStream(sr);
+            IICalendar iCal = iCalendar.LoadFromStream(sr)[0];
             Assert.IsTrue(iCal.Events.Count == 2, "There should be 2 events in the parsed calendar");
             Assert.IsNotNull(iCal.Events["fd940618-45e2-4d19-b118-37fd7a8e3906"], "Event fd940618-45e2-4d19-b118-37fd7a8e3906 should exist in the calendar");
             Assert.IsNotNull(iCal.Events["ebfbd3e3-cc1e-4a64-98eb-ced2598b3908"], "Event ebfbd3e3-cc1e-4a64-98eb-ced2598b3908 should exist in the calendar");
         }
+        
+        // FIXME: re-implement
+        //[Test]
+        //public void EVALUATION1()
+        //{
+        //    iCalendarCollection calendars = new iCalendarCollection();
+        //    calendars.AddRange(iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics"));
+        //    calendars.AddRange(iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE22.ics"));
 
-        [Test]
-        public void EVALUATION1()
-        {
-            //iCalendarCollection calendars = new iCalendarCollection();
-            //calendars.Add(iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics"));
-            //calendars.Add(iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE22.ics"));
+        //    iCalDateTime startDate = new iCalDateTime(1996, 1, 1, tzid, calendars[0]);
+        //    iCalDateTime endDate = new iCalDateTime(1998, 4, 1, tzid, calendars[0]);
 
-            //iCalDateTime startDate = new iCalDateTime(1996, 1, 1, tzid, calendars[0]);
-            //iCalDateTime endDate = new iCalDateTime(1998, 4, 1, tzid, calendars[0]);
+        //    List<IDateTime> DateTimes = new List<IDateTime>(new iCalDateTime[]
+        //    {
+        //        new iCalDateTime(1997, 9, 2, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1997, 9, 9, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1997, 9, 16, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1997, 9, 23, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1997, 9, 30, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1997, 11, 4, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1997, 11, 11, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1997, 11, 18, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1997, 11, 25, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1998, 1, 6, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1998, 1, 13, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1998, 1, 20, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1998, 1, 27, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1998, 3, 3, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1998, 3, 10, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1998, 3, 17, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1998, 3, 24, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1998, 3, 31, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1997, 9, 10, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1997, 9, 11, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1997, 9, 12, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1997, 9, 13, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1997, 9, 14, 9, 0, 0, tzid, calendars[0]),
+        //        new iCalDateTime(1997, 9, 15, 9, 0, 0, tzid, calendars[0]),                
+        //    });
 
-            //List<IDateTime> DateTimes = new List<IDateTime>(new iCalDateTime[]
-            //{
-            //    new iCalDateTime(1997, 9, 2, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1997, 9, 9, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1997, 9, 16, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1997, 9, 23, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1997, 9, 30, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1997, 11, 4, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1997, 11, 11, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1997, 11, 18, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1997, 11, 25, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1998, 1, 6, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1998, 1, 13, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1998, 1, 20, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1998, 1, 27, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1998, 3, 3, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1998, 3, 10, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1998, 3, 17, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1998, 3, 24, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1998, 3, 31, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1997, 9, 10, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1997, 9, 11, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1997, 9, 12, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1997, 9, 13, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1997, 9, 14, 9, 0, 0, tzid, calendars[0]),
-            //    new iCalDateTime(1997, 9, 15, 9, 0, 0, tzid, calendars[0]),                
-            //});
+        //    List<Event> occurrences = new List<Event>(calendars.GetRecurrencesForRange<Event>(startDate, endDate));
+        //    foreach (Event evt in occurrences)
+        //        Assert.IsTrue(DateTimes.Contains(evt.Start), "Event occurred on " + evt.Start + "; it should not have");
+        //    foreach (iCalDateTime dt in DateTimes)
+        //    {
+        //        bool isFound = false;
+        //        foreach (Event evt in occurrences)
+        //        {
+        //            if (evt.Start.Equals(dt))
+        //            {
+        //                isFound = true;
+        //                break;
+        //            }
+        //        }
+        //        Assert.IsTrue(isFound, "Event should occur on " + dt);
+        //    }
 
-            //List<Event> occurrences = new List<Event>(calendars.GetRecurrencesForRange<Event>(startDate, endDate));
-            //foreach (Event evt in occurrences)
-            //    Assert.IsTrue(DateTimes.Contains(evt.Start), "Event occurred on " + evt.Start + "; it should not have");
-            //foreach(iCalDateTime dt in DateTimes)
-            //{
-            //    bool isFound = false;
-            //    foreach (Event evt in occurrences)
-            //    {
-            //        if (evt.Start.Equals(dt))
-            //        {
-            //            isFound = true;
-            //            break;
-            //        }
-            //    }
-            //    Assert.IsTrue(isFound, "Event should occur on " + dt);
-            //}
-
-
-            //Assert.IsTrue(occurrences.Count == DateTimes.Count, "There should be exactly " + DateTimes.Count + " occurrences; there were " + occurrences.Count);
-        }
+        //    Assert.IsTrue(occurrences.Count == DateTimes.Count, "There should be exactly " + DateTimes.Count + " occurrences; there were " + occurrences.Count);
+        //}
 
         [Test]
         public void PRODID1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/PRODID1.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/PRODID1.ics")[0];
         }
 
         [Test]
         public void PRODID2()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/PRODID2.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/PRODID2.ics")[0];
         }
 
         [Test]
         public void Outlook2007_With_Folded_Lines_Using_Tabs_Contains_One_Event()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Outlook2007LineFolds.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Outlook2007LineFolds.ics")[0];
             IList<Occurrence> events = iCal.GetOccurrences(new iCalDateTime(2009, 06, 20), new iCalDateTime(2009, 06, 22));
             Assert.AreEqual(1, events.Count);
         }
@@ -551,7 +551,7 @@ END:VCALENDAR
         public void Outlook2007_With_Folded_Lines_Using_Tabs_Is_Properly_Unwrapped()
         {
             string longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Outlook2007LineFolds.ics");
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Outlook2007LineFolds.ics")[0];
             IList<Occurrence> events = iCal.GetOccurrences<Event>(new iCalDateTime(2009, 06, 20), new iCalDateTime(2009, 06, 22));
             Assert.AreEqual(longName, ((IEvent)events[0].Source).Location);
         }

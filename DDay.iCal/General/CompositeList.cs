@@ -35,6 +35,18 @@ namespace DDay.iCal
 
         #endregion
 
+        #region Protected Properties
+
+        virtual protected IEnumerable<IList<T>> Lists
+        {
+            get
+            {
+                return m_Lists;
+            }
+        }
+
+        #endregion
+
         #region Constructors
 
         public CompositeList(ICalendarObject parent)

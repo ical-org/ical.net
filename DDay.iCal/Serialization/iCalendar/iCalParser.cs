@@ -89,12 +89,12 @@ namespace DDay.iCal
 		{
 			initialize();
 		}
-		
-	public iCalendarCollection  icalendar(
+
+        public IICalendarCollection icalendar(
 		ISerializationContext ctx
 	) //throws RecognitionException, TokenStreamException
 {
-		iCalendarCollection iCalendars = (iCalendarCollection)SerializationUtil.GetUninitializedObject(typeof(iCalendarCollection));;
+    IICalendarCollection iCalendars = new iCalendarCollection();
 		
 		
 		

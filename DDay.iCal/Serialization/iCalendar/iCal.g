@@ -31,7 +31,7 @@ options
 }
 
 // iCalendar object
-icalendar[ISerializationContext ctx] returns [iCalendarCollection iCalendars = (iCalendarCollection)SerializationUtil.GetUninitializedObject(typeof(iCalendarCollection));]
+icalendar[ISerializationContext ctx] returns [IICalendarCollection iCalendars = new iCalendarCollection()]
 :	
 {
 	SerializationUtil.OnDeserializing(iCalendars);
