@@ -7,9 +7,7 @@ using DDay.iCal.Serialization;
 namespace DDay.iCal
 {
     /// <summary>
-    /// A collection of iCalendars that is enumerable, and contains
-    /// several public properties for direct access to components
-    /// from each individual iCalendar.
+    /// A list of iCalendars.
     /// </summary>
 #if DATACONTRACT
     [CollectionDataContract(Name = "iCalendarCollection", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]

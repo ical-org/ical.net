@@ -28,16 +28,6 @@ namespace DDay.iCal
         RecurringComponent,
         IEvent
     {
-        #region Static Public Methods
-
-        static public Event Create(iCalendar iCal)
-        {
-            Event evt = iCal.Create<Event>();
-            return evt;
-        }
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>
