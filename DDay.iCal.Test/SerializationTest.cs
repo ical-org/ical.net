@@ -562,19 +562,19 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         }
 
         [Test, Category("Serialization")]
-        public void LANGUAGE1()
+        public void Language1()
         {
-            SerializeTest("LANGUAGE1.ics", typeof(iCalendarSerializer));
+            SerializeTest("Language1.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
-        public void LANGUAGE2()
+        public void Language2()
         {
-            SerializeTest("LANGUAGE2.ics", typeof(iCalendarSerializer));
+            SerializeTest("Language2.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
-        public void LANGUAGE3()
+        public void Language3()
         {
             SerializeTest("RussiaHolidays.ics", typeof(iCalendarSerializer));
 
@@ -591,7 +591,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         }
 
         [Test, Category("Serialization")]
-        public void LANGUAGE4()
+        public void Language4()
         {
             string calendarPath = Path.Combine(Environment.CurrentDirectory, "Calendars");
             calendarPath = Path.Combine(calendarPath, "Serialization");

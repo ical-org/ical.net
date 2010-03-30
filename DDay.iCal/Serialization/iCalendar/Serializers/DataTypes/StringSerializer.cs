@@ -84,7 +84,7 @@ namespace DDay.iCal.Serialization.iCalendar
                     // Encode the string as needed.
                     EncodableDataType dt = new EncodableDataType();
                     dt.AssociatedObject = co;
-                    return Encode(dt, value);
+                    return Encode(dt, Escape(value));
                 }
                 return Escape(value);
             }

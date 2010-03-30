@@ -11,7 +11,19 @@ namespace DDay.iCal
     {
         #region Private Fields
 
-        private bool m_IsLoaded = false;
+        private bool m_IsLoaded;
+
+        #endregion
+
+        #region Constructors
+
+        public CalendarObjectBase()
+        {
+            // Objects that are loaded using a normal constructor
+            // are "Loaded" by default.  Objects that are being
+            // deserialized do not use the constructor.
+            m_IsLoaded = true;
+        }
 
         #endregion
 
@@ -22,7 +34,7 @@ namespace DDay.iCal
         /// current object.
         /// </summary>
         virtual public void CopyFrom(ICopyable c)
-        {            
+        {
         }
 
         /// <summary>
