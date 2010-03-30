@@ -105,13 +105,16 @@ namespace DDay.iCal
                     else
                         Remove(name);
                 }
-                Add(new CalendarParameter(name, values));
+                else if (values != null)
+                {
+                    Add(new CalendarParameter(name, values));
+                }
             }
         }
 
         public void Set(string name, string value)
         {
-            Set(name, new string[] { value });
+            Set(name, value != null ? new string[] { value } : null);
         }
 
         public string Get(string name)

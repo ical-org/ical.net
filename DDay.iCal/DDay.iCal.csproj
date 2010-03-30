@@ -102,6 +102,7 @@
     <Compile Include="Evaluation\TodoEvaluator.cs" />
     <Compile Include="Exceptions\EvaluationEngineException.cs" />
     <Compile Include="General\AssociatedCalendarParameterList.cs" />
+    <Compile Include="General\CompositePropertyList.cs" />
     <Compile Include="General\FilteredCalendarObjectList.cs" />
     <Compile Include="Interfaces\General\IFilteredCalendarObjectList.cs" />
     <Compile Include="Interfaces\Components\IAlarmContainer.cs" />

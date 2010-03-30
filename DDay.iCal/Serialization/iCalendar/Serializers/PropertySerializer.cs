@@ -52,8 +52,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 // the property and parameter values
                 ISerializerFactory sf = GetService<ISerializerFactory>();
 
-                StringBuilder result = new StringBuilder();
-                               
+                StringBuilder result = new StringBuilder();                               
                 foreach (object v in objs)
                 {
                     // Get a serializer to serialize the property's value.
@@ -66,18 +65,28 @@ namespace DDay.iCal.Serialization.iCalendar
                         // FIXME: this isn't always the way this is accomplished.
                         // Multiple values can often be serialized within the
                         // same property.  How should we fix this?
+
+                        // Serialize the property's value first, as during the serialization it
+                        // may modify our parameters.
+                        string value = valueSerializer.SerializeToString(v);
+
+                        // Get the list of parameters we'll be serializing
+                        ICalendarParameterList parameterList = prop.Parameters;
+                        if (v is ICalendarDataType)
+                            parameterList = ((ICalendarDataType)v).Parameters;
+
                         StringBuilder sb = new StringBuilder(prop.Name);
-                        if (prop.Parameters.Count > 0)
+                        if (parameterList.Count > 0)
                         {
                             // Get a serializer for parameters
-                            IStringSerializer parmSerializer = sf.Build(typeof(ICalendarParameter), SerializationContext) as IStringSerializer;
-                            if (parmSerializer != null)
+                            IStringSerializer parameterSerializer = sf.Build(typeof(ICalendarParameter), SerializationContext) as IStringSerializer;
+                            if (parameterSerializer != null)
                             {
                                 // Serialize each parameter
                                 List<string> parameters = new List<string>();
-                                foreach (ICalendarParameter param in prop.Parameters)
+                                foreach (ICalendarParameter param in parameterList)
                                 {
-                                    parameters.Add(parmSerializer.SerializeToString(param));
+                                    parameters.Add(parameterSerializer.SerializeToString(param));
                                 }
 
                                 // Separate parameters with semicolons
@@ -86,9 +95,7 @@ namespace DDay.iCal.Serialization.iCalendar
                             }
                         }
                         sb.Append(":");
-
-                        // Serialize the property's value
-                        sb.Append(valueSerializer.SerializeToString(v));
+                        sb.Append(value);
 
                         result.Append(TextUtil.WrapLines(sb.ToString()));
                     }
