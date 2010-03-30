@@ -63,17 +63,19 @@ namespace DDay.iCal
         
         protected void HandleItemAdded(T item)
         {
-            if (item.UID == null)
+            // Assign the item a UID if it's loaded.
+            if (item.IsLoaded && item.UID == null)
                 item.UID = m_UIDFactory.Build();
             
             item.UIDChanged += UIDChangedHandler;
-            m_Dictionary[item.UID] = item;
+            if (item.UID != null)
+                m_Dictionary[item.UID] = item;
         }
 
         protected void HandleItemRemoved(T item)
         {
             item.UIDChanged -= UIDChangedHandler;
-            if (m_Dictionary.ContainsKey(item.UID))
+            if (item.UID != null && m_Dictionary.ContainsKey(item.UID))
                 m_Dictionary.Remove(item.UID);
         }
 

@@ -356,10 +356,10 @@
     <None Include="Calendars\Recurrence\RRULE9.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Serialization\LANGUAGE1.ics">
+    <None Include="Calendars\Serialization\Language1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Serialization\LANGUAGE2.ics">
+    <None Include="Calendars\Serialization\Language2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Calendars\Serialization\PARSE1.ics">
