@@ -30,6 +30,10 @@ namespace DDay.iCal.Serialization.iCalendar
                 }
                 else if (a.Data != null)
                 {
+                    // Default to BASE64 encoding for inline attachments.
+                    if (a.Encoding == null)
+                        a.Parameters.Set("ENCODING", "BASE64");
+
                     // Ensure the VALUE type is set to BINARY
                     a.Parameters.Set("VALUE", "BINARY");
 
@@ -47,7 +51,7 @@ namespace DDay.iCal.Serialization.iCalendar
             if (a != null)
             {
                 // Decode the value, if necessary
-                value = Decode(a, value);
+                byte[] data = DecodeData(a, value);
 
                 // Get the format of the attachment
                 if (a.Parameters.ContainsKey("VALUE"))
@@ -58,7 +62,7 @@ namespace DDay.iCal.Serialization.iCalendar
                     if (string.Compare(valueType, "BINARY", true) == 0)
                     {
                         if (value != null)
-                            a.Data = System.Text.Encoding.Unicode.GetBytes(value);
+                            a.Data = data;
                         return a;
                     }
                 }
@@ -66,7 +70,10 @@ namespace DDay.iCal.Serialization.iCalendar
                 // The default VALUE type for attachments is URI.  So, let's
                 // grab the URI by default.
                 if (value != null)
-                    a.Uri = new Uri(value);
+                {
+                    string uriValue = Decode(a, value);
+                    a.Uri = new Uri(uriValue);
+                }
 
                 return a;
             }

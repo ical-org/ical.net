@@ -23,10 +23,11 @@ namespace DDay.iCal.Test
         }
 
         [Test, Category("Journal")]
-        public void JOURNAL1()
+        public void Journal1()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL1.ics")[0];
             ProgramTest.TestCal(iCal);
+            Assert.AreEqual(1, iCal.Journals.Count);
             IJournal j = iCal.Journals[0];
 
             Assert.IsNotNull(j, "Journal entry was null");
@@ -36,10 +37,11 @@ namespace DDay.iCal.Test
         }
 
         [Test, Category("Journal")]
-        public void JOURNAL2()
+        public void Journal2()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL2.ics")[0];
             ProgramTest.TestCal(iCal);
+            Assert.AreEqual(1, iCal.Journals.Count);
             IJournal j = iCal.Journals[0];
 
             Assert.IsNotNull(j, "Journal entry was null");
