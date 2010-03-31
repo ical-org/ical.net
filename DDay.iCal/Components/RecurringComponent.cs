@@ -125,11 +125,6 @@ namespace DDay.iCal
         {
             m_Evaluator = new RecurringEvaluator(this);
             Alarms = new List<IAlarm>();
-
-            RecurrenceDates = new List<IPeriodList>();
-            RecurrenceRules = new List<IRecurrencePattern>();
-            ExceptionDates = new List<IPeriodList>();
-            ExceptionRules = new List<IRecurrencePattern>();
         }
 
         #endregion        

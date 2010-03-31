@@ -34,7 +34,7 @@ namespace DDay.iCal
             ResolveUIDs();
             ItemAdded += new EventHandler<ObjectEventArgs<T>>(UniqueComponentList_ItemAdded);
             ItemRemoved += new EventHandler<ObjectEventArgs<T>>(UniqueComponentList_ItemRemoved);
-        }        
+        }
 
         #endregion
 

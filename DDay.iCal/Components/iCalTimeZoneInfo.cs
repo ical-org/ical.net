@@ -43,11 +43,6 @@ namespace DDay.iCal
         void Initialize()
         {
             m_Evaluator = new TimeZoneInfoEvaluator(this);
-
-            RecurrenceDates = new List<IPeriodList>();
-            RecurrenceRules = new List<IRecurrencePattern>();
-            ExceptionDates = new List<IPeriodList>();
-            ExceptionRules = new List<IRecurrencePattern>();
         }
 
         #endregion
