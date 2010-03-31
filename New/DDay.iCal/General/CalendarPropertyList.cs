@@ -100,7 +100,7 @@ namespace DDay.iCal
 
         virtual public IList<U> GetList<U>(string name)
         {
-            return new CompositeList<U>(m_Parent, GetAll<IEnumerable>(name));            
+            return new CalendarPropertyCompositeList<U>(this, name);
         }
 
         #endregion

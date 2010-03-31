@@ -55,14 +55,6 @@ namespace DDay.iCal
         {
             Properties.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarProperty>>(Properties_ItemAdded);
             Properties.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarProperty>>(Properties_ItemRemoved);
-
-            Attachments = new List<IAttachment>();
-            Attendees = new List<IAttendee>();
-            Categories = new List<string>();
-            Comments = new List<string>();
-            Contacts = new List<string>();
-            RelatedComponents = new List<string>();
-            RequestStatuses = new List<IRequestStatus>();
         }
 
         #endregion
