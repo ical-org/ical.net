@@ -869,14 +869,30 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE14.ics")[0];
             Assert.AreEqual(1, iCal.Events.Count);
             Assert.AreEqual(4, iCal.Events[0].RequestStatuses.Count);
-            Assert.AreEqual(2, iCal.Events[0].RequestStatuses[0].StatusCode.Primary);
-            Assert.AreEqual(0, iCal.Events[0].RequestStatuses[0].StatusCode.Secondary);
-            Assert.AreEqual(3, iCal.Events[0].RequestStatuses[1].StatusCode.Primary);
-            Assert.AreEqual(1, iCal.Events[0].RequestStatuses[1].StatusCode.Secondary);
-            Assert.AreEqual(2, iCal.Events[0].RequestStatuses[2].StatusCode.Primary);
-            Assert.AreEqual(8, iCal.Events[0].RequestStatuses[2].StatusCode.Secondary);
-            Assert.AreEqual(4, iCal.Events[0].RequestStatuses[3].StatusCode.Primary);
-            Assert.AreEqual(1, iCal.Events[0].RequestStatuses[3].StatusCode.Secondary);
+
+            IRequestStatus rs = iCal.Events[0].RequestStatuses[0];
+            Assert.AreEqual(2, rs.StatusCode.Primary);
+            Assert.AreEqual(0, rs.StatusCode.Secondary);
+            Assert.AreEqual("Success", rs.Description);
+            Assert.IsNull(rs.ExtraData);
+
+            rs = iCal.Events[0].RequestStatuses[1];
+            Assert.AreEqual(3, rs.StatusCode.Primary);
+            Assert.AreEqual(1, rs.StatusCode.Secondary);
+            Assert.AreEqual("Invalid property value", rs.Description);
+            Assert.AreEqual("DTSTART:96-Apr-01", rs.ExtraData);
+
+            rs = iCal.Events[0].RequestStatuses[2];
+            Assert.AreEqual(2, rs.StatusCode.Primary);
+            Assert.AreEqual(8, rs.StatusCode.Secondary);
+            Assert.AreEqual(" Success, repeating event ignored. Scheduled as a single event.", rs.Description);
+            Assert.AreEqual("RRULE:FREQ=WEEKLY;INTERVAL=2", rs.ExtraData);
+
+            rs = iCal.Events[0].RequestStatuses[3];
+            Assert.AreEqual(4, rs.StatusCode.Primary);
+            Assert.AreEqual(1, rs.StatusCode.Secondary);
+            Assert.AreEqual("Event conflict. Date/time is busy.", rs.Description);
+            Assert.IsNull(rs.ExtraData);
         }
 
         /// <summary>
