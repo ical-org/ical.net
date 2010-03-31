@@ -37,7 +37,14 @@ namespace DDay.iCal
             if (value is IList<object>)
             {
                 isList = true;
-                return ((IList<object>)value).Count;
+
+                int count = 0;
+                foreach (object obj in (IList<object>)value)
+                {
+                    if (obj is T)
+                        count++;
+                }
+                return count;
             }
             else if (value != null)
             {
@@ -312,7 +319,13 @@ namespace DDay.iCal
                     if (string.Equals(p.Name, m_PropertyName))
                     {
                         if (p.Value is IList<object>)
-                            count += ((IList<object>)p.Value).Count;
+                        {
+                            foreach (object obj in (IList<object>)p.Value)
+                            {
+                                if (obj is T)
+                                    count++;
+                            }
+                        }
                         else if (p.Value != null)
                             count++;
                     }
