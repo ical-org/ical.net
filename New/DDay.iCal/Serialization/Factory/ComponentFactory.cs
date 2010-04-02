@@ -20,8 +20,9 @@ namespace DDay.iCal
             switch (objectName.ToUpper())
             {
                 // FIXME: implement
-
-                //case ALARM: return new Alarm();
+                case Components.ALARM:
+                    type = typeof(Alarm);
+                    break;
                 case Components.EVENT: 
                     type = typeof(Event);
                     break;

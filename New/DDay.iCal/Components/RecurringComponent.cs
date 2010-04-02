@@ -195,13 +195,13 @@ namespace DDay.iCal
 
         virtual public IList<AlarmOccurrence> PollAlarms(IDateTime startTime, IDateTime endTime)
         {
-            List<AlarmOccurrence> Occurrences = new List<AlarmOccurrence>();
+            List<AlarmOccurrence> occurrences = new List<AlarmOccurrence>();
             if (Alarms != null)
             {
                 foreach (IAlarm alarm in Alarms)
-                    Occurrences.AddRange(alarm.Poll(startTime, endTime));
+                    occurrences.AddRange(alarm.Poll(startTime, endTime));
             }
-            return Occurrences;
+            return occurrences;
         }
 
         #endregion

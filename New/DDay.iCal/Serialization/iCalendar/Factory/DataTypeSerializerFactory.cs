@@ -41,6 +41,8 @@ namespace DDay.iCal.Serialization.iCalendar
                     s = new RequestStatusSerializer();
                 else if (typeof(IStatusCode).IsAssignableFrom(objectType))
                     s = new StatusCodeSerializer();
+                else if (typeof(ITrigger).IsAssignableFrom(objectType))
+                    s = new TriggerSerializer();
                 else if (typeof(IUTCOffset).IsAssignableFrom(objectType))
                     s = new UTCOffsetSerializer();
                 else if (typeof(IWeekDay).IsAssignableFrom(objectType))
