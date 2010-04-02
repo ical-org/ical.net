@@ -12,14 +12,6 @@ namespace DDay.iCal
         System.Globalization.Calendar Calendar { get; }
 
         /// <summary>
-        /// Gets a list of occurences for this evaluator that
-        /// are static.  These occurrences do not change and
-        /// are not calculated, but are added to the resulting
-        /// evaluation.
-        /// </summary>
-        IList<DateTime> StaticOccurrences { get; }
-
-        /// <summary>
         /// The start bounds of the evaluation.  This gives
         /// the first date/time that is covered by the evaluation.
         /// This together with EvaluationEndBounds determines

@@ -39,7 +39,6 @@ namespace DDay.iCal
         private IList<int> _ByMonth = new List<int>();
         private IList<int> _BySetPosition = new List<int>();
         private DayOfWeek _FirstDayOfWeek = DayOfWeek.Monday;
-        private IList<IDateTime> _StaticOccurrences = new List<IDateTime>();
         private RecurrenceRestrictionType? _RestrictionType = null;
         private RecurrenceEvaluationModeType? _EvaluationMode = null;
 
@@ -183,15 +182,6 @@ namespace DDay.iCal
 #if DATACONTRACT
         [DataMember(Order = 15)]
 #endif
-        public IList<IDateTime> StaticOccurrences
-        {
-            get { return _StaticOccurrences; }
-            set { _StaticOccurrences = value; }
-        }
-
-#if DATACONTRACT
-        [DataMember(Order = 16)]
-#endif
         public RecurrenceRestrictionType RestrictionType
         {
             get
@@ -209,7 +199,7 @@ namespace DDay.iCal
         }
 
 #if DATACONTRACT
-        [DataMember(Order = 17)]
+        [DataMember(Order = 16)]
 #endif
         public RecurrenceEvaluationModeType EvaluationMode
         {

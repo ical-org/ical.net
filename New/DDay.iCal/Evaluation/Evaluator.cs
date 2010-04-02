@@ -11,7 +11,6 @@ namespace DDay.iCal
         #region Private Fields
 
         private System.Globalization.Calendar m_Calendar;
-        private IList<DateTime> m_StaticOccurrences;
         private DateTime m_EvaluationStartBounds = DateTime.MaxValue;
         private DateTime m_EvaluationEndBounds = DateTime.MinValue;
         
@@ -50,7 +49,6 @@ namespace DDay.iCal
         void Initialize()
         {
             m_Calendar = System.Globalization.CultureInfo.CurrentCulture.Calendar;
-            m_StaticOccurrences = new List<DateTime>();
             m_Periods = new List<IPeriod>();
         }
 
@@ -118,11 +116,6 @@ namespace DDay.iCal
             get { return m_Calendar; }
         }
 
-        public IList<DateTime> StaticOccurrences
-        {
-            get { return m_StaticOccurrences; }
-        }
-
         virtual public DateTime EvaluationStartBounds
         {
             get { return m_EvaluationStartBounds; }
@@ -158,7 +151,6 @@ namespace DDay.iCal
         {
             m_EvaluationStartBounds = DateTime.MaxValue;
             m_EvaluationEndBounds = DateTime.MinValue;
-            m_StaticOccurrences.Clear();
             m_Periods.Clear();
         }
 

@@ -61,9 +61,9 @@ namespace DDay.iCal
     /// </summary>
     public enum TodoStatus
     {
-        Needs_Action,
+        NeedsAction,
         Completed,
-        In_Process,
+        InProcess,
         Cancelled
     };
 
