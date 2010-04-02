@@ -197,13 +197,15 @@ namespace DDay.iCal.Test
                 new iCalDateTime(2006, 7, 1, 9, 0, 0),
                 new iCalDateTime(2007, 7, 1, 9, 0, 0));
 
-            for (int i = 0; i < items.Count; i++)
-                Assert.AreEqual(items[i], occurrences[i].Period.StartTime, "TODO should occur at " + items[i] + ", but does not.");
-
+            // FIXME: Count is not properly restricting recurrences to 10.
+            // What's going wrong here?
             Assert.AreEqual(
                 items.Count,
                 occurrences.Count,
                 "TODO should have " + items.Count + " occurrences; it has " + occurrences.Count);
+
+            for (int i = 0; i < items.Count; i++)
+                Assert.AreEqual(items[i], occurrences[i].Period.StartTime, "TODO should occur at " + items[i] + ", but does not.");            
         }
 
         [Test, Category("Todo")]

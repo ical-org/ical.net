@@ -134,6 +134,7 @@
     <Compile Include="Serialization\iCalendar\Processors\ComponentPropertyConsolidator.cs" />
     <Compile Include="Serialization\iCalendar\Processors\CompositeProcessor.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\AttachmentSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\EnumSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\TriggerSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\StatusCodeSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\RequestStatusSerializer.cs" />

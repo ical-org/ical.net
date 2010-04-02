@@ -180,8 +180,7 @@ namespace DDay.iCal
                     return true;
 
                 // Evaluate to the previous occurrence.
-                // FIXME: re-implement this
-                //m_Evaluator.EvaluateToPreviousOccurrence(Completed, currDt);
+                m_Evaluator.EvaluateToPreviousOccurrence(Completed, currDt);
 
                 foreach (Period p in m_Evaluator.Periods)
                 {

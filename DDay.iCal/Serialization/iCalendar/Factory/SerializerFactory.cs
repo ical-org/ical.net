@@ -47,11 +47,13 @@ namespace DDay.iCal.Serialization.iCalendar
                 else if (typeof(ICalendarProperty).IsAssignableFrom(objectType))
                     s = new PropertySerializer();
                 else if (typeof(ICalendarParameter).IsAssignableFrom(objectType))
-                    s = new ParameterSerializer();                    
+                    s = new ParameterSerializer();
                 else if (typeof(string).IsAssignableFrom(objectType))
                     s = new StringSerializer();
                 else if (objectType.IsGenericType && typeof(IList<>).IsAssignableFrom(objectType.GetGenericTypeDefinition()))
-                    s = new GenericListSerializer(objectType);                
+                    s = new GenericListSerializer(objectType);
+                else if (objectType.IsEnum)
+                    s = new EnumSerializer(objectType);
                 else if (typeof(TimeSpan).IsAssignableFrom(objectType))
                     s = new TimeSpanSerializer();
                 else if (typeof(int).IsAssignableFrom(objectType))
