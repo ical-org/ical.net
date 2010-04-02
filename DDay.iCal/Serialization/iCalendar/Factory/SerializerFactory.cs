@@ -40,36 +40,28 @@ namespace DDay.iCal.Serialization.iCalendar
             {
                 ISerializer s = null;
 
-                object contextObj = ctx.Peek();
-                if (contextObj is IICalendar ||
-                    contextObj is ICalendarComponent)
-                {
-                    if (typeof(IICalendar).IsAssignableFrom(objectType))
-                        s = new iCalendarSerializer();
-                    else if (typeof(ICalendarComponent).IsAssignableFrom(objectType))
-                        s = new ComponentSerializer();
-                    else if (typeof(ICalendarProperty).IsAssignableFrom(objectType))
-                        s = new PropertySerializer();                    
-                }
+                if (typeof(IICalendar).IsAssignableFrom(objectType))
+                    s = new iCalendarSerializer();
+                else if (typeof(ICalendarComponent).IsAssignableFrom(objectType))
+                    s = new ComponentSerializer();
+                else if (typeof(ICalendarProperty).IsAssignableFrom(objectType))
+                    s = new PropertySerializer();
+                else if (typeof(ICalendarParameter).IsAssignableFrom(objectType))
+                    s = new ParameterSerializer();                    
+                else if (typeof(string).IsAssignableFrom(objectType))
+                    s = new StringSerializer();
+                else if (objectType.IsGenericType && typeof(IList<>).IsAssignableFrom(objectType.GetGenericTypeDefinition()))
+                    s = new GenericListSerializer(objectType);                
+                else if (typeof(TimeSpan).IsAssignableFrom(objectType))
+                    s = new TimeSpanSerializer();
+                else if (typeof(int).IsAssignableFrom(objectType))
+                    s = new IntegerSerializer();
+                else if (typeof(ICalendarDataType).IsAssignableFrom(objectType))
+                    s = m_DataTypeSerializerFactory.Build(objectType, ctx);
+                // Default to a string serializer, which simply calls
+                // ToString() on the value to serialize it.
                 else
-                {
-                    if (typeof(string).IsAssignableFrom(objectType))
-                        s = new StringSerializer();
-                    else if (objectType.IsGenericType && typeof(IList<>).IsAssignableFrom(objectType.GetGenericTypeDefinition()))
-                        s = new GenericListSerializer(objectType);
-                    else if (typeof(ICalendarParameter).IsAssignableFrom(objectType))
-                        s = new ParameterSerializer();                    
-                    else if (typeof(TimeSpan).IsAssignableFrom(objectType))
-                        s = new TimeSpanSerializer();
-                    else if (typeof(int).IsAssignableFrom(objectType))
-                        s = new IntegerSerializer();
-                    else if (typeof(ICalendarDataType).IsAssignableFrom(objectType))
-                        s = m_DataTypeSerializerFactory.Build(objectType, ctx);
-                    // Default to a string serializer, which simply calls
-                    // ToString() on the value to serialize it.
-                    else
-                        s = new StringSerializer();
-                }
+                    s = new StringSerializer();
                 
                 // Set the serialization context
                 if (s != null)

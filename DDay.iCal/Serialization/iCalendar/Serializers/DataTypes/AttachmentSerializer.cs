@@ -19,7 +19,7 @@ namespace DDay.iCal.Serialization.iCalendar
             if (a != null)
             {
                 if (a.Uri != null)
-                {
+                {                    
                     if (a.Parameters.ContainsKey("VALUE"))
                     {
                         // Ensure no VALUE type is provided
@@ -35,7 +35,7 @@ namespace DDay.iCal.Serialization.iCalendar
                         a.Parameters.Set("ENCODING", "BASE64");
 
                     // Ensure the VALUE type is set to BINARY
-                    a.Parameters.Set("VALUE", "BINARY");
+                    a.SetValueType("BINARY");
 
                     return Encode(a, a.Data);
                 }
@@ -54,17 +54,14 @@ namespace DDay.iCal.Serialization.iCalendar
                 byte[] data = DecodeData(a, value);
 
                 // Get the format of the attachment
-                if (a.Parameters.ContainsKey("VALUE"))
+                Type valueType = a.GetValueType();
+                if (valueType == typeof(byte[]))
                 {
                     // If the VALUE type is specifically set to BINARY,
-                    // then set the Data property instead.
-                    string valueType = a.Parameters.Get("VALUE");
-                    if (string.Compare(valueType, "BINARY", true) == 0)
-                    {
-                        if (value != null)
-                            a.Data = data;
-                        return a;
-                    }
+                    // then set the Data property instead.                    
+                    if (value != null)
+                        a.Data = data;
+                    return a;
                 }
 
                 // The default VALUE type for attachments is URI.  So, let's

@@ -18,7 +18,7 @@ namespace DDay.iCal
         ICalendarDataType
     {
         #region Private Fields
-
+        
         ICalendarParameterList _Parameters = new AssociatedCalendarParameterList(null, null);
 
         #endregion
@@ -30,6 +30,42 @@ namespace DDay.iCal
         #endregion        
     
         #region ICalendarDataType Members
+
+        virtual public Type GetValueType()
+        {
+            // See RFC 5545 Section 3.2.20.
+            if (_Parameters != null && _Parameters.ContainsKey("VALUE"))
+            {
+                switch (_Parameters.Get("VALUE"))
+                {
+                    case "BINARY": return typeof(byte[]);
+                    case "BOOLEAN": return typeof(bool);
+                    case "CAL-ADDRESS": return typeof(Uri);
+                    case "DATE": return typeof(IDateTime);
+                    case "DATE-TIME": return typeof(IDateTime);
+                    case "DURATION": return typeof(TimeSpan);
+                    case "FLOAT": return typeof(double);
+                    case "INTEGER": return typeof(int);
+                    case "PERIOD": return typeof(IPeriod);
+                    case "RECUR": return typeof(IRecurrencePattern);
+                    case "TEXT": return typeof(string);
+                    case "TIME":
+                        // FIXME: implement ISO.8601.2004
+                        throw new NotImplementedException();
+                    case "URI": return typeof(Uri);
+                    case "UTC-OFFSET": return typeof(IUTCOffset);
+                    default:
+                        return null;
+                }
+            }
+            return null;
+        }
+
+        virtual public void SetValueType(string type)
+        {
+            if (_Parameters != null)
+                _Parameters.Set("VALUE", type != null ? type : type.ToUpper());
+        }
 
         virtual public ICalendarObject AssociatedObject
         {

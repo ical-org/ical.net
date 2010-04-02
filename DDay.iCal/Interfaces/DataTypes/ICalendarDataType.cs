@@ -9,6 +9,8 @@ namespace DDay.iCal
         ICopyable,
         IServiceProvider
     {
+        Type GetValueType();
+        void SetValueType(string type);
         ICalendarObject AssociatedObject { get; set; }
         IICalendar Calendar { get; }
     }

@@ -74,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\Alarm.cs" />
     <Compile Include="Components\iCalTimeZone.cs" />
     <Compile Include="Components\iCalTimeZoneInfo.cs" />
     <Compile Include="DataTypes\Attachment.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="DataTypes\CalendarDataType.cs" />
     <Compile Include="DataTypes\RequestStatus.cs" />
     <Compile Include="DataTypes\StatusCode.cs" />
+    <Compile Include="DataTypes\Trigger.cs" />
     <Compile Include="DataTypes\WeekDay.cs" />
     <Compile Include="DataTypes\EncodableDataType.cs" />
     <Compile Include="DataTypes\GeographicLocation.cs" />
@@ -131,8 +133,8 @@
     <Compile Include="Serialization\iCalendar\Factory\DataTypeSerializerFactory.cs" />
     <Compile Include="Serialization\iCalendar\Processors\ComponentPropertyConsolidator.cs" />
     <Compile Include="Serialization\iCalendar\Processors\CompositeProcessor.cs" />
-    <Compile Include="Serialization\iCalendar\Serializers\Components\EventSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\AttachmentSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\TriggerSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\StatusCodeSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\RequestStatusSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\PeriodSerializer.cs" />

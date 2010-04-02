@@ -15,6 +15,12 @@ namespace DDay.iCal
         Procedure
     };
 
+    public enum TriggerRelation
+    {
+        Start,
+        End
+    }
+
     #endregion
 
     #region Components
