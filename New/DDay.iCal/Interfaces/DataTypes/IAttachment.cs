@@ -27,7 +27,12 @@ namespace DDay.iCal
         /// This optional value should be an IANA-registered
         /// MIME type, if specified.
         /// </summary>
-        string FormatType { get; set; }        
+        string FormatType { get; set; }
+
+        /// <summary>
+        /// Gets/sets the encoding used to store the data.
+        /// </summary>
+        Encoding Encoding { get; set; }
 
         /// <summary>
         /// Loads (fills) the <c>Data</c> property with the file designated

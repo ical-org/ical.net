@@ -24,12 +24,16 @@ namespace DDay.iCal
 
         private Uri m_Uri;
         private byte[] m_Data;
+        private Encoding m_Encoding;
 
         #endregion
 
         #region Constructors
 
-        public Attachment() { }
+        public Attachment() 
+        {
+            Initialize();
+        }
         public Attachment(string value)
             : this()
         {
@@ -37,9 +41,21 @@ namespace DDay.iCal
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
+        void Initialize()
+        {
+            m_Encoding = System.Text.Encoding.Unicode;
+        }
+
         #endregion
 
         #region Overrides
+
+        protected override void OnDeserializing(StreamingContext context)
+        {
+            base.OnDeserializing(context);
+
+            Initialize();
+        }
 
         public override bool Equals(object obj)
         {
@@ -77,6 +93,8 @@ namespace DDay.iCal
             if (obj is IAttachment)
             {
                 IAttachment a = (IAttachment)obj;
+                ((IAttachment)this).Encoding = a.Encoding;
+
                 if (a.Data != null)
                 {
                     Data = new byte[a.Data.Length];
@@ -110,18 +128,24 @@ namespace DDay.iCal
             set { m_Data = value; }
         }
 
+        virtual public Encoding Encoding
+        {
+            get { return m_Encoding; }
+            set { m_Encoding = value; }
+        }
+
         virtual public string Value
         {
             get
             {
                 if (Data != null)
-                    return System.Text.Encoding.Unicode.GetString(Data);
+                    return m_Encoding.GetString(Data);
                 return null;
             }
             set
             {
                 if (value != null)
-                    Data = System.Text.Encoding.Unicode.GetBytes(value);
+                    Data = m_Encoding.GetBytes(value);
                 else                    
                     Data = null;
             }
