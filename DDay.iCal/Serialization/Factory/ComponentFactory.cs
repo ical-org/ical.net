@@ -27,7 +27,9 @@ namespace DDay.iCal
                     type = typeof(Event);
                     break;
                 //case FREEBUSY: return new FreeBusy();
-                //case JOURNAL: return new Journal();
+                case Components.JOURNAL:
+                    type = typeof(Journal);
+                    break;
                 case Components.TIMEZONE:
                     type = typeof(iCalTimeZone);
                     break;

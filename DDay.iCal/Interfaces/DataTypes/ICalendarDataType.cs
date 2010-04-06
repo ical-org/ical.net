@@ -13,5 +13,7 @@ namespace DDay.iCal
         void SetValueType(string type);
         ICalendarObject AssociatedObject { get; set; }
         IICalendar Calendar { get; }
+
+        string Language { get; set; }
     }
 }

@@ -62,7 +62,7 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Private Methods
+        #region Internal Methods
 
         [OnDeserializing]
         internal void DeserializingInternal(StreamingContext context)

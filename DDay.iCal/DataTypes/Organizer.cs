@@ -1,0 +1,90 @@
+using System;
+using System.Diagnostics;
+using System.Collections.Generic;
+using System.Text;
+using DDay.iCal;
+using System.Runtime.Serialization;
+using System.IO;
+using DDay.iCal.Serialization.iCalendar;
+
+namespace DDay.iCal
+{
+    /// <summary>
+    /// A class that represents the organizer of an event/todo/journal.
+    /// </summary>
+    [DebuggerDisplay("{Value}")]
+#if DATACONTRACT
+    [DataContract(Name = "Organizer", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+#endif
+    [Serializable]
+    public class Organizer :
+        EncodableDataType,
+        IOrganizer
+    {
+        #region Public Properties
+
+        virtual public Uri SentBy
+        {
+            get { return new Uri(Parameters.Get("SENT-BY")); }
+            set
+            {
+                if (value != null)
+                    Parameters.Set("SENT-BY", value.OriginalString);
+                else
+                    Parameters.Set("SENT-BY", (string)null);
+            }
+        }
+
+        virtual public string CommonName
+        {
+            get { return Parameters.Get("CN"); }
+            set { Parameters.Set("CN", value); }
+        }
+
+        virtual public Uri DirectoryEntry
+        {
+            get { return new Uri(Parameters.Get("DIR")); }
+            set
+            {
+                if (value != null)
+                    Parameters.Set("DIR", value.OriginalString);
+                else
+                    Parameters.Set("DIR", (string)null);
+            }
+        }
+
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
+        virtual public Uri Value { get; set; }
+
+        #endregion
+
+        #region Constructors
+
+        public Organizer() : base() { }
+        public Organizer(string value)
+            : this()
+        {
+            OrganizerSerializer serializer = new OrganizerSerializer();
+            CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
+        }
+
+        #endregion
+
+        #region Overrides
+
+        public override void CopyFrom(ICopyable obj)
+        {
+            base.CopyFrom(obj);
+
+            IOrganizer o = obj as IOrganizer;
+            if (o != null)
+            {
+                Value = o.Value;
+            }
+        }
+
+        #endregion
+    }
+}

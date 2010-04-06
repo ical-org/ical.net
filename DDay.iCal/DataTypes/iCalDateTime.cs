@@ -291,7 +291,7 @@ namespace DDay.iCal
             return new iCalDateTime(left);
         }
 
-        #endregion        
+        #endregion
 
         #region IDateTime Members
 

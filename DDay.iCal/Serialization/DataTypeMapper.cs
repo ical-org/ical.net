@@ -90,8 +90,8 @@ namespace DDay.iCal.Serialization
                     return typeof(EventStatus);
                 else if (obj.Parent is ITodo)
                     return typeof(TodoStatus);
-
-                // FIXME: return other status types here
+                else if (obj.Parent is IJournal)
+                    return typeof(JournalStatus);
             }
 
             return null;

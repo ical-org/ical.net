@@ -54,15 +54,6 @@ namespace DDay.iCal
             set { m_StatusCode = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 4)]
-#endif
-        virtual public string Language
-        {
-            get { return Parameters.Get("LANGUAGE"); }
-            set { Parameters.Set("LANGUAGE", value); }
-        }
-
         #endregion
 
         #region Constructors

@@ -31,6 +31,8 @@ namespace DDay.iCal.Serialization.iCalendar
                     s = new DateTimeSerializer();
                 else if (typeof(IGeographicLocation).IsAssignableFrom(objectType))
                     s = new GeographicLocationSerializer();
+                else if (typeof(IOrganizer).IsAssignableFrom(objectType))
+                    s = new OrganizerSerializer();
                 else if (typeof(IPeriod).IsAssignableFrom(objectType))
                     s = new PeriodSerializer();
                 else if (typeof(IPeriodList).IsAssignableFrom(objectType))
