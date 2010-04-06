@@ -131,7 +131,7 @@ namespace DDay.iCal
         {
             get { return Parameters.Get("FMTTYPE"); }
             set { Parameters.Set("FMTTYPE", value); }
-        }        
+        }
 
         /// <summary>
         /// Loads (fills) the <c>Data</c> property with the file designated

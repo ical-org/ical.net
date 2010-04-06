@@ -77,6 +77,7 @@
     <Compile Include="Components\Alarm.cs" />
     <Compile Include="Components\iCalTimeZone.cs" />
     <Compile Include="Components\iCalTimeZoneInfo.cs" />
+    <Compile Include="Components\Journal.cs" />
     <Compile Include="DataTypes\Attachment.cs" />
     <Compile Include="Components\CalendarComponent.cs">
       <SubType>Code</SubType>
@@ -87,6 +88,7 @@
     <Compile Include="Components\UniqueComponent.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DataTypes\CalendarDataType.cs" />
+    <Compile Include="DataTypes\Organizer.cs" />
     <Compile Include="DataTypes\RequestStatus.cs" />
     <Compile Include="DataTypes\StatusCode.cs" />
     <Compile Include="DataTypes\Trigger.cs" />
@@ -134,6 +136,7 @@
     <Compile Include="Serialization\iCalendar\Processors\ComponentPropertyConsolidator.cs" />
     <Compile Include="Serialization\iCalendar\Processors\CompositeProcessor.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\AttachmentSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\OrganizerSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\EnumSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\TriggerSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\StatusCodeSerializer.cs" />

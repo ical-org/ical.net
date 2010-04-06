@@ -19,7 +19,7 @@ namespace DDay.iCal
     {
         #region Private Fields
         
-        ICalendarParameterList _Parameters = new AssociatedCalendarParameterList(null, null);
+        ICalendarParameterList _Parameters;
 
         #endregion
 
@@ -27,7 +27,50 @@ namespace DDay.iCal
 
         protected ICalendarObject _AssociatedObject;
 
-        #endregion        
+        #endregion
+
+        #region Constructors
+
+        public CalendarDataType()
+        {
+            Initialize();
+        }
+
+        void Initialize()
+        {
+             _Parameters = new AssociatedCalendarParameterList(null, null);
+        }
+
+        #endregion
+
+        #region Internal Methods
+
+        [OnDeserializing]
+        internal void DeserializingInternal(StreamingContext context)
+        {
+            OnDeserializing(context);
+        }
+
+        [OnDeserialized]
+        internal void DeserializedInternal(StreamingContext context)
+        {
+            OnDeserialized(context);
+        }
+
+        #endregion
+
+        #region Protected Methods
+
+        virtual protected void OnDeserializing(StreamingContext context)
+        {
+            Initialize();
+        }
+
+        virtual protected void OnDeserialized(StreamingContext context)
+        {
+        }
+
+        #endregion
     
         #region ICalendarDataType Members
 
@@ -88,6 +131,12 @@ namespace DDay.iCal
                     return _AssociatedObject.Calendar;
                 return null;
             }
+        }
+
+        virtual public string Language
+        {
+            get { return Parameters.Get("LANGUAGE"); }
+            set { Parameters.Set("LANGUAGE", value); }
         }
 
         #endregion

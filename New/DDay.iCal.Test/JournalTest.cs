@@ -60,6 +60,15 @@ namespace DDay.iCal.Test
                     "ldap://host.com:6666/o=3DDC%20Associates,c=3DUS??(cn=3DJohn%20Smith)",
                     StringComparison.InvariantCultureIgnoreCase),
                 "Organizer's directory entry should have been 'ldap://host.com:6666/o=3DDC%20Associates,c=3DUS??(cn=3DJohn%20Smith)', but it was '" + j.Organizer.DirectoryEntry + "'");
+            Assert.AreEqual(
+                "MAILTO:jsmith@host.com",
+                j.Organizer.Value.OriginalString);
+            Assert.AreEqual(
+                "jsmith",
+                j.Organizer.Value.UserInfo);
+            Assert.AreEqual(
+                "host.com",
+                j.Organizer.Value.Host);
             Assert.IsNull(j.Start);
         }
     }

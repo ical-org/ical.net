@@ -17,7 +17,6 @@ namespace DDay.iCal
         bool RSVP { get; set; }
         IList<Uri> DelegatedTo { get; }
         IList<Uri> DelegatedFrom { get; }
-        string Language { get; set; }
-        string EmailAddress { get; }
+        Uri Value { get; set; }
     }
 }
