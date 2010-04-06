@@ -30,9 +30,9 @@ namespace DDay.iCal
         string FormatType { get; set; }
 
         /// <summary>
-        /// Gets/sets the encoding used to store the data.
+        /// Gets/sets the encoding used to store the value.
         /// </summary>
-        Encoding Encoding { get; set; }
+        Encoding ValueEncoding { get; set; }
 
         /// <summary>
         /// Loads (fills) the <c>Data</c> property with the file designated

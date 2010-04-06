@@ -93,7 +93,7 @@ namespace DDay.iCal
             if (obj is IAttachment)
             {
                 IAttachment a = (IAttachment)obj;
-                ((IAttachment)this).Encoding = a.Encoding;
+                ValueEncoding = a.ValueEncoding;
 
                 if (a.Data != null)
                 {
@@ -128,7 +128,7 @@ namespace DDay.iCal
             set { m_Data = value; }
         }
 
-        virtual public Encoding Encoding
+        virtual public Encoding ValueEncoding
         {
             get { return m_Encoding; }
             set { m_Encoding = value; }
