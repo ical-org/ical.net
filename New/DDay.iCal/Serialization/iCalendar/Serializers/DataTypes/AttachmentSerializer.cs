@@ -55,7 +55,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
                 // Get the currently-used encoding off the encoding stack.
                 IEncodingStack encodingStack = GetService<IEncodingStack>();
-                a.Encoding = encodingStack.Current;
+                a.ValueEncoding = encodingStack.Current;
 
                 // Get the format of the attachment
                 Type valueType = a.GetValueType();
