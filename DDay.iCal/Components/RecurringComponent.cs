@@ -53,6 +53,12 @@ namespace DDay.iCal
 
         #endregion
 
+        #region Protected Properties
+
+        virtual protected bool EvaluationIncludesReferenceDate { get { return false; } }
+
+        #endregion
+
         #region Public Properties
 
         /// <summary>
@@ -170,22 +176,22 @@ namespace DDay.iCal
 
         virtual public IList<Occurrence> GetOccurrences(IDateTime dt)
         {
-            return RecurrenceUtil.GetOccurrences(this, dt);
+            return RecurrenceUtil.GetOccurrences(this, dt, EvaluationIncludesReferenceDate);
         }
 
         virtual public IList<Occurrence> GetOccurrences(DateTime dt)
         {
-            return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(dt));
+            return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(dt), EvaluationIncludesReferenceDate);
         }
 
         virtual public IList<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
         {
-            return RecurrenceUtil.GetOccurrences(this, startTime, endTime);
+            return RecurrenceUtil.GetOccurrences(this, startTime, endTime, EvaluationIncludesReferenceDate);
         }
 
         virtual public IList<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
         {
-            return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(startTime), new iCalDateTime(endTime));
+            return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(startTime), new iCalDateTime(endTime), EvaluationIncludesReferenceDate);
         }
 
         virtual public IList<AlarmOccurrence> PollAlarms()

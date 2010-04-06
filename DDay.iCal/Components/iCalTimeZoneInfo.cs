@@ -177,7 +177,7 @@ namespace DDay.iCal
             if (parentEval != null)
             {
                 // Evaluate the date/time in question.
-                parentEval.Evaluate(Start, DateUtil.GetSimpleDateTimeData(Start), normalizedDt);
+                parentEval.Evaluate(Start, DateUtil.GetSimpleDateTimeData(Start), normalizedDt, true);
                 foreach (IPeriod period in m_Evaluator.Periods)
                 {   
                     if (period.Contains(dt))
@@ -250,22 +250,22 @@ namespace DDay.iCal
 
         virtual public IList<Occurrence> GetOccurrences(IDateTime dt)
         {
-            return RecurrenceUtil.GetOccurrences(this, dt);
+            return RecurrenceUtil.GetOccurrences(this, dt, true);
         }
 
         virtual public IList<Occurrence> GetOccurrences(DateTime dt)
         {
-            return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(dt));
+            return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(dt), true);
         }
 
         virtual public IList<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
         {
-            return RecurrenceUtil.GetOccurrences(this, startTime, endTime);
+            return RecurrenceUtil.GetOccurrences(this, startTime, endTime, true);
         }
 
         virtual public IList<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
         {
-            return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(startTime), new iCalDateTime(endTime));
+            return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(startTime), new iCalDateTime(endTime), true);
         }
 
         #endregion

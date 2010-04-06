@@ -157,7 +157,8 @@ namespace DDay.iCal
         abstract public IList<IPeriod> Evaluate(
             IDateTime referenceDate,
             DateTime periodStart,
-            DateTime periodEnd);
+            DateTime periodEnd,
+            bool includeReferenceDateInResults);
 
         #endregion
     }

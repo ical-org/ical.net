@@ -21,7 +21,7 @@ namespace DDay.iCal
 
         public RecurrencePatternEvaluator(IRecurrencePattern pattern)
 	    {
-            Pattern = pattern;            
+            Pattern = pattern;
 	    }
 
         #endregion
@@ -155,67 +155,20 @@ namespace DDay.iCal
         }
 
         /**
-         * Returns a list of start dates in the specified period represented by this recur. Any date fields not specified by
-         * this recur are retained from the period start, and as such you should ensure the period start is initialised
-         * correctly.
-         * @param periodStart the start of the period
-         * @param periodEnd the end of the period
-         * @param value the type of dates to generate (i.e. date/date-time)
-         * @return a list of dates
-         */
-        private List<DateTime> GetDates(DateTime periodStart, DateTime periodEnd, IRecurrencePattern pattern)
-        {
-            return GetDates(new iCalDateTime(periodStart), periodStart, periodEnd, -1, pattern);
-        }
-
-        /**
-         * Convenience method for retrieving recurrences in a specified period.
-         * @param seed a seed date for generating recurrence instances
-         * @param period the period of returned recurrence dates
-         * @param value type of dates to generate
-         * @return a list of dates
-         */
-        private List<DateTime> GetDates(IDateTime seed, IPeriod period, IRecurrencePattern pattern)
-        {
-            return GetDates(seed, DateUtil.GetSimpleDateTimeData(period.StartTime), DateUtil.GetSimpleDateTimeData(period.EndTime), -1, pattern);
-        }
-
-        /**
          * Returns a list of start dates in the specified period represented by this recur. This method includes a base date
          * argument, which indicates the start of the fist occurrence of this recurrence. The base date is used to inject
          * default values to return a set of dates in the correct format. For example, if the search start date (start) is
          * Wed, Mar 23, 12:19PM, but the recurrence is Mon - Fri, 9:00AM - 5:00PM, the start dates returned should all be at
          * 9:00AM, and not 12:19PM.
-         * @return a list of dates represented by this recur instance
-         * @param seed the start date of this Recurrence's first instance
-         * @param periodStart the start of the period
-         * @param periodEnd the end of the period
-         * @param value the type of dates to generate (i.e. date/date-time)
          */
-        private List<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd, IRecurrencePattern pattern)
-        {
-             return GetDates(seed, periodStart, periodEnd, -1, pattern);
-        }
-
-        /**
-         * Returns a list of start dates in the specified period represented by this recur. This method includes a base date
-         * argument, which indicates the start of the fist occurrence of this recurrence. The base date is used to inject
-         * default values to return a set of dates in the correct format. For example, if the search start date (start) is
-         * Wed, Mar 23, 12:19PM, but the recurrence is Mon - Fri, 9:00AM - 5:00PM, the start dates returned should all be at
-         * 9:00AM, and not 12:19PM.
-         * @return a list of dates represented by this recur instance
-         * @param seed the start date of this Recurrence's first instance
-         * @param periodStart the start of the period
-         * @param periodEnd the end of the period
-         * @param value the type of dates to generate (i.e. date/date-time)
-         * @param maxCount limits the number of instances returned. Up to one years
-         *       worth extra may be returned. Less than 0 means no limit
-         */
-        private List<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd, int maxCount, IRecurrencePattern pattern)
+        private List<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd, int maxCount, IRecurrencePattern pattern, bool includeReferenceDateInResults)
         {            
             List<DateTime> dates = new List<DateTime>();
-
             DateTime seedCopy = DateUtil.GetSimpleDateTimeData(seed);
+
+            if (includeReferenceDateInResults)
+                dates.Add(seedCopy);
+
             // optimize the start time for selecting candidates
             // (only applicable where a COUNT is not specified)
             if (Pattern.Count == int.MinValue)
@@ -269,7 +222,8 @@ namespace DDay.iCal
                             }
                             else if (!(pattern.Until != DateTime.MinValue && candidate > pattern.Until))
                             {
-                                dates.Add(candidate);
+                                if (!dates.Contains(candidate))
+                                    dates.Add(candidate);
                             }
                         }
                     }
@@ -825,7 +779,7 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
+        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Create a recurrence pattern suitable for use during evaluation.
             IRecurrencePattern pattern = ProcessRecurrencePattern(referenceDate);
@@ -834,7 +788,7 @@ namespace DDay.iCal
             EnforceEvaluationRestrictions(pattern);
 
             Periods.Clear();
-            foreach (DateTime dt in GetDates(referenceDate, periodStart, periodEnd, pattern))
+            foreach (DateTime dt in GetDates(referenceDate, periodStart, periodEnd, -1, pattern, includeReferenceDateInResults))
             {
                 // Turn each resulting date/time into an IDateTime and associate it
                 // with the reference date.

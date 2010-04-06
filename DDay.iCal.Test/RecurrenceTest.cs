@@ -2566,7 +2566,8 @@ namespace DDay.iCal.Test
             IList<IPeriod> occurrences = evaluator.Evaluate(
                 startDate, 
                 DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
-                DateUtil.SimpleDateTimeToMatch(toDate, startDate));
+                DateUtil.SimpleDateTimeToMatch(toDate, startDate),
+                false);
             Assert.AreEqual(4, occurrences.Count);
             Assert.AreEqual(new iCalDateTime(DateTime.Parse("03/30/08 11:59:40 PM", us)), occurrences[0].StartTime);
             Assert.AreEqual(new iCalDateTime(DateTime.Parse("03/30/08 11:59:50 PM", us)), occurrences[1].StartTime);
@@ -2593,7 +2594,8 @@ namespace DDay.iCal.Test
             IList<IPeriod> occurrences = evaluator.Evaluate(
                 startDate, 
                 DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
-                DateUtil.SimpleDateTimeToMatch(toDate, startDate));
+                DateUtil.SimpleDateTimeToMatch(toDate, startDate),
+                false);
             Assert.AreNotEqual(0, occurrences.Count);
         }
 
@@ -2724,7 +2726,8 @@ namespace DDay.iCal.Test
             IList<IPeriod> periods = evaluator.Evaluate(
                 evtStart,
                 DateUtil.GetSimpleDateTimeData(evtStart), 
-                DateUtil.SimpleDateTimeToMatch(evtEnd, evtStart));
+                DateUtil.SimpleDateTimeToMatch(evtEnd, evtStart),
+                false);
             Assert.AreEqual(10, periods.Count);
             Assert.AreEqual(2, periods[0].StartTime.Day);
             Assert.AreEqual(3, periods[1].StartTime.Day);
