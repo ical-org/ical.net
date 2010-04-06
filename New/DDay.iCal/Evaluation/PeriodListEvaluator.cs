@@ -24,9 +24,16 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
+        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             List<IPeriod> periods = new List<IPeriod>();
+
+            if (includeReferenceDateInResults)
+            {
+                IPeriod p = new Period(referenceDate);
+                if (!periods.Contains(p))
+                    periods.Add(p);
+            }
 
             if (periodEnd < periodStart)
                 return periods;

@@ -54,7 +54,7 @@ namespace DDay.iCal
                     DetermineStartingRecurrence(exdate, ref beginningDate);
             }
 
-            Evaluate(Todo.Start, DateUtil.GetSimpleDateTimeData(beginningDate), DateUtil.GetSimpleDateTimeData(currDt).AddTicks(1));
+            Evaluate(Todo.Start, DateUtil.GetSimpleDateTimeData(beginningDate), DateUtil.GetSimpleDateTimeData(currDt).AddTicks(1), true);
         }
 
         public void DetermineStartingRecurrence(IPeriodList rdate, ref IDateTime dt)
@@ -89,17 +89,12 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
+        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // TODO items can only recur if a start date is specified
             if (Todo.Start != null)
             {
-                // Add the todo itself, before recurrence rules are evaluated
-                IPeriod startPeriod = new Period(Todo.Start);
-                if (!Periods.Contains(startPeriod))
-                    Periods.Add(startPeriod);
-
-                base.Evaluate(referenceDate, periodStart, periodEnd);
+                base.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
 
                 // Ensure each period has a duration
                 for (int i = 0; i < Periods.Count; i++)

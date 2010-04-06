@@ -87,7 +87,7 @@ namespace DDay.iCal
             m_Occurrences.Clear();
         }
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
+        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             List<ITimeZoneInfo> infos = new List<ITimeZoneInfo>(TimeZone.TimeZoneInfos);
 
@@ -119,7 +119,8 @@ namespace DDay.iCal
                         IList<IPeriod> periods = evaluator.Evaluate(
                             referenceDate,
                             periodStart,
-                            offsetEnd);
+                            offsetEnd,
+                            includeReferenceDateInResults);
 
                         foreach (IPeriod period in periods)
                         {
@@ -141,7 +142,7 @@ namespace DDay.iCal
             else
             {
                 if (EvaluationEndBounds != DateTime.MinValue && periodEnd > EvaluationEndBounds)
-                    Evaluate(referenceDate, EvaluationEndBounds, periodEnd);
+                    Evaluate(referenceDate, EvaluationEndBounds, periodEnd, includeReferenceDateInResults);
             }
 
             return Periods;

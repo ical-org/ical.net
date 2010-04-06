@@ -13,15 +13,16 @@ namespace DDay.iCal
                 evaluator.Clear();
         }
 
-        static public IList<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt)
+        static public IList<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt, bool includeReferenceDateInResults)
         {
             return GetOccurrences(
                 recurrable, 
                 new iCalDateTime(dt.Local.Date), 
-                new iCalDateTime(dt.Local.Date.AddDays(1).AddSeconds(-1)));
+                new iCalDateTime(dt.Local.Date.AddDays(1).AddSeconds(-1)),
+                includeReferenceDateInResults);
         }
 
-        static public IList<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime periodStart, IDateTime periodEnd)
+        static public IList<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime periodStart, IDateTime periodEnd, bool includeReferenceDateInResults)
         {
             List<Occurrence> occurrences = new List<Occurrence>();
 
@@ -36,7 +37,8 @@ namespace DDay.iCal
                 IList<IPeriod> periods = evaluator.Evaluate(
                     recurrable.Start,
                     DateUtil.GetSimpleDateTimeData(periodStart),
-                    DateUtil.GetSimpleDateTimeData(periodEnd));
+                    DateUtil.GetSimpleDateTimeData(periodEnd),
+                    includeReferenceDateInResults);
 
                 foreach (IPeriod p in periods)
                 {

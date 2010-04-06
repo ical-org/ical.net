@@ -282,6 +282,14 @@ namespace DDay.iCal
 
         #region Overrides
 
+        protected override bool EvaluationIncludesReferenceDate
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public override object GetService(Type serviceType)
         {
             if (typeof(IEvaluator).IsAssignableFrom(serviceType))
