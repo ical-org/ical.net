@@ -137,7 +137,7 @@
     <Compile Include="Serialization\iCalendar\Processors\CompositeProcessor.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\AttachmentSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\OrganizerSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\EnumSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\Other\EnumSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\TriggerSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\StatusCodeSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\RequestStatusSerializer.cs" />
@@ -147,12 +147,12 @@
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\WeekDaySerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\EncodableDataTypeSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\GeographicLocationSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\IntegerSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\Other\IntegerSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\RecurrencePatternSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Serializers\Structs\TimeSpanSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\Other\TimeSpanSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\UTCOffsetSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\GenericListSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\StringSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\Other\StringSerializer.cs" />
     <Compile Include="Serialization\EncodingProvider.cs" />
     <Compile Include="Structs\AlarmOccurrence.cs" />
     <Compile Include="Structs\Occurrence.cs" />

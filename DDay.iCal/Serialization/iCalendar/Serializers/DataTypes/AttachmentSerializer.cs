@@ -53,6 +53,10 @@ namespace DDay.iCal.Serialization.iCalendar
                 // Decode the value, if necessary
                 byte[] data = DecodeData(a, value);
 
+                // Get the currently-used encoding off the encoding stack.
+                IEncodingStack encodingStack = GetService<IEncodingStack>();
+                a.Encoding = encodingStack.Current;
+
                 // Get the format of the attachment
                 Type valueType = a.GetValueType();
                 if (valueType == typeof(byte[]))
