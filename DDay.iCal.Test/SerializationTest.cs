@@ -266,8 +266,8 @@ namespace DDay.iCal.Test
             serializer.Serialize(iCal, @"Calendars\Serialization\Temp\CalendarParameters1.ics");
 
             iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\CalendarParameters1.ics")[0];
-            Assert.IsNotEmpty(iCal.Version);
-            Assert.IsNotEmpty(iCal.ProductID);
+            Assert.IsNotNullOrEmpty(iCal.Version);
+            Assert.IsNotNullOrEmpty(iCal.ProductID);
 
             iCal.Version = string.Empty;
             iCal.ProductID = null;

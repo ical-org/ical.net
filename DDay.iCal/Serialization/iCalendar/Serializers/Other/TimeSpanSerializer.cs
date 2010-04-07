@@ -34,7 +34,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 else
                 {
                     if (ts.Days != 0)
-                        sb.Append(ts.Days + "D");
+                        sb.Append(Math.Abs(ts.Days) + "D");
                     if (ts.Hours != 0 ||
                         ts.Minutes != 0 ||
                         ts.Seconds != 0)

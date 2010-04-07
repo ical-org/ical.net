@@ -80,12 +80,15 @@ namespace DDay.iCal.Serialization.iCalendar
                         if (serializer != null)
                         {
                             object obj = serializer.Deserialize(new StringReader(value));
-                            if (obj is IDateTime)
-                                t.DateTime = (IDateTime)obj;
-                            else
-                                t.Duration = (TimeSpan)obj;
+                            if (obj != null)
+                            {
+                                if (obj is IDateTime)
+                                    t.DateTime = (IDateTime)obj;
+                                else
+                                    t.Duration = (TimeSpan)obj;
 
-                            return t;
+                                return t;
+                            }
                         }
                     }
                 }
