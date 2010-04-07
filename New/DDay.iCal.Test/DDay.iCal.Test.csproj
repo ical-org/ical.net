@@ -362,52 +362,52 @@
     <None Include="Calendars\Serialization\Language2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Serialization\PARSE1.ics">
+    <None Include="Calendars\Serialization\EmptyLines1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Serialization\PARSE10.ics">
+    <None Include="Calendars\Serialization\Parameter1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Serialization\PARSE13.ics">
+    <None Include="Calendars\Serialization\Parameter2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Serialization\PARSE14.ics">
+    <None Include="Calendars\Serialization\RequestStatus1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Serialization\PARSE15.ics">
+    <None Include="Calendars\Serialization\RecurrenceDates1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Serialization\PARSE16.ics">
+    <None Include="Calendars\Serialization\DateTime1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Calendars\Serialization\PARSE17.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Serialization\PARSE18.ics">
+    <None Include="Calendars\Serialization\Bug2033495.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Serialization\PARSE2.ics">
+    <None Include="Calendars\Serialization\EmptyLines2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Serialization\PARSE3.ics">
+    <None Include="Calendars\Serialization\Calendar1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Serialization\PARSE4.ics">
+    <None Include="Calendars\Serialization\EmptyLines3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Serialization\PARSE5.ics">
+    <None Include="Calendars\Serialization\CalendarParameters2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Serialization\PARSE6.ics">
+    <None Include="Calendars\Serialization\Parse1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Serialization\PARSE7.ics">
+    <None Include="Calendars\Serialization\EmptyLines4.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Serialization\PARSE8.ics">
+    <None Include="Calendars\Serialization\CaseInsensitive4.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Serialization\PARSE9.ics">
+    <None Include="Calendars\Serialization\Property1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Calendars\Serialization\Language3.ics">
@@ -491,31 +491,31 @@
     <None Include="Calendars\Serialization\USHolidays.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Todo\TODO1.ics">
+    <None Include="Calendars\Todo\Todo1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Todo\TODO2.ics">
+    <None Include="Calendars\Todo\Todo2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Todo\TODO3.ics">
+    <None Include="Calendars\Todo\Todo3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Todo\TODO4.ics">
+    <None Include="Calendars\Todo\Todo4.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Todo\TODO5.ics">
+    <None Include="Calendars\Todo\Todo5.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Todo\TODO6.ics">
+    <None Include="Calendars\Todo\Todo6.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Todo\TODO7.ics">
+    <None Include="Calendars\Todo\Todo7.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Todo\TODO8.ics">
+    <None Include="Calendars\Todo\Todo8.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Todo\TODO9.ics">
+    <None Include="Calendars\Todo\Todo9.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="Copyright.txt" />
