@@ -1,12 +1,6 @@
 using System;
-using System.Diagnostics;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Configuration;
-using DDay.iCal;
-using DDay.iCal;
-using DDay.iCal.Serialization;
+using System.Diagnostics;
 using System.Runtime.Serialization;
 
 namespace DDay.iCal
@@ -27,24 +21,13 @@ namespace DDay.iCal
     /// </note>
 #if DATACONTRACT
     [DataContract(Name = "Event", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(Alarm))]
+    //[KnownType(typeof(Alarm))]
 #endif
-    [Serializable]
-    [DebuggerDisplay("{Summary}: {Start} {Duration}")]
-    public class Event : RecurringComponent
+    [Serializable]    
+    public class Event : 
+        RecurringComponent,
+        IEvent
     {
-        #region Private Fields
-
-        private iCalDateTime _DTEnd;
-        private Duration _Duration;
-        private Geo _Geo;
-        private Text _Location;
-        private TextCollection[] _Resources;
-        private EventStatus _Status;
-        private Transparency _Transp;
-
-        #endregion
-         
         #region Public Properties
 
         /// <summary>
@@ -58,7 +41,7 @@ namespace DDay.iCal
         /// the end date/time will be extrapolated.
         /// </note>
         /// </summary>
-        public override iCalDateTime DTStart
+        public override IDateTime DTStart
         {
             get
             {
@@ -82,9 +65,9 @@ namespace DDay.iCal
         /// will be extrapolated.
         /// </note>
         /// </summary>
-        virtual public iCalDateTime DTEnd
+        virtual public IDateTime DTEnd
         {
-            get { return Properties.Get<iCalDateTime>("DTEND"); }
+            get { return Properties.Get<IDateTime>("DTEND"); }
             set
             {
                 if (!object.Equals(DTEnd, value))
@@ -116,23 +99,23 @@ namespace DDay.iCal
         //
         // Therefore, Duration is not serialized, as DTEnd
         // should always be extrapolated from the duration.
-        virtual public Duration Duration
+        virtual public TimeSpan Duration
         {
-            get { return Properties.Get<Duration>("DURATION"); }
+            get { return Properties.Get<TimeSpan>("DURATION"); }
             set
             {
                 if (!object.Equals(Duration, value))
                 {
                     Properties.Set("DURATION", value);
                     ExtrapolateTimes();
-                }                
+                }
             }
         }
 
         /// <summary>
         /// An alias to the DTEnd field (i.e. end date/time).
         /// </summary>
-        virtual public iCalDateTime End
+        virtual public IDateTime End
         {
             get { return DTEnd; }
             set { DTEnd = value; }
@@ -143,7 +126,7 @@ namespace DDay.iCal
         /// </summary>
         virtual public bool IsAllDay
         {
-            get { return Start != null && !Start.HasTime; }
+            get { return !Start.HasTime; }
             set
             {
                 // Set whether or not the start date/time
@@ -151,14 +134,15 @@ namespace DDay.iCal
                 if (Start != null)
                     Start.HasTime = !value;
                 if (End != null)
-                {
                     End.HasTime = !value;
-                    if (value &&
-                        Start.Date.Equals(End.Date))
-                    {
-                        _Duration = null;
-                        End = Start.AddDays(1);
-                    }
+
+                if (value && 
+                    Start != null &&
+                    End != null &&
+                    object.Equals(Start.Date, End.Date))
+                {
+                    Duration = default(TimeSpan);
+                    End = Start.AddDays(1);
                 }
             }
         }
@@ -166,18 +150,18 @@ namespace DDay.iCal
         /// <summary>
         /// The geographic location (lat/long) of the event.
         /// </summary>
-        public Geo Geo
+        public IGeographicLocation GeographicLocation
         {
-            get { return Properties.Get<Geo>("GEO"); }
+            get { return Properties.Get<IGeographicLocation>("GEO"); }
             set { Properties.Set("GEO", value); }
         }
 
         /// <summary>
         /// The location of the event.
         /// </summary>
-        public Text Location
+        public string Location
         {
-            get { return Properties.Get<Text>("LOCATION"); }
+            get { return Properties.Get<string>("LOCATION"); }
             set { Properties.Set("LOCATION", value); }
         }
 
@@ -186,9 +170,9 @@ namespace DDay.iCal
         /// <example>Conference room #2</example>
         /// <example>Projector</example>
         /// </summary>
-        public TextCollection[] Resources
+        public IList<string> Resources
         {
-            get { return Properties.Get<TextCollection[]>("RESOURCES"); }
+            get { return Properties.GetList<string>("RESOURCES"); }
             set { Properties.Set("RESOURCES", value); }
         }
 
@@ -208,21 +192,17 @@ namespace DDay.iCal
         /// or if the time cannot be scheduled for anything
         /// else (opaque).
         /// </summary>
-        public Transparency Transp
+        public ITransparency Transparency
         {
-            get { return Properties.Get<Transparency>("TRANSP"); }
+            get { return Properties.Get<ITransparency>("TRANSP"); }
             set { Properties.Set("TRANSP", value); }
         }
 
         #endregion
 
-        #region Static Public Methods
+        #region Private Fields
 
-        static public Event Create(iCalendar iCal)
-        {
-            Event evt = iCal.Create<Event>();
-            return evt;
-        }
+        EventEvaluator m_Evaluator;
 
         #endregion
 
@@ -240,7 +220,10 @@ namespace DDay.iCal
 
         private void Initialize()
         {
-            this.Name = ComponentFactory.EVENT;
+            this.Name = Components.EVENT;
+
+            Resources = new List<string>();
+            m_Evaluator = new EventEvaluator(this);
         }
 
         #endregion
@@ -256,13 +239,13 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="DateTime">The date to test.</param>
         /// <returns>True if the event occurs on the <paramref name="DateTime"/> provided, False otherwise.</returns>
-        virtual public bool OccursOn(iCalDateTime DateTime)
-        {            
-            foreach (Period p in Periods)
+        virtual public bool OccursOn(IDateTime DateTime)
+        {
+            foreach (IPeriod p in m_Evaluator.Periods)
                 // NOTE: removed UTC from date checks, since a date is a date.
-                if (p.StartTime.Date == DateTime.Date ||    // It's the start date
+                if (p.StartTime.Date == DateTime.Date ||    // It's the start date OR
                     (p.StartTime.Date <= DateTime.Date &&   // It's after the start date AND
-                    (p.EndTime.HasTime && p.EndTime.Date >= DateTime.Date || // an end time was specified, and it's before then
+                    (p.EndTime.HasTime && p.EndTime.Date >= DateTime.Date || // an end time was specified, and it's after the test date
                     (!p.EndTime.HasTime && p.EndTime.Date > DateTime.Date)))) // an end time was not specified, and it's before the end date
                     // NOTE: fixed bug as follows:
                     // DTSTART;VALUE=DATE:20060704
@@ -277,9 +260,9 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="DateTime">The date and time to test.</param>
         /// <returns>True if the event begins at the given date and time</returns>
-        virtual public bool OccursAt(iCalDateTime DateTime)
-        {            
-            foreach (Period p in Periods)
+        virtual public bool OccursAt(IDateTime DateTime)
+        {
+            foreach (IPeriod p in m_Evaluator.Periods)
                 if (p.StartTime.Equals(DateTime))
                     return true;
             return false;
@@ -295,109 +278,51 @@ namespace DDay.iCal
             return (Status != EventStatus.Cancelled);            
         }
 
-        virtual public void AddResource(string resource)
-        {
-            Text r = resource;
-            if (Resources != null)
-            {
-                foreach (TextCollection tc in Resources)
-                {
-                    if (tc.Values.Contains(r))
-                    {
-                        return;
-                    }
-                }
-            }
-
-            if (Resources == null ||
-                Resources.Length == 0)
-            {
-                Resources = new TextCollection[1] { new TextCollection(resource) };
-                Resources[0].Name = "RESOURCES";
-            }
-            else
-            {
-                Resources[0].Values.Add(r);
-            }
-        }
-
-        virtual public void RemoveResource(string resource)
-        {
-            if (Resources != null)
-            {
-                Text r = resource;
-                foreach (TextCollection tc in Resources)
-                {
-                    if (tc.Values.Contains(r))
-                    {
-                        tc.Values.Remove(r);
-                        return;
-                    }
-                }
-            }
-        }
-
         #endregion
 
         #region Overrides
 
-        /// <summary>
-        /// Evaluates this event to determine the dates and times for which the event occurs.
-        /// This method only evaluates events which occur between <paramref name="FromDate"/>
-        /// and <paramref name="ToDate"/>; therefore, if you require a list of events which
-        /// occur outside of this range, you must specify a <paramref name="FromDate"/> and
-        /// <paramref name="ToDate"/> which encapsulate the date(s) of interest.
-        /// <note type="caution">
-        ///     For events with very complex recurrence rules, this method may be a bottleneck
-        ///     during processing time, especially when this method in called for a large number
-        ///     of events, in sequence, or for a very large time span.
-        /// </note>
-        /// </summary>
-        /// <param name="FromDate">The beginning date of the range to evaluate.</param>
-        /// <param name="ToDate">The end date of the range to evaluate.</param>
-        /// <returns></returns>                
-        internal override List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
+        protected override bool EvaluationIncludesReferenceDate
         {
-            // Add the event itself, before recurrence rules are evaluated
-            // NOTE: this fixes a bug where (if evaluated multiple times)
-            // a period can be added to the Periods collection multiple times.
-            Period period = new Period(DTStart, Duration);
-            // Ensure the period does not already exist in our collection
-            if (!Periods.Contains(period))
-                Periods.Add(period);
-            
-            // Evaluate recurrences normally
-            base.Evaluate(FromDate, ToDate);
-
-            // Ensure each period has a duration
-            foreach(Period p in Periods)
+            get
             {
-                if (p.EndTime == null)
-                {
-                    p.Duration = Duration;
-                    if (p.Duration != null)
-                        p.EndTime = p.StartTime + Duration;
-                    else p.EndTime = p.StartTime;
-                }
-                // Ensure the Kind of time is consistent with DTStart
-                p.EndTime.IsUniversalTime = DTStart.IsUniversalTime;
+                return true;
             }
-
-            return Periods;
         }
+
+        public override object GetService(Type serviceType)
+        {
+            if (typeof(IEvaluator).IsAssignableFrom(serviceType))
+                return m_Evaluator;
+            return null;
+        }
+
+        protected override void OnDeserializing(StreamingContext context)
+        {
+            base.OnDeserializing(context);
+
+            Initialize();
+        }
+
+        protected override void OnDeserialized(StreamingContext context)
+        {
+            base.OnDeserialized(context);
+
+            ExtrapolateTimes();
+        }        
         
-        #endregion        
+        #endregion
 
         #region Private Methods
 
         private void ExtrapolateTimes()
         {
-            if (DTEnd == null && DTStart != null && Duration != null)
-                DTEnd = DTStart + Duration;
-            else if (Duration == null && DTStart != null && DTEnd != null)
-                Duration = DTEnd - DTStart;
-            else if (DTStart == null && Duration != null && DTEnd != null)
-                DTStart = DTEnd - Duration;
+            if (DTEnd == null && DTStart != null && Duration != default(TimeSpan))
+                DTEnd = DTStart.Add(Duration);
+            else if (Duration == default(TimeSpan) && DTStart != null && DTEnd != null)
+                Duration = DTEnd.Subtract(DTStart);
+            else if (DTStart == null && Duration != default(TimeSpan) && DTEnd != null)
+                DTStart = DTEnd.Subtract(Duration);
         }
 
         #endregion

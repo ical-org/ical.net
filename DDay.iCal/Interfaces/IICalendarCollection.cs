@@ -5,9 +5,7 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface IICalendarCollection :
-        ICollection<IICalendar>,
-        IICalendar        
-    {
-        IICalendar this[int index] { get; set; }
+        IList<IICalendar>        
+    {        
     }
 }

@@ -5,20 +5,23 @@ using System.Text;
 using System.Text.RegularExpressions;
 using DDay.iCal.Serialization;
 using System.Runtime.Serialization;
+using System.IO;
+using DDay.iCal.Serialization.iCalendar;
 
 namespace DDay.iCal
 {
     /// <summary>
     /// A class that represents the return status of an iCalendar request.
     /// </summary>
-    [DebuggerDisplay("{StatusCode} - {StatusDesc}")]
-    public class RequestStatus : iCalDataType
+    public class RequestStatus :
+        EncodableDataType,
+        IRequestStatus
     {
         #region Private Fields
 
-        private Text m_StatusDesc;
-        private Text m_ExtData;
-        private StatusCode m_StatusCode;
+        private string m_Description;
+        private string m_ExtraData;
+        private IStatusCode m_StatusCode;
 
         #endregion
 
@@ -27,37 +30,28 @@ namespace DDay.iCal
 #if DATACONTRACT
         [DataMember(Order = 1)]
 #endif
-        virtual public Text StatusDesc
+        virtual public string Description
         {
-            get { return m_StatusDesc; }
-            set { m_StatusDesc = value; }
+            get { return m_Description; }
+            set { m_Description = value; }
         }
 
 #if DATACONTRACT
         [DataMember(Order = 2)]
 #endif
-        virtual public Text ExtData
+        virtual public string ExtraData
         {
-            get { return m_ExtData; }
-            set { m_ExtData = value; }
+            get { return m_ExtraData; }
+            set { m_ExtraData = value; }
         }
 
 #if DATACONTRACT
         [DataMember(Order = 3)]
 #endif
-        virtual public StatusCode StatusCode
+        virtual public IStatusCode StatusCode
         {
             get { return m_StatusCode; }
             set { m_StatusCode = value; }
-        }
-
-#if DATACONTRACT
-        [DataMember(Order = 4)]
-#endif
-        virtual public string Language
-        {
-            get { return Parameters.Get<string>("LANGUAGE"); }
-            set { Parameters.Set("LANGUAGE", value); }
         }
 
         #endregion
@@ -68,7 +62,8 @@ namespace DDay.iCal
         public RequestStatus(string value)
             : this()
         {
-            CopyFrom(Parse(value));
+            RequestStatusSerializer serializer = new RequestStatusSerializer();
+            CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
         #endregion
@@ -78,37 +73,20 @@ namespace DDay.iCal
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (obj is RequestStatus)
+            if (obj is IRequestStatus)
             {
-                RequestStatus rs = (RequestStatus)obj;
+                IRequestStatus rs = (IRequestStatus)obj;                
                 if (rs.StatusCode != null)
-                    StatusCode = rs.StatusCode.Copy<StatusCode>();
-                if (rs.StatusDesc != null)
-                    StatusDesc = rs.StatusDesc.Copy<Text>();
-                if (rs.ExtData != null)
-                    ExtData = rs.ExtData.Copy<Text>();
+                    StatusCode = rs.StatusCode.Copy<IStatusCode>();
+                Description = rs.Description;
+                rs.ExtraData = rs.ExtraData;
             }
-            base.CopyFrom(obj);
         }
 
-        public override bool TryParse(string value, ref ICalendarDataType obj)
+        public override string ToString()
         {
-            RequestStatus rs = (RequestStatus)obj;
-            Match match = Regex.Match(value, @"(.+);(.+)(;(.*))?");
-            if (match.Success)
-            {
-                if (!match.Groups[1].Success ||
-                    !match.Groups[2].Success)
-                    return false;
-
-                StatusCode = new StatusCode(match.Groups[1].Value);
-                StatusDesc = new Text(match.Groups[1].Value, true);
-                if (match.Groups[3].Success)
-                    ExtData = new Text(match.Groups[4].Value, true);
-
-                return true;
-            }
-            return false;
+            RequestStatusSerializer serializer = new RequestStatusSerializer();
+            return serializer.SerializeToString(this);
         }
 
         #endregion

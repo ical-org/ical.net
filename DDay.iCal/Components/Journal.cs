@@ -13,14 +13,15 @@ namespace DDay.iCal
     /// <summary>
     /// A class that represents an RFC 5545 VJOURNAL component.
     /// </summary>
-    [DebuggerDisplay("{Summary}: {(Description.ToString().Length < 32) ? Description.ToString() : Description.ToString().Substring(0, 32)}")]
 #if DATACONTRACT
     [DataContract(Name = "Journal", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public class Journal : RecurringComponent
+    public class Journal : 
+        RecurringComponent,
+        IJournal
     {
-        #region Public Properties
+        #region IJournal Members
         
         public JournalStatus Status
         {
@@ -30,46 +31,34 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Static Public Methods
-
-        static public Journal Create(iCalendar iCal)
-        {
-            return iCal.Create<Journal>();
-        }
-
-        #endregion
-
         #region Constructors
 
         public Journal()
+        {            
+        }
+
+        void Initialize()
         {
-            this.Name = ComponentFactory.JOURNAL;
+            this.Name = Components.JOURNAL;
         }
 
         #endregion
 
         #region Overrides
 
-        /// <summary>
-        /// Returns a typed copy of the Journal object.
-        /// </summary>
-        /// <returns>A typed copy of the Journal object.</returns>
-        public new Journal Copy()
+        protected override bool EvaluationIncludesReferenceDate
         {
-            return base.Copy<Journal>();
+            get
+            {
+                return true;
+            }
         }
 
-        internal override List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
+        protected override void OnDeserializing(StreamingContext context)
         {
-            if (Start != null)
-            {
-                Period p = new Period(Start);
-                if (!Periods.Contains(p))
-                    Periods.Add(p);
+            base.OnDeserializing(context);
 
-                return base.Evaluate(FromDate, ToDate);
-            }
-            return new System.Collections.Generic.List<Period>();
+            Initialize();
         }
 
         #endregion

@@ -5,11 +5,15 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface ICalendarDataType :
-        ICalendarProperty
+        ICalendarParameterListContainer,
+        ICopyable,
+        IServiceProvider
     {
-        Type ValueType { get; }
+        Type GetValueType();
+        void SetValueType(string type);
+        ICalendarObject AssociatedObject { get; set; }
+        IICalendar Calendar { get; }
 
-        ICalendarDataType Parse(string value);
-        bool TryParse(string value, ref ICalendarDataType obj);
+        string Language { get; set; }
     }
 }

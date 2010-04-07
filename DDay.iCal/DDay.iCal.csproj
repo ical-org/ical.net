@@ -25,7 +25,8 @@
     <StartupObject>
     </StartupObject>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>DDay.iCal.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>2.0</OldToolsVersion>
@@ -73,89 +74,137 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataTypes\AlarmOccurrence.cs" />
-    <Compile Include="Factory\ComponentFactory.cs" />
-    <Compile Include="Components\Event.cs">
+    <Compile Include="Components\Alarm.cs" />
+    <Compile Include="Components\iCalTimeZone.cs" />
+    <Compile Include="Components\iCalTimeZoneInfo.cs" />
+    <Compile Include="Components\Journal.cs" />
+    <Compile Include="DataTypes\Attachment.cs" />
+    <Compile Include="Components\CalendarComponent.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DataTypes\iCalTimeZoneInfo.cs" />
-    <Compile Include="DataTypes\RelationshipTypes.cs" />
-    <Compile Include="DataTypes\Attendee.cs" />
-    <Compile Include="DataTypes\CalendarAddressCollection.cs" />
-    <Compile Include="DataTypes\DateUtils.cs" />
-    <Compile Include="DataTypes\EvaluationEngineException.cs" />
-    <Compile Include="DataTypes\Occurrence.cs" />
-    <Compile Include="DataTypes\Organizer.cs" />
-    <Compile Include="DataTypes\Trigger.cs" />
-    <Compile Include="DataTypes\Binary.cs" />
-    <Compile Include="DataTypes\AlarmAction.cs" />
-    <Compile Include="DataTypes\EncodableAttribute.cs" />
-    <Compile Include="DataTypes\EncodableDataType.cs" />
-    <Compile Include="DataTypes\Float.cs" />
-    <Compile Include="DataTypes\JournalStatus.cs" />
-    <Compile Include="DataTypes\Integer.cs" />
-    <Compile Include="DataTypes\TodoStatus.cs" />
-    <Compile Include="DataTypes\TextCollection.cs" />
-    <Compile Include="DataTypes\StatusCode.cs" />
-    <Compile Include="DataTypes\RequestStatus.cs" />
-    <Compile Include="DataTypes\Text.cs" />
-    <Compile Include="DataTypes\TZID.cs" />
-    <Compile Include="DataTypes\DaySpecifier.cs" />
-    <Compile Include="DataTypes\CalendarAddress.cs" />
-    <Compile Include="DataTypes\Geo.cs" />
-    <Compile Include="DataTypes\iCalDataType.cs" />
-    <Compile Include="DataTypes\RecurrenceDates.cs" />
-    <Compile Include="DataTypes\EventStatus.cs" />
-    <Compile Include="DataTypes\Transparency.cs" />
-    <Compile Include="DataTypes\UTC_Offset.cs" />
-    <Compile Include="DataTypes\URI.cs" />
-    <Compile Include="DataTypes\RecurrencePattern.cs" />
-    <Compile Include="DataTypes\Period.cs" />
-    <Compile Include="DataTypes\Duration.cs" />
-    <Compile Include="DataTypes\iCalDateTime.cs" />
-    <Compile Include="Factory\ObjectFactory.cs" />
-    <Compile Include="General\CalendarValueObject.cs" />
-    <Compile Include="General\CalendarValueObjectList.cs" />
-    <Compile Include="General\CalendarParameterList.cs" />
-    <Compile Include="General\CalendarPropertyList.cs" />
-    <Compile Include="General\CalendarObjectBase.cs" />
-    <Compile Include="iCalendarCollection.cs" />
-    <Compile Include="Components\Component.cs" />
-    <Compile Include="Attributes\ComponentFactoryAttribute.cs" />
-    <Compile Include="Components\Alarm.cs" />
-    <Compile Include="Attributes\DefaultValueAttribute.cs" />
-    <Compile Include="Attributes\DefaultValueTypeAttribute.cs" />
-    <Compile Include="Interfaces\Factory\IObjectFactory.cs" />
-    <Compile Include="Interfaces\General\ICalendarValueObject.cs" />
-    <Compile Include="Interfaces\General\ICalendarValueObjectList.cs" />
-    <Compile Include="Interfaces\IICalendarCollection.cs" />
-    <Compile Include="Interfaces\Factory\ISerializerFactory.cs" />
-    <Compile Include="Interfaces\Utility\IUniqueComponentList.cs" />
-    <Compile Include="Serialization\iCalendarSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Components\ComponentSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Components\ParameterSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Components\PropertySerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Components\SerializableBase.cs" />
-    <Compile Include="Serialization\iCalendar\DataTypes\DateTimeSerializer.cs" />
-    <Compile Include="Serialization\iCalendar\Factory\SerializerFactory.cs" />
-    <Compile Include="Utility\UniqueComponentList.cs" />
-    <Compile Include="Components\UniqueComponent.cs" />
+    <Compile Include="Components\Event.cs" />
     <Compile Include="Components\RecurringComponent.cs" />
-    <Compile Include="General\CalendarObject.cs" />
-    <Compile Include="Interfaces\Components\ICalendarTimeZone.cs" />
+    <Compile Include="Components\Todo.cs" />
+    <Compile Include="Components\UniqueComponent.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="DataTypes\CalendarDataType.cs" />
+    <Compile Include="DataTypes\Organizer.cs" />
+    <Compile Include="DataTypes\RequestStatus.cs" />
+    <Compile Include="DataTypes\StatusCode.cs" />
+    <Compile Include="DataTypes\Trigger.cs" />
+    <Compile Include="DataTypes\WeekDay.cs" />
+    <Compile Include="DataTypes\EncodableDataType.cs" />
+    <Compile Include="DataTypes\GeographicLocation.cs" />
+    <Compile Include="DataTypes\PeriodList.cs" />
+    <Compile Include="DataTypes\RecurrencePattern.cs" />
+    <Compile Include="DataTypes\UTCOffset.cs" />
+    <Compile Include="Evaluation\RecurrencePatternEvaluator.cs" />
+    <Compile Include="Evaluation\TimeZoneEvaluator.cs" />
+    <Compile Include="Evaluation\EventEvaluator.cs" />
+    <Compile Include="Evaluation\Evaluator.cs" />
+    <Compile Include="Evaluation\PeriodListEvaluator.cs" />
+    <Compile Include="Evaluation\RecurringEvaluator.cs" />
+    <Compile Include="Evaluation\TimeZoneInfoEvaluator.cs" />
+    <Compile Include="Evaluation\TodoEvaluator.cs" />
+    <Compile Include="Exceptions\EvaluationEngineException.cs" />
+    <Compile Include="General\AssociatedCalendarParameterList.cs" />
+    <Compile Include="General\CalendarPropertyCompositeList.cs" />
+    <Compile Include="General\FilteredCalendarObjectList.cs" />
+    <Compile Include="Interfaces\General\ICalendarPropertyCompositeList.cs" />
+    <Compile Include="Interfaces\General\IFilteredCalendarObjectList.cs" />
+    <Compile Include="Interfaces\Components\IAlarmContainer.cs" />
+    <Compile Include="Interfaces\DataTypes\ICalendarDataType.cs" />
+    <Compile Include="Interfaces\DataTypes\IDateTime.cs" />
+    <Compile Include="Interfaces\DataTypes\IWeekDay.cs" />
+    <Compile Include="Interfaces\DataTypes\IEncodableDataType.cs" />
+    <Compile Include="Interfaces\DataTypes\IGeographicLocation.cs" />
+    <Compile Include="Interfaces\DataTypes\IPeriod.cs" />
+    <Compile Include="Interfaces\DataTypes\ITransparency.cs" />
+    <Compile Include="Interfaces\Evaluation\IEvaluator.cs" />
+    <Compile Include="Interfaces\Evaluation\IRecurrable.cs" />
+    <Compile Include="Interfaces\Serialization\IDataTypeMapper.cs" />
+    <Compile Include="Interfaces\Serialization\IEncodingProvider.cs" />
+    <Compile Include="Interfaces\Serialization\IEncodingStack.cs" />
+    <Compile Include="Interfaces\Serialization\ISerializationProcessor.cs" />
+    <Compile Include="Interfaces\Serialization\ISerializationSettings.cs" />
+    <Compile Include="Interfaces\Serialization\IStringSerializer.cs" />
+    <Compile Include="Serialization\Attributes\OnDeserializedAttribute.cs" />
+    <Compile Include="Serialization\Attributes\OnDeserializingAttribute.cs" />
+    <Compile Include="Serialization\Attributes\StreamingContext.cs" />
+    <Compile Include="Serialization\EncodingStack.cs" />
+    <Compile Include="Serialization\iCalendar\Factory\DataTypeSerializerFactory.cs" />
+    <Compile Include="Serialization\iCalendar\Processors\ComponentPropertyConsolidator.cs" />
+    <Compile Include="Serialization\iCalendar\Processors\CompositeProcessor.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\AttachmentSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\OrganizerSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\Other\EnumSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\TriggerSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\StatusCodeSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\RequestStatusSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\PeriodSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\PeriodListSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\DataTypeSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\WeekDaySerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\EncodableDataTypeSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\GeographicLocationSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\Other\IntegerSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\RecurrencePatternSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\Other\TimeSpanSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\UTCOffsetSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\GenericListSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\Other\StringSerializer.cs" />
+    <Compile Include="Serialization\EncodingProvider.cs" />
+    <Compile Include="Structs\AlarmOccurrence.cs" />
+    <Compile Include="Structs\Occurrence.cs" />
+    <Compile Include="DataTypes\Period.cs" />
+    <Compile Include="Serialization\Factory\ComponentFactory.cs" />
+    <Compile Include="General\CalendarObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="General\CalendarObjectBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="General\CalendarParameter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="General\CalendarParameterList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="General\CalendarProperty.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="General\CalendarPropertyList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DataTypes\iCalDateTime.cs" />
+    <Compile Include="Factory\UIDFactory.cs" />
+    <Compile Include="iCalendar.cs" />
+    <Compile Include="iCalendarCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\Components\IAlarm.cs" />
+    <Compile Include="Interfaces\Components\IEvent.cs" />
+    <Compile Include="Interfaces\Components\IFreeBusy.cs" />
+    <Compile Include="Interfaces\Components\IJournal.cs" />
+    <Compile Include="Interfaces\Components\ITimeZone.cs" />
+    <Compile Include="Interfaces\Components\ITodo.cs" />
+    <Compile Include="Interfaces\DataTypes\IAttendee.cs" />
+    <Compile Include="Interfaces\DataTypes\IAttachment.cs" />
+    <Compile Include="Interfaces\DataTypes\IOrganizer.cs" />
+    <Compile Include="Interfaces\DataTypes\IPeriodList.cs" />
+    <Compile Include="Interfaces\DataTypes\IRecurrencePattern.cs" />
+    <Compile Include="Interfaces\DataTypes\IRequestStatus.cs" />
+    <Compile Include="Interfaces\DataTypes\IStatusCode.cs" />
+    <Compile Include="Interfaces\Components\ITimeZoneInfo.cs" />
+    <Compile Include="Interfaces\DataTypes\ITrigger.cs" />
+    <Compile Include="Interfaces\DataTypes\IUTCOffset.cs" />
+    <Compile Include="Interfaces\IICalendarCollection.cs" />
+    <Compile Include="Interfaces\Serialization\Factory\ISerializerFactory.cs" />
+    <Compile Include="Interfaces\General\IUniqueComponentList.cs" />
     <Compile Include="Interfaces\Components\IRecurringComponent.cs" />
     <Compile Include="Interfaces\Components\IUniqueComponent.cs" />
-    <Compile Include="General\CalendarParameter.cs" />
-    <Compile Include="Components\FreeBusy.cs" />
-    <Compile Include="Components\Journal.cs" />
-    <Compile Include="General\CalendarProperty.cs" />
-    <Compile Include="Components\iCalTimeZone.cs" />
-    <Compile Include="Components\Todo.cs" />
-    <Compile Include="iCalendar.cs" />
-    <Compile Include="Interfaces\DataTypes\ICalendarDataType.cs" />
     <Compile Include="Interfaces\Components\ICalendarComponent.cs" />
-    <Compile Include="Interfaces\DataTypes\IEscapable.cs" />
-    <Compile Include="Interfaces\Factory\ICalendarComponentFactory.cs" />
+    <Compile Include="Interfaces\Serialization\Factory\ICalendarComponentFactory.cs" />
     <Compile Include="Interfaces\General\ICalendarObjectList.cs" />
     <Compile Include="Interfaces\General\ICalendarPropertyList.cs" />
     <Compile Include="Interfaces\General\ICalendarObject.cs" />
@@ -164,23 +213,40 @@
     <Compile Include="Interfaces\General\ICalendarParameterListContainer.cs" />
     <Compile Include="Interfaces\General\ICalendarProperty.cs" />
     <Compile Include="Interfaces\General\ICalendarPropertyListContainer.cs" />
-    <Compile Include="Interfaces\Utility\ICopyable.cs" />
-    <Compile Include="Interfaces\Utility\ILoadable.cs" />
-    <Compile Include="Interfaces\Utility\IMergeable.cs" />
+    <Compile Include="Interfaces\General\ICopyable.cs" />
+    <Compile Include="Interfaces\General\ILoadable.cs" />
+    <Compile Include="Interfaces\General\IMergeable.cs" />
     <Compile Include="Interfaces\IICalendar.cs" />
     <Compile Include="Interfaces\Serialization\ISerializationContext.cs" />
-    <Compile Include="Interfaces\Utility\IKeyedList.cs" />
-    <Compile Include="Interfaces\Utility\IKeyedObject.cs" />
-    <Compile Include="Utility\KeyedList.cs" />
-    <Compile Include="Utility\KnownTypeHelper.cs" />
+    <Compile Include="Interfaces\General\IKeyedList.cs" />
+    <Compile Include="Interfaces\General\IKeyedObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Properties\AssemblyInfo.cs.template" />
+    <None Include="Serialization\iCalendar\iCal.g" />
+    <Compile Include="Interfaces\Serialization\ISerializer.cs" />
+    <Compile Include="Serialization\DataTypeMapper.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataMapSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\DateTimeSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\ParameterSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\iCalendarSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\Components\ComponentSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\PropertySerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\SerializerBase.cs" />
+    <Compile Include="Serialization\iCalendar\Factory\SerializerFactory.cs" />
     <Compile Include="Serialization\iCalendar\iCalLexer.cs" />
     <Compile Include="Serialization\iCalendar\iCalParser.cs" />
-    <Compile Include="Serialization\iCalendar\iCalParserHelper.cs" />
     <Compile Include="Serialization\iCalendar\iCalParserTokenTypes.cs" />
-    <Compile Include="Interfaces\Serialization\ISerializable.cs" />
     <Compile Include="Serialization\SerializationContext.cs" />
+    <Compile Include="Serialization\SerializationSettings.cs" />
+    <Compile Include="Structs\TimeZoneObservance.cs" />
+    <Compile Include="Utility\AssociationUtil.cs" />
+    <Compile Include="Utility\DateUtil.cs" />
+    <Compile Include="General\KeyedList.cs" />
+    <Compile Include="Utility\KnownTypeHelper.cs" />
+    <Compile Include="Utility\RecurrenceUtil.cs" />
+    <Compile Include="Utility\SerializationUtil.cs" />
+    <Compile Include="Utility\TextUtil.cs" />
+    <Compile Include="General\UniqueComponentList.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
@@ -194,10 +260,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Serialization\iCalendar\iCalParserTokenTypes.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="DDay.iCal.pfx" />
-    <None Include="Serialization\iCalendar\iCal.g" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

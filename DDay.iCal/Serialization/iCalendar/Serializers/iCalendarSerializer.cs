@@ -1,0 +1,121 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.IO;
+
+namespace DDay.iCal.Serialization.iCalendar
+{
+    public class iCalendarSerializer :
+        ComponentSerializer
+    {
+        #region Private Fields
+
+        IICalendar m_ICalendar;
+
+        #endregion
+
+        #region Constructors
+
+        public iCalendarSerializer() : base()
+        {
+        }
+
+        public iCalendarSerializer(IICalendar iCal)
+        {
+            m_ICalendar = iCal;
+        }
+
+        public iCalendarSerializer(ISerializationContext ctx) : base(ctx)
+        {
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        [Obsolete("Use the Serialize(IICalendar iCal, string filename) method instead.")]
+        virtual public void Serialize(string filename)
+        {
+            if (m_ICalendar != null)
+                Serialize(m_ICalendar, filename);
+        }
+
+        [Obsolete("Use the SerializeToString(ICalendarObject obj) method instead.")]
+        virtual public string SerializeToString()
+        {
+            return SerializeToString(m_ICalendar);
+        }
+
+        virtual public void Serialize(IICalendar iCal, string filename)
+        {
+            using (FileStream fs = new FileStream(filename, FileMode.Create))
+            {
+                Serialize(iCal, fs, new UTF8Encoding());
+            }
+        }        
+
+        #endregion
+
+        #region Overrides
+
+        protected override IComparer<ICalendarProperty> PropertySorter
+        {
+            get
+            {
+                return new CalendarPropertySorter();
+            }
+        }
+
+        public override object Deserialize(TextReader tr)
+        {
+            if (tr != null)
+            {
+                // Normalize the text before parsing it
+                tr = TextUtil.Normalize(tr, SerializationContext);
+
+                // Create a lexer for our text stream
+                iCalLexer lexer = new iCalLexer(tr);
+                iCalParser parser = new iCalParser(lexer);
+
+                // Parse the iCalendar(s)!
+                IICalendarCollection iCalendars = parser.icalendar(SerializationContext);
+
+                // Close our text stream
+                tr.Close();
+
+                // Return the parsed iCalendar(s)
+                return iCalendars;
+            }
+            return null;
+        }
+
+        #endregion
+
+        private class CalendarPropertySorter :
+            IComparer<ICalendarProperty>
+        {
+            #region IComparer<ICalendarProperty> Members
+
+            public int Compare(ICalendarProperty x, ICalendarProperty y)
+            {
+                if (x == y || (x == null && y == null))
+                    return 0;
+                else if (x == null)
+                    return -1;
+                else if (y == null)
+                    return 1;
+                else
+                {
+                    // Alphabetize all properties except VERSION, which should appear first. 
+                    if (string.Equals("VERSION", x.Name, StringComparison.InvariantCultureIgnoreCase))
+                        return -1;
+                    else if (string.Equals("VERSION", y.Name, StringComparison.InvariantCultureIgnoreCase))
+                        return 1;
+                    return string.Compare(x.Name, y.Name);
+                }
+            }
+
+            #endregion
+        }
+    }
+}

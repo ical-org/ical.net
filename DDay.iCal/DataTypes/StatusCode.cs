@@ -4,6 +4,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
 using DDay.iCal.Serialization;
+using System.IO;
+using DDay.iCal.Serialization.iCalendar;
 
 namespace DDay.iCal
 {    
@@ -14,7 +16,9 @@ namespace DDay.iCal
     [DataContract(Name = "StatusCode", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public class StatusCode : iCalDataType
+    public class StatusCode : 
+        EncodableDataType,
+        IStatusCode
     {
         #region Private Fields
 
@@ -71,7 +75,8 @@ namespace DDay.iCal
         public StatusCode(string value)
             : this()
         {
-            CopyFrom(Parse(value));
+            StatusCodeSerializer serializer = new StatusCodeSerializer();
+            CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
         #endregion
@@ -81,45 +86,18 @@ namespace DDay.iCal
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (obj is StatusCode)
+            if (obj is IStatusCode)
             {
-                StatusCode sc = (StatusCode)obj;
+                IStatusCode sc = (IStatusCode)obj;
                 Parts = new int[sc.Parts.Length];
                 sc.Parts.CopyTo(Parts, 0);
             }
-            base.CopyFrom(obj);
-        }
-
-        public override bool TryParse(string value, ref ICalendarDataType obj)
-        {
-            StatusCode sc = (StatusCode)obj;
-            Match match = Regex.Match(value, @"\d(\.\d+)*");
-            if (match.Success)
-            {
-                int[] iparts;
-                string[] parts = match.Value.Split('.');
-                iparts = new int[parts.Length];
-                for (int i = 0; i < parts.Length; i++)
-                {
-                    int num;
-                    if (!Int32.TryParse(parts[i], out num))
-                        return false;
-                    iparts[i] = num;
-                }
-
-                sc.Parts = iparts;
-                return true;
-            }
-
-            return false;
         }
 
         public override string ToString()
         {
-            string[] vals = new string[Parts.Length];
-            for (int i = 0; i < Parts.Length; i++)
-                vals[i] = Parts[i].ToString();
-            return string.Join(".", vals);
+            StatusCodeSerializer serializer = new StatusCodeSerializer();
+            return serializer.SerializeToString(this);
         }
 
         #endregion

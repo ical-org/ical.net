@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Text;
 using DDay.iCal;
 using System.Runtime.Serialization;
+using System.IO;
+using DDay.iCal.Serialization.iCalendar;
 
 namespace DDay.iCal
 {
@@ -15,58 +17,46 @@ namespace DDay.iCal
     [DataContract(Name = "Organizer", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public class Organizer : CalendarAddress
+    public class Organizer :
+        EncodableDataType,
+        IOrganizer
     {
         #region Public Properties
+
+        virtual public Uri SentBy
+        {
+            get { return new Uri(Parameters.Get("SENT-BY")); }
+            set
+            {
+                if (value != null)
+                    Parameters.Set("SENT-BY", value.OriginalString);
+                else
+                    Parameters.Set("SENT-BY", (string)null);
+            }
+        }
+
+        virtual public string CommonName
+        {
+            get { return Parameters.Get("CN"); }
+            set { Parameters.Set("CN", value); }
+        }
+
+        virtual public Uri DirectoryEntry
+        {
+            get { return new Uri(Parameters.Get("DIR")); }
+            set
+            {
+                if (value != null)
+                    Parameters.Set("DIR", value.OriginalString);
+                else
+                    Parameters.Set("DIR", (string)null);
+            }
+        }
 
 #if DATACONTRACT
         [DataMember(Order = 1)]
 #endif
-        virtual public CalendarAddress SentBy
-        {
-            get { return Parameters.Get<CalendarAddress>("SENT-BY"); }
-            set { Parameters.Set("SENT-BY", value); }
-        }
-
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
-        virtual public Text CommonName
-        {
-            get { return Parameters.Get<Text>("CN"); }
-            set { Parameters.Set("CN", value); }
-        }
-
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
-        virtual public URI DirectoryEntry
-        {
-            get { return Parameters.Get<URI>("DIR"); }
-            set { Parameters.Set("DIR", value); }
-        }
-
-#if DATACONTRACT
-        [DataMember(Order = 4)]
-#endif
-        virtual public string Language
-        {
-            get { return Parameters.Get<string>("LANGUAGE"); }
-            set { Parameters.Set("LANGUAGE", value); }
-        }
-
-        virtual public string EmailAddress
-        {
-            get
-            {
-                if (Value != null &&
-                    Scheme == Uri.UriSchemeMailto)
-                {
-                    return Authority;
-                }
-                return null;
-            }            
-        }
+        virtual public Uri Value { get; set; }
 
         #endregion
 
@@ -76,21 +66,23 @@ namespace DDay.iCal
         public Organizer(string value)
             : this()
         {
-            this.Name = "ORGANIZER";
+            OrganizerSerializer serializer = new OrganizerSerializer();
+            CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
         #endregion
 
-        #region Operators
+        #region Overrides
 
-        static public implicit operator string(Organizer o)
+        public override void CopyFrom(ICopyable obj)
         {
-            return o != null ? o.Value : null;            
-        }
+            base.CopyFrom(obj);
 
-        static public implicit operator Organizer(string o)
-        {
-            return new Organizer(o);
+            IOrganizer o = obj as IOrganizer;
+            if (o != null)
+            {
+                Value = o.Value;
+            }
         }
 
         #endregion

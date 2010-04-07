@@ -5,25 +5,21 @@ using System.Collections;
 using System.IO;
 using System.Resources;
 using System.Web;
-using System.Web.UI;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
-using DDay.iCal;
-using DDay.iCal;
-using DDay.iCal.Serialization;
 
 namespace DDay.iCal.Test
 {
     [TestFixture]
     public class CopyTest
     {
-        private TZID tzid;
+        private string tzid;
 
         [TestFixtureSetUp]
         public void InitAll()
         {            
-            tzid = new TZID("US-Eastern");
+            tzid = "US-Eastern";
         }
 
         private void CopyCalendarTest(string filename)
@@ -34,93 +30,129 @@ namespace DDay.iCal.Test
         }
 
         [Test, Category("Copy")]
-        public void COPY1()
+        public void CopyAttachment3()
         {
-            CopyCalendarTest("SERIALIZE1.ics");            
+            CopyCalendarTest("Attachment3.ics");
         }
 
         [Test, Category("Copy")]
-        public void COPY2()
+        public void CopyBug2148092()
         {
-            CopyCalendarTest("SERIALIZE2.ics");
+            CopyCalendarTest("Bug2148092.ics");
         }
 
         [Test, Category("Copy")]
-        public void COPY3()
+        public void CopyCaseInsensitive1()
         {
-            CopyCalendarTest("SERIALIZE3.ics");
+            CopyCalendarTest("CaseInsensitive1.ics");
         }
 
         [Test, Category("Copy")]
-        public void COPY4()
+        public void CopyCaseInsensitive2()
         {
-            CopyCalendarTest("SERIALIZE4.ics");
+            CopyCalendarTest("CaseInsensitive2.ics");
         }
 
         [Test, Category("Copy")]
-        public void COPY5()
+        public void CopyCaseInsensitive3()
         {
-            CopyCalendarTest("SERIALIZE5.ics");
+            CopyCalendarTest("CaseInsensitive3.ics");
         }
 
         [Test, Category("Copy")]
-        public void COPY6()
+        public void CopyCategories1()
         {
-            CopyCalendarTest("SERIALIZE6.ics");
+            CopyCalendarTest("Categories1.ics");
         }
 
         [Test, Category("Copy")]
-        public void COPY7()
+        public void CopyDuration1()
         {
-            CopyCalendarTest("SERIALIZE7.ics");
+            CopyCalendarTest("Duration1.ics");
+        }        
+
+        [Test, Category("Copy")]
+        public void CopyEncoding1()
+        {
+            CopyCalendarTest("Encoding1.ics");
         }
 
         [Test, Category("Copy")]
-        public void COPY8()
+        public void CopyEvent1()
         {
-            CopyCalendarTest("SERIALIZE8.ics");
+            CopyCalendarTest("Event1.ics");
         }
 
         [Test, Category("Copy")]
-        public void COPY9()
+        public void CopyEvent2()
         {
-            CopyCalendarTest("SERIALIZE9.ics");
+            CopyCalendarTest("Event2.ics");
         }
 
         [Test, Category("Copy")]
-        public void COPY10()
+        public void CopyEvent3()
         {
-            CopyCalendarTest("SERIALIZE10.ics");
+            CopyCalendarTest("Event3.ics");
         }
 
         [Test, Category("Copy")]
-        public void COPY11()
+        public void CopyEvent4()
         {
-            CopyCalendarTest("SERIALIZE11.ics");
+            CopyCalendarTest("Event4.ics");
         }
 
         [Test, Category("Copy")]
-        public void COPY12()
+        public void CopyGeo1()
         {
-            CopyCalendarTest("SERIALIZE12.ics");
+            CopyCalendarTest("Geo1.ics");
         }
 
         [Test, Category("Copy")]
-        public void COPY13()
+        public void CopyLanguage1()
         {
-            CopyCalendarTest("SERIALIZE13.ics");
+            CopyCalendarTest("Language1.ics");
         }
 
         [Test, Category("Copy")]
-        public void COPY14()
+        public void CopyLanguage2()
         {
-            CopyCalendarTest("SERIALIZE14.ics");
+            CopyCalendarTest("Language2.ics");
         }
 
         [Test, Category("Copy")]
-        public void COPY15()
+        public void CopyLanguage3()
         {
-            CopyCalendarTest("SERIALIZE15.ics");
+            CopyCalendarTest("Language3.ics");
+        }
+
+        [Test, Category("Copy")]
+        public void CopyTimeZone1()
+        {
+            CopyCalendarTest("TimeZone1.ics");
+        }
+
+        [Test, Category("Copy")]
+        public void CopyTimeZone2()
+        {
+            CopyCalendarTest("TimeZone2.ics");
+        }
+
+        [Test, Category("Copy")]
+        public void CopyTimeZone3()
+        {
+            CopyCalendarTest("TimeZone3.ics");
+        }
+
+        [Test, Category("Copy")]
+        public void CopyXProperty1()
+        {
+            CopyCalendarTest("XProperty1.ics");
+        }
+
+        [Test, Category("Copy")]
+        public void CopyXProperty2()
+        {
+            CopyCalendarTest("XProperty2.ics");
         }
     }
 }

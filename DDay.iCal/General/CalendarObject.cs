@@ -3,15 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
-using DDay.iCal;
-using DDay.iCal.Serialization;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 
 namespace DDay.iCal
 {
     /// <summary>
-    /// The base class for all iCalendar objects, components, and data types.
+    /// The base class for all iCalendar objects and components.
     /// </summary>
 #if DATACONTRACT
     [DataContract(IsReference = true, Name = "CalendarObject", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
@@ -64,51 +62,32 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Public Overridable Methods
+        #region Internal Methods
 
-        /// <summary>
-        /// Adds an <see cref="iCalObject"/>-based object as a child
-        /// of the current object.
-        /// </summary>
-        /// <param name="child">The <see cref="iCalObject"/>-based object to add.</param>
-        virtual public void AddChild(ICalendarObject child)
-        {
-            child.Parent = this;
-            Children.Add(child);
-        }
-
-        /// <summary>
-        /// Removed an <see cref="iCalObject"/>-based object from the <see cref="Children"/>
-        /// collection.
-        /// </summary>
-        /// <param name="child"></param>
-        virtual public void RemoveChild(ICalendarObject child)
-        {
-            if (Children.Contains(child))
-            {
-                Children.Remove(child);
-                child.Parent = null;
-            }
-        }
-
-        /// <summary>
-        /// Initializes an object that has just been created.
-        /// </summary>
-        virtual public void CreateInitialize()
-        {
-        }
-
-        #endregion        
-
-        #region Private Methods
-
-#if DATACONTRACT
         [OnDeserializing]
-        private void OnDeserializing(StreamingContext context)
+        internal void DeserializingInternal(StreamingContext context)
+        {
+            OnDeserializing(context);
+        }
+
+        [OnDeserialized]
+        internal void DeserializedInternal(StreamingContext context)
+        {
+            OnDeserialized(context);
+        }
+
+        #endregion
+
+        #region Protected Methods
+
+        virtual protected void OnDeserializing(StreamingContext context)
         {
             Initialize();
         }
-#endif
+
+        virtual protected void OnDeserialized(StreamingContext context)
+        {
+        }
 
         #endregion
 
@@ -139,73 +118,31 @@ namespace DDay.iCal
                 this.Parent = obj.Parent;
                 this.Line = obj.Line;
                 this.Column = obj.Column;
-
+                
                 // Add each child
-                foreach (ICalendarObject child in Children)
+                foreach (ICalendarObject child in obj.Children)
                     AddChild(child.Copy<ICalendarObject>());
-
-                // FIXME: remove the following?  If we copy all
-                // children we should be set, right?
-
-                ////
-                //// Get a list of serialized items,
-                //// iterate through each, make a copy
-                //// of each item, and assign it to our
-                //// copied object.
-                ////
-                //List<object> items = SerializedItems;
-                //foreach (object item in items)
-                //{
-                //    FieldInfo field = null;
-                //    PropertyInfo prop = null;
-
-                //    if (item is FieldInfo)
-                //        field = (FieldInfo)item;
-                //    else
-                //        prop = (PropertyInfo)item;
-
-                //    // Get the item's value
-                //    object itemValue = (field == null) ? prop.GetValue(this, null) : field.GetValue(this);
-                //    Type itemType = itemValue != null ? itemValue.GetType() : null;
-
-                //    if (itemType != null)
-                //    {
-                //        //
-                //        // Let's make a copy of the object
-                //        //
-                //        if (typeof(ICalendarObjectList).IsAssignableFrom(itemType))
-                //        {
-                //            // The object is an array type.  Let's copy each individual
-                //            // element in the array.
-                //            ArrayList al = new ArrayList();
-                //            foreach (object childObj in (IEnumerable)itemValue)
-                //            {
-                //                if (childObj is ICalendarObject)
-                //                    al.Add(((ICalendarObject)childObj).Copy(obj));
-                //                else al.Add(childObj);
-                //            }
-                //            // Convert the value back to an array of the same type.
-                //            itemValue = al.ToArray(itemType.GetElementType());
-                //        }
-                //        else if (typeof(ICalendarObject).IsAssignableFrom(itemType))
-                //        {
-                //            // Make a copy of the item, if it's copyable.
-                //            itemValue = ((ICalendarObject)itemValue).Copy(obj);
-                //        }
-                //        else { } // FIXME: make an exact copy, if possible.
-                //    }
-
-                //    // Set the item's value in our copied object
-                //    if (field == null)
-                //        prop.SetValue(obj, itemValue, null);
-                //    else field.SetValue(obj, itemValue);
-                //}
             }
         }
 
         #endregion
 
         #region ICalendarObject Members
+
+        public event EventHandler<ObjectEventArgs<ICalendarObject>> ChildAdded;
+        public event EventHandler<ObjectEventArgs<ICalendarObject>> ChildRemoved;
+
+        protected void OnChildAdded(ICalendarObject child)
+        {
+            if (ChildAdded != null)
+                ChildAdded(this, new ObjectEventArgs<ICalendarObject>(child));
+        }
+
+        protected void OnChildRemoved(ICalendarObject child)
+        {
+            if (ChildRemoved != null)
+                ChildRemoved(this, new ObjectEventArgs<ICalendarObject>(child));
+        }
 
         /// <summary>
         /// Returns the parent <see cref="iCalObject"/> that owns this one.
@@ -229,10 +166,6 @@ namespace DDay.iCal
         virtual public IList<ICalendarObject> Children
         {
             get { return _Children; }
-            protected set
-            {
-                this._Children = value;
-            }
         }
 
         /// <summary>
@@ -268,7 +201,7 @@ namespace DDay.iCal
             get
             {
                 ICalendarObject obj = this;
-                while (obj.Parent != null && !(obj is IICalendar))
+                while (!(obj is IICalendar) && obj.Parent != null)
                     obj = obj.Parent;
 
                 if (obj is IICalendar)
@@ -305,6 +238,37 @@ namespace DDay.iCal
             set { _Column = value; }
         }
 
+        /// <summary>
+        /// Adds an <see cref="iCalObject"/>-based object as a child
+        /// of the current object.
+        /// </summary>
+        /// <param name="child">The <see cref="iCalObject"/>-based object to add.</param>
+        virtual public void AddChild(ICalendarObject child)
+        {
+            child.Parent = this;
+            Children.Add(child);
+            OnChildAdded(child);
+        }
+
+        /// <summary>
+        /// Removed an <see cref="iCalObject"/>-based object from the <see cref="Children"/>
+        /// collection.
+        /// </summary>
+        /// <param name="child"></param>
+        virtual public void RemoveChild(ICalendarObject child)
+        {
+            if (Children.Contains(child))
+            {
+                Children.Remove(child);
+                child.Parent = null;
+                OnChildRemoved(child);
+            }
+        }
+
+        #endregion
+
+        #region IMergeable Members
+
         virtual public void MergeWith(ICalendarObject obj)
         {
             if (obj != null)
@@ -315,6 +279,17 @@ namespace DDay.iCal
                 foreach (ICalendarObject child in obj.Children)
                     AddChild(child.Copy<ICalendarObject>());
             }
+        }
+
+        #endregion
+
+        #region IServiceProvider Members
+
+        virtual public object GetService(Type serviceType)
+        {
+            // Objects don't provide any services by default.
+            // Each object needs to provide its own services.
+            return null;
         }
 
         #endregion

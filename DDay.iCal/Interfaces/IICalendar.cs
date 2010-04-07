@@ -28,11 +28,6 @@ namespace DDay.iCal
         string Method { get; set; }
 
         /// <summary>
-        /// Gets/sets the component factory for this calendar.
-        /// </summary>
-        ICalendarComponentFactory ComponentFactory { get; set; }
-
-        /// <summary>
         /// Gets/sets the restriction on how evaluation of 
         /// recurrence patterns occurs within this calendar.
         /// </summary>
@@ -55,37 +50,37 @@ namespace DDay.iCal
         /// to the provided TZID, or null of no matching
         /// time zone could be found.
         /// </summary>
-        ICalendarTimeZone GetTimeZone(TZID tzid);
+        ITimeZone GetTimeZone(string tzid);
 
         /// <summary>
         /// Gets a list of unique components contained in the calendar.
         /// </summary>
-        IUniqueComponentListReadonly<IUniqueComponent> UniqueComponents { get; }
+        IUniqueComponentList<IUniqueComponent> UniqueComponents { get; }
 
         /// <summary>
         /// Gets a list of Events contained in the calendar.
         /// </summary>
-        IUniqueComponentListReadonly<Event> Events { get; }
+        IUniqueComponentList<IEvent> Events { get; }
 
         /// <summary>
         /// Gets a list of Free/Busy components contained in the calendar.
         /// </summary>
-        IUniqueComponentListReadonly<FreeBusy> FreeBusy { get; }
+        IUniqueComponentList<IFreeBusy> FreeBusy { get; }
 
         /// <summary>
         /// Gets a list of Journal entries contained in the calendar.
         /// </summary>
-        IUniqueComponentListReadonly<Journal> Journals { get; }
+        IUniqueComponentList<IJournal> Journals { get; }
 
         /// <summary>
         /// Gets a list of time zones contained in the calendar.
         /// </summary>
-        IList<ICalendarTimeZone> TimeZones { get; }
+        IFilteredCalendarObjectList<ITimeZone> TimeZones { get; }
 
         /// <summary>
         /// Gets a list of To-do items contained in the calendar.
         /// </summary>
-        IUniqueComponentListReadonly<Todo> Todos { get; }
+        IUniqueComponentList<ITodo> Todos { get; }
 
         /// <summary>
         /// Clears recurrence evaluations for recurring components.        
@@ -98,7 +93,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
         /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
-        List<Occurrence> GetOccurrences(iCalDateTime dt);
+        IList<Occurrence> GetOccurrences(IDateTime dt);
 
         /// <summary>
         /// Returns a list of occurrences of each recurring component
@@ -107,7 +102,7 @@ namespace DDay.iCal
         /// <param name="FromDate">The beginning date/time of the range.</param>
         /// <param name="ToDate">The end date/time of the range.</param>
         /// <returns>A list of occurrences that fall between the dates provided.</returns>
-        List<Occurrence> GetOccurrences(iCalDateTime FromDate, iCalDateTime ToDate);
+        IList<Occurrence> GetOccurrences(IDateTime fromDate, IDateTime toDate);
 
         /// <summary>
         /// Returns all occurrences of components of type T that start on the date provided.
@@ -121,7 +116,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences.</param>
         /// <returns>A list of Periods representing the occurrences of this object.</returns>
-        List<Occurrence> GetOccurrences<T>(iCalDateTime dt) where T : IRecurringComponent;
+        IList<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent;
 
         /// <summary>
         /// Returns all occurrences of components of type T that start within the date range provided.
@@ -130,25 +125,26 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="startTime">The starting date range</param>
         /// <param name="endTime">The ending date range</param>
-        List<Occurrence> GetOccurrences<T>(iCalDateTime startTime, iCalDateTime endTime) where T : IRecurringComponent;
+        IList<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent;
 
-#if DATACONTRACT && !SILVERLIGHT
-        /// <summary>
-        /// Adds a system time zone to the iCalendar.  This time zone may
-        /// then be used in date/time objects contained in the 
-        /// calendar.
-        /// </summary>
-        /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>
-        /// <returns>The time zone added to the calendar.</returns>
-        ICalendarTimeZone AddTimeZone(System.TimeZoneInfo tzi);        
+        // FIXME: add this back in:
+//#if DATACONTRACT && !SILVERLIGHT
+//        /// <summary>
+//        /// Adds a system time zone to the iCalendar.  This time zone may
+//        /// then be used in date/time objects contained in the 
+//        /// calendar.
+//        /// </summary>
+//        /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>
+//        /// <returns>The time zone added to the calendar.</returns>
+//        ITimeZone AddTimeZone(System.TimeZoneInfo tzi);
 
-        /// <summary>
-        /// Adds the local system time zone to the iCalendar.  
-        /// This time zone may then be used in date/time
-        /// objects contained in the calendar.
-        /// </summary>
-        /// <returns>The time zone added to the calendar.</returns>
-        ICalendarTimeZone AddLocalTimeZone();
-#endif
+//        /// <summary>
+//        /// Adds the local system time zone to the iCalendar.  
+//        /// This time zone may then be used in date/time
+//        /// objects contained in the calendar.
+//        /// </summary>
+//        /// <returns>The time zone added to the calendar.</returns>
+//        ITimeZone AddLocalTimeZone();
+//#endif
     }
 }

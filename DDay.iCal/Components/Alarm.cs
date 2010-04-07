@@ -3,41 +3,33 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Configuration;
-using DDay.iCal;
-using DDay.iCal;
-using DDay.iCal.Serialization;
 using System.Runtime.Serialization;
 
 namespace DDay.iCal
 {
     /// <summary>
-    /// A class that represents an RFC 5545 VALARM component.
+    /// A class that represents an RFC 2445 VALARM component.
+    /// FIXME: move GetOccurrences() logic into an AlarmEvaluator.
     /// </summary>    
 #if DATACONTRACT
     [DataContract(Name = "Alarm", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+    /*[KnownType(typeof(Binary))]
+    [KnownType(typeof(Cal_Address))]
+    [KnownType(typeof(Cal_Address[]))]
+    [KnownType(typeof(Text))]
+    [KnownType(typeof(Duration))]
+    [KnownType(typeof(Integer))]
+    [KnownType(typeof(Trigger))]    */
+#else
     [Serializable]
-    public class Alarm : CalendarComponent
+#endif
+    public class Alarm :
+        CalendarComponent,
+        IAlarm
     {
-        #region Static Public Methods
-
-        static public Alarm Create(RecurringComponent rc)
-        {
-            Alarm alarm = rc.Calendar.Create<Alarm>();
-            return alarm;
-        }
-
-        #endregion
-
         #region Private Fields
 
         private List<AlarmOccurrence> m_Occurrences;
-
-        private Text m_Description;        
-        private Duration m_Duration;        
-        private Integer m_Repeat;        
-        private Text m_Summary;        
-        private Trigger m_Trigger;        
 
         #endregion
 
@@ -55,64 +47,63 @@ namespace DDay.iCal
 #if DATACONTRACT
         [DataMember(Order = 2)]
 #endif
-        virtual public Binary Attach
+        virtual public IAttachment Attachment
         {
-            get { return Properties.Get<Binary>("ATTACH"); }
+            get { return Properties.Get<IAttachment>("ATTACH"); }
             set { Properties.Set("ATTACH", value); }
         }
 
 #if DATACONTRACT
         [DataMember(Order = 3)]
 #endif
-        virtual public Attendee[] Attendee
+        virtual public IList<IAttendee> Attendees
         {
-            get { return Properties.Get<Attendee[]>("ATTENDEE"); }
-            set { Properties.Set("ATTENDEE", value); }
+            get { return Properties.GetList<IAttendee>("ATTENDEE"); }
+            set { Properties.SetList("ATTENDEE", value); }
         }
 
 #if DATACONTRACT
         [DataMember(Order = 4)]
 #endif
-        virtual public Text Description
+        virtual public string Description
         {
-            get { return Properties.Get<Text>("DESCRIPTION"); }
+            get { return Properties.Get<string>("DESCRIPTION"); }
             set { Properties.Set("DESCRIPTION", value); }
         }
 
-        [DefaultValue("P")]
 #if DATACONTRACT
         [DataMember(Order = 5)]
 #endif
-        virtual public Duration Duration
+        virtual public TimeSpan Duration
         {
-            get { return Properties.Get<Duration>("DURATION"); }
+            get { return Properties.Get<TimeSpan>("DURATION"); }
             set { Properties.Set("DURATION", value); }
         }
 
 #if DATACONTRACT
         [DataMember(Order = 6)]
 #endif
-        virtual public Integer Repeat
+        virtual public int Repeat
         {
-            get { return Properties.Get<Integer>("REPEAT"); }
+            get { return Properties.Get<int>("REPEAT"); }
             set { Properties.Set("REPEAT", value); }
         }
 
 #if DATACONTRACT
         [DataMember(Order = 7)]
 #endif
-        virtual public Text Summary
+        virtual public string Summary
         {
-            get { return Properties.Get<Text>("SUMMARY"); }
+            get { return Properties.Get<string>("SUMMARY"); }
             set { Properties.Set("SUMMARY", value); }
         }
 
 #if DATACONTRACT
         [DataMember(Order = 8)]
 #endif
-        virtual public Trigger Trigger
+        virtual public ITrigger Trigger
         {
-            get { return Properties.Get<Trigger>("TRIGGER"); }
+            get { return Properties.Get<ITrigger>("TRIGGER"); }
             set { Properties.Set("TRIGGER", value); }
         }
 
@@ -135,9 +126,9 @@ namespace DDay.iCal
             Initialize();
         }
 
-        private void Initialize()
+        void Initialize()
         {
-            this.Name = ComponentFactory.ALARM;
+            Name = Components.ALARM;
             Occurrences = new List<AlarmOccurrence>();
         }
 
@@ -149,54 +140,53 @@ namespace DDay.iCal
         /// Gets a list of alarm occurrences for the given recurring component, <paramref name="rc"/>
         /// that occur between <paramref name="FromDate"/> and <paramref name="ToDate"/>.
         /// </summary>
-        virtual public List<AlarmOccurrence> GetOccurrences(RecurringComponent rc, iCalDateTime FromDate, iCalDateTime ToDate)
+        virtual public IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, IDateTime FromDate, IDateTime ToDate)
         {
             Occurrences.Clear();
 
-            // If the trigger is relative, it can recur right along with
-            // the recurring items, otherwise, it happens once and
-            // only once (at a precise time).
-            if (Trigger.IsRelative)
+            if (Trigger != null)
             {
-                // Ensure that "FromDate" has already been set
-                if (FromDate == null)
-                    FromDate = rc.Start.Copy<iCalDateTime>();
-
-                Duration d = null;
-                foreach (Occurrence o in rc.GetOccurrences(FromDate, ToDate))
+                // If the trigger is relative, it can recur right along with
+                // the recurring items, otherwise, it happens once and
+                // only once (at a precise time).
+                if (Trigger.IsRelative)
                 {
-                    iCalDateTime dt = o.Period.StartTime;
-                    if (Trigger.Related == Trigger.TriggerRelation.End)
+                    // Ensure that "FromDate" has already been set
+                    if (FromDate == null)
+                        FromDate = rc.Start.Copy<IDateTime>();
+
+                    TimeSpan d = default(TimeSpan);
+                    foreach (Occurrence o in rc.GetOccurrences(FromDate, ToDate))
                     {
-                        if (o.Period.EndTime != null)
+                        IDateTime dt = o.Period.StartTime;
+                        if (Trigger.Related == TriggerRelation.End)
                         {
-                            dt = o.Period.EndTime;
-                            if (d == null)
-                                d = o.Period.Duration;
+                            if (o.Period.EndTime != null)
+                            {
+                                dt = o.Period.EndTime;
+                                if (d == default(TimeSpan))
+                                    d = o.Period.Duration;
+                            }
+                            // Use the "last-found" duration as a reference point
+                            else if (d != default(TimeSpan))
+                                dt = o.Period.StartTime.Add(d);
+                            else throw new ArgumentException("Alarm trigger is relative to the END of the occurrence; however, the occurence has no discernible end.");
                         }
-                        // Use the "last-found" duration as a reference point
-                        else if (d != null)
-                            dt = o.Period.StartTime + d;
-                        else throw new ArgumentException("Alarm trigger is relative to the END of the occurrence; however, the occurence has no discernible end.");
+
+                        Occurrences.Add(new AlarmOccurrence(this, dt.Add(Trigger.Duration.Value), rc));
                     }
-
-                    Occurrences.Add(new AlarmOccurrence(this, dt + Trigger.Duration, rc));
                 }
-            }
-            else
-            {
-                Occurrences.Add(
-                    new AlarmOccurrence(
-                        this,
-                        Trigger.DateTime.Copy<iCalDateTime>(),
-                        rc
-                    )
-                );
-            }
+                else
+                {
+                    IDateTime dt = Trigger.DateTime.Copy<IDateTime>();
+                    dt.AssociatedObject = this;
+                    Occurrences.Add(new AlarmOccurrence(this, dt, rc));
+                }
 
-            // If a REPEAT and DURATION value were specified,
-            // then handle those repetitions here.
-            AddRepeatedItems();
+                // If a REPEAT and DURATION value were specified,
+                // then handle those repetitions here.
+                AddRepeatedItems();
+            }
 
             return Occurrences;
         }
@@ -207,9 +197,8 @@ namespace DDay.iCal
         /// is null, all triggered alarms will be returned.
         /// </summary>
         /// <param name="Start">The earliest date/time to poll trigerred alarms for.</param>
-        /// <param name="End">The latest date/time to poll trigerred alarms for.</param>
         /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
-        public List<AlarmOccurrence> Poll(iCalDateTime Start, iCalDateTime End)
+        virtual public IList<AlarmOccurrence> Poll(IDateTime Start, IDateTime End)
         {
             List<AlarmOccurrence> Results = new List<AlarmOccurrence>();
 
@@ -240,15 +229,26 @@ namespace DDay.iCal
                 for (int i = 0; i < len; i++)
                 {
                     AlarmOccurrence ao = Occurrences[i];
-                    iCalDateTime alarmTime = ao.DateTime.Copy<iCalDateTime>();
+                    IDateTime alarmTime = ao.DateTime.Copy<IDateTime>();
 
                     for (int j = 0; j < Repeat; j++)
                     {
-                        alarmTime += Duration;
-                        Occurrences.Add(new AlarmOccurrence(this, alarmTime.Copy<iCalDateTime>(), ao.Component));
+                        alarmTime = alarmTime.Add(Duration);
+                        Occurrences.Add(new AlarmOccurrence(this, alarmTime.Copy<IDateTime>(), ao.Component));
                     }
                 }
             }
+        }
+
+        #endregion
+
+        #region Overrides
+
+        protected override void OnDeserializing(StreamingContext context)
+        {
+            base.OnDeserializing(context);
+
+            Initialize();
         }
 
         #endregion

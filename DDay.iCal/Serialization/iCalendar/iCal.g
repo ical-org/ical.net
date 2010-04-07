@@ -6,13 +6,18 @@
 //
 header
 {
-    using System.Text;   
+    using System.Text;
+    using System.IO;
+    using System.Collections.Generic;  
+    using System.Runtime.Serialization;
+    using DDay.iCal.Serialization;
+    using DDay.iCal.Serialization.iCalendar;
 }
 
 options
 {    
 	language = "CSharp";
-	namespace = "DDay.iCal.Serialization";
+	namespace = "DDay.iCal";
 }
 
 //
@@ -26,68 +31,223 @@ options
 }
 
 // iCalendar object
-icalobject[ISerializationContext ctx] returns [iCalendarCollection iCalendars = new iCalendarCollection();]
+icalendar[ISerializationContext ctx] returns [IICalendarCollection iCalendars = new iCalendarCollection()]
 :	
-	{ IICalendar iCal = null; }
+{
+	SerializationUtil.OnDeserializing(iCalendars);
+
+	IICalendar iCal = null;
+	ISerializationSettings settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
+}
     (
-		(CRLF)* BEGIN COLON VCALENDAR (CRLF)* {iCal = (IICalendar)Activator.CreateInstance(iCalendarType);}
+		(CRLF)* BEGIN COLON VCALENDAR (CRLF)*
+		{			
+			ISerializationProcessor<IICalendar> processor = ctx.GetService(typeof(ISerializationProcessor<IICalendar>)) as ISerializationProcessor<IICalendar>;
+			
+			// Do some pre-processing on the calendar:
+			if (processor != null)
+				processor.PreDeserialization(iCal);
+		
+			iCal = (IICalendar)SerializationUtil.GetUninitializedObject(settings.iCalendarType);			
+			SerializationUtil.OnDeserializing(iCal);
+			
+			// Push the iCalendar onto the serialization context stack
+			ctx.Push(iCal);
+		}
 		icalbody[ctx, iCal]
 		END COLON VCALENDAR (CRLF)*
 		{
+			// Do some final processing on the calendar:
+			if (processor != null)
+				processor.PostDeserialization(iCal);
+		
+			// Notify that the iCalendar has been loaded
 			iCal.OnLoaded();
 			iCalendars.Add(iCal);
+			
+			SerializationUtil.OnDeserialized(iCal);
+			
+			// Pop the iCalendar off the serialization context stack
+			ctx.Pop();
 		}
 	)* 	
+	{
+		SerializationUtil.OnDeserialized(iCalendars);
+	}
 ;
 
 // iCalendar body
 // NOTE: We allow intermixture of calendar components and calendar properties
-icalbody[ISerializationContext ctx, IICalendar iCal]: (calprop[iCal] | components[ctx, iCal])*;
+icalbody[ISerializationContext ctx, IICalendar iCal]:
+{
+	ISerializerFactory sf = ctx.GetService(typeof(ISerializerFactory)) as ISerializerFactory;
+	ICalendarComponentFactory cf = ctx.GetService(typeof(ICalendarComponentFactory)) as ICalendarComponentFactory;
+	ICalendarComponent c;
+	ICalendarProperty p;
+}
+(
+	property[ctx, iCal] |
+	component[ctx, sf, cf, iCal]
+)*;
 
 // iCalendar components
-components[ISerializationContext ctx, ICalendarObject o]: (component[ctx, o])+;
-component[ISerializationContext ctx, ICalendarObject o] returns [ICalendarComponent c = null;]:
+component[
+	ISerializationContext ctx,
+	ISerializerFactory sf,
+	ICalendarComponentFactory cf,
+	ICalendarObject o
+] returns [ICalendarComponent c = null;]:
 BEGIN COLON
 (
-	n:IANA_TOKEN { c = o.Calendar.ComponentFactory.Create(n.getText().ToLower()); } | 
-	m:X_NAME { c = o.Calendar.ComponentFactory.Create(m.getText().ToLower()); }
+	n:IANA_TOKEN { c = cf.Build(n.getText().ToLower(), true); } | 
+	m:X_NAME { c = cf.Build(m.getText().ToLower(), true); }
 )
 {
-	// Add the component as a child immediately, in case
-	// embedded components need to access this component,
-	// or the iCalendar itself.
-	o.AddChild(c); 
+	ISerializationProcessor<ICalendarComponent> processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarComponent>)) as ISerializationProcessor<ICalendarComponent>;
+	// Do some pre-processing on the component
+	if (processor != null)
+		processor.PreDeserialization(c);
+
+	SerializationUtil.OnDeserializing(c);
+
+	// Push the component onto the serialization context stack
+	ctx.Push(c);
+
+	if (o != null)
+	{
+		// Add the component as a child immediately, in case
+		// embedded components need to access this component,
+		// or the iCalendar itself.
+		o.AddChild(c); 
+	}
 	
 	c.Line = n.getLine();
 	c.Column = n.getColumn();
 }
 (CRLF)*
-(contentline[ctx, c])*
-END COLON IANA_TOKEN (CRLF)* { c.OnLoaded(); };
+(
+	// Components can have properties, and other embedded components.
+	// (i.e. VALARM)	
+	property[ctx, c] |
+	component[ctx, sf, cf, c]
+)*
+END COLON IANA_TOKEN (CRLF)*
+{	
+	// Do some final processing on the component
+	if (processor != null)
+		processor.PostDeserialization(c);
 
-// iCalendar Properties
-calprop[ISerializationContext ctx, IICalendar iCal]: x_prop[ctx, iCal] | iana_prop[ctx, iCal];
+	// Notify that the component has been loaded
+	c.OnLoaded();
+	
+	SerializationUtil.OnDeserialized(c);
+	
+	// Pop the component off the serialization context stack
+	ctx.Pop();
+};
 
+//
+// Properties
+//
 // NOTE: RFC5545 states that for properties, the value should be a "text" value, not a "value" value.
 // Outlook 2007, however, uses a "value" value in some instances, and will require this for proper
 // parsing.  NOTE: Fixes bug #1874977 - X-MS-OLK-WKHRDAYS won't parse correctly
 //
-// Properties:
-iana_prop[ISerializationContext ctx, ICalendarPropertyListContainer c] {CalendarProperty p; string v;}: n:IANA_TOKEN { p = new CalendarProperty(n.getLine(), n.getColumn()); } (SEMICOLON (param[p] | xparam[p]))* COLON v=value {p.Name = n.getText().ToUpper(); p.Value = v; c.Properties.Add(p); } (CRLF)*;
-x_prop[ISerializationContext ctx, ICalendarPropertyListContainer c] {CalendarProperty p; string v;}: n:X_NAME { p = new CalendarProperty(n.getLine(), n.getColumn()); } (SEMICOLON (param[p] | xparam[p]))* COLON v=value {p.Name = n.getText().ToUpper(); p.Value = v; c.Properties.Add(p); } (CRLF)*;
-
-// Content Lines
-contentline[ISerializationContext ctx, ICalendarPropertyListContainer c]:
+property[
+	ISerializationContext ctx,	
+	ICalendarPropertyListContainer c
+] returns [ICalendarProperty p = null;]
+{
+	string v;
+}:
 (
-	iana_prop[c] |
-	x_prop[c] |
-	component[ctx, c] // Allow for embedded components here (i.e. VALARM)
-); 
+	n:IANA_TOKEN
+	{
+		p = new CalendarProperty(n.getLine(), n.getColumn());
+		p.Name = n.getText().ToUpper();
+	} |
+	m:X_NAME
+	{
+		p = new CalendarProperty(m.getLine(), m.getColumn());
+		p.Name = m.getText().ToUpper();
+	}
+)
+{
+	ISerializationProcessor<ICalendarProperty> processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarProperty>)) as ISerializationProcessor<ICalendarProperty>;
+	// Do some pre-processing on the property
+	if (processor != null)
+		processor.PreDeserialization(p);
 
-// Parameters:
-param[ICalendarProperty prop] {CalendarParameter p; string n; string v;}: n=param_name {p = new CalendarParameter(n);} EQUAL v=param_value {p.Values.Add(v);} (COMMA v=param_value {p.Values.Add(v);})* { prop.Parameters.Add(p); };
-xparam[ICalendarProperty prop] { CalendarParameter p; string v;}: n:X_NAME {p = new CalendarParameter(n.getText());} EQUAL v=param_value {p.Values.Add(v);} (COMMA v=param_value {p.Values.Add(v);})* { prop.Parameters.Add(p); };
-param_name returns [string n = string.Empty;]: i:IANA_TOKEN {n = i.getText();};
+	if (c != null)
+	{
+		// Add the property to the container, as the parent object(s)
+		// may be needed during deserialization.
+		c.Properties.Add(p);
+	}
+
+	// Push the property onto the serialization context stack
+	ctx.Push(p);
+	IStringSerializer dataMapSerializer = new DataMapSerializer(ctx);
+}
+(SEMICOLON parameter[ctx, p])* COLON
+v=value
+{
+	// Deserialize the value of the property
+	// into a concrete iCalendar data type,
+	// or string value.
+	p.Value = dataMapSerializer.Deserialize(new StringReader(v));
+} (CRLF)*
+{
+	// Do some final processing on the property:
+	if (processor != null)
+		processor.PostDeserialization(p);
+
+	// Notify that the property has been loaded
+	p.OnLoaded();
+	
+	// Pop the property off the serialization context stack
+	ctx.Pop();
+};
+
+//
+// Parameters
+//
+parameter[
+	ISerializationContext ctx,
+	ICalendarParameterListContainer container
+] returns [ICalendarParameter p = null;]
+{
+	string v;
+	List<string> values = new List<string>();
+}:
+(
+	n:IANA_TOKEN { p = new CalendarParameter(n.getText()); } |
+	m:X_NAME { p = new CalendarParameter(m.getText()); }
+)
+{
+	// Push the parameter onto the serialization context stack
+	ctx.Push(p);
+}
+EQUAL v=param_value { values.Add(v); }
+(
+	COMMA v=param_value { values.Add(v); }
+)*
+{
+	p.Values = values.ToArray();
+	
+	if (container != null)
+	{
+		container.Parameters.Add(p);
+	}
+	
+	// Notify that the parameter has been loaded
+	p.OnLoaded();
+	
+	// Pop the parameter off the serialization context stack
+	ctx.Pop();
+};
+
+// Value productions
 param_value returns [string v = string.Empty;]: v=paramtext | v=quoted_string;
 paramtext returns [string s = null;] {StringBuilder sb = new StringBuilder(); string c;}: (c=safe_char {sb.Append(c);})* { s = sb.ToString(); };
 value returns [string v = string.Empty] {StringBuilder sb = new StringBuilder(); string c;}: (c=value_char {sb.Append(c);})* { v = sb.ToString(); };

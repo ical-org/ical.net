@@ -4,9 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Configuration;
-using DDay.iCal;
-using DDay.iCal;
-using DDay.iCal.Serialization;
 using System.Runtime.Serialization;
 
 namespace DDay.iCal
@@ -19,20 +16,14 @@ namespace DDay.iCal
     [DataContract(Name = "Todo", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public class Todo : RecurringComponent
+    public class Todo : 
+        RecurringComponent,
+        ITodo
     {
         #region Private Fields
 
-        private iCalDateTime m_Completed;
-        private iCalDateTime m_Due;
-        private Duration m_Duration;
-        private Geo m_Geo;
-        private bool m_Loaded = false;
-        private Text m_Location;
-        private Integer m_Percent_Complete;
-        private TextCollection[] m_Resources;
-        private TodoStatus m_Status;
-
+        TodoEvaluator m_Evaluator;
+        
         #endregion
 
         #region Public Properties
@@ -40,16 +31,16 @@ namespace DDay.iCal
         /// <summary>
         /// The date/time the todo was completed.
         /// </summary>
-        virtual public iCalDateTime Completed
+        virtual public IDateTime Completed
         {
-            get { return Properties.Get<iCalDateTime>("COMPLETED"); }
+            get { return Properties.Get<IDateTime>("COMPLETED"); }
             set { Properties.Set("COMPLETED", value); }
         }
 
         /// <summary>
         /// The start date/time of the todo item.
         /// </summary>
-        public override iCalDateTime DTStart
+        public override IDateTime DTStart
         {
             get
             {
@@ -65,9 +56,9 @@ namespace DDay.iCal
         /// <summary>
         /// The due date of the todo item.
         /// </summary>
-        virtual public iCalDateTime Due
+        virtual public IDateTime Due
         {
-            get { return Properties.Get<iCalDateTime>("DUE"); }
+            get { return Properties.Get<IDateTime>("DUE"); }
             set
             {
                 Properties.Set("DUE", value);
@@ -88,9 +79,9 @@ namespace DDay.iCal
         //
         // Therefore, Duration is not serialized, as Due
         // should always be extrapolated from the duration.
-        virtual public Duration Duration
+        virtual public TimeSpan Duration
         {
-            get { return Properties.Get<Duration>("DURATION"); }
+            get { return Properties.Get<TimeSpan>("DURATION"); }
             set
             {
                 Properties.Set("DURATION", value);
@@ -98,27 +89,27 @@ namespace DDay.iCal
             }
         }
 
-        virtual public Geo Geo
+        virtual public IGeographicLocation GeographicLocation
         {
-            get { return Properties.Get<Geo>("GEO"); }
+            get { return Properties.Get<IGeographicLocation>("GEO"); }
             set { Properties.Set("GEO", value); }
         }
 
-        virtual public Text Location
+        virtual public string Location
         {
-            get { return Properties.Get<Text>("LOCATION"); }
+            get { return Properties.Get<string>("LOCATION"); }
             set { Properties.Set("LOCATION", value); }
         }
 
-        virtual public Integer PercentComplete
+        virtual public int PercentComplete
         {
-            get { return Properties.Get<Integer>("PERCENT-COMPLETE"); }
+            get { return Properties.Get<int>("PERCENT-COMPLETE"); }
             set { Properties.Set("PERCENT-COMPLETE", value); }
         }
 
-        virtual public TextCollection[] Resources
+        virtual public IList<string> Resources
         {
-            get { return Properties.Get<TextCollection[]>("RESOURCES"); }
+            get { return Properties.GetList<string>("RESOURCES"); }
             set { Properties.Set("RESOURCES", value); }
         }
 
@@ -139,7 +130,7 @@ namespace DDay.iCal
                     if (IsLoaded)
                     {
                         if (value == TodoStatus.Completed)
-                            Completed = DateTime.Now;
+                            Completed = iCalDateTime.Now;
                         else Completed = null;
                     }
 
@@ -159,7 +150,9 @@ namespace DDay.iCal
 
         private void Initialize()
         {
-            this.Name = ComponentFactory.TODO;
+            this.Name = Components.TODO;
+
+            m_Evaluator = new TodoEvaluator(this);
         }
 
         #endregion
@@ -178,20 +171,21 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="DateTime">The date and time to test.</param>
         /// <returns>True if the todo item has been completed</returns>
-        virtual public bool IsCompleted(iCalDateTime currDt)
+        virtual public bool IsCompleted(IDateTime currDt)
         {
             if (Status == TodoStatus.Completed)
             {
                 if (Completed == null ||
-                    Completed > currDt)
+                    Completed.GreaterThan(currDt))
                     return true;
 
-                EvaluateToPreviousOccurrence(Completed, currDt);
+                // Evaluate to the previous occurrence.
+                m_Evaluator.EvaluateToPreviousOccurrence(Completed, currDt);
 
-                foreach (Period p in Periods)
+                foreach (Period p in m_Evaluator.Periods)
                 {
-                    if (p.StartTime > Completed && // The item has recurred after it was completed
-                        currDt >= p.StartTime)     // and the current date is after or on the recurrence date.
+                    if (p.StartTime.GreaterThan(Completed) && // The item has recurred after it was completed
+                        currDt.GreaterThanOrEqual(p.StartTime))     // and the current date is after or on the recurrence date.
                         return false;
                 }
                 return true;
@@ -205,11 +199,11 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="currDt">The date and time to test.</param>
         /// <returns>True if the item is Active as of <paramref name="currDt"/>, False otherwise.</returns>
-        virtual public bool IsActive(iCalDateTime currDt)
+        virtual public bool IsActive(IDateTime currDt)
         {
             if (DTStart == null)
                 return !IsCompleted(currDt) && !IsCancelled();
-            else if (currDt >= DTStart)
+            else if (currDt.GreaterThanOrEqual(DTStart))
                 return !IsCompleted(currDt) && !IsCancelled();
             else return false;
         }
@@ -223,123 +217,44 @@ namespace DDay.iCal
             return Status == TodoStatus.Cancelled;
         }
 
-        virtual public void AddResource(string resource)
-        {
-            Text r = resource;
-            if (Resources != null)
-            {
-                foreach (TextCollection tc in Resources)
-                {
-                    if (tc.Values.Contains(r))
-                    {
-                        return;
-                    }
-                }
-            }
-
-            if (Resources == null ||
-                Resources.Length == 0)
-            {
-                Resources = new TextCollection[1] { new TextCollection(resource) };
-                Resources[0].Name = "RESOURCES";
-            }
-            else
-            {
-                Resources[0].Values.Add(r);
-            }
-        }
-
-        virtual public void RemoveResource(string resource)
-        {
-            if (Resources != null)
-            {
-                Text r = resource;
-                foreach (TextCollection tc in Resources)
-                {
-                    if (tc.Values.Contains(r))
-                    {
-                        tc.Values.Remove(r);
-                        return;
-                    }
-                }
-            }
-        }
-
         #endregion
 
         #region Overrides
 
-        internal override List<Period> Evaluate(iCalDateTime FromDate, iCalDateTime ToDate)
+        protected override bool EvaluationIncludesReferenceDate
         {
-            // TODO items can only recur if a start date is specified
-            if (DTStart != null)
+            get
             {
-                // Add the todo itself, before recurrence rules are evaluated
-                Period startPeriod = new Period(DTStart);
-                if (DTStart != null &&
-                    !Periods.Contains(startPeriod))
-                    Periods.Add(startPeriod);
-
-                base.Evaluate(FromDate, ToDate);
-
-                // Ensure each period has a duration
-                foreach (Period p in Periods)
-                {
-                    if (p.EndTime == null)
-                    {
-                        p.Duration = Duration;
-                        if (p.Duration != null)
-                            p.EndTime = p.StartTime + Duration;
-                        else p.EndTime = p.StartTime;
-                    }
-                    // Ensure the Kind of time is consistent with DTStart
-                    else p.EndTime.IsUniversalTime = DTStart.IsUniversalTime;
-                }
-
-                return Periods;
+                return true;
             }
-            return new List<Period>();
+        }
+
+        public override object GetService(Type serviceType)
+        {
+            if (typeof(IEvaluator).IsAssignableFrom(serviceType))
+                return m_Evaluator;
+            return null;
+        }
+
+        protected override void OnDeserializing(StreamingContext context)
+        {
+            base.OnDeserializing(context);
+
+            Initialize();
         }
 
         #endregion
 
         #region Private Methods
 
-        private void EvaluateToPreviousOccurrence(iCalDateTime completedDate, iCalDateTime currDt)
-        {
-            iCalDateTime beginningDate = completedDate.Copy<iCalDateTime>();
-            if (RRule != null) foreach (RecurrencePattern rrule in RRule) DetermineStartingRecurrence(rrule, ref beginningDate);
-            if (RDate != null) foreach (RecurrenceDates rdate in RDate) DetermineStartingRecurrence(rdate, ref beginningDate);
-            if (ExRule != null) foreach (RecurrencePattern exrule in ExRule) DetermineStartingRecurrence(exrule, ref beginningDate);
-            if (ExDate != null) foreach (RecurrenceDates exdate in ExDate) DetermineStartingRecurrence(exdate, ref beginningDate);
-
-            Evaluate(beginningDate, currDt);
-        }
-
-        private void DetermineStartingRecurrence(RecurrenceDates rdate, ref iCalDateTime dt)
-        {
-            foreach (Period p in rdate.Periods)
-            {
-                if (p.StartTime < dt)
-                    dt = p.StartTime.Copy<iCalDateTime>();
-            }
-        }
-
-        private void DetermineStartingRecurrence(RecurrencePattern recur, ref iCalDateTime dt)
-        {
-            if (recur.Count != int.MinValue)
-                dt = DTStart.Copy<iCalDateTime>();
-            else recur.IncrementDate(ref dt, -recur.Interval);
-        }
-
         private void ExtrapolateTimes()
         {
-            if (Due == null && DTStart != null && Duration != null)
-                Due = DTStart + Duration;
-            else if (Duration == null && DTStart != null && Due != null)
-                Duration = Due - DTStart;
-            else if (DTStart == null && Duration != null && Due != null)
-                DTStart = Due - Duration;            
+            if (Due == null && DTStart != null && Duration != default(TimeSpan))
+                Due = DTStart.Add(Duration);
+            else if (Duration == default(TimeSpan) && DTStart != null && Due != null)
+                Duration = Due.Subtract(DTStart);
+            else if (DTStart == null && Duration != default(TimeSpan) && Due != null)
+                DTStart = Due.Subtract(Duration);
         }
 
         #endregion

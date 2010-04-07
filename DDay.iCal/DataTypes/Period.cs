@@ -3,101 +3,55 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
-using DDay.iCal.Serialization;
+using DDay.iCal.Serialization.iCalendar;
 
 namespace DDay.iCal
 {
     /// <summary>
     /// Represents an iCalendar period of time.
-    /// </summary>
-    [DebuggerDisplay("Period ( {StartTime} - {EndTime} )")]
+    /// </summary>    
 #if DATACONTRACT
     [DataContract(Name = "Period", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
-    public class Period : iCalDataType, IComparable
+    public class Period :
+        EncodableDataType,
+        IPeriod
     {
         #region Private Fields
 
-        private iCalDateTime m_StartTime = new iCalDateTime();        
-        private iCalDateTime m_EndTime;        
-        private Duration m_Duration;
-        private bool m_MatchesDateOnly = false;
+        private IDateTime m_StartTime;
+        private IDateTime m_EndTime;        
+        private TimeSpan m_Duration;
+        private bool m_MatchesDateOnly;
 
-        #endregion
-
-        #region Public Properties
-
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
-        public iCalDateTime StartTime
-        {
-            get { return m_StartTime; }
-            set { m_StartTime = value; }
-        }
-
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
-        public iCalDateTime EndTime
-        {
-            get { return m_EndTime; }
-            set { m_EndTime = value; }
-        }
-
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
-        public Duration Duration
-        {
-            get { return m_Duration; }
-            set { m_Duration = value; }
-        }
-        
-        /// <summary>
-        /// When true, comparisons between this and other <see cref="Period"/>
-        /// objects are matched against the date only, and
-        /// not the date-time combination.
-        /// </summary>
-#if DATACONTRACT
-        [DataMember(Order = 4)]
-#endif
-        public bool MatchesDateOnly
-        {
-            get { return m_MatchesDateOnly; }
-            set { m_MatchesDateOnly = value; }
-        }
-
-        #endregion
+        #endregion        
 
         #region Constructors
 
-        public Period() { }
-        public Period(iCalDateTime occurs) : this(occurs, null) { }
-        public Period(iCalDateTime start, iCalDateTime end)
-            : this()
+        public Period()
         {
-            StartTime = start.Copy<iCalDateTime>();
+        }
+
+        public Period(IDateTime occurs) : this(occurs, default(TimeSpan)) { }
+        public Period(IDateTime start, IDateTime end) : this()
+        {
+            StartTime = start;
             if (end != null)
             {
-                EndTime = end.Copy<iCalDateTime>();
-                Duration = new Duration(end.Value - start.Value);
-            }            
+                EndTime = end;
+                Duration = end.Subtract(start);
+            }
         }
-        public Period(iCalDateTime start, TimeSpan duration)
+        public Period(IDateTime start, TimeSpan duration)
             : this()
         {
-            StartTime = start.Copy<iCalDateTime>();
-            if (duration != TimeSpan.MinValue)
+            StartTime = start;
+            if (duration != default(TimeSpan))
             {
-                Duration = new Duration(duration);
-                EndTime = start + duration;
-            }            
-        }
-        public Period(string value) : this()
-        {
-            CopyFrom((Period)Parse(value));
+                Duration = duration;
+                EndTime = start.Add(duration);
+            }
         }
 
         #endregion
@@ -106,9 +60,9 @@ namespace DDay.iCal
         
         public override bool Equals(object obj)
         {
-            if (obj is Period)
+            if (obj is IPeriod)
             {
-                Period p = (Period)obj;
+                IPeriod p = (IPeriod)obj;
                 if (MatchesDateOnly || p.MatchesDateOnly)
                 {
                     return
@@ -116,7 +70,7 @@ namespace DDay.iCal
                         (
                             EndTime == null ||
                             p.EndTime == null ||
-                            EndTime.Value.Date == p.EndTime.Value.Date
+                            EndTime.Value.Date.Equals(p.EndTime.Value.Date)
                         );
                 }
                 else
@@ -138,66 +92,113 @@ namespace DDay.iCal
             return StartTime.GetHashCode() ^ EndTime.GetHashCode();
         }
 
-        public override void CopyFrom(ICopyable obj)
+        public override string ToString()
         {
-            base.CopyFrom(obj);
-            if (obj is Period)
-            {
-                Period p = (Period)obj;
-                StartTime = p.StartTime;
-                EndTime = p.EndTime;
-                Duration = p.Duration;
-            }
-            base.CopyFrom(obj);
+            PeriodSerializer periodSerializer = new PeriodSerializer();
+            return periodSerializer.SerializeToString(this);
         }
 
-        public override bool TryParse(string value, ref ICalendarDataType obj)
+        #endregion
+
+        #region Private Methods
+
+        private void ExtrapolateTimes()
         {
-            Period p = (Period)obj;
+            if (StartTime == null && StartTime != null && Duration != default(TimeSpan))
+                EndTime = StartTime.Add(Duration);
+            else if (Duration == default(TimeSpan) && StartTime != null && EndTime != null)
+                Duration = EndTime.Subtract(StartTime);
+            else if (StartTime == null && Duration != default(TimeSpan) && EndTime != null)
+                StartTime = EndTime.Subtract(Duration);
+        }
 
-            string[] values = value.Split('/');
-            if (values.Length != 2)
-                return false;
+        #endregion
 
-            p.StartTime = new iCalDateTime();
-            p.EndTime = new iCalDateTime();
-            p.Duration = new Duration();
+        #region IPeriod Members
 
-            ICalendarDataType st = p.StartTime;
-            ICalendarDataType et = p.EndTime;
-            ICalendarDataType d = p.Duration;
+#if DATACONTRACT
+        [DataMember(Order = 1)]
+#endif
+        virtual public IDateTime StartTime
+        {
+            get { return m_StartTime; }
+            set
+            {                
+                m_StartTime = value;
+                ExtrapolateTimes();
+            }
+        }
 
-            bool retVal = p.StartTime.TryParse(values[0], ref st) &&
-                (
-                    p.EndTime.TryParse(values[1], ref et) ||
-                    p.Duration.TryParse(values[1], ref d)
-                );
+#if DATACONTRACT
+        [DataMember(Order = 2)]
+#endif
+        virtual public IDateTime EndTime
+        {
+            get { return m_EndTime; }
+            set
+            {
+                m_EndTime = value;
+                ExtrapolateTimes();
+            }
+        }
 
-            // Fill in missing values
-            if (!p.EndTime.HasDate)            
-                p.EndTime = p.StartTime + p.Duration;            
-            else if (p.Duration.Value.Ticks == 0)
-                p.Duration = new Duration(p.EndTime.Value - p.StartTime.Value);
+#if DATACONTRACT
+        [DataMember(Order = 3)]
+#endif
+        virtual public TimeSpan Duration
+        {
+            get { return m_Duration; }
+            set
+            {
+                if (!object.Equals(m_Duration, value))
+                {
+                    m_Duration = value;
+                    ExtrapolateTimes();
+                }
+            }
+        }
 
-            return retVal;
+        /// <summary>
+        /// When true, comparisons between this and other <see cref="Period"/>
+        /// objects are matched against the date only, and
+        /// not the date-time combination.
+        /// </summary>
+#if DATACONTRACT
+        [DataMember(Order = 4)]
+#endif
+        virtual public bool MatchesDateOnly
+        {
+            get { return m_MatchesDateOnly; }
+            set { m_MatchesDateOnly = value; }
+        }
+
+        virtual public bool Contains(IDateTime dt)
+        {
+            if (dt != null &&
+                StartTime != null &&
+                StartTime.LessThanOrEqual(dt))
+            {
+                if (EndTime == null || EndTime.GreaterThanOrEqual(dt))
+                    return true;
+            }
+            return false;
         }
 
         #endregion
 
         #region IComparable Members
 
-        public int CompareTo(object obj)
+        public int CompareTo(IPeriod p)
         {
-            if (obj is Period)
-            {
-                if (Equals(obj))
-                    return 0;
-                else if (StartTime < ((Period)obj).StartTime)
-                    return -1;
-                else if (StartTime >= ((Period)obj).StartTime)
-                    return 1;
-            }
-            throw new ArgumentException("obj must be a Period type");
+            if (p == null)
+                throw new ArgumentNullException("p");
+            else if (Equals(p))
+                return 0;
+            else if (StartTime.LessThan(p.StartTime))
+                return -1;
+            else if (StartTime.GreaterThanOrEqual(p.StartTime))
+                return 1;
+            throw new Exception("An error occurred while comparing Period values.");
         }
 
         #endregion

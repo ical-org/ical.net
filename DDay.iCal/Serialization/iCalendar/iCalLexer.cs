@@ -1,8 +1,13 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalLexer.cs"$
 
-    using System.Text;   
+    using System.Text;
+    using System.IO;
+    using System.Collections.Generic;  
+    using System.Runtime.Serialization;
+    using DDay.iCal.Serialization;
+    using DDay.iCal.Serialization.iCalendar;
 
-namespace DDay.iCal.Serialization
+namespace DDay.iCal
 {
 	// Generate header specific to lexer CSharp file
 	using System;
@@ -667,7 +672,7 @@ tryAgain:
 		_ttype = IANA_TOKEN;
 		
 		{ // ( ... )+
-			int _cnt97=0;
+			int _cnt82=0;
 			for (;;)
 			{
 				switch ( cached_LA1 )
@@ -716,12 +721,12 @@ tryAgain:
 					}
 				else
 				{
-					if (_cnt97 >= 1) { goto _loop97_breakloop; } else { throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());; }
+					if (_cnt82 >= 1) { goto _loop82_breakloop; } else { throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());; }
 				}
 				break; }
-				_cnt97++;
+				_cnt82++;
 			}
-_loop97_breakloop:			;
+_loop82_breakloop:			;
 		}    // ( ... )+
 		
 		string s = text.ToString(_begin, text.Length-_begin);

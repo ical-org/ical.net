@@ -4,10 +4,13 @@ using System.Text;
 
 namespace DDay.iCal
 {
-    public interface ICalendarProperty :
-        ICalendarValueObject,
+    public interface ICalendarProperty :        
         ICalendarParameterListContainer,
-        IKeyedObject<string>
+        ICalendarObject,
+        IKeyedObject<string>        
     {
-    }
+        event EventHandler<ValueChangedEventArgs> ValueChanged;
+
+        object Value { get; set; }
+    }    
 }

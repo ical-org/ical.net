@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using DDay.iCal;
 using System.Runtime.Serialization;
+using System.Diagnostics;
 
 namespace DDay.iCal
 {
@@ -26,16 +26,18 @@ namespace DDay.iCal
     /// There may be other, custom X-properties applied to the calendar,
     /// and X-properties may be applied to calendar components.
     /// </remarks>
+    [DebuggerDisplay("{Name}:{Value}")]
 #if DATACONTRACT
     [DataContract(Name = "CalendarProperty", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
 #endif
     [Serializable]
     public class CalendarProperty : 
-        CalendarValueObject,
+        CalendarObject,
         ICalendarProperty
     {
         #region Private Fields
 
+        private object m_Value;        
         private ICalendarParameterList m_Parameters;
 
         #endregion
@@ -76,8 +78,10 @@ namespace DDay.iCal
             Initialize();
         }
 
-        public CalendarProperty(string name, string value) : base(name, value)
+        public CalendarProperty(string name, object value) : base(name)
         {
+            Initialize();
+            m_Value = value;
         }
 
         public CalendarProperty(int line, int col) : base(line, col)
@@ -87,28 +91,11 @@ namespace DDay.iCal
 
         private void Initialize()
         {
-            m_Parameters = new CalendarParameterList();
+            m_Parameters = new CalendarParameterList(this);
         }
 
         #endregion
-
-        #region Overrides
-
-        public override void CopyFrom(ICopyable obj)
-        {
-            base.CopyFrom(obj);
-
-            ICalendarProperty p = obj as ICalendarProperty;
-            if (p != null)
-            {               
-                // Copy parameters
-                foreach (ICalendarParameter parm in p.Parameters)
-                    AddChild(parm.Copy<ICalendarParameter>());
-            }
-        }
-
-        #endregion
-
+               
         #region Public Methods
 
         /// <summary>
@@ -130,15 +117,68 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Private Methods
+        #region Overrides
 
-#if DATACONTRACT
-        [OnDeserializing]
-        private void OnDeserializing(StreamingContext context)
+        protected override void OnDeserializing(StreamingContext context)
         {
+            base.OnDeserializing(context);
+
             Initialize();
         }
-#endif
+
+        public override void CopyFrom(ICopyable obj)
+        {
+            base.CopyFrom(obj);
+
+            ICalendarProperty p = obj as ICalendarProperty;
+            if (p != null)
+            {
+                if (p.Value is ICopyable)
+                    Value = ((ICopyable)p.Value).Copy<object>();
+                else
+                    Value = p.Value;
+
+                // Copy parameters
+                foreach (ICalendarParameter parm in p.Parameters)
+                    AddChild(parm.Copy<ICalendarParameter>());
+            }
+        }
+
+        #endregion
+
+        #region ICalendarProperty Members
+
+        public event EventHandler<ValueChangedEventArgs> ValueChanged;
+
+        protected void OnValueChanged(object oldValue, object newValue)
+        {
+            if (ValueChanged != null)
+                ValueChanged(this, new ValueChangedEventArgs(oldValue, newValue));
+        }
+
+        virtual public object Value
+        {
+            get { return m_Value; }
+            set 
+            {
+                if (!object.Equals(m_Value, value))
+                {
+                    object old = m_Value;
+                    m_Value = value;
+
+                    // Deassociate the old value
+                    if (old != null)
+                        AssociationUtil.DeassociateItem(old);
+
+                    // Associate the new value
+                    if (m_Value != null)
+                        AssociationUtil.AssociateItem(m_Value, Parent);
+
+                    // Notify that the value changed
+                    OnValueChanged(old, m_Value);
+                }
+            }
+        }
 
         #endregion
 

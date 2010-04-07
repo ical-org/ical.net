@@ -2,12 +2,10 @@ using System;
 using System.Data;
 using System.Collections;
 using System.Configuration;
-using DDay.iCal;
-using DDay.iCal;
-using DDay.iCal.Serialization;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace DDay.iCal
 {
@@ -20,7 +18,7 @@ namespace DDay.iCal
     [Serializable]
     public partial class iCalTimeZone : 
         CalendarComponent,
-        ICalendarTimeZone
+        ITimeZone
     {
         #region Static Public Methods
 
@@ -30,11 +28,11 @@ namespace DDay.iCal
             return FromSystemTimeZone(System.TimeZoneInfo.Local);
         }
 
-        static private void PopulateiCalTimeZoneInfo(iCalTimeZoneInfo tzi, System.TimeZoneInfo.TransitionTime transition, int year)
+        static private void PopulateiCalTimeZoneInfo(ITimeZoneInfo tzi, System.TimeZoneInfo.TransitionTime transition, int year)
         {
             Calendar c = CultureInfo.CurrentCulture.Calendar;
 
-            RecurrencePattern recurrence = new RecurrencePattern();
+            RecurrencePattern recurrence = new RecurrencePattern();            
             recurrence.Frequency = FrequencyType.Yearly;
             recurrence.ByMonth.Add(transition.Month);
             recurrence.ByHour.Add(transition.TimeOfDay.Hour);
@@ -46,7 +44,7 @@ namespace DDay.iCal
             }
             else
             {
-                recurrence.ByDay.Add(new DaySpecifier(transition.DayOfWeek));
+                recurrence.ByDay.Add(new WeekDay(transition.DayOfWeek));
                 int daysInMonth = c.GetDaysInMonth(year, transition.Month);
                 int offset = (transition.Week * 7) - 7;
                 if (offset + 7 > daysInMonth)
@@ -57,7 +55,7 @@ namespace DDay.iCal
                     recurrence.ByMonthDay.Add(i + offset + (int)transition.DayOfWeek);
             }
 
-            tzi.AddRecurrencePattern(recurrence);
+            tzi.RecurrenceRules.Add(recurrence);
         }
 
         public static iCalTimeZone FromSystemTimeZone(System.TimeZoneInfo tzinfo)
@@ -73,11 +71,11 @@ namespace DDay.iCal
 
                 var dday_tzinfo_standard = new DDay.iCal.iCalTimeZoneInfo();
                 dday_tzinfo_standard.Name = "STANDARD";
-                dday_tzinfo_standard.Start = adjustmentRule.DateStart;
+                dday_tzinfo_standard.Start = new iCalDateTime(adjustmentRule.DateStart);
                 if (dday_tzinfo_standard.Start.Year < 1800)
                     dday_tzinfo_standard.Start = dday_tzinfo_standard.Start.AddYears(1800 - dday_tzinfo_standard.Start.Year);
-                dday_tzinfo_standard.TZOffsetFrom = new DDay.iCal.UTC_Offset(utcOffset + delta);
-                dday_tzinfo_standard.TZOffsetTo = new DDay.iCal.UTC_Offset(utcOffset);
+                dday_tzinfo_standard.OffsetFrom = new UTCOffset(utcOffset + delta);
+                dday_tzinfo_standard.OffsetTo = new UTCOffset(utcOffset);
                 PopulateiCalTimeZoneInfo(dday_tzinfo_standard, adjustmentRule.DaylightTransitionEnd, adjustmentRule.DateStart.Year);
 
                 // Add the "standard" time rule to the time zone
@@ -85,11 +83,11 @@ namespace DDay.iCal
 
                 var dday_tzinfo_daylight = new DDay.iCal.iCalTimeZoneInfo();
                 dday_tzinfo_daylight.Name = "DAYLIGHT";
-                dday_tzinfo_daylight.Start = adjustmentRule.DateStart;
+                dday_tzinfo_daylight.Start = new iCalDateTime(adjustmentRule.DateStart);
                 if (dday_tzinfo_daylight.Start.Year < 1800)
                     dday_tzinfo_daylight.Start = dday_tzinfo_daylight.Start.AddYears(1800 - dday_tzinfo_daylight.Start.Year);
-                dday_tzinfo_daylight.TZOffsetFrom = new DDay.iCal.UTC_Offset(utcOffset);
-                dday_tzinfo_daylight.TZOffsetTo = new DDay.iCal.UTC_Offset(utcOffset + delta);
+                dday_tzinfo_daylight.OffsetFrom = new UTCOffset(utcOffset);
+                dday_tzinfo_daylight.OffsetTo = new UTCOffset(utcOffset + delta);
                 PopulateiCalTimeZoneInfo(dday_tzinfo_daylight, adjustmentRule.DaylightTransitionStart, adjustmentRule.DateStart.Year);
 
                 // Add the "daylight" time rule to the time zone
@@ -104,12 +102,10 @@ namespace DDay.iCal
 
         #region Private Fields
 
-        private TZID m_TZID;
-        private iCalDateTime m_Last_Modified;
-        private URI m_TZUrl;
-        private IList<iCalTimeZoneInfo> m_TimeZoneInfos = new List<iCalTimeZoneInfo>();
-
-        #endregion        
+        TimeZoneEvaluator m_Evaluator;
+        IFilteredCalendarObjectList<ITimeZoneInfo> m_TimeZoneInfos;
+        
+        #endregion
 
         #region Constructors
 
@@ -120,53 +116,81 @@ namespace DDay.iCal
 
         private void Initialize()
         {
-            this.Name = ComponentFactory.TIMEZONE;
+            this.Name = Components.TIMEZONE;
+
+            m_Evaluator = new TimeZoneEvaluator(this);
+            m_TimeZoneInfos = new FilteredCalendarObjectList<ITimeZoneInfo>(this);
+            ChildAdded += new EventHandler<ObjectEventArgs<ICalendarObject>>(iCalTimeZone_ChildAdded);
+            ChildRemoved += new EventHandler<ObjectEventArgs<ICalendarObject>>(iCalTimeZone_ChildRemoved);
+        }        
+
+        #endregion
+
+        #region Event Handlers
+
+        void iCalTimeZone_ChildRemoved(object sender, ObjectEventArgs<ICalendarObject> e)
+        {
+            m_Evaluator.Clear();
+        }
+
+        void iCalTimeZone_ChildAdded(object sender, ObjectEventArgs<ICalendarObject> e)
+        {
+            m_Evaluator.Clear();
         }
 
         #endregion
 
         #region Overrides
 
-        public override void AddChild(ICalendarObject child)
+        protected override void OnDeserializing(StreamingContext context)
         {
-            if (child is iCalTimeZoneInfo)
-                TimeZoneInfos.Add((iCalTimeZoneInfo)child);
+            base.OnDeserializing(context);
 
-            base.AddChild(child);
+            Initialize();
         }
 
-        public override void RemoveChild(ICalendarObject child)
+        public override object GetService(Type serviceType)
         {
-            if (child is iCalTimeZoneInfo &&
-                TimeZoneInfos.Contains((iCalTimeZoneInfo)child))
-                TimeZoneInfos.Remove((iCalTimeZoneInfo)child);
-
-            base.RemoveChild(child);
+            if (typeof(IEvaluator).IsAssignableFrom(serviceType))
+                return m_Evaluator;
+            return null;
         }
 
         #endregion
 
-        #region ICalendarTimeZone Members
+        #region ITimeZone Members
 
-        public TZID TZID
+        virtual public string ID
         {
-            get { return Properties.Get<TZID>("TZID"); }
+            get { return Properties.Get<string>("TZID"); }
             set { Properties.Set("TZID", value); }
         }
 
-        public iCalDateTime LastModified
+        virtual public string TZID
         {
-            get { return Properties.Get<iCalDateTime>("LAST-MODIFIED"); }
+            get { return ID; }
+            set { ID = value; }
+        }
+
+        virtual public IDateTime LastModified
+        {
+            get { return Properties.Get<IDateTime>("LAST-MODIFIED"); }
             set { Properties.Set("LAST-MODIFIED", value); }
         }
 
-        public URI TZUrl
+        virtual public Uri Url
         {
-            get { return Properties.Get<URI>("TZURL"); }
+            get { return Properties.Get<Uri>("TZURL"); }
             set { Properties.Set("TZURL", value); }
         }
+        
+        virtual public Uri TZUrl
+        {
+            get { return Url; }
+            set { Url = value; }
+        }
 
-        public IList<iCalTimeZoneInfo> TimeZoneInfos
+        virtual public IFilteredCalendarObjectList<ITimeZoneInfo> TimeZoneInfos
         {
             get { return m_TimeZoneInfos; }
             set { m_TimeZoneInfos = value; }
@@ -179,71 +203,16 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The iCalDateTime object for which to retrieve the iCalTimeZoneInfo.</param>
         /// <returns>A TimeZoneInfo object for the specified iCalDateTime</returns>
-        public iCalTimeZoneInfo GetTimeZoneInfo(iCalDateTime dt)
+        virtual public TimeZoneObservance? GetTimeZoneObservance(IDateTime dt)
         {
-            iCalTimeZoneInfo tzi = null;
-
-            TimeSpan mostRecent = TimeSpan.MaxValue;
-            foreach (iCalTimeZoneInfo curr in TimeZoneInfos)
+            Trace.TraceInformation("Getting time zone for '" + dt + "'...", "Time Zone");
+            foreach (ITimeZoneInfo tzi in TimeZoneInfos)
             {
-                DateTime Start = new DateTime(dt.Year - 1, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-                DateTime End = new DateTime(dt.Year + 1, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-                DateTime dtUTC = dt.Value;
-                dtUTC = DateTime.SpecifyKind(dtUTC, DateTimeKind.Utc);
-
-                // Time zones must include an effective start date/time.
-                if (curr.Start == null)
-                    continue;
-
-                // Make a copy of the current start value
-                iCalDateTime currStart = curr.Start.Copy<iCalDateTime>();
-                if (curr.TZOffsetTo != null)
-                {
-                    int mult = curr.TZOffsetTo.Positive ? -1 : 1;
-                    dtUTC = dtUTC.AddHours(curr.TZOffsetTo.Hours * mult);
-                    dtUTC = dtUTC.AddMinutes(curr.TZOffsetTo.Minutes * mult);
-                    dtUTC = dtUTC.AddSeconds(curr.TZOffsetTo.Seconds * mult);
-                    // Offset the current start value to match our offset time...
-                    currStart = currStart.AddHours(curr.TZOffsetTo.Hours * mult);
-                    currStart = currStart.AddMinutes(curr.TZOffsetTo.Minutes * mult);
-                    currStart = currStart.AddSeconds(curr.TZOffsetTo.Seconds * mult);
-                }
-
-                // Determine the UTC occurrences of the Time Zone changes                
-                if (curr.EvalStart == null ||
-                    curr.EvalEnd == null ||
-                    dtUTC < curr.EvalStart.Value ||
-                    dtUTC > curr.EvalEnd.Value)
-                    curr.Evaluate(Start, End);
-
-                // If the date is past the last allowed date, then don't consider it!
-                // NOTE: if this time zone ends as another begins, then there can
-                // be up to a 1 year period of "unhandled" time unless we add a year
-                // to the "Until" date.  For example, one time period "ends" in Oct. 2006
-                // (the last occurrence), and the next begins in Apr. 2007.  If we didn't
-                // add 1 year to the "Until" time, the 6 month period between Oct. 2006
-                // and Apr. 2007 would be unhandled.
-
-                // FIXME: this thinking may be flawed. We should try to find some other way...
-                //
-                //if (curr.Until != null &&
-                //    dtUTC > curr.Until.AddYears(1))
-                //    continue;
-
-                foreach (Period p in curr.Periods)
-                {
-                    TimeSpan currentSpan = dtUTC - p.StartTime;
-                    if (currentSpan.Ticks >= 0 &&
-                        currentSpan.Ticks < mostRecent.Ticks)
-                    {
-                        mostRecent = currentSpan;
-                        tzi = curr;
-                    }
-                }
+                TimeZoneObservance? observance = tzi.GetObservance(dt);
+                if (observance != null && observance.HasValue)
+                    return observance;
             }
-
-            return tzi;
+            return null;
         }
 
         #endregion

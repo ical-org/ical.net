@@ -1,9 +1,6 @@
 using System;
 using System.Collections;
 using System.Text;
-using DDay.iCal;
-using DDay.iCal;
-using DDay.iCal.Serialization;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -29,186 +26,148 @@ namespace DDay.iCal
 
         #region Constructors
 
-        public UniqueComponent() : base() { }
-        public UniqueComponent(string name) : base(name) { }        
-
-        #endregion
-
-        #region Private Fields
-
-        private Binary[] _Attach;
-        private Attendee[] _Attendee;
-        private TextCollection[] _Categories;
-        private Text _Class;
-        private Text[] _Comment;
-        private Text[] _Contact;
-        private iCalDateTime _Created;
-        private Text _Description;
-        private iCalDateTime _DTStamp;
-        private iCalDateTime _Last_Modified;
-        private Organizer _Organizer;
-        private Integer _Priority;
-        private Text[] _Related_To;
-        private RequestStatus[] _Request_Status;
-        private Integer _Sequence = 0;
-        private Text _Summary;
-        private URI _Url;
-        
-        #endregion
-
-        #region IUniqueComponent Members
-        
-        [field: NonSerialized]
-        public event UIDChangedEventHandler UIDChanged;
-
-        virtual public Text UID
+        public UniqueComponent()
         {
-            get
-            {
-                return Properties.Get<Text>("UID");
-            }
-            set
-            {
-                if (!object.Equals(UID, value))
-                {
-                    Text oldUID = UID;
+            Initialize();
+            CreateInitialize();
+        }
+        public UniqueComponent(string name) : base(name)
+        {
+            Initialize();
+            CreateInitialize();            
+        }
 
-                    Properties.Set("UID", value);
-                    OnUIDChanged(oldUID, value);
-                }
-            }
+        private void CreateInitialize()
+        {
+            // Create a new UID for the component
+            UID = new UIDFactory().Build();
+
+            // Here, we don't simply set to DateTime.Now because DateTime.Now contains milliseconds, and
+            // the iCalendar standard doesn't care at all about milliseconds.  Therefore, when comparing
+            // two calendars, one generated, and one loaded from file, they may be functionally identical,
+            // but be determined to be different due to millisecond differences.
+            DateTime now = DateTime.Now;
+            Created = new iCalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+            DTStamp = Created.Copy<IDateTime>();
+        }
+
+        private void Initialize()
+        {
+            Properties.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarProperty>>(Properties_ItemAdded);
+            Properties.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarProperty>>(Properties_ItemRemoved);
         }
 
         #endregion
 
         #region Public Properties
 
-        virtual public Binary[] Attach
+        virtual public IList<IAttachment> Attachments
         {
-            get { return Properties.Get<Binary[]>("ATTACH"); }
-            set { Properties.Set("ATTACH", value); }
+            get { return Properties.GetList<IAttachment>("ATTACH"); }
+            set { Properties.SetList("ATTACH", value); }
         }
 
-        virtual public Attendee[] Attendee
+        virtual public IList<IAttendee> Attendees
         {
-            get { return Properties.Get<Attendee[]>("ATTENDEE"); }
-            set { Properties.Set("ATTENDEE", value); }
+            get { return Properties.GetList<IAttendee>("ATTENDEE"); }
+            set { Properties.SetList("ATTENDEE", value); }
         }
 
-        virtual public TextCollection[] Categories
+        virtual public IList<string> Categories
         {
-            get { return Properties.Get<TextCollection[]>("CATEGORIES"); }
-            set { Properties.Set("CATEGORIES", value); }
+            get { return Properties.GetList<string>("CATEGORIES"); }
+            set { Properties.SetList("CATEGORIES", value); }            
         }
 
-        virtual public Text Class
+        virtual public string Class
         {
-            get { return Properties.Get<Text>("CLASS"); }
+            get { return Properties.Get<string>("CLASS"); }
             set { Properties.Set("CLASS", value); }
         }
 
-        virtual public Text[] Comment
+        virtual public IList<string> Comments
         {
-            get { return Properties.Get<Text[]>("COMMENT"); }
-            set { Properties.Set("COMMENT", value); }
+            get { return Properties.GetList<string>("COMMENT"); }
+            set { Properties.SetList("COMMENT", value); }
         }
 
-        virtual public Text[] Contact
+        virtual public IList<string> Contacts
         {
-            get { return Properties.Get<Text[]>("CONTACT"); }
-            set { Properties.Set("CONTACT", value); }
+            get { return Properties.GetList<string>("CONTACT"); }
+            set { Properties.SetList("CONTACT", value); }
         }
 
-        virtual public iCalDateTime Created
+        virtual public IDateTime Created
         {
-            get { return Properties.Get<iCalDateTime>("CREATED"); }
+            get { return Properties.Get<IDateTime>("CREATED"); }
             set { Properties.Set("CREATED", value); }
         }
 
-        virtual public Text Description
+        virtual public string Description
         {
-            get { return Properties.Get<Text>("DESCRIPTION"); }
+            get { return Properties.Get<string>("DESCRIPTION"); }
             set { Properties.Set("DESCRIPTION", value); }
         }
 
-        virtual public iCalDateTime DTStamp
+        virtual public IDateTime DTStamp
         {
-            get { return Properties.Get<iCalDateTime>("DTSTAMP"); }
+            get { return Properties.Get<IDateTime>("DTSTAMP"); }
             set { Properties.Set("DTSTAMP", value); }
         }
 
-        virtual public iCalDateTime LastModified
+        virtual public IDateTime LastModified
         {
-            get { return Properties.Get<iCalDateTime>("LAST-MODIFIED"); }
+            get { return Properties.Get<IDateTime>("LAST-MODIFIED"); }
             set { Properties.Set("LAST-MODIFIED", value); }
         }
 
-        virtual public Organizer Organizer
+        virtual public IOrganizer Organizer
         {
-            get { return Properties.Get<Organizer>("ORGANIZER"); }
+            get { return Properties.Get<IOrganizer>("ORGANIZER"); }
             set { Properties.Set("ORGANIZER", value); }
         }
 
-        virtual public Integer Priority
+        virtual public int Priority
         {
-            get { return Properties.Get<Integer>("PRIORITY"); }
+            get { return Properties.Get<int>("PRIORITY"); }
             set { Properties.Set("PRIORITY", value); }
         }
 
-        virtual public Text[] RelatedTo
+        virtual public IList<string> RelatedComponents
         {
-            get { return Properties.Get<Text[]>("RELATED-TO"); }
-            set { Properties.Set("RELATED-TO", value); }
+            get { return Properties.GetList<string>("RELATED-TO"); }
+            set { Properties.SetList("RELATED-TO", value); }
         }
 
-        virtual public RequestStatus[] RequestStatus
+        virtual public IList<IRequestStatus> RequestStatuses
         {
-            get { return Properties.Get<RequestStatus[]>("REQUEST-STATUS"); }
-            set { Properties.Set("REQUEST-STATUS", value); }
+            get { return Properties.GetList<IRequestStatus>("REQUEST-STATUS"); }
+            set { Properties.SetList("REQUEST-STATUS", value); }
         }
 
-        virtual public Integer Sequence
+        virtual public int Sequence
         {
-            get { return Properties.Get<Integer>("SEQUENCE"); }
+            get { return Properties.Get<int>("SEQUENCE"); }
             set { Properties.Set("SEQUENCE", value); }
         }
 
-        virtual public Text Summary
+        virtual public string Summary
         {
-            get { return Properties.Get<Text>("SUMMARY"); }
+            get { return Properties.Get<string>("SUMMARY"); }
             set { Properties.Set("SUMMARY", value); }
         }
 
-        virtual public URI Url
+        virtual public Uri Url
         {
-            get { return Properties.Get<URI>("URL"); }
+            get { return Properties.Get<Uri>("URL"); }
             set { Properties.Set("URL", value); }
-        }
-
-        virtual public string Category
-        {
-            get
-            {
-                if (Categories != null && Categories.Length > 0 && Categories[0].Values.Count > 0)
-                    return Categories[0].Values[0];
-                return null;
-            }
-            set
-            {
-                if (!object.Equals(Category, value))
-                {
-                    if (Categories == null || Categories.Length == 0)
-                        Categories = new TextCollection[1];
-                    Categories[0] = new TextCollection(value);
-                }                
-            }
         }
 
         #endregion
 
         #region Protected Methods
 
-        protected void OnUIDChanged(Text oldUID, Text newUID)
+        protected void OnUIDChanged(string oldUID, string newUID)
         {
             if (UIDChanged != null)
                 UIDChanged(this, oldUID, newUID);
@@ -216,247 +175,48 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Public Methods
+        #region Event Handlers
 
-        virtual public void AddAttachment(byte[] data)
+        void Properties_ItemRemoved(object sender, ObjectEventArgs<ICalendarProperty> e)
         {
-            Binary binary = new Binary();
-            binary.Data = data;
-
-            AddAttachment(binary);
-        }
-
-        virtual public void AddAttachment(Binary binary)
-        {
-            if (Attach == null)
+            if (e.Object != null &&
+                e.Object.Name != null &&
+                string.Equals(e.Object.Name.ToUpper(), "UID"))
             {
-                Attach = new Binary[] { binary };
-            }
-            else
-            {
-                Binary[] attachments = Attach;
-                Attach = new Binary[Attach.Length + 1];
-                attachments.CopyTo(Attach, 0);
-                Attach[Attach.Length - 1] = binary;
+                OnUIDChanged(e.Object.Value != null ? e.Object.Value.ToString() : null, null);
+                e.Object.ValueChanged -= new EventHandler<ValueChangedEventArgs>(UID_ValueChanged);
             }
         }
 
-        virtual public void RemoveAttachment(Binary binary)
+        void Properties_ItemAdded(object sender, ObjectEventArgs<ICalendarProperty> e)
         {
-            if (Attach == null)
-                return;
-            else
+            if (e.Object != null &&
+                e.Object.Name != null &&
+                string.Equals(e.Object.Name.ToUpper(), "UID"))
             {
-                int index = Array.IndexOf<Binary>(Attach, binary);
-                if (index >= 0)
-                {
-                    Binary[] attachments = new Binary[Attach.Length - 1];
-                    Array.Copy(Attach, 0, attachments, 0, index);
-                    Array.Copy(Attach, index + 1, attachments, index, attachments.Length - index);
-                    Attach = attachments;
-                }
+                OnUIDChanged(null, e.Object.Value != null ? e.Object.Value.ToString() : null);
+                e.Object.ValueChanged += new EventHandler<ValueChangedEventArgs>(UID_ValueChanged);
             }
         }
 
-
-        virtual public void AddAttendee(Attendee attendee)
+        void UID_ValueChanged(object sender, ValueChangedEventArgs e)
         {
-            List<Attendee> attendees = new List<Attendee>();
-            if (Attendee != null)
-                attendees.AddRange(Attendee);
-
-            attendees.Add(attendee);
-            Attendee = attendees.ToArray();
-        }
-
-        virtual public void RemoveAttendee(Attendee attendee)
-        {
-            List<Attendee> attendees = new List<Attendee>();
-            if (Attendee != null)
-                attendees.AddRange(Attendee);
-
-            attendees.Remove(attendee);
-            if (attendees.Count > 0)
-                Attendee = attendees.ToArray();
-            else Attendee = null;
-        }
-
-        virtual public void AddCategory(string categoryName)
-        {
-            Text cn = categoryName;
-            if (Categories != null)
-            {
-                foreach (TextCollection tc in Categories)
-                {
-                    if (tc.Values.Contains(cn))
-                    {
-                        return;
-                    }
-                }
-            }
-
-            if (Categories == null ||
-                Categories.Length == 0)
-            {
-                Categories = new TextCollection[1] { new TextCollection(categoryName) };
-                Categories[0].Name = "CATEGORIES";
-            }
-            else
-            {
-                Categories[0].Values.Add(cn);
-            }
-        }
-
-        virtual public void RemoveCategory(string categoryName)
-        {
-            if (Categories != null)
-            {
-                Text cn = categoryName;
-                foreach (TextCollection tc in Categories)
-                {
-                    if (tc.Values.Contains(cn))
-                    {
-                        tc.Values.Remove(cn);
-                        return;
-                    }
-                }
-            }
-        }
-
-        virtual public void AddComment(string comment)
-        {
-            if (Comment == null)
-                Comment = new Text[] { comment };
-            else
-            {
-                Text[] comments = Comment;
-                Comment = new Text[Comment.Length + 1];
-                comments.CopyTo(Comment, 0);
-                Comment[Comment.Length - 1] = comment;                
-            }
-        }
-
-        virtual public void RemoveComment(string comment)
-        {
-            if (Comment == null)
-                return;
-            else
-            {
-                int index = Array.IndexOf<Text>(Comment, comment);
-                if (index >= 0)
-                {
-                    Text[] comments = new Text[Comment.Length - 1];
-                    Array.Copy(Comment, 0, comments, 0, index);
-                    Array.Copy(Comment, index + 1, comments, index, comments.Length - index);
-                    Comment = comments;
-                }
-            }
-        }
-
-        virtual public void AddContact(string contact)
-        {
-            AddContact(contact, null);            
-        }
-
-        virtual public void AddContact(string contact, Uri alternateTextRepresentation)
-        {
-            if (Contact == null)
-            {
-                Contact = new Text[] { contact };
-                if (alternateTextRepresentation != null)
-                    Contact[0].AddParameter("ALTREP", alternateTextRepresentation.OriginalString);
-            }
-            else
-            {
-                Text[] contacts = Contact;
-                Contact = new Text[Contact.Length + 1];
-                contacts.CopyTo(Contact, 0);
-                Contact[Contact.Length - 1] = contact;
-                if (alternateTextRepresentation != null)
-                    Contact[Contact.Length - 1].AddParameter("ALTREP", alternateTextRepresentation.OriginalString);
-            }
-        }
-
-        virtual public void RemoveContact(string contact)
-        {
-            if (Comment == null)
-                return;
-            else
-            {
-                int index = Array.IndexOf<Text>(Contact, contact);
-                if (index >= 0)
-                {
-                    Text[] contacts = new Text[Contact.Length - 1];
-                    Array.Copy(Contact, 0, contacts, 0, index);
-                    Array.Copy(Contact, index + 1, contacts, index, contacts.Length - index);
-                    Contact = contacts;
-                }
-            }
-        }
-
-        virtual public void AddRelatedTo(string uid)
-        {
-            AddRelatedTo(uid, null);
-        }
-
-        virtual public void AddRelatedTo(string uid, string relationshipType)
-        {
-            Text text = uid;
-            if (relationshipType != null)
-                text.AddParameter(new CalendarParameter("RELTYPE", relationshipType));
-
-            if (RelatedTo == null)
-            {
-                RelatedTo = new Text[] { text };
-            }
-            else
-            {
-                Text[] related_to = RelatedTo;
-                RelatedTo = new Text[RelatedTo.Length + 1];
-                related_to.CopyTo(RelatedTo, 0);
-                RelatedTo[RelatedTo.Length - 1] = text;                
-            }
-        }
-
-        virtual public void RemoveRelatedTo(string uid)
-        {
-            if (RelatedTo == null)
-                return;
-            else
-            {
-                int index = -1;
-                for (int i = 0; i < RelatedTo.Length; i++)
-                {
-                    if (RelatedTo[i].Value.Equals(uid) ||
-                        RelatedTo[i].Value.Equals("<" + uid + ">"))
-                    {
-                        index = i;
-                        break;
-                    }
-                }
-                
-                if (index >= 0)
-                {
-                    Text[] related_to = new Text[RelatedTo.Length - 1];
-                    Array.Copy(RelatedTo, 0, related_to, 0, index);
-                    Array.Copy(RelatedTo, index + 1, related_to, index, related_to.Length - index);
-                    RelatedTo = related_to;
-                }
-            }
-        }
-
-        #endregion
-
-        #region Static Public Methods
-
-        static public Text NewUID()
-        {
-            return Guid.NewGuid().ToString();
+            OnUIDChanged(
+                e.OldValue != null ? e.OldValue.ToString() : null,
+                e.NewValue != null ? e.NewValue.ToString() : null
+            );
         }
 
         #endregion
 
         #region Overrides
+
+        protected override void OnDeserializing(StreamingContext context)
+        {
+            base.OnDeserializing(context);
+
+            Initialize();
+        }
 
         public override bool Equals(object obj)
         {
@@ -478,20 +238,17 @@ namespace DDay.iCal
             return base.GetHashCode();
         }
 
-        public override void CreateInitialize()
+        #endregion
+
+        #region IUniqueComponent Members
+
+        [field: NonSerialized]
+        public event UIDChangedEventHandler UIDChanged;
+
+        virtual public string UID
         {
-            base.CreateInitialize();
-
-            // Create a new UID for the component
-            UID = UniqueComponent.NewUID();
-
-            // Here, we don't simply set to DateTime.Now because DateTime.Now contains milliseconds, and
-            // the iCalendar standard doesn't care at all about milliseconds.  Therefore, when comparing
-            // two calendars, one generated, and one loaded from file, they may be functionally identical,
-            // but be determined to be different due to millisecond differences.
-            DateTime now = DateTime.Now;
-            Created = new iCalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
-            DTStamp = Created.Copy<iCalDateTime>();
+            get { return Properties.Get<string>("UID"); }
+            set { Properties.Set("UID", value); }
         }
 
         #endregion
