@@ -40,7 +40,7 @@ namespace DDay.iCal
             // If the frequency is weekly, and
             // no day of week is specified, use
             // the original date's day of week.
-            // NOTE: fixes RRULE7 and RRULE8 handling
+            // NOTE: fixes WeeklyCount1() and WeeklyUntil1() handling
             if (r.Frequency == FrequencyType.Weekly &&
                 r.ByDay.Count == 0)
                 r.ByDay.Add(new WeekDay(referenceDate.DayOfWeek));
@@ -58,8 +58,8 @@ namespace DDay.iCal
                 r.ByHour.Add(referenceDate.Hour);
             // If neither BYDAY, BYMONTHDAY, or BYYEARDAY is specified,
             // default to the current day of month
-            // NOTE: fixes RRULE23 handling, added BYYEARDAY exclusion
-            // to fix RRULE25 handling
+            // NOTE: fixes YearlyByMonth1() handling, added BYYEARDAY exclusion
+            // to fix YearlyCountByYearDay1() handling
             if (r.Frequency > FrequencyType.Weekly &&
                 r.ByMonthDay.Count == 0 &&
                 r.ByYearDay.Count == 0 &&
@@ -67,7 +67,7 @@ namespace DDay.iCal
                 r.ByMonthDay.Add(referenceDate.Day);
             // If neither BYMONTH nor BYYEARDAY is specified, default to
             // the current month
-            // NOTE: fixes RRULE25 handling
+            // NOTE: fixes YearlyCountByYearDay1() handling
             if (r.Frequency > FrequencyType.Monthly &&
                 r.ByYearDay.Count == 0 &&
                 r.ByDay.Count == 0 &&

@@ -201,6 +201,21 @@ namespace DDay.iCal.Test
             SerializeTest("Attachment3.ics", typeof(iCalendarSerializer));
         }
 
+        [Test]
+        public void Attachment4()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Attachment4.ics")[0];
+            ProgramTest.TestCal(iCal);
+
+            IEvent evt = iCal.Events["uuid1153170430406"];
+            Assert.IsNotNull(evt, "Event could not be accessed by UID");
+
+            IAttachment a = evt.Attachments[0];
+            a.LoadDataFromUri();
+            Assert.IsNotNull(a.Data);
+            Assert.AreNotEqual(0, a.Data.Length);
+        }
+
         /// <summary>
         /// Tests that Lotus Notes-style properties are properly handled.
         /// https://sourceforge.net/tracker/?func=detail&aid=2033495&group_id=187422&atid=921236
@@ -329,6 +344,41 @@ namespace DDay.iCal.Test
         public void Encoding1()
         {
             SerializeTest("Encoding1.ics", typeof(iCalendarSerializer));
+        }
+
+        [Test]
+        public void Encoding2()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Encoding2.ics")[0];
+            ProgramTest.TestCal(iCal);
+            IEvent evt = iCal.Events[0];
+
+            Assert.AreEqual(
+"This is a test to try out base64 encoding without being too large.\r\n" +
+"This is a test to try out base64 encoding without being too large.\r\n" +
+"This is a test to try out base64 encoding without being too large.\r\n" +
+"This is a test to try out base64 encoding without being too large.\r\n" +
+"This is a test to try out base64 encoding without being too large.\r\n" +
+"This is a test to try out base64 encoding without being too large.\r\n" +
+"This is a test to try out base64 encoding without being too large.\r\n" +
+"This is a test to try out base64 encoding without being too large.\r\n" +
+"This is a test to try out base64 encoding without being too large.\r\n" +
+"This is a test to try out base64 encoding without being too large.\r\n" +
+"This is a test to try out base64 encoding without being too large.\r\n" +
+"This is a test to try out base64 encoding without being too large.",
+                evt.Attachments[0].Value,
+                "Attached value does not match.");
+        }
+
+        [Test]
+        public void Encoding3()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Encoding3.ics")[0];
+            ProgramTest.TestCal(iCal);
+            IEvent evt = iCal.Events[0];
+
+            Assert.AreEqual("uuid1153170430406", evt.UID, "UID should be 'uuid1153170430406'; it is " + evt.UID);
+            Assert.AreEqual(1, evt.Sequence, "SEQUENCE should be 1; it is " + evt.Sequence);
         }
 
         [Test, Category("Serialization")]
@@ -463,16 +513,82 @@ END:VCALENDAR
         }
 
         [Test, Category("Serialization")]
+        public void Event8()
+        {
+            StringReader sr = new StringReader(@"BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Apple Computer\, Inc//iCal 1.0//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+CREATED:20070404T211714Z
+DTEND:20070407T010000Z
+DTSTAMP:20070404T211714Z
+DTSTART:20070406T230000Z
+DURATION:PT2H
+RRULE:FREQ=WEEKLY;UNTIL=20070801T070000Z;BYDAY=FR
+SUMMARY:Friday Meetings
+DTSTAMP:20040103T033800Z
+SEQUENCE:1
+UID:fd940618-45e2-4d19-b118-37fd7a8e3906
+END:VEVENT
+BEGIN:VEVENT
+CREATED:20070404T204310Z
+DTEND:20070416T030000Z
+DTSTAMP:20070404T204310Z
+DTSTART:20070414T200000Z
+DURATION:P1DT7H
+RRULE:FREQ=DAILY;COUNT=12;BYDAY=SA,SU
+SUMMARY:Weekend Yea!
+DTSTAMP:20040103T033800Z
+SEQUENCE:1
+UID:ebfbd3e3-cc1e-4a64-98eb-ced2598b3908
+END:VEVENT
+END:VCALENDAR
+");
+            IICalendar iCal = iCalendar.LoadFromStream(sr)[0];
+            Assert.IsTrue(iCal.Events.Count == 2, "There should be 2 events in the parsed calendar");
+            Assert.IsNotNull(iCal.Events["fd940618-45e2-4d19-b118-37fd7a8e3906"], "Event fd940618-45e2-4d19-b118-37fd7a8e3906 should exist in the calendar");
+            Assert.IsNotNull(iCal.Events["ebfbd3e3-cc1e-4a64-98eb-ced2598b3908"], "Event ebfbd3e3-cc1e-4a64-98eb-ced2598b3908 should exist in the calendar");
+        }
+
+        [Test, Category("Serialization")]
         public void Geo1()
         {
             SerializeTest("Geo1.ics", typeof(iCalendarSerializer));
+        }
+
+        [Test, Category("Serialization")]
+        public void Google1()
+        {
+            string tzid = "Europe/Berlin";
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/Serialization/Google1.ics")[0];
+            IEvent evt = iCal.Events["594oeajmftl3r9qlkb476rpr3c@google.com"];
+            Assert.IsNotNull(evt);
+
+            IDateTime dtStart = new iCalDateTime(2006, 12, 18, tzid);
+            IDateTime dtEnd = new iCalDateTime(2006, 12, 23, tzid);
+            IList<Occurrence> occurrences = iCal.GetOccurrences(dtStart, dtEnd);
+
+            iCalDateTime[] DateTimes = new iCalDateTime[]
+            {
+                new iCalDateTime(2006, 12, 18, 7, 0, 0, tzid),
+                new iCalDateTime(2006, 12, 19, 7, 0, 0, tzid),
+                new iCalDateTime(2006, 12, 20, 7, 0, 0, tzid),
+                new iCalDateTime(2006, 12, 21, 7, 0, 0, tzid),
+                new iCalDateTime(2006, 12, 22, 7, 0, 0, tzid)
+            };
+
+            for (int i = 0; i < DateTimes.Length; i++)
+                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur at " + DateTimes[i]);
+
+            Assert.AreEqual(DateTimes.Length, occurrences.Count, "There should be exactly " + DateTimes.Length + " occurrences; there were " + occurrences.Count);
         }
 
         /// <summary>
         /// Tests that a Google calendar is correctly loaded and parsed.
         /// </summary>
         [Test, Category("Serialization")]
-        public void Google1()
+        public void Google2()
         {
             IICalendar iCal = iCalendar.LoadFromUri(new Uri("http://www.google.com/calendar/ical/tvhot064q4p48frqdalgo3fb2k%40group.calendar.google.com/public/basic.ics"))[0];
             Assert.IsNotNull(iCal);
@@ -942,7 +1058,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         }
 
         [Test, Category("Serialization")]
-        public void USHOLIDAYS()
+        public void USHolidays()
         {
             SerializeTest("USHolidays.ics", typeof(iCalendarSerializer));
         }
@@ -986,6 +1102,12 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             IICalendar russia2 = iCalendar.LoadFromFile(Path.Combine(calendarPath, "Language3.ics"))[0];
 
             CompareCalendars(russia1, russia2);
+        }
+
+        [Test]
+        public void LANGUAGE4()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/Serialization/Language4.ics")[0];
         }
 
         /// <summary>

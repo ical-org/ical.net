@@ -78,7 +78,7 @@ namespace DDay.iCal
                     // and we increment the day until the week number matches our "goal" week number.
                     // So, if the current week number is 36, and our Interval is 2, then our goal
                     // week number is 38.
-                    // NOTE: fixes RRULE12 eval.
+                    // NOTE: fixes WeeklyUntilWkst2() eval.
                     int current = Calendar.GetWeekOfYear(old, System.Globalization.CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek),
                         lastLastYear = Calendar.GetWeekOfYear(new DateTime(old.Year - 1, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek),
                         last = Calendar.GetWeekOfYear(new DateTime(old.Year, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek),
