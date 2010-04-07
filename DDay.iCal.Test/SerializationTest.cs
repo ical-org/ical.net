@@ -249,7 +249,7 @@ namespace DDay.iCal.Test
         [Test, Category("Serialization")]
         public void Bug2148092()
         {
-            SerializeTest("Language5.ics", typeof(iCalendarSerializer));
+            SerializeTest("Bug2148092.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]

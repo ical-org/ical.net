@@ -30,7 +30,7 @@ namespace DDay.iCal.Serialization.iCalendar
                     ts.Hours == 0 &&
                     ts.Minutes == 0 &&
                     ts.Seconds == 0)
-                    sb.Append(Math.Round((double)ts.Days / 7) + "W");
+                    sb.Append(Math.Round(Math.Abs((double)ts.Days) / 7) + "W");
                 else
                 {
                     if (ts.Days != 0)
@@ -41,11 +41,11 @@ namespace DDay.iCal.Serialization.iCalendar
                     {
                         sb.Append("T");
                         if (ts.Hours != 0)
-                            sb.Append(ts.Hours + "H");
+                            sb.Append(Math.Abs(ts.Hours) + "H");
                         if (ts.Minutes != 0)
-                            sb.Append(ts.Minutes + "M");
+                            sb.Append(Math.Abs(ts.Minutes) + "M");
                         if (ts.Seconds != 0)
-                            sb.Append(ts.Seconds + "S");
+                            sb.Append(Math.Abs(ts.Seconds) + "S");
                     }
                 }
 
