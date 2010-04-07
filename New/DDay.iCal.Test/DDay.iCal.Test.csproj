@@ -128,16 +128,16 @@
     <None Include="Calendars\Alarm\ALARM7.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\General\Barça 2006 - 2007.ics">
+    <None Include="Calendars\Serialization\Language4.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\General\BASE64.ics">
+    <None Include="Calendars\Serialization\Encoding2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\General\BASE64_1.ics">
+    <None Include="Calendars\Serialization\Encoding3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\General\BINARY.ics">
+    <None Include="Calendars\Serialization\Attachment4.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Calendars\General\CATEGORIES.ics">
@@ -149,7 +149,7 @@
     <None Include="Calendars\General\GeographicLocation1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\General\GoogleCalendar.ics">
+    <None Include="Calendars\Serialization\Google1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Calendars\General\MERGE2.ics">
@@ -176,184 +176,184 @@
     <None Include="Calendars\Journal\JOURNAL2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE1.ics">
+    <None Include="Calendars\Recurrence\YearlyComplex1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE10.ics">
+    <None Include="Calendars\Recurrence\WeeklyUntilWkst1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE11.ics">
+    <None Include="Calendars\Recurrence\WeeklyCountWkst1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE12.ics">
+    <None Include="Calendars\Recurrence\WeeklyUntilWkst2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE13.ics">
+    <None Include="Calendars\Recurrence\WeeklyCountWkst2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE14.ics">
+    <None Include="Calendars\Recurrence\MonthlyCountByDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE15.ics">
+    <None Include="Calendars\Recurrence\MonthlyUntilByDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE16.ics">
+    <None Include="Calendars\Recurrence\MonthlyCountByDay2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE17.ics">
+    <None Include="Calendars\Recurrence\MonthlyCountByDay3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE18.ics">
+    <None Include="Calendars\Recurrence\ByMonthDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE19.ics">
+    <None Include="Calendars\Recurrence\MonthlyCountByMonthDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE2.ics">
+    <None Include="Calendars\Recurrence\DailyCount1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE20.ics">
+    <None Include="Calendars\Recurrence\MonthlyCountByMonthDay2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE21.ics">
+    <None Include="Calendars\Recurrence\MonthlyCountByMonthDay3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE22.ics">
+    <None Include="Calendars\Recurrence\MonthlyByDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE23.ics">
+    <None Include="Calendars\Recurrence\YearlyByMonth1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE24.ics">
+    <None Include="Calendars\Recurrence\YearlyCountByMonth1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE25.ics">
+    <None Include="Calendars\Recurrence\YearlyCountByYearDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE26.ics">
+    <None Include="Calendars\Recurrence\YearlyByDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE27.ics">
+    <None Include="Calendars\Recurrence\YearlyByWeekNo1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE28.ics">
+    <None Include="Calendars\Recurrence\YearlyByMonth2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE29.ics">
+    <None Include="Calendars\Recurrence\YearlyByMonth3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE3.ics">
+    <None Include="Calendars\Recurrence\DailyUntil1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE30.ics">
+    <None Include="Calendars\Recurrence\MonthlyByMonthDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE31.ics">
+    <None Include="Calendars\Recurrence\MonthlyByMonthDay2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE32.ics">
+    <None Include="Calendars\Recurrence\YearlyByMonthDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE33.ics">
+    <None Include="Calendars\Recurrence\MonthlyBySetPos1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE34.ics">
+    <None Include="Calendars\Recurrence\MonthlyBySetPos2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE35.ics">
+    <None Include="Calendars\Recurrence\HourlyUntil1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE36.ics">
+    <None Include="Calendars\Recurrence\MinutelyCount1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE37.ics">
+    <None Include="Calendars\Recurrence\MinutelyCount2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE38.ics">
+    <None Include="Calendars\Recurrence\DailyByHourMinute1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE39.ics">
+    <None Include="Calendars\Recurrence\MinutelyByHour1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE4.ics">
+    <None Include="Calendars\Recurrence\Daily1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE40.ics">
+    <None Include="Calendars\Recurrence\WeeklyCountWkst3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE41.ics">
+    <None Include="Calendars\Recurrence\WeeklyCountWkst4.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE42.ics">
+    <None Include="Calendars\Recurrence\Bug1741093.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE44.ics">
+    <None Include="Calendars\Recurrence\Secondly1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE45.ics">
+    <None Include="Calendars\Recurrence\Minutely1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE46.ics">
+    <None Include="Calendars\Recurrence\Hourly1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE47.ics">
+    <None Include="Calendars\Recurrence\MonthlyInterval1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE48.ics">
+    <None Include="Calendars\Recurrence\YearlyInterval1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE49.ics">
+    <None Include="Calendars\Recurrence\DailyInterval1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE5.ics">
+    <None Include="Calendars\Recurrence\DailyCount2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE50.ics">
+    <None Include="Calendars\Recurrence\HourlyInterval1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE51.ics">
+    <None Include="Calendars\Recurrence\YearlyBySetPos1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE52.ics">
+    <None Include="Calendars\Recurrence\Empty1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE53.ics">
+    <None Include="Calendars\Recurrence\HourlyInterval2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE54.ics">
+    <None Include="Calendars\Recurrence\MinutelyInterval1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE55.ics">
+    <None Include="Calendars\Recurrence\DailyInterval2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE56.ics">
+    <None Include="Calendars\Recurrence\DailyByDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE57.ics">
+    <None Include="Calendars\Recurrence\WeeklyInterval1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE58.ics">
+    <None Include="Calendars\Recurrence\Monthly1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE59.ics">
+    <None Include="Calendars\Recurrence\Yearly1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE6.ics">
+    <None Include="Calendars\Recurrence\ByMonth1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE60.ics">
+    <None Include="Calendars\Recurrence\Bug2912657.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE6_1.ics">
+    <None Include="Calendars\Recurrence\ByMonth2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE7.ics">
+    <None Include="Calendars\Recurrence\WeeklyCount1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE8.ics">
+    <None Include="Calendars\Recurrence\WeeklyUntil1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Calendars\Recurrence\RRULE9.ics">
+    <None Include="Calendars\Recurrence\WeeklyWkst1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Calendars\Serialization\Language1.ics">

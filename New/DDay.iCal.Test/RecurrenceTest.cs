@@ -74,9 +74,9 @@ namespace DDay.iCal.Test
         /// See Page 45 of RFC 2445 - RRULE:FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE1()
+        public void YearlyComplex1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE1.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyComplex1.ics")[0];
             ProgramTest.TestCal(iCal);
             IEvent evt = iCal.Events[0];
             IList<Occurrence> occurrences = evt.GetOccurrences(
@@ -107,9 +107,9 @@ namespace DDay.iCal.Test
         /// See Page 118 of RFC 2445 - RRULE:FREQ=DAILY;COUNT=10;INTERVAL=2
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE2()
+        public void DailyCount1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE2.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\DailyCount1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2006, 7, 1, tzid),
@@ -135,9 +135,9 @@ namespace DDay.iCal.Test
         /// See Page 118 of RFC 2445 - RRULE:FREQ=DAILY;UNTIL=19971224T000000Z
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE3()
+        public void DailyUntil1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE3.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\DailyUntil1.ics")[0];
             ProgramTest.TestCal(iCal);
             IEvent evt = iCal.Events[0];
 
@@ -168,9 +168,9 @@ namespace DDay.iCal.Test
         /// See Page 118 of RFC 2445 - RRULE:FREQ=DAILY;INTERVAL=2
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE4()
+        public void Daily1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE4.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\Daily1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1997, 9, 1, tzid),
@@ -282,9 +282,9 @@ namespace DDay.iCal.Test
         /// See Page 119 of RFC 2445 - RRULE:FREQ=DAILY;INTERVAL=10;COUNT=5
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE5()
+        public void DailyCount2()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE5.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\DailyCount2.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1997, 9, 1, tzid),
@@ -305,9 +305,9 @@ namespace DDay.iCal.Test
         /// See Page 119 of RFC 2445 - RRULE:FREQ=DAILY;UNTIL=20000131T090000Z;BYMONTH=1
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE6()
+        public void ByMonth1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE6.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\ByMonth1.ics")[0];
             ProgramTest.TestCal(iCal);
             IEvent evt = iCal.Events[0];
 
@@ -340,10 +340,10 @@ namespace DDay.iCal.Test
         /// </note>        
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE6_1()
+        public void ByMonth2()
         {
-            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE6.ics")[0];
-            IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE6_1.ics")[0];
+            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\ByMonth1.ics")[0];
+            IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\ByMonth2.ics")[0];
             ProgramTest.TestCal(iCal1);
             ProgramTest.TestCal(iCal2);
             IEvent evt1 = (Event)iCal1.Events[0];
@@ -351,18 +351,18 @@ namespace DDay.iCal.Test
 
             IList<Occurrence> evt1Occurrences = evt1.GetOccurrences(new iCalDateTime(1997, 9, 1), new iCalDateTime(2000, 12, 31));
             IList<Occurrence> evt2Occurrences = evt2.GetOccurrences(new iCalDateTime(1997, 9, 1), new iCalDateTime(2000, 12, 31));
-            Assert.IsTrue(evt1Occurrences.Count == evt2Occurrences.Count, "RRULE6_1 does not match RRULE6 as it should");
+            Assert.IsTrue(evt1Occurrences.Count == evt2Occurrences.Count, "ByMonth1 does not match ByMonth2 as it should");
             for (int i = 0; i < evt1Occurrences.Count; i++)
-                Assert.AreEqual(evt1Occurrences[i].Period, evt2Occurrences[i].Period, "PERIOD " + i + " from RRULE6 (" + evt1Occurrences[i].ToString() + ") does not match PERIOD " + i + " from RRULE6_1 (" + evt2Occurrences[i].ToString() + ")");
+                Assert.AreEqual(evt1Occurrences[i].Period, evt2Occurrences[i].Period, "PERIOD " + i + " from ByMonth1 (" + evt1Occurrences[i].ToString() + ") does not match PERIOD " + i + " from ByMonth2 (" + evt2Occurrences[i].ToString() + ")");
         }
 
         /// <summary>
         /// See Page 119 of RFC 2445 - RRULE:FREQ=WEEKLY;COUNT=10
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE7()
+        public void WeeklyCount1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE7.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\WeeklyCount1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1997, 9, 1, tzid),
@@ -400,9 +400,9 @@ namespace DDay.iCal.Test
         /// See Page 119 of RFC 2445 - RRULE:FREQ=WEEKLY;UNTIL=19971224T000000Z
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE8()
+        public void WeeklyUntil1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE8.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\WeeklyUntil1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1997, 9, 1, tzid),
@@ -454,9 +454,9 @@ namespace DDay.iCal.Test
         /// See Page 119 of RFC 2445 - RRULE:FREQ=WEEKLY;INTERVAL=2;WKST=SU
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE9()
+        public void WeeklyWkst1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE9.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\WeeklyWkst1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1997, 9, 1, tzid),
@@ -496,9 +496,9 @@ namespace DDay.iCal.Test
         /// See Page 119 of RFC 2445 - RRULE:FREQ=WEEKLY;UNTIL=19971007T000000Z;WKST=SU;BYDAY=TU,TH
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE10()
+        public void WeeklyUntilWkst1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE10.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\WeeklyUntilWkst1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1997, 9, 1, tzid),
@@ -524,10 +524,10 @@ namespace DDay.iCal.Test
         /// See Page 120 of RFC 2445 - RRULE:FREQ=WEEKLY;COUNT=10;WKST=SU;BYDAY=TU,TH
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE11()
+        public void WeeklyCountWkst1()
         {
-            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE10.ics")[0];
-            IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE11.ics")[0];
+            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\WeeklyUntilWkst1.ics")[0];
+            IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\WeeklyCountWkst1.ics")[0];
             ProgramTest.TestCal(iCal1);
             ProgramTest.TestCal(iCal2);
             IEvent evt1 = iCal1.Events[0];
@@ -535,18 +535,18 @@ namespace DDay.iCal.Test
 
             IList<Occurrence> evt1occ = evt1.GetOccurrences(new iCalDateTime(1997, 9, 1), new iCalDateTime(1999, 1, 1));
             IList<Occurrence> evt2occ = evt2.GetOccurrences(new iCalDateTime(1997, 9, 1), new iCalDateTime(1999, 1, 1));
-            Assert.AreEqual(evt1occ.Count, evt2occ.Count, "RRULE11 does not match RRULE10 as it should");
+            Assert.AreEqual(evt1occ.Count, evt2occ.Count, "WeeklyCountWkst1() does not match WeeklyUntilWkst1() as it should");
             for (int i = 0; i < evt1occ.Count; i++)
-                Assert.AreEqual(evt1occ[i].Period, evt2occ[i].Period, "PERIOD " + i + " from RRULE10 (" + evt1occ[i].Period.ToString() + ") does not match PERIOD " + i + " from RRULE11 (" + evt2occ[i].Period.ToString() + ")");
+                Assert.AreEqual(evt1occ[i].Period, evt2occ[i].Period, "PERIOD " + i + " from WeeklyUntilWkst1 (" + evt1occ[i].Period.ToString() + ") does not match PERIOD " + i + " from WeeklyCountWkst1 (" + evt2occ[i].Period.ToString() + ")");
         }
 
         /// <summary>
         /// See Page 120 of RFC 2445 - RRULE:FREQ=WEEKLY;INTERVAL=2;UNTIL=19971224T000000Z;WKST=SU;BYDAY=MO,WE,FR
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE12()
+        public void WeeklyUntilWkst2()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE12.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\WeeklyUntilWkst2.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -614,9 +614,9 @@ namespace DDay.iCal.Test
         /// Tests to ensure FREQUENCY=WEEKLY with INTERVAL=2 works when starting evaluation from an "off" week
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE12_1()
+        public void WeeklyUntilWkst2_1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE12.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\WeeklyUntilWkst2.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1997, 9, 9, tzid),
@@ -678,9 +678,9 @@ namespace DDay.iCal.Test
         /// See Page 120 of RFC 2445 - RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=8;WKST=SU;BYDAY=TU,TH
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE13()
+        public void WeeklyCountWkst2()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE13.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\WeeklyCountWkst2.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -704,9 +704,9 @@ namespace DDay.iCal.Test
         /// See Page 120 of RFC 2445 - RRULE:FREQ=MONTHLY;COUNT=10;BYDAY=1FR
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE14()
+        public void MonthlyCountByDay1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE14.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyCountByDay1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -744,9 +744,9 @@ namespace DDay.iCal.Test
         /// See Page 120 of RFC 2445 - RRULE:FREQ=MONTHLY;UNTIL=19971224T000000Z;BYDAY=1FR
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE15()
+        public void MonthlyUntilByDay1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE15.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyUntilByDay1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -772,9 +772,9 @@ namespace DDay.iCal.Test
         /// See Page 120 of RFC 2445 - RRULE:FREQ=MONTHLY;INTERVAL=2;COUNT=10;BYDAY=1SU,-1SU
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE16()
+        public void MonthlyCountByDay2()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE16.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyCountByDay2.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -812,9 +812,9 @@ namespace DDay.iCal.Test
         /// See Page 121 of RFC 2445 - RRULE:FREQ=MONTHLY;COUNT=6;BYDAY=-2MO
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE17()
+        public void MonthlyCountByDay3()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE17.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyCountByDay3.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -844,9 +844,9 @@ namespace DDay.iCal.Test
         /// See Page 121 of RFC 2445 - RRULE:FREQ=MONTHLY;BYMONTHDAY=-3
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE18()
+        public void ByMonthDay1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE18.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\ByMonthDay1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -876,9 +876,9 @@ namespace DDay.iCal.Test
         /// See Page 121 of RFC 2445 - RRULE:FREQ=MONTHLY;COUNT=10;BYMONTHDAY=2,15
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE19()
+        public void MonthlyCountByMonthDay1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE19.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyCountByMonthDay1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -916,9 +916,9 @@ namespace DDay.iCal.Test
         /// See Page 121 of RFC 2445 - RRULE:FREQ=MONTHLY;COUNT=10;BYMONTHDAY=1,-1
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE20()
+        public void MonthlyCountByMonthDay2()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE20.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyCountByMonthDay2.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -956,9 +956,9 @@ namespace DDay.iCal.Test
         /// See Page 121 of RFC 2445 - RRULE:FREQ=MONTHLY;INTERVAL=18;COUNT=10;BYMONTHDAY=10,11,12,13,14,15
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE21()
+        public void MonthlyCountByMonthDay3()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE21.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyCountByMonthDay3.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -996,9 +996,9 @@ namespace DDay.iCal.Test
         /// See Page 122 of RFC 2445 - RRULE:FREQ=MONTHLY;INTERVAL=2;BYDAY=TU
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE22()
+        public void MonthlyByDay1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE22.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyByDay1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1052,9 +1052,9 @@ namespace DDay.iCal.Test
         /// See Page 122 of RFC 2445 - RRULE:FREQ=YEARLY;COUNT=10;BYMONTH=6,7
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE23()
+        public void YearlyByMonth1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE23.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyByMonth1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1080,9 +1080,9 @@ namespace DDay.iCal.Test
         /// See Page 122 of RFC 2445 - RRULE:FREQ=YEARLY;INTERVAL=2;COUNT=10;BYMONTH=1,2,3
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE24()
+        public void YearlyCountByMonth1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE24.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyCountByMonth1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1108,9 +1108,9 @@ namespace DDay.iCal.Test
         /// See Page 122 of RFC 2445 - RRULE:FREQ=YEARLY;INTERVAL=3;COUNT=10;BYYEARDAY=1,100,200
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE25()
+        public void YearlyCountByYearDay1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE25.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyCountByYearDay1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1148,9 +1148,9 @@ namespace DDay.iCal.Test
         /// See Page 123 of RFC 2445 - RRULE:FREQ=YEARLY;BYDAY=20MO
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE26()
+        public void YearlyByDay1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE26.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyByDay1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1169,9 +1169,9 @@ namespace DDay.iCal.Test
         /// See Page 123 of RFC 2445 - RRULE:FREQ=YEARLY;BYWEEKNO=20;BYDAY=MO
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE27()
+        public void YearlyByWeekNo1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE27.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyByWeekNo1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1190,9 +1190,9 @@ namespace DDay.iCal.Test
         /// See Page 123 of RFC 2445 - RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=TH
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE28()
+        public void YearlyByMonth2()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE28.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyByMonth2.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1219,9 +1219,9 @@ namespace DDay.iCal.Test
         /// See Page 123 of RFC 2445 - RRULE:FREQ=YEARLY;BYDAY=TH;BYMONTH=6,7,8
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE29()
+        public void YearlyByMonth3()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE29.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyByMonth3.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1278,9 +1278,9 @@ namespace DDay.iCal.Test
         /// RRULE:FREQ=MONTHLY;BYDAY=FR;BYMONTHDAY=13
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE30()
+        public void MonthlyByMonthDay1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE30.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyByMonthDay1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1308,9 +1308,9 @@ namespace DDay.iCal.Test
         /// See Page 124 of RFC 2445 - RRULE:FREQ=MONTHLY;BYDAY=SA;BYMONTHDAY=7,8,9,10,11,12,13
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE31()
+        public void MonthlyByMonthDay2()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE31.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyByMonthDay2.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1348,9 +1348,9 @@ namespace DDay.iCal.Test
         /// See Page 124 of RFC 2445 - RRULE:FREQ=YEARLY;INTERVAL=4;BYMONTH=11;BYDAY=TU;BYMONTHDAY=2,3,4,5,6,7,8
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE32()
+        public void YearlyByMonthDay1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE32.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyByMonthDay1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1369,9 +1369,9 @@ namespace DDay.iCal.Test
         /// See Page 124 of RFC 2445 - RRULE:FREQ=MONTHLY;COUNT=3;BYDAY=TU,WE,TH;BYSETPOS=3
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE33()
+        public void MonthlyBySetPos1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE33.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyBySetPos1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1395,9 +1395,9 @@ namespace DDay.iCal.Test
         /// See Page 124 of RFC 2445 - RRULE:FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-2
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE34()
+        public void MonthlyBySetPos2()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE34.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyBySetPos2.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1431,9 +1431,9 @@ namespace DDay.iCal.Test
         /// match the local EDT time occurrence of 3:00pm.  Is the RFC example incorrect?
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE35()
+        public void HourlyUntil1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE35.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\HourlyUntil1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1452,9 +1452,9 @@ namespace DDay.iCal.Test
         /// See Page 125 of RFC 2445 - RRULE:FREQ=MINUTELY;INTERVAL=15;COUNT=6
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE36()
+        public void MinutelyCount1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE36.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\MinutelyCount1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1997, 9, 2, tzid),
@@ -1476,9 +1476,9 @@ namespace DDay.iCal.Test
         /// See Page 125 of RFC 2445 - RRULE:FREQ=MINUTELY;INTERVAL=90;COUNT=4
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE37()
+        public void MinutelyCount2()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE37.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\MinutelyCount2.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1498,9 +1498,9 @@ namespace DDay.iCal.Test
         /// See Page 125 of RFC 2445 - RRULE:FREQ=DAILY;BYHOUR=9,10,11,12,13,14,15,16;BYMINUTE=0,20,40
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE38()
+        public void DailyByHourMinute1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE38.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\DailyByHourMinute1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1997, 9, 2, tzid),
@@ -1564,10 +1564,10 @@ namespace DDay.iCal.Test
         /// See Page 125 of RFC 2445 - RRULE:FREQ=MINUTELY;INTERVAL=20;BYHOUR=9,10,11,12,13,14,15,16
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE39()
+        public void MinutelyByHour1()
         {
-            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE38.ics")[0];
-            IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE39.ics")[0];
+            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\DailyByHourMinute1.ics")[0];
+            IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\MinutelyByHour1.ics")[0];
             ProgramTest.TestCal(iCal1);
             ProgramTest.TestCal(iCal2);
             IEvent evt1 = iCal1.Events[0];
@@ -1575,18 +1575,18 @@ namespace DDay.iCal.Test
 
             IList<Occurrence> evt1occ = evt1.GetOccurrences(new iCalDateTime(1997, 9, 1, tzid), new iCalDateTime(1997, 9, 3, tzid));
             IList<Occurrence> evt2occ = evt2.GetOccurrences(new iCalDateTime(1997, 9, 1, tzid), new iCalDateTime(1997, 9, 3, tzid));
-            Assert.IsTrue(evt1occ.Count == evt2occ.Count, "RRULE39 does not match RRULE38 as it should");
+            Assert.IsTrue(evt1occ.Count == evt2occ.Count, "MinutelyByHour1() does not match DailyByHourMinute1() as it should");
             for (int i = 0; i < evt1occ.Count; i++)
-                Assert.AreEqual(evt1occ[i].Period, evt2occ[i].Period, "PERIOD " + i + " from RRULE38 (" + evt1occ[i].Period.ToString() + ") does not match PERIOD " + i + " from RRULE39 (" + evt2occ[i].Period.ToString() + ")");
+                Assert.AreEqual(evt1occ[i].Period, evt2occ[i].Period, "PERIOD " + i + " from DailyByHourMinute1 (" + evt1occ[i].Period.ToString() + ") does not match PERIOD " + i + " from MinutelyByHour1 (" + evt2occ[i].Period.ToString() + ")");
         }
 
         /// <summary>
         /// See Page 125 of RFC 2445 - RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=MO
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE40()
+        public void WeeklyCountWkst3()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE40.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\WeeklyCountWkst3.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1604,12 +1604,12 @@ namespace DDay.iCal.Test
 
         /// <summary>
         /// See Page 125 of RFC 2445 - RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=SU
-        /// This is the same as RRULE40, except WKST is SU, which changes the results.
+        /// This is the same as WeeklyCountWkst3, except WKST is SU, which changes the results.
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE41()
+        public void WeeklyCountWkst4()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE41.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\WeeklyCountWkst4.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1630,9 +1630,9 @@ namespace DDay.iCal.Test
         /// are correctly handled.  See Bug #1741093 - WEEKLY frequency eval behaves strangely.
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE42()
+        public void Bug1741093()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE42.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\Bug1741093.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 7, 1, tzid),
@@ -1661,7 +1661,7 @@ namespace DDay.iCal.Test
         /// Bug #1821721 - Recur for every-other-month doesn't evaluate correctly
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE43()
+        public void Bug1821721()
         {
             iCalendar iCal = new iCalendar();
 
@@ -1715,7 +1715,7 @@ namespace DDay.iCal.Test
         /// Ensures that, by default, SECONDLY recurrence rules are not allowed.
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE44()
+        public void Secondly1()
         {
             AutoResetEvent evt = new AutoResetEvent(false);
 
@@ -1724,7 +1724,7 @@ namespace DDay.iCal.Test
                 {
                     try
                     {
-                        IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE44.ics")[0];
+                        IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\Secondly1.ics")[0];
                         IList<Occurrence> occurrences = iCal.GetOccurrences(
                             new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
                             new iCalDateTime(2007, 7, 21, 8, 0, 0, tzid));
@@ -1745,9 +1745,9 @@ namespace DDay.iCal.Test
         /// mode is set to adjust automatically for SECONDLY evaluation
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE44_1()
+        public void Secondly1_1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE44.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\Secondly1.ics")[0];
             iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
 
             EventOccurrenceTest(
@@ -1776,9 +1776,9 @@ namespace DDay.iCal.Test
         /// Ensures that if configured, MINUTELY recurrence rules are not allowed.
         /// </summary>
         [Test, Category("Recurrence"), ExpectedException(typeof(EvaluationEngineException))]
-        public void RRULE45()
+        public void Minutely1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE45.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\Minutely1.ics")[0];
             iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictMinutely;
             IList<Occurrence> occurrences = iCal.GetOccurrences(
                 new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
@@ -1790,9 +1790,9 @@ namespace DDay.iCal.Test
         /// mode is set to adjust automatically for MINUTELY evaluation
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE45_1()
+        public void Minutely1_1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE45.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\Minutely1.ics")[0];
             iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictMinutely;
             iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
 
@@ -1816,9 +1816,9 @@ namespace DDay.iCal.Test
         /// Ensures that if configured, HOURLY recurrence rules are not allowed.
         /// </summary>
         [Test, Category("Recurrence"), ExpectedException(typeof(EvaluationEngineException))]
-        public void RRULE46()
+        public void Hourly1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE46.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\Hourly1.ics")[0];
             iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictHourly;
             IList<Occurrence> occurrences = iCal.GetOccurrences(
                 new iCalDateTime(2007, 6, 21, 8, 0, 0, tzid),
@@ -1830,9 +1830,9 @@ namespace DDay.iCal.Test
         /// mode is set to adjust automatically for HOURLY evaluation
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE46_1()
+        public void Hourly1_1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE46.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\Hourly1.ics")[0];
             iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictHourly;
             iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
 
@@ -1856,9 +1856,9 @@ namespace DDay.iCal.Test
         /// Ensures that "off-month" calculation works correctly
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE47()
+        public void MonthlyInterval1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE47.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyInterval1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2008, 1, 1, 7, 0, 0, tzid),
@@ -1876,9 +1876,9 @@ namespace DDay.iCal.Test
         /// Ensures that "off-year" calculation works correctly
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE48()
+        public void YearlyInterval1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE48.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyInterval1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2006, 1, 1, 7, 0, 0, tzid),
@@ -1896,9 +1896,9 @@ namespace DDay.iCal.Test
         /// Ensures that "off-day" calcuation works correctly
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE49()
+        public void DailyInterval1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE49.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\DailyInterval1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 4, 11, 7, 0, 0, tzid),
@@ -1916,9 +1916,9 @@ namespace DDay.iCal.Test
         /// Ensures that "off-hour" calculation works correctly
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE50()
+        public void HourlyInterval1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE50.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\HourlyInterval1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 4, 9, 10, 0, 0, tzid),
@@ -1938,9 +1938,9 @@ namespace DDay.iCal.Test
         /// This specifically tests the BYSETPOS=-1 to accomplish this.
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE51()
+        public void YearlyBySetPos1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE51.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyBySetPos1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2009, 1, 1, 0, 0, 0, tzid),
@@ -1967,9 +1967,9 @@ namespace DDay.iCal.Test
         /// for a non-recurring event.
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE52()
+        public void Empty1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE52.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\Empty1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2009, 1, 1, 0, 0, 0, tzid),
@@ -1986,9 +1986,9 @@ namespace DDay.iCal.Test
         /// Ensures that RecurrencePattern.GetNextOccurrence() functions properly for an HOURLY frequency.
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE53()
+        public void HourlyInterval2()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE53.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\HourlyInterval2.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 4, 9, 7, 0, 0),
@@ -2015,9 +2015,9 @@ namespace DDay.iCal.Test
         /// Ensures that RecurrencePattern.GetNextOccurrence() functions properly for an MINUTELY frequency.
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE54()
+        public void MinutelyInterval1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE54.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\MinutelyInterval1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 4, 9, 7, 0, 0),
@@ -2044,9 +2044,9 @@ namespace DDay.iCal.Test
         /// Ensures that RecurrencePattern.GetNextOccurrence() functions properly for an DAILY frequency with an INTERVAL.
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE55()
+        public void DailyInterval2()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE55.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\DailyInterval2.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 4, 9, 7, 0, 0),
@@ -2072,9 +2072,9 @@ namespace DDay.iCal.Test
         /// Ensures that RecurrencePattern.GetNextOccurrence() functions properly for an DAILY frequency with a BYDAY value.
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE56()
+        public void DailyByDay1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE56.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\DailyByDay1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 9, 10, 7, 0, 0),
@@ -2096,9 +2096,9 @@ namespace DDay.iCal.Test
         /// Ensures that RecurrencePattern.GetNextOccurrence() functions properly for a WEEKLY frequency with an INTERVAL.
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE57()
+        public void WeeklyInterval1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE57.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\WeeklyInterval1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 9, 10, 7, 0, 0),
@@ -2123,9 +2123,9 @@ namespace DDay.iCal.Test
         /// Ensures that RecurrencePattern.GetNextOccurrence() functions properly for a MONTHLY frequency.
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE58()
+        public void Monthly1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE58.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\Monthly1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 9, 10, 7, 0, 0),
@@ -2154,9 +2154,9 @@ namespace DDay.iCal.Test
         /// Ensures that RecurrencePattern.GetNextOccurrence() functions properly for a YEARLY frequency.
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE59()
+        public void Yearly1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE59.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\Yearly1.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2007, 9, 10, 7, 0, 0),
@@ -2188,9 +2188,9 @@ namespace DDay.iCal.Test
         /// Sourceforge.net bug #2912657
         /// </summary>
         [Test, Category("Recurrence")]
-        public void RRULE60()
+        public void Bug2912657()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\RRULE60.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\Bug2912657.ics")[0];
             string localTZID = iCal.TimeZones[0].TZID;
 
             // Daily recurrence
@@ -2246,7 +2246,7 @@ namespace DDay.iCal.Test
         /// Tests the iCal holidays downloaded from apple.com
         /// </summary>
         [Test, Category("Recurrence")]
-        public void USHOLIDAYS()
+        public void USHolidays()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\USHolidays.ics")[0];
 
