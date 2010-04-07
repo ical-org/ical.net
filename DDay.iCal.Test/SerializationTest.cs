@@ -39,7 +39,6 @@ namespace DDay.iCal.Test
             // Load the calendar from file
             IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Serialization\" + filename, Encoding.UTF8, serializer)[0];
 
-            Assert.IsTrue(iCal1.Properties.Count > 0, "iCalendar has no properties; did it load correctly?");
             Assert.IsTrue(iCal1.UniqueComponents.Count > 0, "iCalendar has no unique components; it must to be used in SerializeTest(). Did it load correctly?");
 
             FileStream fs = new FileStream(@"Calendars\Serialization\Temp\" + Path.GetFileNameWithoutExtension(filename) + "_Serialized" + Path.GetExtension(filename), FileMode.Create, FileAccess.Write);
@@ -203,12 +202,31 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
+        /// Tests that Lotus Notes-style properties are properly handled.
+        /// https://sourceforge.net/tracker/?func=detail&aid=2033495&group_id=187422&atid=921236
+        /// Sourceforge bug #2033495
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void Bug2033495()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\Bug2033495.ics", Encoding.UTF8)[0];
+            Assert.AreEqual(1, iCal.Events.Count);
+            Assert.AreEqual(iCal.Properties["X-LOTUS-CHILD_UID"].Value, "XXX");
+        }
+
+        /// <summary>
         /// Tests bug #2148092 - Percent compelete serialization error
         /// </summary>
         [Test, Category("Serialization")]
         public void Bug2148092()
         {
             SerializeTest("Language5.ics", typeof(iCalendarSerializer));
+        }
+
+        [Test, Category("Serialization")]
+        public void Calendar1()
+        {
+            SerializeTest("Calendar1.ics", typeof(iCalendarSerializer));
         }
 
         [Test]
@@ -226,6 +244,16 @@ namespace DDay.iCal.Test
             iCal.ProductID = null;
             Assert.IsNotEmpty(iCal.Version, "VERSION is required");
             Assert.IsNotEmpty(iCal.ProductID, "PRODID is required");
+        }
+
+        /// <summary>
+        /// Verifies that a calendar will load without a VERSION or PRODID
+        /// specification.
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void CalendarParameters2()
+        {
+            SerializeTest("CalendarParameters2.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]
@@ -246,10 +274,55 @@ namespace DDay.iCal.Test
             SerializeTest("CaseInsensitive3.ics", typeof(iCalendarSerializer));
         }
 
+        /// <summary>
+        /// Tests that a mixed-case VERSION property is loaded properly
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void CaseInsensitive4()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\CaseInsensitive4.ics")[0];
+            Assert.AreEqual("2.5", iCal.Version);
+        }
+
         [Test, Category("Serialization")]
         public void Categories1()
         {
             SerializeTest("Categories1.ics", typeof(iCalendarSerializer));
+        }
+
+        [Test, Category("Serialization")]
+        public void EmptyLines1()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\EmptyLines1.ics")[0];
+            Assert.AreEqual(2, iCal.Events.Count, "iCalendar should have 2 events");
+        }
+
+        [Test, Category("Serialization")]
+        public void EmptyLines2()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\EmptyLines2.ics")[0];
+            Assert.AreEqual(4, iCal.Events.Count, "iCalendar should have 4 events");
+        }
+
+        /// <summary>
+        /// Verifies that blank lines between components are allowed
+        /// (as occurs with some applications/parsers - i.e. KOrganizer)
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void EmptyLines3()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\EmptyLines3.ics")[0];
+            Assert.AreEqual(1, iCal.Todos.Count, "iCalendar should have 1 todo");
+        }
+
+        /// <summary>
+        /// Similar to PARSE4 and PARSE5 tests.
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void EmptyLines4()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\EmptyLines4.ics")[0];
+            Assert.AreEqual(28, iCal.Events.Count);
         }
 
         [Test, Category("Serialization")]
@@ -395,6 +468,89 @@ END:VCALENDAR
             SerializeTest("Geo1.ics", typeof(iCalendarSerializer));
         }
 
+        /// <summary>
+        /// Tests that a Google calendar is correctly loaded and parsed.
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void Google1()
+        {
+            IICalendar iCal = iCalendar.LoadFromUri(new Uri("http://www.google.com/calendar/ical/tvhot064q4p48frqdalgo3fb2k%40group.calendar.google.com/public/basic.ics"))[0];
+            Assert.IsNotNull(iCal);
+            Assert.AreEqual(1, iCal.Events.Count);
+            Assert.AreEqual(1, iCal.TimeZones.Count);
+
+            string tzid = iCal.TimeZones[0].TZID;
+            IList<Occurrence> occurrences = iCal.GetOccurrences(new iCalDateTime(2009, 8, 24, tzid), new iCalDateTime(2009, 9, 28, tzid));
+            Assert.AreEqual(5, occurrences.Count);
+            Assert.AreEqual(new iCalDateTime(2009, 8, 26, 8, 0, 0, tzid), occurrences[0].Period.StartTime);
+            Assert.AreEqual(new iCalDateTime(2009, 9, 2, 8, 0, 0, tzid), occurrences[1].Period.StartTime);
+            Assert.AreEqual(new iCalDateTime(2009, 9, 9, 8, 0, 0, tzid), occurrences[2].Period.StartTime);
+            Assert.AreEqual(new iCalDateTime(2009, 9, 16, 8, 0, 0, tzid), occurrences[3].Period.StartTime);
+            Assert.AreEqual(new iCalDateTime(2009, 9, 23, 8, 0, 0, tzid), occurrences[4].Period.StartTime);
+            Assert.AreEqual(new iCalDateTime(2009, 8, 26, 10, 0, 0, tzid), occurrences[0].Period.EndTime);
+        }
+
+        /// <summary>
+        /// Tests that valid RDATE properties are parsed correctly.
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void RecurrenceDates1()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\RecurrenceDates1.ics")[0];
+            Assert.AreEqual(1, iCal.Events.Count);
+            Assert.AreEqual(3, iCal.Events[0].RecurrenceDates.Count);
+            Assert.AreEqual((iCalDateTime)new DateTime(1997, 7, 14, 12, 30, 0, DateTimeKind.Utc), iCal.Events[0].RecurrenceDates[0][0].StartTime);
+            Assert.AreEqual((iCalDateTime)new DateTime(1996, 4, 3, 2, 0, 0, DateTimeKind.Utc), iCal.Events[0].RecurrenceDates[1][0].StartTime);
+            Assert.AreEqual((iCalDateTime)new DateTime(1996, 4, 3, 4, 0, 0, DateTimeKind.Utc), iCal.Events[0].RecurrenceDates[1][0].EndTime);
+            Assert.AreEqual(new iCalDateTime(1997, 1, 1), iCal.Events[0].RecurrenceDates[2][0].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 1, 20), iCal.Events[0].RecurrenceDates[2][1].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 2, 17), iCal.Events[0].RecurrenceDates[2][2].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 4, 21), iCal.Events[0].RecurrenceDates[2][3].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 5, 26), iCal.Events[0].RecurrenceDates[2][4].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 7, 4), iCal.Events[0].RecurrenceDates[2][5].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 9, 1), iCal.Events[0].RecurrenceDates[2][6].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 10, 14), iCal.Events[0].RecurrenceDates[2][7].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 11, 28), iCal.Events[0].RecurrenceDates[2][8].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 11, 29), iCal.Events[0].RecurrenceDates[2][9].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 12, 25), iCal.Events[0].RecurrenceDates[2][10].StartTime);
+        }
+
+
+        /// <summary>
+        /// Tests that valid REQUEST-STATUS properties are parsed correctly.
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void RequestStatus1()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\RequestStatus1.ics")[0];
+            Assert.AreEqual(1, iCal.Events.Count);
+            Assert.AreEqual(4, iCal.Events[0].RequestStatuses.Count);
+
+            IRequestStatus rs = iCal.Events[0].RequestStatuses[0];
+            Assert.AreEqual(2, rs.StatusCode.Primary);
+            Assert.AreEqual(0, rs.StatusCode.Secondary);
+            Assert.AreEqual("Success", rs.Description);
+            Assert.IsNull(rs.ExtraData);
+
+            rs = iCal.Events[0].RequestStatuses[1];
+            Assert.AreEqual(3, rs.StatusCode.Primary);
+            Assert.AreEqual(1, rs.StatusCode.Secondary);
+            Assert.AreEqual("Invalid property value", rs.Description);
+            Assert.AreEqual("DTSTART:96-Apr-01", rs.ExtraData);
+
+            rs = iCal.Events[0].RequestStatuses[2];
+            Assert.AreEqual(2, rs.StatusCode.Primary);
+            Assert.AreEqual(8, rs.StatusCode.Secondary);
+            Assert.AreEqual(" Success, repeating event ignored. Scheduled as a single event.", rs.Description);
+            Assert.AreEqual("RRULE:FREQ=WEEKLY;INTERVAL=2", rs.ExtraData);
+
+            rs = iCal.Events[0].RequestStatuses[3];
+            Assert.AreEqual(4, rs.StatusCode.Primary);
+            Assert.AreEqual(1, rs.StatusCode.Secondary);
+            Assert.AreEqual("Event conflict. Date/time is busy.", rs.Description);
+            Assert.IsNull(rs.ExtraData);
+        }
+
         [Test, Category("Serialization")]
         public void String1()
         {
@@ -444,6 +600,28 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             serializer.Serialize(@"Calendars\Serialization\String1.ics");
 
             SerializeTest("String1.ics", typeof(iCalendarSerializer));
+        }
+
+        /// <summary>
+        /// Tests that string escaping works with Text elements.
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void String2()
+        {
+            StringSerializer serializer = new StringSerializer();
+            string value = @"test\with\;characters";
+            string escaped = serializer.SerializeToString(value);
+
+            Assert.AreEqual(@"test\with;characters", escaped, "String escaping was incorrect.");
+
+            value = @"C:\Path\To\My\New\Information";
+            escaped = serializer.SerializeToString(value);
+            Assert.AreEqual("C:\\Path\\To\\My\new\\Information", escaped, "String escaping was incorrect.");
+
+            value = @"\""This\r\nis\Na\, test\""\;\\;,";
+            escaped = serializer.SerializeToString(value);
+
+            Assert.AreEqual("\"This\\r\nis\na, test\";\\;,", escaped, "String escaping was incorrect.");
         }
 
         [Test]
@@ -732,9 +910,24 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         //    SerializeTest("SERIALIZE28.ics", typeof(iCalendarSerializer));
         //}
 
-        
 
-        
+        /// <summary>
+        /// Tests that DateTime values that are out-of-range are still parsed correctly
+        /// and set to the closest representable date/time in .NET.
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void DateTime1()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\DateTime1.ics")[0];
+            Assert.AreEqual(6, iCal.Events.Count);
+
+            IEvent evt = iCal.Events["nc2o66s0u36iesitl2l0b8inn8@google.com"];
+            Assert.IsNotNull(evt);
+
+            // The "Created" date is out-of-bounds.  It should be coerced to the
+            // closest representable date/time.
+            Assert.AreEqual(DateTime.MinValue, evt.Created.Value);
+        }
 
         [Test, Category("Serialization")]
         public void Duration1()
@@ -795,96 +988,13 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             CompareCalendars(russia1, russia2);
         }
 
-        [Test, Category("Serialization")]
-        public void PARSE1()
-        {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE1.ics")[0];
-            Assert.IsTrue(iCal.Events.Count == 2, "iCalendar should have 2 events");
-        }
-
-        [Test, Category("Serialization")]
-        public void PARSE2()
-        {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE2.ics")[0];
-            Assert.IsTrue(iCal.Events.Count == 4, "iCalendar should have 4 events");
-        }
-
-        [Test, Category("Serialization")]
-        public void PARSE3()
-        {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE3.ics")[0];
-        }
-
-        /// <summary>
-        /// Verifies that blank lines between components are allowed
-        /// (as occurs with some applications/parsers - i.e. KOrganizer)
-        /// </summary>
-        [Test, Category("Serialization")]
-        public void PARSE4()
-        {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE4.ics")[0];
-        }
-
-        /// <summary>
-        /// Verifies that a calendar will load without a VERSION or PRODID
-        /// specification.
-        /// </summary>
-        [Test, Category("Serialization")]
-        public void PARSE5()
-        {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE5.ics")[0];
-        }
-
-        /// <summary>
-        /// Tests a calendar that should fail to properly parse.
-        /// </summary>
-        [Test, Category("Serialization"), ExpectedException("antlr.MismatchedTokenException")]
-        public void PARSE6()
-        {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE6.ics")[0];
-        }
-
-        /// <summary>
-        /// Similar to PARSE4 and PARSE5 tests.
-        /// </summary>
-        [Test, Category("Serialization")]
-        public void PARSE7()
-        {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE7.ics")[0];
-        }
-
-        /// <summary>
-        /// Tests that a mixed-case VERSION property is loaded properly
-        /// </summary>
-        [Test, Category("Serialization")]
-        public void PARSE8()
-        {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE8.ics")[0];
-            Assert.AreEqual("2.5", iCal.Version);
-        }
-
-        /// <summary>
-        /// Tests that multiple properties are allowed in iCalObjects
-        /// </summary>
-        [Test, Category("Serialization")]
-        public void PARSE9()
-        {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE9.ics")[0];
-
-            IList<ICalendarProperty> props = iCal.Properties.AllOf("VERSION");
-            Assert.AreEqual(2, props.Count);
-
-            for (int i = 0; i < props.Count; i++)
-                Assert.AreEqual("2." + i, props[i].Value);
-        }
-
         /// <summary>
         /// Tests that multiple parameters are allowed in iCalObjects
         /// </summary>
         [Test, Category("Serialization")]
-        public void PARSE10()
+        public void Parameter1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE10.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Parameter1.ics")[0];
 
             IEvent evt = iCal.Events[0];
             IList<ICalendarParameter> parms = evt.Properties["DTSTART"].Parameters.AllOf("VALUE");
@@ -894,143 +1004,40 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         }
 
         /// <summary>
-        /// Tests that a Google calendar is correctly loaded and parsed.
-        /// </summary>
-        [Test, Category("Serialization")]
-        public void PARSE11()
-        {
-            IICalendar iCal = iCalendar.LoadFromUri(new Uri("http://www.google.com/calendar/ical/tvhot064q4p48frqdalgo3fb2k%40group.calendar.google.com/public/basic.ics"))[0];
-            Assert.IsNotNull(iCal);
-            Assert.AreEqual(1, iCal.Events.Count);
-            Assert.AreEqual(1, iCal.TimeZones.Count);
-
-            string tzid = iCal.TimeZones[0].TZID;
-            IList<Occurrence> occurrences = iCal.GetOccurrences(new iCalDateTime(2009, 8, 24, tzid), new iCalDateTime(2009, 9, 28, tzid));
-            Assert.AreEqual(5, occurrences.Count);
-            Assert.AreEqual(new iCalDateTime(2009, 8, 26, 8, 0, 0, tzid), occurrences[0].Period.StartTime);
-            Assert.AreEqual(new iCalDateTime(2009, 9, 2, 8, 0, 0, tzid), occurrences[1].Period.StartTime);
-            Assert.AreEqual(new iCalDateTime(2009, 9, 9, 8, 0, 0, tzid), occurrences[2].Period.StartTime);
-            Assert.AreEqual(new iCalDateTime(2009, 9, 16, 8, 0, 0, tzid), occurrences[3].Period.StartTime);
-            Assert.AreEqual(new iCalDateTime(2009, 9, 23, 8, 0, 0, tzid), occurrences[4].Period.StartTime);
-            Assert.AreEqual(new iCalDateTime(2009, 8, 26, 10, 0, 0, tzid), occurrences[0].Period.EndTime);
-        }
-
-        // FIXME: re-implement
-        ///// <summary>
-        ///// Tests that string escaping works with Text elements.
-        ///// </summary>
-        //[Test, Category("Serialization")]
-        //public void PARSE12()
-        //{
-        //    string value = @"test\with\;characters";
-        //    Text v1 = value;
-        //    Text v2 = new Text(value, true);
-
-        //    Assert.AreEqual(value, v1.Value, "String escaping was incorrect.");
-        //    Assert.AreEqual(@"test\with;characters", v2.Value, "String escaping was incorrect.");
-
-        //    value = @"C:\Path\To\My\New\Information";
-        //    v1 = value;
-        //    v2 = new Text(value, true);
-        //    Assert.AreEqual(value, v1.Value, "String escaping was incorrect.");
-        //    Assert.AreEqual("C:\\Path\\To\\My\new\\Information", v2.Value, "String escaping was incorrect.");
-
-        //    value = @"\""This\r\nis\Na\, test\""\;\\;,";
-        //    v1 = value;
-        //    v2 = new Text(value, true);
-
-        //    Assert.AreEqual(value, v1.Value, "String escaping was incorrect.");
-        //    Assert.AreEqual("\"This\\r\nis\na, test\";\\;,", v2.Value, "String escaping was incorrect.");
-        //}
-
-        /// <summary>
         /// Tests that empty parameters are allowed in iCalObjects
         /// </summary>
         [Test, Category("Serialization")]
-        public void PARSE13()
+        public void Parameter2()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE13.ics")[0];
-
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Parameter2.ics")[0];
             Assert.AreEqual(2, iCal.Events.Count);
         }
 
         /// <summary>
-        /// Tests that valid REQUEST-STATUS properties are parsed correctly.
+        /// Tests a calendar that should fail to properly parse.
         /// </summary>
-        [Test, Category("Serialization")]
-        public void PARSE14()
+        [Test, Category("Serialization"), ExpectedException("antlr.MismatchedTokenException")]
+        public void Parse1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE14.ics")[0];
-            Assert.AreEqual(1, iCal.Events.Count);
-            Assert.AreEqual(4, iCal.Events[0].RequestStatuses.Count);
-
-            IRequestStatus rs = iCal.Events[0].RequestStatuses[0];
-            Assert.AreEqual(2, rs.StatusCode.Primary);
-            Assert.AreEqual(0, rs.StatusCode.Secondary);
-            Assert.AreEqual("Success", rs.Description);
-            Assert.IsNull(rs.ExtraData);
-
-            rs = iCal.Events[0].RequestStatuses[1];
-            Assert.AreEqual(3, rs.StatusCode.Primary);
-            Assert.AreEqual(1, rs.StatusCode.Secondary);
-            Assert.AreEqual("Invalid property value", rs.Description);
-            Assert.AreEqual("DTSTART:96-Apr-01", rs.ExtraData);
-
-            rs = iCal.Events[0].RequestStatuses[2];
-            Assert.AreEqual(2, rs.StatusCode.Primary);
-            Assert.AreEqual(8, rs.StatusCode.Secondary);
-            Assert.AreEqual(" Success, repeating event ignored. Scheduled as a single event.", rs.Description);
-            Assert.AreEqual("RRULE:FREQ=WEEKLY;INTERVAL=2", rs.ExtraData);
-
-            rs = iCal.Events[0].RequestStatuses[3];
-            Assert.AreEqual(4, rs.StatusCode.Primary);
-            Assert.AreEqual(1, rs.StatusCode.Secondary);
-            Assert.AreEqual("Event conflict. Date/time is busy.", rs.Description);
-            Assert.IsNull(rs.ExtraData);
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Parse1.ics")[0];
         }
 
         /// <summary>
-        /// Tests that valid RDATE properties are parsed correctly.
+        /// Tests that multiple properties are allowed in iCalObjects
         /// </summary>
         [Test, Category("Serialization")]
-        public void PARSE15()
+        public void Property1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE15.ics")[0];
-            Assert.AreEqual(1, iCal.Events.Count);
-            Assert.AreEqual(3, iCal.Events[0].RecurrenceDates.Count);
-            Assert.AreEqual((iCalDateTime)new DateTime(1997, 7, 14, 12, 30, 0, DateTimeKind.Utc), iCal.Events[0].RecurrenceDates[0][0].StartTime);
-            Assert.AreEqual((iCalDateTime)new DateTime(1996, 4, 3, 2, 0, 0, DateTimeKind.Utc), iCal.Events[0].RecurrenceDates[1][0].StartTime);
-            Assert.AreEqual((iCalDateTime)new DateTime(1996, 4, 3, 4, 0, 0, DateTimeKind.Utc), iCal.Events[0].RecurrenceDates[1][0].EndTime);
-            Assert.AreEqual(new iCalDateTime(1997, 1, 1), iCal.Events[0].RecurrenceDates[2][0].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 1, 20), iCal.Events[0].RecurrenceDates[2][1].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 2, 17), iCal.Events[0].RecurrenceDates[2][2].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 4, 21), iCal.Events[0].RecurrenceDates[2][3].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 5, 26), iCal.Events[0].RecurrenceDates[2][4].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 7, 4), iCal.Events[0].RecurrenceDates[2][5].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 9, 1), iCal.Events[0].RecurrenceDates[2][6].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 10, 14), iCal.Events[0].RecurrenceDates[2][7].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 11, 28), iCal.Events[0].RecurrenceDates[2][8].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 11, 29), iCal.Events[0].RecurrenceDates[2][9].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 12, 25), iCal.Events[0].RecurrenceDates[2][10].StartTime);
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Property1.ics")[0];
+
+            IList<ICalendarProperty> props = iCal.Properties.AllOf("VERSION");
+            Assert.AreEqual(2, props.Count);
+
+            for (int i = 0; i < props.Count; i++)
+                Assert.AreEqual("2." + i, props[i].Value);
         }
 
-        /// <summary>
-        /// Tests that DateTime values that are out-of-range are still parsed correctly
-        /// and set to the closest representable date/time in .NET.
-        /// </summary>
-        [Test, Category("Serialization")]
-        public void PARSE16()
-        {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE16.ics")[0];
-            Assert.AreEqual(6, iCal.Events.Count);
-
-            IEvent evt = iCal.Events["nc2o66s0u36iesitl2l0b8inn8@google.com"];
-            Assert.IsNotNull(evt);
-
-            // The "Created" date is out-of-bounds.  It should be coerced to the
-            // closest representable date/time.
-            Assert.AreEqual(DateTime.MinValue, evt.Created.Value);
-        }
+        
 
         // FIXME: re-implement
         ///// <summary>
@@ -1052,18 +1059,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         //    Assert.AreEqual(iCal.Events[0].Properties["DTEND"].Value, "5678");
         //}
 
-        /// <summary>
-        /// Tests that Lotus Notes-style properties are properly handled.
-        /// https://sourceforge.net/tracker/?func=detail&aid=2033495&group_id=187422&atid=921236
-        /// Sourceforge bug #2033495
-        /// </summary>
-        [Test, Category("Serialization")]
-        public void PARSE18()
-        {
-            IICalendar iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\PARSE18.ics", Encoding.UTF8)[0];
-            Assert.AreEqual(1, iCal.Events.Count);
-            Assert.AreEqual(iCal.Properties["X-LOTUS-CHILD_UID"].Value, "XXX");
-        }
+        
                        
         /// <summary>
         /// Tests that line/column numbers are correctly tracked for

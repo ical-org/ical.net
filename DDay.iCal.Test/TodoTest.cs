@@ -70,16 +70,16 @@ namespace DDay.iCal.Test
         }
 
         [Test, Category("Todo")]
-        public void TODO1()
+        public void Todo1()
         {
             ArrayList items = new ArrayList();
             items.Add(new iCalDateTime(2200, 12, 31, 0, 0, 0)); items.Add(true);
 
-            TestTodoActive("TODO1.ics", items);
+            TestTodoActive("Todo1.ics", items);
         }
 
         [Test, Category("Todo")]
-        public void TODO2()
+        public void Todo2()
         {
             ArrayList items = new ArrayList();
             items.Add(new iCalDateTime(2006, 7, 28, 8, 0, 0)); items.Add(false);
@@ -87,32 +87,32 @@ namespace DDay.iCal.Test
             items.Add(new iCalDateTime(2006, 7, 28, 9, 0, 0)); items.Add(true);
             items.Add(new iCalDateTime(2200, 12, 31, 0, 0, 0)); items.Add(true);
 
-            TestTodoActive("TODO2.ics", items);
+            TestTodoActive("Todo2.ics", items);
         }
 
         [Test, Category("Todo")]
-        public void TODO3()
+        public void Todo3()
         {
             ArrayList items = new ArrayList();
             items.Add(new iCalDateTime(2006, 7, 28, 8, 0, 0)); items.Add(false);
             items.Add(new iCalDateTime(2200, 12, 31, 0, 0, 0)); items.Add(false);
 
-            TestTodoActive("TODO3.ics", items);
+            TestTodoActive("Todo3.ics", items);
         }
 
         [Test, Category("Todo")]
-        public void TODO4()
+        public void Todo4()
         {
             ArrayList items = new ArrayList();
             items.Add(new iCalDateTime(2006, 07, 28, 8, 0, 0)); items.Add(true);
             items.Add(new iCalDateTime(2006, 07, 28, 9, 0, 0)); items.Add(true);
             items.Add(new iCalDateTime(2006, 8, 1, 0, 0, 0)); items.Add(true);
 
-            TestTodoCompleted("TODO4.ics", items);
+            TestTodoCompleted("Todo4.ics", items);
         }
 
         [Test, Category("Todo")]
-        public void TODO5()
+        public void Todo5()
         {
             ArrayList items = new ArrayList();
             items.Add(new iCalDateTime(2006, 7, 28, 9, 0, 0)); items.Add(false);
@@ -128,11 +128,11 @@ namespace DDay.iCal.Test
             items.Add(new iCalDateTime(2006, 8, 7, 9, 0, 0)); items.Add(true);
             items.Add(new iCalDateTime(2006, 8, 8, 9, 0, 0)); items.Add(true);
 
-            TestTodoActive("TODO5.ics", items);
+            TestTodoActive("Todo5.ics", items);
         }
 
         [Test, Category("Todo")]
-        public void TODO6()
+        public void Todo6()
         {
             ArrayList items = new ArrayList();
             items.Add(new iCalDateTime(2006, 7, 28, 9, 0, 0)); items.Add(false);
@@ -148,11 +148,11 @@ namespace DDay.iCal.Test
             items.Add(new iCalDateTime(2006, 8, 7, 9, 0, 0)); items.Add(true);
             items.Add(new iCalDateTime(2006, 8, 8, 9, 0, 0)); items.Add(true);
 
-            TestTodoActive("TODO6.ics", items);
+            TestTodoActive("Todo6.ics", items);
         }
 
         [Test, Category("Todo")]
-        public void TODO7()
+        public void Todo7()
         {
             ArrayList items = new ArrayList();
             items.Add(new iCalDateTime(2006, 7, 28, 9, 0, 0)); items.Add(false);
@@ -172,13 +172,13 @@ namespace DDay.iCal.Test
             items.Add(new iCalDateTime(2006, 9, 2, 9, 0, 0)); items.Add(true);
             items.Add(new iCalDateTime(2006, 9, 3, 9, 0, 0)); items.Add(true);
 
-            TestTodoActive("TODO7.ics", items);
+            TestTodoActive("Todo7.ics", items);
         }
 
         [Test, Category("Todo")]
-        public void TODO7_1()
+        public void Todo7_1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\TODO7.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\Todo7.ics")[0];
             ITodo todo = iCal.Todos[0];
 
             ArrayList items = new ArrayList();
@@ -209,7 +209,7 @@ namespace DDay.iCal.Test
         }
 
         [Test, Category("Todo")]
-        public void TODO8()
+        public void Todo8()
         {
             ArrayList items = new ArrayList();
             items.Add(new iCalDateTime(2006, 7, 28, 9, 0, 0)); items.Add(false);
@@ -242,11 +242,11 @@ namespace DDay.iCal.Test
             items.Add(new iCalDateTime(2007, 2, 3, 9, 0, 0)); items.Add(true);
             items.Add(new iCalDateTime(2007, 2, 4, 9, 0, 0)); items.Add(true);
 
-            TestTodoActive("TODO8.ics", items);
+            TestTodoActive("Todo8.ics", items);
         }
 
         [Test, Category("Todo")]
-        public void TODO9()
+        public void Todo9()
         {
             ArrayList items = new ArrayList();
             items.Add(new iCalDateTime(2006, 7, 28, 9, 0, 0)); items.Add(false);
@@ -260,7 +260,7 @@ namespace DDay.iCal.Test
             items.Add(new iCalDateTime(2006, 9, 8, 9, 0, 0)); items.Add(true);
             items.Add(new iCalDateTime(2006, 9, 9, 9, 0, 0)); items.Add(true);
 
-            TestTodoActive("TODO9.ics", items, 3);            
+            TestTodoActive("Todo9.ics", items, 3);            
         }
 
         // FIXME: re-implement
