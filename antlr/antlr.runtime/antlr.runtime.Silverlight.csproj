@@ -1,0 +1,177 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C6930C54-03A9-4CA5-B73A-E444B2986A2B}</ProjectGuid>
+    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>antlr.runtime.Silverlight</RootNamespace>
+    <AssemblyName>antlr.runtime.Silverlight</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <SilverlightApplication>false</SilverlightApplication>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="SilverlightAdapter, Version=1.0.0.0, Culture=neutral, PublicKeyToken=80468f9d6a1d92a4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\SilverlightAdapter.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows" />
+    <Reference Include="mscorlib" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Browser" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="antlr.collections.impl\ASTArray.cs" />
+    <Compile Include="antlr.collections.impl\BitSet.cs" />
+    <Compile Include="antlr.collections\AST.cs" />
+    <Compile Include="antlr.debug\ANTLREventArgs.cs" />
+    <Compile Include="antlr.debug\DebuggingCharScanner.cs" />
+    <Compile Include="antlr.debug\DebuggingInputBuffer.cs" />
+    <Compile Include="antlr.debug\DebuggingParser.cs" />
+    <Compile Include="antlr.debug\GuessingEventArgs.cs" />
+    <Compile Include="antlr.debug\ICharScannerDebugSubject.cs" />
+    <Compile Include="antlr.debug\IDebugSubject.cs" />
+    <Compile Include="antlr.debug\InputBufferEventArgs.cs" />
+    <Compile Include="antlr.debug\InputBufferEventSupport.cs" />
+    <Compile Include="antlr.debug\InputBufferListener.cs" />
+    <Compile Include="antlr.debug\InputBufferListenerBase.cs" />
+    <Compile Include="antlr.debug\InputBufferReporter.cs" />
+    <Compile Include="antlr.debug\IParserDebugSubject.cs" />
+    <Compile Include="antlr.debug\Listener.cs" />
+    <Compile Include="antlr.debug\LLkDebuggingParser.cs" />
+    <Compile Include="antlr.debug\MessageEventArgs.cs" />
+    <Compile Include="antlr.debug\MessageListener.cs" />
+    <Compile Include="antlr.debug\MessageListenerBase.cs" />
+    <Compile Include="antlr.debug\NewLineEventArgs.cs" />
+    <Compile Include="antlr.debug\NewLineListener.cs" />
+    <Compile Include="antlr.debug\ParserController.cs" />
+    <Compile Include="antlr.debug\ParserEventSupport.cs" />
+    <Compile Include="antlr.debug\ParserListener.cs" />
+    <Compile Include="antlr.debug\ParserListenerBase.cs" />
+    <Compile Include="antlr.debug\ParserMatchEventArgs.cs" />
+    <Compile Include="antlr.debug\ParserMatchListener.cs" />
+    <Compile Include="antlr.debug\ParserMatchListenerBase.cs" />
+    <Compile Include="antlr.debug\ParserReporter.cs" />
+    <Compile Include="antlr.debug\ParserTokenEventArgs.cs" />
+    <Compile Include="antlr.debug\ParserTokenListener.cs" />
+    <Compile Include="antlr.debug\ParserTokenListenerBase.cs" />
+    <Compile Include="antlr.debug\ParseTreeDebugParser.cs" />
+    <Compile Include="antlr.debug\ScannerEventSupport.cs" />
+    <Compile Include="antlr.debug\SemanticPredicateEventArgs.cs" />
+    <Compile Include="antlr.debug\SemanticPredicateListener.cs" />
+    <Compile Include="antlr.debug\SemanticPredicateListenerBase.cs" />
+    <Compile Include="antlr.debug\SyntacticPredicateEventArgs.cs" />
+    <Compile Include="antlr.debug\SyntacticPredicateListener.cs" />
+    <Compile Include="antlr.debug\SyntacticPredicateListenerBase.cs" />
+    <Compile Include="antlr.debug\TraceEventArgs.cs" />
+    <Compile Include="antlr.debug\TraceListener.cs" />
+    <Compile Include="antlr.debug\TraceListenerBase.cs" />
+    <Compile Include="antlr.debug\Tracer.cs" />
+    <Compile Include="antlr\ANTLRException.cs" />
+    <Compile Include="antlr\ANTLRPanicException.cs" />
+    <Compile Include="antlr\ASTFactory.cs" />
+    <Compile Include="antlr\ASTNodeCreator.cs" />
+    <Compile Include="antlr\ASTNULLType.cs" />
+    <Compile Include="antlr\ASTPair.cs" />
+    <Compile Include="antlr\ASTVisitor.cs" />
+    <Compile Include="antlr\BaseAST.cs" />
+    <Compile Include="antlr\ByteBuffer.cs" />
+    <Compile Include="antlr\CharBuffer.cs" />
+    <Compile Include="antlr\CharQueue.cs" />
+    <Compile Include="antlr\CharScanner.cs" />
+    <Compile Include="antlr\CharStreamException.cs" />
+    <Compile Include="antlr\CharStreamIOException.cs" />
+    <Compile Include="antlr\CommonAST.cs" />
+    <Compile Include="antlr\CommonASTWithHiddenTokens.cs" />
+    <Compile Include="antlr\CommonHiddenStreamToken.cs" />
+    <Compile Include="antlr\CommonToken.cs" />
+    <Compile Include="antlr\DefaultFileLineFormatter.cs" />
+    <Compile Include="antlr\DumpASTVisitor.cs" />
+    <Compile Include="antlr\FileLineFormatter.cs" />
+    <Compile Include="antlr\IHiddenStreamToken.cs" />
+    <Compile Include="antlr\InputBuffer.cs" />
+    <Compile Include="antlr\IToken.cs" />
+    <Compile Include="antlr\LexerSharedInputState.cs" />
+    <Compile Include="antlr\LLkParser.cs" />
+    <Compile Include="antlr\MismatchedCharException.cs" />
+    <Compile Include="antlr\MismatchedTokenException.cs" />
+    <Compile Include="antlr\NoViableAltException.cs" />
+    <Compile Include="antlr\NoViableAltForCharException.cs" />
+    <Compile Include="antlr\Parser.cs" />
+    <Compile Include="antlr\ParserSharedInputState.cs" />
+    <Compile Include="antlr\ParseTree.cs" />
+    <Compile Include="antlr\ParseTreeRule.cs" />
+    <Compile Include="antlr\ParseTreeToken.cs" />
+    <Compile Include="antlr\RecognitionException.cs" />
+    <Compile Include="antlr\SemanticException.cs" />
+    <Compile Include="antlr\StringUtils.cs" />
+    <Compile Include="antlr\Token.cs" />
+    <Compile Include="antlr\TokenBuffer.cs" />
+    <Compile Include="antlr\TokenCreator.cs" />
+    <Compile Include="antlr\TokenQueue.cs" />
+    <Compile Include="antlr\TokenStream.cs" />
+    <Compile Include="antlr\TokenStreamBasicFilter.cs" />
+    <Compile Include="antlr\TokenStreamException.cs" />
+    <Compile Include="antlr\TokenStreamHiddenTokenFilter.cs" />
+    <Compile Include="antlr\TokenStreamIOException.cs" />
+    <Compile Include="antlr\TokenStreamRecognitionException.cs" />
+    <Compile Include="antlr\TokenStreamRetryException.cs" />
+    <Compile Include="antlr\TokenStreamRewriteEngine.cs" />
+    <Compile Include="antlr\TokenStreamSelector.cs" />
+    <Compile Include="antlr\TokenWithIndex.cs" />
+    <Compile Include="antlr\TreeParser.cs" />
+    <Compile Include="antlr\TreeParserSharedInputState.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="SupportClass.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DDay.iCal.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\v3.0\Microsoft.Silverlight.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
+        <SilverlightProjectProperties />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
