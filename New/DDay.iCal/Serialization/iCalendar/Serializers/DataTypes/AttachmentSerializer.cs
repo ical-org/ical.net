@@ -30,12 +30,11 @@ namespace DDay.iCal.Serialization.iCalendar
                 }
                 else if (a.Data != null)
                 {
-                    // Default to BASE64 encoding for inline attachments.
-                    if (a.Encoding == null)
-                        a.Parameters.Set("ENCODING", "BASE64");
-
                     // Ensure the VALUE type is set to BINARY
                     a.SetValueType("BINARY");
+
+                    // BASE64 encoding for BINARY inline attachments.
+                    a.Parameters.Set("ENCODING", "BASE64");                    
 
                     return Encode(a, a.Data);
                 }
