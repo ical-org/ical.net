@@ -29,26 +29,37 @@ namespace DDay.iCal
         public UniqueComponent()
         {
             Initialize();
-            CreateInitialize();
+            EnsureProperties();
         }
         public UniqueComponent(string name) : base(name)
         {
             Initialize();
-            CreateInitialize();            
+            EnsureProperties();            
         }
 
-        private void CreateInitialize()
-        {
-            // Create a new UID for the component
-            UID = new UIDFactory().Build();
+        private void EnsureProperties()
+        {            
+            if (string.IsNullOrEmpty(UID))
+            {
+                // Create a new UID for the component
+                UID = new UIDFactory().Build();
+            }
 
-            // Here, we don't simply set to DateTime.Now because DateTime.Now contains milliseconds, and
-            // the iCalendar standard doesn't care at all about milliseconds.  Therefore, when comparing
-            // two calendars, one generated, and one loaded from file, they may be functionally identical,
-            // but be determined to be different due to millisecond differences.
-            DateTime now = DateTime.Now;
-            Created = new iCalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
-            DTStamp = Created.Copy<IDateTime>();
+            if (!Properties.ContainsKey("SEQUENCE"))
+                Sequence = 0;
+
+            if (Created == null)
+            {
+                // Here, we don't simply set to DateTime.Now because DateTime.Now contains milliseconds, and
+                // the iCalendar standard doesn't care at all about milliseconds.  Therefore, when comparing
+                // two calendars, one generated, and one loaded from file, they may be functionally identical,
+                // but be determined to be different due to millisecond differences.
+                DateTime now = DateTime.Now;
+                Created = new iCalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);                
+            }
+
+            if (DTStamp == null)
+                DTStamp = Created.Copy<IDateTime>();
         }
 
         private void Initialize()
@@ -216,6 +227,13 @@ namespace DDay.iCal
             base.OnDeserializing(context);
 
             Initialize();
+        }
+
+        protected override void OnDeserialized(StreamingContext context)
+        {
+            base.OnDeserialized(context);
+
+            EnsureProperties();
         }
 
         public override bool Equals(object obj)

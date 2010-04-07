@@ -135,6 +135,7 @@
     <Compile Include="Serialization\iCalendar\Factory\DataTypeSerializerFactory.cs" />
     <Compile Include="Serialization\iCalendar\Processors\ComponentPropertyConsolidator.cs" />
     <Compile Include="Serialization\iCalendar\Processors\CompositeProcessor.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\Components\EventSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\AttachmentSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\OrganizerSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\Other\EnumSerializer.cs" />

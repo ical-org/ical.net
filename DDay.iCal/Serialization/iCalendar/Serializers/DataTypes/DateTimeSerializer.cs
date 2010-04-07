@@ -54,6 +54,13 @@ namespace DDay.iCal.Serialization.iCalendar
                 // Assign the TZID for the date/time value.
                 dt.Parameters.Set("TZID", dt.TZID);
 
+                // FIXME: what if DATE is the default value type for this?
+                // Also, what if the DATE-TIME value type is specified on something
+                // where DATE-TIME is the default value type?  It should be removed
+                // during serialization, as it's redundant...
+                if (!dt.HasTime)
+                    dt.SetValueType("DATE");
+
                 string value = string.Format("{0:0000}{1:00}{2:00}", dt.Year, dt.Month, dt.Day);
                 if (dt.HasTime)
                 {

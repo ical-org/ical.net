@@ -252,12 +252,16 @@ namespace DDay.iCal
         {
             if (IsReadOnly)
                 throw new NotSupportedException();
+
+            // Create a new list to store our item
+            IList<object> list = new List<object>();
+            list.Add(item);
             
             // FIXME: Do we always add a property, or should we aggregate to
             // another property that is an IList<object>?
             CalendarProperty p = new CalendarProperty();
             p.Name = m_PropertyName;
-            p.Value = item;
+            p.Value = list;
 
             m_PropertyList.Add(p);
         }

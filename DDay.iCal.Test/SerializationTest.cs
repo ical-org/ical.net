@@ -443,8 +443,8 @@ namespace DDay.iCal.Test
 
             Assert.IsNotEmpty(icalString, "iCalendarSerializer.SerializeToString() must not be empty");
 
-            ComponentSerializer compSerializer = new ComponentSerializer();
-            string evtString = compSerializer.SerializeToString(evt);
+            EventSerializer eventSerializer = new EventSerializer();
+            string evtString = eventSerializer.SerializeToString(evt);
 
             Assert.IsTrue(evtString.Equals("BEGIN:VEVENT\r\nCREATED:20070319T000000Z\r\nDTEND;VALUE=DATE:20070320\r\nDTSTAMP:20070319T000000Z\r\nDTSTART;VALUE=DATE:20070319\r\nRRULE:FREQ=WEEKLY;INTERVAL=3;COUNT=4;BYDAY=TU,FR,SU\r\nSEQUENCE:0\r\nSUMMARY:Test event title\r\nUID:123456789\r\nEND:VEVENT\r\n"), "ComponentBaseSerializer.SerializeToString() serialized incorrectly");
 
@@ -466,10 +466,10 @@ namespace DDay.iCal.Test
             RecurrencePattern rec = new RecurrencePattern("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4");
             evt.RecurrenceRules.Add(rec);
 
-            ComponentSerializer compSerializer = new ComponentSerializer();
+            EventSerializer eventSerializer = new EventSerializer();
 
             FileStream fs = new FileStream(@"Calendars\Serialization\Event6.ics", FileMode.Create, FileAccess.Write);
-            compSerializer.Serialize(evt, fs, Encoding.UTF8);
+            eventSerializer.Serialize(evt, fs, Encoding.UTF8);
             fs.Close();
 
             iCalendar iCal1 = new iCalendar();

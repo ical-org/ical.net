@@ -110,7 +110,7 @@ namespace DDay.iCal
         virtual public IList<string> Resources
         {
             get { return Properties.GetList<string>("RESOURCES"); }
-            set { Properties.Set("RESOURCES", value); }
+            set { Properties.SetList("RESOURCES", value); }
         }
 
         /// <summary>

@@ -8,6 +8,19 @@ namespace DDay.iCal.Serialization.iCalendar
         List<ISerializationProcessor<T>>,
         ISerializationProcessor<T>
     {
+        #region Constructors
+
+        public CompositeProcessor()
+        {
+        }
+
+        public CompositeProcessor(IEnumerable<ISerializationProcessor<T>> processors)
+        {
+            AddRange(processors);
+        }
+
+        #endregion
+
         #region ISerializationProcessor<T> Members
 
         virtual public void PreSerialization(T obj)
