@@ -222,7 +222,6 @@ namespace DDay.iCal
         {
             this.Name = Components.EVENT;
 
-            Resources = new List<string>();
             m_Evaluator = new EventEvaluator(this);
         }
 

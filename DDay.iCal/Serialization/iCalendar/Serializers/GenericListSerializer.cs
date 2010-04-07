@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Reflection;
+using System.Collections;
 
 namespace DDay.iCal.Serialization.iCalendar
 {
@@ -53,7 +54,8 @@ namespace DDay.iCal.Serialization.iCalendar
                 if (listObj != null)
                 {
                     // Get a serializer for the inner type
-                    IStringSerializer stringSerializer = sf.Build(_InnerType, SerializationContext) as IStringSerializer;
+                    IStringSerializer stringSerializer = sf.Build(_InnerType, SerializationContext) as IStringSerializer;;
+
                     if (stringSerializer != null)
                     {
                         // Deserialize the inner object
@@ -71,9 +73,23 @@ namespace DDay.iCal.Serialization.iCalendar
                             MethodInfo mi = _ObjectType.GetMethod("Add");
                             if (mi != null)
                             {
-                                // Add the object to the list
-                                mi.Invoke(listObj, new object[] { objToAdd });
-
+                                // Determine if the returned object is an IList<ObjectType>,
+                                // rather than just an ObjectType.
+                                if (objToAdd is IEnumerable &&
+                                    objToAdd.GetType().Equals(typeof(List<>).MakeGenericType(_InnerType)))
+                                {
+                                    // Deserialization returned an IList<ObjectType>, instead of
+                                    // simply an ObjectType.  So, let's enumerate through the
+                                    // items in the list and add them individually to our
+                                    // list.
+                                    foreach (object innerObj in (IEnumerable)objToAdd)
+                                        mi.Invoke(listObj, new object[] { innerObj });
+                                }
+                                else
+                                {
+                                    // Add the object to the list
+                                    mi.Invoke(listObj, new object[] { objToAdd });
+                                }
                                 return listObj;
                             }
                         }

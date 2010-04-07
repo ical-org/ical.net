@@ -12,14 +12,16 @@ namespace DDay.iCal
         #region Private Fields
 
         ICalendarObject m_Parent;
+        bool m_CaseInsensitive;
 
         #endregion
 
         #region Constructors
 
-        public CalendarParameterList(ICalendarObject parent)
+        public CalendarParameterList(ICalendarObject parent, bool caseInsensitive)
         {
             m_Parent = parent;
+            m_CaseInsensitive = caseInsensitive;
 
             ItemAdded += new EventHandler<ObjectEventArgs<ICalendarParameter>>(CalendarParameterList_ItemAdded);
             ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarParameter>>(CalendarParameterList_ItemRemoved);
@@ -45,18 +47,27 @@ namespace DDay.iCal
 
         public void Add(string name, string value)
         {
-            Add(new CalendarParameter(name, value));
+            if (name != null)
+            {
+                name = m_CaseInsensitive ? name.ToUpper() : name;
+                Add(new CalendarParameter(name, value));
+            }
         }
 
         public void Add(string name, string[] values)
         {
-            Add(new CalendarParameter(name, values));
+            if (name != null)
+            {
+                name = m_CaseInsensitive ? name.ToUpper() : name;
+                Add(new CalendarParameter(name, values));
+            }
         }
 
         public void Set(string name, string[] values)
         {
             if (name != null)
             {
+                name = m_CaseInsensitive ? name.ToUpper() : name;
                 if (ContainsKey(name))
                 {
                     if (values != null)
@@ -75,8 +86,12 @@ namespace DDay.iCal
 
         public string Get(string name)
         {
-            if (name != null && ContainsKey(name))
-                return this[name].Value;
+            if (name != null)
+            {
+                name = m_CaseInsensitive ? name.ToUpper() : name;
+                if (ContainsKey(name))
+                    return this[name].Value;
+            }
             return null;
         }
 
@@ -84,6 +99,8 @@ namespace DDay.iCal
         {
             if (name != null && ContainsKey(name))
             {
+                name = m_CaseInsensitive ? name.ToUpper() : name;
+
                 List<string> values = new List<string>();
                 foreach (ICalendarParameter p in AllOf(name))
                 {

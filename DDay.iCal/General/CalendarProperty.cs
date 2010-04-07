@@ -91,7 +91,7 @@ namespace DDay.iCal
 
         private void Initialize()
         {
-            m_Parameters = new CalendarParameterList(this);
+            m_Parameters = new CalendarParameterList(this, true);
         }
 
         #endregion

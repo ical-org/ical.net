@@ -122,7 +122,7 @@ namespace DDay.iCal
 
         private void Initialize()
         {
-            m_Properties = new CalendarPropertyList(this);
+            m_Properties = new CalendarPropertyList(this, true);
         }
 
         #endregion

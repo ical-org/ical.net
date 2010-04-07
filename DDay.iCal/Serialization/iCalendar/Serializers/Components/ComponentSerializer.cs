@@ -137,7 +137,8 @@ namespace DDay.iCal.Serialization.iCalendar
                     return -1;
                 else if (y == null)
                     return 1;
-                else return string.Compare(x.Name, y.Name);
+                else
+                    return string.Compare(x.Name, y.Name, true);
             }
 
             #endregion

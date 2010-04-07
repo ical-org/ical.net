@@ -38,10 +38,15 @@ namespace DDay.iCal.Serialization.iCalendar
 
                 // Push this object on the serialization context.
                 SerializationContext.Push(prop);
+
+                IDataTypeMapper mapper = GetService<IDataTypeMapper>();
+                Type serializedType = mapper.GetPropertyMapping(prop);
                 
                 // Build a list of values that are to be serialized.
                 List<object> objs = new List<object>();
-                if (!(prop.Value is string) && prop.Value is IEnumerable)
+                if (!(prop.Value is string) && 
+                    !(typeof(IEnumerable<string>).IsAssignableFrom(serializedType)) && 
+                    prop.Value is IEnumerable)
                 {
                     foreach (object v in (IEnumerable)prop.Value)
                         objs.Add(v);

@@ -184,6 +184,11 @@ namespace DDay.iCal
 
     #region Calendar Properties
 
+    public class CalendarProductIDs
+    {
+        public const string Default = "-//ddaysoftware.com//NONSGML DDay.iCal 1.0//EN";
+    }
+
     public class CalendarVersions
     {
         public const string v2_0 = "2.0";

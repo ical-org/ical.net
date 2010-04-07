@@ -71,26 +71,30 @@ namespace DDay.iCal.Test
 
         static public void CompareComponents(ICalendarComponent cb1, ICalendarComponent cb2)
         {
-            List<ICalendarProperty> c1Props = new List<ICalendarProperty>(cb1.Properties);
-            List<ICalendarProperty> c2Props = new List<ICalendarProperty>(cb2.Properties);
+            Assert.AreEqual(cb1.Properties.Count, cb2.Properties.Count, "The number of '" + cb1.Name + "' properties is not equal.");
 
-            Assert.AreEqual(c1Props.Count, c2Props.Count, "The number of '" + cb1.Name + "' properties is not equal.");
-
-            c1Props.Sort(new ComponentSerializer.PropertyAlphabetizer());
-            c2Props.Sort(new ComponentSerializer.PropertyAlphabetizer());            
-
-            for (int i = 0; i < c1Props.Count; i++)
+            foreach (ICalendarProperty p1 in cb1.Properties)
             {
-                ICalendarProperty p1 = c1Props[i];
-                ICalendarProperty p2 = c2Props[i];
-                Assert.AreEqual(p1, p2, "The properties '" + p1.Name + "' are not equal.");
+                bool isMatch = false;
+                foreach (ICalendarProperty p2 in cb2.Properties.AllOf(p1.Name))
+                {
+                    try
+                    {
+                        Assert.AreEqual(p1, p2, "The properties '" + p1.Name + "' are not equal.");
+                        if (p1.Value is IComparable)
+                            Assert.AreEqual(0, ((IComparable)p1.Value).CompareTo(p2.Value), "The '" + p1.Name + "' property values do not match.");
+                        else if (p1.Value is IEnumerable)
+                            CompareEnumerables((IEnumerable)p1.Value, (IEnumerable)p2.Value, p1.Name);
+                        else
+                            Assert.AreEqual(p1.Value, p2.Value, "The '" + p1.Name + "' property values are not equal.");
 
-                if (p1.Value is IComparable)
-                    Assert.AreEqual(0, ((IComparable)p1.Value).CompareTo(p2.Value), "The '" + p1.Name + "' property values do not match.");
-                else if (p1.Value is IEnumerable)
-                    CompareEnumerables((IEnumerable)p1.Value, (IEnumerable)p2.Value, p1.Name);
-                else
-                    Assert.AreEqual(p1.Value, p2.Value, "The '" + p1.Name + "' property values are not equal.");
+                        isMatch = true;
+                        break;
+                    }
+                    catch { }
+                }
+
+                Assert.IsTrue(isMatch, "Could not find a matching property.");                    
             }
 
             Assert.AreEqual(cb1.Children.Count, cb2.Children.Count, "The number of children are not equal.");
@@ -263,16 +267,11 @@ namespace DDay.iCal.Test
         {
             IICalendar iCal = new iCalendar();
             iCalendarSerializer serializer = new iCalendarSerializer();
-            serializer.Serialize(iCal, @"Calendars\Serialization\Temp\CalendarParameters1.ics");
+            serializer.Serialize(iCal, @"Calendars\Serialization\CalendarParameters1.ics");
 
-            iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\CalendarParameters1.ics")[0];
+            iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\CalendarParameters1.ics")[0];
             Assert.IsNotNullOrEmpty(iCal.Version);
             Assert.IsNotNullOrEmpty(iCal.ProductID);
-
-            iCal.Version = string.Empty;
-            iCal.ProductID = null;
-            Assert.IsNotEmpty(iCal.Version, "VERSION is required");
-            Assert.IsNotEmpty(iCal.ProductID, "PRODID is required");
         }
 
         /// <summary>

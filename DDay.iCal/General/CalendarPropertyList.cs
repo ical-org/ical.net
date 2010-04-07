@@ -12,14 +12,16 @@ namespace DDay.iCal
         #region Private Fields
 
         ICalendarObject m_Parent;
+        bool m_CaseInsensitive;
 
         #endregion
 
         #region Constructors
 
-        public CalendarPropertyList(ICalendarObject parent)
+        public CalendarPropertyList(ICalendarObject parent, bool caseInsensitive)
         {
             m_Parent = parent;
+            m_CaseInsensitive = caseInsensitive;
 
             ItemAdded += new EventHandler<ObjectEventArgs<ICalendarProperty>>(CalendarPropertyList_ItemAdded);
             ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarProperty>>(CalendarPropertyList_ItemRemoved);
@@ -47,8 +49,9 @@ namespace DDay.iCal
         {
             if (name != null)
             {
+                name = m_CaseInsensitive ? name.ToUpper() : name;
                 if (value != null)
-                {
+                {                    
                     ICalendarProperty p = new CalendarProperty(name, value);
                     if (ContainsKey(name))
                         this[name] = p;
@@ -66,6 +69,8 @@ namespace DDay.iCal
         {
             if (name != null)
             {
+                name = m_CaseInsensitive ? name.ToUpper() : name;
+
                 Remove(name);
                 Set(name, value);
             }
@@ -75,6 +80,8 @@ namespace DDay.iCal
         {
             if (name != null && ContainsKey(name))
             {
+                name = m_CaseInsensitive ? name.ToUpper() : name;
+
                 object obj = this[name].Value;
                 if (obj is T)
                     return (T)obj;
@@ -86,6 +93,8 @@ namespace DDay.iCal
         {
             if (name != null && ContainsKey(name))
             {
+                name = m_CaseInsensitive ? name.ToUpper() : name;
+
                 List<T> objs = new List<T>();
                 foreach (ICalendarProperty p in AllOf(name))
                 {
@@ -100,6 +109,7 @@ namespace DDay.iCal
 
         virtual public IList<U> GetList<U>(string name)
         {
+            name = m_CaseInsensitive ? name.ToUpper() : name;
             return new CalendarPropertyCompositeList<U>(this, name);
         }
 

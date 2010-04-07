@@ -425,11 +425,20 @@ namespace DDay.iCal
         public iCalendar()
         {
             Initialize();
+            EnsureProperties();
+        }
+
+        private void EnsureProperties()
+        {
+            if (string.IsNullOrEmpty(Version))
+                Version = CalendarVersions.v2_0;
+            if (string.IsNullOrEmpty(ProductID))
+                ProductID = CalendarProductIDs.Default;
         }
 
         private void Initialize()
         {
-            this.Name = Components.CALENDAR;
+            this.Name = Components.CALENDAR;            
 
             m_UniqueComponents = new UniqueComponentList<IUniqueComponent>(this);
             m_Events = new UniqueComponentList<IEvent>(this);
@@ -448,6 +457,13 @@ namespace DDay.iCal
             base.OnDeserializing(context);
 
             Initialize();
+        }
+
+        protected override void OnDeserialized(StreamingContext context)
+        {
+            base.OnDeserialized(context);
+
+            EnsureProperties();
         }
 
         public override bool Equals(object obj)

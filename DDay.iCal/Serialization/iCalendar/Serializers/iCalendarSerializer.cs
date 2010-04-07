@@ -66,6 +66,25 @@ namespace DDay.iCal.Serialization.iCalendar
             }
         }
 
+        public override string SerializeToString(object obj)
+        {
+            IICalendar iCal = obj as IICalendar;
+            if (iCal != null)
+            {
+                // Ensure VERSION and PRODUCTID are both set,
+                // as they are required by RFC5545.
+                IICalendar copy = iCal.Copy<IICalendar>();
+                if (string.IsNullOrEmpty(copy.Version))
+                    copy.Version = CalendarVersions.v2_0;                    
+                if (string.IsNullOrEmpty(copy.ProductID))
+                    copy.ProductID = CalendarProductIDs.Default;                    
+
+                return base.SerializeToString(copy);
+            }
+
+            return base.SerializeToString(obj);
+        }
+
         public override object Deserialize(TextReader tr)
         {
             if (tr != null)
