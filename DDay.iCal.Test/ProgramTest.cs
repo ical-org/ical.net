@@ -161,30 +161,7 @@ namespace DDay.iCal.Test
 
         
 
-        /// <summary>
-        /// At times, this may throw a WebException if an internet connection is not present.
-        /// This is safely ignored.
-        /// </summary>
-        [Test, ExpectedException(typeof(WebException))]
-        public void Attachment()
-        {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\BINARY.ics")[0];
-            ProgramTest.TestCal(iCal);
-            IEvent evt = iCal.Events[0];
-
-            IAttachment a = evt.Attachments[0];
-            if (a.Uri != null)
-                a.LoadDataFromUri();
-
-            MemoryStream ms = new MemoryStream();
-            ms.SetLength(a.Data.Length);
-            a.Data.CopyTo(ms.GetBuffer(), 0);
-
-            IICalendar iCal1 = iCalendar.LoadFromStream(ms)[0];
-            Assert.IsNotNull(iCal1, "Attached iCalendar did not load correctly");
-
-            throw new WebException();
-        }
+        
 
         /// <summary>
         /// The following test is an aggregate of MonthlyCountByMonthDay3() and MonthlyByDay1() in the

@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using NUnit.Framework;
 using DDay.iCal.Serialization.iCalendar;
 using DDay.iCal.Serialization;
+using System.Net;
 
 namespace DDay.iCal.Test
 {
@@ -201,7 +202,11 @@ namespace DDay.iCal.Test
             SerializeTest("Attachment3.ics", typeof(iCalendarSerializer));
         }
 
-        [Test]
+        /// <summary>
+        /// At times, this may throw a WebException if an internet connection is not present.
+        /// This is safely ignored.
+        /// </summary>
+        [Test, ExpectedException(typeof(WebException))]
         public void Attachment4()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Attachment4.ics")[0];
@@ -214,6 +219,15 @@ namespace DDay.iCal.Test
             a.LoadDataFromUri();
             Assert.IsNotNull(a.Data);
             Assert.AreNotEqual(0, a.Data.Length);
+
+            MemoryStream ms = new MemoryStream();
+            ms.SetLength(a.Data.Length);
+            a.Data.CopyTo(ms.GetBuffer(), 0);
+
+            IICalendar iCal1 = iCalendar.LoadFromStream(ms)[0];
+            Assert.IsNotNull(iCal1, "Attached iCalendar did not load correctly");
+
+            throw new WebException();
         }
 
         /// <summary>
@@ -315,8 +329,10 @@ namespace DDay.iCal.Test
         [Test, Category("Serialization")]
         public void EmptyLines2()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\EmptyLines2.ics")[0];
-            Assert.AreEqual(4, iCal.Events.Count, "iCalendar should have 4 events");
+            IICalendarCollection calendars = iCalendar.LoadFromFile(@"Calendars\Serialization\EmptyLines2.ics");
+            Assert.AreEqual(2, calendars.Count);
+            Assert.AreEqual(2, calendars[0].Events.Count, "iCalendar should have 2 events");
+            Assert.AreEqual(2, calendars[1].Events.Count, "iCalendar should have 2 events");
         }
 
         /// <summary>
