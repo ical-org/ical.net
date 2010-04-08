@@ -95,6 +95,7 @@
     <Compile Include="JournalTest.cs" />
     <Compile Include="ProgramTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="Properties\AssemblyInfo.cs.template" />
     <Compile Include="RecurrenceTest.cs" />
     <Compile Include="SerializationTest.cs" />
     <Compile Include="Startup.cs" />
@@ -518,4 +519,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PreBuildEvent>$(SolutionDir)subwcrev.exe $(ProjectDir). $(ProjectDir)Properties\AssemblyInfo.cs.template $(ProjectDir)Properties\AssemblyInfo.cs</PreBuildEvent>
+  </PropertyGroup>
 </Project>
