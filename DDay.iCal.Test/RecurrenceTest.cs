@@ -2248,7 +2248,7 @@ namespace DDay.iCal.Test
         [Test, Category("Recurrence")]
         public void USHolidays()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\USHolidays.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\USHolidays.ics")[0];
 
             Assert.IsNotNull(iCal, "iCalendar was not loaded.");
             Hashtable items = new Hashtable();

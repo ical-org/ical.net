@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Net;
 using NUnit.Framework;
+using DDay.iCal.Serialization.iCalendar;
 
 namespace DDay.iCal.Test
 {
@@ -21,7 +22,7 @@ namespace DDay.iCal.Test
             // The following code loads and displays an iCalendar
             // with US Holidays for 2006.
             //
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\USHolidays.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\USHolidays.ics")[0];
             Assert.IsNotNull(iCal, "iCalendar did not load.  Are you connected to the internet?");
 
             IList<Occurrence> occurrences = iCal.GetOccurrences(
@@ -97,78 +98,30 @@ namespace DDay.iCal.Test
         [Test]
         public void LoadFromFile()
         {
-            string path = @"Calendars\General\Test1.ics";
+            string path = @"Calendars\Serialization\Calendar1.ics";
             Assert.IsTrue(File.Exists(path), "File '" + path + "' does not exist.");
 
             IICalendar iCal = iCalendar.LoadFromFile(path)[0];
-            ProgramTest.TestCal(iCal);
+            Assert.AreEqual(14, iCal.Events.Count);
         }
 
         [Test]
         public void LoadFromUri()
         {
             string path = Directory.GetCurrentDirectory();
-            path = Path.Combine(path, "Calendars/General/Test1.ics").Replace(@"\", "/");
+            path = Path.Combine(path, "Calendars/Serialization/Calendar1.ics").Replace(@"\", "/");
             path = "file:///" + path;
             Uri uri = new Uri(path);
             IICalendar iCal = iCalendar.LoadFromUri(uri)[0];
-            ProgramTest.TestCal(iCal);
-        }
-
-        // FIXME: re-imeplement
-        //[Test]
-        //public void CATEGORIES()
-        //{
-        //    IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\CATEGORIES.ics");
-        //    ProgramTest.TestCal(iCal);
-        //    IEvent evt = iCal.Events[0];
-
-        //    ArrayList items = new ArrayList();
-        //    items.AddRange(new string[]
-        //    {
-        //        "One", "Two", "Three",
-        //        "Four", "Five", "Six",
-        //        "Seven", "A string of text with nothing less than a comma, semicolon; and a newline\n."
-        //    });
-
-        //    Hashtable found = new Hashtable();
-
-        //    foreach (TextCollection tc in evt.Categories)
-        //    {
-        //        foreach (Text text in tc.Values)
-        //        {
-        //            if (items.Contains(text.Value))
-        //                found[text.Value] = true;
-        //        }
-        //    }
-
-        //    foreach (string item in items)
-        //        Assert.IsTrue(found.ContainsKey(item), "Event should contain CATEGORY '" + item + "', but it was not found.");
-        //}
-
-        [Test]
-        public void GeographicLocation1()
-        {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\GeographicLocation1.ics")[0];
-            ProgramTest.TestCal(iCal);
-            IEvent evt = iCal.Events[0];
-
-            Assert.AreEqual(37.386013, evt.GeographicLocation.Latitude, "Latitude should be 37.386013; it is not.");
-            Assert.AreEqual(-122.082932, evt.GeographicLocation.Longitude, "Longitude should be -122.082932; it is not.");
-        }
-
-        
-
-        
-
-        
+            Assert.AreEqual(14, iCal.Events.Count);
+        }        
 
         /// <summary>
         /// The following test is an aggregate of MonthlyCountByMonthDay3() and MonthlyByDay1() in the
         /// <see cref="Recurrence"/> class.
         /// </summary>
         [Test]
-        public void MERGE1()
+        public void Merge1()
         {
             IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyCountByMonthDay3.ics")[0];
             IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyByDay1.ics")[0];
@@ -217,7 +170,7 @@ namespace DDay.iCal.Test
             {
                 IDateTime dt = DateTimes[i];
                 IDateTime start = occurrences[i].Period.StartTime;
-                Assert.AreEqual(dt.Local, start.Local);
+                Assert.AreEqual(dt, start);
                 Assert.IsTrue(dt.TimeZoneName == TimeZones[i], "Event " + dt + " should occur in the " + TimeZones[i] + " timezone");
             }
 
@@ -276,7 +229,7 @@ namespace DDay.iCal.Test
             {
                 IDateTime dt = DateTimes1[i];
                 IDateTime start = occurrences[i].Period.StartTime;
-                Assert.AreEqual(dt.Local, start.Local);
+                Assert.AreEqual(dt, start);
                 Assert.IsTrue(dt.TimeZoneName == TimeZones1[i], "Event " + dt + " should occur in the " + TimeZones1[i] + " timezone");
             }
 
@@ -284,13 +237,13 @@ namespace DDay.iCal.Test
         }
 
         [Test]
-        public void MERGE2()
+        public void Merge2()
         {
             iCalendar iCal = new iCalendar();
-            IICalendar tmp_cal = iCalendar.LoadFromFile(@"Calendars\General\MERGE2.ics")[0];
+            IICalendar tmp_cal = iCalendar.LoadFromFile(@"Calendars\Serialization\TimeZone3.ics")[0];
             iCal.MergeWith(tmp_cal);
 
-            tmp_cal = iCalendar.LoadFromFile(@"Calendars\General\MERGE2.ics")[0];
+            tmp_cal = iCalendar.LoadFromFile(@"Calendars\Serialization\TimeZone3.ics")[0];
 
             // Compare the two calendars -- they should match exactly
             SerializationTest.CompareCalendars(iCal, tmp_cal);
@@ -301,7 +254,7 @@ namespace DDay.iCal.Test
         /// ensure that unique component merging happens as expected.
         /// </summary>
         [Test]
-        public void MERGE3()
+        public void Merge3()
         {
             IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyCountByMonthDay3.ics")[0];
             IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyByMonth1.ics")[0];
@@ -309,119 +262,7 @@ namespace DDay.iCal.Test
             iCal1.MergeWith(iCal2);
 
             Assert.AreEqual(1, iCal1.Events.Count);
-        }
-
-        
-
-        // FIXME: re-implement
-        //[Test]
-        //public void AddEvent1()
-        //{
-        //    IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\General\GEO1.ics");
-        //    ProgramTest.TestCal(iCal);
-
-        //    Event evt = iCal.Create<Event>();
-        //    evt.Summary = "Test event";
-        //    evt.Description = "This is an event to see if event creation works";
-        //    evt.Start = new iCalDateTime(2006, 12, 15, "US-Eastern", iCal);
-        //    evt.Duration = new TimeSpan(1, 0, 0);
-        //    evt.Organizer = new Organizer("dougd@daywesthealthcare.com");
-
-        //    if (!Directory.Exists(@"Calendars\General\Temp"))
-        //        Directory.CreateDirectory(@"Calendars\General\Temp");
-
-        //    iCalendarSerializer serializer = new iCalendarSerializer();
-        //    serializer.Serialize(iCal, @"Calendars\General\Temp\GEO1_Serialized.ics");
-        //}
-
-        
-        // FIXME: re-implement
-        //[Test]
-        //public void EVALUATION1()
-        //{
-        //    iCalendarCollection calendars = new iCalendarCollection();
-        //    calendars.AddRange(iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyCountByMonthDay3.ics"));
-        //    calendars.AddRange(iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyByDay1.ics"));
-
-        //    iCalDateTime startDate = new iCalDateTime(1996, 1, 1, tzid, calendars[0]);
-        //    iCalDateTime endDate = new iCalDateTime(1998, 4, 1, tzid, calendars[0]);
-
-        //    List<IDateTime> DateTimes = new List<IDateTime>(new iCalDateTime[]
-        //    {
-        //        new iCalDateTime(1997, 9, 2, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1997, 9, 9, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1997, 9, 16, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1997, 9, 23, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1997, 9, 30, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1997, 11, 4, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1997, 11, 11, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1997, 11, 18, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1997, 11, 25, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1998, 1, 6, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1998, 1, 13, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1998, 1, 20, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1998, 1, 27, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1998, 3, 3, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1998, 3, 10, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1998, 3, 17, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1998, 3, 24, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1998, 3, 31, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1997, 9, 10, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1997, 9, 11, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1997, 9, 12, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1997, 9, 13, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1997, 9, 14, 9, 0, 0, tzid, calendars[0]),
-        //        new iCalDateTime(1997, 9, 15, 9, 0, 0, tzid, calendars[0]),                
-        //    });
-
-        //    List<Event> occurrences = new List<Event>(calendars.GetRecurrencesForRange<Event>(startDate, endDate));
-        //    foreach (Event evt in occurrences)
-        //        Assert.IsTrue(DateTimes.Contains(evt.Start), "Event occurred on " + evt.Start + "; it should not have");
-        //    foreach (iCalDateTime dt in DateTimes)
-        //    {
-        //        bool isFound = false;
-        //        foreach (Event evt in occurrences)
-        //        {
-        //            if (evt.Start.Equals(dt))
-        //            {
-        //                isFound = true;
-        //                break;
-        //            }
-        //        }
-        //        Assert.IsTrue(isFound, "Event should occur on " + dt);
-        //    }
-
-        //    Assert.IsTrue(occurrences.Count == DateTimes.Count, "There should be exactly " + DateTimes.Count + " occurrences; there were " + occurrences.Count);
-        //}
-
-        [Test]
-        public void PRODID1()
-        {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/PRODID1.ics")[0];
-        }
-
-        [Test]
-        public void PRODID2()
-        {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/PRODID2.ics")[0];
-        }
-
-        [Test]
-        public void Outlook2007_With_Folded_Lines_Using_Tabs_Contains_One_Event()
-        {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Outlook2007LineFolds.ics")[0];
-            IList<Occurrence> events = iCal.GetOccurrences(new iCalDateTime(2009, 06, 20), new iCalDateTime(2009, 06, 22));
-            Assert.AreEqual(1, events.Count);
-        }
-
-        [Test]
-        public void Outlook2007_With_Folded_Lines_Using_Tabs_Is_Properly_Unwrapped()
-        {
-            string longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/General/Outlook2007LineFolds.ics")[0];
-            IList<Occurrence> events = iCal.GetOccurrences<Event>(new iCalDateTime(2009, 06, 20), new iCalDateTime(2009, 06, 22));
-            Assert.AreEqual(longName, ((IEvent)events[0].Source).Location);
-        }
+        }        
 
 #if DATACONTRACT && !SILVERLIGHT
         /// <summary>
@@ -437,11 +278,14 @@ namespace DDay.iCal.Test
             iCalendar iCal = new iCalendar();
             iCalTimeZone tz = iCalTimeZone.FromSystemTimeZone(tzi);
             Assert.IsNotNull(tz);
-
             iCal.AddChild(tz);
+
+            iCalendarSerializer serializer = new iCalendarSerializer();
+            serializer.Serialize(iCal, @"Calendars\Serialization\SystemTimeZone1.ics");
 
             iCalDateTime dt1 = new iCalDateTime(2003, 10, 26, 0, 59, 59, tz.TZID, iCal);
             iCalDateTime dt2 = new iCalDateTime(2003, 10, 26, 1, 0, 0, tz.TZID, iCal);
+
             TimeSpan result = dt2 - dt1;
             Assert.AreEqual(TimeSpan.FromHours(1) + TimeSpan.FromSeconds(1), result);
 
@@ -461,9 +305,12 @@ namespace DDay.iCal.Test
             Assert.IsNotNull(tzi);
 
             iCalendar iCal = new iCalendar();
-            iCalTimeZone tz = iCal.AddTimeZone(tzi);
+            ITimeZone tz = iCal.AddTimeZone(tzi);
             Assert.IsNotNull(tz);
-            
+
+            iCalendarSerializer serializer = new iCalendarSerializer();
+            serializer.Serialize(iCal, @"Calendars\Serialization\SystemTimeZone2.ics");
+
             iCalDateTime dt1 = new iCalDateTime(2003, 10, 26, 0, 59, 59, tz.TZID, iCal);
             iCalDateTime dt2 = new iCalDateTime(2003, 10, 26, 1, 0, 0, tz.TZID, iCal);
             TimeSpan result = dt2 - dt1;

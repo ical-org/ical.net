@@ -123,7 +123,7 @@ namespace DDay.iCal
                 foreach (ICalendarObject child in obj.Children)
                     AddChild(child.Copy<ICalendarObject>());
             }
-        }
+        }        
 
         #endregion
 
@@ -265,23 +265,7 @@ namespace DDay.iCal
             }
         }
 
-        #endregion
-
-        #region IMergeable Members
-
-        virtual public void MergeWith(ICalendarObject obj)
-        {
-            if (obj != null)
-            {
-                if (Name == null)
-                    Name = obj.Name;
-
-                foreach (ICalendarObject child in obj.Children)
-                    AddChild(child.Copy<ICalendarObject>());
-            }
-        }
-
-        #endregion
+        #endregion       
 
         #region IServiceProvider Members
 

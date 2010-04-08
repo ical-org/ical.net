@@ -59,7 +59,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 value = value.Replace("\r", @"\n");
                 value = value.Replace("\n", @"\n");
                 value = value.Replace(";", @"\;");
-                value = value.Replace(",", @"\,");                
+                value = value.Replace(",", @"\,");
             }
             return value;
         }
@@ -124,49 +124,52 @@ namespace DDay.iCal.Serialization.iCalendar
                 // depending on the input text.  Anything that uses this serializer should
                 // be prepared to receive either a string, or an IList<string>.
 
-                // FIXME: should we deserialize something even when an ICalendarObject
-                // cannot be found on the serialization stack?
+                bool serializeAsList = false;
+
                 ICalendarObject co = SerializationContext.Peek() as ICalendarObject;
+                if (co is ICalendarProperty)
+                {
+                    IDataTypeMapper mapper = GetService<IDataTypeMapper>();
+                    Type type = mapper.GetPropertyMapping((ICalendarProperty)co);
+                    if (type != null && typeof(IList<string>).IsAssignableFrom(type))
+                        serializeAsList = true;
+                }
+
+                value = TextUtil.Normalize(value, SerializationContext).ReadToEnd();
+
+                // Try to decode the string
+                EncodableDataType dt = null;
                 if (co != null)
                 {
-                    bool serializeAsList = false;
-
-                    if (co is ICalendarProperty)
-                    {
-                        IDataTypeMapper mapper = GetService<IDataTypeMapper>();
-                        Type type = mapper.GetPropertyMapping((ICalendarProperty)co);
-                        if (type != null && typeof(IList<string>).IsAssignableFrom(type))
-                            serializeAsList = true;
-                    }
-
-                    value = TextUtil.Normalize(value, SerializationContext).ReadToEnd();
-
-                    // Try to decode the string
-                    EncodableDataType dt = new EncodableDataType();
+                    dt = new EncodableDataType();
                     dt.AssociatedObject = co;
-                    
-                    List<string> values = new List<string>();
-
-                    int i = 0;
-                    if (serializeAsList)
-                    {
-                        MatchCollection matches = Regex.Matches(value, @"[^\\](,)");
-                        foreach (Match match in matches)
-                        {
-                            values.Add(Unescape(Decode(dt, value.Substring(i, match.Index - i + 1))));
-                            i = match.Index + 2;
-                        }
-                    }
-
-                    if (i < value.Length)
-                        values.Add(Unescape(Decode(dt, value.Substring(i, value.Length - i))));
-
-                    // Return either a single value, or the entire list.
-                    if (values.Count == 1)
-                        return values[0];
-                    else
-                        return values;
                 }
+                
+                List<string> values = new List<string>();
+
+                int i = 0;
+                if (serializeAsList)
+                {
+                    MatchCollection matches = Regex.Matches(value, @"[^\\](,)");
+                    foreach (Match match in matches)
+                    {
+                        string newValue = dt != null ? Decode(dt, value.Substring(i, match.Index - i + 1)) : value.Substring(i, match.Index - i + 1);
+                        values.Add(Unescape(newValue));
+                        i = match.Index + 2;
+                    }
+                }
+
+                if (i < value.Length)
+                {
+                    string newValue = dt != null ? Decode(dt, value.Substring(i, value.Length - i)) : value.Substring(i, value.Length - i);
+                    values.Add(Unescape(newValue));
+                }
+
+                // Return either a single value, or the entire list.
+                if (values.Count == 1)
+                    return values[0];
+                else
+                    return values;                
             }
             return null;
         }

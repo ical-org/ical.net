@@ -67,11 +67,11 @@ namespace DDay.iCal
             foreach (var adjustmentRule in adjustmentRules)
             {                
                 var delta = adjustmentRule.DaylightDelta;
-                dday_tz.TZID = tzinfo.Id;                
+                dday_tz.TZID = tzinfo.Id;
 
                 var dday_tzinfo_standard = new DDay.iCal.iCalTimeZoneInfo();
                 dday_tzinfo_standard.Name = "STANDARD";
-                dday_tzinfo_standard.Start = new iCalDateTime(adjustmentRule.DateStart);
+                dday_tzinfo_standard.Start = new iCalDateTime(adjustmentRule.DateStart);                
                 if (dday_tzinfo_standard.Start.Year < 1800)
                     dday_tzinfo_standard.Start = dday_tzinfo_standard.Start.AddYears(1800 - dday_tzinfo_standard.Start.Year);
                 dday_tzinfo_standard.OffsetFrom = new UTCOffset(utcOffset + delta);

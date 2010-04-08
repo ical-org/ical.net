@@ -5,7 +5,8 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface IICalendar :
-        ICalendarComponent
+        ICalendarComponent,
+        IMergeable
     {
         /// <summary>
         /// Gets/sets the calendar version.  Defaults to "2.0".

@@ -456,7 +456,7 @@ namespace DDay.iCal
             #region Private Fields
 
             string m_PropertyName;
-            ICalendarPropertyList m_PropertyList;            
+            ICalendarPropertyList m_PropertyList;
             IEnumerator m_CurrentListEnumerator;
             int m_PropertyIndex = -1;
 

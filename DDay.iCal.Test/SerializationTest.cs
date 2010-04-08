@@ -70,9 +70,7 @@ namespace DDay.iCal.Test
         }
 
         static public void CompareComponents(ICalendarComponent cb1, ICalendarComponent cb2)
-        {
-            Assert.AreEqual(cb1.Properties.Count, cb2.Properties.Count, "The number of '" + cb1.Name + "' properties is not equal.");
-
+        {            
             foreach (ICalendarProperty p1 in cb1.Properties)
             {
                 bool isMatch = false;
@@ -94,6 +92,10 @@ namespace DDay.iCal.Test
                     catch { }
                 }
 
+                // If there was no match, and this is a collection property with no items,
+                // then simply ignore it!
+                if (!isMatch && p1.Value is ICollection && ((ICollection)p1.Value).Count == 0)
+                    continue;
                 Assert.IsTrue(isMatch, "Could not find a matching property.");                    
             }
 
@@ -313,9 +315,36 @@ namespace DDay.iCal.Test
         }
 
         [Test, Category("Serialization")]
-        public void Categories1()
+        public void Categories1_1()
         {
             SerializeTest("Categories1.ics", typeof(iCalendarSerializer));
+        }
+
+        [Test, Category("Serialization")]
+        public void Categories1_2()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Categories1.ics")[0];
+            ProgramTest.TestCal(iCal);
+            IEvent evt = iCal.Events[0];
+
+            ArrayList items = new ArrayList();
+            items.AddRange(new string[]
+            {
+                "One", "Two", "Three",
+                "Four", "Five", "Six",
+                "Seven", "A string of text with nothing less than a comma, semicolon; and a newline\n."
+            });
+
+            Hashtable found = new Hashtable();
+
+            foreach (string s in evt.Categories)
+            {
+                if (items.Contains(s))
+                    found[s] = true;
+            }
+
+            foreach (string item in items)
+                Assert.IsTrue(found.ContainsKey(item), "Event should contain CATEGORY '" + item + "', but it was not found.");
         }
 
         [Test, Category("Serialization")]
@@ -567,9 +596,20 @@ END:VCALENDAR
         }
 
         [Test, Category("Serialization")]
-        public void Geo1()
+        public void GeographicLocation1_1()
         {
-            SerializeTest("Geo1.ics", typeof(iCalendarSerializer));
+            SerializeTest("GeographicLocation1.ics", typeof(iCalendarSerializer));
+        }
+
+        [Test]
+        public void GeographicLocation1_2()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\GeographicLocation1.ics")[0];
+            ProgramTest.TestCal(iCal);
+            IEvent evt = iCal.Events[0];
+
+            Assert.AreEqual(37.386013, evt.GeographicLocation.Latitude, "Latitude should be 37.386013; it is not.");
+            Assert.AreEqual(-122.082932, evt.GeographicLocation.Longitude, "Longitude should be -122.082932; it is not.");
         }
 
         [Test, Category("Serialization")]
@@ -741,18 +781,18 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         {
             StringSerializer serializer = new StringSerializer();
             string value = @"test\with\;characters";
-            string escaped = serializer.SerializeToString(value);
+            string unescaped = (string)serializer.Deserialize(new StringReader(value));
 
-            Assert.AreEqual(@"test\with;characters", escaped, "String escaping was incorrect.");
+            Assert.AreEqual(@"test\with;characters", unescaped, "String unescaping was incorrect.");
 
             value = @"C:\Path\To\My\New\Information";
-            escaped = serializer.SerializeToString(value);
-            Assert.AreEqual("C:\\Path\\To\\My\new\\Information", escaped, "String escaping was incorrect.");
+            unescaped = (string)serializer.Deserialize(new StringReader(value));
+            Assert.AreEqual("C:\\Path\\To\\My\new\\Information", unescaped, "String unescaping was incorrect.");
 
             value = @"\""This\r\nis\Na\, test\""\;\\;,";
-            escaped = serializer.SerializeToString(value);
+            unescaped = (string)serializer.Deserialize(new StringReader(value));
 
-            Assert.AreEqual("\"This\\r\nis\na, test\";\\;,", escaped, "String escaping was incorrect.");
+            Assert.AreEqual("\"This\\r\nis\na, test\";\\;,", unescaped, "String unescaping was incorrect.");
         }
 
         [Test]
@@ -1119,10 +1159,27 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             CompareCalendars(russia1, russia2);
         }
 
-        [Test]
-        public void LANGUAGE4()
+        [Test, Category("Serialization")]
+        public void Language4()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/Serialization/Language4.ics")[0];
+        }
+
+        [Test, Category("Serialization")]
+        public void Outlook2007_LineFolds1()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/Serialization/Outlook2007LineFolds.ics")[0];
+            IList<Occurrence> events = iCal.GetOccurrences(new iCalDateTime(2009, 06, 20), new iCalDateTime(2009, 06, 22));
+            Assert.AreEqual(1, events.Count);
+        }
+
+        [Test, Category("Serialization")]
+        public void Outlook2007_LineFolds2()
+        {
+            string longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars/Serialization/Outlook2007LineFolds.ics")[0];
+            IList<Occurrence> events = iCal.GetOccurrences<Event>(new iCalDateTime(2009, 06, 20), new iCalDateTime(2009, 06, 22));
+            Assert.AreEqual(longName, ((IEvent)events[0].Source).Location);
         }
 
         /// <summary>
@@ -1157,6 +1214,18 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         public void Parse1()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Parse1.ics")[0];
+        }
+
+        [Test]
+        public void ProdID1()
+        {
+            SerializeTest("ProdID1.ics", typeof(iCalendarSerializer));
+        }
+
+        [Test]
+        public void ProdID2()
+        {
+            SerializeTest("ProdID2.ics", typeof(iCalendarSerializer));
         }
 
         /// <summary>
@@ -1212,7 +1281,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
 
             iCalendarSerializer serializer = new iCalendarSerializer();
             serializer.SerializationContext = ctx;
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE1.ics", Encoding.UTF8, serializer)[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\EmptyLines1.ics", Encoding.UTF8, serializer)[0];
 
             Assert.AreEqual(2, iCal.Events.Count);
             Assert.AreEqual(4, iCal.Events[0].Line);
@@ -1244,7 +1313,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
 
             iCalendarSerializer serializer = new iCalendarSerializer();
             serializer.SerializationContext = ctx;
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\PARSE3.ics", Encoding.UTF8, serializer)[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Calendar1.ics", Encoding.UTF8, serializer)[0];
 
             Assert.IsNotNull(iCal.Todos["2df60496-1e73-11db-ba96-e3cfe6793b5f"]);
             Assert.IsNotNull(iCal.Todos["4836c236-1e75-11db-835f-a024e2a6131f"]);

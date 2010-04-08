@@ -58,21 +58,26 @@ namespace DDay.iCal
         public iCalDateTime() { }
         public iCalDateTime(IDateTime value)
         {
-            Initialize(value.Value, value.TZID);
+            Initialize(value.Value, value.TZID, null);
         }
         public iCalDateTime(DateTime value) : this(value, null) {}
         public iCalDateTime(DateTime value, string tzid) 
         {
-            Initialize(value, tzid);
+            Initialize(value, tzid, null);
         }
         public iCalDateTime(int year, int month, int day, int hour, int minute, int second)
         {
-            Initialize(year, month, day, hour, minute, second, null);
+            Initialize(year, month, day, hour, minute, second, null, null);
             HasTime = true;
         }
         public iCalDateTime(int year, int month, int day, int hour, int minute, int second, string tzid)
         {
-            Initialize(year, month, day, hour, minute, second, tzid);
+            Initialize(year, month, day, hour, minute, second, tzid, null);
+            HasTime = true;
+        }
+        public iCalDateTime(int year, int month, int day, int hour, int minute, int second, string tzid, IICalendar iCal)
+        {
+            Initialize(year, month, day, hour, minute, second, tzid, iCal);
             HasTime = true;
         }
         public iCalDateTime(int year, int month, int day)
@@ -80,12 +85,12 @@ namespace DDay.iCal
         public iCalDateTime(int year, int month, int day, string tzid)
             : this(year, month, day, 0, 0, 0, tzid) { }
 
-        private void Initialize(int year, int month, int day, int hour, int minute, int second, string tzid)
+        private void Initialize(int year, int month, int day, int hour, int minute, int second, string tzid, IICalendar iCal)
         {
-            Initialize(CoerceDateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzid);            
+            Initialize(CoerceDateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzid, iCal);
         }
 
-        private void Initialize(DateTime value, string tzid)
+        private void Initialize(DateTime value, string tzid, IICalendar iCal)
         {
             if (value.Kind == DateTimeKind.Utc)
                 this.IsUniversalTime = true;
@@ -94,7 +99,8 @@ namespace DDay.iCal
             this.Value = DateTime.SpecifyKind(value, DateTimeKind.Utc);
             this.HasDate = true;
             this.HasTime = (value.Second == 0 && value.Minute == 0 && value.Hour == 0) ? false : true;
-            this.TZID = tzid;            
+            this.TZID = tzid;
+            this.AssociatedObject = iCal;
         }
 
         private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)

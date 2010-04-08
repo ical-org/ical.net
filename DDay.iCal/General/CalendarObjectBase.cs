@@ -5,8 +5,7 @@ using System.Text;
 namespace DDay.iCal
 {
     public class CalendarObjectBase :
-        ICopyable,
-        IMergeable,
+        ICopyable,        
         ILoadable
     {
         #region Private Fields
@@ -56,15 +55,7 @@ namespace DDay.iCal
             return default(T);
         }
 
-        #endregion
-
-        #region IMergeable Members
-
-        virtual public void MergeWith(IMergeable obj)
-        {
-        }
-
-        #endregion
+        #endregion        
 
         #region ILoadable Members
 

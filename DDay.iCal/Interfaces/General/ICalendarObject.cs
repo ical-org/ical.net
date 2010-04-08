@@ -6,8 +6,7 @@ namespace DDay.iCal
 {
     public interface ICalendarObject :
         ILoadable,
-        ICopyable,
-        IMergeable,
+        ICopyable,        
         IServiceProvider
     {
         event EventHandler<ObjectEventArgs<ICalendarObject>> ChildAdded;
@@ -57,6 +56,6 @@ namespace DDay.iCal
         /// <summary>
         /// Removes a child object from the current object.
         /// </summary>
-        void RemoveChild(ICalendarObject child);        
+        void RemoveChild(ICalendarObject child);
     }
 }

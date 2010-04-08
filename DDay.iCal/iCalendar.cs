@@ -798,5 +798,48 @@ namespace DDay.iCal
         }
 
         #endregion        
+    
+        #region IMergeable Members
+
+        virtual public void MergeWith(IMergeable obj)
+        {
+            IICalendar c = obj as IICalendar;
+            if (c != null)
+            {
+                if (Name == null)
+                    Name = c.Name;
+
+                Method = c.Method;
+                Version = c.Version;
+                ProductID = c.ProductID;
+                Scale = c.Scale;
+
+                foreach (ICalendarProperty p in c.Properties)
+                {
+                    if (!Properties.ContainsKey(p.Name))
+                        Properties.Add(p.Copy<ICalendarProperty>());
+                }
+                foreach (ICalendarObject child in c.Children)
+                {
+                    if (child is IUniqueComponent)
+                    {
+                        if (!UniqueComponents.ContainsKey(((IUniqueComponent)child).UID))
+                            AddChild(child.Copy<ICalendarObject>());
+                    }
+                    else if (child is ITimeZone)
+                    {
+                        ITimeZone tz = GetTimeZone(((ITimeZone)child).TZID);
+                        if (tz == null)
+                            AddChild(child.Copy<ICalendarObject>());
+                    }
+                    else
+                    {
+                        AddChild(child.Copy<ICalendarObject>());
+                    }
+                }
+            }
+        }
+
+        #endregion
     }
 }

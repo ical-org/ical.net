@@ -102,9 +102,9 @@ namespace DDay.iCal.Test
         }
 
         [Test, Category("Copy")]
-        public void CopyGeo1()
+        public void CopyGeographicLocation1()
         {
-            CopyCalendarTest("Geo1.ics");
+            CopyCalendarTest("GeographicLocation1.ics");
         }
 
         [Test, Category("Copy")]
