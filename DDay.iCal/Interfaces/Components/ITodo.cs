@@ -13,11 +13,6 @@ namespace DDay.iCal
         IDateTime Completed { get; set; }
 
         /// <summary>
-        /// The start date/time of the todo item.
-        /// </summary>
-        IDateTime DTStart { get; set; }
-
-        /// <summary>
         /// The due date of the todo item.
         /// </summary>
         IDateTime Due { get; set; }

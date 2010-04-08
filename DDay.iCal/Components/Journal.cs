@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Data;
 using System.Configuration;
 using DDay.iCal;
-using DDay.iCal;
 using DDay.iCal.Serialization;
 using System.Collections.Generic;
 using System.Runtime.Serialization;

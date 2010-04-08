@@ -173,7 +173,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="s">The stream from which to load the <see cref="iCalendar"/> object</param>
         /// <returns>An <see cref="iCalendar"/> object</returns>
-        static public IICalendarCollection LoadFromStream(Stream s)
+        static public new IICalendarCollection LoadFromStream(Stream s)
         {
             return LoadFromStream(s, Encoding.UTF8, new iCalendarSerializer());
         }
@@ -194,12 +194,12 @@ namespace DDay.iCal
 
         #region LoadFromStream(Stream s, Encoding encoding) variants
 
-        static public IICalendarCollection LoadFromStream(Stream s, Encoding encoding)
+        static public new IICalendarCollection LoadFromStream(Stream s, Encoding encoding)
         {
             return LoadFromStream(s, encoding, new iCalendarSerializer());
         }
 
-        static public IICalendarCollection LoadFromStream<T>(Stream s, Encoding encoding) where T : IICalendar
+        static public new IICalendarCollection LoadFromStream<T>(Stream s, Encoding encoding) where T : IICalendar
         {
             return LoadFromStream(typeof(T), s, encoding);
         }
@@ -211,7 +211,7 @@ namespace DDay.iCal
             return LoadFromStream(s, encoding, serializer);
         }
 
-        static public IICalendarCollection LoadFromStream(Stream s, Encoding e, ISerializer serializer)
+        static public new IICalendarCollection LoadFromStream(Stream s, Encoding e, ISerializer serializer)
         {
             return serializer.Deserialize(s, e) as IICalendarCollection;
         }
@@ -220,12 +220,12 @@ namespace DDay.iCal
 
         #region LoadFromStream(TextReader tr) variants
 
-        static public IICalendarCollection LoadFromStream(TextReader tr)
+        static public new IICalendarCollection LoadFromStream(TextReader tr)
         {
             return LoadFromStream(tr, new iCalendarSerializer());
         }
 
-        static public IICalendarCollection LoadFromStream<T>(TextReader tr) where T : IICalendar
+        static public new IICalendarCollection LoadFromStream<T>(TextReader tr) where T : IICalendar
         {            
             return LoadFromStream(typeof(T), tr);
         }

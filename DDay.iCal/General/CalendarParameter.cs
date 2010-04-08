@@ -6,15 +6,6 @@ using System.Diagnostics;
 
 namespace DDay.iCal
 {
-    /// <summary>
-    /// A class that provides additional information about a <see cref="ContentLine"/>.
-    /// </summary>
-    /// <remarks>
-    /// <example>
-    /// For example, a DTSTART line may look like this: <c>DTSTART;VALUE=DATE:20060116</c>.  
-    /// The <c>VALUE=DATE</c> portion is a <see cref="Parameter"/> of the DTSTART value.
-    /// </example>
-    /// </remarks>
     [DebuggerDisplay("{Name}={string.Join(\",\", Values)}")]
 #if DATACONTRACT
     [DataContract(Name = "CalendarParameter", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]

@@ -19,13 +19,6 @@ namespace DDay.iCal
         CalendarObjectBase,
         ICalendarObject
     {
-        #region Public Events
-
-        [field: NonSerialized]
-        public event EventHandler Loaded;
-
-        #endregion
-
         #region Private Fields
 
         private ICalendarObject _Parent = null;

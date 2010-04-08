@@ -9,7 +9,6 @@ namespace DDay.iCal
     {
         string Description { get; set; }
         string ExtraData { get; set; }
-        IStatusCode StatusCode { get; set; }
-        string Language { get; set; }
+        IStatusCode StatusCode { get; set; }        
     }
 }

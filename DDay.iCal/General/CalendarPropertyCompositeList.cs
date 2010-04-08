@@ -10,7 +10,6 @@ namespace DDay.iCal
     {
         #region Private Fields
 
-        ICalendarObject m_Parent;
         ICalendarPropertyList m_PropertyList;
         string m_PropertyName;
 
