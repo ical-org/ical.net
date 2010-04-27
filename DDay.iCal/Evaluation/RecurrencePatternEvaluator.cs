@@ -37,13 +37,6 @@ namespace DDay.iCal
             if (r.Until != DateTime.MinValue)
                 r.Until = DateUtil.MatchTimeZone(referenceDate, new iCalDateTime(r.Until)).Value;
 
-            // If the frequency is weekly, and
-            // no day of week is specified, use
-            // the original date's day of week.
-            // NOTE: fixes WeeklyCount1() and WeeklyUntil1() handling
-            if (r.Frequency == FrequencyType.Weekly &&
-                r.ByDay.Count == 0)
-                r.ByDay.Add(new WeekDay(referenceDate.DayOfWeek));
             if (r.Frequency > FrequencyType.Secondly &&
                 r.BySecond.Count == 0 &&
                 referenceDate.HasTime /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
@@ -56,23 +49,35 @@ namespace DDay.iCal
                 r.ByHour.Count == 0 &&
                 referenceDate.HasTime /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
                 r.ByHour.Add(referenceDate.Hour);
-            // If neither BYDAY, BYMONTHDAY, or BYYEARDAY is specified,
-            // default to the current day of month
-            // NOTE: fixes YearlyByMonth1() handling, added BYYEARDAY exclusion
-            // to fix YearlyCountByYearDay1() handling
-            if (r.Frequency > FrequencyType.Weekly &&
-                r.ByMonthDay.Count == 0 &&
+
+            // If BYDAY, BYYEARDAY, or BYWEEKNO is specified, then
+            // we don't default BYDAY, BYMONTH or BYMONTHDAY
+            if (r.ByDay.Count == 0 &&
                 r.ByYearDay.Count == 0 &&
-                r.ByDay.Count == 0)
-                r.ByMonthDay.Add(referenceDate.Day);
-            // If neither BYMONTH nor BYYEARDAY is specified, default to
-            // the current month
-            // NOTE: fixes YearlyCountByYearDay1() handling
-            if (r.Frequency > FrequencyType.Monthly &&
-                r.ByYearDay.Count == 0 &&
-                r.ByDay.Count == 0 &&
-                r.ByMonth.Count == 0)
-                r.ByMonth.Add(referenceDate.Month);
+                r.ByWeekNo.Count == 0)
+            {
+                // If the frequency is weekly, and
+                // no day of week is specified, use
+                // the original date's day of week.
+                // NOTE: fixes WeeklyCount1() and WeeklyUntil1() handling
+                if (r.Frequency == FrequencyType.Weekly)
+                    r.ByDay.Add(new WeekDay(referenceDate.DayOfWeek));
+
+                // If BYMONTHDAY is not specified,
+                // default to the current day of month
+                // NOTE: fixes YearlyByMonth1() handling, added BYYEARDAY exclusion
+                // to fix YearlyCountByYearDay1() handling
+                if (r.Frequency > FrequencyType.Weekly &&
+                    r.ByMonthDay.Count == 0)
+                    r.ByMonthDay.Add(referenceDate.Day);
+
+                // If BYMONTH is not specified, default to
+                // the current month.
+                // NOTE: fixes YearlyCountByYearDay1() handling
+                if (r.Frequency > FrequencyType.Monthly &&
+                    r.ByMonth.Count == 0)
+                    r.ByMonth.Add(referenceDate.Month);
+            }
 
             return r;
         }
@@ -164,6 +169,7 @@ namespace DDay.iCal
         private List<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd, int maxCount, IRecurrencePattern pattern, bool includeReferenceDateInResults)
         {            
             List<DateTime> dates = new List<DateTime>();
+            DateTime originalDate = DateUtil.GetSimpleDateTimeData(seed);
             DateTime seedCopy = DateUtil.GetSimpleDateTimeData(seed);
 
             if (includeReferenceDateInResults)
@@ -208,11 +214,15 @@ namespace DDay.iCal
                     {
                         candidate = candidates[i];
 
-                        // don't count candidates that occur before the seed date..
-                        if (candidate >= seedCopy)
+                        // don't count candidates that occur before the original date..
+                        if (candidate >= originalDate)
                         {
+                            // candidates MAY occur before periodStart
+                            // For example, FREQ=YEARLY;BYWEEKNO=1 could return dates
+                            // from the previous year.
+                            //
                             // candidates exclusive of periodEnd..
-                            if (candidate < periodStart || candidate >= periodEnd)
+                            if (candidate >= periodEnd)
                             {
                                 invalidCandidateCount++;
                             } 
@@ -423,7 +433,7 @@ namespace DDay.iCal
                 {
                     // Determine our target week number
                     int weekNo = pattern.ByWeekNo[j];
-                    
+                                        
                     // Determine our current week number
                     int currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
                     while (currWeekNo > weekNo)
@@ -438,6 +448,7 @@ namespace DDay.iCal
                     
                     // Move ahead to the correct week of the year
                     date = date.AddDays((weekNo - currWeekNo) * 7);
+
                     // Step backward single days until we're at the correct DayOfWeek
                     while (date.DayOfWeek != pattern.FirstDayOfWeek)
                         date = date.AddDays(-1);

@@ -145,7 +145,11 @@ namespace DDay.iCal.Serialization.iCalendar
                 {
                     IStringSerializer serializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
                     if (serializer != null)
-                        values.Add("UNTIL=" + serializer.SerializeToString(new iCalDateTime(recur.Until)));
+                    {
+                        IDateTime until = new iCalDateTime(recur.Until);
+                        until.HasTime = true;
+                        values.Add("UNTIL=" + serializer.SerializeToString(until));
+                    }
                 }
 
                 if (recur.FirstDayOfWeek != DayOfWeek.Monday)

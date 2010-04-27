@@ -32,10 +32,9 @@ namespace DDay.iCal.Serialization
         #endregion
 
         #region Private Fields
-
-        private IDictionary<Type, object> m_TypedServices = new Dictionary<Type, object>();
-        private IDictionary<string, object> m_NamedServices = new Dictionary<string, object>();
+                
         private Stack<object> m_Stack = new Stack<object>();
+        private ServiceProvider m_ServiceProvider = new ServiceProvider();
 
         #endregion
 
@@ -77,55 +76,7 @@ namespace DDay.iCal.Serialization
             if (m_Stack.Count > 0)
                 return m_Stack.Peek();
             return null;
-        }
-
-        virtual public object GetService(string name)
-        {
-            if (m_NamedServices.ContainsKey(name))
-                return m_NamedServices[name];
-            return null;
-        }
-
-        virtual public void SetService(string name, object obj)
-        {
-            if (!string.IsNullOrEmpty(name) && obj != null)
-                m_NamedServices[name] = obj;
-        }
-
-        virtual public void SetService(object obj)
-        {
-            if (obj != null)
-            {
-                Type type = obj.GetType();
-                m_TypedServices[type] = obj;
-
-                // Get interfaces for the given type
-                foreach (Type iface in type.GetInterfaces())
-                    m_TypedServices[iface] = obj;
-            }
-        }
-
-        virtual public void RemoveService(Type type)
-        {
-            if (type != null)
-            {
-                if (m_TypedServices.ContainsKey(type))
-                     m_TypedServices.Remove(type);
-
-                // Get interfaces for the given type
-                foreach (Type iface in type.GetInterfaces())
-                {
-                    if (m_TypedServices.ContainsKey(iface))
-                     m_TypedServices.Remove(iface);
-                }
-            }
-        }
-
-        virtual public void RemoveService(string name)
-        {
-            if (m_NamedServices.ContainsKey(name))
-                m_NamedServices.Remove(name);
-        }
+        }        
 
         #endregion
 
@@ -133,11 +84,44 @@ namespace DDay.iCal.Serialization
 
         virtual public object GetService(Type serviceType)
         {
-            if (m_TypedServices.ContainsKey(serviceType))
-                return m_TypedServices[serviceType];
-            return null;
+            return m_ServiceProvider.GetService(serviceType);
         }
 
-        #endregion    
+        virtual public object GetService(string name)
+        {
+            return m_ServiceProvider.GetService(name);
+        }
+
+        virtual public T GetService<T>()
+        {
+            return m_ServiceProvider.GetService<T>();
+        }
+
+        virtual public T GetService<T>(string name)
+        {
+            return m_ServiceProvider.GetService<T>(name);
+        }
+
+        virtual public void SetService(string name, object obj)
+        {
+            m_ServiceProvider.SetService(name, obj);
+        }
+
+        virtual public void SetService(object obj)
+        {
+            m_ServiceProvider.SetService(obj);
+        }
+
+        virtual public void RemoveService(Type type)
+        {
+            m_ServiceProvider.RemoveService(type);
+        }
+
+        virtual public void RemoveService(string name)
+        {
+            m_ServiceProvider.RemoveService(name);
+        }
+
+        #endregion
     }
 }

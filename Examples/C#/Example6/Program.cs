@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DDay.iCal;
-using DDay.iCal.Components;
-using DDay.iCal.Serialization;
-using DDay.iCal.DataTypes;
 using System.IO;
+using DDay.iCal;
+using DDay.iCal.Serialization;
+using DDay.iCal.Serialization.iCalendar;
 
 namespace Example6
 {
@@ -14,10 +13,10 @@ namespace Example6
         static void Main(string[] args)
         {
             // First, create a calendar
-            iCalendar iCal = CreateCalendar();
+            IICalendar iCal = CreateCalendar();
 
             // Make a copy of the calendar and save it!
-            iCalendar newCal = iCal.Copy();
+            IICalendar newCal = iCal.Copy<IICalendar>();
             SaveCalendar("Copied.ics", newCal);
 
             // Show the calendar in a specific time zone
@@ -32,21 +31,21 @@ namespace Example6
         /// <summary>
         /// Creates a calendar with 2 events, and returns it.
         /// </summary>
-        static iCalendar CreateCalendar()
+        static IICalendar CreateCalendar()
         {
             // First load a file containing time zone information for North & South America
-            iCalendar timeZones = iCalendar.LoadFromFile("America.ics");
+            IICalendar timeZones = iCalendar.LoadFromFile("America.ics")[0];
 
             // Add the time zones we are going to use to our calendar
             // If we're not sure what we'll use, we could simply copy the
             // entire time zone information instead:
             //
-            // iCalendar iCal = timeZones.Copy();
+            // IICalendar iCal = timeZones.Copy<IICalendar>();
             //
             // This will take significantly more disk space, and can slow
             // down performance, so I recommend you determine which time
             // zones will be used and only copy the necessary zones.
-            iCalendar iCal = new iCalendar();
+            IICalendar iCal = new iCalendar();
             iCal.AddChild(timeZones.GetTimeZone("America/New_York"));
             iCal.AddChild(timeZones.GetTimeZone("America/Denver"));            
 
@@ -70,34 +69,36 @@ namespace Example6
             evt.Status = EventStatus.Confirmed;
 
             // Set the geographic location (latitude,longitude) of the event
-            evt.Geo = new Geo(114.2938, 32.982);
+            evt.GeographicLocation = new GeographicLocation(114.2938, 32.982);
             
             evt.Location = "Home office";
             evt.Priority = 7;
 
             // Add an organizer to the event.
-            // This is the person who created the event (or who is in charge of it)
-            evt.Organizer = "danielg@daywesthealthcare.com";
+            // This is the person who created the event (or who is in charge of it)            
+            evt.Organizer = new Organizer("MAILTO:danielg@daywesthealthcare.com");
             // Indicate that this organizer is a member of another group
-            evt.Organizer.AddParameter("MEMBER", "MAILTO:DEV-GROUP@host2.com");
+            evt.Organizer.Parameters.Add("MEMBER", "MAILTO:DEV-GROUP@host2.com");
 
             // Add a person who will attend the event
-            evt.AddAttendee("doug@ddaysoftware.com");
+            // FIXME: re-implement this
+            //evt.Attendees.Add(new Attendee("doug@ddaysoftware.com"));
 
             // Add categories to the event
-            evt.AddCategory("Work");
-            evt.AddCategory("Personal");
+            evt.Categories.Add("Work");
+            evt.Categories.Add("Personal");
 
             // Add some comments to the event
-            evt.AddComment("Comment #1");
-            evt.AddComment("Comment #2");
+            evt.Comments.Add("Comment #1");
+            evt.Comments.Add("Comment #2");
 
             // Add resources that will be used for the event
-            evt.AddResource("Conference Room #2");
-            evt.AddResource("Projector #4");
+            evt.Resources.Add("Conference Room #2");
+            evt.Resources.Add("Projector #4");
 
             // Add contact information to this event, with an optional link to further information
-            evt.AddContact("Doug Day (XXX) XXX-XXXX", new Uri("http://www.someuri.com/pdi/dougd.vcf"));
+            // FIXME: reimplement this:
+            //evt.Contacts.Add("Doug Day (XXX) XXX-XXXX", new Uri("http://www.someuri.com/pdi/dougd.vcf"));
 
             // Set the identifier for the event.  NOTE: this will happen automatically
             // if you don't do it manually.  We set it manually here so we can easily
@@ -109,9 +110,9 @@ namespace Example6
             // second to last Monday of each month.
             RecurrencePattern rp = new RecurrencePattern();
             rp.Frequency = FrequencyType.Monthly;
-            rp.ByDay.Add(new DaySpecifier(DayOfWeek.Monday, FrequencyOccurrence.First));
-            rp.ByDay.Add(new DaySpecifier(DayOfWeek.Monday, FrequencyOccurrence.SecondToLast));            
-            evt.AddRecurrencePattern(rp);
+            rp.ByDay.Add(new WeekDay(DayOfWeek.Monday, FrequencyOccurrence.First));
+            rp.ByDay.Add(new WeekDay(DayOfWeek.Monday, FrequencyOccurrence.SecondToLast));            
+            evt.RecurrenceRules.Add(rp);
 
             // Let's also add an alarm on this event so we can be reminded of it later.
             Alarm alarm = new Alarm();
@@ -135,7 +136,7 @@ namespace Example6
             alarm.Duration = TimeSpan.FromMinutes(10);
             
             // Add the alarm to the event
-            evt.AddAlarm(alarm);
+            evt.Alarms.Add(alarm);
                         
             // Create another (much more simple) event
             evt = iCal.Create<Event>();
@@ -146,7 +147,7 @@ namespace Example6
 
             rp = new RecurrencePattern();
             rp.Frequency = FrequencyType.Monthly;
-            evt.AddRecurrencePattern(rp);
+            evt.RecurrenceRules.Add(rp);
 
             return iCal;
         }
@@ -158,13 +159,14 @@ namespace Example6
         /// </summary>
         static void EditAndSaveEvent(string filepath, string eventUID)
         {
-            iCalendar iCal = iCalendar.LoadFromFile(filepath);            
-            Event evt = iCal.Events[eventUID];
+            IICalendar iCal = iCalendar.LoadFromFile(filepath)[0];            
+            IEvent evt = iCal.Events[eventUID];
             if (evt != null)
             {
                 evt.Summary = "New summary for event";
-                evt.AddAttendee("AnotherPerson@someurl.com");
-                evt.Sequence = evt.Sequence + 1;
+                // FIXME: re-implement this
+                //evt.AddAttendee("AnotherPerson@someurl.com");
+                evt.Sequence++;
 
                 string newFilename = Path.GetFileNameWithoutExtension(filepath) + "_Altered" + Path.GetExtension(filepath);
                 SaveCalendar(newFilename, iCal);
@@ -174,31 +176,39 @@ namespace Example6
         /// <summary>
         /// Displays the calendar in the time zone identified by <paramref name="tzid"/>.
         /// </summary>
-        static void ShowCalendar(iCalendar iCal, string tzid)
+        static void ShowCalendar(IICalendar iCal, string tzid)
         {
-            iCalDateTime start = new iCalDateTime(2007, 3, 1);
-            iCalDateTime end = new iCalDateTime(2007, 4, 1).AddSeconds(-1);
+            IDateTime start = new iCalDateTime(2007, 3, 1);
+            IDateTime end = new iCalDateTime(2007, 4, 1).AddSeconds(-1);
 
-            List<Occurrence> occurrences = iCal.GetOccurrences(start, end);
+            IList<Occurrence> occurrences = iCal.GetOccurrences(start, end);
 
             Console.WriteLine("====Events/Todos/Journal Entries in " + tzid + "====");
             foreach (Occurrence o in occurrences)
             {
-                Console.WriteLine(
-                    o.Period.StartTime.ToTimeZone(tzid).ToString("ddd, MMM d - h:mm") + " to " +
-                    o.Period.EndTime.ToTimeZone(tzid).ToString("h:mm tt") + Environment.NewLine +
-                    o.Component.Summary + Environment.NewLine);
+                IRecurringComponent rc = o.Source as IRecurringComponent;
+                if (rc != null)
+                {
+                    Console.WriteLine(
+                        o.Period.StartTime.ToTimeZone(tzid).ToString("ddd, MMM d - h:mm") + " to " +
+                        o.Period.EndTime.ToTimeZone(tzid).ToString("h:mm tt") + Environment.NewLine +
+                        rc.Summary + Environment.NewLine);
+                }
             }
 
             Console.WriteLine("====Alarms in " + tzid + "====");
-            foreach (RecurringComponent rc in iCal.RecurringComponents)
+            foreach (object obj in iCal.Children)
             {
-                foreach (AlarmOccurrence ao in rc.PollAlarms(start, end))
+                IRecurringComponent rc = obj as IRecurringComponent;
+                if (rc != null)
                 {
-                    Console.WriteLine(
-                        "Alarm: " +
-                        ao.DateTime.ToTimeZone(tzid).ToString("ddd, MMM d - h:mm") + ": " +
-                        ao.Alarm.Summary);
+                    foreach (AlarmOccurrence ao in rc.PollAlarms(start, end))
+                    {
+                        Console.WriteLine(
+                            "Alarm: " +
+                            ao.DateTime.ToTimeZone(tzid).ToString("ddd, MMM d - h:mm") + ": " +
+                            ao.Alarm.Summary);
+                    }
                 }
             }
 
@@ -208,10 +218,10 @@ namespace Example6
         /// <summary>
         /// Saves the calendar to the specified <paramref name="filepath"/>.
         /// </summary>
-        static void SaveCalendar(string filepath, iCalendar iCal)
+        static void SaveCalendar(string filepath, IICalendar iCal)
         {
-            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
-            serializer.Serialize(filepath);
+            iCalendarSerializer serializer = new iCalendarSerializer();
+            serializer.Serialize(iCal, filepath);
         }
     }
 }

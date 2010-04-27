@@ -23,6 +23,7 @@ namespace DDay.iCal
 
         private ICalendarObject _Parent = null;
         private IList<ICalendarObject> _Children;
+        private ServiceProvider _ServiceProvider;
         private string _Name;
         
         private int _Line;
@@ -51,6 +52,7 @@ namespace DDay.iCal
         private void Initialize()
         {
             _Children = new List<ICalendarObject>();
+            _ServiceProvider = new ServiceProvider();
         }
 
         #endregion
@@ -264,9 +266,42 @@ namespace DDay.iCal
 
         virtual public object GetService(Type serviceType)
         {
-            // Objects don't provide any services by default.
-            // Each object needs to provide its own services.
-            return null;
+            return _ServiceProvider.GetService(serviceType);
+        }
+
+        virtual public object GetService(string name)
+        {
+            return _ServiceProvider.GetService(name);            
+        }
+
+        virtual public T GetService<T>()
+        {
+            return _ServiceProvider.GetService<T>();
+        }
+
+        virtual public T GetService<T>(string name)
+        {
+            return _ServiceProvider.GetService<T>(name);
+        }
+
+        virtual public void SetService(string name, object obj)
+        {
+            _ServiceProvider.SetService(name, obj);
+        }
+
+        virtual public void SetService(object obj)
+        {
+            _ServiceProvider.SetService(obj);
+        }
+
+        virtual public void RemoveService(Type type)
+        {
+            _ServiceProvider.RemoveService(type);
+        }
+
+        virtual public void RemoveService(string name)
+        {
+            _ServiceProvider.RemoveService(name);
         }
 
         #endregion

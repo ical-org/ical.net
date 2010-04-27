@@ -136,7 +136,7 @@ namespace DDay.iCal
                             EvaluationEndBounds = offsetEnd;
                     }
                 }
-
+                
                 ProcessOccurrences(referenceDate);
             }
             else

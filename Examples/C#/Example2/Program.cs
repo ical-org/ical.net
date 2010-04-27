@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DDay.iCal;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
-using DDay.iCal.Serialization;
+using DDay.iCal.Serialization.iCalendar;
 
 namespace Example2
 {
@@ -26,7 +24,7 @@ namespace Example2
             else
             {
                 summary += ", " + evt.Start.Local.ToShortTimeString();
-                return summary + " (" + Math.Round((double)(evt.End - evt.Start).TotalHours) + " hours)";
+                return summary + " (" + Math.Round((double)evt.End.Subtract(evt.Start).TotalHours) + " hours)";
             }
         }
 
@@ -42,7 +40,7 @@ namespace Example2
             Event evt = iCal.Create<Event>();
 
             // Set information about the event
-            evt.Start = DateTime.Today.AddHours(8);            
+            evt.Start = iCalDateTime.Today.AddHours(8);            
             evt.End = evt.Start.AddHours(18); // This also sets the duration            
             evt.Description = "The event description";
             evt.Location = "Event location";
@@ -50,7 +48,7 @@ namespace Example2
 
             // Set information about the second event
             evt = iCal.Create<Event>();
-            evt.Start = DateTime.Today.AddDays(5);
+            evt.Start = iCalDateTime.Today.AddDays(5);
             evt.End = evt.Start.AddDays(1);
             evt.IsAllDay = true;
             evt.Summary = "All-day event";
@@ -60,18 +58,21 @@ namespace Example2
                 Console.WriteLine("Event created: " + GetDescription(e));
             
             // Serialize (save) the iCalendar
-            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
-            serializer.Serialize(@"iCalendar.ics");
+            iCalendarSerializer serializer = new iCalendarSerializer();
+            serializer.Serialize(iCal, @"iCalendar.ics");
             Console.WriteLine("iCalendar file saved." + Environment.NewLine);
             
             // Load the calendar from the file we just saved
-            iCal = iCalendar.LoadFromFile(@"iCalendar.ics");
+            IICalendarCollection calendars = iCalendar.LoadFromFile(@"iCalendar.ics");
             Console.WriteLine("iCalendar file loaded.");
 
             // Iterate through each event to display its description
             // (and verify the file saved correctly)
-            foreach (Event e in iCal.Events)
-                Console.WriteLine("Event loaded: " + GetDescription(e));
+            foreach (IICalendar calendar in calendars)
+            {
+                foreach (Event e in calendar.Events)
+                    Console.WriteLine("Event loaded: " + GetDescription(e));
+            }
         }
     }
 }

@@ -5,11 +5,10 @@ using System.IO;
 
 namespace DDay.iCal.Serialization
 {    
-    public interface ISerializer
+    public interface ISerializer :
+        IServiceProvider
     {
-        ISerializationContext SerializationContext { get; set; }
-        T GetService<T>();
-        T GetService<T>(string name);
+        ISerializationContext SerializationContext { get; set; }        
 
         Type TargetType { get; }        
         void Serialize(object obj, Stream stream, Encoding encoding);

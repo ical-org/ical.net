@@ -9,10 +9,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
-
-// Required DDay.iCal namespaces
 using DDay.iCal;
-using DDay.iCal.Components;
 
 public partial class _Default : System.Web.UI.Page
 {
@@ -48,8 +45,8 @@ public partial class _Default : System.Web.UI.Page
         }
 
         // Get a list of todays events and upcoming events
-        List<Occurrence> todaysEvents = GetTodaysEvents();
-        List<Occurrence> upcomingEvents = GetUpcomingEvents();
+        IList<Occurrence> todaysEvents = GetTodaysEvents();
+        IList<Occurrence> upcomingEvents = GetUpcomingEvents();
 
         // Bind our list to the repeater that will display the events.
         TodaysEvents.DataSource = todaysEvents;
@@ -89,7 +86,7 @@ public partial class _Default : System.Web.UI.Page
             if (li.Selected)
             {
                 // Load the calendar from the file system
-                _Calendars.Add(iCalendar.LoadFromFile(Path.Combine(_CalendarAbsPath, li.Text + @".ics")));                
+                _Calendars.AddRange(iCalendar.LoadFromFile(Path.Combine(_CalendarAbsPath, li.Text + @".ics")));                
             }
         }
     }
@@ -98,14 +95,14 @@ public partial class _Default : System.Web.UI.Page
     /// Gets a list of events that occur today.
     /// </summary>
     /// <returns>A list of events that occur today</returns>
-    protected List<Occurrence> GetTodaysEvents()
+    protected IList<Occurrence> GetTodaysEvents()
     {
         // Load selected calendars, if we haven't already
         if (_Calendars == null)
             LoadSelectedCalendars();
 
         // Get all event occurrences for today
-        return _Calendars.GetOccurrences<Event>(DateTime.Today);            
+        return _Calendars.GetOccurrences<IEvent>(DateTime.Today);            
     }
 
     /// <summary>
@@ -113,7 +110,7 @@ public partial class _Default : System.Web.UI.Page
     /// next week).
     /// </summary>
     /// <returns>A list of events that will occur within the next week</returns>
-    protected List<Occurrence> GetUpcomingEvents()
+    protected IList<Occurrence> GetUpcomingEvents()
     {
         // Load selected calendars, if we haven't already
         if (_Calendars == null)
@@ -126,7 +123,7 @@ public partial class _Default : System.Web.UI.Page
         DateTime endDate = DateTime.Today.AddDays(daysInFuture+1).AddSeconds(-1); // 11:59:59 P.M. on the last day
 
         // Get all upcoming events for the next week
-        return _Calendars.GetOccurrences<Event>(startDate, endDate);
+        return _Calendars.GetOccurrences<IEvent>(startDate, endDate);
     }
 
     /// <summary>
@@ -137,10 +134,11 @@ public partial class _Default : System.Web.UI.Page
     /// <returns>A string representation of the start time of an event</returns>
     protected string GetTimeDisplay(object obj)
     {
-        Occurrence occurrence = obj as Occurrence;
-        if (occurrence != null)
+        if (obj is Occurrence)
         {
-            Event evt = occurrence.Component as Event;
+            Occurrence occurrence = (Occurrence)obj;
+
+            IEvent evt = occurrence.Source as IEvent;
             if (evt != null)
             {
                 if (evt.IsAllDay)

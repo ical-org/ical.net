@@ -52,17 +52,23 @@ namespace DDay.iCal.Serialization.iCalendar
         {
             string value = tr.ReadToEnd();
 
-            ICalendarObject obj = SerializationContext.Peek() as ICalendarObject;
-            if (obj != null)
+            try
             {
-                // Decode the value, if necessary!
-                EncodableDataType dt = new EncodableDataType();
-                dt.AssociatedObject = obj;
-                value = Decode(dt, value);
-            }
+                ICalendarObject obj = SerializationContext.Peek() as ICalendarObject;
+                if (obj != null)
+                {
+                    // Decode the value, if necessary!
+                    EncodableDataType dt = new EncodableDataType();
+                    dt.AssociatedObject = obj;
+                    value = Decode(dt, value);
+                }
 
-            // Remove "-" characters while parsing Enum values.
-            return Enum.Parse(m_EnumType, value.Replace("-", ""), true);
+                // Remove "-" characters while parsing Enum values.
+                return Enum.Parse(m_EnumType, value.Replace("-", ""), true);
+            }
+            catch { }
+
+            return value;
         }
     }
 }

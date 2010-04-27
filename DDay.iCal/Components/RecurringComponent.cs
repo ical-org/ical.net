@@ -49,7 +49,6 @@ namespace DDay.iCal
         #region Private Fields
                 
         private IList<IAlarm> m_Alarms;
-        private RecurringEvaluator m_Evaluator;
 
         #endregion
 
@@ -129,7 +128,7 @@ namespace DDay.iCal
         public RecurringComponent(string name) : base(name) { Initialize(); }
         private void Initialize()
         {
-            m_Evaluator = new RecurringEvaluator(this);
+            SetService(new RecurringEvaluator(this));
             Alarms = new List<IAlarm>();
         }
 
@@ -156,13 +155,6 @@ namespace DDay.iCal
             if (child is IAlarm)
                 Alarms.Remove((IAlarm)child);
             base.RemoveChild(child);
-        }
-
-        public override object GetService(Type serviceType)
-        {
-            if (typeof(IEvaluator).IsAssignableFrom(serviceType))
-                return m_Evaluator;
-            return null;
         }
 
         #endregion

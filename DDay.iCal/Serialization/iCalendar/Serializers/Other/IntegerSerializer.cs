@@ -39,20 +39,24 @@ namespace DDay.iCal.Serialization.iCalendar
         {
             string value = tr.ReadToEnd();
 
-            ICalendarObject obj = SerializationContext.Peek() as ICalendarObject;
-            if (obj != null)
+            try
             {
-                // Decode the value, if necessary!
-                EncodableDataType dt = new EncodableDataType();
-                dt.AssociatedObject = obj;
-                value = Decode(dt, value);
+                ICalendarObject obj = SerializationContext.Peek() as ICalendarObject;
+                if (obj != null)
+                {
+                    // Decode the value, if necessary!
+                    EncodableDataType dt = new EncodableDataType();
+                    dt.AssociatedObject = obj;
+                    value = Decode(dt, value);
+                }
+
+                int i;
+                if (Int32.TryParse(value, out i))
+                    return i;
             }
+            catch {}
 
-            int i;
-            if (Int32.TryParse(value, out i))
-                return i;
-
-            return null;
+            return value;
         }
     }
 }

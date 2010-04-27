@@ -63,6 +63,8 @@ namespace DDay.iCal.Serialization.iCalendar
                     s = new TimeSpanSerializer();
                 else if (typeof(int).IsAssignableFrom(objectType))
                     s = new IntegerSerializer();
+                else if (typeof(Uri).IsAssignableFrom(objectType))
+                    s = new UriSerializer();
                 else if (typeof(ICalendarDataType).IsAssignableFrom(objectType))
                     s = m_DataTypeSerializerFactory.Build(objectType, ctx);
                 // Default to a string serializer, which simply calls

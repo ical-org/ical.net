@@ -17,5 +17,86 @@ namespace DDay.iCal
         List<IICalendar>,
         IICalendarCollection
     {
+        #region IGetOccurrences Members
+
+        public void ClearEvaluation()
+        {
+            foreach (IICalendar iCal in this)
+                iCal.ClearEvaluation();
+        }
+
+        public IList<Occurrence> GetOccurrences(IDateTime dt)
+        {
+            List<Occurrence> occurrences = new List<Occurrence>();
+            foreach (IICalendar iCal in this)
+                occurrences.AddRange(iCal.GetOccurrences(dt));
+            occurrences.Sort();
+            return occurrences;
+        }
+
+        public IList<Occurrence> GetOccurrences(DateTime dt)
+        {
+            List<Occurrence> occurrences = new List<Occurrence>();
+            foreach (IICalendar iCal in this)
+                occurrences.AddRange(iCal.GetOccurrences(dt));
+            occurrences.Sort();
+            return occurrences;
+        }
+
+        public IList<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
+        {
+            List<Occurrence> occurrences = new List<Occurrence>();
+            foreach (IICalendar iCal in this)
+                occurrences.AddRange(iCal.GetOccurrences(startTime, endTime));
+            occurrences.Sort();
+            return occurrences;
+        }
+
+        public IList<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
+        {
+            List<Occurrence> occurrences = new List<Occurrence>();
+            foreach (IICalendar iCal in this)
+                occurrences.AddRange(iCal.GetOccurrences(startTime, endTime));
+            occurrences.Sort();
+            return occurrences;
+        }
+
+        public IList<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
+        {
+            List<Occurrence> occurrences = new List<Occurrence>();
+            foreach (IICalendar iCal in this)
+                occurrences.AddRange(iCal.GetOccurrences<T>(dt));
+            occurrences.Sort();
+            return occurrences;
+        }
+
+        public IList<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
+        {
+            List<Occurrence> occurrences = new List<Occurrence>();
+            foreach (IICalendar iCal in this)
+                occurrences.AddRange(iCal.GetOccurrences<T>(dt));
+            occurrences.Sort();
+            return occurrences;
+        }
+
+        public IList<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
+        {
+            List<Occurrence> occurrences = new List<Occurrence>();
+            foreach (IICalendar iCal in this)
+                occurrences.AddRange(iCal.GetOccurrences<T>(startTime, endTime));
+            occurrences.Sort();
+            return occurrences;
+        }
+
+        public IList<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent
+        {
+            List<Occurrence> occurrences = new List<Occurrence>();
+            foreach (IICalendar iCal in this)
+                occurrences.AddRange(iCal.GetOccurrences<T>(startTime, endTime));
+            occurrences.Sort();
+            return occurrences;
+        }
+
+        #endregion
     }
 }

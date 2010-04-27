@@ -9,15 +9,16 @@ namespace DDay.iCal.Serialization
     public class DataTypeMapper :
         IDataTypeMapper
     {
-        private struct Mapping
+        private struct PropertyMapping
         {
             public Type ObjectType { get; set; }
             public TypeResolverDelegate Resolver { get; set; }
+            public bool AllowsMultipleValuesPerProperty { get; set; }
         }
 
         #region Private Fields
 
-        IDictionary<string, Mapping> _PropertyMap = new Dictionary<string, Mapping>();
+        IDictionary<string, PropertyMapping> _PropertyMap = new Dictionary<string, PropertyMapping>();
 
         #endregion
 
@@ -25,42 +26,42 @@ namespace DDay.iCal.Serialization
 
         public DataTypeMapper()
         {
-            AddPropertyMapping("ACTION", typeof(AlarmAction));
-            AddPropertyMapping("ATTACH", typeof(IList<IAttachment>));
-            AddPropertyMapping("ATTENDEE", ResolveAttendeeProperty);
-            AddPropertyMapping("CATEGORIES", typeof(IList<string>));
-            AddPropertyMapping("COMMENT", typeof(IList<string>));
-            AddPropertyMapping("COMPLETED", typeof(IDateTime));
-            AddPropertyMapping("CONTACT", typeof(IList<string>));
-            AddPropertyMapping("CREATED", typeof(IDateTime));
-            AddPropertyMapping("DTEND", typeof(IDateTime));
-            AddPropertyMapping("DTSTAMP", typeof(IDateTime));
-            AddPropertyMapping("DTSTART", typeof(IDateTime));
-            AddPropertyMapping("DUE", typeof(IDateTime));
-            AddPropertyMapping("DURATION", typeof(TimeSpan));
-            AddPropertyMapping("EXDATE", typeof(IList<IPeriodList>));
-            AddPropertyMapping("EXRULE", typeof(IList<IRecurrencePattern>));
-            AddPropertyMapping("GEO", typeof(IGeographicLocation));
-            AddPropertyMapping("LAST-MODIFIED", typeof(IDateTime));
-            AddPropertyMapping("ORGANIZER", typeof(IOrganizer));
-            AddPropertyMapping("PERCENT-COMPLETE", typeof(int));
-            AddPropertyMapping("PRIORITY", typeof(int));
-            AddPropertyMapping("RDATE", typeof(IList<IPeriodList>));
-            AddPropertyMapping("RECURRENCE-ID", typeof(IDateTime));
-            AddPropertyMapping("RELATED-TO", typeof(IList<string>));
-            AddPropertyMapping("REQUEST-STATUS", typeof(IList<IRequestStatus>));
-            AddPropertyMapping("REPEAT", typeof(int));
-            AddPropertyMapping("RESOURCES", typeof(IList<string>));
-            AddPropertyMapping("RRULE", typeof(IList<IRecurrencePattern>));
-            AddPropertyMapping("SEQUENCE", typeof(int));
-            AddPropertyMapping("STATUS", ResolveStatusProperty);
-            AddPropertyMapping("TRANSP", typeof(ITransparency));
-            AddPropertyMapping("TRIGGER", typeof(ITrigger));
-            AddPropertyMapping("TZNAME", typeof(IList<string>));
-            AddPropertyMapping("TZOFFSETFROM", typeof(IUTCOffset));
-            AddPropertyMapping("TZOFFSETTO", typeof(IUTCOffset));
-            AddPropertyMapping("TZURL", typeof(Uri));
-            AddPropertyMapping("URL", typeof(Uri));
+            AddPropertyMapping("ACTION", typeof(AlarmAction), false);
+            AddPropertyMapping("ATTACH", typeof(IList<IAttachment>), false);
+            AddPropertyMapping("ATTENDEE", ResolveAttendeeProperty, false);
+            AddPropertyMapping("CATEGORIES", typeof(IList<string>), true);
+            AddPropertyMapping("COMMENT", typeof(IList<string>), false);
+            AddPropertyMapping("COMPLETED", typeof(IDateTime), false);
+            AddPropertyMapping("CONTACT", typeof(IList<string>), false);
+            AddPropertyMapping("CREATED", typeof(IDateTime), false);
+            AddPropertyMapping("DTEND", typeof(IDateTime), false);
+            AddPropertyMapping("DTSTAMP", typeof(IDateTime), false);
+            AddPropertyMapping("DTSTART", typeof(IDateTime), false);
+            AddPropertyMapping("DUE", typeof(IDateTime), false);
+            AddPropertyMapping("DURATION", typeof(TimeSpan), false);
+            AddPropertyMapping("EXDATE", typeof(IList<IPeriodList>), false);
+            AddPropertyMapping("EXRULE", typeof(IList<IRecurrencePattern>), false);
+            AddPropertyMapping("GEO", typeof(IGeographicLocation), false);
+            AddPropertyMapping("LAST-MODIFIED", typeof(IDateTime), false);
+            AddPropertyMapping("ORGANIZER", typeof(IOrganizer), false);
+            AddPropertyMapping("PERCENT-COMPLETE", typeof(int), false);
+            AddPropertyMapping("PRIORITY", typeof(int), false);
+            AddPropertyMapping("RDATE", typeof(IList<IPeriodList>), false);
+            AddPropertyMapping("RECURRENCE-ID", typeof(IDateTime), false);
+            AddPropertyMapping("RELATED-TO", typeof(IList<string>), false);
+            AddPropertyMapping("REQUEST-STATUS", typeof(IList<IRequestStatus>), false);
+            AddPropertyMapping("REPEAT", typeof(int), false);
+            AddPropertyMapping("RESOURCES", typeof(IList<string>), true);
+            AddPropertyMapping("RRULE", typeof(IList<IRecurrencePattern>), false);
+            AddPropertyMapping("SEQUENCE", typeof(int), false);
+            AddPropertyMapping("STATUS", ResolveStatusProperty, false);
+            AddPropertyMapping("TRANSP", typeof(ITransparency), false);
+            AddPropertyMapping("TRIGGER", typeof(ITrigger), false);
+            AddPropertyMapping("TZNAME", typeof(IList<string>), false);
+            AddPropertyMapping("TZOFFSETFROM", typeof(IUTCOffset), false);
+            AddPropertyMapping("TZOFFSETTO", typeof(IUTCOffset), false);
+            AddPropertyMapping("TZURL", typeof(Uri), false);
+            AddPropertyMapping("URL", typeof(Uri), false);
         }
 
         #endregion
@@ -101,23 +102,25 @@ namespace DDay.iCal.Serialization
 
         #region IDefaultTypeMapper Members
 
-        public void AddPropertyMapping(string name, Type objectType)
+        public void AddPropertyMapping(string name, Type objectType, bool allowsMultipleValues)
         {
             if (name != null && objectType != null)
             {
-                Mapping m = new Mapping();
+                PropertyMapping m = new PropertyMapping();
                 m.ObjectType = objectType;
+                m.AllowsMultipleValuesPerProperty = allowsMultipleValues;
 
                 _PropertyMap[name.ToUpper()] = m;
             }
         }
 
-        public void AddPropertyMapping(string name, TypeResolverDelegate resolver)
+        public void AddPropertyMapping(string name, TypeResolverDelegate resolver, bool allowsMultipleValues)
         {
             if (name != null && resolver != null)
             {
-                Mapping m = new Mapping();
+                PropertyMapping m = new PropertyMapping();
                 m.Resolver = resolver;
+                m.AllowsMultipleValuesPerProperty = allowsMultipleValues;
 
                 _PropertyMap[name.ToUpper()] = m;
             }
@@ -129,6 +132,21 @@ namespace DDay.iCal.Serialization
                 _PropertyMap.ContainsKey(name.ToUpper()))
                 _PropertyMap.Remove(name.ToUpper());
         }
+
+        virtual public bool GetPropertyAllowsMultipleValues(object obj)
+        {
+            ICalendarProperty p = obj as ICalendarProperty;
+            if (p != null && p.Name != null)
+            {
+                string name = p.Name.ToUpper();
+                if (_PropertyMap.ContainsKey(name))
+                {
+                    PropertyMapping m = _PropertyMap[name];
+                    return m.AllowsMultipleValuesPerProperty;
+                }
+            }
+            return false;
+        }
         
         virtual public Type GetPropertyMapping(object obj)
         {
@@ -138,7 +156,7 @@ namespace DDay.iCal.Serialization
                 string name = p.Name.ToUpper();
                 if (_PropertyMap.ContainsKey(name))
                 {
-                    Mapping m = _PropertyMap[name];
+                    PropertyMapping m = _PropertyMap[name];
                     if (m.Resolver != null)
                         return m.Resolver(p);
                     else

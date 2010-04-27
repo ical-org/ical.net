@@ -122,6 +122,7 @@ namespace DDay.iCal
             m_TimeZoneInfos = new FilteredCalendarObjectList<ITimeZoneInfo>(this);
             ChildAdded += new EventHandler<ObjectEventArgs<ICalendarObject>>(iCalTimeZone_ChildAdded);
             ChildRemoved += new EventHandler<ObjectEventArgs<ICalendarObject>>(iCalTimeZone_ChildRemoved);
+            SetService(m_Evaluator);
         }        
 
         #endregion
@@ -147,13 +148,6 @@ namespace DDay.iCal
             base.OnDeserializing(context);
 
             Initialize();
-        }
-
-        public override object GetService(Type serviceType)
-        {
-            if (typeof(IEvaluator).IsAssignableFrom(serviceType))
-                return m_Evaluator;
-            return null;
         }
 
         #endregion

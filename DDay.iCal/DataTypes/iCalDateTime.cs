@@ -4,6 +4,8 @@ using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
+using DDay.iCal.Serialization.iCalendar;
+using System.IO;
 
 namespace DDay.iCal
 {
@@ -84,6 +86,12 @@ namespace DDay.iCal
             : this(year, month, day, 0, 0, 0) { }
         public iCalDateTime(int year, int month, int day, string tzid)
             : this(year, month, day, 0, 0, 0, tzid) { }
+
+        public iCalDateTime(string value)
+        {
+            DateTimeSerializer serializer = new DateTimeSerializer();
+            CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
+        }
 
         private void Initialize(int year, int month, int day, int hour, int minute, int second, string tzid, IICalendar iCal)
         {
@@ -519,7 +527,11 @@ namespace DDay.iCal
                         if (tzi != null && tzi.HasValue)
                             return ToTimeZone(tzi.Value.TimeZoneInfo);
                     }
-                    throw new Exception("The '" + tzid + "' time zone could not be resolved.");
+                    // FIXME: sometimes a calendar is perfectly valid but the time zone
+                    // could not be resolved.  What should we do here?
+                    //throw new Exception("The '" + tzid + "' time zone could not be resolved.");
+
+                    return Copy<IDateTime>();
                 }
                 else throw new Exception("The iCalDateTime object must have an iCalendar associated with it in order to use TimeZones.");
             }

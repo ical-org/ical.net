@@ -83,5 +83,7 @@ namespace DDay.iCal
         /// else (opaque).
         /// </summary>
         ITransparency Transparency { get; set; }
+
+        bool IsActive();
     }
 }

@@ -425,15 +425,6 @@ namespace DDay.iCal
         public iCalendar()
         {
             Initialize();
-            EnsureProperties();
-        }
-
-        private void EnsureProperties()
-        {
-            if (string.IsNullOrEmpty(Version))
-                Version = CalendarVersions.v2_0;
-            if (string.IsNullOrEmpty(ProductID))
-                ProductID = CalendarProductIDs.Default;
         }
 
         private void Initialize()
@@ -457,13 +448,6 @@ namespace DDay.iCal
             base.OnDeserializing(context);
 
             Initialize();
-        }
-
-        protected override void OnDeserialized(StreamingContext context)
-        {
-            base.OnDeserialized(context);
-
-            EnsureProperties();
         }
 
         public override bool Equals(object obj)
@@ -702,11 +686,17 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
         /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
-        public IList<Occurrence> GetOccurrences(IDateTime dt)
+        virtual public IList<Occurrence> GetOccurrences(IDateTime dt)
         {
             return GetOccurrences<IRecurringComponent>(
                 new iCalDateTime(dt.Local.Date), 
                 new iCalDateTime(dt.Local.Date.AddDays(1).AddSeconds(-1)));
+        }
+        virtual public IList<Occurrence> GetOccurrences(DateTime dt)
+        {
+            return GetOccurrences<IRecurringComponent>(
+                new iCalDateTime(dt.Date),
+                new iCalDateTime(dt.Date.AddDays(1).AddSeconds(-1)));
         }
 
         /// <summary>
@@ -716,9 +706,13 @@ namespace DDay.iCal
         /// <param name="FromDate">The beginning date/time of the range.</param>
         /// <param name="ToDate">The end date/time of the range.</param>
         /// <returns>A list of occurrences that fall between the dates provided.</returns>
-        public IList<Occurrence> GetOccurrences(IDateTime fromDate, IDateTime toDate)
+        virtual public IList<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
         {
-            return GetOccurrences<IRecurringComponent>(fromDate, toDate);
+            return GetOccurrences<IRecurringComponent>(startTime, endTime);
+        }
+        virtual public IList<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
+        {
+            return GetOccurrences<IRecurringComponent>(new iCalDateTime(startTime), new iCalDateTime(endTime));
         }
 
         /// <summary>
@@ -737,9 +731,15 @@ namespace DDay.iCal
         {
             return GetOccurrences<T>(
                 new iCalDateTime(dt.Local.Date), 
-                new iCalDateTime(dt.Local.Date.AddDays(1).AddSeconds(-1)));
+                new iCalDateTime(dt.Local.Date.AddDays(1).AddTicks(-1)));
         }
-
+        virtual public IList<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
+        {
+            return GetOccurrences<T>(
+                new iCalDateTime(dt.Date),
+                new iCalDateTime(dt.Date.AddDays(1).AddTicks(-1)));
+        }
+        
         /// <summary>
         /// Returns all occurrences of components of type T that start within the date range provided.
         /// All components occurring between <paramref name="startTime"/> and <paramref name="endTime"/>
@@ -758,6 +758,10 @@ namespace DDay.iCal
 
             occurrences.Sort();
             return occurrences;
+        }
+        virtual public IList<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent
+        {
+            return GetOccurrences<T>(new iCalDateTime(startTime), new iCalDateTime(endTime));
         }
 
         /// <summary>

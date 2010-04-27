@@ -12,6 +12,7 @@ namespace DDay.iCal.Serialization
         private Type m_iCalendarType = typeof(DDay.iCal.iCalendar);        
         private bool m_EnsureAccurateLineNumbers = false;
         private ParsingModeType m_ParsingMode = ParsingModeType.Strict;
+        private bool m_StoreExtraSerializationData = false;        
 
         #endregion
 
@@ -33,6 +34,12 @@ namespace DDay.iCal.Serialization
         {
             get { return m_ParsingMode; }
             set { m_ParsingMode = value; }
+        }
+
+        virtual public bool StoreExtraSerializationData
+        {
+            get { return m_StoreExtraSerializationData; }
+            set { m_StoreExtraSerializationData = value; }
         }
 
         #endregion

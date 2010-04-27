@@ -1187,6 +1187,79 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
+        /// RRULE:FREQ=YEARLY;BYWEEKNO=20
+        /// Includes every day in week 20.
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void YearlyByWeekNo2()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyByWeekNo2.ics")[0];
+            EventOccurrenceTest(
+                iCal,
+                new iCalDateTime(1996, 1, 1, tzid),
+                new iCalDateTime(1999, 12, 31, tzid),
+                new iCalDateTime[]
+                {
+                    new iCalDateTime(1997, 5, 12, 9, 0, 0, tzid),
+                    new iCalDateTime(1997, 5, 13, 9, 0, 0, tzid),
+                    new iCalDateTime(1997, 5, 14, 9, 0, 0, tzid),
+                    new iCalDateTime(1997, 5, 15, 9, 0, 0, tzid),
+                    new iCalDateTime(1997, 5, 16, 9, 0, 0, tzid),
+                    new iCalDateTime(1997, 5, 17, 9, 0, 0, tzid),
+                    new iCalDateTime(1997, 5, 18, 9, 0, 0, tzid),
+                    new iCalDateTime(1998, 5, 11, 9, 0, 0, tzid),
+                    new iCalDateTime(1998, 5, 12, 9, 0, 0, tzid),
+                    new iCalDateTime(1998, 5, 13, 9, 0, 0, tzid),
+                    new iCalDateTime(1998, 5, 14, 9, 0, 0, tzid),
+                    new iCalDateTime(1998, 5, 15, 9, 0, 0, tzid),
+                    new iCalDateTime(1998, 5, 16, 9, 0, 0, tzid),
+                    new iCalDateTime(1998, 5, 17, 9, 0, 0, tzid),
+                    new iCalDateTime(1999, 5, 17, 9, 0, 0, tzid),
+                    new iCalDateTime(1999, 5, 18, 9, 0, 0, tzid),
+                    new iCalDateTime(1999, 5, 19, 9, 0, 0, tzid),
+                    new iCalDateTime(1999, 5, 20, 9, 0, 0, tzid),
+                    new iCalDateTime(1999, 5, 21, 9, 0, 0, tzid),
+                    new iCalDateTime(1999, 5, 22, 9, 0, 0, tzid),
+                    new iCalDateTime(1999, 5, 23, 9, 0, 0, tzid)
+                },
+                null
+            );
+        }
+
+        /// <summary>
+        /// DTSTART;TZID=US-Eastern:20020101T100000
+        /// RRULE:FREQ=YEARLY;BYWEEKNO=1
+        /// Ensures that 20021230 and 20021231 are in the list.
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void YearlyByWeekNo3()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyByWeekNo3.ics")[0];
+            EventOccurrenceTest(
+                iCal,
+                new iCalDateTime(2001, 1, 1, tzid),
+                new iCalDateTime(2003, 1, 31, tzid),
+                new iCalDateTime[]
+                {
+                    new iCalDateTime(2002, 1, 1, 10, 0, 0, tzid),
+                    new iCalDateTime(2002, 1, 2, 10, 0, 0, tzid),
+                    new iCalDateTime(2002, 1, 3, 10, 0, 0, tzid),
+                    new iCalDateTime(2002, 1, 4, 10, 0, 0, tzid),
+                    new iCalDateTime(2002, 1, 5, 10, 0, 0, tzid),
+                    new iCalDateTime(2002, 1, 6, 10, 0, 0, tzid),
+                    new iCalDateTime(2002, 12, 30, 10, 0, 0, tzid),
+                    new iCalDateTime(2002, 12, 31, 10, 0, 0, tzid),
+                    new iCalDateTime(2003, 1, 1, 10, 0, 0, tzid),
+                    new iCalDateTime(2003, 1, 2, 10, 0, 0, tzid),
+                    new iCalDateTime(2003, 1, 3, 10, 0, 0, tzid),
+                    new iCalDateTime(2003, 1, 4, 10, 0, 0, tzid),
+                    new iCalDateTime(2003, 1, 5, 10, 0, 0, tzid)
+                },
+                null
+            );
+        }
+
+        /// <summary>
         /// See Page 123 of RFC 2445 - RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=TH
         /// </summary>
         [Test, Category("Recurrence")]

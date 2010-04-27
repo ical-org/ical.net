@@ -43,24 +43,18 @@ namespace DDay.iCal
         void Initialize()
         {
             m_Evaluator = new TimeZoneInfoEvaluator(this);
+            SetService(m_Evaluator);
         }
 
         #endregion
 
         #region Overrides
-
+        
         protected override void OnDeserializing(StreamingContext context)
         {
             base.OnDeserializing(context);
 
             Initialize();
-        }
-
-        public override object GetService(Type serviceType)
-        {
-            if (typeof(IEvaluator).IsAssignableFrom(serviceType))
-                return m_Evaluator;
-            return null;
         }
 
         public override bool Equals(object obj)
@@ -179,7 +173,7 @@ namespace DDay.iCal
                 // Evaluate the date/time in question.
                 parentEval.Evaluate(Start, DateUtil.GetSimpleDateTimeData(Start), normalizedDt, true);
                 foreach (IPeriod period in m_Evaluator.Periods)
-                {   
+                {
                     if (period.Contains(dt))
                         return new TimeZoneObservance(period, this);
                 }

@@ -32,9 +32,13 @@ namespace DDay.iCal.Serialization.iCalendar
             ICalendarParameter p = obj as ICalendarParameter;
             if (p != null)
             {
-                string value = p.Name + "=";
-                value += string.Join(",", p.Values);
-                return value;
+                string result = p.Name + "=";
+                string value = string.Join(",", p.Values);
+                // Surround the parameter value with double quotes, if the value
+                // contains any problematic characters.
+                if (value.IndexOfAny(new char[] { '"', ';', ':', ',' }) >= 0)
+                    value = "\"" + value + "\"";
+                return result + value;
             }
             return string.Empty;
         }

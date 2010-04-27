@@ -58,34 +58,39 @@ namespace DDay.iCal.Serialization.iCalendar
         {
             string value = tr.ReadToEnd();
 
-            Match match = Regex.Match(value, @"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?))$");
-            int days = 0;
-            int hours = 0;
-            int minutes = 0;
-            int seconds = 0;
-
-            if (match.Success)
+            try
             {
-                int mult = 1;
-                if (match.Groups["sign"].Success && match.Groups["sign"].Value == "-")
-                    mult = -1;
+                Match match = Regex.Match(value, @"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?))$");
+                int days = 0;
+                int hours = 0;
+                int minutes = 0;
+                int seconds = 0;
 
-                if (match.Groups["week"].Success)
-                    days = Convert.ToInt32(match.Groups["week"].Value) * 7;
-                else if (match.Groups["main"].Success)
+                if (match.Success)
                 {
-                    if (match.Groups["day"].Success) days = Convert.ToInt32(match.Groups["day"].Value);
-                    if (match.Groups["time"].Success)
-                    {
-                        if (match.Groups["hour"].Success) hours = Convert.ToInt32(match.Groups["hour"].Value);
-                        if (match.Groups["minute"].Success) minutes = Convert.ToInt32(match.Groups["minute"].Value);
-                        if (match.Groups["second"].Success) seconds = Convert.ToInt32(match.Groups["second"].Value);
-                    }
-                }
+                    int mult = 1;
+                    if (match.Groups["sign"].Success && match.Groups["sign"].Value == "-")
+                        mult = -1;
 
-                return new TimeSpan(days * mult, hours * mult, minutes * mult, seconds * mult);
+                    if (match.Groups["week"].Success)
+                        days = Convert.ToInt32(match.Groups["week"].Value) * 7;
+                    else if (match.Groups["main"].Success)
+                    {
+                        if (match.Groups["day"].Success) days = Convert.ToInt32(match.Groups["day"].Value);
+                        if (match.Groups["time"].Success)
+                        {
+                            if (match.Groups["hour"].Success) hours = Convert.ToInt32(match.Groups["hour"].Value);
+                            if (match.Groups["minute"].Success) minutes = Convert.ToInt32(match.Groups["minute"].Value);
+                            if (match.Groups["second"].Success) seconds = Convert.ToInt32(match.Groups["second"].Value);
+                        }
+                    }
+
+                    return new TimeSpan(days * mult, hours * mult, minutes * mult, seconds * mult);
+                }
             }
-            return null;
+            catch { }
+
+            return value;
         }
     }
 }

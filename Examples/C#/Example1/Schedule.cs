@@ -7,33 +7,29 @@ using System.Text;
 using System.Windows.Forms;
 using System.Globalization;
 using DDay.iCal;
-using DDay.iCal.Components;
-using DDay.iCal.DataTypes;
 
 namespace Example1
 {
     public partial class Schedule : Form
     {
+        private bool _ConvertToLocalTime = false;
         private iCalendarCollection _Calendars = new iCalendarCollection();
-        private DateTime _StartDate;
-        private DateTime _EndDate;
 
         /// <summary>
         /// Returns 12:00 AM of the first day of the current month
         /// </summary>
-        public DateTime StartOfMonth
+        public IDateTime StartOfMonth
         {
-            get { return new DateTime(2006, cbMonth.SelectedIndex + 1, 1); }            
+            get { return new iCalDateTime(2006, cbMonth.SelectedIndex + 1, 1); }            
         }
 
         /// <summary>
-        /// Returns 11:59 PM of the last day of the current month
+        /// Returns 11:59:59 PM of the last day of the current month
         /// </summary>
-        public DateTime EndOfMonth
+        public IDateTime EndOfMonth
         {
-            get { return StartOfMonth.AddMonths(1).AddSeconds(-1); }
+            get { return StartOfMonth.AddMonths(1).AddTicks(-1); }
         }
-
 
         public Schedule()
         {
@@ -45,10 +41,19 @@ namespace Example1
         /// </summary>        
         private void Schedule_Load(object sender, EventArgs e)
         {
-            _Calendars.Add(iCalendar.LoadFromFile(@"Calendars\USHolidays.ics"));
-            _Calendars.Add(iCalendar.LoadFromFile(@"Calendars\lotr.ics"));
-            _Calendars.Add(iCalendar.LoadFromFile(@"Calendars\To-do.ics"));
-            _Calendars.Add(iCalendar.LoadFromFile(@"Calendars\Barça 2006 - 2007.ics"));
+            _Calendars.AddRange(iCalendar.LoadFromFile(@"Calendars\USHolidays.ics"));
+            _Calendars.AddRange(iCalendar.LoadFromFile(@"Calendars\lotr.ics"));
+            _Calendars.AddRange(iCalendar.LoadFromFile(@"Calendars\To-do.ics"));
+            _Calendars.AddRange(iCalendar.LoadFromFile(@"Calendars\Barça 2006 - 2007.ics"));
+        }
+
+        /// <summary>
+        /// Refreshes the display of events/todo items.
+        /// </summary>
+        private void RefreshDisplay()
+        {
+            FillEventList();
+            FillTodoList();
         }
 
         /// <summary>
@@ -56,8 +61,37 @@ namespace Example1
         /// </summary>        
         private void cbMonth_SelectedIndexChanged(object sender, EventArgs e)
         {
-            FillEventList();
-            FillTodoList();
+            RefreshDisplay();
+        }
+
+        /// <summary>
+        /// Occurs when the checkbox for showing events in local time changes.
+        /// </summary>
+        private void cbLocalTime_CheckedChanged(object sender, EventArgs e)
+        {
+            _ConvertToLocalTime = cbLocalTime.Checked;
+            RefreshDisplay();
+        }
+
+        private string GetEventString(Occurrence o, IEvent evt)
+        {
+            // Get a string that represents our event
+            string summary = o.Period.StartTime.ToString("d") + " - " + evt.Summary;
+            if (evt.IsAllDay)
+                summary += " (All Day)";
+            else
+            {
+                string startTime = _ConvertToLocalTime ?
+                    o.Period.StartTime.Local.ToString("t") :
+                    o.Period.StartTime.ToString("t") + " " + o.Period.StartTime.TimeZoneName;
+                string endTime = _ConvertToLocalTime ?
+                    o.Period.EndTime.Local.ToString("t") :
+                    o.Period.EndTime.ToString("t") + " " + o.Period.EndTime.TimeZoneName;
+
+                summary += " (" + startTime + " to " + endTime + ")";
+            }
+
+            return summary;
         }
 
         /// <summary>
@@ -68,14 +102,17 @@ namespace Example1
         {
             // Clear the list
             clbTodo.Items.Clear();
-                        
-            foreach (Todo todo in _Calendars.Todos)            
+
+            foreach (IICalendar iCal in _Calendars)
             {
-                // Ensure the todo item is active as of 11:59 PM on the last day of the month
-                if (todo.IsActive(EndOfMonth))
+                foreach (Todo todo in iCal.Todos)
                 {
-                    clbTodo.Items.Add(todo.Summary.Value);
-                }                
+                    // Ensure the todo item is active as of 11:59 PM on the last day of the month
+                    if (todo.IsActive(EndOfMonth))
+                    {
+                        clbTodo.Items.Add(todo.Summary);
+                    }
+                }
             }
         }
 
@@ -89,28 +126,25 @@ namespace Example1
             listEvents.Items.Clear();
 
             // Get a list of event occurrences from each of our calendars.            
-            List<Occurrence> occurrences = _Calendars.GetOccurrences<Event>(StartOfMonth, EndOfMonth);
+            IList<Occurrence> occurrences = _Calendars.GetOccurrences<IEvent>(StartOfMonth, EndOfMonth);
 
             // Iterate through each occurrence
             foreach (Occurrence o in occurrences)
             {
                 // Cast the component to an event
-                Event evt = o.Component as Event;
+                IEvent evt = o.Source as IEvent;
                 if (evt != null)
                 {
                     // Make sure the event is active (hasn't been cancelled)
                     if (evt.IsActive())
                     {
-                        // Get a string that represents our event
-                        string summary = o.Period.StartTime.ToString("d") + " - " + evt.Summary.Value;
-                        if (evt.IsAllDay)
-                            summary += " (All Day)";
+                        
                         
                         // Add the occurrence to the list view
-                        listEvents.Items.Add(new ListViewItem(summary));
+                        listEvents.Items.Add(new ListViewItem(GetEventString(o, evt)));
                     }
                 }
             }
-        }
+        }        
     }
 }

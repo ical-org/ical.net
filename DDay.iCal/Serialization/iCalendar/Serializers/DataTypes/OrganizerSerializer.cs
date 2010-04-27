@@ -33,12 +33,17 @@ namespace DDay.iCal.Serialization.iCalendar
         {
             string value = tr.ReadToEnd();
 
-            IOrganizer o = CreateAndAssociate() as IOrganizer;
-            if (o != null)
+            try
             {
-                o.Value = new Uri(Unescape(Decode(o, value)));
-                return o;
+                IOrganizer o = CreateAndAssociate() as IOrganizer;
+                if (o != null)
+                {
+                    o.Value = new Uri(Unescape(Decode(o, value)));
+                    return o;
+                }
             }
+            catch { }
+
             return null;
         }
     }

@@ -153,6 +153,7 @@ namespace DDay.iCal
             this.Name = Components.TODO;
 
             m_Evaluator = new TodoEvaluator(this);
+            SetService(m_Evaluator);
         }
 
         #endregion
@@ -227,13 +228,6 @@ namespace DDay.iCal
             {
                 return true;
             }
-        }
-
-        public override object GetService(Type serviceType)
-        {
-            if (typeof(IEvaluator).IsAssignableFrom(serviceType))
-                return m_Evaluator;
-            return null;
         }
 
         protected override void OnDeserializing(StreamingContext context)

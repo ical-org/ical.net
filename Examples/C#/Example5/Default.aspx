@@ -18,7 +18,7 @@
             <ItemTemplate>
                 <div class="item">
                     <div class="time"><%# GetTimeDisplay(Container.DataItem) %></div>
-                    <span class="bold"><%# DataBinder.Eval(Container.DataItem, "Component.Summary") %></span>
+                    <span class="bold"><%# DataBinder.Eval(Container.DataItem, "Source.Summary") %></span>
                 </div>
             </ItemTemplate>
         </asp:Repeater>
@@ -38,7 +38,7 @@
                         <%# GetTimeDisplay(Container.DataItem)%>
                     </div>
                     <span class="bold">
-                        <%# DataBinder.Eval(Container.DataItem, "Component.Summary") %>
+                        <%# DataBinder.Eval(Container.DataItem, "Source.Summary") %>
                     </span>
                 </div>
             </ItemTemplate>

@@ -72,35 +72,7 @@ namespace DDay.iCal
                 case FrequencyType.Minutely: dt = old.AddMinutes(interval); break;
                 case FrequencyType.Hourly: dt = old.AddHours(interval); break;
                 case FrequencyType.Daily: dt = old.AddDays(interval); break;
-                case FrequencyType.Weekly:
-                    // How the week increments depends on the WKST indicated (defaults to Monday)
-                    // So, basically, we determine the week of year using the necessary rules,
-                    // and we increment the day until the week number matches our "goal" week number.
-                    // So, if the current week number is 36, and our Interval is 2, then our goal
-                    // week number is 38.
-                    // NOTE: fixes WeeklyUntilWkst2() eval.
-                    int current = Calendar.GetWeekOfYear(old, System.Globalization.CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek),
-                        lastLastYear = Calendar.GetWeekOfYear(new DateTime(old.Year - 1, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek),
-                        last = Calendar.GetWeekOfYear(new DateTime(old.Year, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek),
-                        goal = current + interval;
-
-                    // If the goal week is greater than the last week of the year, wrap it!
-                    if (goal > last)
-                        goal = goal - last;
-                    else if (goal <= 0)
-                        goal = lastLastYear + goal;
-
-                    int i = interval > 0 ? 7 : -7;
-                    while (current != goal)
-                    {
-                        old = old.AddDays(i);
-                        current = Calendar.GetWeekOfYear(old, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
-                    }
-                    while (old.DayOfWeek != pattern.FirstDayOfWeek)
-                        old = old.AddDays(-1);
-
-                    dt = old;
-                    break;
+                case FrequencyType.Weekly: dt = DateUtil.AddWeeks(Calendar, old, interval, pattern.FirstDayOfWeek); break;
                 case FrequencyType.Monthly: dt = old.AddDays(-old.Day + 1).AddMonths(interval); break;
                 case FrequencyType.Yearly: dt = old.AddDays(-old.DayOfYear + 1).AddYears(interval); break;
                 default: throw new Exception("FrequencyType.NONE cannot be evaluated. Please specify a FrequencyType before evaluating the recurrence.");

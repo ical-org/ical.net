@@ -1,16 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using System.Resources;
-using System.Web;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using NUnit.Framework;
-using DDay.iCal.Serialization.iCalendar;
-using DDay.iCal.Serialization;
 using System.Net;
+using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
+using DDay.iCal.Serialization;
+using DDay.iCal.Serialization.iCalendar;
+using NUnit.Framework;
 
 namespace DDay.iCal.Test
 {
@@ -1098,6 +1096,16 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             // The "Created" date is out-of-bounds.  It should be coerced to the
             // closest representable date/time.
             Assert.AreEqual(DateTime.MinValue, evt.Created.Value);
+        }
+
+        [Test, Category("Serialization")]
+        public void DateTime2()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\DateTime2.ics")[0];
+            Assert.AreEqual(1, iCal.Events.Count);
+
+            Assert.IsNull(iCal.Events[0].Start);
+            Assert.AreEqual("19970412", iCal.Events[0].Properties["DTSTART"].Value);
         }
 
         [Test, Category("Serialization")]

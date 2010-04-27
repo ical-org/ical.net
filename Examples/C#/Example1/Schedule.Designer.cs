@@ -34,13 +34,14 @@ namespace Example1
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.cbLocalTime = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // listEvents
             // 
             this.listEvents.Location = new System.Drawing.Point(12, 66);
             this.listEvents.Name = "listEvents";
-            this.listEvents.Size = new System.Drawing.Size(270, 394);
+            this.listEvents.Size = new System.Drawing.Size(381, 394);
             this.listEvents.TabIndex = 1;
             this.listEvents.UseCompatibleStateImageBehavior = false;
             this.listEvents.View = System.Windows.Forms.View.List;
@@ -48,7 +49,7 @@ namespace Example1
             // clbTodo
             // 
             this.clbTodo.FormattingEnabled = true;
-            this.clbTodo.Location = new System.Drawing.Point(288, 66);
+            this.clbTodo.Location = new System.Drawing.Point(399, 66);
             this.clbTodo.Name = "clbTodo";
             this.clbTodo.Size = new System.Drawing.Size(262, 394);
             this.clbTodo.TabIndex = 2;
@@ -97,18 +98,30 @@ namespace Example1
             // label3
             // 
             this.label3.Font = new System.Drawing.Font("Lucida Sans", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(285, 51);
+            this.label3.Location = new System.Drawing.Point(396, 51);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(266, 14);
             this.label3.TabIndex = 4;
             this.label3.Text = "This Month\'s Todo List";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // cbLocalTime
+            // 
+            this.cbLocalTime.AutoSize = true;
+            this.cbLocalTime.Location = new System.Drawing.Point(175, 19);
+            this.cbLocalTime.Name = "cbLocalTime";
+            this.cbLocalTime.Size = new System.Drawing.Size(170, 18);
+            this.cbLocalTime.TabIndex = 5;
+            this.cbLocalTime.Text = "Show Events in Local Time";
+            this.cbLocalTime.UseVisualStyleBackColor = true;
+            this.cbLocalTime.CheckedChanged += new System.EventHandler(this.cbLocalTime_CheckedChanged);
+            // 
             // Schedule
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(563, 472);
+            this.ClientSize = new System.Drawing.Size(674, 472);
+            this.Controls.Add(this.cbLocalTime);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -132,6 +145,7 @@ namespace Example1
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.CheckBox cbLocalTime;
     }
 }
 

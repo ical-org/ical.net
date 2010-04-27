@@ -36,29 +36,7 @@ namespace DDay.iCal.Serialization.iCalendar
         {
             get { return m_SerializationContext; }
             set { m_SerializationContext = value; }
-        }
-
-        virtual public T GetService<T>()
-        {
-            if (SerializationContext != null)
-            {
-                object obj = SerializationContext.GetService(typeof(T));
-                if (obj != null)
-                    return (T)obj;
-            }
-            return default(T);
-        }
-
-        virtual public T GetService<T>(string name)
-        {
-            if (SerializationContext != null)
-            {
-                object obj = SerializationContext.GetService(name);
-                if (obj != null)
-                    return (T)obj;
-            }
-            return default(T);
-        }
+        }        
 
         public abstract Type TargetType { get; }
         public abstract string SerializeToString(object obj);
@@ -100,6 +78,62 @@ namespace DDay.iCal.Serialization.iCalendar
                 // Pop the current object off the serialization stack
                 SerializationContext.Pop();
             }
+        }
+
+        #endregion
+
+        #region IServiceProvider Members
+
+        virtual public object GetService(Type serviceType)
+        {
+            if (SerializationContext != null)
+                return SerializationContext.GetService(serviceType);
+            return null;
+        }
+
+        virtual public object GetService(string name)
+        {
+            if (SerializationContext != null)
+                return SerializationContext.GetService(name);
+            return null;
+        }
+
+        virtual public T GetService<T>()
+        {
+            if (SerializationContext != null)
+                return SerializationContext.GetService<T>();
+            return default(T);
+        }
+
+        virtual public T GetService<T>(string name)
+        {
+            if (SerializationContext != null)
+                return SerializationContext.GetService<T>(name);
+            return default(T);
+        }
+
+        public void SetService(string name, object obj)
+        {
+            if (SerializationContext != null)
+                SerializationContext.SetService(name, obj);
+        }
+
+        public void SetService(object obj)
+        {
+            if (SerializationContext != null)
+                SerializationContext.SetService(obj);
+        }
+
+        public void RemoveService(Type type)
+        {
+            if (SerializationContext != null)
+                SerializationContext.RemoveService(type);
+        }
+
+        public void RemoveService(string name)
+        {
+            if (SerializationContext != null)
+                SerializationContext.RemoveService(name);
         }
 
         #endregion

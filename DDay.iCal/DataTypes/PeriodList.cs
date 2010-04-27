@@ -25,7 +25,6 @@ namespace DDay.iCal
 
         private IList<IPeriod> m_Periods = new List<IPeriod>();
         private string m_TZID;
-        private PeriodListEvaluator m_Evaluator;
 
         #endregion
 
@@ -55,7 +54,7 @@ namespace DDay.iCal
 
         public PeriodList()
         {
-            m_Evaluator = new PeriodListEvaluator(this);
+            Initialize();
         }
         public PeriodList(string value) : this()
         {
@@ -63,9 +62,21 @@ namespace DDay.iCal
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
+        void Initialize()
+        {
+            SetService(new PeriodListEvaluator(this));
+        }
+
         #endregion
 
         #region Overrides
+
+        protected override void OnDeserializing(StreamingContext context)
+        {
+            base.OnDeserializing(context);
+
+            Initialize();
+        }
 
         public override bool Equals(object obj)
         {
@@ -116,13 +127,6 @@ namespace DDay.iCal
         {
             PeriodListSerializer serializer = new PeriodListSerializer();
             return serializer.SerializeToString(this);
-        }
-
-        public override object GetService(Type serviceType)
-        {
-            if (typeof(IEvaluator).IsAssignableFrom(serviceType))
-                return m_Evaluator;
-            return null;
         }
 
         #endregion

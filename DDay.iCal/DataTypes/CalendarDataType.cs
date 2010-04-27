@@ -20,6 +20,7 @@ namespace DDay.iCal
         #region Private Fields
         
         ICalendarParameterList _Parameters;
+        ServiceProvider _ServiceProvider;
 
         #endregion
 
@@ -39,6 +40,7 @@ namespace DDay.iCal
         void Initialize()
         {
              _Parameters = new AssociatedCalendarParameterList(null, null);
+             _ServiceProvider = new ServiceProvider();
         }
 
         #endregion
@@ -178,20 +180,55 @@ namespace DDay.iCal
 
         #endregion
 
-        #region IServiceProvider Members
-
-        virtual public object GetService(Type serviceType)
-        {
-            return null;
-        }
-
-        #endregion
-
         #region ICalendarParameterListContainer Members
 
         public ICalendarParameterList Parameters
         {
             get { return _Parameters; }
+        }
+
+        #endregion
+
+        #region IServiceProvider Members
+
+        virtual public object GetService(Type serviceType)
+        {
+            return _ServiceProvider.GetService(serviceType);
+        }
+
+        public object GetService(string name)
+        {
+            return _ServiceProvider.GetService(name);
+        }
+
+        public T GetService<T>()
+        {
+            return _ServiceProvider.GetService<T>();
+        }
+
+        public T GetService<T>(string name)
+        {
+            return _ServiceProvider.GetService<T>(name);
+        }
+
+        public void SetService(string name, object obj)
+        {
+            _ServiceProvider.SetService(name, obj);
+        }
+
+        public void SetService(object obj)
+        {
+            _ServiceProvider.SetService(obj);
+        }
+
+        public void RemoveService(Type type)
+        {
+            _ServiceProvider.RemoveService(type);
+        }
+
+        public void RemoveService(string name)
+        {
+            _ServiceProvider.RemoveService(name);
         }
 
         #endregion
