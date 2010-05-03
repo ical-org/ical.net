@@ -52,22 +52,28 @@ namespace DDay.iCal
 
             // If BYDAY, BYYEARDAY, or BYWEEKNO is specified, then
             // we don't default BYDAY, BYMONTH or BYMONTHDAY
-            if (r.ByDay.Count == 0 &&
-                r.ByYearDay.Count == 0 &&
-                r.ByWeekNo.Count == 0)
+            if (r.ByDay.Count == 0)
             {
-                // If the frequency is weekly, and
-                // no day of week is specified, use
-                // the original date's day of week.
+                // If the frequency is weekly, use the original date's day of week.
                 // NOTE: fixes WeeklyCount1() and WeeklyUntil1() handling
-                if (r.Frequency == FrequencyType.Weekly)
+                // If BYWEEKNO is specified and BYMONTHDAY/BYYEARDAY is not specified,
+                // then let's add BYDAY to BYWEEKNO.
+                // NOTE: fixes YearlyByWeekNoX() handling
+                if (r.Frequency == FrequencyType.Weekly ||
+                    (
+                        r.ByWeekNo.Count > 0 &&
+                        r.ByMonthDay.Count == 0 &&
+                        r.ByYearDay.Count == 0
+                    ))
                     r.ByDay.Add(new WeekDay(referenceDate.DayOfWeek));
 
                 // If BYMONTHDAY is not specified,
-                // default to the current day of month
+                // default to the current day of month.
                 // NOTE: fixes YearlyByMonth1() handling, added BYYEARDAY exclusion
                 // to fix YearlyCountByYearDay1() handling
                 if (r.Frequency > FrequencyType.Weekly &&
+                    r.ByWeekNo.Count == 0 &&
+                    r.ByYearDay.Count == 0 &&
                     r.ByMonthDay.Count == 0)
                     r.ByMonthDay.Add(referenceDate.Day);
 
@@ -75,6 +81,8 @@ namespace DDay.iCal
                 // the current month.
                 // NOTE: fixes YearlyCountByYearDay1() handling
                 if (r.Frequency > FrequencyType.Monthly &&
+                    r.ByWeekNo.Count == 0 &&
+                    r.ByYearDay.Count == 0 &&
                     r.ByMonth.Count == 0)
                     r.ByMonth.Add(referenceDate.Month);
             }

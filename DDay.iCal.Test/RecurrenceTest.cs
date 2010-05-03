@@ -1187,13 +1187,65 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
+        /// DTSTART;TZID=US-Eastern:19970512T090000
         /// RRULE:FREQ=YEARLY;BYWEEKNO=20
-        /// Includes every day in week 20.
+        /// Includes Monday in week 20 (since 19970512 is a Monday)
+        /// of each year.
+        /// See http://lists.calconnect.org/pipermail/caldeveloper-l/2010-April/000042.html
+        /// and related threads for a fairly in-depth discussion about this topic.
         /// </summary>
         [Test, Category("Recurrence")]
         public void YearlyByWeekNo2()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyByWeekNo2.ics")[0];
+            EventOccurrenceTest(
+                iCal,
+                new iCalDateTime(1996, 1, 1, tzid),
+                new iCalDateTime(1999, 12, 31, tzid),
+                new iCalDateTime[]
+                {
+                    new iCalDateTime(1997, 5, 12, 9, 0, 0, tzid),
+                    new iCalDateTime(1998, 5, 11, 9, 0, 0, tzid),                    
+                    new iCalDateTime(1999, 5, 17, 9, 0, 0, tzid)                    
+                },
+                null
+            );
+        }
+
+        /// <summary>
+        /// DTSTART;TZID=US-Eastern:20020101T100000
+        /// RRULE:FREQ=YEARLY;BYWEEKNO=1
+        /// Ensures that 20021230 part of week 1 in 2002.
+        /// See http://lists.calconnect.org/pipermail/caldeveloper-l/2010-April/000042.html
+        /// and related threads for a fairly in-depth discussion about this topic.
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void YearlyByWeekNo3()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyByWeekNo3.ics")[0];
+            EventOccurrenceTest(
+                iCal,
+                new iCalDateTime(2001, 1, 1, tzid),
+                new iCalDateTime(2003, 1, 31, tzid),
+                new iCalDateTime[]
+                {
+                    new iCalDateTime(2002, 1, 1, 10, 0, 0, tzid),
+                    new iCalDateTime(2002, 12, 31, 10, 0, 0, tzid),
+                },
+                null
+            );
+        }
+
+        /// <summary>
+        /// RRULE:FREQ=YEARLY;BYWEEKNO=20;BYDAY=MO,TU,WE,TH,FR,SA,SU
+        /// Includes every day in week 20.
+        /// See http://lists.calconnect.org/pipermail/caldeveloper-l/2010-April/000042.html
+        /// and related threads for a fairly in-depth discussion about this topic.
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void YearlyByWeekNo4()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyByWeekNo4.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(1996, 1, 1, tzid),
@@ -1228,13 +1280,16 @@ namespace DDay.iCal.Test
 
         /// <summary>
         /// DTSTART;TZID=US-Eastern:20020101T100000
-        /// RRULE:FREQ=YEARLY;BYWEEKNO=1
-        /// Ensures that 20021230 and 20021231 are in the list.
+        /// RRULE:FREQ=YEARLY;BYWEEKNO=1;BYDAY=MO,TU,WE,TH,FR,SA,SU
+        /// Ensures that 20021230 and 20021231 are in week 1.
+        /// Also ensures 20011231 is NOT in the result.
+        /// See http://lists.calconnect.org/pipermail/caldeveloper-l/2010-April/000042.html
+        /// and related threads for a fairly in-depth discussion about this topic.
         /// </summary>
         [Test, Category("Recurrence")]
-        public void YearlyByWeekNo3()
+        public void YearlyByWeekNo5()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyByWeekNo3.ics")[0];
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyByWeekNo5.ics")[0];
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2001, 1, 1, tzid),
@@ -1246,7 +1301,7 @@ namespace DDay.iCal.Test
                     new iCalDateTime(2002, 1, 3, 10, 0, 0, tzid),
                     new iCalDateTime(2002, 1, 4, 10, 0, 0, tzid),
                     new iCalDateTime(2002, 1, 5, 10, 0, 0, tzid),
-                    new iCalDateTime(2002, 1, 6, 10, 0, 0, tzid),
+                    new iCalDateTime(2002, 1, 6, 10, 0, 0, tzid),                    
                     new iCalDateTime(2002, 12, 30, 10, 0, 0, tzid),
                     new iCalDateTime(2002, 12, 31, 10, 0, 0, tzid),
                     new iCalDateTime(2003, 1, 1, 10, 0, 0, tzid),

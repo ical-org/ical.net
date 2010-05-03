@@ -510,6 +510,12 @@
     <None Include="Calendars\Recurrence\YearlyByWeekNo3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Calendars\Recurrence\YearlyByWeekNo4.ics">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Calendars\Recurrence\YearlyByWeekNo5.ics">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="Copyright.txt" />
     <None Include="Data\LoremIpsum.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
