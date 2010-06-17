@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -87,6 +88,7 @@
     <Compile Include="Components\Todo.cs" />
     <Compile Include="Components\UniqueComponent.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="DataTypes\Attendee.cs" />
     <Compile Include="DataTypes\CalendarDataType.cs" />
     <Compile Include="DataTypes\Organizer.cs" />
     <Compile Include="DataTypes\RequestStatus.cs" />
@@ -108,10 +110,12 @@
     <Compile Include="Evaluation\TodoEvaluator.cs" />
     <Compile Include="Exceptions\EvaluationEngineException.cs" />
     <Compile Include="General\AssociatedCalendarParameterList.cs" />
+    <Compile Include="General\CalendarParameterCompositeList.cs" />
     <Compile Include="General\CalendarPropertyCompositeList.cs" />
     <Compile Include="General\FilteredCalendarObjectList.cs" />
     <Compile Include="General\ServiceProvider.cs" />
     <Compile Include="Interfaces\Evaluation\IGetOccurrences.cs" />
+    <Compile Include="Interfaces\General\ICalendarParameterCompositeList.cs" />
     <Compile Include="Interfaces\General\ICalendarPropertyCompositeList.cs" />
     <Compile Include="Interfaces\General\IFilteredCalendarObjectList.cs" />
     <Compile Include="Interfaces\Components\IAlarmContainer.cs" />

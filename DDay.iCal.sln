@@ -1,6 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
+# SharpDevelop 4.0.0.5570
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDay.iCal", "DDay.iCal\DDay.iCal.csproj", "{F88DB6D3-CB95-4707-9C88-B53403AADC61}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDay.iCal.Test", "DDay.iCal.Test\DDay.iCal.Test.csproj", "{38A02D06-15CC-436A-9C8F-07B84A7E2CE0}"

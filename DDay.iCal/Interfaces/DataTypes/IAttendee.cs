@@ -11,12 +11,12 @@ namespace DDay.iCal
         string CommonName { get; set; }
         Uri DirectoryEntry { get; set; }
         string Type { get; set; }
-        IList<Uri> Member { get; }
+        IList<string> Members { get; }
         string Role { get; set; }
         string ParticipationStatus { get; set; }
         bool RSVP { get; set; }
-        IList<Uri> DelegatedTo { get; }
-        IList<Uri> DelegatedFrom { get; }
+        IList<string> DelegatedTo { get; }
+        IList<string> DelegatedFrom { get; }
         Uri Value { get; set; }
     }
 }

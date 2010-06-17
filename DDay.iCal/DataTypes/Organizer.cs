@@ -21,7 +21,7 @@ namespace DDay.iCal
         EncodableDataType,
         IOrganizer
     {
-        #region Public Properties
+        #region IOrganizer Members
 
         virtual public Uri SentBy
         {

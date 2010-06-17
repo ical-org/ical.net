@@ -82,16 +82,32 @@ namespace DDay.iCal
 
         #endregion
 
-        #region ICalendarParaeterList Members
+        #region ICalendarParameterList Members
 
         public void Add(string name, string value)
         {
-            Add(new CalendarParameter(name, value));
+            if (name != null)
+            {        
+                Add(new CalendarParameter(name, value));
+            }
         }
 
         public void Add(string name, string[] values)
         {
-            Add(new CalendarParameter(name, values));
+            if (name != null)
+            {
+                Add(new CalendarParameter(name, values));
+            }
+        }
+        
+        public void Add(string name, IList<string> values)
+        {
+            if (name != null)
+            {
+                string[] vals = new string[values.Count];
+                values.CopyTo(vals, 0);
+                Add(new CalendarParameter(name, vals));
+            }
         }
 
         public void Set(string name, string[] values)
@@ -116,6 +132,13 @@ namespace DDay.iCal
         {
             Set(name, value != null ? new string[] { value } : null);
         }
+        
+        public void Set(string name, IList<string> values)
+        {
+            string[] vals = new string[values.Count];
+            values.CopyTo(vals, 0);
+            Set(name, vals);
+        }
 
         public string Get(string name)
         {
@@ -137,6 +160,11 @@ namespace DDay.iCal
                 return values.ToArray();
             }
             return null;
+        }
+        
+        public IList<string> GetList(string name)
+        {
+            return new CalendarParameterCompositeList<string>(this, name);
         }
 
         #endregion
