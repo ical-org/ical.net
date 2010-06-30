@@ -38,7 +38,7 @@ namespace DDay.iCal
         }
 
         private void EnsureProperties()
-        {            
+        {
             if (string.IsNullOrEmpty(UID))
             {
                 // Create a new UID for the component
@@ -48,18 +48,17 @@ namespace DDay.iCal
             if (!Properties.ContainsKey("SEQUENCE"))
                 Sequence = 0;
 
-            if (Created == null)
+            // NOTE: removed setting the 'CREATED' property here since it breaks serialization.
+            // See https://sourceforge.net/projects/dday-ical/forums/forum/656447/topic/3754354
+            if (DTStamp == null)
             {
                 // Here, we don't simply set to DateTime.Now because DateTime.Now contains milliseconds, and
                 // the iCalendar standard doesn't care at all about milliseconds.  Therefore, when comparing
                 // two calendars, one generated, and one loaded from file, they may be functionally identical,
                 // but be determined to be different due to millisecond differences.
                 DateTime now = DateTime.Now;
-                Created = new iCalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);                
-            }
-
-            if (DTStamp == null)
-                DTStamp = Created.Copy<IDateTime>();
+                DTStamp = new iCalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);                
+            }            
         }
 
         private void Initialize()
