@@ -105,7 +105,7 @@ namespace Example1
 
             foreach (IICalendar iCal in _Calendars)
             {
-                foreach (Todo todo in iCal.Todos)
+                foreach (ITodo todo in iCal.Todos)
                 {
                     // Ensure the todo item is active as of 11:59 PM on the last day of the month
                     if (todo.IsActive(EndOfMonth))
@@ -138,8 +138,6 @@ namespace Example1
                     // Make sure the event is active (hasn't been cancelled)
                     if (evt.IsActive())
                     {
-                        
-                        
                         // Add the occurrence to the list view
                         listEvents.Items.Add(new ListViewItem(GetEventString(o, evt)));
                     }

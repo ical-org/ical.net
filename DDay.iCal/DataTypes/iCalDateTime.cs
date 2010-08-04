@@ -577,6 +577,8 @@ namespace DDay.iCal
         public IDateTime AddHours(int hours)
         {
             IDateTime dt = Copy<IDateTime>();
+            if (!dt.HasTime && hours % 24 > 0)
+                dt.HasTime = true;
             dt.Value = Value.AddHours(hours);
             return dt;
         }
@@ -584,6 +586,8 @@ namespace DDay.iCal
         public IDateTime AddMinutes(int minutes)
         {
             IDateTime dt = Copy<IDateTime>();
+            if (!dt.HasTime && minutes % 1440 > 0)
+                dt.HasTime = true;
             dt.Value = Value.AddMinutes(minutes);
             return dt;
         }
@@ -591,6 +595,8 @@ namespace DDay.iCal
         public IDateTime AddSeconds(int seconds)
         {
             IDateTime dt = Copy<IDateTime>();
+            if (!dt.HasTime && seconds % 86400 > 0)
+                dt.HasTime = true;
             dt.Value = Value.AddSeconds(seconds);
             return dt;
         }
@@ -598,6 +604,8 @@ namespace DDay.iCal
         public IDateTime AddMilliseconds(int milliseconds)
         {
             IDateTime dt = Copy<IDateTime>();
+            if (!dt.HasTime && milliseconds % 86400000 > 0)
+                dt.HasTime = true;
             dt.Value = Value.AddMilliseconds(milliseconds);
             return dt;
         }

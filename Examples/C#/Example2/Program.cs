@@ -13,7 +13,7 @@ namespace Example2
         /// </summary>
         /// <param name="evt">The event to display</param>
         /// <returns>A string representation of the event.</returns>
-        static string GetDescription(Event evt)
+        static string GetDescription(IEvent evt)
         {
             string summary = evt.Summary + ": " + evt.Start.Local.ToShortDateString();
 
@@ -41,7 +41,7 @@ namespace Example2
 
             // Set information about the event
             evt.Start = iCalDateTime.Today.AddHours(8);            
-            evt.End = evt.Start.AddHours(18); // This also sets the duration            
+            evt.End = evt.Start.AddHours(18); // This also sets the duration
             evt.Description = "The event description";
             evt.Location = "Event location";
             evt.Summary = "18 hour event summary";
@@ -70,7 +70,7 @@ namespace Example2
             // (and verify the file saved correctly)
             foreach (IICalendar calendar in calendars)
             {
-                foreach (Event e in calendar.Events)
+                foreach (IEvent e in calendar.Events)
                     Console.WriteLine("Event loaded: " + GetDescription(e));
             }
         }
