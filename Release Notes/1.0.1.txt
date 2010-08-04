@@ -1,0 +1,38 @@
+* Release notes for version 1.0.1 (Beta Candidate)
+
+Comments
+=========================================================================================================
+Version 1.0.1 is a fairly major upgrade from version 1.0 Alpha, and includes a bunch of bug fixes and
+additional feature implementations.
+
+It is highly recommended to upgrade to 1.0.1 if you're currently using version 1.0 Alpha.
+In addition, it's important to note that I am no longer making any bug fixes or improvements
+to any version prior to 1.0 Alpha, so if you'd like to take advantage of the additional features
+and/or bug fixes, you'll want to plan on upgrading to the newest version sometime during your
+maintenance/implemenation cycle.
+
+Changes
+=========================================================================================================
+- Added support for Attendees.
+- Added composite lists for components, properties and parameters.  This composite lists allow these items to be
+  aggregated and worked on as a single unit, and assist in giving DDay.iCal an object-oriented feel.
+- Fixed some various warnings.
+- Temporarily removed examples 3 and 4 because they use implementations that have been removed from DDay.iCal.
+- When time zone lookups fail, it is now silent instead of throwing an exception.  This may be changed in the future...
+- Fixed a bug where MatchTimeZone() altered the original object.
+- Fixed Examples 1, 2, 5, and 6.
+- Temporarily removed examples 3 and 4 because they use implementations that have been removed from DDay.iCal.
+- Added YearlyByWeekNo2() unit test
+- Added YearlyByWeekNo3() unit test
+- Fixed URI serialization/deserialization.
+- Added a more complete IServiceProvider implementation that inherits the standard .NET IServiceProvider.
+- Added YearlyByWeekNo4() and YearlyByWeekNo5() unit tests.
+- Adjusted YearlyByWeekNoX() tests according to conversations on the caldeveloper mailing list.
+- Fixed how EnsureProperties() handles unset properties - CREATED is no longer automatically set.
+- Fixed bug #2916581 - missing weekly occurrences
+- Fixed bug #2938007 - hasTime missing
+- Fixed bug #2959692 - Weekly events (every 2 wks) before 29.02.2008
+- Fixed bug #2966236 - Daily Recurrence Rules
+- Fixed bug #3007244 - GetOccurences not returning long spanning all-day events 
+- Fixed a bug that caused VALARM components to not serialize.
+- Updated version number to 1.0.1.
