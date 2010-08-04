@@ -812,10 +812,15 @@ namespace DDay.iCal
                 // Turn each resulting date/time into an IDateTime and associate it
                 // with the reference date.
                 IDateTime newDt = new iCalDateTime(dt, referenceDate.TZID);
+                
+                // NOTE: fixes bug #2938007 - hasTime missing
+                newDt.HasTime = referenceDate.HasTime;
+
                 newDt.AssociateWith(referenceDate);
 
                 // Create a period from the new date/time.
                 IPeriod p = new Period(newDt);
+                
                 if (!Periods.Contains(p))
                     Periods.Add(p);
             }

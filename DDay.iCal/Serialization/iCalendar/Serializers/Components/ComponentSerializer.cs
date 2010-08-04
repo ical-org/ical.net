@@ -53,6 +53,8 @@ namespace DDay.iCal.Serialization.iCalendar
                 // Sort the calendar properties in alphabetical order before
                 // serializing them!
                 List<ICalendarProperty> properties = new List<ICalendarProperty>(c.Properties);
+                
+                // FIXME: remove this try/catch
                 try
                 {                    
                     properties.Sort(PropertySorter);

@@ -44,13 +44,7 @@ namespace DDay.iCal
                 yield return (T)(object)rc;
         }
 
-        #endregion
-
-        #region Private Fields
-                
-        private IList<IAlarm> m_Alarms;
-
-        #endregion
+        #endregion        
 
         #region Protected Properties
 
@@ -116,8 +110,7 @@ namespace DDay.iCal
 #endif
         virtual public IList<IAlarm> Alarms
         {
-            get { return m_Alarms; }
-            set { m_Alarms = value; }
+            get { return new CalendarComponentCompositeList<IAlarm>(this, Components.ALARM); }            
         }
 
         #endregion
@@ -128,8 +121,7 @@ namespace DDay.iCal
         public RecurringComponent(string name) : base(name) { Initialize(); }
         private void Initialize()
         {
-            SetService(new RecurringEvaluator(this));
-            Alarms = new List<IAlarm>();
+            SetService(new RecurringEvaluator(this));            
         }
 
         #endregion        
@@ -141,20 +133,6 @@ namespace DDay.iCal
             base.OnDeserializing(context);
 
             Initialize();
-        }
-
-        public override void AddChild(ICalendarObject child)
-        {
-            if (child is IAlarm)
-                Alarms.Add((IAlarm)child);
-            base.AddChild(child);
-        }
-
-        public override void RemoveChild(ICalendarObject child)
-        {
-            if (child is IAlarm)
-                Alarms.Remove((IAlarm)child);
-            base.RemoveChild(child);
         }
 
         #endregion

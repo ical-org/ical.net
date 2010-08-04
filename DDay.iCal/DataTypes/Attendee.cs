@@ -107,8 +107,27 @@ namespace DDay.iCal
         public Attendee(Uri attendee)
         {
             Value = attendee;
-        }        
+        }
+
+        public Attendee(string attendeeUri)
+        {
+            if (!Uri.IsWellFormedUriString(attendeeUri, UriKind.Absolute))
+                throw new ArgumentException("attendeeUri");
+            Value = new Uri(attendeeUri);
+        }
 		
         #endregion
-	}
+
+        #region Overrides
+
+        public override bool Equals(object obj)
+        {
+            IAttendee a = obj as IAttendee;
+            if (a != null)
+                return object.Equals(Value, a.Value);
+            return base.Equals(obj);
+        }
+
+        #endregion
+    }
 }

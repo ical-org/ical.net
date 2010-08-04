@@ -32,7 +32,7 @@ namespace DDay.iCal.Serialization
         #endregion
 
         #region Private Fields
-                
+
         private Stack<object> m_Stack = new Stack<object>();
         private ServiceProvider m_ServiceProvider = new ServiceProvider();
 

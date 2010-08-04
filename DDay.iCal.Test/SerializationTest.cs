@@ -68,7 +68,7 @@ namespace DDay.iCal.Test
         }
 
         static public void CompareComponents(ICalendarComponent cb1, ICalendarComponent cb2)
-        {            
+        {
             foreach (ICalendarProperty p1 in cb1.Properties)
             {
                 bool isMatch = false;
@@ -121,6 +121,37 @@ namespace DDay.iCal.Test
 
             while (enum1.MoveNext() && enum2.MoveNext())
                 Assert.AreEqual(enum1.Current, enum2.Current, value + " do not match");
+        }
+
+        [Test, Category("Serialization")]
+        public void Alarm1()
+        {
+            // Create a new iCalendar
+            iCalendar iCal = new iCalendar();
+
+            // Create the event, and add it to the iCalendar
+            Event evt = iCal.Create<Event>();
+
+            evt.Start = new iCalDateTime(2010, 7, 3, 8, 0, 0);
+            evt.End = evt.Start.AddHours(1);
+            evt.Summary = "Test event";
+            evt.Description = "Some description";
+
+            Alarm alarm = new Alarm();
+            alarm.Action = AlarmAction.Display;
+            alarm.Summary = "Alarm for the first Monday and second-to-last Monday of each month";
+            alarm.Trigger = new Trigger(TimeSpan.FromMinutes(-30));
+            alarm.Repeat = 2;
+            alarm.Duration = TimeSpan.FromMinutes(10);
+
+            // Add the alarm to the event
+            evt.Alarms.Add(alarm);
+
+            iCalendarSerializer serializer = new iCalendarSerializer();
+            serializer.Serialize(iCal, @"Calendars\Serialization\Alarm1.ics");
+
+            IICalendar loadedCalendar = iCalendar.LoadFromFile(@"Calendars\Serialization\Alarm1.ics")[0];
+            CompareCalendars(iCal, loadedCalendar);
         }
 
         /// <summary>
@@ -234,6 +265,90 @@ namespace DDay.iCal.Test
             throw new WebException();
         }
 
+        [Test, Category("Serialization")]
+        public void Attendee1()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\Attendee1.ics", Encoding.UTF8)[0];
+            Assert.AreEqual(1, iCal.Events.Count);
+            
+            IEvent evt = iCal.Events[0];
+            // Ensure there are 2 attendees
+            Assert.AreEqual(2, evt.Attendees.Count);
+
+            IAttendee attendee1 = evt.Attendees[0];
+            IAttendee attendee2 = evt.Attendees[1];
+
+            // Values
+            Assert.AreEqual(new Uri("mailto:joecool@example.com"), attendee1.Value);
+            Assert.AreEqual(new Uri("mailto:ildoit@example.com"), attendee2.Value);
+
+            // MEMBERS
+            Assert.AreEqual(1, attendee1.Members.Count);
+            Assert.AreEqual(0, attendee2.Members.Count);
+            Assert.AreEqual(new Uri("mailto:DEV-GROUP@example.com"), attendee1.Members[0]);
+
+            // DELEGATED-FROM
+            Assert.AreEqual(0, attendee1.DelegatedFrom.Count);
+            Assert.AreEqual(1, attendee2.DelegatedFrom.Count);
+            Assert.AreEqual(new Uri("mailto:immud@example.com"), attendee2.DelegatedFrom[0]);
+
+            // DELEGATED-TO
+            Assert.AreEqual(0, attendee1.DelegatedTo.Count);
+            Assert.AreEqual(0, attendee2.DelegatedTo.Count);
+        }
+
+        /// <summary>
+        /// Tests that multiple parameters of the
+        /// same name are correctly aggregated into
+        /// a single list.
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void Attendee2()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\Attendee2.ics", Encoding.UTF8)[0];
+            Assert.AreEqual(1, iCal.Events.Count);
+
+            IEvent evt = iCal.Events[0];
+            // Ensure there is 1 attendee
+            Assert.AreEqual(1, evt.Attendees.Count);
+
+            IAttendee attendee1 = evt.Attendees[0];
+
+            // Values
+            Assert.AreEqual(new Uri("mailto:joecool@example.com"), attendee1.Value);
+
+            // MEMBERS
+            Assert.AreEqual(3, attendee1.Members.Count);
+            Assert.AreEqual(new Uri("mailto:DEV-GROUP@example.com"), attendee1.Members[0]);
+            Assert.AreEqual(new Uri("mailto:ANOTHER-GROUP@example.com"), attendee1.Members[1]);
+            Assert.AreEqual(new Uri("mailto:THIRD-GROUP@example.com"), attendee1.Members[2]);
+        }
+
+        /// <summary>
+        /// Tests that creating attendees by hand is serialized correctly.
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void Attendee3()
+        {
+            IICalendar iCal = new iCalendar();
+            IEvent evt = iCal.Create<Event>();
+
+            evt.Summary = "Test event";
+            evt.Start = new iCalDateTime(2010, 7, 3, 8, 0, 0);
+            evt.End = new iCalDateTime(2010, 7, 3, 9, 0, 0);
+
+            IAttendee attendee = new Attendee("mailto:joecool@example.com");
+            attendee.Members.Add("mailto:DEV-GROUP@example.com");
+            evt.Attendees.Add(attendee);
+
+            iCalendarSerializer serializer = new iCalendarSerializer();
+            serializer.Serialize(iCal, @"Calendars\Serialization\Attendee3.ics");
+
+            // Ensure the loaded calendar and our original are identical
+            IICalendar loadedCalendar = iCalendar.LoadFromFile(@"Calendars\Serialization\Attendee3.ics")[0];
+            CompareCalendars(iCal, loadedCalendar);
+        }
+
         /// <summary>
         /// Tests that Lotus Notes-style properties are properly handled.
         /// https://sourceforge.net/tracker/?func=detail&aid=2033495&group_id=187422&atid=921236
@@ -254,6 +369,27 @@ namespace DDay.iCal.Test
         public void Bug2148092()
         {
             SerializeTest("Bug2148092.ics", typeof(iCalendarSerializer));
+        }
+
+        /// <summary>
+        /// Tests bug #2938007 - involving the HasTime property in IDateTime values.
+        /// See https://sourceforge.net/tracker/?func=detail&aid=2938007&group_id=187422&atid=921236
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void Bug2938007()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Bug2938007.ics")[0];
+            Assert.AreEqual(1, iCal.Events.Count);
+
+            IEvent evt = iCal.Events[0];
+            Assert.AreEqual(true, evt.Start.HasTime);
+            Assert.AreEqual(true, evt.End.HasTime);
+
+            foreach (Occurrence o in evt.GetOccurrences(new iCalDateTime(2010, 1, 17, 0, 0, 0), new iCalDateTime(2010, 2, 1, 0, 0, 0)))
+            {
+                Assert.AreEqual(true, o.Period.StartTime.HasTime);
+                Assert.AreEqual(true, o.Period.EndTime.HasTime);
+            }
         }
 
         [Test, Category("Serialization")]

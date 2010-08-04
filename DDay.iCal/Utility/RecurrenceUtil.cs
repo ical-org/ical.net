@@ -42,10 +42,11 @@ namespace DDay.iCal
 
                 foreach (IPeriod p in periods)
                 {
-                    // Filter the resulting periods to only contain those between
-                    // startTime and endTime.
-                    if (p.StartTime.GreaterThanOrEqual(periodStart) &&
-                        p.StartTime.LessThanOrEqual(periodEnd))
+                    // Filter the resulting periods to only contain those 
+                    // that occur sometime between startTime and endTime.
+                    // NOTE: fixes bug #3007244 - GetOccurences not returning long spanning all-day events 
+                    IDateTime endTime = p.EndTime ?? p.StartTime;
+                    if (endTime.GreaterThan(periodStart) && p.StartTime.LessThanOrEqual(periodEnd))
                         occurrences.Add(new Occurrence(recurrable, p));
                 }
 

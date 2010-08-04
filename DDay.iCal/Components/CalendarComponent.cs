@@ -91,8 +91,8 @@ namespace DDay.iCal
         #endregion
 
         #region Private Fields
-
-        private ICalendarPropertyList m_Properties;
+                
+        private ICalendarPropertyList m_Properties;        
 
         #endregion
 
@@ -121,7 +121,7 @@ namespace DDay.iCal
         public CalendarComponent(string name) : base(name) { Initialize(); }
 
         private void Initialize()
-        {
+        {            
             m_Properties = new CalendarPropertyList(this, true);
         }
 

@@ -9,7 +9,7 @@ namespace DDay.iCal
         /// <summary>
         /// A list of <see cref="Alarm"/>s for this recurring component.
         /// </summary>
-        IList<IAlarm> Alarms { get; set; }
+        IList<IAlarm> Alarms { get; }
 
         /// <summary>
         /// Polls <see cref="Alarm"/>s for occurrences within the <see cref="Evaluate"/>d

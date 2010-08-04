@@ -5,6 +5,52 @@ using System.Collections;
 
 namespace DDay.iCal
 {
+    /// <summary>
+    /// This class provides a parameter list via the associated container.
+    /// <example>
+    /// For example, let's say an event has several properties:
+    /// 
+    /// BEGIN:VEVENT
+    /// SUMMARY:My Event
+    /// DTSTART;TZID=MST:20100703T080000
+    /// DTEND;TZID=MST:20100703T090000
+    /// END:VEVENT
+    /// 
+    /// When we process this event, we get an object model similar to this:
+    /// 
+    /// Event
+    ///   -> Properties
+    ///         -> CalendarProperty
+    ///             -> Name: SUMMARY
+    ///             -> Value: My Event
+    ///         -> CalendarProperty
+    ///             -> Name: DTSTART
+    ///             -> Value
+    ///                 -> Type: iCalDateTime
+    ///                 -> Value: 20100703T080000
+    ///             -> Parameters
+    ///                 -> CalendarParameter: TZID=MST
+    ///         -> CalendarProperty
+    ///             -> Name: DTEND
+    ///             -> Value
+    ///                 -> Type: iCalDateTime
+    ///                 -> Value: 20100703T090000
+    ///             -> Parameters
+    ///                 -> CalendarParameter: TZID=MST
+    /// </example>
+    /// The problem with this is that, in order to serialize the value
+    /// of DTSTART and DTEND properly, they need to be aware of the
+    /// TZID parameters that were attached to the event properties.
+    /// This is very important when the parameter itself hints at
+    /// different types of serialization.  Some examples are:
+    /// 
+    /// ENCODING=BASE64
+    /// VALUE=DATE
+    /// 
+    /// That is why the AssociatedCalendarParameterList was created.
+    /// This class associates a CalendarDataType-based property value 
+    /// with the property itself, so it can be serialized correctly.
+    /// </summary>
     public class AssociatedCalendarParameterList :
         ICalendarParameterList
     {
@@ -164,7 +210,7 @@ namespace DDay.iCal
         
         public IList<string> GetList(string name)
         {
-            return new CalendarParameterCompositeList<string>(this, name);
+            return new CalendarParameterCompositeList(this, name);
         }
 
         #endregion

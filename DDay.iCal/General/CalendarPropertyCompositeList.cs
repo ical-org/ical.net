@@ -5,6 +5,32 @@ using System.Collections;
 
 namespace DDay.iCal
 {
+    /// <summary>
+    /// This class takes multiple calendar properties/property values
+    /// and consolidates them into a single list.
+    /// 
+    /// <example>
+    /// Consider the following example:
+    /// 
+    /// BEGIN:VEVENT
+    /// CATEGORIES:APPOINTMENT,EDUCATION
+    /// CATEGORIES:MEETING
+    /// END:EVENT
+    /// </example>
+    /// 
+    /// When we process this event, we don't really care that there
+    /// are 2 different CATEGORIES properties, no do we care that
+    /// the first CATEGORIES property has 2 values, whereas the 
+    /// second CATEGORIES property only has 1 value.  In the end,
+    /// we want a list of 3 values: APPOINTMENT, EDUCATION, and MEETING.
+    /// 
+    /// This class consolidates properties of a given name into a list,
+    /// and allows you to work with those values directly against the
+    /// properties themselves.  This preserves the notion that our values
+    /// are still stored directly within the calendar property, but gives
+    /// us the flexibility to work with multiple properties through a
+    /// single (composite) list.
+    /// </summary>
     public class CalendarPropertyCompositeList<T> :
         ICalendarPropertyCompositeList<T>
     {
@@ -21,9 +47,6 @@ namespace DDay.iCal
         {
             m_PropertyList = propertyList;
             m_PropertyName = propertyName;
-
-            propertyList.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarProperty>>(properties_ItemAdded);
-            propertyList.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarProperty>>(properties_ItemRemoved);
         }        
 
         #endregion
@@ -63,7 +86,7 @@ namespace DDay.iCal
             // Search through the properties for the one
             // that contains the index in question.
             int propertyValueCount = 0;
-            while (propertyIndex < m_PropertyList.Count)                
+            while (propertyIndex < m_PropertyList.Count)
             {
                 if (string.Equals(m_PropertyList[propertyIndex].Name, m_PropertyName))
                 {
@@ -130,18 +153,6 @@ namespace DDay.iCal
             indexInProperty = -1;
             itemIndex = -1;
             return null;
-        }
-
-        #endregion
-
-        #region Event Handlers
-
-        void properties_ItemRemoved(object sender, ObjectEventArgs<ICalendarProperty> e)
-        {
-        }
-
-        void properties_ItemAdded(object sender, ObjectEventArgs<ICalendarProperty> e)
-        {
         }
 
         #endregion

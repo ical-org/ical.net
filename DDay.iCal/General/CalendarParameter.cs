@@ -108,14 +108,5 @@ namespace DDay.iCal
         }
 
         #endregion
-
-        #region IKeyedObject Members
-
-        virtual public string Key
-        {
-            get { return Name; }
-        }
-
-        #endregion
     }
 }

@@ -15,7 +15,7 @@ namespace DDay.iCal.Test
             Event evt = iCal.Create<Event>();
 
             Assert.IsNotNull(evt.UID);
-            Assert.IsNotNull(evt.Created);
+            Assert.IsNull(evt.Created); // We don't want this to be set automatically
             Assert.IsNotNull(evt.DTStamp);
         }
     }

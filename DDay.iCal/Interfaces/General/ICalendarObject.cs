@@ -5,6 +5,7 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface ICalendarObject :
+        IKeyedObject<string>,
         ILoadable,
         ICopyable,        
         IServiceProvider

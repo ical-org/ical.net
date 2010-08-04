@@ -2053,6 +2053,11 @@ namespace DDay.iCal.Test
                 new iCalDateTime(2007, 4, 10, 20, 0, 0, tzid),
                 new iCalDateTime[]
                 {
+                    // NOTE: this instance is included in the result set because it ends
+                    // after the start of the evaluation period.
+                    // See bug #3007244.
+                    // https://sourceforge.net/tracker/?func=detail&aid=3007244&group_id=187422&atid=921236
+                    new iCalDateTime(2007, 4, 9, 7, 0, 0, tzid), 
                     new iCalDateTime(2007, 4, 10, 1, 0, 0, tzid),
                     new iCalDateTime(2007, 4, 10, 19, 0, 0, tzid)
                 },
@@ -2367,6 +2372,156 @@ namespace DDay.iCal.Test
                 },
                 null,
                 2
+            );
+        }
+
+        /// <summary>
+        /// Tests a bug with WEEKLY recurrence values that cross year boundaries.
+        /// https://sourceforge.net/tracker/?func=detail&aid=2916581&group_id=187422&atid=921236
+        /// Sourceforge.net bug #2916581
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void Bug2916581()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\Bug2916581.ics")[0];
+            string localTZID = iCal.TimeZones[0].TZID;
+
+            // Weekly across year boundary
+            EventOccurrenceTest(
+                iCal,
+                new iCalDateTime(2009, 12, 25, 0, 0, 0, localTZID),
+                new iCalDateTime(2010, 1, 3, 0, 0, 0, localTZID),
+                new iCalDateTime[]
+                {
+                    new iCalDateTime(2009, 12, 25, 11, 00, 00, localTZID),
+                    new iCalDateTime(2010, 1, 1, 11, 00, 00, localTZID),
+                },
+                null,
+                0
+            );
+
+            // Weekly across year boundary
+            EventOccurrenceTest(
+                iCal,
+                new iCalDateTime(2009, 12, 25, 0, 0, 0, localTZID),
+                new iCalDateTime(2010, 1, 3, 0, 0, 0, localTZID),
+                new iCalDateTime[]
+                {
+                    new iCalDateTime(2009, 12, 26, 11, 00, 00, localTZID),
+                    new iCalDateTime(2010, 1, 2, 11, 00, 00, localTZID),
+                },
+                null,
+                1
+            );
+        }
+
+        /// <summary>
+        /// Tests a bug with WEEKLY recurrence values
+        /// https://sourceforge.net/tracker/?func=detail&aid=2959692&group_id=187422&atid=921236
+        /// Sourceforge.net bug #2959692
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void Bug2959692()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\Bug2959692.ics")[0];
+            string localTZID = iCal.TimeZones[0].TZID;
+
+            EventOccurrenceTest(
+                iCal,
+                new iCalDateTime(2008, 1, 1, 0, 0, 0, localTZID),
+                new iCalDateTime(2008, 4, 1, 0, 0, 0, localTZID),
+                new iCalDateTime[]
+                {
+                    new iCalDateTime(2008, 1, 3, 17, 00, 00, localTZID),
+                    new iCalDateTime(2008, 1, 17, 17, 00, 00, localTZID),
+                    new iCalDateTime(2008, 1, 31, 17, 00, 00, localTZID),
+                    new iCalDateTime(2008, 2, 14, 17, 00, 00, localTZID),
+                    new iCalDateTime(2008, 2, 28, 17, 00, 00, localTZID),
+                    new iCalDateTime(2008, 3, 13, 17, 00, 00, localTZID),
+                    new iCalDateTime(2008, 3, 27, 17, 00, 00, localTZID),
+                },
+                null,
+                0
+            );
+        }
+
+        /// <summary>
+        /// Tests a bug with DAILY recurrence values
+        /// https://sourceforge.net/tracker/?func=detail&aid=2966236&group_id=187422&atid=921236
+        /// Sourceforge.net bug #2966236
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void Bug2966236()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\Bug2966236.ics")[0];
+            string localTZID = iCal.TimeZones[0].TZID;
+
+            EventOccurrenceTest(
+                iCal,
+                new iCalDateTime(2010, 1, 1, 0, 0, 0, localTZID),
+                new iCalDateTime(2010, 3, 1, 0, 0, 0, localTZID),
+                new iCalDateTime[]
+                {
+                    new iCalDateTime(2010, 1, 19, 8, 00, 00, localTZID),
+                    new iCalDateTime(2010, 1, 26, 8, 00, 00, localTZID),
+                    new iCalDateTime(2010, 2, 2, 8, 00, 00, localTZID),
+                    new iCalDateTime(2010, 2, 9, 8, 00, 00, localTZID),
+                    new iCalDateTime(2010, 2, 16, 8, 00, 00, localTZID),
+                    new iCalDateTime(2010, 2, 23, 8, 00, 00, localTZID),
+                },
+                null,
+                0
+            );
+
+            EventOccurrenceTest(
+                iCal,
+                new iCalDateTime(2010, 2, 1, 0, 0, 0, localTZID),
+                new iCalDateTime(2010, 3, 1, 0, 0, 0, localTZID),
+                new iCalDateTime[]
+                {                    
+                    new iCalDateTime(2010, 2, 2, 8, 00, 00, localTZID),
+                    new iCalDateTime(2010, 2, 9, 8, 00, 00, localTZID),
+                    new iCalDateTime(2010, 2, 16, 8, 00, 00, localTZID),
+                    new iCalDateTime(2010, 2, 23, 8, 00, 00, localTZID),
+                },
+                null,
+                0
+            );
+        }
+
+        /// <summary>
+        /// Tests a bug with events that span a very long period of time. (i.e. weeks, months, etc.)
+        /// https://sourceforge.net/tracker/?func=detail&aid=3007244&group_id=187422&atid=921236
+        /// Sourceforge.net bug #3007244
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void Bug3007244()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\Bug3007244.ics")[0];
+            IRecurrencePattern pattern = iCal.Events[0].RecurrenceRules[0];
+            
+            EventOccurrenceTest(
+                iCal,
+                new iCalDateTime(2010, 7, 18, 0, 0, 0),
+                new iCalDateTime(2010, 7, 26, 0, 0, 0),
+                new iCalDateTime[]
+                {
+                    new iCalDateTime(2010, 5, 23)
+                },
+                null,
+                0
+            );
+
+            EventOccurrenceTest(
+                iCal,
+                new iCalDateTime(2011, 7, 18, 0, 0, 0),
+                new iCalDateTime(2011, 7, 26, 0, 0, 0),
+                new iCalDateTime[]
+                {
+                    new iCalDateTime(2011, 5, 23)
+                },
+                null,
+                0
             );
         }
 

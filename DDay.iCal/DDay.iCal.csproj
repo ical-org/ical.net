@@ -112,6 +112,7 @@
     <Compile Include="General\AssociatedCalendarParameterList.cs" />
     <Compile Include="General\CalendarParameterCompositeList.cs" />
     <Compile Include="General\CalendarPropertyCompositeList.cs" />
+    <Compile Include="General\CalendarComponentCompositeList.cs" />
     <Compile Include="General\FilteredCalendarObjectList.cs" />
     <Compile Include="General\ServiceProvider.cs" />
     <Compile Include="Interfaces\Evaluation\IGetOccurrences.cs" />
@@ -145,6 +146,7 @@
     <Compile Include="Serialization\iCalendar\SerializationInfo.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\Components\EventSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\AttachmentSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\AttendeeSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\OrganizerSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\Other\UriSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\Other\EnumSerializer.cs" />

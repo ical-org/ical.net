@@ -27,6 +27,8 @@ namespace DDay.iCal.Serialization.iCalendar
 
                 if (typeof(IAttachment).IsAssignableFrom(objectType))
                     s = new AttachmentSerializer();
+                else if (typeof(IAttendee).IsAssignableFrom(objectType))
+                    s = new AttendeeSerializer();
                 else if (typeof(IDateTime).IsAssignableFrom(objectType))
                     s = new DateTimeSerializer();
                 else if (typeof(IGeographicLocation).IsAssignableFrom(objectType))

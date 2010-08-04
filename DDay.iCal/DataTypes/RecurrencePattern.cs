@@ -309,7 +309,7 @@ namespace DDay.iCal
             if (Interval.Equals(1))
                 hashCode ^= 0x1;
             else hashCode ^= Interval.GetHashCode();
-
+                        
             hashCode ^= Until.GetHashCode();
             hashCode ^= FirstDayOfWeek.GetHashCode();
             return hashCode;

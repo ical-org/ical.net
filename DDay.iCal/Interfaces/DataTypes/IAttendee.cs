@@ -5,7 +5,7 @@ using System.Text;
 namespace DDay.iCal
 {
     public interface IAttendee :
-        ICalendarDataType
+        IEncodableDataType
     {
         Uri SentBy { get; set; }
         string CommonName { get; set; }

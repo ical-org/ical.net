@@ -2,9 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Collections;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal
 {
+#if DATACONTRACT
+    [CollectionDataContract(Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
+#endif
+    [Serializable]
     public class CalendarParameterList :
         KeyedList<ICalendarParameter, string>,
         ICalendarParameterList
@@ -17,6 +22,10 @@ namespace DDay.iCal
         #endregion
 
         #region Constructors
+
+        public CalendarParameterList()
+        {
+        }
 
         public CalendarParameterList(ICalendarObject parent, bool caseInsensitive)
         {
@@ -132,7 +141,7 @@ namespace DDay.iCal
         virtual public IList<string> GetList(string name)
         {
             name = m_CaseInsensitive ? name.ToUpper() : name;
-            return new CalendarParameterCompositeList<string>(this, name);
+            return new CalendarParameterCompositeList(this, name);
         }
 
         #endregion
