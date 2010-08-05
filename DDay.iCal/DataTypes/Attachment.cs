@@ -11,9 +11,7 @@ namespace DDay.iCal
     /// <summary>
     /// A class to handle attachments, or URIs as attachments, within an iCalendar. 
     /// </summary>
-#if DATACONTRACT
-    [DataContract(Name = "Attachment", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#else
+#if !SILVERLIGHT
     [Serializable]
 #endif
     public class Attachment : 
@@ -39,6 +37,11 @@ namespace DDay.iCal
         {
             AttachmentSerializer serializer = new AttachmentSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
+        }
+
+        public Attachment(byte[] value) : this()
+        {
+            m_Data = value;
         }
 
         void Initialize()
@@ -110,18 +113,12 @@ namespace DDay.iCal
 
         #region IAttachment Members
 
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         virtual public Uri Uri
         {
             get { return m_Uri; }
             set { m_Uri = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
         virtual public byte[] Data
         {
             get { return m_Data; }

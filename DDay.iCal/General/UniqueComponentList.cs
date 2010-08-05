@@ -11,10 +11,9 @@ namespace DDay.iCal
     /// <see cref="iCalendar"/> class to maintain a collection of events,
     /// to-do items, journal entries, and free/busy times.
     /// </summary>
-#if DATACONTRACT
-    [DataContract(Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class UniqueComponentList<T> : 
         FilteredCalendarObjectList<T>,
         IUniqueComponentList<T>

@@ -12,9 +12,7 @@ namespace DDay.iCal
     /// <summary>
     /// An iCalendar list of recurring dates (or date exclusions)
     /// </summary>
-#if DATACONTRACT
-    [DataContract(Name = "PeriodList", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#else
+#if !SILVERLIGHT
     [Serializable]
 #endif
     public class PeriodList : 
@@ -30,18 +28,12 @@ namespace DDay.iCal
 
         #region Public Properties
 
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         public string TZID
         {
             get { return m_TZID; }
             set { m_TZID = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
         protected IList<IPeriod> Periods
         {
             get { return m_Periods; }

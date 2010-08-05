@@ -8,10 +8,9 @@ namespace DDay.iCal
     /// <summary>
     /// An abstract class from which all iCalendar data types inherit.
     /// </summary>
-#if DATACONTRACT
-    [DataContract(Name = "EncodableDataType", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class EncodableDataType :
         CalendarDataType,
         IEncodableDataType

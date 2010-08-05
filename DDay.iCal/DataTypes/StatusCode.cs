@@ -12,10 +12,9 @@ namespace DDay.iCal
     /// <summary>
     /// An iCalendar status code.
     /// </summary>
-#if DATACONTRACT
-    [DataContract(Name = "StatusCode", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class StatusCode : 
         EncodableDataType,
         IStatusCode
@@ -28,9 +27,6 @@ namespace DDay.iCal
 
         #region Public Properties
 
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         public int[] Parts
         {
             get { return m_Parts; }

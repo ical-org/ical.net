@@ -9,10 +9,9 @@ namespace DDay.iCal
     /// A list of objects that are keyed.  This is similar to a 
     /// Dictionary<T,U> object, except 
     /// </summary>
-#if DATACONTRACT
-    [CollectionDataContract(Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class KeyedList<T, U> :
         IKeyedList<T, U> where T : IKeyedObject<U>
     {

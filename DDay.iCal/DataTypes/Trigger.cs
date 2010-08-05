@@ -11,11 +11,7 @@ namespace DDay.iCal
     /// A class that is used to specify exactly when an <see cref="Alarm"/> component will trigger.
     /// Usually this date/time is relative to the component to which the Alarm is associated.
     /// </summary>    
-#if DATACONTRACT
-    [DataContract(Name = "Trigger", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    //[KnownType(typeof(iCalDateTime))]
-    //[KnownType(typeof(Duration))]
-#else
+#if !SILVERLIGHT
     [Serializable]
 #endif
     public class Trigger : 
@@ -32,9 +28,6 @@ namespace DDay.iCal
 
         #region Public Properties
 
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         virtual public IDateTime DateTime
         {
             get { return m_DateTime; }
@@ -55,9 +48,6 @@ namespace DDay.iCal
             }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
         virtual public TimeSpan? Duration
         {
             get { return m_Duration; }
@@ -74,9 +64,6 @@ namespace DDay.iCal
             }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
         virtual public TriggerRelation Related
         {
             get { return m_Related; }

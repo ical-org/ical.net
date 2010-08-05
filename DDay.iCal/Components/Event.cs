@@ -19,11 +19,9 @@ namespace DDay.iCal
     ///         <item>Create a TextCollection DataType for 'text' items separated by commas</item>
     ///     </list>
     /// </note>
-#if DATACONTRACT
-    [DataContract(Name = "Event", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    //[KnownType(typeof(Alarm))]
-#endif
+#if !SILVERLIGHT
     [Serializable]    
+#endif
     public class Event : 
         RecurringComponent,
         IEvent

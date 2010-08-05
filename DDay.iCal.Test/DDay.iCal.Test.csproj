@@ -91,7 +91,6 @@
     <Compile Include="EventTest.cs" />
     <Compile Include="CopyTest.cs" />
     <Compile Include="Custom\Custom1.cs" />
-    <Compile Include="DataContractSeralizationTest.cs" />
     <Compile Include="JournalTest.cs" />
     <Compile Include="ProgramTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

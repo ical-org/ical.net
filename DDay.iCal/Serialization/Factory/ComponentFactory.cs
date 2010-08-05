@@ -19,7 +19,6 @@ namespace DDay.iCal
             // Determine the type of component to build.
             switch (objectName.ToUpper())
             {
-                // FIXME: implement
                 case Components.ALARM:
                     type = typeof(Alarm);
                     break;

@@ -11,10 +11,9 @@ namespace DDay.iCal
     /// A class that contains time zone information, and is usually accessed
     /// from an iCalendar object using the <see cref="DDay.iCal.iCalendar.GetTimeZone"/> method.        
     /// </summary>
-#if DATACONTRACT
-    [DataContract(Name = "iCalTimeZoneInfo", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class iCalTimeZoneInfo : 
         CalendarComponent,
         ITimeZoneInfo
@@ -31,7 +30,9 @@ namespace DDay.iCal
         public iCalTimeZoneInfo() : base()
         {
             // FIXME: how do we ensure SEQUENCE doesn't get serialized?
-            //base.Sequence = null; // iCalTimeZoneInfo does not allow sequence numbers
+            //base.Sequence = null;
+            // iCalTimeZoneInfo does not allow sequence numbers
+            // Perhaps we should have a custom serializer that fixes this?
 
             Initialize();
         }

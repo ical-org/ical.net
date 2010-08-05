@@ -15,10 +15,9 @@ namespace DDay.iCal
     /// This class is used by the parsing framework for iCalendar components.
     /// Generally, you should not need to use this class directly.
     /// </summary>
-#if DATACONTRACT
-    [DataContract(IsReference = true, Name = "CalendarComponent", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     [DebuggerDisplay("Component: {Name}")]
     public class CalendarComponent :
         CalendarObject,
@@ -101,9 +100,6 @@ namespace DDay.iCal
         /// <summary>
         /// Returns a list of properties that are associated with the iCalendar object.
         /// </summary>
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         virtual public ICalendarPropertyList Properties
         {
             get { return m_Properties; }

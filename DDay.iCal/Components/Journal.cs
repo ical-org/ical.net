@@ -12,10 +12,9 @@ namespace DDay.iCal
     /// <summary>
     /// A class that represents an RFC 5545 VJOURNAL component.
     /// </summary>
-#if DATACONTRACT
-    [DataContract(Name = "Journal", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class Journal : 
         RecurringComponent,
         IJournal

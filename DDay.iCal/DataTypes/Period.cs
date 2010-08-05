@@ -10,10 +10,9 @@ namespace DDay.iCal
     /// <summary>
     /// Represents an iCalendar period of time.
     /// </summary>    
-#if DATACONTRACT
-    [DataContract(Name = "Period", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class Period :
         EncodableDataType,
         IPeriod
@@ -116,9 +115,6 @@ namespace DDay.iCal
 
         #region IPeriod Members
 
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         virtual public IDateTime StartTime
         {
             get { return m_StartTime; }
@@ -129,9 +125,6 @@ namespace DDay.iCal
             }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
         virtual public IDateTime EndTime
         {
             get { return m_EndTime; }
@@ -142,9 +135,6 @@ namespace DDay.iCal
             }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
         virtual public TimeSpan Duration
         {
             get { return m_Duration; }
@@ -163,9 +153,6 @@ namespace DDay.iCal
         /// objects are matched against the date only, and
         /// not the date-time combination.
         /// </summary>
-#if DATACONTRACT
-        [DataMember(Order = 4)]
-#endif
         virtual public bool MatchesDateOnly
         {
             get { return m_MatchesDateOnly; }

@@ -14,10 +14,9 @@ namespace DDay.iCal
     /// RRULEs, RDATE, EXRULEs, and EXDATEs, as well as the DTSTART
     /// for the recurring item (all recurring items must have a DTSTART).
     /// </remarks>
-#if DATACONTRACT
-    [DataContract(Name = "RecurringComponent", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class RecurringComponent : 
         UniqueComponent,
         IRecurringComponent
@@ -105,9 +104,6 @@ namespace DDay.iCal
         /// <summary>
         /// A list of <see cref="Alarm"/>s for this recurring component.
         /// </summary>
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         virtual public IList<IAlarm> Alarms
         {
             get { return new CalendarComponentCompositeList<IAlarm>(this, Components.ALARM); }            

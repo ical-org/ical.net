@@ -27,10 +27,9 @@ namespace DDay.iCal
     /// and X-properties may be applied to calendar components.
     /// </remarks>
     [DebuggerDisplay("{Name}:{Value}")]
-#if DATACONTRACT
-    [DataContract(Name = "CalendarProperty", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class CalendarProperty : 
         CalendarObject,
         ICalendarProperty
@@ -47,9 +46,6 @@ namespace DDay.iCal
         /// <summary>
         /// Returns a list of parameters that are associated with the iCalendar object.
         /// </summary>
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         virtual public ICalendarParameterList Parameters
         {
             get { return m_Parameters; }

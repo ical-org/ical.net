@@ -7,10 +7,9 @@ using System.Diagnostics;
 namespace DDay.iCal
 {
     [DebuggerDisplay("{Name}={string.Join(\",\", Values)}")]
-#if DATACONTRACT
-    [DataContract(Name = "CalendarParameter", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class CalendarParameter : 
         CalendarObject,
         ICalendarParameter

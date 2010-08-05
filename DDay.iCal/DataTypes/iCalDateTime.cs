@@ -17,10 +17,9 @@ namespace DDay.iCal
     /// the iCalendar framework.
     /// </remarks>
     /// </summary>
-#if DATACONTRACT
-    [DataContract(Name = "iCalDateTime", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public sealed class iCalDateTime :
         EncodableDataType,
         IDateTime
@@ -371,9 +370,6 @@ namespace DDay.iCal
             }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         public bool IsUniversalTime
         {
             get { return _IsUniversalTime; }
@@ -392,9 +388,6 @@ namespace DDay.iCal
             }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
         public DateTime Value
         {
             get { return _Value; }
@@ -415,27 +408,18 @@ namespace DDay.iCal
             }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
         public bool HasDate
         {
             get { return _HasDate; }
             set { _HasDate = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 4)]
-#endif
         public bool HasTime
         {
             get { return _HasTime; }
             set { _HasTime = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 5)]
-#endif
         public string TZID
         {
             get { return Parameters.Get("TZID"); }

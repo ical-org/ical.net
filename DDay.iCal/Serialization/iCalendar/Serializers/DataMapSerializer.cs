@@ -76,7 +76,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 // Default to returning the string representation of the value
                 // if the value wasn't formatted correctly.
                 // FIXME: should this be a try/catch?  Should serializers be throwing
-                // and InvalidFormatException?  This may have some performance issues
+                // an InvalidFormatException?  This may have some performance issues
                 // as try/catch is much slower than other means.
                 return returnValue ?? value;
             }

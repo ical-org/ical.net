@@ -13,10 +13,9 @@ namespace DDay.iCal
     /// the alarm occurs, the <see cref="Alarm"/> that fired, and the 
     /// component on which the alarm fired.
     /// </remarks>
-#if DATACONTRACT
-    [DataContract(Name = "AlarmOccurrence", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public struct AlarmOccurrence : 
         IComparable<AlarmOccurrence>
     {
@@ -30,36 +29,24 @@ namespace DDay.iCal
 
         #region Public Properties
 
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         public IPeriod Period
         {
             get { return m_Period; }
             set { m_Period = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
         public IRecurringComponent Component
         {
             get { return m_Component; }
             set { m_Component = value; }
         } 
 
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
         public IAlarm Alarm
         {
             get { return m_Alarm; }
             set { m_Alarm = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
         public IDateTime DateTime
         {
             get { return Period.StartTime; }

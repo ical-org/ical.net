@@ -13,9 +13,7 @@ namespace DDay.iCal
     /// <see cref="Event"/> or <see cref="Todo"/> item.
     /// </summary>
     [DebuggerDisplay("{Latitude};{Longitude}")]
-#if DATACONTRACT
-    [DataContract(Name = "GeographicLocation", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#else
+#if !SILVERLIGHT
     [Serializable]
 #endif
     public class GeographicLocation :
@@ -31,18 +29,12 @@ namespace DDay.iCal
 
         #region Public Properties
 
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         public double Latitude
         {
             get { return m_Latitude; }
             set { m_Latitude = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
         public double Longitude
         {
             get { return m_Longitude; }

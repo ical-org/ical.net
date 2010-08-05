@@ -264,7 +264,7 @@ namespace DDay.iCal.Test
             Assert.AreEqual(1, iCal1.Events.Count);
         }        
 
-#if DATACONTRACT && !SILVERLIGHT
+#if !SILVERLIGHT
         /// <summary>
         /// Tests conversion of the system time zone to one compatible with DDay.iCal.
         /// Also tests the gaining/loss of an hour over time zone boundaries.

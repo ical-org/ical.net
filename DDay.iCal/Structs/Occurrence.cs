@@ -6,10 +6,9 @@ using System.Runtime.Serialization;
 
 namespace DDay.iCal
 {    
-#if DATACONTRACT
-    [DataContract(Name = "Occurrence", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public struct Occurrence :
         IComparable<Occurrence>
     {
@@ -22,18 +21,12 @@ namespace DDay.iCal
 
         #region Public Properties
 
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         public IPeriod Period
         {
             get { return m_Period; }
             set { m_Period = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
         public IRecurrable Source
         {
             get { return m_Source; }

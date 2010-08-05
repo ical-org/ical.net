@@ -10,15 +10,9 @@ namespace DDay.iCal
         static public IList<Type> GetKnownTypes()
         {
             List<Type> types = new List<Type>();
+
             types.Add(typeof(CalendarPropertyList));
-            types.Add(typeof(CalendarParameterList));            
-            
-            // FIXME: re-add known types
-            /*types.Add(typeof(Event));
-            types.Add(typeof(Todo));
-            types.Add(typeof(Journal));
-            types.Add(typeof(FreeBusy));
-            types.Add(typeof(Alarm));            */
+            types.Add(typeof(CalendarParameterList));
 
             return types;
         }

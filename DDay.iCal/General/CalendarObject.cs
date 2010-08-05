@@ -11,10 +11,9 @@ namespace DDay.iCal
     /// <summary>
     /// The base class for all iCalendar objects and components.
     /// </summary>
-#if DATACONTRACT
-    [DataContract(IsReference = true, Name = "CalendarObject", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class CalendarObject :
         CalendarObjectBase,
         ICalendarObject
@@ -142,9 +141,6 @@ namespace DDay.iCal
         /// <summary>
         /// Returns the parent <see cref="iCalObject"/> that owns this one.
         /// </summary>
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         virtual public ICalendarObject Parent
         {
             get { return _Parent; }
@@ -155,9 +151,6 @@ namespace DDay.iCal
         /// A collection of <see cref="iCalObject"/>s that are children 
         /// of the current object.
         /// </summary>
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
         virtual public IList<ICalendarObject> Children
         {
             get { return _Children; }
@@ -175,9 +168,6 @@ namespace DDay.iCal
         ///     </list>
         /// </example>
         /// </summary>        
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
         virtual public string Name
         {
             get { return _Name; }
@@ -188,9 +178,6 @@ namespace DDay.iCal
         /// Returns the <see cref="DDay.iCal.iCalendar"/> that this <see cref="iCalObject"/>
         /// belongs to.
         /// </summary>
-#if DATACONTRACT
-        [DataMember(Order = 4)]
-#endif
         virtual public IICalendar Calendar
         {
             get
@@ -215,18 +202,12 @@ namespace DDay.iCal
             protected set { Calendar = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 5)]
-#endif
         virtual public int Line
         {
             get { return _Line; }
             set { _Line = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 6)]
-#endif
         virtual public int Column
         {
             get { return _Column; }

@@ -9,10 +9,9 @@ namespace DDay.iCal
     /// <summary>
     /// A list of iCalendars.
     /// </summary>
-#if DATACONTRACT
-    [CollectionDataContract(Name = "iCalendarCollection", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class iCalendarCollection :
         List<IICalendar>,
         IICalendarCollection

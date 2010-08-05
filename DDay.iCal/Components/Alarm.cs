@@ -11,16 +11,7 @@ namespace DDay.iCal
     /// A class that represents an RFC 2445 VALARM component.
     /// FIXME: move GetOccurrences() logic into an AlarmEvaluator.
     /// </summary>    
-#if DATACONTRACT
-    [DataContract(Name = "Alarm", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    /*[KnownType(typeof(Binary))]
-    [KnownType(typeof(Cal_Address))]
-    [KnownType(typeof(Cal_Address[]))]
-    [KnownType(typeof(Text))]
-    [KnownType(typeof(Duration))]
-    [KnownType(typeof(Integer))]
-    [KnownType(typeof(Trigger))]    */
-#else
+#if !SILVERLIGHT
     [Serializable]
 #endif
     public class Alarm :
@@ -35,72 +26,48 @@ namespace DDay.iCal
 
         #region Public Properties
 
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         virtual public AlarmAction Action
         {
             get { return Properties.Get<AlarmAction>("ACTION"); }
             set { Properties.Set("ACTION", value); }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
         virtual public IAttachment Attachment
         {
             get { return Properties.Get<IAttachment>("ATTACH"); }
             set { Properties.Set("ATTACH", value); }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
         virtual public IList<IAttendee> Attendees
         {
             get { return Properties.GetList<IAttendee>("ATTENDEE"); }
             set { Properties.SetList("ATTENDEE", value); }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 4)]
-#endif
         virtual public string Description
         {
             get { return Properties.Get<string>("DESCRIPTION"); }
             set { Properties.Set("DESCRIPTION", value); }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 5)]
-#endif
         virtual public TimeSpan Duration
         {
             get { return Properties.Get<TimeSpan>("DURATION"); }
             set { Properties.Set("DURATION", value); }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 6)]
-#endif
         virtual public int Repeat
         {
             get { return Properties.Get<int>("REPEAT"); }
             set { Properties.Set("REPEAT", value); }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 7)]
-#endif
         virtual public string Summary
         {
             get { return Properties.Get<string>("SUMMARY"); }
             set { Properties.Set("SUMMARY", value); }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 8)]
-#endif
         virtual public ITrigger Trigger
         {
             get { return Properties.Get<ITrigger>("TRIGGER"); }

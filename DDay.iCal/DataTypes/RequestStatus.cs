@@ -13,6 +13,9 @@ namespace DDay.iCal
     /// <summary>
     /// A class that represents the return status of an iCalendar request.
     /// </summary>
+#if !SILVERLIGHT
+    [Serializable]
+#endif
     public class RequestStatus :
         EncodableDataType,
         IRequestStatus
@@ -27,27 +30,18 @@ namespace DDay.iCal
 
         #region Public Properties
 
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         virtual public string Description
         {
             get { return m_Description; }
             set { m_Description = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
         virtual public string ExtraData
         {
             get { return m_ExtraData; }
             set { m_ExtraData = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
         virtual public IStatusCode StatusCode
         {
             get { return m_StatusCode; }

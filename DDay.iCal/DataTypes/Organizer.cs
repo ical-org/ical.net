@@ -13,10 +13,9 @@ namespace DDay.iCal
     /// A class that represents the organizer of an event/todo/journal.
     /// </summary>
     [DebuggerDisplay("{Value}")]
-#if DATACONTRACT
-    [DataContract(Name = "Organizer", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class Organizer :
         EncodableDataType,
         IOrganizer
@@ -53,9 +52,6 @@ namespace DDay.iCal
             }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         virtual public Uri Value { get; set; }
 
         #endregion

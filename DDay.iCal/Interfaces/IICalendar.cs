@@ -84,7 +84,7 @@ namespace DDay.iCal
         /// </summary>
         IUniqueComponentList<ITodo> Todos { get; }        
 
-#if DATACONTRACT && !SILVERLIGHT
+#if !SILVERLIGHT
         /// <summary>
         /// Adds a system time zone to the iCalendar.  This time zone may
         /// then be used in date/time objects contained in the 

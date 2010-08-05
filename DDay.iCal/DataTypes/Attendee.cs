@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace DDay.iCal
 {
+#if !SILVERLIGHT
+    [Serializable]
+#endif
     public class Attendee :
         EncodableDataType,
         IAttendee
@@ -94,6 +98,7 @@ namespace DDay.iCal
             set { Parameters.Set("DELEGATED-FROM", value); }
         }
         
+        [DataMember(Order = 1)]
         virtual public Uri Value { get; set; }
         
         #endregion        

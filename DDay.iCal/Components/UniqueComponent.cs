@@ -10,10 +10,9 @@ namespace DDay.iCal
     /// Represents a unique component, a component with a unique UID,
     /// which can be used to uniquely identify the component.    
     /// </summary>
-#if DATACONTRACT
-    [DataContract(Name = "UniqueComponent", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class UniqueComponent : 
         CalendarComponent,
         IUniqueComponent

@@ -12,17 +12,16 @@ namespace DDay.iCal
     /// <summary>
     /// A class that represents an RFC 5545 VTIMEZONE component.
     /// </summary>
-#if DATACONTRACT
-    [DataContract(Name = "iCalTimeZone", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public partial class iCalTimeZone : 
         CalendarComponent,
         ITimeZone
     {
         #region Static Public Methods
 
-#if DATACONTRACT && !SILVERLIGHT
+#if !SILVERLIGHT
         static public iCalTimeZone FromLocalTimeZone()
         {
             return FromSystemTimeZone(System.TimeZoneInfo.Local);

@@ -71,8 +71,12 @@ namespace DDay.iCal.Serialization.iCalendar
                         // Multiple values can often be serialized within the
                         // same property.  How should we fix this?
 
-                        // Serialize the property's value first, as during the serialization it
-                        // may modify our parameters.
+                        // NOTE:
+                        // We Serialize the property's value first, as during 
+                        // serialization it may modify our parameters.
+                        // FIXME: the "parameter modification" operation should
+                        // be separated from serialization. Perhaps something
+                        // like PreSerialize(), etc.
                         string value = valueSerializer.SerializeToString(v);
 
                         // Get the list of parameters we'll be serializing

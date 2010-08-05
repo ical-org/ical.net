@@ -11,10 +11,9 @@ namespace DDay.iCal
     /// <summary>
     /// Represents an RFC 5545 "BYDAY" value.
     /// </summary>
-#if DATACONTRACT
-    [DataContract(Name = "WeekDay", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class WeekDay : 
         EncodableDataType,
         IWeekDay        
@@ -28,18 +27,12 @@ namespace DDay.iCal
 
         #region Public Properties
 
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         virtual public int Offset
         {
             get { return m_Num; }
             set { m_Num = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
         virtual public DayOfWeek DayOfWeek
         {
             get { return m_DayOfWeek; }

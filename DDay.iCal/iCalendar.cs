@@ -85,18 +85,9 @@ namespace DDay.iCal
     /// </code>
     /// </para>
     /// </remarks>
-#if DATACONTRACT
-    [DataContract(IsReference = true, Name = "iCalendar", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-    [KnownType(typeof(UniqueComponentList<IUniqueComponent>))]
-    [KnownType(typeof(UniqueComponentList<IEvent>))]
-    [KnownType(typeof(UniqueComponentList<ITodo>))]
-    [KnownType(typeof(UniqueComponentList<IJournal>))]
-    //[KnownType(typeof(Event))]
-    //[KnownType(typeof(Todo))]
-    //[KnownType(typeof(Journal))]
-    //[KnownType(typeof(FreeBusy))]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class iCalendar : 
         CalendarComponent,
         IICalendar,
@@ -595,7 +586,7 @@ namespace DDay.iCal
             return tz;
         }
 
-#if DATACONTRACT && !SILVERLIGHT
+#if !SILVERLIGHT
         /// <summary>
         /// Adds a system time zone to the iCalendar.  This time zone may
         /// then be used in date/time objects contained in the 

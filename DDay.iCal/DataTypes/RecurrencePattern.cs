@@ -12,10 +12,9 @@ namespace DDay.iCal
     /// <summary>
     /// An iCalendar representation of the <c>RRULE</c> property.
     /// </summary>
-#if DATACONTRACT
-    [DataContract(Name = "RecurrencePattern", Namespace = "http://www.ddaysoftware.com/dday.ical/2009/07/")]
-#endif
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public partial class RecurrencePattern :
         EncodableDataType,
         IRecurrencePattern
@@ -46,36 +45,24 @@ namespace DDay.iCal
 
         #region Public Properties
 
-#if DATACONTRACT
-        [DataMember(Order = 1)]
-#endif
         public FrequencyType Frequency
         {
             get { return _Frequency; }
             set { _Frequency = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 2)]
-#endif
         public DateTime Until
         {
             get { return _Until; }
             set { _Until = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 3)]
-#endif
         public int Count
         {
             get { return _Count; }
             set { _Count = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 4)]
-#endif
         public int Interval
         {
             get
@@ -87,99 +74,66 @@ namespace DDay.iCal
             set { _Interval = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 5)]
-#endif
         public IList<int> BySecond
         {
             get { return _BySecond; }
             set { _BySecond = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 6)]
-#endif
         public IList<int> ByMinute
         {
             get { return _ByMinute; }
             set { _ByMinute = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 7)]
-#endif
         public IList<int> ByHour
         {
             get { return _ByHour; }
             set { _ByHour = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 8)]
-#endif
         public IList<IWeekDay> ByDay
         {
             get { return _ByDay; }
             set { _ByDay = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 9)]
-#endif
         public IList<int> ByMonthDay
         {
             get { return _ByMonthDay; }
             set { _ByMonthDay = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 10)]
-#endif
         public IList<int> ByYearDay
         {
             get { return _ByYearDay; }
             set { _ByYearDay = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 11)]
-#endif
         public IList<int> ByWeekNo
         {
             get { return _ByWeekNo; }
             set { _ByWeekNo = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 12)]
-#endif
         public IList<int> ByMonth
         {
             get { return _ByMonth; }
             set { _ByMonth = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 13)]
-#endif
         public IList<int> BySetPosition
         {
             get { return _BySetPosition; }
             set { _BySetPosition = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 14)]
-#endif
         public DayOfWeek FirstDayOfWeek
         {
             get { return _FirstDayOfWeek; }
             set { _FirstDayOfWeek = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 15)]
-#endif
         public RecurrenceRestrictionType RestrictionType
         {
             get
@@ -196,9 +150,6 @@ namespace DDay.iCal
             set { _RestrictionType = value; }
         }
 
-#if DATACONTRACT
-        [DataMember(Order = 16)]
-#endif
         public RecurrenceEvaluationModeType EvaluationMode
         {
             get
