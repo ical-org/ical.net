@@ -80,11 +80,17 @@ namespace DDay.iCal
                 // Add the "standard" time rule to the time zone
                 dday_tz.AddChild(dday_tzinfo_standard);
 
+                // FIXME: 1905 is the first time DST was used.  Anything prior
+                // is irrelevant.  However, this is simply an arbitrary value
+                // that doesn't really need to be calculated.
+                // Perhaps time zones need a simplified evaluation system that
+                // is much faster than a standard RRULE evaluation?
+                // For example, only allow FREQ=YEARLY or something like that?
                 var dday_tzinfo_daylight = new DDay.iCal.iCalTimeZoneInfo();
                 dday_tzinfo_daylight.Name = "DAYLIGHT";
                 dday_tzinfo_daylight.Start = new iCalDateTime(adjustmentRule.DateStart);
-                if (dday_tzinfo_daylight.Start.Year < 1800)
-                    dday_tzinfo_daylight.Start = dday_tzinfo_daylight.Start.AddYears(1800 - dday_tzinfo_daylight.Start.Year);
+                if (dday_tzinfo_daylight.Start.Year < 1905)
+                    dday_tzinfo_daylight.Start = dday_tzinfo_daylight.Start.AddYears(1905 - dday_tzinfo_daylight.Start.Year);
                 dday_tzinfo_daylight.OffsetFrom = new UTCOffset(utcOffset);
                 dday_tzinfo_daylight.OffsetTo = new UTCOffset(utcOffset + delta);
                 PopulateiCalTimeZoneInfo(dday_tzinfo_daylight, adjustmentRule.DaylightTransitionStart, adjustmentRule.DateStart.Year);
