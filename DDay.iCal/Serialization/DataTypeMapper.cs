@@ -55,7 +55,7 @@ namespace DDay.iCal.Serialization
             AddPropertyMapping("RRULE", typeof(IList<IRecurrencePattern>), false);
             AddPropertyMapping("SEQUENCE", typeof(int), false);
             AddPropertyMapping("STATUS", ResolveStatusProperty, false);
-            AddPropertyMapping("TRANSP", typeof(ITransparency), false);
+            AddPropertyMapping("TRANSP", typeof(TransparencyType), false);
             AddPropertyMapping("TRIGGER", typeof(ITrigger), false);
             AddPropertyMapping("TZNAME", typeof(IList<string>), false);
             AddPropertyMapping("TZOFFSETFROM", typeof(IUTCOffset), false);

@@ -184,6 +184,16 @@ namespace DDay.iCal
 
     #endregion
 
+    #region Transparency
+
+    public enum TransparencyType
+    {
+        Opaque,
+        Transparent
+    }
+
+    #endregion
+
     #region Calendar Properties
 
     public class CalendarProductIDs

@@ -166,6 +166,106 @@ namespace DDay.iCal
             set { _EvaluationMode = value; }
         }
 
+        /// <summary>
+        /// Returns the next occurrence of the pattern,
+        /// given a valid previous occurrence, <paramref name="lastOccurrence"/>.
+        /// As long as the recurrence pattern is valid, and
+        /// <paramref name="lastOccurrence"/> is a valid previous 
+        /// occurrence within the pattern, this will return the
+        /// next occurrence.  NOTE: This will not give accurate results
+        /// when COUNT or BYSETVAL are used.
+        /// </summary>
+        virtual public IPeriod GetNextOccurrence(IDateTime lastOccurrence)
+        {
+            if (lastOccurrence != null)
+            {
+                IDateTime fromDate = lastOccurrence;
+                IDateTime toDate = null;
+
+                IRecurrencePattern r = new RecurrencePattern();
+                r.CopyFrom(this);
+
+                switch (r.Frequency)
+                {
+                    case FrequencyType.Yearly:
+                        toDate = fromDate.FirstDayOfYear.AddYears(Interval + 1);
+                        break;
+                    case FrequencyType.Monthly:
+                        // Determine how far into the future we need to scan
+                        // to get the next occurrence.
+                        int yearsByInterval = (int)Math.Ceiling((double)Interval / 12.0);
+                        if (ByMonthDay.Count > 0)
+                            toDate = fromDate.FirstDayOfYear.AddYears(yearsByInterval + 1);
+                        else if (ByMonth.Count > 0)
+                            toDate = fromDate.AddYears(yearsByInterval);
+                        else
+                            toDate = fromDate.FirstDayOfMonth.AddMonths(Interval + 1);
+                        break;
+                    case FrequencyType.Weekly:
+                        toDate = fromDate.AddDays((Interval + 1) * 7);
+                        break;
+                    case FrequencyType.Daily:
+                        if (ByDay.Count > 0)
+                            toDate = fromDate.AddDays(7);
+                        else
+                            toDate = fromDate.AddDays(Interval + 1);
+                        break;
+                    case FrequencyType.Hourly:
+                        if (ByHour.Count > 0)
+                        {
+                            int daysByInterval = (int)Math.Ceiling((double)Interval / 24.0);
+                            toDate = fromDate.AddDays(daysByInterval + 1);
+                        }
+                        else
+                            toDate = fromDate.AddHours(Interval + 1);
+                        break;
+                    case FrequencyType.Minutely:
+                        if (ByMinute.Count > 0)
+                        {
+                            int hoursByInterval = (int)Math.Ceiling((double)Interval / 60.0);
+                            toDate = fromDate.AddHours(hoursByInterval + 1);
+                        }
+                        else
+                            toDate = fromDate.AddMinutes(Interval + 1);
+                        break;
+                    case FrequencyType.Secondly:
+                        if (BySecond.Count > 0)
+                        {
+                            int minutesByInterval = (int)Math.Ceiling((double)Interval / 60.0);
+                            toDate = fromDate.AddMinutes(minutesByInterval + 1);
+                        }
+                        else
+                            toDate = fromDate.AddMinutes(Interval + 1);
+                        break;
+                }
+
+                if (toDate != null)
+                {
+                    IEvaluator evaluator = new RecurrencePatternEvaluator(this);
+
+                    IPeriod lastOccurrencePeriod = new Period(lastOccurrence);
+
+                    // Get the first occurence within the interval we just evaluated, if available.
+                    IList<IPeriod> occurrences = evaluator.Evaluate(lastOccurrence, fromDate.Value, toDate.Value, true);
+                    if (occurrences != null &&
+                        occurrences.Count > 0)
+                    {
+                        // NOTE: the lastOccurrence may or may not be contained in the
+                        // result list of occurrences.  If it is, grab the next occurence
+                        // if it is available.
+                        if (occurrences[0].Equals(lastOccurrencePeriod))
+                        {
+                            if (occurrences.Count > 1)
+                                return occurrences[1];
+                        }
+                        else return occurrences[0];
+                    }
+                }
+            }
+
+            return null;
+        }
+
         #endregion
 
         #region Constructors

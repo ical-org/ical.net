@@ -126,7 +126,6 @@
     <Compile Include="Interfaces\DataTypes\IEncodableDataType.cs" />
     <Compile Include="Interfaces\DataTypes\IGeographicLocation.cs" />
     <Compile Include="Interfaces\DataTypes\IPeriod.cs" />
-    <Compile Include="Interfaces\DataTypes\ITransparency.cs" />
     <Compile Include="Interfaces\Evaluation\IEvaluator.cs" />
     <Compile Include="Interfaces\Evaluation\IRecurrable.cs" />
     <Compile Include="Interfaces\General\IServiceProvider.cs" />

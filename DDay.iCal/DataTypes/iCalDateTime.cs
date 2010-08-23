@@ -483,6 +483,26 @@ namespace DDay.iCal
             get { return Value.DayOfYear; }
         }
 
+        public IDateTime FirstDayOfYear
+        {
+            get
+            {
+                IDateTime dt = Copy<IDateTime>();
+                dt.Value = Value.AddDays(-Value.DayOfYear+1);
+                return dt;
+            }
+        }
+
+        public IDateTime FirstDayOfMonth
+        {
+            get
+            {
+                IDateTime dt = Copy<IDateTime>();
+                dt.Value = Value.AddDays(-Value.Day+1);
+                return dt;
+            }
+        }
+
         public DateTime Date
         {
             get { return Value.Date; }

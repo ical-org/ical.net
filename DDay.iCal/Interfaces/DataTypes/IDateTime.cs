@@ -107,7 +107,17 @@ namespace DDay.iCal
         /// <summary>
         /// Gets the DayOfYear for this date/time value.
         /// </summary>
-        int DayOfYear { get; }        
+        int DayOfYear { get; }
+
+        /// <summary>
+        /// Gets the first day of the year currently represented by the IDateTime instance.
+        /// </summary>
+        IDateTime FirstDayOfYear { get; }
+
+        /// <summary>
+        /// Gets the first day of the month currently represented by the IDateTime instance.
+        /// </summary>
+        IDateTime FirstDayOfMonth { get; }
 
         /// <summary>
         /// Gets the date portion of the date/time value.

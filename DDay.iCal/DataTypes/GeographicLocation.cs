@@ -64,9 +64,9 @@ namespace DDay.iCal
 
         public override bool Equals(object obj)
         {
-            if (obj is GeographicLocation)
+            if (obj is IGeographicLocation)
             {
-                GeographicLocation g = (GeographicLocation)obj;
+                IGeographicLocation g = (IGeographicLocation)obj;
                 return g.Latitude.Equals(Latitude) && g.Longitude.Equals(Longitude);
             }
             return base.Equals(obj);

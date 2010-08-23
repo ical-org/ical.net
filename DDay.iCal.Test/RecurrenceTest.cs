@@ -47,6 +47,13 @@ namespace DDay.iCal.Test
                 occurrences.Count,
                 "There should be exactly " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
 
+            IRecurrencePattern pattern = null;
+            if (evt != null && evt.RecurrenceRules.Count > 0)
+            {
+                Assert.AreEqual(1, evt.RecurrenceRules.Count);
+                pattern = evt.RecurrenceRules[0];
+            }
+
             for (int i = 0; i < dateTimes.Length; i++)
             {
                 // Associate each incoming date/time with the calendar.
@@ -56,7 +63,15 @@ namespace DDay.iCal.Test
                 Assert.AreEqual(dt, occurrences[i].Period.StartTime, "Event should occur on " + dt);
                 if (timeZones != null)
                     Assert.AreEqual(timeZones[i], dt.TimeZoneName, "Event " + dt + " should occur in the " + timeZones[i] + " timezone");
-            }
+
+                // Now, verify that GetNextOccurrence() returns accurate results.
+                if (i < dateTimes.Length - 1)
+                {
+                    IPeriod nextOccurrence = pattern.GetNextOccurrence(dateTimes[i]);
+                    IPeriod p = new Period(dateTimes[i + 1]);
+                    Assert.AreEqual(p, nextOccurrence, "Next occurrence did not match the results of RecurrencePattern.GetNextOccurrence()");
+                }
+            }            
         }
 
         private void EventOccurrenceTest(

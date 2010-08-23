@@ -1052,6 +1052,28 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         {
             SerializeTest("Todo7.ics", typeof(iCalendarSerializer));
         }
+        
+        [Test, Category("Serialization")]
+        public void Transparency1()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Transparency1.ics")[0];
+            
+            Assert.AreEqual(1, iCal.Events.Count);
+            IEvent evt = iCal.Events[0];
+            
+            Assert.AreEqual(TransparencyType.Opaque, evt.Transparency);
+        }
+
+        [Test, Category("Serialization")]
+        public void Transparency2()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Transparency2.ics")[0];
+
+            Assert.AreEqual(1, iCal.Events.Count);
+            IEvent evt = iCal.Events[0];
+
+            Assert.AreEqual(TransparencyType.Transparent, evt.Transparency);
+        }
 
         [Test, Category("Serialization")]
         public void XProperty1()
@@ -1101,20 +1123,20 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             // Create an event in the iCalendar
             Event evt = iCal.Create<Event>();
 
-            //Populate the properties
+            // Populate the properties
             evt.Start = new iCalDateTime(2009, 6, 28, 8, 0, 0);
             evt.Duration = TimeSpan.FromHours(1);
             evt.Url = new Uri("http://www.ftb.pl/news/59941_0_1/tunnel-electrocity-2008-timetable.htm");
             evt.Summary = "This is a title";
             evt.Description = "This is a description";
 
-            iCalendarSerializer serializer = new iCalendarSerializer(iCal);
-            string output = serializer.SerializeToString();
-            serializer.Serialize(@"Calendars\Serialization\SERIALIZE32.ics");
+            iCalendarSerializer serializer = new iCalendarSerializer();
+            string output = serializer.SerializeToString(iCal);
+            serializer.Serialize(iCal, @"Calendars\Serialization\XProperty4.ics");
 
             Assert.IsFalse(Regex.IsMatch(output, @"\r\n[\r\n]"));
 
-            SerializeTest("SERIALIZE32.ics", typeof(iCalendarSerializer));
+            SerializeTest("XProperty4.ics", typeof(iCalendarSerializer));
         }
 
         // FIXME: re-implement

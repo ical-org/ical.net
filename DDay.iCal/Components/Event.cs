@@ -190,9 +190,9 @@ namespace DDay.iCal
         /// or if the time cannot be scheduled for anything
         /// else (opaque).
         /// </summary>
-        public ITransparency Transparency
+        public TransparencyType Transparency
         {
-            get { return Properties.Get<ITransparency>("TRANSP"); }
+            get { return Properties.Get<TransparencyType>("TRANSP"); }
             set { Properties.Set("TRANSP", value); }
         }
 

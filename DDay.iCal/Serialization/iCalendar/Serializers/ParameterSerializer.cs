@@ -34,9 +34,14 @@ namespace DDay.iCal.Serialization.iCalendar
             {
                 string result = p.Name + "=";
                 string value = string.Join(",", p.Values);
+
+                // "Section 3.2:  Property parameter values MUST NOT contain the DQUOTE character."
+                // Therefore, let's strip any double quotes from the value.                
+                value = value.Replace("\"", string.Empty);
+
                 // Surround the parameter value with double quotes, if the value
                 // contains any problematic characters.
-                if (value.IndexOfAny(new char[] { '"', ';', ':', ',' }) >= 0)
+                if (value.IndexOfAny(new char[] { ';', ':', ',' }) >= 0)
                     value = "\"" + value + "\"";
                 return result + value;
             }

@@ -82,7 +82,7 @@ namespace DDay.iCal
         /// or if the time cannot be scheduled for anything
         /// else (opaque).
         /// </summary>
-        ITransparency Transparency { get; set; }
+        TransparencyType Transparency { get; set; }
 
         bool IsActive();
     }
