@@ -21,10 +21,10 @@ namespace DDay.iCal
         IList<int> ByMonth { get; set; }
         IList<int> BySetPosition { get; set; }
         DayOfWeek FirstDayOfWeek { get; set; }
-
+                
         RecurrenceRestrictionType RestrictionType { get; set; }
         RecurrenceEvaluationModeType EvaluationMode { get; set; }
 
-        IPeriod GetNextOccurrence(IDateTime dt);
+        //IPeriod GetNextOccurrence(IDateTime dt);
     }
 }

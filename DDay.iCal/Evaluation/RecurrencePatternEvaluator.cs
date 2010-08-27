@@ -5,6 +5,46 @@ using System.Globalization;
 
 namespace DDay.iCal
 {
+    /// <summary>
+    /// Much of this code comes from iCal4j, as Ben Fortuna has done an
+    /// excellent job with the recurrence pattern evaluation there.
+    /// 
+    /// Here's the iCal4j license:
+    /// ==================
+    ///  iCal4j - License
+    ///  ==================
+    ///  
+    /// Copyright (c) 2009, Ben Fortuna
+    /// All rights reserved.
+    /// 
+    /// Redistribution and use in source and binary forms, with or without
+    /// modification, are permitted provided that the following conditions
+    /// are met:
+    /// 
+    /// o Redistributions of source code must retain the above copyright
+    /// notice, this list of conditions and the following disclaimer.
+    /// 
+    /// o Redistributions in binary form must reproduce the above copyright
+    /// notice, this list of conditions and the following disclaimer in the
+    /// documentation and/or other materials provided with the distribution.
+    /// 
+    /// o Neither the name of Ben Fortuna nor the names of any other contributors
+    /// may be used to endorse or promote products derived from this software
+    /// without specific prior written permission.
+    /// 
+    /// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    /// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    /// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    /// A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+    /// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+    /// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    /// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    /// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+    /// LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+    /// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+    /// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    /// </summary>
+
     public class RecurrencePatternEvaluator :
         Evaluator
     {
@@ -185,7 +225,7 @@ namespace DDay.iCal
 
             // optimize the start time for selecting candidates
             // (only applicable where a COUNT is not specified)
-            if (Pattern.Count == int.MinValue)
+            if (pattern.Count == int.MinValue)
             {
                 DateTime incremented = seedCopy;
                 IncrementDate(ref incremented, pattern, pattern.Interval);
@@ -195,6 +235,8 @@ namespace DDay.iCal
                     IncrementDate(ref incremented, pattern, pattern.Interval);
                 }
             }
+                        
+            bool?[] expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
 
             int invalidCandidateCount = 0;
             int noCandidateIncrementCount = 0;
@@ -206,11 +248,11 @@ namespace DDay.iCal
 
                 if (periodEnd != null && candidate != DateTime.MinValue && candidate > periodEnd)
                     break;
+                                
+                if (pattern.Count >= 1 && (dates.Count + invalidCandidateCount) >= pattern.Count)
+                    break;                
 
-                if (pattern.Count >= 1 && (dates.Count + invalidCandidateCount) >= pattern.Count) 
-                    break;
-
-                List<DateTime> candidates = GetCandidates(seedCopy, pattern);
+                List<DateTime> candidates = GetCandidates(seedCopy, pattern, expandBehavior);
                 if (candidates.Count > 0)
                 {
                     noCandidateIncrementCount = 0;
@@ -233,15 +275,15 @@ namespace DDay.iCal
                             if (candidate >= periodEnd)
                             {
                                 invalidCandidateCount++;
-                            } 
+                            }
                             else if (pattern.Count >= 1 && (dates.Count + invalidCandidateCount) >= pattern.Count)
                             {
                                 break;
                             }
-                            else if (!(pattern.Until != DateTime.MinValue && candidate > pattern.Until))
+                            else if (pattern.Until == DateTime.MinValue || candidate <= pattern.Until)
                             {
                                 if (!dates.Contains(candidate))
-                                    dates.Add(candidate);
+                                    dates.Add(candidate);                                
                             }
                         }
                     }
@@ -261,87 +303,89 @@ namespace DDay.iCal
             return dates;
         }
         
-        /**
-         * Returns the the next date of this recurrence given a seed date
-         * and start date.  The seed date indicates the start of the fist 
-         * occurrence of this recurrence. The start date is the
-         * starting date to search for the next recurrence.  Return null
-         * if there is no occurrence date after start date.
-         * @return the next date in the recurrence series after startDate
-         * @param seed the start date of this Recurrence's first instance
-         * @param startDate the date to start the search
-         */
-        private DateTime? GetNextDate(IDateTime seed, DateTime startDate, IRecurrencePattern pattern)
-        {            
-            DateTime seedCopy = DateUtil.GetSimpleDateTimeData(seed);
-            // optimize the start time for selecting candidates
-            // (only applicable where a COUNT is not specified)
-            if (Pattern.Count == int.MinValue)
-            {
-                DateTime incremented = seedCopy;
-                IncrementDate(ref incremented, pattern, pattern.Interval);
-                while (incremented < startDate)
-                {
-                    seedCopy = incremented;
-                    IncrementDate(ref incremented, pattern, pattern.Interval);
-                }
-            }
+        ///**
+        // * Returns the the next date of this recurrence given a seed date
+        // * and start date.  The seed date indicates the start of the fist 
+        // * occurrence of this recurrence. The start date is the
+        // * starting date to search for the next recurrence.  Return null
+        // * if there is no occurrence date after start date.
+        // * @return the next date in the recurrence series after startDate
+        // * @param seed the start date of this Recurrence's first instance
+        // * @param startDate the date to start the search
+        // */
+        //private DateTime? GetNextDate(IDateTime referenceDate, DateTime periodStart, IRecurrencePattern pattern)
+        //{            
+        //    DateTime seedCopy = DateUtil.GetSimpleDateTimeData(referenceDate);
+        //    // optimize the start time for selecting candidates
+        //    // (only applicable where a COUNT is not specified)
+        //    if (Pattern.Count == int.MinValue)
+        //    {
+        //        DateTime incremented = seedCopy;
+        //        IncrementDate(ref incremented, pattern, pattern.Interval);
+        //        while (incremented < periodStart)
+        //        {
+        //            seedCopy = incremented;
+        //            IncrementDate(ref incremented, pattern, pattern.Interval);
+        //        }
+        //    }
+                        
+        //    bool?[] expandBehaviors = RecurrenceUtil.GetExpandBehaviorList(pattern);
 
-            int invalidCandidateCount = 0;
-            int noCandidateIncrementCount = 0;
-            DateTime candidate = DateTime.MinValue;            
+        //    int invalidCandidateCount = 0;
+        //    int noCandidateIncrementCount = 0;
+        //    DateTime candidate = DateTime.MinValue;            
             
-            while (true)
-            {
-                if (pattern.Until != DateTime.MinValue && candidate != DateTime.MinValue && candidate > pattern.Until)
-                    break;
-                
-                if (pattern.Count > 0 && invalidCandidateCount >= pattern.Count)
-                    break;
+        //    while (true)
+        //    {
+        //        if (pattern.Until != DateTime.MinValue && candidate != DateTime.MinValue && candidate > pattern.Until)
+        //            break;
 
-                List<DateTime> candidates = GetCandidates(seedCopy, pattern);
-                if (candidates.Count > 0)
-                {
-                    noCandidateIncrementCount = 0;
+        //        if (pattern.Count > 0 && invalidCandidateCount >= pattern.Count)
+        //            break;
 
-                    // sort candidates for identifying when UNTIL date is exceeded..
-                    candidates.Sort();
+        //        List<DateTime> candidates = GetCandidates(seedCopy, pattern, expandBehaviors);
+        //        if (candidates.Count > 0)
+        //        {
+        //            noCandidateIncrementCount = 0;
 
-                    for (int i = 0; i < candidates.Count; i++)
-                    {
-                        candidate = candidates[i];
+        //            // sort candidates for identifying when UNTIL date is exceeded..
+        //            candidates.Sort();
 
-                        // don't count candidates that occur before the seed date..
-                        if (candidate >= seedCopy)
-                        {
-                            // Candidate must be after startDate because
-                            // we want the NEXT occurrence
-                            if (candidate >= startDate)
-                            {
-                                invalidCandidateCount++;
-                            }
-                            else if (pattern.Count > 0 && invalidCandidateCount >= pattern.Count)
-                            {
-                                break;
-                            }
-                            else if (!(pattern.Until != DateTime.MinValue && candidate > pattern.Until))
-                            {
-                                return candidate;
-                            }
-                        }
-                    }
-                } 
-                else 
-                {
-                    noCandidateIncrementCount++;
-                    if ((maxIncrementCount > 0) && (noCandidateIncrementCount > maxIncrementCount)) 
-                        break;
-                }
+        //            for (int i = 0; i < candidates.Count; i++)
+        //            {
+        //                candidate = candidates[i];
 
-                IncrementDate(ref seedCopy, pattern, pattern.Interval);
-            }
-            return null;
-        }
+        //                // don't count candidates that occur before the seed date..
+        //                if (candidate >= seedCopy)
+        //                {
+        //                    // Candidate must be after startDate because
+        //                    // we want the NEXT occurrence
+        //                    if (candidate >= periodStart)
+        //                    {
+        //                        invalidCandidateCount++;
+        //                    }
+        //                    else if (pattern.Count > 0 && invalidCandidateCount >= pattern.Count)
+        //                    {
+        //                        break;
+        //                    }
+        //                    else if (pattern.Until == DateTime.MinValue || candidate <= pattern.Until)
+        //                    {
+        //                        return candidate;
+        //                    }
+        //                }
+        //            }
+        //        } 
+        //        else 
+        //        {
+        //            noCandidateIncrementCount++;
+        //            if ((maxIncrementCount > 0) && (noCandidateIncrementCount > maxIncrementCount)) 
+        //                break;
+        //        }
+
+        //        IncrementDate(ref seedCopy, pattern, pattern.Interval);
+        //    }
+        //    return null;
+        //}
 
         /**
          * Returns a list of possible dates generated from the applicable BY* rules, using the specified date as a seed.
@@ -349,18 +393,18 @@ namespace DDay.iCal
          * @param value the type of date list to return
          * @return a DateList
          */
-        private List<DateTime> GetCandidates(DateTime date, IRecurrencePattern pattern)
+        private List<DateTime> GetCandidates(DateTime date, IRecurrencePattern pattern, bool?[] expandBehaviors)
         {
             List<DateTime> dates = new List<DateTime>();
             dates.Add(date);
-            dates = GetMonthVariants(dates, pattern);
-            dates = GetWeekNoVariants(dates, pattern);
-            dates = GetYearDayVariants(dates, pattern);
-            dates = GetMonthDayVariants(dates, pattern);
-            dates = GetDayVariants(dates, pattern);
-            dates = GetHourVariants(dates, pattern);
-            dates = GetMinuteVariants(dates, pattern);
-            dates = GetSecondVariants(dates, pattern);
+            dates = GetMonthVariants(dates, pattern, expandBehaviors[0]);
+            dates = GetWeekNoVariants(dates, pattern, expandBehaviors[1]);
+            dates = GetYearDayVariants(dates, pattern, expandBehaviors[2]);
+            dates = GetMonthDayVariants(dates, pattern, expandBehaviors[3]);
+            dates = GetDayVariants(dates, pattern, expandBehaviors[4]);
+            dates = GetHourVariants(dates, pattern, expandBehaviors[5]);
+            dates = GetMinuteVariants(dates, pattern, expandBehaviors[6]);
+            dates = GetSecondVariants(dates, pattern, expandBehaviors[7]);
             dates = ApplySetPosRules(dates, pattern);
             return dates;
         }
@@ -403,23 +447,43 @@ namespace DDay.iCal
          * @param dates
          * @return
          */
-        private List<DateTime> GetMonthVariants(List<DateTime> dates, IRecurrencePattern pattern)
-        {            
-            if (pattern.ByMonth.Count == 0)
+        private List<DateTime> GetMonthVariants(List<DateTime> dates, IRecurrencePattern pattern, bool? expand)
+        {
+            if (expand == null || pattern.ByMonth.Count == 0)
                 return dates;
 
-            List<DateTime> monthlyDates = new List<DateTime>();
-            for (int i = 0; i < dates.Count; i++)
+            if (expand.HasValue && expand.Value)
             {
-                DateTime date = dates[i];
-                for (int j = 0; j < pattern.ByMonth.Count; j++)
+                // Expand behavior
+                List<DateTime> monthlyDates = new List<DateTime>();
+                for (int i = 0; i < dates.Count; i++)
                 {
-                    int month = pattern.ByMonth[j];
-                    date = date.AddMonths(month - date.Month);
-                    monthlyDates.Add(date);
+                    DateTime date = dates[i];
+                    for (int j = 0; j < pattern.ByMonth.Count; j++)
+                    {
+                        int month = pattern.ByMonth[j];
+                        date = date.AddMonths(month - date.Month);
+                        monthlyDates.Add(date);
+                    }
                 }
+                return monthlyDates;
             }
-            return monthlyDates;
+            else
+            {
+                // Limit behavior
+                for (int i = dates.Count - 1; i >= 0; i--)
+                {
+                    DateTime date = dates[i];
+                    for (int j = 0; j < pattern.ByMonth.Count; j++)
+                    {
+                        if (date.Month == pattern.ByMonth[j])
+                            goto Next;
+                    }
+                    dates.RemoveAt(i);
+                Next: ;
+                }
+                return dates;
+            }
         }
 
         /**
@@ -428,47 +492,74 @@ namespace DDay.iCal
          * @param dates
          * @return
          */
-        private List<DateTime> GetWeekNoVariants(List<DateTime> dates, IRecurrencePattern pattern)
-        {            
-            if (pattern.ByWeekNo.Count == 0)
+        private List<DateTime> GetWeekNoVariants(List<DateTime> dates, IRecurrencePattern pattern, bool? expand)
+        {
+            if (expand == null || pattern.ByWeekNo.Count == 0)
                 return dates;
 
-            List<DateTime> weekNoDates = new List<DateTime>();
-            for (int i = 0; i < dates.Count; i++)
+            if (expand.HasValue && expand.Value)
             {
-                DateTime date = dates[i];
-                for (int j = 0; j < pattern.ByWeekNo.Count; j++)
+                // Expand behavior
+                List<DateTime> weekNoDates = new List<DateTime>();
+                for (int i = 0; i < dates.Count; i++)
                 {
-                    // Determine our target week number
-                    int weekNo = pattern.ByWeekNo[j];
-                                        
-                    // Determine our current week number
-                    int currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
-                    while (currWeekNo > weekNo)
-                    {                        
-                        // If currWeekNo > weekNo, then we're likely at the start of a year
-                        // where currWeekNo could be 52 or 53.  If we simply step ahead 7 days
-                        // we should be back to week 1, where we can easily make the calculation
-                        // to move to weekNo.
-                        date = date.AddDays(7);
-                        currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
-                    }
-                    
-                    // Move ahead to the correct week of the year
-                    date = date.AddDays((weekNo - currWeekNo) * 7);
-
-                    // Step backward single days until we're at the correct DayOfWeek
-                    while (date.DayOfWeek != pattern.FirstDayOfWeek)
-                        date = date.AddDays(-1);
-
-                    for (int k = 0; k < 7; k++)
+                    DateTime date = dates[i];
+                    for (int j = 0; j < pattern.ByWeekNo.Count; j++)
                     {
-                        weekNoDates.Add(date);
-                        date = date.AddDays(1);
+                        // Determine our target week number
+                        int weekNo = pattern.ByWeekNo[j];
+
+                        // Determine our current week number
+                        int currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+                        while (currWeekNo > weekNo)
+                        {
+                            // If currWeekNo > weekNo, then we're likely at the start of a year
+                            // where currWeekNo could be 52 or 53.  If we simply step ahead 7 days
+                            // we should be back to week 1, where we can easily make the calculation
+                            // to move to weekNo.
+                            date = date.AddDays(7);
+                            currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+                        }
+
+                        // Move ahead to the correct week of the year
+                        date = date.AddDays((weekNo - currWeekNo) * 7);
+
+                        // Step backward single days until we're at the correct DayOfWeek
+                        while (date.DayOfWeek != pattern.FirstDayOfWeek)
+                            date = date.AddDays(-1);
+
+                        for (int k = 0; k < 7; k++)
+                        {
+                            weekNoDates.Add(date);
+                            date = date.AddDays(1);
+                        }
                     }
                 }
+                return weekNoDates;
             }
-            return weekNoDates;
+            else
+            {
+                // Limit behavior
+                for (int i = dates.Count - 1; i >= 0; i--)
+                {
+                    DateTime date = dates[i];
+                    for (int j = 0; j < pattern.ByWeekNo.Count; j++)
+                    {
+                        // Determine our target week number
+                        int weekNo = pattern.ByWeekNo[j];
+
+                        // Determine our current week number
+                        int currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+
+                        if (weekNo == currWeekNo)
+                            goto Next;
+                    }
+
+                    dates.RemoveAt(i);
+                Next: ;
+                }
+                return dates;
+            }
         }
 
         /**
@@ -477,29 +568,59 @@ namespace DDay.iCal
          * @param dates
          * @return
          */
-        private List<DateTime> GetYearDayVariants(List<DateTime> dates, IRecurrencePattern pattern)
-        {            
-            if (pattern.ByYearDay.Count == 0)
+        private List<DateTime> GetYearDayVariants(List<DateTime> dates, IRecurrencePattern pattern, bool? expand)
+        {
+            if (expand == null || pattern.ByYearDay.Count == 0)
                 return dates;
 
-            List<DateTime> yearDayDates = new List<DateTime>();
-            for (int i = 0; i < dates.Count; i++)
+            if (expand.HasValue && expand.Value)
             {
-                DateTime date = dates[i];
-                for (int j = 0; j < pattern.ByYearDay.Count; j++)
+                // Expand behavior
+                List<DateTime> yearDayDates = new List<DateTime>();
+                for (int i = 0; i < dates.Count; i++)
                 {
-                    int yearDay = pattern.ByYearDay[j];
+                    DateTime date = dates[i];
+                    for (int j = 0; j < pattern.ByYearDay.Count; j++)
+                    {
+                        int yearDay = pattern.ByYearDay[j];
 
-                    DateTime newDate;
-                    if (yearDay > 0)
-                        newDate = date.AddDays(-date.DayOfYear + yearDay);
-                    else
-                        newDate = date.AddDays(-date.DayOfYear + 1).AddYears(1).AddDays(yearDay);
+                        DateTime newDate;
+                        if (yearDay > 0)
+                            newDate = date.AddDays(-date.DayOfYear + yearDay);
+                        else
+                            newDate = date.AddDays(-date.DayOfYear + 1).AddYears(1).AddDays(yearDay);
 
-                    yearDayDates.Add(newDate);
+                        yearDayDates.Add(newDate);
+                    }
                 }
+                return yearDayDates;
             }
-            return yearDayDates;
+            else
+            {
+                // Limit behavior
+                for (int i = dates.Count - 1; i >= 0; i--)
+                {
+                    DateTime date = dates[i];
+                    for (int j = 0; j < pattern.ByYearDay.Count; j++)
+                    {
+                        int yearDay = pattern.ByYearDay[j];
+
+                        DateTime newDate;
+                        if (yearDay > 0)
+                            newDate = date.AddDays(-date.DayOfYear + yearDay);
+                        else
+                            newDate = date.AddDays(-date.DayOfYear + 1).AddYears(1).AddDays(yearDay);
+
+                        if (newDate.DayOfYear == date.DayOfYear)
+                            goto Next;
+                    }
+
+                    dates.RemoveAt(i);
+                Next: ;                    
+                }
+
+                return dates;
+            }
         }
 
         /**
@@ -508,34 +629,69 @@ namespace DDay.iCal
          * @param dates
          * @return
          */
-        private List<DateTime> GetMonthDayVariants(List<DateTime> dates, IRecurrencePattern pattern)
-        {            
-            if (pattern.ByMonthDay.Count == 0)
+        private List<DateTime> GetMonthDayVariants(List<DateTime> dates, IRecurrencePattern pattern, bool? expand)
+        {
+            if (expand == null || pattern.ByMonthDay.Count == 0)
                 return dates;
 
-            List<DateTime> monthDayDates = new List<DateTime>();
-            for (int i = 0; i < dates.Count; i++)
+            if (expand.HasValue && expand.Value)
             {
-                DateTime date = dates[i];
-                for (int j = 0; j < pattern.ByMonthDay.Count; j++)
+                // Expand behavior
+                List<DateTime> monthDayDates = new List<DateTime>();
+                for (int i = 0; i < dates.Count; i++)
                 {
-                    int monthDay = pattern.ByMonthDay[j];
-                        
-                    int daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
-                    if (Math.Abs(monthDay) > daysInMonth)
-                        throw new ArgumentException("Invalid day of month: " + date + " (day " + monthDay + ")");
+                    DateTime date = dates[i];
+                    for (int j = 0; j < pattern.ByMonthDay.Count; j++)
+                    {
+                        int monthDay = pattern.ByMonthDay[j];
 
-                    // Account for positive or negative numbers
-                    DateTime newDate;
-                    if (monthDay > 0)
-                        newDate = date.AddDays(-date.Day + monthDay);
-                    else
-                        newDate = date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay);
+                        int daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
+                        if (Math.Abs(monthDay) > daysInMonth)
+                            throw new ArgumentException("Invalid day of month: " + date + " (day " + monthDay + ")");
 
-                    monthDayDates.Add(newDate);
+                        // Account for positive or negative numbers
+                        DateTime newDate;
+                        if (monthDay > 0)
+                            newDate = date.AddDays(-date.Day + monthDay);
+                        else
+                            newDate = date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay);
+
+                        monthDayDates.Add(newDate);
+                    }
                 }
+                return monthDayDates;
             }
-            return monthDayDates;
+            else
+            {
+                // Limit behavior
+                for (int i = dates.Count - 1; i >= 0; i--)
+                {
+                    DateTime date = dates[i];
+                    for (int j = 0; j < pattern.ByMonthDay.Count; j++)
+                    {
+                        int monthDay = pattern.ByMonthDay[j];
+
+                        int daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
+                        if (Math.Abs(monthDay) > daysInMonth)
+                            throw new ArgumentException("Invalid day of month: " + date + " (day " + monthDay + ")");
+
+                        // Account for positive or negative numbers
+                        DateTime newDate;
+                        if (monthDay > 0)
+                            newDate = date.AddDays(-date.Day + monthDay);
+                        else
+                            newDate = date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay);
+
+                        if (newDate.Day.Equals(date.Day))
+                            goto Next;
+                    }
+
+                Next: ;
+                    dates.RemoveAt(i);
+                }                
+            
+                return dates;
+            }
         }
 
         /**
@@ -544,89 +700,49 @@ namespace DDay.iCal
          * @param dates
          * @return
          */
-        private List<DateTime> GetDayVariants(List<DateTime> dates, IRecurrencePattern pattern)
-        {            
-            if (pattern.ByDay.Count == 0)
+        private List<DateTime> GetDayVariants(List<DateTime> dates, IRecurrencePattern pattern, bool? expand)
+        {
+            if (expand == null || pattern.ByDay.Count == 0)
                 return dates;
 
-            List<DateTime> weekDayDates = new List<DateTime>();
-            for (int i = 0; i < dates.Count; i++)
+            if (expand.HasValue && expand.Value)
             {
-                DateTime date = dates[i];
-                for (int j = 0; j < pattern.ByDay.Count; j++)
+                // Expand behavior
+                List<DateTime> weekDayDates = new List<DateTime>();
+                for (int i = 0; i < dates.Count; i++)
                 {
-                    IWeekDay weekDay = pattern.ByDay[j];
-                    
-                    // if BYYEARDAY or BYMONTHDAY is specified filter existing
-                    // list..
-                    if (pattern.ByYearDay.Count > 0 || pattern.ByMonthDay.Count > 0)
+                    DateTime date = dates[i];
+                    for (int j = 0; j < pattern.ByDay.Count; j++)
                     {
-                        //int offset = weekDay.Offset;
-                        //if (offset != int.MinValue)
-                        //{
-                        //    if (!weekDay.DayOfWeek.Equals(date.DayOfWeek))
-                        //        continue;
+                        weekDayDates.AddRange(GetAbsWeekDays(date, pattern.ByDay[j], pattern, expand));
+                    }
+                }
 
-                        //    int inc = offset > 0 ? 1 : -1;
-                        //    int abs = Math.Abs(offset);
-                        //    if (pattern.ByMonthDay.Count > 0)
-                        //    {
-                        //        // Get the start/end of the month
-                        //        DateTime mondt = date.AddDays(-date.Day + 1);
-                        //        if (offset > 0)
-                        //            mondt = mondt.AddMonths(1).AddDays(-1);
-
-                        //        // Navigate to the correct day of week
-                        //        while (mondt.DayOfWeek != weekDay.DayOfWeek)
-                        //            mondt = mondt.AddDays(inc);
-
-                        //        // Navigate to the correct offset
-                        //        mondt = mondt.AddDays((abs - 1) * inc);
-
-                        //        // If equal, it's valid!
-                        //        if (mondt.Equals(date))
-                        //            weekDayDates.Add(date);
-                        //    }
-                        //    else
-                        //    {
-                        //        DateTime yeardt = date.AddDays(-date.DayOfYear + 1);
-                        //        if (offset > 0)
-                        //        {
-                        //            // Start at end of year, or end of month if BYMONTH is specified
-                        //            if (pattern.ByMonth.Count == 0)
-                        //                yeardt = yeardt.AddYears(1).AddDays(-1);
-                        //            else 
-                        //                yeardt = yeardt.AddMonths(1).AddDays(-1);
-                        //        }
-
-                        //        // Navigate to the correct day of week
-                        //        while (yeardt.DayOfWeek != weekDay.DayOfWeek)
-                        //            yeardt = yeardt.AddDays(inc);
-
-                        //        // Navigate to the correct offset
-                        //        yeardt = yeardt.AddDays((abs - 1) * inc);
-
-                        //        // If equal, it's valid!
-                        //        if (yeardt.Equals(date))
-                        //            weekDayDates.Add(date);
-                        //    }
-                        //}
-                        //else 
-                            
+                return weekDayDates;
+            }
+            else
+            {
+                // Limit behavior
+                for (int i = dates.Count - 1; i >= 0; i--)
+                {
+                    DateTime date = dates[i];
+                    for (int j = 0; j < pattern.ByDay.Count; j++)
+                    {
+                        IWeekDay weekDay = pattern.ByDay[j];
                         if (weekDay.DayOfWeek.Equals(date.DayOfWeek))
                         {
                             // If no offset is specified, simply test the day of week!
-                            weekDayDates.Add(date);                          
+                            // FIXME: test with offset...
+                            if (date.DayOfWeek.Equals(weekDay.DayOfWeek))
+                                goto Next;
                         }
                     }
-                    else
-                    {
-                        weekDayDates.AddRange(GetAbsWeekDays(date, weekDay, pattern));
-                    }
+                    dates.RemoveAt(i);
+                Next: ;
                 }
-            }
 
-            return weekDayDates;
+                return dates;
+            }
         }
 
         /**
@@ -636,7 +752,7 @@ namespace DDay.iCal
          * @param weekDay
          * @return
          */
-        private List<DateTime> GetAbsWeekDays(DateTime date, IWeekDay weekDay, IRecurrencePattern pattern)
+        private List<DateTime> GetAbsWeekDays(DateTime date, IWeekDay weekDay, IRecurrencePattern pattern, bool? expand)
         {
             List<DateTime> days = new List<DateTime>();
 
@@ -725,23 +841,45 @@ namespace DDay.iCal
          * @param dates
          * @return
          */
-        private List<DateTime> GetHourVariants(List<DateTime> dates, IRecurrencePattern pattern)
+        private List<DateTime> GetHourVariants(List<DateTime> dates, IRecurrencePattern pattern, bool? expand)
         {
-            if (pattern.ByHour.Count == 0)
+            if (expand == null || pattern.ByHour.Count == 0)
                 return dates;
 
-            List<DateTime> hourlyDates = new List<DateTime>();
-            for (int i = 0; i < dates.Count; i++)
+            if (expand.HasValue && expand.Value)
             {
-                DateTime date = dates[i];
-                for (int j = 0; j < pattern.ByHour.Count; j++)
+                // Expand behavior
+                List<DateTime> hourlyDates = new List<DateTime>();
+                for (int i = 0; i < dates.Count; i++)
                 {
-                    int hour = pattern.ByHour[j];
-                    date = date.AddHours(-date.Hour + hour);                    
-                    hourlyDates.Add(date);
+                    DateTime date = dates[i];
+                    for (int j = 0; j < pattern.ByHour.Count; j++)
+                    {
+                        int hour = pattern.ByHour[j];
+                        date = date.AddHours(-date.Hour + hour);
+                        hourlyDates.Add(date);
+                    }
                 }
+                return hourlyDates;
             }
-            return hourlyDates;
+            else
+            {
+                // Limit behavior
+                for (int i = dates.Count - 1; i >= 0; i--)
+                {
+                    DateTime date = dates[i];
+                    for (int j = 0; j < pattern.ByHour.Count; j++)
+                    {
+                        int hour = pattern.ByHour[j];
+                        if (date.Hour == hour)
+                            goto Next;
+                    }
+                    // Remove unmatched dates
+                    dates.RemoveAt(i);
+                Next: ;
+                }
+                return dates;
+            }
         }
 
         /**
@@ -750,23 +888,45 @@ namespace DDay.iCal
          * @param dates
          * @return
          */
-        private List<DateTime> GetMinuteVariants(List<DateTime> dates, IRecurrencePattern pattern)
+        private List<DateTime> GetMinuteVariants(List<DateTime> dates, IRecurrencePattern pattern, bool? expand)
         {
-            if (pattern.ByMinute.Count == 0)
+            if (expand == null || pattern.ByMinute.Count == 0)
                 return dates;
-            
-            List<DateTime> minutelyDates = new List<DateTime>();
-            for (int i = 0; i < dates.Count; i++)
+
+            if (expand.HasValue && expand.Value)
             {
-                DateTime date = dates[i];
-                for (int j = 0; j < pattern.ByMinute.Count; j++)
+                // Expand behavior
+                List<DateTime> minutelyDates = new List<DateTime>();
+                for (int i = 0; i < dates.Count; i++)
                 {
-                    int minute = pattern.ByMinute[j];
-                    date = date.AddMinutes(-date.Minute + minute);
-                    minutelyDates.Add(date);
+                    DateTime date = dates[i];
+                    for (int j = 0; j < pattern.ByMinute.Count; j++)
+                    {
+                        int minute = pattern.ByMinute[j];
+                        date = date.AddMinutes(-date.Minute + minute);
+                        minutelyDates.Add(date);
+                    }
                 }
+                return minutelyDates;
             }
-            return minutelyDates;
+            else
+            {
+                // Limit behavior
+                for (int i = dates.Count - 1; i >= 0; i--)
+                {
+                    DateTime date = dates[i];
+                    for (int j = 0; j < pattern.ByMinute.Count; j++)
+                    {
+                        int minute = pattern.ByMinute[j];
+                        if (date.Minute == minute)
+                            goto Next;
+                    }
+                    // Remove unmatched dates
+                    dates.RemoveAt(i);
+                Next: ;
+                }
+                return dates;
+            }
         }
 
         /**
@@ -775,24 +935,83 @@ namespace DDay.iCal
          * @param dates
          * @return
          */
-        private List<DateTime> GetSecondVariants(List<DateTime> dates, IRecurrencePattern pattern)
+        private List<DateTime> GetSecondVariants(List<DateTime> dates, IRecurrencePattern pattern, bool? expand)
         {
-            if (pattern.BySecond.Count == 0)
+            if (expand == null || pattern.BySecond.Count == 0)
                 return dates;
-
-            List<DateTime> secondlyDates = new List<DateTime>();
-            for (int i = 0; i < dates.Count; i++)
+                        
+            if (expand.HasValue && expand.Value)
             {
-                DateTime date = dates[i];
-                for (int j = 0; j < pattern.BySecond.Count; j++)
+                // Expand behavior
+                List<DateTime> secondlyDates = new List<DateTime>();
+                for (int i = 0; i < dates.Count; i++)
                 {
-                    int second = pattern.BySecond[j];
-                    date = date.AddSeconds(-date.Second + second);
-                    secondlyDates.Add(date);
+                    DateTime date = dates[i];
+                    for (int j = 0; j < pattern.BySecond.Count; j++)
+                    {
+                        int second = pattern.BySecond[j];
+                        date = date.AddSeconds(-date.Second + second);
+                        secondlyDates.Add(date);
+                    }
                 }
+                return secondlyDates;
             }
-            return secondlyDates;
+            else
+            {
+                // Limit behavior
+                for (int i = dates.Count - 1; i >= 0; i--)
+                {
+                    DateTime date = dates[i];
+                    for (int j = 0; j < pattern.BySecond.Count; j++)
+                    {
+                        int second = pattern.BySecond[j];
+                        if (date.Second == second)
+                            goto Next;
+                    }
+                    // Remove unmatched dates
+                    dates.RemoveAt(i);
+                Next: ;
+                }
+                return dates;
+            }            
         }
+
+        #endregion
+
+        #region Private Methods
+
+        IPeriod CreatePeriod(DateTime dt, IDateTime referenceDate)
+        {
+            // Turn each resulting date/time into an IDateTime and associate it
+            // with the reference date.
+            IDateTime newDt = new iCalDateTime(dt, referenceDate.TZID);
+
+            // NOTE: fixes bug #2938007 - hasTime missing
+            newDt.HasTime = referenceDate.HasTime;
+
+            newDt.AssociateWith(referenceDate);
+
+            // Create a period from the new date/time.
+            return new Period(newDt);
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        //virtual public IPeriod GetNext(IDateTime referenceDate)
+        //{
+        //    DateTime? dt = GetNextDate(referenceDate, referenceDate.Value, Pattern);
+        //    if (dt != null)
+        //    {
+        //        // Create a period from the date/time.
+        //        IPeriod p = CreatePeriod(dt.Value, referenceDate);
+
+        //        if (!Periods.Contains(p))
+        //            Periods.Add(p);
+        //    }
+        //    return null;
+        //}
 
         #endregion
 
@@ -808,18 +1027,9 @@ namespace DDay.iCal
 
             Periods.Clear();
             foreach (DateTime dt in GetDates(referenceDate, periodStart, periodEnd, -1, pattern, includeReferenceDateInResults))
-            {
-                // Turn each resulting date/time into an IDateTime and associate it
-                // with the reference date.
-                IDateTime newDt = new iCalDateTime(dt, referenceDate.TZID);
-                
-                // NOTE: fixes bug #2938007 - hasTime missing
-                newDt.HasTime = referenceDate.HasTime;
-
-                newDt.AssociateWith(referenceDate);
-
-                // Create a period from the new date/time.
-                IPeriod p = new Period(newDt);
+            {                
+                // Create a period from the date/time.
+                IPeriod p = CreatePeriod(dt, referenceDate);
                 
                 if (!Periods.Contains(p))
                     Periods.Add(p);

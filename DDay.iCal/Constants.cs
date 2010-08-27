@@ -98,7 +98,7 @@ namespace DDay.iCal
     /// MONTHLY or YEARLY recurrence frequency. For example, within
     /// a MONTHLY frequency, consider the following:
     /// 
-    /// Recur r = new Recur();
+    /// RecurrencePattern r = new RecurrencePattern();
     /// r.Frequency = FrequencyType.Monthly;
     /// r.ByDay.Add(new WeekDay(DayOfWeek.Monday, FrequencyOccurrence.First));
     /// 
