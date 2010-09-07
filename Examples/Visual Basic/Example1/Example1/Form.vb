@@ -1,4 +1,7 @@
 Imports DDay.iCal
+Imports DDay.iCal.Serialization
+Imports DDay.iCal.Serialization.iCalendar
+
 Public Class Form
 
     'create a datatable to hold the dates that the user selects
@@ -82,21 +85,21 @@ Public Class Form
             For Each Item As DataRow In dtSelectedDates.Rows
 
                 'Create an event in thr iCalendar
-                Dim MyEvent As DDay.iCal.Components.Event = MyCal.Create(Of DDay.iCal.Components.Event)()
+                Dim MyEvent As IEvent = MyCal.Create(Of DDay.iCal.Event)()
 
                 'Populate the properties
                 With MyEvent
-                    .Start = New DDay.iCal.DataTypes.iCalDateTime(DirectCast(Item("Start"), Date))
-                    .End = New DDay.iCal.DataTypes.iCalDateTime(DirectCast(Item("End"), Date))
-                    .Summary = New DDay.iCal.DataTypes.Text(DirectCast(Item("Summary"), String))
-                    .Description = New DDay.iCal.DataTypes.Text(DirectCast(Item("Description"), String))
+                    .Start = New iCalDateTime(DirectCast(Item("Start"), Date))
+                    .End = New iCalDateTime(DirectCast(Item("End"), Date))
+                    .Summary = DirectCast(Item("Summary"), String)
+                    .Description = DirectCast(Item("Description"), String)
                 End With
 
             Next
 
 
             'Serialize the calendar, and output it to the user-specified path
-            Dim MySerializer As New DDay.iCal.Serialization.iCalendarSerializer(MyCal)
+            Dim MySerializer As New iCalendarSerializer(MyCal)
             MySerializer.Serialize(txtSavePath.Text)
 
             MsgBox("ICS Created at" & SaveLocation.FullName & "!", MsgBoxStyle.OkOnly, "Success")
