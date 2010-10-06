@@ -548,6 +548,9 @@
     <None Include="Calendars\Recurrence\MinutelyCount4.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Calendars\Serialization\Trigger1.ics">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="Copyright.txt" />
     <None Include="Data\LoremIpsum.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

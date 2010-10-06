@@ -51,7 +51,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;DATACONTRACT</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\DDay.iCal.XML</DocumentationFile>
@@ -75,6 +75,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Compatibility\BrowsableAttribute.cs" />
+    <Compile Include="Compatibility\DebuggerDisplayAttribute.cs" />
     <Compile Include="Components\Alarm.cs" />
     <Compile Include="Components\iCalTimeZone.cs" />
     <Compile Include="Components\iCalTimeZoneInfo.cs" />

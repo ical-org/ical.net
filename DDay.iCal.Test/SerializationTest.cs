@@ -804,6 +804,7 @@ END:VCALENDAR
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\RecurrenceDates1.ics")[0];
             Assert.AreEqual(1, iCal.Events.Count);
             Assert.AreEqual(3, iCal.Events[0].RecurrenceDates.Count);
+            
             Assert.AreEqual((iCalDateTime)new DateTime(1997, 7, 14, 12, 30, 0, DateTimeKind.Utc), iCal.Events[0].RecurrenceDates[0][0].StartTime);
             Assert.AreEqual((iCalDateTime)new DateTime(1996, 4, 3, 2, 0, 0, DateTimeKind.Utc), iCal.Events[0].RecurrenceDates[1][0].StartTime);
             Assert.AreEqual((iCalDateTime)new DateTime(1996, 4, 3, 4, 0, 0, DateTimeKind.Utc), iCal.Events[0].RecurrenceDates[1][0].EndTime);
@@ -1073,6 +1074,14 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             IEvent evt = iCal.Events[0];
 
             Assert.AreEqual(TransparencyType.Transparent, evt.Transparency);
+        }
+
+        [Test, Category("Serialization")]
+        public void Trigger1()
+        {
+            // FIXME: Attendees on triggers aren't serializing properly.
+            // The Attendee.Value property is null for some reason.
+            SerializeTest("Trigger1.ics", typeof(iCalendarSerializer));
         }
 
         [Test, Category("Serialization")]

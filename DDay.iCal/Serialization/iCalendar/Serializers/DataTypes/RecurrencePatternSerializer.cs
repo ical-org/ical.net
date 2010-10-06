@@ -254,6 +254,13 @@ namespace DDay.iCal.Serialization.iCalendar
                         }
                     }
                 }
+                
+                //
+                // This matches strings such as:
+                //
+                // "Every 6 minutes"
+                // "Every 3 days"
+                //
                 else if ((match = Regex.Match(value, @"every\s+(?<Interval>other|\d+)?\w{0,2}\s*(?<Freq>second|minute|hour|day|week|month|year)s?,?\s*(?<More>.+)", RegexOptions.IgnoreCase)).Success)
                 {
                     if (match.Groups["Interval"].Success)

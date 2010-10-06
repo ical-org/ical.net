@@ -16,7 +16,7 @@ namespace DDay.iCal.Serialization.iCalendar
         public override string SerializeToString(object obj)
         {
             IAttendee a = obj as IAttendee;
-            if (a != null)
+            if (a != null && a.Value != null)
                 return Encode(a, a.Value.OriginalString);
             return null;
         }
