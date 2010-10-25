@@ -4,6 +4,9 @@ using System.Text;
 
 namespace DDay.iCal.Serialization.iCalendar
 {
+    /// <summary>
+    /// FIXME: implement this.
+    /// </summary>
     public class ComponentPropertyConsolidator :
         ISerializationProcessor<ICalendarComponent>
     {

@@ -94,7 +94,7 @@ namespace DDay.iCal
 
         public void Add(T item)
         {
-            m_Attached.Children.Add(item);            
+            m_Attached.Children.Add(item);
         }
 
         public void Clear()

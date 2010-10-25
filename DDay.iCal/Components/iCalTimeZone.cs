@@ -43,15 +43,10 @@ namespace DDay.iCal
             }
             else
             {
-                recurrence.ByDay.Add(new WeekDay(transition.DayOfWeek));
-                int daysInMonth = c.GetDaysInMonth(year, transition.Month);
-                int offset = (transition.Week * 7) - 7;
-                if (offset + 7 > daysInMonth)
-                    offset = daysInMonth - 7;
-
-                // Add the possible days of the month this could occur.
-                for (int i = 1; i <= 7; i++)
-                    recurrence.ByMonthDay.Add(i + offset + (int)transition.DayOfWeek);
+                if( transition.Week != 5 )
+                    recurrence.ByDay.Add(new WeekDay(transition.DayOfWeek, transition.Week ));
+                else
+                    recurrence.ByDay.Add( new WeekDay( transition.DayOfWeek, -1 ) );
             }
 
             tzi.RecurrenceRules.Add(recurrence);
@@ -109,7 +104,7 @@ namespace DDay.iCal
 
         TimeZoneEvaluator m_Evaluator;
         IFilteredCalendarObjectList<ITimeZoneInfo> m_TimeZoneInfos;
-        
+
         #endregion
 
         #region Constructors
@@ -128,7 +123,7 @@ namespace DDay.iCal
             ChildAdded += new EventHandler<ObjectEventArgs<ICalendarObject>>(iCalTimeZone_ChildAdded);
             ChildRemoved += new EventHandler<ObjectEventArgs<ICalendarObject>>(iCalTimeZone_ChildRemoved);
             SetService(m_Evaluator);
-        }        
+        }
 
         #endregion
 
@@ -182,7 +177,7 @@ namespace DDay.iCal
             get { return Properties.Get<Uri>("TZURL"); }
             set { Properties.Set("TZURL", value); }
         }
-        
+
         virtual public Uri TZUrl
         {
             get { return Url; }
