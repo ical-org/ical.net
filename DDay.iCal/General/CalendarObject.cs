@@ -21,7 +21,7 @@ namespace DDay.iCal
         #region Private Fields
 
         private ICalendarObject _Parent = null;
-        private IList<ICalendarObject> _Children;
+        private List<ICalendarObject> _Children;
         private ServiceProvider _ServiceProvider;
         private string _Name;
         
@@ -148,12 +148,12 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// A collection of <see cref="iCalObject"/>s that are children 
+        /// A read-only collection of <see cref="iCalObject"/>s that are children 
         /// of the current object.
         /// </summary>
         virtual public IList<ICalendarObject> Children
         {
-            get { return _Children; }
+            get { return _Children.AsReadOnly(); }
         }
 
         /// <summary>
@@ -222,7 +222,7 @@ namespace DDay.iCal
         virtual public void AddChild(ICalendarObject child)
         {
             child.Parent = this;
-            Children.Add(child);
+            _Children.Add(child);
             OnChildAdded(child);
         }
 
@@ -233,12 +233,44 @@ namespace DDay.iCal
         /// <param name="child"></param>
         virtual public void RemoveChild(ICalendarObject child)
         {
-            if (Children.Contains(child))
+            if (_Children.Contains(child))
             {
-                Children.Remove(child);
+                _Children.Remove(child);
                 child.Parent = null;
                 OnChildRemoved(child);
             }
+        }
+
+        /// <summary>
+        /// Inserts a child at the given index in the children list.
+        /// </summary>
+        virtual public void InsertChild(int index, ICalendarObject child)
+        {
+            _Children.Insert(index, child);
+            OnChildAdded(child);
+        }
+
+        /// <summary>
+        /// Removes a child at the given index in the children list.
+        /// </summary>
+        /// <param name="index"></param>
+        virtual public void RemoveChildAt(int index)
+        {
+            if (index >= 0 && index < _Children.Count)
+            {
+                ICalendarObject child = _Children[index];
+                _Children.RemoveAt(index);
+                OnChildRemoved(child);
+            }
+        }
+
+        /// <summary>
+        /// Clears all children from the object.
+        /// </summary>
+        virtual public void ClearChildren()
+        {
+            while (_Children.Count > 0)
+                RemoveChildAt(0);
         }
 
         #endregion       

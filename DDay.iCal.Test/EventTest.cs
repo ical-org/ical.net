@@ -57,7 +57,7 @@ namespace DDay.iCal.Test
             Assert.AreEqual(1, iCal.Children.Count);
             Assert.AreSame(evt, iCal.Children[0]);
 
-            iCal.Children.RemoveAt(0);
+            iCal.RemoveChild(evt);
             Assert.AreEqual(0, iCal.Children.Count);
             Assert.AreEqual(0, iCal.Events.Count);
         }

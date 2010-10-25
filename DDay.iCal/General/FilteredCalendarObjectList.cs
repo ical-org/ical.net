@@ -94,13 +94,13 @@ namespace DDay.iCal
 
         public void Add(T item)
         {
-            m_Attached.Children.Add(item);
+            m_Attached.AddChild(item);
         }
 
         public void Clear()
         {
             foreach (T item in m_Items)
-                m_Attached.Children.Remove(item);
+                m_Attached.RemoveChild(item);
         }
 
         public bool Contains(T item)
@@ -125,7 +125,12 @@ namespace DDay.iCal
 
         public bool Remove(T item)
         {
-            return m_Attached.Children.Remove(item);
+            if (Contains(item))
+            {
+                m_Attached.RemoveChild(item);
+                return true;
+            }
+            return false;
         }
 
         #endregion

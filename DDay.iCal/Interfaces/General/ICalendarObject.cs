@@ -58,5 +58,21 @@ namespace DDay.iCal
         /// Removes a child object from the current object.
         /// </summary>
         void RemoveChild(ICalendarObject child);
+
+        /// <summary>
+        /// Inserts a child at the given index in the children list.
+        /// </summary>
+        void InsertChild(int index, ICalendarObject child);
+
+        /// <summary>
+        /// Removes a child at the given index in the children list.
+        /// </summary>
+        /// <param name="index"></param>
+        void RemoveChildAt(int index);
+
+        /// <summary>
+        /// Clears all children from the object.
+        /// </summary>
+        void ClearChildren();
     }
 }

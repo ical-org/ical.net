@@ -63,7 +63,7 @@ namespace DDay.iCal
                 throw new ArgumentOutOfRangeException("index");
 
             if (index == 0)
-                m_Component.Children.Insert(0, value);
+                m_Component.InsertChild(0, value);
             else
             {                
                 int curr = 0;
@@ -74,7 +74,7 @@ namespace DDay.iCal
                         curr++;
                         if (curr == index)
                         {
-                            m_Component.Children.Insert(i + 1, value);
+                            m_Component.InsertChild(i + 1, value);
                             return;
                         }
                     }
@@ -96,7 +96,7 @@ namespace DDay.iCal
                 {
                     if (curr++ == index)
                     {
-                        m_Component.Children.RemoveAt(i);
+                        m_Component.RemoveChildAt(i);
                         return;
                     }
                 }
@@ -141,16 +141,12 @@ namespace DDay.iCal
             if (IsReadOnly)
                 throw new NotSupportedException();
 
-            m_Component.Children.Add(value);
+            m_Component.AddChild(value);
         }
 
         public void Clear()
         {
-            for (int i = m_Component.Children.Count - 1; i >= 0; i--)
-            {
-                if (m_Component.Children[i] is T && string.Equals(m_Component.Children[i].Name, m_ComponentName))
-                    m_Component.Children.RemoveAt(i);
-            }
+            m_Component.ClearChildren();
         }
 
         public bool Contains(T value)

@@ -601,6 +601,13 @@ namespace DDay.iCal
             return tz;
         }
 
+        public ITimeZone AddTimeZone(System.TimeZoneInfo tzi, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
+        {
+            ITimeZone tz = iCalTimeZone.FromSystemTimeZone(tzi, earliestDateTimeToSupport, includeHistoricalData);
+            AddChild(tz);
+            return tz;
+        }
+
         /// <summary>
         /// Adds the local system time zone to the iCalendar.  
         /// This time zone may then be used in date/time
@@ -610,6 +617,13 @@ namespace DDay.iCal
         public ITimeZone AddLocalTimeZone()
         {
             ITimeZone tz = iCalTimeZone.FromLocalTimeZone();
+            AddChild(tz);
+            return tz;
+        }
+
+        public ITimeZone AddLocalTimeZone(DateTime earliestDateTimeToSupport, bool includeHistoricalData)
+        {
+            ITimeZone tz = iCalTimeZone.FromLocalTimeZone(earliestDateTimeToSupport, includeHistoricalData);
             AddChild(tz);
             return tz;
         }

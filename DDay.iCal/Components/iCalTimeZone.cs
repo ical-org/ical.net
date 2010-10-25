@@ -26,6 +26,10 @@ namespace DDay.iCal
         {
             return FromSystemTimeZone(System.TimeZoneInfo.Local);
         }
+        static public iCalTimeZone FromLocalTimeZone(DateTime earlistDateTimeToSupport, bool includeHistoricalData)
+        {
+            return FromSystemTimeZone(System.TimeZoneInfo.Local, earlistDateTimeToSupport, includeHistoricalData);
+        }
 
         static private void PopulateiCalTimeZoneInfo(ITimeZoneInfo tzi, System.TimeZoneInfo.TransitionTime transition, int year)
         {
@@ -54,20 +58,32 @@ namespace DDay.iCal
 
         public static iCalTimeZone FromSystemTimeZone(System.TimeZoneInfo tzinfo)
         {
+            // Support date/times for January 1st of the previous year by default.
+            return FromSystemTimeZone(tzinfo, new DateTime(DateTime.Now.Year, 1, 1).AddYears(-1), false);
+        }
+
+        public static iCalTimeZone FromSystemTimeZone(System.TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
+        {
             var adjustmentRules = tzinfo.GetAdjustmentRules();
             var utcOffset = tzinfo.BaseUtcOffset;
             var dday_tz = new iCalTimeZone();
+            IDateTime earliest = new iCalDateTime(earlistDateTimeToSupport);
 
             foreach (var adjustmentRule in adjustmentRules)
-            {                
+            {
+                // Only include historical data if asked to do so.  Otherwise,
+                // use only the most recent adjustment rule available.
+                if (!includeHistoricalData && adjustmentRule.DateEnd < earlistDateTimeToSupport)
+                    continue;
+
                 var delta = adjustmentRule.DaylightDelta;
                 dday_tz.TZID = tzinfo.Id;
 
                 var dday_tzinfo_standard = new DDay.iCal.iCalTimeZoneInfo();
                 dday_tzinfo_standard.Name = "STANDARD";
                 dday_tzinfo_standard.Start = new iCalDateTime(adjustmentRule.DateStart);                
-                if (dday_tzinfo_standard.Start.Year < 1800)
-                    dday_tzinfo_standard.Start = dday_tzinfo_standard.Start.AddYears(1800 - dday_tzinfo_standard.Start.Year);
+                if (dday_tzinfo_standard.Start.LessThan(earliest))
+                    dday_tzinfo_standard.Start = dday_tzinfo_standard.Start.AddYears(earliest.Year - dday_tzinfo_standard.Start.Year);
                 dday_tzinfo_standard.OffsetFrom = new UTCOffset(utcOffset + delta);
                 dday_tzinfo_standard.OffsetTo = new UTCOffset(utcOffset);
                 PopulateiCalTimeZoneInfo(dday_tzinfo_standard, adjustmentRule.DaylightTransitionEnd, adjustmentRule.DateStart.Year);
@@ -75,17 +91,11 @@ namespace DDay.iCal
                 // Add the "standard" time rule to the time zone
                 dday_tz.AddChild(dday_tzinfo_standard);
 
-                // FIXME: 1905 is the first time DST was used.  Anything prior
-                // is irrelevant.  However, this is simply an arbitrary value
-                // that doesn't really need to be calculated.
-                // Perhaps time zones need a simplified evaluation system that
-                // is much faster than a standard RRULE evaluation?
-                // For example, only allow FREQ=YEARLY or something like that?
                 var dday_tzinfo_daylight = new DDay.iCal.iCalTimeZoneInfo();
                 dday_tzinfo_daylight.Name = "DAYLIGHT";
                 dday_tzinfo_daylight.Start = new iCalDateTime(adjustmentRule.DateStart);
-                if (dday_tzinfo_daylight.Start.Year < 1905)
-                    dday_tzinfo_daylight.Start = dday_tzinfo_daylight.Start.AddYears(1905 - dday_tzinfo_daylight.Start.Year);
+                if (dday_tzinfo_daylight.Start.LessThan(earliest))
+                    dday_tzinfo_daylight.Start = dday_tzinfo_daylight.Start.AddYears(earliest.Year - dday_tzinfo_daylight.Start.Year);
                 dday_tzinfo_daylight.OffsetFrom = new UTCOffset(utcOffset);
                 dday_tzinfo_daylight.OffsetTo = new UTCOffset(utcOffset + delta);
                 PopulateiCalTimeZoneInfo(dday_tzinfo_daylight, adjustmentRule.DaylightTransitionStart, adjustmentRule.DateStart.Year);

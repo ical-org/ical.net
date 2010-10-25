@@ -276,7 +276,7 @@ namespace DDay.iCal.Test
             Assert.IsNotNull(tzi);
 
             iCalendar iCal = new iCalendar();
-            iCalTimeZone tz = iCalTimeZone.FromSystemTimeZone(tzi);
+            iCalTimeZone tz = iCalTimeZone.FromSystemTimeZone(tzi, new DateTime(2000, 1, 1), false);
             Assert.IsNotNull(tz);
             iCal.AddChild(tz);
 
@@ -313,7 +313,7 @@ namespace DDay.iCal.Test
             Assert.IsNotNull(tzi);
 
             iCalendar iCal = new iCalendar();
-            ITimeZone tz = iCal.AddTimeZone(tzi);            
+            ITimeZone tz = iCal.AddTimeZone(tzi, new DateTime(2000, 1, 1), false);
             Assert.IsNotNull(tz);
 
             iCalendarSerializer serializer = new iCalendarSerializer();
