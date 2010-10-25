@@ -83,6 +83,17 @@ namespace DDay.iCal
             return serializer.SerializeToString(this);
         }
 
+        public override bool Equals(object obj)
+        {
+            IRequestStatus rs = obj as IRequestStatus;
+            if (rs != null)
+            {
+                return object.Equals(StatusCode, rs.StatusCode);
+            }
+
+            return base.Equals(obj);
+        }
+
         #endregion
     }
 }

@@ -1079,8 +1079,6 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         [Test, Category("Serialization")]
         public void Trigger1()
         {
-            // FIXME: Attendees on triggers aren't serializing properly.
-            // The Attendee.Value property is null for some reason.
             SerializeTest("Trigger1.ics", typeof(iCalendarSerializer));            
         }
 
