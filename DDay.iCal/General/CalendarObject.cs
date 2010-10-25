@@ -107,7 +107,7 @@ namespace DDay.iCal
             ICalendarObject obj = c as ICalendarObject;
             if (obj != null)
             {
-                // Copy the name
+                // Copy the name and basic information
                 this.Name = obj.Name;
                 this.Parent = obj.Parent;
                 this.Line = obj.Line;

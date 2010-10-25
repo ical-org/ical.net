@@ -133,6 +133,17 @@ namespace DDay.iCal
             return base.Equals(obj);
         }
 
+        public override void CopyFrom(ICopyable obj)
+        {
+            base.CopyFrom(obj);
+
+            IAttendee a = obj as IAttendee;
+            if (a != null)
+            {
+                Value = a.Value;
+            }
+        }
+
         #endregion
     }
 }

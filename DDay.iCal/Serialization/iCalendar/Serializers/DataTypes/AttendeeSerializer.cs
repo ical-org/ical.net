@@ -25,19 +25,24 @@ namespace DDay.iCal.Serialization.iCalendar
         {
             string value = tr.ReadToEnd();
 
+            IAttendee a = null; 
             try
             {
-                IAttendee a = CreateAndAssociate() as IAttendee;
+                a = CreateAndAssociate() as IAttendee;
                 if (a != null)
                 {
-                    // Decode and unescape the value as needed
-                    a.Value = new Uri(Unescape(Decode(a, value)));
-                    return a;
+                    string uriString = Unescape(Decode(a, value));
+
+                    // Prepend "mailto:" if necessary
+                    if (!uriString.StartsWith("mailto:", StringComparison.InvariantCultureIgnoreCase))
+                        uriString = "mailto:" + uriString;
+
+                    a.Value = new Uri(uriString);
                 }
             }
             catch { }
 
-            return null;
+            return a;
         }
     }
 }

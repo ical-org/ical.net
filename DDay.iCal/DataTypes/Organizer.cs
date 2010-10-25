@@ -69,6 +69,14 @@ namespace DDay.iCal
         #endregion
 
         #region Overrides
+        
+        public override bool Equals(object obj)
+        {
+            IOrganizer o = obj as IOrganizer;
+            if (o != null)
+                return object.Equals(Value, o.Value);
+            return base.Equals(obj);
+        }
 
         public override void CopyFrom(ICopyable obj)
         {

@@ -19,7 +19,7 @@ namespace DDay.iCal.Serialization.iCalendar
             try
             {
                 IOrganizer o = obj as IOrganizer;
-                if (o != null)
+                if (o != null && o.Value != null)
                     return Encode(o, Escape(o.Value.OriginalString));
                 return null;
             }
@@ -33,18 +33,24 @@ namespace DDay.iCal.Serialization.iCalendar
         {
             string value = tr.ReadToEnd();
 
+            IOrganizer o = null;
             try
             {
-                IOrganizer o = CreateAndAssociate() as IOrganizer;
+                o = CreateAndAssociate() as IOrganizer;
                 if (o != null)
                 {
-                    o.Value = new Uri(Unescape(Decode(o, value)));
-                    return o;
+                    string uriString = Unescape(Decode(o, value));
+
+                    // Prepend "mailto:" if necessary
+                    if (!uriString.StartsWith("mailto:", StringComparison.InvariantCultureIgnoreCase))
+                        uriString = "mailto:" + uriString;
+                    
+                    o.Value = new Uri(uriString);
                 }
             }
             catch { }
 
-            return null;
+            return o;
         }
     }
 }
