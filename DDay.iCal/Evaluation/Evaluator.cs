@@ -65,6 +65,10 @@ namespace DDay.iCal
 
         protected void IncrementDate(ref DateTime dt, IRecurrencePattern pattern, int interval)
         {
+            // FIXME: use a more specific exception.
+            if (interval <= 0)
+                throw new Exception("Cannot evaluate with an interval of zero (or less).  Please use an interval greater than zero.");
+
             DateTime old = dt;
             switch (pattern.Frequency)
             {
@@ -75,6 +79,7 @@ namespace DDay.iCal
                 case FrequencyType.Weekly: dt = DateUtil.AddWeeks(Calendar, old, interval, pattern.FirstDayOfWeek); break;
                 case FrequencyType.Monthly: dt = old.AddDays(-old.Day + 1).AddMonths(interval); break;
                 case FrequencyType.Yearly: dt = old.AddDays(-old.DayOfYear + 1).AddYears(interval); break;
+                // FIXME: use a more specific exception.
                 default: throw new Exception("FrequencyType.NONE cannot be evaluated. Please specify a FrequencyType before evaluating the recurrence.");
             }
         }
