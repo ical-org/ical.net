@@ -88,6 +88,7 @@
   <ItemGroup>
     <Compile Include="AlarmTest.cs" />
     <Compile Include="ComponentTest.cs" />
+    <Compile Include="FreeBusyTest.cs" />
     <Compile Include="EventTest.cs" />
     <Compile Include="CopyTest.cs" />
     <Compile Include="Custom\Custom1.cs" />

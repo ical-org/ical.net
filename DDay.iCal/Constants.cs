@@ -90,16 +90,12 @@ namespace DDay.iCal
         Cancelled   // Indicates journal is removed.
     };
 
-    #endregion
-
-    #region Type Constants
-
-    public enum FreeBusyType
+    public enum FreeBusyStatus
     {
-        Busy = 0,
-        Free = 1,
-        BusyUnavailable,
-        BusyTentative
+        Free = 0,
+        BusyTentative = 1,
+        BusyUnavailable = 2,
+        Busy = 3
     }
 
     #endregion

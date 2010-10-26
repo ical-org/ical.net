@@ -14,5 +14,6 @@ namespace DDay.iCal
         bool MatchesDateOnly { get; set; }
 
         bool Contains(IDateTime dt);
+        bool CollidesWith(IPeriod period);
     }
 }

@@ -23,18 +23,18 @@ namespace DDay.iCal.Serialization.iCalendar
             IFreeBusyEntry entry = obj as IFreeBusyEntry;
             if (entry != null)
             {
-                switch (entry.Type)
+                switch (entry.Status)
                 {
-                    case FreeBusyType.Busy:
+                    case FreeBusyStatus.Busy:
                         entry.Parameters.Remove("FMTYPE");
                         break;
-                    case FreeBusyType.BusyTentative:
+                    case FreeBusyStatus.BusyTentative:
                         entry.Parameters.Set("FMTYPE", "BUSY-TENTATIVE");
                         break;
-                    case FreeBusyType.BusyUnavailable:
+                    case FreeBusyStatus.BusyUnavailable:
                         entry.Parameters.Set("FMTYPE", "BUSY-UNAVAILABLE");
                         break;
-                    case FreeBusyType.Free:
+                    case FreeBusyStatus.Free:
                         entry.Parameters.Set("FMTYPE", "FREE");
                         break;
                 }
@@ -55,10 +55,10 @@ namespace DDay.iCal.Serialization.iCalendar
                     {
                         switch (value.ToUpperInvariant())
                         {
-                            case "FREE": entry.Type = FreeBusyType.Free; break;
-                            case "BUSY": entry.Type = FreeBusyType.Busy; break;
-                            case "BUSY-UNAVAILABLE": entry.Type = FreeBusyType.BusyUnavailable; break;
-                            case "BUSY-TENTATIVE": entry.Type = FreeBusyType.BusyTentative; break;
+                            case "FREE": entry.Status = FreeBusyStatus.Free; break;
+                            case "BUSY": entry.Status = FreeBusyStatus.Busy; break;
+                            case "BUSY-UNAVAILABLE": entry.Status = FreeBusyStatus.BusyUnavailable; break;
+                            case "BUSY-TENTATIVE": entry.Status = FreeBusyStatus.BusyTentative; break;
                             default: break;
                         }
                     }

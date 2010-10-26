@@ -175,12 +175,27 @@ namespace DDay.iCal
 
         virtual public bool Contains(IDateTime dt)
         {
+            // Start time is inclusive
             if (dt != null &&
                 StartTime != null &&
                 StartTime.LessThanOrEqual(dt))
             {
-                if (EndTime == null || EndTime.GreaterThanOrEqual(dt))
+                // End time is exclusive
+                if (EndTime == null || EndTime.GreaterThan(dt))
                     return true;
+            }
+            return false;
+        }
+
+        virtual public bool CollidesWith(IPeriod period)
+        {
+            if (period != null &&
+                (
+                    (period.StartTime != null && Contains(period.StartTime)) ||
+                    (period.EndTime != null && Contains(period.EndTime))
+                ))
+            {
+                return true;
             }
             return false;
         }

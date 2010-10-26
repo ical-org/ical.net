@@ -13,5 +13,8 @@ namespace DDay.iCal
         IDateTime DTEnd { get; set; }
         IDateTime Start { get; set; }
         IDateTime End { get; set; }
+
+        FreeBusyStatus GetFreeBusyStatus(IPeriod period);
+        FreeBusyStatus GetFreeBusyStatus(IDateTime dt);
     }
 }

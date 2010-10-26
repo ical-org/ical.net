@@ -44,7 +44,7 @@ namespace DDay.iCal
                     {
                         IEvent evt = uc as IEvent;
                         bool accepted = false;
-                        FreeBusyType type = FreeBusyType.Busy;
+                        FreeBusyStatus type = FreeBusyStatus.Busy;
                         
                         // We only accept events, and only "opaque" events.
                         if (evt != null && evt.Transparency != TransparencyType.Transparent)
@@ -66,11 +66,11 @@ namespace DDay.iCal
                                         {
                                             case ParticipationStatus.Tentative:
                                                 accepted = true;
-                                                type = FreeBusyType.BusyTentative;
+                                                type = FreeBusyStatus.BusyTentative;
                                                 break;
                                             case ParticipationStatus.Accepted:
                                                 accepted = true;
-                                                type = FreeBusyType.Busy;
+                                                type = FreeBusyStatus.Busy;
                                                 break;
                                             default:
                                                 break;
@@ -151,6 +151,34 @@ namespace DDay.iCal
         {
             get { return Properties.Get<IDateTime>("DTEND"); }
             set { Properties.Set("DTEND", value); }
+        }
+
+        virtual public FreeBusyStatus GetFreeBusyStatus(IPeriod period)
+        {
+            FreeBusyStatus status = FreeBusyStatus.Free;
+            if (period != null)
+            {                
+                foreach (IFreeBusyEntry fbe in Entries)
+                {
+                    if (fbe.CollidesWith(period) && status < fbe.Status)
+                        status = fbe.Status;
+                }
+            }
+            return status;
+        }
+
+        virtual public FreeBusyStatus GetFreeBusyStatus(IDateTime dt)
+        {
+            FreeBusyStatus status = FreeBusyStatus.Free;
+            if (dt != null)
+            {
+                foreach (IFreeBusyEntry fbe in Entries)
+                {
+                    if (fbe.Contains(dt) && status < fbe.Status)
+                        status = fbe.Status;
+                }
+            }
+            return status;
         }
 
         #endregion

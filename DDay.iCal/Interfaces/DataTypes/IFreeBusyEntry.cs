@@ -8,6 +8,6 @@ namespace DDay.iCal
     public interface IFreeBusyEntry :
         IPeriod
     {
-        FreeBusyType Type { get; set; }
+        FreeBusyStatus Status { get; set; }
     }
 }

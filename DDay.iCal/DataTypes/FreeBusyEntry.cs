@@ -11,17 +11,23 @@ namespace DDay.iCal
     {
         #region Private Fields
 
-        FreeBusyType _Type;
+        FreeBusyStatus _Status;
 
         #endregion
 
         #region Constructors
 
-        public FreeBusyEntry() : base() {}
-        public FreeBusyEntry(IPeriod period, FreeBusyType type) : base()
+        public FreeBusyEntry() : base() { Initialize(); }
+        public FreeBusyEntry(IPeriod period, FreeBusyStatus status) : base()
         {
+            Initialize();
             CopyFrom(period);
-            Type = type;
+            Status = status;
+        }
+
+        void Initialize()
+        {
+            Status = FreeBusyStatus.Busy;
         }
 
         #endregion
@@ -35,7 +41,7 @@ namespace DDay.iCal
             IFreeBusyEntry fb = obj as IFreeBusyEntry;
             if (fb != null)
             {
-                Type = fb.Type;
+                Status = fb.Status;
             }
         }
 
@@ -43,10 +49,10 @@ namespace DDay.iCal
 
         #region IFreeBusyEntry Members
 
-        virtual public FreeBusyType Type
+        virtual public FreeBusyStatus Status
         {
-            get { return _Type; }
-            set { _Type = value; }
+            get { return _Status; }
+            set { _Status = value; }
         }
 
         #endregion
