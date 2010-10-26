@@ -850,5 +850,24 @@ namespace DDay.iCal
         }
 
         #endregion
+
+        #region IGetFreeBusy Members
+
+        virtual public IFreeBusy GetFreeBusy(IFreeBusy freeBusyRequest)
+        {
+            return DDay.iCal.FreeBusy.Create(this, freeBusyRequest);            
+        }
+
+        virtual public IFreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive)
+        {
+            return DDay.iCal.FreeBusy.Create(this, DDay.iCal.FreeBusy.CreateRequest(fromInclusive, toExclusive, null, null));
+        }
+
+        virtual public IFreeBusy GetFreeBusy(IOrganizer organizer, IAttendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive)
+        {
+            return DDay.iCal.FreeBusy.Create(this, DDay.iCal.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
+        }
+
+        #endregion
     }
 }

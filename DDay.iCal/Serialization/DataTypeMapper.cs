@@ -41,6 +41,7 @@ namespace DDay.iCal.Serialization
             AddPropertyMapping("DURATION", typeof(TimeSpan), false);
             AddPropertyMapping("EXDATE", typeof(IList<IPeriodList>), false);
             AddPropertyMapping("EXRULE", typeof(IList<IRecurrencePattern>), false);
+            AddPropertyMapping("FREEBUSY", typeof(IList<IFreeBusyEntry>), true);
             AddPropertyMapping("GEO", typeof(IGeographicLocation), false);
             AddPropertyMapping("LAST-MODIFIED", typeof(IDateTime), false);
             AddPropertyMapping("ORGANIZER", typeof(IOrganizer), false);

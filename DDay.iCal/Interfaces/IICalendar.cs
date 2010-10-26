@@ -7,6 +7,7 @@ namespace DDay.iCal
     public interface IICalendar :
         ICalendarComponent,
         IGetOccurrencesTyped,
+        IGetFreeBusy,
         IMergeable
     {
         /// <summary>

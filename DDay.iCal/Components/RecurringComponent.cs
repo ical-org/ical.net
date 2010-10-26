@@ -53,6 +53,42 @@ namespace DDay.iCal
 
         #region Public Properties
 
+        virtual public IList<IAttachment> Attachments
+        {
+            get { return Properties.GetList<IAttachment>("ATTACH"); }
+            set { Properties.SetList("ATTACH", value); }
+        }
+
+        virtual public IList<string> Categories
+        {
+            get { return Properties.GetList<string>("CATEGORIES"); }
+            set { Properties.SetList("CATEGORIES", value); }
+        }
+
+        virtual public string Class
+        {
+            get { return Properties.Get<string>("CLASS"); }
+            set { Properties.Set("CLASS", value); }
+        }
+
+        virtual public IList<string> Contacts
+        {
+            get { return Properties.GetList<string>("CONTACT"); }
+            set { Properties.SetList("CONTACT", value); }
+        }
+
+        virtual public IDateTime Created
+        {
+            get { return Properties.Get<IDateTime>("CREATED"); }
+            set { Properties.Set("CREATED", value); }
+        }
+
+        virtual public string Description
+        {
+            get { return Properties.Get<string>("DESCRIPTION"); }
+            set { Properties.Set("DESCRIPTION", value); }
+        }
+
         /// <summary>
         /// The start date/time of the component.
         /// </summary>
@@ -74,6 +110,18 @@ namespace DDay.iCal
             set { Properties.SetList("EXRULE", value); }
         }
 
+        virtual public IDateTime LastModified
+        {
+            get { return Properties.Get<IDateTime>("LAST-MODIFIED"); }
+            set { Properties.Set("LAST-MODIFIED", value); }
+        }
+
+        virtual public int Priority
+        {
+            get { return Properties.Get<int>("PRIORITY"); }
+            set { Properties.Set("PRIORITY", value); }
+        }
+
         virtual public IList<IPeriodList> RecurrenceDates
         {
             get { return Properties.GetList<IPeriodList>("RDATE"); }
@@ -92,6 +140,18 @@ namespace DDay.iCal
             set { Properties.Set("RECURRENCE-ID", value); }
         }
 
+        virtual public IList<string> RelatedComponents
+        {
+            get { return Properties.GetList<string>("RELATED-TO"); }
+            set { Properties.SetList("RELATED-TO", value); }
+        }
+
+        virtual public int Sequence
+        {
+            get { return Properties.Get<int>("SEQUENCE"); }
+            set { Properties.Set("SEQUENCE", value); }
+        }
+
         /// <summary>
         /// An alias to the DTStart field (i.e. start date/time).
         /// </summary>
@@ -99,6 +159,12 @@ namespace DDay.iCal
         {
             get { return DTStart; }
             set { DTStart = value; }
+        }
+
+        virtual public string Summary
+        {
+            get { return Properties.Get<string>("SUMMARY"); }
+            set { Properties.Set("SUMMARY", value); }
         }
 
         /// <summary>
@@ -113,15 +179,35 @@ namespace DDay.iCal
 
         #region Constructors
 
-        public RecurringComponent() : base() { Initialize(); }
-        public RecurringComponent(string name) : base(name) { Initialize(); }
-        private void Initialize()
+        public RecurringComponent() : base()
         {
-            SetService(new RecurringEvaluator(this));            
+            Initialize();
+            EnsureProperties();
         }
 
-        #endregion        
-        
+        public RecurringComponent(string name) : base(name)
+        {
+            Initialize();
+            EnsureProperties();
+        }
+
+        private void Initialize()
+        {
+            SetService(new RecurringEvaluator(this));
+        }
+
+        #endregion   
+     
+        #region Private Methods
+
+        private void EnsureProperties()
+        {
+            if (!Properties.ContainsKey("SEQUENCE"))
+                Sequence = 0;
+        }
+
+        #endregion
+
         #region Overrides
 
         protected override void OnDeserializing(StreamingContext context)

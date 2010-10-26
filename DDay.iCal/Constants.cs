@@ -43,8 +43,21 @@ namespace DDay.iCal
     }
 
     #endregion
-
+    
     #region Status Constants
+
+    public class ParticipationStatus
+    {
+        #region Constants
+
+        public const string NeedsAction = "NEEDS-ACTION";
+        public const string Accepted = "ACCEPTED";
+        public const string Declined = "DECLINED";
+        public const string Tentative = "TENTATIVE";
+        public const string Delegated = "DELEGATED";
+
+        #endregion
+    }
 
     /// <summary>
     /// Status codes available to an <see cref="Event"/> item
@@ -76,6 +89,18 @@ namespace DDay.iCal
         Final,      // Indicates journal is final.
         Cancelled   // Indicates journal is removed.
     };
+
+    #endregion
+
+    #region Type Constants
+
+    public enum FreeBusyType
+    {
+        Busy = 0,
+        Free = 1,
+        BusyUnavailable,
+        BusyTentative
+    }
 
     #endregion
 

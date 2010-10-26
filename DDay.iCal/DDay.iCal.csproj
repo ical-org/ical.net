@@ -78,6 +78,7 @@
     <Compile Include="Compatibility\BrowsableAttribute.cs" />
     <Compile Include="Compatibility\DebuggerDisplayAttribute.cs" />
     <Compile Include="Components\Alarm.cs" />
+    <Compile Include="Components\FreeBusy.cs" />
     <Compile Include="Components\iCalTimeZone.cs" />
     <Compile Include="Components\iCalTimeZoneInfo.cs" />
     <Compile Include="Components\Journal.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="DataTypes\Attendee.cs" />
     <Compile Include="DataTypes\CalendarDataType.cs" />
+    <Compile Include="DataTypes\FreeBusyEntry.cs" />
     <Compile Include="DataTypes\Organizer.cs" />
     <Compile Include="DataTypes\RequestStatus.cs" />
     <Compile Include="DataTypes\StatusCode.cs" />
@@ -117,6 +119,8 @@
     <Compile Include="General\CalendarComponentCompositeList.cs" />
     <Compile Include="General\FilteredCalendarObjectList.cs" />
     <Compile Include="General\ServiceProvider.cs" />
+    <Compile Include="Interfaces\DataTypes\IFreeBusyEntry.cs" />
+    <Compile Include="Interfaces\Evaluation\IGetFreeBusy.cs" />
     <Compile Include="Interfaces\Evaluation\IGetOccurrences.cs" />
     <Compile Include="Interfaces\General\ICalendarParameterCompositeList.cs" />
     <Compile Include="Interfaces\General\ICalendarPropertyCompositeList.cs" />
@@ -145,6 +149,7 @@
     <Compile Include="Serialization\iCalendar\Serializers\Components\EventSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\AttachmentSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\AttendeeSerializer.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\FreeBusyEntrySerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\OrganizerSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\Other\UriSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\Other\EnumSerializer.cs" />

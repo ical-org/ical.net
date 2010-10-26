@@ -31,6 +31,8 @@ namespace DDay.iCal.Serialization.iCalendar
                     s = new AttendeeSerializer();
                 else if (typeof(IDateTime).IsAssignableFrom(objectType))
                     s = new DateTimeSerializer();
+                else if (typeof(IFreeBusyEntry).IsAssignableFrom(objectType))
+                    s = new FreeBusyEntrySerializer();
                 else if (typeof(IGeographicLocation).IsAssignableFrom(objectType))
                     s = new GeographicLocationSerializer();
                 else if (typeof(IOrganizer).IsAssignableFrom(objectType))

@@ -56,6 +56,20 @@ namespace DDay.iCal
         #endregion
 
         #region Overrides
+
+        public override void CopyFrom(ICopyable obj)
+        {
+            base.CopyFrom(obj);
+
+            IPeriod p = obj as IPeriod;
+            if (p != null)
+            {
+                StartTime = p.StartTime;
+                EndTime = p.EndTime;
+                Duration = p.Duration;
+                MatchesDateOnly = p.MatchesDateOnly;
+            }
+        }
         
         public override bool Equals(object obj)
         {

@@ -44,9 +44,6 @@ namespace DDay.iCal
                 UID = new UIDFactory().Build();
             }
 
-            if (!Properties.ContainsKey("SEQUENCE"))
-                Sequence = 0;
-
             // NOTE: removed setting the 'CREATED' property here since it breaks serialization.
             // See https://sourceforge.net/projects/dday-ical/forums/forum/656447/topic/3754354
             if (DTStamp == null)
@@ -70,28 +67,10 @@ namespace DDay.iCal
 
         #region Public Properties
 
-        virtual public IList<IAttachment> Attachments
-        {
-            get { return Properties.GetList<IAttachment>("ATTACH"); }
-            set { Properties.SetList("ATTACH", value); }
-        }
-
         virtual public IList<IAttendee> Attendees
         {
             get { return Properties.GetList<IAttendee>("ATTENDEE"); }
             set { Properties.SetList("ATTENDEE", value); }
-        }
-
-        virtual public IList<string> Categories
-        {
-            get { return Properties.GetList<string>("CATEGORIES"); }
-            set { Properties.SetList("CATEGORIES", value); }            
-        }
-
-        virtual public string Class
-        {
-            get { return Properties.Get<string>("CLASS"); }
-            set { Properties.Set("CLASS", value); }
         }
 
         virtual public IList<string> Comments
@@ -100,34 +79,10 @@ namespace DDay.iCal
             set { Properties.SetList("COMMENT", value); }
         }
 
-        virtual public IList<string> Contacts
-        {
-            get { return Properties.GetList<string>("CONTACT"); }
-            set { Properties.SetList("CONTACT", value); }
-        }
-
-        virtual public IDateTime Created
-        {
-            get { return Properties.Get<IDateTime>("CREATED"); }
-            set { Properties.Set("CREATED", value); }
-        }
-
-        virtual public string Description
-        {
-            get { return Properties.Get<string>("DESCRIPTION"); }
-            set { Properties.Set("DESCRIPTION", value); }
-        }
-
         virtual public IDateTime DTStamp
         {
             get { return Properties.Get<IDateTime>("DTSTAMP"); }
             set { Properties.Set("DTSTAMP", value); }
-        }
-
-        virtual public IDateTime LastModified
-        {
-            get { return Properties.Get<IDateTime>("LAST-MODIFIED"); }
-            set { Properties.Set("LAST-MODIFIED", value); }
         }
 
         virtual public IOrganizer Organizer
@@ -136,34 +91,10 @@ namespace DDay.iCal
             set { Properties.Set("ORGANIZER", value); }
         }
 
-        virtual public int Priority
-        {
-            get { return Properties.Get<int>("PRIORITY"); }
-            set { Properties.Set("PRIORITY", value); }
-        }
-
-        virtual public IList<string> RelatedComponents
-        {
-            get { return Properties.GetList<string>("RELATED-TO"); }
-            set { Properties.SetList("RELATED-TO", value); }
-        }
-
         virtual public IList<IRequestStatus> RequestStatuses
         {
             get { return Properties.GetList<IRequestStatus>("REQUEST-STATUS"); }
             set { Properties.SetList("REQUEST-STATUS", value); }
-        }
-
-        virtual public int Sequence
-        {
-            get { return Properties.Get<int>("SEQUENCE"); }
-            set { Properties.Set("SEQUENCE", value); }
-        }
-
-        virtual public string Summary
-        {
-            get { return Properties.Get<string>("SUMMARY"); }
-            set { Properties.Set("SUMMARY", value); }
         }
 
         virtual public Uri Url

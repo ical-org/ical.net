@@ -97,5 +97,44 @@ namespace DDay.iCal
         }
 
         #endregion
+
+        #region Private Methods
+
+        IFreeBusy CombineFreeBusy(IFreeBusy main, IFreeBusy current)
+        {
+            if (main != null)
+                main.MergeWith(current);
+            return current;
+        }
+
+        #endregion
+
+        #region IGetFreeBusy Members
+
+        public IFreeBusy GetFreeBusy(IFreeBusy freeBusyRequest)
+        {
+            IFreeBusy fb = null;
+            foreach (IICalendar iCal in this)
+                fb = CombineFreeBusy(fb, iCal.GetFreeBusy(freeBusyRequest));
+            return fb;
+        }
+
+        public IFreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive)
+        {
+            IFreeBusy fb = null;
+            foreach (IICalendar iCal in this)
+                fb = CombineFreeBusy(fb, iCal.GetFreeBusy(fromInclusive, toExclusive));
+            return fb;
+        }
+
+        public IFreeBusy GetFreeBusy(IOrganizer organizer, IAttendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive)
+        {
+            IFreeBusy fb = null;
+            foreach (IICalendar iCal in this)
+                fb = CombineFreeBusy(fb, iCal.GetFreeBusy(organizer, contacts, fromInclusive, toExclusive));
+            return fb;
+        }
+
+        #endregion
     }
 }

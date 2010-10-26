@@ -25,7 +25,9 @@ namespace DDay.iCal
                 case Components.EVENT: 
                     type = typeof(Event);
                     break;
-                //case FREEBUSY: return new FreeBusy();
+                case Components.FREEBUSY:
+                    type = typeof(FreeBusy);
+                    break;
                 case Components.JOURNAL:
                     type = typeof(Journal);
                     break;

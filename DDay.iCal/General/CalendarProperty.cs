@@ -131,6 +131,8 @@ namespace DDay.iCal
             {
                 if (p.Value is ICopyable)
                     Value = ((ICopyable)p.Value).Copy<object>();
+                else if (p.Value is ICloneable)
+                    Value = ((ICloneable)p.Value).Clone();
                 else
                     Value = p.Value;
 

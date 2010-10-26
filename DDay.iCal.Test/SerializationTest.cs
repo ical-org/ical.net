@@ -730,6 +730,55 @@ END:VCALENDAR
         }
 
         [Test, Category("Serialization")]
+        public void FreeBusy1()
+        {
+            IICalendar iCal = new iCalendar();
+
+            IEvent evt = iCal.Create<Event>();
+            evt.Summary = "Test event";
+            evt.Start = new iCalDateTime(2010, 10, 1, 8, 0, 0);
+            evt.End = new iCalDateTime(2010, 10, 1, 9, 0, 0);
+
+            IICalendar freeBusyCalendar = new iCalendar();
+            IFreeBusy freeBusy = iCal.GetFreeBusy(new iCalDateTime(2010, 10, 1, 0, 0, 0), new iCalDateTime(2010, 10, 7, 11, 59, 59));
+            freeBusyCalendar.AddChild(freeBusy);
+
+            iCalendarSerializer serializer = new iCalendarSerializer();
+            serializer.Serialize(freeBusyCalendar, @"Calendars\Serialization\FreeBusy1.ics");
+
+            SerializeTest("FreeBusy1.ics", typeof(iCalendarSerializer));
+        }
+
+        [Test, Category("Serialization")]
+        public void FreeBusy2()
+        {
+            IICalendar iCal = new iCalendar();
+
+            IEvent evt = iCal.Create<Event>();
+            evt.Summary = "Test event";
+            evt.Start = new iCalDateTime(2010, 10, 1, 8, 0, 0);
+            evt.End = new iCalDateTime(2010, 10, 1, 9, 0, 0);
+
+            IAttendee attendee = new Attendee("mailto:test@test.com");
+            attendee.ParticipationStatus = ParticipationStatus.Tentative;
+            evt.Attendees.Add(attendee);
+
+            IICalendar freeBusyCalendar = new iCalendar();
+            IFreeBusy freeBusy = iCal.GetFreeBusy(
+                null, 
+                new IAttendee[] { new Attendee("mailto:test@test.com") }, 
+                new iCalDateTime(2010, 10, 1, 0, 0, 0), 
+                new iCalDateTime(2010, 10, 7, 11, 59, 59));
+
+            freeBusyCalendar.AddChild(freeBusy);
+
+            iCalendarSerializer serializer = new iCalendarSerializer();
+            serializer.Serialize(freeBusyCalendar, @"Calendars\Serialization\FreeBusy2.ics");
+
+            SerializeTest("FreeBusy2.ics", typeof(iCalendarSerializer));
+        }
+
+        [Test, Category("Serialization")]
         public void GeographicLocation1_1()
         {
             SerializeTest("GeographicLocation1.ics", typeof(iCalendarSerializer));
