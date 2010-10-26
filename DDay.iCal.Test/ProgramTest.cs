@@ -337,6 +337,34 @@ namespace DDay.iCal.Test
             result = dt2 - dt1;
             Assert.AreEqual(TimeSpan.FromHours(-1) + TimeSpan.FromSeconds(1), result);
         }
+
+        [Test]
+        public void SystemTimeZone3()
+        {
+            // Per Jon Udell's test, we should be able to get all 
+            // system time zones on the machine and ensure they
+            // are properly translated.
+            var zones = System.TimeZoneInfo.GetSystemTimeZones();
+            TimeZoneInfo tzinfo;
+            foreach (var zone in zones)
+            {
+                tzinfo = null;
+                try
+                {
+                    tzinfo = System.TimeZoneInfo.FindSystemTimeZoneById(zone.Id);                    
+                }
+                catch (Exception e)
+                {
+                    Assert.Fail("Not found: " + zone.StandardName);                    
+                }
+
+                if (tzinfo != null)
+                {
+                    var ical_tz = DDay.iCal.iCalTimeZone.FromSystemTimeZone(tzinfo);
+                    Assert.AreNotEqual(0, ical_tz.TimeZoneInfos.Count, zone.StandardName + ": no time zone information was extracted.");
+                }
+            }            
+        }
 #endif
     }
 }

@@ -81,27 +81,48 @@ namespace DDay.iCal
 
                 var dday_tzinfo_standard = new DDay.iCal.iCalTimeZoneInfo();
                 dday_tzinfo_standard.Name = "STANDARD";
+                dday_tzinfo_standard.TimeZoneName = tzinfo.StandardName;
                 dday_tzinfo_standard.Start = new iCalDateTime(adjustmentRule.DateStart);                
                 if (dday_tzinfo_standard.Start.LessThan(earliest))
                     dday_tzinfo_standard.Start = dday_tzinfo_standard.Start.AddYears(earliest.Year - dday_tzinfo_standard.Start.Year);
                 dday_tzinfo_standard.OffsetFrom = new UTCOffset(utcOffset + delta);
                 dday_tzinfo_standard.OffsetTo = new UTCOffset(utcOffset);
                 PopulateiCalTimeZoneInfo(dday_tzinfo_standard, adjustmentRule.DaylightTransitionEnd, adjustmentRule.DateStart.Year);
-
+                                
                 // Add the "standard" time rule to the time zone
                 dday_tz.AddChild(dday_tzinfo_standard);
 
-                var dday_tzinfo_daylight = new DDay.iCal.iCalTimeZoneInfo();
-                dday_tzinfo_daylight.Name = "DAYLIGHT";
-                dday_tzinfo_daylight.Start = new iCalDateTime(adjustmentRule.DateStart);
-                if (dday_tzinfo_daylight.Start.LessThan(earliest))
-                    dday_tzinfo_daylight.Start = dday_tzinfo_daylight.Start.AddYears(earliest.Year - dday_tzinfo_daylight.Start.Year);
-                dday_tzinfo_daylight.OffsetFrom = new UTCOffset(utcOffset);
-                dday_tzinfo_daylight.OffsetTo = new UTCOffset(utcOffset + delta);
-                PopulateiCalTimeZoneInfo(dday_tzinfo_daylight, adjustmentRule.DaylightTransitionStart, adjustmentRule.DateStart.Year);
+                if (tzinfo.SupportsDaylightSavingTime)
+                {
+                    var dday_tzinfo_daylight = new DDay.iCal.iCalTimeZoneInfo();
+                    dday_tzinfo_daylight.Name = "DAYLIGHT";
+                    dday_tzinfo_daylight.TimeZoneName = tzinfo.DaylightName;
+                    dday_tzinfo_daylight.Start = new iCalDateTime(adjustmentRule.DateStart);
+                    if (dday_tzinfo_daylight.Start.LessThan(earliest))
+                        dday_tzinfo_daylight.Start = dday_tzinfo_daylight.Start.AddYears(earliest.Year - dday_tzinfo_daylight.Start.Year);
+                    dday_tzinfo_daylight.OffsetFrom = new UTCOffset(utcOffset);
+                    dday_tzinfo_daylight.OffsetTo = new UTCOffset(utcOffset + delta);
+                    PopulateiCalTimeZoneInfo(dday_tzinfo_daylight, adjustmentRule.DaylightTransitionStart, adjustmentRule.DateStart.Year);
 
-                // Add the "daylight" time rule to the time zone
-                dday_tz.AddChild(dday_tzinfo_daylight);                
+                    // Add the "daylight" time rule to the time zone
+                    dday_tz.AddChild(dday_tzinfo_daylight);
+                }                
+            }
+
+            // If no time zone information was recorded, at least
+            // add a STANDARD time zone element to indicate the
+            // base time zone information.
+            if (dday_tz.TimeZoneInfos.Count == 0)
+            {
+                var dday_tzinfo_standard = new DDay.iCal.iCalTimeZoneInfo();
+                dday_tzinfo_standard.Name = "STANDARD";
+                dday_tzinfo_standard.TimeZoneName = tzinfo.StandardName;
+                dday_tzinfo_standard.Start = earliest;                
+                dday_tzinfo_standard.OffsetFrom = new UTCOffset(utcOffset);
+                dday_tzinfo_standard.OffsetTo = new UTCOffset(utcOffset);
+
+                // Add the "standard" time rule to the time zone
+                dday_tz.AddChild(dday_tzinfo_standard);
             }
 
             return dday_tz;
