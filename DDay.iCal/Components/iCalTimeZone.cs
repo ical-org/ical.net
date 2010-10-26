@@ -88,7 +88,7 @@ namespace DDay.iCal
                 dday_tzinfo_standard.OffsetFrom = new UTCOffset(utcOffset + delta);
                 dday_tzinfo_standard.OffsetTo = new UTCOffset(utcOffset);
                 PopulateiCalTimeZoneInfo(dday_tzinfo_standard, adjustmentRule.DaylightTransitionEnd, adjustmentRule.DateStart.Year);
-                                
+
                 // Add the "standard" time rule to the time zone
                 dday_tz.AddChild(dday_tzinfo_standard);
 

@@ -363,7 +363,7 @@ namespace DDay.iCal.Test
                     var ical_tz = DDay.iCal.iCalTimeZone.FromSystemTimeZone(tzinfo);
                     Assert.AreNotEqual(0, ical_tz.TimeZoneInfos.Count, zone.StandardName + ": no time zone information was extracted.");
                 }
-            }            
+            }
         }
 #endif
     }

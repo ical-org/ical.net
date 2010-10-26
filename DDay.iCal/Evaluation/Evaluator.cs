@@ -66,8 +66,8 @@ namespace DDay.iCal
         protected void IncrementDate(ref DateTime dt, IRecurrencePattern pattern, int interval)
         {
             // FIXME: use a more specific exception.
-            if (interval <= 0)
-                throw new Exception("Cannot evaluate with an interval of zero (or less).  Please use an interval greater than zero.");
+            if (interval == 0)
+                throw new Exception("Cannot evaluate with an interval of zero.  Please use an interval other than zero.");
 
             DateTime old = dt;
             switch (pattern.Frequency)
