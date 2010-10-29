@@ -31,5 +31,5 @@ using System.Security;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.0.1.$WCREV$")]
-[assembly: AssemblyFileVersion("1.0.1.$WCREV$")]
+[assembly: AssemblyVersion("1.0.2.$WCREV$")]
+[assembly: AssemblyFileVersion("1.0.2.$WCREV$")]

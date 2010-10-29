@@ -153,12 +153,12 @@ namespace DDay.iCal
 
         virtual public DateTime ToUTC(DateTime dt)
         {
-            return Offset(dt, !Positive);
+            return DateTime.SpecifyKind(Offset(dt, !Positive), DateTimeKind.Utc);
         }
 
         virtual public DateTime ToLocal(DateTime dt)
         {
-            return Offset(dt, Positive);
+            return DateTime.SpecifyKind(Offset(dt, Positive), DateTimeKind.Local);
         }
 
         #endregion

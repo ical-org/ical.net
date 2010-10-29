@@ -133,13 +133,15 @@ namespace DDay.iCal
         /// Converts the date/time value to a local time
         /// within the specified time zone.
         /// </summary>
-        IDateTime ToTimeZone(ITimeZoneInfo tzi);
+        IDateTime ToTimeZone(TimeZoneObservance tzo);
 
         /// <summary>
         /// Converts the date/time value to a local time
         /// within the specified time zone.
         /// </summary>
         IDateTime ToTimeZone(string tzid);
+        IDateTime ToTimeZone(ITimeZone tz);
+        IDateTime SetTimeZone(ITimeZone tz);
 
         IDateTime Add(TimeSpan ts);
         IDateTime Subtract(TimeSpan ts);
@@ -160,6 +162,6 @@ namespace DDay.iCal
         bool GreaterThanOrEqual(IDateTime dt);
 
         string ToString(string format);
-        void AssociateWith(IDateTime dt);
+        void AssociateWith(IDateTime dt);        
     }
 }

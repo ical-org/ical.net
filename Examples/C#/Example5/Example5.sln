@@ -1,8 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "C:\...\Example5\", ".", "{F282C4FE-2A34-4C2B-81DD-16AD59BF4613}"
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Example5", ".", "{F282C4FE-2A34-4C2B-81DD-16AD59BF4613}"
 	ProjectSection(WebsiteProperties) = preProject
+		TargetFramework = "3.5"
 		ProjectReferences = ""
 		Debug.AspNetCompiler.VirtualPath = "/Example5"
 		Debug.AspNetCompiler.PhysicalPath = "..\..\SourceForge\DDay.iCal\trunk\Example5\"

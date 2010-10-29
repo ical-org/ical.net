@@ -89,6 +89,10 @@ namespace DDay.iCal
 
         public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
+            // Ensure the reference date is associated with the time zone
+            if (referenceDate.AssociatedObject == null)
+                referenceDate.AssociatedObject = TimeZone;
+
             List<ITimeZoneInfo> infos = new List<ITimeZoneInfo>(TimeZone.TimeZoneInfos);
 
             // Evaluate extra time periods, without re-evaluating ones that were already evaluated

@@ -1156,10 +1156,10 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             htmlBuilder.Append("<HTML><HEAD><META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html;charset=iso-8859-1\"></HEAD><BODY>");
             htmlBuilder.Append("<B>Test</B>");
             htmlBuilder.Append("</BODY></HTML>");
-
-            // This adds the property to the event automatically
+                        
             ICalendarProperty p = new CalendarProperty("X-ALT-DESC", htmlBuilder.ToString());
             p.Parameters.Add(new CalendarParameter("FMTTYPE", "text/html"));
+            evt.Properties.Add(p);
 
             iCalendarSerializer serializer = new iCalendarSerializer();
             serializer.Serialize(iCal, @"Calendars\Serialization\XProperty3.ics");

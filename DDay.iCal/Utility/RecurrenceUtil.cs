@@ -29,13 +29,17 @@ namespace DDay.iCal
             IEvaluator evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
             if (evaluator != null)
             {
+                // Ensure the start time is associated with the object being queried
+                IDateTime start = recurrable.Start.Copy<IDateTime>();
+                start.AssociatedObject = recurrable as ICalendarObject;
+
                 // Change the time zone of periodStart/periodEnd as needed 
                 // so they can be used during the evaluation process.
-                periodStart = DateUtil.MatchTimeZone(recurrable.Start, periodStart);
-                periodEnd = DateUtil.MatchTimeZone(recurrable.Start, periodEnd);
+                periodStart = DateUtil.MatchTimeZone(start, periodStart);
+                periodEnd = DateUtil.MatchTimeZone(start, periodEnd);
 
                 IList<IPeriod> periods = evaluator.Evaluate(
-                    recurrable.Start,
+                    start,
                     DateUtil.GetSimpleDateTimeData(periodStart),
                     DateUtil.GetSimpleDateTimeData(periodEnd),
                     includeReferenceDateInResults);

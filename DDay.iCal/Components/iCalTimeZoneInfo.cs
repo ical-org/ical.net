@@ -101,25 +101,14 @@ namespace DDay.iCal
         {
             get
             {
-                IList<string> tzNames = TimeZoneNames;
-                if (tzNames != null &&
-                    tzNames.Count > 0)
-                    return tzNames[0];
+                if (TimeZoneNames.Count > 0)
+                    return TimeZoneNames[0];
                 return null;
             }
             set
             {
-                IList<string> tzNames = TimeZoneNames;
-                if (tzNames != null &&
-                    tzNames.Count > 0)
-                    tzNames[0] = value;
-                else
-                {
-                    if (value != null)
-                        tzNames = new List<string>(new string[] { value });
-                    else
-                        tzNames = null;
-                }
+                TimeZoneNames.Clear();
+                TimeZoneNames.Add(value);
             }
         }
 
@@ -165,7 +154,7 @@ namespace DDay.iCal
                 dt = new iCalDateTime(OffsetTo.ToUTC(dt.Value));
                 normalizedDt = OffsetTo.ToUTC(normalizedDt);
             }
-                        
+
             // Let's evaluate our time zone observances to find the 
             // observance that applies to this date/time value.
             IEvaluator parentEval = Parent.GetService(typeof(IEvaluator)) as IEvaluator;

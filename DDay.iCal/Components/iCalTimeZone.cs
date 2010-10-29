@@ -67,8 +67,9 @@ namespace DDay.iCal
             var adjustmentRules = tzinfo.GetAdjustmentRules();
             var utcOffset = tzinfo.BaseUtcOffset;
             var dday_tz = new iCalTimeZone();
-            IDateTime earliest = new iCalDateTime(earlistDateTimeToSupport);
+            dday_tz.TZID = tzinfo.Id;
 
+            IDateTime earliest = new iCalDateTime(earlistDateTimeToSupport);
             foreach (var adjustmentRule in adjustmentRules)
             {
                 // Only include historical data if asked to do so.  Otherwise,
@@ -77,8 +78,6 @@ namespace DDay.iCal
                     continue;
 
                 var delta = adjustmentRule.DaylightDelta;
-                dday_tz.TZID = tzinfo.Id;
-
                 var dday_tzinfo_standard = new DDay.iCal.iCalTimeZoneInfo();
                 dday_tzinfo_standard.Name = "STANDARD";
                 dday_tzinfo_standard.TimeZoneName = tzinfo.StandardName;

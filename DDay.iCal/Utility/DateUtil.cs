@@ -58,11 +58,8 @@ namespace DDay.iCal
             // same context (i.e. evaluation).
             if (dt1.TZID != null)
             {
-                ITimeZoneInfo tzi = dt1.TimeZoneObservance != null ?
-                    dt1.TimeZoneObservance.Value.TimeZoneInfo :
-                    null;
                 if (!string.Equals(dt1.TZID, copy.TZID))
-                    return (tzi != null) ? copy.ToTimeZone(tzi) : copy.ToTimeZone(dt1.TZID);
+                    return (dt1.TimeZoneObservance != null) ? copy.ToTimeZone(dt1.TimeZoneObservance.Value) : copy.ToTimeZone(dt1.TZID);
                 else return copy;
             }
             else if (dt1.IsUniversalTime)

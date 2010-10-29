@@ -36,7 +36,13 @@ namespace DDay.iCal
         }
 
         #endregion
+
+        #region Overrides
+
         
+
+        #endregion
+
         #region Event Handlers
 
         void CalendarPropertyList_ItemRemoved(object sender, ObjectEventArgs<ICalendarProperty> e)
@@ -59,12 +65,12 @@ namespace DDay.iCal
             {
                 name = m_CaseInsensitive ? name.ToUpper() : name;
                 if (value != null)
-                {                    
+                {
                     ICalendarProperty p = new CalendarProperty(name, value);
                     if (ContainsKey(name))
                         this[name] = p;
                     else
-                        Add(p);
+                        Add(p);                    
                 }
                 else
                 {

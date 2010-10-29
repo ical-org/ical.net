@@ -235,7 +235,7 @@ namespace DDay.iCal
                     IncrementDate(ref incremented, pattern, pattern.Interval);
                 }
             }
-                        
+
             bool?[] expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
 
             int invalidCandidateCount = 0;

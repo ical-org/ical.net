@@ -13,8 +13,7 @@ namespace DDay.iCal
     /// The iCalendar equivalent of the .NET <see cref="DateTime"/> class.
     /// <remarks>
     /// In addition to the features of the <see cref="DateTime"/> class, the <see cref="iCalDateTime"/>
-    /// class handles time zone differences, and integrates seamlessly into
-    /// the iCalendar framework.
+    /// class handles time zone differences, and integrates seamlessly into the iCalendar framework.
     /// </remarks>
     /// </summary>
 #if !SILVERLIGHT
@@ -66,6 +65,10 @@ namespace DDay.iCal
         {
             Initialize(value, tzid, null);
         }
+        public iCalDateTime(DateTime value, TimeZoneObservance tzo)
+        {
+            Initialize(value, tzo);
+        }
         public iCalDateTime(int year, int month, int day, int hour, int minute, int second)
         {
             Initialize(year, month, day, hour, minute, second, null, null);
@@ -108,6 +111,21 @@ namespace DDay.iCal
             this.HasTime = (value.Second == 0 && value.Minute == 0 && value.Hour == 0) ? false : true;
             this.TZID = tzid;
             this.AssociatedObject = iCal;
+        }
+
+        private void Initialize(DateTime value, TimeZoneObservance tzo)
+        {
+            if (value.Kind == DateTimeKind.Utc)
+                this.IsUniversalTime = true;
+
+            // Convert all incoming values to UTC.
+            this.Value = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+            this.HasDate = true;
+            this.HasTime = (value.Second == 0 && value.Minute == 0 && value.Hour == 0) ? false : true;
+            if (tzo.TimeZoneInfo != null)
+                this.TZID = tzo.TimeZoneInfo.TZID;
+            this.TimeZoneObservance = tzo;            
+            this.AssociatedObject = tzo.TimeZoneInfo;
         }
 
         private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
@@ -165,7 +183,6 @@ namespace DDay.iCal
                 if (!object.Equals(AssociatedObject, value))
                 {
                     base.AssociatedObject = value;
-                    _TimeZoneObservance = null;
                 }
             }
         }
@@ -209,16 +226,7 @@ namespace DDay.iCal
 
         public override string ToString()
         {
-            string tz = TimeZoneName;
-            if (!string.IsNullOrEmpty(tz))
-                tz = " " + tz;
-
-            if (HasTime && HasDate)
-                return Value.ToString() + tz;
-            else if (HasTime)
-                return Value.TimeOfDay.ToString() + tz;
-            else
-                return Value.ToShortDateString() + tz;
+            return ToString(null, null);
         }
 
         #endregion
@@ -355,7 +363,7 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// Gets the <see cref="iCalTimeZoneInfo"/> object for the time
+        /// Gets/sets the <see cref="iCalTimeZoneInfo"/> object for the time
         /// zone set by <see cref="TZID"/>.
         /// </summary>
         public TimeZoneObservance? TimeZoneObservance
@@ -367,6 +375,16 @@ namespace DDay.iCal
             set
             {
                 _TimeZoneObservance = value;
+                if (value != null &&
+                    value.HasValue &&                    
+                    value.Value.TimeZoneInfo != null)
+                {
+                    this.TZID = value.Value.TimeZoneInfo.TZID;
+                }
+                else
+                {
+                    this.TZID = null;
+                }
             }
         }
 
@@ -401,7 +419,7 @@ namespace DDay.iCal
                     // fall within this time zone observance.
                     if (_TimeZoneObservance != null && 
                         _TimeZoneObservance.HasValue &&
-                        !_TimeZoneObservance.Value.Period.Contains(this))
+                        !_TimeZoneObservance.Value.Contains(this))
                         _TimeZoneObservance = null;
                 }
                     
@@ -428,7 +446,15 @@ namespace DDay.iCal
                 if (!object.Equals(TZID, value))
                 {
                     Parameters.Set("TZID", value);
-                    _TimeZoneObservance = null;
+                    
+                    // Set the time zone observance to null if the TZID
+                    // doesn't match.
+                    if (value != null && 
+                        _TimeZoneObservance != null &&
+                        _TimeZoneObservance.HasValue &&
+                        _TimeZoneObservance.Value.TimeZoneInfo != null &&
+                        !object.Equals(_TimeZoneObservance.Value.TimeZoneInfo.TZID, value))
+                        _TimeZoneObservance = null;
                 }
             }
         }
@@ -488,7 +514,7 @@ namespace DDay.iCal
             get
             {
                 IDateTime dt = Copy<IDateTime>();
-                dt.Value = Value.AddDays(-Value.DayOfYear+1);
+                dt.Value = Value.AddDays(-Value.DayOfYear+1).Date;
                 return dt;
             }
         }
@@ -498,7 +524,7 @@ namespace DDay.iCal
             get
             {
                 IDateTime dt = Copy<IDateTime>();
-                dt.Value = Value.AddDays(-Value.Day+1);
+                dt.Value = Value.AddDays(-Value.Day+1).Date;
                 return dt;
             }
         }
@@ -511,11 +537,29 @@ namespace DDay.iCal
         public TimeSpan TimeOfDay
         {
             get { return Value.TimeOfDay; }
-        }        
+        }
 
-        public IDateTime ToTimeZone(ITimeZoneInfo tzi)
+        public IDateTime ToTimeZone(TimeZoneObservance tzo)
         {
-            return new iCalDateTime(tzi.OffsetTo.ToLocal(UTC));
+            ITimeZoneInfo tzi = tzo.TimeZoneInfo;
+            if (tzi != null)
+                return new iCalDateTime(tzi.OffsetTo.ToLocal(UTC), tzo);
+            return null;
+        }
+
+        public IDateTime ToTimeZone(ITimeZone tz)
+        {
+            if (tz != null)
+            {
+                TimeZoneObservance? tzi = tz.GetTimeZoneObservance(this);
+                if (tzi != null && tzi.HasValue)
+                    return ToTimeZone(tzi.Value);
+
+                // FIXME: if the time cannot be resolved, should we
+                // just provide a copy?  Is this always appropriate?
+                return Copy<IDateTime>();
+            }
+            else throw new ArgumentException("You must provide a valid time zone to the ToTimeZone() method", "tz");
         }
 
         public IDateTime ToTimeZone(string tzid)
@@ -526,20 +570,23 @@ namespace DDay.iCal
                 {
                     ITimeZone tz = Calendar.GetTimeZone(tzid);
                     if (tz != null)
-                    {
-                        TimeZoneObservance? tzi = tz.GetTimeZoneObservance(this);
-                        if (tzi != null && tzi.HasValue)
-                            return ToTimeZone(tzi.Value.TimeZoneInfo);
-                    }
+                        return ToTimeZone(tz);
+                    
                     // FIXME: sometimes a calendar is perfectly valid but the time zone
                     // could not be resolved.  What should we do here?
                     //throw new Exception("The '" + tzid + "' time zone could not be resolved.");
-
                     return Copy<IDateTime>();
                 }
                 else throw new Exception("The iCalDateTime object must have an iCalendar associated with it in order to use TimeZones.");
             }
             else throw new ArgumentException("You must provide a valid TZID to the ToTimeZone() method", "tzid");
+        }
+
+        public IDateTime SetTimeZone(ITimeZone tz)
+        {
+            if (tz != null)
+                this.TZID = tz.TZID;
+            return this;
         }
 
         public IDateTime Add(TimeSpan ts)
@@ -693,7 +740,18 @@ namespace DDay.iCal
 
         public string ToString(string format, IFormatProvider formatProvider)
         {
-            return Value.ToString(format, formatProvider);
+            string tz = TimeZoneName;            
+            if (!string.IsNullOrEmpty(tz))
+                tz = " " + tz;
+            
+            if (format != null)
+                return Value.ToString(format, formatProvider) + tz;
+            else if (HasTime && HasDate)
+                return Value.ToString() + tz;
+            else if (HasTime)
+                return Value.TimeOfDay.ToString() + tz;
+            else
+                return Value.ToShortDateString() + tz;
         }
 
         #endregion

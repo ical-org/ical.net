@@ -161,7 +161,7 @@ namespace DDay.iCal
         /// <summary>
         /// Adds a property to this component.
         /// </summary>
-        virtual public void AddProperty(CalendarProperty p)
+        virtual public void AddProperty(ICalendarProperty p)
         {
             p.Parent = this;
             Properties[p.Name] = p;
