@@ -10,7 +10,7 @@ namespace DDay.iCal.Serialization
     {
         #region Static Private Fields
 
-        static private ISerializationContext _Default;
+        static private SerializationContext _Default;
 
         #endregion
 
@@ -24,8 +24,19 @@ namespace DDay.iCal.Serialization
             get
             {
                 if (_Default == null)
+                {
                     _Default = new SerializationContext();
-                return _Default;
+                }
+
+                // Create a new serialization context that doesn't contain any objects
+                // (and is non-static).  That way, if any objects get pushed onto
+                // the serialization stack when the Default serialization context is used,
+                // and something goes wrong and the objects don't get popped off the stack,
+                // we don't need to worry (as much) about a memory leak, because the
+                // objects weren't pushed onto a stack referenced by a static variable.
+                SerializationContext ctx = new SerializationContext();
+                ctx.m_ServiceProvider = _Default.m_ServiceProvider;
+                return ctx;
             }
         }
 

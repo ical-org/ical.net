@@ -20,7 +20,12 @@ namespace DDay.iCal
     {
         #region Private Fields
 
-        private ICalendarObject _Parent = null;
+        /// <summary>
+        /// NOTE: we use a weak reference here to ensure this doesn't cause a memory leak.
+        /// As this class merely provides a service to calendar properties, we shouldn't
+        /// be holding on to memory references via this object anyhow.
+        /// </summary>
+        private WeakReference _Parent = null;
         private List<ICalendarObject> _Children;
         private ServiceProvider _ServiceProvider;
         private string _Name;
@@ -143,8 +148,8 @@ namespace DDay.iCal
         /// </summary>
         virtual public ICalendarObject Parent
         {
-            get { return _Parent; }
-            set { _Parent = value; }
+            get { return _Parent != null ? _Parent.Target as ICalendarObject : null; }
+            set { _Parent = new WeakReference(value); }
         }
 
         /// <summary>
@@ -192,7 +197,7 @@ namespace DDay.iCal
             }
             protected set
             {
-                this._Parent = value;
+                this._Parent = new WeakReference(value);
             }
         }
 

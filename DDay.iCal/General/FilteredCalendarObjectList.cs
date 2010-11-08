@@ -39,7 +39,12 @@ namespace DDay.iCal
 
         #region Private Fields
 
-        private ICalendarObject m_Attached = null;
+        /// <summary>
+        /// NOTE: we use a weak reference here to ensure this doesn't cause a memory leak.
+        /// As this class merely provides a service to calendar properties, we shouldn't
+        /// be holding on to memory references via this object anyhow.
+        /// </summary>
+        private WeakReference m_Attached = null;
         private List<T> m_Items = null;
 
         #endregion
@@ -48,8 +53,8 @@ namespace DDay.iCal
 
         protected ICalendarObject Attached
         {
-            get { return m_Attached; }
-            set { m_Attached = value; }
+            get { return m_Attached != null ? m_Attached.Target as ICalendarObject : null; }
+            set { m_Attached = value != null ? new WeakReference(value) : null; }
         }
 
         #endregion
@@ -58,10 +63,10 @@ namespace DDay.iCal
 
         public FilteredCalendarObjectList(ICalendarObject attached)
         {
-            m_Attached = attached;
+            Attached = attached;
             m_Items = new List<T>();
-            m_Attached.ChildAdded += new EventHandler<ObjectEventArgs<ICalendarObject>>(m_Attached_ChildAdded);
-            m_Attached.ChildRemoved += new EventHandler<ObjectEventArgs<ICalendarObject>>(m_Attached_ChildRemoved);
+            attached.ChildAdded += new EventHandler<ObjectEventArgs<ICalendarObject>>(m_Attached_ChildAdded);
+            attached.ChildRemoved += new EventHandler<ObjectEventArgs<ICalendarObject>>(m_Attached_ChildRemoved);
         }        
 
         #endregion
@@ -94,13 +99,13 @@ namespace DDay.iCal
 
         public void Add(T item)
         {
-            m_Attached.AddChild(item);
+            Attached.AddChild(item);
         }
 
         public void Clear()
         {
             foreach (T item in m_Items)
-                m_Attached.RemoveChild(item);
+                Attached.RemoveChild(item);
         }
 
         public bool Contains(T item)
@@ -127,7 +132,7 @@ namespace DDay.iCal
         {
             if (Contains(item))
             {
-                m_Attached.RemoveChild(item);
+                Attached.RemoveChild(item);
                 return true;
             }
             return false;
