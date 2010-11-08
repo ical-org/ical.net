@@ -15,7 +15,12 @@ namespace DDay.iCal
     {
         #region Private Fields
 
-        ICalendarObject m_Parent;
+        /// <summary>
+        /// NOTE: we use a weak reference here to ensure this doesn't cause a memory leak.
+        /// As this class merely provides a service to calendar properties, we shouldn't
+        /// be holding on to memory references via this object anyhow.
+        /// </summary>
+        WeakReference m_Parent;
         bool m_CaseInsensitive;
 
         #endregion
@@ -28,25 +33,25 @@ namespace DDay.iCal
 
         public CalendarParameterList(ICalendarObject parent, bool caseInsensitive)
         {
-            m_Parent = parent;
+            m_Parent = new WeakReference(parent);
             m_CaseInsensitive = caseInsensitive;
 
-            ItemAdded += new EventHandler<ObjectEventArgs<ICalendarParameter>>(CalendarParameterList_ItemAdded);
-            ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarParameter>>(CalendarParameterList_ItemRemoved);
+            ItemAdded += new EventHandler<ObjectEventArgs<ICalendarParameter>>(OnParameterAdded);
+            ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarParameter>>(OnParameterRemoved);
         }
 
         #endregion
 
-        #region Event Handlers
+        #region Protected Methods
 
-        void CalendarParameterList_ItemRemoved(object sender, ObjectEventArgs<ICalendarParameter> e)
+        protected void OnParameterRemoved(object sender, ObjectEventArgs<ICalendarParameter> e)
         {
             e.Object.Parent = null;
         }
 
-        void CalendarParameterList_ItemAdded(object sender, ObjectEventArgs<ICalendarParameter> e)
+        protected void OnParameterAdded(object sender, ObjectEventArgs<ICalendarParameter> e)
         {
-            e.Object.Parent = m_Parent;
+            e.Object.Parent = m_Parent != null ? m_Parent as ICalendarObject : null;
         }
 
         #endregion

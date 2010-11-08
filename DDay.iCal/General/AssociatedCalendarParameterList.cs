@@ -56,9 +56,31 @@ namespace DDay.iCal
     {
         #region Private Fields
 
-        ICalendarObject m_Parent;
-        ICalendarParameterListContainer m_AssociatedContainer;
-        IKeyedList<ICalendarParameter, string> m_Parameters = new KeyedList<ICalendarParameter, string>();
+        /// <summary>
+        /// NOTE: we use a weak reference here to ensure this doesn't cause a memory leak.
+        /// As this class merely provides a service to calendar properties, we shouldn't
+        /// be holding on to memory references via this object anyhow.
+        /// </summary>
+        WeakReference m_Parent;
+        WeakReference m_AssociatedContainer;
+        ICalendarParameterList m_Parameters;
+
+        #endregion
+
+        #region Protected Properties
+
+        protected ICalendarParameterList Parameters
+        {
+            get
+            {
+                ICalendarParameterListContainer m_container = m_AssociatedContainer != null ? m_AssociatedContainer.Target as ICalendarParameterListContainer : null;
+                if (m_container != null &&
+                    m_container.Parameters != null)
+                    return m_container.Parameters;
+                else
+                    return m_Parameters;
+            }
+        }
 
         #endregion
 
@@ -66,8 +88,9 @@ namespace DDay.iCal
 
         public AssociatedCalendarParameterList(ICalendarObject parent, ICalendarParameterListContainer container)
         {
-            m_Parent = parent;
-            m_AssociatedContainer = container;
+            m_Parent = new WeakReference(parent);
+            m_AssociatedContainer = new WeakReference(container);
+            m_Parameters = new CalendarParameterList(parent, true);
 
             m_Parameters.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarParameter>>(Parameters_ItemAdded);
             m_Parameters.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarParameter>>(Parameters_ItemRemoved);
@@ -85,13 +108,14 @@ namespace DDay.iCal
         {
             if (list != null)
             {
-                if (m_AssociatedContainer != null &&
-                    m_AssociatedContainer.Parameters != null)
+                ICalendarParameterListContainer m_container = m_AssociatedContainer != null ? m_AssociatedContainer.Target as ICalendarParameterListContainer : null;
+                if (m_container != null &&
+                    m_container.Parameters != null)
                 {
                     foreach (ICalendarParameter p in list)
                     {
-                        if (!m_AssociatedContainer.Parameters.Contains(p))
-                            m_AssociatedContainer.Parameters.Add(p);
+                        if (!m_container.Parameters.Contains(p))
+                            m_container.Parameters.Add(p);
                     }
                 }
                 else
@@ -123,7 +147,7 @@ namespace DDay.iCal
 
         void CalendarParameterList_ItemAdded(object sender, ObjectEventArgs<ICalendarParameter> e)
         {
-            e.Object.Parent = m_Parent;
+            e.Object.Parent = m_Parent != null ? m_Parent.Target as ICalendarObject : null;
         }
 
         #endregion
@@ -234,52 +258,33 @@ namespace DDay.iCal
 
         public bool ContainsKey(string key)
         {
-            if (m_AssociatedContainer != null &&
-                m_AssociatedContainer.Parameters != null)
-                return m_AssociatedContainer.Parameters.ContainsKey(key);
-            return m_Parameters.ContainsKey(key);
+            return Parameters.ContainsKey(key);
         }
 
         public int IndexOf(string key)
         {
-            if (m_AssociatedContainer != null &&
-                m_AssociatedContainer.Parameters != null)
-                return m_AssociatedContainer.Parameters.IndexOf(key);
-            return m_Parameters.IndexOf(key);
+            return Parameters.IndexOf(key);
         }
 
         public int CountOf(string key)
         {
-            if (m_AssociatedContainer != null &&
-                m_AssociatedContainer.Parameters != null)
-                return m_AssociatedContainer.Parameters.CountOf(key);
-            return m_Parameters.CountOf(key);
+            return Parameters.CountOf(key);
         }
 
         public IList<ICalendarParameter> AllOf(string key)
         {
-            if (m_AssociatedContainer != null &&
-                m_AssociatedContainer.Parameters != null)
-                return m_AssociatedContainer.Parameters.AllOf(key);
-            return m_Parameters.AllOf(key);
+            return Parameters.AllOf(key);
         }
 
         public ICalendarParameter this[string key]
         {
             get
             {
-                if (m_AssociatedContainer != null &&
-                m_AssociatedContainer.Parameters != null)
-                    return m_AssociatedContainer.Parameters[key];
-                return m_Parameters[key];
+                return Parameters[key];
             }
             set
             {
-                if (m_AssociatedContainer != null &&
-                   m_AssociatedContainer.Parameters != null)
-                    m_AssociatedContainer.Parameters[key] = value;
-                else
-                    m_Parameters[key] = value;
+                Parameters[key] = value;
             }
         }
 
@@ -296,10 +301,7 @@ namespace DDay.iCal
 
         public ICalendarParameter[] ToArray()
         {
-            if (m_AssociatedContainer != null &&
-                m_AssociatedContainer.Parameters != null)
-                return m_AssociatedContainer.Parameters.ToArray();
-            return m_Parameters.ToArray();
+            return Parameters.ToArray();
         }
 
         #endregion
@@ -308,44 +310,28 @@ namespace DDay.iCal
 
         public int IndexOf(ICalendarParameter item)
         {
-            if (m_AssociatedContainer != null &&
-                m_AssociatedContainer.Parameters != null)
-                return m_AssociatedContainer.Parameters.IndexOf(item);
-            return m_Parameters.IndexOf(item);
+            return Parameters.IndexOf(item);
         }
 
         public void Insert(int index, ICalendarParameter item)
         {
-            if (m_AssociatedContainer != null &&
-                m_AssociatedContainer.Parameters != null)
-                m_AssociatedContainer.Parameters.Insert(index, item);
-            else
-                m_Parameters.Insert(index, item);
+            Parameters.Insert(index, item);
         }
 
         public void RemoveAt(int index)
         {
-            if (m_AssociatedContainer != null &&
-                m_AssociatedContainer.Parameters != null)
-                m_AssociatedContainer.Parameters.RemoveAt(index);
-            else
-                m_Parameters.RemoveAt(index);
+            Parameters.RemoveAt(index);
         }
 
         public ICalendarParameter this[int index]
         {
             get
             {
-                if (m_AssociatedContainer != null && m_AssociatedContainer.Parameters != null)
-                    return m_AssociatedContainer.Parameters[index];
-                return m_Parameters[index];
+                return Parameters[index];
             }
             set
             {
-                if (m_AssociatedContainer != null && m_AssociatedContainer.Parameters != null)
-                    m_AssociatedContainer.Parameters[index] = value;
-                else
-                    m_Parameters[index] = value;
+                Parameters[index] = value;
             }
         }
 
@@ -355,47 +341,29 @@ namespace DDay.iCal
 
         public void Add(ICalendarParameter item)
         {
-            if (m_AssociatedContainer != null &&
-                m_AssociatedContainer.Parameters != null)
-                m_AssociatedContainer.Parameters.Add(item);
-            else
-                m_Parameters.Add(item);
+            Parameters.Add(item);
         }
 
         public void Clear()
         {
-            if (m_AssociatedContainer != null &&
-                m_AssociatedContainer.Parameters != null)
-                m_AssociatedContainer.Parameters.Clear();
-            else
-                m_Parameters.Clear();
+            Parameters.Clear();
         }
 
         public bool Contains(ICalendarParameter item)
         {
-            if (m_AssociatedContainer != null &&
-                m_AssociatedContainer.Parameters != null)
-                return m_AssociatedContainer.Parameters.Contains(item);
-            return m_Parameters.Contains(item);
+            return Parameters.Contains(item);
         }
 
         public void CopyTo(ICalendarParameter[] array, int arrayIndex)
         {
-            if (m_AssociatedContainer != null &&
-                m_AssociatedContainer.Parameters != null)
-                m_AssociatedContainer.Parameters.CopyTo(array, arrayIndex);
-            else
-                m_Parameters.CopyTo(array, arrayIndex);
+            Parameters.CopyTo(array, arrayIndex);
         }
 
         public int Count
         {
             get
             {
-                if (m_AssociatedContainer != null &&
-                    m_AssociatedContainer.Parameters != null)
-                    return m_AssociatedContainer.Parameters.Count;
-                return m_Parameters.Count;
+                return Parameters.Count;
             }
         }
 
@@ -421,10 +389,7 @@ namespace DDay.iCal
 
         public IEnumerator<ICalendarParameter> GetEnumerator()
         {
-            if (m_AssociatedContainer != null &&
-                m_AssociatedContainer.Parameters != null)
-                return m_AssociatedContainer.Parameters.GetEnumerator();
-            return m_Parameters.GetEnumerator();
+            return Parameters.GetEnumerator();
         }
 
         #endregion
@@ -433,10 +398,7 @@ namespace DDay.iCal
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            if (m_AssociatedContainer != null &&
-                m_AssociatedContainer.Parameters != null)
-                return m_AssociatedContainer.Parameters.GetEnumerator();
-            return m_Parameters.GetEnumerator();
+            return Parameters.GetEnumerator();
         }
 
         #endregion

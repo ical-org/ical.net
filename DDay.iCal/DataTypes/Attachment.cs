@@ -183,19 +183,21 @@ namespace DDay.iCal
         /// <param name="password">The pasword to supply for credentials</param>
         virtual public void LoadDataFromUri(Uri uri, string username, string password)
         {
-            WebClient client = new WebClient();
-            if (username != null &&
-                password != null)
-                client.Credentials = new System.Net.NetworkCredential(username, password);
-
-            if (uri == null)
+            using (WebClient client = new WebClient())
             {
-                if (Uri == null)
-                    throw new ArgumentException("A URI was not provided for the LoadDataFromUri() method");
-                uri = new Uri(Uri.OriginalString);
-            }
+                if (username != null &&
+                    password != null)
+                    client.Credentials = new System.Net.NetworkCredential(username, password);
 
-            Data = client.DownloadData(uri);
+                if (uri == null)
+                {
+                    if (Uri == null)
+                        throw new ArgumentException("A URI was not provided for the LoadDataFromUri() method");
+                    uri = new Uri(Uri.OriginalString);
+                }
+
+                Data = client.DownloadData(uri);
+            }
         }
 
         #endregion
