@@ -44,7 +44,7 @@ namespace DDay.iCal.Serialization
 
         #region Private Fields
 
-        private Stack<object> m_Stack = new Stack<object>();
+        private Stack<WeakReference> m_Stack = new Stack<WeakReference>();
         private ServiceProvider m_ServiceProvider = new ServiceProvider();
 
         #endregion
@@ -72,20 +72,20 @@ namespace DDay.iCal.Serialization
         virtual public void Push(object item)
         {
             if (item != null)
-                m_Stack.Push(item);
+                m_Stack.Push(new WeakReference(item));
         }
 
         virtual public object Pop()
         {
             if (m_Stack.Count > 0)
-                return m_Stack.Pop();
+                return m_Stack.Pop().Target;
             return null;
         }
 
         virtual public object Peek()
         {
             if (m_Stack.Count > 0)
-                return m_Stack.Peek();
+                return m_Stack.Peek().Target;
             return null;
         }        
 
