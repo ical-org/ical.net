@@ -78,16 +78,24 @@ namespace DDay.iCal.Serialization
         virtual public object Pop()
         {
             if (m_Stack.Count > 0)
-                return m_Stack.Pop().Target;
+            {
+                WeakReference r = m_Stack.Pop();
+                if (r.IsAlive)
+                    return r.Target;
+            }
             return null;
         }
 
         virtual public object Peek()
         {
             if (m_Stack.Count > 0)
-                return m_Stack.Peek().Target;
+            {
+                WeakReference r = m_Stack.Peek();
+                if (r.IsAlive)
+                    return r.Target;
+            }
             return null;
-        }        
+        }
 
         #endregion
 

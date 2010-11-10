@@ -25,12 +25,7 @@ namespace DDay.iCal
 
         #region Protected Fields
 
-        /// <summary>
-        /// NOTE: we use a weak reference here to ensure this doesn't cause a memory leak.
-        /// As this class merely provides a service to calendar properties, we shouldn't
-        /// be holding on to memory references via this object anyhow.
-        /// </summary>
-        protected WeakReference _AssociatedObject;
+        protected ICalendarObject _AssociatedObject;
 
         #endregion
 
@@ -118,20 +113,13 @@ namespace DDay.iCal
 
         virtual public ICalendarObject AssociatedObject
         {
-            get { return _AssociatedObject != null ? _AssociatedObject.Target as ICalendarObject : null; }
+            get { return _AssociatedObject; }
             set
             {
-                if ((value != null && _AssociatedObject == null) ||
-                    (value == null) ||
-                    !object.Equals(_AssociatedObject.Target, value))
+                if (!object.Equals(_AssociatedObject, value))
                 {
-                    if (value != null)
-                        _AssociatedObject = new WeakReference(value);
-                    else
-                        _AssociatedObject = null;
-
-                    ICalendarObject associated = AssociatedObject;
-                    _Parameters = new AssociatedCalendarParameterList(_Parameters, associated, associated as ICalendarParameterListContainer);
+                    _AssociatedObject = value;
+                    _Parameters = new AssociatedCalendarParameterList(_Parameters, _AssociatedObject, _AssociatedObject as ICalendarParameterListContainer);
                 }
             }
         }
@@ -141,7 +129,7 @@ namespace DDay.iCal
             get
             {
                 if (_AssociatedObject != null)
-                    return AssociatedObject.Calendar;
+                    return _AssociatedObject.Calendar;
                 return null;
             }
         }
@@ -165,9 +153,8 @@ namespace DDay.iCal
             if (obj is ICalendarDataType)
             {
                 ICalendarDataType dt = (ICalendarDataType)obj;                
-                ICalendarObject associated = dt.AssociatedObject;
-                AssociatedObject = associated;
-                _Parameters = new AssociatedCalendarParameterList(dt.Parameters, associated, associated as ICalendarParameterListContainer);
+                _AssociatedObject = dt.AssociatedObject;
+                _Parameters = new AssociatedCalendarParameterList(dt.Parameters, _AssociatedObject, _AssociatedObject as ICalendarParameterListContainer);
             }
         }
 

@@ -44,7 +44,7 @@ namespace DDay.iCal
         /// As this class merely provides a service to calendar properties, we shouldn't
         /// be holding on to memory references via this object anyhow.
         /// </summary>
-        private WeakReference m_Attached = null;
+        private ICalendarObject m_Attached = null;
         private List<T> m_Items = null;
 
         #endregion
@@ -53,8 +53,8 @@ namespace DDay.iCal
 
         protected ICalendarObject Attached
         {
-            get { return m_Attached != null ? m_Attached.Target as ICalendarObject : null; }
-            set { m_Attached = value != null ? new WeakReference(value) : null; }
+            get { return m_Attached; }
+            set { m_Attached = value; }
         }
 
         #endregion

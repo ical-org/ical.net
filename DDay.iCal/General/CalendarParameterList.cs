@@ -20,7 +20,7 @@ namespace DDay.iCal
         /// As this class merely provides a service to calendar properties, we shouldn't
         /// be holding on to memory references via this object anyhow.
         /// </summary>
-        WeakReference m_Parent;
+        ICalendarObject m_Parent;
         bool m_CaseInsensitive;
 
         #endregion
@@ -33,7 +33,7 @@ namespace DDay.iCal
 
         public CalendarParameterList(ICalendarObject parent, bool caseInsensitive)
         {
-            m_Parent = new WeakReference(parent);
+            m_Parent = parent;
             m_CaseInsensitive = caseInsensitive;
 
             ItemAdded += new EventHandler<ObjectEventArgs<ICalendarParameter>>(OnParameterAdded);
@@ -51,7 +51,7 @@ namespace DDay.iCal
 
         protected void OnParameterAdded(object sender, ObjectEventArgs<ICalendarParameter> e)
         {
-            e.Object.Parent = m_Parent != null ? m_Parent as ICalendarObject : null;
+            e.Object.Parent = m_Parent;
         }
 
         #endregion

@@ -56,13 +56,8 @@ namespace DDay.iCal
     {
         #region Private Fields
 
-        /// <summary>
-        /// NOTE: we use a weak reference here to ensure this doesn't cause a memory leak.
-        /// As this class merely provides a service to calendar properties, we shouldn't
-        /// be holding on to memory references via this object anyhow.
-        /// </summary>
-        WeakReference m_Parent;
-        WeakReference m_AssociatedContainer;
+        ICalendarObject m_Parent;
+        ICalendarParameterListContainer m_AssociatedContainer;
         ICalendarParameterList m_Parameters;
 
         #endregion
@@ -73,10 +68,9 @@ namespace DDay.iCal
         {
             get
             {
-                ICalendarParameterListContainer m_container = m_AssociatedContainer != null ? m_AssociatedContainer.Target as ICalendarParameterListContainer : null;
-                if (m_container != null &&
-                    m_container.Parameters != null)
-                    return m_container.Parameters;
+                if (m_AssociatedContainer != null &&
+                    m_AssociatedContainer.Parameters != null)
+                    return m_AssociatedContainer.Parameters;
                 else
                     return m_Parameters;
             }
@@ -88,8 +82,8 @@ namespace DDay.iCal
 
         public AssociatedCalendarParameterList(ICalendarObject parent, ICalendarParameterListContainer container)
         {
-            m_Parent = new WeakReference(parent);
-            m_AssociatedContainer = new WeakReference(container);
+            m_Parent = parent;
+            m_AssociatedContainer = container;
             m_Parameters = new CalendarParameterList(parent, true);
 
             m_Parameters.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarParameter>>(Parameters_ItemAdded);
@@ -107,15 +101,14 @@ namespace DDay.iCal
             this(parent, container)
         {
             if (list != null)
-            {
-                ICalendarParameterListContainer m_container = m_AssociatedContainer != null ? m_AssociatedContainer.Target as ICalendarParameterListContainer : null;
-                if (m_container != null &&
-                    m_container.Parameters != null)
+            {                
+                if (m_AssociatedContainer != null &&
+                    m_AssociatedContainer.Parameters != null)
                 {
                     foreach (ICalendarParameter p in list)
                     {
-                        if (!m_container.Parameters.Contains(p))
-                            m_container.Parameters.Add(p);
+                        if (!m_AssociatedContainer.Parameters.Contains(p))
+                            m_AssociatedContainer.Parameters.Add(p);
                     }
                 }
                 else
@@ -147,7 +140,7 @@ namespace DDay.iCal
 
         void CalendarParameterList_ItemAdded(object sender, ObjectEventArgs<ICalendarParameter> e)
         {
-            e.Object.Parent = m_Parent != null ? m_Parent.Target as ICalendarObject : null;
+            e.Object.Parent = m_Parent;
         }
 
         #endregion
