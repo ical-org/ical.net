@@ -117,7 +117,7 @@ namespace DDay.iCal
 
         private void ExtrapolateTimes()
         {
-            if (StartTime == null && StartTime != null && Duration != default(TimeSpan))
+            if (EndTime == null && StartTime != null && Duration != default(TimeSpan))
                 EndTime = StartTime.Add(Duration);
             else if (Duration == default(TimeSpan) && StartTime != null && EndTime != null)
                 Duration = EndTime.Subtract(StartTime);
