@@ -26,16 +26,16 @@ namespace DDay.iCal.Serialization.iCalendar
                 switch (entry.Status)
                 {
                     case FreeBusyStatus.Busy:
-                        entry.Parameters.Remove("FMTYPE");
+                        entry.Parameters.Remove("FBTYPE");
                         break;
                     case FreeBusyStatus.BusyTentative:
-                        entry.Parameters.Set("FMTYPE", "BUSY-TENTATIVE");
+                        entry.Parameters.Set("FBTYPE", "BUSY-TENTATIVE");
                         break;
                     case FreeBusyStatus.BusyUnavailable:
-                        entry.Parameters.Set("FMTYPE", "BUSY-UNAVAILABLE");
+                        entry.Parameters.Set("FBTYPE", "BUSY-UNAVAILABLE");
                         break;
                     case FreeBusyStatus.Free:
-                        entry.Parameters.Set("FMTYPE", "FREE");
+                        entry.Parameters.Set("FBTYPE", "FREE");
                         break;
                 }
             }
@@ -48,9 +48,9 @@ namespace DDay.iCal.Serialization.iCalendar
             IFreeBusyEntry entry = base.Deserialize(tr) as IFreeBusyEntry;
             if (entry != null)
             {
-                if (entry.Parameters.ContainsKey("FMTYPE"))
+                if (entry.Parameters.ContainsKey("FBTYPE"))
                 {
-                    string value = entry.Parameters.Get("FMTYPE");
+                    string value = entry.Parameters.Get("FBTYPE");
                     if (value != null)
                     {
                         switch (value.ToUpperInvariant())
