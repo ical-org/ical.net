@@ -285,8 +285,8 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>$(SolutionDir)subwcrev.exe $(ProjectDir). $(ProjectDir)Properties\AssemblyInfo.cs.template $(ProjectDir)Properties\AssemblyInfo.cs</PreBuildEvent>
-    <PostBuildEvent>
+    <!--<PreBuildEvent>$(SolutionDir)subwcrev.exe $(ProjectDir). $(ProjectDir)Properties\AssemblyInfo.cs.template $(ProjectDir)Properties\AssemblyInfo.cs</PreBuildEvent>
+    --><PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
 </Project>
