@@ -571,6 +571,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>$(SolutionDir)subwcrev.exe $(ProjectDir). $(ProjectDir)Properties\AssemblyInfo.cs.template $(ProjectDir)Properties\AssemblyInfo.cs</PreBuildEvent>
+    <!--<PreBuildEvent>$(SolutionDir)subwcrev.exe $(ProjectDir). $(ProjectDir)Properties\AssemblyInfo.cs.template $(ProjectDir)Properties\AssemblyInfo.cs</PreBuildEvent>-->
   </PropertyGroup>
 </Project>
