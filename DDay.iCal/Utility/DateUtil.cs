@@ -87,6 +87,18 @@ namespace DDay.iCal
                 last = calendar.GetWeekOfYear(new DateTime(dt.Year, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, firstDayOfWeek),
                 goal = current + interval;
 
+            // test if current week starts in a last year
+            // set start date = 2012.01.01 to reproduce
+            if (dt.Month == 1) // this may happen in Jan only
+            {
+                var test = new DateTime(dt.Ticks, dt.Kind);
+                test = test.AddDays(7);
+                var testWeekNo = calendar.GetWeekOfYear(test, System.Globalization.CalendarWeekRule.FirstFourDayWeek, firstDayOfWeek);
+
+                if (testWeekNo < current)
+                    goal = 1;
+            }
+
             // If the goal week is greater than the last week of the year, wrap it!
             if (goal > last)
                 goal = goal - last;
