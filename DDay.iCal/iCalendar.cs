@@ -144,11 +144,11 @@ namespace DDay.iCal
 
         static public IICalendarCollection LoadFromFile(string filepath, Encoding encoding, ISerializer serializer)
         {
-            FileStream fs = new FileStream(filepath, FileMode.Open);
-
-            IICalendarCollection calendars = LoadFromStream(fs, encoding, serializer);
-            fs.Close();
-            return calendars;
+            using (FileStream fs = new FileStream(filepath, FileMode.Open))
+            {
+                IICalendarCollection calendars = LoadFromStream(fs, encoding, serializer);
+                return calendars;
+            }
         }
 
         #endregion
