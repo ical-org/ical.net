@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -759,6 +760,14 @@ namespace DDay.iCal
             {
                 if (recurrable is T)
                     occurrences.AddRange(recurrable.GetOccurrences(startTime, endTime));
+            }
+
+            foreach (var baseRecurringItem in occurrences.Where(o => o.Source is IUniqueComponent)
+                .GroupBy(o => ((IUniqueComponent)o.Source).UID)
+                .SelectMany(@group => @group.Where(o => o.Source.RecurrenceID != null)
+                    .SelectMany(occurrence => @group.Where(o => o.Source.RecurrenceID == null && occurrence.Source.RecurrenceID.Equals(o.Period.StartTime)))))
+            {
+                occurrences.Remove(baseRecurringItem);
             }
 
             occurrences.Sort();
