@@ -74,31 +74,11 @@ namespace DDay.iCal
             }
         }
 
-        public static DateTime AddWeeks(System.Globalization.Calendar calendar, DateTime dt, int interval, DayOfWeek firstDayOfWeek)
+        public static DateTime AddWeeks(DateTime dt, int interval, DayOfWeek firstDayOfWeek)
         {
-            // How the week increments depends on the WKST indicated (defaults to Monday)
-            // So, basically, we determine the week of year using the necessary rules,
-            // and we increment the day until the week number matches our "goal" week number.
-            // So, if the current week number is 36, and our interval is 2, then our goal
-            // week number is 38.
             // NOTE: fixes WeeklyUntilWkst2() eval.
-            int current = calendar.GetWeekOfYear(dt, System.Globalization.CalendarWeekRule.FirstFourDayWeek, firstDayOfWeek),
-                lastLastYear = calendar.GetWeekOfYear(new DateTime(dt.Year - 1, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, firstDayOfWeek),
-                last = calendar.GetWeekOfYear(new DateTime(dt.Year, 12, 31, 0, 0, 0, DateTimeKind.Local), System.Globalization.CalendarWeekRule.FirstFourDayWeek, firstDayOfWeek),
-                goal = current + interval;
-
-            // If the goal week is greater than the last week of the year, wrap it!
-            if (goal > last)
-                goal = goal - last;
-            else if (goal <= 0)
-                goal = lastLastYear + goal;
-
-            int i = interval > 0 ? 7 : -7;
-            while (current != goal)
-            {
-                dt = dt.AddDays(i);
-                current = calendar.GetWeekOfYear(dt, CalendarWeekRule.FirstFourDayWeek, firstDayOfWeek);
-            }
+            // NOTE: simplified the execution of this - fixes bug #3119920 - missing weekly occurences also
+            dt = dt.AddDays(interval * 7);
             while (dt.DayOfWeek != firstDayOfWeek)
                 dt = dt.AddDays(-1);
 

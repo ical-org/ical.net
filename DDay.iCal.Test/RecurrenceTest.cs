@@ -2598,6 +2598,27 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
+        /// Tests bug #3119920 - missing weekly occurences
+        /// See https://sourceforge.net/tracker/?func=detail&aid=3119920&group_id=187422&atid=921236
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void Bug3119920()
+        {
+            using (StringReader sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126T120000;INTERVAL=1;BYDAY=MO"))
+            {
+                DateTime start = DateTime.Parse("2010-11-27 9:00:00");
+                RecurrencePatternSerializer serializer = new RecurrencePatternSerializer();
+                RecurrencePattern rp = (RecurrencePattern)serializer.Deserialize(sr);
+                RecurrencePatternEvaluator rpe = new RecurrencePatternEvaluator(rp);
+                IList<IPeriod> recurringPeriods = rpe.Evaluate(new iCalDateTime(start), start, rp.Until, false);
+                
+                IPeriod period = recurringPeriods.ElementAt(recurringPeriods.Count() - 1);
+                Assert.AreEqual(2025, period.StartTime.Year, "The final recurrence of this event should occur in 2025.");
+                // FIXME: add additional asserts here
+            }
+        }
+
+        /// <summary>
         /// Tests the iCal holidays downloaded from apple.com
         /// </summary>
         [Test, Category("Recurrence")]
