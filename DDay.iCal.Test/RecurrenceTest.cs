@@ -2645,6 +2645,23 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
+        /// Tests bug #3292737 - Google Repeating Task Until Time  Bug
+        /// See https://sourceforge.net/tracker/?func=detail&aid=3292737&group_id=187422&atid=921236
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void Bug3292737()
+        {
+            using (StringReader sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126"))
+            {
+                RecurrencePatternSerializer serializer = new RecurrencePatternSerializer();
+                var rp = (RecurrencePattern)serializer.Deserialize(sr);
+
+                Assert.IsNotNull(rp);
+                Assert.AreEqual(new DateTime(2025, 11, 26), rp.Until);
+            }
+        }
+
+        /// <summary>
         /// Tests the iCal holidays downloaded from apple.com
         /// </summary>
         [Test, Category("Recurrence")]

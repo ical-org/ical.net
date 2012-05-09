@@ -87,14 +87,13 @@ namespace DDay.iCal.Serialization.iCalendar
                 value = Decode(dt, value);
                 string[] values = value.Split('T');
 
-                bool hasTime = true;
-                if (dt.Parameters.ContainsKey("VALUE") && string.Equals(dt.Parameters.Get("VALUE"), "DATE"))
-                    hasTime = false;
-
                 string dateOnlyPattern = @"^((\d{4})(\d{2})(\d{2}))?$";
                 string fullPattern = @"^((\d{4})(\d{2})(\d{2}))T((\d{2})(\d{2})(\d{2})(Z)?)$";
 
-                Match match = Regex.Match(value, hasTime ? fullPattern : dateOnlyPattern, RegexOptions.IgnoreCase);
+                Match match = Regex.Match(value, fullPattern, RegexOptions.IgnoreCase);
+                if (!match.Success)
+                    match = Regex.Match(value, dateOnlyPattern, RegexOptions.IgnoreCase);
+
                 if (!match.Success)
                     return null;
                 else
@@ -115,7 +114,7 @@ namespace DDay.iCal.Serialization.iCalendar
                         month = Convert.ToInt32(match.Groups[3].Value);
                         date = Convert.ToInt32(match.Groups[4].Value);
                     }
-                    if (hasTime && match.Groups[5].Success)
+                    if (match.Groups.Count >= 6 && match.Groups[5].Success)
                     {
                         dt.HasTime = true;
                         hour = Convert.ToInt32(match.Groups[6].Value);
