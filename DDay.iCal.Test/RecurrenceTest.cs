@@ -2613,9 +2613,35 @@ namespace DDay.iCal.Test
                 IList<IPeriod> recurringPeriods = rpe.Evaluate(new iCalDateTime(start), start, rp.Until, false);
                 
                 IPeriod period = recurringPeriods.ElementAt(recurringPeriods.Count() - 1);
-                Assert.AreEqual(2025, period.StartTime.Year, "The final recurrence of this event should occur in 2025.");
-                // FIXME: add additional asserts here
+
+                Assert.AreEqual(new iCalDateTime(2025, 11, 24, 9, 0, 0), period.StartTime);
             }
+        }
+
+        /// <summary>
+        /// Tests bug #3178652 - 29th day of February in recurrence problems
+        /// See https://sourceforge.net/tracker/?func=detail&aid=3178652&group_id=187422&atid=921236
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void Bug3178652()
+        {
+            var evt = new Event();
+            evt.Start = new iCalDateTime(2011, 1, 29, 11, 0, 0);
+            evt.Duration = TimeSpan.FromHours(1.5);
+            evt.Summary = "29th February Test";
+
+            var pattern = new RecurrencePattern()
+            {
+                Frequency = FrequencyType.Monthly,
+                Until = new DateTime(2011, 12, 25, 0, 0, 0, DateTimeKind.Utc),
+                FirstDayOfWeek = DayOfWeek.Sunday,
+                ByMonthDay = new List<int>(new int[] { 29 })
+            };
+
+            evt.RecurrenceRules.Add(pattern);
+
+            var occurrences = evt.GetOccurrences(new DateTime(2011, 1, 1), new DateTime(2012, 1, 1));
+            Assert.AreEqual(10, occurrences.Count, "There should be 10 occurrences of this event, one for each month except February and December.");
         }
 
         /// <summary>

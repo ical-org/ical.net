@@ -646,17 +646,17 @@ namespace DDay.iCal
                         int monthDay = pattern.ByMonthDay[j];
 
                         int daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
-                        if (Math.Abs(monthDay) > daysInMonth)
-                            throw new ArgumentException("Invalid day of month: " + date + " (day " + monthDay + ")");
+                        if (Math.Abs(monthDay) <= daysInMonth)
+                        {
+                            // Account for positive or negative numbers
+                            DateTime newDate;
+                            if (monthDay > 0)
+                                newDate = date.AddDays(-date.Day + monthDay);
+                            else
+                                newDate = date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay);
 
-                        // Account for positive or negative numbers
-                        DateTime newDate;
-                        if (monthDay > 0)
-                            newDate = date.AddDays(-date.Day + monthDay);
-                        else
-                            newDate = date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay);
-
-                        monthDayDates.Add(newDate);
+                            monthDayDates.Add(newDate);
+                        }
                     }
                 }
                 return monthDayDates;
