@@ -664,6 +664,7 @@ namespace DDay.iCal
         public IDateTime AddTicks(long ticks)
         {
             IDateTime dt = Copy<IDateTime>();
+            dt.HasTime = true;
             dt.Value = Value.AddTicks(ticks);
             return dt;
         }           
