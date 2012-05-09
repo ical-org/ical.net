@@ -6,7 +6,7 @@ namespace DDay.iCal
 {
     public interface IPeriodList :
         IEncodableDataType,
-        ICollection<IPeriod>
+        IList<IPeriod>
     {
         string TZID { get; set; }
 

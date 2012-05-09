@@ -2,6 +2,7 @@
 
     using System.Text;
     using System.IO;
+	using System.Collections;
     using System.Collections.Generic;  
     using System.Runtime.Serialization;
     using DDay.iCal.Serialization;

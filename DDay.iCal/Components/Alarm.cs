@@ -40,8 +40,8 @@ namespace DDay.iCal
 
         virtual public IList<IAttendee> Attendees
         {
-            get { return Properties.GetList<IAttendee>("ATTENDEE"); }
-            set { Properties.SetList("ATTENDEE", value); }
+            get { return Properties.GetMany<IAttendee>("ATTENDEE"); }
+            set { Properties.Set("ATTENDEE", value); }
         }
 
         virtual public string Description

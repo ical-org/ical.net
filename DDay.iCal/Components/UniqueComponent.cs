@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
+using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using DDay.Collections;
 
 namespace DDay.iCal
 {
@@ -59,8 +61,8 @@ namespace DDay.iCal
 
         private void Initialize()
         {
-            Properties.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarProperty>>(Properties_ItemAdded);
-            Properties.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarProperty>>(Properties_ItemRemoved);
+            Properties.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarProperty, int>>(Properties_ItemAdded);
+            Properties.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarProperty, int>>(Properties_ItemRemoved);
         }
 
         #endregion
@@ -69,14 +71,14 @@ namespace DDay.iCal
 
         virtual public IList<IAttendee> Attendees
         {
-            get { return Properties.GetList<IAttendee>("ATTENDEE"); }
-            set { Properties.SetList("ATTENDEE", value); }
+            get { return Properties.GetMany<IAttendee>("ATTENDEE"); }
+            set { Properties.Set("ATTENDEE", value); }
         }
 
         virtual public IList<string> Comments
         {
-            get { return Properties.GetList<string>("COMMENT"); }
-            set { Properties.SetList("COMMENT", value); }
+            get { return Properties.GetMany<string>("COMMENT"); }
+            set { Properties.Set("COMMENT", value); }
         }
 
         virtual public IDateTime DTStamp
@@ -93,8 +95,8 @@ namespace DDay.iCal
 
         virtual public IList<IRequestStatus> RequestStatuses
         {
-            get { return Properties.GetList<IRequestStatus>("REQUEST-STATUS"); }
-            set { Properties.SetList("REQUEST-STATUS", value); }
+            get { return Properties.GetMany<IRequestStatus>("REQUEST-STATUS"); }
+            set { Properties.Set("REQUEST-STATUS", value); }
         }
 
         virtual public Uri Url
@@ -105,52 +107,41 @@ namespace DDay.iCal
 
         #endregion
 
-        #region Protected Methods
-
-        protected void OnUIDChanged(string oldUID, string newUID)
-        {
-            if (UIDChanged != null)
-                UIDChanged(this, oldUID, newUID);
-        }
-
-        #endregion
-
         #region Event Handlers
 
-        void Properties_ItemRemoved(object sender, ObjectEventArgs<ICalendarProperty> e)
+        void Properties_ItemRemoved(object sender, ObjectEventArgs<ICalendarProperty, int> e)
         {
-            if (e.Object != null &&
-                e.Object.Name != null &&
-                string.Equals(e.Object.Name.ToUpper(), "UID"))
+            if (e.First != null &&
+                e.First.Name != null &&
+                string.Equals(e.First.Name.ToUpper(), "UID"))
             {
-                OnUIDChanged(e.Object.Value != null ? e.Object.Value.ToString() : null, null);
-                e.Object.ValueChanged -= new EventHandler<ValueChangedEventArgs>(UID_ValueChanged);
+                OnUIDChanged(e.First.Values.Cast<string>().FirstOrDefault(), null);
+                e.First.ValueChanged -= Object_ValueChanged;
             }
         }
 
-        void Properties_ItemAdded(object sender, ObjectEventArgs<ICalendarProperty> e)
+        void Properties_ItemAdded(object sender, ObjectEventArgs<ICalendarProperty, int> e)
         {
-            if (e.Object != null &&
-                e.Object.Name != null &&
-                string.Equals(e.Object.Name.ToUpper(), "UID"))
+            if (e.First != null &&
+                e.First.Name != null &&
+                string.Equals(e.First.Name.ToUpper(), "UID"))
             {
-                OnUIDChanged(null, e.Object.Value != null ? e.Object.Value.ToString() : null);
-                e.Object.ValueChanged += new EventHandler<ValueChangedEventArgs>(UID_ValueChanged);
+                OnUIDChanged(null, e.First.Values.Cast<string>().FirstOrDefault());
+                e.First.ValueChanged += Object_ValueChanged;
             }
         }
 
-        void UID_ValueChanged(object sender, ValueChangedEventArgs e)
+        void Object_ValueChanged(object sender, ValueChangedEventArgs<object> e)
         {
-            OnUIDChanged(
-                e.OldValue != null ? e.OldValue.ToString() : null,
-                e.NewValue != null ? e.NewValue.ToString() : null
-            );
+            string oldValue = e.RemovedValues.OfType<string>().FirstOrDefault();
+            string newValue = e.AddedValues.OfType<string>().FirstOrDefault();
+            OnUIDChanged(oldValue, newValue);
         }
 
         #endregion
 
         #region Overrides
-
+        
         protected override void OnDeserializing(StreamingContext context)
         {
             base.OnDeserializing(context);
@@ -189,8 +180,13 @@ namespace DDay.iCal
 
         #region IUniqueComponent Members
 
-        [field: NonSerialized]
-        public event UIDChangedEventHandler UIDChanged;
+        virtual public event EventHandler<ObjectEventArgs<string, string>> UIDChanged;
+
+        virtual protected void OnUIDChanged(string oldUID, string newUID)
+        {
+            if (UIDChanged != null)
+                UIDChanged(this, new ObjectEventArgs<string, string>(oldUID, newUID));
+        }
 
         virtual public string UID
         {

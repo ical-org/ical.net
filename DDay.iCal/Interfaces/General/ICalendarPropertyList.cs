@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using DDay.Collections;
 
 namespace DDay.iCal
 {
-    public interface ICalendarPropertyList : 
-        IKeyedList<ICalendarProperty, string>
+    public interface ICalendarPropertyList :
+        IGroupedValueList<string, ICalendarProperty, CalendarProperty, object>
     {
-        void Set(string name, object value);
-        void SetList<U>(string name, IList<U> value);
-        T Get<T>(string name);
-        T[] GetAll<T>(string name);
-        IList<U> GetList<U>(string name);
+        ICalendarProperty this[string name] { get; }
     }
 }

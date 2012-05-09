@@ -108,8 +108,8 @@ namespace DDay.iCal
 
         virtual public IList<string> Resources
         {
-            get { return Properties.GetList<string>("RESOURCES"); }
-            set { Properties.SetList("RESOURCES", value); }
+            get { return Properties.GetMany<string>("RESOURCES"); }
+            set { Properties.Set("RESOURCES", value); }
         }
 
         /// <summary>

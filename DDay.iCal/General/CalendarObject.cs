@@ -5,6 +5,7 @@ using System.Text;
 using System.Reflection;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using DDay.Collections;
 
 namespace DDay.iCal
 {
@@ -21,7 +22,7 @@ namespace DDay.iCal
         #region Private Fields
 
         private ICalendarObject _Parent = null;
-        private List<ICalendarObject> _Children;
+        private ICalendarObjectList<ICalendarObject> _Children;
         private ServiceProvider _ServiceProvider;
         private string _Name;
         
@@ -37,7 +38,8 @@ namespace DDay.iCal
             Initialize();
         }
 
-        public CalendarObject(string name) : this()
+        public CalendarObject(string name)
+            : this()
         {
             Name = name;
         }
@@ -48,11 +50,14 @@ namespace DDay.iCal
             Column = col;
         }
 
-        private void Initialize()
+        void Initialize()
         {
-            _Children = new List<ICalendarObject>();
+            _Children = new CalendarObjectList(this);
             _ServiceProvider = new ServiceProvider();
-        }
+
+            _Children.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarObject, int>>(_Children_ItemAdded);
+            _Children.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarObject, int>>(_Children_ItemRemoved);
+        }        
 
         #endregion
 
@@ -81,6 +86,20 @@ namespace DDay.iCal
 
         virtual protected void OnDeserialized(StreamingContext context)
         {
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        void _Children_ItemRemoved(object sender, ObjectEventArgs<ICalendarObject, int> e)
+        {
+            e.First.Parent = null;
+        }
+
+        void _Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e)
+        {
+            e.First.Parent = this;
         }
 
         #endregion
@@ -114,30 +133,16 @@ namespace DDay.iCal
                 this.Column = obj.Column;
                 
                 // Add each child
+                this.Children.Clear();
                 foreach (ICalendarObject child in obj.Children)
-                    AddChild(child.Copy<ICalendarObject>());
+                    this.AddChild(child.Copy<ICalendarObject>());
             }
         }        
 
         #endregion
 
         #region ICalendarObject Members
-
-        public event EventHandler<ObjectEventArgs<ICalendarObject>> ChildAdded;
-        public event EventHandler<ObjectEventArgs<ICalendarObject>> ChildRemoved;
-
-        protected void OnChildAdded(ICalendarObject child)
-        {
-            if (ChildAdded != null)
-                ChildAdded(this, new ObjectEventArgs<ICalendarObject>(child));
-        }
-
-        protected void OnChildRemoved(ICalendarObject child)
-        {
-            if (ChildRemoved != null)
-                ChildRemoved(this, new ObjectEventArgs<ICalendarObject>(child));
-        }
-
+        
         /// <summary>
         /// Returns the parent <see cref="iCalObject"/> that owns this one.
         /// </summary>
@@ -148,12 +153,15 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// A read-only collection of <see cref="iCalObject"/>s that are children 
+        /// A collection of <see cref="iCalObject"/>s that are children 
         /// of the current object.
         /// </summary>
-        virtual public IList<ICalendarObject> Children
+        virtual public ICalendarObjectList<ICalendarObject> Children
         {
-            get { return _Children.AsReadOnly(); }
+            get
+            {
+                return _Children;
+            }
         }
 
         /// <summary>
@@ -171,7 +179,15 @@ namespace DDay.iCal
         virtual public string Name
         {
             get { return _Name; }
-            set { _Name = value; }
+            set
+            {
+                if (!object.Equals(_Name, value))
+                {
+                    string old = _Name;
+                    _Name = value;
+                    OnGroupChanged(old, _Name);
+                }
+            }
         }
 
         /// <summary>
@@ -212,65 +228,6 @@ namespace DDay.iCal
         {
             get { return _Column; }
             set { _Column = value; }
-        }
-
-        /// <summary>
-        /// Adds an <see cref="iCalObject"/>-based object as a child
-        /// of the current object.
-        /// </summary>
-        /// <param name="child">The <see cref="iCalObject"/>-based object to add.</param>
-        virtual public void AddChild(ICalendarObject child)
-        {
-            child.Parent = this;
-            _Children.Add(child);
-            OnChildAdded(child);
-        }
-
-        /// <summary>
-        /// Removed an <see cref="iCalObject"/>-based object from the <see cref="Children"/>
-        /// collection.
-        /// </summary>
-        /// <param name="child"></param>
-        virtual public void RemoveChild(ICalendarObject child)
-        {
-            if (_Children.Contains(child))
-            {
-                _Children.Remove(child);
-                child.Parent = null;
-                OnChildRemoved(child);
-            }
-        }
-
-        /// <summary>
-        /// Inserts a child at the given index in the children list.
-        /// </summary>
-        virtual public void InsertChild(int index, ICalendarObject child)
-        {
-            _Children.Insert(index, child);
-            OnChildAdded(child);
-        }
-
-        /// <summary>
-        /// Removes a child at the given index in the children list.
-        /// </summary>
-        /// <param name="index"></param>
-        virtual public void RemoveChildAt(int index)
-        {
-            if (index >= 0 && index < _Children.Count)
-            {
-                ICalendarObject child = _Children[index];
-                _Children.RemoveAt(index);
-                OnChildRemoved(child);
-            }
-        }
-
-        /// <summary>
-        /// Clears all children from the object.
-        /// </summary>
-        virtual public void ClearChildren()
-        {
-            while (_Children.Count > 0)
-                RemoveChildAt(0);
         }
 
         #endregion       
@@ -319,11 +276,21 @@ namespace DDay.iCal
 
         #endregion
 
-        #region IKeyedObject<string> Members
+        #region IGroupedObject Members
 
-        public string Key
+        [field: NonSerialized]
+        public event EventHandler<ObjectEventArgs<string, string>> GroupChanged;
+
+        protected void OnGroupChanged(string @old, string @new)
+        {
+            if (GroupChanged != null)
+                GroupChanged(this, new ObjectEventArgs<string, string>(@old, @new));
+        }
+
+        virtual public string Group
         {
             get { return Name; }
+            set { Name = value; }
         }
 
         #endregion

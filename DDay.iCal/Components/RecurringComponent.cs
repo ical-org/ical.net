@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
+using DDay.Collections;
 
 namespace DDay.iCal
 {
@@ -55,14 +56,14 @@ namespace DDay.iCal
 
         virtual public IList<IAttachment> Attachments
         {
-            get { return Properties.GetList<IAttachment>("ATTACH"); }
-            set { Properties.SetList("ATTACH", value); }
+            get { return Properties.GetMany<IAttachment>("ATTACH"); }
+            set { Properties.Set("ATTACH", value); }
         }
 
         virtual public IList<string> Categories
         {
-            get { return Properties.GetList<string>("CATEGORIES"); }
-            set { Properties.SetList("CATEGORIES", value); }
+            get { return Properties.GetMany<string>("CATEGORIES"); }
+            set { Properties.Set("CATEGORIES", value); }
         }
 
         virtual public string Class
@@ -73,8 +74,8 @@ namespace DDay.iCal
 
         virtual public IList<string> Contacts
         {
-            get { return Properties.GetList<string>("CONTACT"); }
-            set { Properties.SetList("CONTACT", value); }
+            get { return Properties.GetMany<string>("CONTACT"); }
+            set { Properties.Set("CONTACT", value); }
         }
 
         virtual public IDateTime Created
@@ -96,18 +97,18 @@ namespace DDay.iCal
         {
             get { return Properties.Get<IDateTime>("DTSTART"); }            
             set { Properties.Set("DTSTART", value); }
-        }        
+        }
 
         virtual public IList<IPeriodList> ExceptionDates
         {
-            get { return Properties.GetList<IPeriodList>("EXDATE"); }
-            set { Properties.SetList("EXDATE", value); }
+            get { return Properties.GetMany<IPeriodList>("EXDATE"); }
+            set { Properties.Set("EXDATE", value); }
         }
 
         virtual public IList<IRecurrencePattern> ExceptionRules
         {
-            get { return Properties.GetList<IRecurrencePattern>("EXRULE"); }
-            set { Properties.SetList("EXRULE", value); }
+            get { return Properties.GetMany<IRecurrencePattern>("EXRULE"); }
+            set { Properties.Set("EXRULE", value); }
         }
 
         virtual public IDateTime LastModified
@@ -124,14 +125,14 @@ namespace DDay.iCal
 
         virtual public IList<IPeriodList> RecurrenceDates
         {
-            get { return Properties.GetList<IPeriodList>("RDATE"); }
-            set { Properties.SetList("RDATE", value); }
+            get { return Properties.GetMany<IPeriodList>("RDATE"); }
+            set { Properties.Set("RDATE", value); }
         }
 
         virtual public IList<IRecurrencePattern> RecurrenceRules
         {
-            get { return Properties.GetList<IRecurrencePattern>("RRULE"); }
-            set { Properties.SetList("RRULE", value); }
+            get { return Properties.GetMany<IRecurrencePattern>("RRULE"); }
+            set { Properties.Set("RRULE", value); }
         }
 
         virtual public IDateTime RecurrenceID
@@ -142,8 +143,8 @@ namespace DDay.iCal
 
         virtual public IList<string> RelatedComponents
         {
-            get { return Properties.GetList<string>("RELATED-TO"); }
-            set { Properties.SetList("RELATED-TO", value); }
+            get { return Properties.GetMany<string>("RELATED-TO"); }
+            set { Properties.Set("RELATED-TO", value); }
         }
 
         virtual public int Sequence
@@ -170,9 +171,9 @@ namespace DDay.iCal
         /// <summary>
         /// A list of <see cref="Alarm"/>s for this recurring component.
         /// </summary>
-        virtual public IList<IAlarm> Alarms
+        virtual public ICalendarObjectList<IAlarm> Alarms
         {
-            get { return new CalendarComponentCompositeList<IAlarm>(this, Components.ALARM); }            
+            get { return new CalendarObjectListProxy<IAlarm>(Children); }
         }
 
         #endregion

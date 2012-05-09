@@ -1,16 +1,17 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections;
-using System.IO;
-using System.Resources;
-using System.Web;
-using System.Reflection;
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using System.Globalization;
-using NUnit.Framework;
-using DDay.iCal.Serialization.iCalendar;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Resources;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
+using System.Web;
+using DDay.iCal.Serialization.iCalendar;
+using NUnit.Framework;
 
 namespace DDay.iCal.Test
 {
@@ -34,7 +35,7 @@ namespace DDay.iCal.Test
             int eventIndex
         )
         {
-            IEvent evt = iCal.Events[eventIndex];
+            IEvent evt = iCal.Events.Skip(eventIndex).First();
             fromDate.AssociatedObject = iCal;
             toDate.AssociatedObject = iCal;
 
@@ -93,7 +94,7 @@ namespace DDay.iCal.Test
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyComplex1.ics")[0];
             ProgramTest.TestCal(iCal);
-            IEvent evt = iCal.Events[0];
+            IEvent evt = iCal.Events.First();
             IList<Occurrence> occurrences = evt.GetOccurrences(
                 new iCalDateTime(2006, 1, 1, tzid),
                 new iCalDateTime(2011, 1, 1, tzid));
@@ -154,7 +155,7 @@ namespace DDay.iCal.Test
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\DailyUntil1.ics")[0];
             ProgramTest.TestCal(iCal);
-            IEvent evt = iCal.Events[0];
+            IEvent evt = iCal.Events.First();
 
             IList<Occurrence> occurrences = evt.GetOccurrences(
                 new iCalDateTime(1997, 9, 1, tzid),
@@ -324,7 +325,7 @@ namespace DDay.iCal.Test
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\ByMonth1.ics")[0];
             ProgramTest.TestCal(iCal);
-            IEvent evt = iCal.Events[0];
+            IEvent evt = iCal.Events.First();
 
             IList<Occurrence> occurrences = evt.GetOccurrences(
                 new iCalDateTime(1998, 1, 1, tzid),
@@ -361,8 +362,8 @@ namespace DDay.iCal.Test
             IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\ByMonth2.ics")[0];
             ProgramTest.TestCal(iCal1);
             ProgramTest.TestCal(iCal2);
-            IEvent evt1 = (Event)iCal1.Events[0];
-            IEvent evt2 = (Event)iCal2.Events[0];
+            IEvent evt1 = (Event)iCal1.Events.First();
+            IEvent evt2 = (Event)iCal2.Events.First();
 
             IList<Occurrence> evt1Occurrences = evt1.GetOccurrences(new iCalDateTime(1997, 9, 1), new iCalDateTime(2000, 12, 31));
             IList<Occurrence> evt2Occurrences = evt2.GetOccurrences(new iCalDateTime(1997, 9, 1), new iCalDateTime(2000, 12, 31));
@@ -545,8 +546,8 @@ namespace DDay.iCal.Test
             IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\WeeklyCountWkst1.ics")[0];
             ProgramTest.TestCal(iCal1);
             ProgramTest.TestCal(iCal2);
-            IEvent evt1 = iCal1.Events[0];
-            IEvent evt2 = iCal2.Events[0];
+            IEvent evt1 = iCal1.Events.First();
+            IEvent evt2 = iCal2.Events.First();
 
             IList<Occurrence> evt1occ = evt1.GetOccurrences(new iCalDateTime(1997, 9, 1), new iCalDateTime(1999, 1, 1));
             IList<Occurrence> evt2occ = evt2.GetOccurrences(new iCalDateTime(1997, 9, 1), new iCalDateTime(1999, 1, 1));
@@ -1769,8 +1770,8 @@ namespace DDay.iCal.Test
             IICalendar iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\MinutelyByHour1.ics")[0];
             ProgramTest.TestCal(iCal1);
             ProgramTest.TestCal(iCal2);
-            IEvent evt1 = iCal1.Events[0];
-            IEvent evt2 = iCal2.Events[0];
+            IEvent evt1 = iCal1.Events.First();
+            IEvent evt2 = iCal2.Events.First();
 
             IList<Occurrence> evt1occ = evt1.GetOccurrences(new iCalDateTime(1997, 9, 1, tzid), new iCalDateTime(1997, 9, 3, tzid));
             IList<Occurrence> evt2occ = evt2.GetOccurrences(new iCalDateTime(1997, 9, 1, tzid), new iCalDateTime(1997, 9, 3, tzid));
@@ -2569,7 +2570,7 @@ namespace DDay.iCal.Test
         public void Bug3007244()
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\Bug3007244.ics")[0];
-            IRecurrencePattern pattern = iCal.Events[0].RecurrenceRules[0];
+            IRecurrencePattern pattern = iCal.Events.First().RecurrenceRules[0];
             
             EventOccurrenceTest(
                 iCal,

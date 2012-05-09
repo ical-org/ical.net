@@ -310,7 +310,7 @@ namespace DDay.iCal
             }            
         }
 
-        private bool CollectionEquals<T>(ICollection<T> c1, ICollection<T> c2)
+        private bool CollectionEquals<T>(IList<T> c1, IList<T> c2)
         {
             // NOTE: fixes a bug where collections weren't properly compared
             if (c1 == null ||

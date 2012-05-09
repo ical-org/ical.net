@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using DDay.iCal.Serialization;
 using DDay.iCal.Serialization.iCalendar;
+using DDay.Collections;
 
 namespace DDay.iCal
 {
@@ -88,7 +89,7 @@ namespace DDay.iCal
 #if !SILVERLIGHT
     [Serializable]
 #endif
-    public class iCalendar : 
+    public class iCalendar :
         CalendarComponent,
         IICalendar,
         IDisposable
@@ -144,7 +145,8 @@ namespace DDay.iCal
 
         static public IICalendarCollection LoadFromFile(string filepath, Encoding encoding, ISerializer serializer)
         {
-            FileStream fs = new FileStream(filepath, FileMode.Open);
+            // NOTE: Fixes bug #3211934 - Bug in iCalendar.cs - UnauthorizedAccessException
+            FileStream fs = new FileStream(filepath, FileMode.Open, FileAccess.Read);
 
             IICalendarCollection calendars = LoadFromStream(fs, encoding, serializer);
             fs.Close();
@@ -217,7 +219,7 @@ namespace DDay.iCal
         }
 
         static public new IICalendarCollection LoadFromStream<T>(TextReader tr) where T : IICalendar
-        {            
+        {
             return LoadFromStream(typeof(T), tr);
         }
 
@@ -254,8 +256,8 @@ namespace DDay.iCal
         }
 
         static public IICalendarCollection LoadFromUri<T>(Uri uri) where T : IICalendar
-        {            
-            return LoadFromUri(typeof(T), uri, null, null, null);            
+        {
+            return LoadFromUri(typeof(T), uri, null, null, null);
         }
 
         static public IICalendarCollection LoadFromUri(Type iCalendarType, Uri uri)
@@ -396,9 +398,9 @@ namespace DDay.iCal
         private IUniqueComponentList<IUniqueComponent> m_UniqueComponents;
         private IUniqueComponentList<IEvent> m_Events;
         private IUniqueComponentList<ITodo> m_Todos;
-        private IUniqueComponentList<IJournal> m_Journals;
+        private ICalendarObjectList<IJournal> m_Journals;
         private IUniqueComponentList<IFreeBusy> m_FreeBusy;
-        private IFilteredCalendarObjectList<ITimeZone> m_TimeZones;
+        private ICalendarObjectList<ITimeZone> m_TimeZones;
 
         #endregion
 
@@ -420,14 +422,14 @@ namespace DDay.iCal
 
         private void Initialize()
         {
-            this.Name = Components.CALENDAR;            
+            this.Name = Components.CALENDAR;
 
-            m_UniqueComponents = new UniqueComponentList<IUniqueComponent>(this);
-            m_Events = new UniqueComponentList<IEvent>(this);
-            m_Todos = new UniqueComponentList<ITodo>(this);
-            m_Journals = new UniqueComponentList<IJournal>(this);
-            m_FreeBusy = new UniqueComponentList<IFreeBusy>(this);
-            m_TimeZones = new FilteredCalendarObjectList<ITimeZone>(this);            
+            m_UniqueComponents = new UniqueComponentListProxy<IUniqueComponent>(Children);
+            m_Events = new UniqueComponentListProxy<IEvent>(Children);
+            m_Todos = new UniqueComponentListProxy<ITodo>(Children);
+            m_Journals = new CalendarObjectListProxy<IJournal>(Children);
+            m_FreeBusy = new UniqueComponentListProxy<IFreeBusy>(Children);
+            m_TimeZones = new CalendarObjectListProxy<ITimeZone>(Children);
         }
 
         #endregion
@@ -446,38 +448,38 @@ namespace DDay.iCal
             IICalendar iCal = obj as iCalendar;
             if (iCal != null)
             {
-                bool isEqual =
-                    object.Equals(Version, iCal.Version) &&
-                    object.Equals(ProductID, iCal.ProductID) &&
-                    object.Equals(Scale, iCal.Scale) &&
-                    object.Equals(Method, iCal.Method) &&
-                    (
-                        (UniqueComponents == null && iCal.UniqueComponents == null) ||
-                        (UniqueComponents != null && iCal.UniqueComponents != null && object.Equals(UniqueComponents.Count, iCal.UniqueComponents.Count))
-                    );
+                //bool isEqual =
+                //    object.Equals(Version, iCal.Version) &&
+                //    object.Equals(ProductID, iCal.ProductID) &&
+                //    object.Equals(Scale, iCal.Scale) &&
+                //    object.Equals(Method, iCal.Method) &&
+                //    (
+                //        (UniqueComponents == null && iCal.UniqueComponents == null) ||
+                //        (UniqueComponents != null && iCal.UniqueComponents != null && object.Equals(UniqueComponents.Count, iCal.UniqueComponents.Count))
+                //    );
 
-                if (isEqual)
-                {
-                    if (UniqueComponents.Count != iCal.UniqueComponents.Count)
-                        return false;
+                //if (isEqual)
+                //{
+                //    if (UniqueComponents.Count != iCal.UniqueComponents.Count)
+                //        return false;
 
-                    IEnumerator<IUniqueComponent> e1 = UniqueComponents.GetEnumerator();
-                    IEnumerator<IUniqueComponent> e2 = iCal.UniqueComponents.GetEnumerator();
-                    while (e1.MoveNext())
-                    {
-                        if (!e2.MoveNext())
-                            return false;
-                        if (!object.Equals(e1.Current, e2.Current))
-                            return false;
-                    }
-                    return !e2.MoveNext();                    
-                }
-                return false;
+                //    IEnumerator<IUniqueComponent> e1 = UniqueComponents.GetEnumerator();
+                //    IEnumerator<IUniqueComponent> e2 = iCal.UniqueComponents.GetEnumerator();
+                //    while (e1.MoveNext())
+                //    {
+                //        if (!e2.MoveNext())
+                //            return false;
+                //        if (!object.Equals(e1.Current, e2.Current))
+                //            return false;
+                //    }
+                //    return !e2.MoveNext();                    
+                //}
+                //return false;
             }
             return base.Equals(obj);
         }
 
-        #endregion        
+        #endregion
 
         #region IICalendar Members
 
@@ -517,7 +519,7 @@ namespace DDay.iCal
         /// <summary>
         /// A collection of <see cref="Journal"/> components in the iCalendar.
         /// </summary>
-        virtual public IUniqueComponentList<IJournal> Journals
+        virtual public ICalendarObjectList<IJournal> Journals
         {
             get { return m_Journals; }
         }
@@ -525,7 +527,7 @@ namespace DDay.iCal
         /// <summary>
         /// A collection of <see cref="DDay.iCal.TimeZone"/> components in the iCalendar.
         /// </summary>
-        virtual public IFilteredCalendarObjectList<ITimeZone> TimeZones
+        virtual public ICalendarObjectList<ITimeZone> TimeZones
         {
             get { return m_TimeZones; }
         }
@@ -582,7 +584,7 @@ namespace DDay.iCal
         /// <returns>The time zone added to the calendar.</returns>
         public ITimeZone AddTimeZone(ITimeZone tz)
         {
-            AddChild(tz);
+            this.AddChild(tz);
             return tz;
         }
 
@@ -597,14 +599,14 @@ namespace DDay.iCal
         public ITimeZone AddTimeZone(System.TimeZoneInfo tzi)
         {
             ITimeZone tz = iCalTimeZone.FromSystemTimeZone(tzi);
-            AddChild(tz);
+            this.AddChild(tz);
             return tz;
         }
 
         public ITimeZone AddTimeZone(System.TimeZoneInfo tzi, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
         {
             ITimeZone tz = iCalTimeZone.FromSystemTimeZone(tzi, earliestDateTimeToSupport, includeHistoricalData);
-            AddChild(tz);
+            this.AddChild(tz);
             return tz;
         }
 
@@ -617,14 +619,14 @@ namespace DDay.iCal
         public ITimeZone AddLocalTimeZone()
         {
             ITimeZone tz = iCalTimeZone.FromLocalTimeZone();
-            AddChild(tz);
+            this.AddChild(tz);
             return tz;
         }
 
         public ITimeZone AddLocalTimeZone(DateTime earliestDateTimeToSupport, bool includeHistoricalData)
         {
             ITimeZone tz = iCalTimeZone.FromLocalTimeZone(earliestDateTimeToSupport, includeHistoricalData);
-            AddChild(tz);
+            this.AddChild(tz);
             return tz;
         }
 #endif
@@ -694,7 +696,7 @@ namespace DDay.iCal
         virtual public IList<Occurrence> GetOccurrences(IDateTime dt)
         {
             return GetOccurrences<IRecurringComponent>(
-                new iCalDateTime(dt.Local.Date), 
+                new iCalDateTime(dt.Local.Date),
                 new iCalDateTime(dt.Local.Date.AddDays(1).AddSeconds(-1)));
         }
         virtual public IList<Occurrence> GetOccurrences(DateTime dt)
@@ -735,7 +737,7 @@ namespace DDay.iCal
         virtual public IList<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
         {
             return GetOccurrences<T>(
-                new iCalDateTime(dt.Local.Date), 
+                new iCalDateTime(dt.Local.Date),
                 new iCalDateTime(dt.Local.Date.AddDays(1).AddTicks(-1)));
         }
         virtual public IList<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
@@ -744,7 +746,7 @@ namespace DDay.iCal
                 new iCalDateTime(dt.Date),
                 new iCalDateTime(dt.Date.AddDays(1).AddTicks(-1)));
         }
-        
+
         /// <summary>
         /// Returns all occurrences of components of type T that start within the date range provided.
         /// All components occurring between <paramref name="startTime"/> and <paramref name="endTime"/>
@@ -791,7 +793,7 @@ namespace DDay.iCal
             ICalendarObject obj = Activator.CreateInstance(typeof(T)) as ICalendarObject;
             if (obj is T)
             {
-                AddChild(obj);
+                this.AddChild(obj);
                 return (T)obj;
             }
             return default(T);
@@ -806,8 +808,8 @@ namespace DDay.iCal
             Children.Clear();
         }
 
-        #endregion        
-    
+        #endregion
+
         #region IMergeable Members
 
         virtual public void MergeWith(IMergeable obj)
@@ -833,17 +835,17 @@ namespace DDay.iCal
                     if (child is IUniqueComponent)
                     {
                         if (!UniqueComponents.ContainsKey(((IUniqueComponent)child).UID))
-                            AddChild(child.Copy<ICalendarObject>());
+                            this.AddChild(child.Copy<ICalendarObject>());
                     }
                     else if (child is ITimeZone)
                     {
                         ITimeZone tz = GetTimeZone(((ITimeZone)child).TZID);
                         if (tz == null)
-                            AddChild(child.Copy<ICalendarObject>());
+                            this.AddChild(child.Copy<ICalendarObject>());
                     }
                     else
                     {
-                        AddChild(child.Copy<ICalendarObject>());
+                        this.AddChild(child.Copy<ICalendarObject>());
                     }
                 }
             }
@@ -855,7 +857,7 @@ namespace DDay.iCal
 
         virtual public IFreeBusy GetFreeBusy(IFreeBusy freeBusyRequest)
         {
-            return DDay.iCal.FreeBusy.Create(this, freeBusyRequest);            
+            return DDay.iCal.FreeBusy.Create(this, freeBusyRequest);
         }
 
         virtual public IFreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive)

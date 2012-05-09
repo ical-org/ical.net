@@ -5,11 +5,10 @@ using System.Collections;
 
 namespace DDay.iCal
 {
-    public interface IUniqueComponentList<T> :
-        IFilteredCalendarObjectList<T>
-        where T : IUniqueComponent
+    public interface IUniqueComponentList<TComponentType> :
+        ICalendarObjectList<TComponentType>
+        where TComponentType : class, IUniqueComponent
     {
-        bool ContainsKey(string UID);
-        T this[string uid] { get; set; }
+        TComponentType this[string uid] { get; set; }
     }
 }

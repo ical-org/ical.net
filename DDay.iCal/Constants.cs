@@ -296,33 +296,5 @@ namespace DDay.iCal
         public const string DeclineCounter = "DECLINECOUNTER";
     } 
 
-    #endregion
-
-    #region EventArgs
-
-    public class ObjectEventArgs<T> :
-        EventArgs
-    {
-        public T Object { get; set; }
-
-        public ObjectEventArgs(T obj)
-        {
-            Object = obj;
-        }
-    }
-
-    public class ValueChangedEventArgs :
-        EventArgs
-    {
-        public object OldValue { get; set; }
-        public object NewValue { get; set; }
-
-        public ValueChangedEventArgs(object oldValue, object newValue)
-        {
-            OldValue = oldValue;
-            NewValue = newValue;
-        }
-    }
-
-    #endregion
+    #endregion   
 }

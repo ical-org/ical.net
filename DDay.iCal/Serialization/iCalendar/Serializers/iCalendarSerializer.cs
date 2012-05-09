@@ -77,7 +77,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 if (string.IsNullOrEmpty(copy.Version))
                     copy.Version = CalendarVersions.v2_0;                    
                 if (string.IsNullOrEmpty(copy.ProductID))
-                    copy.ProductID = CalendarProductIDs.Default;                    
+                    copy.ProductID = CalendarProductIDs.Default;
 
                 return base.SerializeToString(copy);
             }

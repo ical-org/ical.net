@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 
@@ -15,47 +16,12 @@ namespace DDay.iCal
     [Serializable]
 #endif
     public class FilteredCalendarObjectList<T> :
-        IFilteredCalendarObjectList<T>
-        where T : ICalendarObject
+        ICalendarObjectList<T>
+        where T : class, ICalendarObject
     {
-        #region Public Events
-
-        public event EventHandler<ObjectEventArgs<T>> ItemAdded;
-        public event EventHandler<ObjectEventArgs<T>> ItemRemoved;
-
-        protected void OnItemAdded(T item)
-        {
-            if (ItemAdded != null)
-                ItemAdded(this, new ObjectEventArgs<T>(item));
-        }
-
-        protected void OnItemRemoved(T item)
-        {
-            if (ItemRemoved != null)
-                ItemRemoved(this, new ObjectEventArgs<T>(item));
-        }
-
-        #endregion
-
-        #region Private Fields
-
-        /// <summary>
-        /// NOTE: we use a weak reference here to ensure this doesn't cause a memory leak.
-        /// As this class merely provides a service to calendar properties, we shouldn't
-        /// be holding on to memory references via this object anyhow.
-        /// </summary>
-        private ICalendarObject m_Attached = null;
-        private List<T> m_Items = null;
-
-        #endregion
-
         #region Protected Properties
 
-        protected ICalendarObject Attached
-        {
-            get { return m_Attached; }
-            set { m_Attached = value; }
-        }
+        protected ICalendarObject Attached { get; set; }
 
         #endregion
 
@@ -64,87 +30,128 @@ namespace DDay.iCal
         public FilteredCalendarObjectList(ICalendarObject attached)
         {
             Attached = attached;
-            m_Items = new List<T>();
-            attached.ChildAdded += new EventHandler<ObjectEventArgs<ICalendarObject>>(m_Attached_ChildAdded);
-            attached.ChildRemoved += new EventHandler<ObjectEventArgs<ICalendarObject>>(m_Attached_ChildRemoved);
-        }        
-
-        #endregion
-
-        #region Event Handlers
-
-        void m_Attached_ChildRemoved(object sender, ObjectEventArgs<ICalendarObject> e)
-        {
-            if (e.Object is T)
-            {
-                T item = (T)e.Object;
-                m_Items.Remove(item);
-                OnItemRemoved(item);
-            }
+            Attached.Children.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarObject>>(Children_ItemAdded);
+            Attached.Children.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarObject>>(Children_ItemRemoved);
         }
 
-        void m_Attached_ChildAdded(object sender, ObjectEventArgs<ICalendarObject> e)
+        void Children_ItemRemoved(object sender, ObjectEventArgs<ICalendarObject> e)
         {
             if (e.Object is T)
-            {
-                T item = (T)e.Object;
-                m_Items.Add(item);
-                OnItemAdded(item);
-            }
+                OnItemRemoved(this, e);
+        }
+
+        void Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject> e)
+        {
+            if (e.Object is T)
+                OnItemAdded(this, e);
         }
 
         #endregion
 
-        #region ICollection<T> Members
+        #region IKeyedList<string,T> Members
 
-        public void Add(T item)
+        public event EventHandler<ObjectEventArgs<T>> ItemAdded;
+        public event EventHandler<ObjectEventArgs<T>> ItemRemoved;
+
+        protected void OnItemAdded(object sender, ObjectEventArgs<ICalendarObject> e)
+        {
+            if (ItemAdded != null)
+                ItemAdded(sender, new ObjectEventArgs<T>((T)e.Object));
+        }
+
+        protected void OnItemRemoved(object sender, ObjectEventArgs<ICalendarObject> e)
+        {
+            if (ItemRemoved != null)
+                ItemRemoved(sender, new ObjectEventArgs<T>((T)e.Object));
+        }
+
+        virtual public void Add(T item)
         {
             Attached.AddChild(item);
         }
 
-        public void Clear()
+        virtual public void Insert(int index, T item)
         {
-            foreach (T item in m_Items)
-                Attached.RemoveChild(item);
+            Attached.Children.Insert(index, item);
         }
 
-        public bool Contains(T item)
+        virtual public bool Remove(T item)
         {
-            return m_Items.Contains(item);
+            return Attached.Children.Remove(item);
         }
 
-        public void CopyTo(T[] array, int arrayIndex)
+        virtual public bool Remove(string key)
         {
-            m_Items.CopyTo(array, arrayIndex);
+            return Attached.Children.Remove(key);
         }
 
-        public int Count
+        virtual public int IndexOf(T item)
         {
-            get { return m_Items.Count; }
+            return Attached.Children.IndexOf(item);
         }
 
-        public bool IsReadOnly
+        virtual public void Clear(string key)
         {
-            get { return false; }
+            // Clear all items matching the given key, of the type filtered in this list.
+            var items = Attached.Children.AllOf(key).OfType<T>().ToArray();
+            foreach (var item in items)
+                Attached.Children.Remove(item);
         }
 
-        public bool Remove(T item)
+        virtual public void Clear()
         {
-            if (Contains(item))
+            // Clear all items of the type filtered in this list.
+            var items = Attached.Children.OfType<T>().ToArray();
+            foreach (var item in items)
+                Attached.Children.Remove(item);
+        }
+        
+        virtual public bool ContainsKey(string key)
+        {
+            return Attached.Children.ContainsKey(key);
+        }
+
+        virtual public int CountOf(string key)
+        {
+            if (Attached.Children.ContainsKey(key))
+                return Attached.Children.AllOf(key).OfType<T>().Count();
+            return 0;
+        }
+
+        virtual public IEnumerable<T> Values()
+        {
+            return Attached.Children.OfType<T>();
+        }
+
+        virtual public IEnumerable<T> AllOf(string key)
+        {
+            return Attached.Children.AllOf(key).OfType<T>();
+        }
+
+        virtual public T this[string key]
+        {
+            get
             {
-                Attached.RemoveChild(item);
-                return true;
+                return Attached.Children[key] as T;
             }
-            return false;
+            set
+            {
+                Attached.Children[key] = value;
+            }
+        }
+
+        virtual public T[] ToArray()
+        {
+            return Attached.Children.Values().OfType<T>().ToArray();            
         }
 
         #endregion
 
         #region IEnumerable<T> Members
 
-        public IEnumerator<T> GetEnumerator()
+        virtual public IEnumerator<T> GetEnumerator()
         {
-            return m_Items.GetEnumerator();
+            return Attached.Children.Values().OfType<T>().GetEnumerator();
         }
 
         #endregion
@@ -153,24 +160,7 @@ namespace DDay.iCal
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return m_Items.GetEnumerator();
-        }
-
-        #endregion
-
-        #region IFilteredCalendarObjectList<T> Members
-
-        public T this[int index]
-        {
-            get
-            {
-                return m_Items[index];
-            }
-        }
-
-        public int IndexOf(T item)
-        {
-            return m_Items.IndexOf(item);
+            return Attached.Children.Values().OfType<T>().GetEnumerator();
         }
 
         #endregion

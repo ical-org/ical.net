@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using DDay.Collections;
 
 namespace DDay.iCal
 {
@@ -12,7 +13,7 @@ namespace DDay.iCal
         IDateTime LastModified { get; set; }
         Uri TZUrl { get; set; }
         Uri Url { get; set; }
-        IFilteredCalendarObjectList<ITimeZoneInfo> TimeZoneInfos { get; set; }
+        ICalendarObjectList<ITimeZoneInfo> TimeZoneInfos { get; set; }
         TimeZoneObservance? GetTimeZoneObservance(IDateTime dt);
     }
 }

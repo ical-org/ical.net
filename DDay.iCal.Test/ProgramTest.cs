@@ -1,15 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using System.Resources;
-using System.Web;
-using System.Reflection;
-using System.Text.RegularExpressions;
+using System.Linq;
 using System.Net;
-using NUnit.Framework;
+using System.Reflection;
+using System.Resources;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Web;
 using DDay.iCal.Serialization.iCalendar;
+using NUnit.Framework;
 
 namespace DDay.iCal.Test
 {
@@ -130,8 +131,8 @@ namespace DDay.iCal.Test
             iCal2.Events[iCal1.Events[0].UID].UID = "1234567890";
             iCal1.MergeWith(iCal2);
 
-            IEvent evt1 = iCal1.Events[0];
-            IEvent evt2 = iCal1.Events[1];
+            IEvent evt1 = iCal1.Events.First();
+            IEvent evt2 = iCal1.Events.Skip(1).First();
 
             // Get occurrences for the first event
             IList<Occurrence> occurrences = evt1.GetOccurrences(

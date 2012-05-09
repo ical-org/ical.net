@@ -125,8 +125,8 @@ namespace DDay.iCal
 
         virtual public IList<IFreeBusyEntry> Entries
         {
-            get { return Properties.GetList<IFreeBusyEntry>("FREEBUSY"); }
-            set { Properties.SetList("FREEBUSY", value); }
+            get { return Properties.GetMany<IFreeBusyEntry>("FREEBUSY"); }
+            set { Properties.Set("FREEBUSY", value); }
         }
 
         virtual public IDateTime DTStart

@@ -164,7 +164,7 @@ namespace DDay.iCal
         virtual public void AddProperty(ICalendarProperty p)
         {
             p.Parent = this;
-            Properties[p.Name] = p;
+            Properties.Set(p.Name, p);
         }
 
         #endregion        

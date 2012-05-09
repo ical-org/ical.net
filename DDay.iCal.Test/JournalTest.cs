@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Collections;
 using System.IO;
@@ -42,7 +43,7 @@ namespace DDay.iCal.Test
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL2.ics")[0];
             ProgramTest.TestCal(iCal);
             Assert.AreEqual(1, iCal.Journals.Count);
-            IJournal j = iCal.Journals[0];
+            IJournal j = iCal.Journals.First();
 
             Assert.IsNotNull(j, "Journal entry was null");
             Assert.AreEqual(JournalStatus.Final, j.Status, "Journal entry should have been in FINAL status, but it was in " + j.Status + " status.");

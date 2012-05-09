@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using DDay.Collections;
 
 namespace DDay.iCal
 {
@@ -73,12 +74,12 @@ namespace DDay.iCal
         /// <summary>
         /// Gets a list of Journal entries contained in the calendar.
         /// </summary>
-        IUniqueComponentList<IJournal> Journals { get; }
+        ICalendarObjectList<IJournal> Journals { get; }
 
         /// <summary>
         /// Gets a list of time zones contained in the calendar.
         /// </summary>
-        IFilteredCalendarObjectList<ITimeZone> TimeZones { get; }
+        ICalendarObjectList<ITimeZone> TimeZones { get; }
 
         /// <summary>
         /// Gets a list of To-do items contained in the calendar.

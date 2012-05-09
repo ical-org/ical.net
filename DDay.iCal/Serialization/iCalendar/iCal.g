@@ -8,6 +8,7 @@ header
 {
     using System.Text;
     using System.IO;
+	using System.Collections;
     using System.Collections.Generic;  
     using System.Runtime.Serialization;
     using DDay.iCal.Serialization;
@@ -194,8 +195,28 @@ v=value
 {
 	// Deserialize the value of the property
 	// into a concrete iCalendar data type,
+	// a list of concrete iCalendar data types,
 	// or string value.
-	p.Value = dataMapSerializer.Deserialize(new StringReader(v));
+	object deserialized = dataMapSerializer.Deserialize(new StringReader(v));
+    if (deserialized != null)
+    {
+		// Try to determine if this is was deserialized as a *list*
+		// of concrete types.
+        Type targetType = dataMapSerializer.TargetType;
+        Type listOfTargetType = typeof(IList<>).MakeGenericType(targetType);
+        if (listOfTargetType.IsAssignableFrom(deserialized.GetType()))
+        {
+			// We deserialized a list - add each value to the
+			// resulting object.
+            foreach (var item in (IEnumerable)deserialized)
+                p.AddValue(item);
+        }
+        else
+        {
+			// We deserialized a single value - add it to the object.
+            p.AddValue(deserialized);
+        }
+    }
 } (CRLF)*
 {
 	// Do some final processing on the property:
@@ -214,7 +235,7 @@ v=value
 //
 parameter[
 	ISerializationContext ctx,
-	ICalendarParameterListContainer container
+	ICalendarParameterCollectionContainer container
 ] returns [ICalendarParameter p = null;]
 {
 	string v;
@@ -233,7 +254,7 @@ EQUAL v=param_value { values.Add(v); }
 	COMMA v=param_value { values.Add(v); }
 )*
 {
-	p.Values = values.ToArray();
+	p.SetValue(values);
 	
 	if (container != null)
 	{

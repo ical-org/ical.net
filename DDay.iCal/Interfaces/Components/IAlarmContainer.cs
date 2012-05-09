@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using DDay.Collections;
 
 namespace DDay.iCal
 {
@@ -9,7 +10,7 @@ namespace DDay.iCal
         /// <summary>
         /// A list of <see cref="Alarm"/>s for this recurring component.
         /// </summary>
-        IList<IAlarm> Alarms { get; }
+        ICalendarObjectList<IAlarm> Alarms { get; }
 
         /// <summary>
         /// Polls <see cref="Alarm"/>s for occurrences within the <see cref="Evaluate"/>d
@@ -21,7 +22,7 @@ namespace DDay.iCal
         /// The following is an example of polling alarms for an event.
         /// <code>
         /// IICalendar iCal = iCalendar.LoadFromUri(new Uri("http://somesite.com/calendar.ics"));
-        /// IEvent evt = iCal.Events[0];
+        /// IEvent evt = iCal.Events.First();
         ///
         /// // Poll the alarms on the event
         /// List<AlarmOccurrence> alarms = evt.PollAlarms();
