@@ -1,0 +1,1825 @@
+
+EXTRA_DIST =  
+
+# Warning: This is an automatically generated file, do not edit!
+
+if ENABLE_DEBUG
+ASSEMBLY_COMPILER_COMMAND = gmcs
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- -debug "-define:TRACE;DEBUG" "-main:DDay.iCal.Test.Startup"
+ASSEMBLY = bin/Debug/DDay.iCal.Test.exe
+ASSEMBLY_MDB = $(ASSEMBLY).mdb
+COMPILE_TARGET = winexe
+PROJECT_REFERENCES =  \
+	../DDay.iCal/bin/Debug/DDay.iCal.dll
+BUILD_DIR = bin/Debug/
+
+DDAY_ICAL_TEST_EXE_MDB_SOURCE=bin/Debug/DDay.iCal.Test.exe.mdb
+DDAY_ICAL_TEST_EXE_MDB=$(BUILD_DIR)/DDay.iCal.Test.exe.mdb
+ALARM1_ICS_SOURCE=Calendars/Alarm/ALARM1.ics
+ALARM2_ICS_SOURCE=Calendars/Alarm/ALARM2.ics
+ALARM3_ICS_SOURCE=Calendars/Alarm/ALARM3.ics
+ALARM4_ICS_SOURCE=Calendars/Alarm/ALARM4.ics
+ALARM5_ICS_SOURCE=Calendars/Alarm/ALARM5.ics
+ALARM6_ICS_SOURCE=Calendars/Alarm/ALARM6.ics
+ALARM7_ICS_SOURCE=Calendars/Alarm/ALARM7.ics
+LANGUAGE4_ICS_SOURCE=Calendars/Serialization/Language4.ics
+ENCODING2_ICS_SOURCE=Calendars/Serialization/Encoding2.ics
+ENCODING3_ICS_SOURCE=Calendars/Serialization/Encoding3.ics
+ATTACHMENT4_ICS_SOURCE=Calendars/Serialization/Attachment4.ics
+GEOGRAPHICLOCATION1_ICS_SOURCE=Calendars/Serialization/GeographicLocation1.ics
+GOOGLE1_ICS_SOURCE=Calendars/Serialization/Google1.ics
+OUTLOOK2007LINEFOLDS_ICS_SOURCE=Calendars/Serialization/Outlook2007LineFolds.ics
+PRODID1_ICS_SOURCE=Calendars/Serialization/ProdID1.ics
+PRODID2_ICS_SOURCE=Calendars/Serialization/ProdID2.ics
+JOURNAL1_ICS_SOURCE=Calendars/Journal/JOURNAL1.ics
+JOURNAL2_ICS_SOURCE=Calendars/Journal/JOURNAL2.ics
+YEARLYCOMPLEX1_ICS_SOURCE=Calendars/Recurrence/YearlyComplex1.ics
+WEEKLYUNTILWKST1_ICS_SOURCE=Calendars/Recurrence/WeeklyUntilWkst1.ics
+WEEKLYCOUNTWKST1_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst1.ics
+WEEKLYUNTILWKST2_ICS_SOURCE=Calendars/Recurrence/WeeklyUntilWkst2.ics
+WEEKLYCOUNTWKST2_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst2.ics
+MONTHLYCOUNTBYDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByDay1.ics
+MONTHLYUNTILBYDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyUntilByDay1.ics
+MONTHLYCOUNTBYDAY2_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByDay2.ics
+MONTHLYCOUNTBYDAY3_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByDay3.ics
+BYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/ByMonthDay1.ics
+MONTHLYCOUNTBYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByMonthDay1.ics
+DAILYCOUNT1_ICS_SOURCE=Calendars/Recurrence/DailyCount1.ics
+MONTHLYCOUNTBYMONTHDAY2_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByMonthDay2.ics
+MONTHLYCOUNTBYMONTHDAY3_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByMonthDay3.ics
+MONTHLYBYDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyByDay1.ics
+YEARLYBYMONTH1_ICS_SOURCE=Calendars/Recurrence/YearlyByMonth1.ics
+YEARLYCOUNTBYMONTH1_ICS_SOURCE=Calendars/Recurrence/YearlyCountByMonth1.ics
+YEARLYCOUNTBYYEARDAY1_ICS_SOURCE=Calendars/Recurrence/YearlyCountByYearDay1.ics
+YEARLYBYDAY1_ICS_SOURCE=Calendars/Recurrence/YearlyByDay1.ics
+YEARLYBYWEEKNO1_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo1.ics
+YEARLYBYMONTH2_ICS_SOURCE=Calendars/Recurrence/YearlyByMonth2.ics
+YEARLYBYMONTH3_ICS_SOURCE=Calendars/Recurrence/YearlyByMonth3.ics
+DAILYUNTIL1_ICS_SOURCE=Calendars/Recurrence/DailyUntil1.ics
+MONTHLYBYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyByMonthDay1.ics
+MONTHLYBYMONTHDAY2_ICS_SOURCE=Calendars/Recurrence/MonthlyByMonthDay2.ics
+YEARLYBYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/YearlyByMonthDay1.ics
+MONTHLYBYSETPOS1_ICS_SOURCE=Calendars/Recurrence/MonthlyBySetPos1.ics
+MONTHLYBYSETPOS2_ICS_SOURCE=Calendars/Recurrence/MonthlyBySetPos2.ics
+HOURLYUNTIL1_ICS_SOURCE=Calendars/Recurrence/HourlyUntil1.ics
+MINUTELYCOUNT1_ICS_SOURCE=Calendars/Recurrence/MinutelyCount1.ics
+MINUTELYCOUNT2_ICS_SOURCE=Calendars/Recurrence/MinutelyCount2.ics
+DAILYBYHOURMINUTE1_ICS_SOURCE=Calendars/Recurrence/DailyByHourMinute1.ics
+MINUTELYBYHOUR1_ICS_SOURCE=Calendars/Recurrence/MinutelyByHour1.ics
+DAILY1_ICS_SOURCE=Calendars/Recurrence/Daily1.ics
+WEEKLYCOUNTWKST3_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst3.ics
+WEEKLYCOUNTWKST4_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst4.ics
+BUG1741093_ICS_SOURCE=Calendars/Recurrence/Bug1741093.ics
+SECONDLY1_ICS_SOURCE=Calendars/Recurrence/Secondly1.ics
+MINUTELY1_ICS_SOURCE=Calendars/Recurrence/Minutely1.ics
+HOURLY1_ICS_SOURCE=Calendars/Recurrence/Hourly1.ics
+MONTHLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/MonthlyInterval1.ics
+YEARLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/YearlyInterval1.ics
+DAILYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/DailyInterval1.ics
+DAILYCOUNT2_ICS_SOURCE=Calendars/Recurrence/DailyCount2.ics
+HOURLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/HourlyInterval1.ics
+YEARLYBYSETPOS1_ICS_SOURCE=Calendars/Recurrence/YearlyBySetPos1.ics
+EMPTY1_ICS_SOURCE=Calendars/Recurrence/Empty1.ics
+HOURLYINTERVAL2_ICS_SOURCE=Calendars/Recurrence/HourlyInterval2.ics
+MINUTELYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/MinutelyInterval1.ics
+DAILYINTERVAL2_ICS_SOURCE=Calendars/Recurrence/DailyInterval2.ics
+DAILYBYDAY1_ICS_SOURCE=Calendars/Recurrence/DailyByDay1.ics
+WEEKLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/WeeklyInterval1.ics
+WEEKLYWEEKSTARTSLASTYEAR_ICS_SOURCE=Calendars/Recurrence/WeeklyWeekStartsLastYear.ics
+MONTHLY1_ICS_SOURCE=Calendars/Recurrence/Monthly1.ics
+YEARLY1_ICS_SOURCE=Calendars/Recurrence/Yearly1.ics
+BYMONTH1_ICS_SOURCE=Calendars/Recurrence/ByMonth1.ics
+BUG2912657_ICS_SOURCE=Calendars/Recurrence/Bug2912657.ics
+BYMONTH2_ICS_SOURCE=Calendars/Recurrence/ByMonth2.ics
+WEEKLYCOUNT1_ICS_SOURCE=Calendars/Recurrence/WeeklyCount1.ics
+WEEKLYUNTIL1_ICS_SOURCE=Calendars/Recurrence/WeeklyUntil1.ics
+WEEKLYWKST1_ICS_SOURCE=Calendars/Recurrence/WeeklyWkst1.ics
+LANGUAGE1_ICS_SOURCE=Calendars/Serialization/Language1.ics
+LANGUAGE2_ICS_SOURCE=Calendars/Serialization/Language2.ics
+EMPTYLINES1_ICS_SOURCE=Calendars/Serialization/EmptyLines1.ics
+PARAMETER1_ICS_SOURCE=Calendars/Serialization/Parameter1.ics
+PARAMETER2_ICS_SOURCE=Calendars/Serialization/Parameter2.ics
+REQUESTSTATUS1_ICS_SOURCE=Calendars/Serialization/RequestStatus1.ics
+RECURRENCEDATES1_ICS_SOURCE=Calendars/Serialization/RecurrenceDates1.ics
+DATETIME1_ICS_SOURCE=Calendars/Serialization/DateTime1.ics
+PARSE17_ICS_SOURCE=Calendars/Serialization/PARSE17.ics
+BUG2033495_ICS_SOURCE=Calendars/Serialization/Bug2033495.ics
+EMPTYLINES2_ICS_SOURCE=Calendars/Serialization/EmptyLines2.ics
+CALENDAR1_ICS_SOURCE=Calendars/Serialization/Calendar1.ics
+EMPTYLINES3_ICS_SOURCE=Calendars/Serialization/EmptyLines3.ics
+CALENDARPARAMETERS2_ICS_SOURCE=Calendars/Serialization/CalendarParameters2.ics
+PARSE1_ICS_SOURCE=Calendars/Serialization/Parse1.ics
+EMPTYLINES4_ICS_SOURCE=Calendars/Serialization/EmptyLines4.ics
+CASEINSENSITIVE4_ICS_SOURCE=Calendars/Serialization/CaseInsensitive4.ics
+PROPERTY1_ICS_SOURCE=Calendars/Serialization/Property1.ics
+LANGUAGE3_ICS_SOURCE=Calendars/Serialization/Language3.ics
+EVENT1_ICS_SOURCE=Calendars/Serialization/Event1.ics
+TODO2_ICS_SOURCE=Calendars/Serialization/Todo2.ics
+TODO3_ICS_SOURCE=Calendars/Serialization/Todo3.ics
+TODO4_ICS_SOURCE=Calendars/Serialization/Todo4.ics
+TODO5_ICS_SOURCE=Calendars/Serialization/Todo5.ics
+TODO6_ICS_SOURCE=Calendars/Serialization/Todo6.ics
+TODO7_ICS_SOURCE=Calendars/Serialization/Todo7.ics
+EVENT2_ICS_SOURCE=Calendars/Serialization/Event2.ics
+CASEINSENSITIVE1_ICS_SOURCE=Calendars/Serialization/CaseInsensitive1.ics
+CASEINSENSITIVE2_ICS_SOURCE=Calendars/Serialization/CaseInsensitive2.ics
+CASEINSENSITIVE3_ICS_SOURCE=Calendars/Serialization/CaseInsensitive3.ics
+XPROPERTY1_ICS_SOURCE=Calendars/Serialization/XProperty1.ics
+XPROPERTY2_ICS_SOURCE=Calendars/Serialization/XProperty2.ics
+EVENT3_ICS_SOURCE=Calendars/Serialization/Event3.ics
+BUG2148092_ICS_SOURCE=Calendars/Serialization/Bug2148092.ics
+DURATION1_ICS_SOURCE=Calendars/Serialization/Duration1.ics
+ATTACHMENT3_ICS_SOURCE=Calendars/Serialization/Attachment3.ics
+ENCODING1_ICS_SOURCE=Calendars/Serialization/Encoding1.ics
+EVENT4_ICS_SOURCE=Calendars/Serialization/Event4.ics
+CATEGORIES1_ICS_SOURCE=Calendars/Serialization/Categories1.ics
+TODO1_ICS_SOURCE=Calendars/Serialization/Todo1.ics
+TIMEZONE1_ICS_SOURCE=Calendars/Serialization/TimeZone1.ics
+TIMEZONE2_ICS_SOURCE=Calendars/Serialization/TimeZone2.ics
+TIMEZONE3_ICS_SOURCE=Calendars/Serialization/TimeZone3.ics
+USHOLIDAYS_ICS_SOURCE=Calendars/Serialization/USHolidays.ics
+TODO1_ICS2_SOURCE=Calendars/Todo/Todo1.ics
+TODO2_ICS2_SOURCE=Calendars/Todo/Todo2.ics
+TODO3_ICS2_SOURCE=Calendars/Todo/Todo3.ics
+TODO4_ICS2_SOURCE=Calendars/Todo/Todo4.ics
+TODO5_ICS2_SOURCE=Calendars/Todo/Todo5.ics
+TODO6_ICS2_SOURCE=Calendars/Todo/Todo6.ics
+TODO7_ICS2_SOURCE=Calendars/Todo/Todo7.ics
+TODO8_ICS_SOURCE=Calendars/Todo/Todo8.ics
+TODO9_ICS_SOURCE=Calendars/Todo/Todo9.ics
+DATETIME2_ICS_SOURCE=Calendars/Serialization/DateTime2.ics
+YEARLYBYWEEKNO2_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo2.ics
+YEARLYBYWEEKNO3_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo3.ics
+YEARLYBYWEEKNO4_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo4.ics
+YEARLYBYWEEKNO5_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo5.ics
+ATTENDEE1_ICS_SOURCE=Calendars/Serialization/Attendee1.ics
+ATTENDEE2_ICS_SOURCE=Calendars/Serialization/Attendee2.ics
+BUG2916581_ICS_SOURCE=Calendars/Recurrence/Bug2916581.ics
+BUG2938007_ICS_SOURCE=Calendars/Serialization/Bug2938007.ics
+BUG2959692_ICS_SOURCE=Calendars/Recurrence/Bug2959692.ics
+BUG2966236_ICS_SOURCE=Calendars/Recurrence/Bug2966236.ics
+BUG3007244_ICS_SOURCE=Calendars/Recurrence/Bug3007244.ics
+TRANSPARENCY1_ICS_SOURCE=Calendars/Serialization/Transparency1.ics
+TRANSPARENCY2_ICS_SOURCE=Calendars/Serialization/Transparency2.ics
+MINUTELYCOUNT3_ICS_SOURCE=Calendars/Recurrence/MinutelyCount3.ics
+MINUTELYCOUNT4_ICS_SOURCE=Calendars/Recurrence/MinutelyCount4.ics
+TRIGGER1_ICS_SOURCE=Calendars/Serialization/Trigger1.ics
+LOREMIPSUM_TXT_SOURCE=Data/LoremIpsum.txt
+TEST_DOC_SOURCE=Data/Test.doc
+ANTLR_RUNTIME_DLL_SOURCE=../antlr.runtime.dll
+LOG4NET_DLL_SOURCE=log4net.dll
+NUNIT_CONSOLE_RUNNER_DLL_SOURCE=nunit-console-runner.dll
+NUNIT_UTIL_DLL_SOURCE=nunit.util.dll
+NUNIT_CORE_DLL_SOURCE=nunit.core.dll
+NUNIT_CORE_INTERFACES_DLL_SOURCE=nunit.core.interfaces.dll
+NUNIT_GUI_RUNNER_DLL_SOURCE=nunit-gui-runner.dll
+NUNIT_UIKIT_DLL_SOURCE=nunit.uikit.dll
+NUNIT_UIEXCEPTION_DLL_SOURCE=nunit.uiexception.dll
+NUNIT_FIXTURES_DLL_SOURCE=nunit.fixtures.dll
+NUNIT_FRAMEWORK_DLL_SOURCE=nunit.framework.dll
+DDAY_ICAL_DLL_SOURCE=../DDay.iCal/bin/Debug/DDay.iCal.dll
+LICENSE_TXT_SOURCE=../DDay.iCal/License.txt
+DDAY_COLLECTIONS_DLL_SOURCE=../DDay.Collections/DDay.Collections/bin/Debug/DDay.Collections.dll
+DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=../DDay.Collections/DDay.Collections/app.config
+
+endif
+
+if ENABLE_DEBUG_MIXED_PLATFORMS
+ASSEMBLY_COMPILER_COMMAND = gmcs
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- -debug "-define:TRACE;DEBUG" "-main:DDay.iCal.Test.Startup"
+ASSEMBLY = bin/Debug/DDay.iCal.Test.exe
+ASSEMBLY_MDB = $(ASSEMBLY).mdb
+COMPILE_TARGET = winexe
+PROJECT_REFERENCES =  \
+	../DDay.iCal/bin/Debug/DDay.iCal.dll
+BUILD_DIR = bin/Debug/
+
+DDAY_ICAL_TEST_EXE_MDB_SOURCE=bin/Debug/DDay.iCal.Test.exe.mdb
+DDAY_ICAL_TEST_EXE_MDB=$(BUILD_DIR)/DDay.iCal.Test.exe.mdb
+ALARM1_ICS_SOURCE=Calendars/Alarm/ALARM1.ics
+ALARM2_ICS_SOURCE=Calendars/Alarm/ALARM2.ics
+ALARM3_ICS_SOURCE=Calendars/Alarm/ALARM3.ics
+ALARM4_ICS_SOURCE=Calendars/Alarm/ALARM4.ics
+ALARM5_ICS_SOURCE=Calendars/Alarm/ALARM5.ics
+ALARM6_ICS_SOURCE=Calendars/Alarm/ALARM6.ics
+ALARM7_ICS_SOURCE=Calendars/Alarm/ALARM7.ics
+LANGUAGE4_ICS_SOURCE=Calendars/Serialization/Language4.ics
+ENCODING2_ICS_SOURCE=Calendars/Serialization/Encoding2.ics
+ENCODING3_ICS_SOURCE=Calendars/Serialization/Encoding3.ics
+ATTACHMENT4_ICS_SOURCE=Calendars/Serialization/Attachment4.ics
+GEOGRAPHICLOCATION1_ICS_SOURCE=Calendars/Serialization/GeographicLocation1.ics
+GOOGLE1_ICS_SOURCE=Calendars/Serialization/Google1.ics
+OUTLOOK2007LINEFOLDS_ICS_SOURCE=Calendars/Serialization/Outlook2007LineFolds.ics
+PRODID1_ICS_SOURCE=Calendars/Serialization/ProdID1.ics
+PRODID2_ICS_SOURCE=Calendars/Serialization/ProdID2.ics
+JOURNAL1_ICS_SOURCE=Calendars/Journal/JOURNAL1.ics
+JOURNAL2_ICS_SOURCE=Calendars/Journal/JOURNAL2.ics
+YEARLYCOMPLEX1_ICS_SOURCE=Calendars/Recurrence/YearlyComplex1.ics
+WEEKLYUNTILWKST1_ICS_SOURCE=Calendars/Recurrence/WeeklyUntilWkst1.ics
+WEEKLYCOUNTWKST1_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst1.ics
+WEEKLYUNTILWKST2_ICS_SOURCE=Calendars/Recurrence/WeeklyUntilWkst2.ics
+WEEKLYCOUNTWKST2_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst2.ics
+MONTHLYCOUNTBYDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByDay1.ics
+MONTHLYUNTILBYDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyUntilByDay1.ics
+MONTHLYCOUNTBYDAY2_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByDay2.ics
+MONTHLYCOUNTBYDAY3_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByDay3.ics
+BYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/ByMonthDay1.ics
+MONTHLYCOUNTBYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByMonthDay1.ics
+DAILYCOUNT1_ICS_SOURCE=Calendars/Recurrence/DailyCount1.ics
+MONTHLYCOUNTBYMONTHDAY2_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByMonthDay2.ics
+MONTHLYCOUNTBYMONTHDAY3_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByMonthDay3.ics
+MONTHLYBYDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyByDay1.ics
+YEARLYBYMONTH1_ICS_SOURCE=Calendars/Recurrence/YearlyByMonth1.ics
+YEARLYCOUNTBYMONTH1_ICS_SOURCE=Calendars/Recurrence/YearlyCountByMonth1.ics
+YEARLYCOUNTBYYEARDAY1_ICS_SOURCE=Calendars/Recurrence/YearlyCountByYearDay1.ics
+YEARLYBYDAY1_ICS_SOURCE=Calendars/Recurrence/YearlyByDay1.ics
+YEARLYBYWEEKNO1_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo1.ics
+YEARLYBYMONTH2_ICS_SOURCE=Calendars/Recurrence/YearlyByMonth2.ics
+YEARLYBYMONTH3_ICS_SOURCE=Calendars/Recurrence/YearlyByMonth3.ics
+DAILYUNTIL1_ICS_SOURCE=Calendars/Recurrence/DailyUntil1.ics
+MONTHLYBYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyByMonthDay1.ics
+MONTHLYBYMONTHDAY2_ICS_SOURCE=Calendars/Recurrence/MonthlyByMonthDay2.ics
+YEARLYBYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/YearlyByMonthDay1.ics
+MONTHLYBYSETPOS1_ICS_SOURCE=Calendars/Recurrence/MonthlyBySetPos1.ics
+MONTHLYBYSETPOS2_ICS_SOURCE=Calendars/Recurrence/MonthlyBySetPos2.ics
+HOURLYUNTIL1_ICS_SOURCE=Calendars/Recurrence/HourlyUntil1.ics
+MINUTELYCOUNT1_ICS_SOURCE=Calendars/Recurrence/MinutelyCount1.ics
+MINUTELYCOUNT2_ICS_SOURCE=Calendars/Recurrence/MinutelyCount2.ics
+DAILYBYHOURMINUTE1_ICS_SOURCE=Calendars/Recurrence/DailyByHourMinute1.ics
+MINUTELYBYHOUR1_ICS_SOURCE=Calendars/Recurrence/MinutelyByHour1.ics
+DAILY1_ICS_SOURCE=Calendars/Recurrence/Daily1.ics
+WEEKLYCOUNTWKST3_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst3.ics
+WEEKLYCOUNTWKST4_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst4.ics
+BUG1741093_ICS_SOURCE=Calendars/Recurrence/Bug1741093.ics
+SECONDLY1_ICS_SOURCE=Calendars/Recurrence/Secondly1.ics
+MINUTELY1_ICS_SOURCE=Calendars/Recurrence/Minutely1.ics
+HOURLY1_ICS_SOURCE=Calendars/Recurrence/Hourly1.ics
+MONTHLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/MonthlyInterval1.ics
+YEARLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/YearlyInterval1.ics
+DAILYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/DailyInterval1.ics
+DAILYCOUNT2_ICS_SOURCE=Calendars/Recurrence/DailyCount2.ics
+HOURLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/HourlyInterval1.ics
+YEARLYBYSETPOS1_ICS_SOURCE=Calendars/Recurrence/YearlyBySetPos1.ics
+EMPTY1_ICS_SOURCE=Calendars/Recurrence/Empty1.ics
+HOURLYINTERVAL2_ICS_SOURCE=Calendars/Recurrence/HourlyInterval2.ics
+MINUTELYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/MinutelyInterval1.ics
+DAILYINTERVAL2_ICS_SOURCE=Calendars/Recurrence/DailyInterval2.ics
+DAILYBYDAY1_ICS_SOURCE=Calendars/Recurrence/DailyByDay1.ics
+WEEKLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/WeeklyInterval1.ics
+WEEKLYWEEKSTARTSLASTYEAR_ICS_SOURCE=Calendars/Recurrence/WeeklyWeekStartsLastYear.ics
+MONTHLY1_ICS_SOURCE=Calendars/Recurrence/Monthly1.ics
+YEARLY1_ICS_SOURCE=Calendars/Recurrence/Yearly1.ics
+BYMONTH1_ICS_SOURCE=Calendars/Recurrence/ByMonth1.ics
+BUG2912657_ICS_SOURCE=Calendars/Recurrence/Bug2912657.ics
+BYMONTH2_ICS_SOURCE=Calendars/Recurrence/ByMonth2.ics
+WEEKLYCOUNT1_ICS_SOURCE=Calendars/Recurrence/WeeklyCount1.ics
+WEEKLYUNTIL1_ICS_SOURCE=Calendars/Recurrence/WeeklyUntil1.ics
+WEEKLYWKST1_ICS_SOURCE=Calendars/Recurrence/WeeklyWkst1.ics
+LANGUAGE1_ICS_SOURCE=Calendars/Serialization/Language1.ics
+LANGUAGE2_ICS_SOURCE=Calendars/Serialization/Language2.ics
+EMPTYLINES1_ICS_SOURCE=Calendars/Serialization/EmptyLines1.ics
+PARAMETER1_ICS_SOURCE=Calendars/Serialization/Parameter1.ics
+PARAMETER2_ICS_SOURCE=Calendars/Serialization/Parameter2.ics
+REQUESTSTATUS1_ICS_SOURCE=Calendars/Serialization/RequestStatus1.ics
+RECURRENCEDATES1_ICS_SOURCE=Calendars/Serialization/RecurrenceDates1.ics
+DATETIME1_ICS_SOURCE=Calendars/Serialization/DateTime1.ics
+PARSE17_ICS_SOURCE=Calendars/Serialization/PARSE17.ics
+BUG2033495_ICS_SOURCE=Calendars/Serialization/Bug2033495.ics
+EMPTYLINES2_ICS_SOURCE=Calendars/Serialization/EmptyLines2.ics
+CALENDAR1_ICS_SOURCE=Calendars/Serialization/Calendar1.ics
+EMPTYLINES3_ICS_SOURCE=Calendars/Serialization/EmptyLines3.ics
+CALENDARPARAMETERS2_ICS_SOURCE=Calendars/Serialization/CalendarParameters2.ics
+PARSE1_ICS_SOURCE=Calendars/Serialization/Parse1.ics
+EMPTYLINES4_ICS_SOURCE=Calendars/Serialization/EmptyLines4.ics
+CASEINSENSITIVE4_ICS_SOURCE=Calendars/Serialization/CaseInsensitive4.ics
+PROPERTY1_ICS_SOURCE=Calendars/Serialization/Property1.ics
+LANGUAGE3_ICS_SOURCE=Calendars/Serialization/Language3.ics
+EVENT1_ICS_SOURCE=Calendars/Serialization/Event1.ics
+TODO2_ICS_SOURCE=Calendars/Serialization/Todo2.ics
+TODO3_ICS_SOURCE=Calendars/Serialization/Todo3.ics
+TODO4_ICS_SOURCE=Calendars/Serialization/Todo4.ics
+TODO5_ICS_SOURCE=Calendars/Serialization/Todo5.ics
+TODO6_ICS_SOURCE=Calendars/Serialization/Todo6.ics
+TODO7_ICS_SOURCE=Calendars/Serialization/Todo7.ics
+EVENT2_ICS_SOURCE=Calendars/Serialization/Event2.ics
+CASEINSENSITIVE1_ICS_SOURCE=Calendars/Serialization/CaseInsensitive1.ics
+CASEINSENSITIVE2_ICS_SOURCE=Calendars/Serialization/CaseInsensitive2.ics
+CASEINSENSITIVE3_ICS_SOURCE=Calendars/Serialization/CaseInsensitive3.ics
+XPROPERTY1_ICS_SOURCE=Calendars/Serialization/XProperty1.ics
+XPROPERTY2_ICS_SOURCE=Calendars/Serialization/XProperty2.ics
+EVENT3_ICS_SOURCE=Calendars/Serialization/Event3.ics
+BUG2148092_ICS_SOURCE=Calendars/Serialization/Bug2148092.ics
+DURATION1_ICS_SOURCE=Calendars/Serialization/Duration1.ics
+ATTACHMENT3_ICS_SOURCE=Calendars/Serialization/Attachment3.ics
+ENCODING1_ICS_SOURCE=Calendars/Serialization/Encoding1.ics
+EVENT4_ICS_SOURCE=Calendars/Serialization/Event4.ics
+CATEGORIES1_ICS_SOURCE=Calendars/Serialization/Categories1.ics
+TODO1_ICS_SOURCE=Calendars/Serialization/Todo1.ics
+TIMEZONE1_ICS_SOURCE=Calendars/Serialization/TimeZone1.ics
+TIMEZONE2_ICS_SOURCE=Calendars/Serialization/TimeZone2.ics
+TIMEZONE3_ICS_SOURCE=Calendars/Serialization/TimeZone3.ics
+USHOLIDAYS_ICS_SOURCE=Calendars/Serialization/USHolidays.ics
+TODO1_ICS2_SOURCE=Calendars/Todo/Todo1.ics
+TODO2_ICS2_SOURCE=Calendars/Todo/Todo2.ics
+TODO3_ICS2_SOURCE=Calendars/Todo/Todo3.ics
+TODO4_ICS2_SOURCE=Calendars/Todo/Todo4.ics
+TODO5_ICS2_SOURCE=Calendars/Todo/Todo5.ics
+TODO6_ICS2_SOURCE=Calendars/Todo/Todo6.ics
+TODO7_ICS2_SOURCE=Calendars/Todo/Todo7.ics
+TODO8_ICS_SOURCE=Calendars/Todo/Todo8.ics
+TODO9_ICS_SOURCE=Calendars/Todo/Todo9.ics
+DATETIME2_ICS_SOURCE=Calendars/Serialization/DateTime2.ics
+YEARLYBYWEEKNO2_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo2.ics
+YEARLYBYWEEKNO3_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo3.ics
+YEARLYBYWEEKNO4_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo4.ics
+YEARLYBYWEEKNO5_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo5.ics
+ATTENDEE1_ICS_SOURCE=Calendars/Serialization/Attendee1.ics
+ATTENDEE2_ICS_SOURCE=Calendars/Serialization/Attendee2.ics
+BUG2916581_ICS_SOURCE=Calendars/Recurrence/Bug2916581.ics
+BUG2938007_ICS_SOURCE=Calendars/Serialization/Bug2938007.ics
+BUG2959692_ICS_SOURCE=Calendars/Recurrence/Bug2959692.ics
+BUG2966236_ICS_SOURCE=Calendars/Recurrence/Bug2966236.ics
+BUG3007244_ICS_SOURCE=Calendars/Recurrence/Bug3007244.ics
+TRANSPARENCY1_ICS_SOURCE=Calendars/Serialization/Transparency1.ics
+TRANSPARENCY2_ICS_SOURCE=Calendars/Serialization/Transparency2.ics
+MINUTELYCOUNT3_ICS_SOURCE=Calendars/Recurrence/MinutelyCount3.ics
+MINUTELYCOUNT4_ICS_SOURCE=Calendars/Recurrence/MinutelyCount4.ics
+TRIGGER1_ICS_SOURCE=Calendars/Serialization/Trigger1.ics
+LOREMIPSUM_TXT_SOURCE=Data/LoremIpsum.txt
+TEST_DOC_SOURCE=Data/Test.doc
+ANTLR_RUNTIME_DLL_SOURCE=../antlr.runtime.dll
+LOG4NET_DLL_SOURCE=log4net.dll
+NUNIT_CONSOLE_RUNNER_DLL_SOURCE=nunit-console-runner.dll
+NUNIT_UTIL_DLL_SOURCE=nunit.util.dll
+NUNIT_CORE_DLL_SOURCE=nunit.core.dll
+NUNIT_CORE_INTERFACES_DLL_SOURCE=nunit.core.interfaces.dll
+NUNIT_GUI_RUNNER_DLL_SOURCE=nunit-gui-runner.dll
+NUNIT_UIKIT_DLL_SOURCE=nunit.uikit.dll
+NUNIT_UIEXCEPTION_DLL_SOURCE=nunit.uiexception.dll
+NUNIT_FIXTURES_DLL_SOURCE=nunit.fixtures.dll
+NUNIT_FRAMEWORK_DLL_SOURCE=nunit.framework.dll
+DDAY_ICAL_DLL_SOURCE=../DDay.iCal/bin/Debug/DDay.iCal.dll
+LICENSE_TXT_SOURCE=../DDay.iCal/License.txt
+DDAY_COLLECTIONS_DLL_SOURCE=../DDay.Collections/DDay.Collections/bin/Debug/DDay.Collections.dll
+DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=../DDay.Collections/DDay.Collections/app.config
+
+endif
+
+if ENABLE_DEBUG_X86
+ASSEMBLY_COMPILER_COMMAND = gmcs
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- -debug "-define:TRACE;DEBUG" "-main:DDay.iCal.Test.Startup"
+ASSEMBLY = bin/Debug/DDay.iCal.Test.exe
+ASSEMBLY_MDB = $(ASSEMBLY).mdb
+COMPILE_TARGET = winexe
+PROJECT_REFERENCES =  \
+	../DDay.iCal/bin/Debug/DDay.iCal.dll
+BUILD_DIR = bin/Debug/
+
+DDAY_ICAL_TEST_EXE_MDB_SOURCE=bin/Debug/DDay.iCal.Test.exe.mdb
+DDAY_ICAL_TEST_EXE_MDB=$(BUILD_DIR)/DDay.iCal.Test.exe.mdb
+ALARM1_ICS_SOURCE=Calendars/Alarm/ALARM1.ics
+ALARM2_ICS_SOURCE=Calendars/Alarm/ALARM2.ics
+ALARM3_ICS_SOURCE=Calendars/Alarm/ALARM3.ics
+ALARM4_ICS_SOURCE=Calendars/Alarm/ALARM4.ics
+ALARM5_ICS_SOURCE=Calendars/Alarm/ALARM5.ics
+ALARM6_ICS_SOURCE=Calendars/Alarm/ALARM6.ics
+ALARM7_ICS_SOURCE=Calendars/Alarm/ALARM7.ics
+LANGUAGE4_ICS_SOURCE=Calendars/Serialization/Language4.ics
+ENCODING2_ICS_SOURCE=Calendars/Serialization/Encoding2.ics
+ENCODING3_ICS_SOURCE=Calendars/Serialization/Encoding3.ics
+ATTACHMENT4_ICS_SOURCE=Calendars/Serialization/Attachment4.ics
+GEOGRAPHICLOCATION1_ICS_SOURCE=Calendars/Serialization/GeographicLocation1.ics
+GOOGLE1_ICS_SOURCE=Calendars/Serialization/Google1.ics
+OUTLOOK2007LINEFOLDS_ICS_SOURCE=Calendars/Serialization/Outlook2007LineFolds.ics
+PRODID1_ICS_SOURCE=Calendars/Serialization/ProdID1.ics
+PRODID2_ICS_SOURCE=Calendars/Serialization/ProdID2.ics
+JOURNAL1_ICS_SOURCE=Calendars/Journal/JOURNAL1.ics
+JOURNAL2_ICS_SOURCE=Calendars/Journal/JOURNAL2.ics
+YEARLYCOMPLEX1_ICS_SOURCE=Calendars/Recurrence/YearlyComplex1.ics
+WEEKLYUNTILWKST1_ICS_SOURCE=Calendars/Recurrence/WeeklyUntilWkst1.ics
+WEEKLYCOUNTWKST1_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst1.ics
+WEEKLYUNTILWKST2_ICS_SOURCE=Calendars/Recurrence/WeeklyUntilWkst2.ics
+WEEKLYCOUNTWKST2_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst2.ics
+MONTHLYCOUNTBYDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByDay1.ics
+MONTHLYUNTILBYDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyUntilByDay1.ics
+MONTHLYCOUNTBYDAY2_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByDay2.ics
+MONTHLYCOUNTBYDAY3_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByDay3.ics
+BYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/ByMonthDay1.ics
+MONTHLYCOUNTBYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByMonthDay1.ics
+DAILYCOUNT1_ICS_SOURCE=Calendars/Recurrence/DailyCount1.ics
+MONTHLYCOUNTBYMONTHDAY2_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByMonthDay2.ics
+MONTHLYCOUNTBYMONTHDAY3_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByMonthDay3.ics
+MONTHLYBYDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyByDay1.ics
+YEARLYBYMONTH1_ICS_SOURCE=Calendars/Recurrence/YearlyByMonth1.ics
+YEARLYCOUNTBYMONTH1_ICS_SOURCE=Calendars/Recurrence/YearlyCountByMonth1.ics
+YEARLYCOUNTBYYEARDAY1_ICS_SOURCE=Calendars/Recurrence/YearlyCountByYearDay1.ics
+YEARLYBYDAY1_ICS_SOURCE=Calendars/Recurrence/YearlyByDay1.ics
+YEARLYBYWEEKNO1_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo1.ics
+YEARLYBYMONTH2_ICS_SOURCE=Calendars/Recurrence/YearlyByMonth2.ics
+YEARLYBYMONTH3_ICS_SOURCE=Calendars/Recurrence/YearlyByMonth3.ics
+DAILYUNTIL1_ICS_SOURCE=Calendars/Recurrence/DailyUntil1.ics
+MONTHLYBYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyByMonthDay1.ics
+MONTHLYBYMONTHDAY2_ICS_SOURCE=Calendars/Recurrence/MonthlyByMonthDay2.ics
+YEARLYBYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/YearlyByMonthDay1.ics
+MONTHLYBYSETPOS1_ICS_SOURCE=Calendars/Recurrence/MonthlyBySetPos1.ics
+MONTHLYBYSETPOS2_ICS_SOURCE=Calendars/Recurrence/MonthlyBySetPos2.ics
+HOURLYUNTIL1_ICS_SOURCE=Calendars/Recurrence/HourlyUntil1.ics
+MINUTELYCOUNT1_ICS_SOURCE=Calendars/Recurrence/MinutelyCount1.ics
+MINUTELYCOUNT2_ICS_SOURCE=Calendars/Recurrence/MinutelyCount2.ics
+DAILYBYHOURMINUTE1_ICS_SOURCE=Calendars/Recurrence/DailyByHourMinute1.ics
+MINUTELYBYHOUR1_ICS_SOURCE=Calendars/Recurrence/MinutelyByHour1.ics
+DAILY1_ICS_SOURCE=Calendars/Recurrence/Daily1.ics
+WEEKLYCOUNTWKST3_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst3.ics
+WEEKLYCOUNTWKST4_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst4.ics
+BUG1741093_ICS_SOURCE=Calendars/Recurrence/Bug1741093.ics
+SECONDLY1_ICS_SOURCE=Calendars/Recurrence/Secondly1.ics
+MINUTELY1_ICS_SOURCE=Calendars/Recurrence/Minutely1.ics
+HOURLY1_ICS_SOURCE=Calendars/Recurrence/Hourly1.ics
+MONTHLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/MonthlyInterval1.ics
+YEARLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/YearlyInterval1.ics
+DAILYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/DailyInterval1.ics
+DAILYCOUNT2_ICS_SOURCE=Calendars/Recurrence/DailyCount2.ics
+HOURLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/HourlyInterval1.ics
+YEARLYBYSETPOS1_ICS_SOURCE=Calendars/Recurrence/YearlyBySetPos1.ics
+EMPTY1_ICS_SOURCE=Calendars/Recurrence/Empty1.ics
+HOURLYINTERVAL2_ICS_SOURCE=Calendars/Recurrence/HourlyInterval2.ics
+MINUTELYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/MinutelyInterval1.ics
+DAILYINTERVAL2_ICS_SOURCE=Calendars/Recurrence/DailyInterval2.ics
+DAILYBYDAY1_ICS_SOURCE=Calendars/Recurrence/DailyByDay1.ics
+WEEKLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/WeeklyInterval1.ics
+WEEKLYWEEKSTARTSLASTYEAR_ICS_SOURCE=Calendars/Recurrence/WeeklyWeekStartsLastYear.ics
+MONTHLY1_ICS_SOURCE=Calendars/Recurrence/Monthly1.ics
+YEARLY1_ICS_SOURCE=Calendars/Recurrence/Yearly1.ics
+BYMONTH1_ICS_SOURCE=Calendars/Recurrence/ByMonth1.ics
+BUG2912657_ICS_SOURCE=Calendars/Recurrence/Bug2912657.ics
+BYMONTH2_ICS_SOURCE=Calendars/Recurrence/ByMonth2.ics
+WEEKLYCOUNT1_ICS_SOURCE=Calendars/Recurrence/WeeklyCount1.ics
+WEEKLYUNTIL1_ICS_SOURCE=Calendars/Recurrence/WeeklyUntil1.ics
+WEEKLYWKST1_ICS_SOURCE=Calendars/Recurrence/WeeklyWkst1.ics
+LANGUAGE1_ICS_SOURCE=Calendars/Serialization/Language1.ics
+LANGUAGE2_ICS_SOURCE=Calendars/Serialization/Language2.ics
+EMPTYLINES1_ICS_SOURCE=Calendars/Serialization/EmptyLines1.ics
+PARAMETER1_ICS_SOURCE=Calendars/Serialization/Parameter1.ics
+PARAMETER2_ICS_SOURCE=Calendars/Serialization/Parameter2.ics
+REQUESTSTATUS1_ICS_SOURCE=Calendars/Serialization/RequestStatus1.ics
+RECURRENCEDATES1_ICS_SOURCE=Calendars/Serialization/RecurrenceDates1.ics
+DATETIME1_ICS_SOURCE=Calendars/Serialization/DateTime1.ics
+PARSE17_ICS_SOURCE=Calendars/Serialization/PARSE17.ics
+BUG2033495_ICS_SOURCE=Calendars/Serialization/Bug2033495.ics
+EMPTYLINES2_ICS_SOURCE=Calendars/Serialization/EmptyLines2.ics
+CALENDAR1_ICS_SOURCE=Calendars/Serialization/Calendar1.ics
+EMPTYLINES3_ICS_SOURCE=Calendars/Serialization/EmptyLines3.ics
+CALENDARPARAMETERS2_ICS_SOURCE=Calendars/Serialization/CalendarParameters2.ics
+PARSE1_ICS_SOURCE=Calendars/Serialization/Parse1.ics
+EMPTYLINES4_ICS_SOURCE=Calendars/Serialization/EmptyLines4.ics
+CASEINSENSITIVE4_ICS_SOURCE=Calendars/Serialization/CaseInsensitive4.ics
+PROPERTY1_ICS_SOURCE=Calendars/Serialization/Property1.ics
+LANGUAGE3_ICS_SOURCE=Calendars/Serialization/Language3.ics
+EVENT1_ICS_SOURCE=Calendars/Serialization/Event1.ics
+TODO2_ICS_SOURCE=Calendars/Serialization/Todo2.ics
+TODO3_ICS_SOURCE=Calendars/Serialization/Todo3.ics
+TODO4_ICS_SOURCE=Calendars/Serialization/Todo4.ics
+TODO5_ICS_SOURCE=Calendars/Serialization/Todo5.ics
+TODO6_ICS_SOURCE=Calendars/Serialization/Todo6.ics
+TODO7_ICS_SOURCE=Calendars/Serialization/Todo7.ics
+EVENT2_ICS_SOURCE=Calendars/Serialization/Event2.ics
+CASEINSENSITIVE1_ICS_SOURCE=Calendars/Serialization/CaseInsensitive1.ics
+CASEINSENSITIVE2_ICS_SOURCE=Calendars/Serialization/CaseInsensitive2.ics
+CASEINSENSITIVE3_ICS_SOURCE=Calendars/Serialization/CaseInsensitive3.ics
+XPROPERTY1_ICS_SOURCE=Calendars/Serialization/XProperty1.ics
+XPROPERTY2_ICS_SOURCE=Calendars/Serialization/XProperty2.ics
+EVENT3_ICS_SOURCE=Calendars/Serialization/Event3.ics
+BUG2148092_ICS_SOURCE=Calendars/Serialization/Bug2148092.ics
+DURATION1_ICS_SOURCE=Calendars/Serialization/Duration1.ics
+ATTACHMENT3_ICS_SOURCE=Calendars/Serialization/Attachment3.ics
+ENCODING1_ICS_SOURCE=Calendars/Serialization/Encoding1.ics
+EVENT4_ICS_SOURCE=Calendars/Serialization/Event4.ics
+CATEGORIES1_ICS_SOURCE=Calendars/Serialization/Categories1.ics
+TODO1_ICS_SOURCE=Calendars/Serialization/Todo1.ics
+TIMEZONE1_ICS_SOURCE=Calendars/Serialization/TimeZone1.ics
+TIMEZONE2_ICS_SOURCE=Calendars/Serialization/TimeZone2.ics
+TIMEZONE3_ICS_SOURCE=Calendars/Serialization/TimeZone3.ics
+USHOLIDAYS_ICS_SOURCE=Calendars/Serialization/USHolidays.ics
+TODO1_ICS2_SOURCE=Calendars/Todo/Todo1.ics
+TODO2_ICS2_SOURCE=Calendars/Todo/Todo2.ics
+TODO3_ICS2_SOURCE=Calendars/Todo/Todo3.ics
+TODO4_ICS2_SOURCE=Calendars/Todo/Todo4.ics
+TODO5_ICS2_SOURCE=Calendars/Todo/Todo5.ics
+TODO6_ICS2_SOURCE=Calendars/Todo/Todo6.ics
+TODO7_ICS2_SOURCE=Calendars/Todo/Todo7.ics
+TODO8_ICS_SOURCE=Calendars/Todo/Todo8.ics
+TODO9_ICS_SOURCE=Calendars/Todo/Todo9.ics
+DATETIME2_ICS_SOURCE=Calendars/Serialization/DateTime2.ics
+YEARLYBYWEEKNO2_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo2.ics
+YEARLYBYWEEKNO3_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo3.ics
+YEARLYBYWEEKNO4_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo4.ics
+YEARLYBYWEEKNO5_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo5.ics
+ATTENDEE1_ICS_SOURCE=Calendars/Serialization/Attendee1.ics
+ATTENDEE2_ICS_SOURCE=Calendars/Serialization/Attendee2.ics
+BUG2916581_ICS_SOURCE=Calendars/Recurrence/Bug2916581.ics
+BUG2938007_ICS_SOURCE=Calendars/Serialization/Bug2938007.ics
+BUG2959692_ICS_SOURCE=Calendars/Recurrence/Bug2959692.ics
+BUG2966236_ICS_SOURCE=Calendars/Recurrence/Bug2966236.ics
+BUG3007244_ICS_SOURCE=Calendars/Recurrence/Bug3007244.ics
+TRANSPARENCY1_ICS_SOURCE=Calendars/Serialization/Transparency1.ics
+TRANSPARENCY2_ICS_SOURCE=Calendars/Serialization/Transparency2.ics
+MINUTELYCOUNT3_ICS_SOURCE=Calendars/Recurrence/MinutelyCount3.ics
+MINUTELYCOUNT4_ICS_SOURCE=Calendars/Recurrence/MinutelyCount4.ics
+TRIGGER1_ICS_SOURCE=Calendars/Serialization/Trigger1.ics
+LOREMIPSUM_TXT_SOURCE=Data/LoremIpsum.txt
+TEST_DOC_SOURCE=Data/Test.doc
+ANTLR_RUNTIME_DLL_SOURCE=../antlr.runtime.dll
+LOG4NET_DLL_SOURCE=log4net.dll
+NUNIT_CONSOLE_RUNNER_DLL_SOURCE=nunit-console-runner.dll
+NUNIT_UTIL_DLL_SOURCE=nunit.util.dll
+NUNIT_CORE_DLL_SOURCE=nunit.core.dll
+NUNIT_CORE_INTERFACES_DLL_SOURCE=nunit.core.interfaces.dll
+NUNIT_GUI_RUNNER_DLL_SOURCE=nunit-gui-runner.dll
+NUNIT_UIKIT_DLL_SOURCE=nunit.uikit.dll
+NUNIT_UIEXCEPTION_DLL_SOURCE=nunit.uiexception.dll
+NUNIT_FIXTURES_DLL_SOURCE=nunit.fixtures.dll
+NUNIT_FRAMEWORK_DLL_SOURCE=nunit.framework.dll
+DDAY_ICAL_DLL_SOURCE=../DDay.iCal/bin/Debug/DDay.iCal.dll
+LICENSE_TXT_SOURCE=../DDay.iCal/License.txt
+DDAY_COLLECTIONS_DLL_SOURCE=../DDay.Collections/DDay.Collections/bin/Debug/DDay.Collections.dll
+DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=../DDay.Collections/DDay.Collections/app.config
+
+endif
+
+if ENABLE_RELEASE
+ASSEMBLY_COMPILER_COMMAND = gmcs
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-define:TRACE" "-main:DDay.iCal.Test.Startup"
+ASSEMBLY = bin/Release/DDay.iCal.Test.exe
+ASSEMBLY_MDB = 
+COMPILE_TARGET = winexe
+PROJECT_REFERENCES =  \
+	../DDay.iCal/bin/Release/DDay.iCal.dll
+BUILD_DIR = bin/Release/
+
+DDAY_ICAL_TEST_EXE_MDB=
+ALARM1_ICS_SOURCE=Calendars/Alarm/ALARM1.ics
+ALARM2_ICS_SOURCE=Calendars/Alarm/ALARM2.ics
+ALARM3_ICS_SOURCE=Calendars/Alarm/ALARM3.ics
+ALARM4_ICS_SOURCE=Calendars/Alarm/ALARM4.ics
+ALARM5_ICS_SOURCE=Calendars/Alarm/ALARM5.ics
+ALARM6_ICS_SOURCE=Calendars/Alarm/ALARM6.ics
+ALARM7_ICS_SOURCE=Calendars/Alarm/ALARM7.ics
+LANGUAGE4_ICS_SOURCE=Calendars/Serialization/Language4.ics
+ENCODING2_ICS_SOURCE=Calendars/Serialization/Encoding2.ics
+ENCODING3_ICS_SOURCE=Calendars/Serialization/Encoding3.ics
+ATTACHMENT4_ICS_SOURCE=Calendars/Serialization/Attachment4.ics
+GEOGRAPHICLOCATION1_ICS_SOURCE=Calendars/Serialization/GeographicLocation1.ics
+GOOGLE1_ICS_SOURCE=Calendars/Serialization/Google1.ics
+OUTLOOK2007LINEFOLDS_ICS_SOURCE=Calendars/Serialization/Outlook2007LineFolds.ics
+PRODID1_ICS_SOURCE=Calendars/Serialization/ProdID1.ics
+PRODID2_ICS_SOURCE=Calendars/Serialization/ProdID2.ics
+JOURNAL1_ICS_SOURCE=Calendars/Journal/JOURNAL1.ics
+JOURNAL2_ICS_SOURCE=Calendars/Journal/JOURNAL2.ics
+YEARLYCOMPLEX1_ICS_SOURCE=Calendars/Recurrence/YearlyComplex1.ics
+WEEKLYUNTILWKST1_ICS_SOURCE=Calendars/Recurrence/WeeklyUntilWkst1.ics
+WEEKLYCOUNTWKST1_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst1.ics
+WEEKLYUNTILWKST2_ICS_SOURCE=Calendars/Recurrence/WeeklyUntilWkst2.ics
+WEEKLYCOUNTWKST2_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst2.ics
+MONTHLYCOUNTBYDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByDay1.ics
+MONTHLYUNTILBYDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyUntilByDay1.ics
+MONTHLYCOUNTBYDAY2_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByDay2.ics
+MONTHLYCOUNTBYDAY3_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByDay3.ics
+BYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/ByMonthDay1.ics
+MONTHLYCOUNTBYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByMonthDay1.ics
+DAILYCOUNT1_ICS_SOURCE=Calendars/Recurrence/DailyCount1.ics
+MONTHLYCOUNTBYMONTHDAY2_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByMonthDay2.ics
+MONTHLYCOUNTBYMONTHDAY3_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByMonthDay3.ics
+MONTHLYBYDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyByDay1.ics
+YEARLYBYMONTH1_ICS_SOURCE=Calendars/Recurrence/YearlyByMonth1.ics
+YEARLYCOUNTBYMONTH1_ICS_SOURCE=Calendars/Recurrence/YearlyCountByMonth1.ics
+YEARLYCOUNTBYYEARDAY1_ICS_SOURCE=Calendars/Recurrence/YearlyCountByYearDay1.ics
+YEARLYBYDAY1_ICS_SOURCE=Calendars/Recurrence/YearlyByDay1.ics
+YEARLYBYWEEKNO1_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo1.ics
+YEARLYBYMONTH2_ICS_SOURCE=Calendars/Recurrence/YearlyByMonth2.ics
+YEARLYBYMONTH3_ICS_SOURCE=Calendars/Recurrence/YearlyByMonth3.ics
+DAILYUNTIL1_ICS_SOURCE=Calendars/Recurrence/DailyUntil1.ics
+MONTHLYBYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyByMonthDay1.ics
+MONTHLYBYMONTHDAY2_ICS_SOURCE=Calendars/Recurrence/MonthlyByMonthDay2.ics
+YEARLYBYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/YearlyByMonthDay1.ics
+MONTHLYBYSETPOS1_ICS_SOURCE=Calendars/Recurrence/MonthlyBySetPos1.ics
+MONTHLYBYSETPOS2_ICS_SOURCE=Calendars/Recurrence/MonthlyBySetPos2.ics
+HOURLYUNTIL1_ICS_SOURCE=Calendars/Recurrence/HourlyUntil1.ics
+MINUTELYCOUNT1_ICS_SOURCE=Calendars/Recurrence/MinutelyCount1.ics
+MINUTELYCOUNT2_ICS_SOURCE=Calendars/Recurrence/MinutelyCount2.ics
+DAILYBYHOURMINUTE1_ICS_SOURCE=Calendars/Recurrence/DailyByHourMinute1.ics
+MINUTELYBYHOUR1_ICS_SOURCE=Calendars/Recurrence/MinutelyByHour1.ics
+DAILY1_ICS_SOURCE=Calendars/Recurrence/Daily1.ics
+WEEKLYCOUNTWKST3_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst3.ics
+WEEKLYCOUNTWKST4_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst4.ics
+BUG1741093_ICS_SOURCE=Calendars/Recurrence/Bug1741093.ics
+SECONDLY1_ICS_SOURCE=Calendars/Recurrence/Secondly1.ics
+MINUTELY1_ICS_SOURCE=Calendars/Recurrence/Minutely1.ics
+HOURLY1_ICS_SOURCE=Calendars/Recurrence/Hourly1.ics
+MONTHLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/MonthlyInterval1.ics
+YEARLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/YearlyInterval1.ics
+DAILYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/DailyInterval1.ics
+DAILYCOUNT2_ICS_SOURCE=Calendars/Recurrence/DailyCount2.ics
+HOURLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/HourlyInterval1.ics
+YEARLYBYSETPOS1_ICS_SOURCE=Calendars/Recurrence/YearlyBySetPos1.ics
+EMPTY1_ICS_SOURCE=Calendars/Recurrence/Empty1.ics
+HOURLYINTERVAL2_ICS_SOURCE=Calendars/Recurrence/HourlyInterval2.ics
+MINUTELYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/MinutelyInterval1.ics
+DAILYINTERVAL2_ICS_SOURCE=Calendars/Recurrence/DailyInterval2.ics
+DAILYBYDAY1_ICS_SOURCE=Calendars/Recurrence/DailyByDay1.ics
+WEEKLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/WeeklyInterval1.ics
+WEEKLYWEEKSTARTSLASTYEAR_ICS_SOURCE=Calendars/Recurrence/WeeklyWeekStartsLastYear.ics
+MONTHLY1_ICS_SOURCE=Calendars/Recurrence/Monthly1.ics
+YEARLY1_ICS_SOURCE=Calendars/Recurrence/Yearly1.ics
+BYMONTH1_ICS_SOURCE=Calendars/Recurrence/ByMonth1.ics
+BUG2912657_ICS_SOURCE=Calendars/Recurrence/Bug2912657.ics
+BYMONTH2_ICS_SOURCE=Calendars/Recurrence/ByMonth2.ics
+WEEKLYCOUNT1_ICS_SOURCE=Calendars/Recurrence/WeeklyCount1.ics
+WEEKLYUNTIL1_ICS_SOURCE=Calendars/Recurrence/WeeklyUntil1.ics
+WEEKLYWKST1_ICS_SOURCE=Calendars/Recurrence/WeeklyWkst1.ics
+LANGUAGE1_ICS_SOURCE=Calendars/Serialization/Language1.ics
+LANGUAGE2_ICS_SOURCE=Calendars/Serialization/Language2.ics
+EMPTYLINES1_ICS_SOURCE=Calendars/Serialization/EmptyLines1.ics
+PARAMETER1_ICS_SOURCE=Calendars/Serialization/Parameter1.ics
+PARAMETER2_ICS_SOURCE=Calendars/Serialization/Parameter2.ics
+REQUESTSTATUS1_ICS_SOURCE=Calendars/Serialization/RequestStatus1.ics
+RECURRENCEDATES1_ICS_SOURCE=Calendars/Serialization/RecurrenceDates1.ics
+DATETIME1_ICS_SOURCE=Calendars/Serialization/DateTime1.ics
+PARSE17_ICS_SOURCE=Calendars/Serialization/PARSE17.ics
+BUG2033495_ICS_SOURCE=Calendars/Serialization/Bug2033495.ics
+EMPTYLINES2_ICS_SOURCE=Calendars/Serialization/EmptyLines2.ics
+CALENDAR1_ICS_SOURCE=Calendars/Serialization/Calendar1.ics
+EMPTYLINES3_ICS_SOURCE=Calendars/Serialization/EmptyLines3.ics
+CALENDARPARAMETERS2_ICS_SOURCE=Calendars/Serialization/CalendarParameters2.ics
+PARSE1_ICS_SOURCE=Calendars/Serialization/Parse1.ics
+EMPTYLINES4_ICS_SOURCE=Calendars/Serialization/EmptyLines4.ics
+CASEINSENSITIVE4_ICS_SOURCE=Calendars/Serialization/CaseInsensitive4.ics
+PROPERTY1_ICS_SOURCE=Calendars/Serialization/Property1.ics
+LANGUAGE3_ICS_SOURCE=Calendars/Serialization/Language3.ics
+EVENT1_ICS_SOURCE=Calendars/Serialization/Event1.ics
+TODO2_ICS_SOURCE=Calendars/Serialization/Todo2.ics
+TODO3_ICS_SOURCE=Calendars/Serialization/Todo3.ics
+TODO4_ICS_SOURCE=Calendars/Serialization/Todo4.ics
+TODO5_ICS_SOURCE=Calendars/Serialization/Todo5.ics
+TODO6_ICS_SOURCE=Calendars/Serialization/Todo6.ics
+TODO7_ICS_SOURCE=Calendars/Serialization/Todo7.ics
+EVENT2_ICS_SOURCE=Calendars/Serialization/Event2.ics
+CASEINSENSITIVE1_ICS_SOURCE=Calendars/Serialization/CaseInsensitive1.ics
+CASEINSENSITIVE2_ICS_SOURCE=Calendars/Serialization/CaseInsensitive2.ics
+CASEINSENSITIVE3_ICS_SOURCE=Calendars/Serialization/CaseInsensitive3.ics
+XPROPERTY1_ICS_SOURCE=Calendars/Serialization/XProperty1.ics
+XPROPERTY2_ICS_SOURCE=Calendars/Serialization/XProperty2.ics
+EVENT3_ICS_SOURCE=Calendars/Serialization/Event3.ics
+BUG2148092_ICS_SOURCE=Calendars/Serialization/Bug2148092.ics
+DURATION1_ICS_SOURCE=Calendars/Serialization/Duration1.ics
+ATTACHMENT3_ICS_SOURCE=Calendars/Serialization/Attachment3.ics
+ENCODING1_ICS_SOURCE=Calendars/Serialization/Encoding1.ics
+EVENT4_ICS_SOURCE=Calendars/Serialization/Event4.ics
+CATEGORIES1_ICS_SOURCE=Calendars/Serialization/Categories1.ics
+TODO1_ICS_SOURCE=Calendars/Serialization/Todo1.ics
+TIMEZONE1_ICS_SOURCE=Calendars/Serialization/TimeZone1.ics
+TIMEZONE2_ICS_SOURCE=Calendars/Serialization/TimeZone2.ics
+TIMEZONE3_ICS_SOURCE=Calendars/Serialization/TimeZone3.ics
+USHOLIDAYS_ICS_SOURCE=Calendars/Serialization/USHolidays.ics
+TODO1_ICS2_SOURCE=Calendars/Todo/Todo1.ics
+TODO2_ICS2_SOURCE=Calendars/Todo/Todo2.ics
+TODO3_ICS2_SOURCE=Calendars/Todo/Todo3.ics
+TODO4_ICS2_SOURCE=Calendars/Todo/Todo4.ics
+TODO5_ICS2_SOURCE=Calendars/Todo/Todo5.ics
+TODO6_ICS2_SOURCE=Calendars/Todo/Todo6.ics
+TODO7_ICS2_SOURCE=Calendars/Todo/Todo7.ics
+TODO8_ICS_SOURCE=Calendars/Todo/Todo8.ics
+TODO9_ICS_SOURCE=Calendars/Todo/Todo9.ics
+DATETIME2_ICS_SOURCE=Calendars/Serialization/DateTime2.ics
+YEARLYBYWEEKNO2_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo2.ics
+YEARLYBYWEEKNO3_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo3.ics
+YEARLYBYWEEKNO4_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo4.ics
+YEARLYBYWEEKNO5_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo5.ics
+ATTENDEE1_ICS_SOURCE=Calendars/Serialization/Attendee1.ics
+ATTENDEE2_ICS_SOURCE=Calendars/Serialization/Attendee2.ics
+BUG2916581_ICS_SOURCE=Calendars/Recurrence/Bug2916581.ics
+BUG2938007_ICS_SOURCE=Calendars/Serialization/Bug2938007.ics
+BUG2959692_ICS_SOURCE=Calendars/Recurrence/Bug2959692.ics
+BUG2966236_ICS_SOURCE=Calendars/Recurrence/Bug2966236.ics
+BUG3007244_ICS_SOURCE=Calendars/Recurrence/Bug3007244.ics
+TRANSPARENCY1_ICS_SOURCE=Calendars/Serialization/Transparency1.ics
+TRANSPARENCY2_ICS_SOURCE=Calendars/Serialization/Transparency2.ics
+MINUTELYCOUNT3_ICS_SOURCE=Calendars/Recurrence/MinutelyCount3.ics
+MINUTELYCOUNT4_ICS_SOURCE=Calendars/Recurrence/MinutelyCount4.ics
+TRIGGER1_ICS_SOURCE=Calendars/Serialization/Trigger1.ics
+LOREMIPSUM_TXT_SOURCE=Data/LoremIpsum.txt
+TEST_DOC_SOURCE=Data/Test.doc
+ANTLR_RUNTIME_DLL_SOURCE=../antlr.runtime.dll
+LOG4NET_DLL_SOURCE=log4net.dll
+NUNIT_CONSOLE_RUNNER_DLL_SOURCE=nunit-console-runner.dll
+NUNIT_UTIL_DLL_SOURCE=nunit.util.dll
+NUNIT_CORE_DLL_SOURCE=nunit.core.dll
+NUNIT_CORE_INTERFACES_DLL_SOURCE=nunit.core.interfaces.dll
+NUNIT_GUI_RUNNER_DLL_SOURCE=nunit-gui-runner.dll
+NUNIT_UIKIT_DLL_SOURCE=nunit.uikit.dll
+NUNIT_UIEXCEPTION_DLL_SOURCE=nunit.uiexception.dll
+NUNIT_FIXTURES_DLL_SOURCE=nunit.fixtures.dll
+NUNIT_FRAMEWORK_DLL_SOURCE=nunit.framework.dll
+DDAY_ICAL_DLL_SOURCE=../DDay.iCal/bin/Release/DDay.iCal.dll
+LICENSE_TXT_SOURCE=../DDay.iCal/License.txt
+DDAY_COLLECTIONS_DLL_SOURCE=../DDay.Collections/DDay.Collections/bin/Release/DDay.Collections.dll
+DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=../DDay.Collections/DDay.Collections/app.config
+
+endif
+
+if ENABLE_RELEASE_MIXED_PLATFORMS
+ASSEMBLY_COMPILER_COMMAND = gmcs
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-define:TRACE" "-main:DDay.iCal.Test.Startup"
+ASSEMBLY = bin/Release/DDay.iCal.Test.exe
+ASSEMBLY_MDB = 
+COMPILE_TARGET = winexe
+PROJECT_REFERENCES =  \
+	../DDay.iCal/bin/Release/DDay.iCal.dll
+BUILD_DIR = bin/Release/
+
+DDAY_ICAL_TEST_EXE_MDB=
+ALARM1_ICS_SOURCE=Calendars/Alarm/ALARM1.ics
+ALARM2_ICS_SOURCE=Calendars/Alarm/ALARM2.ics
+ALARM3_ICS_SOURCE=Calendars/Alarm/ALARM3.ics
+ALARM4_ICS_SOURCE=Calendars/Alarm/ALARM4.ics
+ALARM5_ICS_SOURCE=Calendars/Alarm/ALARM5.ics
+ALARM6_ICS_SOURCE=Calendars/Alarm/ALARM6.ics
+ALARM7_ICS_SOURCE=Calendars/Alarm/ALARM7.ics
+LANGUAGE4_ICS_SOURCE=Calendars/Serialization/Language4.ics
+ENCODING2_ICS_SOURCE=Calendars/Serialization/Encoding2.ics
+ENCODING3_ICS_SOURCE=Calendars/Serialization/Encoding3.ics
+ATTACHMENT4_ICS_SOURCE=Calendars/Serialization/Attachment4.ics
+GEOGRAPHICLOCATION1_ICS_SOURCE=Calendars/Serialization/GeographicLocation1.ics
+GOOGLE1_ICS_SOURCE=Calendars/Serialization/Google1.ics
+OUTLOOK2007LINEFOLDS_ICS_SOURCE=Calendars/Serialization/Outlook2007LineFolds.ics
+PRODID1_ICS_SOURCE=Calendars/Serialization/ProdID1.ics
+PRODID2_ICS_SOURCE=Calendars/Serialization/ProdID2.ics
+JOURNAL1_ICS_SOURCE=Calendars/Journal/JOURNAL1.ics
+JOURNAL2_ICS_SOURCE=Calendars/Journal/JOURNAL2.ics
+YEARLYCOMPLEX1_ICS_SOURCE=Calendars/Recurrence/YearlyComplex1.ics
+WEEKLYUNTILWKST1_ICS_SOURCE=Calendars/Recurrence/WeeklyUntilWkst1.ics
+WEEKLYCOUNTWKST1_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst1.ics
+WEEKLYUNTILWKST2_ICS_SOURCE=Calendars/Recurrence/WeeklyUntilWkst2.ics
+WEEKLYCOUNTWKST2_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst2.ics
+MONTHLYCOUNTBYDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByDay1.ics
+MONTHLYUNTILBYDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyUntilByDay1.ics
+MONTHLYCOUNTBYDAY2_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByDay2.ics
+MONTHLYCOUNTBYDAY3_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByDay3.ics
+BYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/ByMonthDay1.ics
+MONTHLYCOUNTBYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByMonthDay1.ics
+DAILYCOUNT1_ICS_SOURCE=Calendars/Recurrence/DailyCount1.ics
+MONTHLYCOUNTBYMONTHDAY2_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByMonthDay2.ics
+MONTHLYCOUNTBYMONTHDAY3_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByMonthDay3.ics
+MONTHLYBYDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyByDay1.ics
+YEARLYBYMONTH1_ICS_SOURCE=Calendars/Recurrence/YearlyByMonth1.ics
+YEARLYCOUNTBYMONTH1_ICS_SOURCE=Calendars/Recurrence/YearlyCountByMonth1.ics
+YEARLYCOUNTBYYEARDAY1_ICS_SOURCE=Calendars/Recurrence/YearlyCountByYearDay1.ics
+YEARLYBYDAY1_ICS_SOURCE=Calendars/Recurrence/YearlyByDay1.ics
+YEARLYBYWEEKNO1_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo1.ics
+YEARLYBYMONTH2_ICS_SOURCE=Calendars/Recurrence/YearlyByMonth2.ics
+YEARLYBYMONTH3_ICS_SOURCE=Calendars/Recurrence/YearlyByMonth3.ics
+DAILYUNTIL1_ICS_SOURCE=Calendars/Recurrence/DailyUntil1.ics
+MONTHLYBYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyByMonthDay1.ics
+MONTHLYBYMONTHDAY2_ICS_SOURCE=Calendars/Recurrence/MonthlyByMonthDay2.ics
+YEARLYBYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/YearlyByMonthDay1.ics
+MONTHLYBYSETPOS1_ICS_SOURCE=Calendars/Recurrence/MonthlyBySetPos1.ics
+MONTHLYBYSETPOS2_ICS_SOURCE=Calendars/Recurrence/MonthlyBySetPos2.ics
+HOURLYUNTIL1_ICS_SOURCE=Calendars/Recurrence/HourlyUntil1.ics
+MINUTELYCOUNT1_ICS_SOURCE=Calendars/Recurrence/MinutelyCount1.ics
+MINUTELYCOUNT2_ICS_SOURCE=Calendars/Recurrence/MinutelyCount2.ics
+DAILYBYHOURMINUTE1_ICS_SOURCE=Calendars/Recurrence/DailyByHourMinute1.ics
+MINUTELYBYHOUR1_ICS_SOURCE=Calendars/Recurrence/MinutelyByHour1.ics
+DAILY1_ICS_SOURCE=Calendars/Recurrence/Daily1.ics
+WEEKLYCOUNTWKST3_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst3.ics
+WEEKLYCOUNTWKST4_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst4.ics
+BUG1741093_ICS_SOURCE=Calendars/Recurrence/Bug1741093.ics
+SECONDLY1_ICS_SOURCE=Calendars/Recurrence/Secondly1.ics
+MINUTELY1_ICS_SOURCE=Calendars/Recurrence/Minutely1.ics
+HOURLY1_ICS_SOURCE=Calendars/Recurrence/Hourly1.ics
+MONTHLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/MonthlyInterval1.ics
+YEARLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/YearlyInterval1.ics
+DAILYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/DailyInterval1.ics
+DAILYCOUNT2_ICS_SOURCE=Calendars/Recurrence/DailyCount2.ics
+HOURLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/HourlyInterval1.ics
+YEARLYBYSETPOS1_ICS_SOURCE=Calendars/Recurrence/YearlyBySetPos1.ics
+EMPTY1_ICS_SOURCE=Calendars/Recurrence/Empty1.ics
+HOURLYINTERVAL2_ICS_SOURCE=Calendars/Recurrence/HourlyInterval2.ics
+MINUTELYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/MinutelyInterval1.ics
+DAILYINTERVAL2_ICS_SOURCE=Calendars/Recurrence/DailyInterval2.ics
+DAILYBYDAY1_ICS_SOURCE=Calendars/Recurrence/DailyByDay1.ics
+WEEKLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/WeeklyInterval1.ics
+WEEKLYWEEKSTARTSLASTYEAR_ICS_SOURCE=Calendars/Recurrence/WeeklyWeekStartsLastYear.ics
+MONTHLY1_ICS_SOURCE=Calendars/Recurrence/Monthly1.ics
+YEARLY1_ICS_SOURCE=Calendars/Recurrence/Yearly1.ics
+BYMONTH1_ICS_SOURCE=Calendars/Recurrence/ByMonth1.ics
+BUG2912657_ICS_SOURCE=Calendars/Recurrence/Bug2912657.ics
+BYMONTH2_ICS_SOURCE=Calendars/Recurrence/ByMonth2.ics
+WEEKLYCOUNT1_ICS_SOURCE=Calendars/Recurrence/WeeklyCount1.ics
+WEEKLYUNTIL1_ICS_SOURCE=Calendars/Recurrence/WeeklyUntil1.ics
+WEEKLYWKST1_ICS_SOURCE=Calendars/Recurrence/WeeklyWkst1.ics
+LANGUAGE1_ICS_SOURCE=Calendars/Serialization/Language1.ics
+LANGUAGE2_ICS_SOURCE=Calendars/Serialization/Language2.ics
+EMPTYLINES1_ICS_SOURCE=Calendars/Serialization/EmptyLines1.ics
+PARAMETER1_ICS_SOURCE=Calendars/Serialization/Parameter1.ics
+PARAMETER2_ICS_SOURCE=Calendars/Serialization/Parameter2.ics
+REQUESTSTATUS1_ICS_SOURCE=Calendars/Serialization/RequestStatus1.ics
+RECURRENCEDATES1_ICS_SOURCE=Calendars/Serialization/RecurrenceDates1.ics
+DATETIME1_ICS_SOURCE=Calendars/Serialization/DateTime1.ics
+PARSE17_ICS_SOURCE=Calendars/Serialization/PARSE17.ics
+BUG2033495_ICS_SOURCE=Calendars/Serialization/Bug2033495.ics
+EMPTYLINES2_ICS_SOURCE=Calendars/Serialization/EmptyLines2.ics
+CALENDAR1_ICS_SOURCE=Calendars/Serialization/Calendar1.ics
+EMPTYLINES3_ICS_SOURCE=Calendars/Serialization/EmptyLines3.ics
+CALENDARPARAMETERS2_ICS_SOURCE=Calendars/Serialization/CalendarParameters2.ics
+PARSE1_ICS_SOURCE=Calendars/Serialization/Parse1.ics
+EMPTYLINES4_ICS_SOURCE=Calendars/Serialization/EmptyLines4.ics
+CASEINSENSITIVE4_ICS_SOURCE=Calendars/Serialization/CaseInsensitive4.ics
+PROPERTY1_ICS_SOURCE=Calendars/Serialization/Property1.ics
+LANGUAGE3_ICS_SOURCE=Calendars/Serialization/Language3.ics
+EVENT1_ICS_SOURCE=Calendars/Serialization/Event1.ics
+TODO2_ICS_SOURCE=Calendars/Serialization/Todo2.ics
+TODO3_ICS_SOURCE=Calendars/Serialization/Todo3.ics
+TODO4_ICS_SOURCE=Calendars/Serialization/Todo4.ics
+TODO5_ICS_SOURCE=Calendars/Serialization/Todo5.ics
+TODO6_ICS_SOURCE=Calendars/Serialization/Todo6.ics
+TODO7_ICS_SOURCE=Calendars/Serialization/Todo7.ics
+EVENT2_ICS_SOURCE=Calendars/Serialization/Event2.ics
+CASEINSENSITIVE1_ICS_SOURCE=Calendars/Serialization/CaseInsensitive1.ics
+CASEINSENSITIVE2_ICS_SOURCE=Calendars/Serialization/CaseInsensitive2.ics
+CASEINSENSITIVE3_ICS_SOURCE=Calendars/Serialization/CaseInsensitive3.ics
+XPROPERTY1_ICS_SOURCE=Calendars/Serialization/XProperty1.ics
+XPROPERTY2_ICS_SOURCE=Calendars/Serialization/XProperty2.ics
+EVENT3_ICS_SOURCE=Calendars/Serialization/Event3.ics
+BUG2148092_ICS_SOURCE=Calendars/Serialization/Bug2148092.ics
+DURATION1_ICS_SOURCE=Calendars/Serialization/Duration1.ics
+ATTACHMENT3_ICS_SOURCE=Calendars/Serialization/Attachment3.ics
+ENCODING1_ICS_SOURCE=Calendars/Serialization/Encoding1.ics
+EVENT4_ICS_SOURCE=Calendars/Serialization/Event4.ics
+CATEGORIES1_ICS_SOURCE=Calendars/Serialization/Categories1.ics
+TODO1_ICS_SOURCE=Calendars/Serialization/Todo1.ics
+TIMEZONE1_ICS_SOURCE=Calendars/Serialization/TimeZone1.ics
+TIMEZONE2_ICS_SOURCE=Calendars/Serialization/TimeZone2.ics
+TIMEZONE3_ICS_SOURCE=Calendars/Serialization/TimeZone3.ics
+USHOLIDAYS_ICS_SOURCE=Calendars/Serialization/USHolidays.ics
+TODO1_ICS2_SOURCE=Calendars/Todo/Todo1.ics
+TODO2_ICS2_SOURCE=Calendars/Todo/Todo2.ics
+TODO3_ICS2_SOURCE=Calendars/Todo/Todo3.ics
+TODO4_ICS2_SOURCE=Calendars/Todo/Todo4.ics
+TODO5_ICS2_SOURCE=Calendars/Todo/Todo5.ics
+TODO6_ICS2_SOURCE=Calendars/Todo/Todo6.ics
+TODO7_ICS2_SOURCE=Calendars/Todo/Todo7.ics
+TODO8_ICS_SOURCE=Calendars/Todo/Todo8.ics
+TODO9_ICS_SOURCE=Calendars/Todo/Todo9.ics
+DATETIME2_ICS_SOURCE=Calendars/Serialization/DateTime2.ics
+YEARLYBYWEEKNO2_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo2.ics
+YEARLYBYWEEKNO3_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo3.ics
+YEARLYBYWEEKNO4_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo4.ics
+YEARLYBYWEEKNO5_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo5.ics
+ATTENDEE1_ICS_SOURCE=Calendars/Serialization/Attendee1.ics
+ATTENDEE2_ICS_SOURCE=Calendars/Serialization/Attendee2.ics
+BUG2916581_ICS_SOURCE=Calendars/Recurrence/Bug2916581.ics
+BUG2938007_ICS_SOURCE=Calendars/Serialization/Bug2938007.ics
+BUG2959692_ICS_SOURCE=Calendars/Recurrence/Bug2959692.ics
+BUG2966236_ICS_SOURCE=Calendars/Recurrence/Bug2966236.ics
+BUG3007244_ICS_SOURCE=Calendars/Recurrence/Bug3007244.ics
+TRANSPARENCY1_ICS_SOURCE=Calendars/Serialization/Transparency1.ics
+TRANSPARENCY2_ICS_SOURCE=Calendars/Serialization/Transparency2.ics
+MINUTELYCOUNT3_ICS_SOURCE=Calendars/Recurrence/MinutelyCount3.ics
+MINUTELYCOUNT4_ICS_SOURCE=Calendars/Recurrence/MinutelyCount4.ics
+TRIGGER1_ICS_SOURCE=Calendars/Serialization/Trigger1.ics
+LOREMIPSUM_TXT_SOURCE=Data/LoremIpsum.txt
+TEST_DOC_SOURCE=Data/Test.doc
+ANTLR_RUNTIME_DLL_SOURCE=../antlr.runtime.dll
+LOG4NET_DLL_SOURCE=log4net.dll
+NUNIT_CONSOLE_RUNNER_DLL_SOURCE=nunit-console-runner.dll
+NUNIT_UTIL_DLL_SOURCE=nunit.util.dll
+NUNIT_CORE_DLL_SOURCE=nunit.core.dll
+NUNIT_CORE_INTERFACES_DLL_SOURCE=nunit.core.interfaces.dll
+NUNIT_GUI_RUNNER_DLL_SOURCE=nunit-gui-runner.dll
+NUNIT_UIKIT_DLL_SOURCE=nunit.uikit.dll
+NUNIT_UIEXCEPTION_DLL_SOURCE=nunit.uiexception.dll
+NUNIT_FIXTURES_DLL_SOURCE=nunit.fixtures.dll
+NUNIT_FRAMEWORK_DLL_SOURCE=nunit.framework.dll
+DDAY_ICAL_DLL_SOURCE=../DDay.iCal/bin/Release/DDay.iCal.dll
+LICENSE_TXT_SOURCE=../DDay.iCal/License.txt
+DDAY_COLLECTIONS_DLL_SOURCE=../DDay.Collections/DDay.Collections/bin/Release/DDay.Collections.dll
+DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=../DDay.Collections/DDay.Collections/app.config
+
+endif
+
+if ENABLE_RELEASE_X86
+ASSEMBLY_COMPILER_COMMAND = gmcs
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-define:TRACE" "-main:DDay.iCal.Test.Startup"
+ASSEMBLY = bin/Release/DDay.iCal.Test.exe
+ASSEMBLY_MDB = 
+COMPILE_TARGET = winexe
+PROJECT_REFERENCES =  \
+	../DDay.iCal/bin/Release/DDay.iCal.dll
+BUILD_DIR = bin/Release/
+
+DDAY_ICAL_TEST_EXE_MDB=
+ALARM1_ICS_SOURCE=Calendars/Alarm/ALARM1.ics
+ALARM2_ICS_SOURCE=Calendars/Alarm/ALARM2.ics
+ALARM3_ICS_SOURCE=Calendars/Alarm/ALARM3.ics
+ALARM4_ICS_SOURCE=Calendars/Alarm/ALARM4.ics
+ALARM5_ICS_SOURCE=Calendars/Alarm/ALARM5.ics
+ALARM6_ICS_SOURCE=Calendars/Alarm/ALARM6.ics
+ALARM7_ICS_SOURCE=Calendars/Alarm/ALARM7.ics
+LANGUAGE4_ICS_SOURCE=Calendars/Serialization/Language4.ics
+ENCODING2_ICS_SOURCE=Calendars/Serialization/Encoding2.ics
+ENCODING3_ICS_SOURCE=Calendars/Serialization/Encoding3.ics
+ATTACHMENT4_ICS_SOURCE=Calendars/Serialization/Attachment4.ics
+GEOGRAPHICLOCATION1_ICS_SOURCE=Calendars/Serialization/GeographicLocation1.ics
+GOOGLE1_ICS_SOURCE=Calendars/Serialization/Google1.ics
+OUTLOOK2007LINEFOLDS_ICS_SOURCE=Calendars/Serialization/Outlook2007LineFolds.ics
+PRODID1_ICS_SOURCE=Calendars/Serialization/ProdID1.ics
+PRODID2_ICS_SOURCE=Calendars/Serialization/ProdID2.ics
+JOURNAL1_ICS_SOURCE=Calendars/Journal/JOURNAL1.ics
+JOURNAL2_ICS_SOURCE=Calendars/Journal/JOURNAL2.ics
+YEARLYCOMPLEX1_ICS_SOURCE=Calendars/Recurrence/YearlyComplex1.ics
+WEEKLYUNTILWKST1_ICS_SOURCE=Calendars/Recurrence/WeeklyUntilWkst1.ics
+WEEKLYCOUNTWKST1_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst1.ics
+WEEKLYUNTILWKST2_ICS_SOURCE=Calendars/Recurrence/WeeklyUntilWkst2.ics
+WEEKLYCOUNTWKST2_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst2.ics
+MONTHLYCOUNTBYDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByDay1.ics
+MONTHLYUNTILBYDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyUntilByDay1.ics
+MONTHLYCOUNTBYDAY2_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByDay2.ics
+MONTHLYCOUNTBYDAY3_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByDay3.ics
+BYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/ByMonthDay1.ics
+MONTHLYCOUNTBYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByMonthDay1.ics
+DAILYCOUNT1_ICS_SOURCE=Calendars/Recurrence/DailyCount1.ics
+MONTHLYCOUNTBYMONTHDAY2_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByMonthDay2.ics
+MONTHLYCOUNTBYMONTHDAY3_ICS_SOURCE=Calendars/Recurrence/MonthlyCountByMonthDay3.ics
+MONTHLYBYDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyByDay1.ics
+YEARLYBYMONTH1_ICS_SOURCE=Calendars/Recurrence/YearlyByMonth1.ics
+YEARLYCOUNTBYMONTH1_ICS_SOURCE=Calendars/Recurrence/YearlyCountByMonth1.ics
+YEARLYCOUNTBYYEARDAY1_ICS_SOURCE=Calendars/Recurrence/YearlyCountByYearDay1.ics
+YEARLYBYDAY1_ICS_SOURCE=Calendars/Recurrence/YearlyByDay1.ics
+YEARLYBYWEEKNO1_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo1.ics
+YEARLYBYMONTH2_ICS_SOURCE=Calendars/Recurrence/YearlyByMonth2.ics
+YEARLYBYMONTH3_ICS_SOURCE=Calendars/Recurrence/YearlyByMonth3.ics
+DAILYUNTIL1_ICS_SOURCE=Calendars/Recurrence/DailyUntil1.ics
+MONTHLYBYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/MonthlyByMonthDay1.ics
+MONTHLYBYMONTHDAY2_ICS_SOURCE=Calendars/Recurrence/MonthlyByMonthDay2.ics
+YEARLYBYMONTHDAY1_ICS_SOURCE=Calendars/Recurrence/YearlyByMonthDay1.ics
+MONTHLYBYSETPOS1_ICS_SOURCE=Calendars/Recurrence/MonthlyBySetPos1.ics
+MONTHLYBYSETPOS2_ICS_SOURCE=Calendars/Recurrence/MonthlyBySetPos2.ics
+HOURLYUNTIL1_ICS_SOURCE=Calendars/Recurrence/HourlyUntil1.ics
+MINUTELYCOUNT1_ICS_SOURCE=Calendars/Recurrence/MinutelyCount1.ics
+MINUTELYCOUNT2_ICS_SOURCE=Calendars/Recurrence/MinutelyCount2.ics
+DAILYBYHOURMINUTE1_ICS_SOURCE=Calendars/Recurrence/DailyByHourMinute1.ics
+MINUTELYBYHOUR1_ICS_SOURCE=Calendars/Recurrence/MinutelyByHour1.ics
+DAILY1_ICS_SOURCE=Calendars/Recurrence/Daily1.ics
+WEEKLYCOUNTWKST3_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst3.ics
+WEEKLYCOUNTWKST4_ICS_SOURCE=Calendars/Recurrence/WeeklyCountWkst4.ics
+BUG1741093_ICS_SOURCE=Calendars/Recurrence/Bug1741093.ics
+SECONDLY1_ICS_SOURCE=Calendars/Recurrence/Secondly1.ics
+MINUTELY1_ICS_SOURCE=Calendars/Recurrence/Minutely1.ics
+HOURLY1_ICS_SOURCE=Calendars/Recurrence/Hourly1.ics
+MONTHLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/MonthlyInterval1.ics
+YEARLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/YearlyInterval1.ics
+DAILYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/DailyInterval1.ics
+DAILYCOUNT2_ICS_SOURCE=Calendars/Recurrence/DailyCount2.ics
+HOURLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/HourlyInterval1.ics
+YEARLYBYSETPOS1_ICS_SOURCE=Calendars/Recurrence/YearlyBySetPos1.ics
+EMPTY1_ICS_SOURCE=Calendars/Recurrence/Empty1.ics
+HOURLYINTERVAL2_ICS_SOURCE=Calendars/Recurrence/HourlyInterval2.ics
+MINUTELYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/MinutelyInterval1.ics
+DAILYINTERVAL2_ICS_SOURCE=Calendars/Recurrence/DailyInterval2.ics
+DAILYBYDAY1_ICS_SOURCE=Calendars/Recurrence/DailyByDay1.ics
+WEEKLYINTERVAL1_ICS_SOURCE=Calendars/Recurrence/WeeklyInterval1.ics
+WEEKLYWEEKSTARTSLASTYEAR_ICS_SOURCE=Calendars/Recurrence/WeeklyWeekStartsLastYear.ics
+MONTHLY1_ICS_SOURCE=Calendars/Recurrence/Monthly1.ics
+YEARLY1_ICS_SOURCE=Calendars/Recurrence/Yearly1.ics
+BYMONTH1_ICS_SOURCE=Calendars/Recurrence/ByMonth1.ics
+BUG2912657_ICS_SOURCE=Calendars/Recurrence/Bug2912657.ics
+BYMONTH2_ICS_SOURCE=Calendars/Recurrence/ByMonth2.ics
+WEEKLYCOUNT1_ICS_SOURCE=Calendars/Recurrence/WeeklyCount1.ics
+WEEKLYUNTIL1_ICS_SOURCE=Calendars/Recurrence/WeeklyUntil1.ics
+WEEKLYWKST1_ICS_SOURCE=Calendars/Recurrence/WeeklyWkst1.ics
+LANGUAGE1_ICS_SOURCE=Calendars/Serialization/Language1.ics
+LANGUAGE2_ICS_SOURCE=Calendars/Serialization/Language2.ics
+EMPTYLINES1_ICS_SOURCE=Calendars/Serialization/EmptyLines1.ics
+PARAMETER1_ICS_SOURCE=Calendars/Serialization/Parameter1.ics
+PARAMETER2_ICS_SOURCE=Calendars/Serialization/Parameter2.ics
+REQUESTSTATUS1_ICS_SOURCE=Calendars/Serialization/RequestStatus1.ics
+RECURRENCEDATES1_ICS_SOURCE=Calendars/Serialization/RecurrenceDates1.ics
+DATETIME1_ICS_SOURCE=Calendars/Serialization/DateTime1.ics
+PARSE17_ICS_SOURCE=Calendars/Serialization/PARSE17.ics
+BUG2033495_ICS_SOURCE=Calendars/Serialization/Bug2033495.ics
+EMPTYLINES2_ICS_SOURCE=Calendars/Serialization/EmptyLines2.ics
+CALENDAR1_ICS_SOURCE=Calendars/Serialization/Calendar1.ics
+EMPTYLINES3_ICS_SOURCE=Calendars/Serialization/EmptyLines3.ics
+CALENDARPARAMETERS2_ICS_SOURCE=Calendars/Serialization/CalendarParameters2.ics
+PARSE1_ICS_SOURCE=Calendars/Serialization/Parse1.ics
+EMPTYLINES4_ICS_SOURCE=Calendars/Serialization/EmptyLines4.ics
+CASEINSENSITIVE4_ICS_SOURCE=Calendars/Serialization/CaseInsensitive4.ics
+PROPERTY1_ICS_SOURCE=Calendars/Serialization/Property1.ics
+LANGUAGE3_ICS_SOURCE=Calendars/Serialization/Language3.ics
+EVENT1_ICS_SOURCE=Calendars/Serialization/Event1.ics
+TODO2_ICS_SOURCE=Calendars/Serialization/Todo2.ics
+TODO3_ICS_SOURCE=Calendars/Serialization/Todo3.ics
+TODO4_ICS_SOURCE=Calendars/Serialization/Todo4.ics
+TODO5_ICS_SOURCE=Calendars/Serialization/Todo5.ics
+TODO6_ICS_SOURCE=Calendars/Serialization/Todo6.ics
+TODO7_ICS_SOURCE=Calendars/Serialization/Todo7.ics
+EVENT2_ICS_SOURCE=Calendars/Serialization/Event2.ics
+CASEINSENSITIVE1_ICS_SOURCE=Calendars/Serialization/CaseInsensitive1.ics
+CASEINSENSITIVE2_ICS_SOURCE=Calendars/Serialization/CaseInsensitive2.ics
+CASEINSENSITIVE3_ICS_SOURCE=Calendars/Serialization/CaseInsensitive3.ics
+XPROPERTY1_ICS_SOURCE=Calendars/Serialization/XProperty1.ics
+XPROPERTY2_ICS_SOURCE=Calendars/Serialization/XProperty2.ics
+EVENT3_ICS_SOURCE=Calendars/Serialization/Event3.ics
+BUG2148092_ICS_SOURCE=Calendars/Serialization/Bug2148092.ics
+DURATION1_ICS_SOURCE=Calendars/Serialization/Duration1.ics
+ATTACHMENT3_ICS_SOURCE=Calendars/Serialization/Attachment3.ics
+ENCODING1_ICS_SOURCE=Calendars/Serialization/Encoding1.ics
+EVENT4_ICS_SOURCE=Calendars/Serialization/Event4.ics
+CATEGORIES1_ICS_SOURCE=Calendars/Serialization/Categories1.ics
+TODO1_ICS_SOURCE=Calendars/Serialization/Todo1.ics
+TIMEZONE1_ICS_SOURCE=Calendars/Serialization/TimeZone1.ics
+TIMEZONE2_ICS_SOURCE=Calendars/Serialization/TimeZone2.ics
+TIMEZONE3_ICS_SOURCE=Calendars/Serialization/TimeZone3.ics
+USHOLIDAYS_ICS_SOURCE=Calendars/Serialization/USHolidays.ics
+TODO1_ICS2_SOURCE=Calendars/Todo/Todo1.ics
+TODO2_ICS2_SOURCE=Calendars/Todo/Todo2.ics
+TODO3_ICS2_SOURCE=Calendars/Todo/Todo3.ics
+TODO4_ICS2_SOURCE=Calendars/Todo/Todo4.ics
+TODO5_ICS2_SOURCE=Calendars/Todo/Todo5.ics
+TODO6_ICS2_SOURCE=Calendars/Todo/Todo6.ics
+TODO7_ICS2_SOURCE=Calendars/Todo/Todo7.ics
+TODO8_ICS_SOURCE=Calendars/Todo/Todo8.ics
+TODO9_ICS_SOURCE=Calendars/Todo/Todo9.ics
+DATETIME2_ICS_SOURCE=Calendars/Serialization/DateTime2.ics
+YEARLYBYWEEKNO2_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo2.ics
+YEARLYBYWEEKNO3_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo3.ics
+YEARLYBYWEEKNO4_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo4.ics
+YEARLYBYWEEKNO5_ICS_SOURCE=Calendars/Recurrence/YearlyByWeekNo5.ics
+ATTENDEE1_ICS_SOURCE=Calendars/Serialization/Attendee1.ics
+ATTENDEE2_ICS_SOURCE=Calendars/Serialization/Attendee2.ics
+BUG2916581_ICS_SOURCE=Calendars/Recurrence/Bug2916581.ics
+BUG2938007_ICS_SOURCE=Calendars/Serialization/Bug2938007.ics
+BUG2959692_ICS_SOURCE=Calendars/Recurrence/Bug2959692.ics
+BUG2966236_ICS_SOURCE=Calendars/Recurrence/Bug2966236.ics
+BUG3007244_ICS_SOURCE=Calendars/Recurrence/Bug3007244.ics
+TRANSPARENCY1_ICS_SOURCE=Calendars/Serialization/Transparency1.ics
+TRANSPARENCY2_ICS_SOURCE=Calendars/Serialization/Transparency2.ics
+MINUTELYCOUNT3_ICS_SOURCE=Calendars/Recurrence/MinutelyCount3.ics
+MINUTELYCOUNT4_ICS_SOURCE=Calendars/Recurrence/MinutelyCount4.ics
+TRIGGER1_ICS_SOURCE=Calendars/Serialization/Trigger1.ics
+LOREMIPSUM_TXT_SOURCE=Data/LoremIpsum.txt
+TEST_DOC_SOURCE=Data/Test.doc
+ANTLR_RUNTIME_DLL_SOURCE=../antlr.runtime.dll
+LOG4NET_DLL_SOURCE=log4net.dll
+NUNIT_CONSOLE_RUNNER_DLL_SOURCE=nunit-console-runner.dll
+NUNIT_UTIL_DLL_SOURCE=nunit.util.dll
+NUNIT_CORE_DLL_SOURCE=nunit.core.dll
+NUNIT_CORE_INTERFACES_DLL_SOURCE=nunit.core.interfaces.dll
+NUNIT_GUI_RUNNER_DLL_SOURCE=nunit-gui-runner.dll
+NUNIT_UIKIT_DLL_SOURCE=nunit.uikit.dll
+NUNIT_UIEXCEPTION_DLL_SOURCE=nunit.uiexception.dll
+NUNIT_FIXTURES_DLL_SOURCE=nunit.fixtures.dll
+NUNIT_FRAMEWORK_DLL_SOURCE=nunit.framework.dll
+DDAY_ICAL_DLL_SOURCE=../DDay.iCal/bin/Release/DDay.iCal.dll
+LICENSE_TXT_SOURCE=../DDay.iCal/License.txt
+DDAY_COLLECTIONS_DLL_SOURCE=../DDay.Collections/DDay.Collections/bin/Release/DDay.Collections.dll
+DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=../DDay.Collections/DDay.Collections/app.config
+
+endif
+
+AL=al2
+SATELLITE_ASSEMBLY_NAME=$(notdir $(basename $(ASSEMBLY))).resources.dll
+
+PROGRAMFILES = \
+	$(DDAY_ICAL_TEST_EXE_MDB) \
+	$(ANTLR_RUNTIME_DLL) \
+	$(LOG4NET_DLL) \
+	$(NUNIT_CONSOLE_RUNNER_DLL) \
+	$(NUNIT_UTIL_DLL) \
+	$(NUNIT_CORE_DLL) \
+	$(NUNIT_CORE_INTERFACES_DLL) \
+	$(NUNIT_GUI_RUNNER_DLL) \
+	$(NUNIT_UIKIT_DLL) \
+	$(NUNIT_UIEXCEPTION_DLL) \
+	$(NUNIT_FIXTURES_DLL) \
+	$(NUNIT_FRAMEWORK_DLL) \
+	$(DDAY_ICAL_DLL) \
+	$(LICENSE_TXT) \
+	$(DDAY_COLLECTIONS_DLL) \
+	$(DDAY_COLLECTIONS_DLL_CONFIG)  
+
+PROGRAMFILES_CALENDARS_ALARM = \
+	$(ALARM1_ICS) \
+	$(ALARM2_ICS) \
+	$(ALARM3_ICS) \
+	$(ALARM4_ICS) \
+	$(ALARM5_ICS) \
+	$(ALARM6_ICS) \
+	$(ALARM7_ICS)  
+
+PROGRAMFILES_CALENDARS_SERIALIZATION = \
+	$(LANGUAGE4_ICS) \
+	$(ENCODING2_ICS) \
+	$(ENCODING3_ICS) \
+	$(ATTACHMENT4_ICS) \
+	$(GEOGRAPHICLOCATION1_ICS) \
+	$(GOOGLE1_ICS) \
+	$(OUTLOOK2007LINEFOLDS_ICS) \
+	$(PRODID1_ICS) \
+	$(PRODID2_ICS) \
+	$(LANGUAGE1_ICS) \
+	$(LANGUAGE2_ICS) \
+	$(EMPTYLINES1_ICS) \
+	$(PARAMETER1_ICS) \
+	$(PARAMETER2_ICS) \
+	$(REQUESTSTATUS1_ICS) \
+	$(RECURRENCEDATES1_ICS) \
+	$(DATETIME1_ICS) \
+	$(PARSE17_ICS) \
+	$(BUG2033495_ICS) \
+	$(EMPTYLINES2_ICS) \
+	$(CALENDAR1_ICS) \
+	$(EMPTYLINES3_ICS) \
+	$(CALENDARPARAMETERS2_ICS) \
+	$(PARSE1_ICS) \
+	$(EMPTYLINES4_ICS) \
+	$(CASEINSENSITIVE4_ICS) \
+	$(PROPERTY1_ICS) \
+	$(LANGUAGE3_ICS) \
+	$(EVENT1_ICS) \
+	$(TODO2_ICS) \
+	$(TODO3_ICS) \
+	$(TODO4_ICS) \
+	$(TODO5_ICS) \
+	$(TODO6_ICS) \
+	$(TODO7_ICS) \
+	$(EVENT2_ICS) \
+	$(CASEINSENSITIVE1_ICS) \
+	$(CASEINSENSITIVE2_ICS) \
+	$(CASEINSENSITIVE3_ICS) \
+	$(XPROPERTY1_ICS) \
+	$(XPROPERTY2_ICS) \
+	$(EVENT3_ICS) \
+	$(BUG2148092_ICS) \
+	$(DURATION1_ICS) \
+	$(ATTACHMENT3_ICS) \
+	$(ENCODING1_ICS) \
+	$(EVENT4_ICS) \
+	$(CATEGORIES1_ICS) \
+	$(TODO1_ICS) \
+	$(TIMEZONE1_ICS) \
+	$(TIMEZONE2_ICS) \
+	$(TIMEZONE3_ICS) \
+	$(USHOLIDAYS_ICS) \
+	$(DATETIME2_ICS) \
+	$(ATTENDEE1_ICS) \
+	$(ATTENDEE2_ICS) \
+	$(BUG2938007_ICS) \
+	$(TRANSPARENCY1_ICS) \
+	$(TRANSPARENCY2_ICS) \
+	$(TRIGGER1_ICS)  
+
+PROGRAMFILES_CALENDARS_JOURNAL = \
+	$(JOURNAL1_ICS) \
+	$(JOURNAL2_ICS)  
+
+PROGRAMFILES_CALENDARS_RECURRENCE = \
+	$(YEARLYCOMPLEX1_ICS) \
+	$(WEEKLYUNTILWKST1_ICS) \
+	$(WEEKLYCOUNTWKST1_ICS) \
+	$(WEEKLYUNTILWKST2_ICS) \
+	$(WEEKLYCOUNTWKST2_ICS) \
+	$(MONTHLYCOUNTBYDAY1_ICS) \
+	$(MONTHLYUNTILBYDAY1_ICS) \
+	$(MONTHLYCOUNTBYDAY2_ICS) \
+	$(MONTHLYCOUNTBYDAY3_ICS) \
+	$(BYMONTHDAY1_ICS) \
+	$(MONTHLYCOUNTBYMONTHDAY1_ICS) \
+	$(DAILYCOUNT1_ICS) \
+	$(MONTHLYCOUNTBYMONTHDAY2_ICS) \
+	$(MONTHLYCOUNTBYMONTHDAY3_ICS) \
+	$(MONTHLYBYDAY1_ICS) \
+	$(YEARLYBYMONTH1_ICS) \
+	$(YEARLYCOUNTBYMONTH1_ICS) \
+	$(YEARLYCOUNTBYYEARDAY1_ICS) \
+	$(YEARLYBYDAY1_ICS) \
+	$(YEARLYBYWEEKNO1_ICS) \
+	$(YEARLYBYMONTH2_ICS) \
+	$(YEARLYBYMONTH3_ICS) \
+	$(DAILYUNTIL1_ICS) \
+	$(MONTHLYBYMONTHDAY1_ICS) \
+	$(MONTHLYBYMONTHDAY2_ICS) \
+	$(YEARLYBYMONTHDAY1_ICS) \
+	$(MONTHLYBYSETPOS1_ICS) \
+	$(MONTHLYBYSETPOS2_ICS) \
+	$(HOURLYUNTIL1_ICS) \
+	$(MINUTELYCOUNT1_ICS) \
+	$(MINUTELYCOUNT2_ICS) \
+	$(DAILYBYHOURMINUTE1_ICS) \
+	$(MINUTELYBYHOUR1_ICS) \
+	$(DAILY1_ICS) \
+	$(WEEKLYCOUNTWKST3_ICS) \
+	$(WEEKLYCOUNTWKST4_ICS) \
+	$(BUG1741093_ICS) \
+	$(SECONDLY1_ICS) \
+	$(MINUTELY1_ICS) \
+	$(HOURLY1_ICS) \
+	$(MONTHLYINTERVAL1_ICS) \
+	$(YEARLYINTERVAL1_ICS) \
+	$(DAILYINTERVAL1_ICS) \
+	$(DAILYCOUNT2_ICS) \
+	$(HOURLYINTERVAL1_ICS) \
+	$(YEARLYBYSETPOS1_ICS) \
+	$(EMPTY1_ICS) \
+	$(HOURLYINTERVAL2_ICS) \
+	$(MINUTELYINTERVAL1_ICS) \
+	$(DAILYINTERVAL2_ICS) \
+	$(DAILYBYDAY1_ICS) \
+	$(WEEKLYINTERVAL1_ICS) \
+	$(WEEKLYWEEKSTARTSLASTYEAR_ICS) \
+	$(MONTHLY1_ICS) \
+	$(YEARLY1_ICS) \
+	$(BYMONTH1_ICS) \
+	$(BUG2912657_ICS) \
+	$(BYMONTH2_ICS) \
+	$(WEEKLYCOUNT1_ICS) \
+	$(WEEKLYUNTIL1_ICS) \
+	$(WEEKLYWKST1_ICS) \
+	$(YEARLYBYWEEKNO2_ICS) \
+	$(YEARLYBYWEEKNO3_ICS) \
+	$(YEARLYBYWEEKNO4_ICS) \
+	$(YEARLYBYWEEKNO5_ICS) \
+	$(BUG2916581_ICS) \
+	$(BUG2959692_ICS) \
+	$(BUG2966236_ICS) \
+	$(BUG3007244_ICS) \
+	$(MINUTELYCOUNT3_ICS) \
+	$(MINUTELYCOUNT4_ICS)  
+
+PROGRAMFILES_CALENDARS_TODO = \
+	$(TODO1_ICS2) \
+	$(TODO2_ICS2) \
+	$(TODO3_ICS2) \
+	$(TODO4_ICS2) \
+	$(TODO5_ICS2) \
+	$(TODO6_ICS2) \
+	$(TODO7_ICS2) \
+	$(TODO8_ICS) \
+	$(TODO9_ICS)  
+
+PROGRAMFILES_DATA = \
+	$(LOREMIPSUM_TXT) \
+	$(TEST_DOC)  
+
+BINARIES = \
+	$(DDAY_ICAL_TEST)  
+
+
+RESGEN=resgen2
+	
+all: $(ASSEMBLY) $(PROGRAMFILES) $(PROGRAMFILES_CALENDARS_ALARM) $(PROGRAMFILES_CALENDARS_SERIALIZATION) $(PROGRAMFILES_CALENDARS_JOURNAL) $(PROGRAMFILES_CALENDARS_RECURRENCE) $(PROGRAMFILES_CALENDARS_TODO) $(PROGRAMFILES_DATA) $(BINARIES) 
+
+FILES = \
+	AlarmTest.cs \
+	ComponentTest.cs \
+	FreeBusyTest.cs \
+	EventTest.cs \
+	CopyTest.cs \
+	Custom/Custom1.cs \
+	JournalTest.cs \
+	ProgramTest.cs \
+	Properties/AssemblyInfo.cs \
+	RecurrenceTest.cs \
+	SerializationTest.cs \
+	Startup.cs \
+	TodoTest.cs 
+
+DATA_FILES = 
+
+RESOURCES = 
+
+EXTRAS = \
+	Properties/AssemblyInfo.cs.template \
+	Calendars/Alarm/ALARM1.ics \
+	Calendars/Alarm/ALARM2.ics \
+	Calendars/Alarm/ALARM3.ics \
+	Calendars/Alarm/ALARM4.ics \
+	Calendars/Alarm/ALARM5.ics \
+	Calendars/Alarm/ALARM6.ics \
+	Calendars/Alarm/ALARM7.ics \
+	Calendars/Serialization/Language4.ics \
+	Calendars/Serialization/Encoding2.ics \
+	Calendars/Serialization/Encoding3.ics \
+	Calendars/Serialization/Attachment4.ics \
+	Calendars/Serialization/GeographicLocation1.ics \
+	Calendars/Serialization/Google1.ics \
+	Calendars/Serialization/Outlook2007LineFolds.ics \
+	Calendars/Serialization/ProdID1.ics \
+	Calendars/Serialization/ProdID2.ics \
+	Calendars/Journal/JOURNAL1.ics \
+	Calendars/Journal/JOURNAL2.ics \
+	Calendars/Recurrence/YearlyComplex1.ics \
+	Calendars/Recurrence/WeeklyUntilWkst1.ics \
+	Calendars/Recurrence/WeeklyCountWkst1.ics \
+	Calendars/Recurrence/WeeklyUntilWkst2.ics \
+	Calendars/Recurrence/WeeklyCountWkst2.ics \
+	Calendars/Recurrence/MonthlyCountByDay1.ics \
+	Calendars/Recurrence/MonthlyUntilByDay1.ics \
+	Calendars/Recurrence/MonthlyCountByDay2.ics \
+	Calendars/Recurrence/MonthlyCountByDay3.ics \
+	Calendars/Recurrence/ByMonthDay1.ics \
+	Calendars/Recurrence/MonthlyCountByMonthDay1.ics \
+	Calendars/Recurrence/DailyCount1.ics \
+	Calendars/Recurrence/MonthlyCountByMonthDay2.ics \
+	Calendars/Recurrence/MonthlyCountByMonthDay3.ics \
+	Calendars/Recurrence/MonthlyByDay1.ics \
+	Calendars/Recurrence/YearlyByMonth1.ics \
+	Calendars/Recurrence/YearlyCountByMonth1.ics \
+	Calendars/Recurrence/YearlyCountByYearDay1.ics \
+	Calendars/Recurrence/YearlyByDay1.ics \
+	Calendars/Recurrence/YearlyByWeekNo1.ics \
+	Calendars/Recurrence/YearlyByMonth2.ics \
+	Calendars/Recurrence/YearlyByMonth3.ics \
+	Calendars/Recurrence/DailyUntil1.ics \
+	Calendars/Recurrence/MonthlyByMonthDay1.ics \
+	Calendars/Recurrence/MonthlyByMonthDay2.ics \
+	Calendars/Recurrence/YearlyByMonthDay1.ics \
+	Calendars/Recurrence/MonthlyBySetPos1.ics \
+	Calendars/Recurrence/MonthlyBySetPos2.ics \
+	Calendars/Recurrence/HourlyUntil1.ics \
+	Calendars/Recurrence/MinutelyCount1.ics \
+	Calendars/Recurrence/MinutelyCount2.ics \
+	Calendars/Recurrence/DailyByHourMinute1.ics \
+	Calendars/Recurrence/MinutelyByHour1.ics \
+	Calendars/Recurrence/Daily1.ics \
+	Calendars/Recurrence/WeeklyCountWkst3.ics \
+	Calendars/Recurrence/WeeklyCountWkst4.ics \
+	Calendars/Recurrence/Bug1741093.ics \
+	Calendars/Recurrence/Secondly1.ics \
+	Calendars/Recurrence/Minutely1.ics \
+	Calendars/Recurrence/Hourly1.ics \
+	Calendars/Recurrence/MonthlyInterval1.ics \
+	Calendars/Recurrence/YearlyInterval1.ics \
+	Calendars/Recurrence/DailyInterval1.ics \
+	Calendars/Recurrence/DailyCount2.ics \
+	Calendars/Recurrence/HourlyInterval1.ics \
+	Calendars/Recurrence/YearlyBySetPos1.ics \
+	Calendars/Recurrence/Empty1.ics \
+	Calendars/Recurrence/HourlyInterval2.ics \
+	Calendars/Recurrence/MinutelyInterval1.ics \
+	Calendars/Recurrence/DailyInterval2.ics \
+	Calendars/Recurrence/DailyByDay1.ics \
+	Calendars/Recurrence/WeeklyInterval1.ics \
+	Calendars/Recurrence/WeeklyWeekStartsLastYear.ics \
+	Calendars/Recurrence/Monthly1.ics \
+	Calendars/Recurrence/Yearly1.ics \
+	Calendars/Recurrence/ByMonth1.ics \
+	Calendars/Recurrence/Bug2912657.ics \
+	Calendars/Recurrence/ByMonth2.ics \
+	Calendars/Recurrence/WeeklyCount1.ics \
+	Calendars/Recurrence/WeeklyUntil1.ics \
+	Calendars/Recurrence/WeeklyWkst1.ics \
+	Calendars/Serialization/Language1.ics \
+	Calendars/Serialization/Language2.ics \
+	Calendars/Serialization/EmptyLines1.ics \
+	Calendars/Serialization/Parameter1.ics \
+	Calendars/Serialization/Parameter2.ics \
+	Calendars/Serialization/RequestStatus1.ics \
+	Calendars/Serialization/RecurrenceDates1.ics \
+	Calendars/Serialization/DateTime1.ics \
+	Calendars/Serialization/PARSE17.ics \
+	Calendars/Serialization/Bug2033495.ics \
+	Calendars/Serialization/EmptyLines2.ics \
+	Calendars/Serialization/Calendar1.ics \
+	Calendars/Serialization/EmptyLines3.ics \
+	Calendars/Serialization/CalendarParameters2.ics \
+	Calendars/Serialization/Parse1.ics \
+	Calendars/Serialization/EmptyLines4.ics \
+	Calendars/Serialization/CaseInsensitive4.ics \
+	Calendars/Serialization/Property1.ics \
+	Calendars/Serialization/Language3.ics \
+	Calendars/Serialization/Event1.ics \
+	Calendars/Serialization/Todo2.ics \
+	Calendars/Serialization/Todo3.ics \
+	Calendars/Serialization/Todo4.ics \
+	Calendars/Serialization/Todo5.ics \
+	Calendars/Serialization/Todo6.ics \
+	Calendars/Serialization/Todo7.ics \
+	Calendars/Serialization/Event2.ics \
+	Calendars/Serialization/CaseInsensitive1.ics \
+	Calendars/Serialization/CaseInsensitive2.ics \
+	Calendars/Serialization/CaseInsensitive3.ics \
+	Calendars/Serialization/XProperty1.ics \
+	Calendars/Serialization/XProperty2.ics \
+	Calendars/Serialization/Event3.ics \
+	Calendars/Serialization/Bug2148092.ics \
+	Calendars/Serialization/Duration1.ics \
+	Calendars/Serialization/Attachment3.ics \
+	Calendars/Serialization/Encoding1.ics \
+	Calendars/Serialization/Event4.ics \
+	Calendars/Serialization/Categories1.ics \
+	Calendars/Serialization/Todo1.ics \
+	Calendars/Serialization/TimeZone1.ics \
+	Calendars/Serialization/TimeZone2.ics \
+	Calendars/Serialization/TimeZone3.ics \
+	Calendars/Serialization/USHolidays.ics \
+	Calendars/Todo/Todo1.ics \
+	Calendars/Todo/Todo2.ics \
+	Calendars/Todo/Todo3.ics \
+	Calendars/Todo/Todo4.ics \
+	Calendars/Todo/Todo5.ics \
+	Calendars/Todo/Todo6.ics \
+	Calendars/Todo/Todo7.ics \
+	Calendars/Todo/Todo8.ics \
+	Calendars/Todo/Todo9.ics \
+	Calendars/Serialization/DateTime2.ics \
+	Calendars/Recurrence/YearlyByWeekNo2.ics \
+	Calendars/Recurrence/YearlyByWeekNo3.ics \
+	Calendars/Recurrence/YearlyByWeekNo4.ics \
+	Calendars/Recurrence/YearlyByWeekNo5.ics \
+	Calendars/Serialization/Attendee1.ics \
+	Calendars/Serialization/Attendee2.ics \
+	Calendars/Recurrence/Bug2916581.ics \
+	Calendars/Serialization/Bug2938007.ics \
+	Calendars/Recurrence/Bug2959692.ics \
+	Calendars/Recurrence/Bug2966236.ics \
+	Calendars/Recurrence/Bug3007244.ics \
+	Calendars/Serialization/Transparency1.ics \
+	Calendars/Serialization/Transparency2.ics \
+	Calendars/Recurrence/MinutelyCount3.ics \
+	Calendars/Recurrence/MinutelyCount4.ics \
+	Calendars/Serialization/Trigger1.ics \
+	Copyright.txt \
+	Data/LoremIpsum.txt \
+	Data/Test.doc \
+	dday.ical.test.in 
+
+REFERENCES =  \
+	System \
+	System.Core \
+	System.Data \
+	System.Runtime.Serialization \
+	System.Xml
+
+DLL_REFERENCES =  \
+	../antlr.runtime.dll \
+	log4net.dll \
+	nunit-console-runner.dll \
+	nunit-gui-runner.dll \
+	nunit.core.dll \
+	nunit.core.interfaces.dll \
+	nunit.fixtures.dll \
+	nunit.framework.dll \
+	nunit.uiexception.dll \
+	nunit.uikit.dll \
+	nunit.util.dll
+
+CLEANFILES = $(PROGRAMFILES) $(PROGRAMFILES_CALENDARS_ALARM) $(PROGRAMFILES_CALENDARS_SERIALIZATION) $(PROGRAMFILES_CALENDARS_JOURNAL) $(PROGRAMFILES_CALENDARS_RECURRENCE) $(PROGRAMFILES_CALENDARS_TODO) $(PROGRAMFILES_DATA) $(BINARIES) 
+
+include $(top_srcdir)/Makefile.include
+
+ALARM1_ICS = $(BUILD_DIR)/Calendars/Alarm/ALARM1.ics
+ALARM2_ICS = $(BUILD_DIR)/Calendars/Alarm/ALARM2.ics
+ALARM3_ICS = $(BUILD_DIR)/Calendars/Alarm/ALARM3.ics
+ALARM4_ICS = $(BUILD_DIR)/Calendars/Alarm/ALARM4.ics
+ALARM5_ICS = $(BUILD_DIR)/Calendars/Alarm/ALARM5.ics
+ALARM6_ICS = $(BUILD_DIR)/Calendars/Alarm/ALARM6.ics
+ALARM7_ICS = $(BUILD_DIR)/Calendars/Alarm/ALARM7.ics
+LANGUAGE4_ICS = $(BUILD_DIR)/Calendars/Serialization/Language4.ics
+ENCODING2_ICS = $(BUILD_DIR)/Calendars/Serialization/Encoding2.ics
+ENCODING3_ICS = $(BUILD_DIR)/Calendars/Serialization/Encoding3.ics
+ATTACHMENT4_ICS = $(BUILD_DIR)/Calendars/Serialization/Attachment4.ics
+GEOGRAPHICLOCATION1_ICS = $(BUILD_DIR)/Calendars/Serialization/GeographicLocation1.ics
+GOOGLE1_ICS = $(BUILD_DIR)/Calendars/Serialization/Google1.ics
+OUTLOOK2007LINEFOLDS_ICS = $(BUILD_DIR)/Calendars/Serialization/Outlook2007LineFolds.ics
+PRODID1_ICS = $(BUILD_DIR)/Calendars/Serialization/ProdID1.ics
+PRODID2_ICS = $(BUILD_DIR)/Calendars/Serialization/ProdID2.ics
+JOURNAL1_ICS = $(BUILD_DIR)/Calendars/Journal/JOURNAL1.ics
+JOURNAL2_ICS = $(BUILD_DIR)/Calendars/Journal/JOURNAL2.ics
+YEARLYCOMPLEX1_ICS = $(BUILD_DIR)/Calendars/Recurrence/YearlyComplex1.ics
+WEEKLYUNTILWKST1_ICS = $(BUILD_DIR)/Calendars/Recurrence/WeeklyUntilWkst1.ics
+WEEKLYCOUNTWKST1_ICS = $(BUILD_DIR)/Calendars/Recurrence/WeeklyCountWkst1.ics
+WEEKLYUNTILWKST2_ICS = $(BUILD_DIR)/Calendars/Recurrence/WeeklyUntilWkst2.ics
+WEEKLYCOUNTWKST2_ICS = $(BUILD_DIR)/Calendars/Recurrence/WeeklyCountWkst2.ics
+MONTHLYCOUNTBYDAY1_ICS = $(BUILD_DIR)/Calendars/Recurrence/MonthlyCountByDay1.ics
+MONTHLYUNTILBYDAY1_ICS = $(BUILD_DIR)/Calendars/Recurrence/MonthlyUntilByDay1.ics
+MONTHLYCOUNTBYDAY2_ICS = $(BUILD_DIR)/Calendars/Recurrence/MonthlyCountByDay2.ics
+MONTHLYCOUNTBYDAY3_ICS = $(BUILD_DIR)/Calendars/Recurrence/MonthlyCountByDay3.ics
+BYMONTHDAY1_ICS = $(BUILD_DIR)/Calendars/Recurrence/ByMonthDay1.ics
+MONTHLYCOUNTBYMONTHDAY1_ICS = $(BUILD_DIR)/Calendars/Recurrence/MonthlyCountByMonthDay1.ics
+DAILYCOUNT1_ICS = $(BUILD_DIR)/Calendars/Recurrence/DailyCount1.ics
+MONTHLYCOUNTBYMONTHDAY2_ICS = $(BUILD_DIR)/Calendars/Recurrence/MonthlyCountByMonthDay2.ics
+MONTHLYCOUNTBYMONTHDAY3_ICS = $(BUILD_DIR)/Calendars/Recurrence/MonthlyCountByMonthDay3.ics
+MONTHLYBYDAY1_ICS = $(BUILD_DIR)/Calendars/Recurrence/MonthlyByDay1.ics
+YEARLYBYMONTH1_ICS = $(BUILD_DIR)/Calendars/Recurrence/YearlyByMonth1.ics
+YEARLYCOUNTBYMONTH1_ICS = $(BUILD_DIR)/Calendars/Recurrence/YearlyCountByMonth1.ics
+YEARLYCOUNTBYYEARDAY1_ICS = $(BUILD_DIR)/Calendars/Recurrence/YearlyCountByYearDay1.ics
+YEARLYBYDAY1_ICS = $(BUILD_DIR)/Calendars/Recurrence/YearlyByDay1.ics
+YEARLYBYWEEKNO1_ICS = $(BUILD_DIR)/Calendars/Recurrence/YearlyByWeekNo1.ics
+YEARLYBYMONTH2_ICS = $(BUILD_DIR)/Calendars/Recurrence/YearlyByMonth2.ics
+YEARLYBYMONTH3_ICS = $(BUILD_DIR)/Calendars/Recurrence/YearlyByMonth3.ics
+DAILYUNTIL1_ICS = $(BUILD_DIR)/Calendars/Recurrence/DailyUntil1.ics
+MONTHLYBYMONTHDAY1_ICS = $(BUILD_DIR)/Calendars/Recurrence/MonthlyByMonthDay1.ics
+MONTHLYBYMONTHDAY2_ICS = $(BUILD_DIR)/Calendars/Recurrence/MonthlyByMonthDay2.ics
+YEARLYBYMONTHDAY1_ICS = $(BUILD_DIR)/Calendars/Recurrence/YearlyByMonthDay1.ics
+MONTHLYBYSETPOS1_ICS = $(BUILD_DIR)/Calendars/Recurrence/MonthlyBySetPos1.ics
+MONTHLYBYSETPOS2_ICS = $(BUILD_DIR)/Calendars/Recurrence/MonthlyBySetPos2.ics
+HOURLYUNTIL1_ICS = $(BUILD_DIR)/Calendars/Recurrence/HourlyUntil1.ics
+MINUTELYCOUNT1_ICS = $(BUILD_DIR)/Calendars/Recurrence/MinutelyCount1.ics
+MINUTELYCOUNT2_ICS = $(BUILD_DIR)/Calendars/Recurrence/MinutelyCount2.ics
+DAILYBYHOURMINUTE1_ICS = $(BUILD_DIR)/Calendars/Recurrence/DailyByHourMinute1.ics
+MINUTELYBYHOUR1_ICS = $(BUILD_DIR)/Calendars/Recurrence/MinutelyByHour1.ics
+DAILY1_ICS = $(BUILD_DIR)/Calendars/Recurrence/Daily1.ics
+WEEKLYCOUNTWKST3_ICS = $(BUILD_DIR)/Calendars/Recurrence/WeeklyCountWkst3.ics
+WEEKLYCOUNTWKST4_ICS = $(BUILD_DIR)/Calendars/Recurrence/WeeklyCountWkst4.ics
+BUG1741093_ICS = $(BUILD_DIR)/Calendars/Recurrence/Bug1741093.ics
+SECONDLY1_ICS = $(BUILD_DIR)/Calendars/Recurrence/Secondly1.ics
+MINUTELY1_ICS = $(BUILD_DIR)/Calendars/Recurrence/Minutely1.ics
+HOURLY1_ICS = $(BUILD_DIR)/Calendars/Recurrence/Hourly1.ics
+MONTHLYINTERVAL1_ICS = $(BUILD_DIR)/Calendars/Recurrence/MonthlyInterval1.ics
+YEARLYINTERVAL1_ICS = $(BUILD_DIR)/Calendars/Recurrence/YearlyInterval1.ics
+DAILYINTERVAL1_ICS = $(BUILD_DIR)/Calendars/Recurrence/DailyInterval1.ics
+DAILYCOUNT2_ICS = $(BUILD_DIR)/Calendars/Recurrence/DailyCount2.ics
+HOURLYINTERVAL1_ICS = $(BUILD_DIR)/Calendars/Recurrence/HourlyInterval1.ics
+YEARLYBYSETPOS1_ICS = $(BUILD_DIR)/Calendars/Recurrence/YearlyBySetPos1.ics
+EMPTY1_ICS = $(BUILD_DIR)/Calendars/Recurrence/Empty1.ics
+HOURLYINTERVAL2_ICS = $(BUILD_DIR)/Calendars/Recurrence/HourlyInterval2.ics
+MINUTELYINTERVAL1_ICS = $(BUILD_DIR)/Calendars/Recurrence/MinutelyInterval1.ics
+DAILYINTERVAL2_ICS = $(BUILD_DIR)/Calendars/Recurrence/DailyInterval2.ics
+DAILYBYDAY1_ICS = $(BUILD_DIR)/Calendars/Recurrence/DailyByDay1.ics
+WEEKLYINTERVAL1_ICS = $(BUILD_DIR)/Calendars/Recurrence/WeeklyInterval1.ics
+WEEKLYWEEKSTARTSLASTYEAR_ICS = $(BUILD_DIR)/Calendars/Recurrence/WeeklyWeekStartsLastYear.ics
+MONTHLY1_ICS = $(BUILD_DIR)/Calendars/Recurrence/Monthly1.ics
+YEARLY1_ICS = $(BUILD_DIR)/Calendars/Recurrence/Yearly1.ics
+BYMONTH1_ICS = $(BUILD_DIR)/Calendars/Recurrence/ByMonth1.ics
+BUG2912657_ICS = $(BUILD_DIR)/Calendars/Recurrence/Bug2912657.ics
+BYMONTH2_ICS = $(BUILD_DIR)/Calendars/Recurrence/ByMonth2.ics
+WEEKLYCOUNT1_ICS = $(BUILD_DIR)/Calendars/Recurrence/WeeklyCount1.ics
+WEEKLYUNTIL1_ICS = $(BUILD_DIR)/Calendars/Recurrence/WeeklyUntil1.ics
+WEEKLYWKST1_ICS = $(BUILD_DIR)/Calendars/Recurrence/WeeklyWkst1.ics
+LANGUAGE1_ICS = $(BUILD_DIR)/Calendars/Serialization/Language1.ics
+LANGUAGE2_ICS = $(BUILD_DIR)/Calendars/Serialization/Language2.ics
+EMPTYLINES1_ICS = $(BUILD_DIR)/Calendars/Serialization/EmptyLines1.ics
+PARAMETER1_ICS = $(BUILD_DIR)/Calendars/Serialization/Parameter1.ics
+PARAMETER2_ICS = $(BUILD_DIR)/Calendars/Serialization/Parameter2.ics
+REQUESTSTATUS1_ICS = $(BUILD_DIR)/Calendars/Serialization/RequestStatus1.ics
+RECURRENCEDATES1_ICS = $(BUILD_DIR)/Calendars/Serialization/RecurrenceDates1.ics
+DATETIME1_ICS = $(BUILD_DIR)/Calendars/Serialization/DateTime1.ics
+PARSE17_ICS = $(BUILD_DIR)/Calendars/Serialization/PARSE17.ics
+BUG2033495_ICS = $(BUILD_DIR)/Calendars/Serialization/Bug2033495.ics
+EMPTYLINES2_ICS = $(BUILD_DIR)/Calendars/Serialization/EmptyLines2.ics
+CALENDAR1_ICS = $(BUILD_DIR)/Calendars/Serialization/Calendar1.ics
+EMPTYLINES3_ICS = $(BUILD_DIR)/Calendars/Serialization/EmptyLines3.ics
+CALENDARPARAMETERS2_ICS = $(BUILD_DIR)/Calendars/Serialization/CalendarParameters2.ics
+PARSE1_ICS = $(BUILD_DIR)/Calendars/Serialization/Parse1.ics
+EMPTYLINES4_ICS = $(BUILD_DIR)/Calendars/Serialization/EmptyLines4.ics
+CASEINSENSITIVE4_ICS = $(BUILD_DIR)/Calendars/Serialization/CaseInsensitive4.ics
+PROPERTY1_ICS = $(BUILD_DIR)/Calendars/Serialization/Property1.ics
+LANGUAGE3_ICS = $(BUILD_DIR)/Calendars/Serialization/Language3.ics
+EVENT1_ICS = $(BUILD_DIR)/Calendars/Serialization/Event1.ics
+TODO2_ICS = $(BUILD_DIR)/Calendars/Serialization/Todo2.ics
+TODO3_ICS = $(BUILD_DIR)/Calendars/Serialization/Todo3.ics
+TODO4_ICS = $(BUILD_DIR)/Calendars/Serialization/Todo4.ics
+TODO5_ICS = $(BUILD_DIR)/Calendars/Serialization/Todo5.ics
+TODO6_ICS = $(BUILD_DIR)/Calendars/Serialization/Todo6.ics
+TODO7_ICS = $(BUILD_DIR)/Calendars/Serialization/Todo7.ics
+EVENT2_ICS = $(BUILD_DIR)/Calendars/Serialization/Event2.ics
+CASEINSENSITIVE1_ICS = $(BUILD_DIR)/Calendars/Serialization/CaseInsensitive1.ics
+CASEINSENSITIVE2_ICS = $(BUILD_DIR)/Calendars/Serialization/CaseInsensitive2.ics
+CASEINSENSITIVE3_ICS = $(BUILD_DIR)/Calendars/Serialization/CaseInsensitive3.ics
+XPROPERTY1_ICS = $(BUILD_DIR)/Calendars/Serialization/XProperty1.ics
+XPROPERTY2_ICS = $(BUILD_DIR)/Calendars/Serialization/XProperty2.ics
+EVENT3_ICS = $(BUILD_DIR)/Calendars/Serialization/Event3.ics
+BUG2148092_ICS = $(BUILD_DIR)/Calendars/Serialization/Bug2148092.ics
+DURATION1_ICS = $(BUILD_DIR)/Calendars/Serialization/Duration1.ics
+ATTACHMENT3_ICS = $(BUILD_DIR)/Calendars/Serialization/Attachment3.ics
+ENCODING1_ICS = $(BUILD_DIR)/Calendars/Serialization/Encoding1.ics
+EVENT4_ICS = $(BUILD_DIR)/Calendars/Serialization/Event4.ics
+CATEGORIES1_ICS = $(BUILD_DIR)/Calendars/Serialization/Categories1.ics
+TODO1_ICS = $(BUILD_DIR)/Calendars/Serialization/Todo1.ics
+TIMEZONE1_ICS = $(BUILD_DIR)/Calendars/Serialization/TimeZone1.ics
+TIMEZONE2_ICS = $(BUILD_DIR)/Calendars/Serialization/TimeZone2.ics
+TIMEZONE3_ICS = $(BUILD_DIR)/Calendars/Serialization/TimeZone3.ics
+USHOLIDAYS_ICS = $(BUILD_DIR)/Calendars/Serialization/USHolidays.ics
+TODO1_ICS2 = $(BUILD_DIR)/Calendars/Todo/Todo1.ics
+TODO2_ICS2 = $(BUILD_DIR)/Calendars/Todo/Todo2.ics
+TODO3_ICS2 = $(BUILD_DIR)/Calendars/Todo/Todo3.ics
+TODO4_ICS2 = $(BUILD_DIR)/Calendars/Todo/Todo4.ics
+TODO5_ICS2 = $(BUILD_DIR)/Calendars/Todo/Todo5.ics
+TODO6_ICS2 = $(BUILD_DIR)/Calendars/Todo/Todo6.ics
+TODO7_ICS2 = $(BUILD_DIR)/Calendars/Todo/Todo7.ics
+TODO8_ICS = $(BUILD_DIR)/Calendars/Todo/Todo8.ics
+TODO9_ICS = $(BUILD_DIR)/Calendars/Todo/Todo9.ics
+DATETIME2_ICS = $(BUILD_DIR)/Calendars/Serialization/DateTime2.ics
+YEARLYBYWEEKNO2_ICS = $(BUILD_DIR)/Calendars/Recurrence/YearlyByWeekNo2.ics
+YEARLYBYWEEKNO3_ICS = $(BUILD_DIR)/Calendars/Recurrence/YearlyByWeekNo3.ics
+YEARLYBYWEEKNO4_ICS = $(BUILD_DIR)/Calendars/Recurrence/YearlyByWeekNo4.ics
+YEARLYBYWEEKNO5_ICS = $(BUILD_DIR)/Calendars/Recurrence/YearlyByWeekNo5.ics
+ATTENDEE1_ICS = $(BUILD_DIR)/Calendars/Serialization/Attendee1.ics
+ATTENDEE2_ICS = $(BUILD_DIR)/Calendars/Serialization/Attendee2.ics
+BUG2916581_ICS = $(BUILD_DIR)/Calendars/Recurrence/Bug2916581.ics
+BUG2938007_ICS = $(BUILD_DIR)/Calendars/Serialization/Bug2938007.ics
+BUG2959692_ICS = $(BUILD_DIR)/Calendars/Recurrence/Bug2959692.ics
+BUG2966236_ICS = $(BUILD_DIR)/Calendars/Recurrence/Bug2966236.ics
+BUG3007244_ICS = $(BUILD_DIR)/Calendars/Recurrence/Bug3007244.ics
+TRANSPARENCY1_ICS = $(BUILD_DIR)/Calendars/Serialization/Transparency1.ics
+TRANSPARENCY2_ICS = $(BUILD_DIR)/Calendars/Serialization/Transparency2.ics
+MINUTELYCOUNT3_ICS = $(BUILD_DIR)/Calendars/Recurrence/MinutelyCount3.ics
+MINUTELYCOUNT4_ICS = $(BUILD_DIR)/Calendars/Recurrence/MinutelyCount4.ics
+TRIGGER1_ICS = $(BUILD_DIR)/Calendars/Serialization/Trigger1.ics
+LOREMIPSUM_TXT = $(BUILD_DIR)/Data/LoremIpsum.txt
+TEST_DOC = $(BUILD_DIR)/Data/Test.doc
+ANTLR_RUNTIME_DLL = $(BUILD_DIR)/antlr.runtime.dll
+LOG4NET_DLL = $(BUILD_DIR)/log4net.dll
+NUNIT_CONSOLE_RUNNER_DLL = $(BUILD_DIR)/nunit-console-runner.dll
+NUNIT_UTIL_DLL = $(BUILD_DIR)/nunit.util.dll
+NUNIT_CORE_DLL = $(BUILD_DIR)/nunit.core.dll
+NUNIT_CORE_INTERFACES_DLL = $(BUILD_DIR)/nunit.core.interfaces.dll
+NUNIT_GUI_RUNNER_DLL = $(BUILD_DIR)/nunit-gui-runner.dll
+NUNIT_UIKIT_DLL = $(BUILD_DIR)/nunit.uikit.dll
+NUNIT_UIEXCEPTION_DLL = $(BUILD_DIR)/nunit.uiexception.dll
+NUNIT_FIXTURES_DLL = $(BUILD_DIR)/nunit.fixtures.dll
+NUNIT_FRAMEWORK_DLL = $(BUILD_DIR)/nunit.framework.dll
+DDAY_ICAL_DLL = $(BUILD_DIR)/DDay.iCal.dll
+LICENSE_TXT = $(BUILD_DIR)/License.txt
+DDAY_COLLECTIONS_DLL = $(BUILD_DIR)/DDay.Collections.dll
+DDAY_COLLECTIONS_DLL_CONFIG = $(BUILD_DIR)/DDay.Collections.dll.config
+DDAY_ICAL_TEST = $(BUILD_DIR)/dday.ical.test
+
+$(eval $(call emit-deploy-target,ALARM1_ICS))
+$(eval $(call emit-deploy-target,ALARM2_ICS))
+$(eval $(call emit-deploy-target,ALARM3_ICS))
+$(eval $(call emit-deploy-target,ALARM4_ICS))
+$(eval $(call emit-deploy-target,ALARM5_ICS))
+$(eval $(call emit-deploy-target,ALARM6_ICS))
+$(eval $(call emit-deploy-target,ALARM7_ICS))
+$(eval $(call emit-deploy-target,LANGUAGE4_ICS))
+$(eval $(call emit-deploy-target,ENCODING2_ICS))
+$(eval $(call emit-deploy-target,ENCODING3_ICS))
+$(eval $(call emit-deploy-target,ATTACHMENT4_ICS))
+$(eval $(call emit-deploy-target,GEOGRAPHICLOCATION1_ICS))
+$(eval $(call emit-deploy-target,GOOGLE1_ICS))
+$(eval $(call emit-deploy-target,OUTLOOK2007LINEFOLDS_ICS))
+$(eval $(call emit-deploy-target,PRODID1_ICS))
+$(eval $(call emit-deploy-target,PRODID2_ICS))
+$(eval $(call emit-deploy-target,JOURNAL1_ICS))
+$(eval $(call emit-deploy-target,JOURNAL2_ICS))
+$(eval $(call emit-deploy-target,YEARLYCOMPLEX1_ICS))
+$(eval $(call emit-deploy-target,WEEKLYUNTILWKST1_ICS))
+$(eval $(call emit-deploy-target,WEEKLYCOUNTWKST1_ICS))
+$(eval $(call emit-deploy-target,WEEKLYUNTILWKST2_ICS))
+$(eval $(call emit-deploy-target,WEEKLYCOUNTWKST2_ICS))
+$(eval $(call emit-deploy-target,MONTHLYCOUNTBYDAY1_ICS))
+$(eval $(call emit-deploy-target,MONTHLYUNTILBYDAY1_ICS))
+$(eval $(call emit-deploy-target,MONTHLYCOUNTBYDAY2_ICS))
+$(eval $(call emit-deploy-target,MONTHLYCOUNTBYDAY3_ICS))
+$(eval $(call emit-deploy-target,BYMONTHDAY1_ICS))
+$(eval $(call emit-deploy-target,MONTHLYCOUNTBYMONTHDAY1_ICS))
+$(eval $(call emit-deploy-target,DAILYCOUNT1_ICS))
+$(eval $(call emit-deploy-target,MONTHLYCOUNTBYMONTHDAY2_ICS))
+$(eval $(call emit-deploy-target,MONTHLYCOUNTBYMONTHDAY3_ICS))
+$(eval $(call emit-deploy-target,MONTHLYBYDAY1_ICS))
+$(eval $(call emit-deploy-target,YEARLYBYMONTH1_ICS))
+$(eval $(call emit-deploy-target,YEARLYCOUNTBYMONTH1_ICS))
+$(eval $(call emit-deploy-target,YEARLYCOUNTBYYEARDAY1_ICS))
+$(eval $(call emit-deploy-target,YEARLYBYDAY1_ICS))
+$(eval $(call emit-deploy-target,YEARLYBYWEEKNO1_ICS))
+$(eval $(call emit-deploy-target,YEARLYBYMONTH2_ICS))
+$(eval $(call emit-deploy-target,YEARLYBYMONTH3_ICS))
+$(eval $(call emit-deploy-target,DAILYUNTIL1_ICS))
+$(eval $(call emit-deploy-target,MONTHLYBYMONTHDAY1_ICS))
+$(eval $(call emit-deploy-target,MONTHLYBYMONTHDAY2_ICS))
+$(eval $(call emit-deploy-target,YEARLYBYMONTHDAY1_ICS))
+$(eval $(call emit-deploy-target,MONTHLYBYSETPOS1_ICS))
+$(eval $(call emit-deploy-target,MONTHLYBYSETPOS2_ICS))
+$(eval $(call emit-deploy-target,HOURLYUNTIL1_ICS))
+$(eval $(call emit-deploy-target,MINUTELYCOUNT1_ICS))
+$(eval $(call emit-deploy-target,MINUTELYCOUNT2_ICS))
+$(eval $(call emit-deploy-target,DAILYBYHOURMINUTE1_ICS))
+$(eval $(call emit-deploy-target,MINUTELYBYHOUR1_ICS))
+$(eval $(call emit-deploy-target,DAILY1_ICS))
+$(eval $(call emit-deploy-target,WEEKLYCOUNTWKST3_ICS))
+$(eval $(call emit-deploy-target,WEEKLYCOUNTWKST4_ICS))
+$(eval $(call emit-deploy-target,BUG1741093_ICS))
+$(eval $(call emit-deploy-target,SECONDLY1_ICS))
+$(eval $(call emit-deploy-target,MINUTELY1_ICS))
+$(eval $(call emit-deploy-target,HOURLY1_ICS))
+$(eval $(call emit-deploy-target,MONTHLYINTERVAL1_ICS))
+$(eval $(call emit-deploy-target,YEARLYINTERVAL1_ICS))
+$(eval $(call emit-deploy-target,DAILYINTERVAL1_ICS))
+$(eval $(call emit-deploy-target,DAILYCOUNT2_ICS))
+$(eval $(call emit-deploy-target,HOURLYINTERVAL1_ICS))
+$(eval $(call emit-deploy-target,YEARLYBYSETPOS1_ICS))
+$(eval $(call emit-deploy-target,EMPTY1_ICS))
+$(eval $(call emit-deploy-target,HOURLYINTERVAL2_ICS))
+$(eval $(call emit-deploy-target,MINUTELYINTERVAL1_ICS))
+$(eval $(call emit-deploy-target,DAILYINTERVAL2_ICS))
+$(eval $(call emit-deploy-target,DAILYBYDAY1_ICS))
+$(eval $(call emit-deploy-target,WEEKLYINTERVAL1_ICS))
+$(eval $(call emit-deploy-target,WEEKLYWEEKSTARTSLASTYEAR_ICS))
+$(eval $(call emit-deploy-target,MONTHLY1_ICS))
+$(eval $(call emit-deploy-target,YEARLY1_ICS))
+$(eval $(call emit-deploy-target,BYMONTH1_ICS))
+$(eval $(call emit-deploy-target,BUG2912657_ICS))
+$(eval $(call emit-deploy-target,BYMONTH2_ICS))
+$(eval $(call emit-deploy-target,WEEKLYCOUNT1_ICS))
+$(eval $(call emit-deploy-target,WEEKLYUNTIL1_ICS))
+$(eval $(call emit-deploy-target,WEEKLYWKST1_ICS))
+$(eval $(call emit-deploy-target,LANGUAGE1_ICS))
+$(eval $(call emit-deploy-target,LANGUAGE2_ICS))
+$(eval $(call emit-deploy-target,EMPTYLINES1_ICS))
+$(eval $(call emit-deploy-target,PARAMETER1_ICS))
+$(eval $(call emit-deploy-target,PARAMETER2_ICS))
+$(eval $(call emit-deploy-target,REQUESTSTATUS1_ICS))
+$(eval $(call emit-deploy-target,RECURRENCEDATES1_ICS))
+$(eval $(call emit-deploy-target,DATETIME1_ICS))
+$(eval $(call emit-deploy-target,PARSE17_ICS))
+$(eval $(call emit-deploy-target,BUG2033495_ICS))
+$(eval $(call emit-deploy-target,EMPTYLINES2_ICS))
+$(eval $(call emit-deploy-target,CALENDAR1_ICS))
+$(eval $(call emit-deploy-target,EMPTYLINES3_ICS))
+$(eval $(call emit-deploy-target,CALENDARPARAMETERS2_ICS))
+$(eval $(call emit-deploy-target,PARSE1_ICS))
+$(eval $(call emit-deploy-target,EMPTYLINES4_ICS))
+$(eval $(call emit-deploy-target,CASEINSENSITIVE4_ICS))
+$(eval $(call emit-deploy-target,PROPERTY1_ICS))
+$(eval $(call emit-deploy-target,LANGUAGE3_ICS))
+$(eval $(call emit-deploy-target,EVENT1_ICS))
+$(eval $(call emit-deploy-target,TODO2_ICS))
+$(eval $(call emit-deploy-target,TODO3_ICS))
+$(eval $(call emit-deploy-target,TODO4_ICS))
+$(eval $(call emit-deploy-target,TODO5_ICS))
+$(eval $(call emit-deploy-target,TODO6_ICS))
+$(eval $(call emit-deploy-target,TODO7_ICS))
+$(eval $(call emit-deploy-target,EVENT2_ICS))
+$(eval $(call emit-deploy-target,CASEINSENSITIVE1_ICS))
+$(eval $(call emit-deploy-target,CASEINSENSITIVE2_ICS))
+$(eval $(call emit-deploy-target,CASEINSENSITIVE3_ICS))
+$(eval $(call emit-deploy-target,XPROPERTY1_ICS))
+$(eval $(call emit-deploy-target,XPROPERTY2_ICS))
+$(eval $(call emit-deploy-target,EVENT3_ICS))
+$(eval $(call emit-deploy-target,BUG2148092_ICS))
+$(eval $(call emit-deploy-target,DURATION1_ICS))
+$(eval $(call emit-deploy-target,ATTACHMENT3_ICS))
+$(eval $(call emit-deploy-target,ENCODING1_ICS))
+$(eval $(call emit-deploy-target,EVENT4_ICS))
+$(eval $(call emit-deploy-target,CATEGORIES1_ICS))
+$(eval $(call emit-deploy-target,TODO1_ICS))
+$(eval $(call emit-deploy-target,TIMEZONE1_ICS))
+$(eval $(call emit-deploy-target,TIMEZONE2_ICS))
+$(eval $(call emit-deploy-target,TIMEZONE3_ICS))
+$(eval $(call emit-deploy-target,USHOLIDAYS_ICS))
+$(eval $(call emit-deploy-target,TODO1_ICS2))
+$(eval $(call emit-deploy-target,TODO2_ICS2))
+$(eval $(call emit-deploy-target,TODO3_ICS2))
+$(eval $(call emit-deploy-target,TODO4_ICS2))
+$(eval $(call emit-deploy-target,TODO5_ICS2))
+$(eval $(call emit-deploy-target,TODO6_ICS2))
+$(eval $(call emit-deploy-target,TODO7_ICS2))
+$(eval $(call emit-deploy-target,TODO8_ICS))
+$(eval $(call emit-deploy-target,TODO9_ICS))
+$(eval $(call emit-deploy-target,DATETIME2_ICS))
+$(eval $(call emit-deploy-target,YEARLYBYWEEKNO2_ICS))
+$(eval $(call emit-deploy-target,YEARLYBYWEEKNO3_ICS))
+$(eval $(call emit-deploy-target,YEARLYBYWEEKNO4_ICS))
+$(eval $(call emit-deploy-target,YEARLYBYWEEKNO5_ICS))
+$(eval $(call emit-deploy-target,ATTENDEE1_ICS))
+$(eval $(call emit-deploy-target,ATTENDEE2_ICS))
+$(eval $(call emit-deploy-target,BUG2916581_ICS))
+$(eval $(call emit-deploy-target,BUG2938007_ICS))
+$(eval $(call emit-deploy-target,BUG2959692_ICS))
+$(eval $(call emit-deploy-target,BUG2966236_ICS))
+$(eval $(call emit-deploy-target,BUG3007244_ICS))
+$(eval $(call emit-deploy-target,TRANSPARENCY1_ICS))
+$(eval $(call emit-deploy-target,TRANSPARENCY2_ICS))
+$(eval $(call emit-deploy-target,MINUTELYCOUNT3_ICS))
+$(eval $(call emit-deploy-target,MINUTELYCOUNT4_ICS))
+$(eval $(call emit-deploy-target,TRIGGER1_ICS))
+$(eval $(call emit-deploy-target,LOREMIPSUM_TXT))
+$(eval $(call emit-deploy-target,TEST_DOC))
+$(eval $(call emit-deploy-target,ANTLR_RUNTIME_DLL))
+$(eval $(call emit-deploy-target,LOG4NET_DLL))
+$(eval $(call emit-deploy-target,NUNIT_CONSOLE_RUNNER_DLL))
+$(eval $(call emit-deploy-target,NUNIT_UTIL_DLL))
+$(eval $(call emit-deploy-target,NUNIT_CORE_DLL))
+$(eval $(call emit-deploy-target,NUNIT_CORE_INTERFACES_DLL))
+$(eval $(call emit-deploy-target,NUNIT_GUI_RUNNER_DLL))
+$(eval $(call emit-deploy-target,NUNIT_UIKIT_DLL))
+$(eval $(call emit-deploy-target,NUNIT_UIEXCEPTION_DLL))
+$(eval $(call emit-deploy-target,NUNIT_FIXTURES_DLL))
+$(eval $(call emit-deploy-target,NUNIT_FRAMEWORK_DLL))
+$(eval $(call emit-deploy-target,DDAY_ICAL_DLL))
+$(eval $(call emit-deploy-target,LICENSE_TXT))
+$(eval $(call emit-deploy-target,DDAY_COLLECTIONS_DLL))
+$(eval $(call emit-deploy-target,DDAY_COLLECTIONS_DLL_CONFIG))
+$(eval $(call emit-deploy-wrapper,DDAY_ICAL_TEST,dday.ical.test,x))
+
+
+$(eval $(call emit_resgen_targets))
+$(build_xamlg_list): %.xaml.g.cs: %.xaml
+	xamlg '$<'
+
+$(ASSEMBLY_MDB): $(ASSEMBLY)
+
+$(ASSEMBLY): $(build_sources) $(build_resources) $(build_datafiles) $(DLL_REFERENCES) $(PROJECT_REFERENCES) $(build_xamlg_list) $(build_satellite_assembly_list)
+	mkdir -p $(shell dirname $(ASSEMBLY))
+	$(ASSEMBLY_COMPILER_COMMAND) $(ASSEMBLY_COMPILER_FLAGS) -out:$(ASSEMBLY) -target:$(COMPILE_TARGET) $(build_sources_embed) $(build_resources_embed) $(build_references_ref)
