@@ -27,38 +27,38 @@ namespace DDay.iCal.Serialization
         public DataTypeMapper()
         {
             AddPropertyMapping("ACTION", typeof(AlarmAction), false);
-            AddPropertyMapping("ATTACH", typeof(IList<IAttachment>), false);
-            AddPropertyMapping("ATTENDEE", ResolveAttendeeProperty, false);
-            AddPropertyMapping("CATEGORIES", typeof(IList<string>), true);
-            AddPropertyMapping("COMMENT", typeof(IList<string>), false);
+            AddPropertyMapping("ATTACH", typeof(IAttachment), false);
+            AddPropertyMapping("ATTENDEE", typeof(IAttendee), false);
+            AddPropertyMapping("CATEGORIES", typeof(string), true);
+            AddPropertyMapping("COMMENT", typeof(string), false);
             AddPropertyMapping("COMPLETED", typeof(IDateTime), false);
-            AddPropertyMapping("CONTACT", typeof(IList<string>), false);
+            AddPropertyMapping("CONTACT", typeof(string), false);
             AddPropertyMapping("CREATED", typeof(IDateTime), false);
             AddPropertyMapping("DTEND", typeof(IDateTime), false);
             AddPropertyMapping("DTSTAMP", typeof(IDateTime), false);
             AddPropertyMapping("DTSTART", typeof(IDateTime), false);
             AddPropertyMapping("DUE", typeof(IDateTime), false);
             AddPropertyMapping("DURATION", typeof(TimeSpan), false);
-            AddPropertyMapping("EXDATE", typeof(IList<IPeriodList>), false);
-            AddPropertyMapping("EXRULE", typeof(IList<IRecurrencePattern>), false);
-            AddPropertyMapping("FREEBUSY", typeof(IList<IFreeBusyEntry>), true);
+            AddPropertyMapping("EXDATE", typeof(IPeriodList), false);
+            AddPropertyMapping("EXRULE", typeof(IRecurrencePattern), false);
+            AddPropertyMapping("FREEBUSY", typeof(IFreeBusyEntry), true);
             AddPropertyMapping("GEO", typeof(IGeographicLocation), false);
             AddPropertyMapping("LAST-MODIFIED", typeof(IDateTime), false);
             AddPropertyMapping("ORGANIZER", typeof(IOrganizer), false);
             AddPropertyMapping("PERCENT-COMPLETE", typeof(int), false);
             AddPropertyMapping("PRIORITY", typeof(int), false);
-            AddPropertyMapping("RDATE", typeof(IList<IPeriodList>), false);
+            AddPropertyMapping("RDATE", typeof(IPeriodList), false);
             AddPropertyMapping("RECURRENCE-ID", typeof(IDateTime), false);
-            AddPropertyMapping("RELATED-TO", typeof(IList<string>), false);
-            AddPropertyMapping("REQUEST-STATUS", typeof(IList<IRequestStatus>), false);
+            AddPropertyMapping("RELATED-TO", typeof(string), false);
+            AddPropertyMapping("REQUEST-STATUS", typeof(IRequestStatus), false);
             AddPropertyMapping("REPEAT", typeof(int), false);
-            AddPropertyMapping("RESOURCES", typeof(IList<string>), true);
-            AddPropertyMapping("RRULE", typeof(IList<IRecurrencePattern>), false);
+            AddPropertyMapping("RESOURCES", typeof(string), true);
+            AddPropertyMapping("RRULE", typeof(IRecurrencePattern), false);
             AddPropertyMapping("SEQUENCE", typeof(int), false);
             AddPropertyMapping("STATUS", ResolveStatusProperty, false);
             AddPropertyMapping("TRANSP", typeof(TransparencyType), false);
             AddPropertyMapping("TRIGGER", typeof(ITrigger), false);
-            AddPropertyMapping("TZNAME", typeof(IList<string>), false);
+            AddPropertyMapping("TZNAME", typeof(string), false);
             AddPropertyMapping("TZOFFSETFROM", typeof(IUTCOffset), false);
             AddPropertyMapping("TZOFFSETTO", typeof(IUTCOffset), false);
             AddPropertyMapping("TZURL", typeof(Uri), false);
@@ -68,20 +68,6 @@ namespace DDay.iCal.Serialization
         #endregion
 
         #region Event Handlers
-
-        protected Type ResolveAttendeeProperty(object context)
-        {
-            ICalendarObject obj = context as ICalendarObject;
-            if (obj != null)
-            {
-                if (obj.Parent is IAlarm)
-                    return typeof(IAttendee);
-                else
-                    return typeof(IList<IAttendee>);
-            }
-
-            return null;
-        }
 
         protected Type ResolveStatusProperty(object context)
         {

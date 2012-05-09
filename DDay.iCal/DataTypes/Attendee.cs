@@ -10,7 +10,7 @@ namespace DDay.iCal
     public class Attendee :
         EncodableDataType,
         IAttendee
-	{
+    {
         #region IAttendee Members
         
         virtual public Uri SentBy
@@ -51,7 +51,7 @@ namespace DDay.iCal
         
         virtual public IList<string> Members
         {
-            get { return Parameters.GetList("MEMBER"); }
+            get { return Parameters.GetMany("MEMBER"); }
             set { Parameters.Set("MEMBER", value); }
         }
         
@@ -88,13 +88,13 @@ namespace DDay.iCal
         
         virtual public IList<string> DelegatedTo
         {
-            get { return Parameters.GetList("DELEGATED-TO"); }
+            get { return Parameters.GetMany("DELEGATED-TO"); }
             set { Parameters.Set("DELEGATED-TO", value); }
         }
          
         virtual public IList<string> DelegatedFrom
         {
-            get { return Parameters.GetList("DELEGATED-FROM"); }
+            get { return Parameters.GetMany("DELEGATED-FROM"); }
             set { Parameters.Set("DELEGATED-FROM", value); }
         }
         
@@ -104,7 +104,7 @@ namespace DDay.iCal
         #endregion        
             
         #region Constructors
-		
+        
         public Attendee()
         {
         }
@@ -120,7 +120,7 @@ namespace DDay.iCal
                 throw new ArgumentException("attendeeUri");
             Value = new Uri(attendeeUri);
         }
-		
+        
         #endregion
 
         #region Overrides

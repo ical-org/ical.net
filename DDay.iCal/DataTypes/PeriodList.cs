@@ -171,7 +171,7 @@ namespace DDay.iCal
 
         #endregion
 
-        #region ICollection<IPeriod> Members
+        #region IList<IPeriod> Members
 
         virtual public void Add(IPeriod item)
         {
@@ -206,6 +206,21 @@ namespace DDay.iCal
         public bool Remove(IPeriod item)
         {
             return m_Periods.Remove(item);
+        }
+
+        public int IndexOf(IPeriod item)
+        {
+            return m_Periods.IndexOf(item);
+        }
+
+        public void Insert(int index, IPeriod item)
+        {
+            m_Periods.Insert(index, item);
+        }
+
+        public void RemoveAt(int index)
+        {
+            m_Periods.RemoveAt(index);
         }
 
         #endregion

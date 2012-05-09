@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -33,7 +34,7 @@ namespace DDay.iCal.Serialization.iCalendar
             if (p != null)
             {
                 string result = p.Name + "=";
-                string value = string.Join(",", p.Values);
+                string value = string.Join(",", p.Values.ToArray());
 
                 // "Section 3.2:  Property parameter values MUST NOT contain the DQUOTE character."
                 // Therefore, let's strip any double quotes from the value.                

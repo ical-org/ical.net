@@ -33,7 +33,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
                 // Get the data type for this object
                 Type type = mapper.GetPropertyMapping(obj);
-                    
+
                 if (type != null)
                     return sf.Build(type, SerializationContext) as IStringSerializer;
                 else

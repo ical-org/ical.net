@@ -76,7 +76,7 @@ namespace DDay.iCal
                 case FrequencyType.Minutely: dt = old.AddMinutes(interval); break;
                 case FrequencyType.Hourly: dt = old.AddHours(interval); break;
                 case FrequencyType.Daily: dt = old.AddDays(interval); break;
-                case FrequencyType.Weekly: dt = DateUtil.AddWeeks(Calendar, old, interval, pattern.FirstDayOfWeek); break;
+                case FrequencyType.Weekly: dt = DateUtil.AddWeeks(old, interval, pattern.FirstDayOfWeek); break;
                 case FrequencyType.Monthly: dt = old.AddDays(-old.Day + 1).AddMonths(interval); break;
                 case FrequencyType.Yearly: dt = old.AddDays(-old.DayOfYear + 1).AddYears(interval); break;
                 // FIXME: use a more specific exception.

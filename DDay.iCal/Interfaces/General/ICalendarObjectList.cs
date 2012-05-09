@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using DDay.Collections;
 
 namespace DDay.iCal
-{
-    public interface ICalendarObjectList :
-        IList<ICalendarObject>,
-        ICopyable,
-        IMergeable
+{    
+    public interface ICalendarObjectList<TType> : 
+        IGroupedCollection<string, TType>
+        where TType : class, ICalendarObject
     {
-        ICalendarObject Parent { get; set; }
+        TType this[int index] { get; }
     }
 }

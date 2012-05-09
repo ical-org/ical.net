@@ -17,7 +17,7 @@ namespace DDay.iCal
     /// single (composite) list.
     /// </summary>
     public class CalendarComponentCompositeList<T> :
-        KeyedList<ICalendarComponent, string>,
+        KeyedCollection<string, ICalendarComponent>,
         IList<T>
         where T : ICalendarComponent
     {
@@ -65,7 +65,7 @@ namespace DDay.iCal
             if (index == 0)
                 m_Component.InsertChild(0, value);
             else
-            {                
+            {
                 int curr = 0;
                 for (int i = 0; i < m_Component.Children.Count; i++)
                 {

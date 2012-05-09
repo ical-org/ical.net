@@ -354,7 +354,7 @@ namespace DDay.iCal
                     {
                         Debug.Assert(tzi.Value.TimeZoneInfo.OffsetTo != null);
                         return DateTime.SpecifyKind(tzi.Value.TimeZoneInfo.OffsetTo.ToUTC(value), DateTimeKind.Utc);
-                    }                    
+                    }
                 }
                  
                 // Fallback to the OS-conversion

@@ -2,6 +2,7 @@
 
     using System.Text;
     using System.IO;
+	using System.Collections;
     using System.Collections.Generic;  
     using System.Runtime.Serialization;
     using DDay.iCal.Serialization;
@@ -89,12 +90,12 @@ namespace DDay.iCal
 		{
 			initialize();
 		}
-
-        public IICalendarCollection icalendar(
+		
+	public IICalendarCollection  icalendar(
 		ISerializationContext ctx
 	) //throws RecognitionException, TokenStreamException
 {
-    IICalendarCollection iCalendars = new iCalendarCollection();
+		IICalendarCollection iCalendars = new iCalendarCollection();
 		
 		
 		
@@ -299,7 +300,7 @@ _loop12_breakloop:			;
 		
 			// Push the property onto the serialization context stack
 			ctx.Push(p);
-            IStringSerializer dataMapSerializer = new DataMapSerializer(ctx);
+			IStringSerializer dataMapSerializer = new DataMapSerializer(ctx);
 		
 		{    // ( ... )*
 			for (;;)
@@ -322,8 +323,28 @@ _loop24_breakloop:			;
 		
 			// Deserialize the value of the property
 			// into a concrete iCalendar data type,
+			// a list of concrete iCalendar data types,
 			// or string value.
-            p.Value = dataMapSerializer.Deserialize(new StringReader(v));
+			object deserialized = dataMapSerializer.Deserialize(new StringReader(v));
+		if (deserialized != null)
+		{
+				// Try to determine if this is was deserialized as a *list*
+				// of concrete types.
+		Type targetType = dataMapSerializer.TargetType;
+		Type listOfTargetType = typeof(IList<>).MakeGenericType(targetType);
+		if (listOfTargetType.IsAssignableFrom(deserialized.GetType()))
+		{
+					// We deserialized a list - add each value to the
+					// resulting object.
+		foreach (var item in (IEnumerable)deserialized)
+		p.AddValue(item);
+		}
+		else
+		{
+					// We deserialized a single value - add it to the object.
+		p.AddValue(deserialized);
+		}
+		}
 		
 		{    // ( ... )*
 			for (;;)
@@ -491,7 +512,7 @@ _loop20_breakloop:			;
 	public ICalendarParameter  parameter(
 		
 	ISerializationContext ctx,
-	ICalendarParameterListContainer container
+	ICalendarParameterCollectionContainer container
 
 	) //throws RecognitionException, TokenStreamException
 {
@@ -552,7 +573,7 @@ _loop20_breakloop:			;
 _loop30_breakloop:			;
 		}    // ( ... )*
 		
-			p.Values = values.ToArray();
+			p.SetValue(values);
 			
 			if (container != null)
 			{

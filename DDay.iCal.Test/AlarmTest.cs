@@ -1,12 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
-using System.Resources;
-using System.Web;
+using System.Linq;
 using System.Reflection;
+using System.Resources;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using NUnit.Framework;
 
 namespace DDay.iCal.Test
@@ -26,7 +27,7 @@ namespace DDay.iCal.Test
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Alarm\" + calendar)[0];
             ProgramTest.TestCal(iCal);
-            IEvent evt = iCal.Events[0];
+            IEvent evt = iCal.Events.First();
             
             // Poll all alarms that occurred between Start and End
             IList<AlarmOccurrence> alarms = evt.PollAlarms(start, end);

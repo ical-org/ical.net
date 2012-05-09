@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
@@ -55,16 +56,15 @@ namespace DDay.iCal.Test
 
             Assert.AreEqual(iCal1.Children.Count, iCal2.Children.Count, "Children count is different between calendars.");
 
-            for (int i = 0; i < iCal1.Events.Count; i++)
-                CompareComponents(iCal1.Events[i], iCal2.Events[i]);
-            for (int i = 0; i < iCal1.FreeBusy.Count; i++)
-                CompareComponents(iCal1.FreeBusy[i], iCal2.FreeBusy[i]);
-            for (int i = 0; i < iCal1.Journals.Count; i++)
-                CompareComponents(iCal1.Journals[i], iCal2.Journals[i]);
-            for (int i = 0; i < iCal1.Todos.Count; i++)
-                CompareComponents(iCal1.Todos[i], iCal2.Todos[i]);
-            for (int i = 0; i < iCal1.TimeZones.Count; i++)
-                CompareComponents(iCal1.TimeZones[i], iCal2.TimeZones[i]);
+            for (int i = 0; i < iCal1.Children.Count; i++)
+            {
+                var component1 = iCal1.Children[i] as ICalendarComponent;
+                var component2 = iCal2.Children[i] as ICalendarComponent;
+                if (component1 != null && component2 != null)
+                {
+                    CompareComponents(component1, component2);
+                }
+            }
         }
 
         static public void CompareComponents(ICalendarComponent cb1, ICalendarComponent cb2)
@@ -90,11 +90,7 @@ namespace DDay.iCal.Test
                     catch { }
                 }
 
-                // If there was no match, and this is a collection property with no items,
-                // then simply ignore it!
-                if (!isMatch && p1.Value is ICollection && ((ICollection)p1.Value).Count == 0)
-                    continue;
-                Assert.IsTrue(isMatch, "Could not find a matching property.");                    
+                Assert.IsTrue(isMatch, "Could not find a matching property - " + p1.Name + ":" + (p1.Value != null ? p1.Value.ToString() : string.Empty));                    
             }
 
             Assert.AreEqual(cb1.Children.Count, cb2.Children.Count, "The number of children are not equal.");
@@ -180,7 +176,7 @@ namespace DDay.iCal.Test
             serializer.Serialize(iCal, @"Calendars\Serialization\Temp\Attachment1.ics");
 
             iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\Attachment1.ics")[0];
-            evt = iCal.Events[0];
+            evt = iCal.Events.First();
             attachment = evt.Attachments[0];
 
             Assert.IsTrue(CompareBinary(@"Data\Test.doc", attachment.Data), "Serialized version of Test.doc did not match the deserialized version.");
@@ -218,7 +214,7 @@ namespace DDay.iCal.Test
             serializer.Serialize(iCal, @"Calendars\Serialization\Temp\Attachment2.ics");
 
             iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\Attachment2.ics")[0];
-            evt = iCal.Events[0];
+            evt = iCal.Events.First();
             attachment = evt.Attachments[0];
 
             // Ensure the generated and serialized strings match
@@ -271,9 +267,9 @@ namespace DDay.iCal.Test
             IICalendar iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\Attendee1.ics", Encoding.UTF8)[0];
             Assert.AreEqual(1, iCal.Events.Count);
             
-            IEvent evt = iCal.Events[0];
+            IEvent evt = iCal.Events.First();
             // Ensure there are 2 attendees
-            Assert.AreEqual(2, evt.Attendees.Count);
+            Assert.AreEqual(2, evt.Attendees.Count);            
 
             IAttendee attendee1 = evt.Attendees[0];
             IAttendee attendee2 = evt.Attendees[1];
@@ -308,7 +304,7 @@ namespace DDay.iCal.Test
             IICalendar iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\Attendee2.ics", Encoding.UTF8)[0];
             Assert.AreEqual(1, iCal.Events.Count);
 
-            IEvent evt = iCal.Events[0];
+            IEvent evt = iCal.Events.First();
             // Ensure there is 1 attendee
             Assert.AreEqual(1, evt.Attendees.Count);
 
@@ -381,7 +377,7 @@ namespace DDay.iCal.Test
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Bug2938007.ics")[0];
             Assert.AreEqual(1, iCal.Events.Count);
 
-            IEvent evt = iCal.Events[0];
+            IEvent evt = iCal.Events.First();
             Assert.AreEqual(true, evt.Start.HasTime);
             Assert.AreEqual(true, evt.End.HasTime);
 
@@ -390,6 +386,55 @@ namespace DDay.iCal.Test
                 Assert.AreEqual(true, o.Period.StartTime.HasTime);
                 Assert.AreEqual(true, o.Period.EndTime.HasTime);
             }
+        }
+
+        /// <summary>
+        /// Tests bug #3177278 - Serialize closes stream
+        /// See https://sourceforge.net/tracker/?func=detail&aid=3177278&group_id=187422&atid=921236
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void Bug3177278()
+        {
+            var calendar = new iCalendar();
+            var serializer = new iCalendarSerializer();
+
+            MemoryStream ms = new MemoryStream();
+            serializer.Serialize(calendar, ms, Encoding.UTF8);
+
+            Assert.IsTrue(ms.CanWrite);
+        }
+
+        /// <summary>
+        /// Tests bug #3211934 - Bug in iCalendar.cs - UnauthorizedAccessException
+        /// See https://sourceforge.net/tracker/?func=detail&aid=3211934&group_id=187422&atid=921236
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void Bug3211934()
+        {
+            var calendar = new iCalendar();
+            var serializer = new iCalendarSerializer();
+
+            var filename = "Bug3211934.ics";
+
+            if (File.Exists(filename))
+            {
+                // Reset the file attributes and delete
+                File.SetAttributes(filename, FileAttributes.Normal);
+                File.Delete(filename);
+            }
+
+            serializer.Serialize(calendar, filename);
+
+            // Set the file as read-only
+            File.SetAttributes(filename, FileAttributes.ReadOnly);
+
+            // Load the calendar from file, and ensure the read-only attribute doesn't affect the load
+            var calendars = iCalendar.LoadFromFile(filename, Encoding.UTF8, serializer);
+            Assert.IsNotNull(calendars);
+
+            // Reset the file attributes and delete
+            File.SetAttributes(filename, FileAttributes.Normal);
+            File.Delete(filename);
         }
 
         [Test, Category("Serialization")]
@@ -459,7 +504,7 @@ namespace DDay.iCal.Test
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Categories1.ics")[0];
             ProgramTest.TestCal(iCal);
-            IEvent evt = iCal.Events[0];
+            IEvent evt = iCal.Events.First();
 
             ArrayList items = new ArrayList();
             items.AddRange(new string[]
@@ -529,7 +574,7 @@ namespace DDay.iCal.Test
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Encoding2.ics")[0];
             ProgramTest.TestCal(iCal);
-            IEvent evt = iCal.Events[0];
+            IEvent evt = iCal.Events.First();
 
             Assert.AreEqual(
 "This is a test to try out base64 encoding without being too large.\r\n" +
@@ -553,7 +598,7 @@ namespace DDay.iCal.Test
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Encoding3.ics")[0];
             ProgramTest.TestCal(iCal);
-            IEvent evt = iCal.Events[0];
+            IEvent evt = iCal.Events.First();
 
             Assert.AreEqual("uuid1153170430406", evt.UID, "UID should be 'uuid1153170430406'; it is " + evt.UID);
             Assert.AreEqual(1, evt.Sequence, "SEQUENCE should be 1; it is " + evt.Sequence);
@@ -789,7 +834,7 @@ END:VCALENDAR
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\GeographicLocation1.ics")[0];
             ProgramTest.TestCal(iCal);
-            IEvent evt = iCal.Events[0];
+            IEvent evt = iCal.Events.First();
 
             Assert.AreEqual(37.386013, evt.GeographicLocation.Latitude, "Latitude should be 37.386013; it is not.");
             Assert.AreEqual(-122.082932, evt.GeographicLocation.Longitude, "Longitude should be -122.082932; it is not.");
@@ -823,28 +868,6 @@ END:VCALENDAR
         }
 
         /// <summary>
-        /// Tests that a Google calendar is correctly loaded and parsed.
-        /// </summary>
-        [Test, Category("Serialization")]
-        public void Google2()
-        {
-            IICalendar iCal = iCalendar.LoadFromUri(new Uri("http://www.google.com/calendar/ical/tvhot064q4p48frqdalgo3fb2k%40group.calendar.google.com/public/basic.ics"))[0];
-            Assert.IsNotNull(iCal);
-            Assert.AreEqual(1, iCal.Events.Count);
-            Assert.AreEqual(1, iCal.TimeZones.Count);
-
-            string tzid = iCal.TimeZones[0].TZID;
-            IList<Occurrence> occurrences = iCal.GetOccurrences(new iCalDateTime(2009, 8, 24, tzid), new iCalDateTime(2009, 9, 28, tzid));
-            Assert.AreEqual(5, occurrences.Count);
-            Assert.AreEqual(new iCalDateTime(2009, 8, 26, 8, 0, 0, tzid), occurrences[0].Period.StartTime);
-            Assert.AreEqual(new iCalDateTime(2009, 9, 2, 8, 0, 0, tzid), occurrences[1].Period.StartTime);
-            Assert.AreEqual(new iCalDateTime(2009, 9, 9, 8, 0, 0, tzid), occurrences[2].Period.StartTime);
-            Assert.AreEqual(new iCalDateTime(2009, 9, 16, 8, 0, 0, tzid), occurrences[3].Period.StartTime);
-            Assert.AreEqual(new iCalDateTime(2009, 9, 23, 8, 0, 0, tzid), occurrences[4].Period.StartTime);
-            Assert.AreEqual(new iCalDateTime(2009, 8, 26, 10, 0, 0, tzid), occurrences[0].Period.EndTime);
-        }
-
-        /// <summary>
         /// Tests that valid RDATE properties are parsed correctly.
         /// </summary>
         [Test, Category("Serialization")]
@@ -852,22 +875,22 @@ END:VCALENDAR
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\RecurrenceDates1.ics")[0];
             Assert.AreEqual(1, iCal.Events.Count);
-            Assert.AreEqual(3, iCal.Events[0].RecurrenceDates.Count);
+            Assert.AreEqual(3, iCal.Events.First().RecurrenceDates.Count);
             
-            Assert.AreEqual((iCalDateTime)new DateTime(1997, 7, 14, 12, 30, 0, DateTimeKind.Utc), iCal.Events[0].RecurrenceDates[0][0].StartTime);
-            Assert.AreEqual((iCalDateTime)new DateTime(1996, 4, 3, 2, 0, 0, DateTimeKind.Utc), iCal.Events[0].RecurrenceDates[1][0].StartTime);
-            Assert.AreEqual((iCalDateTime)new DateTime(1996, 4, 3, 4, 0, 0, DateTimeKind.Utc), iCal.Events[0].RecurrenceDates[1][0].EndTime);
-            Assert.AreEqual(new iCalDateTime(1997, 1, 1), iCal.Events[0].RecurrenceDates[2][0].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 1, 20), iCal.Events[0].RecurrenceDates[2][1].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 2, 17), iCal.Events[0].RecurrenceDates[2][2].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 4, 21), iCal.Events[0].RecurrenceDates[2][3].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 5, 26), iCal.Events[0].RecurrenceDates[2][4].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 7, 4), iCal.Events[0].RecurrenceDates[2][5].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 9, 1), iCal.Events[0].RecurrenceDates[2][6].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 10, 14), iCal.Events[0].RecurrenceDates[2][7].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 11, 28), iCal.Events[0].RecurrenceDates[2][8].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 11, 29), iCal.Events[0].RecurrenceDates[2][9].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 12, 25), iCal.Events[0].RecurrenceDates[2][10].StartTime);
+            Assert.AreEqual((iCalDateTime)new DateTime(1997, 7, 14, 12, 30, 0, DateTimeKind.Utc), iCal.Events.First().RecurrenceDates[0][0].StartTime);
+            Assert.AreEqual((iCalDateTime)new DateTime(1996, 4, 3, 2, 0, 0, DateTimeKind.Utc), iCal.Events.First().RecurrenceDates[1][0].StartTime);
+            Assert.AreEqual((iCalDateTime)new DateTime(1996, 4, 3, 4, 0, 0, DateTimeKind.Utc), iCal.Events.First().RecurrenceDates[1][0].EndTime);
+            Assert.AreEqual(new iCalDateTime(1997, 1, 1), iCal.Events.First().RecurrenceDates[2][0].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 1, 20), iCal.Events.First().RecurrenceDates[2][1].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 2, 17), iCal.Events.First().RecurrenceDates[2][2].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 4, 21), iCal.Events.First().RecurrenceDates[2][3].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 5, 26), iCal.Events.First().RecurrenceDates[2][4].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 7, 4), iCal.Events.First().RecurrenceDates[2][5].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 9, 1), iCal.Events.First().RecurrenceDates[2][6].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 10, 14), iCal.Events.First().RecurrenceDates[2][7].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 11, 28), iCal.Events.First().RecurrenceDates[2][8].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 11, 29), iCal.Events.First().RecurrenceDates[2][9].StartTime);
+            Assert.AreEqual(new iCalDateTime(1997, 12, 25), iCal.Events.First().RecurrenceDates[2][10].StartTime);
         }
 
 
@@ -879,27 +902,27 @@ END:VCALENDAR
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\RequestStatus1.ics")[0];
             Assert.AreEqual(1, iCal.Events.Count);
-            Assert.AreEqual(4, iCal.Events[0].RequestStatuses.Count);
+            Assert.AreEqual(4, iCal.Events.First().RequestStatuses.Count);
 
-            IRequestStatus rs = iCal.Events[0].RequestStatuses[0];
+            IRequestStatus rs = iCal.Events.First().RequestStatuses[0];
             Assert.AreEqual(2, rs.StatusCode.Primary);
             Assert.AreEqual(0, rs.StatusCode.Secondary);
             Assert.AreEqual("Success", rs.Description);
             Assert.IsNull(rs.ExtraData);
 
-            rs = iCal.Events[0].RequestStatuses[1];
+            rs = iCal.Events.First().RequestStatuses[1];
             Assert.AreEqual(3, rs.StatusCode.Primary);
             Assert.AreEqual(1, rs.StatusCode.Secondary);
             Assert.AreEqual("Invalid property value", rs.Description);
             Assert.AreEqual("DTSTART:96-Apr-01", rs.ExtraData);
 
-            rs = iCal.Events[0].RequestStatuses[2];
+            rs = iCal.Events.First().RequestStatuses[2];
             Assert.AreEqual(2, rs.StatusCode.Primary);
             Assert.AreEqual(8, rs.StatusCode.Secondary);
             Assert.AreEqual(" Success, repeating event ignored. Scheduled as a single event.", rs.Description);
             Assert.AreEqual("RRULE:FREQ=WEEKLY;INTERVAL=2", rs.ExtraData);
 
-            rs = iCal.Events[0].RequestStatuses[3];
+            rs = iCal.Events.First().RequestStatuses[3];
             Assert.AreEqual(4, rs.StatusCode.Primary);
             Assert.AreEqual(1, rs.StatusCode.Secondary);
             Assert.AreEqual("Event conflict. Date/time is busy.", rs.Description);
@@ -1109,7 +1132,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Transparency1.ics")[0];
             
             Assert.AreEqual(1, iCal.Events.Count);
-            IEvent evt = iCal.Events[0];
+            IEvent evt = iCal.Events.First();
             
             Assert.AreEqual(TransparencyType.Opaque, evt.Transparency);
         }
@@ -1120,7 +1143,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Transparency2.ics")[0];
 
             Assert.AreEqual(1, iCal.Events.Count);
-            IEvent evt = iCal.Events[0];
+            IEvent evt = iCal.Events.First();
 
             Assert.AreEqual(TransparencyType.Transparent, evt.Transparency);
         }
@@ -1258,8 +1281,8 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
 
         //    Assert.IsTrue(calendar.Events.Count == 1, "Calendar should have 1 event");
         //    Assert.IsTrue(customiCal.Events.Count == 1, "Custom calendar should have 1 event");
-        //    Assert.IsTrue(calendar.Events[0].GetType() == typeof(Event), "Calendar event should be of type Event");
-        //    Assert.IsTrue(customiCal.Events[0].GetType() == typeof(CustomEvent1), "Custom calendar event should be of type CustomEvent1");
+        //    Assert.IsTrue(calendar.Events.First().GetType() == typeof(Event), "Calendar event should be of type Event");
+        //    Assert.IsTrue(customiCal.Events.First().GetType() == typeof(CustomEvent1), "Custom calendar event should be of type CustomEvent1");
         //}
 
         
@@ -1318,8 +1341,8 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\DateTime2.ics")[0];
             Assert.AreEqual(1, iCal.Events.Count);
 
-            Assert.IsNull(iCal.Events[0].Start);
-            Assert.AreEqual("19970412", iCal.Events[0].Properties["DTSTART"].Value);
+            Assert.IsNull(iCal.Events.First().Start);
+            Assert.AreEqual("19970412", iCal.Events.First().Properties["DTSTART"].Value);
         }
 
         [Test, Category("Serialization")]
@@ -1412,11 +1435,11 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Parameter1.ics")[0];
 
-            IEvent evt = iCal.Events[0];
-            IList<ICalendarParameter> parms = evt.Properties["DTSTART"].Parameters.AllOf("VALUE");
+            IEvent evt = iCal.Events.First();
+            IList<ICalendarParameter> parms = evt.Properties["DTSTART"].Parameters.AllOf("VALUE").ToList();
             Assert.AreEqual(2, parms.Count);
-            Assert.AreEqual("DATE", parms[0].Values[0]);
-            Assert.AreEqual("OTHER", parms[1].Values[0]);
+            Assert.AreEqual("DATE", parms[0].Values.First());
+            Assert.AreEqual("OTHER", parms[1].Values.First());
         }
 
         /// <summary>
@@ -1458,7 +1481,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         {
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Property1.ics")[0];
 
-            IList<ICalendarProperty> props = iCal.Properties.AllOf("VERSION");
+            IList<ICalendarProperty> props = iCal.Properties.AllOf("VERSION").ToList();
             Assert.AreEqual(2, props.Count);
 
             for (int i = 0; i < props.Count; i++)
@@ -1483,8 +1506,8 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         //    IICalendar iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\PARSE17.ics", Encoding.UTF8, serializer);
 
         //    Assert.AreEqual(1, iCal.Events.Count);
-        //    Assert.AreEqual(iCal.Events[0].Properties["DTSTART"].Value, "1234");
-        //    Assert.AreEqual(iCal.Events[0].Properties["DTEND"].Value, "5678");
+        //    Assert.AreEqual(iCal.Events.First().Properties["DTSTART"].Value, "1234");
+        //    Assert.AreEqual(iCal.Events.First().Properties["DTEND"].Value, "5678");
         //}
 
         
@@ -1506,19 +1529,19 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\EmptyLines1.ics", Encoding.UTF8, serializer)[0];
 
             Assert.AreEqual(2, iCal.Events.Count);
-            Assert.AreEqual(4, iCal.Events[0].Line);
+            Assert.AreEqual(4, iCal.Events.First().Line);
             Assert.AreEqual(18, iCal.Events[1].Line);
-            Assert.AreEqual(5, iCal.Events[0].Properties["CREATED"].Line);
-            Assert.AreEqual(6, iCal.Events[0].Properties["LAST-MODIFIED"].Line);
-            Assert.AreEqual(7, iCal.Events[0].Properties["DTSTAMP"].Line);
-            Assert.AreEqual(8, iCal.Events[0].Properties["UID"].Line);
-            Assert.AreEqual(9, iCal.Events[0].Properties["SUMMARY"].Line);
-            Assert.AreEqual(10, iCal.Events[0].Properties["CLASS"].Line);
-            Assert.AreEqual(11, iCal.Events[0].Properties["DTSTART"].Line);
-            Assert.AreEqual(12, iCal.Events[0].Properties["DTEND"].Line);
-            Assert.AreEqual(13, iCal.Events[0].Properties["CATEGORIES"].Line);
-            Assert.AreEqual(14, iCal.Events[0].Properties["X-MOZILLA-ALARM-DEFAULT-LENGTH"].Line);
-            Assert.AreEqual(15, iCal.Events[0].Properties["LOCATION"].Line);
+            Assert.AreEqual(5, iCal.Events.First().Properties["CREATED"].Line);
+            Assert.AreEqual(6, iCal.Events.First().Properties["LAST-MODIFIED"].Line);
+            Assert.AreEqual(7, iCal.Events.First().Properties["DTSTAMP"].Line);
+            Assert.AreEqual(8, iCal.Events.First().Properties["UID"].Line);
+            Assert.AreEqual(9, iCal.Events.First().Properties["SUMMARY"].Line);
+            Assert.AreEqual(10, iCal.Events.First().Properties["CLASS"].Line);
+            Assert.AreEqual(11, iCal.Events.First().Properties["DTSTART"].Line);
+            Assert.AreEqual(12, iCal.Events.First().Properties["DTEND"].Line);
+            Assert.AreEqual(13, iCal.Events.First().Properties["CATEGORIES"].Line);
+            Assert.AreEqual(14, iCal.Events.First().Properties["X-MOZILLA-ALARM-DEFAULT-LENGTH"].Line);
+            Assert.AreEqual(15, iCal.Events.First().Properties["LOCATION"].Line);
         }
 
         /// <summary>

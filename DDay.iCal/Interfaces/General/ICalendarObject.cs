@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using DDay.Collections;
 
 namespace DDay.iCal
 {
     public interface ICalendarObject :
-        IKeyedObject<string>,
+        IGroupedObject<string>,
         ILoadable,
-        ICopyable,        
+        ICopyable,
         IServiceProvider
     {
-        event EventHandler<ObjectEventArgs<ICalendarObject>> ChildAdded;
-        event EventHandler<ObjectEventArgs<ICalendarObject>> ChildRemoved;
-
         /// <summary>
         /// The name of the calendar object.
         /// Every calendar object can be assigned
@@ -26,9 +24,9 @@ namespace DDay.iCal
         ICalendarObject Parent { get; set; }
 
         /// <summary>
-        /// Returns a list of children of this object.
+        /// Returns a collection of children of this object.
         /// </summary>
-        IList<ICalendarObject> Children { get; }
+        ICalendarObjectList<ICalendarObject> Children { get; }
 
         /// <summary>
         /// Returns the iCalendar that this object
@@ -48,31 +46,5 @@ namespace DDay.iCal
         /// object was found during parsing.
         /// </summary>
         int Column { get; set; }
-
-        /// <summary>
-        /// Adds a child object to the current object.
-        /// </summary>
-        void AddChild(ICalendarObject child);
-
-        /// <summary>
-        /// Removes a child object from the current object.
-        /// </summary>
-        void RemoveChild(ICalendarObject child);
-
-        /// <summary>
-        /// Inserts a child at the given index in the children list.
-        /// </summary>
-        void InsertChild(int index, ICalendarObject child);
-
-        /// <summary>
-        /// Removes a child at the given index in the children list.
-        /// </summary>
-        /// <param name="index"></param>
-        void RemoveChildAt(int index);
-
-        /// <summary>
-        /// Clears all children from the object.
-        /// </summary>
-        void ClearChildren();
     }
 }

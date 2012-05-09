@@ -138,8 +138,8 @@ namespace DDay.iCal
 
         virtual public IList<string> TimeZoneNames
         {
-            get { return Properties.GetList<string>("TZNAME"); }
-            set { Properties.SetList<string>("TZNAME", value); }
+            get { return Properties.GetMany<string>("TZNAME"); }
+            set { Properties.Set("TZNAME", value); }
         }
 
         virtual public TimeZoneObservance? GetObservance(IDateTime dt)
@@ -195,26 +195,26 @@ namespace DDay.iCal
 
         virtual public IList<IPeriodList> ExceptionDates
         {
-            get { return Properties.GetList<IPeriodList>("EXDATE"); }
-            set { Properties.SetList("EXDATE", value); }
+            get { return Properties.GetMany<IPeriodList>("EXDATE"); }
+            set { Properties.Set("EXDATE", value); }
         }
 
         virtual public IList<IRecurrencePattern> ExceptionRules
         {
-            get { return Properties.GetList<IRecurrencePattern>("EXRULE"); }
-            set { Properties.SetList("EXRULE", value); }
+            get { return Properties.GetMany<IRecurrencePattern>("EXRULE"); }
+            set { Properties.Set("EXRULE", value); }
         }
 
         virtual public IList<IPeriodList> RecurrenceDates
         {
-            get { return Properties.GetList<IPeriodList>("RDATE"); }
-            set { Properties.SetList("RDATE", value); }
+            get { return Properties.GetMany<IPeriodList>("RDATE"); }
+            set { Properties.Set("RDATE", value); }
         }
 
         virtual public IList<IRecurrencePattern> RecurrenceRules
         {
-            get { return Properties.GetList<IRecurrencePattern>("RRULE"); }
-            set { Properties.SetList("RRULE", value); }
+            get { return Properties.GetMany<IRecurrencePattern>("RRULE"); }
+            set { Properties.Set("RRULE", value); }
         }
 
         virtual public IDateTime RecurrenceID

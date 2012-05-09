@@ -55,8 +55,9 @@ namespace DDay.iCal.Serialization.iCalendar
                     s = new ParameterSerializer();
                 else if (typeof(string).IsAssignableFrom(objectType))
                     s = new StringSerializer();
-                else if (objectType.IsGenericType && typeof(IList<>).IsAssignableFrom(objectType.GetGenericTypeDefinition()))
-                    s = new GenericListSerializer(objectType);
+                // FIXME: remove?
+                //else if (objectType.IsGenericType && typeof(IList<>).IsAssignableFrom(objectType.GetGenericTypeDefinition()))
+                //    s = new GenericListSerializer(objectType);
                 else if (objectType.IsEnum)
                     s = new EnumSerializer(objectType);
                 else if (typeof(TimeSpan).IsAssignableFrom(objectType))

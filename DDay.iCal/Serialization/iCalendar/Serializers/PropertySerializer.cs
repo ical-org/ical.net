@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -31,8 +32,9 @@ namespace DDay.iCal.Serialization.iCalendar
         public override string SerializeToString(object obj)
         {
             ICalendarProperty prop = obj as ICalendarProperty;
-            if (prop != null &&
-                prop.Value != null)
+            if (prop != null && 
+                prop.Values != null &&
+                prop.Values.Any())
             {
                 // Don't serialize the property if the value is null                
 
@@ -42,71 +44,65 @@ namespace DDay.iCal.Serialization.iCalendar
                 IDataTypeMapper mapper = GetService<IDataTypeMapper>();
                 Type serializedType = mapper.GetPropertyMapping(prop);
                 
-                // Build a list of values that are to be serialized.
-                List<object> objs = new List<object>();
-                if (!(prop.Value is string) && 
-                    !(typeof(IEnumerable<string>).IsAssignableFrom(serializedType)) && 
-                    prop.Value is IEnumerable)
-                {
-                    foreach (object v in (IEnumerable)prop.Value)
-                        objs.Add(v);
-                }
-                else objs.Add(prop.Value);
-
                 // Get a serializer factory that we can use to serialize
                 // the property and parameter values
                 ISerializerFactory sf = GetService<ISerializerFactory>();
 
-                StringBuilder result = new StringBuilder();                               
-                foreach (object v in objs)
+                StringBuilder result = new StringBuilder();
+                foreach (object v in prop.Values)
                 {
-                    // Get a serializer to serialize the property's value.
-                    // If we can't serialize the property's value, the next step is worthless anyway.
-                    IStringSerializer valueSerializer = sf.Build(v.GetType(), SerializationContext) as IStringSerializer;
-                    if (valueSerializer != null)
+                    // Only serialize the value to a string if it
+                    // is non-null.
+                    if (v != null)
                     {
-                        // Iterate through each value to be serialized,
-                        // and give it a property (with parameters).
-                        // FIXME: this isn't always the way this is accomplished.
-                        // Multiple values can often be serialized within the
-                        // same property.  How should we fix this?
-
-                        // NOTE:
-                        // We Serialize the property's value first, as during 
-                        // serialization it may modify our parameters.
-                        // FIXME: the "parameter modification" operation should
-                        // be separated from serialization. Perhaps something
-                        // like PreSerialize(), etc.
-                        string value = valueSerializer.SerializeToString(v);
-
-                        // Get the list of parameters we'll be serializing
-                        ICalendarParameterList parameterList = prop.Parameters;
-                        if (v is ICalendarDataType)
-                            parameterList = ((ICalendarDataType)v).Parameters;
-
-                        StringBuilder sb = new StringBuilder(prop.Name);
-                        if (parameterList.Count > 0)
+                        // Get a serializer to serialize the property's value.
+                        // If we can't serialize the property's value, the next step is worthless anyway.
+                        IStringSerializer valueSerializer = sf.Build(v.GetType(), SerializationContext) as IStringSerializer;
+                        if (valueSerializer != null)
                         {
-                            // Get a serializer for parameters
-                            IStringSerializer parameterSerializer = sf.Build(typeof(ICalendarParameter), SerializationContext) as IStringSerializer;
-                            if (parameterSerializer != null)
+                            // Iterate through each value to be serialized,
+                            // and give it a property (with parameters).
+                            // FIXME: this isn't always the way this is accomplished.
+                            // Multiple values can often be serialized within the
+                            // same property.  How should we fix this?
+
+                            // NOTE:
+                            // We Serialize the property's value first, as during 
+                            // serialization it may modify our parameters.
+                            // FIXME: the "parameter modification" operation should
+                            // be separated from serialization. Perhaps something
+                            // like PreSerialize(), etc.
+                            string value = valueSerializer.SerializeToString(v);
+
+                            // Get the list of parameters we'll be serializing
+                            ICalendarParameterCollection parameterList = prop.Parameters;
+                            if (v is ICalendarDataType)
+                                parameterList = ((ICalendarDataType)v).Parameters;
+
+                            StringBuilder sb = new StringBuilder(prop.Name);
+                            if (parameterList.Any())
                             {
-                                // Serialize each parameter
-                                List<string> parameters = new List<string>();
-                                foreach (ICalendarParameter param in parameterList)
+                                // Get a serializer for parameters
+                                IStringSerializer parameterSerializer = sf.Build(typeof(ICalendarParameter), SerializationContext) as IStringSerializer;
+                                if (parameterSerializer != null)
                                 {
-                                    parameters.Add(parameterSerializer.SerializeToString(param));
+                                    // Serialize each parameter
+                                    List<string> parameters = new List<string>();
+                                    foreach (ICalendarParameter param in parameterList)
+                                    {
+                                        parameters.Add(parameterSerializer.SerializeToString(param));
+                                    }
+
+                                    // Separate parameters with semicolons
+                                    sb.Append(";");
+                                    sb.Append(string.Join(";", parameters.ToArray()));
                                 }
-
-                                // Separate parameters with semicolons
-                                sb.Append(";");
-                                sb.Append(string.Join(";", parameters.ToArray()));
                             }
-                        }
-                        sb.Append(":");
-                        sb.Append(value);
+                            sb.Append(":");
+                            sb.Append(value);
 
-                        result.Append(TextUtil.WrapLines(sb.ToString()));
+                            result.Append(TextUtil.WrapLines(sb.ToString()));
+                        }
                     }
                 }
 

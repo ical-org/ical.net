@@ -43,7 +43,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
         #region Content Validation
 
-        virtual public void CheckRange(string name, ICollection<int> values, int min, int max)
+        virtual public void CheckRange(string name, IList<int> values, int min, int max)
         {
             bool allowZero = (min == 0 || max == 0) ? true : false;
             foreach (int value in values)
