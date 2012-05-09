@@ -2297,6 +2297,34 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
+        /// Ensures that DateUtil.AddWeeks works properly when week number is for previous year for selected date.
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void WeeklyWeekStartsLastYear()
+        {
+            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Recurrence\WeeklyWeekStartsLastYear.ics")[0];
+            EventOccurrenceTest(
+                iCal,
+                new iCalDateTime(2012, 1, 1, 7, 0, 0),
+                new iCalDateTime(2012, 1, 15, 11, 59, 59),
+                new iCalDateTime[]
+                {
+                    new iCalDateTime(2012, 1, 2, 7, 0, 0),
+                    new iCalDateTime(2012, 1, 3, 7, 0, 0),
+                    new iCalDateTime(2012, 1, 4, 7, 0, 0),
+                    new iCalDateTime(2012, 1, 5, 7, 0, 0),
+                    new iCalDateTime(2012, 1, 6, 7, 0, 0),
+                    new iCalDateTime(2012, 1, 9, 7, 0, 0),
+                    new iCalDateTime(2012, 1, 10, 7, 0, 0),
+                    new iCalDateTime(2012, 1, 11, 7, 0, 0),
+                    new iCalDateTime(2012, 1, 12, 7, 0, 0),
+                    new iCalDateTime(2012, 1, 13, 7, 0, 0)
+                },
+                null
+            );
+        }
+
+        /// <summary>
         /// Ensures that RecurrencePattern.GetNextOccurrence() functions properly for a WEEKLY frequency with an INTERVAL.
         /// </summary>
         [Test, Category("Recurrence")]
