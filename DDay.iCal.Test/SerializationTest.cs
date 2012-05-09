@@ -388,6 +388,55 @@ namespace DDay.iCal.Test
             }
         }
 
+        /// <summary>
+        /// Tests bug #3177278 - Serialize closes stream
+        /// See https://sourceforge.net/tracker/?func=detail&aid=3177278&group_id=187422&atid=921236
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void Bug3177278()
+        {
+            var calendar = new iCalendar();
+            var serializer = new iCalendarSerializer();
+
+            MemoryStream ms = new MemoryStream();
+            serializer.Serialize(calendar, ms, Encoding.UTF8);
+
+            Assert.IsTrue(ms.CanWrite);
+        }
+
+        /// <summary>
+        /// Tests bug #3211934 - Bug in iCalendar.cs - UnauthorizedAccessException
+        /// See https://sourceforge.net/tracker/?func=detail&aid=3211934&group_id=187422&atid=921236
+        /// </summary>
+        [Test, Category("Serialization")]
+        public void Bug3211934()
+        {
+            var calendar = new iCalendar();
+            var serializer = new iCalendarSerializer();
+
+            var filename = "Bug3211934.ics";
+
+            if (File.Exists(filename))
+            {
+                // Reset the file attributes and delete
+                File.SetAttributes(filename, FileAttributes.Normal);
+                File.Delete(filename);
+            }
+
+            serializer.Serialize(calendar, filename);
+
+            // Set the file as read-only
+            File.SetAttributes(filename, FileAttributes.ReadOnly);
+
+            // Load the calendar from file, and ensure the read-only attribute doesn't affect the load
+            var calendars = iCalendar.LoadFromFile(filename, Encoding.UTF8, serializer);
+            Assert.IsNotNull(calendars);
+
+            // Reset the file attributes and delete
+            File.SetAttributes(filename, FileAttributes.Normal);
+            File.Delete(filename);
+        }
+
         [Test, Category("Serialization")]
         public void Calendar1()
         {
