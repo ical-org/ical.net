@@ -4,14 +4,14 @@ EXTRA_DIST =
 # Warning: This is an automatically generated file, do not edit!
 
 if ENABLE_DEBUG
-ASSEMBLY_COMPILER_COMMAND = gmcs
-ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- -debug "-define:TRACE;DEBUG;DATACONTRACT" "-keyfile:"
+ASSEMBLY_COMPILER_COMMAND = mcs
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- -debug "-define:TRACE;DEBUG;DATACONTRACT" 
 ASSEMBLY = bin/Debug/DDay.iCal.dll
 ASSEMBLY_MDB = $(ASSEMBLY).mdb
 COMPILE_TARGET = library
 PROJECT_REFERENCES =  \
 	../DDay.Collections/DDay.Collections/bin/Debug/DDay.Collections.dll
-BUILD_DIR = bin/Debug/
+BUILD_DIR = bin/Debug
 
 DDAY_ICAL_DLL_MDB_SOURCE=bin/Debug/DDay.iCal.dll.mdb
 DDAY_ICAL_DLL_MDB=$(BUILD_DIR)/DDay.iCal.dll.mdb
@@ -23,14 +23,14 @@ DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=../DDay.Collections/DDay.Collections/app.conf
 endif
 
 if ENABLE_DEBUG_MIXED_PLATFORMS
-ASSEMBLY_COMPILER_COMMAND = gmcs
-ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- -debug "-define:TRACE;DEBUG;DATACONTRACT" "-keyfile:"
+ASSEMBLY_COMPILER_COMMAND = mcs
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- -debug "-define:TRACE;DEBUG;DATACONTRACT" 
 ASSEMBLY = bin/Debug/DDay.iCal.dll
 ASSEMBLY_MDB = $(ASSEMBLY).mdb
 COMPILE_TARGET = library
 PROJECT_REFERENCES =  \
 	../DDay.Collections/DDay.Collections/bin/Debug/DDay.Collections.dll
-BUILD_DIR = bin/Debug/
+BUILD_DIR = bin/Debug
 
 DDAY_ICAL_DLL_MDB_SOURCE=bin/Debug/DDay.iCal.dll.mdb
 DDAY_ICAL_DLL_MDB=$(BUILD_DIR)/DDay.iCal.dll.mdb
@@ -42,14 +42,14 @@ DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=../DDay.Collections/DDay.Collections/app.conf
 endif
 
 if ENABLE_DEBUG_X86
-ASSEMBLY_COMPILER_COMMAND = gmcs
-ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- -debug "-define:TRACE;DEBUG;DATACONTRACT" "-keyfile:"
+ASSEMBLY_COMPILER_COMMAND = mcs
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- -debug "-define:TRACE;DEBUG;DATACONTRACT" 
 ASSEMBLY = bin/Debug/DDay.iCal.dll
 ASSEMBLY_MDB = $(ASSEMBLY).mdb
 COMPILE_TARGET = library
 PROJECT_REFERENCES =  \
 	../DDay.Collections/DDay.Collections/bin/Debug/DDay.Collections.dll
-BUILD_DIR = bin/Debug/
+BUILD_DIR = bin/Debug
 
 DDAY_ICAL_DLL_MDB_SOURCE=bin/Debug/DDay.iCal.dll.mdb
 DDAY_ICAL_DLL_MDB=$(BUILD_DIR)/DDay.iCal.dll.mdb
@@ -61,14 +61,14 @@ DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=../DDay.Collections/DDay.Collections/app.conf
 endif
 
 if ENABLE_RELEASE
-ASSEMBLY_COMPILER_COMMAND = gmcs
-ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-define:TRACE" "-keyfile:"
+ASSEMBLY_COMPILER_COMMAND = mcs
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-define:TRACE" 
 ASSEMBLY = bin/Release/DDay.iCal.dll
 ASSEMBLY_MDB = 
 COMPILE_TARGET = library
 PROJECT_REFERENCES =  \
 	../DDay.Collections/DDay.Collections/bin/Release/DDay.Collections.dll
-BUILD_DIR = bin/Release/
+BUILD_DIR = bin/Release
 
 DDAY_ICAL_DLL_MDB=
 LICENSE_TXT_SOURCE=License.txt
@@ -79,14 +79,14 @@ DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=../DDay.Collections/DDay.Collections/app.conf
 endif
 
 if ENABLE_RELEASE_MIXED_PLATFORMS
-ASSEMBLY_COMPILER_COMMAND = gmcs
-ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-define:TRACE" "-keyfile:"
+ASSEMBLY_COMPILER_COMMAND = mcs
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-define:TRACE" 
 ASSEMBLY = bin/Release/DDay.iCal.dll
 ASSEMBLY_MDB = 
 COMPILE_TARGET = library
 PROJECT_REFERENCES =  \
 	../DDay.Collections/DDay.Collections/bin/Release/DDay.Collections.dll
-BUILD_DIR = bin/Release/
+BUILD_DIR = bin/Release
 
 DDAY_ICAL_DLL_MDB=
 LICENSE_TXT_SOURCE=License.txt
@@ -97,14 +97,14 @@ DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=../DDay.Collections/DDay.Collections/app.conf
 endif
 
 if ENABLE_RELEASE_X86
-ASSEMBLY_COMPILER_COMMAND = gmcs
-ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-define:TRACE" "-keyfile:"
+ASSEMBLY_COMPILER_COMMAND = mcs
+ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-define:TRACE" 
 ASSEMBLY = bin/Release/DDay.iCal.dll
 ASSEMBLY_MDB = 
 COMPILE_TARGET = library
 PROJECT_REFERENCES =  \
 	../DDay.Collections/DDay.Collections/bin/Release/DDay.Collections.dll
-BUILD_DIR = bin/Release/
+BUILD_DIR = bin/Release
 
 DDAY_ICAL_DLL_MDB=
 LICENSE_TXT_SOURCE=License.txt

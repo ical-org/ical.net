@@ -4,13 +4,13 @@ EXTRA_DIST =
 # Warning: This is an automatically generated file, do not edit!
 
 if ENABLE_DEBUG
-ASSEMBLY_COMPILER_COMMAND = gmcs
+ASSEMBLY_COMPILER_COMMAND = mcs
 ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- -debug "-define:DEBUG;TRACE"
 ASSEMBLY = bin/Debug/DDay.Collections.dll
 ASSEMBLY_MDB = $(ASSEMBLY).mdb
 COMPILE_TARGET = library
 PROJECT_REFERENCES = 
-BUILD_DIR = bin/Debug/
+BUILD_DIR = bin/Debug
 
 DDAY_COLLECTIONS_DLL_MDB_SOURCE=bin/Debug/DDay.Collections.dll.mdb
 DDAY_COLLECTIONS_DLL_MDB=$(BUILD_DIR)/DDay.Collections.dll.mdb
@@ -19,13 +19,13 @@ DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=app.config
 endif
 
 if ENABLE_DEBUG_MIXED_PLATFORMS
-ASSEMBLY_COMPILER_COMMAND = gmcs
+ASSEMBLY_COMPILER_COMMAND = mcs
 ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- -debug "-define:DEBUG;TRACE"
 ASSEMBLY = bin/Debug/DDay.Collections.dll
 ASSEMBLY_MDB = $(ASSEMBLY).mdb
 COMPILE_TARGET = library
 PROJECT_REFERENCES = 
-BUILD_DIR = bin/Debug/
+BUILD_DIR = bin/Debug
 
 DDAY_COLLECTIONS_DLL_MDB_SOURCE=bin/Debug/DDay.Collections.dll.mdb
 DDAY_COLLECTIONS_DLL_MDB=$(BUILD_DIR)/DDay.Collections.dll.mdb
@@ -34,13 +34,13 @@ DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=app.config
 endif
 
 if ENABLE_DEBUG_X86
-ASSEMBLY_COMPILER_COMMAND = gmcs
+ASSEMBLY_COMPILER_COMMAND = mcs
 ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- -debug "-define:DEBUG;TRACE"
 ASSEMBLY = bin/Debug/DDay.Collections.dll
 ASSEMBLY_MDB = $(ASSEMBLY).mdb
 COMPILE_TARGET = library
 PROJECT_REFERENCES = 
-BUILD_DIR = bin/Debug/
+BUILD_DIR = bin/Debug
 
 DDAY_COLLECTIONS_DLL_MDB_SOURCE=bin/Debug/DDay.Collections.dll.mdb
 DDAY_COLLECTIONS_DLL_MDB=$(BUILD_DIR)/DDay.Collections.dll.mdb
@@ -49,13 +49,13 @@ DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=app.config
 endif
 
 if ENABLE_RELEASE
-ASSEMBLY_COMPILER_COMMAND = gmcs
+ASSEMBLY_COMPILER_COMMAND = mcs
 ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-define:TRACE"
 ASSEMBLY = bin/Release/DDay.Collections.dll
 ASSEMBLY_MDB = 
 COMPILE_TARGET = library
 PROJECT_REFERENCES = 
-BUILD_DIR = bin/Release/
+BUILD_DIR = bin/Release
 
 DDAY_COLLECTIONS_DLL_MDB=
 DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=app.config
@@ -63,13 +63,13 @@ DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=app.config
 endif
 
 if ENABLE_RELEASE_MIXED_PLATFORMS
-ASSEMBLY_COMPILER_COMMAND = gmcs
+ASSEMBLY_COMPILER_COMMAND = mcs
 ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-define:TRACE"
 ASSEMBLY = bin/Release/DDay.Collections.dll
 ASSEMBLY_MDB = 
 COMPILE_TARGET = library
 PROJECT_REFERENCES = 
-BUILD_DIR = bin/Release/
+BUILD_DIR = bin/Release
 
 DDAY_COLLECTIONS_DLL_MDB=
 DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=app.config
@@ -77,13 +77,13 @@ DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=app.config
 endif
 
 if ENABLE_RELEASE_X86
-ASSEMBLY_COMPILER_COMMAND = gmcs
+ASSEMBLY_COMPILER_COMMAND = mcs
 ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-define:TRACE"
 ASSEMBLY = bin/Release/DDay.Collections.dll
 ASSEMBLY_MDB = 
 COMPILE_TARGET = library
 PROJECT_REFERENCES = 
-BUILD_DIR = bin/Release/
+BUILD_DIR = bin/Release
 
 DDAY_COLLECTIONS_DLL_MDB=
 DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=app.config
@@ -137,7 +137,6 @@ REFERENCES =  \
 	System.Core \
 	System.Xml.Linq \
 	System.Data.DataSetExtensions \
-	Microsoft.CSharp \
 	System.Data \
 	System.Xml
 

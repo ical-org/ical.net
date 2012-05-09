@@ -4,14 +4,15 @@ EXTRA_DIST =
 # Warning: This is an automatically generated file, do not edit!
 
 if ENABLE_DEBUG
-ASSEMBLY_COMPILER_COMMAND = gmcs
+ASSEMBLY_COMPILER_COMMAND = mcs
 ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- -debug "-define:TRACE;DEBUG" "-main:DDay.iCal.Test.Startup"
 ASSEMBLY = bin/Debug/DDay.iCal.Test.exe
 ASSEMBLY_MDB = $(ASSEMBLY).mdb
 COMPILE_TARGET = winexe
 PROJECT_REFERENCES =  \
-	../DDay.iCal/bin/Debug/DDay.iCal.dll
-BUILD_DIR = bin/Debug/
+	../DDay.iCal/bin/Debug/DDay.iCal.dll \
+	../DDay.iCal/bin/Debug/DDay.Collections.dll
+BUILD_DIR = bin/Debug
 
 DDAY_ICAL_TEST_EXE_MDB_SOURCE=bin/Debug/DDay.iCal.Test.exe.mdb
 DDAY_ICAL_TEST_EXE_MDB=$(BUILD_DIR)/DDay.iCal.Test.exe.mdb
@@ -185,14 +186,15 @@ DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=../DDay.Collections/DDay.Collections/app.conf
 endif
 
 if ENABLE_DEBUG_MIXED_PLATFORMS
-ASSEMBLY_COMPILER_COMMAND = gmcs
+ASSEMBLY_COMPILER_COMMAND = mcs
 ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- -debug "-define:TRACE;DEBUG" "-main:DDay.iCal.Test.Startup"
 ASSEMBLY = bin/Debug/DDay.iCal.Test.exe
 ASSEMBLY_MDB = $(ASSEMBLY).mdb
 COMPILE_TARGET = winexe
 PROJECT_REFERENCES =  \
-	../DDay.iCal/bin/Debug/DDay.iCal.dll
-BUILD_DIR = bin/Debug/
+	../DDay.iCal/bin/Debug/DDay.iCal.dll \
+	../DDay.iCal/bin/Debug/DDay.Collections.dll
+BUILD_DIR = bin/Debug
 
 DDAY_ICAL_TEST_EXE_MDB_SOURCE=bin/Debug/DDay.iCal.Test.exe.mdb
 DDAY_ICAL_TEST_EXE_MDB=$(BUILD_DIR)/DDay.iCal.Test.exe.mdb
@@ -366,14 +368,15 @@ DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=../DDay.Collections/DDay.Collections/app.conf
 endif
 
 if ENABLE_DEBUG_X86
-ASSEMBLY_COMPILER_COMMAND = gmcs
+ASSEMBLY_COMPILER_COMMAND = mcs
 ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize- -debug "-define:TRACE;DEBUG" "-main:DDay.iCal.Test.Startup"
 ASSEMBLY = bin/Debug/DDay.iCal.Test.exe
 ASSEMBLY_MDB = $(ASSEMBLY).mdb
 COMPILE_TARGET = winexe
 PROJECT_REFERENCES =  \
-	../DDay.iCal/bin/Debug/DDay.iCal.dll
-BUILD_DIR = bin/Debug/
+	../DDay.iCal/bin/Debug/DDay.iCal.dll \
+	../DDay.iCal/bin/Debug/DDay.Collections.dll
+BUILD_DIR = bin/Debug
 
 DDAY_ICAL_TEST_EXE_MDB_SOURCE=bin/Debug/DDay.iCal.Test.exe.mdb
 DDAY_ICAL_TEST_EXE_MDB=$(BUILD_DIR)/DDay.iCal.Test.exe.mdb
@@ -547,14 +550,15 @@ DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=../DDay.Collections/DDay.Collections/app.conf
 endif
 
 if ENABLE_RELEASE
-ASSEMBLY_COMPILER_COMMAND = gmcs
+ASSEMBLY_COMPILER_COMMAND = mcs
 ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-define:TRACE" "-main:DDay.iCal.Test.Startup"
 ASSEMBLY = bin/Release/DDay.iCal.Test.exe
 ASSEMBLY_MDB = 
 COMPILE_TARGET = winexe
 PROJECT_REFERENCES =  \
-	../DDay.iCal/bin/Release/DDay.iCal.dll
-BUILD_DIR = bin/Release/
+	../DDay.iCal/bin/Release/DDay.iCal.dll \
+	../DDay.iCal/bin/Release/DDay.Collections.dll
+BUILD_DIR = bin/Release
 
 DDAY_ICAL_TEST_EXE_MDB=
 ALARM1_ICS_SOURCE=Calendars/Alarm/ALARM1.ics
@@ -727,14 +731,15 @@ DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=../DDay.Collections/DDay.Collections/app.conf
 endif
 
 if ENABLE_RELEASE_MIXED_PLATFORMS
-ASSEMBLY_COMPILER_COMMAND = gmcs
+ASSEMBLY_COMPILER_COMMAND = mcs
 ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-define:TRACE" "-main:DDay.iCal.Test.Startup"
 ASSEMBLY = bin/Release/DDay.iCal.Test.exe
 ASSEMBLY_MDB = 
 COMPILE_TARGET = winexe
 PROJECT_REFERENCES =  \
-	../DDay.iCal/bin/Release/DDay.iCal.dll
-BUILD_DIR = bin/Release/
+	../DDay.iCal/bin/Release/DDay.iCal.dll \
+	../DDay.iCal/bin/Release/DDay.Collections.dll
+BUILD_DIR = bin/Release
 
 DDAY_ICAL_TEST_EXE_MDB=
 ALARM1_ICS_SOURCE=Calendars/Alarm/ALARM1.ics
@@ -907,14 +912,15 @@ DDAY_COLLECTIONS_DLL_CONFIG_SOURCE=../DDay.Collections/DDay.Collections/app.conf
 endif
 
 if ENABLE_RELEASE_X86
-ASSEMBLY_COMPILER_COMMAND = gmcs
+ASSEMBLY_COMPILER_COMMAND = mcs
 ASSEMBLY_COMPILER_FLAGS =  -noconfig -codepage:utf8 -warn:4 -optimize+ "-define:TRACE" "-main:DDay.iCal.Test.Startup"
 ASSEMBLY = bin/Release/DDay.iCal.Test.exe
 ASSEMBLY_MDB = 
 COMPILE_TARGET = winexe
 PROJECT_REFERENCES =  \
-	../DDay.iCal/bin/Release/DDay.iCal.dll
-BUILD_DIR = bin/Release/
+	../DDay.iCal/bin/Release/DDay.iCal.dll \
+ 	../DDay.iCal/bin/Release/DDay.Collections.dll
+BUILD_DIR = bin/Release
 
 DDAY_ICAL_TEST_EXE_MDB=
 ALARM1_ICS_SOURCE=Calendars/Alarm/ALARM1.ics
