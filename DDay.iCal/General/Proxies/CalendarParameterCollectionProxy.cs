@@ -46,9 +46,7 @@ namespace DDay.iCal
 
         virtual public string Get(string name)
         {
-            var parameter = RealObject
-                .AllOf(name)
-                .FirstOrDefault();
+            var parameter = RealObject.FirstOrDefault(o => o.Name == name);
 
             if (parameter != null)
                 return parameter.Value;
@@ -65,9 +63,7 @@ namespace DDay.iCal
 
         virtual public void Set(string name, string value)
         {
-            var parameter = RealObject
-                .AllOf(name)
-                .FirstOrDefault();
+            var parameter = RealObject.FirstOrDefault(o => o.Name == name);
 
             if (parameter == null)
             {
@@ -81,9 +77,7 @@ namespace DDay.iCal
 
         virtual public void Set(string name, IEnumerable<string> values)
         {
-            var parameter = RealObject
-                .AllOf(name)
-                .FirstOrDefault();
+            var parameter = RealObject.FirstOrDefault(o => o.Name == name);
 
             if (parameter == null)
             {

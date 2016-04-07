@@ -118,7 +118,6 @@ namespace DDay.Collections
 
             var items = _RealObject
                 .OfType<TNew>()
-                .Where(_Predicate)
                 .ToArray();
 
             foreach (var item in items)
@@ -147,7 +146,6 @@ namespace DDay.Collections
             { 
                 return _RealObject
                     .OfType<TNew>()
-                    .Where(_Predicate)
                     .Count(); 
             }
         }
@@ -166,7 +164,6 @@ namespace DDay.Collections
         {
             return _RealObject
                 .OfType<TNew>()
-                .Where(_Predicate)
                 .GetEnumerator();
         }
 
@@ -174,7 +171,6 @@ namespace DDay.Collections
         {
             return _RealObject
                 .OfType<TNew>()
-                .Where(_Predicate)
                 .GetEnumerator();
         }
 
