@@ -170,7 +170,7 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Evaluate extra time periods, without re-evaluating ones that were already evaluated
             if ((EvaluationStartBounds == DateTime.MaxValue && EvaluationEndBounds == DateTime.MinValue) ||
@@ -195,7 +195,7 @@ namespace DDay.iCal
             }
 
             // Sort the list
-            m_Periods.Sort();
+            //m_Periods.Sort();
 
             return Periods;
         }

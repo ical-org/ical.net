@@ -86,7 +86,7 @@ namespace DDay.iCal
             m_Occurrences.Clear();
         }
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Ensure the reference date is associated with the time zone
             if (referenceDate.AssociatedObject == null)

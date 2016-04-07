@@ -23,9 +23,9 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
-            var periods = new List<IPeriod>();
+            var periods = new HashSet<IPeriod>();
 
             if (includeReferenceDateInResults)
             {

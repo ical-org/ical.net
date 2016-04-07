@@ -26,7 +26,7 @@ namespace DDay.iCal
  
         #region Overrides
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Time zones must include an effective start date/time
             // and must provide an evaluator.
@@ -37,7 +37,7 @@ namespace DDay.iCal
                 return periods;
             }
 
-            return new List<IPeriod>();            
+            return new HashSet<IPeriod>();            
         }
 
         #endregion

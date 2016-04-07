@@ -19,7 +19,7 @@ namespace DDay.iCal
 
         #region Protected Fields
 
-        protected List<IPeriod> m_Periods;
+        protected HashSet<IPeriod> m_Periods;
 
         #endregion
 
@@ -47,7 +47,7 @@ namespace DDay.iCal
         void Initialize()
         {
             m_Calendar = System.Globalization.CultureInfo.CurrentCulture.Calendar;
-            m_Periods = new List<IPeriod>();
+            m_Periods = new HashSet<IPeriod>();
         }
 
         #endregion
@@ -117,7 +117,7 @@ namespace DDay.iCal
             protected set { m_AssociatedObject = value; }
         }
 
-        virtual public IList<IPeriod> Periods
+        virtual public HashSet<IPeriod> Periods
         {
             get { return m_Periods; }
         }
@@ -129,7 +129,7 @@ namespace DDay.iCal
             m_Periods.Clear();
         }
 
-        abstract public IList<IPeriod> Evaluate(
+        abstract public HashSet<IPeriod> Evaluate(
             IDateTime referenceDate,
             DateTime periodStart,
             DateTime periodEnd,

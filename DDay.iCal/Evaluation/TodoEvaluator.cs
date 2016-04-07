@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DDay.iCal
 {
@@ -88,7 +89,7 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // TODO items can only recur if a start date is specified
             if (Todo.Start != null)
@@ -96,21 +97,21 @@ namespace DDay.iCal
                 base.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
 
                 // Ensure each period has a duration
-                for (var i = 0; i < Periods.Count; i++)
+                foreach (var period in Periods.Where(period => period.EndTime == null))
                 {
-                    var p = Periods[i];
-                    if (p.EndTime == null)
+                    period.Duration = Todo.Duration;
+                    if (period.Duration != null)
                     {
-                        p.Duration = Todo.Duration;
-                        if (p.Duration != null)
-                            p.EndTime = p.StartTime.Add(Todo.Duration);
-                        else p.EndTime = p.StartTime;
-                    }                    
+                        period.EndTime = period.StartTime.Add(Todo.Duration);
+                    }
+                    else
+                    {
+                        period.Duration = Todo.Duration;
+                    }
                 }
-
                 return Periods;
             }
-            return new List<IPeriod>();
+            return new HashSet<IPeriod>();
         }
 
         #endregion

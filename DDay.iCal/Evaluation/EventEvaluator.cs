@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DDay.iCal
 {
@@ -43,23 +44,30 @@ namespace DDay.iCal
         /// <param name="periodEnd">The end date of the range to evaluate.</param>
         /// <param name="includeReferenceDateInResults"></param>
         /// <returns></returns>
-        public override IList<IPeriod> Evaluate(IDateTime referenceTime, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override HashSet<IPeriod> Evaluate(IDateTime referenceTime, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {   
             // Evaluate recurrences normally
             base.Evaluate(referenceTime, periodStart, periodEnd, includeReferenceDateInResults);
 
-            // Ensure each period has a duration
-            for (var i = 0; i < Periods.Count; i++)
-            {
-                var p = Periods[i];
-                if (p.EndTime == null)
-                {
-                    p.Duration = Event.Duration;
-                    if (p.Duration != null)
-                        p.EndTime = p.StartTime.Add(Event.Duration);
-                    else p.EndTime = p.StartTime;
-                }
+            foreach (var period in Periods.Where(period => period.EndTime == null)) {
+                period.Duration = Event.Duration;
+                period.EndTime = period.Duration == null
+                    ? period.StartTime
+                    : period.StartTime.Add(Event.Duration);
             }
+
+            // Ensure each period has a duration
+            //for (var i = 0; i < Periods.Count; i++)
+            //{
+            //    var p = Periods[i];
+            //    if (p.EndTime == null)
+            //    {
+            //        p.Duration = Event.Duration;
+            //        if (p.Duration != null)
+            //            p.EndTime = p.StartTime.Add(Event.Duration);
+            //        else p.EndTime = p.StartTime;
+            //    }
+            //}
 
             return Periods;
         }

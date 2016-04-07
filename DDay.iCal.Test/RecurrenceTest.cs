@@ -3009,7 +3009,9 @@ namespace DDay.iCal.Test
                 startDate, 
                 DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
                 DateUtil.SimpleDateTimeToMatch(toDate, startDate),
-                false);
+                false)
+                .OrderBy(o => o.StartTime)
+                .ToList();
             Assert.AreEqual(4, occurrences.Count);
             Assert.AreEqual(new iCalDateTime(DateTime.Parse("03/30/08 11:59:40 PM", us)), occurrences[0].StartTime);
             Assert.AreEqual(new iCalDateTime(DateTime.Parse("03/30/08 11:59:50 PM", us)), occurrences[1].StartTime);
@@ -3169,7 +3171,9 @@ namespace DDay.iCal.Test
                 evtStart,
                 DateUtil.GetSimpleDateTimeData(evtStart), 
                 DateUtil.SimpleDateTimeToMatch(evtEnd, evtStart),
-                false);
+                false)
+                .OrderBy(p => p.StartTime)
+                .ToList();
             Assert.AreEqual(10, periods.Count);
             Assert.AreEqual(2, periods[0].StartTime.Day);
             Assert.AreEqual(3, periods[1].StartTime.Day);

@@ -213,9 +213,9 @@ namespace DDay.iCal
          * Wed, Mar 23, 12:19PM, but the recurrence is Mon - Fri, 9:00AM - 5:00PM, the start dates returned should all be at
          * 9:00AM, and not 12:19PM.
          */
-        private List<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd, int maxCount, IRecurrencePattern pattern, bool includeReferenceDateInResults)
+        private HashSet<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd, int maxCount, IRecurrencePattern pattern, bool includeReferenceDateInResults)
         {            
-            var dates = new List<DateTime>();
+            var dates = new HashSet<DateTime>();
             var originalDate = DateUtil.GetSimpleDateTimeData(seed);
             var seedCopy = DateUtil.GetSimpleDateTimeData(seed);
 
@@ -298,7 +298,6 @@ namespace DDay.iCal
             }
 
             // sort final list..
-            dates.Sort();
             return dates;
         }
         
@@ -1011,7 +1010,7 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Create a recurrence pattern suitable for use during evaluation.
             var pattern = ProcessRecurrencePattern(referenceDate);
@@ -1020,6 +1019,8 @@ namespace DDay.iCal
             EnforceEvaluationRestrictions(pattern);
 
             Periods.Clear();
+            //Periods = new HashSet<IPeriod>();
+
             foreach (var dt in GetDates(referenceDate, periodStart, periodEnd, -1, pattern, includeReferenceDateInResults))
             {                
                 // Create a period from the date/time.
