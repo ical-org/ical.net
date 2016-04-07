@@ -124,13 +124,31 @@ namespace DDay.iCal
         #endregion
 
         #region Overrides
+        protected bool Equals(Attendee other)
+        {
+            return Equals(Value, other.Value);
+        }
 
         public override bool Equals(object obj)
         {
-            IAttendee a = obj as IAttendee;
-            if (a != null)
-                return object.Equals(Value, a.Value);
-            return base.Equals(obj);
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+            return Equals((Attendee) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (Value != null ? Value.GetHashCode() : 0);
         }
 
         public override void CopyFrom(ICopyable obj)

@@ -444,40 +444,47 @@ namespace DDay.iCal
             Initialize();
         }
 
+        protected bool Equals(iCalendar other)
+        {
+            return base.Equals(other)
+                && Equals(m_UniqueComponents, other.m_UniqueComponents)
+                && Equals(m_Events, other.m_Events)
+                && Equals(m_Todos, other.m_Todos)
+                && Equals(m_Journals, other.m_Journals)
+                && Equals(m_FreeBusy, other.m_FreeBusy)
+                && Equals(m_TimeZones, other.m_TimeZones);
+        }
+
         public override bool Equals(object obj)
         {
-            IICalendar iCal = obj as iCalendar;
-            if (iCal != null)
+            if (ReferenceEquals(null, obj))
             {
-                //bool isEqual =
-                //    object.Equals(Version, iCal.Version) &&
-                //    object.Equals(ProductID, iCal.ProductID) &&
-                //    object.Equals(Scale, iCal.Scale) &&
-                //    object.Equals(Method, iCal.Method) &&
-                //    (
-                //        (UniqueComponents == null && iCal.UniqueComponents == null) ||
-                //        (UniqueComponents != null && iCal.UniqueComponents != null && object.Equals(UniqueComponents.Count, iCal.UniqueComponents.Count))
-                //    );
-
-                //if (isEqual)
-                //{
-                //    if (UniqueComponents.Count != iCal.UniqueComponents.Count)
-                //        return false;
-
-                //    IEnumerator<IUniqueComponent> e1 = UniqueComponents.GetEnumerator();
-                //    IEnumerator<IUniqueComponent> e2 = iCal.UniqueComponents.GetEnumerator();
-                //    while (e1.MoveNext())
-                //    {
-                //        if (!e2.MoveNext())
-                //            return false;
-                //        if (!object.Equals(e1.Current, e2.Current))
-                //            return false;
-                //    }
-                //    return !e2.MoveNext();                    
-                //}
-                //return false;
+                return false;
             }
-            return base.Equals(obj);
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+            return Equals((iCalendar) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = base.GetHashCode();
+                hashCode = (hashCode * 397) ^ (m_UniqueComponents != null ? m_UniqueComponents.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (m_Events != null ? m_Events.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (m_Todos != null ? m_Todos.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (m_Journals != null ? m_Journals.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (m_FreeBusy != null ? m_FreeBusy.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (m_TimeZones != null ? m_TimeZones.GetHashCode() : 0);
+                return hashCode;
+            }
         }
 
         #endregion

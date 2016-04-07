@@ -77,15 +77,38 @@ namespace DDay.iCal
             return serializer.SerializeToString(this);
         }
 
+        protected bool Equals(RequestStatus other)
+        {
+            return string.Equals(m_Description, other.m_Description) && string.Equals(m_ExtraData, other.m_ExtraData) &&
+                   Equals(m_StatusCode, other.m_StatusCode);
+        }
+
         public override bool Equals(object obj)
         {
-            IRequestStatus rs = obj as IRequestStatus;
-            if (rs != null)
+            if (ReferenceEquals(null, obj))
             {
-                return object.Equals(StatusCode, rs.StatusCode);
+                return false;
             }
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+            return Equals((RequestStatus) obj);
+        }
 
-            return base.Equals(obj);
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = (m_Description != null ? m_Description.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (m_ExtraData != null ? m_ExtraData.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (m_StatusCode != null ? m_StatusCode.GetHashCode() : 0);
+                return hashCode;
+            }
         }
 
         #endregion

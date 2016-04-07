@@ -74,17 +74,38 @@ namespace DDay.iCal
 
         #region Overrides
 
+        protected bool Equals(UTCOffset other)
+        {
+            return m_Positive == other.m_Positive && m_Hours == other.m_Hours && m_Minutes == other.m_Minutes && m_Seconds == other.m_Seconds;
+        }
+
         public override bool Equals(object obj)
         {
-            UTCOffset o = obj as UTCOffset;
-            if (o != null)
+            if (ReferenceEquals(null, obj))
             {
-                return object.Equals(Positive, o.Positive) &&
-                    object.Equals(Hours, o.Hours) &&
-                    object.Equals(Minutes, o.Minutes) &&
-                    object.Equals(Seconds, o.Seconds);
+                return false;
             }
-            return base.Equals(obj);
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+            return Equals((UTCOffset) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = m_Positive.GetHashCode();
+                hashCode = (hashCode * 397) ^ m_Hours;
+                hashCode = (hashCode * 397) ^ m_Minutes;
+                hashCode = (hashCode * 397) ^ m_Seconds;
+                return hashCode;
+            }
         }
 
         public override void CopyFrom(ICopyable obj)

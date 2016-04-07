@@ -66,12 +66,31 @@ namespace DDay.iCal
 
         #region Overrides
         
+        protected bool Equals(Organizer other)
+        {
+            return Equals(Value, other.Value);
+        }
+
         public override bool Equals(object obj)
         {
-            IOrganizer o = obj as IOrganizer;
-            if (o != null)
-                return object.Equals(Value, o.Value);
-            return base.Equals(obj);
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+            return Equals((Organizer) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (Value != null ? Value.GetHashCode() : 0);
         }
 
         public override void CopyFrom(ICopyable obj)

@@ -91,26 +91,31 @@ namespace DDay.iCal
             return serializer.SerializeToString(this);
         }
 
+        protected bool Equals(StatusCode other)
+        {
+            return Equals(m_Parts, other.m_Parts);
+        }
+
         public override bool Equals(object obj)
         {
-            IStatusCode sc = obj as IStatusCode;
-            if (sc != null)
+            if (ReferenceEquals(null, obj))
             {
-                if (m_Parts != null &&
-                    sc.Parts != null &&
-                    m_Parts.Length == sc.Parts.Length)
-                {
-                    for (int i = 0; i < m_Parts.Length; i++)
-                    {
-                        if (!object.Equals(m_Parts[i], sc.Parts[i]))
-                            return false;
-                    }
-                    return true;
-                }
                 return false;
             }
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+            return Equals((StatusCode) obj);
+        }
 
-            return base.Equals(obj);
+        public override int GetHashCode()
+        {
+            return (m_Parts != null ? m_Parts.GetHashCode() : 0);
         }
 
         #endregion

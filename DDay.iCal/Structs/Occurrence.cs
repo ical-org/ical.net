@@ -49,16 +49,26 @@ namespace DDay.iCal
 
         #region Overrides
 
+        public bool Equals(Occurrence other)
+        {
+            return Equals(m_Period, other.m_Period) && Equals(m_Source, other.m_Source);
+        }
+
         public override bool Equals(object obj)
         {
-            if (obj is Occurrence)
+            if (ReferenceEquals(null, obj))
             {
-                Occurrence o = (Occurrence)obj;
-                return 
-                    object.Equals(Source, o.Source) &&
-                    CompareTo(o) == 0;
+                return false;
             }
-            return base.Equals(obj);
+            return obj is Occurrence && Equals((Occurrence) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((m_Period != null ? m_Period.GetHashCode() : 0) * 397) ^ (m_Source != null ? m_Source.GetHashCode() : 0);
+            }
         }
 
         public override string ToString()
