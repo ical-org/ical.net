@@ -102,7 +102,7 @@ namespace DDay.iCal
         /// <summary>
         /// Loads an <see cref="iCalendar"/> from the file system.
         /// </summary>
-        /// <param name="Filepath">The path to the file to load.</param>
+        /// <param name="filepath">The path to the file to load.</param>
         /// <returns>An <see cref="iCalendar"/> object</returns>        
         static public IICalendarCollection LoadFromFile(string filepath)
         {
@@ -247,7 +247,7 @@ namespace DDay.iCal
         /// <summary>
         /// Loads an <see cref="iCalendar"/> from a given Uri.
         /// </summary>
-        /// <param name="url">The Uri from which to load the <see cref="iCalendar"/> object</param>
+        /// <param name="uri">The Uri from which to load the <see cref="iCalendar"/> object</param>
         /// <returns>An <see cref="iCalendar"/> object</returns>
         static public IICalendarCollection LoadFromUri(Uri uri)
         {
@@ -290,7 +290,9 @@ namespace DDay.iCal
         /// specified <paramref name="username"/> and <paramref name="password"/>
         /// for credentials.
         /// </summary>
-        /// <param name="url">The Uri from which to load the <see cref="iCalendar"/> object</param>
+        /// <param name="uri">The Uri from which to load the <see cref="iCalendar"/> object</param>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
         /// <returns>an <see cref="iCalendar"/> object</returns>
         static public IICalendarCollection LoadFromUri(Uri uri, string username, string password)
         {
@@ -524,7 +526,7 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// A collection of <see cref="DDay.iCal.TimeZone"/> components in the iCalendar.
+        /// A collection of TimeZone components in the iCalendar.
         /// </summary>
         virtual public ICalendarObjectList<ITimeZone> TimeZones
         {
@@ -631,11 +633,10 @@ namespace DDay.iCal
 #endif
 
         /// <summary>
-        /// Retrieves the <see cref="DDay.iCal.TimeZone" /> object for the specified
-        /// <see cref="TZID"/> (Time Zone Identifier).
+        /// Retrieves the TimeZone object for the specified TZID (Time Zone Identifier).
         /// </summary>
-        /// <param name="tzid">A valid <see cref="TZID"/> object, or a valid <see cref="TZID"/> string.</param>
-        /// <returns>A <see cref="TimeZone"/> object for the <see cref="TZID"/>.</returns>
+        /// <param name="tzid">A valid TZID object, or a valid TZID string.</param>
+        /// <returns>A <see cref="TimeZone"/> object for the TZID.</returns>
         public ITimeZone GetTimeZone(string tzid)
         {
             foreach (ITimeZone tz in TimeZones)
@@ -707,10 +708,10 @@ namespace DDay.iCal
 
         /// <summary>
         /// Returns a list of occurrences of each recurring component
-        /// that occur between <paramref name="FromDate"/> and <paramref name="ToDate"/>.
+        /// that occur between <paramref name="startTime"/> and <paramref name="endTime"/>.
         /// </summary>
-        /// <param name="FromDate">The beginning date/time of the range.</param>
-        /// <param name="ToDate">The end date/time of the range.</param>
+        /// <param name="startTime">The beginning date/time of the range.</param>
+        /// <param name="endTime">The end date/time of the range.</param>
         /// <returns>A list of occurrences that fall between the dates provided.</returns>
         virtual public IList<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
         {

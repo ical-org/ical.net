@@ -46,12 +46,12 @@ namespace DDay.iCal
 
         /// <summary>
         /// Evaluates this item to determine the dates and times for which it occurs/recurs.
-        /// This method only evaluates items which occur/recur between <paramref name="fromDate"/>
-        /// and <paramref name="toDate"/>; therefore, if you require a list of items which
-        /// occur outside of this range, you must specify a <paramref name="fromDate"/> and
-        /// <paramref name="toDate"/> which encapsulate the date(s) of interest.
-        /// This method evaluates using the <paramref name="startDate" /> as the beginning
-        /// point.  For example, for a WEEKLY occurrence, the <paramref name="startDate"/>
+        /// This method only evaluates items which occur/recur between <paramref name="periodStart"/>
+        /// and <paramref name="periodEnd"/>; therefore, if you require a list of items which
+        /// occur outside of this range, you must specify a <paramref name="periodStart"/> and
+        /// <paramref name="periodEnd"/> which encapsulate the date(s) of interest.
+        /// This method evaluates using the <paramref name="periodStart" /> as the beginning
+        /// point.  For example, for a WEEKLY occurrence, the <paramref name="periodStart"/>
         /// determines the day of week that this item will recur on.
         /// <note type="caution">
         ///     For events with very complex recurrence rules, this method may be a bottleneck
@@ -59,9 +59,10 @@ namespace DDay.iCal
         ///     of items, in sequence, or for a very large time span.
         /// </note>
         /// </summary>
-        /// <param name="startDate">The date to begin evaluation from.</param>
-        /// <param name="fromDate">The beginning date of the range to evaluate.</param>
-        /// <param name="toDate">The end date of the range to evaluate.</param>
+        /// <param name="referenceDate"></param>
+        /// <param name="periodStart"></param>
+        /// <param name="periodEnd"></param>
+        /// <param name="includeReferenceDateInResults"></param>
         /// <returns>
         ///     A list of <see cref="System.DateTime"/> objects for
         ///     each date/time when this item occurs/recurs.

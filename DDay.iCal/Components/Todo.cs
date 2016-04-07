@@ -166,7 +166,6 @@ namespace DDay.iCal
         /// into account to give the most accurate result possible.
         /// </note>
         /// </summary>
-        /// <param name="DateTime">The date and time to test.</param>
         /// <returns>True if the todo item has been completed</returns>
         virtual public bool IsCompleted(IDateTime currDt)
         {

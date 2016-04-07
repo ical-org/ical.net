@@ -45,11 +45,12 @@ namespace DDay.iCal
         #region Protected Methods
 
         /// <summary>
-        /// Evaulates the RRule component, and adds each specified Period
-        /// to the <see cref="Periods"/> collection.
+        /// Evaulates the RRule component, and adds each specified Period to the Periods collection.
         /// </summary>
-        /// <param name="FromDate">The beginning date of the range to evaluate.</param>
-        /// <param name="ToDate">The end date of the range to evaluate.</param>
+        /// <param name="referenceDate"></param>
+        /// <param name="periodStart">The beginning date of the range to evaluate.</param>
+        /// <param name="periodEnd">The end date of the range to evaluate.</param>
+        /// <param name="includeReferenceDateInResults"></param>
         virtual protected void EvaluateRRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Handle RRULEs
@@ -81,11 +82,11 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// Evalates the RDate component, and adds each specified DateTime or
-        /// Period to the <see cref="Periods"/> collection.
+        /// Evalates the RDate component, and adds each specified DateTime or Period to the Periods collection.
         /// </summary>
-        /// <param name="FromDate">The beginning date of the range to evaluate.</param>
-        /// <param name="ToDate">The end date of the range to evaluate.</param>
+        /// <param name="referenceDate"></param>
+        /// <param name="periodStart">The beginning date of the range to evaluate.</param>
+        /// <param name="periodEnd">The end date of the range to evaluate.</param>
         virtual protected void EvaluateRDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             // Handle RDATEs
@@ -108,11 +109,11 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// Evaulates the ExRule component, and excludes each specified DateTime
-        /// from the <see cref="Periods"/> collection.
+        /// Evaulates the ExRule component, and excludes each specified DateTime from the Periods collection.
         /// </summary>
-        /// <param name="FromDate">The beginning date of the range to evaluate.</param>
-        /// <param name="ToDate">The end date of the range to evaluate.</param>
+        /// <param name="referenceDate"></param>
+        /// <param name="periodStart">The beginning date of the range to evaluate.</param>
+        /// <param name="periodEnd">The end date of the range to evaluate.</param>
         virtual protected void EvaluateExRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             // Handle EXRULEs
@@ -135,11 +136,11 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// Evalates the ExDate component, and excludes each specified DateTime or
-        /// Period from the <see cref="Periods"/> collection.
+        /// Evalates the ExDate component, and excludes each specified DateTime or Period from the Periods collection.
         /// </summary>
-        /// <param name="FromDate">The beginning date of the range to evaluate.</param>
-        /// <param name="ToDate">The end date of the range to evaluate.</param>
+        /// <param name="referenceDate"></param>
+        /// <param name="periodStart">The beginning date of the range to evaluate.</param>
+        /// <param name="periodEnd">The end date of the range to evaluate.</param>
         virtual protected void EvaluateExDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             // Handle EXDATEs

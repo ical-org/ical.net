@@ -206,10 +206,9 @@ namespace DDay.iCal
         #region Constructors
 
         /// <summary>
-        /// Constructs an Event object, with an <see cref="iCalObject"/>
+        /// Constructs an Event object, with an iCalObject
         /// (usually an iCalendar object) as its parent.
         /// </summary>
-        /// <param name="parent">An <see cref="iCalObject"/>, usually an iCalendar object.</param>
         public Event() : base()
         {
             Initialize();
@@ -230,7 +229,7 @@ namespace DDay.iCal
         /// <summary>
         /// Use this method to determine if an event occurs on a given date.
         /// <note type="caution">
-        ///     This event should be called only after the <see cref="Evaluate"/>
+        ///     This event should be called only after the Evaluate
         ///     method has calculated the dates for which this event occurs.
         /// </note>
         /// </summary>

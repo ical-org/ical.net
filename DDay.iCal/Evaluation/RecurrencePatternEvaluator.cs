@@ -302,16 +302,11 @@ namespace DDay.iCal
             return dates;
         }
         
-        ///**
-        // * Returns the the next date of this recurrence given a seed date
-        // * and start date.  The seed date indicates the start of the fist 
-        // * occurrence of this recurrence. The start date is the
-        // * starting date to search for the next recurrence.  Return null
-        // * if there is no occurrence date after start date.
-        // * @return the next date in the recurrence series after startDate
-        // * @param seed the start date of this Recurrence's first instance
-        // * @param startDate the date to start the search
-        // */
+        ///// Returns the the next date of this recurrence given a seed date and start date.  The seed date indicates the start of the first occurrence of this
+        ///// recurrence. The start date is the starting date to search for the next recurrence.  Return null if there is no occurrence date after start date.
+        ///// @return the next date in the recurrence series after startDate
+        ///// @param seed the start date of this Recurrence's first instance
+        /////@param startDate the date to start the search
         //private DateTime? GetNextDate(IDateTime referenceDate, DateTime periodStart, IRecurrencePattern pattern)
         //{            
         //    DateTime seedCopy = DateUtil.GetSimpleDateTimeData(referenceDate);
