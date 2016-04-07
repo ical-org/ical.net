@@ -1,10 +1,5 @@
 using System;
-using System.Collections;
 using System.IO;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Text.RegularExpressions;
-using DDay.iCal.Serialization;
 using DDay.iCal.Serialization.iCalendar;
 
 namespace DDay.iCal

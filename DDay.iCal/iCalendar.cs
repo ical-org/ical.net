@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using DDay.iCal.Serialization;
 using DDay.iCal.Serialization.iCalendar;
-using DDay.Collections;
 
 namespace DDay.iCal
 {

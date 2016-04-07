@@ -1,18 +1,9 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalLexer.cs"$
 
-    using System.Text;
-    using System.IO;
-	using System.Collections;
-    using System.Collections.Generic;  
-    using System.Runtime.Serialization;
-    using DDay.iCal.Serialization;
-    using DDay.iCal.Serialization.iCalendar;
-
 namespace DDay.iCal
 {
 	// Generate header specific to lexer CSharp file
-	using System;
-	using Stream                          = System.IO.Stream;
+    using Stream                          = System.IO.Stream;
 	using TextReader                      = System.IO.TextReader;
 	using Hashtable                       = System.Collections.Hashtable;
 	using Comparer                        = System.Collections.Comparer;
@@ -22,19 +13,14 @@ namespace DDay.iCal
 	using TokenStreamRecognitionException = antlr.TokenStreamRecognitionException;
 	using CharStreamException             = antlr.CharStreamException;
 	using CharStreamIOException           = antlr.CharStreamIOException;
-	using ANTLRException                  = antlr.ANTLRException;
-	using CharScanner                     = antlr.CharScanner;
-	using InputBuffer                     = antlr.InputBuffer;
+    using InputBuffer                     = antlr.InputBuffer;
 	using ByteBuffer                      = antlr.ByteBuffer;
 	using CharBuffer                      = antlr.CharBuffer;
 	using Token                           = antlr.Token;
 	using IToken                          = antlr.IToken;
-	using CommonToken                     = antlr.CommonToken;
-	using SemanticException               = antlr.SemanticException;
-	using RecognitionException            = antlr.RecognitionException;
+    using RecognitionException            = antlr.RecognitionException;
 	using NoViableAltForCharException     = antlr.NoViableAltForCharException;
-	using MismatchedCharException         = antlr.MismatchedCharException;
-	using TokenStream                     = antlr.TokenStream;
+    using TokenStream                     = antlr.TokenStream;
 	using LexerSharedInputState           = antlr.LexerSharedInputState;
 	using BitSet                          = antlr.collections.impl.BitSet;
 	

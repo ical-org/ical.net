@@ -3,8 +3,7 @@
     using System.Text;
     using System.IO;
 	using System.Collections;
-    using System.Collections.Generic;  
-    using System.Runtime.Serialization;
+    using System.Collections.Generic;
     using DDay.iCal.Serialization;
     using DDay.iCal.Serialization.iCalendar;
 
@@ -14,17 +13,9 @@ namespace DDay.iCal
 	using System;
 	
 	using TokenBuffer              = antlr.TokenBuffer;
-	using TokenStreamException     = antlr.TokenStreamException;
-	using TokenStreamIOException   = antlr.TokenStreamIOException;
-	using ANTLRException           = antlr.ANTLRException;
-	using LLkParser = antlr.LLkParser;
-	using Token                    = antlr.Token;
 	using IToken                   = antlr.IToken;
 	using TokenStream              = antlr.TokenStream;
-	using RecognitionException     = antlr.RecognitionException;
 	using NoViableAltException     = antlr.NoViableAltException;
-	using MismatchedTokenException = antlr.MismatchedTokenException;
-	using SemanticException        = antlr.SemanticException;
 	using ParserSharedInputState   = antlr.ParserSharedInputState;
 	using BitSet                   = antlr.collections.impl.BitSet;
 	

@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization;
-using DDay.iCal.Serialization;
 
 namespace DDay.iCal
 {

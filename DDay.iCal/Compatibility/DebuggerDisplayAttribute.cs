@@ -1,7 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
-
-namespace System.Diagnostics
+﻿namespace System.Diagnostics
 {
 
 #if NETCF
