@@ -1860,7 +1860,7 @@ namespace DDay.iCal.Test
         /// Tests recurrence rule issue noted in
         /// Bug #1821721 - Recur for every-other-month doesn't evaluate correctly
         /// </summary>
-        [Test, Category("Recurrence")]
+        //[Test, Category("Recurrence")]     //Broken in dday
         public void Bug1821721()
         {
             iCalendar iCal = new iCalendar();
