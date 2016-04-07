@@ -3131,7 +3131,7 @@ namespace DDay.iCal.Test
                 "Serialized recurrence string is incorrect");
         }
 
-        [Test, Category("Recurrence")]
+        //[Test, Category("Recurrence")]    //Console.WriteLine is not a unit test
         public void Test3()
         {
             IICalendar iCal = new iCalendar();
@@ -3145,8 +3145,8 @@ namespace DDay.iCal.Test
             IDateTime doomsdayDate = new iCalDateTime(2010, 12, 31, 10, 30, 0);
             var allOcc = evt.GetOccurrences(evt.Start, doomsdayDate);
 
-            foreach (var occ in allOcc)
-                Console.WriteLine(occ.Period.StartTime.ToString("d") + " " + occ.Period.StartTime.ToString("t"));
+            //foreach (var occ in allOcc)
+            //    Console.WriteLine(occ.Period.StartTime.ToString("d") + " " + occ.Period.StartTime.ToString("t"));
         }
 
         [Test, Category("Recurrence")]
