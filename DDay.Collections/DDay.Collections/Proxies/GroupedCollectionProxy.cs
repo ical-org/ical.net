@@ -86,11 +86,7 @@ namespace DDay.Collections
 
         virtual public int CountOf(TGroup group)
         {
-            return _RealObject
-                .AllOf(group)
-                .OfType<TNew>()
-                .Where(_Predicate)
-                .Count();            
+            return _RealObject.Count(g => g.Group.GetType() == typeof (TGroup));
         }
 
         virtual public IEnumerable<TNew> AllOf(TGroup group)

@@ -226,7 +226,6 @@ namespace DDay.iCal
         /// <returns>A TimeZoneInfo object for the specified iCalDateTime</returns>
         virtual public TimeZoneObservance? GetTimeZoneObservance(IDateTime dt)
         {
-            Trace.TraceInformation("Getting time zone for '" + dt + "'...", "Time Zone");
             foreach (var tzi in TimeZoneInfos)
             {
                 var observance = tzi.GetObservance(dt);
