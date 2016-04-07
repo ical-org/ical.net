@@ -54,6 +54,9 @@ namespace DDay.iCal.Serialization.iCalendar
             }
         }
 
+        internal static readonly Regex _narrowRequestMatch = new Regex(@"(.*?[^\\]);(.*?[^\\]);(.+)", RegexOptions.Compiled);
+        internal static readonly Regex _broadRequestMatch = new Regex(@"(.*?[^\\]);(.+)", RegexOptions.Compiled);
+
         public override object Deserialize(TextReader tr)
         {
             var value = tr.ReadToEnd();
@@ -72,9 +75,9 @@ namespace DDay.iCal.Serialization.iCalendar
                     var factory = GetService<ISerializerFactory>();
                     if (factory != null)
                     {
-                        var match = Regex.Match(value, @"(.*?[^\\]);(.*?[^\\]);(.+)");
+                        var match = _narrowRequestMatch.Match(value);
                         if (!match.Success)
-                            match = Regex.Match(value, @"(.*?[^\\]);(.+)");
+                            match = _broadRequestMatch.Match(value);
 
                         if (match.Success)
                         {

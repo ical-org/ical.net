@@ -53,13 +53,17 @@ namespace DDay.iCal.Serialization.iCalendar
             return null;
         }
 
+        internal static readonly Regex _timespanMatch =
+            new Regex(@"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?))$",
+                RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
         public override object Deserialize(TextReader tr)
         {
             var value = tr.ReadToEnd();
 
             try
             {
-                var match = Regex.Match(value, @"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?))$");
+                var match = _timespanMatch.Match(value);
                 var days = 0;
                 var hours = 0;
                 var minutes = 0;

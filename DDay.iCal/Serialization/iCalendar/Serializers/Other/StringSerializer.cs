@@ -23,25 +23,29 @@ namespace DDay.iCal.Serialization.iCalendar
 
         #region Protected Methods
 
+        internal static readonly Regex _singleBackslashMatch = new Regex(@"(?<!\\)\\(?!\\)", RegexOptions.Compiled);
+
         virtual protected string Unescape(string value)
         {
             // added null check - you can't call .Replace on a null
             // string, but you can just return null as a string
-            if (value != null)
+            if (string.IsNullOrWhiteSpace(value))
             {
-                value = value.Replace(@"\n", "\n");
-                value = value.Replace(@"\N", "\n");
-                value = value.Replace(@"\;", ";");
-                value = value.Replace(@"\,", ",");
-                // NOTE: double quotes aren't escaped in RFC2445, but are in Mozilla Sunbird (0.5-)
-                value = value.Replace("\\\"", "\"");
-
-                // Replace all single-backslashes with double-backslashes.
-                value = Regex.Replace(value, @"(?<!\\)\\(?!\\)", "\\\\");
-
-                // Unescape double backslashes
-                value = value.Replace(@"\\", @"\");
+                return value;
             }
+
+            value = value.Replace(@"\n", "\n");
+            value = value.Replace(@"\N", "\n");
+            value = value.Replace(@"\;", ";");
+            value = value.Replace(@"\,", ",");
+            // NOTE: double quotes aren't escaped in RFC2445, but are in Mozilla Sunbird (0.5-)
+            value = value.Replace("\\\"", "\"");
+
+            // Replace all single-backslashes with double-backslashes.
+            value = _singleBackslashMatch.Replace(value, "\\\\");
+
+            // Unescape double backslashes
+            value = value.Replace(@"\\", @"\");
             return value;
         }
 
@@ -115,6 +119,8 @@ namespace DDay.iCal.Serialization.iCalendar
             return null;
         }
 
+        internal static readonly Regex _unescapedCommas = new Regex(@"[^\\](,)", RegexOptions.Compiled);
+
         public override object Deserialize(TextReader tr)
         {
             if (tr != null)
@@ -149,7 +155,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 var i = 0;
                 if (serializeAsList)
                 {
-                    var matches = Regex.Matches(value, @"[^\\](,)");
+                    var matches = _unescapedCommas.Matches(value);
                     foreach (Match match in matches)
                     {
                         var newValue = dt != null ? Decode(dt, value.Substring(i, match.Index - i + 1)) : value.Substring(i, match.Index - i + 1);

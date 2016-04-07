@@ -72,6 +72,10 @@ namespace DDay.iCal.Serialization.iCalendar
             return null;
         }
 
+        private const RegexOptions _ciCompiled = RegexOptions.Compiled | RegexOptions.IgnoreCase;
+        internal static readonly Regex _dateOnlyMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))?$", _ciCompiled);
+        internal static readonly Regex _fullDateTimePatternMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))T((\d{2})(\d{2})(\d{2})(Z)?)$", _ciCompiled);
+
         public override object Deserialize(TextReader tr)
         {
             var value = tr.ReadToEnd();
@@ -81,14 +85,10 @@ namespace DDay.iCal.Serialization.iCalendar
             {
                 // Decode the value as necessary
                 value = Decode(dt, value);
-                var values = value.Split('T');
 
-                var dateOnlyPattern = @"^((\d{4})(\d{2})(\d{2}))?$";
-                var fullPattern = @"^((\d{4})(\d{2})(\d{2}))T((\d{2})(\d{2})(\d{2})(Z)?)$";
-
-                var match = Regex.Match(value, fullPattern, RegexOptions.IgnoreCase);
+                var match = _fullDateTimePatternMatch.Match(value);
                 if (!match.Success)
-                    match = Regex.Match(value, dateOnlyPattern, RegexOptions.IgnoreCase);
+                    match = _dateOnlyMatch.Match(value);
 
                 if (!match.Success)
                     return null;

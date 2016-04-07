@@ -29,6 +29,8 @@ namespace DDay.iCal.Serialization.iCalendar
             return null;
         }
 
+        internal static readonly Regex _decodeOffset = new Regex(@"(\+|-)(\d{2})(\d{2})(\d{2})?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
         public override object Deserialize(TextReader tr)
         {
             var value = tr.ReadToEnd();
@@ -39,7 +41,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 // Decode the value as necessary
                 value = Decode(offset, value);
 
-                var match = Regex.Match(value, @"(\+|-)(\d{2})(\d{2})(\d{2})?");
+                var match = _decodeOffset.Match(value);
                 if (match.Success)
                 {
                     try

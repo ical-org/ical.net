@@ -49,13 +49,15 @@ namespace DDay.iCal
             return s;
         }
 
+        internal static readonly Regex _normalizeToCrLf = new Regex(@"((\r(?=[^\n]))|((?<=[^\r])\n))", RegexOptions.Compiled);
+
         /// <summary>
         /// Normalizes line endings, converting "\r" into "\r\n" and "\n" into "\r\n".        
         /// </summary>
         public static TextReader Normalize(string s, ISerializationContext ctx)
         {
             // Replace \r and \n with \r\n.
-            s = Regex.Replace(s, @"((\r(?=[^\n]))|((?<=[^\r])\n))", "\r\n");
+            s = _normalizeToCrLf.Replace(s, "\r\n");
 
             var settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
             if (settings == null || !settings.EnsureAccurateLineNumbers)
@@ -73,6 +75,8 @@ namespace DDay.iCal
             return reader;
         }
 
+        internal static readonly Regex _newLineMatch = new Regex(@"(\r\n[ \t])", RegexOptions.Compiled);
+
         /// <summary>
         /// Unwraps lines from the RFC 2445 "line folding" technique.
         /// NOTE: this method makes the line/col numbers output from
@@ -80,7 +84,7 @@ namespace DDay.iCal
         /// </summary>
         public static string UnwrapLines(string s)
         {
-            return Regex.Replace(s, @"(\r\n[ \t])", string.Empty);
+            return _newLineMatch.Replace(s, string.Empty);
         }
 
         public static TextReader UnwrapLines(TextReader tr)

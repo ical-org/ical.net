@@ -25,6 +25,8 @@ namespace DDay.iCal.Serialization.iCalendar
             return null;
         }
 
+        internal static readonly Regex _statusCode = new Regex(@"\d(\.\d+)*", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
         public override object Deserialize(TextReader tr)
         {
             var value = tr.ReadToEnd();
@@ -35,12 +37,11 @@ namespace DDay.iCal.Serialization.iCalendar
                 // Decode the value as needed
                 value = Decode(sc, value);
                                 
-                var match = Regex.Match(value, @"\d(\.\d+)*");
+                var match = _statusCode.Match(value);
                 if (match.Success)
                 {
-                    int[] iparts;
                     var parts = match.Value.Split('.');
-                    iparts = new int[parts.Length];
+                    var iparts = new int[parts.Length];
                     for (var i = 0; i < parts.Length; i++)
                     {
                         int num;
