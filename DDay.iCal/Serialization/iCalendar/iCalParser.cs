@@ -10,9 +10,8 @@
 namespace DDay.iCal
 {
 	// Generate the header common to all output files.
-	using System;
-	
-	using TokenBuffer              = antlr.TokenBuffer;
+
+    using TokenBuffer              = antlr.TokenBuffer;
 	using IToken                   = antlr.IToken;
 	using TokenStream              = antlr.TokenStream;
 	using NoViableAltException     = antlr.NoViableAltException;
