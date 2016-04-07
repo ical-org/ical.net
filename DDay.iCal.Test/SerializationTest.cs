@@ -538,12 +538,6 @@ namespace DDay.iCal.Test
             Assert.AreEqual(28, iCal.Events.Count);
         }
 
-        [Test, Category("Serialization")]
-        public void Encoding1()
-        {
-            SerializeTest("Encoding1.ics", typeof(iCalendarSerializer));
-        }
-
         [Test]
         public void Encoding2()
         {
