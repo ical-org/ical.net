@@ -119,37 +119,6 @@ namespace DDay.iCal.Test
                 Assert.AreEqual(enum1.Current, enum2.Current, value + " do not match");
         }
 
-        [Test, Category("Serialization")]
-        public void Alarm1()
-        {
-            // Create a new iCalendar
-            iCalendar iCal = new iCalendar();
-
-            // Create the event, and add it to the iCalendar
-            Event evt = iCal.Create<Event>();
-
-            evt.Start = new iCalDateTime(2010, 7, 3, 8, 0, 0);
-            evt.End = evt.Start.AddHours(1);
-            evt.Summary = "Test event";
-            evt.Description = "Some description";
-
-            Alarm alarm = new Alarm();
-            alarm.Action = AlarmAction.Display;
-            alarm.Summary = "Alarm for the first Monday and second-to-last Monday of each month";
-            alarm.Trigger = new Trigger(TimeSpan.FromMinutes(-30));
-            alarm.Repeat = 2;
-            alarm.Duration = TimeSpan.FromMinutes(10);
-
-            // Add the alarm to the event
-            evt.Alarms.Add(alarm);
-
-            iCalendarSerializer serializer = new iCalendarSerializer();
-            serializer.Serialize(iCal, @"Calendars\Serialization\Alarm1.ics");
-
-            IICalendar loadedCalendar = iCalendar.LoadFromFile(@"Calendars\Serialization\Alarm1.ics")[0];
-            CompareCalendars(iCal, loadedCalendar);
-        }
-
         /// <summary>
         /// Ensures that a basic, binary attachment functions as it should.
         /// </summary>
