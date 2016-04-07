@@ -321,31 +321,6 @@ namespace DDay.iCal.Test
         }
 
         /// <summary>
-        /// Tests that creating attendees by hand is serialized correctly.
-        /// </summary>
-        [Test, Category("Serialization")]
-        public void Attendee3()
-        {
-            IICalendar iCal = new iCalendar();
-            IEvent evt = iCal.Create<Event>();
-
-            evt.Summary = "Test event";
-            evt.Start = new iCalDateTime(2010, 7, 3, 8, 0, 0);
-            evt.End = new iCalDateTime(2010, 7, 3, 9, 0, 0);
-
-            IAttendee attendee = new Attendee("mailto:joecool@example.com");
-            attendee.Members.Add("mailto:DEV-GROUP@example.com");
-            evt.Attendees.Add(attendee);
-
-            iCalendarSerializer serializer = new iCalendarSerializer();
-            serializer.Serialize(iCal, @"Calendars\Serialization\Attendee3.ics");
-
-            // Ensure the loaded calendar and our original are identical
-            IICalendar loadedCalendar = iCalendar.LoadFromFile(@"Calendars\Serialization\Attendee3.ics")[0];
-            CompareCalendars(iCal, loadedCalendar);
-        }
-
-        /// <summary>
         /// Tests that Lotus Notes-style properties are properly handled.
         /// https://sourceforge.net/tracker/?func=detail&aid=2033495&group_id=187422&atid=921236
         /// Sourceforge bug #2033495
