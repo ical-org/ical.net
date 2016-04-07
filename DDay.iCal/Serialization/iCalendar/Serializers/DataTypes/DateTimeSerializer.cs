@@ -11,7 +11,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
         private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
         {
-            DateTime dt = DateTime.MinValue;
+            var dt = DateTime.MinValue;
 
             // NOTE: determine if a date/time value exceeds the representable date/time values in .NET.
             // If so, let's automatically adjust the date/time to compensate.
@@ -45,7 +45,7 @@ namespace DDay.iCal.Serialization.iCalendar
         {            
             if (obj is IDateTime)
             {
-                IDateTime dt = (IDateTime)obj;
+                var dt = (IDateTime)obj;
 
                 // Assign the TZID for the date/time value.
                 if (dt.TZID != null)
@@ -58,7 +58,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 if (!dt.HasTime)
                     dt.SetValueType("DATE");
 
-                string value = string.Format("{0:0000}{1:00}{2:00}", dt.Year, dt.Month, dt.Day);
+                var value = string.Format("{0:0000}{1:00}{2:00}", dt.Year, dt.Month, dt.Day);
                 if (dt.HasTime)
                 {
                     value += string.Format("T{0:00}{1:00}{2:00}", dt.Hour, dt.Minute, dt.Second);
@@ -74,19 +74,19 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override object Deserialize(TextReader tr)
         {
-            string value = tr.ReadToEnd();
+            var value = tr.ReadToEnd();
 
-            IDateTime dt = CreateAndAssociate() as IDateTime;
+            var dt = CreateAndAssociate() as IDateTime;
             if (dt != null)
             {
                 // Decode the value as necessary
                 value = Decode(dt, value);
-                string[] values = value.Split('T');
+                var values = value.Split('T');
 
-                string dateOnlyPattern = @"^((\d{4})(\d{2})(\d{2}))?$";
-                string fullPattern = @"^((\d{4})(\d{2})(\d{2}))T((\d{2})(\d{2})(\d{2})(Z)?)$";
+                var dateOnlyPattern = @"^((\d{4})(\d{2})(\d{2}))?$";
+                var fullPattern = @"^((\d{4})(\d{2})(\d{2}))T((\d{2})(\d{2})(\d{2})(Z)?)$";
 
-                Match match = Regex.Match(value, fullPattern, RegexOptions.IgnoreCase);
+                var match = Regex.Match(value, fullPattern, RegexOptions.IgnoreCase);
                 if (!match.Success)
                     match = Regex.Match(value, dateOnlyPattern, RegexOptions.IgnoreCase);
 
@@ -94,14 +94,14 @@ namespace DDay.iCal.Serialization.iCalendar
                     return null;
                 else
                 {
-                    DateTime now = DateTime.Now;
+                    var now = DateTime.Now;
 
-                    int year = now.Year;
-                    int month = now.Month;
-                    int date = now.Day;
-                    int hour = 0;
-                    int minute = 0;
-                    int second = 0;
+                    var year = now.Year;
+                    var month = now.Month;
+                    var date = now.Day;
+                    var hour = 0;
+                    var minute = 0;
+                    var second = 0;
 
                     if (match.Groups[1].Success)
                     {

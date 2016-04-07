@@ -57,7 +57,7 @@ namespace DDay.iCal
         {
             base.CopyFrom(obj);
 
-            IPeriod p = obj as IPeriod;
+            var p = obj as IPeriod;
             if (p != null)
             {
                 StartTime = p.StartTime;
@@ -71,7 +71,7 @@ namespace DDay.iCal
         {
             if (obj is IPeriod)
             {
-                IPeriod p = (IPeriod)obj;
+                var p = (IPeriod)obj;
                 if (MatchesDateOnly || p.MatchesDateOnly)
                 {
                     return
@@ -103,7 +103,7 @@ namespace DDay.iCal
 
         public override string ToString()
         {
-            PeriodSerializer periodSerializer = new PeriodSerializer();
+            var periodSerializer = new PeriodSerializer();
             return periodSerializer.SerializeToString(this);
         }
 

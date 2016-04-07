@@ -81,7 +81,7 @@ namespace DDay.iCal
         {
             unchecked
             {
-                int hashCode = base.GetHashCode();
+                var hashCode = base.GetHashCode();
                 hashCode = (hashCode * 397) ^ (m_Evaluator != null ? m_Evaluator.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ m_End.GetHashCode();
                 return hashCode;
@@ -96,7 +96,7 @@ namespace DDay.iCal
         {
             get
             {
-                ITimeZone tz = Parent as ITimeZone;
+                var tz = Parent as ITimeZone;
                 if (tz != null)
                     return tz.TZID;
                 return null;
@@ -166,7 +166,7 @@ namespace DDay.iCal
                 throw new Exception("Cannot call GetObservance() on a TimeZoneInfo whose Parent property is null.");
 
             // Normalize date/time values within this time zone to a UTC value.
-            DateTime normalizedDt = dt.Value;
+            var normalizedDt = dt.Value;
             if (string.Equals(dt.TZID, TZID))
             {
                 dt = new iCalDateTime(OffsetTo.ToUTC(dt.Value));
@@ -175,12 +175,12 @@ namespace DDay.iCal
 
             // Let's evaluate our time zone observances to find the 
             // observance that applies to this date/time value.
-            IEvaluator parentEval = Parent.GetService(typeof(IEvaluator)) as IEvaluator;
+            var parentEval = Parent.GetService(typeof(IEvaluator)) as IEvaluator;
             if (parentEval != null)
             {
                 // Evaluate the date/time in question.
                 parentEval.Evaluate(Start, DateUtil.GetSimpleDateTimeData(Start), normalizedDt, true);
-                foreach (IPeriod period in m_Evaluator.Periods)
+                foreach (var period in m_Evaluator.Periods)
                 {
                     if (period.Contains(dt))
                         return new TimeZoneObservance(period, this);
@@ -191,7 +191,7 @@ namespace DDay.iCal
 
         virtual public bool Contains(IDateTime dt)
         {
-            TimeZoneObservance? retval = GetObservance(dt);
+            var retval = GetObservance(dt);
             return (retval != null && retval.HasValue);
         }
 

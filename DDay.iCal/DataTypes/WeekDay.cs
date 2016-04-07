@@ -62,7 +62,7 @@ namespace DDay.iCal
 
         public WeekDay(string value)
         {
-            DDay.iCal.Serialization.iCalendar.WeekDaySerializer serializer =
+            var serializer =
                 new DDay.iCal.Serialization.iCalendar.WeekDaySerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
@@ -75,7 +75,7 @@ namespace DDay.iCal
         {
             if (obj is WeekDay)
             {
-                WeekDay ds = (WeekDay)obj;
+                var ds = (WeekDay)obj;
                 return ds.Offset == Offset &&
                     ds.DayOfWeek == DayOfWeek;
             }
@@ -92,7 +92,7 @@ namespace DDay.iCal
             base.CopyFrom(obj);
             if (obj is IWeekDay)
             {
-                IWeekDay bd = (IWeekDay)obj;
+                var bd = (IWeekDay)obj;
                 this.Offset = bd.Offset;
                 this.DayOfWeek = bd.DayOfWeek;
             }
@@ -114,7 +114,7 @@ namespace DDay.iCal
                 throw new ArgumentException();
             else 
             {
-                int compare = this.DayOfWeek.CompareTo(bd.DayOfWeek);
+                var compare = this.DayOfWeek.CompareTo(bd.DayOfWeek);
                 if (compare == 0)
                     compare = this.Offset.CompareTo(bd.Offset);
                 return compare;

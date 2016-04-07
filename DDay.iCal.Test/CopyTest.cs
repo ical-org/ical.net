@@ -15,8 +15,8 @@ namespace DDay.iCal.Test
 
         private void CopyCalendarTest(string filename)
         {
-            IICalendar iCal1 = iCalendar.LoadFromFile(@"Calendars\Serialization\" + filename)[0];
-            IICalendar iCal2 = iCal1.Copy<IICalendar>();
+            var iCal1 = iCalendar.LoadFromFile(@"Calendars\Serialization\" + filename)[0];
+            var iCal2 = iCal1.Copy<IICalendar>();
             SerializationTest.CompareCalendars(iCal1, iCal2);
         }
 

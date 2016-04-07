@@ -46,7 +46,7 @@ namespace DDay.iCal
         static public T LoadFromStream<T>(Stream stream, Encoding encoding)
             where T : ICalendarComponent
         {
-            ComponentSerializer serializer = new ComponentSerializer();            
+            var serializer = new ComponentSerializer();            
             object obj = LoadFromStream(stream, encoding, serializer);
             if (obj is T)
                 return (T)obj;
@@ -64,11 +64,11 @@ namespace DDay.iCal
 
         static public ICalendarComponent LoadFromStream(TextReader tr)
         {
-            string text = tr.ReadToEnd();
+            var text = tr.ReadToEnd();
             tr.Close();
 
-            byte[] memoryBlock = Encoding.UTF8.GetBytes(text);
-            MemoryStream ms = new MemoryStream(memoryBlock);
+            var memoryBlock = Encoding.UTF8.GetBytes(text);
+            var ms = new MemoryStream(memoryBlock);
             return LoadFromStream(ms, Encoding.UTF8);
         }
 
@@ -133,11 +133,11 @@ namespace DDay.iCal
         {
             base.CopyFrom(obj);
 
-            ICalendarComponent c = obj as ICalendarComponent;
+            var c = obj as ICalendarComponent;
             if (c != null)
             {
                 Properties.Clear();
-                foreach (ICalendarProperty p in c.Properties)
+                foreach (var p in c.Properties)
                     Properties.Add(p.Copy<ICalendarProperty>());
             }
         }
@@ -151,7 +151,7 @@ namespace DDay.iCal
         /// </summary>
         virtual public void AddProperty(string name, string value)
         {
-            CalendarProperty p = new CalendarProperty(name, value);
+            var p = new CalendarProperty(name, value);
             AddProperty(p);
         }
 

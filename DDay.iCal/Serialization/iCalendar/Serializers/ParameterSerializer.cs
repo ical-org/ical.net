@@ -28,11 +28,11 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {
-            ICalendarParameter p = obj as ICalendarParameter;
+            var p = obj as ICalendarParameter;
             if (p != null)
             {
-                string result = p.Name + "=";
-                string value = string.Join(",", p.Values.ToArray());
+                var result = p.Name + "=";
+                var value = string.Join(",", p.Values.ToArray());
 
                 // "Section 3.2:  Property parameter values MUST NOT contain the DQUOTE character."
                 // Therefore, let's strip any double quotes from the value.                
@@ -50,14 +50,14 @@ namespace DDay.iCal.Serialization.iCalendar
         public override object Deserialize(TextReader tr)
         {
             // Create a lexer for our text stream
-            iCalLexer lexer = new iCalLexer(tr);
-            iCalParser parser = new iCalParser(lexer);
+            var lexer = new iCalLexer(tr);
+            var parser = new iCalParser(lexer);
 
             // Get our serialization context
-            ISerializationContext ctx = SerializationContext;
+            var ctx = SerializationContext;
 
             // Parse the component!
-            ICalendarParameter p = parser.parameter(ctx, null);
+            var p = parser.parameter(ctx, null);
 
             // Close our text stream
             tr.Close();

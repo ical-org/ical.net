@@ -15,13 +15,13 @@ namespace DDay.iCal.Serialization.iCalendar
         {
             try
             {
-                int i = Convert.ToInt32(integer);
+                var i = Convert.ToInt32(integer);
 
-                ICalendarObject obj = SerializationContext.Peek() as ICalendarObject;
+                var obj = SerializationContext.Peek() as ICalendarObject;
                 if (obj != null)
                 {
                     // Encode the value as needed.
-                    EncodableDataType dt = new EncodableDataType();
+                    var dt = new EncodableDataType();
                     dt.AssociatedObject = obj;
                     return Encode(dt, i.ToString());
                 }
@@ -35,15 +35,15 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override object Deserialize(TextReader tr)
         {
-            string value = tr.ReadToEnd();
+            var value = tr.ReadToEnd();
 
             try
             {
-                ICalendarObject obj = SerializationContext.Peek() as ICalendarObject;
+                var obj = SerializationContext.Peek() as ICalendarObject;
                 if (obj != null)
                 {
                     // Decode the value, if necessary!
-                    EncodableDataType dt = new EncodableDataType();
+                    var dt = new EncodableDataType();
                     dt.AssociatedObject = obj;
                     value = Decode(dt, value);
                 }

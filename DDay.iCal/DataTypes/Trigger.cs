@@ -84,7 +84,7 @@ namespace DDay.iCal
         public Trigger(string value)
             : this()
         {
-            TriggerSerializer serializer = new TriggerSerializer();
+            var serializer = new TriggerSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
@@ -97,7 +97,7 @@ namespace DDay.iCal
             base.CopyFrom(obj);
             if (obj is ITrigger)
             {
-                ITrigger t = (ITrigger)obj;
+                var t = (ITrigger)obj;
                 DateTime = t.DateTime;
                 Duration = t.Duration;
                 Related = t.Related;

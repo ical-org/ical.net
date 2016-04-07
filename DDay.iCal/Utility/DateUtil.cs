@@ -47,7 +47,7 @@ namespace DDay.iCal
             Debug.Assert(dt1 != null && dt2 != null);
 
             // Associate the date/time with the first.
-            IDateTime copy = dt2.Copy<IDateTime>();
+            var copy = dt2.Copy<IDateTime>();
             copy.AssociateWith(dt1);
 
             // If the dt1 time does not occur in the same time zone as the

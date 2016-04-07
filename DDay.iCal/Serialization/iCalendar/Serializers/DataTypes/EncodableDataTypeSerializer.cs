@@ -25,7 +25,7 @@
                     return value;
 
                 // Return the value in the current encoding
-                IEncodingStack encodingStack = GetService<IEncodingStack>();
+                var encodingStack = GetService<IEncodingStack>();
                 return Encode(dt, encodingStack.Current.GetBytes(value));
             }
             return null;
@@ -38,11 +38,11 @@
                 if (dt == null || dt.Encoding == null)
                 {
                     // Default to the current encoding
-                    IEncodingStack encodingStack = GetService<IEncodingStack>();
+                    var encodingStack = GetService<IEncodingStack>();
                     return encodingStack.Current.GetString(data);
                 }
 
-                IEncodingProvider encodingProvider = GetService<IEncodingProvider>();
+                var encodingProvider = GetService<IEncodingProvider>();
                 if (encodingProvider != null)
                     return encodingProvider.Encode(dt.Encoding, data);
             }
@@ -51,11 +51,11 @@
 
         protected string Decode(IEncodableDataType dt, string value)
         {
-            byte[] data = DecodeData(dt, value);
+            var data = DecodeData(dt, value);
             if (data != null)
             {
                 // Default to the current encoding
-                IEncodingStack encodingStack = GetService<IEncodingStack>();
+                var encodingStack = GetService<IEncodingStack>();
                 return encodingStack.Current.GetString(data);
             }
             return null;
@@ -68,11 +68,11 @@
                 if (dt == null || dt.Encoding == null)
                 {
                     // Default to the current encoding
-                    IEncodingStack encodingStack = GetService<IEncodingStack>();
+                    var encodingStack = GetService<IEncodingStack>();
                     return encodingStack.Current.GetBytes(value);
                 }
 
-                IEncodingProvider encodingProvider = GetService<IEncodingProvider>();
+                var encodingProvider = GetService<IEncodingProvider>();
                 if (encodingProvider != null)
                     return encodingProvider.DecodeData(dt.Encoding, value);
             }

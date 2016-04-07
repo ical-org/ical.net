@@ -119,10 +119,10 @@ namespace DDay.iCal
                     if (FromDate == null)
                         FromDate = rc.Start.Copy<IDateTime>();
 
-                    TimeSpan d = default(TimeSpan);
-                    foreach (Occurrence o in rc.GetOccurrences(FromDate, ToDate))
+                    var d = default(TimeSpan);
+                    foreach (var o in rc.GetOccurrences(FromDate, ToDate))
                     {
-                        IDateTime dt = o.Period.StartTime;
+                        var dt = o.Period.StartTime;
                         if (Trigger.Related == TriggerRelation.End)
                         {
                             if (o.Period.EndTime != null)
@@ -142,7 +142,7 @@ namespace DDay.iCal
                 }
                 else
                 {
-                    IDateTime dt = Trigger.DateTime.Copy<IDateTime>();
+                    var dt = Trigger.DateTime.Copy<IDateTime>();
                     dt.AssociatedObject = this;
                     Occurrences.Add(new AlarmOccurrence(this, dt, rc));
                 }
@@ -164,10 +164,10 @@ namespace DDay.iCal
         /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
         virtual public IList<AlarmOccurrence> Poll(IDateTime Start, IDateTime End)
         {
-            List<AlarmOccurrence> Results = new List<AlarmOccurrence>();
+            var Results = new List<AlarmOccurrence>();
 
             // Evaluate the alarms to determine the recurrences
-            RecurringComponent rc = Parent as RecurringComponent;
+            var rc = Parent as RecurringComponent;
             if (rc != null)
             {
                 Results.AddRange(GetOccurrences(rc, Start, End));
@@ -189,13 +189,13 @@ namespace DDay.iCal
         {
             if (Repeat != null)
             {
-                int len = Occurrences.Count;
-                for (int i = 0; i < len; i++)
+                var len = Occurrences.Count;
+                for (var i = 0; i < len; i++)
                 {
-                    AlarmOccurrence ao = Occurrences[i];
-                    IDateTime alarmTime = ao.DateTime.Copy<IDateTime>();
+                    var ao = Occurrences[i];
+                    var alarmTime = ao.DateTime.Copy<IDateTime>();
 
-                    for (int j = 0; j < Repeat; j++)
+                    for (var j = 0; j < Repeat; j++)
                     {
                         alarmTime = alarmTime.Add(Duration);
                         Occurrences.Add(new AlarmOccurrence(this, alarmTime.Copy<IDateTime>(), ao.Component));

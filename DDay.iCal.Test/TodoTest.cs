@@ -17,16 +17,16 @@ namespace DDay.iCal.Test
                 
         public void TestTodoActive(string calendar, ArrayList items, params int[] numPeriods)
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
+            var iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
             ProgramTest.TestCal(iCal);
-            ITodo todo = iCal.Todos[0];
+            var todo = iCal.Todos[0];
             
-            for (int i = 0; i < items.Count; i += 2)
+            for (var i = 0; i < items.Count; i += 2)
             {
-                iCalDateTime dt = (iCalDateTime)items[i];                
+                var dt = (iCalDateTime)items[i];                
                 dt.TZID = tzid;
 
-                bool tf = (bool)items[i + 1];
+                var tf = (bool)items[i + 1];
                 if (tf)
                     Assert.IsTrue(todo.IsActive(dt), "Todo should be active at " + dt);
                 else Assert.IsFalse(todo.IsActive(dt), "Todo should not be active at " + dt);
@@ -35,7 +35,7 @@ namespace DDay.iCal.Test
             if (numPeriods != null &&
                 numPeriods.Length > 0)
             {
-                IEvaluator evaluator = todo.GetService(typeof(IEvaluator)) as IEvaluator;
+                var evaluator = todo.GetService(typeof(IEvaluator)) as IEvaluator;
                 Assert.IsNotNull(evaluator);
                 Assert.AreEqual(
                     numPeriods[0],
@@ -46,16 +46,16 @@ namespace DDay.iCal.Test
 
         public void TestTodoCompleted(string calendar, ArrayList items)
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
+            var iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
             ProgramTest.TestCal(iCal);
-            ITodo todo = iCal.Todos[0];
+            var todo = iCal.Todos[0];
             
-            for (int i = 0; i < items.Count; i += 2)
+            for (var i = 0; i < items.Count; i += 2)
             {
-                IDateTime dt = (IDateTime)items[i];
+                var dt = (IDateTime)items[i];
                 dt.TZID = tzid;
 
-                bool tf = (bool)items[i + 1];
+                var tf = (bool)items[i + 1];
                 if (tf)
                     Assert.IsTrue(todo.IsCompleted(dt), "Todo should be completed at " + dt);
                 else Assert.IsFalse(todo.IsCompleted(dt), "Todo should not be completed at " + dt);
@@ -65,7 +65,7 @@ namespace DDay.iCal.Test
         [Test, Category("Todo")]
         public void Todo1()
         {
-            ArrayList items = new ArrayList();
+            var items = new ArrayList();
             items.Add(new iCalDateTime(2200, 12, 31, 0, 0, 0)); items.Add(true);
 
             TestTodoActive("Todo1.ics", items);
@@ -74,7 +74,7 @@ namespace DDay.iCal.Test
         [Test, Category("Todo")]
         public void Todo2()
         {
-            ArrayList items = new ArrayList();
+            var items = new ArrayList();
             items.Add(new iCalDateTime(2006, 7, 28, 8, 0, 0)); items.Add(false);
             items.Add(new iCalDateTime(2006, 7, 28, 8, 59, 59)); items.Add(false);
             items.Add(new iCalDateTime(2006, 7, 28, 9, 0, 0)); items.Add(true);
@@ -86,7 +86,7 @@ namespace DDay.iCal.Test
         [Test, Category("Todo")]
         public void Todo3()
         {
-            ArrayList items = new ArrayList();
+            var items = new ArrayList();
             items.Add(new iCalDateTime(2006, 7, 28, 8, 0, 0)); items.Add(false);
             items.Add(new iCalDateTime(2200, 12, 31, 0, 0, 0)); items.Add(false);
 
@@ -96,7 +96,7 @@ namespace DDay.iCal.Test
         [Test, Category("Todo")]
         public void Todo4()
         {
-            ArrayList items = new ArrayList();
+            var items = new ArrayList();
             items.Add(new iCalDateTime(2006, 07, 28, 8, 0, 0)); items.Add(true);
             items.Add(new iCalDateTime(2006, 07, 28, 9, 0, 0)); items.Add(true);
             items.Add(new iCalDateTime(2006, 8, 1, 0, 0, 0)); items.Add(true);
@@ -107,7 +107,7 @@ namespace DDay.iCal.Test
         [Test, Category("Todo")]
         public void Todo5()
         {
-            ArrayList items = new ArrayList();
+            var items = new ArrayList();
             items.Add(new iCalDateTime(2006, 7, 28, 9, 0, 0)); items.Add(false);
             items.Add(new iCalDateTime(2006, 7, 29, 9, 0, 0)); items.Add(false);
             items.Add(new iCalDateTime(2006, 7, 30, 9, 0, 0)); items.Add(false);
@@ -127,7 +127,7 @@ namespace DDay.iCal.Test
         [Test, Category("Todo")]
         public void Todo6()
         {
-            ArrayList items = new ArrayList();
+            var items = new ArrayList();
             items.Add(new iCalDateTime(2006, 7, 28, 9, 0, 0)); items.Add(false);
             items.Add(new iCalDateTime(2006, 7, 29, 9, 0, 0)); items.Add(false);
             items.Add(new iCalDateTime(2006, 7, 30, 9, 0, 0)); items.Add(false);
@@ -147,7 +147,7 @@ namespace DDay.iCal.Test
         [Test, Category("Todo")]
         public void Todo7()
         {
-            ArrayList items = new ArrayList();
+            var items = new ArrayList();
             items.Add(new iCalDateTime(2006, 7, 28, 9, 0, 0)); items.Add(false);
             items.Add(new iCalDateTime(2006, 7, 29, 9, 0, 0)); items.Add(false);
             items.Add(new iCalDateTime(2006, 7, 30, 9, 0, 0)); items.Add(false);
@@ -171,10 +171,10 @@ namespace DDay.iCal.Test
         [Test, Category("Todo")]
         public void Todo7_1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Todo\Todo7.ics")[0];
-            ITodo todo = iCal.Todos[0];
+            var iCal = iCalendar.LoadFromFile(@"Calendars\Todo\Todo7.ics")[0];
+            var todo = iCal.Todos[0];
 
-            ArrayList items = new ArrayList();
+            var items = new ArrayList();
             items.Add(new iCalDateTime(2006, 7, 28, 9, 0, 0, tzid)); 
             items.Add(new iCalDateTime(2006, 8, 4, 9, 0, 0, tzid)); 
             items.Add(new iCalDateTime(2006, 9, 1, 9, 0, 0, tzid));
@@ -186,7 +186,7 @@ namespace DDay.iCal.Test
             items.Add(new iCalDateTime(2007, 3, 2, 9, 0, 0, tzid));
             items.Add(new iCalDateTime(2007, 4, 6, 9, 0, 0, tzid));
 
-            IList<Occurrence> occurrences = todo.GetOccurrences(
+            var occurrences = todo.GetOccurrences(
                 new iCalDateTime(2006, 7, 1, 9, 0, 0),
                 new iCalDateTime(2007, 7, 1, 9, 0, 0));
 
@@ -197,14 +197,14 @@ namespace DDay.iCal.Test
                 occurrences.Count,
                 "TODO should have " + items.Count + " occurrences; it has " + occurrences.Count);
 
-            for (int i = 0; i < items.Count; i++)
+            for (var i = 0; i < items.Count; i++)
                 Assert.AreEqual(items[i], occurrences[i].Period.StartTime, "TODO should occur at " + items[i] + ", but does not.");            
         }
 
         [Test, Category("Todo")]
         public void Todo8()
         {
-            ArrayList items = new ArrayList();
+            var items = new ArrayList();
             items.Add(new iCalDateTime(2006, 7, 28, 9, 0, 0)); items.Add(false);
             items.Add(new iCalDateTime(2006, 7, 29, 9, 0, 0)); items.Add(false);
             items.Add(new iCalDateTime(2006, 7, 30, 9, 0, 0)); items.Add(false);
@@ -241,7 +241,7 @@ namespace DDay.iCal.Test
         [Test, Category("Todo")]
         public void Todo9()
         {
-            ArrayList items = new ArrayList();
+            var items = new ArrayList();
             items.Add(new iCalDateTime(2006, 7, 28, 9, 0, 0)); items.Add(false);
             items.Add(new iCalDateTime(2006, 7, 29, 9, 0, 0)); items.Add(false);
             items.Add(new iCalDateTime(2006, 7, 30, 9, 0, 0)); items.Add(false);

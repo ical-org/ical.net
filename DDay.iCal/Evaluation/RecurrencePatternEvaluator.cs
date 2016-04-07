@@ -69,7 +69,7 @@ namespace DDay.iCal
 
         private IRecurrencePattern ProcessRecurrencePattern(IDateTime referenceDate)
         {
-            RecurrencePattern r = new RecurrencePattern();
+            var r = new RecurrencePattern();
             r.CopyFrom(Pattern);
 
             // Convert the UNTIL value to one that matches the same time information as the reference date
@@ -215,9 +215,9 @@ namespace DDay.iCal
          */
         private List<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd, int maxCount, IRecurrencePattern pattern, bool includeReferenceDateInResults)
         {            
-            List<DateTime> dates = new List<DateTime>();
-            DateTime originalDate = DateUtil.GetSimpleDateTimeData(seed);
-            DateTime seedCopy = DateUtil.GetSimpleDateTimeData(seed);
+            var dates = new List<DateTime>();
+            var originalDate = DateUtil.GetSimpleDateTimeData(seed);
+            var seedCopy = DateUtil.GetSimpleDateTimeData(seed);
 
             if (includeReferenceDateInResults)
                 dates.Add(seedCopy);
@@ -226,7 +226,7 @@ namespace DDay.iCal
             // (only applicable where a COUNT is not specified)
             if (pattern.Count == int.MinValue)
             {
-                DateTime incremented = seedCopy;
+                var incremented = seedCopy;
                 IncrementDate(ref incremented, pattern, pattern.Interval);
                 while (incremented < periodStart)
                 {
@@ -235,11 +235,11 @@ namespace DDay.iCal
                 }
             }
 
-            bool?[] expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
+            var expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
 
-            int invalidCandidateCount = 0;
-            int noCandidateIncrementCount = 0;
-            DateTime candidate = DateTime.MinValue;
+            var invalidCandidateCount = 0;
+            var noCandidateIncrementCount = 0;
+            var candidate = DateTime.MinValue;
             while ((maxCount < 0) || (dates.Count < maxCount))
             {
                 if (pattern.Until != DateTime.MinValue && candidate != DateTime.MinValue && candidate > pattern.Until)
@@ -251,7 +251,7 @@ namespace DDay.iCal
                 if (pattern.Count >= 1 && (dates.Count + invalidCandidateCount) >= pattern.Count)
                     break;                
 
-                List<DateTime> candidates = GetCandidates(seedCopy, pattern, expandBehavior);
+                var candidates = GetCandidates(seedCopy, pattern, expandBehavior);
                 if (candidates.Count > 0)
                 {
                     noCandidateIncrementCount = 0;
@@ -259,7 +259,7 @@ namespace DDay.iCal
                     // sort candidates for identifying when UNTIL date is exceeded..
                     candidates.Sort();
 
-                    for (int i = 0; i < candidates.Count; i++)
+                    for (var i = 0; i < candidates.Count; i++)
                     {
                         candidate = candidates[i];
 
@@ -389,7 +389,7 @@ namespace DDay.iCal
          */
         private List<DateTime> GetCandidates(DateTime date, IRecurrencePattern pattern, bool?[] expandBehaviors)
         {
-            List<DateTime> dates = new List<DateTime>();
+            var dates = new List<DateTime>();
             dates.Add(date);
             dates = GetMonthVariants(dates, pattern, expandBehaviors[0]);
             dates = GetWeekNoVariants(dates, pattern, expandBehaviors[1]);
@@ -417,12 +417,12 @@ namespace DDay.iCal
             // sort the list before processing..
             dates.Sort();
 
-            List<DateTime> setPosDates = new List<DateTime>();
-            int size = dates.Count;
+            var setPosDates = new List<DateTime>();
+            var size = dates.Count;
 
-            for (int i = 0; i < pattern.BySetPosition.Count; i++)
+            for (var i = 0; i < pattern.BySetPosition.Count; i++)
             {
-                int pos = pattern.BySetPosition[i];
+                var pos = pattern.BySetPosition[i];
                 if (pos > 0 && pos <= size)
                 {
                     setPosDates.Add(dates[pos - 1]);
@@ -449,13 +449,13 @@ namespace DDay.iCal
             if (expand.HasValue && expand.Value)
             {
                 // Expand behavior
-                List<DateTime> monthlyDates = new List<DateTime>();
-                for (int i = 0; i < dates.Count; i++)
+                var monthlyDates = new List<DateTime>();
+                for (var i = 0; i < dates.Count; i++)
                 {
-                    DateTime date = dates[i];
-                    for (int j = 0; j < pattern.ByMonth.Count; j++)
+                    var date = dates[i];
+                    for (var j = 0; j < pattern.ByMonth.Count; j++)
                     {
-                        int month = pattern.ByMonth[j];
+                        var month = pattern.ByMonth[j];
                         date = date.AddMonths(month - date.Month);
                         monthlyDates.Add(date);
                     }
@@ -465,10 +465,10 @@ namespace DDay.iCal
             else
             {
                 // Limit behavior
-                for (int i = dates.Count - 1; i >= 0; i--)
+                for (var i = dates.Count - 1; i >= 0; i--)
                 {
-                    DateTime date = dates[i];
-                    for (int j = 0; j < pattern.ByMonth.Count; j++)
+                    var date = dates[i];
+                    for (var j = 0; j < pattern.ByMonth.Count; j++)
                     {
                         if (date.Month == pattern.ByMonth[j])
                             goto Next;
@@ -494,17 +494,17 @@ namespace DDay.iCal
             if (expand.HasValue && expand.Value)
             {
                 // Expand behavior
-                List<DateTime> weekNoDates = new List<DateTime>();
-                for (int i = 0; i < dates.Count; i++)
+                var weekNoDates = new List<DateTime>();
+                for (var i = 0; i < dates.Count; i++)
                 {
-                    DateTime date = dates[i];
-                    for (int j = 0; j < pattern.ByWeekNo.Count; j++)
+                    var date = dates[i];
+                    for (var j = 0; j < pattern.ByWeekNo.Count; j++)
                     {
                         // Determine our target week number
-                        int weekNo = pattern.ByWeekNo[j];
+                        var weekNo = pattern.ByWeekNo[j];
 
                         // Determine our current week number
-                        int currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+                        var currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
                         while (currWeekNo > weekNo)
                         {
                             // If currWeekNo > weekNo, then we're likely at the start of a year
@@ -522,7 +522,7 @@ namespace DDay.iCal
                         while (date.DayOfWeek != pattern.FirstDayOfWeek)
                             date = date.AddDays(-1);
 
-                        for (int k = 0; k < 7; k++)
+                        for (var k = 0; k < 7; k++)
                         {
                             weekNoDates.Add(date);
                             date = date.AddDays(1);
@@ -534,16 +534,16 @@ namespace DDay.iCal
             else
             {
                 // Limit behavior
-                for (int i = dates.Count - 1; i >= 0; i--)
+                for (var i = dates.Count - 1; i >= 0; i--)
                 {
-                    DateTime date = dates[i];
-                    for (int j = 0; j < pattern.ByWeekNo.Count; j++)
+                    var date = dates[i];
+                    for (var j = 0; j < pattern.ByWeekNo.Count; j++)
                     {
                         // Determine our target week number
-                        int weekNo = pattern.ByWeekNo[j];
+                        var weekNo = pattern.ByWeekNo[j];
 
                         // Determine our current week number
-                        int currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+                        var currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
 
                         if (weekNo == currWeekNo)
                             goto Next;
@@ -570,13 +570,13 @@ namespace DDay.iCal
             if (expand.HasValue && expand.Value)
             {
                 // Expand behavior
-                List<DateTime> yearDayDates = new List<DateTime>();
-                for (int i = 0; i < dates.Count; i++)
+                var yearDayDates = new List<DateTime>();
+                for (var i = 0; i < dates.Count; i++)
                 {
-                    DateTime date = dates[i];
-                    for (int j = 0; j < pattern.ByYearDay.Count; j++)
+                    var date = dates[i];
+                    for (var j = 0; j < pattern.ByYearDay.Count; j++)
                     {
-                        int yearDay = pattern.ByYearDay[j];
+                        var yearDay = pattern.ByYearDay[j];
 
                         DateTime newDate;
                         if (yearDay > 0)
@@ -592,12 +592,12 @@ namespace DDay.iCal
             else
             {
                 // Limit behavior
-                for (int i = dates.Count - 1; i >= 0; i--)
+                for (var i = dates.Count - 1; i >= 0; i--)
                 {
-                    DateTime date = dates[i];
-                    for (int j = 0; j < pattern.ByYearDay.Count; j++)
+                    var date = dates[i];
+                    for (var j = 0; j < pattern.ByYearDay.Count; j++)
                     {
-                        int yearDay = pattern.ByYearDay[j];
+                        var yearDay = pattern.ByYearDay[j];
 
                         DateTime newDate;
                         if (yearDay > 0)
@@ -631,15 +631,15 @@ namespace DDay.iCal
             if (expand.HasValue && expand.Value)
             {
                 // Expand behavior
-                List<DateTime> monthDayDates = new List<DateTime>();
-                for (int i = 0; i < dates.Count; i++)
+                var monthDayDates = new List<DateTime>();
+                for (var i = 0; i < dates.Count; i++)
                 {
-                    DateTime date = dates[i];
-                    for (int j = 0; j < pattern.ByMonthDay.Count; j++)
+                    var date = dates[i];
+                    for (var j = 0; j < pattern.ByMonthDay.Count; j++)
                     {
-                        int monthDay = pattern.ByMonthDay[j];
+                        var monthDay = pattern.ByMonthDay[j];
 
-                        int daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
+                        var daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
                         if (Math.Abs(monthDay) <= daysInMonth)
                         {
                             // Account for positive or negative numbers
@@ -658,14 +658,14 @@ namespace DDay.iCal
             else
             {
                 // Limit behavior
-                for (int i = dates.Count - 1; i >= 0; i--)
+                for (var i = dates.Count - 1; i >= 0; i--)
                 {
-                    DateTime date = dates[i];
-                    for (int j = 0; j < pattern.ByMonthDay.Count; j++)
+                    var date = dates[i];
+                    for (var j = 0; j < pattern.ByMonthDay.Count; j++)
                     {
-                        int monthDay = pattern.ByMonthDay[j];
+                        var monthDay = pattern.ByMonthDay[j];
 
-                        int daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
+                        var daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
                         if (Math.Abs(monthDay) > daysInMonth)
                             throw new ArgumentException("Invalid day of month: " + date + " (day " + monthDay + ")");
 
@@ -702,11 +702,11 @@ namespace DDay.iCal
             if (expand.HasValue && expand.Value)
             {
                 // Expand behavior
-                List<DateTime> weekDayDates = new List<DateTime>();
-                for (int i = 0; i < dates.Count; i++)
+                var weekDayDates = new List<DateTime>();
+                for (var i = 0; i < dates.Count; i++)
                 {
-                    DateTime date = dates[i];
-                    for (int j = 0; j < pattern.ByDay.Count; j++)
+                    var date = dates[i];
+                    for (var j = 0; j < pattern.ByDay.Count; j++)
                     {
                         weekDayDates.AddRange(GetAbsWeekDays(date, pattern.ByDay[j], pattern, expand));
                     }
@@ -717,12 +717,12 @@ namespace DDay.iCal
             else
             {
                 // Limit behavior
-                for (int i = dates.Count - 1; i >= 0; i--)
+                for (var i = dates.Count - 1; i >= 0; i--)
                 {
-                    DateTime date = dates[i];
-                    for (int j = 0; j < pattern.ByDay.Count; j++)
+                    var date = dates[i];
+                    for (var j = 0; j < pattern.ByDay.Count; j++)
                     {
-                        IWeekDay weekDay = pattern.ByDay[j];
+                        var weekDay = pattern.ByDay[j];
                         if (weekDay.DayOfWeek.Equals(date.DayOfWeek))
                         {
                             // If no offset is specified, simply test the day of week!
@@ -748,9 +748,9 @@ namespace DDay.iCal
          */
         private List<DateTime> GetAbsWeekDays(DateTime date, IWeekDay weekDay, IRecurrencePattern pattern, bool? expand)
         {
-            List<DateTime> days = new List<DateTime>();
+            var days = new List<DateTime>();
 
-            DayOfWeek dayOfWeek = weekDay.DayOfWeek;
+            var dayOfWeek = weekDay.DayOfWeek;
             if (pattern.Frequency == FrequencyType.Daily)
             {
                 if (date.DayOfWeek == dayOfWeek)
@@ -758,7 +758,7 @@ namespace DDay.iCal
             }
             else if (pattern.Frequency == FrequencyType.Weekly || pattern.ByWeekNo.Count > 0)
             {
-                int weekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+                var weekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
 
                 // construct a list of possible week days..
                 while (date.DayOfWeek != dayOfWeek)
@@ -772,7 +772,7 @@ namespace DDay.iCal
             }
             else if (pattern.Frequency == FrequencyType.Monthly || pattern.ByMonth.Count > 0)
             {
-                int month = date.Month;
+                var month = date.Month;
 
                 // construct a list of possible month days..
                 date = date.AddDays(-date.Day + 1);
@@ -787,7 +787,7 @@ namespace DDay.iCal
             }
             else if (pattern.Frequency == FrequencyType.Yearly)
             {
-                int year = date.Year;
+                var year = date.Year;
                 
                 // construct a list of possible year days..
                 date = date.AddDays(-date.DayOfYear + 1);
@@ -816,8 +816,8 @@ namespace DDay.iCal
             if (offset == int.MinValue) 
                 return dates;
             
-            List<DateTime> offsetDates = new List<DateTime>();
-            int size = dates.Count;
+            var offsetDates = new List<DateTime>();
+            var size = dates.Count;
             if (offset < 0 && offset >= -size) 
             {
                 offsetDates.Add(dates[size + offset]);
@@ -843,13 +843,13 @@ namespace DDay.iCal
             if (expand.HasValue && expand.Value)
             {
                 // Expand behavior
-                List<DateTime> hourlyDates = new List<DateTime>();
-                for (int i = 0; i < dates.Count; i++)
+                var hourlyDates = new List<DateTime>();
+                for (var i = 0; i < dates.Count; i++)
                 {
-                    DateTime date = dates[i];
-                    for (int j = 0; j < pattern.ByHour.Count; j++)
+                    var date = dates[i];
+                    for (var j = 0; j < pattern.ByHour.Count; j++)
                     {
-                        int hour = pattern.ByHour[j];
+                        var hour = pattern.ByHour[j];
                         date = date.AddHours(-date.Hour + hour);
                         hourlyDates.Add(date);
                     }
@@ -859,12 +859,12 @@ namespace DDay.iCal
             else
             {
                 // Limit behavior
-                for (int i = dates.Count - 1; i >= 0; i--)
+                for (var i = dates.Count - 1; i >= 0; i--)
                 {
-                    DateTime date = dates[i];
-                    for (int j = 0; j < pattern.ByHour.Count; j++)
+                    var date = dates[i];
+                    for (var j = 0; j < pattern.ByHour.Count; j++)
                     {
-                        int hour = pattern.ByHour[j];
+                        var hour = pattern.ByHour[j];
                         if (date.Hour == hour)
                             goto Next;
                     }
@@ -890,13 +890,13 @@ namespace DDay.iCal
             if (expand.HasValue && expand.Value)
             {
                 // Expand behavior
-                List<DateTime> minutelyDates = new List<DateTime>();
-                for (int i = 0; i < dates.Count; i++)
+                var minutelyDates = new List<DateTime>();
+                for (var i = 0; i < dates.Count; i++)
                 {
-                    DateTime date = dates[i];
-                    for (int j = 0; j < pattern.ByMinute.Count; j++)
+                    var date = dates[i];
+                    for (var j = 0; j < pattern.ByMinute.Count; j++)
                     {
-                        int minute = pattern.ByMinute[j];
+                        var minute = pattern.ByMinute[j];
                         date = date.AddMinutes(-date.Minute + minute);
                         minutelyDates.Add(date);
                     }
@@ -906,12 +906,12 @@ namespace DDay.iCal
             else
             {
                 // Limit behavior
-                for (int i = dates.Count - 1; i >= 0; i--)
+                for (var i = dates.Count - 1; i >= 0; i--)
                 {
-                    DateTime date = dates[i];
-                    for (int j = 0; j < pattern.ByMinute.Count; j++)
+                    var date = dates[i];
+                    for (var j = 0; j < pattern.ByMinute.Count; j++)
                     {
-                        int minute = pattern.ByMinute[j];
+                        var minute = pattern.ByMinute[j];
                         if (date.Minute == minute)
                             goto Next;
                     }
@@ -937,13 +937,13 @@ namespace DDay.iCal
             if (expand.HasValue && expand.Value)
             {
                 // Expand behavior
-                List<DateTime> secondlyDates = new List<DateTime>();
-                for (int i = 0; i < dates.Count; i++)
+                var secondlyDates = new List<DateTime>();
+                for (var i = 0; i < dates.Count; i++)
                 {
-                    DateTime date = dates[i];
-                    for (int j = 0; j < pattern.BySecond.Count; j++)
+                    var date = dates[i];
+                    for (var j = 0; j < pattern.BySecond.Count; j++)
                     {
-                        int second = pattern.BySecond[j];
+                        var second = pattern.BySecond[j];
                         date = date.AddSeconds(-date.Second + second);
                         secondlyDates.Add(date);
                     }
@@ -953,12 +953,12 @@ namespace DDay.iCal
             else
             {
                 // Limit behavior
-                for (int i = dates.Count - 1; i >= 0; i--)
+                for (var i = dates.Count - 1; i >= 0; i--)
                 {
-                    DateTime date = dates[i];
-                    for (int j = 0; j < pattern.BySecond.Count; j++)
+                    var date = dates[i];
+                    for (var j = 0; j < pattern.BySecond.Count; j++)
                     {
-                        int second = pattern.BySecond[j];
+                        var second = pattern.BySecond[j];
                         if (date.Second == second)
                             goto Next;
                     }
@@ -1014,16 +1014,16 @@ namespace DDay.iCal
         public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Create a recurrence pattern suitable for use during evaluation.
-            IRecurrencePattern pattern = ProcessRecurrencePattern(referenceDate);
+            var pattern = ProcessRecurrencePattern(referenceDate);
 
             // Enforce evaluation restrictions on the pattern.
             EnforceEvaluationRestrictions(pattern);
 
             Periods.Clear();
-            foreach (DateTime dt in GetDates(referenceDate, periodStart, periodEnd, -1, pattern, includeReferenceDateInResults))
+            foreach (var dt in GetDates(referenceDate, periodStart, periodEnd, -1, pattern, includeReferenceDateInResults))
             {                
                 // Create a period from the date/time.
-                IPeriod p = CreatePeriod(dt, referenceDate);
+                var p = CreatePeriod(dt, referenceDate);
                 
                 if (!Periods.Contains(p))
                     Periods.Add(p);

@@ -23,25 +23,25 @@ namespace DDay.iCal.Serialization.iCalendar
 
         virtual public void PreSerialization(T obj)
         {
-            foreach (ISerializationProcessor<T> p in this)
+            foreach (var p in this)
                 p.PreSerialization(obj);
         }
 
         virtual public void PostSerialization(T obj)
         {
-            foreach (ISerializationProcessor<T> p in this)
+            foreach (var p in this)
                 p.PostSerialization(obj);
         }
 
         virtual public void PreDeserialization(T obj)
         {
-            foreach (ISerializationProcessor<T> p in this)
+            foreach (var p in this)
                 p.PreDeserialization(obj);
         }
 
         virtual public void PostDeserialization(T obj)
         {
-            foreach (ISerializationProcessor<T> p in this)
+            foreach (var p in this)
                 p.PostDeserialization(obj);
         }
 

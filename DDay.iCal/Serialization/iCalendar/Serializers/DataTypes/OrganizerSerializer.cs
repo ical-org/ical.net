@@ -15,7 +15,7 @@ namespace DDay.iCal.Serialization.iCalendar
         {
             try
             {
-                IOrganizer o = obj as IOrganizer;
+                var o = obj as IOrganizer;
                 if (o != null && o.Value != null)
                     return Encode(o, Escape(o.Value.OriginalString));
                 return null;
@@ -28,7 +28,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override object Deserialize(TextReader tr)
         {
-            string value = tr.ReadToEnd();
+            var value = tr.ReadToEnd();
 
             IOrganizer o = null;
             try
@@ -36,7 +36,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 o = CreateAndAssociate() as IOrganizer;
                 if (o != null)
                 {
-                    string uriString = Unescape(Decode(o, value));
+                    var uriString = Unescape(Decode(o, value));
 
                     // Prepend "mailto:" if necessary
                     if (!uriString.StartsWith("mailto:", StringComparison.InvariantCultureIgnoreCase))

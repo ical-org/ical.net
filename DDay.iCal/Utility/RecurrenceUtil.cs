@@ -6,7 +6,7 @@ namespace DDay.iCal
     {
         static public void ClearEvaluation(IRecurrable recurrable)
         {
-            IEvaluator evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
+            var evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
             if (evaluator != null)
                 evaluator.Clear();
         }
@@ -22,13 +22,13 @@ namespace DDay.iCal
 
         static public IList<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime periodStart, IDateTime periodEnd, bool includeReferenceDateInResults)
         {
-            List<Occurrence> occurrences = new List<Occurrence>();
+            var occurrences = new List<Occurrence>();
 
-            IEvaluator evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
+            var evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
             if (evaluator != null)
             {
                 // Ensure the start time is associated with the object being queried
-                IDateTime start = recurrable.Start.Copy<IDateTime>();
+                var start = recurrable.Start.Copy<IDateTime>();
                 start.AssociatedObject = recurrable as ICalendarObject;
 
                 // Change the time zone of periodStart/periodEnd as needed 
@@ -36,18 +36,18 @@ namespace DDay.iCal
                 periodStart = DateUtil.MatchTimeZone(start, periodStart);
                 periodEnd = DateUtil.MatchTimeZone(start, periodEnd);
 
-                IList<IPeriod> periods = evaluator.Evaluate(
+                var periods = evaluator.Evaluate(
                     start,
                     DateUtil.GetSimpleDateTimeData(periodStart),
                     DateUtil.GetSimpleDateTimeData(periodEnd),
                     includeReferenceDateInResults);
 
-                foreach (IPeriod p in periods)
+                foreach (var p in periods)
                 {
                     // Filter the resulting periods to only contain those 
                     // that occur sometime between startTime and endTime.
                     // NOTE: fixes bug #3007244 - GetOccurences not returning long spanning all-day events 
-                    IDateTime endTime = p.EndTime ?? p.StartTime;
+                    var endTime = p.EndTime ?? p.StartTime;
                     if (endTime.GreaterThan(periodStart) && p.StartTime.LessThanOrEqual(periodEnd))
                         occurrences.Add(new Occurrence(recurrable, p));
                 }
@@ -68,7 +68,7 @@ namespace DDay.iCal
                 case FrequencyType.Weekly:   return new bool?[] { false, null, null, null, true, true, true, true, false };
                 case FrequencyType.Monthly:
                     {
-                        bool?[] row = new bool?[] { false, null, null, true, true, true, true, true, false };
+                        var row = new bool?[] { false, null, null, true, true, true, true, true, false };
 
                         // Limit if BYMONTHDAY is present; otherwise, special expand for MONTHLY.
                         if (p.ByMonthDay.Count > 0)
@@ -78,7 +78,7 @@ namespace DDay.iCal
                     }
                 case FrequencyType.Yearly:
                     {
-                        bool?[] row = new bool?[] { true, true, true, true, true, true, true, true, false };
+                        var row = new bool?[] { true, true, true, true, true, true, true, true, false };
 
                         // Limit if BYYEARDAY or BYMONTHDAY is present; otherwise,
                         // special expand for WEEKLY if BYWEEKNO present; otherwise,

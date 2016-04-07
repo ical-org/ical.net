@@ -35,7 +35,7 @@ namespace DDay.iCal
                 AssociatedObject = (ICalendarObject)obj;
             if (obj is ICalendarDataType)
             {
-                ICalendarDataType dt = (ICalendarDataType)obj;
+                var dt = (ICalendarDataType)obj;
                 AssociatedObject = dt.AssociatedObject;
             }
         }
@@ -57,13 +57,13 @@ namespace DDay.iCal
             if (Recurrable.RecurrenceRules != null &&
                 Recurrable.RecurrenceRules.Count > 0)
             {
-                foreach (IRecurrencePattern rrule in Recurrable.RecurrenceRules)
+                foreach (var rrule in Recurrable.RecurrenceRules)
                 {
-                    IEvaluator evaluator = rrule.GetService(typeof(IEvaluator)) as IEvaluator;
+                    var evaluator = rrule.GetService(typeof(IEvaluator)) as IEvaluator;
                     if (evaluator != null)
                     {
-                        IList<IPeriod> periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
-                        foreach (IPeriod p in periods)
+                        var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
+                        foreach (var p in periods)
                         {
                             if (!Periods.Contains(p))
                                 Periods.Add(p);
@@ -92,13 +92,13 @@ namespace DDay.iCal
             // Handle RDATEs
             if (Recurrable.RecurrenceDates != null)
             {
-                foreach (IPeriodList rdate in Recurrable.RecurrenceDates)
+                foreach (var rdate in Recurrable.RecurrenceDates)
                 {
-                    IEvaluator evaluator = rdate.GetService(typeof(IEvaluator)) as IEvaluator;
+                    var evaluator = rdate.GetService(typeof(IEvaluator)) as IEvaluator;
                     if (evaluator != null)
                     {
-                        IList<IPeriod> periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
-                        foreach (IPeriod p in periods)
+                        var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
+                        foreach (var p in periods)
                         {
                             if (!Periods.Contains(p))
                                 Periods.Add(p);
@@ -119,13 +119,13 @@ namespace DDay.iCal
             // Handle EXRULEs
             if (Recurrable.ExceptionRules != null)
             {
-                foreach (IRecurrencePattern exrule in Recurrable.ExceptionRules)
+                foreach (var exrule in Recurrable.ExceptionRules)
                 {
-                    IEvaluator evaluator = exrule.GetService(typeof(IEvaluator)) as IEvaluator;
+                    var evaluator = exrule.GetService(typeof(IEvaluator)) as IEvaluator;
                     if (evaluator != null)
                     {
-                        IList<IPeriod> periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
-                        foreach (IPeriod p in periods)                        
+                        var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
+                        foreach (var p in periods)                        
                         {                            
                             if (this.Periods.Contains(p))
                                 this.Periods.Remove(p);
@@ -146,13 +146,13 @@ namespace DDay.iCal
             // Handle EXDATEs
             if (Recurrable.ExceptionDates != null)
             {
-                foreach (IPeriodList exdate in Recurrable.ExceptionDates)
+                foreach (var exdate in Recurrable.ExceptionDates)
                 {
-                    IEvaluator evaluator = exdate.GetService(typeof(IEvaluator)) as IEvaluator;
+                    var evaluator = exdate.GetService(typeof(IEvaluator)) as IEvaluator;
                     if (evaluator != null)
                     {
-                        IList<IPeriod> periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
-                        foreach (IPeriod p in periods)                        
+                        var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
+                        foreach (var p in periods)                        
                         {
                             // If no time was provided for the ExDate, then it excludes the entire day
                             if (!p.StartTime.HasTime || (p.EndTime != null && !p.EndTime.HasTime))

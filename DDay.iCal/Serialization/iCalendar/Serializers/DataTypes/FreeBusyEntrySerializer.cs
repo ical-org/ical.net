@@ -15,7 +15,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {
-            IFreeBusyEntry entry = obj as IFreeBusyEntry;
+            var entry = obj as IFreeBusyEntry;
             if (entry != null)
             {
                 switch (entry.Status)
@@ -40,12 +40,12 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override object Deserialize(TextReader tr)
         {
-            IFreeBusyEntry entry = base.Deserialize(tr) as IFreeBusyEntry;
+            var entry = base.Deserialize(tr) as IFreeBusyEntry;
             if (entry != null)
             {
                 if (entry.Parameters.ContainsKey("FBTYPE"))
                 {
-                    string value = entry.Parameters.Get("FBTYPE");
+                    var value = entry.Parameters.Get("FBTYPE");
                     if (value != null)
                     {
                         switch (value.ToUpperInvariant())

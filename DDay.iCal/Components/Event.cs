@@ -237,7 +237,7 @@ namespace DDay.iCal
         /// <returns>True if the event occurs on the <paramref name="DateTime"/> provided, False otherwise.</returns>
         virtual public bool OccursOn(IDateTime DateTime)
         {
-            foreach (IPeriod p in m_Evaluator.Periods)
+            foreach (var p in m_Evaluator.Periods)
                 // NOTE: removed UTC from date checks, since a date is a date.
                 if (p.StartTime.Date == DateTime.Date ||    // It's the start date OR
                     (p.StartTime.Date <= DateTime.Date &&   // It's after the start date AND
@@ -258,7 +258,7 @@ namespace DDay.iCal
         /// <returns>True if the event begins at the given date and time</returns>
         virtual public bool OccursAt(IDateTime DateTime)
         {
-            foreach (IPeriod p in m_Evaluator.Periods)
+            foreach (var p in m_Evaluator.Periods)
                 if (p.StartTime.Equals(DateTime))
                     return true;
             return false;

@@ -49,9 +49,9 @@ namespace DDay.iCal
             base.Evaluate(referenceTime, periodStart, periodEnd, includeReferenceDateInResults);
 
             // Ensure each period has a duration
-            for (int i = 0; i < Periods.Count; i++)
+            for (var i = 0; i < Periods.Count; i++)
             {
-                IPeriod p = Periods[i];
+                var p = Periods[i];
                 if (p.EndTime == null)
                 {
                     p.Duration = Event.Duration;

@@ -30,9 +30,9 @@ namespace DDay.iCal
 
         static private void PopulateiCalTimeZoneInfo(ITimeZoneInfo tzi, System.TimeZoneInfo.TransitionTime transition, int year)
         {
-            Calendar c = CultureInfo.CurrentCulture.Calendar;
+            var c = CultureInfo.CurrentCulture.Calendar;
 
-            RecurrencePattern recurrence = new RecurrencePattern();            
+            var recurrence = new RecurrencePattern();            
             recurrence.Frequency = FrequencyType.Yearly;
             recurrence.ByMonth.Add(transition.Month);
             recurrence.ByHour.Add(transition.TimeOfDay.Hour);
@@ -227,9 +227,9 @@ namespace DDay.iCal
         virtual public TimeZoneObservance? GetTimeZoneObservance(IDateTime dt)
         {
             Trace.TraceInformation("Getting time zone for '" + dt + "'...", "Time Zone");
-            foreach (ITimeZoneInfo tzi in TimeZoneInfos)
+            foreach (var tzi in TimeZoneInfos)
             {
-                TimeZoneObservance? observance = tzi.GetObservance(dt);
+                var observance = tzi.GetObservance(dt);
                 if (observance != null && observance.HasValue)
                     return observance;
             }

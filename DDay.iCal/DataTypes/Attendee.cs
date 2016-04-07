@@ -72,14 +72,14 @@ namespace DDay.iCal
             get
             {
                 bool val;
-                string rsvp = Parameters.Get("RSVP");
+                var rsvp = Parameters.Get("RSVP");
                 if (rsvp != null && bool.TryParse(rsvp, out val))
                     return val;
                 return false;
             }
             set
             {
-                string val = value.ToString();
+                var val = value.ToString();
                 if (val != null)
                     val = val.ToUpper();
                 Parameters.Set("RSVP", val);
@@ -155,7 +155,7 @@ namespace DDay.iCal
         {
             base.CopyFrom(obj);
 
-            IAttendee a = obj as IAttendee;
+            var a = obj as IAttendee;
             if (a != null)
             {
                 Value = a.Value;

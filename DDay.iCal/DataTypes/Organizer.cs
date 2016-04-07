@@ -58,7 +58,7 @@ namespace DDay.iCal
         public Organizer(string value)
             : this()
         {
-            OrganizerSerializer serializer = new OrganizerSerializer();
+            var serializer = new OrganizerSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
@@ -97,7 +97,7 @@ namespace DDay.iCal
         {
             base.CopyFrom(obj);
 
-            IOrganizer o = obj as IOrganizer;
+            var o = obj as IOrganizer;
             if (o != null)
             {
                 Value = o.Value;

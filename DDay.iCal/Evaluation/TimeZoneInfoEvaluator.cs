@@ -33,7 +33,7 @@ namespace DDay.iCal
             if (TimeZoneInfo != null)
             {
                 // Always include the reference date in the results
-                IList<IPeriod> periods = base.Evaluate(referenceDate, periodStart, periodEnd, true);
+                var periods = base.Evaluate(referenceDate, periodStart, periodEnd, true);
                 return periods;
             }
 

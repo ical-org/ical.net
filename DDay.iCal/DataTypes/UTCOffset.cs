@@ -57,7 +57,7 @@ namespace DDay.iCal
         public UTCOffset(string value)
             : this()
         {
-            UTCOffsetSerializer serializer = new UTCOffsetSerializer();            
+            var serializer = new UTCOffsetSerializer();            
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
@@ -113,7 +113,7 @@ namespace DDay.iCal
             base.CopyFrom(obj);
             if (obj is IUTCOffset)
             {
-                IUTCOffset utco = (IUTCOffset)obj;
+                var utco = (IUTCOffset)obj;
                 this.Positive = utco.Positive;
                 this.Hours = utco.Hours;
                 this.Minutes = utco.Minutes;
@@ -140,7 +140,7 @@ namespace DDay.iCal
 
         static public explicit operator TimeSpan(UTCOffset o)
         {
-            TimeSpan ts = new TimeSpan(0);
+            var ts = new TimeSpan(0);
             ts = ts.Add(TimeSpan.FromHours(o.Positive ? o.Hours : -o.Hours));
             ts = ts.Add(TimeSpan.FromMinutes(o.Positive ? o.Minutes : -o.Minutes));
             ts = ts.Add(TimeSpan.FromSeconds(o.Positive ? o.Seconds : -o.Seconds));
@@ -157,7 +157,7 @@ namespace DDay.iCal
                 (dt == DateTime.MaxValue && !positive))
                 return dt;
 
-            int mult = positive ? 1 : -1;
+            var mult = positive ? 1 : -1;
             dt = dt.AddHours(Hours * mult);
             dt = dt.AddMinutes(Minutes * mult);
             dt = dt.AddSeconds(Seconds * mult);

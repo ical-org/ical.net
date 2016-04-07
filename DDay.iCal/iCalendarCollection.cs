@@ -17,14 +17,14 @@ namespace DDay.iCal
 
         public void ClearEvaluation()
         {
-            foreach (IICalendar iCal in this)
+            foreach (var iCal in this)
                 iCal.ClearEvaluation();
         }
 
         public IList<Occurrence> GetOccurrences(IDateTime dt)
         {
-            List<Occurrence> occurrences = new List<Occurrence>();
-            foreach (IICalendar iCal in this)
+            var occurrences = new List<Occurrence>();
+            foreach (var iCal in this)
                 occurrences.AddRange(iCal.GetOccurrences(dt));
             occurrences.Sort();
             return occurrences;
@@ -32,8 +32,8 @@ namespace DDay.iCal
 
         public IList<Occurrence> GetOccurrences(DateTime dt)
         {
-            List<Occurrence> occurrences = new List<Occurrence>();
-            foreach (IICalendar iCal in this)
+            var occurrences = new List<Occurrence>();
+            foreach (var iCal in this)
                 occurrences.AddRange(iCal.GetOccurrences(dt));
             occurrences.Sort();
             return occurrences;
@@ -41,8 +41,8 @@ namespace DDay.iCal
 
         public IList<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
         {
-            List<Occurrence> occurrences = new List<Occurrence>();
-            foreach (IICalendar iCal in this)
+            var occurrences = new List<Occurrence>();
+            foreach (var iCal in this)
                 occurrences.AddRange(iCal.GetOccurrences(startTime, endTime));
             occurrences.Sort();
             return occurrences;
@@ -50,8 +50,8 @@ namespace DDay.iCal
 
         public IList<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
         {
-            List<Occurrence> occurrences = new List<Occurrence>();
-            foreach (IICalendar iCal in this)
+            var occurrences = new List<Occurrence>();
+            foreach (var iCal in this)
                 occurrences.AddRange(iCal.GetOccurrences(startTime, endTime));
             occurrences.Sort();
             return occurrences;
@@ -59,8 +59,8 @@ namespace DDay.iCal
 
         public IList<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
         {
-            List<Occurrence> occurrences = new List<Occurrence>();
-            foreach (IICalendar iCal in this)
+            var occurrences = new List<Occurrence>();
+            foreach (var iCal in this)
                 occurrences.AddRange(iCal.GetOccurrences<T>(dt));
             occurrences.Sort();
             return occurrences;
@@ -68,8 +68,8 @@ namespace DDay.iCal
 
         public IList<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
         {
-            List<Occurrence> occurrences = new List<Occurrence>();
-            foreach (IICalendar iCal in this)
+            var occurrences = new List<Occurrence>();
+            foreach (var iCal in this)
                 occurrences.AddRange(iCal.GetOccurrences<T>(dt));
             occurrences.Sort();
             return occurrences;
@@ -77,8 +77,8 @@ namespace DDay.iCal
 
         public IList<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
         {
-            List<Occurrence> occurrences = new List<Occurrence>();
-            foreach (IICalendar iCal in this)
+            var occurrences = new List<Occurrence>();
+            foreach (var iCal in this)
                 occurrences.AddRange(iCal.GetOccurrences<T>(startTime, endTime));
             occurrences.Sort();
             return occurrences;
@@ -86,8 +86,8 @@ namespace DDay.iCal
 
         public IList<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent
         {
-            List<Occurrence> occurrences = new List<Occurrence>();
-            foreach (IICalendar iCal in this)
+            var occurrences = new List<Occurrence>();
+            foreach (var iCal in this)
                 occurrences.AddRange(iCal.GetOccurrences<T>(startTime, endTime));
             occurrences.Sort();
             return occurrences;
@@ -111,7 +111,7 @@ namespace DDay.iCal
         public IFreeBusy GetFreeBusy(IFreeBusy freeBusyRequest)
         {
             IFreeBusy fb = null;
-            foreach (IICalendar iCal in this)
+            foreach (var iCal in this)
                 fb = CombineFreeBusy(fb, iCal.GetFreeBusy(freeBusyRequest));
             return fb;
         }
@@ -119,7 +119,7 @@ namespace DDay.iCal
         public IFreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive)
         {
             IFreeBusy fb = null;
-            foreach (IICalendar iCal in this)
+            foreach (var iCal in this)
                 fb = CombineFreeBusy(fb, iCal.GetFreeBusy(fromInclusive, toExclusive));
             return fb;
         }
@@ -127,7 +127,7 @@ namespace DDay.iCal
         public IFreeBusy GetFreeBusy(IOrganizer organizer, IAttendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive)
         {
             IFreeBusy fb = null;
-            foreach (IICalendar iCal in this)
+            foreach (var iCal in this)
                 fb = CombineFreeBusy(fb, iCal.GetFreeBusy(organizer, contacts, fromInclusive, toExclusive));
             return fb;
         }

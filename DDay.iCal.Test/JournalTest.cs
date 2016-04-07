@@ -18,10 +18,10 @@ namespace DDay.iCal.Test
         [Test, Category("Journal")]
         public void Journal1()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL1.ics")[0];
+            var iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL1.ics")[0];
             ProgramTest.TestCal(iCal);
             Assert.AreEqual(1, iCal.Journals.Count);
-            IJournal j = iCal.Journals[0];
+            var j = iCal.Journals[0];
 
             Assert.IsNotNull(j, "Journal entry was null");
             Assert.AreEqual(JournalStatus.Draft, j.Status, "Journal entry should have been in DRAFT status, but it was in " + j.Status.ToString() + " status.");
@@ -32,10 +32,10 @@ namespace DDay.iCal.Test
         [Test, Category("Journal")]
         public void Journal2()
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL2.ics")[0];
+            var iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL2.ics")[0];
             ProgramTest.TestCal(iCal);
             Assert.AreEqual(1, iCal.Journals.Count);
-            IJournal j = iCal.Journals.First();
+            var j = iCal.Journals.First();
 
             Assert.IsNotNull(j, "Journal entry was null");
             Assert.AreEqual(JournalStatus.Final, j.Status, "Journal entry should have been in FINAL status, but it was in " + j.Status + " status.");

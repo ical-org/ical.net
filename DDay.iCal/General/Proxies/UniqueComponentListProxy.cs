@@ -77,7 +77,7 @@ namespace DDay.iCal
         {
             if (e.First is TComponentType)
             {
-                TComponentType component = (TComponentType)e.First;
+                var component = (TComponentType)e.First;
                 component.UIDChanged += UIDChanged;
 
                 if (!string.IsNullOrEmpty(component.UID))
@@ -89,7 +89,7 @@ namespace DDay.iCal
         {
             if (e.First is TComponentType)
             {
-                TComponentType component = (TComponentType)e.First;
+                var component = (TComponentType)e.First;
                 component.UIDChanged -= UIDChanged;
 
                 if (!string.IsNullOrEmpty(component.UID) &&

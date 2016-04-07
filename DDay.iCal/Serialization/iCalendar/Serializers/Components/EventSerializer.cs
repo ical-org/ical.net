@@ -29,7 +29,7 @@ namespace DDay.iCal.Serialization.iCalendar
         {
             if (obj is IEvent)
             {
-                IEvent evt = ((IEvent)obj).Copy<IEvent>();
+                var evt = ((IEvent)obj).Copy<IEvent>();
 
                 // NOTE: DURATION and DTEND cannot co-exist on an event.
                 // Some systems do not support DURATION, so we serialize

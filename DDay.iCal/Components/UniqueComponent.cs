@@ -52,7 +52,7 @@ namespace DDay.iCal
                 // the iCalendar standard doesn't care at all about milliseconds.  Therefore, when comparing
                 // two calendars, one generated, and one loaded from file, they may be functionally identical,
                 // but be determined to be different due to millisecond differences.
-                DateTime now = DateTime.Now;
+                var now = DateTime.Now;
                 DTStamp = new iCalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);                
             }            
         }
@@ -131,8 +131,8 @@ namespace DDay.iCal
 
         void Object_ValueChanged(object sender, ValueChangedEventArgs<object> e)
         {
-            string oldValue = e.RemovedValues.OfType<string>().FirstOrDefault();
-            string newValue = e.AddedValues.OfType<string>().FirstOrDefault();
+            var oldValue = e.RemovedValues.OfType<string>().FirstOrDefault();
+            var newValue = e.AddedValues.OfType<string>().FirstOrDefault();
             OnUIDChanged(oldValue, newValue);
         }
 
@@ -159,7 +159,7 @@ namespace DDay.iCal
             if (obj is RecurringComponent && 
                 obj != this)
             {
-                RecurringComponent r = (RecurringComponent)obj;                
+                var r = (RecurringComponent)obj;                
                 if (UID != null)
                     return UID.Equals(r.UID);
                 else return UID == r.UID;

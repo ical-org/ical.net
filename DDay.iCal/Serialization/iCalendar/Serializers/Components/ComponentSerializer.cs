@@ -41,18 +41,18 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {
-            ICalendarComponent c = obj as ICalendarComponent;
+            var c = obj as ICalendarComponent;
             if (c != null)
             {
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 sb.Append(TextUtil.WrapLines("BEGIN:" + c.Name.ToUpper()));
 
                 // Get a serializer factory
-                ISerializerFactory sf = GetService<ISerializerFactory>();
+                var sf = GetService<ISerializerFactory>();
 
                 // Sort the calendar properties in alphabetical order before
                 // serializing them!
-                List<ICalendarProperty> properties = new List<ICalendarProperty>(c.Properties);
+                var properties = new List<ICalendarProperty>(c.Properties);
                 
                 // FIXME: remove this try/catch
                 try
@@ -65,10 +65,10 @@ namespace DDay.iCal.Serialization.iCalendar
                 }
 
                 // Serialize properties
-                foreach (ICalendarProperty p in properties)
+                foreach (var p in properties)
                 {
                     // Get a serializer for each property.
-                    IStringSerializer serializer = sf.Build(p.GetType(), SerializationContext) as IStringSerializer;
+                    var serializer = sf.Build(p.GetType(), SerializationContext) as IStringSerializer;
                     if (serializer != null)
                         sb.Append(serializer.SerializeToString(p));
                 }
@@ -76,10 +76,10 @@ namespace DDay.iCal.Serialization.iCalendar
                 // Serialize child objects
                 if (sf != null)
                 {
-                    foreach (ICalendarObject child in c.Children)
+                    foreach (var child in c.Children)
                     {
                         // Get a serializer for each child object.
-                        IStringSerializer serializer = sf.Build(child.GetType(), SerializationContext) as IStringSerializer;
+                        var serializer = sf.Build(child.GetType(), SerializationContext) as IStringSerializer;
                         if (serializer != null)
                             sb.Append(serializer.SerializeToString(child));
                     }
@@ -99,20 +99,20 @@ namespace DDay.iCal.Serialization.iCalendar
                 tr = TextUtil.Normalize(tr, SerializationContext);
 
                 // Create a lexer for our text stream
-                iCalLexer lexer = new iCalLexer(tr);
-                iCalParser parser = new iCalParser(lexer);
+                var lexer = new iCalLexer(tr);
+                var parser = new iCalParser(lexer);
 
                 // Get our serialization context
-                ISerializationContext ctx = SerializationContext;
+                var ctx = SerializationContext;
 
                 // Get a serializer factory from our serialization services
-                ISerializerFactory sf = GetService<ISerializerFactory>();
+                var sf = GetService<ISerializerFactory>();
 
                 // Get a calendar component factory from our serialization services
-                ICalendarComponentFactory cf = GetService<ICalendarComponentFactory>();
+                var cf = GetService<ICalendarComponentFactory>();
 
                 // Parse the component!
-                ICalendarComponent component = parser.component(ctx, sf, cf, null);
+                var component = parser.component(ctx, sf, cf, null);
 
                 // Close our text stream
                 tr.Close();

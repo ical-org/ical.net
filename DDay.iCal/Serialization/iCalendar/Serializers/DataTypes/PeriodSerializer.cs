@@ -16,8 +16,8 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {    
-            IPeriod p = obj as IPeriod;
-            ISerializerFactory factory = GetService<ISerializerFactory>();
+            var p = obj as IPeriod;
+            var factory = GetService<ISerializerFactory>();
 
             if (p != null && factory != null)
             {
@@ -26,11 +26,11 @@ namespace DDay.iCal.Serialization.iCalendar
 
                 try
                 {
-                    IStringSerializer dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
-                    IStringSerializer timeSpanSerializer = factory.Build(typeof(TimeSpan), SerializationContext) as IStringSerializer;
+                    var dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
+                    var timeSpanSerializer = factory.Build(typeof(TimeSpan), SerializationContext) as IStringSerializer;
                     if (dtSerializer != null && timeSpanSerializer != null)
                     {
-                        StringBuilder sb = new StringBuilder();
+                        var sb = new StringBuilder();
 
                         // Serialize the start time                    
                         sb.Append(dtSerializer.SerializeToString(p.StartTime));
@@ -57,20 +57,20 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override object Deserialize(TextReader tr)
         {
-            string value = tr.ReadToEnd();
+            var value = tr.ReadToEnd();
 
-            IPeriod p = CreateAndAssociate() as IPeriod;
-            ISerializerFactory factory = GetService<ISerializerFactory>();
+            var p = CreateAndAssociate() as IPeriod;
+            var factory = GetService<ISerializerFactory>();
             if (p != null && factory != null)
             {
-                IStringSerializer dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
-                IStringSerializer durationSerializer = factory.Build(typeof(TimeSpan), SerializationContext) as IStringSerializer;
+                var dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
+                var durationSerializer = factory.Build(typeof(TimeSpan), SerializationContext) as IStringSerializer;
                 if (dtSerializer != null && durationSerializer != null)
                 {
                     // Decode the value as necessary
                     value = Decode(p, value);
 
-                    string[] values = value.Split('/');
+                    var values = value.Split('/');
                     if (values.Length != 2)
                         return false;
 

@@ -103,7 +103,7 @@ namespace DDay.iCal
 
         public override bool Equals(object obj)
         {
-            ICalendarObject o = obj as ICalendarObject;
+            var o = obj as ICalendarObject;
             if (o != null)
                 return object.Equals(o.Name, Name);
             return base.Equals(obj);
@@ -118,7 +118,7 @@ namespace DDay.iCal
 
         public override void CopyFrom(ICopyable c)
         {
-            ICalendarObject obj = c as ICalendarObject;
+            var obj = c as ICalendarObject;
             if (obj != null)
             {
                 // Copy the name and basic information
@@ -129,7 +129,7 @@ namespace DDay.iCal
                 
                 // Add each child
                 this.Children.Clear();
-                foreach (ICalendarObject child in obj.Children)
+                foreach (var child in obj.Children)
                     this.AddChild(child.Copy<ICalendarObject>());
             }
         }        
@@ -176,7 +176,7 @@ namespace DDay.iCal
             {
                 if (!object.Equals(_Name, value))
                 {
-                    string old = _Name;
+                    var old = _Name;
                     _Name = value;
                     OnGroupChanged(old, _Name);
                 }

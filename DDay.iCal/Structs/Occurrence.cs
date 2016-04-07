@@ -73,7 +73,7 @@ namespace DDay.iCal
 
         public override string ToString()
         {
-            string s = "Occurrence";
+            var s = "Occurrence";
             if (Source != null)
                 s = Source.GetType().Name + " ";
 

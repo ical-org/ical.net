@@ -121,7 +121,7 @@ namespace DDay.Collections
                 .Where(_Predicate)
                 .ToArray();
 
-            foreach (TNew item in items)
+            foreach (var item in items)
             {
                 _RealObject.Remove(item);
             }
@@ -134,8 +134,8 @@ namespace DDay.Collections
 
         virtual public void CopyTo(TNew[] array, int arrayIndex)
         {
-            int i = 0;
-            foreach (TNew item in this)
+            var i = 0;
+            foreach (var item in this)
             {
                 array[arrayIndex + (i++)] = item;
             }

@@ -55,10 +55,10 @@ namespace DDay.iCal
                 }
             );
 
-            for (int i = 0; i < m_Occurrences.Count; i++)
+            for (var i = 0; i < m_Occurrences.Count; i++)
             {
-                Occurrence curr = m_Occurrences[i];
-                Occurrence? next = i < m_Occurrences.Count - 1 ? (Occurrence?)m_Occurrences[i + 1] : null;
+                var curr = m_Occurrences[i];
+                var next = i < m_Occurrences.Count - 1 ? (Occurrence?)m_Occurrences[i + 1] : null;
 
                 // Determine end times for our periods, overwriting previously calculated end times.
                 // This is important because we don't want to overcalculate our time zone information,
@@ -92,16 +92,16 @@ namespace DDay.iCal
             if (referenceDate.AssociatedObject == null)
                 referenceDate.AssociatedObject = TimeZone;
 
-            List<ITimeZoneInfo> infos = new List<ITimeZoneInfo>(TimeZone.TimeZoneInfos);
+            var infos = new List<ITimeZoneInfo>(TimeZone.TimeZoneInfos);
 
             // Evaluate extra time periods, without re-evaluating ones that were already evaluated
             if ((EvaluationStartBounds == DateTime.MaxValue && EvaluationEndBounds == DateTime.MinValue) ||
                 (periodEnd.Equals(EvaluationStartBounds)) ||
                 (periodStart.Equals(EvaluationEndBounds)))
             {
-                foreach (ITimeZoneInfo curr in infos)
+                foreach (var curr in infos)
                 {
-                    IEvaluator evaluator = curr.GetService(typeof(IEvaluator)) as IEvaluator;
+                    var evaluator = curr.GetService(typeof(IEvaluator)) as IEvaluator;
                     Debug.Assert(curr.Start != null, "TimeZoneInfo.Start must not be null.");
                     Debug.Assert(curr.Start.TZID == null, "TimeZoneInfo.Start must not have a time zone reference.");
                     Debug.Assert(evaluator != null, "TimeZoneInfo.GetService(typeof(IEvaluator)) must not be null.");
@@ -116,21 +116,21 @@ namespace DDay.iCal
 
                         // FIXME: 5 years is an arbitrary number, to eliminate the need
                         // to recalculate time zone information as much as possible.
-                        DateTime offsetEnd = periodEnd.AddYears(5); 
+                        var offsetEnd = periodEnd.AddYears(5); 
 
                         // Determine the UTC occurrences of the Time Zone observances
-                        IList<IPeriod> periods = evaluator.Evaluate(
+                        var periods = evaluator.Evaluate(
                             referenceDate,
                             periodStart,
                             offsetEnd,
                             includeReferenceDateInResults);
 
-                        foreach (IPeriod period in periods)
+                        foreach (var period in periods)
                         {
                             if (!Periods.Contains(period))
                                 Periods.Add(period);
 
-                            Occurrence o = new Occurrence(curr, period);
+                            var o = new Occurrence(curr, period);
                             if (!m_Occurrences.Contains(o))
                                 m_Occurrences.Add(o);
                         }

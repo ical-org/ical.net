@@ -12,36 +12,36 @@ namespace DDay.iCal
         {
             if (obj is IGetOccurrencesTyped)
             {
-                IGetOccurrencesTyped getOccurrences = (IGetOccurrencesTyped)obj;
-                IList<Occurrence> occurrences = getOccurrences.GetOccurrences<IEvent>(freeBusyRequest.Start, freeBusyRequest.End);
-                List<string> contacts = new List<string>();
-                bool isFilteredByAttendees = false;
+                var getOccurrences = (IGetOccurrencesTyped)obj;
+                var occurrences = getOccurrences.GetOccurrences<IEvent>(freeBusyRequest.Start, freeBusyRequest.End);
+                var contacts = new List<string>();
+                var isFilteredByAttendees = false;
                 
                 if (freeBusyRequest.Attendees != null &&
                     freeBusyRequest.Attendees.Count > 0)
                 {
                     isFilteredByAttendees = true;
-                    foreach (IAttendee attendee in freeBusyRequest.Attendees)
+                    foreach (var attendee in freeBusyRequest.Attendees)
                     {
                         if (attendee.Value != null)
                             contacts.Add(attendee.Value.OriginalString.Trim());                        
                     }
                 }
 
-                IFreeBusy fb = freeBusyRequest.Copy<IFreeBusy>();
+                var fb = freeBusyRequest.Copy<IFreeBusy>();
                 fb.UID = new UIDFactory().Build();
                 fb.Entries.Clear();
                 fb.DTStamp = iCalDateTime.Now;
 
-                foreach (Occurrence o in occurrences)
+                foreach (var o in occurrences)
                 {
-                    IUniqueComponent uc = o.Source as IUniqueComponent;
+                    var uc = o.Source as IUniqueComponent;
 
                     if (uc != null)
                     {
-                        IEvent evt = uc as IEvent;
-                        bool accepted = false;
-                        FreeBusyStatus type = FreeBusyStatus.Busy;
+                        var evt = uc as IEvent;
+                        var accepted = false;
+                        var type = FreeBusyStatus.Busy;
                         
                         // We only accept events, and only "opaque" events.
                         if (evt != null && evt.Transparency != TransparencyType.Transparent)
@@ -53,7 +53,7 @@ namespace DDay.iCal
                         if (accepted && isFilteredByAttendees)
                         {
                             accepted = false;
-                            foreach (IAttendee a in uc.Attendees)
+                            foreach (var a in uc.Attendees)
                             {
                                 if (a.Value != null && contacts.Contains(a.Value.OriginalString.Trim()))
                                 {
@@ -92,7 +92,7 @@ namespace DDay.iCal
 
         static public IFreeBusy CreateRequest(IDateTime fromInclusive, IDateTime toExclusive, IOrganizer organizer, IAttendee[] contacts)
         {
-            FreeBusy fb = new FreeBusy();
+            var fb = new FreeBusy();
             fb.DTStamp = iCalDateTime.Now;
             fb.DTStart = fromInclusive;
             fb.DTEnd = toExclusive;
@@ -100,7 +100,7 @@ namespace DDay.iCal
                 fb.Organizer = organizer.Copy<IOrganizer>();
             if (contacts != null)
             {
-                foreach (IAttendee attendee in contacts)
+                foreach (var attendee in contacts)
                     fb.Attendees.Add(attendee.Copy<IAttendee>());
             }
 
@@ -152,10 +152,10 @@ namespace DDay.iCal
 
         virtual public FreeBusyStatus GetFreeBusyStatus(IPeriod period)
         {
-            FreeBusyStatus status = FreeBusyStatus.Free;
+            var status = FreeBusyStatus.Free;
             if (period != null)
             {                
-                foreach (IFreeBusyEntry fbe in Entries)
+                foreach (var fbe in Entries)
                 {
                     if (fbe.CollidesWith(period) && status < fbe.Status)
                         status = fbe.Status;
@@ -166,10 +166,10 @@ namespace DDay.iCal
 
         virtual public FreeBusyStatus GetFreeBusyStatus(IDateTime dt)
         {
-            FreeBusyStatus status = FreeBusyStatus.Free;
+            var status = FreeBusyStatus.Free;
             if (dt != null)
             {
-                foreach (IFreeBusyEntry fbe in Entries)
+                foreach (var fbe in Entries)
                 {
                     if (fbe.Contains(dt) && status < fbe.Status)
                         status = fbe.Status;
@@ -184,10 +184,10 @@ namespace DDay.iCal
 
         virtual public void MergeWith(IMergeable obj)
         {
-            IFreeBusy fb = obj as IFreeBusy;
+            var fb = obj as IFreeBusy;
             if (fb != null)
             {
-                foreach (IFreeBusyEntry entry in fb.Entries)
+                foreach (var entry in fb.Entries)
                 {
                     if (!Entries.Contains(entry))
                         Entries.Add(entry.Copy<IFreeBusyEntry>());

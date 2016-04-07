@@ -13,7 +13,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {
-            IAttachment a = obj as IAttachment;
+            var a = obj as IAttachment;
             if (a != null)
             {
                 if (a.Uri != null)
@@ -42,22 +42,22 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override object Deserialize(TextReader tr)
         {
-            string value = tr.ReadToEnd();
+            var value = tr.ReadToEnd();
 
             try
             {
-                IAttachment a = CreateAndAssociate() as IAttachment;
+                var a = CreateAndAssociate() as IAttachment;
                 if (a != null)
                 {
                     // Decode the value, if necessary
-                    byte[] data = DecodeData(a, value);
+                    var data = DecodeData(a, value);
 
                     // Get the currently-used encoding off the encoding stack.
-                    IEncodingStack encodingStack = GetService<IEncodingStack>();
+                    var encodingStack = GetService<IEncodingStack>();
                     a.ValueEncoding = encodingStack.Current;
 
                     // Get the format of the attachment
-                    Type valueType = a.GetValueType();
+                    var valueType = a.GetValueType();
                     if (valueType == typeof(byte[]))
                     {
                         // If the VALUE type is specifically set to BINARY,
@@ -71,7 +71,7 @@ namespace DDay.iCal.Serialization.iCalendar
                     // grab the URI by default.
                     if (value != null)
                     {
-                        string uriValue = Decode(a, value);
+                        var uriValue = Decode(a, value);
                         a.Uri = new Uri(uriValue);
                     }
 

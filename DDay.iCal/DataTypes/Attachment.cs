@@ -34,7 +34,7 @@ namespace DDay.iCal
         public Attachment(string value)
             : this()
         {
-            AttachmentSerializer serializer = new AttachmentSerializer();
+            var serializer = new AttachmentSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
@@ -63,7 +63,7 @@ namespace DDay.iCal
         {
             if (obj is IAttachment)
             {
-                IAttachment a = (IAttachment)obj;
+                var a = (IAttachment)obj;
 
                 if (Data == null && a.Data == null)
                     return Uri.Equals(a.Uri);
@@ -72,7 +72,7 @@ namespace DDay.iCal
                     return false;
                 else if (Data.Length != a.Data.Length)
                     return false;
-                for (int i = 0; i < Data.Length; i++)
+                for (var i = 0; i < Data.Length; i++)
                     if (Data[i] != a.Data[i])
                         return false;
                 return true;                
@@ -94,7 +94,7 @@ namespace DDay.iCal
             base.CopyFrom(obj);
             if (obj is IAttachment)
             {
-                IAttachment a = (IAttachment)obj;
+                var a = (IAttachment)obj;
                 ValueEncoding = a.ValueEncoding;
 
                 if (a.Data != null)
@@ -179,7 +179,7 @@ namespace DDay.iCal
         /// <param name="password">The pasword to supply for credentials</param>
         virtual public void LoadDataFromUri(Uri uri, string username, string password)
         {
-            using (WebClient client = new WebClient())
+            using (var client = new WebClient())
             {
                 if (username != null &&
                     password != null)

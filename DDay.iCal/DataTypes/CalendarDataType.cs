@@ -160,7 +160,7 @@ namespace DDay.iCal
         {
             if (obj is ICalendarDataType)
             {
-                ICalendarDataType dt = (ICalendarDataType)obj;                
+                var dt = (ICalendarDataType)obj;                
                 _AssociatedObject = dt.AssociatedObject;
                 _Proxy.SetParent(_AssociatedObject);
                 _Proxy.SetProxiedObject(dt.Parameters);
@@ -174,7 +174,7 @@ namespace DDay.iCal
         virtual public T Copy<T>()
         {
             ICopyable obj = null;
-            Type type = GetType();
+            var type = GetType();
             obj = Activator.CreateInstance(type) as ICopyable;
 
             // Duplicate our values

@@ -66,7 +66,7 @@ namespace DDay.iCal
         public StatusCode(string value)
             : this()
         {
-            StatusCodeSerializer serializer = new StatusCodeSerializer();
+            var serializer = new StatusCodeSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
@@ -79,7 +79,7 @@ namespace DDay.iCal
             base.CopyFrom(obj);
             if (obj is IStatusCode)
             {
-                IStatusCode sc = (IStatusCode)obj;
+                var sc = (IStatusCode)obj;
                 Parts = new int[sc.Parts.Length];
                 sc.Parts.CopyTo(Parts, 0);
             }
@@ -87,7 +87,7 @@ namespace DDay.iCal
 
         public override string ToString()
         {
-            StatusCodeSerializer serializer = new StatusCodeSerializer();
+            var serializer = new StatusCodeSerializer();
             return serializer.SerializeToString(this);
         }
 

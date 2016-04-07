@@ -8,7 +8,7 @@ namespace DDay.iCal
         {
             if (values != null)
             {
-                foreach (T item in values)
+                foreach (var item in values)
                     list.Add(item);
             }
         }

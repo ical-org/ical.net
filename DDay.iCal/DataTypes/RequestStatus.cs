@@ -50,7 +50,7 @@ namespace DDay.iCal
         public RequestStatus(string value)
             : this()
         {
-            RequestStatusSerializer serializer = new RequestStatusSerializer();
+            var serializer = new RequestStatusSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
@@ -63,7 +63,7 @@ namespace DDay.iCal
             base.CopyFrom(obj);
             if (obj is IRequestStatus)
             {
-                IRequestStatus rs = (IRequestStatus)obj;                
+                var rs = (IRequestStatus)obj;                
                 if (rs.StatusCode != null)
                     StatusCode = rs.StatusCode.Copy<IStatusCode>();
                 Description = rs.Description;
@@ -73,7 +73,7 @@ namespace DDay.iCal
 
         public override string ToString()
         {
-            RequestStatusSerializer serializer = new RequestStatusSerializer();
+            var serializer = new RequestStatusSerializer();
             return serializer.SerializeToString(this);
         }
 

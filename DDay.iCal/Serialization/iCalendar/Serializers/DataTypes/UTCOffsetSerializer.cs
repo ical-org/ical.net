@@ -14,10 +14,10 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {
-            IUTCOffset offset = obj as IUTCOffset;
+            var offset = obj as IUTCOffset;
             if (offset != null)
             {
-                string value = 
+                var value = 
                     (offset.Positive ? "+" : "-") +
                     offset.Hours.ToString("00") +
                     offset.Minutes.ToString("00") +
@@ -31,15 +31,15 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override object Deserialize(TextReader tr)
         {
-            string value = tr.ReadToEnd();
+            var value = tr.ReadToEnd();
 
-            IUTCOffset offset = CreateAndAssociate() as IUTCOffset;
+            var offset = CreateAndAssociate() as IUTCOffset;
             if (offset != null)
             {
                 // Decode the value as necessary
                 value = Decode(offset, value);
 
-                Match match = Regex.Match(value, @"(\+|-)(\d{2})(\d{2})(\d{2})?");
+                var match = Regex.Match(value, @"(\+|-)(\d{2})(\d{2})(\d{2})?");
                 if (match.Success)
                 {
                     try

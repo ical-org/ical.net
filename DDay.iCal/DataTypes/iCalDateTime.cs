@@ -87,7 +87,7 @@ namespace DDay.iCal
 
         public iCalDateTime(string value)
         {
-            DateTimeSerializer serializer = new DateTimeSerializer();
+            var serializer = new DateTimeSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
@@ -126,7 +126,7 @@ namespace DDay.iCal
 
         private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
         {
-            DateTime dt = DateTime.MinValue;
+            var dt = DateTime.MinValue;
 
             // NOTE: determine if a date/time value exceeds the representable date/time values in .NET.
             // If so, let's automatically adjust the date/time to compensate.
@@ -157,7 +157,7 @@ namespace DDay.iCal
                 TZID != null && 
                 Calendar != null)
             {
-                ITimeZone tz = Calendar.GetTimeZone(TZID);
+                var tz = Calendar.GetTimeZone(TZID);
                 if (tz != null)
                     _TimeZoneObservance = tz.GetTimeZoneObservance(this);
             }
@@ -187,7 +187,7 @@ namespace DDay.iCal
         {
             base.CopyFrom(obj);
 
-            IDateTime dt = obj as IDateTime;
+            var dt = obj as IDateTime;
             if (dt != null)
             {
                 _Value = dt.Value;
@@ -208,7 +208,7 @@ namespace DDay.iCal
             }
             else if (obj is DateTime)
             {
-                iCalDateTime dt = (iCalDateTime)obj;
+                var dt = (iCalDateTime)obj;
                 this.AssociateWith(dt);
                 return object.Equals(dt.UTC, UTC);
             }
@@ -291,14 +291,14 @@ namespace DDay.iCal
 
         public static IDateTime operator -(iCalDateTime left, TimeSpan right)
         {            
-            IDateTime copy = left.Copy<IDateTime>();
+            var copy = left.Copy<IDateTime>();
             copy.Value -= right;
             return copy;
         }
 
         public static IDateTime operator +(iCalDateTime left, TimeSpan right)
         {
-            IDateTime copy = left.Copy<IDateTime>();
+            var copy = left.Copy<IDateTime>();
             copy.Value += right;
             return copy;
         }
@@ -339,10 +339,10 @@ namespace DDay.iCal
                     return DateTime.SpecifyKind(Value, DateTimeKind.Utc);
                 else if (TZID != null)
                 {
-                    DateTime value = Value;
+                    var value = Value;
 
                     // Get the Time Zone Observance, if possible
-                    TimeZoneObservance? tzi = TimeZoneObservance;
+                    var tzi = TimeZoneObservance;
                     if (tzi == null || !tzi.HasValue)
                         tzi = GetTimeZoneObservance();
 
@@ -509,7 +509,7 @@ namespace DDay.iCal
         {
             get
             {
-                IDateTime dt = Copy<IDateTime>();
+                var dt = Copy<IDateTime>();
                 dt.Value = Value.AddDays(-Value.DayOfYear+1).Date;
                 return dt;
             }
@@ -519,7 +519,7 @@ namespace DDay.iCal
         {
             get
             {
-                IDateTime dt = Copy<IDateTime>();
+                var dt = Copy<IDateTime>();
                 dt.Value = Value.AddDays(-Value.Day+1).Date;
                 return dt;
             }
@@ -537,7 +537,7 @@ namespace DDay.iCal
 
         public IDateTime ToTimeZone(TimeZoneObservance tzo)
         {
-            ITimeZoneInfo tzi = tzo.TimeZoneInfo;
+            var tzi = tzo.TimeZoneInfo;
             if (tzi != null)
                 return new iCalDateTime(tzi.OffsetTo.ToLocal(UTC), tzo);
             return null;
@@ -547,7 +547,7 @@ namespace DDay.iCal
         {
             if (tz != null)
             {
-                TimeZoneObservance? tzi = tz.GetTimeZoneObservance(this);
+                var tzi = tz.GetTimeZoneObservance(this);
                 if (tzi != null && tzi.HasValue)
                     return ToTimeZone(tzi.Value);
 
@@ -564,7 +564,7 @@ namespace DDay.iCal
             {
                 if (Calendar != null)
                 {
-                    ITimeZone tz = Calendar.GetTimeZone(tzid);
+                    var tz = Calendar.GetTimeZone(tzid);
                     if (tz != null)
                         return ToTimeZone(tz);
                     
@@ -602,28 +602,28 @@ namespace DDay.iCal
 
         public IDateTime AddYears(int years)
         {
-            IDateTime dt = Copy<IDateTime>();
+            var dt = Copy<IDateTime>();
             dt.Value = Value.AddYears(years);
             return dt;
         }
 
         public IDateTime AddMonths(int months)
         {
-            IDateTime dt = Copy<IDateTime>();
+            var dt = Copy<IDateTime>();
             dt.Value = Value.AddMonths(months);
             return dt;
         }
 
         public IDateTime AddDays(int days)
         {
-            IDateTime dt = Copy<IDateTime>();
+            var dt = Copy<IDateTime>();
             dt.Value = Value.AddDays(days);
             return dt;
         }
 
         public IDateTime AddHours(int hours)
         {
-            IDateTime dt = Copy<IDateTime>();
+            var dt = Copy<IDateTime>();
             if (!dt.HasTime && hours % 24 > 0)
                 dt.HasTime = true;
             dt.Value = Value.AddHours(hours);
@@ -632,7 +632,7 @@ namespace DDay.iCal
 
         public IDateTime AddMinutes(int minutes)
         {
-            IDateTime dt = Copy<IDateTime>();
+            var dt = Copy<IDateTime>();
             if (!dt.HasTime && minutes % 1440 > 0)
                 dt.HasTime = true;
             dt.Value = Value.AddMinutes(minutes);
@@ -641,7 +641,7 @@ namespace DDay.iCal
 
         public IDateTime AddSeconds(int seconds)
         {
-            IDateTime dt = Copy<IDateTime>();
+            var dt = Copy<IDateTime>();
             if (!dt.HasTime && seconds % 86400 > 0)
                 dt.HasTime = true;
             dt.Value = Value.AddSeconds(seconds);
@@ -650,7 +650,7 @@ namespace DDay.iCal
 
         public IDateTime AddMilliseconds(int milliseconds)
         {
-            IDateTime dt = Copy<IDateTime>();
+            var dt = Copy<IDateTime>();
             if (!dt.HasTime && milliseconds % 86400000 > 0)
                 dt.HasTime = true;
             dt.Value = Value.AddMilliseconds(milliseconds);
@@ -659,7 +659,7 @@ namespace DDay.iCal
 
         public IDateTime AddTicks(long ticks)
         {
-            IDateTime dt = Copy<IDateTime>();
+            var dt = Copy<IDateTime>();
             dt.HasTime = true;
             dt.Value = Value.AddTicks(ticks);
             return dt;
@@ -737,7 +737,7 @@ namespace DDay.iCal
 
         public string ToString(string format, IFormatProvider formatProvider)
         {
-            string tz = TimeZoneName;            
+            var tz = TimeZoneName;            
             if (!string.IsNullOrEmpty(tz))
                 tz = " " + tz;
             

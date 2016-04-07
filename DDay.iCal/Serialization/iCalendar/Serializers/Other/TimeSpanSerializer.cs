@@ -17,8 +17,8 @@ namespace DDay.iCal.Serialization.iCalendar
         {
             if (obj is TimeSpan)
             {
-                TimeSpan ts = (TimeSpan)obj;
-                StringBuilder sb = new StringBuilder();
+                var ts = (TimeSpan)obj;
+                var sb = new StringBuilder();
 
                 if (ts < new TimeSpan(0))
                     sb.Append("-");
@@ -55,19 +55,19 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override object Deserialize(TextReader tr)
         {
-            string value = tr.ReadToEnd();
+            var value = tr.ReadToEnd();
 
             try
             {
-                Match match = Regex.Match(value, @"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?))$");
-                int days = 0;
-                int hours = 0;
-                int minutes = 0;
-                int seconds = 0;
+                var match = Regex.Match(value, @"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?))$");
+                var days = 0;
+                var hours = 0;
+                var minutes = 0;
+                var seconds = 0;
 
                 if (match.Success)
                 {
-                    int mult = 1;
+                    var mult = 1;
                     if (match.Groups["sign"].Success && match.Groups["sign"].Value == "-")
                         mult = -1;
 

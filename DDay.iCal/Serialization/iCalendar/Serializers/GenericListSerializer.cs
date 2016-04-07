@@ -22,7 +22,7 @@ namespace DDay.iCal.Serialization.iCalendar
         {
             _InnerType = objectType.GetGenericArguments()[0];
             
-            Type listDef = typeof(List<>);
+            var listDef = typeof(List<>);
             _ObjectType = listDef.MakeGenericType(typeof(object));
         }
 
@@ -43,23 +43,23 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override object Deserialize(TextReader tr)
         {
-            ICalendarProperty p = SerializationContext.Peek() as ICalendarProperty;
+            var p = SerializationContext.Peek() as ICalendarProperty;
             if (p != null)
             {
                 // Get a serializer factory to deserialize the contents of this list
-                ISerializerFactory sf = GetService<ISerializerFactory>();
+                var sf = GetService<ISerializerFactory>();
 
-                object listObj = Activator.CreateInstance(_ObjectType);
+                var listObj = Activator.CreateInstance(_ObjectType);
                 if (listObj != null)
                 {
                     // Get a serializer for the inner type
-                    IStringSerializer stringSerializer = sf.Build(_InnerType, SerializationContext) as IStringSerializer;;
+                    var stringSerializer = sf.Build(_InnerType, SerializationContext) as IStringSerializer;;
 
                     if (stringSerializer != null)
                     {
                         // Deserialize the inner object
-                        string value = tr.ReadToEnd();
-                        object objToAdd = stringSerializer.Deserialize(new StringReader(value));
+                        var value = tr.ReadToEnd();
+                        var objToAdd = stringSerializer.Deserialize(new StringReader(value));
 
                         // If deserialization failed, pass the string value
                         // into the list.
@@ -69,7 +69,7 @@ namespace DDay.iCal.Serialization.iCalendar
                         if (objToAdd != null)
                         {
                             // FIXME: cache this
-                            MethodInfo mi = _ObjectType.GetMethod("Add");
+                            var mi = _ObjectType.GetMethod("Add");
                             if (mi != null)
                             {
                                 // Determine if the returned object is an IList<ObjectType>,
@@ -81,7 +81,7 @@ namespace DDay.iCal.Serialization.iCalendar
                                     // simply an ObjectType.  So, let's enumerate through the
                                     // items in the list and add them individually to our
                                     // list.
-                                    foreach (object innerObj in (IEnumerable)objToAdd)
+                                    foreach (var innerObj in (IEnumerable)objToAdd)
                                         mi.Invoke(listObj, new object[] { innerObj });
                                 }
                                 else

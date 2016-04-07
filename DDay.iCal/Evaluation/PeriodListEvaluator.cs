@@ -25,7 +25,7 @@ namespace DDay.iCal
 
         public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
-            List<IPeriod> periods = new List<IPeriod>();
+            var periods = new List<IPeriod>();
 
             if (includeReferenceDateInResults)
             {
@@ -37,7 +37,7 @@ namespace DDay.iCal
             if (periodEnd < periodStart)
                 return periods;
 
-            foreach (IPeriod p in m_PeriodList)
+            foreach (var p in m_PeriodList)
             {
                 if (!periods.Contains(p))
                     periods.Add(p);

@@ -21,7 +21,7 @@ namespace DDay.Collections
         {
             if (ContainsKey(group))
             {
-                IEnumerable<TInterface> items = AllOf(group);
+                var items = AllOf(group);
                 if (items != null)
                 {
                     // Add a value to the first matching item in the list
@@ -31,7 +31,7 @@ namespace DDay.Collections
             }
 
             // No matching item was found, add a new item to the list
-            TInterface obj = Activator.CreateInstance(typeof(TItem)) as TInterface;
+            var obj = Activator.CreateInstance(typeof(TItem)) as TInterface;
 
             // Set the group for the object
             obj.Group = group;

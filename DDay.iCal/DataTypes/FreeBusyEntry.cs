@@ -33,7 +33,7 @@
         {
             base.CopyFrom(obj);
 
-            IFreeBusyEntry fb = obj as IFreeBusyEntry;
+            var fb = obj as IFreeBusyEntry;
             if (fb != null)
             {
                 Status = fb.Status;

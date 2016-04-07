@@ -33,7 +33,7 @@ namespace DDay.iCal
 
         virtual public void SetParent(ICalendarObject parent)
         {            
-            foreach (ICalendarParameter parameter in this)
+            foreach (var parameter in this)
             {
                 parameter.Parent = parent;
             }

@@ -13,7 +13,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {
-            IAttendee a = obj as IAttendee;
+            var a = obj as IAttendee;
             if (a != null && a.Value != null)
                 return Encode(a, a.Value.OriginalString);
             return null;
@@ -21,7 +21,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override object Deserialize(TextReader tr)
         {
-            string value = tr.ReadToEnd();
+            var value = tr.ReadToEnd();
 
             IAttendee a = null; 
             try
@@ -29,7 +29,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 a = CreateAndAssociate() as IAttendee;
                 if (a != null)
                 {
-                    string uriString = Unescape(Decode(a, value));
+                    var uriString = Unescape(Decode(a, value));
 
                     // Prepend "mailto:" if necessary
                     if (!uriString.StartsWith("mailto:", StringComparison.InvariantCultureIgnoreCase))

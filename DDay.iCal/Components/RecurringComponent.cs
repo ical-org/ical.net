@@ -28,8 +28,8 @@ namespace DDay.iCal
 
         static public IEnumerable<T> SortByDate<T>(IEnumerable<T> list)
         {
-            List<IRecurringComponent> items = new List<IRecurringComponent>();
-            foreach (T t in list)
+            var items = new List<IRecurringComponent>();
+            foreach (var t in list)
             {
                 if (t is IRecurringComponent)
                     items.Add((IRecurringComponent)(object)t);
@@ -37,7 +37,7 @@ namespace DDay.iCal
 
             // Sort the list by date
             items.Sort(new RecurringComponentDateSorter());
-            foreach (IRecurringComponent rc in items)
+            foreach (var rc in items)
                 yield return (T)(object)rc;
         }
 
@@ -251,10 +251,10 @@ namespace DDay.iCal
 
         virtual public IList<AlarmOccurrence> PollAlarms(IDateTime startTime, IDateTime endTime)
         {
-            List<AlarmOccurrence> occurrences = new List<AlarmOccurrence>();
+            var occurrences = new List<AlarmOccurrence>();
             if (Alarms != null)
             {
-                foreach (IAlarm alarm in Alarms)
+                foreach (var alarm in Alarms)
                     occurrences.AddRange(alarm.Poll(startTime, endTime));
             }
             return occurrences;

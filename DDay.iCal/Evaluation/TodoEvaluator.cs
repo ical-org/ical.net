@@ -30,26 +30,26 @@ namespace DDay.iCal
 
         public void EvaluateToPreviousOccurrence(IDateTime completedDate, IDateTime currDt)
         {
-            IDateTime beginningDate = completedDate.Copy<IDateTime>();
+            var beginningDate = completedDate.Copy<IDateTime>();
 
             if (Todo.RecurrenceRules != null)
             {
-                foreach (IRecurrencePattern rrule in Todo.RecurrenceRules)
+                foreach (var rrule in Todo.RecurrenceRules)
                     DetermineStartingRecurrence(rrule, ref beginningDate);
             }
             if (Todo.RecurrenceDates != null)
             {
-                foreach (IPeriodList rdate in Todo.RecurrenceDates)
+                foreach (var rdate in Todo.RecurrenceDates)
                     DetermineStartingRecurrence(rdate, ref beginningDate);
             }
             if (Todo.ExceptionRules != null)
             {
-                foreach (IRecurrencePattern exrule in Todo.ExceptionRules)
+                foreach (var exrule in Todo.ExceptionRules)
                     DetermineStartingRecurrence(exrule, ref beginningDate);
             }
             if (Todo.ExceptionDates != null)
             {
-                foreach (IPeriodList exdate in Todo.ExceptionDates)
+                foreach (var exdate in Todo.ExceptionDates)
                     DetermineStartingRecurrence(exdate, ref beginningDate);
             }
 
@@ -58,14 +58,14 @@ namespace DDay.iCal
 
         public void DetermineStartingRecurrence(IPeriodList rdate, ref IDateTime dt)
         {
-            IEvaluator evaluator = rdate.GetService(typeof(IEvaluator)) as IEvaluator;
+            var evaluator = rdate.GetService(typeof(IEvaluator)) as IEvaluator;
             if (evaluator == null)
             {
                 // FIXME: throw a specific, typed exception here.
                 throw new Exception("Could not determine starting recurrence: a period evaluator could not be found!");
             }
 
-            foreach (IPeriod p in evaluator.Periods)
+            foreach (var p in evaluator.Periods)
             {
                 if (p.StartTime.LessThan(dt))
                     dt = p.StartTime;
@@ -78,7 +78,7 @@ namespace DDay.iCal
                 dt = Todo.Start.Copy<IDateTime>();
             else
             {
-                DateTime dtVal = dt.Value;
+                var dtVal = dt.Value;
                 IncrementDate(ref dtVal, recur, -recur.Interval);
                 dt.Value = dtVal;
             }
@@ -96,9 +96,9 @@ namespace DDay.iCal
                 base.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
 
                 // Ensure each period has a duration
-                for (int i = 0; i < Periods.Count; i++)
+                for (var i = 0; i < Periods.Count; i++)
                 {
-                    IPeriod p = Periods[i];
+                    var p = Periods[i];
                     if (p.EndTime == null)
                     {
                         p.Duration = Todo.Duration;
