@@ -387,18 +387,6 @@ namespace DDay.iCal.Test
             SerializeTest("Calendar1.ics", typeof(iCalendarSerializer));
         }
 
-        [Test]
-        public void CalendarParameters1()
-        {
-            IICalendar iCal = new iCalendar();
-            iCalendarSerializer serializer = new iCalendarSerializer();
-            serializer.Serialize(iCal, @"Calendars\Serialization\CalendarParameters1.ics");
-
-            iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\CalendarParameters1.ics")[0];
-            Assert.IsNotNullOrEmpty(iCal.Version);
-            Assert.IsNotNullOrEmpty(iCal.ProductID);
-        }
-
         /// <summary>
         /// Verifies that a calendar will load without a VERSION or PRODID
         /// specification.
