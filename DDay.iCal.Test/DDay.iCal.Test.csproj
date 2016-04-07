@@ -124,6 +124,10 @@
     <Compile Include="TodoTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DDay.Collections\DDay.Collections\DDay.Collections.csproj">
+      <Project>{E04EFEB6-4625-4D58-AC91-7B8B8A2C97BB}</Project>
+      <Name>DDay.Collections</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DDay.iCal\DDay.iCal.csproj">
       <Project>{F88DB6D3-CB95-4707-9C88-B53403AADC61}</Project>
       <Name>DDay.iCal</Name>
