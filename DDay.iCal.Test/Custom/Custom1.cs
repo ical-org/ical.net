@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace DDay.iCal.Test
 {
     // FIXME: fix this custom calendar to function properly
