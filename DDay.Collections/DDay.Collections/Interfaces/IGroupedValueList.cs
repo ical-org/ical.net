@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace DDay.Collections
+﻿namespace DDay.Collections
 {
     public interface IGroupedValueList<TGroup, TInterface, TItem, TValueType> :
         IGroupedValueCollection<TGroup, TInterface, TItem, TValueType>,
