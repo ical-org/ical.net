@@ -205,12 +205,6 @@ namespace DDay.iCal
             set { Properties.Set("TZURL", value); }
         }
 
-        virtual public Uri TZUrl
-        {
-            get { return Url; }
-            set { Url = value; }
-        }
-
         virtual public ICalendarObjectList<ITimeZoneInfo> TimeZoneInfos
         {
             get { return m_TimeZoneInfos; }
