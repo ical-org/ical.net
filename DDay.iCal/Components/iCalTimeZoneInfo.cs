@@ -14,7 +14,6 @@ namespace DDay.iCal
     public class iCalTimeZoneInfo : CalendarComponent, ITimeZoneInfo
     {
         TimeZoneInfoEvaluator m_Evaluator;
-        DateTime m_End;
 
         public iCalTimeZoneInfo() : base()
         {
@@ -217,7 +216,7 @@ namespace DDay.iCal
 
         protected bool Equals(iCalTimeZoneInfo other)
         {
-            return base.Equals(other) && Equals(m_Evaluator, other.m_Evaluator) && m_End.Equals(other.m_End);
+            return base.Equals(other) && Equals(m_Evaluator, other.m_Evaluator);
         }
 
         public override bool Equals(object obj)
@@ -243,7 +242,6 @@ namespace DDay.iCal
             {
                 var hashCode = base.GetHashCode();
                 hashCode = (hashCode * 397) ^ (m_Evaluator != null ? m_Evaluator.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ m_End.GetHashCode();
                 return hashCode;
             }
         }
