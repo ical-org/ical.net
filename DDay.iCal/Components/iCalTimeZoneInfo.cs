@@ -11,31 +11,24 @@ namespace DDay.iCal
 #if !SILVERLIGHT
     [Serializable]
 #endif
-    public class iCalTimeZoneInfo : 
-        CalendarComponent,
-        ITimeZoneInfo
+    public class iCalTimeZoneInfo : CalendarComponent, ITimeZoneInfo
     {
-        #region Private Fields
-
         TimeZoneInfoEvaluator m_Evaluator;
         DateTime m_End;
-
-        #endregion
-
-        #region Constructors
 
         public iCalTimeZoneInfo() : base()
         {
             // FIXME: how do we ensure SEQUENCE doesn't get serialized?
-            //base.Sequence = null;
+            // base.Sequence = null;
             // iCalTimeZoneInfo does not allow sequence numbers
             // Perhaps we should have a custom serializer that fixes this?
 
             Initialize();
         }
+
         public iCalTimeZoneInfo(string name) : this()
         {
-            this.Name = name;
+            Name = name;
         }
 
         void Initialize()
@@ -44,53 +37,6 @@ namespace DDay.iCal
             SetService(m_Evaluator);
         }
 
-        #endregion
-
-        #region Overrides
-        
-        protected override void OnDeserializing(StreamingContext context)
-        {
-            base.OnDeserializing(context);
-
-            Initialize();
-        }
-
-        protected bool Equals(iCalTimeZoneInfo other)
-        {
-            return base.Equals(other) && Equals(m_Evaluator, other.m_Evaluator) && m_End.Equals(other.m_End);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-            if (obj.GetType() != this.GetType())
-            {
-                return false;
-            }
-            return Equals((iCalTimeZoneInfo) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                var hashCode = base.GetHashCode();
-                hashCode = (hashCode * 397) ^ (m_Evaluator != null ? m_Evaluator.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ m_End.GetHashCode();
-                return hashCode;
-            }
-        }
-
-        #endregion
-
-        #region ITimeZoneInfo Members
 
         virtual public string TZID
         {
@@ -195,10 +141,6 @@ namespace DDay.iCal
             return (retval != null && retval.HasValue);
         }
 
-        #endregion
-
-        #region IRecurrable Members
-
         virtual public IDateTime DTStart
         {
             get { return Start; }
@@ -241,10 +183,6 @@ namespace DDay.iCal
             set { Properties.Set("RECURRENCE-ID", value); }
         }
 
-        #endregion
-
-        #region IRecurrable Members
-
         virtual public void ClearEvaluation()
         {
             RecurrenceUtil.ClearEvaluation(this);
@@ -270,6 +208,44 @@ namespace DDay.iCal
             return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(startTime), new iCalDateTime(endTime), true);
         }
 
-        #endregion
+        protected override void OnDeserializing(StreamingContext context)
+        {
+            base.OnDeserializing(context);
+
+            Initialize();
+        }
+
+        protected bool Equals(iCalTimeZoneInfo other)
+        {
+            return base.Equals(other) && Equals(m_Evaluator, other.m_Evaluator) && m_End.Equals(other.m_End);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (obj.GetType() != GetType())
+            {
+                return false;
+            }
+            return Equals((iCalTimeZoneInfo)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = base.GetHashCode();
+                hashCode = (hashCode * 397) ^ (m_Evaluator != null ? m_Evaluator.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ m_End.GetHashCode();
+                return hashCode;
+            }
+        }
     }    
 }
