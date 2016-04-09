@@ -10,64 +10,31 @@ namespace DDay.iCal
 #if !SILVERLIGHT
     [Serializable]
 #endif
-    public class UTCOffset : 
-        EncodableDataType,
-        IUTCOffset
+    public class UTCOffset : EncodableDataType, IUTCOffset
     {
-        #region Private Fields
+        public TimeSpan Offset { get; set; }
 
-        private bool m_Positive = false;
-        private int m_Hours;
-        private int m_Minutes;
-        private int m_Seconds = 0;
-        
-        #endregion
+        public bool Positive => Offset >= TimeSpan.Zero;
 
-        #region Public Properties
+        public int Hours => Math.Abs(Offset.Hours);
 
-        public bool Positive
-        {
-            get { return m_Positive; }
-            set { m_Positive = value; }
-        }
+        public int Minutes => Math.Abs(Offset.Minutes);
 
-        public int Hours
-        {
-            get { return m_Hours; }
-            set { m_Hours = value; }
-        }
-
-        public int Minutes
-        {
-            get { return m_Minutes; }
-            set { m_Minutes = value; }
-        }
-
-        public int Seconds
-        {
-            get { return m_Seconds; }
-            set { m_Seconds = value; }
-        }
-
-        #endregion
+        public int Seconds => Math.Abs(Offset.Seconds);
 
         #region Constructors
 
-        public UTCOffset() { }
-        public UTCOffset(string value)
-            : this()
+        public UTCOffset() {}
+
+        public UTCOffset(string value) : this()
         {
-            var serializer = new UTCOffsetSerializer();            
+            var serializer = new UTCOffsetSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
         public UTCOffset(TimeSpan ts)
-        {            
-            if (ts.Ticks >= 0)
-                Positive = true;
-            Hours = Math.Abs(ts.Hours);
-            Minutes = Math.Abs(ts.Minutes);
-            Seconds = Math.Abs(ts.Seconds);
+        {
+            Offset = ts;
         }
 
         #endregion
@@ -76,7 +43,7 @@ namespace DDay.iCal
 
         protected bool Equals(UTCOffset other)
         {
-            return m_Positive == other.m_Positive && m_Hours == other.m_Hours && m_Minutes == other.m_Minutes && m_Seconds == other.m_Seconds;
+            return Offset == other.Offset;
         }
 
         public override bool Equals(object obj)
@@ -89,7 +56,7 @@ namespace DDay.iCal
             {
                 return true;
             }
-            if (obj.GetType() != this.GetType())
+            if (obj.GetType() != GetType())
             {
                 return false;
             }
@@ -98,14 +65,7 @@ namespace DDay.iCal
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                var hashCode = m_Positive.GetHashCode();
-                hashCode = (hashCode * 397) ^ m_Hours;
-                hashCode = (hashCode * 397) ^ m_Minutes;
-                hashCode = (hashCode * 397) ^ m_Seconds;
-                return hashCode;
-            }
+            return Offset.GetHashCode();
         }
 
         public override void CopyFrom(ICopyable obj)
@@ -113,20 +73,15 @@ namespace DDay.iCal
             base.CopyFrom(obj);
             if (obj is IUTCOffset)
             {
-                var utco = (IUTCOffset)obj;
-                this.Positive = utco.Positive;
-                this.Hours = utco.Hours;
-                this.Minutes = utco.Minutes;
-                this.Seconds = utco.Seconds;
+                var utco = (IUTCOffset) obj;
+                Offset = utco.Offset;
             }
         }
 
         public override string ToString()
         {
-            return (this.Positive ? "+" : "-") +
-                this.Hours.ToString("00") +
-                this.Minutes.ToString("00") +
-                (this.Seconds != 0 ? this.Seconds.ToString("00") : string.Empty);
+            return (Positive ? "+" : "-") + Hours.ToString("00") + Minutes.ToString("00") +
+                   (Seconds != 0 ? Seconds.ToString("00") : string.Empty);
         }
 
         #endregion
@@ -151,11 +106,12 @@ namespace DDay.iCal
 
         #region Private Methods
 
-        private DateTime Offset(DateTime dt, bool positive)
+        private DateTime ComputeOffset(DateTime dt, bool positive)
         {
-            if ((dt == DateTime.MinValue && positive) ||
-                (dt == DateTime.MaxValue && !positive))
+            if ((dt == DateTime.MinValue && positive) || (dt == DateTime.MaxValue && !positive))
+            {
                 return dt;
+            }
 
             var mult = positive ? 1 : -1;
             dt = dt.AddHours(Hours * mult);
@@ -170,12 +126,12 @@ namespace DDay.iCal
 
         virtual public DateTime ToUTC(DateTime dt)
         {
-            return DateTime.SpecifyKind(Offset(dt, !Positive), DateTimeKind.Utc);
+            return DateTime.SpecifyKind(ComputeOffset(dt, !Positive), DateTimeKind.Utc);
         }
 
         virtual public DateTime ToLocal(DateTime dt)
         {
-            return DateTime.SpecifyKind(Offset(dt, Positive), DateTimeKind.Local);
+            return DateTime.SpecifyKind(ComputeOffset(dt, Positive), DateTimeKind.Local);
         }
 
         #endregion

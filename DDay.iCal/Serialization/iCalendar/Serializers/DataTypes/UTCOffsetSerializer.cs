@@ -33,37 +33,15 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override object Deserialize(TextReader tr)
         {
-            var value = tr.ReadToEnd();
-
+            var offsetString = tr.ReadToEnd();
             var offset = CreateAndAssociate() as IUTCOffset;
-            if (offset != null)
+            if (offsetString.EndsWith("00"))
             {
-                // Decode the value as necessary
-                value = Decode(offset, value);
-
-                var match = _decodeOffset.Match(value);
-                if (match.Success)
-                {
-                    try
-                    {
-                        // NOTE: Fixes bug #1874174 - TimeZone positive UTCOffsets don't parse correctly
-                        if (match.Groups[1].Value == "+")
-                            offset.Positive = true;
-                        offset.Hours = Int32.Parse(match.Groups[2].Value);
-                        offset.Minutes = Int32.Parse(match.Groups[3].Value);
-                        if (match.Groups[4].Success)
-                            offset.Seconds = Int32.Parse(match.Groups[4].Value);
-                    }
-                    catch
-                    {
-                        return null;
-                    }
-                    return offset;
-                }
-
-                return false;
+                offsetString = offsetString.Substring(0, offsetString.Length - 2);
             }
-            return null;
+            var dummyOffset = DateTimeOffset.Parse("2016-01-01 00:00:00 " + offsetString);
+            offset.Offset = dummyOffset.Offset;
+            return offset;
         }
     }
 }

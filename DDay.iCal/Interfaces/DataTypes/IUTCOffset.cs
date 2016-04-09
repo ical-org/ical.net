@@ -2,13 +2,13 @@
 
 namespace DDay.iCal
 {
-    public interface IUTCOffset :
-        IEncodableDataType
+    public interface IUTCOffset : IEncodableDataType
     {
-        bool Positive { get; set; }
-        int Hours { get; set; }
-        int Minutes { get; set; }
-        int Seconds { get; set; }
+        TimeSpan Offset { get; set; }
+        bool Positive { get; }
+        int Hours { get; }
+        int Minutes { get; }
+        int Seconds { get; }
 
         DateTime ToUTC(DateTime dt);
         DateTime ToLocal(DateTime dt);
