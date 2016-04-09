@@ -101,31 +101,11 @@ namespace DDay.iCal
         /// Gets the DayOfWeek for this date/time value.
         /// </summary>
         DayOfWeek DayOfWeek { get; }
-        
-        /// <summary>
-        /// Gets the DayOfYear for this date/time value.
-        /// </summary>
-        int DayOfYear { get; }
-
-        /// <summary>
-        /// Gets the first day of the year currently represented by the IDateTime instance.
-        /// </summary>
-        IDateTime FirstDayOfYear { get; }
-
-        /// <summary>
-        /// Gets the first day of the month currently represented by the IDateTime instance.
-        /// </summary>
-        IDateTime FirstDayOfMonth { get; }
 
         /// <summary>
         /// Gets the date portion of the date/time value.
         /// </summary>
         DateTime Date { get; }
-        
-        /// <summary>
-        /// Gets the time portion of the date/time value.
-        /// </summary>
-        TimeSpan TimeOfDay { get; }
 
         /// <summary>
         /// Converts the date/time value to a local time
@@ -139,7 +119,6 @@ namespace DDay.iCal
         /// </summary>
         IDateTime ToTimeZone(string tzid);
         IDateTime ToTimeZone(ITimeZone tz);
-        IDateTime SetTimeZone(ITimeZone tz);
 
         IDateTime Add(TimeSpan ts);
         IDateTime Subtract(TimeSpan ts);
@@ -159,7 +138,6 @@ namespace DDay.iCal
         bool LessThanOrEqual(IDateTime dt);
         bool GreaterThanOrEqual(IDateTime dt);
 
-        string ToString(string format);
         void AssociateWith(IDateTime dt);        
     }
 }
