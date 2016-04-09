@@ -14,7 +14,7 @@ namespace DDay.iCal
 #endif
     public class iCalTimeZoneInfo : CalendarComponent, ITimeZoneInfo
     {
-        TimeZoneInfoEvaluator m_Evaluator;
+        private TimeZoneInfoEvaluator m_Evaluator;
 
         public iCalTimeZoneInfo() : base()
         {
@@ -76,28 +76,18 @@ namespace DDay.iCal
             }
         }
 
-        virtual public IUTCOffset TZOffsetFrom
-        {
-            get { return OffsetFrom; }
-            set { OffsetFrom = value; }
-        }
-
+        private IUTCOffset _offsetFrom;
         virtual public IUTCOffset OffsetFrom
         {
-            get { return Properties.Get<IUTCOffset>("TZOFFSETFROM"); }
-            set { Properties.Set("TZOFFSETFROM", value); }
+            get { return _offsetFrom ?? (_offsetFrom = Properties.Get<IUTCOffset>("TZOFFSETFROM")); }
+            set { _offsetFrom = value; }
         }
 
+        private IUTCOffset _offsetTo;
         virtual public IUTCOffset OffsetTo
         {
-            get { return Properties.Get<IUTCOffset>("TZOFFSETTO"); }
-            set { Properties.Set("TZOFFSETTO", value); }
-        }
-
-        virtual public IUTCOffset TZOffsetTo
-        {
-            get { return OffsetTo; }
-            set { OffsetTo = value; }
+            get { return _offsetTo ?? (_offsetTo = Properties.Get<IUTCOffset>("TZOFFSETTO")); }
+            set { _offsetTo = value; }
         }
 
         private IList<string> _tzNames = new List<string>();
