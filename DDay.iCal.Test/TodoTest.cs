@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using NUnit.Framework;
 
 namespace DDay.iCal.Test
@@ -187,7 +188,7 @@ namespace DDay.iCal.Test
 
             var occurrences = todo.GetOccurrences(
                 new iCalDateTime(2006, 7, 1, 9, 0, 0),
-                new iCalDateTime(2007, 7, 1, 9, 0, 0));
+                new iCalDateTime(2007, 7, 1, 9, 0, 0)).OrderBy(o => o.Period.StartTime).ToList();
 
             // FIXME: Count is not properly restricting recurrences to 10.
             // What's going wrong here?

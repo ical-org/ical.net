@@ -776,7 +776,7 @@ END:VCALENDAR
 
             IDateTime dtStart = new iCalDateTime(2006, 12, 18, tzid);
             IDateTime dtEnd = new iCalDateTime(2006, 12, 23, tzid);
-            var occurrences = iCal.GetOccurrences(dtStart, dtEnd);
+            var occurrences = iCal.GetOccurrences(dtStart, dtEnd).OrderBy(o => o.Period.StartTime).ToList();
 
             var DateTimes = new iCalDateTime[]
             {
@@ -1349,7 +1349,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         {
             var longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
             var iCal = iCalendar.LoadFromFile(@"Calendars/Serialization/Outlook2007LineFolds.ics")[0];
-            var events = iCal.GetOccurrences<Event>(new iCalDateTime(2009, 06, 20), new iCalDateTime(2009, 06, 22));
+            var events = iCal.GetOccurrences<Event>(new iCalDateTime(2009, 06, 20), new iCalDateTime(2009, 06, 22)).OrderBy(o => o.Period.StartTime).ToList();
             Assert.AreEqual(longName, ((IEvent)events[0].Source).Location);
         }
 

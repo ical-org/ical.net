@@ -21,75 +21,67 @@ namespace DDay.iCal
                 iCal.ClearEvaluation();
         }
 
-        public IList<Occurrence> GetOccurrences(IDateTime dt)
+        public HashSet<Occurrence> GetOccurrences(IDateTime dt)
         {
-            var occurrences = new List<Occurrence>();
+            var occurrences = new HashSet<Occurrence>();
             foreach (var iCal in this)
-                occurrences.AddRange(iCal.GetOccurrences(dt));
-            occurrences.Sort();
+                occurrences.UnionWith(iCal.GetOccurrences(dt));
             return occurrences;
         }
 
-        public IList<Occurrence> GetOccurrences(DateTime dt)
+        public HashSet<Occurrence> GetOccurrences(DateTime dt)
         {
-            var occurrences = new List<Occurrence>();
+            var occurrences = new HashSet<Occurrence>();
             foreach (var iCal in this)
-                occurrences.AddRange(iCal.GetOccurrences(dt));
-            occurrences.Sort();
+                occurrences.UnionWith(iCal.GetOccurrences(dt));
             return occurrences;
         }
 
-        public IList<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
+        public HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
         {
-            var occurrences = new List<Occurrence>();
+            var occurrences = new HashSet<Occurrence>();
             foreach (var iCal in this)
-                occurrences.AddRange(iCal.GetOccurrences(startTime, endTime));
-            occurrences.Sort();
+                occurrences.UnionWith(iCal.GetOccurrences(startTime, endTime));
             return occurrences;
         }
 
-        public IList<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
+        public HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
         {
-            var occurrences = new List<Occurrence>();
+            var occurrences = new HashSet<Occurrence>();
             foreach (var iCal in this)
-                occurrences.AddRange(iCal.GetOccurrences(startTime, endTime));
-            occurrences.Sort();
+                occurrences.UnionWith(iCal.GetOccurrences(startTime, endTime));
             return occurrences;
         }
 
-        public IList<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
+        public HashSet<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
         {
-            var occurrences = new List<Occurrence>();
+            var occurrences = new HashSet<Occurrence>();
             foreach (var iCal in this)
-                occurrences.AddRange(iCal.GetOccurrences<T>(dt));
-            occurrences.Sort();
+                occurrences.UnionWith(iCal.GetOccurrences<T>(dt));
             return occurrences;
         }
 
-        public IList<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
+        public HashSet<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
         {
-            var occurrences = new List<Occurrence>();
+            var occurrences = new HashSet<Occurrence>();
             foreach (var iCal in this)
-                occurrences.AddRange(iCal.GetOccurrences<T>(dt));
-            occurrences.Sort();
+                occurrences.UnionWith(iCal.GetOccurrences<T>(dt));
             return occurrences;
         }
 
-        public IList<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
+        public HashSet<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
         {
-            var occurrences = new List<Occurrence>();
+            var occurrences = new HashSet<Occurrence>();
             foreach (var iCal in this)
-                occurrences.AddRange(iCal.GetOccurrences<T>(startTime, endTime));
-            occurrences.Sort();
+                occurrences.UnionWith(iCal.GetOccurrences<T>(startTime, endTime));
             return occurrences;
         }
 
-        public IList<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent
+        public HashSet<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent
         {
-            var occurrences = new List<Occurrence>();
+            var occurrences = new HashSet<Occurrence>();
             foreach (var iCal in this)
-                occurrences.AddRange(iCal.GetOccurrences<T>(startTime, endTime));
-            occurrences.Sort();
+                occurrences.UnionWith(iCal.GetOccurrences<T>(startTime, endTime));
             return occurrences;
         }
 

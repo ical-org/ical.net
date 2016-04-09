@@ -129,7 +129,7 @@ namespace DDay.iCal.Test
             // Get occurrences for the first event
             var occurrences = evt1.GetOccurrences(
                 new iCalDateTime(1996, 1, 1, tzid),
-                new iCalDateTime(2000, 1, 1, tzid));
+                new iCalDateTime(2000, 1, 1, tzid)).OrderBy(o => o.Period.StartTime).ToList();
 
             var DateTimes = new iCalDateTime[]
             {
@@ -172,7 +172,7 @@ namespace DDay.iCal.Test
             // Get occurrences for the 2nd event
             occurrences = evt2.GetOccurrences(
                 new iCalDateTime(1996, 1, 1, tzid),
-                new iCalDateTime(1998, 4, 1, tzid));
+                new iCalDateTime(1998, 4, 1, tzid)).OrderBy(o => o.Period.StartTime).ToList();
 
             var DateTimes1 = new iCalDateTime[]
             {

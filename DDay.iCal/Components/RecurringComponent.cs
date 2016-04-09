@@ -224,22 +224,22 @@ namespace DDay.iCal
             RecurrenceUtil.ClearEvaluation(this);
         }
 
-        virtual public IList<Occurrence> GetOccurrences(IDateTime dt)
+        virtual public HashSet<Occurrence> GetOccurrences(IDateTime dt)
         {
             return RecurrenceUtil.GetOccurrences(this, dt, EvaluationIncludesReferenceDate);
         }
 
-        virtual public IList<Occurrence> GetOccurrences(DateTime dt)
+        virtual public HashSet<Occurrence> GetOccurrences(DateTime dt)
         {
             return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(dt), EvaluationIncludesReferenceDate);
         }
 
-        virtual public IList<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
+        virtual public HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
         {
             return RecurrenceUtil.GetOccurrences(this, startTime, endTime, EvaluationIncludesReferenceDate);
         }
 
-        virtual public IList<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
+        virtual public HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
         {
             return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(startTime), new iCalDateTime(endTime), EvaluationIncludesReferenceDate);
         }

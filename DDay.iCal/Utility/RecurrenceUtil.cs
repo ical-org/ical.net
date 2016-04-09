@@ -11,7 +11,7 @@ namespace DDay.iCal
                 evaluator.Clear();
         }
 
-        static public IList<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt, bool includeReferenceDateInResults)
+        static public HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt, bool includeReferenceDateInResults)
         {
             return GetOccurrences(
                 recurrable, 
@@ -20,9 +20,9 @@ namespace DDay.iCal
                 includeReferenceDateInResults);
         }
 
-        static public IList<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime periodStart, IDateTime periodEnd, bool includeReferenceDateInResults)
+        static public HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime periodStart, IDateTime periodEnd, bool includeReferenceDateInResults)
         {
-            var occurrences = new List<Occurrence>();
+            var occurrences = new HashSet<Occurrence>();
 
             var evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
             if (evaluator != null)
@@ -51,8 +51,6 @@ namespace DDay.iCal
                     if (endTime.GreaterThan(periodStart) && p.StartTime.LessThanOrEqual(periodEnd))
                         occurrences.Add(new Occurrence(recurrable, p));
                 }
-
-                occurrences.Sort();
             }
             return occurrences;
         }

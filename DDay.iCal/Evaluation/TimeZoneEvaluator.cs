@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace DDay.iCal
 {
@@ -9,7 +10,7 @@ namespace DDay.iCal
     {
         #region Private Fields
 
-        private List<Occurrence> m_Occurrences;        
+        private HashSet<Occurrence> m_Occurrences;        
 
         #endregion
 
@@ -21,7 +22,7 @@ namespace DDay.iCal
 
         #region Public Properties
 
-        virtual public List<Occurrence> Occurrences
+        virtual public HashSet<Occurrence> Occurrences
         {
             get { return m_Occurrences; }
             set { m_Occurrences = value; }
@@ -34,7 +35,7 @@ namespace DDay.iCal
         public TimeZoneEvaluator(ITimeZone tz)
         {
             TimeZone = tz;
-            m_Occurrences = new List<Occurrence>();
+            m_Occurrences = new HashSet<Occurrence>();
         }
 
         #endregion
@@ -44,21 +45,13 @@ namespace DDay.iCal
         void ProcessOccurrences(IDateTime referenceDate)
         {
             // Sort the occurrences by start time
-            m_Occurrences.Sort(
-                delegate(Occurrence o1, Occurrence o2)
-                {
-                    if (o1.Period == null || o1.Period.StartTime == null)
-                        return -1;
-                    else if (o2.Period == null || o2.Period.StartTime == null)
-                        return 1;
-                    else return o1.Period.StartTime.CompareTo(o2.Period.StartTime);
-                }
-            );
 
-            for (var i = 0; i < m_Occurrences.Count; i++)
+            var sortedOccurrences = m_Occurrences.OrderBy(o => o.Period.StartTime).ToList();
+
+            for (var i = 0; i < sortedOccurrences.Count; i++)
             {
-                var curr = m_Occurrences[i];
-                var next = i < m_Occurrences.Count - 1 ? (Occurrence?)m_Occurrences[i + 1] : null;
+                var curr = sortedOccurrences[i];
+                var next = i < m_Occurrences.Count - 1 ? (Occurrence?)sortedOccurrences[i + 1] : null;
 
                 // Determine end times for our periods, overwriting previously calculated end times.
                 // This is important because we don't want to overcalculate our time zone information,
