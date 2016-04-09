@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace DDay.iCal
@@ -36,15 +37,17 @@ namespace DDay.iCal
             SetService(m_Evaluator);
         }
 
-
+        private string _tzId;
         virtual public string TZID
         {
             get
             {
-                var tz = Parent as ITimeZone;
-                if (tz != null)
-                    return tz.TZID;
-                return null;
+                if (_tzId == null)
+                {
+                    var tz = Parent as ITimeZone;
+                    _tzId = tz?.TZID;
+                }
+                return _tzId;
             }
         }
 
@@ -64,9 +67,7 @@ namespace DDay.iCal
         {
             get
             {
-                if (TimeZoneNames.Count > 0)
-                    return TimeZoneNames[0];
-                return null;
+                return TimeZoneNames.FirstOrDefault();
             }
             set
             {
@@ -99,10 +100,11 @@ namespace DDay.iCal
             set { OffsetTo = value; }
         }
 
+        private IList<string> _tzNames = new List<string>();
         virtual public IList<string> TimeZoneNames
         {
-            get { return Properties.GetMany<string>("TZNAME"); }
-            set { Properties.Set("TZNAME", value); }
+            get { return _tzNames ?? (_tzNames = Properties.GetMany<string>("TZNAME")); }
+            set { _tzNames = value; }
         }
 
         virtual public TimeZoneObservance? GetObservance(IDateTime dt)
