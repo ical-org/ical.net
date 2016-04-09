@@ -35,13 +35,18 @@ namespace DDay.iCal.Serialization.iCalendar
         {
             var offsetString = tr.ReadToEnd();
             var offset = CreateAndAssociate() as IUTCOffset;
-            if (offsetString.EndsWith("00"))
-            {
-                offsetString = offsetString.Substring(0, offsetString.Length - 2);
-            }
-            var dummyOffset = DateTimeOffset.Parse("2016-01-01 00:00:00 " + offsetString);
-            offset.Offset = dummyOffset.Offset;
+            offset.Offset = GetOffset(offsetString);
             return offset;
+        }
+
+        public static TimeSpan GetOffset(string rawOffset)
+        {
+            if (rawOffset.EndsWith("00"))
+            {
+                rawOffset = rawOffset.Substring(0, rawOffset.Length - 2);
+            }
+            var dummyOffset = DateTimeOffset.Parse("2016-01-01 00:00:00 " + rawOffset);
+            return dummyOffset.Offset;
         }
     }
 }
