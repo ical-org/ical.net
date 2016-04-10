@@ -96,7 +96,7 @@ namespace DDay.iCal
                 {
                     var evaluator = curr.GetService(typeof(IEvaluator)) as IEvaluator;
                     Debug.Assert(curr.Start != null, "TimeZoneInfo.Start must not be null.");
-                    Debug.Assert(curr.Start.TZID == null, "TimeZoneInfo.Start must not have a time zone reference.");
+                    Debug.Assert(curr.Start.TzId == null, "TimeZoneInfo.Start must not have a time zone reference.");
                     Debug.Assert(evaluator != null, "TimeZoneInfo.GetService(typeof(IEvaluator)) must not be null.");
 
                     // Time zones must include an effective start date/time

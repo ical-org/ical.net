@@ -15,8 +15,8 @@ namespace DDay.iCal
         {
             return GetOccurrences(
                 recurrable, 
-                new iCalDateTime(dt.Local.Date), 
-                new iCalDateTime(dt.Local.Date.AddDays(1).AddSeconds(-1)),
+                new iCalDateTime(dt.AsSystemLocal.Date), 
+                new iCalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)),
                 includeReferenceDateInResults);
         }
 

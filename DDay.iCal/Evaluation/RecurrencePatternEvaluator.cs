@@ -977,7 +977,7 @@ namespace DDay.iCal
         {
             // Turn each resulting date/time into an IDateTime and associate it
             // with the reference date.
-            IDateTime newDt = new iCalDateTime(dt, referenceDate.TZID);
+            IDateTime newDt = new iCalDateTime(dt, referenceDate.TzId);
 
             // NOTE: fixes bug #2938007 - hasTime missing
             newDt.HasTime = referenceDate.HasTime;

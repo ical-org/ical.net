@@ -56,7 +56,7 @@ namespace DDay.iCal
 
         protected IDateTime ConvertToIDateTime(DateTime dt, IDateTime referenceDate)
         {
-            IDateTime newDt = new iCalDateTime(dt, referenceDate.TZID);
+            IDateTime newDt = new iCalDateTime(dt, referenceDate.TzId);
             newDt.AssociateWith(referenceDate);
             return newDt;
         }

@@ -28,7 +28,7 @@ namespace DDay.iCal.Test
                 if (evt != null)
                 {
                     // Display the date of the event
-                    Console.Write(o.Period.StartTime.Local.Date.ToString("MM/dd/yyyy") + " -\t");
+                    Console.Write(o.Period.StartTime.AsSystemLocal.Date.ToString("MM/dd/yyyy") + " -\t");
 
                     // Display the event summary
                     Console.Write(evt.Summary);
@@ -36,7 +36,7 @@ namespace DDay.iCal.Test
                     // Display the time the event happens (unless it's an all-day event)
                     if (evt.Start.HasTime)
                     {
-                        Console.Write(" (" + evt.Start.Local.ToShortTimeString() + " - " + evt.End.Local.ToShortTimeString());
+                        Console.Write(" (" + evt.Start.AsSystemLocal.ToShortTimeString() + " - " + evt.End.AsSystemLocal.ToShortTimeString());
                         if (evt.Start.TimeZoneObservance != null && evt.Start.TimeZoneObservance.HasValue)
                             Console.Write(" " + evt.Start.TimeZoneObservance.Value.TimeZoneInfo.TimeZoneName);
                         Console.Write(")");

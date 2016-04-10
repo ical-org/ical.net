@@ -104,7 +104,7 @@ namespace DDay.iCal
 
             // Normalize date/time values within this time zone to a UTC value.
             var normalizedDt = dt.Value;
-            if (string.Equals(dt.TZID, TZID))
+            if (string.Equals(dt.TzId, TZID))
             {
                 dt = new iCalDateTime(OffsetTo.ToUTC(dt.Value));
                 normalizedDt = OffsetTo.ToUTC(normalizedDt);

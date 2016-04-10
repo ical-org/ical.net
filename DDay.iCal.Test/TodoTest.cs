@@ -24,7 +24,7 @@ namespace DDay.iCal.Test
             for (var i = 0; i < items.Count; i += 2)
             {
                 var dt = (iCalDateTime)items[i];                
-                dt.TZID = tzid;
+                dt.TzId = tzid;
 
                 var tf = (bool)items[i + 1];
                 if (tf)
@@ -53,7 +53,7 @@ namespace DDay.iCal.Test
             for (var i = 0; i < items.Count; i += 2)
             {
                 var dt = (IDateTime)items[i];
-                dt.TZID = tzid;
+                dt.TzId = tzid;
 
                 var tf = (bool)items[i + 1];
                 if (tf)

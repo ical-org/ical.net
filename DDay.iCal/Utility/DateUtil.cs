@@ -53,21 +53,21 @@ namespace DDay.iCal
             // If the dt1 time does not occur in the same time zone as the
             // dt2 time, then let's convert it so they can be used in the
             // same context (i.e. evaluation).
-            if (dt1.TZID != null)
+            if (dt1.TzId != null)
             {
-                if (!string.Equals(dt1.TZID, copy.TZID))
-                    return (dt1.TimeZoneObservance != null) ? copy.ToTimeZone(dt1.TimeZoneObservance.Value) : copy.ToTimeZone(dt1.TZID);
+                if (!string.Equals(dt1.TzId, copy.TzId))
+                    return (dt1.TimeZoneObservance != null) ? copy.ToTimeZone(dt1.TimeZoneObservance.Value) : copy.ToTimeZone(dt1.TzId);
                 else return copy;
             }
             else if (dt1.IsUniversalTime)
             {
                 // The first date/time is in UTC time, convert!
-                return new iCalDateTime(copy.UTC);
+                return new iCalDateTime(copy.AsUtc);
             }
             else
             {
                 // The first date/time is in local time, convert!
-                return new iCalDateTime(copy.Local);
+                return new iCalDateTime(copy.AsSystemLocal);
             }
         }
 

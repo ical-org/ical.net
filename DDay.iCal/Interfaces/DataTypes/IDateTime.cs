@@ -2,24 +2,21 @@
 
 namespace DDay.iCal
 {
-    public interface IDateTime :
-        IEncodableDataType,
-        IComparable<IDateTime>,
-        IFormattable
+    public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormattable
     {
         /// <summary>
         /// Converts the date/time to this computer's local date/time.
         /// </summary>
-        DateTime Local { get; }
+        DateTime AsSystemLocal { get; }
 
         /// <summary>
         /// Converts the date/time to UTC (Coordinated Universal Time)
         /// </summary>
-        DateTime UTC { get; }
+        DateTime AsUtc { get; }
 
         /// <summary>
         /// Retrieves the <see cref="iCalTimeZoneInfo"/> object for the time
-        /// zone set by <see cref="TZID"/>.
+        /// zone set by <see cref="TzId"/>.
         /// </summary>
         TimeZoneObservance? TimeZoneObservance { get; set; }
 
@@ -55,7 +52,7 @@ namespace DDay.iCal
         /// <summary>
         /// Gets/sets the time zone ID for this date/time value.
         /// </summary>
-        string TZID { get; set; }
+        string TzId { get; set; }
 
         /// <summary>
         /// Gets the year for this date/time value.

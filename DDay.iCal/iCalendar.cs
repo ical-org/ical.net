@@ -703,8 +703,8 @@ namespace DDay.iCal
         virtual public HashSet<Occurrence> GetOccurrences(IDateTime dt)
         {
             return GetOccurrences<IRecurringComponent>(
-                new iCalDateTime(dt.Local.Date),
-                new iCalDateTime(dt.Local.Date.AddDays(1).AddSeconds(-1)));
+                new iCalDateTime(dt.AsSystemLocal.Date),
+                new iCalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)));
         }
         virtual public HashSet<Occurrence> GetOccurrences(DateTime dt)
         {
@@ -744,8 +744,8 @@ namespace DDay.iCal
         virtual public HashSet<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
         {
             return GetOccurrences<T>(
-                new iCalDateTime(dt.Local.Date),
-                new iCalDateTime(dt.Local.Date.AddDays(1).AddTicks(-1)));
+                new iCalDateTime(dt.AsSystemLocal.Date),
+                new iCalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddTicks(-1)));
         }
         virtual public HashSet<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
         {
