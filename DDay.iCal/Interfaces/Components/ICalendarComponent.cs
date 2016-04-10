@@ -1,8 +1,4 @@
 ﻿namespace DDay.iCal
 {
-    public interface ICalendarComponent :
-        ICalendarObject,
-        ICalendarPropertyListContainer
-    {
-    }
+    public interface ICalendarComponent : ICalendarPropertyListContainer {}
 }
