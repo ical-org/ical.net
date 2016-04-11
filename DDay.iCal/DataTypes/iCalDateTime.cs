@@ -41,7 +41,7 @@ namespace DDay.iCal
 
         #region Private Fields
 
-        private DateTime _Value;
+        private DateTime _value;
         private bool _HasDate;
         private bool _HasTime;
         private TimeZoneObservance? _TimeZoneObservance;
@@ -190,7 +190,7 @@ namespace DDay.iCal
             var dt = obj as IDateTime;
             if (dt != null)
             {
-                _Value = dt.Value;
+                _value = dt.Value;
                 _IsUniversalTime = dt.IsUniversalTime;                
                 _HasDate = dt.HasDate;
                 _HasTime = dt.HasTime;
@@ -328,6 +328,8 @@ namespace DDay.iCal
             }
         }
 
+        private string _cachedDt = string.Empty;
+        private DateTime _utc;
         /// <summary>
         /// Converts the date/time to UTC (Coordinated Universal Time)
         /// </summary>
@@ -335,26 +337,32 @@ namespace DDay.iCal
         {
             get
             {
-                if (IsUniversalTime)
-                    return DateTime.SpecifyKind(Value, DateTimeKind.Utc);
-                else if (TzId != null)
+                if (_utc == default(DateTime) || _cachedDt == string.Empty || _cachedDt != TimeZoneName)
                 {
-                    var value = Value;
-
-                    // Get the Time Zone Observance, if possible
-                    var tzi = TimeZoneObservance;
-                    if (tzi == null || !tzi.HasValue)
-                        tzi = GetTimeZoneObservance();
-
-                    if (tzi != null && tzi.HasValue)
+                    _cachedDt = TimeZoneName;
+                    if (IsUniversalTime)
+                        return DateTime.SpecifyKind(Value, DateTimeKind.Utc);
+                    else if (TzId != null)
                     {
-                        Debug.Assert(tzi.Value.TimeZoneInfo.OffsetTo != null);
-                        return DateTime.SpecifyKind(tzi.Value.TimeZoneInfo.OffsetTo.ToUTC(value), DateTimeKind.Utc);
+                        var value = Value;
+
+                        // Get the Time Zone Observance, if possible
+                        var tzi = TimeZoneObservance;
+                        if (tzi == null || !tzi.HasValue)
+                            tzi = GetTimeZoneObservance();
+
+                        if (tzi != null && tzi.HasValue)
+                        {
+                            Debug.Assert(tzi.Value.TimeZoneInfo.OffsetTo != null);
+                            _utc = DateTime.SpecifyKind(tzi.Value.TimeZoneInfo.OffsetTo.ToUTC(value), DateTimeKind.Utc);
+                            return _utc;
+                        }
                     }
+                    _utc = DateTime.SpecifyKind(Value, DateTimeKind.Local).ToUniversalTime();
                 }
-                 
+                
                 // Fallback to the OS-conversion
-                return DateTime.SpecifyKind(Value, DateTimeKind.Local).ToUniversalTime();
+                return _utc;
             }
         }
 
@@ -404,16 +412,16 @@ namespace DDay.iCal
 
         public DateTime Value
         {
-            get { return _Value; }
+            get { return _value; }
             set
             {
-                if (!object.Equals(_Value, value))
+                if (!object.Equals(_value, value))
                 {
-                    _Value = value;
+                    _value = value;
 
                     // Reset the time zone info if the new date/time doesn't
                     // fall within this time zone observance.
-                    if (_TimeZoneObservance != null && 
+                    if (_TimeZoneObservance != null &&
                         _TimeZoneObservance.HasValue &&
                         !_TimeZoneObservance.Value.Contains(this))
                         _TimeZoneObservance = null;

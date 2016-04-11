@@ -114,7 +114,7 @@ namespace DDay.iCal
                 return zone;
             }
 
-            var newTzId = tzId.Replace("/", "-");
+            var newTzId = tzId.Replace("-", "/");
             zone = DateTimeZoneProviders.Serialization.GetZoneOrNull(newTzId);
             if (zone != null)
             {
