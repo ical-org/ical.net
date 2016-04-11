@@ -1,7 +1,6 @@
 using System;
 using System.Runtime.Serialization;
 using System.Globalization;
-using System.Diagnostics;
 using DDay.Collections;
 
 namespace DDay.iCal

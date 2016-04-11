@@ -119,7 +119,7 @@ namespace DDay.iCal
             this.HasDate = true;
             this.HasTime = (value.Second == 0 && value.Minute == 0 && value.Hour == 0) ? false : true;
             if (tzo.TimeZoneInfo != null)
-                this.TzId = tzo.TimeZoneInfo.TZID;
+                this.TzId = tzo.TimeZoneInfo.TzId;
             this.TimeZoneObservance = tzo;            
             this.AssociatedObject = tzo.TimeZoneInfo;
         }
@@ -375,7 +375,7 @@ namespace DDay.iCal
                     value.HasValue &&                    
                     value.Value.TimeZoneInfo != null)
                 {
-                    this.TzId = value.Value.TimeZoneInfo.TZID;
+                    this.TzId = value.Value.TimeZoneInfo.TzId;
                 }
                 else
                 {
@@ -449,7 +449,7 @@ namespace DDay.iCal
                         _TimeZoneObservance != null &&
                         _TimeZoneObservance.HasValue &&
                         _TimeZoneObservance.Value.TimeZoneInfo != null &&
-                        !object.Equals(_TimeZoneObservance.Value.TimeZoneInfo.TZID, value))
+                        !object.Equals(_TimeZoneObservance.Value.TimeZoneInfo.TzId, value))
                         _TimeZoneObservance = null;
                 }
             }
@@ -505,26 +505,6 @@ namespace DDay.iCal
             get { return Value.DayOfYear; }
         }
 
-        public IDateTime FirstDayOfYear
-        {
-            get
-            {
-                var dt = Copy<IDateTime>();
-                dt.Value = Value.AddDays(-Value.DayOfYear+1).Date;
-                return dt;
-            }
-        }
-
-        public IDateTime FirstDayOfMonth
-        {
-            get
-            {
-                var dt = Copy<IDateTime>();
-                dt.Value = Value.AddDays(-Value.Day+1).Date;
-                return dt;
-            }
-        }
-
         public DateTime Date
         {
             get { return Value.Date; }
@@ -539,7 +519,10 @@ namespace DDay.iCal
         {
             var tzi = tzo.TimeZoneInfo;
             if (tzi != null)
+            {
+                var tzId = tzo.TimeZoneInfo.TzId;
                 return new iCalDateTime(tzi.OffsetTo.ToLocal(AsUtc), tzo);
+            }
             return null;
         }
 

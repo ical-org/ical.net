@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 namespace DDay.iCal
 {
-    public class ServiceProvider :
-        IServiceProvider
+    public class ServiceProvider //: IServiceProvider
     {
         #region Private Fields
 

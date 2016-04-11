@@ -12,14 +12,10 @@ namespace DDay.iCal
         CalendarDataType,
         IEncodableDataType
     {
-        #region IEncodableDataType Members
-
         virtual public string Encoding
         {
             get { return Parameters.Get("ENCODING"); }
             set { Parameters.Set("ENCODING", value); }
         }
-
-        #endregion
     }
 }

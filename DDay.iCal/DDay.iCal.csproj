@@ -128,6 +128,7 @@
     <Compile Include="General\Proxies\CalendarParameterCollectionProxy.cs" />
     <Compile Include="General\ServiceProvider.cs" />
     <Compile Include="General\Proxies\UniqueComponentListProxy.cs" />
+    <Compile Include="INodaDateTime.cs" />
     <Compile Include="Interfaces\DataTypes\IFreeBusyEntry.cs" />
     <Compile Include="Interfaces\Evaluation\IGetFreeBusy.cs" />
     <Compile Include="Interfaces\Evaluation\IGetOccurrences.cs" />

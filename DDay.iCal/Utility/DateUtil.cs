@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using NodaTime;
 
 namespace DDay.iCal
 {
@@ -91,6 +92,54 @@ namespace DDay.iCal
                 offset++;
             }
             return dt;
+        }
+
+        public static DateTimeZone GetZone(string tzId)
+        {
+            var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(tzId);
+            if (zone != null)
+            {
+                return zone;
+            }
+
+            zone = DateTimeZoneProviders.Bcl.GetZoneOrNull(tzId);
+            if (zone != null)
+            {
+                return zone;
+            }
+
+            zone = DateTimeZoneProviders.Serialization.GetZoneOrNull(tzId);
+            if (zone != null)
+            {
+                return zone;
+            }
+
+            var newTzId = tzId.Replace("/", "-");
+            zone = DateTimeZoneProviders.Serialization.GetZoneOrNull(newTzId);
+            if (zone != null)
+            {
+                return zone;
+            }
+
+            throw new ArgumentException($"{tzId} is not a valid time zone");
+        }
+
+        public static ZonedDateTime AddYears(ZonedDateTime zonedDateTime, int years)
+        {
+            var futureDate = zonedDateTime.Date.PlusYears(years);
+            var futureLocalDateTime = new LocalDateTime(futureDate.Year, futureDate.Month, futureDate.Day, zonedDateTime.Hour, zonedDateTime.Minute,
+                zonedDateTime.Second);
+            var zonedFutureDate = new ZonedDateTime(futureLocalDateTime, zonedDateTime.Zone, zonedDateTime.Offset);
+            return zonedFutureDate;
+        }
+
+        public static ZonedDateTime AddMonths(ZonedDateTime zonedDateTime, int months)
+        {
+            var futureDate = zonedDateTime.Date.PlusMonths(months);
+            var futureLocalDateTime = new LocalDateTime(futureDate.Year, futureDate.Month, futureDate.Day, zonedDateTime.Hour, zonedDateTime.Minute,
+                zonedDateTime.Second);
+            var zonedFutureDate = new ZonedDateTime(futureLocalDateTime, zonedDateTime.Zone, zonedDateTime.Offset);
+            return zonedFutureDate;
         }
     }
 }

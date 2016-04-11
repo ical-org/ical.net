@@ -1,7 +1,6 @@
 ﻿namespace DDay.iCal
 {
-    public interface IEncodableDataType :
-        ICalendarDataType
+    public interface IEncodableDataType : ICalendarDataType
     {
         string Encoding { get; set; }
     }

@@ -4,7 +4,7 @@ namespace DDay.iCal
 {
     public interface ITimeZoneInfo : ICalendarComponent, IRecurrable
     {
-        string TZID { get; }
+        string TzId { get; }
         string TimeZoneName { get; set; }
         IList<string> TimeZoneNames { get; set; }
         IUTCOffset OffsetFrom { get; set; }
