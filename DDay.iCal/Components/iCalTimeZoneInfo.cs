@@ -99,41 +99,6 @@ namespace DDay.iCal
             set { _tzNames = value; }
         }
 
-        virtual public TimeZoneObservance? GetObservance(IDateTime dt)
-        {
-            if (Parent == null)
-                throw new Exception("Cannot call GetObservance() on a TimeZoneInfo whose Parent property is null.");
-
-            // Normalize date/time values within this time zone to a UTC value.
-            var normalizedDt = dt.Value;
-            if (string.Equals(dt.TzId, TzId))
-            {
-                dt = new iCalDateTime(OffsetTo.ToUTC(dt.Value));
-                normalizedDt = OffsetTo.ToUTC(normalizedDt);
-            }
-
-            // Let's evaluate our time zone observances to find the 
-            // observance that applies to this date/time value.
-            var parentEval = Parent.GetService(typeof(IEvaluator)) as IEvaluator;
-            if (parentEval != null)
-            {
-                // Evaluate the date/time in question.
-                parentEval.Evaluate(Start, DateUtil.GetSimpleDateTimeData(Start), normalizedDt, true);
-                foreach (var period in m_Evaluator.Periods)
-                {
-                    if (period.Contains(dt))
-                        return new TimeZoneObservance(period, this);
-                }
-            }
-            return null;
-        }
-
-        virtual public bool Contains(IDateTime dt)
-        {
-            var retval = GetObservance(dt);
-            return (retval != null && retval.HasValue);
-        }
-
         virtual public IDateTime DTStart
         {
             get { return Start; }

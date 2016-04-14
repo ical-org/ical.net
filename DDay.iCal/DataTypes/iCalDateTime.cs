@@ -391,18 +391,7 @@ namespace DDay.iCal
             get { return _value; }
             set
             {
-                if (!Equals(_value, value))
-                {
-                    _value = value;
-
-                    // Reset the time zone info if the new date/time doesn't
-                    // fall within this time zone observance.
-                    if (_TimeZoneObservance != null &&
-                        _TimeZoneObservance.HasValue &&
-                        !_TimeZoneObservance.Value.Contains(this))
-                        _TimeZoneObservance = null;
-                }
-                    
+                _value = value;
             }
         }
 
