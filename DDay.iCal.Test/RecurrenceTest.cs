@@ -2435,7 +2435,6 @@ namespace DDay.iCal.Test
                     new iCalDateTime(2009, 12, 8, 2, 00, 00, localTZID),
                     new iCalDateTime(2009, 12, 9, 2, 00, 00, localTZID),
                     new iCalDateTime(2009, 12, 10, 2, 00, 00, localTZID),
-                    new iCalDateTime(2009, 12, 11, 2, 00, 00, localTZID)
                 },
                 null,
                 0
@@ -2445,11 +2444,10 @@ namespace DDay.iCal.Test
             EventOccurrenceTest(
                 iCal,
                 new iCalDateTime(2009, 12, 4, localTZID),
-                new iCalDateTime(2009, 12, 12, localTZID),
+                new iCalDateTime(2009, 12, 10, localTZID),
                 new iCalDateTime[]
                 {
                     new iCalDateTime(2009, 12, 4, 2, 00, 00, localTZID),
-                    new iCalDateTime(2009, 12, 11, 2, 00, 00, localTZID),
                 },
                 null,
                 1

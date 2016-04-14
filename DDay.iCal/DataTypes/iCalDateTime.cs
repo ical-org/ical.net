@@ -529,17 +529,19 @@ namespace DDay.iCal
 
         public IDateTime ToTimeZone(ITimeZone tz)
         {
-            if (tz != null)
+            if (tz == null)
             {
-                var tzi = tz.GetTimeZoneObservance(this);
-                if (tzi != null && tzi.HasValue)
-                    return ToTimeZone(tzi.Value);
-
-                // FIXME: if the time cannot be resolved, should we
-                // just provide a copy?  Is this always appropriate?
-                return Copy<IDateTime>();
+                throw new ArgumentException("You must provide a valid time zone to the ToTimeZone() method", "tz");
             }
-            else throw new ArgumentException("You must provide a valid time zone to the ToTimeZone() method", "tz");
+            var tzi = tz.GetTimeZoneObservance(this);
+            if (tzi != null && tzi.HasValue)
+            {
+                return ToTimeZone(tzi.Value);
+            }
+
+            // FIXME: if the time cannot be resolved, should we
+            // just provide a copy?  Is this always appropriate?
+            return Copy<IDateTime>();
         }
 
         public IDateTime ToTimeZone(string tzid)
@@ -548,23 +550,24 @@ namespace DDay.iCal
             {
                 throw new ArgumentException("You must provide a valid TZID to the ToTimeZone() method", "tzid");
             }
-            if (Calendar != null)
-            {
-                var tz = Calendar.GetTimeZone(tzid);
-                if (tz != null)
-                {
-                    return ToTimeZone(tz);
-                }
-
-                // FIXME: sometimes a calendar is perfectly valid but the time zone
-                // could not be resolved.  What should we do here?
-                //throw new Exception("The '" + tzid + "' time zone could not be resolved.");
-                return Copy<IDateTime>();
-            }
-            else
+            if (Calendar == null)
             {
                 throw new Exception("The iCalDateTime object must have an iCalendar associated with it in order to use TimeZones.");
             }
+
+            //var tz = Calendar.GetTimeZone(tzid);
+            //if (tz != null)
+            //{
+            //    return ToTimeZone(tz);
+            //}
+
+            var newDt = DateUtil.ToZonedDateTimeLeniently(AsUtc, tzid).ToDateTimeUtc();
+            return new iCalDateTime(newDt, tzid);
+
+            // FIXME: sometimes a calendar is perfectly valid but the time zone
+            // could not be resolved.  What should we do here?
+            //throw new Exception("The '" + tzid + "' time zone could not be resolved.");
+            //return Copy<IDateTime>();
         }
 
         public IDateTime SetTimeZone(ITimeZone tz)
