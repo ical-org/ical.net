@@ -208,24 +208,6 @@ namespace DDay.iCal
             set { m_TimeZoneInfos = value; }
         }
 
-        /// <summary>
-        /// Retrieves the iCalTimeZoneInfo object that contains information
-        /// about the TimeZone, with the name of the current timezone,
-        /// offset from UTC, etc.
-        /// </summary>
-        /// <param name="dt">The iCalDateTime object for which to retrieve the iCalTimeZoneInfo.</param>
-        /// <returns>A TimeZoneInfo object for the specified iCalDateTime</returns>
-        virtual public TimeZoneObservance? GetTimeZoneObservance(IDateTime dt)
-        {
-            foreach (var tzi in TimeZoneInfos)
-            {
-                var observance = tzi.GetObservance(dt);
-                if (observance != null && observance.HasValue)
-                    return observance;
-            }
-            return null;
-        }
-
         #endregion
     }
 }
