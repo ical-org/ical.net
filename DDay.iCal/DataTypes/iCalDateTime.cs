@@ -437,7 +437,17 @@ namespace DDay.iCal
 
         public string TzId
         {
-            get { return Parameters.Get("TZID"); }
+            get
+            {
+                if (IsUniversalTime)
+                {
+                    return "UTC";
+                }
+                else
+                {
+                    return Parameters.Get("TZID");
+                }
+            }
             set
             {
                 if (!Equals(TzId, value))
@@ -544,11 +554,11 @@ namespace DDay.iCal
             return Copy<IDateTime>();
         }
 
-        public IDateTime ToTimeZone(string tzid)
+        public IDateTime ToTimeZone(string newTimeZone)
         {
-            if (string.IsNullOrWhiteSpace(tzid))
+            if (string.IsNullOrWhiteSpace(newTimeZone))
             {
-                throw new ArgumentException("You must provide a valid TZID to the ToTimeZone() method", "tzid");
+                throw new ArgumentException("You must provide a valid TZID to the ToTimeZone() method", "newTimeZone");
             }
             if (Calendar == null)
             {
@@ -561,8 +571,12 @@ namespace DDay.iCal
             //    return ToTimeZone(tz);
             //}
 
-            var newDt = DateUtil.ToZonedDateTimeLeniently(AsUtc, tzid).ToDateTimeUtc();
-            return new iCalDateTime(newDt, tzid);
+            var newDt = string.IsNullOrWhiteSpace(TzId)
+                ? DateUtil.ToZonedDateTimeLeniently(Value, newTimeZone).ToDateTimeUtc()
+                : DateUtil.FromTimeZoneToTimeZone(Value, TzId, newTimeZone).ToDateTimeUtc();
+
+            
+            return new iCalDateTime(newDt, newTimeZone);
 
             // FIXME: sometimes a calendar is perfectly valid but the time zone
             // could not be resolved.  What should we do here?

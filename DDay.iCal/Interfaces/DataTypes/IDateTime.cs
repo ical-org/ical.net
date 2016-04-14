@@ -115,7 +115,7 @@ namespace DDay.iCal
         /// Converts the date/time value to a local time
         /// within the specified time zone.
         /// </summary>
-        IDateTime ToTimeZone(string tzid);
+        IDateTime ToTimeZone(string newTimeZone);
         IDateTime ToTimeZone(ITimeZone tz);
 
         IDateTime Add(TimeSpan ts);

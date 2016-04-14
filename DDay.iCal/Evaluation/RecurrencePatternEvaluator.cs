@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using NodaTime;
 
 namespace DDay.iCal
 {
@@ -281,8 +282,11 @@ namespace DDay.iCal
                             }
                             else if (pattern.Until == DateTime.MinValue || candidate <= pattern.Until)
                             {
-                                if (!dates.Contains(candidate))
-                                    dates.Add(candidate);                                
+                                var utcCandidate = DateUtil.FromTimeZoneToTimeZone(candidate, DateUtil.GetZone(seed.TzId), DateTimeZone.Utc).ToDateTimeUtc();
+                                if (!dates.Contains(candidate) && (pattern.Until == DateTime.MinValue || utcCandidate <= pattern.Until))
+                                {
+                                    dates.Add(candidate);
+                                }                                
                             }
                         }
                     }

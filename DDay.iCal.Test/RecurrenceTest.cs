@@ -1581,7 +1581,7 @@ namespace DDay.iCal.Test
                 {
                     new iCalDateTime(1997, 9, 2, 9, 0, 0, tzid),
                     new iCalDateTime(1997, 9, 2, 12, 0, 0, tzid),
-                    new iCalDateTime(1997, 9, 2, 15, 0, 0, tzid)
+                    new iCalDateTime(1997, 9, 2, 15, 0, 0, tzid),
                 },
                 null
             );

@@ -98,6 +98,11 @@ namespace DDay.iCal
 
         public static DateTimeZone GetZone(string tzId)
         {
+            if (string.IsNullOrWhiteSpace(tzId))
+            {
+                return LocalDateTimeZone;
+            }
+
             var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(tzId);
             if (zone != null)
             {
@@ -162,8 +167,19 @@ namespace DDay.iCal
         public static ZonedDateTime ToZonedDateTimeLeniently(DateTime dateTime, string tzId)
         {
             var zone = GetZone(tzId);
-            var lenientZonedDateTime = LocalDateTime.FromDateTime(dateTime).InZoneLeniently(zone);
+            var localDt = LocalDateTime.FromDateTime(dateTime);//19:00 UTC
+            var lenientZonedDateTime = localDt.InZoneLeniently(zone).WithZone(zone);//15:00 Eastern
             return lenientZonedDateTime;
+        }
+
+        public static ZonedDateTime FromTimeZoneToTimeZone(DateTime dateTime, string fromZoneId, string toZoneId)
+            => FromTimeZoneToTimeZone(dateTime, GetZone(fromZoneId), GetZone(toZoneId));
+
+        public static ZonedDateTime FromTimeZoneToTimeZone(DateTime dateTime, DateTimeZone fromZone, DateTimeZone toZone)
+        {
+            var oldZone = LocalDateTime.FromDateTime(dateTime).InZoneLeniently(fromZone);
+            var newZone = oldZone.WithZone(toZone);
+            return newZone;
         }
 
         public static bool IsSerializationTimeZone(DateTimeZone zone) => DateTimeZoneProviders.Serialization.GetZoneOrNull(zone.Id) != null;
