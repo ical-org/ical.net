@@ -340,7 +340,7 @@ namespace DDay.iCal
             // sort the list before processing..
             dates.Sort();
 
-            var setPosDates = new List<DateTime>();
+            var setPosDates = new List<DateTime>(dates.Count);
             var size = dates.Count;
 
             for (var i = 0; i < pattern.BySetPosition.Count; i++)

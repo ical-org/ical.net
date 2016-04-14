@@ -150,23 +150,6 @@ namespace DDay.iCal
         
         #endregion
 
-        #region Protected Methods
-
-        protected TimeZoneObservance? GetTimeZoneObservance()
-        {
-            if (_TimeZoneObservance == null && 
-                TzId != null && 
-                Calendar != null)
-            {
-                var tz = Calendar.GetTimeZone(TzId);
-                if (tz != null)
-                    _TimeZoneObservance = tz.GetTimeZoneObservance(this);
-            }
-            return _TimeZoneObservance;
-        }
-
-        #endregion
-
         #region Overrides
 
         public override ICalendarObject AssociatedObject
@@ -537,23 +520,6 @@ namespace DDay.iCal
             return null;
         }
 
-        public IDateTime ToTimeZone(ITimeZone tz)
-        {
-            if (tz == null)
-            {
-                throw new ArgumentException("You must provide a valid time zone to the ToTimeZone() method", "tz");
-            }
-            var tzi = tz.GetTimeZoneObservance(this);
-            if (tzi != null && tzi.HasValue)
-            {
-                return ToTimeZone(tzi.Value);
-            }
-
-            // FIXME: if the time cannot be resolved, should we
-            // just provide a copy?  Is this always appropriate?
-            return Copy<IDateTime>();
-        }
-
         public IDateTime ToTimeZone(string newTimeZone)
         {
             if (string.IsNullOrWhiteSpace(newTimeZone))
@@ -565,23 +531,11 @@ namespace DDay.iCal
                 throw new Exception("The iCalDateTime object must have an iCalendar associated with it in order to use TimeZones.");
             }
 
-            //var tz = Calendar.GetTimeZone(tzid);
-            //if (tz != null)
-            //{
-            //    return ToTimeZone(tz);
-            //}
-
             var newDt = string.IsNullOrWhiteSpace(TzId)
                 ? DateUtil.ToZonedDateTimeLeniently(Value, newTimeZone).ToDateTimeUtc()
                 : DateUtil.FromTimeZoneToTimeZone(Value, TzId, newTimeZone).ToDateTimeUtc();
-
             
             return new iCalDateTime(newDt, newTimeZone);
-
-            // FIXME: sometimes a calendar is perfectly valid but the time zone
-            // could not be resolved.  What should we do here?
-            //throw new Exception("The '" + tzid + "' time zone could not be resolved.");
-            //return Copy<IDateTime>();
         }
 
         public IDateTime SetTimeZone(ITimeZone tz)

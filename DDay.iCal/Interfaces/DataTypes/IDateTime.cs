@@ -116,7 +116,6 @@ namespace DDay.iCal
         /// within the specified time zone.
         /// </summary>
         IDateTime ToTimeZone(string newTimeZone);
-        IDateTime ToTimeZone(ITimeZone tz);
 
         IDateTime Add(TimeSpan ts);
         IDateTime Subtract(TimeSpan ts);
