@@ -22,29 +22,29 @@ namespace DDay.iCal.Test
                 new iCalDateTime(2006, 1, 1, "US-Eastern"),
                 new iCalDateTime(2006, 12, 31, "US-Eastern"));
 
-            foreach (var o in occurrences)
-            {
-                var evt = o.Source as IEvent;
-                if (evt != null)
-                {
-                    // Display the date of the event
-                    Console.Write(o.Period.StartTime.AsSystemLocal.Date.ToString("MM/dd/yyyy") + " -\t");
+            //foreach (var o in occurrences)
+            //{
+            //    var evt = o.Source as IEvent;
+            //    if (evt != null)
+            //    {
+            //        // Display the date of the event
+            //        Console.Write(o.Period.StartTime.AsSystemLocal.Date.ToString("MM/dd/yyyy") + " -\t");
 
-                    // Display the event summary
-                    Console.Write(evt.Summary);
+            //        // Display the event summary
+            //        Console.Write(evt.Summary);
 
-                    // Display the time the event happens (unless it's an all-day event)
-                    if (evt.Start.HasTime)
-                    {
-                        Console.Write(" (" + evt.Start.AsSystemLocal.ToShortTimeString() + " - " + evt.End.AsSystemLocal.ToShortTimeString());
-                        if (evt.Start.TimeZoneObservance != null && evt.Start.TimeZoneObservance.HasValue)
-                            Console.Write(" " + evt.Start.TimeZoneObservance.Value.TimeZoneInfo.TimeZoneName);
-                        Console.Write(")");
-                    }
+            //        // Display the time the event happens (unless it's an all-day event)
+            //        if (evt.Start.HasTime)
+            //        {
+            //            Console.Write(" (" + evt.Start.AsSystemLocal.ToShortTimeString() + " - " + evt.End.AsSystemLocal.ToShortTimeString());
+            //            if (evt.Start.TimeZoneObservance != null && evt.Start.TimeZoneObservance.HasValue)
+            //                Console.Write(" " + evt.Start.TimeZoneObservance.Value.TimeZoneInfo.TimeZoneName);
+            //            Console.Write(")");
+            //        }
 
-                    Console.Write(Environment.NewLine);
-                }
-            }
+            //        Console.Write(Environment.NewLine);
+            //    }
+            //}
         }
 
         private DateTime Start;
@@ -59,24 +59,10 @@ namespace DDay.iCal.Test
             tzid = "US-Eastern";
         }
 
-        [TestFixtureTearDown]
-        public void DisposeAll()
-        {
-            Console.WriteLine("Total Processing Time: " + Math.Round(TotalTime.TotalMilliseconds) + "ms");
-        }
-
         [SetUp]
         public void Init()
         {
             Start = DateTime.Now;
-        }
-
-        [TearDown]
-        public void Dispose()
-        {
-            End = DateTime.Now;
-            TotalTime = TotalTime.Add(End - Start);
-            Console.WriteLine("Time: " + Math.Round(End.Subtract(Start).TotalMilliseconds) + "ms");
         }
 
         static public void TestCal(IICalendar iCal)
@@ -147,16 +133,16 @@ namespace DDay.iCal.Test
 
             var TimeZones = new string[]
             {
-                "EDT",
-                "EDT",
-                "EDT",
-                "EDT",
-                "EDT",
-                "EDT",
-                "EST",
-                "EST",
-                "EST",
-                "EST"                
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern"
             };
 
             for (var i = 0; i < DateTimes.Length; i++)
@@ -164,7 +150,16 @@ namespace DDay.iCal.Test
                 IDateTime dt = DateTimes[i];
                 var start = occurrences[i].Period.StartTime;
                 Assert.AreEqual(dt, start);
-                Assert.IsTrue(dt.TimeZoneName == TimeZones[i], "Event " + dt + " should occur in the " + TimeZones[i] + " timezone");
+
+                var expectedZone = DateUtil.GetZone(dt.TimeZoneName);
+                var actualZone = DateUtil.GetZone(TimeZones[i]);
+
+                //Assert.AreEqual();
+
+                //Normalize the time zones and then compare equality
+                Assert.AreEqual(expectedZone, actualZone);
+
+                //Assert.IsTrue(dt.TimeZoneName == TimeZones[i], "Event " + dt + " should occur in the " + TimeZones[i] + " timezone");
             }
 
             Assert.IsTrue(occurrences.Count == DateTimes.Length, "There should be exactly " + DateTimes.Length + " occurrences; there were " + occurrences.Count);
@@ -198,24 +193,24 @@ namespace DDay.iCal.Test
 
             var TimeZones1 = new string[]
             {
-                "EDT",
-                "EDT",
-                "EDT",
-                "EDT",                
-                "EDT",
-                "EST",
-                "EST",
-                "EST",
-                "EST",
-                "EST",
-                "EST",
-                "EST",
-                "EST",
-                "EST",
-                "EST",
-                "EST",
-                "EST",
-                "EST"                
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",                
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern",
+                "US-Eastern"
             };
 
             for (var i = 0; i < DateTimes1.Length; i++)

@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using NodaTime;
 
 namespace DDay.iCal
@@ -45,7 +46,6 @@ namespace DDay.iCal
 
         public static IDateTime MatchTimeZone(IDateTime dt1, IDateTime dt2)
         {
-            Debug.Assert(dt1 != null && dt2 != null);
 
             // Associate the date/time with the first.
             var copy = dt2.Copy<IDateTime>();
@@ -94,6 +94,8 @@ namespace DDay.iCal
             return dt;
         }
 
+        public static readonly DateTimeZone LocalDateTimeZone = DateTimeZoneProviders.Bcl.GetSystemDefault();
+
         public static DateTimeZone GetZone(string tzId)
         {
             var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(tzId);
@@ -121,7 +123,22 @@ namespace DDay.iCal
                 return zone;
             }
 
-            throw new ArgumentException($"{tzId} is not a valid time zone");
+            foreach (var providerId in DateTimeZoneProviders.Tzdb.Ids.Where(tzId.Contains))
+            {
+                return DateTimeZoneProviders.Tzdb.GetZoneOrNull(providerId);
+            }
+
+            foreach (var providerId in DateTimeZoneProviders.Bcl.Ids.Where(tzId.Contains))
+            {
+                return DateTimeZoneProviders.Bcl.GetZoneOrNull(providerId);
+            }
+
+            foreach (var providerId in DateTimeZoneProviders.Serialization.Ids.Where(tzId.Contains))
+            {
+                return DateTimeZoneProviders.Serialization.GetZoneOrNull(providerId);
+            }
+
+            return LocalDateTimeZone;
         }
 
         public static ZonedDateTime AddYears(ZonedDateTime zonedDateTime, int years)
@@ -141,5 +158,14 @@ namespace DDay.iCal
             var zonedFutureDate = new ZonedDateTime(futureLocalDateTime, zonedDateTime.Zone, zonedDateTime.Offset);
             return zonedFutureDate;
         }
+
+        public static ZonedDateTime ToZonedDateTimeLeniently(DateTime dateTime, string tzId)
+        {
+            var zone = GetZone(tzId);
+            var lenientZonedDateTime = LocalDateTime.FromDateTime(dateTime).InZoneLeniently(zone);
+            return lenientZonedDateTime;
+        }
+
+        public static bool IsSerializationTimeZone(DateTimeZone zone) => DateTimeZoneProviders.Serialization.GetZoneOrNull(zone.Id) != null;
     }
 }

@@ -67,7 +67,9 @@ namespace DDay.iCal
         {
             get
             {
-                return TimeZoneNames.FirstOrDefault();
+                return !string.IsNullOrWhiteSpace(TzId)
+                    ? TzId
+                    : TimeZoneNames.FirstOrDefault();
             }
             set
             {

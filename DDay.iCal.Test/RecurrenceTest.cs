@@ -165,8 +165,8 @@ namespace DDay.iCal.Test
                 {
                     Assert.AreEqual(dt, occurrences[i].Period.StartTime, "Event should occur at " + dt);
                     Assert.IsTrue(
-                        (dt.LessThan(new iCalDateTime(1997, 10, 26, tzid)) && dt.TimeZoneName == "EDT") ||
-                        (dt.GreaterThan(new iCalDateTime(1997, 10, 26, tzid)) && dt.TimeZoneName == "EST"),
+                        (dt.LessThan(new iCalDateTime(1997, 10, 26, tzid)) && dt.TimeZoneName == "US-Eastern") ||
+                        (dt.GreaterThan(new iCalDateTime(1997, 10, 26, tzid)) && dt.TimeZoneName == "US-Eastern"),
                         "Event " + dt + " doesn't occur in the correct time zone (including Daylight & Standard time zones)");
                     i++;
                 }
@@ -238,53 +238,53 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -393,16 +393,16 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EST",
-                    "EST"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -440,23 +440,23 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -488,17 +488,17 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -592,31 +592,31 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -659,28 +659,28 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -737,16 +737,16 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EDT",
-                    "EDT",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EDT",
-                    "EDT"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -771,10 +771,10 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EDT",
-                    "EDT",
-                    "EST",
-                    "EST"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -805,16 +805,16 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EDT",
-                    "EDT",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EDT",
-                    "EDT"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -841,12 +841,12 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EDT",
-                    "EDT",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -873,12 +873,12 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EDT",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -909,16 +909,16 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -949,16 +949,16 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EDT",
-                    "EDT",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -989,16 +989,16 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -1037,24 +1037,24 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EDT",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -1141,16 +1141,16 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EST",
-                    "EDT",
-                    "EDT",
-                    "EST",
-                    "EDT",
-                    "EDT",
-                    "EST",
-                    "EDT",
-                    "EDT",
-                    "EST"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -1434,11 +1434,11 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EDT",
-                    "EDT"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -1469,16 +1469,16 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EDT",
-                    "EDT",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EDT",
-                    "EDT",
-                    "EDT"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -1523,9 +1523,9 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EDT",
-                    "EDT",
-                    "EST"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }
@@ -1553,13 +1553,13 @@ namespace DDay.iCal.Test
                 },
                 new string[]
                 {
-                    "EDT",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST",
-                    "EST"
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern",
+                    "US-Eastern"
                 }
             );
         }

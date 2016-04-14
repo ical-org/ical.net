@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using DDay.iCal.Serialization.iCalendar;
 using System.IO;
+using NodaTime;
 
 namespace DDay.iCal
 {
@@ -328,7 +329,6 @@ namespace DDay.iCal
             }
         }
 
-        private string _cachedDt = string.Empty;
         private DateTime _utc;
         /// <summary>
         /// Converts the date/time to UTC (Coordinated Universal Time)
@@ -337,32 +337,33 @@ namespace DDay.iCal
         {
             get
             {
-                if (_utc == default(DateTime) || _cachedDt == string.Empty || _cachedDt != TimeZoneName)
+                if (IsUniversalTime)
                 {
-                    _cachedDt = TimeZoneName;
-                    if (IsUniversalTime)
-                        return DateTime.SpecifyKind(Value, DateTimeKind.Utc);
-                    else if (TzId != null)
-                    {
-                        var value = Value;
-
-                        // Get the Time Zone Observance, if possible
-                        var tzi = TimeZoneObservance;
-                        if (tzi == null || !tzi.HasValue)
-                            tzi = GetTimeZoneObservance();
-
-                        if (tzi != null && tzi.HasValue)
-                        {
-                            Debug.Assert(tzi.Value.TimeZoneInfo.OffsetTo != null);
-                            _utc = DateTime.SpecifyKind(tzi.Value.TimeZoneInfo.OffsetTo.ToUTC(value), DateTimeKind.Utc);
-                            return _utc;
-                        }
-                    }
-                    _utc = DateTime.SpecifyKind(Value, DateTimeKind.Local).ToUniversalTime();
+                    _utc = DateTime.SpecifyKind(this._value, DateTimeKind.Utc);
+                    return _utc;
                 }
+                else if (!string.IsNullOrWhiteSpace(TzId))
+                {
+                    //var value = Value;
+
+                    //// Get the Time Zone Observance, if possible
+                    //var tzi = TimeZoneObservance;
+                    //if (tzi == null || !tzi.HasValue)
+                    //    tzi = GetTimeZoneObservance();
+
+                    //if (tzi != null && tzi.HasValue)
+                    //{
+                    //    _utc = DateTime.SpecifyKind(tzi.Value.TimeZoneInfo.OffsetTo.ToUTC(value), DateTimeKind.Utc);
+                    //    return _utc;
+                    //}
+                    var newUtc = DateUtil.ToZonedDateTimeLeniently(Value, TzId);
+                    _utc = newUtc.ToDateTimeUtc();
+                    return _utc;
+                }
+                _utc = DateTime.SpecifyKind(Value, DateTimeKind.Local).ToUniversalTime();
                 
-                // Fallback to the OS-conversion
-                return _utc;
+            // Fallback to the OS-conversion
+            return _utc;
             }
         }
 
@@ -404,6 +405,10 @@ namespace DDay.iCal
             {
                 if (IsUniversalTime)
                     return "UTC";
+                else if (!string.IsNullOrWhiteSpace(TzId))
+                {
+                    return TzId;
+                }
                 else if (_TimeZoneObservance != null && _TimeZoneObservance.HasValue)
                     return _TimeZoneObservance.Value.TimeZoneInfo.TimeZoneName;
                 return string.Empty;
