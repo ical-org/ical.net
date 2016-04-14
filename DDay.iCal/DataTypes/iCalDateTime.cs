@@ -1,8 +1,6 @@
 using System;
-using System.Diagnostics;
 using DDay.iCal.Serialization.iCalendar;
 using System.IO;
-using NodaTime;
 
 namespace DDay.iCal
 {
