@@ -313,8 +313,7 @@ namespace DDay.iCal
          */
         private List<DateTime> GetCandidates(DateTime date, IRecurrencePattern pattern, bool?[] expandBehaviors)
         {
-            var dates = new List<DateTime>();
-            dates.Add(date);
+            var dates = new List<DateTime>(10) {date};
             dates = GetMonthVariants(dates, pattern, expandBehaviors[0]);
             dates = GetWeekNoVariants(dates, pattern, expandBehaviors[1]);
             dates = GetYearDayVariants(dates, pattern, expandBehaviors[2]);

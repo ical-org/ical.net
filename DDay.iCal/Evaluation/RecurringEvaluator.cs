@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DDay.iCal
 {
@@ -63,11 +64,7 @@ namespace DDay.iCal
                     if (evaluator != null)
                     {
                         var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
-                        foreach (var p in periods)
-                        {
-                            if (!Periods.Contains(p))
-                                Periods.Add(p);
-                        }
+                        Periods.UnionWith(periods);
                     }
                 }
             }
@@ -76,8 +73,7 @@ namespace DDay.iCal
                 // If no RRULEs were found, then we still need to add
                 // the initial reference date to the results.
                 IPeriod p = new Period(referenceDate.Copy<IDateTime>());
-                if (!Periods.Contains(p))
-                    Periods.Add(p);
+                Periods.UnionWith(new [] {p});
             }
         }
 
@@ -98,11 +94,7 @@ namespace DDay.iCal
                     if (evaluator != null)
                     {
                         var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
-                        foreach (var p in periods)
-                        {
-                            if (!Periods.Contains(p))
-                                Periods.Add(p);
-                        }
+                        Periods.UnionWith(periods);
                     }
                 }
             }
@@ -117,22 +109,18 @@ namespace DDay.iCal
         virtual protected void EvaluateExRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             // Handle EXRULEs
-            if (Recurrable.ExceptionRules != null)
+            if (Recurrable.ExceptionRules == null)
             {
-                foreach (var exrule in Recurrable.ExceptionRules)
-                {
-                    var evaluator = exrule.GetService(typeof(IEvaluator)) as IEvaluator;
-                    if (evaluator != null)
-                    {
-                        var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
-                        foreach (var p in periods)                        
-                        {                            
-                            if (this.Periods.Contains(p))
-                                this.Periods.Remove(p);
-                        }
-                    }
-                }
+                return;
             }
+
+            var excluded = Recurrable.ExceptionRules
+                .Select(rule => rule.GetService(typeof(IEvaluator)) as IEvaluator)
+                .Where(evaluator => evaluator != null)
+                .SelectMany(evaluator => evaluator.Evaluate(referenceDate,periodStart, periodEnd, false))
+                .ToList();
+
+            Periods.ExceptWith(excluded);
         }
 
         /// <summary>
@@ -144,25 +132,26 @@ namespace DDay.iCal
         virtual protected void EvaluateExDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             // Handle EXDATEs
-            if (Recurrable.ExceptionDates != null)
+            if (Recurrable.ExceptionDates == null)
             {
-                foreach (var exdate in Recurrable.ExceptionDates)
-                {
-                    var evaluator = exdate.GetService(typeof(IEvaluator)) as IEvaluator;
-                    if (evaluator != null)
-                    {
-                        var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
-                        foreach (var p in periods)                        
-                        {
-                            // If no time was provided for the ExDate, then it excludes the entire day
-                            if (!p.StartTime.HasTime || (p.EndTime != null && !p.EndTime.HasTime))
-                                p.MatchesDateOnly = true;
+                return;
+            }
 
-                            while (Periods.Contains(p))
-                                Periods.Remove(p);
-                        }
-                    }
+
+            foreach (var exdate in Recurrable.ExceptionDates)
+            {
+                var evaluator = exdate.GetService(typeof(IEvaluator)) as IEvaluator;
+                if (evaluator == null)
+                {
+                    continue;
                 }
+
+                var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
+                foreach (var p in periods.Where(p => !p.StartTime.HasTime || (p.EndTime != null && !p.EndTime.HasTime)))
+                {
+                    p.MatchesDateOnly = true;
+                }
+                Periods.ExceptWith(periods);
             }
         }
 
@@ -193,9 +182,6 @@ namespace DDay.iCal
                 if (EvaluationEndBounds != DateTime.MinValue && periodEnd > EvaluationEndBounds)
                     Evaluate(referenceDate, EvaluationEndBounds, periodEnd, includeReferenceDateInResults);
             }
-
-            // Sort the list
-            //m_Periods.Sort();
 
             return Periods;
         }
