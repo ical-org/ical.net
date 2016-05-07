@@ -13,7 +13,7 @@ namespace Ical.Net
 #if !SILVERLIGHT
     [Serializable]
 #endif
-    public class ICalendarCollection :
+    public class CalendarCollection :
         List<ICalendar>,
         IICalendarCollection
     {

@@ -17,7 +17,7 @@ namespace Ical.Net.Serialization
 
         #region ISerializationSettings Members
 
-        public virtual Type ICalendarType
+        public virtual Type CalendarType
         {
             get { return _mICalendarType; }
             set { _mICalendarType = value; }

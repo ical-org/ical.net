@@ -126,7 +126,7 @@ namespace Ical.Net
         public static IICalendarCollection LoadFromFile(Type iCalendarType, string filepath)
         {
             ISerializer serializer = new CalendarSerializer();
-            serializer.GetService<ISerializationSettings>().ICalendarType = iCalendarType;
+            serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
             return LoadFromFile(filepath, Encoding.UTF8, serializer);
         }
 
@@ -147,7 +147,7 @@ namespace Ical.Net
         public static IICalendarCollection LoadFromFile(Type iCalendarType, string filepath, Encoding encoding)
         {
             ISerializer serializer = new CalendarSerializer();
-            serializer.GetService<ISerializationSettings>().ICalendarType = iCalendarType;
+            serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
             return LoadFromFile(filepath, encoding, serializer);
         }
 
@@ -187,7 +187,7 @@ namespace Ical.Net
         public static IICalendarCollection LoadFromStream(Type iCalendarType, Stream s)
         {
             ISerializer serializer = new CalendarSerializer();
-            serializer.GetService<ISerializationSettings>().ICalendarType = iCalendarType;
+            serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
             return LoadFromStream(s, Encoding.UTF8, serializer);
         }
 
@@ -208,7 +208,7 @@ namespace Ical.Net
         public static IICalendarCollection LoadFromStream(Type iCalendarType, Stream s, Encoding encoding)
         {
             ISerializer serializer = new CalendarSerializer();
-            serializer.GetService<ISerializationSettings>().ICalendarType = iCalendarType;
+            serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
             return LoadFromStream(s, encoding, serializer);
         }
 
@@ -234,7 +234,7 @@ namespace Ical.Net
         public static IICalendarCollection LoadFromStream(Type iCalendarType, TextReader tr)
         {
             ISerializer serializer = new CalendarSerializer();
-            serializer.GetService<ISerializationSettings>().ICalendarType = iCalendarType;
+            serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
             return LoadFromStream(tr, serializer);
         }
 

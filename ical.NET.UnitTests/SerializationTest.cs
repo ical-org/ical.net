@@ -45,7 +45,7 @@ namespace ical.NET.UnitTests
             Assert.IsNotNull(serializer);
 
             // Set the iCalendar type for deserialization
-            serializer.GetService<ISerializationSettings>().ICalendarType = iCalType;
+            serializer.GetService<ISerializationSettings>().CalendarType = iCalType;
 
             // Load the calendar from file
             var iCal1 = Calendar.LoadFromFile(@"Calendars\Serialization\" + filename, Encoding.UTF8, serializer)[0];
