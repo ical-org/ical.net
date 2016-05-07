@@ -20,28 +20,14 @@ namespace Ical.Net.DataTypes
         EncodableDataType,
         IPeriodList
     {
-        #region Private Fields
+        public string TzId { get; set; }
 
-        private IList<IPeriod> _mPeriods = new List<IPeriod>();
-        private string _mTzid;
-
-        #endregion
-
-        #region Public Properties
-
-        public string TzId
-        {
-            get { return _mTzid; }
-            set { _mTzid = value; }
-        }
-
+        private IList<IPeriod> _periods = new List<IPeriod>();
         protected IList<IPeriod> Periods
         {
-            get { return _mPeriods; }
-            set { _mPeriods = value; }
+            get { return _periods; }
+            set { _periods = value; }
         }
-
-        #endregion
 
         #region Constructors
 
@@ -67,7 +53,6 @@ namespace Ical.Net.DataTypes
         protected override void OnDeserializing(StreamingContext context)
         {
             base.OnDeserializing(context);
-
             Initialize();
         }
 
@@ -116,11 +101,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public override string ToString()
-        {
-            var serializer = new PeriodListSerializer();
-            return serializer.SerializeToString(this);
-        }
+        public override string ToString() => new PeriodListSerializer().SerializeToString(this);
 
         #endregion
 
@@ -146,96 +127,44 @@ namespace Ical.Net.DataTypes
 
         #endregion
 
-        #region IPeriodList Members
+        public virtual void Add(IDateTime dt) => Periods.Add(new Period(dt));
 
-        public virtual void Add(IDateTime dt)
-        {
-            Periods.Add(new Period(dt));
-        }
-
-        public virtual void Remove(IDateTime dt)
-        {
-            Periods.Remove(new Period(dt));
-        }
+        public virtual void Remove(IDateTime dt) => Periods.Remove(new Period(dt));
 
         public IPeriod this[int index]
         {
             get
             {
-                return _mPeriods[index];
+                return _periods[index];
             }
             set
             {
-                _mPeriods[index] = value;
+                _periods[index] = value;
             }
         }
 
-        #endregion
+        public virtual void Add(IPeriod item) => _periods.Add(item);
 
-        #region IList<IPeriod> Members
+        public virtual void Clear() => _periods.Clear();
 
-        public virtual void Add(IPeriod item)
-        {
-            _mPeriods.Add(item);
-        }
+        public bool Contains(IPeriod item) => _periods.Contains(item);
 
-        public virtual void Clear()
-        {
-            _mPeriods.Clear();
-        }
+        public void CopyTo(IPeriod[] array, int arrayIndex) => _periods.CopyTo(array, arrayIndex);
 
-        public bool Contains(IPeriod item)
-        {
-            return _mPeriods.Contains(item);
-        }
-
-        public void CopyTo(IPeriod[] array, int arrayIndex)
-        {
-            _mPeriods.CopyTo(array, arrayIndex);
-        }
-
-        public int Count => _mPeriods.Count;
+        public int Count => _periods.Count;
 
         public bool IsReadOnly => false;
 
-        public bool Remove(IPeriod item)
-        {
-            return _mPeriods.Remove(item);
-        }
+        public bool Remove(IPeriod item) => _periods.Remove(item);
 
-        public int IndexOf(IPeriod item)
-        {
-            return _mPeriods.IndexOf(item);
-        }
+        public int IndexOf(IPeriod item) => _periods.IndexOf(item);
 
-        public void Insert(int index, IPeriod item)
-        {
-            _mPeriods.Insert(index, item);
-        }
+        public void Insert(int index, IPeriod item) => _periods.Insert(index, item);
 
-        public void RemoveAt(int index)
-        {
-            _mPeriods.RemoveAt(index);
-        }
+        public void RemoveAt(int index) => _periods.RemoveAt(index);
 
-        #endregion
+        public IEnumerator<IPeriod> GetEnumerator() => _periods.GetEnumerator();
 
-        #region IEnumerable<IPeriod> Members
-
-        public IEnumerator<IPeriod> GetEnumerator()
-        {
-            return _mPeriods.GetEnumerator();
-        }
-
-        #endregion
-
-        #region IEnumerable Members
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _mPeriods.GetEnumerator();
-        }
-
-        #endregion
+        IEnumerator IEnumerable.GetEnumerator() => _periods.GetEnumerator();
     }
 }
