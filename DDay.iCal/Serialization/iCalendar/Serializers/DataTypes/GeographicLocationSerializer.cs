@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 
 namespace DDay.iCal.Serialization.iCalendar
@@ -15,10 +13,10 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {
-            IGeographicLocation g = obj as IGeographicLocation;
+            var g = obj as IGeographicLocation;
             if (g != null)
             {
-                string value = g.Latitude.ToString("0.000000") + ";" + g.Longitude.ToString("0.000000");
+                var value = g.Latitude.ToString("0.000000") + ";" + g.Longitude.ToString("0.000000");
                 return Encode(g, value);
             }
             return null;
@@ -26,15 +24,15 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override object Deserialize(TextReader tr)
         {
-            string value = tr.ReadToEnd();
+            var value = tr.ReadToEnd();
 
-            IGeographicLocation g = CreateAndAssociate() as IGeographicLocation;
+            var g = CreateAndAssociate() as IGeographicLocation;
             if (g != null)
             {
                 // Decode the value, if necessary!
                 value = Decode(g, value);
 
-                string[] values = value.Split(';');
+                var values = value.Split(';');
                 if (values.Length != 2)
                     return false;
 

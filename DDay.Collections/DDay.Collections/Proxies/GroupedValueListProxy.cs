@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Collections;
 
 namespace DDay.Collections
@@ -61,7 +59,7 @@ namespace DDay.Collections
 
         void IterateValues(Func<IValueObject<TOriginalValue>, int, int, bool> action)
         {
-            int i = 0;
+            var i = 0;
             foreach (var obj in _RealObject)
             {
                 // Get the number of items of the target value i this object
@@ -78,7 +76,7 @@ namespace DDay.Collections
         IValueObject<TOriginalValue> ObjectForIndex(int index, ref int relativeIndex)
         {
             IValueObject<TOriginalValue> obj = null;
-            int retVal = -1;
+            var retVal = -1;
 
             IterateValues((o, i, count) =>
                 {
@@ -122,7 +120,7 @@ namespace DDay.Collections
         {
             var items = Items.Where(o => o.Values != null);
 
-            foreach (TInterface original in items)
+            foreach (var original in items)
             {
                 // Clear all values from each matching object
                 original.SetValue(default(TOriginalValue));
@@ -193,7 +191,7 @@ namespace DDay.Collections
 
         virtual public int IndexOf(TNewValue item)
         {
-            int index = -1;
+            var index = -1;
 
             if (item is TOriginalValue)
             {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace DDay.iCal
 {
@@ -18,17 +17,17 @@ namespace DDay.iCal
 
         /// <summary>
         /// Gets a list of alarm occurrences for the given recurring component, <paramref name="rc"/>
-        /// that occur between <paramref name="FromDate"/> and <paramref name="ToDate"/>.
+        /// that occur between <paramref name="fromDate"/> and <paramref name="toDate"/>.
         /// </summary>
         IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, IDateTime fromDate, IDateTime toDate);
 
         /// <summary>
         /// Polls the <see cref="Alarm"/> component for alarms that have been triggered
-        /// since the provided <paramref name="Start"/> date/time.  If <paramref name="Start"/>
+        /// since the provided <paramref name="fromDate"/> date/time.  If <paramref name="fromDate"/>
         /// is null, all triggered alarms will be returned.
         /// </summary>
-        /// <param name="Start">The earliest date/time to poll trigerred alarms for.</param>
-        /// <param name="End">The latest date/time to poll trigerred alarms for.</param>
+        /// <param name="fromDate">The earliest date/time to poll trigerred alarms for.</param>
+        /// <param name="toDate">The latest date/time to poll trigerred alarms for.</param>
         /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
         IList<AlarmOccurrence> Poll(IDateTime fromDate, IDateTime toDate);
     }    

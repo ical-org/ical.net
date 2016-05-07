@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace DDay.iCal
 {
@@ -11,7 +8,7 @@ namespace DDay.iCal
         {
             if (values != null)
             {
-                foreach (T item in values)
+                foreach (var item in values)
                     list.Add(item);
             }
         }

@@ -1,11 +1,6 @@
 using System;
-using System.Data;
-using System.Collections;
-using System.Configuration;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Globalization;
-using System.Diagnostics;
 using DDay.Collections;
 
 namespace DDay.iCal
@@ -16,9 +11,7 @@ namespace DDay.iCal
 #if !SILVERLIGHT
     [Serializable]
 #endif
-    public partial class iCalTimeZone :
-        CalendarComponent,
-        ITimeZone
+    public partial class iCalTimeZone : CalendarComponent, ITimeZone
     {
         #region Static Public Methods
 
@@ -34,9 +27,9 @@ namespace DDay.iCal
 
         static private void PopulateiCalTimeZoneInfo(ITimeZoneInfo tzi, System.TimeZoneInfo.TransitionTime transition, int year)
         {
-            Calendar c = CultureInfo.CurrentCulture.Calendar;
+            var c = CultureInfo.CurrentCulture.Calendar;
 
-            RecurrencePattern recurrence = new RecurrencePattern();            
+            var recurrence = new RecurrencePattern();            
             recurrence.Frequency = FrequencyType.Yearly;
             recurrence.ByMonth.Add(transition.Month);
             recurrence.ByHour.Add(transition.TimeOfDay.Hour);
@@ -209,35 +202,10 @@ namespace DDay.iCal
             set { Properties.Set("TZURL", value); }
         }
 
-        virtual public Uri TZUrl
-        {
-            get { return Url; }
-            set { Url = value; }
-        }
-
         virtual public ICalendarObjectList<ITimeZoneInfo> TimeZoneInfos
         {
             get { return m_TimeZoneInfos; }
             set { m_TimeZoneInfos = value; }
-        }
-
-        /// <summary>
-        /// Retrieves the iCalTimeZoneInfo object that contains information
-        /// about the TimeZone, with the name of the current timezone,
-        /// offset from UTC, etc.
-        /// </summary>
-        /// <param name="dt">The iCalDateTime object for which to retrieve the iCalTimeZoneInfo.</param>
-        /// <returns>A TimeZoneInfo object for the specified iCalDateTime</returns>
-        virtual public TimeZoneObservance? GetTimeZoneObservance(IDateTime dt)
-        {
-            Trace.TraceInformation("Getting time zone for '" + dt + "'...", "Time Zone");
-            foreach (ITimeZoneInfo tzi in TimeZoneInfos)
-            {
-                TimeZoneObservance? observance = tzi.GetObservance(dt);
-                if (observance != null && observance.HasValue)
-                    return observance;
-            }
-            return null;
         }
 
         #endregion

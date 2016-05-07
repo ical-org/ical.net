@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
 
 namespace DDay.iCal.Test
@@ -11,8 +8,8 @@ namespace DDay.iCal.Test
         [Test, Category("Component")]
         public void UniqueComponent1()
         {
-            iCalendar iCal = new iCalendar();
-            Event evt = iCal.Create<Event>();
+            var iCal = new iCalendar();
+            var evt = iCal.Create<Event>();
 
             Assert.IsNotNull(evt.UID);
             Assert.IsNull(evt.Created); // We don't want this to be set automatically

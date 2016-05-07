@@ -1,6 +1,5 @@
 using System;
 using System.Net;
-using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
 using System.IO;
@@ -35,7 +34,7 @@ namespace DDay.iCal
         public Attachment(string value)
             : this()
         {
-            AttachmentSerializer serializer = new AttachmentSerializer();
+            var serializer = new AttachmentSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
@@ -64,7 +63,7 @@ namespace DDay.iCal
         {
             if (obj is IAttachment)
             {
-                IAttachment a = (IAttachment)obj;
+                var a = (IAttachment)obj;
 
                 if (Data == null && a.Data == null)
                     return Uri.Equals(a.Uri);
@@ -73,7 +72,7 @@ namespace DDay.iCal
                     return false;
                 else if (Data.Length != a.Data.Length)
                     return false;
-                for (int i = 0; i < Data.Length; i++)
+                for (var i = 0; i < Data.Length; i++)
                     if (Data[i] != a.Data[i])
                         return false;
                 return true;                
@@ -95,7 +94,7 @@ namespace DDay.iCal
             base.CopyFrom(obj);
             if (obj is IAttachment)
             {
-                IAttachment a = (IAttachment)obj;
+                var a = (IAttachment)obj;
                 ValueEncoding = a.ValueEncoding;
 
                 if (a.Data != null)
@@ -155,8 +154,7 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// Loads (fills) the <c>Data</c> property with the file designated
-        /// at the given <see cref="URI"/>.
+        /// Loads (fills) the <c>Data</c> property with the file designated at the given URI".
         /// </summary>
         virtual public void LoadDataFromUri()
         {
@@ -164,8 +162,7 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// Loads (fills) the <c>Data</c> property with the file designated
-        /// at the given <see cref="URI"/>.
+        /// Loads (fills) the <c>Data</c> property with the file designated at the given URI.
         /// </summary>
         /// <param name="username">The username to supply for credentials</param>
         /// <param name="password">The pasword to supply for credentials</param>
@@ -175,15 +172,14 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// Loads (fills) the <c>Data</c> property with the contents of the
-        /// given <see cref="URI"/>.
+        /// Loads (fills) the <c>Data</c> property with the contents of the given URI.
         /// </summary>
         /// <param name="uri">The Uri from which to download the <c>Data</c></param>
         /// <param name="username">The username to supply for credentials</param>
         /// <param name="password">The pasword to supply for credentials</param>
         virtual public void LoadDataFromUri(Uri uri, string username, string password)
         {
-            using (WebClient client = new WebClient())
+            using (var client = new WebClient())
             {
                 if (username != null &&
                     password != null)

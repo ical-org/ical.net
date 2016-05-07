@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 
 namespace DDay.iCal.Serialization.iCalendar
@@ -24,15 +22,15 @@ namespace DDay.iCal.Serialization.iCalendar
 
         protected IStringSerializer GetMappedSerializer()
         {
-            ISerializerFactory sf = GetService<ISerializerFactory>();
-            IDataTypeMapper mapper = GetService<IDataTypeMapper>();
+            var sf = GetService<ISerializerFactory>();
+            var mapper = GetService<IDataTypeMapper>();
             if (sf != null &&
                 mapper != null)
             {
-                object obj = SerializationContext.Peek();
+                var obj = SerializationContext.Peek();
 
                 // Get the data type for this object
-                Type type = mapper.GetPropertyMapping(obj);
+                var type = mapper.GetPropertyMapping(obj);
 
                 if (type != null)
                     return sf.Build(type, SerializationContext) as IStringSerializer;
@@ -59,7 +57,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {
-            IStringSerializer serializer = GetMappedSerializer();
+            var serializer = GetMappedSerializer();
             if (serializer != null)
                 return serializer.SerializeToString(obj);
             return null;
@@ -67,11 +65,11 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override object Deserialize(TextReader tr)
         {
-            IStringSerializer serializer = GetMappedSerializer();
+            var serializer = GetMappedSerializer();
             if (serializer != null)
             {
-                string value = tr.ReadToEnd();
-                object returnValue = serializer.Deserialize(new StringReader(value));
+                var value = tr.ReadToEnd();
+                var returnValue = serializer.Deserialize(new StringReader(value));
 
                 // Default to returning the string representation of the value
                 // if the value wasn't formatted correctly.

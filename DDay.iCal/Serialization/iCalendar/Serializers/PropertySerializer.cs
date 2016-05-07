@@ -3,7 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using System.Collections;
 
 namespace DDay.iCal.Serialization.iCalendar
 {
@@ -31,7 +30,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {
-            ICalendarProperty prop = obj as ICalendarProperty;
+            var prop = obj as ICalendarProperty;
             if (prop != null && 
                 prop.Values != null &&
                 prop.Values.Any())
@@ -41,15 +40,15 @@ namespace DDay.iCal.Serialization.iCalendar
                 // Push this object on the serialization context.
                 SerializationContext.Push(prop);
 
-                IDataTypeMapper mapper = GetService<IDataTypeMapper>();
-                Type serializedType = mapper.GetPropertyMapping(prop);
+                var mapper = GetService<IDataTypeMapper>();
+                var serializedType = mapper.GetPropertyMapping(prop);
                 
                 // Get a serializer factory that we can use to serialize
                 // the property and parameter values
-                ISerializerFactory sf = GetService<ISerializerFactory>();
+                var sf = GetService<ISerializerFactory>();
 
-                StringBuilder result = new StringBuilder();
-                foreach (object v in prop.Values)
+                var result = new StringBuilder();
+                foreach (var v in prop.Values)
                 {
                     // Only serialize the value to a string if it
                     // is non-null.
@@ -57,7 +56,7 @@ namespace DDay.iCal.Serialization.iCalendar
                     {
                         // Get a serializer to serialize the property's value.
                         // If we can't serialize the property's value, the next step is worthless anyway.
-                        IStringSerializer valueSerializer = sf.Build(v.GetType(), SerializationContext) as IStringSerializer;
+                        var valueSerializer = sf.Build(v.GetType(), SerializationContext) as IStringSerializer;
                         if (valueSerializer != null)
                         {
                             // Iterate through each value to be serialized,
@@ -72,23 +71,23 @@ namespace DDay.iCal.Serialization.iCalendar
                             // FIXME: the "parameter modification" operation should
                             // be separated from serialization. Perhaps something
                             // like PreSerialize(), etc.
-                            string value = valueSerializer.SerializeToString(v);
+                            var value = valueSerializer.SerializeToString(v);
 
                             // Get the list of parameters we'll be serializing
-                            ICalendarParameterCollection parameterList = prop.Parameters;
+                            var parameterList = prop.Parameters;
                             if (v is ICalendarDataType)
                                 parameterList = ((ICalendarDataType)v).Parameters;
 
-                            StringBuilder sb = new StringBuilder(prop.Name);
+                            var sb = new StringBuilder(prop.Name);
                             if (parameterList.Any())
                             {
                                 // Get a serializer for parameters
-                                IStringSerializer parameterSerializer = sf.Build(typeof(ICalendarParameter), SerializationContext) as IStringSerializer;
+                                var parameterSerializer = sf.Build(typeof(ICalendarParameter), SerializationContext) as IStringSerializer;
                                 if (parameterSerializer != null)
                                 {
                                     // Serialize each parameter
-                                    List<string> parameters = new List<string>();
-                                    foreach (ICalendarParameter param in parameterList)
+                                    var parameters = new List<string>();
+                                    foreach (var param in parameterList)
                                     {
                                         parameters.Add(parameterSerializer.SerializeToString(param));
                                     }
@@ -122,14 +121,14 @@ namespace DDay.iCal.Serialization.iCalendar
                 tr = TextUtil.Normalize(tr, SerializationContext);
 
                 // Create a lexer for our text stream
-                iCalLexer lexer = new iCalLexer(tr);
-                iCalParser parser = new iCalParser(lexer);
+                var lexer = new iCalLexer(tr);
+                var parser = new iCalParser(lexer);
 
                 // Get our serialization context
-                ISerializationContext ctx = SerializationContext;
+                var ctx = SerializationContext;
 
                 // Parse the component!
-                ICalendarProperty p = parser.property(ctx, null);
+                var p = parser.property(ctx, null);
 
                 // Close our text stream
                 tr.Close();

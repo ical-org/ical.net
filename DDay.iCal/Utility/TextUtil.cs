@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 using DDay.iCal.Serialization;
@@ -17,11 +15,11 @@ namespace DDay.iCal
             // the use of strings, and only using StringBuilders.
             // Also, the "while" loop was removed, and StringBuilder
             // modifications are kept at a minimum.
-            StringBuilder result = new StringBuilder();
-            StringBuilder current = new StringBuilder(value);
+            var result = new StringBuilder();
+            var current = new StringBuilder(value);
 
             // Wrap lines at 75 characters, per RFC 2445 "folding" technique
-            int i = 0;
+            var i = 0;
             if (current.Length > 75)
             {
                 result.Append(current.ToString(0, 75) + "\r\n ");
@@ -42,7 +40,7 @@ namespace DDay.iCal
         /// </summary>
         public static string RemoveEmptyLines(string s)
         {
-            int len = -1;
+            var len = -1;
             while (len != s.Length)
             {
                 s = s.Replace("\r\n\r\n", "\r\n");
@@ -51,15 +49,17 @@ namespace DDay.iCal
             return s;
         }
 
+        internal static readonly Regex _normalizeToCrLf = new Regex(@"((\r(?=[^\n]))|((?<=[^\r])\n))", RegexOptions.Compiled);
+
         /// <summary>
         /// Normalizes line endings, converting "\r" into "\r\n" and "\n" into "\r\n".        
         /// </summary>
         public static TextReader Normalize(string s, ISerializationContext ctx)
         {
             // Replace \r and \n with \r\n.
-            s = Regex.Replace(s, @"((\r(?=[^\n]))|((?<=[^\r])\n))", "\r\n");
+            s = _normalizeToCrLf.Replace(s, "\r\n");
 
-            ISerializationSettings settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
+            var settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
             if (settings == null || !settings.EnsureAccurateLineNumbers)
                 s = RemoveEmptyLines(UnwrapLines(s));
 
@@ -68,12 +68,14 @@ namespace DDay.iCal
 
         public static TextReader Normalize(TextReader tr, ISerializationContext ctx)
         {
-            string s = tr.ReadToEnd();
-            TextReader reader = Normalize(s, ctx);
+            var s = tr.ReadToEnd();
+            var reader = Normalize(s, ctx);
             tr.Close();
 
             return reader;
         }
+
+        internal static readonly Regex _newLineMatch = new Regex(@"(\r\n[ \t])", RegexOptions.Compiled);
 
         /// <summary>
         /// Unwraps lines from the RFC 2445 "line folding" technique.
@@ -82,7 +84,7 @@ namespace DDay.iCal
         /// </summary>
         public static string UnwrapLines(string s)
         {
-            return Regex.Replace(s, @"(\r\n[ \t])", string.Empty);
+            return _newLineMatch.Replace(s, string.Empty);
         }
 
         public static TextReader UnwrapLines(TextReader tr)

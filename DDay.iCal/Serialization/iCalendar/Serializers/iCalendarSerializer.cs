@@ -48,7 +48,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
         virtual public void Serialize(IICalendar iCal, string filename)
         {
-            using (FileStream fs = new FileStream(filename, FileMode.Create))
+            using (var fs = new FileStream(filename, FileMode.Create))
             {
                 Serialize(iCal, fs, new UTF8Encoding());
             }
@@ -68,12 +68,12 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {
-            IICalendar iCal = obj as IICalendar;
+            var iCal = obj as IICalendar;
             if (iCal != null)
             {
                 // Ensure VERSION and PRODUCTID are both set,
                 // as they are required by RFC5545.
-                IICalendar copy = iCal.Copy<IICalendar>();
+                var copy = iCal.Copy<IICalendar>();
                 if (string.IsNullOrEmpty(copy.Version))
                     copy.Version = CalendarVersions.v2_0;                    
                 if (string.IsNullOrEmpty(copy.ProductID))
@@ -93,11 +93,11 @@ namespace DDay.iCal.Serialization.iCalendar
                 tr = TextUtil.Normalize(tr, SerializationContext);
 
                 // Create a lexer for our text stream
-                iCalLexer lexer = new iCalLexer(tr);
-                iCalParser parser = new iCalParser(lexer);
+                var lexer = new iCalLexer(tr);
+                var parser = new iCalParser(lexer);
 
                 // Parse the iCalendar(s)!
-                IICalendarCollection iCalendars = parser.icalendar(SerializationContext);
+                var iCalendars = parser.icalendar(SerializationContext);
 
                 // Close our text stream
                 tr.Close();

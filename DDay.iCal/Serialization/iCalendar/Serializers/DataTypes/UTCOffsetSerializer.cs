@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -16,10 +14,10 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {
-            IUTCOffset offset = obj as IUTCOffset;
+            var offset = obj as IUTCOffset;
             if (offset != null)
             {
-                string value = 
+                var value = 
                     (offset.Positive ? "+" : "-") +
                     offset.Hours.ToString("00") +
                     offset.Minutes.ToString("00") +
@@ -31,39 +29,24 @@ namespace DDay.iCal.Serialization.iCalendar
             return null;
         }
 
+        internal static readonly Regex _decodeOffset = new Regex(@"(\+|-)(\d{2})(\d{2})(\d{2})?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
         public override object Deserialize(TextReader tr)
         {
-            string value = tr.ReadToEnd();
+            var offsetString = tr.ReadToEnd();
+            var offset = CreateAndAssociate() as IUTCOffset;
+            offset.Offset = GetOffset(offsetString);
+            return offset;
+        }
 
-            IUTCOffset offset = CreateAndAssociate() as IUTCOffset;
-            if (offset != null)
+        public static TimeSpan GetOffset(string rawOffset)
+        {
+            if (rawOffset.EndsWith("00"))
             {
-                // Decode the value as necessary
-                value = Decode(offset, value);
-
-                Match match = Regex.Match(value, @"(\+|-)(\d{2})(\d{2})(\d{2})?");
-                if (match.Success)
-                {
-                    try
-                    {
-                        // NOTE: Fixes bug #1874174 - TimeZone positive UTCOffsets don't parse correctly
-                        if (match.Groups[1].Value == "+")
-                            offset.Positive = true;
-                        offset.Hours = Int32.Parse(match.Groups[2].Value);
-                        offset.Minutes = Int32.Parse(match.Groups[3].Value);
-                        if (match.Groups[4].Success)
-                            offset.Seconds = Int32.Parse(match.Groups[4].Value);
-                    }
-                    catch
-                    {
-                        return null;
-                    }
-                    return offset;
-                }
-
-                return false;
+                rawOffset = rawOffset.Substring(0, rawOffset.Length - 2);
             }
-            return null;
+            var dummyOffset = DateTimeOffset.Parse("2016-01-01 00:00:00 " + rawOffset);
+            return dummyOffset.Offset;
         }
     }
 }

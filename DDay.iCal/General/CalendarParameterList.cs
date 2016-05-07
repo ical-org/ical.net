@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Collections;
-using System.Runtime.Serialization;
 using DDay.Collections;
 
 namespace DDay.iCal
@@ -68,7 +65,7 @@ namespace DDay.iCal
 
         virtual public void SetParent(ICalendarObject parent)
         {
-            foreach (ICalendarParameter parameter in this)
+            foreach (var parameter in this)
             {
                 parameter.Parent = parent;
             }

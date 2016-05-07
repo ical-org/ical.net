@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Diagnostics;
@@ -105,7 +103,7 @@ namespace DDay.iCal
         /// </summary>
         virtual public void AddParameter(string name, string value)
         {            
-            CalendarParameter p = new CalendarParameter(name, value);
+            var p = new CalendarParameter(name, value);
             Parameters.Add(p);
         }
 
@@ -124,11 +122,11 @@ namespace DDay.iCal
         void CalendarProperty_ValueChanged(object sender, ValueChangedEventArgs<object> e)
         {
             // Deassociate the old values
-            foreach (object removed in e.RemovedValues)
+            foreach (var removed in e.RemovedValues)
                 AssociationUtil.DeassociateItem(removed);
 
             // Associate the new values with this object.
-            foreach (object added in e.AddedValues)
+            foreach (var added in e.AddedValues)
                 AssociationUtil.AssociateItem(added, this);
         }
 
@@ -147,7 +145,7 @@ namespace DDay.iCal
         {
             base.CopyFrom(obj);
 
-            ICalendarProperty p = obj as ICalendarProperty;
+            var p = obj as ICalendarProperty;
             if (p != null)
             {
                 // Copy/clone the object if possible (deep copy)
@@ -159,7 +157,7 @@ namespace DDay.iCal
                     SetValue(p.Values);
 
                 // Copy parameters
-                foreach (ICalendarParameter parm in p.Parameters)
+                foreach (var parm in p.Parameters)
                     this.AddChild(parm.Copy<ICalendarParameter>());
             }
         }
@@ -236,14 +234,14 @@ namespace DDay.iCal
             else if (value != null)
             {
                 // Our list contains values.  Let's set the first value!
-                object oldValue = _Values[0];
+                var oldValue = _Values[0];
                 _Values[0] = value;
                 OnValueChanged(new object[] { oldValue }, new object[] { value });
             }
             else
             {
                 // Remove all values
-                List<object> values = new List<object>(Values);
+                var values = new List<object>(Values);
                 _Values.Clear();
                 OnValueChanged(values, null);
             }

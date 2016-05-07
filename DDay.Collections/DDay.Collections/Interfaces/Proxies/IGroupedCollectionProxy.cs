@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DDay.Collections
+﻿namespace DDay.Collections
 {
     public interface IGroupedCollectionProxy<TGroup, TOriginal, TNew> :
         IGroupedCollection<TGroup, TNew>

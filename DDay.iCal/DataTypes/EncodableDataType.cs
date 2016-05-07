@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization;
 
 namespace DDay.iCal
 {
@@ -15,14 +12,10 @@ namespace DDay.iCal
         CalendarDataType,
         IEncodableDataType
     {
-        #region IEncodableDataType Members
-
         virtual public string Encoding
         {
             get { return Parameters.Get("ENCODING"); }
             set { Parameters.Set("ENCODING", value); }
         }
-
-        #endregion
     }
 }

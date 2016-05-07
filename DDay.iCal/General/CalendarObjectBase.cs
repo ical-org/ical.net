@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization;
 
 namespace DDay.iCal
 {
@@ -47,7 +44,7 @@ namespace DDay.iCal
         virtual public T Copy<T>()
         {
             ICopyable obj = null;
-            Type type = GetType();
+            var type = GetType();
             obj = Activator.CreateInstance(type) as ICopyable;
 
             // Duplicate our values

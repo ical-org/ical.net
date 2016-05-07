@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
+using System.Linq;
 
 namespace DDay.iCal
 {
@@ -10,7 +9,7 @@ namespace DDay.iCal
     {
         #region Private Fields
 
-        private List<Occurrence> m_Occurrences;        
+        private HashSet<Occurrence> m_Occurrences;        
 
         #endregion
 
@@ -22,7 +21,7 @@ namespace DDay.iCal
 
         #region Public Properties
 
-        virtual public List<Occurrence> Occurrences
+        virtual public HashSet<Occurrence> Occurrences
         {
             get { return m_Occurrences; }
             set { m_Occurrences = value; }
@@ -35,7 +34,7 @@ namespace DDay.iCal
         public TimeZoneEvaluator(ITimeZone tz)
         {
             TimeZone = tz;
-            m_Occurrences = new List<Occurrence>();
+            m_Occurrences = new HashSet<Occurrence>();
         }
 
         #endregion
@@ -45,21 +44,13 @@ namespace DDay.iCal
         void ProcessOccurrences(IDateTime referenceDate)
         {
             // Sort the occurrences by start time
-            m_Occurrences.Sort(
-                delegate(Occurrence o1, Occurrence o2)
-                {
-                    if (o1.Period == null || o1.Period.StartTime == null)
-                        return -1;
-                    else if (o2.Period == null || o2.Period.StartTime == null)
-                        return 1;
-                    else return o1.Period.StartTime.CompareTo(o2.Period.StartTime);
-                }
-            );
 
-            for (int i = 0; i < m_Occurrences.Count; i++)
+            var sortedOccurrences = m_Occurrences.OrderBy(o => o.Period.StartTime).ToList();
+
+            for (var i = 0; i < sortedOccurrences.Count; i++)
             {
-                Occurrence curr = m_Occurrences[i];
-                Occurrence? next = i < m_Occurrences.Count - 1 ? (Occurrence?)m_Occurrences[i + 1] : null;
+                var curr = sortedOccurrences[i];
+                var next = i < m_Occurrences.Count - 1 ? (Occurrence?)sortedOccurrences[i + 1] : null;
 
                 // Determine end times for our periods, overwriting previously calculated end times.
                 // This is important because we don't want to overcalculate our time zone information,
@@ -87,25 +78,22 @@ namespace DDay.iCal
             m_Occurrences.Clear();
         }
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Ensure the reference date is associated with the time zone
             if (referenceDate.AssociatedObject == null)
                 referenceDate.AssociatedObject = TimeZone;
 
-            List<ITimeZoneInfo> infos = new List<ITimeZoneInfo>(TimeZone.TimeZoneInfos);
+            var infos = new List<ITimeZoneInfo>(TimeZone.TimeZoneInfos);
 
             // Evaluate extra time periods, without re-evaluating ones that were already evaluated
             if ((EvaluationStartBounds == DateTime.MaxValue && EvaluationEndBounds == DateTime.MinValue) ||
                 (periodEnd.Equals(EvaluationStartBounds)) ||
                 (periodStart.Equals(EvaluationEndBounds)))
             {
-                foreach (ITimeZoneInfo curr in infos)
+                foreach (var curr in infos)
                 {
-                    IEvaluator evaluator = curr.GetService(typeof(IEvaluator)) as IEvaluator;
-                    Debug.Assert(curr.Start != null, "TimeZoneInfo.Start must not be null.");
-                    Debug.Assert(curr.Start.TZID == null, "TimeZoneInfo.Start must not have a time zone reference.");
-                    Debug.Assert(evaluator != null, "TimeZoneInfo.GetService(typeof(IEvaluator)) must not be null.");
+                    var evaluator = curr.GetService(typeof(IEvaluator)) as IEvaluator;
 
                     // Time zones must include an effective start date/time
                     // and must provide an evaluator.
@@ -117,21 +105,21 @@ namespace DDay.iCal
 
                         // FIXME: 5 years is an arbitrary number, to eliminate the need
                         // to recalculate time zone information as much as possible.
-                        DateTime offsetEnd = periodEnd.AddYears(5); 
+                        var offsetEnd = periodEnd.AddYears(5); 
 
                         // Determine the UTC occurrences of the Time Zone observances
-                        IList<IPeriod> periods = evaluator.Evaluate(
+                        var periods = evaluator.Evaluate(
                             referenceDate,
                             periodStart,
                             offsetEnd,
                             includeReferenceDateInResults);
 
-                        foreach (IPeriod period in periods)
+                        foreach (var period in periods)
                         {
                             if (!Periods.Contains(period))
                                 Periods.Add(period);
 
-                            Occurrence o = new Occurrence(curr, period);
+                            var o = new Occurrence(curr, period);
                             if (!m_Occurrences.Contains(o))
                                 m_Occurrences.Add(o);
                         }

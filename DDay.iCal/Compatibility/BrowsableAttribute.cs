@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace System.ComponentModel
+﻿namespace System.ComponentModel
 {
 
 #if NETCF

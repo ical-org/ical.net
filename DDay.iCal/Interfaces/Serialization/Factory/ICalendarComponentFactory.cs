@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DDay.iCal.Serialization
+﻿namespace DDay.iCal.Serialization
 {
     public interface ICalendarComponentFactory
     {

@@ -1,12 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Collections;
-using System.IO;
-using System.Resources;
-using System.Web;
-using System.Reflection;
-using System.Text.RegularExpressions;
 using NUnit.Framework;
 
 namespace DDay.iCal.Test
@@ -30,7 +21,7 @@ namespace DDay.iCal.Test
         {
             IICalendar iCal = new iCalendar();
             
-            Event evt = new Event();
+            var evt = new Event();
             evt.Summary = "Testing";
             evt.Start = new iCalDateTime(2010, 3, 25);
             evt.End = new iCalDateTime(2010, 3, 26);
@@ -48,7 +39,7 @@ namespace DDay.iCal.Test
         {
             IICalendar iCal = new iCalendar();
 
-            Event evt = new Event();
+            var evt = new Event();
             evt.Summary = "Testing";
             evt.Start = new iCalDateTime(2010, 3, 25);
             evt.End = new iCalDateTime(2010, 3, 26);
@@ -70,7 +61,7 @@ namespace DDay.iCal.Test
         {
             IICalendar iCal = new iCalendar();
 
-            Event evt = new Event();
+            var evt = new Event();
             evt.Summary = "Testing";
             evt.Start = new iCalDateTime(2010, 3, 25);
             evt.End = new iCalDateTime(2010, 3, 26);

@@ -1,91 +1,68 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
-using System.Runtime.Serialization;
 
 namespace DDay.iCal
-{    
+{
 #if !SILVERLIGHT
     [Serializable]
 #endif
-    public struct Occurrence :
-        IComparable<Occurrence>
+    public struct Occurrence : IComparable<Occurrence>
     {
-        #region Private Fields
-        
-        private IPeriod m_Period;
-        private IRecurrable m_Source; 
-
-        #endregion
-
-        #region Public Properties
-
-        public IPeriod Period
-        {
-            get { return m_Period; }
-            set { m_Period = value; }
-        }
-
-        public IRecurrable Source
-        {
-            get { return m_Source; }
-            set { m_Source = value; }
-        } 
-
-        #endregion
-
-        #region Constructors
+        public IPeriod Period { get; set; }
+        public IRecurrable Source { get; set; }
 
         public Occurrence(Occurrence ao)
         {
-            m_Period = ao.Period;
-            m_Source = ao.Source;
+            Period = ao.Period;
+            Source = ao.Source;
         }
 
         public Occurrence(IRecurrable recurrable, IPeriod period)
         {
-            m_Source = recurrable;
-            m_Period = period;
+            Source = recurrable;
+            Period = period;
         }
 
-        #endregion
-
-        #region Overrides
+        public bool Equals(Occurrence other)
+        {
+            return Equals(Period, other.Period) && Equals(Source, other.Source);
+        }
 
         public override bool Equals(object obj)
         {
-            if (obj is Occurrence)
+            if (ReferenceEquals(null, obj))
             {
-                Occurrence o = (Occurrence)obj;
-                return 
-                    object.Equals(Source, o.Source) &&
-                    CompareTo(o) == 0;
+                return false;
             }
-            return base.Equals(obj);
+            return obj is Occurrence && Equals((Occurrence) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((Period != null ? Period.GetHashCode() : 0) * 397) ^ (Source != null ? Source.GetHashCode() : 0);
+            }
         }
 
         public override string ToString()
         {
-            string s = "Occurrence";
+            var s = "Occurrence";
             if (Source != null)
+            {
                 s = Source.GetType().Name + " ";
+            }
 
             if (Period != null)
-                s += "(" + Period.StartTime.ToString() + ")";
+            {
+                s += "(" + Period.StartTime + ")";
+            }
 
             return s;
         }
-
-        #endregion
-
-        #region IComparable<Occurrence> Members
 
         public int CompareTo(Occurrence other)
         {
             return Period.CompareTo(other.Period);
         }
-
-        #endregion
     }
 }

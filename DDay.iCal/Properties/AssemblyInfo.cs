@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 
@@ -20,6 +19,7 @@ using System.Security;
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 [assembly: AllowPartiallyTrustedCallers]
+[assembly: SecurityRules(SecurityRuleSet.Level1)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("47df6d82-7a92-4deb-b276-377e89f220be")]

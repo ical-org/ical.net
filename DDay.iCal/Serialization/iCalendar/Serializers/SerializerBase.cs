@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using System.Runtime.Serialization;
-using System.Reflection;
 
 namespace DDay.iCal.Serialization.iCalendar
 {
@@ -45,10 +42,10 @@ namespace DDay.iCal.Serialization.iCalendar
         public object Deserialize(Stream stream, Encoding encoding)
         {
             object obj = null;
-            using (StreamReader sr = new StreamReader(stream, encoding))
+            using (var sr = new StreamReader(stream, encoding))
             {
                 // Push the current encoding on the stack
-                IEncodingStack encodingStack = GetService<IEncodingStack>();
+                var encodingStack = GetService<IEncodingStack>();
                 encodingStack.Push(encoding);
 
                 obj = Deserialize(sr);
@@ -64,13 +61,13 @@ namespace DDay.iCal.Serialization.iCalendar
             // NOTE: we don't use a 'using' statement here because
             // we don't want the stream to be closed by this serialization.
             // Fixes bug #3177278 - Serialize closes stream
-            StreamWriter sw = new StreamWriter(stream, encoding);
+            var sw = new StreamWriter(stream, encoding);
             
             // Push the current object onto the serialization stack
             SerializationContext.Push(obj);
 
             // Push the current encoding on the stack
-            IEncodingStack encodingStack = GetService<IEncodingStack>();
+            var encodingStack = GetService<IEncodingStack>();
             encodingStack.Push(encoding);
 
             sw.Write(SerializeToString(obj));

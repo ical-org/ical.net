@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace DDay.iCal
+﻿namespace DDay.iCal
 {
     public class FreeBusyEntry :
         Period,
@@ -38,7 +33,7 @@ namespace DDay.iCal
         {
             base.CopyFrom(obj);
 
-            IFreeBusyEntry fb = obj as IFreeBusyEntry;
+            var fb = obj as IFreeBusyEntry;
             if (fb != null)
             {
                 Status = fb.Status;

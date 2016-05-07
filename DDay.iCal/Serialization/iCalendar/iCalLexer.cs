@@ -1,18 +1,9 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalLexer.cs"$
 
-    using System.Text;
-    using System.IO;
-	using System.Collections;
-    using System.Collections.Generic;  
-    using System.Runtime.Serialization;
-    using DDay.iCal.Serialization;
-    using DDay.iCal.Serialization.iCalendar;
-
 namespace DDay.iCal
 {
 	// Generate header specific to lexer CSharp file
-	using System;
-	using Stream                          = System.IO.Stream;
+    using Stream                          = System.IO.Stream;
 	using TextReader                      = System.IO.TextReader;
 	using Hashtable                       = System.Collections.Hashtable;
 	using Comparer                        = System.Collections.Comparer;
@@ -22,19 +13,14 @@ namespace DDay.iCal
 	using TokenStreamRecognitionException = antlr.TokenStreamRecognitionException;
 	using CharStreamException             = antlr.CharStreamException;
 	using CharStreamIOException           = antlr.CharStreamIOException;
-	using ANTLRException                  = antlr.ANTLRException;
-	using CharScanner                     = antlr.CharScanner;
-	using InputBuffer                     = antlr.InputBuffer;
+    using InputBuffer                     = antlr.InputBuffer;
 	using ByteBuffer                      = antlr.ByteBuffer;
 	using CharBuffer                      = antlr.CharBuffer;
 	using Token                           = antlr.Token;
 	using IToken                          = antlr.IToken;
-	using CommonToken                     = antlr.CommonToken;
-	using SemanticException               = antlr.SemanticException;
-	using RecognitionException            = antlr.RecognitionException;
+    using RecognitionException            = antlr.RecognitionException;
 	using NoViableAltForCharException     = antlr.NoViableAltForCharException;
-	using MismatchedCharException         = antlr.MismatchedCharException;
-	using TokenStream                     = antlr.TokenStream;
+    using TokenStream                     = antlr.TokenStream;
 	using LexerSharedInputState           = antlr.LexerSharedInputState;
 	using BitSet                          = antlr.collections.impl.BitSet;
 	
@@ -101,7 +87,7 @@ tryAgain:
 			for (;;)
 			{
 				IToken _token = null;
-				int _ttype = Token.INVALID_TYPE;
+				var _ttype = Token.INVALID_TYPE;
 				resetText();
 				try     // for char stream error handling
 				{
@@ -224,7 +210,7 @@ tryAgain:
 		
 	protected void mCR(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = CR;
 		
 		match('\u000d');
@@ -238,7 +224,7 @@ tryAgain:
 	
 	public void mLF(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = LF;
 		
 		match('\u000a');
@@ -253,7 +239,7 @@ tryAgain:
 	
 	protected void mALPHA(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = ALPHA;
 		
 		switch ( cached_LA1 )
@@ -295,7 +281,7 @@ tryAgain:
 	
 	protected void mDIGIT(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = DIGIT;
 		
 		matchRange('\u0030','\u0039');
@@ -309,7 +295,7 @@ tryAgain:
 	
 	protected void mDASH(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = DASH;
 		
 		match('\u002d');
@@ -323,7 +309,7 @@ tryAgain:
 	
 	protected void mUNDERSCORE(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = UNDERSCORE;
 		
 		match('\u005F');
@@ -337,7 +323,7 @@ tryAgain:
 	
 	protected void mUNICODE(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = UNICODE;
 		
 		matchRange('\u0100','\uFFFE');
@@ -351,7 +337,7 @@ tryAgain:
 	
 	protected void mSPECIAL(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = SPECIAL;
 		
 		switch ( cached_LA1 )
@@ -418,7 +404,7 @@ tryAgain:
 	
 	public void mSPACE(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = SPACE;
 		
 		match('\u0020');
@@ -432,7 +418,7 @@ tryAgain:
 	
 	public void mHTAB(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = HTAB;
 		
 		match('\u0009');
@@ -446,7 +432,7 @@ tryAgain:
 	
 	public void mCOLON(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = COLON;
 		
 		match('\u003a');
@@ -460,7 +446,7 @@ tryAgain:
 	
 	public void mSEMICOLON(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = SEMICOLON;
 		
 		match('\u003b');
@@ -474,7 +460,7 @@ tryAgain:
 	
 	public void mCOMMA(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = COMMA;
 		
 		match('\u002c');
@@ -488,7 +474,7 @@ tryAgain:
 	
 	public void mDOT(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = DOT;
 		
 		match('\u002e');
@@ -502,7 +488,7 @@ tryAgain:
 	
 	public void mEQUAL(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = EQUAL;
 		
 		match('\u003d');
@@ -516,7 +502,7 @@ tryAgain:
 	
 	public void mBACKSLASH(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = BACKSLASH;
 		
 		match('\u005c');
@@ -530,7 +516,7 @@ tryAgain:
 	
 	public void mSLASH(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = SLASH;
 		
 		match('\u002f');
@@ -544,7 +530,7 @@ tryAgain:
 	
 	public void mDQUOTE(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = DQUOTE;
 		
 		match('\u0022');
@@ -558,7 +544,7 @@ tryAgain:
 	
 	public void mCRLF(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = CRLF;
 		
 		mCR(false);
@@ -574,7 +560,7 @@ tryAgain:
 	
 	public void mCTL(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = CTL;
 		
 		switch ( cached_LA1 )
@@ -616,7 +602,7 @@ tryAgain:
 	
 	public void mESCAPED_CHAR(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = ESCAPED_CHAR;
 		
 		mBACKSLASH(false);
@@ -669,11 +655,11 @@ tryAgain:
 	
 	public void mIANA_TOKEN(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = IANA_TOKEN;
 		
 		{ // ( ... )+
-			int _cnt82=0;
+			var _cnt82=0;
 			for (;;)
 			{
 				switch ( cached_LA1 )
@@ -730,7 +716,7 @@ tryAgain:
 _loop82_breakloop:			;
 		}    // ( ... )+
 		
-		string s = text.ToString(_begin, text.Length-_begin);
+		var s = text.ToString(_begin, text.Length-_begin);
 		int val;
 		if (int.TryParse(s, out val))
 		_ttype = NUMBER;
@@ -758,7 +744,7 @@ _loop82_breakloop:			;
 	
 	public void mLINEFOLDER(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
-		int _ttype; IToken _token=null; int _begin=text.Length;
+		int _ttype; IToken _token=null; var _begin=text.Length;
 		_ttype = LINEFOLDER;
 		
 		mCRLF(false);
@@ -793,40 +779,40 @@ _loop82_breakloop:			;
 	
 	private static long[] mk_tokenSet_0_()
 	{
-		long[] data = new long[1025];
+		var data = new long[1025];
 		data[0]=576478361669337088L;
 		data[1]=70369012629504L;
-		for (int i = 2; i<=1024; i++) { data[i]=0L; }
+		for (var i = 2; i<=1024; i++) { data[i]=0L; }
 		return data;
 	}
 	public static readonly BitSet tokenSet_0_ = new BitSet(mk_tokenSet_0_());
 	private static long[] mk_tokenSet_1_()
 	{
-		long[] data = new long[1025];
+		var data = new long[1025];
 		data[0]=4294965759L;
 		data[1]=-9223372036854775808L;
-		for (int i = 2; i<=1024; i++) { data[i]=0L; }
+		for (var i = 2; i<=1024; i++) { data[i]=0L; }
 		return data;
 	}
 	public static readonly BitSet tokenSet_1_ = new BitSet(mk_tokenSet_1_());
 	private static long[] mk_tokenSet_2_()
 	{
-		long[] data = new long[2560];
+		var data = new long[2560];
 		data[0]=-3170762861857210368L;
 		data[1]=9223372036586340351L;
-		for (int i = 2; i<=1022; i++) { data[i]=-1L; }
+		for (var i = 2; i<=1022; i++) { data[i]=-1L; }
 		data[1023]=9223372036854775807L;
-		for (int i = 1024; i<=2559; i++) { data[i]=0L; }
+		for (var i = 1024; i<=2559; i++) { data[i]=0L; }
 		return data;
 	}
 	public static readonly BitSet tokenSet_2_ = new BitSet(mk_tokenSet_2_());
 	private static long[] mk_tokenSet_3_()
 	{
-		long[] data = new long[1025];
+		var data = new long[1025];
 		data[0]=-3458746947404300288L;
 		data[1]=8646911290591150081L;
-		for (int i = 2; i<=3; i++) { data[i]=-1L; }
-		for (int i = 4; i<=1024; i++) { data[i]=0L; }
+		for (var i = 2; i<=3; i++) { data[i]=-1L; }
+		for (var i = 4; i<=1024; i++) { data[i]=0L; }
 		return data;
 	}
 	public static readonly BitSet tokenSet_3_ = new BitSet(mk_tokenSet_3_());

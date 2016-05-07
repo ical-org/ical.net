@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Reflection;
-using System.Diagnostics;
 
 namespace DDay.iCal.Serialization.iCalendar
 {
@@ -34,8 +31,8 @@ namespace DDay.iCal.Serialization.iCalendar
 
         static protected void AddInt32Values(IList<int> list, string value)
         {
-            string[] values = value.Split(',');
-            foreach (string v in values)
+            var values = value.Split(',');
+            foreach (var v in values)
                 list.Add(Convert.ToInt32(v));
         }
 
@@ -45,8 +42,8 @@ namespace DDay.iCal.Serialization.iCalendar
 
         virtual public void CheckRange(string name, IList<int> values, int min, int max)
         {
-            bool allowZero = (min == 0 || max == 0) ? true : false;
-            foreach (int value in values)
+            var allowZero = (min == 0 || max == 0) ? true : false;
+            foreach (var value in values)
                 CheckRange(name, value, min, max, allowZero);
         }
 
@@ -77,8 +74,8 @@ namespace DDay.iCal.Serialization.iCalendar
                     t1 = obj1.GetType(),
                     t2 = obj2.GetType();
 
-                FieldInfo fi1 = t1.GetField("MinValue");
-                FieldInfo fi2 = t1.GetField("MinValue");
+                var fi1 = t1.GetField("MinValue");
+                var fi2 = t1.GetField("MinValue");
                 
                 isMin1 = fi1 != null && obj1.Equals(fi1.GetValue(null));
                 isMin2 = fi2 != null && obj2.Equals(fi2.GetValue(null));
@@ -97,8 +94,8 @@ namespace DDay.iCal.Serialization.iCalendar
         {
             if (byValue.Count > 0)
             {
-                List<string> byValues = new List<string>();
-                foreach (int i in byValue)
+                var byValues = new List<string>();
+                foreach (var i in byValue)
                     byValues.Add(i.ToString());
 
                 aggregate.Add(name + "=" + string.Join(",", byValues.ToArray()));
@@ -116,14 +113,14 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {
-            IRecurrencePattern recur = obj as IRecurrencePattern;
-            ISerializerFactory factory = GetService<ISerializerFactory>();
+            var recur = obj as IRecurrencePattern;
+            var factory = GetService<ISerializerFactory>();
             if (recur != null && factory != null)
             {
                 // Push the recurrence pattern onto the serialization stack
                 SerializationContext.Push(recur);
 
-                List<string> values = new List<string>();
+                var values = new List<string>();
 
                 values.Add("FREQ=" + Enum.GetName(typeof(FrequencyType), recur.Frequency).ToUpper());
 
@@ -134,7 +131,7 @@ namespace DDay.iCal.Serialization.iCalendar
                 //rule, every hour for an HOURLY rule, every day for a DAILY rule,
                 //every week for a WEEKLY rule, every month for a MONTHLY rule and
                 //every year for a YEARLY rule.
-                int interval = recur.Interval;
+                var interval = recur.Interval;
                 if (interval == int.MinValue)
                     interval = 1;
 
@@ -143,7 +140,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
                 if (recur.Until != DateTime.MinValue)
                 {
-                    IStringSerializer serializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
+                    var serializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
                     if (serializer != null)
                     {
                         IDateTime until = new iCalDateTime(recur.Until);
@@ -160,9 +157,9 @@ namespace DDay.iCal.Serialization.iCalendar
 
                 if (recur.ByDay.Count > 0)
                 {
-                    List<string> bydayValues = new List<string>();
+                    var bydayValues = new List<string>();
 
-                    IStringSerializer serializer = factory.Build(typeof(IWeekDay), SerializationContext) as IStringSerializer;
+                    var serializer = factory.Build(typeof(IWeekDay), SerializationContext) as IStringSerializer;
                     if (serializer != null)
                     {
                         foreach (WeekDay byday in recur.ByDay)
@@ -189,20 +186,42 @@ namespace DDay.iCal.Serialization.iCalendar
             return null;
         }
 
+        //Compiling these is a one-time penalty of about 80ms
+        private const RegexOptions _ciCompiled = RegexOptions.IgnoreCase | RegexOptions.Compiled;
+        internal static readonly Regex _otherInterval =
+            new Regex(@"every\s+(?<Interval>other|\d+)?\w{0,2}\s*(?<Freq>second|minute|hour|day|week|month|year)s?,?\s*(?<More>.+)", _ciCompiled);
+
+        internal static readonly Regex _adverbFrequencies =
+            new Regex(@"FREQ=(SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY);?(.*)", _ciCompiled);
+
+        internal static readonly Regex _numericTemporalUnits = new Regex(@"(?<Num>\d+)\w\w\s+(?<Type>second|minute|hour|day|week|month)", _ciCompiled);
+
+        internal static readonly Regex _temporalUnitType = new Regex(@"(?<Type>second|minute|hour|day|week|month)\s+(?<Num>\d+)", _ciCompiled);
+
+        internal static readonly Regex _relativeDaysOfWeek =
+            new Regex(@"(?<Num>\d+\w{0,2})?(\w|\s)+?(?<First>first)?(?<Last>last)?\s*((?<Day>sunday|monday|tuesday|wednesday|thursday|friday|saturday)\s*(and|or)?\s*)+", _ciCompiled);
+
+        internal static readonly Regex _time =
+            new Regex(@"at\s+(?<Hour>\d{1,2})(:(?<Minute>\d{2})((:|\.)(?<Second>\d{2}))?)?\s*(?<Meridian>(a|p)m?)?", _ciCompiled);
+
+        internal static readonly Regex _recurUntil = new Regex(@"^\s*until\s+(?<DateTime>.+)$", _ciCompiled);
+
+        internal static readonly Regex _specificRecurrenceCount = new Regex(@"^\s*for\s+(?<Count>\d+)\s+occurrences\s*$", _ciCompiled);
+
         public override object Deserialize(TextReader tr)
         {
-            string value = tr.ReadToEnd();
+            var value = tr.ReadToEnd();
 
             // Instantiate the data type
-            IRecurrencePattern r = CreateAndAssociate() as IRecurrencePattern;
-            ISerializerFactory factory = GetService<ISerializerFactory>();
+            var r = CreateAndAssociate() as IRecurrencePattern;
+            var factory = GetService<ISerializerFactory>();
 
             if (r != null && factory != null)
             {
                 // Decode the value, if necessary
                 value = Decode(r, value);
 
-                Match match = Regex.Match(value, @"FREQ=(SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY);?(.*)", RegexOptions.IgnoreCase);
+                var match = _adverbFrequencies.Match(value);
                 if (match.Success)
                 {
                     // Parse the frequency type
@@ -214,21 +233,21 @@ namespace DDay.iCal.Serialization.iCalendar
                     if (match.Groups[2].Success &&
                         match.Groups[2].Length > 0)
                     {
-                        string[] keywordPairs = match.Groups[2].Value.Split(';');
-                        foreach (string keywordPair in keywordPairs)
+                        var keywordPairs = match.Groups[2].Value.Split(';');
+                        foreach (var keywordPair in keywordPairs)
                         {
-                            string[] keyValues = keywordPair.Split('=');
-                            string keyword = keyValues[0];
-                            string keyValue = keyValues[1];
+                            var keyValues = keywordPair.Split('=');
+                            var keyword = keyValues[0];
+                            var keyValue = keyValues[1];
 
                             switch (keyword.ToUpper())
                             {
                                 case "UNTIL":
                                     {
-                                        IStringSerializer serializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
+                                        var serializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
                                         if (serializer != null)
                                         {
-                                            IDateTime dt = serializer.Deserialize(new StringReader(keyValue)) as IDateTime;
+                                            var dt = serializer.Deserialize(new StringReader(keyValue)) as IDateTime;
                                             if (dt != null)
                                                 r.Until = dt.Value;                                            
                                         }
@@ -240,8 +259,8 @@ namespace DDay.iCal.Serialization.iCalendar
                                 case "BYHOUR": AddInt32Values(r.ByHour, keyValue); break;
                                 case "BYDAY":
                                     {
-                                        string[] days = keyValue.Split(',');
-                                        foreach (string day in days)
+                                        var days = keyValue.Split(',');
+                                        foreach (var day in days)
                                             r.ByDay.Add(new WeekDay(day));
                                     } break;
                                 case "BYMONTHDAY": AddInt32Values(r.ByMonthDay, keyValue); break;
@@ -254,14 +273,14 @@ namespace DDay.iCal.Serialization.iCalendar
                         }
                     }
                 }
-                
+
                 //
                 // This matches strings such as:
                 //
                 // "Every 6 minutes"
                 // "Every 3 days"
                 //
-                else if ((match = Regex.Match(value, @"every\s+(?<Interval>other|\d+)?\w{0,2}\s*(?<Freq>second|minute|hour|day|week|month|year)s?,?\s*(?<More>.+)", RegexOptions.IgnoreCase)).Success)
+                else if ((match = _otherInterval.Match(value)).Success)
                 {
                     if (match.Groups["Interval"].Success)
                     {
@@ -283,11 +302,11 @@ namespace DDay.iCal.Serialization.iCalendar
                         case "year": r.Frequency = FrequencyType.Yearly; break;
                     }
 
-                    string[] values = match.Groups["More"].Value.Split(',');
-                    foreach (string item in values)
+                    var values = match.Groups["More"].Value.Split(',');
+                    foreach (var item in values)
                     {
-                        if ((match = Regex.Match(item, @"(?<Num>\d+)\w\w\s+(?<Type>second|minute|hour|day|week|month)", RegexOptions.IgnoreCase)).Success ||
-                            (match = Regex.Match(item, @"(?<Type>second|minute|hour|day|week|month)\s+(?<Num>\d+)", RegexOptions.IgnoreCase)).Success)
+                        if ((match = _numericTemporalUnits.Match(item)).Success ||
+                            (match = _temporalUnitType.Match(item)).Success)
                         {
                             int num;
                             if (int.TryParse(match.Groups["Num"].Value, out num))
@@ -323,9 +342,9 @@ namespace DDay.iCal.Serialization.iCalendar
                                 }
                             }
                         }
-                        else if ((match = Regex.Match(item, @"(?<Num>\d+\w{0,2})?(\w|\s)+?(?<First>first)?(?<Last>last)?\s*((?<Day>sunday|monday|tuesday|wednesday|thursday|friday|saturday)\s*(and|or)?\s*)+", RegexOptions.IgnoreCase)).Success)
+                        else if ((match = _relativeDaysOfWeek.Match(item)).Success)
                         {
-                            int num = int.MinValue;
+                            var num = int.MinValue;
                             if (match.Groups["Num"].Success)
                             {
                                 if (int.TryParse(match.Groups["Num"].Value, out num))
@@ -344,12 +363,12 @@ namespace DDay.iCal.Serialization.iCalendar
 
                             foreach (Capture capture in match.Groups["Day"].Captures)
                             {
-                                WeekDay ds = new WeekDay((DayOfWeek)Enum.Parse(typeof(DayOfWeek), capture.Value, true));
+                                var ds = new WeekDay((DayOfWeek)Enum.Parse(typeof(DayOfWeek), capture.Value, true));
                                 ds.Offset = num;
                                 r.ByDay.Add(ds);
                             }
                         }
-                        else if ((match = Regex.Match(item, @"at\s+(?<Hour>\d{1,2})(:(?<Minute>\d{2})((:|\.)(?<Second>\d{2}))?)?\s*(?<Meridian>(a|p)m?)?", RegexOptions.IgnoreCase)).Success)
+                        else if ((match = _time.Match(item)).Success)
                         {
                             int hour, minute, second;
 
@@ -372,14 +391,14 @@ namespace DDay.iCal.Serialization.iCalendar
                                 }
                             }
                         }
-                        else if ((match = Regex.Match(item, @"^\s*until\s+(?<DateTime>.+)$", RegexOptions.IgnoreCase)).Success)
+                        else if ((match = _recurUntil.Match(item)).Success)
                         {
-                            DateTime dt = DateTime.Parse(match.Groups["DateTime"].Value);
+                            var dt = DateTime.Parse(match.Groups["DateTime"].Value);
                             DateTime.SpecifyKind(dt, DateTimeKind.Utc);
 
                             r.Until = dt;
                         }
-                        else if ((match = Regex.Match(item, @"^\s*for\s+(?<Count>\d+)\s+occurrences\s*$", RegexOptions.IgnoreCase)).Success)
+                        else if ((match = _specificRecurrenceCount.Match(item)).Success)
                         {
                             int count;
                             if (!int.TryParse(match.Groups["Count"].Value, out count))

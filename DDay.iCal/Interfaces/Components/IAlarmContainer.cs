@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using DDay.Collections;
+﻿using System.Collections.Generic;
 
 namespace DDay.iCal
 {
@@ -39,7 +36,7 @@ namespace DDay.iCal
         /// </para>
         /// </summary>
         /// <param name="Start">The earliest allowable alarm occurrence to poll, or <c>null</c>.</param>
-        /// <returns>A List of <see cref="Alarm.AlarmOccurrence"/> objects, one for each occurrence of the <see cref="Alarm"/>.</returns>
+        /// <returns>A List of <see cref="AlarmOccurrence"/> objects, one for each occurrence of the <see cref="Alarm"/>.</returns>
         IList<AlarmOccurrence> PollAlarms(IDateTime startTime, IDateTime endTime);
     }
 }

@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.IO;
@@ -50,7 +48,7 @@ namespace DDay.iCal
         }
         public PeriodList(string value) : this()
         {
-            PeriodListSerializer serializer = new PeriodListSerializer();
+            var serializer = new PeriodListSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
@@ -74,10 +72,10 @@ namespace DDay.iCal
         {
             if (obj is IPeriodList)
             {
-                IPeriodList r = (IPeriodList)obj;
+                var r = (IPeriodList)obj;
 
-                IEnumerator<IPeriod> p1Enum = GetEnumerator();
-                IEnumerator<IPeriod> p2Enum = r.GetEnumerator();
+                var p1Enum = GetEnumerator();
+                var p2Enum = r.GetEnumerator();
 
                 while (p1Enum.MoveNext())
                 {
@@ -98,8 +96,8 @@ namespace DDay.iCal
 
         public override int GetHashCode()
         {
-            int hashCode = 0;
-            foreach (IPeriod p in this)
+            var hashCode = 0;
+            foreach (var p in this)
                 hashCode ^= p.GetHashCode();
             return hashCode;
         }
@@ -109,15 +107,15 @@ namespace DDay.iCal
             base.CopyFrom(obj);
             if (obj is IPeriodList)
             {
-                IPeriodList rdt = (IPeriodList)obj;
-                foreach (IPeriod p in rdt)
+                var rdt = (IPeriodList)obj;
+                foreach (var p in rdt)
                     Add(p.Copy<IPeriod>());
             }
         }
 
         public override string ToString()
         {
-            PeriodListSerializer serializer = new PeriodListSerializer();
+            var serializer = new PeriodListSerializer();
             return serializer.SerializeToString(this);
         }
 
@@ -127,7 +125,7 @@ namespace DDay.iCal
 
         public List<Period> Evaluate(iCalDateTime StartDate, iCalDateTime FromDate, iCalDateTime EndDate)
         {
-            List<Period> periods = new List<Period>();
+            var periods = new List<Period>();
 
             if (StartDate > FromDate)
                 FromDate = StartDate;

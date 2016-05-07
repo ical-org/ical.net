@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Globalization;
-using System.Diagnostics;
+using System.Linq;
+using NodaTime;
 
 namespace DDay.iCal
 {
@@ -47,30 +45,29 @@ namespace DDay.iCal
 
         public static IDateTime MatchTimeZone(IDateTime dt1, IDateTime dt2)
         {
-            Debug.Assert(dt1 != null && dt2 != null);
 
             // Associate the date/time with the first.
-            IDateTime copy = dt2.Copy<IDateTime>();
+            var copy = dt2.Copy<IDateTime>();
             copy.AssociateWith(dt1);
 
             // If the dt1 time does not occur in the same time zone as the
             // dt2 time, then let's convert it so they can be used in the
             // same context (i.e. evaluation).
-            if (dt1.TZID != null)
+            if (dt1.TzId != null)
             {
-                if (!string.Equals(dt1.TZID, copy.TZID))
-                    return (dt1.TimeZoneObservance != null) ? copy.ToTimeZone(dt1.TimeZoneObservance.Value) : copy.ToTimeZone(dt1.TZID);
+                if (!string.Equals(dt1.TzId, copy.TzId))
+                    return (dt1.TimeZoneObservance != null) ? copy.ToTimeZone(dt1.TimeZoneObservance.Value) : copy.ToTimeZone(dt1.TzId);
                 else return copy;
             }
             else if (dt1.IsUniversalTime)
             {
                 // The first date/time is in UTC time, convert!
-                return new iCalDateTime(copy.UTC);
+                return new iCalDateTime(copy.AsUtc);
             }
             else
             {
                 // The first date/time is in local time, convert!
-                return new iCalDateTime(copy.Local);
+                return new iCalDateTime(copy.AsSystemLocal);
             }
         }
 
@@ -95,5 +92,95 @@ namespace DDay.iCal
             }
             return dt;
         }
+
+        public static readonly DateTimeZone LocalDateTimeZone = DateTimeZoneProviders.Bcl.GetSystemDefault();
+
+        public static DateTimeZone GetZone(string tzId)
+        {
+            if (string.IsNullOrWhiteSpace(tzId))
+            {
+                return LocalDateTimeZone;
+            }
+
+            var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(tzId);
+            if (zone != null)
+            {
+                return zone;
+            }
+
+            zone = DateTimeZoneProviders.Bcl.GetZoneOrNull(tzId);
+            if (zone != null)
+            {
+                return zone;
+            }
+
+            zone = DateTimeZoneProviders.Serialization.GetZoneOrNull(tzId);
+            if (zone != null)
+            {
+                return zone;
+            }
+
+            var newTzId = tzId.Replace("-", "/");
+            zone = DateTimeZoneProviders.Serialization.GetZoneOrNull(newTzId);
+            if (zone != null)
+            {
+                return zone;
+            }
+
+            foreach (var providerId in DateTimeZoneProviders.Tzdb.Ids.Where(tzId.Contains))
+            {
+                return DateTimeZoneProviders.Tzdb.GetZoneOrNull(providerId);
+            }
+
+            foreach (var providerId in DateTimeZoneProviders.Bcl.Ids.Where(tzId.Contains))
+            {
+                return DateTimeZoneProviders.Bcl.GetZoneOrNull(providerId);
+            }
+
+            foreach (var providerId in DateTimeZoneProviders.Serialization.Ids.Where(tzId.Contains))
+            {
+                return DateTimeZoneProviders.Serialization.GetZoneOrNull(providerId);
+            }
+
+            return LocalDateTimeZone;
+        }
+
+        public static ZonedDateTime AddYears(ZonedDateTime zonedDateTime, int years)
+        {
+            var futureDate = zonedDateTime.Date.PlusYears(years);
+            var futureLocalDateTime = new LocalDateTime(futureDate.Year, futureDate.Month, futureDate.Day, zonedDateTime.Hour, zonedDateTime.Minute,
+                zonedDateTime.Second);
+            var zonedFutureDate = new ZonedDateTime(futureLocalDateTime, zonedDateTime.Zone, zonedDateTime.Offset);
+            return zonedFutureDate;
+        }
+
+        public static ZonedDateTime AddMonths(ZonedDateTime zonedDateTime, int months)
+        {
+            var futureDate = zonedDateTime.Date.PlusMonths(months);
+            var futureLocalDateTime = new LocalDateTime(futureDate.Year, futureDate.Month, futureDate.Day, zonedDateTime.Hour, zonedDateTime.Minute,
+                zonedDateTime.Second);
+            var zonedFutureDate = new ZonedDateTime(futureLocalDateTime, zonedDateTime.Zone, zonedDateTime.Offset);
+            return zonedFutureDate;
+        }
+
+        public static ZonedDateTime ToZonedDateTimeLeniently(DateTime dateTime, string tzId)
+        {
+            var zone = GetZone(tzId);
+            var localDt = LocalDateTime.FromDateTime(dateTime);//19:00 UTC
+            var lenientZonedDateTime = localDt.InZoneLeniently(zone).WithZone(zone);//15:00 Eastern
+            return lenientZonedDateTime;
+        }
+
+        public static ZonedDateTime FromTimeZoneToTimeZone(DateTime dateTime, string fromZoneId, string toZoneId)
+            => FromTimeZoneToTimeZone(dateTime, GetZone(fromZoneId), GetZone(toZoneId));
+
+        public static ZonedDateTime FromTimeZoneToTimeZone(DateTime dateTime, DateTimeZone fromZone, DateTimeZone toZone)
+        {
+            var oldZone = LocalDateTime.FromDateTime(dateTime).InZoneLeniently(fromZone);
+            var newZone = oldZone.WithZone(toZone);
+            return newZone;
+        }
+
+        public static bool IsSerializationTimeZone(DateTimeZone zone) => DateTimeZoneProviders.Serialization.GetZoneOrNull(zone.Id) != null;
     }
 }

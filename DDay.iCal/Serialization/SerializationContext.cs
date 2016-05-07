@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using DDay.iCal.Serialization.iCalendar;
 
 namespace DDay.iCal.Serialization
@@ -34,7 +33,7 @@ namespace DDay.iCal.Serialization
                 // and something goes wrong and the objects don't get popped off the stack,
                 // we don't need to worry (as much) about a memory leak, because the
                 // objects weren't pushed onto a stack referenced by a static variable.
-                SerializationContext ctx = new SerializationContext();
+                var ctx = new SerializationContext();
                 ctx.m_ServiceProvider = _Default.m_ServiceProvider;
                 return ctx;
             }
@@ -79,7 +78,7 @@ namespace DDay.iCal.Serialization
         {
             if (m_Stack.Count > 0)
             {
-                WeakReference r = m_Stack.Pop();
+                var r = m_Stack.Pop();
                 if (r.IsAlive)
                     return r.Target;
             }
@@ -90,7 +89,7 @@ namespace DDay.iCal.Serialization
         {
             if (m_Stack.Count > 0)
             {
-                WeakReference r = m_Stack.Peek();
+                var r = m_Stack.Peek();
                 if (r.IsAlive)
                     return r.Target;
             }

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace DDay.iCal
 {
-    public class ServiceProvider :
-        IServiceProvider
+    public class ServiceProvider //: IServiceProvider
     {
         #region Private Fields
 
@@ -32,7 +30,7 @@ namespace DDay.iCal
 
         virtual public T GetService<T>()
         {
-            object service = GetService(typeof(T));
+            var service = GetService(typeof(T));
             if (service is T)
                 return (T)service;
             return default(T);
@@ -40,7 +38,7 @@ namespace DDay.iCal
 
         virtual public T GetService<T>(string name)
         {
-            object service = GetService(name);
+            var service = GetService(name);
             if (service is T)
                 return (T)service;
             return default(T);
@@ -56,11 +54,11 @@ namespace DDay.iCal
         {
             if (obj != null)
             {
-                Type type = obj.GetType();
+                var type = obj.GetType();
                 m_TypedServices[type] = obj;
 
                 // Get interfaces for the given type
-                foreach (Type iface in type.GetInterfaces())
+                foreach (var iface in type.GetInterfaces())
                     m_TypedServices[iface] = obj;
             }
         }
@@ -73,7 +71,7 @@ namespace DDay.iCal
                     m_TypedServices.Remove(type);
 
                 // Get interfaces for the given type
-                foreach (Type iface in type.GetInterfaces())
+                foreach (var iface in type.GetInterfaces())
                 {
                     if (m_TypedServices.ContainsKey(iface))
                         m_TypedServices.Remove(iface);

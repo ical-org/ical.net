@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace DDay.iCal
 {
@@ -31,26 +31,26 @@ namespace DDay.iCal
 
         public void EvaluateToPreviousOccurrence(IDateTime completedDate, IDateTime currDt)
         {
-            IDateTime beginningDate = completedDate.Copy<IDateTime>();
+            var beginningDate = completedDate.Copy<IDateTime>();
 
             if (Todo.RecurrenceRules != null)
             {
-                foreach (IRecurrencePattern rrule in Todo.RecurrenceRules)
+                foreach (var rrule in Todo.RecurrenceRules)
                     DetermineStartingRecurrence(rrule, ref beginningDate);
             }
             if (Todo.RecurrenceDates != null)
             {
-                foreach (IPeriodList rdate in Todo.RecurrenceDates)
+                foreach (var rdate in Todo.RecurrenceDates)
                     DetermineStartingRecurrence(rdate, ref beginningDate);
             }
             if (Todo.ExceptionRules != null)
             {
-                foreach (IRecurrencePattern exrule in Todo.ExceptionRules)
+                foreach (var exrule in Todo.ExceptionRules)
                     DetermineStartingRecurrence(exrule, ref beginningDate);
             }
             if (Todo.ExceptionDates != null)
             {
-                foreach (IPeriodList exdate in Todo.ExceptionDates)
+                foreach (var exdate in Todo.ExceptionDates)
                     DetermineStartingRecurrence(exdate, ref beginningDate);
             }
 
@@ -59,14 +59,14 @@ namespace DDay.iCal
 
         public void DetermineStartingRecurrence(IPeriodList rdate, ref IDateTime dt)
         {
-            IEvaluator evaluator = rdate.GetService(typeof(IEvaluator)) as IEvaluator;
+            var evaluator = rdate.GetService(typeof(IEvaluator)) as IEvaluator;
             if (evaluator == null)
             {
                 // FIXME: throw a specific, typed exception here.
                 throw new Exception("Could not determine starting recurrence: a period evaluator could not be found!");
             }
 
-            foreach (IPeriod p in evaluator.Periods)
+            foreach (var p in evaluator.Periods)
             {
                 if (p.StartTime.LessThan(dt))
                     dt = p.StartTime;
@@ -79,7 +79,7 @@ namespace DDay.iCal
                 dt = Todo.Start.Copy<IDateTime>();
             else
             {
-                DateTime dtVal = dt.Value;
+                var dtVal = dt.Value;
                 IncrementDate(ref dtVal, recur, -recur.Interval);
                 dt.Value = dtVal;
             }
@@ -89,7 +89,7 @@ namespace DDay.iCal
 
         #region Overrides
 
-        public override IList<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // TODO items can only recur if a start date is specified
             if (Todo.Start != null)
@@ -97,21 +97,21 @@ namespace DDay.iCal
                 base.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
 
                 // Ensure each period has a duration
-                for (int i = 0; i < Periods.Count; i++)
+                foreach (var period in Periods.Where(period => period.EndTime == null))
                 {
-                    IPeriod p = Periods[i];
-                    if (p.EndTime == null)
+                    period.Duration = Todo.Duration;
+                    if (period.Duration != null)
                     {
-                        p.Duration = Todo.Duration;
-                        if (p.Duration != null)
-                            p.EndTime = p.StartTime.Add(Todo.Duration);
-                        else p.EndTime = p.StartTime;
-                    }                    
+                        period.EndTime = period.StartTime.Add(Todo.Duration);
+                    }
+                    else
+                    {
+                        period.Duration = Todo.Duration;
+                    }
                 }
-
                 return Periods;
             }
-            return new List<IPeriod>();
+            return new HashSet<IPeriod>();
         }
 
         #endregion

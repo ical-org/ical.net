@@ -1,30 +1,20 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalParser.cs"$
 
-    using System.Text;
-    using System.IO;
-	using System.Collections;
-    using System.Collections.Generic;  
-    using System.Runtime.Serialization;
-    using DDay.iCal.Serialization;
-    using DDay.iCal.Serialization.iCalendar;
+using System.Text;
+using System.IO;
+using System.Collections;
+using System.Collections.Generic;
+using DDay.iCal.Serialization;
+using DDay.iCal.Serialization.iCalendar;
 
 namespace DDay.iCal
 {
 	// Generate the header common to all output files.
-	using System;
-	
-	using TokenBuffer              = antlr.TokenBuffer;
-	using TokenStreamException     = antlr.TokenStreamException;
-	using TokenStreamIOException   = antlr.TokenStreamIOException;
-	using ANTLRException           = antlr.ANTLRException;
-	using LLkParser = antlr.LLkParser;
-	using Token                    = antlr.Token;
+
+    using TokenBuffer              = antlr.TokenBuffer;
 	using IToken                   = antlr.IToken;
 	using TokenStream              = antlr.TokenStream;
-	using RecognitionException     = antlr.RecognitionException;
 	using NoViableAltException     = antlr.NoViableAltException;
-	using MismatchedTokenException = antlr.MismatchedTokenException;
-	using SemanticException        = antlr.SemanticException;
 	using ParserSharedInputState   = antlr.ParserSharedInputState;
 	using BitSet                   = antlr.collections.impl.BitSet;
 	
@@ -102,7 +92,7 @@ namespace DDay.iCal
 			SerializationUtil.OnDeserializing(iCalendars);
 		
 			IICalendar iCal = null;
-			ISerializationSettings settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
+			var settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
 		
 		{    // ( ... )*
 			for (;;)
@@ -143,7 +133,7 @@ _loop4_breakloop:						;
 _loop6_breakloop:						;
 					}    // ( ... )*
 								
-								ISerializationProcessor<IICalendar> processor = ctx.GetService(typeof(ISerializationProcessor<IICalendar>)) as ISerializationProcessor<IICalendar>;
+								var processor = ctx.GetService(typeof(ISerializationProcessor<IICalendar>)) as ISerializationProcessor<IICalendar>;
 								
 								// Do some pre-processing on the calendar:
 								if (processor != null)
@@ -210,8 +200,8 @@ _loop9_breakloop:			;
 		
 		
 		
-			ISerializerFactory sf = ctx.GetService(typeof(ISerializerFactory)) as ISerializerFactory;
-			ICalendarComponentFactory cf = ctx.GetService(typeof(ICalendarComponentFactory)) as ICalendarComponentFactory;
+			var sf = ctx.GetService(typeof(ISerializerFactory)) as ISerializerFactory;
+			var cf = ctx.GetService(typeof(ICalendarComponentFactory)) as ICalendarComponentFactory;
 			ICalendarComponent c;
 			ICalendarProperty p;
 		
@@ -286,7 +276,7 @@ _loop12_breakloop:			;
 			 }
 		}
 		
-			ISerializationProcessor<ICalendarProperty> processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarProperty>)) as ISerializationProcessor<ICalendarProperty>;
+			var processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarProperty>)) as ISerializationProcessor<ICalendarProperty>;
 			// Do some pre-processing on the property
 			if (processor != null)
 				processor.PreDeserialization(p);
@@ -325,13 +315,13 @@ _loop24_breakloop:			;
 			// into a concrete iCalendar data type,
 			// a list of concrete iCalendar data types,
 			// or string value.
-			object deserialized = dataMapSerializer.Deserialize(new StringReader(v));
+			var deserialized = dataMapSerializer.Deserialize(new StringReader(v));
 		if (deserialized != null)
 		{
 				// Try to determine if this is was deserialized as a *list*
 				// of concrete types.
-		Type targetType = dataMapSerializer.TargetType;
-		Type listOfTargetType = typeof(IList<>).MakeGenericType(targetType);
+		var targetType = dataMapSerializer.TargetType;
+		var listOfTargetType = typeof(IList<>).MakeGenericType(targetType);
 		if (listOfTargetType.IsAssignableFrom(deserialized.GetType()))
 		{
 					// We deserialized a list - add each value to the
@@ -415,7 +405,7 @@ _loop26_breakloop:			;
 			 }
 		}
 		
-			ISerializationProcessor<ICalendarComponent> processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarComponent>)) as ISerializationProcessor<ICalendarComponent>;
+			var processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarComponent>)) as ISerializationProcessor<ICalendarComponent>;
 			// Do some pre-processing on the component
 			if (processor != null)
 				processor.PreDeserialization(c);
@@ -522,7 +512,7 @@ _loop20_breakloop:			;
 		IToken  m = null;
 		
 			string v;
-			List<string> values = new List<string>();
+			var values = new List<string>();
 		
 		
 		{
@@ -591,9 +581,9 @@ _loop30_breakloop:			;
 	
 	public string  value() //throws RecognitionException, TokenStreamException
 {
-		string v = string.Empty;
+		var v = string.Empty;
 		
-		StringBuilder sb = new StringBuilder(); string c;
+		var sb = new StringBuilder(); string c;
 		
 		{    // ( ... )*
 			for (;;)
@@ -617,7 +607,7 @@ _loop37_breakloop:			;
 	
 	public string  param_value() //throws RecognitionException, TokenStreamException
 {
-		string v = string.Empty;;
+		var v = string.Empty;;
 		
 		
 		switch ( LA(1) )
@@ -668,7 +658,7 @@ _loop37_breakloop:			;
 {
 		string s = null;;
 		
-		StringBuilder sb = new StringBuilder(); string c;
+		var sb = new StringBuilder(); string c;
 		
 		{    // ( ... )*
 			for (;;)
@@ -692,9 +682,9 @@ _loop34_breakloop:			;
 	
 	public string  quoted_string() //throws RecognitionException, TokenStreamException
 {
-		string s = string.Empty;
+		var s = string.Empty;
 		
-		StringBuilder sb = new StringBuilder(); string c;
+		var sb = new StringBuilder(); string c;
 		
 		match(DQUOTE);
 		{    // ( ... )*
@@ -720,7 +710,7 @@ _loop40_breakloop:			;
 	
 	public string  safe_char() //throws RecognitionException, TokenStreamException
 {
-		string c = string.Empty;
+		var c = string.Empty;
 		
 		IToken  a = null;
 		
@@ -734,7 +724,7 @@ _loop40_breakloop:			;
 	
 	public string  value_char() //throws RecognitionException, TokenStreamException
 {
-		string c = string.Empty;
+		var c = string.Empty;
 		
 		IToken  a = null;
 		
@@ -748,7 +738,7 @@ _loop40_breakloop:			;
 	
 	public string  qsafe_char() //throws RecognitionException, TokenStreamException
 {
-		string c = string.Empty;
+		var c = string.Empty;
 		
 		IToken  a = null;
 		
@@ -762,7 +752,7 @@ _loop40_breakloop:			;
 	
 	public string  tsafe_char() //throws RecognitionException, TokenStreamException
 {
-		string s = string.Empty;
+		var s = string.Empty;
 		
 		IToken  a = null;
 		
@@ -776,7 +766,7 @@ _loop40_breakloop:			;
 	
 	public string  text_char() //throws RecognitionException, TokenStreamException
 {
-		string s = string.Empty;
+		var s = string.Empty;
 		
 		IToken  a = null;
 		
@@ -790,7 +780,7 @@ _loop40_breakloop:			;
 	
 	public string  text() //throws RecognitionException, TokenStreamException
 {
-		string s = string.Empty;
+		var s = string.Empty;
 		
 		string t;
 		
@@ -815,7 +805,7 @@ _loop53_breakloop:			;
 	
 	public string  number() //throws RecognitionException, TokenStreamException
 {
-		string s = string.Empty;
+		var s = string.Empty;
 		
 		IToken  n1 = null;
 		IToken  n2 = null;
@@ -851,7 +841,7 @@ _loop53_breakloop:			;
 	
 	public string  version_number() //throws RecognitionException, TokenStreamException
 {
-		string s = string.Empty;
+		var s = string.Empty;
 		
 		string t;
 		

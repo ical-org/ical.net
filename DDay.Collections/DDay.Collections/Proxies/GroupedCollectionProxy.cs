@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Collections;
 
 namespace DDay.Collections
@@ -88,11 +86,7 @@ namespace DDay.Collections
 
         virtual public int CountOf(TGroup group)
         {
-            return _RealObject
-                .AllOf(group)
-                .OfType<TNew>()
-                .Where(_Predicate)
-                .Count();            
+            return _RealObject.Count(g => g.Group.GetType() == typeof (TGroup));
         }
 
         virtual public IEnumerable<TNew> AllOf(TGroup group)
@@ -120,10 +114,9 @@ namespace DDay.Collections
 
             var items = _RealObject
                 .OfType<TNew>()
-                .Where(_Predicate)
                 .ToArray();
 
-            foreach (TNew item in items)
+            foreach (var item in items)
             {
                 _RealObject.Remove(item);
             }
@@ -136,8 +129,8 @@ namespace DDay.Collections
 
         virtual public void CopyTo(TNew[] array, int arrayIndex)
         {
-            int i = 0;
-            foreach (TNew item in this)
+            var i = 0;
+            foreach (var item in this)
             {
                 array[arrayIndex + (i++)] = item;
             }
@@ -149,7 +142,6 @@ namespace DDay.Collections
             { 
                 return _RealObject
                     .OfType<TNew>()
-                    .Where(_Predicate)
                     .Count(); 
             }
         }
@@ -168,7 +160,6 @@ namespace DDay.Collections
         {
             return _RealObject
                 .OfType<TNew>()
-                .Where(_Predicate)
                 .GetEnumerator();
         }
 
@@ -176,7 +167,6 @@ namespace DDay.Collections
         {
             return _RealObject
                 .OfType<TNew>()
-                .Where(_Predicate)
                 .GetEnumerator();
         }
 

@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
 using System.IO;
 using DDay.iCal.Serialization.iCalendar;
@@ -209,7 +207,7 @@ namespace DDay.iCal
         {
             if (value != null)
             {
-                DDay.iCal.Serialization.iCalendar.RecurrencePatternSerializer serializer = new DDay.iCal.Serialization.iCalendar.RecurrencePatternSerializer();
+                var serializer = new DDay.iCal.Serialization.iCalendar.RecurrencePatternSerializer();
                 CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
             }
         }
@@ -234,7 +232,7 @@ namespace DDay.iCal
         {
             if (obj is RecurrencePattern)
             {
-                RecurrencePattern r = (RecurrencePattern)obj;
+                var r = (RecurrencePattern)obj;
                 if (!CollectionEquals(r.ByDay, ByDay) ||
                     !CollectionEquals(r.ByHour, ByHour) ||
                     !CollectionEquals(r.ByMinute, ByMinute) ||
@@ -263,13 +261,13 @@ namespace DDay.iCal
 
         public override string ToString()
         {
-            RecurrencePatternSerializer serializer = new RecurrencePatternSerializer();
+            var serializer = new RecurrencePatternSerializer();
             return serializer.SerializeToString(this);
         }
 
         public override int GetHashCode()
         {
-            int hashCode =
+            var hashCode =
                 ByDay.GetHashCode() ^ ByHour.GetHashCode() ^ ByMinute.GetHashCode() ^
                 ByMonth.GetHashCode() ^ ByMonthDay.GetHashCode() ^ BySecond.GetHashCode() ^
                 BySetPosition.GetHashCode() ^ ByWeekNo.GetHashCode() ^ ByYearDay.GetHashCode() ^
@@ -289,7 +287,7 @@ namespace DDay.iCal
             base.CopyFrom(obj);
             if (obj is IRecurrencePattern)
             {
-                IRecurrencePattern r = (IRecurrencePattern)obj;
+                var r = (IRecurrencePattern)obj;
 
                 Frequency = r.Frequency;
                 Until = r.Until;

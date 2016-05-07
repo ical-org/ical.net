@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DDay.iCal
+﻿namespace DDay.iCal
 {
-    public interface IEncodableDataType :
-        ICalendarDataType
+    public interface IEncodableDataType : ICalendarDataType
     {
         string Encoding { get; set; }
     }

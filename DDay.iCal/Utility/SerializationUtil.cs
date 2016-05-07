@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using System.Reflection;
 
@@ -17,15 +16,15 @@ namespace DDay.iCal
 
         static public void OnDeserializing(object obj)
         {
-            StreamingContext ctx = new StreamingContext(StreamingContextStates.All);
-            foreach (MethodInfo mi in GetDeserializingMethods(obj.GetType()))
+            var ctx = new StreamingContext(StreamingContextStates.All);
+            foreach (var mi in GetDeserializingMethods(obj.GetType()))
                 mi.Invoke(obj, new object[] { ctx });
         }
 
         static public void OnDeserialized(object obj)
         {
-            StreamingContext ctx = new StreamingContext(StreamingContextStates.All);
-            foreach (MethodInfo mi in GetDeserializedMethods(obj.GetType()))
+            var ctx = new StreamingContext(StreamingContextStates.All);
+            foreach (var mi in GetDeserializedMethods(obj.GetType()))
                 mi.Invoke(obj, new object[] { ctx });
         } 
 
@@ -38,9 +37,9 @@ namespace DDay.iCal
             if (targetType != null)
             {
                 // FIXME: cache this
-                foreach (MethodInfo mi in targetType.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
+                foreach (var mi in targetType.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
                 {
-                    object[] attrs = mi.GetCustomAttributes(typeof(OnDeserializingAttribute), false);
+                    var attrs = mi.GetCustomAttributes(typeof(OnDeserializingAttribute), false);
                     if (attrs != null && attrs.Length > 0)
                         yield return mi;
                 }
@@ -52,9 +51,9 @@ namespace DDay.iCal
             if (targetType != null)
             {
                 // FIXME: cache this
-                foreach (MethodInfo mi in targetType.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
+                foreach (var mi in targetType.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
                 {
-                    object[] attrs = mi.GetCustomAttributes(typeof(OnDeserializedAttribute), true);
+                    var attrs = mi.GetCustomAttributes(typeof(OnDeserializedAttribute), true);
                     if (attrs != null && attrs.Length > 0)
                         yield return mi;
                 }

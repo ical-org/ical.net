@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace DDay.iCal.Serialization
 {
@@ -71,7 +70,7 @@ namespace DDay.iCal.Serialization
 
         protected Type ResolveStatusProperty(object context)
         {
-            ICalendarObject obj = context as ICalendarObject;
+            var obj = context as ICalendarObject;
             if (obj != null)
             {
                 if (obj.Parent is IEvent)
@@ -93,7 +92,7 @@ namespace DDay.iCal.Serialization
         {
             if (name != null && objectType != null)
             {
-                PropertyMapping m = new PropertyMapping();
+                var m = new PropertyMapping();
                 m.ObjectType = objectType;
                 m.AllowsMultipleValuesPerProperty = allowsMultipleValues;
 
@@ -105,7 +104,7 @@ namespace DDay.iCal.Serialization
         {
             if (name != null && resolver != null)
             {
-                PropertyMapping m = new PropertyMapping();
+                var m = new PropertyMapping();
                 m.Resolver = resolver;
                 m.AllowsMultipleValuesPerProperty = allowsMultipleValues;
 
@@ -122,13 +121,13 @@ namespace DDay.iCal.Serialization
 
         virtual public bool GetPropertyAllowsMultipleValues(object obj)
         {
-            ICalendarProperty p = obj as ICalendarProperty;
+            var p = obj as ICalendarProperty;
             if (p != null && p.Name != null)
             {
-                string name = p.Name.ToUpper();
+                var name = p.Name.ToUpper();
                 if (_PropertyMap.ContainsKey(name))
                 {
-                    PropertyMapping m = _PropertyMap[name];
+                    var m = _PropertyMap[name];
                     return m.AllowsMultipleValuesPerProperty;
                 }
             }
@@ -137,13 +136,13 @@ namespace DDay.iCal.Serialization
         
         virtual public Type GetPropertyMapping(object obj)
         {
-            ICalendarProperty p = obj as ICalendarProperty;
+            var p = obj as ICalendarProperty;
             if (p != null && p.Name != null)
             {
-                string name = p.Name.ToUpper();
+                var name = p.Name.ToUpper();
                 if (_PropertyMap.ContainsKey(name))
                 {
-                    PropertyMapping m = _PropertyMap[name];
+                    var m = _PropertyMap[name];
                     if (m.Resolver != null)
                         return m.Resolver(p);
                     else

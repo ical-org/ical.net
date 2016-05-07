@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.Serialization;
 
 namespace DDay.iCal
@@ -207,10 +206,9 @@ namespace DDay.iCal
         #region Constructors
 
         /// <summary>
-        /// Constructs an Event object, with an <see cref="iCalObject"/>
+        /// Constructs an Event object, with an iCalObject
         /// (usually an iCalendar object) as its parent.
         /// </summary>
-        /// <param name="parent">An <see cref="iCalObject"/>, usually an iCalendar object.</param>
         public Event() : base()
         {
             Initialize();
@@ -231,7 +229,7 @@ namespace DDay.iCal
         /// <summary>
         /// Use this method to determine if an event occurs on a given date.
         /// <note type="caution">
-        ///     This event should be called only after the <see cref="Evaluate"/>
+        ///     This event should be called only after the Evaluate
         ///     method has calculated the dates for which this event occurs.
         /// </note>
         /// </summary>
@@ -239,7 +237,7 @@ namespace DDay.iCal
         /// <returns>True if the event occurs on the <paramref name="DateTime"/> provided, False otherwise.</returns>
         virtual public bool OccursOn(IDateTime DateTime)
         {
-            foreach (IPeriod p in m_Evaluator.Periods)
+            foreach (var p in m_Evaluator.Periods)
                 // NOTE: removed UTC from date checks, since a date is a date.
                 if (p.StartTime.Date == DateTime.Date ||    // It's the start date OR
                     (p.StartTime.Date <= DateTime.Date &&   // It's after the start date AND
@@ -260,7 +258,7 @@ namespace DDay.iCal
         /// <returns>True if the event begins at the given date and time</returns>
         virtual public bool OccursAt(IDateTime DateTime)
         {
-            foreach (IPeriod p in m_Evaluator.Periods)
+            foreach (var p in m_Evaluator.Periods)
                 if (p.StartTime.Equals(DateTime))
                     return true;
             return false;

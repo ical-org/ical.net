@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using System.Text.RegularExpressions;
-using System.Collections;
 
 namespace DDay.iCal.Serialization.iCalendar
 {
@@ -34,12 +30,12 @@ namespace DDay.iCal.Serialization.iCalendar
         {
             if (obj is Uri)
             {
-                Uri uri = (Uri)obj;
+                var uri = (Uri)obj;
 
-                ICalendarObject co = SerializationContext.Peek() as ICalendarObject;
+                var co = SerializationContext.Peek() as ICalendarObject;
                 if (co != null)
                 {
-                    EncodableDataType dt = new EncodableDataType();
+                    var dt = new EncodableDataType();
                     dt.AssociatedObject = co;
                     return Encode(dt, uri.OriginalString);
                 }
@@ -52,12 +48,12 @@ namespace DDay.iCal.Serialization.iCalendar
         {
             if (tr != null)
             {
-                string value = tr.ReadToEnd();
+                var value = tr.ReadToEnd();
 
-                ICalendarObject co = SerializationContext.Peek() as ICalendarObject;
+                var co = SerializationContext.Peek() as ICalendarObject;
                 if (co != null)
                 {
-                    EncodableDataType dt = new EncodableDataType();
+                    var dt = new EncodableDataType();
                     dt.AssociatedObject = co;
                     value = Decode(dt, value);
                 }
@@ -66,7 +62,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
                 try
                 {
-                    Uri uri = new Uri(value);
+                    var uri = new Uri(value);
                     return uri;
                 }
                 catch

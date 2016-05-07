@@ -1,9 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
-using System.ComponentModel;
 using System.Runtime.Serialization;
 using DDay.Collections;
 
@@ -108,7 +103,7 @@ namespace DDay.iCal
 
         public override bool Equals(object obj)
         {
-            ICalendarObject o = obj as ICalendarObject;
+            var o = obj as ICalendarObject;
             if (o != null)
                 return object.Equals(o.Name, Name);
             return base.Equals(obj);
@@ -123,7 +118,7 @@ namespace DDay.iCal
 
         public override void CopyFrom(ICopyable c)
         {
-            ICalendarObject obj = c as ICalendarObject;
+            var obj = c as ICalendarObject;
             if (obj != null)
             {
                 // Copy the name and basic information
@@ -134,7 +129,7 @@ namespace DDay.iCal
                 
                 // Add each child
                 this.Children.Clear();
-                foreach (ICalendarObject child in obj.Children)
+                foreach (var child in obj.Children)
                     this.AddChild(child.Copy<ICalendarObject>());
             }
         }        
@@ -144,7 +139,7 @@ namespace DDay.iCal
         #region ICalendarObject Members
         
         /// <summary>
-        /// Returns the parent <see cref="iCalObject"/> that owns this one.
+        /// Returns the parent iCalObject that owns this one.
         /// </summary>
         virtual public ICalendarObject Parent
         {
@@ -153,8 +148,7 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// A collection of <see cref="iCalObject"/>s that are children 
-        /// of the current object.
+        /// A collection of iCalObjects that are children of the current object.
         /// </summary>
         virtual public ICalendarObjectList<ICalendarObject> Children
         {
@@ -165,8 +159,7 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// Gets or sets the name of the <see cref="iCalObject"/>.  For iCalendar components,
-        /// this is the RFC 5545 name of the component.
+        /// Gets or sets the name of the iCalObject.  For iCalendar components, this is the RFC 5545 name of the component.
         /// <example>
         ///     <list type="bullet">
         ///         <item>Event - "VEVENT"</item>
@@ -183,7 +176,7 @@ namespace DDay.iCal
             {
                 if (!object.Equals(_Name, value))
                 {
-                    string old = _Name;
+                    var old = _Name;
                     _Name = value;
                     OnGroupChanged(old, _Name);
                 }
@@ -191,8 +184,7 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// Returns the <see cref="DDay.iCal.iCalendar"/> that this <see cref="iCalObject"/>
-        /// belongs to.
+        /// Returns the <see cref="DDay.iCal.iCalendar"/> that this DDayiCalObject belongs to.
         /// </summary>
         virtual public IICalendar Calendar
         {

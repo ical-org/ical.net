@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.IO;
 
 namespace DDay.iCal.Serialization.iCalendar
@@ -16,18 +14,18 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {
-            IPeriodList rdt = obj as IPeriodList;
-            ISerializerFactory factory = GetService<ISerializerFactory>();
+            var rdt = obj as IPeriodList;
+            var factory = GetService<ISerializerFactory>();
 
             if (rdt != null && factory != null)
             {
-                IStringSerializer dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
-                IStringSerializer periodSerializer = factory.Build(typeof(IPeriod), SerializationContext) as IStringSerializer;
+                var dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
+                var periodSerializer = factory.Build(typeof(IPeriod), SerializationContext) as IStringSerializer;
                 if (dtSerializer != null && periodSerializer != null)
                 {
-                    List<string> parts = new List<string>();
+                    var parts = new List<string>();
 
-                    foreach (IPeriod p in rdt)
+                    foreach (var p in rdt)
                     {
                         if (p.EndTime != null)
                             parts.Add(periodSerializer.SerializeToString(p));
@@ -43,25 +41,25 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override object Deserialize(TextReader tr)
         {
-            string value = tr.ReadToEnd();
+            var value = tr.ReadToEnd();
 
             // Create the day specifier and associate it with a calendar object
-            IPeriodList rdt = CreateAndAssociate() as IPeriodList;
-            ISerializerFactory factory = GetService<ISerializerFactory>();
+            var rdt = CreateAndAssociate() as IPeriodList;
+            var factory = GetService<ISerializerFactory>();
             if (rdt != null && factory != null)
             {
                 // Decode the value, if necessary
                 value = Decode(rdt, value);
 
-                IStringSerializer dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
-                IStringSerializer periodSerializer = factory.Build(typeof(IPeriod), SerializationContext) as IStringSerializer;
+                var dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
+                var periodSerializer = factory.Build(typeof(IPeriod), SerializationContext) as IStringSerializer;
                 if (dtSerializer != null && periodSerializer != null)
                 {
-                    string[] values = value.Split(',');
-                    foreach (string v in values)
+                    var values = value.Split(',');
+                    foreach (var v in values)
                     {
-                        IDateTime dt = dtSerializer.Deserialize(new StringReader(v)) as IDateTime;
-                        IPeriod p = periodSerializer.Deserialize(new StringReader(v)) as IPeriod;
+                        var dt = dtSerializer.Deserialize(new StringReader(v)) as IDateTime;
+                        var p = periodSerializer.Deserialize(new StringReader(v)) as IPeriod;
 
                         if (dt != null)
                         {

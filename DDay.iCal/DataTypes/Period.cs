@@ -1,8 +1,4 @@
 using System;
-using System.Diagnostics;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization;
 using DDay.iCal.Serialization.iCalendar;
 
 namespace DDay.iCal
@@ -61,7 +57,7 @@ namespace DDay.iCal
         {
             base.CopyFrom(obj);
 
-            IPeriod p = obj as IPeriod;
+            var p = obj as IPeriod;
             if (p != null)
             {
                 StartTime = p.StartTime;
@@ -70,44 +66,49 @@ namespace DDay.iCal
                 MatchesDateOnly = p.MatchesDateOnly;
             }
         }
-        
+
+        public bool Equals(Period period)
+        {
+            if (MatchesDateOnly || period.MatchesDateOnly)
+            {
+                return StartTime.Value.Date == period.StartTime.Value.Date &&
+                       (EndTime == null || period.EndTime == null || EndTime.Value.Date.Equals(period.EndTime.Value.Date));
+            }
+            return StartTime.Equals(period.StartTime) && (EndTime == null || period.EndTime == null || EndTime.Equals(period.EndTime));
+        }
+
         public override bool Equals(object obj)
         {
-            if (obj is IPeriod)
+            if (ReferenceEquals(null, obj))
             {
-                IPeriod p = (IPeriod)obj;
-                if (MatchesDateOnly || p.MatchesDateOnly)
-                {
-                    return
-                        StartTime.Value.Date == p.StartTime.Value.Date &&
-                        (
-                            EndTime == null ||
-                            p.EndTime == null ||
-                            EndTime.Value.Date.Equals(p.EndTime.Value.Date)
-                        );
-                }
-                else
-                {
-                    return
-                        StartTime.Equals(p.StartTime) &&
-                        (
-                            EndTime == null ||
-                            p.EndTime == null ||
-                            EndTime.Equals(p.EndTime)
-                        );
-                }
-            }            
-            return false;
+                return false;
+            }
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+            return Equals((Period)obj);
         }
 
         public override int GetHashCode()
         {
-            return StartTime.GetHashCode() ^ EndTime.GetHashCode();
+            unchecked
+            {
+                var hashCode = (m_StartTime != null ? m_StartTime.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (m_EndTime != null ? m_EndTime.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ m_Duration.GetHashCode();
+                hashCode = (hashCode * 397) ^ m_MatchesDateOnly.GetHashCode();
+                return hashCode;
+            }
         }
 
         public override string ToString()
         {
-            PeriodSerializer periodSerializer = new PeriodSerializer();
+            var periodSerializer = new PeriodSerializer();
             return periodSerializer.SerializeToString(this);
         }
 

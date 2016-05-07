@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using DDay.Collections;
 
 namespace DDay.iCal
@@ -78,7 +77,7 @@ namespace DDay.iCal
         {
             if (e.First is TComponentType)
             {
-                TComponentType component = (TComponentType)e.First;
+                var component = (TComponentType)e.First;
                 component.UIDChanged += UIDChanged;
 
                 if (!string.IsNullOrEmpty(component.UID))
@@ -90,7 +89,7 @@ namespace DDay.iCal
         {
             if (e.First is TComponentType)
             {
-                TComponentType component = (TComponentType)e.First;
+                var component = (TComponentType)e.First;
                 component.UIDChanged -= UIDChanged;
 
                 if (!string.IsNullOrEmpty(component.UID) &&

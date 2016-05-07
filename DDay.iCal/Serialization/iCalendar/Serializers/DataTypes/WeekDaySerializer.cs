@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 
@@ -16,10 +14,10 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public override string SerializeToString(object obj)
         {
-            IWeekDay ds = obj as IWeekDay;
+            var ds = obj as IWeekDay;
             if (ds != null)
             {
-                string value = string.Empty;
+                var value = string.Empty;
                 if (ds.Offset != int.MinValue)
                     value += ds.Offset;
                 value += Enum.GetName(typeof(DayOfWeek), ds.DayOfWeek).ToUpper().Substring(0, 2);
@@ -29,17 +27,18 @@ namespace DDay.iCal.Serialization.iCalendar
             return null;
         }
 
+        internal static readonly Regex _dayOfWeek = new Regex(@"(\+|-)?(\d{1,2})?(\w{2})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         public override object Deserialize(TextReader tr)
         {
-            string value = tr.ReadToEnd();
+            var value = tr.ReadToEnd();
 
             // Create the day specifier and associate it with a calendar object
-            IWeekDay ds = CreateAndAssociate() as IWeekDay;
+            var ds = CreateAndAssociate() as IWeekDay;
 
             // Decode the value, if necessary
             value = Decode(ds, value);
 
-            Match match = Regex.Match(value, @"(\+|-)?(\d{1,2})?(\w{2})");
+            var match = _dayOfWeek.Match(value);
             if (match.Success)
             {
                 if (match.Groups[2].Success)

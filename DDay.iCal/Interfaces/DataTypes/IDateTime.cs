@@ -1,27 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DDay.iCal
 {
-    public interface IDateTime :
-        IEncodableDataType,
-        IComparable<IDateTime>,
-        IFormattable
+    public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormattable
     {
         /// <summary>
         /// Converts the date/time to this computer's local date/time.
         /// </summary>
-        DateTime Local { get; }
+        DateTime AsSystemLocal { get; }
 
         /// <summary>
         /// Converts the date/time to UTC (Coordinated Universal Time)
         /// </summary>
-        DateTime UTC { get; }
+        DateTime AsUtc { get; }
 
         /// <summary>
         /// Retrieves the <see cref="iCalTimeZoneInfo"/> object for the time
-        /// zone set by <see cref="TZID"/>.
+        /// zone set by <see cref="TzId"/>.
         /// </summary>
         TimeZoneObservance? TimeZoneObservance { get; set; }
 
@@ -57,7 +52,7 @@ namespace DDay.iCal
         /// <summary>
         /// Gets/sets the time zone ID for this date/time value.
         /// </summary>
-        string TZID { get; set; }
+        string TzId { get; set; }
 
         /// <summary>
         /// Gets the year for this date/time value.
@@ -103,31 +98,11 @@ namespace DDay.iCal
         /// Gets the DayOfWeek for this date/time value.
         /// </summary>
         DayOfWeek DayOfWeek { get; }
-        
-        /// <summary>
-        /// Gets the DayOfYear for this date/time value.
-        /// </summary>
-        int DayOfYear { get; }
-
-        /// <summary>
-        /// Gets the first day of the year currently represented by the IDateTime instance.
-        /// </summary>
-        IDateTime FirstDayOfYear { get; }
-
-        /// <summary>
-        /// Gets the first day of the month currently represented by the IDateTime instance.
-        /// </summary>
-        IDateTime FirstDayOfMonth { get; }
 
         /// <summary>
         /// Gets the date portion of the date/time value.
         /// </summary>
         DateTime Date { get; }
-        
-        /// <summary>
-        /// Gets the time portion of the date/time value.
-        /// </summary>
-        TimeSpan TimeOfDay { get; }
 
         /// <summary>
         /// Converts the date/time value to a local time
@@ -139,9 +114,7 @@ namespace DDay.iCal
         /// Converts the date/time value to a local time
         /// within the specified time zone.
         /// </summary>
-        IDateTime ToTimeZone(string tzid);
-        IDateTime ToTimeZone(ITimeZone tz);
-        IDateTime SetTimeZone(ITimeZone tz);
+        IDateTime ToTimeZone(string newTimeZone);
 
         IDateTime Add(TimeSpan ts);
         IDateTime Subtract(TimeSpan ts);
@@ -161,7 +134,6 @@ namespace DDay.iCal
         bool LessThanOrEqual(IDateTime dt);
         bool GreaterThanOrEqual(IDateTime dt);
 
-        string ToString(string format);
         void AssociateWith(IDateTime dt);        
     }
 }

@@ -1,13 +1,5 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Resources;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Web;
 using NUnit.Framework;
 
 namespace DDay.iCal.Test
@@ -25,14 +17,14 @@ namespace DDay.iCal.Test
 
         public void TestAlarm(string calendar, List<IDateTime> dates, iCalDateTime start, iCalDateTime end)
         {
-            IICalendar iCal = iCalendar.LoadFromFile(@"Calendars\Alarm\" + calendar)[0];
+            var iCal = iCalendar.LoadFromFile(@"Calendars\Alarm\" + calendar)[0];
             ProgramTest.TestCal(iCal);
-            IEvent evt = iCal.Events.First();
+            var evt = iCal.Events.First();
             
             // Poll all alarms that occurred between Start and End
-            IList<AlarmOccurrence> alarms = evt.PollAlarms(start, end);
+            var alarms = evt.PollAlarms(start, end);
 
-            foreach (AlarmOccurrence alarm in alarms)
+            foreach (var alarm in alarms)
                 Assert.IsTrue(dates.Contains(alarm.DateTime), "Alarm triggers at " + alarm.Period.StartTime + ", but it should not.");
             Assert.IsTrue(dates.Count == alarms.Count, "There were " + alarms.Count + " alarm occurrences; there should have been " + dates.Count + ".");
         }
@@ -40,7 +32,7 @@ namespace DDay.iCal.Test
         [Test, Category("Alarm")]
         public void Alarm1()
         {
-            List<IDateTime> dateTimes = new List<IDateTime>();
+            var dateTimes = new List<IDateTime>();
             dateTimes.AddRange(new iCalDateTime[]
             {
                 new iCalDateTime(2006, 7, 18, 9, 30, 0, tzid)
@@ -52,7 +44,7 @@ namespace DDay.iCal.Test
         [Test, Category("Alarm")]
         public void Alarm2()
         {
-            List<IDateTime> dateTimes = new List<IDateTime>();
+            var dateTimes = new List<IDateTime>();
             dateTimes.AddRange(new iCalDateTime[]
             {
                 new iCalDateTime(2006, 7, 18, 9, 30, 0, tzid),
@@ -73,7 +65,7 @@ namespace DDay.iCal.Test
         [Test, Category("Alarm")]
         public void Alarm3()
         {
-            List<IDateTime> dateTimes = new List<IDateTime>();
+            var dateTimes = new List<IDateTime>();
             dateTimes.AddRange(new iCalDateTime[]
             {
                 new iCalDateTime(1998, 2, 11, 9, 0, 0, tzid),
@@ -89,7 +81,7 @@ namespace DDay.iCal.Test
         [Test, Category("Alarm")]
         public void Alarm4()
         {
-            List<IDateTime> dateTimes = new List<IDateTime>();
+            var dateTimes = new List<IDateTime>();
             dateTimes.AddRange(new iCalDateTime[]
             {
                 new iCalDateTime(1998, 2, 11, 9, 0, 0, tzid),
@@ -120,7 +112,7 @@ namespace DDay.iCal.Test
         [Test, Category("Alarm")]
         public void Alarm5()
         {
-            List<IDateTime> dateTimes = new List<IDateTime>();
+            var dateTimes = new List<IDateTime>();
             dateTimes.AddRange(new iCalDateTime[]
             {
                 new iCalDateTime(1998, 1, 2, 8, 0, 0, tzid)
@@ -132,7 +124,7 @@ namespace DDay.iCal.Test
         [Test, Category("Alarm")]
         public void Alarm6()
         {
-            List<IDateTime> DateTimes = new List<IDateTime>();
+            var DateTimes = new List<IDateTime>();
             DateTimes.AddRange(new iCalDateTime[]
             {
                 new iCalDateTime(1998, 1, 2, 8, 0, 0, tzid),
@@ -149,7 +141,7 @@ namespace DDay.iCal.Test
         [Test, Category("Alarm")]
         public void Alarm7()
         {
-            List<IDateTime> dateTimes = new List<IDateTime>();
+            var dateTimes = new List<IDateTime>();
             dateTimes.AddRange(new iCalDateTime[]
             {
                 new iCalDateTime(2006, 7, 18, 10, 30, 0, tzid),

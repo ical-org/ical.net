@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DDay.iCal
 {
-    public interface ICalendarDataType :
-        ICalendarParameterCollectionContainer,
-        ICopyable,
-        IServiceProvider
+    public interface ICalendarDataType : ICalendarParameterCollectionContainer, ICopyable, IServiceProvider
     {
         Type GetValueType();
         void SetValueType(string type);

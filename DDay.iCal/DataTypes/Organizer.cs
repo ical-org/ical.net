@@ -1,9 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Collections.Generic;
-using System.Text;
-using DDay.iCal;
-using System.Runtime.Serialization;
 using System.IO;
 using DDay.iCal.Serialization.iCalendar;
 
@@ -62,7 +58,7 @@ namespace DDay.iCal
         public Organizer(string value)
             : this()
         {
-            OrganizerSerializer serializer = new OrganizerSerializer();
+            var serializer = new OrganizerSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
@@ -70,19 +66,38 @@ namespace DDay.iCal
 
         #region Overrides
         
+        protected bool Equals(Organizer other)
+        {
+            return Equals(Value, other.Value);
+        }
+
         public override bool Equals(object obj)
         {
-            IOrganizer o = obj as IOrganizer;
-            if (o != null)
-                return object.Equals(Value, o.Value);
-            return base.Equals(obj);
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+            return Equals((Organizer) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (Value != null ? Value.GetHashCode() : 0);
         }
 
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
 
-            IOrganizer o = obj as IOrganizer;
+            var o = obj as IOrganizer;
             if (o != null)
             {
                 Value = o.Value;

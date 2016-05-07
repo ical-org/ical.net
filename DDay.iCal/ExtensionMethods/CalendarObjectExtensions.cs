@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace DDay.iCal
+﻿namespace DDay.iCal
 {
     public static class CalendarObjectExtensions
     {

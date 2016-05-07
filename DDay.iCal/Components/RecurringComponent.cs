@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
-using DDay.Collections;
 
 namespace DDay.iCal
 {
@@ -31,8 +28,8 @@ namespace DDay.iCal
 
         static public IEnumerable<T> SortByDate<T>(IEnumerable<T> list)
         {
-            List<IRecurringComponent> items = new List<IRecurringComponent>();
-            foreach (T t in list)
+            var items = new List<IRecurringComponent>();
+            foreach (var t in list)
             {
                 if (t is IRecurringComponent)
                     items.Add((IRecurringComponent)(object)t);
@@ -40,7 +37,7 @@ namespace DDay.iCal
 
             // Sort the list by date
             items.Sort(new RecurringComponentDateSorter());
-            foreach (IRecurringComponent rc in items)
+            foreach (var rc in items)
                 yield return (T)(object)rc;
         }
 
@@ -227,22 +224,22 @@ namespace DDay.iCal
             RecurrenceUtil.ClearEvaluation(this);
         }
 
-        virtual public IList<Occurrence> GetOccurrences(IDateTime dt)
+        virtual public HashSet<Occurrence> GetOccurrences(IDateTime dt)
         {
             return RecurrenceUtil.GetOccurrences(this, dt, EvaluationIncludesReferenceDate);
         }
 
-        virtual public IList<Occurrence> GetOccurrences(DateTime dt)
+        virtual public HashSet<Occurrence> GetOccurrences(DateTime dt)
         {
             return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(dt), EvaluationIncludesReferenceDate);
         }
 
-        virtual public IList<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
+        virtual public HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
         {
             return RecurrenceUtil.GetOccurrences(this, startTime, endTime, EvaluationIncludesReferenceDate);
         }
 
-        virtual public IList<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
+        virtual public HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
         {
             return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(startTime), new iCalDateTime(endTime), EvaluationIncludesReferenceDate);
         }
@@ -254,10 +251,10 @@ namespace DDay.iCal
 
         virtual public IList<AlarmOccurrence> PollAlarms(IDateTime startTime, IDateTime endTime)
         {
-            List<AlarmOccurrence> occurrences = new List<AlarmOccurrence>();
+            var occurrences = new List<AlarmOccurrence>();
             if (Alarms != null)
             {
-                foreach (IAlarm alarm in Alarms)
+                foreach (var alarm in Alarms)
                     occurrences.AddRange(alarm.Poll(startTime, endTime));
             }
             return occurrences;

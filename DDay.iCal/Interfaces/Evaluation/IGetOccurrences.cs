@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace DDay.iCal
 {
@@ -25,8 +24,8 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences.</param>
         /// <returns>A list of Periods representing the occurrences of this object.</returns>
-        IList<Occurrence> GetOccurrences(IDateTime dt);
-        IList<Occurrence> GetOccurrences(DateTime dt);
+        HashSet<Occurrence> GetOccurrences(IDateTime dt);
+        HashSet<Occurrence> GetOccurrences(DateTime dt);
 
         /// <summary>
         /// Returns all occurrences of this component that start within the date range provided.
@@ -35,8 +34,8 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="startTime">The starting date range</param>
         /// <param name="endTime">The ending date range</param>
-        IList<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime);
-        IList<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime);        
+        HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime);
+        HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime);        
     }
 
     public interface IGetOccurrencesTyped : IGetOccurrences
@@ -53,8 +52,8 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="dt">The date for which to return occurrences.</param>
         /// <returns>A list of Periods representing the occurrences of this object.</returns>
-        IList<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent;
-        IList<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent;
+        HashSet<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent;
+        HashSet<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent;
 
         /// <summary>
         /// Returns all occurrences of components of type T that start within the date range provided.
@@ -63,7 +62,7 @@ namespace DDay.iCal
         /// </summary>
         /// <param name="startTime">The starting date range</param>
         /// <param name="endTime">The ending date range</param>
-        IList<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent;
-        IList<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent;
+        HashSet<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent;
+        HashSet<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent;
     }
 }

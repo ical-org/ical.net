@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Runtime.Serialization;
 using System.Diagnostics;
 using DDay.Collections;
@@ -46,7 +45,7 @@ namespace DDay.iCal
             : base(name)
         {
             Initialize();
-            foreach (string v in values)
+            foreach (var v in values)
                 AddValue(v);                
         }
 
@@ -70,7 +69,7 @@ namespace DDay.iCal
         {
             base.CopyFrom(c);
 
-            ICalendarParameter p = c as ICalendarParameter;
+            var p = c as ICalendarParameter;
             if (p != null)
             {
                 if (p.Values != null)
@@ -120,14 +119,14 @@ namespace DDay.iCal
             else if (value != null)
             {                
                 // Our list contains values.  Let's set the first value!
-                string oldValue = _Values[0];
+                var oldValue = _Values[0];
                 _Values[0] = value;
                 OnValueChanged(new string[] { oldValue }, new string[] { value });
             }
             else
             {
                 // Remove all values
-                List<string> values = new List<string>(Values);
+                var values = new List<string>(Values);
                 _Values.Clear();
                 OnValueChanged(values, null);
             }

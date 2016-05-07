@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization;
 using System.IO;
 using DDay.iCal.Serialization.iCalendar;
 
@@ -87,7 +84,7 @@ namespace DDay.iCal
         public Trigger(string value)
             : this()
         {
-            TriggerSerializer serializer = new TriggerSerializer();
+            var serializer = new TriggerSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
@@ -100,25 +97,44 @@ namespace DDay.iCal
             base.CopyFrom(obj);
             if (obj is ITrigger)
             {
-                ITrigger t = (ITrigger)obj;
+                var t = (ITrigger)obj;
                 DateTime = t.DateTime;
                 Duration = t.Duration;
                 Related = t.Related;
             }
         }
 
+        protected bool Equals(Trigger other)
+        {
+            return Equals(m_DateTime, other.m_DateTime) && m_Duration.Equals(other.m_Duration) && m_Related == other.m_Related;
+        }
+
         public override bool Equals(object obj)
         {
-            ITrigger t = obj as ITrigger;
-            if (t != null)
+            if (ReferenceEquals(null, obj))
             {
-                if (DateTime != null && !object.Equals(DateTime, t.DateTime))
-                    return false;
-                if (Duration != null && !object.Equals(Duration, t.Duration))
-                    return false;
-                return object.Equals(Related, t.Related);
+                return false;
             }
-            return base.Equals(obj);
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+            return Equals((Trigger) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = (m_DateTime != null ? m_DateTime.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ m_Duration.GetHashCode();
+                hashCode = (hashCode * 397) ^ (int) m_Related;
+                return hashCode;
+            }
         }
 
         #endregion
