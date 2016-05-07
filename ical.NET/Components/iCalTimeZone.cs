@@ -129,15 +129,13 @@ namespace Ical.Net
 
         #endregion
 
-        TimeZoneEvaluator _evaluator;
-
         public CalTimeZone()
         {
             Name = Components.Timezone;
 
-            _evaluator = new TimeZoneEvaluator(this);
             _tzInfos = new CalendarObjectListProxy<ITimeZoneInfo>(Children);
-            SetService(_evaluator);
+            var evaluator = new TimeZoneEvaluator(this);
+            SetService(evaluator);
         }
 
         public virtual string Id
