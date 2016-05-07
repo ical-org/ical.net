@@ -44,7 +44,7 @@ namespace Ical.Net
         }
 
         private string _tzId;
-        virtual public string TzId
+        public virtual string TzId
         {
             get
             {
@@ -69,7 +69,7 @@ namespace Ical.Net
         ///     </list>
         /// </example>
         /// </summary>
-        virtual public string TimeZoneName
+        public virtual string TimeZoneName
         {
             get
             {
@@ -85,89 +85,89 @@ namespace Ical.Net
         }
 
         private IUtcOffset _offsetFrom;
-        virtual public IUtcOffset OffsetFrom
+        public virtual IUtcOffset OffsetFrom
         {
             get { return _offsetFrom ?? (_offsetFrom = Properties.Get<IUtcOffset>("TZOFFSETFROM")); }
             set { _offsetFrom = value; }
         }
 
         private IUtcOffset _offsetTo;
-        virtual public IUtcOffset OffsetTo
+        public virtual IUtcOffset OffsetTo
         {
             get { return _offsetTo ?? (_offsetTo = Properties.Get<IUtcOffset>("TZOFFSETTO")); }
             set { _offsetTo = value; }
         }
 
         private IList<string> _tzNames = new List<string>();
-        virtual public IList<string> TimeZoneNames
+        public virtual IList<string> TimeZoneNames
         {
             get { return _tzNames ?? (_tzNames = Properties.GetMany<string>("TZNAME")); }
             set { _tzNames = value; }
         }
 
-        virtual public IDateTime DtStart
+        public virtual IDateTime DtStart
         {
             get { return Start; }
             set { Start = value; }
         }
 
-        virtual public IDateTime Start
+        public virtual IDateTime Start
         {
             get { return Properties.Get<IDateTime>("DTSTART"); }
             set { Properties.Set("DTSTART", value); }
         }
 
-        virtual public IList<IPeriodList> ExceptionDates
+        public virtual IList<IPeriodList> ExceptionDates
         {
             get { return Properties.GetMany<IPeriodList>("EXDATE"); }
             set { Properties.Set("EXDATE", value); }
         }
 
-        virtual public IList<IRecurrencePattern> ExceptionRules
+        public virtual IList<IRecurrencePattern> ExceptionRules
         {
             get { return Properties.GetMany<IRecurrencePattern>("EXRULE"); }
             set { Properties.Set("EXRULE", value); }
         }
 
-        virtual public IList<IPeriodList> RecurrenceDates
+        public virtual IList<IPeriodList> RecurrenceDates
         {
             get { return Properties.GetMany<IPeriodList>("RDATE"); }
             set { Properties.Set("RDATE", value); }
         }
 
-        virtual public IList<IRecurrencePattern> RecurrenceRules
+        public virtual IList<IRecurrencePattern> RecurrenceRules
         {
             get { return Properties.GetMany<IRecurrencePattern>("RRULE"); }
             set { Properties.Set("RRULE", value); }
         }
 
-        virtual public IDateTime RecurrenceId
+        public virtual IDateTime RecurrenceId
         {
             get { return Properties.Get<IDateTime>("RECURRENCE-ID"); }
             set { Properties.Set("RECURRENCE-ID", value); }
         }
 
-        virtual public void ClearEvaluation()
+        public virtual void ClearEvaluation()
         {
             RecurrenceUtil.ClearEvaluation(this);
         }
 
-        virtual public HashSet<Occurrence> GetOccurrences(IDateTime dt)
+        public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt)
         {
             return RecurrenceUtil.GetOccurrences(this, dt, true);
         }
 
-        virtual public HashSet<Occurrence> GetOccurrences(DateTime dt)
+        public virtual HashSet<Occurrence> GetOccurrences(DateTime dt)
         {
             return RecurrenceUtil.GetOccurrences(this, new CalDateTime(dt), true);
         }
 
-        virtual public HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
+        public virtual HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
         {
             return RecurrenceUtil.GetOccurrences(this, startTime, endTime, true);
         }
 
-        virtual public HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
+        public virtual HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
         {
             return RecurrenceUtil.GetOccurrences(this, new CalDateTime(startTime), new CalDateTime(endTime), true);
         }

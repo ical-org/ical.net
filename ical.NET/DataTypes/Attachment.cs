@@ -114,25 +114,25 @@ namespace Ical.Net.DataTypes
 
         #region IAttachment Members
 
-        virtual public Uri Uri
+        public virtual Uri Uri
         {
             get { return _mUri; }
             set { _mUri = value; }
         }
 
-        virtual public byte[] Data
+        public virtual byte[] Data
         {
             get { return _mData; }
             set { _mData = value; }
         }
 
-        virtual public Encoding ValueEncoding
+        public virtual Encoding ValueEncoding
         {
             get { return _mEncoding; }
             set { _mEncoding = value; }
         }
 
-        virtual public string Value
+        public virtual string Value
         {
             get
             {
@@ -149,7 +149,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        virtual public string FormatType
+        public virtual string FormatType
         {
             get { return Parameters.Get("FMTTYPE"); }
             set { Parameters.Set("FMTTYPE", value); }
@@ -158,7 +158,7 @@ namespace Ical.Net.DataTypes
         /// <summary>
         /// Loads (fills) the <c>Data</c> property with the file designated at the given URI".
         /// </summary>
-        virtual public void LoadDataFromUri()
+        public virtual void LoadDataFromUri()
         {
             LoadDataFromUri(null, null, null);
         }
@@ -168,7 +168,7 @@ namespace Ical.Net.DataTypes
         /// </summary>
         /// <param name="username">The username to supply for credentials</param>
         /// <param name="password">The pasword to supply for credentials</param>
-        virtual public void LoadDataFromUri(string username, string password)
+        public virtual void LoadDataFromUri(string username, string password)
         {
             LoadDataFromUri(null, username, password);
         }
@@ -179,7 +179,7 @@ namespace Ical.Net.DataTypes
         /// <param name="uri">The Uri from which to download the <c>Data</c></param>
         /// <param name="username">The username to supply for credentials</param>
         /// <param name="password">The pasword to supply for credentials</param>
-        virtual public void LoadDataFromUri(Uri uri, string username, string password)
+        public virtual void LoadDataFromUri(Uri uri, string username, string password)
         {
             using (var client = new WebClient())
             {

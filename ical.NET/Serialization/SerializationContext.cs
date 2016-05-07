@@ -16,7 +16,7 @@ namespace Ical.Net.Serialization
     {
         #region Static Private Fields
 
-        static private SerializationContext _default;
+        private static SerializationContext _default;
 
         #endregion
 
@@ -25,7 +25,7 @@ namespace Ical.Net.Serialization
         /// <summary>
         /// Gets the Singleton instance of the SerializationContext class.
         /// </summary>
-        static public ISerializationContext Default
+        public static ISerializationContext Default
         {
             get
             {
@@ -75,13 +75,13 @@ namespace Ical.Net.Serialization
 
         #region ISerializationContext Members
 
-        virtual public void Push(object item)
+        public virtual void Push(object item)
         {
             if (item != null)
                 _mStack.Push(new WeakReference(item));
         }
 
-        virtual public object Pop()
+        public virtual object Pop()
         {
             if (_mStack.Count > 0)
             {
@@ -92,7 +92,7 @@ namespace Ical.Net.Serialization
             return null;
         }
 
-        virtual public object Peek()
+        public virtual object Peek()
         {
             if (_mStack.Count > 0)
             {
@@ -107,42 +107,42 @@ namespace Ical.Net.Serialization
 
         #region IServiceProvider Members
 
-        virtual public object GetService(Type serviceType)
+        public virtual object GetService(Type serviceType)
         {
             return _mServiceProvider.GetService(serviceType);
         }
 
-        virtual public object GetService(string name)
+        public virtual object GetService(string name)
         {
             return _mServiceProvider.GetService(name);
         }
 
-        virtual public T GetService<T>()
+        public virtual T GetService<T>()
         {
             return _mServiceProvider.GetService<T>();
         }
 
-        virtual public T GetService<T>(string name)
+        public virtual T GetService<T>(string name)
         {
             return _mServiceProvider.GetService<T>(name);
         }
 
-        virtual public void SetService(string name, object obj)
+        public virtual void SetService(string name, object obj)
         {
             _mServiceProvider.SetService(name, obj);
         }
 
-        virtual public void SetService(object obj)
+        public virtual void SetService(object obj)
         {
             _mServiceProvider.SetService(obj);
         }
 
-        virtual public void RemoveService(Type type)
+        public virtual void RemoveService(Type type)
         {
             _mServiceProvider.RemoveService(type);
         }
 
-        virtual public void RemoveService(string name)
+        public virtual void RemoveService(string name)
         {
             _mServiceProvider.RemoveService(name);
         }

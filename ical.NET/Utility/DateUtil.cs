@@ -8,7 +8,7 @@ namespace Ical.Net.Utility
 {
     public class DateUtil
     {
-        static private System.Globalization.Calendar _calendar;
+        private static System.Globalization.Calendar _calendar;
 
         static DateUtil()
         {

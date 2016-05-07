@@ -47,7 +47,7 @@ namespace Ical.Net.DataTypes
 
         #region IFreeBusyEntry Members
 
-        virtual public FreeBusyStatus Status
+        public virtual FreeBusyStatus Status
         {
             get { return _status; }
             set { _status = value; }

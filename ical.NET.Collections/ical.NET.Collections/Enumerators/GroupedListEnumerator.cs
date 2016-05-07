@@ -15,7 +15,7 @@ namespace ical.NET.Collections.Enumerators
             _lists = lists;
         }
 
-        virtual public TType Current
+        public virtual TType Current
         {
             get
             {
@@ -25,7 +25,7 @@ namespace ical.NET.Collections.Enumerators
             }
         }
 
-        virtual public void Dispose()
+        public virtual void Dispose()
         {
             Reset();
         }
@@ -72,7 +72,7 @@ namespace ical.NET.Collections.Enumerators
             return false;
         }
 
-        virtual public bool MoveNext()
+        public virtual bool MoveNext()
         {
             if (_listEnumerator != null)
             {
@@ -95,7 +95,7 @@ namespace ical.NET.Collections.Enumerators
             return false;
         }
 
-        virtual public void Reset()
+        public virtual void Reset()
         {
 
             if (_listsEnumerator != null)

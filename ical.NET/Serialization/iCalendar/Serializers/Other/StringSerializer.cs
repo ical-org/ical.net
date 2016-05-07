@@ -30,7 +30,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 
         internal static readonly Regex SingleBackslashMatch = new Regex(@"(?<!\\)\\(?!\\)", RegexOptions.Compiled);
 
-        virtual protected string Unescape(string value)
+        protected virtual string Unescape(string value)
         {
             // added null check - you can't call .Replace on a null
             // string, but you can just return null as a string
@@ -54,7 +54,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
             return value;
         }
 
-        virtual protected string Escape(string value)
+        protected virtual string Escape(string value)
         {
             // added null check - you can't call .Replace on a null
             // string, but you can just return null as a string

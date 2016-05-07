@@ -16,22 +16,22 @@ namespace ical.NET.Collections
 
         #region IMultiLinkedList<TType> Members
 
-        virtual public void SetPrevious(IMultiLinkedList<TType> previous)
+        public virtual void SetPrevious(IMultiLinkedList<TType> previous)
         {
             _previous = previous;
         }
 
-        virtual public void SetNext(IMultiLinkedList<TType> next)
+        public virtual void SetNext(IMultiLinkedList<TType> next)
         {
             _next = next;
         }
 
-        virtual public int StartIndex
+        public virtual int StartIndex
         {
             get { return _previous != null ? _previous.ExclusiveEnd : 0; }
         }
 
-        virtual public int ExclusiveEnd
+        public virtual int ExclusiveEnd
         {
             get { return Count > 0 ? StartIndex + Count : StartIndex; }
         }

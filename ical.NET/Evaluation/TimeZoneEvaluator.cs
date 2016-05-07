@@ -25,7 +25,7 @@ namespace Ical.Net.Evaluation
 
         #region Public Properties
 
-        virtual public HashSet<Occurrence> Occurrences
+        public virtual HashSet<Occurrence> Occurrences
         {
             get { return _mOccurrences; }
             set { _mOccurrences = value; }

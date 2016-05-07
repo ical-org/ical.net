@@ -71,7 +71,7 @@ namespace ical.NET.UnitTests
             _start = DateTime.Now;
         }
 
-        static public void TestCal(ICalendar cal)
+        public static void TestCal(ICalendar cal)
         {
             Assert.IsNotNull(cal, "The iCalendar was not loaded");
             if (cal.Events.Count > 0)

@@ -13,7 +13,7 @@ namespace Ical.Net.DataTypes
         CalendarDataType,
         IEncodableDataType
     {
-        virtual public string Encoding
+        public virtual string Encoding
         {
             get { return Parameters.Get("ENCODING"); }
             set { Parameters.Set("ENCODING", value); }

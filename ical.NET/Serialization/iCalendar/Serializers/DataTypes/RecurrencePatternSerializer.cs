@@ -14,7 +14,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
     {
         #region Static Public Methods
 
-        static public DayOfWeek GetDayOfWeek(string value)
+        public static DayOfWeek GetDayOfWeek(string value)
         {
             switch (value.ToUpper())
             {
@@ -33,7 +33,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         #region Static Protected Methods
 
-        static protected void AddInt32Values(IList<int> list, string value)
+        protected static void AddInt32Values(IList<int> list, string value)
         {
             var values = value.Split(',');
             foreach (var v in values)
@@ -44,25 +44,25 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         #region Content Validation
 
-        virtual public void CheckRange(string name, IList<int> values, int min, int max)
+        public virtual void CheckRange(string name, IList<int> values, int min, int max)
         {
             var allowZero = (min == 0 || max == 0) ? true : false;
             foreach (var value in values)
                 CheckRange(name, value, min, max, allowZero);
         }
 
-        virtual public void CheckRange(string name, int value, int min, int max)
+        public virtual void CheckRange(string name, int value, int min, int max)
         {
             CheckRange(name, value, min, max, (min == 0 || max == 0) ? true : false);
         }
 
-        virtual public void CheckRange(string name, int value, int min, int max, bool allowZero)
+        public virtual void CheckRange(string name, int value, int min, int max, bool allowZero)
         {
             if (value != int.MinValue && (value < min || value > max || (!allowZero && value == 0)))
                 throw new ArgumentException(name + " value " + value + " is out of range. Valid values are between " + min + " and " + max + (allowZero ? "" : ", excluding zero (0)") + ".");
         }
 
-        virtual public void CheckMutuallyExclusive<T, TU>(string name1, string name2, T obj1, TU obj2)
+        public virtual void CheckMutuallyExclusive<T, TU>(string name1, string name2, T obj1, TU obj2)
         {
             if (object.Equals(obj1, default(T)) || object.Equals(obj2, default(TU)))
                 return;

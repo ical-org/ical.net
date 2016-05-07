@@ -26,19 +26,19 @@ namespace Ical.Net.DataTypes
 
         #region Public Properties
 
-        virtual public string Description
+        public virtual string Description
         {
             get { return _mDescription; }
             set { _mDescription = value; }
         }
 
-        virtual public string ExtraData
+        public virtual string ExtraData
         {
             get { return _mExtraData; }
             set { _mExtraData = value; }
         }
 
-        virtual public IStatusCode StatusCode
+        public virtual IStatusCode StatusCode
         {
             get { return _mStatusCode; }
             set { _mStatusCode = value; }

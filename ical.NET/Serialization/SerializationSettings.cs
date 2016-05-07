@@ -17,25 +17,25 @@ namespace Ical.Net.Serialization
 
         #region ISerializationSettings Members
 
-        virtual public Type ICalendarType
+        public virtual Type ICalendarType
         {
             get { return _mICalendarType; }
             set { _mICalendarType = value; }
         }
 
-        virtual public bool EnsureAccurateLineNumbers
+        public virtual bool EnsureAccurateLineNumbers
         {
             get { return _mEnsureAccurateLineNumbers; }
             set { _mEnsureAccurateLineNumbers = value; }
         }
 
-        virtual public ParsingModeType ParsingMode
+        public virtual ParsingModeType ParsingMode
         {
             get { return _mParsingMode; }
             set { _mParsingMode = value; }
         }
 
-        virtual public bool StoreExtraSerializationData
+        public virtual bool StoreExtraSerializationData
         {
             get { return _mStoreExtraSerializationData; }
             set { _mStoreExtraSerializationData = value; }

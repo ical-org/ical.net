@@ -56,7 +56,7 @@ namespace Ical.Net.Evaluation
         /// <param name="periodStart">The beginning date of the range to evaluate.</param>
         /// <param name="periodEnd">The end date of the range to evaluate.</param>
         /// <param name="includeReferenceDateInResults"></param>
-        virtual protected void EvaluateRRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        protected virtual void EvaluateRRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Handle RRULEs
             if (Recurrable.RecurrenceRules != null &&
@@ -87,7 +87,7 @@ namespace Ical.Net.Evaluation
         /// <param name="referenceDate"></param>
         /// <param name="periodStart">The beginning date of the range to evaluate.</param>
         /// <param name="periodEnd">The end date of the range to evaluate.</param>
-        virtual protected void EvaluateRDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
+        protected virtual void EvaluateRDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             // Handle RDATEs
             if (Recurrable.RecurrenceDates != null)
@@ -110,7 +110,7 @@ namespace Ical.Net.Evaluation
         /// <param name="referenceDate"></param>
         /// <param name="periodStart">The beginning date of the range to evaluate.</param>
         /// <param name="periodEnd">The end date of the range to evaluate.</param>
-        virtual protected void EvaluateExRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
+        protected virtual void EvaluateExRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             // Handle EXRULEs
             if (Recurrable.ExceptionRules == null)
@@ -133,7 +133,7 @@ namespace Ical.Net.Evaluation
         /// <param name="referenceDate"></param>
         /// <param name="periodStart">The beginning date of the range to evaluate.</param>
         /// <param name="periodEnd">The end date of the range to evaluate.</param>
-        virtual protected void EvaluateExDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
+        protected virtual void EvaluateExDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             // Handle EXDATEs
             if (Recurrable.ExceptionDates == null)

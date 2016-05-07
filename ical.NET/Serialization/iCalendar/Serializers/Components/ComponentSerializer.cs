@@ -15,7 +15,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
     {
         #region Protected Properties
 
-        virtual protected IComparer<ICalendarProperty> PropertySorter
+        protected virtual IComparer<ICalendarProperty> PropertySorter
         {
             get
             {

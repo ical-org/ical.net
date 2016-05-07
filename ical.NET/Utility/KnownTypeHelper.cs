@@ -4,9 +4,9 @@ using Ical.Net.General;
 
 namespace Ical.Net.Utility
 {
-    static public class KnownTypeHelper
+    public static class KnownTypeHelper
     {
-        static public IList<Type> GetKnownTypes()
+        public static IList<Type> GetKnownTypes()
         {
             var types = new List<Type>();
 

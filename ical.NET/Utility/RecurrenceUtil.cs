@@ -9,14 +9,14 @@ namespace Ical.Net.Utility
 {
     public class RecurrenceUtil
     {
-        static public void ClearEvaluation(IRecurrable recurrable)
+        public static void ClearEvaluation(IRecurrable recurrable)
         {
             var evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
             if (evaluator != null)
                 evaluator.Clear();
         }
 
-        static public HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt, bool includeReferenceDateInResults)
+        public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt, bool includeReferenceDateInResults)
         {
             return GetOccurrences(
                 recurrable, 
@@ -25,7 +25,7 @@ namespace Ical.Net.Utility
                 includeReferenceDateInResults);
         }
 
-        static public HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime periodStart, IDateTime periodEnd, bool includeReferenceDateInResults)
+        public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime periodStart, IDateTime periodEnd, bool includeReferenceDateInResults)
         {
             var occurrences = new HashSet<Occurrence>();
 
@@ -60,7 +60,7 @@ namespace Ical.Net.Utility
             return occurrences;
         }
 
-        static public bool?[] GetExpandBehaviorList(IRecurrencePattern p)
+        public static bool?[] GetExpandBehaviorList(IRecurrencePattern p)
         {
             // See the table in RFC 5545 Section 3.3.10 (Page 43).
             switch (p.Frequency)

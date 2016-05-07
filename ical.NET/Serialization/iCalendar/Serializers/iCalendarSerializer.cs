@@ -39,19 +39,19 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         #region Public Methods
 
         [Obsolete("Use the Serialize(IICalendar iCal, string filename) method instead.")]
-        virtual public void Serialize(string filename)
+        public virtual void Serialize(string filename)
         {
             if (_mCalendar != null)
                 Serialize(_mCalendar, filename);
         }
 
         [Obsolete("Use the SerializeToString(ICalendarObject obj) method instead.")]
-        virtual public string SerializeToString()
+        public virtual string SerializeToString()
         {
             return SerializeToString(_mCalendar);
         }
 
-        virtual public void Serialize(ICalendar cal, string filename)
+        public virtual void Serialize(ICalendar cal, string filename)
         {
             using (var fs = new FileStream(filename, FileMode.Create))
             {

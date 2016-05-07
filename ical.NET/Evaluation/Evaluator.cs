@@ -96,19 +96,19 @@ namespace Ical.Net.Evaluation
             get { return _mCalendar; }
         }
 
-        virtual public DateTime EvaluationStartBounds
+        public virtual DateTime EvaluationStartBounds
         {
             get { return _mEvaluationStartBounds; }
             set { _mEvaluationStartBounds = value; }
         }
 
-        virtual public DateTime EvaluationEndBounds
+        public virtual DateTime EvaluationEndBounds
         {
             get { return _mEvaluationEndBounds; }
             set { _mEvaluationEndBounds = value; }
         }
 
-        virtual public ICalendarObject AssociatedObject
+        public virtual ICalendarObject AssociatedObject
         {
             get
             {
@@ -122,19 +122,19 @@ namespace Ical.Net.Evaluation
             protected set { _mAssociatedObject = value; }
         }
 
-        virtual public HashSet<IPeriod> Periods
+        public virtual HashSet<IPeriod> Periods
         {
             get { return MPeriods; }
         }
 
-        virtual public void Clear()
+        public virtual void Clear()
         {
             _mEvaluationStartBounds = DateTime.MaxValue;
             _mEvaluationEndBounds = DateTime.MinValue;
             MPeriods.Clear();
         }
 
-        abstract public HashSet<IPeriod> Evaluate(
+        public abstract HashSet<IPeriod> Evaluate(
             IDateTime referenceDate,
             DateTime periodStart,
             DateTime periodEnd,

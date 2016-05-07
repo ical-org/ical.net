@@ -65,7 +65,7 @@ namespace Ical.Net
         /// will be extrapolated.
         /// </note>
         /// </summary>
-        virtual public IDateTime DtEnd
+        public virtual IDateTime DtEnd
         {
             get { return Properties.Get<IDateTime>("DTEND"); }
             set
@@ -99,7 +99,7 @@ namespace Ical.Net
         //
         // Therefore, Duration is not serialized, as DtEnd
         // should always be extrapolated from the duration.
-        virtual public TimeSpan Duration
+        public virtual TimeSpan Duration
         {
             get { return Properties.Get<TimeSpan>("DURATION"); }
             set
@@ -115,7 +115,7 @@ namespace Ical.Net
         /// <summary>
         /// An alias to the DtEnd field (i.e. end date/time).
         /// </summary>
-        virtual public IDateTime End
+        public virtual IDateTime End
         {
             get { return DtEnd; }
             set { DtEnd = value; }
@@ -124,7 +124,7 @@ namespace Ical.Net
         /// <summary>
         /// Returns true if the event is an all-day event.
         /// </summary>
-        virtual public bool IsAllDay
+        public virtual bool IsAllDay
         {
             get { return !Start.HasTime; }
             set
@@ -238,7 +238,7 @@ namespace Ical.Net
         /// </summary>
         /// <param name="dateTime">The date to test.</param>
         /// <returns>True if the event occurs on the <paramref name="dateTime"/> provided, False otherwise.</returns>
-        virtual public bool OccursOn(IDateTime dateTime)
+        public virtual bool OccursOn(IDateTime dateTime)
         {
             foreach (var p in _mEvaluator.Periods)
                 // NOTE: removed UTC from date checks, since a date is a date.
@@ -259,7 +259,7 @@ namespace Ical.Net
         /// </summary>
         /// <param name="dateTime">The date and time to test.</param>
         /// <returns>True if the event begins at the given date and time</returns>
-        virtual public bool OccursAt(IDateTime dateTime)
+        public virtual bool OccursAt(IDateTime dateTime)
         {
             foreach (var p in _mEvaluator.Periods)
                 if (p.StartTime.Equals(dateTime))
@@ -272,7 +272,7 @@ namespace Ical.Net
         /// as an upcoming or occurred event.
         /// </summary>
         /// <returns>True if the event has not been cancelled, False otherwise.</returns>
-        virtual public bool IsActive()
+        public virtual bool IsActive()
         {
             return (Status != EventStatus.Cancelled);            
         }

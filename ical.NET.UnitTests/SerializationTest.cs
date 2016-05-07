@@ -61,7 +61,7 @@ namespace ical.NET.UnitTests
             CompareCalendars(iCal1, iCal2);
         }
 
-        static public void CompareCalendars(ICalendar cal1, ICalendar cal2)
+        public static void CompareCalendars(ICalendar cal1, ICalendar cal2)
         {
             CompareComponents(cal1, cal2);
 
@@ -78,7 +78,7 @@ namespace ical.NET.UnitTests
             }
         }
 
-        static public void CompareComponents(ICalendarComponent cb1, ICalendarComponent cb2)
+        public static void CompareComponents(ICalendarComponent cb1, ICalendarComponent cb2)
         {
             foreach (var p1 in cb1.Properties)
             {
@@ -116,7 +116,7 @@ namespace ical.NET.UnitTests
             }
         }
 
-        static public void CompareEnumerables(IEnumerable a1, IEnumerable a2, string value)
+        public static void CompareEnumerables(IEnumerable a1, IEnumerable a2, string value)
         {
             if (a1 == null && a2 == null)
                 return;

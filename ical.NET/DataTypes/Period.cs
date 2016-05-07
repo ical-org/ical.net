@@ -132,7 +132,7 @@ namespace Ical.Net.DataTypes
 
         #region IPeriod Members
 
-        virtual public IDateTime StartTime
+        public virtual IDateTime StartTime
         {
             get { return _mStartTime; }
             set
@@ -142,7 +142,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        virtual public IDateTime EndTime
+        public virtual IDateTime EndTime
         {
             get { return _mEndTime; }
             set
@@ -152,7 +152,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        virtual public TimeSpan Duration
+        public virtual TimeSpan Duration
         {
             get { return _mDuration; }
             set
@@ -170,13 +170,13 @@ namespace Ical.Net.DataTypes
         /// objects are matched against the date only, and
         /// not the date-time combination.
         /// </summary>
-        virtual public bool MatchesDateOnly
+        public virtual bool MatchesDateOnly
         {
             get { return _mMatchesDateOnly; }
             set { _mMatchesDateOnly = value; }
         }
 
-        virtual public bool Contains(IDateTime dt)
+        public virtual bool Contains(IDateTime dt)
         {
             // Start time is inclusive
             if (dt != null &&
@@ -190,7 +190,7 @@ namespace Ical.Net.DataTypes
             return false;
         }
 
-        virtual public bool CollidesWith(IPeriod period)
+        public virtual bool CollidesWith(IPeriod period)
         {
             if (period != null &&
                 (

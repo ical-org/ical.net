@@ -53,7 +53,7 @@ namespace Ical.Net.General.Proxies
        
         #region UniqueComponentListProxy Members
 
-        virtual public TComponentType this[string uid]
+        public virtual TComponentType this[string uid]
         {
             get
             {

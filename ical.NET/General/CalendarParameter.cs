@@ -91,17 +91,17 @@ namespace Ical.Net.General
                 ValueChanged(this, new ValueChangedEventArgs<string>(removedValues, addedValues));
         }
 
-        virtual public IEnumerable<string> Values
+        public virtual IEnumerable<string> Values
         {
             get { return _values; }
         }
 
-        virtual public bool ContainsValue(string value)
+        public virtual bool ContainsValue(string value)
         {
             return _values.Contains(value);
         }
 
-        virtual public int ValueCount
+        public virtual int ValueCount
         {
             get
             {
@@ -109,7 +109,7 @@ namespace Ical.Net.General
             }
         }
 
-        virtual public void SetValue(string value)
+        public virtual void SetValue(string value)
         {
             if (_values.Count == 0)
             {
@@ -133,7 +133,7 @@ namespace Ical.Net.General
             }
         }
 
-        virtual public void SetValue(IEnumerable<string> values)
+        public virtual void SetValue(IEnumerable<string> values)
         {                        
             // Remove all previous values
             var removedValues = _values.ToList();
@@ -142,7 +142,7 @@ namespace Ical.Net.General
             OnValueChanged(removedValues, values);
         }
 
-        virtual public void AddValue(string value)
+        public virtual void AddValue(string value)
         {
             if (value != null)
             {
@@ -151,7 +151,7 @@ namespace Ical.Net.General
             }
         }
 
-        virtual public void RemoveValue(string value)
+        public virtual void RemoveValue(string value)
         {
             if (value != null &&
                 _values.Contains(value) &&
@@ -165,7 +165,7 @@ namespace Ical.Net.General
 
         #region ICalendarParameter Members
 
-        virtual public string Value
+        public virtual string Value
         {
             get
             {

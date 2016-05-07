@@ -77,12 +77,12 @@ namespace Ical.Net.General
 
         #region Protected Methods
 
-        virtual protected void OnDeserializing(StreamingContext context)
+        protected virtual void OnDeserializing(StreamingContext context)
         {
             Initialize();
         }
 
-        virtual protected void OnDeserialized(StreamingContext context)
+        protected virtual void OnDeserialized(StreamingContext context)
         {
         }
 
@@ -144,7 +144,7 @@ namespace Ical.Net.General
         /// <summary>
         /// Returns the parent iCalObject that owns this one.
         /// </summary>
-        virtual public ICalendarObject Parent
+        public virtual ICalendarObject Parent
         {
             get { return _parent; }
             set { _parent = value; }
@@ -153,7 +153,7 @@ namespace Ical.Net.General
         /// <summary>
         /// A collection of iCalObjects that are children of the current object.
         /// </summary>
-        virtual public ICalendarObjectList<ICalendarObject> Children
+        public virtual ICalendarObjectList<ICalendarObject> Children
         {
             get
             {
@@ -172,7 +172,7 @@ namespace Ical.Net.General
         ///     </list>
         /// </example>
         /// </summary>        
-        virtual public string Name
+        public virtual string Name
         {
             get { return _name; }
             set
@@ -189,7 +189,7 @@ namespace Ical.Net.General
         /// <summary>
         /// Returns the <see cref="ICalendar"/> that this DDayiCalObject belongs to.
         /// </summary>
-        virtual public ICalendar Calendar
+        public virtual ICalendar Calendar
         {
             get
             {
@@ -207,19 +207,19 @@ namespace Ical.Net.General
             }
         }
 
-        virtual public ICalendar ICalendar
+        public virtual ICalendar ICalendar
         {
             get { return Calendar; }
             protected set { Calendar = value; }
         }
 
-        virtual public int Line
+        public virtual int Line
         {
             get { return _line; }
             set { _line = value; }
         }
 
-        virtual public int Column
+        public virtual int Column
         {
             get { return _column; }
             set { _column = value; }
@@ -229,42 +229,42 @@ namespace Ical.Net.General
 
         #region IServiceProvider Members
 
-        virtual public object GetService(Type serviceType)
+        public virtual object GetService(Type serviceType)
         {
             return _serviceProvider.GetService(serviceType);
         }
 
-        virtual public object GetService(string name)
+        public virtual object GetService(string name)
         {
             return _serviceProvider.GetService(name);            
         }
 
-        virtual public T GetService<T>()
+        public virtual T GetService<T>()
         {
             return _serviceProvider.GetService<T>();
         }
 
-        virtual public T GetService<T>(string name)
+        public virtual T GetService<T>(string name)
         {
             return _serviceProvider.GetService<T>(name);
         }
 
-        virtual public void SetService(string name, object obj)
+        public virtual void SetService(string name, object obj)
         {
             _serviceProvider.SetService(name, obj);
         }
 
-        virtual public void SetService(object obj)
+        public virtual void SetService(object obj)
         {
             _serviceProvider.SetService(obj);
         }
 
-        virtual public void RemoveService(Type type)
+        public virtual void RemoveService(Type type)
         {
             _serviceProvider.RemoveService(type);
         }
 
-        virtual public void RemoveService(string name)
+        public virtual void RemoveService(string name)
         {
             _serviceProvider.RemoveService(name);
         }
@@ -282,7 +282,7 @@ namespace Ical.Net.General
                 GroupChanged(this, new ObjectEventArgs<string, string>(@old, @new));
         }
 
-        virtual public string Group
+        public virtual string Group
         {
             get { return Name; }
             set { Name = value; }

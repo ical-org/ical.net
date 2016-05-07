@@ -56,8 +56,8 @@ namespace ical.NET.Collections.Proxies
 
         #region IGroupedCollection Members
 
-        virtual public event EventHandler<ObjectEventArgs<TNew, int>> ItemAdded;
-        virtual public event EventHandler<ObjectEventArgs<TNew, int>> ItemRemoved;
+        public virtual event EventHandler<ObjectEventArgs<TNew, int>> ItemAdded;
+        public virtual event EventHandler<ObjectEventArgs<TNew, int>> ItemRemoved;
 
         protected void OnItemAdded(TNew item, int index)
         {
@@ -71,27 +71,27 @@ namespace ical.NET.Collections.Proxies
                 ItemRemoved(this, new ObjectEventArgs<TNew, int>(item, index));
         }
 
-        virtual public bool Remove(TGroup group)
+        public virtual bool Remove(TGroup group)
         {
             return _realObject.Remove(group);
         }
 
-        virtual public void Clear(TGroup group)
+        public virtual void Clear(TGroup group)
         {
             _realObject.Clear(group);
         }
 
-        virtual public bool ContainsKey(TGroup group)
+        public virtual bool ContainsKey(TGroup group)
         {
             return _realObject.ContainsKey(group);            
         }
 
-        virtual public int CountOf(TGroup group)
+        public virtual int CountOf(TGroup group)
         {
             return _realObject.Count(g => g.Group.GetType() == typeof (TGroup));
         }
 
-        virtual public IEnumerable<TNew> AllOf(TGroup group)
+        public virtual IEnumerable<TNew> AllOf(TGroup group)
         {
             return _realObject
                 .AllOf(group)
@@ -99,17 +99,17 @@ namespace ical.NET.Collections.Proxies
                 .Where(_predicate);
         }
         
-        virtual public void SortKeys(IComparer<TGroup> comparer = null)
+        public virtual void SortKeys(IComparer<TGroup> comparer = null)
         {
             _realObject.SortKeys(comparer);
         }
 
-        virtual public void Add(TNew item)
+        public virtual void Add(TNew item)
         {
             _realObject.Add(item);
         }
 
-        virtual public void Clear()
+        public virtual void Clear()
         {
             // Only clear items of this type
             // that match the predicate.
@@ -124,12 +124,12 @@ namespace ical.NET.Collections.Proxies
             }
         }
 
-        virtual public bool Contains(TNew item)
+        public virtual bool Contains(TNew item)
         {
             return _realObject.Contains(item);
         }
 
-        virtual public void CopyTo(TNew[] array, int arrayIndex)
+        public virtual void CopyTo(TNew[] array, int arrayIndex)
         {
             var i = 0;
             foreach (var item in this)
@@ -138,7 +138,7 @@ namespace ical.NET.Collections.Proxies
             }
         }
 
-        virtual public int Count
+        public virtual int Count
         {
             get 
             { 
@@ -148,17 +148,17 @@ namespace ical.NET.Collections.Proxies
             }
         }
 
-        virtual public bool IsReadOnly
+        public virtual bool IsReadOnly
         {
             get { return false; }
         }
 
-        virtual public bool Remove(TNew item)
+        public virtual bool Remove(TNew item)
         {
             return _realObject.Remove(item);
         }
 
-        virtual public IEnumerator<TNew> GetEnumerator()
+        public virtual IEnumerator<TNew> GetEnumerator()
         {
             return _realObject
                 .OfType<TNew>()
@@ -181,7 +181,7 @@ namespace ical.NET.Collections.Proxies
             get { return _realObject; }
         }
 
-        virtual public void SetProxiedObject(IGroupedCollection<TGroup, TOriginal> realObject)
+        public virtual void SetProxiedObject(IGroupedCollection<TGroup, TOriginal> realObject)
         {
             _realObject = realObject;
         }

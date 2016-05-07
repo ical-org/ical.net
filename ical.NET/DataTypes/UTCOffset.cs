@@ -35,13 +35,13 @@ namespace Ical.Net.DataTypes
             Offset = ts;
         }
 
-        static public implicit operator UtcOffset(TimeSpan ts) => new UtcOffset(ts);
+        public static implicit operator UtcOffset(TimeSpan ts) => new UtcOffset(ts);
 
-        static public explicit operator TimeSpan(UtcOffset o) => o.Offset;
+        public static explicit operator TimeSpan(UtcOffset o) => o.Offset;
 
-        virtual public DateTime ToUtc(DateTime dt) => DateTime.SpecifyKind(dt.Add(-Offset), DateTimeKind.Utc);
+        public virtual DateTime ToUtc(DateTime dt) => DateTime.SpecifyKind(dt.Add(-Offset), DateTimeKind.Utc);
 
-        virtual public DateTime ToLocal(DateTime dt) => DateTime.SpecifyKind(dt.Add(Offset), DateTimeKind.Local);
+        public virtual DateTime ToLocal(DateTime dt) => DateTime.SpecifyKind(dt.Add(Offset), DateTimeKind.Local);
 
         protected bool Equals(UtcOffset other)
         {

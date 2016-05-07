@@ -14,21 +14,21 @@ namespace Ical.Net.General
 
         #region IServiceProvider Members
 
-        virtual public object GetService(Type serviceType)
+        public virtual object GetService(Type serviceType)
         {
             if (_mTypedServices.ContainsKey(serviceType))
                 return _mTypedServices[serviceType];
             return null;
         }
 
-        virtual public object GetService(string name)
+        public virtual object GetService(string name)
         {
             if (_mNamedServices.ContainsKey(name))
                 return _mNamedServices[name];
             return null;
         }
 
-        virtual public T GetService<T>()
+        public virtual T GetService<T>()
         {
             var service = GetService(typeof(T));
             if (service is T)
@@ -36,7 +36,7 @@ namespace Ical.Net.General
             return default(T);
         }
 
-        virtual public T GetService<T>(string name)
+        public virtual T GetService<T>(string name)
         {
             var service = GetService(name);
             if (service is T)
@@ -44,13 +44,13 @@ namespace Ical.Net.General
             return default(T);
         }
 
-        virtual public void SetService(string name, object obj)
+        public virtual void SetService(string name, object obj)
         {
             if (!string.IsNullOrEmpty(name) && obj != null)
                 _mNamedServices[name] = obj;
         }
 
-        virtual public void SetService(object obj)
+        public virtual void SetService(object obj)
         {
             if (obj != null)
             {
@@ -63,7 +63,7 @@ namespace Ical.Net.General
             }
         }
 
-        virtual public void RemoveService(Type type)
+        public virtual void RemoveService(Type type)
         {
             if (type != null)
             {
@@ -79,7 +79,7 @@ namespace Ical.Net.General
             }
         }
 
-        virtual public void RemoveService(string name)
+        public virtual void RemoveService(string name)
         {
             if (_mNamedServices.ContainsKey(name))
                 _mNamedServices.Remove(name);

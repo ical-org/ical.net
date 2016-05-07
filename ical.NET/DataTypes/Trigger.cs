@@ -27,7 +27,7 @@ namespace Ical.Net.DataTypes
 
         #region Public Properties
 
-        virtual public IDateTime DateTime
+        public virtual IDateTime DateTime
         {
             get { return _mDateTime; }
             set
@@ -47,7 +47,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        virtual public TimeSpan? Duration
+        public virtual TimeSpan? Duration
         {
             get { return _mDuration; }
             set
@@ -63,13 +63,13 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        virtual public TriggerRelation Related
+        public virtual TriggerRelation Related
         {
             get { return _mRelated; }
             set { _mRelated = value; }
         }
         
-        virtual public bool IsRelative
+        public virtual bool IsRelative
         {
             get { return _mDuration != null; }
         }

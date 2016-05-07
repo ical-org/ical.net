@@ -6,7 +6,7 @@ namespace ical.NET.UnitTests
     public class Startup
     {
         [STAThread]
-        static public void Main(string[] args)
+        public static void Main(string[] args)
         {
             NUnit.Gui.AppEntry.Main(new string[]
             {

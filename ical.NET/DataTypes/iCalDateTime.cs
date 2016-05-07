@@ -26,7 +26,7 @@ namespace Ical.Net.DataTypes
     {
         #region Static Public Properties
 
-        static public CalDateTime Now
+        public static CalDateTime Now
         {
             get
             {
@@ -34,7 +34,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        static public CalDateTime Today
+        public static CalDateTime Today
         {
             get
             {

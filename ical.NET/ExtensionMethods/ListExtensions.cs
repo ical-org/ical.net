@@ -4,7 +4,7 @@ namespace Ical.Net.ExtensionMethods
 {
     public static class ListExtensions
     {
-        static public void AddRange<T>(this IList<T> list, IEnumerable<T> values)
+        public static void AddRange<T>(this IList<T> list, IEnumerable<T> values)
         {
             if (values != null)
             {

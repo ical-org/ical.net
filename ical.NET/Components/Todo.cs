@@ -31,7 +31,7 @@ namespace Ical.Net
         /// <summary>
         /// The date/time the todo was completed.
         /// </summary>
-        virtual public IDateTime Completed
+        public virtual IDateTime Completed
         {
             get { return Properties.Get<IDateTime>("COMPLETED"); }
             set { Properties.Set("COMPLETED", value); }
@@ -56,7 +56,7 @@ namespace Ical.Net
         /// <summary>
         /// The due date of the todo item.
         /// </summary>
-        virtual public IDateTime Due
+        public virtual IDateTime Due
         {
             get { return Properties.Get<IDateTime>("DUE"); }
             set
@@ -79,7 +79,7 @@ namespace Ical.Net
         //
         // Therefore, Duration is not serialized, as Due
         // should always be extrapolated from the duration.
-        virtual public TimeSpan Duration
+        public virtual TimeSpan Duration
         {
             get { return Properties.Get<TimeSpan>("DURATION"); }
             set
@@ -89,25 +89,25 @@ namespace Ical.Net
             }
         }
 
-        virtual public IGeographicLocation GeographicLocation
+        public virtual IGeographicLocation GeographicLocation
         {
             get { return Properties.Get<IGeographicLocation>("GEO"); }
             set { Properties.Set("GEO", value); }
         }
 
-        virtual public string Location
+        public virtual string Location
         {
             get { return Properties.Get<string>("LOCATION"); }
             set { Properties.Set("LOCATION", value); }
         }
 
-        virtual public int PercentComplete
+        public virtual int PercentComplete
         {
             get { return Properties.Get<int>("PERCENT-COMPLETE"); }
             set { Properties.Set("PERCENT-COMPLETE", value); }
         }
 
-        virtual public IList<string> Resources
+        public virtual IList<string> Resources
         {
             get { return Properties.GetMany<string>("RESOURCES"); }
             set { Properties.Set("RESOURCES", value); }
@@ -116,7 +116,7 @@ namespace Ical.Net
         /// <summary>
         /// The status of the todo item.
         /// </summary>
-        virtual public TodoStatus Status
+        public virtual TodoStatus Status
         {
             get { return Properties.Get<TodoStatus>("STATUS"); }
             set
@@ -171,7 +171,7 @@ namespace Ical.Net
         /// </note>
         /// </summary>
         /// <returns>True if the todo item has been completed</returns>
-        virtual public bool IsCompleted(IDateTime currDt)
+        public virtual bool IsCompleted(IDateTime currDt)
         {
             if (Status == TodoStatus.Completed)
             {
@@ -199,7 +199,7 @@ namespace Ical.Net
         /// </summary>
         /// <param name="currDt">The date and time to test.</param>
         /// <returns>True if the item is Active as of <paramref name="currDt"/>, False otherwise.</returns>
-        virtual public bool IsActive(IDateTime currDt)
+        public virtual bool IsActive(IDateTime currDt)
         {
             if (DtStart == null)
                 return !IsCompleted(currDt) && !IsCancelled();
@@ -212,7 +212,7 @@ namespace Ical.Net
         /// Returns True if the todo item was cancelled.
         /// </summary>
         /// <returns>True if the todo was cancelled, False otherwise.</returns>
-        virtual public bool IsCancelled()
+        public virtual bool IsCancelled()
         {
             return Status == TodoStatus.Cancelled;
         }

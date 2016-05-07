@@ -14,7 +14,7 @@ namespace Ical.Net.General.Proxies
         {
         }
 
-        virtual public TType this[int index]
+        public virtual TType this[int index]
         {
             get
             {

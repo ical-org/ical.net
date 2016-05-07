@@ -72,37 +72,37 @@ namespace Ical.Net
 
         #region Public Properties
 
-        virtual public IList<IAttendee> Attendees
+        public virtual IList<IAttendee> Attendees
         {
             get { return Properties.GetMany<IAttendee>("ATTENDEE"); }
             set { Properties.Set("ATTENDEE", value); }
         }
 
-        virtual public IList<string> Comments
+        public virtual IList<string> Comments
         {
             get { return Properties.GetMany<string>("COMMENT"); }
             set { Properties.Set("COMMENT", value); }
         }
 
-        virtual public IDateTime DtStamp
+        public virtual IDateTime DtStamp
         {
             get { return Properties.Get<IDateTime>("DTSTAMP"); }
             set { Properties.Set("DTSTAMP", value); }
         }
 
-        virtual public IOrganizer Organizer
+        public virtual IOrganizer Organizer
         {
             get { return Properties.Get<IOrganizer>("ORGANIZER"); }
             set { Properties.Set("ORGANIZER", value); }
         }
 
-        virtual public IList<IRequestStatus> RequestStatuses
+        public virtual IList<IRequestStatus> RequestStatuses
         {
             get { return Properties.GetMany<IRequestStatus>("REQUEST-STATUS"); }
             set { Properties.Set("REQUEST-STATUS", value); }
         }
 
-        virtual public Uri Url
+        public virtual Uri Url
         {
             get { return Properties.Get<Uri>("URL"); }
             set { Properties.Set("URL", value); }
@@ -183,15 +183,15 @@ namespace Ical.Net
 
         #region IUniqueComponent Members
 
-        virtual public event EventHandler<ObjectEventArgs<string, string>> UidChanged;
+        public virtual event EventHandler<ObjectEventArgs<string, string>> UidChanged;
 
-        virtual protected void OnUidChanged(string oldUid, string newUid)
+        protected virtual void OnUidChanged(string oldUid, string newUid)
         {
             if (UidChanged != null)
                 UidChanged(this, new ObjectEventArgs<string, string>(oldUid, newUid));
         }
 
-        virtual public string Uid
+        public virtual string Uid
         {
             get { return Properties.Get<string>("UID"); }
             set { Properties.Set("UID", value); }

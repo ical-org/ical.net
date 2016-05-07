@@ -14,7 +14,7 @@ namespace Ical.Net
     {
         #region Static Public Methods
 
-        static public IFreeBusy Create(ICalendarObject obj, IFreeBusy freeBusyRequest)
+        public static IFreeBusy Create(ICalendarObject obj, IFreeBusy freeBusyRequest)
         {
             if (obj is IGetOccurrencesTyped)
             {
@@ -96,7 +96,7 @@ namespace Ical.Net
             return null;
         }
 
-        static public IFreeBusy CreateRequest(IDateTime fromInclusive, IDateTime toExclusive, IOrganizer organizer, IAttendee[] contacts)
+        public static IFreeBusy CreateRequest(IDateTime fromInclusive, IDateTime toExclusive, IOrganizer organizer, IAttendee[] contacts)
         {
             var fb = new FreeBusy();
             fb.DtStamp = CalDateTime.Now;
@@ -126,37 +126,37 @@ namespace Ical.Net
 
         #region IFreeBusy Members
 
-        virtual public IList<IFreeBusyEntry> Entries
+        public virtual IList<IFreeBusyEntry> Entries
         {
             get { return Properties.GetMany<IFreeBusyEntry>("FREEBUSY"); }
             set { Properties.Set("FREEBUSY", value); }
         }
 
-        virtual public IDateTime DtStart
+        public virtual IDateTime DtStart
         {
             get { return Properties.Get<IDateTime>("DTSTART"); }
             set { Properties.Set("DTSTART", value); }
         }
 
-        virtual public IDateTime DtEnd
+        public virtual IDateTime DtEnd
         {
             get { return Properties.Get<IDateTime>("DTEND"); }
             set { Properties.Set("DTEND", value); }
         }
 
-        virtual public IDateTime Start
+        public virtual IDateTime Start
         {
             get { return Properties.Get<IDateTime>("DTSTART"); }
             set { Properties.Set("DTSTART", value); }
         }
 
-        virtual public IDateTime End
+        public virtual IDateTime End
         {
             get { return Properties.Get<IDateTime>("DTEND"); }
             set { Properties.Set("DTEND", value); }
         }
 
-        virtual public FreeBusyStatus GetFreeBusyStatus(IPeriod period)
+        public virtual FreeBusyStatus GetFreeBusyStatus(IPeriod period)
         {
             var status = FreeBusyStatus.Free;
             if (period != null)
@@ -170,7 +170,7 @@ namespace Ical.Net
             return status;
         }
 
-        virtual public FreeBusyStatus GetFreeBusyStatus(IDateTime dt)
+        public virtual FreeBusyStatus GetFreeBusyStatus(IDateTime dt)
         {
             var status = FreeBusyStatus.Free;
             if (dt != null)
@@ -188,7 +188,7 @@ namespace Ical.Net
 
         #region IMergeable Members
 
-        virtual public void MergeWith(IMergeable obj)
+        public virtual void MergeWith(IMergeable obj)
         {
             var fb = obj as IFreeBusy;
             if (fb != null)

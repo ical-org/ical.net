@@ -66,12 +66,12 @@ namespace Ical.Net.DataTypes
 
         #region Protected Methods
 
-        virtual protected void OnDeserializing(StreamingContext context)
+        protected virtual void OnDeserializing(StreamingContext context)
         {
             Initialize();
         }
 
-        virtual protected void OnDeserialized(StreamingContext context)
+        protected virtual void OnDeserialized(StreamingContext context)
         {
         }
 
@@ -79,7 +79,7 @@ namespace Ical.Net.DataTypes
     
         #region ICalendarDataType Members
 
-        virtual public Type GetValueType()
+        public virtual Type GetValueType()
         {
             // See RFC 5545 Section 3.2.20.
             if (_proxy != null && _proxy.ContainsKey("VALUE"))
@@ -109,13 +109,13 @@ namespace Ical.Net.DataTypes
             return null;
         }
 
-        virtual public void SetValueType(string type)
+        public virtual void SetValueType(string type)
         {
             if (_proxy != null)
                 _proxy.Set("VALUE", type != null ? type : type.ToUpper());
         }
 
-        virtual public ICalendarObject AssociatedObject
+        public virtual ICalendarObject AssociatedObject
         {
             get { return _AssociatedObject; }
             set
@@ -138,7 +138,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        virtual public ICalendar Calendar
+        public virtual ICalendar Calendar
         {
             get
             {
@@ -148,7 +148,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        virtual public string Language
+        public virtual string Language
         {
             get { return Parameters.Get("LANGUAGE"); }
             set { Parameters.Set("LANGUAGE", value); }
@@ -162,7 +162,7 @@ namespace Ical.Net.DataTypes
         /// Copies values from the target object to the
         /// current object.
         /// </summary>
-        virtual public void CopyFrom(ICopyable obj)
+        public virtual void CopyFrom(ICopyable obj)
         {
             if (obj is ICalendarDataType)
             {
@@ -177,7 +177,7 @@ namespace Ical.Net.DataTypes
         /// Creates a copy of the object.
         /// </summary>
         /// <returns>The copy of the object.</returns>
-        virtual public T Copy<T>()
+        public virtual T Copy<T>()
         {
             ICopyable obj = null;
             var type = GetType();
@@ -196,7 +196,7 @@ namespace Ical.Net.DataTypes
 
         #region ICalendarParameterCollectionContainer Members
 
-        virtual public ICalendarParameterCollection Parameters
+        public virtual ICalendarParameterCollection Parameters
         {
             get { return _proxy; }
         }
@@ -205,7 +205,7 @@ namespace Ical.Net.DataTypes
 
         #region IServiceProvider Members
 
-        virtual public object GetService(Type serviceType)
+        public virtual object GetService(Type serviceType)
         {
             return _serviceProvider.GetService(serviceType);
         }

@@ -22,25 +22,25 @@ namespace Ical.Net.Serialization.iCalendar.Processors
 
         #region ISerializationProcessor<T> Members
 
-        virtual public void PreSerialization(T obj)
+        public virtual void PreSerialization(T obj)
         {
             foreach (var p in this)
                 p.PreSerialization(obj);
         }
 
-        virtual public void PostSerialization(T obj)
+        public virtual void PostSerialization(T obj)
         {
             foreach (var p in this)
                 p.PostSerialization(obj);
         }
 
-        virtual public void PreDeserialization(T obj)
+        public virtual void PreDeserialization(T obj)
         {
             foreach (var p in this)
                 p.PreDeserialization(obj);
         }
 
-        virtual public void PostDeserialization(T obj)
+        public virtual void PostDeserialization(T obj)
         {
             foreach (var p in this)
                 p.PostDeserialization(obj);

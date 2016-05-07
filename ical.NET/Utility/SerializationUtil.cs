@@ -9,19 +9,19 @@ namespace Ical.Net.Utility
     {
         #region Static Public Methods
 
-        static public object GetUninitializedObject(Type type)
+        public static object GetUninitializedObject(Type type)
         {
             return FormatterServices.GetUninitializedObject(type);
         }
 
-        static public void OnDeserializing(object obj)
+        public static void OnDeserializing(object obj)
         {
             var ctx = new StreamingContext(StreamingContextStates.All);
             foreach (var mi in GetDeserializingMethods(obj.GetType()))
                 mi.Invoke(obj, new object[] { ctx });
         }
 
-        static public void OnDeserialized(object obj)
+        public static void OnDeserialized(object obj)
         {
             var ctx = new StreamingContext(StreamingContextStates.All);
             foreach (var mi in GetDeserializedMethods(obj.GetType()))
@@ -32,7 +32,7 @@ namespace Ical.Net.Utility
 
         #region Static Private Methods
 
-        static private IEnumerable<MethodInfo> GetDeserializingMethods(Type targetType)
+        private static IEnumerable<MethodInfo> GetDeserializingMethods(Type targetType)
         {
             if (targetType != null)
             {
@@ -46,7 +46,7 @@ namespace Ical.Net.Utility
             }
         }
 
-        static private IEnumerable<MethodInfo> GetDeserializedMethods(Type targetType)
+        private static IEnumerable<MethodInfo> GetDeserializedMethods(Type targetType)
         {
             if (targetType != null)
             {

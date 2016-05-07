@@ -80,7 +80,7 @@ namespace Ical.Net.Serialization.iCalendar
 			literals = new Hashtable(100, (float) 0.4, null, Comparer.Default);
 		}
 		
-		override public IToken nextToken()			//throws TokenStreamException
+		public override IToken nextToken()			//throws TokenStreamException
 		{
 			IToken theRetToken = null;
 tryAgain:

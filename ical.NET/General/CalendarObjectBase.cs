@@ -34,7 +34,7 @@ namespace Ical.Net.General
         /// Copies values from the target object to the
         /// current object.
         /// </summary>
-        virtual public void CopyFrom(ICopyable c)
+        public virtual void CopyFrom(ICopyable c)
         {
         }
 
@@ -42,7 +42,7 @@ namespace Ical.Net.General
         /// Creates a copy of the object.
         /// </summary>
         /// <returns>The copy of the object.</returns>
-        virtual public T Copy<T>()
+        public virtual T Copy<T>()
         {
             ICopyable obj = null;
             var type = GetType();
@@ -61,7 +61,7 @@ namespace Ical.Net.General
 
         #region ILoadable Members
 
-        virtual public bool IsLoaded
+        public virtual bool IsLoaded
         {
             get { return _mIsLoaded; }
         }
@@ -69,7 +69,7 @@ namespace Ical.Net.General
         [field:NonSerialized]
         public event EventHandler Loaded;
 
-        virtual public void OnLoaded()
+        public virtual void OnLoaded()
         {
             _mIsLoaded = true;
             if (Loaded != null)

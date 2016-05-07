@@ -15,7 +15,7 @@ namespace Ical.Net.DataTypes
     {
         #region IAttendee Members
         
-        virtual public Uri SentBy
+        public virtual Uri SentBy
         {
             get { return new Uri(Parameters.Get("SENT-BY")); }
             set
@@ -27,13 +27,13 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        virtual public string CommonName
+        public virtual string CommonName
         {
             get { return Parameters.Get("CN"); }
             set { Parameters.Set("CN", value); }
         }
 
-        virtual public Uri DirectoryEntry
+        public virtual Uri DirectoryEntry
         {
             get { return new Uri(Parameters.Get("DIR")); }
             set
@@ -45,31 +45,31 @@ namespace Ical.Net.DataTypes
             }
         }
         
-        virtual public string Type
+        public virtual string Type
         {
             get { return Parameters.Get("CUTYPE"); }
             set { Parameters.Set("CUTYPE", value); }
         }
         
-        virtual public IList<string> Members
+        public virtual IList<string> Members
         {
             get { return Parameters.GetMany("MEMBER"); }
             set { Parameters.Set("MEMBER", value); }
         }
         
-        virtual public string Role
+        public virtual string Role
         {
             get { return Parameters.Get("ROLE"); }
             set { Parameters.Set("ROLE", value); }
         }
         
-        virtual public string ParticipationStatus
+        public virtual string ParticipationStatus
         {
             get { return Parameters.Get("PARTSTAT"); }
             set { Parameters.Set("PARTSTAT", value); }
         }
         
-        virtual public bool Rsvp
+        public virtual bool Rsvp
         {
             get
             {
@@ -88,20 +88,20 @@ namespace Ical.Net.DataTypes
             }
         }
         
-        virtual public IList<string> DelegatedTo
+        public virtual IList<string> DelegatedTo
         {
             get { return Parameters.GetMany("DELEGATED-TO"); }
             set { Parameters.Set("DELEGATED-TO", value); }
         }
          
-        virtual public IList<string> DelegatedFrom
+        public virtual IList<string> DelegatedFrom
         {
             get { return Parameters.GetMany("DELEGATED-FROM"); }
             set { Parameters.Set("DELEGATED-FROM", value); }
         }
         
         [DataMember(Order = 1)]
-        virtual public Uri Value { get; set; }
+        public virtual Uri Value { get; set; }
         
         #endregion        
             

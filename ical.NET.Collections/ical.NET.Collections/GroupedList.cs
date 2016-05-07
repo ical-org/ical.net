@@ -43,7 +43,7 @@ namespace ical.NET.Collections
 
         #region Protected Methods
 
-        virtual protected TGroup GroupModifier(TGroup group)
+        protected virtual TGroup GroupModifier(TGroup group)
         {
             if (group == null)
                 throw new ArgumentNullException("The item's group cannot be null.");
@@ -166,7 +166,7 @@ namespace ical.NET.Collections
                 ItemRemoved(this, new ObjectEventArgs<TItem, int>(obj, index));
         }
 
-        virtual public void Add(TItem item)
+        public virtual void Add(TItem item)
         {
             if (item != null)
             {
@@ -181,7 +181,7 @@ namespace ical.NET.Collections
             }
         }
 
-        virtual public int IndexOf(TItem item)
+        public virtual int IndexOf(TItem item)
         {
             // Get the "real" group
             var group = GroupModifier(item.Group);
@@ -200,7 +200,7 @@ namespace ical.NET.Collections
             return -1;
         }
 
-        virtual public void Clear(TGroup group)
+        public virtual void Clear(TGroup group)
         {
             group = GroupModifier(group);
 
@@ -225,7 +225,7 @@ namespace ical.NET.Collections
             }
         }
 
-        virtual public void Clear()
+        public virtual void Clear()
         {
             // Get a list of items that are being cleared
             var items = _lists.SelectMany(i => i).ToArray();
@@ -239,13 +239,13 @@ namespace ical.NET.Collections
                 OnItemRemoved(UnsubscribeFromKeyChanges(items[i]), i);
         }
 
-        virtual public bool ContainsKey(TGroup group)
+        public virtual bool ContainsKey(TGroup group)
         {
             group = GroupModifier(group);
             return _dictionary.ContainsKey(group);
         }
 
-        virtual public int Count
+        public virtual int Count
         {
             get
             {
@@ -253,7 +253,7 @@ namespace ical.NET.Collections
             }
         }
 
-        virtual public int CountOf(TGroup group)
+        public virtual int CountOf(TGroup group)
         {
             group = GroupModifier(group);
             if (_dictionary.ContainsKey(group))
@@ -261,12 +261,12 @@ namespace ical.NET.Collections
             return 0;
         }
 
-        virtual public IEnumerable<TItem> Values()
+        public virtual IEnumerable<TItem> Values()
         {
             return _dictionary.Values.SelectMany(i => i);
         }
 
-        virtual public IEnumerable<TItem> AllOf(TGroup group)
+        public virtual IEnumerable<TItem> AllOf(TGroup group)
         {
             group = GroupModifier(group);
             if (_dictionary.ContainsKey(group))
@@ -274,7 +274,7 @@ namespace ical.NET.Collections
             return new TItem[0];
         }
         
-        virtual public bool Remove(TItem obj)
+        public virtual bool Remove(TItem obj)
         {
             var group = GroupModifier(obj.Group);
             if (_dictionary.ContainsKey(group))
@@ -293,7 +293,7 @@ namespace ical.NET.Collections
             return false;
         }
 
-        virtual public bool Remove(TGroup group)
+        public virtual bool Remove(TGroup group)
         {
             group = GroupModifier(group);
             if (_dictionary.ContainsKey(group))
@@ -311,7 +311,7 @@ namespace ical.NET.Collections
             return false;
         }
 
-        virtual public void SortKeys(IComparer<TGroup> comparer = null)
+        public virtual void SortKeys(IComparer<TGroup> comparer = null)
         {
             var keys = _dictionary.Keys.ToArray();
 
@@ -341,7 +341,7 @@ namespace ical.NET.Collections
 
         #region ICollection<TObject> Members
 
-        virtual public bool Contains(TItem item)
+        public virtual bool Contains(TItem item)
         {
             var group = GroupModifier(item.Group);
             if (_dictionary.ContainsKey(group))
@@ -349,12 +349,12 @@ namespace ical.NET.Collections
             return false;
         }
 
-        virtual public void CopyTo(TItem[] array, int arrayIndex)
+        public virtual void CopyTo(TItem[] array, int arrayIndex)
         {
             _dictionary.SelectMany(kvp => kvp.Value).ToArray().CopyTo(array, arrayIndex);
         }
 
-        virtual public bool IsReadOnly
+        public virtual bool IsReadOnly
         {
             get { return false; }
         }
@@ -363,7 +363,7 @@ namespace ical.NET.Collections
 
         #region IList<TObject> Members
 
-        virtual public void Insert(int index, TItem item)
+        public virtual void Insert(int index, TItem item)
         {
             int relativeIndex;
             var list = ListForIndex(index, out relativeIndex);
@@ -374,7 +374,7 @@ namespace ical.NET.Collections
             }
         }
 
-        virtual public void RemoveAt(int index)
+        public virtual void RemoveAt(int index)
         {
             int relativeIndex;
             var list = ListForIndex(index, out relativeIndex);
@@ -386,7 +386,7 @@ namespace ical.NET.Collections
             }
         }
 
-        virtual public TItem this[int index]
+        public virtual TItem this[int index]
         {
             get
             {

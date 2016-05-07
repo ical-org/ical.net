@@ -148,12 +148,12 @@ namespace Ical.Net.DataTypes
 
         #region IPeriodList Members
 
-        virtual public void Add(IDateTime dt)
+        public virtual void Add(IDateTime dt)
         {
             Periods.Add(new Period(dt));
         }
 
-        virtual public void Remove(IDateTime dt)
+        public virtual void Remove(IDateTime dt)
         {
             Periods.Remove(new Period(dt));
         }
@@ -174,12 +174,12 @@ namespace Ical.Net.DataTypes
 
         #region IList<IPeriod> Members
 
-        virtual public void Add(IPeriod item)
+        public virtual void Add(IPeriod item)
         {
             _mPeriods.Add(item);
         }
 
-        virtual public void Clear()
+        public virtual void Clear()
         {
             _mPeriods.Clear();
         }

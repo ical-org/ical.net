@@ -25,13 +25,13 @@ namespace Ical.Net.DataTypes
 
         #region Public Properties
 
-        virtual public int Offset
+        public virtual int Offset
         {
             get { return _mNum; }
             set { _mNum = value; }
         }
 
-        virtual public DayOfWeek DayOfWeek
+        public virtual DayOfWeek DayOfWeek
         {
             get { return _mDayOfWeek; }
             set { _mDayOfWeek = value; }

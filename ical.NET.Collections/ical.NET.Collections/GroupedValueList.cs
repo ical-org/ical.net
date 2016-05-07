@@ -14,12 +14,12 @@ namespace ical.NET.Collections
     {
         #region IKeyedValueList<TGroup, TObject, TValueType> Members
 
-        virtual public void Set(TGroup group, TValueType value)
+        public virtual void Set(TGroup group, TValueType value)
         {
             Set(group, new TValueType[] { value });
         }
 
-        virtual public void Set(TGroup group, IEnumerable<TValueType> values)
+        public virtual void Set(TGroup group, IEnumerable<TValueType> values)
         {
             if (ContainsKey(group))
             {
@@ -45,7 +45,7 @@ namespace ical.NET.Collections
             obj.SetValue(values);
         }
 
-        virtual public TType Get<TType>(TGroup group)
+        public virtual TType Get<TType>(TGroup group)
         {
             var firstItem = AllOf(group).FirstOrDefault();
             if (firstItem != null &&
@@ -59,7 +59,7 @@ namespace ical.NET.Collections
             return default(TType);
         }
 
-        virtual public IList<TType> GetMany<TType>(TGroup group)
+        public virtual IList<TType> GetMany<TType>(TGroup group)
         {
             return new GroupedValueListProxy<TGroup, TInterface, TItem, TValueType, TType>(this, group);
         }
