@@ -340,7 +340,7 @@ namespace Ical.Net
                 var request = WebRequest.Create(uri);
 
                 if (username != null && password != null)
-                    request.Credentials = new System.Net.NetworkCredential(username, password);
+                    request.Credentials = new NetworkCredential(username, password);
 
 #if !SILVERLIGHT
                 if (proxy != null)
@@ -350,40 +350,38 @@ namespace Ical.Net
                 var evt = new AutoResetEvent(false);
 
                 string str = null;
-                request.BeginGetResponse(new AsyncCallback(
-                    delegate(IAsyncResult result)
+                request.BeginGetResponse(delegate(IAsyncResult result)
+                {
+                    var e = Encoding.UTF8;
+
+                    try
                     {
-                        var e = Encoding.UTF8;
-
-                        try
+                        using (var resp = request.EndGetResponse(result))
                         {
-                            using (var resp = request.EndGetResponse(result))
+                            // Try to determine the content encoding
+                            try
                             {
-                                // Try to determine the content encoding
-                                try
-                                {
-                                    var keys = new List<string>(resp.Headers.AllKeys);
-                                    if (keys.Contains("Content-Encoding"))
-                                        e = Encoding.GetEncoding(resp.Headers["Content-Encoding"]);
-                                }
-                                catch
-                                {
-                                    // Fail gracefully back to UTF-8
-                                }
+                                var keys = new List<string>(resp.Headers.AllKeys);
+                                if (keys.Contains("Content-Encoding"))
+                                    e = Encoding.GetEncoding(resp.Headers["Content-Encoding"]);
+                            }
+                            catch
+                            {
+                                // Fail gracefully back to UTF-8
+                            }
 
-                                using (var stream = resp.GetResponseStream())
-                                using (var sr = new StreamReader(stream, e))
-                                {
-                                    str = sr.ReadToEnd();
-                                }
+                            using (var stream = resp.GetResponseStream())
+                            using (var sr = new StreamReader(stream, e))
+                            {
+                                str = sr.ReadToEnd();
                             }
                         }
-                        finally
-                        {
-                            evt.Set();
-                        }
                     }
-                ), null);
+                    finally
+                    {
+                        evt.Set();
+                    }
+                }, null);
 
                 evt.WaitOne();
 
@@ -391,7 +389,7 @@ namespace Ical.Net
                     return LoadFromStream(new StringReader(str));
                 return null;
             }
-            catch (System.Net.WebException)
+            catch (WebException)
             {
                 return null;
             }
@@ -432,7 +430,7 @@ namespace Ical.Net
 
         private void Initialize()
         {
-            this.Name = Components.Calendar;
+            Name = Components.Calendar;
 
             _mUniqueComponents = new UniqueComponentListProxy<IUniqueComponent>(Children);
             _mEvents = new UniqueComponentListProxy<IEvent>(Children);
@@ -474,7 +472,7 @@ namespace Ical.Net
             {
                 return true;
             }
-            if (obj.GetType() != this.GetType())
+            if (obj.GetType() != GetType())
             {
                 return false;
             }
@@ -613,14 +611,14 @@ namespace Ical.Net
         /// </summary>
         /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>
         /// <returns>The time zone added to the calendar.</returns>
-        public ITimeZone AddTimeZone(System.TimeZoneInfo tzi)
+        public ITimeZone AddTimeZone(TimeZoneInfo tzi)
         {
             ITimeZone tz = CalTimeZone.FromSystemTimeZone(tzi);
             this.AddChild(tz);
             return tz;
         }
 
-        public ITimeZone AddTimeZone(System.TimeZoneInfo tzi, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
+        public ITimeZone AddTimeZone(TimeZoneInfo tzi, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
         {
             ITimeZone tz = CalTimeZone.FromSystemTimeZone(tzi, earliestDateTimeToSupport, includeHistoricalData);
             this.AddChild(tz);
@@ -882,12 +880,12 @@ namespace Ical.Net
 
         public virtual IFreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive)
         {
-            return Ical.Net.FreeBusy.Create(this, Ical.Net.FreeBusy.CreateRequest(fromInclusive, toExclusive, null, null));
+            return Net.FreeBusy.Create(this, Net.FreeBusy.CreateRequest(fromInclusive, toExclusive, null, null));
         }
 
         public virtual IFreeBusy GetFreeBusy(IOrganizer organizer, IAttendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive)
         {
-            return Ical.Net.FreeBusy.Create(this, Ical.Net.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
+            return Net.FreeBusy.Create(this, Net.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
         }
 
         #endregion

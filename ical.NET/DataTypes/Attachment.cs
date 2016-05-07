@@ -69,10 +69,10 @@ namespace Ical.Net.DataTypes
 
                 if (Data == null && a.Data == null)
                     return Uri.Equals(a.Uri);
-                else if (Data == null || a.Data == null)
+                if (Data == null || a.Data == null)
                     // One item is null, but the other isn't                    
                     return false;
-                else if (Data.Length != a.Data.Length)
+                if (Data.Length != a.Data.Length)
                     return false;
                 for (var i = 0; i < Data.Length; i++)
                     if (Data[i] != a.Data[i])
@@ -86,7 +86,7 @@ namespace Ical.Net.DataTypes
         {
             if (Uri != null)
                 return Uri.GetHashCode();
-            else if (Data != null)
+            if (Data != null)
                 return Data.GetHashCode();
             return base.GetHashCode();
         }
@@ -185,7 +185,7 @@ namespace Ical.Net.DataTypes
             {
                 if (username != null &&
                     password != null)
-                    client.Credentials = new System.Net.NetworkCredential(username, password);
+                    client.Credentials = new NetworkCredential(username, password);
 
                 if (uri == null)
                 {

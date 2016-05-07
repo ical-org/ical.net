@@ -40,13 +40,13 @@ namespace Ical.Net
             foreach (var t in list)
             {
                 if (t is IRecurringComponent)
-                    items.Add((IRecurringComponent)(object)t);
+                    items.Add((IRecurringComponent)t);
             }
 
             // Sort the list by date
             items.Sort(new RecurringComponentDateSorter());
             foreach (var rc in items)
-                yield return (T)(object)rc;
+                yield return (T)rc;
         }
 
         #endregion        
@@ -185,7 +185,7 @@ namespace Ical.Net
 
         #region Constructors
 
-        public RecurringComponent() : base()
+        public RecurringComponent()
         {
             Initialize();
             EnsureProperties();

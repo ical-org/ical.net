@@ -94,38 +94,35 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
                 if (!match.Success)
                     return null;
-                else
+                var now = DateTime.Now;
+
+                var year = now.Year;
+                var month = now.Month;
+                var date = now.Day;
+                var hour = 0;
+                var minute = 0;
+                var second = 0;
+
+                if (match.Groups[1].Success)
                 {
-                    var now = DateTime.Now;
-
-                    var year = now.Year;
-                    var month = now.Month;
-                    var date = now.Day;
-                    var hour = 0;
-                    var minute = 0;
-                    var second = 0;
-
-                    if (match.Groups[1].Success)
-                    {
-                        dt.HasDate = true;
-                        year = Convert.ToInt32(match.Groups[2].Value);
-                        month = Convert.ToInt32(match.Groups[3].Value);
-                        date = Convert.ToInt32(match.Groups[4].Value);
-                    }
-                    if (match.Groups.Count >= 6 && match.Groups[5].Success)
-                    {
-                        dt.HasTime = true;
-                        hour = Convert.ToInt32(match.Groups[6].Value);
-                        minute = Convert.ToInt32(match.Groups[7].Value);
-                        second = Convert.ToInt32(match.Groups[8].Value);
-                    }
-
-                    if (match.Groups[9].Success)
-                        dt.IsUniversalTime = true;
-
-                    dt.Value = CoerceDateTime(year, month, date, hour, minute, second, DateTimeKind.Utc);
-                    return dt;
+                    dt.HasDate = true;
+                    year = Convert.ToInt32(match.Groups[2].Value);
+                    month = Convert.ToInt32(match.Groups[3].Value);
+                    date = Convert.ToInt32(match.Groups[4].Value);
                 }
+                if (match.Groups.Count >= 6 && match.Groups[5].Success)
+                {
+                    dt.HasTime = true;
+                    hour = Convert.ToInt32(match.Groups[6].Value);
+                    minute = Convert.ToInt32(match.Groups[7].Value);
+                    second = Convert.ToInt32(match.Groups[8].Value);
+                }
+
+                if (match.Groups[9].Success)
+                    dt.IsUniversalTime = true;
+
+                dt.Value = CoerceDateTime(year, month, date, hour, minute, second, DateTimeKind.Utc);
+                return dt;
             }
 
             return null;

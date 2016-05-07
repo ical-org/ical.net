@@ -8,7 +8,7 @@
         Display,
         Email,
         Procedure
-    };
+    }
 
     public enum TriggerRelation
     {
@@ -62,7 +62,7 @@
         Tentative,
         Confirmed,
         Cancelled
-    };
+    }
 
     /// <summary>
     /// Status codes available to a <see cref="Components.Todo"/> item.
@@ -73,7 +73,7 @@
         Completed,
         InProcess,
         Cancelled
-    };
+    }
 
     /// <summary>
     /// Status codes available to a <see cref="Components.Journal"/> entry.
@@ -83,7 +83,7 @@
         Draft,      // Indicates journal is draft.
         Final,      // Indicates journal is final.
         Cancelled   // Indicates journal is removed.
-    };
+    }
 
     public enum FreeBusyStatus
     {
@@ -107,7 +107,7 @@
         Weekly,
         Monthly,
         Yearly
-    };
+    }
 
     /// <summary>
     /// Indicates the occurrence of the specific day within a

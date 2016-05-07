@@ -70,7 +70,7 @@ namespace Ical.Net
             get { return Properties.Get<IDateTime>("DTEND"); }
             set
             {
-                if (!object.Equals(DtEnd, value))
+                if (!Equals(DtEnd, value))
                 {
                     Properties.Set("DTEND", value);
                     ExtrapolateTimes();
@@ -104,7 +104,7 @@ namespace Ical.Net
             get { return Properties.Get<TimeSpan>("DURATION"); }
             set
             {
-                if (!object.Equals(Duration, value))
+                if (!Equals(Duration, value))
                 {
                     Properties.Set("DURATION", value);
                     ExtrapolateTimes();
@@ -139,7 +139,7 @@ namespace Ical.Net
                 if (value && 
                     Start != null &&
                     End != null &&
-                    object.Equals(Start.Date, End.Date))
+                    Equals(Start.Date, End.Date))
                 {
                     Duration = default(TimeSpan);
                     End = Start.AddDays(1);
@@ -212,14 +212,14 @@ namespace Ical.Net
         /// Constructs an Event object, with an iCalObject
         /// (usually an iCalendar object) as its parent.
         /// </summary>
-        public Event() : base()
+        public Event()
         {
             Initialize();
         }
 
         private void Initialize()
         {
-            this.Name = Components.Event;
+            Name = Components.Event;
 
             _mEvaluator = new EventEvaluator(this);
             SetService(_mEvaluator);

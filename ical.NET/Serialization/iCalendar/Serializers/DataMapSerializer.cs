@@ -37,8 +37,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
                 if (type != null)
                     return sf.Build(type, SerializationContext) as IStringSerializer;
-                else
-                    return new StringSerializer(SerializationContext);
+                return new StringSerializer(SerializationContext);
             }
             return null;
         }

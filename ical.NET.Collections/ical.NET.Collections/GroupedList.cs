@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ical.NET.Collections.Enumerators;
@@ -113,7 +114,7 @@ namespace ical.NET.Collections
             {
                 // Remove the object from the hash table
                 // based on the old group.
-                if (!object.Equals(oldValue, default(TGroup)))
+                if (!Equals(oldValue, default(TGroup)))
                 {
                     // Find the specific item and remove it
                     var group = GroupModifier(oldValue);
@@ -139,7 +140,7 @@ namespace ical.NET.Collections
                 }
 
                 // If a new group exists, then re-add this item into the hash
-                if (!object.Equals(newValue, default(TGroup)))
+                if (!Equals(newValue, default(TGroup)))
                     Add(obj);
             }
         }
@@ -425,7 +426,7 @@ namespace ical.NET.Collections
 
         #region IEnumerable Members
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator()
         {
             return new GroupedListEnumerator<TItem>(_lists);
         }

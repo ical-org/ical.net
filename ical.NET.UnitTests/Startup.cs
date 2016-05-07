@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using NUnit.Gui;
 
 namespace ical.NET.UnitTests
 {
@@ -8,7 +9,7 @@ namespace ical.NET.UnitTests
         [STAThread]
         public static void Main(string[] args)
         {
-            NUnit.Gui.AppEntry.Main(new string[]
+            AppEntry.Main(new[]
             {
                 Assembly.GetExecutingAssembly().Location
             });

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ical.NET.Collections;
 using ical.NET.Collections.Interfaces;
@@ -21,8 +20,8 @@ namespace Ical.Net.General.Proxies
         {
             _lookup = new Dictionary<string, TComponentType>();
 
-            children.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarObject, int>>(children_ItemAdded);
-            children.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarObject,int>>(children_ItemRemoved);
+            children.ItemAdded += children_ItemAdded;
+            children.ItemRemoved += children_ItemRemoved;
         }
         
         #endregion

@@ -49,13 +49,13 @@ namespace Ical.Net.DataTypes
         public WeekDay(DayOfWeek day)
             : this()
         {
-            this.DayOfWeek = day;
+            DayOfWeek = day;
         }
 
         public WeekDay(DayOfWeek day, int num)
             : this(day)
         {
-            this.Offset = num;
+            Offset = num;
         }
 
         public WeekDay(DayOfWeek day, FrequencyOccurrence type)
@@ -96,8 +96,8 @@ namespace Ical.Net.DataTypes
             if (obj is IWeekDay)
             {
                 var bd = (IWeekDay)obj;
-                this.Offset = bd.Offset;
-                this.DayOfWeek = bd.DayOfWeek;
+                Offset = bd.Offset;
+                DayOfWeek = bd.DayOfWeek;
             }
         }
 
@@ -115,13 +115,10 @@ namespace Ical.Net.DataTypes
 
             if (bd == null)
                 throw new ArgumentException();
-            else 
-            {
-                var compare = this.DayOfWeek.CompareTo(bd.DayOfWeek);
-                if (compare == 0)
-                    compare = this.Offset.CompareTo(bd.Offset);
-                return compare;
-            }
+            var compare = DayOfWeek.CompareTo(bd.DayOfWeek);
+            if (compare == 0)
+                compare = Offset.CompareTo(bd.Offset);
+            return compare;
         }
 
         #endregion

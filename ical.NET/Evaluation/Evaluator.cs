@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
@@ -50,7 +51,7 @@ namespace Ical.Net.Evaluation
 
         void Initialize()
         {
-            Calendar = System.Globalization.CultureInfo.CurrentCulture.Calendar;
+            Calendar = CultureInfo.CurrentCulture.Calendar;
             MPeriods = new HashSet<IPeriod>();
         }
 
@@ -110,10 +111,9 @@ namespace Ical.Net.Evaluation
             {
                 if (_mAssociatedObject != null)
                     return _mAssociatedObject;
-                else if (_mAssociatedDataType != null)
+                if (_mAssociatedDataType != null)
                     return _mAssociatedDataType.AssociatedObject;
-                else
-                    return null;
+                return null;
             }
             protected set { _mAssociatedObject = value; }
         }

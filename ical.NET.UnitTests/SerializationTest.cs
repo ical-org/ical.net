@@ -450,7 +450,7 @@ namespace ical.NET.UnitTests
             var evt = iCal.Events.First();
 
             var items = new ArrayList();
-            items.AddRange(new string[]
+            items.AddRange(new[]
             {
                 "One", "Two", "Three",
                 "Four", "Five", "Six",
@@ -789,7 +789,7 @@ END:VCALENDAR
             IDateTime dtEnd = new CalDateTime(2006, 12, 23, tzId);
             var occurrences = iCal.GetOccurrences(dtStart, dtEnd).OrderBy(o => o.Period.StartTime).ToList();
 
-            var dateTimes = new CalDateTime[]
+            var dateTimes = new[]
             {
                 new CalDateTime(2006, 12, 18, 7, 0, 0, tzId),
                 new CalDateTime(2006, 12, 19, 7, 0, 0, tzId),
@@ -1526,7 +1526,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
 
             if (binaryData == null && data == null)
                 return true;
-            else if (binaryData == null || data == null)
+            if (binaryData == null || data == null)
                 return false;
 
             for (var i = 0; i < data.Length; i++)

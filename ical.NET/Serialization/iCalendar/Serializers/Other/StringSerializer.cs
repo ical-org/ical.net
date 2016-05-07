@@ -188,7 +188,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                     {
                         // Store the escaped value
                         co.SetService("EscapedValue", escapedValues.Count == 1 ? 
-                            (object)escapedValues[0] :
+                            escapedValues[0] :
                             (object)escapedValues);
                     }
                 }
@@ -196,8 +196,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 // Return either a single value, or the entire list.
                 if (values.Count == 1)
                     return values[0];
-                else
-                    return values;                
+                return values;
             }
             return null;
         }

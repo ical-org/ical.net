@@ -16,7 +16,7 @@ namespace Ical.Net.DataTypes
 #if !SILVERLIGHT
     [Serializable]
 #endif
-    public partial class RecurrencePattern :
+    public class RecurrencePattern :
         EncodableDataType,
         IRecurrencePattern
     {
@@ -39,8 +39,8 @@ namespace Ical.Net.DataTypes
         private IList<int> _byMonth = new List<int>();
         private IList<int> _bySetPosition = new List<int>();
         private DayOfWeek _firstDayOfWeek = DayOfWeek.Monday;
-        private RecurrenceRestrictionType? _restrictionType = null;
-        private RecurrenceEvaluationModeType? _evaluationMode = null;
+        private RecurrenceRestrictionType? _restrictionType;
+        private RecurrenceEvaluationModeType? _evaluationMode;
 
         #endregion
 
@@ -143,10 +143,9 @@ namespace Ical.Net.DataTypes
                 if (_restrictionType != null &&
                     _restrictionType.HasValue)
                     return _restrictionType.Value;
-                else if (Calendar != null)
+                if (Calendar != null)
                     return Calendar.RecurrenceRestriction;
-                else
-                    return RecurrenceRestrictionType.Default;
+                return RecurrenceRestrictionType.Default;
             }
             set { _restrictionType = value; }
         }
@@ -159,10 +158,9 @@ namespace Ical.Net.DataTypes
                 if (_evaluationMode != null &&
                     _evaluationMode.HasValue)
                     return _evaluationMode.Value;
-                else if (Calendar != null)
+                if (Calendar != null)
                     return Calendar.RecurrenceEvaluationMode;
-                else
-                    return RecurrenceEvaluationModeType.Default;
+                return RecurrenceEvaluationModeType.Default;
             }
             set { _evaluationMode = value; }
         }
@@ -319,7 +317,7 @@ namespace Ical.Net.DataTypes
             {
                 if (c1 == c2)
                     return true;
-                else return false;
+                return false;
             }
             if (!c1.Count.Equals(c2.Count))
                 return false;
@@ -329,7 +327,7 @@ namespace Ical.Net.DataTypes
 
             while (e1.MoveNext() && e2.MoveNext())
             {
-                if (!object.Equals(e1.Current, e2.Current))
+                if (!Equals(e1.Current, e2.Current))
                     return false;
             }
             return true;

@@ -25,7 +25,7 @@ namespace ical.NET.UnitTests
             var j = iCal.Journals[0];
 
             Assert.IsNotNull(j, "Journal entry was null");
-            Assert.AreEqual(JournalStatus.Draft, j.Status, "Journal entry should have been in DRAFT status, but it was in " + j.Status.ToString() + " status.");
+            Assert.AreEqual(JournalStatus.Draft, j.Status, "Journal entry should have been in DRAFT status, but it was in " + j.Status + " status.");
             Assert.AreEqual("PUBLIC", j.Class, "Journal class should have been PUBLIC, but was " + j.Class + ".");
             Assert.IsNull(j.Start);
         }

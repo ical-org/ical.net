@@ -29,7 +29,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
                     return Encode(a, a.Uri.OriginalString);
                 }
-                else if (a.Data != null)
+                if (a.Data != null)
                 {
                     // Ensure the VALUE type is set to BINARY
                     a.SetValueType("BINARY");

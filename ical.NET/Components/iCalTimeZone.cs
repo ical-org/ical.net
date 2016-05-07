@@ -18,21 +18,21 @@ namespace Ical.Net
 #if !SILVERLIGHT
     [Serializable]
 #endif
-    public partial class CalTimeZone : CalendarComponent, ITimeZone
+    public class CalTimeZone : CalendarComponent, ITimeZone
     {
         #region Static Public Methods
 
 #if !SILVERLIGHT
         public static CalTimeZone FromLocalTimeZone()
         {
-            return FromSystemTimeZone(System.TimeZoneInfo.Local);
+            return FromSystemTimeZone(TimeZoneInfo.Local);
         }
         public static CalTimeZone FromLocalTimeZone(DateTime earlistDateTimeToSupport, bool includeHistoricalData)
         {
-            return FromSystemTimeZone(System.TimeZoneInfo.Local, earlistDateTimeToSupport, includeHistoricalData);
+            return FromSystemTimeZone(TimeZoneInfo.Local, earlistDateTimeToSupport, includeHistoricalData);
         }
 
-        private static void PopulateiCalTimeZoneInfo(ITimeZoneInfo tzi, System.TimeZoneInfo.TransitionTime transition, int year)
+        private static void PopulateiCalTimeZoneInfo(ITimeZoneInfo tzi, TimeZoneInfo.TransitionTime transition, int year)
         {
             var c = CultureInfo.CurrentCulture.Calendar;
 
@@ -57,13 +57,13 @@ namespace Ical.Net
             tzi.RecurrenceRules.Add(recurrence);
         }
 
-        public static CalTimeZone FromSystemTimeZone(System.TimeZoneInfo tzinfo)
+        public static CalTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo)
         {
             // Support date/times for January 1st of the previous year by default.
             return FromSystemTimeZone(tzinfo, new DateTime(DateTime.Now.Year, 1, 1).AddYears(-1), false);
         }
 
-        public static CalTimeZone FromSystemTimeZone(System.TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
+        public static CalTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
         {
             var adjustmentRules = tzinfo.GetAdjustmentRules();
             var utcOffset = tzinfo.BaseUtcOffset;
@@ -147,12 +147,12 @@ namespace Ical.Net
 
         private void Initialize()
         {
-            this.Name = Components.Timezone;
+            Name = Components.Timezone;
 
             _mEvaluator = new TimeZoneEvaluator(this);
             _mTimeZoneInfos = new CalendarObjectListProxy<ITimeZoneInfo>(Children);
-            Children.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarObject, int>>(Children_ItemAdded);
-            Children.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarObject, int>>(Children_ItemRemoved);
+            Children.ItemAdded += Children_ItemAdded;
+            Children.ItemRemoved += Children_ItemRemoved;
             SetService(_mEvaluator);
         }        
 

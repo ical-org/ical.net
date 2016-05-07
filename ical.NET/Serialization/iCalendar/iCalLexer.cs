@@ -1,30 +1,15 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalLexer.cs"$
 
+using System.Collections;
+using System.IO;
+using antlr;
+using antlr.collections.impl;
+
 namespace Ical.Net.Serialization.iCalendar
 {
 	// Generate header specific to lexer CSharp file
-    using Stream                          = System.IO.Stream;
-	using TextReader                      = System.IO.TextReader;
-	using Hashtable                       = System.Collections.Hashtable;
-	using Comparer                        = System.Collections.Comparer;
-	
-	using TokenStreamException            = antlr.TokenStreamException;
-	using TokenStreamIOException          = antlr.TokenStreamIOException;
-	using TokenStreamRecognitionException = antlr.TokenStreamRecognitionException;
-	using CharStreamException             = antlr.CharStreamException;
-	using CharStreamIOException           = antlr.CharStreamIOException;
-    using InputBuffer                     = antlr.InputBuffer;
-	using ByteBuffer                      = antlr.ByteBuffer;
-	using CharBuffer                      = antlr.CharBuffer;
-	using Token                           = antlr.Token;
-	using IToken                          = antlr.IToken;
-    using RecognitionException            = antlr.RecognitionException;
-	using NoViableAltForCharException     = antlr.NoViableAltForCharException;
-    using TokenStream                     = antlr.TokenStream;
-	using LexerSharedInputState           = antlr.LexerSharedInputState;
-	using BitSet                          = antlr.collections.impl.BitSet;
-	
-	public 	class iCalLexer : antlr.CharScanner	, TokenStream
+    
+    public 	class iCalLexer : CharScanner	, TokenStream
 	 {
 		public const int EOF = 1;
 		public const int NULL_TREE_LOOKAHEAD = 3;
@@ -197,13 +182,12 @@ tryAgain:
 							throw new TokenStreamRecognitionException(e);
 					}
 				}
-				catch (CharStreamException cse) {
-					if ( cse is CharStreamIOException ) {
+				catch (CharStreamException cse)
+				{
+				    if ( cse is CharStreamIOException ) {
 						throw new TokenStreamIOException(((CharStreamIOException)cse).io);
 					}
-					else {
-						throw new TokenStreamException(cse.Message);
-					}
+				    throw new TokenStreamException(cse.Message);
 				}
 			}
 		}
@@ -708,7 +692,8 @@ tryAgain:
 					}
 				else
 				{
-					if (_cnt82 >= 1) { goto _loop82_breakloop; } else { throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());; }
+					if (_cnt82 >= 1) { goto _loop82_breakloop; }
+				    throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());;
 				}
 				break; }
 				_cnt82++;

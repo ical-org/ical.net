@@ -31,8 +31,8 @@ namespace Ical.Net.General
             _mCaseInsensitive = caseInsensitive;
 
 
-            ItemAdded += new EventHandler<ObjectEventArgs<ICalendarParameter, int>>(OnParameterAdded);
-            ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarParameter, int>>(OnParameterRemoved);
+            ItemAdded += OnParameterAdded;
+            ItemRemoved += OnParameterRemoved;
         }
 
         #endregion

@@ -115,14 +115,14 @@ namespace Ical.Net.General
             {
                 // Our list doesn't contain any values.  Let's add one!
                 _values.Add(value);
-                OnValueChanged(null, new string[] { value });
+                OnValueChanged(null, new[] { value });
             }
             else if (value != null)
             {                
                 // Our list contains values.  Let's set the first value!
                 var oldValue = _values[0];
                 _values[0] = value;
-                OnValueChanged(new string[] { oldValue }, new string[] { value });
+                OnValueChanged(new[] { oldValue }, new[] { value });
             }
             else
             {
@@ -147,7 +147,7 @@ namespace Ical.Net.General
             if (value != null)
             {
                 _values.Add(value);
-                OnValueChanged(null, new string[] { value });
+                OnValueChanged(null, new[] { value });
             }
         }
 
@@ -157,7 +157,7 @@ namespace Ical.Net.General
                 _values.Contains(value) &&
                 _values.Remove(value))
             {
-                OnValueChanged(new string[] { value }, null);
+                OnValueChanged(new[] { value }, null);
             }
         }
 

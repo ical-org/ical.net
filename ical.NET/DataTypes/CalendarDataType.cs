@@ -120,7 +120,7 @@ namespace Ical.Net.DataTypes
             get { return _AssociatedObject; }
             set
             {
-                if (!object.Equals(_AssociatedObject, value))
+                if (!Equals(_AssociatedObject, value))
                 {
                     _AssociatedObject = value;
                     if (_AssociatedObject != null)

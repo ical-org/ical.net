@@ -19,7 +19,7 @@ namespace Ical.Net.General
     {
         #region Private Fields
 
-        private ICalendarObject _parent = null;
+        private ICalendarObject _parent;
         private ICalendarObjectList<ICalendarObject> _children;
         private ServiceProvider _serviceProvider;
         private string _name;
@@ -53,8 +53,8 @@ namespace Ical.Net.General
             _children = new CalendarObjectList(this);
             _serviceProvider = new ServiceProvider();
 
-            _children.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarObject, int>>(_Children_ItemAdded);
-            _children.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarObject, int>>(_Children_ItemRemoved);
+            _children.ItemAdded += _Children_ItemAdded;
+            _children.ItemRemoved += _Children_ItemRemoved;
         }        
 
         #endregion
@@ -108,7 +108,7 @@ namespace Ical.Net.General
         {
             var o = obj as ICalendarObject;
             if (o != null)
-                return object.Equals(o.Name, Name);
+                return Equals(o.Name, Name);
             return base.Equals(obj);
         }
 
@@ -116,7 +116,7 @@ namespace Ical.Net.General
         {
             if (Name != null)
                 return Name.GetHashCode();
-            else return base.GetHashCode();
+            return base.GetHashCode();
         }
 
         public override void CopyFrom(ICopyable c)
@@ -125,13 +125,13 @@ namespace Ical.Net.General
             if (obj != null)
             {
                 // Copy the name and basic information
-                this.Name = obj.Name;
-                this.Parent = obj.Parent;
-                this.Line = obj.Line;
-                this.Column = obj.Column;
+                Name = obj.Name;
+                Parent = obj.Parent;
+                Line = obj.Line;
+                Column = obj.Column;
                 
                 // Add each child
-                this.Children.Clear();
+                Children.Clear();
                 foreach (var child in obj.Children)
                     this.AddChild(child.Copy<ICalendarObject>());
             }
@@ -177,7 +177,7 @@ namespace Ical.Net.General
             get { return _name; }
             set
             {
-                if (!object.Equals(_name, value))
+                if (!Equals(_name, value))
                 {
                     var old = _name;
                     _name = value;

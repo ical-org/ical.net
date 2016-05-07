@@ -79,9 +79,9 @@ namespace Ical.Net.Serialization
             {
                 if (obj.Parent is IEvent)
                     return typeof(EventStatus);
-                else if (obj.Parent is ITodo)
+                if (obj.Parent is ITodo)
                     return typeof(TodoStatus);
-                else if (obj.Parent is IJournal)
+                if (obj.Parent is IJournal)
                     return typeof(JournalStatus);
             }
 
@@ -149,8 +149,7 @@ namespace Ical.Net.Serialization
                     var m = _propertyMap[name];
                     if (m.Resolver != null)
                         return m.Resolver(p);
-                    else
-                        return m.ObjectType;
+                    return m.ObjectType;
                 }
             }
             return null;

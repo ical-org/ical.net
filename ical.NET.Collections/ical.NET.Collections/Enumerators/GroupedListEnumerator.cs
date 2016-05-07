@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using ical.NET.Collections.Interfaces;
 
 namespace ical.NET.Collections.Enumerators
@@ -39,7 +40,7 @@ namespace ical.NET.Collections.Enumerators
             }
         }
 
-        object System.Collections.IEnumerator.Current
+        object IEnumerator.Current
         {
             get
             {
@@ -80,12 +81,9 @@ namespace ical.NET.Collections.Enumerators
                 {
                     return true;
                 }
-                else
-                {
-                    DisposeListEnumerator();
-                    if (MoveNextList())
-                        return MoveNext();
-                }
+                DisposeListEnumerator();
+                if (MoveNextList())
+                    return MoveNext();
             }
             else
             {

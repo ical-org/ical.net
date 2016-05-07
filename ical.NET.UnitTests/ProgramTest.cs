@@ -123,7 +123,7 @@ namespace ical.NET.UnitTests
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(2000, 1, 1, _tzid)).OrderBy(o => o.Period.StartTime).ToList();
 
-            var dateTimes = new CalDateTime[]
+            var dateTimes = new[]
             {
                 new CalDateTime(1997, 9, 10, 9, 0, 0, _tzid),
                 new CalDateTime(1997, 9, 11, 9, 0, 0, _tzid),
@@ -134,10 +134,10 @@ namespace ical.NET.UnitTests
                 new CalDateTime(1999, 3, 10, 9, 0, 0, _tzid),
                 new CalDateTime(1999, 3, 11, 9, 0, 0, _tzid),
                 new CalDateTime(1999, 3, 12, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 3, 13, 9, 0, 0, _tzid),
+                new CalDateTime(1999, 3, 13, 9, 0, 0, _tzid)
             };
 
-            var timeZones = new string[]
+            var timeZones = new[]
             {
                 "US-Eastern",
                 "US-Eastern",
@@ -175,7 +175,7 @@ namespace ical.NET.UnitTests
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1998, 4, 1, _tzid)).OrderBy(o => o.Period.StartTime).ToList();
 
-            var dateTimes1 = new CalDateTime[]
+            var dateTimes1 = new[]
             {
                 new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
                 new CalDateTime(1997, 9, 9, 9, 0, 0, _tzid),
@@ -197,7 +197,7 @@ namespace ical.NET.UnitTests
                 new CalDateTime(1998, 3, 31, 9, 0, 0, _tzid)
             };
 
-            var timeZones1 = new string[]
+            var timeZones1 = new[]
             {
                 "US-Eastern",
                 "US-Eastern",
@@ -266,7 +266,7 @@ namespace ical.NET.UnitTests
         //[Test]     //Broken in dday
         public void SystemTimeZone1()
         {
-            var tzi = System.TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time");
+            var tzi = TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time");
             Assert.IsNotNull(tzi);
 
             var iCal = new Calendar();
@@ -303,7 +303,7 @@ namespace ical.NET.UnitTests
         //[Test]     //Broken in dday
         public void SystemTimeZone2()
         {
-            var tzi = System.TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time");
+            var tzi = TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time");
             Assert.IsNotNull(tzi);
 
             var iCal = new Calendar();
@@ -338,14 +338,14 @@ namespace ical.NET.UnitTests
             // Per Jon Udell's test, we should be able to get all 
             // system time zones on the machine and ensure they
             // are properly translated.
-            var zones = System.TimeZoneInfo.GetSystemTimeZones();
+            var zones = TimeZoneInfo.GetSystemTimeZones();
             TimeZoneInfo tzinfo;
             foreach (var zone in zones)
             {
                 tzinfo = null;
                 try
                 {
-                    tzinfo = System.TimeZoneInfo.FindSystemTimeZoneById(zone.Id);                    
+                    tzinfo = TimeZoneInfo.FindSystemTimeZoneById(zone.Id);                    
                 }
                 catch (Exception e)
                 {
@@ -354,7 +354,7 @@ namespace ical.NET.UnitTests
 
                 if (tzinfo != null)
                 {
-                    var icalTz = Ical.Net.CalTimeZone.FromSystemTimeZone(tzinfo);
+                    var icalTz = CalTimeZone.FromSystemTimeZone(tzinfo);
                     Assert.AreNotEqual(0, icalTz.TimeZoneInfos.Count, zone.StandardName + ": no time zone information was extracted.");
                 }
             }

@@ -85,7 +85,7 @@ namespace Ical.Net.DataTypes
                     if (!p2Enum.MoveNext())
                         return false;
 
-                    if (!object.Equals(p1Enum.Current, p2Enum.Current))
+                    if (!Equals(p1Enum.Current, p2Enum.Current))
                         return false;
                 }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
@@ -12,7 +13,7 @@ namespace Ical.Net.Utility
 
         static DateUtil()
         {
-            _calendar = System.Globalization.CultureInfo.CurrentCulture.Calendar;
+            _calendar = CultureInfo.CurrentCulture.Calendar;
         }
 
         public static IDateTime StartOfDay(IDateTime dt)
@@ -37,12 +38,11 @@ namespace Ical.Net.Utility
         {
             if (toMatch.IsUniversalTime && dt.IsUniversalTime)
                 return dt.Value;
-            else if (toMatch.IsUniversalTime)
+            if (toMatch.IsUniversalTime)
                 return dt.Value.ToUniversalTime();
-            else if (dt.IsUniversalTime)
+            if (dt.IsUniversalTime)
                 return dt.Value.ToLocalTime();
-            else
-                return dt.Value;
+            return dt.Value;
         }
 
         public static IDateTime MatchTimeZone(IDateTime dt1, IDateTime dt2)
@@ -59,18 +59,15 @@ namespace Ical.Net.Utility
             {
                 if (!string.Equals(dt1.TzId, copy.TzId))
                     return (dt1.TimeZoneObservance != null) ? copy.ToTimeZone(dt1.TimeZoneObservance.Value) : copy.ToTimeZone(dt1.TzId);
-                else return copy;
+                return copy;
             }
-            else if (dt1.IsUniversalTime)
+            if (dt1.IsUniversalTime)
             {
                 // The first date/time is in UTC time, convert!
                 return new CalDateTime(copy.AsUtc);
             }
-            else
-            {
-                // The first date/time is in local time, convert!
-                return new CalDateTime(copy.AsSystemLocal);
-            }
+            // The first date/time is in local time, convert!
+            return new CalDateTime(copy.AsSystemLocal);
         }
 
         public static DateTime AddWeeks(DateTime dt, int interval, DayOfWeek firstDayOfWeek)

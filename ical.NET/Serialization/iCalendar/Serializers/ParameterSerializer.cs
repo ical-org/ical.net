@@ -43,7 +43,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
                 // Surround the parameter value with double quotes, if the value
                 // contains any problematic characters.
-                if (value.IndexOfAny(new char[] { ';', ':', ',' }) >= 0)
+                if (value.IndexOfAny(new[] { ';', ':', ',' }) >= 0)
                     value = "\"" + value + "\"";
                 return result + value;
             }

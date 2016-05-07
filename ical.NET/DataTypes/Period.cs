@@ -89,7 +89,7 @@ namespace Ical.Net.DataTypes
             {
                 return true;
             }
-            if (obj.GetType() != this.GetType())
+            if (obj.GetType() != GetType())
             {
                 return false;
             }
@@ -157,7 +157,7 @@ namespace Ical.Net.DataTypes
             get { return _mDuration; }
             set
             {
-                if (!object.Equals(_mDuration, value))
+                if (!Equals(_mDuration, value))
                 {
                     _mDuration = value;
                     ExtrapolateTimes();
@@ -211,11 +211,11 @@ namespace Ical.Net.DataTypes
         {
             if (p == null)
                 throw new ArgumentNullException("p");
-            else if (Equals(p))
+            if (Equals(p))
                 return 0;
-            else if (StartTime.LessThan(p.StartTime))
+            if (StartTime.LessThan(p.StartTime))
                 return -1;
-            else if (StartTime.GreaterThanOrEqual(p.StartTime))
+            if (StartTime.GreaterThanOrEqual(p.StartTime))
                 return 1;
             throw new Exception("An error occurred while comparing Period values.");
         }

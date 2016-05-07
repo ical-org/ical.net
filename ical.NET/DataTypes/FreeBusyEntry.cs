@@ -13,8 +13,9 @@ namespace Ical.Net.DataTypes
 
         #region Constructors
 
-        public FreeBusyEntry() : base() { Initialize(); }
-        public FreeBusyEntry(IPeriod period, FreeBusyStatus status) : base()
+        public FreeBusyEntry()
+        { Initialize(); }
+        public FreeBusyEntry(IPeriod period, FreeBusyStatus status)
         {
             Initialize();
             CopyFrom(period);

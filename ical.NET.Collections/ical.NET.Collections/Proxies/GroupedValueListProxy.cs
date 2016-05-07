@@ -46,7 +46,7 @@ namespace ical.NET.Collections.Proxies
                 _container = Items.FirstOrDefault();
 
                 // If no item is found, create a new object and add it to the list
-                if (object.Equals(_container, default(TInterface)))
+                if (Equals(_container, default(TInterface)))
                 {
                     var container = new TItem();
                     if (!(container is TInterface))
@@ -269,7 +269,7 @@ namespace ical.NET.Collections.Proxies
             {
                 if (index >= 0 && index < Count)
                 {   
-                    if (!object.Equals(value, default(TNewValue)))
+                    if (!Equals(value, default(TNewValue)))
                     {
                         Insert(index, value);
                         index++;
@@ -289,8 +289,7 @@ namespace ical.NET.Collections.Proxies
             {
                 if (_group != null)
                     return _realObject.AllOf(_group);
-                else
-                    return _realObject;
+                return _realObject;
             }
         }
 

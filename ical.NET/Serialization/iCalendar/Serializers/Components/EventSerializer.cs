@@ -9,7 +9,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
     {
         #region Constructor
 
-        public EventSerializer() : base()
+        public EventSerializer()
         {
         }
 

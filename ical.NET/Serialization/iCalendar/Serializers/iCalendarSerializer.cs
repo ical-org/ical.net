@@ -21,7 +21,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         #region Constructors
 
-        public CalendarSerializer() : base()
+        public CalendarSerializer()
         {
         }
 
@@ -124,19 +124,16 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             {
                 if (x == y || (x == null && y == null))
                     return 0;
-                else if (x == null)
+                if (x == null)
                     return -1;
-                else if (y == null)
+                if (y == null)
                     return 1;
-                else
-                {
-                    // Alphabetize all properties except VERSION, which should appear first. 
-                    if (string.Equals("VERSION", x.Name, StringComparison.InvariantCultureIgnoreCase))
-                        return -1;
-                    else if (string.Equals("VERSION", y.Name, StringComparison.InvariantCultureIgnoreCase))
-                        return 1;
-                    return string.Compare(x.Name, y.Name);
-                }
+                // Alphabetize all properties except VERSION, which should appear first. 
+                if (string.Equals("VERSION", x.Name, StringComparison.InvariantCultureIgnoreCase))
+                    return -1;
+                if (string.Equals("VERSION", y.Name, StringComparison.InvariantCultureIgnoreCase))
+                    return 1;
+                return string.Compare(x.Name, y.Name);
             }
 
             #endregion

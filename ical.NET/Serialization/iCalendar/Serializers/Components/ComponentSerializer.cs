@@ -140,12 +140,11 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
             {
                 if (x == y || (x == null && y == null))
                     return 0;
-                else if (x == null)
+                if (x == null)
                     return -1;
-                else if (y == null)
+                if (y == null)
                     return 1;
-                else
-                    return string.Compare(x.Name, y.Name, true);
+                return string.Compare(x.Name, y.Name, true);
             }
 
             #endregion

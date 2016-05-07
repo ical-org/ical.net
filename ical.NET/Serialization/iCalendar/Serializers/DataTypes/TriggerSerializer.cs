@@ -34,7 +34,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                             var serializer = factory.Build(valueType, SerializationContext) as IStringSerializer;
                             if (serializer != null)
                             {
-                                var value = (valueType == typeof(IDateTime)) ? (object)t.DateTime : (object)t.Duration;
+                                var value = (valueType == typeof(IDateTime)) ? t.DateTime : (object)t.Duration;
                                 return serializer.SerializeToString(value);
                             }
                         }

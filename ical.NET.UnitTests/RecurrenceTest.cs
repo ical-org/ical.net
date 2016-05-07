@@ -137,7 +137,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2006, 7, 1, _tzid),
                 new CalDateTime(2006, 9, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2006, 07, 18, 10, 00, 00, _tzid),
                     new CalDateTime(2006, 07, 20, 10, 00, 00, _tzid),
@@ -198,7 +198,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1997, 9, 1, _tzid),
                 new CalDateTime(1997, 12, 4, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 4, 9, 0, 0, _tzid),
@@ -248,7 +248,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(1997, 12, 1, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 12, 3, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -312,7 +312,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1997, 9, 1, _tzid),
                 new CalDateTime(1998, 1, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 12, 9, 0, 0, _tzid),
@@ -376,7 +376,7 @@ namespace ical.NET.UnitTests
             var evt2Occurrences = evt2.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(2000, 12, 31)).OrderBy(o => o.Period.StartTime).ToList();
             Assert.IsTrue(evt1Occurrences.Count == evt2Occurrences.Count, "ByMonth1 does not match ByMonth2 as it should");
             for (var i = 0; i < evt1Occurrences.Count; i++)
-                Assert.AreEqual(evt1Occurrences[i].Period, evt2Occurrences[i].Period, "PERIOD " + i + " from ByMonth1 (" + evt1Occurrences[i].ToString() + ") does not match PERIOD " + i + " from ByMonth2 (" + evt2Occurrences[i].ToString() + ")");
+                Assert.AreEqual(evt1Occurrences[i].Period, evt2Occurrences[i].Period, "PERIOD " + i + " from ByMonth1 (" + evt1Occurrences[i] + ") does not match PERIOD " + i + " from ByMonth2 (" + evt2Occurrences[i] + ")");
         }
 
         /// <summary>
@@ -390,7 +390,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1997, 9, 1, _tzid),
                 new CalDateTime(1998, 1, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 9, 9, 0, 0, _tzid),
@@ -403,7 +403,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(1997, 10, 28, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 11, 4, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -430,7 +430,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1997, 9, 1, _tzid),
                 new CalDateTime(1999, 1, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 9, 9, 0, 0, _tzid),
@@ -450,7 +450,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(1997, 12, 16, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 12, 23, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -484,7 +484,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1997, 9, 1, _tzid),
                 new CalDateTime(1998, 1, 31, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 16, 9, 0, 0, _tzid),
@@ -498,7 +498,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(1998, 1, 6, 9, 0, 0, _tzid),
                     new CalDateTime(1998, 1, 20, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -526,7 +526,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1997, 9, 1, _tzid),
                 new CalDateTime(1999, 1, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 4, 9, 0, 0, _tzid),
@@ -560,7 +560,7 @@ namespace ical.NET.UnitTests
             var evt2Occ = evt2.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(1999, 1, 1)).OrderBy(o => o.Period.StartTime).ToList();
             Assert.AreEqual(evt1Occ.Count, evt2Occ.Count, "WeeklyCountWkst1() does not match WeeklyUntilWkst1() as it should");
             for (var i = 0; i < evt1Occ.Count; i++)
-                Assert.AreEqual(evt1Occ[i].Period, evt2Occ[i].Period, "PERIOD " + i + " from WeeklyUntilWkst1 (" + evt1Occ[i].Period.ToString() + ") does not match PERIOD " + i + " from WeeklyCountWkst1 (" + evt2Occ[i].Period.ToString() + ")");
+                Assert.AreEqual(evt1Occ[i].Period, evt2Occ[i].Period, "PERIOD " + i + " from WeeklyUntilWkst1 (" + evt1Occ[i].Period + ") does not match PERIOD " + i + " from WeeklyCountWkst1 (" + evt2Occ[i].Period + ")");
         }
 
         /// <summary>
@@ -574,7 +574,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1999, 1, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 3, 9, 0, 0, _tzid),
@@ -602,7 +602,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(1997, 12, 12, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 12, 22, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -644,7 +644,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1997, 9, 9, _tzid),
                 new CalDateTime(1999, 1, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 15, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 17, 9, 0, 0, _tzid),
@@ -669,7 +669,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(1997, 12, 12, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 12, 22, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -708,7 +708,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1999, 1, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 4, 9, 0, 0, _tzid),
@@ -734,7 +734,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1999, 1, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 5, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 10, 3, 9, 0, 0, _tzid),
@@ -747,7 +747,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(1998, 5, 1, 9, 0, 0, _tzid),
                     new CalDateTime(1998, 6, 5, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -774,14 +774,14 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1999, 1, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 5, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 10, 3, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 11, 7, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 12, 5, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -802,7 +802,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1999, 1, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 7, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 28, 9, 0, 0, _tzid),
@@ -815,7 +815,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(1998, 5, 3, 9, 0, 0, _tzid),
                     new CalDateTime(1998, 5, 31, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -842,7 +842,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1999, 1, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 22, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 10, 20, 9, 0, 0, _tzid),
@@ -851,7 +851,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(1998, 1, 19, 9, 0, 0, _tzid),
                     new CalDateTime(1998, 2, 16, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -874,7 +874,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1998, 3, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 28, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 10, 29, 9, 0, 0, _tzid),
@@ -883,7 +883,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(1998, 1, 29, 9, 0, 0, _tzid),
                     new CalDateTime(1998, 2, 26, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -906,7 +906,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1998, 3, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 15, 9, 0, 0, _tzid),
@@ -919,7 +919,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(1998, 1, 2, 9, 0, 0, _tzid),
                     new CalDateTime(1998, 1, 15, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -946,7 +946,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1998, 3, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 10, 1, 9, 0, 0, _tzid),
@@ -959,7 +959,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(1998, 1, 31, 9, 0, 0, _tzid),
                     new CalDateTime(1998, 2, 1, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -986,7 +986,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(2000, 1, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 10, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 11, 9, 0, 0, _tzid),
@@ -997,9 +997,9 @@ namespace ical.NET.UnitTests
                     new CalDateTime(1999, 3, 10, 9, 0, 0, _tzid),
                     new CalDateTime(1999, 3, 11, 9, 0, 0, _tzid),
                     new CalDateTime(1999, 3, 12, 9, 0, 0, _tzid),
-                    new CalDateTime(1999, 3, 13, 9, 0, 0, _tzid),
+                    new CalDateTime(1999, 3, 13, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -1026,7 +1026,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1998, 4, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 9, 9, 0, 0, _tzid),
@@ -1047,7 +1047,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(1998, 3, 24, 9, 0, 0, _tzid),
                     new CalDateTime(1998, 3, 31, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -1082,7 +1082,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(2002, 1, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 6, 10, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 7, 10, 9, 0, 0, _tzid),
@@ -1110,7 +1110,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(2003, 4, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 3, 10, 9, 0, 0, _tzid),
                     new CalDateTime(1999, 1, 10, 9, 0, 0, _tzid),
@@ -1138,7 +1138,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(2007, 1, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 1, 1, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 4, 10, 9, 0, 0, _tzid),
@@ -1151,7 +1151,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(2003, 7, 19, 9, 0, 0, _tzid),
                     new CalDateTime(2006, 1, 1, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -1178,7 +1178,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1999, 12, 31, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 5, 19, 9, 0, 0, _tzid),
                     new CalDateTime(1998, 5, 18, 9, 0, 0, _tzid),
@@ -1199,7 +1199,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1999, 12, 31, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 5, 12, 9, 0, 0, _tzid),
                     new CalDateTime(1998, 5, 11, 9, 0, 0, _tzid),
@@ -1225,7 +1225,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1999, 12, 31, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 5, 12, 9, 0, 0, _tzid),
                     new CalDateTime(1998, 5, 11, 9, 0, 0, _tzid),                    
@@ -1250,10 +1250,10 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2001, 1, 1, _tzid),
                 new CalDateTime(2003, 1, 31, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2002, 1, 1, 10, 0, 0, _tzid),
-                    new CalDateTime(2002, 12, 31, 10, 0, 0, _tzid),
+                    new CalDateTime(2002, 12, 31, 10, 0, 0, _tzid)
                 },
                 null
             );
@@ -1273,7 +1273,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1999, 12, 31, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 5, 12, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 5, 13, 9, 0, 0, _tzid),
@@ -1317,7 +1317,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2001, 1, 1, _tzid),
                 new CalDateTime(2003, 1, 31, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2002, 1, 1, 10, 0, 0, _tzid),
                     new CalDateTime(2002, 1, 2, 10, 0, 0, _tzid),
@@ -1348,7 +1348,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1999, 12, 31, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 3, 13, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 3, 20, 9, 0, 0, _tzid),
@@ -1377,7 +1377,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1999, 12, 31, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 6, 5, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 6, 12, 9, 0, 0, _tzid),
@@ -1436,7 +1436,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(2000, 12, 31, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1998, 2, 13, 9, 0, 0, _tzid),
                     new CalDateTime(1998, 3, 13, 9, 0, 0, _tzid),
@@ -1444,7 +1444,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(1999, 8, 13, 9, 0, 0, _tzid),
                     new CalDateTime(2000, 10, 13, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -1466,7 +1466,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1998, 6, 30, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 13, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 10, 11, 9, 0, 0, _tzid),
@@ -1479,7 +1479,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(1998, 5, 9, 9, 0, 0, _tzid),
                     new CalDateTime(1998, 6, 13, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -1506,7 +1506,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(2004, 12, 31, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1996, 11, 5, 9, 0, 0, _tzid),
                     new CalDateTime(2000, 11, 7, 9, 0, 0, _tzid),
@@ -1527,13 +1527,13 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(2004, 12, 31, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 4, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 10, 7, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 11, 6, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -1553,7 +1553,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1998, 3, 31, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 29, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 10, 30, 9, 0, 0, _tzid),
@@ -1563,7 +1563,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(1998, 2, 26, 9, 0, 0, _tzid),
                     new CalDateTime(1998, 3, 30, 9, 0, 0, _tzid)
                 },
-                new string[]
+                new[]
                 {
                     "US-Eastern",
                     "US-Eastern",
@@ -1589,11 +1589,11 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1998, 3, 31, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 2, 12, 0, 0, _tzid),
-                    new CalDateTime(1997, 9, 2, 15, 0, 0, _tzid),
+                    new CalDateTime(1997, 9, 2, 15, 0, 0, _tzid)
                 },
                 null
             );
@@ -1610,7 +1610,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1997, 9, 2, _tzid),
                 new CalDateTime(1997, 9, 3, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 2, 9, 15, 0, _tzid),
@@ -1634,7 +1634,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1998, 12, 31, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 2, 10, 30, 0, _tzid),
@@ -1656,7 +1656,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2010, 8, 27, _tzid),
                 new CalDateTime(2010, 8, 28, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2010, 8, 27, 11, 0, 0, _tzid),
                     new CalDateTime(2010, 8, 27, 11, 1, 0, _tzid),
@@ -1667,7 +1667,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(2010, 8, 27, 11, 6, 0, _tzid),
                     new CalDateTime(2010, 8, 27, 11, 7, 0, _tzid),
                     new CalDateTime(2010, 8, 27, 11, 8, 0, _tzid),
-                    new CalDateTime(2010, 8, 27, 11, 9, 0, _tzid),
+                    new CalDateTime(2010, 8, 27, 11, 9, 0, _tzid)
                 },
                 null
             );
@@ -1684,7 +1684,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2010, 8, 27, _tzid),
                 new CalDateTime(2010, 8, 28, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2010, 8, 27, 11, 0, 0, _tzid),
                     new CalDateTime(2010, 8, 27, 11, 7, 0, _tzid),
@@ -1695,7 +1695,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(2010, 8, 27, 11, 42, 0, _tzid),
                     new CalDateTime(2010, 8, 27, 11, 49, 0, _tzid),
                     new CalDateTime(2010, 8, 27, 11, 56, 0, _tzid),
-                    new CalDateTime(2010, 8, 27, 12, 3, 0, _tzid),
+                    new CalDateTime(2010, 8, 27, 12, 3, 0, _tzid)
                 },
                 null
             );
@@ -1712,7 +1712,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1997, 9, 2, _tzid),
                 new CalDateTime(1997, 9, 4, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 2, 9, 20, 0, _tzid),
@@ -1784,7 +1784,7 @@ namespace ical.NET.UnitTests
             var evt2Occ = evt2.GetOccurrences(new CalDateTime(1997, 9, 1, _tzid), new CalDateTime(1997, 9, 3, _tzid)).OrderBy(o => o.Period.StartTime).ToList();
             Assert.IsTrue(evt1Occ.Count == evt2Occ.Count, "MinutelyByHour1() does not match DailyByHourMinute1() as it should");
             for (var i = 0; i < evt1Occ.Count; i++)
-                Assert.AreEqual(evt1Occ[i].Period, evt2Occ[i].Period, "PERIOD " + i + " from DailyByHourMinute1 (" + evt1Occ[i].Period.ToString() + ") does not match PERIOD " + i + " from MinutelyByHour1 (" + evt2Occ[i].Period.ToString() + ")");
+                Assert.AreEqual(evt1Occ[i].Period, evt2Occ[i].Period, "PERIOD " + i + " from DailyByHourMinute1 (" + evt1Occ[i].Period + ") does not match PERIOD " + i + " from MinutelyByHour1 (" + evt2Occ[i].Period + ")");
         }
 
         /// <summary>
@@ -1798,7 +1798,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1998, 12, 31, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 8, 5, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 8, 10, 9, 0, 0, _tzid),
@@ -1821,7 +1821,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
                 new CalDateTime(1998, 12, 31, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(1997, 8, 5, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 8, 17, 9, 0, 0, _tzid),
@@ -1844,7 +1844,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2007, 7, 1, _tzid),
                 new CalDateTime(2007, 8, 1, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2007, 7, 2, 8, 0, 0, _tzid),
                     new CalDateTime(2007, 7, 3, 8, 0, 0, _tzid),
@@ -1883,7 +1883,7 @@ namespace ical.NET.UnitTests
             standard.OffsetFrom = new UtcOffset("-0400");
             standard.OffsetTo = new UtcOffset("-0500");
             standard.TimeZoneName = "EST";
-            CalendarObjectExtensions.AddChild(tz, standard);
+            tz.AddChild(standard);
 
             ITimeZoneInfo daylight = new CalTimeZoneInfo(Components.Daylight);
             daylight.Start = new CalDateTime(new DateTime(1987, 4, 5, 2, 0, 0, DateTimeKind.Utc));
@@ -1891,7 +1891,7 @@ namespace ical.NET.UnitTests
             daylight.OffsetFrom = new UtcOffset("-0500");
             daylight.OffsetTo = new UtcOffset("-0400");
             daylight.TimeZoneName = "EDT";            
-            CalendarObjectExtensions.AddChild(tz, daylight);
+            tz.AddChild(daylight);
 
             IEvent evt = iCal.Create<Event>();
             evt.Summary = "Test event";
@@ -1905,7 +1905,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2007, 1, 24),
                 new CalDateTime(2007, 12, 31),
-                new CalDateTime[]
+                new[]
                 {                
                     new CalDateTime(2007, 1, 24, 8, 0, 0, _tzid),
                     new CalDateTime(2007, 3, 28, 8, 0, 0, _tzid),
@@ -1961,7 +1961,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
                 new CalDateTime(2007, 6, 21, 8, 10, 1, _tzid), // End period is exclusive, not inclusive.
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
                     new CalDateTime(2007, 6, 21, 8, 1, 0, _tzid),
@@ -2007,7 +2007,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
                 new CalDateTime(2007, 6, 21, 12, 0, 1, _tzid), // End period is exclusive, not inclusive.
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
                     new CalDateTime(2007, 6, 21, 9, 0, 0, _tzid),
@@ -2047,7 +2047,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
                 new CalDateTime(2007, 6, 25, 8, 0, 1, _tzid), // End period is exclusive, not inclusive.
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
                     new CalDateTime(2007, 6, 22, 8, 0, 0, _tzid),
@@ -2070,7 +2070,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2008, 1, 1, 7, 0, 0, _tzid),
                 new CalDateTime(2008, 2, 29, 7, 0, 0, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2008, 2, 11, 7, 0, 0, _tzid),
                     new CalDateTime(2008, 2, 12, 7, 0, 0, _tzid)
@@ -2090,7 +2090,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2006, 1, 1, 7, 0, 0, _tzid),
                 new CalDateTime(2007, 1, 31, 7, 0, 0, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2007, 1, 8, 7, 0, 0, _tzid),
                     new CalDateTime(2007, 1, 9, 7, 0, 0, _tzid)
@@ -2110,7 +2110,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2007, 4, 11, 7, 0, 0, _tzid),
                 new CalDateTime(2007, 4, 16, 7, 0, 0, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2007, 4, 12, 7, 0, 0, _tzid),
                     new CalDateTime(2007, 4, 15, 7, 0, 0, _tzid)
@@ -2130,7 +2130,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2007, 4, 9, 10, 0, 0, _tzid),
                 new CalDateTime(2007, 4, 10, 20, 0, 0, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     // NOTE: this instance is included in the result set because it ends
                     // after the start of the evaluation period.
@@ -2157,7 +2157,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2009, 1, 1, 0, 0, 0, _tzid),
                 new CalDateTime(2020, 1, 1, 0, 0, 0, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2009, 9, 27, 5, 30, 0),
                     new CalDateTime(2010, 9, 26, 5, 30, 0),
@@ -2186,7 +2186,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2009, 1, 1, 0, 0, 0, _tzid),
                 new CalDateTime(2010, 1, 1, 0, 0, 0, _tzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2009, 9, 27, 5, 30, 0)
                 },
@@ -2205,7 +2205,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2007, 4, 9, 7, 0, 0),
                 new CalDateTime(2007, 4, 10, 23, 0, 1), // End time is exclusive, not inclusive
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2007, 4, 9, 7, 0, 0),
                     new CalDateTime(2007, 4, 9, 11, 0, 0),
@@ -2234,7 +2234,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2007, 4, 9, 7, 0, 0),
                 new CalDateTime(2007, 4, 9, 12, 0, 1), // End time is exclusive, not inclusive
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2007, 4, 9, 7, 0, 0),
                     new CalDateTime(2007, 4, 9, 7, 30, 0),
@@ -2246,7 +2246,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(2007, 4, 9, 10, 30, 0),
                     new CalDateTime(2007, 4, 9, 11, 0, 0),
                     new CalDateTime(2007, 4, 9, 11, 30, 0),
-                    new CalDateTime(2007, 4, 9, 12, 0, 0),
+                    new CalDateTime(2007, 4, 9, 12, 0, 0)
                 },
                 null
             );
@@ -2263,7 +2263,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2007, 4, 9, 7, 0, 0),
                 new CalDateTime(2007, 4, 27, 7, 0, 1), // End time is exclusive, not inclusive
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2007, 4, 9, 7, 0, 0),
                     new CalDateTime(2007, 4, 11, 7, 0, 0),
@@ -2291,7 +2291,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2007, 9, 10, 7, 0, 0),
                 new CalDateTime(2007, 9, 27, 7, 0, 1), // End time is exclusive, not inclusive
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2007, 9, 10, 7, 0, 0),
                     new CalDateTime(2007, 9, 13, 7, 0, 0),
@@ -2315,7 +2315,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2012, 1, 1, 7, 0, 0),
                 new CalDateTime(2012, 1, 15, 11, 59, 59),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2012, 1, 2, 7, 0, 0),
                     new CalDateTime(2012, 1, 3, 7, 0, 0),
@@ -2343,7 +2343,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2007, 9, 10, 7, 0, 0),
                 new CalDateTime(2007, 12, 31, 11, 59, 59),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2007, 9, 10, 7, 0, 0),
                     new CalDateTime(2007, 9, 24, 7, 0, 0),
@@ -2353,7 +2353,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(2007, 11, 19, 7, 0, 0),
                     new CalDateTime(2007, 12, 3, 7, 0, 0),
                     new CalDateTime(2007, 12, 17, 7, 0, 0),
-                    new CalDateTime(2007, 12, 31, 7, 0, 0),
+                    new CalDateTime(2007, 12, 31, 7, 0, 0)
                 },
                 null
             );
@@ -2370,7 +2370,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2007, 9, 10, 7, 0, 0),
                 new CalDateTime(2008, 9, 10, 7, 0, 1), // Period end is exclusive, not inclusive
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2007, 9, 10, 7, 0, 0),
                     new CalDateTime(2007, 10, 10, 7, 0, 0),
@@ -2401,7 +2401,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2007, 9, 10, 7, 0, 0),
                 new CalDateTime(2020, 9, 10, 7, 0, 1), // Period end is exclusive, not inclusive
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2007, 9, 10, 7, 0, 0),
                     new CalDateTime(2008, 9, 10, 7, 0, 0),
@@ -2438,7 +2438,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2009, 12, 4, 0, 0, 0, localTzid),
                 new CalDateTime(2009, 12, 12, 0, 0, 0, localTzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2009, 12, 4, 2, 00, 00, localTzid),
                     new CalDateTime(2009, 12, 5, 2, 00, 00, localTzid),
@@ -2446,7 +2446,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(2009, 12, 7, 2, 00, 00, localTzid),
                     new CalDateTime(2009, 12, 8, 2, 00, 00, localTzid),
                     new CalDateTime(2009, 12, 9, 2, 00, 00, localTzid),
-                    new CalDateTime(2009, 12, 10, 2, 00, 00, localTzid),
+                    new CalDateTime(2009, 12, 10, 2, 00, 00, localTzid)
                 },
                 null,
                 0
@@ -2457,9 +2457,9 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2009, 12, 4, localTzid),
                 new CalDateTime(2009, 12, 10, localTzid),
-                new CalDateTime[]
+                new[]
                 {
-                    new CalDateTime(2009, 12, 4, 2, 00, 00, localTzid),
+                    new CalDateTime(2009, 12, 4, 2, 00, 00, localTzid)
                 },
                 null,
                 1
@@ -2470,10 +2470,10 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2009, 12, 4, localTzid),
                 new CalDateTime(2009, 12, 12, localTzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2009, 12, 4, 2, 00, 00, localTzid),
-                    new CalDateTime(2009, 12, 11, 2, 00, 00, localTzid),
+                    new CalDateTime(2009, 12, 11, 2, 00, 00, localTzid)
                 },
                 null,
                 2
@@ -2496,10 +2496,10 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2009, 12, 25, 0, 0, 0, localTzid),
                 new CalDateTime(2010, 1, 3, 0, 0, 0, localTzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2009, 12, 25, 11, 00, 00, localTzid),
-                    new CalDateTime(2010, 1, 1, 11, 00, 00, localTzid),
+                    new CalDateTime(2010, 1, 1, 11, 00, 00, localTzid)
                 },
                 null,
                 0
@@ -2510,10 +2510,10 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2009, 12, 25, 0, 0, 0, localTzid),
                 new CalDateTime(2010, 1, 3, 0, 0, 0, localTzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2009, 12, 26, 11, 00, 00, localTzid),
-                    new CalDateTime(2010, 1, 2, 11, 00, 00, localTzid),
+                    new CalDateTime(2010, 1, 2, 11, 00, 00, localTzid)
                 },
                 null,
                 1
@@ -2535,7 +2535,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2008, 1, 1, 0, 0, 0, localTzid),
                 new CalDateTime(2008, 4, 1, 0, 0, 0, localTzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2008, 1, 3, 17, 00, 00, localTzid),
                     new CalDateTime(2008, 1, 17, 17, 00, 00, localTzid),
@@ -2543,7 +2543,7 @@ namespace ical.NET.UnitTests
                     new CalDateTime(2008, 2, 14, 17, 00, 00, localTzid),
                     new CalDateTime(2008, 2, 28, 17, 00, 00, localTzid),
                     new CalDateTime(2008, 3, 13, 17, 00, 00, localTzid),
-                    new CalDateTime(2008, 3, 27, 17, 00, 00, localTzid),
+                    new CalDateTime(2008, 3, 27, 17, 00, 00, localTzid)
                 },
                 null,
                 0
@@ -2565,14 +2565,14 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2010, 1, 1, 0, 0, 0, localTzid),
                 new CalDateTime(2010, 3, 1, 0, 0, 0, localTzid),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2010, 1, 19, 8, 00, 00, localTzid),
                     new CalDateTime(2010, 1, 26, 8, 00, 00, localTzid),
                     new CalDateTime(2010, 2, 2, 8, 00, 00, localTzid),
                     new CalDateTime(2010, 2, 9, 8, 00, 00, localTzid),
                     new CalDateTime(2010, 2, 16, 8, 00, 00, localTzid),
-                    new CalDateTime(2010, 2, 23, 8, 00, 00, localTzid),
+                    new CalDateTime(2010, 2, 23, 8, 00, 00, localTzid)
                 },
                 null,
                 0
@@ -2582,12 +2582,12 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2010, 2, 1, 0, 0, 0, localTzid),
                 new CalDateTime(2010, 3, 1, 0, 0, 0, localTzid),
-                new CalDateTime[]
+                new[]
                 {                    
                     new CalDateTime(2010, 2, 2, 8, 00, 00, localTzid),
                     new CalDateTime(2010, 2, 9, 8, 00, 00, localTzid),
                     new CalDateTime(2010, 2, 16, 8, 00, 00, localTzid),
-                    new CalDateTime(2010, 2, 23, 8, 00, 00, localTzid),
+                    new CalDateTime(2010, 2, 23, 8, 00, 00, localTzid)
                 },
                 null,
                 0
@@ -2609,7 +2609,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2010, 7, 18, 0, 0, 0),
                 new CalDateTime(2010, 7, 26, 0, 0, 0),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2010, 5, 23)
                 },
@@ -2621,7 +2621,7 @@ namespace ical.NET.UnitTests
                 iCal,
                 new CalDateTime(2011, 7, 18, 0, 0, 0),
                 new CalDateTime(2011, 7, 26, 0, 0, 0),
-                new CalDateTime[]
+                new[]
                 {
                     new CalDateTime(2011, 5, 23)
                 },
@@ -2663,12 +2663,11 @@ namespace ical.NET.UnitTests
             evt.Duration = TimeSpan.FromHours(1.5);
             evt.Summary = "29th February Test";
 
-            var pattern = new RecurrencePattern()
-            {
+            var pattern = new RecurrencePattern {
                 Frequency = FrequencyType.Monthly,
                 Until = new DateTime(2011, 12, 25, 0, 0, 0, DateTimeKind.Utc),
                 FirstDayOfWeek = DayOfWeek.Sunday,
-                ByMonthDay = new List<int>(new int[] { 29 })
+                ByMonthDay = new List<int>(new[] { 29 })
             };
 
             evt.RecurrenceRules.Add(pattern);

@@ -28,11 +28,11 @@ namespace ical.NET.Collections.Proxies
 
         public GroupedCollectionProxy(IGroupedCollection<TGroup, TOriginal> realObject, Func<TNew, bool> predicate = null)
         {
-            _predicate = predicate ?? new Func<TNew, bool>(o => true);
+            _predicate = predicate ?? (o => true);
             SetProxiedObject(realObject);
 
-            RealObject.ItemAdded += new EventHandler<ObjectEventArgs<TOriginal, int>>(_RealObject_ItemAdded);
-            RealObject.ItemRemoved += new EventHandler<ObjectEventArgs<TOriginal, int>>(_RealObject_ItemRemoved);
+            RealObject.ItemAdded += _RealObject_ItemAdded;
+            RealObject.ItemRemoved += _RealObject_ItemRemoved;
         }
 
         #endregion

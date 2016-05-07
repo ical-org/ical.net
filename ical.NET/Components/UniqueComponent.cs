@@ -64,8 +64,8 @@ namespace Ical.Net
 
         private void Initialize()
         {
-            Properties.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarProperty, int>>(Properties_ItemAdded);
-            Properties.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarProperty, int>>(Properties_ItemRemoved);
+            Properties.ItemAdded += Properties_ItemAdded;
+            Properties.ItemRemoved += Properties_ItemRemoved;
         }
 
         #endregion
@@ -167,7 +167,7 @@ namespace Ical.Net
                 var r = (RecurringComponent)obj;                
                 if (Uid != null)
                     return Uid.Equals(r.Uid);
-                else return Uid == r.Uid;
+                return Uid == r.Uid;
             }
             return base.Equals(obj);
         }

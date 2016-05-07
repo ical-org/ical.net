@@ -105,7 +105,7 @@ namespace Ical.Net
             get { return _mProperties; }
             protected set
             {
-                this._mProperties = value;
+                _mProperties = value;
             }
         }
 
@@ -113,7 +113,8 @@ namespace Ical.Net
 
         #region Constructors
 
-        public CalendarComponent() : base() { Initialize(); }
+        public CalendarComponent()
+        { Initialize(); }
         public CalendarComponent(string name) : base(name) { Initialize(); }
 
         private void Initialize()

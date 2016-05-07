@@ -390,22 +390,19 @@ namespace Ical.Net.Evaluation
                 }
                 return monthlyDates;
             }
-            else
+            // Limit behavior
+            for (var i = dates.Count - 1; i >= 0; i--)
             {
-                // Limit behavior
-                for (var i = dates.Count - 1; i >= 0; i--)
+                var date = dates[i];
+                for (var j = 0; j < pattern.ByMonth.Count; j++)
                 {
-                    var date = dates[i];
-                    for (var j = 0; j < pattern.ByMonth.Count; j++)
-                    {
-                        if (date.Month == pattern.ByMonth[j])
-                            goto Next;
-                    }
-                    dates.RemoveAt(i);
-                Next: ;
+                    if (date.Month == pattern.ByMonth[j])
+                        goto Next;
                 }
-                return dates;
+                dates.RemoveAt(i);
+                Next: ;
             }
+            return dates;
         }
 
         /**
@@ -459,29 +456,26 @@ namespace Ical.Net.Evaluation
                 }
                 return weekNoDates;
             }
-            else
+            // Limit behavior
+            for (var i = dates.Count - 1; i >= 0; i--)
             {
-                // Limit behavior
-                for (var i = dates.Count - 1; i >= 0; i--)
+                var date = dates[i];
+                for (var j = 0; j < pattern.ByWeekNo.Count; j++)
                 {
-                    var date = dates[i];
-                    for (var j = 0; j < pattern.ByWeekNo.Count; j++)
-                    {
-                        // Determine our target week number
-                        var weekNo = pattern.ByWeekNo[j];
+                    // Determine our target week number
+                    var weekNo = pattern.ByWeekNo[j];
 
-                        // Determine our current week number
-                        var currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+                    // Determine our current week number
+                    var currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
 
-                        if (weekNo == currWeekNo)
-                            goto Next;
-                    }
-
-                    dates.RemoveAt(i);
-                Next: ;
+                    if (weekNo == currWeekNo)
+                        goto Next;
                 }
-                return dates;
+
+                dates.RemoveAt(i);
+                Next: ;
             }
+            return dates;
         }
 
         /**
@@ -517,32 +511,29 @@ namespace Ical.Net.Evaluation
                 }
                 return yearDayDates;
             }
-            else
+            // Limit behavior
+            for (var i = dates.Count - 1; i >= 0; i--)
             {
-                // Limit behavior
-                for (var i = dates.Count - 1; i >= 0; i--)
+                var date = dates[i];
+                for (var j = 0; j < pattern.ByYearDay.Count; j++)
                 {
-                    var date = dates[i];
-                    for (var j = 0; j < pattern.ByYearDay.Count; j++)
-                    {
-                        var yearDay = pattern.ByYearDay[j];
+                    var yearDay = pattern.ByYearDay[j];
 
-                        DateTime newDate;
-                        if (yearDay > 0)
-                            newDate = date.AddDays(-date.DayOfYear + yearDay);
-                        else
-                            newDate = date.AddDays(-date.DayOfYear + 1).AddYears(1).AddDays(yearDay);
+                    DateTime newDate;
+                    if (yearDay > 0)
+                        newDate = date.AddDays(-date.DayOfYear + yearDay);
+                    else
+                        newDate = date.AddDays(-date.DayOfYear + 1).AddYears(1).AddDays(yearDay);
 
-                        if (newDate.DayOfYear == date.DayOfYear)
-                            goto Next;
-                    }
-
-                    dates.RemoveAt(i);
-                Next: ;                    
+                    if (newDate.DayOfYear == date.DayOfYear)
+                        goto Next;
                 }
 
-                return dates;
+                dates.RemoveAt(i);
+                Next: ;                    
             }
+
+            return dates;
         }
 
         /**
@@ -583,37 +574,34 @@ namespace Ical.Net.Evaluation
                 }
                 return monthDayDates;
             }
-            else
+            // Limit behavior
+            for (var i = dates.Count - 1; i >= 0; i--)
             {
-                // Limit behavior
-                for (var i = dates.Count - 1; i >= 0; i--)
+                var date = dates[i];
+                for (var j = 0; j < pattern.ByMonthDay.Count; j++)
                 {
-                    var date = dates[i];
-                    for (var j = 0; j < pattern.ByMonthDay.Count; j++)
-                    {
-                        var monthDay = pattern.ByMonthDay[j];
+                    var monthDay = pattern.ByMonthDay[j];
 
-                        var daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
-                        if (Math.Abs(monthDay) > daysInMonth)
-                            throw new ArgumentException("Invalid day of month: " + date + " (day " + monthDay + ")");
+                    var daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
+                    if (Math.Abs(monthDay) > daysInMonth)
+                        throw new ArgumentException("Invalid day of month: " + date + " (day " + monthDay + ")");
 
-                        // Account for positive or negative numbers
-                        DateTime newDate;
-                        if (monthDay > 0)
-                            newDate = date.AddDays(-date.Day + monthDay);
-                        else
-                            newDate = date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay);
+                    // Account for positive or negative numbers
+                    DateTime newDate;
+                    if (monthDay > 0)
+                        newDate = date.AddDays(-date.Day + monthDay);
+                    else
+                        newDate = date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay);
 
-                        if (newDate.Day.Equals(date.Day))
-                            goto Next;
-                    }
+                    if (newDate.Day.Equals(date.Day))
+                        goto Next;
+                }
 
                 Next: ;
-                    dates.RemoveAt(i);
-                }                
+                dates.RemoveAt(i);
+            }                
             
-                return dates;
-            }
+            return dates;
         }
 
         /**
@@ -642,29 +630,26 @@ namespace Ical.Net.Evaluation
 
                 return weekDayDates;
             }
-            else
+            // Limit behavior
+            for (var i = dates.Count - 1; i >= 0; i--)
             {
-                // Limit behavior
-                for (var i = dates.Count - 1; i >= 0; i--)
+                var date = dates[i];
+                for (var j = 0; j < pattern.ByDay.Count; j++)
                 {
-                    var date = dates[i];
-                    for (var j = 0; j < pattern.ByDay.Count; j++)
+                    var weekDay = pattern.ByDay[j];
+                    if (weekDay.DayOfWeek.Equals(date.DayOfWeek))
                     {
-                        var weekDay = pattern.ByDay[j];
-                        if (weekDay.DayOfWeek.Equals(date.DayOfWeek))
-                        {
-                            // If no offset is specified, simply test the day of week!
-                            // FIXME: test with offset...
-                            if (date.DayOfWeek.Equals(weekDay.DayOfWeek))
-                                goto Next;
-                        }
+                        // If no offset is specified, simply test the day of week!
+                        // FIXME: test with offset...
+                        if (date.DayOfWeek.Equals(weekDay.DayOfWeek))
+                            goto Next;
                     }
-                    dates.RemoveAt(i);
-                Next: ;
                 }
-
-                return dates;
+                dates.RemoveAt(i);
+                Next: ;
             }
+
+            return dates;
         }
 
         /**
@@ -784,24 +769,21 @@ namespace Ical.Net.Evaluation
                 }
                 return hourlyDates;
             }
-            else
+            // Limit behavior
+            for (var i = dates.Count - 1; i >= 0; i--)
             {
-                // Limit behavior
-                for (var i = dates.Count - 1; i >= 0; i--)
+                var date = dates[i];
+                for (var j = 0; j < pattern.ByHour.Count; j++)
                 {
-                    var date = dates[i];
-                    for (var j = 0; j < pattern.ByHour.Count; j++)
-                    {
-                        var hour = pattern.ByHour[j];
-                        if (date.Hour == hour)
-                            goto Next;
-                    }
-                    // Remove unmatched dates
-                    dates.RemoveAt(i);
-                Next: ;
+                    var hour = pattern.ByHour[j];
+                    if (date.Hour == hour)
+                        goto Next;
                 }
-                return dates;
+                // Remove unmatched dates
+                dates.RemoveAt(i);
+                Next: ;
             }
+            return dates;
         }
 
         /**
@@ -831,24 +813,21 @@ namespace Ical.Net.Evaluation
                 }
                 return minutelyDates;
             }
-            else
+            // Limit behavior
+            for (var i = dates.Count - 1; i >= 0; i--)
             {
-                // Limit behavior
-                for (var i = dates.Count - 1; i >= 0; i--)
+                var date = dates[i];
+                for (var j = 0; j < pattern.ByMinute.Count; j++)
                 {
-                    var date = dates[i];
-                    for (var j = 0; j < pattern.ByMinute.Count; j++)
-                    {
-                        var minute = pattern.ByMinute[j];
-                        if (date.Minute == minute)
-                            goto Next;
-                    }
-                    // Remove unmatched dates
-                    dates.RemoveAt(i);
-                Next: ;
+                    var minute = pattern.ByMinute[j];
+                    if (date.Minute == minute)
+                        goto Next;
                 }
-                return dates;
+                // Remove unmatched dates
+                dates.RemoveAt(i);
+                Next: ;
             }
+            return dates;
         }
 
         /**
@@ -878,24 +857,21 @@ namespace Ical.Net.Evaluation
                 }
                 return secondlyDates;
             }
-            else
+            // Limit behavior
+            for (var i = dates.Count - 1; i >= 0; i--)
             {
-                // Limit behavior
-                for (var i = dates.Count - 1; i >= 0; i--)
+                var date = dates[i];
+                for (var j = 0; j < pattern.BySecond.Count; j++)
                 {
-                    var date = dates[i];
-                    for (var j = 0; j < pattern.BySecond.Count; j++)
-                    {
-                        var second = pattern.BySecond[j];
-                        if (date.Second == second)
-                            goto Next;
-                    }
-                    // Remove unmatched dates
-                    dates.RemoveAt(i);
-                Next: ;
+                    var second = pattern.BySecond[j];
+                    if (date.Second == second)
+                        goto Next;
                 }
-                return dates;
-            }            
+                // Remove unmatched dates
+                dates.RemoveAt(i);
+                Next: ;
+            }
+            return dates;
         }
 
         #endregion

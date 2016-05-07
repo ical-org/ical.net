@@ -194,7 +194,7 @@ namespace Ical.Net.DataTypes
                 AssociateWith((IDateTime)obj);
                 return ((IDateTime)obj).AsUtc.Equals(AsUtc);
             }
-            else if (obj is DateTime)
+            if (obj is DateTime)
             {
                 var dt = (CalDateTime)obj;
                 AssociateWith(dt);
@@ -223,7 +223,7 @@ namespace Ical.Net.DataTypes
 
             if (left.HasTime || right.HasTime)
                 return left.AsUtc < right.AsUtc;
-            else return left.AsUtc.Date < right.AsUtc.Date;
+            return left.AsUtc.Date < right.AsUtc.Date;
         }
 
         public static bool operator >(CalDateTime left, IDateTime right)
@@ -232,7 +232,7 @@ namespace Ical.Net.DataTypes
 
             if (left.HasTime || right.HasTime)
                 return left.AsUtc > right.AsUtc;
-            else return left.AsUtc.Date > right.AsUtc.Date;
+            return left.AsUtc.Date > right.AsUtc.Date;
         }
 
         public static bool operator <=(CalDateTime left, IDateTime right)
@@ -241,7 +241,7 @@ namespace Ical.Net.DataTypes
 
             if (left.HasTime || right.HasTime)
                 return left.AsUtc <= right.AsUtc;
-            else return left.AsUtc.Date <= right.AsUtc.Date;
+            return left.AsUtc.Date <= right.AsUtc.Date;
         }
 
         public static bool operator >=(CalDateTime left, IDateTime right)
@@ -250,7 +250,7 @@ namespace Ical.Net.DataTypes
 
             if (left.HasTime || right.HasTime)
                 return left.AsUtc >= right.AsUtc;
-            else return left.AsUtc.Date >= right.AsUtc.Date;
+            return left.AsUtc.Date >= right.AsUtc.Date;
         }
 
         public static bool operator ==(CalDateTime left, IDateTime right)
@@ -259,7 +259,7 @@ namespace Ical.Net.DataTypes
 
             if (left.HasTime || right.HasTime)
                 return left.AsUtc.Equals(right.AsUtc);
-            else return left.AsUtc.Date.Equals(right.AsUtc.Date);
+            return left.AsUtc.Date.Equals(right.AsUtc.Date);
         }
 
         public static bool operator !=(CalDateTime left, IDateTime right)
@@ -268,7 +268,7 @@ namespace Ical.Net.DataTypes
 
             if (left.HasTime || right.HasTime)
                 return !left.AsUtc.Equals(right.AsUtc);
-            else return !left.AsUtc.Date.Equals(right.AsUtc.Date);
+            return !left.AsUtc.Date.Equals(right.AsUtc.Date);
         }
 
         public static TimeSpan operator -(CalDateTime left, IDateTime right)
@@ -309,10 +309,9 @@ namespace Ical.Net.DataTypes
             {
                 if (!HasTime)
                     return DateTime.SpecifyKind(Value.Date, DateTimeKind.Local);
-                else if (IsUniversalTime)
+                if (IsUniversalTime)
                     return Value.ToLocalTime();
-                else
-                    return AsUtc.ToLocalTime();
+                return AsUtc.ToLocalTime();
             }
         }
 
@@ -329,7 +328,7 @@ namespace Ical.Net.DataTypes
                     _utc = DateTime.SpecifyKind(_value, DateTimeKind.Utc);
                     return _utc;
                 }
-                else if (!string.IsNullOrWhiteSpace(TzId))
+                if (!string.IsNullOrWhiteSpace(TzId))
                 {
                     var newUtc = DateUtil.ToZonedDateTimeLeniently(Value, TzId);
                     _utc = newUtc.ToDateTimeUtc();
@@ -380,11 +379,11 @@ namespace Ical.Net.DataTypes
             {
                 if (IsUniversalTime)
                     return "UTC";
-                else if (!string.IsNullOrWhiteSpace(TzId))
+                if (!string.IsNullOrWhiteSpace(TzId))
                 {
                     return TzId;
                 }
-                else if (_timeZoneObservance != null && _timeZoneObservance.HasValue)
+                if (_timeZoneObservance != null && _timeZoneObservance.HasValue)
                     return _timeZoneObservance.Value.TimeZoneInfo.TimeZoneName;
                 return string.Empty;
             }
@@ -419,10 +418,7 @@ namespace Ical.Net.DataTypes
                 {
                     return "UTC";
                 }
-                else
-                {
-                    return Parameters.Get("TZID");
-                }
+                return Parameters.Get("TZID");
             }
             set
             {
@@ -672,9 +668,9 @@ namespace Ical.Net.DataTypes
         {
             if (Equals(dt))
                 return 0;
-            else if (this < dt)
+            if (this < dt)
                 return -1;
-            else if (this > dt)
+            if (this > dt)
                 return 1;
             throw new Exception("An error occurred while comparing two IDateTime values.");
         }
@@ -696,12 +692,11 @@ namespace Ical.Net.DataTypes
             
             if (format != null)
                 return Value.ToString(format, formatProvider) + tz;
-            else if (HasTime && HasDate)
-                return Value.ToString() + tz;
-            else if (HasTime)
-                return Value.TimeOfDay.ToString() + tz;
-            else
-                return Value.ToShortDateString() + tz;
+            if (HasTime && HasDate)
+                return Value + tz;
+            if (HasTime)
+                return Value.TimeOfDay + tz;
+            return Value.ToShortDateString() + tz;
         }
 
         #endregion

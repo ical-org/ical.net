@@ -150,7 +150,7 @@ namespace Ical.Net
 
         private void Initialize()
         {
-            this.Name = Components.Todo;
+            Name = Components.Todo;
 
             _mEvaluator = new TodoEvaluator(this);
             SetService(_mEvaluator);
@@ -203,9 +203,9 @@ namespace Ical.Net
         {
             if (DtStart == null)
                 return !IsCompleted(currDt) && !IsCancelled();
-            else if (currDt.GreaterThanOrEqual(DtStart))
+            if (currDt.GreaterThanOrEqual(DtStart))
                 return !IsCompleted(currDt) && !IsCancelled();
-            else return false;
+            return false;
         }
 
         /// <summary>

@@ -54,7 +54,7 @@ namespace Ical.Net.General
             get { return _parameters; }
             protected set
             {
-                this._parameters = value;
+                _parameters = value;
             }
         }
 
@@ -62,7 +62,7 @@ namespace Ical.Net.General
 
         #region Constructors
 
-        public CalendarProperty() : base()
+        public CalendarProperty()
         {
             Initialize();
         }
@@ -94,7 +94,7 @@ namespace Ical.Net.General
         {
             _values = new List<object>();
             _parameters = new CalendarParameterList(this, true);
-            ValueChanged += new EventHandler<ValueChangedEventArgs<object>>(CalendarProperty_ValueChanged);
+            ValueChanged += CalendarProperty_ValueChanged;
         }        
 
         #endregion
@@ -232,14 +232,14 @@ namespace Ical.Net.General
             {
                 // Our list doesn't contain any values.  Let's add one!
                 _values.Add(value);
-                OnValueChanged(null, new object[] { value });
+                OnValueChanged(null, new[] { value });
             }
             else if (value != null)
             {
                 // Our list contains values.  Let's set the first value!
                 var oldValue = _values[0];
                 _values[0] = value;
-                OnValueChanged(new object[] { oldValue }, new object[] { value });
+                OnValueChanged(new[] { oldValue }, new[] { value });
             }
             else
             {
@@ -264,7 +264,7 @@ namespace Ical.Net.General
             if (value != null)
             {
                 _values.Add(value);
-                OnValueChanged(null, new object[] { value });
+                OnValueChanged(null, new[] { value });
             }
         }
         
@@ -274,7 +274,7 @@ namespace Ical.Net.General
                 _values.Contains(value) &&
                 _values.Remove(value))
             {
-                OnValueChanged(new object[] { value }, null);
+                OnValueChanged(new[] { value }, null);
             }
         }
 

@@ -36,7 +36,7 @@ namespace ical.NET.UnitTests
         public void Alarm1()
         {
             var dateTimes = new List<IDateTime>();
-            dateTimes.AddRange(new CalDateTime[]
+            dateTimes.AddRange(new[]
             {
                 new CalDateTime(2006, 7, 18, 9, 30, 0, _tzid)
             });
@@ -48,7 +48,7 @@ namespace ical.NET.UnitTests
         public void Alarm2()
         {
             var dateTimes = new List<IDateTime>();
-            dateTimes.AddRange(new CalDateTime[]
+            dateTimes.AddRange(new[]
             {
                 new CalDateTime(2006, 7, 18, 9, 30, 0, _tzid),
                 new CalDateTime(2006, 7, 20, 9, 30, 0, _tzid),
@@ -69,7 +69,7 @@ namespace ical.NET.UnitTests
         public void Alarm3()
         {
             var dateTimes = new List<IDateTime>();
-            dateTimes.AddRange(new CalDateTime[]
+            dateTimes.AddRange(new[]
             {
                 new CalDateTime(1998, 2, 11, 9, 0, 0, _tzid),
                 new CalDateTime(1998, 3, 11, 9, 0, 0, _tzid),
@@ -85,7 +85,7 @@ namespace ical.NET.UnitTests
         public void Alarm4()
         {
             var dateTimes = new List<IDateTime>();
-            dateTimes.AddRange(new CalDateTime[]
+            dateTimes.AddRange(new[]
             {
                 new CalDateTime(1998, 2, 11, 9, 0, 0, _tzid),
                 new CalDateTime(1998, 2, 11, 11, 0, 0, _tzid),
@@ -116,7 +116,7 @@ namespace ical.NET.UnitTests
         public void Alarm5()
         {
             var dateTimes = new List<IDateTime>();
-            dateTimes.AddRange(new CalDateTime[]
+            dateTimes.AddRange(new[]
             {
                 new CalDateTime(1998, 1, 2, 8, 0, 0, _tzid)
             });
@@ -128,7 +128,7 @@ namespace ical.NET.UnitTests
         public void Alarm6()
         {
             var dateTimes = new List<IDateTime>();
-            dateTimes.AddRange(new CalDateTime[]
+            dateTimes.AddRange(new[]
             {
                 new CalDateTime(1998, 1, 2, 8, 0, 0, _tzid),
                 new CalDateTime(1998, 1, 5, 8, 0, 0, _tzid),
@@ -145,7 +145,7 @@ namespace ical.NET.UnitTests
         public void Alarm7()
         {
             var dateTimes = new List<IDateTime>();
-            dateTimes.AddRange(new CalDateTime[]
+            dateTimes.AddRange(new[]
             {
                 new CalDateTime(2006, 7, 18, 10, 30, 0, _tzid),
                 new CalDateTime(2006, 7, 20, 10, 30, 0, _tzid),

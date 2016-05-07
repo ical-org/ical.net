@@ -29,8 +29,8 @@ namespace Ical.Net.General
         {
             _mParent = parent;
 
-            ItemAdded += new EventHandler<ObjectEventArgs<ICalendarProperty, int>>(CalendarPropertyList_ItemAdded);
-            ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarProperty, int>>(CalendarPropertyList_ItemRemoved);
+            ItemAdded += CalendarPropertyList_ItemAdded;
+            ItemRemoved += CalendarPropertyList_ItemRemoved;
         }
 
         #endregion

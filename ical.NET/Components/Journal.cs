@@ -26,13 +26,9 @@ namespace Ical.Net
 
         #region Constructors
 
-        public Journal()
-        {            
-        }
-
         void Initialize()
         {
-            this.Name = Components.Journal;
+            Name = Components.Journal;
         }
 
         #endregion

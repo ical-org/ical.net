@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using antlr;
+using antlr.collections.impl;
 using Ical.Net.ExtensionMethods;
 using Ical.Net.General;
 using Ical.Net.Interfaces;
@@ -17,15 +19,8 @@ using Ical.Net.Utility;
 namespace Ical.Net.Serialization.iCalendar
 {
 	// Generate the header common to all output files.
-
-    using TokenBuffer              = antlr.TokenBuffer;
-	using IToken                   = antlr.IToken;
-	using TokenStream              = antlr.TokenStream;
-	using NoViableAltException     = antlr.NoViableAltException;
-	using ParserSharedInputState   = antlr.ParserSharedInputState;
-	using BitSet                   = antlr.collections.impl.BitSet;
-	
-	public 	class iCalParser : antlr.LLkParser
+    
+    public 	class iCalParser : LLkParser
 	{
 		public const int EOF = 1;
 		public const int NULL_TREE_LOOKAHEAD = 3;
@@ -882,7 +877,7 @@ _loop53_breakloop:			;
 	{
 	}
 	
-	public static readonly string[] tokenNames_ = new string[] {
+	public static readonly string[] tokenNames_ = {
 		@"""<0>""",
 		@"""EOF""",
 		@"""<2>""",

@@ -22,7 +22,7 @@ namespace Ical.Net
     {
         private TimeZoneInfoEvaluator _mEvaluator;
 
-        public CalTimeZoneInfo() : base()
+        public CalTimeZoneInfo()
         {
             // FIXME: how do we ensure SEQUENCE doesn't get serialized?
             // base.Sequence = null;
