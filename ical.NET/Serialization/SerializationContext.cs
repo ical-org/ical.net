@@ -11,8 +11,7 @@ using Ical.Net.Serialization.iCalendar.Processors;
 
 namespace Ical.Net.Serialization
 {
-    public class SerializationContext :        
-        ISerializationContext
+    public class SerializationContext : ISerializationContext
     {
         #region Static Private Fields
 
@@ -65,10 +64,10 @@ namespace Ical.Net.Serialization
             SetService(new ComponentFactory());
             SetService(new DataTypeMapper());
             SetService(new EncodingStack());
-            SetService(new EncodingProvider(this));            
+            SetService(new EncodingProvider(this));
             SetService(new CompositeProcessor<ICalendar>());
             SetService(new CompositeProcessor<ICalendarComponent>());
-            SetService(new CompositeProcessor<ICalendarProperty>());            
+            SetService(new CompositeProcessor<ICalendarProperty>());
         }
 
         #endregion
@@ -78,7 +77,9 @@ namespace Ical.Net.Serialization
         public virtual void Push(object item)
         {
             if (item != null)
+            {
                 _mStack.Push(new WeakReference(item));
+            }
         }
 
         public virtual object Pop()
@@ -87,7 +88,9 @@ namespace Ical.Net.Serialization
             {
                 var r = _mStack.Pop();
                 if (r.IsAlive)
+                {
                     return r.Target;
+                }
             }
             return null;
         }
@@ -98,7 +101,9 @@ namespace Ical.Net.Serialization
             {
                 var r = _mStack.Peek();
                 if (r.IsAlive)
+                {
                     return r.Target;
+                }
             }
             return null;
         }

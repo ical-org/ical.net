@@ -17,22 +17,28 @@ namespace Ical.Net.General
         public virtual object GetService(Type serviceType)
         {
             if (_mTypedServices.ContainsKey(serviceType))
+            {
                 return _mTypedServices[serviceType];
+            }
             return null;
         }
 
         public virtual object GetService(string name)
         {
             if (_mNamedServices.ContainsKey(name))
+            {
                 return _mNamedServices[name];
+            }
             return null;
         }
 
         public virtual T GetService<T>()
         {
-            var service = GetService(typeof(T));
+            var service = GetService(typeof (T));
             if (service is T)
-                return (T)service;
+            {
+                return (T) service;
+            }
             return default(T);
         }
 
@@ -40,14 +46,18 @@ namespace Ical.Net.General
         {
             var service = GetService(name);
             if (service is T)
-                return (T)service;
+            {
+                return (T) service;
+            }
             return default(T);
         }
 
         public virtual void SetService(string name, object obj)
         {
             if (!string.IsNullOrEmpty(name) && obj != null)
+            {
                 _mNamedServices[name] = obj;
+            }
         }
 
         public virtual void SetService(object obj)
@@ -59,7 +69,9 @@ namespace Ical.Net.General
 
                 // Get interfaces for the given type
                 foreach (var iface in type.GetInterfaces())
+                {
                     _mTypedServices[iface] = obj;
+                }
             }
         }
 
@@ -68,13 +80,17 @@ namespace Ical.Net.General
             if (type != null)
             {
                 if (_mTypedServices.ContainsKey(type))
+                {
                     _mTypedServices.Remove(type);
+                }
 
                 // Get interfaces for the given type
                 foreach (var iface in type.GetInterfaces())
                 {
                     if (_mTypedServices.ContainsKey(iface))
+                    {
                         _mTypedServices.Remove(iface);
+                    }
                 }
             }
         }
@@ -82,7 +98,9 @@ namespace Ical.Net.General
         public virtual void RemoveService(string name)
         {
             if (_mNamedServices.ContainsKey(name))
+            {
                 _mNamedServices.Remove(name);
+            }
         }
 
         #endregion

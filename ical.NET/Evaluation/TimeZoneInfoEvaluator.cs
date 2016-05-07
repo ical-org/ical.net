@@ -5,8 +5,7 @@ using Ical.Net.Interfaces.DataTypes;
 
 namespace Ical.Net.Evaluation
 {
-    public class TimeZoneInfoEvaluator :
-        RecurringEvaluator
+    public class TimeZoneInfoEvaluator : RecurringEvaluator
     {
         #region Protected Properties
 
@@ -20,12 +19,10 @@ namespace Ical.Net.Evaluation
 
         #region Constructors
 
-        public TimeZoneInfoEvaluator(ITimeZoneInfo tzi) : base(tzi)
-        {
-        }
+        public TimeZoneInfoEvaluator(ITimeZoneInfo tzi) : base(tzi) {}
 
-        #endregion       
- 
+        #endregion
+
         #region Overrides
 
         public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
@@ -39,7 +36,7 @@ namespace Ical.Net.Evaluation
                 return periods;
             }
 
-            return new HashSet<IPeriod>();            
+            return new HashSet<IPeriod>();
         }
 
         #endregion

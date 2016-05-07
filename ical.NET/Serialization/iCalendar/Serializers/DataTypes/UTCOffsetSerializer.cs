@@ -6,21 +6,17 @@ using Ical.Net.Interfaces.DataTypes;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
-    public class UtcOffsetSerializer :
-        EncodableDataTypeSerializer
+    public class UtcOffsetSerializer : EncodableDataTypeSerializer
     {
-        public override Type TargetType => typeof(UtcOffset);
+        public override Type TargetType => typeof (UtcOffset);
 
         public override string SerializeToString(object obj)
         {
             var offset = obj as IUtcOffset;
             if (offset != null)
             {
-                var value = 
-                    (offset.Positive ? "+" : "-") +
-                    offset.Hours.ToString("00") +
-                    offset.Minutes.ToString("00") +
-                    (offset.Seconds != 0 ? offset.Seconds.ToString("00") : string.Empty);
+                var value = (offset.Positive ? "+" : "-") + offset.Hours.ToString("00") + offset.Minutes.ToString("00") +
+                            (offset.Seconds != 0 ? offset.Seconds.ToString("00") : string.Empty);
 
                 // Encode the value as necessary
                 return Encode(offset, value);

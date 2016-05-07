@@ -5,11 +5,7 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.Interfaces
 {
-    public interface ICalendar :
-        ICalendarComponent,
-        IGetOccurrencesTyped,
-        IGetFreeBusy,
-        IMergeable
+    public interface ICalendar : ICalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, IMergeable
     {
         /// <summary>
         /// Gets/sets the calendar version.  Defaults to "2.0".
@@ -84,7 +80,7 @@ namespace Ical.Net.Interfaces
         /// <summary>
         /// Gets a list of To-do items contained in the calendar.
         /// </summary>
-        IUniqueComponentList<ITodo> Todos { get; }        
+        IUniqueComponentList<ITodo> Todos { get; }
 
 
         /// <summary>
@@ -95,6 +91,7 @@ namespace Ical.Net.Interfaces
         /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>
         /// <returns>The time zone added to the calendar.</returns>
         ITimeZone AddTimeZone(TimeZoneInfo tzi);
+
         ITimeZone AddTimeZone(TimeZoneInfo tzi, DateTime earliestDateTimeToSupport, bool includeHistoricalData);
 
         /// <summary>
@@ -104,7 +101,7 @@ namespace Ical.Net.Interfaces
         /// </summary>
         /// <returns>The time zone added to the calendar.</returns>
         ITimeZone AddLocalTimeZone();
-        ITimeZone AddLocalTimeZone(DateTime earliestDateTimeToSupport, bool includeHistoricalData);
 
+        ITimeZone AddLocalTimeZone(DateTime earliestDateTimeToSupport, bool includeHistoricalData);
     }
 }

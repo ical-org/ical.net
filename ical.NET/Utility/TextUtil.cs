@@ -24,7 +24,9 @@ namespace Ical.Net.Utility
             {
                 result.Append(current.ToString(0, 75) + "\r\n ");
                 for (i = 75; i < current.Length - 74; i += 74)
+                {
                     result.Append(current.ToString(i, 74) + "\r\n ");
+                }
             }
             result.Append(current.ToString(i, current.Length - i));
             result.Append("\r\n");
@@ -59,9 +61,11 @@ namespace Ical.Net.Utility
             // Replace \r and \n with \r\n.
             s = NormalizeToCrLf.Replace(s, "\r\n");
 
-            var settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
+            var settings = ctx.GetService(typeof (ISerializationSettings)) as ISerializationSettings;
             if (settings == null || !settings.EnsureAccurateLineNumbers)
+            {
                 s = RemoveEmptyLines(UnwrapLines(s));
+            }
 
             return new StringReader(s);
         }

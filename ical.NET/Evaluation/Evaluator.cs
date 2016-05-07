@@ -9,14 +9,13 @@ using Ical.Net.Utility;
 
 namespace Ical.Net.Evaluation
 {
-    public abstract class Evaluator :
-        IEvaluator
+    public abstract class Evaluator : IEvaluator
     {
         #region Private Fields
 
         private DateTime _mEvaluationStartBounds = DateTime.MaxValue;
         private DateTime _mEvaluationEndBounds = DateTime.MinValue;
-        
+
         private ICalendarObject _mAssociatedObject;
         private ICalendarDataType _mAssociatedDataType;
 
@@ -70,20 +69,37 @@ namespace Ical.Net.Evaluation
         {
             // FIXME: use a more specific exception.
             if (interval == 0)
+            {
                 throw new Exception("Cannot evaluate with an interval of zero.  Please use an interval other than zero.");
+            }
 
             var old = dt;
             switch (pattern.Frequency)
             {
-                case FrequencyType.Secondly: dt = old.AddSeconds(interval); break;
-                case FrequencyType.Minutely: dt = old.AddMinutes(interval); break;
-                case FrequencyType.Hourly: dt = old.AddHours(interval); break;
-                case FrequencyType.Daily: dt = old.AddDays(interval); break;
-                case FrequencyType.Weekly: dt = DateUtil.AddWeeks(old, interval, pattern.FirstDayOfWeek); break;
-                case FrequencyType.Monthly: dt = old.AddDays(-old.Day + 1).AddMonths(interval); break;
-                case FrequencyType.Yearly: dt = old.AddDays(-old.DayOfYear + 1).AddYears(interval); break;
+                case FrequencyType.Secondly:
+                    dt = old.AddSeconds(interval);
+                    break;
+                case FrequencyType.Minutely:
+                    dt = old.AddMinutes(interval);
+                    break;
+                case FrequencyType.Hourly:
+                    dt = old.AddHours(interval);
+                    break;
+                case FrequencyType.Daily:
+                    dt = old.AddDays(interval);
+                    break;
+                case FrequencyType.Weekly:
+                    dt = DateUtil.AddWeeks(old, interval, pattern.FirstDayOfWeek);
+                    break;
+                case FrequencyType.Monthly:
+                    dt = old.AddDays(-old.Day + 1).AddMonths(interval);
+                    break;
+                case FrequencyType.Yearly:
+                    dt = old.AddDays(-old.DayOfYear + 1).AddYears(interval);
+                    break;
                 // FIXME: use a more specific exception.
-                default: throw new Exception("FrequencyType.NONE cannot be evaluated. Please specify a FrequencyType before evaluating the recurrence.");
+                default:
+                    throw new Exception("FrequencyType.NONE cannot be evaluated. Please specify a FrequencyType before evaluating the recurrence.");
             }
         }
 
@@ -110,9 +126,13 @@ namespace Ical.Net.Evaluation
             get
             {
                 if (_mAssociatedObject != null)
+                {
                     return _mAssociatedObject;
+                }
                 if (_mAssociatedDataType != null)
+                {
                     return _mAssociatedDataType.AssociatedObject;
+                }
                 return null;
             }
             protected set { _mAssociatedObject = value; }
@@ -127,11 +147,7 @@ namespace Ical.Net.Evaluation
             MPeriods.Clear();
         }
 
-        public abstract HashSet<IPeriod> Evaluate(
-            IDateTime referenceDate,
-            DateTime periodStart,
-            DateTime periodEnd,
-            bool includeReferenceDateInResults);
+        public abstract HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults);
 
         #endregion
     }

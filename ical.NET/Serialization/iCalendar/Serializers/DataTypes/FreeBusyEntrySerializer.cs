@@ -5,12 +5,11 @@ using Ical.Net.Interfaces.DataTypes;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
-    public class FreeBusyEntrySerializer : 
-        PeriodSerializer
+    public class FreeBusyEntrySerializer : PeriodSerializer
     {
         #region Overrides
 
-        public override Type TargetType => typeof(FreeBusyEntry);
+        public override Type TargetType => typeof (FreeBusyEntry);
 
         public override string SerializeToString(object obj)
         {
@@ -49,11 +48,20 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                     {
                         switch (value.ToUpperInvariant())
                         {
-                            case "FREE": entry.Status = FreeBusyStatus.Free; break;
-                            case "BUSY": entry.Status = FreeBusyStatus.Busy; break;
-                            case "BUSY-UNAVAILABLE": entry.Status = FreeBusyStatus.BusyUnavailable; break;
-                            case "BUSY-TENTATIVE": entry.Status = FreeBusyStatus.BusyTentative; break;
-                            default: break;
+                            case "FREE":
+                                entry.Status = FreeBusyStatus.Free;
+                                break;
+                            case "BUSY":
+                                entry.Status = FreeBusyStatus.Busy;
+                                break;
+                            case "BUSY-UNAVAILABLE":
+                                entry.Status = FreeBusyStatus.BusyUnavailable;
+                                break;
+                            case "BUSY-TENTATIVE":
+                                entry.Status = FreeBusyStatus.BusyTentative;
+                                break;
+                            default:
+                                break;
                         }
                     }
                 }

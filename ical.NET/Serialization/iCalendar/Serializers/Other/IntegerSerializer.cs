@@ -6,10 +6,9 @@ using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 {
-    public class IntegerSerializer :
-        EncodableDataTypeSerializer
+    public class IntegerSerializer : EncodableDataTypeSerializer
     {
-        public override Type TargetType => typeof(int);
+        public override Type TargetType => typeof (int);
 
         public override string SerializeToString(object integer)
         {
@@ -50,7 +49,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 
                 int i;
                 if (Int32.TryParse(value, out i))
+                {
                     return i;
+                }
             }
             catch {}
 

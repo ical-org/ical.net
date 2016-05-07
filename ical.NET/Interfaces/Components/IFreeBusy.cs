@@ -4,9 +4,7 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.Interfaces.Components
 {
-    public interface IFreeBusy :
-        IUniqueComponent,
-        IMergeable
+    public interface IFreeBusy : IUniqueComponent, IMergeable
     {
         IList<IFreeBusyEntry> Entries { get; set; }
         IDateTime DtStart { get; set; }

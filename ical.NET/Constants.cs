@@ -1,5 +1,6 @@
 ﻿namespace Ical.Net
 {
+
     #region Alarms
 
     public enum AlarmAction
@@ -38,7 +39,7 @@
     }
 
     #endregion
-    
+
     #region Status Constants
 
     public class ParticipationStatus
@@ -80,9 +81,9 @@
     /// </summary>    
     public enum JournalStatus
     {
-        Draft,      // Indicates journal is draft.
-        Final,      // Indicates journal is final.
-        Cancelled   // Indicates journal is removed.
+        Draft, // Indicates journal is draft.
+        Final, // Indicates journal is final.
+        Cancelled // Indicates journal is removed.
     }
 
     public enum FreeBusyStatus
@@ -196,7 +197,7 @@
         /// were evaluated, an exception would be thrown.
         /// </summary>
         ThrowException
-    } 
+    }
 
     #endregion
 
@@ -289,7 +290,7 @@
         /// counter-proposal.
         /// </summary>
         public const string DeclineCounter = "DECLINECOUNTER";
-    } 
+    }
 
-    #endregion   
+    #endregion
 }

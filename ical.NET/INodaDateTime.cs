@@ -21,7 +21,6 @@ namespace Ical.Net
         /// zone set by <see cref="TzId"/>.
         /// </summary>
         //TimeZoneObservance? TimeZoneObservance { get; set; }
-
         /// <summary>
         /// Gets/sets whether the Value of this date/time represents
         /// a universal time.
@@ -111,12 +110,12 @@ namespace Ical.Net
         /// within the specified time zone.
         /// </summary>
         //INodaDateTime ToTimeZone(TimeZoneObservance tzo);
-
         /// <summary>
         /// Converts the date/time value to a local time
         /// within the specified time zone.
         /// </summary>
         INodaDateTime ToTimeZone(string tzId);
+
         //INodaDateTime ToTimeZone(ITimeZone tz);
 
         INodaDateTime Add(Duration duration);

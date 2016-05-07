@@ -7,12 +7,8 @@ namespace Ical.Net.General
     /// <summary>
     /// A collection of calendar objects.
     /// </summary>
-
     [Serializable]
-
-    public class CalendarObjectList :
-        GroupedList<string, ICalendarObject>,
-        ICalendarObjectList<ICalendarObject>
+    public class CalendarObjectList : GroupedList<string, ICalendarObject>, ICalendarObjectList<ICalendarObject>
     {
         ICalendarObject _parent;
 

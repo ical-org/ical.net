@@ -10,8 +10,7 @@ using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.Components
 {
-    public class ComponentSerializer :
-        SerializerBase
+    public class ComponentSerializer : SerializerBase
     {
         #region Protected Properties
 
@@ -21,19 +20,15 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
 
         #region Constructor
 
-        public ComponentSerializer()
-        {
-        }
+        public ComponentSerializer() {}
 
-        public ComponentSerializer(ISerializationContext ctx) : base(ctx)
-        {
-        }
+        public ComponentSerializer(ISerializationContext ctx) : base(ctx) {}
 
         #endregion
 
         #region Overrides
 
-        public override Type TargetType => typeof(CalendarComponent);
+        public override Type TargetType => typeof (CalendarComponent);
 
         public override string SerializeToString(object obj)
         {
@@ -49,10 +44,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
                 // Sort the calendar properties in alphabetical order before
                 // serializing them!
                 var properties = new List<ICalendarProperty>(c.Properties);
-                
+
                 // FIXME: remove this try/catch
                 try
-                {                    
+                {
                     properties.Sort(PropertySorter);
                 }
                 catch (Exception e)
@@ -66,7 +61,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
                     // Get a serializer for each property.
                     var serializer = sf.Build(p.GetType(), SerializationContext) as IStringSerializer;
                     if (serializer != null)
+                    {
                         sb.Append(serializer.SerializeToString(p));
+                    }
                 }
 
                 // Serialize child objects
@@ -77,7 +74,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
                         // Get a serializer for each child object.
                         var serializer = sf.Build(child.GetType(), SerializationContext) as IStringSerializer;
                         if (serializer != null)
+                        {
                             sb.Append(serializer.SerializeToString(child));
+                        }
                     }
                 }
 
@@ -130,11 +129,17 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
             public int Compare(ICalendarProperty x, ICalendarProperty y)
             {
                 if (x == y || (x == null && y == null))
+                {
                     return 0;
+                }
                 if (x == null)
+                {
                     return -1;
+                }
                 if (y == null)
+                {
                     return 1;
+                }
                 return string.Compare(x.Name, y.Name, true);
             }
 

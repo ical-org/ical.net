@@ -7,24 +7,19 @@ using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers
 {
-    public class ParameterSerializer :
-        SerializerBase
+    public class ParameterSerializer : SerializerBase
     {
         #region Constructors
 
-        public ParameterSerializer()
-        {
-        }
+        public ParameterSerializer() {}
 
-        public ParameterSerializer(ISerializationContext ctx) : base(ctx)
-        {
-        }
+        public ParameterSerializer(ISerializationContext ctx) : base(ctx) {}
 
         #endregion
 
         #region Overrides
 
-        public override Type TargetType => typeof(CalendarParameter);
+        public override Type TargetType => typeof (CalendarParameter);
 
         public override string SerializeToString(object obj)
         {
@@ -40,8 +35,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
                 // Surround the parameter value with double quotes, if the value
                 // contains any problematic characters.
-                if (value.IndexOfAny(new[] { ';', ':', ',' }) >= 0)
+                if (value.IndexOfAny(new[] {';', ':', ','}) >= 0)
+                {
                     value = "\"" + value + "\"";
+                }
                 return result + value;
             }
             return string.Empty;
@@ -64,7 +61,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
             // Return the parsed parameter
             return p;
-        } 
+        }
 
         #endregion
     }

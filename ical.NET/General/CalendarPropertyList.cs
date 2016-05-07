@@ -5,12 +5,8 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.General
 {
-
     [Serializable]
-
-    public class CalendarPropertyList :
-        GroupedValueList<string, ICalendarProperty, CalendarProperty, object>,
-        ICalendarPropertyList
+    public class CalendarPropertyList : GroupedValueList<string, ICalendarProperty, CalendarProperty, object>, ICalendarPropertyList
     {
         #region Private Fields
 
@@ -21,9 +17,7 @@ namespace Ical.Net.General
 
         #region Constructors
 
-        public CalendarPropertyList()
-        {
-        }
+        public CalendarPropertyList() {}
 
         public CalendarPropertyList(ICalendarObject parent, bool caseInsensitive)
         {
@@ -34,7 +28,7 @@ namespace Ical.Net.General
         }
 
         #endregion
-        
+
         #region Event Handlers
 
         void CalendarPropertyList_ItemRemoved(object sender, ObjectEventArgs<ICalendarProperty, int> e)
@@ -52,7 +46,9 @@ namespace Ical.Net.General
         protected override string GroupModifier(string group)
         {
             if (_mCaseInsensitive && group != null)
+            {
                 return group.ToUpper();
+            }
             return group;
         }
 
@@ -62,11 +58,10 @@ namespace Ical.Net.General
             {
                 if (ContainsKey(name))
                 {
-                    return AllOf(name)
-                        .FirstOrDefault();
+                    return AllOf(name).FirstOrDefault();
                 }
                 return null;
-            }            
+            }
         }
     }
 }

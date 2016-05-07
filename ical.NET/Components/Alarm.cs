@@ -11,12 +11,8 @@ namespace Ical.Net
     /// A class that represents an RFC 2445 VALARM component.
     /// FIXME: move GetOccurrences() logic into an AlarmEvaluator.
     /// </summary>    
-
     [Serializable]
-
-    public class Alarm :
-        CalendarComponent,
-        IAlarm
+    public class Alarm : CalendarComponent, IAlarm
     {
         #region Private Fields
 
@@ -99,7 +95,7 @@ namespace Ical.Net
             Occurrences = new List<AlarmOccurrence>();
         }
 
-        #endregion                
+        #endregion
 
         #region Public Methods
 
@@ -120,7 +116,9 @@ namespace Ical.Net
                 {
                     // Ensure that "FromDate" has already been set
                     if (fromDate == null)
+                    {
                         fromDate = rc.Start.Copy<IDateTime>();
+                    }
 
                     var d = default(TimeSpan);
                     foreach (var o in rc.GetOccurrences(fromDate, toDate))
@@ -132,12 +130,20 @@ namespace Ical.Net
                             {
                                 dt = o.Period.EndTime;
                                 if (d == default(TimeSpan))
+                                {
                                     d = o.Period.Duration;
+                                }
                             }
                             // Use the "last-found" duration as a reference point
                             else if (d != default(TimeSpan))
+                            {
                                 dt = o.Period.StartTime.Add(d);
-                            else throw new ArgumentException("Alarm trigger is relative to the END of the occurrence; however, the occurence has no discernible end.");
+                            }
+                            else
+                            {
+                                throw new ArgumentException(
+                                    "Alarm trigger is relative to the END of the occurrence; however, the occurence has no discernible end.");
+                            }
                         }
 
                         Occurrences.Add(new AlarmOccurrence(this, dt.Add(Trigger.Duration.Value), rc));

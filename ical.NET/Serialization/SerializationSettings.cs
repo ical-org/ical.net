@@ -3,8 +3,7 @@ using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization
 {
-    public class SerializationSettings :
-        ISerializationSettings
+    public class SerializationSettings : ISerializationSettings
     {
         #region Private Fields
 
@@ -12,7 +11,7 @@ namespace Ical.Net.Serialization
 
         #region ISerializationSettings Members
 
-        public virtual Type CalendarType { get; set; } = typeof(Calendar);
+        public virtual Type CalendarType { get; set; } = typeof (Calendar);
 
         public virtual bool EnsureAccurateLineNumbers { get; set; }
 

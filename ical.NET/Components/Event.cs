@@ -21,12 +21,8 @@ namespace Ical.Net
     ///         <item>Create a TextCollection DataType for 'text' items separated by commas</item>
     ///     </list>
     /// </note>
-
-    [Serializable]    
-
-    public class Event : 
-        RecurringComponent,
-        IEvent
+    [Serializable]
+    public class Event : RecurringComponent, IEvent
     {
         #region Public Properties
 
@@ -43,10 +39,7 @@ namespace Ical.Net
         /// </summary>
         public override IDateTime DtStart
         {
-            get
-            {
-                return base.DtStart;
-            }
+            get { return base.DtStart; }
             set
             {
                 base.DtStart = value;
@@ -132,14 +125,15 @@ namespace Ical.Net
                 // Set whether or not the start date/time
                 // has a time value.
                 if (Start != null)
+                {
                     Start.HasTime = !value;
+                }
                 if (End != null)
+                {
                     End.HasTime = !value;
+                }
 
-                if (value && 
-                    Start != null &&
-                    End != null &&
-                    Equals(Start.Date, End.Date))
+                if (value && Start != null && End != null && Equals(Start.Date, End.Date))
                 {
                     Duration = default(TimeSpan);
                     End = Start.AddDays(1);
@@ -241,16 +235,20 @@ namespace Ical.Net
         public virtual bool OccursOn(IDateTime dateTime)
         {
             foreach (var p in _mEvaluator.Periods)
+            {
                 // NOTE: removed UTC from date checks, since a date is a date.
-                if (p.StartTime.Date == dateTime.Date ||    // It's the start date OR
-                    (p.StartTime.Date <= dateTime.Date &&   // It's after the start date AND
-                    (p.EndTime.HasTime && p.EndTime.Date >= dateTime.Date || // an end time was specified, and it's after the test date
-                    (!p.EndTime.HasTime && p.EndTime.Date > dateTime.Date)))) // an end time was not specified, and it's before the end date
+                if (p.StartTime.Date == dateTime.Date || // It's the start date OR
+                    (p.StartTime.Date <= dateTime.Date && // It's after the start date AND
+                     (p.EndTime.HasTime && p.EndTime.Date >= dateTime.Date || // an end time was specified, and it's after the test date
+                      (!p.EndTime.HasTime && p.EndTime.Date > dateTime.Date)))) // an end time was not specified, and it's before the end date
+                {
                     // NOTE: fixed bug as follows:
                     // DTSTART;VALUE=DATE:20060704
                     // DTEND;VALUE=DATE:20060705
                     // Event.OccursOn(new iCalDateTime(2006, 7, 5)); // Evals to true; should be false
                     return true;
+                }
+            }
             return false;
         }
 
@@ -262,8 +260,12 @@ namespace Ical.Net
         public virtual bool OccursAt(IDateTime dateTime)
         {
             foreach (var p in _mEvaluator.Periods)
+            {
                 if (p.StartTime.Equals(dateTime))
+                {
                     return true;
+                }
+            }
             return false;
         }
 
@@ -274,7 +276,7 @@ namespace Ical.Net
         /// <returns>True if the event has not been cancelled, False otherwise.</returns>
         public virtual bool IsActive()
         {
-            return (Status != EventStatus.Cancelled);            
+            return (Status != EventStatus.Cancelled);
         }
 
         #endregion
@@ -295,8 +297,8 @@ namespace Ical.Net
             base.OnDeserialized(context);
 
             ExtrapolateTimes();
-        }        
-        
+        }
+
         #endregion
 
         #region Private Methods
@@ -304,11 +306,17 @@ namespace Ical.Net
         private void ExtrapolateTimes()
         {
             if (DtEnd == null && DtStart != null && Duration != default(TimeSpan))
+            {
                 DtEnd = DtStart.Add(Duration);
+            }
             else if (Duration == default(TimeSpan) && DtStart != null && DtEnd != null)
+            {
                 Duration = DtEnd.Subtract(DtStart);
+            }
             else if (DtStart == null && Duration != default(TimeSpan) && DtEnd != null)
+            {
                 DtStart = DtEnd.Subtract(Duration);
+            }
         }
 
         #endregion

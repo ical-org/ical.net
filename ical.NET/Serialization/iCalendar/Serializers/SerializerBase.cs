@@ -5,8 +5,7 @@ using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers
 {
-    public abstract class SerializerBase :
-        IStringSerializer
+    public abstract class SerializerBase : IStringSerializer
     {
         #region Private Fields
 
@@ -34,7 +33,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         {
             get { return _mSerializationContext; }
             set { _mSerializationContext = value; }
-        }        
+        }
 
         public abstract Type TargetType { get; }
         public abstract string SerializeToString(object obj);
@@ -63,7 +62,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             // we don't want the stream to be closed by this serialization.
             // Fixes bug #3177278 - Serialize closes stream
             var sw = new StreamWriter(stream, encoding);
-            
+
             // Push the current object onto the serialization stack
             SerializationContext.Push(obj);
 
@@ -87,53 +86,69 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         public virtual object GetService(Type serviceType)
         {
             if (SerializationContext != null)
+            {
                 return SerializationContext.GetService(serviceType);
+            }
             return null;
         }
 
         public virtual object GetService(string name)
         {
             if (SerializationContext != null)
+            {
                 return SerializationContext.GetService(name);
+            }
             return null;
         }
 
         public virtual T GetService<T>()
         {
             if (SerializationContext != null)
+            {
                 return SerializationContext.GetService<T>();
+            }
             return default(T);
         }
 
         public virtual T GetService<T>(string name)
         {
             if (SerializationContext != null)
+            {
                 return SerializationContext.GetService<T>(name);
+            }
             return default(T);
         }
 
         public void SetService(string name, object obj)
         {
             if (SerializationContext != null)
+            {
                 SerializationContext.SetService(name, obj);
+            }
         }
 
         public void SetService(object obj)
         {
             if (SerializationContext != null)
+            {
                 SerializationContext.SetService(obj);
+            }
         }
 
         public void RemoveService(Type type)
         {
             if (SerializationContext != null)
+            {
                 SerializationContext.RemoveService(type);
+            }
         }
 
         public void RemoveService(string name)
         {
             if (SerializationContext != null)
+            {
                 SerializationContext.RemoveService(name);
+            }
         }
 
         #endregion

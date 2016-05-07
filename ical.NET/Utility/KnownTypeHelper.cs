@@ -10,8 +10,8 @@ namespace Ical.Net.Utility
         {
             var types = new List<Type>();
 
-            types.Add(typeof(CalendarPropertyList));
-            types.Add(typeof(CalendarParameterList));
+            types.Add(typeof (CalendarPropertyList));
+            types.Add(typeof (CalendarParameterList));
 
             return types;
         }

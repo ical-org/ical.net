@@ -15,12 +15,8 @@ namespace Ical.Net
     /// Represents a unique component, a component with a unique UID,
     /// which can be used to uniquely identify the component.    
     /// </summary>
-
     [Serializable]
-
-    public class UniqueComponent : 
-        CalendarComponent,
-        IUniqueComponent
+    public class UniqueComponent : CalendarComponent, IUniqueComponent
     {
         // TODO: Add AddRelationship() public method.
         // This method will add the UID of a related component
@@ -35,10 +31,11 @@ namespace Ical.Net
             Initialize();
             EnsureProperties();
         }
+
         public UniqueComponent(string name) : base(name)
         {
             Initialize();
-            EnsureProperties();            
+            EnsureProperties();
         }
 
         private void EnsureProperties()
@@ -58,8 +55,8 @@ namespace Ical.Net
                 // two calendars, one generated, and one loaded from file, they may be functionally identical,
                 // but be determined to be different due to millisecond differences.
                 var now = DateTime.Now;
-                DtStamp = new CalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);                
-            }            
+                DtStamp = new CalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+            }
         }
 
         private void Initialize()
@@ -114,9 +111,7 @@ namespace Ical.Net
 
         void Properties_ItemRemoved(object sender, ObjectEventArgs<ICalendarProperty, int> e)
         {
-            if (e.First != null &&
-                e.First.Name != null &&
-                string.Equals(e.First.Name.ToUpper(), "UID"))
+            if (e.First != null && e.First.Name != null && string.Equals(e.First.Name.ToUpper(), "UID"))
             {
                 OnUidChanged(e.First.Values.Cast<string>().FirstOrDefault(), null);
                 e.First.ValueChanged -= Object_ValueChanged;
@@ -125,9 +120,7 @@ namespace Ical.Net
 
         void Properties_ItemAdded(object sender, ObjectEventArgs<ICalendarProperty, int> e)
         {
-            if (e.First != null &&
-                e.First.Name != null &&
-                string.Equals(e.First.Name.ToUpper(), "UID"))
+            if (e.First != null && e.First.Name != null && string.Equals(e.First.Name.ToUpper(), "UID"))
             {
                 OnUidChanged(null, e.First.Values.Cast<string>().FirstOrDefault());
                 e.First.ValueChanged += Object_ValueChanged;
@@ -144,7 +137,7 @@ namespace Ical.Net
         #endregion
 
         #region Overrides
-        
+
         protected override void OnDeserializing(StreamingContext context)
         {
             base.OnDeserializing(context);
@@ -161,12 +154,13 @@ namespace Ical.Net
 
         public override bool Equals(object obj)
         {
-            if (obj is RecurringComponent && 
-                obj != this)
+            if (obj is RecurringComponent && obj != this)
             {
-                var r = (RecurringComponent)obj;                
+                var r = (RecurringComponent) obj;
                 if (Uid != null)
+                {
                     return Uid.Equals(r.Uid);
+                }
                 return Uid == r.Uid;
             }
             return base.Equals(obj);
@@ -175,7 +169,9 @@ namespace Ical.Net
         public override int GetHashCode()
         {
             if (Uid != null)
+            {
                 return Uid.GetHashCode();
+            }
             return base.GetHashCode();
         }
 
@@ -188,7 +184,9 @@ namespace Ical.Net
         protected virtual void OnUidChanged(string oldUid, string newUid)
         {
             if (UidChanged != null)
+            {
                 UidChanged(this, new ObjectEventArgs<string, string>(oldUid, newUid));
+            }
         }
 
         public virtual string Uid

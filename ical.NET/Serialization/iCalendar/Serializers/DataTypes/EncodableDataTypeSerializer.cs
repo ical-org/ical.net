@@ -3,18 +3,13 @@ using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
-    public abstract class EncodableDataTypeSerializer :
-        DataTypeSerializer
+    public abstract class EncodableDataTypeSerializer : DataTypeSerializer
     {
         #region Constructors
 
-        public EncodableDataTypeSerializer()
-        {
-        }
+        public EncodableDataTypeSerializer() {}
 
-        public EncodableDataTypeSerializer(ISerializationContext ctx) : base(ctx)
-        {
-        }
+        public EncodableDataTypeSerializer(ISerializationContext ctx) : base(ctx) {}
 
         #endregion
 
@@ -25,7 +20,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             if (value != null)
             {
                 if (dt == null || dt.Encoding == null)
+                {
                     return value;
+                }
 
                 // Return the value in the current encoding
                 var encodingStack = GetService<IEncodingStack>();
@@ -47,7 +44,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
                 var encodingProvider = GetService<IEncodingProvider>();
                 if (encodingProvider != null)
+                {
                     return encodingProvider.Encode(dt.Encoding, data);
+                }
             }
             return null;
         }
@@ -77,7 +76,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
                 var encodingProvider = GetService<IEncodingProvider>();
                 if (encodingProvider != null)
+                {
                     return encodingProvider.DecodeData(dt.Encoding, value);
+                }
             }
             return null;
         }

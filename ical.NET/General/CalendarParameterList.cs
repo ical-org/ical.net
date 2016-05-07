@@ -5,12 +5,8 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.General
 {
-
     [Serializable]
-
-    public class CalendarParameterList :
-        GroupedValueList<string, ICalendarParameter, CalendarParameter, string>,
-        ICalendarParameterCollection
+    public class CalendarParameterList : GroupedValueList<string, ICalendarParameter, CalendarParameter, string>, ICalendarParameterCollection
     {
         #region Private Fields
 
@@ -21,9 +17,7 @@ namespace Ical.Net.General
 
         #region Constructors
 
-        public CalendarParameterList()
-        {
-        }
+        public CalendarParameterList() {}
 
         public CalendarParameterList(ICalendarObject parent, bool caseInsensitive)
         {
@@ -56,7 +50,9 @@ namespace Ical.Net.General
         protected override string GroupModifier(string group)
         {
             if (_mCaseInsensitive && group != null)
+            {
                 return group.ToUpper();
+            }
             return group;
         }
 

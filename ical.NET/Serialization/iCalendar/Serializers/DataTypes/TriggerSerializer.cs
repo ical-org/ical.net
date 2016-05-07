@@ -8,10 +8,9 @@ using Ical.Net.Serialization.iCalendar.Serializers.Other;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
-    public class TriggerSerializer :
-        StringSerializer
+    public class TriggerSerializer : StringSerializer
     {
-        public override Type TargetType => typeof(Trigger);
+        public override Type TargetType => typeof (Trigger);
 
         public override string SerializeToString(object obj)
         {
@@ -27,11 +26,11 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                         var factory = GetService<ISerializerFactory>();
                         if (factory != null)
                         {
-                            var valueType = t.GetValueType() ?? typeof(TimeSpan);
+                            var valueType = t.GetValueType() ?? typeof (TimeSpan);
                             var serializer = factory.Build(valueType, SerializationContext) as IStringSerializer;
                             if (serializer != null)
                             {
-                                var value = (valueType == typeof(IDateTime)) ? t.DateTime : (object)t.Duration;
+                                var value = (valueType == typeof (IDateTime)) ? t.DateTime : (object) t.Duration;
                                 return serializer.SerializeToString(value);
                             }
                         }
@@ -65,8 +64,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                     value = Decode(t, value);
 
                     // Set the trigger relation
-                    if (t.Parameters.ContainsKey("RELATED") &&
-                        t.Parameters.Get("RELATED").Equals("END"))
+                    if (t.Parameters.ContainsKey("RELATED") && t.Parameters.Get("RELATED").Equals("END"))
                     {
                         t.Related = TriggerRelation.End;
                     }
@@ -74,7 +72,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                     var factory = GetService<ISerializerFactory>();
                     if (factory != null)
                     {
-                        var valueType = t.GetValueType() ?? typeof(TimeSpan);
+                        var valueType = t.GetValueType() ?? typeof (TimeSpan);
                         var serializer = factory.Build(valueType, SerializationContext) as IStringSerializer;
                         if (serializer != null)
                         {
@@ -82,9 +80,13 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                             if (obj != null)
                             {
                                 if (obj is IDateTime)
-                                    t.DateTime = (IDateTime)obj;
+                                {
+                                    t.DateTime = (IDateTime) obj;
+                                }
                                 else
-                                    t.Duration = (TimeSpan)obj;
+                                {
+                                    t.Duration = (TimeSpan) obj;
+                                }
 
                                 return t;
                             }

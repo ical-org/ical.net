@@ -10,12 +10,8 @@ namespace Ical.Net.General
     /// <summary>
     /// The base class for all iCalendar objects and components.
     /// </summary>
-
     [Serializable]
-
-    public class CalendarObject :
-        CalendarObjectBase,
-        ICalendarObject
+    public class CalendarObject : CalendarObjectBase, ICalendarObject
     {
         #region Private Fields
 
@@ -23,7 +19,7 @@ namespace Ical.Net.General
         private ICalendarObjectList<ICalendarObject> _children;
         private ServiceProvider _serviceProvider;
         private string _name;
-        
+
         private int _line;
         private int _column;
 
@@ -36,8 +32,7 @@ namespace Ical.Net.General
             Initialize();
         }
 
-        public CalendarObject(string name)
-            : this()
+        public CalendarObject(string name) : this()
         {
             Name = name;
         }
@@ -55,7 +50,7 @@ namespace Ical.Net.General
 
             _children.ItemAdded += _Children_ItemAdded;
             _children.ItemRemoved += _Children_ItemRemoved;
-        }        
+        }
 
         #endregion
 
@@ -82,9 +77,7 @@ namespace Ical.Net.General
             Initialize();
         }
 
-        protected virtual void OnDeserialized(StreamingContext context)
-        {
-        }
+        protected virtual void OnDeserialized(StreamingContext context) {}
 
         #endregion
 
@@ -108,14 +101,18 @@ namespace Ical.Net.General
         {
             var o = obj as ICalendarObject;
             if (o != null)
+            {
                 return Equals(o.Name, Name);
+            }
             return base.Equals(obj);
         }
 
         public override int GetHashCode()
         {
             if (Name != null)
+            {
                 return Name.GetHashCode();
+            }
             return base.GetHashCode();
         }
 
@@ -129,18 +126,20 @@ namespace Ical.Net.General
                 Parent = obj.Parent;
                 Line = obj.Line;
                 Column = obj.Column;
-                
+
                 // Add each child
                 Children.Clear();
                 foreach (var child in obj.Children)
+                {
                     this.AddChild(child.Copy<ICalendarObject>());
+                }
             }
-        }        
+        }
 
         #endregion
 
         #region ICalendarObject Members
-        
+
         /// <summary>
         /// Returns the parent iCalObject that owns this one.
         /// </summary>
@@ -189,16 +188,17 @@ namespace Ical.Net.General
             {
                 ICalendarObject obj = this;
                 while (!(obj is ICalendar) && obj.Parent != null)
+                {
                     obj = obj.Parent;
+                }
 
                 if (obj is ICalendar)
-                    return (ICalendar)obj;
+                {
+                    return (ICalendar) obj;
+                }
                 return null;
             }
-            protected set
-            {
-                _parent = value;
-            }
+            protected set { _parent = value; }
         }
 
         public virtual ICalendar ICalendar
@@ -219,7 +219,7 @@ namespace Ical.Net.General
             set { _column = value; }
         }
 
-        #endregion       
+        #endregion
 
         #region IServiceProvider Members
 
@@ -230,7 +230,7 @@ namespace Ical.Net.General
 
         public virtual object GetService(string name)
         {
-            return _serviceProvider.GetService(name);            
+            return _serviceProvider.GetService(name);
         }
 
         public virtual T GetService<T>()
@@ -273,7 +273,9 @@ namespace Ical.Net.General
         protected void OnGroupChanged(string @old, string @new)
         {
             if (GroupChanged != null)
+            {
                 GroupChanged(this, new ObjectEventArgs<string, string>(@old, @new));
+            }
         }
 
         public virtual string Group

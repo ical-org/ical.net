@@ -6,10 +6,9 @@ using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
-    public class AttachmentSerializer :
-        EncodableDataTypeSerializer
+    public class AttachmentSerializer : EncodableDataTypeSerializer
     {
-        public override Type TargetType => typeof(Attachment);
+        public override Type TargetType => typeof (Attachment);
 
         public override string SerializeToString(object obj)
         {
@@ -17,7 +16,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             if (a != null)
             {
                 if (a.Uri != null)
-                {                    
+                {
                     if (a.Parameters.ContainsKey("VALUE"))
                     {
                         // Ensure no VALUE type is provided
@@ -32,7 +31,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                     a.SetValueType("BINARY");
 
                     // BASE64 encoding for BINARY inline attachments.
-                    a.Parameters.Set("ENCODING", "BASE64");                    
+                    a.Parameters.Set("ENCODING", "BASE64");
 
                     return Encode(a, a.Data);
                 }
@@ -58,12 +57,14 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
                     // Get the format of the attachment
                     var valueType = a.GetValueType();
-                    if (valueType == typeof(byte[]))
+                    if (valueType == typeof (byte[]))
                     {
                         // If the VALUE type is specifically set to BINARY,
                         // then set the Data property instead.                    
                         if (value != null)
+                        {
                             a.Data = data;
+                        }
                         return a;
                     }
 
@@ -78,7 +79,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                     return a;
                 }
             }
-            catch { }
+            catch {}
 
             return null;
         }

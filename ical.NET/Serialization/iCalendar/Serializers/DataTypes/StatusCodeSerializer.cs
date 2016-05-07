@@ -7,10 +7,9 @@ using Ical.Net.Serialization.iCalendar.Serializers.Other;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
-    public class StatusCodeSerializer :
-        StringSerializer
+    public class StatusCodeSerializer : StringSerializer
     {
-        public override Type TargetType => typeof(StatusCode);
+        public override Type TargetType => typeof (StatusCode);
 
         public override string SerializeToString(object obj)
         {
@@ -19,7 +18,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             {
                 var vals = new string[sc.Parts.Length];
                 for (var i = 0; i < sc.Parts.Length; i++)
+                {
                     vals[i] = sc.Parts[i].ToString();
+                }
                 return Encode(sc, Escape(string.Join(".", vals)));
             }
             return null;
@@ -36,7 +37,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             {
                 // Decode the value as needed
                 value = Decode(sc, value);
-                                
+
                 var match = StatusCode.Match(value);
                 if (match.Success)
                 {
@@ -46,7 +47,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                     {
                         int num;
                         if (!Int32.TryParse(parts[i], out num))
+                        {
                             return false;
+                        }
                         iparts[i] = num;
                     }
 

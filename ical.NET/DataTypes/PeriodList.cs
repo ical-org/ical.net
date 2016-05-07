@@ -13,16 +13,13 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// An iCalendar list of recurring dates (or date exclusions)
     /// </summary>
-
     [Serializable]
-
-    public class PeriodList : 
-        EncodableDataType,
-        IPeriodList
+    public class PeriodList : EncodableDataType, IPeriodList
     {
         public string TzId { get; set; }
 
         private IList<IPeriod> _periods = new List<IPeriod>();
+
         protected IList<IPeriod> Periods
         {
             get { return _periods; }
@@ -35,6 +32,7 @@ namespace Ical.Net.DataTypes
         {
             Initialize();
         }
+
         public PeriodList(string value) : this()
         {
             var serializer = new PeriodListSerializer();
@@ -60,7 +58,7 @@ namespace Ical.Net.DataTypes
         {
             if (obj is IPeriodList)
             {
-                var r = (IPeriodList)obj;
+                var r = (IPeriodList) obj;
 
                 var p1Enum = GetEnumerator();
                 var p2Enum = r.GetEnumerator();
@@ -68,14 +66,20 @@ namespace Ical.Net.DataTypes
                 while (p1Enum.MoveNext())
                 {
                     if (!p2Enum.MoveNext())
+                    {
                         return false;
+                    }
 
                     if (!Equals(p1Enum.Current, p2Enum.Current))
+                    {
                         return false;
+                    }
                 }
 
                 if (p2Enum.MoveNext())
+                {
                     return false;
+                }
 
                 return true;
             }
@@ -86,18 +90,22 @@ namespace Ical.Net.DataTypes
         {
             var hashCode = 0;
             foreach (var p in this)
+            {
                 hashCode ^= p.GetHashCode();
+            }
             return hashCode;
         }
- 
+
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
             if (obj is IPeriodList)
             {
-                var rdt = (IPeriodList)obj;
+                var rdt = (IPeriodList) obj;
                 foreach (var p in rdt)
+                {
                     Add(p.Copy<IPeriod>());
+                }
             }
         }
 
@@ -112,15 +120,22 @@ namespace Ical.Net.DataTypes
             var periods = new List<Period>();
 
             if (startDate > fromDate)
+            {
                 fromDate = startDate;
+            }
 
-            if (endDate < fromDate ||
-                fromDate > endDate)
+            if (endDate < fromDate || fromDate > endDate)
+            {
                 return periods;
+            }
 
             foreach (Period p in Periods)
+            {
                 if (!periods.Contains(p))
+                {
                     periods.Add(p);
+                }
+            }
 
             return periods;
         }
@@ -133,14 +148,8 @@ namespace Ical.Net.DataTypes
 
         public IPeriod this[int index]
         {
-            get
-            {
-                return _periods[index];
-            }
-            set
-            {
-                _periods[index] = value;
-            }
+            get { return _periods[index]; }
+            set { _periods[index] = value; }
         }
 
         public virtual void Add(IPeriod item) => _periods.Add(item);

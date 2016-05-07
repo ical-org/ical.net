@@ -2,8 +2,7 @@
 
 namespace Ical.Net.Interfaces.DataTypes
 {
-    public interface ITrigger :
-        IEncodableDataType
+    public interface ITrigger : IEncodableDataType
     {
         IDateTime DateTime { get; set; }
         TimeSpan? Duration { get; set; }

@@ -12,12 +12,8 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// A class to handle attachments, or URIs as attachments, within an iCalendar. 
     /// </summary>
-
     [Serializable]
-
-    public class Attachment : 
-        EncodableDataType,
-        IAttachment
+    public class Attachment : EncodableDataType, IAttachment
     {
         #region Private Fields
 
@@ -29,12 +25,12 @@ namespace Ical.Net.DataTypes
 
         #region Constructors
 
-        public Attachment() 
+        public Attachment()
         {
             Initialize();
         }
-        public Attachment(string value)
-            : this()
+
+        public Attachment(string value) : this()
         {
             var serializer = new AttachmentSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
@@ -65,19 +61,29 @@ namespace Ical.Net.DataTypes
         {
             if (obj is IAttachment)
             {
-                var a = (IAttachment)obj;
+                var a = (IAttachment) obj;
 
                 if (Data == null && a.Data == null)
+                {
                     return Uri.Equals(a.Uri);
+                }
                 if (Data == null || a.Data == null)
+                {
                     // One item is null, but the other isn't                    
                     return false;
+                }
                 if (Data.Length != a.Data.Length)
+                {
                     return false;
+                }
                 for (var i = 0; i < Data.Length; i++)
+                {
                     if (Data[i] != a.Data[i])
+                    {
                         return false;
-                return true;                
+                    }
+                }
+                return true;
             }
             return base.Equals(obj);
         }
@@ -85,18 +91,22 @@ namespace Ical.Net.DataTypes
         public override int GetHashCode()
         {
             if (Uri != null)
+            {
                 return Uri.GetHashCode();
+            }
             if (Data != null)
+            {
                 return Data.GetHashCode();
+            }
             return base.GetHashCode();
         }
-      
+
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
             if (obj is IAttachment)
             {
-                var a = (IAttachment)obj;
+                var a = (IAttachment) obj;
                 ValueEncoding = a.ValueEncoding;
 
                 if (a.Data != null)
@@ -104,13 +114,16 @@ namespace Ical.Net.DataTypes
                     Data = new byte[a.Data.Length];
                     a.Data.CopyTo(Data, 0);
                 }
-                else Data = null;
+                else
+                {
+                    Data = null;
+                }
 
                 Uri = a.Uri;
             }
         }
 
-        #endregion        
+        #endregion
 
         #region IAttachment Members
 
@@ -137,15 +150,21 @@ namespace Ical.Net.DataTypes
             get
             {
                 if (Data != null)
+                {
                     return _mEncoding.GetString(Data);
+                }
                 return null;
             }
             set
             {
                 if (value != null)
+                {
                     Data = _mEncoding.GetBytes(value);
-                else                    
+                }
+                else
+                {
                     Data = null;
+                }
             }
         }
 
@@ -183,14 +202,17 @@ namespace Ical.Net.DataTypes
         {
             using (var client = new WebClient())
             {
-                if (username != null &&
-                    password != null)
+                if (username != null && password != null)
+                {
                     client.Credentials = new NetworkCredential(username, password);
+                }
 
                 if (uri == null)
                 {
                     if (Uri == null)
+                    {
                         throw new ArgumentException("A URI was not provided for the LoadDataFromUri() method");
+                    }
                     uri = new Uri(Uri.OriginalString);
                 }
 

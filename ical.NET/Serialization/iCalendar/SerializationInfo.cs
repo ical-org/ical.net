@@ -14,12 +14,8 @@
         /// </summary>
         int Column { get; set; }
 
-        public SerializationInfo()
-        {
-        }
+        public SerializationInfo() {}
 
-        public SerializationInfo(int line, int column)
-        {
-        }
+        public SerializationInfo(int line, int column) {}
     }
 }

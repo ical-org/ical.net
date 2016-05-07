@@ -15,9 +15,7 @@ namespace Ical.Net
     /// This class is used by the parsing framework for iCalendar components.
     /// Generally, you should not need to use this class directly.
     /// </summary>
-
     [Serializable]
-
     [DebuggerDisplay("Component: {Name}")]
     public class CalendarComponent : CalendarObject, ICalendarComponent
     {
@@ -44,13 +42,14 @@ namespace Ical.Net
             return LoadFromStream(stream, encoding, new ComponentSerializer());
         }
 
-        public static T LoadFromStream<T>(Stream stream, Encoding encoding)
-            where T : ICalendarComponent
+        public static T LoadFromStream<T>(Stream stream, Encoding encoding) where T : ICalendarComponent
         {
-            var serializer = new ComponentSerializer();            
+            var serializer = new ComponentSerializer();
             object obj = LoadFromStream(stream, encoding, serializer);
             if (obj is T)
-                return (T)obj;
+            {
+                return (T) obj;
+            }
             return default(T);
         }
 
@@ -77,11 +76,13 @@ namespace Ical.Net
         {
             object obj = LoadFromStream(tr);
             if (obj is T)
-                return (T)obj;
+            {
+                return (T) obj;
+            }
             return default(T);
         }
 
-        #endregion        
+        #endregion
 
         #endregion
 
@@ -123,7 +124,9 @@ namespace Ical.Net
             {
                 Properties.Clear();
                 foreach (var p in c.Properties)
+                {
                     Properties.Add(p.Copy<ICalendarProperty>());
+                }
             }
         }
 

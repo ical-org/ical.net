@@ -2,11 +2,7 @@
 
 namespace Ical.Net.Interfaces.General
 {
-    public interface ICalendarObject :
-        IGroupedObject<string>,
-        ILoadable,
-        ICopyable,
-        IServiceProvider
+    public interface ICalendarObject : IGroupedObject<string>, ILoadable, ICopyable, IServiceProvider
     {
         /// <summary>
         /// The name of the calendar object.
@@ -30,6 +26,7 @@ namespace Ical.Net.Interfaces.General
         /// is associated with.
         /// </summary>
         ICalendar Calendar { get; }
+
         ICalendar ICalendar { get; }
 
         /// <summary>

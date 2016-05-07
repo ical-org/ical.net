@@ -13,16 +13,13 @@ namespace Ical.Net.Structs
     /// the alarm occurs, the <see cref="Alarm"/> that fired, and the 
     /// component on which the alarm fired.
     /// </remarks>
-
     [Serializable]
-
-    public struct AlarmOccurrence : 
-        IComparable<AlarmOccurrence>
+    public struct AlarmOccurrence : IComparable<AlarmOccurrence>
     {
         #region Private Fields
 
         private IPeriod _mPeriod;
-        private IRecurringComponent _mComponent; 
+        private IRecurringComponent _mComponent;
         private IAlarm _mAlarm;
 
         #endregion
@@ -39,7 +36,7 @@ namespace Ical.Net.Structs
         {
             get { return _mComponent; }
             set { _mComponent = value; }
-        } 
+        }
 
         public IAlarm Alarm
         {

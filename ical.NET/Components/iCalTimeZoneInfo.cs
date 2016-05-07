@@ -10,14 +10,12 @@ using Ical.Net.Structs;
 using Ical.Net.Utility;
 
 namespace Ical.Net
-{    
+{
     /// <summary>
     /// A class that contains time zone information, and is usually accessed
     /// from an iCalendar object using the <see cref="Calendar.GetTimeZone"/> method.        
     /// </summary>
-
     [Serializable]
-
     public class CalTimeZoneInfo : CalendarComponent, ITimeZoneInfo
     {
         private TimeZoneInfoEvaluator _mEvaluator;
@@ -44,6 +42,7 @@ namespace Ical.Net
         }
 
         private string _tzId;
+
         public virtual string TzId
         {
             get
@@ -71,12 +70,7 @@ namespace Ical.Net
         /// </summary>
         public virtual string TimeZoneName
         {
-            get
-            {
-                return !string.IsNullOrWhiteSpace(TzId)
-                    ? TzId
-                    : TimeZoneNames.FirstOrDefault();
-            }
+            get { return !string.IsNullOrWhiteSpace(TzId) ? TzId : TimeZoneNames.FirstOrDefault(); }
             set
             {
                 TimeZoneNames.Clear();
@@ -85,6 +79,7 @@ namespace Ical.Net
         }
 
         private IUtcOffset _offsetFrom;
+
         public virtual IUtcOffset OffsetFrom
         {
             get { return _offsetFrom ?? (_offsetFrom = Properties.Get<IUtcOffset>("TZOFFSETFROM")); }
@@ -92,6 +87,7 @@ namespace Ical.Net
         }
 
         private IUtcOffset _offsetTo;
+
         public virtual IUtcOffset OffsetTo
         {
             get { return _offsetTo ?? (_offsetTo = Properties.Get<IUtcOffset>("TZOFFSETTO")); }
@@ -99,6 +95,7 @@ namespace Ical.Net
         }
 
         private IList<string> _tzNames = new List<string>();
+
         public virtual IList<string> TimeZoneNames
         {
             get { return _tzNames ?? (_tzNames = Properties.GetMany<string>("TZNAME")); }
@@ -198,7 +195,7 @@ namespace Ical.Net
             {
                 return false;
             }
-            return Equals((CalTimeZoneInfo)obj);
+            return Equals((CalTimeZoneInfo) obj);
         }
 
         public override int GetHashCode()
@@ -210,5 +207,5 @@ namespace Ical.Net
                 return hashCode;
             }
         }
-    }    
+    }
 }

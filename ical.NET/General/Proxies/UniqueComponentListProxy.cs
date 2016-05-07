@@ -7,9 +7,7 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.General.Proxies
 {
-    public class UniqueComponentListProxy<TComponentType> :
-        CalendarObjectListProxy<TComponentType>,
-        IUniqueComponentList<TComponentType>
+    public class UniqueComponentListProxy<TComponentType> : CalendarObjectListProxy<TComponentType>, IUniqueComponentList<TComponentType>
         where TComponentType : class, IUniqueComponent
     {
         Dictionary<string, TComponentType> _lookup;
@@ -23,7 +21,7 @@ namespace Ical.Net.General.Proxies
             children.ItemAdded += children_ItemAdded;
             children.ItemRemoved += children_ItemRemoved;
         }
-        
+
         #endregion
 
         #region Private Methods
@@ -35,10 +33,7 @@ namespace Ical.Net.General.Proxies
                 return _lookup[uid];
             }
 
-            var item = this
-                .OfType<TComponentType>()
-                .Where(c => string.Equals(c.Uid, uid))
-                .FirstOrDefault();
+            var item = this.OfType<TComponentType>().Where(c => string.Equals(c.Uid, uid)).FirstOrDefault();
 
             if (item != null)
             {
@@ -49,25 +44,26 @@ namespace Ical.Net.General.Proxies
         }
 
         #endregion
-       
+
         #region UniqueComponentListProxy Members
 
         public virtual TComponentType this[string uid]
         {
-            get
-            {
-                return Search(uid);
-            }
+            get { return Search(uid); }
             set
             {
                 // Find the item matching the UID
                 var item = Search(uid);
 
                 if (item != null)
+                {
                     Remove(item);
-                
+                }
+
                 if (value != null)
+                {
                     Add(value);
+                }
             }
         }
 
@@ -79,11 +75,13 @@ namespace Ical.Net.General.Proxies
         {
             if (e.First is TComponentType)
             {
-                var component = (TComponentType)e.First;
+                var component = (TComponentType) e.First;
                 component.UidChanged += UidChanged;
 
                 if (!string.IsNullOrEmpty(component.Uid))
+                {
                     _lookup[component.Uid] = component;
+                }
             }
         }
 
@@ -91,28 +89,26 @@ namespace Ical.Net.General.Proxies
         {
             if (e.First is TComponentType)
             {
-                var component = (TComponentType)e.First;
+                var component = (TComponentType) e.First;
                 component.UidChanged -= UidChanged;
 
-                if (!string.IsNullOrEmpty(component.Uid) &&
-                    _lookup.ContainsKey(component.Uid))
+                if (!string.IsNullOrEmpty(component.Uid) && _lookup.ContainsKey(component.Uid))
                 {
                     _lookup.Remove(component.Uid);
                 }
-            }   
+            }
         }
 
         void UidChanged(object sender, ObjectEventArgs<string, string> e)
         {
-            if (e.First != null &&
-                _lookup.ContainsKey(e.First))
+            if (e.First != null && _lookup.ContainsKey(e.First))
             {
                 _lookup.Remove(e.First);
             }
 
             if (e.Second != null)
             {
-                _lookup[e.Second] = (TComponentType)sender;
+                _lookup[e.Second] = (TComponentType) sender;
             }
         }
 

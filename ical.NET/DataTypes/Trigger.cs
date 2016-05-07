@@ -10,12 +10,8 @@ namespace Ical.Net.DataTypes
     /// A class that is used to specify exactly when an <see cref="Components.Alarm"/> component will trigger.
     /// Usually this date/time is relative to the component to which the Alarm is associated.
     /// </summary>    
-
     [Serializable]
-
-    public class Trigger : 
-        EncodableDataType,
-        ITrigger
+    public class Trigger : EncodableDataType, ITrigger
     {
         #region Private Fields
 
@@ -68,20 +64,21 @@ namespace Ical.Net.DataTypes
             get { return _mRelated; }
             set { _mRelated = value; }
         }
-        
+
         public virtual bool IsRelative => _mDuration != null;
 
         #endregion
 
         #region Constructors
 
-        public Trigger() { }
+        public Trigger() {}
+
         public Trigger(TimeSpan ts)
         {
             Duration = ts;
         }
-        public Trigger(string value)
-            : this()
+
+        public Trigger(string value) : this()
         {
             var serializer = new TriggerSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
@@ -96,7 +93,7 @@ namespace Ical.Net.DataTypes
             base.CopyFrom(obj);
             if (obj is ITrigger)
             {
-                var t = (ITrigger)obj;
+                var t = (ITrigger) obj;
                 DateTime = t.DateTime;
                 Duration = t.Duration;
                 Related = t.Related;

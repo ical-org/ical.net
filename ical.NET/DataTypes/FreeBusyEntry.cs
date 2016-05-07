@@ -3,9 +3,7 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.DataTypes
 {
-    public class FreeBusyEntry :
-        Period,
-        IFreeBusyEntry
+    public class FreeBusyEntry : Period, IFreeBusyEntry
     {
         #region Private Fields
 
@@ -14,7 +12,10 @@ namespace Ical.Net.DataTypes
         #region Constructors
 
         public FreeBusyEntry()
-        { Initialize(); }
+        {
+            Initialize();
+        }
+
         public FreeBusyEntry(IPeriod period, FreeBusyStatus status)
         {
             Initialize();

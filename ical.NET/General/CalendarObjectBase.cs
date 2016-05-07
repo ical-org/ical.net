@@ -3,12 +3,8 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.General
 {
-
     [Serializable]
-
-    public class CalendarObjectBase :
-        ICopyable,        
-        ILoadable
+    public class CalendarObjectBase : ICopyable, ILoadable
     {
         #region Private Fields
 
@@ -34,9 +30,7 @@ namespace Ical.Net.General
         /// Copies values from the target object to the
         /// current object.
         /// </summary>
-        public virtual void CopyFrom(ICopyable c)
-        {
-        }
+        public virtual void CopyFrom(ICopyable c) {}
 
         /// <summary>
         /// Creates a copy of the object.
@@ -52,25 +46,27 @@ namespace Ical.Net.General
             if (obj is T)
             {
                 obj.CopyFrom(this);
-                return (T)obj;
+                return (T) obj;
             }
             return default(T);
         }
 
-        #endregion        
+        #endregion
 
         #region ILoadable Members
 
         public virtual bool IsLoaded => _mIsLoaded;
 
-        [field:NonSerialized]
+        [field: NonSerialized]
         public event EventHandler Loaded;
 
         public virtual void OnLoaded()
         {
             _mIsLoaded = true;
             if (Loaded != null)
+            {
                 Loaded(this, EventArgs.Empty);
+            }
         }
 
         #endregion

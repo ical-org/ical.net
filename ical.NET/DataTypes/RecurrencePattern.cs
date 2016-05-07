@@ -13,19 +13,12 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// An iCalendar representation of the <c>RRULE</c> property.
     /// </summary>
-
     [Serializable]
-
-    public class RecurrencePattern :
-        EncodableDataType,
-        IRecurrencePattern
+    public class RecurrencePattern : EncodableDataType, IRecurrencePattern
     {
         #region Private Fields
 
-
-        [NonSerialized]
-
-        private FrequencyType _frequency;
+        [NonSerialized] private FrequencyType _frequency;
         private DateTime _until = DateTime.MinValue;
         private int _count = int.MinValue;
         private int _interval = int.MinValue;
@@ -69,7 +62,9 @@ namespace Ical.Net.DataTypes
             get
             {
                 if (_interval == int.MinValue)
+                {
                     return 1;
+                }
                 return _interval;
             }
             set { _interval = value; }
@@ -140,11 +135,14 @@ namespace Ical.Net.DataTypes
             get
             {
                 // NOTE: Fixes bug #1924358 - Cannot evaluate Secondly patterns
-                if (_restrictionType != null &&
-                    _restrictionType.HasValue)
+                if (_restrictionType != null && _restrictionType.HasValue)
+                {
                     return _restrictionType.Value;
+                }
                 if (Calendar != null)
+                {
                     return Calendar.RecurrenceRestriction;
+                }
                 return RecurrenceRestrictionType.Default;
             }
             set { _restrictionType = value; }
@@ -155,11 +153,14 @@ namespace Ical.Net.DataTypes
             get
             {
                 // NOTE: Fixes bug #1924358 - Cannot evaluate Secondly patterns
-                if (_evaluationMode != null &&
-                    _evaluationMode.HasValue)
+                if (_evaluationMode != null && _evaluationMode.HasValue)
+                {
                     return _evaluationMode.Value;
+                }
                 if (Calendar != null)
+                {
                     return Calendar.RecurrenceEvaluationMode;
+                }
                 return RecurrenceEvaluationModeType.Default;
             }
             set { _evaluationMode = value; }
@@ -192,19 +193,15 @@ namespace Ical.Net.DataTypes
             Initialize();
         }
 
-        public RecurrencePattern(FrequencyType frequency) : this(frequency, 1)
-        {
-        }
+        public RecurrencePattern(FrequencyType frequency) : this(frequency, 1) {}
 
-        public RecurrencePattern(FrequencyType frequency, int interval) :
-            this()
+        public RecurrencePattern(FrequencyType frequency, int interval) : this()
         {
             Frequency = frequency;
             Interval = interval;
         }
 
-        public RecurrencePattern(string value) : 
-            this()
+        public RecurrencePattern(string value) : this()
         {
             if (value != null)
             {
@@ -233,28 +230,40 @@ namespace Ical.Net.DataTypes
         {
             if (obj is RecurrencePattern)
             {
-                var r = (RecurrencePattern)obj;
-                if (!CollectionEquals(r.ByDay, ByDay) ||
-                    !CollectionEquals(r.ByHour, ByHour) ||
-                    !CollectionEquals(r.ByMinute, ByMinute) ||
-                    !CollectionEquals(r.ByMonth, ByMonth) ||
-                    !CollectionEquals(r.ByMonthDay, ByMonthDay) ||
-                    !CollectionEquals(r.BySecond, BySecond) ||
-                    !CollectionEquals(r.BySetPosition, BySetPosition) ||
-                    !CollectionEquals(r.ByWeekNo, ByWeekNo) ||
-                    !CollectionEquals(r.ByYearDay, ByYearDay))
+                var r = (RecurrencePattern) obj;
+                if (!CollectionEquals(r.ByDay, ByDay) || !CollectionEquals(r.ByHour, ByHour) || !CollectionEquals(r.ByMinute, ByMinute) ||
+                    !CollectionEquals(r.ByMonth, ByMonth) || !CollectionEquals(r.ByMonthDay, ByMonthDay) || !CollectionEquals(r.BySecond, BySecond) ||
+                    !CollectionEquals(r.BySetPosition, BySetPosition) || !CollectionEquals(r.ByWeekNo, ByWeekNo) || !CollectionEquals(r.ByYearDay, ByYearDay))
+                {
                     return false;
-                if (r.Count != Count) return false;
-                if (r.Frequency != Frequency) return false;
-                if (r.Interval != Interval) return false;
+                }
+                if (r.Count != Count)
+                {
+                    return false;
+                }
+                if (r.Frequency != Frequency)
+                {
+                    return false;
+                }
+                if (r.Interval != Interval)
+                {
+                    return false;
+                }
                 if (r.Until != DateTime.MinValue)
                 {
                     if (!r.Until.Equals(Until))
+                    {
                         return false;
+                    }
                 }
                 else if (Until != DateTime.MinValue)
+                {
                     return false;
-                if (r.FirstDayOfWeek != FirstDayOfWeek) return false;
+                }
+                if (r.FirstDayOfWeek != FirstDayOfWeek)
+                {
+                    return false;
+                }
                 return true;
             }
             return base.Equals(obj);
@@ -268,16 +277,19 @@ namespace Ical.Net.DataTypes
 
         public override int GetHashCode()
         {
-            var hashCode =
-                ByDay.GetHashCode() ^ ByHour.GetHashCode() ^ ByMinute.GetHashCode() ^
-                ByMonth.GetHashCode() ^ ByMonthDay.GetHashCode() ^ BySecond.GetHashCode() ^
-                BySetPosition.GetHashCode() ^ ByWeekNo.GetHashCode() ^ ByYearDay.GetHashCode() ^
-                Count.GetHashCode() ^ Frequency.GetHashCode();
+            var hashCode = ByDay.GetHashCode() ^ ByHour.GetHashCode() ^ ByMinute.GetHashCode() ^ ByMonth.GetHashCode() ^ ByMonthDay.GetHashCode() ^
+                           BySecond.GetHashCode() ^ BySetPosition.GetHashCode() ^ ByWeekNo.GetHashCode() ^ ByYearDay.GetHashCode() ^ Count.GetHashCode() ^
+                           Frequency.GetHashCode();
 
             if (Interval.Equals(1))
+            {
                 hashCode ^= 0x1;
-            else hashCode ^= Interval.GetHashCode();
-                        
+            }
+            else
+            {
+                hashCode ^= Interval.GetHashCode();
+            }
+
             hashCode ^= Until.GetHashCode();
             hashCode ^= FirstDayOfWeek.GetHashCode();
             return hashCode;
@@ -288,7 +300,7 @@ namespace Ical.Net.DataTypes
             base.CopyFrom(obj);
             if (obj is IRecurrencePattern)
             {
-                var r = (IRecurrencePattern)obj;
+                var r = (IRecurrencePattern) obj;
 
                 Frequency = r.Frequency;
                 Until = r.Until;
@@ -306,21 +318,24 @@ namespace Ical.Net.DataTypes
                 FirstDayOfWeek = r.FirstDayOfWeek;
                 RestrictionType = r.RestrictionType;
                 EvaluationMode = r.EvaluationMode;
-            }            
+            }
         }
 
         private bool CollectionEquals<T>(IList<T> c1, IList<T> c2)
         {
             // NOTE: fixes a bug where collections weren't properly compared
-            if (c1 == null ||
-                c2 == null)
+            if (c1 == null || c2 == null)
             {
                 if (c1 == c2)
+                {
                     return true;
+                }
                 return false;
             }
             if (!c1.Count.Equals(c2.Count))
+            {
                 return false;
+            }
 
             IEnumerator e1 = c1.GetEnumerator();
             IEnumerator e2 = c2.GetEnumerator();
@@ -328,7 +343,9 @@ namespace Ical.Net.DataTypes
             while (e1.MoveNext() && e2.MoveNext())
             {
                 if (!Equals(e1.Current, e2.Current))
+                {
                     return false;
+                }
             }
             return true;
         }
@@ -337,7 +354,6 @@ namespace Ical.Net.DataTypes
 
         #region Protected Methods
 
-       
         #endregion
     }
 }

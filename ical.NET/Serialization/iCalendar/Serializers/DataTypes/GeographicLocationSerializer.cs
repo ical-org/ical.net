@@ -5,10 +5,9 @@ using Ical.Net.Interfaces.DataTypes;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
-    public class GeographicLocationSerializer :
-        EncodableDataTypeSerializer
+    public class GeographicLocationSerializer : EncodableDataTypeSerializer
     {
-        public override Type TargetType => typeof(GeographicLocation);
+        public override Type TargetType => typeof (GeographicLocation);
 
         public override string SerializeToString(object obj)
         {
@@ -33,7 +32,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
                 var values = value.Split(';');
                 if (values.Length != 2)
+                {
                     return false;
+                }
 
                 double lat;
                 double lon;

@@ -6,8 +6,7 @@ using Ical.Net.Interfaces.DataTypes;
 
 namespace Ical.Net.Evaluation
 {
-    public class EventEvaluator :
-        RecurringEvaluator
+    public class EventEvaluator : RecurringEvaluator
     {
         #region Protected Properties
 
@@ -21,9 +20,7 @@ namespace Ical.Net.Evaluation
 
         #region Constructors
 
-        public EventEvaluator(IEvent evt) : base(evt)
-        {
-        }
+        public EventEvaluator(IEvent evt) : base(evt) {}
 
         #endregion
 
@@ -47,15 +44,14 @@ namespace Ical.Net.Evaluation
         /// <param name="includeReferenceDateInResults"></param>
         /// <returns></returns>
         public override HashSet<IPeriod> Evaluate(IDateTime referenceTime, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
-        {   
+        {
             // Evaluate recurrences normally
             base.Evaluate(referenceTime, periodStart, periodEnd, includeReferenceDateInResults);
 
-            foreach (var period in Periods.Where(period => period.EndTime == null)) {
+            foreach (var period in Periods.Where(period => period.EndTime == null))
+            {
                 period.Duration = Event.Duration;
-                period.EndTime = period.Duration == null
-                    ? period.StartTime
-                    : period.StartTime.Add(Event.Duration);
+                period.EndTime = period.Duration == null ? period.StartTime : period.StartTime.Add(Event.Duration);
             }
 
             // Ensure each period has a duration

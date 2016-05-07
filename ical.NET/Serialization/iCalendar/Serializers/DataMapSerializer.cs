@@ -6,18 +6,13 @@ using Ical.Net.Serialization.iCalendar.Serializers.Other;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers
 {
-    public class DataMapSerializer :
-        SerializerBase
+    public class DataMapSerializer : SerializerBase
     {
         #region Constructors
 
-        public DataMapSerializer()
-        {            
-        }
+        public DataMapSerializer() {}
 
-        public DataMapSerializer(ISerializationContext ctx) : base(ctx)
-        {
-        }
+        public DataMapSerializer(ISerializationContext ctx) : base(ctx) {}
 
         #endregion
 
@@ -27,8 +22,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         {
             var sf = GetService<ISerializerFactory>();
             var mapper = GetService<IDataTypeMapper>();
-            if (sf != null &&
-                mapper != null)
+            if (sf != null && mapper != null)
             {
                 var obj = SerializationContext.Peek();
 
@@ -36,7 +30,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                 var type = mapper.GetPropertyMapping(obj);
 
                 if (type != null)
+                {
                     return sf.Build(type, SerializationContext) as IStringSerializer;
+                }
                 return new StringSerializer(SerializationContext);
             }
             return null;
@@ -52,7 +48,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             {
                 ISerializer serializer = GetMappedSerializer();
                 if (serializer != null)
+                {
                     return serializer.TargetType;
+                }
                 return null;
             }
         }
@@ -61,7 +59,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         {
             var serializer = GetMappedSerializer();
             if (serializer != null)
+            {
                 return serializer.SerializeToString(obj);
+            }
             return null;
         }
 
@@ -80,8 +80,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                 // as try/catch is much slower than other means.
                 return returnValue ?? value;
             }
-            return null;            
-        } 
+            return null;
+        }
 
         #endregion
     }

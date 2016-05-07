@@ -18,15 +18,19 @@ namespace Ical.Net.Utility
         {
             var ctx = new StreamingContext(StreamingContextStates.All);
             foreach (var mi in GetDeserializingMethods(obj.GetType()))
-                mi.Invoke(obj, new object[] { ctx });
+            {
+                mi.Invoke(obj, new object[] {ctx});
+            }
         }
 
         public static void OnDeserialized(object obj)
         {
             var ctx = new StreamingContext(StreamingContextStates.All);
             foreach (var mi in GetDeserializedMethods(obj.GetType()))
-                mi.Invoke(obj, new object[] { ctx });
-        } 
+            {
+                mi.Invoke(obj, new object[] {ctx});
+            }
+        }
 
         #endregion
 
@@ -39,9 +43,11 @@ namespace Ical.Net.Utility
                 // FIXME: cache this
                 foreach (var mi in targetType.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
                 {
-                    var attrs = mi.GetCustomAttributes(typeof(OnDeserializingAttribute), false);
+                    var attrs = mi.GetCustomAttributes(typeof (OnDeserializingAttribute), false);
                     if (attrs != null && attrs.Length > 0)
+                    {
                         yield return mi;
+                    }
                 }
             }
         }
@@ -53,12 +59,14 @@ namespace Ical.Net.Utility
                 // FIXME: cache this
                 foreach (var mi in targetType.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
                 {
-                    var attrs = mi.GetCustomAttributes(typeof(OnDeserializedAttribute), true);
+                    var attrs = mi.GetCustomAttributes(typeof (OnDeserializedAttribute), true);
                     if (attrs != null && attrs.Length > 0)
+                    {
                         yield return mi;
+                    }
                 }
             }
-        } 
+        }
 
         #endregion
     }

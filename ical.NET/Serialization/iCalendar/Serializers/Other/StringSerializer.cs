@@ -11,18 +11,13 @@ using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 {
-    public class StringSerializer :
-        EncodableDataTypeSerializer
+    public class StringSerializer : EncodableDataTypeSerializer
     {
         #region Constructors
 
-        public StringSerializer()
-        {
-        }
+        public StringSerializer() {}
 
-        public StringSerializer(ISerializationContext ctx) : base(ctx)
-        {
-        }
+        public StringSerializer(ISerializationContext ctx) : base(ctx) {}
 
         #endregion
 
@@ -76,25 +71,27 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 
         #region Overrides
 
-        public override Type TargetType => typeof(string);
+        public override Type TargetType => typeof (string);
 
         public override string SerializeToString(object obj)
         {
             if (obj != null)
             {
-                var settings = GetService<ISerializationSettings>();                
+                var settings = GetService<ISerializationSettings>();
 
                 var values = new List<string>();
                 if (obj is string)
                 {
                     // Object to be serialied is a string already
-                    values.Add((string)obj);
+                    values.Add((string) obj);
                 }
                 else if (obj is IEnumerable)
                 {
                     // Object is a list of objects (probably IList<string>).
-                    foreach (var child in (IEnumerable)obj)
+                    foreach (var child in (IEnumerable) obj)
+                    {
                         values.Add(child.ToString());
+                    }
                 }
                 else
                 {
@@ -109,13 +106,17 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                     var dt = new EncodableDataType();
                     dt.AssociatedObject = co;
                     for (var i = 0; i < values.Count; i++)
+                    {
                         values[i] = Encode(dt, Escape(values[i]));
+                    }
 
                     return string.Join(",", values.ToArray());
                 }
-                
+
                 for (var i = 0; i < values.Count; i++)
+                {
                     values[i] = Escape(values[i]);
+                }
                 return string.Join(",", values.ToArray());
             }
             return null;
@@ -139,7 +140,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 // with multiple values per line.
                 var co = SerializationContext.Peek() as ICalendarObject;
                 if (co is ICalendarProperty)
+                {
                     serializeAsList = GetService<IDataTypeMapper>().GetPropertyAllowsMultipleValues(co);
+                }
 
                 value = TextUtil.Normalize(value, SerializationContext).ReadToEnd();
 
@@ -178,21 +181,20 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 {
                     // Determine if our we're supposed to store extra information during
                     // the serialization process.  If so, let's store the escaped value.
-                    var property = (ICalendarProperty)co;
+                    var property = (ICalendarProperty) co;
                     var settings = GetService<ISerializationSettings>();
-                    if (settings != null &&
-                        settings.StoreExtraSerializationData)
+                    if (settings != null && settings.StoreExtraSerializationData)
                     {
                         // Store the escaped value
-                        co.SetService("EscapedValue", escapedValues.Count == 1 ? 
-                            escapedValues[0] :
-                            (object)escapedValues);
+                        co.SetService("EscapedValue", escapedValues.Count == 1 ? escapedValues[0] : (object) escapedValues);
                     }
                 }
 
                 // Return either a single value, or the entire list.
                 if (values.Count == 1)
+                {
                     return values[0];
+                }
                 return values;
             }
             return null;

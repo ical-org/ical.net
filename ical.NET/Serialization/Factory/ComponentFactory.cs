@@ -5,8 +5,7 @@ using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization.Factory
 {
-    public class ComponentFactory :
-        ICalendarComponentFactory
+    public class ComponentFactory : ICalendarComponentFactory
     {
         #region ICalendarComponentFactory Members
 
@@ -18,29 +17,29 @@ namespace Ical.Net.Serialization.Factory
             switch (objectName.ToUpper())
             {
                 case Components.Alarm:
-                    type = typeof(Alarm);
+                    type = typeof (Alarm);
                     break;
-                case Components.Event: 
-                    type = typeof(Event);
+                case Components.Event:
+                    type = typeof (Event);
                     break;
                 case Components.Freebusy:
-                    type = typeof(FreeBusy);
+                    type = typeof (FreeBusy);
                     break;
                 case Components.Journal:
-                    type = typeof(Journal);
+                    type = typeof (Journal);
                     break;
                 case Components.Timezone:
-                    type = typeof(CalTimeZone);
+                    type = typeof (CalTimeZone);
                     break;
                 case Components.Todo:
-                    type = typeof(Todo);
+                    type = typeof (Todo);
                     break;
                 case Components.Daylight:
                 case Components.Standard:
-                    type = typeof(CalTimeZoneInfo);
+                    type = typeof (CalTimeZoneInfo);
                     break;
                 default:
-                    type = typeof(CalendarComponent);
+                    type = typeof (CalendarComponent);
                     break;
             }
 

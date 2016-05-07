@@ -6,10 +6,9 @@ using Ical.Net.Serialization.iCalendar.Serializers.Other;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
-    public class OrganizerSerializer :
-        StringSerializer
+    public class OrganizerSerializer : StringSerializer
     {
-        public override Type TargetType => typeof(Organizer);
+        public override Type TargetType => typeof (Organizer);
 
         public override string SerializeToString(object obj)
         {
@@ -17,7 +16,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             {
                 var o = obj as IOrganizer;
                 if (o != null && o.Value != null)
+                {
                     return Encode(o, Escape(o.Value.OriginalString));
+                }
                 return null;
             }
             catch
@@ -40,12 +41,14 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
                     // Prepend "mailto:" if necessary
                     if (!uriString.StartsWith("mailto:", StringComparison.InvariantCultureIgnoreCase))
+                    {
                         uriString = "mailto:" + uriString;
-                    
+                    }
+
                     o.Value = new Uri(uriString);
                 }
             }
-            catch { }
+            catch {}
 
             return o;
         }

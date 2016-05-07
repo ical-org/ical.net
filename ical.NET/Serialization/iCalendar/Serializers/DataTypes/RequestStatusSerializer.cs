@@ -9,10 +9,9 @@ using Ical.Net.Serialization.iCalendar.Serializers.Other;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
-    public class RequestStatusSerializer :
-        StringSerializer
+    public class RequestStatusSerializer : StringSerializer
     {
-        public override Type TargetType => typeof(RequestStatus);
+        public override Type TargetType => typeof (RequestStatus);
 
         public override string SerializeToString(object obj)
         {
@@ -29,13 +28,15 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                         var factory = GetService<ISerializerFactory>();
                         if (factory != null)
                         {
-                            var serializer = factory.Build(typeof(IStatusCode), SerializationContext) as IStringSerializer;
+                            var serializer = factory.Build(typeof (IStatusCode), SerializationContext) as IStringSerializer;
                             if (serializer != null)
                             {
                                 var value = Escape(serializer.SerializeToString(rs.StatusCode));
                                 value += ";" + Escape(rs.Description);
                                 if (!string.IsNullOrEmpty(rs.ExtraData))
+                                {
                                     value += ";" + Escape(rs.ExtraData);
+                                }
 
                                 return Encode(rs, value);
                             }
@@ -45,7 +46,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                     {
                         // Pop the object off the serialization stack
                         SerializationContext.Pop();
-                    }                    
+                    }
                 }
 
                 return null;
@@ -79,17 +80,21 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                     {
                         var match = NarrowRequestMatch.Match(value);
                         if (!match.Success)
+                        {
                             match = BroadRequestMatch.Match(value);
+                        }
 
                         if (match.Success)
                         {
-                            var serializer = factory.Build(typeof(IStatusCode), SerializationContext) as IStringSerializer;
+                            var serializer = factory.Build(typeof (IStatusCode), SerializationContext) as IStringSerializer;
                             if (serializer != null)
                             {
                                 rs.StatusCode = serializer.Deserialize(new StringReader(Unescape(match.Groups[1].Value))) as IStatusCode;
                                 rs.Description = Unescape(match.Groups[2].Value);
                                 if (match.Groups.Count == 4)
+                                {
                                     rs.ExtraData = Unescape(match.Groups[3].Value);
+                                }
 
                                 return rs;
                             }

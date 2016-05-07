@@ -4,8 +4,7 @@ using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization
 {
-    public class EncodingStack :
-        IEncodingStack
+    public class EncodingStack : IEncodingStack
     {
         #region Private Fields
 
@@ -29,7 +28,9 @@ namespace Ical.Net.Serialization
             get
             {
                 if (_mStack.Count > 0)
+                {
                     return _mStack.Peek();
+                }
 
                 // Default to Unicode encoding
                 return Encoding.Unicode;
@@ -39,13 +40,17 @@ namespace Ical.Net.Serialization
         public void Push(Encoding encoding)
         {
             if (encoding != null)
+            {
                 _mStack.Push(encoding);
+            }
         }
 
         public Encoding Pop()
         {
             if (_mStack.Count > 0)
+            {
                 return _mStack.Pop();
+            }
             return null;
         }
 

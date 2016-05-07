@@ -7,8 +7,7 @@ using Ical.Net.Serialization.iCalendar.Serializers.Other;
 
 namespace Ical.Net.Serialization.iCalendar.Factory
 {
-    public class DataTypeSerializerFactory :
-        ISerializerFactory
+    public class DataTypeSerializerFactory : ISerializerFactory
     {
         #region ISerializerFactory Members
 
@@ -27,42 +26,74 @@ namespace Ical.Net.Serialization.iCalendar.Factory
             {
                 ISerializer s = null;
 
-                if (typeof(IAttachment).IsAssignableFrom(objectType))
+                if (typeof (IAttachment).IsAssignableFrom(objectType))
+                {
                     s = new AttachmentSerializer();
-                else if (typeof(IAttendee).IsAssignableFrom(objectType))
+                }
+                else if (typeof (IAttendee).IsAssignableFrom(objectType))
+                {
                     s = new AttendeeSerializer();
-                else if (typeof(IDateTime).IsAssignableFrom(objectType))
+                }
+                else if (typeof (IDateTime).IsAssignableFrom(objectType))
+                {
                     s = new DateTimeSerializer();
-                else if (typeof(IFreeBusyEntry).IsAssignableFrom(objectType))
+                }
+                else if (typeof (IFreeBusyEntry).IsAssignableFrom(objectType))
+                {
                     s = new FreeBusyEntrySerializer();
-                else if (typeof(IGeographicLocation).IsAssignableFrom(objectType))
+                }
+                else if (typeof (IGeographicLocation).IsAssignableFrom(objectType))
+                {
                     s = new GeographicLocationSerializer();
-                else if (typeof(IOrganizer).IsAssignableFrom(objectType))
+                }
+                else if (typeof (IOrganizer).IsAssignableFrom(objectType))
+                {
                     s = new OrganizerSerializer();
-                else if (typeof(IPeriod).IsAssignableFrom(objectType))
+                }
+                else if (typeof (IPeriod).IsAssignableFrom(objectType))
+                {
                     s = new PeriodSerializer();
-                else if (typeof(IPeriodList).IsAssignableFrom(objectType))
+                }
+                else if (typeof (IPeriodList).IsAssignableFrom(objectType))
+                {
                     s = new PeriodListSerializer();
-                else if (typeof(IRecurrencePattern).IsAssignableFrom(objectType))
+                }
+                else if (typeof (IRecurrencePattern).IsAssignableFrom(objectType))
+                {
                     s = new RecurrencePatternSerializer();
-                else if (typeof(IRequestStatus).IsAssignableFrom(objectType))
+                }
+                else if (typeof (IRequestStatus).IsAssignableFrom(objectType))
+                {
                     s = new RequestStatusSerializer();
-                else if (typeof(IStatusCode).IsAssignableFrom(objectType))
+                }
+                else if (typeof (IStatusCode).IsAssignableFrom(objectType))
+                {
                     s = new StatusCodeSerializer();
-                else if (typeof(ITrigger).IsAssignableFrom(objectType))
+                }
+                else if (typeof (ITrigger).IsAssignableFrom(objectType))
+                {
                     s = new TriggerSerializer();
-                else if (typeof(IUtcOffset).IsAssignableFrom(objectType))
+                }
+                else if (typeof (IUtcOffset).IsAssignableFrom(objectType))
+                {
                     s = new UtcOffsetSerializer();
-                else if (typeof(IWeekDay).IsAssignableFrom(objectType))
+                }
+                else if (typeof (IWeekDay).IsAssignableFrom(objectType))
+                {
                     s = new WeekDaySerializer();
+                }
                 // Default to a string serializer, which simply calls
                 // ToString() on the value to serialize it.
                 else
+                {
                     s = new StringSerializer();
-                
+                }
+
                 // Set the serialization context
                 if (s != null)
+                {
                     s.SerializationContext = ctx;
+                }
 
                 return s;
             }

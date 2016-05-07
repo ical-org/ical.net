@@ -10,26 +10,26 @@ namespace Ical.Net
     /// <summary>
     /// A list of iCalendars.
     /// </summary>
-
     [Serializable]
-
-    public class CalendarCollection :
-        List<ICalendar>,
-        IICalendarCollection
+    public class CalendarCollection : List<ICalendar>, IICalendarCollection
     {
         #region IGetOccurrences Members
 
         public void ClearEvaluation()
         {
             foreach (var iCal in this)
+            {
                 iCal.ClearEvaluation();
+            }
         }
 
         public HashSet<Occurrence> GetOccurrences(IDateTime dt)
         {
             var occurrences = new HashSet<Occurrence>();
             foreach (var iCal in this)
+            {
                 occurrences.UnionWith(iCal.GetOccurrences(dt));
+            }
             return occurrences;
         }
 
@@ -37,7 +37,9 @@ namespace Ical.Net
         {
             var occurrences = new HashSet<Occurrence>();
             foreach (var iCal in this)
+            {
                 occurrences.UnionWith(iCal.GetOccurrences(dt));
+            }
             return occurrences;
         }
 
@@ -45,7 +47,9 @@ namespace Ical.Net
         {
             var occurrences = new HashSet<Occurrence>();
             foreach (var iCal in this)
+            {
                 occurrences.UnionWith(iCal.GetOccurrences(startTime, endTime));
+            }
             return occurrences;
         }
 
@@ -53,7 +57,9 @@ namespace Ical.Net
         {
             var occurrences = new HashSet<Occurrence>();
             foreach (var iCal in this)
+            {
                 occurrences.UnionWith(iCal.GetOccurrences(startTime, endTime));
+            }
             return occurrences;
         }
 
@@ -61,7 +67,9 @@ namespace Ical.Net
         {
             var occurrences = new HashSet<Occurrence>();
             foreach (var iCal in this)
+            {
                 occurrences.UnionWith(iCal.GetOccurrences<T>(dt));
+            }
             return occurrences;
         }
 
@@ -69,7 +77,9 @@ namespace Ical.Net
         {
             var occurrences = new HashSet<Occurrence>();
             foreach (var iCal in this)
+            {
                 occurrences.UnionWith(iCal.GetOccurrences<T>(dt));
+            }
             return occurrences;
         }
 
@@ -77,7 +87,9 @@ namespace Ical.Net
         {
             var occurrences = new HashSet<Occurrence>();
             foreach (var iCal in this)
+            {
                 occurrences.UnionWith(iCal.GetOccurrences<T>(startTime, endTime));
+            }
             return occurrences;
         }
 
@@ -85,7 +97,9 @@ namespace Ical.Net
         {
             var occurrences = new HashSet<Occurrence>();
             foreach (var iCal in this)
+            {
                 occurrences.UnionWith(iCal.GetOccurrences<T>(startTime, endTime));
+            }
             return occurrences;
         }
 
@@ -96,7 +110,9 @@ namespace Ical.Net
         IFreeBusy CombineFreeBusy(IFreeBusy main, IFreeBusy current)
         {
             if (main != null)
+            {
                 main.MergeWith(current);
+            }
             return current;
         }
 
@@ -108,7 +124,9 @@ namespace Ical.Net
         {
             IFreeBusy fb = null;
             foreach (var iCal in this)
+            {
                 fb = CombineFreeBusy(fb, iCal.GetFreeBusy(freeBusyRequest));
+            }
             return fb;
         }
 
@@ -116,7 +134,9 @@ namespace Ical.Net
         {
             IFreeBusy fb = null;
             foreach (var iCal in this)
+            {
                 fb = CombineFreeBusy(fb, iCal.GetFreeBusy(fromInclusive, toExclusive));
+            }
             return fb;
         }
 
@@ -124,7 +144,9 @@ namespace Ical.Net
         {
             IFreeBusy fb = null;
             foreach (var iCal in this)
+            {
                 fb = CombineFreeBusy(fb, iCal.GetFreeBusy(organizer, contacts, fromInclusive, toExclusive));
+            }
             return fb;
         }
 

@@ -3,8 +3,7 @@ using ical.NET.Collections.Interfaces;
 
 namespace Ical.Net.Interfaces.General
 {
-    public interface ICalendarParameterCollection :
-        IGroupedList<string, ICalendarParameter>
+    public interface ICalendarParameterCollection : IGroupedList<string, ICalendarParameter>
     {
         void SetParent(ICalendarObject parent);
         void Add(string name, string value);

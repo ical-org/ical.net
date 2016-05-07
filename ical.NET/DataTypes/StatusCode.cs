@@ -5,16 +5,12 @@ using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
 namespace Ical.Net.DataTypes
-{    
+{
     /// <summary>
     /// An iCalendar status code.
     /// </summary>
-
     [Serializable]
-
-    public class StatusCode : 
-        EncodableDataType,
-        IStatusCode
+    public class StatusCode : EncodableDataType, IStatusCode
     {
         #region Private Fields
 
@@ -35,7 +31,9 @@ namespace Ical.Net.DataTypes
             get
             {
                 if (_mParts.Length > 0)
+                {
                     return _mParts[0];
+                }
                 return 0;
             }
         }
@@ -45,7 +43,9 @@ namespace Ical.Net.DataTypes
             get
             {
                 if (_mParts.Length > 1)
+                {
                     return _mParts[1];
+                }
                 return 0;
             }
         }
@@ -55,7 +55,9 @@ namespace Ical.Net.DataTypes
             get
             {
                 if (_mParts.Length > 2)
+                {
                     return _mParts[2];
+                }
                 return 0;
             }
         }
@@ -64,9 +66,9 @@ namespace Ical.Net.DataTypes
 
         #region Constructors
 
-        public StatusCode() { }
-        public StatusCode(string value)
-            : this()
+        public StatusCode() {}
+
+        public StatusCode(string value) : this()
         {
             var serializer = new StatusCodeSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
@@ -81,7 +83,7 @@ namespace Ical.Net.DataTypes
             base.CopyFrom(obj);
             if (obj is IStatusCode)
             {
-                var sc = (IStatusCode)obj;
+                var sc = (IStatusCode) obj;
                 Parts = new int[sc.Parts.Length];
                 sc.Parts.CopyTo(Parts, 0);
             }
