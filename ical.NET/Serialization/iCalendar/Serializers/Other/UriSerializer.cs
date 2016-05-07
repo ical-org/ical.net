@@ -8,31 +8,25 @@ using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 {
-    public class UriSerializer :
-        EncodableDataTypeSerializer
+    public class UriSerializer : EncodableDataTypeSerializer
     {
         #region Constructors
 
-        public UriSerializer()
-        {
-        }
+        public UriSerializer() {}
 
-        public UriSerializer(ISerializationContext ctx)
-            : base(ctx)
-        {
-        }
+        public UriSerializer(ISerializationContext ctx) : base(ctx) {}
 
-        #endregion        
+        #endregion
 
         #region Overrides
 
-        public override Type TargetType => typeof(string);
+        public override Type TargetType => typeof (string);
 
         public override string SerializeToString(object obj)
         {
             if (obj is Uri)
             {
-                var uri = (Uri)obj;
+                var uri = (Uri) obj;
 
                 var co = SerializationContext.Peek() as ICalendarObject;
                 if (co != null)
@@ -67,9 +61,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                     var uri = new Uri(value);
                     return uri;
                 }
-                catch
-                {
-                }
+                catch {}
             }
             return null;
         }

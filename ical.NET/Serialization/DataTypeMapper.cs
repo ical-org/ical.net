@@ -9,8 +9,7 @@ namespace Ical.Net.Serialization
 {
     public delegate Type TypeResolverDelegate(object context);
 
-    public class DataTypeMapper :
-        IDataTypeMapper
+    public class DataTypeMapper : IDataTypeMapper
     {
         private struct PropertyMapping
         {
@@ -29,43 +28,43 @@ namespace Ical.Net.Serialization
 
         public DataTypeMapper()
         {
-            AddPropertyMapping("ACTION", typeof(AlarmAction), false);
-            AddPropertyMapping("ATTACH", typeof(IAttachment), false);
-            AddPropertyMapping("ATTENDEE", typeof(IAttendee), false);
-            AddPropertyMapping("CATEGORIES", typeof(string), true);
-            AddPropertyMapping("COMMENT", typeof(string), false);
-            AddPropertyMapping("COMPLETED", typeof(IDateTime), false);
-            AddPropertyMapping("CONTACT", typeof(string), false);
-            AddPropertyMapping("CREATED", typeof(IDateTime), false);
-            AddPropertyMapping("DTEND", typeof(IDateTime), false);
-            AddPropertyMapping("DTSTAMP", typeof(IDateTime), false);
-            AddPropertyMapping("DTSTART", typeof(IDateTime), false);
-            AddPropertyMapping("DUE", typeof(IDateTime), false);
-            AddPropertyMapping("DURATION", typeof(TimeSpan), false);
-            AddPropertyMapping("EXDATE", typeof(IPeriodList), false);
-            AddPropertyMapping("EXRULE", typeof(IRecurrencePattern), false);
-            AddPropertyMapping("FREEBUSY", typeof(IFreeBusyEntry), true);
-            AddPropertyMapping("GEO", typeof(IGeographicLocation), false);
-            AddPropertyMapping("LAST-MODIFIED", typeof(IDateTime), false);
-            AddPropertyMapping("ORGANIZER", typeof(IOrganizer), false);
-            AddPropertyMapping("PERCENT-COMPLETE", typeof(int), false);
-            AddPropertyMapping("PRIORITY", typeof(int), false);
-            AddPropertyMapping("RDATE", typeof(IPeriodList), false);
-            AddPropertyMapping("RECURRENCE-ID", typeof(IDateTime), false);
-            AddPropertyMapping("RELATED-TO", typeof(string), false);
-            AddPropertyMapping("REQUEST-STATUS", typeof(IRequestStatus), false);
-            AddPropertyMapping("REPEAT", typeof(int), false);
-            AddPropertyMapping("RESOURCES", typeof(string), true);
-            AddPropertyMapping("RRULE", typeof(IRecurrencePattern), false);
-            AddPropertyMapping("SEQUENCE", typeof(int), false);
+            AddPropertyMapping("ACTION", typeof (AlarmAction), false);
+            AddPropertyMapping("ATTACH", typeof (IAttachment), false);
+            AddPropertyMapping("ATTENDEE", typeof (IAttendee), false);
+            AddPropertyMapping("CATEGORIES", typeof (string), true);
+            AddPropertyMapping("COMMENT", typeof (string), false);
+            AddPropertyMapping("COMPLETED", typeof (IDateTime), false);
+            AddPropertyMapping("CONTACT", typeof (string), false);
+            AddPropertyMapping("CREATED", typeof (IDateTime), false);
+            AddPropertyMapping("DTEND", typeof (IDateTime), false);
+            AddPropertyMapping("DTSTAMP", typeof (IDateTime), false);
+            AddPropertyMapping("DTSTART", typeof (IDateTime), false);
+            AddPropertyMapping("DUE", typeof (IDateTime), false);
+            AddPropertyMapping("DURATION", typeof (TimeSpan), false);
+            AddPropertyMapping("EXDATE", typeof (IPeriodList), false);
+            AddPropertyMapping("EXRULE", typeof (IRecurrencePattern), false);
+            AddPropertyMapping("FREEBUSY", typeof (IFreeBusyEntry), true);
+            AddPropertyMapping("GEO", typeof (IGeographicLocation), false);
+            AddPropertyMapping("LAST-MODIFIED", typeof (IDateTime), false);
+            AddPropertyMapping("ORGANIZER", typeof (IOrganizer), false);
+            AddPropertyMapping("PERCENT-COMPLETE", typeof (int), false);
+            AddPropertyMapping("PRIORITY", typeof (int), false);
+            AddPropertyMapping("RDATE", typeof (IPeriodList), false);
+            AddPropertyMapping("RECURRENCE-ID", typeof (IDateTime), false);
+            AddPropertyMapping("RELATED-TO", typeof (string), false);
+            AddPropertyMapping("REQUEST-STATUS", typeof (IRequestStatus), false);
+            AddPropertyMapping("REPEAT", typeof (int), false);
+            AddPropertyMapping("RESOURCES", typeof (string), true);
+            AddPropertyMapping("RRULE", typeof (IRecurrencePattern), false);
+            AddPropertyMapping("SEQUENCE", typeof (int), false);
             AddPropertyMapping("STATUS", ResolveStatusProperty, false);
-            AddPropertyMapping("TRANSP", typeof(TransparencyType), false);
-            AddPropertyMapping("TRIGGER", typeof(ITrigger), false);
-            AddPropertyMapping("TZNAME", typeof(string), false);
-            AddPropertyMapping("TZOFFSETFROM", typeof(IUtcOffset), false);
-            AddPropertyMapping("TZOFFSETTO", typeof(IUtcOffset), false);
-            AddPropertyMapping("TZURL", typeof(Uri), false);
-            AddPropertyMapping("URL", typeof(Uri), false);
+            AddPropertyMapping("TRANSP", typeof (TransparencyType), false);
+            AddPropertyMapping("TRIGGER", typeof (ITrigger), false);
+            AddPropertyMapping("TZNAME", typeof (string), false);
+            AddPropertyMapping("TZOFFSETFROM", typeof (IUtcOffset), false);
+            AddPropertyMapping("TZOFFSETTO", typeof (IUtcOffset), false);
+            AddPropertyMapping("TZURL", typeof (Uri), false);
+            AddPropertyMapping("URL", typeof (Uri), false);
         }
 
         #endregion
@@ -78,11 +77,17 @@ namespace Ical.Net.Serialization
             if (obj != null)
             {
                 if (obj.Parent is IEvent)
-                    return typeof(EventStatus);
+                {
+                    return typeof (EventStatus);
+                }
                 if (obj.Parent is ITodo)
-                    return typeof(TodoStatus);
+                {
+                    return typeof (TodoStatus);
+                }
                 if (obj.Parent is IJournal)
-                    return typeof(JournalStatus);
+                {
+                    return typeof (JournalStatus);
+                }
             }
 
             return null;
@@ -118,9 +123,10 @@ namespace Ical.Net.Serialization
 
         public void RemovePropertyMapping(string name)
         {
-            if (name != null &&
-                _propertyMap.ContainsKey(name.ToUpper()))
+            if (name != null && _propertyMap.ContainsKey(name.ToUpper()))
+            {
                 _propertyMap.Remove(name.ToUpper());
+            }
         }
 
         public virtual bool GetPropertyAllowsMultipleValues(object obj)
@@ -137,7 +143,7 @@ namespace Ical.Net.Serialization
             }
             return false;
         }
-        
+
         public virtual Type GetPropertyMapping(object obj)
         {
             var p = obj as ICalendarProperty;
@@ -148,7 +154,9 @@ namespace Ical.Net.Serialization
                 {
                     var m = _propertyMap[name];
                     if (m.Resolver != null)
+                    {
                         return m.Resolver(p);
+                    }
                     return m.ObjectType;
                 }
             }

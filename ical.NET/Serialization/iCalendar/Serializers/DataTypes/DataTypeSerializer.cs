@@ -5,20 +5,15 @@ using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
-    public abstract class DataTypeSerializer :
-        SerializerBase
+    public abstract class DataTypeSerializer : SerializerBase
     {
         #region Constructors
 
-        public DataTypeSerializer()
-        {
-        }
+        public DataTypeSerializer() {}
 
-        public DataTypeSerializer(ISerializationContext ctx) : base(ctx)
-        {
-        }
+        public DataTypeSerializer(ISerializationContext ctx) : base(ctx) {}
 
-        #endregion        
+        #endregion
 
         #region Protected Methods
 
@@ -30,8 +25,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             {
                 var associatedObject = SerializationContext.Peek() as ICalendarObject;
                 if (associatedObject != null)
+                {
                     dt.AssociatedObject = associatedObject;
-                
+                }
+
                 return dt;
             }
             return null;

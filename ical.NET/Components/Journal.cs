@@ -7,20 +7,16 @@ namespace Ical.Net
     /// <summary>
     /// A class that represents an RFC 5545 VJOURNAL component.
     /// </summary>
-
     [Serializable]
-
-    public class Journal : 
-        RecurringComponent,
-        IJournal
+    public class Journal : RecurringComponent, IJournal
     {
         #region IJournal Members
-        
+
         public JournalStatus Status
         {
             get { return Properties.Get<JournalStatus>("STATUS"); }
             set { Properties.Set("STATUS", value); }
-        } 
+        }
 
         #endregion
 

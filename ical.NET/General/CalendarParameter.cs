@@ -9,12 +9,8 @@ using Ical.Net.Interfaces.General;
 namespace Ical.Net.General
 {
     [DebuggerDisplay("{Name}={string.Join(\",\", Values)}")]
-
     [Serializable]
-
-    public class CalendarParameter : 
-        CalendarObject,
-        ICalendarParameter
+    public class CalendarParameter : CalendarObject, ICalendarParameter
     {
         #region Private Fields
 
@@ -24,30 +20,29 @@ namespace Ical.Net.General
 
         #region Constructors
 
-        public CalendarParameter() 
+        public CalendarParameter()
         {
             Initialize();
         }
 
-        public CalendarParameter(string name)
-            : base(name)
+        public CalendarParameter(string name) : base(name)
         {
             Initialize();
         }
 
-        public CalendarParameter(string name, string value)
-            : base(name)
+        public CalendarParameter(string name, string value) : base(name)
         {
             Initialize();
             AddValue(value);
         }
 
-        public CalendarParameter(string name, IEnumerable<string> values)
-            : base(name)
+        public CalendarParameter(string name, IEnumerable<string> values) : base(name)
         {
             Initialize();
             foreach (var v in values)
-                AddValue(v);                
+            {
+                AddValue(v);
+            }
         }
 
         void Initialize()
@@ -74,7 +69,9 @@ namespace Ical.Net.General
             if (p != null)
             {
                 if (p.Values != null)
+                {
                     _values = new List<string>(p.Values);
+                }
             }
         }
 
@@ -82,13 +79,15 @@ namespace Ical.Net.General
 
         #region IValueObject<string> Members
 
-        [field:NonSerialized]
+        [field: NonSerialized]
         public event EventHandler<ValueChangedEventArgs<string>> ValueChanged;
 
         protected void OnValueChanged(IEnumerable<string> removedValues, IEnumerable<string> addedValues)
         {
             if (ValueChanged != null)
+            {
                 ValueChanged(this, new ValueChangedEventArgs<string>(removedValues, addedValues));
+            }
         }
 
         public virtual IEnumerable<string> Values => _values;
@@ -106,14 +105,14 @@ namespace Ical.Net.General
             {
                 // Our list doesn't contain any values.  Let's add one!
                 _values.Add(value);
-                OnValueChanged(null, new[] { value });
+                OnValueChanged(null, new[] {value});
             }
             else if (value != null)
-            {                
+            {
                 // Our list contains values.  Let's set the first value!
                 var oldValue = _values[0];
                 _values[0] = value;
-                OnValueChanged(new[] { oldValue }, new[] { value });
+                OnValueChanged(new[] {oldValue}, new[] {value});
             }
             else
             {
@@ -125,7 +124,7 @@ namespace Ical.Net.General
         }
 
         public virtual void SetValue(IEnumerable<string> values)
-        {                        
+        {
             // Remove all previous values
             var removedValues = _values.ToList();
             _values.Clear();
@@ -138,17 +137,15 @@ namespace Ical.Net.General
             if (value != null)
             {
                 _values.Add(value);
-                OnValueChanged(null, new[] { value });
+                OnValueChanged(null, new[] {value});
             }
         }
 
         public virtual void RemoveValue(string value)
         {
-            if (value != null &&
-                _values.Contains(value) &&
-                _values.Remove(value))
+            if (value != null && _values.Contains(value) && _values.Remove(value))
             {
-                OnValueChanged(new[] { value }, null);
+                OnValueChanged(new[] {value}, null);
             }
         }
 
@@ -161,13 +158,12 @@ namespace Ical.Net.General
             get
             {
                 if (Values != null)
+                {
                     return Values.FirstOrDefault();
+                }
                 return default(string);
             }
-            set
-            {
-                SetValue(value);
-            }
+            set { SetValue(value); }
         }
 
         #endregion

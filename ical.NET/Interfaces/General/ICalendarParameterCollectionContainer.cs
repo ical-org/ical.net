@@ -1,6 +1,6 @@
 ﻿namespace Ical.Net.Interfaces.General
 {
-    public interface ICalendarParameterCollectionContainer        
+    public interface ICalendarParameterCollectionContainer
     {
         ICalendarParameterCollection Parameters { get; }
     }

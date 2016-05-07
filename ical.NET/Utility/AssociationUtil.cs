@@ -10,17 +10,25 @@ namespace Ical.Net.Utility
         public static void AssociateItem(object item, ICalendarObject objectToAssociate)
         {
             if (item is ICalendarDataType)
-                ((ICalendarDataType)item).AssociatedObject = objectToAssociate;
+            {
+                ((ICalendarDataType) item).AssociatedObject = objectToAssociate;
+            }
             else if (item is ICalendarObject)
-                ((ICalendarObject)item).Parent = objectToAssociate;
+            {
+                ((ICalendarObject) item).Parent = objectToAssociate;
+            }
         }
 
         public static void DeassociateItem(object item)
         {
             if (item is ICalendarDataType)
-                ((ICalendarDataType)item).AssociatedObject = null;
+            {
+                ((ICalendarDataType) item).AssociatedObject = null;
+            }
             else if (item is ICalendarObject)
-                ((ICalendarObject)item).Parent = null;
+            {
+                ((ICalendarObject) item).Parent = null;
+            }
         }
 
         #endregion

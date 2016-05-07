@@ -13,17 +13,13 @@ namespace Ical.Net
     /// A class that represents an RFC 5545 VTODO component.
     /// </summary> 
     [DebuggerDisplay("{Summary} - {Status}")]
-
     [Serializable]
-
-    public class Todo : 
-        RecurringComponent,
-        ITodo
+    public class Todo : RecurringComponent, ITodo
     {
         #region Private Fields
 
         TodoEvaluator _mEvaluator;
-        
+
         #endregion
 
         #region Public Properties
@@ -42,10 +38,7 @@ namespace Ical.Net
         /// </summary>
         public override IDateTime DtStart
         {
-            get
-            {
-                return base.DtStart;
-            }
+            get { return base.DtStart; }
             set
             {
                 base.DtStart = value;
@@ -130,8 +123,13 @@ namespace Ical.Net
                     if (IsLoaded)
                     {
                         if (value == TodoStatus.Completed)
+                        {
                             Completed = CalDateTime.Now;
-                        else Completed = null;
+                        }
+                        else
+                        {
+                            Completed = null;
+                        }
                     }
 
                     Properties.Set("STATUS", value);
@@ -175,9 +173,10 @@ namespace Ical.Net
         {
             if (Status == TodoStatus.Completed)
             {
-                if (Completed == null ||
-                    Completed.GreaterThan(currDt))
+                if (Completed == null || Completed.GreaterThan(currDt))
+                {
                     return true;
+                }
 
                 // Evaluate to the previous occurrence.
                 _mEvaluator.EvaluateToPreviousOccurrence(Completed, currDt);
@@ -185,8 +184,10 @@ namespace Ical.Net
                 foreach (Period p in _mEvaluator.Periods)
                 {
                     if (p.StartTime.GreaterThan(Completed) && // The item has recurred after it was completed
-                        currDt.GreaterThanOrEqual(p.StartTime))     // and the current date is after or on the recurrence date.
+                        currDt.GreaterThanOrEqual(p.StartTime)) // and the current date is after or on the recurrence date.
+                    {
                         return false;
+                    }
                 }
                 return true;
             }
@@ -202,9 +203,13 @@ namespace Ical.Net
         public virtual bool IsActive(IDateTime currDt)
         {
             if (DtStart == null)
+            {
                 return !IsCompleted(currDt) && !IsCancelled();
+            }
             if (currDt.GreaterThanOrEqual(DtStart))
+            {
                 return !IsCompleted(currDt) && !IsCancelled();
+            }
             return false;
         }
 
@@ -237,11 +242,17 @@ namespace Ical.Net
         private void ExtrapolateTimes()
         {
             if (Due == null && DtStart != null && Duration != default(TimeSpan))
+            {
                 Due = DtStart.Add(Duration);
+            }
             else if (Duration == default(TimeSpan) && DtStart != null && Due != null)
+            {
                 Duration = Due.Subtract(DtStart);
+            }
             else if (DtStart == null && Duration != default(TimeSpan) && Due != null)
+            {
                 DtStart = Due.Subtract(Duration);
+            }
         }
 
         #endregion

@@ -4,8 +4,7 @@ using Ical.Net.Interfaces.DataTypes;
 
 namespace Ical.Net.Interfaces.Components
 {
-    public interface ITodo :
-        IRecurringComponent
+    public interface ITodo : IRecurringComponent
     {
         /// <summary>
         /// The date/time the todo was completed.

@@ -8,29 +8,24 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// Represents an iCalendar period of time.
     /// </summary>    
-
     [Serializable]
-
-    public class Period :
-        EncodableDataType,
-        IPeriod
+    public class Period : EncodableDataType, IPeriod
     {
         #region Private Fields
 
         private IDateTime _mStartTime;
-        private IDateTime _mEndTime;        
+        private IDateTime _mEndTime;
         private TimeSpan _mDuration;
         private bool _mMatchesDateOnly;
 
-        #endregion        
+        #endregion
 
         #region Constructors
 
-        public Period()
-        {
-        }
+        public Period() {}
 
-        public Period(IDateTime occurs) : this(occurs, default(TimeSpan)) { }
+        public Period(IDateTime occurs) : this(occurs, default(TimeSpan)) {}
+
         public Period(IDateTime start, IDateTime end) : this()
         {
             StartTime = start;
@@ -40,8 +35,8 @@ namespace Ical.Net.DataTypes
                 Duration = end.Subtract(start);
             }
         }
-        public Period(IDateTime start, TimeSpan duration)
-            : this()
+
+        public Period(IDateTime start, TimeSpan duration) : this()
         {
             StartTime = start;
             if (duration != default(TimeSpan))
@@ -93,7 +88,7 @@ namespace Ical.Net.DataTypes
             {
                 return false;
             }
-            return Equals((Period)obj);
+            return Equals((Period) obj);
         }
 
         public override int GetHashCode()
@@ -121,11 +116,17 @@ namespace Ical.Net.DataTypes
         private void ExtrapolateTimes()
         {
             if (EndTime == null && StartTime != null && Duration != default(TimeSpan))
+            {
                 EndTime = StartTime.Add(Duration);
+            }
             else if (Duration == default(TimeSpan) && StartTime != null && EndTime != null)
+            {
                 Duration = EndTime.Subtract(StartTime);
+            }
             else if (StartTime == null && Duration != default(TimeSpan) && EndTime != null)
+            {
                 StartTime = EndTime.Subtract(Duration);
+            }
         }
 
         #endregion
@@ -136,7 +137,7 @@ namespace Ical.Net.DataTypes
         {
             get { return _mStartTime; }
             set
-            {                
+            {
                 _mStartTime = value;
                 ExtrapolateTimes();
             }
@@ -179,24 +180,20 @@ namespace Ical.Net.DataTypes
         public virtual bool Contains(IDateTime dt)
         {
             // Start time is inclusive
-            if (dt != null &&
-                StartTime != null &&
-                StartTime.LessThanOrEqual(dt))
+            if (dt != null && StartTime != null && StartTime.LessThanOrEqual(dt))
             {
                 // End time is exclusive
                 if (EndTime == null || EndTime.GreaterThan(dt))
+                {
                     return true;
+                }
             }
             return false;
         }
 
         public virtual bool CollidesWith(IPeriod period)
         {
-            if (period != null &&
-                (
-                    (period.StartTime != null && Contains(period.StartTime)) ||
-                    (period.EndTime != null && Contains(period.EndTime))
-                ))
+            if (period != null && ((period.StartTime != null && Contains(period.StartTime)) || (period.EndTime != null && Contains(period.EndTime))))
             {
                 return true;
             }
@@ -210,13 +207,21 @@ namespace Ical.Net.DataTypes
         public int CompareTo(IPeriod p)
         {
             if (p == null)
+            {
                 throw new ArgumentNullException("p");
+            }
             if (Equals(p))
+            {
                 return 0;
+            }
             if (StartTime.LessThan(p.StartTime))
+            {
                 return -1;
+            }
             if (StartTime.GreaterThanOrEqual(p.StartTime))
+            {
                 return 1;
+            }
             throw new Exception("An error occurred while comparing Period values.");
         }
 

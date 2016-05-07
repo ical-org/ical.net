@@ -3,8 +3,7 @@ using System.Text;
 
 namespace Ical.Net.Interfaces.DataTypes
 {
-    public interface IAttachment :
-        IEncodableDataType
+    public interface IAttachment : IEncodableDataType
     {
         /// <summary>
         /// The URI where the attachment information can be located.

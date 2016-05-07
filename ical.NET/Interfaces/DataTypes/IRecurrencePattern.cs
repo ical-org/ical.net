@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 namespace Ical.Net.Interfaces.DataTypes
 {
-    public interface IRecurrencePattern :
-        IEncodableDataType
+    public interface IRecurrencePattern : IEncodableDataType
     {
         FrequencyType Frequency { get; set; }
         DateTime Until { get; set; }
@@ -20,7 +19,7 @@ namespace Ical.Net.Interfaces.DataTypes
         IList<int> ByMonth { get; set; }
         IList<int> BySetPosition { get; set; }
         DayOfWeek FirstDayOfWeek { get; set; }
-                
+
         RecurrenceRestrictionType RestrictionType { get; set; }
         RecurrenceEvaluationModeType EvaluationMode { get; set; }
 

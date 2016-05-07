@@ -9,7 +9,9 @@ namespace Ical.Net.ExtensionMethods
             if (values != null)
             {
                 foreach (var item in values)
+                {
                     list.Add(item);
+                }
             }
         }
     }

@@ -2,9 +2,7 @@
 
 namespace Ical.Net.Interfaces.DataTypes
 {
-    public interface IWeekDay :
-        IEncodableDataType,
-        IComparable
+    public interface IWeekDay : IEncodableDataType, IComparable
     {
         int Offset { get; set; }
         DayOfWeek DayOfWeek { get; set; }

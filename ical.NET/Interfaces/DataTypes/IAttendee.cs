@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 namespace Ical.Net.Interfaces.DataTypes
 {
-    public interface IAttendee :
-        IEncodableDataType
+    public interface IAttendee : IEncodableDataType
     {
         Uri SentBy { get; set; }
         string CommonName { get; set; }

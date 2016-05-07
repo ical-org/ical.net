@@ -17,7 +17,6 @@ namespace Ical.Net.DataTypes
     /// class handles time zone differences, and integrates seamlessly into the iCalendar framework.
     /// </remarks>
     /// </summary>
-
     [Serializable]
     public sealed class CalDateTime : EncodableDataType, IDateTime
     {
@@ -37,39 +36,45 @@ namespace Ical.Net.DataTypes
 
         #region Constructors
 
-        public CalDateTime() { }
+        public CalDateTime() {}
+
         public CalDateTime(IDateTime value)
         {
             Initialize(value.Value, value.TzId, null);
         }
+
         public CalDateTime(DateTime value) : this(value, null) {}
-        public CalDateTime(DateTime value, string tzId) 
+
+        public CalDateTime(DateTime value, string tzId)
         {
             Initialize(value, tzId, null);
         }
+
         public CalDateTime(DateTime value, TimeZoneObservance tzo)
         {
             Initialize(value, tzo);
         }
+
         public CalDateTime(int year, int month, int day, int hour, int minute, int second)
         {
             Initialize(year, month, day, hour, minute, second, null, null);
             HasTime = true;
         }
+
         public CalDateTime(int year, int month, int day, int hour, int minute, int second, string tzId)
         {
             Initialize(year, month, day, hour, minute, second, tzId, null);
             HasTime = true;
         }
+
         public CalDateTime(int year, int month, int day, int hour, int minute, int second, string tzId, ICalendar cal)
         {
             Initialize(year, month, day, hour, minute, second, tzId, cal);
             HasTime = true;
         }
-        public CalDateTime(int year, int month, int day)
-            : this(year, month, day, 0, 0, 0) { }
-        public CalDateTime(int year, int month, int day, string tzId)
-            : this(year, month, day, 0, 0, 0, tzId) { }
+
+        public CalDateTime(int year, int month, int day) : this(year, month, day, 0, 0, 0) {}
+        public CalDateTime(int year, int month, int day, string tzId) : this(year, month, day, 0, 0, 0, tzId) {}
 
         public CalDateTime(string value)
         {
@@ -85,7 +90,9 @@ namespace Ical.Net.DataTypes
         private void Initialize(DateTime value, string tzId, ICalendar cal)
         {
             if (value.Kind == DateTimeKind.Utc)
+            {
                 IsUniversalTime = true;
+            }
 
             // Convert all incoming values to UTC.
             Value = DateTime.SpecifyKind(value, DateTimeKind.Utc);
@@ -98,15 +105,19 @@ namespace Ical.Net.DataTypes
         private void Initialize(DateTime value, TimeZoneObservance tzo)
         {
             if (value.Kind == DateTimeKind.Utc)
+            {
                 IsUniversalTime = true;
+            }
 
             // Convert all incoming values to UTC.
             Value = DateTime.SpecifyKind(value, DateTimeKind.Utc);
             HasDate = true;
             HasTime = (value.Second == 0 && value.Minute == 0 && value.Hour == 0) ? false : true;
             if (tzo.TimeZoneInfo != null)
+            {
                 TzId = tzo.TimeZoneInfo.TzId;
-            TimeZoneObservance = tzo;            
+            }
+            TimeZoneObservance = tzo;
             AssociatedObject = tzo.TimeZoneInfo;
         }
 
@@ -122,27 +133,26 @@ namespace Ical.Net.DataTypes
             try
             {
                 if (year > 9999)
+                {
                     dt = DateTime.MaxValue;
+                }
                 else if (year > 0)
-                    dt = new DateTime(year, month, day, hour, minute, second, kind);                
+                {
+                    dt = new DateTime(year, month, day, hour, minute, second, kind);
+                }
             }
-            catch
-            {                
-            }
+            catch {}
 
             return dt;
         }
-        
+
         #endregion
 
         #region Overrides
 
         public override ICalendarObject AssociatedObject
         {
-            get
-            {
-                return base.AssociatedObject;
-            }
+            get { return base.AssociatedObject; }
             set
             {
                 if (!Equals(AssociatedObject, value))
@@ -160,28 +170,28 @@ namespace Ical.Net.DataTypes
             if (dt != null)
             {
                 _value = dt.Value;
-                _isUniversalTime = dt.IsUniversalTime;                
+                _isUniversalTime = dt.IsUniversalTime;
                 _hasDate = dt.HasDate;
                 _hasTime = dt.HasTime;
-                
+
                 AssociateWith(dt);
             }
         }
-        
+
         public override bool Equals(object obj)
         {
             if (obj is IDateTime)
             {
-                AssociateWith((IDateTime)obj);
-                return ((IDateTime)obj).AsUtc.Equals(AsUtc);
+                AssociateWith((IDateTime) obj);
+                return ((IDateTime) obj).AsUtc.Equals(AsUtc);
             }
             if (obj is DateTime)
             {
-                var dt = (CalDateTime)obj;
+                var dt = (CalDateTime) obj;
                 AssociateWith(dt);
                 return Equals(dt.AsUtc, AsUtc);
             }
-            return false;            
+            return false;
         }
 
         public override int GetHashCode()
@@ -203,7 +213,9 @@ namespace Ical.Net.DataTypes
             left.AssociateWith(right);
 
             if (left.HasTime || right.HasTime)
+            {
                 return left.AsUtc < right.AsUtc;
+            }
             return left.AsUtc.Date < right.AsUtc.Date;
         }
 
@@ -212,7 +224,9 @@ namespace Ical.Net.DataTypes
             left.AssociateWith(right);
 
             if (left.HasTime || right.HasTime)
+            {
                 return left.AsUtc > right.AsUtc;
+            }
             return left.AsUtc.Date > right.AsUtc.Date;
         }
 
@@ -221,7 +235,9 @@ namespace Ical.Net.DataTypes
             left.AssociateWith(right);
 
             if (left.HasTime || right.HasTime)
+            {
                 return left.AsUtc <= right.AsUtc;
+            }
             return left.AsUtc.Date <= right.AsUtc.Date;
         }
 
@@ -230,7 +246,9 @@ namespace Ical.Net.DataTypes
             left.AssociateWith(right);
 
             if (left.HasTime || right.HasTime)
+            {
                 return left.AsUtc >= right.AsUtc;
+            }
             return left.AsUtc.Date >= right.AsUtc.Date;
         }
 
@@ -239,7 +257,9 @@ namespace Ical.Net.DataTypes
             left.AssociateWith(right);
 
             if (left.HasTime || right.HasTime)
+            {
                 return left.AsUtc.Equals(right.AsUtc);
+            }
             return left.AsUtc.Date.Equals(right.AsUtc.Date);
         }
 
@@ -248,7 +268,9 @@ namespace Ical.Net.DataTypes
             left.AssociateWith(right);
 
             if (left.HasTime || right.HasTime)
+            {
                 return !left.AsUtc.Equals(right.AsUtc);
+            }
             return !left.AsUtc.Date.Equals(right.AsUtc.Date);
         }
 
@@ -259,7 +281,7 @@ namespace Ical.Net.DataTypes
         }
 
         public static IDateTime operator -(CalDateTime left, TimeSpan right)
-        {            
+        {
             var copy = left.Copy<IDateTime>();
             copy.Value -= right;
             return copy;
@@ -289,14 +311,19 @@ namespace Ical.Net.DataTypes
             get
             {
                 if (!HasTime)
+                {
                     return DateTime.SpecifyKind(Value.Date, DateTimeKind.Local);
+                }
                 if (IsUniversalTime)
+                {
                     return Value.ToLocalTime();
+                }
                 return AsUtc.ToLocalTime();
             }
         }
 
         private DateTime _utc;
+
         /// <summary>
         /// Converts the date/time to UTC (Coordinated Universal Time)
         /// </summary>
@@ -328,16 +355,11 @@ namespace Ical.Net.DataTypes
         /// </summary>
         public TimeZoneObservance? TimeZoneObservance
         {
-            get
-            {
-                return _timeZoneObservance;
-            }
+            get { return _timeZoneObservance; }
             set
             {
                 _timeZoneObservance = value;
-                if (value != null &&
-                    value.HasValue &&                    
-                    value.Value.TimeZoneInfo != null)
+                if (value != null && value.HasValue && value.Value.TimeZoneInfo != null)
                 {
                     TzId = value.Value.TimeZoneInfo.TzId;
                 }
@@ -359,13 +381,17 @@ namespace Ical.Net.DataTypes
             get
             {
                 if (IsUniversalTime)
+                {
                     return "UTC";
+                }
                 if (!string.IsNullOrWhiteSpace(TzId))
                 {
                     return TzId;
                 }
                 if (_timeZoneObservance != null && _timeZoneObservance.HasValue)
+                {
                     return _timeZoneObservance.Value.TimeZoneInfo.TimeZoneName;
+                }
                 return string.Empty;
             }
         }
@@ -373,10 +399,7 @@ namespace Ical.Net.DataTypes
         public DateTime Value
         {
             get { return _value; }
-            set
-            {
-                _value = value;
-            }
+            set { _value = value; }
         }
 
         public bool HasDate
@@ -406,15 +429,14 @@ namespace Ical.Net.DataTypes
                 if (!Equals(TzId, value))
                 {
                     Parameters.Set("TZID", value);
-                    
+
                     // Set the time zone observance to null if the TZID
                     // doesn't match.
-                    if (value != null && 
-                        _timeZoneObservance != null &&
-                        _timeZoneObservance.HasValue &&
-                        _timeZoneObservance.Value.TimeZoneInfo != null &&
+                    if (value != null && _timeZoneObservance != null && _timeZoneObservance.HasValue && _timeZoneObservance.Value.TimeZoneInfo != null &&
                         !Equals(_timeZoneObservance.Value.TimeZoneInfo.TzId, value))
+                    {
                         _timeZoneObservance = null;
+                    }
                 }
             }
         }
@@ -468,14 +490,16 @@ namespace Ical.Net.DataTypes
             var newDt = string.IsNullOrWhiteSpace(TzId)
                 ? DateUtil.ToZonedDateTimeLeniently(Value, newTimeZone).ToDateTimeUtc()
                 : DateUtil.FromTimeZoneToTimeZone(Value, TzId, newTimeZone).ToDateTimeUtc();
-            
+
             return new CalDateTime(newDt, newTimeZone);
         }
 
         public IDateTime SetTimeZone(ITimeZone tz)
         {
             if (tz != null)
+            {
                 TzId = tz.TzId;
+            }
             return this;
         }
 
@@ -519,7 +543,9 @@ namespace Ical.Net.DataTypes
         {
             var dt = Copy<IDateTime>();
             if (!dt.HasTime && hours % 24 > 0)
+            {
                 dt.HasTime = true;
+            }
             dt.Value = Value.AddHours(hours);
             return dt;
         }
@@ -528,7 +554,9 @@ namespace Ical.Net.DataTypes
         {
             var dt = Copy<IDateTime>();
             if (!dt.HasTime && minutes % 1440 > 0)
+            {
                 dt.HasTime = true;
+            }
             dt.Value = Value.AddMinutes(minutes);
             return dt;
         }
@@ -537,7 +565,9 @@ namespace Ical.Net.DataTypes
         {
             var dt = Copy<IDateTime>();
             if (!dt.HasTime && seconds % 86400 > 0)
+            {
                 dt.HasTime = true;
+            }
             dt.Value = Value.AddSeconds(seconds);
             return dt;
         }
@@ -546,7 +576,9 @@ namespace Ical.Net.DataTypes
         {
             var dt = Copy<IDateTime>();
             if (!dt.HasTime && milliseconds % 86400000 > 0)
+            {
                 dt.HasTime = true;
+            }
             dt.Value = Value.AddMilliseconds(milliseconds);
             return dt;
         }
@@ -557,7 +589,7 @@ namespace Ical.Net.DataTypes
             dt.HasTime = true;
             dt.Value = Value.AddTicks(ticks);
             return dt;
-        }           
+        }
 
         public bool LessThan(IDateTime dt)
         {
@@ -582,9 +614,13 @@ namespace Ical.Net.DataTypes
         public void AssociateWith(IDateTime dt)
         {
             if (AssociatedObject == null && dt.AssociatedObject != null)
+            {
                 AssociatedObject = dt.AssociatedObject;
+            }
             else if (AssociatedObject != null && dt.AssociatedObject == null)
+            {
                 dt.AssociatedObject = AssociatedObject;
+            }
 
             // If these share the same TZID, then let's see if we
             // can share the time zone observance also!
@@ -594,13 +630,17 @@ namespace Ical.Net.DataTypes
                 {
                     IDateTime normalizedDt = new CalDateTime(TimeZoneObservance.Value.TimeZoneInfo.OffsetTo.ToUtc(dt.Value));
                     if (TimeZoneObservance.Value.Contains(normalizedDt))
+                    {
                         dt.TimeZoneObservance = TimeZoneObservance;
+                    }
                 }
                 else if (dt.TimeZoneObservance != null && TimeZoneObservance == null)
                 {
                     IDateTime normalizedDt = new CalDateTime(dt.TimeZoneObservance.Value.TimeZoneInfo.OffsetTo.ToUtc(Value));
                     if (dt.TimeZoneObservance.Value.Contains(normalizedDt))
+                    {
                         TimeZoneObservance = dt.TimeZoneObservance;
+                    }
                 }
             }
         }
@@ -633,16 +673,24 @@ namespace Ical.Net.DataTypes
 
         public string ToString(string format, IFormatProvider formatProvider)
         {
-            var tz = TimeZoneName;            
+            var tz = TimeZoneName;
             if (!string.IsNullOrEmpty(tz))
+            {
                 tz = " " + tz;
-            
+            }
+
             if (format != null)
+            {
                 return Value.ToString(format, formatProvider) + tz;
+            }
             if (HasTime && HasDate)
+            {
                 return Value + tz;
+            }
             if (HasTime)
+            {
                 return Value.TimeOfDay + tz;
+            }
             return Value.ToShortDateString() + tz;
         }
 

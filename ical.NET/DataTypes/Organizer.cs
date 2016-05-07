@@ -11,12 +11,8 @@ namespace Ical.Net.DataTypes
     /// A class that represents the organizer of an event/todo/journal.
     /// </summary>
     [DebuggerDisplay("{Value}")]
-
     [Serializable]
-
-    public class Organizer :
-        EncodableDataType,
-        IOrganizer
+    public class Organizer : EncodableDataType, IOrganizer
     {
         #region IOrganizer Members
 
@@ -26,9 +22,13 @@ namespace Ical.Net.DataTypes
             set
             {
                 if (value != null)
+                {
                     Parameters.Set("SENT-BY", value.OriginalString);
+                }
                 else
-                    Parameters.Set("SENT-BY", (string)null);
+                {
+                    Parameters.Set("SENT-BY", (string) null);
+                }
             }
         }
 
@@ -44,9 +44,13 @@ namespace Ical.Net.DataTypes
             set
             {
                 if (value != null)
+                {
                     Parameters.Set("DIR", value.OriginalString);
+                }
                 else
-                    Parameters.Set("DIR", (string)null);
+                {
+                    Parameters.Set("DIR", (string) null);
+                }
             }
         }
 
@@ -56,9 +60,9 @@ namespace Ical.Net.DataTypes
 
         #region Constructors
 
-        public Organizer() { }
-        public Organizer(string value)
-            : this()
+        public Organizer() {}
+
+        public Organizer(string value) : this()
         {
             var serializer = new OrganizerSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
@@ -67,7 +71,7 @@ namespace Ical.Net.DataTypes
         #endregion
 
         #region Overrides
-        
+
         protected bool Equals(Organizer other)
         {
             return Equals(Value, other.Value);

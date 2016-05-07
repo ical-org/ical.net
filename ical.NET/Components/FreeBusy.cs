@@ -8,9 +8,7 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net
 {
-    public class FreeBusy :
-        UniqueComponent,
-        IFreeBusy
+    public class FreeBusy : UniqueComponent, IFreeBusy
     {
         #region Static Public Methods
 
@@ -18,19 +16,20 @@ namespace Ical.Net
         {
             if (obj is IGetOccurrencesTyped)
             {
-                var getOccurrences = (IGetOccurrencesTyped)obj;
+                var getOccurrences = (IGetOccurrencesTyped) obj;
                 var occurrences = getOccurrences.GetOccurrences<IEvent>(freeBusyRequest.Start, freeBusyRequest.End);
                 var contacts = new List<string>();
                 var isFilteredByAttendees = false;
-                
-                if (freeBusyRequest.Attendees != null &&
-                    freeBusyRequest.Attendees.Count > 0)
+
+                if (freeBusyRequest.Attendees != null && freeBusyRequest.Attendees.Count > 0)
                 {
                     isFilteredByAttendees = true;
                     foreach (var attendee in freeBusyRequest.Attendees)
                     {
                         if (attendee.Value != null)
-                            contacts.Add(attendee.Value.OriginalString.Trim());                        
+                        {
+                            contacts.Add(attendee.Value.OriginalString.Trim());
+                        }
                     }
                 }
 
@@ -48,10 +47,12 @@ namespace Ical.Net
                         var evt = uc as IEvent;
                         var accepted = false;
                         var type = FreeBusyStatus.Busy;
-                        
+
                         // We only accept events, and only "opaque" events.
                         if (evt != null && evt.Transparency != TransparencyType.Transparent)
+                        {
                             accepted = true;
+                        }
 
                         // If the result is filtered by attendees, then
                         // we won't accept it until we find an event
@@ -65,7 +66,7 @@ namespace Ical.Net
                                 {
                                     if (a.ParticipationStatus != null)
                                     {
-                                        switch(a.ParticipationStatus.ToUpperInvariant())
+                                        switch (a.ParticipationStatus.ToUpperInvariant())
                                         {
                                             case ParticipationStatus.Tentative:
                                                 accepted = true;
@@ -103,11 +104,15 @@ namespace Ical.Net
             fb.DtStart = fromInclusive;
             fb.DtEnd = toExclusive;
             if (organizer != null)
+            {
                 fb.Organizer = organizer.Copy<IOrganizer>();
+            }
             if (contacts != null)
             {
                 foreach (var attendee in contacts)
+                {
                     fb.Attendees.Add(attendee.Copy<IAttendee>());
+                }
             }
 
             return fb;
@@ -160,11 +165,13 @@ namespace Ical.Net
         {
             var status = FreeBusyStatus.Free;
             if (period != null)
-            {                
+            {
                 foreach (var fbe in Entries)
                 {
                     if (fbe.CollidesWith(period) && status < fbe.Status)
+                    {
                         status = fbe.Status;
+                    }
                 }
             }
             return status;
@@ -178,7 +185,9 @@ namespace Ical.Net
                 foreach (var fbe in Entries)
                 {
                     if (fbe.Contains(dt) && status < fbe.Status)
+                    {
                         status = fbe.Status;
+                    }
                 }
             }
             return status;
@@ -196,7 +205,9 @@ namespace Ical.Net
                 foreach (var entry in fb.Entries)
                 {
                     if (!Entries.Contains(entry))
+                    {
                         Entries.Add(entry.Copy<IFreeBusyEntry>());
+                    }
                 }
             }
         }

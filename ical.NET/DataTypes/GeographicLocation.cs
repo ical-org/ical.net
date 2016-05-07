@@ -12,12 +12,8 @@ namespace Ical.Net.DataTypes
     /// <see cref="Components.Event"/> or <see cref="Components.Todo"/> item.
     /// </summary>
     [DebuggerDisplay("{Latitude};{Longitude}")]
-
     [Serializable]
-
-    public class GeographicLocation :
-        EncodableDataType,
-        IGeographicLocation
+    public class GeographicLocation : EncodableDataType, IGeographicLocation
     {
         #region Private Fields
 
@@ -44,13 +40,14 @@ namespace Ical.Net.DataTypes
 
         #region Constructors
 
-        public GeographicLocation() { }
-        public GeographicLocation(string value)
-            : this()
+        public GeographicLocation() {}
+
+        public GeographicLocation(string value) : this()
         {
             var serializer = new GeographicLocationSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
+
         public GeographicLocation(double latitude, double longitude)
         {
             Latitude = latitude;
@@ -65,7 +62,7 @@ namespace Ical.Net.DataTypes
         {
             if (obj is IGeographicLocation)
             {
-                var g = (IGeographicLocation)obj;
+                var g = (IGeographicLocation) obj;
                 return g.Latitude.Equals(Latitude) && g.Longitude.Equals(Longitude);
             }
             return base.Equals(obj);
@@ -81,10 +78,10 @@ namespace Ical.Net.DataTypes
             base.CopyFrom(obj);
             if (obj is IGeographicLocation)
             {
-                var g = (IGeographicLocation)obj;
+                var g = (IGeographicLocation) obj;
                 Latitude = g.Latitude;
                 Longitude = g.Longitude;
-            }            
+            }
         }
 
         public override string ToString()

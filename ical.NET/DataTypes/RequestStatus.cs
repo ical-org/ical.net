@@ -9,12 +9,8 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// A class that represents the return status of an iCalendar request.
     /// </summary>
-
     [Serializable]
-
-    public class RequestStatus :
-        EncodableDataType,
-        IRequestStatus
+    public class RequestStatus : EncodableDataType, IRequestStatus
     {
         #region Private Fields
 
@@ -48,9 +44,9 @@ namespace Ical.Net.DataTypes
 
         #region Constructors
 
-        public RequestStatus() { }
-        public RequestStatus(string value)
-            : this()
+        public RequestStatus() {}
+
+        public RequestStatus(string value) : this()
         {
             var serializer = new RequestStatusSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
@@ -65,9 +61,11 @@ namespace Ical.Net.DataTypes
             base.CopyFrom(obj);
             if (obj is IRequestStatus)
             {
-                var rs = (IRequestStatus)obj;                
+                var rs = (IRequestStatus) obj;
                 if (rs.StatusCode != null)
+                {
                     StatusCode = rs.StatusCode.Copy<IStatusCode>();
+                }
                 Description = rs.Description;
                 rs.ExtraData = rs.ExtraData;
             }

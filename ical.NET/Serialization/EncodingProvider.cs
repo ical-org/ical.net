@@ -4,10 +4,10 @@ using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization
 {
-    public class EncodingProvider :
-        IEncodingProvider
+    public class EncodingProvider : IEncodingProvider
     {
         public delegate string EncoderDelegate(byte[] data);
+
         public delegate byte[] DecoderDelegate(string value);
 
         #region Private Fields
@@ -33,7 +33,7 @@ namespace Ical.Net.Serialization
         {
             try
             {
-                var utf7 = new UTF7Encoding();                
+                var utf7 = new UTF7Encoding();
                 return utf7.GetBytes(value);
             }
             catch
@@ -47,7 +47,7 @@ namespace Ical.Net.Serialization
             try
             {
                 var utf8 = new UTF8Encoding();
-                return utf8.GetBytes(value);                
+                return utf8.GetBytes(value);
             }
             catch
             {
@@ -73,15 +73,18 @@ namespace Ical.Net.Serialization
             {
                 switch (encoding.ToUpper())
                 {
-                    case "7BIT": return Decode7Bit;
-                    case "8BIT": return Decode8Bit;
-                    case "BASE64": return DecodeBase64;
+                    case "7BIT":
+                        return Decode7Bit;
+                    case "8BIT":
+                        return Decode8Bit;
+                    case "BASE64":
+                        return DecodeBase64;
                     default:
                         return null;
                 }
             }
             return null;
-        } 
+        }
 
         #endregion
 
@@ -131,15 +134,18 @@ namespace Ical.Net.Serialization
             {
                 switch (encoding.ToUpper())
                 {
-                    case "7BIT": return Encode7Bit;
-                    case "8BIT": return Encode8Bit;
-                    case "BASE64": return EncodeBase64;
+                    case "7BIT":
+                        return Encode7Bit;
+                    case "8BIT":
+                        return Encode8Bit;
+                    case "BASE64":
+                        return EncodeBase64;
                     default:
                         return null;
                 }
             }
             return null;
-        } 
+        }
 
         #endregion
 
@@ -149,26 +155,26 @@ namespace Ical.Net.Serialization
 
         public string Encode(string encoding, byte[] data)
         {
-            if (encoding != null &&
-                data != null)
+            if (encoding != null && data != null)
             {
                 var encoder = GetEncoderFor(encoding);
                 if (encoder != null)
+                {
                     return encoder(data);
+                }
             }
             return null;
         }
 
         public string DecodeString(string encoding, string value)
         {
-            if (encoding != null &&
-                value != null)
+            if (encoding != null && value != null)
             {
                 var data = DecodeData(encoding, value);
                 if (data != null)
                 {
                     // Decode the string into the current encoding
-                    var encodingStack = _mSerializationContext.GetService(typeof(IEncodingStack)) as IEncodingStack;
+                    var encodingStack = _mSerializationContext.GetService(typeof (IEncodingStack)) as IEncodingStack;
                     return encodingStack.Current.GetString(data);
                 }
             }
@@ -177,12 +183,13 @@ namespace Ical.Net.Serialization
 
         public byte[] DecodeData(string encoding, string value)
         {
-            if (encoding != null &&
-                value != null)
+            if (encoding != null && value != null)
             {
                 var decoder = GetDecoderFor(encoding);
                 if (decoder != null)
+                {
                     return decoder(value);
+                }
             }
             return null;
         }

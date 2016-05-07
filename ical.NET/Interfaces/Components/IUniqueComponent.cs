@@ -5,8 +5,7 @@ using Ical.Net.Interfaces.DataTypes;
 
 namespace Ical.Net.Interfaces.Components
 {
-    public interface IUniqueComponent :
-        ICalendarComponent
+    public interface IUniqueComponent : ICalendarComponent
     {
         event EventHandler<ObjectEventArgs<string, string>> UidChanged;
         string Uid { get; set; }

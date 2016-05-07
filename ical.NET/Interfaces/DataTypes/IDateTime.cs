@@ -63,38 +63,38 @@ namespace Ical.Net.Interfaces.DataTypes
         /// <summary>
         /// Gets the month for this date/time value.
         /// </summary>
-        int Month { get; }        
+        int Month { get; }
 
         /// <summary>
         /// Gets the day for this date/time value.
         /// </summary>
         int Day { get; }
-        
+
         /// <summary>
         /// Gets the hour for this date/time value.
         /// </summary>
         int Hour { get; }
-        
+
         /// <summary>
         /// Gets the minute for this date/time value.
         /// </summary>
         int Minute { get; }
-        
+
         /// <summary>
         /// Gets the second for this date/time value.
         /// </summary>
         int Second { get; }
-        
+
         /// <summary>
         /// Gets the millisecond for this date/time value.
         /// </summary>
         int Millisecond { get; }
-        
+
         /// <summary>
         /// Gets the ticks for this date/time value.
         /// </summary>
         long Ticks { get; }
-        
+
         /// <summary>
         /// Gets the DayOfWeek for this date/time value.
         /// </summary>
@@ -135,6 +135,6 @@ namespace Ical.Net.Interfaces.DataTypes
         bool LessThanOrEqual(IDateTime dt);
         bool GreaterThanOrEqual(IDateTime dt);
 
-        void AssociateWith(IDateTime dt);        
+        void AssociateWith(IDateTime dt);
     }
 }

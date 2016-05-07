@@ -8,8 +8,7 @@ using Ical.Net.Interfaces.Serialization.Factory;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers
 {
-    public class GenericListSerializer :
-        SerializerBase
+    public class GenericListSerializer : SerializerBase
     {
         #region Private Fields
 
@@ -23,9 +22,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         public GenericListSerializer(Type objectType)
         {
             _innerType = objectType.GetGenericArguments()[0];
-            
-            var listDef = typeof(List<>);
-            _objectType = listDef.MakeGenericType(typeof(object));
+
+            var listDef = typeof (List<>);
+            _objectType = listDef.MakeGenericType(typeof (object));
         }
 
         #endregion
@@ -52,7 +51,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                 if (listObj != null)
                 {
                     // Get a serializer for the inner type
-                    var stringSerializer = sf.Build(_innerType, SerializationContext) as IStringSerializer;;
+                    var stringSerializer = sf.Build(_innerType, SerializationContext) as IStringSerializer;
+                    ;
 
                     if (stringSerializer != null)
                     {
@@ -63,7 +63,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                         // If deserialization failed, pass the string value
                         // into the list.
                         if (objToAdd == null)
+                        {
                             objToAdd = value;
+                        }
 
                         if (objToAdd != null)
                         {
@@ -73,20 +75,21 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                             {
                                 // Determine if the returned object is an IList<ObjectType>,
                                 // rather than just an ObjectType.
-                                if (objToAdd is IEnumerable &&
-                                    objToAdd.GetType().Equals(typeof(List<>).MakeGenericType(_innerType)))
+                                if (objToAdd is IEnumerable && objToAdd.GetType().Equals(typeof (List<>).MakeGenericType(_innerType)))
                                 {
                                     // Deserialization returned an IList<ObjectType>, instead of
                                     // simply an ObjectType.  So, let's enumerate through the
                                     // items in the list and add them individually to our
                                     // list.
-                                    foreach (var innerObj in (IEnumerable)objToAdd)
-                                        mi.Invoke(listObj, new[] { innerObj });
+                                    foreach (var innerObj in (IEnumerable) objToAdd)
+                                    {
+                                        mi.Invoke(listObj, new[] {innerObj});
+                                    }
                                 }
                                 else
                                 {
                                     // Add the object to the list
-                                    mi.Invoke(listObj, new[] { objToAdd });
+                                    mi.Invoke(listObj, new[] {objToAdd});
                                 }
                                 return listObj;
                             }

@@ -20,12 +20,8 @@ namespace Ical.Net
     /// RRULEs, RDATE, EXRULEs, and EXDATEs, as well as the DTSTART
     /// for the recurring item (all recurring items must have a DTSTART).
     /// </remarks>
-
     [Serializable]
-
-    public class RecurringComponent : 
-        UniqueComponent,
-        IRecurringComponent
+    public class RecurringComponent : UniqueComponent, IRecurringComponent
     {
         #region Static Public Methods
 
@@ -40,16 +36,20 @@ namespace Ical.Net
             foreach (var t in list)
             {
                 if (t is IRecurringComponent)
-                    items.Add((IRecurringComponent)t);
+                {
+                    items.Add((IRecurringComponent) t);
+                }
             }
 
             // Sort the list by date
             items.Sort(new RecurringComponentDateSorter());
             foreach (var rc in items)
-                yield return (T)rc;
+            {
+                yield return (T) rc;
+            }
         }
 
-        #endregion        
+        #endregion
 
         #region Protected Properties
 
@@ -100,7 +100,7 @@ namespace Ical.Net
         /// </summary>
         public virtual IDateTime DtStart
         {
-            get { return Properties.Get<IDateTime>("DTSTART"); }            
+            get { return Properties.Get<IDateTime>("DTSTART"); }
             set { Properties.Set("DTSTART", value); }
         }
 
@@ -199,14 +199,16 @@ namespace Ical.Net
             SetService(new RecurringEvaluator(this));
         }
 
-        #endregion   
-     
+        #endregion
+
         #region Private Methods
 
         private void EnsureProperties()
         {
             if (!Properties.ContainsKey("SEQUENCE"))
+            {
                 Sequence = 0;
+            }
         }
 
         #endregion
@@ -260,7 +262,9 @@ namespace Ical.Net
             if (Alarms != null)
             {
                 foreach (var alarm in Alarms)
+                {
                     occurrences.AddRange(alarm.Poll(startTime, endTime));
+                }
             }
             return occurrences;
         }
@@ -277,7 +281,7 @@ namespace Ical.Net
 
         public int Compare(IRecurringComponent x, IRecurringComponent y)
         {
-            return x.Start.CompareTo(y.Start);            
+            return x.Start.CompareTo(y.Start);
         }
 
         #endregion

@@ -4,10 +4,7 @@ using Ical.Net.Interfaces.Evaluation;
 
 namespace Ical.Net.Interfaces.Components
 {
-    public interface IRecurringComponent :
-        IUniqueComponent,
-        IRecurrable,
-        IAlarmContainer
+    public interface IRecurringComponent : IUniqueComponent, IRecurrable, IAlarmContainer
     {
         IList<IAttachment> Attachments { get; set; }
         IList<string> Categories { get; set; }

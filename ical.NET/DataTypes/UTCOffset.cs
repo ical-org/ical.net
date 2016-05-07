@@ -8,9 +8,7 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// Represents a time offset from UTC (Coordinated Universal Time).
     /// </summary>
-
     [Serializable]
-
     public class UtcOffset : EncodableDataType, IUtcOffset
     {
         public TimeSpan Offset { get; set; }
@@ -23,7 +21,7 @@ namespace Ical.Net.DataTypes
 
         public int Seconds => Math.Abs(Offset.Seconds);
 
-        public UtcOffset() { }
+        public UtcOffset() {}
 
         public UtcOffset(string value) : this()
         {
@@ -62,7 +60,7 @@ namespace Ical.Net.DataTypes
             {
                 return false;
             }
-            return Equals((UtcOffset)obj);
+            return Equals((UtcOffset) obj);
         }
 
         public override int GetHashCode()
@@ -75,15 +73,14 @@ namespace Ical.Net.DataTypes
             base.CopyFrom(obj);
             if (obj is IUtcOffset)
             {
-                var utco = (IUtcOffset)obj;
+                var utco = (IUtcOffset) obj;
                 Offset = utco.Offset;
             }
         }
 
         public override string ToString()
         {
-            return (Positive ? "+" : "-") + Hours.ToString("00") + Minutes.ToString("00") +
-                   (Seconds != 0 ? Seconds.ToString("00") : string.Empty);
+            return (Positive ? "+" : "-") + Hours.ToString("00") + Minutes.ToString("00") + (Seconds != 0 ? Seconds.ToString("00") : string.Empty);
         }
     }
 }

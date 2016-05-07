@@ -5,9 +5,7 @@ using IServiceProvider = Ical.Net.Interfaces.General.IServiceProvider;
 
 namespace Ical.Net.Interfaces.Evaluation
 {
-    public interface IRecurrable :
-        IGetOccurrences,
-        IServiceProvider
+    public interface IRecurrable : IGetOccurrences, IServiceProvider
     {
         [Obsolete("Use the Start property instead.")]
         IDateTime DtStart { get; set; }
@@ -21,6 +19,6 @@ namespace Ical.Net.Interfaces.Evaluation
         IList<IRecurrencePattern> ExceptionRules { get; set; }
         IList<IPeriodList> RecurrenceDates { get; set; }
         IList<IRecurrencePattern> RecurrenceRules { get; set; }
-        IDateTime RecurrenceId { get; set; }        
+        IDateTime RecurrenceId { get; set; }
     }
 }

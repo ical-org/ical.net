@@ -8,8 +8,7 @@ using Ical.Net.Utility;
 
 namespace Ical.Net.Evaluation
 {
-    public class TodoEvaluator :
-        RecurringEvaluator
+    public class TodoEvaluator : RecurringEvaluator
     {
         #region Protected Properties
 
@@ -19,9 +18,7 @@ namespace Ical.Net.Evaluation
 
         #region Constructors
 
-        public TodoEvaluator(ITodo todo) : base(todo)
-        {
-        }
+        public TodoEvaluator(ITodo todo) : base(todo) {}
 
         #endregion
 
@@ -34,22 +31,30 @@ namespace Ical.Net.Evaluation
             if (Todo.RecurrenceRules != null)
             {
                 foreach (var rrule in Todo.RecurrenceRules)
+                {
                     DetermineStartingRecurrence(rrule, ref beginningDate);
+                }
             }
             if (Todo.RecurrenceDates != null)
             {
                 foreach (var rdate in Todo.RecurrenceDates)
+                {
                     DetermineStartingRecurrence(rdate, ref beginningDate);
+                }
             }
             if (Todo.ExceptionRules != null)
             {
                 foreach (var exrule in Todo.ExceptionRules)
+                {
                     DetermineStartingRecurrence(exrule, ref beginningDate);
+                }
             }
             if (Todo.ExceptionDates != null)
             {
                 foreach (var exdate in Todo.ExceptionDates)
+                {
                     DetermineStartingRecurrence(exdate, ref beginningDate);
+                }
             }
 
             Evaluate(Todo.Start, DateUtil.GetSimpleDateTimeData(beginningDate), DateUtil.GetSimpleDateTimeData(currDt).AddTicks(1), true);
@@ -57,7 +62,7 @@ namespace Ical.Net.Evaluation
 
         public void DetermineStartingRecurrence(IPeriodList rdate, ref IDateTime dt)
         {
-            var evaluator = rdate.GetService(typeof(IEvaluator)) as IEvaluator;
+            var evaluator = rdate.GetService(typeof (IEvaluator)) as IEvaluator;
             if (evaluator == null)
             {
                 // FIXME: throw a specific, typed exception here.
@@ -67,14 +72,18 @@ namespace Ical.Net.Evaluation
             foreach (var p in evaluator.Periods)
             {
                 if (p.StartTime.LessThan(dt))
+                {
                     dt = p.StartTime;
+                }
             }
         }
 
         public void DetermineStartingRecurrence(IRecurrencePattern recur, ref IDateTime dt)
         {
             if (recur.Count != int.MinValue)
+            {
                 dt = Todo.Start.Copy<IDateTime>();
+            }
             else
             {
                 var dtVal = dt.Value;

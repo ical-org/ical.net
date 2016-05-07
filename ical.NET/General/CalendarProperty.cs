@@ -30,16 +30,12 @@ namespace Ical.Net.General
     /// and X-properties may be applied to calendar components.
     /// </remarks>
     [DebuggerDisplay("{Name}:{Value}")]
-
     [Serializable]
-
-    public class CalendarProperty :
-        CalendarObject,
-        ICalendarProperty
+    public class CalendarProperty : CalendarObject, ICalendarProperty
     {
         #region Private Fields
 
-        private IList<object> _values;        
+        private IList<object> _values;
         private ICalendarParameterCollection _parameters;
 
         #endregion
@@ -52,10 +48,7 @@ namespace Ical.Net.General
         public virtual ICalendarParameterCollection Parameters
         {
             get { return _parameters; }
-            protected set
-            {
-                _parameters = value;
-            }
+            protected set { _parameters = value; }
         }
 
         #endregion
@@ -72,14 +65,12 @@ namespace Ical.Net.General
             CopyFrom(other);
         }
 
-        public CalendarProperty(string name)
-            : base(name)
+        public CalendarProperty(string name) : base(name)
         {
             Initialize();
         }
 
-        public CalendarProperty(string name, object value)
-            : base(name)
+        public CalendarProperty(string name, object value) : base(name)
         {
             Initialize();
             _values.Add(value);
@@ -95,17 +86,17 @@ namespace Ical.Net.General
             _values = new List<object>();
             _parameters = new CalendarParameterList(this, true);
             ValueChanged += CalendarProperty_ValueChanged;
-        }        
+        }
 
         #endregion
-               
+
         #region Public Methods
 
         /// <summary>
         /// Adds a parameter to the iCalendar object.
         /// </summary>
         public virtual void AddParameter(string name, string value)
-        {            
+        {
             var p = new CalendarParameter(name, value);
             Parameters.Add(p);
         }
@@ -126,11 +117,15 @@ namespace Ical.Net.General
         {
             // Deassociate the old values
             foreach (var removed in e.RemovedValues)
+            {
                 AssociationUtil.DeassociateItem(removed);
+            }
 
             // Associate the new values with this object.
             foreach (var added in e.AddedValues)
+            {
                 AssociationUtil.AssociateItem(added, this);
+            }
         }
 
         #endregion
@@ -153,15 +148,23 @@ namespace Ical.Net.General
             {
                 // Copy/clone the object if possible (deep copy)
                 if (p.Values is ICopyable)
-                    SetValue(((ICopyable)p.Values).Copy<object>());
+                {
+                    SetValue(((ICopyable) p.Values).Copy<object>());
+                }
                 else if (p.Values is ICloneable)
-                    SetValue(((ICloneable)p.Values).Clone());
+                {
+                    SetValue(((ICloneable) p.Values).Clone());
+                }
                 else
+                {
                     SetValue(p.Values);
+                }
 
                 // Copy parameters
                 foreach (var parm in p.Parameters)
+                {
                     this.AddChild(parm.Copy<ICalendarParameter>());
+                }
             }
         }
 
@@ -175,7 +178,9 @@ namespace Ical.Net.General
         protected void OnValueChanged(object removedValue, object addedValue)
         {
             if (ValueChanged != null)
-                ValueChanged(this, new ValueChangedEventArgs<object>((IEnumerable<object>)removedValue, (IEnumerable<object>)addedValue));
+            {
+                ValueChanged(this, new ValueChangedEventArgs<object>((IEnumerable<object>) removedValue, (IEnumerable<object>) addedValue));
+            }
         }
 
         public virtual IEnumerable<object> Values => _values;
@@ -185,7 +190,9 @@ namespace Ical.Net.General
             get
             {
                 if (_values != null)
+                {
                     return _values.FirstOrDefault();
+                }
                 return null;
             }
             set
@@ -193,7 +200,9 @@ namespace Ical.Net.General
                 if (value != null)
                 {
                     if (_values != null && _values.Count > 0)
+                    {
                         _values[0] = value;
+                    }
                     else
                     {
                         _values.Clear();
@@ -220,14 +229,14 @@ namespace Ical.Net.General
             {
                 // Our list doesn't contain any values.  Let's add one!
                 _values.Add(value);
-                OnValueChanged(null, new[] { value });
+                OnValueChanged(null, new[] {value});
             }
             else if (value != null)
             {
                 // Our list contains values.  Let's set the first value!
                 var oldValue = _values[0];
                 _values[0] = value;
-                OnValueChanged(new[] { oldValue }, new[] { value });
+                OnValueChanged(new[] {oldValue}, new[] {value});
             }
             else
             {
@@ -252,17 +261,15 @@ namespace Ical.Net.General
             if (value != null)
             {
                 _values.Add(value);
-                OnValueChanged(null, new[] { value });
+                OnValueChanged(null, new[] {value});
             }
         }
-        
+
         public virtual void RemoveValue(object value)
         {
-            if (value != null &&
-                _values.Contains(value) &&
-                _values.Remove(value))
+            if (value != null && _values.Contains(value) && _values.Remove(value))
             {
-                OnValueChanged(new[] { value }, null);
+                OnValueChanged(new[] {value}, null);
             }
         }
 

@@ -10,8 +10,7 @@ using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers
 {
-    public class CalendarSerializer :
-        ComponentSerializer
+    public class CalendarSerializer : ComponentSerializer
     {
         #region Private Fields
 
@@ -21,18 +20,14 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         #region Constructors
 
-        public CalendarSerializer()
-        {
-        }
+        public CalendarSerializer() {}
 
         public CalendarSerializer(ICalendar cal)
         {
             _mCalendar = cal;
         }
 
-        public CalendarSerializer(ISerializationContext ctx) : base(ctx)
-        {
-        }
+        public CalendarSerializer(ISerializationContext ctx) : base(ctx) {}
 
         #endregion
 
@@ -42,7 +37,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         public virtual void Serialize(string filename)
         {
             if (_mCalendar != null)
+            {
                 Serialize(_mCalendar, filename);
+            }
         }
 
         [Obsolete("Use the SerializeToString(ICalendarObject obj) method instead.")]
@@ -57,7 +54,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             {
                 Serialize(cal, fs, new UTF8Encoding());
             }
-        }        
+        }
 
         #endregion
 
@@ -74,9 +71,13 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                 // as they are required by RFC5545.
                 var copy = iCal.Copy<ICalendar>();
                 if (string.IsNullOrEmpty(copy.Version))
-                    copy.Version = CalendarVersions.V20;                    
+                {
+                    copy.Version = CalendarVersions.V20;
+                }
                 if (string.IsNullOrEmpty(copy.ProductId))
+                {
                     copy.ProductId = CalendarProductIDs.Default;
+                }
 
                 return base.SerializeToString(copy);
             }
@@ -109,24 +110,33 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         #endregion
 
-        private class CalendarPropertySorter :
-            IComparer<ICalendarProperty>
+        private class CalendarPropertySorter : IComparer<ICalendarProperty>
         {
             #region IComparer<ICalendarProperty> Members
 
             public int Compare(ICalendarProperty x, ICalendarProperty y)
             {
                 if (x == y || (x == null && y == null))
+                {
                     return 0;
+                }
                 if (x == null)
+                {
                     return -1;
+                }
                 if (y == null)
+                {
                     return 1;
+                }
                 // Alphabetize all properties except VERSION, which should appear first. 
                 if (string.Equals("VERSION", x.Name, StringComparison.InvariantCultureIgnoreCase))
+                {
                     return -1;
+                }
                 if (string.Equals("VERSION", y.Name, StringComparison.InvariantCultureIgnoreCase))
+                {
                     return 1;
+                }
                 return string.Compare(x.Name, y.Name);
             }
 
