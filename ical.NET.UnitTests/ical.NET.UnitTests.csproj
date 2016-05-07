@@ -89,7 +89,6 @@
     <Compile Include="ProgramTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="app.config" />
-    <None Include="Properties\AssemblyInfo.cs.template" />
     <Compile Include="RecurrenceTest.cs" />
     <Compile Include="SerializationTest.cs" />
     <Compile Include="Startup.cs" />

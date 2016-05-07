@@ -245,7 +245,6 @@
     <Compile Include="Interfaces\ICalendar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="packages.config" />
-    <None Include="Properties\AssemblyInfo.cs.template" />
     <None Include="Serialization\iCalendar\iCal.g" />
     <Compile Include="Serialization\DataTypeMapper.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataMapSerializer.cs" />
