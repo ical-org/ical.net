@@ -15,7 +15,6 @@ namespace Ical.Net
     /// </summary>
 
     [Serializable]
-
     public class CalTimeZone : CalendarComponent, ITimeZone
     {
         #region Static Public Methods

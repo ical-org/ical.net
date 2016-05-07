@@ -19,18 +19,11 @@ namespace Ical.Net.DataTypes
     /// </summary>
 
     [Serializable]
-
-    public sealed class CalDateTime :
-        EncodableDataType,
-        IDateTime
+    public sealed class CalDateTime : EncodableDataType, IDateTime
     {
-        #region Static Public Properties
-
         public static CalDateTime Now => new CalDateTime(DateTime.Now);
 
         public static CalDateTime Today => new CalDateTime(DateTime.Today);
-
-        #endregion
 
         #region Private Fields
 
@@ -614,20 +607,22 @@ namespace Ical.Net.DataTypes
 
         #endregion
 
-        #region IComparable Members
-
         public int CompareTo(IDateTime dt)
         {
             if (Equals(dt))
+            {
                 return 0;
+            }
             if (this < dt)
+            {
                 return -1;
+            }
             if (this > dt)
+            {
                 return 1;
+            }
             throw new Exception("An error occurred while comparing two IDateTime values.");
         }
-
-        #endregion
 
         #region IFormattable Members
 

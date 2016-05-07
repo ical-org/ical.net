@@ -4,9 +4,7 @@ using Ical.Net.Interfaces.DataTypes;
 
 namespace Ical.Net.Structs
 {
-
     [Serializable]
-
     public struct TimeZoneObservance
     {
         public IPeriod Period { get; set; }
@@ -21,7 +19,9 @@ namespace Ical.Net.Structs
         public bool Contains(IDateTime dt)
         {
             if (Period != null)
+            {
                 return Period.Contains(dt);
+            }
             return false;
         }
     }
