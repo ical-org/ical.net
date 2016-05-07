@@ -355,10 +355,7 @@ namespace ical.NET.Collections
             _dictionary.SelectMany(kvp => kvp.Value).ToArray().CopyTo(array, arrayIndex);
         }
 
-        public virtual bool IsReadOnly
-        {
-            get { return false; }
-        }
+        public virtual bool IsReadOnly => false;
 
         #endregion
 

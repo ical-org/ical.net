@@ -9,10 +9,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
     public class UtcOffsetSerializer :
         EncodableDataTypeSerializer
     {
-        public override Type TargetType
-        {
-            get { return typeof(UtcOffset); }
-        }
+        public override Type TargetType => typeof(UtcOffset);
 
         public override string SerializeToString(object obj)
         {

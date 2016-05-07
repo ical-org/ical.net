@@ -11,10 +11,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
     public class PeriodListSerializer :
         EncodableDataTypeSerializer
     {
-        public override Type TargetType
-        {
-            get { return typeof(PeriodList); }
-        }
+        public override Type TargetType => typeof(PeriodList);
 
         public override string SerializeToString(object obj)
         {

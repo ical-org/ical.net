@@ -10,10 +10,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
     {
         #region Overrides
 
-        public override Type TargetType
-        {
-            get { return typeof(FreeBusyEntry); }
-        }
+        public override Type TargetType => typeof(FreeBusyEntry);
 
         public override string SerializeToString(object obj)
         {

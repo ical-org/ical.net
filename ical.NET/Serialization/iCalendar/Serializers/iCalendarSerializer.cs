@@ -63,13 +63,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         #region Overrides
 
-        protected override IComparer<ICalendarProperty> PropertySorter
-        {
-            get
-            {
-                return new CalendarPropertySorter();
-            }
-        }
+        protected override IComparer<ICalendarProperty> PropertySorter => new CalendarPropertySorter();
 
         public override string SerializeToString(object obj)
         {

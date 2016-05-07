@@ -13,13 +13,7 @@ namespace Ical.Net.General.Proxies
     {
         #region Protected Properties
 
-        protected IGroupedValueList<string, ICalendarParameter, CalendarParameter, string> Parameters
-        {
-            get
-            {
-                return RealObject as IGroupedValueList<string, ICalendarParameter, CalendarParameter, string>;
-            }
-        }
+        protected IGroupedValueList<string, ICalendarParameter, CalendarParameter, string> Parameters => RealObject as IGroupedValueList<string, ICalendarParameter, CalendarParameter, string>;
 
         #endregion
 

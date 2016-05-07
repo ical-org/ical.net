@@ -26,21 +26,9 @@ namespace Ical.Net.DataTypes
     {
         #region Static Public Properties
 
-        public static CalDateTime Now
-        {
-            get
-            {
-                return new CalDateTime(DateTime.Now);
-            }
-        }
+        public static CalDateTime Now => new CalDateTime(DateTime.Now);
 
-        public static CalDateTime Today
-        {
-            get
-            {
-                return new CalDateTime(DateTime.Today);
-            }            
-        }
+        public static CalDateTime Today => new CalDateTime(DateTime.Today);
 
         #endregion
 
@@ -438,65 +426,29 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public int Year
-        {
-            get { return Value.Year; }
-        }
+        public int Year => Value.Year;
 
-        public int Month
-        {
-            get { return Value.Month; }
-        }
+        public int Month => Value.Month;
 
-        public int Day
-        {
-            get { return Value.Day; }
-        }
+        public int Day => Value.Day;
 
-        public int Hour
-        {
-            get { return Value.Hour; }
-        }
+        public int Hour => Value.Hour;
 
-        public int Minute
-        {
-            get { return Value.Minute; }
-        }
+        public int Minute => Value.Minute;
 
-        public int Second
-        {
-            get { return Value.Second; }
-        }
+        public int Second => Value.Second;
 
-        public int Millisecond
-        {
-            get { return Value.Millisecond; }
-        }
+        public int Millisecond => Value.Millisecond;
 
-        public long Ticks
-        {
-            get { return Value.Ticks; }
-        }
+        public long Ticks => Value.Ticks;
 
-        public DayOfWeek DayOfWeek
-        {
-            get { return Value.DayOfWeek; }
-        }
+        public DayOfWeek DayOfWeek => Value.DayOfWeek;
 
-        public int DayOfYear
-        {
-            get { return Value.DayOfYear; }
-        }
+        public int DayOfYear => Value.DayOfYear;
 
-        public DateTime Date
-        {
-            get { return Value.Date; }
-        }
+        public DateTime Date => Value.Date;
 
-        public TimeSpan TimeOfDay
-        {
-            get { return Value.TimeOfDay; }
-        }
+        public TimeSpan TimeOfDay => Value.TimeOfDay;
 
         public IDateTime ToTimeZone(TimeZoneObservance tzo)
         {

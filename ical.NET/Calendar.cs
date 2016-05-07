@@ -498,10 +498,7 @@ namespace Ical.Net
 
         #region IICalendar Members
 
-        public virtual IUniqueComponentList<IUniqueComponent> UniqueComponents
-        {
-            get { return _mUniqueComponents; }
-        }
+        public virtual IUniqueComponentList<IUniqueComponent> UniqueComponents => _mUniqueComponents;
 
         public virtual IEnumerable<IRecurrable> RecurringItems
         {
@@ -518,42 +515,27 @@ namespace Ical.Net
         /// <summary>
         /// A collection of <see cref="Components.Event"/> components in the iCalendar.
         /// </summary>
-        public virtual IUniqueComponentList<IEvent> Events
-        {
-            get { return _mEvents; }
-        }
+        public virtual IUniqueComponentList<IEvent> Events => _mEvents;
 
         /// <summary>
         /// A collection of <see cref="Net.FreeBusy"/> components in the iCalendar.
         /// </summary>
-        public virtual IUniqueComponentList<IFreeBusy> FreeBusy
-        {
-            get { return _mFreeBusy; }
-        }
+        public virtual IUniqueComponentList<IFreeBusy> FreeBusy => _mFreeBusy;
 
         /// <summary>
         /// A collection of <see cref="Components.Journal"/> components in the iCalendar.
         /// </summary>
-        public virtual ICalendarObjectList<IJournal> Journals
-        {
-            get { return _mJournals; }
-        }
+        public virtual ICalendarObjectList<IJournal> Journals => _mJournals;
 
         /// <summary>
         /// A collection of TimeZone components in the iCalendar.
         /// </summary>
-        public virtual ICalendarObjectList<ITimeZone> TimeZones
-        {
-            get { return _mTimeZones; }
-        }
+        public virtual ICalendarObjectList<ITimeZone> TimeZones => _mTimeZones;
 
         /// <summary>
         /// A collection of <see cref="Components.Todo"/> components in the iCalendar.
         /// </summary>
-        public virtual IUniqueComponentList<ITodo> Todos
-        {
-            get { return _mTodos; }
-        }
+        public virtual IUniqueComponentList<ITodo> Todos => _mTodos;
 
         public virtual string Version
         {

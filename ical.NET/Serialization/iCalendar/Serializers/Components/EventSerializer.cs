@@ -22,10 +22,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
 
         #region Overrides
 
-        public override Type TargetType
-        {
-            get { return typeof(Event); }
-        }
+        public override Type TargetType => typeof(Event);
 
         public override string SerializeToString(object obj)
         {

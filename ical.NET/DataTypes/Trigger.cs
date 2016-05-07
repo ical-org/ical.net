@@ -69,10 +69,7 @@ namespace Ical.Net.DataTypes
             set { _mRelated = value; }
         }
         
-        public virtual bool IsRelative
-        {
-            get { return _mDuration != null; }
-        }
+        public virtual bool IsRelative => _mDuration != null;
 
         #endregion
 

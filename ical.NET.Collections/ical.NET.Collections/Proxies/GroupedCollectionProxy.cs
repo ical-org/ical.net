@@ -137,20 +137,11 @@ namespace ical.NET.Collections.Proxies
             }
         }
 
-        public virtual int Count
-        {
-            get 
-            { 
-                return RealObject
-                    .OfType<TNew>()
-                    .Count(); 
-            }
-        }
+        public virtual int Count => RealObject
+            .OfType<TNew>()
+            .Count();
 
-        public virtual bool IsReadOnly
-        {
-            get { return false; }
-        }
+        public virtual bool IsReadOnly => false;
 
         public virtual bool Remove(TNew item)
         {

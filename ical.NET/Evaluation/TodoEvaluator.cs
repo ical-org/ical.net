@@ -13,13 +13,7 @@ namespace Ical.Net.Evaluation
     {
         #region Protected Properties
 
-        protected ITodo Todo
-        {
-            get
-            {
-                return Recurrable as ITodo;
-            }
-        }
+        protected ITodo Todo => Recurrable as ITodo;
 
         #endregion
 

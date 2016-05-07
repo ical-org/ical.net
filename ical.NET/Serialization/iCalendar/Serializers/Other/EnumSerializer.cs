@@ -24,10 +24,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 
         #endregion
 
-        public override Type TargetType
-        {
-            get { return _mEnumType; }
-        }
+        public override Type TargetType => _mEnumType;
 
         public override string SerializeToString(object enumValue)
         {

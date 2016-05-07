@@ -196,10 +196,7 @@ namespace Ical.Net.DataTypes
 
         #region ICalendarParameterCollectionContainer Members
 
-        public virtual ICalendarParameterCollection Parameters
-        {
-            get { return _proxy; }
-        }
+        public virtual ICalendarParameterCollection Parameters => _proxy;
 
         #endregion
 

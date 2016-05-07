@@ -53,7 +53,7 @@ namespace Ical.Net
 
         #region Protected Properties
 
-        protected virtual bool EvaluationIncludesReferenceDate { get { return false; } }
+        protected virtual bool EvaluationIncludesReferenceDate => false;
 
         #endregion
 
@@ -176,10 +176,7 @@ namespace Ical.Net
         /// <summary>
         /// A list of <see cref="Alarm"/>s for this recurring component.
         /// </summary>
-        public virtual ICalendarObjectList<IAlarm> Alarms
-        {
-            get { return new CalendarObjectListProxy<IAlarm>(Children); }
-        }
+        public virtual ICalendarObjectList<IAlarm> Alarms => new CalendarObjectListProxy<IAlarm>(Children);
 
         #endregion
 

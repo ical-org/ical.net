@@ -118,10 +118,7 @@ namespace Ical.Net.Evaluation
             protected set { _mAssociatedObject = value; }
         }
 
-        public virtual HashSet<IPeriod> Periods
-        {
-            get { return MPeriods; }
-        }
+        public virtual HashSet<IPeriod> Periods => MPeriods;
 
         public virtual void Clear()
         {

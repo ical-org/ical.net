@@ -157,10 +157,7 @@ namespace ical.NET.Collections.Proxies
             }
         }
 
-        public virtual bool IsReadOnly
-        {
-            get { return false; }
-        }
+        public virtual bool IsReadOnly => false;
 
         public virtual bool Remove(TNewValue item)
         {

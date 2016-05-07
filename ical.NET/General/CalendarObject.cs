@@ -153,13 +153,7 @@ namespace Ical.Net.General
         /// <summary>
         /// A collection of iCalObjects that are children of the current object.
         /// </summary>
-        public virtual ICalendarObjectList<ICalendarObject> Children
-        {
-            get
-            {
-                return _children;
-            }
-        }
+        public virtual ICalendarObjectList<ICalendarObject> Children => _children;
 
         /// <summary>
         /// Gets or sets the name of the iCalObject.  For iCalendar components, this is the RFC 5545 name of the component.

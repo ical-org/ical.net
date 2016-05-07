@@ -61,11 +61,8 @@ namespace Ical.Net.General
 
         #region ILoadable Members
 
-        public virtual bool IsLoaded
-        {
-            get { return _mIsLoaded; }
-        }
-        
+        public virtual bool IsLoaded => _mIsLoaded;
+
         [field:NonSerialized]
         public event EventHandler Loaded;
 

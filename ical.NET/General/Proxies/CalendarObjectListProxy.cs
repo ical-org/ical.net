@@ -14,12 +14,6 @@ namespace Ical.Net.General.Proxies
         {
         }
 
-        public virtual TType this[int index]
-        {
-            get
-            {
-                return this.Skip(index).FirstOrDefault();
-            }
-        }
+        public virtual TType this[int index] => this.Skip(index).FirstOrDefault();
     }
 }
