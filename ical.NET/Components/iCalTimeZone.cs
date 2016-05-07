@@ -1,7 +1,5 @@
 using System;
 using System.Globalization;
-using System.Runtime.Serialization;
-using ical.NET.Collections;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.ExtensionMethods;
@@ -131,59 +129,16 @@ namespace Ical.Net
 
         #endregion
 
-        #region Private Fields
-
-        TimeZoneEvaluator _mEvaluator;
-        ICalendarObjectList<ITimeZoneInfo> _mTimeZoneInfos;
-
-        #endregion
-
-        #region Constructors
+        TimeZoneEvaluator _evaluator;
 
         public CalTimeZone()
         {
-            Initialize();
-        }
-
-        private void Initialize()
-        {
             Name = Components.Timezone;
 
-            _mEvaluator = new TimeZoneEvaluator(this);
-            _mTimeZoneInfos = new CalendarObjectListProxy<ITimeZoneInfo>(Children);
-            Children.ItemAdded += Children_ItemAdded;
-            Children.ItemRemoved += Children_ItemRemoved;
-            SetService(_mEvaluator);
-        }        
-
-        #endregion
-
-        #region Event Handlers
-
-        void Children_ItemRemoved(object sender, ObjectEventArgs<ICalendarObject, int> e)
-        {
-            _mEvaluator.Clear();
+            _evaluator = new TimeZoneEvaluator(this);
+            _tzInfos = new CalendarObjectListProxy<ITimeZoneInfo>(Children);
+            SetService(_evaluator);
         }
-
-        void Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e)
-        {
-            _mEvaluator.Clear();
-        }
-
-        #endregion
-
-        #region Overrides
-
-        protected override void OnDeserializing(StreamingContext context)
-        {
-            base.OnDeserializing(context);
-
-            Initialize();
-        }
-
-        #endregion
-
-        #region ITimeZone Members
 
         public virtual string Id
         {
@@ -209,12 +164,11 @@ namespace Ical.Net
             set { Properties.Set("TZURL", value); }
         }
 
+        private ICalendarObjectList<ITimeZoneInfo> _tzInfos;
         public virtual ICalendarObjectList<ITimeZoneInfo> TimeZoneInfos
         {
-            get { return _mTimeZoneInfos; }
-            set { _mTimeZoneInfos = value; }
+            get { return _tzInfos; }
+            set { _tzInfos = value; }
         }
-
-        #endregion
     }
 }

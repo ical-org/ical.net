@@ -19,9 +19,7 @@ namespace Ical.Net
     [Serializable]
 #endif
     [DebuggerDisplay("Component: {Name}")]
-    public class CalendarComponent :
-        CalendarObject,
-        ICalendarComponent
+    public class CalendarComponent : CalendarObject, ICalendarComponent
     {
         #region Static Public Methods
 
@@ -89,42 +87,25 @@ namespace Ical.Net
 
         #endregion
 
-        #region Private Fields
-                
-        private ICalendarPropertyList _mProperties;        
-
-        #endregion
-
-        #region ICalendarPropertyList Members
-
         /// <summary>
         /// Returns a list of properties that are associated with the iCalendar object.
         /// </summary>
-        public virtual ICalendarPropertyList Properties
-        {
-            get { return _mProperties; }
-            protected set
-            {
-                _mProperties = value;
-            }
-        }
-
-        #endregion
-
-        #region Constructors
+        public virtual ICalendarPropertyList Properties { get; protected set; }
 
         public CalendarComponent()
-        { Initialize(); }
-        public CalendarComponent(string name) : base(name) { Initialize(); }
-
-        private void Initialize()
-        {            
-            _mProperties = new CalendarPropertyList(this, true);
+        {
+            Initialize();
         }
 
-        #endregion
+        public CalendarComponent(string name) : base(name)
+        {
+            Initialize();
+        }
 
-        #region Overrides
+        private void Initialize()
+        {
+            Properties = new CalendarPropertyList(this, true);
+        }
 
         protected override void OnDeserializing(StreamingContext context)
         {
@@ -146,10 +127,6 @@ namespace Ical.Net
             }
         }
 
-        #endregion
-
-        #region Public Methods
-
         /// <summary>
         /// Adds a property to this component.
         /// </summary>
@@ -167,7 +144,5 @@ namespace Ical.Net
             p.Parent = this;
             Properties.Set(p.Name, p);
         }
-
-        #endregion        
     }
 }
