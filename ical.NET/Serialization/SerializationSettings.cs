@@ -8,38 +8,17 @@ namespace Ical.Net.Serialization
     {
         #region Private Fields
 
-        private Type _mICalendarType = typeof(Net.Calendar);        
-        private bool _mEnsureAccurateLineNumbers;
-        private ParsingModeType _mParsingMode = ParsingModeType.Strict;
-        private bool _mStoreExtraSerializationData;        
-
         #endregion
 
         #region ISerializationSettings Members
 
-        public virtual Type CalendarType
-        {
-            get { return _mICalendarType; }
-            set { _mICalendarType = value; }
-        }
+        public virtual Type CalendarType { get; set; } = typeof(Net.Calendar);
 
-        public virtual bool EnsureAccurateLineNumbers
-        {
-            get { return _mEnsureAccurateLineNumbers; }
-            set { _mEnsureAccurateLineNumbers = value; }
-        }
+        public virtual bool EnsureAccurateLineNumbers { get; set; }
 
-        public virtual ParsingModeType ParsingMode
-        {
-            get { return _mParsingMode; }
-            set { _mParsingMode = value; }
-        }
+        public virtual ParsingModeType ParsingMode { get; set; } = ParsingModeType.Strict;
 
-        public virtual bool StoreExtraSerializationData
-        {
-            get { return _mStoreExtraSerializationData; }
-            set { _mStoreExtraSerializationData = value; }
-        }
+        public virtual bool StoreExtraSerializationData { get; set; }
 
         #endregion
     }

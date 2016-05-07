@@ -13,7 +13,6 @@ namespace Ical.Net.Evaluation
     {
         #region Private Fields
 
-        private System.Globalization.Calendar _mCalendar;
         private DateTime _mEvaluationStartBounds = DateTime.MaxValue;
         private DateTime _mEvaluationEndBounds = DateTime.MinValue;
         
@@ -51,7 +50,7 @@ namespace Ical.Net.Evaluation
 
         void Initialize()
         {
-            _mCalendar = System.Globalization.CultureInfo.CurrentCulture.Calendar;
+            Calendar = System.Globalization.CultureInfo.CurrentCulture.Calendar;
             MPeriods = new HashSet<IPeriod>();
         }
 
@@ -91,10 +90,7 @@ namespace Ical.Net.Evaluation
 
         #region IEvaluator Members
 
-        public System.Globalization.Calendar Calendar
-        {
-            get { return _mCalendar; }
-        }
+        public System.Globalization.Calendar Calendar { get; private set; }
 
         public virtual DateTime EvaluationStartBounds
         {

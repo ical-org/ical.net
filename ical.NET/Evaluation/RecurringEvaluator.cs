@@ -13,17 +13,11 @@ namespace Ical.Net.Evaluation
     {
         #region Private Fields
 
-        private IRecurrable _mRecurrable;
-
         #endregion
 
         #region Protected Properties
 
-        protected IRecurrable Recurrable
-        {
-            get { return _mRecurrable; }
-            set { _mRecurrable = value; }
-        }
+        protected IRecurrable Recurrable { get; set; }
 
         #endregion
 

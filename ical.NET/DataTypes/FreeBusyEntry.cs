@@ -9,8 +9,6 @@ namespace Ical.Net.DataTypes
     {
         #region Private Fields
 
-        FreeBusyStatus _status;
-
         #endregion
 
         #region Constructors
@@ -47,11 +45,7 @@ namespace Ical.Net.DataTypes
 
         #region IFreeBusyEntry Members
 
-        public virtual FreeBusyStatus Status
-        {
-            get { return _status; }
-            set { _status = value; }
-        }
+        public virtual FreeBusyStatus Status { get; set; }
 
         #endregion
     }
