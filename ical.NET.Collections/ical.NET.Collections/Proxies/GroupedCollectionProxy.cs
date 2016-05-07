@@ -30,9 +30,6 @@ namespace ical.NET.Collections.Proxies
         {
             _predicate = predicate ?? (o => true);
             SetProxiedObject(realObject);
-
-            RealObject.ItemAdded += _RealObject_ItemAdded;
-            RealObject.ItemRemoved += _RealObject_ItemRemoved;
         }
 
         #endregion

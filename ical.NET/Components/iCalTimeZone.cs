@@ -1,7 +1,6 @@
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
-using ical.NET.Collections;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.ExtensionMethods;
@@ -138,8 +137,6 @@ namespace Ical.Net
 
         #endregion
 
-        #region Constructors
-
         public CalTimeZone()
         {
             Initialize();
@@ -151,26 +148,8 @@ namespace Ical.Net
 
             _mEvaluator = new TimeZoneEvaluator(this);
             _mTimeZoneInfos = new CalendarObjectListProxy<ITimeZoneInfo>(Children);
-            Children.ItemAdded += Children_ItemAdded;
-            Children.ItemRemoved += Children_ItemRemoved;
             SetService(_mEvaluator);
         }        
-
-        #endregion
-
-        #region Event Handlers
-
-        void Children_ItemRemoved(object sender, ObjectEventArgs<ICalendarObject, int> e)
-        {
-            _mEvaluator.Clear();
-        }
-
-        void Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e)
-        {
-            _mEvaluator.Clear();
-        }
-
-        #endregion
 
         #region Overrides
 
