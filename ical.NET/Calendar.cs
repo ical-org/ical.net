@@ -97,9 +97,9 @@ namespace Ical.Net
 #if !SILVERLIGHT
     [Serializable]
 #endif
-    public class ICalendar :
+    public class Calendar :
         CalendarComponent,
-        IICalendar,
+        ICalendar,
         IDisposable
     {
         #region Static Public Methods
@@ -109,16 +109,16 @@ namespace Ical.Net
         #region LoadFromFile(string filepath) variants
 
         /// <summary>
-        /// Loads an <see cref="ICalendar"/> from the file system.
+        /// Loads an <see cref="Calendar"/> from the file system.
         /// </summary>
         /// <param name="filepath">The path to the file to load.</param>
-        /// <returns>An <see cref="ICalendar"/> object</returns>        
+        /// <returns>An <see cref="Calendar"/> object</returns>        
         static public IICalendarCollection LoadFromFile(string filepath)
         {
             return LoadFromFile(filepath, Encoding.UTF8, new CalendarSerializer());
         }
 
-        static public IICalendarCollection LoadFromFile<T>(string filepath) where T : IICalendar
+        static public IICalendarCollection LoadFromFile<T>(string filepath) where T : ICalendar
         {
             return LoadFromFile(typeof(T), filepath);
         }
@@ -139,7 +139,7 @@ namespace Ical.Net
             return LoadFromFile(filepath, encoding, new CalendarSerializer());
         }
 
-        static public IICalendarCollection LoadFromFile<T>(string filepath, Encoding encoding) where T : IICalendar
+        static public IICalendarCollection LoadFromFile<T>(string filepath, Encoding encoding) where T : ICalendar
         {
             return LoadFromFile(typeof(T), filepath, encoding);
         }
@@ -170,16 +170,16 @@ namespace Ical.Net
         #region LoadFromStream(Stream s) variants
 
         /// <summary>
-        /// Loads an <see cref="ICalendar"/> from an open stream.
+        /// Loads an <see cref="Calendar"/> from an open stream.
         /// </summary>
-        /// <param name="s">The stream from which to load the <see cref="ICalendar"/> object</param>
-        /// <returns>An <see cref="ICalendar"/> object</returns>
+        /// <param name="s">The stream from which to load the <see cref="Calendar"/> object</param>
+        /// <returns>An <see cref="Calendar"/> object</returns>
         static public new IICalendarCollection LoadFromStream(Stream s)
         {
             return LoadFromStream(s, Encoding.UTF8, new CalendarSerializer());
         }
 
-        static public IICalendarCollection LoadFromStream<T>(Stream s) where T : IICalendar
+        static public IICalendarCollection LoadFromStream<T>(Stream s) where T : ICalendar
         {
             return LoadFromStream(typeof(T), s);
         }
@@ -200,7 +200,7 @@ namespace Ical.Net
             return LoadFromStream(s, encoding, new CalendarSerializer());
         }
 
-        static public new IICalendarCollection LoadFromStream<T>(Stream s, Encoding encoding) where T : IICalendar
+        static public new IICalendarCollection LoadFromStream<T>(Stream s, Encoding encoding) where T : ICalendar
         {
             return LoadFromStream(typeof(T), s, encoding);
         }
@@ -226,7 +226,7 @@ namespace Ical.Net
             return LoadFromStream(tr, new CalendarSerializer());
         }
 
-        static public new IICalendarCollection LoadFromStream<T>(TextReader tr) where T : IICalendar
+        static public new IICalendarCollection LoadFromStream<T>(TextReader tr) where T : ICalendar
         {
             return LoadFromStream(typeof(T), tr);
         }
@@ -254,16 +254,16 @@ namespace Ical.Net
         #region LoadFromUri(Uri uri) variants
 
         /// <summary>
-        /// Loads an <see cref="ICalendar"/> from a given Uri.
+        /// Loads an <see cref="Calendar"/> from a given Uri.
         /// </summary>
-        /// <param name="uri">The Uri from which to load the <see cref="ICalendar"/> object</param>
-        /// <returns>An <see cref="ICalendar"/> object</returns>
+        /// <param name="uri">The Uri from which to load the <see cref="Calendar"/> object</param>
+        /// <returns>An <see cref="Calendar"/> object</returns>
         static public IICalendarCollection LoadFromUri(Uri uri)
         {
-            return LoadFromUri(typeof(ICalendar), uri, null, null, null);
+            return LoadFromUri(typeof(Calendar), uri, null, null, null);
         }
 
-        static public IICalendarCollection LoadFromUri<T>(Uri uri) where T : IICalendar
+        static public IICalendarCollection LoadFromUri<T>(Uri uri) where T : ICalendar
         {
             return LoadFromUri(typeof(T), uri, null, null, null);
         }
@@ -276,7 +276,7 @@ namespace Ical.Net
 #if !SILVERLIGHT
         static public IICalendarCollection LoadFromUri(Uri uri, WebProxy proxy)
         {
-            return LoadFromUri(typeof(ICalendar), uri, null, null, proxy);
+            return LoadFromUri(typeof(Calendar), uri, null, null, proxy);
         }
 
         static public IICalendarCollection LoadFromUri<T>(Uri uri, WebProxy proxy)
@@ -295,20 +295,20 @@ namespace Ical.Net
         #region LoadFromUri(Uri uri, string username, string password) variants
 
         /// <summary>
-        /// Loads an <see cref="ICalendar"/> from a given Uri, using a 
+        /// Loads an <see cref="Calendar"/> from a given Uri, using a 
         /// specified <paramref name="username"/> and <paramref name="password"/>
         /// for credentials.
         /// </summary>
-        /// <param name="uri">The Uri from which to load the <see cref="ICalendar"/> object</param>
+        /// <param name="uri">The Uri from which to load the <see cref="Calendar"/> object</param>
         /// <param name="username"></param>
         /// <param name="password"></param>
-        /// <returns>an <see cref="ICalendar"/> object</returns>
+        /// <returns>an <see cref="Calendar"/> object</returns>
         static public IICalendarCollection LoadFromUri(Uri uri, string username, string password)
         {
-            return LoadFromUri(typeof(ICalendar), uri, username, password, null);
+            return LoadFromUri(typeof(Calendar), uri, username, password, null);
         }
 
-        static public IICalendarCollection LoadFromUri<T>(Uri uri, string username, string password) where T : IICalendar
+        static public IICalendarCollection LoadFromUri<T>(Uri uri, string username, string password) where T : ICalendar
         {
             return LoadFromUri(typeof(T), uri, username, password, null);
         }
@@ -321,7 +321,7 @@ namespace Ical.Net
 #if !SILVERLIGHT
         static public IICalendarCollection LoadFromUri(Uri uri, string username, string password, WebProxy proxy)
         {
-            return LoadFromUri(typeof(ICalendar), uri, username, password, proxy);
+            return LoadFromUri(typeof(Calendar), uri, username, password, proxy);
         }
 #endif
 
@@ -425,7 +425,7 @@ namespace Ical.Net
         /// </code>
         /// </example>
         /// </summary>
-        public ICalendar()
+        public Calendar()
         {
             Initialize();
         }
@@ -453,7 +453,7 @@ namespace Ical.Net
             Initialize();
         }
 
-        protected bool Equals(ICalendar other)
+        protected bool Equals(Calendar other)
         {
             return base.Equals(other)
                 && Equals(_mUniqueComponents, other._mUniqueComponents)
@@ -478,7 +478,7 @@ namespace Ical.Net
             {
                 return false;
             }
-            return Equals((ICalendar) obj);
+            return Equals((Calendar) obj);
         }
 
         public override int GetHashCode()
@@ -834,7 +834,7 @@ namespace Ical.Net
 
         virtual public void MergeWith(IMergeable obj)
         {
-            var c = obj as IICalendar;
+            var c = obj as ICalendar;
             if (c != null)
             {
                 if (Name == null)

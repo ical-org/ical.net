@@ -11,7 +11,7 @@ using Ical.Net.Utility;
 namespace Ical.Net.General
 {
     /// <summary>
-    /// A class that represents a property of the <see cref="ICalendar"/>
+    /// A class that represents a property of the <see cref="Calendar"/>
     /// itself or one of its components.  It can also represent non-standard
     /// (X-) properties of an iCalendar component, as seen with many
     /// applications, such as with Apple's iCal.

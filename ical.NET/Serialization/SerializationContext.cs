@@ -66,7 +66,7 @@ namespace Ical.Net.Serialization
             SetService(new DataTypeMapper());
             SetService(new EncodingStack());
             SetService(new EncodingProvider(this));            
-            SetService(new CompositeProcessor<IICalendar>());
+            SetService(new CompositeProcessor<ICalendar>());
             SetService(new CompositeProcessor<ICalendarComponent>());
             SetService(new CompositeProcessor<ICalendarProperty>());            
         }

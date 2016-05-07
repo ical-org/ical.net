@@ -20,7 +20,7 @@ namespace ical.NET.UnitTests
 
         public void TestAlarm(string calendar, List<IDateTime> dates, CalDateTime start, CalDateTime end)
         {
-            var iCal = ICalendar.LoadFromFile(@"Calendars\Alarm\" + calendar)[0];
+            var iCal = Calendar.LoadFromFile(@"Calendars\Alarm\" + calendar)[0];
             ProgramTest.TestCal(iCal);
             var evt = iCal.Events.First();
             

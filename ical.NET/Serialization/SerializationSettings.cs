@@ -8,7 +8,7 @@ namespace Ical.Net.Serialization
     {
         #region Private Fields
 
-        private Type _mICalendarType = typeof(Net.ICalendar);        
+        private Type _mICalendarType = typeof(Net.Calendar);        
         private bool _mEnsureAccurateLineNumbers;
         private ParsingModeType _mParsingMode = ParsingModeType.Strict;
         private bool _mStoreExtraSerializationData;        

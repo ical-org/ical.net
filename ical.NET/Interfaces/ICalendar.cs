@@ -5,7 +5,7 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.Interfaces
 {
-    public interface IICalendar :
+    public interface ICalendar :
         ICalendarComponent,
         IGetOccurrencesTyped,
         IGetFreeBusy,

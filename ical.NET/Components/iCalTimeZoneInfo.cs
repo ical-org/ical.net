@@ -13,7 +13,7 @@ namespace Ical.Net
 {    
     /// <summary>
     /// A class that contains time zone information, and is usually accessed
-    /// from an iCalendar object using the <see cref="ICalendar.GetTimeZone"/> method.        
+    /// from an iCalendar object using the <see cref="Calendar.GetTimeZone"/> method.        
     /// </summary>
 #if !SILVERLIGHT
     [Serializable]

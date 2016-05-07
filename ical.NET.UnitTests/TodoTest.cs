@@ -21,7 +21,7 @@ namespace ical.NET.UnitTests
                 
         public void TestTodoActive(string calendar, ArrayList items, params int[] numPeriods)
         {
-            var iCal = ICalendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
+            var iCal = Calendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
             ProgramTest.TestCal(iCal);
             var todo = iCal.Todos[0];
             
@@ -50,7 +50,7 @@ namespace ical.NET.UnitTests
 
         public void TestTodoCompleted(string calendar, ArrayList items)
         {
-            var iCal = ICalendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
+            var iCal = Calendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
             ProgramTest.TestCal(iCal);
             var todo = iCal.Todos[0];
             
@@ -175,7 +175,7 @@ namespace ical.NET.UnitTests
         [Test, Category("Todo")]
         public void Todo7_1()
         {
-            var iCal = ICalendar.LoadFromFile(@"Calendars\Todo\Todo7.ics")[0];
+            var iCal = Calendar.LoadFromFile(@"Calendars\Todo\Todo7.ics")[0];
             var todo = iCal.Todos[0];
 
             var items = new ArrayList();

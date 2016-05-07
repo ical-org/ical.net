@@ -21,7 +21,7 @@ namespace ical.NET.UnitTests
             // The following code loads and displays an iCalendar
             // with US Holidays for 2006.
             //
-            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\USHolidays.ics")[0];
+            var iCal = Calendar.LoadFromFile(@"Calendars\Serialization\USHolidays.ics")[0];
             Assert.IsNotNull(iCal, "iCalendar did not load.  Are you connected to the internet?");
 
             var occurrences = iCal.GetOccurrences(
@@ -71,13 +71,13 @@ namespace ical.NET.UnitTests
             _start = DateTime.Now;
         }
 
-        static public void TestCal(IICalendar iCal)
+        static public void TestCal(ICalendar cal)
         {
-            Assert.IsNotNull(iCal, "The iCalendar was not loaded");
-            if (iCal.Events.Count > 0)
-                Assert.IsTrue(iCal.Events.Count == 1, "Calendar should contain 1 event; however, the iCalendar loaded " + iCal.Events.Count + " events");
-            else if (iCal.Todos.Count > 0)
-                Assert.IsTrue(iCal.Todos.Count == 1, "Calendar should contain 1 todo; however, the iCalendar loaded " + iCal.Todos.Count + " todos");
+            Assert.IsNotNull(cal, "The iCalendar was not loaded");
+            if (cal.Events.Count > 0)
+                Assert.IsTrue(cal.Events.Count == 1, "Calendar should contain 1 event; however, the iCalendar loaded " + cal.Events.Count + " events");
+            else if (cal.Todos.Count > 0)
+                Assert.IsTrue(cal.Todos.Count == 1, "Calendar should contain 1 todo; however, the iCalendar loaded " + cal.Todos.Count + " todos");
         }
 
         [Test]
@@ -86,7 +86,7 @@ namespace ical.NET.UnitTests
             var path = @"Calendars\Serialization\Calendar1.ics";
             Assert.IsTrue(File.Exists(path), "File '" + path + "' does not exist.");
 
-            var iCal = ICalendar.LoadFromFile(path)[0];
+            var iCal = Calendar.LoadFromFile(path)[0];
             Assert.AreEqual(14, iCal.Events.Count);
         }
 
@@ -97,7 +97,7 @@ namespace ical.NET.UnitTests
             path = Path.Combine(path, "Calendars/Serialization/Calendar1.ics").Replace(@"\", "/");
             path = "file:///" + path;
             var uri = new Uri(path);
-            var iCal = ICalendar.LoadFromUri(uri)[0];
+            var iCal = Calendar.LoadFromUri(uri)[0];
             Assert.AreEqual(14, iCal.Events.Count);
         }        
 
@@ -108,8 +108,8 @@ namespace ical.NET.UnitTests
         [Test]
         public void Merge1()
         {
-            var iCal1 = ICalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyCountByMonthDay3.ics")[0];
-            var iCal2 = ICalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyByDay1.ics")[0];
+            var iCal1 = Calendar.LoadFromFile(@"Calendars\Recurrence\MonthlyCountByMonthDay3.ics")[0];
+            var iCal2 = Calendar.LoadFromFile(@"Calendars\Recurrence\MonthlyByDay1.ics")[0];
 
             // Change the UID of the 2nd event to make sure it's different
             iCal2.Events[iCal1.Events[0].Uid].Uid = "1234567890";
@@ -233,11 +233,11 @@ namespace ical.NET.UnitTests
         //[Test]     //Broken in dday
         public void Merge2()
         {
-            var iCal = new ICalendar();
-            var tmpCal = ICalendar.LoadFromFile(@"Calendars\Serialization\TimeZone3.ics")[0];
+            var iCal = new Calendar();
+            var tmpCal = Calendar.LoadFromFile(@"Calendars\Serialization\TimeZone3.ics")[0];
             iCal.MergeWith(tmpCal);
 
-            tmpCal = ICalendar.LoadFromFile(@"Calendars\Serialization\TimeZone3.ics")[0];
+            tmpCal = Calendar.LoadFromFile(@"Calendars\Serialization\TimeZone3.ics")[0];
 
             // Compare the two calendars -- they should match exactly
             SerializationTest.CompareCalendars(iCal, tmpCal);
@@ -250,8 +250,8 @@ namespace ical.NET.UnitTests
         //[Test]     //Broken in dday
         public void Merge3()
         {
-            var iCal1 = ICalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyCountByMonthDay3.ics")[0];
-            var iCal2 = ICalendar.LoadFromFile(@"Calendars\Recurrence\YearlyByMonth1.ics")[0];
+            var iCal1 = Calendar.LoadFromFile(@"Calendars\Recurrence\MonthlyCountByMonthDay3.ics")[0];
+            var iCal2 = Calendar.LoadFromFile(@"Calendars\Recurrence\YearlyByMonth1.ics")[0];
 
             iCal1.MergeWith(iCal2);
 
@@ -269,7 +269,7 @@ namespace ical.NET.UnitTests
             var tzi = System.TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time");
             Assert.IsNotNull(tzi);
 
-            var iCal = new ICalendar();
+            var iCal = new Calendar();
             var tz = CalTimeZone.FromSystemTimeZone(tzi, new DateTime(2000, 1, 1), false);
             Assert.IsNotNull(tz);
             iCal.AddChild(tz);
@@ -306,7 +306,7 @@ namespace ical.NET.UnitTests
             var tzi = System.TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time");
             Assert.IsNotNull(tzi);
 
-            var iCal = new ICalendar();
+            var iCal = new Calendar();
             var tz = iCal.AddTimeZone(tzi, new DateTime(2000, 1, 1), false);
             Assert.IsNotNull(tz);
 

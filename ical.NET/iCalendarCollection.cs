@@ -14,7 +14,7 @@ namespace Ical.Net
     [Serializable]
 #endif
     public class ICalendarCollection :
-        List<IICalendar>,
+        List<ICalendar>,
         IICalendarCollection
     {
         #region IGetOccurrences Members

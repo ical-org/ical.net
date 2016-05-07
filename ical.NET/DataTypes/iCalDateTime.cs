@@ -80,9 +80,9 @@ namespace Ical.Net.DataTypes
             Initialize(year, month, day, hour, minute, second, tzId, null);
             HasTime = true;
         }
-        public CalDateTime(int year, int month, int day, int hour, int minute, int second, string tzId, IICalendar iCal)
+        public CalDateTime(int year, int month, int day, int hour, int minute, int second, string tzId, ICalendar cal)
         {
-            Initialize(year, month, day, hour, minute, second, tzId, iCal);
+            Initialize(year, month, day, hour, minute, second, tzId, cal);
             HasTime = true;
         }
         public CalDateTime(int year, int month, int day)
@@ -96,12 +96,12 @@ namespace Ical.Net.DataTypes
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
-        private void Initialize(int year, int month, int day, int hour, int minute, int second, string tzId, IICalendar iCal)
+        private void Initialize(int year, int month, int day, int hour, int minute, int second, string tzId, ICalendar cal)
         {
-            Initialize(CoerceDateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzId, iCal);
+            Initialize(CoerceDateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzId, cal);
         }
 
-        private void Initialize(DateTime value, string tzId, IICalendar iCal)
+        private void Initialize(DateTime value, string tzId, ICalendar cal)
         {
             if (value.Kind == DateTimeKind.Utc)
                 IsUniversalTime = true;
@@ -111,7 +111,7 @@ namespace Ical.Net.DataTypes
             HasDate = true;
             HasTime = (value.Second == 0 && value.Minute == 0 && value.Hour == 0) ? false : true;
             TzId = tzId;
-            AssociatedObject = iCal;
+            AssociatedObject = cal;
         }
 
         private void Initialize(DateTime value, TimeZoneObservance tzo)

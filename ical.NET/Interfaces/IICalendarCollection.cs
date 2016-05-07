@@ -5,7 +5,7 @@ namespace Ical.Net.Interfaces
 {
     public interface IICalendarCollection :
         IGetOccurrencesTyped,
-        IList<IICalendar>
+        IList<ICalendar>
     {        
     }
 }

@@ -15,7 +15,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
     {
         #region Private Fields
 
-        IICalendar _mICalendar;
+        ICalendar _mCalendar;
 
         #endregion
 
@@ -25,9 +25,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         {
         }
 
-        public CalendarSerializer(IICalendar iCal)
+        public CalendarSerializer(ICalendar cal)
         {
-            _mICalendar = iCal;
+            _mCalendar = cal;
         }
 
         public CalendarSerializer(ISerializationContext ctx) : base(ctx)
@@ -41,21 +41,21 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         [Obsolete("Use the Serialize(IICalendar iCal, string filename) method instead.")]
         virtual public void Serialize(string filename)
         {
-            if (_mICalendar != null)
-                Serialize(_mICalendar, filename);
+            if (_mCalendar != null)
+                Serialize(_mCalendar, filename);
         }
 
         [Obsolete("Use the SerializeToString(ICalendarObject obj) method instead.")]
         virtual public string SerializeToString()
         {
-            return SerializeToString(_mICalendar);
+            return SerializeToString(_mCalendar);
         }
 
-        virtual public void Serialize(IICalendar iCal, string filename)
+        virtual public void Serialize(ICalendar cal, string filename)
         {
             using (var fs = new FileStream(filename, FileMode.Create))
             {
-                Serialize(iCal, fs, new UTF8Encoding());
+                Serialize(cal, fs, new UTF8Encoding());
             }
         }        
 
@@ -73,12 +73,12 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         public override string SerializeToString(object obj)
         {
-            var iCal = obj as IICalendar;
+            var iCal = obj as ICalendar;
             if (iCal != null)
             {
                 // Ensure VERSION and PRODUCTID are both set,
                 // as they are required by RFC5545.
-                var copy = iCal.Copy<IICalendar>();
+                var copy = iCal.Copy<ICalendar>();
                 if (string.IsNullOrEmpty(copy.Version))
                     copy.Version = CalendarVersions.V20;                    
                 if (string.IsNullOrEmpty(copy.ProductId))

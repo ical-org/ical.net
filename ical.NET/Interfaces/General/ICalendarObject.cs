@@ -29,8 +29,8 @@ namespace Ical.Net.Interfaces.General
         /// Returns the iCalendar that this object
         /// is associated with.
         /// </summary>
-        IICalendar Calendar { get; }
-        IICalendar ICalendar { get; }
+        ICalendar Calendar { get; }
+        ICalendar ICalendar { get; }
 
         /// <summary>
         /// Returns the line number where this calendar

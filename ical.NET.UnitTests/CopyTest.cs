@@ -17,8 +17,8 @@ namespace ical.NET.UnitTests
 
         private void CopyCalendarTest(string filename)
         {
-            var iCal1 = ICalendar.LoadFromFile(@"Calendars\Serialization\" + filename)[0];
-            var iCal2 = iCal1.Copy<IICalendar>();
+            var iCal1 = Calendar.LoadFromFile(@"Calendars\Serialization\" + filename)[0];
+            var iCal2 = iCal1.Copy<ICalendar>();
             SerializationTest.CompareCalendars(iCal1, iCal2);
         }
 

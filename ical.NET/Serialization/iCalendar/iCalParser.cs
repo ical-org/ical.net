@@ -98,7 +98,7 @@ namespace Ical.Net.Serialization.iCalendar
 		
 			SerializationUtil.OnDeserializing(iCalendars);
 		
-			IICalendar iCal = null;
+			ICalendar cal = null;
 			var settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
 		
 		{    // ( ... )*
@@ -140,19 +140,19 @@ _loop4_breakloop:						;
 _loop6_breakloop:						;
 					}    // ( ... )*
 								
-								var processor = ctx.GetService(typeof(ISerializationProcessor<IICalendar>)) as ISerializationProcessor<IICalendar>;
+								var processor = ctx.GetService(typeof(ISerializationProcessor<ICalendar>)) as ISerializationProcessor<ICalendar>;
 								
 								// Do some pre-processing on the calendar:
 								if (processor != null)
-									processor.PreDeserialization(iCal);
+									processor.PreDeserialization(cal);
 							
-								iCal = (IICalendar)SerializationUtil.GetUninitializedObject(settings.ICalendarType);			
-								SerializationUtil.OnDeserializing(iCal);
+								cal = (ICalendar)SerializationUtil.GetUninitializedObject(settings.ICalendarType);			
+								SerializationUtil.OnDeserializing(cal);
 								
 								// Push the iCalendar onto the serialization context stack
-								ctx.Push(iCal);
+								ctx.Push(cal);
 							
-					icalbody(ctx, iCal);
+					icalbody(ctx, cal);
 					match(END);
 					match(COLON);
 					match(VCALENDAR);
@@ -174,13 +174,13 @@ _loop8_breakloop:						;
 					
 								// Do some final processing on the calendar:
 								if (processor != null)
-									processor.PostDeserialization(iCal);
+									processor.PostDeserialization(cal);
 							
 								// Notify that the iCalendar has been loaded
-								iCal.OnLoaded();
-								iCalendars.Add(iCal);
+								cal.OnLoaded();
+								iCalendars.Add(cal);
 								
-								SerializationUtil.OnDeserialized(iCal);
+								SerializationUtil.OnDeserialized(cal);
 								
 								// Pop the iCalendar off the serialization context stack
 								ctx.Pop();
@@ -201,7 +201,7 @@ _loop9_breakloop:			;
 	}
 	
 	public void icalbody(
-		ISerializationContext ctx, IICalendar iCal
+		ISerializationContext ctx, ICalendar cal
 	) //throws RecognitionException, TokenStreamException
 {
 		
@@ -220,12 +220,12 @@ _loop9_breakloop:			;
 				case IANA_TOKEN:
 				case X_NAME:
 				{
-					property(ctx, iCal);
+					property(ctx, cal);
 					break;
 				}
 				case BEGIN:
 				{
-					component(ctx, sf, cf, iCal);
+					component(ctx, sf, cf, cal);
 					break;
 				}
 				default:

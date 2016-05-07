@@ -23,16 +23,16 @@ namespace ical.NET.UnitTests
         [Test, Category("Event")]
         public void Add1()
         {
-            IICalendar iCal = new ICalendar();
+            ICalendar cal = new Calendar();
             
             var evt = new Event();
             evt.Summary = "Testing";
             evt.Start = new CalDateTime(2010, 3, 25);
             evt.End = new CalDateTime(2010, 3, 26);
             
-            iCal.Events.Add(evt);
-            Assert.AreEqual(1, iCal.Children.Count);
-            Assert.AreSame(evt, iCal.Children[0]);            
+            cal.Events.Add(evt);
+            Assert.AreEqual(1, cal.Children.Count);
+            Assert.AreSame(evt, cal.Children[0]);            
         }
 
         /// <summary>
@@ -41,20 +41,20 @@ namespace ical.NET.UnitTests
         [Test, Category("Event")]
         public void Remove1()
         {
-            IICalendar iCal = new ICalendar();
+            ICalendar cal = new Calendar();
 
             var evt = new Event();
             evt.Summary = "Testing";
             evt.Start = new CalDateTime(2010, 3, 25);
             evt.End = new CalDateTime(2010, 3, 26);
 
-            iCal.Events.Add(evt);
-            Assert.AreEqual(1, iCal.Children.Count);
-            Assert.AreSame(evt, iCal.Children[0]);
+            cal.Events.Add(evt);
+            Assert.AreEqual(1, cal.Children.Count);
+            Assert.AreSame(evt, cal.Children[0]);
 
-            iCal.RemoveChild(evt);
-            Assert.AreEqual(0, iCal.Children.Count);
-            Assert.AreEqual(0, iCal.Events.Count);
+            cal.RemoveChild(evt);
+            Assert.AreEqual(0, cal.Children.Count);
+            Assert.AreEqual(0, cal.Events.Count);
         }
 
         /// <summary>
@@ -63,20 +63,20 @@ namespace ical.NET.UnitTests
         [Test, Category("Event")]
         public void Remove2()
         {
-            IICalendar iCal = new ICalendar();
+            ICalendar cal = new Calendar();
 
             var evt = new Event();
             evt.Summary = "Testing";
             evt.Start = new CalDateTime(2010, 3, 25);
             evt.End = new CalDateTime(2010, 3, 26);
 
-            iCal.Events.Add(evt);
-            Assert.AreEqual(1, iCal.Children.Count);
-            Assert.AreSame(evt, iCal.Children[0]);
+            cal.Events.Add(evt);
+            Assert.AreEqual(1, cal.Children.Count);
+            Assert.AreSame(evt, cal.Children[0]);
 
-            iCal.Events.Remove(evt);
-            Assert.AreEqual(0, iCal.Children.Count);
-            Assert.AreEqual(0, iCal.Events.Count);
+            cal.Events.Remove(evt);
+            Assert.AreEqual(0, cal.Children.Count);
+            Assert.AreEqual(0, cal.Events.Count);
         }
     }
 }

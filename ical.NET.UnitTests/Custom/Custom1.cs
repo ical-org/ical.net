@@ -4,7 +4,7 @@ namespace ical.NET.UnitTests.Custom
 {
     // FIXME: fix this custom calendar to function properly
     //[ComponentBaseType(typeof(CustomComponentBase1))]
-    public class CustomICal1 : ICalendar
+    public class CustomICal1 : Calendar
     {
     }
 

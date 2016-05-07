@@ -138,7 +138,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        virtual public IICalendar Calendar
+        virtual public ICalendar Calendar
         {
             get
             {
