@@ -1872,7 +1872,7 @@ namespace ical.NET.UnitTests
         {
             var iCal = new Calendar();
 
-            var tz = iCal.Create<CalTimeZone>();
+            var tz = iCal.Create<VTimeZone>();
 
             tz.TzId = "US-Eastern";
             tz.LastModified = new CalDateTime(new DateTime(1987, 1, 1, 0, 0, 0, DateTimeKind.Utc));

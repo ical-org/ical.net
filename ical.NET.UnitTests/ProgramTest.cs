@@ -270,7 +270,7 @@ namespace ical.NET.UnitTests
             Assert.IsNotNull(tzi);
 
             var iCal = new Calendar();
-            var tz = CalTimeZone.FromSystemTimeZone(tzi, new DateTime(2000, 1, 1), false);
+            var tz = VTimeZone.FromSystemTimeZone(tzi, new DateTime(2000, 1, 1), false);
             Assert.IsNotNull(tz);
             iCal.AddChild(tz);
 
@@ -354,7 +354,7 @@ namespace ical.NET.UnitTests
 
                 if (tzinfo != null)
                 {
-                    var icalTz = CalTimeZone.FromSystemTimeZone(tzinfo);
+                    var icalTz = VTimeZone.FromSystemTimeZone(tzinfo);
                     Assert.AreNotEqual(0, icalTz.TimeZoneInfos.Count, zone.StandardName + ": no time zone information was extracted.");
                 }
             }

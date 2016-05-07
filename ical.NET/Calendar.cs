@@ -518,14 +518,14 @@ namespace Ical.Net
         /// <returns>The time zone added to the calendar.</returns>
         public ITimeZone AddTimeZone(TimeZoneInfo tzi)
         {
-            ITimeZone tz = CalTimeZone.FromSystemTimeZone(tzi);
+            ITimeZone tz = VTimeZone.FromSystemTimeZone(tzi);
             this.AddChild(tz);
             return tz;
         }
 
         public ITimeZone AddTimeZone(TimeZoneInfo tzi, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
         {
-            ITimeZone tz = CalTimeZone.FromSystemTimeZone(tzi, earliestDateTimeToSupport, includeHistoricalData);
+            ITimeZone tz = VTimeZone.FromSystemTimeZone(tzi, earliestDateTimeToSupport, includeHistoricalData);
             this.AddChild(tz);
             return tz;
         }
@@ -538,14 +538,14 @@ namespace Ical.Net
         /// <returns>The time zone added to the calendar.</returns>
         public ITimeZone AddLocalTimeZone()
         {
-            ITimeZone tz = CalTimeZone.FromLocalTimeZone();
+            ITimeZone tz = VTimeZone.FromLocalTimeZone();
             this.AddChild(tz);
             return tz;
         }
 
         public ITimeZone AddLocalTimeZone(DateTime earliestDateTimeToSupport, bool includeHistoricalData)
         {
-            ITimeZone tz = CalTimeZone.FromLocalTimeZone(earliestDateTimeToSupport, includeHistoricalData);
+            ITimeZone tz = VTimeZone.FromLocalTimeZone(earliestDateTimeToSupport, includeHistoricalData);
             this.AddChild(tz);
             return tz;
         }

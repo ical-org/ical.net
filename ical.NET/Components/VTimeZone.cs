@@ -14,16 +14,16 @@ namespace Ical.Net
     /// A class that represents an RFC 5545 VTIMEZONE component.
     /// </summary>
     [Serializable]
-    public class CalTimeZone : CalendarComponent, ITimeZone
+    public class VTimeZone : CalendarComponent, ITimeZone
     {
         #region Static Public Methods
 
-        public static CalTimeZone FromLocalTimeZone()
+        public static VTimeZone FromLocalTimeZone()
         {
             return FromSystemTimeZone(TimeZoneInfo.Local);
         }
 
-        public static CalTimeZone FromLocalTimeZone(DateTime earlistDateTimeToSupport, bool includeHistoricalData)
+        public static VTimeZone FromLocalTimeZone(DateTime earlistDateTimeToSupport, bool includeHistoricalData)
         {
             return FromSystemTimeZone(TimeZoneInfo.Local, earlistDateTimeToSupport, includeHistoricalData);
         }
@@ -57,17 +57,17 @@ namespace Ical.Net
             tzi.RecurrenceRules.Add(recurrence);
         }
 
-        public static CalTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo)
+        public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo)
         {
             // Support date/times for January 1st of the previous year by default.
             return FromSystemTimeZone(tzinfo, new DateTime(DateTime.Now.Year, 1, 1).AddYears(-1), false);
         }
 
-        public static CalTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
+        public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
         {
             var adjustmentRules = tzinfo.GetAdjustmentRules();
             var utcOffset = tzinfo.BaseUtcOffset;
-            var ddayTz = new CalTimeZone();
+            var ddayTz = new VTimeZone();
             ddayTz.TzId = tzinfo.Id;
 
             IDateTime earliest = new CalDateTime(earlistDateTimeToSupport);
@@ -143,7 +143,7 @@ namespace Ical.Net
 
         #endregion
 
-        public CalTimeZone()
+        public VTimeZone()
         {
             Name = Components.Timezone;
 

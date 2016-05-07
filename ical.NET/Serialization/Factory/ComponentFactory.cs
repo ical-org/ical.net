@@ -29,7 +29,7 @@ namespace Ical.Net.Serialization.Factory
                     type = typeof (Journal);
                     break;
                 case Components.Timezone:
-                    type = typeof (CalTimeZone);
+                    type = typeof (VTimeZone);
                     break;
                 case Components.Todo:
                     type = typeof (Todo);

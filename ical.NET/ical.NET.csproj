@@ -84,7 +84,7 @@
   <ItemGroup>
     <Compile Include="Components\Alarm.cs" />
     <Compile Include="Components\FreeBusy.cs" />
-    <Compile Include="Components\iCalTimeZone.cs" />
+    <Compile Include="Components\VTimeZone.cs" />
     <Compile Include="Components\iCalTimeZoneInfo.cs" />
     <Compile Include="Components\Journal.cs" />
     <Compile Include="DataTypes\Attachment.cs" />
