@@ -21,9 +21,9 @@ namespace Ical.Net
     ///         <item>Create a TextCollection DataType for 'text' items separated by commas</item>
     ///     </list>
     /// </note>
-#if !SILVERLIGHT
+
     [Serializable]    
-#endif
+
     public class Event : 
         RecurringComponent,
         IEvent

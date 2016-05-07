@@ -10,9 +10,9 @@ namespace Ical.Net
     /// <summary>
     /// A list of iCalendars.
     /// </summary>
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class CalendarCollection :
         List<ICalendar>,
         IICalendarCollection

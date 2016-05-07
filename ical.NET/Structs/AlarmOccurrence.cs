@@ -13,9 +13,9 @@ namespace Ical.Net.Structs
     /// the alarm occurs, the <see cref="Alarm"/> that fired, and the 
     /// component on which the alarm fired.
     /// </remarks>
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public struct AlarmOccurrence : 
         IComparable<AlarmOccurrence>
     {

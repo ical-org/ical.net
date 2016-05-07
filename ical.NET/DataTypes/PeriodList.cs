@@ -13,9 +13,9 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// An iCalendar list of recurring dates (or date exclusions)
     /// </summary>
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class PeriodList : 
         EncodableDataType,
         IPeriodList

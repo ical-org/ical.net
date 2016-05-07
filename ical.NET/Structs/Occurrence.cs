@@ -4,9 +4,9 @@ using Ical.Net.Interfaces.Evaluation;
 
 namespace Ical.Net.Structs
 {
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public struct Occurrence : IComparable<Occurrence>
     {
         public IPeriod Period { get; set; }

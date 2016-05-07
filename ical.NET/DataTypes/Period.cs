@@ -8,9 +8,9 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// Represents an iCalendar period of time.
     /// </summary>    
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class Period :
         EncodableDataType,
         IPeriod

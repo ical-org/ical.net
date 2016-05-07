@@ -4,9 +4,9 @@ using Ical.Net.Interfaces.DataTypes;
 
 namespace Ical.Net.Structs
 {
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public struct TimeZoneObservance
     {
         public IPeriod Period { get; set; }

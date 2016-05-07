@@ -11,9 +11,9 @@ namespace Ical.Net.DataTypes
     /// A class that represents the organizer of an event/todo/journal.
     /// </summary>
     [DebuggerDisplay("{Value}")]
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class Organizer :
         EncodableDataType,
         IOrganizer

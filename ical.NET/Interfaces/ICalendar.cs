@@ -86,7 +86,7 @@ namespace Ical.Net.Interfaces
         /// </summary>
         IUniqueComponentList<ITodo> Todos { get; }        
 
-#if !SILVERLIGHT
+
         /// <summary>
         /// Adds a system time zone to the iCalendar.  This time zone may
         /// then be used in date/time objects contained in the 
@@ -105,6 +105,6 @@ namespace Ical.Net.Interfaces
         /// <returns>The time zone added to the calendar.</returns>
         ITimeZone AddLocalTimeZone();
         ITimeZone AddLocalTimeZone(DateTime earliestDateTimeToSupport, bool includeHistoricalData);
-#endif
+
     }
 }

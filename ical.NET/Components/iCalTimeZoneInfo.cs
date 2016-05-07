@@ -15,9 +15,9 @@ namespace Ical.Net
     /// A class that contains time zone information, and is usually accessed
     /// from an iCalendar object using the <see cref="Calendar.GetTimeZone"/> method.        
     /// </summary>
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class CalTimeZoneInfo : CalendarComponent, ITimeZoneInfo
     {
         private TimeZoneInfoEvaluator _mEvaluator;

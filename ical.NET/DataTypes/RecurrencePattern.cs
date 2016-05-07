@@ -13,18 +13,18 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// An iCalendar representation of the <c>RRULE</c> property.
     /// </summary>
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class RecurrencePattern :
         EncodableDataType,
         IRecurrencePattern
     {
         #region Private Fields
 
-#if !SILVERLIGHT
+
         [NonSerialized]
-#endif
+
         private FrequencyType _frequency;
         private DateTime _until = DateTime.MinValue;
         private int _count = int.MinValue;

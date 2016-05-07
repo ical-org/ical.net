@@ -12,9 +12,9 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// A class to handle attachments, or URIs as attachments, within an iCalendar. 
     /// </summary>
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class Attachment : 
         EncodableDataType,
         IAttachment

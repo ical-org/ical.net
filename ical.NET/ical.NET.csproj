@@ -82,8 +82,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Compatibility\BrowsableAttribute.cs" />
-    <Compile Include="Compatibility\DebuggerDisplayAttribute.cs" />
     <Compile Include="Components\Alarm.cs" />
     <Compile Include="Components\FreeBusy.cs" />
     <Compile Include="Components\iCalTimeZone.cs" />
@@ -294,6 +292,7 @@
       <Name>Ical.Net.Collections</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

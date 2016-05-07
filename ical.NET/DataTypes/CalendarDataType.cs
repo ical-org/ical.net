@@ -12,9 +12,9 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// An abstract class from which all iCalendar data types inherit.
     /// </summary>
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public abstract class CalendarDataType :
         ICalendarDataType
     {

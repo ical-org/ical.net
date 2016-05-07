@@ -3,9 +3,9 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.General
 {
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class CalendarObjectBase :
         ICopyable,        
         ILoadable

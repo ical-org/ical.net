@@ -10,9 +10,9 @@ namespace Ical.Net.General
     /// <summary>
     /// The base class for all iCalendar objects and components.
     /// </summary>
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class CalendarObject :
         CalendarObjectBase,
         ICalendarObject

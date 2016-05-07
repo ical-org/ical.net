@@ -94,9 +94,9 @@ namespace Ical.Net
     /// </code>
     /// </para>
     /// </remarks>
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class Calendar :
         CalendarComponent,
         ICalendar,
@@ -273,7 +273,7 @@ namespace Ical.Net
             return LoadFromUri(iCalendarType, uri, null, null, null);
         }
 
-#if !SILVERLIGHT
+
         public static IICalendarCollection LoadFromUri(Uri uri, WebProxy proxy)
         {
             return LoadFromUri(typeof(Calendar), uri, null, null, proxy);
@@ -288,7 +288,7 @@ namespace Ical.Net
         {
             return LoadFromUri(iCalendarType, uri, null, null, proxy);
         }
-#endif
+
 
         #endregion
 
@@ -318,22 +318,18 @@ namespace Ical.Net
             return LoadFromUri(iCalendarType, uri, username, password, null);
         }
 
-#if !SILVERLIGHT
+
         public static IICalendarCollection LoadFromUri(Uri uri, string username, string password, WebProxy proxy)
         {
             return LoadFromUri(typeof(Calendar), uri, username, password, proxy);
         }
-#endif
+
 
         #endregion
 
         #region LoadFromUri(Type iCalendarType, Uri uri, string username, string password, WebProxy proxy)
 
-#if SILVERLIGHT
-        static public IICalendarCollection LoadFromUri(Type iCalendarType, Uri uri, string username, string password, object unusedProxy)
-#else
         public static IICalendarCollection LoadFromUri(Type iCalendarType, Uri uri, string username, string password, WebProxy proxy)
-#endif
         {
             try
             {
@@ -342,10 +338,10 @@ namespace Ical.Net
                 if (username != null && password != null)
                     request.Credentials = new NetworkCredential(username, password);
 
-#if !SILVERLIGHT
+
                 if (proxy != null)
                     request.Proxy = proxy;
-#endif
+
 
                 var evt = new AutoResetEvent(false);
 
@@ -585,7 +581,7 @@ namespace Ical.Net
             return tz;
         }
 
-#if !SILVERLIGHT
+
         /// <summary>
         /// Adds a system time zone to the iCalendar.  This time zone may
         /// then be used in date/time objects contained in the 
@@ -626,7 +622,7 @@ namespace Ical.Net
             this.AddChild(tz);
             return tz;
         }
-#endif
+
 
         /// <summary>
         /// Retrieves the TimeZone object for the specified TZID (Time Zone Identifier).

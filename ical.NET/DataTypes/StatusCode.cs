@@ -9,9 +9,9 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// An iCalendar status code.
     /// </summary>
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class StatusCode : 
         EncodableDataType,
         IStatusCode
