@@ -5,12 +5,9 @@ using System.Security;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DDay.iCal")]
-[assembly: AssemblyDescription("An iCalendar (RFC 5545) control library. See ddaysoftware.com for details.")]
-[assembly: AssemblyConfiguration("Beta")]
-[assembly: AssemblyCompany("DDay Software - ddaysoftware.com")]
-[assembly: AssemblyProduct("DDay.iCal")]
-[assembly: AssemblyCopyright("Copyright © 2010 Douglas Day")]
+[assembly: AssemblyTitle("Ical.Net")]
+[assembly: AssemblyDescription("An iCalendar (RFC 5545) control library. See github.com/rianjs/ical.net for details.")]
+[assembly: AssemblyProduct("Ical.Net")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -22,7 +19,7 @@ using System.Security;
 [assembly: SecurityRules(SecurityRuleSet.Level1)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("47df6d82-7a92-4deb-b276-377e89f220be")]
+[assembly: Guid("a15a4881-6815-4a4f-bec8-72228c3886b2")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -31,5 +28,5 @@ using System.Security;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.0.2.*")]
-[assembly: AssemblyFileVersion("1.0.2.*")]
+[assembly: AssemblyVersion("1.1.0.*")]
+[assembly: AssemblyFileVersion("1.1.0.*")]
