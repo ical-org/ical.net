@@ -13,7 +13,7 @@ namespace Ical.Net.Evaluation
     {
         #region Private Fields
 
-        private IRecurrable m_Recurrable;
+        private IRecurrable _mRecurrable;
 
         #endregion
 
@@ -21,8 +21,8 @@ namespace Ical.Net.Evaluation
 
         protected IRecurrable Recurrable
         {
-            get { return m_Recurrable; }
-            set { m_Recurrable = value; }
+            get { return _mRecurrable; }
+            set { _mRecurrable = value; }
         }
 
         #endregion

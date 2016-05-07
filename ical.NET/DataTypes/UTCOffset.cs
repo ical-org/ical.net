@@ -11,7 +11,7 @@ namespace Ical.Net.DataTypes
 #if !SILVERLIGHT
     [Serializable]
 #endif
-    public class UTCOffset : EncodableDataType, IUTCOffset
+    public class UtcOffset : EncodableDataType, IUTCOffset
     {
         public TimeSpan Offset { get; set; }
 
@@ -23,27 +23,27 @@ namespace Ical.Net.DataTypes
 
         public int Seconds => Math.Abs(Offset.Seconds);
 
-        public UTCOffset() { }
+        public UtcOffset() { }
 
-        public UTCOffset(string value) : this()
+        public UtcOffset(string value) : this()
         {
             Offset = UTCOffsetSerializer.GetOffset(value);
         }
 
-        public UTCOffset(TimeSpan ts)
+        public UtcOffset(TimeSpan ts)
         {
             Offset = ts;
         }
 
-        static public implicit operator UTCOffset(TimeSpan ts) => new UTCOffset(ts);
+        static public implicit operator UtcOffset(TimeSpan ts) => new UtcOffset(ts);
 
-        static public explicit operator TimeSpan(UTCOffset o) => o.Offset;
+        static public explicit operator TimeSpan(UtcOffset o) => o.Offset;
 
         virtual public DateTime ToUTC(DateTime dt) => DateTime.SpecifyKind(dt.Add(-Offset), DateTimeKind.Utc);
 
         virtual public DateTime ToLocal(DateTime dt) => DateTime.SpecifyKind(dt.Add(Offset), DateTimeKind.Local);
 
-        protected bool Equals(UTCOffset other)
+        protected bool Equals(UtcOffset other)
         {
             return Offset == other.Offset;
         }
@@ -62,7 +62,7 @@ namespace Ical.Net.DataTypes
             {
                 return false;
             }
-            return Equals((UTCOffset)obj);
+            return Equals((UtcOffset)obj);
         }
 
         public override int GetHashCode()

@@ -21,8 +21,8 @@ namespace Ical.Net.DataTypes
     {
         #region Private Fields
 
-        private double m_Latitude;
-        private double m_Longitude;
+        private double _mLatitude;
+        private double _mLongitude;
 
         #endregion
 
@@ -30,14 +30,14 @@ namespace Ical.Net.DataTypes
 
         public double Latitude
         {
-            get { return m_Latitude; }
-            set { m_Latitude = value; }
+            get { return _mLatitude; }
+            set { _mLatitude = value; }
         }
 
         public double Longitude
         {
-            get { return m_Longitude; }
-            set { m_Longitude = value; }
+            get { return _mLongitude; }
+            set { _mLongitude = value; }
         }
 
         #endregion

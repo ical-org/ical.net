@@ -20,7 +20,7 @@ namespace Ical.Net
     {
         #region Private Fields
 
-        private List<AlarmOccurrence> m_Occurrences;
+        private List<AlarmOccurrence> _mOccurrences;
 
         #endregion
 
@@ -80,8 +80,8 @@ namespace Ical.Net
 
         virtual protected List<AlarmOccurrence> Occurrences
         {
-            get { return m_Occurrences; }
-            set { m_Occurrences = value; }
+            get { return _mOccurrences; }
+            set { _mOccurrences = value; }
         }
 
         #endregion
@@ -105,9 +105,9 @@ namespace Ical.Net
 
         /// <summary>
         /// Gets a list of alarm occurrences for the given recurring component, <paramref name="rc"/>
-        /// that occur between <paramref name="FromDate"/> and <paramref name="ToDate"/>.
+        /// that occur between <paramref name="fromDate"/> and <paramref name="toDate"/>.
         /// </summary>
-        virtual public IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, IDateTime FromDate, IDateTime ToDate)
+        virtual public IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, IDateTime fromDate, IDateTime toDate)
         {
             Occurrences.Clear();
 
@@ -119,11 +119,11 @@ namespace Ical.Net
                 if (Trigger.IsRelative)
                 {
                     // Ensure that "FromDate" has already been set
-                    if (FromDate == null)
-                        FromDate = rc.Start.Copy<IDateTime>();
+                    if (fromDate == null)
+                        fromDate = rc.Start.Copy<IDateTime>();
 
                     var d = default(TimeSpan);
-                    foreach (var o in rc.GetOccurrences(FromDate, ToDate))
+                    foreach (var o in rc.GetOccurrences(fromDate, toDate))
                     {
                         var dt = o.Period.StartTime;
                         if (Trigger.Related == TriggerRelation.End)
@@ -160,23 +160,23 @@ namespace Ical.Net
 
         /// <summary>
         /// Polls the <see cref="Alarm"/> component for alarms that have been triggered
-        /// since the provided <paramref name="Start"/> date/time.  If <paramref name="Start"/>
+        /// since the provided <paramref name="start"/> date/time.  If <paramref name="start"/>
         /// is null, all triggered alarms will be returned.
         /// </summary>
-        /// <param name="Start">The earliest date/time to poll trigerred alarms for.</param>
+        /// <param name="start">The earliest date/time to poll trigerred alarms for.</param>
         /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
-        virtual public IList<AlarmOccurrence> Poll(IDateTime Start, IDateTime End)
+        virtual public IList<AlarmOccurrence> Poll(IDateTime start, IDateTime end)
         {
-            var Results = new List<AlarmOccurrence>();
+            var results = new List<AlarmOccurrence>();
 
             // Evaluate the alarms to determine the recurrences
             var rc = Parent as RecurringComponent;
             if (rc != null)
             {
-                Results.AddRange(GetOccurrences(rc, Start, End));
-                Results.Sort();
+                results.AddRange(GetOccurrences(rc, start, end));
+                results.Sort();
             }
-            return Results;
+            return results;
         }
 
         #endregion

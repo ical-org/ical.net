@@ -54,7 +54,7 @@ namespace Ical.Net.Evaluation
         Evaluator
     {
         // FIXME: in ical4j this is configurable.
-        private static int maxIncrementCount = 1000;
+        private static int _maxIncrementCount = 1000;
 
         #region Protected Properties
 
@@ -80,7 +80,7 @@ namespace Ical.Net.Evaluation
 
             // Convert the UNTIL value to one that matches the same time information as the reference date
             if (r.Until != DateTime.MinValue)
-                r.Until = DateUtil.MatchTimeZone(referenceDate, new iCalDateTime(r.Until)).Value;
+                r.Until = DateUtil.MatchTimeZone(referenceDate, new CalDateTime(r.Until)).Value;
 
             if (r.Frequency > FrequencyType.Secondly &&
                 r.BySecond.Count == 0 &&
@@ -299,7 +299,7 @@ namespace Ical.Net.Evaluation
                 else
                 {
                     noCandidateIncrementCount++;
-                    if ((maxIncrementCount > 0) && (noCandidateIncrementCount > maxIncrementCount))
+                    if ((_maxIncrementCount > 0) && (noCandidateIncrementCount > _maxIncrementCount))
                         break;
                 }
 
@@ -906,7 +906,7 @@ namespace Ical.Net.Evaluation
         {
             // Turn each resulting date/time into an IDateTime and associate it
             // with the reference date.
-            IDateTime newDt = new iCalDateTime(dt, referenceDate.TzId);
+            IDateTime newDt = new CalDateTime(dt, referenceDate.TzId);
 
             // NOTE: fixes bug #2938007 - hasTime missing
             newDt.HasTime = referenceDate.HasTime;

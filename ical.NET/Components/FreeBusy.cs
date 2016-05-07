@@ -37,7 +37,7 @@ namespace Ical.Net
                 var fb = freeBusyRequest.Copy<IFreeBusy>();
                 fb.UID = new UIDFactory().Build();
                 fb.Entries.Clear();
-                fb.DTStamp = iCalDateTime.Now;
+                fb.DTStamp = CalDateTime.Now;
 
                 foreach (var o in occurrences)
                 {
@@ -99,7 +99,7 @@ namespace Ical.Net
         static public IFreeBusy CreateRequest(IDateTime fromInclusive, IDateTime toExclusive, IOrganizer organizer, IAttendee[] contacts)
         {
             var fb = new FreeBusy();
-            fb.DTStamp = iCalDateTime.Now;
+            fb.DTStamp = CalDateTime.Now;
             fb.DTStart = fromInclusive;
             fb.DTEnd = toExclusive;
             if (organizer != null)

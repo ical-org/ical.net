@@ -13,13 +13,13 @@ namespace Ical.Net.General.Proxies
         IUniqueComponentList<TComponentType>
         where TComponentType : class, IUniqueComponent
     {
-        Dictionary<string, TComponentType> _Lookup;
+        Dictionary<string, TComponentType> _lookup;
 
         #region Constructors
 
         public UniqueComponentListProxy(IGroupedCollection<string, ICalendarObject> children) : base(children)
         {
-            _Lookup = new Dictionary<string, TComponentType>();
+            _lookup = new Dictionary<string, TComponentType>();
 
             children.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarObject, int>>(children_ItemAdded);
             children.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarObject,int>>(children_ItemRemoved);
@@ -31,9 +31,9 @@ namespace Ical.Net.General.Proxies
 
         TComponentType Search(string uid)
         {
-            if (_Lookup.ContainsKey(uid))
+            if (_lookup.ContainsKey(uid))
             {
-                return _Lookup[uid];
+                return _lookup[uid];
             }
 
             var item = this
@@ -43,7 +43,7 @@ namespace Ical.Net.General.Proxies
 
             if (item != null)
             {
-                _Lookup[uid] = item;
+                _lookup[uid] = item;
                 return item;
             }
             return default(TComponentType);
@@ -81,10 +81,10 @@ namespace Ical.Net.General.Proxies
             if (e.First is TComponentType)
             {
                 var component = (TComponentType)e.First;
-                component.UIDChanged += UIDChanged;
+                component.UIDChanged += UidChanged;
 
                 if (!string.IsNullOrEmpty(component.UID))
-                    _Lookup[component.UID] = component;
+                    _lookup[component.UID] = component;
             }
         }
 
@@ -93,27 +93,27 @@ namespace Ical.Net.General.Proxies
             if (e.First is TComponentType)
             {
                 var component = (TComponentType)e.First;
-                component.UIDChanged -= UIDChanged;
+                component.UIDChanged -= UidChanged;
 
                 if (!string.IsNullOrEmpty(component.UID) &&
-                    _Lookup.ContainsKey(component.UID))
+                    _lookup.ContainsKey(component.UID))
                 {
-                    _Lookup.Remove(component.UID);
+                    _lookup.Remove(component.UID);
                 }
             }   
         }
 
-        void UIDChanged(object sender, ObjectEventArgs<string, string> e)
+        void UidChanged(object sender, ObjectEventArgs<string, string> e)
         {
             if (e.First != null &&
-                _Lookup.ContainsKey(e.First))
+                _lookup.ContainsKey(e.First))
             {
-                _Lookup.Remove(e.First);
+                _lookup.Remove(e.First);
             }
 
             if (e.Second != null)
             {
-                _Lookup[e.Second] = (TComponentType)sender;
+                _lookup[e.Second] = (TComponentType)sender;
             }
         }
 

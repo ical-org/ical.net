@@ -18,8 +18,8 @@ namespace Ical.Net.DataTypes
     {
         #region Private Fields
 
-        private int m_Num = int.MinValue;            
-        private DayOfWeek m_DayOfWeek;            
+        private int _mNum = int.MinValue;            
+        private DayOfWeek _mDayOfWeek;            
 
         #endregion
 
@@ -27,14 +27,14 @@ namespace Ical.Net.DataTypes
 
         virtual public int Offset
         {
-            get { return m_Num; }
-            set { m_Num = value; }
+            get { return _mNum; }
+            set { _mNum = value; }
         }
 
         virtual public DayOfWeek DayOfWeek
         {
-            get { return m_DayOfWeek; }
-            set { m_DayOfWeek = value; }
+            get { return _mDayOfWeek; }
+            set { _mDayOfWeek = value; }
         }
 
         #endregion

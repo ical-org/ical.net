@@ -22,8 +22,8 @@ namespace Ical.Net.DataTypes
     {
         #region Private Fields
 
-        private IList<IPeriod> m_Periods = new List<IPeriod>();
-        private string m_TZID;
+        private IList<IPeriod> _mPeriods = new List<IPeriod>();
+        private string _mTzid;
 
         #endregion
 
@@ -31,14 +31,14 @@ namespace Ical.Net.DataTypes
 
         public string TZID
         {
-            get { return m_TZID; }
-            set { m_TZID = value; }
+            get { return _mTzid; }
+            set { _mTzid = value; }
         }
 
         protected IList<IPeriod> Periods
         {
-            get { return m_Periods; }
-            set { m_Periods = value; }
+            get { return _mPeriods; }
+            set { _mPeriods = value; }
         }
 
         #endregion
@@ -126,15 +126,15 @@ namespace Ical.Net.DataTypes
 
         #region Public Methods
 
-        public List<Period> Evaluate(iCalDateTime StartDate, iCalDateTime FromDate, iCalDateTime EndDate)
+        public List<Period> Evaluate(CalDateTime startDate, CalDateTime fromDate, CalDateTime endDate)
         {
             var periods = new List<Period>();
 
-            if (StartDate > FromDate)
-                FromDate = StartDate;
+            if (startDate > fromDate)
+                fromDate = startDate;
 
-            if (EndDate < FromDate ||
-                FromDate > EndDate)
+            if (endDate < fromDate ||
+                fromDate > endDate)
                 return periods;
 
             foreach (Period p in Periods)
@@ -162,11 +162,11 @@ namespace Ical.Net.DataTypes
         {
             get
             {
-                return m_Periods[index];
+                return _mPeriods[index];
             }
             set
             {
-                m_Periods[index] = value;
+                _mPeriods[index] = value;
             }
         }
 
@@ -176,27 +176,27 @@ namespace Ical.Net.DataTypes
 
         virtual public void Add(IPeriod item)
         {
-            m_Periods.Add(item);
+            _mPeriods.Add(item);
         }
 
         virtual public void Clear()
         {
-            m_Periods.Clear();
+            _mPeriods.Clear();
         }
 
         public bool Contains(IPeriod item)
         {
-            return m_Periods.Contains(item);
+            return _mPeriods.Contains(item);
         }
 
         public void CopyTo(IPeriod[] array, int arrayIndex)
         {
-            m_Periods.CopyTo(array, arrayIndex);
+            _mPeriods.CopyTo(array, arrayIndex);
         }
 
         public int Count
         {
-            get { return m_Periods.Count; }
+            get { return _mPeriods.Count; }
         }
 
         public bool IsReadOnly
@@ -206,22 +206,22 @@ namespace Ical.Net.DataTypes
 
         public bool Remove(IPeriod item)
         {
-            return m_Periods.Remove(item);
+            return _mPeriods.Remove(item);
         }
 
         public int IndexOf(IPeriod item)
         {
-            return m_Periods.IndexOf(item);
+            return _mPeriods.IndexOf(item);
         }
 
         public void Insert(int index, IPeriod item)
         {
-            m_Periods.Insert(index, item);
+            _mPeriods.Insert(index, item);
         }
 
         public void RemoveAt(int index)
         {
-            m_Periods.RemoveAt(index);
+            _mPeriods.RemoveAt(index);
         }
 
         #endregion
@@ -230,7 +230,7 @@ namespace Ical.Net.DataTypes
 
         public IEnumerator<IPeriod> GetEnumerator()
         {
-            return m_Periods.GetEnumerator();
+            return _mPeriods.GetEnumerator();
         }
 
         #endregion
@@ -239,7 +239,7 @@ namespace Ical.Net.DataTypes
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return m_Periods.GetEnumerator();
+            return _mPeriods.GetEnumerator();
         }
 
         #endregion

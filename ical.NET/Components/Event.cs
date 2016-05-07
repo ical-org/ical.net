@@ -202,7 +202,7 @@ namespace Ical.Net
 
         #region Private Fields
 
-        EventEvaluator m_Evaluator;
+        EventEvaluator _mEvaluator;
 
         #endregion
 
@@ -221,8 +221,8 @@ namespace Ical.Net
         {
             this.Name = Components.EVENT;
 
-            m_Evaluator = new EventEvaluator(this);
-            SetService(m_Evaluator);
+            _mEvaluator = new EventEvaluator(this);
+            SetService(_mEvaluator);
         }
 
         #endregion
@@ -236,16 +236,16 @@ namespace Ical.Net
         ///     method has calculated the dates for which this event occurs.
         /// </note>
         /// </summary>
-        /// <param name="DateTime">The date to test.</param>
-        /// <returns>True if the event occurs on the <paramref name="DateTime"/> provided, False otherwise.</returns>
-        virtual public bool OccursOn(IDateTime DateTime)
+        /// <param name="dateTime">The date to test.</param>
+        /// <returns>True if the event occurs on the <paramref name="dateTime"/> provided, False otherwise.</returns>
+        virtual public bool OccursOn(IDateTime dateTime)
         {
-            foreach (var p in m_Evaluator.Periods)
+            foreach (var p in _mEvaluator.Periods)
                 // NOTE: removed UTC from date checks, since a date is a date.
-                if (p.StartTime.Date == DateTime.Date ||    // It's the start date OR
-                    (p.StartTime.Date <= DateTime.Date &&   // It's after the start date AND
-                    (p.EndTime.HasTime && p.EndTime.Date >= DateTime.Date || // an end time was specified, and it's after the test date
-                    (!p.EndTime.HasTime && p.EndTime.Date > DateTime.Date)))) // an end time was not specified, and it's before the end date
+                if (p.StartTime.Date == dateTime.Date ||    // It's the start date OR
+                    (p.StartTime.Date <= dateTime.Date &&   // It's after the start date AND
+                    (p.EndTime.HasTime && p.EndTime.Date >= dateTime.Date || // an end time was specified, and it's after the test date
+                    (!p.EndTime.HasTime && p.EndTime.Date > dateTime.Date)))) // an end time was not specified, and it's before the end date
                     // NOTE: fixed bug as follows:
                     // DTSTART;VALUE=DATE:20060704
                     // DTEND;VALUE=DATE:20060705
@@ -257,12 +257,12 @@ namespace Ical.Net
         /// <summary>
         /// Use this method to determine if an event begins at a given date and time.
         /// </summary>
-        /// <param name="DateTime">The date and time to test.</param>
+        /// <param name="dateTime">The date and time to test.</param>
         /// <returns>True if the event begins at the given date and time</returns>
-        virtual public bool OccursAt(IDateTime DateTime)
+        virtual public bool OccursAt(IDateTime dateTime)
         {
-            foreach (var p in m_Evaluator.Periods)
-                if (p.StartTime.Equals(DateTime))
+            foreach (var p in _mEvaluator.Periods)
+                if (p.StartTime.Equals(dateTime))
                     return true;
             return false;
         }

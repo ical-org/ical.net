@@ -39,8 +39,8 @@ namespace Ical.Net.General
     {
         #region Private Fields
 
-        private IList<object> _Values;        
-        private ICalendarParameterCollection _Parameters;
+        private IList<object> _values;        
+        private ICalendarParameterCollection _parameters;
 
         #endregion
 
@@ -51,10 +51,10 @@ namespace Ical.Net.General
         /// </summary>
         virtual public ICalendarParameterCollection Parameters
         {
-            get { return _Parameters; }
+            get { return _parameters; }
             protected set
             {
-                this._Parameters = value;
+                this._parameters = value;
             }
         }
 
@@ -82,7 +82,7 @@ namespace Ical.Net.General
             : base(name)
         {
             Initialize();
-            _Values.Add(value);
+            _values.Add(value);
         }
 
         public CalendarProperty(int line, int col) : base(line, col)
@@ -92,8 +92,8 @@ namespace Ical.Net.General
 
         private void Initialize()
         {
-            _Values = new List<object>();
-            _Parameters = new CalendarParameterList(this, true);
+            _values = new List<object>();
+            _parameters = new CalendarParameterList(this, true);
             ValueChanged += new EventHandler<ValueChangedEventArgs<object>>(CalendarProperty_ValueChanged);
         }        
 
@@ -182,7 +182,7 @@ namespace Ical.Net.General
         {
             get 
             {
-                return _Values;
+                return _values;
             }
         }
 
@@ -190,62 +190,62 @@ namespace Ical.Net.General
         {
             get
             {
-                if (_Values != null)
-                    return _Values.FirstOrDefault();
+                if (_values != null)
+                    return _values.FirstOrDefault();
                 return null;
             }
             set
             {
                 if (value != null)
                 {
-                    if (_Values != null && _Values.Count > 0)
-                        _Values[0] = value;
+                    if (_values != null && _values.Count > 0)
+                        _values[0] = value;
                     else
                     {
-                        _Values.Clear();
-                        _Values.Add(value);
+                        _values.Clear();
+                        _values.Add(value);
                     }
                 }
                 else
                 {
-                    _Values = null;
+                    _values = null;
                 }
             }
         }
 
         virtual public bool ContainsValue(object value)
         {
-            return _Values.Contains(value);
+            return _values.Contains(value);
         }
 
         virtual public int ValueCount
         {
             get
             {
-                return _Values != null ? _Values.Count : 0;
+                return _values != null ? _values.Count : 0;
             }
         }
 
         virtual public void SetValue(object value)
         {
-            if (_Values.Count == 0)
+            if (_values.Count == 0)
             {
                 // Our list doesn't contain any values.  Let's add one!
-                _Values.Add(value);
+                _values.Add(value);
                 OnValueChanged(null, new object[] { value });
             }
             else if (value != null)
             {
                 // Our list contains values.  Let's set the first value!
-                var oldValue = _Values[0];
-                _Values[0] = value;
+                var oldValue = _values[0];
+                _values[0] = value;
                 OnValueChanged(new object[] { oldValue }, new object[] { value });
             }
             else
             {
                 // Remove all values
                 var values = new List<object>(Values);
-                _Values.Clear();
+                _values.Clear();
                 OnValueChanged(values, null);
             }
         }
@@ -253,9 +253,9 @@ namespace Ical.Net.General
         virtual public void SetValue(IEnumerable<object> values)
         {
             // Remove all previous values
-            var removedValues = _Values.ToList();
-            _Values.Clear();
-            _Values.AddRange(values);
+            var removedValues = _values.ToList();
+            _values.Clear();
+            _values.AddRange(values);
             OnValueChanged(removedValues, values);
         }
 
@@ -263,7 +263,7 @@ namespace Ical.Net.General
         {
             if (value != null)
             {
-                _Values.Add(value);
+                _values.Add(value);
                 OnValueChanged(null, new object[] { value });
             }
         }
@@ -271,8 +271,8 @@ namespace Ical.Net.General
         virtual public void RemoveValue(object value)
         {
             if (value != null &&
-                _Values.Contains(value) &&
-                _Values.Remove(value))
+                _values.Contains(value) &&
+                _values.Remove(value))
             {
                 OnValueChanged(new object[] { value }, null);
             }

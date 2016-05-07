@@ -18,7 +18,7 @@ namespace Ical.Net.DataTypes
     {
         #region Private Fields
 
-        private int[] m_Parts;
+        private int[] _mParts;
 
         #endregion
 
@@ -26,16 +26,16 @@ namespace Ical.Net.DataTypes
 
         public int[] Parts
         {
-            get { return m_Parts; }
-            set { m_Parts = value; }
+            get { return _mParts; }
+            set { _mParts = value; }
         }
 
         public int Primary
         {
             get
             {
-                if (m_Parts.Length > 0)
-                    return m_Parts[0];
+                if (_mParts.Length > 0)
+                    return _mParts[0];
                 return 0;
             }
         }
@@ -44,8 +44,8 @@ namespace Ical.Net.DataTypes
         {
             get
             {
-                if (m_Parts.Length > 1)
-                    return m_Parts[1];
+                if (_mParts.Length > 1)
+                    return _mParts[1];
                 return 0;
             }
         }
@@ -54,8 +54,8 @@ namespace Ical.Net.DataTypes
         {
             get
             {
-                if (m_Parts.Length > 2)
-                    return m_Parts[2];
+                if (_mParts.Length > 2)
+                    return _mParts[2];
                 return 0;
             }
         }
@@ -95,7 +95,7 @@ namespace Ical.Net.DataTypes
 
         protected bool Equals(StatusCode other)
         {
-            return Equals(m_Parts, other.m_Parts);
+            return Equals(_mParts, other._mParts);
         }
 
         public override bool Equals(object obj)
@@ -117,7 +117,7 @@ namespace Ical.Net.DataTypes
 
         public override int GetHashCode()
         {
-            return (m_Parts != null ? m_Parts.GetHashCode() : 0);
+            return (_mParts != null ? _mParts.GetHashCode() : 0);
         }
 
         #endregion

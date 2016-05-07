@@ -22,7 +22,7 @@ namespace Ical.Net
     {
         #region Private Fields
 
-        TodoEvaluator m_Evaluator;
+        TodoEvaluator _mEvaluator;
         
         #endregion
 
@@ -130,7 +130,7 @@ namespace Ical.Net
                     if (IsLoaded)
                     {
                         if (value == TodoStatus.Completed)
-                            Completed = iCalDateTime.Now;
+                            Completed = CalDateTime.Now;
                         else Completed = null;
                     }
 
@@ -152,8 +152,8 @@ namespace Ical.Net
         {
             this.Name = Components.TODO;
 
-            m_Evaluator = new TodoEvaluator(this);
-            SetService(m_Evaluator);
+            _mEvaluator = new TodoEvaluator(this);
+            SetService(_mEvaluator);
         }
 
         #endregion
@@ -180,9 +180,9 @@ namespace Ical.Net
                     return true;
 
                 // Evaluate to the previous occurrence.
-                m_Evaluator.EvaluateToPreviousOccurrence(Completed, currDt);
+                _mEvaluator.EvaluateToPreviousOccurrence(Completed, currDt);
 
-                foreach (Period p in m_Evaluator.Periods)
+                foreach (Period p in _mEvaluator.Periods)
                 {
                     if (p.StartTime.GreaterThan(Completed) && // The item has recurred after it was completed
                         currDt.GreaterThanOrEqual(p.StartTime))     // and the current date is after or on the recurrence date.

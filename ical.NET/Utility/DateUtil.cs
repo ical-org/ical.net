@@ -64,12 +64,12 @@ namespace Ical.Net.Utility
             else if (dt1.IsUniversalTime)
             {
                 // The first date/time is in UTC time, convert!
-                return new iCalDateTime(copy.AsUtc);
+                return new CalDateTime(copy.AsUtc);
             }
             else
             {
                 // The first date/time is in local time, convert!
-                return new iCalDateTime(copy.AsSystemLocal);
+                return new CalDateTime(copy.AsSystemLocal);
             }
         }
 

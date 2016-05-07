@@ -20,8 +20,8 @@ namespace Ical.Net.Utility
         {
             return GetOccurrences(
                 recurrable, 
-                new iCalDateTime(dt.AsSystemLocal.Date), 
-                new iCalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)),
+                new CalDateTime(dt.AsSystemLocal.Date), 
+                new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)),
                 includeReferenceDateInResults);
         }
 

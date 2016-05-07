@@ -13,7 +13,7 @@ namespace Ical.Net.Evaluation
     {
         #region Private Fields
 
-        private HashSet<Occurrence> m_Occurrences;        
+        private HashSet<Occurrence> _mOccurrences;        
 
         #endregion
 
@@ -27,8 +27,8 @@ namespace Ical.Net.Evaluation
 
         virtual public HashSet<Occurrence> Occurrences
         {
-            get { return m_Occurrences; }
-            set { m_Occurrences = value; }
+            get { return _mOccurrences; }
+            set { _mOccurrences = value; }
         }
 
         #endregion
@@ -38,7 +38,7 @@ namespace Ical.Net.Evaluation
         public TimeZoneEvaluator(ITimeZone tz)
         {
             TimeZone = tz;
-            m_Occurrences = new HashSet<Occurrence>();
+            _mOccurrences = new HashSet<Occurrence>();
         }
 
         #endregion
@@ -49,12 +49,12 @@ namespace Ical.Net.Evaluation
         {
             // Sort the occurrences by start time
 
-            var sortedOccurrences = m_Occurrences.OrderBy(o => o.Period.StartTime).ToList();
+            var sortedOccurrences = _mOccurrences.OrderBy(o => o.Period.StartTime).ToList();
 
             for (var i = 0; i < sortedOccurrences.Count; i++)
             {
                 var curr = sortedOccurrences[i];
-                var next = i < m_Occurrences.Count - 1 ? (Occurrence?)sortedOccurrences[i + 1] : null;
+                var next = i < _mOccurrences.Count - 1 ? (Occurrence?)sortedOccurrences[i + 1] : null;
 
                 // Determine end times for our periods, overwriting previously calculated end times.
                 // This is important because we don't want to overcalculate our time zone information,
@@ -79,7 +79,7 @@ namespace Ical.Net.Evaluation
         public override void Clear()
         {
             base.Clear();
-            m_Occurrences.Clear();
+            _mOccurrences.Clear();
         }
 
         public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
@@ -124,8 +124,8 @@ namespace Ical.Net.Evaluation
                                 Periods.Add(period);
 
                             var o = new Occurrence(curr, period);
-                            if (!m_Occurrences.Contains(o))
-                                m_Occurrences.Add(o);
+                            if (!_mOccurrences.Contains(o))
+                                _mOccurrences.Add(o);
                         }
 
                         if (EvaluationEndBounds == DateTime.MinValue || EvaluationEndBounds < offsetEnd)

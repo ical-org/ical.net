@@ -19,13 +19,13 @@ namespace Ical.Net.General
     {
         #region Private Fields
 
-        private ICalendarObject _Parent = null;
-        private ICalendarObjectList<ICalendarObject> _Children;
-        private ServiceProvider _ServiceProvider;
-        private string _Name;
+        private ICalendarObject _parent = null;
+        private ICalendarObjectList<ICalendarObject> _children;
+        private ServiceProvider _serviceProvider;
+        private string _name;
         
-        private int _Line;
-        private int _Column;
+        private int _line;
+        private int _column;
 
         #endregion
 
@@ -50,11 +50,11 @@ namespace Ical.Net.General
 
         void Initialize()
         {
-            _Children = new CalendarObjectList(this);
-            _ServiceProvider = new ServiceProvider();
+            _children = new CalendarObjectList(this);
+            _serviceProvider = new ServiceProvider();
 
-            _Children.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarObject, int>>(_Children_ItemAdded);
-            _Children.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarObject, int>>(_Children_ItemRemoved);
+            _children.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarObject, int>>(_Children_ItemAdded);
+            _children.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarObject, int>>(_Children_ItemRemoved);
         }        
 
         #endregion
@@ -146,8 +146,8 @@ namespace Ical.Net.General
         /// </summary>
         virtual public ICalendarObject Parent
         {
-            get { return _Parent; }
-            set { _Parent = value; }
+            get { return _parent; }
+            set { _parent = value; }
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace Ical.Net.General
         {
             get
             {
-                return _Children;
+                return _children;
             }
         }
 
@@ -174,14 +174,14 @@ namespace Ical.Net.General
         /// </summary>        
         virtual public string Name
         {
-            get { return _Name; }
+            get { return _name; }
             set
             {
-                if (!object.Equals(_Name, value))
+                if (!object.Equals(_name, value))
                 {
-                    var old = _Name;
-                    _Name = value;
-                    OnGroupChanged(old, _Name);
+                    var old = _name;
+                    _name = value;
+                    OnGroupChanged(old, _name);
                 }
             }
         }
@@ -203,7 +203,7 @@ namespace Ical.Net.General
             }
             protected set
             {
-                _Parent = value;
+                _parent = value;
             }
         }
 
@@ -215,14 +215,14 @@ namespace Ical.Net.General
 
         virtual public int Line
         {
-            get { return _Line; }
-            set { _Line = value; }
+            get { return _line; }
+            set { _line = value; }
         }
 
         virtual public int Column
         {
-            get { return _Column; }
-            set { _Column = value; }
+            get { return _column; }
+            set { _column = value; }
         }
 
         #endregion       
@@ -231,42 +231,42 @@ namespace Ical.Net.General
 
         virtual public object GetService(Type serviceType)
         {
-            return _ServiceProvider.GetService(serviceType);
+            return _serviceProvider.GetService(serviceType);
         }
 
         virtual public object GetService(string name)
         {
-            return _ServiceProvider.GetService(name);            
+            return _serviceProvider.GetService(name);            
         }
 
         virtual public T GetService<T>()
         {
-            return _ServiceProvider.GetService<T>();
+            return _serviceProvider.GetService<T>();
         }
 
         virtual public T GetService<T>(string name)
         {
-            return _ServiceProvider.GetService<T>(name);
+            return _serviceProvider.GetService<T>(name);
         }
 
         virtual public void SetService(string name, object obj)
         {
-            _ServiceProvider.SetService(name, obj);
+            _serviceProvider.SetService(name, obj);
         }
 
         virtual public void SetService(object obj)
         {
-            _ServiceProvider.SetService(obj);
+            _serviceProvider.SetService(obj);
         }
 
         virtual public void RemoveService(Type type)
         {
-            _ServiceProvider.RemoveService(type);
+            _serviceProvider.RemoveService(type);
         }
 
         virtual public void RemoveService(string name)
         {
-            _ServiceProvider.RemoveService(name);
+            _serviceProvider.RemoveService(name);
         }
 
         #endregion

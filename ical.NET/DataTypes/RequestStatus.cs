@@ -18,9 +18,9 @@ namespace Ical.Net.DataTypes
     {
         #region Private Fields
 
-        private string m_Description;
-        private string m_ExtraData;
-        private IStatusCode m_StatusCode;
+        private string _mDescription;
+        private string _mExtraData;
+        private IStatusCode _mStatusCode;
 
         #endregion
 
@@ -28,20 +28,20 @@ namespace Ical.Net.DataTypes
 
         virtual public string Description
         {
-            get { return m_Description; }
-            set { m_Description = value; }
+            get { return _mDescription; }
+            set { _mDescription = value; }
         }
 
         virtual public string ExtraData
         {
-            get { return m_ExtraData; }
-            set { m_ExtraData = value; }
+            get { return _mExtraData; }
+            set { _mExtraData = value; }
         }
 
         virtual public IStatusCode StatusCode
         {
-            get { return m_StatusCode; }
-            set { m_StatusCode = value; }
+            get { return _mStatusCode; }
+            set { _mStatusCode = value; }
         }
 
         #endregion
@@ -81,8 +81,8 @@ namespace Ical.Net.DataTypes
 
         protected bool Equals(RequestStatus other)
         {
-            return string.Equals(m_Description, other.m_Description) && string.Equals(m_ExtraData, other.m_ExtraData) &&
-                   Equals(m_StatusCode, other.m_StatusCode);
+            return string.Equals(_mDescription, other._mDescription) && string.Equals(_mExtraData, other._mExtraData) &&
+                   Equals(_mStatusCode, other._mStatusCode);
         }
 
         public override bool Equals(object obj)
@@ -106,9 +106,9 @@ namespace Ical.Net.DataTypes
         {
             unchecked
             {
-                var hashCode = (m_Description != null ? m_Description.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (m_ExtraData != null ? m_ExtraData.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (m_StatusCode != null ? m_StatusCode.GetHashCode() : 0);
+                var hashCode = (_mDescription != null ? _mDescription.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_mExtraData != null ? _mExtraData.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_mStatusCode != null ? _mStatusCode.GetHashCode() : 0);
                 return hashCode;
             }
         }

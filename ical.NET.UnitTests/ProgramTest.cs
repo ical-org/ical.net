@@ -25,8 +25,8 @@ namespace ical.NET.UnitTests
             Assert.IsNotNull(iCal, "iCalendar did not load.  Are you connected to the internet?");
 
             var occurrences = iCal.GetOccurrences(
-                new iCalDateTime(2006, 1, 1, "US-Eastern"),
-                new iCalDateTime(2006, 12, 31, "US-Eastern"));
+                new CalDateTime(2006, 1, 1, "US-Eastern"),
+                new CalDateTime(2006, 12, 31, "US-Eastern"));
 
             //foreach (var o in occurrences)
             //{
@@ -120,21 +120,21 @@ namespace ical.NET.UnitTests
 
             // Get occurrences for the first event
             var occurrences = evt1.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid),
-                new iCalDateTime(2000, 1, 1, tzid)).OrderBy(o => o.Period.StartTime).ToList();
+                new CalDateTime(1996, 1, 1, tzid),
+                new CalDateTime(2000, 1, 1, tzid)).OrderBy(o => o.Period.StartTime).ToList();
 
-            var DateTimes = new iCalDateTime[]
+            var DateTimes = new CalDateTime[]
             {
-                new iCalDateTime(1997, 9, 10, 9, 0, 0, tzid),
-                new iCalDateTime(1997, 9, 11, 9, 0, 0, tzid),
-                new iCalDateTime(1997, 9, 12, 9, 0, 0, tzid),
-                new iCalDateTime(1997, 9, 13, 9, 0, 0, tzid),
-                new iCalDateTime(1997, 9, 14, 9, 0, 0, tzid),
-                new iCalDateTime(1997, 9, 15, 9, 0, 0, tzid),
-                new iCalDateTime(1999, 3, 10, 9, 0, 0, tzid),
-                new iCalDateTime(1999, 3, 11, 9, 0, 0, tzid),
-                new iCalDateTime(1999, 3, 12, 9, 0, 0, tzid),
-                new iCalDateTime(1999, 3, 13, 9, 0, 0, tzid),
+                new CalDateTime(1997, 9, 10, 9, 0, 0, tzid),
+                new CalDateTime(1997, 9, 11, 9, 0, 0, tzid),
+                new CalDateTime(1997, 9, 12, 9, 0, 0, tzid),
+                new CalDateTime(1997, 9, 13, 9, 0, 0, tzid),
+                new CalDateTime(1997, 9, 14, 9, 0, 0, tzid),
+                new CalDateTime(1997, 9, 15, 9, 0, 0, tzid),
+                new CalDateTime(1999, 3, 10, 9, 0, 0, tzid),
+                new CalDateTime(1999, 3, 11, 9, 0, 0, tzid),
+                new CalDateTime(1999, 3, 12, 9, 0, 0, tzid),
+                new CalDateTime(1999, 3, 13, 9, 0, 0, tzid),
             };
 
             var TimeZones = new string[]
@@ -172,29 +172,29 @@ namespace ical.NET.UnitTests
 
             // Get occurrences for the 2nd event
             occurrences = evt2.GetOccurrences(
-                new iCalDateTime(1996, 1, 1, tzid),
-                new iCalDateTime(1998, 4, 1, tzid)).OrderBy(o => o.Period.StartTime).ToList();
+                new CalDateTime(1996, 1, 1, tzid),
+                new CalDateTime(1998, 4, 1, tzid)).OrderBy(o => o.Period.StartTime).ToList();
 
-            var DateTimes1 = new iCalDateTime[]
+            var DateTimes1 = new CalDateTime[]
             {
-                new iCalDateTime(1997, 9, 2, 9, 0, 0, tzid),
-                new iCalDateTime(1997, 9, 9, 9, 0, 0, tzid),
-                new iCalDateTime(1997, 9, 16, 9, 0, 0, tzid),
-                new iCalDateTime(1997, 9, 23, 9, 0, 0, tzid),
-                new iCalDateTime(1997, 9, 30, 9, 0, 0, tzid),
-                new iCalDateTime(1997, 11, 4, 9, 0, 0, tzid),
-                new iCalDateTime(1997, 11, 11, 9, 0, 0, tzid),
-                new iCalDateTime(1997, 11, 18, 9, 0, 0, tzid),
-                new iCalDateTime(1997, 11, 25, 9, 0, 0, tzid),
-                new iCalDateTime(1998, 1, 6, 9, 0, 0, tzid),
-                new iCalDateTime(1998, 1, 13, 9, 0, 0, tzid),
-                new iCalDateTime(1998, 1, 20, 9, 0, 0, tzid),
-                new iCalDateTime(1998, 1, 27, 9, 0, 0, tzid),
-                new iCalDateTime(1998, 3, 3, 9, 0, 0, tzid),
-                new iCalDateTime(1998, 3, 10, 9, 0, 0, tzid),
-                new iCalDateTime(1998, 3, 17, 9, 0, 0, tzid),
-                new iCalDateTime(1998, 3, 24, 9, 0, 0, tzid),
-                new iCalDateTime(1998, 3, 31, 9, 0, 0, tzid)
+                new CalDateTime(1997, 9, 2, 9, 0, 0, tzid),
+                new CalDateTime(1997, 9, 9, 9, 0, 0, tzid),
+                new CalDateTime(1997, 9, 16, 9, 0, 0, tzid),
+                new CalDateTime(1997, 9, 23, 9, 0, 0, tzid),
+                new CalDateTime(1997, 9, 30, 9, 0, 0, tzid),
+                new CalDateTime(1997, 11, 4, 9, 0, 0, tzid),
+                new CalDateTime(1997, 11, 11, 9, 0, 0, tzid),
+                new CalDateTime(1997, 11, 18, 9, 0, 0, tzid),
+                new CalDateTime(1997, 11, 25, 9, 0, 0, tzid),
+                new CalDateTime(1998, 1, 6, 9, 0, 0, tzid),
+                new CalDateTime(1998, 1, 13, 9, 0, 0, tzid),
+                new CalDateTime(1998, 1, 20, 9, 0, 0, tzid),
+                new CalDateTime(1998, 1, 27, 9, 0, 0, tzid),
+                new CalDateTime(1998, 3, 3, 9, 0, 0, tzid),
+                new CalDateTime(1998, 3, 10, 9, 0, 0, tzid),
+                new CalDateTime(1998, 3, 17, 9, 0, 0, tzid),
+                new CalDateTime(1998, 3, 24, 9, 0, 0, tzid),
+                new CalDateTime(1998, 3, 31, 9, 0, 0, tzid)
             };
 
             var TimeZones1 = new string[]
@@ -270,7 +270,7 @@ namespace ical.NET.UnitTests
             Assert.IsNotNull(tzi);
 
             var iCal = new iCalendar();
-            var tz = iCalTimeZone.FromSystemTimeZone(tzi, new DateTime(2000, 1, 1), false);
+            var tz = ICalTimeZone.FromSystemTimeZone(tzi, new DateTime(2000, 1, 1), false);
             Assert.IsNotNull(tz);
             iCal.AddChild(tz);
 
@@ -281,8 +281,8 @@ namespace ical.NET.UnitTests
             // (i.e. it takes 1 hour and 1 second to transition from
             // 2003-10-26 12:59:59 AM to
             // 2003-10-26 01:00:00 AM)
-            var dt1 = new iCalDateTime(2003, 10, 26, 0, 59, 59, tz.TZID, iCal);
-            var dt2 = new iCalDateTime(2003, 10, 26, 1, 0, 0, tz.TZID, iCal);
+            var dt1 = new CalDateTime(2003, 10, 26, 0, 59, 59, tz.TZID, iCal);
+            var dt2 = new CalDateTime(2003, 10, 26, 1, 0, 0, tz.TZID, iCal);
 
             var result = dt2 - dt1;
             Assert.AreEqual(TimeSpan.FromHours(1) + TimeSpan.FromSeconds(1), result);
@@ -291,8 +291,8 @@ namespace ical.NET.UnitTests
             // (i.e. it takes negative 59 minutes and 59 seconds to transition from
             // 2004-04-04 01:59:59 AM to
             // 2004-04-04 02:00:00 AM)
-            dt1 = new iCalDateTime(2004, 4, 4, 1, 59, 59, tz.TZID, iCal);
-            dt2 = new iCalDateTime(2004, 4, 4, 2, 0, 0, tz.TZID, iCal);
+            dt1 = new CalDateTime(2004, 4, 4, 1, 59, 59, tz.TZID, iCal);
+            dt2 = new CalDateTime(2004, 4, 4, 2, 0, 0, tz.TZID, iCal);
             result = dt2 - dt1;
             Assert.AreEqual(TimeSpan.FromHours(-1) + TimeSpan.FromSeconds(1), result);            
         }
@@ -317,8 +317,8 @@ namespace ical.NET.UnitTests
             // (i.e. it takes 1 hour and 1 second to transition from
             // 2003-10-26 12:59:59 AM to
             // 2003-10-26 01:00:00 AM)
-            var dt1 = new iCalDateTime(2003, 10, 26, 0, 59, 59, tz.TZID, iCal);
-            var dt2 = new iCalDateTime(2003, 10, 26, 1, 0, 0, tz.TZID, iCal);
+            var dt1 = new CalDateTime(2003, 10, 26, 0, 59, 59, tz.TZID, iCal);
+            var dt2 = new CalDateTime(2003, 10, 26, 1, 0, 0, tz.TZID, iCal);
             var result = dt2 - dt1;
             Assert.AreEqual(TimeSpan.FromHours(1) + TimeSpan.FromSeconds(1), result);
 
@@ -326,8 +326,8 @@ namespace ical.NET.UnitTests
             // (i.e. it takes negative 59 minutes and 59 seconds to transition from
             // 2004-04-04 01:59:59 AM to
             // 2004-04-04 02:00:00 AM)
-            dt1 = new iCalDateTime(2004, 4, 4, 1, 59, 59, tz.TZID, iCal);
-            dt2 = new iCalDateTime(2004, 4, 4, 2, 0, 0, tz.TZID, iCal);
+            dt1 = new CalDateTime(2004, 4, 4, 1, 59, 59, tz.TZID, iCal);
+            dt2 = new CalDateTime(2004, 4, 4, 2, 0, 0, tz.TZID, iCal);
             result = dt2 - dt1;
             Assert.AreEqual(TimeSpan.FromHours(-1) + TimeSpan.FromSeconds(1), result);
         }
@@ -354,7 +354,7 @@ namespace ical.NET.UnitTests
 
                 if (tzinfo != null)
                 {
-                    var ical_tz = Ical.Net.iCalTimeZone.FromSystemTimeZone(tzinfo);
+                    var ical_tz = Ical.Net.ICalTimeZone.FromSystemTimeZone(tzinfo);
                     Assert.AreNotEqual(0, ical_tz.TimeZoneInfos.Count, zone.StandardName + ": no time zone information was extracted.");
                 }
             }

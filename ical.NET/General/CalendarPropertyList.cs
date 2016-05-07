@@ -14,8 +14,8 @@ namespace Ical.Net.General
     {
         #region Private Fields
 
-        ICalendarObject m_Parent;
-        bool m_CaseInsensitive;
+        ICalendarObject _mParent;
+        bool _mCaseInsensitive;
 
         #endregion
 
@@ -27,7 +27,7 @@ namespace Ical.Net.General
 
         public CalendarPropertyList(ICalendarObject parent, bool caseInsensitive)
         {
-            m_Parent = parent;
+            _mParent = parent;
 
             ItemAdded += new EventHandler<ObjectEventArgs<ICalendarProperty, int>>(CalendarPropertyList_ItemAdded);
             ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarProperty, int>>(CalendarPropertyList_ItemRemoved);
@@ -44,14 +44,14 @@ namespace Ical.Net.General
 
         void CalendarPropertyList_ItemAdded(object sender, ObjectEventArgs<ICalendarProperty, int> e)
         {
-            e.First.Parent = m_Parent;
+            e.First.Parent = _mParent;
         }
 
         #endregion
 
         protected override string GroupModifier(string group)
         {
-            if (m_CaseInsensitive && group != null)
+            if (_mCaseInsensitive && group != null)
                 return group.ToUpper();
             return group;
         }

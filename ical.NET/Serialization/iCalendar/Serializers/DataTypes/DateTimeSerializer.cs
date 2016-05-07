@@ -40,7 +40,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public override Type TargetType
         {
-            get { return typeof(iCalDateTime); }
+            get { return typeof(CalDateTime); }
         }
 
         public override string SerializeToString(object obj)

@@ -17,10 +17,10 @@ namespace Ical.Net.DataTypes
     {
         #region Private Fields
 
-        private IDateTime m_StartTime;
-        private IDateTime m_EndTime;        
-        private TimeSpan m_Duration;
-        private bool m_MatchesDateOnly;
+        private IDateTime _mStartTime;
+        private IDateTime _mEndTime;        
+        private TimeSpan _mDuration;
+        private bool _mMatchesDateOnly;
 
         #endregion        
 
@@ -100,10 +100,10 @@ namespace Ical.Net.DataTypes
         {
             unchecked
             {
-                var hashCode = (m_StartTime != null ? m_StartTime.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (m_EndTime != null ? m_EndTime.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ m_Duration.GetHashCode();
-                hashCode = (hashCode * 397) ^ m_MatchesDateOnly.GetHashCode();
+                var hashCode = (_mStartTime != null ? _mStartTime.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_mEndTime != null ? _mEndTime.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ _mDuration.GetHashCode();
+                hashCode = (hashCode * 397) ^ _mMatchesDateOnly.GetHashCode();
                 return hashCode;
             }
         }
@@ -134,32 +134,32 @@ namespace Ical.Net.DataTypes
 
         virtual public IDateTime StartTime
         {
-            get { return m_StartTime; }
+            get { return _mStartTime; }
             set
             {                
-                m_StartTime = value;
+                _mStartTime = value;
                 ExtrapolateTimes();
             }
         }
 
         virtual public IDateTime EndTime
         {
-            get { return m_EndTime; }
+            get { return _mEndTime; }
             set
             {
-                m_EndTime = value;
+                _mEndTime = value;
                 ExtrapolateTimes();
             }
         }
 
         virtual public TimeSpan Duration
         {
-            get { return m_Duration; }
+            get { return _mDuration; }
             set
             {
-                if (!object.Equals(m_Duration, value))
+                if (!object.Equals(_mDuration, value))
                 {
-                    m_Duration = value;
+                    _mDuration = value;
                     ExtrapolateTimes();
                 }
             }
@@ -172,8 +172,8 @@ namespace Ical.Net.DataTypes
         /// </summary>
         virtual public bool MatchesDateOnly
         {
-            get { return m_MatchesDateOnly; }
-            set { m_MatchesDateOnly = value; }
+            get { return _mMatchesDateOnly; }
+            set { _mMatchesDateOnly = value; }
         }
 
         virtual public bool Contains(IDateTime dt)

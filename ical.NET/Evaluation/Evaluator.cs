@@ -13,18 +13,18 @@ namespace Ical.Net.Evaluation
     {
         #region Private Fields
 
-        private System.Globalization.Calendar m_Calendar;
-        private DateTime m_EvaluationStartBounds = DateTime.MaxValue;
-        private DateTime m_EvaluationEndBounds = DateTime.MinValue;
+        private System.Globalization.Calendar _mCalendar;
+        private DateTime _mEvaluationStartBounds = DateTime.MaxValue;
+        private DateTime _mEvaluationEndBounds = DateTime.MinValue;
         
-        private ICalendarObject m_AssociatedObject;
-        private ICalendarDataType m_AssociatedDataType;
+        private ICalendarObject _mAssociatedObject;
+        private ICalendarDataType _mAssociatedDataType;
 
         #endregion
 
         #region Protected Fields
 
-        protected HashSet<IPeriod> m_Periods;
+        protected HashSet<IPeriod> MPeriods;
 
         #endregion
 
@@ -37,22 +37,22 @@ namespace Ical.Net.Evaluation
 
         public Evaluator(ICalendarObject associatedObject)
         {
-            m_AssociatedObject = associatedObject;
+            _mAssociatedObject = associatedObject;
 
             Initialize();
         }
 
         public Evaluator(ICalendarDataType dataType)
         {
-            m_AssociatedDataType = dataType;
+            _mAssociatedDataType = dataType;
 
             Initialize();
         }
 
         void Initialize()
         {
-            m_Calendar = System.Globalization.CultureInfo.CurrentCulture.Calendar;
-            m_Periods = new HashSet<IPeriod>();
+            _mCalendar = System.Globalization.CultureInfo.CurrentCulture.Calendar;
+            MPeriods = new HashSet<IPeriod>();
         }
 
         #endregion
@@ -61,7 +61,7 @@ namespace Ical.Net.Evaluation
 
         protected IDateTime ConvertToIDateTime(DateTime dt, IDateTime referenceDate)
         {
-            IDateTime newDt = new iCalDateTime(dt, referenceDate.TzId);
+            IDateTime newDt = new CalDateTime(dt, referenceDate.TzId);
             newDt.AssociateWith(referenceDate);
             return newDt;
         }
@@ -93,45 +93,45 @@ namespace Ical.Net.Evaluation
 
         public System.Globalization.Calendar Calendar
         {
-            get { return m_Calendar; }
+            get { return _mCalendar; }
         }
 
         virtual public DateTime EvaluationStartBounds
         {
-            get { return m_EvaluationStartBounds; }
-            set { m_EvaluationStartBounds = value; }
+            get { return _mEvaluationStartBounds; }
+            set { _mEvaluationStartBounds = value; }
         }
 
         virtual public DateTime EvaluationEndBounds
         {
-            get { return m_EvaluationEndBounds; }
-            set { m_EvaluationEndBounds = value; }
+            get { return _mEvaluationEndBounds; }
+            set { _mEvaluationEndBounds = value; }
         }
 
         virtual public ICalendarObject AssociatedObject
         {
             get
             {
-                if (m_AssociatedObject != null)
-                    return m_AssociatedObject;
-                else if (m_AssociatedDataType != null)
-                    return m_AssociatedDataType.AssociatedObject;
+                if (_mAssociatedObject != null)
+                    return _mAssociatedObject;
+                else if (_mAssociatedDataType != null)
+                    return _mAssociatedDataType.AssociatedObject;
                 else
                     return null;
             }
-            protected set { m_AssociatedObject = value; }
+            protected set { _mAssociatedObject = value; }
         }
 
         virtual public HashSet<IPeriod> Periods
         {
-            get { return m_Periods; }
+            get { return MPeriods; }
         }
 
         virtual public void Clear()
         {
-            m_EvaluationStartBounds = DateTime.MaxValue;
-            m_EvaluationEndBounds = DateTime.MinValue;
-            m_Periods.Clear();
+            _mEvaluationStartBounds = DateTime.MaxValue;
+            _mEvaluationEndBounds = DateTime.MinValue;
+            MPeriods.Clear();
         }
 
         abstract public HashSet<IPeriod> Evaluate(

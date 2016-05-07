@@ -19,9 +19,9 @@ namespace Ical.Net.DataTypes
     {
         #region Private Fields
 
-        private IDateTime m_DateTime;
-        private TimeSpan? m_Duration;
-        private TriggerRelation m_Related = TriggerRelation.Start;
+        private IDateTime _mDateTime;
+        private TimeSpan? _mDuration;
+        private TriggerRelation _mRelated = TriggerRelation.Start;
 
         #endregion
 
@@ -29,11 +29,11 @@ namespace Ical.Net.DataTypes
 
         virtual public IDateTime DateTime
         {
-            get { return m_DateTime; }
+            get { return _mDateTime; }
             set
             {
-                m_DateTime = value;
-                if (m_DateTime != null)
+                _mDateTime = value;
+                if (_mDateTime != null)
                 {
                     // NOTE: this, along with the "Duration" setter, fixes the bug tested in
                     // TODO11(), as well as this thread: https://sourceforge.net/forum/forum.php?thread_id=1926742&forum_id=656447
@@ -42,18 +42,18 @@ namespace Ical.Net.DataTypes
                     Duration = null;
 
                     // Do not allow timeless date/time values
-                    m_DateTime.HasTime = true;
+                    _mDateTime.HasTime = true;
                 }
             }
         }
 
         virtual public TimeSpan? Duration
         {
-            get { return m_Duration; }
+            get { return _mDuration; }
             set
             {
-                m_Duration = value;
-                if (m_Duration != null)
+                _mDuration = value;
+                if (_mDuration != null)
                 {
                     // NOTE: see above.
 
@@ -65,13 +65,13 @@ namespace Ical.Net.DataTypes
 
         virtual public TriggerRelation Related
         {
-            get { return m_Related; }
-            set { m_Related = value; }
+            get { return _mRelated; }
+            set { _mRelated = value; }
         }
         
         virtual public bool IsRelative
         {
-            get { return m_Duration != null; }
+            get { return _mDuration != null; }
         }
 
         #endregion
@@ -108,7 +108,7 @@ namespace Ical.Net.DataTypes
 
         protected bool Equals(Trigger other)
         {
-            return Equals(m_DateTime, other.m_DateTime) && m_Duration.Equals(other.m_Duration) && m_Related == other.m_Related;
+            return Equals(_mDateTime, other._mDateTime) && _mDuration.Equals(other._mDuration) && _mRelated == other._mRelated;
         }
 
         public override bool Equals(object obj)
@@ -132,9 +132,9 @@ namespace Ical.Net.DataTypes
         {
             unchecked
             {
-                var hashCode = (m_DateTime != null ? m_DateTime.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ m_Duration.GetHashCode();
-                hashCode = (hashCode * 397) ^ (int) m_Related;
+                var hashCode = (_mDateTime != null ? _mDateTime.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ _mDuration.GetHashCode();
+                hashCode = (hashCode * 397) ^ (int) _mRelated;
                 return hashCode;
             }
         }

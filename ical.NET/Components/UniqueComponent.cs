@@ -58,7 +58,7 @@ namespace Ical.Net
                 // two calendars, one generated, and one loaded from file, they may be functionally identical,
                 // but be determined to be different due to millisecond differences.
                 var now = DateTime.Now;
-                DTStamp = new iCalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);                
+                DTStamp = new CalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);                
             }            
         }
 
@@ -118,7 +118,7 @@ namespace Ical.Net
                 e.First.Name != null &&
                 string.Equals(e.First.Name.ToUpper(), "UID"))
             {
-                OnUIDChanged(e.First.Values.Cast<string>().FirstOrDefault(), null);
+                OnUidChanged(e.First.Values.Cast<string>().FirstOrDefault(), null);
                 e.First.ValueChanged -= Object_ValueChanged;
             }
         }
@@ -129,7 +129,7 @@ namespace Ical.Net
                 e.First.Name != null &&
                 string.Equals(e.First.Name.ToUpper(), "UID"))
             {
-                OnUIDChanged(null, e.First.Values.Cast<string>().FirstOrDefault());
+                OnUidChanged(null, e.First.Values.Cast<string>().FirstOrDefault());
                 e.First.ValueChanged += Object_ValueChanged;
             }
         }
@@ -138,7 +138,7 @@ namespace Ical.Net
         {
             var oldValue = e.RemovedValues.OfType<string>().FirstOrDefault();
             var newValue = e.AddedValues.OfType<string>().FirstOrDefault();
-            OnUIDChanged(oldValue, newValue);
+            OnUidChanged(oldValue, newValue);
         }
 
         #endregion
@@ -185,10 +185,10 @@ namespace Ical.Net
 
         virtual public event EventHandler<ObjectEventArgs<string, string>> UIDChanged;
 
-        virtual protected void OnUIDChanged(string oldUID, string newUID)
+        virtual protected void OnUidChanged(string oldUid, string newUid)
         {
             if (UIDChanged != null)
-                UIDChanged(this, new ObjectEventArgs<string, string>(oldUID, newUID));
+                UIDChanged(this, new ObjectEventArgs<string, string>(oldUid, newUid));
         }
 
         virtual public string UID

@@ -18,16 +18,16 @@ namespace Ical.Net
 #if !SILVERLIGHT
     [Serializable]
 #endif
-    public partial class iCalTimeZone : CalendarComponent, ITimeZone
+    public partial class ICalTimeZone : CalendarComponent, ITimeZone
     {
         #region Static Public Methods
 
 #if !SILVERLIGHT
-        static public iCalTimeZone FromLocalTimeZone()
+        static public ICalTimeZone FromLocalTimeZone()
         {
             return FromSystemTimeZone(System.TimeZoneInfo.Local);
         }
-        static public iCalTimeZone FromLocalTimeZone(DateTime earlistDateTimeToSupport, bool includeHistoricalData)
+        static public ICalTimeZone FromLocalTimeZone(DateTime earlistDateTimeToSupport, bool includeHistoricalData)
         {
             return FromSystemTimeZone(System.TimeZoneInfo.Local, earlistDateTimeToSupport, includeHistoricalData);
         }
@@ -57,20 +57,20 @@ namespace Ical.Net
             tzi.RecurrenceRules.Add(recurrence);
         }
 
-        public static iCalTimeZone FromSystemTimeZone(System.TimeZoneInfo tzinfo)
+        public static ICalTimeZone FromSystemTimeZone(System.TimeZoneInfo tzinfo)
         {
             // Support date/times for January 1st of the previous year by default.
             return FromSystemTimeZone(tzinfo, new DateTime(DateTime.Now.Year, 1, 1).AddYears(-1), false);
         }
 
-        public static iCalTimeZone FromSystemTimeZone(System.TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
+        public static ICalTimeZone FromSystemTimeZone(System.TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
         {
             var adjustmentRules = tzinfo.GetAdjustmentRules();
             var utcOffset = tzinfo.BaseUtcOffset;
-            var dday_tz = new iCalTimeZone();
-            dday_tz.TZID = tzinfo.Id;
+            var ddayTz = new ICalTimeZone();
+            ddayTz.TZID = tzinfo.Id;
 
-            IDateTime earliest = new iCalDateTime(earlistDateTimeToSupport);
+            IDateTime earliest = new CalDateTime(earlistDateTimeToSupport);
             foreach (var adjustmentRule in adjustmentRules)
             {
                 // Only include historical data if asked to do so.  Otherwise,
@@ -79,53 +79,53 @@ namespace Ical.Net
                     continue;
 
                 var delta = adjustmentRule.DaylightDelta;
-                var dday_tzinfo_standard = new iCalTimeZoneInfo();
-                dday_tzinfo_standard.Name = "STANDARD";
-                dday_tzinfo_standard.TimeZoneName = tzinfo.StandardName;
-                dday_tzinfo_standard.Start = new iCalDateTime(new DateTime(adjustmentRule.DateStart.Year, adjustmentRule.DaylightTransitionEnd.Month, adjustmentRule.DaylightTransitionEnd.Day, adjustmentRule.DaylightTransitionEnd.TimeOfDay.Hour, adjustmentRule.DaylightTransitionEnd.TimeOfDay.Minute, adjustmentRule.DaylightTransitionEnd.TimeOfDay.Second).AddDays(1));
-                if (dday_tzinfo_standard.Start.LessThan(earliest))
-                    dday_tzinfo_standard.Start = dday_tzinfo_standard.Start.AddYears(earliest.Year - dday_tzinfo_standard.Start.Year);
-                dday_tzinfo_standard.OffsetFrom = new UTCOffset(utcOffset + delta);
-                dday_tzinfo_standard.OffsetTo = new UTCOffset(utcOffset);
-                PopulateiCalTimeZoneInfo(dday_tzinfo_standard, adjustmentRule.DaylightTransitionEnd, adjustmentRule.DateStart.Year);
+                var ddayTzinfoStandard = new ICalTimeZoneInfo();
+                ddayTzinfoStandard.Name = "STANDARD";
+                ddayTzinfoStandard.TimeZoneName = tzinfo.StandardName;
+                ddayTzinfoStandard.Start = new CalDateTime(new DateTime(adjustmentRule.DateStart.Year, adjustmentRule.DaylightTransitionEnd.Month, adjustmentRule.DaylightTransitionEnd.Day, adjustmentRule.DaylightTransitionEnd.TimeOfDay.Hour, adjustmentRule.DaylightTransitionEnd.TimeOfDay.Minute, adjustmentRule.DaylightTransitionEnd.TimeOfDay.Second).AddDays(1));
+                if (ddayTzinfoStandard.Start.LessThan(earliest))
+                    ddayTzinfoStandard.Start = ddayTzinfoStandard.Start.AddYears(earliest.Year - ddayTzinfoStandard.Start.Year);
+                ddayTzinfoStandard.OffsetFrom = new UtcOffset(utcOffset + delta);
+                ddayTzinfoStandard.OffsetTo = new UtcOffset(utcOffset);
+                PopulateiCalTimeZoneInfo(ddayTzinfoStandard, adjustmentRule.DaylightTransitionEnd, adjustmentRule.DateStart.Year);
 
                 // Add the "standard" time rule to the time zone
-                dday_tz.AddChild(dday_tzinfo_standard);
+                ddayTz.AddChild(ddayTzinfoStandard);
 
                 if (tzinfo.SupportsDaylightSavingTime)
                 {
-                    var dday_tzinfo_daylight = new iCalTimeZoneInfo();
-                    dday_tzinfo_daylight.Name = "DAYLIGHT";
-                    dday_tzinfo_daylight.TimeZoneName = tzinfo.DaylightName;
-                    dday_tzinfo_daylight.Start = new iCalDateTime(new DateTime(adjustmentRule.DateStart.Year, adjustmentRule.DaylightTransitionStart.Month, adjustmentRule.DaylightTransitionStart.Day, adjustmentRule.DaylightTransitionStart.TimeOfDay.Hour, adjustmentRule.DaylightTransitionStart.TimeOfDay.Minute, adjustmentRule.DaylightTransitionStart.TimeOfDay.Second));
-                    if (dday_tzinfo_daylight.Start.LessThan(earliest))
-                        dday_tzinfo_daylight.Start = dday_tzinfo_daylight.Start.AddYears(earliest.Year - dday_tzinfo_daylight.Start.Year);
-                    dday_tzinfo_daylight.OffsetFrom = new UTCOffset(utcOffset);
-                    dday_tzinfo_daylight.OffsetTo = new UTCOffset(utcOffset + delta);
-                    PopulateiCalTimeZoneInfo(dday_tzinfo_daylight, adjustmentRule.DaylightTransitionStart, adjustmentRule.DateStart.Year);
+                    var ddayTzinfoDaylight = new ICalTimeZoneInfo();
+                    ddayTzinfoDaylight.Name = "DAYLIGHT";
+                    ddayTzinfoDaylight.TimeZoneName = tzinfo.DaylightName;
+                    ddayTzinfoDaylight.Start = new CalDateTime(new DateTime(adjustmentRule.DateStart.Year, adjustmentRule.DaylightTransitionStart.Month, adjustmentRule.DaylightTransitionStart.Day, adjustmentRule.DaylightTransitionStart.TimeOfDay.Hour, adjustmentRule.DaylightTransitionStart.TimeOfDay.Minute, adjustmentRule.DaylightTransitionStart.TimeOfDay.Second));
+                    if (ddayTzinfoDaylight.Start.LessThan(earliest))
+                        ddayTzinfoDaylight.Start = ddayTzinfoDaylight.Start.AddYears(earliest.Year - ddayTzinfoDaylight.Start.Year);
+                    ddayTzinfoDaylight.OffsetFrom = new UtcOffset(utcOffset);
+                    ddayTzinfoDaylight.OffsetTo = new UtcOffset(utcOffset + delta);
+                    PopulateiCalTimeZoneInfo(ddayTzinfoDaylight, adjustmentRule.DaylightTransitionStart, adjustmentRule.DateStart.Year);
 
                     // Add the "daylight" time rule to the time zone
-                    dday_tz.AddChild(dday_tzinfo_daylight);
+                    ddayTz.AddChild(ddayTzinfoDaylight);
                 }                
             }
 
             // If no time zone information was recorded, at least
             // add a STANDARD time zone element to indicate the
             // base time zone information.
-            if (dday_tz.TimeZoneInfos.Count == 0)
+            if (ddayTz.TimeZoneInfos.Count == 0)
             {
-                var dday_tzinfo_standard = new iCalTimeZoneInfo();
-                dday_tzinfo_standard.Name = "STANDARD";
-                dday_tzinfo_standard.TimeZoneName = tzinfo.StandardName;
-                dday_tzinfo_standard.Start = earliest;                
-                dday_tzinfo_standard.OffsetFrom = new UTCOffset(utcOffset);
-                dday_tzinfo_standard.OffsetTo = new UTCOffset(utcOffset);
+                var ddayTzinfoStandard = new ICalTimeZoneInfo();
+                ddayTzinfoStandard.Name = "STANDARD";
+                ddayTzinfoStandard.TimeZoneName = tzinfo.StandardName;
+                ddayTzinfoStandard.Start = earliest;                
+                ddayTzinfoStandard.OffsetFrom = new UtcOffset(utcOffset);
+                ddayTzinfoStandard.OffsetTo = new UtcOffset(utcOffset);
 
                 // Add the "standard" time rule to the time zone
-                dday_tz.AddChild(dday_tzinfo_standard);
+                ddayTz.AddChild(ddayTzinfoStandard);
             }
 
-            return dday_tz;
+            return ddayTz;
         }
 #endif
 
@@ -133,14 +133,14 @@ namespace Ical.Net
 
         #region Private Fields
 
-        TimeZoneEvaluator m_Evaluator;
-        ICalendarObjectList<ITimeZoneInfo> m_TimeZoneInfos;
+        TimeZoneEvaluator _mEvaluator;
+        ICalendarObjectList<ITimeZoneInfo> _mTimeZoneInfos;
 
         #endregion
 
         #region Constructors
 
-        public iCalTimeZone()
+        public ICalTimeZone()
         {
             Initialize();
         }
@@ -149,11 +149,11 @@ namespace Ical.Net
         {
             this.Name = Components.TIMEZONE;
 
-            m_Evaluator = new TimeZoneEvaluator(this);
-            m_TimeZoneInfos = new CalendarObjectListProxy<ITimeZoneInfo>(Children);
+            _mEvaluator = new TimeZoneEvaluator(this);
+            _mTimeZoneInfos = new CalendarObjectListProxy<ITimeZoneInfo>(Children);
             Children.ItemAdded += new EventHandler<ObjectEventArgs<ICalendarObject, int>>(Children_ItemAdded);
             Children.ItemRemoved += new EventHandler<ObjectEventArgs<ICalendarObject, int>>(Children_ItemRemoved);
-            SetService(m_Evaluator);
+            SetService(_mEvaluator);
         }        
 
         #endregion
@@ -162,12 +162,12 @@ namespace Ical.Net
 
         void Children_ItemRemoved(object sender, ObjectEventArgs<ICalendarObject, int> e)
         {
-            m_Evaluator.Clear();
+            _mEvaluator.Clear();
         }
 
         void Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e)
         {
-            m_Evaluator.Clear();
+            _mEvaluator.Clear();
         }
 
         #endregion
@@ -211,8 +211,8 @@ namespace Ical.Net
 
         virtual public ICalendarObjectList<ITimeZoneInfo> TimeZoneInfos
         {
-            get { return m_TimeZoneInfos; }
-            set { m_TimeZoneInfos = value; }
+            get { return _mTimeZoneInfos; }
+            set { _mTimeZoneInfos = value; }
         }
 
         #endregion

@@ -25,22 +25,22 @@ namespace Ical.Net.DataTypes
 #if !SILVERLIGHT
         [NonSerialized]
 #endif
-        private FrequencyType _Frequency;
-        private DateTime _Until = DateTime.MinValue;
-        private int _Count = int.MinValue;
-        private int _Interval = int.MinValue;
-        private IList<int> _BySecond = new List<int>();
-        private IList<int> _ByMinute = new List<int>();
-        private IList<int> _ByHour = new List<int>();
-        private IList<IWeekDay> _ByDay = new List<IWeekDay>();
-        private IList<int> _ByMonthDay = new List<int>();
-        private IList<int> _ByYearDay = new List<int>();
-        private IList<int> _ByWeekNo = new List<int>();
-        private IList<int> _ByMonth = new List<int>();
-        private IList<int> _BySetPosition = new List<int>();
-        private DayOfWeek _FirstDayOfWeek = DayOfWeek.Monday;
-        private RecurrenceRestrictionType? _RestrictionType = null;
-        private RecurrenceEvaluationModeType? _EvaluationMode = null;
+        private FrequencyType _frequency;
+        private DateTime _until = DateTime.MinValue;
+        private int _count = int.MinValue;
+        private int _interval = int.MinValue;
+        private IList<int> _bySecond = new List<int>();
+        private IList<int> _byMinute = new List<int>();
+        private IList<int> _byHour = new List<int>();
+        private IList<IWeekDay> _byDay = new List<IWeekDay>();
+        private IList<int> _byMonthDay = new List<int>();
+        private IList<int> _byYearDay = new List<int>();
+        private IList<int> _byWeekNo = new List<int>();
+        private IList<int> _byMonth = new List<int>();
+        private IList<int> _bySetPosition = new List<int>();
+        private DayOfWeek _firstDayOfWeek = DayOfWeek.Monday;
+        private RecurrenceRestrictionType? _restrictionType = null;
+        private RecurrenceEvaluationModeType? _evaluationMode = null;
 
         #endregion
 
@@ -48,91 +48,91 @@ namespace Ical.Net.DataTypes
 
         public FrequencyType Frequency
         {
-            get { return _Frequency; }
-            set { _Frequency = value; }
+            get { return _frequency; }
+            set { _frequency = value; }
         }
 
         public DateTime Until
         {
-            get { return _Until; }
-            set { _Until = value; }
+            get { return _until; }
+            set { _until = value; }
         }
 
         public int Count
         {
-            get { return _Count; }
-            set { _Count = value; }
+            get { return _count; }
+            set { _count = value; }
         }
 
         public int Interval
         {
             get
             {
-                if (_Interval == int.MinValue)
+                if (_interval == int.MinValue)
                     return 1;
-                return _Interval;
+                return _interval;
             }
-            set { _Interval = value; }
+            set { _interval = value; }
         }
 
         public IList<int> BySecond
         {
-            get { return _BySecond; }
-            set { _BySecond = value; }
+            get { return _bySecond; }
+            set { _bySecond = value; }
         }
 
         public IList<int> ByMinute
         {
-            get { return _ByMinute; }
-            set { _ByMinute = value; }
+            get { return _byMinute; }
+            set { _byMinute = value; }
         }
 
         public IList<int> ByHour
         {
-            get { return _ByHour; }
-            set { _ByHour = value; }
+            get { return _byHour; }
+            set { _byHour = value; }
         }
 
         public IList<IWeekDay> ByDay
         {
-            get { return _ByDay; }
-            set { _ByDay = value; }
+            get { return _byDay; }
+            set { _byDay = value; }
         }
 
         public IList<int> ByMonthDay
         {
-            get { return _ByMonthDay; }
-            set { _ByMonthDay = value; }
+            get { return _byMonthDay; }
+            set { _byMonthDay = value; }
         }
 
         public IList<int> ByYearDay
         {
-            get { return _ByYearDay; }
-            set { _ByYearDay = value; }
+            get { return _byYearDay; }
+            set { _byYearDay = value; }
         }
 
         public IList<int> ByWeekNo
         {
-            get { return _ByWeekNo; }
-            set { _ByWeekNo = value; }
+            get { return _byWeekNo; }
+            set { _byWeekNo = value; }
         }
 
         public IList<int> ByMonth
         {
-            get { return _ByMonth; }
-            set { _ByMonth = value; }
+            get { return _byMonth; }
+            set { _byMonth = value; }
         }
 
         public IList<int> BySetPosition
         {
-            get { return _BySetPosition; }
-            set { _BySetPosition = value; }
+            get { return _bySetPosition; }
+            set { _bySetPosition = value; }
         }
 
         public DayOfWeek FirstDayOfWeek
         {
-            get { return _FirstDayOfWeek; }
-            set { _FirstDayOfWeek = value; }
+            get { return _firstDayOfWeek; }
+            set { _firstDayOfWeek = value; }
         }
 
         public RecurrenceRestrictionType RestrictionType
@@ -140,15 +140,15 @@ namespace Ical.Net.DataTypes
             get
             {
                 // NOTE: Fixes bug #1924358 - Cannot evaluate Secondly patterns
-                if (_RestrictionType != null &&
-                    _RestrictionType.HasValue)
-                    return _RestrictionType.Value;
+                if (_restrictionType != null &&
+                    _restrictionType.HasValue)
+                    return _restrictionType.Value;
                 else if (Calendar != null)
                     return Calendar.RecurrenceRestriction;
                 else
                     return RecurrenceRestrictionType.Default;
             }
-            set { _RestrictionType = value; }
+            set { _restrictionType = value; }
         }
 
         public RecurrenceEvaluationModeType EvaluationMode
@@ -156,15 +156,15 @@ namespace Ical.Net.DataTypes
             get
             {
                 // NOTE: Fixes bug #1924358 - Cannot evaluate Secondly patterns
-                if (_EvaluationMode != null &&
-                    _EvaluationMode.HasValue)
-                    return _EvaluationMode.Value;
+                if (_evaluationMode != null &&
+                    _evaluationMode.HasValue)
+                    return _evaluationMode.Value;
                 else if (Calendar != null)
                     return Calendar.RecurrenceEvaluationMode;
                 else
                     return RecurrenceEvaluationModeType.Default;
             }
-            set { _EvaluationMode = value; }
+            set { _evaluationMode = value; }
         }
 
         ///// <summary>

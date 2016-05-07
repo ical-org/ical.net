@@ -91,7 +91,7 @@ namespace Ical.Net
 
         #region Private Fields
                 
-        private ICalendarPropertyList m_Properties;        
+        private ICalendarPropertyList _mProperties;        
 
         #endregion
 
@@ -102,10 +102,10 @@ namespace Ical.Net
         /// </summary>
         virtual public ICalendarPropertyList Properties
         {
-            get { return m_Properties; }
+            get { return _mProperties; }
             protected set
             {
-                this.m_Properties = value;
+                this._mProperties = value;
             }
         }
 
@@ -118,7 +118,7 @@ namespace Ical.Net
 
         private void Initialize()
         {            
-            m_Properties = new CalendarPropertyList(this, true);
+            _mProperties = new CalendarPropertyList(this, true);
         }
 
         #endregion

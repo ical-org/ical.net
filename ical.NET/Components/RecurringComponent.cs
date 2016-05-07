@@ -239,7 +239,7 @@ namespace Ical.Net
 
         virtual public HashSet<Occurrence> GetOccurrences(DateTime dt)
         {
-            return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(dt), EvaluationIncludesReferenceDate);
+            return RecurrenceUtil.GetOccurrences(this, new CalDateTime(dt), EvaluationIncludesReferenceDate);
         }
 
         virtual public HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
@@ -249,7 +249,7 @@ namespace Ical.Net
 
         virtual public HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
         {
-            return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(startTime), new iCalDateTime(endTime), EvaluationIncludesReferenceDate);
+            return RecurrenceUtil.GetOccurrences(this, new CalDateTime(startTime), new CalDateTime(endTime), EvaluationIncludesReferenceDate);
         }
 
         virtual public IList<AlarmOccurrence> PollAlarms()

@@ -12,7 +12,7 @@ namespace Ical.Net.General
     {
         #region Private Fields
 
-        private bool m_IsLoaded;
+        private bool _mIsLoaded;
 
         #endregion
 
@@ -23,7 +23,7 @@ namespace Ical.Net.General
             // Objects that are loaded using a normal constructor
             // are "Loaded" by default.  Objects that are being
             // deserialized do not use the constructor.
-            m_IsLoaded = true;
+            _mIsLoaded = true;
         }
 
         #endregion
@@ -63,7 +63,7 @@ namespace Ical.Net.General
 
         virtual public bool IsLoaded
         {
-            get { return m_IsLoaded; }
+            get { return _mIsLoaded; }
         }
         
         [field:NonSerialized]
@@ -71,7 +71,7 @@ namespace Ical.Net.General
 
         virtual public void OnLoaded()
         {
-            m_IsLoaded = true;
+            _mIsLoaded = true;
             if (Loaded != null)
                 Loaded(this, EventArgs.Empty);
         }

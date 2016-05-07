@@ -20,9 +20,9 @@ namespace Ical.Net.DataTypes
     {
         #region Private Fields
 
-        ICalendarParameterCollection _Parameters;
-        ICalendarParameterCollectionProxy _Proxy;
-        ServiceProvider _ServiceProvider;
+        ICalendarParameterCollection _parameters;
+        ICalendarParameterCollectionProxy _proxy;
+        ServiceProvider _serviceProvider;
 
         #endregion
 
@@ -41,9 +41,9 @@ namespace Ical.Net.DataTypes
 
         void Initialize()
         {
-            _Parameters = new CalendarParameterList();
-            _Proxy = new CalendarParameterCollectionProxy(_Parameters);
-            _ServiceProvider = new ServiceProvider();
+            _parameters = new CalendarParameterList();
+            _proxy = new CalendarParameterCollectionProxy(_parameters);
+            _serviceProvider = new ServiceProvider();
         }
 
         #endregion
@@ -82,9 +82,9 @@ namespace Ical.Net.DataTypes
         virtual public Type GetValueType()
         {
             // See RFC 5545 Section 3.2.20.
-            if (_Proxy != null && _Proxy.ContainsKey("VALUE"))
+            if (_proxy != null && _proxy.ContainsKey("VALUE"))
             {
-                switch (_Proxy.Get("VALUE"))
+                switch (_proxy.Get("VALUE"))
                 {
                     case "BINARY": return typeof(byte[]);
                     case "BOOLEAN": return typeof(bool);
@@ -111,8 +111,8 @@ namespace Ical.Net.DataTypes
 
         virtual public void SetValueType(string type)
         {
-            if (_Proxy != null)
-                _Proxy.Set("VALUE", type != null ? type : type.ToUpper());
+            if (_proxy != null)
+                _proxy.Set("VALUE", type != null ? type : type.ToUpper());
         }
 
         virtual public ICalendarObject AssociatedObject
@@ -125,14 +125,14 @@ namespace Ical.Net.DataTypes
                     _AssociatedObject = value;
                     if (_AssociatedObject != null)
                     {
-                        _Proxy.SetParent(_AssociatedObject);
+                        _proxy.SetParent(_AssociatedObject);
                         if (_AssociatedObject is ICalendarParameterCollectionContainer)
-                            _Proxy.SetProxiedObject(((ICalendarParameterCollectionContainer)_AssociatedObject).Parameters);
+                            _proxy.SetProxiedObject(((ICalendarParameterCollectionContainer)_AssociatedObject).Parameters);
                     }
                     else
                     {
-                        _Proxy.SetParent(null);
-                        _Proxy.SetProxiedObject(_Parameters);
+                        _proxy.SetParent(null);
+                        _proxy.SetProxiedObject(_parameters);
                     }
                 }
             }
@@ -168,8 +168,8 @@ namespace Ical.Net.DataTypes
             {
                 var dt = (ICalendarDataType)obj;                
                 _AssociatedObject = dt.AssociatedObject;
-                _Proxy.SetParent(_AssociatedObject);
-                _Proxy.SetProxiedObject(dt.Parameters);
+                _proxy.SetParent(_AssociatedObject);
+                _proxy.SetProxiedObject(dt.Parameters);
             }
         }
 
@@ -198,7 +198,7 @@ namespace Ical.Net.DataTypes
 
         virtual public ICalendarParameterCollection Parameters
         {
-            get { return _Proxy; }
+            get { return _proxy; }
         }
 
         #endregion
@@ -207,42 +207,42 @@ namespace Ical.Net.DataTypes
 
         virtual public object GetService(Type serviceType)
         {
-            return _ServiceProvider.GetService(serviceType);
+            return _serviceProvider.GetService(serviceType);
         }
 
         public object GetService(string name)
         {
-            return _ServiceProvider.GetService(name);
+            return _serviceProvider.GetService(name);
         }
 
         public T GetService<T>()
         {
-            return _ServiceProvider.GetService<T>();
+            return _serviceProvider.GetService<T>();
         }
 
         public T GetService<T>(string name)
         {
-            return _ServiceProvider.GetService<T>(name);
+            return _serviceProvider.GetService<T>(name);
         }
 
         public void SetService(string name, object obj)
         {
-            _ServiceProvider.SetService(name, obj);
+            _serviceProvider.SetService(name, obj);
         }
 
         public void SetService(object obj)
         {
-            _ServiceProvider.SetService(obj);
+            _serviceProvider.SetService(obj);
         }
 
         public void RemoveService(Type type)
         {
-            _ServiceProvider.RemoveService(type);
+            _serviceProvider.RemoveService(type);
         }
 
         public void RemoveService(string name)
         {
-            _ServiceProvider.RemoveService(name);
+            _serviceProvider.RemoveService(name);
         }
 
         #endregion

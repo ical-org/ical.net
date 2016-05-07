@@ -7,8 +7,8 @@ namespace Ical.Net.General
     {
         #region Private Fields
 
-        private IDictionary<Type, object> m_TypedServices = new Dictionary<Type, object>();
-        private IDictionary<string, object> m_NamedServices = new Dictionary<string, object>();
+        private IDictionary<Type, object> _mTypedServices = new Dictionary<Type, object>();
+        private IDictionary<string, object> _mNamedServices = new Dictionary<string, object>();
 
         #endregion
 
@@ -16,15 +16,15 @@ namespace Ical.Net.General
 
         virtual public object GetService(Type serviceType)
         {
-            if (m_TypedServices.ContainsKey(serviceType))
-                return m_TypedServices[serviceType];
+            if (_mTypedServices.ContainsKey(serviceType))
+                return _mTypedServices[serviceType];
             return null;
         }
 
         virtual public object GetService(string name)
         {
-            if (m_NamedServices.ContainsKey(name))
-                return m_NamedServices[name];
+            if (_mNamedServices.ContainsKey(name))
+                return _mNamedServices[name];
             return null;
         }
 
@@ -47,7 +47,7 @@ namespace Ical.Net.General
         virtual public void SetService(string name, object obj)
         {
             if (!string.IsNullOrEmpty(name) && obj != null)
-                m_NamedServices[name] = obj;
+                _mNamedServices[name] = obj;
         }
 
         virtual public void SetService(object obj)
@@ -55,11 +55,11 @@ namespace Ical.Net.General
             if (obj != null)
             {
                 var type = obj.GetType();
-                m_TypedServices[type] = obj;
+                _mTypedServices[type] = obj;
 
                 // Get interfaces for the given type
                 foreach (var iface in type.GetInterfaces())
-                    m_TypedServices[iface] = obj;
+                    _mTypedServices[iface] = obj;
             }
         }
 
@@ -67,22 +67,22 @@ namespace Ical.Net.General
         {
             if (type != null)
             {
-                if (m_TypedServices.ContainsKey(type))
-                    m_TypedServices.Remove(type);
+                if (_mTypedServices.ContainsKey(type))
+                    _mTypedServices.Remove(type);
 
                 // Get interfaces for the given type
                 foreach (var iface in type.GetInterfaces())
                 {
-                    if (m_TypedServices.ContainsKey(iface))
-                        m_TypedServices.Remove(iface);
+                    if (_mTypedServices.ContainsKey(iface))
+                        _mTypedServices.Remove(iface);
                 }
             }
         }
 
         virtual public void RemoveService(string name)
         {
-            if (m_NamedServices.ContainsKey(name))
-                m_NamedServices.Remove(name);
+            if (_mNamedServices.ContainsKey(name))
+                _mNamedServices.Remove(name);
         }
 
         #endregion

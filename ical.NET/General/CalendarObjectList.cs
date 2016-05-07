@@ -14,11 +14,11 @@ namespace Ical.Net.General
         GroupedList<string, ICalendarObject>,
         ICalendarObjectList<ICalendarObject>
     {
-        ICalendarObject _Parent;
+        ICalendarObject _parent;
 
         public CalendarObjectList(ICalendarObject parent)
         {
-            _Parent = parent;
+            _parent = parent;
         }
     }
 }

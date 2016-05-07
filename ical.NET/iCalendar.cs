@@ -615,14 +615,14 @@ namespace Ical.Net
         /// <returns>The time zone added to the calendar.</returns>
         public ITimeZone AddTimeZone(System.TimeZoneInfo tzi)
         {
-            ITimeZone tz = iCalTimeZone.FromSystemTimeZone(tzi);
+            ITimeZone tz = ICalTimeZone.FromSystemTimeZone(tzi);
             this.AddChild(tz);
             return tz;
         }
 
         public ITimeZone AddTimeZone(System.TimeZoneInfo tzi, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
         {
-            ITimeZone tz = iCalTimeZone.FromSystemTimeZone(tzi, earliestDateTimeToSupport, includeHistoricalData);
+            ITimeZone tz = ICalTimeZone.FromSystemTimeZone(tzi, earliestDateTimeToSupport, includeHistoricalData);
             this.AddChild(tz);
             return tz;
         }
@@ -635,14 +635,14 @@ namespace Ical.Net
         /// <returns>The time zone added to the calendar.</returns>
         public ITimeZone AddLocalTimeZone()
         {
-            ITimeZone tz = iCalTimeZone.FromLocalTimeZone();
+            ITimeZone tz = ICalTimeZone.FromLocalTimeZone();
             this.AddChild(tz);
             return tz;
         }
 
         public ITimeZone AddLocalTimeZone(DateTime earliestDateTimeToSupport, bool includeHistoricalData)
         {
-            ITimeZone tz = iCalTimeZone.FromLocalTimeZone(earliestDateTimeToSupport, includeHistoricalData);
+            ITimeZone tz = ICalTimeZone.FromLocalTimeZone(earliestDateTimeToSupport, includeHistoricalData);
             this.AddChild(tz);
             return tz;
         }
@@ -712,14 +712,14 @@ namespace Ical.Net
         virtual public HashSet<Occurrence> GetOccurrences(IDateTime dt)
         {
             return GetOccurrences<IRecurringComponent>(
-                new iCalDateTime(dt.AsSystemLocal.Date),
-                new iCalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)));
+                new CalDateTime(dt.AsSystemLocal.Date),
+                new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)));
         }
         virtual public HashSet<Occurrence> GetOccurrences(DateTime dt)
         {
             return GetOccurrences<IRecurringComponent>(
-                new iCalDateTime(dt.Date),
-                new iCalDateTime(dt.Date.AddDays(1).AddSeconds(-1)));
+                new CalDateTime(dt.Date),
+                new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)));
         }
 
         /// <summary>
@@ -735,7 +735,7 @@ namespace Ical.Net
         }
         virtual public HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
         {
-            return GetOccurrences<IRecurringComponent>(new iCalDateTime(startTime), new iCalDateTime(endTime));
+            return GetOccurrences<IRecurringComponent>(new CalDateTime(startTime), new CalDateTime(endTime));
         }
 
         /// <summary>
@@ -753,14 +753,14 @@ namespace Ical.Net
         virtual public HashSet<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
         {
             return GetOccurrences<T>(
-                new iCalDateTime(dt.AsSystemLocal.Date),
-                new iCalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddTicks(-1)));
+                new CalDateTime(dt.AsSystemLocal.Date),
+                new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddTicks(-1)));
         }
         virtual public HashSet<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
         {
             return GetOccurrences<T>(
-                new iCalDateTime(dt.Date),
-                new iCalDateTime(dt.Date.AddDays(1).AddTicks(-1)));
+                new CalDateTime(dt.Date),
+                new CalDateTime(dt.Date.AddDays(1).AddTicks(-1)));
         }
 
         /// <summary>
@@ -788,7 +788,7 @@ namespace Ical.Net
         }
         virtual public HashSet<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent
         {
-            return GetOccurrences<T>(new iCalDateTime(startTime), new iCalDateTime(endTime));
+            return GetOccurrences<T>(new CalDateTime(startTime), new CalDateTime(endTime));
         }
 
         /// <summary>

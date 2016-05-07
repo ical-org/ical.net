@@ -21,9 +21,9 @@ namespace Ical.Net.DataTypes
     {
         #region Private Fields
 
-        private Uri m_Uri;
-        private byte[] m_Data;
-        private Encoding m_Encoding;
+        private Uri _mUri;
+        private byte[] _mData;
+        private Encoding _mEncoding;
 
         #endregion
 
@@ -42,12 +42,12 @@ namespace Ical.Net.DataTypes
 
         public Attachment(byte[] value) : this()
         {
-            m_Data = value;
+            _mData = value;
         }
 
         void Initialize()
         {
-            m_Encoding = System.Text.Encoding.Unicode;
+            _mEncoding = System.Text.Encoding.Unicode;
         }
 
         #endregion
@@ -116,20 +116,20 @@ namespace Ical.Net.DataTypes
 
         virtual public Uri Uri
         {
-            get { return m_Uri; }
-            set { m_Uri = value; }
+            get { return _mUri; }
+            set { _mUri = value; }
         }
 
         virtual public byte[] Data
         {
-            get { return m_Data; }
-            set { m_Data = value; }
+            get { return _mData; }
+            set { _mData = value; }
         }
 
         virtual public Encoding ValueEncoding
         {
-            get { return m_Encoding; }
-            set { m_Encoding = value; }
+            get { return _mEncoding; }
+            set { _mEncoding = value; }
         }
 
         virtual public string Value
@@ -137,13 +137,13 @@ namespace Ical.Net.DataTypes
             get
             {
                 if (Data != null)
-                    return m_Encoding.GetString(Data);
+                    return _mEncoding.GetString(Data);
                 return null;
             }
             set
             {
                 if (value != null)
-                    Data = m_Encoding.GetBytes(value);
+                    Data = _mEncoding.GetBytes(value);
                 else                    
                     Data = null;
             }

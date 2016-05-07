@@ -10,7 +10,7 @@ namespace Ical.Net.Evaluation
     {
         #region Private Fields
 
-        IPeriodList m_PeriodList;
+        IPeriodList _mPeriodList;
 
         #endregion
 
@@ -18,7 +18,7 @@ namespace Ical.Net.Evaluation
 
         public PeriodListEvaluator(IPeriodList rdt)
         {
-            m_PeriodList = rdt;
+            _mPeriodList = rdt;
         }
 
         #endregion
@@ -39,7 +39,7 @@ namespace Ical.Net.Evaluation
             if (periodEnd < periodStart)
                 return periods;
 
-            foreach (var p in m_PeriodList)
+            foreach (var p in _mPeriodList)
             {
                 if (!periods.Contains(p))
                     periods.Add(p);

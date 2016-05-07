@@ -18,11 +18,11 @@ namespace Ical.Net
 #if !SILVERLIGHT
     [Serializable]
 #endif
-    public class iCalTimeZoneInfo : CalendarComponent, ITimeZoneInfo
+    public class ICalTimeZoneInfo : CalendarComponent, ITimeZoneInfo
     {
-        private TimeZoneInfoEvaluator m_Evaluator;
+        private TimeZoneInfoEvaluator _mEvaluator;
 
-        public iCalTimeZoneInfo() : base()
+        public ICalTimeZoneInfo() : base()
         {
             // FIXME: how do we ensure SEQUENCE doesn't get serialized?
             // base.Sequence = null;
@@ -32,15 +32,15 @@ namespace Ical.Net
             Initialize();
         }
 
-        public iCalTimeZoneInfo(string name) : this()
+        public ICalTimeZoneInfo(string name) : this()
         {
             Name = name;
         }
 
         void Initialize()
         {
-            m_Evaluator = new TimeZoneInfoEvaluator(this);
-            SetService(m_Evaluator);
+            _mEvaluator = new TimeZoneInfoEvaluator(this);
+            SetService(_mEvaluator);
         }
 
         private string _tzId;
@@ -159,7 +159,7 @@ namespace Ical.Net
 
         virtual public HashSet<Occurrence> GetOccurrences(DateTime dt)
         {
-            return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(dt), true);
+            return RecurrenceUtil.GetOccurrences(this, new CalDateTime(dt), true);
         }
 
         virtual public HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
@@ -169,7 +169,7 @@ namespace Ical.Net
 
         virtual public HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
         {
-            return RecurrenceUtil.GetOccurrences(this, new iCalDateTime(startTime), new iCalDateTime(endTime), true);
+            return RecurrenceUtil.GetOccurrences(this, new CalDateTime(startTime), new CalDateTime(endTime), true);
         }
 
         protected override void OnDeserializing(StreamingContext context)
@@ -179,9 +179,9 @@ namespace Ical.Net
             Initialize();
         }
 
-        protected bool Equals(iCalTimeZoneInfo other)
+        protected bool Equals(ICalTimeZoneInfo other)
         {
-            return base.Equals(other) && Equals(m_Evaluator, other.m_Evaluator);
+            return base.Equals(other) && Equals(_mEvaluator, other._mEvaluator);
         }
 
         public override bool Equals(object obj)
@@ -198,7 +198,7 @@ namespace Ical.Net
             {
                 return false;
             }
-            return Equals((iCalTimeZoneInfo)obj);
+            return Equals((ICalTimeZoneInfo)obj);
         }
 
         public override int GetHashCode()
@@ -206,7 +206,7 @@ namespace Ical.Net
             unchecked
             {
                 var hashCode = base.GetHashCode();
-                hashCode = (hashCode * 397) ^ (m_Evaluator != null ? m_Evaluator.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_mEvaluator != null ? _mEvaluator.GetHashCode() : 0);
                 return hashCode;
             }
         }

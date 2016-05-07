@@ -30,14 +30,14 @@ namespace Ical.Net.Serialization.Factory
                     type = typeof(Journal);
                     break;
                 case Components.TIMEZONE:
-                    type = typeof(iCalTimeZone);
+                    type = typeof(ICalTimeZone);
                     break;
                 case Components.TODO:
                     type = typeof(Todo);
                     break;
                 case Components.DAYLIGHT:
                 case Components.STANDARD:
-                    type = typeof(iCalTimeZoneInfo);
+                    type = typeof(ICalTimeZoneInfo);
                     break;
                 default:
                     type = typeof(CalendarComponent);

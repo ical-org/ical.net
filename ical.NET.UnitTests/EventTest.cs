@@ -27,8 +27,8 @@ namespace ical.NET.UnitTests
             
             var evt = new Event();
             evt.Summary = "Testing";
-            evt.Start = new iCalDateTime(2010, 3, 25);
-            evt.End = new iCalDateTime(2010, 3, 26);
+            evt.Start = new CalDateTime(2010, 3, 25);
+            evt.End = new CalDateTime(2010, 3, 26);
             
             iCal.Events.Add(evt);
             Assert.AreEqual(1, iCal.Children.Count);
@@ -45,8 +45,8 @@ namespace ical.NET.UnitTests
 
             var evt = new Event();
             evt.Summary = "Testing";
-            evt.Start = new iCalDateTime(2010, 3, 25);
-            evt.End = new iCalDateTime(2010, 3, 26);
+            evt.Start = new CalDateTime(2010, 3, 25);
+            evt.End = new CalDateTime(2010, 3, 26);
 
             iCal.Events.Add(evt);
             Assert.AreEqual(1, iCal.Children.Count);
@@ -67,8 +67,8 @@ namespace ical.NET.UnitTests
 
             var evt = new Event();
             evt.Summary = "Testing";
-            evt.Start = new iCalDateTime(2010, 3, 25);
-            evt.End = new iCalDateTime(2010, 3, 26);
+            evt.Start = new CalDateTime(2010, 3, 25);
+            evt.End = new CalDateTime(2010, 3, 26);
 
             iCal.Events.Add(evt);
             Assert.AreEqual(1, iCal.Children.Count);

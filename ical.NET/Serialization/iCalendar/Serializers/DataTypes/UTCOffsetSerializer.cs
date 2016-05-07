@@ -11,7 +11,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
     {
         public override Type TargetType
         {
-            get { return typeof(UTCOffset); }
+            get { return typeof(UtcOffset); }
         }
 
         public override string SerializeToString(object obj)

@@ -141,7 +141,7 @@ namespace ical.NET.UnitTests
             // Create a test event
             IEvent evt = iCal.Create<Event>();
             evt.Summary = "Test Event";
-            evt.Start = new iCalDateTime(2007, 10, 15, 8, 0, 0);
+            evt.Start = new CalDateTime(2007, 10, 15, 8, 0, 0);
             evt.Duration = TimeSpan.FromHours(1);
 
             // Add an attachment to this event
@@ -173,7 +173,7 @@ namespace ical.NET.UnitTests
             // Create a test event
             IEvent evt = iCal.Create<Event>();
             evt.Summary = "Test Event";
-            evt.Start = new iCalDateTime(2007, 10, 15, 8, 0, 0);
+            evt.Start = new CalDateTime(2007, 10, 15, 8, 0, 0);
             evt.Duration = TimeSpan.FromHours(1);
 
             // Get a data file
@@ -336,7 +336,7 @@ namespace ical.NET.UnitTests
             Assert.AreEqual(true, evt.Start.HasTime);
             Assert.AreEqual(true, evt.End.HasTime);
 
-            foreach (var o in evt.GetOccurrences(new iCalDateTime(2010, 1, 17, 0, 0, 0), new iCalDateTime(2010, 2, 1, 0, 0, 0)))
+            foreach (var o in evt.GetOccurrences(new CalDateTime(2010, 1, 17, 0, 0, 0), new CalDateTime(2010, 2, 1, 0, 0, 0)))
             {
                 Assert.AreEqual(true, o.Period.StartTime.HasTime);
                 Assert.AreEqual(true, o.Period.EndTime.HasTime);
@@ -572,7 +572,7 @@ namespace ical.NET.UnitTests
 
             var evt = iCal.Create<Event>();
             evt.Summary = "Test event title";
-            evt.Start = new iCalDateTime(2007, 3, 19);
+            evt.Start = new CalDateTime(2007, 3, 19);
             evt.Start.IsUniversalTime = true;
             evt.Duration = new TimeSpan(24, 0, 0);
             evt.Created = evt.Start.Copy<IDateTime>();
@@ -604,7 +604,7 @@ namespace ical.NET.UnitTests
 
             var evt = iCal.Create<Event>();
             evt.Summary = "Test event title";
-            evt.Start = new iCalDateTime(2007, 4, 29);
+            evt.Start = new CalDateTime(2007, 4, 29);
             evt.End = evt.Start.AddDays(1);
             evt.IsAllDay = true;
 
@@ -718,11 +718,11 @@ END:VCALENDAR
 
             IEvent evt = iCal.Create<Event>();
             evt.Summary = "Test event";
-            evt.Start = new iCalDateTime(2010, 10, 1, 8, 0, 0);
-            evt.End = new iCalDateTime(2010, 10, 1, 9, 0, 0);
+            evt.Start = new CalDateTime(2010, 10, 1, 8, 0, 0);
+            evt.End = new CalDateTime(2010, 10, 1, 9, 0, 0);
 
             IICalendar freeBusyCalendar = new iCalendar();
-            var freeBusy = iCal.GetFreeBusy(new iCalDateTime(2010, 10, 1, 0, 0, 0), new iCalDateTime(2010, 10, 7, 11, 59, 59));
+            var freeBusy = iCal.GetFreeBusy(new CalDateTime(2010, 10, 1, 0, 0, 0), new CalDateTime(2010, 10, 7, 11, 59, 59));
             freeBusyCalendar.AddChild(freeBusy);
 
             var serializer = new iCalendarSerializer();
@@ -738,8 +738,8 @@ END:VCALENDAR
 
             IEvent evt = iCal.Create<Event>();
             evt.Summary = "Test event";
-            evt.Start = new iCalDateTime(2010, 10, 1, 8, 0, 0);
-            evt.End = new iCalDateTime(2010, 10, 1, 9, 0, 0);
+            evt.Start = new CalDateTime(2010, 10, 1, 8, 0, 0);
+            evt.End = new CalDateTime(2010, 10, 1, 9, 0, 0);
 
             IAttendee attendee = new Attendee("mailto:test@test.com");
             attendee.ParticipationStatus = ParticipationStatus.Tentative;
@@ -749,8 +749,8 @@ END:VCALENDAR
             var freeBusy = iCal.GetFreeBusy(
                 null, 
                 new IAttendee[] { new Attendee("mailto:test@test.com") }, 
-                new iCalDateTime(2010, 10, 1, 0, 0, 0), 
-                new iCalDateTime(2010, 10, 7, 11, 59, 59));
+                new CalDateTime(2010, 10, 1, 0, 0, 0), 
+                new CalDateTime(2010, 10, 7, 11, 59, 59));
 
             freeBusyCalendar.AddChild(freeBusy);
 
@@ -785,17 +785,17 @@ END:VCALENDAR
             var evt = iCal.Events["594oeajmftl3r9qlkb476rpr3c@google.com"];
             Assert.IsNotNull(evt);
 
-            IDateTime dtStart = new iCalDateTime(2006, 12, 18, tzid);
-            IDateTime dtEnd = new iCalDateTime(2006, 12, 23, tzid);
+            IDateTime dtStart = new CalDateTime(2006, 12, 18, tzid);
+            IDateTime dtEnd = new CalDateTime(2006, 12, 23, tzid);
             var occurrences = iCal.GetOccurrences(dtStart, dtEnd).OrderBy(o => o.Period.StartTime).ToList();
 
-            var DateTimes = new iCalDateTime[]
+            var DateTimes = new CalDateTime[]
             {
-                new iCalDateTime(2006, 12, 18, 7, 0, 0, tzid),
-                new iCalDateTime(2006, 12, 19, 7, 0, 0, tzid),
-                new iCalDateTime(2006, 12, 20, 7, 0, 0, tzid),
-                new iCalDateTime(2006, 12, 21, 7, 0, 0, tzid),
-                new iCalDateTime(2006, 12, 22, 7, 0, 0, tzid)
+                new CalDateTime(2006, 12, 18, 7, 0, 0, tzid),
+                new CalDateTime(2006, 12, 19, 7, 0, 0, tzid),
+                new CalDateTime(2006, 12, 20, 7, 0, 0, tzid),
+                new CalDateTime(2006, 12, 21, 7, 0, 0, tzid),
+                new CalDateTime(2006, 12, 22, 7, 0, 0, tzid)
             };
 
             for (var i = 0; i < DateTimes.Length; i++)
@@ -814,20 +814,20 @@ END:VCALENDAR
             Assert.AreEqual(1, iCal.Events.Count);
             Assert.AreEqual(3, iCal.Events.First().RecurrenceDates.Count);
             
-            Assert.AreEqual((iCalDateTime)new DateTime(1997, 7, 14, 12, 30, 0, DateTimeKind.Utc), iCal.Events.First().RecurrenceDates[0][0].StartTime);
-            Assert.AreEqual((iCalDateTime)new DateTime(1996, 4, 3, 2, 0, 0, DateTimeKind.Utc), iCal.Events.First().RecurrenceDates[1][0].StartTime);
-            Assert.AreEqual((iCalDateTime)new DateTime(1996, 4, 3, 4, 0, 0, DateTimeKind.Utc), iCal.Events.First().RecurrenceDates[1][0].EndTime);
-            Assert.AreEqual(new iCalDateTime(1997, 1, 1), iCal.Events.First().RecurrenceDates[2][0].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 1, 20), iCal.Events.First().RecurrenceDates[2][1].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 2, 17), iCal.Events.First().RecurrenceDates[2][2].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 4, 21), iCal.Events.First().RecurrenceDates[2][3].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 5, 26), iCal.Events.First().RecurrenceDates[2][4].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 7, 4), iCal.Events.First().RecurrenceDates[2][5].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 9, 1), iCal.Events.First().RecurrenceDates[2][6].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 10, 14), iCal.Events.First().RecurrenceDates[2][7].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 11, 28), iCal.Events.First().RecurrenceDates[2][8].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 11, 29), iCal.Events.First().RecurrenceDates[2][9].StartTime);
-            Assert.AreEqual(new iCalDateTime(1997, 12, 25), iCal.Events.First().RecurrenceDates[2][10].StartTime);
+            Assert.AreEqual((CalDateTime)new DateTime(1997, 7, 14, 12, 30, 0, DateTimeKind.Utc), iCal.Events.First().RecurrenceDates[0][0].StartTime);
+            Assert.AreEqual((CalDateTime)new DateTime(1996, 4, 3, 2, 0, 0, DateTimeKind.Utc), iCal.Events.First().RecurrenceDates[1][0].StartTime);
+            Assert.AreEqual((CalDateTime)new DateTime(1996, 4, 3, 4, 0, 0, DateTimeKind.Utc), iCal.Events.First().RecurrenceDates[1][0].EndTime);
+            Assert.AreEqual(new CalDateTime(1997, 1, 1), iCal.Events.First().RecurrenceDates[2][0].StartTime);
+            Assert.AreEqual(new CalDateTime(1997, 1, 20), iCal.Events.First().RecurrenceDates[2][1].StartTime);
+            Assert.AreEqual(new CalDateTime(1997, 2, 17), iCal.Events.First().RecurrenceDates[2][2].StartTime);
+            Assert.AreEqual(new CalDateTime(1997, 4, 21), iCal.Events.First().RecurrenceDates[2][3].StartTime);
+            Assert.AreEqual(new CalDateTime(1997, 5, 26), iCal.Events.First().RecurrenceDates[2][4].StartTime);
+            Assert.AreEqual(new CalDateTime(1997, 7, 4), iCal.Events.First().RecurrenceDates[2][5].StartTime);
+            Assert.AreEqual(new CalDateTime(1997, 9, 1), iCal.Events.First().RecurrenceDates[2][6].StartTime);
+            Assert.AreEqual(new CalDateTime(1997, 10, 14), iCal.Events.First().RecurrenceDates[2][7].StartTime);
+            Assert.AreEqual(new CalDateTime(1997, 11, 28), iCal.Events.First().RecurrenceDates[2][8].StartTime);
+            Assert.AreEqual(new CalDateTime(1997, 11, 29), iCal.Events.First().RecurrenceDates[2][9].StartTime);
+            Assert.AreEqual(new CalDateTime(1997, 12, 25), iCal.Events.First().RecurrenceDates[2][10].StartTime);
         }
 
 
@@ -871,7 +871,7 @@ END:VCALENDAR
         {
             IICalendar iCal = new iCalendar();
             var evt = iCal.Create<Event>();
-            evt.Start = iCalDateTime.Now;
+            evt.Start = CalDateTime.Now;
             evt.Duration = TimeSpan.FromHours(1);
             evt.Summary = @"
 Thank you for purchasing tickets on Ticketmaster.
@@ -945,7 +945,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\TimeZone1.ics")[0];
 
             var tz = iCal.TimeZones[0];
-            tz.LastModified = new iCalDateTime(2007, 1, 1);
+            tz.LastModified = new CalDateTime(2007, 1, 1);
 
             var serializer = new iCalendarSerializer();
             serializer.Serialize(iCal, @"Calendars\Serialization\Temp\TimeZone1.ics");
@@ -966,8 +966,8 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\TimeZone2.ics")[0];
 
             var tz = iCal.TimeZones[0];
-            foreach (iCalTimeZoneInfo tzi in tz.TimeZoneInfos)
-                tzi.Start = new iCalDateTime(2007, 1, 1);
+            foreach (ICalTimeZoneInfo tzi in tz.TimeZoneInfos)
+                tzi.Start = new CalDateTime(2007, 1, 1);
 
             var serializer = new iCalendarSerializer();
             serializer.Serialize(iCal, @"Calendars\Serialization\Temp\TimeZone2.ics");
@@ -975,7 +975,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\TimeZone2.ics")[0];
             tz = iCal.TimeZones[0];
 
-            foreach (iCalTimeZoneInfo tzi in tz.TimeZoneInfos)
+            foreach (ICalTimeZoneInfo tzi in tz.TimeZoneInfos)
             {
                 Assert.AreEqual(
                     0,
@@ -989,9 +989,9 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\TimeZone2.ics")[0];
 
             tz = iCal.TimeZones[0];
-            foreach (iCalTimeZoneInfo tzi in tz.TimeZoneInfos)
+            foreach (ICalTimeZoneInfo tzi in tz.TimeZoneInfos)
             {
-                tzi.Start = iCalDateTime.Now;
+                tzi.Start = CalDateTime.Now;
                 tzi.Start.IsUniversalTime = true;
             }
 
@@ -1001,7 +1001,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\TimeZone2.ics")[0];
             tz = iCal.TimeZones[0];
 
-            foreach (iCalTimeZoneInfo tzi in tz.TimeZoneInfos)
+            foreach (ICalTimeZoneInfo tzi in tz.TimeZoneInfos)
             {
                 Assert.AreEqual(0, tzi.Properties["DTSTART"].Parameters.CountOf("VALUE"),
                     "\"DTSTART\" property MUST be represented in local time in timezones");
@@ -1140,7 +1140,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             var evt = iCal.Create<Event>();
 
             // Populate the properties
-            evt.Start = new iCalDateTime(2009, 6, 28, 8, 0, 0);
+            evt.Start = new CalDateTime(2009, 6, 28, 8, 0, 0);
             evt.Duration = TimeSpan.FromHours(1);
             evt.Url = new Uri("http://www.ftb.pl/news/59941_0_1/tunnel-electrocity-2008-timetable.htm");
             evt.Summary = "This is a title";
@@ -1351,7 +1351,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         public void Outlook2007_LineFolds1()
         {
             var iCal = iCalendar.LoadFromFile(@"Calendars/Serialization/Outlook2007LineFolds.ics")[0];
-            var events = iCal.GetOccurrences(new iCalDateTime(2009, 06, 20), new iCalDateTime(2009, 06, 22));
+            var events = iCal.GetOccurrences(new CalDateTime(2009, 06, 20), new CalDateTime(2009, 06, 22));
             Assert.AreEqual(1, events.Count);
         }
 
@@ -1360,7 +1360,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         {
             var longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
             var iCal = iCalendar.LoadFromFile(@"Calendars/Serialization/Outlook2007LineFolds.ics")[0];
-            var events = iCal.GetOccurrences<Event>(new iCalDateTime(2009, 06, 20), new iCalDateTime(2009, 06, 22)).OrderBy(o => o.Period.StartTime).ToList();
+            var events = iCal.GetOccurrences<Event>(new CalDateTime(2009, 06, 20), new CalDateTime(2009, 06, 22)).OrderBy(o => o.Period.StartTime).ToList();
             Assert.AreEqual(longName, ((IEvent)events[0].Source).Location);
         }
 

@@ -18,7 +18,7 @@ namespace Ical.Net.General
     {
         #region Private Fields
 
-        List<string> _Values;
+        List<string> _values;
 
         #endregion
 
@@ -52,7 +52,7 @@ namespace Ical.Net.General
 
         void Initialize()
         {
-            _Values = new List<string>();
+            _values = new List<string>();
         }
 
         #endregion
@@ -74,7 +74,7 @@ namespace Ical.Net.General
             if (p != null)
             {
                 if (p.Values != null)
-                    _Values = new List<string>(p.Values);
+                    _values = new List<string>(p.Values);
             }
         }
 
@@ -93,42 +93,42 @@ namespace Ical.Net.General
 
         virtual public IEnumerable<string> Values
         {
-            get { return _Values; }
+            get { return _values; }
         }
 
         virtual public bool ContainsValue(string value)
         {
-            return _Values.Contains(value);
+            return _values.Contains(value);
         }
 
         virtual public int ValueCount
         {
             get
             {
-                return _Values != null ? _Values.Count : 0;
+                return _values != null ? _values.Count : 0;
             }
         }
 
         virtual public void SetValue(string value)
         {
-            if (_Values.Count == 0)
+            if (_values.Count == 0)
             {
                 // Our list doesn't contain any values.  Let's add one!
-                _Values.Add(value);
+                _values.Add(value);
                 OnValueChanged(null, new string[] { value });
             }
             else if (value != null)
             {                
                 // Our list contains values.  Let's set the first value!
-                var oldValue = _Values[0];
-                _Values[0] = value;
+                var oldValue = _values[0];
+                _values[0] = value;
                 OnValueChanged(new string[] { oldValue }, new string[] { value });
             }
             else
             {
                 // Remove all values
                 var values = new List<string>(Values);
-                _Values.Clear();
+                _values.Clear();
                 OnValueChanged(values, null);
             }
         }
@@ -136,9 +136,9 @@ namespace Ical.Net.General
         virtual public void SetValue(IEnumerable<string> values)
         {                        
             // Remove all previous values
-            var removedValues = _Values.ToList();
-            _Values.Clear();
-            _Values.AddRange(values);
+            var removedValues = _values.ToList();
+            _values.Clear();
+            _values.AddRange(values);
             OnValueChanged(removedValues, values);
         }
 
@@ -146,7 +146,7 @@ namespace Ical.Net.General
         {
             if (value != null)
             {
-                _Values.Add(value);
+                _values.Add(value);
                 OnValueChanged(null, new string[] { value });
             }
         }
@@ -154,8 +154,8 @@ namespace Ical.Net.General
         virtual public void RemoveValue(string value)
         {
             if (value != null &&
-                _Values.Contains(value) &&
-                _Values.Remove(value))
+                _values.Contains(value) &&
+                _values.Remove(value))
             {
                 OnValueChanged(new string[] { value }, null);
             }
