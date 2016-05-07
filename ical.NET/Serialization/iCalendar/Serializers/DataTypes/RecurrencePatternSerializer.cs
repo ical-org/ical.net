@@ -107,10 +107,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         #region Overrides
 
-        public override Type TargetType
-        {
-            get { return typeof(RecurrencePattern); }
-        }
+        public override Type TargetType => typeof(RecurrencePattern);
 
         public override string SerializeToString(object obj)
         {

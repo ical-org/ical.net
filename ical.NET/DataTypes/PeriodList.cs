@@ -194,15 +194,9 @@ namespace Ical.Net.DataTypes
             _mPeriods.CopyTo(array, arrayIndex);
         }
 
-        public int Count
-        {
-            get { return _mPeriods.Count; }
-        }
+        public int Count => _mPeriods.Count;
 
-        public bool IsReadOnly
-        {
-            get { return false; }
-        }
+        public bool IsReadOnly => false;
 
         public bool Remove(IPeriod item)
         {

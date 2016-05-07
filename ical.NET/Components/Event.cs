@@ -281,13 +281,7 @@ namespace Ical.Net
 
         #region Overrides
 
-        protected override bool EvaluationIncludesReferenceDate
-        {
-            get
-            {
-                return true;
-            }
-        }
+        protected override bool EvaluationIncludesReferenceDate => true;
 
         protected override void OnDeserializing(StreamingContext context)
         {

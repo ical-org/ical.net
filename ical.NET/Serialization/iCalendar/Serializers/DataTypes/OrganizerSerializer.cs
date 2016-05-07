@@ -9,10 +9,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
     public class OrganizerSerializer :
         StringSerializer
     {
-        public override Type TargetType
-        {
-            get { return typeof(Organizer); }
-        }
+        public override Type TargetType => typeof(Organizer);
 
         public override string SerializeToString(object obj)
         {

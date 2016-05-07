@@ -24,10 +24,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         #region Overrides
 
-        public override Type TargetType
-        {
-            get { return typeof(CalendarParameter); }
-        }
+        public override Type TargetType => typeof(CalendarParameter);
 
         public override string SerializeToString(object obj)
         {

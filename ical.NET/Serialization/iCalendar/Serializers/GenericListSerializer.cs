@@ -32,10 +32,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         #region Overrides
 
-        public override Type TargetType
-        {
-            get { return _objectType; }
-        }
+        public override Type TargetType => _objectType;
 
         public override string SerializeToString(object obj)
         {

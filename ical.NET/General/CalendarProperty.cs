@@ -178,13 +178,7 @@ namespace Ical.Net.General
                 ValueChanged(this, new ValueChangedEventArgs<object>((IEnumerable<object>)removedValue, (IEnumerable<object>)addedValue));
         }
 
-        public virtual IEnumerable<object> Values
-        {
-            get 
-            {
-                return _values;
-            }
-        }
+        public virtual IEnumerable<object> Values => _values;
 
         public object Value
         {
@@ -218,13 +212,7 @@ namespace Ical.Net.General
             return _values.Contains(value);
         }
 
-        public virtual int ValueCount
-        {
-            get
-            {
-                return _values != null ? _values.Count : 0;
-            }
-        }
+        public virtual int ValueCount => _values != null ? _values.Count : 0;
 
         public virtual void SetValue(object value)
         {

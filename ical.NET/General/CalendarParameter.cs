@@ -91,23 +91,14 @@ namespace Ical.Net.General
                 ValueChanged(this, new ValueChangedEventArgs<string>(removedValues, addedValues));
         }
 
-        public virtual IEnumerable<string> Values
-        {
-            get { return _values; }
-        }
+        public virtual IEnumerable<string> Values => _values;
 
         public virtual bool ContainsValue(string value)
         {
             return _values.Contains(value);
         }
 
-        public virtual int ValueCount
-        {
-            get
-            {
-                return _values != null ? _values.Count : 0;
-            }
-        }
+        public virtual int ValueCount => _values != null ? _values.Count : 0;
 
         public virtual void SetValue(string value)
         {

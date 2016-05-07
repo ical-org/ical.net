@@ -15,13 +15,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
     {
         #region Protected Properties
 
-        protected virtual IComparer<ICalendarProperty> PropertySorter
-        {
-            get
-            {
-                return new PropertyAlphabetizer();
-            }
-        }
+        protected virtual IComparer<ICalendarProperty> PropertySorter => new PropertyAlphabetizer();
 
         #endregion
 
@@ -39,10 +33,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
 
         #region Overrides
 
-        public override Type TargetType
-        {
-            get { return typeof(CalendarComponent); }
-        }
+        public override Type TargetType => typeof(CalendarComponent);
 
         public override string SerializeToString(object obj)
         {

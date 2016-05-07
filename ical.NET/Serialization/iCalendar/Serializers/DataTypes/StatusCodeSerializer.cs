@@ -10,10 +10,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
     public class StatusCodeSerializer :
         StringSerializer
     {
-        public override Type TargetType
-        {
-            get { return typeof(StatusCode); }
-        }
+        public override Type TargetType => typeof(StatusCode);
 
         public override string SerializeToString(object obj)
         {
