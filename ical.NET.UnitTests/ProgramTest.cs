@@ -258,7 +258,7 @@ namespace ical.NET.UnitTests
             Assert.AreEqual(1, iCal1.Events.Count);
         }
 
-#if !SILVERLIGHT
+
         /// <summary>
         /// Tests conversion of the system time zone to one compatible with Ical.Net.
         /// Also tests the gaining/loss of an hour over time zone boundaries.
@@ -359,6 +359,6 @@ namespace ical.NET.UnitTests
                 }
             }
         }
-#endif
+
     }
 }

@@ -6,9 +6,9 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.DataTypes
 {
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class Attendee :
         EncodableDataType,
         IAttendee

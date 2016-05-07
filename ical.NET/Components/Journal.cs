@@ -7,9 +7,9 @@ namespace Ical.Net
     /// <summary>
     /// A class that represents an RFC 5545 VJOURNAL component.
     /// </summary>
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class Journal : 
         RecurringComponent,
         IJournal

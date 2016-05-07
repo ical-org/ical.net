@@ -17,9 +17,9 @@ namespace Ical.Net.DataTypes
     /// class handles time zone differences, and integrates seamlessly into the iCalendar framework.
     /// </remarks>
     /// </summary>
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public sealed class CalDateTime :
         EncodableDataType,
         IDateTime

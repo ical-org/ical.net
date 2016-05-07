@@ -10,9 +10,9 @@ namespace ical.NET.Collections
     /// <summary>
     /// A list of objects that are keyed.
     /// </summary>
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class GroupedList<TGroup, TItem> :
         IGroupedList<TGroup, TItem>
         where TItem : class, IGroupedObject<TGroup>

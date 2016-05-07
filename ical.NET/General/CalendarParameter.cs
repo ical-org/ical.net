@@ -9,9 +9,9 @@ using Ical.Net.Interfaces.General;
 namespace Ical.Net.General
 {
     [DebuggerDisplay("{Name}={string.Join(\",\", Values)}")]
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class CalendarParameter : 
         CalendarObject,
         ICalendarParameter

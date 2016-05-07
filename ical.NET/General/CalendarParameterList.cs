@@ -5,9 +5,9 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.General
 {
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class CalendarParameterList :
         GroupedValueList<string, ICalendarParameter, CalendarParameter, string>,
         ICalendarParameterCollection

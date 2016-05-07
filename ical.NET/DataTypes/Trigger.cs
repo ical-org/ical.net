@@ -10,9 +10,9 @@ namespace Ical.Net.DataTypes
     /// A class that is used to specify exactly when an <see cref="Components.Alarm"/> component will trigger.
     /// Usually this date/time is relative to the component to which the Alarm is associated.
     /// </summary>    
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class Trigger : 
         EncodableDataType,
         ITrigger

@@ -15,9 +15,9 @@ namespace Ical.Net
     /// Represents a unique component, a component with a unique UID,
     /// which can be used to uniquely identify the component.    
     /// </summary>
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class UniqueComponent : 
         CalendarComponent,
         IUniqueComponent

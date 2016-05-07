@@ -9,9 +9,9 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// A class that represents the return status of an iCalendar request.
     /// </summary>
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class RequestStatus :
         EncodableDataType,
         IRequestStatus

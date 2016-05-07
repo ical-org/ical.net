@@ -11,9 +11,9 @@ namespace Ical.Net
     /// A class that represents an RFC 2445 VALARM component.
     /// FIXME: move GetOccurrences() logic into an AlarmEvaluator.
     /// </summary>    
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class Alarm :
         CalendarComponent,
         IAlarm

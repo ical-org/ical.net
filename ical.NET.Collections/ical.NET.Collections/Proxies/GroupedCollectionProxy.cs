@@ -10,9 +10,9 @@ namespace ical.NET.Collections.Proxies
     /// <summary>
     /// A proxy for a keyed list.
     /// </summary>
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class GroupedCollectionProxy<TGroup, TOriginal, TNew> :
         IGroupedCollectionProxy<TGroup, TOriginal, TNew>
         where TOriginal : class, IGroupedObject<TGroup>

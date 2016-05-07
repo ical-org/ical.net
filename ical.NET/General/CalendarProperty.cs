@@ -30,9 +30,9 @@ namespace Ical.Net.General
     /// and X-properties may be applied to calendar components.
     /// </remarks>
     [DebuggerDisplay("{Name}:{Value}")]
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class CalendarProperty :
         CalendarObject,
         ICalendarProperty

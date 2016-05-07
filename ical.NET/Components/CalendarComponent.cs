@@ -15,9 +15,9 @@ namespace Ical.Net
     /// This class is used by the parsing framework for iCalendar components.
     /// Generally, you should not need to use this class directly.
     /// </summary>
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     [DebuggerDisplay("Component: {Name}")]
     public class CalendarComponent : CalendarObject, ICalendarComponent
     {

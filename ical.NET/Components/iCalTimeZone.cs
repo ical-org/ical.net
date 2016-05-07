@@ -13,14 +13,14 @@ namespace Ical.Net
     /// <summary>
     /// A class that represents an RFC 5545 VTIMEZONE component.
     /// </summary>
-#if !SILVERLIGHT
+
     [Serializable]
-#endif
+
     public class CalTimeZone : CalendarComponent, ITimeZone
     {
         #region Static Public Methods
 
-#if !SILVERLIGHT
+
         public static CalTimeZone FromLocalTimeZone()
         {
             return FromSystemTimeZone(TimeZoneInfo.Local);
@@ -125,7 +125,7 @@ namespace Ical.Net
 
             return ddayTz;
         }
-#endif
+
 
         #endregion
 
