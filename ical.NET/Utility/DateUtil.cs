@@ -1,8 +1,10 @@
 using System;
 using System.Linq;
+using Ical.Net.DataTypes;
+using Ical.Net.Interfaces.DataTypes;
 using NodaTime;
 
-namespace DDay.iCal
+namespace Ical.Net.Utility
 {
     public class DateUtil
     {

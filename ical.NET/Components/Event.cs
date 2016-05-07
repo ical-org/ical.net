@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Ical.Net.Evaluation;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.DataTypes;
 
-namespace DDay.iCal
+namespace Ical.Net
 {
     /// <summary>
     /// A class that represents an RFC 5545 VEVENT component.

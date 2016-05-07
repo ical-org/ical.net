@@ -1,4 +1,4 @@
-﻿namespace DDay.Collections
+﻿namespace ical.NET.Collections.Interfaces
 {
     public interface IGroupedValueList<TGroup, TInterface, TItem, TValueType> :
         IGroupedValueCollection<TGroup, TInterface, TItem, TValueType>,

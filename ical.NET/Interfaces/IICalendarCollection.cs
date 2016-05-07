@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using Ical.Net.Interfaces.Evaluation;
 
-namespace DDay.iCal
+namespace Ical.Net.Interfaces
 {
     public interface IICalendarCollection :
         IGetOccurrencesTyped,

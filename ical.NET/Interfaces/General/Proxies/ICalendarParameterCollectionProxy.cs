@@ -1,6 +1,6 @@
-﻿using DDay.Collections;
+﻿using ical.NET.Collections.Interfaces.Proxies;
 
-namespace DDay.iCal
+namespace Ical.Net.Interfaces.General.Proxies
 {
     public interface ICalendarParameterCollectionProxy :
         ICalendarParameterCollection,

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.DataTypes;
 
-namespace DDay.iCal
+namespace Ical.Net.Evaluation
 {
     public class EventEvaluator :
         RecurringEvaluator

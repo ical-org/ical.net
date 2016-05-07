@@ -1,4 +1,4 @@
-﻿namespace DDay.iCal.Serialization.iCalendar
+﻿namespace Ical.Net.Serialization.iCalendar
 {
     public class SerializationInfo
     {

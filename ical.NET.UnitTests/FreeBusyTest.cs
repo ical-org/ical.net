@@ -1,6 +1,10 @@
+using Ical.Net;
+using Ical.Net.DataTypes;
+using Ical.Net.Interfaces;
+using Ical.Net.Interfaces.Components;
 using NUnit.Framework;
 
-namespace DDay.iCal.Test
+namespace ical.NET.UnitTests
 {
     [TestFixture]
     public class FreeBusyTest

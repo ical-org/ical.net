@@ -1,4 +1,4 @@
-﻿namespace DDay.iCal
+﻿namespace Ical.Net
 {
     #region Alarms
 
@@ -55,7 +55,7 @@
     }
 
     /// <summary>
-    /// Status codes available to an <see cref="Event"/> item
+    /// Status codes available to an <see cref="Components.Event"/> item
     /// </summary>
     public enum EventStatus
     {
@@ -65,7 +65,7 @@
     };
 
     /// <summary>
-    /// Status codes available to a <see cref="Todo"/> item.
+    /// Status codes available to a <see cref="Components.Todo"/> item.
     /// </summary>
     public enum TodoStatus
     {
@@ -76,7 +76,7 @@
     };
 
     /// <summary>
-    /// Status codes available to a <see cref="Journal"/> entry.
+    /// Status codes available to a <see cref="Components.Journal"/> entry.
     /// </summary>    
     public enum JournalStatus
     {

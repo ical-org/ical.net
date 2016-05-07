@@ -2,12 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Structs;
+using Ical.Net.Utility;
 
-namespace DDay.iCal
+namespace Ical.Net
 {    
     /// <summary>
     /// A class that contains time zone information, and is usually accessed
-    /// from an iCalendar object using the <see cref="DDay.iCal.iCalendar.GetTimeZone"/> method.        
+    /// from an iCalendar object using the <see cref="iCalendar.GetTimeZone"/> method.        
     /// </summary>
 #if !SILVERLIGHT
     [Serializable]

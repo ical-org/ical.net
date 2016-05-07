@@ -1,6 +1,12 @@
 ﻿using System.Collections.Generic;
+using Ical.Net.DataTypes;
+using Ical.Net.Factory;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.Evaluation;
+using Ical.Net.Interfaces.General;
 
-namespace DDay.iCal
+namespace Ical.Net
 {
     public class FreeBusy :
         UniqueComponent,

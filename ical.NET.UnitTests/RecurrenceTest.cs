@@ -5,10 +5,21 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using DDay.iCal.Serialization.iCalendar;
+using Ical.Net;
+using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
+using Ical.Net.Exceptions;
+using Ical.Net.ExtensionMethods;
+using Ical.Net.Interfaces;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.Evaluation;
+using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using Ical.Net.Structs;
+using Ical.Net.Utility;
 using NUnit.Framework;
 
-namespace DDay.iCal.Test
+namespace ical.NET.UnitTests
 {
     [TestFixture]
     public class RecurrenceTest
@@ -1871,7 +1882,7 @@ namespace DDay.iCal.Test
             standard.OffsetFrom = new UTCOffset("-0400");
             standard.OffsetTo = new UTCOffset("-0500");
             standard.TimeZoneName = "EST";
-            tz.AddChild(standard);
+            CalendarObjectExtensions.AddChild(tz, standard);
 
             ITimeZoneInfo daylight = new iCalTimeZoneInfo(Components.DAYLIGHT);
             daylight.Start = new iCalDateTime(new DateTime(1987, 4, 5, 2, 0, 0, DateTimeKind.Utc));
@@ -1879,7 +1890,7 @@ namespace DDay.iCal.Test
             daylight.OffsetFrom = new UTCOffset("-0500");
             daylight.OffsetTo = new UTCOffset("-0400");
             daylight.TimeZoneName = "EDT";            
-            tz.AddChild(daylight);
+            CalendarObjectExtensions.AddChild(tz, daylight);
 
             IEvent evt = iCal.Create<Event>();
             evt.Summary = "Test event";

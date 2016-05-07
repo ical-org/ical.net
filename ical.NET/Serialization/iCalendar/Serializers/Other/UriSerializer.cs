@@ -1,7 +1,12 @@
 ﻿using System;
 using System.IO;
+using Ical.Net.DataTypes;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Interfaces.Serialization;
+using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using Ical.Net.Utility;
 
-namespace DDay.iCal.Serialization.iCalendar
+namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 {
     public class UriSerializer :
         EncodableDataTypeSerializer

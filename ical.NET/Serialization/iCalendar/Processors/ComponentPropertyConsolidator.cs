@@ -1,4 +1,7 @@
-﻿namespace DDay.iCal.Serialization.iCalendar
+﻿using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.Serialization;
+
+namespace Ical.Net.Serialization.iCalendar.Processors
 {
     /// <summary>
     /// FIXME: implement this.

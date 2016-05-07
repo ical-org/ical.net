@@ -1,6 +1,9 @@
 ﻿using System;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.Evaluation;
+using Ical.Net.Interfaces.General;
 
-namespace DDay.iCal
+namespace Ical.Net.Interfaces
 {
     public interface IICalendar :
         ICalendarComponent,

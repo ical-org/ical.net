@@ -1,8 +1,11 @@
 using System;
 using System.Runtime.Serialization;
-using DDay.Collections;
+using ical.NET.Collections;
+using Ical.Net.ExtensionMethods;
+using Ical.Net.Interfaces;
+using Ical.Net.Interfaces.General;
 
-namespace DDay.iCal
+namespace Ical.Net.General
 {
     /// <summary>
     /// The base class for all iCalendar objects and components.
@@ -184,7 +187,7 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// Returns the <see cref="DDay.iCal.iCalendar"/> that this DDayiCalObject belongs to.
+        /// Returns the <see cref="Net.iCalendar"/> that this DDayiCalObject belongs to.
         /// </summary>
         virtual public IICalendar Calendar
         {

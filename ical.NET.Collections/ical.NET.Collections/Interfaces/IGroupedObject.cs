@@ -1,6 +1,6 @@
 using System;
 
-namespace DDay.Collections
+namespace ical.NET.Collections.Interfaces
 {
     public interface IGroupedObject<TGroup>
     {

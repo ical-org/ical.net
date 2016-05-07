@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Text;
 using System.IO;
+using System.Text;
+using Ical.Net.Interfaces.Serialization;
 
-namespace DDay.iCal.Serialization.iCalendar
+namespace Ical.Net.Serialization.iCalendar.Serializers
 {
     public abstract class SerializerBase :
         IStringSerializer
@@ -17,7 +18,7 @@ namespace DDay.iCal.Serialization.iCalendar
 
         public SerializerBase()
         {
-            m_SerializationContext = DDay.iCal.Serialization.SerializationContext.Default;
+            m_SerializationContext = Serialization.SerializationContext.Default;
         }
 
         public SerializerBase(ISerializationContext ctx)

@@ -1,7 +1,8 @@
 ﻿using System;
+using Ical.Net.Interfaces.DataTypes;
 using NodaTime;
 
-namespace DDay.iCal
+namespace Ical.Net
 {
     public interface INodaDateTime : IComparable<INodaDateTime>, IFormattable, IEncodableDataType
     {
@@ -16,7 +17,7 @@ namespace DDay.iCal
         ZonedDateTime AsUtc { get; }
 
         /// <summary>
-        /// Retrieves the <see cref="iCalTimeZoneInfo"/> object for the time
+        /// Retrieves the <see cref="Components.iCalTimeZoneInfo"/> object for the time
         /// zone set by <see cref="TzId"/>.
         /// </summary>
         //TimeZoneObservance? TimeZoneObservance { get; set; }

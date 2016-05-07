@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Diagnostics;
-using DDay.Collections;
+using ical.NET.Collections;
+using Ical.Net.ExtensionMethods;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Utility;
 
-namespace DDay.iCal
+namespace Ical.Net.General
 {
     /// <summary>
     /// A class that represents a property of the <see cref="iCalendar"/>

@@ -1,6 +1,8 @@
+using Ical.Net;
+using Ical.Net.Interfaces;
 using NUnit.Framework;
 
-namespace DDay.iCal.Test
+namespace ical.NET.UnitTests
 {
     [TestFixture]
     public class CopyTest

@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Interfaces.Serialization;
 
-namespace DDay.iCal.Serialization
+namespace Ical.Net.Serialization
 {
     public delegate Type TypeResolverDelegate(object context);
 

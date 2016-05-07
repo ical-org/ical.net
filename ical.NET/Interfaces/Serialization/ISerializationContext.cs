@@ -1,4 +1,6 @@
-﻿namespace DDay.iCal.Serialization
+﻿using Ical.Net.Interfaces.General;
+
+namespace Ical.Net.Interfaces.Serialization
 {
     public interface ISerializationContext : 
         IServiceProvider

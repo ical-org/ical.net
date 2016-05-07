@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using Ical.Net.DataTypes;
+using Ical.Net.Exceptions;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Utility;
 using NodaTime;
+using Period = Ical.Net.DataTypes.Period;
 
-namespace DDay.iCal
+namespace Ical.Net.Evaluation
 {
     /// <summary>
     /// Much of this code comes from iCal4j, as Ben Fortuna has done an

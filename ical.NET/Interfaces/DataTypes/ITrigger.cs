@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DDay.iCal
+namespace Ical.Net.Interfaces.DataTypes
 {
     public interface ITrigger :
         IEncodableDataType

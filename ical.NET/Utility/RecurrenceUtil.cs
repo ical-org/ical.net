@@ -1,6 +1,11 @@
 ﻿using System.Collections.Generic;
+using Ical.Net.DataTypes;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.Evaluation;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Structs;
 
-namespace DDay.iCal
+namespace Ical.Net.Utility
 {
     public class RecurrenceUtil
     {

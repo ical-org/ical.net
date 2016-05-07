@@ -1,6 +1,7 @@
 ﻿using System;
+using Ical.Net.Serialization;
 
-namespace DDay.iCal.Serialization
+namespace Ical.Net.Interfaces.Serialization
 {
     public interface IDataTypeMapper
     {

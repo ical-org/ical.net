@@ -1,13 +1,15 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using DDay.iCal.Serialization.iCalendar;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
-namespace DDay.iCal
+namespace Ical.Net.DataTypes
 {
     /// <summary>
     /// A class that represents the geographical location of an
-    /// <see cref="Event"/> or <see cref="Todo"/> item.
+    /// <see cref="Components.Event"/> or <see cref="Components.Todo"/> item.
     /// </summary>
     [DebuggerDisplay("{Latitude};{Longitude}")]
 #if !SILVERLIGHT

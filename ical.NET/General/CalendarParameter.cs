@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Diagnostics;
-using DDay.Collections;
+using ical.NET.Collections;
+using Ical.Net.Interfaces.General;
 
-namespace DDay.iCal
+namespace Ical.Net.General
 {
     [DebuggerDisplay("{Name}={string.Join(\",\", Values)}")]
 #if !SILVERLIGHT

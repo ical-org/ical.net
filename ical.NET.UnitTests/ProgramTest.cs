@@ -1,10 +1,16 @@
 using System;
 using System.IO;
 using System.Linq;
-using DDay.iCal.Serialization.iCalendar;
+using Ical.Net;
+using Ical.Net.DataTypes;
+using Ical.Net.ExtensionMethods;
+using Ical.Net.Interfaces;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Serialization.iCalendar.Serializers;
+using Ical.Net.Utility;
 using NUnit.Framework;
 
-namespace DDay.iCal.Test
+namespace ical.NET.UnitTests
 {
     [TestFixture]
     public class ProgramTest
@@ -254,7 +260,7 @@ namespace DDay.iCal.Test
 
 #if !SILVERLIGHT
         /// <summary>
-        /// Tests conversion of the system time zone to one compatible with DDay.iCal.
+        /// Tests conversion of the system time zone to one compatible with Ical.Net.
         /// Also tests the gaining/loss of an hour over time zone boundaries.
         /// </summary>
         //[Test]     //Broken in dday
@@ -348,7 +354,7 @@ namespace DDay.iCal.Test
 
                 if (tzinfo != null)
                 {
-                    var ical_tz = DDay.iCal.iCalTimeZone.FromSystemTimeZone(tzinfo);
+                    var ical_tz = Ical.Net.iCalTimeZone.FromSystemTimeZone(tzinfo);
                     Assert.AreNotEqual(0, ical_tz.TimeZoneInfos.Count, zone.StandardName + ": no time zone information was extracted.");
                 }
             }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace DDay.iCal
+namespace Ical.Net.Interfaces.DataTypes
 {
     public interface IAttachment :
         IEncodableDataType

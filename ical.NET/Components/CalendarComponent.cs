@@ -1,12 +1,15 @@
 using System;
-using System.Text;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
-using System.Diagnostics;
-using DDay.iCal.Serialization;
-using DDay.iCal.Serialization.iCalendar;
+using System.Text;
+using Ical.Net.General;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Interfaces.Serialization;
+using Ical.Net.Serialization.iCalendar.Serializers.Components;
 
-namespace DDay.iCal
+namespace Ical.Net
 {
     /// <summary>
     /// This class is used by the parsing framework for iCalendar components.

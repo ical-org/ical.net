@@ -1,8 +1,9 @@
 using System;
-using System.Text;
 using System.IO;
+using System.Text;
+using IServiceProvider = Ical.Net.Interfaces.General.IServiceProvider;
 
-namespace DDay.iCal.Serialization
+namespace Ical.Net.Interfaces.Serialization
 {    
     public interface ISerializer :
         IServiceProvider

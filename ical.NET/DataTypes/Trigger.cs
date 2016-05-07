@@ -1,11 +1,13 @@
 using System;
 using System.IO;
-using DDay.iCal.Serialization.iCalendar;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
-namespace DDay.iCal
+namespace Ical.Net.DataTypes
 {
     /// <summary>
-    /// A class that is used to specify exactly when an <see cref="Alarm"/> component will trigger.
+    /// A class that is used to specify exactly when an <see cref="Components.Alarm"/> component will trigger.
     /// Usually this date/time is relative to the component to which the Alarm is associated.
     /// </summary>    
 #if !SILVERLIGHT

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DDay.iCal
+namespace Ical.Net.ExtensionMethods
 {
     public static class ListExtensions
     {

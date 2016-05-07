@@ -1,7 +1,9 @@
 using System;
-using DDay.iCal.Serialization.iCalendar;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
-namespace DDay.iCal
+namespace Ical.Net.DataTypes
 {
     /// <summary>
     /// Represents an iCalendar period of time.

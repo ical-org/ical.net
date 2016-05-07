@@ -1,4 +1,6 @@
-namespace DDay.iCal.Test
+using Ical.Net;
+
+namespace ical.NET.UnitTests.Custom
 {
     // FIXME: fix this custom calendar to function properly
     //[ComponentBaseType(typeof(CustomComponentBase1))]

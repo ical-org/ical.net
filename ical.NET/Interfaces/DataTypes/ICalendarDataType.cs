@@ -1,6 +1,8 @@
 ﻿using System;
+using Ical.Net.Interfaces.General;
+using IServiceProvider = Ical.Net.Interfaces.General.IServiceProvider;
 
-namespace DDay.iCal
+namespace Ical.Net.Interfaces.DataTypes
 {
     public interface ICalendarDataType : ICalendarParameterCollectionContainer, ICopyable, IServiceProvider
     {

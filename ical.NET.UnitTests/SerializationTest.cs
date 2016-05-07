@@ -7,11 +7,22 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using DDay.iCal.Serialization;
-using DDay.iCal.Serialization.iCalendar;
+using Ical.Net;
+using Ical.Net.DataTypes;
+using Ical.Net.ExtensionMethods;
+using Ical.Net.General;
+using Ical.Net.Interfaces;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Interfaces.Serialization;
+using Ical.Net.Serialization;
+using Ical.Net.Serialization.iCalendar.Serializers;
+using Ical.Net.Serialization.iCalendar.Serializers.Components;
+using Ical.Net.Serialization.iCalendar.Serializers.Other;
 using NUnit.Framework;
 
-namespace DDay.iCal.Test
+namespace ical.NET.UnitTests
 {
     [TestFixture]
     public class SerializationTest

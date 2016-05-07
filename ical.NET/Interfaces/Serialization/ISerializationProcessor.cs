@@ -1,4 +1,4 @@
-﻿namespace DDay.iCal
+﻿namespace Ical.Net.Interfaces.Serialization
 {
     public interface ISerializationProcessor<T>
     {

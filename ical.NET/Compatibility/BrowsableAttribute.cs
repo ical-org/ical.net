@@ -1,4 +1,4 @@
-﻿namespace System.ComponentModel
+﻿namespace Ical.Net.Compatibility
 {
 
 #if NETCF

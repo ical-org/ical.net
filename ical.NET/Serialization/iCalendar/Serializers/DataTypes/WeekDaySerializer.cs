@@ -1,8 +1,10 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using System.IO;
+using System.Text.RegularExpressions;
+using Ical.Net.DataTypes;
+using Ical.Net.Interfaces.DataTypes;
 
-namespace DDay.iCal.Serialization.iCalendar
+namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class WeekDaySerializer :
         EncodableDataTypeSerializer

@@ -1,9 +1,11 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using DDay.iCal.Serialization.iCalendar;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
-namespace DDay.iCal
+namespace Ical.Net.DataTypes
 {
     /// <summary>
     /// A class that represents the organizer of an event/todo/journal.

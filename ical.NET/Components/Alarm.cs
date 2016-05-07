@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Structs;
 
-namespace DDay.iCal
+namespace Ical.Net
 {
     /// <summary>
     /// A class that represents an RFC 2445 VALARM component.

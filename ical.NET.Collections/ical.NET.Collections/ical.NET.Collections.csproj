@@ -8,8 +8,8 @@
     <ProjectGuid>{E04EFEB6-4625-4D58-AC91-7B8B8A2C97BB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DDay.Collections</RootNamespace>
-    <AssemblyName>DDay.Collections</AssemblyName>
+    <RootNamespace>Ical.Net.Collections</RootNamespace>
+    <AssemblyName>Ical.Net.Collections</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>

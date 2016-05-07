@@ -1,9 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.IO;
 
-namespace DDay.iCal.Serialization.iCalendar
+namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 {
     public class TimeSpanSerializer :
         SerializerBase

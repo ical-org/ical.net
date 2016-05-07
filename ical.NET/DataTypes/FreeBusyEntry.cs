@@ -1,4 +1,7 @@
-﻿namespace DDay.iCal
+﻿using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
+
+namespace Ical.Net.DataTypes
 {
     public class FreeBusyEntry :
         Period,

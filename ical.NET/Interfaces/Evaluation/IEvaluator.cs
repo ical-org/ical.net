@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
 
-namespace DDay.iCal
+namespace Ical.Net.Interfaces.Evaluation
 {
     public interface IEvaluator
     {

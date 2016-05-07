@@ -1,6 +1,6 @@
 using System;
 
-namespace DDay.iCal
+namespace Ical.Net.Exceptions
 {
     public class EvaluationEngineException : Exception
     {

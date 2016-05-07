@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DDay.iCal
+namespace Ical.Net.General
 {
     public class ServiceProvider //: IServiceProvider
     {

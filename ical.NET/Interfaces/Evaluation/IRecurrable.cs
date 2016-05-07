@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ical.Net.Interfaces.DataTypes;
+using IServiceProvider = Ical.Net.Interfaces.General.IServiceProvider;
 
-namespace DDay.iCal
+namespace Ical.Net.Interfaces.Evaluation
 {
     public interface IRecurrable :
         IGetOccurrences,

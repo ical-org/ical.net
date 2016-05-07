@@ -1,8 +1,11 @@
 ﻿using System;
-using System.Linq;
 using System.IO;
+using System.Linq;
+using Ical.Net.General;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Interfaces.Serialization;
 
-namespace DDay.iCal.Serialization.iCalendar
+namespace Ical.Net.Serialization.iCalendar.Serializers
 {
     public class ParameterSerializer :
         SerializerBase

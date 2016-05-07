@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DDay.Collections;
+using ical.NET.Collections.Interfaces;
+using ical.NET.Collections.Proxies;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Interfaces.General.Proxies;
 
-namespace DDay.iCal
+namespace Ical.Net.General.Proxies
 {
     public class CalendarParameterCollectionProxy :
         GroupedCollectionProxy<string, ICalendarParameter, ICalendarParameter>,

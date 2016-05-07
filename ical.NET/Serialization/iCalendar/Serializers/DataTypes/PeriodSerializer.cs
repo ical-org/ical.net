@@ -1,8 +1,12 @@
 ﻿using System;
-using System.Text;
 using System.IO;
+using System.Text;
+using Ical.Net.DataTypes;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.Serialization;
+using Ical.Net.Interfaces.Serialization.Factory;
 
-namespace DDay.iCal.Serialization.iCalendar
+namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class PeriodSerializer : 
         EncodableDataTypeSerializer

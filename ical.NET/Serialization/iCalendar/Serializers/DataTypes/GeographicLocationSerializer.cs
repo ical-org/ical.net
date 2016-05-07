@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using Ical.Net.DataTypes;
+using Ical.Net.Interfaces.DataTypes;
 
-namespace DDay.iCal.Serialization.iCalendar
+namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class GeographicLocationSerializer :
         EncodableDataTypeSerializer

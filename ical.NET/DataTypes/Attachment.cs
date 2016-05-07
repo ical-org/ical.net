@@ -1,11 +1,13 @@
 using System;
-using System.Net;
-using System.Text;
-using System.Runtime.Serialization;
 using System.IO;
-using DDay.iCal.Serialization.iCalendar;
+using System.Net;
+using System.Runtime.Serialization;
+using System.Text;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
-namespace DDay.iCal
+namespace Ical.Net.DataTypes
 {
     /// <summary>
     /// A class to handle attachments, or URIs as attachments, within an iCalendar. 

@@ -1,10 +1,16 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
+using System.Linq;
+using System.Text;
+using Ical.Net.General;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Interfaces.Serialization;
+using Ical.Net.Interfaces.Serialization.Factory;
+using Ical.Net.Utility;
 
-namespace DDay.iCal.Serialization.iCalendar
+namespace Ical.Net.Serialization.iCalendar.Serializers
 {
     public class PropertySerializer :
         SerializerBase

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ical.Net.General;
 
-namespace DDay.iCal
+namespace Ical.Net.Utility
 {
     static public class KnownTypeHelper
     {

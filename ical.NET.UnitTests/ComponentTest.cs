@@ -1,6 +1,7 @@
+using Ical.Net;
 using NUnit.Framework;
 
-namespace DDay.iCal.Test
+namespace ical.NET.UnitTests
 {
     [TestFixture]
     public class ComponentTest

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ical.Net.Interfaces.DataTypes;
 
-namespace DDay.iCal
+namespace Ical.Net.Interfaces.Components
 {
     public interface ITodo :
         IRecurringComponent

@@ -1,8 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using DDay.iCal.Serialization.iCalendar;
+using Ical.Net.General;
+using Ical.Net.Interfaces;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Interfaces.Serialization;
+using Ical.Net.Serialization.Factory;
+using Ical.Net.Serialization.iCalendar.Factory;
+using Ical.Net.Serialization.iCalendar.Processors;
 
-namespace DDay.iCal.Serialization
+namespace Ical.Net.Serialization
 {
     public class SerializationContext :        
         ISerializationContext

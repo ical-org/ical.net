@@ -11,8 +11,8 @@ header
 	using System.Collections;
     using System.Collections.Generic;  
     using System.Runtime.Serialization;
-    using DDay.iCal.Serialization;
-    using DDay.iCal.Serialization.iCalendar;
+    using Ical.Net.Serialization;
+    using Ical.Net.Serialization.iCalendar;
 }
 
 options

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DDay.Collections;
+using ical.NET.Collections;
+using ical.NET.Collections.Interfaces;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.General;
 
-namespace DDay.iCal
+namespace Ical.Net.General.Proxies
 {
     public class UniqueComponentListProxy<TComponentType> :
         CalendarObjectListProxy<TComponentType>,

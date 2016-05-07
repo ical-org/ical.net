@@ -1,6 +1,6 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalLexer.cs"$
 
-namespace DDay.iCal
+namespace Ical.Net.Serialization.iCalendar
 {
 	// Generate header specific to lexer CSharp file
     using Stream                          = System.IO.Stream;

@@ -1,11 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.IO;
-using DDay.iCal.Serialization.iCalendar;
+using System.Runtime.Serialization;
+using Ical.Net.Evaluation;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
-namespace DDay.iCal
+namespace Ical.Net.DataTypes
 {
     /// <summary>
     /// An iCalendar representation of the <c>RRULE</c> property.
@@ -207,7 +210,7 @@ namespace DDay.iCal
         {
             if (value != null)
             {
-                var serializer = new DDay.iCal.Serialization.iCalendar.RecurrencePatternSerializer();
+                var serializer = new RecurrencePatternSerializer();
                 CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
             }
         }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Structs;
 
-namespace DDay.iCal
+namespace Ical.Net.Interfaces.Components
 {
     public interface IAlarm :
         ICalendarComponent
@@ -22,7 +24,7 @@ namespace DDay.iCal
         IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, IDateTime fromDate, IDateTime toDate);
 
         /// <summary>
-        /// Polls the <see cref="Alarm"/> component for alarms that have been triggered
+        /// Polls the <see cref="Components.Alarm"/> component for alarms that have been triggered
         /// since the provided <paramref name="fromDate"/> date/time.  If <paramref name="fromDate"/>
         /// is null, all triggered alarms will be returned.
         /// </summary>

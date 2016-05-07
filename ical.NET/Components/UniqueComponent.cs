@@ -1,10 +1,15 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
-using DDay.Collections;
+using ical.NET.Collections;
+using Ical.Net.DataTypes;
+using Ical.Net.Factory;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
 
-namespace DDay.iCal
+namespace Ical.Net
 {
     /// <summary>
     /// Represents a unique component, a component with a unique UID,

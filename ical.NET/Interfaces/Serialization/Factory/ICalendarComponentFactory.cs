@@ -1,4 +1,6 @@
-﻿namespace DDay.iCal.Serialization
+﻿using Ical.Net.Interfaces.Components;
+
+namespace Ical.Net.Interfaces.Serialization.Factory
 {
     public interface ICalendarComponentFactory
     {

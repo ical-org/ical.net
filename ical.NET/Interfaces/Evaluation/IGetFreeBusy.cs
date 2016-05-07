@@ -1,4 +1,7 @@
-﻿namespace DDay.iCal
+﻿using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.DataTypes;
+
+namespace Ical.Net.Interfaces.Evaluation
 {
     public interface IGetFreeBusy
     {

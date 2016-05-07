@@ -8,8 +8,8 @@
     <ProjectGuid>{38A02D06-15CC-436A-9C8F-07B84A7E2CE0}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DDay.iCal.Test</RootNamespace>
-    <AssemblyName>DDay.iCal.Test</AssemblyName>
+    <RootNamespace>Ical.Net.UnitTests</RootNamespace>
+    <AssemblyName>Ical.Net.UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <StartupObject>
@@ -96,13 +96,13 @@
     <Compile Include="TodoTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ical.NET.Collections\ical.NET.Collections\ical.NET.Collections.csproj">
+    <ProjectReference Include="..\ical.NET.Collections\ical.NET.Collections\Ical.Net.Collections.csproj">
       <Project>{E04EFEB6-4625-4D58-AC91-7B8B8A2C97BB}</Project>
-      <Name>ical.NET.Collections</Name>
+      <Name>Ical.Net.Collections</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ical.NET\ical.NET.csproj">
+    <ProjectReference Include="..\ical.NET\Ical.Net.csproj">
       <Project>{F88DB6D3-CB95-4707-9C88-B53403AADC61}</Project>
-      <Name>ical.NET</Name>
+      <Name>Ical.Net</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Structs;
 
-namespace DDay.iCal
+namespace Ical.Net.Interfaces.Evaluation
 {
     public interface IGetOccurrences
     {

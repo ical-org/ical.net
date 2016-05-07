@@ -1,4 +1,7 @@
-﻿namespace DDay.iCal.Serialization.iCalendar
+﻿using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.Serialization;
+
+namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public abstract class EncodableDataTypeSerializer :
         DataTypeSerializer

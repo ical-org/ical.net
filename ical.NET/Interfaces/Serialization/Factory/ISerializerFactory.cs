@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DDay.iCal.Serialization
+namespace Ical.Net.Interfaces.Serialization.Factory
 {
     public interface ISerializerFactory
     {

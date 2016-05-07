@@ -1,7 +1,9 @@
 ﻿using System;
-using DDay.iCal.Serialization;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.Serialization.Factory;
+using Ical.Net.Utility;
 
-namespace DDay.iCal
+namespace Ical.Net.Serialization.Factory
 {
     public class ComponentFactory :
         ICalendarComponentFactory

@@ -1,4 +1,6 @@
-﻿namespace DDay.iCal
+﻿using Ical.Net.Interfaces.Components;
+
+namespace Ical.Net.Interfaces.General
 {
     public interface IUniqueComponentList<TComponentType> :
         ICalendarObjectList<TComponentType>

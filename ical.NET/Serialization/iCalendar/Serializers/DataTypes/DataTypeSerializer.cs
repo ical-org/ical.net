@@ -1,6 +1,9 @@
 ﻿using System;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Interfaces.Serialization;
 
-namespace DDay.iCal.Serialization.iCalendar
+namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public abstract class DataTypeSerializer :
         SerializerBase

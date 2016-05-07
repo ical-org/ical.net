@@ -1,8 +1,10 @@
 using System;
 using System.IO;
-using DDay.iCal.Serialization.iCalendar;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
-namespace DDay.iCal
+namespace Ical.Net.DataTypes
 {    
     /// <summary>
     /// An iCalendar status code.

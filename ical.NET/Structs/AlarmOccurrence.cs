@@ -1,6 +1,9 @@
 using System;
+using Ical.Net.DataTypes;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.DataTypes;
 
-namespace DDay.iCal
+namespace Ical.Net.Structs
 {
     /// <summary>
     /// A class that represents a specific occurrence of an <see cref="Alarm"/>.        

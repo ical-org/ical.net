@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using DDay.Collections;
+using ical.NET.Collections.Interfaces;
 
-namespace DDay.iCal
+namespace Ical.Net.Interfaces.General
 {
     public interface ICalendarParameterCollection :
         IGroupedList<string, ICalendarParameter>

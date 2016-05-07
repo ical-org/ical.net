@@ -1,4 +1,6 @@
-﻿namespace DDay.iCal
+﻿using Ical.Net.Interfaces.General;
+
+namespace Ical.Net.ExtensionMethods
 {
     public static class CalendarObjectExtensions
     {

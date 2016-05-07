@@ -1,7 +1,9 @@
 ﻿using System.Linq;
-using DDay.Collections;
+using ical.NET.Collections.Interfaces;
+using ical.NET.Collections.Proxies;
+using Ical.Net.Interfaces.General;
 
-namespace DDay.iCal
+namespace Ical.Net.General.Proxies
 {
     public class CalendarObjectListProxy<TType> :
         GroupedCollectionProxy<string, ICalendarObject, TType>,

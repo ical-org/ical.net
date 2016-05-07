@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Structs;
 
-namespace DDay.iCal
+namespace Ical.Net.Interfaces.Components
 {
     public interface IAlarmContainer
     {
         /// <summary>
-        /// A list of <see cref="Alarm"/>s for this recurring component.
+        /// A list of <see cref="Components.Alarm"/>s for this recurring component.
         /// </summary>
         ICalendarObjectList<IAlarm> Alarms { get; }
 

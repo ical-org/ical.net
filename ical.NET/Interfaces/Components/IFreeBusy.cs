@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
 
-namespace DDay.iCal
+namespace Ical.Net.Interfaces.Components
 {
     public interface IFreeBusy :
         IUniqueComponent,

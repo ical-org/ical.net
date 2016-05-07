@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Text;
+using Ical.Net.Interfaces.Serialization;
 
-namespace DDay.iCal.Serialization
+namespace Ical.Net.Serialization
 {
     public class EncodingStack :
         IEncodingStack

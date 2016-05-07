@@ -1,7 +1,10 @@
 using System;
 using System.IO;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
-namespace DDay.iCal
+namespace Ical.Net.DataTypes
 {
     /// <summary>
     /// Represents an RFC 5545 "BYDAY" value.
@@ -63,7 +66,7 @@ namespace DDay.iCal
         public WeekDay(string value)
         {
             var serializer =
-                new DDay.iCal.Serialization.iCalendar.WeekDaySerializer();
+                new WeekDaySerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 

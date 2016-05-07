@@ -1,4 +1,4 @@
-﻿namespace System.Diagnostics
+﻿namespace Ical.Net.Compatibility
 {
 
 #if NETCF

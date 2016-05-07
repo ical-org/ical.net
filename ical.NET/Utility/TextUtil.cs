@@ -1,9 +1,9 @@
-﻿using System.Text;
-using System.IO;
+﻿using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
-using DDay.iCal.Serialization;
+using Ical.Net.Interfaces.Serialization;
 
-namespace DDay.iCal
+namespace Ical.Net.Utility
 {
     public static class TextUtil
     {

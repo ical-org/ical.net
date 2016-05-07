@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ical.NET.Collections.Enumerators;
+using ical.NET.Collections.Interfaces;
 
-namespace DDay.Collections
+namespace ical.NET.Collections
 {
     /// <summary>
     /// A list of objects that are keyed.

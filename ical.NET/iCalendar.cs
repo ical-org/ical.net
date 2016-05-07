@@ -6,10 +6,19 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
-using DDay.iCal.Serialization;
-using DDay.iCal.Serialization.iCalendar;
+using Ical.Net.DataTypes;
+using Ical.Net.ExtensionMethods;
+using Ical.Net.General.Proxies;
+using Ical.Net.Interfaces;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.Evaluation;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Interfaces.Serialization;
+using Ical.Net.Serialization.iCalendar.Serializers;
+using Ical.Net.Structs;
 
-namespace DDay.iCal
+namespace Ical.Net
 {
     /// <summary>
     /// A class that represents an iCalendar object.  To load an iCalendar object, generally a
@@ -509,7 +518,7 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// A collection of <see cref="Event"/> components in the iCalendar.
+        /// A collection of <see cref="Components.Event"/> components in the iCalendar.
         /// </summary>
         virtual public IUniqueComponentList<IEvent> Events
         {
@@ -517,7 +526,7 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// A collection of <see cref="DDay.iCal.FreeBusy"/> components in the iCalendar.
+        /// A collection of <see cref="Components.FreeBusy"/> components in the iCalendar.
         /// </summary>
         virtual public IUniqueComponentList<IFreeBusy> FreeBusy
         {
@@ -525,7 +534,7 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// A collection of <see cref="Journal"/> components in the iCalendar.
+        /// A collection of <see cref="Components.Journal"/> components in the iCalendar.
         /// </summary>
         virtual public ICalendarObjectList<IJournal> Journals
         {
@@ -541,7 +550,7 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// A collection of <see cref="Todo"/> components in the iCalendar.
+        /// A collection of <see cref="Components.Todo"/> components in the iCalendar.
         /// </summary>
         virtual public IUniqueComponentList<ITodo> Todos
         {
@@ -868,17 +877,17 @@ namespace DDay.iCal
 
         virtual public IFreeBusy GetFreeBusy(IFreeBusy freeBusyRequest)
         {
-            return DDay.iCal.FreeBusy.Create(this, freeBusyRequest);
+            return Net.FreeBusy.Create(this, freeBusyRequest);
         }
 
         virtual public IFreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive)
         {
-            return DDay.iCal.FreeBusy.Create(this, DDay.iCal.FreeBusy.CreateRequest(fromInclusive, toExclusive, null, null));
+            return Ical.Net.FreeBusy.Create(this, Ical.Net.FreeBusy.CreateRequest(fromInclusive, toExclusive, null, null));
         }
 
         virtual public IFreeBusy GetFreeBusy(IOrganizer organizer, IAttendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive)
         {
-            return DDay.iCal.FreeBusy.Create(this, DDay.iCal.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
+            return Ical.Net.FreeBusy.Create(this, Ical.Net.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
         }
 
         #endregion

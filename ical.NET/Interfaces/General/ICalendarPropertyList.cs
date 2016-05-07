@@ -1,6 +1,7 @@
-﻿using DDay.Collections;
+﻿using ical.NET.Collections.Interfaces;
+using Ical.Net.General;
 
-namespace DDay.iCal
+namespace Ical.Net.Interfaces.General
 {
     public interface ICalendarPropertyList :
         IGroupedValueList<string, ICalendarProperty, CalendarProperty, object>

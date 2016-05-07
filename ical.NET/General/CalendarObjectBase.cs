@@ -1,6 +1,7 @@
 ﻿using System;
+using Ical.Net.Interfaces.General;
 
-namespace DDay.iCal
+namespace Ical.Net.General
 {
 #if !SILVERLIGHT
     [Serializable]

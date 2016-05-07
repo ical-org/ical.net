@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace DDay.iCal.Test
+namespace ical.NET.UnitTests
 {
     public class Startup
     {

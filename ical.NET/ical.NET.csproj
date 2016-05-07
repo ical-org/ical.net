@@ -8,8 +8,8 @@
     <ProjectGuid>{F88DB6D3-CB95-4707-9C88-B53403AADC61}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DDay.iCal</RootNamespace>
-    <AssemblyName>DDay.iCal</AssemblyName>
+    <RootNamespace>Ical.Net</RootNamespace>
+    <AssemblyName>Ical.Net</AssemblyName>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <StartupObject>
     </StartupObject>
@@ -46,7 +46,7 @@
     <DefineConstants>TRACE;DEBUG;DATACONTRACT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\DDay.iCal.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\Ical.Net.xml</DocumentationFile>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
     <NoWarn>1591</NoWarn>
@@ -58,7 +58,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\DDay.iCal.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\Ical.Net.xml</DocumentationFile>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
@@ -290,9 +290,9 @@
     <Content Include="Serialization\iCalendar\iCalParserTokenTypes.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ical.NET.Collections\ical.NET.Collections\ical.NET.Collections.csproj">
+    <ProjectReference Include="..\ical.NET.Collections\ical.NET.Collections\Ical.Net.Collections.csproj">
       <Project>{E04EFEB6-4625-4D58-AC91-7B8B8A2C97BB}</Project>
-      <Name>ical.NET.Collections</Name>
+      <Name>Ical.Net.Collections</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

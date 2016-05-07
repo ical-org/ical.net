@@ -1,8 +1,14 @@
 using System;
-using DDay.iCal.Serialization.iCalendar;
 using System.IO;
+using Ical.Net.Interfaces;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using Ical.Net.Structs;
+using Ical.Net.Utility;
 
-namespace DDay.iCal
+namespace Ical.Net.DataTypes
 {
     /// <summary>
     /// The iCalendar equivalent of the .NET <see cref="DateTime"/> class.
@@ -337,7 +343,7 @@ namespace DDay.iCal
         }
 
         /// <summary>
-        /// Gets/sets the <see cref="iCalTimeZoneInfo"/> object for the time
+        /// Gets/sets the <see cref="Components.iCalTimeZoneInfo"/> object for the time
         /// zone set by <see cref="TzId"/>.
         /// </summary>
         public TimeZoneObservance? TimeZoneObservance

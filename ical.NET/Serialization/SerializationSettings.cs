@@ -1,16 +1,17 @@
 ﻿using System;
+using Ical.Net.Interfaces.Serialization;
 
-namespace DDay.iCal.Serialization
+namespace Ical.Net.Serialization
 {
     public class SerializationSettings :
         ISerializationSettings
     {
         #region Private Fields
 
-        private Type m_iCalendarType = typeof(DDay.iCal.iCalendar);        
-        private bool m_EnsureAccurateLineNumbers = false;
+        private Type m_iCalendarType = typeof(Net.iCalendar);        
+        private bool m_EnsureAccurateLineNumbers;
         private ParsingModeType m_ParsingMode = ParsingModeType.Strict;
-        private bool m_StoreExtraSerializationData = false;        
+        private bool m_StoreExtraSerializationData;        
 
         #endregion
 

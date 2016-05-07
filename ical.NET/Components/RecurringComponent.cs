@@ -1,8 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
+using Ical.Net.General.Proxies;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Structs;
+using Ical.Net.Utility;
 
-namespace DDay.iCal
+namespace Ical.Net
 {
     /// <summary>
     /// An iCalendar component that recurs.

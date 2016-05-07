@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Collections;
+using ical.NET.Collections.Interfaces;
+using ical.NET.Collections.Interfaces.Proxies;
 
-namespace DDay.Collections
+namespace ical.NET.Collections.Proxies
 {
     /// <summary>
     /// A proxy for a keyed list.

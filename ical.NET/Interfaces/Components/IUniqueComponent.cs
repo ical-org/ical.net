@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using DDay.Collections;
+using ical.NET.Collections;
+using Ical.Net.Interfaces.DataTypes;
 
-namespace DDay.iCal
+namespace Ical.Net.Interfaces.Components
 {
     public interface IUniqueComponent :
         ICalendarComponent

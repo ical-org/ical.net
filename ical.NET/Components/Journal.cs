@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.Serialization;
+using Ical.Net.Interfaces.Components;
 
-namespace DDay.iCal
+namespace Ical.Net
 {
     /// <summary>
     /// A class that represents an RFC 5545 VJOURNAL component.

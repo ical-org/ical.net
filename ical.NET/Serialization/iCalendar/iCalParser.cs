@@ -1,13 +1,20 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalParser.cs"$
 
-using System.Text;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using DDay.iCal.Serialization;
-using DDay.iCal.Serialization.iCalendar;
+using System.IO;
+using System.Text;
+using Ical.Net.ExtensionMethods;
+using Ical.Net.General;
+using Ical.Net.Interfaces;
+using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Interfaces.Serialization;
+using Ical.Net.Interfaces.Serialization.Factory;
+using Ical.Net.Serialization.iCalendar.Serializers;
+using Ical.Net.Utility;
 
-namespace DDay.iCal
+namespace Ical.Net.Serialization.iCalendar
 {
 	// Generate the header common to all output files.
 
