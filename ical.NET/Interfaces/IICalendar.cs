@@ -19,7 +19,7 @@ namespace Ical.Net.Interfaces
         /// <summary>
         /// Gets/sets the product ID for the calendar.
         /// </summary>
-        string ProductID { get; set; }
+        string ProductId { get; set; }
 
         /// <summary>
         /// Gets/sets the scale of the calendar.
@@ -54,7 +54,7 @@ namespace Ical.Net.Interfaces
         /// to the provided TZID, or null of no matching
         /// time zone could be found.
         /// </summary>
-        ITimeZone GetTimeZone(string tzid);
+        ITimeZone GetTimeZone(string tzId);
 
         /// <summary>
         /// Gets a list of unique components contained in the calendar.

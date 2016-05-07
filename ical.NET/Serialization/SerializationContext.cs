@@ -16,7 +16,7 @@ namespace Ical.Net.Serialization
     {
         #region Static Private Fields
 
-        static private SerializationContext _Default;
+        static private SerializationContext _default;
 
         #endregion
 
@@ -29,9 +29,9 @@ namespace Ical.Net.Serialization
         {
             get
             {
-                if (_Default == null)
+                if (_default == null)
                 {
-                    _Default = new SerializationContext();
+                    _default = new SerializationContext();
                 }
 
                 // Create a new serialization context that doesn't contain any objects
@@ -41,7 +41,7 @@ namespace Ical.Net.Serialization
                 // we don't need to worry (as much) about a memory leak, because the
                 // objects weren't pushed onto a stack referenced by a static variable.
                 var ctx = new SerializationContext();
-                ctx.m_ServiceProvider = _Default.m_ServiceProvider;
+                ctx._mServiceProvider = _default._mServiceProvider;
                 return ctx;
             }
         }
@@ -50,8 +50,8 @@ namespace Ical.Net.Serialization
 
         #region Private Fields
 
-        private Stack<WeakReference> m_Stack = new Stack<WeakReference>();
-        private ServiceProvider m_ServiceProvider = new ServiceProvider();
+        private Stack<WeakReference> _mStack = new Stack<WeakReference>();
+        private ServiceProvider _mServiceProvider = new ServiceProvider();
 
         #endregion
 
@@ -78,14 +78,14 @@ namespace Ical.Net.Serialization
         virtual public void Push(object item)
         {
             if (item != null)
-                m_Stack.Push(new WeakReference(item));
+                _mStack.Push(new WeakReference(item));
         }
 
         virtual public object Pop()
         {
-            if (m_Stack.Count > 0)
+            if (_mStack.Count > 0)
             {
-                var r = m_Stack.Pop();
+                var r = _mStack.Pop();
                 if (r.IsAlive)
                     return r.Target;
             }
@@ -94,9 +94,9 @@ namespace Ical.Net.Serialization
 
         virtual public object Peek()
         {
-            if (m_Stack.Count > 0)
+            if (_mStack.Count > 0)
             {
-                var r = m_Stack.Peek();
+                var r = _mStack.Peek();
                 if (r.IsAlive)
                     return r.Target;
             }
@@ -109,42 +109,42 @@ namespace Ical.Net.Serialization
 
         virtual public object GetService(Type serviceType)
         {
-            return m_ServiceProvider.GetService(serviceType);
+            return _mServiceProvider.GetService(serviceType);
         }
 
         virtual public object GetService(string name)
         {
-            return m_ServiceProvider.GetService(name);
+            return _mServiceProvider.GetService(name);
         }
 
         virtual public T GetService<T>()
         {
-            return m_ServiceProvider.GetService<T>();
+            return _mServiceProvider.GetService<T>();
         }
 
         virtual public T GetService<T>(string name)
         {
-            return m_ServiceProvider.GetService<T>(name);
+            return _mServiceProvider.GetService<T>(name);
         }
 
         virtual public void SetService(string name, object obj)
         {
-            m_ServiceProvider.SetService(name, obj);
+            _mServiceProvider.SetService(name, obj);
         }
 
         virtual public void SetService(object obj)
         {
-            m_ServiceProvider.SetService(obj);
+            _mServiceProvider.SetService(obj);
         }
 
         virtual public void RemoveService(Type type)
         {
-            m_ServiceProvider.RemoveService(type);
+            _mServiceProvider.RemoveService(type);
         }
 
         virtual public void RemoveService(string name)
         {
-            m_ServiceProvider.RemoveService(name);
+            _mServiceProvider.RemoveService(name);
         }
 
         #endregion

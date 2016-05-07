@@ -20,8 +20,8 @@ namespace ical.NET.Collections.Proxies
     {
         #region Private Fields
 
-        IGroupedCollection<TGroup, TOriginal> _RealObject;
-        Func<TNew, bool> _Predicate;
+        IGroupedCollection<TGroup, TOriginal> _realObject;
+        Func<TNew, bool> _predicate;
 
         #endregion
 
@@ -29,11 +29,11 @@ namespace ical.NET.Collections.Proxies
 
         public GroupedCollectionProxy(IGroupedCollection<TGroup, TOriginal> realObject, Func<TNew, bool> predicate = null)
         {
-            _Predicate = predicate ?? new Func<TNew, bool>(o => true);
+            _predicate = predicate ?? new Func<TNew, bool>(o => true);
             SetProxiedObject(realObject);
 
-            _RealObject.ItemAdded += new EventHandler<ObjectEventArgs<TOriginal, int>>(_RealObject_ItemAdded);
-            _RealObject.ItemRemoved += new EventHandler<ObjectEventArgs<TOriginal, int>>(_RealObject_ItemRemoved);
+            _realObject.ItemAdded += new EventHandler<ObjectEventArgs<TOriginal, int>>(_RealObject_ItemAdded);
+            _realObject.ItemRemoved += new EventHandler<ObjectEventArgs<TOriginal, int>>(_RealObject_ItemRemoved);
         }
 
         #endregion
@@ -73,40 +73,40 @@ namespace ical.NET.Collections.Proxies
 
         virtual public bool Remove(TGroup group)
         {
-            return _RealObject.Remove(group);
+            return _realObject.Remove(group);
         }
 
         virtual public void Clear(TGroup group)
         {
-            _RealObject.Clear(group);
+            _realObject.Clear(group);
         }
 
         virtual public bool ContainsKey(TGroup group)
         {
-            return _RealObject.ContainsKey(group);            
+            return _realObject.ContainsKey(group);            
         }
 
         virtual public int CountOf(TGroup group)
         {
-            return _RealObject.Count(g => g.Group.GetType() == typeof (TGroup));
+            return _realObject.Count(g => g.Group.GetType() == typeof (TGroup));
         }
 
         virtual public IEnumerable<TNew> AllOf(TGroup group)
         {
-            return _RealObject
+            return _realObject
                 .AllOf(group)
                 .OfType<TNew>()
-                .Where(_Predicate);
+                .Where(_predicate);
         }
         
         virtual public void SortKeys(IComparer<TGroup> comparer = null)
         {
-            _RealObject.SortKeys(comparer);
+            _realObject.SortKeys(comparer);
         }
 
         virtual public void Add(TNew item)
         {
-            _RealObject.Add(item);
+            _realObject.Add(item);
         }
 
         virtual public void Clear()
@@ -114,19 +114,19 @@ namespace ical.NET.Collections.Proxies
             // Only clear items of this type
             // that match the predicate.
 
-            var items = _RealObject
+            var items = _realObject
                 .OfType<TNew>()
                 .ToArray();
 
             foreach (var item in items)
             {
-                _RealObject.Remove(item);
+                _realObject.Remove(item);
             }
         }
 
         virtual public bool Contains(TNew item)
         {
-            return _RealObject.Contains(item);
+            return _realObject.Contains(item);
         }
 
         virtual public void CopyTo(TNew[] array, int arrayIndex)
@@ -142,7 +142,7 @@ namespace ical.NET.Collections.Proxies
         {
             get 
             { 
-                return _RealObject
+                return _realObject
                     .OfType<TNew>()
                     .Count(); 
             }
@@ -155,19 +155,19 @@ namespace ical.NET.Collections.Proxies
 
         virtual public bool Remove(TNew item)
         {
-            return _RealObject.Remove(item);
+            return _realObject.Remove(item);
         }
 
         virtual public IEnumerator<TNew> GetEnumerator()
         {
-            return _RealObject
+            return _realObject
                 .OfType<TNew>()
                 .GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _RealObject
+            return _realObject
                 .OfType<TNew>()
                 .GetEnumerator();
         }
@@ -178,12 +178,12 @@ namespace ical.NET.Collections.Proxies
 
         public IGroupedCollection<TGroup, TOriginal> RealObject
         {
-            get { return _RealObject; }
+            get { return _realObject; }
         }
 
         virtual public void SetProxiedObject(IGroupedCollection<TGroup, TOriginal> realObject)
         {
-            _RealObject = realObject;
+            _realObject = realObject;
         }
 
         #endregion

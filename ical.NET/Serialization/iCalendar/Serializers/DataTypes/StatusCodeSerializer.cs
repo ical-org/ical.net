@@ -28,7 +28,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             return null;
         }
 
-        internal static readonly Regex _statusCode = new Regex(@"\d(\.\d+)*", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        internal static readonly Regex StatusCode = new Regex(@"\d(\.\d+)*", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         public override object Deserialize(TextReader tr)
         {
@@ -40,7 +40,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 // Decode the value as needed
                 value = Decode(sc, value);
                                 
-                var match = _statusCode.Match(value);
+                var match = StatusCode.Match(value);
                 if (match.Success)
                 {
                     var parts = match.Value.Split('.');

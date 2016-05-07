@@ -21,7 +21,7 @@ namespace ical.NET.UnitTests
             // The following code loads and displays an iCalendar
             // with US Holidays for 2006.
             //
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\USHolidays.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\USHolidays.ics")[0];
             Assert.IsNotNull(iCal, "iCalendar did not load.  Are you connected to the internet?");
 
             var occurrences = iCal.GetOccurrences(
@@ -53,22 +53,22 @@ namespace ical.NET.UnitTests
             //}
         }
 
-        private DateTime Start;
-        private DateTime End;
-        private TimeSpan TotalTime;
-        private string tzid;
+        private DateTime _start;
+        private DateTime _end;
+        private TimeSpan _totalTime;
+        private string _tzid;
 
         [TestFixtureSetUp]
         public void InitAll()
         {
-            TotalTime = new TimeSpan(0);
-            tzid = "US-Eastern";
+            _totalTime = new TimeSpan(0);
+            _tzid = "US-Eastern";
         }
 
         [SetUp]
         public void Init()
         {
-            Start = DateTime.Now;
+            _start = DateTime.Now;
         }
 
         static public void TestCal(IICalendar iCal)
@@ -86,7 +86,7 @@ namespace ical.NET.UnitTests
             var path = @"Calendars\Serialization\Calendar1.ics";
             Assert.IsTrue(File.Exists(path), "File '" + path + "' does not exist.");
 
-            var iCal = iCalendar.LoadFromFile(path)[0];
+            var iCal = ICalendar.LoadFromFile(path)[0];
             Assert.AreEqual(14, iCal.Events.Count);
         }
 
@@ -97,7 +97,7 @@ namespace ical.NET.UnitTests
             path = Path.Combine(path, "Calendars/Serialization/Calendar1.ics").Replace(@"\", "/");
             path = "file:///" + path;
             var uri = new Uri(path);
-            var iCal = iCalendar.LoadFromUri(uri)[0];
+            var iCal = ICalendar.LoadFromUri(uri)[0];
             Assert.AreEqual(14, iCal.Events.Count);
         }        
 
@@ -108,11 +108,11 @@ namespace ical.NET.UnitTests
         [Test]
         public void Merge1()
         {
-            var iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyCountByMonthDay3.ics")[0];
-            var iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyByDay1.ics")[0];
+            var iCal1 = ICalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyCountByMonthDay3.ics")[0];
+            var iCal2 = ICalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyByDay1.ics")[0];
 
             // Change the UID of the 2nd event to make sure it's different
-            iCal2.Events[iCal1.Events[0].UID].UID = "1234567890";
+            iCal2.Events[iCal1.Events[0].Uid].Uid = "1234567890";
             iCal1.MergeWith(iCal2);
 
             var evt1 = iCal1.Events.First();
@@ -120,24 +120,24 @@ namespace ical.NET.UnitTests
 
             // Get occurrences for the first event
             var occurrences = evt1.GetOccurrences(
-                new CalDateTime(1996, 1, 1, tzid),
-                new CalDateTime(2000, 1, 1, tzid)).OrderBy(o => o.Period.StartTime).ToList();
+                new CalDateTime(1996, 1, 1, _tzid),
+                new CalDateTime(2000, 1, 1, _tzid)).OrderBy(o => o.Period.StartTime).ToList();
 
-            var DateTimes = new CalDateTime[]
+            var dateTimes = new CalDateTime[]
             {
-                new CalDateTime(1997, 9, 10, 9, 0, 0, tzid),
-                new CalDateTime(1997, 9, 11, 9, 0, 0, tzid),
-                new CalDateTime(1997, 9, 12, 9, 0, 0, tzid),
-                new CalDateTime(1997, 9, 13, 9, 0, 0, tzid),
-                new CalDateTime(1997, 9, 14, 9, 0, 0, tzid),
-                new CalDateTime(1997, 9, 15, 9, 0, 0, tzid),
-                new CalDateTime(1999, 3, 10, 9, 0, 0, tzid),
-                new CalDateTime(1999, 3, 11, 9, 0, 0, tzid),
-                new CalDateTime(1999, 3, 12, 9, 0, 0, tzid),
-                new CalDateTime(1999, 3, 13, 9, 0, 0, tzid),
+                new CalDateTime(1997, 9, 10, 9, 0, 0, _tzid),
+                new CalDateTime(1997, 9, 11, 9, 0, 0, _tzid),
+                new CalDateTime(1997, 9, 12, 9, 0, 0, _tzid),
+                new CalDateTime(1997, 9, 13, 9, 0, 0, _tzid),
+                new CalDateTime(1997, 9, 14, 9, 0, 0, _tzid),
+                new CalDateTime(1997, 9, 15, 9, 0, 0, _tzid),
+                new CalDateTime(1999, 3, 10, 9, 0, 0, _tzid),
+                new CalDateTime(1999, 3, 11, 9, 0, 0, _tzid),
+                new CalDateTime(1999, 3, 12, 9, 0, 0, _tzid),
+                new CalDateTime(1999, 3, 13, 9, 0, 0, _tzid),
             };
 
-            var TimeZones = new string[]
+            var timeZones = new string[]
             {
                 "US-Eastern",
                 "US-Eastern",
@@ -151,14 +151,14 @@ namespace ical.NET.UnitTests
                 "US-Eastern"
             };
 
-            for (var i = 0; i < DateTimes.Length; i++)
+            for (var i = 0; i < dateTimes.Length; i++)
             {
-                IDateTime dt = DateTimes[i];
+                IDateTime dt = dateTimes[i];
                 var start = occurrences[i].Period.StartTime;
                 Assert.AreEqual(dt, start);
 
                 var expectedZone = DateUtil.GetZone(dt.TimeZoneName);
-                var actualZone = DateUtil.GetZone(TimeZones[i]);
+                var actualZone = DateUtil.GetZone(timeZones[i]);
 
                 //Assert.AreEqual();
 
@@ -168,36 +168,36 @@ namespace ical.NET.UnitTests
                 //Assert.IsTrue(dt.TimeZoneName == TimeZones[i], "Event " + dt + " should occur in the " + TimeZones[i] + " timezone");
             }
 
-            Assert.IsTrue(occurrences.Count == DateTimes.Length, "There should be exactly " + DateTimes.Length + " occurrences; there were " + occurrences.Count);
+            Assert.IsTrue(occurrences.Count == dateTimes.Length, "There should be exactly " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
 
             // Get occurrences for the 2nd event
             occurrences = evt2.GetOccurrences(
-                new CalDateTime(1996, 1, 1, tzid),
-                new CalDateTime(1998, 4, 1, tzid)).OrderBy(o => o.Period.StartTime).ToList();
+                new CalDateTime(1996, 1, 1, _tzid),
+                new CalDateTime(1998, 4, 1, _tzid)).OrderBy(o => o.Period.StartTime).ToList();
 
-            var DateTimes1 = new CalDateTime[]
+            var dateTimes1 = new CalDateTime[]
             {
-                new CalDateTime(1997, 9, 2, 9, 0, 0, tzid),
-                new CalDateTime(1997, 9, 9, 9, 0, 0, tzid),
-                new CalDateTime(1997, 9, 16, 9, 0, 0, tzid),
-                new CalDateTime(1997, 9, 23, 9, 0, 0, tzid),
-                new CalDateTime(1997, 9, 30, 9, 0, 0, tzid),
-                new CalDateTime(1997, 11, 4, 9, 0, 0, tzid),
-                new CalDateTime(1997, 11, 11, 9, 0, 0, tzid),
-                new CalDateTime(1997, 11, 18, 9, 0, 0, tzid),
-                new CalDateTime(1997, 11, 25, 9, 0, 0, tzid),
-                new CalDateTime(1998, 1, 6, 9, 0, 0, tzid),
-                new CalDateTime(1998, 1, 13, 9, 0, 0, tzid),
-                new CalDateTime(1998, 1, 20, 9, 0, 0, tzid),
-                new CalDateTime(1998, 1, 27, 9, 0, 0, tzid),
-                new CalDateTime(1998, 3, 3, 9, 0, 0, tzid),
-                new CalDateTime(1998, 3, 10, 9, 0, 0, tzid),
-                new CalDateTime(1998, 3, 17, 9, 0, 0, tzid),
-                new CalDateTime(1998, 3, 24, 9, 0, 0, tzid),
-                new CalDateTime(1998, 3, 31, 9, 0, 0, tzid)
+                new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
+                new CalDateTime(1997, 9, 9, 9, 0, 0, _tzid),
+                new CalDateTime(1997, 9, 16, 9, 0, 0, _tzid),
+                new CalDateTime(1997, 9, 23, 9, 0, 0, _tzid),
+                new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid),
+                new CalDateTime(1997, 11, 4, 9, 0, 0, _tzid),
+                new CalDateTime(1997, 11, 11, 9, 0, 0, _tzid),
+                new CalDateTime(1997, 11, 18, 9, 0, 0, _tzid),
+                new CalDateTime(1997, 11, 25, 9, 0, 0, _tzid),
+                new CalDateTime(1998, 1, 6, 9, 0, 0, _tzid),
+                new CalDateTime(1998, 1, 13, 9, 0, 0, _tzid),
+                new CalDateTime(1998, 1, 20, 9, 0, 0, _tzid),
+                new CalDateTime(1998, 1, 27, 9, 0, 0, _tzid),
+                new CalDateTime(1998, 3, 3, 9, 0, 0, _tzid),
+                new CalDateTime(1998, 3, 10, 9, 0, 0, _tzid),
+                new CalDateTime(1998, 3, 17, 9, 0, 0, _tzid),
+                new CalDateTime(1998, 3, 24, 9, 0, 0, _tzid),
+                new CalDateTime(1998, 3, 31, 9, 0, 0, _tzid)
             };
 
-            var TimeZones1 = new string[]
+            var timeZones1 = new string[]
             {
                 "US-Eastern",
                 "US-Eastern",
@@ -219,28 +219,28 @@ namespace ical.NET.UnitTests
                 "US-Eastern"
             };
 
-            for (var i = 0; i < DateTimes1.Length; i++)
+            for (var i = 0; i < dateTimes1.Length; i++)
             {
-                IDateTime dt = DateTimes1[i];
+                IDateTime dt = dateTimes1[i];
                 var start = occurrences[i].Period.StartTime;
                 Assert.AreEqual(dt, start);
-                Assert.IsTrue(dt.TimeZoneName == TimeZones1[i], "Event " + dt + " should occur in the " + TimeZones1[i] + " timezone");
+                Assert.IsTrue(dt.TimeZoneName == timeZones1[i], "Event " + dt + " should occur in the " + timeZones1[i] + " timezone");
             }
 
-            Assert.AreEqual(DateTimes1.Length, occurrences.Count, "There should be exactly " + DateTimes1.Length + " occurrences; there were " + occurrences.Count);
+            Assert.AreEqual(dateTimes1.Length, occurrences.Count, "There should be exactly " + dateTimes1.Length + " occurrences; there were " + occurrences.Count);
         }
 
         //[Test]     //Broken in dday
         public void Merge2()
         {
-            var iCal = new iCalendar();
-            var tmp_cal = iCalendar.LoadFromFile(@"Calendars\Serialization\TimeZone3.ics")[0];
-            iCal.MergeWith(tmp_cal);
+            var iCal = new ICalendar();
+            var tmpCal = ICalendar.LoadFromFile(@"Calendars\Serialization\TimeZone3.ics")[0];
+            iCal.MergeWith(tmpCal);
 
-            tmp_cal = iCalendar.LoadFromFile(@"Calendars\Serialization\TimeZone3.ics")[0];
+            tmpCal = ICalendar.LoadFromFile(@"Calendars\Serialization\TimeZone3.ics")[0];
 
             // Compare the two calendars -- they should match exactly
-            SerializationTest.CompareCalendars(iCal, tmp_cal);
+            SerializationTest.CompareCalendars(iCal, tmpCal);
         }
 
         /// <summary>
@@ -250,8 +250,8 @@ namespace ical.NET.UnitTests
         //[Test]     //Broken in dday
         public void Merge3()
         {
-            var iCal1 = iCalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyCountByMonthDay3.ics")[0];
-            var iCal2 = iCalendar.LoadFromFile(@"Calendars\Recurrence\YearlyByMonth1.ics")[0];
+            var iCal1 = ICalendar.LoadFromFile(@"Calendars\Recurrence\MonthlyCountByMonthDay3.ics")[0];
+            var iCal2 = ICalendar.LoadFromFile(@"Calendars\Recurrence\YearlyByMonth1.ics")[0];
 
             iCal1.MergeWith(iCal2);
 
@@ -269,20 +269,20 @@ namespace ical.NET.UnitTests
             var tzi = System.TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time");
             Assert.IsNotNull(tzi);
 
-            var iCal = new iCalendar();
-            var tz = ICalTimeZone.FromSystemTimeZone(tzi, new DateTime(2000, 1, 1), false);
+            var iCal = new ICalendar();
+            var tz = CalTimeZone.FromSystemTimeZone(tzi, new DateTime(2000, 1, 1), false);
             Assert.IsNotNull(tz);
             iCal.AddChild(tz);
 
-            var serializer = new iCalendarSerializer();
+            var serializer = new CalendarSerializer();
             serializer.Serialize(iCal, @"Calendars\Serialization\SystemTimeZone1.ics");
 
             // Ensure the time zone transition works as expected
             // (i.e. it takes 1 hour and 1 second to transition from
             // 2003-10-26 12:59:59 AM to
             // 2003-10-26 01:00:00 AM)
-            var dt1 = new CalDateTime(2003, 10, 26, 0, 59, 59, tz.TZID, iCal);
-            var dt2 = new CalDateTime(2003, 10, 26, 1, 0, 0, tz.TZID, iCal);
+            var dt1 = new CalDateTime(2003, 10, 26, 0, 59, 59, tz.TzId, iCal);
+            var dt2 = new CalDateTime(2003, 10, 26, 1, 0, 0, tz.TzId, iCal);
 
             var result = dt2 - dt1;
             Assert.AreEqual(TimeSpan.FromHours(1) + TimeSpan.FromSeconds(1), result);
@@ -291,8 +291,8 @@ namespace ical.NET.UnitTests
             // (i.e. it takes negative 59 minutes and 59 seconds to transition from
             // 2004-04-04 01:59:59 AM to
             // 2004-04-04 02:00:00 AM)
-            dt1 = new CalDateTime(2004, 4, 4, 1, 59, 59, tz.TZID, iCal);
-            dt2 = new CalDateTime(2004, 4, 4, 2, 0, 0, tz.TZID, iCal);
+            dt1 = new CalDateTime(2004, 4, 4, 1, 59, 59, tz.TzId, iCal);
+            dt2 = new CalDateTime(2004, 4, 4, 2, 0, 0, tz.TzId, iCal);
             result = dt2 - dt1;
             Assert.AreEqual(TimeSpan.FromHours(-1) + TimeSpan.FromSeconds(1), result);            
         }
@@ -306,19 +306,19 @@ namespace ical.NET.UnitTests
             var tzi = System.TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time");
             Assert.IsNotNull(tzi);
 
-            var iCal = new iCalendar();
+            var iCal = new ICalendar();
             var tz = iCal.AddTimeZone(tzi, new DateTime(2000, 1, 1), false);
             Assert.IsNotNull(tz);
 
-            var serializer = new iCalendarSerializer();
+            var serializer = new CalendarSerializer();
             serializer.Serialize(iCal, @"Calendars\Serialization\SystemTimeZone2.ics");
 
             // Ensure the time zone transition works as expected
             // (i.e. it takes 1 hour and 1 second to transition from
             // 2003-10-26 12:59:59 AM to
             // 2003-10-26 01:00:00 AM)
-            var dt1 = new CalDateTime(2003, 10, 26, 0, 59, 59, tz.TZID, iCal);
-            var dt2 = new CalDateTime(2003, 10, 26, 1, 0, 0, tz.TZID, iCal);
+            var dt1 = new CalDateTime(2003, 10, 26, 0, 59, 59, tz.TzId, iCal);
+            var dt2 = new CalDateTime(2003, 10, 26, 1, 0, 0, tz.TzId, iCal);
             var result = dt2 - dt1;
             Assert.AreEqual(TimeSpan.FromHours(1) + TimeSpan.FromSeconds(1), result);
 
@@ -326,8 +326,8 @@ namespace ical.NET.UnitTests
             // (i.e. it takes negative 59 minutes and 59 seconds to transition from
             // 2004-04-04 01:59:59 AM to
             // 2004-04-04 02:00:00 AM)
-            dt1 = new CalDateTime(2004, 4, 4, 1, 59, 59, tz.TZID, iCal);
-            dt2 = new CalDateTime(2004, 4, 4, 2, 0, 0, tz.TZID, iCal);
+            dt1 = new CalDateTime(2004, 4, 4, 1, 59, 59, tz.TzId, iCal);
+            dt2 = new CalDateTime(2004, 4, 4, 2, 0, 0, tz.TzId, iCal);
             result = dt2 - dt1;
             Assert.AreEqual(TimeSpan.FromHours(-1) + TimeSpan.FromSeconds(1), result);
         }
@@ -354,8 +354,8 @@ namespace ical.NET.UnitTests
 
                 if (tzinfo != null)
                 {
-                    var ical_tz = Ical.Net.ICalTimeZone.FromSystemTimeZone(tzinfo);
-                    Assert.AreNotEqual(0, ical_tz.TimeZoneInfos.Count, zone.StandardName + ": no time zone information was extracted.");
+                    var icalTz = Ical.Net.CalTimeZone.FromSystemTimeZone(tzinfo);
+                    Assert.AreNotEqual(0, icalTz.TimeZoneInfos.Count, zone.StandardName + ": no time zone information was extracted.");
                 }
             }
         }

@@ -9,8 +9,8 @@ namespace ical.NET.Collections
     {
         #region Private Fields
 
-        IMultiLinkedList<TType> _Previous;
-        IMultiLinkedList<TType> _Next;
+        IMultiLinkedList<TType> _previous;
+        IMultiLinkedList<TType> _next;
 
         #endregion
 
@@ -18,17 +18,17 @@ namespace ical.NET.Collections
 
         virtual public void SetPrevious(IMultiLinkedList<TType> previous)
         {
-            _Previous = previous;
+            _previous = previous;
         }
 
         virtual public void SetNext(IMultiLinkedList<TType> next)
         {
-            _Next = next;
+            _next = next;
         }
 
         virtual public int StartIndex
         {
-            get { return _Previous != null ? _Previous.ExclusiveEnd : 0; }
+            get { return _previous != null ? _previous.ExclusiveEnd : 0; }
         }
 
         virtual public int ExclusiveEnd

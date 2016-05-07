@@ -9,12 +9,12 @@ namespace ical.NET.UnitTests
         [Test, Category("Component")]
         public void UniqueComponent1()
         {
-            var iCal = new iCalendar();
+            var iCal = new ICalendar();
             var evt = iCal.Create<Event>();
 
-            Assert.IsNotNull(evt.UID);
+            Assert.IsNotNull(evt.Uid);
             Assert.IsNull(evt.Created); // We don't want this to be set automatically
-            Assert.IsNotNull(evt.DTStamp);
+            Assert.IsNotNull(evt.DtStamp);
         }
     }
 }

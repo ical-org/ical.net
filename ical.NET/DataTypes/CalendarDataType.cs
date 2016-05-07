@@ -101,7 +101,7 @@ namespace Ical.Net.DataTypes
                         // FIXME: implement ISO.8601.2004
                         throw new NotImplementedException();
                     case "URI": return typeof(Uri);
-                    case "UTC-OFFSET": return typeof(IUTCOffset);
+                    case "UTC-OFFSET": return typeof(IUtcOffset);
                     default:
                         return null;
                 }

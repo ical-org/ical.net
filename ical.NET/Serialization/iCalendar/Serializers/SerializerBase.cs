@@ -10,7 +10,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
     {
         #region Private Fields
 
-        ISerializationContext m_SerializationContext;
+        ISerializationContext _mSerializationContext;
 
         #endregion
 
@@ -18,12 +18,12 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         public SerializerBase()
         {
-            m_SerializationContext = Serialization.SerializationContext.Default;
+            _mSerializationContext = Serialization.SerializationContext.Default;
         }
 
         public SerializerBase(ISerializationContext ctx)
         {
-            m_SerializationContext = ctx;
+            _mSerializationContext = ctx;
         }
 
         #endregion
@@ -32,8 +32,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         virtual public ISerializationContext SerializationContext
         {
-            get { return m_SerializationContext; }
-            set { m_SerializationContext = value; }
+            get { return _mSerializationContext; }
+            set { _mSerializationContext = value; }
         }        
 
         public abstract Type TargetType { get; }

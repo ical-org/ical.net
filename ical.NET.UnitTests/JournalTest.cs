@@ -8,18 +8,18 @@ namespace ical.NET.UnitTests
     [TestFixture]
     public class JournalTest
     {
-        private string tzid;
+        private string _tzid;
 
         [TestFixtureSetUp]
         public void InitAll()
         {
-            tzid = "US-Eastern";
+            _tzid = "US-Eastern";
         }
 
         [Test, Category("Journal")]
         public void Journal1()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL1.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Journal\JOURNAL1.ics")[0];
             ProgramTest.TestCal(iCal);
             Assert.AreEqual(1, iCal.Journals.Count);
             var j = iCal.Journals[0];
@@ -33,7 +33,7 @@ namespace ical.NET.UnitTests
         [Test, Category("Journal")]
         public void Journal2()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Journal\JOURNAL2.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Journal\JOURNAL2.ics")[0];
             ProgramTest.TestCal(iCal);
             Assert.AreEqual(1, iCal.Journals.Count);
             var j = iCal.Journals.First();

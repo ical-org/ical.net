@@ -20,9 +20,9 @@ namespace ical.NET.Collections.Proxies
     {
         #region Private Fields
 
-        IGroupedValueList<TGroup, TInterface, TItem, TOriginalValue> _RealObject;
-        TGroup _Group;
-        TInterface _Container;
+        IGroupedValueList<TGroup, TInterface, TItem, TOriginalValue> _realObject;
+        TGroup _group;
+        TInterface _container;
 
         #endregion
 
@@ -30,8 +30,8 @@ namespace ical.NET.Collections.Proxies
 
         public GroupedValueListProxy(IGroupedValueList<TGroup, TInterface, TItem, TOriginalValue> realObject, TGroup group)
         {
-            _RealObject = realObject;
-            _Group = group;
+            _realObject = realObject;
+            _group = group;
         }
 
         #endregion
@@ -40,29 +40,29 @@ namespace ical.NET.Collections.Proxies
 
         TInterface EnsureContainer()
         {
-            if (_Container == null)
+            if (_container == null)
             {
                 // Find an item that matches our group
-                _Container = Items.FirstOrDefault();
+                _container = Items.FirstOrDefault();
 
                 // If no item is found, create a new object and add it to the list
-                if (object.Equals(_Container, default(TInterface)))
+                if (object.Equals(_container, default(TInterface)))
                 {
                     var container = new TItem();
                     if (!(container is TInterface))
                         throw new Exception("Could not create a container for the value - the container is not of type " + typeof(TInterface).GetType().Name);
-                    _Container = (TInterface)(object)container;
-                    _Container.Group = _Group;
-                    _RealObject.Add(_Container);
+                    _container = (TInterface)(object)container;
+                    _container.Group = _group;
+                    _realObject.Add(_container);
                 }
             }
-            return _Container;
+            return _container;
         }
 
         void IterateValues(Func<IValueObject<TOriginalValue>, int, int, bool> action)
         {
             var i = 0;
-            foreach (var obj in _RealObject)
+            foreach (var obj in _realObject)
             {
                 // Get the number of items of the target value i this object
                 var count = obj.Values != null ? obj.Values.OfType<TNewValue>().Count() : 0;
@@ -287,10 +287,10 @@ namespace ical.NET.Collections.Proxies
         {
             get
             {
-                if (_Group != null)
-                    return _RealObject.AllOf(_Group);
+                if (_group != null)
+                    return _realObject.AllOf(_group);
                 else
-                    return _RealObject;
+                    return _realObject;
             }
         }
 

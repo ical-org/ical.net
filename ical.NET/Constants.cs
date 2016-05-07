@@ -24,15 +24,15 @@
     {
         #region Constants
 
-        public const string ALARM = "VALARM";
-        public const string CALENDAR = "VCALENDAR";
-        public const string EVENT = "VEVENT";
-        public const string FREEBUSY = "VFREEBUSY";
-        public const string TODO = "VTODO";
-        public const string JOURNAL = "VJOURNAL";
-        public const string TIMEZONE = "VTIMEZONE";
-        public const string DAYLIGHT = "DAYLIGHT";
-        public const string STANDARD = "STANDARD";
+        public const string Alarm = "VALARM";
+        public const string Calendar = "VCALENDAR";
+        public const string Event = "VEVENT";
+        public const string Freebusy = "VFREEBUSY";
+        public const string Todo = "VTODO";
+        public const string Journal = "VJOURNAL";
+        public const string Timezone = "VTIMEZONE";
+        public const string Daylight = "DAYLIGHT";
+        public const string Standard = "STANDARD";
 
         #endregion
     }
@@ -219,7 +219,7 @@
 
     public class CalendarVersions
     {
-        public const string v2_0 = "2.0";
+        public const string V20 = "2.0";
     }
 
     public class CalendarScales

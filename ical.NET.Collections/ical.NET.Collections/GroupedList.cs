@@ -18,8 +18,8 @@ namespace ical.NET.Collections
     {
         #region Protected Fields
 
-        List<IMultiLinkedList<TItem>> _Lists = new List<IMultiLinkedList<TItem>>();
-        Dictionary<TGroup, IMultiLinkedList<TItem>> _Dictionary = new Dictionary<TGroup, IMultiLinkedList<TItem>>();
+        List<IMultiLinkedList<TItem>> _lists = new List<IMultiLinkedList<TItem>>();
+        Dictionary<TGroup, IMultiLinkedList<TItem>> _dictionary = new Dictionary<TGroup, IMultiLinkedList<TItem>>();
 
         #endregion
 
@@ -57,35 +57,35 @@ namespace ical.NET.Collections
 
         IMultiLinkedList<TItem> EnsureList(TGroup group, bool createIfNecessary)
         {
-            if (!_Dictionary.ContainsKey(group))
+            if (!_dictionary.ContainsKey(group))
             {
                 if (createIfNecessary)
                 {
                     var list = new MultiLinkedList<TItem>();
-                    _Dictionary[group] = list;
+                    _dictionary[group] = list;
 
-                    if (_Lists.Count > 0)
+                    if (_lists.Count > 0)
                     {
                         // Attach the list to our list chain
-                        var previous = _Lists[_Lists.Count - 1];
+                        var previous = _lists[_lists.Count - 1];
                         previous.SetNext(list);
                         list.SetPrevious(previous);
                     }
 
-                    _Lists.Add(list);
+                    _lists.Add(list);
                     return list;
                 }
             }
             else
             {
-                return _Dictionary[group];
+                return _dictionary[group];
             }
             return null;
         }
 
         IMultiLinkedList<TItem> ListForIndex(int index, out int relativeIndex)
         {
-            foreach (var list in _Lists)
+            foreach (var list in _lists)
             {
                 var startIndex = list.StartIndex;
                 if (list.StartIndex <= index &&
@@ -117,9 +117,9 @@ namespace ical.NET.Collections
                 {
                     // Find the specific item and remove it
                     var group = GroupModifier(oldValue);
-                    if (_Dictionary.ContainsKey(group))
+                    if (_dictionary.ContainsKey(group))
                     {
-                        var items = _Dictionary[group];
+                        var items = _dictionary[group];
 
                         // Find the item's index within the list
                         var index = items.IndexOf(obj);
@@ -185,10 +185,10 @@ namespace ical.NET.Collections
         {
             // Get the "real" group
             var group = GroupModifier(item.Group);
-            if (_Dictionary.ContainsKey(group))
+            if (_dictionary.ContainsKey(group))
             {
                 // Get the list associated with this object's group
-                var list = _Dictionary[group];
+                var list = _dictionary[group];
 
                 // Find the object within the list.
                 var index = list.IndexOf(item);
@@ -204,20 +204,20 @@ namespace ical.NET.Collections
         {
             group = GroupModifier(group);
 
-            if (_Dictionary.ContainsKey(group))
+            if (_dictionary.ContainsKey(group))
             {
                 // Get the list associated with the group
-                var list = _Dictionary[group].ToArray();
+                var list = _dictionary[group].ToArray();
                 
                 // Save the number of items in the list
                 var count = list.Length;
 
                 // Save the starting index of the list
-                var startIndex = _Dictionary[group].StartIndex;
+                var startIndex = _dictionary[group].StartIndex;
 
                 // Clear the list (note that this also clears the list
                 // in the _Lists object).
-                _Dictionary[group].Clear();
+                _dictionary[group].Clear();
 
                 // Notify that each of these items were removed
                 for (var i = list.Length - 1; i >= 0; i--)
@@ -228,11 +228,11 @@ namespace ical.NET.Collections
         virtual public void Clear()
         {
             // Get a list of items that are being cleared
-            var items = _Lists.SelectMany(i => i).ToArray();
+            var items = _lists.SelectMany(i => i).ToArray();
 
             // Clear our lists out
-            _Dictionary.Clear();
-            _Lists.Clear();
+            _dictionary.Clear();
+            _lists.Clear();
 
             // Notify that each item was removed
             for (var i = items.Length - 1; i >= 0; i--)
@@ -242,44 +242,44 @@ namespace ical.NET.Collections
         virtual public bool ContainsKey(TGroup group)
         {
             group = GroupModifier(group);
-            return _Dictionary.ContainsKey(group);
+            return _dictionary.ContainsKey(group);
         }
 
         virtual public int Count
         {
             get
             {
-                return _Lists.Sum(list => list.Count);
+                return _lists.Sum(list => list.Count);
             }
         }
 
         virtual public int CountOf(TGroup group)
         {
             group = GroupModifier(group);
-            if (_Dictionary.ContainsKey(group))
-                return _Dictionary[group].Count;
+            if (_dictionary.ContainsKey(group))
+                return _dictionary[group].Count;
             return 0;
         }
 
         virtual public IEnumerable<TItem> Values()
         {
-            return _Dictionary.Values.SelectMany(i => i);
+            return _dictionary.Values.SelectMany(i => i);
         }
 
         virtual public IEnumerable<TItem> AllOf(TGroup group)
         {
             group = GroupModifier(group);
-            if (_Dictionary.ContainsKey(group))
-                return _Dictionary[group];
+            if (_dictionary.ContainsKey(group))
+                return _dictionary[group];
             return new TItem[0];
         }
         
         virtual public bool Remove(TItem obj)
         {
             var group = GroupModifier(obj.Group);
-            if (_Dictionary.ContainsKey(group))
+            if (_dictionary.ContainsKey(group))
             {
-                var items = _Dictionary[group];
+                var items = _dictionary[group];
                 var index = items.IndexOf(obj);
 
                 if (index >= 0)
@@ -296,9 +296,9 @@ namespace ical.NET.Collections
         virtual public bool Remove(TGroup group)
         {
             group = GroupModifier(group);
-            if (_Dictionary.ContainsKey(group))
+            if (_dictionary.ContainsKey(group))
             {
-                var list = _Dictionary[group];
+                var list = _dictionary[group];
 
                 for (var i = list.Count - 1; i >= 0; i--)
                 {
@@ -313,14 +313,14 @@ namespace ical.NET.Collections
 
         virtual public void SortKeys(IComparer<TGroup> comparer = null)
         {
-            var keys = _Dictionary.Keys.ToArray();
+            var keys = _dictionary.Keys.ToArray();
 
-            _Lists.Clear();
+            _lists.Clear();
 
             IMultiLinkedList<TItem> previous = null;
-            foreach (var group in _Dictionary.Keys.OrderBy(k => k, comparer))
+            foreach (var group in _dictionary.Keys.OrderBy(k => k, comparer))
             {
-                var list = _Dictionary[group];
+                var list = _dictionary[group];
                 if (previous == null)
                 {
                     previous = list;
@@ -333,7 +333,7 @@ namespace ical.NET.Collections
                     previous = list;
                 }
 
-                _Lists.Add(list);
+                _lists.Add(list);
             }
         }
         
@@ -344,14 +344,14 @@ namespace ical.NET.Collections
         virtual public bool Contains(TItem item)
         {
             var group = GroupModifier(item.Group);
-            if (_Dictionary.ContainsKey(group))
-                return _Dictionary[group].Contains(item);
+            if (_dictionary.ContainsKey(group))
+                return _dictionary[group].Contains(item);
             return false;
         }
 
         virtual public void CopyTo(TItem[] array, int arrayIndex)
         {
-            _Dictionary.SelectMany(kvp => kvp.Value).ToArray().CopyTo(array, arrayIndex);
+            _dictionary.SelectMany(kvp => kvp.Value).ToArray().CopyTo(array, arrayIndex);
         }
 
         virtual public bool IsReadOnly
@@ -418,7 +418,7 @@ namespace ical.NET.Collections
 
         public IEnumerator<TItem> GetEnumerator()
         {
-            return new GroupedListEnumerator<TItem>(_Lists);
+            return new GroupedListEnumerator<TItem>(_lists);
         }
 
         #endregion
@@ -427,7 +427,7 @@ namespace ical.NET.Collections
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return new GroupedListEnumerator<TItem>(_Lists);
+            return new GroupedListEnumerator<TItem>(_lists);
         }
 
         #endregion

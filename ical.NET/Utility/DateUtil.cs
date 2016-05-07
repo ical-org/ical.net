@@ -8,11 +8,11 @@ namespace Ical.Net.Utility
 {
     public class DateUtil
     {
-        static private System.Globalization.Calendar _Calendar;
+        static private System.Globalization.Calendar _calendar;
 
         static DateUtil()
         {
-            _Calendar = System.Globalization.CultureInfo.CurrentCulture.Calendar;
+            _calendar = System.Globalization.CultureInfo.CurrentCulture.Calendar;
         }
 
         public static IDateTime StartOfDay(IDateTime dt)

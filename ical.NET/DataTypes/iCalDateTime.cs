@@ -62,9 +62,9 @@ namespace Ical.Net.DataTypes
             Initialize(value.Value, value.TzId, null);
         }
         public CalDateTime(DateTime value) : this(value, null) {}
-        public CalDateTime(DateTime value, string tzid) 
+        public CalDateTime(DateTime value, string tzId) 
         {
-            Initialize(value, tzid, null);
+            Initialize(value, tzId, null);
         }
         public CalDateTime(DateTime value, TimeZoneObservance tzo)
         {
@@ -75,20 +75,20 @@ namespace Ical.Net.DataTypes
             Initialize(year, month, day, hour, minute, second, null, null);
             HasTime = true;
         }
-        public CalDateTime(int year, int month, int day, int hour, int minute, int second, string tzid)
+        public CalDateTime(int year, int month, int day, int hour, int minute, int second, string tzId)
         {
-            Initialize(year, month, day, hour, minute, second, tzid, null);
+            Initialize(year, month, day, hour, minute, second, tzId, null);
             HasTime = true;
         }
-        public CalDateTime(int year, int month, int day, int hour, int minute, int second, string tzid, IICalendar iCal)
+        public CalDateTime(int year, int month, int day, int hour, int minute, int second, string tzId, IICalendar iCal)
         {
-            Initialize(year, month, day, hour, minute, second, tzid, iCal);
+            Initialize(year, month, day, hour, minute, second, tzId, iCal);
             HasTime = true;
         }
         public CalDateTime(int year, int month, int day)
             : this(year, month, day, 0, 0, 0) { }
-        public CalDateTime(int year, int month, int day, string tzid)
-            : this(year, month, day, 0, 0, 0, tzid) { }
+        public CalDateTime(int year, int month, int day, string tzId)
+            : this(year, month, day, 0, 0, 0, tzId) { }
 
         public CalDateTime(string value)
         {
@@ -96,12 +96,12 @@ namespace Ical.Net.DataTypes
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
-        private void Initialize(int year, int month, int day, int hour, int minute, int second, string tzid, IICalendar iCal)
+        private void Initialize(int year, int month, int day, int hour, int minute, int second, string tzId, IICalendar iCal)
         {
-            Initialize(CoerceDateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzid, iCal);
+            Initialize(CoerceDateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzId, iCal);
         }
 
-        private void Initialize(DateTime value, string tzid, IICalendar iCal)
+        private void Initialize(DateTime value, string tzId, IICalendar iCal)
         {
             if (value.Kind == DateTimeKind.Utc)
                 IsUniversalTime = true;
@@ -110,7 +110,7 @@ namespace Ical.Net.DataTypes
             Value = DateTime.SpecifyKind(value, DateTimeKind.Utc);
             HasDate = true;
             HasTime = (value.Second == 0 && value.Minute == 0 && value.Hour == 0) ? false : true;
-            TzId = tzid;
+            TzId = tzId;
             AssociatedObject = iCal;
         }
 
@@ -534,7 +534,7 @@ namespace Ical.Net.DataTypes
         public IDateTime SetTimeZone(ITimeZone tz)
         {
             if (tz != null)
-                TzId = tz.TZID;
+                TzId = tz.TzId;
             return this;
         }
 
@@ -651,13 +651,13 @@ namespace Ical.Net.DataTypes
             {
                 if (TimeZoneObservance != null && dt.TimeZoneObservance == null)
                 {
-                    IDateTime normalizedDt = new CalDateTime(TimeZoneObservance.Value.TimeZoneInfo.OffsetTo.ToUTC(dt.Value));
+                    IDateTime normalizedDt = new CalDateTime(TimeZoneObservance.Value.TimeZoneInfo.OffsetTo.ToUtc(dt.Value));
                     if (TimeZoneObservance.Value.Contains(normalizedDt))
                         dt.TimeZoneObservance = TimeZoneObservance;
                 }
                 else if (dt.TimeZoneObservance != null && TimeZoneObservance == null)
                 {
-                    IDateTime normalizedDt = new CalDateTime(dt.TimeZoneObservance.Value.TimeZoneInfo.OffsetTo.ToUTC(Value));
+                    IDateTime normalizedDt = new CalDateTime(dt.TimeZoneObservance.Value.TimeZoneInfo.OffsetTo.ToUtc(Value));
                     if (dt.TimeZoneObservance.Value.Contains(normalizedDt))
                         TimeZoneObservance = dt.TimeZoneObservance;
                 }

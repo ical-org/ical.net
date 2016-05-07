@@ -29,7 +29,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             return null;
         }
 
-        internal static readonly Regex _dayOfWeek = new Regex(@"(\+|-)?(\d{1,2})?(\w{2})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        internal static readonly Regex DayOfWeek = new Regex(@"(\+|-)?(\d{1,2})?(\w{2})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         public override object Deserialize(TextReader tr)
         {
             var value = tr.ReadToEnd();
@@ -40,7 +40,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             // Decode the value, if necessary
             value = Decode(ds, value);
 
-            var match = _dayOfWeek.Match(value);
+            var match = DayOfWeek.Match(value);
             if (match.Success)
             {
                 if (match.Groups[2].Success)

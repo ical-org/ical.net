@@ -13,8 +13,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
     {
         #region Private Fields
 
-        Type _InnerType;
-        Type _ObjectType;
+        Type _innerType;
+        Type _objectType;
 
         #endregion
 
@@ -22,10 +22,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         public GenericListSerializer(Type objectType)
         {
-            _InnerType = objectType.GetGenericArguments()[0];
+            _innerType = objectType.GetGenericArguments()[0];
             
             var listDef = typeof(List<>);
-            _ObjectType = listDef.MakeGenericType(typeof(object));
+            _objectType = listDef.MakeGenericType(typeof(object));
         }
 
         #endregion
@@ -34,7 +34,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         public override Type TargetType
         {
-            get { return _ObjectType; }
+            get { return _objectType; }
         }
 
         public override string SerializeToString(object obj)
@@ -51,11 +51,11 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                 // Get a serializer factory to deserialize the contents of this list
                 var sf = GetService<ISerializerFactory>();
 
-                var listObj = Activator.CreateInstance(_ObjectType);
+                var listObj = Activator.CreateInstance(_objectType);
                 if (listObj != null)
                 {
                     // Get a serializer for the inner type
-                    var stringSerializer = sf.Build(_InnerType, SerializationContext) as IStringSerializer;;
+                    var stringSerializer = sf.Build(_innerType, SerializationContext) as IStringSerializer;;
 
                     if (stringSerializer != null)
                     {
@@ -71,13 +71,13 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                         if (objToAdd != null)
                         {
                             // FIXME: cache this
-                            var mi = _ObjectType.GetMethod("Add");
+                            var mi = _objectType.GetMethod("Add");
                             if (mi != null)
                             {
                                 // Determine if the returned object is an IList<ObjectType>,
                                 // rather than just an ObjectType.
                                 if (objToAdd is IEnumerable &&
-                                    objToAdd.GetType().Equals(typeof(List<>).MakeGenericType(_InnerType)))
+                                    objToAdd.GetType().Equals(typeof(List<>).MakeGenericType(_innerType)))
                                 {
                                     // Deserialization returned an IList<ObjectType>, instead of
                                     // simply an ObjectType.  So, let's enumerate through the

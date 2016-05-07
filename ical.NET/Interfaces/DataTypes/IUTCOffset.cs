@@ -2,7 +2,7 @@
 
 namespace Ical.Net.Interfaces.DataTypes
 {
-    public interface IUTCOffset : IEncodableDataType
+    public interface IUtcOffset : IEncodableDataType
     {
         TimeSpan Offset { get; set; }
         bool Positive { get; }
@@ -10,7 +10,7 @@ namespace Ical.Net.Interfaces.DataTypes
         int Minutes { get; }
         int Seconds { get; }
 
-        DateTime ToUTC(DateTime dt);
+        DateTime ToUtc(DateTime dt);
         DateTime ToLocal(DateTime dt);
     }
 }

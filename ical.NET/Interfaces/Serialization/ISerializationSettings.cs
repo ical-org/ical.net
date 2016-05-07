@@ -4,7 +4,7 @@ namespace Ical.Net.Interfaces.Serialization
 {
     public interface ISerializationSettings
     {
-        Type iCalendarType { get; set; }
+        Type ICalendarType { get; set; }
         bool EnsureAccurateLineNumbers { get; set; }
         ParsingModeType ParsingMode { get; set; }
         bool StoreExtraSerializationData { get; set; }

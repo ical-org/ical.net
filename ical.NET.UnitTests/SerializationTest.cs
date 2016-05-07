@@ -27,15 +27,15 @@ namespace ical.NET.UnitTests
     [TestFixture]
     public class SerializationTest
     {
-        private string tzid;
+        private string _tzid;
 
         [TestFixtureSetUp]
         public void InitAll()
         {
-            tzid = "US-Eastern";
+            _tzid = "US-Eastern";
         }
 
-        private void SerializeTest(string filename, Type iCalSerializerType) { SerializeTest(filename, typeof(iCalendar), iCalSerializerType); }
+        private void SerializeTest(string filename, Type iCalSerializerType) { SerializeTest(filename, typeof(ICalendar), iCalSerializerType); }
         private void SerializeTest(string filename, Type iCalType, Type iCalSerializerType)
         {
             if (!Directory.Exists(@"Calendars\Serialization\Temp"))
@@ -45,10 +45,10 @@ namespace ical.NET.UnitTests
             Assert.IsNotNull(serializer);
 
             // Set the iCalendar type for deserialization
-            serializer.GetService<ISerializationSettings>().iCalendarType = iCalType;
+            serializer.GetService<ISerializationSettings>().ICalendarType = iCalType;
 
             // Load the calendar from file
-            var iCal1 = iCalendar.LoadFromFile(@"Calendars\Serialization\" + filename, Encoding.UTF8, serializer)[0];
+            var iCal1 = ICalendar.LoadFromFile(@"Calendars\Serialization\" + filename, Encoding.UTF8, serializer)[0];
 
             Assert.IsTrue(iCal1.UniqueComponents.Count > 0, "iCalendar has no unique components; it must to be used in SerializeTest(). Did it load correctly?");
 
@@ -56,7 +56,7 @@ namespace ical.NET.UnitTests
             serializer.Serialize(iCal1, fs, Encoding.UTF8);
             fs.Close();
 
-            var iCal2 = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\" + Path.GetFileNameWithoutExtension(filename) + "_Serialized" + Path.GetExtension(filename), Encoding.UTF8, serializer)[0];
+            var iCal2 = ICalendar.LoadFromFile(@"Calendars\Serialization\Temp\" + Path.GetFileNameWithoutExtension(filename) + "_Serialized" + Path.GetExtension(filename), Encoding.UTF8, serializer)[0];
 
             CompareCalendars(iCal1, iCal2);
         }
@@ -136,7 +136,7 @@ namespace ical.NET.UnitTests
         //[Test, Category("Serialization")]     //Broken in dday
         public void Attachment1()
         {
-            IICalendar iCal = new iCalendar();
+            IICalendar iCal = new ICalendar();
 
             // Create a test event
             IEvent evt = iCal.Create<Event>();
@@ -150,12 +150,12 @@ namespace ical.NET.UnitTests
             attachment.Parameters.Add("X-FILENAME", "WordDocument.doc");
             evt.Attachments.Add(attachment);
 
-            var serializer = new iCalendarSerializer();
+            var serializer = new CalendarSerializer();
             if (!Directory.Exists(@"Calendars\Serialization\Temp"))
                 Directory.CreateDirectory(@"Calendars\Serialization\Temp");
             serializer.Serialize(iCal, @"Calendars\Serialization\Temp\Attachment1.ics");
 
-            iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\Attachment1.ics")[0];
+            iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\Temp\Attachment1.ics")[0];
             evt = iCal.Events.First();
             attachment = evt.Attachments[0];
 
@@ -168,7 +168,7 @@ namespace ical.NET.UnitTests
         //[Test, Category("Serialization")]     //Broken in dday
         public void Attachment2()
         {
-            IICalendar iCal = new iCalendar();
+            IICalendar iCal = new ICalendar();
 
             // Create a test event
             IEvent evt = iCal.Create<Event>();
@@ -188,12 +188,12 @@ namespace ical.NET.UnitTests
             attachment.Data = UnicodeEncoding.Default.GetBytes(sb.ToString());
             evt.Attachments.Add(attachment);
 
-            var serializer = new iCalendarSerializer();
+            var serializer = new CalendarSerializer();
             if (!Directory.Exists(@"Calendars\Serialization\Temp"))
                 Directory.CreateDirectory(@"Calendars\Serialization\Temp");
             serializer.Serialize(iCal, @"Calendars\Serialization\Temp\Attachment2.ics");
 
-            iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\Attachment2.ics")[0];
+            iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\Temp\Attachment2.ics")[0];
             evt = iCal.Events.First();
             attachment = evt.Attachments[0];
 
@@ -210,7 +210,7 @@ namespace ical.NET.UnitTests
         //[Test, Category("Serialization")]     //Broken in dday
         public void Attachment3()
         {
-            SerializeTest("Attachment3.ics", typeof(iCalendarSerializer));
+            SerializeTest("Attachment3.ics", typeof(CalendarSerializer));
         }
 
         /// <summary>
@@ -220,7 +220,7 @@ namespace ical.NET.UnitTests
         [Test, ExpectedException(typeof(WebException))]
         public void Attachment4()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Attachment4.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\Attachment4.ics")[0];
             ProgramTest.TestCal(iCal);
 
             var evt = iCal.Events["uuid1153170430406"];
@@ -235,7 +235,7 @@ namespace ical.NET.UnitTests
             ms.SetLength(a.Data.Length);
             a.Data.CopyTo(ms.GetBuffer(), 0);
 
-            var iCal1 = iCalendar.LoadFromStream(ms)[0];
+            var iCal1 = ICalendar.LoadFromStream(ms)[0];
             Assert.IsNotNull(iCal1, "Attached iCalendar did not load correctly");
 
             throw new WebException();
@@ -244,7 +244,7 @@ namespace ical.NET.UnitTests
         [Test, Category("Serialization")]
         public void Attendee1()
         {
-            var iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\Attendee1.ics", Encoding.UTF8)[0];
+            var iCal = ICalendar.LoadFromFile(typeof(ICalendar), @"Calendars\Serialization\Attendee1.ics", Encoding.UTF8)[0];
             Assert.AreEqual(1, iCal.Events.Count);
             
             var evt = iCal.Events.First();
@@ -281,7 +281,7 @@ namespace ical.NET.UnitTests
         [Test, Category("Serialization")]
         public void Attendee2()
         {
-            var iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\Attendee2.ics", Encoding.UTF8)[0];
+            var iCal = ICalendar.LoadFromFile(typeof(ICalendar), @"Calendars\Serialization\Attendee2.ics", Encoding.UTF8)[0];
             Assert.AreEqual(1, iCal.Events.Count);
 
             var evt = iCal.Events.First();
@@ -308,7 +308,7 @@ namespace ical.NET.UnitTests
         [Test, Category("Serialization")]
         public void Bug2033495()
         {
-            var iCal = iCalendar.LoadFromFile(typeof(iCalendar), @"Calendars\Serialization\Bug2033495.ics", Encoding.UTF8)[0];
+            var iCal = ICalendar.LoadFromFile(typeof(ICalendar), @"Calendars\Serialization\Bug2033495.ics", Encoding.UTF8)[0];
             Assert.AreEqual(1, iCal.Events.Count);
             Assert.AreEqual(iCal.Properties["X-LOTUS-CHILD_UID"].Value, "XXX");
         }
@@ -319,7 +319,7 @@ namespace ical.NET.UnitTests
         //[Test, Category("Serialization")]     //Broken in dday
         public void Bug2148092()
         {
-            SerializeTest("Bug2148092.ics", typeof(iCalendarSerializer));
+            SerializeTest("Bug2148092.ics", typeof(CalendarSerializer));
         }
 
         /// <summary>
@@ -329,7 +329,7 @@ namespace ical.NET.UnitTests
         [Test, Category("Serialization")]
         public void Bug2938007()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Bug2938007.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\Bug2938007.ics")[0];
             Assert.AreEqual(1, iCal.Events.Count);
 
             var evt = iCal.Events.First();
@@ -350,8 +350,8 @@ namespace ical.NET.UnitTests
         [Test, Category("Serialization")]
         public void Bug3177278()
         {
-            var calendar = new iCalendar();
-            var serializer = new iCalendarSerializer();
+            var calendar = new ICalendar();
+            var serializer = new CalendarSerializer();
 
             var ms = new MemoryStream();
             serializer.Serialize(calendar, ms, Encoding.UTF8);
@@ -366,8 +366,8 @@ namespace ical.NET.UnitTests
         [Test, Category("Serialization")]
         public void Bug3211934()
         {
-            var calendar = new iCalendar();
-            var serializer = new iCalendarSerializer();
+            var calendar = new ICalendar();
+            var serializer = new CalendarSerializer();
 
             var filename = "Bug3211934.ics";
 
@@ -384,7 +384,7 @@ namespace ical.NET.UnitTests
             File.SetAttributes(filename, FileAttributes.ReadOnly);
 
             // Load the calendar from file, and ensure the read-only attribute doesn't affect the load
-            var calendars = iCalendar.LoadFromFile(filename, Encoding.UTF8, serializer);
+            var calendars = ICalendar.LoadFromFile(filename, Encoding.UTF8, serializer);
             Assert.IsNotNull(calendars);
 
             // Reset the file attributes and delete
@@ -395,7 +395,7 @@ namespace ical.NET.UnitTests
         //[Test, Category("Serialization")]     //Broken in dday
         public void Calendar1()
         {
-            SerializeTest("Calendar1.ics", typeof(iCalendarSerializer));
+            SerializeTest("Calendar1.ics", typeof(CalendarSerializer));
         }
 
         /// <summary>
@@ -405,25 +405,25 @@ namespace ical.NET.UnitTests
         //[Test, Category("Serialization")]     //Broken in dday
         public void CalendarParameters2()
         {
-            SerializeTest("CalendarParameters2.ics", typeof(iCalendarSerializer));
+            SerializeTest("CalendarParameters2.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void CaseInsensitive1()
         {
-            SerializeTest("CaseInsensitive1.ics", typeof(iCalendarSerializer));
+            SerializeTest("CaseInsensitive1.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void CaseInsensitive2()
         {
-            SerializeTest("CaseInsensitive2.ics", typeof(iCalendarSerializer));
+            SerializeTest("CaseInsensitive2.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void CaseInsensitive3()
         {
-            SerializeTest("CaseInsensitive3.ics", typeof(iCalendarSerializer));
+            SerializeTest("CaseInsensitive3.ics", typeof(CalendarSerializer));
         }
 
         /// <summary>
@@ -432,20 +432,20 @@ namespace ical.NET.UnitTests
         [Test, Category("Serialization")]
         public void CaseInsensitive4()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\CaseInsensitive4.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\CaseInsensitive4.ics")[0];
             Assert.AreEqual("2.5", iCal.Version);
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void Categories1_1()
         {
-            SerializeTest("Categories1.ics", typeof(iCalendarSerializer));
+            SerializeTest("Categories1.ics", typeof(CalendarSerializer));
         }
 
         [Test, Category("Serialization")]
         public void Categories1_2()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Categories1.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\Categories1.ics")[0];
             ProgramTest.TestCal(iCal);
             var evt = iCal.Events.First();
 
@@ -472,14 +472,14 @@ namespace ical.NET.UnitTests
         [Test, Category("Serialization")]
         public void EmptyLines1()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\EmptyLines1.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\EmptyLines1.ics")[0];
             Assert.AreEqual(2, iCal.Events.Count, "iCalendar should have 2 events");
         }
 
         [Test, Category("Serialization")]
         public void EmptyLines2()
         {
-            var calendars = iCalendar.LoadFromFile(@"Calendars\Serialization\EmptyLines2.ics");
+            var calendars = ICalendar.LoadFromFile(@"Calendars\Serialization\EmptyLines2.ics");
             Assert.AreEqual(2, calendars.Count);
             Assert.AreEqual(2, calendars[0].Events.Count, "iCalendar should have 2 events");
             Assert.AreEqual(2, calendars[1].Events.Count, "iCalendar should have 2 events");
@@ -492,7 +492,7 @@ namespace ical.NET.UnitTests
         [Test, Category("Serialization")]
         public void EmptyLines3()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\EmptyLines3.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\EmptyLines3.ics")[0];
             Assert.AreEqual(1, iCal.Todos.Count, "iCalendar should have 1 todo");
         }
 
@@ -502,14 +502,14 @@ namespace ical.NET.UnitTests
         [Test, Category("Serialization")]
         public void EmptyLines4()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\EmptyLines4.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\EmptyLines4.ics")[0];
             Assert.AreEqual(28, iCal.Events.Count);
         }
 
         [Test]
         public void Encoding2()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Encoding2.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\Encoding2.ics")[0];
             ProgramTest.TestCal(iCal);
             var evt = iCal.Events.First();
 
@@ -533,42 +533,42 @@ namespace ical.NET.UnitTests
         [Test]
         public void Encoding3()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Encoding3.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\Encoding3.ics")[0];
             ProgramTest.TestCal(iCal);
             var evt = iCal.Events.First();
 
-            Assert.AreEqual("uuid1153170430406", evt.UID, "UID should be 'uuid1153170430406'; it is " + evt.UID);
+            Assert.AreEqual("uuid1153170430406", evt.Uid, "UID should be 'uuid1153170430406'; it is " + evt.Uid);
             Assert.AreEqual(1, evt.Sequence, "SEQUENCE should be 1; it is " + evt.Sequence);
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void Event1()
         {
-            SerializeTest("Event1.ics", typeof(iCalendarSerializer));
+            SerializeTest("Event1.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void Event2()
         {
-            SerializeTest("Event2.ics", typeof(iCalendarSerializer));
+            SerializeTest("Event2.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void Event3()
         {
-            SerializeTest("Event3.ics", typeof(iCalendarSerializer));
+            SerializeTest("Event3.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void Event4()
         {
-            SerializeTest("Event4.ics", typeof(iCalendarSerializer));
+            SerializeTest("Event4.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void Event5()
         {
-            var iCal = new iCalendar();
+            var iCal = new ICalendar();
 
             var evt = iCal.Create<Event>();
             evt.Summary = "Test event title";
@@ -576,14 +576,14 @@ namespace ical.NET.UnitTests
             evt.Start.IsUniversalTime = true;
             evt.Duration = new TimeSpan(24, 0, 0);
             evt.Created = evt.Start.Copy<IDateTime>();
-            evt.DTStamp = evt.Start.Copy<IDateTime>();
-            evt.UID = "123456789";
+            evt.DtStamp = evt.Start.Copy<IDateTime>();
+            evt.Uid = "123456789";
             evt.IsAllDay = true;
 
             var rec = new RecurrencePattern("FREQ=WEEKLY;INTERVAL=3;BYDAY=TU,FR,SU;COUNT=4");
             evt.RecurrenceRules.Add(rec);
 
-            var serializer = new iCalendarSerializer();
+            var serializer = new CalendarSerializer();
             var icalString = serializer.SerializeToString(iCal);
 
             Assert.IsNotEmpty(icalString, "iCalendarSerializer.SerializeToString() must not be empty");
@@ -594,13 +594,13 @@ namespace ical.NET.UnitTests
             Assert.IsTrue(evtString.Equals("BEGIN:VEVENT\r\nCREATED:20070319T000000Z\r\nDTEND;VALUE=DATE:20070320\r\nDTSTAMP:20070319T000000Z\r\nDTSTART;VALUE=DATE:20070319\r\nRRULE:FREQ=WEEKLY;INTERVAL=3;COUNT=4;BYDAY=TU,FR,SU\r\nSEQUENCE:0\r\nSUMMARY:Test event title\r\nUID:123456789\r\nEND:VEVENT\r\n"), "ComponentBaseSerializer.SerializeToString() serialized incorrectly");
 
             serializer.Serialize(iCal, @"Calendars\Serialization\Event5.ics");
-            SerializeTest("Event5.ics", typeof(iCalendarSerializer));
+            SerializeTest("Event5.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void Event6()
         {
-            var iCal = new iCalendar();
+            var iCal = new ICalendar();
 
             var evt = iCal.Create<Event>();
             evt.Summary = "Test event title";
@@ -617,7 +617,7 @@ namespace ical.NET.UnitTests
             eventSerializer.Serialize(evt, fs, Encoding.UTF8);
             fs.Close();
 
-            var iCal1 = new iCalendar();
+            var iCal1 = new ICalendar();
 
             fs = new FileStream(@"Calendars\Serialization\Event6.ics", FileMode.Open, FileAccess.Read);
             var evt1 = CalendarComponent.LoadFromStream<Event>(fs, Encoding.UTF8);
@@ -660,16 +660,16 @@ END:VEVENT
 END:VCALENDAR
 ";
             var sr = new StringReader(iCalString);
-            var calendar = iCalendar.LoadFromStream(sr)[0];
+            var calendar = ICalendar.LoadFromStream(sr)[0];
 
             Assert.IsTrue(calendar.Events.Count == 2, "There should be 2 events in the loaded iCalendar.");
             Assert.IsNotNull(calendar.Events["fd940618-45e2-4d19-b118-37fd7a8e3906"], "There should be an event with UID: fd940618-45e2-4d19-b118-37fd7a8e3906");
             Assert.IsNotNull(calendar.Events["ebfbd3e3-cc1e-4a64-98eb-ced2598b3908"], "There should be an event with UID: ebfbd3e3-cc1e-4a64-98eb-ced2598b3908");
 
-            var serializer = new iCalendarSerializer();
+            var serializer = new CalendarSerializer();
             serializer.Serialize(calendar, @"Calendars\Serialization\Event7.ics");
 
-            SerializeTest("Event7.ics", typeof(iCalendarSerializer));
+            SerializeTest("Event7.ics", typeof(CalendarSerializer));
         }
 
         [Test, Category("Serialization")]
@@ -705,7 +705,7 @@ UID:ebfbd3e3-cc1e-4a64-98eb-ced2598b3908
 END:VEVENT
 END:VCALENDAR
 ");
-            var iCal = iCalendar.LoadFromStream(sr)[0];
+            var iCal = ICalendar.LoadFromStream(sr)[0];
             Assert.IsTrue(iCal.Events.Count == 2, "There should be 2 events in the parsed calendar");
             Assert.IsNotNull(iCal.Events["fd940618-45e2-4d19-b118-37fd7a8e3906"], "Event fd940618-45e2-4d19-b118-37fd7a8e3906 should exist in the calendar");
             Assert.IsNotNull(iCal.Events["ebfbd3e3-cc1e-4a64-98eb-ced2598b3908"], "Event ebfbd3e3-cc1e-4a64-98eb-ced2598b3908 should exist in the calendar");
@@ -714,27 +714,27 @@ END:VCALENDAR
         //[Test, Category("Serialization")]     //Broken in dday
         public void FreeBusy1()
         {
-            IICalendar iCal = new iCalendar();
+            IICalendar iCal = new ICalendar();
 
             IEvent evt = iCal.Create<Event>();
             evt.Summary = "Test event";
             evt.Start = new CalDateTime(2010, 10, 1, 8, 0, 0);
             evt.End = new CalDateTime(2010, 10, 1, 9, 0, 0);
 
-            IICalendar freeBusyCalendar = new iCalendar();
+            IICalendar freeBusyCalendar = new ICalendar();
             var freeBusy = iCal.GetFreeBusy(new CalDateTime(2010, 10, 1, 0, 0, 0), new CalDateTime(2010, 10, 7, 11, 59, 59));
             freeBusyCalendar.AddChild(freeBusy);
 
-            var serializer = new iCalendarSerializer();
+            var serializer = new CalendarSerializer();
             serializer.Serialize(freeBusyCalendar, @"Calendars\Serialization\FreeBusy1.ics");
 
-            SerializeTest("FreeBusy1.ics", typeof(iCalendarSerializer));
+            SerializeTest("FreeBusy1.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void FreeBusy2()
         {
-            IICalendar iCal = new iCalendar();
+            IICalendar iCal = new ICalendar();
 
             IEvent evt = iCal.Create<Event>();
             evt.Summary = "Test event";
@@ -745,7 +745,7 @@ END:VCALENDAR
             attendee.ParticipationStatus = ParticipationStatus.Tentative;
             evt.Attendees.Add(attendee);
 
-            IICalendar freeBusyCalendar = new iCalendar();
+            IICalendar freeBusyCalendar = new ICalendar();
             var freeBusy = iCal.GetFreeBusy(
                 null, 
                 new IAttendee[] { new Attendee("mailto:test@test.com") }, 
@@ -754,22 +754,22 @@ END:VCALENDAR
 
             freeBusyCalendar.AddChild(freeBusy);
 
-            var serializer = new iCalendarSerializer();
+            var serializer = new CalendarSerializer();
             serializer.Serialize(freeBusyCalendar, @"Calendars\Serialization\FreeBusy2.ics");
 
-            SerializeTest("FreeBusy2.ics", typeof(iCalendarSerializer));
+            SerializeTest("FreeBusy2.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void GeographicLocation1_1()
         {
-            SerializeTest("GeographicLocation1.ics", typeof(iCalendarSerializer));
+            SerializeTest("GeographicLocation1.ics", typeof(CalendarSerializer));
         }
 
         [Test]
         public void GeographicLocation1_2()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\GeographicLocation1.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\GeographicLocation1.ics")[0];
             ProgramTest.TestCal(iCal);
             var evt = iCal.Events.First();
 
@@ -780,28 +780,28 @@ END:VCALENDAR
         [Test, Category("Serialization")]
         public void Google1()
         {
-            var tzid = "Europe/Berlin";
-            var iCal = iCalendar.LoadFromFile(@"Calendars/Serialization/Google1.ics")[0];
+            var tzId = "Europe/Berlin";
+            var iCal = ICalendar.LoadFromFile(@"Calendars/Serialization/Google1.ics")[0];
             var evt = iCal.Events["594oeajmftl3r9qlkb476rpr3c@google.com"];
             Assert.IsNotNull(evt);
 
-            IDateTime dtStart = new CalDateTime(2006, 12, 18, tzid);
-            IDateTime dtEnd = new CalDateTime(2006, 12, 23, tzid);
+            IDateTime dtStart = new CalDateTime(2006, 12, 18, tzId);
+            IDateTime dtEnd = new CalDateTime(2006, 12, 23, tzId);
             var occurrences = iCal.GetOccurrences(dtStart, dtEnd).OrderBy(o => o.Period.StartTime).ToList();
 
-            var DateTimes = new CalDateTime[]
+            var dateTimes = new CalDateTime[]
             {
-                new CalDateTime(2006, 12, 18, 7, 0, 0, tzid),
-                new CalDateTime(2006, 12, 19, 7, 0, 0, tzid),
-                new CalDateTime(2006, 12, 20, 7, 0, 0, tzid),
-                new CalDateTime(2006, 12, 21, 7, 0, 0, tzid),
-                new CalDateTime(2006, 12, 22, 7, 0, 0, tzid)
+                new CalDateTime(2006, 12, 18, 7, 0, 0, tzId),
+                new CalDateTime(2006, 12, 19, 7, 0, 0, tzId),
+                new CalDateTime(2006, 12, 20, 7, 0, 0, tzId),
+                new CalDateTime(2006, 12, 21, 7, 0, 0, tzId),
+                new CalDateTime(2006, 12, 22, 7, 0, 0, tzId)
             };
 
-            for (var i = 0; i < DateTimes.Length; i++)
-                Assert.AreEqual(DateTimes[i], occurrences[i].Period.StartTime, "Event should occur at " + DateTimes[i]);
+            for (var i = 0; i < dateTimes.Length; i++)
+                Assert.AreEqual(dateTimes[i], occurrences[i].Period.StartTime, "Event should occur at " + dateTimes[i]);
 
-            Assert.AreEqual(DateTimes.Length, occurrences.Count, "There should be exactly " + DateTimes.Length + " occurrences; there were " + occurrences.Count);
+            Assert.AreEqual(dateTimes.Length, occurrences.Count, "There should be exactly " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
         }
 
         /// <summary>
@@ -810,7 +810,7 @@ END:VCALENDAR
         [Test, Category("Serialization")]
         public void RecurrenceDates1()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\RecurrenceDates1.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\RecurrenceDates1.ics")[0];
             Assert.AreEqual(1, iCal.Events.Count);
             Assert.AreEqual(3, iCal.Events.First().RecurrenceDates.Count);
             
@@ -837,7 +837,7 @@ END:VCALENDAR
         [Test, Category("Serialization")]
         public void RequestStatus1()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\RequestStatus1.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\RequestStatus1.ics")[0];
             Assert.AreEqual(1, iCal.Events.Count);
             Assert.AreEqual(4, iCal.Events.First().RequestStatuses.Count);
 
@@ -869,7 +869,7 @@ END:VCALENDAR
         //[Test, Category("Serialization")]     //Broken in dday
         public void String1()
         {
-            IICalendar iCal = new iCalendar();
+            IICalendar iCal = new ICalendar();
             var evt = iCal.Create<Event>();
             evt.Start = CalDateTime.Now;
             evt.Duration = TimeSpan.FromHours(1);
@@ -911,10 +911,10 @@ Please do not reply to this email. Replies to this email will not be responded t
 
 Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 48 Leicester Square, London WC2H 7LR ";
 
-            var serializer = new iCalendarSerializer(iCal);
+            var serializer = new CalendarSerializer(iCal);
             serializer.Serialize(@"Calendars\Serialization\String1.ics");
 
-            SerializeTest("String1.ics", typeof(iCalendarSerializer));
+            SerializeTest("String1.ics", typeof(CalendarSerializer));
         }
 
         /// <summary>
@@ -942,15 +942,15 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         //[Test]     //Broken in dday
         public void TimeZone1()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\TimeZone1.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\TimeZone1.ics")[0];
 
             var tz = iCal.TimeZones[0];
             tz.LastModified = new CalDateTime(2007, 1, 1);
 
-            var serializer = new iCalendarSerializer();
+            var serializer = new CalendarSerializer();
             serializer.Serialize(iCal, @"Calendars\Serialization\Temp\TimeZone1.ics");
 
-            iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\TimeZone1.ics")[0];
+            iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\Temp\TimeZone1.ics")[0];
             tz = iCal.TimeZones[0];
 
             Assert.AreEqual(0, tz.Properties["LAST-MODIFIED"].Parameters.CountOf("VALUE"), "The \"VALUE\" parameter is not allowed on \"LAST-MODIFIED\"");
@@ -963,19 +963,19 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             // First, check against the VALUE parameter; it must be absent in DTSTART
             //
 
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\TimeZone2.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\TimeZone2.ics")[0];
 
             var tz = iCal.TimeZones[0];
-            foreach (ICalTimeZoneInfo tzi in tz.TimeZoneInfos)
+            foreach (CalTimeZoneInfo tzi in tz.TimeZoneInfos)
                 tzi.Start = new CalDateTime(2007, 1, 1);
 
-            var serializer = new iCalendarSerializer();
+            var serializer = new CalendarSerializer();
             serializer.Serialize(iCal, @"Calendars\Serialization\Temp\TimeZone2.ics");
 
-            iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\TimeZone2.ics")[0];
+            iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\Temp\TimeZone2.ics")[0];
             tz = iCal.TimeZones[0];
 
-            foreach (ICalTimeZoneInfo tzi in tz.TimeZoneInfos)
+            foreach (CalTimeZoneInfo tzi in tz.TimeZoneInfos)
             {
                 Assert.AreEqual(
                     0,
@@ -986,22 +986,22 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             //
             // Next, check against UTC time; DTSTART must be presented in local time
             //
-            iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\TimeZone2.ics")[0];
+            iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\TimeZone2.ics")[0];
 
             tz = iCal.TimeZones[0];
-            foreach (ICalTimeZoneInfo tzi in tz.TimeZoneInfos)
+            foreach (CalTimeZoneInfo tzi in tz.TimeZoneInfos)
             {
                 tzi.Start = CalDateTime.Now;
                 tzi.Start.IsUniversalTime = true;
             }
 
-            serializer = new iCalendarSerializer();
+            serializer = new CalendarSerializer();
             serializer.Serialize(iCal, @"Calendars\Serialization\Temp\TimeZone2.ics");
 
-            iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\TimeZone2.ics")[0];
+            iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\Temp\TimeZone2.ics")[0];
             tz = iCal.TimeZones[0];
 
-            foreach (ICalTimeZoneInfo tzi in tz.TimeZoneInfos)
+            foreach (CalTimeZoneInfo tzi in tz.TimeZoneInfos)
             {
                 Assert.AreEqual(0, tzi.Properties["DTSTART"].Parameters.CountOf("VALUE"),
                     "\"DTSTART\" property MUST be represented in local time in timezones");
@@ -1011,62 +1011,62 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         //[Test, Category("Serialization")]     //Broken in dday
         public void TimeZone3()
         {
-            SerializeTest("TimeZone3.ics", typeof(iCalendarSerializer));
+            SerializeTest("TimeZone3.ics", typeof(CalendarSerializer));
 
-            var iCal = new iCalendar();
-            var tmp_cal = iCalendar.LoadFromFile(@"Calendars\Serialization\TimeZone3.ics")[0];
-            iCal.MergeWith(tmp_cal);
+            var iCal = new ICalendar();
+            var tmpCal = ICalendar.LoadFromFile(@"Calendars\Serialization\TimeZone3.ics")[0];
+            iCal.MergeWith(tmpCal);
 
-            var serializer = new iCalendarSerializer();
+            var serializer = new CalendarSerializer();
             serializer.Serialize(iCal, @"Calendars\Serialization\Temp\TimeZone3.ics");
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void Todo1()
         {
-            SerializeTest("Todo1.ics", typeof(iCalendarSerializer));
+            SerializeTest("Todo1.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void Todo2()
         {
-            SerializeTest("Todo2.ics", typeof(iCalendarSerializer));
+            SerializeTest("Todo2.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void Todo3()
         {
-            SerializeTest("Todo3.ics", typeof(iCalendarSerializer));
+            SerializeTest("Todo3.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void Todo4()
         {
-            SerializeTest("Todo4.ics", typeof(iCalendarSerializer));
+            SerializeTest("Todo4.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void Todo5()
         {
-            SerializeTest("Todo5.ics", typeof(iCalendarSerializer));
+            SerializeTest("Todo5.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void Todo6()
         {
-            SerializeTest("Todo6.ics", typeof(iCalendarSerializer));
+            SerializeTest("Todo6.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void Todo7()
         {
-            SerializeTest("Todo7.ics", typeof(iCalendarSerializer));
+            SerializeTest("Todo7.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void Transparency1()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Transparency1.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\Transparency1.ics")[0];
             
             Assert.AreEqual(1, iCal.Events.Count);
             var evt = iCal.Events.First();
@@ -1077,7 +1077,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         [Test, Category("Serialization")]
         public void Transparency2()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Transparency2.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\Transparency2.ics")[0];
 
             Assert.AreEqual(1, iCal.Events.Count);
             var evt = iCal.Events.First();
@@ -1088,19 +1088,19 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         //[Test, Category("Serialization")]     //Broken in dday
         public void Trigger1()
         {
-            SerializeTest("Trigger1.ics", typeof(iCalendarSerializer));            
+            SerializeTest("Trigger1.ics", typeof(CalendarSerializer));            
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void XProperty1()
         {
-            SerializeTest("XProperty1.ics", typeof(iCalendarSerializer));
+            SerializeTest("XProperty1.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void XProperty2()
         {
-            SerializeTest("XProperty2.ics", typeof(iCalendarSerializer));
+            SerializeTest("XProperty2.ics", typeof(CalendarSerializer));
         }
 
         /// <summary>
@@ -1109,7 +1109,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         //[Test, Category("Serialization")]     //Broken in dday
         public void XProperty3()
         {
-            var iCal = new iCalendar();
+            var iCal = new ICalendar();
             var evt = iCal.Create<Event>();
 
             var htmlBuilder = new StringBuilder();
@@ -1121,20 +1121,20 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             p.Parameters.Add(new CalendarParameter("FMTTYPE", "text/html"));
             evt.Properties.Add(p);
 
-            var serializer = new iCalendarSerializer();
+            var serializer = new CalendarSerializer();
             serializer.Serialize(iCal, @"Calendars\Serialization\XProperty3.ics");
 
-            SerializeTest("XProperty3.ics", typeof(iCalendarSerializer));
+            SerializeTest("XProperty3.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void XProperty4()
         {
-            var iCal = new iCalendar();
+            var iCal = new ICalendar();
             iCal.AddProperty("X-WR-CALNAME", "DDay Test");
             iCal.AddProperty("X-WR-CALDESC", "Events for a DDay Test");
             iCal.AddProperty("X-PUBLISHED-TTL", "PT30M");
-            iCal.ProductID = "-//DDAYTEST//NONSGML www.test.com//EN";
+            iCal.ProductId = "-//DDAYTEST//NONSGML www.test.com//EN";
 
             // Create an event in the iCalendar
             var evt = iCal.Create<Event>();
@@ -1146,13 +1146,13 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             evt.Summary = "This is a title";
             evt.Description = "This is a description";
 
-            var serializer = new iCalendarSerializer();
+            var serializer = new CalendarSerializer();
             var output = serializer.SerializeToString(iCal);
             serializer.Serialize(iCal, @"Calendars\Serialization\XProperty4.ics");
 
             Assert.IsFalse(Regex.IsMatch(output, @"\r\n[\r\n]"));
 
-            SerializeTest("XProperty4.ics", typeof(iCalendarSerializer));
+            SerializeTest("XProperty4.ics", typeof(CalendarSerializer));
         }
 
         // FIXME: re-implement
@@ -1261,7 +1261,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         [Test, Category("Serialization")]
         public void DateTime1()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\DateTime1.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\DateTime1.ics")[0];
             Assert.AreEqual(6, iCal.Events.Count);
 
             var evt = iCal.Events["nc2o66s0u36iesitl2l0b8inn8@google.com"];
@@ -1275,7 +1275,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         //[Test, Category("Serialization")]     //Broken in dday
         public void DateTime2()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\DateTime2.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\DateTime2.ics")[0];
             Assert.AreEqual(1, iCal.Events.Count);
 
             Assert.IsNull(iCal.Events.First().Start);
@@ -1285,37 +1285,37 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         //[Test, Category("Serialization")]     //Broken in dday
         public void Duration1()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Duration1.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\Duration1.ics")[0];
             var evt = iCal.Events["edb7a48a-d846-47f8-bad2-9ea3f29bcda5"];
 
             Assert.IsNotNull(evt);
             Assert.AreEqual(TimeSpan.FromDays(12) + TimeSpan.FromHours(1), evt.Duration, "Duration should be 12 days, 1 hour");
 
-            SerializeTest("Duration1.ics", typeof(iCalendarSerializer));
+            SerializeTest("Duration1.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
-        public void USHolidays()
+        public void UsHolidays()
         {
-            SerializeTest("USHolidays.ics", typeof(iCalendarSerializer));
+            SerializeTest("USHolidays.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void Language1()
         {
-            SerializeTest("Language1.ics", typeof(iCalendarSerializer));
+            SerializeTest("Language1.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void Language2()
         {
-            SerializeTest("Language2.ics", typeof(iCalendarSerializer));
+            SerializeTest("Language2.ics", typeof(CalendarSerializer));
         }
 
         //[Test, Category("Serialization")]     //Broken in dday
         public void Language3()
         {
-            SerializeTest("Language3.ics", typeof(iCalendarSerializer));
+            SerializeTest("Language3.ics", typeof(CalendarSerializer));
 
             var calendarPath = Path.Combine(Environment.CurrentDirectory, "Calendars");
             calendarPath = Path.Combine(calendarPath, "Serialization");
@@ -1323,8 +1323,8 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             // Ensure that LoadFromUri() and LoadFromFile() produce identical results.
             // Thanks to Eugene, a student from Russia, who helped track down this bug.
             var assembly = Assembly.GetExecutingAssembly();
-            var russia1 = iCalendar.LoadFromUri(new Uri(Path.Combine(calendarPath, "Language3.ics")))[0];
-            var russia2 = iCalendar.LoadFromFile(Path.Combine(calendarPath, "Language3.ics"))[0];
+            var russia1 = ICalendar.LoadFromUri(new Uri(Path.Combine(calendarPath, "Language3.ics")))[0];
+            var russia2 = ICalendar.LoadFromFile(Path.Combine(calendarPath, "Language3.ics"))[0];
 
             CompareCalendars(russia1, russia2);
         }
@@ -1335,8 +1335,8 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             var calendarPath = Path.Combine(Environment.CurrentDirectory, "Calendars");
             calendarPath = Path.Combine(calendarPath, "Serialization");
 
-            var russia1 = iCalendar.LoadFromUri(new Uri("http://www.mozilla.org/projects/calendar/caldata/RussiaHolidays.ics"))[0];
-            var russia2 = iCalendar.LoadFromFile(Path.Combine(calendarPath, "Language3.ics"))[0];
+            var russia1 = ICalendar.LoadFromUri(new Uri("http://www.mozilla.org/projects/calendar/caldata/RussiaHolidays.ics"))[0];
+            var russia2 = ICalendar.LoadFromFile(Path.Combine(calendarPath, "Language3.ics"))[0];
 
             CompareCalendars(russia1, russia2);
         }
@@ -1344,13 +1344,13 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         [Test, Category("Serialization")]
         public void Language4()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars/Serialization/Language4.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars/Serialization/Language4.ics")[0];
         }
 
         [Test, Category("Serialization")]
         public void Outlook2007_LineFolds1()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars/Serialization/Outlook2007LineFolds.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars/Serialization/Outlook2007LineFolds.ics")[0];
             var events = iCal.GetOccurrences(new CalDateTime(2009, 06, 20), new CalDateTime(2009, 06, 22));
             Assert.AreEqual(1, events.Count);
         }
@@ -1359,7 +1359,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         public void Outlook2007_LineFolds2()
         {
             var longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
-            var iCal = iCalendar.LoadFromFile(@"Calendars/Serialization/Outlook2007LineFolds.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars/Serialization/Outlook2007LineFolds.ics")[0];
             var events = iCal.GetOccurrences<Event>(new CalDateTime(2009, 06, 20), new CalDateTime(2009, 06, 22)).OrderBy(o => o.Period.StartTime).ToList();
             Assert.AreEqual(longName, ((IEvent)events[0].Source).Location);
         }
@@ -1370,7 +1370,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         [Test, Category("Serialization")]
         public void Parameter1()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Parameter1.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\Parameter1.ics")[0];
 
             var evt = iCal.Events.First();
             IList<ICalendarParameter> parms = evt.Properties["DTSTART"].Parameters.AllOf("VALUE").ToList();
@@ -1385,7 +1385,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         [Test, Category("Serialization")]
         public void Parameter2()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Parameter2.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\Parameter2.ics")[0];
             Assert.AreEqual(2, iCal.Events.Count);
         }
 
@@ -1395,19 +1395,19 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         [Test, Category("Serialization"), ExpectedException("antlr.MismatchedTokenException")]
         public void Parse1()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Parse1.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\Parse1.ics")[0];
         }
 
         //[Test]     //Broken in dday
-        public void ProdID1()
+        public void ProdId1()
         {
-            SerializeTest("ProdID1.ics", typeof(iCalendarSerializer));
+            SerializeTest("ProdID1.ics", typeof(CalendarSerializer));
         }
 
         //[Test]     //Broken in dday
-        public void ProdID2()
+        public void ProdId2()
         {
-            SerializeTest("ProdID2.ics", typeof(iCalendarSerializer));
+            SerializeTest("ProdID2.ics", typeof(CalendarSerializer));
         }
 
         /// <summary>
@@ -1416,7 +1416,7 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         [Test, Category("Serialization")]
         public void Property1()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Property1.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\Property1.ics")[0];
 
             IList<ICalendarProperty> props = iCal.Properties.AllOf("VERSION").ToList();
             Assert.AreEqual(2, props.Count);
@@ -1461,9 +1461,9 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             var settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
             settings.EnsureAccurateLineNumbers = true;
 
-            var serializer = new iCalendarSerializer();
+            var serializer = new CalendarSerializer();
             serializer.SerializationContext = ctx;
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\EmptyLines1.ics", Encoding.UTF8, serializer)[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\EmptyLines1.ics", Encoding.UTF8, serializer)[0];
 
             Assert.AreEqual(2, iCal.Events.Count);
             Assert.AreEqual(4, iCal.Events.First().Line);
@@ -1493,9 +1493,9 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             var settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
             settings.EnsureAccurateLineNumbers = true;
 
-            var serializer = new iCalendarSerializer();
+            var serializer = new CalendarSerializer();
             serializer.SerializationContext = ctx;
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Calendar1.ics", Encoding.UTF8, serializer)[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Serialization\Calendar1.ics", Encoding.UTF8, serializer)[0];
 
             Assert.IsNotNull(iCal.Todos["2df60496-1e73-11db-ba96-e3cfe6793b5f"]);
             Assert.IsNotNull(iCal.Todos["4836c236-1e75-11db-835f-a024e2a6131f"]);
@@ -1557,16 +1557,16 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
         //    evt2.Summary = "Water Polo";
         //    evt2.Start = new iCalDateTime(2007, 10, 15, 10, 0, 0);
         //    evt2.Duration = TimeSpan.FromHours(1);
-        //    evt2.AddRelatedTo(evt1.UID, RelationshipTypes.Parent); // evt1 is the parent of evt2
+        //    evt2.AddRelatedTo(evt1.Uid, RelationshipTypes.Parent); // evt1 is the parent of evt2
 
         //    iCalendarSerializer serializer = new iCalendarSerializer(iCal);
         //    serializer.Serialize(@"Calendars\Serialization\Temp\RELATED_TO1.ics");
 
         //    iCal = iCalendar.LoadFromFile(@"Calendars\Serialization\Temp\RELATED_TO1.ics");
-        //    evt2 = iCal.Events[evt2.UID];
+        //    evt2 = iCal.Events[evt2.Uid];
 
         //    Assert.AreEqual(1, evt2.Related_To.Length);
-        //    Assert.AreEqual(evt1.UID, evt2.RelatedTo[0].Value);
+        //    Assert.AreEqual(evt1.Uid, evt2.RelatedTo[0].Value);
         //    Assert.AreEqual(((Parameter)evt2.RelatedTo[0].Parameters["RELTYPE"]).Values[0], RelationshipTypes.Parent);
         //}
     }

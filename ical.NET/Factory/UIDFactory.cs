@@ -2,7 +2,7 @@
 
 namespace Ical.Net.Factory
 {
-    public class UIDFactory
+    public class UidFactory
     {
         virtual public string Build()
         {

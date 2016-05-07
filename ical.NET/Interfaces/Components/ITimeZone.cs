@@ -7,8 +7,8 @@ namespace Ical.Net.Interfaces.Components
     public interface ITimeZone :
         ICalendarComponent
     {
-        string ID { get; set; }
-        string TZID { get; set; }
+        string Id { get; set; }
+        string TzId { get; set; }
         IDateTime LastModified { get; set; }
         Uri Url { get; set; }
         ICalendarObjectList<ITimeZoneInfo> TimeZoneInfos { get; set; }

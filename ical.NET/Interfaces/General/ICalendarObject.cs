@@ -30,7 +30,7 @@ namespace Ical.Net.Interfaces.General
         /// is associated with.
         /// </summary>
         IICalendar Calendar { get; }
-        IICalendar iCalendar { get; }
+        IICalendar ICalendar { get; }
 
         /// <summary>
         /// Returns the line number where this calendar

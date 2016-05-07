@@ -116,7 +116,7 @@ namespace Ical.Net
         /// Converts the date/time value to a local time
         /// within the specified time zone.
         /// </summary>
-        INodaDateTime ToTimeZone(string tzid);
+        INodaDateTime ToTimeZone(string tzId);
         //INodaDateTime ToTimeZone(ITimeZone tz);
 
         INodaDateTime Add(Duration duration);

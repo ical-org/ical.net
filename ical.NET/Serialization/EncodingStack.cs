@@ -9,7 +9,7 @@ namespace Ical.Net.Serialization
     {
         #region Private Fields
 
-        Stack<Encoding> m_Stack;
+        Stack<Encoding> _mStack;
 
         #endregion
 
@@ -17,7 +17,7 @@ namespace Ical.Net.Serialization
 
         public EncodingStack()
         {
-            m_Stack = new Stack<Encoding>();
+            _mStack = new Stack<Encoding>();
         }
 
         #endregion
@@ -28,8 +28,8 @@ namespace Ical.Net.Serialization
         {
             get
             {
-                if (m_Stack.Count > 0)
-                    return m_Stack.Peek();
+                if (_mStack.Count > 0)
+                    return _mStack.Peek();
 
                 // Default to Unicode encoding
                 return Encoding.Unicode;
@@ -39,13 +39,13 @@ namespace Ical.Net.Serialization
         public void Push(Encoding encoding)
         {
             if (encoding != null)
-                m_Stack.Push(encoding);
+                _mStack.Push(encoding);
         }
 
         public Encoding Pop()
         {
-            if (m_Stack.Count > 0)
-                return m_Stack.Pop();
+            if (_mStack.Count > 0)
+                return _mStack.Pop();
             return null;
         }
 

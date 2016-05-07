@@ -9,12 +9,12 @@ namespace ical.NET.UnitTests
     [TestFixture]
     public class FreeBusyTest
     {
-        private string tzid;
+        private string _tzid;
 
         [TestFixtureSetUp]
         public void InitAll()
         {
-            tzid = "US-Eastern";
+            _tzid = "US-Eastern";
         }
         
         /// <summary>
@@ -23,7 +23,7 @@ namespace ical.NET.UnitTests
         [Test, Category("FreeBusy")]
         public void GetFreeBusyStatus1()
         {
-            IICalendar iCal = new iCalendar();
+            IICalendar iCal = new ICalendar();
 
             IEvent evt = iCal.Create<Event>();
             evt.Summary = "Test event";

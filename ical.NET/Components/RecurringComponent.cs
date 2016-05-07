@@ -98,7 +98,7 @@ namespace Ical.Net
         /// <summary>
         /// The start date/time of the component.
         /// </summary>
-        virtual public IDateTime DTStart
+        virtual public IDateTime DtStart
         {
             get { return Properties.Get<IDateTime>("DTSTART"); }            
             set { Properties.Set("DTSTART", value); }
@@ -140,7 +140,7 @@ namespace Ical.Net
             set { Properties.Set("RRULE", value); }
         }
 
-        virtual public IDateTime RecurrenceID
+        virtual public IDateTime RecurrenceId
         {
             get { return Properties.Get<IDateTime>("RECURRENCE-ID"); }
             set { Properties.Set("RECURRENCE-ID", value); }
@@ -163,8 +163,8 @@ namespace Ical.Net
         /// </summary>
         virtual public IDateTime Start
         {
-            get { return DTStart; }
-            set { DTStart = value; }
+            get { return DtStart; }
+            set { DtStart = value; }
         }
 
         virtual public string Summary

@@ -69,7 +69,7 @@ namespace Ical.Net.DataTypes
             set { Parameters.Set("PARTSTAT", value); }
         }
         
-        virtual public bool RSVP
+        virtual public bool Rsvp
         {
             get
             {

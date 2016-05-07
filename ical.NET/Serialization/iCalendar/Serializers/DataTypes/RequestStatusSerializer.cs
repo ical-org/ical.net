@@ -59,8 +59,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             }
         }
 
-        internal static readonly Regex _narrowRequestMatch = new Regex(@"(.*?[^\\]);(.*?[^\\]);(.+)", RegexOptions.Compiled);
-        internal static readonly Regex _broadRequestMatch = new Regex(@"(.*?[^\\]);(.+)", RegexOptions.Compiled);
+        internal static readonly Regex NarrowRequestMatch = new Regex(@"(.*?[^\\]);(.*?[^\\]);(.+)", RegexOptions.Compiled);
+        internal static readonly Regex BroadRequestMatch = new Regex(@"(.*?[^\\]);(.+)", RegexOptions.Compiled);
 
         public override object Deserialize(TextReader tr)
         {
@@ -80,9 +80,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                     var factory = GetService<ISerializerFactory>();
                     if (factory != null)
                     {
-                        var match = _narrowRequestMatch.Match(value);
+                        var match = NarrowRequestMatch.Match(value);
                         if (!match.Success)
-                            match = _broadRequestMatch.Match(value);
+                            match = BroadRequestMatch.Match(value);
 
                         if (match.Success)
                         {

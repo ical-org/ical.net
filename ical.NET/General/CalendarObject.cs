@@ -187,7 +187,7 @@ namespace Ical.Net.General
         }
 
         /// <summary>
-        /// Returns the <see cref="Net.iCalendar"/> that this DDayiCalObject belongs to.
+        /// Returns the <see cref="ICalendar"/> that this DDayiCalObject belongs to.
         /// </summary>
         virtual public IICalendar Calendar
         {
@@ -207,7 +207,7 @@ namespace Ical.Net.General
             }
         }
 
-        virtual public IICalendar iCalendar
+        virtual public IICalendar ICalendar
         {
             get { return Calendar; }
             protected set { Calendar = value; }

@@ -6,7 +6,7 @@ namespace Ical.Net.Interfaces.DataTypes
         IEncodableDataType,
         IList<IPeriod>
     {
-        string TZID { get; set; }
+        string TzId { get; set; }
 
         IPeriod this[int index] { get; set; }
         void Add(IDateTime dt);

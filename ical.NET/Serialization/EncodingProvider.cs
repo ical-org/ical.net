@@ -12,7 +12,7 @@ namespace Ical.Net.Serialization
 
         #region Private Fields
 
-        ISerializationContext m_SerializationContext;
+        ISerializationContext _mSerializationContext;
 
         #endregion
 
@@ -20,7 +20,7 @@ namespace Ical.Net.Serialization
 
         public EncodingProvider(ISerializationContext ctx)
         {
-            m_SerializationContext = ctx;
+            _mSerializationContext = ctx;
         }
 
         #endregion
@@ -168,7 +168,7 @@ namespace Ical.Net.Serialization
                 if (data != null)
                 {
                     // Decode the string into the current encoding
-                    var encodingStack = m_SerializationContext.GetService(typeof(IEncodingStack)) as IEncodingStack;
+                    var encodingStack = _mSerializationContext.GetService(typeof(IEncodingStack)) as IEncodingStack;
                     return encodingStack.Current.GetString(data);
                 }
             }

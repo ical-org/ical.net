@@ -62,9 +62,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 throw new ArgumentException(name + " value " + value + " is out of range. Valid values are between " + min + " and " + max + (allowZero ? "" : ", excluding zero (0)") + ".");
         }
 
-        virtual public void CheckMutuallyExclusive<T, U>(string name1, string name2, T obj1, U obj2)
+        virtual public void CheckMutuallyExclusive<T, TU>(string name1, string name2, T obj1, TU obj2)
         {
-            if (object.Equals(obj1, default(T)) || object.Equals(obj2, default(U)))
+            if (object.Equals(obj1, default(T)) || object.Equals(obj2, default(TU)))
                 return;
             else
             {
@@ -192,25 +192,25 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         //Compiling these is a one-time penalty of about 80ms
         private const RegexOptions _ciCompiled = RegexOptions.IgnoreCase | RegexOptions.Compiled;
-        internal static readonly Regex _otherInterval =
+        internal static readonly Regex OtherInterval =
             new Regex(@"every\s+(?<Interval>other|\d+)?\w{0,2}\s*(?<Freq>second|minute|hour|day|week|month|year)s?,?\s*(?<More>.+)", _ciCompiled);
 
-        internal static readonly Regex _adverbFrequencies =
+        internal static readonly Regex AdverbFrequencies =
             new Regex(@"FREQ=(SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY);?(.*)", _ciCompiled);
 
-        internal static readonly Regex _numericTemporalUnits = new Regex(@"(?<Num>\d+)\w\w\s+(?<Type>second|minute|hour|day|week|month)", _ciCompiled);
+        internal static readonly Regex NumericTemporalUnits = new Regex(@"(?<Num>\d+)\w\w\s+(?<Type>second|minute|hour|day|week|month)", _ciCompiled);
 
-        internal static readonly Regex _temporalUnitType = new Regex(@"(?<Type>second|minute|hour|day|week|month)\s+(?<Num>\d+)", _ciCompiled);
+        internal static readonly Regex TemporalUnitType = new Regex(@"(?<Type>second|minute|hour|day|week|month)\s+(?<Num>\d+)", _ciCompiled);
 
-        internal static readonly Regex _relativeDaysOfWeek =
+        internal static readonly Regex RelativeDaysOfWeek =
             new Regex(@"(?<Num>\d+\w{0,2})?(\w|\s)+?(?<First>first)?(?<Last>last)?\s*((?<Day>sunday|monday|tuesday|wednesday|thursday|friday|saturday)\s*(and|or)?\s*)+", _ciCompiled);
 
-        internal static readonly Regex _time =
+        internal static readonly Regex Time =
             new Regex(@"at\s+(?<Hour>\d{1,2})(:(?<Minute>\d{2})((:|\.)(?<Second>\d{2}))?)?\s*(?<Meridian>(a|p)m?)?", _ciCompiled);
 
-        internal static readonly Regex _recurUntil = new Regex(@"^\s*until\s+(?<DateTime>.+)$", _ciCompiled);
+        internal static readonly Regex RecurUntil = new Regex(@"^\s*until\s+(?<DateTime>.+)$", _ciCompiled);
 
-        internal static readonly Regex _specificRecurrenceCount = new Regex(@"^\s*for\s+(?<Count>\d+)\s+occurrences\s*$", _ciCompiled);
+        internal static readonly Regex SpecificRecurrenceCount = new Regex(@"^\s*for\s+(?<Count>\d+)\s+occurrences\s*$", _ciCompiled);
 
         public override object Deserialize(TextReader tr)
         {
@@ -225,7 +225,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 // Decode the value, if necessary
                 value = Decode(r, value);
 
-                var match = _adverbFrequencies.Match(value);
+                var match = AdverbFrequencies.Match(value);
                 if (match.Success)
                 {
                     // Parse the frequency type
@@ -284,7 +284,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 // "Every 6 minutes"
                 // "Every 3 days"
                 //
-                else if ((match = _otherInterval.Match(value)).Success)
+                else if ((match = OtherInterval.Match(value)).Success)
                 {
                     if (match.Groups["Interval"].Success)
                     {
@@ -309,8 +309,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                     var values = match.Groups["More"].Value.Split(',');
                     foreach (var item in values)
                     {
-                        if ((match = _numericTemporalUnits.Match(item)).Success ||
-                            (match = _temporalUnitType.Match(item)).Success)
+                        if ((match = NumericTemporalUnits.Match(item)).Success ||
+                            (match = TemporalUnitType.Match(item)).Success)
                         {
                             int num;
                             if (int.TryParse(match.Groups["Num"].Value, out num))
@@ -346,7 +346,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                                 }
                             }
                         }
-                        else if ((match = _relativeDaysOfWeek.Match(item)).Success)
+                        else if ((match = RelativeDaysOfWeek.Match(item)).Success)
                         {
                             var num = int.MinValue;
                             if (match.Groups["Num"].Success)
@@ -372,7 +372,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                                 r.ByDay.Add(ds);
                             }
                         }
-                        else if ((match = _time.Match(item)).Success)
+                        else if ((match = Time.Match(item)).Success)
                         {
                             int hour, minute, second;
 
@@ -395,14 +395,14 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                                 }
                             }
                         }
-                        else if ((match = _recurUntil.Match(item)).Success)
+                        else if ((match = RecurUntil.Match(item)).Success)
                         {
                             var dt = DateTime.Parse(match.Groups["DateTime"].Value);
                             DateTime.SpecifyKind(dt, DateTimeKind.Utc);
 
                             r.Until = dt;
                         }
-                        else if ((match = _specificRecurrenceCount.Match(item)).Success)
+                        else if ((match = SpecificRecurrenceCount.Match(item)).Success)
                         {
                             int count;
                             if (!int.TryParse(match.Groups["Count"].Value, out count))

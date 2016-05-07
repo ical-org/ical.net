@@ -9,7 +9,7 @@ namespace Ical.Net.Interfaces.Components
         string TzId { get; }
         string TimeZoneName { get; set; }
         IList<string> TimeZoneNames { get; set; }
-        IUTCOffset OffsetFrom { get; set; }
-        IUTCOffset OffsetTo { get; set; }
+        IUtcOffset OffsetFrom { get; set; }
+        IUtcOffset OffsetTo { get; set; }
     }
 }

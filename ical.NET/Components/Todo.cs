@@ -40,15 +40,15 @@ namespace Ical.Net
         /// <summary>
         /// The start date/time of the todo item.
         /// </summary>
-        public override IDateTime DTStart
+        public override IDateTime DtStart
         {
             get
             {
-                return base.DTStart;
+                return base.DtStart;
             }
             set
             {
-                base.DTStart = value;
+                base.DtStart = value;
                 ExtrapolateTimes();
             }
         }
@@ -150,7 +150,7 @@ namespace Ical.Net
 
         private void Initialize()
         {
-            this.Name = Components.TODO;
+            this.Name = Components.Todo;
 
             _mEvaluator = new TodoEvaluator(this);
             SetService(_mEvaluator);
@@ -201,9 +201,9 @@ namespace Ical.Net
         /// <returns>True if the item is Active as of <paramref name="currDt"/>, False otherwise.</returns>
         virtual public bool IsActive(IDateTime currDt)
         {
-            if (DTStart == null)
+            if (DtStart == null)
                 return !IsCompleted(currDt) && !IsCancelled();
-            else if (currDt.GreaterThanOrEqual(DTStart))
+            else if (currDt.GreaterThanOrEqual(DtStart))
                 return !IsCompleted(currDt) && !IsCancelled();
             else return false;
         }
@@ -242,12 +242,12 @@ namespace Ical.Net
 
         private void ExtrapolateTimes()
         {
-            if (Due == null && DTStart != null && Duration != default(TimeSpan))
-                Due = DTStart.Add(Duration);
-            else if (Duration == default(TimeSpan) && DTStart != null && Due != null)
-                Duration = Due.Subtract(DTStart);
-            else if (DTStart == null && Duration != default(TimeSpan) && Due != null)
-                DTStart = Due.Subtract(Duration);
+            if (Due == null && DtStart != null && Duration != default(TimeSpan))
+                Due = DtStart.Add(Duration);
+            else if (Duration == default(TimeSpan) && DtStart != null && Due != null)
+                Duration = Due.Subtract(DtStart);
+            else if (DtStart == null && Duration != default(TimeSpan) && Due != null)
+                DtStart = Due.Subtract(Duration);
         }
 
         #endregion

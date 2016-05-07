@@ -43,22 +43,22 @@ namespace Ical.Net
 
         private void EnsureProperties()
         {
-            if (string.IsNullOrEmpty(UID))
+            if (string.IsNullOrEmpty(Uid))
             {
                 // Create a new UID for the component
-                UID = new UIDFactory().Build();
+                Uid = new UidFactory().Build();
             }
 
             // NOTE: removed setting the 'CREATED' property here since it breaks serialization.
             // See https://sourceforge.net/projects/dday-ical/forums/forum/656447/topic/3754354
-            if (DTStamp == null)
+            if (DtStamp == null)
             {
                 // Here, we don't simply set to DateTime.Now because DateTime.Now contains milliseconds, and
                 // the iCalendar standard doesn't care at all about milliseconds.  Therefore, when comparing
                 // two calendars, one generated, and one loaded from file, they may be functionally identical,
                 // but be determined to be different due to millisecond differences.
                 var now = DateTime.Now;
-                DTStamp = new CalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);                
+                DtStamp = new CalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);                
             }            
         }
 
@@ -84,7 +84,7 @@ namespace Ical.Net
             set { Properties.Set("COMMENT", value); }
         }
 
-        virtual public IDateTime DTStamp
+        virtual public IDateTime DtStamp
         {
             get { return Properties.Get<IDateTime>("DTSTAMP"); }
             set { Properties.Set("DTSTAMP", value); }
@@ -165,17 +165,17 @@ namespace Ical.Net
                 obj != this)
             {
                 var r = (RecurringComponent)obj;                
-                if (UID != null)
-                    return UID.Equals(r.UID);
-                else return UID == r.UID;
+                if (Uid != null)
+                    return Uid.Equals(r.Uid);
+                else return Uid == r.Uid;
             }
             return base.Equals(obj);
         }
 
         public override int GetHashCode()
         {
-            if (UID != null)
-                return UID.GetHashCode();
+            if (Uid != null)
+                return Uid.GetHashCode();
             return base.GetHashCode();
         }
 
@@ -183,15 +183,15 @@ namespace Ical.Net
 
         #region IUniqueComponent Members
 
-        virtual public event EventHandler<ObjectEventArgs<string, string>> UIDChanged;
+        virtual public event EventHandler<ObjectEventArgs<string, string>> UidChanged;
 
         virtual protected void OnUidChanged(string oldUid, string newUid)
         {
-            if (UIDChanged != null)
-                UIDChanged(this, new ObjectEventArgs<string, string>(oldUid, newUid));
+            if (UidChanged != null)
+                UidChanged(this, new ObjectEventArgs<string, string>(oldUid, newUid));
         }
 
-        virtual public string UID
+        virtual public string Uid
         {
             get { return Properties.Get<string>("UID"); }
             set { Properties.Set("UID", value); }

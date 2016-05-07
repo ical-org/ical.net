@@ -49,7 +49,7 @@ namespace Ical.Net.Utility
             return s;
         }
 
-        internal static readonly Regex _normalizeToCrLf = new Regex(@"((\r(?=[^\n]))|((?<=[^\r])\n))", RegexOptions.Compiled);
+        internal static readonly Regex NormalizeToCrLf = new Regex(@"((\r(?=[^\n]))|((?<=[^\r])\n))", RegexOptions.Compiled);
 
         /// <summary>
         /// Normalizes line endings, converting "\r" into "\r\n" and "\n" into "\r\n".        
@@ -57,7 +57,7 @@ namespace Ical.Net.Utility
         public static TextReader Normalize(string s, ISerializationContext ctx)
         {
             // Replace \r and \n with \r\n.
-            s = _normalizeToCrLf.Replace(s, "\r\n");
+            s = NormalizeToCrLf.Replace(s, "\r\n");
 
             var settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
             if (settings == null || !settings.EnsureAccurateLineNumbers)
@@ -75,7 +75,7 @@ namespace Ical.Net.Utility
             return reader;
         }
 
-        internal static readonly Regex _newLineMatch = new Regex(@"(\r\n[ \t])", RegexOptions.Compiled);
+        internal static readonly Regex NewLineMatch = new Regex(@"(\r\n[ \t])", RegexOptions.Compiled);
 
         /// <summary>
         /// Unwraps lines from the RFC 2445 "line folding" technique.
@@ -84,7 +84,7 @@ namespace Ical.Net.Utility
         /// </summary>
         public static string UnwrapLines(string s)
         {
-            return _newLineMatch.Replace(s, string.Empty);
+            return NewLineMatch.Replace(s, string.Empty);
         }
 
         public static TextReader UnwrapLines(TextReader tr)

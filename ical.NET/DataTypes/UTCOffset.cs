@@ -11,7 +11,7 @@ namespace Ical.Net.DataTypes
 #if !SILVERLIGHT
     [Serializable]
 #endif
-    public class UtcOffset : EncodableDataType, IUTCOffset
+    public class UtcOffset : EncodableDataType, IUtcOffset
     {
         public TimeSpan Offset { get; set; }
 
@@ -27,7 +27,7 @@ namespace Ical.Net.DataTypes
 
         public UtcOffset(string value) : this()
         {
-            Offset = UTCOffsetSerializer.GetOffset(value);
+            Offset = UtcOffsetSerializer.GetOffset(value);
         }
 
         public UtcOffset(TimeSpan ts)
@@ -39,7 +39,7 @@ namespace Ical.Net.DataTypes
 
         static public explicit operator TimeSpan(UtcOffset o) => o.Offset;
 
-        virtual public DateTime ToUTC(DateTime dt) => DateTime.SpecifyKind(dt.Add(-Offset), DateTimeKind.Utc);
+        virtual public DateTime ToUtc(DateTime dt) => DateTime.SpecifyKind(dt.Add(-Offset), DateTimeKind.Utc);
 
         virtual public DateTime ToLocal(DateTime dt) => DateTime.SpecifyKind(dt.Add(Offset), DateTimeKind.Local);
 
@@ -73,9 +73,9 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (obj is IUTCOffset)
+            if (obj is IUtcOffset)
             {
-                var utco = (IUTCOffset)obj;
+                var utco = (IUtcOffset)obj;
                 Offset = utco.Offset;
             }
         }

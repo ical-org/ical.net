@@ -10,27 +10,27 @@ using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers
 {
-    public class iCalendarSerializer :
+    public class CalendarSerializer :
         ComponentSerializer
     {
         #region Private Fields
 
-        IICalendar m_ICalendar;
+        IICalendar _mICalendar;
 
         #endregion
 
         #region Constructors
 
-        public iCalendarSerializer() : base()
+        public CalendarSerializer() : base()
         {
         }
 
-        public iCalendarSerializer(IICalendar iCal)
+        public CalendarSerializer(IICalendar iCal)
         {
-            m_ICalendar = iCal;
+            _mICalendar = iCal;
         }
 
-        public iCalendarSerializer(ISerializationContext ctx) : base(ctx)
+        public CalendarSerializer(ISerializationContext ctx) : base(ctx)
         {
         }
 
@@ -41,14 +41,14 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         [Obsolete("Use the Serialize(IICalendar iCal, string filename) method instead.")]
         virtual public void Serialize(string filename)
         {
-            if (m_ICalendar != null)
-                Serialize(m_ICalendar, filename);
+            if (_mICalendar != null)
+                Serialize(_mICalendar, filename);
         }
 
         [Obsolete("Use the SerializeToString(ICalendarObject obj) method instead.")]
         virtual public string SerializeToString()
         {
-            return SerializeToString(m_ICalendar);
+            return SerializeToString(_mICalendar);
         }
 
         virtual public void Serialize(IICalendar iCal, string filename)
@@ -80,9 +80,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                 // as they are required by RFC5545.
                 var copy = iCal.Copy<IICalendar>();
                 if (string.IsNullOrEmpty(copy.Version))
-                    copy.Version = CalendarVersions.v2_0;                    
-                if (string.IsNullOrEmpty(copy.ProductID))
-                    copy.ProductID = CalendarProductIDs.Default;
+                    copy.Version = CalendarVersions.V20;                    
+                if (string.IsNullOrEmpty(copy.ProductId))
+                    copy.ProductId = CalendarProductIDs.Default;
 
                 return base.SerializeToString(copy);
             }

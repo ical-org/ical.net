@@ -35,9 +35,9 @@ namespace Ical.Net
                 }
 
                 var fb = freeBusyRequest.Copy<IFreeBusy>();
-                fb.UID = new UIDFactory().Build();
+                fb.Uid = new UidFactory().Build();
                 fb.Entries.Clear();
-                fb.DTStamp = CalDateTime.Now;
+                fb.DtStamp = CalDateTime.Now;
 
                 foreach (var o in occurrences)
                 {
@@ -99,9 +99,9 @@ namespace Ical.Net
         static public IFreeBusy CreateRequest(IDateTime fromInclusive, IDateTime toExclusive, IOrganizer organizer, IAttendee[] contacts)
         {
             var fb = new FreeBusy();
-            fb.DTStamp = CalDateTime.Now;
-            fb.DTStart = fromInclusive;
-            fb.DTEnd = toExclusive;
+            fb.DtStamp = CalDateTime.Now;
+            fb.DtStart = fromInclusive;
+            fb.DtEnd = toExclusive;
             if (organizer != null)
                 fb.Organizer = organizer.Copy<IOrganizer>();
             if (contacts != null)
@@ -119,7 +119,7 @@ namespace Ical.Net
 
         public FreeBusy()
         {
-            Name = Components.FREEBUSY;
+            Name = Components.Freebusy;
         }
 
         #endregion
@@ -132,13 +132,13 @@ namespace Ical.Net
             set { Properties.Set("FREEBUSY", value); }
         }
 
-        virtual public IDateTime DTStart
+        virtual public IDateTime DtStart
         {
             get { return Properties.Get<IDateTime>("DTSTART"); }
             set { Properties.Set("DTSTART", value); }
         }
 
-        virtual public IDateTime DTEnd
+        virtual public IDateTime DtEnd
         {
             get { return Properties.Get<IDateTime>("DTEND"); }
             set { Properties.Set("DTEND", value); }

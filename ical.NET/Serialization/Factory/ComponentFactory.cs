@@ -17,27 +17,27 @@ namespace Ical.Net.Serialization.Factory
             // Determine the type of component to build.
             switch (objectName.ToUpper())
             {
-                case Components.ALARM:
+                case Components.Alarm:
                     type = typeof(Alarm);
                     break;
-                case Components.EVENT: 
+                case Components.Event: 
                     type = typeof(Event);
                     break;
-                case Components.FREEBUSY:
+                case Components.Freebusy:
                     type = typeof(FreeBusy);
                     break;
-                case Components.JOURNAL:
+                case Components.Journal:
                     type = typeof(Journal);
                     break;
-                case Components.TIMEZONE:
-                    type = typeof(ICalTimeZone);
+                case Components.Timezone:
+                    type = typeof(CalTimeZone);
                     break;
-                case Components.TODO:
+                case Components.Todo:
                     type = typeof(Todo);
                     break;
-                case Components.DAYLIGHT:
-                case Components.STANDARD:
-                    type = typeof(ICalTimeZoneInfo);
+                case Components.Daylight:
+                case Components.Standard:
+                    type = typeof(CalTimeZoneInfo);
                     break;
                 default:
                     type = typeof(CalendarComponent);

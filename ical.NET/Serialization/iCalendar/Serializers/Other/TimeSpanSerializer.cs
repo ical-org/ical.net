@@ -53,7 +53,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
             return null;
         }
 
-        internal static readonly Regex _timespanMatch =
+        internal static readonly Regex TimespanMatch =
             new Regex(@"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?))$",
                 RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
@@ -63,7 +63,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 
             try
             {
-                var match = _timespanMatch.Match(value);
+                var match = TimespanMatch.Match(value);
                 var days = 0;
                 var hours = 0;
                 var minutes = 0;

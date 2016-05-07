@@ -6,21 +6,21 @@ namespace ical.NET.Collections.Enumerators
     public class GroupedListEnumerator<TType> :
         IEnumerator<TType>
     {
-        IList<IMultiLinkedList<TType>> _Lists;
-        IEnumerator<IMultiLinkedList<TType>> _ListsEnumerator;
-        IEnumerator<TType> _ListEnumerator;
+        IList<IMultiLinkedList<TType>> _lists;
+        IEnumerator<IMultiLinkedList<TType>> _listsEnumerator;
+        IEnumerator<TType> _listEnumerator;
 
         public GroupedListEnumerator(IList<IMultiLinkedList<TType>> lists)
         {
-            _Lists = lists;
+            _lists = lists;
         }
 
         virtual public TType Current
         {
             get
             {
-                if (_ListEnumerator != null)
-                    return _ListEnumerator.Current;
+                if (_listEnumerator != null)
+                    return _listEnumerator.Current;
                 return default(TType);
             }
         }
@@ -32,10 +32,10 @@ namespace ical.NET.Collections.Enumerators
 
         void DisposeListEnumerator()
         {
-            if (_ListEnumerator != null)
+            if (_listEnumerator != null)
             {
-                _ListEnumerator.Dispose();
-                _ListEnumerator = null;
+                _listEnumerator.Dispose();
+                _listEnumerator = null;
             }
         }
 
@@ -43,27 +43,27 @@ namespace ical.NET.Collections.Enumerators
         {
             get
             {
-                if (_ListEnumerator != null)
-                    return _ListEnumerator.Current;
+                if (_listEnumerator != null)
+                    return _listEnumerator.Current;
                 return default(TType);
             }
         }
 
         private bool MoveNextList()
         {
-            if (_ListsEnumerator == null)
+            if (_listsEnumerator == null)
             {
-                _ListsEnumerator = _Lists.GetEnumerator();
+                _listsEnumerator = _lists.GetEnumerator();
             }
 
-            if (_ListsEnumerator != null)
+            if (_listsEnumerator != null)
             {
-                if (_ListsEnumerator.MoveNext())
+                if (_listsEnumerator.MoveNext())
                 {
                     DisposeListEnumerator();
-                    if (_ListsEnumerator.Current != null)
+                    if (_listsEnumerator.Current != null)
                     {
-                        _ListEnumerator = _ListsEnumerator.Current.GetEnumerator();
+                        _listEnumerator = _listsEnumerator.Current.GetEnumerator();
                         return true;
                     }
                 }
@@ -74,9 +74,9 @@ namespace ical.NET.Collections.Enumerators
 
         virtual public bool MoveNext()
         {
-            if (_ListEnumerator != null)
+            if (_listEnumerator != null)
             {
-                if (_ListEnumerator.MoveNext())
+                if (_listEnumerator.MoveNext())
                 {
                     return true;
                 }
@@ -98,10 +98,10 @@ namespace ical.NET.Collections.Enumerators
         virtual public void Reset()
         {
 
-            if (_ListsEnumerator != null)
+            if (_listsEnumerator != null)
             {
-                _ListsEnumerator.Dispose();
-                _ListsEnumerator = null;
+                _listsEnumerator.Dispose();
+                _listsEnumerator = null;
             }
         }
     }

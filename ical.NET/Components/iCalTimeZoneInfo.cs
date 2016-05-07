@@ -13,16 +13,16 @@ namespace Ical.Net
 {    
     /// <summary>
     /// A class that contains time zone information, and is usually accessed
-    /// from an iCalendar object using the <see cref="iCalendar.GetTimeZone"/> method.        
+    /// from an iCalendar object using the <see cref="ICalendar.GetTimeZone"/> method.        
     /// </summary>
 #if !SILVERLIGHT
     [Serializable]
 #endif
-    public class ICalTimeZoneInfo : CalendarComponent, ITimeZoneInfo
+    public class CalTimeZoneInfo : CalendarComponent, ITimeZoneInfo
     {
         private TimeZoneInfoEvaluator _mEvaluator;
 
-        public ICalTimeZoneInfo() : base()
+        public CalTimeZoneInfo() : base()
         {
             // FIXME: how do we ensure SEQUENCE doesn't get serialized?
             // base.Sequence = null;
@@ -32,7 +32,7 @@ namespace Ical.Net
             Initialize();
         }
 
-        public ICalTimeZoneInfo(string name) : this()
+        public CalTimeZoneInfo(string name) : this()
         {
             Name = name;
         }
@@ -51,7 +51,7 @@ namespace Ical.Net
                 if (_tzId == null)
                 {
                     var tz = Parent as ITimeZone;
-                    _tzId = tz?.TZID;
+                    _tzId = tz?.TzId;
                 }
                 return _tzId;
             }
@@ -84,17 +84,17 @@ namespace Ical.Net
             }
         }
 
-        private IUTCOffset _offsetFrom;
-        virtual public IUTCOffset OffsetFrom
+        private IUtcOffset _offsetFrom;
+        virtual public IUtcOffset OffsetFrom
         {
-            get { return _offsetFrom ?? (_offsetFrom = Properties.Get<IUTCOffset>("TZOFFSETFROM")); }
+            get { return _offsetFrom ?? (_offsetFrom = Properties.Get<IUtcOffset>("TZOFFSETFROM")); }
             set { _offsetFrom = value; }
         }
 
-        private IUTCOffset _offsetTo;
-        virtual public IUTCOffset OffsetTo
+        private IUtcOffset _offsetTo;
+        virtual public IUtcOffset OffsetTo
         {
-            get { return _offsetTo ?? (_offsetTo = Properties.Get<IUTCOffset>("TZOFFSETTO")); }
+            get { return _offsetTo ?? (_offsetTo = Properties.Get<IUtcOffset>("TZOFFSETTO")); }
             set { _offsetTo = value; }
         }
 
@@ -105,7 +105,7 @@ namespace Ical.Net
             set { _tzNames = value; }
         }
 
-        virtual public IDateTime DTStart
+        virtual public IDateTime DtStart
         {
             get { return Start; }
             set { Start = value; }
@@ -141,7 +141,7 @@ namespace Ical.Net
             set { Properties.Set("RRULE", value); }
         }
 
-        virtual public IDateTime RecurrenceID
+        virtual public IDateTime RecurrenceId
         {
             get { return Properties.Get<IDateTime>("RECURRENCE-ID"); }
             set { Properties.Set("RECURRENCE-ID", value); }
@@ -179,7 +179,7 @@ namespace Ical.Net
             Initialize();
         }
 
-        protected bool Equals(ICalTimeZoneInfo other)
+        protected bool Equals(CalTimeZoneInfo other)
         {
             return base.Equals(other) && Equals(_mEvaluator, other._mEvaluator);
         }
@@ -198,7 +198,7 @@ namespace Ical.Net
             {
                 return false;
             }
-            return Equals((ICalTimeZoneInfo)obj);
+            return Equals((CalTimeZoneInfo)obj);
         }
 
         public override int GetHashCode()

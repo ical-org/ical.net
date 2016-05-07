@@ -18,7 +18,7 @@ namespace Ical.Net.Interfaces.Components
         /// will be extrapolated.
         /// </note>
         /// </summary>
-        IDateTime DTEnd { get; set; }
+        IDateTime DtEnd { get; set; }
 
         /// <summary>
         /// The duration of the event.

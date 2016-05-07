@@ -75,8 +75,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         }
 
         private const RegexOptions _ciCompiled = RegexOptions.Compiled | RegexOptions.IgnoreCase;
-        internal static readonly Regex _dateOnlyMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))?$", _ciCompiled);
-        internal static readonly Regex _fullDateTimePatternMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))T((\d{2})(\d{2})(\d{2})(Z)?)$", _ciCompiled);
+        internal static readonly Regex DateOnlyMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))?$", _ciCompiled);
+        internal static readonly Regex FullDateTimePatternMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))T((\d{2})(\d{2})(\d{2})(Z)?)$", _ciCompiled);
 
         public override object Deserialize(TextReader tr)
         {
@@ -88,9 +88,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 // Decode the value as necessary
                 value = Decode(dt, value);
 
-                var match = _fullDateTimePatternMatch.Match(value);
+                var match = FullDateTimePatternMatch.Match(value);
                 if (!match.Success)
-                    match = _dateOnlyMatch.Match(value);
+                    match = DateOnlyMatch.Match(value);
 
                 if (!match.Success)
                     return null;

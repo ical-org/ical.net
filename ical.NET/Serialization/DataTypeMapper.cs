@@ -21,7 +21,7 @@ namespace Ical.Net.Serialization
 
         #region Private Fields
 
-        IDictionary<string, PropertyMapping> _PropertyMap = new Dictionary<string, PropertyMapping>();
+        IDictionary<string, PropertyMapping> _propertyMap = new Dictionary<string, PropertyMapping>();
 
         #endregion
 
@@ -62,8 +62,8 @@ namespace Ical.Net.Serialization
             AddPropertyMapping("TRANSP", typeof(TransparencyType), false);
             AddPropertyMapping("TRIGGER", typeof(ITrigger), false);
             AddPropertyMapping("TZNAME", typeof(string), false);
-            AddPropertyMapping("TZOFFSETFROM", typeof(IUTCOffset), false);
-            AddPropertyMapping("TZOFFSETTO", typeof(IUTCOffset), false);
+            AddPropertyMapping("TZOFFSETFROM", typeof(IUtcOffset), false);
+            AddPropertyMapping("TZOFFSETTO", typeof(IUtcOffset), false);
             AddPropertyMapping("TZURL", typeof(Uri), false);
             AddPropertyMapping("URL", typeof(Uri), false);
         }
@@ -100,7 +100,7 @@ namespace Ical.Net.Serialization
                 m.ObjectType = objectType;
                 m.AllowsMultipleValuesPerProperty = allowsMultipleValues;
 
-                _PropertyMap[name.ToUpper()] = m;
+                _propertyMap[name.ToUpper()] = m;
             }
         }
 
@@ -112,15 +112,15 @@ namespace Ical.Net.Serialization
                 m.Resolver = resolver;
                 m.AllowsMultipleValuesPerProperty = allowsMultipleValues;
 
-                _PropertyMap[name.ToUpper()] = m;
+                _propertyMap[name.ToUpper()] = m;
             }
         }
 
         public void RemovePropertyMapping(string name)
         {
             if (name != null &&
-                _PropertyMap.ContainsKey(name.ToUpper()))
-                _PropertyMap.Remove(name.ToUpper());
+                _propertyMap.ContainsKey(name.ToUpper()))
+                _propertyMap.Remove(name.ToUpper());
         }
 
         virtual public bool GetPropertyAllowsMultipleValues(object obj)
@@ -129,9 +129,9 @@ namespace Ical.Net.Serialization
             if (p != null && p.Name != null)
             {
                 var name = p.Name.ToUpper();
-                if (_PropertyMap.ContainsKey(name))
+                if (_propertyMap.ContainsKey(name))
                 {
-                    var m = _PropertyMap[name];
+                    var m = _propertyMap[name];
                     return m.AllowsMultipleValuesPerProperty;
                 }
             }
@@ -144,9 +144,9 @@ namespace Ical.Net.Serialization
             if (p != null && p.Name != null)
             {
                 var name = p.Name.ToUpper();
-                if (_PropertyMap.ContainsKey(name))
+                if (_propertyMap.ContainsKey(name))
                 {
-                    var m = _PropertyMap[name];
+                    var m = _propertyMap[name];
                     if (m.Resolver != null)
                         return m.Resolver(p);
                     else

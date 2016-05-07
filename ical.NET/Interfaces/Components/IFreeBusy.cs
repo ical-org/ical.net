@@ -9,8 +9,8 @@ namespace Ical.Net.Interfaces.Components
         IMergeable
     {
         IList<IFreeBusyEntry> Entries { get; set; }
-        IDateTime DTStart { get; set; }
-        IDateTime DTEnd { get; set; }
+        IDateTime DtStart { get; set; }
+        IDateTime DtEnd { get; set; }
         IDateTime Start { get; set; }
         IDateTime End { get; set; }
 

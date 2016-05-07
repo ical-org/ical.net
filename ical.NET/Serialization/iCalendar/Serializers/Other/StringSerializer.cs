@@ -28,7 +28,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 
         #region Protected Methods
 
-        internal static readonly Regex _singleBackslashMatch = new Regex(@"(?<!\\)\\(?!\\)", RegexOptions.Compiled);
+        internal static readonly Regex SingleBackslashMatch = new Regex(@"(?<!\\)\\(?!\\)", RegexOptions.Compiled);
 
         virtual protected string Unescape(string value)
         {
@@ -47,7 +47,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
             value = value.Replace("\\\"", "\"");
 
             // Replace all single-backslashes with double-backslashes.
-            value = _singleBackslashMatch.Replace(value, "\\\\");
+            value = SingleBackslashMatch.Replace(value, "\\\\");
 
             // Unescape double backslashes
             value = value.Replace(@"\\", @"\");
@@ -124,7 +124,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
             return null;
         }
 
-        internal static readonly Regex _unescapedCommas = new Regex(@"[^\\](,)", RegexOptions.Compiled);
+        internal static readonly Regex UnescapedCommas = new Regex(@"[^\\](,)", RegexOptions.Compiled);
 
         public override object Deserialize(TextReader tr)
         {
@@ -160,7 +160,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 var i = 0;
                 if (serializeAsList)
                 {
-                    var matches = _unescapedCommas.Matches(value);
+                    var matches = UnescapedCommas.Matches(value);
                     foreach (Match match in matches)
                     {
                         var newValue = dt != null ? Decode(dt, value.Substring(i, match.Index - i + 1)) : value.Substring(i, match.Index - i + 1);

@@ -9,12 +9,12 @@ namespace ical.NET.UnitTests
     [TestFixture]
     public class EventTest
     {
-        private string tzid;
+        private string _tzid;
 
         [TestFixtureSetUp]
         public void InitAll()
         {
-            tzid = "US-Eastern";
+            _tzid = "US-Eastern";
         }
         
         /// <summary>
@@ -23,7 +23,7 @@ namespace ical.NET.UnitTests
         [Test, Category("Event")]
         public void Add1()
         {
-            IICalendar iCal = new iCalendar();
+            IICalendar iCal = new ICalendar();
             
             var evt = new Event();
             evt.Summary = "Testing";
@@ -41,7 +41,7 @@ namespace ical.NET.UnitTests
         [Test, Category("Event")]
         public void Remove1()
         {
-            IICalendar iCal = new iCalendar();
+            IICalendar iCal = new ICalendar();
 
             var evt = new Event();
             evt.Summary = "Testing";
@@ -63,7 +63,7 @@ namespace ical.NET.UnitTests
         [Test, Category("Event")]
         public void Remove2()
         {
-            IICalendar iCal = new iCalendar();
+            IICalendar iCal = new ICalendar();
 
             var evt = new Event();
             evt.Summary = "Testing";

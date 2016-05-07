@@ -21,9 +21,9 @@ namespace Ical.Net.Structs
     {
         #region Private Fields
 
-        private IPeriod m_Period;
-        private IRecurringComponent m_Component; 
-        private IAlarm m_Alarm;
+        private IPeriod _mPeriod;
+        private IRecurringComponent _mComponent; 
+        private IAlarm _mAlarm;
 
         #endregion
 
@@ -31,20 +31,20 @@ namespace Ical.Net.Structs
 
         public IPeriod Period
         {
-            get { return m_Period; }
-            set { m_Period = value; }
+            get { return _mPeriod; }
+            set { _mPeriod = value; }
         }
 
         public IRecurringComponent Component
         {
-            get { return m_Component; }
-            set { m_Component = value; }
+            get { return _mComponent; }
+            set { _mComponent = value; }
         } 
 
         public IAlarm Alarm
         {
-            get { return m_Alarm; }
-            set { m_Alarm = value; }
+            get { return _mAlarm; }
+            set { _mAlarm = value; }
         }
 
         public IDateTime DateTime
@@ -59,16 +59,16 @@ namespace Ical.Net.Structs
 
         public AlarmOccurrence(AlarmOccurrence ao)
         {
-            m_Period = ao.Period;
-            m_Component = ao.Component;
-            m_Alarm = ao.Alarm;
+            _mPeriod = ao.Period;
+            _mComponent = ao.Component;
+            _mAlarm = ao.Alarm;
         }
 
         public AlarmOccurrence(IAlarm a, IDateTime dt, IRecurringComponent rc)
         {
-            m_Alarm = a;
-            m_Period = new Period(dt);
-            m_Component = rc;
+            _mAlarm = a;
+            _mPeriod = new Period(dt);
+            _mComponent = rc;
         }
 
         #endregion

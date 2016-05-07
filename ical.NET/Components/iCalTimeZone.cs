@@ -18,16 +18,16 @@ namespace Ical.Net
 #if !SILVERLIGHT
     [Serializable]
 #endif
-    public partial class ICalTimeZone : CalendarComponent, ITimeZone
+    public partial class CalTimeZone : CalendarComponent, ITimeZone
     {
         #region Static Public Methods
 
 #if !SILVERLIGHT
-        static public ICalTimeZone FromLocalTimeZone()
+        static public CalTimeZone FromLocalTimeZone()
         {
             return FromSystemTimeZone(System.TimeZoneInfo.Local);
         }
-        static public ICalTimeZone FromLocalTimeZone(DateTime earlistDateTimeToSupport, bool includeHistoricalData)
+        static public CalTimeZone FromLocalTimeZone(DateTime earlistDateTimeToSupport, bool includeHistoricalData)
         {
             return FromSystemTimeZone(System.TimeZoneInfo.Local, earlistDateTimeToSupport, includeHistoricalData);
         }
@@ -57,18 +57,18 @@ namespace Ical.Net
             tzi.RecurrenceRules.Add(recurrence);
         }
 
-        public static ICalTimeZone FromSystemTimeZone(System.TimeZoneInfo tzinfo)
+        public static CalTimeZone FromSystemTimeZone(System.TimeZoneInfo tzinfo)
         {
             // Support date/times for January 1st of the previous year by default.
             return FromSystemTimeZone(tzinfo, new DateTime(DateTime.Now.Year, 1, 1).AddYears(-1), false);
         }
 
-        public static ICalTimeZone FromSystemTimeZone(System.TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
+        public static CalTimeZone FromSystemTimeZone(System.TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
         {
             var adjustmentRules = tzinfo.GetAdjustmentRules();
             var utcOffset = tzinfo.BaseUtcOffset;
-            var ddayTz = new ICalTimeZone();
-            ddayTz.TZID = tzinfo.Id;
+            var ddayTz = new CalTimeZone();
+            ddayTz.TzId = tzinfo.Id;
 
             IDateTime earliest = new CalDateTime(earlistDateTimeToSupport);
             foreach (var adjustmentRule in adjustmentRules)
@@ -79,7 +79,7 @@ namespace Ical.Net
                     continue;
 
                 var delta = adjustmentRule.DaylightDelta;
-                var ddayTzinfoStandard = new ICalTimeZoneInfo();
+                var ddayTzinfoStandard = new CalTimeZoneInfo();
                 ddayTzinfoStandard.Name = "STANDARD";
                 ddayTzinfoStandard.TimeZoneName = tzinfo.StandardName;
                 ddayTzinfoStandard.Start = new CalDateTime(new DateTime(adjustmentRule.DateStart.Year, adjustmentRule.DaylightTransitionEnd.Month, adjustmentRule.DaylightTransitionEnd.Day, adjustmentRule.DaylightTransitionEnd.TimeOfDay.Hour, adjustmentRule.DaylightTransitionEnd.TimeOfDay.Minute, adjustmentRule.DaylightTransitionEnd.TimeOfDay.Second).AddDays(1));
@@ -94,7 +94,7 @@ namespace Ical.Net
 
                 if (tzinfo.SupportsDaylightSavingTime)
                 {
-                    var ddayTzinfoDaylight = new ICalTimeZoneInfo();
+                    var ddayTzinfoDaylight = new CalTimeZoneInfo();
                     ddayTzinfoDaylight.Name = "DAYLIGHT";
                     ddayTzinfoDaylight.TimeZoneName = tzinfo.DaylightName;
                     ddayTzinfoDaylight.Start = new CalDateTime(new DateTime(adjustmentRule.DateStart.Year, adjustmentRule.DaylightTransitionStart.Month, adjustmentRule.DaylightTransitionStart.Day, adjustmentRule.DaylightTransitionStart.TimeOfDay.Hour, adjustmentRule.DaylightTransitionStart.TimeOfDay.Minute, adjustmentRule.DaylightTransitionStart.TimeOfDay.Second));
@@ -114,7 +114,7 @@ namespace Ical.Net
             // base time zone information.
             if (ddayTz.TimeZoneInfos.Count == 0)
             {
-                var ddayTzinfoStandard = new ICalTimeZoneInfo();
+                var ddayTzinfoStandard = new CalTimeZoneInfo();
                 ddayTzinfoStandard.Name = "STANDARD";
                 ddayTzinfoStandard.TimeZoneName = tzinfo.StandardName;
                 ddayTzinfoStandard.Start = earliest;                
@@ -140,14 +140,14 @@ namespace Ical.Net
 
         #region Constructors
 
-        public ICalTimeZone()
+        public CalTimeZone()
         {
             Initialize();
         }
 
         private void Initialize()
         {
-            this.Name = Components.TIMEZONE;
+            this.Name = Components.Timezone;
 
             _mEvaluator = new TimeZoneEvaluator(this);
             _mTimeZoneInfos = new CalendarObjectListProxy<ITimeZoneInfo>(Children);
@@ -185,16 +185,16 @@ namespace Ical.Net
 
         #region ITimeZone Members
 
-        virtual public string ID
+        virtual public string Id
         {
             get { return Properties.Get<string>("TZID"); }
             set { Properties.Set("TZID", value); }
         }
 
-        virtual public string TZID
+        virtual public string TzId
         {
-            get { return ID; }
-            set { ID = value; }
+            get { return Id; }
+            set { Id = value; }
         }
 
         virtual public IDateTime LastModified

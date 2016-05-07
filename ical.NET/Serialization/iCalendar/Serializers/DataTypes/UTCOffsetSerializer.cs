@@ -6,7 +6,7 @@ using Ical.Net.Interfaces.DataTypes;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
-    public class UTCOffsetSerializer :
+    public class UtcOffsetSerializer :
         EncodableDataTypeSerializer
     {
         public override Type TargetType
@@ -16,7 +16,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var offset = obj as IUTCOffset;
+            var offset = obj as IUtcOffset;
             if (offset != null)
             {
                 var value = 
@@ -31,12 +31,12 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             return null;
         }
 
-        internal static readonly Regex _decodeOffset = new Regex(@"(\+|-)(\d{2})(\d{2})(\d{2})?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        internal static readonly Regex DecodeOffset = new Regex(@"(\+|-)(\d{2})(\d{2})(\d{2})?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public override object Deserialize(TextReader tr)
         {
             var offsetString = tr.ReadToEnd();
-            var offset = CreateAndAssociate() as IUTCOffset;
+            var offset = CreateAndAssociate() as IUtcOffset;
             offset.Offset = GetOffset(offsetString);
             return offset;
         }

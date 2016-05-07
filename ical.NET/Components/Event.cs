@@ -41,15 +41,15 @@ namespace Ical.Net
         /// the end date/time will be extrapolated.
         /// </note>
         /// </summary>
-        public override IDateTime DTStart
+        public override IDateTime DtStart
         {
             get
             {
-                return base.DTStart;
+                return base.DtStart;
             }
             set
             {
-                base.DTStart = value;
+                base.DtStart = value;
                 ExtrapolateTimes();
             }
         }
@@ -65,12 +65,12 @@ namespace Ical.Net
         /// will be extrapolated.
         /// </note>
         /// </summary>
-        virtual public IDateTime DTEnd
+        virtual public IDateTime DtEnd
         {
             get { return Properties.Get<IDateTime>("DTEND"); }
             set
             {
-                if (!object.Equals(DTEnd, value))
+                if (!object.Equals(DtEnd, value))
                 {
                     Properties.Set("DTEND", value);
                     ExtrapolateTimes();
@@ -90,14 +90,14 @@ namespace Ical.Net
         /// </note>
         /// </summary>
         // NOTE: Duration is not supported by all systems,
-        // (i.e. iPhone) and cannot co-exist with DTEnd.
+        // (i.e. iPhone) and cannot co-exist with DtEnd.
         // RFC 5545 states:
         //
         //      ; either 'dtend' or 'duration' may appear in
         //      ; a 'eventprop', but 'dtend' and 'duration'
         //      ; MUST NOT occur in the same 'eventprop'
         //
-        // Therefore, Duration is not serialized, as DTEnd
+        // Therefore, Duration is not serialized, as DtEnd
         // should always be extrapolated from the duration.
         virtual public TimeSpan Duration
         {
@@ -113,12 +113,12 @@ namespace Ical.Net
         }
 
         /// <summary>
-        /// An alias to the DTEnd field (i.e. end date/time).
+        /// An alias to the DtEnd field (i.e. end date/time).
         /// </summary>
         virtual public IDateTime End
         {
-            get { return DTEnd; }
-            set { DTEnd = value; }
+            get { return DtEnd; }
+            set { DtEnd = value; }
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace Ical.Net
 
         private void Initialize()
         {
-            this.Name = Components.EVENT;
+            this.Name = Components.Event;
 
             _mEvaluator = new EventEvaluator(this);
             SetService(_mEvaluator);
@@ -309,12 +309,12 @@ namespace Ical.Net
 
         private void ExtrapolateTimes()
         {
-            if (DTEnd == null && DTStart != null && Duration != default(TimeSpan))
-                DTEnd = DTStart.Add(Duration);
-            else if (Duration == default(TimeSpan) && DTStart != null && DTEnd != null)
-                Duration = DTEnd.Subtract(DTStart);
-            else if (DTStart == null && Duration != default(TimeSpan) && DTEnd != null)
-                DTStart = DTEnd.Subtract(Duration);
+            if (DtEnd == null && DtStart != null && Duration != default(TimeSpan))
+                DtEnd = DtStart.Add(Duration);
+            else if (Duration == default(TimeSpan) && DtStart != null && DtEnd != null)
+                Duration = DtEnd.Subtract(DtStart);
+            else if (DtStart == null && Duration != default(TimeSpan) && DtEnd != null)
+                DtStart = DtEnd.Subtract(Duration);
         }
 
         #endregion

@@ -97,7 +97,7 @@ namespace Ical.Net
 #if !SILVERLIGHT
     [Serializable]
 #endif
-    public class iCalendar :
+    public class ICalendar :
         CalendarComponent,
         IICalendar,
         IDisposable
@@ -109,13 +109,13 @@ namespace Ical.Net
         #region LoadFromFile(string filepath) variants
 
         /// <summary>
-        /// Loads an <see cref="iCalendar"/> from the file system.
+        /// Loads an <see cref="ICalendar"/> from the file system.
         /// </summary>
         /// <param name="filepath">The path to the file to load.</param>
-        /// <returns>An <see cref="iCalendar"/> object</returns>        
+        /// <returns>An <see cref="ICalendar"/> object</returns>        
         static public IICalendarCollection LoadFromFile(string filepath)
         {
-            return LoadFromFile(filepath, Encoding.UTF8, new iCalendarSerializer());
+            return LoadFromFile(filepath, Encoding.UTF8, new CalendarSerializer());
         }
 
         static public IICalendarCollection LoadFromFile<T>(string filepath) where T : IICalendar
@@ -125,8 +125,8 @@ namespace Ical.Net
 
         static public IICalendarCollection LoadFromFile(Type iCalendarType, string filepath)
         {
-            ISerializer serializer = new iCalendarSerializer();
-            serializer.GetService<ISerializationSettings>().iCalendarType = iCalendarType;
+            ISerializer serializer = new CalendarSerializer();
+            serializer.GetService<ISerializationSettings>().ICalendarType = iCalendarType;
             return LoadFromFile(filepath, Encoding.UTF8, serializer);
         }
 
@@ -136,7 +136,7 @@ namespace Ical.Net
 
         static public IICalendarCollection LoadFromFile(string filepath, Encoding encoding)
         {
-            return LoadFromFile(filepath, encoding, new iCalendarSerializer());
+            return LoadFromFile(filepath, encoding, new CalendarSerializer());
         }
 
         static public IICalendarCollection LoadFromFile<T>(string filepath, Encoding encoding) where T : IICalendar
@@ -146,8 +146,8 @@ namespace Ical.Net
 
         static public IICalendarCollection LoadFromFile(Type iCalendarType, string filepath, Encoding encoding)
         {
-            ISerializer serializer = new iCalendarSerializer();
-            serializer.GetService<ISerializationSettings>().iCalendarType = iCalendarType;
+            ISerializer serializer = new CalendarSerializer();
+            serializer.GetService<ISerializationSettings>().ICalendarType = iCalendarType;
             return LoadFromFile(filepath, encoding, serializer);
         }
 
@@ -170,13 +170,13 @@ namespace Ical.Net
         #region LoadFromStream(Stream s) variants
 
         /// <summary>
-        /// Loads an <see cref="iCalendar"/> from an open stream.
+        /// Loads an <see cref="ICalendar"/> from an open stream.
         /// </summary>
-        /// <param name="s">The stream from which to load the <see cref="iCalendar"/> object</param>
-        /// <returns>An <see cref="iCalendar"/> object</returns>
+        /// <param name="s">The stream from which to load the <see cref="ICalendar"/> object</param>
+        /// <returns>An <see cref="ICalendar"/> object</returns>
         static public new IICalendarCollection LoadFromStream(Stream s)
         {
-            return LoadFromStream(s, Encoding.UTF8, new iCalendarSerializer());
+            return LoadFromStream(s, Encoding.UTF8, new CalendarSerializer());
         }
 
         static public IICalendarCollection LoadFromStream<T>(Stream s) where T : IICalendar
@@ -186,8 +186,8 @@ namespace Ical.Net
 
         static public IICalendarCollection LoadFromStream(Type iCalendarType, Stream s)
         {
-            ISerializer serializer = new iCalendarSerializer();
-            serializer.GetService<ISerializationSettings>().iCalendarType = iCalendarType;
+            ISerializer serializer = new CalendarSerializer();
+            serializer.GetService<ISerializationSettings>().ICalendarType = iCalendarType;
             return LoadFromStream(s, Encoding.UTF8, serializer);
         }
 
@@ -197,7 +197,7 @@ namespace Ical.Net
 
         static public new IICalendarCollection LoadFromStream(Stream s, Encoding encoding)
         {
-            return LoadFromStream(s, encoding, new iCalendarSerializer());
+            return LoadFromStream(s, encoding, new CalendarSerializer());
         }
 
         static public new IICalendarCollection LoadFromStream<T>(Stream s, Encoding encoding) where T : IICalendar
@@ -207,8 +207,8 @@ namespace Ical.Net
 
         static public IICalendarCollection LoadFromStream(Type iCalendarType, Stream s, Encoding encoding)
         {
-            ISerializer serializer = new iCalendarSerializer();
-            serializer.GetService<ISerializationSettings>().iCalendarType = iCalendarType;
+            ISerializer serializer = new CalendarSerializer();
+            serializer.GetService<ISerializationSettings>().ICalendarType = iCalendarType;
             return LoadFromStream(s, encoding, serializer);
         }
 
@@ -223,7 +223,7 @@ namespace Ical.Net
 
         static public new IICalendarCollection LoadFromStream(TextReader tr)
         {
-            return LoadFromStream(tr, new iCalendarSerializer());
+            return LoadFromStream(tr, new CalendarSerializer());
         }
 
         static public new IICalendarCollection LoadFromStream<T>(TextReader tr) where T : IICalendar
@@ -233,8 +233,8 @@ namespace Ical.Net
 
         static public IICalendarCollection LoadFromStream(Type iCalendarType, TextReader tr)
         {
-            ISerializer serializer = new iCalendarSerializer();
-            serializer.GetService<ISerializationSettings>().iCalendarType = iCalendarType;
+            ISerializer serializer = new CalendarSerializer();
+            serializer.GetService<ISerializationSettings>().ICalendarType = iCalendarType;
             return LoadFromStream(tr, serializer);
         }
 
@@ -254,13 +254,13 @@ namespace Ical.Net
         #region LoadFromUri(Uri uri) variants
 
         /// <summary>
-        /// Loads an <see cref="iCalendar"/> from a given Uri.
+        /// Loads an <see cref="ICalendar"/> from a given Uri.
         /// </summary>
-        /// <param name="uri">The Uri from which to load the <see cref="iCalendar"/> object</param>
-        /// <returns>An <see cref="iCalendar"/> object</returns>
+        /// <param name="uri">The Uri from which to load the <see cref="ICalendar"/> object</param>
+        /// <returns>An <see cref="ICalendar"/> object</returns>
         static public IICalendarCollection LoadFromUri(Uri uri)
         {
-            return LoadFromUri(typeof(iCalendar), uri, null, null, null);
+            return LoadFromUri(typeof(ICalendar), uri, null, null, null);
         }
 
         static public IICalendarCollection LoadFromUri<T>(Uri uri) where T : IICalendar
@@ -276,7 +276,7 @@ namespace Ical.Net
 #if !SILVERLIGHT
         static public IICalendarCollection LoadFromUri(Uri uri, WebProxy proxy)
         {
-            return LoadFromUri(typeof(iCalendar), uri, null, null, proxy);
+            return LoadFromUri(typeof(ICalendar), uri, null, null, proxy);
         }
 
         static public IICalendarCollection LoadFromUri<T>(Uri uri, WebProxy proxy)
@@ -295,17 +295,17 @@ namespace Ical.Net
         #region LoadFromUri(Uri uri, string username, string password) variants
 
         /// <summary>
-        /// Loads an <see cref="iCalendar"/> from a given Uri, using a 
+        /// Loads an <see cref="ICalendar"/> from a given Uri, using a 
         /// specified <paramref name="username"/> and <paramref name="password"/>
         /// for credentials.
         /// </summary>
-        /// <param name="uri">The Uri from which to load the <see cref="iCalendar"/> object</param>
+        /// <param name="uri">The Uri from which to load the <see cref="ICalendar"/> object</param>
         /// <param name="username"></param>
         /// <param name="password"></param>
-        /// <returns>an <see cref="iCalendar"/> object</returns>
+        /// <returns>an <see cref="ICalendar"/> object</returns>
         static public IICalendarCollection LoadFromUri(Uri uri, string username, string password)
         {
-            return LoadFromUri(typeof(iCalendar), uri, username, password, null);
+            return LoadFromUri(typeof(ICalendar), uri, username, password, null);
         }
 
         static public IICalendarCollection LoadFromUri<T>(Uri uri, string username, string password) where T : IICalendar
@@ -321,7 +321,7 @@ namespace Ical.Net
 #if !SILVERLIGHT
         static public IICalendarCollection LoadFromUri(Uri uri, string username, string password, WebProxy proxy)
         {
-            return LoadFromUri(typeof(iCalendar), uri, username, password, proxy);
+            return LoadFromUri(typeof(ICalendar), uri, username, password, proxy);
         }
 #endif
 
@@ -405,12 +405,12 @@ namespace Ical.Net
 
         #region Private Fields
 
-        private IUniqueComponentList<IUniqueComponent> m_UniqueComponents;
-        private IUniqueComponentList<IEvent> m_Events;
-        private IUniqueComponentList<ITodo> m_Todos;
-        private ICalendarObjectList<IJournal> m_Journals;
-        private IUniqueComponentList<IFreeBusy> m_FreeBusy;
-        private ICalendarObjectList<ITimeZone> m_TimeZones;
+        private IUniqueComponentList<IUniqueComponent> _mUniqueComponents;
+        private IUniqueComponentList<IEvent> _mEvents;
+        private IUniqueComponentList<ITodo> _mTodos;
+        private ICalendarObjectList<IJournal> _mJournals;
+        private IUniqueComponentList<IFreeBusy> _mFreeBusy;
+        private ICalendarObjectList<ITimeZone> _mTimeZones;
 
         #endregion
 
@@ -425,21 +425,21 @@ namespace Ical.Net
         /// </code>
         /// </example>
         /// </summary>
-        public iCalendar()
+        public ICalendar()
         {
             Initialize();
         }
 
         private void Initialize()
         {
-            this.Name = Components.CALENDAR;
+            this.Name = Components.Calendar;
 
-            m_UniqueComponents = new UniqueComponentListProxy<IUniqueComponent>(Children);
-            m_Events = new UniqueComponentListProxy<IEvent>(Children);
-            m_Todos = new UniqueComponentListProxy<ITodo>(Children);
-            m_Journals = new CalendarObjectListProxy<IJournal>(Children);
-            m_FreeBusy = new UniqueComponentListProxy<IFreeBusy>(Children);
-            m_TimeZones = new CalendarObjectListProxy<ITimeZone>(Children);
+            _mUniqueComponents = new UniqueComponentListProxy<IUniqueComponent>(Children);
+            _mEvents = new UniqueComponentListProxy<IEvent>(Children);
+            _mTodos = new UniqueComponentListProxy<ITodo>(Children);
+            _mJournals = new CalendarObjectListProxy<IJournal>(Children);
+            _mFreeBusy = new UniqueComponentListProxy<IFreeBusy>(Children);
+            _mTimeZones = new CalendarObjectListProxy<ITimeZone>(Children);
         }
 
         #endregion
@@ -453,15 +453,15 @@ namespace Ical.Net
             Initialize();
         }
 
-        protected bool Equals(iCalendar other)
+        protected bool Equals(ICalendar other)
         {
             return base.Equals(other)
-                && Equals(m_UniqueComponents, other.m_UniqueComponents)
-                && Equals(m_Events, other.m_Events)
-                && Equals(m_Todos, other.m_Todos)
-                && Equals(m_Journals, other.m_Journals)
-                && Equals(m_FreeBusy, other.m_FreeBusy)
-                && Equals(m_TimeZones, other.m_TimeZones);
+                && Equals(_mUniqueComponents, other._mUniqueComponents)
+                && Equals(_mEvents, other._mEvents)
+                && Equals(_mTodos, other._mTodos)
+                && Equals(_mJournals, other._mJournals)
+                && Equals(_mFreeBusy, other._mFreeBusy)
+                && Equals(_mTimeZones, other._mTimeZones);
         }
 
         public override bool Equals(object obj)
@@ -478,7 +478,7 @@ namespace Ical.Net
             {
                 return false;
             }
-            return Equals((iCalendar) obj);
+            return Equals((ICalendar) obj);
         }
 
         public override int GetHashCode()
@@ -486,12 +486,12 @@ namespace Ical.Net
             unchecked
             {
                 var hashCode = base.GetHashCode();
-                hashCode = (hashCode * 397) ^ (m_UniqueComponents != null ? m_UniqueComponents.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (m_Events != null ? m_Events.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (m_Todos != null ? m_Todos.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (m_Journals != null ? m_Journals.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (m_FreeBusy != null ? m_FreeBusy.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (m_TimeZones != null ? m_TimeZones.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_mUniqueComponents != null ? _mUniqueComponents.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_mEvents != null ? _mEvents.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_mTodos != null ? _mTodos.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_mJournals != null ? _mJournals.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_mFreeBusy != null ? _mFreeBusy.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_mTimeZones != null ? _mTimeZones.GetHashCode() : 0);
                 return hashCode;
             }
         }
@@ -502,7 +502,7 @@ namespace Ical.Net
 
         virtual public IUniqueComponentList<IUniqueComponent> UniqueComponents
         {
-            get { return m_UniqueComponents; }
+            get { return _mUniqueComponents; }
         }
 
         virtual public IEnumerable<IRecurrable> RecurringItems
@@ -522,15 +522,15 @@ namespace Ical.Net
         /// </summary>
         virtual public IUniqueComponentList<IEvent> Events
         {
-            get { return m_Events; }
+            get { return _mEvents; }
         }
 
         /// <summary>
-        /// A collection of <see cref="Components.FreeBusy"/> components in the iCalendar.
+        /// A collection of <see cref="Net.FreeBusy"/> components in the iCalendar.
         /// </summary>
         virtual public IUniqueComponentList<IFreeBusy> FreeBusy
         {
-            get { return m_FreeBusy; }
+            get { return _mFreeBusy; }
         }
 
         /// <summary>
@@ -538,7 +538,7 @@ namespace Ical.Net
         /// </summary>
         virtual public ICalendarObjectList<IJournal> Journals
         {
-            get { return m_Journals; }
+            get { return _mJournals; }
         }
 
         /// <summary>
@@ -546,7 +546,7 @@ namespace Ical.Net
         /// </summary>
         virtual public ICalendarObjectList<ITimeZone> TimeZones
         {
-            get { return m_TimeZones; }
+            get { return _mTimeZones; }
         }
 
         /// <summary>
@@ -554,7 +554,7 @@ namespace Ical.Net
         /// </summary>
         virtual public IUniqueComponentList<ITodo> Todos
         {
-            get { return m_Todos; }
+            get { return _mTodos; }
         }
 
         virtual public string Version
@@ -563,7 +563,7 @@ namespace Ical.Net
             set { Properties.Set("VERSION", value); }
         }
 
-        virtual public string ProductID
+        virtual public string ProductId
         {
             get { return Properties.Get<string>("PRODID"); }
             set { Properties.Set("PRODID", value); }
@@ -615,14 +615,14 @@ namespace Ical.Net
         /// <returns>The time zone added to the calendar.</returns>
         public ITimeZone AddTimeZone(System.TimeZoneInfo tzi)
         {
-            ITimeZone tz = ICalTimeZone.FromSystemTimeZone(tzi);
+            ITimeZone tz = CalTimeZone.FromSystemTimeZone(tzi);
             this.AddChild(tz);
             return tz;
         }
 
         public ITimeZone AddTimeZone(System.TimeZoneInfo tzi, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
         {
-            ITimeZone tz = ICalTimeZone.FromSystemTimeZone(tzi, earliestDateTimeToSupport, includeHistoricalData);
+            ITimeZone tz = CalTimeZone.FromSystemTimeZone(tzi, earliestDateTimeToSupport, includeHistoricalData);
             this.AddChild(tz);
             return tz;
         }
@@ -635,14 +635,14 @@ namespace Ical.Net
         /// <returns>The time zone added to the calendar.</returns>
         public ITimeZone AddLocalTimeZone()
         {
-            ITimeZone tz = ICalTimeZone.FromLocalTimeZone();
+            ITimeZone tz = CalTimeZone.FromLocalTimeZone();
             this.AddChild(tz);
             return tz;
         }
 
         public ITimeZone AddLocalTimeZone(DateTime earliestDateTimeToSupport, bool includeHistoricalData)
         {
-            ITimeZone tz = ICalTimeZone.FromLocalTimeZone(earliestDateTimeToSupport, includeHistoricalData);
+            ITimeZone tz = CalTimeZone.FromLocalTimeZone(earliestDateTimeToSupport, includeHistoricalData);
             this.AddChild(tz);
             return tz;
         }
@@ -651,13 +651,13 @@ namespace Ical.Net
         /// <summary>
         /// Retrieves the TimeZone object for the specified TZID (Time Zone Identifier).
         /// </summary>
-        /// <param name="tzid">A valid TZID object, or a valid TZID string.</param>
+        /// <param name="tzId">A valid TZID object, or a valid TZID string.</param>
         /// <returns>A <see cref="TimeZone"/> object for the TZID.</returns>
-        public ITimeZone GetTimeZone(string tzid)
+        public ITimeZone GetTimeZone(string tzId)
         {
             foreach (var tz in TimeZones)
             {
-                if (tz.TZID.Equals(tzid))
+                if (tz.TzId.Equals(tzId))
                 {
                     return tz;
                 }
@@ -673,10 +673,10 @@ namespace Ical.Net
         ///     to display relevant information for those dates.
         /// </example>
         /// </summary>
-        /// <param name="FromDate">The beginning date/time of the range to test.</param>
-        /// <param name="ToDate">The end date/time of the range to test.</param>
+        /// <param name="fromDate">The beginning date/time of the range to test.</param>
+        /// <param name="toDate">The end date/time of the range to test.</param>
         [Obsolete("This method is no longer supported.  Use GetOccurrences() instead.")]
-        public void Evaluate(IDateTime FromDate, IDateTime ToDate)
+        public void Evaluate(IDateTime fromDate, IDateTime toDate)
         {
             throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
         }
@@ -686,10 +686,10 @@ namespace Ical.Net
         /// the type of recurring component specified.
         /// </summary>
         /// <typeparam name="T">The type of component to be evaluated for recurrences.</typeparam>
-        /// <param name="FromDate">The beginning date/time of the range to test.</param>
-        /// <param name="ToDate">The end date/time of the range to test.</param>
+        /// <param name="fromDate">The beginning date/time of the range to test.</param>
+        /// <param name="toDate">The end date/time of the range to test.</param>
         [Obsolete("This method is no longer supported.  Use GetOccurrences() instead.")]
-        public void Evaluate<T>(IDateTime FromDate, IDateTime ToDate)
+        public void Evaluate<T>(IDateTime fromDate, IDateTime toDate)
         {
             throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
         }
@@ -781,8 +781,8 @@ namespace Ical.Net
 
             occurrences.ExceptWith(occurrences
                 .Where(o => o.Source is IUniqueComponent)
-                .Where(o => o.Source.RecurrenceID != null)
-                .Where(o => o.Source.RecurrenceID.Equals(o.Period.StartTime)));
+                .Where(o => o.Source.RecurrenceId != null)
+                .Where(o => o.Source.RecurrenceId.Equals(o.Period.StartTime)));
 
             return occurrences;
         }
@@ -842,7 +842,7 @@ namespace Ical.Net
 
                 Method = c.Method;
                 Version = c.Version;
-                ProductID = c.ProductID;
+                ProductId = c.ProductId;
                 Scale = c.Scale;
 
                 foreach (var p in c.Properties)
@@ -854,12 +854,12 @@ namespace Ical.Net
                 {
                     if (child is IUniqueComponent)
                     {
-                        if (!UniqueComponents.ContainsKey(((IUniqueComponent)child).UID))
+                        if (!UniqueComponents.ContainsKey(((IUniqueComponent)child).Uid))
                             this.AddChild(child.Copy<ICalendarObject>());
                     }
                     else if (child is ITimeZone)
                     {
-                        var tz = GetTimeZone(((ITimeZone)child).TZID);
+                        var tz = GetTimeZone(((ITimeZone)child).TzId);
                         if (tz == null)
                             this.AddChild(child.Copy<ICalendarObject>());
                     }

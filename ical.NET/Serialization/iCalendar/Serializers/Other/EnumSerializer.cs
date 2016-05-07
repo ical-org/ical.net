@@ -11,7 +11,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
     {
         #region Private Fields
 
-        Type m_EnumType;
+        Type _mEnumType;
 
         #endregion
 
@@ -19,14 +19,14 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 
         public EnumSerializer(Type enumType)
         {
-            m_EnumType = enumType;
+            _mEnumType = enumType;
         }
 
         #endregion
 
         public override Type TargetType
         {
-            get { return m_EnumType; }
+            get { return _mEnumType; }
         }
 
         public override string SerializeToString(object enumValue)
@@ -65,7 +65,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 }
 
                 // Remove "-" characters while parsing Enum values.
-                return Enum.Parse(m_EnumType, value.Replace("-", ""), true);
+                return Enum.Parse(_mEnumType, value.Replace("-", ""), true);
             }
             catch { }
 

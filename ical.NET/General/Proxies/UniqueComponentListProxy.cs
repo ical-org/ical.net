@@ -38,7 +38,7 @@ namespace Ical.Net.General.Proxies
 
             var item = this
                 .OfType<TComponentType>()
-                .Where(c => string.Equals(c.UID, uid))
+                .Where(c => string.Equals(c.Uid, uid))
                 .FirstOrDefault();
 
             if (item != null)
@@ -81,10 +81,10 @@ namespace Ical.Net.General.Proxies
             if (e.First is TComponentType)
             {
                 var component = (TComponentType)e.First;
-                component.UIDChanged += UidChanged;
+                component.UidChanged += UidChanged;
 
-                if (!string.IsNullOrEmpty(component.UID))
-                    _lookup[component.UID] = component;
+                if (!string.IsNullOrEmpty(component.Uid))
+                    _lookup[component.Uid] = component;
             }
         }
 
@@ -93,12 +93,12 @@ namespace Ical.Net.General.Proxies
             if (e.First is TComponentType)
             {
                 var component = (TComponentType)e.First;
-                component.UIDChanged -= UidChanged;
+                component.UidChanged -= UidChanged;
 
-                if (!string.IsNullOrEmpty(component.UID) &&
-                    _lookup.ContainsKey(component.UID))
+                if (!string.IsNullOrEmpty(component.Uid) &&
+                    _lookup.ContainsKey(component.Uid))
                 {
-                    _lookup.Remove(component.UID);
+                    _lookup.Remove(component.Uid);
                 }
             }   
         }

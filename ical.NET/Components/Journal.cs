@@ -32,7 +32,7 @@ namespace Ical.Net
 
         void Initialize()
         {
-            this.Name = Components.JOURNAL;
+            this.Name = Components.Journal;
         }
 
         #endregion

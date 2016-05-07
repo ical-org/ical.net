@@ -10,7 +10,7 @@ namespace Ical.Net.Interfaces.Evaluation
         IServiceProvider
     {
         [Obsolete("Use the Start property instead.")]
-        IDateTime DTStart { get; set; }
+        IDateTime DtStart { get; set; }
 
         /// <summary>
         /// Gets/sets the start date/time of the component.
@@ -21,6 +21,6 @@ namespace Ical.Net.Interfaces.Evaluation
         IList<IRecurrencePattern> ExceptionRules { get; set; }
         IList<IPeriodList> RecurrenceDates { get; set; }
         IList<IRecurrencePattern> RecurrenceRules { get; set; }
-        IDateTime RecurrenceID { get; set; }        
+        IDateTime RecurrenceId { get; set; }        
     }
 }

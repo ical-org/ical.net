@@ -16,7 +16,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
     {
         #region Private Fields
 
-        ISerializerFactory m_DataTypeSerializerFactory;
+        ISerializerFactory _mDataTypeSerializerFactory;
 
         #endregion
 
@@ -24,7 +24,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
 
         public SerializerFactory()
         {
-            m_DataTypeSerializerFactory = new DataTypeSerializerFactory();
+            _mDataTypeSerializerFactory = new DataTypeSerializerFactory();
         }
 
         #endregion
@@ -47,7 +47,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
                 ISerializer s = null;
 
                 if (typeof(IICalendar).IsAssignableFrom(objectType))
-                    s = new iCalendarSerializer();
+                    s = new CalendarSerializer();
                 else if (typeof(ICalendarComponent).IsAssignableFrom(objectType))
                 {
                     if (typeof(IEvent).IsAssignableFrom(objectType))
@@ -73,7 +73,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
                 else if (typeof(Uri).IsAssignableFrom(objectType))
                     s = new UriSerializer();
                 else if (typeof(ICalendarDataType).IsAssignableFrom(objectType))
-                    s = m_DataTypeSerializerFactory.Build(objectType, ctx);
+                    s = _mDataTypeSerializerFactory.Build(objectType, ctx);
                 // Default to a string serializer, which simply calls
                 // ToString() on the value to serialize it.
                 else

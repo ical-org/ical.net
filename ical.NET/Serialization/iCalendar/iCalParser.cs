@@ -92,7 +92,7 @@ namespace Ical.Net.Serialization.iCalendar
 		ISerializationContext ctx
 	) //throws RecognitionException, TokenStreamException
 {
-		IICalendarCollection iCalendars = new iCalendarCollection();
+		IICalendarCollection iCalendars = new ICalendarCollection();
 		
 		
 		
@@ -146,7 +146,7 @@ _loop6_breakloop:						;
 								if (processor != null)
 									processor.PreDeserialization(iCal);
 							
-								iCal = (IICalendar)SerializationUtil.GetUninitializedObject(settings.iCalendarType);			
+								iCal = (IICalendar)SerializationUtil.GetUninitializedObject(settings.ICalendarType);			
 								SerializationUtil.OnDeserializing(iCal);
 								
 								// Push the iCalendar onto the serialization context stack

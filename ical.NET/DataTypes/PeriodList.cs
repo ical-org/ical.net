@@ -29,7 +29,7 @@ namespace Ical.Net.DataTypes
 
         #region Public Properties
 
-        public string TZID
+        public string TzId
         {
             get { return _mTzid; }
             set { _mTzid = value; }

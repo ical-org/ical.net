@@ -51,8 +51,8 @@ namespace Ical.Net.Serialization.iCalendar.Factory
                     s = new StatusCodeSerializer();
                 else if (typeof(ITrigger).IsAssignableFrom(objectType))
                     s = new TriggerSerializer();
-                else if (typeof(IUTCOffset).IsAssignableFrom(objectType))
-                    s = new UTCOffsetSerializer();
+                else if (typeof(IUtcOffset).IsAssignableFrom(objectType))
+                    s = new UtcOffsetSerializer();
                 else if (typeof(IWeekDay).IsAssignableFrom(objectType))
                     s = new WeekDaySerializer();
                 // Default to a string serializer, which simply calls

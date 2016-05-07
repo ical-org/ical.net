@@ -7,17 +7,17 @@ namespace ical.NET.UnitTests
     [TestFixture]
     public class CopyTest
     {
-        private string tzid;
+        private string _tzid;
 
         [TestFixtureSetUp]
         public void InitAll()
         {            
-            tzid = "US-Eastern";
+            _tzid = "US-Eastern";
         }
 
         private void CopyCalendarTest(string filename)
         {
-            var iCal1 = iCalendar.LoadFromFile(@"Calendars\Serialization\" + filename)[0];
+            var iCal1 = ICalendar.LoadFromFile(@"Calendars\Serialization\" + filename)[0];
             var iCal2 = iCal1.Copy<IICalendar>();
             SerializationTest.CompareCalendars(iCal1, iCal2);
         }

@@ -11,24 +11,24 @@ namespace ical.NET.UnitTests
     [TestFixture]
     public class TodoTest
     {
-        private string tzid;
+        private string _tzid;
 
         [TestFixtureSetUp]
         public void InitAll()
         {
-            tzid = "US-Eastern";
+            _tzid = "US-Eastern";
         }
                 
         public void TestTodoActive(string calendar, ArrayList items, params int[] numPeriods)
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
             ProgramTest.TestCal(iCal);
             var todo = iCal.Todos[0];
             
             for (var i = 0; i < items.Count; i += 2)
             {
                 var dt = (CalDateTime)items[i];                
-                dt.TzId = tzid;
+                dt.TzId = _tzid;
 
                 var tf = (bool)items[i + 1];
                 if (tf)
@@ -50,14 +50,14 @@ namespace ical.NET.UnitTests
 
         public void TestTodoCompleted(string calendar, ArrayList items)
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
             ProgramTest.TestCal(iCal);
             var todo = iCal.Todos[0];
             
             for (var i = 0; i < items.Count; i += 2)
             {
                 var dt = (IDateTime)items[i];
-                dt.TzId = tzid;
+                dt.TzId = _tzid;
 
                 var tf = (bool)items[i + 1];
                 if (tf)
@@ -175,20 +175,20 @@ namespace ical.NET.UnitTests
         [Test, Category("Todo")]
         public void Todo7_1()
         {
-            var iCal = iCalendar.LoadFromFile(@"Calendars\Todo\Todo7.ics")[0];
+            var iCal = ICalendar.LoadFromFile(@"Calendars\Todo\Todo7.ics")[0];
             var todo = iCal.Todos[0];
 
             var items = new ArrayList();
-            items.Add(new CalDateTime(2006, 7, 28, 9, 0, 0, tzid)); 
-            items.Add(new CalDateTime(2006, 8, 4, 9, 0, 0, tzid)); 
-            items.Add(new CalDateTime(2006, 9, 1, 9, 0, 0, tzid));
-            items.Add(new CalDateTime(2006, 10, 6, 9, 0, 0, tzid));
-            items.Add(new CalDateTime(2006, 11, 3, 9, 0, 0, tzid));
-            items.Add(new CalDateTime(2006, 12, 1, 9, 0, 0, tzid));
-            items.Add(new CalDateTime(2007, 1, 5, 9, 0, 0, tzid));
-            items.Add(new CalDateTime(2007, 2, 2, 9, 0, 0, tzid));
-            items.Add(new CalDateTime(2007, 3, 2, 9, 0, 0, tzid));
-            items.Add(new CalDateTime(2007, 4, 6, 9, 0, 0, tzid));
+            items.Add(new CalDateTime(2006, 7, 28, 9, 0, 0, _tzid)); 
+            items.Add(new CalDateTime(2006, 8, 4, 9, 0, 0, _tzid)); 
+            items.Add(new CalDateTime(2006, 9, 1, 9, 0, 0, _tzid));
+            items.Add(new CalDateTime(2006, 10, 6, 9, 0, 0, _tzid));
+            items.Add(new CalDateTime(2006, 11, 3, 9, 0, 0, _tzid));
+            items.Add(new CalDateTime(2006, 12, 1, 9, 0, 0, _tzid));
+            items.Add(new CalDateTime(2007, 1, 5, 9, 0, 0, _tzid));
+            items.Add(new CalDateTime(2007, 2, 2, 9, 0, 0, _tzid));
+            items.Add(new CalDateTime(2007, 3, 2, 9, 0, 0, _tzid));
+            items.Add(new CalDateTime(2007, 4, 6, 9, 0, 0, _tzid));
 
             var occurrences = todo.GetOccurrences(
                 new CalDateTime(2006, 7, 1, 9, 0, 0),
@@ -271,11 +271,11 @@ namespace ical.NET.UnitTests
         //    todo.Description = "fdsdsfds";
 
         //    // Set Start & Due date
-        //    todo.DTStart = new iCalDateTime(2007, 1, 1, 8, 0, 0);
+        //    todo.DtStart = new iCalDateTime(2007, 1, 1, 8, 0, 0);
         //    todo.Due = new iCalDateTime(2007, 1, 7);
         //    todo.Created = new iCalDateTime(DateTime.SpecifyKind(new DateTime(2007, 1, 1), DateTimeKind.Utc));
-        //    todo.DTStamp = new iCalDateTime(DateTime.SpecifyKind(new DateTime(2007, 1, 1), DateTimeKind.Utc));
-        //    todo.UID = "b6709c95-5523-46aa-a7e5-1b5ea034b86a";
+        //    todo.DtStamp = new iCalDateTime(DateTime.SpecifyKind(new DateTime(2007, 1, 1), DateTimeKind.Utc));
+        //    todo.Uid = "b6709c95-5523-46aa-a7e5-1b5ea034b86a";
 
         //    // Create an alarm
         //    Alarm al = new Alarm();
@@ -314,11 +314,11 @@ namespace ical.NET.UnitTests
         //    todo.Description = "fdsdsfds";
 
         //    // Set Start & Due date
-        //    todo.DTStart = new iCalDateTime(2007, 1, 1, 8, 0, 0);
+        //    todo.DtStart = new iCalDateTime(2007, 1, 1, 8, 0, 0);
         //    todo.Due = new iCalDateTime(2007, 1, 7);
         //    todo.Created = new iCalDateTime(DateTime.SpecifyKind(new DateTime(2007, 1, 1), DateTimeKind.Utc));
-        //    todo.DTStamp = new iCalDateTime(DateTime.SpecifyKind(new DateTime(2007, 1, 1), DateTimeKind.Utc));
-        //    todo.UID = "b6709c95-5523-46aa-a7e5-1b5ea034b86a";
+        //    todo.DtStamp = new iCalDateTime(DateTime.SpecifyKind(new DateTime(2007, 1, 1), DateTimeKind.Utc));
+        //    todo.Uid = "b6709c95-5523-46aa-a7e5-1b5ea034b86a";
 
         //    // Add an alarm in my task 
         //    Alarm al = new Alarm(todo);
