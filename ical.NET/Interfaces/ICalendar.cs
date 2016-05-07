@@ -94,8 +94,8 @@ namespace Ical.Net.Interfaces
         /// </summary>
         /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>
         /// <returns>The time zone added to the calendar.</returns>
-        ITimeZone AddTimeZone(System.TimeZoneInfo tzi);
-        ITimeZone AddTimeZone(System.TimeZoneInfo tzi, DateTime earliestDateTimeToSupport, bool includeHistoricalData);
+        ITimeZone AddTimeZone(TimeZoneInfo tzi);
+        ITimeZone AddTimeZone(TimeZoneInfo tzi, DateTime earliestDateTimeToSupport, bool includeHistoricalData);
 
         /// <summary>
         /// Adds the local system time zone to the iCalendar.  
