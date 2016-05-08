@@ -8,20 +8,12 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 {
     public class EnumSerializer : EncodableDataTypeSerializer
     {
-        #region Private Fields
-
         Type _mEnumType;
-
-        #endregion
-
-        #region Constructors
 
         public EnumSerializer(Type enumType)
         {
             _mEnumType = enumType;
         }
-
-        #endregion
 
         public override Type TargetType => _mEnumType;
 

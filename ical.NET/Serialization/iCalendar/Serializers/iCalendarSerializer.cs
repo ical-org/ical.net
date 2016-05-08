@@ -12,13 +12,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 {
     public class CalendarSerializer : ComponentSerializer
     {
-        #region Private Fields
-
         ICalendar _mCalendar;
-
-        #endregion
-
-        #region Constructors
 
         public CalendarSerializer() {}
 
@@ -28,10 +22,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         }
 
         public CalendarSerializer(ISerializationContext ctx) : base(ctx) {}
-
-        #endregion
-
-        #region Public Methods
 
         [Obsolete("Use the Serialize(IICalendar iCal, string filename) method instead.")]
         public virtual void Serialize(string filename)
@@ -55,10 +45,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                 Serialize(cal, fs, new UTF8Encoding());
             }
         }
-
-        #endregion
-
-        #region Overrides
 
         protected override IComparer<ICalendarProperty> PropertySorter => new CalendarPropertySorter();
 
@@ -108,12 +94,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             return null;
         }
 
-        #endregion
-
         private class CalendarPropertySorter : IComparer<ICalendarProperty>
         {
-            #region IComparer<ICalendarProperty> Members
-
             public int Compare(ICalendarProperty x, ICalendarProperty y)
             {
                 if (x == y || (x == null && y == null))
@@ -139,8 +121,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                 }
                 return string.Compare(x.Name, y.Name);
             }
-
-            #endregion
         }
     }
 }

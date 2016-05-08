@@ -24,8 +24,6 @@ namespace Ical.Net
     [Serializable]
     public class Event : RecurringComponent, IEvent
     {
-        #region Public Properties
-
         /// <summary>
         /// The start date/time of the event.
         /// <note>
@@ -192,15 +190,7 @@ namespace Ical.Net
             set { Properties.Set("TRANSP", value); }
         }
 
-        #endregion
-
-        #region Private Fields
-
         EventEvaluator _mEvaluator;
-
-        #endregion
-
-        #region Constructors
 
         /// <summary>
         /// Constructs an Event object, with an iCalObject
@@ -218,10 +208,6 @@ namespace Ical.Net
             _mEvaluator = new EventEvaluator(this);
             SetService(_mEvaluator);
         }
-
-        #endregion
-
-        #region Public Methods
 
         /// <summary>
         /// Use this method to determine if an event occurs on a given date.
@@ -279,10 +265,6 @@ namespace Ical.Net
             return (Status != EventStatus.Cancelled);
         }
 
-        #endregion
-
-        #region Overrides
-
         protected override bool EvaluationIncludesReferenceDate => true;
 
         protected override void OnDeserializing(StreamingContext context)
@@ -299,10 +281,6 @@ namespace Ical.Net
             ExtrapolateTimes();
         }
 
-        #endregion
-
-        #region Private Methods
-
         private void ExtrapolateTimes()
         {
             if (DtEnd == null && DtStart != null && Duration != default(TimeSpan))
@@ -318,7 +296,5 @@ namespace Ical.Net
                 DtStart = DtEnd.Subtract(Duration);
             }
         }
-
-        #endregion
     }
 }

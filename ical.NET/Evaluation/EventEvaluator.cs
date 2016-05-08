@@ -8,23 +8,13 @@ namespace Ical.Net.Evaluation
 {
     public class EventEvaluator : RecurringEvaluator
     {
-        #region Protected Properties
-
         protected IEvent Event
         {
             get { return Recurrable as IEvent; }
             set { Recurrable = value; }
         }
 
-        #endregion
-
-        #region Constructors
-
         public EventEvaluator(IEvent evt) : base(evt) {}
-
-        #endregion
-
-        #region Overrides
 
         /// <summary>
         /// Evaluates this event to determine the dates and times for which the event occurs.
@@ -69,7 +59,5 @@ namespace Ical.Net.Evaluation
 
             return Periods;
         }
-
-        #endregion
     }
 }

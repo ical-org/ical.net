@@ -16,8 +16,6 @@ namespace Ical.Net.DataTypes
     [Serializable]
     public class RecurrencePattern : EncodableDataType, IRecurrencePattern
     {
-        #region Private Fields
-
         [NonSerialized] private FrequencyType _frequency;
         private DateTime _until = DateTime.MinValue;
         private int _count = int.MinValue;
@@ -34,10 +32,6 @@ namespace Ical.Net.DataTypes
         private DayOfWeek _firstDayOfWeek = DayOfWeek.Monday;
         private RecurrenceRestrictionType? _restrictionType;
         private RecurrenceEvaluationModeType? _evaluationMode;
-
-        #endregion
-
-        #region IRecurrencePattern Members
 
         public FrequencyType Frequency
         {
@@ -184,10 +178,6 @@ namespace Ical.Net.DataTypes
         //    return null;
         //}
 
-        #endregion
-
-        #region Constructors
-
         public RecurrencePattern()
         {
             Initialize();
@@ -214,10 +204,6 @@ namespace Ical.Net.DataTypes
         {
             SetService(new RecurrencePatternEvaluator(this));
         }
-
-        #endregion
-
-        #region Overrides
 
         protected override void OnDeserializing(StreamingContext context)
         {
@@ -349,11 +335,5 @@ namespace Ical.Net.DataTypes
             }
             return true;
         }
-
-        #endregion
-
-        #region Protected Methods
-
-        #endregion
     }
 }

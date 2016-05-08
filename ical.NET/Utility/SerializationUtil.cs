@@ -7,8 +7,6 @@ namespace Ical.Net.Utility
 {
     public class SerializationUtil
     {
-        #region Static Public Methods
-
         public static object GetUninitializedObject(Type type)
         {
             return FormatterServices.GetUninitializedObject(type);
@@ -31,10 +29,6 @@ namespace Ical.Net.Utility
                 mi.Invoke(obj, new object[] {ctx});
             }
         }
-
-        #endregion
-
-        #region Static Private Methods
 
         private static IEnumerable<MethodInfo> GetDeserializingMethods(Type targetType)
         {
@@ -67,7 +61,5 @@ namespace Ical.Net.Utility
                 }
             }
         }
-
-        #endregion
     }
 }

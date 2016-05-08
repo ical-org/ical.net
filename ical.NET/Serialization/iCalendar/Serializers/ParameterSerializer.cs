@@ -9,15 +9,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 {
     public class ParameterSerializer : SerializerBase
     {
-        #region Constructors
-
         public ParameterSerializer() {}
 
         public ParameterSerializer(ISerializationContext ctx) : base(ctx) {}
-
-        #endregion
-
-        #region Overrides
 
         public override Type TargetType => typeof (CalendarParameter);
 
@@ -62,7 +56,5 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             // Return the parsed parameter
             return p;
         }
-
-        #endregion
     }
 }

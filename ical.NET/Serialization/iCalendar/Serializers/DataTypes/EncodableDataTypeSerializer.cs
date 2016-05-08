@@ -5,15 +5,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public abstract class EncodableDataTypeSerializer : DataTypeSerializer
     {
-        #region Constructors
-
         public EncodableDataTypeSerializer() {}
 
         public EncodableDataTypeSerializer(ISerializationContext ctx) : base(ctx) {}
-
-        #endregion
-
-        #region Protected Methods
 
         protected string Encode(IEncodableDataType dt, string value)
         {
@@ -82,7 +76,5 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             }
             return null;
         }
-
-        #endregion
     }
 }

@@ -6,22 +6,12 @@ namespace Ical.Net.Serialization
 {
     public class EncodingStack : IEncodingStack
     {
-        #region Private Fields
-
         Stack<Encoding> _mStack;
-
-        #endregion
-
-        #region Constructors
 
         public EncodingStack()
         {
             _mStack = new Stack<Encoding>();
         }
-
-        #endregion
-
-        #region IEncodingStack Members
 
         public Encoding Current
         {
@@ -53,7 +43,5 @@ namespace Ical.Net.Serialization
             }
             return null;
         }
-
-        #endregion
     }
 }

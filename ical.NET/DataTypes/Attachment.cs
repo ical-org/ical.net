@@ -15,15 +15,9 @@ namespace Ical.Net.DataTypes
     [Serializable]
     public class Attachment : EncodableDataType, IAttachment
     {
-        #region Private Fields
-
         private Uri _mUri;
         private byte[] _mData;
         private Encoding _mEncoding;
-
-        #endregion
-
-        #region Constructors
 
         public Attachment()
         {
@@ -45,10 +39,6 @@ namespace Ical.Net.DataTypes
         {
             _mEncoding = System.Text.Encoding.Unicode;
         }
-
-        #endregion
-
-        #region Overrides
 
         protected override void OnDeserializing(StreamingContext context)
         {
@@ -122,10 +112,6 @@ namespace Ical.Net.DataTypes
                 Uri = a.Uri;
             }
         }
-
-        #endregion
-
-        #region IAttachment Members
 
         public virtual Uri Uri
         {
@@ -219,7 +205,5 @@ namespace Ical.Net.DataTypes
                 Data = client.DownloadData(uri);
             }
         }
-
-        #endregion
     }
 }

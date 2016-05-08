@@ -18,25 +18,15 @@ namespace ical.NET.Collections.Proxies
         where TInterface : class, IGroupedObject<TGroup>, IValueObject<TOriginalValue>
         where TItem : new()        
     {
-        #region Private Fields
-
         IGroupedValueList<TGroup, TInterface, TItem, TOriginalValue> _realObject;
         TGroup _group;
         TInterface _container;
-
-        #endregion
-
-        #region Constructors
 
         public GroupedValueListProxy(IGroupedValueList<TGroup, TInterface, TItem, TOriginalValue> realObject, TGroup group)
         {
             _realObject = realObject;
             _group = group;
         }
-
-        #endregion
-
-        #region Private Methods
 
         TInterface EnsureContainer()
         {
@@ -103,10 +93,6 @@ namespace ical.NET.Collections.Proxies
                 .SelectMany(o => o.Values.OfType<TNewValue>())
                 .GetEnumerator();
         }
-
-        #endregion
-
-        #region IList<TNewValue> Members
 
         public virtual void Add(TNewValue item)
         {
@@ -276,10 +262,6 @@ namespace ical.NET.Collections.Proxies
             }
         }
 
-        #endregion
-
-        #region IGroupedValueListProxy Members
-
         public virtual IEnumerable<TInterface> Items
         {
             get
@@ -289,7 +271,5 @@ namespace ical.NET.Collections.Proxies
                 return _realObject;
             }
         }
-
-        #endregion 
     }
 }

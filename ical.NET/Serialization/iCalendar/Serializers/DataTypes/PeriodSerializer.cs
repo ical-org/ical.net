@@ -10,8 +10,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class PeriodSerializer : EncodableDataTypeSerializer
     {
-        #region Overrides
-
         public override Type TargetType => typeof (Period);
 
         public override string SerializeToString(object obj)
@@ -93,7 +91,5 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
             return null;
         }
-
-        #endregion
     }
 }

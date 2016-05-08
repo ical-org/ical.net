@@ -5,12 +5,6 @@ namespace Ical.Net.DataTypes
 {
     public class FreeBusyEntry : Period, IFreeBusyEntry
     {
-        #region Private Fields
-
-        #endregion
-
-        #region Constructors
-
         public FreeBusyEntry()
         {
             Initialize();
@@ -28,10 +22,6 @@ namespace Ical.Net.DataTypes
             Status = FreeBusyStatus.Busy;
         }
 
-        #endregion
-
-        #region Overrides
-
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
@@ -43,12 +33,6 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        #endregion
-
-        #region IFreeBusyEntry Members
-
         public virtual FreeBusyStatus Status { get; set; }
-
-        #endregion
     }
 }

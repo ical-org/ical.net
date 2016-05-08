@@ -10,26 +10,16 @@ namespace Ical.Net
     [Serializable]
     public class Journal : RecurringComponent, IJournal
     {
-        #region IJournal Members
-
         public JournalStatus Status
         {
             get { return Properties.Get<JournalStatus>("STATUS"); }
             set { Properties.Set("STATUS", value); }
         }
 
-        #endregion
-
-        #region Constructors
-
         void Initialize()
         {
             Name = Components.Journal;
         }
-
-        #endregion
-
-        #region Overrides
 
         protected override bool EvaluationIncludesReferenceDate => true;
 
@@ -39,7 +29,5 @@ namespace Ical.Net
 
             Initialize();
         }
-
-        #endregion
     }
 }

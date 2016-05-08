@@ -16,13 +16,7 @@ namespace Ical.Net
     [Serializable]
     public class Todo : RecurringComponent, ITodo
     {
-        #region Private Fields
-
         TodoEvaluator _mEvaluator;
-
-        #endregion
-
-        #region Public Properties
 
         /// <summary>
         /// The date/time the todo was completed.
@@ -137,10 +131,6 @@ namespace Ical.Net
             }
         }
 
-        #endregion
-
-        #region Constructors
-
         public Todo()
         {
             Initialize();
@@ -153,10 +143,6 @@ namespace Ical.Net
             _mEvaluator = new TodoEvaluator(this);
             SetService(_mEvaluator);
         }
-
-        #endregion
-
-        #region Public Methods
 
         /// <summary>
         /// Use this method to determine if a todo item has been completed.
@@ -222,10 +208,6 @@ namespace Ical.Net
             return Status == TodoStatus.Cancelled;
         }
 
-        #endregion
-
-        #region Overrides
-
         protected override bool EvaluationIncludesReferenceDate => true;
 
         protected override void OnDeserializing(StreamingContext context)
@@ -234,10 +216,6 @@ namespace Ical.Net
 
             Initialize();
         }
-
-        #endregion
-
-        #region Private Methods
 
         private void ExtrapolateTimes()
         {
@@ -254,7 +232,5 @@ namespace Ical.Net
                 DtStart = Due.Subtract(Duration);
             }
         }
-
-        #endregion
     }
 }

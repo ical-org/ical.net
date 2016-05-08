@@ -10,19 +10,9 @@ namespace Ical.Net.Evaluation
 {
     public class TimeZoneEvaluator : Evaluator
     {
-        #region Private Fields
-
         private HashSet<Occurrence> _mOccurrences;
 
-        #endregion
-
-        #region Protected Properties
-
         protected ITimeZone TimeZone { get; set; }
-
-        #endregion
-
-        #region Public Properties
 
         public virtual HashSet<Occurrence> Occurrences
         {
@@ -30,19 +20,11 @@ namespace Ical.Net.Evaluation
             set { _mOccurrences = value; }
         }
 
-        #endregion
-
-        #region Constructors
-
         public TimeZoneEvaluator(ITimeZone tz)
         {
             TimeZone = tz;
             _mOccurrences = new HashSet<Occurrence>();
         }
-
-        #endregion
-
-        #region Private Methods
 
         void ProcessOccurrences(IDateTime referenceDate)
         {
@@ -70,10 +52,6 @@ namespace Ical.Net.Evaluation
                 }
             }
         }
-
-        #endregion
-
-        #region Overrides
 
         public override void Clear()
         {
@@ -149,7 +127,5 @@ namespace Ical.Net.Evaluation
 
             return Periods;
         }
-
-        #endregion
     }
 }

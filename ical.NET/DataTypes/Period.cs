@@ -11,16 +11,10 @@ namespace Ical.Net.DataTypes
     [Serializable]
     public class Period : EncodableDataType, IPeriod
     {
-        #region Private Fields
-
         private IDateTime _mStartTime;
         private IDateTime _mEndTime;
         private TimeSpan _mDuration;
         private bool _mMatchesDateOnly;
-
-        #endregion
-
-        #region Constructors
 
         public Period() {}
 
@@ -45,10 +39,6 @@ namespace Ical.Net.DataTypes
                 EndTime = start.Add(duration);
             }
         }
-
-        #endregion
-
-        #region Overrides
 
         public override void CopyFrom(ICopyable obj)
         {
@@ -109,10 +99,6 @@ namespace Ical.Net.DataTypes
             return periodSerializer.SerializeToString(this);
         }
 
-        #endregion
-
-        #region Private Methods
-
         private void ExtrapolateTimes()
         {
             if (EndTime == null && StartTime != null && Duration != default(TimeSpan))
@@ -128,10 +114,6 @@ namespace Ical.Net.DataTypes
                 StartTime = EndTime.Subtract(Duration);
             }
         }
-
-        #endregion
-
-        #region IPeriod Members
 
         public virtual IDateTime StartTime
         {
@@ -200,10 +182,6 @@ namespace Ical.Net.DataTypes
             return false;
         }
 
-        #endregion
-
-        #region IComparable Members
-
         public int CompareTo(IPeriod p)
         {
             if (p == null)
@@ -224,7 +202,5 @@ namespace Ical.Net.DataTypes
             }
             throw new Exception("An error occurred while comparing Period values.");
         }
-
-        #endregion
     }
 }

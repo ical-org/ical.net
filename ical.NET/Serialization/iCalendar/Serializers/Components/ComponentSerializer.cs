@@ -12,21 +12,11 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
 {
     public class ComponentSerializer : SerializerBase
     {
-        #region Protected Properties
-
         protected virtual IComparer<ICalendarProperty> PropertySorter => new PropertyAlphabetizer();
-
-        #endregion
-
-        #region Constructor
 
         public ComponentSerializer() {}
 
         public ComponentSerializer(ISerializationContext ctx) : base(ctx) {}
-
-        #endregion
-
-        #region Overrides
 
         public override Type TargetType => typeof (CalendarComponent);
 
@@ -118,14 +108,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
             return null;
         }
 
-        #endregion
-
-        #region Helper Classes
-
         public class PropertyAlphabetizer : IComparer<ICalendarProperty>
         {
-            #region IComparer<ICalendarProperty> Members
-
             public int Compare(ICalendarProperty x, ICalendarProperty y)
             {
                 if (x == y || (x == null && y == null))
@@ -142,10 +126,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
                 }
                 return string.Compare(x.Name, y.Name, true);
             }
-
-            #endregion
         }
-
-        #endregion
     }
 }

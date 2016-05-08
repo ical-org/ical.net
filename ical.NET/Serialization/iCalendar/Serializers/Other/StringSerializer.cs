@@ -13,15 +13,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 {
     public class StringSerializer : EncodableDataTypeSerializer
     {
-        #region Constructors
-
         public StringSerializer() {}
 
         public StringSerializer(ISerializationContext ctx) : base(ctx) {}
-
-        #endregion
-
-        #region Protected Methods
 
         internal static readonly Regex SingleBackslashMatch = new Regex(@"(?<!\\)\\(?!\\)", RegexOptions.Compiled);
 
@@ -66,10 +60,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
             }
             return value;
         }
-
-        #endregion
-
-        #region Overrides
 
         public override Type TargetType => typeof (string);
 
@@ -199,7 +189,5 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
             }
             return null;
         }
-
-        #endregion
     }
 }

@@ -54,22 +54,12 @@ namespace Ical.Net.Evaluation
         // FIXME: in ical4j this is configurable.
         private static int _maxIncrementCount = 1000;
 
-        #region Protected Properties
-
         protected IRecurrencePattern Pattern { get; set; }
-
-        #endregion
-
-        #region Constructors
 
         public RecurrencePatternEvaluator(IRecurrencePattern pattern)
         {
             Pattern = pattern;
         }
-
-        #endregion
-
-        #region Private Methods
 
         private IRecurrencePattern ProcessRecurrencePattern(IDateTime referenceDate)
         {
@@ -990,10 +980,6 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        #endregion
-
-        #region Private Methods
-
         IPeriod CreatePeriod(DateTime dt, IDateTime referenceDate)
         {
             // Turn each resulting date/time into an IDateTime and associate it
@@ -1009,10 +995,6 @@ namespace Ical.Net.Evaluation
             return new Period(newDt);
         }
 
-        #endregion
-
-        #region Public Methods
-
         //virtual public IPeriod GetNext(IDateTime referenceDate)
         //{
         //    DateTime? dt = GetNextDate(referenceDate, referenceDate.Value, Pattern);
@@ -1026,10 +1008,6 @@ namespace Ical.Net.Evaluation
         //    }
         //    return null;
         //}
-
-        #endregion
-
-        #region Overrides
 
         public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
@@ -1055,7 +1033,5 @@ namespace Ical.Net.Evaluation
 
             return Periods;
         }
-
-        #endregion
     }
 }

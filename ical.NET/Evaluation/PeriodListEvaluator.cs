@@ -7,22 +7,12 @@ namespace Ical.Net.Evaluation
 {
     public class PeriodListEvaluator : Evaluator
     {
-        #region Private Fields
-
         IPeriodList _mPeriodList;
-
-        #endregion
-
-        #region Constructors
 
         public PeriodListEvaluator(IPeriodList rdt)
         {
             _mPeriodList = rdt;
         }
-
-        #endregion
-
-        #region Overrides
 
         public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
@@ -52,7 +42,5 @@ namespace Ical.Net.Evaluation
 
             return periods;
         }
-
-        #endregion
     }
 }

@@ -15,21 +15,11 @@ namespace Ical.Net.DataTypes
     [Serializable]
     public abstract class CalendarDataType : ICalendarDataType
     {
-        #region Private Fields
-
         ICalendarParameterCollection _parameters;
         ICalendarParameterCollectionProxy _proxy;
         ServiceProvider _serviceProvider;
 
-        #endregion
-
-        #region Protected Fields
-
         protected ICalendarObject _AssociatedObject;
-
-        #endregion
-
-        #region Constructors
 
         public CalendarDataType()
         {
@@ -43,10 +33,6 @@ namespace Ical.Net.DataTypes
             _serviceProvider = new ServiceProvider();
         }
 
-        #endregion
-
-        #region Internal Methods
-
         [OnDeserializing]
         internal void DeserializingInternal(StreamingContext context)
         {
@@ -59,20 +45,12 @@ namespace Ical.Net.DataTypes
             OnDeserialized(context);
         }
 
-        #endregion
-
-        #region Protected Methods
-
         protected virtual void OnDeserializing(StreamingContext context)
         {
             Initialize();
         }
 
         protected virtual void OnDeserialized(StreamingContext context) {}
-
-        #endregion
-
-        #region ICalendarDataType Members
 
         public virtual Type GetValueType()
         {
@@ -168,10 +146,6 @@ namespace Ical.Net.DataTypes
             set { Parameters.Set("LANGUAGE", value); }
         }
 
-        #endregion
-
-        #region ICopyable Members
-
         /// <summary>
         /// Copies values from the target object to the
         /// current object.
@@ -206,15 +180,7 @@ namespace Ical.Net.DataTypes
             return default(T);
         }
 
-        #endregion
-
-        #region ICalendarParameterCollectionContainer Members
-
         public virtual ICalendarParameterCollection Parameters => _proxy;
-
-        #endregion
-
-        #region IServiceProvider Members
 
         public virtual object GetService(Type serviceType)
         {
@@ -255,7 +221,5 @@ namespace Ical.Net.DataTypes
         {
             _serviceProvider.RemoveService(name);
         }
-
-        #endregion
     }
 }

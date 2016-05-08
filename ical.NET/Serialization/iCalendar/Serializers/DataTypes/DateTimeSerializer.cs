@@ -8,8 +8,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class DateTimeSerializer : EncodableDataTypeSerializer
     {
-        #region Private Methods
-
         private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
         {
             var dt = DateTime.MinValue;
@@ -34,10 +32,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
             return dt;
         }
-
-        #endregion
-
-        #region Overrides
 
         public override Type TargetType => typeof (CalDateTime);
 
@@ -137,7 +131,5 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
             return null;
         }
-
-        #endregion
     }
 }

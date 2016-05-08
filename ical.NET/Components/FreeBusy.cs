@@ -10,8 +10,6 @@ namespace Ical.Net
 {
     public class FreeBusy : UniqueComponent, IFreeBusy
     {
-        #region Static Public Methods
-
         public static IFreeBusy Create(ICalendarObject obj, IFreeBusy freeBusyRequest)
         {
             if (obj is IGetOccurrencesTyped)
@@ -118,18 +116,10 @@ namespace Ical.Net
             return fb;
         }
 
-        #endregion
-
-        #region Constructors
-
         public FreeBusy()
         {
             Name = Components.Freebusy;
         }
-
-        #endregion
-
-        #region IFreeBusy Members
 
         public virtual IList<IFreeBusyEntry> Entries
         {
@@ -193,10 +183,6 @@ namespace Ical.Net
             return status;
         }
 
-        #endregion
-
-        #region IMergeable Members
-
         public virtual void MergeWith(IMergeable obj)
         {
             var fb = obj as IFreeBusy;
@@ -211,7 +197,5 @@ namespace Ical.Net
                 }
             }
         }
-
-        #endregion
     }
 }

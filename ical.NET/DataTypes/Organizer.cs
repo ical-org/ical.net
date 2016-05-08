@@ -14,8 +14,6 @@ namespace Ical.Net.DataTypes
     [Serializable]
     public class Organizer : EncodableDataType, IOrganizer
     {
-        #region IOrganizer Members
-
         public virtual Uri SentBy
         {
             get { return new Uri(Parameters.Get("SENT-BY")); }
@@ -56,10 +54,6 @@ namespace Ical.Net.DataTypes
 
         public virtual Uri Value { get; set; }
 
-        #endregion
-
-        #region Constructors
-
         public Organizer() {}
 
         public Organizer(string value) : this()
@@ -67,10 +61,6 @@ namespace Ical.Net.DataTypes
             var serializer = new OrganizerSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
-
-        #endregion
-
-        #region Overrides
 
         protected bool Equals(Organizer other)
         {
@@ -109,7 +99,5 @@ namespace Ical.Net.DataTypes
                 Value = o.Value;
             }
         }
-
-        #endregion
     }
 }

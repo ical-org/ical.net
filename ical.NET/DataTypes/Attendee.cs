@@ -9,8 +9,6 @@ namespace Ical.Net.DataTypes
     [Serializable]
     public class Attendee : EncodableDataType, IAttendee
     {
-        #region IAttendee Members
-
         public virtual Uri SentBy
         {
             get { return new Uri(Parameters.Get("SENT-BY")); }
@@ -111,10 +109,6 @@ namespace Ical.Net.DataTypes
         [DataMember(Order = 1)]
         public virtual Uri Value { get; set; }
 
-        #endregion
-
-        #region Constructors
-
         public Attendee() {}
 
         public Attendee(Uri attendee)
@@ -130,10 +124,6 @@ namespace Ical.Net.DataTypes
             }
             Value = new Uri(attendeeUri);
         }
-
-        #endregion
-
-        #region Overrides
 
         protected bool Equals(Attendee other)
         {
@@ -172,7 +162,5 @@ namespace Ical.Net.DataTypes
                 Value = a.Value;
             }
         }
-
-        #endregion
     }
 }

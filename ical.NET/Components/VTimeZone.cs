@@ -16,8 +16,6 @@ namespace Ical.Net
     [Serializable]
     public class VTimeZone : CalendarComponent, ITimeZone
     {
-        #region Static Public Methods
-
         public static VTimeZone FromLocalTimeZone()
         {
             return FromSystemTimeZone(TimeZoneInfo.Local);
@@ -137,8 +135,6 @@ namespace Ical.Net
 
             return ddayTz;
         }
-
-        #endregion
 
         public VTimeZone()
         {

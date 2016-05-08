@@ -11,23 +11,13 @@ namespace Ical.Net.Evaluation
 {
     public abstract class Evaluator : IEvaluator
     {
-        #region Private Fields
-
         private DateTime _mEvaluationStartBounds = DateTime.MaxValue;
         private DateTime _mEvaluationEndBounds = DateTime.MinValue;
 
         private ICalendarObject _mAssociatedObject;
         private ICalendarDataType _mAssociatedDataType;
 
-        #endregion
-
-        #region Protected Fields
-
         protected HashSet<IPeriod> MPeriods;
-
-        #endregion
-
-        #region Constructors
 
         public Evaluator()
         {
@@ -53,10 +43,6 @@ namespace Ical.Net.Evaluation
             Calendar = CultureInfo.CurrentCulture.Calendar;
             MPeriods = new HashSet<IPeriod>();
         }
-
-        #endregion
-
-        #region Protected Methods
 
         protected IDateTime ConvertToIDateTime(DateTime dt, IDateTime referenceDate)
         {
@@ -103,10 +89,6 @@ namespace Ical.Net.Evaluation
             }
         }
 
-        #endregion
-
-        #region IEvaluator Members
-
         public System.Globalization.Calendar Calendar { get; private set; }
 
         public virtual DateTime EvaluationStartBounds
@@ -148,7 +130,5 @@ namespace Ical.Net.Evaluation
         }
 
         public abstract HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults);
-
-        #endregion
     }
 }

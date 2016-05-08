@@ -23,12 +23,6 @@ namespace Ical.Net
     [Serializable]
     public class Calendar : CalendarComponent, ICalendar, IDisposable
     {
-        #region Static Public Methods
-
-        #region LoadFromFile(...)
-
-        #region LoadFromFile(string filepath) variants
-
         /// <summary>
         /// Loads an <see cref="Calendar"/> from the file system.
         /// </summary>
@@ -50,10 +44,6 @@ namespace Ical.Net
             serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
             return LoadFromFile(filepath, Encoding.UTF8, serializer);
         }
-
-        #endregion
-
-        #region LoadFromFile(string filepath, Encoding encoding) variants
 
         public static IICalendarCollection LoadFromFile(string filepath, Encoding encoding)
         {
@@ -82,14 +72,6 @@ namespace Ical.Net
             return calendars;
         }
 
-        #endregion
-
-        #endregion
-
-        #region LoadFromStream(...)
-
-        #region LoadFromStream(Stream s) variants
-
         /// <summary>
         /// Loads an <see cref="Calendar"/> from an open stream.
         /// </summary>
@@ -112,10 +94,6 @@ namespace Ical.Net
             return LoadFromStream(s, Encoding.UTF8, serializer);
         }
 
-        #endregion
-
-        #region LoadFromStream(Stream s, Encoding encoding) variants
-
         public new static IICalendarCollection LoadFromStream(Stream s, Encoding encoding)
         {
             return LoadFromStream(s, encoding, new CalendarSerializer());
@@ -137,10 +115,6 @@ namespace Ical.Net
         {
             return serializer.Deserialize(s, e) as IICalendarCollection;
         }
-
-        #endregion
-
-        #region LoadFromStream(TextReader tr) variants
 
         public new static IICalendarCollection LoadFromStream(TextReader tr)
         {
@@ -165,14 +139,6 @@ namespace Ical.Net
             var ms = new MemoryStream(Encoding.UTF8.GetBytes(text));
             return LoadFromStream(ms, Encoding.UTF8, serializer);
         }
-
-        #endregion
-
-        #endregion
-
-        #region LoadFromUri(...)
-
-        #region LoadFromUri(Uri uri) variants
 
         /// <summary>
         /// Loads an <see cref="Calendar"/> from a given Uri.
@@ -210,10 +176,6 @@ namespace Ical.Net
             return LoadFromUri(iCalendarType, uri, null, null, proxy);
         }
 
-        #endregion
-
-        #region LoadFromUri(Uri uri, string username, string password) variants
-
         /// <summary>
         /// Loads an <see cref="Calendar"/> from a given Uri, using a 
         /// specified <paramref name="username"/> and <paramref name="password"/>
@@ -243,10 +205,6 @@ namespace Ical.Net
         {
             return LoadFromUri(typeof (Calendar), uri, username, password, proxy);
         }
-
-        #endregion
-
-        #region LoadFromUri(Type iCalendarType, Uri uri, string username, string password, WebProxy proxy)
 
         public static IICalendarCollection LoadFromUri(Type iCalendarType, Uri uri, string username, string password, WebProxy proxy)
         {
@@ -320,24 +278,12 @@ namespace Ical.Net
             }
         }
 
-        #endregion
-
-        #endregion
-
-        #endregion
-
-        #region Private Fields
-
         private IUniqueComponentList<IUniqueComponent> _mUniqueComponents;
         private IUniqueComponentList<IEvent> _mEvents;
         private IUniqueComponentList<ITodo> _mTodos;
         private ICalendarObjectList<IJournal> _mJournals;
         private IUniqueComponentList<IFreeBusy> _mFreeBusy;
         private ICalendarObjectList<ITimeZone> _mTimeZones;
-
-        #endregion
-
-        #region Constructors
 
         /// <summary>
         /// To load an existing an iCalendar object, use one of the provided LoadFromXXX methods.
@@ -364,10 +310,6 @@ namespace Ical.Net
             _mFreeBusy = new UniqueComponentListProxy<IFreeBusy>(Children);
             _mTimeZones = new CalendarObjectListProxy<ITimeZone>(Children);
         }
-
-        #endregion
-
-        #region Overrides
 
         protected override void OnDeserializing(StreamingContext context)
         {
@@ -414,10 +356,6 @@ namespace Ical.Net
                 return hashCode;
             }
         }
-
-        #endregion
-
-        #region IICalendar Members
 
         public virtual IUniqueComponentList<IUniqueComponent> UniqueComponents => _mUniqueComponents;
 
@@ -717,18 +655,10 @@ namespace Ical.Net
             return default(T);
         }
 
-        #endregion
-
-        #region IDisposable Members
-
         public void Dispose()
         {
             Children.Clear();
         }
-
-        #endregion
-
-        #region IMergeable Members
 
         public virtual void MergeWith(IMergeable obj)
         {
@@ -777,10 +707,6 @@ namespace Ical.Net
             }
         }
 
-        #endregion
-
-        #region IGetFreeBusy Members
-
         public virtual IFreeBusy GetFreeBusy(IFreeBusy freeBusyRequest)
         {
             return Net.FreeBusy.Create(this, freeBusyRequest);
@@ -795,7 +721,5 @@ namespace Ical.Net
         {
             return Net.FreeBusy.Create(this, Net.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
         }
-
-        #endregion
     }
 }

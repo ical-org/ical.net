@@ -7,14 +7,8 @@ namespace ical.NET.Collections
         List<TType>,
         IMultiLinkedList<TType>
     {
-        #region Private Fields
-
         IMultiLinkedList<TType> _previous;
         IMultiLinkedList<TType> _next;
-
-        #endregion
-
-        #region IMultiLinkedList<TType> Members
 
         public virtual void SetPrevious(IMultiLinkedList<TType> previous)
         {
@@ -29,7 +23,5 @@ namespace ical.NET.Collections
         public virtual int StartIndex => _previous != null ? _previous.ExclusiveEnd : 0;
 
         public virtual int ExclusiveEnd => Count > 0 ? StartIndex + Count : StartIndex;
-
-        #endregion
     }
 }

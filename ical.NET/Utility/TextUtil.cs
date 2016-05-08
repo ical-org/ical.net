@@ -7,8 +7,6 @@ namespace Ical.Net.Utility
 {
     public static class TextUtil
     {
-        #region Static Public Methods
-
         public static string WrapLines(string value)
         {
             // NOTE: Made this method more efficient by removing
@@ -95,7 +93,5 @@ namespace Ical.Net.Utility
         {
             return new StringReader(UnwrapLines(tr.ReadToEnd()));
         }
-
-        #endregion
     }
 }

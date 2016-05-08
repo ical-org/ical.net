@@ -10,17 +10,7 @@ namespace Ical.Net.Evaluation
 {
     public class RecurringEvaluator : Evaluator
     {
-        #region Private Fields
-
-        #endregion
-
-        #region Protected Properties
-
         protected IRecurrable Recurrable { get; set; }
-
-        #endregion
-
-        #region Constructors
 
         public RecurringEvaluator(IRecurrable obj)
         {
@@ -39,10 +29,6 @@ namespace Ical.Net.Evaluation
                 AssociatedObject = dt.AssociatedObject;
             }
         }
-
-        #endregion
-
-        #region Protected Methods
 
         /// <summary>
         /// Evaulates the RRule component, and adds each specified Period to the Periods collection.
@@ -153,10 +139,6 @@ namespace Ical.Net.Evaluation
             }
         }
 
-        #endregion
-
-        #region Overrides
-
         public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Evaluate extra time periods, without re-evaluating ones that were already evaluated
@@ -190,7 +172,5 @@ namespace Ical.Net.Evaluation
 
             return Periods;
         }
-
-        #endregion
     }
 }

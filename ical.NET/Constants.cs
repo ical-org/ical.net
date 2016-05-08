@@ -1,8 +1,5 @@
 ﻿namespace Ical.Net
 {
-
-    #region Alarms
-
     public enum AlarmAction
     {
         Audio,
@@ -17,14 +14,8 @@
         End
     }
 
-    #endregion
-
-    #region Components
-
     public class Components
     {
-        #region Constants
-
         public const string Alarm = "VALARM";
         public const string Calendar = "VCALENDAR";
         public const string Event = "VEVENT";
@@ -34,25 +25,15 @@
         public const string Timezone = "VTIMEZONE";
         public const string Daylight = "DAYLIGHT";
         public const string Standard = "STANDARD";
-
-        #endregion
     }
-
-    #endregion
-
-    #region Status Constants
 
     public class ParticipationStatus
     {
-        #region Constants
-
         public const string NeedsAction = "NEEDS-ACTION";
         public const string Accepted = "ACCEPTED";
         public const string Declined = "DECLINED";
         public const string Tentative = "TENTATIVE";
         public const string Delegated = "DELEGATED";
-
-        #endregion
     }
 
     /// <summary>
@@ -93,10 +74,6 @@
         BusyUnavailable = 2,
         Busy = 3
     }
-
-    #endregion
-
-    #region Occurrence Evaluation
 
     public enum FrequencyType
     {
@@ -199,19 +176,11 @@
         ThrowException
     }
 
-    #endregion
-
-    #region Transparency
-
     public enum TransparencyType
     {
         Opaque,
         Transparent
     }
-
-    #endregion
-
-    #region Calendar Properties
 
     public class CalendarProductIDs
     {
@@ -291,6 +260,4 @@
         /// </summary>
         public const string DeclineCounter = "DECLINECOUNTER";
     }
-
-    #endregion
 }

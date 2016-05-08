@@ -12,8 +12,6 @@ namespace Ical.Net.General.Proxies
     {
         Dictionary<string, TComponentType> _lookup;
 
-        #region Constructors
-
         public UniqueComponentListProxy(IGroupedCollection<string, ICalendarObject> children) : base(children)
         {
             _lookup = new Dictionary<string, TComponentType>();
@@ -21,10 +19,6 @@ namespace Ical.Net.General.Proxies
             children.ItemAdded += children_ItemAdded;
             children.ItemRemoved += children_ItemRemoved;
         }
-
-        #endregion
-
-        #region Private Methods
 
         TComponentType Search(string uid)
         {
@@ -42,10 +36,6 @@ namespace Ical.Net.General.Proxies
             }
             return default(TComponentType);
         }
-
-        #endregion
-
-        #region UniqueComponentListProxy Members
 
         public virtual TComponentType this[string uid]
         {
@@ -66,10 +56,6 @@ namespace Ical.Net.General.Proxies
                 }
             }
         }
-
-        #endregion
-
-        #region Event Handlers
 
         void children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e)
         {
@@ -111,7 +97,5 @@ namespace Ical.Net.General.Proxies
                 _lookup[e.Second] = (TComponentType) sender;
             }
         }
-
-        #endregion
     }
 }

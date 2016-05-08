@@ -12,14 +12,8 @@ namespace Ical.Net.DataTypes
     [Serializable]
     public class WeekDay : EncodableDataType, IWeekDay
     {
-        #region Private Fields
-
         private int _mNum = int.MinValue;
         private DayOfWeek _mDayOfWeek;
-
-        #endregion
-
-        #region Public Properties
 
         public virtual int Offset
         {
@@ -32,10 +26,6 @@ namespace Ical.Net.DataTypes
             get { return _mDayOfWeek; }
             set { _mDayOfWeek = value; }
         }
-
-        #endregion
-
-        #region Constructors
 
         public WeekDay()
         {
@@ -59,10 +49,6 @@ namespace Ical.Net.DataTypes
             var serializer = new WeekDaySerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
-
-        #endregion
-
-        #region Overrides
 
         public override bool Equals(object obj)
         {
@@ -90,10 +76,6 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        #endregion
-
-        #region IComparable Members
-
         public int CompareTo(object obj)
         {
             IWeekDay bd = null;
@@ -117,7 +99,5 @@ namespace Ical.Net.DataTypes
             }
             return compare;
         }
-
-        #endregion
     }
 }

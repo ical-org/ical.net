@@ -7,8 +7,6 @@ namespace Ical.Net.Serialization.Factory
 {
     public class ComponentFactory : ICalendarComponentFactory
     {
-        #region ICalendarComponentFactory Members
-
         public virtual ICalendarComponent Build(string objectName, bool uninitialized)
         {
             Type type = null;
@@ -63,7 +61,5 @@ namespace Ical.Net.Serialization.Factory
 
             return c;
         }
-
-        #endregion
     }
 }

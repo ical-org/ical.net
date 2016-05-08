@@ -8,15 +8,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 {
     public class DataMapSerializer : SerializerBase
     {
-        #region Constructors
-
         public DataMapSerializer() {}
 
         public DataMapSerializer(ISerializationContext ctx) : base(ctx) {}
-
-        #endregion
-
-        #region Protected Methods
 
         protected IStringSerializer GetMappedSerializer()
         {
@@ -37,10 +31,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             }
             return null;
         }
-
-        #endregion
-
-        #region Overrides
 
         public override Type TargetType
         {
@@ -82,7 +72,5 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             }
             return null;
         }
-
-        #endregion
     }
 }

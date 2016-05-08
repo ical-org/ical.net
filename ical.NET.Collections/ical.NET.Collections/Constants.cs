@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 namespace ical.NET.Collections
 {
-    #region EventArgs
-
     public class ObjectEventArgs<T> :
         EventArgs
     {
@@ -41,6 +39,4 @@ namespace ical.NET.Collections
             AddedValues = addedValues ?? new T[0];
         }
     }
-    
-    #endregion
 }

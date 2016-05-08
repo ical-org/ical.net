@@ -18,23 +18,13 @@ namespace ical.NET.Collections.Proxies
         where TOriginal : class, IGroupedObject<TGroup>
         where TNew : class, TOriginal
     {
-        #region Private Fields
-
         Func<TNew, bool> _predicate;
-
-        #endregion
-
-        #region Constructors
 
         public GroupedCollectionProxy(IGroupedCollection<TGroup, TOriginal> realObject, Func<TNew, bool> predicate = null)
         {
             _predicate = predicate ?? (o => true);
             SetProxiedObject(realObject);
         }
-
-        #endregion
-
-        #region Event Handlers
 
         void _RealObject_ItemRemoved(object sender, ObjectEventArgs<TOriginal, int> e)
         {
@@ -47,10 +37,6 @@ namespace ical.NET.Collections.Proxies
             if (e.First is TNew)
                 OnItemAdded((TNew)e.First, e.Second);
         }
-
-        #endregion
-
-        #region IGroupedCollection Members
 
         public virtual event EventHandler<ObjectEventArgs<TNew, int>> ItemAdded;
         public virtual event EventHandler<ObjectEventArgs<TNew, int>> ItemRemoved;
@@ -159,17 +145,11 @@ namespace ical.NET.Collections.Proxies
                 .GetEnumerator();
         }
 
-        #endregion
-
-        #region IGroupedCollectionProxy Members
-
         public IGroupedCollection<TGroup, TOriginal> RealObject { get; private set; }
 
         public virtual void SetProxiedObject(IGroupedCollection<TGroup, TOriginal> realObject)
         {
             RealObject = realObject;
         }
-
-        #endregion
     }
 }

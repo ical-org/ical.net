@@ -18,13 +18,7 @@ namespace Ical.Net.Serialization
             public bool AllowsMultipleValuesPerProperty { get; set; }
         }
 
-        #region Private Fields
-
         IDictionary<string, PropertyMapping> _propertyMap = new Dictionary<string, PropertyMapping>();
-
-        #endregion
-
-        #region Constructors
 
         public DataTypeMapper()
         {
@@ -67,10 +61,6 @@ namespace Ical.Net.Serialization
             AddPropertyMapping("URL", typeof (Uri), false);
         }
 
-        #endregion
-
-        #region Event Handlers
-
         protected Type ResolveStatusProperty(object context)
         {
             var obj = context as ICalendarObject;
@@ -92,10 +82,6 @@ namespace Ical.Net.Serialization
 
             return null;
         }
-
-        #endregion
-
-        #region IDefaultTypeMapper Members
 
         public void AddPropertyMapping(string name, Type objectType, bool allowsMultipleValues)
         {
@@ -162,7 +148,5 @@ namespace Ical.Net.Serialization
             }
             return null;
         }
-
-        #endregion
     }
 }

@@ -12,8 +12,6 @@ namespace ical.NET.Collections
         where TInterface : class, IGroupedObject<TGroup>, IValueObject<TValueType>
         where TItem : new()        
     {
-        #region IKeyedValueList<TGroup, TObject, TValueType> Members
-
         public virtual void Set(TGroup group, TValueType value)
         {
             Set(group, new[] { value });
@@ -63,7 +61,5 @@ namespace ical.NET.Collections
         {
             return new GroupedValueListProxy<TGroup, TInterface, TItem, TValueType, TType>(this, group);
         }
-
-        #endregion
     }
 }

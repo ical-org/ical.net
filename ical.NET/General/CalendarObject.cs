@@ -13,8 +13,6 @@ namespace Ical.Net.General
     [Serializable]
     public class CalendarObject : CalendarObjectBase, ICalendarObject
     {
-        #region Private Fields
-
         private ICalendarObject _parent;
         private ICalendarObjectList<ICalendarObject> _children;
         private ServiceProvider _serviceProvider;
@@ -22,10 +20,6 @@ namespace Ical.Net.General
 
         private int _line;
         private int _column;
-
-        #endregion
-
-        #region Constructors
 
         internal CalendarObject()
         {
@@ -52,10 +46,6 @@ namespace Ical.Net.General
             _children.ItemRemoved += _Children_ItemRemoved;
         }
 
-        #endregion
-
-        #region Internal Methods
-
         [OnDeserializing]
         internal void DeserializingInternal(StreamingContext context)
         {
@@ -68,20 +58,12 @@ namespace Ical.Net.General
             OnDeserialized(context);
         }
 
-        #endregion
-
-        #region Protected Methods
-
         protected virtual void OnDeserializing(StreamingContext context)
         {
             Initialize();
         }
 
         protected virtual void OnDeserialized(StreamingContext context) {}
-
-        #endregion
-
-        #region Event Handlers
 
         void _Children_ItemRemoved(object sender, ObjectEventArgs<ICalendarObject, int> e)
         {
@@ -92,10 +74,6 @@ namespace Ical.Net.General
         {
             e.First.Parent = this;
         }
-
-        #endregion
-
-        #region Overrides
 
         public override bool Equals(object obj)
         {
@@ -135,10 +113,6 @@ namespace Ical.Net.General
                 }
             }
         }
-
-        #endregion
-
-        #region ICalendarObject Members
 
         /// <summary>
         /// Returns the parent iCalObject that owns this one.
@@ -219,10 +193,6 @@ namespace Ical.Net.General
             set { _column = value; }
         }
 
-        #endregion
-
-        #region IServiceProvider Members
-
         public virtual object GetService(Type serviceType)
         {
             return _serviceProvider.GetService(serviceType);
@@ -263,10 +233,6 @@ namespace Ical.Net.General
             _serviceProvider.RemoveService(name);
         }
 
-        #endregion
-
-        #region IGroupedObject Members
-
         [field: NonSerialized]
         public event EventHandler<ObjectEventArgs<string, string>> GroupChanged;
 
@@ -283,7 +249,5 @@ namespace Ical.Net.General
             get { return Name; }
             set { Name = value; }
         }
-
-        #endregion
     }
 }

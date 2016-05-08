@@ -13,15 +13,9 @@ namespace Ical.Net.DataTypes
     [Serializable]
     public class Trigger : EncodableDataType, ITrigger
     {
-        #region Private Fields
-
         private IDateTime _mDateTime;
         private TimeSpan? _mDuration;
         private TriggerRelation _mRelated = TriggerRelation.Start;
-
-        #endregion
-
-        #region Public Properties
 
         public virtual IDateTime DateTime
         {
@@ -67,10 +61,6 @@ namespace Ical.Net.DataTypes
 
         public virtual bool IsRelative => _mDuration != null;
 
-        #endregion
-
-        #region Constructors
-
         public Trigger() {}
 
         public Trigger(TimeSpan ts)
@@ -83,10 +73,6 @@ namespace Ical.Net.DataTypes
             var serializer = new TriggerSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
-
-        #endregion
-
-        #region Overrides
 
         public override void CopyFrom(ICopyable obj)
         {
@@ -132,7 +118,5 @@ namespace Ical.Net.DataTypes
                 return hashCode;
             }
         }
-
-        #endregion
     }
 }

@@ -6,13 +6,7 @@ namespace Ical.Net.General
     [Serializable]
     public class CalendarObjectBase : ICopyable, ILoadable
     {
-        #region Private Fields
-
         private bool _mIsLoaded;
-
-        #endregion
-
-        #region Constructors
 
         public CalendarObjectBase()
         {
@@ -21,10 +15,6 @@ namespace Ical.Net.General
             // deserialized do not use the constructor.
             _mIsLoaded = true;
         }
-
-        #endregion
-
-        #region ICopyable Members
 
         /// <summary>
         /// Copies values from the target object to the
@@ -51,10 +41,6 @@ namespace Ical.Net.General
             return default(T);
         }
 
-        #endregion
-
-        #region ILoadable Members
-
         public virtual bool IsLoaded => _mIsLoaded;
 
         [field: NonSerialized]
@@ -68,7 +54,5 @@ namespace Ical.Net.General
                 Loaded(this, EventArgs.Empty);
             }
         }
-
-        #endregion
     }
 }

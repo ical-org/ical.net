@@ -5,18 +5,12 @@ namespace Ical.Net.Serialization.iCalendar.Processors
 {
     public class CompositeProcessor<T> : List<ISerializationProcessor<T>>, ISerializationProcessor<T>
     {
-        #region Constructors
-
         public CompositeProcessor() {}
 
         public CompositeProcessor(IEnumerable<ISerializationProcessor<T>> processors)
         {
             AddRange(processors);
         }
-
-        #endregion
-
-        #region ISerializationProcessor<T> Members
 
         public virtual void PreSerialization(T obj)
         {
@@ -49,7 +43,5 @@ namespace Ical.Net.Serialization.iCalendar.Processors
                 p.PostDeserialization(obj);
             }
         }
-
-        #endregion
     }
 }

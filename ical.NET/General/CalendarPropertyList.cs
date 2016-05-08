@@ -8,14 +8,8 @@ namespace Ical.Net.General
     [Serializable]
     public class CalendarPropertyList : GroupedValueList<string, ICalendarProperty, CalendarProperty, object>, ICalendarPropertyList
     {
-        #region Private Fields
-
         ICalendarObject _mParent;
         bool _mCaseInsensitive;
-
-        #endregion
-
-        #region Constructors
 
         public CalendarPropertyList() {}
 
@@ -27,10 +21,6 @@ namespace Ical.Net.General
             ItemRemoved += CalendarPropertyList_ItemRemoved;
         }
 
-        #endregion
-
-        #region Event Handlers
-
         void CalendarPropertyList_ItemRemoved(object sender, ObjectEventArgs<ICalendarProperty, int> e)
         {
             e.First.Parent = null;
@@ -40,8 +30,6 @@ namespace Ical.Net.General
         {
             e.First.Parent = _mParent;
         }
-
-        #endregion
 
         protected override string GroupModifier(string group)
         {

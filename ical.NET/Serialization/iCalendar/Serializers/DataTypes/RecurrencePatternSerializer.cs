@@ -11,8 +11,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class RecurrencePatternSerializer : EncodableDataTypeSerializer
     {
-        #region Static Public Methods
-
         public static DayOfWeek GetDayOfWeek(string value)
         {
             switch (value.ToUpper())
@@ -35,10 +33,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             throw new ArgumentException(value + " is not a valid iCal day-of-week indicator.");
         }
 
-        #endregion
-
-        #region Static Protected Methods
-
         protected static void AddInt32Values(IList<int> list, string value)
         {
             var values = value.Split(',');
@@ -47,10 +41,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 list.Add(Convert.ToInt32(v));
             }
         }
-
-        #endregion
-
-        #region Content Validation
 
         public virtual void CheckRange(string name, IList<int> values, int min, int max)
         {
@@ -100,10 +90,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             throw new ArgumentException("Both " + name1 + " and " + name2 + " cannot be supplied together; they are mutually exclusive.");
         }
 
-        #endregion
-
-        #region Private Methods
-
         private void SerializeByValue(List<string> aggregate, IList<int> byValue, string name)
         {
             if (byValue.Count > 0)
@@ -117,10 +103,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 aggregate.Add(name + "=" + string.Join(",", byValues.ToArray()));
             }
         }
-
-        #endregion
-
-        #region Overrides
 
         public override Type TargetType => typeof (RecurrencePattern);
 
@@ -511,7 +493,5 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
             return r;
         }
-
-        #endregion
     }
 }
