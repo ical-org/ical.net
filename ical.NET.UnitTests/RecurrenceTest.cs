@@ -1875,22 +1875,16 @@ namespace ical.NET.UnitTests
             var tz = iCal.Create<VTimeZone>();
 
             tz.TzId = "US-Eastern";
-            tz.LastModified = new CalDateTime(new DateTime(1987, 1, 1, 0, 0, 0, DateTimeKind.Utc));
 
             ITimeZoneInfo standard = new CalTimeZoneInfo(Components.Standard);
             standard.Start = new CalDateTime(new DateTime(1967, 10, 29, 2, 0, 0, DateTimeKind.Utc));
             standard.RecurrenceRules.Add(new RecurrencePattern("FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10"));
-            standard.OffsetFrom = new UtcOffset("-0400");
-            standard.OffsetTo = new UtcOffset("-0500");
-            standard.TimeZoneName = "EST";
             tz.AddChild(standard);
 
             ITimeZoneInfo daylight = new CalTimeZoneInfo(Components.Daylight);
             daylight.Start = new CalDateTime(new DateTime(1987, 4, 5, 2, 0, 0, DateTimeKind.Utc));
             daylight.RecurrenceRules.Add(new RecurrencePattern("FREQ=YEARLY;BYDAY=1SU;BYMONTH=4"));
-            daylight.OffsetFrom = new UtcOffset("-0500");
-            daylight.OffsetTo = new UtcOffset("-0400");
-            daylight.TimeZoneName = "EDT";            
+
             tz.AddChild(daylight);
 
             IEvent evt = iCal.Create<Event>();

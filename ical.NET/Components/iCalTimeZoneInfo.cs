@@ -42,7 +42,6 @@ namespace Ical.Net
         }
 
         private string _tzId;
-
         public virtual string TzId
         {
             get
@@ -56,28 +55,6 @@ namespace Ical.Net
             }
         }
 
-        /// <summary>
-        /// Returns the name of the current Time Zone.
-        /// <example>
-        ///     The following are examples:
-        ///     <list type="bullet">
-        ///         <item>EST</item>
-        ///         <item>EDT</item>
-        ///         <item>MST</item>
-        ///         <item>MDT</item>
-        ///     </list>
-        /// </example>
-        /// </summary>
-        public virtual string TimeZoneName
-        {
-            get { return !string.IsNullOrWhiteSpace(TzId) ? TzId : TimeZoneNames.FirstOrDefault(); }
-            set
-            {
-                TimeZoneNames.Clear();
-                TimeZoneNames.Add(value);
-            }
-        }
-
         private IUtcOffset _offsetFrom;
 
         public virtual IUtcOffset OffsetFrom
@@ -87,19 +64,10 @@ namespace Ical.Net
         }
 
         private IUtcOffset _offsetTo;
-
         public virtual IUtcOffset OffsetTo
         {
             get { return _offsetTo ?? (_offsetTo = Properties.Get<IUtcOffset>("TZOFFSETTO")); }
             set { _offsetTo = value; }
-        }
-
-        private IList<string> _tzNames = new List<string>();
-
-        public virtual IList<string> TimeZoneNames
-        {
-            get { return _tzNames ?? (_tzNames = Properties.GetMany<string>("TZNAME")); }
-            set { _tzNames = value; }
         }
 
         public virtual IDateTime DtStart

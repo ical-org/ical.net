@@ -376,25 +376,7 @@ namespace Ical.Net.DataTypes
             set { _isUniversalTime = value; }
         }
 
-        public string TimeZoneName
-        {
-            get
-            {
-                if (IsUniversalTime)
-                {
-                    return "UTC";
-                }
-                if (!string.IsNullOrWhiteSpace(TzId))
-                {
-                    return TzId;
-                }
-                if (_timeZoneObservance != null && _timeZoneObservance.HasValue)
-                {
-                    return _timeZoneObservance.Value.TimeZoneInfo.TimeZoneName;
-                }
-                return string.Empty;
-            }
-        }
+        public string TimeZoneName => TzId;
 
         public DateTime Value
         {
