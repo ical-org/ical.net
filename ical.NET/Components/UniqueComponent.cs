@@ -24,8 +24,6 @@ namespace Ical.Net
         // parameter ("PARENT", "CHILD", "SIBLING", or other)
         // TODO: Add RemoveRelationship() public method.        
 
-        #region Constructors
-
         public UniqueComponent()
         {
             Initialize();
@@ -65,10 +63,6 @@ namespace Ical.Net
             Properties.ItemRemoved += Properties_ItemRemoved;
         }
 
-        #endregion
-
-        #region Public Properties
-
         public virtual IList<IAttendee> Attendees
         {
             get { return Properties.GetMany<IAttendee>("ATTENDEE"); }
@@ -105,10 +99,6 @@ namespace Ical.Net
             set { Properties.Set("URL", value); }
         }
 
-        #endregion
-
-        #region Event Handlers
-
         void Properties_ItemRemoved(object sender, ObjectEventArgs<ICalendarProperty, int> e)
         {
             if (e.First != null && e.First.Name != null && string.Equals(e.First.Name.ToUpper(), "UID"))
@@ -133,10 +123,6 @@ namespace Ical.Net
             var newValue = e.AddedValues.OfType<string>().FirstOrDefault();
             OnUidChanged(oldValue, newValue);
         }
-
-        #endregion
-
-        #region Overrides
 
         protected override void OnDeserializing(StreamingContext context)
         {
@@ -175,10 +161,6 @@ namespace Ical.Net
             return base.GetHashCode();
         }
 
-        #endregion
-
-        #region IUniqueComponent Members
-
         public virtual event EventHandler<ObjectEventArgs<string, string>> UidChanged;
 
         protected virtual void OnUidChanged(string oldUid, string newUid)
@@ -194,7 +176,5 @@ namespace Ical.Net
             get { return Properties.Get<string>("UID"); }
             set { Properties.Set("UID", value); }
         }
-
-        #endregion
     }
 }

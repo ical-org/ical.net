@@ -9,8 +9,6 @@ namespace Ical.Net.Serialization.iCalendar.Factory
 {
     public class DataTypeSerializerFactory : ISerializerFactory
     {
-        #region ISerializerFactory Members
-
         /// <summary>
         /// Returns a serializer that can be used to serialize and object
         /// of type <paramref name="objectType"/>.
@@ -99,7 +97,5 @@ namespace Ical.Net.Serialization.iCalendar.Factory
             }
             return null;
         }
-
-        #endregion
     }
 }

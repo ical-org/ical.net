@@ -15,14 +15,8 @@ namespace Ical.Net.DataTypes
     [Serializable]
     public class GeographicLocation : EncodableDataType, IGeographicLocation
     {
-        #region Private Fields
-
         private double _mLatitude;
         private double _mLongitude;
-
-        #endregion
-
-        #region Public Properties
 
         public double Latitude
         {
@@ -35,10 +29,6 @@ namespace Ical.Net.DataTypes
             get { return _mLongitude; }
             set { _mLongitude = value; }
         }
-
-        #endregion
-
-        #region Constructors
 
         public GeographicLocation() {}
 
@@ -53,10 +43,6 @@ namespace Ical.Net.DataTypes
             Latitude = latitude;
             Longitude = longitude;
         }
-
-        #endregion
-
-        #region Overrides
 
         public override bool Equals(object obj)
         {
@@ -88,7 +74,5 @@ namespace Ical.Net.DataTypes
         {
             return Latitude.ToString("0.000000") + ";" + Longitude.ToString("0.000000");
         }
-
-        #endregion
     }
 }

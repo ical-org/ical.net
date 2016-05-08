@@ -12,15 +12,9 @@ namespace Ical.Net.DataTypes
     [Serializable]
     public class RequestStatus : EncodableDataType, IRequestStatus
     {
-        #region Private Fields
-
         private string _mDescription;
         private string _mExtraData;
         private IStatusCode _mStatusCode;
-
-        #endregion
-
-        #region Public Properties
 
         public virtual string Description
         {
@@ -40,10 +34,6 @@ namespace Ical.Net.DataTypes
             set { _mStatusCode = value; }
         }
 
-        #endregion
-
-        #region Constructors
-
         public RequestStatus() {}
 
         public RequestStatus(string value) : this()
@@ -51,10 +41,6 @@ namespace Ical.Net.DataTypes
             var serializer = new RequestStatusSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
-
-        #endregion
-
-        #region Overrides
 
         public override void CopyFrom(ICopyable obj)
         {
@@ -110,7 +96,5 @@ namespace Ical.Net.DataTypes
                 return hashCode;
             }
         }
-
-        #endregion
     }
 }

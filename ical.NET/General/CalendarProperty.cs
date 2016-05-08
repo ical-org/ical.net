@@ -33,14 +33,8 @@ namespace Ical.Net.General
     [Serializable]
     public class CalendarProperty : CalendarObject, ICalendarProperty
     {
-        #region Private Fields
-
         private IList<object> _values;
         private ICalendarParameterCollection _parameters;
-
-        #endregion
-
-        #region Public Properties
 
         /// <summary>
         /// Returns a list of parameters that are associated with the iCalendar object.
@@ -50,10 +44,6 @@ namespace Ical.Net.General
             get { return _parameters; }
             protected set { _parameters = value; }
         }
-
-        #endregion
-
-        #region Constructors
 
         public CalendarProperty()
         {
@@ -88,10 +78,6 @@ namespace Ical.Net.General
             ValueChanged += CalendarProperty_ValueChanged;
         }
 
-        #endregion
-
-        #region Public Methods
-
         /// <summary>
         /// Adds a parameter to the iCalendar object.
         /// </summary>
@@ -109,10 +95,6 @@ namespace Ical.Net.General
             Parameters.Add(p);
         }
 
-        #endregion
-
-        #region Event Handlers
-
         void CalendarProperty_ValueChanged(object sender, ValueChangedEventArgs<object> e)
         {
             // Deassociate the old values
@@ -127,10 +109,6 @@ namespace Ical.Net.General
                 AssociationUtil.AssociateItem(added, this);
             }
         }
-
-        #endregion
-
-        #region Overrides
 
         protected override void OnDeserializing(StreamingContext context)
         {
@@ -167,10 +145,6 @@ namespace Ical.Net.General
                 }
             }
         }
-
-        #endregion
-
-        #region IValueObject<object> Members
 
         [field: NonSerialized]
         public event EventHandler<ValueChangedEventArgs<object>> ValueChanged;
@@ -272,7 +246,5 @@ namespace Ical.Net.General
                 OnValueChanged(new[] {value}, null);
             }
         }
-
-        #endregion
     }
 }

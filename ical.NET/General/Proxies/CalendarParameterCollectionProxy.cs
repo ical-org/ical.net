@@ -9,20 +9,10 @@ namespace Ical.Net.General.Proxies
 {
     public class CalendarParameterCollectionProxy : GroupedCollectionProxy<string, ICalendarParameter, ICalendarParameter>, ICalendarParameterCollectionProxy
     {
-        #region Protected Properties
-
         protected IGroupedValueList<string, ICalendarParameter, CalendarParameter, string> Parameters
             => RealObject as IGroupedValueList<string, ICalendarParameter, CalendarParameter, string>;
 
-        #endregion
-
-        #region Constructors
-
         public CalendarParameterCollectionProxy(IGroupedList<string, ICalendarParameter> realObject) : base(realObject) {}
-
-        #endregion
-
-        #region ICalendarParameterCollection
 
         public virtual void SetParent(ICalendarObject parent)
         {
@@ -101,7 +91,5 @@ namespace Ical.Net.General.Proxies
             get { return Parameters[index]; }
             set { }
         }
-
-        #endregion
     }
 }

@@ -24,17 +24,11 @@ namespace Ical.Net.DataTypes
 
         public static CalDateTime Today => new CalDateTime(DateTime.Today);
 
-        #region Private Fields
-
         private DateTime _value;
         private bool _hasDate;
         private bool _hasTime;
         private TimeZoneObservance? _timeZoneObservance;
         private bool _isUniversalTime;
-
-        #endregion
-
-        #region Constructors
 
         public CalDateTime() {}
 
@@ -146,10 +140,6 @@ namespace Ical.Net.DataTypes
             return dt;
         }
 
-        #endregion
-
-        #region Overrides
-
         public override ICalendarObject AssociatedObject
         {
             get { return base.AssociatedObject; }
@@ -203,10 +193,6 @@ namespace Ical.Net.DataTypes
         {
             return ToString(null, null);
         }
-
-        #endregion
-
-        #region Operators
 
         public static bool operator <(CalDateTime left, IDateTime right)
         {
@@ -298,10 +284,6 @@ namespace Ical.Net.DataTypes
         {
             return new CalDateTime(left);
         }
-
-        #endregion
-
-        #region IDateTime Members
 
         /// <summary>
         /// Converts the date/time to this computer's local date/time.
@@ -627,8 +609,6 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        #endregion
-
         public int CompareTo(IDateTime dt)
         {
             if (Equals(dt))
@@ -645,8 +625,6 @@ namespace Ical.Net.DataTypes
             }
             throw new Exception("An error occurred while comparing two IDateTime values.");
         }
-
-        #region IFormattable Members
 
         public string ToString(string format)
         {
@@ -675,7 +653,5 @@ namespace Ical.Net.DataTypes
             }
             return Value.ToShortDateString() + tz;
         }
-
-        #endregion
     }
 }

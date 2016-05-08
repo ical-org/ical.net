@@ -8,14 +8,8 @@ namespace Ical.Net.General
     [Serializable]
     public class CalendarParameterList : GroupedValueList<string, ICalendarParameter, CalendarParameter, string>, ICalendarParameterCollection
     {
-        #region Private Fields
-
         ICalendarObject _mParent;
         bool _mCaseInsensitive;
-
-        #endregion
-
-        #region Constructors
 
         public CalendarParameterList() {}
 
@@ -29,10 +23,6 @@ namespace Ical.Net.General
             ItemRemoved += OnParameterRemoved;
         }
 
-        #endregion
-
-        #region Protected Methods
-
         protected void OnParameterRemoved(object sender, ObjectEventArgs<ICalendarParameter, int> e)
         {
             e.First.Parent = null;
@@ -43,10 +33,6 @@ namespace Ical.Net.General
             e.First.Parent = _mParent;
         }
 
-        #endregion
-
-        #region Overrides
-
         protected override string GroupModifier(string group)
         {
             if (_mCaseInsensitive && group != null)
@@ -55,10 +41,6 @@ namespace Ical.Net.General
             }
             return group;
         }
-
-        #endregion
-
-        #region ICalendarParameterCollection Members
 
         public virtual void SetParent(ICalendarObject parent)
         {
@@ -82,7 +64,5 @@ namespace Ical.Net.General
         {
             return GetMany<string>(name);
         }
-
-        #endregion
     }
 }

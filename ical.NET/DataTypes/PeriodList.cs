@@ -26,8 +26,6 @@ namespace Ical.Net.DataTypes
             set { _periods = value; }
         }
 
-        #region Constructors
-
         public PeriodList()
         {
             Initialize();
@@ -43,10 +41,6 @@ namespace Ical.Net.DataTypes
         {
             SetService(new PeriodListEvaluator(this));
         }
-
-        #endregion
-
-        #region Overrides
 
         protected override void OnDeserializing(StreamingContext context)
         {
@@ -111,10 +105,6 @@ namespace Ical.Net.DataTypes
 
         public override string ToString() => new PeriodListSerializer().SerializeToString(this);
 
-        #endregion
-
-        #region Public Methods
-
         public List<Period> Evaluate(CalDateTime startDate, CalDateTime fromDate, CalDateTime endDate)
         {
             var periods = new List<Period>();
@@ -139,8 +129,6 @@ namespace Ical.Net.DataTypes
 
             return periods;
         }
-
-        #endregion
 
         public virtual void Add(IDateTime dt) => Periods.Add(new Period(dt));
 

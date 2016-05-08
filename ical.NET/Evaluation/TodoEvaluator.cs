@@ -10,19 +10,9 @@ namespace Ical.Net.Evaluation
 {
     public class TodoEvaluator : RecurringEvaluator
     {
-        #region Protected Properties
-
         protected ITodo Todo => Recurrable as ITodo;
 
-        #endregion
-
-        #region Constructors
-
         public TodoEvaluator(ITodo todo) : base(todo) {}
-
-        #endregion
-
-        #region Public Methods
 
         public void EvaluateToPreviousOccurrence(IDateTime completedDate, IDateTime currDt)
         {
@@ -92,10 +82,6 @@ namespace Ical.Net.Evaluation
             }
         }
 
-        #endregion
-
-        #region Overrides
-
         public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // TODO items can only recur if a start date is specified
@@ -120,7 +106,5 @@ namespace Ical.Net.Evaluation
             }
             return new HashSet<IPeriod>();
         }
-
-        #endregion
     }
 }

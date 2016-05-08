@@ -13,13 +13,7 @@ namespace Ical.Net.Serialization
 {
     public class SerializationContext : ISerializationContext
     {
-        #region Static Private Fields
-
         private static SerializationContext _default;
-
-        #endregion
-
-        #region Static Public Properties
 
         /// <summary>
         /// Gets the Singleton instance of the SerializationContext class.
@@ -45,16 +39,8 @@ namespace Ical.Net.Serialization
             }
         }
 
-        #endregion
-
-        #region Private Fields
-
         private Stack<WeakReference> _mStack = new Stack<WeakReference>();
         private ServiceProvider _mServiceProvider = new ServiceProvider();
-
-        #endregion
-
-        #region Constructors
 
         public SerializationContext()
         {
@@ -69,10 +55,6 @@ namespace Ical.Net.Serialization
             SetService(new CompositeProcessor<ICalendarComponent>());
             SetService(new CompositeProcessor<ICalendarProperty>());
         }
-
-        #endregion
-
-        #region ISerializationContext Members
 
         public virtual void Push(object item)
         {
@@ -107,10 +89,6 @@ namespace Ical.Net.Serialization
             }
             return null;
         }
-
-        #endregion
-
-        #region IServiceProvider Members
 
         public virtual object GetService(Type serviceType)
         {
@@ -151,7 +129,5 @@ namespace Ical.Net.Serialization
         {
             _mServiceProvider.RemoveService(name);
         }
-
-        #endregion
     }
 }

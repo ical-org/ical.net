@@ -14,13 +14,7 @@ namespace Ical.Net
     [Serializable]
     public class Alarm : CalendarComponent, IAlarm
     {
-        #region Private Fields
-
         private List<AlarmOccurrence> _mOccurrences;
-
-        #endregion
-
-        #region Public Properties
 
         public virtual AlarmAction Action
         {
@@ -70,19 +64,11 @@ namespace Ical.Net
             set { Properties.Set("TRIGGER", value); }
         }
 
-        #endregion
-
-        #region Protected Properties
-
         protected virtual List<AlarmOccurrence> Occurrences
         {
             get { return _mOccurrences; }
             set { _mOccurrences = value; }
         }
-
-        #endregion
-
-        #region Constructors
 
         public Alarm()
         {
@@ -94,10 +80,6 @@ namespace Ical.Net
             Name = Components.Alarm;
             Occurrences = new List<AlarmOccurrence>();
         }
-
-        #endregion
-
-        #region Public Methods
 
         /// <summary>
         /// Gets a list of alarm occurrences for the given recurring component, <paramref name="rc"/>
@@ -185,10 +167,6 @@ namespace Ical.Net
             return results;
         }
 
-        #endregion
-
-        #region Protected Methods
-
         /// <summary>
         /// Handles the repetitions that occur from the <c>REPEAT</c> and
         /// <c>DURATION</c> properties.  Each recurrence of the alarm will
@@ -213,17 +191,11 @@ namespace Ical.Net
             }
         }
 
-        #endregion
-
-        #region Overrides
-
         protected override void OnDeserializing(StreamingContext context)
         {
             base.OnDeserializing(context);
 
             Initialize();
         }
-
-        #endregion
     }
 }

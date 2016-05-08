@@ -23,8 +23,6 @@ namespace Ical.Net
     [Serializable]
     public class RecurringComponent : UniqueComponent, IRecurringComponent
     {
-        #region Static Public Methods
-
         public static IEnumerable<IRecurringComponent> SortByDate(IEnumerable<IRecurringComponent> list)
         {
             return SortByDate<IRecurringComponent>(list);
@@ -49,15 +47,7 @@ namespace Ical.Net
             }
         }
 
-        #endregion
-
-        #region Protected Properties
-
         protected virtual bool EvaluationIncludesReferenceDate => false;
-
-        #endregion
-
-        #region Public Properties
 
         public virtual IList<IAttachment> Attachments
         {
@@ -178,10 +168,6 @@ namespace Ical.Net
         /// </summary>
         public virtual ICalendarObjectList<IAlarm> Alarms => new CalendarObjectListProxy<IAlarm>(Children);
 
-        #endregion
-
-        #region Constructors
-
         public RecurringComponent()
         {
             Initialize();
@@ -199,10 +185,6 @@ namespace Ical.Net
             SetService(new RecurringEvaluator(this));
         }
 
-        #endregion
-
-        #region Private Methods
-
         private void EnsureProperties()
         {
             if (!Properties.ContainsKey("SEQUENCE"))
@@ -211,20 +193,12 @@ namespace Ical.Net
             }
         }
 
-        #endregion
-
-        #region Overrides
-
         protected override void OnDeserializing(StreamingContext context)
         {
             base.OnDeserializing(context);
 
             Initialize();
         }
-
-        #endregion
-
-        #region IRecurringComponent Members
 
         public virtual void ClearEvaluation()
         {
@@ -268,8 +242,6 @@ namespace Ical.Net
             }
             return occurrences;
         }
-
-        #endregion
     }
 
     /// <summary>
@@ -277,13 +249,9 @@ namespace Ical.Net
     /// </summary>
     public class RecurringComponentDateSorter : IComparer<IRecurringComponent>
     {
-        #region IComparer<RecurringComponent> Members
-
         public int Compare(IRecurringComponent x, IRecurringComponent y)
         {
             return x.Start.CompareTo(y.Start);
         }
-
-        #endregion
     }
 }

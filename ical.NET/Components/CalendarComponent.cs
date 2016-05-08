@@ -19,12 +19,6 @@ namespace Ical.Net
     [DebuggerDisplay("Component: {Name}")]
     public class CalendarComponent : CalendarObject, ICalendarComponent
     {
-        #region Static Public Methods
-
-        #region LoadFromStream(...)
-
-        #region LoadFromStream(Stream s) variants
-
         /// <summary>
         /// Loads an iCalendar component (Event, Todo, Journal, etc.) from an open stream.
         /// </summary>
@@ -32,10 +26,6 @@ namespace Ical.Net
         {
             return LoadFromStream(s, Encoding.UTF8);
         }
-
-        #endregion
-
-        #region LoadFromStream(Stream s, Encoding e) variants
 
         public static ICalendarComponent LoadFromStream(Stream stream, Encoding encoding)
         {
@@ -58,10 +48,6 @@ namespace Ical.Net
             return serializer.Deserialize(stream, encoding) as ICalendarComponent;
         }
 
-        #endregion
-
-        #region LoadFromStream(TextReader tr) variants
-
         public static ICalendarComponent LoadFromStream(TextReader tr)
         {
             var text = tr.ReadToEnd();
@@ -81,12 +67,6 @@ namespace Ical.Net
             }
             return default(T);
         }
-
-        #endregion
-
-        #endregion
-
-        #endregion
 
         /// <summary>
         /// Returns a list of properties that are associated with the iCalendar object.

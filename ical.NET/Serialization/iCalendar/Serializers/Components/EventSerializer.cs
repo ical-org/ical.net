@@ -6,15 +6,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
 {
     public class EventSerializer : ComponentSerializer
     {
-        #region Constructor
-
         public EventSerializer() {}
 
         public EventSerializer(ISerializationContext ctx) : base(ctx) {}
-
-        #endregion
-
-        #region Overrides
 
         public override Type TargetType => typeof (Event);
 
@@ -36,7 +30,5 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
             }
             return base.SerializeToString(obj);
         }
-
-        #endregion
     }
 }

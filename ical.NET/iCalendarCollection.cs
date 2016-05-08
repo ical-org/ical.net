@@ -13,8 +13,6 @@ namespace Ical.Net
     [Serializable]
     public class CalendarCollection : List<ICalendar>, IICalendarCollection
     {
-        #region IGetOccurrences Members
-
         public void ClearEvaluation()
         {
             foreach (var iCal in this)
@@ -103,10 +101,6 @@ namespace Ical.Net
             return occurrences;
         }
 
-        #endregion
-
-        #region Private Methods
-
         IFreeBusy CombineFreeBusy(IFreeBusy main, IFreeBusy current)
         {
             if (main != null)
@@ -115,10 +109,6 @@ namespace Ical.Net
             }
             return current;
         }
-
-        #endregion
-
-        #region IGetFreeBusy Members
 
         public IFreeBusy GetFreeBusy(IFreeBusy freeBusyRequest)
         {
@@ -149,7 +139,5 @@ namespace Ical.Net
             }
             return fb;
         }
-
-        #endregion
     }
 }

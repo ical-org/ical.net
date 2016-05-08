@@ -7,8 +7,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class FreeBusyEntrySerializer : PeriodSerializer
     {
-        #region Overrides
-
         public override Type TargetType => typeof (FreeBusyEntry);
 
         public override string SerializeToString(object obj)
@@ -69,7 +67,5 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
             return entry;
         }
-
-        #endregion
     }
 }

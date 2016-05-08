@@ -10,14 +10,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 {
     public class GenericListSerializer : SerializerBase
     {
-        #region Private Fields
-
         Type _innerType;
         Type _objectType;
-
-        #endregion
-
-        #region Constructors
 
         public GenericListSerializer(Type objectType)
         {
@@ -26,10 +20,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             var listDef = typeof (List<>);
             _objectType = listDef.MakeGenericType(typeof (object));
         }
-
-        #endregion
-
-        #region Overrides
 
         public override Type TargetType => _objectType;
 
@@ -100,7 +90,5 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
             return null;
         }
-
-        #endregion
     }
 }

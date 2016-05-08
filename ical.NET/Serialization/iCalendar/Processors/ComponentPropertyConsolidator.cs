@@ -8,8 +8,6 @@ namespace Ical.Net.Serialization.iCalendar.Processors
     /// </summary>
     public class ComponentPropertyConsolidator : ISerializationProcessor<ICalendarComponent>
     {
-        #region ISerializationProcessor<ICalendarComponent> Members
-
         public virtual void PreSerialization(ICalendarComponent obj) {}
 
         public virtual void PostSerialization(ICalendarComponent obj) {}
@@ -17,7 +15,5 @@ namespace Ical.Net.Serialization.iCalendar.Processors
         public virtual void PreDeserialization(ICalendarComponent obj) {}
 
         public virtual void PostDeserialization(ICalendarComponent obj) {}
-
-        #endregion
     }
 }

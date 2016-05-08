@@ -5,14 +5,8 @@ namespace Ical.Net.General
 {
     public class ServiceProvider //: IServiceProvider
     {
-        #region Private Fields
-
         private IDictionary<Type, object> _mTypedServices = new Dictionary<Type, object>();
         private IDictionary<string, object> _mNamedServices = new Dictionary<string, object>();
-
-        #endregion
-
-        #region IServiceProvider Members
 
         public virtual object GetService(Type serviceType)
         {
@@ -102,7 +96,5 @@ namespace Ical.Net.General
                 _mNamedServices.Remove(name);
             }
         }
-
-        #endregion
     }
 }

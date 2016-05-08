@@ -7,15 +7,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public abstract class DataTypeSerializer : SerializerBase
     {
-        #region Constructors
-
         public DataTypeSerializer() {}
 
         public DataTypeSerializer(ISerializationContext ctx) : base(ctx) {}
-
-        #endregion
-
-        #region Protected Methods
 
         protected virtual ICalendarDataType CreateAndAssociate()
         {
@@ -33,7 +27,5 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             }
             return null;
         }
-
-        #endregion
     }
 }

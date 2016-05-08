@@ -12,13 +12,7 @@ namespace Ical.Net.DataTypes
     [Serializable]
     public class StatusCode : EncodableDataType, IStatusCode
     {
-        #region Private Fields
-
         private int[] _mParts;
-
-        #endregion
-
-        #region Public Properties
 
         public int[] Parts
         {
@@ -62,10 +56,6 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        #endregion
-
-        #region Constructors
-
         public StatusCode() {}
 
         public StatusCode(string value) : this()
@@ -73,10 +63,6 @@ namespace Ical.Net.DataTypes
             var serializer = new StatusCodeSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
-
-        #endregion
-
-        #region Overrides
 
         public override void CopyFrom(ICopyable obj)
         {
@@ -121,7 +107,5 @@ namespace Ical.Net.DataTypes
         {
             return (_mParts != null ? _mParts.GetHashCode() : 0);
         }
-
-        #endregion
     }
 }

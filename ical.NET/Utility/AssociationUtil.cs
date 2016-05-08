@@ -5,8 +5,6 @@ namespace Ical.Net.Utility
 {
     public class AssociationUtil
     {
-        #region Static Public Methods
-
         public static void AssociateItem(object item, ICalendarObject objectToAssociate)
         {
             if (item is ICalendarDataType)
@@ -30,7 +28,5 @@ namespace Ical.Net.Utility
                 ((ICalendarObject) item).Parent = null;
             }
         }
-
-        #endregion
     }
 }

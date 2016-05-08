@@ -14,15 +14,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 {
     public class PropertySerializer : SerializerBase
     {
-        #region Constructors
-
         public PropertySerializer() {}
 
         public PropertySerializer(ISerializationContext ctx) : base(ctx) {}
-
-        #endregion
-
-        #region Overrides
 
         public override Type TargetType => typeof (CalendarProperty);
 
@@ -136,7 +130,5 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             }
             return null;
         }
-
-        #endregion
     }
 }

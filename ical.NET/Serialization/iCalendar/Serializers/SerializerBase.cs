@@ -7,13 +7,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 {
     public abstract class SerializerBase : IStringSerializer
     {
-        #region Private Fields
-
         ISerializationContext _mSerializationContext;
-
-        #endregion
-
-        #region Constructors
 
         public SerializerBase()
         {
@@ -24,10 +18,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         {
             _mSerializationContext = ctx;
         }
-
-        #endregion
-
-        #region ISerializer Members
 
         public virtual ISerializationContext SerializationContext
         {
@@ -78,10 +68,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             // Pop the current object off the serialization stack
             SerializationContext.Pop();
         }
-
-        #endregion
-
-        #region IServiceProvider Members
 
         public virtual object GetService(Type serviceType)
         {
@@ -150,7 +136,5 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                 SerializationContext.RemoveService(name);
             }
         }
-
-        #endregion
     }
 }

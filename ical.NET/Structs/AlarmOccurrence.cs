@@ -16,15 +16,9 @@ namespace Ical.Net.Structs
     [Serializable]
     public struct AlarmOccurrence : IComparable<AlarmOccurrence>
     {
-        #region Private Fields
-
         private IPeriod _mPeriod;
         private IRecurringComponent _mComponent;
         private IAlarm _mAlarm;
-
-        #endregion
-
-        #region Public Properties
 
         public IPeriod Period
         {
@@ -50,10 +44,6 @@ namespace Ical.Net.Structs
             set { Period = new Period(value); }
         }
 
-        #endregion
-
-        #region Constructors
-
         public AlarmOccurrence(AlarmOccurrence ao)
         {
             _mPeriod = ao.Period;
@@ -68,15 +58,9 @@ namespace Ical.Net.Structs
             _mComponent = rc;
         }
 
-        #endregion
-
-        #region IComparable<AlarmOccurrence> Members
-
         public int CompareTo(AlarmOccurrence other)
         {
             return Period.CompareTo(other.Period);
         }
-
-        #endregion
     }
 }

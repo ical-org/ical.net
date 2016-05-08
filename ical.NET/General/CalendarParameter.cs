@@ -12,13 +12,7 @@ namespace Ical.Net.General
     [Serializable]
     public class CalendarParameter : CalendarObject, ICalendarParameter
     {
-        #region Private Fields
-
         List<string> _values;
-
-        #endregion
-
-        #region Constructors
 
         public CalendarParameter()
         {
@@ -50,10 +44,6 @@ namespace Ical.Net.General
             _values = new List<string>();
         }
 
-        #endregion
-
-        #region Overrides
-
         protected override void OnDeserializing(StreamingContext context)
         {
             base.OnDeserializing(context);
@@ -74,10 +64,6 @@ namespace Ical.Net.General
                 }
             }
         }
-
-        #endregion
-
-        #region IValueObject<string> Members
 
         [field: NonSerialized]
         public event EventHandler<ValueChangedEventArgs<string>> ValueChanged;
@@ -149,10 +135,6 @@ namespace Ical.Net.General
             }
         }
 
-        #endregion
-
-        #region ICalendarParameter Members
-
         public virtual string Value
         {
             get
@@ -165,7 +147,5 @@ namespace Ical.Net.General
             }
             set { SetValue(value); }
         }
-
-        #endregion
     }
 }

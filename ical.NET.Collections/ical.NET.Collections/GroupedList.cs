@@ -17,14 +17,8 @@ namespace ical.NET.Collections
         IGroupedList<TGroup, TItem>
         where TItem : class, IGroupedObject<TGroup>
     {
-        #region Protected Fields
-
         List<IMultiLinkedList<TItem>> _lists = new List<IMultiLinkedList<TItem>>();
         Dictionary<TGroup, IMultiLinkedList<TItem>> _dictionary = new Dictionary<TGroup, IMultiLinkedList<TItem>>();
-
-        #endregion
-
-        #region Private Methods
 
         TItem SubscribeToKeyChanges(TItem item)
         {
@@ -40,10 +34,6 @@ namespace ical.NET.Collections
             return item;
         }
 
-        #endregion
-
-        #region Protected Methods
-
         protected virtual TGroup GroupModifier(TGroup group)
         {
             if (group == null)
@@ -51,10 +41,6 @@ namespace ical.NET.Collections
 
             return group;
         }
-
-        #endregion
-
-        #region Private Methods
 
         IMultiLinkedList<TItem> EnsureList(TGroup group, bool createIfNecessary)
         {
@@ -100,10 +86,6 @@ namespace ical.NET.Collections
             return null;
         }
 
-        #endregion
-
-        #region Event Handlers
-
         void item_GroupChanged(object sender, ObjectEventArgs<TGroup, TGroup> e)
         {
             var oldValue = e.First;
@@ -144,10 +126,6 @@ namespace ical.NET.Collections
                     Add(obj);
             }
         }
-
-        #endregion
-
-        #region IGroupedList<TGroup, TObject> Members
 
         [field: NonSerialized]
         public event EventHandler<ObjectEventArgs<TItem, int>> ItemAdded;
@@ -337,10 +315,6 @@ namespace ical.NET.Collections
                 _lists.Add(list);
             }
         }
-        
-        #endregion
-
-        #region ICollection<TObject> Members
 
         public virtual bool Contains(TItem item)
         {
@@ -356,10 +330,6 @@ namespace ical.NET.Collections
         }
 
         public virtual bool IsReadOnly => false;
-
-        #endregion
-
-        #region IList<TObject> Members
 
         public virtual void Insert(int index, TItem item)
         {
@@ -410,24 +380,14 @@ namespace ical.NET.Collections
             }
         }
 
-        #endregion
-
-        #region IEnumerable<U> Members
-
         public IEnumerator<TItem> GetEnumerator()
         {
             return new GroupedListEnumerator<TItem>(_lists);
         }
 
-        #endregion
-
-        #region IEnumerable Members
-
         IEnumerator IEnumerable.GetEnumerator()
         {
             return new GroupedListEnumerator<TItem>(_lists);
         }
-
-        #endregion
     }    
 }

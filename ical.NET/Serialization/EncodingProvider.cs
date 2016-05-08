@@ -10,24 +10,12 @@ namespace Ical.Net.Serialization
 
         public delegate byte[] DecoderDelegate(string value);
 
-        #region Private Fields
-
         ISerializationContext _mSerializationContext;
-
-        #endregion
-
-        #region Constructors
 
         public EncodingProvider(ISerializationContext ctx)
         {
             _mSerializationContext = ctx;
         }
-
-        #endregion
-
-        #region Protected Methods
-
-        #region Decoding
 
         protected byte[] Decode7Bit(string value)
         {
@@ -86,10 +74,6 @@ namespace Ical.Net.Serialization
             return null;
         }
 
-        #endregion
-
-        #region Encoding
-
         protected string Encode7Bit(byte[] data)
         {
             try
@@ -147,12 +131,6 @@ namespace Ical.Net.Serialization
             return null;
         }
 
-        #endregion
-
-        #endregion
-
-        #region IEncodingProvider Members
-
         public string Encode(string encoding, byte[] data)
         {
             if (encoding != null && data != null)
@@ -193,7 +171,5 @@ namespace Ical.Net.Serialization
             }
             return null;
         }
-
-        #endregion
     }
 }

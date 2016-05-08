@@ -13,22 +13,12 @@ namespace Ical.Net.Serialization.iCalendar.Factory
 {
     public class SerializerFactory : ISerializerFactory
     {
-        #region Private Fields
-
         ISerializerFactory _mDataTypeSerializerFactory;
-
-        #endregion
-
-        #region Constructors
 
         public SerializerFactory()
         {
             _mDataTypeSerializerFactory = new DataTypeSerializerFactory();
         }
-
-        #endregion
-
-        #region ISerializerFactory Members
 
         /// <summary>
         /// Returns a serializer that can be used to serialize and object
@@ -112,7 +102,5 @@ namespace Ical.Net.Serialization.iCalendar.Factory
             }
             return null;
         }
-
-        #endregion
     }
 }

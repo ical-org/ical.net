@@ -10,15 +10,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 {
     public class UriSerializer : EncodableDataTypeSerializer
     {
-        #region Constructors
-
         public UriSerializer() {}
 
         public UriSerializer(ISerializationContext ctx) : base(ctx) {}
-
-        #endregion
-
-        #region Overrides
 
         public override Type TargetType => typeof (string);
 
@@ -65,7 +59,5 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
             }
             return null;
         }
-
-        #endregion
     }
 }
