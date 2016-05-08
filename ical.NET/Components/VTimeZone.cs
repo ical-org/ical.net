@@ -11,7 +11,7 @@ using Ical.Net.Interfaces.General;
 namespace Ical.Net
 {
     /// <summary>
-    /// A class that represents an RFC 5545 VTIMEZONE component.
+    /// Represents an RFC 5545 VTIMEZONE component.
     /// </summary>
     [Serializable]
     public class VTimeZone : CalendarComponent, ITimeZone
@@ -83,7 +83,6 @@ namespace Ical.Net
                 var delta = adjustmentRule.DaylightDelta;
                 var ddayTzinfoStandard = new CalTimeZoneInfo();
                 ddayTzinfoStandard.Name = "STANDARD";
-                ddayTzinfoStandard.TimeZoneName = tzinfo.StandardName;
                 ddayTzinfoStandard.Start =
                     new CalDateTime(
                         new DateTime(adjustmentRule.DateStart.Year, adjustmentRule.DaylightTransitionEnd.Month, adjustmentRule.DaylightTransitionEnd.Day,
@@ -104,7 +103,6 @@ namespace Ical.Net
                 {
                     var ddayTzinfoDaylight = new CalTimeZoneInfo();
                     ddayTzinfoDaylight.Name = "DAYLIGHT";
-                    ddayTzinfoDaylight.TimeZoneName = tzinfo.DaylightName;
                     ddayTzinfoDaylight.Start =
                         new CalDateTime(new DateTime(adjustmentRule.DateStart.Year, adjustmentRule.DaylightTransitionStart.Month,
                             adjustmentRule.DaylightTransitionStart.Day, adjustmentRule.DaylightTransitionStart.TimeOfDay.Hour,
@@ -129,7 +127,6 @@ namespace Ical.Net
             {
                 var ddayTzinfoStandard = new CalTimeZoneInfo();
                 ddayTzinfoStandard.Name = "STANDARD";
-                ddayTzinfoStandard.TimeZoneName = tzinfo.StandardName;
                 ddayTzinfoStandard.Start = earliest;
                 ddayTzinfoStandard.OffsetFrom = new UtcOffset(utcOffset);
                 ddayTzinfoStandard.OffsetTo = new UtcOffset(utcOffset);
@@ -164,12 +161,6 @@ namespace Ical.Net
             set { Id = value; }
         }
 
-        public virtual IDateTime LastModified
-        {
-            get { return Properties.Get<IDateTime>("LAST-MODIFIED"); }
-            set { Properties.Set("LAST-MODIFIED", value); }
-        }
-
         public virtual Uri Url
         {
             get { return Properties.Get<Uri>("TZURL"); }
@@ -177,7 +168,6 @@ namespace Ical.Net
         }
 
         private ICalendarObjectList<ITimeZoneInfo> _tzInfos;
-
         public virtual ICalendarObjectList<ITimeZoneInfo> TimeZoneInfos
         {
             get { return _tzInfos; }

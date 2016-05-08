@@ -945,7 +945,6 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             var iCal = Calendar.LoadFromFile(@"Calendars\Serialization\TimeZone1.ics")[0];
 
             var tz = iCal.TimeZones[0];
-            tz.LastModified = new CalDateTime(2007, 1, 1);
 
             var serializer = new CalendarSerializer();
             serializer.Serialize(iCal, @"Calendars\Serialization\Temp\TimeZone1.ics");
