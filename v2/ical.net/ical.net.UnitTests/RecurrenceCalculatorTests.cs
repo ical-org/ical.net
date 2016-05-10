@@ -19,7 +19,7 @@ namespace ical.net.UnitTests
             var today = ZonedDateTime.FromDateTimeOffset(sunday).WithZone(_nyTz);
 
             //every sunday for 5 occurrences
-            var repeatRules = new RecurrenceRuleSet(limit, Duration.FromStandardWeeks(1));
+            var repeatRules = new RecurrenceRule(limit, Duration.FromStandardWeeks(1));
             var foo = new RecurrenceCalculator(today, repeatRules, null);
             var actual = foo.GetRecurrences();
 

@@ -48,9 +48,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="VEvent.cs" />
+    <Compile Include="Frequency.cs" />
+    <Compile Include="RecurrenceBuilder.cs" />
     <Compile Include="RecurrenceCalculator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RecurrenceRuleSet.cs" />
+    <Compile Include="RecurrenceRule.cs" />
     <Compile Include="NodaUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
