@@ -9,12 +9,12 @@ namespace ical.net
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="vEvent"></param>
+        /// <param name="event"></param>
         /// <param name="frequency"></param>
         /// <param name="recurrenceCount"></param>
         /// <param name="interval"></param>
         /// <returns></returns>
-        public static RecurrenceRule RecurEvery(VEvent vEvent, Frequency frequency, int recurrenceCount, int interval = 1)
+        public static RecurrenceRule RecurEvery(Event @event, Frequency frequency, int recurrenceCount, int interval = 1)
         {
             if (interval <= 0)
             {
@@ -25,8 +25,6 @@ namespace ical.net
             {
                 throw new ArgumentException($"{frequency} is not a valid Frequency");
             }
-
-            return new RecurrenceRule();
 
             throw new NotImplementedException();
         }

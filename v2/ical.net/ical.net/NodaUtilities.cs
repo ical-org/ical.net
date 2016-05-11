@@ -1,5 +1,6 @@
 ﻿using System;
 using NodaTime;
+using NodaTime.TimeZones;
 
 namespace ical.net
 {
@@ -42,6 +43,27 @@ namespace ical.net
             }
 
             throw new ArgumentException($"{tzId} is not a recognized time zone");
+        }
+
+        public static ZonedDateTime NowTimeWithSystemTimeZone()
+        {
+            DateTimeZone tz;
+            try
+            {
+                tz = DateTimeZoneProviders.Tzdb.GetSystemDefault();
+            }
+            catch (DateTimeZoneNotFoundException)
+            {
+                tz = DateTimeZoneProviders.Bcl.GetSystemDefault();
+            }
+            return NowTimeWithTimeZone(tz);
+        }
+
+        public static ZonedDateTime NowTimeWithTimeZone(DateTimeZone timeZone)
+        {
+            var instant = SystemClock.Instance.Now;
+            var zoned = instant.InZone(timeZone);
+            return zoned;
         }
     }
 }
