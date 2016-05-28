@@ -585,28 +585,6 @@ namespace Ical.Net.DataTypes
             {
                 dt.AssociatedObject = AssociatedObject;
             }
-
-            // If these share the same TZID, then let's see if we
-            // can share the time zone observance also!
-            if (TzId != null && string.Equals(TzId, dt.TzId))
-            {
-                if (TimeZoneObservance != null && dt.TimeZoneObservance == null)
-                {
-                    IDateTime normalizedDt = new CalDateTime(TimeZoneObservance.Value.TimeZoneInfo.OffsetTo.ToUtc(dt.Value));
-                    if (TimeZoneObservance.Value.Contains(normalizedDt))
-                    {
-                        dt.TimeZoneObservance = TimeZoneObservance;
-                    }
-                }
-                else if (dt.TimeZoneObservance != null && TimeZoneObservance == null)
-                {
-                    IDateTime normalizedDt = new CalDateTime(dt.TimeZoneObservance.Value.TimeZoneInfo.OffsetTo.ToUtc(Value));
-                    if (dt.TimeZoneObservance.Value.Contains(normalizedDt))
-                    {
-                        TimeZoneObservance = dt.TimeZoneObservance;
-                    }
-                }
-            }
         }
 
         public int CompareTo(IDateTime dt)
