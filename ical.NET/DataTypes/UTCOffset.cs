@@ -11,7 +11,7 @@ namespace Ical.Net.DataTypes
     [Serializable]
     public class UtcOffset : EncodableDataType, IUtcOffset
     {
-        public TimeSpan Offset { get; set; }
+        public TimeSpan Offset { get; private set; }
 
         public bool Positive => Offset >= TimeSpan.Zero;
 
