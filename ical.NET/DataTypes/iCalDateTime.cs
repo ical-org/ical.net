@@ -44,11 +44,6 @@ namespace Ical.Net.DataTypes
             Initialize(value, tzId, null);
         }
 
-        public CalDateTime(DateTime value, TimeZoneObservance tzo)
-        {
-            Initialize(value, tzo);
-        }
-
         public CalDateTime(int year, int month, int day, int hour, int minute, int second)
         {
             Initialize(year, month, day, hour, minute, second, null, null);
@@ -94,25 +89,6 @@ namespace Ical.Net.DataTypes
             HasTime = (value.Second == 0 && value.Minute == 0 && value.Hour == 0) ? false : true;
             TzId = tzId;
             AssociatedObject = cal;
-        }
-
-        private void Initialize(DateTime value, TimeZoneObservance tzo)
-        {
-            if (value.Kind == DateTimeKind.Utc)
-            {
-                IsUniversalTime = true;
-            }
-
-            // Convert all incoming values to UTC.
-            Value = DateTime.SpecifyKind(value, DateTimeKind.Utc);
-            HasDate = true;
-            HasTime = (value.Second == 0 && value.Minute == 0 && value.Hour == 0) ? false : true;
-            if (tzo.TimeZoneInfo != null)
-            {
-                TzId = tzo.TimeZoneInfo.TzId;
-            }
-            TimeZoneObservance = tzo;
-            AssociatedObject = tzo.TimeZoneInfo;
         }
 
         private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
@@ -428,17 +404,6 @@ namespace Ical.Net.DataTypes
         public DateTime Date => Value.Date;
 
         public TimeSpan TimeOfDay => Value.TimeOfDay;
-
-        public IDateTime ToTimeZone(TimeZoneObservance tzo)
-        {
-            var tzi = tzo.TimeZoneInfo;
-            if (tzi != null)
-            {
-                var tzId = tzo.TimeZoneInfo.TzId;
-                return new CalDateTime(tzi.OffsetTo.ToLocal(AsUtc), tzo);
-            }
-            return null;
-        }
 
         public IDateTime ToTimeZone(string newTimeZone)
         {

@@ -109,12 +109,6 @@ namespace Ical.Net.Interfaces.DataTypes
         /// Converts the date/time value to a local time
         /// within the specified time zone.
         /// </summary>
-        IDateTime ToTimeZone(TimeZoneObservance tzo);
-
-        /// <summary>
-        /// Converts the date/time value to a local time
-        /// within the specified time zone.
-        /// </summary>
         IDateTime ToTimeZone(string newTimeZone);
 
         IDateTime Add(TimeSpan ts);

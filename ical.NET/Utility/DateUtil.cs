@@ -61,7 +61,7 @@ namespace Ical.Net.Utility
             {
                 if (!string.Equals(dt1.TzId, copy.TzId))
                 {
-                    return (dt1.TimeZoneObservance != null) ? copy.ToTimeZone(dt1.TimeZoneObservance.Value) : copy.ToTimeZone(dt1.TzId);
+                    return copy.ToTimeZone(dt1.TzId);
                 }
                 return copy;
             }
