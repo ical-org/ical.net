@@ -3,10 +3,8 @@ using System.IO;
 using System.Linq;
 using Ical.Net;
 using Ical.Net.DataTypes;
-using Ical.Net.ExtensionMethods;
 using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Serialization.iCalendar.Serializers;
 using Ical.Net.Utility;
 using NUnit.Framework;
 
@@ -230,108 +228,6 @@ namespace ical.NET.UnitTests
             Assert.AreEqual(dateTimes1.Length, occurrences.Count, "There should be exactly " + dateTimes1.Length + " occurrences; there were " + occurrences.Count);
         }
 
-        //[Test]     //Broken in dday
-        public void Merge2()
-        {
-            var iCal = new Calendar();
-            var tmpCal = Calendar.LoadFromFile(@"Calendars\Serialization\TimeZone3.ics")[0];
-            iCal.MergeWith(tmpCal);
-
-            tmpCal = Calendar.LoadFromFile(@"Calendars\Serialization\TimeZone3.ics")[0];
-
-            // Compare the two calendars -- they should match exactly
-            SerializationTest.CompareCalendars(iCal, tmpCal);
-        }
-
-        /// <summary>
-        /// The following tests the MergeWith() method of iCalendar to
-        /// ensure that unique component merging happens as expected.
-        /// </summary>
-        //[Test]     //Broken in dday
-        public void Merge3()
-        {
-            var iCal1 = Calendar.LoadFromFile(@"Calendars\Recurrence\MonthlyCountByMonthDay3.ics")[0];
-            var iCal2 = Calendar.LoadFromFile(@"Calendars\Recurrence\YearlyByMonth1.ics")[0];
-
-            iCal1.MergeWith(iCal2);
-
-            Assert.AreEqual(1, iCal1.Events.Count);
-        }
-
-
-        /// <summary>
-        /// Tests conversion of the system time zone to one compatible with Ical.Net.
-        /// Also tests the gaining/loss of an hour over time zone boundaries.
-        /// </summary>
-        //[Test]     //Broken in dday
-        public void SystemTimeZone1()
-        {
-            var tzi = TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time");
-            Assert.IsNotNull(tzi);
-
-            var iCal = new Calendar();
-            var tz = VTimeZone.FromSystemTimeZone(tzi, new DateTime(2000, 1, 1), false);
-            Assert.IsNotNull(tz);
-            iCal.AddChild(tz);
-
-            var serializer = new CalendarSerializer();
-            serializer.Serialize(iCal, @"Calendars\Serialization\SystemTimeZone1.ics");
-
-            // Ensure the time zone transition works as expected
-            // (i.e. it takes 1 hour and 1 second to transition from
-            // 2003-10-26 12:59:59 AM to
-            // 2003-10-26 01:00:00 AM)
-            var dt1 = new CalDateTime(2003, 10, 26, 0, 59, 59, tz.TzId, iCal);
-            var dt2 = new CalDateTime(2003, 10, 26, 1, 0, 0, tz.TzId, iCal);
-
-            var result = dt2 - dt1;
-            Assert.AreEqual(TimeSpan.FromHours(1) + TimeSpan.FromSeconds(1), result);
-
-            // Ensure another time zone transition works as expected
-            // (i.e. it takes negative 59 minutes and 59 seconds to transition from
-            // 2004-04-04 01:59:59 AM to
-            // 2004-04-04 02:00:00 AM)
-            dt1 = new CalDateTime(2004, 4, 4, 1, 59, 59, tz.TzId, iCal);
-            dt2 = new CalDateTime(2004, 4, 4, 2, 0, 0, tz.TzId, iCal);
-            result = dt2 - dt1;
-            Assert.AreEqual(TimeSpan.FromHours(-1) + TimeSpan.FromSeconds(1), result);            
-        }
-
-        /// <summary>
-        /// Ensures the AddTimeZone() method works as expected.
-        /// </summary>
-        //[Test]     //Broken in dday
-        public void SystemTimeZone2()
-        {
-            var tzi = TimeZoneInfo.FindSystemTimeZoneById("Mountain Standard Time");
-            Assert.IsNotNull(tzi);
-
-            var iCal = new Calendar();
-            var tz = iCal.AddTimeZone(tzi, new DateTime(2000, 1, 1), false);
-            Assert.IsNotNull(tz);
-
-            var serializer = new CalendarSerializer();
-            serializer.Serialize(iCal, @"Calendars\Serialization\SystemTimeZone2.ics");
-
-            // Ensure the time zone transition works as expected
-            // (i.e. it takes 1 hour and 1 second to transition from
-            // 2003-10-26 12:59:59 AM to
-            // 2003-10-26 01:00:00 AM)
-            var dt1 = new CalDateTime(2003, 10, 26, 0, 59, 59, tz.TzId, iCal);
-            var dt2 = new CalDateTime(2003, 10, 26, 1, 0, 0, tz.TzId, iCal);
-            var result = dt2 - dt1;
-            Assert.AreEqual(TimeSpan.FromHours(1) + TimeSpan.FromSeconds(1), result);
-
-            // Ensure another time zone transition works as expected
-            // (i.e. it takes negative 59 minutes and 59 seconds to transition from
-            // 2004-04-04 01:59:59 AM to
-            // 2004-04-04 02:00:00 AM)
-            dt1 = new CalDateTime(2004, 4, 4, 1, 59, 59, tz.TzId, iCal);
-            dt2 = new CalDateTime(2004, 4, 4, 2, 0, 0, tz.TzId, iCal);
-            result = dt2 - dt1;
-            Assert.AreEqual(TimeSpan.FromHours(-1) + TimeSpan.FromSeconds(1), result);
-        }
-
         [Test]
         public void SystemTimeZone3()
         {
@@ -351,14 +247,7 @@ namespace ical.NET.UnitTests
                 {
                     Assert.Fail("Not found: " + zone.StandardName);                    
                 }
-
-                if (tzinfo != null)
-                {
-                    var icalTz = VTimeZone.FromSystemTimeZone(tzinfo);
-                    Assert.AreNotEqual(0, icalTz.TimeZoneInfos.Count, zone.StandardName + ": no time zone information was extracted.");
-                }
             }
         }
-
     }
 }

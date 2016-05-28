@@ -446,66 +446,6 @@ namespace Ical.Net
             return tz;
         }
 
-
-        /// <summary>
-        /// Adds a system time zone to the iCalendar.  This time zone may
-        /// then be used in date/time objects contained in the 
-        /// calendar.
-        /// </summary>
-        /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>
-        /// <returns>The time zone added to the calendar.</returns>
-        public ITimeZone AddTimeZone(TimeZoneInfo tzi)
-        {
-            ITimeZone tz = VTimeZone.FromSystemTimeZone(tzi);
-            this.AddChild(tz);
-            return tz;
-        }
-
-        public ITimeZone AddTimeZone(TimeZoneInfo tzi, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
-        {
-            ITimeZone tz = VTimeZone.FromSystemTimeZone(tzi, earliestDateTimeToSupport, includeHistoricalData);
-            this.AddChild(tz);
-            return tz;
-        }
-
-        /// <summary>
-        /// Adds the local system time zone to the iCalendar.  
-        /// This time zone may then be used in date/time
-        /// objects contained in the calendar.
-        /// </summary>
-        /// <returns>The time zone added to the calendar.</returns>
-        public ITimeZone AddLocalTimeZone()
-        {
-            ITimeZone tz = VTimeZone.FromLocalTimeZone();
-            this.AddChild(tz);
-            return tz;
-        }
-
-        public ITimeZone AddLocalTimeZone(DateTime earliestDateTimeToSupport, bool includeHistoricalData)
-        {
-            ITimeZone tz = VTimeZone.FromLocalTimeZone(earliestDateTimeToSupport, includeHistoricalData);
-            this.AddChild(tz);
-            return tz;
-        }
-
-
-        /// <summary>
-        /// Retrieves the TimeZone object for the specified TZID (Time Zone Identifier).
-        /// </summary>
-        /// <param name="tzId">A valid TZID object, or a valid TZID string.</param>
-        /// <returns>A <see cref="TimeZone"/> object for the TZID.</returns>
-        public ITimeZone GetTimeZone(string tzId)
-        {
-            foreach (var tz in TimeZones)
-            {
-                if (tz.TzId.Equals(tzId))
-                {
-                    return tz;
-                }
-            }
-            return null;
-        }
-
         /// <summary>
         /// Evaluates component recurrences for the given range of time.
         /// <example>
@@ -687,14 +627,6 @@ namespace Ical.Net
                     if (child is IUniqueComponent)
                     {
                         if (!UniqueComponents.ContainsKey(((IUniqueComponent) child).Uid))
-                        {
-                            this.AddChild(child.Copy<ICalendarObject>());
-                        }
-                    }
-                    else if (child is ITimeZone)
-                    {
-                        var tz = GetTimeZone(((ITimeZone) child).TzId);
-                        if (tz == null)
                         {
                             this.AddChild(child.Copy<ICalendarObject>());
                         }

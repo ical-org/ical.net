@@ -5,7 +5,6 @@ using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
-using Ical.Net.Structs;
 using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes
@@ -27,7 +26,6 @@ namespace Ical.Net.DataTypes
         private DateTime _value;
         private bool _hasDate;
         private bool _hasTime;
-        private TimeZoneObservance? _timeZoneObservance;
         private bool _isUniversalTime;
 
         public CalDateTime() {}
@@ -42,11 +40,6 @@ namespace Ical.Net.DataTypes
         public CalDateTime(DateTime value, string tzId)
         {
             Initialize(value, tzId, null);
-        }
-
-        public CalDateTime(DateTime value, TimeZoneObservance tzo)
-        {
-            Initialize(value, tzo);
         }
 
         public CalDateTime(int year, int month, int day, int hour, int minute, int second)
@@ -94,25 +87,6 @@ namespace Ical.Net.DataTypes
             HasTime = (value.Second == 0 && value.Minute == 0 && value.Hour == 0) ? false : true;
             TzId = tzId;
             AssociatedObject = cal;
-        }
-
-        private void Initialize(DateTime value, TimeZoneObservance tzo)
-        {
-            if (value.Kind == DateTimeKind.Utc)
-            {
-                IsUniversalTime = true;
-            }
-
-            // Convert all incoming values to UTC.
-            Value = DateTime.SpecifyKind(value, DateTimeKind.Utc);
-            HasDate = true;
-            HasTime = (value.Second == 0 && value.Minute == 0 && value.Hour == 0) ? false : true;
-            if (tzo.TimeZoneInfo != null)
-            {
-                TzId = tzo.TimeZoneInfo.TzId;
-            }
-            TimeZoneObservance = tzo;
-            AssociatedObject = tzo.TimeZoneInfo;
         }
 
         private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
@@ -331,27 +305,6 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        /// <summary>
-        /// Gets/sets the <see cref="Components.iCalTimeZoneInfo"/> object for the time
-        /// zone set by <see cref="TzId"/>.
-        /// </summary>
-        public TimeZoneObservance? TimeZoneObservance
-        {
-            get { return _timeZoneObservance; }
-            set
-            {
-                _timeZoneObservance = value;
-                if (value != null && value.HasValue && value.Value.TimeZoneInfo != null)
-                {
-                    TzId = value.Value.TimeZoneInfo.TzId;
-                }
-                else
-                {
-                    TzId = null;
-                }
-            }
-        }
-
         public bool IsUniversalTime
         {
             get { return _isUniversalTime; }
@@ -378,6 +331,7 @@ namespace Ical.Net.DataTypes
             set { _hasTime = value; }
         }
 
+        private string _tzId = string.Empty;
         public string TzId
         {
             get
@@ -386,21 +340,16 @@ namespace Ical.Net.DataTypes
                 {
                     return "UTC";
                 }
-                return Parameters.Get("TZID");
+                return !string.IsNullOrWhiteSpace(_tzId)
+                    ? _tzId
+                    : Parameters.Get("TZID");
             }
             set
             {
                 if (!Equals(TzId, value))
                 {
                     Parameters.Set("TZID", value);
-
-                    // Set the time zone observance to null if the TZID
-                    // doesn't match.
-                    if (value != null && _timeZoneObservance != null && _timeZoneObservance.HasValue && _timeZoneObservance.Value.TimeZoneInfo != null &&
-                        !Equals(_timeZoneObservance.Value.TimeZoneInfo.TzId, value))
-                    {
-                        _timeZoneObservance = null;
-                    }
+                    _tzId = value;
                 }
             }
         }
@@ -428,17 +377,6 @@ namespace Ical.Net.DataTypes
         public DateTime Date => Value.Date;
 
         public TimeSpan TimeOfDay => Value.TimeOfDay;
-
-        public IDateTime ToTimeZone(TimeZoneObservance tzo)
-        {
-            var tzi = tzo.TimeZoneInfo;
-            if (tzi != null)
-            {
-                var tzId = tzo.TimeZoneInfo.TzId;
-                return new CalDateTime(tzi.OffsetTo.ToLocal(AsUtc), tzo);
-            }
-            return null;
-        }
 
         public IDateTime ToTimeZone(string newTimeZone)
         {
@@ -584,28 +522,6 @@ namespace Ical.Net.DataTypes
             else if (AssociatedObject != null && dt.AssociatedObject == null)
             {
                 dt.AssociatedObject = AssociatedObject;
-            }
-
-            // If these share the same TZID, then let's see if we
-            // can share the time zone observance also!
-            if (TzId != null && string.Equals(TzId, dt.TzId))
-            {
-                if (TimeZoneObservance != null && dt.TimeZoneObservance == null)
-                {
-                    IDateTime normalizedDt = new CalDateTime(TimeZoneObservance.Value.TimeZoneInfo.OffsetTo.ToUtc(dt.Value));
-                    if (TimeZoneObservance.Value.Contains(normalizedDt))
-                    {
-                        dt.TimeZoneObservance = TimeZoneObservance;
-                    }
-                }
-                else if (dt.TimeZoneObservance != null && TimeZoneObservance == null)
-                {
-                    IDateTime normalizedDt = new CalDateTime(dt.TimeZoneObservance.Value.TimeZoneInfo.OffsetTo.ToUtc(Value));
-                    if (dt.TimeZoneObservance.Value.Contains(normalizedDt))
-                    {
-                        TimeZoneObservance = dt.TimeZoneObservance;
-                    }
-                }
             }
         }
 

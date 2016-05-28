@@ -1,5 +1,4 @@
 ﻿using System;
-using Ical.Net.Structs;
 
 namespace Ical.Net.Interfaces.DataTypes
 {
@@ -14,12 +13,6 @@ namespace Ical.Net.Interfaces.DataTypes
         /// Converts the date/time to UTC (Coordinated Universal Time)
         /// </summary>
         DateTime AsUtc { get; }
-
-        /// <summary>
-        /// Retrieves the <see cref="Components.iCalTimeZoneInfo"/> object for the time
-        /// zone set by <see cref="TzId"/>.
-        /// </summary>
-        TimeZoneObservance? TimeZoneObservance { get; set; }
 
         /// <summary>
         /// Gets/sets whether the Value of this date/time represents
@@ -104,12 +97,6 @@ namespace Ical.Net.Interfaces.DataTypes
         /// Gets the date portion of the date/time value.
         /// </summary>
         DateTime Date { get; }
-
-        /// <summary>
-        /// Converts the date/time value to a local time
-        /// within the specified time zone.
-        /// </summary>
-        IDateTime ToTimeZone(TimeZoneObservance tzo);
 
         /// <summary>
         /// Converts the date/time value to a local time
