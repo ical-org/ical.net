@@ -27,7 +27,6 @@ namespace Ical.Net.DataTypes
         private DateTime _value;
         private bool _hasDate;
         private bool _hasTime;
-        private TimeZoneObservance? _timeZoneObservance;
         private bool _isUniversalTime;
 
         public CalDateTime() {}
@@ -307,27 +306,6 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        /// <summary>
-        /// Gets/sets the <see cref="Components.iCalTimeZoneInfo"/> object for the time
-        /// zone set by <see cref="TzId"/>.
-        /// </summary>
-        public TimeZoneObservance? TimeZoneObservance
-        {
-            get { return _timeZoneObservance; }
-            set
-            {
-                _timeZoneObservance = value;
-                if (value != null && value.HasValue && value.Value.TimeZoneInfo != null)
-                {
-                    TzId = value.Value.TimeZoneInfo.TzId;
-                }
-                else
-                {
-                    TzId = null;
-                }
-            }
-        }
-
         public bool IsUniversalTime
         {
             get { return _isUniversalTime; }
@@ -354,6 +332,7 @@ namespace Ical.Net.DataTypes
             set { _hasTime = value; }
         }
 
+        private string _tzId = string.Empty;
         public string TzId
         {
             get
@@ -362,21 +341,16 @@ namespace Ical.Net.DataTypes
                 {
                     return "UTC";
                 }
-                return Parameters.Get("TZID");
+                return !string.IsNullOrWhiteSpace(_tzId)
+                    ? _tzId
+                    : Parameters.Get("TZID");
             }
             set
             {
                 if (!Equals(TzId, value))
                 {
                     Parameters.Set("TZID", value);
-
-                    // Set the time zone observance to null if the TZID
-                    // doesn't match.
-                    if (value != null && _timeZoneObservance != null && _timeZoneObservance.HasValue && _timeZoneObservance.Value.TimeZoneInfo != null &&
-                        !Equals(_timeZoneObservance.Value.TimeZoneInfo.TzId, value))
-                    {
-                        _timeZoneObservance = null;
-                    }
+                    _tzId = value;
                 }
             }
         }

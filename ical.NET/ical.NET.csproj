@@ -258,7 +258,6 @@
     <Compile Include="Serialization\iCalendar\iCalParserTokenTypes.cs" />
     <Compile Include="Serialization\SerializationContext.cs" />
     <Compile Include="Serialization\SerializationSettings.cs" />
-    <Compile Include="Structs\TimeZoneObservance.cs" />
     <Compile Include="Utility\AssociationUtil.cs" />
     <Compile Include="Utility\DateUtil.cs" />
     <Compile Include="Utility\KnownTypeHelper.cs" />
