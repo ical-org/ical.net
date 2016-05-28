@@ -4,7 +4,7 @@ namespace Ical.Net.Interfaces.DataTypes
 {
     public interface IUtcOffset : IEncodableDataType
     {
-        TimeSpan Offset { get; set; }
+        TimeSpan Offset { get; }
         bool Positive { get; }
         int Hours { get; }
         int Minutes { get; }
