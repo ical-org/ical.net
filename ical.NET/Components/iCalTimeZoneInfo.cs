@@ -40,14 +40,6 @@ namespace Ical.Net
             SetService(_mEvaluator);
         }
 
-        //ToDo: Delegate to NodaTime
-        private IUtcOffset _offsetTo;
-        public virtual IUtcOffset OffsetTo
-        {
-            get { return _offsetTo ?? (_offsetTo = Properties.Get<IUtcOffset>("TZOFFSETTO")); }
-            set { _offsetTo = value; }
-        }
-
         public virtual IDateTime DtStart
         {
             get { return Start; }

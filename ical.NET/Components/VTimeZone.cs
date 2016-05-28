@@ -64,7 +64,6 @@ namespace Ical.Net
         public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
         {
             var adjustmentRules = tzinfo.GetAdjustmentRules();
-            var utcOffset = tzinfo.BaseUtcOffset;
             var ddayTz = new VTimeZone();
             ddayTz.TzId = tzinfo.Id;
 
@@ -90,7 +89,6 @@ namespace Ical.Net
                 {
                     ddayTzinfoStandard.Start = ddayTzinfoStandard.Start.AddYears(earliest.Year - ddayTzinfoStandard.Start.Year);
                 }
-                ddayTzinfoStandard.OffsetTo = new UtcOffset(utcOffset);
                 PopulateiCalTimeZoneInfo(ddayTzinfoStandard, adjustmentRule.DaylightTransitionEnd, adjustmentRule.DateStart.Year);
 
                 // Add the "standard" time rule to the time zone
@@ -108,7 +106,6 @@ namespace Ical.Net
                     {
                         ddayTzinfoDaylight.Start = ddayTzinfoDaylight.Start.AddYears(earliest.Year - ddayTzinfoDaylight.Start.Year);
                     }
-                    ddayTzinfoDaylight.OffsetTo = new UtcOffset(utcOffset + delta);
                     PopulateiCalTimeZoneInfo(ddayTzinfoDaylight, adjustmentRule.DaylightTransitionStart, adjustmentRule.DateStart.Year);
 
                     // Add the "daylight" time rule to the time zone
@@ -124,7 +121,6 @@ namespace Ical.Net
                 var ddayTzinfoStandard = new CalTimeZoneInfo();
                 ddayTzinfoStandard.Name = "STANDARD";
                 ddayTzinfoStandard.Start = earliest;
-                ddayTzinfoStandard.OffsetTo = new UtcOffset(utcOffset);
 
                 // Add the "standard" time rule to the time zone
                 ddayTz.AddChild(ddayTzinfoStandard);
