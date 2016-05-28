@@ -29,8 +29,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         public override object Deserialize(TextReader tr)
         {
             var offsetString = tr.ReadToEnd();
-            var offset = CreateAndAssociate() as IUtcOffset;
-            offset.Offset = GetOffset(offsetString);
+            var offset = new UtcOffset(offsetString);
             return offset;
         }
 
