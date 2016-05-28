@@ -2,10 +2,10 @@ using System;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
 
-namespace Ical.Net.Structs
+namespace Ical.Net.DataTypes
 {
     [Serializable]
-    public struct Occurrence : IComparable<Occurrence>
+    public class Occurrence : IComparable<Occurrence>
     {
         public IPeriod Period { get; set; }
         public IRecurrable Source { get; set; }

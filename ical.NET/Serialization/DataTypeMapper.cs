@@ -11,7 +11,7 @@ namespace Ical.Net.Serialization
 
     public class DataTypeMapper : IDataTypeMapper
     {
-        private struct PropertyMapping
+        private class PropertyMapping
         {
             public Type ObjectType { get; set; }
             public TypeResolverDelegate Resolver { get; set; }

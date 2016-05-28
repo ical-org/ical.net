@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
-using Ical.Net.Structs;
 
 namespace Ical.Net.Interfaces.Components
 {

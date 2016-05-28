@@ -179,8 +179,8 @@
     <Compile Include="Serialization\iCalendar\Serializers\GenericListSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\Other\StringSerializer.cs" />
     <Compile Include="Serialization\EncodingProvider.cs" />
-    <Compile Include="Structs\AlarmOccurrence.cs" />
-    <Compile Include="Structs\Occurrence.cs" />
+    <Compile Include="DataTypes\AlarmOccurrence.cs" />
+    <Compile Include="DataTypes\Occurrence.cs" />
     <Compile Include="DataTypes\Period.cs" />
     <Compile Include="Serialization\Factory\ComponentFactory.cs" />
     <Compile Include="General\CalendarObject.cs">

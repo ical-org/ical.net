@@ -14,7 +14,6 @@ using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
-using Ical.Net.Structs;
 using Ical.Net.Utility;
 using NUnit.Framework;
 using Calendar = Ical.Net.Calendar;

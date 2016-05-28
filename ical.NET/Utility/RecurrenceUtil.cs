@@ -3,7 +3,6 @@ using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Interfaces.General;
-using Ical.Net.Structs;
 
 namespace Ical.Net.Utility
 {
