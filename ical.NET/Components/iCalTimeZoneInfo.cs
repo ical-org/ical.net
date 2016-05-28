@@ -40,20 +40,6 @@ namespace Ical.Net
             SetService(_mEvaluator);
         }
 
-        private string _tzId;
-        public virtual string TzId
-        {
-            get
-            {
-                if (_tzId == null)
-                {
-                    var tz = Parent as ITimeZone;
-                    _tzId = tz?.TzId;
-                }
-                return _tzId;
-            }
-        }
-
         //ToDo: Delegate to NodaTime
         private IUtcOffset _offsetTo;
         public virtual IUtcOffset OffsetTo
