@@ -1,5 +1,4 @@
 ﻿using System;
-using Ical.Net.Structs;
 
 namespace Ical.Net.Interfaces.DataTypes
 {
