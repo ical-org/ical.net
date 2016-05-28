@@ -56,14 +56,6 @@ namespace Ical.Net
         }
 
         //ToDo: Delegate to NodaTime
-        private IUtcOffset _offsetFrom;
-        public virtual IUtcOffset OffsetFrom
-        {
-            get { return _offsetFrom ?? (_offsetFrom = Properties.Get<IUtcOffset>("TZOFFSETFROM")); }
-            set { _offsetFrom = value; }
-        }
-
-        //ToDo: Delegate to NodaTime
         private IUtcOffset _offsetTo;
         public virtual IUtcOffset OffsetTo
         {
