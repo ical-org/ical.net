@@ -21,10 +21,7 @@ namespace Ical.Net.Evaluation
             if (includeReferenceDateInResults)
             {
                 IPeriod p = new Period(referenceDate);
-                if (!periods.Contains(p))
-                {
-                    periods.Add(p);
-                }
+                periods.Add(p);
             }
 
             if (periodEnd < periodStart)
@@ -32,14 +29,7 @@ namespace Ical.Net.Evaluation
                 return periods;
             }
 
-            foreach (var p in _mPeriodList)
-            {
-                if (!periods.Contains(p))
-                {
-                    periods.Add(p);
-                }
-            }
-
+            periods.UnionWith(_mPeriodList);
             return periods;
         }
     }

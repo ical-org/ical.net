@@ -56,26 +56,28 @@ namespace Ical.Net
                         if (accepted && isFilteredByAttendees)
                         {
                             accepted = false;
-                            foreach (var a in uc.Attendees)
+
+                            var participatingAttendeeQuery = uc.Attendees
+                                .Where(attendee =>
+                                        attendee.Value != null
+                                        && contacts.Contains(attendee.Value.OriginalString.Trim())
+                                        && attendee.ParticipationStatus != null)
+                                .Select(pa => pa.ParticipationStatus.ToUpperInvariant());
+
+                            foreach (var participatingAttendee in participatingAttendeeQuery)
                             {
-                                if (a.Value != null && contacts.Contains(a.Value.OriginalString.Trim()))
+                                switch (participatingAttendee)
                                 {
-                                    if (a.ParticipationStatus != null)
-                                    {
-                                        switch (a.ParticipationStatus.ToUpperInvariant())
-                                        {
-                                            case ParticipationStatus.Tentative:
-                                                accepted = true;
-                                                type = FreeBusyStatus.BusyTentative;
-                                                break;
-                                            case ParticipationStatus.Accepted:
-                                                accepted = true;
-                                                type = FreeBusyStatus.Busy;
-                                                break;
-                                            default:
-                                                break;
-                                        }
-                                    }
+                                    case ParticipationStatus.Tentative:
+                                        accepted = true;
+                                        type = FreeBusyStatus.BusyTentative;
+                                        break;
+                                    case ParticipationStatus.Accepted:
+                                        accepted = true;
+                                        type = FreeBusyStatus.Busy;
+                                        break;
+                                    default:
+                                        break;
                                 }
                             }
                         }
@@ -152,15 +154,14 @@ namespace Ical.Net
         public virtual FreeBusyStatus GetFreeBusyStatus(IPeriod period)
         {
             var status = FreeBusyStatus.Free;
-            if (period != null)
+            if (period == null)
             {
-                foreach (var fbe in Entries)
-                {
-                    if (fbe.CollidesWith(period) && status < fbe.Status)
-                    {
-                        status = fbe.Status;
-                    }
-                }
+                return status;
+            }
+
+            foreach (var fbe in Entries.Where(fbe => fbe.CollidesWith(period) && status < fbe.Status))
+            {
+                status = fbe.Status;
             }
             return status;
         }
@@ -168,15 +169,14 @@ namespace Ical.Net
         public virtual FreeBusyStatus GetFreeBusyStatus(IDateTime dt)
         {
             var status = FreeBusyStatus.Free;
-            if (dt != null)
+            if (dt == null)
             {
-                foreach (var fbe in Entries)
-                {
-                    if (fbe.Contains(dt) && status < fbe.Status)
-                    {
-                        status = fbe.Status;
-                    }
-                }
+                return status;
+            }
+
+            foreach (var fbe in Entries.Where(fbe => fbe.Contains(dt) && status < fbe.Status))
+            {
+                status = fbe.Status;
             }
             return status;
         }
@@ -184,15 +184,14 @@ namespace Ical.Net
         public virtual void MergeWith(IMergeable obj)
         {
             var fb = obj as IFreeBusy;
-            if (fb != null)
+            if (fb == null)
             {
-                foreach (var entry in fb.Entries)
-                {
-                    if (!Entries.Contains(entry))
-                    {
-                        Entries.Add(entry.Copy<IFreeBusyEntry>());
-                    }
-                }
+                return;
+            }
+
+            foreach (var entry in fb.Entries.Where(entry => !Entries.Contains(entry)))
+            {
+                Entries.Add(entry);
             }
         }
     }

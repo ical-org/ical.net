@@ -72,15 +72,10 @@ namespace ical.NET.Collections
 
         private IMultiLinkedList<TItem> ListForIndex(int index, out int relativeIndex)
         {
-            foreach (var list in _lists)
+            foreach (var list in _lists.Where(list => list.StartIndex <= index && list.ExclusiveEnd > index))
             {
-                var startIndex = list.StartIndex;
-                if (list.StartIndex <= index &&
-                    list.ExclusiveEnd > index)
-                {
-                    relativeIndex = index - list.StartIndex;
-                    return list;
-                }
+                relativeIndex = index - list.StartIndex;
+                return list;
             }
             relativeIndex = -1;
             return null;
@@ -292,14 +287,13 @@ namespace ical.NET.Collections
 
         public virtual void SortKeys(IComparer<TGroup> comparer = null)
         {
-            var keys = _dictionary.Keys.ToArray();
-
             _lists.Clear();
 
             IMultiLinkedList<TItem> previous = null;
-            foreach (var group in _dictionary.Keys.OrderBy(k => k, comparer))
+            foreach (var list in _dictionary.Keys
+                .OrderBy(k => k, comparer)
+                .Select(@group => _dictionary[@group]))
             {
-                var list = _dictionary[group];
                 if (previous == null)
                 {
                     previous = list;

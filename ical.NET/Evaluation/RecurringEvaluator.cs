@@ -5,6 +5,7 @@ using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Interfaces.General;
+using IServiceProvider = System.IServiceProvider;
 
 namespace Ical.Net.Evaluation
 {
@@ -42,22 +43,16 @@ namespace Ical.Net.Evaluation
             // Handle RRULEs
             if (Recurrable.RecurrenceRules != null && Recurrable.RecurrenceRules.Count > 0)
             {
-                foreach (var rrule in Recurrable.RecurrenceRules)
-                {
-                    var evaluator = rrule.GetService(typeof (IEvaluator)) as IEvaluator;
-                    if (evaluator != null)
-                    {
-                        var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
-                        Periods.UnionWith(periods);
-                    }
-                }
+                var evaluator = Recurrable.RecurrenceRules.First().GetService(typeof(IEvaluator)) as IEvaluator;
+                var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
+                Periods.UnionWith(periods);
             }
             else if (includeReferenceDateInResults)
             {
                 // If no RRULEs were found, then we still need to add
                 // the initial reference date to the results.
-                IPeriod p = new Period(referenceDate.Copy<IDateTime>());
-                Periods.UnionWith(new[] {p});
+                IPeriod p = new Period(referenceDate);
+                Periods.UnionWith(new [] {p});
             }
         }
 
@@ -70,17 +65,22 @@ namespace Ical.Net.Evaluation
         protected virtual void EvaluateRDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             // Handle RDATEs
-            if (Recurrable.RecurrenceDates != null)
+            if (Recurrable.RecurrenceDates == null || Recurrable.RecurrenceRules.Count < 1)
             {
-                foreach (var rdate in Recurrable.RecurrenceDates)
-                {
-                    var evaluator = rdate.GetService(typeof (IEvaluator)) as IEvaluator;
-                    if (evaluator != null)
-                    {
-                        var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
-                        Periods.UnionWith(periods);
-                    }
-                }
+                return;
+            }
+
+            var evaluator = Recurrable.RecurrenceRules.First().GetService(typeof(IEvaluator)) as IEvaluator;
+            if (evaluator == null)
+            {
+                return;
+            }
+
+            foreach (var rdate in Recurrable.RecurrenceDates)
+            {
+                //ToDo: For some reason, I can't pull this out of the loop, because it kills a unit test. WTF.
+                var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
+                Periods.UnionWith(periods);
             }
         }
 

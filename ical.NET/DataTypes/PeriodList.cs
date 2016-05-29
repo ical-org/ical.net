@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using Ical.Net.Evaluation;
 using Ical.Net.Interfaces.DataTypes;
@@ -90,7 +91,7 @@ namespace Ical.Net.DataTypes
 
         public List<Period> Evaluate(CalDateTime startDate, CalDateTime fromDate, CalDateTime endDate)
         {
-            var periods = new List<Period>();
+            var periods = new List<Period>(Periods.Count);
 
             if (startDate > fromDate)
             {
@@ -102,14 +103,11 @@ namespace Ical.Net.DataTypes
                 return periods;
             }
 
-            foreach (Period p in Periods)
-            {
-                if (!periods.Contains(p))
-                {
-                    periods.Add(p);
-                }
-            }
+            var uncollectedPeriodQuery = from Period p in Periods
+                                         where !periods.Contains(p)
+                                         select p;
 
+            periods.AddRange(uncollectedPeriodQuery);
             return periods;
         }
 

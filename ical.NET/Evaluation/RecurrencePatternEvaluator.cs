@@ -441,65 +441,47 @@ namespace Ical.Net.Evaluation
                 return dates;
             }
 
-            if (expand.Value)
+            if (!expand.Value)
             {
-                // Expand behavior
-                var weekNoDates = new List<DateTime>();
-                for (var i = 0; i < dates.Count; i++)
-                {
-                    var date = dates[i];
-                    foreach (var weekNo in pattern.ByWeekNo)
-                    {
-                        // Determine our current week number
-                        var currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
-                        while (currWeekNo > weekNo)
-                        {
-                            // If currWeekNo > weekNo, then we're likely at the start of a year
-                            // where currWeekNo could be 52 or 53.  If we simply step ahead 7 days
-                            // we should be back to week 1, where we can easily make the calculation
-                            // to move to weekNo.
-                            date = date.AddDays(7);
-                            currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
-                        }
-
-                        // Move ahead to the correct week of the year
-                        date = date.AddDays((weekNo - currWeekNo) * 7);
-
-                        // Step backward single days until we're at the correct DayOfWeek
-                        while (date.DayOfWeek != pattern.FirstDayOfWeek)
-                        {
-                            date = date.AddDays(-1);
-                        }
-
-                        for (var k = 0; k < 7; k++)
-                        {
-                            weekNoDates.Add(date);
-                            date = date.AddDays(1);
-                        }
-                    }
-                }
-                return weekNoDates;
+                return new List<DateTime>();
             }
-            // Limit behavior
-            for (var i = dates.Count - 1; i >= 0; i--)
+
+            // Expand behavior
+            var weekNoDates = new List<DateTime>(128);
+            for (var i = 0; i < dates.Count; i++)
             {
                 var date = dates[i];
                 foreach (var weekNo in pattern.ByWeekNo)
                 {
                     // Determine our current week number
                     var currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
-
-                    if (weekNo == currWeekNo)
+                    while (currWeekNo > weekNo)
                     {
-                        goto Next;
+                        // If currWeekNo > weekNo, then we're likely at the start of a year
+                        // where currWeekNo could be 52 or 53.  If we simply step ahead 7 days
+                        // we should be back to week 1, where we can easily make the calculation
+                        // to move to weekNo.
+                        date = date.AddDays(7);
+                        currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+                    }
+
+                    // Move ahead to the correct week of the year
+                    date = date.AddDays((weekNo - currWeekNo) * 7);
+
+                    // Step backward single days until we're at the correct DayOfWeek
+                    while (date.DayOfWeek != pattern.FirstDayOfWeek)
+                    {
+                        date = date.AddDays(-1);
+                    }
+
+                    for (var k = 0; k < 7; k++)
+                    {
+                        weekNoDates.Add(date);
+                        date = date.AddDays(1);
                     }
                 }
-
-                dates.RemoveAt(i);
-                Next:
-                ;
             }
-            return dates;
+            return weekNoDates;
         }
 
         /**
@@ -959,20 +941,12 @@ namespace Ical.Net.Evaluation
 
             // Enforce evaluation restrictions on the pattern.
             EnforceEvaluationRestrictions(pattern);
-
             Periods.Clear();
-            //Periods = new HashSet<IPeriod>();
 
-            foreach (var dt in GetDates(referenceDate, periodStart, periodEnd, -1, pattern, includeReferenceDateInResults))
-            {
-                // Create a period from the date/time.
-                var p = CreatePeriod(dt, referenceDate);
+            var periodQuery = GetDates(referenceDate, periodStart, periodEnd, -1, pattern, includeReferenceDateInResults)
+                .Select(dt => CreatePeriod(dt, referenceDate));
 
-                if (!Periods.Contains(p))
-                {
-                    Periods.Add(p);
-                }
-            }
+            Periods.UnionWith(periodQuery);
 
             return Periods;
         }

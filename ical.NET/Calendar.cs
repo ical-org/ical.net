@@ -600,13 +600,11 @@ namespace Ical.Net
                 ProductId = c.ProductId;
                 Scale = c.Scale;
 
-                foreach (var p in c.Properties)
+                foreach (var p in c.Properties.Where(p => !Properties.ContainsKey(p.Name)))
                 {
-                    if (!Properties.ContainsKey(p.Name))
-                    {
-                        Properties.Add(p.Copy<ICalendarProperty>());
-                    }
+                    Properties.Add(p.Copy<ICalendarProperty>());
                 }
+
                 foreach (var child in c.Children)
                 {
                     if (child is IUniqueComponent)

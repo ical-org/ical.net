@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace Ical.Net.Utility
@@ -30,35 +32,38 @@ namespace Ical.Net.Utility
             }
         }
 
+        private const BindingFlags _bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
         private static IEnumerable<MethodInfo> GetDeserializingMethods(Type targetType)
         {
-            if (targetType != null)
+            if (targetType == null)
             {
-                // FIXME: cache this
-                foreach (var mi in targetType.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
-                {
-                    var attrs = mi.GetCustomAttributes(typeof (OnDeserializingAttribute), false);
-                    if (attrs.Length > 0)
-                    {
-                        yield return mi;
-                    }
-                }
+                yield break;
+            }
+
+            // FIXME: cache this
+            foreach (var methodInfo in from targetTypeMethodInfo in targetType.GetMethods(_bindingFlags)
+                     let attrs = targetTypeMethodInfo.GetCustomAttributes(typeof (OnDeserializingAttribute), false)
+                     where attrs.Length > 0
+                     select targetTypeMethodInfo)
+            {
+                yield return methodInfo;
             }
         }
 
         private static IEnumerable<MethodInfo> GetDeserializedMethods(Type targetType)
         {
-            if (targetType != null)
+            if (targetType == null)
             {
-                // FIXME: cache this
-                foreach (var mi in targetType.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
-                {
-                    var attrs = mi.GetCustomAttributes(typeof (OnDeserializedAttribute), true);
-                    if (attrs.Length > 0)
-                    {
-                        yield return mi;
-                    }
-                }
+                yield break;
+            }
+
+            // FIXME: cache this
+            foreach (var methodInfo in from targetTypeMethodInfo in targetType.GetMethods(_bindingFlags)
+                let attrs = targetTypeMethodInfo.GetCustomAttributes(typeof (OnDeserializedAttribute), true)
+                where attrs.Length > 0
+                select targetTypeMethodInfo)
+            {
+                yield return methodInfo;
             }
         }
     }

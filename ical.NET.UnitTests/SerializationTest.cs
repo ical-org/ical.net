@@ -288,10 +288,9 @@ namespace ical.NET.UnitTests
 
             var found = new Hashtable();
 
-            foreach (var s in evt.Categories)
+            foreach (var s in evt.Categories.Where(s => items.Contains(s)))
             {
-                if (items.Contains(s))
-                    found[s] = true;
+                found[s] = true;
             }
 
             foreach (string item in items)

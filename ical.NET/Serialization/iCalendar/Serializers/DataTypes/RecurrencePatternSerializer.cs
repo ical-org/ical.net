@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
+using Ical.Net.ExtensionMethods;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Serialization;
 using Ical.Net.Interfaces.Serialization.Factory;
@@ -406,12 +407,11 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                                 num = 1;
                             }
 
-                            foreach (Capture capture in match.Groups["Day"].Captures)
-                            {
-                                var ds = new WeekDay((DayOfWeek) Enum.Parse(typeof (DayOfWeek), capture.Value, true));
-                                ds.Offset = num;
-                                r.ByDay.Add(ds);
-                            }
+                            var dayOfWeekQuery = from Capture capture in match.Groups["Day"].Captures
+                                select (DayOfWeek) Enum.Parse(typeof(DayOfWeek), capture.Value, true) into dayOfWeek
+                                select new WeekDay(dayOfWeek) {Offset = num};
+
+                            r.ByDay.AddRange(dayOfWeekQuery);
                         }
                         else if ((match = Time.Match(item)).Success)
                         {

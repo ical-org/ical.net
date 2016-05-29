@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Ical.Net.General
 {
@@ -79,12 +80,9 @@ namespace Ical.Net.General
                 }
 
                 // Get interfaces for the given type
-                foreach (var iface in type.GetInterfaces())
+                foreach (var iface in type.GetInterfaces().Where(iface => _mTypedServices.ContainsKey(iface)))
                 {
-                    if (_mTypedServices.ContainsKey(iface))
-                    {
-                        _mTypedServices.Remove(iface);
-                    }
+                    _mTypedServices.Remove(iface);
                 }
             }
         }
