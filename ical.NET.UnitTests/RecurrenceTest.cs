@@ -1864,55 +1864,6 @@ namespace ical.NET.UnitTests
         }
 
         /// <summary>
-        /// Tests recurrence rule issue noted in
-        /// Bug #1821721 - Recur for every-other-month doesn't evaluate correctly
-        /// </summary>
-        //[Test, Category("Recurrence")]     //Broken in dday
-        public void Bug1821721()
-        {
-            var iCal = new Calendar();
-
-            var tz = iCal.Create<VTimeZone>();
-
-            tz.TzId = "US-Eastern";
-
-            ITimeZoneInfo standard = new CalTimeZoneInfo(Components.Standard);
-            standard.Start = new CalDateTime(new DateTime(1967, 10, 29, 2, 0, 0, DateTimeKind.Utc));
-            standard.RecurrenceRules.Add(new RecurrencePattern("FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10"));
-            tz.AddChild(standard);
-
-            ITimeZoneInfo daylight = new CalTimeZoneInfo(Components.Daylight);
-            daylight.Start = new CalDateTime(new DateTime(1987, 4, 5, 2, 0, 0, DateTimeKind.Utc));
-            daylight.RecurrenceRules.Add(new RecurrencePattern("FREQ=YEARLY;BYDAY=1SU;BYMONTH=4"));
-
-            tz.AddChild(daylight);
-
-            IEvent evt = iCal.Create<Event>();
-            evt.Summary = "Test event";
-            evt.Start = new CalDateTime(2007, 1, 24, 8, 0, 0, _tzid);
-            evt.Duration = TimeSpan.FromHours(1);
-            evt.End = new CalDateTime(2007, 1, 24, 9, 0, 0, _tzid);
-            IRecurrencePattern recur = new RecurrencePattern("FREQ=MONTHLY;INTERVAL=2;BYDAY=4WE");
-            evt.RecurrenceRules.Add(recur);
-
-            EventOccurrenceTest(
-                iCal,
-                new CalDateTime(2007, 1, 24),
-                new CalDateTime(2007, 12, 31),
-                new[]
-                {                
-                    new CalDateTime(2007, 1, 24, 8, 0, 0, _tzid),
-                    new CalDateTime(2007, 3, 28, 8, 0, 0, _tzid),
-                    new CalDateTime(2007, 5, 23, 8, 0, 0, _tzid),
-                    new CalDateTime(2007, 7, 25, 8, 0, 0, _tzid),
-                    new CalDateTime(2007, 9, 26, 8, 0, 0, _tzid),
-                    new CalDateTime(2007, 11, 28, 8, 0, 0, _tzid)
-                },
-                null
-            );
-        }
-
-        /// <summary>
         /// Ensures that, by default, SECONDLY recurrence rules are not allowed.
         /// </summary>
         [Test, Category("Recurrence")]
