@@ -12,11 +12,11 @@ namespace ical.NET.Collections.Interfaces
         /// within the list, or -1 if the item
         /// is not found in the list.
         /// </summary>
-        int IndexOf(TItem obj);
+        new int IndexOf(TItem obj);
 
         /// <summary>
         /// Gets the object at the specified index.
         /// </summary>
-        TItem this[int index] { get; }
+        new TItem this[int index] { get; }
     }
 }
