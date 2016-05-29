@@ -99,7 +99,7 @@ namespace Ical.Net
             set { Properties.Set("URL", value); }
         }
 
-        void Properties_ItemRemoved(object sender, ObjectEventArgs<ICalendarProperty, int> e)
+        private void Properties_ItemRemoved(object sender, ObjectEventArgs<ICalendarProperty, int> e)
         {
             if (e.First != null && e.First.Name != null && string.Equals(e.First.Name.ToUpper(), "UID"))
             {
@@ -108,7 +108,7 @@ namespace Ical.Net
             }
         }
 
-        void Properties_ItemAdded(object sender, ObjectEventArgs<ICalendarProperty, int> e)
+        private void Properties_ItemAdded(object sender, ObjectEventArgs<ICalendarProperty, int> e)
         {
             if (e.First != null && e.First.Name != null && string.Equals(e.First.Name.ToUpper(), "UID"))
             {
@@ -117,7 +117,7 @@ namespace Ical.Net
             }
         }
 
-        void Object_ValueChanged(object sender, ValueChangedEventArgs<object> e)
+        private void Object_ValueChanged(object sender, ValueChangedEventArgs<object> e)
         {
             var oldValue = e.RemovedValues.OfType<string>().FirstOrDefault();
             var newValue = e.AddedValues.OfType<string>().FirstOrDefault();

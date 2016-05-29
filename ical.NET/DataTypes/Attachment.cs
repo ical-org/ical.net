@@ -35,7 +35,7 @@ namespace Ical.Net.DataTypes
             _mData = value;
         }
 
-        void Initialize()
+        private void Initialize()
         {
             _mEncoding = System.Text.Encoding.Unicode;
         }

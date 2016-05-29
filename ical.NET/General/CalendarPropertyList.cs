@@ -8,8 +8,8 @@ namespace Ical.Net.General
     [Serializable]
     public class CalendarPropertyList : GroupedValueList<string, ICalendarProperty, CalendarProperty, object>, ICalendarPropertyList
     {
-        readonly ICalendarObject _mParent;
-        bool _mCaseInsensitive;
+        private readonly ICalendarObject _mParent;
+        private bool _mCaseInsensitive;
 
         public CalendarPropertyList() {}
 
@@ -21,12 +21,12 @@ namespace Ical.Net.General
             ItemRemoved += CalendarPropertyList_ItemRemoved;
         }
 
-        void CalendarPropertyList_ItemRemoved(object sender, ObjectEventArgs<ICalendarProperty, int> e)
+        private void CalendarPropertyList_ItemRemoved(object sender, ObjectEventArgs<ICalendarProperty, int> e)
         {
             e.First.Parent = null;
         }
 
-        void CalendarPropertyList_ItemAdded(object sender, ObjectEventArgs<ICalendarProperty, int> e)
+        private void CalendarPropertyList_ItemAdded(object sender, ObjectEventArgs<ICalendarProperty, int> e)
         {
             e.First.Parent = _mParent;
         }

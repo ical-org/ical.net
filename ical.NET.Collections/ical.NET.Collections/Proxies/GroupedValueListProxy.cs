@@ -18,9 +18,9 @@ namespace ical.NET.Collections.Proxies
         where TInterface : class, IGroupedObject<TGroup>, IValueObject<TOriginalValue>
         where TItem : new()        
     {
-        readonly IGroupedValueList<TGroup, TInterface, TItem, TOriginalValue> _realObject;
-        readonly TGroup _group;
-        TInterface _container;
+        private readonly IGroupedValueList<TGroup, TInterface, TItem, TOriginalValue> _realObject;
+        private readonly TGroup _group;
+        private TInterface _container;
 
         public GroupedValueListProxy(IGroupedValueList<TGroup, TInterface, TItem, TOriginalValue> realObject, TGroup group)
         {
@@ -28,7 +28,7 @@ namespace ical.NET.Collections.Proxies
             _group = group;
         }
 
-        TInterface EnsureContainer()
+        private TInterface EnsureContainer()
         {
             if (_container == null)
             {
@@ -49,7 +49,7 @@ namespace ical.NET.Collections.Proxies
             return _container;
         }
 
-        void IterateValues(Func<IValueObject<TOriginalValue>, int, int, bool> action)
+        private void IterateValues(Func<IValueObject<TOriginalValue>, int, int, bool> action)
         {
             var i = 0;
             foreach (var obj in _realObject)
@@ -65,7 +65,7 @@ namespace ical.NET.Collections.Proxies
             }
         }
 
-        IValueObject<TOriginalValue> ObjectForIndex(int index, ref int relativeIndex)
+        private IValueObject<TOriginalValue> ObjectForIndex(int index, ref int relativeIndex)
         {
             IValueObject<TOriginalValue> obj = null;
             var retVal = -1;
@@ -86,7 +86,7 @@ namespace ical.NET.Collections.Proxies
             return obj;            
         }
 
-        IEnumerator<TNewValue> GetEnumeratorInternal()
+        private IEnumerator<TNewValue> GetEnumeratorInternal()
         {
             return Items
                 .Where(o => o.ValueCount > 0)

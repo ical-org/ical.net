@@ -37,7 +37,7 @@ namespace Ical.Net.DataTypes
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
-        void Initialize()
+        private void Initialize()
         {
             SetService(new PeriodListEvaluator(this));
         }

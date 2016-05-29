@@ -7,7 +7,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 {
     public abstract class SerializerBase : IStringSerializer
     {
-        ISerializationContext _mSerializationContext;
+        private ISerializationContext _mSerializationContext;
 
         public SerializerBase()
         {

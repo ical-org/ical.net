@@ -16,7 +16,7 @@ namespace Ical.Net
     [Serializable]
     public class Todo : RecurringComponent, ITodo
     {
-        TodoEvaluator _mEvaluator;
+        private TodoEvaluator _mEvaluator;
 
         /// <summary>
         /// The date/time the todo was completed.

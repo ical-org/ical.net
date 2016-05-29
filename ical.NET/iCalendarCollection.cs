@@ -101,7 +101,7 @@ namespace Ical.Net
             return occurrences;
         }
 
-        IFreeBusy CombineFreeBusy(IFreeBusy main, IFreeBusy current)
+        private IFreeBusy CombineFreeBusy(IFreeBusy main, IFreeBusy current)
         {
             if (main != null)
             {

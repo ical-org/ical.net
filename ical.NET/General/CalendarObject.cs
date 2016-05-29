@@ -37,7 +37,7 @@ namespace Ical.Net.General
             Column = col;
         }
 
-        void Initialize()
+        private void Initialize()
         {
             _children = new CalendarObjectList(this);
             _serviceProvider = new ServiceProvider();
@@ -65,12 +65,12 @@ namespace Ical.Net.General
 
         protected virtual void OnDeserialized(StreamingContext context) {}
 
-        void _Children_ItemRemoved(object sender, ObjectEventArgs<ICalendarObject, int> e)
+        private void _Children_ItemRemoved(object sender, ObjectEventArgs<ICalendarObject, int> e)
         {
             e.First.Parent = null;
         }
 
-        void _Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e)
+        private void _Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e)
         {
             e.First.Parent = this;
         }

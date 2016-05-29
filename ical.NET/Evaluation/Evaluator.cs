@@ -38,7 +38,7 @@ namespace Ical.Net.Evaluation
             Initialize();
         }
 
-        void Initialize()
+        private void Initialize()
         {
             Calendar = CultureInfo.CurrentCulture.Calendar;
             MPeriods = new HashSet<IPeriod>();

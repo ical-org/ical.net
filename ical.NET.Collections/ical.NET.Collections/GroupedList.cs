@@ -17,17 +17,17 @@ namespace ical.NET.Collections
         IGroupedList<TGroup, TItem>
         where TItem : class, IGroupedObject<TGroup>
     {
-        readonly List<IMultiLinkedList<TItem>> _lists = new List<IMultiLinkedList<TItem>>();
-        readonly Dictionary<TGroup, IMultiLinkedList<TItem>> _dictionary = new Dictionary<TGroup, IMultiLinkedList<TItem>>();
+        private readonly List<IMultiLinkedList<TItem>> _lists = new List<IMultiLinkedList<TItem>>();
+        private readonly Dictionary<TGroup, IMultiLinkedList<TItem>> _dictionary = new Dictionary<TGroup, IMultiLinkedList<TItem>>();
 
-        TItem SubscribeToKeyChanges(TItem item)
+        private TItem SubscribeToKeyChanges(TItem item)
         {
             if (item != null)
                 item.GroupChanged += item_GroupChanged;
             return item;
         }
 
-        TItem UnsubscribeFromKeyChanges(TItem item)
+        private TItem UnsubscribeFromKeyChanges(TItem item)
         {
             if (item != null)
                 item.GroupChanged -= item_GroupChanged;
@@ -42,7 +42,7 @@ namespace ical.NET.Collections
             return group;
         }
 
-        IMultiLinkedList<TItem> EnsureList(TGroup group, bool createIfNecessary)
+        private IMultiLinkedList<TItem> EnsureList(TGroup group, bool createIfNecessary)
         {
             if (!_dictionary.ContainsKey(group))
             {
@@ -70,7 +70,7 @@ namespace ical.NET.Collections
             return null;
         }
 
-        IMultiLinkedList<TItem> ListForIndex(int index, out int relativeIndex)
+        private IMultiLinkedList<TItem> ListForIndex(int index, out int relativeIndex)
         {
             foreach (var list in _lists)
             {
@@ -86,7 +86,7 @@ namespace ical.NET.Collections
             return null;
         }
 
-        void item_GroupChanged(object sender, ObjectEventArgs<TGroup, TGroup> e)
+        private void item_GroupChanged(object sender, ObjectEventArgs<TGroup, TGroup> e)
         {
             var oldValue = e.First;
             var newValue = e.Second;

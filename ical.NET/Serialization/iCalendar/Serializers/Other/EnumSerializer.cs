@@ -8,7 +8,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 {
     public class EnumSerializer : EncodableDataTypeSerializer
     {
-        readonly Type _mEnumType;
+        private readonly Type _mEnumType;
 
         public EnumSerializer(Type enumType)
         {

@@ -12,7 +12,7 @@ namespace Ical.Net.General
     [Serializable]
     public class CalendarParameter : CalendarObject, ICalendarParameter
     {
-        List<string> _values;
+        private List<string> _values;
 
         public CalendarParameter()
         {
@@ -39,7 +39,7 @@ namespace Ical.Net.General
             }
         }
 
-        void Initialize()
+        private void Initialize()
         {
             _values = new List<string>();
         }

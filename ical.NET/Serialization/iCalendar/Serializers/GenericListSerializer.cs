@@ -10,8 +10,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 {
     public class GenericListSerializer : SerializerBase
     {
-        readonly Type _innerType;
-        readonly Type _objectType;
+        private readonly Type _innerType;
+        private readonly Type _objectType;
 
         public GenericListSerializer(Type objectType)
         {

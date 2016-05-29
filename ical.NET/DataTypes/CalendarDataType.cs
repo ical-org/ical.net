@@ -15,9 +15,9 @@ namespace Ical.Net.DataTypes
     [Serializable]
     public abstract class CalendarDataType : ICalendarDataType
     {
-        ICalendarParameterCollection _parameters;
-        ICalendarParameterCollectionProxy _proxy;
-        ServiceProvider _serviceProvider;
+        private ICalendarParameterCollection _parameters;
+        private ICalendarParameterCollectionProxy _proxy;
+        private ServiceProvider _serviceProvider;
 
         protected ICalendarObject _AssociatedObject;
 
@@ -26,7 +26,7 @@ namespace Ical.Net.DataTypes
             Initialize();
         }
 
-        void Initialize()
+        private void Initialize()
         {
             _parameters = new CalendarParameterList();
             _proxy = new CalendarParameterCollectionProxy(_parameters);

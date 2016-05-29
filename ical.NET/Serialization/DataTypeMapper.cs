@@ -18,7 +18,7 @@ namespace Ical.Net.Serialization
             public bool AllowsMultipleValuesPerProperty { get; set; }
         }
 
-        readonly IDictionary<string, PropertyMapping> _propertyMap = new Dictionary<string, PropertyMapping>();
+        private readonly IDictionary<string, PropertyMapping> _propertyMap = new Dictionary<string, PropertyMapping>();
 
         public DataTypeMapper()
         {

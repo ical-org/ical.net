@@ -955,7 +955,7 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        IPeriod CreatePeriod(DateTime dt, IDateTime referenceDate)
+        private IPeriod CreatePeriod(DateTime dt, IDateTime referenceDate)
         {
             // Turn each resulting date/time into an IDateTime and associate it
             // with the reference date.

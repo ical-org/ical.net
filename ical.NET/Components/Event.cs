@@ -190,7 +190,7 @@ namespace Ical.Net
             set { Properties.Set("TRANSP", value); }
         }
 
-        EventEvaluator _mEvaluator;
+        private EventEvaluator _mEvaluator;
 
         /// <summary>
         /// Constructs an Event object, with an iCalObject

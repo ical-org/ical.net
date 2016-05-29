@@ -95,7 +95,7 @@ namespace Ical.Net.General
             Parameters.Add(p);
         }
 
-        void CalendarProperty_ValueChanged(object sender, ValueChangedEventArgs<object> e)
+        private void CalendarProperty_ValueChanged(object sender, ValueChangedEventArgs<object> e)
         {
             // Deassociate the old values
             foreach (var removed in e.RemovedValues)

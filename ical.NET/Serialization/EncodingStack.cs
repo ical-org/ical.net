@@ -6,7 +6,7 @@ namespace Ical.Net.Serialization
 {
     public class EncodingStack : IEncodingStack
     {
-        readonly Stack<Encoding> _mStack;
+        private readonly Stack<Encoding> _mStack;
 
         public EncodingStack()
         {

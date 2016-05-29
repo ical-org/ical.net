@@ -200,7 +200,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        void Initialize()
+        private void Initialize()
         {
             SetService(new RecurrencePatternEvaluator(this));
         }

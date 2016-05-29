@@ -75,7 +75,7 @@ namespace Ical.Net
             Initialize();
         }
 
-        void Initialize()
+        private void Initialize()
         {
             Name = Components.Alarm;
             Occurrences = new List<AlarmOccurrence>();

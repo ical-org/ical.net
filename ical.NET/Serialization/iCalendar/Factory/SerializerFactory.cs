@@ -13,7 +13,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
 {
     public class SerializerFactory : ISerializerFactory
     {
-        readonly ISerializerFactory _mDataTypeSerializerFactory;
+        private readonly ISerializerFactory _mDataTypeSerializerFactory;
 
         public SerializerFactory()
         {

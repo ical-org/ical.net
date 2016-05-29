@@ -7,9 +7,9 @@ namespace ical.NET.Collections.Enumerators
     public class GroupedListEnumerator<TType> :
         IEnumerator<TType>
     {
-        readonly IList<IMultiLinkedList<TType>> _lists;
-        IEnumerator<IMultiLinkedList<TType>> _listsEnumerator;
-        IEnumerator<TType> _listEnumerator;
+        private readonly IList<IMultiLinkedList<TType>> _lists;
+        private IEnumerator<IMultiLinkedList<TType>> _listsEnumerator;
+        private IEnumerator<TType> _listEnumerator;
 
         public GroupedListEnumerator(IList<IMultiLinkedList<TType>> lists)
         {
@@ -31,7 +31,7 @@ namespace ical.NET.Collections.Enumerators
             Reset();
         }
 
-        void DisposeListEnumerator()
+        private void DisposeListEnumerator()
         {
             if (_listEnumerator != null)
             {

@@ -10,7 +10,7 @@ namespace Ical.Net.Serialization
 
         public delegate byte[] DecoderDelegate(string value);
 
-        readonly ISerializationContext _mSerializationContext;
+        private readonly ISerializationContext _mSerializationContext;
 
         public EncodingProvider(ISerializationContext ctx)
         {

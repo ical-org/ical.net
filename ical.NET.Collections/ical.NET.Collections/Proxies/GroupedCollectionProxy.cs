@@ -18,7 +18,7 @@ namespace ical.NET.Collections.Proxies
         where TOriginal : class, IGroupedObject<TGroup>
         where TNew : class, TOriginal
     {
-        readonly Func<TNew, bool> _predicate;
+        private readonly Func<TNew, bool> _predicate;
 
         public GroupedCollectionProxy(IGroupedCollection<TGroup, TOriginal> realObject, Func<TNew, bool> predicate = null)
         {
@@ -26,13 +26,13 @@ namespace ical.NET.Collections.Proxies
             SetProxiedObject(realObject);
         }
 
-        void _RealObject_ItemRemoved(object sender, ObjectEventArgs<TOriginal, int> e)
+        private void _RealObject_ItemRemoved(object sender, ObjectEventArgs<TOriginal, int> e)
         {
             if (e.First is TNew)
                 OnItemRemoved((TNew)e.First, e.Second);
         }
 
-        void _RealObject_ItemAdded(object sender, ObjectEventArgs<TOriginal, int> e)
+        private void _RealObject_ItemAdded(object sender, ObjectEventArgs<TOriginal, int> e)
         {
             if (e.First is TNew)
                 OnItemAdded((TNew)e.First, e.Second);
