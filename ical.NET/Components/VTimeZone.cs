@@ -1,7 +1,6 @@
 using System;
 using System.Globalization;
 using Ical.Net.DataTypes;
-using Ical.Net.Evaluation;
 using Ical.Net.ExtensionMethods;
 using Ical.Net.General.Proxies;
 using Ical.Net.Interfaces.Components;
