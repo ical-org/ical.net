@@ -8,6 +8,6 @@ namespace Ical.Net.Interfaces.Components
         string Id { get; set; }
         string TzId { get; set; }
         Uri Url { get; set; }
-        ICalendarObjectList<ITimeZoneInfo> TimeZoneInfos { get; set; }
+        ICalendarObjectList<ITimeZoneInfo> TimeZoneInfos { get; }
     }
 }

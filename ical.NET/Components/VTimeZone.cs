@@ -113,19 +113,6 @@ namespace Ical.Net
                 }
             }
 
-            // If no time zone information was recorded, at least
-            // add a STANDARD time zone element to indicate the
-            // base time zone information.
-            if (ddayTz.TimeZoneInfos.Count == 0)
-            {
-                var ddayTzinfoStandard = new CalTimeZoneInfo();
-                ddayTzinfoStandard.Name = "STANDARD";
-                ddayTzinfoStandard.Start = earliest;
-
-                // Add the "standard" time rule to the time zone
-                ddayTz.AddChild(ddayTzinfoStandard);
-            }
-
             return ddayTz;
         }
 
@@ -160,7 +147,6 @@ namespace Ical.Net
         public virtual ICalendarObjectList<ITimeZoneInfo> TimeZoneInfos
         {
             get { return _tzInfos; }
-            set { _tzInfos = value; }
         }
     }
 }

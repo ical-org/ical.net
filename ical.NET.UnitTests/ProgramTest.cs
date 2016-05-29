@@ -351,14 +351,7 @@ namespace ical.NET.UnitTests
                 {
                     Assert.Fail("Not found: " + zone.StandardName);                    
                 }
-
-                if (tzinfo != null)
-                {
-                    var icalTz = VTimeZone.FromSystemTimeZone(tzinfo);
-                    Assert.AreNotEqual(0, icalTz.TimeZoneInfos.Count, zone.StandardName + ": no time zone information was extracted.");
-                }
             }
         }
-
     }
 }
