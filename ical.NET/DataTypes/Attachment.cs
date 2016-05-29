@@ -143,14 +143,9 @@ namespace Ical.Net.DataTypes
             }
             set
             {
-                if (value != null)
-                {
-                    Data = _mEncoding.GetBytes(value);
-                }
-                else
-                {
-                    Data = null;
-                }
+                Data = value == null
+                    ? null
+                    : _mEncoding.GetBytes(value);
             }
         }
 

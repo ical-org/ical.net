@@ -116,14 +116,9 @@ namespace Ical.Net
                     // status was changed).
                     if (IsLoaded)
                     {
-                        if (value == TodoStatus.Completed)
-                        {
-                            Completed = CalDateTime.Now;
-                        }
-                        else
-                        {
-                            Completed = null;
-                        }
+                        Completed = value == TodoStatus.Completed
+                            ? CalDateTime.Now
+                            : null;
                     }
 
                     Properties.Set("STATUS", value);

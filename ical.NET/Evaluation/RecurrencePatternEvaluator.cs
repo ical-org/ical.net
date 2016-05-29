@@ -543,15 +543,9 @@ namespace Ical.Net.Evaluation
                     {
                         var yearDay = pattern.ByYearDay[j];
 
-                        DateTime newDate;
-                        if (yearDay > 0)
-                        {
-                            newDate = date.AddDays(-date.DayOfYear + yearDay);
-                        }
-                        else
-                        {
-                            newDate = date.AddDays(-date.DayOfYear + 1).AddYears(1).AddDays(yearDay);
-                        }
+                        var newDate = yearDay > 0
+                            ? date.AddDays(-date.DayOfYear + yearDay)
+                            : date.AddDays(-date.DayOfYear + 1).AddYears(1).AddDays(yearDay);
 
                         yearDayDates.Add(newDate);
                     }
@@ -566,15 +560,9 @@ namespace Ical.Net.Evaluation
                 {
                     var yearDay = pattern.ByYearDay[j];
 
-                    DateTime newDate;
-                    if (yearDay > 0)
-                    {
-                        newDate = date.AddDays(-date.DayOfYear + yearDay);
-                    }
-                    else
-                    {
-                        newDate = date.AddDays(-date.DayOfYear + 1).AddYears(1).AddDays(yearDay);
-                    }
+                    var newDate = yearDay > 0
+                        ? date.AddDays(-date.DayOfYear + yearDay)
+                        : date.AddDays(-date.DayOfYear + 1).AddYears(1).AddDays(yearDay);
 
                     if (newDate.DayOfYear == date.DayOfYear)
                     {
@@ -619,15 +607,9 @@ namespace Ical.Net.Evaluation
                         if (Math.Abs(monthDay) <= daysInMonth)
                         {
                             // Account for positive or negative numbers
-                            DateTime newDate;
-                            if (monthDay > 0)
-                            {
-                                newDate = date.AddDays(-date.Day + monthDay);
-                            }
-                            else
-                            {
-                                newDate = date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay);
-                            }
+                            var newDate = monthDay > 0
+                                ? date.AddDays(-date.Day + monthDay)
+                                : date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay);
 
                             monthDayDates.Add(newDate);
                         }
@@ -650,15 +632,9 @@ namespace Ical.Net.Evaluation
                     }
 
                     // Account for positive or negative numbers
-                    DateTime newDate;
-                    if (monthDay > 0)
-                    {
-                        newDate = date.AddDays(-date.Day + monthDay);
-                    }
-                    else
-                    {
-                        newDate = date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay);
-                    }
+                    var newDate = monthDay > 0
+                        ? date.AddDays(-date.Day + monthDay)
+                        : date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay);
 
                     if (newDate.Day.Equals(date.Day))
                     {

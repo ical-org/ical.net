@@ -319,14 +319,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                     if (match.Groups["Interval"].Success)
                     {
                         int interval;
-                        if (!int.TryParse(match.Groups["Interval"].Value, out interval))
-                        {
-                            r.Interval = 2; // "other"
-                        }
-                        else
-                        {
-                            r.Interval = interval;
-                        }
+                        r.Interval = !int.TryParse(match.Groups["Interval"].Value, out interval)
+                            ? 2
+                            : interval;
                     }
                     else
                     {
