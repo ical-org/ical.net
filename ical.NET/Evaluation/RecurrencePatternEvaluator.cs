@@ -448,11 +448,8 @@ namespace Ical.Net.Evaluation
                 for (var i = 0; i < dates.Count; i++)
                 {
                     var date = dates[i];
-                    for (var j = 0; j < pattern.ByWeekNo.Count; j++)
+                    foreach (var weekNo in pattern.ByWeekNo)
                     {
-                        // Determine our target week number
-                        var weekNo = pattern.ByWeekNo[j];
-
                         // Determine our current week number
                         var currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
                         while (currWeekNo > weekNo)
@@ -487,11 +484,8 @@ namespace Ical.Net.Evaluation
             for (var i = dates.Count - 1; i >= 0; i--)
             {
                 var date = dates[i];
-                for (var j = 0; j < pattern.ByWeekNo.Count; j++)
+                foreach (var weekNo in pattern.ByWeekNo)
                 {
-                    // Determine our target week number
-                    var weekNo = pattern.ByWeekNo[j];
-
                     // Determine our current week number
                     var currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
 
