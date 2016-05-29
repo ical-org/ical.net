@@ -778,11 +778,10 @@ namespace Ical.Net.Serialization.iCalendar
 
         public string version_number() //throws RecognitionException, TokenStreamException
         {
+            //ToDo: StringBuilder
             var s = string.Empty;
 
-            string t;
-
-            t = number();
+            var t = number();
             s += t;
             {
                 switch (LA(1))
