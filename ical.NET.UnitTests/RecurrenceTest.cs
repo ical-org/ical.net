@@ -53,11 +53,9 @@ namespace ical.NET.UnitTests
                 occurrences.Count,
                 "There should be exactly " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
 
-            IRecurrencePattern pattern = null;
-            if (evt != null && evt.RecurrenceRules.Count > 0)
+            if (evt.RecurrenceRules.Count > 0)
             {
                 Assert.AreEqual(1, evt.RecurrenceRules.Count);
-                pattern = evt.RecurrenceRules[0];
             }
 
             for (var i = 0; i < dateTimes.Length; i++)

@@ -51,23 +51,11 @@ namespace ical.NET.UnitTests
             //}
         }
 
-        private DateTime _start;
-        private DateTime _end;
-        private TimeSpan _totalTime;
-        private string _tzid;
-
-        [TestFixtureSetUp]
-        public void InitAll()
-        {
-            _totalTime = new TimeSpan(0);
-            _tzid = "US-Eastern";
-        }
+        private const string _tzid = "US-Eastern";
 
         [SetUp]
         public void Init()
-        {
-            _start = DateTime.Now;
-        }
+        {}
 
         public static void TestCal(ICalendar cal)
         {
