@@ -45,13 +45,6 @@ namespace Ical.Net.Interfaces
         T Create<T>() where T : ICalendarComponent;
 
         /// <summary>
-        /// Returns the time zone object that corresponds
-        /// to the provided TZID, or null of no matching
-        /// time zone could be found.
-        /// </summary>
-        ITimeZone GetTimeZone(string tzId);
-
-        /// <summary>
         /// Gets a list of unique components contained in the calendar.
         /// </summary>
         IUniqueComponentList<IUniqueComponent> UniqueComponents { get; }
@@ -80,27 +73,5 @@ namespace Ical.Net.Interfaces
         /// Gets a list of To-do items contained in the calendar.
         /// </summary>
         IUniqueComponentList<ITodo> Todos { get; }
-
-
-        /// <summary>
-        /// Adds a system time zone to the iCalendar.  This time zone may
-        /// then be used in date/time objects contained in the 
-        /// calendar.
-        /// </summary>
-        /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>
-        /// <returns>The time zone added to the calendar.</returns>
-        ITimeZone AddTimeZone(TimeZoneInfo tzi);
-
-        ITimeZone AddTimeZone(TimeZoneInfo tzi, DateTime earliestDateTimeToSupport, bool includeHistoricalData);
-
-        /// <summary>
-        /// Adds the local system time zone to the iCalendar.  
-        /// This time zone may then be used in date/time
-        /// objects contained in the calendar.
-        /// </summary>
-        /// <returns>The time zone added to the calendar.</returns>
-        ITimeZone AddLocalTimeZone();
-
-        ITimeZone AddLocalTimeZone(DateTime earliestDateTimeToSupport, bool includeHistoricalData);
     }
 }
