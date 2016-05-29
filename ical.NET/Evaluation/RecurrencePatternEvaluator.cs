@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Exceptions;
 using Ical.Net.Interfaces.DataTypes;
@@ -285,33 +286,29 @@ namespace Ical.Net.Evaluation
                     // sort candidates for identifying when UNTIL date is exceeded..
                     candidates.Sort();
 
-                    for (var i = 0; i < candidates.Count; i++)
+                    foreach (var t in candidates.Where(t => t >= originalDate))
                     {
-                        candidate = candidates[i];
+                        candidate = t;
 
-                        // don't count candidates that occur before the original date..
-                        if (candidate >= originalDate)
+                        // candidates MAY occur before periodStart
+                        // For example, FREQ=YEARLY;BYWEEKNO=1 could return dates
+                        // from the previous year.
+                        //
+                        // candidates exclusive of periodEnd..
+                        if (candidate >= periodEnd)
                         {
-                            // candidates MAY occur before periodStart
-                            // For example, FREQ=YEARLY;BYWEEKNO=1 could return dates
-                            // from the previous year.
-                            //
-                            // candidates exclusive of periodEnd..
-                            if (candidate >= periodEnd)
+                            invalidCandidateCount++;
+                        }
+                        else if (pattern.Count >= 1 && (dates.Count + invalidCandidateCount) >= pattern.Count)
+                        {
+                            break;
+                        }
+                        else if (pattern.Until == DateTime.MinValue || candidate <= pattern.Until)
+                        {
+                            var utcCandidate = DateUtil.FromTimeZoneToTimeZone(candidate, DateUtil.GetZone(seed.TzId), DateTimeZone.Utc).ToDateTimeUtc();
+                            if (!dates.Contains(candidate) && (pattern.Until == DateTime.MinValue || utcCandidate <= pattern.Until))
                             {
-                                invalidCandidateCount++;
-                            }
-                            else if (pattern.Count >= 1 && (dates.Count + invalidCandidateCount) >= pattern.Count)
-                            {
-                                break;
-                            }
-                            else if (pattern.Until == DateTime.MinValue || candidate <= pattern.Until)
-                            {
-                                var utcCandidate = DateUtil.FromTimeZoneToTimeZone(candidate, DateUtil.GetZone(seed.TzId), DateTimeZone.Utc).ToDateTimeUtc();
-                                if (!dates.Contains(candidate) && (pattern.Until == DateTime.MinValue || utcCandidate <= pattern.Until))
-                                {
-                                    dates.Add(candidate);
-                                }
+                                dates.Add(candidate);
                             }
                         }
                     }
@@ -374,9 +371,8 @@ namespace Ical.Net.Evaluation
             var setPosDates = new List<DateTime>(dates.Count);
             var size = dates.Count;
 
-            for (var i = 0; i < pattern.BySetPosition.Count; i++)
+            foreach (var pos in pattern.BySetPosition)
             {
-                var pos = pattern.BySetPosition[i];
                 if (pos > 0 && pos <= size)
                 {
                     setPosDates.Add(dates[pos - 1]);
@@ -407,15 +403,9 @@ namespace Ical.Net.Evaluation
             {
                 // Expand behavior
                 var monthlyDates = new List<DateTime>();
-                for (var i = 0; i < dates.Count; i++)
+                foreach (var date in dates)
                 {
-                    var date = dates[i];
-                    for (var j = 0; j < pattern.ByMonth.Count; j++)
-                    {
-                        var month = pattern.ByMonth[j];
-                        date = date.AddMonths(month - date.Month);
-                        monthlyDates.Add(date);
-                    }
+                    monthlyDates.AddRange(pattern.ByMonth.Select(month => date.AddMonths(month - date.Month)));
                 }
                 return monthlyDates;
             }
