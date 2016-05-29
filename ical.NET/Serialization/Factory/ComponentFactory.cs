@@ -9,7 +9,7 @@ namespace Ical.Net.Serialization.Factory
     {
         public virtual ICalendarComponent Build(string objectName, bool uninitialized)
         {
-            Type type = null;
+            Type type;
 
             // Determine the type of component to build.
             switch (objectName.ToUpper())
@@ -37,7 +37,7 @@ namespace Ical.Net.Serialization.Factory
                     break;
             }
 
-            ICalendarComponent c = null;
+            ICalendarComponent c;
             if (uninitialized)
             {
                 // Create a new, uninitialized object (i.e. no constructor has been called).

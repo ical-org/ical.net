@@ -549,9 +549,7 @@ namespace Ical.Net
         /// <param name="endTime">The ending date range</param>
         public virtual HashSet<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
         {
-            var occurrences = new HashSet<Occurrence>();
-
-            occurrences = new HashSet<Occurrence>(RecurringItems.OfType<T>().SelectMany(recurrable => recurrable.GetOccurrences(startTime, endTime)));
+            var occurrences = new HashSet<Occurrence>(RecurringItems.OfType<T>().SelectMany(recurrable => recurrable.GetOccurrences(startTime, endTime)));
 
             occurrences.ExceptWith(
                 occurrences.Where(o => o.Source is IUniqueComponent)

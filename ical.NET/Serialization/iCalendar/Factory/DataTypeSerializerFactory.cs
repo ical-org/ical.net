@@ -22,7 +22,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
         {
             if (objectType != null)
             {
-                ISerializer s = null;
+                ISerializer s;
 
                 if (typeof (IAttachment).IsAssignableFrom(objectType))
                 {

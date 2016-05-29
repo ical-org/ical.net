@@ -67,7 +67,6 @@ namespace Ical.Net.Serialization.iCalendar
             for (;;)
             {
                 IToken _token = null;
-                var _ttype = Token.INVALID_TYPE;
                 resetText();
                 try // for char stream error handling
                 {
@@ -78,93 +77,77 @@ namespace Ical.Net.Serialization.iCalendar
                             case '\n':
                             {
                                 mLF(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             case ' ':
                             {
                                 mSPACE(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             case '\t':
                             {
                                 mHTAB(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             case ':':
                             {
                                 mCOLON(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             case ';':
                             {
                                 mSEMICOLON(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             case ',':
                             {
                                 mCOMMA(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             case '.':
                             {
                                 mDOT(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             case '=':
                             {
                                 mEQUAL(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             case '/':
                             {
                                 mSLASH(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             case '"':
                             {
                                 mDQUOTE(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             default:
                                 if ((cached_LA1 == '\r') && (cached_LA2 == '\n') && (LA(3) == '\t' || LA(3) == ' '))
                                 {
                                     mLINEFOLDER(true);
-                                    theRetToken = returnToken_;
                                 }
                                 else if ((cached_LA1 == '\r') && (cached_LA2 == '\n') && (true))
                                 {
                                     mCRLF(true);
-                                    theRetToken = returnToken_;
                                 }
                                 else if ((cached_LA1 == '\\') && (tokenSet_0_.member(cached_LA2)))
                                 {
                                     mESCAPED_CHAR(true);
-                                    theRetToken = returnToken_;
                                 }
                                 else if ((cached_LA1 == '\\') && (true))
                                 {
                                     mBACKSLASH(true);
-                                    theRetToken = returnToken_;
                                 }
                                 else if ((tokenSet_1_.member(cached_LA1)) && (true))
                                 {
                                     mCTL(true);
-                                    theRetToken = returnToken_;
                                 }
                                 else if ((tokenSet_2_.member(cached_LA1)))
                                 {
                                     mIANA_TOKEN(true);
-                                    theRetToken = returnToken_;
                                 }
                                 else
                                 {
@@ -184,7 +167,7 @@ namespace Ical.Net.Serialization.iCalendar
                         {
                             goto tryAgain; // found SKIP token
                         }
-                        _ttype = returnToken_.Type;
+                        var _ttype = returnToken_.Type;
                         _ttype = testLiteralsTable(_ttype);
                         returnToken_.Type = _ttype;
                         return returnToken_;
@@ -223,13 +206,11 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void mLF(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = LF;
 
             match('\u000a');
-            _ttype = Token.SKIP;
+            var _ttype = Token.SKIP;
             if (createToken && (null == _token) && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
@@ -921,10 +902,8 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void mLINEFOLDER(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = LINEFOLDER;
 
             mCRLF(false);
             {
@@ -946,7 +925,7 @@ namespace Ical.Net.Serialization.iCalendar
                     }
                 }
             }
-            _ttype = Token.SKIP;
+            var _ttype = Token.SKIP;
             if (createToken && (null == _token) && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);

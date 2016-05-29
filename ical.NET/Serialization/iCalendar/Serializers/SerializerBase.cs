@@ -31,7 +31,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         public object Deserialize(Stream stream, Encoding encoding)
         {
-            object obj = null;
+            object obj;
             using (var sr = new StreamReader(stream, encoding))
             {
                 // Push the current encoding on the stack

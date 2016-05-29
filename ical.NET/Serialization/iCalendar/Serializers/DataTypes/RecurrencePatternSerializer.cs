@@ -73,15 +73,14 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             }
             // If the object is MinValue instead of its default, consider
             // that to be unassigned.
-            bool isMin1 = false, isMin2 = false;
 
-            Type t1 = obj1.GetType(), t2 = obj2.GetType();
+            var t1 = obj1.GetType();
 
             var fi1 = t1.GetField("MinValue");
             var fi2 = t1.GetField("MinValue");
 
-            isMin1 = fi1 != null && obj1.Equals(fi1.GetValue(null));
-            isMin2 = fi2 != null && obj2.Equals(fi2.GetValue(null));
+            var isMin1 = fi1 != null && obj1.Equals(fi1.GetValue(null));
+            var isMin2 = fi2 != null && obj2.Equals(fi2.GetValue(null));
             if (isMin1 || isMin2)
             {
                 return;
