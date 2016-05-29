@@ -153,7 +153,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                     var matches = UnescapedCommas.Matches(value);
                     foreach (Match match in matches)
                     {
-                        var newValue = dt != null ? Decode(dt, value.Substring(i, match.Index - i + 1)) : value.Substring(i, match.Index - i + 1);
+                        var newValue = Decode(dt, value.Substring(i, match.Index - i + 1));
                         escapedValues.Add(newValue);
                         values.Add(Unescape(newValue));
                         i = match.Index + 2;

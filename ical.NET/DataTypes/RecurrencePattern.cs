@@ -129,7 +129,7 @@ namespace Ical.Net.DataTypes
             get
             {
                 // NOTE: Fixes bug #1924358 - Cannot evaluate Secondly patterns
-                if (_restrictionType != null && _restrictionType.HasValue)
+                if (_restrictionType != null)
                 {
                     return _restrictionType.Value;
                 }
@@ -147,7 +147,7 @@ namespace Ical.Net.DataTypes
             get
             {
                 // NOTE: Fixes bug #1924358 - Cannot evaluate Secondly patterns
-                if (_evaluationMode != null && _evaluationMode.HasValue)
+                if (_evaluationMode != null)
                 {
                     return _evaluationMode.Value;
                 }

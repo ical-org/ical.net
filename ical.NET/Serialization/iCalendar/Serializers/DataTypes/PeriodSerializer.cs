@@ -34,11 +34,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                         sb.Append(dtSerializer.SerializeToString(p.StartTime));
 
                         // Serialize the duration
-                        if (p.Duration != null)
-                        {
-                            sb.Append("/");
-                            sb.Append(timeSpanSerializer.SerializeToString(p.Duration));
-                        }
+                        sb.Append("/");
+                        sb.Append(timeSpanSerializer.SerializeToString(p.Duration));
 
                         // Encode the value as necessary
                         return Encode(p, sb.ToString());

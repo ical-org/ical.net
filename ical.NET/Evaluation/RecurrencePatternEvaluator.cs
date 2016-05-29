@@ -267,7 +267,7 @@ namespace Ical.Net.Evaluation
                     break;
                 }
 
-                if (periodEnd != null && candidate != DateTime.MinValue && candidate > periodEnd)
+                if (candidate != DateTime.MinValue && candidate > periodEnd)
                 {
                     break;
                 }
@@ -403,7 +403,7 @@ namespace Ical.Net.Evaluation
                 return dates;
             }
 
-            if (expand.HasValue && expand.Value)
+            if (expand.Value)
             {
                 // Expand behavior
                 var monthlyDates = new List<DateTime>();
@@ -451,7 +451,7 @@ namespace Ical.Net.Evaluation
                 return dates;
             }
 
-            if (expand.HasValue && expand.Value)
+            if (expand.Value)
             {
                 // Expand behavior
                 var weekNoDates = new List<DateTime>();
@@ -532,7 +532,7 @@ namespace Ical.Net.Evaluation
                 return dates;
             }
 
-            if (expand.HasValue && expand.Value)
+            if (expand.Value)
             {
                 // Expand behavior
                 var yearDayDates = new List<DateTime>();
@@ -592,7 +592,7 @@ namespace Ical.Net.Evaluation
                 return dates;
             }
 
-            if (expand.HasValue && expand.Value)
+            if (expand.Value)
             {
                 // Expand behavior
                 var monthDayDates = new List<DateTime>();
@@ -663,7 +663,7 @@ namespace Ical.Net.Evaluation
                 return dates;
             }
 
-            if (expand.HasValue && expand.Value)
+            if (expand.Value)
             {
                 // Expand behavior
                 var weekDayDates = new List<DateTime>();
@@ -672,7 +672,7 @@ namespace Ical.Net.Evaluation
                     var date = dates[i];
                     for (var j = 0; j < pattern.ByDay.Count; j++)
                     {
-                        weekDayDates.AddRange(GetAbsWeekDays(date, pattern.ByDay[j], pattern, expand));
+                        weekDayDates.AddRange(GetAbsWeekDays(date, pattern.ByDay[j], pattern, true));
                     }
                 }
 
@@ -819,7 +819,7 @@ namespace Ical.Net.Evaluation
                 return dates;
             }
 
-            if (expand.HasValue && expand.Value)
+            if (expand.Value)
             {
                 // Expand behavior
                 var hourlyDates = new List<DateTime>();
@@ -869,7 +869,7 @@ namespace Ical.Net.Evaluation
                 return dates;
             }
 
-            if (expand.HasValue && expand.Value)
+            if (expand.Value)
             {
                 // Expand behavior
                 var minutelyDates = new List<DateTime>();
@@ -919,7 +919,7 @@ namespace Ical.Net.Evaluation
                 return dates;
             }
 
-            if (expand.HasValue && expand.Value)
+            if (expand.Value)
             {
                 // Expand behavior
                 var secondlyDates = new List<DateTime>();

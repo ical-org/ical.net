@@ -196,7 +196,7 @@ namespace Ical.Net.Serialization.iCalendar
             _ttype = CR;
 
             match('\u000d');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -211,7 +211,7 @@ namespace Ical.Net.Serialization.iCalendar
 
             match('\u000a');
             var _ttype = Token.SKIP;
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -293,7 +293,7 @@ namespace Ical.Net.Serialization.iCalendar
                     throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());
                 }
             }
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -309,7 +309,7 @@ namespace Ical.Net.Serialization.iCalendar
             _ttype = DIGIT;
 
             matchRange('\u0030', '\u0039');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -325,7 +325,7 @@ namespace Ical.Net.Serialization.iCalendar
             _ttype = DASH;
 
             match('\u002d');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -341,7 +341,7 @@ namespace Ical.Net.Serialization.iCalendar
             _ttype = UNDERSCORE;
 
             match('\u005F');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -357,7 +357,7 @@ namespace Ical.Net.Serialization.iCalendar
             _ttype = UNICODE;
 
             matchRange('\u0100', '\uFFFE');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -439,7 +439,7 @@ namespace Ical.Net.Serialization.iCalendar
                     }
                     break;
             }
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -455,7 +455,7 @@ namespace Ical.Net.Serialization.iCalendar
             _ttype = SPACE;
 
             match('\u0020');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -471,7 +471,7 @@ namespace Ical.Net.Serialization.iCalendar
             _ttype = HTAB;
 
             match('\u0009');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -487,7 +487,7 @@ namespace Ical.Net.Serialization.iCalendar
             _ttype = COLON;
 
             match('\u003a');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -503,7 +503,7 @@ namespace Ical.Net.Serialization.iCalendar
             _ttype = SEMICOLON;
 
             match('\u003b');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -519,7 +519,7 @@ namespace Ical.Net.Serialization.iCalendar
             _ttype = COMMA;
 
             match('\u002c');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -535,7 +535,7 @@ namespace Ical.Net.Serialization.iCalendar
             _ttype = DOT;
 
             match('\u002e');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -551,7 +551,7 @@ namespace Ical.Net.Serialization.iCalendar
             _ttype = EQUAL;
 
             match('\u003d');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -567,7 +567,7 @@ namespace Ical.Net.Serialization.iCalendar
             _ttype = BACKSLASH;
 
             match('\u005c');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -583,7 +583,7 @@ namespace Ical.Net.Serialization.iCalendar
             _ttype = SLASH;
 
             match('\u002f');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -599,7 +599,7 @@ namespace Ical.Net.Serialization.iCalendar
             _ttype = DQUOTE;
 
             match('\u0022');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -617,7 +617,7 @@ namespace Ical.Net.Serialization.iCalendar
             mCR(false);
             mLF(false);
             newline();
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -682,7 +682,7 @@ namespace Ical.Net.Serialization.iCalendar
                     throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());
                 }
             }
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -737,7 +737,7 @@ namespace Ical.Net.Serialization.iCalendar
                     }
                 }
             }
-            if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (_createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -891,7 +891,7 @@ namespace Ical.Net.Serialization.iCalendar
                 }
             }
 
-            if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (_createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -925,7 +925,7 @@ namespace Ical.Net.Serialization.iCalendar
                 }
             }
             var _ttype = Token.SKIP;
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));

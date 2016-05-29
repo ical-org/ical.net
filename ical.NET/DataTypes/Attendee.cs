@@ -86,10 +86,7 @@ namespace Ical.Net.DataTypes
             set
             {
                 var val = value.ToString();
-                if (val != null)
-                {
-                    val = val.ToUpper();
-                }
+                val = val.ToUpper();
                 Parameters.Set("RSVP", val);
             }
         }

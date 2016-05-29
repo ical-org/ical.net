@@ -174,19 +174,16 @@ namespace Ical.Net
         /// </summary>
         protected virtual void AddRepeatedItems()
         {
-            if (Repeat != null)
+            var len = Occurrences.Count;
+            for (var i = 0; i < len; i++)
             {
-                var len = Occurrences.Count;
-                for (var i = 0; i < len; i++)
-                {
-                    var ao = Occurrences[i];
-                    var alarmTime = ao.DateTime.Copy<IDateTime>();
+                var ao = Occurrences[i];
+                var alarmTime = ao.DateTime.Copy<IDateTime>();
 
-                    for (var j = 0; j < Repeat; j++)
-                    {
-                        alarmTime = alarmTime.Add(Duration);
-                        Occurrences.Add(new AlarmOccurrence(this, alarmTime.Copy<IDateTime>(), ao.Component));
-                    }
+                for (var j = 0; j < Repeat; j++)
+                {
+                    alarmTime = alarmTime.Add(Duration);
+                    Occurrences.Add(new AlarmOccurrence(this, alarmTime.Copy<IDateTime>(), ao.Component));
                 }
             }
         }

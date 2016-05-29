@@ -52,32 +52,29 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                         // into the list.
                         var objToAdd = stringSerializer.Deserialize(new StringReader(value)) ?? value;
 
-                        if (objToAdd != null)
+                        // FIXME: cache this
+                        var mi = _objectType.GetMethod("Add");
+                        if (mi != null)
                         {
-                            // FIXME: cache this
-                            var mi = _objectType.GetMethod("Add");
-                            if (mi != null)
+                            // Determine if the returned object is an IList<ObjectType>,
+                            // rather than just an ObjectType.
+                            if (objToAdd is IEnumerable && objToAdd.GetType() == typeof(List<>).MakeGenericType(_innerType))
                             {
-                                // Determine if the returned object is an IList<ObjectType>,
-                                // rather than just an ObjectType.
-                                if (objToAdd is IEnumerable && objToAdd.GetType() == typeof (List<>).MakeGenericType(_innerType))
+                                // Deserialization returned an IList<ObjectType>, instead of
+                                // simply an ObjectType.  So, let's enumerate through the
+                                // items in the list and add them individually to our
+                                // list.
+                                foreach (var innerObj in (IEnumerable) objToAdd)
                                 {
-                                    // Deserialization returned an IList<ObjectType>, instead of
-                                    // simply an ObjectType.  So, let's enumerate through the
-                                    // items in the list and add them individually to our
-                                    // list.
-                                    foreach (var innerObj in (IEnumerable) objToAdd)
-                                    {
-                                        mi.Invoke(listObj, new[] {innerObj});
-                                    }
+                                    mi.Invoke(listObj, new[] {innerObj});
                                 }
-                                else
-                                {
-                                    // Add the object to the list
-                                    mi.Invoke(listObj, new[] {objToAdd});
-                                }
-                                return listObj;
                             }
+                            else
+                            {
+                                // Add the object to the list
+                                mi.Invoke(listObj, new[] {objToAdd});
+                            }
+                            return listObj;
                         }
                     }
                 }

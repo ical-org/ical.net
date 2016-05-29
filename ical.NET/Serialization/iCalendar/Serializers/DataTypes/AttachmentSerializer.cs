@@ -61,20 +61,14 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                     {
                         // If the VALUE type is specifically set to BINARY,
                         // then set the Data property instead.                    
-                        if (value != null)
-                        {
-                            a.Data = data;
-                        }
+                        a.Data = data;
                         return a;
                     }
 
                     // The default VALUE type for attachments is URI.  So, let's
                     // grab the URI by default.
-                    if (value != null)
-                    {
-                        var uriValue = Decode(a, value);
-                        a.Uri = new Uri(uriValue);
-                    }
+                    var uriValue = Decode(a, value);
+                    a.Uri = new Uri(uriValue);
 
                     return a;
                 }

@@ -38,7 +38,7 @@ namespace Ical.Net.Utility
                 foreach (var mi in targetType.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
                 {
                     var attrs = mi.GetCustomAttributes(typeof (OnDeserializingAttribute), false);
-                    if (attrs != null && attrs.Length > 0)
+                    if (attrs.Length > 0)
                     {
                         yield return mi;
                     }
@@ -54,7 +54,7 @@ namespace Ical.Net.Utility
                 foreach (var mi in targetType.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
                 {
                     var attrs = mi.GetCustomAttributes(typeof (OnDeserializedAttribute), true);
-                    if (attrs != null && attrs.Length > 0)
+                    if (attrs.Length > 0)
                     {
                         yield return mi;
                     }
