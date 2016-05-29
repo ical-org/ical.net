@@ -423,7 +423,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                         }
                         else if ((match = Time.Match(item)).Success)
                         {
-                            int hour, minute, second;
+                            int hour;
 
                             if (int.TryParse(match.Groups["Hour"].Value, out hour))
                             {
@@ -435,9 +435,11 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
                                 r.ByHour.Add(hour);
 
+                                int minute;
                                 if (match.Groups["Minute"].Success && int.TryParse(match.Groups["Minute"].Value, out minute))
                                 {
                                     r.ByMinute.Add(minute);
+                                    int second;
                                     if (match.Groups["Second"].Success && int.TryParse(match.Groups["Second"].Value, out second))
                                     {
                                         r.BySecond.Add(second);

@@ -555,14 +555,13 @@ namespace Ical.Net.Serialization.iCalendar
         public string value() //throws RecognitionException, TokenStreamException
         {
             var sb = new StringBuilder();
-            string c;
 
             { // ( ... )*
                 for (;;)
                 {
                     if ((tokenSet_1_.member(LA(1))) && (tokenSet_2_.member(LA(2))) && (tokenSet_2_.member(LA(3))))
                     {
-                        c = value_char();
+                        var c = value_char();
                         sb.Append(c);
                     }
                     else
@@ -629,14 +628,13 @@ namespace Ical.Net.Serialization.iCalendar
         public string paramtext() //throws RecognitionException, TokenStreamException
         {
             var sb = new StringBuilder();
-            string c;
 
             { // ( ... )*
                 for (;;)
                 {
                     if ((tokenSet_3_.member(LA(1))))
                     {
-                        c = safe_char();
+                        var c = safe_char();
                         sb.Append(c);
                     }
                     else
@@ -654,7 +652,6 @@ namespace Ical.Net.Serialization.iCalendar
         public string quoted_string() //throws RecognitionException, TokenStreamException
         {
             var sb = new StringBuilder();
-            string c;
 
             match(DQUOTE);
             { // ( ... )*
@@ -662,7 +659,7 @@ namespace Ical.Net.Serialization.iCalendar
                 {
                     if ((tokenSet_4_.member(LA(1))))
                     {
-                        c = qsafe_char();
+                        var c = qsafe_char();
                         sb.Append(c);
                     }
                     else
@@ -722,14 +719,12 @@ namespace Ical.Net.Serialization.iCalendar
         {
             var s = string.Empty;
 
-            string t;
-
             { // ( ... )*
                 for (;;)
                 {
                     if ((tokenSet_6_.member(LA(1))))
                     {
-                        t = text_char();
+                        var t = text_char();
                         s += t;
                     }
                     else
