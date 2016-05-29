@@ -6,7 +6,7 @@ namespace Ical.Net.Interfaces.DataTypes
     {
         string TzId { get; set; }
 
-        IPeriod this[int index] { get; set; }
+        new IPeriod this[int index] { get; set; }
         void Add(IDateTime dt);
         void Remove(IDateTime dt);
     }
