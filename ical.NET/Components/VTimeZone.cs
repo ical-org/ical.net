@@ -1,9 +1,5 @@
 using System;
-using System.Globalization;
-using Ical.Net.DataTypes;
-using Ical.Net.ExtensionMethods;
 using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
 
 namespace Ical.Net
 {

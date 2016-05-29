@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
@@ -10,8 +9,7 @@ using Ical.Net.Utility;
 namespace Ical.Net
 {
     /// <summary>
-    /// A class that contains time zone information, and is usually accessed
-    /// from an iCalendar object using the <see cref="Calendar.GetTimeZone"/> method.        
+    /// A class that contains time zone information.
     /// </summary>
     [Serializable]
     public class CalTimeZoneInfo : CalendarComponent, ITimeZoneInfo
