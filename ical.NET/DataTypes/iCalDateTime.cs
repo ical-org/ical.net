@@ -396,15 +396,6 @@ namespace Ical.Net.DataTypes
             return new CalDateTime(newDt, newTimeZone);
         }
 
-        public IDateTime SetTimeZone(ITimeZone tz)
-        {
-            if (tz != null)
-            {
-                TzId = tz.TzId;
-            }
-            return this;
-        }
-
         public IDateTime Add(TimeSpan ts)
         {
             return this + ts;
