@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Ical.Net.DataTypes;
-using Ical.Net.Evaluation;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Structs;
@@ -17,27 +16,17 @@ namespace Ical.Net
     [Serializable]
     public class CalTimeZoneInfo : CalendarComponent, ITimeZoneInfo
     {
-        private TimeZoneInfoEvaluator _mEvaluator;
-
         public CalTimeZoneInfo()
         {
             // FIXME: how do we ensure SEQUENCE doesn't get serialized?
             // base.Sequence = null;
             // iCalTimeZoneInfo does not allow sequence numbers
             // Perhaps we should have a custom serializer that fixes this?
-
-            Initialize();
         }
 
         public CalTimeZoneInfo(string name) : this()
         {
             Name = name;
-        }
-
-        void Initialize()
-        {
-            _mEvaluator = new TimeZoneInfoEvaluator(this);
-            SetService(_mEvaluator);
         }
 
         public virtual IDateTime DtStart
@@ -110,13 +99,11 @@ namespace Ical.Net
         protected override void OnDeserializing(StreamingContext context)
         {
             base.OnDeserializing(context);
-
-            Initialize();
         }
 
         protected bool Equals(CalTimeZoneInfo other)
         {
-            return base.Equals(other) && Equals(_mEvaluator, other._mEvaluator);
+            return base.Equals(other);
         }
 
         public override bool Equals(object obj)
@@ -141,7 +128,7 @@ namespace Ical.Net
             unchecked
             {
                 var hashCode = base.GetHashCode();
-                hashCode = (hashCode * 397) ^ (_mEvaluator != null ? _mEvaluator.GetHashCode() : 0);
+                hashCode = (hashCode * 397);
                 return hashCode;
             }
         }
