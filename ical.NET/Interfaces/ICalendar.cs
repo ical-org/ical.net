@@ -1,5 +1,4 @@
-﻿using System;
-using Ical.Net.Interfaces.Components;
+﻿using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Interfaces.General;
 

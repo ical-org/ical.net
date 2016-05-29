@@ -23,35 +23,6 @@ namespace Ical.Net
             return FromSystemTimeZone(TimeZoneInfo.Local, earlistDateTimeToSupport, includeHistoricalData);
         }
 
-        private static void PopulateiCalTimeZoneInfo(ITimeZoneInfo tzi, TimeZoneInfo.TransitionTime transition, int year)
-        {
-            var c = CultureInfo.CurrentCulture.Calendar;
-
-            var recurrence = new RecurrencePattern();
-            recurrence.Frequency = FrequencyType.Yearly;
-            recurrence.ByMonth.Add(transition.Month);
-            recurrence.ByHour.Add(transition.TimeOfDay.Hour);
-            recurrence.ByMinute.Add(transition.TimeOfDay.Minute);
-
-            if (transition.IsFixedDateRule)
-            {
-                recurrence.ByMonthDay.Add(transition.Day);
-            }
-            else
-            {
-                if (transition.Week != 5)
-                {
-                    recurrence.ByDay.Add(new WeekDay(transition.DayOfWeek, transition.Week));
-                }
-                else
-                {
-                    recurrence.ByDay.Add(new WeekDay(transition.DayOfWeek, -1));
-                }
-            }
-
-            tzi.RecurrenceRules.Add(recurrence);
-        }
-
         public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo)
         {
             // Support date/times for January 1st of the previous year by default.
@@ -60,57 +31,7 @@ namespace Ical.Net
 
         public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
         {
-            var adjustmentRules = tzinfo.GetAdjustmentRules();
-            var ddayTz = new VTimeZone();
-            ddayTz.TzId = tzinfo.Id;
-
-            IDateTime earliest = new CalDateTime(earlistDateTimeToSupport);
-            foreach (var adjustmentRule in adjustmentRules)
-            {
-                // Only include historical data if asked to do so.  Otherwise,
-                // use only the most recent adjustment rule available.
-                if (!includeHistoricalData && adjustmentRule.DateEnd < earlistDateTimeToSupport)
-                {
-                    continue;
-                }
-
-                var delta = adjustmentRule.DaylightDelta;
-                var ddayTzinfoStandard = new CalTimeZoneInfo();
-                ddayTzinfoStandard.Name = "STANDARD";
-                ddayTzinfoStandard.Start =
-                    new CalDateTime(
-                        new DateTime(adjustmentRule.DateStart.Year, adjustmentRule.DaylightTransitionEnd.Month, adjustmentRule.DaylightTransitionEnd.Day,
-                            adjustmentRule.DaylightTransitionEnd.TimeOfDay.Hour, adjustmentRule.DaylightTransitionEnd.TimeOfDay.Minute,
-                            adjustmentRule.DaylightTransitionEnd.TimeOfDay.Second).AddDays(1));
-                if (ddayTzinfoStandard.Start.LessThan(earliest))
-                {
-                    ddayTzinfoStandard.Start = ddayTzinfoStandard.Start.AddYears(earliest.Year - ddayTzinfoStandard.Start.Year);
-                }
-                PopulateiCalTimeZoneInfo(ddayTzinfoStandard, adjustmentRule.DaylightTransitionEnd, adjustmentRule.DateStart.Year);
-
-                // Add the "standard" time rule to the time zone
-                ddayTz.AddChild(ddayTzinfoStandard);
-
-                if (tzinfo.SupportsDaylightSavingTime)
-                {
-                    var ddayTzinfoDaylight = new CalTimeZoneInfo();
-                    ddayTzinfoDaylight.Name = "DAYLIGHT";
-                    ddayTzinfoDaylight.Start =
-                        new CalDateTime(new DateTime(adjustmentRule.DateStart.Year, adjustmentRule.DaylightTransitionStart.Month,
-                            adjustmentRule.DaylightTransitionStart.Day, adjustmentRule.DaylightTransitionStart.TimeOfDay.Hour,
-                            adjustmentRule.DaylightTransitionStart.TimeOfDay.Minute, adjustmentRule.DaylightTransitionStart.TimeOfDay.Second));
-                    if (ddayTzinfoDaylight.Start.LessThan(earliest))
-                    {
-                        ddayTzinfoDaylight.Start = ddayTzinfoDaylight.Start.AddYears(earliest.Year - ddayTzinfoDaylight.Start.Year);
-                    }
-                    PopulateiCalTimeZoneInfo(ddayTzinfoDaylight, adjustmentRule.DaylightTransitionStart, adjustmentRule.DateStart.Year);
-
-                    // Add the "daylight" time rule to the time zone
-                    ddayTz.AddChild(ddayTzinfoDaylight);
-                }
-            }
-
-            return ddayTz;
+            return new VTimeZone {TzId = tzinfo.Id};
         }
 
         public VTimeZone()

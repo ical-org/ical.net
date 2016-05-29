@@ -16,19 +16,6 @@ namespace Ical.Net
     [Serializable]
     public class CalTimeZoneInfo : CalendarComponent, ITimeZoneInfo
     {
-        public CalTimeZoneInfo()
-        {
-            // FIXME: how do we ensure SEQUENCE doesn't get serialized?
-            // base.Sequence = null;
-            // iCalTimeZoneInfo does not allow sequence numbers
-            // Perhaps we should have a custom serializer that fixes this?
-        }
-
-        public CalTimeZoneInfo(string name) : this()
-        {
-            Name = name;
-        }
-
         public virtual IDateTime DtStart
         {
             get { return Start; }
@@ -94,33 +81,6 @@ namespace Ical.Net
         public virtual HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
         {
             return RecurrenceUtil.GetOccurrences(this, new CalDateTime(startTime), new CalDateTime(endTime), true);
-        }
-
-        protected override void OnDeserializing(StreamingContext context)
-        {
-            base.OnDeserializing(context);
-        }
-
-        protected bool Equals(CalTimeZoneInfo other)
-        {
-            return base.Equals(other);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
-            return Equals((CalTimeZoneInfo) obj);
         }
 
         public override int GetHashCode()

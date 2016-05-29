@@ -2,7 +2,7 @@
 
 namespace Ical.Net.Interfaces.Components
 {
-    public interface ITimeZoneInfo : ICalendarComponent, IRecurrable
+    public interface ITimeZoneInfo : IRecurrable
     {
     }
 }
