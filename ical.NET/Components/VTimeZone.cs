@@ -121,8 +121,6 @@ namespace Ical.Net
             Name = Components.Timezone;
 
             _tzInfos = new CalendarObjectListProxy<ITimeZoneInfo>(Children);
-            var evaluator = new TimeZoneEvaluator(this);
-            SetService(evaluator);
         }
 
         public virtual string Id
