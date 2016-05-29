@@ -358,19 +358,7 @@ namespace Ical.Net
 
         public virtual IUniqueComponentList<IUniqueComponent> UniqueComponents => _mUniqueComponents;
 
-        public virtual IEnumerable<IRecurrable> RecurringItems
-        {
-            get
-            {
-                foreach (object obj in Children)
-                {
-                    if (obj is IRecurrable)
-                    {
-                        yield return (IRecurrable) obj;
-                    }
-                }
-            }
-        }
+        public virtual IEnumerable<IRecurrable> RecurringItems => Children.OfType<IRecurrable>();
 
         /// <summary>
         /// A collection of <see cref="Components.Event"/> components in the iCalendar.
