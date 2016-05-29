@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using Ical.Net.Evaluation;
 using Ical.Net.Interfaces.Components;
@@ -220,22 +221,10 @@ namespace Ical.Net
         /// <returns>True if the event occurs on the <paramref name="dateTime"/> provided, False otherwise.</returns>
         public virtual bool OccursOn(IDateTime dateTime)
         {
-            foreach (var p in _mEvaluator.Periods)
-            {
-                // NOTE: removed UTC from date checks, since a date is a date.
-                if (p.StartTime.Date == dateTime.Date || // It's the start date OR
-                    (p.StartTime.Date <= dateTime.Date && // It's after the start date AND
-                     (p.EndTime.HasTime && p.EndTime.Date >= dateTime.Date || // an end time was specified, and it's after the test date
-                      (!p.EndTime.HasTime && p.EndTime.Date > dateTime.Date)))) // an end time was not specified, and it's before the end date
-                {
-                    // NOTE: fixed bug as follows:
-                    // DTSTART;VALUE=DATE:20060704
-                    // DTEND;VALUE=DATE:20060705
-                    // Event.OccursOn(new iCalDateTime(2006, 7, 5)); // Evals to true; should be false
-                    return true;
-                }
-            }
-            return false;
+            return _mEvaluator.Periods.Any(p => p.StartTime.Date == dateTime.Date || // It's the start date OR
+                                                (p.StartTime.Date <= dateTime.Date && // It's after the start date AND
+                                                 (p.EndTime.HasTime && p.EndTime.Date >= dateTime.Date || // an end time was specified, and it's after the test date
+                                                  (!p.EndTime.HasTime && p.EndTime.Date > dateTime.Date))));
         }
 
         /// <summary>
@@ -245,14 +234,7 @@ namespace Ical.Net
         /// <returns>True if the event begins at the given date and time</returns>
         public virtual bool OccursAt(IDateTime dateTime)
         {
-            foreach (var p in _mEvaluator.Periods)
-            {
-                if (p.StartTime.Equals(dateTime))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return _mEvaluator.Periods.Any(p => p.StartTime.Equals(dateTime));
         }
 
         /// <summary>

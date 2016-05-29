@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
@@ -91,15 +92,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         private void SerializeByValue(List<string> aggregate, IList<int> byValue, string name)
         {
-            if (byValue.Count > 0)
+            if (byValue.Any())
             {
-                var byValues = new List<string>();
-                foreach (var i in byValue)
-                {
-                    byValues.Add(i.ToString());
-                }
-
-                aggregate.Add(name + "=" + string.Join(",", byValues.ToArray()));
+                aggregate.Add(name + "=" + string.Join(",", byValue.Select(i => i.ToString())));
             }
         }
 
@@ -164,10 +159,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                     var serializer = factory.Build(typeof (IWeekDay), SerializationContext) as IStringSerializer;
                     if (serializer != null)
                     {
-                        foreach (WeekDay byday in recur.ByDay)
-                        {
-                            bydayValues.Add(serializer.SerializeToString(byday));
-                        }
+                        bydayValues.AddRange(recur.ByDay.Select(byday => serializer.SerializeToString(byday)));
                     }
 
                     values.Add("BYDAY=" + string.Join(",", bydayValues.ToArray()));

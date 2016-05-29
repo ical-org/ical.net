@@ -48,46 +48,29 @@ namespace Ical.Net.DataTypes
             Initialize();
         }
 
+        protected bool Equals(PeriodList other)
+        {
+            return Equals(_periods, other._periods) && string.Equals(TzId, other.TzId);
+        }
+
         public override bool Equals(object obj)
         {
-            if (obj is IPeriodList)
-            {
-                var r = (IPeriodList) obj;
-
-                var p1Enum = GetEnumerator();
-                var p2Enum = r.GetEnumerator();
-
-                while (p1Enum.MoveNext())
-                {
-                    if (!p2Enum.MoveNext())
-                    {
-                        return false;
-                    }
-
-                    if (!Equals(p1Enum.Current, p2Enum.Current))
-                    {
-                        return false;
-                    }
-                }
-
-                if (p2Enum.MoveNext())
-                {
-                    return false;
-                }
-
-                return true;
-            }
-            return false;
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((PeriodList)obj);
         }
 
         public override int GetHashCode()
         {
-            var hashCode = 0;
-            foreach (var p in this)
+            unchecked
             {
-                hashCode ^= p.GetHashCode();
+                return ((_periods != null
+                    ? _periods.GetHashCode()
+                    : 0) * 397) ^ (TzId != null
+                        ? TzId.GetHashCode()
+                        : 0);
             }
-            return hashCode;
         }
 
         public override void CopyFrom(ICopyable obj)

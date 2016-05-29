@@ -518,21 +518,13 @@ namespace Ical.Net.Evaluation
 
             if (expand.Value)
             {
-                // Expand behavior
-                var yearDayDates = new List<DateTime>();
-                for (var i = 0; i < dates.Count; i++)
+                var yearDayDates = new List<DateTime>(dates.Count);
+                foreach (var date in dates)
                 {
-                    var date = dates[i];
-                    for (var j = 0; j < pattern.ByYearDay.Count; j++)
-                    {
-                        var yearDay = pattern.ByYearDay[j];
-
-                        var newDate = yearDay > 0
-                            ? date.AddDays(-date.DayOfYear + yearDay)
-                            : date.AddDays(-date.DayOfYear + 1).AddYears(1).AddDays(yearDay);
-
-                        yearDayDates.Add(newDate);
-                    }
+                    var date1 = date;
+                    yearDayDates.AddRange(pattern.ByYearDay.Select(yearDay => yearDay > 0
+                        ? date1.AddDays(-date1.DayOfYear + yearDay)
+                        : date1.AddDays(-date1.DayOfYear + 1).AddYears(1).AddDays(yearDay)));
                 }
                 return yearDayDates;
             }
@@ -578,26 +570,18 @@ namespace Ical.Net.Evaluation
 
             if (expand.Value)
             {
-                // Expand behavior
-                var monthDayDates = new List<DateTime>();
+                var monthDayDates = new List<DateTime>(128);
                 for (var i = 0; i < dates.Count; i++)
                 {
                     var date = dates[i];
-                    for (var j = 0; j < pattern.ByMonthDay.Count; j++)
-                    {
-                        var monthDay = pattern.ByMonthDay[j];
-
-                        var daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month);
-                        if (Math.Abs(monthDay) <= daysInMonth)
-                        {
-                            // Account for positive or negative numbers
-                            var newDate = monthDay > 0
-                                ? date.AddDays(-date.Day + monthDay)
-                                : date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay);
-
-                            monthDayDates.Add(newDate);
-                        }
-                    }
+                    monthDayDates.AddRange(
+                        from monthDay in pattern.ByMonthDay
+                        let daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month)
+                        where Math.Abs(monthDay) <= daysInMonth
+                        select monthDay > 0
+                            ? date.AddDays(-date.Day + monthDay)
+                            : date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay)
+                   );
                 }
                 return monthDayDates;
             }

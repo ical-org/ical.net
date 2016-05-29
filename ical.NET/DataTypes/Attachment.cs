@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
@@ -66,14 +67,7 @@ namespace Ical.Net.DataTypes
                 {
                     return false;
                 }
-                for (var i = 0; i < Data.Length; i++)
-                {
-                    if (Data[i] != a.Data[i])
-                    {
-                        return false;
-                    }
-                }
-                return true;
+                return !Data.Where((t, i) => t != a.Data[i]).Any();
             }
             return false;
         }

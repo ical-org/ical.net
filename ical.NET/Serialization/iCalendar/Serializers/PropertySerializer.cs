@@ -78,15 +78,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                                 if (parameterSerializer != null)
                                 {
                                     // Serialize each parameter
-                                    var parameters = new List<string>();
-                                    foreach (var param in parameterList)
-                                    {
-                                        parameters.Add(parameterSerializer.SerializeToString(param));
-                                    }
 
                                     // Separate parameters with semicolons
                                     sb.Append(";");
-                                    sb.Append(string.Join(";", parameters.ToArray()));
+                                    sb.Append(string.Join(";", parameterList.Select(param => parameterSerializer.SerializeToString(param))));
                                 }
                             }
                             sb.Append(":");

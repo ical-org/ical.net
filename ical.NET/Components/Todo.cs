@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.Serialization;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
@@ -162,15 +163,7 @@ namespace Ical.Net
                 // Evaluate to the previous occurrence.
                 _mEvaluator.EvaluateToPreviousOccurrence(Completed, currDt);
 
-                foreach (Period p in _mEvaluator.Periods)
-                {
-                    if (p.StartTime.GreaterThan(Completed) && // The item has recurred after it was completed
-                        currDt.GreaterThanOrEqual(p.StartTime)) // and the current date is after or on the recurrence date.
-                    {
-                        return false;
-                    }
-                }
-                return true;
+                return _mEvaluator.Periods.Cast<Period>().All(p => !p.StartTime.GreaterThan(Completed) || !currDt.GreaterThanOrEqual(p.StartTime));
             }
             return false;
         }

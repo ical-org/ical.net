@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.General;
@@ -65,51 +66,44 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 
         public override string SerializeToString(object obj)
         {
-            if (obj != null)
+            if (obj == null)
             {
-                var settings = GetService<ISerializationSettings>();
+                return null;
+            }
 
-                var values = new List<string>();
-                if (obj is string)
-                {
-                    // Object to be serialied is a string already
-                    values.Add((string) obj);
-                }
-                else if (obj is IEnumerable)
-                {
-                    // Object is a list of objects (probably IList<string>).
-                    foreach (var child in (IEnumerable) obj)
-                    {
-                        values.Add(child.ToString());
-                    }
-                }
-                else
-                {
-                    // Serialize the object as a string.
-                    values.Add(obj.ToString());
-                }
+            var values = new List<string>();
+            if (obj is string)
+            {
+                values.Add((string) obj);
+            }
+            else if (obj is IEnumerable)
+            {
+                values.AddRange(from object child in (IEnumerable) obj select child.ToString());
+            }
+            else
+            {
+                values.Add(obj.ToString());
+            }
 
-                var co = SerializationContext.Peek() as ICalendarObject;
-                if (co != null)
-                {
-                    // Encode the string as needed.
-                    var dt = new EncodableDataType();
-                    dt.AssociatedObject = co;
-                    for (var i = 0; i < values.Count; i++)
-                    {
-                        values[i] = Encode(dt, Escape(values[i]));
-                    }
-
-                    return string.Join(",", values.ToArray());
-                }
-
+            var co = SerializationContext.Peek() as ICalendarObject;
+            if (co != null)
+            {
+                // Encode the string as needed.
+                var dt = new EncodableDataType();
+                dt.AssociatedObject = co;
                 for (var i = 0; i < values.Count; i++)
                 {
-                    values[i] = Escape(values[i]);
+                    values[i] = Encode(dt, Escape(values[i]));
                 }
-                return string.Join(",", values.ToArray());
+
+                return string.Join(",", values);
             }
-            return null;
+
+            for (var i = 0; i < values.Count; i++)
+            {
+                values[i] = Escape(values[i]);
+            }
+            return string.Join(",", values);
         }
 
         internal static readonly Regex UnescapedCommas = new Regex(@"[^\\](,)", RegexOptions.Compiled);
