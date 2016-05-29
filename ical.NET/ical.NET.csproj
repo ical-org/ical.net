@@ -85,7 +85,6 @@
     <Compile Include="Components\Alarm.cs" />
     <Compile Include="Components\FreeBusy.cs" />
     <Compile Include="Components\VTimeZone.cs" />
-    <Compile Include="Components\iCalTimeZoneInfo.cs" />
     <Compile Include="Components\Journal.cs" />
     <Compile Include="DataTypes\Attachment.cs" />
     <Compile Include="Components\CalendarComponent.cs">
@@ -221,7 +220,6 @@
     <Compile Include="Interfaces\DataTypes\IRecurrencePattern.cs" />
     <Compile Include="Interfaces\DataTypes\IRequestStatus.cs" />
     <Compile Include="Interfaces\DataTypes\IStatusCode.cs" />
-    <Compile Include="Interfaces\Components\ITimeZoneInfo.cs" />
     <Compile Include="Interfaces\DataTypes\ITrigger.cs" />
     <Compile Include="Interfaces\DataTypes\IUTCOffset.cs" />
     <Compile Include="Interfaces\IICalendarCollection.cs" />

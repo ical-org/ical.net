@@ -32,10 +32,6 @@ namespace Ical.Net.Serialization.Factory
                 case Components.Todo:
                     type = typeof (Todo);
                     break;
-                case Components.Daylight:
-                case Components.Standard:
-                    type = typeof (CalTimeZoneInfo);
-                    break;
                 default:
                     type = typeof (CalendarComponent);
                     break;
