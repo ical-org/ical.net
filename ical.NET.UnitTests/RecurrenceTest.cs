@@ -2856,24 +2856,6 @@ namespace ical.NET.UnitTests
                 "Serialized recurrence string is incorrect");
         }
 
-        //[Test, Category("Recurrence")]    //Console.WriteLine is not a unit test
-        public void Test3()
-        {
-            ICalendar cal = new Calendar();
-            IEvent evt = cal.Create<Event>();
-
-            evt.Start = new CalDateTime(2008, 10, 18, 10, 30, 0);
-            evt.Summary = "Test Event";
-            evt.Duration = TimeSpan.FromHours(1);
-            evt.RecurrenceRules.Add(new RecurrencePattern("RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH"));
-
-            IDateTime doomsdayDate = new CalDateTime(2010, 12, 31, 10, 30, 0);
-            var allOcc = evt.GetOccurrences(evt.Start, doomsdayDate);
-
-            //foreach (var occ in allOcc)
-            //    Console.WriteLine(occ.Period.StartTime.ToString("d") + " " + occ.Period.StartTime.ToString("t"));
-        }
-
         [Test, Category("Recurrence")]
         public void Test4()
         {
@@ -2909,92 +2891,5 @@ namespace ical.NET.UnitTests
             Assert.AreEqual(30, periods[8].StartTime.Day);
             Assert.AreEqual(31, periods[9].StartTime.Day);
         }
-
-        // FIXME: re-implement
-        ///// <summary>
-        ///// Tests that BYHOUR values work properly with GetNextOccurrence()
-        ///// when the LastOccurrence is somewhat randomized between BYHOUR values.
-        ///// </summary>
-        //[Test, Category("Recurrence")]
-        //public void Test5()
-        //{
-        //    RecurrencePattern rpattern = new RecurrencePattern();
-        //    rpattern.ByHour.Add(8);
-        //    rpattern.ByHour.Add(17);
-
-        //    rpattern.Frequency = FrequencyType.Daily;
-
-        //    IDateTime lastOccurrence = new iCalDateTime(2006, 10, 1, 11, 15, 0);
-
-        //    for (int i = 0; i < 20; i++)
-        //    {
-        //        IPeriod nextOccurrence = rpattern.GetNextOccurrence(lastOccurrence);
-        //        IDateTime expectedNextOccurrence;
-        //        if (lastOccurrence.Hour > 17)
-        //            expectedNextOccurrence = DateUtil.StartOfDay(lastOccurrence).AddDays(1).AddHours(8).AddMinutes(15);
-        //        else
-        //            expectedNextOccurrence = DateUtil.StartOfDay(lastOccurrence).AddHours(17).AddMinutes(15);
-
-        //        Assert.AreEqual(expectedNextOccurrence, nextOccurrence.StartTime);
-        //        lastOccurrence = lastOccurrence.AddHours(12);
-        //    }
-        //}
-
-        // FIXME: re-implement
-        ///// <summary>
-        ///// Similar to TEST5(), except on the last day of the month.
-        ///// This ensures the "next day" values are properly calculated.
-        ///// </summary>
-        //[Test, Category("Recurrence")]
-        //public void Test6()
-        //{
-        //    IRecurrencePattern rpattern = new RecurrencePattern();
-        //    rpattern.ByHour.Add(8);
-        //    rpattern.ByHour.Add(17);
-        //    rpattern.Frequency = FrequencyType.Daily;
-
-        //    IDateTime lastOccurrence = new iCalDateTime(2009, 9, 30, 11, 42, 53);
-
-        //    for (int i = 0; i < 20; i++)
-        //    {
-        //        IPeriod nextOccurrence = rpattern.GetNextOccurrence(lastOccurrence);
-        //        IDateTime expectedNextOccurrence;
-        //        if (lastOccurrence.Hour > 17)
-        //            expectedNextOccurrence = DateUtil.StartOfDay(lastOccurrence).AddDays(1).AddHours(8).AddMinutes(42).AddSeconds(53);
-        //        else
-        //            expectedNextOccurrence = DateUtil.StartOfDay(lastOccurrence).AddHours(17).AddMinutes(42).AddSeconds(53);
-
-        //        Assert.AreEqual(expectedNextOccurrence, nextOccurrence.StartTime);
-        //        lastOccurrence = lastOccurrence.AddHours(12);
-        //    }
-        //}
-
-        // FIXME: re-implement
-        ///// <summary>
-        ///// Similar to TEST6(), except on the last day of the year.        
-        ///// </summary>
-        //[Test, Category("Recurrence")]
-        //public void Test7()
-        //{
-        //    IRecurrencePattern rpattern = new RecurrencePattern();
-        //    rpattern.ByHour.Add(8);
-        //    rpattern.ByHour.Add(17);
-        //    rpattern.Frequency = FrequencyType.Daily;
-
-        //    IDateTime lastOccurrence = new iCalDateTime(2009, 12, 31, 11, 42, 53);
-
-        //    for (int i = 0; i < 20; i++)
-        //    {
-        //        IPeriod nextOccurrence = rpattern.GetNextOccurrence(lastOccurrence);
-        //        IDateTime expectedNextOccurrence;
-        //        if (lastOccurrence.Hour > 17)
-        //            expectedNextOccurrence = DateUtil.StartOfDay(lastOccurrence).AddDays(1).AddHours(8).AddMinutes(42).AddSeconds(53);
-        //        else
-        //            expectedNextOccurrence = DateUtil.StartOfDay(lastOccurrence).AddHours(17).AddMinutes(42).AddSeconds(53);
-
-        //        Assert.AreEqual(expectedNextOccurrence, nextOccurrence);
-        //        lastOccurrence = lastOccurrence.AddHours(12);
-        //    }
-        //}
     }
 }

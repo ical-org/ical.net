@@ -11,14 +11,8 @@ namespace ical.NET.UnitTests
     [TestFixture]
     public class TodoTest
     {
-        private string _tzid;
+        private const string _tzid = "US-Eastern";
 
-        [TestFixtureSetUp]
-        public void InitAll()
-        {
-            _tzid = "US-Eastern";
-        }
-                
         public void TestTodoActive(string calendar, ArrayList items, params int[] numPeriods)
         {
             var iCal = Calendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
@@ -259,83 +253,5 @@ namespace ical.NET.UnitTests
 
             TestTodoActive("Todo9.ics", items, 3);            
         }
-
-        // FIXME: re-implement
-        //[Test, Category("Todo")]
-        //public void TODO10()
-        //{
-        //    iCalendar iCal = new iCalendar();
-        //    Todo todo = iCal.Create<Todo>();
-
-        //    todo.Summary = "xxxx";
-        //    todo.Description = "fdsdsfds";
-
-        //    // Set Start & Due date
-        //    todo.DtStart = new iCalDateTime(2007, 1, 1, 8, 0, 0);
-        //    todo.Due = new iCalDateTime(2007, 1, 7);
-        //    todo.Created = new iCalDateTime(DateTime.SpecifyKind(new DateTime(2007, 1, 1), DateTimeKind.Utc));
-        //    todo.DtStamp = new iCalDateTime(DateTime.SpecifyKind(new DateTime(2007, 1, 1), DateTimeKind.Utc));
-        //    todo.Uid = "b6709c95-5523-46aa-a7e5-1b5ea034b86a";
-
-        //    // Create an alarm
-        //    Alarm al = new Alarm();
-        //    al.Trigger = new Trigger(TimeSpan.FromMinutes(-30));
-        //    al.Action = AlarmAction.Display;
-        //    al.Description = "Reminder";
-
-        //    // Add the alarm to the todo item
-        //    todo.Alarms.Add(al);
-
-        //    // Save into calendar file.
-        //    iCalendarSerializer serializer = new iCalendarSerializer();
-        //    string serializedTodo = serializer.SerializeToString(iCal);
-
-        //    Assert.AreEqual(
-        //        "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//ddaysoftware.com//NONSGML DDay.iCal 1.0//EN\r\nBEGIN:VTODO\r\nCREATED:20070101T000000Z\r\nDESCRIPTION:fdsdsfds\r\nDTSTAMP:20070101T000000Z\r\nDTSTART:20070101T080000\r\nDUE;VALUE=DATE:20070107\r\nSEQUENCE:0\r\nSTATUS:NEEDS-ACTION\r\nSUMMARY:xxxx\r\nUID:b6709c95-5523-46aa-a7e5-1b5ea034b86a\r\nBEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:Reminder\r\nTRIGGER:-PT30M\r\nEND:VALARM\r\nEND:VTODO\r\nEND:VCALENDAR\r\n",
-        //        serializedTodo);
-
-        //    List<AlarmOccurrence> alarms = todo.PollAlarms(
-        //        new iCalDateTime(2007, 1, 1),
-        //        new iCalDateTime(2007, 2, 1));
-                        
-        //    iCalDateTime expectedAlarm = new iCalDateTime(2007, 1, 1, 7, 30, 0);
-        //    Assert.AreEqual(1, alarms.Count, "There should be exactly 1 alarm");
-        //    Assert.AreEqual(expectedAlarm, alarms[0].DateTime, "The alarm should occur at " + expectedAlarm);
-        //}
-
-        // FIXME: re-implement
-        //[Test, Category("Todo")]
-        //public void TODO11()
-        //{
-        //    iCalendar iCal = new iCalendar();
-        //    Todo todo = iCal.Create<Todo>();
-
-        //    todo.Summary = "xxxx";
-        //    todo.Description = "fdsdsfds";
-
-        //    // Set Start & Due date
-        //    todo.DtStart = new iCalDateTime(2007, 1, 1, 8, 0, 0);
-        //    todo.Due = new iCalDateTime(2007, 1, 7);
-        //    todo.Created = new iCalDateTime(DateTime.SpecifyKind(new DateTime(2007, 1, 1), DateTimeKind.Utc));
-        //    todo.DtStamp = new iCalDateTime(DateTime.SpecifyKind(new DateTime(2007, 1, 1), DateTimeKind.Utc));
-        //    todo.Uid = "b6709c95-5523-46aa-a7e5-1b5ea034b86a";
-
-        //    // Add an alarm in my task 
-        //    Alarm al = new Alarm(todo);
-        //    al.Action = AlarmAction.Display;
-        //    al.Description = "Reminder";
-        //    al.Trigger = new Trigger();
-
-        //    // Set reminder time 
-        //    al.Trigger.DateTime = new DateTime(2007, 1, 6, 8, 0, 0);
-
-        //    // Save into calendar file.
-        //    iCalendarSerializer serializer = new iCalendarSerializer();
-        //    string serializedTodo = serializer.SerializeToString(iCal);
-
-        //    Assert.AreEqual(
-        //        "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//ddaysoftware.com//NONSGML DDay.iCal 1.0//EN\r\nBEGIN:VTODO\r\nCREATED:20070101T000000Z\r\nDESCRIPTION:fdsdsfds\r\nDTSTAMP:20070101T000000Z\r\nDTSTART:20070101T080000\r\nDUE;VALUE=DATE:20070107\r\nSEQUENCE:0\r\nSTATUS:NEEDS-ACTION\r\nSUMMARY:xxxx\r\nUID:b6709c95-5523-46aa-a7e5-1b5ea034b86a\r\nBEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:Reminder\r\nTRIGGER;VALUE=DATE-TIME:20070106T080000\r\nEND:VALARM\r\nEND:VTODO\r\nEND:VCALENDAR\r\n",
-        //        serializedTodo);
-        //}
     }
 }

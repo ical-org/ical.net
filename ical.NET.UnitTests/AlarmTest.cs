@@ -10,13 +10,7 @@ namespace ical.NET.UnitTests
     [TestFixture]
     public class AlarmTest
     {
-        private string _tzid;
-
-        [TestFixtureSetUp]
-        public void InitAll()
-        {
-            _tzid = "US-Eastern";
-        }
+        private const string _tzid = "US-Eastern";
 
         public void TestAlarm(string calendar, List<IDateTime> dates, CalDateTime start, CalDateTime end)
         {
