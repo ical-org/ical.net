@@ -8,8 +8,8 @@ namespace Ical.Net.General
     [Serializable]
     public class CalendarParameterList : GroupedValueList<string, ICalendarParameter, CalendarParameter, string>, ICalendarParameterCollection
     {
-        ICalendarObject _mParent;
-        bool _mCaseInsensitive;
+        readonly ICalendarObject _mParent;
+        readonly bool _mCaseInsensitive;
 
         public CalendarParameterList() {}
 

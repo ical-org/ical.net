@@ -52,7 +52,7 @@ namespace Ical.Net.Evaluation
     public class RecurrencePatternEvaluator : Evaluator
     {
         // FIXME: in ical4j this is configurable.
-        private static int _maxIncrementCount = 1000;
+        private static readonly int _maxIncrementCount = 1000;
 
         protected IRecurrencePattern Pattern { get; set; }
 

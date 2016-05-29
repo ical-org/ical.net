@@ -39,7 +39,7 @@ namespace Ical.Net.Serialization
             }
         }
 
-        private Stack<WeakReference> _mStack = new Stack<WeakReference>();
+        private readonly Stack<WeakReference> _mStack = new Stack<WeakReference>();
         private ServiceProvider _mServiceProvider = new ServiceProvider();
 
         public SerializationContext()

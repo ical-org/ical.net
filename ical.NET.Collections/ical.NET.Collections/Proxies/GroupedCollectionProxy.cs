@@ -18,7 +18,7 @@ namespace ical.NET.Collections.Proxies
         where TOriginal : class, IGroupedObject<TGroup>
         where TNew : class, TOriginal
     {
-        Func<TNew, bool> _predicate;
+        readonly Func<TNew, bool> _predicate;
 
         public GroupedCollectionProxy(IGroupedCollection<TGroup, TOriginal> realObject, Func<TNew, bool> predicate = null)
         {

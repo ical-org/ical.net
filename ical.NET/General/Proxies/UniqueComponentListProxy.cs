@@ -10,7 +10,7 @@ namespace Ical.Net.General.Proxies
     public class UniqueComponentListProxy<TComponentType> : CalendarObjectListProxy<TComponentType>, IUniqueComponentList<TComponentType>
         where TComponentType : class, IUniqueComponent
     {
-        Dictionary<string, TComponentType> _lookup;
+        readonly Dictionary<string, TComponentType> _lookup;
 
         public UniqueComponentListProxy(IGroupedCollection<string, ICalendarObject> children) : base(children)
         {

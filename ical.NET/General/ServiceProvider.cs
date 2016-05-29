@@ -5,8 +5,8 @@ namespace Ical.Net.General
 {
     public class ServiceProvider //: IServiceProvider
     {
-        private IDictionary<Type, object> _mTypedServices = new Dictionary<Type, object>();
-        private IDictionary<string, object> _mNamedServices = new Dictionary<string, object>();
+        private readonly IDictionary<Type, object> _mTypedServices = new Dictionary<Type, object>();
+        private readonly IDictionary<string, object> _mNamedServices = new Dictionary<string, object>();
 
         public virtual object GetService(Type serviceType)
         {

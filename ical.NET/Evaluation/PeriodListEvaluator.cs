@@ -7,7 +7,7 @@ namespace Ical.Net.Evaluation
 {
     public class PeriodListEvaluator : Evaluator
     {
-        IPeriodList _mPeriodList;
+        readonly IPeriodList _mPeriodList;
 
         public PeriodListEvaluator(IPeriodList rdt)
         {

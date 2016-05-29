@@ -17,8 +17,8 @@ namespace ical.NET.Collections
         IGroupedList<TGroup, TItem>
         where TItem : class, IGroupedObject<TGroup>
     {
-        List<IMultiLinkedList<TItem>> _lists = new List<IMultiLinkedList<TItem>>();
-        Dictionary<TGroup, IMultiLinkedList<TItem>> _dictionary = new Dictionary<TGroup, IMultiLinkedList<TItem>>();
+        readonly List<IMultiLinkedList<TItem>> _lists = new List<IMultiLinkedList<TItem>>();
+        readonly Dictionary<TGroup, IMultiLinkedList<TItem>> _dictionary = new Dictionary<TGroup, IMultiLinkedList<TItem>>();
 
         TItem SubscribeToKeyChanges(TItem item)
         {

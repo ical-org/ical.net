@@ -8,7 +8,7 @@ namespace Ical.Net.General
     [Serializable]
     public class CalendarPropertyList : GroupedValueList<string, ICalendarProperty, CalendarProperty, object>, ICalendarPropertyList
     {
-        ICalendarObject _mParent;
+        readonly ICalendarObject _mParent;
         bool _mCaseInsensitive;
 
         public CalendarPropertyList() {}

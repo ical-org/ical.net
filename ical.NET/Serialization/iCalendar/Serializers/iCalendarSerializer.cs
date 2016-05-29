@@ -12,7 +12,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 {
     public class CalendarSerializer : ComponentSerializer
     {
-        ICalendar _mCalendar;
+        readonly ICalendar _mCalendar;
 
         public CalendarSerializer() {}
 

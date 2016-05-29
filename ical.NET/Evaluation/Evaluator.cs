@@ -15,7 +15,7 @@ namespace Ical.Net.Evaluation
         private DateTime _mEvaluationEndBounds = DateTime.MinValue;
 
         private ICalendarObject _mAssociatedObject;
-        private ICalendarDataType _mAssociatedDataType;
+        private readonly ICalendarDataType _mAssociatedDataType;
 
         protected HashSet<IPeriod> MPeriods;
 

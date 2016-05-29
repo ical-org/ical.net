@@ -7,7 +7,7 @@ namespace ical.NET.Collections.Enumerators
     public class GroupedListEnumerator<TType> :
         IEnumerator<TType>
     {
-        IList<IMultiLinkedList<TType>> _lists;
+        readonly IList<IMultiLinkedList<TType>> _lists;
         IEnumerator<IMultiLinkedList<TType>> _listsEnumerator;
         IEnumerator<TType> _listEnumerator;
 
