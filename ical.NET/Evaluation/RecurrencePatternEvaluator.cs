@@ -643,7 +643,6 @@ namespace Ical.Net.Evaluation
                 }
 
                 Next:
-                ;
                 dates.RemoveAt(i);
             }
 

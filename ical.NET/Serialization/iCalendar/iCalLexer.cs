@@ -854,7 +854,6 @@ namespace Ical.Net.Serialization.iCalendar
                                     goto _loop82_breakloop;
                                 }
                                 throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());
-                                ;
                             }
                             break;
                     }

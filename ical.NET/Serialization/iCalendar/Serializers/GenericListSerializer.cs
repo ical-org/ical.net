@@ -42,7 +42,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                 {
                     // Get a serializer for the inner type
                     var stringSerializer = sf.Build(_innerType, SerializationContext) as IStringSerializer;
-                    ;
 
                     if (stringSerializer != null)
                     {
