@@ -252,7 +252,7 @@ namespace Ical.Net.DataTypes
                 }
                 return true;
             }
-            return base.Equals(obj);
+            return false;
         }
 
         public override string ToString()

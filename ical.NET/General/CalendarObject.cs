@@ -82,7 +82,7 @@ namespace Ical.Net.General
             {
                 return Equals(o.Name, Name);
             }
-            return base.Equals(obj);
+            return false;
         }
 
         public override int GetHashCode()

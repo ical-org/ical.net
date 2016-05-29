@@ -51,7 +51,7 @@ namespace Ical.Net.DataTypes
                 var g = (IGeographicLocation) obj;
                 return g.Latitude.Equals(Latitude) && g.Longitude.Equals(Longitude);
             }
-            return base.Equals(obj);
+            return false;
         }
 
         public override int GetHashCode()
