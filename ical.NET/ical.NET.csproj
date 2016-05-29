@@ -111,7 +111,6 @@
     <Compile Include="DataTypes\RecurrencePattern.cs" />
     <Compile Include="DataTypes\UTCOffset.cs" />
     <Compile Include="Evaluation\RecurrencePatternEvaluator.cs" />
-    <Compile Include="Evaluation\TimeZoneEvaluator.cs" />
     <Compile Include="Evaluation\EventEvaluator.cs" />
     <Compile Include="Evaluation\Evaluator.cs" />
     <Compile Include="Evaluation\PeriodListEvaluator.cs" />

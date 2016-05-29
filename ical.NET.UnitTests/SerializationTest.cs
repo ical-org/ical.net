@@ -955,58 +955,6 @@ Ticketmaster UK Limited Registration in England No 2662632, Registered Office, 4
             Assert.AreEqual(0, tz.Properties["LAST-MODIFIED"].Parameters.CountOf("VALUE"), "The \"VALUE\" parameter is not allowed on \"LAST-MODIFIED\"");
         }
 
-        //[Test]     //Broken in dday
-        public void TimeZone2()
-        {
-            //
-            // First, check against the VALUE parameter; it must be absent in DTSTART
-            //
-
-            var iCal = Calendar.LoadFromFile(@"Calendars\Serialization\TimeZone2.ics")[0];
-
-            var tz = iCal.TimeZones[0];
-            foreach (CalTimeZoneInfo tzi in tz.TimeZoneInfos)
-                tzi.Start = new CalDateTime(2007, 1, 1);
-
-            var serializer = new CalendarSerializer();
-            serializer.Serialize(iCal, @"Calendars\Serialization\Temp\TimeZone2.ics");
-
-            iCal = Calendar.LoadFromFile(@"Calendars\Serialization\Temp\TimeZone2.ics")[0];
-            tz = iCal.TimeZones[0];
-
-            foreach (CalTimeZoneInfo tzi in tz.TimeZoneInfos)
-            {
-                Assert.AreEqual(
-                    0,
-                    tzi.Properties["DTSTART"].Parameters.CountOf("VALUE"),
-                    "\"DTSTART\" property MUST be represented in local time in timezones");
-            }
-
-            //
-            // Next, check against UTC time; DTSTART must be presented in local time
-            //
-            iCal = Calendar.LoadFromFile(@"Calendars\Serialization\TimeZone2.ics")[0];
-
-            tz = iCal.TimeZones[0];
-            foreach (CalTimeZoneInfo tzi in tz.TimeZoneInfos)
-            {
-                tzi.Start = CalDateTime.Now;
-                tzi.Start.IsUniversalTime = true;
-            }
-
-            serializer = new CalendarSerializer();
-            serializer.Serialize(iCal, @"Calendars\Serialization\Temp\TimeZone2.ics");
-
-            iCal = Calendar.LoadFromFile(@"Calendars\Serialization\Temp\TimeZone2.ics")[0];
-            tz = iCal.TimeZones[0];
-
-            foreach (CalTimeZoneInfo tzi in tz.TimeZoneInfos)
-            {
-                Assert.AreEqual(0, tzi.Properties["DTSTART"].Parameters.CountOf("VALUE"),
-                    "\"DTSTART\" property MUST be represented in local time in timezones");
-            }
-        }
-
         //[Test, Category("Serialization")]     //Broken in dday
         public void TimeZone3()
         {

@@ -2,10 +2,8 @@ using System;
 using System.Globalization;
 using Ical.Net.DataTypes;
 using Ical.Net.ExtensionMethods;
-using Ical.Net.General.Proxies;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
 
 namespace Ical.Net
 {
@@ -118,8 +116,6 @@ namespace Ical.Net
         public VTimeZone()
         {
             Name = Components.Timezone;
-
-            _tzInfos = new CalendarObjectListProxy<ITimeZoneInfo>(Children);
         }
 
         public virtual string Id
@@ -138,12 +134,6 @@ namespace Ical.Net
         {
             get { return Properties.Get<Uri>("TZURL"); }
             set { Properties.Set("TZURL", value); }
-        }
-
-        private ICalendarObjectList<ITimeZoneInfo> _tzInfos;
-        public virtual ICalendarObjectList<ITimeZoneInfo> TimeZoneInfos
-        {
-            get { return _tzInfos; }
         }
     }
 }
