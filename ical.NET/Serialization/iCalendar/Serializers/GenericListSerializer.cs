@@ -61,7 +61,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                             {
                                 // Determine if the returned object is an IList<ObjectType>,
                                 // rather than just an ObjectType.
-                                if (objToAdd is IEnumerable && objToAdd.GetType().Equals(typeof (List<>).MakeGenericType(_innerType)))
+                                if (objToAdd is IEnumerable && objToAdd.GetType() == typeof (List<>).MakeGenericType(_innerType))
                                 {
                                     // Deserialization returned an IList<ObjectType>, instead of
                                     // simply an ObjectType.  So, let's enumerate through the
