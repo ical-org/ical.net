@@ -48,14 +48,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                     {
                         // Deserialize the inner object
                         var value = tr.ReadToEnd();
-                        var objToAdd = stringSerializer.Deserialize(new StringReader(value));
 
                         // If deserialization failed, pass the string value
                         // into the list.
-                        if (objToAdd == null)
-                        {
-                            objToAdd = value;
-                        }
+                        var objToAdd = stringSerializer.Deserialize(new StringReader(value)) ?? value;
 
                         if (objToAdd != null)
                         {
