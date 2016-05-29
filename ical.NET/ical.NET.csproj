@@ -123,7 +123,6 @@
     <Compile Include="General\Proxies\CalendarParameterCollectionProxy.cs" />
     <Compile Include="General\ServiceProvider.cs" />
     <Compile Include="General\Proxies\UniqueComponentListProxy.cs" />
-    <Compile Include="INodaDateTime.cs" />
     <Compile Include="Interfaces\DataTypes\IFreeBusyEntry.cs" />
     <Compile Include="Interfaces\Evaluation\IGetFreeBusy.cs" />
     <Compile Include="Interfaces\Evaluation\IGetOccurrences.cs" />
@@ -150,7 +149,6 @@
     <Compile Include="Interfaces\Serialization\ISerializationSettings.cs" />
     <Compile Include="Interfaces\Serialization\ISerializer.cs" />
     <Compile Include="Interfaces\Serialization\IStringSerializer.cs" />
-    <Compile Include="NodaDateTime.cs" />
     <Compile Include="Serialization\EncodingStack.cs" />
     <Compile Include="Serialization\iCalendar\Factory\DataTypeSerializerFactory.cs" />
     <Compile Include="Serialization\iCalendar\Processors\ComponentPropertyConsolidator.cs" />
