@@ -7,7 +7,6 @@ using Ical.Net.General.Proxies;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
-using Ical.Net.Structs;
 using Ical.Net.Utility;
 
 namespace Ical.Net

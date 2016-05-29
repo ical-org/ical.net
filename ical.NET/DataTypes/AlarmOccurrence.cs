@@ -1,9 +1,8 @@
 using System;
-using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 
-namespace Ical.Net.Structs
+namespace Ical.Net.DataTypes
 {
     /// <summary>
     /// A class that represents a specific occurrence of an <see cref="Alarm"/>.        
@@ -14,7 +13,7 @@ namespace Ical.Net.Structs
     /// component on which the alarm fired.
     /// </remarks>
     [Serializable]
-    public struct AlarmOccurrence : IComparable<AlarmOccurrence>
+    public class AlarmOccurrence : IComparable<AlarmOccurrence>
     {
         private IPeriod _mPeriod;
         private IRecurringComponent _mComponent;
