@@ -17,11 +17,6 @@ namespace Ical.Net
         ZonedDateTime AsUtc { get; }
 
         /// <summary>
-        /// Retrieves the <see cref="Components.iCalTimeZoneInfo"/> object for the time
-        /// zone set by <see cref="TzId"/>.
-        /// </summary>
-        //TimeZoneObservance? TimeZoneObservance { get; set; }
-        /// <summary>
         /// Gets/sets whether the Value of this date/time represents
         /// a universal time.
         /// </summary>

@@ -151,7 +151,7 @@ namespace Ical.Net
         /// since the provided <paramref name="start"/> date/time.  If <paramref name="start"/>
         /// is null, all triggered alarms will be returned.
         /// </summary>
-        /// <param name="start">The earliest date/time to poll trigerred alarms for.</param>
+        /// <param name="start">The earliest date/time to poll trigered alarms for.</param>
         /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
         public virtual IList<AlarmOccurrence> Poll(IDateTime start, IDateTime end)
         {
