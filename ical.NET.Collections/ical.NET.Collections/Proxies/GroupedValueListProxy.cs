@@ -117,13 +117,7 @@ namespace ical.NET.Collections.Proxies
 
         public virtual bool Contains(TNewValue item)
         {
-            if (item is TOriginalValue)
-            {
-                return Items
-                    .Where(o => o.ContainsValue((TOriginalValue)(object)item))
-                    .Any();
-            }
-            return false;
+            return Items.Any(o => o.ContainsValue((TOriginalValue)(object)item));
         }
 
         public virtual void CopyTo(TNewValue[] array, int arrayIndex)
@@ -135,13 +129,7 @@ namespace ical.NET.Collections.Proxies
                 .CopyTo(array, arrayIndex);
         }
         
-        public virtual int Count
-        {
-            get
-            {
-                return Items.Sum(o => o.ValueCount);
-            }
-        }
+        public virtual int Count => Items.Sum(o => o.ValueCount);
 
         public virtual bool IsReadOnly => false;
 
@@ -151,9 +139,7 @@ namespace ical.NET.Collections.Proxies
             {
                 var value = (TOriginalValue)(object)item;
 
-                var container = Items
-                    .Where(o => o.ContainsValue(value))
-                    .FirstOrDefault();
+                var container = Items.FirstOrDefault(o => o.ContainsValue(value));
 
                 if (container != null)
                 {

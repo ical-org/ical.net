@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Factory;
 using Ical.Net.Interfaces.Components;
@@ -16,19 +17,16 @@ namespace Ical.Net
             {
                 var getOccurrences = (IGetOccurrencesTyped) obj;
                 var occurrences = getOccurrences.GetOccurrences<IEvent>(freeBusyRequest.Start, freeBusyRequest.End);
-                var contacts = new List<string>();
+                var contacts = new List<string>(128);
                 var isFilteredByAttendees = false;
 
                 if (freeBusyRequest.Attendees != null && freeBusyRequest.Attendees.Count > 0)
                 {
                     isFilteredByAttendees = true;
-                    foreach (var attendee in freeBusyRequest.Attendees)
-                    {
-                        if (attendee.Value != null)
-                        {
-                            contacts.Add(attendee.Value.OriginalString.Trim());
-                        }
-                    }
+                    var attendees = freeBusyRequest.Attendees
+                        .Where(a => a.Value != null)
+                        .Select(a => a.Value.OriginalString.Trim());
+                    contacts.AddRange(attendees);
                 }
 
                 var fb = freeBusyRequest.Copy<IFreeBusy>();
