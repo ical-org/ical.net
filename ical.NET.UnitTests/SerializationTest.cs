@@ -574,6 +574,7 @@ END:VCALENDAR
         public void Language4()
         {
             var iCal = Calendar.LoadFromFile(@"Calendars/Serialization/Language4.ics")[0];
+            Assert.IsNotNull(iCal);
         }
 
         [Test, Category("Serialization")]
@@ -625,6 +626,7 @@ END:VCALENDAR
         public void Parse1()
         {
             var iCal = Calendar.LoadFromFile(@"Calendars\Serialization\Parse1.ics")[0];
+            Assert.IsNotNull(iCal);
         }
 
         /// <summary>

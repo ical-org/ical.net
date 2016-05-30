@@ -4,6 +4,7 @@ using System.Linq;
 using Ical.Net;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces;
+using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Utility;
 using NUnit.Framework;
@@ -20,42 +21,10 @@ namespace ical.NET.UnitTests
             // with US Holidays for 2006.
             //
             var iCal = Calendar.LoadFromFile(@"Calendars\Serialization\USHolidays.ics")[0];
-            Assert.IsNotNull(iCal, "iCalendar did not load.  Are you connected to the internet?");
-
-            var occurrences = iCal.GetOccurrences(
-                new CalDateTime(2006, 1, 1, "US-Eastern"),
-                new CalDateTime(2006, 12, 31, "US-Eastern"));
-
-            //foreach (var o in occurrences)
-            //{
-            //    var evt = o.Source as IEvent;
-            //    if (evt != null)
-            //    {
-            //        // Display the date of the event
-            //        Console.Write(o.Period.StartTime.AsSystemLocal.Date.ToString("MM/dd/yyyy") + " -\t");
-
-            //        // Display the event summary
-            //        Console.Write(evt.Summary);
-
-            //        // Display the time the event happens (unless it's an all-day event)
-            //        if (evt.Start.HasTime)
-            //        {
-            //            Console.Write(" (" + evt.Start.AsSystemLocal.ToShortTimeString() + " - " + evt.End.AsSystemLocal.ToShortTimeString());
-            //            if (evt.Start.TimeZoneObservance != null && evt.Start.TimeZoneObservance.HasValue)
-            //                Console.Write(" " + evt.Start.TimeZoneObservance.Value.TimeZoneInfo.TimeZoneName);
-            //            Console.Write(")");
-            //        }
-
-            //        Console.Write(Environment.NewLine);
-            //    }
-            //}
+            Assert.IsNotNull(iCal, "iCalendar did not load.");
         }
 
         private const string _tzid = "US-Eastern";
-
-        [SetUp]
-        public void Init()
-        {}
 
         public static void TestCal(ICalendar cal)
         {
@@ -229,7 +198,7 @@ namespace ical.NET.UnitTests
                 {
                     TimeZoneInfo.FindSystemTimeZoneById(zone.Id);                    
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Assert.Fail("Not found: " + zone.StandardName);                    
                 }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using Ical.Net.Interfaces.Serialization;
@@ -57,7 +58,7 @@ namespace Ical.Net.Utility
         public static TextReader Normalize(string s, ISerializationContext ctx)
         {
             // Replace \r and \n with \r\n.
-            s = NormalizeToCrLf.Replace(s, "\r\n");
+            s = NormalizeToCrLf.Replace(s, Environment.NewLine);
 
             var settings = ctx.GetService(typeof (ISerializationSettings)) as ISerializationSettings;
             if (settings == null || !settings.EnsureAccurateLineNumbers)

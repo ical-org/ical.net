@@ -2544,7 +2544,6 @@ namespace ical.NET.UnitTests
         public void Bug3007244()
         {
             var iCal = Calendar.LoadFromFile(@"Calendars\Recurrence\Bug3007244.ics")[0];
-            var pattern = iCal.Events.First().RecurrenceRules[0];
             
             EventOccurrenceTest(
                 iCal,
