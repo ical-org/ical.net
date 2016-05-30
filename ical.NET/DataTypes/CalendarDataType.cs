@@ -167,9 +167,8 @@ namespace Ical.Net.DataTypes
         /// <returns>The copy of the object.</returns>
         public virtual T Copy<T>()
         {
-            ICopyable obj = null;
             var type = GetType();
-            obj = Activator.CreateInstance(type) as ICopyable;
+            var obj = Activator.CreateInstance(type) as ICopyable;
 
             // Duplicate our values
             if (obj is T)

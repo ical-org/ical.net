@@ -2779,9 +2779,7 @@ namespace ical.NET.UnitTests
             var laterDateAndTime = new CalDateTime(2009, 11, 19, 11, 0, 0);
             var end = new CalDateTime(2009, 11, 23, 0, 0, 0);
 
-            HashSet<Occurrence> occurrences = null;
-
-            occurrences = evt.GetOccurrences(previousDateAndTime, end);
+            var occurrences = evt.GetOccurrences(previousDateAndTime, end);
             Assert.AreEqual(5, occurrences.Count);
 
             occurrences = evt.GetOccurrences(previousDateOnly, end);
