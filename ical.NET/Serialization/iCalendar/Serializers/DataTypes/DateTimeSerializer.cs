@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
@@ -37,39 +38,41 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            if (obj is IDateTime)
+            if (!(obj is IDateTime))
             {
-                var dt = (IDateTime) obj;
-
-                // Assign the TZID for the date/time value.
-                if (dt.TzId != null)
-                {
-                    dt.Parameters.Set("TZID", dt.TzId);
-                }
-
-                // FIXME: what if DATE is the default value type for this?
-                // Also, what if the DATE-TIME value type is specified on something
-                // where DATE-TIME is the default value type?  It should be removed
-                // during serialization, as it's redundant...
-                if (!dt.HasTime)
-                {
-                    dt.SetValueType("DATE");
-                }
-
-                var value = string.Format("{0:0000}{1:00}{2:00}", dt.Year, dt.Month, dt.Day);
-                if (dt.HasTime)
-                {
-                    value += string.Format("T{0:00}{1:00}{2:00}", dt.Hour, dt.Minute, dt.Second);
-                    if (dt.IsUniversalTime)
-                    {
-                        value += "Z";
-                    }
-                }
-
-                // Encode the value as necessary
-                return Encode(dt, value);
+                return null;
             }
-            return null;
+
+            var dt = (IDateTime) obj;
+
+            // Assign the TZID for the date/time value.
+            if (dt.TzId != null)
+            {
+                dt.Parameters.Set("TZID", dt.TzId);
+            }
+
+            // FIXME: what if DATE is the default value type for this?
+            // Also, what if the DATE-TIME value type is specified on something
+            // where DATE-TIME is the default value type?  It should be removed
+            // during serialization, as it's redundant...
+            if (!dt.HasTime)
+            {
+                dt.SetValueType("DATE");
+            }
+
+            var value = new StringBuilder(32);
+            value.Append($"{dt.Year:0000}{dt.Month:00}{dt.Day:00}");
+            if (dt.HasTime)
+            {
+                value.Append($"T{dt.Hour:00}{dt.Minute:00}{dt.Second:00}");
+                if (dt.IsUniversalTime)
+                {
+                    value.Append("Z");
+                }
+            }
+
+            // Encode the value as necessary
+            return Encode(dt, value.ToString());
         }
 
         private const RegexOptions _ciCompiled = RegexOptions.Compiled | RegexOptions.IgnoreCase;
