@@ -21,7 +21,7 @@ namespace Ical.Net.DataTypes
 
         protected ICalendarObject _AssociatedObject;
 
-        public CalendarDataType()
+        protected CalendarDataType()
         {
             Initialize();
         }

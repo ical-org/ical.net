@@ -9,7 +9,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
     {
         private ISerializationContext _mSerializationContext;
 
-        public SerializerBase()
+        protected SerializerBase()
         {
             _mSerializationContext = Serialization.SerializationContext.Default;
         }
