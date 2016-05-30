@@ -189,34 +189,30 @@ namespace Ical.Net.Serialization.iCalendar
         {
             var sf = ctx.GetService(typeof(ISerializerFactory)) as ISerializerFactory;
             var cf = ctx.GetService(typeof(ICalendarComponentFactory)) as ICalendarComponentFactory;
-            ICalendarComponent c;
-            ICalendarProperty p;
 
-            { // ( ... )*
-                for (;;)
+            for (;;)
+            {
+                switch (LA(1))
                 {
-                    switch (LA(1))
+                    case IANA_TOKEN:
+                    case X_NAME:
                     {
-                        case IANA_TOKEN:
-                        case X_NAME:
-                        {
-                            property(ctx, cal);
-                            break;
-                        }
-                        case BEGIN:
-                        {
-                            component(ctx, sf, cf, cal);
-                            break;
-                        }
-                        default:
-                        {
-                            goto _loop12_breakloop;
-                        }
+                        property(ctx, cal);
+                        break;
+                    }
+                    case BEGIN:
+                    {
+                        component(ctx, sf, cf, cal);
+                        break;
+                    }
+                    default:
+                    {
+                        goto _loop12_breakloop;
                     }
                 }
-                _loop12_breakloop:
-                ;
-            } // ( ... )*
+            }
+            _loop12_breakloop:
+            ;
         }
 
         public ICalendarProperty property(ISerializationContext ctx, ICalendarPropertyListContainer c) //throws RecognitionException, TokenStreamException
@@ -230,8 +226,10 @@ namespace Ical.Net.Serialization.iCalendar
                         var n = LT(1);
                         match(IANA_TOKEN);
 
-                        p = new CalendarProperty(n.getLine(), n.getColumn());
-                        p.Name = n.getText().ToUpper();
+                        p = new CalendarProperty(n.getLine(), n.getColumn())
+                        {
+                            Name = n.getText().ToUpper()
+                        };
 
                         break;
                     }
@@ -240,8 +238,10 @@ namespace Ical.Net.Serialization.iCalendar
                         var m = LT(1);
                         match(X_NAME);
 
-                        p = new CalendarProperty(m.getLine(), m.getColumn());
-                        p.Name = m.getText().ToUpper();
+                        p = new CalendarProperty(m.getLine(), m.getColumn())
+                        {
+                            Name = m.getText().ToUpper()
+                        };
 
                         break;
                     }
@@ -294,7 +294,7 @@ namespace Ical.Net.Serialization.iCalendar
                 // of concrete types.
                 var targetType = dataMapSerializer.TargetType;
                 var listOfTargetType = typeof(IList<>).MakeGenericType(targetType);
-                if (listOfTargetType.IsAssignableFrom(deserialized.GetType()))
+                if (listOfTargetType.IsInstanceOfType(deserialized))
                 {
                     // We deserialized a list - add each value to the
                     // resulting object.

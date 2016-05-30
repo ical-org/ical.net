@@ -87,9 +87,11 @@ namespace Ical.Net.Serialization
         {
             if (name != null && objectType != null)
             {
-                var m = new PropertyMapping();
-                m.ObjectType = objectType;
-                m.AllowsMultipleValuesPerProperty = allowsMultipleValues;
+                var m = new PropertyMapping
+                {
+                    ObjectType = objectType,
+                    AllowsMultipleValuesPerProperty = allowsMultipleValues
+                };
 
                 _propertyMap[name.ToUpper()] = m;
             }
@@ -99,9 +101,11 @@ namespace Ical.Net.Serialization
         {
             if (name != null && resolver != null)
             {
-                var m = new PropertyMapping();
-                m.Resolver = resolver;
-                m.AllowsMultipleValuesPerProperty = allowsMultipleValues;
+                var m = new PropertyMapping
+                {
+                    Resolver = resolver,
+                    AllowsMultipleValuesPerProperty = allowsMultipleValues
+                };
 
                 _propertyMap[name.ToUpper()] = m;
             }

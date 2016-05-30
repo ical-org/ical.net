@@ -381,7 +381,7 @@ namespace Ical.Net.DataTypes
         {
             if (string.IsNullOrWhiteSpace(newTimeZone))
             {
-                throw new ArgumentException("You must provide a valid TZID to the ToTimeZone() method", "newTimeZone");
+                throw new ArgumentException("You must provide a valid TZID to the ToTimeZone() method", nameof(newTimeZone));
             }
             if (Calendar == null)
             {

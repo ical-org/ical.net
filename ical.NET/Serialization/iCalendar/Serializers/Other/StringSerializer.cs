@@ -89,8 +89,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
             if (co != null)
             {
                 // Encode the string as needed.
-                var dt = new EncodableDataType();
-                dt.AssociatedObject = co;
+                var dt = new EncodableDataType
+                {
+                    AssociatedObject = co
+                };
                 for (var i = 0; i < values.Count; i++)
                 {
                     values[i] = Encode(dt, Escape(values[i]));
@@ -134,8 +136,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 EncodableDataType dt = null;
                 if (co != null)
                 {
-                    dt = new EncodableDataType();
-                    dt.AssociatedObject = co;
+                    dt = new EncodableDataType
+                    {
+                        AssociatedObject = co
+                    };
                 }
 
                 var escapedValues = new List<string>();

@@ -186,7 +186,7 @@ namespace Ical.Net.DataTypes
         {
             if (p == null)
             {
-                throw new ArgumentNullException("p");
+                throw new ArgumentNullException(nameof(p));
             }
             if (Equals(p))
             {

@@ -16,12 +16,14 @@ namespace ical.NET.UnitTests
         public void Add1()
         {
             ICalendar cal = new Calendar();
-            
-            var evt = new Event();
-            evt.Summary = "Testing";
-            evt.Start = new CalDateTime(2010, 3, 25);
-            evt.End = new CalDateTime(2010, 3, 26);
-            
+
+            var evt = new Event
+            {
+                Summary = "Testing",
+                Start = new CalDateTime(2010, 3, 25),
+                End = new CalDateTime(2010, 3, 26)
+            };
+
             cal.Events.Add(evt);
             Assert.AreEqual(1, cal.Children.Count);
             Assert.AreSame(evt, cal.Children[0]);            
@@ -35,10 +37,12 @@ namespace ical.NET.UnitTests
         {
             ICalendar cal = new Calendar();
 
-            var evt = new Event();
-            evt.Summary = "Testing";
-            evt.Start = new CalDateTime(2010, 3, 25);
-            evt.End = new CalDateTime(2010, 3, 26);
+            var evt = new Event
+            {
+                Summary = "Testing",
+                Start = new CalDateTime(2010, 3, 25),
+                End = new CalDateTime(2010, 3, 26)
+            };
 
             cal.Events.Add(evt);
             Assert.AreEqual(1, cal.Children.Count);
@@ -57,10 +61,12 @@ namespace ical.NET.UnitTests
         {
             ICalendar cal = new Calendar();
 
-            var evt = new Event();
-            evt.Summary = "Testing";
-            evt.Start = new CalDateTime(2010, 3, 25);
-            evt.End = new CalDateTime(2010, 3, 26);
+            var evt = new Event
+            {
+                Summary = "Testing",
+                Start = new CalDateTime(2010, 3, 25),
+                End = new CalDateTime(2010, 3, 26)
+            };
 
             cal.Events.Add(evt);
             Assert.AreEqual(1, cal.Children.Count);

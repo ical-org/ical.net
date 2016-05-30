@@ -111,9 +111,11 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 // Push the recurrence pattern onto the serialization stack
                 SerializationContext.Push(recur);
 
-                var values = new List<string>();
+                var values = new List<string>
+                {
+                    "FREQ=" + Enum.GetName(typeof(FrequencyType), recur.Frequency).ToUpper()
+                };
 
-                values.Add("FREQ=" + Enum.GetName(typeof (FrequencyType), recur.Frequency).ToUpper());
 
                 //-- FROM RFC2445 --
                 //The INTERVAL rule part contains a positive integer representing how

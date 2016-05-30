@@ -95,10 +95,12 @@ namespace Ical.Net
 
         public static IFreeBusy CreateRequest(IDateTime fromInclusive, IDateTime toExclusive, IOrganizer organizer, IAttendee[] contacts)
         {
-            var fb = new FreeBusy();
-            fb.DtStamp = CalDateTime.Now;
-            fb.DtStart = fromInclusive;
-            fb.DtEnd = toExclusive;
+            var fb = new FreeBusy
+            {
+                DtStamp = CalDateTime.Now,
+                DtStart = fromInclusive,
+                DtEnd = toExclusive
+            };
             if (organizer != null)
             {
                 fb.Organizer = organizer.Copy<IOrganizer>();

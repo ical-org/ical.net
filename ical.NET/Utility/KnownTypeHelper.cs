@@ -6,14 +6,10 @@ namespace Ical.Net.Utility
 {
     public static class KnownTypeHelper
     {
-        public static IList<Type> GetKnownTypes()
+        public static IList<Type> GetKnownTypes() => new List<Type>
         {
-            var types = new List<Type>();
-
-            types.Add(typeof (CalendarPropertyList));
-            types.Add(typeof (CalendarParameterList));
-
-            return types;
-        }
+            typeof(CalendarPropertyList),
+            typeof(CalendarParameterList)
+        };
     }
 }

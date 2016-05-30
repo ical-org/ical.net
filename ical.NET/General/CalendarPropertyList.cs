@@ -9,14 +9,14 @@ namespace Ical.Net.General
     public class CalendarPropertyList : GroupedValueList<string, ICalendarProperty, CalendarProperty, object>, ICalendarPropertyList
     {
         private readonly ICalendarObject _mParent;
-        private bool _mCaseInsensitive;
+        private readonly bool _mCaseInsensitive;
 
         public CalendarPropertyList() {}
 
         public CalendarPropertyList(ICalendarObject parent, bool caseInsensitive)
         {
             _mParent = parent;
-
+            _mCaseInsensitive = caseInsensitive;
             ItemAdded += CalendarPropertyList_ItemAdded;
             ItemRemoved += CalendarPropertyList_ItemRemoved;
         }
