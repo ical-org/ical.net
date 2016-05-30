@@ -25,21 +25,15 @@ namespace ical.NET.Collections
                 if (items != null)
                 {
                     // Add a value to the first matching item in the list
-                    items.FirstOrDefault().SetValue(values);
+                    items.First().SetValue(values);
                     return;
                 }
             }
 
             // No matching item was found, add a new item to the list
             var obj = Activator.CreateInstance(typeof(TItem)) as TInterface;
-
-            // Set the group for the object
             obj.Group = group;
-
-            // Add the object to the list
             Add(obj);
-
-            // Set the list of values for the object
             obj.SetValue(values);
         }
 

@@ -225,7 +225,7 @@ namespace Ical.Net
 
                 var evt = new AutoResetEvent(false);
 
-                string str = null;
+                string str = string.Empty;
                 request.BeginGetResponse(delegate(IAsyncResult result)
                 {
                     var e = Encoding.UTF8;
@@ -237,7 +237,7 @@ namespace Ical.Net
                             // Try to determine the content encoding
                             try
                             {
-                                var keys = new List<string>(resp.Headers.AllKeys);
+                                var keys = new HashSet<string>(resp.Headers.AllKeys);
                                 if (keys.Contains("Content-Encoding"))
                                 {
                                     e = Encoding.GetEncoding(resp.Headers["Content-Encoding"]);
@@ -249,11 +249,9 @@ namespace Ical.Net
                             }
 
                             using (var stream = resp.GetResponseStream())
+                            using (var sr = new StreamReader(stream, e))
                             {
-                                using (var sr = new StreamReader(stream, e))
-                                {
-                                    str = sr.ReadToEnd();
-                                }
+                                str = sr.ReadToEnd();
                             }
                         }
                     }

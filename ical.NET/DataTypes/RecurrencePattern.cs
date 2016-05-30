@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using Ical.Net.Evaluation;
 using Ical.Net.Interfaces.DataTypes;
@@ -307,33 +308,6 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private bool CollectionEquals<T>(IList<T> c1, IList<T> c2)
-        {
-            // NOTE: fixes a bug where collections weren't properly compared
-            if (c1 == null || c2 == null)
-            {
-                if (c1 == c2)
-                {
-                    return true;
-                }
-                return false;
-            }
-            if (!c1.Count.Equals(c2.Count))
-            {
-                return false;
-            }
-
-            IEnumerator e1 = c1.GetEnumerator();
-            IEnumerator e2 = c2.GetEnumerator();
-
-            while (e1.MoveNext() && e2.MoveNext())
-            {
-                if (!Equals(e1.Current, e2.Current))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        private bool CollectionEquals<T>(IEnumerable<T> c1, IEnumerable<T> c2) => c1.SequenceEqual(c2);
     }
 }
