@@ -115,28 +115,23 @@ namespace Ical.Net.Evaluation
         /// <param name="periodEnd">The end date of the range to evaluate.</param>
         protected virtual void EvaluateExDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
-            // Handle EXDATEs
-            if (Recurrable.ExceptionDates == null)
+            if (Recurrable.ExceptionDates == null || !Recurrable.ExceptionDates.Any())
             {
                 return;
             }
 
-
-            foreach (var exdate in Recurrable.ExceptionDates)
+            var evaluator = Recurrable.ExceptionDates.First().GetService(typeof(IEvaluator)) as IEvaluator;
+            if (evaluator == null)
             {
-                var evaluator = exdate.GetService(typeof (IEvaluator)) as IEvaluator;
-                if (evaluator == null)
-                {
-                    continue;
-                }
-
-                var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
-                foreach (var p in periods.Where(p => !p.StartTime.HasTime || (p.EndTime != null && !p.EndTime.HasTime)))
-                {
-                    p.MatchesDateOnly = true;
-                }
-                Periods.ExceptWith(periods);
+                return;
             }
+
+            var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
+            foreach (var p in periods.Where(p => !p.StartTime.HasTime || (p.EndTime != null && !p.EndTime.HasTime)))
+            {
+                p.MatchesDateOnly = true;
+            }
+            Periods.ExceptWith(periods);
         }
 
         public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
