@@ -57,34 +57,6 @@ namespace Ical.Net.Evaluation
         }
 
         /// <summary>
-        /// Evalates the RDate component, and adds each specified DateTime or Period to the Periods collection.
-        /// </summary>
-        /// <param name="referenceDate"></param>
-        /// <param name="periodStart">The beginning date of the range to evaluate.</param>
-        /// <param name="periodEnd">The end date of the range to evaluate.</param>
-        protected virtual void EvaluateRDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
-        {
-            // Handle RDATEs
-            if (Recurrable.RecurrenceDates == null || Recurrable.RecurrenceRules.Count < 1)
-            {
-                return;
-            }
-
-            var evaluator = Recurrable.RecurrenceRules.First().GetService(typeof(IEvaluator)) as IEvaluator;
-            if (evaluator == null)
-            {
-                return;
-            }
-
-            foreach (var rdate in Recurrable.RecurrenceDates)
-            {
-                //ToDo: For some reason, I can't pull this out of the loop, because it kills a unit test. WTF.
-                var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
-                Periods.UnionWith(periods);
-            }
-        }
-
-        /// <summary>
         /// Evaulates the ExRule component, and excludes each specified DateTime from the Periods collection.
         /// </summary>
         /// <param name="referenceDate"></param>
@@ -141,7 +113,6 @@ namespace Ical.Net.Evaluation
                 (periodStart.Equals(EvaluationEndBounds)))
             {
                 EvaluateRRule(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
-                EvaluateRDate(referenceDate, periodStart, periodEnd);
                 EvaluateExRule(referenceDate, periodStart, periodEnd);
                 EvaluateExDate(referenceDate, periodStart, periodEnd);
                 if (EvaluationStartBounds == DateTime.MaxValue || EvaluationStartBounds > periodStart)

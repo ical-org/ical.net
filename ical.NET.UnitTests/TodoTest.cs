@@ -172,17 +172,19 @@ namespace ical.NET.UnitTests
             var iCal = Calendar.LoadFromFile(@"Calendars\Todo\Todo7.ics")[0];
             var todo = iCal.Todos[0];
 
-            var items = new ArrayList();
-            items.Add(new CalDateTime(2006, 7, 28, 9, 0, 0, _tzid)); 
-            items.Add(new CalDateTime(2006, 8, 4, 9, 0, 0, _tzid)); 
-            items.Add(new CalDateTime(2006, 9, 1, 9, 0, 0, _tzid));
-            items.Add(new CalDateTime(2006, 10, 6, 9, 0, 0, _tzid));
-            items.Add(new CalDateTime(2006, 11, 3, 9, 0, 0, _tzid));
-            items.Add(new CalDateTime(2006, 12, 1, 9, 0, 0, _tzid));
-            items.Add(new CalDateTime(2007, 1, 5, 9, 0, 0, _tzid));
-            items.Add(new CalDateTime(2007, 2, 2, 9, 0, 0, _tzid));
-            items.Add(new CalDateTime(2007, 3, 2, 9, 0, 0, _tzid));
-            items.Add(new CalDateTime(2007, 4, 6, 9, 0, 0, _tzid));
+            var items = new ArrayList(15)
+            {
+                new CalDateTime(2006, 7, 28, 9, 0, 0, _tzid),
+                new CalDateTime(2006, 8, 4, 9, 0, 0, _tzid),
+                new CalDateTime(2006, 9, 1, 9, 0, 0, _tzid),
+                new CalDateTime(2006, 10, 6, 9, 0, 0, _tzid),
+                new CalDateTime(2006, 11, 3, 9, 0, 0, _tzid),
+                new CalDateTime(2006, 12, 1, 9, 0, 0, _tzid),
+                new CalDateTime(2007, 1, 5, 9, 0, 0, _tzid),
+                new CalDateTime(2007, 2, 2, 9, 0, 0, _tzid),
+                new CalDateTime(2007, 3, 2, 9, 0, 0, _tzid),
+                new CalDateTime(2007, 4, 6, 9, 0, 0, _tzid)
+            };
 
             var occurrences = todo.GetOccurrences(
                 new CalDateTime(2006, 7, 1, 9, 0, 0),
