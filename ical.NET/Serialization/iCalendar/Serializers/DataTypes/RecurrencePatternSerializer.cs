@@ -244,13 +244,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                                 case "UNTIL":
                                 {
                                     var serializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
-                                    if (serializer != null)
+                                    var dt = serializer?.Deserialize(new StringReader(keyValue)) as IDateTime;
+                                    if (dt != null)
                                     {
-                                        var dt = serializer.Deserialize(new StringReader(keyValue)) as IDateTime;
-                                        if (dt != null)
-                                        {
-                                            r.Until = dt.Value;
-                                        }
+                                        r.Until = dt.Value;
                                     }
                                 }
                                     break;

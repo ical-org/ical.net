@@ -56,12 +56,9 @@ namespace Ical.Net.General
             base.CopyFrom(c);
 
             var p = c as ICalendarParameter;
-            if (p != null)
+            if (p?.Values != null)
             {
-                if (p.Values != null)
-                {
-                    _values = new List<string>(p.Values);
-                }
+                _values = new List<string>(p.Values);
             }
         }
 
@@ -70,10 +67,7 @@ namespace Ical.Net.General
 
         protected void OnValueChanged(IEnumerable<string> removedValues, IEnumerable<string> addedValues)
         {
-            if (ValueChanged != null)
-            {
-                ValueChanged(this, new ValueChangedEventArgs<string>(removedValues, addedValues));
-            }
+            ValueChanged?.Invoke(this, new ValueChangedEventArgs<string>(removedValues, addedValues));
         }
 
         public virtual IEnumerable<string> Values => _values;
@@ -140,11 +134,7 @@ namespace Ical.Net.General
         {
             get
             {
-                if (Values != null)
-                {
-                    return Values.FirstOrDefault();
-                }
-                return default(string);
+                return Values?.FirstOrDefault();
             }
             set { SetValue(value); }
         }

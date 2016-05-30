@@ -131,10 +131,7 @@ namespace Ical.Net.Serialization.iCalendar
                         var processor = ctx.GetService(typeof(ISerializationProcessor<ICalendar>)) as ISerializationProcessor<ICalendar>;
 
                         // Do some pre-processing on the calendar:
-                        if (processor != null)
-                        {
-                            processor.PreDeserialization(cal);
-                        }
+                        processor?.PreDeserialization(cal);
 
                         cal = (ICalendar) SerializationUtil.GetUninitializedObject(settings.CalendarType);
                         SerializationUtil.OnDeserializing(cal);
@@ -163,10 +160,7 @@ namespace Ical.Net.Serialization.iCalendar
                         } // ( ... )*
 
                         // Do some final processing on the calendar:
-                        if (processor != null)
-                        {
-                            processor.PostDeserialization(cal);
-                        }
+                        processor?.PostDeserialization(cal);
 
                         // Notify that the iCalendar has been loaded
                         cal.OnLoaded();
@@ -260,17 +254,11 @@ namespace Ical.Net.Serialization.iCalendar
 
             var processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarProperty>)) as ISerializationProcessor<ICalendarProperty>;
             // Do some pre-processing on the property
-            if (processor != null)
-            {
-                processor.PreDeserialization(p);
-            }
+            processor?.PreDeserialization(p);
 
-            if (c != null)
-            {
-                // Add the property to the container, as the parent object(s)
-                // may be needed during deserialization.
-                c.Properties.Add(p);
-            }
+            // Add the property to the container, as the parent object(s)
+            // may be needed during deserialization.
+            c?.Properties.Add(p);
 
             // Push the property onto the serialization context stack
             ctx.Push(p);
@@ -339,10 +327,7 @@ namespace Ical.Net.Serialization.iCalendar
             } // ( ... )*
 
             // Do some final processing on the property:
-            if (processor != null)
-            {
-                processor.PostDeserialization(p);
-            }
+            processor?.PostDeserialization(p);
 
             // Notify that the property has been loaded
             p.OnLoaded();
@@ -387,23 +372,17 @@ namespace Ical.Net.Serialization.iCalendar
 
             var processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarComponent>)) as ISerializationProcessor<ICalendarComponent>;
             // Do some pre-processing on the component
-            if (processor != null)
-            {
-                processor.PreDeserialization(c);
-            }
+            processor?.PreDeserialization(c);
 
             SerializationUtil.OnDeserializing(c);
 
             // Push the component onto the serialization context stack
             ctx.Push(c);
 
-            if (o != null)
-            {
-                // Add the component as a child immediately, in case
-                // embedded components need to access this component,
-                // or the iCalendar itself.
-                o.AddChild(c);
-            }
+            // Add the component as a child immediately, in case
+            // embedded components need to access this component,
+            // or the iCalendar itself.
+            o?.AddChild(c);
 
             c.Line = n.getLine();
             c.Column = n.getColumn();
@@ -468,10 +447,7 @@ namespace Ical.Net.Serialization.iCalendar
             } // ( ... )*
 
             // Do some final processing on the component
-            if (processor != null)
-            {
-                processor.PostDeserialization(c);
-            }
+            processor?.PostDeserialization(c);
 
             // Notify that the component has been loaded
             c.OnLoaded();
@@ -538,10 +514,7 @@ namespace Ical.Net.Serialization.iCalendar
 
             p.SetValue(values);
 
-            if (container != null)
-            {
-                container.Parameters.Add(p);
-            }
+            container?.Parameters.Add(p);
 
             // Notify that the parameter has been loaded
             p.OnLoaded();

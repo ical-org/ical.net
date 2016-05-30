@@ -151,10 +151,7 @@ namespace Ical.Net.General
 
         protected void OnValueChanged(object removedValue, object addedValue)
         {
-            if (ValueChanged != null)
-            {
-                ValueChanged(this, new ValueChangedEventArgs<object>((IEnumerable<object>) removedValue, (IEnumerable<object>) addedValue));
-            }
+            ValueChanged?.Invoke(this, new ValueChangedEventArgs<object>((IEnumerable<object>) removedValue, (IEnumerable<object>) addedValue));
         }
 
         public virtual IEnumerable<object> Values => _values;
@@ -163,11 +160,7 @@ namespace Ical.Net.General
         {
             get
             {
-                if (_values != null)
-                {
-                    return _values.FirstOrDefault();
-                }
-                return null;
+                return _values?.FirstOrDefault();
             }
             set
             {

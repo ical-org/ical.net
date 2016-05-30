@@ -97,10 +97,7 @@ namespace Ical.Net.DataTypes
 
         public virtual void SetValueType(string type)
         {
-            if (_proxy != null)
-            {
-                _proxy.Set("VALUE", type != null ? type : type.ToUpper());
-            }
+            _proxy?.Set("VALUE", type != null ? type : type.ToUpper());
         }
 
         public virtual ICalendarObject AssociatedObject
@@ -132,11 +129,8 @@ namespace Ical.Net.DataTypes
         {
             get
             {
-                if (_AssociatedObject != null)
-                {
-                    return _AssociatedObject.Calendar;
-                }
-                return null;
+                //ToDo: Expression body all the things
+                return _AssociatedObject?.Calendar;
             }
         }
 

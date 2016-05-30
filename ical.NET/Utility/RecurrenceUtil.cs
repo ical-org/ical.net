@@ -12,10 +12,7 @@ namespace Ical.Net.Utility
         public static void ClearEvaluation(IRecurrable recurrable)
         {
             var evaluator = recurrable.GetService(typeof (IEvaluator)) as IEvaluator;
-            if (evaluator != null)
-            {
-                evaluator.Clear();
-            }
+            evaluator?.Clear();
         }
 
         public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt, bool includeReferenceDateInResults)

@@ -48,10 +48,7 @@ namespace Ical.Net.General
         public virtual void OnLoaded()
         {
             _mIsLoaded = true;
-            if (Loaded != null)
-            {
-                Loaded(this, EventArgs.Empty);
-            }
+            Loaded?.Invoke(this, EventArgs.Empty);
         }
     }
 }

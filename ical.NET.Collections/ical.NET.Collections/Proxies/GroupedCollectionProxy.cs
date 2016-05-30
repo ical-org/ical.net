@@ -43,14 +43,12 @@ namespace ical.NET.Collections.Proxies
 
         protected void OnItemAdded(TNew item, int index)
         {
-            if (ItemAdded != null)
-                ItemAdded(this, new ObjectEventArgs<TNew, int>(item, index));
+            ItemAdded?.Invoke(this, new ObjectEventArgs<TNew, int>(item, index));
         }
 
         protected void OnItemRemoved(TNew item, int index)
         {
-            if (ItemRemoved != null)
-                ItemRemoved(this, new ObjectEventArgs<TNew, int>(item, index));
+            ItemRemoved?.Invoke(this, new ObjectEventArgs<TNew, int>(item, index));
         }
 
         public virtual bool Remove(TGroup group)

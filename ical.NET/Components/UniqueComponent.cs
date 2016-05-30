@@ -165,10 +165,7 @@ namespace Ical.Net
 
         protected virtual void OnUidChanged(string oldUid, string newUid)
         {
-            if (UidChanged != null)
-            {
-                UidChanged(this, new ObjectEventArgs<string, string>(oldUid, newUid));
-            }
+            UidChanged?.Invoke(this, new ObjectEventArgs<string, string>(oldUid, newUid));
         }
 
         public virtual string Uid

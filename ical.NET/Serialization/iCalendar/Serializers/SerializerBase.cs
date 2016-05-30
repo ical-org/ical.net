@@ -71,20 +71,12 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         public virtual object GetService(Type serviceType)
         {
-            if (SerializationContext != null)
-            {
-                return SerializationContext.GetService(serviceType);
-            }
-            return null;
+            return SerializationContext?.GetService(serviceType);
         }
 
         public virtual object GetService(string name)
         {
-            if (SerializationContext != null)
-            {
-                return SerializationContext.GetService(name);
-            }
-            return null;
+            return SerializationContext?.GetService(name);
         }
 
         public virtual T GetService<T>()
@@ -107,34 +99,22 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         public void SetService(string name, object obj)
         {
-            if (SerializationContext != null)
-            {
-                SerializationContext.SetService(name, obj);
-            }
+            SerializationContext?.SetService(name, obj);
         }
 
         public void SetService(object obj)
         {
-            if (SerializationContext != null)
-            {
-                SerializationContext.SetService(obj);
-            }
+            SerializationContext?.SetService(obj);
         }
 
         public void RemoveService(Type type)
         {
-            if (SerializationContext != null)
-            {
-                SerializationContext.RemoveService(type);
-            }
+            SerializationContext?.RemoveService(type);
         }
 
         public void RemoveService(string name)
         {
-            if (SerializationContext != null)
-            {
-                SerializationContext.RemoveService(name);
-            }
+            SerializationContext?.RemoveService(name);
         }
     }
 }

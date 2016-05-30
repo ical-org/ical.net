@@ -130,14 +130,12 @@ namespace ical.NET.Collections
 
         protected void OnItemAdded(TItem obj, int index)
         {
-            if (ItemAdded != null)
-                ItemAdded(this, new ObjectEventArgs<TItem, int>(obj, index));
+            ItemAdded?.Invoke(this, new ObjectEventArgs<TItem, int>(obj, index));
         }
 
         protected void OnItemRemoved(TItem obj, int index)
         {
-            if (ItemRemoved != null)
-                ItemRemoved(this, new ObjectEventArgs<TItem, int>(obj, index));
+            ItemRemoved?.Invoke(this, new ObjectEventArgs<TItem, int>(obj, index));
         }
 
         public virtual void Add(TItem item)
@@ -354,9 +352,7 @@ namespace ical.NET.Collections
             {
                 int relativeIndex;
                 var list = ListForIndex(index, out relativeIndex);
-                if (list != null)
-                    return list[relativeIndex];
-                return default(TItem);
+                return list?[relativeIndex];
             }
             set
             {

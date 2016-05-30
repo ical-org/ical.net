@@ -104,10 +104,7 @@ namespace Ical.Net
 
         private IFreeBusy CombineFreeBusy(IFreeBusy main, IFreeBusy current)
         {
-            if (main != null)
-            {
-                main.MergeWith(current);
-            }
+            main?.MergeWith(current);
             return current;
         }
 

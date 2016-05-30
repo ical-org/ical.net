@@ -107,15 +107,7 @@ namespace Ical.Net.Evaluation
         {
             get
             {
-                if (_mAssociatedObject != null)
-                {
-                    return _mAssociatedObject;
-                }
-                if (_mAssociatedDataType != null)
-                {
-                    return _mAssociatedDataType.AssociatedObject;
-                }
-                return null;
+                return _mAssociatedObject ?? _mAssociatedDataType?.AssociatedObject;
             }
             protected set { _mAssociatedObject = value; }
         }
