@@ -114,8 +114,9 @@ namespace Ical.Net.General
             // Remove all previous values
             var removedValues = _values.ToList();
             _values.Clear();
-            _values.AddRange(values);
-            OnValueChanged(removedValues, values);
+            var materializedValues = values.ToList();
+            _values.AddRange(materializedValues);
+            OnValueChanged(removedValues, materializedValues);
         }
 
         public virtual void AddValue(string value)
