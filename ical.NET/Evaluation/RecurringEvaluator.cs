@@ -5,7 +5,6 @@ using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Interfaces.General;
-using IServiceProvider = System.IServiceProvider;
 
 namespace Ical.Net.Evaluation
 {

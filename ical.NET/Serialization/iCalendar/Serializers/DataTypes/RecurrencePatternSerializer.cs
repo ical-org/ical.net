@@ -46,7 +46,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public virtual void CheckRange(string name, IList<int> values, int min, int max)
         {
-            var allowZero = (min == 0 || max == 0) ? true : false;
+            var allowZero = (min == 0 || max == 0);
             foreach (var value in values)
             {
                 CheckRange(name, value, min, max, allowZero);
@@ -55,7 +55,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public virtual void CheckRange(string name, int value, int min, int max)
         {
-            CheckRange(name, value, min, max, (min == 0 || max == 0) ? true : false);
+            var allowZero = min == 0 || max == 0;
+            CheckRange(name, value, min, max, allowZero);
         }
 
         public virtual void CheckRange(string name, int value, int min, int max, bool allowZero)

@@ -9,7 +9,7 @@ namespace Ical.Net.Serialization.iCalendar
 {
     // Generate header specific to lexer CSharp file
 
-    public class iCalLexer : CharScanner, TokenStream
+    public class iCalLexer : CharScanner
     {
         public const int EOF = 1;
         public const int NULL_TREE_LOOKAHEAD = 3;
@@ -127,23 +127,23 @@ namespace Ical.Net.Serialization.iCalendar
                                 {
                                     mLINEFOLDER(true);
                                 }
-                                else if ((cached_LA1 == '\r') && (cached_LA2 == '\n') && (true))
+                                else if ((cached_LA1 == '\r') && (cached_LA2 == '\n'))
                                 {
                                     mCRLF(true);
                                 }
-                                else if ((cached_LA1 == '\\') && (tokenSet_0_.member(cached_LA2)))
+                                else if ((cached_LA1 == '\\') && tokenSet_0_.member(cached_LA2))
                                 {
                                     mESCAPED_CHAR(true);
                                 }
-                                else if ((cached_LA1 == '\\') && (true))
+                                else if (cached_LA1 == '\\')
                                 {
                                     mBACKSLASH(true);
                                 }
-                                else if ((tokenSet_1_.member(cached_LA1)) && (true))
+                                else if (tokenSet_1_.member(cached_LA1))
                                 {
                                     mCTL(true);
                                 }
-                                else if ((tokenSet_2_.member(cached_LA1)))
+                                else if (tokenSet_2_.member(cached_LA1))
                                 {
                                     mIANA_TOKEN(true);
                                 }
@@ -420,7 +420,7 @@ namespace Ical.Net.Serialization.iCalendar
                     break;
                 }
                 default:
-                    if (((cached_LA1 >= '\u0080' && cached_LA1 <= '\u00ff')))
+                    if (cached_LA1 >= '\u0080' && cached_LA1 <= '\u00ff')
                     {
                         matchRange('\u0080', '\u00ff');
                     }
@@ -816,11 +816,11 @@ namespace Ical.Net.Serialization.iCalendar
                             break;
                         }
                         default:
-                            if ((tokenSet_3_.member(cached_LA1)))
+                            if (tokenSet_3_.member(cached_LA1))
                             {
                                 mSPECIAL(false);
                             }
-                            else if (((cached_LA1 >= '\u0100' && cached_LA1 <= '\ufffe')))
+                            else if (cached_LA1 >= '\u0100' && cached_LA1 <= '\ufffe')
                             {
                                 mUNICODE(false);
                             }

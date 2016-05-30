@@ -176,8 +176,6 @@ namespace Ical.Net.Evaluation
                                 }
                             }
                                 break;
-                            default:
-                                break;
                         }
                         break;
                     case RecurrenceEvaluationModeType.ThrowException:
@@ -214,8 +212,6 @@ namespace Ical.Net.Evaluation
                                         throw new EvaluationEngineException();
                                 }
                             }
-                                break;
-                            default:
                                 break;
                         }
                         break;

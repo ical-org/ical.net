@@ -34,16 +34,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
                 // Sort the calendar properties in alphabetical order before
                 // serializing them!
                 var properties = new List<ICalendarProperty>(c.Properties);
-
-                // FIXME: remove this try/catch
-                try
-                {
-                    properties.Sort(PropertySorter);
-                }
-                catch (Exception e)
-                {
-                    throw;
-                }
+                properties.Sort(PropertySorter);
 
                 // Serialize properties
                 foreach (var p in properties)

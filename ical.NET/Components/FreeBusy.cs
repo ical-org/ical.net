@@ -76,8 +76,6 @@ namespace Ical.Net
                                         accepted = true;
                                         type = FreeBusyStatus.Busy;
                                         break;
-                                    default:
-                                        break;
                                 }
                             }
                         }

@@ -27,7 +27,7 @@ namespace Ical.Net.General.Proxies
                 return _lookup[uid];
             }
 
-            var item = this.OfType<TComponentType>().FirstOrDefault(c => string.Equals(c.Uid, uid));
+            var item = this.FirstOrDefault(c => string.Equals(c.Uid, uid));
 
             if (item != null)
             {

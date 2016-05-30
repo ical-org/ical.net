@@ -238,12 +238,9 @@ namespace Ical.Net.General
         [field: NonSerialized]
         public event EventHandler<ObjectEventArgs<string, string>> GroupChanged;
 
-        protected void OnGroupChanged(string @old, string @new)
+        protected void OnGroupChanged(string old, string @new)
         {
-            if (GroupChanged != null)
-            {
-                GroupChanged(this, new ObjectEventArgs<string, string>(@old, @new));
-            }
+            GroupChanged?.Invoke(this, new ObjectEventArgs<string, string>(old, @new));
         }
 
         public virtual string Group

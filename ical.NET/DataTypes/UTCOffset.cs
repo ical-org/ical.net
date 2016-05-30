@@ -1,6 +1,5 @@
 using System;
 using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
 namespace Ical.Net.DataTypes

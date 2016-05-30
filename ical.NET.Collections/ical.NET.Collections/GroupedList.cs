@@ -292,7 +292,7 @@ namespace ical.NET.Collections
             IMultiLinkedList<TItem> previous = null;
             foreach (var list in _dictionary.Keys
                 .OrderBy(k => k, comparer)
-                .Select(@group => _dictionary[@group]))
+                .Select(group => _dictionary[group]))
             {
                 if (previous == null)
                 {

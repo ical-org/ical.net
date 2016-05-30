@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
