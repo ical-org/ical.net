@@ -77,23 +77,22 @@ namespace Ical.Net.General
             e.First.Parent = this;
         }
 
+        protected bool Equals(CalendarObject other)
+        {
+            return string.Equals(_name, other._name);
+        }
+
         public override bool Equals(object obj)
         {
-            var o = obj as ICalendarObject;
-            if (o != null)
-            {
-                return Equals(o.Name, Name);
-            }
-            return false;
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((CalendarObject) obj);
         }
 
         public override int GetHashCode()
         {
-            if (Name != null)
-            {
-                return Name.GetHashCode();
-            }
-            return base.GetHashCode();
+            return _name?.GetHashCode() ?? 0;
         }
 
         public override void CopyFrom(ICopyable c)
