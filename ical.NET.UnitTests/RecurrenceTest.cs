@@ -2847,7 +2847,7 @@ namespace ical.NET.UnitTests
             evt.RecurrenceRules.Add(recur);
 
             var serializer = new RecurrencePatternSerializer();
-            Assert.IsTrue(string.Compare(serializer.SerializeToString(recur), "FREQ=DAILY;COUNT=3;BYDAY=MO,WE,FR") == 0,
+            Assert.IsTrue(string.Compare(serializer.SerializeToString(recur), "FREQ=DAILY;COUNT=3;BYDAY=MO,WE,FR", StringComparison.Ordinal) == 0,
                 "Serialized recurrence string is incorrect");
         }
 

@@ -115,7 +115,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
                 {
                     return 1;
                 }
-                return string.Compare(x.Name, y.Name, true);
+                return string.Compare(x.Name, y.Name, StringComparison.InvariantCultureIgnoreCase);
             }
         }
     }
