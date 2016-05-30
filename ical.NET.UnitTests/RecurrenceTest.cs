@@ -1867,23 +1867,15 @@ namespace ical.NET.UnitTests
         {
             var evt = new AutoResetEvent(false);
 
-            var thread = new Thread((ThreadStart)
-                delegate
-                {
-                    try
-                    {
-                        var iCal = Calendar.LoadFromFile(@"Calendars\Recurrence\Secondly1.ics")[0];
-                        var occurrences = iCal.GetOccurrences(
-                            new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
-                            new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
-                    }
-                    catch(EvaluationEngineException)
-                    {
-                        evt.Set();
-                    }
-                }
-            );
-            thread.Start();
+            try
+            {
+                var iCal = Calendar.LoadFromFile(@"Calendars\Recurrence\Secondly1.ics")[0];
+                var occurrences = iCal.GetOccurrences(new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid), new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
+            }
+            catch (EvaluationEngineException)
+            {
+                evt.Set();
+            }
 
             Assert.IsTrue(evt.WaitOne(2000), "Evaluation engine should have failed.");
         }
