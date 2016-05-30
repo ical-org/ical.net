@@ -118,35 +118,32 @@ namespace Ical.Net.Serialization
         public virtual bool GetPropertyAllowsMultipleValues(object obj)
         {
             var p = obj as ICalendarProperty;
-            if (p != null && p.Name != null)
+            if (p?.Name == null)
             {
-                var name = p.Name.ToUpper();
-                if (_propertyMap.ContainsKey(name))
-                {
-                    var m = _propertyMap[name];
-                    return m.AllowsMultipleValuesPerProperty;
-                }
+                return false;
             }
-            return false;
+            var name = p.Name.ToUpper();
+            return _propertyMap.ContainsKey(name) && _propertyMap[name].AllowsMultipleValuesPerProperty;
         }
 
         public virtual Type GetPropertyMapping(object obj)
         {
             var p = obj as ICalendarProperty;
-            if (p != null && p.Name != null)
+            if (p?.Name == null)
             {
-                var name = p.Name.ToUpper();
-                if (_propertyMap.ContainsKey(name))
-                {
-                    var m = _propertyMap[name];
-                    if (m.Resolver != null)
-                    {
-                        return m.Resolver(p);
-                    }
-                    return m.ObjectType;
-                }
+                return null;
             }
-            return null;
+
+            var name = p.Name.ToUpper();
+            if (!_propertyMap.ContainsKey(name))
+            {
+                return null;
+            }
+
+            var m = _propertyMap[name];
+            return m.Resolver == null
+                ? m.ObjectType
+                : m.Resolver(p);
         }
     }
 }

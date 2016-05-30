@@ -40,8 +40,7 @@ namespace ical.NET.Collections
         public virtual TType Get<TType>(TGroup group)
         {
             var firstItem = AllOf(group).FirstOrDefault();
-            if (firstItem != null &&
-                firstItem.Values != null)
+            if (firstItem?.Values != null)
             {
                 return firstItem
                     .Values

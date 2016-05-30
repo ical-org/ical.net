@@ -22,7 +22,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         public override string SerializeToString(object obj)
         {
             var prop = obj as ICalendarProperty;
-            if (prop != null && prop.Values != null && prop.Values.Any())
+            if (prop?.Values != null && prop.Values.Any())
             {
                 // Don't serialize the property if the value is null                
 

@@ -85,8 +85,8 @@ namespace Ical.Net.DataTypes
         {
             unchecked
             {
-                var hashCode = (_mStartTime != null ? _mStartTime.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (_mEndTime != null ? _mEndTime.GetHashCode() : 0);
+                var hashCode = _mStartTime?.GetHashCode() ?? 0;
+                hashCode = (hashCode * 397) ^ (_mEndTime?.GetHashCode() ?? 0);
                 hashCode = (hashCode * 397) ^ _mDuration.GetHashCode();
                 hashCode = (hashCode * 397) ^ _mMatchesDateOnly.GetHashCode();
                 return hashCode;

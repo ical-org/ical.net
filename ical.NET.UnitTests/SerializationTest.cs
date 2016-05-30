@@ -62,7 +62,7 @@ namespace ical.NET.UnitTests
                     catch { }
                 }
 
-                Assert.IsTrue(isMatch, "Could not find a matching property - " + p1.Name + ":" + (p1.Value != null ? p1.Value.ToString() : string.Empty));                    
+                Assert.IsTrue(isMatch, "Could not find a matching property - " + p1.Name + ":" + (p1.Value?.ToString() ?? string.Empty));                    
             }
 
             Assert.AreEqual(cb1.Children.Count, cb2.Children.Count, "The number of children are not equal.");

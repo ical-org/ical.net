@@ -90,9 +90,9 @@ namespace Ical.Net.DataTypes
         {
             unchecked
             {
-                var hashCode = (_mDescription != null ? _mDescription.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (_mExtraData != null ? _mExtraData.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (_mStatusCode != null ? _mStatusCode.GetHashCode() : 0);
+                var hashCode = _mDescription?.GetHashCode() ?? 0;
+                hashCode = (hashCode * 397) ^ (_mExtraData?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (_mStatusCode?.GetHashCode() ?? 0);
                 return hashCode;
             }
         }

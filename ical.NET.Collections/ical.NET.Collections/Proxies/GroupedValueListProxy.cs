@@ -55,7 +55,7 @@ namespace ical.NET.Collections.Proxies
             foreach (var obj in _realObject)
             {
                 // Get the number of items of the target value i this object
-                var count = obj.Values != null ? obj.Values.OfType<TNewValue>().Count() : 0;
+                var count = obj.Values?.OfType<TNewValue>().Count() ?? 0;
 
                 // Perform some action on this item
                 if (!action(obj, i, count))

@@ -20,7 +20,7 @@ namespace ical.NET.Collections
             _next = next;
         }
 
-        public virtual int StartIndex => _previous != null ? _previous.ExclusiveEnd : 0;
+        public virtual int StartIndex => _previous?.ExclusiveEnd ?? 0;
 
         public virtual int ExclusiveEnd => Count > 0 ? StartIndex + Count : StartIndex;
     }

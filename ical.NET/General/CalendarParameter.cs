@@ -77,7 +77,7 @@ namespace Ical.Net.General
             return _values.Contains(value);
         }
 
-        public virtual int ValueCount => _values != null ? _values.Count : 0;
+        public virtual int ValueCount => _values?.Count ?? 0;
 
         public virtual void SetValue(string value)
         {

@@ -40,7 +40,7 @@ namespace Ical.Net.DataTypes
         {
             unchecked
             {
-                return ((Period != null ? Period.GetHashCode() : 0) * 397) ^ (Source != null ? Source.GetHashCode() : 0);
+                return ((Period?.GetHashCode() ?? 0) * 397) ^ (Source?.GetHashCode() ?? 0);
             }
         }
 

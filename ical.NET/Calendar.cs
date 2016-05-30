@@ -344,12 +344,12 @@ namespace Ical.Net
             unchecked
             {
                 var hashCode = base.GetHashCode();
-                hashCode = (hashCode * 397) ^ (_mUniqueComponents != null ? _mUniqueComponents.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (_mEvents != null ? _mEvents.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (_mTodos != null ? _mTodos.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (_mJournals != null ? _mJournals.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (_mFreeBusy != null ? _mFreeBusy.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (_mTimeZones != null ? _mTimeZones.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_mUniqueComponents?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (_mEvents?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (_mTodos?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (_mJournals?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (_mFreeBusy?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (_mTimeZones?.GetHashCode() ?? 0);
                 return hashCode;
             }
         }

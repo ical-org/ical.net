@@ -65,15 +65,9 @@ namespace Ical.Net.DataTypes
         {
             unchecked
             {
-                var hashCode = (_mUri != null
-                    ? _mUri.GetHashCode()
-                    : 0);
-                hashCode = (hashCode * 397) ^ (_mData != null
-                    ? _mData.GetHashCode()
-                    : 0);
-                hashCode = (hashCode * 397) ^ (_mEncoding != null
-                    ? _mEncoding.GetHashCode()
-                    : 0);
+                var hashCode = _mUri?.GetHashCode() ?? 0;
+                hashCode = (hashCode * 397) ^ (_mData?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (_mEncoding?.GetHashCode() ?? 0);
                 return hashCode;
             }
         }

@@ -66,11 +66,7 @@ namespace Ical.Net.DataTypes
         {
             unchecked
             {
-                return ((_periods != null
-                    ? _periods.GetHashCode()
-                    : 0) * 397) ^ (TzId != null
-                        ? TzId.GetHashCode()
-                        : 0);
+                return ((_periods?.GetHashCode() ?? 0) * 397) ^ (TzId?.GetHashCode() ?? 0);
             }
         }
 
