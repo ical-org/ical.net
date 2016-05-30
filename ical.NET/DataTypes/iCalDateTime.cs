@@ -83,7 +83,7 @@ namespace Ical.Net.DataTypes
             // Convert all incoming values to UTC.
             Value = DateTime.SpecifyKind(value, DateTimeKind.Utc);
             HasDate = true;
-            HasTime = (value.Second == 0 && value.Minute == 0 && value.Hour == 0) ? false : true;
+            HasTime = value.Second != 0 || value.Minute != 0 || value.Hour != 0;
             TzId = tzId;
             AssociatedObject = cal;
         }

@@ -14,7 +14,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             _mSerializationContext = Serialization.SerializationContext.Default;
         }
 
-        public SerializerBase(ISerializationContext ctx)
+        protected SerializerBase(ISerializationContext ctx)
         {
             _mSerializationContext = ctx;
         }
