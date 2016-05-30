@@ -125,14 +125,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public virtual ICalendar Calendar
-        {
-            get
-            {
-                //ToDo: Expression body all the things
-                return _AssociatedObject?.Calendar;
-            }
-        }
+        public virtual ICalendar Calendar => _AssociatedObject?.Calendar;
 
         public virtual string Language
         {
