@@ -920,20 +920,6 @@ namespace Ical.Net.Evaluation
             return new Period(newDt);
         }
 
-        //virtual public IPeriod GetNext(IDateTime referenceDate)
-        //{
-        //    DateTime? dt = GetNextDate(referenceDate, referenceDate.Value, Pattern);
-        //    if (dt != null)
-        //    {
-        //        // Create a period from the date/time.
-        //        IPeriod p = CreatePeriod(dt.Value, referenceDate);
-
-        //        if (!Periods.Contains(p))
-        //            Periods.Add(p);
-        //    }
-        //    return null;
-        //}
-
         public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Create a recurrence pattern suitable for use during evaluation.
