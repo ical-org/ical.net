@@ -4,7 +4,6 @@ using System.Linq;
 using Ical.Net;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Utility;
 using NUnit.Framework;
