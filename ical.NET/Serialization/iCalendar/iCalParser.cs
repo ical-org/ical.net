@@ -775,8 +775,6 @@ namespace Ical.Net.Serialization.iCalendar
             return s;
         }
 
-        private void initializeFactory() {}
-
         public static readonly string[] tokenNames_ =
         {
             @"""<0>""", @"""EOF""", @"""<2>""", @"""NULL_TREE_LOOKAHEAD""", @"""CRLF""", @"""BEGIN""", @"""COLON""",

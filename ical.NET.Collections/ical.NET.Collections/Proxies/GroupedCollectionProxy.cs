@@ -26,18 +26,6 @@ namespace ical.NET.Collections.Proxies
             SetProxiedObject(realObject);
         }
 
-        private void _RealObject_ItemRemoved(object sender, ObjectEventArgs<TOriginal, int> e)
-        {
-            if (e.First is TNew)
-                OnItemRemoved((TNew)e.First, e.Second);
-        }
-
-        private void _RealObject_ItemAdded(object sender, ObjectEventArgs<TOriginal, int> e)
-        {
-            if (e.First is TNew)
-                OnItemAdded((TNew)e.First, e.Second);
-        }
-
         public virtual event EventHandler<ObjectEventArgs<TNew, int>> ItemAdded;
         public virtual event EventHandler<ObjectEventArgs<TNew, int>> ItemRemoved;
 

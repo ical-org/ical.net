@@ -65,27 +65,6 @@ namespace ical.NET.Collections.Proxies
             }
         }
 
-        private IValueObject<TOriginalValue> ObjectForIndex(int index, ref int relativeIndex)
-        {
-            IValueObject<TOriginalValue> obj = null;
-            var retVal = -1;
-
-            IterateValues((o, i, count) =>
-                {
-                    // Determine if this index is found within this object
-                    if (index >= i && index < count)
-                    {
-                        retVal = index - i;
-                        obj = o;
-                        return false;
-                    }
-                    return true;
-                });
-
-            relativeIndex = retVal;
-            return obj;            
-        }
-
         private IEnumerator<TNewValue> GetEnumeratorInternal()
         {
             return Items
