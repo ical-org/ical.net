@@ -28,7 +28,7 @@ namespace Ical.Net
             return SortByDate<IRecurringComponent>(list);
         }
 
-        public static IEnumerable<IRecurringComponent> SortByDate<IRecurringComponent>(IEnumerable<IRecurringComponent> list) => list.OrderBy(d => d);
+        public static IEnumerable<TRecurringComponent> SortByDate<TRecurringComponent>(IEnumerable<TRecurringComponent> list) => list.OrderBy(d => d);
 
         protected virtual bool EvaluationIncludesReferenceDate => false;
 
