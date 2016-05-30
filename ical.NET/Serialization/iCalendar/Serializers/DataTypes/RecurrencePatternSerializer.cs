@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
+using Ical.Net.ExtensionMethods;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Serialization;
 using Ical.Net.Interfaces.Serialization.Factory;
@@ -44,7 +46,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public virtual void CheckRange(string name, IList<int> values, int min, int max)
         {
-            var allowZero = (min == 0 || max == 0) ? true : false;
+            var allowZero = (min == 0 || max == 0);
             foreach (var value in values)
             {
                 CheckRange(name, value, min, max, allowZero);
@@ -53,7 +55,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public virtual void CheckRange(string name, int value, int min, int max)
         {
-            CheckRange(name, value, min, max, (min == 0 || max == 0) ? true : false);
+            var allowZero = min == 0 || max == 0;
+            CheckRange(name, value, min, max, allowZero);
         }
 
         public virtual void CheckRange(string name, int value, int min, int max, bool allowZero)
@@ -73,15 +76,14 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             }
             // If the object is MinValue instead of its default, consider
             // that to be unassigned.
-            bool isMin1 = false, isMin2 = false;
 
-            Type t1 = obj1.GetType(), t2 = obj2.GetType();
+            var t1 = obj1.GetType();
 
             var fi1 = t1.GetField("MinValue");
             var fi2 = t1.GetField("MinValue");
 
-            isMin1 = fi1 != null && obj1.Equals(fi1.GetValue(null));
-            isMin2 = fi2 != null && obj2.Equals(fi2.GetValue(null));
+            var isMin1 = fi1 != null && obj1.Equals(fi1.GetValue(null));
+            var isMin2 = fi2 != null && obj2.Equals(fi2.GetValue(null));
             if (isMin1 || isMin2)
             {
                 return;
@@ -92,15 +94,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         private void SerializeByValue(List<string> aggregate, IList<int> byValue, string name)
         {
-            if (byValue.Count > 0)
+            if (byValue.Any())
             {
-                var byValues = new List<string>();
-                foreach (var i in byValue)
-                {
-                    byValues.Add(i.ToString());
-                }
-
-                aggregate.Add(name + "=" + string.Join(",", byValues.ToArray()));
+                aggregate.Add(name + "=" + string.Join(",", byValue.Select(i => i.ToString())));
             }
         }
 
@@ -115,9 +111,11 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 // Push the recurrence pattern onto the serialization stack
                 SerializationContext.Push(recur);
 
-                var values = new List<string>();
+                var values = new List<string>
+                {
+                    "FREQ=" + Enum.GetName(typeof(FrequencyType), recur.Frequency).ToUpper()
+                };
 
-                values.Add("FREQ=" + Enum.GetName(typeof (FrequencyType), recur.Frequency).ToUpper());
 
                 //-- FROM RFC2445 --
                 //The INTERVAL rule part contains a positive integer representing how
@@ -160,15 +158,12 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
                 if (recur.ByDay.Count > 0)
                 {
-                    var bydayValues = new List<string>();
+                    var bydayValues = new List<string>(128);
 
                     var serializer = factory.Build(typeof (IWeekDay), SerializationContext) as IStringSerializer;
                     if (serializer != null)
                     {
-                        foreach (WeekDay byday in recur.ByDay)
-                        {
-                            bydayValues.Add(serializer.SerializeToString(byday));
-                        }
+                        bydayValues.AddRange(recur.ByDay.Select(byday => serializer.SerializeToString(byday)));
                     }
 
                     values.Add("BYDAY=" + string.Join(",", bydayValues.ToArray()));
@@ -251,13 +246,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                                 case "UNTIL":
                                 {
                                     var serializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
-                                    if (serializer != null)
+                                    var dt = serializer?.Deserialize(new StringReader(keyValue)) as IDateTime;
+                                    if (dt != null)
                                     {
-                                        var dt = serializer.Deserialize(new StringReader(keyValue)) as IDateTime;
-                                        if (dt != null)
-                                        {
-                                            r.Until = dt.Value;
-                                        }
+                                        r.Until = dt.Value;
                                     }
                                 }
                                     break;
@@ -319,14 +311,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                     if (match.Groups["Interval"].Success)
                     {
                         int interval;
-                        if (!int.TryParse(match.Groups["Interval"].Value, out interval))
-                        {
-                            r.Interval = 2; // "other"
-                        }
-                        else
-                        {
-                            r.Interval = interval;
-                        }
+                        r.Interval = !int.TryParse(match.Groups["Interval"].Value, out interval)
+                            ? 2
+                            : interval;
                     }
                     else
                     {
@@ -420,16 +407,15 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                                 num = 1;
                             }
 
-                            foreach (Capture capture in match.Groups["Day"].Captures)
-                            {
-                                var ds = new WeekDay((DayOfWeek) Enum.Parse(typeof (DayOfWeek), capture.Value, true));
-                                ds.Offset = num;
-                                r.ByDay.Add(ds);
-                            }
+                            var dayOfWeekQuery = from Capture capture in match.Groups["Day"].Captures
+                                select (DayOfWeek) Enum.Parse(typeof(DayOfWeek), capture.Value, true) into dayOfWeek
+                                select new WeekDay(dayOfWeek) {Offset = num};
+
+                            r.ByDay.AddRange(dayOfWeekQuery);
                         }
                         else if ((match = Time.Match(item)).Success)
                         {
-                            int hour, minute, second;
+                            int hour;
 
                             if (int.TryParse(match.Groups["Hour"].Value, out hour))
                             {
@@ -441,9 +427,11 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
                                 r.ByHour.Add(hour);
 
+                                int minute;
                                 if (match.Groups["Minute"].Success && int.TryParse(match.Groups["Minute"].Value, out minute))
                                 {
                                     r.ByMinute.Add(minute);
+                                    int second;
                                     if (match.Groups["Second"].Success && int.TryParse(match.Groups["Second"].Value, out second))
                                     {
                                         r.BySecond.Add(second);

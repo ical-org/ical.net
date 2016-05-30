@@ -73,7 +73,7 @@ namespace Ical.Net.General
 
         private void Initialize()
         {
-            _values = new List<object>();
+            _values = new List<object>(128);
             _parameters = new CalendarParameterList(this, true);
             ValueChanged += CalendarProperty_ValueChanged;
         }
@@ -95,7 +95,7 @@ namespace Ical.Net.General
             Parameters.Add(p);
         }
 
-        void CalendarProperty_ValueChanged(object sender, ValueChangedEventArgs<object> e)
+        private void CalendarProperty_ValueChanged(object sender, ValueChangedEventArgs<object> e)
         {
             // Deassociate the old values
             foreach (var removed in e.RemovedValues)
@@ -151,10 +151,7 @@ namespace Ical.Net.General
 
         protected void OnValueChanged(object removedValue, object addedValue)
         {
-            if (ValueChanged != null)
-            {
-                ValueChanged(this, new ValueChangedEventArgs<object>((IEnumerable<object>) removedValue, (IEnumerable<object>) addedValue));
-            }
+            ValueChanged?.Invoke(this, new ValueChangedEventArgs<object>((IEnumerable<object>) removedValue, (IEnumerable<object>) addedValue));
         }
 
         public virtual IEnumerable<object> Values => _values;
@@ -163,11 +160,7 @@ namespace Ical.Net.General
         {
             get
             {
-                if (_values != null)
-                {
-                    return _values.FirstOrDefault();
-                }
-                return null;
+                return _values?.FirstOrDefault();
             }
             set
             {
@@ -195,7 +188,7 @@ namespace Ical.Net.General
             return _values.Contains(value);
         }
 
-        public virtual int ValueCount => _values != null ? _values.Count : 0;
+        public virtual int ValueCount => _values?.Count ?? 0;
 
         public virtual void SetValue(object value)
         {

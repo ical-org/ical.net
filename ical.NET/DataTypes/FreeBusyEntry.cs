@@ -17,7 +17,7 @@ namespace Ical.Net.DataTypes
             Status = status;
         }
 
-        void Initialize()
+        private void Initialize()
         {
             Status = FreeBusyStatus.Busy;
         }

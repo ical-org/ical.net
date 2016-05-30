@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
@@ -11,10 +12,7 @@ namespace Ical.Net.Utility
         public static void ClearEvaluation(IRecurrable recurrable)
         {
             var evaluator = recurrable.GetService(typeof (IEvaluator)) as IEvaluator;
-            if (evaluator != null)
-            {
-                evaluator.Clear();
-            }
+            evaluator?.Clear();
         }
 
         public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt, bool includeReferenceDateInResults)
@@ -28,32 +26,30 @@ namespace Ical.Net.Utility
             var occurrences = new HashSet<Occurrence>();
 
             var evaluator = recurrable.GetService(typeof (IEvaluator)) as IEvaluator;
-            if (evaluator != null)
+            if (evaluator == null)
             {
-                // Ensure the start time is associated with the object being queried
-                var start = recurrable.Start.Copy<IDateTime>();
-                start.AssociatedObject = recurrable as ICalendarObject;
-
-                // Change the time zone of periodStart/periodEnd as needed 
-                // so they can be used during the evaluation process.
-                periodStart = DateUtil.MatchTimeZone(start, periodStart);
-                periodEnd = DateUtil.MatchTimeZone(start, periodEnd);
-
-                var periods = evaluator.Evaluate(start, DateUtil.GetSimpleDateTimeData(periodStart), DateUtil.GetSimpleDateTimeData(periodEnd),
-                    includeReferenceDateInResults);
-
-                foreach (var p in periods)
-                {
-                    // Filter the resulting periods to only contain those 
-                    // that occur sometime between startTime and endTime.
-                    // NOTE: fixes bug #3007244 - GetOccurences not returning long spanning all-day events 
-                    var endTime = p.EndTime ?? p.StartTime;
-                    if (endTime.GreaterThan(periodStart) && p.StartTime.LessThanOrEqual(periodEnd))
-                    {
-                        occurrences.Add(new Occurrence(recurrable, p));
-                    }
-                }
+                return occurrences;
             }
+
+            // Ensure the start time is associated with the object being queried
+            var start = recurrable.Start.Copy<IDateTime>();
+            start.AssociatedObject = recurrable as ICalendarObject;
+
+            // Change the time zone of periodStart/periodEnd as needed 
+            // so they can be used during the evaluation process.
+            periodStart = DateUtil.MatchTimeZone(start, periodStart);
+            periodEnd = DateUtil.MatchTimeZone(start, periodEnd);
+
+            var periods = evaluator.Evaluate(start, DateUtil.GetSimpleDateTimeData(periodStart), DateUtil.GetSimpleDateTimeData(periodEnd),
+                includeReferenceDateInResults);
+
+            var otherOccurrences =
+                from p in periods
+                let endTime = p.EndTime ?? p.StartTime
+                where endTime.GreaterThan(periodStart) && p.StartTime.LessThanOrEqual(periodEnd)
+                select new Occurrence(recurrable, p);
+            occurrences.UnionWith(otherOccurrences);
+
             return occurrences;
         }
 

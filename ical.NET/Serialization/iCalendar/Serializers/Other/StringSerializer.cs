@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.General;
@@ -65,129 +66,125 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 
         public override string SerializeToString(object obj)
         {
-            if (obj != null)
+            if (obj == null)
             {
-                var settings = GetService<ISerializationSettings>();
+                return null;
+            }
 
-                var values = new List<string>();
-                if (obj is string)
-                {
-                    // Object to be serialied is a string already
-                    values.Add((string) obj);
-                }
-                else if (obj is IEnumerable)
-                {
-                    // Object is a list of objects (probably IList<string>).
-                    foreach (var child in (IEnumerable) obj)
-                    {
-                        values.Add(child.ToString());
-                    }
-                }
-                else
-                {
-                    // Serialize the object as a string.
-                    values.Add(obj.ToString());
-                }
+            var values = new List<string>(128);
+            if (obj is string)
+            {
+                values.Add((string) obj);
+            }
+            else if (obj is IEnumerable)
+            {
+                values.AddRange(from object child in (IEnumerable) obj select child.ToString());
+            }
+            else
+            {
+                values.Add(obj.ToString());
+            }
 
-                var co = SerializationContext.Peek() as ICalendarObject;
-                if (co != null)
+            var co = SerializationContext.Peek() as ICalendarObject;
+            if (co != null)
+            {
+                // Encode the string as needed.
+                var dt = new EncodableDataType
                 {
-                    // Encode the string as needed.
-                    var dt = new EncodableDataType();
-                    dt.AssociatedObject = co;
-                    for (var i = 0; i < values.Count; i++)
-                    {
-                        values[i] = Encode(dt, Escape(values[i]));
-                    }
-
-                    return string.Join(",", values.ToArray());
-                }
-
+                    AssociatedObject = co
+                };
                 for (var i = 0; i < values.Count; i++)
                 {
-                    values[i] = Escape(values[i]);
+                    values[i] = Encode(dt, Escape(values[i]));
                 }
-                return string.Join(",", values.ToArray());
+
+                return string.Join(",", values);
             }
-            return null;
+
+            for (var i = 0; i < values.Count; i++)
+            {
+                values[i] = Escape(values[i]);
+            }
+            return string.Join(",", values);
         }
 
         internal static readonly Regex UnescapedCommas = new Regex(@"[^\\](,)", RegexOptions.Compiled);
-
         public override object Deserialize(TextReader tr)
         {
-            if (tr != null)
+            if (tr == null)
             {
-                var value = tr.ReadToEnd();
+                return null;
+            }
 
-                // NOTE: this can deserialize into an IList<string> or simply a string,
-                // depending on the input text.  Anything that uses this serializer should
-                // be prepared to receive either a string, or an IList<string>.
+            var value = tr.ReadToEnd();
 
-                var serializeAsList = false;
+            // NOTE: this can deserialize into an IList<string> or simply a string,
+            // depending on the input text.  Anything that uses this serializer should
+            // be prepared to receive either a string, or an IList<string>.
 
-                // Determine if we can serialize this property
-                // with multiple values per line.
-                var co = SerializationContext.Peek() as ICalendarObject;
-                if (co is ICalendarProperty)
+            var serializeAsList = false;
+
+            // Determine if we can serialize this property
+            // with multiple values per line.
+            var co = SerializationContext.Peek() as ICalendarObject;
+            if (co is ICalendarProperty)
+            {
+                serializeAsList = GetService<IDataTypeMapper>().GetPropertyAllowsMultipleValues(co);
+            }
+
+            value = TextUtil.Normalize(value, SerializationContext).ReadToEnd();
+
+            // Try to decode the string
+            EncodableDataType dt = null;
+            if (co != null)
+            {
+                dt = new EncodableDataType
                 {
-                    serializeAsList = GetService<IDataTypeMapper>().GetPropertyAllowsMultipleValues(co);
-                }
+                    AssociatedObject = co
+                };
+            }
 
-                value = TextUtil.Normalize(value, SerializationContext).ReadToEnd();
+            var escapedValues = new List<string>(128);
+            var values = new List<string>(128);
 
-                // Try to decode the string
-                EncodableDataType dt = null;
-                if (co != null)
+            var i = 0;
+            if (serializeAsList)
+            {
+                var matches = UnescapedCommas.Matches(value);
+                foreach (Match match in matches)
                 {
-                    dt = new EncodableDataType();
-                    dt.AssociatedObject = co;
-                }
-
-                var escapedValues = new List<string>();
-                var values = new List<string>();
-
-                var i = 0;
-                if (serializeAsList)
-                {
-                    var matches = UnescapedCommas.Matches(value);
-                    foreach (Match match in matches)
-                    {
-                        var newValue = dt != null ? Decode(dt, value.Substring(i, match.Index - i + 1)) : value.Substring(i, match.Index - i + 1);
-                        escapedValues.Add(newValue);
-                        values.Add(Unescape(newValue));
-                        i = match.Index + 2;
-                    }
-                }
-
-                if (i < value.Length)
-                {
-                    var newValue = dt != null ? Decode(dt, value.Substring(i, value.Length - i)) : value.Substring(i, value.Length - i);
+                    var newValue = Decode(dt, value.Substring(i, match.Index - i + 1));
                     escapedValues.Add(newValue);
                     values.Add(Unescape(newValue));
+                    i = match.Index + 2;
                 }
-
-                if (co is ICalendarProperty)
-                {
-                    // Determine if our we're supposed to store extra information during
-                    // the serialization process.  If so, let's store the escaped value.
-                    var property = (ICalendarProperty) co;
-                    var settings = GetService<ISerializationSettings>();
-                    if (settings != null && settings.StoreExtraSerializationData)
-                    {
-                        // Store the escaped value
-                        co.SetService("EscapedValue", escapedValues.Count == 1 ? escapedValues[0] : (object) escapedValues);
-                    }
-                }
-
-                // Return either a single value, or the entire list.
-                if (values.Count == 1)
-                {
-                    return values[0];
-                }
-                return values;
             }
-            return null;
+
+            if (i < value.Length)
+            {
+                var newValue = dt != null ? Decode(dt, value.Substring(i, value.Length - i)) : value.Substring(i, value.Length - i);
+                escapedValues.Add(newValue);
+                values.Add(Unescape(newValue));
+            }
+
+            if (co is ICalendarProperty)
+            {
+                // Determine if our we're supposed to store extra information during
+                // the serialization process.  If so, let's store the escaped value.
+                var settings = GetService<ISerializationSettings>();
+                if (settings != null && settings.StoreExtraSerializationData)
+                {
+                    // Store the escaped value
+                    co.SetService("EscapedValue", escapedValues.Count == 1 ? escapedValues[0] : (object) escapedValues);
+                }
+            }
+
+            // Return either a single value, or the entire list.
+            if (values.Count == 1)
+            {
+                return values[0];
+            }
+            return values;
         }
     }
 }

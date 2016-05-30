@@ -37,8 +37,10 @@ namespace Ical.Net.General
             Column = col;
         }
 
-        void Initialize()
+        private void Initialize()
         {
+            //ToDo: I'm fairly certain this is ONLY used for null checking. If so, maybe it can just be a bool? CalendarObjectList is an empty object, and
+            //ToDo: its constructor parameter is ignored
             _children = new CalendarObjectList(this);
             _serviceProvider = new ServiceProvider();
 
@@ -65,33 +67,32 @@ namespace Ical.Net.General
 
         protected virtual void OnDeserialized(StreamingContext context) {}
 
-        void _Children_ItemRemoved(object sender, ObjectEventArgs<ICalendarObject, int> e)
+        private void _Children_ItemRemoved(object sender, ObjectEventArgs<ICalendarObject, int> e)
         {
             e.First.Parent = null;
         }
 
-        void _Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e)
+        private void _Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e)
         {
             e.First.Parent = this;
         }
 
+        protected bool Equals(CalendarObject other)
+        {
+            return string.Equals(_name, other._name);
+        }
+
         public override bool Equals(object obj)
         {
-            var o = obj as ICalendarObject;
-            if (o != null)
-            {
-                return Equals(o.Name, Name);
-            }
-            return base.Equals(obj);
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((CalendarObject) obj);
         }
 
         public override int GetHashCode()
         {
-            if (Name != null)
-            {
-                return Name.GetHashCode();
-            }
-            return base.GetHashCode();
+            return _name?.GetHashCode() ?? 0;
         }
 
         public override void CopyFrom(ICopyable c)
@@ -236,12 +237,9 @@ namespace Ical.Net.General
         [field: NonSerialized]
         public event EventHandler<ObjectEventArgs<string, string>> GroupChanged;
 
-        protected void OnGroupChanged(string @old, string @new)
+        protected void OnGroupChanged(string old, string @new)
         {
-            if (GroupChanged != null)
-            {
-                GroupChanged(this, new ObjectEventArgs<string, string>(@old, @new));
-            }
+            GroupChanged?.Invoke(this, new ObjectEventArgs<string, string>(old, @new));
         }
 
         public virtual string Group

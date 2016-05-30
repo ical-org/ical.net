@@ -20,8 +20,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 if (obj != null)
                 {
                     // Encode the value as needed.
-                    var dt = new EncodableDataType();
-                    dt.AssociatedObject = obj;
+                    var dt = new EncodableDataType
+                    {
+                        AssociatedObject = obj
+                    };
                     return Encode(dt, i.ToString());
                 }
                 return i.ToString();
@@ -42,8 +44,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 if (obj != null)
                 {
                     // Decode the value, if necessary!
-                    var dt = new EncodableDataType();
-                    dt.AssociatedObject = obj;
+                    var dt = new EncodableDataType
+                    {
+                        AssociatedObject = obj
+                    };
                     value = Decode(dt, value);
                 }
 

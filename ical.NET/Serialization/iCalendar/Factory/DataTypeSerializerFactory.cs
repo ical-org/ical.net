@@ -22,7 +22,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
         {
             if (objectType != null)
             {
-                ISerializer s = null;
+                ISerializer s;
 
                 if (typeof (IAttachment).IsAssignableFrom(objectType))
                 {
@@ -88,10 +88,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
                 }
 
                 // Set the serialization context
-                if (s != null)
-                {
-                    s.SerializationContext = ctx;
-                }
+                s.SerializationContext = ctx;
 
                 return s;
             }

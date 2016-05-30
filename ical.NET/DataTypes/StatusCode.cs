@@ -105,7 +105,7 @@ namespace Ical.Net.DataTypes
 
         public override int GetHashCode()
         {
-            return (_mParts != null ? _mParts.GetHashCode() : 0);
+            return _mParts?.GetHashCode() ?? 0;
         }
     }
 }

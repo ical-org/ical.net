@@ -16,7 +16,7 @@ namespace Ical.Net
             set { Properties.Set("STATUS", value); }
         }
 
-        void Initialize()
+        private void Initialize()
         {
             Name = Components.Journal;
         }

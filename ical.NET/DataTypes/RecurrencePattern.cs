@@ -1,7 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using Ical.Net.Evaluation;
 using Ical.Net.Interfaces.DataTypes;
@@ -20,15 +20,15 @@ namespace Ical.Net.DataTypes
         private DateTime _until = DateTime.MinValue;
         private int _count = int.MinValue;
         private int _interval = int.MinValue;
-        private IList<int> _bySecond = new List<int>();
-        private IList<int> _byMinute = new List<int>();
-        private IList<int> _byHour = new List<int>();
-        private IList<IWeekDay> _byDay = new List<IWeekDay>();
-        private IList<int> _byMonthDay = new List<int>();
-        private IList<int> _byYearDay = new List<int>();
-        private IList<int> _byWeekNo = new List<int>();
-        private IList<int> _byMonth = new List<int>();
-        private IList<int> _bySetPosition = new List<int>();
+        private IList<int> _bySecond = new List<int>(128);
+        private IList<int> _byMinute = new List<int>(128);
+        private IList<int> _byHour = new List<int>(128);
+        private IList<IWeekDay> _byDay = new List<IWeekDay>(128);
+        private IList<int> _byMonthDay = new List<int>(128);
+        private IList<int> _byYearDay = new List<int>(128);
+        private IList<int> _byWeekNo = new List<int>(128);
+        private IList<int> _byMonth = new List<int>(128);
+        private IList<int> _bySetPosition = new List<int>(128);
         private DayOfWeek _firstDayOfWeek = DayOfWeek.Monday;
         private RecurrenceRestrictionType? _restrictionType;
         private RecurrenceEvaluationModeType? _evaluationMode;
@@ -129,7 +129,7 @@ namespace Ical.Net.DataTypes
             get
             {
                 // NOTE: Fixes bug #1924358 - Cannot evaluate Secondly patterns
-                if (_restrictionType != null && _restrictionType.HasValue)
+                if (_restrictionType != null)
                 {
                     return _restrictionType.Value;
                 }
@@ -147,7 +147,7 @@ namespace Ical.Net.DataTypes
             get
             {
                 // NOTE: Fixes bug #1924358 - Cannot evaluate Secondly patterns
-                if (_evaluationMode != null && _evaluationMode.HasValue)
+                if (_evaluationMode != null)
                 {
                     return _evaluationMode.Value;
                 }
@@ -200,7 +200,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        void Initialize()
+        private void Initialize()
         {
             SetService(new RecurrencePatternEvaluator(this));
         }
@@ -252,7 +252,7 @@ namespace Ical.Net.DataTypes
                 }
                 return true;
             }
-            return base.Equals(obj);
+            return false;
         }
 
         public override string ToString()
@@ -307,33 +307,6 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private bool CollectionEquals<T>(IList<T> c1, IList<T> c2)
-        {
-            // NOTE: fixes a bug where collections weren't properly compared
-            if (c1 == null || c2 == null)
-            {
-                if (c1 == c2)
-                {
-                    return true;
-                }
-                return false;
-            }
-            if (!c1.Count.Equals(c2.Count))
-            {
-                return false;
-            }
-
-            IEnumerator e1 = c1.GetEnumerator();
-            IEnumerator e2 = c2.GetEnumerator();
-
-            while (e1.MoveNext() && e2.MoveNext())
-            {
-                if (!Equals(e1.Current, e2.Current))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        private bool CollectionEquals<T>(IEnumerable<T> c1, IEnumerable<T> c2) => c1.SequenceEqual(c2);
     }
 }

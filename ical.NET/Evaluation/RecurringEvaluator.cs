@@ -42,45 +42,16 @@ namespace Ical.Net.Evaluation
             // Handle RRULEs
             if (Recurrable.RecurrenceRules != null && Recurrable.RecurrenceRules.Count > 0)
             {
-                foreach (var rrule in Recurrable.RecurrenceRules)
-                {
-                    var evaluator = rrule.GetService(typeof (IEvaluator)) as IEvaluator;
-                    if (evaluator != null)
-                    {
-                        var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
-                        Periods.UnionWith(periods);
-                    }
-                }
+                var evaluator = Recurrable.RecurrenceRules.First().GetService(typeof(IEvaluator)) as IEvaluator;
+                var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
+                Periods.UnionWith(periods);
             }
             else if (includeReferenceDateInResults)
             {
                 // If no RRULEs were found, then we still need to add
                 // the initial reference date to the results.
-                IPeriod p = new Period(referenceDate.Copy<IDateTime>());
-                Periods.UnionWith(new[] {p});
-            }
-        }
-
-        /// <summary>
-        /// Evalates the RDate component, and adds each specified DateTime or Period to the Periods collection.
-        /// </summary>
-        /// <param name="referenceDate"></param>
-        /// <param name="periodStart">The beginning date of the range to evaluate.</param>
-        /// <param name="periodEnd">The end date of the range to evaluate.</param>
-        protected virtual void EvaluateRDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
-        {
-            // Handle RDATEs
-            if (Recurrable.RecurrenceDates != null)
-            {
-                foreach (var rdate in Recurrable.RecurrenceDates)
-                {
-                    var evaluator = rdate.GetService(typeof (IEvaluator)) as IEvaluator;
-                    if (evaluator != null)
-                    {
-                        var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
-                        Periods.UnionWith(periods);
-                    }
-                }
+                IPeriod p = new Period(referenceDate);
+                Periods.UnionWith(new [] {p});
             }
         }
 
@@ -115,28 +86,23 @@ namespace Ical.Net.Evaluation
         /// <param name="periodEnd">The end date of the range to evaluate.</param>
         protected virtual void EvaluateExDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
-            // Handle EXDATEs
-            if (Recurrable.ExceptionDates == null)
+            if (Recurrable.ExceptionDates == null || !Recurrable.ExceptionDates.Any())
             {
                 return;
             }
 
-
-            foreach (var exdate in Recurrable.ExceptionDates)
+            var evaluator = Recurrable.ExceptionDates.First().GetService(typeof(IEvaluator)) as IEvaluator;
+            if (evaluator == null)
             {
-                var evaluator = exdate.GetService(typeof (IEvaluator)) as IEvaluator;
-                if (evaluator == null)
-                {
-                    continue;
-                }
-
-                var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
-                foreach (var p in periods.Where(p => !p.StartTime.HasTime || (p.EndTime != null && !p.EndTime.HasTime)))
-                {
-                    p.MatchesDateOnly = true;
-                }
-                Periods.ExceptWith(periods);
+                return;
             }
+
+            var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
+            foreach (var p in periods.Where(p => !p.StartTime.HasTime || (p.EndTime != null && !p.EndTime.HasTime)))
+            {
+                p.MatchesDateOnly = true;
+            }
+            Periods.ExceptWith(periods);
         }
 
         public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
@@ -146,7 +112,6 @@ namespace Ical.Net.Evaluation
                 (periodStart.Equals(EvaluationEndBounds)))
             {
                 EvaluateRRule(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
-                EvaluateRDate(referenceDate, periodStart, periodEnd);
                 EvaluateExRule(referenceDate, periodStart, periodEnd);
                 EvaluateExDate(referenceDate, periodStart, periodEnd);
                 if (EvaluationStartBounds == DateTime.MaxValue || EvaluationStartBounds > periodStart)

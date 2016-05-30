@@ -74,22 +74,19 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                     {
                         var valueType = t.GetValueType() ?? typeof (TimeSpan);
                         var serializer = factory.Build(valueType, SerializationContext) as IStringSerializer;
-                        if (serializer != null)
+                        var obj = serializer?.Deserialize(new StringReader(value));
+                        if (obj != null)
                         {
-                            var obj = serializer.Deserialize(new StringReader(value));
-                            if (obj != null)
+                            if (obj is IDateTime)
                             {
-                                if (obj is IDateTime)
-                                {
-                                    t.DateTime = (IDateTime) obj;
-                                }
-                                else
-                                {
-                                    t.Duration = (TimeSpan) obj;
-                                }
-
-                                return t;
+                                t.DateTime = (IDateTime) obj;
                             }
+                            else
+                            {
+                                t.Duration = (TimeSpan) obj;
+                            }
+
+                            return t;
                         }
                     }
                 }

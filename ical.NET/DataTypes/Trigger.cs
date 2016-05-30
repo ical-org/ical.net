@@ -112,7 +112,7 @@ namespace Ical.Net.DataTypes
         {
             unchecked
             {
-                var hashCode = (_mDateTime != null ? _mDateTime.GetHashCode() : 0);
+                var hashCode = _mDateTime?.GetHashCode() ?? 0;
                 hashCode = (hashCode * 397) ^ _mDuration.GetHashCode();
                 hashCode = (hashCode * 397) ^ (int) _mRelated;
                 return hashCode;

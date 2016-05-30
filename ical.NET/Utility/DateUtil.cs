@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
@@ -9,13 +8,6 @@ namespace Ical.Net.Utility
 {
     public class DateUtil
     {
-        private static System.Globalization.Calendar _calendar;
-
-        static DateUtil()
-        {
-            _calendar = CultureInfo.CurrentCulture.Calendar;
-        }
-
         public static IDateTime StartOfDay(IDateTime dt)
         {
             return dt.AddHours(-dt.Hour).AddMinutes(-dt.Minute).AddSeconds(-dt.Second);

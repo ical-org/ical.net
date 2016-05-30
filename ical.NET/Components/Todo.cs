@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.Serialization;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
@@ -16,7 +17,7 @@ namespace Ical.Net
     [Serializable]
     public class Todo : RecurringComponent, ITodo
     {
-        TodoEvaluator _mEvaluator;
+        private TodoEvaluator _mEvaluator;
 
         /// <summary>
         /// The date/time the todo was completed.
@@ -116,14 +117,9 @@ namespace Ical.Net
                     // status was changed).
                     if (IsLoaded)
                     {
-                        if (value == TodoStatus.Completed)
-                        {
-                            Completed = CalDateTime.Now;
-                        }
-                        else
-                        {
-                            Completed = null;
-                        }
+                        Completed = value == TodoStatus.Completed
+                            ? CalDateTime.Now
+                            : null;
                     }
 
                     Properties.Set("STATUS", value);
@@ -167,15 +163,7 @@ namespace Ical.Net
                 // Evaluate to the previous occurrence.
                 _mEvaluator.EvaluateToPreviousOccurrence(Completed, currDt);
 
-                foreach (Period p in _mEvaluator.Periods)
-                {
-                    if (p.StartTime.GreaterThan(Completed) && // The item has recurred after it was completed
-                        currDt.GreaterThanOrEqual(p.StartTime)) // and the current date is after or on the recurrence date.
-                    {
-                        return false;
-                    }
-                }
-                return true;
+                return _mEvaluator.Periods.Cast<Period>().All(p => !p.StartTime.GreaterThan(Completed) || !currDt.GreaterThanOrEqual(p.StartTime));
             }
             return false;
         }

@@ -28,9 +28,8 @@ namespace Ical.Net.General
         /// <returns>The copy of the object.</returns>
         public virtual T Copy<T>()
         {
-            ICopyable obj = null;
             var type = GetType();
-            obj = Activator.CreateInstance(type) as ICopyable;
+            var obj = Activator.CreateInstance(type) as ICopyable;
 
             // Duplicate our values
             if (obj is T)
@@ -49,10 +48,7 @@ namespace Ical.Net.General
         public virtual void OnLoaded()
         {
             _mIsLoaded = true;
-            if (Loaded != null)
-            {
-                Loaded(this, EventArgs.Empty);
-            }
+            Loaded?.Invoke(this, EventArgs.Empty);
         }
     }
 }

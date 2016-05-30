@@ -18,7 +18,7 @@ namespace Ical.Net.Serialization
             public bool AllowsMultipleValuesPerProperty { get; set; }
         }
 
-        IDictionary<string, PropertyMapping> _propertyMap = new Dictionary<string, PropertyMapping>();
+        private readonly IDictionary<string, PropertyMapping> _propertyMap = new Dictionary<string, PropertyMapping>();
 
         public DataTypeMapper()
         {
@@ -87,9 +87,11 @@ namespace Ical.Net.Serialization
         {
             if (name != null && objectType != null)
             {
-                var m = new PropertyMapping();
-                m.ObjectType = objectType;
-                m.AllowsMultipleValuesPerProperty = allowsMultipleValues;
+                var m = new PropertyMapping
+                {
+                    ObjectType = objectType,
+                    AllowsMultipleValuesPerProperty = allowsMultipleValues
+                };
 
                 _propertyMap[name.ToUpper()] = m;
             }
@@ -99,9 +101,11 @@ namespace Ical.Net.Serialization
         {
             if (name != null && resolver != null)
             {
-                var m = new PropertyMapping();
-                m.Resolver = resolver;
-                m.AllowsMultipleValuesPerProperty = allowsMultipleValues;
+                var m = new PropertyMapping
+                {
+                    Resolver = resolver,
+                    AllowsMultipleValuesPerProperty = allowsMultipleValues
+                };
 
                 _propertyMap[name.ToUpper()] = m;
             }
@@ -118,35 +122,32 @@ namespace Ical.Net.Serialization
         public virtual bool GetPropertyAllowsMultipleValues(object obj)
         {
             var p = obj as ICalendarProperty;
-            if (p != null && p.Name != null)
+            if (p?.Name == null)
             {
-                var name = p.Name.ToUpper();
-                if (_propertyMap.ContainsKey(name))
-                {
-                    var m = _propertyMap[name];
-                    return m.AllowsMultipleValuesPerProperty;
-                }
+                return false;
             }
-            return false;
+            var name = p.Name.ToUpper();
+            return _propertyMap.ContainsKey(name) && _propertyMap[name].AllowsMultipleValuesPerProperty;
         }
 
         public virtual Type GetPropertyMapping(object obj)
         {
             var p = obj as ICalendarProperty;
-            if (p != null && p.Name != null)
+            if (p?.Name == null)
             {
-                var name = p.Name.ToUpper();
-                if (_propertyMap.ContainsKey(name))
-                {
-                    var m = _propertyMap[name];
-                    if (m.Resolver != null)
-                    {
-                        return m.Resolver(p);
-                    }
-                    return m.ObjectType;
-                }
+                return null;
             }
-            return null;
+
+            var name = p.Name.ToUpper();
+            if (!_propertyMap.ContainsKey(name))
+            {
+                return null;
+            }
+
+            var m = _propertyMap[name];
+            return m.Resolver == null
+                ? m.ObjectType
+                : m.Resolver(p);
         }
     }
 }

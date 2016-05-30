@@ -18,7 +18,7 @@ namespace ical.NET.Collections.Proxies
         where TOriginal : class, IGroupedObject<TGroup>
         where TNew : class, TOriginal
     {
-        Func<TNew, bool> _predicate;
+        private readonly Func<TNew, bool> _predicate;
 
         public GroupedCollectionProxy(IGroupedCollection<TGroup, TOriginal> realObject, Func<TNew, bool> predicate = null)
         {
@@ -26,31 +26,17 @@ namespace ical.NET.Collections.Proxies
             SetProxiedObject(realObject);
         }
 
-        void _RealObject_ItemRemoved(object sender, ObjectEventArgs<TOriginal, int> e)
-        {
-            if (e.First is TNew)
-                OnItemRemoved((TNew)e.First, e.Second);
-        }
-
-        void _RealObject_ItemAdded(object sender, ObjectEventArgs<TOriginal, int> e)
-        {
-            if (e.First is TNew)
-                OnItemAdded((TNew)e.First, e.Second);
-        }
-
         public virtual event EventHandler<ObjectEventArgs<TNew, int>> ItemAdded;
         public virtual event EventHandler<ObjectEventArgs<TNew, int>> ItemRemoved;
 
         protected void OnItemAdded(TNew item, int index)
         {
-            if (ItemAdded != null)
-                ItemAdded(this, new ObjectEventArgs<TNew, int>(item, index));
+            ItemAdded?.Invoke(this, new ObjectEventArgs<TNew, int>(item, index));
         }
 
         protected void OnItemRemoved(TNew item, int index)
         {
-            if (ItemRemoved != null)
-                ItemRemoved(this, new ObjectEventArgs<TNew, int>(item, index));
+            ItemRemoved?.Invoke(this, new ObjectEventArgs<TNew, int>(item, index));
         }
 
         public virtual bool Remove(TGroup group)

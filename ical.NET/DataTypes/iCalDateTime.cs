@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
@@ -84,7 +83,7 @@ namespace Ical.Net.DataTypes
             // Convert all incoming values to UTC.
             Value = DateTime.SpecifyKind(value, DateTimeKind.Utc);
             HasDate = true;
-            HasTime = (value.Second == 0 && value.Minute == 0 && value.Hour == 0) ? false : true;
+            HasTime = value.Second != 0 || value.Minute != 0 || value.Hour != 0;
             TzId = tzId;
             AssociatedObject = cal;
         }
@@ -382,7 +381,7 @@ namespace Ical.Net.DataTypes
         {
             if (string.IsNullOrWhiteSpace(newTimeZone))
             {
-                throw new ArgumentException("You must provide a valid TZID to the ToTimeZone() method", "newTimeZone");
+                throw new ArgumentException("You must provide a valid TZID to the ToTimeZone() method", nameof(newTimeZone));
             }
             if (Calendar == null)
             {
@@ -394,15 +393,6 @@ namespace Ical.Net.DataTypes
                 : DateUtil.FromTimeZoneToTimeZone(Value, TzId, newTimeZone).ToDateTimeUtc();
 
             return new CalDateTime(newDt, newTimeZone);
-        }
-
-        public IDateTime SetTimeZone(ITimeZone tz)
-        {
-            if (tz != null)
-            {
-                TzId = tz.TzId;
-            }
-            return this;
         }
 
         public IDateTime Add(TimeSpan ts)

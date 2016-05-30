@@ -12,7 +12,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 {
     public class CalendarSerializer : ComponentSerializer
     {
-        ICalendar _mCalendar;
+        private readonly ICalendar _mCalendar;
 
         public CalendarSerializer() {}
 
@@ -119,7 +119,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                 {
                     return 1;
                 }
-                return string.Compare(x.Name, y.Name);
+                return string.Compare(x.Name, y.Name, StringComparison.InvariantCultureIgnoreCase);
             }
         }
     }

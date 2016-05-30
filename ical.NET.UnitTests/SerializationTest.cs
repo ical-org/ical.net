@@ -62,7 +62,7 @@ namespace ical.NET.UnitTests
                     catch { }
                 }
 
-                Assert.IsTrue(isMatch, "Could not find a matching property - " + p1.Name + ":" + (p1.Value != null ? p1.Value.ToString() : string.Empty));                    
+                Assert.IsTrue(isMatch, "Could not find a matching property - " + p1.Name + ":" + (p1.Value?.ToString() ?? string.Empty));                    
             }
 
             Assert.AreEqual(cb1.Children.Count, cb2.Children.Count, "The number of children are not equal.");
@@ -288,10 +288,9 @@ namespace ical.NET.UnitTests
 
             var found = new Hashtable();
 
-            foreach (var s in evt.Categories)
+            foreach (var s in evt.Categories.Where(s => items.Contains(s)))
             {
-                if (items.Contains(s))
-                    found[s] = true;
+                found[s] = true;
             }
 
             foreach (string item in items)
@@ -575,6 +574,7 @@ END:VCALENDAR
         public void Language4()
         {
             var iCal = Calendar.LoadFromFile(@"Calendars/Serialization/Language4.ics")[0];
+            Assert.IsNotNull(iCal);
         }
 
         [Test, Category("Serialization")]
@@ -626,6 +626,7 @@ END:VCALENDAR
         public void Parse1()
         {
             var iCal = Calendar.LoadFromFile(@"Calendars\Serialization\Parse1.ics")[0];
+            Assert.IsNotNull(iCal);
         }
 
         /// <summary>
@@ -655,8 +656,10 @@ END:VCALENDAR
             var settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
             settings.EnsureAccurateLineNumbers = true;
 
-            var serializer = new CalendarSerializer();
-            serializer.SerializationContext = ctx;
+            var serializer = new CalendarSerializer
+            {
+                SerializationContext = ctx
+            };
             var iCal = Calendar.LoadFromFile(@"Calendars\Serialization\EmptyLines1.ics", Encoding.UTF8, serializer)[0];
 
             Assert.AreEqual(2, iCal.Events.Count);
@@ -687,8 +690,10 @@ END:VCALENDAR
             var settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
             settings.EnsureAccurateLineNumbers = true;
 
-            var serializer = new CalendarSerializer();
-            serializer.SerializationContext = ctx;
+            var serializer = new CalendarSerializer
+            {
+                SerializationContext = ctx
+            };
             var iCal = Calendar.LoadFromFile(@"Calendars\Serialization\Calendar1.ics", Encoding.UTF8, serializer)[0];
 
             Assert.IsNotNull(iCal.Todos["2df60496-1e73-11db-ba96-e3cfe6793b5f"]);

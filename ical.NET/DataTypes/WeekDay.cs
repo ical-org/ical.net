@@ -57,7 +57,7 @@ namespace Ical.Net.DataTypes
                 var ds = (WeekDay) obj;
                 return ds.Offset == Offset && ds.DayOfWeek == DayOfWeek;
             }
-            return base.Equals(obj);
+            return false;
         }
 
         public override int GetHashCode()

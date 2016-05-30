@@ -86,10 +86,7 @@ namespace Ical.Net.DataTypes
             set
             {
                 var val = value.ToString();
-                if (val != null)
-                {
-                    val = val.ToUpper();
-                }
+                val = val.ToUpper();
                 Parameters.Set("RSVP", val);
             }
         }
@@ -149,7 +146,7 @@ namespace Ical.Net.DataTypes
 
         public override int GetHashCode()
         {
-            return (Value != null ? Value.GetHashCode() : 0);
+            return Value?.GetHashCode() ?? 0;
         }
 
         public override void CopyFrom(ICopyable obj)

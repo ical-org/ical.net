@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.Components;
@@ -101,43 +102,25 @@ namespace Ical.Net
             return occurrences;
         }
 
-        IFreeBusy CombineFreeBusy(IFreeBusy main, IFreeBusy current)
+        private IFreeBusy CombineFreeBusy(IFreeBusy main, IFreeBusy current)
         {
-            if (main != null)
-            {
-                main.MergeWith(current);
-            }
+            main?.MergeWith(current);
             return current;
         }
 
         public IFreeBusy GetFreeBusy(IFreeBusy freeBusyRequest)
         {
-            IFreeBusy fb = null;
-            foreach (var iCal in this)
-            {
-                fb = CombineFreeBusy(fb, iCal.GetFreeBusy(freeBusyRequest));
-            }
-            return fb;
+            return this.Aggregate<ICalendar, IFreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(freeBusyRequest)));
         }
 
         public IFreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive)
         {
-            IFreeBusy fb = null;
-            foreach (var iCal in this)
-            {
-                fb = CombineFreeBusy(fb, iCal.GetFreeBusy(fromInclusive, toExclusive));
-            }
-            return fb;
+            return this.Aggregate<ICalendar, IFreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(fromInclusive, toExclusive)));
         }
 
         public IFreeBusy GetFreeBusy(IOrganizer organizer, IAttendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive)
         {
-            IFreeBusy fb = null;
-            foreach (var iCal in this)
-            {
-                fb = CombineFreeBusy(fb, iCal.GetFreeBusy(organizer, contacts, fromInclusive, toExclusive));
-            }
-            return fb;
+            return this.Aggregate<ICalendar, IFreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(organizer, contacts, fromInclusive, toExclusive)));
         }
     }
 }

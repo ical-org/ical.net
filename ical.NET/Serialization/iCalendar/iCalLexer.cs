@@ -9,7 +9,7 @@ namespace Ical.Net.Serialization.iCalendar
 {
     // Generate header specific to lexer CSharp file
 
-    public class iCalLexer : CharScanner, TokenStream
+    public class iCalLexer : CharScanner
     {
         public const int EOF = 1;
         public const int NULL_TREE_LOOKAHEAD = 3;
@@ -62,12 +62,9 @@ namespace Ical.Net.Serialization.iCalendar
 
         public override IToken nextToken() //throws TokenStreamException
         {
-            IToken theRetToken = null;
             tryAgain:
             for (;;)
             {
-                IToken _token = null;
-                var _ttype = Token.INVALID_TYPE;
                 resetText();
                 try // for char stream error handling
                 {
@@ -78,93 +75,77 @@ namespace Ical.Net.Serialization.iCalendar
                             case '\n':
                             {
                                 mLF(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             case ' ':
                             {
                                 mSPACE(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             case '\t':
                             {
                                 mHTAB(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             case ':':
                             {
                                 mCOLON(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             case ';':
                             {
                                 mSEMICOLON(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             case ',':
                             {
                                 mCOMMA(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             case '.':
                             {
                                 mDOT(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             case '=':
                             {
                                 mEQUAL(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             case '/':
                             {
                                 mSLASH(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             case '"':
                             {
                                 mDQUOTE(true);
-                                theRetToken = returnToken_;
                                 break;
                             }
                             default:
                                 if ((cached_LA1 == '\r') && (cached_LA2 == '\n') && (LA(3) == '\t' || LA(3) == ' '))
                                 {
                                     mLINEFOLDER(true);
-                                    theRetToken = returnToken_;
                                 }
-                                else if ((cached_LA1 == '\r') && (cached_LA2 == '\n') && (true))
+                                else if ((cached_LA1 == '\r') && (cached_LA2 == '\n'))
                                 {
                                     mCRLF(true);
-                                    theRetToken = returnToken_;
                                 }
-                                else if ((cached_LA1 == '\\') && (tokenSet_0_.member(cached_LA2)))
+                                else if ((cached_LA1 == '\\') && tokenSet_0_.member(cached_LA2))
                                 {
                                     mESCAPED_CHAR(true);
-                                    theRetToken = returnToken_;
                                 }
-                                else if ((cached_LA1 == '\\') && (true))
+                                else if (cached_LA1 == '\\')
                                 {
                                     mBACKSLASH(true);
-                                    theRetToken = returnToken_;
                                 }
-                                else if ((tokenSet_1_.member(cached_LA1)) && (true))
+                                else if (tokenSet_1_.member(cached_LA1))
                                 {
                                     mCTL(true);
-                                    theRetToken = returnToken_;
                                 }
-                                else if ((tokenSet_2_.member(cached_LA1)))
+                                else if (tokenSet_2_.member(cached_LA1))
                                 {
                                     mIANA_TOKEN(true);
-                                    theRetToken = returnToken_;
                                 }
                                 else
                                 {
@@ -184,7 +165,7 @@ namespace Ical.Net.Serialization.iCalendar
                         {
                             goto tryAgain; // found SKIP token
                         }
-                        _ttype = returnToken_.Type;
+                        var _ttype = returnToken_.Type;
                         _ttype = testLiteralsTable(_ttype);
                         returnToken_.Type = _ttype;
                         return returnToken_;
@@ -207,13 +188,12 @@ namespace Ical.Net.Serialization.iCalendar
 
         protected void mCR(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = CR;
+            var _ttype = CR;
 
             match('\u000d');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -223,14 +203,12 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void mLF(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = LF;
 
             match('\u000a');
-            _ttype = Token.SKIP;
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            var _ttype = Token.SKIP;
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -240,10 +218,9 @@ namespace Ical.Net.Serialization.iCalendar
 
         protected void mALPHA(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = ALPHA;
+            var _ttype = ALPHA;
 
             switch (cached_LA1)
             {
@@ -312,7 +289,7 @@ namespace Ical.Net.Serialization.iCalendar
                     throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());
                 }
             }
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -322,13 +299,12 @@ namespace Ical.Net.Serialization.iCalendar
 
         protected void mDIGIT(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = DIGIT;
+            var _ttype = DIGIT;
 
             matchRange('\u0030', '\u0039');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -338,13 +314,12 @@ namespace Ical.Net.Serialization.iCalendar
 
         protected void mDASH(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = DASH;
+            var _ttype = DASH;
 
             match('\u002d');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -354,13 +329,12 @@ namespace Ical.Net.Serialization.iCalendar
 
         protected void mUNDERSCORE(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = UNDERSCORE;
+            var _ttype = UNDERSCORE;
 
             match('\u005F');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -370,13 +344,12 @@ namespace Ical.Net.Serialization.iCalendar
 
         protected void mUNICODE(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = UNICODE;
+            var _ttype = UNICODE;
 
             matchRange('\u0100', '\uFFFE');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -386,10 +359,9 @@ namespace Ical.Net.Serialization.iCalendar
 
         protected void mSPECIAL(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = SPECIAL;
+            var _ttype = SPECIAL;
 
             switch (cached_LA1)
             {
@@ -448,7 +420,7 @@ namespace Ical.Net.Serialization.iCalendar
                     break;
                 }
                 default:
-                    if (((cached_LA1 >= '\u0080' && cached_LA1 <= '\u00ff')))
+                    if (cached_LA1 >= '\u0080' && cached_LA1 <= '\u00ff')
                     {
                         matchRange('\u0080', '\u00ff');
                     }
@@ -458,7 +430,7 @@ namespace Ical.Net.Serialization.iCalendar
                     }
                     break;
             }
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -468,13 +440,12 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void mSPACE(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = SPACE;
+            var _ttype = SPACE;
 
             match('\u0020');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -484,13 +455,12 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void mHTAB(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = HTAB;
+            var _ttype = HTAB;
 
             match('\u0009');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -500,13 +470,12 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void mCOLON(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = COLON;
+            var _ttype = COLON;
 
             match('\u003a');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -516,13 +485,12 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void mSEMICOLON(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = SEMICOLON;
+            var _ttype = SEMICOLON;
 
             match('\u003b');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -532,13 +500,12 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void mCOMMA(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = COMMA;
+            var _ttype = COMMA;
 
             match('\u002c');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -548,13 +515,12 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void mDOT(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = DOT;
+            var _ttype = DOT;
 
             match('\u002e');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -564,13 +530,12 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void mEQUAL(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = EQUAL;
+            var _ttype = EQUAL;
 
             match('\u003d');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -580,13 +545,12 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void mBACKSLASH(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = BACKSLASH;
+            var _ttype = BACKSLASH;
 
             match('\u005c');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -596,13 +560,12 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void mSLASH(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = SLASH;
+            var _ttype = SLASH;
 
             match('\u002f');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -612,13 +575,12 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void mDQUOTE(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = DQUOTE;
+            var _ttype = DQUOTE;
 
             match('\u0022');
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -628,15 +590,14 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void mCRLF(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = CRLF;
+            var _ttype = CRLF;
 
             mCR(false);
             mLF(false);
             newline();
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -646,10 +607,9 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void mCTL(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = CTL;
+            var _ttype = CTL;
 
             switch (cached_LA1)
             {
@@ -701,7 +661,7 @@ namespace Ical.Net.Serialization.iCalendar
                     throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());
                 }
             }
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -711,10 +671,9 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void mESCAPED_CHAR(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = ESCAPED_CHAR;
+            var _ttype = ESCAPED_CHAR;
 
             mBACKSLASH(false);
             {
@@ -756,7 +715,7 @@ namespace Ical.Net.Serialization.iCalendar
                     }
                 }
             }
-            if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (_createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -766,10 +725,9 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void mIANA_TOKEN(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = IANA_TOKEN;
+            var _ttype = IANA_TOKEN;
 
             { // ( ... )+
                 var _cnt82 = 0;
@@ -858,11 +816,11 @@ namespace Ical.Net.Serialization.iCalendar
                             break;
                         }
                         default:
-                            if ((tokenSet_3_.member(cached_LA1)))
+                            if (tokenSet_3_.member(cached_LA1))
                             {
                                 mSPECIAL(false);
                             }
-                            else if (((cached_LA1 >= '\u0100' && cached_LA1 <= '\ufffe')))
+                            else if (cached_LA1 >= '\u0100' && cached_LA1 <= '\ufffe')
                             {
                                 mUNICODE(false);
                             }
@@ -873,7 +831,6 @@ namespace Ical.Net.Serialization.iCalendar
                                     goto _loop82_breakloop;
                                 }
                                 throw new NoViableAltForCharException(cached_LA1, getFilename(), getLine(), getColumn());
-                                ;
                             }
                             break;
                     }
@@ -911,7 +868,7 @@ namespace Ical.Net.Serialization.iCalendar
                 }
             }
 
-            if (_createToken && (null == _token) && (_ttype != Token.SKIP))
+            if (_createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));
@@ -921,10 +878,8 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void mLINEFOLDER(bool createToken) //throws RecognitionException, CharStreamException, TokenStreamException
         {
-            int _ttype;
             IToken _token = null;
             var _begin = text.Length;
-            _ttype = LINEFOLDER;
 
             mCRLF(false);
             {
@@ -946,8 +901,8 @@ namespace Ical.Net.Serialization.iCalendar
                     }
                 }
             }
-            _ttype = Token.SKIP;
-            if (createToken && (null == _token) && (_ttype != Token.SKIP))
+            var _ttype = Token.SKIP;
+            if (createToken && (_ttype != Token.SKIP))
             {
                 _token = makeToken(_ttype);
                 _token.setText(text.ToString(_begin, text.Length - _begin));

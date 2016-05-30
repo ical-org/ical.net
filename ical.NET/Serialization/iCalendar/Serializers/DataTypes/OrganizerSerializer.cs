@@ -15,11 +15,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             try
             {
                 var o = obj as IOrganizer;
-                if (o != null && o.Value != null)
-                {
-                    return Encode(o, Escape(o.Value.OriginalString));
-                }
-                return null;
+                return o?.Value == null
+                    ? null
+                    : Encode(o, Escape(o.Value.OriginalString));
             }
             catch
             {

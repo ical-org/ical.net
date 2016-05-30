@@ -13,7 +13,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
 {
     public class SerializerFactory : ISerializerFactory
     {
-        ISerializerFactory _mDataTypeSerializerFactory;
+        private readonly ISerializerFactory _mDataTypeSerializerFactory;
 
         public SerializerFactory()
         {
@@ -33,7 +33,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
         {
             if (objectType != null)
             {
-                ISerializer s = null;
+                ISerializer s;
 
                 if (typeof (ICalendar).IsAssignableFrom(objectType))
                 {
@@ -41,14 +41,9 @@ namespace Ical.Net.Serialization.iCalendar.Factory
                 }
                 else if (typeof (ICalendarComponent).IsAssignableFrom(objectType))
                 {
-                    if (typeof (IEvent).IsAssignableFrom(objectType))
-                    {
-                        s = new EventSerializer();
-                    }
-                    else
-                    {
-                        s = new ComponentSerializer();
-                    }
+                    s = typeof (IEvent).IsAssignableFrom(objectType)
+                        ? new EventSerializer()
+                        : new ComponentSerializer();
                 }
                 else if (typeof (ICalendarProperty).IsAssignableFrom(objectType))
                 {

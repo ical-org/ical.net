@@ -99,25 +99,25 @@ namespace Ical.Net
             set { Properties.Set("URL", value); }
         }
 
-        void Properties_ItemRemoved(object sender, ObjectEventArgs<ICalendarProperty, int> e)
+        private void Properties_ItemRemoved(object sender, ObjectEventArgs<ICalendarProperty, int> e)
         {
-            if (e.First != null && e.First.Name != null && string.Equals(e.First.Name.ToUpper(), "UID"))
+            if (string.Equals(e.First.Name, "UID", StringComparison.OrdinalIgnoreCase))
             {
                 OnUidChanged(e.First.Values.Cast<string>().FirstOrDefault(), null);
                 e.First.ValueChanged -= Object_ValueChanged;
             }
         }
 
-        void Properties_ItemAdded(object sender, ObjectEventArgs<ICalendarProperty, int> e)
+        private void Properties_ItemAdded(object sender, ObjectEventArgs<ICalendarProperty, int> e)
         {
-            if (e.First != null && e.First.Name != null && string.Equals(e.First.Name.ToUpper(), "UID"))
+            if (string.Equals(e.First.Name, "UID", StringComparison.OrdinalIgnoreCase))
             {
                 OnUidChanged(null, e.First.Values.Cast<string>().FirstOrDefault());
                 e.First.ValueChanged += Object_ValueChanged;
             }
         }
 
-        void Object_ValueChanged(object sender, ValueChangedEventArgs<object> e)
+        private void Object_ValueChanged(object sender, ValueChangedEventArgs<object> e)
         {
             var oldValue = e.RemovedValues.OfType<string>().FirstOrDefault();
             var newValue = e.AddedValues.OfType<string>().FirstOrDefault();
@@ -165,10 +165,7 @@ namespace Ical.Net
 
         protected virtual void OnUidChanged(string oldUid, string newUid)
         {
-            if (UidChanged != null)
-            {
-                UidChanged(this, new ObjectEventArgs<string, string>(oldUid, newUid));
-            }
+            UidChanged?.Invoke(this, new ObjectEventArgs<string, string>(oldUid, newUid));
         }
 
         public virtual string Uid

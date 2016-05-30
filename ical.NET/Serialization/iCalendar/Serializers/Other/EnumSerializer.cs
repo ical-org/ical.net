@@ -8,7 +8,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 {
     public class EnumSerializer : EncodableDataTypeSerializer
     {
-        Type _mEnumType;
+        private readonly Type _mEnumType;
 
         public EnumSerializer(Type enumType)
         {
@@ -25,8 +25,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 if (obj != null)
                 {
                     // Encode the value as needed.
-                    var dt = new EncodableDataType();
-                    dt.AssociatedObject = obj;
+                    var dt = new EncodableDataType
+                    {
+                        AssociatedObject = obj
+                    };
                     return Encode(dt, enumValue.ToString());
                 }
                 return enumValue.ToString();
@@ -47,8 +49,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 if (obj != null)
                 {
                     // Decode the value, if necessary!
-                    var dt = new EncodableDataType();
-                    dt.AssociatedObject = obj;
+                    var dt = new EncodableDataType
+                    {
+                        AssociatedObject = obj
+                    };
                     value = Decode(dt, value);
                 }
 

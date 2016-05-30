@@ -15,18 +15,18 @@ namespace Ical.Net.DataTypes
     [Serializable]
     public abstract class CalendarDataType : ICalendarDataType
     {
-        ICalendarParameterCollection _parameters;
-        ICalendarParameterCollectionProxy _proxy;
-        ServiceProvider _serviceProvider;
+        private ICalendarParameterCollection _parameters;
+        private ICalendarParameterCollectionProxy _proxy;
+        private ServiceProvider _serviceProvider;
 
         protected ICalendarObject _AssociatedObject;
 
-        public CalendarDataType()
+        protected CalendarDataType()
         {
             Initialize();
         }
 
-        void Initialize()
+        private void Initialize()
         {
             _parameters = new CalendarParameterList();
             _proxy = new CalendarParameterCollectionProxy(_parameters);
@@ -97,10 +97,7 @@ namespace Ical.Net.DataTypes
 
         public virtual void SetValueType(string type)
         {
-            if (_proxy != null)
-            {
-                _proxy.Set("VALUE", type != null ? type : type.ToUpper());
-            }
+            _proxy?.Set("VALUE", type != null ? type : type.ToUpper());
         }
 
         public virtual ICalendarObject AssociatedObject
@@ -128,17 +125,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public virtual ICalendar Calendar
-        {
-            get
-            {
-                if (_AssociatedObject != null)
-                {
-                    return _AssociatedObject.Calendar;
-                }
-                return null;
-            }
-        }
+        public virtual ICalendar Calendar => _AssociatedObject?.Calendar;
 
         public virtual string Language
         {
@@ -167,9 +154,8 @@ namespace Ical.Net.DataTypes
         /// <returns>The copy of the object.</returns>
         public virtual T Copy<T>()
         {
-            ICopyable obj = null;
             var type = GetType();
-            obj = Activator.CreateInstance(type) as ICopyable;
+            var obj = Activator.CreateInstance(type) as ICopyable;
 
             // Duplicate our values
             if (obj is T)

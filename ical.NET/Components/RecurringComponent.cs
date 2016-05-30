@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
@@ -27,24 +28,7 @@ namespace Ical.Net
             return SortByDate<IRecurringComponent>(list);
         }
 
-        public static IEnumerable<T> SortByDate<T>(IEnumerable<T> list)
-        {
-            var items = new List<IRecurringComponent>();
-            foreach (var t in list)
-            {
-                if (t is IRecurringComponent)
-                {
-                    items.Add((IRecurringComponent) t);
-                }
-            }
-
-            // Sort the list by date
-            items.Sort(new RecurringComponentDateSorter());
-            foreach (var rc in items)
-            {
-                yield return (T) rc;
-            }
-        }
+        public static IEnumerable<TRecurringComponent> SortByDate<TRecurringComponent>(IEnumerable<TRecurringComponent> list) => list.OrderBy(d => d);
 
         protected virtual bool EvaluationIncludesReferenceDate => false;
 
@@ -231,7 +215,7 @@ namespace Ical.Net
 
         public virtual IList<AlarmOccurrence> PollAlarms(IDateTime startTime, IDateTime endTime)
         {
-            var occurrences = new List<AlarmOccurrence>();
+            var occurrences = new List<AlarmOccurrence>(128);
             if (Alarms != null)
             {
                 foreach (var alarm in Alarms)
@@ -240,17 +224,6 @@ namespace Ical.Net
                 }
             }
             return occurrences;
-        }
-    }
-
-    /// <summary>
-    /// Sorts recurring components by their start dates
-    /// </summary>
-    public class RecurringComponentDateSorter : IComparer<IRecurringComponent>
-    {
-        public int Compare(IRecurringComponent x, IRecurringComponent y)
-        {
-            return x.Start.CompareTo(y.Start);
         }
     }
 }

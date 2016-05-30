@@ -87,7 +87,7 @@ namespace Ical.Net.Serialization.iCalendar
             SerializationUtil.OnDeserializing(iCalendars);
 
             ICalendar cal = null;
-            var settings = ctx.GetService(typeof (ISerializationSettings)) as ISerializationSettings;
+            var settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
 
             { // ( ... )*
                 for (;;)
@@ -128,13 +128,10 @@ namespace Ical.Net.Serialization.iCalendar
                             ;
                         } // ( ... )*
 
-                        var processor = ctx.GetService(typeof (ISerializationProcessor<ICalendar>)) as ISerializationProcessor<ICalendar>;
+                        var processor = ctx.GetService(typeof(ISerializationProcessor<ICalendar>)) as ISerializationProcessor<ICalendar>;
 
                         // Do some pre-processing on the calendar:
-                        if (processor != null)
-                        {
-                            processor.PreDeserialization(cal);
-                        }
+                        processor?.PreDeserialization(cal);
 
                         cal = (ICalendar) SerializationUtil.GetUninitializedObject(settings.CalendarType);
                         SerializationUtil.OnDeserializing(cal);
@@ -163,10 +160,7 @@ namespace Ical.Net.Serialization.iCalendar
                         } // ( ... )*
 
                         // Do some final processing on the calendar:
-                        if (processor != null)
-                        {
-                            processor.PostDeserialization(cal);
-                        }
+                        processor?.PostDeserialization(cal);
 
                         // Notify that the iCalendar has been loaded
                         cal.OnLoaded();
@@ -193,69 +187,61 @@ namespace Ical.Net.Serialization.iCalendar
 
         public void icalbody(ISerializationContext ctx, ICalendar cal) //throws RecognitionException, TokenStreamException
         {
-            var sf = ctx.GetService(typeof (ISerializerFactory)) as ISerializerFactory;
-            var cf = ctx.GetService(typeof (ICalendarComponentFactory)) as ICalendarComponentFactory;
-            ICalendarComponent c;
-            ICalendarProperty p;
+            var sf = ctx.GetService(typeof(ISerializerFactory)) as ISerializerFactory;
+            var cf = ctx.GetService(typeof(ICalendarComponentFactory)) as ICalendarComponentFactory;
 
-            { // ( ... )*
-                for (;;)
+            for (;;)
+            {
+                switch (LA(1))
                 {
-                    switch (LA(1))
+                    case IANA_TOKEN:
+                    case X_NAME:
                     {
-                        case IANA_TOKEN:
-                        case X_NAME:
-                        {
-                            property(ctx, cal);
-                            break;
-                        }
-                        case BEGIN:
-                        {
-                            component(ctx, sf, cf, cal);
-                            break;
-                        }
-                        default:
-                        {
-                            goto _loop12_breakloop;
-                        }
+                        property(ctx, cal);
+                        break;
+                    }
+                    case BEGIN:
+                    {
+                        component(ctx, sf, cf, cal);
+                        break;
+                    }
+                    default:
+                    {
+                        goto _loop12_breakloop;
                     }
                 }
-                _loop12_breakloop:
-                ;
-            } // ( ... )*
+            }
+            _loop12_breakloop:
+            ;
         }
 
         public ICalendarProperty property(ISerializationContext ctx, ICalendarPropertyListContainer c) //throws RecognitionException, TokenStreamException
         {
-            ICalendarProperty p = null;
-            ;
-
-            IToken n = null;
-            IToken m = null;
-
-            string v;
-
-
+            ICalendarProperty p;
             {
                 switch (LA(1))
                 {
                     case IANA_TOKEN:
                     {
-                        n = LT(1);
+                        var n = LT(1);
                         match(IANA_TOKEN);
 
-                        p = new CalendarProperty(n.getLine(), n.getColumn());
-                        p.Name = n.getText().ToUpper();
+                        p = new CalendarProperty(n.getLine(), n.getColumn())
+                        {
+                            Name = n.getText().ToUpper()
+                        };
 
                         break;
                     }
                     case X_NAME:
                     {
-                        m = LT(1);
+                        var m = LT(1);
                         match(X_NAME);
 
-                        p = new CalendarProperty(m.getLine(), m.getColumn());
-                        p.Name = m.getText().ToUpper();
+                        p = new CalendarProperty(m.getLine(), m.getColumn())
+                        {
+                            Name = m.getText().ToUpper()
+                        };
 
                         break;
                     }
@@ -266,19 +252,13 @@ namespace Ical.Net.Serialization.iCalendar
                 }
             }
 
-            var processor = ctx.GetService(typeof (ISerializationProcessor<ICalendarProperty>)) as ISerializationProcessor<ICalendarProperty>;
+            var processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarProperty>)) as ISerializationProcessor<ICalendarProperty>;
             // Do some pre-processing on the property
-            if (processor != null)
-            {
-                processor.PreDeserialization(p);
-            }
+            processor?.PreDeserialization(p);
 
-            if (c != null)
-            {
-                // Add the property to the container, as the parent object(s)
-                // may be needed during deserialization.
-                c.Properties.Add(p);
-            }
+            // Add the property to the container, as the parent object(s)
+            // may be needed during deserialization.
+            c?.Properties.Add(p);
 
             // Push the property onto the serialization context stack
             ctx.Push(p);
@@ -301,7 +281,7 @@ namespace Ical.Net.Serialization.iCalendar
                 ;
             } // ( ... )*
             match(COLON);
-            v = value();
+            var v = value();
 
             // Deserialize the value of the property
             // into a concrete iCalendar data type,
@@ -313,8 +293,8 @@ namespace Ical.Net.Serialization.iCalendar
                 // Try to determine if this is was deserialized as a *list*
                 // of concrete types.
                 var targetType = dataMapSerializer.TargetType;
-                var listOfTargetType = typeof (IList<>).MakeGenericType(targetType);
-                if (listOfTargetType.IsAssignableFrom(deserialized.GetType()))
+                var listOfTargetType = typeof(IList<>).MakeGenericType(targetType);
+                if (listOfTargetType.IsInstanceOfType(deserialized))
                 {
                     // We deserialized a list - add each value to the
                     // resulting object.
@@ -347,10 +327,7 @@ namespace Ical.Net.Serialization.iCalendar
             } // ( ... )*
 
             // Do some final processing on the property:
-            if (processor != null)
-            {
-                processor.PostDeserialization(p);
-            }
+            processor?.PostDeserialization(p);
 
             // Notify that the property has been loaded
             p.OnLoaded();
@@ -364,11 +341,8 @@ namespace Ical.Net.Serialization.iCalendar
         public ICalendarComponent component(ISerializationContext ctx, ISerializerFactory sf, ICalendarComponentFactory cf, ICalendarObject o)
             //throws RecognitionException, TokenStreamException
         {
-            ICalendarComponent c = null;
-            ;
-
+            ICalendarComponent c;
             IToken n = null;
-            IToken m = null;
 
             match(BEGIN);
             match(COLON);
@@ -384,7 +358,7 @@ namespace Ical.Net.Serialization.iCalendar
                     }
                     case X_NAME:
                     {
-                        m = LT(1);
+                        var m = LT(1);
                         match(X_NAME);
                         c = cf.Build(m.getText().ToLower(), true);
                         break;
@@ -396,25 +370,19 @@ namespace Ical.Net.Serialization.iCalendar
                 }
             }
 
-            var processor = ctx.GetService(typeof (ISerializationProcessor<ICalendarComponent>)) as ISerializationProcessor<ICalendarComponent>;
+            var processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarComponent>)) as ISerializationProcessor<ICalendarComponent>;
             // Do some pre-processing on the component
-            if (processor != null)
-            {
-                processor.PreDeserialization(c);
-            }
+            processor?.PreDeserialization(c);
 
             SerializationUtil.OnDeserializing(c);
 
             // Push the component onto the serialization context stack
             ctx.Push(c);
 
-            if (o != null)
-            {
-                // Add the component as a child immediately, in case
-                // embedded components need to access this component,
-                // or the iCalendar itself.
-                o.AddChild(c);
-            }
+            // Add the component as a child immediately, in case
+            // embedded components need to access this component,
+            // or the iCalendar itself.
+            o?.AddChild(c);
 
             c.Line = n.getLine();
             c.Column = n.getColumn();
@@ -479,10 +447,7 @@ namespace Ical.Net.Serialization.iCalendar
             } // ( ... )*
 
             // Do some final processing on the component
-            if (processor != null)
-            {
-                processor.PostDeserialization(c);
-            }
+            processor?.PostDeserialization(c);
 
             // Notify that the component has been loaded
             c.OnLoaded();
@@ -498,37 +463,28 @@ namespace Ical.Net.Serialization.iCalendar
         public ICalendarParameter parameter(ISerializationContext ctx, ICalendarParameterCollectionContainer container)
             //throws RecognitionException, TokenStreamException
         {
-            ICalendarParameter p = null;
-            ;
+            ICalendarParameter p;
+            var values = new List<string>(128);
 
-            IToken n = null;
-            IToken m = null;
-
-            string v;
-            var values = new List<string>();
-
-
+            switch (LA(1))
             {
-                switch (LA(1))
+                case IANA_TOKEN:
                 {
-                    case IANA_TOKEN:
-                    {
-                        n = LT(1);
-                        match(IANA_TOKEN);
-                        p = new CalendarParameter(n.getText());
-                        break;
-                    }
-                    case X_NAME:
-                    {
-                        m = LT(1);
-                        match(X_NAME);
-                        p = new CalendarParameter(m.getText());
-                        break;
-                    }
-                    default:
-                    {
-                        throw new NoViableAltException(LT(1), getFilename());
-                    }
+                    var n = LT(1);
+                    match(IANA_TOKEN);
+                    p = new CalendarParameter(n.getText());
+                    break;
+                }
+                case X_NAME:
+                {
+                    var m = LT(1);
+                    match(X_NAME);
+                    p = new CalendarParameter(m.getText());
+                    break;
+                }
+                default:
+                {
+                    throw new NoViableAltException(LT(1), getFilename());
                 }
             }
 
@@ -536,7 +492,7 @@ namespace Ical.Net.Serialization.iCalendar
             ctx.Push(p);
 
             match(EQUAL);
-            v = param_value();
+            var v = param_value();
             values.Add(v);
             { // ( ... )*
                 for (;;)
@@ -558,10 +514,7 @@ namespace Ical.Net.Serialization.iCalendar
 
             p.SetValue(values);
 
-            if (container != null)
-            {
-                container.Parameters.Add(p);
-            }
+            container?.Parameters.Add(p);
 
             // Notify that the parameter has been loaded
             p.OnLoaded();
@@ -574,17 +527,14 @@ namespace Ical.Net.Serialization.iCalendar
 
         public string value() //throws RecognitionException, TokenStreamException
         {
-            var v = string.Empty;
-
             var sb = new StringBuilder();
-            string c;
 
             { // ( ... )*
                 for (;;)
                 {
                     if ((tokenSet_1_.member(LA(1))) && (tokenSet_2_.member(LA(2))) && (tokenSet_2_.member(LA(3))))
                     {
-                        c = value_char();
+                        var c = value_char();
                         sb.Append(c);
                     }
                     else
@@ -595,14 +545,13 @@ namespace Ical.Net.Serialization.iCalendar
                 _loop37_breakloop:
                 ;
             } // ( ... )*
-            v = sb.ToString();
+            var v = sb.ToString();
             return v;
         }
 
         public string param_value() //throws RecognitionException, TokenStreamException
         {
-            var v = string.Empty;
-            ;
+            string v;
 
 
             switch (LA(1))
@@ -651,18 +600,14 @@ namespace Ical.Net.Serialization.iCalendar
 
         public string paramtext() //throws RecognitionException, TokenStreamException
         {
-            string s = null;
-            ;
-
             var sb = new StringBuilder();
-            string c;
 
             { // ( ... )*
                 for (;;)
                 {
                     if ((tokenSet_3_.member(LA(1))))
                     {
-                        c = safe_char();
+                        var c = safe_char();
                         sb.Append(c);
                     }
                     else
@@ -673,16 +618,13 @@ namespace Ical.Net.Serialization.iCalendar
                 _loop34_breakloop:
                 ;
             } // ( ... )*
-            s = sb.ToString();
+            var s = sb.ToString();
             return s;
         }
 
         public string quoted_string() //throws RecognitionException, TokenStreamException
         {
-            var s = string.Empty;
-
             var sb = new StringBuilder();
-            string c;
 
             match(DQUOTE);
             { // ( ... )*
@@ -690,7 +632,7 @@ namespace Ical.Net.Serialization.iCalendar
                 {
                     if ((tokenSet_4_.member(LA(1))))
                     {
-                        c = qsafe_char();
+                        var c = qsafe_char();
                         sb.Append(c);
                     }
                     else
@@ -702,77 +644,47 @@ namespace Ical.Net.Serialization.iCalendar
                 ;
             } // ( ... )*
             match(DQUOTE);
-            s = sb.ToString();
+            var s = sb.ToString();
             return s;
         }
 
         public string safe_char() //throws RecognitionException, TokenStreamException
         {
-            var c = string.Empty;
-
-            IToken a = null;
-
-            {
-                a = LT(1);
-                match(tokenSet_3_);
-            }
-            c = a.getText();
+            var a = LT(1);
+            match(tokenSet_3_);
+            var c = a.getText();
             return c;
         }
 
         public string value_char() //throws RecognitionException, TokenStreamException
         {
-            var c = string.Empty;
-
-            IToken a = null;
-
-            {
-                a = LT(1);
-                match(tokenSet_1_);
-            }
-            c = a.getText();
+            var a = LT(1);
+            match(tokenSet_1_);
+            var c = a.getText();
             return c;
         }
 
         public string qsafe_char() //throws RecognitionException, TokenStreamException
         {
-            var c = string.Empty;
-
-            IToken a = null;
-
-            {
-                a = LT(1);
-                match(tokenSet_4_);
-            }
-            c = a.getText();
+            var a = LT(1);
+            match(tokenSet_4_);
+            var c = a.getText();
             return c;
         }
 
         public string tsafe_char() //throws RecognitionException, TokenStreamException
         {
-            var s = string.Empty;
-
-            IToken a = null;
-
-            {
-                a = LT(1);
-                match(tokenSet_5_);
-            }
-            s = a.getText();
+            var a = LT(1);
+            match(tokenSet_5_);
+            var s = a.getText();
             return s;
         }
 
         public string text_char() //throws RecognitionException, TokenStreamException
         {
-            var s = string.Empty;
-
-            IToken a = null;
-
-            {
-                a = LT(1);
-                match(tokenSet_6_);
-            }
-            s = a.getText();
+            var a = LT(1);
+            match(tokenSet_6_);
+            var s = a.getText();
             return s;
         }
 
@@ -780,14 +692,12 @@ namespace Ical.Net.Serialization.iCalendar
         {
             var s = string.Empty;
 
-            string t;
-
             { // ( ... )*
                 for (;;)
                 {
                     if ((tokenSet_6_.member(LA(1))))
                     {
-                        t = text_char();
+                        var t = text_char();
                         s += t;
                     }
                     else
@@ -805,10 +715,7 @@ namespace Ical.Net.Serialization.iCalendar
         {
             var s = string.Empty;
 
-            IToken n1 = null;
-            IToken n2 = null;
-
-            n1 = LT(1);
+            var n1 = LT(1);
             match(NUMBER);
             s += n1.getText();
             {
@@ -818,7 +725,7 @@ namespace Ical.Net.Serialization.iCalendar
                     {
                         match(DOT);
                         s += ".";
-                        n2 = LT(1);
+                        var n2 = LT(1);
                         match(NUMBER);
                         s += n2.getText();
                         break;
@@ -839,11 +746,10 @@ namespace Ical.Net.Serialization.iCalendar
 
         public string version_number() //throws RecognitionException, TokenStreamException
         {
+            //ToDo: StringBuilder
             var s = string.Empty;
 
-            string t;
-
-            t = number();
+            var t = number();
             s += t;
             {
                 switch (LA(1))
@@ -868,8 +774,6 @@ namespace Ical.Net.Serialization.iCalendar
             }
             return s;
         }
-
-        private void initializeFactory() {}
 
         public static readonly string[] tokenNames_ =
         {

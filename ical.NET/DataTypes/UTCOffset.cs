@@ -1,6 +1,5 @@
 using System;
 using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
 namespace Ical.Net.DataTypes
@@ -11,7 +10,7 @@ namespace Ical.Net.DataTypes
     [Serializable]
     public class UtcOffset : EncodableDataType, IUtcOffset
     {
-        public TimeSpan Offset { get; private set; }
+        public TimeSpan Offset { get; }
 
         public bool Positive => Offset >= TimeSpan.Zero;
 
@@ -66,16 +65,6 @@ namespace Ical.Net.DataTypes
         public override int GetHashCode()
         {
             return Offset.GetHashCode();
-        }
-
-        public override void CopyFrom(ICopyable obj)
-        {
-            base.CopyFrom(obj);
-            if (obj is IUtcOffset)
-            {
-                var utco = (IUtcOffset) obj;
-                Offset = utco.Offset;
-            }
         }
 
         public override string ToString()

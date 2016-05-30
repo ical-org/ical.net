@@ -10,11 +10,6 @@ namespace Ical.Net.General
     [Serializable]
     public class CalendarObjectList : GroupedList<string, ICalendarObject>, ICalendarObjectList<ICalendarObject>
     {
-        ICalendarObject _parent;
-
-        public CalendarObjectList(ICalendarObject parent)
-        {
-            _parent = parent;
-        }
+        public CalendarObjectList(ICalendarObject parent) {}
     }
 }

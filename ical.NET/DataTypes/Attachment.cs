@@ -35,7 +35,7 @@ namespace Ical.Net.DataTypes
             _mData = value;
         }
 
-        void Initialize()
+        private void Initialize()
         {
             _mEncoding = System.Text.Encoding.Unicode;
         }
@@ -47,48 +47,28 @@ namespace Ical.Net.DataTypes
             Initialize();
         }
 
+        protected bool Equals(Attachment other)
+        {
+            return Equals(_mUri, other._mUri) && Equals(_mData, other._mData) && Equals(_mEncoding, other._mEncoding);
+        }
+
         public override bool Equals(object obj)
         {
-            if (obj is IAttachment)
-            {
-                var a = (IAttachment) obj;
-
-                if (Data == null && a.Data == null)
-                {
-                    return Uri.Equals(a.Uri);
-                }
-                if (Data == null || a.Data == null)
-                {
-                    // One item is null, but the other isn't                    
-                    return false;
-                }
-                if (Data.Length != a.Data.Length)
-                {
-                    return false;
-                }
-                for (var i = 0; i < Data.Length; i++)
-                {
-                    if (Data[i] != a.Data[i])
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            return base.Equals(obj);
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((Attachment) obj);
         }
 
         public override int GetHashCode()
         {
-            if (Uri != null)
+            unchecked
             {
-                return Uri.GetHashCode();
+                var hashCode = _mUri?.GetHashCode() ?? 0;
+                hashCode = (hashCode * 397) ^ (_mData?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (_mEncoding?.GetHashCode() ?? 0);
+                return hashCode;
             }
-            if (Data != null)
-            {
-                return Data.GetHashCode();
-            }
-            return base.GetHashCode();
         }
 
         public override void CopyFrom(ICopyable obj)
@@ -143,14 +123,9 @@ namespace Ical.Net.DataTypes
             }
             set
             {
-                if (value != null)
-                {
-                    Data = _mEncoding.GetBytes(value);
-                }
-                else
-                {
-                    Data = null;
-                }
+                Data = value == null
+                    ? null
+                    : _mEncoding.GetBytes(value);
             }
         }
 

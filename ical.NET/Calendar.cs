@@ -225,7 +225,7 @@ namespace Ical.Net
 
                 var evt = new AutoResetEvent(false);
 
-                string str = null;
+                string str = string.Empty;
                 request.BeginGetResponse(delegate(IAsyncResult result)
                 {
                     var e = Encoding.UTF8;
@@ -237,7 +237,7 @@ namespace Ical.Net
                             // Try to determine the content encoding
                             try
                             {
-                                var keys = new List<string>(resp.Headers.AllKeys);
+                                var keys = new HashSet<string>(resp.Headers.AllKeys);
                                 if (keys.Contains("Content-Encoding"))
                                 {
                                     e = Encoding.GetEncoding(resp.Headers["Content-Encoding"]);
@@ -249,11 +249,9 @@ namespace Ical.Net
                             }
 
                             using (var stream = resp.GetResponseStream())
+                            using (var sr = new StreamReader(stream, e))
                             {
-                                using (var sr = new StreamReader(stream, e))
-                                {
-                                    str = sr.ReadToEnd();
-                                }
+                                str = sr.ReadToEnd();
                             }
                         }
                     }
@@ -346,31 +344,19 @@ namespace Ical.Net
             unchecked
             {
                 var hashCode = base.GetHashCode();
-                hashCode = (hashCode * 397) ^ (_mUniqueComponents != null ? _mUniqueComponents.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (_mEvents != null ? _mEvents.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (_mTodos != null ? _mTodos.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (_mJournals != null ? _mJournals.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (_mFreeBusy != null ? _mFreeBusy.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (_mTimeZones != null ? _mTimeZones.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_mUniqueComponents?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (_mEvents?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (_mTodos?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (_mJournals?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (_mFreeBusy?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (_mTimeZones?.GetHashCode() ?? 0);
                 return hashCode;
             }
         }
 
         public virtual IUniqueComponentList<IUniqueComponent> UniqueComponents => _mUniqueComponents;
 
-        public virtual IEnumerable<IRecurrable> RecurringItems
-        {
-            get
-            {
-                foreach (object obj in Children)
-                {
-                    if (obj is IRecurrable)
-                    {
-                        yield return (IRecurrable) obj;
-                    }
-                }
-            }
-        }
+        public virtual IEnumerable<IRecurrable> RecurringItems => Children.OfType<IRecurrable>();
 
         /// <summary>
         /// A collection of <see cref="Components.Event"/> components in the iCalendar.
@@ -549,9 +535,7 @@ namespace Ical.Net
         /// <param name="endTime">The ending date range</param>
         public virtual HashSet<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
         {
-            var occurrences = new HashSet<Occurrence>();
-
-            occurrences = new HashSet<Occurrence>(RecurringItems.OfType<T>().SelectMany(recurrable => recurrable.GetOccurrences(startTime, endTime)));
+            var occurrences = new HashSet<Occurrence>(RecurringItems.OfType<T>().SelectMany(recurrable => recurrable.GetOccurrences(startTime, endTime)));
 
             occurrences.ExceptWith(
                 occurrences.Where(o => o.Source is IUniqueComponent)
@@ -614,13 +598,11 @@ namespace Ical.Net
                 ProductId = c.ProductId;
                 Scale = c.Scale;
 
-                foreach (var p in c.Properties)
+                foreach (var p in c.Properties.Where(p => !Properties.ContainsKey(p.Name)))
                 {
-                    if (!Properties.ContainsKey(p.Name))
-                    {
-                        Properties.Add(p.Copy<ICalendarProperty>());
-                    }
+                    Properties.Add(p.Copy<ICalendarProperty>());
                 }
+
                 foreach (var child in c.Children)
                 {
                     if (child is IUniqueComponent)

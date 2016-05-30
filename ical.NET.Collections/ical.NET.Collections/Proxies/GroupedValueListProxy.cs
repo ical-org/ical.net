@@ -12,15 +12,14 @@ namespace ical.NET.Collections.Proxies
     /// </summary>
 
     [Serializable]
-
     public class GroupedValueListProxy<TGroup, TInterface, TItem, TOriginalValue, TNewValue> :
         IGroupedValueListProxy<TInterface, TNewValue>
         where TInterface : class, IGroupedObject<TGroup>, IValueObject<TOriginalValue>
         where TItem : new()        
     {
-        IGroupedValueList<TGroup, TInterface, TItem, TOriginalValue> _realObject;
-        TGroup _group;
-        TInterface _container;
+        private readonly IGroupedValueList<TGroup, TInterface, TItem, TOriginalValue> _realObject;
+        private readonly TGroup _group;
+        private TInterface _container;
 
         public GroupedValueListProxy(IGroupedValueList<TGroup, TInterface, TItem, TOriginalValue> realObject, TGroup group)
         {
@@ -28,34 +27,38 @@ namespace ical.NET.Collections.Proxies
             _group = group;
         }
 
-        TInterface EnsureContainer()
+        private TInterface EnsureContainer()
         {
-            if (_container == null)
+            if (_container != null)
             {
-                // Find an item that matches our group
-                _container = Items.FirstOrDefault();
+                return _container;
+            }
 
-                // If no item is found, create a new object and add it to the list
-                if (Equals(_container, default(TInterface)))
+            // Find an item that matches our group
+            _container = Items.FirstOrDefault();
+
+            // If no item is found, create a new object and add it to the list
+            if (Equals(_container, default(TInterface)))
+            {
+                var container = new TItem();
+                if (!(container is TInterface))
                 {
-                    var container = new TItem();
-                    if (!(container is TInterface))
-                        throw new Exception("Could not create a container for the value - the container is not of type " + typeof(TInterface).GetType().Name);
-                    _container = (TInterface)(object)container;
-                    _container.Group = _group;
-                    _realObject.Add(_container);
+                    throw new Exception("Could not create a container for the value - the container is not of type " + typeof(TInterface).Name);
                 }
+                _container = (TInterface)(object)container;
+                _container.Group = _group;
+                _realObject.Add(_container);
             }
             return _container;
         }
 
-        void IterateValues(Func<IValueObject<TOriginalValue>, int, int, bool> action)
+        private void IterateValues(Func<IValueObject<TOriginalValue>, int, int, bool> action)
         {
             var i = 0;
             foreach (var obj in _realObject)
             {
                 // Get the number of items of the target value i this object
-                var count = obj.Values != null ? obj.Values.OfType<TNewValue>().Count() : 0;
+                var count = obj.Values?.OfType<TNewValue>().Count() ?? 0;
 
                 // Perform some action on this item
                 if (!action(obj, i, count))
@@ -65,28 +68,7 @@ namespace ical.NET.Collections.Proxies
             }
         }
 
-        IValueObject<TOriginalValue> ObjectForIndex(int index, ref int relativeIndex)
-        {
-            IValueObject<TOriginalValue> obj = null;
-            var retVal = -1;
-
-            IterateValues((o, i, count) =>
-                {
-                    // Determine if this index is found within this object
-                    if (index >= i && index < count)
-                    {
-                        retVal = index - i;
-                        obj = o;
-                        return false;
-                    }
-                    return true;
-                });
-
-            relativeIndex = retVal;
-            return obj;            
-        }
-
-        IEnumerator<TNewValue> GetEnumeratorInternal()
+        private IEnumerator<TNewValue> GetEnumeratorInternal()
         {
             return Items
                 .Where(o => o.ValueCount > 0)
@@ -115,16 +97,7 @@ namespace ical.NET.Collections.Proxies
             }
         }
 
-        public virtual bool Contains(TNewValue item)
-        {
-            if (item is TOriginalValue)
-            {
-                return Items
-                    .Where(o => o.ContainsValue((TOriginalValue)(object)item))
-                    .Any();
-            }
-            return false;
-        }
+        public virtual bool Contains(TNewValue item) => Items.Any(o => o.ContainsValue((TOriginalValue)(object)item));
 
         public virtual void CopyTo(TNewValue[] array, int arrayIndex)
         {
@@ -135,63 +108,53 @@ namespace ical.NET.Collections.Proxies
                 .CopyTo(array, arrayIndex);
         }
         
-        public virtual int Count
-        {
-            get
-            {
-                return Items.Sum(o => o.ValueCount);
-            }
-        }
+        public virtual int Count => Items.Sum(o => o.ValueCount);
 
         public virtual bool IsReadOnly => false;
 
         public virtual bool Remove(TNewValue item)
         {
-            if (item is TOriginalValue)
+            if (!(item is TOriginalValue))
             {
-                var value = (TOriginalValue)(object)item;
-
-                var container = Items
-                    .Where(o => o.ContainsValue(value))
-                    .FirstOrDefault();
-
-                if (container != null)
-                {
-                    container.RemoveValue(value);
-                    return true;
-                }
+                return false;
             }
-            return false;
+
+            var value = (TOriginalValue)(object)item;
+            var container = Items.FirstOrDefault(o => o.ContainsValue(value));
+
+            if (container == null)
+            {
+                return false;
+            }
+
+            container.RemoveValue(value);
+            return true;
         }
 
-        public virtual IEnumerator<TNewValue> GetEnumerator()
-        {
-            return GetEnumeratorInternal();        
-        }
+        public virtual IEnumerator<TNewValue> GetEnumerator() => GetEnumeratorInternal();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumeratorInternal();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumeratorInternal();
 
         public virtual int IndexOf(TNewValue item)
         {
             var index = -1;
 
-            if (item is TOriginalValue)
+            if (!(item is TOriginalValue))
             {
-                var value = (TOriginalValue)(object)item;
-                IterateValues((o, i, count) =>
-                    {
-                        if (o.Values != null && o.Values.Contains(value))
-                        {
-                            var list = o.Values.ToList();
-                            index = i + list.IndexOf(value);
-                            return false;
-                        }
-                        return true;
-                    });
+                return index;
             }
+
+            var value = (TOriginalValue)(object)item;
+            IterateValues((o, i, count) =>
+            {
+                if (o.Values != null && o.Values.Contains(value))
+                {
+                    var list = o.Values.ToList();
+                    index = i + list.IndexOf(value);
+                    return false;
+                }
+                return true;
+            });
 
             return index;
         }
@@ -199,22 +162,23 @@ namespace ical.NET.Collections.Proxies
         public virtual void Insert(int index, TNewValue item)
         {
             IterateValues((o, i, count) =>
-                {
-                    var value = (TOriginalValue)(object)item;
+            {
+                var value = (TOriginalValue)(object)item;
 
-                    // Determine if this index is found within this object
-                    if (index >= i && index < count)
-                    {
-                        // Convert the items to a list
-                        var items = o.Values.ToList();
-                        // Insert the item at the relative index within the list
-                        items.Insert(index - i, value);
-                        // Set the new list
-                        o.SetValue(items);
-                        return false;
-                    }
+                // Determine if this index is found within this object
+                if (index < i || index >= count)
+                {
                     return true;
-                });
+                }
+
+                // Convert the items to a list
+                var items = o.Values.ToList();
+                // Insert the item at the relative index within the list
+                items.Insert(index - i, value);
+                // Set the new list
+                o.SetValue(items);
+                return false;
+            });
         }
 
         public virtual void RemoveAt(int index)
@@ -262,14 +226,8 @@ namespace ical.NET.Collections.Proxies
             }
         }
 
-        public virtual IEnumerable<TInterface> Items
-        {
-            get
-            {
-                if (_group != null)
-                    return _realObject.AllOf(_group);
-                return _realObject;
-            }
-        }
+        public virtual IEnumerable<TInterface> Items => _group == null
+            ? _realObject
+            : _realObject.AllOf(_group);
     }
 }

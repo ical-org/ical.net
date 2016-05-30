@@ -53,11 +53,9 @@ namespace ical.NET.UnitTests
                 occurrences.Count,
                 "There should be exactly " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
 
-            IRecurrencePattern pattern = null;
-            if (evt != null && evt.RecurrenceRules.Count > 0)
+            if (evt.RecurrenceRules.Count > 0)
             {
                 Assert.AreEqual(1, evt.RecurrenceRules.Count);
-                pattern = evt.RecurrenceRules[0];
             }
 
             for (var i = 0; i < dateTimes.Length; i++)
@@ -1869,23 +1867,15 @@ namespace ical.NET.UnitTests
         {
             var evt = new AutoResetEvent(false);
 
-            var thread = new Thread((ThreadStart)
-                delegate
-                {
-                    try
-                    {
-                        var iCal = Calendar.LoadFromFile(@"Calendars\Recurrence\Secondly1.ics")[0];
-                        var occurrences = iCal.GetOccurrences(
-                            new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
-                            new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
-                    }
-                    catch(EvaluationEngineException)
-                    {
-                        evt.Set();
-                    }
-                }
-            );
-            thread.Start();
+            try
+            {
+                var iCal = Calendar.LoadFromFile(@"Calendars\Recurrence\Secondly1.ics")[0];
+                var occurrences = iCal.GetOccurrences(new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid), new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
+            }
+            catch (EvaluationEngineException)
+            {
+                evt.Set();
+            }
 
             Assert.IsTrue(evt.WaitOne(2000), "Evaluation engine should have failed.");
         }
@@ -2546,7 +2536,6 @@ namespace ical.NET.UnitTests
         public void Bug3007244()
         {
             var iCal = Calendar.LoadFromFile(@"Calendars\Recurrence\Bug3007244.ics")[0];
-            var pattern = iCal.Events.First().RecurrenceRules[0];
             
             EventOccurrenceTest(
                 iCal,
@@ -2601,10 +2590,12 @@ namespace ical.NET.UnitTests
         [Test, Category("Recurrence")]
         public void Bug3178652()
         {
-            var evt = new Event();
-            evt.Start = new CalDateTime(2011, 1, 29, 11, 0, 0);
-            evt.Duration = TimeSpan.FromHours(1.5);
-            evt.Summary = "29th February Test";
+            var evt = new Event
+            {
+                Start = new CalDateTime(2011, 1, 29, 11, 0, 0),
+                Duration = TimeSpan.FromHours(1.5),
+                Summary = "29th February Test"
+            };
 
             var pattern = new RecurrencePattern {
                 Frequency = FrequencyType.Monthly,
@@ -2645,34 +2636,36 @@ namespace ical.NET.UnitTests
             var iCal = Calendar.LoadFromFile(@"Calendars\Serialization\USHolidays.ics")[0];
 
             Assert.IsNotNull(iCal, "iCalendar was not loaded.");
-            var items = new Hashtable();
-            items["Christmas"] = new CalDateTime(2006, 12, 25);
-            items["Thanksgiving"] = new CalDateTime(2006, 11, 23);
-            items["Veteran's Day"] = new CalDateTime(2006, 11, 11);
-            items["Halloween"] = new CalDateTime(2006, 10, 31);
-            items["Daylight Saving Time Ends"] = new CalDateTime(2006, 10, 29);
-            items["Columbus Day"] = new CalDateTime(2006, 10, 9);
-            items["Labor Day"] = new CalDateTime(2006, 9, 4);
-            items["Independence Day"] = new CalDateTime(2006, 7, 4);
-            items["Father's Day"] = new CalDateTime(2006, 6, 18);
-            items["Flag Day"] = new CalDateTime(2006, 6, 14);
-            items["John F. Kennedy's Birthday"] = new CalDateTime(2006, 5, 29);
-            items["Memorial Day"] = new CalDateTime(2006, 5, 29);
-            items["Mother's Day"] = new CalDateTime(2006, 5, 14);
-            items["Cinco de Mayo"] = new CalDateTime(2006, 5, 5);
-            items["Earth Day"] = new CalDateTime(2006, 4, 22);
-            items["Easter"] = new CalDateTime(2006, 4, 16);
-            items["Tax Day"] = new CalDateTime(2006, 4, 15);
-            items["Daylight Saving Time Begins"] = new CalDateTime(2006, 4, 2);
-            items["April Fool's Day"] = new CalDateTime(2006, 4, 1);
-            items["St. Patrick's Day"] = new CalDateTime(2006, 3, 17);
-            items["Washington's Birthday"] = new CalDateTime(2006, 2, 22);
-            items["President's Day"] = new CalDateTime(2006, 2, 20);
-            items["Valentine's Day"] = new CalDateTime(2006, 2, 14);
-            items["Lincoln's Birthday"] = new CalDateTime(2006, 2, 12);
-            items["Groundhog Day"] = new CalDateTime(2006, 2, 2);
-            items["Martin Luther King, Jr. Day"] = new CalDateTime(2006, 1, 16);
-            items["New Year's Day"] = new CalDateTime(2006, 1, 1);
+            var items = new Hashtable
+            {
+                ["Christmas"] = new CalDateTime(2006, 12, 25),
+                ["Thanksgiving"] = new CalDateTime(2006, 11, 23),
+                ["Veteran's Day"] = new CalDateTime(2006, 11, 11),
+                ["Halloween"] = new CalDateTime(2006, 10, 31),
+                ["Daylight Saving Time Ends"] = new CalDateTime(2006, 10, 29),
+                ["Columbus Day"] = new CalDateTime(2006, 10, 9),
+                ["Labor Day"] = new CalDateTime(2006, 9, 4),
+                ["Independence Day"] = new CalDateTime(2006, 7, 4),
+                ["Father's Day"] = new CalDateTime(2006, 6, 18),
+                ["Flag Day"] = new CalDateTime(2006, 6, 14),
+                ["John F. Kennedy's Birthday"] = new CalDateTime(2006, 5, 29),
+                ["Memorial Day"] = new CalDateTime(2006, 5, 29),
+                ["Mother's Day"] = new CalDateTime(2006, 5, 14),
+                ["Cinco de Mayo"] = new CalDateTime(2006, 5, 5),
+                ["Earth Day"] = new CalDateTime(2006, 4, 22),
+                ["Easter"] = new CalDateTime(2006, 4, 16),
+                ["Tax Day"] = new CalDateTime(2006, 4, 15),
+                ["Daylight Saving Time Begins"] = new CalDateTime(2006, 4, 2),
+                ["April Fool's Day"] = new CalDateTime(2006, 4, 1),
+                ["St. Patrick's Day"] = new CalDateTime(2006, 3, 17),
+                ["Washington's Birthday"] = new CalDateTime(2006, 2, 22),
+                ["President's Day"] = new CalDateTime(2006, 2, 20),
+                ["Valentine's Day"] = new CalDateTime(2006, 2, 14),
+                ["Lincoln's Birthday"] = new CalDateTime(2006, 2, 12),
+                ["Groundhog Day"] = new CalDateTime(2006, 2, 2),
+                ["Martin Luther King, Jr. Day"] = new CalDateTime(2006, 1, 16),
+                ["New Year's Day"] = new CalDateTime(2006, 1, 1)
+            };
 
             var occurrences = iCal.GetOccurrences(
                 new CalDateTime(2006, 1, 1),
@@ -2781,9 +2774,7 @@ namespace ical.NET.UnitTests
             var laterDateAndTime = new CalDateTime(2009, 11, 19, 11, 0, 0);
             var end = new CalDateTime(2009, 11, 23, 0, 0, 0);
 
-            HashSet<Occurrence> occurrences = null;
-
-            occurrences = evt.GetOccurrences(previousDateAndTime, end);
+            var occurrences = evt.GetOccurrences(previousDateAndTime, end);
             Assert.AreEqual(5, occurrences.Count);
 
             occurrences = evt.GetOccurrences(previousDateOnly, end);
@@ -2851,7 +2842,7 @@ namespace ical.NET.UnitTests
             evt.RecurrenceRules.Add(recur);
 
             var serializer = new RecurrencePatternSerializer();
-            Assert.IsTrue(string.Compare(serializer.SerializeToString(recur), "FREQ=DAILY;COUNT=3;BYDAY=MO,WE,FR") == 0,
+            Assert.IsTrue(string.Compare(serializer.SerializeToString(recur), "FREQ=DAILY;COUNT=3;BYDAY=MO,WE,FR", StringComparison.Ordinal) == 0,
                 "Serialized recurrence string is incorrect");
         }
 

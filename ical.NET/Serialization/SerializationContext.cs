@@ -33,13 +33,15 @@ namespace Ical.Net.Serialization
                 // and something goes wrong and the objects don't get popped off the stack,
                 // we don't need to worry (as much) about a memory leak, because the
                 // objects weren't pushed onto a stack referenced by a static variable.
-                var ctx = new SerializationContext();
-                ctx._mServiceProvider = _default._mServiceProvider;
+                var ctx = new SerializationContext
+                {
+                    _mServiceProvider = _default._mServiceProvider
+                };
                 return ctx;
             }
         }
 
-        private Stack<WeakReference> _mStack = new Stack<WeakReference>();
+        private readonly Stack<WeakReference> _mStack = new Stack<WeakReference>();
         private ServiceProvider _mServiceProvider = new ServiceProvider();
 
         public SerializationContext()

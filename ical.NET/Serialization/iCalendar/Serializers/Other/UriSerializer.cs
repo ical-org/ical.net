@@ -25,8 +25,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 var co = SerializationContext.Peek() as ICalendarObject;
                 if (co != null)
                 {
-                    var dt = new EncodableDataType();
-                    dt.AssociatedObject = co;
+                    var dt = new EncodableDataType
+                    {
+                        AssociatedObject = co
+                    };
                     return Encode(dt, uri.OriginalString);
                 }
                 return uri.OriginalString;
@@ -43,8 +45,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 var co = SerializationContext.Peek() as ICalendarObject;
                 if (co != null)
                 {
-                    var dt = new EncodableDataType();
-                    dt.AssociatedObject = co;
+                    var dt = new EncodableDataType
+                    {
+                        AssociatedObject = co
+                    };
                     value = Decode(dt, value);
                 }
 

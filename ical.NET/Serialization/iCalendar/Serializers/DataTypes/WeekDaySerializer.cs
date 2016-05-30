@@ -40,21 +40,21 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             value = Decode(ds, value);
 
             var match = DayOfWeek.Match(value);
-            if (match.Success)
+            if (!match.Success)
             {
-                if (match.Groups[2].Success)
-                {
-                    ds.Offset = Convert.ToInt32(match.Groups[2].Value);
-                    if (match.Groups[1].Success && match.Groups[1].Value.Contains("-"))
-                    {
-                        ds.Offset *= -1;
-                    }
-                }
-                ds.DayOfWeek = RecurrencePatternSerializer.GetDayOfWeek(match.Groups[3].Value);
-                return ds;
+                return null;
             }
 
-            return null;
+            if (match.Groups[2].Success)
+            {
+                ds.Offset = Convert.ToInt32(match.Groups[2].Value);
+                if (match.Groups[1].Success && match.Groups[1].Value.Contains("-"))
+                {
+                    ds.Offset *= -1;
+                }
+            }
+            ds.DayOfWeek = RecurrencePatternSerializer.GetDayOfWeek(match.Groups[3].Value);
+            return ds;
         }
     }
 }

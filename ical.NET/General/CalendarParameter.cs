@@ -12,7 +12,7 @@ namespace Ical.Net.General
     [Serializable]
     public class CalendarParameter : CalendarObject, ICalendarParameter
     {
-        List<string> _values;
+        private List<string> _values;
 
         public CalendarParameter()
         {
@@ -39,9 +39,9 @@ namespace Ical.Net.General
             }
         }
 
-        void Initialize()
+        private void Initialize()
         {
-            _values = new List<string>();
+            _values = new List<string>(128);
         }
 
         protected override void OnDeserializing(StreamingContext context)
@@ -56,12 +56,9 @@ namespace Ical.Net.General
             base.CopyFrom(c);
 
             var p = c as ICalendarParameter;
-            if (p != null)
+            if (p?.Values != null)
             {
-                if (p.Values != null)
-                {
-                    _values = new List<string>(p.Values);
-                }
+                _values = new List<string>(p.Values);
             }
         }
 
@@ -70,10 +67,7 @@ namespace Ical.Net.General
 
         protected void OnValueChanged(IEnumerable<string> removedValues, IEnumerable<string> addedValues)
         {
-            if (ValueChanged != null)
-            {
-                ValueChanged(this, new ValueChangedEventArgs<string>(removedValues, addedValues));
-            }
+            ValueChanged?.Invoke(this, new ValueChangedEventArgs<string>(removedValues, addedValues));
         }
 
         public virtual IEnumerable<string> Values => _values;
@@ -83,7 +77,7 @@ namespace Ical.Net.General
             return _values.Contains(value);
         }
 
-        public virtual int ValueCount => _values != null ? _values.Count : 0;
+        public virtual int ValueCount => _values?.Count ?? 0;
 
         public virtual void SetValue(string value)
         {
@@ -114,8 +108,9 @@ namespace Ical.Net.General
             // Remove all previous values
             var removedValues = _values.ToList();
             _values.Clear();
-            _values.AddRange(values);
-            OnValueChanged(removedValues, values);
+            var materializedValues = values.ToList();
+            _values.AddRange(materializedValues);
+            OnValueChanged(removedValues, materializedValues);
         }
 
         public virtual void AddValue(string value)
@@ -139,11 +134,7 @@ namespace Ical.Net.General
         {
             get
             {
-                if (Values != null)
-                {
-                    return Values.FirstOrDefault();
-                }
-                return default(string);
+                return Values?.FirstOrDefault();
             }
             set { SetValue(value); }
         }

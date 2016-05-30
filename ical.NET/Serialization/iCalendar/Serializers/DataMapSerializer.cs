@@ -37,22 +37,14 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             get
             {
                 ISerializer serializer = GetMappedSerializer();
-                if (serializer != null)
-                {
-                    return serializer.TargetType;
-                }
-                return null;
+                return serializer?.TargetType;
             }
         }
 
         public override string SerializeToString(object obj)
         {
             var serializer = GetMappedSerializer();
-            if (serializer != null)
-            {
-                return serializer.SerializeToString(obj);
-            }
-            return null;
+            return serializer?.SerializeToString(obj);
         }
 
         public override object Deserialize(TextReader tr)

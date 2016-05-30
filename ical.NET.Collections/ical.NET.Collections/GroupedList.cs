@@ -17,17 +17,17 @@ namespace ical.NET.Collections
         IGroupedList<TGroup, TItem>
         where TItem : class, IGroupedObject<TGroup>
     {
-        List<IMultiLinkedList<TItem>> _lists = new List<IMultiLinkedList<TItem>>();
-        Dictionary<TGroup, IMultiLinkedList<TItem>> _dictionary = new Dictionary<TGroup, IMultiLinkedList<TItem>>();
+        private readonly List<IMultiLinkedList<TItem>> _lists = new List<IMultiLinkedList<TItem>>();
+        private readonly Dictionary<TGroup, IMultiLinkedList<TItem>> _dictionary = new Dictionary<TGroup, IMultiLinkedList<TItem>>();
 
-        TItem SubscribeToKeyChanges(TItem item)
+        private TItem SubscribeToKeyChanges(TItem item)
         {
             if (item != null)
                 item.GroupChanged += item_GroupChanged;
             return item;
         }
 
-        TItem UnsubscribeFromKeyChanges(TItem item)
+        private TItem UnsubscribeFromKeyChanges(TItem item)
         {
             if (item != null)
                 item.GroupChanged -= item_GroupChanged;
@@ -37,12 +37,12 @@ namespace ical.NET.Collections
         protected virtual TGroup GroupModifier(TGroup group)
         {
             if (group == null)
-                throw new ArgumentNullException("The item's group cannot be null.");
+                throw new ArgumentNullException(nameof(group), "The item's group cannot be null.");
 
             return group;
         }
 
-        IMultiLinkedList<TItem> EnsureList(TGroup group, bool createIfNecessary)
+        private IMultiLinkedList<TItem> EnsureList(TGroup group, bool createIfNecessary)
         {
             if (!_dictionary.ContainsKey(group))
             {
@@ -70,23 +70,18 @@ namespace ical.NET.Collections
             return null;
         }
 
-        IMultiLinkedList<TItem> ListForIndex(int index, out int relativeIndex)
+        private IMultiLinkedList<TItem> ListForIndex(int index, out int relativeIndex)
         {
-            foreach (var list in _lists)
+            foreach (var list in _lists.Where(list => list.StartIndex <= index && list.ExclusiveEnd > index))
             {
-                var startIndex = list.StartIndex;
-                if (list.StartIndex <= index &&
-                    list.ExclusiveEnd > index)
-                {
-                    relativeIndex = index - list.StartIndex;
-                    return list;
-                }
+                relativeIndex = index - list.StartIndex;
+                return list;
             }
             relativeIndex = -1;
             return null;
         }
 
-        void item_GroupChanged(object sender, ObjectEventArgs<TGroup, TGroup> e)
+        private void item_GroupChanged(object sender, ObjectEventArgs<TGroup, TGroup> e)
         {
             var oldValue = e.First;
             var newValue = e.Second;
@@ -135,14 +130,12 @@ namespace ical.NET.Collections
 
         protected void OnItemAdded(TItem obj, int index)
         {
-            if (ItemAdded != null)
-                ItemAdded(this, new ObjectEventArgs<TItem, int>(obj, index));
+            ItemAdded?.Invoke(this, new ObjectEventArgs<TItem, int>(obj, index));
         }
 
         protected void OnItemRemoved(TItem obj, int index)
         {
-            if (ItemRemoved != null)
-                ItemRemoved(this, new ObjectEventArgs<TItem, int>(obj, index));
+            ItemRemoved?.Invoke(this, new ObjectEventArgs<TItem, int>(obj, index));
         }
 
         public virtual void Add(TItem item)
@@ -188,9 +181,6 @@ namespace ical.NET.Collections
                 // Get the list associated with the group
                 var list = _dictionary[group].ToArray();
                 
-                // Save the number of items in the list
-                var count = list.Length;
-
                 // Save the starting index of the list
                 var startIndex = _dictionary[group].StartIndex;
 
@@ -200,7 +190,9 @@ namespace ical.NET.Collections
 
                 // Notify that each of these items were removed
                 for (var i = list.Length - 1; i >= 0; i--)
+                {
                     OnItemRemoved(UnsubscribeFromKeyChanges(list[i]), startIndex + i);
+                }
             }
         }
 
@@ -256,50 +248,51 @@ namespace ical.NET.Collections
         public virtual bool Remove(TItem obj)
         {
             var group = GroupModifier(obj.Group);
-            if (_dictionary.ContainsKey(group))
+            if (!_dictionary.ContainsKey(group))
             {
-                var items = _dictionary[group];
-                var index = items.IndexOf(obj);
-
-                if (index >= 0)
-                {
-                    var item = items[index];
-                    items.RemoveAt(index);
-                    OnItemRemoved(UnsubscribeFromKeyChanges(obj), index);
-                    return true;
-                }
+                return false;
             }
-            return false;
+
+            var items = _dictionary[group];
+            var index = items.IndexOf(obj);
+
+            if (index < 0)
+            {
+                return false;
+            }
+
+            items.RemoveAt(index);
+            OnItemRemoved(UnsubscribeFromKeyChanges(obj), index);
+            return true;
         }
 
         public virtual bool Remove(TGroup group)
         {
             group = GroupModifier(group);
-            if (_dictionary.ContainsKey(group))
+            if (!_dictionary.ContainsKey(group))
             {
-                var list = _dictionary[group];
-
-                for (var i = list.Count - 1; i >= 0; i--)
-                {
-                    var obj = list[i];
-                    list.RemoveAt(i);
-                    OnItemRemoved(UnsubscribeFromKeyChanges(obj), list.StartIndex + i);
-                }
-                return true;
+                return false;
             }
-            return false;
+
+            var list = _dictionary[group];
+            for (var i = list.Count - 1; i >= 0; i--)
+            {
+                var obj = list[i];
+                list.RemoveAt(i);
+                OnItemRemoved(UnsubscribeFromKeyChanges(obj), list.StartIndex + i);
+            }
+            return true;
         }
 
         public virtual void SortKeys(IComparer<TGroup> comparer = null)
         {
-            var keys = _dictionary.Keys.ToArray();
-
             _lists.Clear();
 
             IMultiLinkedList<TItem> previous = null;
-            foreach (var group in _dictionary.Keys.OrderBy(k => k, comparer))
+            foreach (var list in _dictionary.Keys
+                .OrderBy(k => k, comparer)
+                .Select(group => _dictionary[group]))
             {
-                var list = _dictionary[group];
                 if (previous == null)
                 {
                     previous = list;
@@ -319,9 +312,7 @@ namespace ical.NET.Collections
         public virtual bool Contains(TItem item)
         {
             var group = GroupModifier(item.Group);
-            if (_dictionary.ContainsKey(group))
-                return _dictionary[group].Contains(item);
-            return false;
+            return _dictionary.ContainsKey(group) && _dictionary[group].Contains(item);
         }
 
         public virtual void CopyTo(TItem[] array, int arrayIndex)
@@ -335,23 +326,26 @@ namespace ical.NET.Collections
         {
             int relativeIndex;
             var list = ListForIndex(index, out relativeIndex);
-            if (list != null)
+            if (list == null)
             {
-                list.Insert(relativeIndex, item);
-                OnItemAdded(item, index);
+                return;
             }
+
+            list.Insert(relativeIndex, item);
+            OnItemAdded(item, index);
         }
 
         public virtual void RemoveAt(int index)
         {
             int relativeIndex;
             var list = ListForIndex(index, out relativeIndex);
-            if (list != null)
+            if (list == null)
             {
-                var item = list[relativeIndex];
-                list.RemoveAt(relativeIndex);
-                OnItemRemoved(item, index);
+                return;
             }
+            var item = list[relativeIndex];
+            list.RemoveAt(relativeIndex);
+            OnItemRemoved(item, index);
         }
 
         public virtual TItem this[int index]
@@ -360,9 +354,7 @@ namespace ical.NET.Collections
             {
                 int relativeIndex;
                 var list = ListForIndex(index, out relativeIndex);
-                if (list != null)
-                    return list[relativeIndex];
-                return default(TItem);
+                return list?[relativeIndex];
             }
             set
             {

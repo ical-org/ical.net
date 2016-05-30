@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using Ical.Net.Evaluation;
 using Ical.Net.Interfaces.DataTypes;
@@ -18,7 +19,7 @@ namespace Ical.Net.DataTypes
     {
         public string TzId { get; set; }
 
-        private IList<IPeriod> _periods = new List<IPeriod>();
+        private IList<IPeriod> _periods = new List<IPeriod>(128);
 
         protected IList<IPeriod> Periods
         {
@@ -37,7 +38,7 @@ namespace Ical.Net.DataTypes
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
-        void Initialize()
+        private void Initialize()
         {
             SetService(new PeriodListEvaluator(this));
         }
@@ -48,46 +49,25 @@ namespace Ical.Net.DataTypes
             Initialize();
         }
 
+        protected bool Equals(PeriodList other)
+        {
+            return Equals(_periods, other._periods) && string.Equals(TzId, other.TzId);
+        }
+
         public override bool Equals(object obj)
         {
-            if (obj is IPeriodList)
-            {
-                var r = (IPeriodList) obj;
-
-                var p1Enum = GetEnumerator();
-                var p2Enum = r.GetEnumerator();
-
-                while (p1Enum.MoveNext())
-                {
-                    if (!p2Enum.MoveNext())
-                    {
-                        return false;
-                    }
-
-                    if (!Equals(p1Enum.Current, p2Enum.Current))
-                    {
-                        return false;
-                    }
-                }
-
-                if (p2Enum.MoveNext())
-                {
-                    return false;
-                }
-
-                return true;
-            }
-            return base.Equals(obj);
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((PeriodList)obj);
         }
 
         public override int GetHashCode()
         {
-            var hashCode = 0;
-            foreach (var p in this)
+            unchecked
             {
-                hashCode ^= p.GetHashCode();
+                return ((_periods?.GetHashCode() ?? 0) * 397) ^ (TzId?.GetHashCode() ?? 0);
             }
-            return hashCode;
         }
 
         public override void CopyFrom(ICopyable obj)
@@ -107,7 +87,7 @@ namespace Ical.Net.DataTypes
 
         public List<Period> Evaluate(CalDateTime startDate, CalDateTime fromDate, CalDateTime endDate)
         {
-            var periods = new List<Period>();
+            var periods = new List<Period>(Periods.Count);
 
             if (startDate > fromDate)
             {
@@ -119,14 +99,11 @@ namespace Ical.Net.DataTypes
                 return periods;
             }
 
-            foreach (Period p in Periods)
-            {
-                if (!periods.Contains(p))
-                {
-                    periods.Add(p);
-                }
-            }
+            var uncollectedPeriodQuery = from Period p in Periods
+                                         where !periods.Contains(p)
+                                         select p;
 
+            periods.AddRange(uncollectedPeriodQuery);
             return periods;
         }
 

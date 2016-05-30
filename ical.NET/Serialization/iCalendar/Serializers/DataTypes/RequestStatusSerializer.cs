@@ -26,20 +26,17 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                     try
                     {
                         var factory = GetService<ISerializerFactory>();
-                        if (factory != null)
+                        var serializer = factory?.Build(typeof (IStatusCode), SerializationContext) as IStringSerializer;
+                        if (serializer != null)
                         {
-                            var serializer = factory.Build(typeof (IStatusCode), SerializationContext) as IStringSerializer;
-                            if (serializer != null)
+                            var value = Escape(serializer.SerializeToString(rs.StatusCode));
+                            value += ";" + Escape(rs.Description);
+                            if (!string.IsNullOrEmpty(rs.ExtraData))
                             {
-                                var value = Escape(serializer.SerializeToString(rs.StatusCode));
-                                value += ";" + Escape(rs.Description);
-                                if (!string.IsNullOrEmpty(rs.ExtraData))
-                                {
-                                    value += ";" + Escape(rs.ExtraData);
-                                }
-
-                                return Encode(rs, value);
+                                value += ";" + Escape(rs.ExtraData);
                             }
+
+                            return Encode(rs, value);
                         }
                     }
                     finally

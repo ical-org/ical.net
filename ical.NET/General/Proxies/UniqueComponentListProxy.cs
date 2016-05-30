@@ -10,7 +10,7 @@ namespace Ical.Net.General.Proxies
     public class UniqueComponentListProxy<TComponentType> : CalendarObjectListProxy<TComponentType>, IUniqueComponentList<TComponentType>
         where TComponentType : class, IUniqueComponent
     {
-        Dictionary<string, TComponentType> _lookup;
+        private readonly Dictionary<string, TComponentType> _lookup;
 
         public UniqueComponentListProxy(IGroupedCollection<string, ICalendarObject> children) : base(children)
         {
@@ -20,14 +20,14 @@ namespace Ical.Net.General.Proxies
             children.ItemRemoved += children_ItemRemoved;
         }
 
-        TComponentType Search(string uid)
+        private TComponentType Search(string uid)
         {
             if (_lookup.ContainsKey(uid))
             {
                 return _lookup[uid];
             }
 
-            var item = this.OfType<TComponentType>().Where(c => string.Equals(c.Uid, uid)).FirstOrDefault();
+            var item = this.FirstOrDefault(c => string.Equals(c.Uid, uid));
 
             if (item != null)
             {
@@ -57,7 +57,7 @@ namespace Ical.Net.General.Proxies
             }
         }
 
-        void children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e)
+        private void children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e)
         {
             if (e.First is TComponentType)
             {
@@ -71,7 +71,7 @@ namespace Ical.Net.General.Proxies
             }
         }
 
-        void children_ItemRemoved(object sender, ObjectEventArgs<ICalendarObject, int> e)
+        private void children_ItemRemoved(object sender, ObjectEventArgs<ICalendarObject, int> e)
         {
             if (e.First is TComponentType)
             {
@@ -85,7 +85,7 @@ namespace Ical.Net.General.Proxies
             }
         }
 
-        void UidChanged(object sender, ObjectEventArgs<string, string> e)
+        private void UidChanged(object sender, ObjectEventArgs<string, string> e)
         {
             if (e.First != null && _lookup.ContainsKey(e.First))
             {

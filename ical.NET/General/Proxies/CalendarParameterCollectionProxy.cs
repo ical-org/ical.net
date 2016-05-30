@@ -31,11 +31,7 @@ namespace Ical.Net.General.Proxies
         {
             var parameter = RealObject.FirstOrDefault(o => o.Name == name);
 
-            if (parameter != null)
-            {
-                return parameter.Value;
-            }
-            return default(string);
+            return parameter?.Value;
         }
 
         public virtual IList<string> GetMany(string name)

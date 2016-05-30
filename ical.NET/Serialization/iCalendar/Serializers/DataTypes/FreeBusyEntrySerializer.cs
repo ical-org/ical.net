@@ -42,25 +42,24 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 if (entry.Parameters.ContainsKey("FBTYPE"))
                 {
                     var value = entry.Parameters.Get("FBTYPE");
-                    if (value != null)
+                    if (value == null)
                     {
-                        switch (value.ToUpperInvariant())
-                        {
-                            case "FREE":
-                                entry.Status = FreeBusyStatus.Free;
-                                break;
-                            case "BUSY":
-                                entry.Status = FreeBusyStatus.Busy;
-                                break;
-                            case "BUSY-UNAVAILABLE":
-                                entry.Status = FreeBusyStatus.BusyUnavailable;
-                                break;
-                            case "BUSY-TENTATIVE":
-                                entry.Status = FreeBusyStatus.BusyTentative;
-                                break;
-                            default:
-                                break;
-                        }
+                        return entry;
+                    }
+                    switch (value.ToUpperInvariant())
+                    {
+                        case "FREE":
+                            entry.Status = FreeBusyStatus.Free;
+                            break;
+                        case "BUSY":
+                            entry.Status = FreeBusyStatus.Busy;
+                            break;
+                        case "BUSY-UNAVAILABLE":
+                            entry.Status = FreeBusyStatus.BusyUnavailable;
+                            break;
+                        case "BUSY-TENTATIVE":
+                            entry.Status = FreeBusyStatus.BusyTentative;
+                            break;
                     }
                 }
             }

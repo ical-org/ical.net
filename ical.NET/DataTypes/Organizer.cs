@@ -86,7 +86,7 @@ namespace Ical.Net.DataTypes
 
         public override int GetHashCode()
         {
-            return (Value != null ? Value.GetHashCode() : 0);
+            return Value?.GetHashCode() ?? 0;
         }
 
         public override void CopyFrom(ICopyable obj)
