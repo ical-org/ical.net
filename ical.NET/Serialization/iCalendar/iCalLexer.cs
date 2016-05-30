@@ -62,11 +62,9 @@ namespace Ical.Net.Serialization.iCalendar
 
         public override IToken nextToken() //throws TokenStreamException
         {
-            IToken theRetToken = null;
             tryAgain:
             for (;;)
             {
-                IToken _token = null;
                 resetText();
                 try // for char stream error handling
                 {

@@ -9,14 +9,6 @@ namespace ical.NET.UnitTests
     [TestFixture]
     public class EventTest
     {
-        private string _tzid;
-
-        [TestFixtureSetUp]
-        public void InitAll()
-        {
-            _tzid = "US-Eastern";
-        }
-        
         /// <summary>
         /// Ensures that events can be properly added to a calendar.
         /// </summary>

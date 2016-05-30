@@ -9,14 +9,6 @@ namespace ical.NET.UnitTests
     [TestFixture]
     public class FreeBusyTest
     {
-        private string _tzid;
-
-        [TestFixtureSetUp]
-        public void InitAll()
-        {
-            _tzid = "US-Eastern";
-        }
-        
         /// <summary>
         /// Ensures that GetFreeBusyStatus() return the correct status.
         /// </summary>

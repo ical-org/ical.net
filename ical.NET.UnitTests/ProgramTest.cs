@@ -223,13 +223,11 @@ namespace ical.NET.UnitTests
             // system time zones on the machine and ensure they
             // are properly translated.
             var zones = TimeZoneInfo.GetSystemTimeZones();
-            TimeZoneInfo tzinfo;
             foreach (var zone in zones)
             {
-                tzinfo = null;
                 try
                 {
-                    tzinfo = TimeZoneInfo.FindSystemTimeZoneById(zone.Id);                    
+                    TimeZoneInfo.FindSystemTimeZoneById(zone.Id);                    
                 }
                 catch (Exception e)
                 {

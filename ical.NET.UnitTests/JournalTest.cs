@@ -8,14 +8,6 @@ namespace ical.NET.UnitTests
     [TestFixture]
     public class JournalTest
     {
-        private string _tzid;
-
-        [TestFixtureSetUp]
-        public void InitAll()
-        {
-            _tzid = "US-Eastern";
-        }
-
         [Test, Category("Journal")]
         public void Journal1()
         {
