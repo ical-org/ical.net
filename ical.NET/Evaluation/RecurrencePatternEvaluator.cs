@@ -334,7 +334,7 @@ namespace Ical.Net.Evaluation
 
         private List<DateTime> GetCandidates(DateTime date, IRecurrencePattern pattern, bool?[] expandBehaviors)
         {
-            var dates = new List<DateTime>(10) {date};
+            var dates = new List<DateTime>(128) {date};
             dates = GetMonthVariants(dates, pattern, expandBehaviors[0]);
             dates = GetWeekNoVariants(dates, pattern, expandBehaviors[1]);
             dates = GetYearDayVariants(dates, pattern, expandBehaviors[2]);
@@ -398,7 +398,7 @@ namespace Ical.Net.Evaluation
             if (expand.Value)
             {
                 // Expand behavior
-                var monthlyDates = new List<DateTime>();
+                var monthlyDates = new List<DateTime>(128);
                 foreach (var date in dates)
                 {
                     monthlyDates.AddRange(pattern.ByMonth.Select(month => date.AddMonths(month - date.Month)));
@@ -618,7 +618,7 @@ namespace Ical.Net.Evaluation
                     var date = dates[i];
                     for (var j = 0; j < pattern.ByDay.Count; j++)
                     {
-                        weekDayDates.AddRange(GetAbsWeekDays(date, pattern.ByDay[j], pattern, true));
+                        weekDayDates.AddRange(GetAbsWeekDays(date, pattern.ByDay[j], pattern));
                     }
                 }
 
@@ -657,9 +657,9 @@ namespace Ical.Net.Evaluation
          * @return
          */
 
-        private List<DateTime> GetAbsWeekDays(DateTime date, IWeekDay weekDay, IRecurrencePattern pattern, bool? expand)
+        private List<DateTime> GetAbsWeekDays(DateTime date, IWeekDay weekDay, IRecurrencePattern pattern)
         {
-            var days = new List<DateTime>();
+            var days = new List<DateTime>(128);
 
             var dayOfWeek = weekDay.DayOfWeek;
             if (pattern.Frequency == FrequencyType.Daily)
@@ -738,7 +738,7 @@ namespace Ical.Net.Evaluation
                 return dates;
             }
 
-            var offsetDates = new List<DateTime>();
+            var offsetDates = new List<DateTime>(128);
             var size = dates.Count;
             if (offset < 0 && offset >= -size)
             {
@@ -768,7 +768,7 @@ namespace Ical.Net.Evaluation
             if (expand.Value)
             {
                 // Expand behavior
-                var hourlyDates = new List<DateTime>();
+                var hourlyDates = new List<DateTime>(128);
                 for (var i = 0; i < dates.Count; i++)
                 {
                     var date = dates[i];
@@ -818,7 +818,7 @@ namespace Ical.Net.Evaluation
             if (expand.Value)
             {
                 // Expand behavior
-                var minutelyDates = new List<DateTime>();
+                var minutelyDates = new List<DateTime>(128);
                 for (var i = 0; i < dates.Count; i++)
                 {
                     var date = dates[i];
@@ -868,7 +868,7 @@ namespace Ical.Net.Evaluation
             if (expand.Value)
             {
                 // Expand behavior
-                var secondlyDates = new List<DateTime>();
+                var secondlyDates = new List<DateTime>(128);
                 for (var i = 0; i < dates.Count; i++)
                 {
                     var date = dates[i];

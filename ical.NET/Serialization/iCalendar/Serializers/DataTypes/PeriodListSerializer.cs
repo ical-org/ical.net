@@ -23,7 +23,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 var periodSerializer = factory.Build(typeof (IPeriod), SerializationContext) as IStringSerializer;
                 if (dtSerializer != null && periodSerializer != null)
                 {
-                    var parts = new List<string>();
+                    var parts = new List<string>(128);
 
                     foreach (var p in rdt)
                     {

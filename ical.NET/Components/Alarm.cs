@@ -78,7 +78,7 @@ namespace Ical.Net
         private void Initialize()
         {
             Name = Components.Alarm;
-            Occurrences = new List<AlarmOccurrence>();
+            Occurrences = new List<AlarmOccurrence>(128);
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace Ical.Net
         /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
         public virtual IList<AlarmOccurrence> Poll(IDateTime start, IDateTime end)
         {
-            var results = new List<AlarmOccurrence>();
+            var results = new List<AlarmOccurrence>(128);
 
             // Evaluate the alarms to determine the recurrences
             var rc = Parent as RecurringComponent;

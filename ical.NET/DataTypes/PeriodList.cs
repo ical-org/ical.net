@@ -19,7 +19,7 @@ namespace Ical.Net.DataTypes
     {
         public string TzId { get; set; }
 
-        private IList<IPeriod> _periods = new List<IPeriod>();
+        private IList<IPeriod> _periods = new List<IPeriod>(128);
 
         protected IList<IPeriod> Periods
         {

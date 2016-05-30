@@ -464,7 +464,7 @@ namespace Ical.Net.Serialization.iCalendar
             //throws RecognitionException, TokenStreamException
         {
             ICalendarParameter p;
-            var values = new List<string>();
+            var values = new List<string>(128);
 
             switch (LA(1))
             {

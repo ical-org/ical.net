@@ -71,7 +71,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 return null;
             }
 
-            var values = new List<string>();
+            var values = new List<string>(128);
             if (obj is string)
             {
                 values.Add((string) obj);
@@ -144,8 +144,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 };
             }
 
-            var escapedValues = new List<string>();
-            var values = new List<string>();
+            var escapedValues = new List<string>(128);
+            var values = new List<string>(128);
 
             var i = 0;
             if (serializeAsList)

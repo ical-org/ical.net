@@ -158,7 +158,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
                 if (recur.ByDay.Count > 0)
                 {
-                    var bydayValues = new List<string>();
+                    var bydayValues = new List<string>(128);
 
                     var serializer = factory.Build(typeof (IWeekDay), SerializationContext) as IStringSerializer;
                     if (serializer != null)

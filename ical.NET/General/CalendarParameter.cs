@@ -41,7 +41,7 @@ namespace Ical.Net.General
 
         private void Initialize()
         {
-            _values = new List<string>();
+            _values = new List<string>(128);
         }
 
         protected override void OnDeserializing(StreamingContext context)

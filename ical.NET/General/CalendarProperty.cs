@@ -73,7 +73,7 @@ namespace Ical.Net.General
 
         private void Initialize()
         {
-            _values = new List<object>();
+            _values = new List<object>(128);
             _parameters = new CalendarParameterList(this, true);
             ValueChanged += CalendarProperty_ValueChanged;
         }

@@ -215,7 +215,7 @@ namespace Ical.Net
 
         public virtual IList<AlarmOccurrence> PollAlarms(IDateTime startTime, IDateTime endTime)
         {
-            var occurrences = new List<AlarmOccurrence>();
+            var occurrences = new List<AlarmOccurrence>(128);
             if (Alarms != null)
             {
                 foreach (var alarm in Alarms)
