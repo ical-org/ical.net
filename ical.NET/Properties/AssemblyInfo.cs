@@ -7,7 +7,7 @@ using System.Security;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("Ical.Net")]
-[assembly: AssemblyDescription("An iCalendar (RFC 5545) control library. See github.com/rianjs/ical.net for details.")]
+[assembly: AssemblyDescription("An iCalendar (RFC 5545) control library. See https://github.com/rianjs/ical.net for details.")]
 [assembly: AssemblyProduct("Ical.Net")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -32,5 +32,5 @@ using System.Security;
 //      Revision
 //
 
-[assembly: AssemblyVersion("1.1.0.*")]
-[assembly: AssemblyFileVersion("1.1.0.*")]
+[assembly: AssemblyVersion("2.1.0.*")]
+[assembly: AssemblyFileVersion("2.1.0.*")]
