@@ -4,15 +4,12 @@
         <id>Ical.Net</id>
         <version>2.1.1</version>
         <title>Ical.Net (formerly dday.ical)</title>
-        <authors>Rian Stockbower</authors>
-        <owners>Rian Stockbower, Douglas Day, M. David Peterson</owners>
+        <authors>Rian Stockbower, Douglas Day, M. David Peterson</authors>
+        <owners>Rian Stockbower</owners>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>An iCalendar (RFC 5545) control library for .NET. A fork and continuation of the original dday.ical library including bug fixes, and many performance enhancements.</description>
         <projectUrl>https://github.com/rianjs/ical.net</projectUrl>
         <licenseUrl>https://github.com/rianjs/ical.net/blob/master/license.md</licenseUrl>
-        <dependencies>
-            <dependency id="NodaTime" version="1.3.1" />
-        </dependencies>
     </metadata>
     <files>
         <!--<file src="content\Serialization\iCalendar\iCalParserTokenTypes.txt" target="content\Serialization\iCalendar\iCalParserTokenTypes.txt" />-->
