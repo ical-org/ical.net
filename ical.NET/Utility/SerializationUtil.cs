@@ -32,38 +32,59 @@ namespace Ical.Net.Utility
         }
 
         private const BindingFlags _bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
-        private static IEnumerable<MethodInfo> GetDeserializingMethods(Type targetType)
+
+        private static Dictionary<Type, List<MethodInfo>> _onDeserializingMethods = new Dictionary<Type, List<MethodInfo>>(16);
+        private static List<MethodInfo> GetDeserializingMethods(Type targetType)
         {
             if (targetType == null)
             {
-                yield break;
+                return new List<MethodInfo>();
             }
 
-            // FIXME: cache this
-            foreach (var methodInfo in from targetTypeMethodInfo in targetType.GetMethods(_bindingFlags)
-                     let attrs = targetTypeMethodInfo.GetCustomAttributes(typeof (OnDeserializingAttribute), false)
-                     where attrs.Length > 0
-                     select targetTypeMethodInfo)
+            if (_onDeserializingMethods.ContainsKey(targetType))
             {
-                yield return methodInfo;
+                return _onDeserializingMethods[targetType];
             }
+
+            var methodInfo = targetType.GetMethods(_bindingFlags)
+                .Select(targetTypeMethodInfo => new
+                {
+                    targetTypeMethodInfo,
+                    attrs = targetTypeMethodInfo.GetCustomAttributes(typeof(OnDeserializingAttribute), false)
+                })
+                .Where(t => t.attrs.Length > 0)
+                .Select(t => t.targetTypeMethodInfo)
+                .ToList();
+
+            _onDeserializingMethods.Add(targetType, methodInfo);
+            return methodInfo;
         }
 
-        private static IEnumerable<MethodInfo> GetDeserializedMethods(Type targetType)
+        private static Dictionary<Type, List<MethodInfo>> _onDeserializedMethods = new Dictionary<Type, List<MethodInfo>>(16);
+        private static List<MethodInfo> GetDeserializedMethods(Type targetType)
         {
             if (targetType == null)
             {
-                yield break;
+                return new List<MethodInfo>();
             }
 
-            // FIXME: cache this
-            foreach (var methodInfo in from targetTypeMethodInfo in targetType.GetMethods(_bindingFlags)
-                let attrs = targetTypeMethodInfo.GetCustomAttributes(typeof (OnDeserializedAttribute), true)
-                where attrs.Length > 0
-                select targetTypeMethodInfo)
+            if (_onDeserializedMethods.ContainsKey(targetType))
             {
-                yield return methodInfo;
+                return _onDeserializedMethods[targetType];
             }
+
+            var methodInfo = targetType.GetMethods(_bindingFlags)
+                .Select(targetTypeMethodInfo => new
+                {
+                    targetTypeMethodInfo,
+                    attrs = targetTypeMethodInfo.GetCustomAttributes(typeof(OnDeserializedAttribute), false)
+                })
+                .Where(t => t.attrs.Length > 0)
+                .Select(t => t.targetTypeMethodInfo)
+                .ToList();
+
+            _onDeserializedMethods.Add(targetType, methodInfo);
+            return methodInfo;
         }
     }
 }

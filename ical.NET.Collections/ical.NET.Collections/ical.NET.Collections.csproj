@@ -39,7 +39,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\net40</OutputPath>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -48,9 +48,13 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <ProjectGuid>{E04EFEB6-4625-4D58-AC91-7B8B8A2C97BB}</ProjectGuid>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>Ical.Net.Collections</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Core" />
