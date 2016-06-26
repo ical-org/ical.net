@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ical.net.UnitTests")]
+[assembly: AssemblyTitle("NugetTester")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ical.net.UnitTests")]
+[assembly: AssemblyProduct("NugetTester")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("9358a3f6-6b85-4be3-8b49-3be036a9da9a")]
+[assembly: Guid("ab8a5dba-c2e8-4e6e-85c5-c0c18955cfd1")]
 
 // Version information for an assembly consists of the following four values:
 //
