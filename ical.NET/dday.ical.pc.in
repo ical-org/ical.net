@@ -1,6 +1,0 @@
-Name: DDay.iCal
-Description: DDay.iCal
-Version: 0.1
-
-Requires: 
-Libs: -r:@expanded_libdir@/@PACKAGE@/DDay.iCal.dll
