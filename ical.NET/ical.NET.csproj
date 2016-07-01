@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug46|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -11,6 +11,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <NoWarn>CS7035</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release40|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -23,6 +24,7 @@
     <DocumentationFile>bin\Release\net40\Ical.Net.xml</DocumentationFile>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
+    <NoWarn>CS7035</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release45|AnyCPU'">
     <OutputPath>bin\Release\net45\</OutputPath>
@@ -33,6 +35,7 @@
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <NoWarn>CS7035</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release46|AnyCPU'">
     <OutputPath>bin\Release\net46\</OutputPath>
@@ -43,6 +46,7 @@
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
+    <NoWarn>CS7035</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <OutputType>Library</OutputType>
@@ -52,10 +56,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="antlr.runtime, Version=2.7.6.2, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\antlr.runtime.dll</HintPath>
-    </Reference>
     <Reference Include="NodaTime, Version=1.3.0.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
       <HintPath>..\packages\NodaTime.1.3.1\lib\net35-Client\NodaTime.dll</HintPath>
       <Private>True</Private>
@@ -264,6 +264,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\antlr.runtime\antlr.runtime.csproj">
+      <Project>{cb7cc882-ed47-46c0-aaae-7a437f22f1c6}</Project>
+      <Name>antlr.runtime</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ical.NET.Collections\ical.NET.Collections\Ical.Net.Collections.csproj">
       <Project>{E04EFEB6-4625-4D58-AC91-7B8B8A2C97BB}</Project>
       <Name>Ical.Net.Collections</Name>
@@ -271,7 +275,7 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
