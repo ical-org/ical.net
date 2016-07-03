@@ -17,23 +17,25 @@ namespace antlr
     // With many thanks to Eric V. Smith from the ANTLR list.
     //
 
-    public class SemanticException : RecognitionException
+    /*
+    * Wraps a RecognitionException in a TokenStreamException so you
+    * can pass it along.
+    */
+
+    [Serializable]
+    public class TokenStreamRecognitionException : TokenStreamException
     {
-        public SemanticException(string s)
-            : base(s)
+        public RecognitionException recog;
+
+        public TokenStreamRecognitionException(RecognitionException re) :
+            base(re.Message)
         {
+            this.recog = re;
         }
 
-        [Obsolete("Replaced by SemanticException(string, string, int, int) since version 2.7.2.6", false)]
-        public SemanticException(String s, String fileName, int line) :
-            this(s, fileName, line, -1)
+        override public string ToString()
         {
-
-        }
-
-        public SemanticException(string s, string fileName, int line, int column) :
-            base(s, fileName, line, column)
-        {
+            return recog.ToString();
         }
     }
 }

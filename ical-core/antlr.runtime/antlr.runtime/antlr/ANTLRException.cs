@@ -1,5 +1,3 @@
-using System;
-
 namespace antlr
 {
     /*ANTLR Translator Generator
@@ -17,22 +15,23 @@ namespace antlr
     // With many thanks to Eric V. Smith from the ANTLR list.
     //
 
-    public class SemanticException : RecognitionException
+    using System;
+
+    [Serializable]
+    public class ANTLRException : Exception
     {
-        public SemanticException(string s)
+        public ANTLRException()
+            : base()
+        {
+        }
+
+        public ANTLRException(string s)
             : base(s)
         {
         }
 
-        [Obsolete("Replaced by SemanticException(string, string, int, int) since version 2.7.2.6", false)]
-        public SemanticException(String s, String fileName, int line) :
-            this(s, fileName, line, -1)
-        {
-
-        }
-
-        public SemanticException(string s, string fileName, int line, int column) :
-            base(s, fileName, line, column)
+        public ANTLRException(string s, Exception inner)
+            : base(s, inner)
         {
         }
     }

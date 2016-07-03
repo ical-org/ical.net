@@ -1,4 +1,5 @@
 using System;
+using IOException = System.IO.IOException;
 
 namespace antlr
 {
@@ -17,23 +18,21 @@ namespace antlr
     // With many thanks to Eric V. Smith from the ANTLR list.
     //
 
-    public class SemanticException : RecognitionException
+    /*
+    * Wraps an IOException in a TokenStreamException
+    */
+    [Serializable]
+    public class TokenStreamIOException : TokenStreamException
     {
-        public SemanticException(string s)
-            : base(s)
+        public IOException io;
+        /*
+        * TokenStreamIOException constructor comment.
+        * @param s java.lang.String
+        */
+        public TokenStreamIOException(IOException io)
+            : base(io.Message)
         {
-        }
-
-        [Obsolete("Replaced by SemanticException(string, string, int, int) since version 2.7.2.6", false)]
-        public SemanticException(String s, String fileName, int line) :
-            this(s, fileName, line, -1)
-        {
-
-        }
-
-        public SemanticException(string s, string fileName, int line, int column) :
-            base(s, fileName, line, column)
-        {
+            this.io = io;
         }
     }
 }
