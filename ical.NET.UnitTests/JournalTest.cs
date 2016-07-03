@@ -1,6 +1,8 @@
 using System;
+using System.IO;
 using System.Linq;
 using Ical.Net;
+using Ical.Net.UnitTests;
 using NUnit.Framework;
 
 namespace ical.NET.UnitTests
@@ -11,7 +13,7 @@ namespace ical.NET.UnitTests
         [Test, Category("Journal")]
         public void Journal1()
         {
-            var iCal = Calendar.LoadFromFile(@"Calendars\Journal\JOURNAL1.ics")[0];
+            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.JOURNAL1))[0];
             ProgramTest.TestCal(iCal);
             Assert.AreEqual(1, iCal.Journals.Count);
             var j = iCal.Journals[0];
@@ -25,7 +27,7 @@ namespace ical.NET.UnitTests
         [Test, Category("Journal")]
         public void Journal2()
         {
-            var iCal = Calendar.LoadFromFile(@"Calendars\Journal\JOURNAL2.ics")[0];
+            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.JOURNAL2))[0];
             ProgramTest.TestCal(iCal);
             Assert.AreEqual(1, iCal.Journals.Count);
             var j = iCal.Journals.First();
@@ -38,13 +40,13 @@ namespace ical.NET.UnitTests
                 string.Equals(
                     j.Organizer.SentBy.OriginalString,
                     "mailto:jane_doe@host.com",
-                    StringComparison.InvariantCultureIgnoreCase),
+                    StringComparison.OrdinalIgnoreCase),
                 "Organizer should have had been SENT-BY 'mailto:jane_doe@host.com'; it was sent by '" + j.Organizer.SentBy + "'");
             Assert.IsTrue(
                 string.Equals(
                     j.Organizer.DirectoryEntry.OriginalString,
                     "ldap://host.com:6666/o=3DDC%20Associates,c=3DUS??(cn=3DJohn%20Smith)",
-                    StringComparison.InvariantCultureIgnoreCase),
+                    StringComparison.OrdinalIgnoreCase),
                 "Organizer's directory entry should have been 'ldap://host.com:6666/o=3DDC%20Associates,c=3DUS??(cn=3DJohn%20Smith)', but it was '" + j.Organizer.DirectoryEntry + "'");
             Assert.AreEqual(
                 "MAILTO:jsmith@host.com",

@@ -13,7 +13,6 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// An iCalendar representation of the <c>RRULE</c> property.
     /// </summary>
-    [Serializable]
     public class RecurrencePattern : EncodableDataType, IRecurrencePattern
     {
         [NonSerialized] private FrequencyType _frequency;

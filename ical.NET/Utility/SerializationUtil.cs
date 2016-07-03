@@ -8,26 +8,19 @@ namespace Ical.Net.Utility
 {
     public class SerializationUtil
     {
-        public static object GetUninitializedObject(Type type)
-        {
-            return FormatterServices.GetUninitializedObject(type);
-        }
-
         public static void OnDeserializing(object obj)
         {
-            var ctx = new StreamingContext(StreamingContextStates.All);
             foreach (var mi in GetDeserializingMethods(obj.GetType()))
             {
-                mi.Invoke(obj, new object[] {ctx});
+                mi.Invoke(obj, new object[] {new StreamingContext(), });
             }
         }
 
         public static void OnDeserialized(object obj)
         {
-            var ctx = new StreamingContext(StreamingContextStates.All);
             foreach (var mi in GetDeserializedMethods(obj.GetType()))
             {
-                mi.Invoke(obj, new object[] {ctx});
+                mi.Invoke(obj, new object[] { new StreamingContext() });
             }
         }
 
@@ -50,9 +43,9 @@ namespace Ical.Net.Utility
                 .Select(targetTypeMethodInfo => new
                 {
                     targetTypeMethodInfo,
-                    attrs = targetTypeMethodInfo.GetCustomAttributes(typeof(OnDeserializingAttribute), false)
+                    attrs = targetTypeMethodInfo.GetCustomAttributes(typeof(OnDeserializingAttribute), false).ToList()
                 })
-                .Where(t => t.attrs.Length > 0)
+                .Where(t => t.attrs.Count > 0)
                 .Select(t => t.targetTypeMethodInfo)
                 .ToList();
 
@@ -77,9 +70,9 @@ namespace Ical.Net.Utility
                 .Select(targetTypeMethodInfo => new
                 {
                     targetTypeMethodInfo,
-                    attrs = targetTypeMethodInfo.GetCustomAttributes(typeof(OnDeserializedAttribute), false)
+                    attrs = targetTypeMethodInfo.GetCustomAttributes(typeof(OnDeserializedAttribute), false).ToList()
                 })
-                .Where(t => t.attrs.Length > 0)
+                .Where(t => t.attrs.Count > 0)
                 .Select(t => t.targetTypeMethodInfo)
                 .ToList();
 

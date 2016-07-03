@@ -1,5 +1,6 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalParser.cs"$
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -87,7 +88,8 @@ namespace Ical.Net.Serialization.iCalendar
             SerializationUtil.OnDeserializing(iCalendars);
 
             ICalendar cal = null;
-            var settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
+            Type foo = typeof(ISerializationSettings);
+            var settings = ctx.GetService<ISerializationSettings>();
 
             { // ( ... )*
                 for (;;)
@@ -133,7 +135,7 @@ namespace Ical.Net.Serialization.iCalendar
                         // Do some pre-processing on the calendar:
                         processor?.PreDeserialization(cal);
 
-                        cal = (ICalendar) SerializationUtil.GetUninitializedObject(settings.CalendarType);
+                        cal = new Calendar();
                         SerializationUtil.OnDeserializing(cal);
 
                         // Push the iCalendar onto the serialization context stack
@@ -353,14 +355,14 @@ namespace Ical.Net.Serialization.iCalendar
                     {
                         n = LT(1);
                         match(IANA_TOKEN);
-                        c = cf.Build(n.getText().ToLower(), true);
+                        c = cf.Build(n.getText());
                         break;
                     }
                     case X_NAME:
                     {
                         var m = LT(1);
                         match(X_NAME);
-                        c = cf.Build(m.getText().ToLower(), true);
+                        c = cf.Build(m.getText());
                         break;
                     }
                     default:
