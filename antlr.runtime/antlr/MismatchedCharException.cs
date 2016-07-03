@@ -1,6 +1,5 @@
-using System;
 using System.Text;
-using antlr.collections.impl;
+using antlr.collections;
 
 namespace antlr
 {
@@ -19,7 +18,6 @@ namespace antlr
     // With many thanks to Eric V. Smith from the ANTLR list.
     //
 
-    [Serializable]
     public class MismatchedCharException : RecognitionException
     {
         /*

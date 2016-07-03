@@ -1,4 +1,3 @@
-using System;
 using antlr.collections;
 
 namespace antlr
@@ -18,17 +17,10 @@ namespace antlr
     // With many thanks to Eric V. Smith from the ANTLR list.
     //
 
-    [Serializable]
     public class NoViableAltException : RecognitionException
     {
         public IToken token;
         public AST node; // handles parsing and treeparsing
-
-        public NoViableAltException(AST t)
-            : base("NoViableAlt", "<AST>", -1, -1)
-        {
-            node = t;
-        }
 
         public NoViableAltException(IToken t, string fileName_) :
             base("NoViableAlt", fileName_, t.getLine(), t.getColumn())
@@ -50,7 +42,7 @@ namespace antlr
                 }
 
                 // must a tree parser error if token==null
-                if ((node == null) || (node == TreeParser.ASTNULL))
+                if (node == null)
                 {
                     return "unexpected end of subtree";
                 }

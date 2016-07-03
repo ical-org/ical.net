@@ -1,5 +1,3 @@
-using System;
-
 namespace antlr
 {
 	/*ANTLR Translator Generator
@@ -65,36 +63,6 @@ namespace antlr
 		public override IToken LT(int i)
 		{
 			return inputState.input.LT(i);
-		}
-		private void  trace(string ee, string rname)
-		{
-			traceIndent();
-			Console.Out.Write(ee + rname + ((inputState.guessing > 0)?"; [guessing]":"; "));
-			 for (int i = 1; i <= k; i++)
-			{
-				if (i != 1)
-				{
-					Console.Out.Write(", ");
-				}
-				if ( LT(i)!=null ) {
-					Console.Out.Write("LA(" + i + ")==" + LT(i).getText());
-				}
-				else 
-				{
-					Console.Out.Write("LA(" + i + ")==ull");
-				}
-			}
-			Console.Out.WriteLine("");
-		}
-		public override void  traceIn(string rname)
-		{
-			traceDepth += 1;
-			trace("> ", rname);
-		}
-		public override void  traceOut(string rname)
-		{
-			trace("< ", rname);
-			traceDepth -= 1;
 		}
 	}
 }

@@ -64,10 +64,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="antlr.collections.impl\ASTArray.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="antlr.collections.impl\BitSet.cs">
+    <Compile Include="antlr.collections\BitSet.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="antlr.collections\AST.cs">
@@ -79,31 +76,10 @@
     <Compile Include="antlr\ANTLRPanicException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="antlr\ASTFactory.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="antlr\ASTNodeCreator.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="antlr\ASTNULLType.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="antlr\ASTPair.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="antlr\ASTVisitor.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="antlr\BaseAST.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="antlr\ByteBuffer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="antlr\CharBuffer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="antlr\CharQueue.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="antlr\CharScanner.cs">
@@ -115,28 +91,13 @@
     <Compile Include="antlr\CharStreamIOException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="antlr\CommonAST.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="antlr\CommonASTWithHiddenTokens.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="antlr\CommonHiddenStreamToken.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="antlr\CommonToken.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="antlr\DefaultFileLineFormatter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="antlr\DumpASTVisitor.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="antlr\FileLineFormatter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="antlr\IHiddenStreamToken.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="antlr\InputBuffer.cs">
@@ -169,22 +130,7 @@
     <Compile Include="antlr\ParserSharedInputState.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="antlr\ParseTree.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="antlr\ParseTreeRule.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="antlr\ParseTreeToken.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="antlr\RecognitionException.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="antlr\SemanticException.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="antlr\StringUtils.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="antlr\Token.cs">
@@ -202,13 +148,7 @@
     <Compile Include="antlr\TokenStream.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="antlr\TokenStreamBasicFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="antlr\TokenStreamException.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="antlr\TokenStreamHiddenTokenFilter.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="antlr\TokenStreamIOException.cs">
@@ -220,19 +160,7 @@
     <Compile Include="antlr\TokenStreamRetryException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="antlr\TokenStreamSelector.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="antlr\TreeParser.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="antlr\TreeParserSharedInputState.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="SupportClass.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -243,6 +171,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

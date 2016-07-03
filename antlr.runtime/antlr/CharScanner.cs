@@ -1,7 +1,6 @@
 using System;
-using System.ComponentModel;
 using System.Text;
-using antlr.collections.impl;
+using antlr.collections;
 
 namespace antlr
 {
@@ -24,9 +23,6 @@ namespace antlr
     {
         internal const char NO_CHAR = (char)(0);
         public static readonly char EOF_CHAR = char.MaxValue;
-
-        // Used to store event delegates
-        protected internal EventHandlerList Events { get; } = new EventHandlerList();
 
         // The unique keys for each event that CharScanner [objects] can generate
         internal static readonly object EnterRuleEventKey = new object();

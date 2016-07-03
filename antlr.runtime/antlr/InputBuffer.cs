@@ -103,7 +103,7 @@ namespace antlr
 		public virtual char LA(int i)
 		{
 			fill(i);
-			return (char) Buffer[markerOffset + i - 1];
+			return Buffer[markerOffset + i - 1];
 		}
 		
 		/*Return an integer marker that can be used to rewind the buffer to

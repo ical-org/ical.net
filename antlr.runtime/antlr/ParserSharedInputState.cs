@@ -26,17 +26,7 @@ namespace antlr
 		/*Where to get token objects */
 		protected internal TokenBuffer input;
 		
-		/*Are we guessing (guessing>0)? */
-		public int guessing;
-		
 		/*What file (if known) caused the problem? */
 		protected internal string filename;
-		
-		public virtual void  reset()
-		{
-			guessing = 0;
-			filename = null;
-			input.reset();
-		}
 	}
 }

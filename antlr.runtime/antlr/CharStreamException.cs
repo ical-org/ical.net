@@ -1,5 +1,3 @@
-using System;
-
 namespace antlr
 {
     /*ANTLR Translator Generator
@@ -21,7 +19,6 @@ namespace antlr
     * Anything that goes wrong while generating a stream of characters
     */
 
-    [Serializable]
     public class CharStreamException : ANTLRException
     {
         /*

@@ -32,7 +32,6 @@ namespace antlr
 	
 	public class TokenBuffer
 	{
-		
 		// Token source
 		protected internal TokenStream input;
 		
@@ -55,15 +54,6 @@ namespace antlr
 			queue = new TokenQueue(1);
 		}
 		
-		/*Reset the input buffer to empty state */
-		public virtual void  reset()
-		{
-			nMarkers = 0;
-			markerOffset = 0;
-			numToConsume = 0;
-			queue.reset();
-		}
-		
 		/*Mark another token for deferred consumption */
 		public virtual void  consume()
 		{
@@ -82,12 +72,6 @@ namespace antlr
 			}
 		}
 		
-		/*return the Tokenizer (needed by ParseView) */
-		public virtual TokenStream getInput()
-		{
-			return input;
-		}
-		
 		/*Get a lookahead token value */
 		public virtual int LA(int i)
 		{
@@ -100,26 +84,6 @@ namespace antlr
 		{
 			fill(i);
 			return queue.elementAt(markerOffset + i - 1);
-		}
-		
-		/*Return an integer marker that can be used to rewind the buffer to
-		* its current state.
-		*/
-		public virtual int mark()
-		{
-			syncConsume();
-			nMarkers++;
-			return markerOffset;
-		}
-		
-		/*Rewind the token buffer to a marker.
-		* @param mark Marker returned previously from mark()
-		*/
-		public virtual void  rewind(int mark)
-		{
-			syncConsume();
-			markerOffset = mark;
-			nMarkers--;
 		}
 		
 		/*Sync up deferred consumption */

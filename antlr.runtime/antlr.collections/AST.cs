@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 
 namespace antlr.collections
@@ -21,7 +20,7 @@ namespace antlr.collections
     /// <summary>
     /// Minimal AST node interface used by ANTLR AST generation and tree-walker.
     /// </summary>
-    public interface AST : ICloneable
+    public interface AST
     {
         /// <summary>
         /// Add a (rightmost) child to this node
@@ -83,5 +82,6 @@ namespace antlr.collections
         string ToString();
         string ToStringList();
         string ToStringTree();
+        object Clone();
     }
 }

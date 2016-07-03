@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 
 namespace antlr
@@ -21,7 +20,6 @@ namespace antlr
     /*
     * Wraps an IOException in a TokenStreamException
     */
-    [Serializable]
     public class TokenStreamIOException : TokenStreamException
     {
         public IOException io;

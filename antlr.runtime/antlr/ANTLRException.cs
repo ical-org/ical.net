@@ -17,7 +17,6 @@ namespace antlr
     // With many thanks to Eric V. Smith from the ANTLR list.
     //
     
-    [Serializable]
     public class ANTLRException : Exception
     {
         public ANTLRException()

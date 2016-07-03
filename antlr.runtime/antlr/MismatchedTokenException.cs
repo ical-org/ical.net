@@ -1,7 +1,5 @@
-using System;
 using System.Text;
 using antlr.collections;
-using antlr.collections.impl;
 
 namespace antlr
 {
@@ -20,7 +18,6 @@ namespace antlr
     // With many thanks to Eric V. Smith from the ANTLR list.
     //
 
-    [Serializable]
     public class MismatchedTokenException : RecognitionException
     {
         // Token names array for formatting

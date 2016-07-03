@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 
 namespace antlr
@@ -33,9 +32,6 @@ namespace antlr
 
     public class ByteBuffer : InputBuffer
     {
-
-        // char source
-        [NonSerialized]
         internal Stream input;
 
         private const int BUF_SIZE = 16;
@@ -54,8 +50,6 @@ namespace antlr
         /*Ensure that the character buffer is sufficiently full */
         public override void fill(int amount)
         {
-            //			try
-            //			{
             syncConsume();
             // Fill the buffer sufficiently to hold needed characters
             int bytesToRead = (amount + markerOffset) - Buffer.Count;
@@ -69,14 +63,12 @@ namespace antlr
                     // Append the next character
                     var foo = (char) buf[i];
                     Buffer.Add(foo);
-                    //queue.Add(foo);
                 }
                 if (c < BUF_SIZE)
                 {
                     while ((bytesToRead-- > 0) && (Buffer.Count < BUF_SIZE))
                     {
                         Buffer.Add(CharScanner.EOF_CHAR);
-                        //queue.Add(CharScanner.EOF_CHAR);
                     }
                     break;
                 }

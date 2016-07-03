@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 
 namespace antlr
@@ -21,7 +20,6 @@ namespace antlr
     /*
     * Wrap an IOException in a CharStreamException
     */
-    [Serializable]
     public class CharStreamIOException : CharStreamException
     {
         public IOException io;

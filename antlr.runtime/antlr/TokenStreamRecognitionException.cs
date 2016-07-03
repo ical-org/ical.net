@@ -1,5 +1,3 @@
-using System;
-
 namespace antlr
 {
     /*ANTLR Translator Generator
@@ -22,7 +20,6 @@ namespace antlr
     * can pass it along.
     */
 
-    [Serializable]
     public class TokenStreamRecognitionException : TokenStreamException
     {
         public RecognitionException recog;
