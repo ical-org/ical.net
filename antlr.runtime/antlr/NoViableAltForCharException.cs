@@ -1,5 +1,5 @@
 using System;
-using StringBuilder = System.Text.StringBuilder;
+using System.Text;
 
 namespace antlr
 {
@@ -38,7 +38,7 @@ namespace antlr
         /*
         * Returns a clean error message (no line number/column information)
         */
-        override public string Message
+        public override string Message
         {
             get
             {

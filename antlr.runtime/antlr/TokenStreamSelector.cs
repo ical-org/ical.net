@@ -1,7 +1,6 @@
 using System;
-
-using Hashtable = System.Collections.Hashtable;
-
+using System.Collections;
+using System.Collections.Generic;
 using Stack    		= System.Collections.Generic.Stack<object>;
 	
 namespace antlr
@@ -31,7 +30,7 @@ namespace antlr
 	public class TokenStreamSelector : TokenStream
 	{
 		/*The set of inputs to the MUX */
-		protected internal Hashtable inputStreamNames;
+	    protected internal Dictionary<string, TokenStream> InputStreamNames = new Dictionary<string, TokenStream>(64);
 		
 		/*The currently-selected token stream input */
 		protected internal TokenStream input;
@@ -39,13 +38,9 @@ namespace antlr
 		/*Used to track stack of input streams */
 		protected internal Stack streamStack = new Stack();
 		
-		public TokenStreamSelector() : base()
-		{
-			inputStreamNames = new Hashtable();
-		}
 		public virtual void  addInputStream(TokenStream stream, string key)
 		{
-			inputStreamNames[key] = stream;
+			InputStreamNames[key] = stream;
 		}
 		/*Return the stream from tokens are being pulled at
 		*  the moment.
@@ -56,11 +51,11 @@ namespace antlr
 		}
 		public virtual TokenStream getStream(string sname)
 		{
-			TokenStream stream = (TokenStream) inputStreamNames[sname];
-			if (stream == null)
-			{
-				throw new System.ArgumentException("TokenStream " + sname + " not found");
-			}
+		    TokenStream stream;
+		    if (!InputStreamNames.TryGetValue(sname, out stream))
+		    {
+                throw new ArgumentException("TokenStream " + sname + " not found");
+            }
 			return stream;
 		}
 		public virtual IToken nextToken()
@@ -111,18 +106,14 @@ namespace antlr
 		public virtual void  select(TokenStream stream)
 		{
 			input = stream;
-			if (input is CharScanner)
-			{
-				((CharScanner) input).refresh();
-			}
+		    var scanner = input as CharScanner;
+		    scanner?.refresh();
 		}
 		public virtual void  select(string sname)
 		{
 			input = getStream(sname);
-			if (input is CharScanner)
-			{
-				((CharScanner) input).refresh();
-			}
+		    var scanner = input as CharScanner;
+		    scanner?.refresh();
 		}
 	}
 }

@@ -1,8 +1,5 @@
-using System;
-using IEnumerator		= System.Collections.IEnumerator;
-
-using AST				= antlr.collections.AST;
-using Token				= antlr.Token;
+using System.Collections;
+using antlr.collections;
 
 namespace antlr
 {
@@ -69,7 +66,7 @@ namespace antlr
 		public virtual int Type
 		{
 			get { return Token.NULL_TREE_LOOKAHEAD; }
-			set { ; }
+			set { }
 		}
 		public int getNumberOfChildren() 
 		{
@@ -86,21 +83,18 @@ namespace antlr
 		}
 		public virtual void  setFirstChild(AST c)
 		{
-			;
 		}
 		public virtual void  setNextSibling(AST n)
 		{
-			;
 		}
 		public virtual void  setText(string text)
 		{
-			;
 		}
 		public virtual void  setType(int ttype)
 		{
-			this.Type = ttype;
+			Type = ttype;
 		}
-		override public string ToString()
+		public override string ToString()
 		{
 			return getText();
 		}

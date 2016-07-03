@@ -1,5 +1,5 @@
 using System;
-using AST		= antlr.collections.AST;
+using antlr.collections;
 
 namespace antlr
 {
@@ -24,11 +24,11 @@ namespace antlr
 
 	public class CommonASTWithHiddenTokens : CommonAST
 	{
-		new public static readonly CommonASTWithHiddenTokens.CommonASTWithHiddenTokensCreator Creator = new CommonASTWithHiddenTokensCreator();
+		public new static readonly CommonASTWithHiddenTokensCreator Creator = new CommonASTWithHiddenTokensCreator();
 
 		protected internal IHiddenStreamToken hiddenBefore, hiddenAfter; // references to hidden tokens
 		
-		public CommonASTWithHiddenTokens() : base()
+		public CommonASTWithHiddenTokens()
 		{
 		}
 		
@@ -53,14 +53,14 @@ namespace antlr
 			return hiddenBefore;
 		}
 		
-		override public void initialize(AST t)
+		public override void initialize(AST t)
 		{
 			hiddenBefore = ((CommonASTWithHiddenTokens) t).getHiddenBefore();
 			hiddenAfter  = ((CommonASTWithHiddenTokens) t).getHiddenAfter();
 			base.initialize(t);
 		}
 
-		override public void initialize(IToken tok)
+		public override void initialize(IToken tok)
 		{
 			IHiddenStreamToken t = (IHiddenStreamToken) tok;
 			base.initialize(t);
@@ -70,7 +70,7 @@ namespace antlr
 
 		#region Implementation of ICloneable
 		[Obsolete("Deprecated since version 2.7.2. Use ASTFactory.dup() instead.", false)]
-		override public object Clone()
+		public override object Clone()
 		{
 			return new CommonASTWithHiddenTokens(this);
 		}
@@ -78,27 +78,16 @@ namespace antlr
 
 		public class CommonASTWithHiddenTokensCreator : ASTNodeCreator
 		{
-			public CommonASTWithHiddenTokensCreator() {}
-
 			/// <summary>
 			/// Returns the fully qualified name of the AST type that this
 			/// class creates.
 			/// </summary>
-			public override string ASTNodeTypeName
-			{
-				get 
-				{ 
-					return typeof(antlr.CommonASTWithHiddenTokens).FullName;; 
-				}
-			}
+			public override string ASTNodeTypeName => typeof(CommonASTWithHiddenTokens).FullName;
 
-			/// <summary>
+		    /// <summary>
 			/// Constructs a <see cref="AST"/> instance.
 			/// </summary>
-			public override AST Create()
-			{
-				return new CommonASTWithHiddenTokens();
-			}
+			public override AST Create() => new CommonASTWithHiddenTokens();
 		}
 	}
 }

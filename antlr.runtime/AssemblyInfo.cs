@@ -1,6 +1,5 @@
 using System;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Security;
 
 // General Information about an assembly is controlled through the following
@@ -9,7 +8,7 @@ using System.Security;
 
 // TODO: Review the values of the assembly attributes
 
-[assembly: AllowPartiallyTrustedCallers()]
+[assembly: AllowPartiallyTrustedCallers]
 
 [assembly: AssemblyTitle("antlr.runtime")]
 [assembly: AssemblyDescription("ANTLR Runtime for .NET")]
@@ -32,4 +31,4 @@ using System.Security;
 // You can specify all the values or you can default the Revision and Build Numbers
 // by using the '*' as shown below:
 
-[assembly: CLSCompliantAttribute(true)]
+[assembly: CLSCompliant(true)]

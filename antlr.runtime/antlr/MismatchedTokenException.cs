@@ -1,8 +1,7 @@
 using System;
-using StringBuilder = System.Text.StringBuilder;
-
-using BitSet = antlr.collections.impl.BitSet;
-using AST = antlr.collections.AST;
+using System.Text;
+using antlr.collections;
+using antlr.collections.impl;
 
 namespace antlr
 {
@@ -31,7 +30,7 @@ namespace antlr
         // The offending AST node if tree walking
         public AST node;
 
-        internal string tokenText = null; // taken from node or token object
+        internal string tokenText; // taken from node or token object
 
         // Types of tokens
         public enum TokenTypeEnum
@@ -67,14 +66,9 @@ namespace antlr
         {
             tokenNames = tokenNames_;
             node = node_;
-            if (node_ == null)
-            {
-                tokenText = "<empty tree>";
-            }
-            else
-            {
-                tokenText = node_.ToString();
-            }
+            tokenText = node_ == null
+                ? "<empty tree>"
+                : node_.ToString();
             mismatchType = matchNot ? TokenTypeEnum.NotRangeType : TokenTypeEnum.RangeType;
             expecting = lower;
             upper = upper_;
@@ -86,14 +80,9 @@ namespace antlr
         {
             tokenNames = tokenNames_;
             node = node_;
-            if (node_ == null)
-            {
-                tokenText = "<empty tree>";
-            }
-            else
-            {
-                tokenText = node_.ToString();
-            }
+            tokenText = node_ == null
+                ? "<empty tree>"
+                : node_.ToString();
             mismatchType = matchNot ? TokenTypeEnum.NotTokenType : TokenTypeEnum.TokenType;
             expecting = expecting_;
         }
@@ -104,14 +93,9 @@ namespace antlr
         {
             tokenNames = tokenNames_;
             node = node_;
-            if (node_ == null)
-            {
-                tokenText = "<empty tree>";
-            }
-            else
-            {
-                tokenText = node_.ToString();
-            }
+            tokenText = node_ == null
+                ? "<empty tree>"
+                : node_.ToString();
             mismatchType = matchNot ? TokenTypeEnum.NotSetType : TokenTypeEnum.SetType;
             bset = set_;
         }
@@ -153,7 +137,7 @@ namespace antlr
         /*
         * Returns a clean error message (no line number/column information)
         */
-        override public string Message
+        public override string Message
         {
             get
             {
@@ -181,10 +165,10 @@ namespace antlr
                     case TokenTypeEnum.NotSetType:
                         sb.Append("expecting " + (mismatchType == TokenTypeEnum.NotSetType ? "NOT " : "") + "one of (");
                         int[] elems = bset.toArray();
-                        for (int i = 0; i < elems.Length; i++)
+                        foreach (int t in elems)
                         {
                             sb.Append(" ");
-                            sb.Append(tokenName(elems[i]));
+                            sb.Append(tokenName(t));
                         }
                         sb.Append("), found '" + tokenText + "'");
                         break;
@@ -203,14 +187,11 @@ namespace antlr
             {
                 return "<Set of tokens>";
             }
-            else if (tokenType < 0 || tokenType >= tokenNames.Length)
+            if (tokenType < 0 || tokenType >= tokenNames.Length)
             {
-                return "<" + tokenType.ToString() + ">";
+                return "<" + tokenType + ">";
             }
-            else
-            {
-                return tokenNames[tokenType];
-            }
+            return tokenNames[tokenType];
         }
     }
 }

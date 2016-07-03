@@ -1,6 +1,5 @@
-using System;
-using BitSet = antlr.collections.impl.BitSet;
-	
+using antlr.collections.impl;
+
 namespace antlr
 {
 	/*ANTLR Translator Generator

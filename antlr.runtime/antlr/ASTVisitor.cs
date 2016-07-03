@@ -1,6 +1,4 @@
-using System;
-
-using AST		= antlr.collections.AST;
+using antlr.collections;
 
 namespace antlr
 {

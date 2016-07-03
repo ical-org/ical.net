@@ -1,3 +1,6 @@
+using System.Text;
+using antlr.collections;
+
 namespace antlr
 {
 
@@ -11,12 +14,8 @@ namespace antlr
 	//                            Kunle Odutola       : kunle UNDERSCORE odutola AT hotmail DOT com
 	//                            Anthony Oguntimehin
 	//
-
-	using System;
-	using StringBuilder 	= System.Text.StringBuilder;
-	using AST 				= antlr.collections.AST;
-
-	public class ParseTreeRule : ParseTree 
+    
+    public class ParseTreeRule : ParseTree 
 	{
 		public const int INVALID_ALT = -1;
 
@@ -79,14 +78,11 @@ namespace antlr
 
 		public override string ToString()
 		{
-			if ( altNumber == INVALID_ALT ) 
+		    if ( altNumber == INVALID_ALT ) 
 			{
 				return '<'+ruleName+'>';
 			}
-			else 
-			{
-				return '<'+ruleName+"["+altNumber+"]>";
-			}
+		    return '<'+ruleName+"["+altNumber+"]>";
 		}
 	}
 }

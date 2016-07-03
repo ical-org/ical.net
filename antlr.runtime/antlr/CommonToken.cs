@@ -1,5 +1,3 @@
-using System;
-	
 namespace antlr
 {
 	/*ANTLR Translator Generator
@@ -19,11 +17,11 @@ namespace antlr
 
 	public class CommonToken : Token
 	{
-		public static readonly CommonToken.CommonTokenCreator Creator = new CommonTokenCreator();
+		public static readonly CommonTokenCreator Creator = new CommonTokenCreator();
 
 		// most tokens will want line and text information
 		protected internal int line;
-		protected internal string text = null;
+		protected internal string text;
 		protected internal int col;
 		
 		public CommonToken()
@@ -33,7 +31,7 @@ namespace antlr
 		public CommonToken(int t, string txt)
 		{
 			type_ = t;
-			setText(txt);
+		    text = txt;
 		}
 		
 		public CommonToken(string s)
@@ -41,65 +39,55 @@ namespace antlr
 			text = s;
 		}
 		
-		override public int getLine()
+		public override int getLine()
 		{
 			return line;
 		}
 		
-		override public string getText()
+		public override string getText()
 		{
 			return text;
 		}
 		
-		override public void  setLine(int l)
+		public override void  setLine(int l)
 		{
 			line = l;
 		}
 		
-		override public void  setText(string s)
+		public override void  setText(string s)
 		{
 			text = s;
 		}
 		
-		override public string ToString()
+		public override string ToString()
 		{
 			return "[\"" + getText() + "\",<" + type_ + ">,line=" + line + ",col=" + col + "]";
 		}
 		
 		/*Return token's start column */
-		override public int getColumn()
+		public override int getColumn()
 		{
 			return col;
 		}
 		
-		override public void  setColumn(int c)
+		public override void  setColumn(int c)
 		{
 			col = c;
 		}
 
 		public class CommonTokenCreator : TokenCreator
 		{
-			public CommonTokenCreator() {}
 
 			/// <summary>
 			/// Returns the fully qualified name of the Token type that this
 			/// class creates.
 			/// </summary>
-			public override string TokenTypeName
-			{
-				get 
-				{ 
-					return typeof(antlr.CommonToken).FullName;; 
-				}
-			}
+			public override string TokenTypeName => typeof(CommonToken).FullName;
 
-			/// <summary>
+		    /// <summary>
 			/// Constructs a <see cref="Token"/> instance.
 			/// </summary>
-			public override IToken Create()
-			{
-				return new CommonToken();
-			}
+			public override IToken Create() => new CommonToken();
 		}
 	}
 }

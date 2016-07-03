@@ -77,7 +77,7 @@ namespace antlr
             return Message;
         }
 
-        override public string ToString()
+        public override string ToString()
         {
             return FileLineFormatter.getFormatter().getFormatString(fileName, line, column) + Message;
         }

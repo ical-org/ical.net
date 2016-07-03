@@ -1,7 +1,6 @@
 using System;
-using StringBuilder = System.Text.StringBuilder;
-
-using BitSet = antlr.collections.impl.BitSet;
+using System.Text;
+using antlr.collections.impl;
 
 namespace antlr
 {
@@ -26,7 +25,7 @@ namespace antlr
         /*
         * Returns a clean error message (no line number/column information)
         */
-        override public string Message
+        public override string Message
         {
             get
             {
@@ -62,9 +61,9 @@ namespace antlr
                     case CharTypeEnum.NotSetType:
                         sb.Append("expecting " + (mismatchType == CharTypeEnum.NotSetType ? "NOT " : "") + "one of (");
                         int[] elems = bset.toArray();
-                        for (int i = 0; i < elems.Length; i++)
+                        foreach (int t in elems)
                         {
-                            appendCharName(sb, elems[i]);
+                            appendCharName(sb, t);
                         }
                         sb.Append("), found ");
                         appendCharName(sb, foundChar);

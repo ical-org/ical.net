@@ -1,5 +1,3 @@
-using System;
-
 namespace antlr
 {
 	/*ANTLR Translator Generator
@@ -33,8 +31,7 @@ namespace antlr
 		public TokenQueue(int minSize)
 		{
 			// Find first power of 2 >= to requested size
-			int size;
-			if (minSize < 0)
+		    if (minSize < 0)
 			{
 				init(16); // pick some value for them
 				return ;
@@ -43,13 +40,9 @@ namespace antlr
 			if (minSize >= (int.MaxValue / 2))
 			{
 				init(int.MaxValue); // wow that's big.
-				return ;
+				return;
 			}
-			 for (size = 2; size < minSize; size *= 2)
-			{
-				;
-			}
-			init(size);
+			init(minSize);
 		}
 		
 		/*Add token to end of the queue

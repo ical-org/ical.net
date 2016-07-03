@@ -1,6 +1,3 @@
-using System;
-using AST = antlr.collections.AST;
-	
 namespace antlr.collections.impl
 {
 	/*ANTLR Translator Generator
@@ -25,7 +22,7 @@ namespace antlr.collections.impl
 	*/
 	public class ASTArray
 	{
-		public int size = 0;
+		public int size;
 		public AST[] array;
 		
 		

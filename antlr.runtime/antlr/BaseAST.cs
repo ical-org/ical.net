@@ -1,11 +1,10 @@
 using System;
-using StringBuilder = System.Text.StringBuilder;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using antlr.collections;
 //using ISerializable		= System.Runtime.Serialization.ISerializable;
-using TextWriter = System.IO.TextWriter;
-using ArrayList = System.Collections.ArrayList;
-using IEnumerator = System.Collections.IEnumerator;
-
-using AST = antlr.collections.AST;
 
 namespace antlr
 {
@@ -49,21 +48,21 @@ namespace antlr
     * Most people will create ASTs that are subclasses of
     * BaseAST or of CommonAST.
     */
-    [Serializable()]
+    [Serializable]
     public abstract class BaseAST : AST
     {
         protected internal BaseAST down;
         protected internal BaseAST right;
 
-        private static bool verboseStringConversion = false;
-        private static string[] tokenNames = null;
+        private static bool verboseStringConversion;
+        private static string[] tokenNames;
 
         /*Add a node to the end of the child list for this node */
         public virtual void addChild(AST node)
         {
             if (node == null)
                 return;
-            BaseAST t = this.down;
+            BaseAST t = down;
             if (t != null)
             {
                 while (t.right != null)
@@ -74,16 +73,15 @@ namespace antlr
             }
             else
             {
-                this.down = (BaseAST)node;
+                down = (BaseAST)node;
             }
         }
 
-        private void doWorkForFindAll(ArrayList v, AST target, bool partialMatch)
+        private void doWorkForFindAll(IList v, AST target, bool partialMatch)
         {
             AST sibling;
 
             // Start walking sibling lists, looking for matches.
-            //siblingWalk: 
             for (sibling = this; sibling != null; sibling = sibling.getNextSibling())
             {
                 if ((partialMatch && sibling.EqualsTreePartial(target)) || (!partialMatch && sibling.EqualsTree(target)))
@@ -102,7 +100,7 @@ namespace antlr
         {
             if (obj == null)
                 return false;
-            if (this.GetType() != obj.GetType())
+            if (GetType() != obj.GetType())
                 return false;
             return Equals((AST)obj);
         }
@@ -113,8 +111,8 @@ namespace antlr
             if (t == null)
                 return false;
 
-            return (Object.Equals(this.getText(), t.getText())) &&
-                    (this.Type == t.Type);
+            return (Equals(getText(), t.getText())) &&
+                    (Type == t.Type);
         }
 
         /*Is t an exact structural and equals() match of this tree.  The
@@ -200,12 +198,12 @@ namespace antlr
         public virtual bool EqualsTree(AST t)
         {
             // check roots first.
-            if (!this.Equals(t))
+            if (!Equals(t))
                 return false;
             // if roots match, do full list match test on children.
-            if (this.getFirstChild() != null)
+            if (getFirstChild() != null)
             {
-                if (!this.getFirstChild().EqualsList(t.getFirstChild()))
+                if (!getFirstChild().EqualsList(t.getFirstChild()))
                     return false;
             }
             else if (t.getFirstChild() != null)
@@ -227,12 +225,12 @@ namespace antlr
             }
 
             // check roots first.
-            if (!this.Equals(sub))
+            if (!Equals(sub))
                 return false;
             // if roots match, do full list partial match test on children.
-            if (this.getFirstChild() != null)
+            if (getFirstChild() != null)
             {
-                if (!this.getFirstChild().EqualsListPartial(sub.getFirstChild()))
+                if (!getFirstChild().EqualsListPartial(sub.getFirstChild()))
                     return false;
             }
             return true;
@@ -244,17 +242,14 @@ namespace antlr
         */
         public virtual IEnumerator findAll(AST target)
         {
-            ArrayList roots = new ArrayList(10);
-            //AST sibling;
-
             // the empty tree cannot result in an enumeration
             if (target == null)
             {
                 return null;
             }
 
+            var roots = new List<AST>(10);
             doWorkForFindAll(roots, target, false); // find all matches recursively
-
             return roots.GetEnumerator();
         }
 
@@ -264,8 +259,7 @@ namespace antlr
         */
         public virtual IEnumerator findAllPartial(AST sub)
         {
-            ArrayList roots = new ArrayList(10);
-            //AST sibling;
+            var roots = new List<AST>(10);
 
             // the empty tree cannot result in an enumeration
             if (sub == null)
@@ -274,7 +268,6 @@ namespace antlr
             }
 
             doWorkForFindAll(roots, sub, true); // find all matches recursively
-
             return roots.GetEnumerator();
         }
 
@@ -300,7 +293,7 @@ namespace antlr
         public virtual int Type
         {
             get { return 0; }
-            set { ; }
+            set { }
         }
 
         /// <summary>
@@ -309,7 +302,7 @@ namespace antlr
         /// <returns>Number of children</returns>
         public int getNumberOfChildren()
         {
-            BaseAST t = this.down;
+            BaseAST t = down;
             int n = 0;
             if (t != null)
             {
@@ -347,14 +340,12 @@ namespace antlr
 
         /*Set the token text for this node */
         public virtual void setText(string text)
-        {
-            ;
-        }
+        {}
 
         /*Set the token type for this node */
         public virtual void setType(int ttype)
         {
-            this.Type = ttype;
+            Type = ttype;
         }
 
         public static void setVerboseStringConversion(bool verbose, string[] names)
@@ -363,13 +354,13 @@ namespace antlr
             tokenNames = names;
         }
 
-        override public string ToString()
+        public override string ToString()
         {
             StringBuilder b = new StringBuilder();
             // if verbose and type name not same as text (keyword probably)
             if (verboseStringConversion &&
-                    (0 != String.Compare(getText(), (tokenNames[Type]), StringComparison.InvariantCultureIgnoreCase)) &&
-                    (0 != String.Compare(getText(), StringUtils.stripFrontBack(tokenNames[Type], @"""", @""""), StringComparison.InvariantCultureIgnoreCase)))
+                    (0 != string.Compare(getText(), (tokenNames[Type]), StringComparison.InvariantCultureIgnoreCase)) &&
+                    (0 != string.Compare(getText(), StringUtils.stripFrontBack(tokenNames[Type], @"""", @""""), StringComparison.InvariantCultureIgnoreCase)))
             {
                 b.Append('[');
                 b.Append(getText());
@@ -388,7 +379,7 @@ namespace antlr
             string ts = "";
             if (t.getFirstChild() != null)
                 ts += " (";
-            ts += " " + this.ToString();
+            ts += " " + ToString();
             if (t.getFirstChild() != null)
             {
                 ts += ((BaseAST)t.getFirstChild()).ToStringList();
@@ -410,7 +401,7 @@ namespace antlr
             {
                 ts += " (";
             }
-            ts += " " + this.ToString();
+            ts += " " + ToString();
             if (t.getFirstChild() != null)
             {
                 ts += ((BaseAST)t.getFirstChild()).ToStringList();
@@ -432,10 +423,9 @@ namespace antlr
             StringBuilder sb = new StringBuilder(prefix);
 
             // Replace vertical bar if there is no next sibling.
-            if ((getNextSibling() == null))
-                sb.Append("+--");
-            else
-                sb.Append("|--");
+            sb.Append(getNextSibling() == null
+                ? "+--"
+                : "|--");
 
             sb.Append(ToString());
             sb.Append(Environment.NewLine);
@@ -443,10 +433,9 @@ namespace antlr
             if (getFirstChild() != null)
             {
                 // Replace vertical bar if there is no next sibling.
-                if (getNextSibling() == null)
-                    sb.Append(((BaseAST)getFirstChild()).ToTree(prefix + "   "));
-                else
-                    sb.Append(((BaseAST)getFirstChild()).ToTree(prefix + "|  "));
+                sb.Append(getNextSibling() == null
+                    ? ((BaseAST) getFirstChild()).ToTree(prefix + "   ")
+                    : ((BaseAST) getFirstChild()).ToTree(prefix + "|  "));
             }
 
             if (getNextSibling() != null)
@@ -457,18 +446,17 @@ namespace antlr
 
         public static string decode(string text)
         {
-            char c, c1, c2, c3, c4, c5;
-            StringBuilder n = new StringBuilder();
+            var n = new StringBuilder();
             for (int i = 0; i < text.Length; i++)
             {
-                c = text[i];
+                var c = text[i];
                 if (c == '&')
                 {
-                    c1 = text[i + 1];
-                    c2 = text[i + 2];
-                    c3 = text[i + 3];
-                    c4 = text[i + 4];
-                    c5 = text[i + 5];
+                    var c1 = text[i + 1];
+                    var c2 = text[i + 2];
+                    var c3 = text[i + 3];
+                    var c4 = text[i + 4];
+                    var c5 = text[i + 5];
 
                     if (c1 == 'a' && c2 == 'm' && c3 == 'p' && c4 == ';')
                     {
@@ -506,48 +494,46 @@ namespace antlr
 
         public static string encode(string text)
         {
-            char c;
-            StringBuilder n = new StringBuilder();
-            for (int i = 0; i < text.Length; i++)
+            var n = new StringBuilder();
+            foreach (var c in text)
             {
-                c = text[i];
                 switch (c)
                 {
                     case '&':
-                        {
-                            n.Append("&amp;");
-                            break;
-                        }
+                    {
+                        n.Append("&amp;");
+                        break;
+                    }
 
                     case '<':
-                        {
-                            n.Append("&lt;");
-                            break;
-                        }
+                    {
+                        n.Append("&lt;");
+                        break;
+                    }
 
                     case '>':
-                        {
-                            n.Append("&gt;");
-                            break;
-                        }
+                    {
+                        n.Append("&gt;");
+                        break;
+                    }
 
                     case '"':
-                        {
-                            n.Append("&quot;");
-                            break;
-                        }
+                    {
+                        n.Append("&quot;");
+                        break;
+                    }
 
                     case '\'':
-                        {
-                            n.Append("&apos;");
-                            break;
-                        }
+                    {
+                        n.Append("&apos;");
+                        break;
+                    }
 
                     default:
-                        {
-                            n.Append(c);
-                            break;
-                        }
+                    {
+                        n.Append(c);
+                        break;
+                    }
 
                 }
             }
@@ -608,7 +594,7 @@ namespace antlr
         }
         #endregion
 
-        public override Int32 GetHashCode()
+        public override int GetHashCode()
         {
             return base.GetHashCode();
         }

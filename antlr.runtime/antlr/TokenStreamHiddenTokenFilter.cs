@@ -1,6 +1,5 @@
-using System;
-using BitSet = antlr.collections.impl.BitSet;
-	
+using antlr.collections.impl;
+
 namespace antlr
 {
 	/*ANTLR Translator Generator
@@ -25,9 +24,8 @@ namespace antlr
 	* Any of the channels can be filtered off as "hidden" channels whose
 	* tokens can be accessed from the parser.
 	*/
-	public class TokenStreamHiddenTokenFilter : TokenStreamBasicFilter, TokenStream
+	public class TokenStreamHiddenTokenFilter : TokenStreamBasicFilter
 	{
-		// protected BitSet discardMask;
 		protected internal BitSet hideMask;
 		
 		private IHiddenStreamToken nextMonitoredToken;
@@ -37,7 +35,7 @@ namespace antlr
 		*/
 		protected internal IHiddenStreamToken lastHiddenToken;
 		
-		protected internal IHiddenStreamToken firstHidden = null;
+		protected internal IHiddenStreamToken firstHidden;
 		
 		public TokenStreamHiddenTokenFilter(TokenStream input) : base(input)
 		{
@@ -129,7 +127,7 @@ namespace antlr
 		*
 		*  Note: EOF must be a monitored Token.
 		*/
-		override public IToken nextToken()
+		public override IToken nextToken()
 		{
 			// handle an initial condition; don't want to get lookahead
 			// token of this splitter until first call to nextToken

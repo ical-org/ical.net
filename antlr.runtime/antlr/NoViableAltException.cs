@@ -1,6 +1,5 @@
 using System;
-
-using AST = antlr.collections.AST;
+using antlr.collections;
 
 namespace antlr
 {
@@ -40,14 +39,14 @@ namespace antlr
         /*
         * Returns a clean error message (no line number/column information)
         */
-        override public string Message
+        public override string Message
         {
             get
             {
                 if (token != null)
                 {
                     //return "unexpected token: " + token.getText();
-                    return "unexpected token: " + token.ToString();
+                    return "unexpected token: " + token;
                 }
 
                 // must a tree parser error if token==null

@@ -1,3 +1,6 @@
+using System.Text;
+using antlr.collections;
+
 namespace antlr
 {
 	/* ANTLR Translator Generator
@@ -10,12 +13,8 @@ namespace antlr
 	//                            Kunle Odutola       : kunle UNDERSCORE odutola AT hotmail DOT com
 	//                            Anthony Oguntimehin
 	//
-
-	using System;
-	using StringBuilder 	= System.Text.StringBuilder;
-	using AST 				= antlr.collections.AST;
-
-	public abstract class ParseTree : BaseAST
+    
+    public abstract class ParseTree : BaseAST
 	{
 		/// <summary>
 		/// Walk parse tree and return requested number of derivation steps.
@@ -38,7 +37,7 @@ namespace antlr
 		public string getLeftmostDerivation(int maxSteps)
 		{
 			StringBuilder buf = new StringBuilder(2000);
-			buf.Append("    " + this.ToString());
+			buf.Append("    " + ToString());
 			buf.Append("\n");
 			for (int d=1; d < maxSteps; d++) 
 			{

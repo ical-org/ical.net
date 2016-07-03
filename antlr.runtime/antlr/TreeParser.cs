@@ -1,7 +1,7 @@
 using System;
-using AST = antlr.collections.AST;
-using BitSet = antlr.collections.impl.BitSet;
-	
+using antlr.collections;
+using antlr.collections.impl;
+
 namespace antlr
 {
 	/*ANTLR Translator Generator
@@ -49,7 +49,7 @@ namespace antlr
 		protected internal ASTFactory astFactory = new ASTFactory();
 		
 		/*Used to keep track of indentdepth for traceIn/Out */
-		protected internal int traceDepth = 0;
+		protected internal int traceDepth;
 		
 		public TreeParser()
 		{

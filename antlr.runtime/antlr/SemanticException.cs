@@ -25,7 +25,7 @@ namespace antlr
         }
 
         [Obsolete("Replaced by SemanticException(string, string, int, int) since version 2.7.2.6", false)]
-        public SemanticException(String s, String fileName, int line) :
+        public SemanticException(string s, string fileName, int line) :
             this(s, fileName, line, -1)
         {
 

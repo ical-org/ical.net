@@ -1,6 +1,6 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalLexer.cs"$
 
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using antlr;
 using antlr.collections.impl;
@@ -50,14 +50,6 @@ namespace Ical.Net.Serialization.iCalendar
 
         public iCalLexer(LexerSharedInputState state) : base(state)
         {
-            initialize();
-        }
-
-        private void initialize()
-        {
-            caseSensitiveLiterals = true;
-            setCaseSensitive(true);
-            literals = new Hashtable(100, (float) 0.4, null, Comparer.Default);
         }
 
         public override IToken nextToken() //throws TokenStreamException
@@ -165,9 +157,6 @@ namespace Ical.Net.Serialization.iCalendar
                         {
                             goto tryAgain; // found SKIP token
                         }
-                        var _ttype = returnToken_.Type;
-                        _ttype = testLiteralsTable(_ttype);
-                        returnToken_.Type = _ttype;
                         return returnToken_;
                     }
                     catch (RecognitionException e)

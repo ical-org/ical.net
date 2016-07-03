@@ -1,7 +1,5 @@
 using System;
-using IEnumerator = System.Collections.IEnumerator;
-
-using IToken = antlr.IToken;
+using System.Collections;
 
 namespace antlr.collections
 {

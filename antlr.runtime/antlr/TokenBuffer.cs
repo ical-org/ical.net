@@ -1,5 +1,3 @@
-using System;
-
 namespace antlr
 {
 	/*ANTLR Translator Generator
@@ -39,13 +37,13 @@ namespace antlr
 		protected internal TokenStream input;
 		
 		// Number of active markers
-		protected internal int nMarkers = 0;
+		protected internal int nMarkers;
 		
 		// Additional offset used when markers are active
-		protected internal int markerOffset = 0;
+		protected internal int markerOffset;
 		
 		// Number of calls to consume() since last LA() or LT() call
-		protected internal int numToConsume = 0;
+		protected internal int numToConsume;
 		
 		// Circular queue
 		internal TokenQueue queue;

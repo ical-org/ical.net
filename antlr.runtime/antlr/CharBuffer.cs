@@ -1,7 +1,5 @@
 using System;
-using System.Runtime.InteropServices;
-using TextReader = System.IO.TextReader;
-using IOException = System.IO.IOException;
+using System.IO;
 
 namespace antlr
 {
@@ -36,47 +34,45 @@ namespace antlr
     public class CharBuffer : InputBuffer
     {
         // char source
-        [NonSerialized()]
+        [NonSerialized]
         internal TextReader input;
 
         private const int BUF_SIZE = 16;
         /// <summary>
         /// Small buffer used to avoid reading individual chars
         /// </summary>
-        private char[] buf = new char[BUF_SIZE];
+        private readonly char[] buf = new char[BUF_SIZE];
 
 
         /*Create a character buffer */
         public CharBuffer(TextReader input_)
-            : base()
         {
             input = input_;
         }
 
         /*Ensure that the character buffer is sufficiently full */
-        override public void fill(int amount)
+        public override void fill(int amount)
         {
             try
             {
                 syncConsume();
                 // Fill the buffer sufficiently to hold needed characters
-                int charsToRead = (amount + markerOffset) - queue.Count;
-                int c;
+                int charsToRead = (amount + markerOffset) - Buffer.Count;
 
                 while (charsToRead > 0)
                 {
                     // Read a few characters
-                    c = input.Read(buf, 0, BUF_SIZE);
+                    var c = input.Read(buf, 0, BUF_SIZE);
                     for (int i = 0; i < c; i++)
                     {
                         // Append the next character
-                        queue.Add(buf[i]);
+                        Buffer.Add(buf[i]);
                     }
                     if (c < BUF_SIZE)
                     {
-                        while ((charsToRead-- > 0) && (queue.Count < BUF_SIZE))
+                        while ((charsToRead-- > 0) && (Buffer.Count < BUF_SIZE))
                         {
-                            queue.Add(CharScanner.EOF_CHAR);
+                            Buffer.Add(CharScanner.EOF_CHAR);
                         }
                         break;
                     }

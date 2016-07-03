@@ -1,5 +1,3 @@
-using System;
-
 namespace antlr
 {
 	/* ANTLR Translator Generator
@@ -24,7 +22,7 @@ namespace antlr
 		* @param c The character to remove
 		* @return The resulting string
 		*/
-		static public string stripBack(string s, char c)
+		public static string stripBack(string s, char c)
 		{
 			while (s.Length > 0 && s[s.Length - 1] == c)
 			{
@@ -39,13 +37,13 @@ namespace antlr
 		* @param remove A string containing the set of characters to remove
 		* @return The resulting string
 		*/
-		static public string stripBack(string s, string remove)
+		public static string stripBack(string s, string remove)
 		{
 			bool changed;
 			do 
 			{
 				changed = false;
-				 for (int i = 0; i < remove.Length; i++)
+				for (int i = 0; i < remove.Length; i++)
 				{
 					char c = remove[i];
 					while (s.Length > 0 && s[s.Length - 1] == c)
@@ -65,7 +63,7 @@ namespace antlr
 		* @param c The character to remove
 		* @return The resulting string
 		*/
-		static public string stripFront(string s, char c)
+		public static string stripFront(string s, char c)
 		{
 			while (s.Length > 0 && s[0] == c)
 			{
@@ -80,13 +78,13 @@ namespace antlr
 		* @param remove A string containing the set of characters to remove
 		* @return The resulting string
 		*/
-		static public string stripFront(string s, string remove)
+		public static string stripFront(string s, string remove)
 		{
 			bool changed;
 			do 
 			{
 				changed = false;
-				 for (int i = 0; i < remove.Length; i++)
+				for (int i = 0; i < remove.Length; i++)
 				{
 					char c = remove[i];
 					while (s.Length > 0 && s[0] == c)

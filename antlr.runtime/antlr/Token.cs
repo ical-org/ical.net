@@ -1,5 +1,3 @@
-using System;
-
 namespace antlr
 {
 	/*ANTLR Translator Generator
@@ -77,21 +75,18 @@ namespace antlr
 			set { type_ = value; }
 		}
 
-		public virtual void setType(int newType)	{ this.Type = newType; }
+		public virtual void setType(int newType)	{ Type = newType; }
 
 		public virtual void  setColumn(int c)
 		{
-			;
 		}
 		public virtual void  setLine(int l)
 		{
-			;
 		}
 		public virtual void  setText(string t)
 		{
-			;
 		}
-		override public string ToString()
+		public override string ToString()
 		{
 			return "[\"" + getText() + "\",<" + type_ + ">]";
 		}

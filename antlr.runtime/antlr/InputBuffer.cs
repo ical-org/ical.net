@@ -1,10 +1,9 @@
+using System.Collections.Generic;
+using System.Text;
+
 namespace antlr
 {
-	using System;
-	using ArrayList		= System.Collections.ArrayList;
-	using StringBuilder	= System.Text.StringBuilder;
-
-	/*ANTLR Translator Generator
+    /*ANTLR Translator Generator
 	* Project led by Terence Parr at http://www.jGuru.com
 	* Software rights: http://www.antlr.org/license.html
 	*/
@@ -39,22 +38,16 @@ namespace antlr
 	public abstract class InputBuffer
 	{
 		// Number of active markers
-		protected internal int nMarkers = 0;
+		protected internal int nMarkers;
 		
 		// Additional offset used when markers are active
-		protected internal int markerOffset = 0;
+		protected internal int markerOffset;
 		
 		// Number of calls to consume() since last LA() or LT() call
-		protected internal int numToConsume = 0;
+		protected internal int numToConsume;
 		
 		// Circular queue
-		protected ArrayList	queue;
-		
-		/*Create an input buffer */
-		public InputBuffer()
-		{
-			queue = new ArrayList();
-		}
+	    protected List<char> Buffer = new List<char>(128);
 		
 		/*This method updates the state of the input buffer so that
 		*  the text matched since the most recent mark() is no longer
@@ -82,8 +75,8 @@ namespace antlr
 			StringBuilder la = new StringBuilder();
 
 			// copy buffer contents to array before looping thru contents (it's usually faster)
-			char[] fastBuf = new char[queue.Count-markerOffset];
-			queue.CopyTo(fastBuf, markerOffset);
+			char[] fastBuf = new char[Buffer.Count-markerOffset];
+			Buffer.CopyTo(fastBuf, markerOffset);
 
 			la.Append(fastBuf);
 			return la.ToString();
@@ -94,8 +87,8 @@ namespace antlr
 			StringBuilder marked = new StringBuilder();
 
 			// copy buffer contents to array before looping thru contents (it's usually faster)
-			char[] fastBuf = new char[queue.Count-markerOffset];
-			queue.CopyTo(fastBuf, markerOffset);
+			char[] fastBuf = new char[Buffer.Count-markerOffset];
+			Buffer.CopyTo(fastBuf, markerOffset);
 
 			marked.Append(fastBuf);
 			return marked.ToString();
@@ -110,7 +103,7 @@ namespace antlr
 		public virtual char LA(int i)
 		{
 			fill(i);
-			return (char) queue[markerOffset + i - 1];
+			return (char) Buffer[markerOffset + i - 1];
 		}
 		
 		/*Return an integer marker that can be used to rewind the buffer to
@@ -140,7 +133,7 @@ namespace antlr
 			nMarkers = 0;
 			markerOffset = 0;
 			numToConsume = 0;
-			queue.Clear();
+			Buffer.Clear();
 		}
 		
 		/*Sync up deferred consumption */
@@ -156,7 +149,7 @@ namespace antlr
 				else
 				{
 					// normal mode -- remove "consumed" characters from buffer
-					queue.RemoveRange(0, numToConsume);
+					Buffer.RemoveRange(0, numToConsume);
 				}
 				numToConsume = 0;
 			}

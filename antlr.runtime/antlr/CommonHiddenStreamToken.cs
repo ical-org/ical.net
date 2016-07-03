@@ -1,5 +1,3 @@
-using System;
-
 namespace antlr
 {
 	/*ANTLR Translator Generator
@@ -19,12 +17,12 @@ namespace antlr
 	
 	public class CommonHiddenStreamToken : CommonToken, IHiddenStreamToken
 	{
-		new public static readonly CommonHiddenStreamToken.CommonHiddenStreamTokenCreator Creator = new CommonHiddenStreamTokenCreator();
+		public new static readonly CommonHiddenStreamTokenCreator Creator = new CommonHiddenStreamTokenCreator();
 
 		protected internal IHiddenStreamToken hiddenBefore;
 		protected internal IHiddenStreamToken hiddenAfter;
 		
-		public CommonHiddenStreamToken() : base()
+		public CommonHiddenStreamToken()
 		{
 		}
 		
@@ -58,27 +56,16 @@ namespace antlr
 
 		public class CommonHiddenStreamTokenCreator : TokenCreator
 		{
-			public CommonHiddenStreamTokenCreator() {}
-
 			/// <summary>
 			/// Returns the fully qualified name of the Token type that this
 			/// class creates.
 			/// </summary>
-			public override string TokenTypeName
-			{
-				get 
-				{ 
-					return typeof(antlr.CommonHiddenStreamToken).FullName;; 
-				}
-			}
+			public override string TokenTypeName => typeof(CommonHiddenStreamToken).FullName;
 
-			/// <summary>
+		    /// <summary>
 			/// Constructs a <see cref="Token"/> instance.
 			/// </summary>
-			public override IToken Create()
-			{
-				return new CommonHiddenStreamToken();
-			}
+			public override IToken Create() => new CommonHiddenStreamToken();
 		}
 	}
 }

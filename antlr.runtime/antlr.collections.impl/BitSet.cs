@@ -1,5 +1,5 @@
 using System;
-using ArrayList = System.Collections.ArrayList;
+using System.Collections;
 
 //using CharFormatter				= antlr.CharFormatter;
 
@@ -85,14 +85,14 @@ namespace antlr.collections.impl
 
         public virtual BitSet and(BitSet a)
         {
-            BitSet s = (BitSet)this.Clone();
+            BitSet s = (BitSet)Clone();
             s.andInPlace(a);
             return s;
         }
 
         public virtual void andInPlace(BitSet a)
         {
-            int min = (int)(Math.Min(dataBits.Length, a.dataBits.Length));
+            int min = Math.Min(dataBits.Length, a.dataBits.Length);
             for (int i = min - 1; i >= 0; i--)
             {
                 dataBits[i] &= a.dataBits[i];
@@ -167,41 +167,42 @@ namespace antlr.collections.impl
         /*code "inherited" from java.util.BitSet */
         public override bool Equals(object obj)
         {
-            if ((obj != null) && (obj is BitSet))
-            {
-                BitSet bset = (BitSet)obj;
+            var bset = obj as BitSet;
 
-                int n = (int)(System.Math.Min(dataBits.Length, bset.dataBits.Length));
-                for (int i = n; i-- > 0; )
+            if (bset?.dataBits.Length != dataBits.Length)
+            {
+                return false;
+            }
+
+            var n = Math.Min(dataBits.Length, bset.dataBits.Length);
+            for (int i = n; i-- > 0; )
+            {
+                if (dataBits[i] != bset.dataBits[i])
                 {
-                    if (dataBits[i] != bset.dataBits[i])
+                    return false;
+                }
+            }
+            if (dataBits.Length > n)
+            {
+                for (int i = dataBits.Length; i-- > n; )
+                {
+                    if (dataBits[i] != 0)
                     {
                         return false;
                     }
                 }
-                if (dataBits.Length > n)
-                {
-                    for (int i = (int)(dataBits.Length); i-- > n; )
-                    {
-                        if (dataBits[i] != 0)
-                        {
-                            return false;
-                        }
-                    }
-                }
-                else if (bset.dataBits.Length > n)
-                {
-                    for (int i = (int)(bset.dataBits.Length); i-- > n; )
-                    {
-                        if (bset.dataBits[i] != 0)
-                        {
-                            return false;
-                        }
-                    }
-                }
-                return true;
             }
-            return false;
+            else if (bset.dataBits.Length > n)
+            {
+                for (int i = bset.dataBits.Length; i-- > n; )
+                {
+                    if (bset.dataBits[i] != 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         /*
@@ -210,7 +211,7 @@ namespace antlr.collections.impl
         */
         public virtual void growToInclude(int bit)
         {
-            int newSize = (int)(System.Math.Max(dataBits.Length << 1, numWordsToHold(bit)));
+            int newSize = Math.Max(dataBits.Length << 1, numWordsToHold(bit));
             long[] newbits = new long[newSize];
             Array.Copy(dataBits, 0, newbits, 0, dataBits.Length);
             dataBits = newbits;
@@ -236,7 +237,7 @@ namespace antlr.collections.impl
 
         public virtual BitSet not()
         {
-            BitSet s = (BitSet)this.Clone();
+            BitSet s = (BitSet)Clone();
             s.notInPlace();
             return s;
         }
@@ -282,7 +283,7 @@ namespace antlr.collections.impl
         /*return this | a in a new set */
         public virtual BitSet or(BitSet a)
         {
-            BitSet s = (BitSet)this.Clone();
+            BitSet s = (BitSet)Clone();
             s.orInPlace(a);
             return s;
         }
@@ -292,9 +293,9 @@ namespace antlr.collections.impl
             // If this is smaller than a, grow this first
             if (a.dataBits.Length > dataBits.Length)
             {
-                setSize((int)(a.dataBits.Length));
+                setSize(a.dataBits.Length);
             }
-            int min = (int)(System.Math.Min(dataBits.Length, a.dataBits.Length));
+            int min = Math.Min(dataBits.Length, a.dataBits.Length);
             for (int i = min - 1; i >= 0; i--)
             {
                 dataBits[i] |= a.dataBits[i];
@@ -319,7 +320,7 @@ namespace antlr.collections.impl
         private void setSize(int nwords)
         {
             long[] newbits = new long[nwords];
-            int n = (int)(System.Math.Min(nwords, dataBits.Length));
+            int n = Math.Min(nwords, dataBits.Length);
             Array.Copy(dataBits, 0, newbits, 0, n);
             dataBits = newbits;
         }
@@ -342,7 +343,7 @@ namespace antlr.collections.impl
         {
             if (a == null) //(a == null || !(a is BitSet))
                 return false;
-            return this.and(a).Equals(this);
+            return and(a).Equals(this);
         }
 
         /*Subtract the elements of 'a' from 'this' in-place.
@@ -410,7 +411,7 @@ namespace antlr.collections.impl
         * @separator The string to put in between elements
         * @return A commma-separated list of character constants.
         */
-        public virtual string ToString(string separator, ArrayList vocabulary)
+        public virtual string ToString(string separator, IList vocabulary)
         {
             if (vocabulary == null)
             {

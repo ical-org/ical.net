@@ -1,6 +1,5 @@
 using System;
-
-using AST			= antlr.collections.AST;
+using antlr.collections;
 
 namespace antlr
 {
@@ -25,7 +24,7 @@ namespace antlr
 	/** Simple class to dump the contents of an AST to the output */
 	public class DumpASTVisitor : ASTVisitor 
 	{
-		protected int level = 0;
+		protected int level;
 
 
 		private void tabs() 
@@ -39,42 +38,25 @@ namespace antlr
 		public void visit(AST node) 
 		{
 			// Flatten this level of the tree if it has no children
-			bool flatten = /*true*/ false;
-			AST node2;
+		    AST node2;
 			for (node2 = node; node2 != null; node2 = node2.getNextSibling()) 
 			{
 				if (node2.getFirstChild() != null) 
 				{
-					flatten = false;
-					break;
+				    break;
 				}
 			}
 
 			for (node2 = node; node2 != null; node2 = node2.getNextSibling()) 
 			{
-				if (!flatten || node2 == node) 
+				if (node2 == node) 
 				{
 					tabs();
 				}
-				if (node2.getText() == null) 
-				{
-					Console.Out.Write("nil");
-				}
-				else 
-				{
-					Console.Out.Write(node2.getText());
-				}
+			    Console.Out.Write(node2.getText() ?? "nil");
 
-				Console.Out.Write(" [" + node2.Type + "] ");
-
-				if (flatten) 
-				{
-					Console.Out.Write(" ");
-				}
-				else 
-				{
-					Console.Out.WriteLine("");
-				}
+			    Console.Out.Write(" [" + node2.Type + "] ");
+				Console.Out.WriteLine("");
 
 				if (node2.getFirstChild() != null) 
 				{
@@ -82,11 +64,6 @@ namespace antlr
 					visit(node2.getFirstChild());
 					level--;
 				}
-			}
-
-			if (flatten) 
-			{
-				Console.Out.WriteLine("");
 			}
 		}
 	}  

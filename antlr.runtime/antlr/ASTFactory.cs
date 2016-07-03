@@ -1,13 +1,9 @@
 using System;
-using System.Collections;
-using Assembly = System.Reflection.Assembly;
-
-using Hashtable = System.Collections.Hashtable;
-using ArrayList = System.Collections.ArrayList;
-using Debug = System.Diagnostics.Debug;
-using AST = antlr.collections.AST;
-using ASTArray = antlr.collections.impl.ASTArray;
-using ANTLRException = antlr.ANTLRException;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
+using antlr.collections;
+using antlr.collections.impl;
 
 namespace antlr
 {
@@ -46,7 +42,7 @@ namespace antlr
     /// <para>
     /// Typically, <see cref="setASTNodeType"/>  is used to specify the
     /// homogeneous type of node to create, but you can override
-    /// <see cref="create"/>  to make heterogeneous nodes etc...
+    /// <see cref="Create"/>  to make heterogeneous nodes etc...
     /// </para>
     /// </remarks>
     public class ASTFactory
@@ -60,7 +56,7 @@ namespace antlr
         /// <see cref="antlr.CommonAST"/>.
         /// </summary>
         public ASTFactory()
-            : this(typeof(antlr.CommonAST))
+            : this(typeof(CommonAST))
         {
         }
 
@@ -88,10 +84,8 @@ namespace antlr
             heteroList_ = new FactoryEntry[Token.MIN_USER_TYPE + 1];
             defaultASTNodeTypeObject_ = nodeType;
             defaultCreator_ = null;
-            typename2creator_ = new Hashtable(32, (float)0.3);
-            typename2creator_["antlr.CommonAST"] = CommonAST.Creator;
-            typename2creator_["antlr.CommonASTWithHiddenTokens"] = CommonASTWithHiddenTokens.Creator;
-
+            AstNodeCreator.Add("antlr.CommonAST", CommonAST.Creator);
+            AstNodeCreator.Add("antlr.CommonASTWithHiddenTokens", CommonASTWithHiddenTokens.Creator);
         }
 
         //---------------------------------------------------------------------
@@ -113,7 +107,7 @@ namespace antlr
         /// <summary>
         /// Stores the mapping between AST node typenames and their token ID.
         /// </summary>
-        protected Hashtable typename2creator_;
+        protected Dictionary<string, ASTNodeCreator> AstNodeCreator = new Dictionary<string, ASTNodeCreator>(32);
 
         //---------------------------------------------------------------------
         // FUNCTION MEMBERS
@@ -183,8 +177,7 @@ namespace antlr
             else
                 heteroList_[NodeType].Creator = creator;
 
-            //typename2creator_[NodeType.ToString()]		= creator;
-            typename2creator_[creator.ASTNodeTypeName] = creator;
+            AstNodeCreator[creator.ASTNodeTypeName] = creator;
         }
 
         /// <summary>
@@ -270,12 +263,9 @@ namespace antlr
         /// <returns>An uninitialized AST node object.</returns>
         public virtual AST create()
         {
-            AST newNode;
-
-            if (defaultCreator_ == null)
-                newNode = createFromNodeTypeObject(defaultASTNodeTypeObject_);
-            else
-                newNode = defaultCreator_.Create();
+            var newNode = defaultCreator_ == null
+                ? createFromNodeTypeObject(defaultASTNodeTypeObject_)
+                : defaultCreator_.Create();
 
             return newNode;
         }
@@ -471,10 +461,7 @@ namespace antlr
                 return null;
             AST root = nodes[0];
             AST tail = null;
-            if (root != null)
-            {
-                root.setFirstChild(null); // don't leave any old pointers set
-            }
+            root?.setFirstChild(null); // don't leave any old pointers set
             // link in children;
             for (int i = 1; i < nodes.Length; i++)
             {
@@ -604,7 +591,7 @@ namespace antlr
             AST newNode = null;
             Type nodeAsTypeObj = node.GetType();
 
-            ASTNodeCreator creator = (ASTNodeCreator)typename2creator_[nodeAsTypeObj.FullName];
+            var creator = AstNodeCreator[nodeAsTypeObj.FullName];
             if (creator != null)
             {
                 newNode = creator.Create();
@@ -624,7 +611,7 @@ namespace antlr
         {
             AST newNode = null;
 
-            ASTNodeCreator creator = (ASTNodeCreator)typename2creator_[nodeTypeName];
+            var creator = AstNodeCreator[nodeTypeName];
             if (creator != null)
             {
                 newNode = creator.Create();
@@ -646,20 +633,17 @@ namespace antlr
             AST newNode = null;
 
             FactoryEntry entry = heteroList_[nodeTypeIndex];
-            if ((entry != null) && (entry.Creator != null))
+            if (entry?.Creator != null)
             {
                 newNode = entry.Creator.Create();
             }
             else
             {
-                if ((entry == null) || (entry.NodeTypeObject == null))
+                if (entry?.NodeTypeObject == null)
                 {
-                    if (defaultCreator_ == null)
-                    {
-                        newNode = createFromNodeTypeObject(defaultASTNodeTypeObject_);
-                    }
-                    else
-                        newNode = defaultCreator_.Create();
+                    newNode = defaultCreator_ == null
+                        ? createFromNodeTypeObject(defaultASTNodeTypeObject_)
+                        : defaultCreator_.Create();
                 }
                 else
                     newNode = createFromNodeTypeObject(entry.NodeTypeObject);

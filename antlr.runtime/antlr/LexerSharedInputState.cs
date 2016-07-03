@@ -1,6 +1,4 @@
-using System;
-using Stream			= System.IO.Stream;
-using TextReader		= System.IO.TextReader;
+using System.IO;
 
 namespace antlr
 {

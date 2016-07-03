@@ -1,5 +1,3 @@
-using System;
-
 namespace antlr
 {
     /*ANTLR Translator Generator
@@ -23,9 +21,7 @@ namespace antlr
     * of stream to re-enter and retry.
     */
 
-    [Serializable]
     public class TokenStreamRetryException : TokenStreamException
     {
-        public TokenStreamRetryException() { }
     }
 }

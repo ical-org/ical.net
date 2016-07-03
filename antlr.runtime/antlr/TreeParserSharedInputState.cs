@@ -1,5 +1,3 @@
-using System;
-
 namespace antlr
 {
 	/*ANTLR Translator Generator
@@ -27,7 +25,7 @@ namespace antlr
 	public class TreeParserSharedInputState
 	{
 		/*Are we guessing (guessing>0)? */
-		public int guessing = 0;
+		public int guessing;
 
 		public virtual void reset()
 		{

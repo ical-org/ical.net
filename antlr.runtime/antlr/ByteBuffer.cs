@@ -1,8 +1,5 @@
 using System;
-using System.Runtime.InteropServices;
-using Stream = System.IO.Stream;
-using BinaryReader = System.IO.BinaryReader;
-using IOException = System.IO.IOException;
+using System.IO;
 
 namespace antlr
 {
@@ -38,57 +35,53 @@ namespace antlr
     {
 
         // char source
-        [NonSerialized()]
+        [NonSerialized]
         internal Stream input;
 
         private const int BUF_SIZE = 16;
         /// <summary>
         /// Small buffer used to avoid reading individual chars
         /// </summary>
-        private byte[] buf = new byte[BUF_SIZE];
+        private readonly byte[] buf = new byte[BUF_SIZE];
 
 
         /*Create a character buffer */
         public ByteBuffer(Stream input_)
-            : base()
         {
             input = input_;
         }
 
         /*Ensure that the character buffer is sufficiently full */
-        override public void fill(int amount)
+        public override void fill(int amount)
         {
             //			try
             //			{
             syncConsume();
             // Fill the buffer sufficiently to hold needed characters
-            int bytesToRead = (amount + markerOffset) - queue.Count;
-            int c;
+            int bytesToRead = (amount + markerOffset) - Buffer.Count;
 
             while (bytesToRead > 0)
             {
                 // Read a few characters
-                c = input.Read(buf, 0, BUF_SIZE);
+                var c = input.Read(buf, 0, BUF_SIZE);
                 for (int i = 0; i < c; i++)
                 {
                     // Append the next character
-                    queue.Add(unchecked((char)buf[i]));
+                    var foo = (char) buf[i];
+                    Buffer.Add(foo);
+                    //queue.Add(foo);
                 }
                 if (c < BUF_SIZE)
                 {
-                    while ((bytesToRead-- > 0) && (queue.Count < BUF_SIZE))
+                    while ((bytesToRead-- > 0) && (Buffer.Count < BUF_SIZE))
                     {
-                        queue.Add(CharScanner.EOF_CHAR);
+                        Buffer.Add(CharScanner.EOF_CHAR);
+                        //queue.Add(CharScanner.EOF_CHAR);
                     }
                     break;
                 }
                 bytesToRead -= c;
             }
-            //			}
-            //			catch (IOException io)
-            //			{
-            //				throw new CharStreamIOException(io);
-            //			}
         }
     }
 }

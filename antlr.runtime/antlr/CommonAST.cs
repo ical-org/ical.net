@@ -1,6 +1,6 @@
 using System;
-using AST = antlr.collections.AST;
-	
+using antlr.collections;
+
 namespace antlr
 {
 	/*ANTLR Translator Generator
@@ -21,7 +21,7 @@ namespace antlr
 	/*Common AST node implementation */
 	public class CommonAST : BaseAST
 	{
-		public static readonly CommonAST.CommonASTCreator Creator = new CommonASTCreator();
+		public static readonly CommonASTCreator Creator = new CommonASTCreator();
 
 		internal int ttype = Token.INVALID_TYPE;
 		internal string text;
@@ -34,29 +34,29 @@ namespace antlr
 			//down	= another.down;
 			//right	= another.right;
 			ttype	= another.ttype;
-			text	= (another.text==null) ? null : String.Copy(another.text);
+			text	= (another.text==null) ? null : string.Copy(another.text);
 		}
 
 		/*Get the token text for this node */
-		override public string getText()
+		public override string getText()
 		{
 			return text;
 		}
 		
 		/*Get the token type for this node */
-		override public int Type
+		public override int Type
 		{
 			get { return ttype;   }
 			set { ttype = value; }
 		}
 		
-		override public void  initialize(int t, string txt)
+		public override void  initialize(int t, string txt)
 		{
 			Type = t;
 			setText(txt);
 		}
 		
-		override public void  initialize(AST t)
+		public override void  initialize(AST t)
 		{
 			setText(t.getText());
 			Type = t.Type;
@@ -71,25 +71,25 @@ namespace antlr
 			initialize(tok);
 		}
 		
-		override public void  initialize(IToken tok)
+		public override void  initialize(IToken tok)
 		{
 			setText(tok.getText());
 			Type = tok.Type;
 		}
 		/*Set the token text for this node */
-		override public void  setText(string text_)
+		public override void  setText(string text_)
 		{
 			text = text_;
 		}
 		/*Set the token type for this node */
-		override public void  setType(int ttype_)
+		public override void  setType(int ttype_)
 		{
-			this.Type = ttype_;
+			Type = ttype_;
 		}
 
 		#region Implementation of ICloneable
 		[Obsolete("Deprecated since version 2.7.2. Use ASTFactory.dup() instead.", false)]
-		override public object Clone()
+		public override object Clone()
 		{
 			return new CommonAST(this);
 		}
@@ -97,27 +97,16 @@ namespace antlr
 
 		public class CommonASTCreator : ASTNodeCreator
 		{
-			public CommonASTCreator() {}
-
 			/// <summary>
 			/// Returns the fully qualified name of the AST type that this
 			/// class creates.
 			/// </summary>
-			public override string ASTNodeTypeName
-			{
-				get 
-				{ 
-					return typeof(antlr.CommonAST).FullName;; 
-				}
-			}
+			public override string ASTNodeTypeName => typeof(CommonAST).FullName;
 
-			/// <summary>
+		    /// <summary>
 			/// Constructs a <see cref="AST"/> instance.
 			/// </summary>
-			public override AST Create()
-			{
-				return new CommonAST();
-			}
+			public override AST Create() => new CommonAST();
 		}
 	}
 }

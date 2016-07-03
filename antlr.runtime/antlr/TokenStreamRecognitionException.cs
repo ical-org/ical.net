@@ -30,10 +30,10 @@ namespace antlr
         public TokenStreamRecognitionException(RecognitionException re) :
             base(re.Message)
         {
-            this.recog = re;
+            recog = re;
         }
 
-        override public string ToString()
+        public override string ToString()
         {
             return recog.ToString();
         }

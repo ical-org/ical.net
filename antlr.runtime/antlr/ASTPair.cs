@@ -1,10 +1,11 @@
+using System.Collections.Generic;
+using antlr.collections;
+
 namespace antlr
 {
-	using System;
-	using Queue = System.Collections.Generic.Queue<object>;
-	using AST	= antlr.collections.AST;
+    using Queue = Queue<object>;
 
-	/*ANTLR Translator Generator
+    /*ANTLR Translator Generator
 	* Project led by Terence Parr at http://www.jGuru.com
 	* Software rights: http://www.antlr.org/license.html
 	*
@@ -46,19 +47,15 @@ namespace antlr
 		/*Copy an ASTPair.  Don't call it clone() because we want type-safety */
 		public ASTPair copy()
 		{
-			ASTPair tmp = new ASTPair();
-			tmp.root = root;
-			tmp.child = child;
-			return tmp;
+		    ASTPair tmp = new ASTPair
+		    {
+		        root = root,
+		        child = child
+		    };
+		    return tmp;
 		}
 
-		private void reset()
-		{
-			root  = null;
-			child = null;
-		}
-		
-		override public string ToString()
+		public override string ToString()
 		{
 			string r = (root == null) ? "null" : root.getText();
 			string c = (child == null) ? "null" : child.getText();

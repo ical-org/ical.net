@@ -1,5 +1,5 @@
 using System;
-	
+
 namespace antlr
 {
 	/*ANTLR Translator Generator
@@ -39,7 +39,7 @@ namespace antlr
 		public LLkParser(TokenBuffer tokenBuf, int k_)
 		{
 			k = k_;
-			setTokenBuffer(tokenBuf);
+		    inputState.input = tokenBuf;
 		}
 		public LLkParser(TokenStream lexer, int k_)
 		{
@@ -54,15 +54,15 @@ namespace antlr
 		* For example, calling consume() 3 times when k=2, means that the first token
 		* consumed will be overwritten with the 3rd.
 		*/
-		override public void  consume()
+		public override void  consume()
 		{
 			inputState.input.consume();
 		}
-		override public int LA(int i)
+		public override int LA(int i)
 		{
 			return inputState.input.LA(i);
 		}
-		override public IToken LT(int i)
+		public override IToken LT(int i)
 		{
 			return inputState.input.LT(i);
 		}
@@ -86,12 +86,12 @@ namespace antlr
 			}
 			Console.Out.WriteLine("");
 		}
-		override public void  traceIn(string rname)
+		public override void  traceIn(string rname)
 		{
 			traceDepth += 1;
 			trace("> ", rname);
 		}
-		override public void  traceOut(string rname)
+		public override void  traceOut(string rname)
 		{
 			trace("< ", rname);
 			traceDepth -= 1;

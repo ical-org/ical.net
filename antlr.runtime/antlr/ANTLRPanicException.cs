@@ -1,3 +1,5 @@
+using System;
+
 namespace antlr
 {
     /*ANTLR Translator Generator
@@ -14,14 +16,11 @@ namespace antlr
     //
     // With many thanks to Eric V. Smith from the ANTLR list.
     //
-
-    using System;
-
+    
     [Serializable]
     public class ANTLRPanicException : ANTLRException
     {
         public ANTLRPanicException()
-            : base()
         {
         }
 

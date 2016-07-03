@@ -1,5 +1,5 @@
 using System;
-using IOException = System.IO.IOException;
+using System.IO;
 
 namespace antlr
 {

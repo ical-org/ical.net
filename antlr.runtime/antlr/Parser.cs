@@ -1,29 +1,8 @@
 using System;
-using EventHandlerList			= System.ComponentModel.EventHandlerList;
+using System.ComponentModel;
+using antlr.collections;
+using antlr.collections.impl;
 
-using BitSet					= antlr.collections.impl.BitSet;
-using AST						= antlr.collections.AST;
-using ASTArray					= antlr.collections.impl.ASTArray;
-using antlr.debug;
-
-using MessageListener				= antlr.debug.MessageListener;
-using ParserListener				= antlr.debug.ParserListener;
-using ParserMatchListener			= antlr.debug.ParserMatchListener;
-using ParserTokenListener			= antlr.debug.ParserTokenListener;
-using SemanticPredicateListener		= antlr.debug.SemanticPredicateListener;
-using SyntacticPredicateListener	= antlr.debug.SyntacticPredicateListener;
-using TraceListener					= antlr.debug.TraceListener;
-
-/*
-	private Vector messageListeners;
-	private Vector newLineListeners;
-	private Vector matchListeners;
-	private Vector tokenListeners;
-	private Vector semPredListeners;
-	private Vector synPredListeners;
-	private Vector traceListeners;
-*/
-	
 namespace antlr
 {
 	/*ANTLR Translator Generator
@@ -41,17 +20,12 @@ namespace antlr
 	// With many thanks to Eric V. Smith from the ANTLR list.
 	//
 
-	public abstract class Parser : IParserDebugSubject
+	public abstract class Parser
 	{
 		// Used to store event delegates
-		private EventHandlerList events_ = new EventHandlerList();
+	    protected internal EventHandlerList Events { get; } = new EventHandlerList();
 
-		protected internal EventHandlerList Events 
-		{
-			get	{ return events_;	}
-		}
-
-		// The unique keys for each event that Parser [objects] can generate
+	    // The unique keys for each event that Parser [objects] can generate
 		internal static readonly object EnterRuleEventKey		= new object();
 		internal static readonly object ExitRuleEventKey			= new object();
 		internal static readonly object DoneEventKey				= new object();
@@ -83,10 +57,10 @@ namespace antlr
 		/*AST support code; parser and treeparser delegate to this object */
 		protected internal ASTFactory astFactory = new ASTFactory();
 		
-		private bool ignoreInvalidDebugCalls = false;
+		private bool ignoreInvalidDebugCalls;
 		
 		/*Used to keep track of indentdepth for traceIn/Out */
-		protected internal int traceDepth = 0;
+		protected internal int traceDepth;
 		
 		public Parser()
 		{
@@ -96,143 +70,6 @@ namespace antlr
 		public Parser(ParserSharedInputState state)
 		{
 			inputState = state;
-		}
-		
-		/// <summary>
-		/// 
-		/// </summary>
-
-		public event TraceEventHandler EnterRule
-		{
-			add		{	Events.AddHandler(EnterRuleEventKey, value);	}
-			remove	{	Events.RemoveHandler(EnterRuleEventKey, value);	}
-		}
-
-		public event TraceEventHandler ExitRule
-		{
-			add		{	Events.AddHandler(ExitRuleEventKey, value);		}
-			remove	{	Events.RemoveHandler(ExitRuleEventKey, value);	}
-		}
-
-		public event TraceEventHandler Done
-		{
-			add		{	Events.AddHandler(DoneEventKey, value);		}
-			remove	{	Events.RemoveHandler(DoneEventKey, value);	}
-		}
-
-		public event MessageEventHandler ErrorReported
-		{
-			add		{	Events.AddHandler(ReportErrorEventKey, value);		}
-			remove	{	Events.RemoveHandler(ReportErrorEventKey, value);	}
-		}
-
-		public event MessageEventHandler WarningReported
-		{
-			add		{	Events.AddHandler(ReportWarningEventKey, value);	}
-			remove	{	Events.RemoveHandler(ReportWarningEventKey, value);	}
-		}
-
-		public event MatchEventHandler MatchedToken
-		{
-			add		{	Events.AddHandler(MatchEventKey, value);	}
-			remove	{	Events.RemoveHandler(MatchEventKey, value);	}
-		}
-
-		public event MatchEventHandler MatchedNotToken
-		{
-			add		{	Events.AddHandler(MatchNotEventKey, value);		}
-			remove	{	Events.RemoveHandler(MatchNotEventKey, value);	}
-		}
-
-		public event MatchEventHandler MisMatchedToken
-		{
-			add		{	Events.AddHandler(MisMatchEventKey, value);		}
-			remove	{	Events.RemoveHandler(MisMatchEventKey, value);	}
-		}
-
-		public event MatchEventHandler MisMatchedNotToken
-		{
-			add		{	Events.AddHandler(MisMatchNotEventKey, value);		}
-			remove	{	Events.RemoveHandler(MisMatchNotEventKey, value);	}
-		}
-
-		public event TokenEventHandler ConsumedToken
-		{
-			add		{	Events.AddHandler(ConsumeEventKey, value);		}
-			remove	{	Events.RemoveHandler(ConsumeEventKey, value);	}
-		}
-
-		public event TokenEventHandler TokenLA
-		{
-			add		{	Events.AddHandler(LAEventKey, value);		}
-			remove	{	Events.RemoveHandler(LAEventKey, value);	}
-		}
-
-		public event SemanticPredicateEventHandler SemPredEvaluated
-		{
-			add		{	Events.AddHandler(SemPredEvaluatedEventKey, value);		}
-			remove	{	Events.RemoveHandler(SemPredEvaluatedEventKey, value);	}
-		}
-
-		public event SyntacticPredicateEventHandler SynPredStarted
-		{
-			add		{	Events.AddHandler(SynPredStartedEventKey, value);		}
-			remove	{	Events.RemoveHandler(SynPredStartedEventKey, value);	}
-		}
-
-		public event SyntacticPredicateEventHandler SynPredFailed
-		{
-			add		{	Events.AddHandler(SynPredFailedEventKey, value);	}
-			remove	{	Events.RemoveHandler(SynPredFailedEventKey, value);	}
-		}
-
-		public event SyntacticPredicateEventHandler SynPredSucceeded
-		{
-			add		{	Events.AddHandler(SynPredSucceededEventKey, value);		}
-			remove	{	Events.RemoveHandler(SynPredSucceededEventKey, value);	}
-		}
-
-		
-		public virtual void  addMessageListener(MessageListener l)
-		{
-			if (!ignoreInvalidDebugCalls)
-				throw new System.ArgumentException("addMessageListener() is only valid if parser built for debugging");
-		}
-		
-		public virtual void  addParserListener(ParserListener l)
-		{
-			if (!ignoreInvalidDebugCalls)
-				throw new System.ArgumentException("addParserListener() is only valid if parser built for debugging");
-		}
-		
-		public virtual void  addParserMatchListener(ParserMatchListener l)
-		{
-			if (!ignoreInvalidDebugCalls)
-				throw new System.ArgumentException("addParserMatchListener() is only valid if parser built for debugging");
-		}
-		
-		public virtual void  addParserTokenListener(ParserTokenListener l)
-		{
-			if (!ignoreInvalidDebugCalls)
-				throw new System.ArgumentException("addParserTokenListener() is only valid if parser built for debugging");
-		}
-		
-		public virtual void  addSemanticPredicateListener(SemanticPredicateListener l)
-		{
-			if (!ignoreInvalidDebugCalls)
-				throw new System.ArgumentException("addSemanticPredicateListener() is only valid if parser built for debugging");
-		}
-		
-		public virtual void  addSyntacticPredicateListener(SyntacticPredicateListener l)
-		{
-			if (!ignoreInvalidDebugCalls)
-				throw new System.ArgumentException("addSyntacticPredicateListener() is only valid if parser built for debugging");
-		}
-		
-		public virtual void  addTraceListener(TraceListener l)
-		{
-			if (!ignoreInvalidDebugCalls)
-				throw new System.ArgumentException("addTraceListener() is only valid if parser built for debugging");
 		}
 		
 		/*Get another token object from the token stream */
@@ -317,31 +154,30 @@ namespace antlr
 		*/
 		public virtual void  match(int t)
 		{
-			if (LA(1) != t)
+		    if (LA(1) != t)
 				throw new MismatchedTokenException(tokenNames, LT(1), t, false, getFilename());
-			else
-				consume();
+		    consume();
 		}
-		/*Make sure current lookahead symbol matches the given set
+
+	    /*Make sure current lookahead symbol matches the given set
 		* Throw an exception upon mismatch, which is catch by either the
 		* error handler or by the syntactic predicate.
 		*/
 		public virtual void  match(BitSet b)
 		{
-			if (!b.member(LA(1)))
+		    if (!b.member(LA(1)))
 				throw new MismatchedTokenException(tokenNames, LT(1), b, false, getFilename());
-			else
-				consume();
-		}
-		public virtual void  matchNot(int t)
-		{
-			if (LA(1) == t)
-				throw new MismatchedTokenException(tokenNames, LT(1), t, true, getFilename());
-			else
-				consume();
+		    consume();
 		}
 
-		/// <summary>
+	    public virtual void  matchNot(int t)
+	    {
+	        if (LA(1) == t)
+				throw new MismatchedTokenException(tokenNames, LT(1), t, true, getFilename());
+	        consume();
+	    }
+
+	    /// <summary>
 		/// @deprecated as of 2.7.2. This method calls System.exit() and writes
 		/// directly to stderr, which is usually not appropriate when
 		/// a parser is embedded into a larger application. Since the method is
@@ -352,45 +188,10 @@ namespace antlr
 		[Obsolete("De-activated since version 2.7.2.6 as it cannot be overidden.", true)]
 		public static void  panic()
 		{
-			System.Console.Error.WriteLine("Parser: panic");
+			Console.Error.WriteLine("Parser: panic");
 			//System.Environment.Exit(1);
 		}
 
-		public virtual void  removeMessageListener(MessageListener l)
-		{
-			if (!ignoreInvalidDebugCalls)
-				throw new System.SystemException("removeMessageListener() is only valid if parser built for debugging");
-		}
-		public virtual void  removeParserListener(ParserListener l)
-		{
-			if (!ignoreInvalidDebugCalls)
-				throw new System.SystemException("removeParserListener() is only valid if parser built for debugging");
-		}
-		public virtual void  removeParserMatchListener(ParserMatchListener l)
-		{
-			if (!ignoreInvalidDebugCalls)
-				throw new System.SystemException("removeParserMatchListener() is only valid if parser built for debugging");
-		}
-		public virtual void  removeParserTokenListener(ParserTokenListener l)
-		{
-			if (!ignoreInvalidDebugCalls)
-				throw new System.SystemException("removeParserTokenListener() is only valid if parser built for debugging");
-		}
-		public virtual void  removeSemanticPredicateListener(SemanticPredicateListener l)
-		{
-			if (!ignoreInvalidDebugCalls)
-				throw new System.ArgumentException("removeSemanticPredicateListener() is only valid if parser built for debugging");
-		}
-		public virtual void  removeSyntacticPredicateListener(SyntacticPredicateListener l)
-		{
-			if (!ignoreInvalidDebugCalls)
-				throw new System.ArgumentException("removeSyntacticPredicateListener() is only valid if parser built for debugging");
-		}
-		public virtual void  removeTraceListener(TraceListener l)
-		{
-			if (!ignoreInvalidDebugCalls)
-				throw new System.SystemException("removeTraceListener() is only valid if parser built for debugging");
-		}
 		
 		/*Parser error-reporting function can be overridden in subclass */
 		public virtual void reportError(RecognitionException ex)
@@ -470,7 +271,7 @@ namespace antlr
 		public virtual void  setDebugMode(bool debugMode)
 		{
 			if (!ignoreInvalidDebugCalls)
-				throw new System.SystemException("setDebugMode() only valid if parser built for debugging");
+				throw new SystemException("setDebugMode() only valid if parser built for debugging");
 		}
 		public virtual void  setFilename(string f)
 		{
