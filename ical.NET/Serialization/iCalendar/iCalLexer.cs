@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using System.IO;
 using antlr;
-using antlr.collections.impl;
+using antlr.collections;
 
 namespace Ical.Net.Serialization.iCalendar
 {

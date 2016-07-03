@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using antlr;
-using antlr.collections.impl;
+using antlr.collections;
 using Ical.Net.ExtensionMethods;
 using Ical.Net.General;
 using Ical.Net.Interfaces;

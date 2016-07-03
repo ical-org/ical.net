@@ -28,21 +28,21 @@ namespace antlr
     * <p>
     */
 
-    // SAS: Move most functionality into InputBuffer -- just the file-specific
-    //      stuff is in here
-    public class CharBuffer : InputBuffer
+    // SAS: added this class to handle Binary input w/ FileInputStream
+
+    public class ByteBuffer : InputBuffer
     {
-        internal TextReader input;
+        internal Stream input;
 
         private const int BUF_SIZE = 16;
         /// <summary>
         /// Small buffer used to avoid reading individual chars
         /// </summary>
-        private readonly char[] buf = new char[BUF_SIZE];
+        private readonly byte[] buf = new byte[BUF_SIZE];
 
 
         /*Create a character buffer */
-        public CharBuffer(TextReader input_)
+        public ByteBuffer(Stream input_)
         {
             input = input_;
         }
@@ -50,35 +50,29 @@ namespace antlr
         /*Ensure that the character buffer is sufficiently full */
         public override void fill(int amount)
         {
-            try
-            {
-                syncConsume();
-                // Fill the buffer sufficiently to hold needed characters
-                int charsToRead = (amount + markerOffset) - Buffer.Count;
+            syncConsume();
+            // Fill the buffer sufficiently to hold needed characters
+            int bytesToRead = (amount + markerOffset) - Buffer.Count;
 
-                while (charsToRead > 0)
-                {
-                    // Read a few characters
-                    var c = input.Read(buf, 0, BUF_SIZE);
-                    for (int i = 0; i < c; i++)
-                    {
-                        // Append the next character
-                        Buffer.Add(buf[i]);
-                    }
-                    if (c < BUF_SIZE)
-                    {
-                        while ((charsToRead-- > 0) && (Buffer.Count < BUF_SIZE))
-                        {
-                            Buffer.Add(CharScanner.EOF_CHAR);
-                        }
-                        break;
-                    }
-                    charsToRead -= c;
-                }
-            }
-            catch (IOException io)
+            while (bytesToRead > 0)
             {
-                throw new CharStreamIOException(io);
+                // Read a few characters
+                var c = input.Read(buf, 0, BUF_SIZE);
+                for (int i = 0; i < c; i++)
+                {
+                    // Append the next character
+                    var foo = (char) buf[i];
+                    Buffer.Add(foo);
+                }
+                if (c < BUF_SIZE)
+                {
+                    while ((bytesToRead-- > 0) && (Buffer.Count < BUF_SIZE))
+                    {
+                        Buffer.Add(CharScanner.EOF_CHAR);
+                    }
+                    break;
+                }
+                bytesToRead -= c;
             }
         }
     }

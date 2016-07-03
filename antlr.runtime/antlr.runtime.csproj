@@ -79,9 +79,7 @@
     <Compile Include="antlr\ByteBuffer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="antlr\CharBuffer.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="antlr\CharBuffer.cs" />
     <Compile Include="antlr\CharScanner.cs">
       <SubType>Code</SubType>
     </Compile>
