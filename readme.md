@@ -2,15 +2,56 @@ DDay.iCal is an iCalendar (RFC2445) class library for .NET. It's aimed at provid
 
 ## Getting ical.net
 
-Coming soon to a nuget near you.
+ical.net is available as a nuget package: https://www.nuget.org/packages/Ical.Net
 
 ## Examples
 
-Coming soon to a readme near you.
+### Creating a calendar with a recurring event:
+
+```csharp
+var now = DateTime.Now;
+var later = now.AddHours(1);
+
+var rrule = new RecurrencePattern(FrequencyType.Daily, 1)
+{
+    Count = 5
+};
+
+var e = new Event
+{
+    DtStart = new CalDateTime(now),
+    DtEnd = new CalDateTime(later),
+    Duration = TimeSpan.FromHours(1),
+    RecurrenceRules = new List<IRecurrencePattern> {rrule},
+};
+
+var foo = new Calendar();
+foo.Events.Add(e);
+
+var serializer = new CalendarSerializer(new SerializationContext());
+var serializedCalendar = serializer.SerializeToString(calendar);
+
+Console.WriteLine(serializedCalendar);
+
+//Outputs something like:
+
+// BEGIN: VCALENDAR
+// VERSION:2.0
+// PRODID: -//github.com/rianjs/ical.net//NONSGML ical.net 2.1//EN
+// BEGIN:VEVENT
+// DTEND:20160704T172520
+// DTSTAMP:20160704T162520
+// DTSTART:20160704T162520
+// RRULE:FREQ = DAILY; COUNT = 5
+// SEQUENCE: 0
+// UID: f4693a88 - 0a57 - 4761 - b949 - 8822b8a507d2
+// END:VEVENT
+// END:VCALENDAR
+```
 
 ## Contributing
 
-Fork, and submit a pull request! If you haven't gotten feedback from me in a few days, please send me an email: rstockbower@gmail.com. Sometimes I don't see them.
+Fork and submit a pull request! If you haven't gotten feedback from me in a few days, please send me an email: rstockbower@gmail.com. Sometimes I don't see them.
 
 A couple of guidelines to keep code quality high, and code reviews efficient:
 
@@ -20,49 +61,14 @@ A couple of guidelines to keep code quality high, and code reviews efficient:
 
 ### Immediate wins
 
-Performance is ical.net's biggest pain point right now. Most of the immediate wins are ways of addressing performance holistically, and is how I got interested in the project to begin with.
+#### v2 - Current version
 
-#### Circular type dependencies
+I am working on a .NET Core port. Getting that finished is my first priority, then I will begin work on v3.
 
-(This one isn't for the faint of heart.)
+#### v3 - Future version
 
-Here's a sketch of one small area that shows what I mean:
+I have written a fairly detailed collection of things I'd like to get done for v3, which will involve some significant API changes, and simplifications of serialization and deserialization.
 
-```
-IDateTime
-    -> TimeZoneObservance
-        -> IPeriod -> IDateTime (circular)
-        -> ITimeZoneInfo
-            -> IUTCOffset (DateTime ToUTC/Local, TimeSpan)
-            -> TimeZoneObservance (circular)
-```
+http://rianjs.net/2016/07/api-changes-for-ical-net-v3
 
-There were many circular type dependencies in dday.ical, and they persist in ical.net. In general, this makes it difficult to change implementations. The normal pattern of making `A` and `B` depend on `C` instead of on each other is a non-trivial undertaking because each type depends on every other type. To that end, just flattening the interfaces so each type doesn't have a large, hidden dependency tree would be helpful.
-
-At first glance, many of the properties associated with the `IDateTime` object, for example, can be getter-only, but have cases where doing so would break something you don't see.
-
-#### NodaTime usage
-
-Many of the concepts explicit in the diagram above disappear entirely if we move to NodaTime. Doing so everywhere is difficult due to the circular type dependencies, though I have managed to swap implementations in some of the hot paths in a few places.
-
-#### Swapping service provider pattern for real dependency injection
-
-This follows from the circular type dependencies. This would make unit testing smaller chunks of code easier, and it makes it easier to swap out implementations for serialization, parsing, recurrence computation, time zone checking, etc.
-
-#### Modern serialization/deserialization
-
-The patterns used in dday.ical are somewhat dated, and I suspect the machinery around the process doesn't need to be so ornate.
-
-#### Update ANTLR
-
-I suspect the version of ANTLR used is old. I would prefer not to have the DLLs committed. Even swapping these for a nuget reference would be a step forward.
-
-#### Use of generic .NET collections
-
-dday.ical had its own set of specialized collections that it used with the service provider pattern. In general, the performance of these are bad. I haven't fully investigated, yet, but I suspect getting rid of the specialized collections could improve performance.
-
-Along similar lines, I replace many instances of `List<T>` usage with `ISet<T>` with comprehensive `GetHashCode()` implementations, which helped performance considerably. I suspect I didn't get them all; there are many corners of the code that I have not explored.
-
-#### Get rid of the garbage collection + reallocation overhead
-
-Taking this on as a top-level task is probably pointless. Moving away from the old dday.ical collections, moving to NodaTime, and changing/eliminating `Copy<T>` behavior from the serialization implementation and getting rid of the service provider pattern should reduce much of this thrashing as a natural course of events.
+I don't have clear plans beyond what I have outlined there. It may be that ical.net can be put on a shelf for a while after that.
