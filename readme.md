@@ -12,6 +12,7 @@ ical.net is available as a nuget package: https://www.nuget.org/packages/Ical.Ne
 var now = DateTime.Now;
 var later = now.AddHours(1);
 
+//Repeat daily for 5 days
 var rrule = new RecurrencePattern(FrequencyType.Daily, 1)
 {
     Count = 5
@@ -33,7 +34,7 @@ var serializedCalendar = serializer.SerializeToString(calendar);
 
 Console.WriteLine(serializedCalendar);
 
-//Outputs something like:
+//Displays something like:
 
 // BEGIN: VCALENDAR
 // VERSION:2.0
@@ -47,6 +48,21 @@ Console.WriteLine(serializedCalendar);
 // UID: f4693a88 - 0a57 - 4761 - b949 - 8822b8a507d2
 // END:VEVENT
 // END:VCALENDAR
+```
+
+### Deserializing an ics file
+
+```csharp
+// Loads a collection of calendars (each ics file can have more than one VCALENDAR in it)
+var calendarCollection = Calendar.LoadFromFile(@"path\to\file.ics");
+
+//A VCALENDAR may contain many VEVENTs, so get the first calendar's first event
+var firstEvent = calendarCollection
+    .First()
+    .Events
+    .First();
+
+Console.WriteLine(firstEvent.Duration);
 ```
 
 ## Contributing
