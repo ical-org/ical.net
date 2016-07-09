@@ -3,7 +3,6 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.General
 {
-    [Serializable]
     public class CalendarObjectBase : ICopyable, ILoadable
     {
         private bool _mIsLoaded;

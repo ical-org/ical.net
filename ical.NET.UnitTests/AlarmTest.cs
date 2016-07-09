@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Ical.Net;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.UnitTests;
 using NUnit.Framework;
 
 namespace ical.NET.UnitTests
@@ -12,9 +14,9 @@ namespace ical.NET.UnitTests
     {
         private const string _tzid = "US-Eastern";
 
-        public void TestAlarm(string calendar, List<IDateTime> dates, CalDateTime start, CalDateTime end)
+        public void TestAlarm(string calendarString, List<IDateTime> dates, CalDateTime start, CalDateTime end)
         {
-            var iCal = Calendar.LoadFromFile(@"Calendars\Alarm\" + calendar)[0];
+            var iCal = Calendar.LoadFromStream(new StringReader(calendarString))[0];
             ProgramTest.TestCal(iCal);
             var evt = iCal.Events.First();
             
@@ -35,7 +37,8 @@ namespace ical.NET.UnitTests
                 new CalDateTime(2006, 7, 18, 9, 30, 0, _tzid)
             });
 
-            TestAlarm("Alarm1.ics", dateTimes, new CalDateTime(2006, 7, 1, _tzid), new CalDateTime(2006, 9, 1, _tzid));
+            var content = IcsFiles.ALARM1;
+            TestAlarm(content, dateTimes, new CalDateTime(2006, 7, 1, _tzid), new CalDateTime(2006, 9, 1, _tzid));
         }
 
         [Test, Category("Alarm")]
@@ -56,7 +59,8 @@ namespace ical.NET.UnitTests
                 new CalDateTime(2006, 8, 5, 9, 30, 0, _tzid)
             });
 
-            TestAlarm("Alarm2.ics", dateTimes, new CalDateTime(2006, 7, 1, _tzid), new CalDateTime(2006, 9, 1, _tzid));
+            var content = IcsFiles.ALARM2;
+            TestAlarm(content, dateTimes, new CalDateTime(2006, 7, 1, _tzid), new CalDateTime(2006, 9, 1, _tzid));
         }
 
         [Test, Category("Alarm")]
@@ -72,7 +76,8 @@ namespace ical.NET.UnitTests
                 new CalDateTime(2000, 10, 11, 9, 0, 0, _tzid)
             });
 
-            TestAlarm("Alarm3.ics", dateTimes, new CalDateTime(1997, 1, 1, _tzid), new CalDateTime(2000, 12, 31, _tzid));
+            var content = IcsFiles.ALARM3;
+            TestAlarm(content, dateTimes, new CalDateTime(1997, 1, 1, _tzid), new CalDateTime(2000, 12, 31, _tzid));
         }
 
         [Test, Category("Alarm")]
@@ -103,7 +108,8 @@ namespace ical.NET.UnitTests
                 new CalDateTime(2000, 10, 11, 15, 0, 0, _tzid)
             });
 
-            TestAlarm("Alarm4.ics", dateTimes, new CalDateTime(1997, 1, 1, _tzid), new CalDateTime(2000, 12, 31, _tzid));
+            var content = IcsFiles.ALARM4;
+            TestAlarm(content, dateTimes, new CalDateTime(1997, 1, 1, _tzid), new CalDateTime(2000, 12, 31, _tzid));
         }
 
         [Test, Category("Alarm")]
@@ -115,7 +121,8 @@ namespace ical.NET.UnitTests
                 new CalDateTime(1998, 1, 2, 8, 0, 0, _tzid)
             });
 
-            TestAlarm("Alarm5.ics", dateTimes, new CalDateTime(1997, 7, 1, _tzid), new CalDateTime(2000, 12, 31, _tzid));
+            var content = IcsFiles.ALARM5;
+            TestAlarm(content, dateTimes, new CalDateTime(1997, 7, 1, _tzid), new CalDateTime(2000, 12, 31, _tzid));
         }
 
         [Test, Category("Alarm")]
@@ -132,7 +139,8 @@ namespace ical.NET.UnitTests
                 new CalDateTime(1998, 1, 17, 8, 0, 0, _tzid)
             });
 
-            TestAlarm("Alarm6.ics", dateTimes, new CalDateTime(1997, 7, 1, _tzid), new CalDateTime(2000, 12, 31, _tzid));
+            var content = IcsFiles.ALARM6;
+            TestAlarm(content, dateTimes, new CalDateTime(1997, 7, 1, _tzid), new CalDateTime(2000, 12, 31, _tzid));
         }
 
         [Test, Category("Alarm")]
@@ -153,7 +161,8 @@ namespace ical.NET.UnitTests
                 new CalDateTime(2006, 8, 5, 10, 30, 0, _tzid)
             });
 
-            TestAlarm("Alarm7.ics", dateTimes, new CalDateTime(2006, 7, 1, _tzid), new CalDateTime(2006, 9, 1, _tzid));
+            var content = IcsFiles.ALARM7;
+            TestAlarm(content, dateTimes, new CalDateTime(2006, 7, 1, _tzid), new CalDateTime(2006, 9, 1, _tzid));
         }
     }
 }

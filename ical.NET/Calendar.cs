@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
-using System.Threading;
 using Ical.Net.DataTypes;
 using Ical.Net.ExtensionMethods;
 using Ical.Net.General.Proxies;
@@ -19,7 +17,6 @@ using Ical.Net.Serialization.iCalendar.Serializers;
 
 namespace Ical.Net
 {
-    [Serializable]
     public class Calendar : CalendarComponent, ICalendar, IDisposable
     {
         /// <summary>
@@ -64,11 +61,11 @@ namespace Ical.Net
         public static IICalendarCollection LoadFromFile(string filepath, Encoding encoding, ISerializer serializer)
         {
             // NOTE: Fixes bug #3211934 - Bug in iCalendar.cs - UnauthorizedAccessException
-            var fs = new FileStream(filepath, FileMode.Open, FileAccess.Read);
-
-            var calendars = LoadFromStream(fs, encoding, serializer);
-            fs.Close();
-            return calendars;
+            using (var fs = new FileStream(filepath, FileMode.Open, FileAccess.Read))
+            {
+                var calendars = LoadFromStream(fs, encoding, serializer);
+                return calendars;
+            }
         }
 
         /// <summary>
@@ -115,12 +112,12 @@ namespace Ical.Net
             return serializer.Deserialize(s, e) as IICalendarCollection;
         }
 
-        public new static IICalendarCollection LoadFromStream(TextReader tr)
+        public static IICalendarCollection LoadFromStream(TextReader tr)
         {
             return LoadFromStream(tr, new CalendarSerializer());
         }
 
-        public new static IICalendarCollection LoadFromStream<T>(TextReader tr) where T : ICalendar
+        public static IICalendarCollection LoadFromStream<T>(TextReader tr) where T : ICalendar
         {
             return LoadFromStream(typeof (T), tr);
         }
@@ -137,142 +134,6 @@ namespace Ical.Net
             var text = tr.ReadToEnd();
             var ms = new MemoryStream(Encoding.UTF8.GetBytes(text));
             return LoadFromStream(ms, Encoding.UTF8, serializer);
-        }
-
-        /// <summary>
-        /// Loads an <see cref="Calendar"/> from a given Uri.
-        /// </summary>
-        /// <param name="uri">The Uri from which to load the <see cref="Calendar"/> object</param>
-        /// <returns>An <see cref="Calendar"/> object</returns>
-        public static IICalendarCollection LoadFromUri(Uri uri)
-        {
-            return LoadFromUri(typeof (Calendar), uri, null, null, null);
-        }
-
-        public static IICalendarCollection LoadFromUri<T>(Uri uri) where T : ICalendar
-        {
-            return LoadFromUri(typeof (T), uri, null, null, null);
-        }
-
-        public static IICalendarCollection LoadFromUri(Type iCalendarType, Uri uri)
-        {
-            return LoadFromUri(iCalendarType, uri, null, null, null);
-        }
-
-
-        public static IICalendarCollection LoadFromUri(Uri uri, WebProxy proxy)
-        {
-            return LoadFromUri(typeof (Calendar), uri, null, null, proxy);
-        }
-
-        public static IICalendarCollection LoadFromUri<T>(Uri uri, WebProxy proxy)
-        {
-            return LoadFromUri(typeof (T), uri, null, null, proxy);
-        }
-
-        public static IICalendarCollection LoadFromUri(Type iCalendarType, Uri uri, WebProxy proxy)
-        {
-            return LoadFromUri(iCalendarType, uri, null, null, proxy);
-        }
-
-        /// <summary>
-        /// Loads an <see cref="Calendar"/> from a given Uri, using a 
-        /// specified <paramref name="username"/> and <paramref name="password"/>
-        /// for credentials.
-        /// </summary>
-        /// <param name="uri">The Uri from which to load the <see cref="Calendar"/> object</param>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        /// <returns>an <see cref="Calendar"/> object</returns>
-        public static IICalendarCollection LoadFromUri(Uri uri, string username, string password)
-        {
-            return LoadFromUri(typeof (Calendar), uri, username, password, null);
-        }
-
-        public static IICalendarCollection LoadFromUri<T>(Uri uri, string username, string password) where T : ICalendar
-        {
-            return LoadFromUri(typeof (T), uri, username, password, null);
-        }
-
-        public static IICalendarCollection LoadFromUri(Type iCalendarType, Uri uri, string username, string password)
-        {
-            return LoadFromUri(iCalendarType, uri, username, password, null);
-        }
-
-
-        public static IICalendarCollection LoadFromUri(Uri uri, string username, string password, WebProxy proxy)
-        {
-            return LoadFromUri(typeof (Calendar), uri, username, password, proxy);
-        }
-
-        public static IICalendarCollection LoadFromUri(Type iCalendarType, Uri uri, string username, string password, WebProxy proxy)
-        {
-            try
-            {
-                var request = WebRequest.Create(uri);
-
-                if (username != null && password != null)
-                {
-                    request.Credentials = new NetworkCredential(username, password);
-                }
-
-
-                if (proxy != null)
-                {
-                    request.Proxy = proxy;
-                }
-
-
-                var evt = new AutoResetEvent(false);
-
-                string str = string.Empty;
-                request.BeginGetResponse(delegate(IAsyncResult result)
-                {
-                    var e = Encoding.UTF8;
-
-                    try
-                    {
-                        using (var resp = request.EndGetResponse(result))
-                        {
-                            // Try to determine the content encoding
-                            try
-                            {
-                                var keys = new HashSet<string>(resp.Headers.AllKeys);
-                                if (keys.Contains("Content-Encoding"))
-                                {
-                                    e = Encoding.GetEncoding(resp.Headers["Content-Encoding"]);
-                                }
-                            }
-                            catch
-                            {
-                                // Fail gracefully back to UTF-8
-                            }
-
-                            using (var stream = resp.GetResponseStream())
-                            using (var sr = new StreamReader(stream, e))
-                            {
-                                str = sr.ReadToEnd();
-                            }
-                        }
-                    }
-                    finally
-                    {
-                        evt.Set();
-                    }
-                }, null);
-
-                evt.WaitOne();
-
-                if (str != null)
-                {
-                    return LoadFromStream(new StringReader(str));
-                }
-                return null;
-            }
-            catch (WebException)
-            {
-                return null;
-            }
         }
 
         private IUniqueComponentList<IUniqueComponent> _mUniqueComponents;

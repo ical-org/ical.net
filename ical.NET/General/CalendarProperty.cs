@@ -30,7 +30,6 @@ namespace Ical.Net.General
     /// and X-properties may be applied to calendar components.
     /// </remarks>
     [DebuggerDisplay("{Name}:{Value}")]
-    [Serializable]
     public class CalendarProperty : CalendarObject, ICalendarProperty
     {
         private IList<object> _values;
@@ -128,10 +127,6 @@ namespace Ical.Net.General
                 if (p.Values is ICopyable)
                 {
                     SetValue(((ICopyable) p.Values).Copy<object>());
-                }
-                else if (p.Values is ICloneable)
-                {
-                    SetValue(((ICloneable) p.Values).Clone());
                 }
                 else
                 {

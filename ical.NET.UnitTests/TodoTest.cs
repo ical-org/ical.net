@@ -1,10 +1,11 @@
-using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Ical.Net;
 using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Evaluation;
+using Ical.Net.UnitTests;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 
 namespace ical.NET.UnitTests
 {
@@ -13,230 +14,189 @@ namespace ical.NET.UnitTests
     {
         private const string _tzid = "US-Eastern";
 
-        public void TestTodoActive(string calendar, ArrayList items, params int[] numPeriods)
+        [Test, TestCaseSource(nameof(ActiveTodo_TestCases)), Category("Todo")]
+        public void ActiveTodo_Tests(string calendarString, IList<KeyValuePair<CalDateTime, bool>> incoming)
         {
-            var iCal = Calendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
+            var iCal = Calendar.LoadFromStream(new StringReader(calendarString))[0];
             ProgramTest.TestCal(iCal);
             var todo = iCal.Todos[0];
-            
-            for (var i = 0; i < items.Count; i += 2)
+
+            foreach (var calDateTime in incoming)
             {
-                var dt = (CalDateTime)items[i];                
+                var dt = calDateTime.Key;
                 dt.TzId = _tzid;
-
-                var tf = (bool)items[i + 1];
-                if (tf)
-                    Assert.IsTrue(todo.IsActive(dt), "Todo should be active at " + dt);
-                else Assert.IsFalse(todo.IsActive(dt), "Todo should not be active at " + dt);
-            }
-
-            if (numPeriods != null &&
-                numPeriods.Length > 0)
-            {
-                var evaluator = todo.GetService(typeof(IEvaluator)) as IEvaluator;
-                Assert.IsNotNull(evaluator);
-                Assert.AreEqual(
-                    numPeriods[0],
-                    evaluator.Periods.Count,
-                    "Todo should have " + numPeriods[0] + " occurrences after evaluation; it had " + evaluator.Periods.Count);
+                Assert.AreEqual(calDateTime.Value, todo.IsActive(dt));
             }
         }
 
-        public void TestTodoCompleted(string calendar, ArrayList items)
+        public static IEnumerable<ITestCaseData> ActiveTodo_TestCases()
         {
-            var iCal = Calendar.LoadFromFile(@"Calendars\Todo\" + calendar)[0];
+            var testVals = new List<KeyValuePair<CalDateTime, bool>>
+            {
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2200, 12, 31, 0, 0, 0), true)
+            };
+            yield return new TestCaseData(IcsFiles.Todo1, testVals)
+                .SetName("Todo1");
+
+            testVals = new List<KeyValuePair<CalDateTime, bool>>
+            {
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 28, 8, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 28, 8, 59, 59), false),
+
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 28, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2200, 12, 31, 0, 0, 0), true),
+            };
+            yield return new TestCaseData(IcsFiles.Todo2, testVals)
+                .SetName("Todo2");
+
+            testVals = new List<KeyValuePair<CalDateTime, bool>>
+            {
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 28, 8, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2200, 12, 31, 0, 0, 0), false),
+            };
+            yield return new TestCaseData(IcsFiles.Todo3, testVals).SetName("Todo3");
+
+            testVals = new List<KeyValuePair<CalDateTime, bool>>
+            {
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 28, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 29, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 30, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 31, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 1, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 2, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 3, 9, 0, 0), false),
+
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 4, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 5, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 6, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 7, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 8, 9, 0, 0), true),
+            };
+            yield return new TestCaseData(IcsFiles.Todo5, testVals).SetName("Todo5");
+
+            testVals = new List<KeyValuePair<CalDateTime, bool>>
+            {
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 28, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 29, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 30, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 31, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 1, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 2, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 3, 9, 0, 0), false),
+
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 4, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 5, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 6, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 7, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 8, 9, 0, 0), true),
+            };
+            yield return new TestCaseData(IcsFiles.Todo6, testVals).SetName("Todo6");
+
+            testVals = new List<KeyValuePair<CalDateTime, bool>>
+            {
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 28, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 29, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 30, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 31, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 1, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 2, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 3, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 4, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 5, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 6, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 30, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 31, 9, 0, 0), false),
+
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 9, 1, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 9, 2, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 9, 3, 9, 0, 0), true),
+            };
+            yield return new TestCaseData(IcsFiles.Todo7, testVals).SetName("Todo7");
+
+            testVals = new List<KeyValuePair<CalDateTime, bool>>
+            {
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 28, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 29, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 30, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 31, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 1, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 2, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 3, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 4, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 5, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 6, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 30, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 31, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 9, 1, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 9, 2, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 9, 3, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 10, 10, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 11, 15, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 12, 5, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2007, 1, 3, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2007, 1, 4, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2007, 1, 5, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2007, 1, 6, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2007, 1, 7, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2007, 2, 1, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2007, 2, 2, 8, 59, 59), false),
+
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2007, 2, 2, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2007, 2, 3, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2007, 2, 4, 9, 0, 0), true),
+            };
+            yield return new TestCaseData(IcsFiles.Todo8, testVals).SetName("Todo8");
+
+            testVals = new List<KeyValuePair<CalDateTime, bool>>
+            {
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 28, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 29, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 30, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 17, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 18, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 19, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 9, 7, 9, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 9, 8, 8, 59, 59), false),
+
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 9, 8, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 9, 9, 9, 0, 0), true),
+            };
+            yield return new TestCaseData(IcsFiles.Todo9, testVals).SetName("Todo9");
+        }
+
+        [Test, TestCaseSource(nameof(CompletedTodo_TestCases)), Category("Todo")]
+        public void CompletedTodo_Tests(string calendarString, IList<KeyValuePair<CalDateTime, bool>> incoming)
+        {
+            var iCal = Calendar.LoadFromStream(new StringReader(calendarString))[0];
             ProgramTest.TestCal(iCal);
             var todo = iCal.Todos[0];
-            
-            for (var i = 0; i < items.Count; i += 2)
-            {
-                var dt = (IDateTime)items[i];
-                dt.TzId = _tzid;
 
-                var tf = (bool)items[i + 1];
-                if (tf)
-                    Assert.IsTrue(todo.IsCompleted(dt), "Todo should be completed at " + dt);
-                else Assert.IsFalse(todo.IsCompleted(dt), "Todo should not be completed at " + dt);
+            foreach (var calDateTime in incoming)
+            {
+                var dt = calDateTime.Key;
+                dt.TzId = _tzid;
+                Assert.AreEqual(calDateTime.Value, todo.IsCompleted(dt));
             }
         }
 
-        [Test, Category("Todo")]
-        public void Todo1()
+        public static IEnumerable<ITestCaseData> CompletedTodo_TestCases()
         {
-            var items = new ArrayList
+            var testVals = new List<KeyValuePair<CalDateTime, bool>>
             {
-                new CalDateTime(2200, 12, 31, 0, 0, 0),
-                true
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 07, 28, 8, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 07, 28, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 1, 0, 0, 0), true),
             };
-
-            TestTodoActive("Todo1.ics", items);
-        }
-
-        [Test, Category("Todo")]
-        public void Todo2()
-        {
-            var items = new ArrayList
-            {
-                new CalDateTime(2006, 7, 28, 8, 0, 0),
-                false,
-                new CalDateTime(2006, 7, 28, 8, 59, 59),
-                false,
-                new CalDateTime(2006, 7, 28, 9, 0, 0),
-                true,
-                new CalDateTime(2200, 12, 31, 0, 0, 0),
-                true
-            };
-
-            TestTodoActive("Todo2.ics", items);
-        }
-
-        [Test, Category("Todo")]
-        public void Todo3()
-        {
-            var items = new ArrayList
-            {
-                new CalDateTime(2006, 7, 28, 8, 0, 0),
-                false,
-                new CalDateTime(2200, 12, 31, 0, 0, 0),
-                false
-            };
-
-            TestTodoActive("Todo3.ics", items);
-        }
-
-        [Test, Category("Todo")]
-        public void Todo4()
-        {
-            var items = new ArrayList
-            {
-                new CalDateTime(2006, 07, 28, 8, 0, 0),
-                true,
-                new CalDateTime(2006, 07, 28, 9, 0, 0),
-                true,
-                new CalDateTime(2006, 8, 1, 0, 0, 0),
-                true
-            };
-
-            TestTodoCompleted("Todo4.ics", items);
-        }
-
-        [Test, Category("Todo")]
-        public void Todo5()
-        {
-            var items = new ArrayList
-            {
-                new CalDateTime(2006, 7, 28, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 7, 29, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 7, 30, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 7, 31, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 1, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 2, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 3, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 4, 9, 0, 0),
-                true,
-                new CalDateTime(2006, 8, 5, 9, 0, 0),
-                true,
-                new CalDateTime(2006, 8, 6, 9, 0, 0),
-                true,
-                new CalDateTime(2006, 8, 7, 9, 0, 0),
-                true,
-                new CalDateTime(2006, 8, 8, 9, 0, 0),
-                true
-            };
-
-            TestTodoActive("Todo5.ics", items);
-        }
-
-        [Test, Category("Todo")]
-        public void Todo6()
-        {
-            var items = new ArrayList
-            {
-                new CalDateTime(2006, 7, 28, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 7, 29, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 7, 30, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 7, 31, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 1, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 2, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 3, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 4, 9, 0, 0),
-                true,
-                new CalDateTime(2006, 8, 5, 9, 0, 0),
-                true,
-                new CalDateTime(2006, 8, 6, 9, 0, 0),
-                true,
-                new CalDateTime(2006, 8, 7, 9, 0, 0),
-                true,
-                new CalDateTime(2006, 8, 8, 9, 0, 0),
-                true
-            };
-
-            TestTodoActive("Todo6.ics", items);
-        }
-
-        [Test, Category("Todo")]
-        public void Todo7()
-        {
-            var items = new ArrayList
-            {
-                new CalDateTime(2006, 7, 28, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 7, 29, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 7, 30, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 7, 31, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 1, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 2, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 3, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 4, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 5, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 6, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 30, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 31, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 31, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 9, 1, 9, 0, 0),
-                true,
-                new CalDateTime(2006, 9, 2, 9, 0, 0),
-                true,
-                new CalDateTime(2006, 9, 3, 9, 0, 0),
-                true
-            };
-
-            TestTodoActive("Todo7.ics", items);
+            yield return new TestCaseData(IcsFiles.Todo4, testVals).SetName("Todo4");
         }
 
         [Test, Category("Todo")]
         public void Todo7_1()
         {
-            var iCal = Calendar.LoadFromFile(@"Calendars\Todo\Todo7.ics")[0];
+            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Todo7))[0];
             var todo = iCal.Todos[0];
 
-            var items = new ArrayList(15)
+            var items = new List<CalDateTime>
             {
                 new CalDateTime(2006, 7, 28, 9, 0, 0, _tzid),
                 new CalDateTime(2006, 8, 4, 9, 0, 0, _tzid),
@@ -262,105 +222,9 @@ namespace ical.NET.UnitTests
                 "TODO should have " + items.Count + " occurrences; it has " + occurrences.Count);
 
             for (var i = 0; i < items.Count; i++)
-                Assert.AreEqual(items[i], occurrences[i].Period.StartTime, "TODO should occur at " + items[i] + ", but does not.");            
-        }
-
-        [Test, Category("Todo")]
-        public void Todo8()
-        {
-            var items = new ArrayList
             {
-                new CalDateTime(2006, 7, 28, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 7, 29, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 7, 30, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 7, 31, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 1, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 2, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 3, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 4, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 5, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 6, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 30, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 31, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 31, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 9, 1, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 9, 2, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 9, 3, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 10, 10, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 11, 15, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 12, 5, 9, 0, 0),
-                false,
-                new CalDateTime(2007, 1, 3, 9, 0, 0),
-                false,
-                new CalDateTime(2007, 1, 4, 9, 0, 0),
-                false,
-                new CalDateTime(2007, 1, 5, 9, 0, 0),
-                false,
-                new CalDateTime(2007, 1, 6, 9, 0, 0),
-                false,
-                new CalDateTime(2007, 1, 7, 9, 0, 0),
-                false,
-                new CalDateTime(2007, 2, 1, 9, 0, 0),
-                false,
-                new CalDateTime(2007, 2, 2, 8, 59, 59),
-                false,
-                new CalDateTime(2007, 2, 2, 9, 0, 0),
-                true,
-                new CalDateTime(2007, 2, 3, 9, 0, 0),
-                true,
-                new CalDateTime(2007, 2, 4, 9, 0, 0),
-                true
-            };
-
-            TestTodoActive("Todo8.ics", items);
-        }
-
-        [Test, Category("Todo")]
-        public void Todo9()
-        {
-            var items = new ArrayList
-            {
-                new CalDateTime(2006, 7, 28, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 7, 29, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 7, 30, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 17, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 18, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 8, 19, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 9, 7, 9, 0, 0),
-                false,
-                new CalDateTime(2006, 9, 8, 8, 59, 59),
-                false,
-                new CalDateTime(2006, 9, 8, 9, 0, 0),
-                true,
-                new CalDateTime(2006, 9, 9, 9, 0, 0),
-                true
-            };
-
-            TestTodoActive("Todo9.ics", items, 3);            
+                Assert.AreEqual(items[i], occurrences[i].Period.StartTime, "TODO should occur at " + items[i] + ", but does not.");
+            }
         }
     }
 }

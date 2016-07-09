@@ -69,15 +69,6 @@ namespace Ical.Net.Utility
             return new StringReader(s);
         }
 
-        public static TextReader Normalize(TextReader tr, ISerializationContext ctx)
-        {
-            var s = tr.ReadToEnd();
-            var reader = Normalize(s, ctx);
-            tr.Close();
-
-            return reader;
-        }
-
         internal static readonly Regex NewLineMatch = new Regex(@"(\r\n[ \t])", RegexOptions.Compiled);
 
         /// <summary>
@@ -88,11 +79,6 @@ namespace Ical.Net.Utility
         public static string UnwrapLines(string s)
         {
             return NewLineMatch.Replace(s, string.Empty);
-        }
-
-        public static TextReader UnwrapLines(TextReader tr)
-        {
-            return new StringReader(UnwrapLines(tr.ReadToEnd()));
         }
     }
 }

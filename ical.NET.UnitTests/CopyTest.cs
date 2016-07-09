@@ -1,143 +1,47 @@
+using System.Collections.Generic;
+using System.IO;
 using Ical.Net;
 using Ical.Net.Interfaces;
+using Ical.Net.UnitTests;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 
 namespace ical.NET.UnitTests
 {
     [TestFixture]
     public class CopyTest
     {
-        private void CopyCalendarTest(string filename)
+        [Test, TestCaseSource(nameof(CopyCalendarTest_TestCases)), Category("Copy tests")]
+        public void CopyCalendarTest(string calendarString)
         {
-            var iCal1 = Calendar.LoadFromFile(@"Calendars\Serialization\" + filename)[0];
+            var iCal1 = Calendar.LoadFromStream(new StringReader(calendarString))[0];
             var iCal2 = iCal1.Copy<ICalendar>();
             SerializationTest.CompareCalendars(iCal1, iCal2);
         }
 
-        [Test, Category("Copy")]
-        public void CopyAttachment3()
+        public static IEnumerable<ITestCaseData> CopyCalendarTest_TestCases()
         {
-            CopyCalendarTest("Attachment3.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyBug2148092()
-        {
-            CopyCalendarTest("Bug2148092.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyCaseInsensitive1()
-        {
-            CopyCalendarTest("CaseInsensitive1.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyCaseInsensitive2()
-        {
-            CopyCalendarTest("CaseInsensitive2.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyCaseInsensitive3()
-        {
-            CopyCalendarTest("CaseInsensitive3.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyCategories1()
-        {
-            CopyCalendarTest("Categories1.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyDuration1()
-        {
-            CopyCalendarTest("Duration1.ics");
-        }        
-
-        [Test, Category("Copy")]
-        public void CopyEncoding1()
-        {
-            CopyCalendarTest("Encoding1.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyEvent1()
-        {
-            CopyCalendarTest("Event1.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyEvent2()
-        {
-            CopyCalendarTest("Event2.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyEvent3()
-        {
-            CopyCalendarTest("Event3.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyEvent4()
-        {
-            CopyCalendarTest("Event4.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyGeographicLocation1()
-        {
-            CopyCalendarTest("GeographicLocation1.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyLanguage1()
-        {
-            CopyCalendarTest("Language1.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyLanguage2()
-        {
-            CopyCalendarTest("Language2.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyLanguage3()
-        {
-            CopyCalendarTest("Language3.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyTimeZone1()
-        {
-            CopyCalendarTest("TimeZone1.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyTimeZone2()
-        {
-            CopyCalendarTest("TimeZone2.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyTimeZone3()
-        {
-            CopyCalendarTest("TimeZone3.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyXProperty1()
-        {
-            CopyCalendarTest("XProperty1.ics");
-        }
-
-        [Test, Category("Copy")]
-        public void CopyXProperty2()
-        {
-            CopyCalendarTest("XProperty2.ics");
+            yield return new TestCaseData(IcsFiles.Attachment3).SetName("Attachment3");
+            yield return new TestCaseData(IcsFiles.Bug2148092).SetName("Bug2148092");
+            yield return new TestCaseData(IcsFiles.CaseInsensitive1).SetName("CaseInsensitive1");
+            yield return new TestCaseData(IcsFiles.CaseInsensitive2).SetName("CaseInsensitive2");
+            yield return new TestCaseData(IcsFiles.CaseInsensitive3).SetName("CaseInsensitive3");
+            yield return new TestCaseData(IcsFiles.Categories1).SetName("Categories1");
+            yield return new TestCaseData(IcsFiles.Duration1).SetName("Duration1");
+            yield return new TestCaseData(IcsFiles.Encoding1).SetName("Encoding1");
+            yield return new TestCaseData(IcsFiles.Event1).SetName("Event1");
+            yield return new TestCaseData(IcsFiles.Event2).SetName("Event2");
+            yield return new TestCaseData(IcsFiles.Event3).SetName("Event3");
+            yield return new TestCaseData(IcsFiles.Event4).SetName("Event4");
+            yield return new TestCaseData(IcsFiles.GeographicLocation1).SetName("GeographicLocation1");
+            yield return new TestCaseData(IcsFiles.Language1).SetName("Language1");
+            yield return new TestCaseData(IcsFiles.Language2).SetName("Language2");
+            yield return new TestCaseData(IcsFiles.Language3).SetName("Language3");
+            yield return new TestCaseData(IcsFiles.TimeZone1).SetName("TimeZone1");
+            yield return new TestCaseData(IcsFiles.TimeZone2).SetName("TimeZone2");
+            yield return new TestCaseData(IcsFiles.TimeZone3).SetName("TimeZone3");
+            yield return new TestCaseData(IcsFiles.XProperty1).SetName("XProperty1");
+            yield return new TestCaseData(IcsFiles.XProperty2).SetName("XProperty2");
         }
     }
 }

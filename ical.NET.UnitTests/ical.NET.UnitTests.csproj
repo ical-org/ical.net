@@ -53,22 +53,17 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>Ical.Net.UnitTests</RootNamespace>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="NodaTime, Version=1.3.0.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NodaTime.1.3.1\lib\net35-Client\NodaTime.dll</HintPath>
     </Reference>
-    <Reference Include="nunit-gui-runner, Version=2.5.3.9345, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\nunit-gui-runner.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.fixtures, Version=2.5.3.9345, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\nunit.fixtures.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework, Version=2.5.3.9345, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\nunit.framework.dll</HintPath>
+    <Reference Include="nunit.framework, Version=3.4.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.4.1\lib\net40\nunit.framework.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -81,16 +76,21 @@
     <Compile Include="FreeBusyTest.cs" />
     <Compile Include="EventTest.cs" />
     <Compile Include="CopyTest.cs" />
+    <Compile Include="IcsFiles.cs" />
     <Compile Include="JournalTest.cs" />
     <Compile Include="ProgramTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="app.config" />
     <Compile Include="RecurrenceTest.cs" />
     <Compile Include="SerializationTest.cs" />
-    <Compile Include="Startup.cs" />
     <Compile Include="TodoTest.cs" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\antlr.runtime\antlr.runtime.csproj">
+      <Project>{cb7cc882-ed47-46c0-aaae-7a437f22f1c6}</Project>
+      <Name>antlr.runtime</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ical.NET.Collections\ical.NET.Collections\Ical.Net.Collections.csproj">
       <Project>{E04EFEB6-4625-4D58-AC91-7B8B8A2C97BB}</Project>
       <Name>Ical.Net.Collections</Name>
@@ -101,461 +101,453 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Calendars\Alarm\ALARM1.ics">
+    <EmbeddedResource Include="Calendars\Alarm\ALARM1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Alarm\ALARM2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Alarm\ALARM2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Alarm\ALARM3.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Alarm\ALARM3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Alarm\ALARM4.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Alarm\ALARM4.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Alarm\ALARM5.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Alarm\ALARM5.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Alarm\ALARM6.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Alarm\ALARM6.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Alarm\ALARM7.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Alarm\ALARM7.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Language4.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Language4.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Encoding2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Encoding2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Encoding3.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Encoding3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Attachment4.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Attachment4.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\GeographicLocation1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\GeographicLocation1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Google1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Google1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Outlook2007LineFolds.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Outlook2007LineFolds.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\ProdID1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\ProdID1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\ProdID2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\ProdID2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Journal\JOURNAL1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Journal\JOURNAL1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Journal\JOURNAL2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Journal\JOURNAL2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\YearlyComplex1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\YearlyComplex1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\WeeklyUntilWkst1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\WeeklyUntilWkst1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\WeeklyCountWkst1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\WeeklyCountWkst1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\WeeklyUntilWkst2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\WeeklyUntilWkst2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\WeeklyCountWkst2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\WeeklyCountWkst2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MonthlyCountByDay1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MonthlyCountByDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MonthlyUntilByDay1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MonthlyUntilByDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MonthlyCountByDay2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MonthlyCountByDay2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MonthlyCountByDay3.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MonthlyCountByDay3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\ByMonthDay1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\ByMonthDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MonthlyCountByMonthDay1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MonthlyCountByMonthDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\DailyCount1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\DailyCount1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MonthlyCountByMonthDay2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MonthlyCountByMonthDay2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MonthlyCountByMonthDay3.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MonthlyCountByMonthDay3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MonthlyByDay1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MonthlyByDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\YearlyByMonth1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\YearlyByMonth1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\YearlyCountByMonth1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\YearlyCountByMonth1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\YearlyCountByYearDay1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\YearlyCountByYearDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\YearlyByDay1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\YearlyByDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\YearlyByWeekNo1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\YearlyByWeekNo1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\YearlyByMonth2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\YearlyByMonth2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\YearlyByMonth3.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\YearlyByMonth3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\DailyUntil1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\DailyUntil1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MonthlyByMonthDay1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MonthlyByMonthDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MonthlyByMonthDay2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MonthlyByMonthDay2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\YearlyByMonthDay1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\YearlyByMonthDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MonthlyBySetPos1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MonthlyBySetPos1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MonthlyBySetPos2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MonthlyBySetPos2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\HourlyUntil1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\HourlyUntil1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MinutelyCount1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MinutelyCount1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MinutelyCount2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MinutelyCount2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\DailyByHourMinute1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\DailyByHourMinute1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MinutelyByHour1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MinutelyByHour1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\Daily1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\Daily1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\WeeklyCountWkst3.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\WeeklyCountWkst3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\WeeklyCountWkst4.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\WeeklyCountWkst4.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\Bug1741093.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\Bug1741093.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\Secondly1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\Secondly1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\Minutely1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\Minutely1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\Hourly1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\Hourly1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MonthlyInterval1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MonthlyInterval1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\YearlyInterval1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\YearlyInterval1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\DailyInterval1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\DailyInterval1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\DailyCount2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\DailyCount2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\HourlyInterval1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\HourlyInterval1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\YearlyBySetPos1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\YearlyBySetPos1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\Empty1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\Empty1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\HourlyInterval2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\HourlyInterval2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MinutelyInterval1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MinutelyInterval1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\DailyInterval2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\DailyInterval2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\DailyByDay1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\DailyByDay1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\WeeklyInterval1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\WeeklyInterval1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\WeeklyWeekStartsLastYear.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\WeeklyWeekStartsLastYear.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\Monthly1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\Monthly1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\Yearly1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\Yearly1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\ByMonth1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\ByMonth1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\Bug2912657.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\Bug2912657.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\ByMonth2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\ByMonth2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\WeeklyCount1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\WeeklyCount1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\WeeklyUntil1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\WeeklyUntil1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\WeeklyWkst1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\WeeklyWkst1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Language1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Language1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Language2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Language2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\EmptyLines1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\EmptyLines1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Parameter1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Parameter1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Parameter2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Parameter2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\RequestStatus1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\RequestStatus1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\RecurrenceDates1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\RecurrenceDates1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\DateTime1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\DateTime1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\PARSE17.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\PARSE17.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Bug2033495.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Bug2033495.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\EmptyLines2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\EmptyLines2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Calendar1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Calendar1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\EmptyLines3.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\EmptyLines3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\CalendarParameters2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\CalendarParameters2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Parse1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Parse1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\EmptyLines4.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\EmptyLines4.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\CaseInsensitive4.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\CaseInsensitive4.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Property1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Property1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Language3.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Language3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Event1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Event1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Todo2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Todo2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Todo3.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Todo3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Todo4.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Todo4.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Todo5.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Todo5.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Todo6.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Todo6.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Todo7.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Todo7.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Event2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Event2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\CaseInsensitive1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\CaseInsensitive1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\CaseInsensitive2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\CaseInsensitive2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\CaseInsensitive3.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\CaseInsensitive3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\XProperty1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\XProperty1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\XProperty2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\XProperty2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Event3.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Event3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Bug2148092.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Bug2148092.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Duration1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Duration1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Attachment3.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Attachment3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Encoding1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Encoding1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Event4.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Event4.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Categories1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Categories1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Todo1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Todo1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\TimeZone1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\TimeZone1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\TimeZone2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\TimeZone2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\TimeZone3.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\TimeZone3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\USHolidays.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\USHolidays.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Todo\Todo1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Todo\Todo1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Todo\Todo2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Todo\Todo2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Todo\Todo3.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Todo\Todo3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Todo\Todo4.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Todo\Todo4.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Todo\Todo5.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Todo\Todo5.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Todo\Todo6.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Todo\Todo6.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Todo\Todo7.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Todo\Todo7.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Todo\Todo8.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Todo\Todo8.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Todo\Todo9.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Todo\Todo9.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\DateTime2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\DateTime2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\YearlyByWeekNo2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\YearlyByWeekNo2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\YearlyByWeekNo3.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\YearlyByWeekNo3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\YearlyByWeekNo4.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\YearlyByWeekNo4.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\YearlyByWeekNo5.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\YearlyByWeekNo5.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Attendee1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Attendee1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Attendee2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Attendee2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\Bug2916581.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\Bug2916581.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Bug2938007.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Bug2938007.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\Bug2959692.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\Bug2959692.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\Bug2966236.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\Bug2966236.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\Bug3007244.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\Bug3007244.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Transparency1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Transparency1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Transparency2.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Transparency2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MinutelyCount3.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MinutelyCount3.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Recurrence\MinutelyCount4.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Recurrence\MinutelyCount4.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Calendars\Serialization\Trigger1.ics">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Trigger1.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\LoremIpsum.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Data\Test.doc">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -574,7 +566,6 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

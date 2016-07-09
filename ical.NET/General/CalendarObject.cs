@@ -10,7 +10,6 @@ namespace Ical.Net.General
     /// <summary>
     /// The base class for all iCalendar objects and components.
     /// </summary>
-    [Serializable]
     public class CalendarObject : CalendarObjectBase, ICalendarObject
     {
         private ICalendarObject _parent;

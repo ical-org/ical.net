@@ -9,7 +9,6 @@ using Ical.Net.Interfaces.General;
 namespace Ical.Net.General
 {
     [DebuggerDisplay("{Name}={string.Join(\",\", Values)}")]
-    [Serializable]
     public class CalendarParameter : CalendarObject, ICalendarParameter
     {
         private List<string> _values;
