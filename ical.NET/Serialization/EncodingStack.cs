@@ -17,13 +17,9 @@ namespace Ical.Net.Serialization
         {
             get
             {
-                if (_mStack.Count > 0)
-                {
-                    return _mStack.Peek();
-                }
-
-                // Default to Unicode encoding
-                return Encoding.Unicode;
+                return _mStack.Count > 0
+                    ? _mStack.Peek()
+                    : Encoding.Unicode;
             }
         }
 
@@ -37,11 +33,9 @@ namespace Ical.Net.Serialization
 
         public Encoding Pop()
         {
-            if (_mStack.Count > 0)
-            {
-                return _mStack.Pop();
-            }
-            return null;
+            return _mStack.Count > 0
+                ? _mStack.Pop()
+                : null;
         }
     }
 }

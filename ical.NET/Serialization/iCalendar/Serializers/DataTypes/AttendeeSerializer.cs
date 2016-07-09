@@ -13,11 +13,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         public override string SerializeToString(object obj)
         {
             var a = obj as IAttendee;
-            if (a?.Value != null)
-            {
-                return Encode(a, a.Value.OriginalString);
-            }
-            return null;
+            return a?.Value == null
+                ? null
+                : Encode(a, a.Value.OriginalString);
         }
 
         public override object Deserialize(TextReader tr)
@@ -28,20 +26,20 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             try
             {
                 a = CreateAndAssociate() as IAttendee;
-                if (a != null)
+                var uriString = Unescape(Decode(a, value));
+
+                // Prepend "mailto:" if necessary
+                if (!uriString.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase))
                 {
-                    var uriString = Unescape(Decode(a, value));
-
-                    // Prepend "mailto:" if necessary
-                    if (!uriString.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase))
-                    {
-                        uriString = "mailto:" + uriString;
-                    }
-
-                    a.Value = new Uri(uriString);
+                    uriString = "mailto:" + uriString;
                 }
+
+                a.Value = new Uri(uriString);
             }
-            catch {}
+            catch
+            {
+                // ignored
+            }
 
             return a;
         }

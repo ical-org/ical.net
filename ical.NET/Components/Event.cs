@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text;
 using Ical.Net.Evaluation;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.General;
+using Ical.Net.Utility;
 
 namespace Ical.Net
 {
@@ -24,6 +27,8 @@ namespace Ical.Net
     /// </note>
     public class Event : RecurringComponent, IEvent
     {
+        internal const string ComponentName = "VEVENT";
+
         /// <summary>
         /// The start date/time of the event.
         /// <note>
@@ -162,9 +167,9 @@ namespace Ical.Net
         /// <example>Conference room #2</example>
         /// <example>Projector</example>
         /// </summary>
-        public IList<string> Resources
+        public ISet<string> Resources
         {
-            get { return Properties.GetMany<string>("RESOURCES"); }
+            get { return new HashSet<string>(Properties.GetMany<string>("RESOURCES")); }
             set { Properties.Set("RESOURCES", value); }
         }
 
@@ -276,6 +281,22 @@ namespace Ical.Net
             {
                 DtStart = DtEnd.Subtract(Duration);
             }
+        }
+
+        public override string ToString()
+        {
+            //var sb = new StringBuilder(256);
+            //sb.AppendLine("BEGIN:" + ComponentName);
+
+            //foreach (var p in Properties.OrderBy(p => p.Name))
+            //{
+            //    sb.AppendLine(p.);
+            //}
+
+
+            //var properties = new List<ICalendarProperty>(c.Properties);
+            //properties.Sort(PropertySorter);
+            return string.Empty;
         }
     }
 }

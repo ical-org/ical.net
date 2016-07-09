@@ -85,45 +85,45 @@ namespace ical.NET.Collections
             var newValue = e.Second;
             var obj = sender as TItem;
 
-            if (obj != null)
+            if (obj == null)
             {
-                // Remove the object from the hash table
-                // based on the old group.
-                if (!Equals(oldValue, default(TGroup)))
+                return;
+            }
+
+            // Remove the object from the hash table
+            // based on the old group.
+            if (!Equals(oldValue, default(TGroup)))
+            {
+                // Find the specific item and remove it
+                var group = GroupModifier(oldValue);
+                if (_dictionary.ContainsKey(@group))
                 {
-                    // Find the specific item and remove it
-                    var group = GroupModifier(oldValue);
-                    if (_dictionary.ContainsKey(group))
+                    var items = _dictionary[@group];
+
+                    // Find the item's index within the list
+                    var index = items.IndexOf(obj);
+                    if (index >= 0)
                     {
-                        var items = _dictionary[group];
+                        // Get a reference to the object
+                        var item = items[index];
 
-                        // Find the item's index within the list
-                        var index = items.IndexOf(obj);
-                        if (index >= 0)
-                        {
-                            // Get a reference to the object
-                            var item = items[index];
+                        // Remove the object
+                        items.RemoveAt(index);
 
-                            // Remove the object
-                            items.RemoveAt(index);
-
-                            // Notify that this item was removed, with the overall
-                            // index of the item in the keyed list.
-                            OnItemRemoved(UnsubscribeFromKeyChanges(item), items.StartIndex + index);
-                        }
+                        // Notify that this item was removed, with the overall
+                        // index of the item in the keyed list.
+                        OnItemRemoved(UnsubscribeFromKeyChanges(item), items.StartIndex + index);
                     }
                 }
-
-                // If a new group exists, then re-add this item into the hash
-                if (!Equals(newValue, default(TGroup)))
-                    Add(obj);
             }
+
+            // If a new group exists, then re-add this item into the hash
+            if (!Equals(newValue, default(TGroup)))
+                Add(obj);
         }
 
-        [field: NonSerialized]
         public event EventHandler<ObjectEventArgs<TItem, int>> ItemAdded;
 
-        [field: NonSerialized]
         public event EventHandler<ObjectEventArgs<TItem, int>> ItemRemoved;
 
         protected void OnItemAdded(TItem obj, int index)

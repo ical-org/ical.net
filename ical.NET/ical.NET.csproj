@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug46|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -187,7 +187,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DataTypes\iCalDateTime.cs" />
-    <Compile Include="Factory\UIDFactory.cs" />
     <Compile Include="Calendar.cs" />
     <Compile Include="iCalendarCollection.cs">
       <SubType>Code</SubType>
@@ -224,7 +223,6 @@
     <Compile Include="Interfaces\ICalendar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="packages.config" />
-    <None Include="Serialization\iCalendar\iCal.g" />
     <Compile Include="Serialization\DataTypeMapper.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataMapSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\DateTimeSerializer.cs" />
@@ -241,7 +239,6 @@
     <Compile Include="Serialization\SerializationSettings.cs" />
     <Compile Include="Utility\AssociationUtil.cs" />
     <Compile Include="Utility\DateUtil.cs" />
-    <Compile Include="Utility\KnownTypeHelper.cs" />
     <Compile Include="Utility\RecurrenceUtil.cs" />
     <Compile Include="Utility\SerializationUtil.cs" />
     <Compile Include="Utility\TextUtil.cs" />

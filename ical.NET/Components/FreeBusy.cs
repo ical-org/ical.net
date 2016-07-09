@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.DataTypes;
-using Ical.Net.Factory;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
@@ -13,84 +13,86 @@ namespace Ical.Net
     {
         public static IFreeBusy Create(ICalendarObject obj, IFreeBusy freeBusyRequest)
         {
-            if (obj is IGetOccurrencesTyped)
+            if (!(obj is IGetOccurrencesTyped))
             {
-                var getOccurrences = (IGetOccurrencesTyped) obj;
-                var occurrences = getOccurrences.GetOccurrences<IEvent>(freeBusyRequest.Start, freeBusyRequest.End);
-                var contacts = new List<string>(128);
-                var isFilteredByAttendees = false;
+                return null;
+            }
+            var getOccurrences = (IGetOccurrencesTyped) obj;
+            var occurrences = getOccurrences.GetOccurrences<IEvent>(freeBusyRequest.Start, freeBusyRequest.End);
+            var contacts = new List<string>(128);
+            var isFilteredByAttendees = false;
 
-                if (freeBusyRequest.Attendees != null && freeBusyRequest.Attendees.Count > 0)
+            if (freeBusyRequest.Attendees != null && freeBusyRequest.Attendees.Count > 0)
+            {
+                isFilteredByAttendees = true;
+                var attendees = freeBusyRequest.Attendees
+                    .Where(a => a.Value != null)
+                    .Select(a => a.Value.OriginalString.Trim());
+                contacts.AddRange(attendees);
+            }
+
+            var fb = freeBusyRequest;
+            fb.Uid = Guid.NewGuid().ToString();
+            fb.Entries.Clear();
+            fb.DtStamp = CalDateTime.Now;
+
+            foreach (var o in occurrences)
+            {
+                var uc = o.Source as IUniqueComponent;
+
+                if (uc == null)
                 {
-                    isFilteredByAttendees = true;
-                    var attendees = freeBusyRequest.Attendees
-                        .Where(a => a.Value != null)
-                        .Select(a => a.Value.OriginalString.Trim());
-                    contacts.AddRange(attendees);
+                    continue;
                 }
 
-                var fb = freeBusyRequest.Copy<IFreeBusy>();
-                fb.Uid = new UidFactory().Build();
-                fb.Entries.Clear();
-                fb.DtStamp = CalDateTime.Now;
+                var evt = uc as IEvent;
+                var accepted = false;
+                var type = FreeBusyStatus.Busy;
 
-                foreach (var o in occurrences)
+                // We only accept events, and only "opaque" events.
+                if (evt != null && evt.Transparency != TransparencyType.Transparent)
                 {
-                    var uc = o.Source as IUniqueComponent;
+                    accepted = true;
+                }
 
-                    if (uc != null)
+                // If the result is filtered by attendees, then
+                // we won't accept it until we find an event
+                // that is being attended by this person.
+                if (accepted && isFilteredByAttendees)
+                {
+                    accepted = false;
+
+                    var participatingAttendeeQuery = uc.Attendees
+                        .Where(attendee =>
+                            attendee.Value != null
+                            && contacts.Contains(attendee.Value.OriginalString.Trim())
+                            && attendee.ParticipationStatus != null)
+                        .Select(pa => pa.ParticipationStatus.ToUpperInvariant());
+
+                    foreach (var participatingAttendee in participatingAttendeeQuery)
                     {
-                        var evt = uc as IEvent;
-                        var accepted = false;
-                        var type = FreeBusyStatus.Busy;
-
-                        // We only accept events, and only "opaque" events.
-                        if (evt != null && evt.Transparency != TransparencyType.Transparent)
+                        switch (participatingAttendee)
                         {
-                            accepted = true;
-                        }
-
-                        // If the result is filtered by attendees, then
-                        // we won't accept it until we find an event
-                        // that is being attended by this person.
-                        if (accepted && isFilteredByAttendees)
-                        {
-                            accepted = false;
-
-                            var participatingAttendeeQuery = uc.Attendees
-                                .Where(attendee =>
-                                        attendee.Value != null
-                                        && contacts.Contains(attendee.Value.OriginalString.Trim())
-                                        && attendee.ParticipationStatus != null)
-                                .Select(pa => pa.ParticipationStatus.ToUpperInvariant());
-
-                            foreach (var participatingAttendee in participatingAttendeeQuery)
-                            {
-                                switch (participatingAttendee)
-                                {
-                                    case ParticipationStatus.Tentative:
-                                        accepted = true;
-                                        type = FreeBusyStatus.BusyTentative;
-                                        break;
-                                    case ParticipationStatus.Accepted:
-                                        accepted = true;
-                                        type = FreeBusyStatus.Busy;
-                                        break;
-                                }
-                            }
-                        }
-
-                        if (accepted)
-                        {
-                            // If the entry was accepted, add it to our list!
-                            fb.Entries.Add(new FreeBusyEntry(o.Period, type));
+                            case ParticipationStatus.Tentative:
+                                accepted = true;
+                                type = FreeBusyStatus.BusyTentative;
+                                break;
+                            case ParticipationStatus.Accepted:
+                                accepted = true;
+                                type = FreeBusyStatus.Busy;
+                                break;
                         }
                     }
                 }
 
-                return fb;
+                if (accepted)
+                {
+                    // If the entry was accepted, add it to our list!
+                    fb.Entries.Add(new FreeBusyEntry(o.Period, type));
+                }
             }
-            return null;
+
+            return fb;
         }
 
         public static IFreeBusy CreateRequest(IDateTime fromInclusive, IDateTime toExclusive, IOrganizer organizer, IAttendee[] contacts)

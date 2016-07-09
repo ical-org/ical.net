@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.General;
@@ -22,49 +23,28 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
 
         public override string SerializeToString(object obj)
         {
-            var c = obj as ICalendarComponent;
-            if (c != null)
+            var component = obj as ICalendarComponent;
+
+            var sb = new StringBuilder(1024);
+            sb.Append(TextUtil.WrapLines("BEGIN:" + component.Name.ToUpper()));
+
+            var sf = GetService<ISerializerFactory>();
+
+            var properties = new List<ICalendarProperty>(component.Properties.OrderBy(c => c.Name));
+
+            var serializer = sf.Build(properties.First().GetType(), SerializationContext) as IStringSerializer;
+            foreach (var p in properties)
             {
-                var sb = new StringBuilder();
-                sb.Append(TextUtil.WrapLines("BEGIN:" + c.Name.ToUpper()));
-
-                // Get a serializer factory
-                var sf = GetService<ISerializerFactory>();
-
-                // Sort the calendar properties in alphabetical order before
-                // serializing them!
-                var properties = new List<ICalendarProperty>(c.Properties);
-                properties.Sort(PropertySorter);
-
-                // Serialize properties
-                foreach (var p in properties)
-                {
-                    // Get a serializer for each property.
-                    var serializer = sf.Build(p.GetType(), SerializationContext) as IStringSerializer;
-                    if (serializer != null)
-                    {
-                        sb.Append(serializer.SerializeToString(p));
-                    }
-                }
-
-                // Serialize child objects
-                if (sf != null)
-                {
-                    foreach (var child in c.Children)
-                    {
-                        // Get a serializer for each child object.
-                        var serializer = sf.Build(child.GetType(), SerializationContext) as IStringSerializer;
-                        if (serializer != null)
-                        {
-                            sb.Append(serializer.SerializeToString(child));
-                        }
-                    }
-                }
-
-                sb.Append(TextUtil.WrapLines("END:" + c.Name.ToUpper()));
-                return sb.ToString();
+                sb.Append(serializer.SerializeToString(p));
             }
-            return null;
+
+            foreach (var child in component.Children)
+            {
+                sb.Append(serializer.SerializeToString(child));
+            }
+
+            sb.Append(TextUtil.WrapLines("END:" + component.Name.ToUpper()));
+            return sb.ToString();
         }
 
         public override object Deserialize(TextReader tr)
