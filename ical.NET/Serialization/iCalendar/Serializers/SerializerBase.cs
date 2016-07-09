@@ -34,13 +34,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             object obj;
             using (var sr = new StreamReader(stream, encoding))
             {
-                // Push the current encoding on the stack
                 var encodingStack = GetService<IEncodingStack>();
                 encodingStack.Push(encoding);
-
                 obj = Deserialize(sr);
-
-                // Pop the current encoding off the stack
                 encodingStack.Pop();
             }
             return obj;

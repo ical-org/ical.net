@@ -34,21 +34,12 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             // the property and parameter values
             var sf = GetService<ISerializerFactory>();
 
-            var result = new StringBuilder();
-            foreach (var v in prop.Values)
+            var result = new StringBuilder(1024);
+            foreach (var v in prop.Values.Where(value => value != null))
             {
-                if (v == null)
-                {
-                    continue;
-                }
-
                 // Get a serializer to serialize the property's value.
                 // If we can't serialize the property's value, the next step is worthless anyway.
                 var valueSerializer = sf.Build(v.GetType(), SerializationContext) as IStringSerializer;
-                if (valueSerializer == null)
-                {
-                    continue;
-                }
 
                 // Iterate through each value to be serialized,
                 // and give it a property (with parameters).
@@ -68,7 +59,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                 var parameterList = prop.Parameters;
                 if (v is ICalendarDataType)
                 {
-                    parameterList = ((ICalendarDataType) v).Parameters;
+                    parameterList = (v as ICalendarDataType).Parameters;
                 }
 
                 var sb = new StringBuilder(256);

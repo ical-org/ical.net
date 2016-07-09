@@ -38,12 +38,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            if (!(obj is IDateTime))
-            {
-                return null;
-            }
-
-            var dt = (IDateTime) obj;
+            var dt = obj as IDateTime;
 
             // Assign the TZID for the date/time value.
             if (dt.TzId != null)

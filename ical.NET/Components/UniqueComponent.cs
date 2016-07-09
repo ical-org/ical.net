@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using ical.NET.Collections;
 using Ical.Net.DataTypes;
-using Ical.Net.Factory;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
@@ -40,7 +39,7 @@ namespace Ical.Net
             if (string.IsNullOrEmpty(Uid))
             {
                 // Create a new UID for the component
-                Uid = new UidFactory().Build();
+                Uid = Guid.NewGuid().ToString();
             }
 
             // NOTE: removed setting the 'CREATED' property here since it breaks serialization.

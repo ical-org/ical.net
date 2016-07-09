@@ -21,14 +21,14 @@ namespace Ical.Net.Utility
             var i = 0;
             if (current.Length > 75)
             {
-                result.Append(current.ToString(0, 75) + "\r\n ");
+                result.AppendLine(current.ToString(0, 75));
                 for (i = 75; i < current.Length - 74; i += 74)
                 {
-                    result.Append(current.ToString(i, 74) + "\r\n ");
+                    result.AppendLine(current.ToString(i, 74));
                 }
             }
             result.Append(current.ToString(i, current.Length - i));
-            result.Append("\r\n");
+            result.AppendLine();
 
             return result.ToString();
         }
@@ -44,7 +44,7 @@ namespace Ical.Net.Utility
             var len = -1;
             while (len != s.Length)
             {
-                s = s.Replace("\r\n\r\n", "\r\n");
+                s = s.Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine);
                 len = s.Length;
             }
             return s;

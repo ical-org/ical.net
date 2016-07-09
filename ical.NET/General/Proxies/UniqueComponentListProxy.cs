@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ical.NET.Collections;
 using ical.NET.Collections.Interfaces;
@@ -27,14 +28,15 @@ namespace Ical.Net.General.Proxies
                 return _lookup[uid];
             }
 
-            var item = this.FirstOrDefault(c => string.Equals(c.Uid, uid));
+            var item = this.FirstOrDefault(c => string.Equals(c.Uid, uid, StringComparison.OrdinalIgnoreCase));
 
-            if (item != null)
+            if (item == null)
             {
-                _lookup[uid] = item;
-                return item;
+                return default(TComponentType);
             }
-            return default(TComponentType);
+
+            _lookup[uid] = item;
+            return item;
         }
 
         public virtual TComponentType this[string uid]

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Ical.Net.General;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Interfaces.Serialization;
@@ -18,24 +19,22 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         public override string SerializeToString(object obj)
         {
             var p = obj as ICalendarParameter;
-            if (p != null)
+
+            var builder = new StringBuilder(512);
+            builder.Append(p.Name + "=");
+
+            // "Section 3.2:  Property parameter values MUST NOT contain the DQUOTE character."
+            // Therefore, let's strip any double quotes from the value.
+            var values = string.Join(",", p.Values).Replace("\"", string.Empty);
+
+            // Surround the parameter value with double quotes, if the value
+            // contains any problematic characters.
+            if (values.IndexOfAny(new[] { ';', ':', ',' }) >= 0)
             {
-                var result = p.Name + "=";
-                var value = string.Join(",", p.Values.ToArray());
-
-                // "Section 3.2:  Property parameter values MUST NOT contain the DQUOTE character."
-                // Therefore, let's strip any double quotes from the value.                
-                value = value.Replace("\"", string.Empty);
-
-                // Surround the parameter value with double quotes, if the value
-                // contains any problematic characters.
-                if (value.IndexOfAny(new[] {';', ':', ','}) >= 0)
-                {
-                    value = "\"" + value + "\"";
-                }
-                return result + value;
+                values = "\"" + values + "\"";
             }
-            return string.Empty;
+            builder.Append(values);
+            return builder.ToString();
         }
 
         public override object Deserialize(TextReader tr)

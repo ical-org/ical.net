@@ -57,21 +57,22 @@ namespace Ical.Net.Serialization
 
         protected virtual DecoderDelegate GetDecoderFor(string encoding)
         {
-            if (encoding != null)
+            if (encoding == null)
             {
-                switch (encoding.ToUpper())
-                {
-                    case "7BIT":
-                        return Decode7Bit;
-                    case "8BIT":
-                        return Decode8Bit;
-                    case "BASE64":
-                        return DecodeBase64;
-                    default:
-                        return null;
-                }
+                return null;
             }
-            return null;
+
+            switch (encoding.ToUpper())
+            {
+                case "7BIT":
+                    return Decode7Bit;
+                case "8BIT":
+                    return Decode8Bit;
+                case "BASE64":
+                    return DecodeBase64;
+                default:
+                    return null;
+            }
         }
 
         protected string Encode7Bit(byte[] data)
@@ -114,62 +115,62 @@ namespace Ical.Net.Serialization
 
         protected virtual EncoderDelegate GetEncoderFor(string encoding)
         {
-            if (encoding != null)
+            if (encoding == null)
             {
-                switch (encoding.ToUpper())
-                {
-                    case "7BIT":
-                        return Encode7Bit;
-                    case "8BIT":
-                        return Encode8Bit;
-                    case "BASE64":
-                        return EncodeBase64;
-                    default:
-                        return null;
-                }
+                return null;
             }
-            return null;
+
+            switch (encoding.ToUpper())
+            {
+                case "7BIT":
+                    return Encode7Bit;
+                case "8BIT":
+                    return Encode8Bit;
+                case "BASE64":
+                    return EncodeBase64;
+                default:
+                    return null;
+            }
         }
 
         public string Encode(string encoding, byte[] data)
         {
-            if (encoding != null && data != null)
+            if (encoding == null || data == null)
             {
-                var encoder = GetEncoderFor(encoding);
-                if (encoder != null)
-                {
-                    return encoder(data);
-                }
+                return null;
             }
-            return null;
+
+            var encoder = GetEncoderFor(encoding);
+            return encoder?.Invoke(data);
         }
 
         public string DecodeString(string encoding, string value)
         {
-            if (encoding != null && value != null)
+            if (encoding == null || value == null)
             {
-                var data = DecodeData(encoding, value);
-                if (data != null)
-                {
-                    // Decode the string into the current encoding
-                    var encodingStack = _mSerializationContext.GetService(typeof (IEncodingStack)) as IEncodingStack;
-                    return encodingStack.Current.GetString(data);
-                }
+                return null;
             }
-            return null;
+
+            var data = DecodeData(encoding, value);
+            if (data == null)
+            {
+                return null;
+            }
+
+            // Decode the string into the current encoding
+            var encodingStack = _mSerializationContext.GetService(typeof (IEncodingStack)) as IEncodingStack;
+            return encodingStack.Current.GetString(data);
         }
 
         public byte[] DecodeData(string encoding, string value)
         {
-            if (encoding != null && value != null)
+            if (encoding == null || value == null)
             {
-                var decoder = GetDecoderFor(encoding);
-                if (decoder != null)
-                {
-                    return decoder(value);
-                }
+                return null;
             }
-            return null;
+
+            var decoder = GetDecoderFor(encoding);
+            return decoder?.Invoke(value);
         }
     }
 }

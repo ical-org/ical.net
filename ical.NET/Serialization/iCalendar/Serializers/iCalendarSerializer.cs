@@ -26,17 +26,11 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         [Obsolete("Use the Serialize(IICalendar iCal, string filename) method instead.")]
         public virtual void Serialize(string filename)
         {
-            if (_mCalendar != null)
-            {
-                Serialize(_mCalendar, filename);
-            }
+            Serialize(_mCalendar, filename);
         }
 
         [Obsolete("Use the SerializeToString(ICalendarObject obj) method instead.")]
-        public virtual string SerializeToString()
-        {
-            return SerializeToString(_mCalendar);
-        }
+        public virtual string SerializeToString() => SerializeToString(_mCalendar);
 
         public virtual void Serialize(ICalendar cal, string filename)
         {
@@ -51,24 +45,20 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         public override string SerializeToString(object obj)
         {
             var iCal = obj as ICalendar;
-            if (iCal != null)
-            {
-                // Ensure VERSION and PRODUCTID are both set,
-                // as they are required by RFC5545.
-                var copy = iCal.Copy<ICalendar>();
-                if (string.IsNullOrEmpty(copy.Version))
-                {
-                    copy.Version = CalendarVersions.V20;
-                }
-                if (string.IsNullOrEmpty(copy.ProductId))
-                {
-                    copy.ProductId = CalendarProductIDs.Default;
-                }
 
-                return base.SerializeToString(copy);
+            // Ensure VERSION and PRODUCTID are both set,
+            // as they are required by RFC5545.
+            var copy = iCal.Copy<ICalendar>();
+            if (string.IsNullOrWhiteSpace(copy.Version))
+            {
+                copy.Version = CalendarVersions.V20;
+            }
+            if (string.IsNullOrWhiteSpace(copy.ProductId))
+            {
+                copy.ProductId = CalendarProductIDs.Default;
             }
 
-            return base.SerializeToString(obj);
+            return base.SerializeToString(copy);
         }
 
         public override object Deserialize(TextReader tr)
