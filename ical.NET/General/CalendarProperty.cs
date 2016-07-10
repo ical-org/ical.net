@@ -49,11 +49,6 @@ namespace Ical.Net.General
             Initialize();
         }
 
-        public CalendarProperty(ICalendarProperty other) : this()
-        {
-            CopyFrom(other);
-        }
-
         public CalendarProperty(string name) : base(name)
         {
             Initialize();
@@ -121,27 +116,14 @@ namespace Ical.Net.General
             base.CopyFrom(obj);
 
             var p = obj as ICalendarProperty;
-            if (p != null)
+            if (p == null)
             {
-                // Copy/clone the object if possible (deep copy)
-                if (p.Values is ICopyable)
-                {
-                    SetValue(((ICopyable) p.Values).Copy<object>());
-                }
-                else
-                {
-                    SetValue(p.Values);
-                }
-
-                // Copy parameters
-                foreach (var parm in p.Parameters)
-                {
-                    this.AddChild(parm.Copy<ICalendarParameter>());
-                }
+                return;
             }
+
+            SetValue(p.Values);
         }
 
-        [field: NonSerialized]
         public event EventHandler<ValueChangedEventArgs<object>> ValueChanged;
 
         protected void OnValueChanged(object removedValue, object addedValue)
@@ -159,21 +141,20 @@ namespace Ical.Net.General
             }
             set
             {
-                if (value != null)
+                if (value == null)
                 {
-                    if (_values != null && _values.Count > 0)
-                    {
-                        _values[0] = value;
-                    }
-                    else
-                    {
-                        _values.Clear();
-                        _values.Add(value);
-                    }
+                    _values = null;
+                    return;
+                }
+
+                if (_values != null && _values.Count > 0)
+                {
+                    _values[0] = value;
                 }
                 else
                 {
-                    _values = null;
+                    _values?.Clear();
+                    _values?.Add(value);
                 }
             }
         }
@@ -189,7 +170,6 @@ namespace Ical.Net.General
         {
             if (_values.Count == 0)
             {
-                // Our list doesn't contain any values.  Let's add one!
                 _values.Add(value);
                 OnValueChanged(null, new[] {value});
             }

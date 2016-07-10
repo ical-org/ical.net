@@ -5,21 +5,19 @@ namespace Ical.Net.DataTypes
 {
     public class FreeBusyEntry : Period, IFreeBusyEntry
     {
+        public virtual FreeBusyStatus Status { get; set; }
+
         public FreeBusyEntry()
         {
-            Initialize();
+            Status = FreeBusyStatus.Busy;
         }
 
         public FreeBusyEntry(IPeriod period, FreeBusyStatus status)
         {
-            Initialize();
+            //Sets the status associated with a given period, which requires copying the period values
+            //Probably the Period object should just have a FreeBusyStatus directly?
             CopyFrom(period);
             Status = status;
-        }
-
-        private void Initialize()
-        {
-            Status = FreeBusyStatus.Busy;
         }
 
         public override void CopyFrom(ICopyable obj)
@@ -32,7 +30,5 @@ namespace Ical.Net.DataTypes
                 Status = fb.Status;
             }
         }
-
-        public virtual FreeBusyStatus Status { get; set; }
     }
 }

@@ -78,13 +78,15 @@ namespace Ical.Net
             base.CopyFrom(obj);
 
             var c = obj as ICalendarComponent;
-            if (c != null)
+            if (c == null)
             {
-                Properties.Clear();
-                foreach (var p in c.Properties)
-                {
-                    Properties.Add(p.Copy<ICalendarProperty>());
-                }
+                return;
+            }
+
+            Properties.Clear();
+            foreach (var p in c.Properties)
+            {
+                Properties.Add(p);
             }
         }
 

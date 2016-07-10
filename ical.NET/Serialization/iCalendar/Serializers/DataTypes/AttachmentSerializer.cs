@@ -28,28 +28,27 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
                 return Encode(a, a.Uri.OriginalString);
             }
-            if (a.Data != null)
+            if (a.Data == null)
             {
-                // Ensure the VALUE type is set to BINARY
-                a.SetValueType("BINARY");
-
-                // BASE64 encoding for BINARY inline attachments.
-                a.Parameters.Set("ENCODING", "BASE64");
-
-                return Encode(a, a.Data);
+                return null;
             }
-            return null;
+
+            // Ensure the VALUE type is set to BINARY
+            a.SetValueType("BINARY");
+
+            // BASE64 encoding for BINARY inline attachments.
+            a.Parameters.Set("ENCODING", "BASE64");
+
+            return Encode(a, a.Data);
         }
 
-        public override object Deserialize(TextReader tr)
+        public Attachment Deserialize(string attachment)
         {
-            var value = tr.ReadToEnd();
-
             try
             {
-                var a = CreateAndAssociate() as IAttachment;
+                var a = CreateAndAssociate() as Attachment;
                 // Decode the value, if necessary
-                var data = DecodeData(a, value);
+                var data = DecodeData(a, attachment);
 
                 // Get the currently-used encoding off the encoding stack.
                 var encodingStack = GetService<IEncodingStack>();
@@ -67,7 +66,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
                 // The default VALUE type for attachments is URI.  So, let's
                 // grab the URI by default.
-                var uriValue = Decode(a, value);
+                var uriValue = Decode(a, attachment);
                 a.Uri = new Uri(uriValue);
 
                 return a;
@@ -79,5 +78,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
             return null;
         }
+
+        public override object Deserialize(TextReader tr) => Deserialize(tr.ReadToEnd());
     }
 }

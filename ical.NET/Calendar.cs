@@ -461,7 +461,7 @@ namespace Ical.Net
 
                 foreach (var p in c.Properties.Where(p => !Properties.ContainsKey(p.Name)))
                 {
-                    Properties.Add(p.Copy<ICalendarProperty>());
+                    Properties.Add(p);
                 }
 
                 foreach (var child in c.Children)
@@ -470,12 +470,12 @@ namespace Ical.Net
                     {
                         if (!UniqueComponents.ContainsKey(((IUniqueComponent) child).Uid))
                         {
-                            this.AddChild(child.Copy<ICalendarObject>());
+                            this.AddChild(child);
                         }
                     }
                     else
                     {
-                        this.AddChild(child.Copy<ICalendarObject>());
+                        this.AddChild(child);
                     }
                 }
             }

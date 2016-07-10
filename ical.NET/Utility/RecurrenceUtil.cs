@@ -32,7 +32,7 @@ namespace Ical.Net.Utility
             }
 
             // Ensure the start time is associated with the object being queried
-            var start = recurrable.Start.Copy<IDateTime>();
+            var start = recurrable.Start;
             start.AssociatedObject = recurrable as ICalendarObject;
 
             // Change the time zone of periodStart/periodEnd as needed 

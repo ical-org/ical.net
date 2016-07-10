@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
 
@@ -102,7 +101,6 @@ namespace Ical.Net.DataTypes
             set { Parameters.Set("DELEGATED-FROM", value); }
         }
 
-        [DataMember(Order = 1)]
         public virtual Uri Value { get; set; }
 
         public Attendee() {}
@@ -148,15 +146,7 @@ namespace Ical.Net.DataTypes
             return Value?.GetHashCode() ?? 0;
         }
 
-        public override void CopyFrom(ICopyable obj)
-        {
-            base.CopyFrom(obj);
-
-            var a = obj as IAttendee;
-            if (a != null)
-            {
-                Value = a.Value;
-            }
-        }
+        //ToDo: See if this can be deleted
+        public override void CopyFrom(ICopyable obj) {}
     }
 }

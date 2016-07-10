@@ -105,14 +105,16 @@ namespace Ical.Net
             };
             if (organizer != null)
             {
-                fb.Organizer = organizer.Copy<IOrganizer>();
+                fb.Organizer = organizer;
             }
-            if (contacts != null)
+
+            if (contacts == null)
             {
-                foreach (var attendee in contacts)
-                {
-                    fb.Attendees.Add(attendee.Copy<IAttendee>());
-                }
+                return fb;
+            }
+            foreach (var attendee in contacts)
+            {
+                fb.Attendees.Add(attendee);
             }
 
             return fb;

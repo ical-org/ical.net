@@ -88,59 +88,61 @@ namespace Ical.Net
         {
             Occurrences.Clear();
 
-            if (Trigger != null)
+            if (Trigger == null)
             {
-                // If the trigger is relative, it can recur right along with
-                // the recurring items, otherwise, it happens once and
-                // only once (at a precise time).
-                if (Trigger.IsRelative)
-                {
-                    // Ensure that "FromDate" has already been set
-                    if (fromDate == null)
-                    {
-                        fromDate = rc.Start.Copy<IDateTime>();
-                    }
+                return Occurrences;
+            }
 
-                    var d = default(TimeSpan);
-                    foreach (var o in rc.GetOccurrences(fromDate, toDate))
+            // If the trigger is relative, it can recur right along with
+            // the recurring items, otherwise, it happens once and
+            // only once (at a precise time).
+            if (Trigger.IsRelative)
+            {
+                // Ensure that "FromDate" has already been set
+                if (fromDate == null)
+                {
+                    fromDate = rc.Start.Copy<IDateTime>();
+                }
+
+                var d = default(TimeSpan);
+                foreach (var o in rc.GetOccurrences(fromDate, toDate))
+                {
+                    var dt = o.Period.StartTime;
+                    if (Trigger.Related == TriggerRelation.End)
                     {
-                        var dt = o.Period.StartTime;
-                        if (Trigger.Related == TriggerRelation.End)
+                        if (o.Period.EndTime != null)
                         {
-                            if (o.Period.EndTime != null)
+                            dt = o.Period.EndTime;
+                            if (d == default(TimeSpan))
                             {
-                                dt = o.Period.EndTime;
-                                if (d == default(TimeSpan))
-                                {
-                                    d = o.Period.Duration;
-                                }
-                            }
-                            // Use the "last-found" duration as a reference point
-                            else if (d != default(TimeSpan))
-                            {
-                                dt = o.Period.StartTime.Add(d);
-                            }
-                            else
-                            {
-                                throw new ArgumentException(
-                                    "Alarm trigger is relative to the END of the occurrence; however, the occurence has no discernible end.");
+                                d = o.Period.Duration;
                             }
                         }
-
-                        Occurrences.Add(new AlarmOccurrence(this, dt.Add(Trigger.Duration.Value), rc));
+                        // Use the "last-found" duration as a reference point
+                        else if (d != default(TimeSpan))
+                        {
+                            dt = o.Period.StartTime.Add(d);
+                        }
+                        else
+                        {
+                            throw new ArgumentException(
+                                "Alarm trigger is relative to the END of the occurrence; however, the occurence has no discernible end.");
+                        }
                     }
-                }
-                else
-                {
-                    var dt = Trigger.DateTime.Copy<IDateTime>();
-                    dt.AssociatedObject = this;
-                    Occurrences.Add(new AlarmOccurrence(this, dt, rc));
-                }
 
-                // If a REPEAT and DURATION value were specified,
-                // then handle those repetitions here.
-                AddRepeatedItems();
+                    Occurrences.Add(new AlarmOccurrence(this, dt.Add(Trigger.Duration.Value), rc));
+                }
             }
+            else
+            {
+                var dt = Trigger.DateTime.Copy<IDateTime>();
+                dt.AssociatedObject = this;
+                Occurrences.Add(new AlarmOccurrence(this, dt, rc));
+            }
+
+            // If a REPEAT and DURATION value were specified,
+            // then handle those repetitions here.
+            AddRepeatedItems();
 
             return Occurrences;
         }
