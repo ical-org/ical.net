@@ -12,7 +12,6 @@ namespace Ical.Net.DataTypes
     /// </summary>
     public class Attachment : EncodableDataType, IAttachment
     {
-
         public virtual Uri Uri { get; set; }
         public virtual byte[] Data { get; set; }
         public virtual Encoding ValueEncoding { get; set; }

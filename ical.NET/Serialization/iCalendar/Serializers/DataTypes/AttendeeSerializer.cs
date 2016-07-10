@@ -18,15 +18,12 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 : Encode(a, a.Value.OriginalString);
         }
 
-        public override object Deserialize(TextReader tr)
+        public Attendee Deserialize(string attendee)
         {
-            var value = tr.ReadToEnd();
-
-            IAttendee a = null;
             try
             {
-                a = CreateAndAssociate() as IAttendee;
-                var uriString = Unescape(Decode(a, value));
+                var a = CreateAndAssociate() as Attendee;
+                var uriString = Unescape(Decode(a, attendee));
 
                 // Prepend "mailto:" if necessary
                 if (!uriString.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase))
@@ -35,13 +32,16 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 }
 
                 a.Value = new Uri(uriString);
+                return a;
             }
             catch
             {
                 // ignored
             }
 
-            return a;
+            return null;
         }
+
+        public override object Deserialize(TextReader tr) => Deserialize(tr.ReadToEnd());
     }
 }
