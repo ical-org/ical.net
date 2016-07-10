@@ -1,9 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.Serialization;
-using ical.NET.Collections;
 using Ical.Net.ExtensionMethods;
 using Ical.Net.Interfaces.General;
 
@@ -31,8 +28,8 @@ namespace Ical.Net.General
     [DebuggerDisplay("{Name}:{Value}")]
     public class CalendarProperty : CalendarObject, ICalendarProperty
     {
-        private IList<object> _values;
-        private ICalendarParameterCollection _parameters;
+        private IList<object> _values = new List<object>(128);
+        private ICalendarParameterCollection _parameters = new CalendarParameterList();
 
         /// <summary>
         /// Returns a list of parameters that are associated with the iCalendar object.
@@ -43,32 +40,16 @@ namespace Ical.Net.General
             protected set { _parameters = value; }
         }
 
-        public CalendarProperty()
-        {
-            Initialize();
-        }
+        public CalendarProperty() {}
 
-        public CalendarProperty(string name) : base(name)
-        {
-            Initialize();
-        }
+        public CalendarProperty(string name) : base(name) {}
 
         public CalendarProperty(string name, object value) : base(name)
         {
-            Initialize();
             _values.Add(value);
         }
 
-        public CalendarProperty(int line, int col) : base(line, col)
-        {
-            Initialize();
-        }
-
-        private void Initialize()
-        {
-            _values = new List<object>(128);
-            _parameters = new CalendarParameterList();
-        }
+        public CalendarProperty(int line, int col) : base(line, col) {}
 
         /// <summary>
         /// Adds a parameter to the iCalendar object.
@@ -85,13 +66,6 @@ namespace Ical.Net.General
         public virtual void AddParameter(ICalendarParameter p)
         {
             Parameters.Add(p);
-        }
-
-        protected override void OnDeserializing(StreamingContext context)
-        {
-            base.OnDeserializing(context);
-
-            Initialize();
         }
 
         public override void CopyFrom(ICopyable obj)

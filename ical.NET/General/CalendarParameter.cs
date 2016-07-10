@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using ical.NET.Collections;
 using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.General
@@ -11,7 +10,7 @@ namespace Ical.Net.General
     [DebuggerDisplay("{Name}={string.Join(\",\", Values)}")]
     public class CalendarParameter : CalendarObject, ICalendarParameter
     {
-        private List<string> _values;
+        private HashSet<string> _values;
 
         public CalendarParameter()
         {
@@ -40,7 +39,7 @@ namespace Ical.Net.General
 
         private void Initialize()
         {
-            _values = new List<string>(128);
+            _values = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         }
 
         protected override void OnDeserializing(StreamingContext context)
@@ -57,11 +56,10 @@ namespace Ical.Net.General
             var p = c as ICalendarParameter;
             if (p?.Values != null)
             {
-                _values = new List<string>(p.Values);
+                _values = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                _values.UnionWith(p.Values);
             }
         }
-
-        public event EventHandler<ValueChangedEventArgs<string>> ValueChanged;
 
         public virtual IEnumerable<string> Values => _values;
 
@@ -74,29 +72,14 @@ namespace Ical.Net.General
 
         public virtual void SetValue(string value)
         {
-            if (_values.Count == 0)
-            {
-                // Our list doesn't contain any values.  Let's add one!
-                _values.Add(value);
-            }
-            else if (value != null)
-            {
-                // Our list contains values.  Let's set the first value!
-                _values[0] = value;
-            }
-            else
-            {
-                // Remove all values
-                _values.Clear();
-            }
+            _values.Add(value);
         }
 
         public virtual void SetValue(IEnumerable<string> values)
         {
             // Remove all previous values
             _values.Clear();
-            var materializedValues = values.ToList();
-            _values.AddRange(materializedValues);
+            _values.UnionWith(values);
         }
 
         public virtual void AddValue(string value)

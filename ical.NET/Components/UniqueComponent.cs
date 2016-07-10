@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using ical.NET.Collections;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
@@ -112,8 +111,6 @@ namespace Ical.Net
         {
             return Uid?.GetHashCode() ?? base.GetHashCode();
         }
-
-        public virtual event EventHandler<ObjectEventArgs<string, string>> UidChanged;
 
         public virtual string Uid
         {
