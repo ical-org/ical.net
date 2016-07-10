@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
 

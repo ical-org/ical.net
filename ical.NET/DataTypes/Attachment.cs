@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Text;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;

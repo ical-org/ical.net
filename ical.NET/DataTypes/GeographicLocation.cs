@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.IO;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
@@ -13,27 +12,15 @@ namespace Ical.Net.DataTypes
     [DebuggerDisplay("{Latitude};{Longitude}")]
     public class GeographicLocation : EncodableDataType, IGeographicLocation
     {
-        private double _mLatitude;
-        private double _mLongitude;
-
-        public double Latitude
-        {
-            get { return _mLatitude; }
-            set { _mLatitude = value; }
-        }
-
-        public double Longitude
-        {
-            get { return _mLongitude; }
-            set { _mLongitude = value; }
-        }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
 
         public GeographicLocation() {}
 
         public GeographicLocation(string value) : this()
         {
             var serializer = new GeographicLocationSerializer();
-            CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
+            serializer.Deserialize(value);
         }
 
         public GeographicLocation(double latitude, double longitude)
@@ -42,35 +29,32 @@ namespace Ical.Net.DataTypes
             Longitude = longitude;
         }
 
-        public override bool Equals(object obj)
-        {
-            if (obj is IGeographicLocation)
-            {
-                var g = (IGeographicLocation) obj;
-                return g.Latitude.Equals(Latitude) && g.Longitude.Equals(Longitude);
-            }
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return Latitude.GetHashCode() ^ Longitude.GetHashCode();
-        }
-
-        public override void CopyFrom(ICopyable obj)
-        {
-            base.CopyFrom(obj);
-            if (obj is IGeographicLocation)
-            {
-                var g = (IGeographicLocation) obj;
-                Latitude = g.Latitude;
-                Longitude = g.Longitude;
-            }
-        }
+        public override void CopyFrom(ICopyable obj) {}
 
         public override string ToString()
         {
             return Latitude.ToString("0.000000") + ";" + Longitude.ToString("0.000000");
+        }
+
+        protected bool Equals(GeographicLocation other)
+        {
+            return Latitude.Equals(other.Latitude) && Longitude.Equals(other.Longitude);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((GeographicLocation)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (Latitude.GetHashCode() * 397) ^ Longitude.GetHashCode();
+            }
         }
     }
 }
