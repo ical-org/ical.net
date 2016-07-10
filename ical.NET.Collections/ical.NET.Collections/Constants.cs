@@ -3,17 +3,6 @@ using System.Collections.Generic;
 
 namespace ical.NET.Collections
 {
-    public class ObjectEventArgs<T> :
-        EventArgs
-    {
-        public T Object { get; set; }
-
-        public ObjectEventArgs(T obj)
-        {
-            Object = obj;
-        }
-    }
-
     public class ObjectEventArgs<T, TU> :
         EventArgs
     {

@@ -18,19 +18,9 @@ namespace ical.NET.Collections
         private readonly List<IMultiLinkedList<TItem>> _lists = new List<IMultiLinkedList<TItem>>();
         private readonly Dictionary<TGroup, IMultiLinkedList<TItem>> _dictionary = new Dictionary<TGroup, IMultiLinkedList<TItem>>();
 
-        private TItem SubscribeToKeyChanges(TItem item)
-        {
-            if (item != null)
-                item.GroupChanged += item_GroupChanged;
-            return item;
-        }
+        private TItem SubscribeToKeyChanges(TItem item) => item;
 
-        private TItem UnsubscribeFromKeyChanges(TItem item)
-        {
-            if (item != null)
-                item.GroupChanged -= item_GroupChanged;
-            return item;
-        }
+        private TItem UnsubscribeFromKeyChanges(TItem item) => item;
 
         protected virtual TGroup GroupModifier(TGroup group)
         {
@@ -79,49 +69,6 @@ namespace ical.NET.Collections
             return null;
         }
 
-        private void item_GroupChanged(object sender, ObjectEventArgs<TGroup, TGroup> e)
-        {
-            var oldValue = e.First;
-            var newValue = e.Second;
-            var obj = sender as TItem;
-
-            if (obj == null)
-            {
-                return;
-            }
-
-            // Remove the object from the hash table
-            // based on the old group.
-            if (!Equals(oldValue, default(TGroup)))
-            {
-                // Find the specific item and remove it
-                var group = GroupModifier(oldValue);
-                if (_dictionary.ContainsKey(@group))
-                {
-                    var items = _dictionary[@group];
-
-                    // Find the item's index within the list
-                    var index = items.IndexOf(obj);
-                    if (index >= 0)
-                    {
-                        // Get a reference to the object
-                        var item = items[index];
-
-                        // Remove the object
-                        items.RemoveAt(index);
-
-                        // Notify that this item was removed, with the overall
-                        // index of the item in the keyed list.
-                        OnItemRemoved(UnsubscribeFromKeyChanges(item), items.StartIndex + index);
-                    }
-                }
-            }
-
-            // If a new group exists, then re-add this item into the hash
-            if (!Equals(newValue, default(TGroup)))
-                Add(obj);
-        }
-
         public event EventHandler<ObjectEventArgs<TItem, int>> ItemAdded;
 
         public event EventHandler<ObjectEventArgs<TItem, int>> ItemRemoved;
@@ -138,17 +85,19 @@ namespace ical.NET.Collections
 
         public virtual void Add(TItem item)
         {
-            if (item != null)
+            if (item == null)
             {
-                // Get the "real" group for this item
-                var group = GroupModifier(item.Group);
-
-                // Add a new list if necessary
-                var list = EnsureList(group, true);
-                var index = list.Count;
-                list.Add(SubscribeToKeyChanges(item));
-                OnItemAdded(item, list.StartIndex + index);
+                return;
             }
+
+            // Get the "real" group for this item
+            var group = GroupModifier(item.Group);
+
+            // Add a new list if necessary
+            var list = EnsureList(@group, true);
+            var index = list.Count;
+            list.Add(SubscribeToKeyChanges(item));
+            OnItemAdded(item, list.StartIndex + index);
         }
 
         public virtual int IndexOf(TItem item)

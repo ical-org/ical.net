@@ -61,13 +61,7 @@ namespace Ical.Net.General
             }
         }
 
-        [field: NonSerialized]
         public event EventHandler<ValueChangedEventArgs<string>> ValueChanged;
-
-        protected void OnValueChanged(IEnumerable<string> removedValues, IEnumerable<string> addedValues)
-        {
-            ValueChanged?.Invoke(this, new ValueChangedEventArgs<string>(removedValues, addedValues));
-        }
 
         public virtual IEnumerable<string> Values => _values;
 
@@ -84,32 +78,25 @@ namespace Ical.Net.General
             {
                 // Our list doesn't contain any values.  Let's add one!
                 _values.Add(value);
-                OnValueChanged(null, new[] {value});
             }
             else if (value != null)
             {
                 // Our list contains values.  Let's set the first value!
-                var oldValue = _values[0];
                 _values[0] = value;
-                OnValueChanged(new[] {oldValue}, new[] {value});
             }
             else
             {
                 // Remove all values
-                var values = new List<string>(Values);
                 _values.Clear();
-                OnValueChanged(values, null);
             }
         }
 
         public virtual void SetValue(IEnumerable<string> values)
         {
             // Remove all previous values
-            var removedValues = _values.ToList();
             _values.Clear();
             var materializedValues = values.ToList();
             _values.AddRange(materializedValues);
-            OnValueChanged(removedValues, materializedValues);
         }
 
         public virtual void AddValue(string value)
@@ -117,17 +104,10 @@ namespace Ical.Net.General
             if (value != null)
             {
                 _values.Add(value);
-                OnValueChanged(null, new[] {value});
             }
         }
 
-        public virtual void RemoveValue(string value)
-        {
-            if (value != null && _values.Contains(value) && _values.Remove(value))
-            {
-                OnValueChanged(new[] {value}, null);
-            }
-        }
+        public virtual void RemoveValue(string value) {}
 
         public virtual string Value
         {
