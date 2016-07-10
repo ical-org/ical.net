@@ -12,13 +12,8 @@ namespace Ical.Net.General
     /// </summary>
     public class CalendarObject : CalendarObjectBase, ICalendarObject
     {
-        private ICalendarObject _parent;
         private ICalendarObjectList<ICalendarObject> _children;
         private ServiceProvider _serviceProvider;
-        private string _name;
-
-        private int _line;
-        private int _column;
 
         internal CalendarObject()
         {
@@ -76,10 +71,7 @@ namespace Ical.Net.General
             e.First.Parent = this;
         }
 
-        protected bool Equals(CalendarObject other)
-        {
-            return string.Equals(_name, other._name);
-        }
+        protected bool Equals(CalendarObject other) => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
 
         public override bool Equals(object obj)
         {
@@ -91,7 +83,7 @@ namespace Ical.Net.General
 
         public override int GetHashCode()
         {
-            return _name?.GetHashCode() ?? 0;
+            return Name?.GetHashCode() ?? 0;
         }
 
         public override void CopyFrom(ICopyable c)
@@ -119,11 +111,7 @@ namespace Ical.Net.General
         /// <summary>
         /// Returns the parent iCalObject that owns this one.
         /// </summary>
-        public virtual ICalendarObject Parent
-        {
-            get { return _parent; }
-            set { _parent = value; }
-        }
+        public virtual ICalendarObject Parent { get; set; }
 
         /// <summary>
         /// A collection of iCalObjects that are children of the current object.
@@ -141,19 +129,7 @@ namespace Ical.Net.General
         ///     </list>
         /// </example>
         /// </summary>        
-        public virtual string Name
-        {
-            get { return _name; }
-            set
-            {
-                if (!Equals(_name, value))
-                {
-                    var old = _name;
-                    _name = value;
-                    OnGroupChanged(old, _name);
-                }
-            }
-        }
+        public virtual string Name { get; set; }
 
         /// <summary>
         /// Returns the <see cref="ICalendar"/> that this DDayiCalObject belongs to.
@@ -174,7 +150,7 @@ namespace Ical.Net.General
                 }
                 return null;
             }
-            protected set { _parent = value; }
+            protected set { }
         }
 
         public virtual ICalendar ICalendar
@@ -183,17 +159,9 @@ namespace Ical.Net.General
             protected set { Calendar = value; }
         }
 
-        public virtual int Line
-        {
-            get { return _line; }
-            set { _line = value; }
-        }
+        public virtual int Line { get; set; }
 
-        public virtual int Column
-        {
-            get { return _column; }
-            set { _column = value; }
-        }
+        public virtual int Column { get; set; }
 
         public virtual object GetService(Type serviceType)
         {
@@ -233,14 +201,6 @@ namespace Ical.Net.General
         public virtual void RemoveService(string name)
         {
             _serviceProvider.RemoveService(name);
-        }
-
-        [field: NonSerialized]
-        public event EventHandler<ObjectEventArgs<string, string>> GroupChanged;
-
-        protected void OnGroupChanged(string old, string @new)
-        {
-            GroupChanged?.Invoke(this, new ObjectEventArgs<string, string>(old, @new));
         }
 
         public virtual string Group

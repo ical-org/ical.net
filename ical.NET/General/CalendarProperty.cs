@@ -1,12 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.Serialization;
-using ical.NET.Collections;
 using Ical.Net.ExtensionMethods;
 using Ical.Net.Interfaces.General;
-using Ical.Net.Utility;
 
 namespace Ical.Net.General
 {
@@ -32,8 +28,8 @@ namespace Ical.Net.General
     [DebuggerDisplay("{Name}:{Value}")]
     public class CalendarProperty : CalendarObject, ICalendarProperty
     {
-        private IList<object> _values;
-        private ICalendarParameterCollection _parameters;
+        private IList<object> _values = new List<object>(128);
+        private ICalendarParameterCollection _parameters = new CalendarParameterList();
 
         /// <summary>
         /// Returns a list of parameters that are associated with the iCalendar object.
@@ -44,33 +40,16 @@ namespace Ical.Net.General
             protected set { _parameters = value; }
         }
 
-        public CalendarProperty()
-        {
-            Initialize();
-        }
+        public CalendarProperty() {}
 
-        public CalendarProperty(string name) : base(name)
-        {
-            Initialize();
-        }
+        public CalendarProperty(string name) : base(name) {}
 
         public CalendarProperty(string name, object value) : base(name)
         {
-            Initialize();
             _values.Add(value);
         }
 
-        public CalendarProperty(int line, int col) : base(line, col)
-        {
-            Initialize();
-        }
-
-        private void Initialize()
-        {
-            _values = new List<object>(128);
-            _parameters = new CalendarParameterList(this, true);
-            ValueChanged += CalendarProperty_ValueChanged;
-        }
+        public CalendarProperty(int line, int col) : base(line, col) {}
 
         /// <summary>
         /// Adds a parameter to the iCalendar object.
@@ -89,28 +68,6 @@ namespace Ical.Net.General
             Parameters.Add(p);
         }
 
-        private void CalendarProperty_ValueChanged(object sender, ValueChangedEventArgs<object> e)
-        {
-            // Deassociate the old values
-            foreach (var removed in e.RemovedValues)
-            {
-                AssociationUtil.DeassociateItem(removed);
-            }
-
-            // Associate the new values with this object.
-            foreach (var added in e.AddedValues)
-            {
-                AssociationUtil.AssociateItem(added, this);
-            }
-        }
-
-        protected override void OnDeserializing(StreamingContext context)
-        {
-            base.OnDeserializing(context);
-
-            Initialize();
-        }
-
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
@@ -122,13 +79,6 @@ namespace Ical.Net.General
             }
 
             SetValue(p.Values);
-        }
-
-        public event EventHandler<ValueChangedEventArgs<object>> ValueChanged;
-
-        protected void OnValueChanged(object removedValue, object addedValue)
-        {
-            ValueChanged?.Invoke(this, new ValueChangedEventArgs<object>((IEnumerable<object>) removedValue, (IEnumerable<object>) addedValue));
         }
 
         public virtual IEnumerable<object> Values => _values;
@@ -171,48 +121,35 @@ namespace Ical.Net.General
             if (_values.Count == 0)
             {
                 _values.Add(value);
-                OnValueChanged(null, new[] {value});
             }
             else if (value != null)
             {
                 // Our list contains values.  Let's set the first value!
-                var oldValue = _values[0];
                 _values[0] = value;
-                OnValueChanged(new[] {oldValue}, new[] {value});
             }
             else
             {
-                // Remove all values
-                var values = new List<object>(Values);
                 _values.Clear();
-                OnValueChanged(values, null);
             }
         }
 
         public virtual void SetValue(IEnumerable<object> values)
         {
             // Remove all previous values
-            var removedValues = _values.ToList();
             _values.Clear();
             _values.AddRange(values);
-            OnValueChanged(removedValues, values);
         }
 
         public virtual void AddValue(object value)
         {
-            if (value != null)
+            if (value == null)
             {
-                _values.Add(value);
-                OnValueChanged(null, new[] {value});
+                return;
             }
+
+            _values.Add(value);
         }
 
-        public virtual void RemoveValue(object value)
-        {
-            if (value != null && _values.Contains(value) && _values.Remove(value))
-            {
-                OnValueChanged(new[] {value}, null);
-            }
-        }
+        public virtual void RemoveValue(object value) { }
     }
 }

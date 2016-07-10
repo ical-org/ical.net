@@ -54,7 +54,7 @@ namespace ical.NET.Collections.Proxies
 
         public virtual int CountOf(TGroup group)
         {
-            return RealObject.Count(g => g.Group.GetType() == typeof (TGroup));
+            return RealObject.OfType<TGroup>().Count();
         }
 
         public virtual IEnumerable<TNew> AllOf(TGroup group)

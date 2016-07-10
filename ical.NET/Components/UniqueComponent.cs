@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using ical.NET.Collections;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
 
 namespace Ical.Net
 {
@@ -24,13 +21,11 @@ namespace Ical.Net
 
         public UniqueComponent()
         {
-            Initialize();
             EnsureProperties();
         }
 
         public UniqueComponent(string name) : base(name)
         {
-            Initialize();
             EnsureProperties();
         }
 
@@ -53,12 +48,6 @@ namespace Ical.Net
                 var now = DateTime.Now;
                 DtStamp = new CalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
             }
-        }
-
-        private void Initialize()
-        {
-            Properties.ItemAdded += Properties_ItemAdded;
-            Properties.ItemRemoved += Properties_ItemRemoved;
         }
 
         public virtual IList<IAttendee> Attendees
@@ -97,38 +86,6 @@ namespace Ical.Net
             set { Properties.Set("URL", value); }
         }
 
-        private void Properties_ItemRemoved(object sender, ObjectEventArgs<ICalendarProperty, int> e)
-        {
-            if (string.Equals(e.First.Name, "UID", StringComparison.OrdinalIgnoreCase))
-            {
-                OnUidChanged(e.First.Values.Cast<string>().FirstOrDefault(), null);
-                e.First.ValueChanged -= Object_ValueChanged;
-            }
-        }
-
-        private void Properties_ItemAdded(object sender, ObjectEventArgs<ICalendarProperty, int> e)
-        {
-            if (string.Equals(e.First.Name, "UID", StringComparison.OrdinalIgnoreCase))
-            {
-                OnUidChanged(null, e.First.Values.Cast<string>().FirstOrDefault());
-                e.First.ValueChanged += Object_ValueChanged;
-            }
-        }
-
-        private void Object_ValueChanged(object sender, ValueChangedEventArgs<object> e)
-        {
-            var oldValue = e.RemovedValues.OfType<string>().FirstOrDefault();
-            var newValue = e.AddedValues.OfType<string>().FirstOrDefault();
-            OnUidChanged(oldValue, newValue);
-        }
-
-        protected override void OnDeserializing(StreamingContext context)
-        {
-            base.OnDeserializing(context);
-
-            Initialize();
-        }
-
         protected override void OnDeserialized(StreamingContext context)
         {
             base.OnDeserialized(context);
@@ -152,18 +109,7 @@ namespace Ical.Net
 
         public override int GetHashCode()
         {
-            if (Uid != null)
-            {
-                return Uid.GetHashCode();
-            }
-            return base.GetHashCode();
-        }
-
-        public virtual event EventHandler<ObjectEventArgs<string, string>> UidChanged;
-
-        protected virtual void OnUidChanged(string oldUid, string newUid)
-        {
-            UidChanged?.Invoke(this, new ObjectEventArgs<string, string>(oldUid, newUid));
+            return Uid?.GetHashCode() ?? base.GetHashCode();
         }
 
         public virtual string Uid

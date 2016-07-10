@@ -64,7 +64,6 @@ namespace Ical.Net.General.Proxies
             if (e.First is TComponentType)
             {
                 var component = (TComponentType) e.First;
-                component.UidChanged += UidChanged;
 
                 if (!string.IsNullOrEmpty(component.Uid))
                 {
@@ -78,25 +77,11 @@ namespace Ical.Net.General.Proxies
             if (e.First is TComponentType)
             {
                 var component = (TComponentType) e.First;
-                component.UidChanged -= UidChanged;
 
                 if (!string.IsNullOrEmpty(component.Uid) && _lookup.ContainsKey(component.Uid))
                 {
                     _lookup.Remove(component.Uid);
                 }
-            }
-        }
-
-        private void UidChanged(object sender, ObjectEventArgs<string, string> e)
-        {
-            if (e.First != null && _lookup.ContainsKey(e.First))
-            {
-                _lookup.Remove(e.First);
-            }
-
-            if (e.Second != null)
-            {
-                _lookup[e.Second] = (TComponentType) sender;
             }
         }
     }
