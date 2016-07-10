@@ -9,11 +9,10 @@
         void CopyFrom(ICopyable obj);
 
         /// <summary>
-        /// Returns a copy of the current object, including
-        /// all relevent fields/properties, resulting in a
-        /// semantically equivalent copy of the object.
-        /// (which consequently passes an object.Equals(obj1, obj2)
-        /// test).
+        /// Returns a deep copy of the current object. For the most part, this is only necessary when working with mutable reference types,
+        /// (i.e. iCalDateTime). For most other types, it's unnecessary overhead. The pattern that identifies whether it's necessary to copy
+        /// or not is whether arithmetic operations mutate fields or properties. iCalDateTime is a good example where + and - would otherwise
+        /// change the Value of the underlying DateTime.
         /// </summary>
         T Copy<T>();
     }

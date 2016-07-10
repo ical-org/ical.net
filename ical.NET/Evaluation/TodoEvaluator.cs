@@ -50,61 +50,55 @@ namespace Ical.Net.Evaluation
             Evaluate(Todo.Start, DateUtil.GetSimpleDateTimeData(beginningDate), DateUtil.GetSimpleDateTimeData(currDt).AddTicks(1), true);
         }
 
-        public void DetermineStartingRecurrence(IPeriodList rdate, ref IDateTime dt)
+        public void DetermineStartingRecurrence(IPeriodList rdate, ref IDateTime referenceDateTime)
         {
-            var evaluator = rdate.GetService(typeof (IEvaluator)) as IEvaluator;
-            if (evaluator == null)
-            {
-                // FIXME: throw a specific, typed exception here.
-                throw new Exception("Could not determine starting recurrence: a period evaluator could not be found!");
-            }
+            var evaluator = rdate.GetService<IEvaluator>();
 
-            foreach (var p in evaluator.Periods)
+            var dt2 = referenceDateTime;
+            foreach (var p in evaluator.Periods.Where(p => p.StartTime.LessThan(dt2)))
             {
-                if (p.StartTime.LessThan(dt))
-                {
-                    dt = p.StartTime;
-                }
+                referenceDateTime = p.StartTime;
             }
         }
 
-        public void DetermineStartingRecurrence(IRecurrencePattern recur, ref IDateTime dt)
+        public void DetermineStartingRecurrence(IRecurrencePattern recur, ref IDateTime referenceDateTime)
         {
             if (recur.Count != int.MinValue)
             {
-                dt = Todo.Start.Copy<IDateTime>();
+                referenceDateTime = Todo.Start.Copy<IDateTime>();
             }
             else
             {
-                var dtVal = dt.Value;
+                var dtVal = referenceDateTime.Value;
                 IncrementDate(ref dtVal, recur, -recur.Interval);
-                dt.Value = dtVal;
+                referenceDateTime.Value = dtVal;
             }
         }
 
         public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // TODO items can only recur if a start date is specified
-            if (Todo.Start != null)
+            if (Todo.Start == null)
             {
-                base.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
+                return new HashSet<IPeriod>();
+            }
 
-                // Ensure each period has a duration
-                foreach (var period in Periods.Where(period => period.EndTime == null))
+            base.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
+
+            // Ensure each period has a duration
+            foreach (var period in Periods.Where(period => period.EndTime == null))
+            {
+                period.Duration = Todo.Duration;
+                if (period.Duration != null)
+                {
+                    period.EndTime = period.StartTime.Add(Todo.Duration);
+                }
+                else
                 {
                     period.Duration = Todo.Duration;
-                    if (period.Duration != null)
-                    {
-                        period.EndTime = period.StartTime.Add(Todo.Duration);
-                    }
-                    else
-                    {
-                        period.Duration = Todo.Duration;
-                    }
                 }
-                return Periods;
             }
-            return new HashSet<IPeriod>();
+            return Periods;
         }
     }
 }

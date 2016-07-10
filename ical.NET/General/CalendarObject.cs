@@ -97,20 +97,22 @@ namespace Ical.Net.General
         public override void CopyFrom(ICopyable c)
         {
             var obj = c as ICalendarObject;
-            if (obj != null)
+            if (obj == null)
             {
-                // Copy the name and basic information
-                Name = obj.Name;
-                Parent = obj.Parent;
-                Line = obj.Line;
-                Column = obj.Column;
+                return;
+            }
 
-                // Add each child
-                Children.Clear();
-                foreach (var child in obj.Children)
-                {
-                    this.AddChild(child.Copy<ICalendarObject>());
-                }
+            // Copy the name and basic information
+            Name = obj.Name;
+            Parent = obj.Parent;
+            Line = obj.Line;
+            Column = obj.Column;
+
+            // Add each child
+            Children.Clear();
+            foreach (var child in obj.Children)
+            {
+                this.AddChild(child);
             }
         }
 

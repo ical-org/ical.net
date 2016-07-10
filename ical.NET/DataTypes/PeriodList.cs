@@ -71,13 +71,15 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (obj is IPeriodList)
+            var list = obj as IPeriodList;
+            if (list == null)
             {
-                var rdt = (IPeriodList) obj;
-                foreach (var p in rdt)
-                {
-                    Add(p.Copy<IPeriod>());
-                }
+                return;
+            }
+
+            foreach (var p in list)
+            {
+                Add(p);
             }
         }
 

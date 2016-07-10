@@ -45,7 +45,7 @@ namespace Ical.Net.Utility
         public static IDateTime MatchTimeZone(IDateTime dt1, IDateTime dt2)
         {
             // Associate the date/time with the first.
-            var copy = dt2.Copy<IDateTime>();
+            var copy = dt2;
             copy.AssociateWith(dt1);
 
             // If the dt1 time does not occur in the same time zone as the

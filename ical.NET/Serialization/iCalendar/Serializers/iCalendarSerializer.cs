@@ -48,17 +48,16 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
             // Ensure VERSION and PRODUCTID are both set,
             // as they are required by RFC5545.
-            var copy = iCal.Copy<ICalendar>();
-            if (string.IsNullOrWhiteSpace(copy.Version))
+            if (string.IsNullOrWhiteSpace(iCal.Version))
             {
-                copy.Version = CalendarVersions.V20;
+                iCal.Version = CalendarVersions.V20;
             }
-            if (string.IsNullOrWhiteSpace(copy.ProductId))
+            if (string.IsNullOrWhiteSpace(iCal.ProductId))
             {
-                copy.ProductId = CalendarProductIDs.Default;
+                iCal.ProductId = CalendarProductIDs.Default;
             }
 
-            return base.SerializeToString(copy);
+            return base.SerializeToString(iCal);
         }
 
         public override object Deserialize(TextReader tr)
