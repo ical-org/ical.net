@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Runtime.Serialization;
 using System.Text;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
@@ -13,41 +12,52 @@ namespace Ical.Net.DataTypes
     /// </summary>
     public class Attachment : EncodableDataType, IAttachment
     {
-        private Uri _mUri;
-        private byte[] _mData;
-        private Encoding _mEncoding;
 
-        public Attachment()
+        public virtual Uri Uri { get; set; }
+        public virtual byte[] Data { get; set; }
+        public virtual Encoding ValueEncoding { get; set; }
+
+        public virtual string FormatType
         {
-            Initialize();
+            get { return Parameters.Get("FMTTYPE"); }
+            set { Parameters.Set("FMTTYPE", value); }
+        }
+
+        public Attachment() {}
+
+        public Attachment(byte[] value) : this()
+        {
+            Data = value;
         }
 
         public Attachment(string value) : this()
         {
             var serializer = new AttachmentSerializer();
-            CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
+            var a = serializer.Deserialize(value);
+            if (a == null)
+            {
+                throw new ArgumentException($"{value} is not a valid ATTACH component");
+            }
+
+            ValueEncoding = a.ValueEncoding;
+
+            Data = a.Data;
+            Uri = a.Uri;
         }
 
-        public Attachment(byte[] value) : this()
+        public override string ToString()
         {
-            _mData = value;
+            return Data == null
+                ? string.Empty
+                : ValueEncoding.GetString(Data);
         }
 
-        private void Initialize()
-        {
-            _mEncoding = System.Text.Encoding.Unicode;
-        }
-
-        protected override void OnDeserializing(StreamingContext context)
-        {
-            base.OnDeserializing(context);
-
-            Initialize();
-        }
+        //ToDo: See if this can be deleted
+        public override void CopyFrom(ICopyable obj) { }
 
         protected bool Equals(Attachment other)
         {
-            return Equals(_mUri, other._mUri) && Equals(_mData, other._mData) && Equals(_mEncoding, other._mEncoding);
+            return Equals(Uri, other.Uri) && Equals(Data, other.Data) && Equals(ValueEncoding, other.ValueEncoding);
         }
 
         public override bool Equals(object obj)
@@ -62,75 +72,11 @@ namespace Ical.Net.DataTypes
         {
             unchecked
             {
-                var hashCode = _mUri?.GetHashCode() ?? 0;
-                hashCode = (hashCode * 397) ^ (_mData?.GetHashCode() ?? 0);
-                hashCode = (hashCode * 397) ^ (_mEncoding?.GetHashCode() ?? 0);
+                var hashCode = Uri?.GetHashCode() ?? 0;
+                hashCode = (hashCode * 397) ^ (Data?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (ValueEncoding?.GetHashCode() ?? 0);
                 return hashCode;
             }
-        }
-
-        public override void CopyFrom(ICopyable obj)
-        {
-            base.CopyFrom(obj);
-            if (obj is IAttachment)
-            {
-                var a = (IAttachment) obj;
-                ValueEncoding = a.ValueEncoding;
-
-                if (a.Data != null)
-                {
-                    Data = new byte[a.Data.Length];
-                    a.Data.CopyTo(Data, 0);
-                }
-                else
-                {
-                    Data = null;
-                }
-
-                Uri = a.Uri;
-            }
-        }
-
-        public virtual Uri Uri
-        {
-            get { return _mUri; }
-            set { _mUri = value; }
-        }
-
-        public virtual byte[] Data
-        {
-            get { return _mData; }
-            set { _mData = value; }
-        }
-
-        public virtual Encoding ValueEncoding
-        {
-            get { return _mEncoding; }
-            set { _mEncoding = value; }
-        }
-
-        public virtual string Value
-        {
-            get
-            {
-                if (Data != null)
-                {
-                    return _mEncoding.GetString(Data);
-                }
-                return null;
-            }
-            set
-            {
-                Data = value == null
-                    ? null
-                    : _mEncoding.GetBytes(value);
-            }
-        }
-
-        public virtual string FormatType
-        {
-            get { return Parameters.Get("FMTTYPE"); }
-            set { Parameters.Set("FMTTYPE", value); }
         }
     }
 }

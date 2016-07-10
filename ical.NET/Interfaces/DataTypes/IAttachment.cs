@@ -16,11 +16,6 @@ namespace Ical.Net.Interfaces.DataTypes
         byte[] Data { get; set; }
 
         /// <summary>
-        /// A unicode-encoded version of the data that was loaded.
-        /// </summary>
-        string Value { get; set; }
-
-        /// <summary>
         /// To specify the content type of a referenced object.
         /// This optional value should be an IANA-registered
         /// MIME type, if specified.

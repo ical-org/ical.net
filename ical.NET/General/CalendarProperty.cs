@@ -49,11 +49,6 @@ namespace Ical.Net.General
             Initialize();
         }
 
-        public CalendarProperty(ICalendarProperty other) : this()
-        {
-            CopyFrom(other);
-        }
-
         public CalendarProperty(string name) : base(name)
         {
             Initialize();

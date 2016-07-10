@@ -326,7 +326,7 @@ namespace ical.NET.UnitTests
 "This is a test to try out base64 encoding without being too large.\r\n" +
 "This is a test to try out base64 encoding without being too large.\r\n" +
 "This is a test to try out base64 encoding without being too large.",
-                evt.Attachments[0].Value,
+                evt.Attachments[0].ToString(),
                 "Attached value does not match.");
         }
 
