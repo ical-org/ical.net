@@ -45,10 +45,5 @@ namespace ical.NET.Collections.Interfaces
         /// match the specified group.
         /// </summary>
         IEnumerable<TItem> AllOf(TGroup group);
-
-        /// <summary>
-        /// Sort the keys of the list.
-        /// </summary>
-        void SortKeys(IComparer<TGroup> comparer = null);
     }
 }

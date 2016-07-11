@@ -50,37 +50,39 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             // Create the day specifier and associate it with a calendar object
             var rdt = CreateAndAssociate() as IPeriodList;
             var factory = GetService<ISerializerFactory>();
-            if (rdt != null && factory != null)
+            if (rdt == null || factory == null)
             {
-                // Decode the value, if necessary
-                value = Decode(rdt, value);
-
-                var dtSerializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
-                var periodSerializer = factory.Build(typeof (IPeriod), SerializationContext) as IStringSerializer;
-                if (dtSerializer != null && periodSerializer != null)
-                {
-                    var values = value.Split(',');
-                    foreach (var v in values)
-                    {
-                        var dt = dtSerializer.Deserialize(new StringReader(v)) as IDateTime;
-                        var p = periodSerializer.Deserialize(new StringReader(v)) as IPeriod;
-
-                        if (dt != null)
-                        {
-                            dt.AssociatedObject = rdt.AssociatedObject;
-                            rdt.Add(dt);
-                        }
-                        else if (p != null)
-                        {
-                            p.AssociatedObject = rdt.AssociatedObject;
-                            rdt.Add(p);
-                        }
-                    }
-                    return rdt;
-                }
+                return null;
             }
 
-            return null;
+            // Decode the value, if necessary
+            value = Decode(rdt, value);
+
+            var dtSerializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
+            var periodSerializer = factory.Build(typeof (IPeriod), SerializationContext) as IStringSerializer;
+            if (dtSerializer == null || periodSerializer == null)
+            {
+                return null;
+            }
+
+            var values = value.Split(',');
+            foreach (var v in values)
+            {
+                var dt = dtSerializer.Deserialize(new StringReader(v)) as IDateTime;
+                var p = periodSerializer.Deserialize(new StringReader(v)) as IPeriod;
+
+                if (dt != null)
+                {
+                    dt.AssociatedObject = rdt.AssociatedObject;
+                    rdt.Add(dt);
+                }
+                else if (p != null)
+                {
+                    p.AssociatedObject = rdt.AssociatedObject;
+                    rdt.Add(p);
+                }
+            }
+            return rdt;
         }
     }
 }

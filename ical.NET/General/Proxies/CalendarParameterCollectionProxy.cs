@@ -69,18 +69,12 @@ namespace Ical.Net.General.Proxies
 
         public virtual int IndexOf(ICalendarParameter obj)
         {
-            return Parameters.IndexOf(obj);
+            return 0;
         }
 
-        public virtual void Insert(int index, ICalendarParameter item)
-        {
-            Parameters.Insert(index, item);
-        }
+        public virtual void Insert(int index, ICalendarParameter item) {}
 
-        public virtual void RemoveAt(int index)
-        {
-            Parameters.RemoveAt(index);
-        }
+        public virtual void RemoveAt(int index) {}
 
         public virtual ICalendarParameter this[int index]
         {

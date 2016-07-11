@@ -32,32 +32,17 @@ namespace ical.NET.Collections
             return group;
         }
 
-        private IMultiLinkedList<TItem> EnsureList(TGroup group, bool createIfNecessary)
+        private IMultiLinkedList<TItem> EnsureList(TGroup group)
         {
-            if (!_dictionary.ContainsKey(group))
-            {
-                if (createIfNecessary)
-                {
-                    var list = new MultiLinkedList<TItem>();
-                    _dictionary[group] = list;
-
-                    if (_lists.Count > 0)
-                    {
-                        // Attach the list to our list chain
-                        var previous = _lists[_lists.Count - 1];
-                        previous.SetNext(list);
-                        list.SetPrevious(previous);
-                    }
-
-                    _lists.Add(list);
-                    return list;
-                }
-            }
-            else
+            if (_dictionary.ContainsKey(group))
             {
                 return _dictionary[group];
             }
-            return null;
+
+            var list = new MultiLinkedList<TItem>();
+            _dictionary[group] = list;
+            _lists.Add(list);
+            return list;
         }
 
         private IMultiLinkedList<TItem> ListForIndex(int index, out int relativeIndex)
@@ -96,7 +81,7 @@ namespace ical.NET.Collections
             var group = GroupModifier(item.Group);
 
             // Add a new list if necessary
-            var list = EnsureList(@group, true);
+            var list = EnsureList(group);
             var index = list.Count;
             list.Add(SubscribeToKeyChanges(item));
             OnItemAdded(item, list.StartIndex + index);
@@ -233,31 +218,6 @@ namespace ical.NET.Collections
             return true;
         }
 
-        public virtual void SortKeys(IComparer<TGroup> comparer = null)
-        {
-            _lists.Clear();
-
-            IMultiLinkedList<TItem> previous = null;
-            foreach (var list in _dictionary.Keys
-                .OrderBy(k => k, comparer)
-                .Select(group => _dictionary[group]))
-            {
-                if (previous == null)
-                {
-                    previous = list;
-                    previous.SetPrevious(null);
-                }
-                else
-                {
-                    previous.SetNext(list);
-                    list.SetPrevious(previous);
-                    previous = list;
-                }
-
-                _lists.Add(list);
-            }
-        }
-
         public virtual bool Contains(TItem item)
         {
             var group = GroupModifier(item.Group);
@@ -309,15 +269,17 @@ namespace ical.NET.Collections
             {
                 int relativeIndex;
                 var list = ListForIndex(index, out relativeIndex);
-                if (list != null)
+                if (list == null)
                 {
-                    // Remove the item at that index and replace it
-                    var item = list[relativeIndex];
-                    list.RemoveAt(relativeIndex);
-                    list.Insert(relativeIndex, value);
-                    OnItemRemoved(item, index);
-                    OnItemAdded(item, index);
+                    return;
                 }
+
+                // Remove the item at that index and replace it
+                var item = list[relativeIndex];
+                list.RemoveAt(relativeIndex);
+                list.Insert(relativeIndex, value);
+                OnItemRemoved(item, index);
+                OnItemAdded(item, index);
             }
         }
 
