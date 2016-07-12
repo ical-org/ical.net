@@ -13,11 +13,6 @@ namespace ical.NET.Collections.Interfaces
         event EventHandler<ObjectEventArgs<TItem, int>> ItemAdded;
 
         /// <summary>
-        /// Fired after an item is removed from the collection.
-        /// </summary>
-        event EventHandler<ObjectEventArgs<TItem, int>> ItemRemoved;
-
-        /// <summary>
         /// Removes all items with the matching group from the collection.
         /// </summary>        
         /// <returns>True if the object was removed, false otherwise.</returns>

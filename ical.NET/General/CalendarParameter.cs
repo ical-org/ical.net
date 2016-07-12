@@ -54,11 +54,13 @@ namespace Ical.Net.General
             base.CopyFrom(c);
 
             var p = c as ICalendarParameter;
-            if (p?.Values != null)
+            if (p?.Values == null)
             {
-                _values = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                _values.UnionWith(p.Values);
+                return;
             }
+
+            _values = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            _values.UnionWith(p.Values);
         }
 
         public virtual IEnumerable<string> Values => _values;

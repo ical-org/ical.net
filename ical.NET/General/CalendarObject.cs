@@ -39,7 +39,6 @@ namespace Ical.Net.General
             _serviceProvider = new ServiceProvider();
 
             _children.ItemAdded += _Children_ItemAdded;
-            _children.ItemRemoved += _Children_ItemRemoved;
         }
 
         [OnDeserializing]
@@ -60,11 +59,6 @@ namespace Ical.Net.General
         }
 
         protected virtual void OnDeserialized(StreamingContext context) {}
-
-        private void _Children_ItemRemoved(object sender, ObjectEventArgs<ICalendarObject, int> e)
-        {
-            e.First.Parent = null;
-        }
 
         private void _Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e)
         {

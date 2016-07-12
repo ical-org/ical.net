@@ -6,13 +6,6 @@ namespace Ical.Net.General
 {
     public class CalendarParameterList : GroupedValueList<string, ICalendarParameter, CalendarParameter, string>, ICalendarParameterCollection
     {
-        protected override string GroupModifier(string group)
-        {
-            return string.IsNullOrWhiteSpace(group)
-                ? string.Empty
-                : group.ToUpper();
-        }
-
         public virtual void SetParent(ICalendarObject parent)
         {
             foreach (var parameter in this)
