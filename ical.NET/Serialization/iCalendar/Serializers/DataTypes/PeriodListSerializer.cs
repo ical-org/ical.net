@@ -16,31 +16,32 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         {
             var rdt = obj as IPeriodList;
             var factory = GetService<ISerializerFactory>();
-
-            if (rdt != null && factory != null)
+            if (rdt == null || factory == null)
             {
-                var dtSerializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
-                var periodSerializer = factory.Build(typeof (IPeriod), SerializationContext) as IStringSerializer;
-                if (dtSerializer != null && periodSerializer != null)
+                return null;
+            }
+
+            var dtSerializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
+            var periodSerializer = factory.Build(typeof (IPeriod), SerializationContext) as IStringSerializer;
+            if (dtSerializer == null || periodSerializer == null)
+            {
+                return null;
+            }
+
+            var parts = new List<string>(rdt.Count);
+            foreach (var p in rdt)
+            {
+                if (p.EndTime != null)
                 {
-                    var parts = new List<string>(128);
-
-                    foreach (var p in rdt)
-                    {
-                        if (p.EndTime != null)
-                        {
-                            parts.Add(periodSerializer.SerializeToString(p));
-                        }
-                        else if (p.StartTime != null)
-                        {
-                            parts.Add(dtSerializer.SerializeToString(p.StartTime));
-                        }
-                    }
-
-                    return Encode(rdt, string.Join(",", parts.ToArray()));
+                    parts.Add(periodSerializer.SerializeToString(p));
+                }
+                else if (p.StartTime != null)
+                {
+                    parts.Add(dtSerializer.SerializeToString(p.StartTime));
                 }
             }
-            return null;
+
+            return Encode(rdt, string.Join(",", parts));
         }
 
         public override object Deserialize(TextReader tr)

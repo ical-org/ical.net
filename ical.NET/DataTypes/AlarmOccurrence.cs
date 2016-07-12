@@ -14,27 +14,11 @@ namespace Ical.Net.DataTypes
     /// </remarks>
     public class AlarmOccurrence : IComparable<AlarmOccurrence>
     {
-        private IPeriod _mPeriod;
-        private IRecurringComponent _mComponent;
-        private IAlarm _mAlarm;
+        public IPeriod Period { get; set; }
 
-        public IPeriod Period
-        {
-            get { return _mPeriod; }
-            set { _mPeriod = value; }
-        }
+        public IRecurringComponent Component { get; set; }
 
-        public IRecurringComponent Component
-        {
-            get { return _mComponent; }
-            set { _mComponent = value; }
-        }
-
-        public IAlarm Alarm
-        {
-            get { return _mAlarm; }
-            set { _mAlarm = value; }
-        }
+        public IAlarm Alarm { get; set; }
 
         public IDateTime DateTime
         {
@@ -44,21 +28,51 @@ namespace Ical.Net.DataTypes
 
         public AlarmOccurrence(AlarmOccurrence ao)
         {
-            _mPeriod = ao.Period;
-            _mComponent = ao.Component;
-            _mAlarm = ao.Alarm;
+            Period = ao.Period;
+            Component = ao.Component;
+            Alarm = ao.Alarm;
         }
 
         public AlarmOccurrence(IAlarm a, IDateTime dt, IRecurringComponent rc)
         {
-            _mAlarm = a;
-            _mPeriod = new Period(dt);
-            _mComponent = rc;
+            Alarm = a;
+            Period = new Period(dt);
+            Component = rc;
         }
 
         public int CompareTo(AlarmOccurrence other)
         {
             return Period.CompareTo(other.Period);
+        }
+
+        protected bool Equals(AlarmOccurrence other)
+        {
+            return Equals(Period, other.Period) && Equals(Component, other.Component) && Equals(Alarm, other.Alarm);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((AlarmOccurrence)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = (Period != null
+                    ? Period.GetHashCode()
+                    : 0);
+                hashCode = (hashCode * 397) ^ (Component != null
+                    ? Component.GetHashCode()
+                    : 0);
+                hashCode = (hashCode * 397) ^ (Alarm != null
+                    ? Alarm.GetHashCode()
+                    : 0);
+                return hashCode;
+            }
         }
     }
 }

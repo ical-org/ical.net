@@ -463,7 +463,6 @@ namespace Ical.Net.Serialization.iCalendar
         }
 
         public ICalendarParameter parameter(ISerializationContext ctx, ICalendarParameterCollectionContainer container)
-            //throws RecognitionException, TokenStreamException
         {
             ICalendarParameter p;
             var values = new List<string>(128);

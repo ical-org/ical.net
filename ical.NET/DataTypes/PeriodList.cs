@@ -14,8 +14,10 @@ namespace Ical.Net.DataTypes
     public class PeriodList : EncodableDataType, IPeriodList
     {
         public string TzId { get; set; }
+        public int Count => Periods.Count;
 
-        protected IList<IPeriod> Periods { get; set; } = new List<IPeriod>(128);
+        protected IList<IPeriod> Periods { get; set; } = new List<IPeriod>(64);
+
 
         public PeriodList()
         {

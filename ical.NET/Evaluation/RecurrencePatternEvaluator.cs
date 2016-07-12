@@ -659,7 +659,7 @@ namespace Ical.Net.Evaluation
 
         private List<DateTime> GetAbsWeekDays(DateTime date, IWeekDay weekDay, IRecurrencePattern pattern)
         {
-            var days = new List<DateTime>(128);
+            var days = new List<DateTime>(64);
 
             var dayOfWeek = weekDay.DayOfWeek;
             if (pattern.Frequency == FrequencyType.Daily)
@@ -738,7 +738,7 @@ namespace Ical.Net.Evaluation
                 return dates;
             }
 
-            var offsetDates = new List<DateTime>(128);
+            var offsetDates = new List<DateTime>(16);
             var size = dates.Count;
             if (offset < 0 && offset >= -size)
             {

@@ -9,5 +9,6 @@ namespace Ical.Net.Interfaces.DataTypes
         void Add(IDateTime dt);
         void Add(IPeriod item);
         IEnumerator<IPeriod> GetEnumerator();
+        int Count { get; }
     }
 }

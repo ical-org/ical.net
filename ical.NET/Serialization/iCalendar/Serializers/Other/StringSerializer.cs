@@ -80,10 +80,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
             {
                 values.AddRange(from object child in (IEnumerable) obj select child.ToString());
             }
-            else
-            {
-                values.Add(obj.ToString());
-            }
 
             var co = SerializationContext.Peek() as ICalendarObject;
             if (co != null)
