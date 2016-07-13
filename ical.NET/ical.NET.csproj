@@ -18,7 +18,7 @@
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\net40\</OutputPath>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE,NET_4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\net40\Ical.Net.xml</DocumentationFile>
