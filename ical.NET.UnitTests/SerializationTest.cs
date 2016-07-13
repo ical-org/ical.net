@@ -10,12 +10,16 @@ using NUnit.Framework;
 using Ical.Net.Interfaces.DataTypes;
 using System.IO;
 using System.Collections.Generic;
+using Ical.Net.ExtensionMethods;
+using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace ical.NET.UnitTests
 {
     [TestFixture]
     public class SerializationTest
     {
+        #region helperMethods
         public static void CompareCalendars(ICalendar cal1, ICalendar cal2)
         {
             CompareComponents(cal1, cal2);
@@ -85,27 +89,55 @@ namespace ical.NET.UnitTests
                 Assert.AreEqual(enum1.Current, enum2.Current, value + " do not match");
         }
 
-        const string nl = "\r\n";
+        const string NewLine = "\r\n"; // I suspect the spec actually specifies this, and so Environment.NewLine would not be appropriate
         public static string InspectSerializedSection(string serialized, string sectionName, IEnumerable<string> elements)
         {
             const string notFound = "expected '{0}' not found";
             string searchFor = "BEGIN:" + sectionName;
             int begin = serialized.IndexOf(searchFor);
-            Assert.AreNotEqual(-1, begin, string.Format(notFound, searchFor));
+            Assert.AreNotEqual(-1, begin, notFound, searchFor);
             searchFor = "END:" + sectionName;
             int end = serialized.IndexOf(searchFor, begin);
-            Assert.AreNotEqual(-1, end, string.Format(notFound, searchFor));
+            Assert.AreNotEqual(-1, end, notFound, searchFor);
 
             string searchRegion = serialized.Substring(begin, end - begin + 1);
 
             foreach (var e in elements)
             {
-                Assert.IsTrue(searchRegion.Contains(nl + e +nl), string.Format(notFound, e));
+                Assert.IsTrue(searchRegion.Contains(NewLine + e + NewLine), notFound, e);
             }
 
             return searchRegion;
         }
-        
+
+        //3 formats - UTC, local time as defined in vTimeZone, and floating,
+        //at some point it would be great to independently unit test string serialization of an IDateTime object, into its 3 forms
+        //http://www.kanzaki.com/docs/ical/dateTime.html
+        static string CalDateString(IDateTime cdt)
+        {
+            string returnVar = cdt.Year.ToString() + cdt.Month + cdt.Day + 'T' + cdt.Hour + cdt.Minute + cdt.Second;
+            if (cdt.IsUniversalTime)
+            {
+                return returnVar + 'Z';
+            }
+            if(!string.IsNullOrEmpty(cdt.TzId)){
+                return string.Format("TZID={0}:{1}",cdt.TzId,returnVar);
+            }
+            return returnVar;
+        }
+
+        //This method needs renaming
+        static Dictionary<string, string> GetValues(string serialized, string name, string value)
+        {
+            string lengthened = serialized.Replace(NewLine + ' ', string.Empty);
+            //using a regex for now - for the sake of speed, it may be worth creating a C# text search later
+            var match = Regex.Match(lengthened, '^' + Regex.Escape(name) + ";(.*):" + Regex.Escape(value) + NewLine, RegexOptions.Multiline);
+            Assert.IsTrue(match.Success, "could not find a(n) '{0}' with value '{1}'", name, value);
+            return match.Groups[1].Value.Split(';').Select(v=>v.Split('=')).ToDictionary(v=>v[0], v=>v.Length>1 ? v[1] : null);
+        }
+        #endregion //helperMethods
+
+        #region tests
         [Test, Category("Serialization")]
         public void TimeZoneSerialize()
         {
@@ -178,19 +210,13 @@ namespace ical.NET.UnitTests
                     var cal2 = Calendar.LoadFromStream(sr)[0];
                     CompareCalendars(cal1, cal2);
                 }
-                
+
             }
-        }
-        //3 formats - UTC, local time as defined in vTimeZone, and unspecified,
-        //this is just an early iteration to get things underway
-        static string CalDateString(IDateTime cdt)
-        {
-            return cdt.ToString("yyyyMMddhhmm", System.Globalization.CultureInfo.InvariantCulture);
         }
         [Test, Category("Serialization")]
         public void EventPropertiesSerialized()
         {
-            using (var cal = new Calendar() { Method = "PUBLISH", Version= "2.0"})
+            using (var cal = new Calendar() { Method = "PUBLISH", Version = "2.0" })
             {
                 var evt = new Event
                 {
@@ -224,10 +250,10 @@ namespace ical.NET.UnitTests
 
                 foreach (var p in expectProperties)
                 {
-                    Assert.IsTrue(serializedCalendar.Contains(nl+p+nl), "expected '"+p+"' not found");
+                    Assert.IsTrue(serializedCalendar.Contains(NewLine + p + NewLine), "expected '" + p + "' not found");
                 }
 
-                InspectSerializedSection(serializedCalendar,"VEVENT", new[]
+                InspectSerializedSection(serializedCalendar, "VEVENT", new[]
                 {
                     "CLASS:" + evt.Class,
                     "CREATED:" + CalDateString(evt.Created),
@@ -243,5 +269,43 @@ namespace ical.NET.UnitTests
                 });
             }
         }
+        [Test, Category("Serialization")]
+        public void AttendeesSerialized()
+        {
+            using (var cal = new Calendar() { Method = "REQUEST", Version = "2.0" })
+            {
+                var evt = AttendeeTest.EvtFactory();
+                cal.Events.Add(evt);
+                const string org = "MAILTO:james@test.com";
+                evt.Organizer = new Organizer(org);
+
+                evt.Attendees.AddRange(AttendeeTest.AttendeesFactory());
+
+                var serializer = new CalendarSerializer(new SerializationContext());
+                var serializedCalendar = serializer.SerializeToString(cal);
+
+                Console.Write(serializedCalendar);
+
+                var vEvt = InspectSerializedSection(serializedCalendar, "VEVENT", new string[] {
+                    "ORGANIZER:" + org
+                });
+
+                foreach (var a in evt.Attendees)
+                {
+                    var vals = GetValues(vEvt, "ATTENDEE", a.Value.OriginalString);
+                    foreach (var v in new Dictionary<string, string> {
+                        ["CN"] = a.CommonName,
+                        ["ROLE"] = a.Role,
+                        ["RSVP"] = a.Rsvp.ToString().ToUpperInvariant(),
+                        ["PARTSTAT"] = a.ParticipationStatus
+                    }) {
+                        Assert.IsTrue(vals.ContainsKey(v.Key), "could not find key '{0}'", v.Key);
+                        Assert.AreEqual(v.Value, vals[v.Key], "ATENDEE prop '{0}' differ", v.Key);
+                    }
+                }
+            }
+        }
+
+        #endregion
     }
 }

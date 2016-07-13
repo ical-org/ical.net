@@ -11,7 +11,7 @@ namespace ical.NET.UnitTests
     [TestFixture]
     public class AttendeeTest
     {
-        private static Event EvtFactory()
+        internal static Event EvtFactory()
         {
             return new Event
             {
@@ -22,7 +22,7 @@ namespace ical.NET.UnitTests
         }
 
         const string req = "REQ-PARTICIPANT"; //this string may be added to the api in the future
-        private static IList<Attendee> AttendeesFactory()
+        internal static IList<Attendee> AttendeesFactory()
         {
             
             return new[] {
@@ -30,14 +30,14 @@ namespace ical.NET.UnitTests
                 {
                     CommonName = "James James",
                     Role = req,
-                    Rsvp = false,
+                    Rsvp = true,
                     ParticipationStatus = ParticipationStatus.Tentative
                 },
                 new Attendee("MAILTO:mary@test.com")
                 {
                     CommonName = "Mary Mary",
                     Role = req,
-                    Rsvp = false,
+                    Rsvp = true,
                     ParticipationStatus = ParticipationStatus.Accepted
                 }
             };
