@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -26,7 +27,7 @@ namespace Ical.Net.Utility
 
         private const BindingFlags _bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
 
-        private static Dictionary<Type, List<MethodInfo>> _onDeserializingMethods = new Dictionary<Type, List<MethodInfo>>(16);
+        private static readonly ConcurrentDictionary<Type, List<MethodInfo>> _onDeserializingMethods = new ConcurrentDictionary<Type, List<MethodInfo>>();
         private static List<MethodInfo> GetDeserializingMethods(Type targetType)
         {
             if (targetType == null)
@@ -49,11 +50,11 @@ namespace Ical.Net.Utility
                 .Select(t => t.targetTypeMethodInfo)
                 .ToList();
 
-            _onDeserializingMethods.Add(targetType, methodInfo);
+            _onDeserializingMethods.AddOrUpdate(targetType, methodInfo, (type, list) => methodInfo);
             return methodInfo;
         }
 
-        private static Dictionary<Type, List<MethodInfo>> _onDeserializedMethods = new Dictionary<Type, List<MethodInfo>>(16);
+        private static ConcurrentDictionary<Type, List<MethodInfo>> _onDeserializedMethods = new ConcurrentDictionary<Type, List<MethodInfo>>();
         private static List<MethodInfo> GetDeserializedMethods(Type targetType)
         {
             if (targetType == null)
@@ -76,7 +77,7 @@ namespace Ical.Net.Utility
                 .Select(t => t.targetTypeMethodInfo)
                 .ToList();
 
-            _onDeserializedMethods.Add(targetType, methodInfo);
+            _onDeserializedMethods.AddOrUpdate(targetType, methodInfo, (type, list) => methodInfo);
             return methodInfo;
         }
     }
