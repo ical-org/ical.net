@@ -230,7 +230,10 @@ namespace ical.NET.UnitTests
                     Location = "here",
                     Summary = "test",
                     DtStart = new CalDateTime(2012, 3, 25, 12, 50, 00),
-                    DtEnd = new CalDateTime(2012, 3, 25, 13, 10, 00)
+                    DtEnd = new CalDateTime(2012, 3, 25, 13, 10, 00),
+                    //not yet testing property below as serialized output currently does not comply with RTFC 2445
+                    //Transparency = TransparencyType.Opaque,
+                    //Status = EventStatus.Confirmed
                 };
                 cal.Events.Add(evt);
 
@@ -245,7 +248,6 @@ namespace ical.NET.UnitTests
                 {
                     "METHOD:PUBLISH",
                     "VERSION:2.0",
-                    "CLASS:PRIVATE"
                 };
 
                 foreach (var p in expectProperties)
@@ -265,7 +267,9 @@ namespace ical.NET.UnitTests
                     "LOCATION:" + evt.Location,
                     "SUMMARY:" + evt.Summary,
                     "DTSTART:" + CalDateString(evt.DtStart),
-                    "DTEND:" + CalDateString(evt.DtEnd)
+                    "DTEND:" + CalDateString(evt.DtEnd),
+                    //"TRANSPARENCY:" + TransparencyType.Opaque.ToString().ToUpperInvariant(),
+                    //"STATUS:" + EventStatus.Confirmed.ToString().ToUpperInvariant()
                 });
             }
         }
@@ -306,6 +310,9 @@ namespace ical.NET.UnitTests
             }
         }
 
+        //todo test event:
+        //-GeographicLocation
+        //-Alarm
         #endregion
     }
 }

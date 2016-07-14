@@ -57,7 +57,9 @@ namespace ical.NET.UnitTests
             Assert.AreEqual(1, evt.Attendees.Count);
             Assert.AreSame(at[0], evt.Attendees[0]);
 
-            Assert.AreEqual(req, evt.Attendees[0].Role); //this property had been set to null as part of the add operation in earlier versions
+            //the properties below had been set to null during the Attendees.Add operation in NuGet version 2.1.4
+            Assert.AreEqual(req, evt.Attendees[0].Role); 
+            Assert.AreEqual(ParticipationStatus.Tentative, evt.Attendees[0].ParticipationStatus);
         }
 
         [Test, Category("Attendee")]
@@ -73,7 +75,7 @@ namespace ical.NET.UnitTests
             Assert.AreEqual(2, evt.Attendees.Count);
             Assert.AreSame(at[1], evt.Attendees[1]);
 
-            Assert.AreEqual("REQ-PARTICIPANT", evt.Attendees[1].Role);
+            Assert.AreEqual(req, evt.Attendees[1].Role);
 
             var cal = new Calendar();
             cal.Events.Add(evt);

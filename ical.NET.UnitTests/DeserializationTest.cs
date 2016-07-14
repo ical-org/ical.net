@@ -271,7 +271,7 @@ namespace ical.NET.UnitTests
             Assert.AreEqual(1, evt.Sequence, "SEQUENCE should be 1; it is " + evt.Sequence);
         }
 
-        [Test, Category("Serialization")]
+        [Test, Category("Deserialization")]
         public void Event8()
         {
             var sr = new StringReader(@"BEGIN:VCALENDAR
