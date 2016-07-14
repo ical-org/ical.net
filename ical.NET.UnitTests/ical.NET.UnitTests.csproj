@@ -74,6 +74,7 @@
     <Compile Include="AlarmTest.cs" />
     <Compile Include="AttendeeTest.cs" />
     <Compile Include="ComponentTest.cs" />
+    <Compile Include="ConcurrentDeserializationTests.cs" />
     <Compile Include="DeserializationTests.cs" />
     <Compile Include="FreeBusyTest.cs" />
     <Compile Include="EventTest.cs" />
