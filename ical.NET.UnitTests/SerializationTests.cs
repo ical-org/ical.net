@@ -132,7 +132,7 @@ namespace ical.NET.UnitTests
         //http://www.kanzaki.com/docs/ical/dateTime.html
         static string CalDateString(IDateTime cdt)
         {
-            var returnVar = cdt.Year.ToString() + cdt.Month + cdt.Day + 'T' + cdt.Hour + cdt.Minute + cdt.Second;
+            var returnVar = $"{cdt.Year}{cdt.Month:D2}{cdt.Day:D2}T{cdt.Hour:D2}{cdt.Minute:D2}{cdt.Second:D2}";
             if (cdt.IsUniversalTime)
             {
                 return returnVar + 'Z';
@@ -148,9 +148,11 @@ namespace ical.NET.UnitTests
         {
             var lengthened = serialized.Replace(_newLine + ' ', string.Empty);
             //using a regex for now - for the sake of speed, it may be worth creating a C# text search later
-            var match = Regex.Match(lengthened, '^' + Regex.Escape(name) + ";(.*):" + Regex.Escape(value) + _newLine, RegexOptions.Multiline);
+            var match = Regex.Match(lengthened, '^' + Regex.Escape(name) + "(;.+)?:" + Regex.Escape(value) + _newLine, RegexOptions.Multiline);
             Assert.IsTrue(match.Success, $"could not find a(n) '{name}' with value '{value}'");
-            return match.Groups[1].Value.Split(';').Select(v=>v.Split('=')).ToDictionary(v=>v[0], v=>v.Length>1 ? v[1] : null);
+            return match.Groups[1].Value.Length == 0
+                ? new Dictionary<string, string>()
+                : match.Groups[1].Value.Substring(1).Split(';').Select(v=>v.Split('=')).ToDictionary(v=>v[0], v=>v.Length>1 ? v[1] : null);
         }
         #endregion //helperMethods
 
@@ -264,7 +266,7 @@ namespace ical.NET.UnitTests
 
             Console.Write(serializedCalendar);
             Assert.IsTrue(serializedCalendar.StartsWith("BEGIN:VCALENDAR"));
-            Assert.IsTrue(serializedCalendar.EndsWith("END:VCALENDAR\r\n"));
+            Assert.IsTrue(serializedCalendar.EndsWith("END:VCALENDAR" + _newLine));
 
             var expectProperties = new[] {"METHOD:PUBLISH", "VERSION:2.0"};
 
@@ -277,7 +279,7 @@ namespace ical.NET.UnitTests
                 new[]
                 {
                     "CLASS:" + evt.Class, "CREATED:" + CalDateString(evt.Created), "DTSTAMP:" + CalDateString(evt.DtStamp),
-                    "LASTMODIFIED:" + CalDateString(evt.LastModified), "SEQUENCE:" + evt.Sequence, "UID:" + evt.Uid, "PRIORITY:" + evt.Priority,
+                    "LAST-MODIFIED:" + CalDateString(evt.LastModified), "SEQUENCE:" + evt.Sequence, "UID:" + evt.Uid, "PRIORITY:" + evt.Priority,
                     "LOCATION:" + evt.Location, "SUMMARY:" + evt.Summary, "DTSTART:" + CalDateString(evt.DtStart), "DTEND:" + CalDateString(evt.DtEnd)
                     //"TRANSPARENCY:" + TransparencyType.Opaque.ToString().ToUpperInvariant(),
                     //"STATUS:" + EventStatus.Confirmed.ToString().ToUpperInvariant()
