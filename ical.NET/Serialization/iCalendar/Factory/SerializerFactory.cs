@@ -58,10 +58,17 @@ namespace Ical.Net.Serialization.iCalendar.Factory
                 {
                     s = new StringSerializer();
                 }
+#if NET_4
+                else if (objectType.IsEnum)
+                {
+                    s = new EnumSerializer(objectType);
+                }
+#else
                 else if (objectType.GetTypeInfo().IsEnum)
                 {
                     s = new EnumSerializer(objectType);
                 }
+#endif
                 else if (typeof (TimeSpan).IsAssignableFrom(objectType))
                 {
                     s = new TimeSpanSerializer();
