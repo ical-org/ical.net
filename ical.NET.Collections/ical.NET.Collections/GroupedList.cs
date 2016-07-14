@@ -25,7 +25,9 @@ namespace ical.NET.Collections
         protected virtual TGroup GroupModifier(TGroup group)
         {
             if (group == null)
+            {
                 throw new ArgumentNullException(nameof(group), "The item's group cannot be null.");
+            }
 
             return group;
         }

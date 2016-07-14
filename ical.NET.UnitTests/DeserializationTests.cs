@@ -19,7 +19,7 @@ using NUnit.Framework;
 namespace ical.NET.UnitTests
 {
     [TestFixture]
-    public class DeSerializationTest
+    public class DeserializationTests
     {
 
         [Test, Category("Deserialization")]
