@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using Ical.Net.DataTypes;
 using Ical.Net.Interfaces;
-using Ical.Net.Serialization;
-using Ical.Net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
 
 namespace Ical.Net.UnitTests
