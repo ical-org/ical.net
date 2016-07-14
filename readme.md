@@ -1,8 +1,10 @@
-ical.net is an iCalendar (RFC2445) class library for .NET. It's aimed at providing full RFC 2445 compliance, while providing full compatibility with popular calendaring applications.
+![iCal.NET for .NET](logo.png)
 
-## Getting ical.net
+iCal.NET is an iCalendar (RFC2445) class library for .NET. It's aimed at providing full RFC 2445 compliance, while providing full compatibility with popular calendaring applications.
 
-ical.net is available as a nuget package: https://www.nuget.org/packages/Ical.Net
+## Getting iCal.NET
+
+iCal.NET is available as a nuget package: https://www.nuget.org/packages/Ical.Net
 
 ## Examples
 
@@ -88,3 +90,7 @@ I have written a fairly detailed collection of things I'd like to get done for v
 http://rianjs.net/2016/07/api-changes-for-ical-net-v3
 
 I don't have clear plans beyond what I have outlined there. It may be that ical.net can be put on a shelf for a while after that.
+
+## Creative Commons
+
+iCal.NET logo adapted from [Love Calendar](https://thenounproject.com/term/love-calendar/116866/) By Sergey Demushkin, RU
