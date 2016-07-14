@@ -1,18 +1,20 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Ical.Net;
 using Ical.Net.DataTypes;
+using Ical.Net.ExtensionMethods;
 using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.Components;
+using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
-using Ical.Net.Interfaces.DataTypes;
-using System.IO;
-using System.Collections.Generic;
-using Ical.Net.ExtensionMethods;
-using System.Text.RegularExpressions;
-using System.Linq;
+using Calendar = Ical.Net.Calendar;
 
 namespace ical.NET.UnitTests
 {
@@ -156,7 +158,8 @@ namespace ical.NET.UnitTests
         [Test, Category("Serialization")]
         public void TimeZoneSerialize()
         {
-            var cal = new Calendar()
+            //ToDo: This test is broken as of 2016-07-13
+            var cal = new Calendar
             {
                 Method = "PUBLISH",
                 Version = "2.0"
@@ -180,7 +183,7 @@ namespace ical.NET.UnitTests
             Console.Write(serializedCalendar);
 
             var vTimezone = InspectSerializedSection(serializedCalendar, "VTIMEZONE", new[] {"TZID:" + timezone.Id});
-            var o = tzi.BaseUtcOffset.ToString("hhmm", System.Globalization.CultureInfo.InvariantCulture);
+            var o = tzi.BaseUtcOffset.ToString("hhmm", CultureInfo.InvariantCulture);
 
             InspectSerializedSection(vTimezone, "STANDARD", new[] {"TZNAME:" + tzi.StandardName, "TZOFFSETTO:" + o
                 //todo - standard time, for NZ standard time (current example)
@@ -195,7 +198,8 @@ namespace ical.NET.UnitTests
         [Test, Category("Serialization")]
         public void SerializeDeserialize()
         {
-            var cal1 = new Calendar()
+            //ToDo: This test is broken as of 2016-07-13
+            var cal1 = new Calendar
             {
                 Method = "PUBLISH",
                 Version = "2.0"
@@ -229,7 +233,8 @@ namespace ical.NET.UnitTests
         [Test, Category("Serialization")]
         public void EventPropertiesSerialized()
         {
-            var cal = new Calendar()
+            //ToDo: This test is broken as of 2016-07-13
+            var cal = new Calendar
             {
                 Method = "PUBLISH",
                 Version = "2.0"
@@ -247,7 +252,7 @@ namespace ical.NET.UnitTests
                 Location = "here",
                 Summary = "test",
                 DtStart = new CalDateTime(2012, 3, 25, 12, 50, 00),
-                DtEnd = new CalDateTime(2012, 3, 25, 13, 10, 00),
+                DtEnd = new CalDateTime(2012, 3, 25, 13, 10, 00)
                 //not yet testing property below as serialized output currently does not comply with RTFC 2445
                 //Transparency = TransparencyType.Opaque,
                 //Status = EventStatus.Confirmed
@@ -261,7 +266,7 @@ namespace ical.NET.UnitTests
             Assert.IsTrue(serializedCalendar.StartsWith("BEGIN:VCALENDAR"));
             Assert.IsTrue(serializedCalendar.EndsWith("END:VCALENDAR\r\n"));
 
-            var expectProperties = new[] {"METHOD:PUBLISH", "VERSION:2.0",};
+            var expectProperties = new[] {"METHOD:PUBLISH", "VERSION:2.0"};
 
             foreach (var p in expectProperties)
             {
@@ -273,7 +278,7 @@ namespace ical.NET.UnitTests
                 {
                     "CLASS:" + evt.Class, "CREATED:" + CalDateString(evt.Created), "DTSTAMP:" + CalDateString(evt.DtStamp),
                     "LASTMODIFIED:" + CalDateString(evt.LastModified), "SEQUENCE:" + evt.Sequence, "UID:" + evt.Uid, "PRIORITY:" + evt.Priority,
-                    "LOCATION:" + evt.Location, "SUMMARY:" + evt.Summary, "DTSTART:" + CalDateString(evt.DtStart), "DTEND:" + CalDateString(evt.DtEnd),
+                    "LOCATION:" + evt.Location, "SUMMARY:" + evt.Summary, "DTSTART:" + CalDateString(evt.DtStart), "DTEND:" + CalDateString(evt.DtEnd)
                     //"TRANSPARENCY:" + TransparencyType.Opaque.ToString().ToUpperInvariant(),
                     //"STATUS:" + EventStatus.Confirmed.ToString().ToUpperInvariant()
                 });
@@ -301,7 +306,8 @@ namespace ical.NET.UnitTests
         [Test, Category("Serialization")]
         public void AttendeesSerialized()
         {
-            var cal = new Calendar()
+            //ToDo: This test is broken as of 2016-07-13
+            var cal = new Calendar
             {
                 Method = "REQUEST",
                 Version = "2.0"
@@ -319,7 +325,7 @@ namespace ical.NET.UnitTests
 
             Console.Write(serializedCalendar);
 
-            var vEvt = InspectSerializedSection(serializedCalendar, "VEVENT", new string[] {"ORGANIZER:" + org});
+            var vEvt = InspectSerializedSection(serializedCalendar, "VEVENT", new[] {"ORGANIZER:" + org});
 
             foreach (var a in evt.Attendees)
             {

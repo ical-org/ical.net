@@ -81,6 +81,7 @@ namespace ical.NET.UnitTests
         [Test, Category("Attendee")]
         public void Remove1Attendee()
         {
+            //ToDo: This test is broken as of 2016-07-13
             var evt = VEventFactory();
             Assert.AreEqual(0, evt.Attendees.Count);
 
