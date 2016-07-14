@@ -72,7 +72,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AlarmTest.cs" />
+    <Compile Include="AttendeeTest.cs" />
     <Compile Include="ComponentTest.cs" />
+    <Compile Include="DeserializationTests.cs" />
     <Compile Include="FreeBusyTest.cs" />
     <Compile Include="EventTest.cs" />
     <Compile Include="CopyTest.cs" />
@@ -82,7 +84,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="app.config" />
     <Compile Include="RecurrenceTest.cs" />
-    <Compile Include="SerializationTest.cs" />
+    <Compile Include="SerializationTests.cs" />
     <Compile Include="TodoTest.cs" />
     <None Include="packages.config" />
   </ItemGroup>
