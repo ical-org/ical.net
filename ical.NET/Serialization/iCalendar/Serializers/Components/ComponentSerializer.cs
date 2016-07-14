@@ -15,35 +15,46 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
     {
         protected virtual IComparer<ICalendarProperty> PropertySorter => new PropertyAlphabetizer();
 
-        public ComponentSerializer() {}
+        public ComponentSerializer() { }
 
-        public ComponentSerializer(ISerializationContext ctx) : base(ctx) {}
+        public ComponentSerializer(ISerializationContext ctx) : base(ctx) { }
 
-        public override Type TargetType => typeof (CalendarComponent);
+        public override Type TargetType => typeof(CalendarComponent);
 
         public override string SerializeToString(object obj)
         {
-            var component = obj as ICalendarComponent;
+            var c = obj as ICalendarComponent;
+            if (c == null)
+            {
+                return null;
+            }
 
-            var sb = new StringBuilder(1024);
-            sb.Append(TextUtil.WrapLines("BEGIN:" + component.Name.ToUpper()));
+            var sb = new StringBuilder(512);
+            sb.Append(TextUtil.WrapLines("BEGIN:" + c.Name.ToUpper()));
 
-            var properties = new List<ICalendarProperty>(component.Properties.Count);
-            properties.AddRange(component.Properties.OrderBy(c => c.Name));
-
+            // Get a serializer factory
             var sf = GetService<ISerializerFactory>();
-            var serializer = sf.Build(properties.First().GetType(), SerializationContext) as IStringSerializer;
+
+            // Sort the calendar properties in alphabetical order before serializing them!
+            var properties = c.Properties.OrderBy(p => p.Name).ToList();
+
+            // Serialize properties
             foreach (var p in properties)
             {
+                // Get a serializer for each property.
+                var serializer = sf.Build(p.GetType(), SerializationContext) as IStringSerializer;
                 sb.Append(serializer.SerializeToString(p));
             }
 
-            foreach (var child in component.Children)
+            // Serialize child objects
+            foreach (var child in c.Children)
             {
+                // Get a serializer for each child object.
+                var serializer = sf.Build(child.GetType(), SerializationContext) as IStringSerializer;
                 sb.Append(serializer.SerializeToString(child));
             }
 
-            sb.Append(TextUtil.WrapLines("END:" + component.Name.ToUpper()));
+            sb.Append(TextUtil.WrapLines("END:" + c.Name.ToUpper()));
             return sb.ToString();
         }
 
