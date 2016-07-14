@@ -64,11 +64,6 @@ namespace ical.NET.Collections.Proxies
                 .OfType<TNew>()
                 .Where(_predicate);
         }
-        
-        public virtual void SortKeys(IComparer<TGroup> comparer = null)
-        {
-            RealObject.SortKeys(comparer);
-        }
 
         public virtual void Add(TNew item)
         {

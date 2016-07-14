@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.Components;
@@ -13,8 +14,6 @@ namespace Ical.Net
     /// </summary>    
     public class Alarm : CalendarComponent, IAlarm
     {
-        private List<AlarmOccurrence> _mOccurrences;
-
         public virtual AlarmAction Action
         {
             get { return Properties.Get<AlarmAction>("ACTION"); }
@@ -63,21 +62,12 @@ namespace Ical.Net
             set { Properties.Set("TRIGGER", value); }
         }
 
-        protected virtual List<AlarmOccurrence> Occurrences
-        {
-            get { return _mOccurrences; }
-            set { _mOccurrences = value; }
-        }
+        protected virtual IList<AlarmOccurrence> Occurrences { get; set; }
 
         public Alarm()
         {
-            Initialize();
-        }
-
-        private void Initialize()
-        {
             Name = Components.Alarm;
-            Occurrences = new List<AlarmOccurrence>(128);
+            Occurrences = new List<AlarmOccurrence>(16);
         }
 
         /// <summary>
@@ -156,15 +146,16 @@ namespace Ical.Net
         /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
         public virtual IList<AlarmOccurrence> Poll(IDateTime start, IDateTime end)
         {
-            var results = new List<AlarmOccurrence>(128);
+            var results = new List<AlarmOccurrence>(16);
 
             // Evaluate the alarms to determine the recurrences
             var rc = Parent as RecurringComponent;
-            if (rc != null)
+            if (rc == null)
             {
-                results.AddRange(GetOccurrences(rc, start, end));
-                results.Sort();
+                return results;
             }
+
+            results.AddRange(GetOccurrences(rc, start, end));
             return results;
         }
 
@@ -187,13 +178,6 @@ namespace Ical.Net
                     Occurrences.Add(new AlarmOccurrence(this, alarmTime.Copy<IDateTime>(), ao.Component));
                 }
             }
-        }
-
-        protected override void OnDeserializing(StreamingContext context)
-        {
-            base.OnDeserializing(context);
-
-            Initialize();
         }
     }
 }

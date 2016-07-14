@@ -63,7 +63,7 @@ namespace Ical.Net
 
         private void Initialize()
         {
-            Properties = new CalendarPropertyList(this, true);
+            Properties = new CalendarPropertyList(this);
         }
 
         protected override void OnDeserializing(StreamingContext context)

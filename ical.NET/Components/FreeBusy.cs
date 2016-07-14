@@ -19,7 +19,7 @@ namespace Ical.Net
             }
             var getOccurrences = (IGetOccurrencesTyped) obj;
             var occurrences = getOccurrences.GetOccurrences<IEvent>(freeBusyRequest.Start, freeBusyRequest.End);
-            var contacts = new List<string>(128);
+            var contacts = new List<string>(32);
             var isFilteredByAttendees = false;
 
             if (freeBusyRequest.Attendees != null && freeBusyRequest.Attendees.Count > 0)

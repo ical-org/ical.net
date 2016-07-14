@@ -279,21 +279,5 @@ namespace Ical.Net
                 DtStart = DtEnd.Subtract(Duration);
             }
         }
-
-        public override string ToString()
-        {
-            //var sb = new StringBuilder(256);
-            //sb.AppendLine("BEGIN:" + ComponentName);
-
-            //foreach (var p in Properties.OrderBy(p => p.Name))
-            //{
-            //    sb.AppendLine(p.);
-            //}
-
-
-            //var properties = new List<ICalendarProperty>(c.Properties);
-            //properties.Sort(PropertySorter);
-            return string.Empty;
-        }
     }
 }

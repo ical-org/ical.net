@@ -28,10 +28,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
             var sb = new StringBuilder(1024);
             sb.Append(TextUtil.WrapLines("BEGIN:" + component.Name.ToUpper()));
 
+            var properties = new List<ICalendarProperty>(component.Properties.Count);
+            properties.AddRange(component.Properties.OrderBy(c => c.Name));
+
             var sf = GetService<ISerializerFactory>();
-
-            var properties = new List<ICalendarProperty>(component.Properties.OrderBy(c => c.Name));
-
             var serializer = sf.Build(properties.First().GetType(), SerializationContext) as IStringSerializer;
             foreach (var p in properties)
             {
