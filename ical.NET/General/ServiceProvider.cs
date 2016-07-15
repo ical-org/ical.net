@@ -11,20 +11,16 @@ namespace Ical.Net.General
 
         public virtual object GetService(Type serviceType)
         {
-            if (_mTypedServices.ContainsKey(serviceType))
-            {
-                return _mTypedServices[serviceType];
-            }
-            return null;
+            object service;
+            _mTypedServices.TryGetValue(serviceType, out service);
+            return service;
         }
 
         public virtual object GetService(string name)
         {
-            if (_mNamedServices.ContainsKey(name))
-            {
-                return _mNamedServices[name];
-            }
-            return null;
+            object service;
+            _mNamedServices.TryGetValue(name, out service);
+            return service;
         }
 
         public virtual T GetService<T>()

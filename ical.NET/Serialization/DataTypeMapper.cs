@@ -18,7 +18,7 @@ namespace Ical.Net.Serialization
             public bool AllowsMultipleValuesPerProperty { get; set; }
         }
 
-        private readonly IDictionary<string, PropertyMapping> _propertyMap = new Dictionary<string, PropertyMapping>();
+        private readonly IDictionary<string, PropertyMapping> _propertyMap = new Dictionary<string, PropertyMapping>(StringComparer.OrdinalIgnoreCase);
 
         public DataTypeMapper()
         {
@@ -93,7 +93,7 @@ namespace Ical.Net.Serialization
                     AllowsMultipleValuesPerProperty = allowsMultipleValues
                 };
 
-                _propertyMap[name.ToUpper()] = m;
+                _propertyMap[name] = m;
             }
         }
 
@@ -107,27 +107,23 @@ namespace Ical.Net.Serialization
                     AllowsMultipleValuesPerProperty = allowsMultipleValues
                 };
 
-                _propertyMap[name.ToUpper()] = m;
+                _propertyMap[name] = m;
             }
         }
 
         public void RemovePropertyMapping(string name)
         {
-            if (name != null && _propertyMap.ContainsKey(name.ToUpper()))
+            if (name != null && _propertyMap.ContainsKey(name))
             {
-                _propertyMap.Remove(name.ToUpper());
+                _propertyMap.Remove(name);
             }
         }
 
         public virtual bool GetPropertyAllowsMultipleValues(object obj)
         {
             var p = obj as ICalendarProperty;
-            if (p?.Name == null)
-            {
-                return false;
-            }
-            var name = p.Name.ToUpper();
-            return _propertyMap.ContainsKey(name) && _propertyMap[name].AllowsMultipleValuesPerProperty;
+            PropertyMapping m;
+            return p?.Name != null && _propertyMap.TryGetValue(p.Name, out m) && m.AllowsMultipleValuesPerProperty;
         }
 
         public virtual Type GetPropertyMapping(object obj)
@@ -138,13 +134,12 @@ namespace Ical.Net.Serialization
                 return null;
             }
 
-            var name = p.Name.ToUpper();
-            if (!_propertyMap.ContainsKey(name))
+            PropertyMapping m;
+            if (!_propertyMap.TryGetValue(p.Name, out m))
             {
                 return null;
             }
 
-            var m = _propertyMap[name];
             return m.Resolver == null
                 ? m.ObjectType
                 : m.Resolver(p);
