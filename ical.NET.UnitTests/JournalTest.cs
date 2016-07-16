@@ -2,10 +2,9 @@ using System;
 using System.IO;
 using System.Linq;
 using Ical.Net;
-using Ical.Net.UnitTests;
 using NUnit.Framework;
 
-namespace ical.NET.UnitTests
+namespace ical.Net.UnitTests
 {
     [TestFixture]
     public class JournalTest

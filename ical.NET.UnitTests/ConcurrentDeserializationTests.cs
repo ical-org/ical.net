@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Ical.Net;
 using Ical.Net.Interfaces;
 using NUnit.Framework;
 
-namespace Ical.Net.UnitTests
+namespace ical.Net.UnitTests
 {
     public class ConcurrentDeserializationTests
     {

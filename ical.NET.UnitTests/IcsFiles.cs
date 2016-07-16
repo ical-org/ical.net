@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Reflection;
 
-namespace Ical.Net.UnitTests
+namespace ical.Net.UnitTests
 {
     internal class IcsFiles
     {

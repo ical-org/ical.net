@@ -13,10 +13,9 @@ using Ical.Net.Interfaces.Serialization;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using Ical.Net.Serialization.iCalendar.Serializers.Other;
-using Ical.Net.UnitTests;
 using NUnit.Framework;
 
-namespace ical.NET.UnitTests
+namespace ical.Net.UnitTests
 {
     [TestFixture]
     public class DeserializationTests

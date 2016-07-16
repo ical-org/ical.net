@@ -13,12 +13,12 @@ using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
-using Ical.Net.UnitTests;
+
 using Ical.Net.Utility;
 using NUnit.Framework;
 using Calendar = Ical.Net.Calendar;
 
-namespace ical.NET.UnitTests
+namespace ical.Net.UnitTests
 {
     [TestFixture]
     public class RecurrenceTest

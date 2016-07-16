@@ -3,11 +3,11 @@ using System.IO;
 using System.Linq;
 using Ical.Net;
 using Ical.Net.DataTypes;
-using Ical.Net.UnitTests;
+
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
-namespace ical.NET.UnitTests
+namespace ical.Net.UnitTests
 {
     [TestFixture]
     public class TodoTest

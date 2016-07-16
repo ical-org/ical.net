@@ -4,7 +4,7 @@ using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.Components;
 using NUnit.Framework;
 
-namespace ical.NET.UnitTests
+namespace ical.Net.UnitTests
 {
     [TestFixture]
     public class FreeBusyTest
