@@ -34,6 +34,11 @@ namespace Ical.Net
             Name = Components.Timezone;
         }
 
+        public VTimeZone(string tzId) : this()
+        {
+            TzId = tzId;
+        }
+
         private string _tzId;
         public virtual string TzId
         {
@@ -65,9 +70,9 @@ namespace Ical.Net
 
         protected bool Equals(VTimeZone other)
         {
-            return base.Equals(other)
-                && string.Equals(_tzId, other._tzId, StringComparison.OrdinalIgnoreCase)
-                && Equals(_url, other._url);
+            return string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase)
+                && Equals(Url, other.Url);
         }
 
         public override bool Equals(object obj)
@@ -82,13 +87,9 @@ namespace Ical.Net
         {
             unchecked
             {
-                int hashCode = base.GetHashCode();
-                hashCode = (hashCode * 397) ^ (_tzId != null
-                    ? _tzId.GetHashCode()
-                    : 0);
-                hashCode = (hashCode * 397) ^ (_url != null
-                    ? _url.GetHashCode()
-                    : 0);
+                var hashCode = Name.GetHashCode();
+                hashCode = (hashCode * 397) ^ (TzId?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (Url?.GetHashCode() ?? 0);
                 return hashCode;
             }
         }

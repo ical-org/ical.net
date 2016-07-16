@@ -48,5 +48,23 @@ namespace ical.Net.UnitTests
             Assert.AreEqual(e, onlyEvent);
             Assert.AreEqual(calendar, onlyCalendar);
         }
+
+        [Test]
+        public void VTimeZoneSerialization_Test()
+        {
+            var originalCalendar = new Calendar();
+            var tz = new VTimeZone
+            {
+                TzId = "New Zealand Standard Time"
+            };
+            originalCalendar.AddTimeZone(tz);
+            var serializer = new CalendarSerializer(new SerializationContext());
+            var serializedCalendar = serializer.SerializeToString(originalCalendar);
+            var unserializedCalendar = Calendar.LoadFromStream(new StringReader(serializedCalendar)).Single();
+
+            CollectionAssert.AreEqual(originalCalendar.TimeZones, unserializedCalendar.TimeZones);
+            Assert.AreEqual(originalCalendar, unserializedCalendar);
+            Assert.AreEqual(originalCalendar.GetHashCode(), unserializedCalendar.GetHashCode());
+        }
     }
 }

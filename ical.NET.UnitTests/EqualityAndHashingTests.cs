@@ -114,5 +114,51 @@ namespace ical.Net.UnitTests
             Assert.AreEqual(actualCalendar.GetHashCode(), expectedCalendar.GetHashCode());
             Assert.IsTrue(actualCalendar.Equals(expectedCalendar));
         }
+
+        [Test, TestCaseSource(nameof(VTimeZone_TestCases))]
+        public void VTimeZone_Tests(VTimeZone actual, VTimeZone expected)
+        {
+            Assert.AreEqual(actual.Url, expected.Url);
+            Assert.AreEqual(actual.TzId, expected.TzId);
+            Assert.AreEqual(actual, expected);
+            Assert.AreEqual(actual.GetHashCode(), expected.GetHashCode());
+        }
+
+        public static IEnumerable<ITestCaseData> VTimeZone_TestCases()
+        {
+            var first = new VTimeZone
+            {
+                TzId = "New Zealand Standard Time"
+            };
+
+            var second = new VTimeZone("New Zealand Standard Time");
+            yield return new TestCaseData(first, second);
+
+            first.Url = new Uri("http://example.com/");
+            second.Url = new Uri("http://example.com");
+            yield return new TestCaseData(first, second);
+        }
+
+        //ToDo: Tests for:
+        //private IUniqueComponentList<IUniqueComponent> _mUniqueComponents;
+        //private IUniqueComponentList<IEvent> _mEvents;
+        //private IUniqueComponentList<ITodo> _mTodos;
+        //private ICalendarObjectList<IJournal> _mJournals;
+        //private IUniqueComponentList<IFreeBusy> _mFreeBusy;
+        //private ICalendarObjectList<ITimeZone> _mTimeZones;
+        
+        // FreeBusy
+        //VAlarm
+        //Journal
+        //RecurringComponent?
+        //Todo
+        //VTimeZone?
+        //IAttachment
+        //GeographicLocation
+        //Organizer
+        //StatusCode
+        //Trigger
+        //UTCOffset -- perhaps try to retire this entirely first
+        //WeekDay
     }
 }

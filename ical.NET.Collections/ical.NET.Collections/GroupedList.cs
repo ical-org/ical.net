@@ -22,6 +22,11 @@ namespace ical.NET.Collections
 
         private IMultiLinkedList<TItem> EnsureList(TGroup group)
         {
+            if (group == null)
+            {
+                return null;
+            }
+
             if (_dictionary.ContainsKey(group))
             {
                 return _dictionary[group];
@@ -29,6 +34,15 @@ namespace ical.NET.Collections
 
             var list = new MultiLinkedList<TItem>();
             _dictionary[group] = list;
+
+            //if (_lists.Count > 0)
+            //{
+            //    // Attach the list to our list chain
+            //    var previous = _lists[_lists.Count - 1];
+            //    previous.SetNext(list);
+            //    list.SetPrevious(previous);
+            //}
+
             _lists.Add(list);
             return list;
         }
@@ -59,7 +73,8 @@ namespace ical.NET.Collections
             }
 
             // Add a new list if necessary
-            var list = EnsureList(item.Group);
+            var group = item.Group;
+            var list = EnsureList(group);
             var index = list.Count;
             list.Add(SubscribeToKeyChanges(item));
             OnItemAdded(item, list.StartIndex + index);
