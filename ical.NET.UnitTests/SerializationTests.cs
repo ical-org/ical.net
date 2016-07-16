@@ -174,8 +174,8 @@ namespace ical.Net.UnitTests
             var evt = new Event
             {
                 Summary = "Testing",
-                Start = new CalDateTime(2016, 7, 14, timezone.Id),
-                End = new CalDateTime(2016, 7, 15, timezone.Id)
+                Start = new CalDateTime(2016, 7, 14, timezone.TzId),
+                End = new CalDateTime(2016, 7, 15, timezone.TzId)
             };
             cal.Events.Add(evt);
 
@@ -184,7 +184,7 @@ namespace ical.Net.UnitTests
 
             Console.Write(serializedCalendar);
 
-            var vTimezone = InspectSerializedSection(serializedCalendar, "VTIMEZONE", new[] {"TZID:" + timezone.Id});
+            var vTimezone = InspectSerializedSection(serializedCalendar, "VTIMEZONE", new[] {"TZID:" + timezone.TzId});
             var o = tzi.BaseUtcOffset.ToString("hhmm", CultureInfo.InvariantCulture);
 
             InspectSerializedSection(vTimezone, "STANDARD", new[] {"TZNAME:" + tzi.StandardName, "TZOFFSETTO:" + o

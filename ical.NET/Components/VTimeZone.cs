@@ -34,22 +34,63 @@ namespace Ical.Net
             Name = Components.Timezone;
         }
 
-        public virtual string Id
-        {
-            get { return Properties.Get<string>("TZID"); }
-            set { Properties.Set("TZID", value); }
-        }
-
+        private string _tzId;
         public virtual string TzId
         {
-            get { return Id; }
-            set { Id = value; }
+            get
+            {
+                if (string.IsNullOrEmpty(_tzId))
+                {
+                    _tzId = Properties.Get<string>("TZID");
+                }
+                return _tzId;
+            }
+            set
+            {
+                _tzId = value;
+                Properties.Set("TZID", _tzId);
+            }
         }
 
+        private Uri _url;
         public virtual Uri Url
         {
-            get { return Properties.Get<Uri>("TZURL"); }
-            set { Properties.Set("TZURL", value); }
+            get { return _url ?? (_url = Properties.Get<Uri>("TZURL")); }
+            set
+            {
+                _url = value;
+                Properties.Set("TZURL", _url);
+            }
+        }
+
+        protected bool Equals(VTimeZone other)
+        {
+            return base.Equals(other)
+                && string.Equals(_tzId, other._tzId, StringComparison.OrdinalIgnoreCase)
+                && Equals(_url, other._url);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((VTimeZone)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = base.GetHashCode();
+                hashCode = (hashCode * 397) ^ (_tzId != null
+                    ? _tzId.GetHashCode()
+                    : 0);
+                hashCode = (hashCode * 397) ^ (_url != null
+                    ? _url.GetHashCode()
+                    : 0);
+                return hashCode;
+            }
         }
     }
 }
