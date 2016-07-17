@@ -293,7 +293,8 @@ namespace Ical.Net
                 && Status.Equals(other.Status)
                 && IsActive() == other.IsActive()
                 && Transparency.Equals(other.Transparency)
-                && EvaluationIncludesReferenceDate == other.EvaluationIncludesReferenceDate;
+                && EvaluationIncludesReferenceDate == other.EvaluationIncludesReferenceDate
+                && Attachments.SequenceEqual(other.Attachments);
         }
 
         public override bool Equals(object obj)

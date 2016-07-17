@@ -5,7 +5,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Ical.Net;
 using Ical.Net.DataTypes;
 using Ical.Net.ExtensionMethods;
 using Ical.Net.Interfaces;
@@ -14,7 +13,6 @@ using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
-using Calendar = Ical.Net.Calendar;
 
 namespace Ical.Net.UnitTests
 {
@@ -105,7 +103,6 @@ namespace Ical.Net.UnitTests
             }
         }
 
-        private const string _newLine = "\r\n"; // I suspect the spec actually specifies this, and so Environment.NewLine would not be appropriate
         public static string InspectSerializedSection(string serialized, string sectionName, IEnumerable<string> elements)
         {
             const string notFound = "expected '{0}' not found";
@@ -121,7 +118,7 @@ namespace Ical.Net.UnitTests
 
             foreach (var e in elements)
             {
-                Assert.IsTrue(searchRegion.Contains(_newLine + e + _newLine), notFound, e);
+                Assert.IsTrue(searchRegion.Contains(SerializationConstants.LineBreak + e + SerializationConstants.LineBreak), notFound, e);
             }
 
             return searchRegion;
@@ -146,9 +143,9 @@ namespace Ical.Net.UnitTests
         //This method needs renaming
         static Dictionary<string, string> GetValues(string serialized, string name, string value)
         {
-            var lengthened = serialized.Replace(_newLine + ' ', string.Empty);
+            var lengthened = serialized.Replace(SerializationConstants.LineBreak + ' ', string.Empty);
             //using a regex for now - for the sake of speed, it may be worth creating a C# text search later
-            var match = Regex.Match(lengthened, '^' + Regex.Escape(name) + "(;.+)?:" + Regex.Escape(value) + _newLine, RegexOptions.Multiline);
+            var match = Regex.Match(lengthened, '^' + Regex.Escape(name) + "(;.+)?:" + Regex.Escape(value) + SerializationConstants.LineBreak, RegexOptions.Multiline);
             Assert.IsTrue(match.Success, $"could not find a(n) '{name}' with value '{value}'");
             return match.Groups[1].Value.Length == 0
                 ? new Dictionary<string, string>()
@@ -266,13 +263,13 @@ namespace Ical.Net.UnitTests
 
             Console.Write(serializedCalendar);
             Assert.IsTrue(serializedCalendar.StartsWith("BEGIN:VCALENDAR"));
-            Assert.IsTrue(serializedCalendar.EndsWith("END:VCALENDAR" + _newLine));
+            Assert.IsTrue(serializedCalendar.EndsWith("END:VCALENDAR" + SerializationConstants.LineBreak));
 
             var expectProperties = new[] {"METHOD:PUBLISH", "VERSION:2.0"};
 
             foreach (var p in expectProperties)
             {
-                Assert.IsTrue(serializedCalendar.Contains(_newLine + p + _newLine), "expected '" + p + "' not found");
+                Assert.IsTrue(serializedCalendar.Contains(SerializationConstants.LineBreak + p + SerializationConstants.LineBreak), "expected '" + p + "' not found");
             }
 
             InspectSerializedSection(serializedCalendar, "VEVENT",

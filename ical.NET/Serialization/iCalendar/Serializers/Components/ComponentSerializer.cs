@@ -30,7 +30,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
             }
 
             var sb = new StringBuilder(512);
-            sb.Append(TextUtil.WrapLines("BEGIN:" + c.Name.ToUpper()));
+            //sb.Append(TextUtil.WrapLines("BEGIN:" + c.Name.ToUpper()));
+            sb.Append(TextUtil.FoldLines($"BEGIN:{c.Name.ToUpperInvariant()}"));
 
             // Get a serializer factory
             var sf = GetService<ISerializerFactory>();
@@ -54,7 +55,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
                 sb.Append(serializer.SerializeToString(child));
             }
 
-            sb.Append(TextUtil.WrapLines("END:" + c.Name.ToUpper()));
+            //sb.Append(TextUtil.WrapLines("END:" + c.Name.ToUpper()));
+            sb.Append(TextUtil.FoldLines($"END:{c.Name.ToUpperInvariant()}"));
             return sb.ToString();
         }
 

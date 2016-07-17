@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using Ical.Net.Interfaces.Serialization;
 
@@ -10,29 +8,31 @@ namespace Ical.Net.Utility
 {
     public static class TextUtil
     {
-        public static string WrapLines(string value)
+        /// <summary> Folds lines at 75 characters, and prepends the next line with a space per RFC https://tools.ietf.org/html/rfc5545#section-3.1 </summary>
+        public static string FoldLines(string incoming)
         {
-            // NOTE: Made this method more efficient by removing
-            // the use of strings, and only using StringBuilders.
-            // Also, the "while" loop was removed, and StringBuilder
-            // modifications are kept at a minimum.
-            var result = new StringBuilder();
-            var current = new StringBuilder(value);
-
-            // Wrap lines at 75 characters, per RFC 2445 "folding" technique
-            var i = 0;
-            if (current.Length > 75)
+            //The spec says nothing about trimming, but it seems reasonable...
+            var trimmed = incoming.Trim();
+            if (trimmed.Length <= 75)
             {
-                result.Append(current.ToString(0, 75) + "\r\n");
-                for (i = 75; i < current.Length - 74; i += 74)
-                {
-                    result.Append(current.ToString(i, 74) + "\r\n");
-                }
+                return trimmed + SerializationConstants.LineBreak;
             }
-            result.Append(current.ToString(i, current.Length - i));
-            result.Append("\r\n");
 
-            return result.ToString();
+            const int takeLimit = 74;
+
+            var firstLine = trimmed.Substring(0, takeLimit);
+            var remainder = trimmed.Substring(takeLimit, trimmed.Length - takeLimit);
+
+            var chunkedRemainder = string.Join(SerializationConstants.LineBreak + " ", Chunk(remainder));
+            return firstLine + SerializationConstants.LineBreak + " " + chunkedRemainder + SerializationConstants.LineBreak;
+        }
+
+        public static IEnumerable<string> Chunk(string str, int chunkSize = 73)
+        {
+            for (var index = 0; index < str.Length; index += chunkSize)
+            {
+                yield return str.Substring(index, Math.Min(chunkSize, str.Length - index));
+            }
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Ical.Net.Utility
             var len = -1;
             while (len != s.Length)
             {
-                s = s.Replace("\r\n\r\n", "\r\n");
+                s = s.Replace("\r\n\r\n", SerializationConstants.LineBreak);
                 len = s.Length;
             }
             return s;
@@ -60,7 +60,7 @@ namespace Ical.Net.Utility
         public static TextReader Normalize(string s, ISerializationContext ctx)
         {
             // Replace \r and \n with \r\n.
-            s = NormalizeToCrLf.Replace(s, "\r\n");
+            s = NormalizeToCrLf.Replace(s, SerializationConstants.LineBreak);
 
             var settings = ctx.GetService(typeof (ISerializationSettings)) as ISerializationSettings;
             if (settings == null || !settings.EnsureAccurateLineNumbers)
@@ -73,13 +73,10 @@ namespace Ical.Net.Utility
 
         internal static readonly Regex NewLineMatch = new Regex(@"(\r\n[ \t])", RegexOptions.Compiled);
 
-        /// <summary>
-        /// Unwraps lines from the RFC 2445 "line folding" technique.
-        /// NOTE: this method makes the line/col numbers output from
-        /// antlr incorrect.
-        /// </summary>
+        /// <summary> Unwraps lines from the RFC 5545 "line folding" technique. </summary>
         public static string UnwrapLines(string s)
         {
+            //(NOTE: this method makes the line/ col numbers output from antlr incorrect.)
             return NewLineMatch.Replace(s, string.Empty);
         }
     }

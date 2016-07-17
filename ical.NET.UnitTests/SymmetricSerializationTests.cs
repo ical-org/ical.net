@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Ical.Net;
+using System.Text;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.DataTypes;
@@ -10,7 +10,6 @@ using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
-using NUnit.Framework.Internal;
 
 namespace Ical.Net.UnitTests
 {
@@ -120,6 +119,38 @@ namespace Ical.Net.UnitTests
                 ParticipationStatus = EventParticipationStatus.Tentative
             };
             yield return new TestCaseData(simple).SetName("Simple attendee");
+        }
+
+        [Test, TestCaseSource(nameof(BinaryAttachment_TestCases))]
+        public void BinaryAttachment_Tests(string theString)
+        {
+            var asBytes = Encoding.UTF8.GetBytes(theString);
+            var attachment = new Attachment
+            {
+                Data = asBytes,
+                ValueEncoding = Encoding.UTF8,
+            };
+
+            var calendar = new Calendar();
+            var vEvent = GetSimpleEvent();
+            vEvent.Attachments = new List<IAttachment> { attachment };
+            calendar.Events.Add(vEvent);
+
+            var serialized = SerializeToString(calendar);
+            var unserialized = UnserializeCalendar(serialized);
+
+            Assert.AreEqual(calendar.GetHashCode(), unserialized.GetHashCode());
+            Assert.AreEqual(calendar, unserialized);
+        }
+
+        public static IEnumerable<ITestCaseData> BinaryAttachment_TestCases()
+        {
+            yield return new TestCaseData("This is a string.")
+                .SetName("Short string");
+            yield return new TestCaseData("This is a stringThisThis is a")
+                .SetName("Moderate string fails");
+            yield return new TestCaseData("This is a song that never ends. It just goes on and on my friends. Some people started singing it not...")
+                .SetName("Much longer string");
         }
     }
 }

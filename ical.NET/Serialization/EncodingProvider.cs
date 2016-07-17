@@ -142,6 +142,8 @@ namespace Ical.Net.Serialization
             }
 
             var encoder = GetEncoderFor(encoding);
+            //var wrapped = TextUtil.FoldLines(encoder?.Invoke(data));
+            //return wrapped;
             return encoder?.Invoke(data);
         }
 

@@ -79,7 +79,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                 sb.Append(":");
                 sb.Append(value);
 
-                result.Append(TextUtil.WrapLines(sb.ToString()));
+                //result.Append(TextUtil.WrapLines(sb.ToString()));
+                result.Append(TextUtil.FoldLines(sb.ToString()));
             }
 
             // Pop the object off the serialization context.

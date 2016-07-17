@@ -104,6 +104,11 @@
         public static string ParamName => Role;
     }
 
+    public class SerializationConstants
+    {
+        public const string LineBreak = "\r\n";
+    }
+
     /// <summary>
     /// Status codes available to an <see cref="Components.Event"/> item
     /// </summary>

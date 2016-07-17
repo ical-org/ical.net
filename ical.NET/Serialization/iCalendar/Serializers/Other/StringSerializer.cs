@@ -53,7 +53,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 // NOTE: fixed a bug that caused text parsing to fail on
                 // programmatically entered strings.
                 // SEE unit test SERIALIZE25().
-                value = value.Replace("\r\n", @"\n");
+                value = value.Replace(SerializationConstants.LineBreak, @"\n");
                 value = value.Replace("\r", @"\n");
                 value = value.Replace("\n", @"\n");
                 value = value.Replace(";", @"\;");
