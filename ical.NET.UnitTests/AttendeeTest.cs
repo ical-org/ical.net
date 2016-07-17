@@ -21,20 +21,19 @@ namespace ical.Net.UnitTests
             };
         }
 
-        private const string _requiredParticipant = "REQ-PARTICIPANT"; //this string may be added to the api in the future
         private static readonly IList<Attendee> _attendees = new List<Attendee>
         {
             new Attendee("MAILTO:james@example.com")
             {
                 CommonName = "James James",
-                Role = _requiredParticipant,
+                Role = ParticipationRole.RequiredParticipant,
                 Rsvp = true,
                 ParticipationStatus = EventParticipationStatus.Tentative
             },
             new Attendee("MAILTO:mary@example.com")
             {
                 CommonName = "Mary Mary",
-                Role = _requiredParticipant,
+                Role = ParticipationRole.RequiredParticipant,
                 Rsvp = true,
                 ParticipationStatus = EventParticipationStatus.Accepted
             }
@@ -54,7 +53,7 @@ namespace ical.Net.UnitTests
             Assert.AreEqual(1, evt.Attendees.Count);
 
             //the properties below had been set to null during the Attendees.Add operation in NuGet version 2.1.4
-            Assert.AreEqual(_requiredParticipant, evt.Attendees[0].Role); 
+            Assert.AreEqual(ParticipationRole.RequiredParticipant, evt.Attendees[0].Role); 
             Assert.AreEqual(EventParticipationStatus.Tentative, evt.Attendees[0].ParticipationStatus);
         }
 
@@ -67,7 +66,7 @@ namespace ical.Net.UnitTests
             evt.Attendees.Add(_attendees[0]);
             evt.Attendees.Add(_attendees[1]);
             Assert.AreEqual(2, evt.Attendees.Count);
-            Assert.AreEqual(_requiredParticipant, evt.Attendees[1].Role);
+            Assert.AreEqual(ParticipationRole.RequiredParticipant, evt.Attendees[1].Role);
 
             var cal = new Calendar();
             cal.Events.Add(evt);

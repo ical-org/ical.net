@@ -286,20 +286,19 @@ namespace ical.Net.UnitTests
                 });
         }
 
-        private const string _requiredParticipant = "REQ-PARTICIPANT"; //this string may be added to the api in the future
         private static readonly IList<Attendee> _attendees = new List<Attendee>
         {
             new Attendee("MAILTO:james@example.com")
             {
                 CommonName = "James James",
-                Role = _requiredParticipant,
+                Role = ParticipationRole.RequiredParticipant,
                 Rsvp = true,
                 ParticipationStatus = EventParticipationStatus.Tentative
             },
             new Attendee("MAILTO:mary@example.com")
             {
                 CommonName = "Mary Mary",
-                Role = _requiredParticipant,
+                Role = ParticipationRole.RequiredParticipant,
                 Rsvp = true,
                 ParticipationStatus = EventParticipationStatus.Accepted
             }

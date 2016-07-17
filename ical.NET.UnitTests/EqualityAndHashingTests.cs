@@ -139,26 +139,58 @@ namespace ical.Net.UnitTests
             yield return new TestCaseData(first, second);
         }
 
-        //ToDo: Tests for:
-        //private IUniqueComponentList<IUniqueComponent> _mUniqueComponents;
-        //private IUniqueComponentList<IEvent> _mEvents;
-        //private IUniqueComponentList<ITodo> _mTodos;
-        //private ICalendarObjectList<IJournal> _mJournals;
-        //private IUniqueComponentList<IFreeBusy> _mFreeBusy;
-        //private ICalendarObjectList<ITimeZone> _mTimeZones;
-        
-        // FreeBusy
-        //VAlarm
-        //Journal
-        //RecurringComponent?
-        //Todo
-        //VTimeZone?
-        //IAttachment
-        //GeographicLocation
-        //Organizer
-        //StatusCode
-        //Trigger
-        //UTCOffset -- perhaps try to retire this entirely first
-        //WeekDay
+        [Test, TestCaseSource(nameof(Attendees_TestCases))]
+        public void Attendees_Tests(Attendee actual, Attendee expected)
+        {
+            Assert.AreEqual(expected.GetHashCode(), actual.GetHashCode());
+            Assert.AreEqual(expected, actual);
+        }
+
+        public static IEnumerable<ITestCaseData> Attendees_TestCases()
+        {
+            var tentative1 = new Attendee("MAILTO:james@example.com")
+            {
+                CommonName = "James Tentative",
+                Role = ParticipationRole.RequiredParticipant,
+                Rsvp = true,
+                ParticipationStatus = EventParticipationStatus.Tentative
+            };
+            var tentative2 = new Attendee("MAILTO:james@example.com")
+            {
+                CommonName = "James Tentative",
+                Role = ParticipationRole.RequiredParticipant,
+                Rsvp = true,
+                ParticipationStatus = EventParticipationStatus.Tentative
+            };
+            yield return new TestCaseData(tentative1, tentative2).SetName("Simple attendee test case");
+
+            var complex1 = new Attendee("MAILTO:mary@example.com")
+            {
+                CommonName = "Mary Accepted",
+                Rsvp = true,
+                ParticipationStatus = EventParticipationStatus.Accepted,
+                SentBy = new Uri("mailto:someone@example.com"),
+                DirectoryEntry = new Uri("ldap://example.com:6666/o=eDABC Industries,c=3DUS??(cn=3DBMary Accepted)"),
+                Type = "CuType",
+                Members = new List<string> { "Group A", "Group B"},
+                Role = ParticipationRole.Chair,
+                DelegatedTo = new List<string> { "Peon A", "Peon B"},
+                DelegatedFrom = new List<string> { "Bigwig A", "Bigwig B"}
+            };
+            var complex2 = new Attendee("MAILTO:mary@example.com")
+            {
+                CommonName = "Mary Accepted",
+                Rsvp = true,
+                ParticipationStatus = EventParticipationStatus.Accepted,
+                SentBy = new Uri("mailto:someone@example.com"),
+                DirectoryEntry = new Uri("ldap://example.com:6666/o=eDABC Industries,c=3DUS??(cn=3DBMary Accepted)"),
+                Type = "CuType",
+                Members = new List<string> { "Group A", "Group B" },
+                Role = ParticipationRole.Chair,
+                DelegatedTo = new List<string> { "Peon A", "Peon B" },
+                DelegatedFrom = new List<string> { "Bigwig A", "Bigwig B" }
+            };
+            yield return new TestCaseData(complex1, complex2).SetName("Complex attendee test");
+        }
     }
 }
