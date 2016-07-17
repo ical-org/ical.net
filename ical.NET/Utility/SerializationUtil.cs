@@ -61,13 +61,13 @@ namespace Ical.Net.Utility
             {
                 return new List<MethodInfo>();
             }
-
-            if (_onDeserializedMethods.ContainsKey(targetType))
+            List<MethodInfo> methodInfos;
+            if (_onDeserializedMethods.TryGetValue(targetType, out methodInfos))
             {
-                return _onDeserializedMethods[targetType];
+                return methodInfos;
             }
 
-            var methodInfo = targetType.GetMethods(_bindingFlags)
+            methodInfos = targetType.GetMethods(_bindingFlags)
                 .Select(targetTypeMethodInfo => new
                 {
                     targetTypeMethodInfo,
@@ -77,8 +77,8 @@ namespace Ical.Net.Utility
                 .Select(t => t.targetTypeMethodInfo)
                 .ToList();
 
-            _onDeserializedMethods.AddOrUpdate(targetType, methodInfo, (type, list) => methodInfo);
-            return methodInfo;
+            _onDeserializedMethods.AddOrUpdate(targetType, methodInfos, (type, list) => methodInfos);
+            return methodInfos;
         }
     }
 }

@@ -19,9 +19,10 @@ namespace Ical.Net.General.Proxies
 
         private TComponentType Search(string uid)
         {
-            if (_lookup.ContainsKey(uid))
+            TComponentType componentType;
+            if (_lookup.TryGetValue(uid, out componentType))
             {
-                return _lookup[uid];
+                return componentType;
             }
 
             var item = this.FirstOrDefault(c => string.Equals(c.Uid, uid, StringComparison.OrdinalIgnoreCase));
