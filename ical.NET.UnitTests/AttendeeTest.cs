@@ -29,14 +29,14 @@ namespace ical.Net.UnitTests
                 CommonName = "James James",
                 Role = _requiredParticipant,
                 Rsvp = true,
-                ParticipationStatus = ParticipationStatus.Tentative
+                ParticipationStatus = EventParticipationStatus.Tentative
             },
             new Attendee("MAILTO:mary@example.com")
             {
                 CommonName = "Mary Mary",
                 Role = _requiredParticipant,
                 Rsvp = true,
-                ParticipationStatus = ParticipationStatus.Accepted
+                ParticipationStatus = EventParticipationStatus.Accepted
             }
         }.AsReadOnly();
 
@@ -55,7 +55,7 @@ namespace ical.Net.UnitTests
 
             //the properties below had been set to null during the Attendees.Add operation in NuGet version 2.1.4
             Assert.AreEqual(_requiredParticipant, evt.Attendees[0].Role); 
-            Assert.AreEqual(ParticipationStatus.Tentative, evt.Attendees[0].ParticipationStatus);
+            Assert.AreEqual(EventParticipationStatus.Tentative, evt.Attendees[0].ParticipationStatus);
         }
 
         [Test, Category("Attendee")]

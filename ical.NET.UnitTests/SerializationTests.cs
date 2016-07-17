@@ -294,14 +294,14 @@ namespace ical.Net.UnitTests
                 CommonName = "James James",
                 Role = _requiredParticipant,
                 Rsvp = true,
-                ParticipationStatus = ParticipationStatus.Tentative
+                ParticipationStatus = EventParticipationStatus.Tentative
             },
             new Attendee("MAILTO:mary@example.com")
             {
                 CommonName = "Mary Mary",
                 Role = _requiredParticipant,
                 Rsvp = true,
-                ParticipationStatus = ParticipationStatus.Accepted
+                ParticipationStatus = EventParticipationStatus.Accepted
             }
         }.AsReadOnly();
 
