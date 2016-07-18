@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using Ical.Net.Interfaces.Serialization;
@@ -21,14 +20,14 @@ namespace Ical.Net.Utility
             var i = 0;
             if (current.Length > 75)
             {
-                result.AppendLine(current.ToString(0, 75));
+                result.Append(current.ToString(0, 75) + "\r\n");
                 for (i = 75; i < current.Length - 74; i += 74)
                 {
-                    result.AppendLine(current.ToString(i, 74));
+                    result.Append(current.ToString(i, 74) + "\r\n");
                 }
             }
             result.Append(current.ToString(i, current.Length - i));
-            result.AppendLine();
+            result.Append("\r\n");
 
             return result.ToString();
         }
@@ -44,7 +43,7 @@ namespace Ical.Net.Utility
             var len = -1;
             while (len != s.Length)
             {
-                s = s.Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine);
+                s = s.Replace("\r\n\r\n", "\r\n");
                 len = s.Length;
             }
             return s;
@@ -58,7 +57,7 @@ namespace Ical.Net.Utility
         public static TextReader Normalize(string s, ISerializationContext ctx)
         {
             // Replace \r and \n with \r\n.
-            s = NormalizeToCrLf.Replace(s, Environment.NewLine);
+            s = NormalizeToCrLf.Replace(s, "\r\n");
 
             var settings = ctx.GetService(typeof (ISerializationSettings)) as ISerializationSettings;
             if (settings == null || !settings.EnsureAccurateLineNumbers)
