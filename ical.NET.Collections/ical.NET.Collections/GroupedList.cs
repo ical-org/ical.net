@@ -22,12 +22,13 @@ namespace ical.NET.Collections
 
         private IMultiLinkedList<TItem> EnsureList(TGroup group)
         {
-            if (_dictionary.ContainsKey(group))
+            IMultiLinkedList<TItem> list;
+            if (_dictionary.TryGetValue(group, out list))
             {
-                return _dictionary[group];
+                return list;
             }
 
-            var list = new MultiLinkedList<TItem>();
+            list = new MultiLinkedList<TItem>();
             _dictionary[group] = list;
             _lists.Add(list);
             return list;
@@ -68,32 +69,29 @@ namespace ical.NET.Collections
         public virtual int IndexOf(TItem item)
         {
             var group = item.Group;
-            if (!_dictionary.ContainsKey(group))
+            // Get the list associated with this object's group
+            IMultiLinkedList<TItem> list;
+            if (!_dictionary.TryGetValue(group, out list))
             {
                 return -1;
             }
-
-            // Get the list associated with this object's group
-            var list = _dictionary[group];
 
             // Find the object within the list.
             var index = list.IndexOf(item);
 
             // Return the index within the overall KeyedList
-            if (index >= 0)
-                return list.StartIndex + index;
-            return -1;
+            return index >= 0
+                ? list.StartIndex + index
+                : -1;
         }
-
         public virtual void Clear(TGroup group)
         {
-            if (!_dictionary.ContainsKey(group))
+            IMultiLinkedList<TItem> list;
+            if (_dictionary.TryGetValue(group, out list))
             {
-                return;
+                // Clear the list (note _Lists and _dictionary include the same item, which is cleared).
+                list.Clear();
             }
-
-            // Clear the list (note that this also clears the list in the _Lists object).
-            _dictionary[group].Clear();
         }
 
         public virtual void Clear()
@@ -115,8 +113,9 @@ namespace ical.NET.Collections
 
         public virtual int CountOf(TGroup group)
         {
-            return _dictionary.ContainsKey(group)
-                ? _dictionary[group].Count
+            IMultiLinkedList<TItem> list;
+            return _dictionary.TryGetValue(group, out list)
+                ? list.Count
                 : 0;
         }
 
@@ -127,20 +126,24 @@ namespace ical.NET.Collections
 
         public virtual IEnumerable<TItem> AllOf(TGroup group)
         {
-            return _dictionary.ContainsKey(@group)
-                ? (IEnumerable<TItem>) _dictionary[@group]
+            IMultiLinkedList<TItem> list;
+            return _dictionary.TryGetValue(group, out list)
+                ? (IEnumerable<TItem>) list
                 : new TItem[0];
         }
 
         public virtual bool Remove(TItem obj)
         {
             var group = obj.Group;
-            if (!_dictionary.ContainsKey(group))
+            //surely  the Remove(TGroup) override should be called HERE
+            //this function however is performing a remove operation, while Remove(TGroup is performing a clear operation)
+            //to do, find callers, write tests and then clean this up!
+            IMultiLinkedList<TItem> items;
+            if (!_dictionary.TryGetValue(group, out items))
             {
                 return false;
             }
 
-            var items = _dictionary[group];
             var index = items.IndexOf(obj);
 
             if (index < 0)
@@ -154,12 +157,13 @@ namespace ical.NET.Collections
 
         public virtual bool Remove(TGroup group)
         {
-            if (!_dictionary.ContainsKey(group))
+            IMultiLinkedList<TItem> list;
+            if (!_dictionary.TryGetValue(group, out list))
             {
                 return false;
             }
-
-            var list = _dictionary[group];
+            //basically a list.Clear opperation - is the code written like this because of event subscription? B.M.
+            //see comment in prior function
             for (var i = list.Count - 1; i >= 0; i--)
             {
                 list.RemoveAt(i);
@@ -170,7 +174,8 @@ namespace ical.NET.Collections
         public virtual bool Contains(TItem item)
         {
             var group = item.Group;
-            return _dictionary.ContainsKey(group) && _dictionary[group].Contains(item);
+            IMultiLinkedList<TItem> list;
+            return _dictionary.TryGetValue(group, out list) && list.Contains(item);
         }
 
         public virtual void CopyTo(TItem[] array, int arrayIndex)
