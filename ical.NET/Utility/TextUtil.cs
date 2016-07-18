@@ -17,13 +17,16 @@ namespace Ical.Net.Utility
             var current = new StringBuilder(value);
 
             // Wrap lines at 75 characters, per RFC 2445 "folding" technique
+            const int foldAt = 75;
+            const int foldAtLessSpace = foldAt - 1;
             var i = 0;
-            if (current.Length > 75)
+            if (current.Length > foldAt)
             {
-                result.Append(current.ToString(0, 75) + "\r\n");
-                for (i = 75; i < current.Length - 74; i += 74)
+                const string foldingBreak = "\r\n ";
+                result.Append(current.ToString(0, foldAt) + foldingBreak);
+                for (i = foldAt; i < current.Length - foldAtLessSpace; i += foldAtLessSpace)
                 {
-                    result.Append(current.ToString(i, 74) + "\r\n");
+                    result.Append(current.ToString(i, foldAtLessSpace) + foldingBreak);
                 }
             }
             result.Append(current.ToString(i, current.Length - i));
