@@ -349,6 +349,12 @@ namespace ical.NET.UnitTests
         //todo test event:
         //-GeographicLocation
         //-Alarm
+
+        [Test, Category("Serialization")]
+        public void EnumHyphenation()
+        {
+            Assert.AreEqual("REQ-PARTICIPANT", Ical.Net.Serialization.iCalendar.Serializers.Other.EnumSerializer.CamelCaseToHyphenatedUpper("ReqParticipant"));
+        }
         #endregion
     }
 }

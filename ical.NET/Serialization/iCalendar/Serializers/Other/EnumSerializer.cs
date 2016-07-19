@@ -3,6 +3,7 @@ using System.IO;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using System.Text;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 {
@@ -21,7 +22,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
         {
             try
             {
-                string caps = enumValue.ToString().ToUpperInvariant();
+                string caps = CamelCaseToHyphenatedUpper(enumValue.ToString());
                 var obj = SerializationContext.Peek() as ICalendarObject;
                 if (obj != null)
                 {
@@ -38,6 +39,30 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
             {
                 return null;
             }
+        }
+
+        public static string CamelCaseToHyphenatedUpper(string camelCase) //ironic member variable name
+        {
+            if (string.IsNullOrEmpty(camelCase))
+            {
+                return camelCase;
+            }
+            var sb = new StringBuilder(camelCase.Length + 3);
+            sb.Append(char.ToUpperInvariant(camelCase[0])); // ToUpper in order to handle pascal case as well
+            for (int i=1; i<camelCase.Length; i++)
+            {
+                char currentLetter = camelCase[i];
+                if (char.IsUpper(currentLetter))
+                {
+                    sb.Append('-');
+                    sb.Append(currentLetter);
+                }
+                else
+                {
+                    sb.Append(char.ToUpperInvariant(currentLetter));
+                }
+            }
+            return sb.ToString();
         }
 
         public override object Deserialize(TextReader tr)
