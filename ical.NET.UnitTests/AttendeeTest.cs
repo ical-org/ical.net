@@ -6,7 +6,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
-namespace ical.Net.UnitTests
+namespace Ical.Net.UnitTests
 {
     [TestFixture]
     public class AttendeeTest

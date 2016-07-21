@@ -7,7 +7,7 @@ using Ical.Net.Interfaces.DataTypes;
 
 using NUnit.Framework;
 
-namespace ical.Net.UnitTests
+namespace Ical.Net.UnitTests
 {
     [TestFixture]
     public class AlarmTest

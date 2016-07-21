@@ -4,7 +4,7 @@ using Ical.Net.ExtensionMethods;
 using Ical.Net.Interfaces;
 using NUnit.Framework;
 
-namespace ical.Net.UnitTests
+namespace Ical.Net.UnitTests
 {
     [TestFixture]
     public class EventTest

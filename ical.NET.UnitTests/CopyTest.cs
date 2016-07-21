@@ -6,7 +6,7 @@ using Ical.Net.Interfaces;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
-namespace ical.Net.UnitTests
+namespace Ical.Net.UnitTests
 {
     [TestFixture]
     public class CopyTest

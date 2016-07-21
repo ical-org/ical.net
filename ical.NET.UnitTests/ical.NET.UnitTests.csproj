@@ -88,6 +88,7 @@
     <Compile Include="RecurrenceTest.cs" />
     <Compile Include="SerializationTests.cs" />
     <Compile Include="SymmetricSerializationTests.cs" />
+    <Compile Include="TextUtilTests.cs" />
     <Compile Include="TodoTest.cs" />
     <None Include="packages.config" />
   </ItemGroup>

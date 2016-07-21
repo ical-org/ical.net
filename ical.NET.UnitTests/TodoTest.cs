@@ -7,7 +7,7 @@ using Ical.Net.DataTypes;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
-namespace ical.Net.UnitTests
+namespace Ical.Net.UnitTests
 {
     [TestFixture]
     public class TodoTest

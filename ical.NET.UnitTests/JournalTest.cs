@@ -4,7 +4,7 @@ using System.Linq;
 using Ical.Net;
 using NUnit.Framework;
 
-namespace ical.Net.UnitTests
+namespace Ical.Net.UnitTests
 {
     [TestFixture]
     public class JournalTest

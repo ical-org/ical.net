@@ -5,7 +5,7 @@ using Ical.Net;
 using Ical.Net.Interfaces;
 using NUnit.Framework;
 
-namespace ical.Net.UnitTests
+namespace Ical.Net.UnitTests
 {
     public class ConcurrentDeserializationTests
     {

@@ -12,7 +12,7 @@ using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 
-namespace ical.Net.UnitTests
+namespace Ical.Net.UnitTests
 {
     public class SymmetricSerializationTests
     {
