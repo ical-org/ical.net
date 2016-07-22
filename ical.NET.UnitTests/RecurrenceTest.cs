@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Ical.Net;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Exceptions;
@@ -16,7 +15,6 @@ using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
 using Ical.Net.Utility;
 using NUnit.Framework;
-using Calendar = Ical.Net.Calendar;
 
 namespace Ical.Net.UnitTests
 {

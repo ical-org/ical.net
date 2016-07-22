@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using Ical.Net;
 using NUnit.Framework;
 
 namespace Ical.Net.UnitTests

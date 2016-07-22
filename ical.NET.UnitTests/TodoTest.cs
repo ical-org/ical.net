@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Ical.Net;
 using Ical.Net.DataTypes;
 
 using NUnit.Framework;

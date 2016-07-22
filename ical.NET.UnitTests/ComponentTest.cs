@@ -1,4 +1,3 @@
-using Ical.Net;
 using NUnit.Framework;
 
 namespace Ical.Net.UnitTests

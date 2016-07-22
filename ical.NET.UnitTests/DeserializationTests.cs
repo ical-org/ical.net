@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using antlr;
-using Ical.Net;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
