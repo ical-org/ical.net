@@ -164,7 +164,7 @@ namespace Ical.Net.UnitTests
                 Version = "2.0"
             };
 
-            const string exampleTz = "New Zealand Standard Time"; // can change this but should SupportDaylightTime
+            const string exampleTz = "New Zealand Standard Time";
             var tzi = TimeZoneInfo.FindSystemTimeZoneById(exampleTz);
             var timezone = VTimeZone.FromSystemTimeZone(tzi);
             cal.AddTimeZone(timezone);

@@ -151,6 +151,10 @@ namespace Ical.Net.UnitTests
                 .SetName("Moderate string fails");
             yield return new TestCaseData("This is a song that never ends. It just goes on and on my friends. Some people started singing it not...")
                 .SetName("Much longer string");
+
+            const string jsonSerialized =
+                "{\"TheList\":[\"Foo\",\"Bar\",\"Baz\",\"Foo\",\"Bar\",\"Baz\",\"Foo\",\"Bar\",\"Baz\",\"Foo\",\"Bar\",\"Baz\",\"Foo\",\"Bar\",\"Baz\",\"Foo\",\"Bar\",\"Baz\"],\"TheNumber\":42,\"TheSet\":[\"Foo\",\"Bar\",\"Baz\"]}";
+            yield return new TestCaseData(jsonSerialized).SetName("JSON-serialized text");
         }
     }
 }
