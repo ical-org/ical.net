@@ -600,5 +600,26 @@ END:VCALENDAR
             Assert.AreEqual(110, iCal.Todos["4836c236-1e75-11db-835f-a024e2a6131f"].Properties["LOCATION"].Line);
             Assert.AreEqual(123, iCal.Todos["2df60496-1e73-11db-ba96-e3cfe6793b5f"].Properties["UID"].Line);
         }
+
+        [Test, Category("Deserialization")]
+        public void TimeZoneDeserialization()
+        {
+            var cal = Calendar.LoadFromStream(new StringReader(IcsFiles.TimeZone1))[0];
+
+            ITimeZone tz = cal.TimeZones[0];
+            Assert.AreEqual("US-Eastern", tz.TzId);
+
+            ICalendarComponent std = tz.Children.FirstOrDefault(c => c.Name == "STANDARD") as ICalendarComponent;
+            Assert.IsNotNull(std, "Could not find STANDARD child on VTIMEZONE");
+            var rdate = new DateTime(1997, 10, 26, 2, 0, 0);
+            TimeZoneTest.AssertTimezoneProperties(std, new Dictionary<string, object>
+            {
+                ["DTSTART"] = rdate,
+                ["TZOFFSETFROM"] = new TimeSpan(-4, 0, 0),
+                ["TZOFFSETTO"] = new TimeSpan(-5, 0, 0),
+                ["TZNAME"] = "EST",
+                ["RDATE"] = new List<IPeriod>() { new Period { StartTime = new CalDateTime(rdate) } }
+            });
+        }
     }
 }
