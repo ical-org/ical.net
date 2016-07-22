@@ -19,25 +19,31 @@ namespace Ical.Net.UnitTests
         private static readonly DateTime _later = _nowTime.AddHours(1);
         private static CalendarSerializer GetNewSerializer() => new CalendarSerializer(new SerializationContext());
         private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
-        private static Event GetSimpleEvent() => new Event {DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later),Duration = _later - _nowTime};
+        private static Event GetSimpleEvent() => new Event {DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime};
         private static ICalendar UnserializeCalendar(string s) => Calendar.LoadFromStream(new StringReader(s)).Single();
 
-        [Test]
-        public void SimpleEvent_Test()
+        [Test, TestCaseSource(nameof(Event_TestCases))]
+        public void Event_Tests(Calendar iCalendar)
         {
-            //This is example from the readme
-            var now = DateTime.Now;
-            var later = now.AddHours(1);
+            var originalEvent = iCalendar.Events.Single();
 
-            var rrule = new RecurrencePattern(FrequencyType.Daily, 1)
-            {
-                Count = 5
-            };
+            var serializedCalendar = SerializeToString(iCalendar);
+            var unserializedCalendar = UnserializeCalendar(serializedCalendar);
 
+            var onlyEvent = unserializedCalendar.Events.Single();
+
+            Assert.AreEqual(originalEvent.GetHashCode(), onlyEvent.GetHashCode());
+            Assert.AreEqual(originalEvent, onlyEvent);
+            Assert.AreEqual(iCalendar, unserializedCalendar);
+        }
+
+        public static IEnumerable<ITestCaseData> Event_TestCases()
+        {
+            var rrule = new RecurrencePattern(FrequencyType.Daily, 1) { Count = 5};
             var e = new Event
             {
-                DtStart = new CalDateTime(now),
-                DtEnd = new CalDateTime(later),
+                DtStart = new CalDateTime(_nowTime),
+                DtEnd = new CalDateTime(_later),
                 Duration = TimeSpan.FromHours(1),
                 RecurrenceRules = new List<IRecurrencePattern> { rrule },
             };
@@ -45,17 +51,13 @@ namespace Ical.Net.UnitTests
             var calendar = new Calendar();
             calendar.Events.Add(e);
 
-            var serializer = new CalendarSerializer(new SerializationContext());
-            var serializedCalendar = serializer.SerializeToString(calendar);
+            yield return new TestCaseData(calendar).SetName("readme.md example");
+            e = GetSimpleEvent();
+            e.Description = "This is an event description that is really rather long. Hopefully the line breaks work now, and it's serialized properly.";
 
-            var unserializedCalendarCollection = Calendar.LoadFromStream(new StringReader(serializedCalendar));
-
-            var onlyCalendar = unserializedCalendarCollection.Single();
-            var onlyEvent = onlyCalendar.Events.Single();
-
-            Assert.AreEqual(e.GetHashCode(), onlyEvent.GetHashCode());
-            Assert.AreEqual(e, onlyEvent);
-            Assert.AreEqual(calendar, onlyCalendar);
+            calendar = new Calendar();
+            calendar.Events.Add(e);
+            yield return new TestCaseData(calendar).SetName("Description serialization isn't working properly. Issue #60");
         }
 
         [Test]
