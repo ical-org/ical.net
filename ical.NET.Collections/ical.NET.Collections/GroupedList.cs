@@ -35,14 +35,6 @@ namespace ical.NET.Collections
             var list = new MultiLinkedList<TItem>();
             _dictionary[group] = list;
 
-            //if (_lists.Count > 0)
-            //{
-            //    // Attach the list to our list chain
-            //    var previous = _lists[_lists.Count - 1];
-            //    previous.SetNext(list);
-            //    list.SetPrevious(previous);
-            //}
-
             _lists.Add(list);
             return list;
         }

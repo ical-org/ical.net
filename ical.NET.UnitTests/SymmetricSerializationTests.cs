@@ -97,19 +97,18 @@ namespace Ical.Net.UnitTests
 
         public static IEnumerable<ITestCaseData> AttendeeSerialization_TestCases()
         {
-            //TODO: Fix this. It appears to be non-deterministic. E.g. you can have one of the Delegated* properties uncommented, and it works, but not both
             var complex1 = new Attendee("MAILTO:mary@example.com")
             {
                 CommonName = "Mary Accepted",
                 Rsvp = true,
                 ParticipationStatus = EventParticipationStatus.Accepted,
-                //SentBy = new Uri("mailto:someone@example.com"), //Broken
-                //DirectoryEntry = new Uri("ldap://example.com:6666/o=eDABC Industries,c=3DUS??(cn=3DBMary Accepted)"), //Broken
-                //Type = "CuType",
-                //Members = new List<string> { "Group A", "Group B" },
-                //Role = ParticipationRole.Chair,
-                //DelegatedTo = new List<string> { "Peon A", "Peon B" },
-                //DelegatedFrom = new List<string> { "Bigwig A", "Bigwig B" }
+                SentBy = new Uri("mailto:someone@example.com"), //Broken
+                DirectoryEntry = new Uri("ldap://example.com:6666/o=eDABC Industries,c=3DUS??(cn=3DBMary Accepted)"), //Broken
+                Type = "CuType",
+                Members = new List<string> { "Group A", "Group B" },
+                Role = ParticipationRole.Chair,
+                DelegatedTo = new List<string> { "Peon A", "Peon B" },
+                DelegatedFrom = new List<string> { "Bigwig A", "Bigwig B" }
             };
             yield return new TestCaseData(complex1).SetName("Complex attendee");
 
