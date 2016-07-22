@@ -65,6 +65,8 @@ namespace Ical.Net.General
             e.First.Parent = this;
         }
 
+        //Is this a robust implementation? A calendar object has a Name, Parent, Children, Line, Column, but we call them equal if only the Name property is equal
+        //This is probably to facilitate testing, but the tests can check for equality of the name property
         protected bool Equals(CalendarObject other) => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
 
         public override bool Equals(object obj)
