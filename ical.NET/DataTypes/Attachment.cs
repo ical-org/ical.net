@@ -1,8 +1,10 @@
 using System;
+using System.Linq;
 using System.Text;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using Utility;
 
 namespace Ical.Net.DataTypes
 {
@@ -55,7 +57,7 @@ namespace Ical.Net.DataTypes
 
         protected bool Equals(Attachment other)
         {
-            return Equals(Uri, other.Uri) && Equals(Data, other.Data) && Equals(ValueEncoding, other.ValueEncoding);
+            return Equals(Uri, other.Uri) && ValueEncoding.Equals(other.ValueEncoding) && Data.SequenceEqual(other.Data);
         }
 
         public override bool Equals(object obj)
@@ -71,7 +73,7 @@ namespace Ical.Net.DataTypes
             unchecked
             {
                 var hashCode = Uri?.GetHashCode() ?? 0;
-                hashCode = (hashCode * 397) ^ (Data?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (CollectionHelpers.GetHashCode(Data));
                 hashCode = (hashCode * 397) ^ (ValueEncoding?.GetHashCode() ?? 0);
                 return hashCode;
             }

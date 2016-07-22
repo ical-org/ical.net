@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Ical.Net;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Exceptions;
@@ -13,12 +12,11 @@ using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
-using Ical.Net.UnitTests;
+
 using Ical.Net.Utility;
 using NUnit.Framework;
-using Calendar = Ical.Net.Calendar;
 
-namespace ical.NET.UnitTests
+namespace Ical.Net.UnitTests
 {
     [TestFixture]
     public class RecurrenceTest

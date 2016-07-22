@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using Ical.Net.Evaluation;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
+using Utility;
 
 namespace Ical.Net
 {
@@ -277,6 +278,45 @@ namespace Ical.Net
             else if (DtStart == null && Duration != default(TimeSpan) && DtEnd != null)
             {
                 DtStart = DtEnd.Subtract(Duration);
+            }
+        }
+
+        protected bool Equals(Event other)
+        {
+            var resourcesSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            resourcesSet.UnionWith(Resources);
+
+            return Equals(DtStart, other.DtStart)
+                && Equals(DtEnd, other.DtEnd)
+                && string.Equals(Location, other.Location, StringComparison.OrdinalIgnoreCase)
+                && resourcesSet.SetEquals(other.Resources)
+                && Status.Equals(other.Status)
+                && IsActive() == other.IsActive()
+                && Transparency.Equals(other.Transparency)
+                && EvaluationIncludesReferenceDate == other.EvaluationIncludesReferenceDate
+                && Attachments.SequenceEqual(other.Attachments);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Event)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = DtStart?.GetHashCode() ?? 0;
+                hashCode = (hashCode * 397) ^ (DtEnd?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (Location?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ Status.GetHashCode();
+                hashCode = (hashCode * 397) ^ IsActive().GetHashCode();
+                hashCode = (hashCode * 397) ^ Transparency.GetHashCode();
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Resources);
+                return hashCode;
             }
         }
     }

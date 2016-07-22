@@ -235,6 +235,7 @@
     <Compile Include="Serialization\SerializationContext.cs" />
     <Compile Include="Serialization\SerializationSettings.cs" />
     <Compile Include="Utility\AssociationUtil.cs" />
+    <Compile Include="Utility\CollectionHelpers.cs" />
     <Compile Include="Utility\DateUtil.cs" />
     <Compile Include="Utility\RecurrenceUtil.cs" />
     <Compile Include="Utility\SerializationUtil.cs" />

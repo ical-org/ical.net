@@ -27,13 +27,86 @@
         public const string Standard = "STANDARD";
     }
 
-    public class ParticipationStatus
+    public static class EventParticipationStatus
     {
+        public const string ParticipationStatus = "PARTSTAT";
+
+        /// <summary> Event needs action </summary>
         public const string NeedsAction = "NEEDS-ACTION";
+        /// <summary> Event accepted </summary>
         public const string Accepted = "ACCEPTED";
+        /// <summary> Event declined </summary>
         public const string Declined = "DECLINED";
+        /// <summary> Event tentatively accepted </summary>
         public const string Tentative = "TENTATIVE";
+        /// <summary> Event delegated </summary>
         public const string Delegated = "DELEGATED";
+
+        public static string ParamName => ParticipationStatus;
+        public static string Default => NeedsAction;
+    }
+
+    public static class ToDoParticipationStatus
+    {
+        public const string ParticipationStatus = "PARTSTAT";
+
+        /// <summary> To-do needs action </summary>
+        public const string NeedsAction = "NEEDS-ACTION";
+        /// <summary> To-do accepted </summary>
+        public const string Accepted = "ACCEPTED";
+        /// <summary> To-do declined </summary>
+        public const string Declined = "DECLINED";
+        /// <summary> To-do tentatively accepted </summary>
+        public const string Tentative = "TENTATIVE";
+        /// <summary> To-do delegated </summary>
+        public const string Delegated = "DELEGATED";
+        /// <summary> To-do completed </summary>
+        public const string Completed = "COMPLETED";
+        /// <summary> To-do in process </summary>
+        public const string InProcess = "IN-PROCESS";
+
+        public static string ParamName => ParticipationStatus;
+        public static string Default => NeedsAction;
+    }
+
+    public static class JournalParticipationStatus
+    {
+        public const string ParticipationStatus = "PARTSTAT";
+
+        /// <summary> Event needs action </summary>
+        public const string NeedsAction = "NEEDS-ACTION";
+        /// <summary> Event accepted </summary>
+        public const string Accepted = "ACCEPTED";
+        /// <summary> Event declined </summary>
+        public const string Declined = "DECLINED";
+
+        public static string ParamName => ParticipationStatus;
+        public static string Default => NeedsAction;
+    }
+
+    public static class ParticipationRole
+    {
+        public const string Role = "ROLE";
+
+        /// <summary> Indicates the chair of the calendar entity </summary>
+        public const string Chair = "CHAIR";
+
+        /// <summary> Indicates a participant whose participation is required </summary>
+        public const string RequiredParticipant = "REQ-PARTICIPANT";
+
+        /// <summary> Indicates a participant whose participation is optional </summary>
+        public const string OptionalParticipant = "OPT-PARTICIPANT";
+
+        /// <summary> Indicates a participant who is copied for information purposes only </summary>
+        public const string NonParticipant = "NON-PARTICIPANT";
+
+        public static string Default => RequiredParticipant;
+        public static string ParamName => Role;
+    }
+
+    public class SerializationConstants
+    {
+        public const string LineBreak = "\r\n";
     }
 
     /// <summary>
