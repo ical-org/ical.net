@@ -11,20 +11,9 @@ namespace Ical.Net.DataTypes
     /// </summary>
     public class WeekDay : EncodableDataType, IWeekDay
     {
-        private int _mNum = int.MinValue;
-        private DayOfWeek _mDayOfWeek;
+        public virtual int Offset { get; set; } = int.MinValue;
 
-        public virtual int Offset
-        {
-            get { return _mNum; }
-            set { _mNum = value; }
-        }
-
-        public virtual DayOfWeek DayOfWeek
-        {
-            get { return _mDayOfWeek; }
-            set { _mDayOfWeek = value; }
-        }
+        public virtual DayOfWeek DayOfWeek { get; set; }
 
         public WeekDay()
         {
@@ -51,12 +40,13 @@ namespace Ical.Net.DataTypes
 
         public override bool Equals(object obj)
         {
-            if (obj is WeekDay)
+            if (!(obj is WeekDay))
             {
-                var ds = (WeekDay) obj;
-                return ds.Offset == Offset && ds.DayOfWeek == DayOfWeek;
+                return false;
             }
-            return false;
+
+            var ds = (WeekDay) obj;
+            return ds.Offset == Offset && ds.DayOfWeek == DayOfWeek;
         }
 
         public override int GetHashCode()

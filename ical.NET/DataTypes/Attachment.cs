@@ -9,13 +9,31 @@ using Utility;
 namespace Ical.Net.DataTypes
 {
     /// <summary>
-    /// A class to handle attachments, or URIs as attachments, within an iCalendar. 
+    /// Attachments represent the ATTACH element that can be associated with Alarms, Journals, Todos, and Events. There are two kinds of attachments:
+    /// 1) A string representing a URI which is typically human-readable, OR
+    /// 2) A base64-encoded string that can represent anything
     /// </summary>
     public class Attachment : EncodableDataType, IAttachment
     {
         public virtual Uri Uri { get; set; }
         public virtual byte[] Data { get; set; }
-        public virtual Encoding ValueEncoding { get; set; }
+
+        private Encoding _valueEncoding = System.Text.Encoding.UTF8;
+        public virtual Encoding ValueEncoding
+        {
+            get
+            {
+                return _valueEncoding;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    return;
+                }
+                _valueEncoding = value;
+            }
+        }
 
         public virtual string FormatType
         {
@@ -57,7 +75,10 @@ namespace Ical.Net.DataTypes
 
         protected bool Equals(Attachment other)
         {
-            return Equals(Uri, other.Uri) && ValueEncoding.Equals(other.ValueEncoding) && Data.SequenceEqual(other.Data);
+            var firstPart = Equals(Uri, other.Uri) && ValueEncoding.Equals(other.ValueEncoding);
+            return Data == null
+                ? firstPart
+                : firstPart && Data.SequenceEqual(other.Data);
         }
 
         public override bool Equals(object obj)
