@@ -13,7 +13,7 @@ namespace ical.NET.UnitTests
     [TestFixture]
     public class TimeZoneTest
     {
-        internal static readonly TimeZoneInfo _customTimeZone;
+        internal static readonly System.TimeZoneInfo _customTimeZone;
         static TimeZoneTest()
         {
             //sunday on the second week of March
@@ -26,7 +26,7 @@ namespace ical.NET.UnitTests
                                                                        new TimeSpan(1, 0, 0), transitionRuleStart, transitionRuleEnd);
             const string custName = "example timezone";
             //standard time is 4 hours before UTC
-            _customTimeZone = TimeZoneInfo.CreateCustomTimeZone(custName, new TimeSpan(-4,0,0), custName, custName, "daylight saving " + custName,
+            _customTimeZone = TimeZoneInfo.CreateCustomTimeZone(custName, new TimeSpan(-4,0,0), custName, "standard " + custName, "daylight saving " + custName,
                 new[] { adjustment });
 
         }
@@ -73,21 +73,23 @@ namespace ical.NET.UnitTests
             ICalendarComponent std;
             if (adjustments.TryGetValue("STANDARD", out std))
             {
+                Assert.IsInstanceOf<IDateTime>(std.Properties["DTSTART"].Value);
                 AssertTimezoneProperties(std, new Dictionary<string, object>
                 {
-                    ["DTSTART"] = adjust.DateStart,
                     ["TZOFFSETFROM"] = _customTimeZone.BaseUtcOffset + adjust.DaylightDelta,
                     ["TZOFFSETTO"] = _customTimeZone.BaseUtcOffset,
                 });
                 //rrule is not mandated by the spec, but given the timezoneinfo we would expect:
                 //(comment out as necessary)
 
-                var rrule = std.Properties["RRULE"] as RecurrencePattern;
+                var rrule = std.Properties["RRULE"].Value as RecurrencePattern;
                 Assert.IsNotNull(rrule);
                 var compareTo = new RecurrencePattern(FrequencyType.Yearly, 1)
                 {
                     ByDay = new List<IWeekDay> { new WeekDay(DayOfWeek.Sunday, FrequencyOccurrence.First) },
-                    ByMonth = new List<int> { 11 }
+                    ByMonth = new List<int> { 11 },
+                    ByHour = new List<int> { 2 },
+                    ByMinute = new List<int> { 0 }
                 };
                 Assert.AreEqual(compareTo,rrule,"standard RRULE");
             }
@@ -97,17 +99,18 @@ namespace ical.NET.UnitTests
             {
                 AssertTimezoneProperties(daylight, new Dictionary<string, object>
                 {
-                    ["DTSTART"] = adjust.DateStart,
                     ["TZOFFSETFROM"] = _customTimeZone.BaseUtcOffset,
                     ["TZOFFSETTO"] = _customTimeZone.BaseUtcOffset + adjust.DaylightDelta,
                 });
 
-                var rrule = std.Properties["RRULE"] as RecurrencePattern;
+                var rrule = daylight.Properties["RRULE"].Value as RecurrencePattern;
                 Assert.IsNotNull(rrule);
                 var compareTo = new RecurrencePattern(FrequencyType.Yearly, 1)
                 {
                     ByDay = new List<IWeekDay> { new WeekDay(DayOfWeek.Sunday, FrequencyOccurrence.Second) },
-                    ByMonth = new List<int> { 3 }
+                    ByMonth = new List<int> { 3 },
+                    ByHour = new List<int> { 2 },
+                    ByMinute = new List<int> { 0 }
                 };
                 Assert.AreEqual(compareTo, rrule, "standard RRULE");
             }

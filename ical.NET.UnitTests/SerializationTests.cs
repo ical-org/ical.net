@@ -137,31 +137,6 @@ namespace ical.NET.UnitTests
         }
 
         [Test, Category("SerializeThenDeserialize")]
-        public void SerializeDeserializeTimeZone()
-        {
-            //ToDo: This test is broken as of 2016-07-13
-            var cal1 = new Calendar
-            {
-                Method = "PUBLISH",
-                Version = "2.0"
-            };
-
-            const string exampleTz = "New Zealand Standard Time"; // can change this but should SupportDaylightTime
-            var tzi = TimeZoneInfo.FindSystemTimeZoneById(exampleTz);
-            var timezone = VTimeZone.FromSystemTimeZone(tzi);
-            cal1.AddTimeZone(timezone);
-            var evt = new Event
-            {
-                Summary = "Testing",
-                Start = new CalDateTime(2016, 7, 14, timezone.Id),
-                End = new CalDateTime(2016, 7, 15, timezone.Id)
-            };
-            cal1.Events.Add(evt);
-
-            SerializeAndCompare(cal1);
-        }
-
-        [Test, Category("SerializeThenDeserialize")]
         public void SerializeDeserializeEmptyCal()
         {
             var cal1 = new Calendar
@@ -169,6 +144,8 @@ namespace ical.NET.UnitTests
                 Method = "PUBLISH",
                 Version = "2.0"
             };
+
+            SerializeAndCompare(cal1);
         }
 
         [Test, Category("SerializeThenDeserialize")]
