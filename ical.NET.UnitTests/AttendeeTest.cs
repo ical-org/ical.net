@@ -4,6 +4,7 @@ using Ical.Net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Ical.Net.UnitTests
 {
@@ -79,15 +80,17 @@ namespace Ical.Net.UnitTests
         [Test, Category("Attendee")]
         public void Remove1Attendee()
         {
-            //ToDo: This test is broken as of 2016-07-13
             var evt = VEventFactory();
             Assert.AreEqual(0, evt.Attendees.Count);
 
-            var attendee = _attendees[0];
+            var attendee = _attendees.First();
             evt.Attendees.Add(attendee);
             Assert.AreEqual(1, evt.Attendees.Count);
 
             evt.Attendees.Remove(attendee);
+            Assert.AreEqual(0, evt.Attendees.Count);
+
+            evt.Attendees.Remove(_attendees.Last());
             Assert.AreEqual(0, evt.Attendees.Count);
         }
     }

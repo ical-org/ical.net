@@ -29,16 +29,11 @@ namespace Ical.Net.General
     public class CalendarProperty : CalendarObject, ICalendarProperty
     {
         private IList<object> _values = new List<object>(128);
-        private ICalendarParameterCollection _parameters = new CalendarParameterList();
 
         /// <summary>
         /// Returns a list of parameters that are associated with the iCalendar object.
         /// </summary>
-        public virtual ICalendarParameterCollection Parameters
-        {
-            get { return _parameters; }
-            protected set { _parameters = value; }
-        }
+        public virtual ICalendarParameterCollection Parameters { get; protected set; } = new CalendarParameterList();
 
         public CalendarProperty() {}
 
@@ -150,6 +145,13 @@ namespace Ical.Net.General
             _values.Add(value);
         }
 
-        public virtual void RemoveValue(object value) { }
+        public virtual void RemoveValue(object value)
+        {
+            if (value == null)
+            {
+                return;
+            }
+            _values.Remove(value);
+        }
     }
 }
