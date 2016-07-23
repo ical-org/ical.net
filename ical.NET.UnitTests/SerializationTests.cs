@@ -221,7 +221,6 @@ namespace ical.NET.UnitTests
         [Test, Category("SerializeThenDeserialize")]
         public void SerializeDeserializeEvtAttendees()
         {
-            //ToDo: This test is broken as of 2016-07-13
             var cal = new Calendar
             {
                 Method = "REQUEST",
@@ -241,7 +240,6 @@ namespace ical.NET.UnitTests
         [Test, Category("SerializeThenDeserialize")]
         public void SerializeDeserializeEvtCategories()
         {
-            //ToDo: This test is broken as of 2016-07-13
             var cal = new Calendar
             {
                 Method = "REQUEST",

@@ -30,37 +30,10 @@ namespace ical.NET.UnitTests
 
         private const string _requiredParticipant = "REQ-PARTICIPANT"; //this string may be added to the api in the future
         #endregion //HelperMethods
-        //this has been superseeded by specific tests of timezone
-        /*
-        [Test, Category("SpecValidation")]
-        public async Task TimeZoneValidates()
-        {
-            //ToDo: This test is broken as of 2016-07-13
-            var cal = new Calendar
-            {
-                Method = "PUBLISH",
-                Version = "2.0"
-            };
-
-            const string exampleTz = "New Zealand Standard Time"; // can change this but should SupportDaylightTime
-            var tzi = TimeZoneInfo.FindSystemTimeZoneById(exampleTz);
-            var timezone = VTimeZone.FromSystemTimeZone(tzi);
-            cal.AddTimeZone(timezone);
-            var evt = new Event
-            {
-                Summary = "Testing",
-                Start = new CalDateTime(2016, 7, 14, timezone.Id),
-                End = new CalDateTime(2016, 7, 15, timezone.Id)
-            };
-            cal.Events.Add(evt);
-            await onlineValidateCal(cal);
-        }
-        */
 
         [Test, Category("SpecValidation")]
         public async Task KitchenSinkValidates()
         {
-            //ToDo: This test is broken as of 2016-07-13
             var cal = new Calendar
             {
                 Method = "REQUEST",
