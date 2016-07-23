@@ -123,7 +123,7 @@ namespace Ical.Net.UnitTests
         }
 
         [Test, TestCaseSource(nameof(BinaryAttachment_TestCases))]
-        public void BinaryAttachment_Tests(string theString)
+        public void BinaryAttachment_Tests(string theString, string expectedAttachment)
         {
             var asBytes = Encoding.UTF8.GetBytes(theString);
             var attachment = new Attachment
@@ -139,23 +139,35 @@ namespace Ical.Net.UnitTests
 
             var serialized = SerializeToString(calendar);
             var unserialized = UnserializeCalendar(serialized);
+            var unserializedAttachment = unserialized
+                .Events
+                .First()
+                .Attachments
+                .Select(a => Encoding.UTF8.GetString(a.Data))
+                .First();
 
+            Assert.AreEqual(expectedAttachment, unserializedAttachment);
             Assert.AreEqual(calendar.GetHashCode(), unserialized.GetHashCode());
             Assert.AreEqual(calendar, unserialized);
         }
 
         public static IEnumerable<ITestCaseData> BinaryAttachment_TestCases()
         {
-            yield return new TestCaseData("This is a string.")
+            const string shortString = "This is a string.";
+            yield return new TestCaseData(shortString, shortString)
                 .SetName("Short string");
-            yield return new TestCaseData("This is a stringThisThis is a")
-                .SetName("Moderate string fails");
-            yield return new TestCaseData("This is a song that never ends. It just goes on and on my friends. Some people started singing it not...")
+
+            const string mediumString = "This is a stringThisThis is a";
+            yield return new TestCaseData(mediumString, mediumString)
+                .SetName("Moderate string");
+
+            const string longishString = "This is a song that never ends. It just goes on and on my friends. Some people started singing it not...";
+            yield return new TestCaseData(longishString, longishString)
                 .SetName("Much longer string");
 
-            const string jsonSerialized =
+            const string jsonString =
                 "{\"TheList\":[\"Foo\",\"Bar\",\"Baz\",\"Foo\",\"Bar\",\"Baz\",\"Foo\",\"Bar\",\"Baz\",\"Foo\",\"Bar\",\"Baz\",\"Foo\",\"Bar\",\"Baz\",\"Foo\",\"Bar\",\"Baz\"],\"TheNumber\":42,\"TheSet\":[\"Foo\",\"Bar\",\"Baz\"]}";
-            yield return new TestCaseData(jsonSerialized).SetName("JSON-serialized text");
+            yield return new TestCaseData(jsonString, jsonString).SetName("JSON-serialized text");
         }
     }
 }
