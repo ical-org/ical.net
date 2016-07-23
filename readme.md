@@ -13,6 +13,8 @@ The wiki contains several pages of examples of common ical.net usage scenarios.
 * [Simple event with a recurrence](https://github.com/rianjs/ical.net/wiki)
 * [Deserializing an ics file](https://github.com/rianjs/ical.net/wiki/Deserialize-an-ics-file)
 * [Working with attachments](https://github.com/rianjs/ical.net/wiki/Working-with-attachments)
+* [Working with recurring elements](https://github.com/rianjs/ical.net/wiki/Working-with-recurring-elements)
+* [Concurrency scenarios and PLINQ](https://github.com/rianjs/ical.net/wiki/Concurrency-scenarios-and-PLINQ)
 
 ## Contributing
 

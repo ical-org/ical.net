@@ -17,7 +17,23 @@ namespace Ical.Net.DataTypes
     {
         public virtual Uri Uri { get; set; }
         public virtual byte[] Data { get; set; }
-        public virtual Encoding ValueEncoding { get; set; }
+
+        private Encoding _valueEncoding = System.Text.Encoding.UTF8;
+        public virtual Encoding ValueEncoding
+        {
+            get
+            {
+                return _valueEncoding;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    return;
+                }
+                _valueEncoding = value;
+            }
+        }
 
         public virtual string FormatType
         {
@@ -59,7 +75,10 @@ namespace Ical.Net.DataTypes
 
         protected bool Equals(Attachment other)
         {
-            return Equals(Uri, other.Uri) && ValueEncoding.Equals(other.ValueEncoding) && Data.SequenceEqual(other.Data);
+            var firstPart = Equals(Uri, other.Uri) && ValueEncoding.Equals(other.ValueEncoding);
+            return Data == null
+                ? firstPart
+                : firstPart && Data.SequenceEqual(other.Data);
         }
 
         public override bool Equals(object obj)

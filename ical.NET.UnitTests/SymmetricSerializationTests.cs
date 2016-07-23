@@ -15,6 +15,8 @@ namespace Ical.Net.UnitTests
 {
     public class SymmetricSerializationTests
     {
+        private const string _ldapUri = "ldap://example.com:6666/o=eDABC Industries,c=3DUS??(cn=3DBMary Accepted)";
+
         private static readonly DateTime _nowTime = DateTime.Now;
         private static readonly DateTime _later = _nowTime.AddHours(1);
         private static CalendarSerializer GetNewSerializer() => new CalendarSerializer(new SerializationContext());
@@ -102,8 +104,8 @@ namespace Ical.Net.UnitTests
                 CommonName = "Mary Accepted",
                 Rsvp = true,
                 ParticipationStatus = EventParticipationStatus.Accepted,
-                SentBy = new Uri("mailto:someone@example.com"), //Broken
-                DirectoryEntry = new Uri("ldap://example.com:6666/o=eDABC Industries,c=3DUS??(cn=3DBMary Accepted)"), //Broken
+                SentBy = new Uri("mailto:someone@example.com"),
+                DirectoryEntry = new Uri(_ldapUri),
                 Type = "CuType",
                 Members = new List<string> { "Group A", "Group B" },
                 Role = ParticipationRole.Chair,
@@ -126,15 +128,11 @@ namespace Ical.Net.UnitTests
         public void BinaryAttachment_Tests(string theString, string expectedAttachment)
         {
             var asBytes = Encoding.UTF8.GetBytes(theString);
-            var attachment = new Attachment
-            {
-                Data = asBytes,
-                ValueEncoding = Encoding.UTF8,
-            };
+            var binaryAttachment = new Attachment(asBytes);
 
             var calendar = new Calendar();
             var vEvent = GetSimpleEvent();
-            vEvent.Attachments = new List<IAttachment> { attachment };
+            vEvent.Attachments = new List<IAttachment> { binaryAttachment };
             calendar.Events.Add(vEvent);
 
             var serialized = SerializeToString(calendar);
@@ -168,6 +166,39 @@ namespace Ical.Net.UnitTests
             const string jsonString =
                 "{\"TheList\":[\"Foo\",\"Bar\",\"Baz\",\"Foo\",\"Bar\",\"Baz\",\"Foo\",\"Bar\",\"Baz\",\"Foo\",\"Bar\",\"Baz\",\"Foo\",\"Bar\",\"Baz\",\"Foo\",\"Bar\",\"Baz\"],\"TheNumber\":42,\"TheSet\":[\"Foo\",\"Bar\",\"Baz\"]}";
             yield return new TestCaseData(jsonString, jsonString).SetName("JSON-serialized text");
+        }
+
+        [Test, TestCaseSource(nameof(UriAttachment_TestCases))]
+        public void UriAttachment_Tests(string uri, Uri expectedUri)
+        {
+            var attachment = new Attachment(uri);
+
+            var calendar = new Calendar();
+            var vEvent = GetSimpleEvent();
+            vEvent.Attachments = new List<IAttachment> { attachment };
+            calendar.Events.Add(vEvent);
+
+            var serialized = SerializeToString(calendar);
+            var unserialized = UnserializeCalendar(serialized);
+            var unserializedUri = unserialized
+                .Events
+                .First()
+                .Attachments
+                .Select(a => a.Uri)
+                .Single();
+
+            Assert.AreEqual(expectedUri, unserializedUri);
+            Assert.AreEqual(calendar.GetHashCode(), unserialized.GetHashCode());
+            Assert.AreEqual(calendar, unserialized);
+        }
+
+        public static IEnumerable<ITestCaseData> UriAttachment_TestCases()
+        {
+            yield return new TestCaseData("http://www.google.com", new Uri("http://www.google.com")).SetName("HTTP URL");
+            yield return new TestCaseData("mailto:rstockbower@gmail.com", new Uri("mailto:rstockbower@gmail.com")).SetName("mailto: URL");
+            yield return new TestCaseData(_ldapUri, new Uri(_ldapUri)).SetName("ldap URL");
+            yield return new TestCaseData("C:\\path\\to\\file.txt", new Uri("C:\\path\\to\\file.txt")).SetName("Local file path URL");
+            yield return new TestCaseData("\\\\uncPath\\to\\resource.txt", new Uri("\\\\uncPath\\to\\resource.txt")).SetName("UNC path URL");
         }
     }
 }

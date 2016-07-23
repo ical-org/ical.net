@@ -76,6 +76,7 @@
     <Compile Include="ComponentTest.cs" />
     <Compile Include="ConcurrentDeserializationTests.cs" />
     <Compile Include="DeserializationTests.cs" />
+    <Compile Include="DocumentationExamples.cs" />
     <Compile Include="EqualityAndHashingTests.cs" />
     <Compile Include="FreeBusyTest.cs" />
     <Compile Include="EventTest.cs" />
