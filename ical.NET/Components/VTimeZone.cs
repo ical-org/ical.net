@@ -17,18 +17,25 @@ namespace Ical.Net
             return FromSystemTimeZone(TimeZoneInfo.Local);
         }
 
-        public static VTimeZone FromLocalTimeZone(DateTime earlistDateTimeToSupport, bool includeHistoricalData)
+        public static VTimeZone FromLocalTimeZone(DateTime earlistDateTimeToSupport)
         {
-            return FromSystemTimeZone(TimeZoneInfo.Local, earlistDateTimeToSupport, includeHistoricalData);
+            return FromSystemTimeZone(TimeZoneInfo.Local, earlistDateTimeToSupport);
         }
 
+        /// <summary>
+        /// This will create a new VTIMEZONE component including STANDARD +/- DAYLIGHT components
+        /// If you do not wish to include this information (required under the spec but archaic)
+        /// simply create a new VTimeZone instance and set the TZID property
+        /// </summary>
+        /// <param name="tzinfo"></param>
+        /// <returns></returns>
         public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo)
         {
             // Support date/times for January 1st of the previous year by default.
-            return FromSystemTimeZone(tzinfo, new DateTime(DateTime.Now.Year, 1, 1).AddYears(-1), false);
+            return FromSystemTimeZone(tzinfo, new DateTime(DateTime.Now.Year, 1, 1).AddYears(-1));
         }
 
-        public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
+        public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport)
         {
             var returnVar = new VTimeZone { TzId = tzinfo.Id };
             returnVar.AddTimeZone(tzinfo, earlistDateTimeToSupport);
