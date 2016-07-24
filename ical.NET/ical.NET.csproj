@@ -185,7 +185,7 @@
     </Compile>
     <Compile Include="DataTypes\iCalDateTime.cs" />
     <Compile Include="Calendar.cs" />
-    <Compile Include="iCalendarCollection.cs">
+    <Compile Include="CalendarCollection.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Interfaces\Components\IAlarm.cs" />

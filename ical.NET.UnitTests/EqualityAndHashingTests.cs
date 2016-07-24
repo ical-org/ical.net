@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 using NUnit.Framework;
@@ -190,6 +191,25 @@ namespace Ical.Net.UnitTests
                 DelegatedFrom = new List<string> { "Bigwig A", "Bigwig B" }
             };
             yield return new TestCaseData(complex1, complex2).SetName("Complex attendee test");
+        }
+
+        [Test, TestCaseSource(nameof(CalendarCollection_TestCases))]
+        public void CalendarCollection_Tests(string rawCalendar)
+        {
+            var a = Calendar.LoadFromStream(new StringReader(IcsFiles.USHolidays)) as CalendarCollection;
+            var b = Calendar.LoadFromStream(new StringReader(IcsFiles.USHolidays)) as CalendarCollection;
+            
+            Assert.IsNotNull(a);
+            Assert.IsNotNull(b);
+            Assert.AreEqual(a.GetHashCode(), b.GetHashCode());
+            Assert.AreEqual(a, b);
+        }
+
+        public static IEnumerable<ITestCaseData> CalendarCollection_TestCases()
+        {
+            yield return new TestCaseData(IcsFiles.Google1).SetName("Google calendar test case");
+            yield return new TestCaseData(IcsFiles.Parse1).SetName("Weird file parse test case");
+            yield return new TestCaseData(IcsFiles.USHolidays).SetName("US Holidays (quite large)");
         }
     }
 }
