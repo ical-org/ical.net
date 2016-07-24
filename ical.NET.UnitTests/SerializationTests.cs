@@ -141,7 +141,7 @@ namespace ical.NET.UnitTests
         {
             var cal1 = new Calendar
             {
-                Method = "PUBLISH",
+                Method = CalendarMethods.Publish,
                 Version = "2.0"
             };
 
@@ -153,7 +153,7 @@ namespace ical.NET.UnitTests
         {
             var cal1 = new Calendar
             {
-                Method = "PUBLISH",
+                Method = CalendarMethods.Publish,
                 Version = "2.0"
             };
 
@@ -223,7 +223,7 @@ namespace ical.NET.UnitTests
         {
             var cal = new Calendar
             {
-                Method = "REQUEST",
+                Method = CalendarMethods.Request,
                 Version = "2.0"
             };
 
@@ -242,7 +242,7 @@ namespace ical.NET.UnitTests
         {
             var cal = new Calendar
             {
-                Method = "REQUEST",
+                Method = CalendarMethods.Request,
                 Version = "2.0"
             };
 
@@ -285,7 +285,7 @@ namespace ical.NET.UnitTests
         {
             var cal = new Calendar
             {
-                Method = "PUBLISH",
+                Method = CalendarMethods.Publish,
                 Version = "2.0"
             };
 
@@ -304,7 +304,7 @@ namespace ical.NET.UnitTests
         {
             var cal = new Calendar
             {
-                Method = "REQUEST",
+                Method = CalendarMethods.Request,
                 Version = "2.0"
             };
 
@@ -326,7 +326,7 @@ namespace ical.NET.UnitTests
         {
             var cal = new Calendar
             {
-                Method = "RESPONSE",
+                Method = CalendarMethods.Reply,
                 Version = "2.0"
             };
             var fb = new FreeBusy

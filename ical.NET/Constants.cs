@@ -260,4 +260,31 @@
         /// </summary>
         public const string DeclineCounter = "DECLINECOUNTER";
     }
+
+    public class AccessClassifications
+    {
+        public const string Public = "PUBLIC";
+        public const string Private = "PRIVATE";
+        public const string Confidential = "CONFIDENTIAL";
+    }
+
+    public class Roles
+    {
+        /// <summary>
+        /// Indicates chair of the calendar entity
+        /// </summary>
+        public const string Chair = "CHAIR";
+        /// <summary>
+        /// Indicates a participant whose participation is required
+        /// </summary>
+        public const string ReqParticipant = "REQ-PARTICIPANT";
+        /// <summary>
+        /// Indicates a participant whose participation is optional
+        /// </summary>
+        public const string OptParticipant = "OPT-PARTICIPANT"; 
+        /// <summary>
+        /// Indicates a participant who is copied for information purposes only
+        /// </summary>
+        public const string NonParticipant = "NON-PARTICIPANT";
+    }
 }

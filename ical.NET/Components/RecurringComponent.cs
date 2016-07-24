@@ -43,6 +43,9 @@ namespace Ical.Net
             set { Properties.Set("CATEGORIES", value); }
         }
 
+        /// <summary>
+        /// valid values: Ical.Net.AccessClassifications
+        /// </summary>
         public virtual string Class
         {
             get { return Properties.Get<string>("CLASS"); }

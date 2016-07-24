@@ -12,6 +12,9 @@ namespace Ical.Net
     /// </summary>    
     public class Alarm : CalendarComponent, IAlarm
     {
+        /// <summary>
+        /// valid values: Ical.Net.AlarmAction
+        /// </summary>
         public virtual AlarmAction Action
         {
             get { return Properties.Get<AlarmAction>("ACTION"); }

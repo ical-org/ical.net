@@ -57,12 +57,17 @@ namespace Ical.Net.DataTypes
             set { Parameters.Set("MEMBER", value); }
         }
 
+        /// <summary>
+        /// valid values: Ical.Net.Roles
+        /// </summary>
         public virtual string Role
         {
             get { return Parameters.Get("ROLE"); }
             set { Parameters.Set("ROLE", value); }
         }
-
+        /// <summary>
+        /// valid values: Ical.Net.ParticipationStatus
+        /// </summary>
         public virtual string ParticipationStatus
         {
             get { return Parameters.Get("PARTSTAT"); }

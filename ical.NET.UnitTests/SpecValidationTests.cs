@@ -36,7 +36,7 @@ namespace ical.NET.UnitTests
         {
             var cal = new Calendar
             {
-                Method = "REQUEST",
+                Method = CalendarMethods.Request,
                 Version = "2.0"
             };
 
