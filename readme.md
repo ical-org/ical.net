@@ -6,6 +6,10 @@ iCal.NET is an iCalendar (RFC2445) class library for .NET. It's aimed at providi
 
 iCal.NET is available as [a nuget package](https://www.nuget.org/packages/Ical.Net).
 
+## Migrating from dday.ical to ical.net
+
+There's a guide just for you: **[Migrating from dday.ical](https://github.com/rianjs/ical.net/wiki/Migrating-from-dday.ical)**
+
 ## Examples
 
 The wiki contains several pages of examples of common ical.net usage scenarios.
@@ -15,6 +19,7 @@ The wiki contains several pages of examples of common ical.net usage scenarios.
 * [Working with attachments](https://github.com/rianjs/ical.net/wiki/Working-with-attachments)
 * [Working with recurring elements](https://github.com/rianjs/ical.net/wiki/Working-with-recurring-elements)
 * [Concurrency scenarios and PLINQ](https://github.com/rianjs/ical.net/wiki/Concurrency-scenarios-and-PLINQ)
+* [Migrating from dday.ical](https://github.com/rianjs/ical.net/wiki/Migrating-from-dday.ical)
 
 ## Contributing
 
