@@ -10,6 +10,7 @@
         <description>An iCalendar (RFC 5545) control library for .NET. A fork and continuation of the original dday.ical library including bug fixes, and many performance enhancements.</description>
         <projectUrl>https://github.com/rianjs/ical.net</projectUrl>
         <licenseUrl>https://github.com/rianjs/ical.net/blob/master/license.md</licenseUrl>
+        <tags>iCal Calendar icalendar ics outlook events rfc-5545 rfc-2445</tags>
     </metadata>
     <files>
         <!-- .NET 4.6 -->
