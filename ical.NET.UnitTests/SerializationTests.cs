@@ -279,10 +279,66 @@ namespace ical.NET.UnitTests
             SerializeAndCompare(cal);
 
         }
-        //todo test event:
-        //-GeographicLocation
-        //-Alarm
 
+        [Test, Category("SerializeThenDeserialize")]
+        public void SerializeDeserializeGeographicLocation()
+        {
+            var cal = new Calendar
+            {
+                Method = "PUBLISH",
+                Version = "2.0"
+            };
+
+            var evt = AttendeeTest.VEventFactory();
+            cal.Events.Add(evt);
+            const string org = "MAILTO:james@example.com";
+            evt.Organizer = new Organizer(org);
+            //Madison Square Gardens Lat/Long!
+            evt.GeographicLocation = new GeographicLocation(40.750505, -73.993439);
+
+            SerializeAndCompare(cal);
+        }
+
+        [Test, Category("SerializeThenDeserialize")]
+        public void SerializeDeserializeEvtAlarm()
+        {
+            var cal = new Calendar
+            {
+                Method = "REQUEST",
+                Version = "2.0"
+            };
+
+            var evt = AttendeeTest.VEventFactory();
+            cal.Events.Add(evt);
+            evt.Alarms.Add(new Alarm
+            {
+                Action = AlarmAction.Display,
+                Summary = "test",
+                Trigger = new Trigger(TimeSpan.FromHours(-1)),
+                Description = "descr."
+            });
+            cal.Events.Add(evt);
+
+            SerializeAndCompare(cal);
+        }
+        [Test, Category("SerializeThenDeserialize")]
+        public void SerializeDeserializeFreeBusyResponse()
+        {
+            var cal = new Calendar
+            {
+                Method = "RESPONSE",
+                Version = "2.0"
+            };
+            var fb = new FreeBusy
+            {
+                Organizer = new Organizer("mailto:maryadams@example.com")
+            };
+            fb.Comments.Add("testing availability");
+            fb.Attendees.Add(new Attendee("mailto:johnsmith@example.com"));
+            fb.Entries.Add(new FreeBusyEntry(new Period(new CalDateTime(2020,11,3,9,0,0), new CalDateTime(2020,11,3,12,0,0)),FreeBusyStatus.Free));
+            fb.Entries.Add(new FreeBusyEntry(new Period(new CalDateTime(2020, 11, 4, 9, 0, 0), new CalDateTime(2020, 11, 4, 12, 0, 0)), FreeBusyStatus.BusyTentative));
+            cal.FreeBusy.Add(fb);
+        }
         [Test, Category("Serialization")]
         public void EnumHyphenation()
         {

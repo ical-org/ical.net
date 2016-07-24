@@ -32,7 +32,7 @@ namespace ical.NET.UnitTests
         #endregion //HelperMethods
 
         [Test, Category("SpecValidation")]
-        public async Task KitchenSinkValidates()
+        public async Task ValidateSpecMultiComponentCalendar()
         {
             var cal = new Calendar
             {
@@ -46,15 +46,16 @@ namespace ical.NET.UnitTests
             var evt = new Event
             {
                 Class = "PRIVATE",
-                Created = new CalDateTime(2010, 3, 25, 12, 53, 35, timezone.Id),
-                DtStamp = new CalDateTime(2010, 3, 25, 12, 53, 35),
-                LastModified = new CalDateTime(DateTime.SpecifyKind(new DateTime(2010, 3, 27, 13, 53, 35), DateTimeKind.Utc)),
+                //as per spec the following 3 dates must be UTC
+                Created = new CalDateTime(new DateTime(2010, 3, 25, 12, 53, 35,DateTimeKind.Utc)),
+                DtStamp = new CalDateTime(new DateTime(2010, 3, 25, 12, 53, 35,DateTimeKind.Utc)), 
+                LastModified = new CalDateTime(new DateTime(2010, 3, 27, 13, 53, 35, DateTimeKind.Utc)),
                 Sequence = 0,
                 Uid = "42f58d4f-847e-46f8-9f4a-ce52697682cf",
                 Priority = 5,
                 Location = "here",
                 Summary = "test",
-                DtStart = new CalDateTime(2012, 3, 25, 12, 50, 00),
+                DtStart = new CalDateTime(2012, 3, 25, 12, 50, 00, timezone.TzId),
                 DtEnd = new CalDateTime(2012, 3, 25, 13, 10, 00),
                 Transparency = TransparencyType.Opaque,
                 Status = EventStatus.Confirmed,
@@ -68,7 +69,7 @@ namespace ical.NET.UnitTests
                 ParticipationStatus = ParticipationStatus.Tentative
             });
 
-            var attendee = new Attendee("MAILTO:mary@example.com")
+            var attendee2 = new Attendee("MAILTO:mary@example.com")
             {
                 CommonName = "Mary Mary",
                 Role = _requiredParticipant,
@@ -77,10 +78,10 @@ namespace ical.NET.UnitTests
                 //DelegatedFrom = new List<string>() { "mailto:immud@example.com" },
                 //Members = new List<string>() { "mailto:DEV-GROUP@example.com" }
             };
-            attendee.DelegatedFrom.Add("mailto:immud@example.com");
-            attendee.Members.Add("mailto:DEV-GROUP@example.com");
+            attendee2.DelegatedFrom.Add("mailto:immud@example.com");
+            attendee2.Members.Add("mailto:DEV-GROUP@example.com");
 
-            evt.Attendees.Add(attendee);
+            evt.Attendees.Add(attendee2);
 
             evt.Alarms.Add(new Alarm
             {
@@ -90,6 +91,18 @@ namespace ical.NET.UnitTests
                 Description = "descr."
             });
             cal.Events.Add(evt);
+
+            /*
+             * http://severinghaus.org/projects/icv/ states the FreeBusy component is not applicable to this type of calendar
+            var fb = new FreeBusy
+            {
+                DtStart = new CalDateTime(2019, 3, 2),
+                DtEnd = new CalDateTime(2019, 4, 2),
+                Organizer = evt.Organizer
+            };
+            fb.Attendees.Add(new Attendee("mailto:johnsmith@example.com"));
+            cal.FreeBusy.Add(fb);
+            */
 
             await onlineValidateCal(cal);
         }
