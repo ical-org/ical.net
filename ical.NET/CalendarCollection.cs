@@ -5,6 +5,7 @@ using Ical.Net.DataTypes;
 using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
+using Utility;
 
 namespace Ical.Net
 {
@@ -120,6 +121,24 @@ namespace Ical.Net
         public IFreeBusy GetFreeBusy(IOrganizer organizer, IAttendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive)
         {
             return this.Aggregate<ICalendar, IFreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(organizer, contacts, fromInclusive, toExclusive)));
+        }
+
+        public override int GetHashCode()
+        {
+            return CollectionHelpers.GetHashCode(this);
+        }
+
+        protected bool Equals(CalendarCollection obj)
+        {
+            return this.SequenceEqual(obj);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((Event)obj);
         }
     }
 }
