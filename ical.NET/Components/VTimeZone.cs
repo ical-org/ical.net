@@ -31,7 +31,7 @@ namespace Ical.Net
         public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo)
         {
             // Support date/times for January 1st of the previous year by default.
-            return FromSystemTimeZone(tzinfo, new DateTime(DateTime.Now.Year, 1, 1).AddYears(-1));
+            return FromSystemTimeZone(tzinfo, new DateTime(DateTime.UtcNow.Year, 1, 1).AddYears(-1));
         }
 
         public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport)

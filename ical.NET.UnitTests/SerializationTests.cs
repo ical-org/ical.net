@@ -160,8 +160,8 @@ namespace ical.NET.UnitTests
             var evt = new Event
             {
                 Class = "PRIVATE",
-                Created = new CalDateTime(2010, 3, 25, 12, 53, 35),
-                DtStamp = new CalDateTime(2010, 3, 25, 12, 53, 35),
+                Created = new CalDateTime(new DateTime(2010, 3, 25, 12, 53, 35, DateTimeKind.Utc)),
+                DtStamp = new CalDateTime(new DateTime(2010, 3, 25, 12, 53, 35, DateTimeKind.Utc)),
                 LastModified = new CalDateTime(2010, 3, 27, 13, 53, 35),
                 Sequence = 0,
                 Uid = "42f58d4f-847e-46f8-9f4a-ce52697682cf",

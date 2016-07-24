@@ -17,7 +17,27 @@ namespace Ical.Net.DataTypes
     /// </summary>
     public sealed class CalDateTime : EncodableDataType, IDateTime
     {
-        public static CalDateTime Now => new CalDateTime(DateTime.Now);
+        public static CalDateTime Now {
+            get
+            {
+                // Here, we don't simply set to DateTime.Now because DateTime.Now contains milliseconds, and
+                // the iCalendar standard doesn't care at all about milliseconds.  Therefore, when comparing
+                // two calendars, one generated, and one loaded from file, they may be functionally identical,
+                // but be determined to be different due to millisecond differences.
+                var now = DateTime.Now;
+                return new CalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+            }
+        }
+
+        public static CalDateTime UtcNow {
+            get
+            {
+                // Here, we don't simply set to DateTime.UtcNow because DateTime.UtcNow contains milliseconds, and
+                // the iCalendar standard doesn't care at all about milliseconds.  Therefore, when comparing
+                // two calendars, one generated, and one loaded from file, they may be functionally identical,
+                // but be determined to be different due to millisecond differences.
+            }
+        }
 
         public static CalDateTime Today => new CalDateTime(DateTime.Today);
 
@@ -336,7 +356,7 @@ namespace Ical.Net.DataTypes
             {
                 if (IsUniversalTime)
                 {
-                    return "UTC";
+                    return null;
                 }
                 return !string.IsNullOrWhiteSpace(_tzId)
                     ? _tzId
@@ -529,6 +549,11 @@ namespace Ical.Net.DataTypes
                 return 1;
             }
             throw new Exception("An error occurred while comparing two IDateTime values.");
+        }
+
+        int IComparable.CompareTo(object obj)
+        {
+            return CompareTo(obj as IDateTime);
         }
 
         public string ToString(string format)
