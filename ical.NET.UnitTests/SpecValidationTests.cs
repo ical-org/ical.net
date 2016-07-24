@@ -105,7 +105,9 @@ namespace ical.NET.UnitTests
             };
             var fb = new FreeBusy
             {
-                Organizer = new Organizer("mailto:maryadams@example.com")
+                Organizer = new Organizer("mailto:maryadams@example.com"),
+                DtStart = new CalDateTime(new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc)),
+                DtEnd = new CalDateTime(new DateTime(2020, 12, 31,0, 0, 0, DateTimeKind.Utc))
             };
             fb.Comments.Add("testing availability");
             fb.Attendees.Add(new Attendee("mailto:johnsmith@example.com"));
