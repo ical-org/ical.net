@@ -332,13 +332,29 @@ namespace ical.NET.UnitTests
             var fb = new FreeBusy
             {
                 Organizer = new Organizer("mailto:maryadams@example.com"),
-                DtStart = new CalDateTime(new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc)),
-                DtEnd = new CalDateTime(new DateTime(2020, 12, 31, 0, 0, 0, DateTimeKind.Utc))
+                DtStart = new CalDateTime(new DateTime(2020, 1, 1, 2, 0, 0, DateTimeKind.Utc)),
+                DtEnd = new CalDateTime(new DateTime(2020, 12, 31, 4, 0, 0, DateTimeKind.Utc))
             };
             fb.Comments.Add("testing availability");
             fb.Attendees.Add(new Attendee("mailto:johnsmith@example.com"));
             fb.Entries.Add(new FreeBusyEntry(new Period(new CalDateTime(2020,11,3,9,0,0), new CalDateTime(2020,11,3,12,0,0)),FreeBusyStatus.Free));
             fb.Entries.Add(new FreeBusyEntry(new Period(new CalDateTime(2020, 11, 4, 9, 0, 0), new CalDateTime(2020, 11, 4, 12, 0, 0)), FreeBusyStatus.BusyTentative));
+            cal.FreeBusy.Add(fb);
+
+            SerializeAndCompare(cal);
+        }
+        [Test, Category("SerializeThenDeserialize")]
+        public void SerializeDeserializeUtcMidnight()
+        {
+            var cal = new Calendar
+            {
+            };
+            var fb = new FreeBusy
+            {
+                Organizer = new Organizer("mailto:maryadams@example.com"),
+                DtStart = new CalDateTime(new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc)),
+                DtEnd = new CalDateTime(new DateTime(2020, 12, 31, 0, 0, 0, DateTimeKind.Utc))
+            };
             cal.FreeBusy.Add(fb);
 
             SerializeAndCompare(cal);
