@@ -114,7 +114,7 @@ namespace Ical.Net.DataTypes
         {
             if (!Uri.IsWellFormedUriString(attendeeUri, UriKind.Absolute))
             {
-                throw new ArgumentException("attendeeUri");
+                throw new ArgumentException("not a well formed uri string","attendeeUri");
             }
             Value = new Uri(attendeeUri);
         }

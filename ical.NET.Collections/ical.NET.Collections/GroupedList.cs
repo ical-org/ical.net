@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ical.NET.Collections.Enumerators;
 using ical.NET.Collections.Interfaces;
+using System.Diagnostics;
 
 namespace ical.NET.Collections
 {
@@ -234,12 +235,12 @@ namespace ical.NET.Collections
                 OnItemAdded(item, index);
             }
         }
-
+        [DebuggerStepThrough]
         public IEnumerator<TItem> GetEnumerator()
         {
             return new GroupedListEnumerator<TItem>(_lists);
         }
-
+        
         IEnumerator IEnumerable.GetEnumerator()
         {
             return new GroupedListEnumerator<TItem>(_lists);

@@ -77,7 +77,7 @@ namespace Ical.Net
         //library to support the VTimeZoneInfo [DAYLIGHT/STANDARD] components
         //
         //The plan would be to remove this method as soon as the iCalendar spec has been updated to account for more modern techniques of
-        //communicating international date information
+        //communicating timezone information
         //Serialisation is included for now as (while this format is unambiguously mandated in the spec):
         //- an email client interpreting iCalendar information might rely on the information within the calendar component
         //- validation will fail if using a TimeZoneId on any times within the calendar
