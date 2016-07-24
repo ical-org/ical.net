@@ -61,7 +61,9 @@ namespace Ical.Net
             get { return Properties.GetMany<string>("COMMENT"); }
             set { Properties.Set("COMMENT", value); }
         }
-
+        /// <summary>
+        /// Spec requires explicit UTC date
+        /// </summary>
         public virtual IDateTime DtStamp
         {
             get { return Properties.Get<IDateTime>("DTSTAMP"); }

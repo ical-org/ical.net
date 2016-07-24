@@ -57,7 +57,9 @@ namespace Ical.Net
             get { return Properties.GetMany<string>("CONTACT"); }
             set { Properties.Set("CONTACT", value); }
         }
-
+        /// <summary>
+        /// Spec requires explicit UTC date
+        /// </summary>
         public virtual IDateTime Created
         {
             get { return Properties.Get<IDateTime>("CREATED"); }
@@ -90,7 +92,9 @@ namespace Ical.Net
             get { return Properties.GetMany<IRecurrencePattern>("EXRULE"); }
             set { Properties.Set("EXRULE", value); }
         }
-
+        /// <summary>
+        /// Spec requires explicit UTC date
+        /// </summary>
         public virtual IDateTime LastModified
         {
             get { return Properties.Get<IDateTime>("LAST-MODIFIED"); }

@@ -23,12 +23,11 @@ namespace Ical.Net
         }
 
         /// <summary>
-        /// This will create a new VTIMEZONE component including STANDARD +/- DAYLIGHT components
+        /// This will create a new VTIMEZONE component including STANDARD +/- DAYLIGHT components.
+        /// It will be deprecated as soon as a more up to date spec is released
         /// If you do not wish to include this information (required under the spec but archaic)
-        /// simply create a new VTimeZone instance and set the TZID property
+        /// simply create a new VTimeZone instance and set TZID = timeZoneInfoInstance.StandardName
         /// </summary>
-        /// <param name="tzinfo"></param>
-        /// <returns></returns>
         public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo)
         {
             // Support date/times for January 1st of the previous year by default.
