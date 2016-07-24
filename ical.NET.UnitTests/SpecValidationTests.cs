@@ -14,7 +14,7 @@ namespace ical.NET.UnitTests
     public class SpecValidationTests
     {
         #region HelperMethods
-        static async Task onlineValidateCal(Calendar cal)
+        private static async Task OnlineValidateCal(Calendar cal)
         {
             var serializer = new CalendarSerializer(new SerializationContext());
             var serializedCalendar = serializer.SerializeToString(cal);
@@ -32,7 +32,7 @@ namespace ical.NET.UnitTests
         #endregion //HelperMethods
 
         [Test, Category("SpecValidation")]
-        public async Task ValidateSpecMultiComponentCalendar()
+        public async Task ValidateSpecEvent()
         {
             var cal = new Calendar
             {
@@ -92,20 +92,28 @@ namespace ical.NET.UnitTests
             });
             cal.Events.Add(evt);
 
-            /*
-             * http://severinghaus.org/projects/icv/ states the FreeBusy component is not applicable to this type of calendar
-            var fb = new FreeBusy
-            {
-                DtStart = new CalDateTime(2019, 3, 2),
-                DtEnd = new CalDateTime(2019, 4, 2),
-                Organizer = evt.Organizer
-            };
-            fb.Attendees.Add(new Attendee("mailto:johnsmith@example.com"));
-            cal.FreeBusy.Add(fb);
-            */
-
-            await onlineValidateCal(cal);
+            await OnlineValidateCal(cal);
         }
 
+        [Test, Category("SpecValidation")]
+        public async Task ValidateSpecFreeBusy()
+        {
+            var cal = new Calendar
+            {
+                Method = CalendarMethods.Reply,
+                Version = "2.0"
+            };
+            var fb = new FreeBusy
+            {
+                Organizer = new Organizer("mailto:maryadams@example.com")
+            };
+            fb.Comments.Add("testing availability");
+            fb.Attendees.Add(new Attendee("mailto:johnsmith@example.com"));
+            fb.Entries.Add(new FreeBusyEntry(new Period(new CalDateTime(2020, 11, 3, 9, 0, 0), new CalDateTime(2020, 11, 3, 12, 0, 0)), FreeBusyStatus.Free));
+            fb.Entries.Add(new FreeBusyEntry(new Period(new CalDateTime(2020, 11, 4, 9, 0, 0), new CalDateTime(2020, 11, 4, 12, 0, 0)), FreeBusyStatus.BusyTentative));
+            cal.FreeBusy.Add(fb);
+
+            await OnlineValidateCal(cal);
+        }
     }
 }

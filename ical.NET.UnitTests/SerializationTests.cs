@@ -338,6 +338,8 @@ namespace ical.NET.UnitTests
             fb.Entries.Add(new FreeBusyEntry(new Period(new CalDateTime(2020,11,3,9,0,0), new CalDateTime(2020,11,3,12,0,0)),FreeBusyStatus.Free));
             fb.Entries.Add(new FreeBusyEntry(new Period(new CalDateTime(2020, 11, 4, 9, 0, 0), new CalDateTime(2020, 11, 4, 12, 0, 0)), FreeBusyStatus.BusyTentative));
             cal.FreeBusy.Add(fb);
+
+            SerializeAndCompare(cal);
         }
         [Test, Category("Serialization")]
         public void EnumHyphenation()
