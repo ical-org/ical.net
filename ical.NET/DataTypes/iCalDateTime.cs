@@ -57,12 +57,12 @@ namespace Ical.Net.DataTypes
         }
 
         /// <summary>
-        /// Use provided DateTimeValue. If only date component is required, set HasTime = False
+        /// Use provided DateTime. If only date component is required, set HasTime = False
         /// </summary>
         public CalDateTime(DateTime value) : this(value, null) {}
 
         /// <summary>
-        /// Use provided DateTimeValue. If only date component is required, set HasTime = False
+        /// Use provided DateTime. If only date component is required, set HasTime = False
         /// </summary>
         public CalDateTime(DateTime value, string tzId)
         {
