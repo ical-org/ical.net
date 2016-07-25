@@ -55,6 +55,8 @@ namespace Ical.Net.UnitTests
                             var d2 = (IDateTime)p2.Value;
                             Assert.AreEqual(d1.TzId, d2.TzId, "TimeZoneId " + p1.Name);
                             Assert.AreEqual(d1.IsUniversalTime, d2.IsUniversalTime, "UTC " + p1.Name);
+                            Assert.AreEqual(d1.HasTime, d2.HasTime, "HasTime " + p1.Name);
+                            Assert.AreEqual(d1.HasDate, d2.HasDate, "HasDate " + p1.Name);
                             Assert.AreEqual(d1.Value, d2.Value, "The '" + p1.Name + "' property values do not match.");
                         }
                         else if (p1.Value is IComparable)
