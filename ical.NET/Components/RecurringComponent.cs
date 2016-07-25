@@ -58,7 +58,7 @@ namespace Ical.Net
             set { Properties.Set("CONTACT", value); }
         }
         /// <summary>
-        /// Spec requires explicit UTC date
+        /// The UTC date/time that the calendar information was created by the calendar user agent in the calendar store. This is analogous to the creation date and time for a file in the file system.
         /// </summary>
         public virtual IDateTime Created
         {
@@ -93,7 +93,7 @@ namespace Ical.Net
             set { Properties.Set("EXRULE", value); }
         }
         /// <summary>
-        /// Spec requires explicit UTC date
+        /// the UTC date/time that the information associated with the calendar component was last revised in the calendar store. Note: This is analogous to the modification date and time for a file in the file system
         /// </summary>
         public virtual IDateTime LastModified
         {

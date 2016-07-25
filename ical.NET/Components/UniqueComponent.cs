@@ -57,7 +57,7 @@ namespace Ical.Net
             set { Properties.Set("COMMENT", value); }
         }
         /// <summary>
-        /// Spec requires explicit UTC date
+        /// /// The UTC date/time that the instance of the iCalendar object was created.
         /// </summary>
         public virtual IDateTime DtStamp
         {
