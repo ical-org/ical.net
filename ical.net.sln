@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ical.Net.Collections", "ica
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "antlr.runtime", "antlr.runtime\antlr.runtime.csproj", "{CB7CC882-ED47-46C0-AAAE-7A437F22F1C6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecValidation", "SpecValidation\SpecValidation.csproj", "{0C67C168-A6FE-42E1-8F3B-00F0FFDFB8ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
