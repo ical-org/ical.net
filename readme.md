@@ -21,6 +21,16 @@ The wiki contains several pages of examples of common ical.net usage scenarios.
 * [Concurrency scenarios and PLINQ](https://github.com/rianjs/ical.net/wiki/Concurrency-scenarios-and-PLINQ)
 * [Migrating from dday.ical](https://github.com/rianjs/ical.net/wiki/Migrating-from-dday.ical)
 
+## Versioning
+
+ical.net uses [semantic versioning](http://semver.org/). In a nutshell:
+
+> Given a version number MAJOR.MINOR.PATCH, increment the:
+>
+> 1. MAJOR version when you make incompatible API changes,
+> 2. MINOR version when you add functionality in a backwards-compatible manner, and
+> 3. PATCH version when you make backwards-compatible bug fixes.
+
 ## Contributing
 
 Fork and submit a pull request! If you haven't gotten feedback from me in a few days, please send me an email: rstockbower@gmail.com. Sometimes I don't see them.
