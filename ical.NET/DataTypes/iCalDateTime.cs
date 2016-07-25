@@ -53,10 +53,17 @@ namespace Ical.Net.DataTypes
         public CalDateTime(IDateTime value)
         {
             Initialize(value.Value, value.TzId, null);
+            HasTime = value.HasTime;
         }
 
+        /// <summary>
+        /// Use provided DateTimeValue. If only date component is required, set HasTime = False
+        /// </summary>
         public CalDateTime(DateTime value) : this(value, null) {}
 
+        /// <summary>
+        /// Use provided DateTimeValue. If only date component is required, set HasTime = False
+        /// </summary>
         public CalDateTime(DateTime value, string tzId)
         {
             Initialize(value, tzId, null);
