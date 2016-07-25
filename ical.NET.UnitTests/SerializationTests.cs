@@ -160,7 +160,7 @@ namespace Ical.Net.UnitTests
 
             var evt = new Event
             {
-                Class = "PRIVATE",
+                Class = AccessClassifications.Private,
                 Created = new CalDateTime(new DateTime(2010, 3, 25, 12, 53, 35, DateTimeKind.Utc)),
                 DtStamp = new CalDateTime(new DateTime(2010, 3, 25, 12, 53, 35, DateTimeKind.Utc)),
                 LastModified = new CalDateTime(2010, 3, 27, 13, 53, 35),
@@ -184,13 +184,13 @@ namespace Ical.Net.UnitTests
         {
             var cal1 = new Calendar
             {
-                Method = "PUBLISH",
+                Method = CalendarMethods.Publish,
                 Version = "2.0"
             };
 
             var evt = new Event
             {
-                Class = "PRIVATE",
+                Class = AccessClassifications.Private,
                 Created = new CalDateTime(new DateTime(2010, 3, 25, 12, 53, 35,DateTimeKind.Utc)),
                 DtStart = new CalDateTime(2012, 3, 25, 12, 50, 00, "New Zealand Standard Time"),
                 DtEnd = new CalDateTime(2012, 3, 25, 13, 10, 00)
@@ -207,7 +207,7 @@ namespace Ical.Net.UnitTests
 
             var evt = new Event
             {
-                Class = "PUBLIC",
+                Class = AccessClassifications.Public,
                 Organizer = new Organizer("MAILTO:james@example.com"),
                 DtStart = new CalDateTime(2012, 3, 25),
                 DtEnd = new CalDateTime(2012, 3, 26)
