@@ -22,6 +22,11 @@ namespace ical.NET.Collections
 
         private IMultiLinkedList<TItem> EnsureList(TGroup group)
         {
+            if (group == null)
+            {
+                return null;
+            }
+
             IMultiLinkedList<TItem> list;
             if (_dictionary.TryGetValue(group, out list))
             {
