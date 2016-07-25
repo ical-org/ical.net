@@ -30,6 +30,7 @@ namespace ical.NET.Collections
 
             list = new MultiLinkedList<TItem>();
             _dictionary[group] = list;
+
             _lists.Add(list);
             return list;
         }
@@ -60,7 +61,8 @@ namespace ical.NET.Collections
             }
 
             // Add a new list if necessary
-            var list = EnsureList(item.Group);
+            var group = item.Group;
+            var list = EnsureList(group);
             var index = list.Count;
             list.Add(SubscribeToKeyChanges(item));
             OnItemAdded(item, list.StartIndex + index);
@@ -84,6 +86,7 @@ namespace ical.NET.Collections
                 ? list.StartIndex + index
                 : -1;
         }
+
         public virtual void Clear(TGroup group)
         {
             IMultiLinkedList<TItem> list;

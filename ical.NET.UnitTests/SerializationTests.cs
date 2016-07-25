@@ -16,7 +16,7 @@ using Ical.Net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
 using Calendar = Ical.Net.Calendar;
 
-namespace ical.NET.UnitTests
+namespace Ical.Net.UnitTests
 {
     [TestFixture]
     public class SerializationTests
@@ -105,7 +105,6 @@ namespace ical.NET.UnitTests
             }
         }
 
-        private const string _newLine = "\r\n"; // I suspect the spec actually specifies this, and so Environment.NewLine would not be appropriate
         public static string InspectSerializedSection(string serialized, string sectionName, IEnumerable<string> elements)
         {
             const string notFound = "expected '{0}' not found";
@@ -121,7 +120,7 @@ namespace ical.NET.UnitTests
 
             foreach (var e in elements)
             {
-                Assert.IsTrue(searchRegion.Contains(_newLine + e + _newLine), notFound, e);
+                Assert.IsTrue(searchRegion.Contains(SerializationConstants.LineBreak + e + SerializationConstants.LineBreak), notFound, e);
             }
 
             return searchRegion;
@@ -146,9 +145,9 @@ namespace ical.NET.UnitTests
         //This method needs renaming
         static Dictionary<string, string> GetValues(string serialized, string name, string value)
         {
-            string coalescedMultiline = Regex.Replace(serialized,_newLine + @"\s" ,string.Empty);
+            var unfolded = serialized.Replace(SerializationConstants.LineBreak + ' ', string.Empty);
             //using a regex for now - for the sake of speed, it may be worth creating a C# text search later
-            var match = Regex.Match(coalescedMultiline, '^' + Regex.Escape(name) + "(;.+)?:" + Regex.Escape(value) + _newLine, RegexOptions.Multiline);
+            var match = Regex.Match(unfolded, '^' + Regex.Escape(name) + "(;.+)?:" + Regex.Escape(value) + SerializationConstants.LineBreak, RegexOptions.Multiline);
             Assert.IsTrue(match.Success, $"could not find a(n) '{name}' with value '{value}'");
             return match.Groups[1].Value.Length == 0
                 ? new Dictionary<string, string>()
@@ -167,15 +166,15 @@ namespace ical.NET.UnitTests
                 Version = "2.0"
             };
 
-            const string exampleTz = "New Zealand Standard Time"; // can change this but should SupportDaylightTime
+            const string exampleTz = "New Zealand Standard Time";
             var tzi = TimeZoneInfo.FindSystemTimeZoneById(exampleTz);
             var timezone = VTimeZone.FromSystemTimeZone(tzi);
             cal.AddTimeZone(timezone);
             var evt = new Event
             {
                 Summary = "Testing",
-                Start = new CalDateTime(2016, 7, 14, timezone.Id),
-                End = new CalDateTime(2016, 7, 15, timezone.Id)
+                Start = new CalDateTime(2016, 7, 14, timezone.TzId),
+                End = new CalDateTime(2016, 7, 15, timezone.TzId)
             };
             cal.Events.Add(evt);
 
@@ -184,7 +183,7 @@ namespace ical.NET.UnitTests
 
             Console.Write(serializedCalendar);
 
-            var vTimezone = InspectSerializedSection(serializedCalendar, "VTIMEZONE", new[] {"TZID:" + timezone.Id});
+            var vTimezone = InspectSerializedSection(serializedCalendar, "VTIMEZONE", new[] {"TZID:" + timezone.TzId});
             var o = tzi.BaseUtcOffset.ToString("hhmm", CultureInfo.InvariantCulture);
 
             InspectSerializedSection(vTimezone, "STANDARD", new[] {"TZNAME:" + tzi.StandardName, "TZOFFSETTO:" + o
@@ -265,13 +264,13 @@ namespace ical.NET.UnitTests
 
             Console.Write(serializedCalendar);
             Assert.IsTrue(serializedCalendar.StartsWith("BEGIN:VCALENDAR"));
-            Assert.IsTrue(serializedCalendar.EndsWith("END:VCALENDAR" + _newLine));
+            Assert.IsTrue(serializedCalendar.EndsWith("END:VCALENDAR" + SerializationConstants.LineBreak));
 
             var expectProperties = new[] {"METHOD:PUBLISH", "VERSION:2.0"};
 
             foreach (var p in expectProperties)
             {
-                Assert.IsTrue(serializedCalendar.Contains(_newLine + p + _newLine), "expected '" + p + "' not found");
+                Assert.IsTrue(serializedCalendar.Contains(SerializationConstants.LineBreak + p + SerializationConstants.LineBreak), "expected '" + p + "' not found");
             }
 
             InspectSerializedSection(serializedCalendar, "VEVENT",
@@ -285,22 +284,21 @@ namespace ical.NET.UnitTests
                 });
         }
 
-        private const string _requiredParticipant = "REQ-PARTICIPANT"; //this string may be added to the api in the future
         private static readonly IList<Attendee> _attendees = new List<Attendee>
         {
             new Attendee("MAILTO:james@example.com")
             {
                 CommonName = "James James",
-                Role = _requiredParticipant,
+                Role = ParticipationRole.RequiredParticipant,
                 Rsvp = true,
-                ParticipationStatus = ParticipationStatus.Tentative
+                ParticipationStatus = EventParticipationStatus.Tentative
             },
             new Attendee("MAILTO:mary@example.com")
             {
                 CommonName = "Mary Mary",
-                Role = _requiredParticipant,
+                Role = ParticipationRole.RequiredParticipant,
                 Rsvp = true,
-                ParticipationStatus = ParticipationStatus.Accepted
+                ParticipationStatus = EventParticipationStatus.Accepted
             }
         }.AsReadOnly();
 

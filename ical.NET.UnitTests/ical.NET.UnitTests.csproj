@@ -76,6 +76,8 @@
     <Compile Include="ComponentTest.cs" />
     <Compile Include="ConcurrentDeserializationTests.cs" />
     <Compile Include="DeserializationTests.cs" />
+    <Compile Include="DocumentationExamples.cs" />
+    <Compile Include="EqualityAndHashingTests.cs" />
     <Compile Include="FreeBusyTest.cs" />
     <Compile Include="EventTest.cs" />
     <Compile Include="CopyTest.cs" />
@@ -86,6 +88,8 @@
     <None Include="app.config" />
     <Compile Include="RecurrenceTest.cs" />
     <Compile Include="SerializationTests.cs" />
+    <Compile Include="SymmetricSerializationTests.cs" />
+    <Compile Include="TextUtilTests.cs" />
     <Compile Include="TodoTest.cs" />
     <None Include="packages.config" />
   </ItemGroup>

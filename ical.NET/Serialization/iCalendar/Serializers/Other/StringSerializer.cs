@@ -22,8 +22,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 
         protected virtual string Unescape(string value)
         {
-            // added null check - you can't call .Replace on a null
-            // string, but you can just return null as a string
             if (string.IsNullOrWhiteSpace(value))
             {
                 return value;
@@ -46,19 +44,19 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 
         protected virtual string Escape(string value)
         {
-            // added null check - you can't call .Replace on a null
-            // string, but you can just return null as a string
-            if (value != null)
+            if (string.IsNullOrWhiteSpace(value))
             {
-                // NOTE: fixed a bug that caused text parsing to fail on
-                // programmatically entered strings.
-                // SEE unit test SERIALIZE25().
-                value = value.Replace("\r\n", @"\n");
-                value = value.Replace("\r", @"\n");
-                value = value.Replace("\n", @"\n");
-                value = value.Replace(";", @"\;");
-                value = value.Replace(",", @"\,");
+                return value;
             }
+
+            // NOTE: fixed a bug that caused text parsing to fail on
+            // programmatically entered strings.
+            // SEE unit test SERIALIZE25().
+            value = value.Replace(SerializationConstants.LineBreak, @"\n");
+            value = value.Replace("\r", @"\n");
+            value = value.Replace("\n", @"\n");
+            value = value.Replace(";", @"\;");
+            value = value.Replace(",", @"\,");
             return value;
         }
 

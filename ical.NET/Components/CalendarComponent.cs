@@ -51,7 +51,7 @@ namespace Ical.Net
         /// </summary>
         public virtual ICalendarPropertyList Properties { get; protected set; }
 
-        public CalendarComponent()
+        public CalendarComponent() : base()
         {
             Initialize();
         }

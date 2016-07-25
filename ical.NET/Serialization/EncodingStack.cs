@@ -19,7 +19,7 @@ namespace Ical.Net.Serialization
             {
                 return _mStack.Count > 0
                     ? _mStack.Peek()
-                    : Encoding.Unicode;
+                    : Encoding.UTF8;
             }
         }
 
