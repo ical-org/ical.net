@@ -113,7 +113,7 @@ namespace Ical.Net.Serialization
 
         public void RemovePropertyMapping(string name)
         {
-            if (name != null && _propertyMap.ContainsKey(name))
+            if (name != null)
             {
                 _propertyMap.Remove(name);
             }

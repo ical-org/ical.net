@@ -1,18 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 using Ical.Net.ExtensionMethods;
 using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
+using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using Ical.Net.Interfaces.DataTypes;
+using System.Linq;
 
 namespace Ical.Net.UnitTests
 {
@@ -23,22 +22,23 @@ namespace Ical.Net.UnitTests
         public static void CompareCalendars(ICalendar cal1, ICalendar cal2)
         {
             CompareComponents(cal1, cal2);
-
-            Assert.AreEqual(cal1.Children.Count, cal2.Children.Count, "Children count is different between calendars.");
-
-            for (var i = 0; i < cal1.Children.Count; i++)
-            {
-                var component1 = cal1.Children[i] as ICalendarComponent;
-                var component2 = cal2.Children[i] as ICalendarComponent;
-                if (component1 != null && component2 != null)
-                {
-                    CompareComponents(component1, component2);
-                }
-            }
         }
 
         public static void CompareComponents(ICalendarComponent cb1, ICalendarComponent cb2)
         {
+            Assert.AreEqual(cb1.Name, cb2.Name);
+            var names1 = cb1.Properties.Select(c => c.Name).ToList();
+            var names2 = cb2.Properties.Select(c => c.Name).ToList();
+            //sometimes it may be appropriate to add extra properties (duration for instance if a DATESTART and DATEEND property are specified)
+            //therefore check we have not lost properties, and if extra properties have been added we will include these in the test output
+            CollectionAssert.IsSubsetOf(names1, names2, cb1.Name + " properties");
+
+            var extra = names2.Except(names1).ToList();
+            if (extra.Any())
+            {
+                Console.WriteLine($"The following properties of {cb1.Name} are only present in the 2nd calendar:{Environment.NewLine}" + string.Join(Environment.NewLine, extra));
+            }
+
             foreach (var p1 in cb1.Properties)
             {
                 var isMatch = false;
@@ -46,14 +46,26 @@ namespace Ical.Net.UnitTests
                 {
                     try
                     {
-                        Assert.AreEqual(p1, p2, "The properties '" + p1.Name + "' are not equal.");
-                        if (p1.Value is IComparable)
+                        Assert.AreEqual(p1?.Name, p2?.Name, "The properties '" + p1.Name + "' are not equal.");
+                        //quite reasonably, IDateTimes are equivalent if the UTC value is equal
+                        //for this test (copying and serializing->deserializing, it is important both the UTC values and the date form are the same)
+                        if (p1.Value is IDateTime)
+                        {
+                            var d1 = (IDateTime)p1.Value;
+                            var d2 = (IDateTime)p2.Value;
+                            Assert.AreEqual(d1.TzId, d2.TzId, "TimeZoneId " + p1.Name);
+                            Assert.AreEqual(d1.IsUniversalTime, d2.IsUniversalTime, "UTC " + p1.Name);
+                            Assert.AreEqual(d1.HasTime, d2.HasTime, "HasTime " + p1.Name);
+                            Assert.AreEqual(d1.HasDate, d2.HasDate, "HasDate " + p1.Name);
+                            Assert.AreEqual(d1.Value, d2.Value, "The '" + p1.Name + "' property values do not match.");
+                        }
+                        else if (p1.Value is IComparable)
                         {
                             Assert.AreEqual(0, ((IComparable) p1.Value).CompareTo(p2.Value), "The '" + p1.Name + "' property values do not match.");
                         }
                         else if (p1.Value is IEnumerable)
                         {
-                            CompareEnumerables((IEnumerable) p1.Value, (IEnumerable) p2.Value, p1.Name);
+                            CollectionAssert.AreEquivalent((IEnumerable)p1.Value, (IEnumerable)p2.Value, p1.Name);
                         }
                         else
                         {
@@ -63,13 +75,14 @@ namespace Ical.Net.UnitTests
                         isMatch = true;
                         break;
                     }
-                    catch { }
+                    catch {
+                    }
                 }
 
                 Assert.IsTrue(isMatch, "Could not find a matching property - " + p1.Name + ":" + (p1.Value?.ToString() ?? string.Empty));
             }
 
-            Assert.AreEqual(cb1.Children.Count, cb2.Children.Count, "The number of children are not equal.");
+            CollectionAssert.AreEquivalent(cb1.Children.Select(c => c.Name), cb2.Children.Select(c => c.Name), cb1.Name + " children");
             for (var i = 0; i < cb1.Children.Count; i++)
             {
                 var child1 = cb1.Children[i] as ICalendarComponent;
@@ -85,165 +98,71 @@ namespace Ical.Net.UnitTests
             }
         }
 
-        public static void CompareEnumerables(IEnumerable a1, IEnumerable a2, string value)
+        static ICalendar SerializeAndCompare(ICalendar cal1)
         {
-            if (a1 == null && a2 == null)
-            {
-                return;
-            }
-
-            Assert.IsFalse((a1 == null && a2 != null) || (a1 != null && a2 == null), value + " do not match - one item is null");
-
-            var enum1 = a1.GetEnumerator();
-            var enum2 = a2.GetEnumerator();
-
-            while (enum1.MoveNext() && enum2.MoveNext())
-            {
-                Assert.AreEqual(enum1.Current, enum2.Current, value + " do not match");
-            }
-        }
-
-        public static string InspectSerializedSection(string serialized, string sectionName, IEnumerable<string> elements)
-        {
-            const string notFound = "expected '{0}' not found";
-            var searchFor = "BEGIN:" + sectionName;
-            var begin = serialized.IndexOf(searchFor);
-            Assert.AreNotEqual(-1, begin, notFound, searchFor);
-
-            searchFor = "END:" + sectionName;
-            var end = serialized.IndexOf(searchFor, begin);
-            Assert.AreNotEqual(-1, end, notFound, searchFor);
-
-            var searchRegion = serialized.Substring(begin, end - begin + 1);
-
-            foreach (var e in elements)
-            {
-                Assert.IsTrue(searchRegion.Contains(SerializationConstants.LineBreak + e + SerializationConstants.LineBreak), notFound, e);
-            }
-
-            return searchRegion;
-        }
-
-        //3 formats - UTC, local time as defined in vTimeZone, and floating,
-        //at some point it would be great to independently unit test string serialization of an IDateTime object, into its 3 forms
-        //http://www.kanzaki.com/docs/ical/dateTime.html
-        static string CalDateString(IDateTime cdt)
-        {
-            var returnVar = $"{cdt.Year}{cdt.Month:D2}{cdt.Day:D2}T{cdt.Hour:D2}{cdt.Minute:D2}{cdt.Second:D2}";
-            if (cdt.IsUniversalTime)
-            {
-                return returnVar + 'Z';
-            }
-
-            return string.IsNullOrEmpty(cdt.TzId)
-                ? returnVar
-                : $"TZID={cdt.TzId}:{returnVar}";
-        }
-
-        //This method needs renaming
-        static Dictionary<string, string> GetValues(string serialized, string name, string value)
-        {
-            var lengthened = serialized.Replace(SerializationConstants.LineBreak + ' ', string.Empty);
-            //using a regex for now - for the sake of speed, it may be worth creating a C# text search later
-            var match = Regex.Match(lengthened, '^' + Regex.Escape(name) + "(;.+)?:" + Regex.Escape(value) + SerializationConstants.LineBreak, RegexOptions.Multiline);
-            Assert.IsTrue(match.Success, $"could not find a(n) '{name}' with value '{value}'");
-            return match.Groups[1].Value.Length == 0
-                ? new Dictionary<string, string>()
-                : match.Groups[1].Value.Substring(1).Split(';').Select(v=>v.Split('=')).ToDictionary(v=>v[0], v=>v.Length>1 ? v[1] : null);
-        }
-        #endregion //helperMethods
-
-        #region tests
-        [Test, Category("Serialization")]
-        public void TimeZoneSerialize()
-        {
-            //ToDo: This test is broken as of 2016-07-13
-            var cal = new Calendar
-            {
-                Method = "PUBLISH",
-                Version = "2.0"
-            };
-
-            const string exampleTz = "New Zealand Standard Time";
-            var tzi = TimeZoneInfo.FindSystemTimeZoneById(exampleTz);
-            var timezone = VTimeZone.FromSystemTimeZone(tzi);
-            cal.AddTimeZone(timezone);
-            var evt = new Event
-            {
-                Summary = "Testing",
-                Start = new CalDateTime(2016, 7, 14, timezone.TzId),
-                End = new CalDateTime(2016, 7, 15, timezone.TzId)
-            };
-            cal.Events.Add(evt);
-
-            var serializer = new CalendarSerializer(new SerializationContext());
-            var serializedCalendar = serializer.SerializeToString(cal);
-
-            Console.Write(serializedCalendar);
-
-            var vTimezone = InspectSerializedSection(serializedCalendar, "VTIMEZONE", new[] {"TZID:" + timezone.TzId});
-            var o = tzi.BaseUtcOffset.ToString("hhmm", CultureInfo.InvariantCulture);
-
-            InspectSerializedSection(vTimezone, "STANDARD", new[] {"TZNAME:" + tzi.StandardName, "TZOFFSETTO:" + o
-                //todo - standard time, for NZ standard time (current example)
-                //"DTSTART:20150402T030000",
-                //"RRULE:FREQ=YEARLY;BYDAY=1SU;BYHOUR=3;BYMINUTE=0;BYMONTH=4",
-                //"TZOFFSETFROM:+1300"
-            });
-
-
-            InspectSerializedSection(vTimezone, "DAYLIGHT", new[] {"TZNAME:" + tzi.DaylightName, "TZOFFSETFROM:" + o});
-        }
-        [Test, Category("Serialization")]
-        public void SerializeDeserialize()
-        {
-            //ToDo: This test is broken as of 2016-07-13
-            var cal1 = new Calendar
-            {
-                Method = "PUBLISH",
-                Version = "2.0"
-            };
-
-            var evt = new Event
-            {
-                Class = "PRIVATE",
-                Created = new CalDateTime(2010, 3, 25, 12, 53, 35),
-                DtStamp = new CalDateTime(2010, 3, 25, 12, 53, 35),
-                LastModified = new CalDateTime(2010, 3, 27, 13, 53, 35),
-                Sequence = 0,
-                Uid = "42f58d4f-847e-46f8-9f4a-ce52697682cf",
-                Priority = 5,
-                Location = "here",
-                Summary = "test",
-                DtStart = new CalDateTime(2012, 3, 25, 12, 50, 00),
-                DtEnd = new CalDateTime(2012, 3, 25, 13, 10, 00)
-            };
-            cal1.Events.Add(evt);
-
             var serializer = new CalendarSerializer(new SerializationContext());
             var serializedCalendar = serializer.SerializeToString(cal1);
+
+            Console.WriteLine(serializedCalendar);
+
             using (var sr = new StringReader(serializedCalendar))
             {
                 var cal2 = Calendar.LoadFromStream(sr)[0];
                 CompareCalendars(cal1, cal2);
+                return cal2;
             }
         }
-
+        #endregion //HelperMethods
+        #region tests
+        //http://icalendar.org/iCalendar-RFC-5545/3-3-5-date-time.html
         [Test, Category("Serialization")]
-        public void EventPropertiesSerialized()
+        public void DateTimeSerialization()
         {
-            //ToDo: This test is broken as of 2016-07-13
-            var cal = new Calendar
+            var serializer = new DateTimeSerializer();
+            
+            var cdt = new CalDateTime(2010, 3, 25, 12, 53, 35);
+            Assert.AreEqual("20100325T125335", serializer.SerializeToString(cdt), "date with local time");
+            cdt = new CalDateTime(new DateTime(2010, 3, 25, 12, 53, 35));
+            Assert.AreEqual("20100325T125335", serializer.SerializeToString(cdt), "date with local time");
+            cdt = new CalDateTime(new DateTime(2010, 3, 25, 12, 53, 35, DateTimeKind.Utc));
+            Assert.AreEqual("20100325T125335Z", serializer.SerializeToString(cdt), "date with utc time");
+            cdt = new CalDateTime(new DateTime(2010, 3, 25, 0, 0, 0, DateTimeKind.Utc));
+            Assert.AreEqual("20100325T000000Z", serializer.SerializeToString(cdt), "date with utc T00:00");
+            //below is not working - TODO improve testability by allowing objects which are not calendars to be serialized, then uncomment BM
+            //const string timezone = "America/New_York";
+            //cdt = new CalDateTime(2010, 3, 25, 12, 53, 35, timezone);
+            //Assert.AreEqual($"TZID={timezone}:20100325T125335", serializer.SerializeToString(cdt), "date with local time & time zone ref.");
+            //cdt = new CalDateTime(2010, 3, 25);
+            //Assert.AreEqual("20100325", serializer.SerializeToString(cdt), "date only");
+
+        }
+
+        [Test, Category("SerializeThenDeserialize")]
+        public void SerializeDeserializeEmptyCal()
+        {
+            var cal1 = new Calendar
             {
-                Method = "PUBLISH",
+                Method = CalendarMethods.Publish,
+                Version = "2.0"
+            };
+
+            SerializeAndCompare(cal1);
+        }
+
+        [Test, Category("SerializeThenDeserialize")]
+        public void SerializeDeserializeEventProperties()
+        {
+            var cal1 = new Calendar
+            {
+                Method = CalendarMethods.Publish,
                 Version = "2.0"
             };
 
             var evt = new Event
             {
-                Class = "PRIVATE",
-                Created = new CalDateTime(2010, 3, 25, 12, 53, 35),
-                DtStamp = new CalDateTime(2010, 3, 25, 12, 53, 35),
+                Class = AccessClassifications.Private,
+                Created = new CalDateTime(new DateTime(2010, 3, 25, 12, 53, 35, DateTimeKind.Utc)),
+                DtStamp = new CalDateTime(new DateTime(2010, 3, 25, 12, 53, 35, DateTimeKind.Utc)),
                 LastModified = new CalDateTime(2010, 3, 27, 13, 53, 35),
                 Sequence = 0,
                 Uid = "42f58d4f-847e-46f8-9f4a-ce52697682cf",
@@ -251,36 +170,51 @@ namespace Ical.Net.UnitTests
                 Location = "here",
                 Summary = "test",
                 DtStart = new CalDateTime(2012, 3, 25, 12, 50, 00),
-                DtEnd = new CalDateTime(2012, 3, 25, 13, 10, 00)
-                //not yet testing property below as serialized output currently does not comply with RTFC 2445
-                //Transparency = TransparencyType.Opaque,
-                //Status = EventStatus.Confirmed
+                DtEnd = new CalDateTime(2012, 3, 25, 13, 10, 00),
+                Transparency = TransparencyType.Opaque,
+                Status = EventStatus.Confirmed
             };
-            cal.Events.Add(evt);
+            cal1.Events.Add(evt);
 
-            var serializer = new CalendarSerializer(new SerializationContext());
-            var serializedCalendar = serializer.SerializeToString(cal);
+            SerializeAndCompare(cal1);
+        }
 
-            Console.Write(serializedCalendar);
-            Assert.IsTrue(serializedCalendar.StartsWith("BEGIN:VCALENDAR"));
-            Assert.IsTrue(serializedCalendar.EndsWith("END:VCALENDAR" + SerializationConstants.LineBreak));
-
-            var expectProperties = new[] {"METHOD:PUBLISH", "VERSION:2.0"};
-
-            foreach (var p in expectProperties)
+        [Test, Category("SerializeThenDeserialize")]
+        public void SerializeDeserializeEventDateTimes()
+        {
+            var cal1 = new Calendar
             {
-                Assert.IsTrue(serializedCalendar.Contains(SerializationConstants.LineBreak + p + SerializationConstants.LineBreak), "expected '" + p + "' not found");
-            }
+                Method = CalendarMethods.Publish,
+                Version = "2.0"
+            };
 
-            InspectSerializedSection(serializedCalendar, "VEVENT",
-                new[]
-                {
-                    "CLASS:" + evt.Class, "CREATED:" + CalDateString(evt.Created), "DTSTAMP:" + CalDateString(evt.DtStamp),
-                    "LAST-MODIFIED:" + CalDateString(evt.LastModified), "SEQUENCE:" + evt.Sequence, "UID:" + evt.Uid, "PRIORITY:" + evt.Priority,
-                    "LOCATION:" + evt.Location, "SUMMARY:" + evt.Summary, "DTSTART:" + CalDateString(evt.DtStart), "DTEND:" + CalDateString(evt.DtEnd)
-                    //"TRANSPARENCY:" + TransparencyType.Opaque.ToString().ToUpperInvariant(),
-                    //"STATUS:" + EventStatus.Confirmed.ToString().ToUpperInvariant()
-                });
+            var evt = new Event
+            {
+                Class = AccessClassifications.Private,
+                Created = new CalDateTime(new DateTime(2010, 3, 25, 12, 53, 35,DateTimeKind.Utc)),
+                DtStart = new CalDateTime(2012, 3, 25, 12, 50, 00, "New Zealand Standard Time"),
+                DtEnd = new CalDateTime(2012, 3, 25, 13, 10, 00)
+            };
+            cal1.Events.Add(evt);
+
+            SerializeAndCompare(cal1);
+        }
+
+        [Test, Category("SerializeThenDeserialize")]
+        public void SerializeDeserializeEventDate()
+        {
+            var cal1 = new Calendar();
+
+            var evt = new Event
+            {
+                Class = AccessClassifications.Public,
+                Organizer = new Organizer("MAILTO:james@example.com"),
+                DtStart = new CalDateTime(2012, 3, 25),
+                DtEnd = new CalDateTime(2012, 3, 26)
+            };
+            cal1.Events.Add(evt);
+
+            SerializeAndCompare(cal1);
         }
 
         private static readonly IList<Attendee> _attendees = new List<Attendee>
@@ -301,13 +235,12 @@ namespace Ical.Net.UnitTests
             }
         }.AsReadOnly();
 
-        [Test, Category("Serialization")]
-        public void AttendeesSerialized()
+        [Test, Category("SerializeThenDeserialize")]
+        public void SerializeDeserializeEvtAttendees()
         {
-            //ToDo: This test is broken as of 2016-07-13
             var cal = new Calendar
             {
-                Method = "REQUEST",
+                Method = CalendarMethods.Request,
                 Version = "2.0"
             };
 
@@ -318,34 +251,136 @@ namespace Ical.Net.UnitTests
 
             evt.Attendees.AddRange(_attendees);
 
-            var serializer = new CalendarSerializer(new SerializationContext());
-            var serializedCalendar = serializer.SerializeToString(cal);
-
-            Console.Write(serializedCalendar);
-
-            var vEvt = InspectSerializedSection(serializedCalendar, "VEVENT", new[] {"ORGANIZER:" + org});
-
-            foreach (var a in evt.Attendees)
-            {
-                var vals = GetValues(vEvt, "ATTENDEE", a.Value.OriginalString);
-                foreach (var v in new Dictionary<string, string>
-                {
-                    ["CN"] = a.CommonName,
-                    ["ROLE"] = a.Role,
-                    ["RSVP"] = a.Rsvp.ToString()
-                        .ToUpperInvariant(),
-                    ["PARTSTAT"] = a.ParticipationStatus
-                })
-                {
-                    Assert.IsTrue(vals.ContainsKey(v.Key), $"could not find key '{v.Key}'");
-                    Assert.AreEqual(v.Value, vals[v.Key], $"ATENDEE prop '{v.Key}' differ");
-                }
-            }
+            SerializeAndCompare(cal);
         }
 
-        //todo test event:
-        //-GeographicLocation
-        //-Alarm
+        [Test, Category("SerializeThenDeserialize")]
+        public void SerializeDeserializeEvtCategories()
+        {
+            var cal = new Calendar
+            {
+                Method = CalendarMethods.Request,
+                Version = "2.0"
+            };
+
+            var evt = AttendeeTest.VEventFactory();
+            cal.Events.Add(evt);
+            evt.Organizer = new Organizer("MAILTO:james@example.com");
+
+            evt.Categories.AddRange(new[] { "1","3","8", "text with chars -;:\n" });
+
+            SerializeAndCompare(cal);
+        }
+
+        [Test, Category("SerializeThenDeserialize")]
+        public void SerializeDeserializeRRules()
+        {
+            //code similar to the example on the readme on the github repo - we definately want this to work
+            var rrule = new RecurrencePattern(FrequencyType.Yearly, 1)
+            {
+                Count = 5,
+                ByDay = new List<IWeekDay> { new WeekDay(DayOfWeek.Monday, FrequencyOccurrence.Last) },
+                ByMonth = new List<int> { 7 }
+            };
+            var e = new Event
+            {
+                DtStart = new CalDateTime(2020, 3, 25, 13, 10, 00),
+                DtEnd = new CalDateTime(2020, 3, 25, 13, 50, 00),
+                RecurrenceRules = new List<IRecurrencePattern> { rrule },
+            };
+
+            var cal = new Calendar();
+            cal.Events.Add(e);
+
+            SerializeAndCompare(cal);
+
+        }
+
+        [Test, Category("SerializeThenDeserialize")]
+        public void SerializeDeserializeGeographicLocation()
+        {
+            var cal = new Calendar
+            {
+                Method = CalendarMethods.Publish,
+                Version = "2.0"
+            };
+
+            var evt = AttendeeTest.VEventFactory();
+            cal.Events.Add(evt);
+            const string org = "MAILTO:james@example.com";
+            evt.Organizer = new Organizer(org);
+            //Madison Square Gardens Lat/Long!
+            evt.GeographicLocation = new GeographicLocation(40.750505, -73.993439);
+
+            SerializeAndCompare(cal);
+        }
+
+        [Test, Category("SerializeThenDeserialize")]
+        public void SerializeDeserializeEvtAlarm()
+        {
+            var cal = new Calendar
+            {
+                Method = CalendarMethods.Request,
+                Version = "2.0"
+            };
+
+            var evt = AttendeeTest.VEventFactory();
+            cal.Events.Add(evt);
+            evt.Alarms.Add(new Alarm
+            {
+                Action = AlarmAction.Display,
+                Summary = "test",
+                Trigger = new Trigger(TimeSpan.FromHours(-1)),
+                Description = "descr."
+            });
+            cal.Events.Add(evt);
+
+            SerializeAndCompare(cal);
+        }
+        [Test, Category("SerializeThenDeserialize")]
+        public void SerializeDeserializeFreeBusyResponse()
+        {
+            var cal = new Calendar
+            {
+                Method = CalendarMethods.Reply,
+                Version = "2.0"
+            };
+            var fb = new FreeBusy
+            {
+                Organizer = new Organizer("mailto:maryadams@example.com"),
+                DtStart = new CalDateTime(new DateTime(2020, 1, 1, 2, 0, 0, DateTimeKind.Utc)),
+                DtEnd = new CalDateTime(new DateTime(2020, 12, 31, 4, 0, 0, DateTimeKind.Utc))
+            };
+            fb.Comments.Add("testing availability");
+            fb.Attendees.Add(new Attendee("mailto:johnsmith@example.com"));
+            fb.Entries.Add(new FreeBusyEntry(new Period(new CalDateTime(2020,11,3,9,0,0), new CalDateTime(2020,11,3,12,0,0)),FreeBusyStatus.Free));
+            fb.Entries.Add(new FreeBusyEntry(new Period(new CalDateTime(2020, 11, 4, 9, 0, 0), new CalDateTime(2020, 11, 4, 12, 0, 0)), FreeBusyStatus.BusyTentative));
+            cal.FreeBusy.Add(fb);
+
+            SerializeAndCompare(cal);
+        }
+        [Test, Category("SerializeThenDeserialize")]
+        public void SerializeDeserializeUtcMidnight()
+        {
+            var cal = new Calendar
+            {
+            };
+            var fb = new FreeBusy
+            {
+                Organizer = new Organizer("mailto:maryadams@example.com"),
+                DtStart = new CalDateTime(new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc)),
+                DtEnd = new CalDateTime(new DateTime(2020, 12, 31, 0, 0, 0, DateTimeKind.Utc))
+            };
+            cal.FreeBusy.Add(fb);
+
+            SerializeAndCompare(cal);
+        }
+
+        [Test, Category("Serialization")]
+        public void EnumHyphenation()
+        {
+            Assert.AreEqual("REQ-PARTICIPANT", Serialization.iCalendar.Serializers.Other.EnumSerializer.CamelCaseToHyphenatedUpper("ReqParticipant"));
+        }
         #endregion
     }
 }

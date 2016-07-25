@@ -41,12 +41,7 @@ namespace Ical.Net
             // See https://sourceforge.net/projects/dday-ical/forums/forum/656447/topic/3754354
             if (DtStamp == null)
             {
-                // Here, we don't simply set to DateTime.Now because DateTime.Now contains milliseconds, and
-                // the iCalendar standard doesn't care at all about milliseconds.  Therefore, when comparing
-                // two calendars, one generated, and one loaded from file, they may be functionally identical,
-                // but be determined to be different due to millisecond differences.
-                var now = DateTime.Now;
-                DtStamp = new CalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+                DtStamp = CalDateTime.UtcNow;
             }
         }
 
@@ -61,7 +56,9 @@ namespace Ical.Net
             get { return Properties.GetMany<string>("COMMENT"); }
             set { Properties.Set("COMMENT", value); }
         }
-
+        /// <summary>
+        /// /// The UTC date/time that the instance of the iCalendar object was created.
+        /// </summary>
         public virtual IDateTime DtStamp
         {
             get { return Properties.Get<IDateTime>("DTSTAMP"); }

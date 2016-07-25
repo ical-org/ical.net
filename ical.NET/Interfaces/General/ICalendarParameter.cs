@@ -1,4 +1,4 @@
-﻿using ical.NET.Collections.Interfaces;
+﻿using ical.Net.Collections.Interfaces;
 
 namespace Ical.Net.Interfaces.General
 {

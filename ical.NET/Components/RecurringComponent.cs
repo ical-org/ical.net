@@ -43,6 +43,9 @@ namespace Ical.Net
             set { Properties.Set("CATEGORIES", value); }
         }
 
+        /// <summary>
+        /// valid values: Ical.Net.AccessClassifications
+        /// </summary>
         public virtual string Class
         {
             get { return Properties.Get<string>("CLASS"); }
@@ -54,7 +57,9 @@ namespace Ical.Net
             get { return Properties.GetMany<string>("CONTACT"); }
             set { Properties.Set("CONTACT", value); }
         }
-
+        /// <summary>
+        /// The UTC date/time that the calendar information was created by the calendar user agent in the calendar store. This is analogous to the creation date and time for a file in the file system.
+        /// </summary>
         public virtual IDateTime Created
         {
             get { return Properties.Get<IDateTime>("CREATED"); }
@@ -87,7 +92,9 @@ namespace Ical.Net
             get { return Properties.GetMany<IRecurrencePattern>("EXRULE"); }
             set { Properties.Set("EXRULE", value); }
         }
-
+        /// <summary>
+        /// the UTC date/time that the information associated with the calendar component was last revised in the calendar store. Note: This is analogous to the modification date and time for a file in the file system
+        /// </summary>
         public virtual IDateTime LastModified
         {
             get { return Properties.Get<IDateTime>("LAST-MODIFIED"); }

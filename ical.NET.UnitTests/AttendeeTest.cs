@@ -1,4 +1,6 @@
 using Ical.Net.DataTypes;
+using Ical.Net.ExtensionMethods;
+using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
@@ -92,6 +94,24 @@ namespace Ical.Net.UnitTests
 
             evt.Attendees.Remove(_attendees.Last());
             Assert.AreEqual(0, evt.Attendees.Count);
+        }
+
+        /// <summary>
+        /// It should not matter whether the IList of attendees is assigned via a list, or individually added
+        /// </summary>
+        [Test, Category("Attendee")]
+        public void AssignEvtAttendeeList()
+        {
+            var created = CalDateTime.UtcNow;
+            var uid = Guid.NewGuid().ToString();
+
+            var evt1 = new Event { Created = created, Uid = uid };
+            evt1.Attendees.AddRange(_attendees);
+
+            var evt2 = new Event { Created = created, Uid = uid };
+            evt2.Attendees = _attendees.Cast<IAttendee>().ToList();
+
+            SerializationTests.CompareComponents(evt1, evt2);
         }
     }
 }

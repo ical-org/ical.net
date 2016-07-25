@@ -81,6 +81,7 @@
     <Compile Include="Components\UniqueComponent.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DataTypes\Attendee.cs" />
+    <Compile Include="DataTypes\CalDateTime.cs" />
     <Compile Include="DataTypes\CalendarDataType.cs" />
     <Compile Include="DataTypes\FreeBusyEntry.cs" />
     <Compile Include="DataTypes\IGroupedCollection.cs" />
@@ -183,7 +184,6 @@
     <Compile Include="General\CalendarPropertyList.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DataTypes\iCalDateTime.cs" />
     <Compile Include="Calendar.cs" />
     <Compile Include="CalendarCollection.cs">
       <SubType>Code</SubType>

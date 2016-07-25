@@ -17,7 +17,29 @@ namespace Ical.Net.DataTypes
     /// </summary>
     public sealed class CalDateTime : EncodableDataType, IDateTime
     {
-        public static CalDateTime Now => new CalDateTime(DateTime.Now);
+        public static CalDateTime Now {
+            get
+            {
+                // Here, we don't simply set to DateTime.Now because DateTime.Now contains milliseconds, and
+                // the iCalendar standard doesn't care at all about milliseconds.  Therefore, when comparing
+                // two calendars, one generated, and one loaded from file, they may be functionally identical,
+                // but be determined to be different due to millisecond differences.
+                var now = DateTime.Now;
+                return new CalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+            }
+        }
+
+        public static CalDateTime UtcNow {
+            get
+            {
+                // Here, we don't simply set to DateTime.UtcNow because DateTime.UtcNow contains milliseconds, and
+                // the iCalendar standard doesn't care at all about milliseconds.  Therefore, when comparing
+                // two calendars, one generated, and one loaded from file, they may be functionally identical,
+                // but be determined to be different due to millisecond differences.
+                var utcNow = DateTime.UtcNow;
+                return new CalDateTime(new DateTime(utcNow.Year, utcNow.Month, utcNow.Day, utcNow.Hour, utcNow.Minute, utcNow.Second, DateTimeKind.Utc));
+            }
+        }
 
         public static CalDateTime Today => new CalDateTime(DateTime.Today);
 
@@ -31,13 +53,21 @@ namespace Ical.Net.DataTypes
         public CalDateTime(IDateTime value)
         {
             Initialize(value.Value, value.TzId, null);
+            HasTime = value.HasTime;
         }
 
+        /// <summary>
+        /// Use provided DateTime. If only date component is required, set HasTime = False
+        /// </summary>
         public CalDateTime(DateTime value) : this(value, null) {}
 
+        /// <summary>
+        /// Use provided DateTime. If only date component is required, set HasTime = False
+        /// </summary>
         public CalDateTime(DateTime value, string tzId)
         {
             Initialize(value, tzId, null);
+            HasTime = true;
         }
 
         public CalDateTime(int year, int month, int day, int hour, int minute, int second)
@@ -58,8 +88,13 @@ namespace Ical.Net.DataTypes
             HasTime = true;
         }
 
-        public CalDateTime(int year, int month, int day) : this(year, month, day, 0, 0, 0) {}
-        public CalDateTime(int year, int month, int day, string tzId) : this(year, month, day, 0, 0, 0, tzId) {}
+        public CalDateTime(int year, int month, int day) : this(year, month, day, 0, 0, 0) {
+            HasTime = false;
+        }
+
+        public CalDateTime(int year, int month, int day, string tzId) : this(year, month, day, 0, 0, 0, tzId) {
+            HasTime = false;
+        }
 
         public CalDateTime(string value)
         {
@@ -78,11 +113,11 @@ namespace Ical.Net.DataTypes
             {
                 IsUniversalTime = true;
             }
-
+            
             // Convert all incoming values to UTC.
             Value = new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second, DateTimeKind.Utc);
             HasDate = true;
-            HasTime = value.Second != 0 || value.Minute != 0 || value.Hour != 0;
+            //HasTime = IsUniversalTime || value.TimeOfDay.Ticks!=0;
             TzId = tzId;
             AssociatedObject = cal;
         }
@@ -339,7 +374,7 @@ namespace Ical.Net.DataTypes
             {
                 if (IsUniversalTime)
                 {
-                    return "UTC";
+                    return null;
                 }
                 return !string.IsNullOrWhiteSpace(_tzId)
                     ? _tzId
@@ -532,6 +567,11 @@ namespace Ical.Net.DataTypes
                 return 1;
             }
             throw new Exception("An error occurred while comparing two IDateTime values.");
+        }
+
+        int IComparable.CompareTo(object obj)
+        {
+            return CompareTo(obj as IDateTime);
         }
 
         public string ToString(string format)

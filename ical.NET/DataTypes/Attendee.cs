@@ -121,7 +121,10 @@ namespace Ical.Net.DataTypes
         }
 
         private string _role;
-        /// <summary> ROLE: the intended role the attendee will have </summary>
+        /// <summary> 
+        /// ROLE: the intended role the attendee will have.
+	    /// Valid values: Ical.Net.ParticipationRole
+	    /// </summary>
         public virtual string Role
         {
             get
@@ -144,6 +147,9 @@ namespace Ical.Net.DataTypes
         }
 
         private string _participationStatus;
+        /// <summary>
+        /// Valid values: Ical.Net.[Event|Journal|ToDo]ParticipationStatus
+        /// </summary>
         public virtual string ParticipationStatus
         {
             get
@@ -239,7 +245,7 @@ namespace Ical.Net.DataTypes
         {
             if (!Uri.IsWellFormedUriString(attendeeUri, UriKind.Absolute))
             {
-                throw new ArgumentException("attendeeUri");
+             throw new ArgumentException("not a well formed uri string","attendeeUri");
             }
             Value = new Uri(attendeeUri);
         }

@@ -266,7 +266,9 @@ namespace Ical.Net
             get { return Properties.Get<string>("CALSCALE"); }
             set { Properties.Set("CALSCALE", value); }
         }
-
+        /// <summary>
+        /// valid values: Ical.Net.CalendarMethods
+        /// </summary>
         public virtual string Method
         {
             get { return Properties.Get<string>("METHOD"); }

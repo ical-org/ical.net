@@ -104,6 +104,13 @@
         public static string ParamName => Role;
     }
 
+    public class AccessClassifications
+    {
+        public const string Public = "PUBLIC";
+        public const string Private = "PRIVATE";
+        public const string Confidential = "CONFIDENTIAL";
+    }
+
     public class SerializationConstants
     {
         public const string LineBreak = "\r\n";
@@ -333,4 +340,5 @@
         /// </summary>
         public const string DeclineCounter = "DECLINECOUNTER";
     }
+
 }

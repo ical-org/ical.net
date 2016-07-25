@@ -10,6 +10,9 @@ namespace Ical.Net.Interfaces.Components
 
         IList<IAttendee> Attendees { get; set; }
         IList<string> Comments { get; set; }
+        /// <summary>
+        /// The UTC date/time that the instance of the iCalendar object was created.
+        /// </summary>
         IDateTime DtStamp { get; set; }
         IOrganizer Organizer { get; set; }
         IList<IRequestStatus> RequestStatuses { get; set; }

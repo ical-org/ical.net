@@ -168,12 +168,12 @@ namespace Ical.Net.UnitTests
             // Per Jon Udell's test, we should be able to get all 
             // system time zones on the machine and ensure they
             // are properly translated.
-            var zones = TimeZoneInfo.GetSystemTimeZones();
+            var zones = System.TimeZoneInfo.GetSystemTimeZones();
             foreach (var zone in zones)
             {
                 try
                 {
-                    TimeZoneInfo.FindSystemTimeZoneById(zone.Id);                    
+                    System.TimeZoneInfo.FindSystemTimeZoneById(zone.Id);                    
                 }
                 catch (Exception)
                 {

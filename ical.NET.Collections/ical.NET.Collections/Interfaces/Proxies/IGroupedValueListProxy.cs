@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ical.NET.Collections.Interfaces.Proxies
+namespace ical.Net.Collections.Interfaces.Proxies
 {
     public interface IGroupedValueListProxy<TItem, TValue> :
         IList<TValue>

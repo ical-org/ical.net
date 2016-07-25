@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ical.NET.Collections.Interfaces
+namespace ical.Net.Collections.Interfaces
 {
     public interface IGroupedValueCollection<TGroup, TInterface, TItem, TValueType> :
         IGroupedCollection<TGroup, TInterface>
