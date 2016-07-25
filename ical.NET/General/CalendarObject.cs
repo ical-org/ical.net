@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.Serialization;
-using ical.NET.Collections;
+using ical.Net.Collections;
 using Ical.Net.ExtensionMethods;
 using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.General;
@@ -202,7 +202,10 @@ namespace Ical.Net.General
         public virtual string Group
         {
             get { return Name; }
-            set { Name = value; }
+            set
+            {
+                Name = value;
+            }
         }
     }
 }

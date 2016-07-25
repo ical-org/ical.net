@@ -73,11 +73,11 @@ namespace Ical.Net
                     {
                         switch (participatingAttendee)
                         {
-                            case ParticipationStatus.Tentative:
+                            case EventParticipationStatus.Tentative:
                                 accepted = true;
                                 type = FreeBusyStatus.BusyTentative;
                                 break;
-                            case ParticipationStatus.Accepted:
+                            case EventParticipationStatus.Accepted:
                                 accepted = true;
                                 type = FreeBusyStatus.Busy;
                                 break;

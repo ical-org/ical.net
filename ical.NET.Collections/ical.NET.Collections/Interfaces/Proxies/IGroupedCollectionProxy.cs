@@ -1,4 +1,4 @@
-﻿namespace ical.NET.Collections.Interfaces.Proxies
+﻿namespace ical.Net.Collections.Interfaces.Proxies
 {
     public interface IGroupedCollectionProxy<TGroup, TOriginal, TNew> :
         IGroupedCollection<TGroup, TNew>

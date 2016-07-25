@@ -1,5 +1,4 @@
-﻿using Ical.Net;
-using Ical.Net.DataTypes;
+﻿using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using NUnit.Framework;
@@ -8,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ical.NET.UnitTests
+namespace Ical.Net.UnitTests
 {
     [TestFixture]
     public class TimeZoneTest

@@ -1,5 +1,4 @@
 using System;
-using Ical.Net;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
@@ -8,7 +7,7 @@ using SpecValidation;
 using System.Threading.Tasks;
 using System.Linq;
 
-namespace ical.NET.UnitTests
+namespace Ical.Net.UnitTests
 {
     [TestFixture]
     public class SpecValidationTests
@@ -66,7 +65,7 @@ namespace ical.NET.UnitTests
                 CommonName = "James James",
                 Role = _requiredParticipant,
                 Rsvp = true,
-                ParticipationStatus = ParticipationStatus.Tentative
+                ParticipationStatus = EventParticipationStatus.Tentative
             });
 
             var attendee2 = new Attendee("MAILTO:mary@example.com")

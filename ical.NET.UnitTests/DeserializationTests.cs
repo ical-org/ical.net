@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using antlr;
-using Ical.Net;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
@@ -13,10 +12,9 @@ using Ical.Net.Interfaces.Serialization;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using Ical.Net.Serialization.iCalendar.Serializers.Other;
-using Ical.Net.UnitTests;
 using NUnit.Framework;
 
-namespace ical.NET.UnitTests
+namespace Ical.Net.UnitTests
 {
     [TestFixture]
     public class DeserializationTests

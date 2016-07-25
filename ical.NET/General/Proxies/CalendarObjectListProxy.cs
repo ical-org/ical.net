@@ -1,6 +1,6 @@
 ﻿using System.Linq;
-using ical.NET.Collections.Interfaces;
-using ical.NET.Collections.Proxies;
+using ical.Net.Collections.Interfaces;
+using ical.Net.Collections.Proxies;
 using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.General.Proxies

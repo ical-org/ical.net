@@ -2,11 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ical.NET.Collections.Enumerators;
-using ical.NET.Collections.Interfaces;
+using ical.Net.Collections.Enumerators;
+using ical.Net.Collections.Interfaces;
 using System.Diagnostics;
 
-namespace ical.NET.Collections
+namespace ical.Net.Collections
 {
     /// <summary>
     /// A list of objects that are keyed.
@@ -23,6 +23,11 @@ namespace ical.NET.Collections
 
         private IMultiLinkedList<TItem> EnsureList(TGroup group)
         {
+            if (group == null)
+            {
+                return null;
+            }
+
             IMultiLinkedList<TItem> list;
             if (_dictionary.TryGetValue(group, out list))
             {
@@ -61,7 +66,8 @@ namespace ical.NET.Collections
             }
 
             // Add a new list if necessary
-            var list = EnsureList(item.Group);
+            var group = item.Group;
+            var list = EnsureList(group);
             var index = list.Count;
             list.Add(SubscribeToKeyChanges(item));
             OnItemAdded(item, list.StartIndex + index);
@@ -85,6 +91,7 @@ namespace ical.NET.Collections
                 ? list.StartIndex + index
                 : -1;
         }
+
         public virtual void Clear(TGroup group)
         {
             IMultiLinkedList<TItem> list;
@@ -240,7 +247,7 @@ namespace ical.NET.Collections
         {
             return new GroupedListEnumerator<TItem>(_lists);
         }
-        
+
         IEnumerator IEnumerable.GetEnumerator()
         {
             return new GroupedListEnumerator<TItem>(_lists);

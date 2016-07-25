@@ -115,7 +115,7 @@ namespace Ical.Net.DataTypes
             }
             
             // Convert all incoming values to UTC.
-            Value = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+            Value = new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second, DateTimeKind.Utc);
             HasDate = true;
             //HasTime = IsUniversalTime || value.TimeOfDay.Ticks!=0;
             TzId = tzId;
@@ -175,12 +175,15 @@ namespace Ical.Net.DataTypes
             }
         }
 
+        //ToDo: Time zone equality should include time zone values. Perhaps we should separate the idea of "equal" with "equivalent
+        /// <summary>Equality is determined by the unambiguous UTC representation of the time. Time zone string values are ignored.</summary>
         public override bool Equals(object obj)
         {
             if (obj is IDateTime)
             {
-                AssociateWith((IDateTime) obj);
-                return ((IDateTime) obj).AsUtc.Equals(AsUtc);
+                AssociateWith((IDateTime)obj);
+                var thisDt = ((IDateTime)obj).AsUtc;
+                return thisDt.Equals(AsUtc);
             }
             if (obj is DateTime)
             {

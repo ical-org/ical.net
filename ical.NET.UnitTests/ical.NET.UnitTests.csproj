@@ -76,6 +76,8 @@
     <Compile Include="ComponentTest.cs" />
     <Compile Include="ConcurrentDeserializationTests.cs" />
     <Compile Include="DeserializationTests.cs" />
+    <Compile Include="DocumentationExamples.cs" />
+    <Compile Include="EqualityAndHashingTests.cs" />
     <Compile Include="FreeBusyTest.cs" />
     <Compile Include="EventTest.cs" />
     <Compile Include="CopyTest.cs" />
@@ -86,6 +88,10 @@
     <None Include="app.config" />
     <Compile Include="RecurrenceTest.cs" />
     <Compile Include="SerializationTests.cs" />
+    <Compile Include="SpecValidationTests.cs" />
+    <Compile Include="SymmetricSerializationTests.cs" />
+    <Compile Include="TextUtilTests.cs" />
+    <Compile Include="TimeZoneTest.cs" />
     <Compile Include="TodoTest.cs" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -101,6 +107,10 @@
     <ProjectReference Include="..\ical.NET\Ical.Net.csproj">
       <Project>{F88DB6D3-CB95-4707-9C88-B53403AADC61}</Project>
       <Name>Ical.Net</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SpecValidation\SpecValidation.csproj">
+      <Project>{0c67c168-a6fe-42e1-8f3b-00f0ffdfb8ed}</Project>
+      <Name>SpecValidation</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -568,6 +578,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

@@ -1,4 +1,4 @@
-﻿using ical.NET.Collections.Interfaces.Proxies;
+﻿using ical.Net.Collections.Interfaces.Proxies;
 
 namespace Ical.Net.Interfaces.General.Proxies
 {

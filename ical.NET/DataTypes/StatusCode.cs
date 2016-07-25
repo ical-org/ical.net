@@ -1,7 +1,9 @@
 using System.IO;
+using System.Linq;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using Utility;
 
 namespace Ical.Net.DataTypes
 {
@@ -10,21 +12,15 @@ namespace Ical.Net.DataTypes
     /// </summary>
     public class StatusCode : EncodableDataType, IStatusCode
     {
-        private int[] _mParts;
-
-        public int[] Parts
-        {
-            get { return _mParts; }
-            set { _mParts = value; }
-        }
+        public int[] Parts { get; private set; }
 
         public int Primary
         {
             get
             {
-                if (_mParts.Length > 0)
+                if (Parts.Length > 0)
                 {
-                    return _mParts[0];
+                    return Parts[0];
                 }
                 return 0;
             }
@@ -34,11 +30,9 @@ namespace Ical.Net.DataTypes
         {
             get
             {
-                if (_mParts.Length > 1)
-                {
-                    return _mParts[1];
-                }
-                return 0;
+                return Parts.Length > 1
+                    ? Parts[1]
+                    : 0;
             }
         }
 
@@ -46,15 +40,18 @@ namespace Ical.Net.DataTypes
         {
             get
             {
-                if (_mParts.Length > 2)
-                {
-                    return _mParts[2];
-                }
-                return 0;
+                return Parts.Length > 2
+                    ? Parts[2]
+                    : 0;
             }
         }
 
         public StatusCode() {}
+
+        public StatusCode(int[] parts)
+        {
+            Parts = parts;
+        }
 
         public StatusCode(string value) : this()
         {
@@ -73,16 +70,9 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public override string ToString()
-        {
-            var serializer = new StatusCodeSerializer();
-            return serializer.SerializeToString(this);
-        }
+        public override string ToString() => new StatusCodeSerializer().SerializeToString(this);
 
-        protected bool Equals(StatusCode other)
-        {
-            return Equals(_mParts, other._mParts);
-        }
+        protected bool Equals(StatusCode other) => Parts.SequenceEqual(other.Parts);
 
         public override bool Equals(object obj)
         {
@@ -101,9 +91,6 @@ namespace Ical.Net.DataTypes
             return Equals((StatusCode) obj);
         }
 
-        public override int GetHashCode()
-        {
-            return _mParts?.GetHashCode() ?? 0;
-        }
+        public override int GetHashCode() => CollectionHelpers.GetHashCode(Parts);
     }
 }

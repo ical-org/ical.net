@@ -49,22 +49,64 @@ namespace Ical.Net
             //TimeZoneInfos = new List<ITimeZoneInfo>();
         }
 
-        public virtual string Id
+        public VTimeZone(string tzId) : this()
         {
-            get { return Properties.Get<string>("TZID"); }
-            set { Properties.Set("TZID", value); }
+            TzId = tzId;
         }
 
+        private string _tzId;
         public virtual string TzId
         {
-            get { return Id; }
-            set { Id = value; }
+            get
+            {
+                if (string.IsNullOrEmpty(_tzId))
+                {
+                    _tzId = Properties.Get<string>("TZID");
+                }
+                return _tzId;
+            }
+            set
+            {
+                _tzId = value;
+                Properties.Set("TZID", _tzId);
+            }
         }
 
+        private Uri _url;
         public virtual Uri Url
         {
-            get { return Properties.Get<Uri>("TZURL"); }
-            set { Properties.Set("TZURL", value); }
+            get { return _url ?? (_url = Properties.Get<Uri>("TZURL")); }
+            set
+            {
+                _url = value;
+                Properties.Set("TZURL", _url);
+            }
+        }
+
+        protected bool Equals(VTimeZone other)
+        {
+            return string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase)
+                && Equals(Url, other.Url);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((VTimeZone)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = Name.GetHashCode();
+                hashCode = (hashCode * 397) ^ (TzId?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (Url?.GetHashCode() ?? 0);
+                return hashCode;
+            }
         }
 
         //This component is designed for serialization (in order to meet the spec)

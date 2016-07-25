@@ -1,7 +1,6 @@
-using Ical.Net;
 using NUnit.Framework;
 
-namespace ical.NET.UnitTests
+namespace Ical.Net.UnitTests
 {
     [TestFixture]
     public class ComponentTest

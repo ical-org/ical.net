@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using ical.NET.Collections.Interfaces;
+using ical.Net.Collections.Interfaces;
 using System.Diagnostics;
 
-namespace ical.NET.Collections.Enumerators
+namespace ical.Net.Collections.Enumerators
 {
     [DebuggerStepThrough]
     public class GroupedListEnumerator<TType> :

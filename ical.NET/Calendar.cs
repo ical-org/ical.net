@@ -14,6 +14,7 @@ using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Interfaces.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
+using Utility;
 
 namespace Ical.Net
 {
@@ -178,9 +179,13 @@ namespace Ical.Net
 
         protected bool Equals(Calendar other)
         {
-            return base.Equals(other) && Equals(_mUniqueComponents, other._mUniqueComponents) && Equals(_mEvents, other._mEvents) &&
-                   Equals(_mTodos, other._mTodos) && Equals(_mJournals, other._mJournals) && Equals(_mFreeBusy, other._mFreeBusy) &&
-                   Equals(_mTimeZones, other._mTimeZones);
+            return string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)
+                   && UniqueComponents.SequenceEqual(other.UniqueComponents)
+                   && Events.SequenceEqual(other.Events)
+                   && Todos.SequenceEqual(other.Todos)
+                   && Journals.SequenceEqual(other.Journals)
+                   && FreeBusy.SequenceEqual(other.FreeBusy)
+                   && TimeZones.SequenceEqual(other.TimeZones);
         }
 
         public override bool Equals(object obj)
@@ -204,13 +209,13 @@ namespace Ical.Net
         {
             unchecked
             {
-                var hashCode = base.GetHashCode();
-                hashCode = (hashCode * 397) ^ (_mUniqueComponents?.GetHashCode() ?? 0);
-                hashCode = (hashCode * 397) ^ (_mEvents?.GetHashCode() ?? 0);
-                hashCode = (hashCode * 397) ^ (_mTodos?.GetHashCode() ?? 0);
-                hashCode = (hashCode * 397) ^ (_mJournals?.GetHashCode() ?? 0);
-                hashCode = (hashCode * 397) ^ (_mFreeBusy?.GetHashCode() ?? 0);
-                hashCode = (hashCode * 397) ^ (_mTimeZones?.GetHashCode() ?? 0);
+                var hashCode = Name.GetHashCode();
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(UniqueComponents);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Events);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Todos);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Journals);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(FreeBusy);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(TimeZones);
                 return hashCode;
             }
         }

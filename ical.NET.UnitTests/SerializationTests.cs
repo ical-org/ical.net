@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using Ical.Net;
 using Ical.Net.DataTypes;
 using Ical.Net.ExtensionMethods;
 using Ical.Net.Interfaces;
@@ -10,12 +9,11 @@ using Ical.Net.Interfaces.Components;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
-using Calendar = Ical.Net.Calendar;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 using System.Linq;
 
-namespace ical.NET.UnitTests
+namespace Ical.Net.UnitTests
 {
     [TestFixture]
     public class SerializationTests
@@ -217,22 +215,21 @@ namespace ical.NET.UnitTests
             SerializeAndCompare(cal1);
         }
 
-        private const string _requiredParticipant = "REQ-PARTICIPANT"; //this string may be added to the api in the future
         private static readonly IList<Attendee> _attendees = new List<Attendee>
         {
             new Attendee("MAILTO:james@example.com")
             {
                 CommonName = "James James",
-                Role = _requiredParticipant,
+                Role = ParticipationRole.RequiredParticipant,
                 Rsvp = true,
-                ParticipationStatus = ParticipationStatus.Tentative
+                ParticipationStatus = EventParticipationStatus.Tentative
             },
             new Attendee("MAILTO:mary@example.com")
             {
                 CommonName = "Mary Mary",
-                Role = _requiredParticipant,
+                Role = ParticipationRole.RequiredParticipant,
                 Rsvp = true,
-                ParticipationStatus = ParticipationStatus.Accepted
+                ParticipationStatus = EventParticipationStatus.Accepted
             }
         }.AsReadOnly();
 
@@ -380,7 +377,7 @@ namespace ical.NET.UnitTests
         [Test, Category("Serialization")]
         public void EnumHyphenation()
         {
-            Assert.AreEqual("REQ-PARTICIPANT", Ical.Net.Serialization.iCalendar.Serializers.Other.EnumSerializer.CamelCaseToHyphenatedUpper("ReqParticipant"));
+            Assert.AreEqual("REQ-PARTICIPANT", Serialization.iCalendar.Serializers.Other.EnumSerializer.CamelCaseToHyphenatedUpper("ReqParticipant"));
         }
         #endregion
     }
