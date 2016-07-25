@@ -34,7 +34,7 @@ namespace Ical.Net
             var fb = freeBusyRequest;
             fb.Uid = Guid.NewGuid().ToString();
             fb.Entries.Clear();
-            fb.DtStamp = CalDateTime.Now;
+            fb.DtStamp = CalDateTime.UtcNow;
 
             foreach (var o in occurrences)
             {
@@ -99,7 +99,7 @@ namespace Ical.Net
         {
             var fb = new FreeBusy
             {
-                DtStamp = CalDateTime.Now,
+                DtStamp = CalDateTime.UtcNow,
                 DtStart = fromInclusive,
                 DtEnd = toExclusive
             };
@@ -131,12 +131,18 @@ namespace Ical.Net
             set { Properties.Set("FREEBUSY", value); }
         }
 
+        /// <summary>
+        /// Spec requires explicit UTC date
+        /// </summary>
         public virtual IDateTime DtStart
         {
             get { return Properties.Get<IDateTime>("DTSTART"); }
             set { Properties.Set("DTSTART", value); }
         }
 
+        /// <summary>
+        /// Spec requires explicit UTC date
+        /// </summary>
         public virtual IDateTime DtEnd
         {
             get { return Properties.Get<IDateTime>("DTEND"); }

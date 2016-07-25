@@ -126,7 +126,8 @@ namespace ical.NET.UnitTests
             Assert.AreEqual("20100325T125335", serializer.SerializeToString(cdt), "date with local time");
             cdt = new CalDateTime(new DateTime(2010, 3, 25, 12, 53, 35, DateTimeKind.Utc));
             Assert.AreEqual("20100325T125335Z", serializer.SerializeToString(cdt), "date with utc time");
-
+            cdt = new CalDateTime(new DateTime(2010, 3, 25, 0, 0, 0, DateTimeKind.Utc));
+            Assert.AreEqual("20100325T000000Z", serializer.SerializeToString(cdt), "date with utc T00:00");
             //below is not working - TODO improve testability by allowing objects which are not calendars to be serialized, then uncomment BM
             //const string timezone = "America/New_York";
             //cdt = new CalDateTime(2010, 3, 25, 12, 53, 35, timezone);
@@ -199,6 +200,23 @@ namespace ical.NET.UnitTests
             SerializeAndCompare(cal1);
         }
 
+        [Test, Category("SerializeThenDeserialize")]
+        public void SerializeDeserializeEventDate()
+        {
+            var cal1 = new Calendar();
+
+            var evt = new Event
+            {
+                Class = "PUBLIC",
+                Organizer = new Organizer("MAILTO:james@example.com"),
+                DtStart = new CalDateTime(2012, 3, 25),
+                DtEnd = new CalDateTime(2012, 3, 26)
+            };
+            cal1.Events.Add(evt);
+
+            SerializeAndCompare(cal1);
+        }
+
         private const string _requiredParticipant = "REQ-PARTICIPANT"; //this string may be added to the api in the future
         private static readonly IList<Attendee> _attendees = new List<Attendee>
         {
@@ -248,8 +266,7 @@ namespace ical.NET.UnitTests
 
             var evt = AttendeeTest.VEventFactory();
             cal.Events.Add(evt);
-            const string org = "MAILTO:james@example.com";
-            evt.Organizer = new Organizer(org);
+            evt.Organizer = new Organizer("MAILTO:james@example.com");
 
             evt.Categories.AddRange(new[] { "1","3","8", "text with chars -;:\n" });
 
@@ -359,6 +376,7 @@ namespace ical.NET.UnitTests
 
             SerializeAndCompare(cal);
         }
+
         [Test, Category("Serialization")]
         public void EnumHyphenation()
         {
