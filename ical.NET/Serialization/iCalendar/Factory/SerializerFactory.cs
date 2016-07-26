@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using Ical.Net.General;
 using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
@@ -50,7 +51,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
                 {
                     s = new PropertySerializer();
                 }
-                else if (typeof (ICalendarParameter).IsAssignableFrom(objectType))
+                else if (typeof (CalendarParameter).IsAssignableFrom(objectType))
                 {
                     s = new ParameterSerializer();
                 }

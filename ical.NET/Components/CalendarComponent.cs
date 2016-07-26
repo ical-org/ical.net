@@ -49,7 +49,7 @@ namespace Ical.Net
         /// <summary>
         /// Returns a list of properties that are associated with the iCalendar object.
         /// </summary>
-        public virtual ICalendarPropertyList Properties { get; protected set; }
+        public virtual CalendarPropertyList Properties { get; protected set; }
 
         public CalendarComponent() : base()
         {

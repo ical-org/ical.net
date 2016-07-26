@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
+using ical.NET.Collections.Interfaces;
 using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.General
 {
     [DebuggerDisplay("{Name}={string.Join(\",\", Values)}")]
-    public class CalendarParameter : CalendarObject, ICalendarParameter
+    public class CalendarParameter : CalendarObject, IValueObject<string>
     {
         private HashSet<string> _values;
 
@@ -53,7 +54,7 @@ namespace Ical.Net.General
         {
             base.CopyFrom(c);
 
-            var p = c as ICalendarParameter;
+            var p = c as CalendarParameter;
             if (p?.Values == null)
             {
                 return;

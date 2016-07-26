@@ -462,9 +462,9 @@ namespace Ical.Net.Serialization.iCalendar
             return c;
         }
 
-        public ICalendarParameter parameter(ISerializationContext ctx, ICalendarParameterCollectionContainer container)
+        public CalendarParameter parameter(ISerializationContext ctx, ICalendarParameterCollectionContainer container)
         {
-            ICalendarParameter p;
+            CalendarParameter p;
             var values = new List<string>(128);
 
             switch (LA(1))

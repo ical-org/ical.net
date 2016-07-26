@@ -155,13 +155,13 @@ namespace Ical.Net
         /// </summary>
         public Calendar()
         {
+            Name = Components.Calendar;
+
             Initialize();
         }
 
         private void Initialize()
         {
-            Name = Components.Calendar;
-
             _mUniqueComponents = new UniqueComponentListProxy<IUniqueComponent>(Children);
             _mEvents = new UniqueComponentListProxy<IEvent>(Children);
             _mTodos = new UniqueComponentListProxy<ITodo>(Children);

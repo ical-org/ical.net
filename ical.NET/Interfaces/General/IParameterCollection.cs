@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using ical.NET.Collections.Interfaces;
+using Ical.Net.General;
 
 namespace Ical.Net.Interfaces.General
 {
-    public interface ICalendarParameterCollection : IGroupedList<string, ICalendarParameter>
+    public interface IParameterCollection : IGroupedList<string, CalendarParameter>
     {
         void SetParent(ICalendarObject parent);
         void Add(string name, string value);

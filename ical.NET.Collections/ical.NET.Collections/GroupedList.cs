@@ -10,15 +10,12 @@ namespace ical.NET.Collections
     /// <summary>
     /// A list of objects that are keyed.
     /// </summary>
-
     public class GroupedList<TGroup, TItem> :
         IGroupedList<TGroup, TItem>
         where TItem : class, IGroupedObject<TGroup>
     {
         private readonly List<IMultiLinkedList<TItem>> _lists = new List<IMultiLinkedList<TItem>>();
         private readonly Dictionary<TGroup, IMultiLinkedList<TItem>> _dictionary = new Dictionary<TGroup, IMultiLinkedList<TItem>>();
-
-        private TItem SubscribeToKeyChanges(TItem item) => item;
 
         private IMultiLinkedList<TItem> EnsureList(TGroup group)
         {
@@ -68,7 +65,7 @@ namespace ical.NET.Collections
             var group = item.Group;
             var list = EnsureList(group);
             var index = list.Count;
-            list.Add(SubscribeToKeyChanges(item));
+            list.Add(item);
             OnItemAdded(item, list.StartIndex + index);
         }
 
@@ -105,20 +102,13 @@ namespace ical.NET.Collections
 
         public virtual void Clear()
         {
-            // Clear our lists out
             _dictionary.Clear();
             _lists.Clear();
         }
 
         public virtual bool ContainsKey(TGroup group) => _dictionary.ContainsKey(@group);
 
-        public virtual int Count
-        {
-            get
-            {
-                return _lists.Sum(list => list.Count);
-            }
-        }
+        public virtual int Count => _lists.Sum(list => list.Count);
 
         public virtual int CountOf(TGroup group)
         {
@@ -127,10 +117,7 @@ namespace ical.NET.Collections
                 : 0;
         }
 
-        public virtual IEnumerable<TItem> Values()
-        {
-            return _dictionary.Values.SelectMany(i => i);
-        }
+        public virtual IEnumerable<TItem> Values() => _dictionary.Values.SelectMany(i => i);
 
         public virtual IEnumerable<TItem> AllOf(TGroup group)
         {

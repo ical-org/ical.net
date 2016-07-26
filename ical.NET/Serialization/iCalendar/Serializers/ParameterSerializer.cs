@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text;
 using Ical.Net.General;
-using Ical.Net.Interfaces.General;
 using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers
@@ -17,7 +16,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         public override string SerializeToString(object obj)
         {
-            var p = obj as ICalendarParameter;
+            var p = obj as CalendarParameter;
 
             var builder = new StringBuilder(512);
             builder.Append(p.Name + "=");

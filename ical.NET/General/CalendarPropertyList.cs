@@ -4,7 +4,7 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.General
 {
-    public class CalendarPropertyList : GroupedValueList<string, ICalendarProperty, CalendarProperty, object>, ICalendarPropertyList
+    public class CalendarPropertyList : GroupedValueList<string, ICalendarProperty, CalendarProperty, object>
     {
         private readonly ICalendarObject _mParent;
 
