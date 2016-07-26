@@ -8,12 +8,12 @@ using Ical.Net.Interfaces.General.Proxies;
 
 namespace Ical.Net.General.Proxies
 {
-    public class CalendarParameterCollectionProxy : GroupedCollectionProxy<string, ICalendarParameter, ICalendarParameter>, ICalendarParameterCollectionProxy
+    public class CalendarParameterCollectionProxy : GroupedCollectionProxy<string, CalendarParameter, CalendarParameter>, ICalendarParameterCollectionProxy
     {
-        protected GroupedValueList<string, ICalendarParameter, CalendarParameter, string> Parameters
-            => RealObject as GroupedValueList<string, ICalendarParameter, CalendarParameter, string>;
+        protected GroupedValueList<string, CalendarParameter, CalendarParameter, string> Parameters
+            => RealObject as GroupedValueList<string, CalendarParameter, CalendarParameter, string>;
 
-        public CalendarParameterCollectionProxy(IGroupedList<string, ICalendarParameter> realObject) : base(realObject) {}
+        public CalendarParameterCollectionProxy(IGroupedList<string, CalendarParameter> realObject) : base(realObject) {}
 
         public virtual void SetParent(ICalendarObject parent)
         {
@@ -37,7 +37,7 @@ namespace Ical.Net.General.Proxies
 
         public virtual IList<string> GetMany(string name)
         {
-            return new GroupedValueListProxy<string, ICalendarParameter, CalendarParameter, string, string>(Parameters, name);
+            return new GroupedValueListProxy<string, CalendarParameter, CalendarParameter, string, string>(Parameters, name);
         }
 
         public virtual void Set(string name, string value)
@@ -68,16 +68,16 @@ namespace Ical.Net.General.Proxies
             }
         }
 
-        public virtual int IndexOf(ICalendarParameter obj)
+        public virtual int IndexOf(CalendarParameter obj)
         {
             return 0;
         }
 
-        public virtual void Insert(int index, ICalendarParameter item) {}
+        public virtual void Insert(int index, CalendarParameter item) {}
 
         public virtual void RemoveAt(int index) {}
 
-        public virtual ICalendarParameter this[int index]
+        public virtual CalendarParameter this[int index]
         {
             get { return Parameters[index]; }
             set { }

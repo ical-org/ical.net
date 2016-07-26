@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using antlr;
 using Ical.Net.DataTypes;
+using Ical.Net.General;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
@@ -491,7 +492,7 @@ END:VCALENDAR
             var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Parameter1))[0];
 
             var evt = iCal.Events.First();
-            IList<ICalendarParameter> parms = evt.Properties["DTSTART"].Parameters.AllOf("VALUE").ToList();
+            IList<CalendarParameter> parms = evt.Properties["DTSTART"].Parameters.AllOf("VALUE").ToList();
             Assert.AreEqual(2, parms.Count);
             Assert.AreEqual("DATE", parms[0].Values.First());
             Assert.AreEqual("OTHER", parms[1].Values.First());

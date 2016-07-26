@@ -10,7 +10,6 @@ namespace ical.NET.Collections
     /// <summary>
     /// A list of objects that are keyed.
     /// </summary>
-
     public class GroupedList<TGroup, TItem> :
         IGroupedList<TGroup, TItem>
         where TItem : class, IGroupedObject<TGroup>

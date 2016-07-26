@@ -4,7 +4,7 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.General
 {
-    public class CalendarParameterList : GroupedValueList<string, ICalendarParameter, CalendarParameter, string>, ICalendarParameterCollection
+    public class CalendarParameterList : GroupedValueList<string, CalendarParameter, CalendarParameter, string>, ICalendarParameterCollection
     {
         public virtual void SetParent(ICalendarObject parent)
         {

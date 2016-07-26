@@ -58,7 +58,7 @@ namespace Ical.Net.General
         /// <summary>
         /// Adds a parameter to the iCalendar object.
         /// </summary>
-        public virtual void AddParameter(ICalendarParameter p)
+        public virtual void AddParameter(CalendarParameter p)
         {
             Parameters.Add(p);
         }
