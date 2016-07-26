@@ -16,7 +16,7 @@ namespace Ical.Net
     [DebuggerDisplay("{Summary} - {Status}")]
     public class Todo : RecurringComponent, ITodo
     {
-        private TodoEvaluator _mEvaluator;
+        private readonly TodoEvaluator _mEvaluator;
 
         /// <summary>
         /// The date/time the todo was completed.
@@ -128,11 +128,6 @@ namespace Ical.Net
 
         public Todo()
         {
-            Initialize();
-        }
-
-        private void Initialize()
-        {
             Name = Components.Todo;
 
             _mEvaluator = new TodoEvaluator(this);
@@ -199,9 +194,8 @@ namespace Ical.Net
 
         protected override void OnDeserializing(StreamingContext context)
         {
+            //ToDo: a necessary evil, for now
             base.OnDeserializing(context);
-
-            Initialize();
         }
 
         private void ExtrapolateTimes()
