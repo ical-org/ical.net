@@ -5,7 +5,6 @@ using Ical.Net.General.Proxies;
 using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.General.Proxies;
 
 namespace Ical.Net.DataTypes
 {
@@ -15,7 +14,7 @@ namespace Ical.Net.DataTypes
     public abstract class CalendarDataType : ICalendarDataType
     {
         private ICalendarParameterCollection _parameters;
-        private ICalendarParameterCollectionProxy _proxy;
+        private CalendarParameterCollectionProxy _proxy;
         private ServiceProvider _serviceProvider;
 
         protected ICalendarObject _AssociatedObject;

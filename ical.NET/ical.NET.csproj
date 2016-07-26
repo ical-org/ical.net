@@ -122,7 +122,6 @@
     <Compile Include="Interfaces\Evaluation\IRecurrable.cs" />
     <Compile Include="Interfaces\General\ICalendarObjectList.cs" />
     <Compile Include="Interfaces\General\IUniqueComponentList.cs" />
-    <Compile Include="Interfaces\General\Proxies\ICalendarParameterCollectionProxy.cs" />
     <Compile Include="Interfaces\General\IServiceProvider.cs" />
     <Compile Include="Interfaces\Serialization\Factory\ICalendarComponentFactory.cs" />
     <Compile Include="Interfaces\Serialization\Factory\ISerializerFactory.cs" />
