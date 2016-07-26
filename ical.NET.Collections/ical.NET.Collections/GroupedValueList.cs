@@ -8,7 +8,7 @@ namespace ical.NET.Collections
 {
     public class GroupedValueList<TGroup, TInterface, TItem, TValueType> :
         GroupedList<TGroup, TInterface>,
-        IGroupedValueList<TGroup, TInterface, TItem, TValueType>
+        IGroupedValueCollection<TGroup, TInterface, TItem, TValueType>
         where TInterface : class, IGroupedObject<TGroup>, IValueObject<TValueType>
         where TItem : new()        
     {

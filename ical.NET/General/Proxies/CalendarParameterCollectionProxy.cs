@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ical.NET.Collections;
 using ical.NET.Collections.Interfaces;
 using ical.NET.Collections.Proxies;
 using Ical.Net.Interfaces.General;
@@ -9,8 +10,8 @@ namespace Ical.Net.General.Proxies
 {
     public class CalendarParameterCollectionProxy : GroupedCollectionProxy<string, ICalendarParameter, ICalendarParameter>, ICalendarParameterCollectionProxy
     {
-        protected IGroupedValueList<string, ICalendarParameter, CalendarParameter, string> Parameters
-            => RealObject as IGroupedValueList<string, ICalendarParameter, CalendarParameter, string>;
+        protected GroupedValueList<string, ICalendarParameter, CalendarParameter, string> Parameters
+            => RealObject as GroupedValueList<string, ICalendarParameter, CalendarParameter, string>;
 
         public CalendarParameterCollectionProxy(IGroupedList<string, ICalendarParameter> realObject) : base(realObject) {}
 

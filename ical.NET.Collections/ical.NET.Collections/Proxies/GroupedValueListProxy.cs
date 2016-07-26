@@ -13,11 +13,11 @@ namespace ical.NET.Collections.Proxies
         where TInterface : class, IGroupedObject<TGroup>, IValueObject<TOriginalValue>
         where TItem : new()        
     {
-        private readonly IGroupedValueList<TGroup, TInterface, TItem, TOriginalValue> _realObject;
+        private readonly GroupedValueList<TGroup, TInterface, TItem, TOriginalValue> _realObject;
         private readonly TGroup _group;
         private TInterface _container;
 
-        public GroupedValueListProxy(IGroupedValueList<TGroup, TInterface, TItem, TOriginalValue> realObject, TGroup group)
+        public GroupedValueListProxy(GroupedValueList<TGroup, TInterface, TItem, TOriginalValue> realObject, TGroup group)
         {
             _realObject = realObject;
             _group = group;
