@@ -28,12 +28,12 @@ namespace SpecValidation
                     //client.DefaultRequestHeaders.Add("Connection", "Keep-Alive");
                     //client.DefaultRequestHeaders.Referrer = new System.Uri("http://icalendar.org/validator.html");
 
-                    using (HttpContent content = ICalNetSpecificFormat.ToUrlSpecificFormContent(serializedIcal))
+                    using (HttpContent content = ICalendarOrgSpecificFormat.ToUrlSpecificFormContent(serializedIcal))
                     {
                         using (var response = await client.PostAsync("http://icalendar.org/validator.html", content))
                         {
                             //this should move to JSON when appropriate service available
-                            var returnVar = await ICalNetSpecificFormat.FromResponse(await response.Content.ReadAsStreamAsync());
+                            var returnVar = await ICalendarOrgSpecificFormat.FromResponse(await response.Content.ReadAsStreamAsync());
 
                             string[] lines = null;
                             foreach (var v in returnVar)
@@ -48,7 +48,6 @@ namespace SpecValidation
                         }
                     }
                 }
-                //I am not sure if dispose would be called on the children of a multipart header?
             }
 
         }
