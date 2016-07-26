@@ -13,8 +13,8 @@ namespace Ical.Net.DataTypes
     /// </summary>
     public abstract class CalendarDataType : ICalendarDataType
     {
-        private ICalendarParameterCollection _parameters;
-        private CalendarParameterCollectionProxy _proxy;
+        private IParameterCollection _parameters;
+        private ParameterCollectionProxy _proxy;
         private ServiceProvider _serviceProvider;
 
         protected ICalendarObject _AssociatedObject;
@@ -26,8 +26,8 @@ namespace Ical.Net.DataTypes
 
         private void Initialize()
         {
-            _parameters = new CalendarParameterList();
-            _proxy = new CalendarParameterCollectionProxy(_parameters);
+            _parameters = new ParameterList();
+            _proxy = new ParameterCollectionProxy(_parameters);
             _serviceProvider = new ServiceProvider();
         }
 
@@ -164,7 +164,7 @@ namespace Ical.Net.DataTypes
             return default(T);
         }
 
-        public virtual ICalendarParameterCollection Parameters => _proxy;
+        public virtual IParameterCollection Parameters => _proxy;
 
         public virtual object GetService(Type serviceType)
         {

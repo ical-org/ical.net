@@ -7,12 +7,12 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.General.Proxies
 {
-    public class CalendarParameterCollectionProxy : GroupedCollectionProxy<string, CalendarParameter, CalendarParameter>, ICalendarParameterCollection
+    public class ParameterCollectionProxy : GroupedCollectionProxy<string, CalendarParameter, CalendarParameter>, IParameterCollection
     {
         protected GroupedValueList<string, CalendarParameter, CalendarParameter, string> Parameters
             => RealObject as GroupedValueList<string, CalendarParameter, CalendarParameter, string>;
 
-        public CalendarParameterCollectionProxy(IGroupedList<string, CalendarParameter> realObject) : base(realObject) {}
+        public ParameterCollectionProxy(IGroupedList<string, CalendarParameter> realObject) : base(realObject) {}
 
         public virtual void SetParent(ICalendarObject parent)
         {

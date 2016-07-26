@@ -2,6 +2,6 @@
 {
     public interface ICalendarParameterCollectionContainer
     {
-        ICalendarParameterCollection Parameters { get; }
+        IParameterCollection Parameters { get; }
     }
 }

@@ -4,7 +4,7 @@ using Ical.Net.General;
 
 namespace Ical.Net.Interfaces.General
 {
-    public interface ICalendarParameterCollection : IGroupedList<string, CalendarParameter>
+    public interface IParameterCollection : IGroupedList<string, CalendarParameter>
     {
         void SetParent(ICalendarObject parent);
         void Add(string name, string value);

@@ -105,7 +105,7 @@
     <Compile Include="ExtensionMethods\ListExtensions.cs" />
     <Compile Include="General\CalendarObjectList.cs" />
     <Compile Include="General\Proxies\CalendarObjectListProxy.cs" />
-    <Compile Include="General\Proxies\CalendarParameterCollectionProxy.cs" />
+    <Compile Include="General\Proxies\ParameterCollectionProxy.cs" />
     <Compile Include="General\ServiceProvider.cs" />
     <Compile Include="General\Proxies\UniqueComponentListProxy.cs" />
     <Compile Include="Interfaces\DataTypes\IFreeBusyEntry.cs" />
@@ -173,7 +173,7 @@
     <Compile Include="General\CalendarParameter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="General\CalendarParameterList.cs">
+    <Compile Include="General\ParameterList.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="General\CalendarProperty.cs">
@@ -207,7 +207,7 @@
     <Compile Include="Interfaces\Components\IUniqueComponent.cs" />
     <Compile Include="Interfaces\Components\ICalendarComponent.cs" />
     <Compile Include="Interfaces\General\ICalendarObject.cs" />
-    <Compile Include="Interfaces\General\ICalendarParameterCollection.cs" />
+    <Compile Include="Interfaces\General\IParameterCollection.cs" />
     <Compile Include="Interfaces\General\ICalendarParameterCollectionContainer.cs" />
     <Compile Include="Interfaces\General\ICalendarProperty.cs" />
     <Compile Include="Interfaces\General\ICalendarPropertyListContainer.cs" />
