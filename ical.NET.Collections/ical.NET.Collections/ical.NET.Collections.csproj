@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug46|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -70,7 +70,6 @@
     </Compile>
     <Compile Include="Interfaces\IGroupedValueCollection.cs" />
     <Compile Include="Interfaces\IGroupedCollection.cs" />
-    <Compile Include="Interfaces\Proxies\IGroupedValueListProxy.cs" />
     <Compile Include="Proxies\GroupedCollectionProxy.cs" />
     <Compile Include="Interfaces\IGroupedList.cs" />
     <Compile Include="Interfaces\IGroupedObject.cs" />

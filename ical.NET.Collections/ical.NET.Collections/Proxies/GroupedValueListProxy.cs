@@ -3,16 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ical.NET.Collections.Interfaces;
-using ical.NET.Collections.Interfaces.Proxies;
 
 namespace ical.NET.Collections.Proxies
 {
     /// <summary>
     /// A proxy for a keyed list.
     /// </summary>
-
-    public class GroupedValueListProxy<TGroup, TInterface, TItem, TOriginalValue, TNewValue> :
-        IGroupedValueListProxy<TInterface, TNewValue>
+    public class GroupedValueListProxy<TGroup, TInterface, TItem, TOriginalValue, TNewValue> : IList<TNewValue>
         where TInterface : class, IGroupedObject<TGroup>, IValueObject<TOriginalValue>
         where TItem : new()        
     {
@@ -37,17 +34,19 @@ namespace ical.NET.Collections.Proxies
             _container = Items.FirstOrDefault();
 
             // If no item is found, create a new object and add it to the list
-            if (Equals(_container, default(TInterface)))
+            if (!Equals(_container, default(TInterface)))
             {
-                var container = new TItem();
-                if (!(container is TInterface))
-                {
-                    throw new Exception("Could not create a container for the value - the container is not of type " + typeof(TInterface).Name);
-                }
-                _container = (TInterface)(object)container;
-                _container.Group = _group;
-                _realObject.Add(_container);
+                return _container;
             }
+            var container = new TItem();
+            if (!(container is TInterface))
+            {
+                throw new Exception("Could not create a container for the value - the container is not of type " + typeof(TInterface).Name);
+            }
+
+            _container = (TInterface)(object)container;
+            _container.Group = _group;
+            _realObject.Add(_container);
             return _container;
         }
 
