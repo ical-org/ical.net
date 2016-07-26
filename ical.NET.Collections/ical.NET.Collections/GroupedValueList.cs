@@ -7,8 +7,7 @@ using ical.NET.Collections.Proxies;
 namespace ical.NET.Collections
 {
     public class GroupedValueList<TGroup, TInterface, TItem, TValueType> :
-        GroupedList<TGroup, TInterface>,
-        IGroupedValueCollection<TGroup, TInterface, TItem, TValueType>
+        GroupedList<TGroup, TInterface>
         where TInterface : class, IGroupedObject<TGroup>, IValueObject<TValueType>
         where TItem : new()        
     {

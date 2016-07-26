@@ -207,7 +207,6 @@
     <Compile Include="Interfaces\Components\IRecurringComponent.cs" />
     <Compile Include="Interfaces\Components\IUniqueComponent.cs" />
     <Compile Include="Interfaces\Components\ICalendarComponent.cs" />
-    <Compile Include="Interfaces\General\ICalendarPropertyList.cs" />
     <Compile Include="Interfaces\General\ICalendarObject.cs" />
     <Compile Include="Interfaces\General\ICalendarParameter.cs" />
     <Compile Include="Interfaces\General\ICalendarParameterCollection.cs" />
