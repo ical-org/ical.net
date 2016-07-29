@@ -21,6 +21,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
         {
             try
             {
+                string caps = enumValue.ToString().ToUpperInvariant();
                 var obj = SerializationContext.Peek() as ICalendarObject;
                 if (obj != null)
                 {
@@ -29,9 +30,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                     {
                         AssociatedObject = obj
                     };
-                    return Encode(dt, enumValue.ToString());
+                    return Encode(dt, caps);
                 }
-                return enumValue.ToString();
+                return caps;
             }
             catch
             {

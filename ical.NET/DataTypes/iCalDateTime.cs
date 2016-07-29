@@ -339,7 +339,7 @@ namespace Ical.Net.DataTypes
             {
                 if (IsUniversalTime)
                 {
-                    return "UTC";
+                    return null;
                 }
                 return !string.IsNullOrWhiteSpace(_tzId)
                     ? _tzId

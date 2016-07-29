@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Ical.Net;
 using Ical.Net.DataTypes;
 using Ical.Net.ExtensionMethods;
 using Ical.Net.Interfaces;
@@ -13,6 +14,7 @@ using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
+using Calendar = Ical.Net.Calendar;
 
 namespace Ical.Net.UnitTests
 {
@@ -143,9 +145,9 @@ namespace Ical.Net.UnitTests
         //This method needs renaming
         static Dictionary<string, string> GetValues(string serialized, string name, string value)
         {
-            var lengthened = serialized.Replace(SerializationConstants.LineBreak + ' ', string.Empty);
+            var unfolded = serialized.Replace(SerializationConstants.LineBreak + ' ', string.Empty);
             //using a regex for now - for the sake of speed, it may be worth creating a C# text search later
-            var match = Regex.Match(lengthened, '^' + Regex.Escape(name) + "(;.+)?:" + Regex.Escape(value) + SerializationConstants.LineBreak, RegexOptions.Multiline);
+            var match = Regex.Match(unfolded, '^' + Regex.Escape(name) + "(;.+)?:" + Regex.Escape(value) + SerializationConstants.LineBreak, RegexOptions.Multiline);
             Assert.IsTrue(match.Success, $"could not find a(n) '{name}' with value '{value}'");
             return match.Groups[1].Value.Length == 0
                 ? new Dictionary<string, string>()
@@ -251,10 +253,9 @@ namespace Ical.Net.UnitTests
                 Location = "here",
                 Summary = "test",
                 DtStart = new CalDateTime(2012, 3, 25, 12, 50, 00),
-                DtEnd = new CalDateTime(2012, 3, 25, 13, 10, 00)
-                //not yet testing property below as serialized output currently does not comply with RTFC 2445
-                //Transparency = TransparencyType.Opaque,
-                //Status = EventStatus.Confirmed
+                DtEnd = new CalDateTime(2012, 3, 25, 13, 10, 00),
+                Transparency = TransparencyType.Opaque,
+                Status = EventStatus.Confirmed
             };
             cal.Events.Add(evt);
 
@@ -277,9 +278,9 @@ namespace Ical.Net.UnitTests
                 {
                     "CLASS:" + evt.Class, "CREATED:" + CalDateString(evt.Created), "DTSTAMP:" + CalDateString(evt.DtStamp),
                     "LAST-MODIFIED:" + CalDateString(evt.LastModified), "SEQUENCE:" + evt.Sequence, "UID:" + evt.Uid, "PRIORITY:" + evt.Priority,
-                    "LOCATION:" + evt.Location, "SUMMARY:" + evt.Summary, "DTSTART:" + CalDateString(evt.DtStart), "DTEND:" + CalDateString(evt.DtEnd)
-                    //"TRANSPARENCY:" + TransparencyType.Opaque.ToString().ToUpperInvariant(),
-                    //"STATUS:" + EventStatus.Confirmed.ToString().ToUpperInvariant()
+                    "LOCATION:" + evt.Location, "SUMMARY:" + evt.Summary, "DTSTART:" + CalDateString(evt.DtStart), "DTEND:" + CalDateString(evt.DtEnd),
+                    "TRANSP:" + TransparencyType.Opaque.ToString().ToUpperInvariant(),
+                    "STATUS:" + EventStatus.Confirmed.ToString().ToUpperInvariant()
                 });
         }
 

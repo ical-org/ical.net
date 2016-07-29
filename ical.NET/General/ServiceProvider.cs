@@ -70,13 +70,10 @@ namespace Ical.Net.General
         {
             if (type != null)
             {
-                if (_mTypedServices.ContainsKey(type))
-                {
-                    _mTypedServices.Remove(type);
-                }
+                _mTypedServices.Remove(type);
 
                 // Get interfaces for the given type
-                foreach (var iface in type.GetInterfaces().Where(iface => _mTypedServices.ContainsKey(iface)))
+                foreach (var iface in type.GetInterfaces())
                 {
                     _mTypedServices.Remove(iface);
                 }
@@ -85,10 +82,7 @@ namespace Ical.Net.General
 
         public virtual void RemoveService(string name)
         {
-            if (_mNamedServices.ContainsKey(name))
-            {
-                _mNamedServices.Remove(name);
-            }
+            _mNamedServices.Remove(name);
         }
     }
 }
