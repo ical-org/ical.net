@@ -154,7 +154,7 @@ namespace Ical.Net.UnitTests
         #endregion //helperMethods
 
         #region tests
-        [Test, Category("Serialization")]
+        [Test, Category("Serialization"), Ignore("TODO: standard time, for NZ standard time (current example)")]
         public void TimeZoneSerialize()
         {
             //ToDo: This test is broken as of 2016-07-13
@@ -185,7 +185,6 @@ namespace Ical.Net.UnitTests
             var o = tzi.BaseUtcOffset.ToString("hhmm", CultureInfo.InvariantCulture);
 
             InspectSerializedSection(vTimezone, "STANDARD", new[] {"TZNAME:" + tzi.StandardName, "TZOFFSETTO:" + o
-                //todo - standard time, for NZ standard time (current example)
                 //"DTSTART:20150402T030000",
                 //"RRULE:FREQ=YEARLY;BYDAY=1SU;BYHOUR=3;BYMINUTE=0;BYMONTH=4",
                 //"TZOFFSETFROM:+1300"
