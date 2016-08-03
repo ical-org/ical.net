@@ -105,7 +105,7 @@ namespace Ical.Net
         public virtual void AddProperty(ICalendarProperty p)
         {
             p.Parent = this;
-            Properties.Set(p.Name, p);
+            Properties.Set(p.Name, p.Value);
         }
     }
 }
