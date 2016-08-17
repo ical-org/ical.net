@@ -45,8 +45,8 @@ namespace Ical.Net
                 // the iCalendar standard doesn't care at all about milliseconds.  Therefore, when comparing
                 // two calendars, one generated, and one loaded from file, they may be functionally identical,
                 // but be determined to be different due to millisecond differences.
-                var now = DateTime.Now;
-                DtStamp = new CalDateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+                var now = DateTime.SpecifyKind(DateTime.Today.Add(DateTime.UtcNow.TimeOfDay), DateTimeKind.Utc);
+                DtStamp = new CalDateTime(now);
             }
         }
 
