@@ -2,16 +2,16 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ical.Net</id>
-        <version>2.2.5</version>
-        <title>Ical.Net (formerly dday.ical)</title>
+        <version>2.2.6</version>
+        <title>Ical.Net</title>
         <authors>Rian Stockbower, Douglas Day, M. David Peterson</authors>
         <owners>Rian Stockbower</owners>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>An iCalendar (RFC 5545) control library for .NET. A fork and continuation of the original dday.ical library including bug fixes, and many performance enhancements.</description>
+        <description>An iCalendar (RFC 5545) control library for .NET. A fork and continuation of the original dday.ical library including bug fixes and many performance enhancements.</description>
         <projectUrl>https://github.com/rianjs/ical.net</projectUrl>
         <licenseUrl>https://github.com/rianjs/ical.net/blob/master/license.md</licenseUrl>
         <iconUrl>https://github.com/rianjs/ical.net/raw/master/nuget_logo_150px.png</iconUrl>
-        <tags>iCal Calendar icalendar ics outlook events rfc-5545 rfc-2445</tags>
+        <tags>iCal Calendar icalendar ics outlook events rfc-5545 rfc-2445 dday</tags>
     </metadata>
     <files>
         <!-- .NET 4.6 -->
