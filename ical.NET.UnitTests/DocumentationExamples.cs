@@ -78,6 +78,10 @@ namespace Ical.Net.UnitTests
             // Recurring every other Tuesday until Dec 31
             var rrule = new RecurrencePattern(FrequencyType.Yearly, 1)
             {
+                Frequency = FrequencyType.Yearly,
+                Interval = 1,
+                ByMonth = new List<int> { 11 },
+                ByDay = new List<IWeekDay> { new WeekDay { DayOfWeek = DayOfWeek.Thursday, Offset = 4 } },
                 Until = DateTime.MaxValue
             };
             vEvent.RecurrenceRules = new List<IRecurrencePattern> { rrule };
@@ -87,6 +91,10 @@ namespace Ical.Net.UnitTests
             var usThanksgivings = vEvent.GetOccurrences(searchStart, searchEnd);
 
             Assert.AreEqual(17, usThanksgivings.Count);
+            foreach (var thanksgiving in usThanksgivings)
+            {
+                Assert.IsTrue(thanksgiving.Period.StartTime.DayOfWeek == DayOfWeek.Thursday);
+            }
         }
 
         [Test]
