@@ -1,6 +1,6 @@
 ![iCal.NET for .NET](logo.png)
 
-iCal.NET is an iCalendar (RFC2445) class library for .NET. It's aimed at providing full RFC 2445 compliance, while providing full compatibility with popular calendaring applications.
+iCal.NET is an iCalendar (RFC 5545) class library for .NET aimed at providing RFC 5545 compliance, while providing full compatibility with popular calendaring applications and libraries.
 
 ## Getting iCal.NET
 
