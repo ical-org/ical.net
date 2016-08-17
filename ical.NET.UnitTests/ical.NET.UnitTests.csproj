@@ -89,6 +89,7 @@
     <None Include="app.config" />
     <Compile Include="RecurrenceTest.cs" />
     <Compile Include="SerializationTests.cs" />
+    <Compile Include="Serialization\iCalendar\Serializers\DataTypes\DateTimeSerializerTests.cs" />
     <Compile Include="SymmetricSerializationTests.cs" />
     <Compile Include="TextUtilTests.cs" />
     <Compile Include="TodoTest.cs" />

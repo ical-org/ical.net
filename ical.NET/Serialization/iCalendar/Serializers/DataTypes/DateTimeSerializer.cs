@@ -41,7 +41,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             var dt = obj as IDateTime;
 
             // Assign the TZID for the date/time value.
-            if (dt.TzId != null)
+            // http://www.ietf.org/rfc/rfc2445.txt p.35
+            // The TZID property parameter MUST NOT be applied to DATE-TIME or TIME
+            // properties whose time values are specified in UTC.
+            if (dt.TzId != null && !dt.IsUniversalTime)
             {
                 dt.Parameters.Set("TZID", dt.TzId);
             }
