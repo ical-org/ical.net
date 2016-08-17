@@ -41,7 +41,11 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             var dt = obj as IDateTime;
 
             // Assign the TZID for the date/time value.
-            if (dt.TzId != null)
+            if (dt.IsUniversalTime)
+            {
+                dt.Parameters.Remove("TZID");
+            }
+            else if (dt.TzId != null)
             {
                 dt.Parameters.Set("TZID", dt.TzId);
             }

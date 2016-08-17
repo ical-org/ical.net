@@ -76,6 +76,7 @@
     <Compile Include="CalendarPropertiesTest.cs" />
     <Compile Include="ComponentTest.cs" />
     <Compile Include="ConcurrentDeserializationTests.cs" />
+    <Compile Include="DateTimeSerializerTests.cs" />
     <Compile Include="DeserializationTests.cs" />
     <Compile Include="DocumentationExamples.cs" />
     <Compile Include="EqualityAndHashingTests.cs" />
@@ -573,6 +574,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
