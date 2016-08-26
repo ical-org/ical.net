@@ -40,18 +40,11 @@ namespace Ical.Net.Utility
                 return _onDeserializingMethods[targetType];
             }
 
-            var methodInfo = targetType.GetMethods(_bindingFlags)
-                .Select(targetTypeMethodInfo => new
-                {
-                    targetTypeMethodInfo,
-                    attrs = targetTypeMethodInfo.GetCustomAttributes(typeof(OnDeserializingAttribute), false).ToList()
-                })
-                .Where(t => t.attrs.Count > 0)
-                .Select(t => t.targetTypeMethodInfo)
-                .ToList();
-
-            _onDeserializingMethods.AddOrUpdate(targetType, methodInfo, (type, list) => methodInfo);
-            return methodInfo;
+            return _onDeserializingMethods.GetOrAdd(targetType, tt => tt
+                .GetMethods(_bindingFlags)
+                .Where(targetTypeMethodInfo => targetTypeMethodInfo
+                    .GetCustomAttributes(typeof(OnDeserializingAttribute), false).Any())
+                .ToList());
         }
 
         private static ConcurrentDictionary<Type, List<MethodInfo>> _onDeserializedMethods = new ConcurrentDictionary<Type, List<MethodInfo>>();
