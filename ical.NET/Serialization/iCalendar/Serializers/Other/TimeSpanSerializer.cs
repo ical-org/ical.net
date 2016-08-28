@@ -11,48 +11,55 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 
         public override string SerializeToString(object obj)
         {
-            if (obj is TimeSpan)
+            if (!(obj is TimeSpan))
             {
-                var ts = (TimeSpan) obj;
-                var sb = new StringBuilder();
-
-                if (ts < new TimeSpan(0))
-                {
-                    sb.Append("-");
-                }
-
-                sb.Append("P");
-                if (ts.Days > 7 && ts.Days % 7 == 0 && ts.Hours == 0 && ts.Minutes == 0 && ts.Seconds == 0)
-                {
-                    sb.Append(Math.Round(Math.Abs((double) ts.Days) / 7) + "W");
-                }
-                else
-                {
-                    if (ts.Days != 0)
-                    {
-                        sb.Append(Math.Abs(ts.Days) + "D");
-                    }
-                    if (ts.Hours != 0 || ts.Minutes != 0 || ts.Seconds != 0)
-                    {
-                        sb.Append("T");
-                        if (ts.Hours != 0)
-                        {
-                            sb.Append(Math.Abs(ts.Hours) + "H");
-                        }
-                        if (ts.Minutes != 0)
-                        {
-                            sb.Append(Math.Abs(ts.Minutes) + "M");
-                        }
-                        if (ts.Seconds != 0)
-                        {
-                            sb.Append(Math.Abs(ts.Seconds) + "S");
-                        }
-                    }
-                }
-
-                return sb.ToString();
+                return null;
             }
-            return null;
+
+            var ts = (TimeSpan) obj;
+
+            if (ts == TimeSpan.Zero)
+            {
+                return "P0D";
+            }
+
+            var sb = new StringBuilder(32);
+
+            if (ts < TimeSpan.Zero)
+            {
+                sb.Append("-");
+            }
+
+            sb.Append("P");
+            if (ts.Days > 7 && ts.Days % 7 == 0 && ts.Hours == 0 && ts.Minutes == 0 && ts.Seconds == 0)
+            {
+                sb.Append(Math.Round(Math.Abs((double) ts.Days) / 7) + "W");
+            }
+            else
+            {
+                if (ts.Days != 0)
+                {
+                    sb.Append(Math.Abs(ts.Days) + "D");
+                }
+                if (ts.Hours != 0 || ts.Minutes != 0 || ts.Seconds != 0)
+                {
+                    sb.Append("T");
+                    if (ts.Hours != 0)
+                    {
+                        sb.Append(Math.Abs(ts.Hours) + "H");
+                    }
+                    if (ts.Minutes != 0)
+                    {
+                        sb.Append(Math.Abs(ts.Minutes) + "M");
+                    }
+                    if (ts.Seconds != 0)
+                    {
+                        sb.Append(Math.Abs(ts.Seconds) + "S");
+                    }
+                }
+            }
+
+            return sb.ToString();
         }
 
         internal static readonly Regex TimespanMatch =
