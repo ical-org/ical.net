@@ -2534,15 +2534,11 @@ namespace Ical.Net.UnitTests
         {
             var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Bug3007244))[0];
 
-
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2010, 7, 18, 0, 0, 0),
                 new CalDateTime(2010, 7, 26, 0, 0, 0),
-                new[]
-                {
-                    new CalDateTime(2010, 5, 23)
-                },
+                new IDateTime[] {} ,
                 null,
                 0
             );
@@ -2551,10 +2547,7 @@ namespace Ical.Net.UnitTests
                 iCal,
                 new CalDateTime(2011, 7, 18, 0, 0, 0),
                 new CalDateTime(2011, 7, 26, 0, 0, 0),
-                new[]
-                {
-                    new CalDateTime(2011, 5, 23)
-                },
+                new IDateTime[] {},
                 null,
                 0
             );

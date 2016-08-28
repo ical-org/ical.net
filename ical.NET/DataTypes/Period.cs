@@ -123,7 +123,16 @@ namespace Ical.Net.DataTypes
 
         public virtual TimeSpan Duration
         {
-            get { return _duration; }
+            get
+            {
+                if (StartTime != null
+                    && EndTime == null
+                    && StartTime.Value.TimeOfDay == TimeSpan.Zero)
+                {
+                    return TimeSpan.FromDays(1);
+                }
+                return _duration;
+            }
             set
             {
                 if (!Equals(_duration, value))
