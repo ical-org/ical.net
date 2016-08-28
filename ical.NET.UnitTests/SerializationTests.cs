@@ -12,6 +12,7 @@ using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
+using Ical.Net.Serialization.iCalendar.Serializers.Other;
 using NUnit.Framework;
 
 namespace Ical.Net.UnitTests
@@ -345,6 +346,13 @@ namespace Ical.Net.UnitTests
         //todo test event:
         //-GeographicLocation
         //-Alarm
+
+        [Test]
+        public void ZeroTimeSpan_Test()
+        {
+            var result = new TimeSpanSerializer().SerializeToString(TimeSpan.Zero);
+            Assert.IsTrue("P0D".Equals(result, StringComparison.Ordinal));
+        }
         #endregion
     }
 }
