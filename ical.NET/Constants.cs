@@ -257,12 +257,12 @@
 
     public class CalendarProductIDs
     {
-        public const string Default = "-//github.com/rianjs/ical.net//NONSGML ical.net 2.1//EN";
+        public const string Default = "-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN";
     }
 
     public class CalendarVersions
     {
-        public const string V20 = "2.0";
+        public const string Latest = "2.0";
     }
 
     public class CalendarScales
