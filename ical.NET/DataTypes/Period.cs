@@ -5,21 +5,21 @@ using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
 namespace Ical.Net.DataTypes
 {
-    /// <summary>
-    /// Represents an iCalendar period of time.
-    /// </summary>    
+    /// <summary> Represents an iCalendar period of time. </summary>    
     public class Period : EncodableDataType, IPeriod
     {
-        private IDateTime _startTime;
-        private IDateTime _endTime;
-        private TimeSpan _duration;
+        public Period() { }
 
-        public Period() {}
+        public Period(IDateTime occurs)
+            : this(occurs, default(TimeSpan)) {}
 
-        public Period(IDateTime occurs) : this(occurs, default(TimeSpan)) {}
-
-        public Period(IDateTime start, IDateTime end) : this()
+        public Period(IDateTime start, IDateTime end)
         {
+            if (end != null && end.LessThanOrEqual(start))
+            {
+                throw new ArgumentException($"Start time ( {start} ) must come before the end time ( {end} )");
+            }
+
             StartTime = start;
             if (end == null)
             {
@@ -29,8 +29,13 @@ namespace Ical.Net.DataTypes
             Duration = end.Subtract(start);
         }
 
-        public Period(IDateTime start, TimeSpan duration) : this()
+        public Period(IDateTime start, TimeSpan duration)
         {
+            if (duration < TimeSpan.Zero)
+            {
+                throw new ArgumentException($"Duration ( ${duration} ) cannot be less than zero");
+            }
+
             StartTime = start;
             if (duration == default(TimeSpan))
             {
@@ -57,7 +62,7 @@ namespace Ical.Net.DataTypes
 
         protected bool Equals(Period other)
         {
-            return Equals(_startTime, other._startTime) && Equals(_endTime, other._endTime) && _duration.Equals(other._duration);
+            return Equals(StartTime, other.StartTime) && Equals(EndTime, other.EndTime) && Duration.Equals(other.Duration);
         }
 
         public override bool Equals(object obj)
@@ -72,9 +77,9 @@ namespace Ical.Net.DataTypes
         {
             unchecked
             {
-                var hashCode = _startTime?.GetHashCode() ?? 0;
-                hashCode = (hashCode * 397) ^ (_endTime?.GetHashCode() ?? 0);
-                hashCode = (hashCode * 397) ^ _duration.GetHashCode();
+                var hashCode = StartTime?.GetHashCode() ?? 0;
+                hashCode = (hashCode * 397) ^ (EndTime?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ Duration.GetHashCode();
                 return hashCode;
             }
         }
@@ -101,26 +106,37 @@ namespace Ical.Net.DataTypes
             }
         }
 
+        private IDateTime _startTime;
         public virtual IDateTime StartTime
         {
             get { return _startTime; }
             set
             {
+                if (Equals(_startTime, value))
+                {
+                    return;
+                }
                 _startTime = value;
                 ExtrapolateTimes();
             }
         }
 
+        private IDateTime _endTime;
         public virtual IDateTime EndTime
         {
             get { return _endTime; }
             set
             {
+                if (Equals(_endTime, value))
+                {
+                    return;
+                }
                 _endTime = value;
                 ExtrapolateTimes();
             }
         }
 
+        private TimeSpan _duration;
         public virtual TimeSpan Duration
         {
             get
@@ -135,11 +151,12 @@ namespace Ical.Net.DataTypes
             }
             set
             {
-                if (!Equals(_duration, value))
+                if (Equals(_duration, value))
                 {
-                    _duration = value;
-                    ExtrapolateTimes();
+                    return;
                 }
+                _duration = value;
+                ExtrapolateTimes();
             }
         }
 
