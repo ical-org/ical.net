@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Interfaces.Serialization;
@@ -12,33 +11,18 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 {
     public class CalendarSerializer : ComponentSerializer
     {
-        private readonly ICalendar _mCalendar;
+        private readonly ICalendar _calendar;
 
         public CalendarSerializer() {}
 
         public CalendarSerializer(ICalendar cal)
         {
-            _mCalendar = cal;
+            _calendar = cal;
         }
 
         public CalendarSerializer(ISerializationContext ctx) : base(ctx) {}
 
-        [Obsolete("Use the Serialize(IICalendar iCal, string filename) method instead.")]
-        public virtual void Serialize(string filename)
-        {
-            Serialize(_mCalendar, filename);
-        }
-
-        [Obsolete("Use the SerializeToString(ICalendarObject obj) method instead.")]
-        public virtual string SerializeToString() => SerializeToString(_mCalendar);
-
-        public virtual void Serialize(ICalendar cal, string filename)
-        {
-            using (var fs = new FileStream(filename, FileMode.Create))
-            {
-                Serialize(cal, fs, new UTF8Encoding());
-            }
-        }
+        public virtual string SerializeToString() => SerializeToString(_calendar);
 
         protected override IComparer<ICalendarProperty> PropertySorter => new CalendarPropertySorter();
 
@@ -50,7 +34,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             // as they are required by RFC5545.
             if (string.IsNullOrWhiteSpace(iCal.Version))
             {
-                iCal.Version = CalendarVersions.V20;
+                iCal.Version = CalendarVersions.Latest;
             }
             if (string.IsNullOrWhiteSpace(iCal.ProductId))
             {

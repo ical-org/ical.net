@@ -131,39 +131,6 @@ namespace Ical.Net.UnitTests
         }
 
         /// <summary>
-        /// Tests bug #3211934 - Bug in iCalendar.cs - UnauthorizedAccessException
-        /// See https://sourceforge.net/tracker/?func=detail&aid=3211934&group_id=187422&atid=921236
-        /// </summary>
-        [Test, Category("Deserialization")]
-        public void Bug3211934()
-        {
-            var calendar = new Calendar();
-            var serializer = new CalendarSerializer();
-
-            var filename = "Bug3211934.ics";
-
-            if (File.Exists(filename))
-            {
-                // Reset the file attributes and delete
-                File.SetAttributes(filename, FileAttributes.Normal);
-                File.Delete(filename);
-            }
-
-            serializer.Serialize(calendar, filename);
-
-            // Set the file as read-only
-            File.SetAttributes(filename, FileAttributes.ReadOnly);
-
-            // Load the calendar from file, and ensure the read-only attribute doesn't affect the load
-            var calendars = Calendar.LoadFromFile(filename, Encoding.UTF8, serializer);
-            Assert.IsNotNull(calendars);
-
-            // Reset the file attributes and delete
-            File.SetAttributes(filename, FileAttributes.Normal);
-            File.Delete(filename);
-        }
-
-        /// <summary>
         /// Tests that a mixed-case VERSION property is loaded properly
         /// </summary>
         [Test, Category("Deserialization")]
