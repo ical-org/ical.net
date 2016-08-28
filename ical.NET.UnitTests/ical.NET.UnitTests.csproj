@@ -88,7 +88,7 @@
     <Compile Include="ProgramTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="app.config" />
-    <Compile Include="RecurrenceTest.cs" />
+    <Compile Include="RecurrenceTests.cs" />
     <Compile Include="SerializationTests.cs" />
     <Compile Include="SymmetricSerializationTests.cs" />
     <Compile Include="TextUtilTests.cs" />

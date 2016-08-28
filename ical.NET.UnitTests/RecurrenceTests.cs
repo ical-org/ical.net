@@ -12,22 +12,15 @@ using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
-
 using Ical.Net.Utility;
 using NUnit.Framework;
 
 namespace Ical.Net.UnitTests
 {
     [TestFixture]
-    public class RecurrenceTest
+    public class RecurrenceTests
     {
-        private string _tzid;
-
-        [OneTimeSetUp]
-        public void InitAll()
-        {
-            _tzid = "US-Eastern";
-        }
+        private const string _tzid = "US-Eastern";
 
         private void EventOccurrenceTest(
             ICalendar cal,
@@ -42,9 +35,9 @@ namespace Ical.Net.UnitTests
             fromDate.AssociatedObject = cal;
             toDate.AssociatedObject = cal;
 
-            var occurrences = evt.GetOccurrences(
-                fromDate,
-                toDate).OrderBy(o => o.Period.StartTime).ToList();
+            var occurrences = evt.GetOccurrences(fromDate, toDate)
+                .OrderBy(o => o.Period.StartTime)
+                .ToList();
 
             Assert.AreEqual(
                 dateTimes.Length,
@@ -2541,15 +2534,11 @@ namespace Ical.Net.UnitTests
         {
             var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Bug3007244))[0];
 
-
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2010, 7, 18, 0, 0, 0),
                 new CalDateTime(2010, 7, 26, 0, 0, 0),
-                new[]
-                {
-                    new CalDateTime(2010, 5, 23)
-                },
+                new IDateTime[] {} ,
                 null,
                 0
             );
@@ -2558,10 +2547,7 @@ namespace Ical.Net.UnitTests
                 iCal,
                 new CalDateTime(2011, 7, 18, 0, 0, 0),
                 new CalDateTime(2011, 7, 26, 0, 0, 0),
-                new[]
-                {
-                    new CalDateTime(2011, 5, 23)
-                },
+                new IDateTime[] {},
                 null,
                 0
             );
@@ -2884,6 +2870,33 @@ namespace Ical.Net.UnitTests
             Assert.AreEqual(24, periods[7].StartTime.Day);
             Assert.AreEqual(30, periods[8].StartTime.Day);
             Assert.AreEqual(31, periods[9].StartTime.Day);
+        }
+
+        [Test, Category("Recurrence")]
+        public void ExDateShouldFilterOutAllPeriods()
+        {
+            //One-day event starting Aug 23 (inclusive), ending Aug 24 (exclusive), repeating daily until Aug 24 (exclusive).
+            //I.e. an event that occupies all of Aug 23, and no more, with zero recurrences.
+            //Then exclude Aug 23 and Aug 24 from the set of recurrences.
+            const string ical = @"BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20120823
+DTEND;VALUE=DATE:20120824
+RRULE:FREQ=DAILY;UNTIL=20120824
+EXDATE;VALUE=DATE:20120824
+EXDATE;VALUE=DATE:20120823
+DTSTAMP:20131031T111655Z
+CREATED:20120621T142631Z
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR";
+            var collection = Calendar.LoadFromStream(new StringReader(ical));
+            var firstEvent = collection.First().Events.First();
+            var startSearch = new CalDateTime(2010, 1, 1, _tzid);
+            var endSearch = new CalDateTime(2016, 12, 31, _tzid);
+
+            var occurrences = firstEvent.GetOccurrences(startSearch, endSearch).Select(o => o.Period as Period).ToList();
+            Assert.IsTrue(occurrences.Count == 0);
         }
     }
 }
