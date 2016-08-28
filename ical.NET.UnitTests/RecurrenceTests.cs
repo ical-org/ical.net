@@ -2878,5 +2878,36 @@ namespace Ical.Net.UnitTests
             Assert.AreEqual(30, periods[8].StartTime.Day);
             Assert.AreEqual(31, periods[9].StartTime.Day);
         }
+
+        [Test, Category("Recurrence")]
+        public void ExDateShouldFilterOutAllPeriods()
+        {
+            const string ical = @"BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20120823
+DTEND;VALUE=DATE:20120824
+RRULE:FREQ=DAILY;UNTIL=20120824
+EXDATE;VALUE=DATE:20120824
+EXDATE;VALUE=DATE:20120823
+DTSTAMP:20131031T111655Z
+CREATED:20120621T142631Z
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR";
+
+            var collection = Calendar.LoadFromStream(new StringReader(ical));
+            var firstEvent = collection.First().Events.First();
+            var occurrences = firstEvent.GetOccurrences(new CalDateTime(2010, 1, 1, _tzid), new CalDateTime(2016, 12, 31, _tzid));
+
+            if (occurrences.Any())
+            {
+                var firstOccurrence = occurrences.OrderBy(p => p.Period.StartTime).First().Period;
+                var relevantExDatePeriod = firstEvent.ExceptionDates.Last().First();
+                Assert.AreEqual(firstOccurrence, relevantExDatePeriod);
+                Assert.AreEqual(firstOccurrence.GetHashCode(), relevantExDatePeriod.GetHashCode());
+            }
+
+            Assert.IsTrue(occurrences.Count == 0);
+        }
     }
 }
