@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Ical.Net.Interfaces.Serialization;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Factory;
