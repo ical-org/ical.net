@@ -2875,6 +2875,9 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void ExDateShouldFilterOutAllPeriods()
         {
+            //One-day event starting Aug 23 (inclusive), ending Aug 24 (exclusive), repeating daily until Aug 24 (exclusive).
+            //I.e. an event that occupies all of Aug 23, and no more, with zero recurrences.
+            //Then exclude Aug 23 and Aug 24 from the set of recurrences.
             const string ical = @"BEGIN:VCALENDAR
 BEGIN:VEVENT
 DTSTART;VALUE=DATE:20120823
@@ -2887,19 +2890,12 @@ CREATED:20120621T142631Z
 TRANSP:TRANSPARENT
 END:VEVENT
 END:VCALENDAR";
-
             var collection = Calendar.LoadFromStream(new StringReader(ical));
             var firstEvent = collection.First().Events.First();
-            var occurrences = firstEvent.GetOccurrences(new CalDateTime(2010, 1, 1, _tzid), new CalDateTime(2016, 12, 31, _tzid));
+            var startSearch = new CalDateTime(2010, 1, 1, _tzid);
+            var endSearch = new CalDateTime(2016, 12, 31, _tzid);
 
-            if (occurrences.Any())
-            {
-                var firstOccurrence = occurrences.OrderBy(p => p.Period.StartTime).First().Period;
-                var relevantExDatePeriod = firstEvent.ExceptionDates.Last().First();
-                Assert.AreEqual(firstOccurrence, relevantExDatePeriod);
-                Assert.AreEqual(firstOccurrence.GetHashCode(), relevantExDatePeriod.GetHashCode());
-            }
-
+            var occurrences = firstEvent.GetOccurrences(startSearch, endSearch).Select(o => o.Period as Period).ToList();
             Assert.IsTrue(occurrences.Count == 0);
         }
     }

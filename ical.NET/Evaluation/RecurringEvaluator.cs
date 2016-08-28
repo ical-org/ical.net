@@ -63,7 +63,6 @@ namespace Ical.Net.Evaluation
         /// <param name="periodEnd">The end date of the range to evaluate.</param>
         protected virtual void EvaluateExRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
-            // Handle EXRULEs
             if (Recurrable.ExceptionRules == null)
             {
                 return;
@@ -97,7 +96,7 @@ namespace Ical.Net.Evaluation
                 return;
             }
 
-            var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
+            var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, true);
             Periods.ExceptWith(periods);
         }
 
