@@ -12,22 +12,15 @@ using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
-
 using Ical.Net.Utility;
 using NUnit.Framework;
 
 namespace Ical.Net.UnitTests
 {
     [TestFixture]
-    public class RecurrenceTest
+    public class RecurrenceTests
     {
-        private string _tzid;
-
-        [OneTimeSetUp]
-        public void InitAll()
-        {
-            _tzid = "US-Eastern";
-        }
+        private const string _tzid = "US-Eastern";
 
         private void EventOccurrenceTest(
             ICalendar cal,
@@ -42,9 +35,9 @@ namespace Ical.Net.UnitTests
             fromDate.AssociatedObject = cal;
             toDate.AssociatedObject = cal;
 
-            var occurrences = evt.GetOccurrences(
-                fromDate,
-                toDate).OrderBy(o => o.Period.StartTime).ToList();
+            var occurrences = evt.GetOccurrences(fromDate, toDate)
+                .OrderBy(o => o.Period.StartTime)
+                .ToList();
 
             Assert.AreEqual(
                 dateTimes.Length,
