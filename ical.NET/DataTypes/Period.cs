@@ -10,10 +10,9 @@ namespace Ical.Net.DataTypes
     /// </summary>    
     public class Period : EncodableDataType, IPeriod
     {
-        private IDateTime _mStartTime;
-        private IDateTime _mEndTime;
-        private TimeSpan _mDuration;
-        private bool _mMatchesDateOnly;
+        private IDateTime _startTime;
+        private IDateTime _endTime;
+        private TimeSpan _duration;
 
         public Period() {}
 
@@ -22,21 +21,24 @@ namespace Ical.Net.DataTypes
         public Period(IDateTime start, IDateTime end) : this()
         {
             StartTime = start;
-            if (end != null)
+            if (end == null)
             {
-                EndTime = end;
-                Duration = end.Subtract(start);
+                return;
             }
+            EndTime = end;
+            Duration = end.Subtract(start);
         }
 
         public Period(IDateTime start, TimeSpan duration) : this()
         {
             StartTime = start;
-            if (duration != default(TimeSpan))
+            if (duration == default(TimeSpan))
             {
-                Duration = duration;
-                EndTime = start.Add(duration);
+                return;
             }
+
+            Duration = duration;
+            EndTime = start.Add(duration);
         }
 
         public override void CopyFrom(ICopyable obj)
@@ -44,23 +46,19 @@ namespace Ical.Net.DataTypes
             base.CopyFrom(obj);
 
             var p = obj as IPeriod;
-            if (p != null)
+            if (p == null)
             {
-                StartTime = p.StartTime;
-                EndTime = p.EndTime;
-                Duration = p.Duration;
-                MatchesDateOnly = p.MatchesDateOnly;
+                return;
             }
+            StartTime = p.StartTime;
+            EndTime = p.EndTime;
+            Duration = p.Duration;
         }
 
         public bool Equals(Period period)
         {
-            if (MatchesDateOnly || period.MatchesDateOnly)
-            {
                 return StartTime.Value.Date == period.StartTime.Value.Date &&
                        (EndTime == null || period.EndTime == null || EndTime.Value.Date.Equals(period.EndTime.Value.Date));
-            }
-            return StartTime.Equals(period.StartTime) && (EndTime == null || period.EndTime == null || EndTime.Equals(period.EndTime));
         }
 
         public override bool Equals(object obj)
@@ -84,10 +82,9 @@ namespace Ical.Net.DataTypes
         {
             unchecked
             {
-                var hashCode = _mStartTime?.GetHashCode() ?? 0;
-                hashCode = (hashCode * 397) ^ (_mEndTime?.GetHashCode() ?? 0);
-                hashCode = (hashCode * 397) ^ _mDuration.GetHashCode();
-                hashCode = (hashCode * 397) ^ _mMatchesDateOnly.GetHashCode();
+                var hashCode = _startTime?.GetHashCode() ?? 0;
+                hashCode = (hashCode * 397) ^ (_endTime?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ _duration.GetHashCode();
                 return hashCode;
             }
         }
@@ -116,69 +113,53 @@ namespace Ical.Net.DataTypes
 
         public virtual IDateTime StartTime
         {
-            get { return _mStartTime; }
+            get { return _startTime; }
             set
             {
-                _mStartTime = value;
+                _startTime = value;
                 ExtrapolateTimes();
             }
         }
 
         public virtual IDateTime EndTime
         {
-            get { return _mEndTime; }
+            get { return _endTime; }
             set
             {
-                _mEndTime = value;
+                _endTime = value;
                 ExtrapolateTimes();
             }
         }
 
         public virtual TimeSpan Duration
         {
-            get { return _mDuration; }
+            get { return _duration; }
             set
             {
-                if (!Equals(_mDuration, value))
+                if (!Equals(_duration, value))
                 {
-                    _mDuration = value;
+                    _duration = value;
                     ExtrapolateTimes();
                 }
             }
         }
 
-        /// <summary>
-        /// When true, comparisons between this and other <see cref="Period"/>
-        /// objects are matched against the date only, and
-        /// not the date-time combination.
-        /// </summary>
-        public virtual bool MatchesDateOnly
-        {
-            get { return _mMatchesDateOnly; }
-            set { _mMatchesDateOnly = value; }
-        }
-
         public virtual bool Contains(IDateTime dt)
         {
             // Start time is inclusive
-            if (dt != null && StartTime != null && StartTime.LessThanOrEqual(dt))
+            if (dt == null || StartTime == null || !StartTime.LessThanOrEqual(dt))
             {
-                // End time is exclusive
-                if (EndTime == null || EndTime.GreaterThan(dt))
-                {
-                    return true;
-                }
+                return false;
             }
-            return false;
+
+            // End time is exclusive
+            return EndTime == null || EndTime.GreaterThan(dt);
         }
 
         public virtual bool CollidesWith(IPeriod period)
         {
-            if (period != null && ((period.StartTime != null && Contains(period.StartTime)) || (period.EndTime != null && Contains(period.EndTime))))
-            {
-                return true;
-            }
-            return false;
+            return period != null
+                && ((period.StartTime != null && Contains(period.StartTime)) || (period.EndTime != null && Contains(period.EndTime)));
         }
 
         public int CompareTo(IPeriod p)

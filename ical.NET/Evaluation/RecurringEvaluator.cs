@@ -98,10 +98,6 @@ namespace Ical.Net.Evaluation
             }
 
             var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
-            foreach (var p in periods.Where(p => !p.StartTime.HasTime || (p.EndTime != null && !p.EndTime.HasTime)))
-            {
-                p.MatchesDateOnly = true;
-            }
             Periods.ExceptWith(periods);
         }
 
