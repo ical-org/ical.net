@@ -55,26 +55,16 @@ namespace Ical.Net.DataTypes
             Duration = p.Duration;
         }
 
-        public bool Equals(Period period)
+        protected bool Equals(Period other)
         {
-                return StartTime.Value.Date == period.StartTime.Value.Date &&
-                       (EndTime == null || period.EndTime == null || EndTime.Value.Date.Equals(period.EndTime.Value.Date));
+            return Equals(_startTime, other._startTime) && Equals(_endTime, other._endTime) && _duration.Equals(other._duration);
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
             return Equals((Period) obj);
         }
 
