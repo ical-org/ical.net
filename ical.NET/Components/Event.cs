@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using Ical.Net.Evaluation;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
-using Utility;
+using Ical.Net.Utility;
 
 namespace Ical.Net
 {

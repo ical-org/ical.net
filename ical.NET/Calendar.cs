@@ -14,7 +14,7 @@ using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Interfaces.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
-using Utility;
+using Ical.Net.Utility;
 
 namespace Ical.Net
 {

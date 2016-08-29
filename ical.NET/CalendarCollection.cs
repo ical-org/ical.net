@@ -5,7 +5,7 @@ using Ical.Net.DataTypes;
 using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
-using Utility;
+using Ical.Net.Utility;
 
 namespace Ical.Net
 {
