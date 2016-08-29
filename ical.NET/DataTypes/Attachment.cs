@@ -4,7 +4,7 @@ using System.Text;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
-using Utility;
+using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes
 {
