@@ -2902,6 +2902,7 @@ END:VCALENDAR";
         [Test, Category("Recurrence")]
         public void RDateShouldBeUnionedWithRecurrenceSet()
         {
+            //Issues #118 and #107 on Github
             const string ical =
 @"BEGIN:VCALENDAR
 PRODID:-//ddaysoftware.com//NONSGML DDay.iCal 1.0//EN
@@ -2927,6 +2928,9 @@ END:VCALENDAR";
                 .Select(o => o.Period as Period)
                 .OrderBy(p => p.StartTime)
                 .ToList();
+
+            var firstExpectedOccurrence = new CalDateTime(DateTime.Parse("2016-08-29T08:00:00"), _tzid);
+            Assert.AreEqual(firstExpectedOccurrence, occurrences.First().StartTime);
 
             var firstExpectedRDate = new CalDateTime(DateTime.Parse("2016-08-30T10:00:00"), _tzid);
             Assert.IsTrue(occurrences[1].StartTime.Equals(firstExpectedRDate));

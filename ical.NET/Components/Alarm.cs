@@ -114,7 +114,7 @@ namespace Ical.Net
                         else
                         {
                             throw new ArgumentException(
-                                "Alarm trigger is relative to the END of the occurrence; however, the occurence has no discernible end.");
+                                "Alarm trigger is relative to the START of the occurrence; however, the occurence has no discernible end.");
                         }
                     }
 
