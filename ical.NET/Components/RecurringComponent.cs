@@ -214,12 +214,12 @@ namespace Ical.Net
 
         public virtual IList<AlarmOccurrence> PollAlarms(IDateTime startTime, IDateTime endTime)
         {
-            var occurrences = new List<AlarmOccurrence>(16);
-            if (Alarms == null)
+            if (Alarms == null || !Alarms.Any())
             {
-                return occurrences;
+                return new List<AlarmOccurrence>();
             }
 
+            var occurrences = new List<AlarmOccurrence>(16);
             foreach (var alarm in Alarms)
             {
                 occurrences.AddRange(alarm.Poll(startTime, endTime));

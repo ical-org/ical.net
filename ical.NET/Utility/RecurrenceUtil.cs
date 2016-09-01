@@ -23,12 +23,10 @@ namespace Ical.Net.Utility
 
         public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime periodStart, IDateTime periodEnd, bool includeReferenceDateInResults)
         {
-            var occurrences = new HashSet<Occurrence>();
-
             var evaluator = recurrable.GetService(typeof (IEvaluator)) as IEvaluator;
             if (evaluator == null)
             {
-                return occurrences;
+                return new HashSet<Occurrence>();
             }
 
             // Ensure the start time is associated with the object being queried
@@ -40,16 +38,15 @@ namespace Ical.Net.Utility
             periodStart = DateUtil.MatchTimeZone(start, periodStart);
             periodEnd = DateUtil.MatchTimeZone(start, periodEnd);
 
-            var periods = evaluator.Evaluate(start, DateUtil.GetSimpleDateTimeData(periodStart), DateUtil.GetSimpleDateTimeData(periodEnd),
-                includeReferenceDateInResults);
+            var periods = evaluator.Evaluate(start, DateUtil.GetSimpleDateTimeData(periodStart), DateUtil.GetSimpleDateTimeData(periodEnd), includeReferenceDateInResults);
 
             var otherOccurrences =
                 from p in periods
                 let endTime = p.EndTime ?? p.StartTime
                 where endTime.GreaterThan(periodStart) && p.StartTime.LessThanOrEqual(periodEnd)
                 select new Occurrence(recurrable, p);
-            occurrences.UnionWith(otherOccurrences);
 
+            var occurrences = new HashSet<Occurrence>(otherOccurrences);
             return occurrences;
         }
 

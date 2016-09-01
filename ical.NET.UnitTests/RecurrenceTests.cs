@@ -2898,5 +2898,45 @@ END:VCALENDAR";
             var occurrences = firstEvent.GetOccurrences(startSearch, endSearch).Select(o => o.Period as Period).ToList();
             Assert.IsTrue(occurrences.Count == 0);
         }
+
+        [Test, Category("Recurrence")]
+        public void RDateShouldBeUnionedWithRecurrenceSet()
+        {
+            //Issues #118 and #107 on Github
+            const string ical =
+@"BEGIN:VCALENDAR
+PRODID:-//ddaysoftware.com//NONSGML DDay.iCal 1.0//EN
+VERSION:2.0
+BEGIN:VEVENT
+DTSTART;TZID=US-Eastern:20160829T080000
+DTEND;TZID=US-Eastern:20160829T090000
+EXDATE;TZID=US-Eastern:20160830T080000
+EXDATE;TZID=US-Eastern:20160831T080000
+RDATE;TZID=US-Eastern:20160830T100000
+RDATE;TZID=US-Eastern:20160831T100000
+RRULE:FREQ=DAILY
+UID:abab717c-1786-4efc-87dd-6859c2b48eb6
+END:VEVENT
+END:VCALENDAR";
+
+            var collection = Calendar.LoadFromStream(new StringReader(ical));
+            var firstEvent = collection.First().Events.First();
+            var startSearch = new CalDateTime(DateTime.Parse("2015-08-28T07:00:00"), _tzid);
+            var endSearch = new CalDateTime(DateTime.Parse("2016-08-28T07:00:00").AddDays(7), _tzid);
+
+            var occurrences = firstEvent.GetOccurrences(startSearch, endSearch)
+                .Select(o => o.Period as Period)
+                .OrderBy(p => p.StartTime)
+                .ToList();
+
+            var firstExpectedOccurrence = new CalDateTime(DateTime.Parse("2016-08-29T08:00:00"), _tzid);
+            Assert.AreEqual(firstExpectedOccurrence, occurrences.First().StartTime);
+
+            var firstExpectedRDate = new CalDateTime(DateTime.Parse("2016-08-30T10:00:00"), _tzid);
+            Assert.IsTrue(occurrences[1].StartTime.Equals(firstExpectedRDate));
+
+            var secondExpectedRDate = new CalDateTime(DateTime.Parse("2016-08-31T10:00:00"), _tzid);
+            Assert.IsTrue(occurrences[2].StartTime.Equals(secondExpectedRDate));
+        }
     }
 }
