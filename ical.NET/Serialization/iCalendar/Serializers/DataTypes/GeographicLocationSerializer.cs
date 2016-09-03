@@ -2,6 +2,7 @@
 using System.IO;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
+using System.Globalization;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
@@ -45,9 +46,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
             double lat;
             double lon;
-            double.TryParse(values[0], out lat);
-            double.TryParse(values[1], out lon);
-            g.Latitude = lat;
+			double.TryParse(values[0], NumberStyles.Any, CultureInfo.InvariantCulture, out lat);
+			double.TryParse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture, out lon);
+			g.Latitude = lat;
             g.Longitude = lon;
 
             return g;
