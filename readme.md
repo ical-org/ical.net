@@ -33,13 +33,9 @@ ical.net uses [semantic versioning](http://semver.org/). In a nutshell:
 
 ## Contributing
 
-Fork and submit a pull request! If you haven't gotten feedback from me in a few days, please send me an email: rstockbower@gmail.com. Sometimes I don't see them.
-
-A couple of guidelines to keep code quality high, and code reviews efficient:
-
-* If you are submitting a fix, please include a unit test that tests for that bug. Unit tests are how we can be sure we haven't broken B while changing A. The unit test project has some good examples of how unit tests are structured. If you've never written (or run!) a unit test in Visual Studio, and you're uncertain how to do so, have a look at the [NUnit Test Adapter](http://nunit.org/index.php?p=vsTestAdapter&r=2.6.4), which is a free add-in with explicit nunit test support.
-* Don't submit a change that has broken some of the unit tests. There are bugs in ical.net, as there are in all software. I have found cases where the unit tests themselves assert the wrong things. I have fixed several of these cases. Breaking a unit test that asserts the wrong thing is OK, but please make it assert the right thing so it's passing again.
-* Please keep your commits and their messages meaningful. It is better to have many small commits, each with a message explaining the "why" of that specific change than it is to have a single, messy commit that does a dozen different things squashed together.  (Adding new features being the exception.) _Clean commits speed up the code review process._
+* [Submit a bug report or issue](https://github.com/rianjs/ical.net/wiki/Filing-a-(good)-bug-report)
+* [Contribute code by submitting a pull request](https://github.com/rianjs/ical.net/wiki/Contributing-a-(good)-pull-request)
+* [Ask a question](https://github.com/rianjs/ical.net/issues)
 
 ### Immediate wins
 
