@@ -46,9 +46,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
             double lat;
             double lon;
-			double.TryParse(values[0], NumberStyles.Any, CultureInfo.InvariantCulture, out lat);
-			double.TryParse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture, out lon);
-			g.Latitude = lat;
+            double.TryParse(values[0], NumberStyles.Any, CultureInfo.InvariantCulture, out lat);
+            double.TryParse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture, out lon);
+            g.Latitude = lat;
             g.Longitude = lon;
 
             return g;
