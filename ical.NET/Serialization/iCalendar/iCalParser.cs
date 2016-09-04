@@ -691,7 +691,7 @@ namespace Ical.Net.Serialization.iCalendar
 
         public string text() //throws RecognitionException, TokenStreamException
         {
-            var s = string.Empty;
+			var sb = new StringBuilder();
 
             { // ( ... )*
                 for (;;)
@@ -699,7 +699,7 @@ namespace Ical.Net.Serialization.iCalendar
                     if ((tokenSet_6_.member(LA(1))))
                     {
                         var t = text_char();
-                        s += t;
+                        sb.Append(t);
                     }
                     else
                     {
@@ -709,26 +709,25 @@ namespace Ical.Net.Serialization.iCalendar
                 _loop53_breakloop:
                 ;
             } // ( ... )*
-            return s;
+            return sb.ToString();
         }
 
         public string number() //throws RecognitionException, TokenStreamException
         {
-            var s = string.Empty;
-
+			var sb = new StringBuilder();
             var n1 = LT(1);
             match(NUMBER);
-            s += n1.getText();
+            sb.Append(n1.getText());
             {
                 switch (LA(1))
                 {
                     case DOT:
                     {
                         match(DOT);
-                        s += ".";
+                        sb.Append(".");
                         var n2 = LT(1);
                         match(NUMBER);
-                        s += n2.getText();
+                        sb.Append(n2.getText());
                         break;
                     }
                     case EOF:
@@ -742,25 +741,23 @@ namespace Ical.Net.Serialization.iCalendar
                     }
                 }
             }
-            return s;
+            return sb.ToString();
         }
 
         public string version_number() //throws RecognitionException, TokenStreamException
         {
-            //ToDo: StringBuilder
-            var s = string.Empty;
-
+			var sb = new StringBuilder();
             var t = number();
-            s += t;
+            sb.Append(t);
             {
                 switch (LA(1))
                 {
                     case SEMICOLON:
                     {
                         match(SEMICOLON);
-                        s += ";";
+                        sb.Append(";");
                         t = number();
-                        s += t;
+                        sb.Append(t);
                         break;
                     }
                     case EOF:
@@ -773,7 +770,7 @@ namespace Ical.Net.Serialization.iCalendar
                     }
                 }
             }
-            return s;
+            return sb.ToString();
         }
 
         public static readonly string[] tokenNames_ =
