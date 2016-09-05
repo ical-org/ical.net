@@ -3002,5 +3002,91 @@ END:VCALENDAR";
 
             Assert.IsTrue(occurrences.Last().StartTime.Equals(lastExpected));
         }
+
+        [Test, Ignore("Turn on in v3")]
+        public void EventsWithShareUidsShouldGenerateASingleRecurrenceSet()
+        {
+            //https://github.com/rianjs/ical.net/issues/120
+            const string ical =
+@"BEGIN:VCALENDAR
+PRODID:-//Google Inc//Google Calendar 70.9054//EN
+VERSION:2.0
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Calendar 2
+X-WR-TIMEZONE:Europe/Bucharest
+BEGIN:VEVENT
+DTSTART;TZID=Europe/Bucharest:20160829T110000
+DTEND;TZID=Europe/Bucharest:20160829T163000
+RRULE:FREQ=DAILY
+DTSTAMP:20160901T104339Z
+UID:gknfcr66sb7rpangtprsthmpn8@google.com
+CREATED:20160901T104300Z
+DESCRIPTION:
+LAST-MODIFIED:20160901T104311Z
+LOCATION:
+SEQUENCE:1
+STATUS:CONFIRMED
+SUMMARY:testRScuAD
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;TZID=Europe/Bucharest:20160901T163000
+DTEND;TZID=Europe/Bucharest:20160901T220000
+DTSTAMP:20160901T104339Z
+UID:gknfcr66sb7rpangtprsthmpn8@google.com
+RECURRENCE-ID;TZID=Europe/Bucharest:20160901T110000
+CREATED:20160901T104300Z
+DESCRIPTION:
+LAST-MODIFIED:20160901T104314Z
+LOCATION:
+SEQUENCE:2
+STATUS:CONFIRMED
+SUMMARY:testRScuAD
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;TZID=Europe/Bucharest:20160903T070000
+DTEND;TZID=Europe/Bucharest:20160903T123000
+DTSTAMP:20160901T104339Z
+UID:gknfcr66sb7rpangtprsthmpn8@google.com
+RECURRENCE-ID;TZID=Europe/Bucharest:20160903T110000
+CREATED:20160901T104300Z
+DESCRIPTION:
+LAST-MODIFIED:20160901T104315Z
+LOCATION:
+SEQUENCE:2
+STATUS:CONFIRMED
+SUMMARY:testRScuAD
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR";
+
+            var calendars = Calendar.LoadFromStream(new StringReader(ical));
+            var events = calendars.SelectMany(c => c.Events).ToList();
+
+            var startSearch = DateTime.Parse("2016-08-01T00:00:00");
+            var endSearch = startSearch.AddDays(45);
+
+            //The API should be something like:
+            //var occurrences = calendar.GetOccurrences(string eventUid, DateTime startSearch, DateTime endSearch);
+
+            var occurrences = new HashSet<Occurrence>();
+
+            var orderedOccurrences = occurrences
+                .Select(o => o.Period as Period)
+                .OrderBy(p => p.StartTime)
+                .ToList();
+
+            var expectedSept1Start = new CalDateTime(DateTime.Parse("2016-09-01T16:30:00"), "Europe/Bucharest");
+            var expectedSept1End = new CalDateTime(DateTime.Parse("2016-09-01T22:00:00"), "Europe/Bucharest");
+            Assert.AreEqual(expectedSept1Start, orderedOccurrences[3].StartTime);
+            Assert.AreEqual(expectedSept1End, orderedOccurrences[3].EndTime);
+
+            var expectedSept3Start = new CalDateTime(DateTime.Parse("2016-09-03T07:00:00"), "Europe/Bucharest");
+            var expectedSept3End = new CalDateTime(DateTime.Parse("2016-09-01T12:30:00"), "Europe/Bucharest");
+            Assert.AreEqual(expectedSept3Start, orderedOccurrences[5].StartTime);
+            Assert.AreEqual(expectedSept3End, orderedOccurrences[5].EndTime);
+        }
     }
 }
