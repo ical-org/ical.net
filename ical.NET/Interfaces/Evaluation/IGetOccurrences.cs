@@ -32,9 +32,8 @@ namespace Ical.Net.Interfaces.Evaluation
         HashSet<Occurrence> GetOccurrences(DateTime dt);
 
         /// <summary>
-        /// Returns all occurrences of this component that start within the date range provided.
-        /// All components occurring between <paramref name="startTime"/> and <paramref name="endTime"/>
-        /// will be returned.
+        /// Returns all occurrences of this component that overlap with the date range provided.
+        /// All components that overlap with the time range between <paramref name="startTime"/> and <paramref name="endTime"/> will be returned.
         /// </summary>
         /// <param name="startTime">The starting date range</param>
         /// <param name="endTime">The ending date range</param>
