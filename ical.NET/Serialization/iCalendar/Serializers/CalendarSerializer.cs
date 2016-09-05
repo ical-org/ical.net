@@ -13,7 +13,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
     {
         private readonly ICalendar _calendar;
 
-        public CalendarSerializer() {}
+        public CalendarSerializer()
+            :this(new SerializationContext()) { }
 
         public CalendarSerializer(ICalendar cal)
         {
