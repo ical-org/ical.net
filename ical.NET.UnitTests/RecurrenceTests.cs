@@ -2938,5 +2938,69 @@ END:VCALENDAR";
             var secondExpectedRDate = new CalDateTime(DateTime.Parse("2016-08-31T10:00:00"), _tzid);
             Assert.IsTrue(occurrences[2].StartTime.Equals(secondExpectedRDate));
         }
+
+        [Test]
+        public void OccurrenceMustBeCompletelyContainedWithinSearchRange()
+        {
+            //https://github.com/rianjs/ical.net/issues/121
+
+            const string ical =
+    @"BEGIN:VCALENDAR
+PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
+VERSION:2.0
+BEGIN:VEVENT
+SUMMARY:This is an event
+DTEND;TZID=UTC:20160801T080000
+DTSTAMP:20160905T142724Z
+DTSTART;TZID=UTC:20160801T070000
+RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=WE;UNTIL=20160901T070000
+UID:abab717c-1786-4efc-87dd-6859c2b48eb6
+END:VEVENT
+END:VCALENDAR";
+
+            var rrule = new RecurrencePattern(FrequencyType.Weekly, interval: 1)
+            {
+                Until = DateTime.Parse("2016-08-31T07:00:00"),
+                ByDay = new List<IWeekDay> { new WeekDay(DayOfWeek.Wednesday)},
+            };
+
+            var start = DateTime.Parse("2016-08-01T07:00:00");
+            var end = start.AddHours(1);
+            var e = new Event()
+            {
+                DtStart = new CalDateTime(start, "UTC"),
+                DtEnd = new CalDateTime(end, "UTC"),
+                RecurrenceRules = new List<IRecurrencePattern> { rrule },
+                Summary = "This is an event",
+                Uid = "abab717c-1786-4efc-87dd-6859c2b48eb6",
+            };
+
+            var collection = Calendar.LoadFromStream(new StringReader(ical));
+            var firstEvent = collection.First().Events.First();
+            var calendar = new Calendar();
+            calendar.Events.Add(e);
+
+            Assert.AreEqual(e, firstEvent);
+
+            var startSearch = new CalDateTime(DateTime.Parse("2016-07-01T00:00:00"), "UTC");
+            var endSearch = new CalDateTime(DateTime.Parse("2016-08-31T07:00:00"), "UTC");
+
+            var lastExpected = new CalDateTime(DateTime.Parse("2016-08-31T07:00:00"), "UTC");
+            var occurrences = firstEvent.GetOccurrences(startSearch, endSearch)
+                    .Select(o => o.Period as Period)
+                    .OrderBy(p => p.StartTime)
+                    .ToList();
+
+            Assert.IsFalse(occurrences.Last().StartTime.Equals(lastExpected));
+
+            //Create 1 second of overlap
+            endSearch = new CalDateTime(endSearch.Value.AddSeconds(1), "UTC");
+            occurrences = firstEvent.GetOccurrences(startSearch, endSearch)
+                .Select(o => o.Period as Period)
+                .OrderBy(p => p.StartTime)
+                .ToList();
+
+            Assert.IsTrue(occurrences.Last().StartTime.Equals(lastExpected));
+        }
     }
 }
