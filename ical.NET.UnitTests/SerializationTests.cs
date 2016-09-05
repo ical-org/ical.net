@@ -177,7 +177,7 @@ namespace Ical.Net.UnitTests
             };
             cal.Events.Add(evt);
 
-            var serializer = new CalendarSerializer(new SerializationContext());
+            var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(cal);
 
             Console.Write(serializedCalendar);
@@ -220,7 +220,7 @@ namespace Ical.Net.UnitTests
             };
             cal1.Events.Add(evt);
 
-            var serializer = new CalendarSerializer(new SerializationContext());
+            var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(cal1);
             using (var sr = new StringReader(serializedCalendar))
             {
@@ -258,7 +258,7 @@ namespace Ical.Net.UnitTests
             };
             cal.Events.Add(evt);
 
-            var serializer = new CalendarSerializer(new SerializationContext());
+            var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(cal);
 
             Console.Write(serializedCalendar);
@@ -318,7 +318,7 @@ namespace Ical.Net.UnitTests
 
             evt.Attendees.AddRange(_attendees);
 
-            var serializer = new CalendarSerializer(new SerializationContext());
+            var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(cal);
 
             Console.Write(serializedCalendar);
