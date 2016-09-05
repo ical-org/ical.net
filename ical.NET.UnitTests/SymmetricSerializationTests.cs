@@ -19,7 +19,7 @@ namespace Ical.Net.UnitTests
 
         private static readonly DateTime _nowTime = DateTime.Now;
         private static readonly DateTime _later = _nowTime.AddHours(1);
-        private static CalendarSerializer GetNewSerializer() => new CalendarSerializer(new SerializationContext());
+        private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
         private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
         private static Event GetSimpleEvent() => new Event {DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime};
         private static ICalendar UnserializeCalendar(string s) => Calendar.LoadFromStream(new StringReader(s)).Single();
@@ -71,7 +71,7 @@ namespace Ical.Net.UnitTests
                 TzId = "New Zealand Standard Time"
             };
             originalCalendar.AddTimeZone(tz);
-            var serializer = new CalendarSerializer(new SerializationContext());
+            var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(originalCalendar);
             var unserializedCalendar = Calendar.LoadFromStream(new StringReader(serializedCalendar)).Single();
 
