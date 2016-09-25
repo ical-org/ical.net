@@ -1,6 +1,6 @@
-﻿using Ical.Net.Interfaces.General;
+﻿using ical.net.Interfaces.General;
 
-namespace Ical.Net.Interfaces.Serialization
+namespace ical.net.Interfaces.Serialization
 {
     public interface ISerializationContext : IServiceProvider
     {

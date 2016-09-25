@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Ical.Net.DataTypes;
-using Ical.Net.Evaluation;
-using Ical.Net.General.Proxies;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Utility;
+using ical.net.DataTypes;
+using ical.net.Evaluation;
+using ical.net.General.Proxies;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.General;
+using ical.net.Utility;
 
-namespace Ical.Net
+namespace ical.net
 {
     /// <summary>
     /// An iCalendar component that recurs.

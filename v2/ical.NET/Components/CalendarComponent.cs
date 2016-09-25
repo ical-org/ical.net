@@ -2,13 +2,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
-using Ical.Net.General;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Serialization.iCalendar.Serializers.Components;
+using ical.net.General;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.General;
+using ical.net.Interfaces.Serialization;
+using ical.net.Serialization.iCalendar.Serializers.Components;
 
-namespace Ical.Net
+namespace ical.net
 {
     /// <summary>
     /// This class is used by the parsing framework for iCalendar components.

@@ -1,12 +1,12 @@
 using System;
 using System.IO;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
-using Ical.Net.Utility;
+using ical.net.Interfaces;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.General;
+using ical.net.Serialization.iCalendar.Serializers.DataTypes;
+using ical.net.Utility;
 
-namespace Ical.Net.DataTypes
+namespace ical.net.DataTypes
 {
     /// <summary>
     /// The iCalendar equivalent of the .NET <see cref="DateTime"/> class.

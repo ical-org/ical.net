@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Ical.Net.Interfaces.DataTypes
+namespace ical.net.Interfaces.DataTypes
 {
     public interface IAttachment : IEncodableDataType
     {

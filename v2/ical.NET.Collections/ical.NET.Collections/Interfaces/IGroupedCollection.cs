@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ical.NET.Collections.Interfaces
+namespace ical.net.collections.Interfaces
 {
     public interface IGroupedCollection<TGroup, TItem> :
         ICollection<TItem>

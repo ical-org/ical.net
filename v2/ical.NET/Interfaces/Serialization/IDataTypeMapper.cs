@@ -1,7 +1,7 @@
 ﻿using System;
-using Ical.Net.Serialization;
+using ical.net.Serialization;
 
-namespace Ical.Net.Interfaces.Serialization
+namespace ical.net.Interfaces.Serialization
 {
     public interface IDataTypeMapper
     {

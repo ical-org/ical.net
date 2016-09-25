@@ -1,4 +1,4 @@
-﻿namespace Ical.Net.Interfaces.Components
+﻿namespace ical.net.Interfaces.Components
 {
     public interface IJournal : IRecurringComponent
     {

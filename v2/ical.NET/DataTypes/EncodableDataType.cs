@@ -1,6 +1,6 @@
-﻿using Ical.Net.Interfaces.DataTypes;
+﻿using ical.net.Interfaces.DataTypes;
 
-namespace Ical.Net.DataTypes
+namespace ical.net.DataTypes
 {
     /// <summary>
     /// An abstract class from which all iCalendar data types inherit.

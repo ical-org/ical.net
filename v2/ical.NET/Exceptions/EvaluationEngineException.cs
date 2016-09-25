@@ -1,6 +1,6 @@
 using System;
 
-namespace Ical.Net.Exceptions
+namespace ical.net.Exceptions
 {
     public class EvaluationEngineException : Exception
     {

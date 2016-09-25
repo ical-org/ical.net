@@ -1,7 +1,7 @@
-﻿using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
+﻿using ical.net.Interfaces.Components;
+using ical.net.Interfaces.DataTypes;
 
-namespace Ical.Net.Interfaces.Evaluation
+namespace ical.net.Interfaces.Evaluation
 {
     public interface IGetFreeBusy
     {

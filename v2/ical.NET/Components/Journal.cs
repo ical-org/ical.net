@@ -1,7 +1,7 @@
 using System.Runtime.Serialization;
-using Ical.Net.Interfaces.Components;
+using ical.net.Interfaces.Components;
 
-namespace Ical.Net
+namespace ical.net
 {
     /// <summary>
     /// A class that represents an RFC 5545 VJOURNAL component.

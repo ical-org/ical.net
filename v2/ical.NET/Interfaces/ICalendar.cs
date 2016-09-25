@@ -1,8 +1,8 @@
-﻿using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.Evaluation;
-using Ical.Net.Interfaces.General;
+﻿using ical.net.Interfaces.Components;
+using ical.net.Interfaces.Evaluation;
+using ical.net.Interfaces.General;
 
-namespace Ical.Net.Interfaces
+namespace ical.net.Interfaces
 {
     public interface ICalendar : ICalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, IMergeable
     {

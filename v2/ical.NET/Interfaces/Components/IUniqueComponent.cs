@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Ical.Net.Interfaces.DataTypes;
+using ical.net.Interfaces.DataTypes;
 
-namespace Ical.Net.Interfaces.Components
+namespace ical.net.Interfaces.Components
 {
     public interface IUniqueComponent : ICalendarComponent
     {

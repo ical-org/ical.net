@@ -1,12 +1,12 @@
 using System;
 using System.Runtime.Serialization;
-using Ical.Net.General;
-using Ical.Net.General.Proxies;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
+using ical.net.General;
+using ical.net.General.Proxies;
+using ical.net.Interfaces;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.General;
 
-namespace Ical.Net.DataTypes
+namespace ical.net.DataTypes
 {
     /// <summary>
     /// An abstract class from which all iCalendar data types inherit.

@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ical.Net", "ical.NET\Ical.Net.csproj", "{F88DB6D3-CB95-4707-9C88-B53403AADC61}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ical.net", "ical.NET\ical.net.csproj", "{F88DB6D3-CB95-4707-9C88-B53403AADC61}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ical.Net.UnitTests", "ical.NET.UnitTests\Ical.Net.UnitTests.csproj", "{38A02D06-15CC-436A-9C8F-07B84A7E2CE0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ical.net.unittests", "ical.NET.UnitTests\ical.net.unittests.csproj", "{38A02D06-15CC-436A-9C8F-07B84A7E2CE0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ical.Net.Collections", "ical.NET.Collections\ical.NET.Collections\Ical.Net.Collections.csproj", "{E04EFEB6-4625-4D58-AC91-7B8B8A2C97BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ical.net.collections", "ical.NET.Collections\ical.NET.Collections\ical.net.collections.csproj", "{E04EFEB6-4625-4D58-AC91-7B8B8A2C97BB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "antlr.runtime", "antlr.runtime\antlr.runtime.csproj", "{CB7CC882-ED47-46C0-AAAE-7A437F22F1C6}"
 EndProject

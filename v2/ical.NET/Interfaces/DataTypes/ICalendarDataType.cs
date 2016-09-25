@@ -1,8 +1,8 @@
 ﻿using System;
-using Ical.Net.Interfaces.General;
-using IServiceProvider = Ical.Net.Interfaces.General.IServiceProvider;
+using ical.net.Interfaces.General;
+using IServiceProvider = ical.net.Interfaces.General.IServiceProvider;
 
-namespace Ical.Net.Interfaces.DataTypes
+namespace ical.net.Interfaces.DataTypes
 {
     public interface ICalendarDataType : ICalendarParameterCollectionContainer, ICopyable, IServiceProvider
     {

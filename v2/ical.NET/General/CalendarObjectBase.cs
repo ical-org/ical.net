@@ -1,7 +1,7 @@
 ﻿using System;
-using Ical.Net.Interfaces.General;
+using ical.net.Interfaces.General;
 
-namespace Ical.Net.General
+namespace ical.net.General
 {
     public class CalendarObjectBase : ICopyable, ILoadable
     {

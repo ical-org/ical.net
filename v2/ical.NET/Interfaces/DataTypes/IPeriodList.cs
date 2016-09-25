@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Ical.Net.Interfaces.DataTypes
+namespace ical.net.Interfaces.DataTypes
 {
     public interface IPeriodList : IEncodableDataType, IEnumerable<IPeriod>
     {

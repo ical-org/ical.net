@@ -2,16 +2,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ical.NET.Collections.Interfaces;
+using ical.net.collections.Interfaces;
 
-namespace ical.NET.Collections.Proxies
+namespace ical.net.collections.Proxies
 {
     /// <summary>
     /// A proxy for a keyed list.
     /// </summary>
     public class GroupedValueListProxy<TGroup, TInterface, TItem, TOriginalValue, TNewValue> : IList<TNewValue>
         where TInterface : class, IGroupedObject<TGroup>, IValueObject<TOriginalValue>
-        where TItem : new()        
+        where TItem : new()
     {
         private readonly GroupedValueList<TGroup, TInterface, TItem, TOriginalValue> _realObject;
         private readonly TGroup _group;
@@ -99,13 +99,13 @@ namespace ical.NET.Collections.Proxies
 
         public virtual void CopyTo(TNewValue[] array, int arrayIndex)
         {
-            Items                
+            Items
                 .Where(o => o.Values != null)
                 .SelectMany(o => o.Values)
                 .ToArray()
                 .CopyTo(array, arrayIndex);
         }
-        
+
         public virtual int Count => Items.Sum(o => o.ValueCount);
 
         public virtual bool IsReadOnly => false;
@@ -213,7 +213,7 @@ namespace ical.NET.Collections.Proxies
             set
             {
                 if (index >= 0 && index < Count)
-                {   
+                {
                     if (!Equals(value, default(TNewValue)))
                     {
                         Insert(index, value);

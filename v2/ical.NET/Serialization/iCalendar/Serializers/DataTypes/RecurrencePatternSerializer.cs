@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Ical.Net.DataTypes;
-using Ical.Net.ExtensionMethods;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Interfaces.Serialization.Factory;
+using ical.net.DataTypes;
+using ical.net.ExtensionMethods;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.Serialization;
+using ical.net.Interfaces.Serialization.Factory;
 
-namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
+namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class RecurrencePatternSerializer : EncodableDataTypeSerializer
     {

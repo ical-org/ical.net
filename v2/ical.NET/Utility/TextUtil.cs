@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using Ical.Net.Interfaces.Serialization;
+using ical.net.Interfaces.Serialization;
 
-namespace Ical.Net.Utility
+namespace ical.net.Utility
 {
     public static class TextUtil
     {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.General;
 
-namespace Ical.Net.Interfaces.Evaluation
+namespace ical.net.Interfaces.Evaluation
 {
     public interface IEvaluator
     {

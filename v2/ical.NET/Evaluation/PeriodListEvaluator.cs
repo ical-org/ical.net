@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
+using ical.net.DataTypes;
+using ical.net.Interfaces.DataTypes;
 
-namespace Ical.Net.Evaluation
+namespace ical.net.Evaluation
 {
     public class PeriodListEvaluator : Evaluator
     {

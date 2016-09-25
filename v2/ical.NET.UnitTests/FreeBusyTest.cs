@@ -1,9 +1,9 @@
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.Components;
+using ical.net.DataTypes;
+using ical.net.Interfaces;
+using ical.net.Interfaces.Components;
 using NUnit.Framework;
 
-namespace Ical.Net.UnitTests
+namespace ical.net.unittests
 {
     [TestFixture]
     public class FreeBusyTest

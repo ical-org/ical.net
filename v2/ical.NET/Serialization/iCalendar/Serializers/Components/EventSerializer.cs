@@ -1,7 +1,7 @@
 ﻿using System;
-using Ical.Net.Interfaces.Components;
+using ical.net.Interfaces.Components;
 
-namespace Ical.Net.Serialization.iCalendar.Serializers.Components
+namespace ical.net.Serialization.iCalendar.Serializers.Components
 {
     public class EventSerializer : ComponentSerializer
     {

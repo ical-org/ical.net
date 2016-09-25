@@ -1,4 +1,4 @@
-namespace ical.NET.Collections.Interfaces
+namespace ical.net.collections.Interfaces
 {
     public interface IGroupedObject<TGroup>
     {

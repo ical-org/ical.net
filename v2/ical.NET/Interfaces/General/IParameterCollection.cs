@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using ical.NET.Collections.Interfaces;
-using Ical.Net.General;
+using ical.net.collections.Interfaces;
+using ical.net.General;
 
-namespace Ical.Net.Interfaces.General
+namespace ical.net.Interfaces.General
 {
     public interface IParameterCollection : IGroupedList<string, CalendarParameter>
     {

@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Serialization;
-using Ical.Net.Serialization.iCalendar.Serializers;
+using ical.net.DataTypes;
+using ical.net.Interfaces;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Serialization;
+using ical.net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
-namespace Ical.Net.UnitTests
+namespace ical.net.unittests
 {
     public class SymmetricSerializationTests
     {

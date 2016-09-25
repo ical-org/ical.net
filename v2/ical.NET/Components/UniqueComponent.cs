@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
+using ical.net.DataTypes;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.DataTypes;
 
-namespace Ical.Net
+namespace ical.net
 {
     /// <summary>
     /// Represents a unique component, a component with a unique UID,

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Evaluation;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Utility;
+using ical.net.DataTypes;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.Evaluation;
+using ical.net.Interfaces.General;
+using ical.net.Utility;
 
-namespace Ical.Net.Evaluation
+namespace ical.net.Evaluation
 {
     public abstract class Evaluator : IEvaluator
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Ical.Net.ExtensionMethods
+namespace ical.net.ExtensionMethods
 {
     public static class ListExtensions
     {

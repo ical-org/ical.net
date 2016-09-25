@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using ical.NET.Collections.Interfaces;
-using Ical.Net.Interfaces.General;
+using ical.net.collections.Interfaces;
+using ical.net.Interfaces.General;
 
-namespace Ical.Net.General
+namespace ical.net.General
 {
     [DebuggerDisplay("{Name}={string.Join(\",\", Values)}")]
     public class CalendarParameter : CalendarObject, IValueObject<string>

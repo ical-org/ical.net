@@ -21,7 +21,7 @@
     <DefineConstants>TRACE,NET_4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\net40\Ical.Net.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net40\ical.net.xml</DocumentationFile>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
     <NoWarn>CS7035</NoWarn>
@@ -30,7 +30,7 @@
     <OutputPath>bin\Release\net45\</OutputPath>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>bin\Release\net45\Ical.Net.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net45\ical.net.xml</DocumentationFile>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -41,7 +41,7 @@
     <OutputPath>bin\Release\net46\</OutputPath>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>bin\Release\net46\Ical.Net.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net46\ical.net.xml</DocumentationFile>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -56,7 +56,10 @@
     <StartupObject />
   </PropertyGroup>
   <PropertyGroup>
-    <RootNamespace>Ical.Net</RootNamespace>
+    <RootNamespace>ical.net</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyName>ical.net</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NodaTime, Version=1.3.0.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
@@ -263,9 +266,9 @@
       <Project>{cb7cc882-ed47-46c0-aaae-7a437f22f1c6}</Project>
       <Name>antlr.runtime</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ical.NET.Collections\ical.NET.Collections\Ical.Net.Collections.csproj">
+    <ProjectReference Include="..\ical.NET.Collections\ical.NET.Collections\ical.net.collections.csproj">
       <Project>{E04EFEB6-4625-4D58-AC91-7B8B8A2C97BB}</Project>
-      <Name>Ical.Net.Collections</Name>
+      <Name>ical.net.collections</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

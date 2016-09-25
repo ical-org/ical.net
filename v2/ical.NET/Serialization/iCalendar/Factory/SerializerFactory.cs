@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Reflection;
-using Ical.Net.General;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Interfaces.Serialization.Factory;
-using Ical.Net.Serialization.iCalendar.Serializers;
-using Ical.Net.Serialization.iCalendar.Serializers.Components;
-using Ical.Net.Serialization.iCalendar.Serializers.Other;
+using ical.net.General;
+using ical.net.Interfaces;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.General;
+using ical.net.Interfaces.Serialization;
+using ical.net.Interfaces.Serialization.Factory;
+using ical.net.Serialization.iCalendar.Serializers;
+using ical.net.Serialization.iCalendar.Serializers.Components;
+using ical.net.Serialization.iCalendar.Serializers.Other;
 
-namespace Ical.Net.Serialization.iCalendar.Factory
+namespace ical.net.Serialization.iCalendar.Factory
 {
     public class SerializerFactory : ISerializerFactory
     {

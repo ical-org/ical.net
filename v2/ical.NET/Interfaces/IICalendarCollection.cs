@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Ical.Net.Interfaces.Evaluation;
+using ical.net.Interfaces.Evaluation;
 
-namespace Ical.Net.Interfaces
+namespace ical.net.Interfaces
 {
     public interface IICalendarCollection : IGetOccurrencesTyped, IList<ICalendar> {}
 }

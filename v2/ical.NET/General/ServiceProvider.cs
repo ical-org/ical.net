@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Ical.Net.General
+namespace ical.net.General
 {
     public class ServiceProvider //: IServiceProvider
     {

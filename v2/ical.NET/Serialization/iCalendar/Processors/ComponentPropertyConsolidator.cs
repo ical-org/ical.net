@@ -1,7 +1,7 @@
-﻿using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.Serialization;
+﻿using ical.net.Interfaces.Components;
+using ical.net.Interfaces.Serialization;
 
-namespace Ical.Net.Serialization.iCalendar.Processors
+namespace ical.net.Serialization.iCalendar.Processors
 {
     /// <summary>
     /// FIXME: implement this.

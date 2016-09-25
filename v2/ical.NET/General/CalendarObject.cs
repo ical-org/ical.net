@@ -1,11 +1,11 @@
 using System;
 using System.Runtime.Serialization;
-using ical.NET.Collections;
-using Ical.Net.ExtensionMethods;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.General;
+using ical.net.collections;
+using ical.net.ExtensionMethods;
+using ical.net.Interfaces;
+using ical.net.Interfaces.General;
 
-namespace Ical.Net.General
+namespace ical.net.General
 {
     /// <summary>
     /// The base class for all iCalendar objects and components.

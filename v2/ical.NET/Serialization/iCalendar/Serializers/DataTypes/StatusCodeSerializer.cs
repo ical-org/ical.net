@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Text.RegularExpressions;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Serialization.iCalendar.Serializers.Other;
+using ical.net.DataTypes;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Serialization.iCalendar.Serializers.Other;
 
-namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
+namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class StatusCodeSerializer : StringSerializer
     {

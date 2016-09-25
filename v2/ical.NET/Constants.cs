@@ -1,4 +1,4 @@
-﻿namespace Ical.Net
+﻿namespace ical.net
 {
     public enum AlarmAction
     {

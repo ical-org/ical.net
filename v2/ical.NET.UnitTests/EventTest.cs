@@ -1,11 +1,11 @@
-using Ical.Net.DataTypes;
-using Ical.Net.ExtensionMethods;
-using Ical.Net.Interfaces;
+using ical.net.DataTypes;
+using ical.net.ExtensionMethods;
+using ical.net.Interfaces;
 using NUnit.Framework;
 using System;
 using System.Linq;
 
-namespace Ical.Net.UnitTests
+namespace ical.net.unittests
 {
     [TestFixture]
     public class EventTest
@@ -123,12 +123,12 @@ namespace Ical.Net.UnitTests
         [Test, Category("Deserialization")]
         public void EnsureCorrectSetDTSTAMPisSerializedAsKindUTC()
         {
-            var ical = new Ical.Net.Calendar();
-            var evt = new Ical.Net.Event();
+            var ical = new ical.net.Calendar();
+            var evt = new ical.net.Event();
             evt.DtStamp = new CalDateTime(new DateTime(2016, 8, 17, 2, 30, 0, DateTimeKind.Utc));
             ical.Events.Add(evt);
 
-            var serializer = new Ical.Net.Serialization.iCalendar.Serializers.CalendarSerializer();
+            var serializer = new ical.net.Serialization.iCalendar.Serializers.CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(ical);
 
             var lines = serializedCalendar.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
@@ -142,11 +142,11 @@ namespace Ical.Net.UnitTests
         [Test, Category("Deserialization")]
         public void EnsureAutomaticallySetDTSTAMPisSerializedAsKindUTC()
         {
-            var ical = new Ical.Net.Calendar();
-            var evt = new Ical.Net.Event();
+            var ical = new ical.net.Calendar();
+            var evt = new ical.net.Event();
             ical.Events.Add(evt);
 
-            var serializer = new Ical.Net.Serialization.iCalendar.Serializers.CalendarSerializer();
+            var serializer = new ical.net.Serialization.iCalendar.Serializers.CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(ical);
 
             var lines = serializedCalendar.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();

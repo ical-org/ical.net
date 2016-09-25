@@ -2,10 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ical.NET.Collections.Enumerators;
-using ical.NET.Collections.Interfaces;
+using ical.net.collections.Enumerators;
+using ical.net.collections.Interfaces;
 
-namespace ical.NET.Collections
+namespace ical.net.collections
 {
     /// <summary>
     /// A list of objects that are keyed.

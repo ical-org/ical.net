@@ -1,8 +1,8 @@
 using System;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Evaluation;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.Evaluation;
 
-namespace Ical.Net.DataTypes
+namespace ical.net.DataTypes
 {
     public class Occurrence : IComparable<Occurrence>
     {

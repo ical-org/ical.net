@@ -2,10 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ical.NET.Collections.Interfaces;
-using ical.NET.Collections.Interfaces.Proxies;
+using ical.net.collections.Interfaces;
+using ical.net.collections.Interfaces.Proxies;
+using ical.net.collections;
+using ical.net.collections.Interfaces;
 
-namespace ical.NET.Collections.Proxies
+namespace ical.net.collections.Proxies
 {
     /// <summary>
     /// A proxy for a keyed list.
@@ -49,7 +51,7 @@ namespace ical.NET.Collections.Proxies
 
         public virtual bool ContainsKey(TGroup group)
         {
-            return RealObject.ContainsKey(group);            
+            return RealObject.ContainsKey(group);
         }
 
         public virtual int CountOf(TGroup group)

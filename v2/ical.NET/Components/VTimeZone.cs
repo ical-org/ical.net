@@ -1,7 +1,7 @@
 using System;
-using Ical.Net.Interfaces.Components;
+using ical.net.Interfaces.Components;
 
-namespace Ical.Net
+namespace ical.net
 {
     /// <summary>
     /// Represents an RFC 5545 VTIMEZONE component.

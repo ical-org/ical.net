@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Ical.Net.Interfaces.Serialization;
+using ical.net.Interfaces.Serialization;
 
-namespace Ical.Net.Serialization.iCalendar.Processors
+namespace ical.net.Serialization.iCalendar.Processors
 {
     public class CompositeProcessor<T> : List<ISerializationProcessor<T>>, ISerializationProcessor<T>
     {

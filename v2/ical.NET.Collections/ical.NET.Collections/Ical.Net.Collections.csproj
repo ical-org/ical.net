@@ -21,7 +21,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\net40\Ical.Net.Collections.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net40\ical.net.collections.xml</DocumentationFile>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
     <NoWarn>CS1591,CS7035</NoWarn>
@@ -30,7 +30,7 @@
     <OutputPath>bin\Release\net45\</OutputPath>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>bin\Release\net45\Ical.Net.Collections.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net45\ical.net.collections.xml</DocumentationFile>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -41,7 +41,7 @@
     <OutputPath>bin\Release\net46\</OutputPath>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>bin\Release\net46\Ical.Net.Collections.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net46\ical.net.collections.xml</DocumentationFile>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -57,7 +57,10 @@
     <StartupObject />
   </PropertyGroup>
   <PropertyGroup>
-    <RootNamespace>Ical.Net.Collections</RootNamespace>
+    <RootNamespace>ical.net.collections</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyName>ical.net.collections</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Core" />

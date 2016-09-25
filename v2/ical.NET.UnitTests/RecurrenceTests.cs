@@ -4,18 +4,18 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Ical.Net.DataTypes;
-using Ical.Net.Evaluation;
-using Ical.Net.Exceptions;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Evaluation;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
-using Ical.Net.Utility;
+using ical.net.DataTypes;
+using ical.net.Evaluation;
+using ical.net.Exceptions;
+using ical.net.Interfaces;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.Evaluation;
+using ical.net.Serialization.iCalendar.Serializers.DataTypes;
+using ical.net.Utility;
 using NUnit.Framework;
 
-namespace Ical.Net.UnitTests
+namespace ical.net.unittests
 {
     [TestFixture]
     public class RecurrenceTests

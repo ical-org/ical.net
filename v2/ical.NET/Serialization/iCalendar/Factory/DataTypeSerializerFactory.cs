@@ -1,11 +1,11 @@
 ﻿using System;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Interfaces.Serialization.Factory;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
-using Ical.Net.Serialization.iCalendar.Serializers.Other;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.Serialization;
+using ical.net.Interfaces.Serialization.Factory;
+using ical.net.Serialization.iCalendar.Serializers.DataTypes;
+using ical.net.Serialization.iCalendar.Serializers.Other;
 
-namespace Ical.Net.Serialization.iCalendar.Factory
+namespace ical.net.Serialization.iCalendar.Factory
 {
     public class DataTypeSerializerFactory : ISerializerFactory
     {

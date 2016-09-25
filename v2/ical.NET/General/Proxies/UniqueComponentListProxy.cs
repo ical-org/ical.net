@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ical.NET.Collections.Interfaces;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.General;
+using ical.net.collections.Interfaces;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.General;
 
-namespace Ical.Net.General.Proxies
+namespace ical.net.General.Proxies
 {
     public class UniqueComponentListProxy<TComponentType> : CalendarObjectListProxy<TComponentType>, IUniqueComponentList<TComponentType>
         where TComponentType : class, IUniqueComponent

@@ -7,17 +7,17 @@ using System.IO;
 using System.Text;
 using antlr;
 using antlr.collections;
-using Ical.Net.ExtensionMethods;
-using Ical.Net.General;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Interfaces.Serialization.Factory;
-using Ical.Net.Serialization.iCalendar.Serializers;
-using Ical.Net.Utility;
+using ical.net.ExtensionMethods;
+using ical.net.General;
+using ical.net.Interfaces;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.General;
+using ical.net.Interfaces.Serialization;
+using ical.net.Interfaces.Serialization.Factory;
+using ical.net.Serialization.iCalendar.Serializers;
+using ical.net.Utility;
 
-namespace Ical.Net.Serialization.iCalendar
+namespace ical.net.Serialization.iCalendar
 {
     // Generate the header common to all output files.
 

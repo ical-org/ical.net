@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
-using Ical.Net.Utility;
+using ical.net.DataTypes;
+using ical.net.Interfaces.General;
+using ical.net.Interfaces.Serialization;
+using ical.net.Serialization.iCalendar.Serializers.DataTypes;
+using ical.net.Utility;
 
-namespace Ical.Net.Serialization.iCalendar.Serializers.Other
+namespace ical.net.Serialization.iCalendar.Serializers.Other
 {
     public class UriSerializer : EncodableDataTypeSerializer
     {

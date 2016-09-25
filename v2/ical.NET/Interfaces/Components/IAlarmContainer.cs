@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
+using ical.net.DataTypes;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.General;
 
-namespace Ical.Net.Interfaces.Components
+namespace ical.net.Interfaces.Components
 {
     public interface IAlarmContainer
     {

@@ -1,8 +1,8 @@
 ﻿using System.Linq;
-using ical.NET.Collections;
-using Ical.Net.Interfaces.General;
+using ical.net.collections;
+using ical.net.Interfaces.General;
 
-namespace Ical.Net.General
+namespace ical.net.General
 {
     public class CalendarPropertyList : GroupedValueList<string, ICalendarProperty, CalendarProperty, object>
     {

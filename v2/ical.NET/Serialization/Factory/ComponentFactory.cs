@@ -1,7 +1,7 @@
-﻿using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.Serialization.Factory;
+﻿using ical.net.Interfaces.Components;
+using ical.net.Interfaces.Serialization.Factory;
 
-namespace Ical.Net.Serialization.Factory
+namespace ical.net.Serialization.Factory
 {
     public class ComponentFactory : ICalendarComponentFactory
     {

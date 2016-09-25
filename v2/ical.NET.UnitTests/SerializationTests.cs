@@ -5,17 +5,17 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Ical.Net.DataTypes;
-using Ical.Net.ExtensionMethods;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Serialization;
-using Ical.Net.Serialization.iCalendar.Serializers;
-using Ical.Net.Serialization.iCalendar.Serializers.Other;
+using ical.net.DataTypes;
+using ical.net.ExtensionMethods;
+using ical.net.Interfaces;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Serialization;
+using ical.net.Serialization.iCalendar.Serializers;
+using ical.net.Serialization.iCalendar.Serializers.Other;
 using NUnit.Framework;
 
-namespace Ical.Net.UnitTests
+namespace ical.net.unittests
 {
     [TestFixture]
     public class SerializationTests

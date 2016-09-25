@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using Ical.Net.General;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Serialization.Factory;
-using Ical.Net.Serialization.iCalendar.Factory;
-using Ical.Net.Serialization.iCalendar.Processors;
+using ical.net.General;
+using ical.net.Interfaces;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.General;
+using ical.net.Interfaces.Serialization;
+using ical.net.Serialization.Factory;
+using ical.net.Serialization.iCalendar.Factory;
+using ical.net.Serialization.iCalendar.Processors;
 
-namespace Ical.Net.Serialization
+namespace ical.net.Serialization
 {
     public class SerializationContext : ISerializationContext
     {

@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Interfaces.Serialization.Factory;
+using ical.net.Interfaces.General;
+using ical.net.Interfaces.Serialization;
+using ical.net.Interfaces.Serialization.Factory;
 
-namespace Ical.Net.Serialization.iCalendar.Serializers
+namespace ical.net.Serialization.iCalendar.Serializers
 {
     public class GenericListSerializer : SerializerBase
     {

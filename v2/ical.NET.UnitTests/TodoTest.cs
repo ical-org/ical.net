@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Ical.Net.DataTypes;
+using ical.net.DataTypes;
 
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
-namespace Ical.Net.UnitTests
+namespace ical.net.unittests
 {
     [TestFixture]
     public class TodoTest

@@ -6,9 +6,9 @@ using System.Security;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("Ical.Net")]
+[assembly: AssemblyTitle("ical.net")]
 [assembly: AssemblyDescription("An iCalendar (RFC 5545) control library. See https://github.com/rianjs/ical.net for details.")]
-[assembly: AssemblyProduct("Ical.Net")]
+[assembly: AssemblyProduct("ical.net")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

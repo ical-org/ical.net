@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Ical.Net.Interfaces.DataTypes;
-using IServiceProvider = Ical.Net.Interfaces.General.IServiceProvider;
+using ical.net.Interfaces.DataTypes;
+using IServiceProvider = ical.net.Interfaces.General.IServiceProvider;
 
-namespace Ical.Net.Interfaces.Evaluation
+namespace ical.net.Interfaces.Evaluation
 {
     public interface IRecurrable : IGetOccurrences, IServiceProvider
     {

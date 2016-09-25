@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Ical.Net.DataTypes;
-using Ical.Net.Exceptions;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Utility;
+using ical.net.DataTypes;
+using ical.net.Exceptions;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Utility;
 using NodaTime;
-using Period = Ical.Net.DataTypes.Period;
+using Period = ical.net.DataTypes.Period;
 
-namespace Ical.Net.Evaluation
+namespace ical.net.Evaluation
 {
     /// <summary>
     /// Much of this code comes from iCal4j, as Ben Fortuna has done an

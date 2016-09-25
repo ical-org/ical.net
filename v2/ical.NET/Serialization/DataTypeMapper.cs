@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.General;
+using ical.net.Interfaces.Serialization;
 
-namespace Ical.Net.Serialization
+namespace ical.net.Serialization
 {
     public delegate Type TypeResolverDelegate(object context);
 

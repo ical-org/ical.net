@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using ical.NET.Collections.Interfaces;
+using ical.net.collections.Interfaces;
 
-namespace ical.NET.Collections.Enumerators
+namespace ical.net.collections.Enumerators
 {
     public class GroupedListEnumerator<TType> :
         IEnumerator<TType>

@@ -4,19 +4,19 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-using Ical.Net.DataTypes;
-using Ical.Net.ExtensionMethods;
-using Ical.Net.General.Proxies;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Evaluation;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Serialization.iCalendar.Serializers;
-using Ical.Net.Utility;
+using ical.net.DataTypes;
+using ical.net.ExtensionMethods;
+using ical.net.General.Proxies;
+using ical.net.Interfaces;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.Evaluation;
+using ical.net.Interfaces.General;
+using ical.net.Interfaces.Serialization;
+using ical.net.Serialization.iCalendar.Serializers;
+using ical.net.Utility;
 
-namespace Ical.Net
+namespace ical.net
 {
     public class Calendar : CalendarComponent, ICalendar, IDisposable
     {
@@ -488,17 +488,17 @@ namespace Ical.Net
 
         public virtual IFreeBusy GetFreeBusy(IFreeBusy freeBusyRequest)
         {
-            return Net.FreeBusy.Create(this, freeBusyRequest);
+            return net.FreeBusy.Create(this, freeBusyRequest);
         }
 
         public virtual IFreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive)
         {
-            return Net.FreeBusy.Create(this, Net.FreeBusy.CreateRequest(fromInclusive, toExclusive, null, null));
+            return net.FreeBusy.Create(this, net.FreeBusy.CreateRequest(fromInclusive, toExclusive, null, null));
         }
 
         public virtual IFreeBusy GetFreeBusy(IOrganizer organizer, IAttendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive)
         {
-            return Net.FreeBusy.Create(this, Net.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
+            return net.FreeBusy.Create(this, net.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
         }
     }
 }

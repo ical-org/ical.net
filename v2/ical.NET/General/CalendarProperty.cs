@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Ical.Net.ExtensionMethods;
-using Ical.Net.Interfaces.General;
+using ical.net.ExtensionMethods;
+using ical.net.Interfaces.General;
 
-namespace Ical.Net.General
+namespace ical.net.General
 {
     /// <summary>
     /// A class that represents a property of the <see cref="Calendar"/>

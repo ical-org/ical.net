@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Evaluation;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.Evaluation;
 
-namespace Ical.Net.Interfaces.Components
+namespace ical.net.Interfaces.Components
 {
     public interface IRecurringComponent : IUniqueComponent, IRecurrable, IAlarmContainer
     {

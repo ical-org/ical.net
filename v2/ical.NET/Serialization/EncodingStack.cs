@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Text;
-using Ical.Net.Interfaces.Serialization;
+using ical.net.Interfaces.Serialization;
 
-namespace Ical.Net.Serialization
+namespace ical.net.Serialization
 {
     public class EncodingStack : IEncodingStack
     {

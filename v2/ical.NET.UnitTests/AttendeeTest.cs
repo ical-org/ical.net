@@ -1,12 +1,12 @@
-using Ical.Net.DataTypes;
-using Ical.Net.Serialization;
-using Ical.Net.Serialization.iCalendar.Serializers;
+using ical.net.DataTypes;
+using ical.net.Serialization;
+using ical.net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Ical.Net.UnitTests
+namespace ical.net.unittests
 {
     [TestFixture]
     public class AttendeeTest

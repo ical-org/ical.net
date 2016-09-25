@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Ical.Net.Utility
+namespace ical.net.Utility
 {
     public static class CollectionHelpers
     {

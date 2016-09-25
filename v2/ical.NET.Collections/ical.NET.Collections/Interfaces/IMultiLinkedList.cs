@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ical.NET.Collections.Interfaces
+namespace ical.net.collections.Interfaces
 {
     public interface IMultiLinkedList<TType> :
         IList<TType>
