@@ -17,8 +17,6 @@ using System.Security;
 // COM, set the ComVisible attribute to true on that type.
 
 [assembly: ComVisible(false)]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: SecurityRules(SecurityRuleSet.Level1)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 
@@ -32,5 +30,5 @@ using System.Security;
 //      Revision
 //
 
-[assembly: AssemblyVersion("2.1.0.*")]
-[assembly: AssemblyFileVersion("2.1.0.*")]
+[assembly: AssemblyVersion("3.0.0.*")]
+[assembly: AssemblyFileVersion("3.0.0.*")]

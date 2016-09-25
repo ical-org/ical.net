@@ -35,13 +35,13 @@ namespace ical.net.Utility
                 return new List<MethodInfo>();
             }
 
-            if (_onDeserializingMethods.ContainsKey(targetType))
+            List<MethodInfo> methodInfos;
+            if (_onDeserializingMethods.TryGetValue(targetType, out methodInfos))
             {
-                return _onDeserializingMethods[targetType];
+                return methodInfos;
             }
 
-            return _onDeserializingMethods.GetOrAdd(targetType, tt => tt
-                .GetMethods(_bindingFlags)
+            return _onDeserializingMethods.GetOrAdd(targetType, tt => tt.GetTypeInfo().GetMethods(_bindingFlags)
                 .Where(targetTypeMethodInfo => targetTypeMethodInfo
                     .GetCustomAttributes(typeof(OnDeserializingAttribute), false).Any())
                 .ToList());
@@ -54,13 +54,14 @@ namespace ical.net.Utility
             {
                 return new List<MethodInfo>();
             }
+
             List<MethodInfo> methodInfos;
             if (_onDeserializedMethods.TryGetValue(targetType, out methodInfos))
             {
                 return methodInfos;
             }
 
-            methodInfos = targetType.GetMethods(_bindingFlags)
+            methodInfos = targetType.GetTypeInfo().GetMethods(_bindingFlags)
                 .Select(targetTypeMethodInfo => new
                 {
                     targetTypeMethodInfo,

@@ -41,7 +41,7 @@ namespace ical.net.General
 
         public virtual bool IsLoaded => _mIsLoaded;
 
-        [field: NonSerialized]
+        //[field: NonSerialized]
         public event EventHandler Loaded;
 
         public virtual void OnLoaded()

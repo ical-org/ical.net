@@ -9,6 +9,7 @@ namespace ical.net.unittests
 
         internal static string ReadStream(string manifestResource)
         {
+            var foo = _assembly.GetManifestResourceNames();
             using (var stream = _assembly.GetManifestResourceStream(manifestResource))
             {
                 return new StreamReader(stream).ReadToEnd();
@@ -16,13 +17,12 @@ namespace ical.net.unittests
         }
 
         internal static string Alarm1 => ReadStream("ical.net.unittests.Calendars.Alarm.ALARM1.ics");
-        internal static string ALARM1 => ReadStream("ical.net.unittests.Calendars.Alarm.ALARM1.ics");
-        internal static string ALARM2 => ReadStream("ical.net.unittests.Calendars.Alarm.ALARM2.ics");
-        internal static string ALARM3 => ReadStream("ical.net.unittests.Calendars.Alarm.ALARM3.ics");
-        internal static string ALARM4 => ReadStream("ical.net.unittests.Calendars.Alarm.ALARM4.ics");
-        internal static string ALARM5 => ReadStream("ical.net.unittests.Calendars.Alarm.ALARM5.ics");
-        internal static string ALARM6 => ReadStream("ical.net.unittests.Calendars.Alarm.ALARM6.ics");
-        internal static string ALARM7 => ReadStream("ical.net.unittests.Calendars.Alarm.ALARM7.ics");
+        internal static string Alarm2 => ReadStream("ical.net.unittests.Calendars.Alarm.ALARM2.ics");
+        internal static string Alarm3 => ReadStream("ical.net.unittests.Calendars.Alarm.ALARM3.ics");
+        internal static string Alarm4 => ReadStream("ical.net.unittests.Calendars.Alarm.ALARM4.ics");
+        internal static string Alarm5 => ReadStream("ical.net.unittests.Calendars.Alarm.ALARM5.ics");
+        internal static string Alarm6 => ReadStream("ical.net.unittests.Calendars.Alarm.ALARM6.ics");
+        internal static string Alarm7 => ReadStream("ical.net.unittests.Calendars.Alarm.ALARM7.ics");
         internal static string Attachment3 => ReadStream("ical.net.unittests.Calendars.Serialization.Attachment3.ics");
         internal static string Attachment4 => ReadStream("ical.net.unittests.Calendars.Serialization.Attachment4.ics");
         internal static string Attendee1 => ReadStream("ical.net.unittests.Calendars.Serialization.Attendee1.ics");

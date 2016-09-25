@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using antlr;
 using antlr.collections;
@@ -296,7 +297,7 @@ namespace ical.net.Serialization.iCalendar
                 // of concrete types.
                 var targetType = dataMapSerializer.TargetType;
                 var listOfTargetType = typeof(IList<>).MakeGenericType(targetType);
-                if (listOfTargetType.IsInstanceOfType(deserialized))
+                if (listOfTargetType.GetTypeInfo().IsInstanceOfType(deserialized))
                 {
                     // We deserialized a list - add each value to the
                     // resulting object.

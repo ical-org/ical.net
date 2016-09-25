@@ -1,0 +1,19 @@
+{
+  "version": "1.0.0-*",
+
+    "dependencies": {
+        "antlr.runtime": "1.0.0-*",
+        "ical.net.collections": "1.0.0-*",
+        "NETStandard.Library": "1.6.0",
+        "NodaTime": "2.0.0-alpha20160729",
+        "System.ComponentModel": "4.0.1",
+        "System.Linq": "4.1.0",
+        "System.Linq.Queryable": "4.0.1"
+    },
+
+  "frameworks": {
+    "netstandard1.6": {
+      "imports": "dnxcore50"
+    }
+  }
+}
