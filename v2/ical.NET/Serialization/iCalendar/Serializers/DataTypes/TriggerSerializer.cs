@@ -16,7 +16,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
         {
             try
             {
-                var t = obj as ITrigger;
+                var t = obj as Trigger;
                 if (t != null)
                 {
                     // Push the trigger onto the serialization stack
@@ -53,7 +53,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
         {
             var value = tr.ReadToEnd();
 
-            var t = CreateAndAssociate() as ITrigger;
+            var t = CreateAndAssociate() as Trigger;
             if (t != null)
             {
                 // Push the trigger onto the serialization stack

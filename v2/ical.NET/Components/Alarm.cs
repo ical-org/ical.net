@@ -54,9 +54,9 @@ namespace ical.net
             set { Properties.Set("SUMMARY", value); }
         }
 
-        public virtual ITrigger Trigger
+        public virtual Trigger Trigger
         {
-            get { return Properties.Get<ITrigger>("TRIGGER"); }
+            get { return Properties.Get<Trigger>("TRIGGER"); }
             set { Properties.Set("TRIGGER", value); }
         }
 
