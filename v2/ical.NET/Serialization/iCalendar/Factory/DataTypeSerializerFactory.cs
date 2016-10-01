@@ -1,4 +1,5 @@
 ﻿using System;
+using ical.net.DataTypes;
 using ical.net.Interfaces.DataTypes;
 using ical.net.Interfaces.Serialization;
 using ical.net.Interfaces.Serialization.Factory;
@@ -37,7 +38,7 @@ namespace ical.net.Serialization.iCalendar.Factory
                 {
                     s = new DateTimeSerializer();
                 }
-                else if (typeof (IFreeBusyEntry).GetTypeInfo().IsAssignableFrom(objectType))
+                else if (typeof (FreeBusyEntry).IsAssignableFrom(objectType))
                 {
                     s = new FreeBusyEntrySerializer();
                 }

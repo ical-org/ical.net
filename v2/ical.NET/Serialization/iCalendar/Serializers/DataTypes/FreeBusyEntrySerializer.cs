@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using ical.net.DataTypes;
-using ical.net.Interfaces.DataTypes;
 
 namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 {
@@ -11,7 +10,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var entry = obj as IFreeBusyEntry;
+            var entry = obj as FreeBusyEntry;
             if (entry != null)
             {
                 switch (entry.Status)
@@ -36,7 +35,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 
         public override object Deserialize(TextReader tr)
         {
-            var entry = base.Deserialize(tr) as IFreeBusyEntry;
+            var entry = base.Deserialize(tr) as FreeBusyEntry;
             if (entry != null)
             {
                 if (entry.Parameters.ContainsKey("FBTYPE"))
