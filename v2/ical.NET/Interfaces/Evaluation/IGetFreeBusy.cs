@@ -1,4 +1,5 @@
-﻿using ical.net.Interfaces.DataTypes;
+﻿using ical.net.DataTypes;
+using ical.net.Interfaces.DataTypes;
 
 namespace ical.net.Interfaces.Evaluation
 {
@@ -6,6 +7,6 @@ namespace ical.net.Interfaces.Evaluation
     {
         FreeBusy GetFreeBusy(FreeBusy freeBusyRequest);
         FreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive);
-        FreeBusy GetFreeBusy(IOrganizer organizer, IAttendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive);
+        FreeBusy GetFreeBusy(IOrganizer organizer, Attendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive);
     }
 }

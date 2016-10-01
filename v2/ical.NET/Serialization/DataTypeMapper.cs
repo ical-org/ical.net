@@ -24,7 +24,7 @@ namespace ical.net.Serialization
         {
             AddPropertyMapping("ACTION", typeof (AlarmAction), false);
             AddPropertyMapping("ATTACH", typeof (IAttachment), false);
-            AddPropertyMapping("ATTENDEE", typeof (IAttendee), false);
+            AddPropertyMapping("ATTENDEE", typeof (Attendee), false);
             AddPropertyMapping("CATEGORIES", typeof (string), true);
             AddPropertyMapping("COMMENT", typeof (string), false);
             AddPropertyMapping("COMPLETED", typeof (IDateTime), false);

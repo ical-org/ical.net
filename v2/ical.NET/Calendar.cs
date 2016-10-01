@@ -496,7 +496,7 @@ namespace ical.net
             return net.FreeBusy.Create(this, net.FreeBusy.CreateRequest(fromInclusive, toExclusive, null, null));
         }
 
-        public virtual FreeBusy GetFreeBusy(IOrganizer organizer, IAttendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive)
+        public virtual FreeBusy GetFreeBusy(IOrganizer organizer, Attendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive)
         {
             return net.FreeBusy.Create(this, net.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
         }

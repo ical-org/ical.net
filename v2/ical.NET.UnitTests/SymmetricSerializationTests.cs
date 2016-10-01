@@ -85,7 +85,7 @@ namespace ical.net.unittests
             var calendar = new Calendar();
             calendar.AddTimeZone(new VTimeZone("America/Los_Angeles"));
             var someEvent = GetSimpleEvent();
-            someEvent.Attendees = new List<IAttendee> {attendee};
+            someEvent.Attendees = new List<Attendee> {attendee};
             calendar.Events.Add(someEvent);
 
             var serialized = SerializeToString(calendar);

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ical.net.Interfaces.DataTypes;
 using ical.net.Interfaces.General;
 using ical.net.Utility;
 
 namespace ical.net.DataTypes
 {
-    public class Attendee : EncodableDataType, IAttendee
+    public class Attendee : EncodableDataType
     {
         private Uri _sentBy;
         /// <summary> SENT-BY, to indicate who is acting on behalf of the ATTENDEE </summary>
