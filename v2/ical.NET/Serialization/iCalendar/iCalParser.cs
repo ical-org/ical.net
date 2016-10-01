@@ -218,7 +218,7 @@ namespace ical.net.Serialization.iCalendar
             ;
         }
 
-        public ICalendarProperty property(ISerializationContext ctx, ICalendarPropertyListContainer c) //throws RecognitionException, TokenStreamException
+        public ICalendarProperty property(ISerializationContext ctx, ICalendarComponent c)
         {
             ICalendarProperty p;
             {

@@ -148,7 +148,7 @@ namespace ical.net
         /// <summary>
         /// A list of <see cref="Alarm"/>s for this recurring component.
         /// </summary>
-        public virtual ICalendarObjectList<IAlarm> Alarms => new CalendarObjectListProxy<IAlarm>(Children);
+        public virtual ICalendarObjectList<Alarm> Alarms => new CalendarObjectListProxy<Alarm>(Children);
 
         public RecurringComponent()
         {

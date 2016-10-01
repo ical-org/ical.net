@@ -217,7 +217,6 @@
     <Compile Include="Interfaces\General\IParameterCollection.cs" />
     <Compile Include="Interfaces\General\ICalendarParameterCollectionContainer.cs" />
     <Compile Include="Interfaces\General\ICalendarProperty.cs" />
-    <Compile Include="Interfaces\General\ICalendarPropertyListContainer.cs" />
     <Compile Include="Interfaces\General\ICopyable.cs" />
     <Compile Include="Interfaces\General\ILoadable.cs" />
     <Compile Include="Interfaces\General\IMergeable.cs" />
