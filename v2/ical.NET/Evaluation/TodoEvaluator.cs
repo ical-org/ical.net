@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ical.net.Interfaces.Components;
 using ical.net.Interfaces.DataTypes;
 using ical.net.Interfaces.Evaluation;
 using ical.net.Utility;
@@ -10,9 +9,9 @@ namespace ical.net.Evaluation
 {
     public class TodoEvaluator : RecurringEvaluator
     {
-        protected ITodo Todo => Recurrable as ITodo;
+        protected Todo Todo => Recurrable as Todo;
 
-        public TodoEvaluator(ITodo todo) : base(todo) {}
+        public TodoEvaluator(Todo todo) : base(todo) {}
 
         public void EvaluateToPreviousOccurrence(IDateTime completedDate, IDateTime currDt)
         {

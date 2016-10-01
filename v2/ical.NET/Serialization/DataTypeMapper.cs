@@ -71,7 +71,7 @@ namespace ical.net.Serialization
                 {
                     return typeof (EventStatus);
                 }
-                if (obj.Parent is ITodo)
+                if (obj.Parent is Todo)
                 {
                     return typeof (TodoStatus);
                 }

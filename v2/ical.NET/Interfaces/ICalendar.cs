@@ -72,6 +72,6 @@ namespace ical.net.Interfaces
         /// <summary>
         /// Gets a list of To-do items contained in the calendar.
         /// </summary>
-        IUniqueComponentList<ITodo> Todos { get; }
+        IUniqueComponentList<Todo> Todos { get; }
     }
 }
