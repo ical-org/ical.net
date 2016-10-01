@@ -10,7 +10,6 @@ using ical.net.ExtensionMethods;
 using ical.net.Interfaces;
 using ical.net.Interfaces.Components;
 using ical.net.Interfaces.DataTypes;
-using ical.net.Serialization;
 using ical.net.Serialization.iCalendar.Serializers;
 using ical.net.Serialization.iCalendar.Serializers.Other;
 using NUnit.Framework;

@@ -195,7 +195,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Interfaces\Components\IEvent.cs" />
-    <Compile Include="Interfaces\Components\IFreeBusy.cs" />
     <Compile Include="Interfaces\Components\ITimeZone.cs" />
     <Compile Include="Interfaces\Components\ITodo.cs" />
     <Compile Include="Interfaces\DataTypes\IAttendee.cs" />
@@ -207,7 +206,6 @@
     <Compile Include="Interfaces\DataTypes\IStatusCode.cs" />
     <Compile Include="Interfaces\DataTypes\ITrigger.cs" />
     <Compile Include="Interfaces\DataTypes\IUTCOffset.cs" />
-    <Compile Include="Interfaces\IICalendarCollection.cs" />
     <Compile Include="Interfaces\Components\IRecurringComponent.cs" />
     <Compile Include="Interfaces\Components\IUniqueComponent.cs" />
     <Compile Include="Interfaces\Components\ICalendarComponent.cs" />

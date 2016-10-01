@@ -57,7 +57,7 @@ namespace ical.net.Interfaces
         /// <summary>
         /// Gets a list of Free/Busy components contained in the calendar.
         /// </summary>
-        IUniqueComponentList<IFreeBusy> FreeBusy { get; }
+        IUniqueComponentList<FreeBusy> FreeBusy { get; }
 
         /// <summary>
         /// Gets a list of Journal entries contained in the calendar.

@@ -1,5 +1,4 @@
-﻿using ical.net.collections.Interfaces;
-using ical.net.General;
+﻿using ical.net.General;
 using ical.net.Interfaces.General;
 
 namespace ical.net.Interfaces.Components

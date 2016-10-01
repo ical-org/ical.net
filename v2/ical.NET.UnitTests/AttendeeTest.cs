@@ -1,5 +1,4 @@
 using ical.net.DataTypes;
-using ical.net.Serialization;
 using ical.net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
 using System;

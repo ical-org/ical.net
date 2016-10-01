@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ical.net.Interfaces;
 using NUnit.Framework;
 
 namespace ical.net.unittests

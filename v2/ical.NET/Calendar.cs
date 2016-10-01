@@ -141,7 +141,7 @@ namespace ical.net
         private IUniqueComponentList<IEvent> _mEvents;
         private IUniqueComponentList<ITodo> _mTodos;
         private ICalendarObjectList<Journal> _mJournals;
-        private IUniqueComponentList<IFreeBusy> _mFreeBusy;
+        private IUniqueComponentList<FreeBusy> _mFreeBusy;
         private ICalendarObjectList<ITimeZone> _mTimeZones;
 
         /// <summary>
@@ -166,7 +166,7 @@ namespace ical.net
             _mEvents = new UniqueComponentListProxy<IEvent>(Children);
             _mTodos = new UniqueComponentListProxy<ITodo>(Children);
             _mJournals = new CalendarObjectListProxy<Journal>(Children);
-            _mFreeBusy = new UniqueComponentListProxy<IFreeBusy>(Children);
+            _mFreeBusy = new UniqueComponentListProxy<FreeBusy>(Children);
             _mTimeZones = new CalendarObjectListProxy<ITimeZone>(Children);
         }
 
@@ -232,7 +232,7 @@ namespace ical.net
         /// <summary>
         /// A collection of <see cref="Net.FreeBusy"/> components in the iCalendar.
         /// </summary>
-        public virtual IUniqueComponentList<IFreeBusy> FreeBusy => _mFreeBusy;
+        public virtual IUniqueComponentList<FreeBusy> FreeBusy => _mFreeBusy;
 
         /// <summary>
         /// A collection of <see cref="Components.Journal"/> components in the iCalendar.
@@ -486,17 +486,17 @@ namespace ical.net
             }
         }
 
-        public virtual IFreeBusy GetFreeBusy(IFreeBusy freeBusyRequest)
+        public virtual FreeBusy GetFreeBusy(FreeBusy freeBusyRequest)
         {
             return net.FreeBusy.Create(this, freeBusyRequest);
         }
 
-        public virtual IFreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive)
+        public virtual FreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive)
         {
             return net.FreeBusy.Create(this, net.FreeBusy.CreateRequest(fromInclusive, toExclusive, null, null));
         }
 
-        public virtual IFreeBusy GetFreeBusy(IOrganizer organizer, IAttendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive)
+        public virtual FreeBusy GetFreeBusy(IOrganizer organizer, IAttendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive)
         {
             return net.FreeBusy.Create(this, net.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
         }

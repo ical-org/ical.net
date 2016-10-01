@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ical.net.collections.Interfaces;
 using ical.net.collections.Proxies;
-using ical.net.collections.Interfaces;
-using ical.net.collections.Proxies;
 
 namespace ical.net.collections
 {

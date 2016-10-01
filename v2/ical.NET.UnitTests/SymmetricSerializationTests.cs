@@ -6,7 +6,6 @@ using System.Text;
 using ical.net.DataTypes;
 using ical.net.Interfaces;
 using ical.net.Interfaces.DataTypes;
-using ical.net.Serialization;
 using ical.net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
