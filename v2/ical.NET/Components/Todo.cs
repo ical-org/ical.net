@@ -14,7 +14,7 @@ namespace ical.net
     /// A class that represents an RFC 5545 VTODO component.
     /// </summary> 
     [DebuggerDisplay("{Summary} - {Status}")]
-    public class Todo : RecurringComponent, ITodo
+    public class Todo : RecurringComponent, ITodo, IAlarmContainer
     {
         private readonly TodoEvaluator _mEvaluator;
 

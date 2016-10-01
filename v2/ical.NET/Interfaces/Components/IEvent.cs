@@ -4,7 +4,7 @@ using ical.net.Interfaces.DataTypes;
 
 namespace ical.net.Interfaces.Components
 {
-    public interface IEvent : IRecurringComponent
+    public interface IEvent : IRecurringComponent, IAlarmContainer
     {
         /// <summary>
         /// The end date/time of the event.
