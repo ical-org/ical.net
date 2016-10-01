@@ -23,7 +23,7 @@ namespace ical.net.unittests
 
             var deserializedCalendars = calendars.AsParallel().SelectMany(c =>
             {
-                IICalendarCollection calendar;
+                CalendarCollection calendar;
                 using (var reader = new StringReader(c ?? string.Empty))
                 {
                     calendar = Calendar.LoadFromStream(reader);

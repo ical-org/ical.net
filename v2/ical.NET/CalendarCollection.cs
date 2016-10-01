@@ -5,14 +5,13 @@ using ical.net.DataTypes;
 using ical.net.Interfaces;
 using ical.net.Interfaces.Components;
 using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.Evaluation;
 using ical.net.Utility;
 
 namespace ical.net
 {
-    /// <summary>
-    /// A list of iCalendars.
-    /// </summary>
-    public class CalendarCollection : List<ICalendar>, IICalendarCollection
+    /// <summary> A list of iCalendars. </summary>
+    public class CalendarCollection : List<ICalendar>, IGetOccurrencesTyped
     {
         public void ClearEvaluation()
         {

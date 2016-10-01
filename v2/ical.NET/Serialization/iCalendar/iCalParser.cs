@@ -81,12 +81,12 @@ namespace ical.net.Serialization.iCalendar
             initialize();
         }
 
-        public IICalendarCollection icalendar(ISerializationContext ctx) //throws RecognitionException, TokenStreamException
+        public CalendarCollection icalendar(ISerializationContext ctx) //throws RecognitionException, TokenStreamException
         {
-            IICalendarCollection iCalendars = new CalendarCollection();
+            var calendars = new CalendarCollection();
 
 
-            SerializationUtil.OnDeserializing(iCalendars);
+            SerializationUtil.OnDeserializing(calendars);
 
             ICalendar cal = null;
             Type foo = typeof(ISerializationSettings);
@@ -167,7 +167,7 @@ namespace ical.net.Serialization.iCalendar
 
                         // Notify that the iCalendar has been loaded
                         cal.OnLoaded();
-                        iCalendars.Add(cal);
+                        calendars.Add(cal);
 
                         SerializationUtil.OnDeserialized(cal);
 
@@ -183,9 +183,9 @@ namespace ical.net.Serialization.iCalendar
                 ;
             } // ( ... )*
 
-            SerializationUtil.OnDeserialized(iCalendars);
+            SerializationUtil.OnDeserialized(calendars);
 
-            return iCalendars;
+            return calendars;
         }
 
         public void icalbody(ISerializationContext ctx, ICalendar cal) //throws RecognitionException, TokenStreamException
