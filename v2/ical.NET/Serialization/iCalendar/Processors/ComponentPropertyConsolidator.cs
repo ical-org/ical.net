@@ -1,12 +1,11 @@
 ﻿using ical.net.Interfaces.Components;
-using ical.net.Interfaces.Serialization;
 
 namespace ical.net.Serialization.iCalendar.Processors
 {
     /// <summary>
     /// FIXME: implement this.
     /// </summary>
-    public class ComponentPropertyConsolidator : ISerializationProcessor<ICalendarComponent>
+    public class ComponentPropertyConsolidator : CompositeProcessor<ICalendarComponent>
     {
         public virtual void PreSerialization(ICalendarComponent obj) {}
 

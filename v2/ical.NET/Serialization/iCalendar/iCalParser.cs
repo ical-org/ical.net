@@ -15,6 +15,7 @@ using ical.net.Interfaces.Components;
 using ical.net.Interfaces.General;
 using ical.net.Interfaces.Serialization;
 using ical.net.Interfaces.Serialization.Factory;
+using ical.net.Serialization.iCalendar.Processors;
 using ical.net.Serialization.iCalendar.Serializers;
 using ical.net.Utility;
 
@@ -131,7 +132,7 @@ namespace ical.net.Serialization.iCalendar
                             ;
                         } // ( ... )*
 
-                        var processor = ctx.GetService(typeof(ISerializationProcessor<ICalendar>)) as ISerializationProcessor<ICalendar>;
+                        var processor = ctx.GetService(typeof(CompositeProcessor<ICalendar>)) as CompositeProcessor<ICalendar>;
 
                         // Do some pre-processing on the calendar:
                         processor?.PreDeserialization(cal);
@@ -255,7 +256,7 @@ namespace ical.net.Serialization.iCalendar
                 }
             }
 
-            var processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarProperty>)) as ISerializationProcessor<ICalendarProperty>;
+            var processor = ctx.GetService(typeof(CompositeProcessor<ICalendarProperty>)) as CompositeProcessor<ICalendarProperty>;
             // Do some pre-processing on the property
             processor?.PreDeserialization(p);
 
@@ -373,7 +374,7 @@ namespace ical.net.Serialization.iCalendar
                 }
             }
 
-            var processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarComponent>)) as ISerializationProcessor<ICalendarComponent>;
+            var processor = ctx.GetService(typeof(CompositeProcessor<ICalendarComponent>)) as CompositeProcessor<ICalendarComponent>;
             // Do some pre-processing on the component
             processor?.PreDeserialization(c);
 

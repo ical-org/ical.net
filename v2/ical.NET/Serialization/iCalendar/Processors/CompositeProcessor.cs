@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
-using ical.net.Interfaces.Serialization;
 
 namespace ical.net.Serialization.iCalendar.Processors
 {
-    public class CompositeProcessor<T> : List<ISerializationProcessor<T>>, ISerializationProcessor<T>
+    public class CompositeProcessor<T> : List<CompositeProcessor<T>>
     {
         public CompositeProcessor() {}
 
-        public CompositeProcessor(IEnumerable<ISerializationProcessor<T>> processors)
+        public CompositeProcessor(IEnumerable<CompositeProcessor<T>> processors)
         {
             AddRange(processors);
         }
