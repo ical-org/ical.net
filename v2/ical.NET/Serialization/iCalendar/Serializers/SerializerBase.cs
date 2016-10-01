@@ -34,7 +34,7 @@ namespace ical.net.Serialization.iCalendar.Serializers
             object obj;
             using (var sr = new StreamReader(stream, encoding))
             {
-                var encodingStack = GetService<IEncodingStack>();
+                var encodingStack = GetService<EncodingStack>();
                 encodingStack.Push(encoding);
                 obj = Deserialize(sr);
                 encodingStack.Pop();
@@ -53,7 +53,7 @@ namespace ical.net.Serialization.iCalendar.Serializers
             SerializationContext.Push(obj);
 
             // Push the current encoding on the stack
-            var encodingStack = GetService<IEncodingStack>();
+            var encodingStack = GetService<EncodingStack>();
             encodingStack.Push(encoding);
 
             sw.Write(SerializeToString(obj));

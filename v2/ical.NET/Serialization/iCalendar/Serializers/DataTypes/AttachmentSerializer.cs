@@ -2,7 +2,6 @@
 using System.IO;
 using ical.net.DataTypes;
 using ical.net.Interfaces.DataTypes;
-using ical.net.Interfaces.Serialization;
 
 namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 {
@@ -51,7 +50,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
                 var data = DecodeData(a, attachment);
 
                 // Get the currently-used encoding off the encoding stack.
-                var encodingStack = GetService<IEncodingStack>();
+                var encodingStack = GetService<EncodingStack>();
                 a.ValueEncoding = encodingStack.Current;
 
                 // Get the format of the attachment

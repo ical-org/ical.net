@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Text;
-using ical.net.Interfaces.Serialization;
 
 namespace ical.net.Serialization
 {
-    public class EncodingStack : IEncodingStack
+    public class EncodingStack
     {
         private readonly Stack<Encoding> _mStack;
 
