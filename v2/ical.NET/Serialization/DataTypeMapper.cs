@@ -40,7 +40,7 @@ namespace ical.net.Serialization
             AddPropertyMapping("FREEBUSY", typeof (FreeBusyEntry), true);
             AddPropertyMapping("GEO", typeof (IGeographicLocation), false);
             AddPropertyMapping("LAST-MODIFIED", typeof (IDateTime), false);
-            AddPropertyMapping("ORGANIZER", typeof (IOrganizer), false);
+            AddPropertyMapping("ORGANIZER", typeof (Organizer), false);
             AddPropertyMapping("PERCENT-COMPLETE", typeof (int), false);
             AddPropertyMapping("PRIORITY", typeof (int), false);
             AddPropertyMapping("RDATE", typeof (IPeriodList), false);

@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using ical.net.Interfaces.DataTypes;
 using ical.net.Interfaces.General;
 using ical.net.Serialization.iCalendar.Serializers.DataTypes;
 
@@ -11,7 +10,7 @@ namespace ical.net.DataTypes
     /// A class that represents the organizer of an event/todo/journal.
     /// </summary>
     [DebuggerDisplay("{Value}")]
-    public class Organizer : EncodableDataType, IOrganizer
+    public class Organizer : EncodableDataType
     {
         public virtual Uri SentBy
         {
@@ -92,7 +91,7 @@ namespace ical.net.DataTypes
         {
             base.CopyFrom(obj);
 
-            var o = obj as IOrganizer;
+            var o = obj as Organizer;
             if (o != null)
             {
                 Value = o.Value;
