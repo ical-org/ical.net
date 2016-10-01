@@ -62,7 +62,7 @@ namespace ical.net.Interfaces
         /// <summary>
         /// Gets a list of Journal entries contained in the calendar.
         /// </summary>
-        ICalendarObjectList<IJournal> Journals { get; }
+        ICalendarObjectList<Journal> Journals { get; }
 
         /// <summary>
         /// Gets a list of time zones contained in the calendar.
