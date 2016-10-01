@@ -142,7 +142,7 @@ namespace ical.net
         private IUniqueComponentList<Todo> _mTodos;
         private ICalendarObjectList<Journal> _mJournals;
         private IUniqueComponentList<FreeBusy> _mFreeBusy;
-        private ICalendarObjectList<ITimeZone> _mTimeZones;
+        private ICalendarObjectList<VTimeZone> _mTimeZones;
 
         /// <summary>
         /// To load an existing an iCalendar object, use one of the provided LoadFromXXX methods.
@@ -167,7 +167,7 @@ namespace ical.net
             _mTodos = new UniqueComponentListProxy<Todo>(Children);
             _mJournals = new CalendarObjectListProxy<Journal>(Children);
             _mFreeBusy = new UniqueComponentListProxy<FreeBusy>(Children);
-            _mTimeZones = new CalendarObjectListProxy<ITimeZone>(Children);
+            _mTimeZones = new CalendarObjectListProxy<VTimeZone>(Children);
         }
 
         protected override void OnDeserializing(StreamingContext context)
@@ -242,7 +242,7 @@ namespace ical.net
         /// <summary>
         /// A collection of TimeZone components in the iCalendar.
         /// </summary>
-        public virtual ICalendarObjectList<ITimeZone> TimeZones => _mTimeZones;
+        public virtual ICalendarObjectList<VTimeZone> TimeZones => _mTimeZones;
 
         /// <summary>
         /// A collection of <see cref="Components.Todo"/> components in the iCalendar.
@@ -291,7 +291,7 @@ namespace ical.net
         /// calendar.
         /// </summary>        
         /// <returns>The time zone added to the calendar.</returns>
-        public ITimeZone AddTimeZone(ITimeZone tz)
+        public VTimeZone AddTimeZone(VTimeZone tz)
         {
             this.AddChild(tz);
             return tz;

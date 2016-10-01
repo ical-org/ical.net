@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ical.net.DataTypes;
-using ical.net.Interfaces.Components;
 using ical.net.Interfaces.DataTypes;
 using ical.net.Interfaces.General;
 using ical.net.Interfaces.Serialization;

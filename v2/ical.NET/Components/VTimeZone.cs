@@ -1,12 +1,11 @@
 using System;
-using ical.net.Interfaces.Components;
 
 namespace ical.net
 {
     /// <summary>
     /// Represents an RFC 5545 VTIMEZONE component.
     /// </summary>
-    public class VTimeZone : CalendarComponent, ITimeZone
+    public class VTimeZone : CalendarComponent
     {
         public static VTimeZone FromLocalTimeZone()
         {

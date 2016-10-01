@@ -1,6 +1,5 @@
 using ical.net.DataTypes;
 using ical.net.Interfaces;
-using ical.net.Interfaces.Components;
 using NUnit.Framework;
 
 namespace ical.net.unittests

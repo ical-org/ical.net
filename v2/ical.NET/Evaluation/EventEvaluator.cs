@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ical.net.Interfaces.Components;
 using ical.net.Interfaces.DataTypes;
 
 namespace ical.net.Evaluation

@@ -8,7 +8,6 @@ using ical.net.DataTypes;
 using ical.net.Evaluation;
 using ical.net.Exceptions;
 using ical.net.Interfaces;
-using ical.net.Interfaces.Components;
 using ical.net.Interfaces.DataTypes;
 using ical.net.Interfaces.Evaluation;
 using ical.net.Serialization.iCalendar.Serializers.DataTypes;
