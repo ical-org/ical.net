@@ -121,7 +121,7 @@ namespace ical.net.Evaluation
                 var rruleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
                 if (includeReferenceDateInResults)
                 {
-                    rruleOccurrences.UnionWith(new [] {new Period(referenceDate), });
+                    rruleOccurrences.UnionWith(new [] {new Period(referenceDate) });
                 }
 
                 var rdateOccurrences = EvaluateRDate(referenceDate, periodStart, periodEnd);

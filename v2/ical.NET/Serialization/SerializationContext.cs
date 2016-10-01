@@ -4,21 +4,21 @@ using ical.net.General;
 using ical.net.Interfaces;
 using ical.net.Interfaces.Components;
 using ical.net.Interfaces.General;
-using ical.net.Interfaces.Serialization;
 using ical.net.Serialization.Factory;
 using ical.net.Serialization.iCalendar.Factory;
 using ical.net.Serialization.iCalendar.Processors;
+using IServiceProvider = ical.net.Interfaces.General.IServiceProvider;
 
 namespace ical.net.Serialization
 {
-    public class SerializationContext : ISerializationContext
+    public class SerializationContext : IServiceProvider// : SerializationContext
     {
         private static SerializationContext _default;
 
         /// <summary>
         /// Gets the Singleton instance of the SerializationContext class.
         /// </summary>
-        public static ISerializationContext Default
+        public static SerializationContext Default
         {
             get
             {

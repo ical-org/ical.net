@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using ical.net.DataTypes;
+using ical.net.Serialization.iCalendar.Serializers;
 using ical.net.Serialization.iCalendar.Serializers.DataTypes;
 using NUnit.Framework;
 
@@ -12,15 +13,15 @@ namespace ical.net.unittests.Serialization.iCalendar.Serializers.DataTypes
         [Test, Category("Deserialization")]
         public void TZIDPropertyMustNotBeAppliedToUtcDateTime()
         {
-            var ical = new ical.net.Calendar();
-            var evt = new ical.net.Event();
+            var ical = new Calendar();
+            var evt = new Event();
             evt.DtStamp = new CalDateTime(new DateTime(2016, 8, 17, 2, 30, 0, DateTimeKind.Utc));
             ical.Events.Add(evt);
 
-            var serializer = new ical.net.Serialization.iCalendar.Serializers.CalendarSerializer();
+            var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(ical);
 
-            var lines = serializedCalendar.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var lines = serializedCalendar.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             var result = lines.First(s => s.StartsWith("DTSTAMP"));
             Assert.AreEqual("DTSTAMP:20160817T023000Z", result);
         }

@@ -4,7 +4,6 @@ using System.Linq;
 using ical.net.DataTypes;
 using ical.net.Interfaces;
 using ical.net.Interfaces.DataTypes;
-
 using ical.net.Utility;
 using NUnit.Framework;
 

@@ -17,7 +17,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.Components
 
         public ComponentSerializer() { }
 
-        public ComponentSerializer(ISerializationContext ctx) : base(ctx) { }
+        public ComponentSerializer(SerializationContext ctx) : base(ctx) { }
 
         public override Type TargetType => typeof(CalendarComponent);
 

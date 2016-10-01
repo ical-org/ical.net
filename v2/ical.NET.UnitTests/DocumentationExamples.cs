@@ -16,7 +16,7 @@ namespace ical.net.unittests
             var vEvent = new Event
             {
                 DtStart = new CalDateTime(DateTime.Parse("2016-07-01T07:00")),
-                DtEnd = new CalDateTime(DateTime.Parse("2016-07-01T08:00")),
+                DtEnd = new CalDateTime(DateTime.Parse("2016-07-01T08:00"))
             };
 
             //Recur daily through the end of the day, July 31, 2016
@@ -45,7 +45,7 @@ namespace ical.net.unittests
             var vEvent = new Event
             {
                 DtStart = new CalDateTime(DateTime.Parse("2016-07-05T07:00")),
-                DtEnd = new CalDateTime(DateTime.Parse("2016-07-05T08:00")),
+                DtEnd = new CalDateTime(DateTime.Parse("2016-07-05T08:00"))
             };
 
             // Recurring every other Tuesday until Dec 31
@@ -72,7 +72,7 @@ namespace ical.net.unittests
             var vEvent = new Event
             {
                 DtStart = new CalDateTime(DateTime.Parse("2000-11-23T07:00")),
-                DtEnd = new CalDateTime(DateTime.Parse("2000-11-23T19:00")),
+                DtEnd = new CalDateTime(DateTime.Parse("2000-11-23T19:00"))
             };
 
             // Recurring every other Tuesday until Dec 31
@@ -105,7 +105,7 @@ namespace ical.net.unittests
             {
                 DtStart = new CalDateTime(DateTime.Parse("2016-01-01T07:00")),
                 DtEnd = new CalDateTime(DateTime.Parse("2016-12-31T08:00")),
-                RecurrenceRules = new List<IRecurrencePattern> { new RecurrencePattern(FrequencyType.Daily, 1)},
+                RecurrenceRules = new List<IRecurrencePattern> { new RecurrencePattern(FrequencyType.Daily, 1)}
             };
 
             //Define the exceptions: Sunday

@@ -347,8 +347,8 @@ namespace ical.net.unittests
             var iCal2 = Calendar.LoadFromStream(new StringReader(IcsFiles.ByMonth2))[0];
             ProgramTest.TestCal(iCal1);
             ProgramTest.TestCal(iCal2);
-            Event evt1 = (Event)iCal1.Events.First();
-            Event evt2 = (Event)iCal2.Events.First();
+            Event evt1 = iCal1.Events.First();
+            Event evt2 = iCal2.Events.First();
 
             var evt1Occurrences = evt1.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(2000, 12, 31)).OrderBy(o => o.Period.StartTime).ToList();
             var evt2Occurrences = evt2.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(2000, 12, 31)).OrderBy(o => o.Period.StartTime).ToList();
@@ -2653,7 +2653,7 @@ namespace ical.net.unittests
                 {"Lincoln's Birthday", new CalDateTime(2006, 2, 12)},
                 {"Groundhog Day", new CalDateTime(2006, 2, 2)},
                 {"Martin Luther King, Jr. Day", new CalDateTime(2006, 1, 16)},
-                { "New Year's Day", new CalDateTime(2006, 1, 1)},
+                { "New Year's Day", new CalDateTime(2006, 1, 1)}
             };
 
             var occurrences = iCal.GetOccurrences(
@@ -2960,18 +2960,18 @@ END:VCALENDAR";
             var rrule = new RecurrencePattern(FrequencyType.Weekly, interval: 1)
             {
                 Until = DateTime.Parse("2016-08-31T07:00:00"),
-                ByDay = new List<IWeekDay> { new WeekDay(DayOfWeek.Wednesday)},
+                ByDay = new List<IWeekDay> { new WeekDay(DayOfWeek.Wednesday)}
             };
 
             var start = DateTime.Parse("2016-08-01T07:00:00");
             var end = start.AddHours(1);
-            var e = new Event()
+            var e = new Event
             {
                 DtStart = new CalDateTime(start, "UTC"),
                 DtEnd = new CalDateTime(end, "UTC"),
                 RecurrenceRules = new List<IRecurrencePattern> { rrule },
                 Summary = "This is an event",
-                Uid = "abab717c-1786-4efc-87dd-6859c2b48eb6",
+                Uid = "abab717c-1786-4efc-87dd-6859c2b48eb6"
             };
 
             var collection = Calendar.LoadFromStream(new StringReader(ical));

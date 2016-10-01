@@ -2,7 +2,6 @@
 using System.IO;
 using ical.net.DataTypes;
 using ical.net.Interfaces.General;
-using ical.net.Interfaces.Serialization;
 using ical.net.Serialization.iCalendar.Serializers.DataTypes;
 using ical.net.Utility;
 
@@ -12,7 +11,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.Other
     {
         public UriSerializer() {}
 
-        public UriSerializer(ISerializationContext ctx) : base(ctx) {}
+        public UriSerializer(SerializationContext ctx) : base(ctx) {}
 
         public override Type TargetType => typeof (string);
 

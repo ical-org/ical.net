@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using ical.net.Interfaces;
 using ical.net.Interfaces.General;
-using ical.net.Interfaces.Serialization;
 using ical.net.Serialization.iCalendar.Serializers.Components;
 using ical.net.Utility;
 
@@ -21,7 +20,7 @@ namespace ical.net.Serialization.iCalendar.Serializers
             _calendar = cal;
         }
 
-        public CalendarSerializer(ISerializationContext ctx) : base(ctx) {}
+        public CalendarSerializer(SerializationContext ctx) : base(ctx) {}
 
         public virtual string SerializeToString() => SerializeToString(_calendar);
 

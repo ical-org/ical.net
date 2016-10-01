@@ -1,13 +1,14 @@
 using System;
 using System.IO;
 using System.Text;
+using ical.net.Serialization;
 using IServiceProvider = ical.net.Interfaces.General.IServiceProvider;
 
 namespace ical.net.Interfaces.Serialization
 {
     public interface ISerializer : IServiceProvider
     {
-        ISerializationContext SerializationContext { get; set; }
+        SerializationContext SerializationContext { get; set; }
 
         Type TargetType { get; }
         void Serialize(object obj, Stream stream, Encoding encoding);

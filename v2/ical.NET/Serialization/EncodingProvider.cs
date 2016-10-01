@@ -10,9 +10,9 @@ namespace ical.net.Serialization
 
         public delegate byte[] DecoderDelegate(string value);
 
-        private readonly ISerializationContext _mSerializationContext;
+        private readonly SerializationContext _mSerializationContext;
 
-        public EncodingProvider(ISerializationContext ctx)
+        public EncodingProvider(SerializationContext ctx)
         {
             _mSerializationContext = ctx;
         }

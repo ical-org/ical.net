@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using ical.net.DataTypes;
 using ical.net.Interfaces.DataTypes;
-using System.Globalization;
 
 namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 {

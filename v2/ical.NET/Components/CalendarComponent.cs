@@ -51,7 +51,7 @@ namespace ical.net
         /// </summary>
         public virtual CalendarPropertyList Properties { get; protected set; }
 
-        public CalendarComponent() : base()
+        public CalendarComponent()
         {
             Initialize();
         }

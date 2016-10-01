@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
 using ical.net.Interfaces;
-
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 

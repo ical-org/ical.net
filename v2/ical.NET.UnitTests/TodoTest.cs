@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ical.net.DataTypes;
-
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
@@ -43,7 +42,7 @@ namespace ical.net.unittests
                 new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 28, 8, 59, 59), false),
 
                 new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 28, 9, 0, 0), true),
-                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2200, 12, 31, 0, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2200, 12, 31, 0, 0, 0), true)
             };
             yield return new TestCaseData(IcsFiles.Todo2, testVals)
                 .SetName("Todo2");
@@ -51,7 +50,7 @@ namespace ical.net.unittests
             testVals = new List<KeyValuePair<CalDateTime, bool>>
             {
                 new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 7, 28, 8, 0, 0), false),
-                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2200, 12, 31, 0, 0, 0), false),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2200, 12, 31, 0, 0, 0), false)
             };
             yield return new TestCaseData(IcsFiles.Todo3, testVals).SetName("Todo3");
 
@@ -69,7 +68,7 @@ namespace ical.net.unittests
                 new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 5, 9, 0, 0), true),
                 new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 6, 9, 0, 0), true),
                 new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 7, 9, 0, 0), true),
-                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 8, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 8, 9, 0, 0), true)
             };
             yield return new TestCaseData(IcsFiles.Todo5, testVals).SetName("Todo5");
 
@@ -87,7 +86,7 @@ namespace ical.net.unittests
                 new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 5, 9, 0, 0), true),
                 new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 6, 9, 0, 0), true),
                 new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 7, 9, 0, 0), true),
-                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 8, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 8, 9, 0, 0), true)
             };
             yield return new TestCaseData(IcsFiles.Todo6, testVals).SetName("Todo6");
 
@@ -108,7 +107,7 @@ namespace ical.net.unittests
 
                 new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 9, 1, 9, 0, 0), true),
                 new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 9, 2, 9, 0, 0), true),
-                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 9, 3, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 9, 3, 9, 0, 0), true)
             };
             yield return new TestCaseData(IcsFiles.Todo7, testVals).SetName("Todo7");
 
@@ -142,7 +141,7 @@ namespace ical.net.unittests
 
                 new KeyValuePair<CalDateTime, bool>(new CalDateTime(2007, 2, 2, 9, 0, 0), true),
                 new KeyValuePair<CalDateTime, bool>(new CalDateTime(2007, 2, 3, 9, 0, 0), true),
-                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2007, 2, 4, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2007, 2, 4, 9, 0, 0), true)
             };
             yield return new TestCaseData(IcsFiles.Todo8, testVals).SetName("Todo8");
 
@@ -158,7 +157,7 @@ namespace ical.net.unittests
                 new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 9, 8, 8, 59, 59), false),
 
                 new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 9, 8, 9, 0, 0), true),
-                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 9, 9, 9, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 9, 9, 9, 0, 0), true)
             };
             yield return new TestCaseData(IcsFiles.Todo9, testVals).SetName("Todo9");
         }
@@ -184,7 +183,7 @@ namespace ical.net.unittests
             {
                 new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 07, 28, 8, 0, 0), true),
                 new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 07, 28, 9, 0, 0), true),
-                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 1, 0, 0, 0), true),
+                new KeyValuePair<CalDateTime, bool>(new CalDateTime(2006, 8, 1, 0, 0, 0), true)
             };
             yield return new TestCaseData(IcsFiles.Todo4, testVals).SetName("Todo4");
         }

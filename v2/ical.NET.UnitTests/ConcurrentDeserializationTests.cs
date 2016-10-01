@@ -17,7 +17,7 @@ namespace ical.net.unittests
                 IcsFiles.DailyInterval2,
                 IcsFiles.DailyByDay1,
                 IcsFiles.RecurrenceDates1,
-                IcsFiles.DailyByHourMinute1,
+                IcsFiles.DailyByHourMinute1
             };
 
             var deserializedCalendars = calendars.AsParallel().SelectMany(c =>

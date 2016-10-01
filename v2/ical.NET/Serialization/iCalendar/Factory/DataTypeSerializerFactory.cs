@@ -20,7 +20,7 @@ namespace ical.net.Serialization.iCalendar.Factory
         /// </summary>
         /// <param name="objectType">The type of object to be serialized.</param>
         /// <param name="ctx">The serialization context.</param>
-        public virtual ISerializer Build(Type objectType, ISerializationContext ctx)
+        public virtual ISerializer Build(Type objectType, SerializationContext ctx)
         {
             if (objectType != null)
             {

@@ -1,7 +1,6 @@
 ﻿using System;
 using ical.net.Interfaces.DataTypes;
 using ical.net.Interfaces.General;
-using ical.net.Interfaces.Serialization;
 
 namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 {
@@ -9,7 +8,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
     {
         protected DataTypeSerializer() {}
 
-        protected DataTypeSerializer(ISerializationContext ctx) : base(ctx) {}
+        protected DataTypeSerializer(SerializationContext ctx) : base(ctx) {}
 
         protected virtual ICalendarDataType CreateAndAssociate()
         {
