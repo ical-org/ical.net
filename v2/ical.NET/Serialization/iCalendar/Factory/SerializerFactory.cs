@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using ical.net.General;
 using ical.net.Interfaces;

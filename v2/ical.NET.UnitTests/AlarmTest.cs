@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using ical.net.DataTypes;
 using ical.net.Interfaces.DataTypes;
-
 using NUnit.Framework;
 
 namespace ical.net.unittests

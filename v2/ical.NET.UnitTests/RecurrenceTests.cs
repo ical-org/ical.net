@@ -348,8 +348,8 @@ namespace ical.net.unittests
             var iCal2 = Calendar.LoadFromStream(new StringReader(IcsFiles.ByMonth2))[0];
             ProgramTest.TestCal(iCal1);
             ProgramTest.TestCal(iCal2);
-            IEvent evt1 = (Event)iCal1.Events.First();
-            IEvent evt2 = (Event)iCal2.Events.First();
+            Event evt1 = (Event)iCal1.Events.First();
+            Event evt2 = (Event)iCal2.Events.First();
 
             var evt1Occurrences = evt1.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(2000, 12, 31)).OrderBy(o => o.Period.StartTime).ToList();
             var evt2Occurrences = evt2.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(2000, 12, 31)).OrderBy(o => o.Period.StartTime).ToList();
@@ -2664,7 +2664,7 @@ namespace ical.net.unittests
             Assert.AreEqual(items.Count, occurrences.Count, "The number of holidays did not evaluate correctly.");
             foreach (var o in occurrences)
             {
-                var evt = o.Source as IEvent;
+                var evt = o.Source as Event;
                 Assert.IsNotNull(evt);
                 Assert.IsTrue(items.ContainsKey(evt.Summary), "Holiday text '" + evt.Summary + "' did not match known holidays.");
                 Assert.AreEqual(items[evt.Summary], o.Period.StartTime, "Date/time of holiday '" + evt.Summary + "' did not match.");
@@ -2680,7 +2680,7 @@ namespace ical.net.unittests
         public void Evaluate1()
         {
             ICalendar cal = new Calendar();
-            IEvent evt = cal.Create<Event>();
+            Event evt = cal.Create<Event>();
             evt.Summary = "Event summary";
 
             // Start at midnight, UTC time
@@ -2752,7 +2752,7 @@ namespace ical.net.unittests
         public void GetOccurrences1()
         {
             ICalendar cal = new Calendar();
-            IEvent evt = cal.Create<Event>();
+            Event evt = cal.Create<Event>();
             evt.Start = new CalDateTime(2009, 11, 18, 5, 0, 0);
             evt.End = new CalDateTime(2009, 11, 18, 5, 10, 0);
             evt.RecurrenceRules.Add(new RecurrencePattern(FrequencyType.Daily));
@@ -2800,7 +2800,7 @@ namespace ical.net.unittests
         public void Test1()
         {
             ICalendar cal = new Calendar();
-            IEvent evt = cal.Create<Event>();
+            Event evt = cal.Create<Event>();
             evt.Summary = "Event summary";
             evt.Start = new CalDateTime(DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc));
 
@@ -2819,7 +2819,7 @@ namespace ical.net.unittests
         public void Test2()
         {
             ICalendar cal = new Calendar();
-            IEvent evt = cal.Create<Event>();
+            Event evt = cal.Create<Event>();
             evt.Summary = "Event summary";
             evt.Start = new CalDateTime(DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc));
 

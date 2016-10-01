@@ -18,7 +18,7 @@ namespace ical.net
                 return null;
             }
             var getOccurrences = (IGetOccurrencesTyped) obj;
-            var occurrences = getOccurrences.GetOccurrences<IEvent>(freeBusyRequest.Start, freeBusyRequest.End);
+            var occurrences = getOccurrences.GetOccurrences<Event>(freeBusyRequest.Start, freeBusyRequest.End);
             var contacts = new List<string>(32);
             var isFilteredByAttendees = false;
 
@@ -45,7 +45,7 @@ namespace ical.net
                     continue;
                 }
 
-                var evt = uc as IEvent;
+                var evt = uc as Event;
                 var accepted = false;
                 var type = FreeBusyStatus.Busy;
 
