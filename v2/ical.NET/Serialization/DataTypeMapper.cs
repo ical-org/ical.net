@@ -55,8 +55,8 @@ namespace ical.net.Serialization
             AddPropertyMapping("TRANSP", typeof (TransparencyType), false);
             AddPropertyMapping("TRIGGER", typeof (Trigger), false);
             AddPropertyMapping("TZNAME", typeof (string), false);
-            AddPropertyMapping("TZOFFSETFROM", typeof (IUtcOffset), false);
-            AddPropertyMapping("TZOFFSETTO", typeof (IUtcOffset), false);
+            AddPropertyMapping("TZOFFSETFROM", typeof (UtcOffset), false);
+            AddPropertyMapping("TZOFFSETTO", typeof (UtcOffset), false);
             AddPropertyMapping("TZURL", typeof (Uri), false);
             AddPropertyMapping("URL", typeof (Uri), false);
         }
