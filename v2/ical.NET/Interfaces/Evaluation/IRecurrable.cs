@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ical.net.DataTypes;
 using ical.net.Interfaces.DataTypes;
 using IServiceProvider = ical.net.Interfaces.General.IServiceProvider;
@@ -8,9 +7,6 @@ namespace ical.net.Interfaces.Evaluation
 {
     public interface IRecurrable : IGetOccurrences, IServiceProvider
     {
-        [Obsolete("Use the Start property instead.")]
-        IDateTime DtStart { get; set; }
-
         /// <summary>
         /// Gets/sets the start date/time of the component.
         /// </summary>
