@@ -50,7 +50,7 @@ namespace ical.net.Utility
             return occurrences;
         }
 
-        public static bool?[] GetExpandBehaviorList(IRecurrencePattern p)
+        public static bool?[] GetExpandBehaviorList(RecurrencePattern p)
         {
             // See the table in RFC 5545 Section 3.3.10 (Page 43).
             switch (p.Frequency)

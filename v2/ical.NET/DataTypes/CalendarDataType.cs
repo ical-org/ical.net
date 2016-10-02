@@ -76,7 +76,7 @@ namespace ical.net.DataTypes
                     case "PERIOD":
                         return typeof (IPeriod);
                     case "RECUR":
-                        return typeof (IRecurrencePattern);
+                        return typeof (RecurrencePattern);
                     case "TEXT":
                         return typeof (string);
                     case "TIME":

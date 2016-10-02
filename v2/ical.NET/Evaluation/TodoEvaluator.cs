@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ical.net.DataTypes;
 using ical.net.Interfaces.DataTypes;
 using ical.net.Interfaces.Evaluation;
 using ical.net.Utility;
@@ -60,7 +61,7 @@ namespace ical.net.Evaluation
             }
         }
 
-        public void DetermineStartingRecurrence(IRecurrencePattern recur, ref IDateTime referenceDateTime)
+        public void DetermineStartingRecurrence(RecurrencePattern recur, ref IDateTime referenceDateTime)
         {
             if (recur.Count != int.MinValue)
             {

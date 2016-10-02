@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ical.net.DataTypes;
 using ical.net.Interfaces.DataTypes;
 using IServiceProvider = ical.net.Interfaces.General.IServiceProvider;
 
@@ -16,9 +17,9 @@ namespace ical.net.Interfaces.Evaluation
         IDateTime Start { get; set; }
 
         IList<IPeriodList> ExceptionDates { get; set; }
-        IList<IRecurrencePattern> ExceptionRules { get; set; }
+        IList<RecurrencePattern> ExceptionRules { get; set; }
         IList<IPeriodList> RecurrenceDates { get; set; }
-        IList<IRecurrencePattern> RecurrenceRules { get; set; }
+        IList<RecurrencePattern> RecurrenceRules { get; set; }
         IDateTime RecurrenceId { get; set; }
     }
 }

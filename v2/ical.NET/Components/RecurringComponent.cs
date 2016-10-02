@@ -82,9 +82,9 @@ namespace ical.net
             set { Properties.Set("EXDATE", value); }
         }
 
-        public virtual IList<IRecurrencePattern> ExceptionRules
+        public virtual IList<RecurrencePattern> ExceptionRules
         {
-            get { return Properties.GetMany<IRecurrencePattern>("EXRULE"); }
+            get { return Properties.GetMany<RecurrencePattern>("EXRULE"); }
             set { Properties.Set("EXRULE", value); }
         }
 
@@ -106,9 +106,9 @@ namespace ical.net
             set { Properties.Set("RDATE", value); }
         }
 
-        public virtual IList<IRecurrencePattern> RecurrenceRules
+        public virtual IList<RecurrencePattern> RecurrenceRules
         {
-            get { return Properties.GetMany<IRecurrencePattern>("RRULE"); }
+            get { return Properties.GetMany<RecurrencePattern>("RRULE"); }
             set { Properties.Set("RRULE", value); }
         }
 

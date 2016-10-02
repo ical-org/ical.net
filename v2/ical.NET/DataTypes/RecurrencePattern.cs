@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ical.net.Evaluation;
-using ical.net.Interfaces.DataTypes;
 using ical.net.Interfaces.General;
 using ical.net.Serialization.iCalendar.Serializers.DataTypes;
 
@@ -12,7 +11,7 @@ namespace ical.net.DataTypes
     /// <summary>
     /// An iCalendar representation of the <c>RRULE</c> property.
     /// </summary>
-    public class RecurrencePattern : EncodableDataType, IRecurrencePattern
+    public class RecurrencePattern : EncodableDataType
     {
         private int _interval = int.MinValue;
         private RecurrenceRestrictionType? _restrictionType;
@@ -173,12 +172,12 @@ namespace ical.net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (!(obj is IRecurrencePattern))
+            if (!(obj is RecurrencePattern))
             {
                 return;
             }
 
-            var r = (IRecurrencePattern) obj;
+            var r = (RecurrencePattern) obj;
 
             Frequency = r.Frequency;
             Until = r.Until;
