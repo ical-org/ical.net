@@ -38,7 +38,7 @@ namespace ical.net.Serialization
             AddPropertyMapping("EXDATE", typeof (PeriodList), false);
             AddPropertyMapping("EXRULE", typeof (RecurrencePattern), false);
             AddPropertyMapping("FREEBUSY", typeof (FreeBusyEntry), true);
-            AddPropertyMapping("GEO", typeof (IGeographicLocation), false);
+            AddPropertyMapping("GEO", typeof (GeographicLocation), false);
             AddPropertyMapping("LAST-MODIFIED", typeof (IDateTime), false);
             AddPropertyMapping("ORGANIZER", typeof (Organizer), false);
             AddPropertyMapping("PERCENT-COMPLETE", typeof (int), false);

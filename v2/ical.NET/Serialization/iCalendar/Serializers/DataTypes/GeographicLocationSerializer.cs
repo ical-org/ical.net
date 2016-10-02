@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.IO;
 using ical.net.DataTypes;
-using ical.net.Interfaces.DataTypes;
 
 namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 {
@@ -12,7 +11,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var g = obj as IGeographicLocation;
+            var g = obj as GeographicLocation;
             if (g == null)
             {
                 return null;

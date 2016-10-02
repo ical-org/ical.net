@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using ical.net.DataTypes;
 using ical.net.Evaluation;
 using ical.net.Interfaces.Components;
 using ical.net.Interfaces.DataTypes;
@@ -145,9 +146,9 @@ namespace ical.net
         /// <summary>
         /// The geographic location (lat/long) of the event.
         /// </summary>
-        public IGeographicLocation GeographicLocation
+        public GeographicLocation GeographicLocation
         {
-            get { return Properties.Get<IGeographicLocation>("GEO"); }
+            get { return Properties.Get<GeographicLocation>("GEO"); }
             set { Properties.Set("GEO", value); }
         }
 
