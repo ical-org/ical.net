@@ -15,15 +15,9 @@ namespace ical.net.collections.Enumerators
             _lists = lists;
         }
 
-        public virtual TType Current
-        {
-            get
-            {
-                if (_listEnumerator != null)
-                    return _listEnumerator.Current;
-                return default(TType);
-            }
-        }
+        public virtual TType Current => _listEnumerator == null
+            ? default(TType)
+            :_listEnumerator.Current;
 
         public virtual void Dispose()
         {
@@ -32,22 +26,17 @@ namespace ical.net.collections.Enumerators
 
         private void DisposeListEnumerator()
         {
-            if (_listEnumerator != null)
+            if (_listEnumerator == null)
             {
-                _listEnumerator.Dispose();
-                _listEnumerator = null;
+                return;
             }
+            _listEnumerator.Dispose();
+            _listEnumerator = null;
         }
 
-        object IEnumerator.Current
-        {
-            get
-            {
-                if (_listEnumerator != null)
-                    return _listEnumerator.Current;
-                return default(TType);
-            }
-        }
+        object IEnumerator.Current => _listEnumerator == null
+            ? default(TType)
+            : _listEnumerator.Current;
 
         private bool MoveNextList()
         {
@@ -56,20 +45,24 @@ namespace ical.net.collections.Enumerators
                 _listsEnumerator = _lists.GetEnumerator();
             }
 
-            if (_listsEnumerator != null)
+            if (_listsEnumerator == null)
             {
-                if (_listsEnumerator.MoveNext())
-                {
-                    DisposeListEnumerator();
-                    if (_listsEnumerator.Current != null)
-                    {
-                        _listEnumerator = _listsEnumerator.Current.GetEnumerator();
-                        return true;
-                    }
-                }
+                return false;
             }
 
-            return false;
+            if (!_listsEnumerator.MoveNext())
+            {
+                return false;
+            }
+
+            DisposeListEnumerator();
+            if (_listsEnumerator.Current == null)
+            {
+                return false;
+            }
+
+            _listEnumerator = _listsEnumerator.Current.GetEnumerator();
+            return true;
         }
 
         public virtual bool MoveNext()
@@ -94,12 +87,13 @@ namespace ical.net.collections.Enumerators
 
         public virtual void Reset()
         {
-
-            if (_listsEnumerator != null)
+            if (_listsEnumerator == null)
             {
-                _listsEnumerator.Dispose();
-                _listsEnumerator = null;
+                return;
             }
+
+            _listsEnumerator.Dispose();
+            _listsEnumerator = null;
         }
     }
 }
