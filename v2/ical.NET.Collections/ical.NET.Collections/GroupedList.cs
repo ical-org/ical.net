@@ -7,17 +7,15 @@ using ical.net.collections.Interfaces;
 
 namespace ical.net.collections
 {
-    /// <summary>
-    /// A list of objects that are keyed.
-    /// </summary>
+    /// <summary> A list of objects that are keyed. </summary>
     public class GroupedList<TGroup, TItem> :
         IGroupedList<TGroup, TItem>
         where TItem : class, IGroupedObject<TGroup>
     {
-        private readonly List<IMultiLinkedList<TItem>> _lists = new List<IMultiLinkedList<TItem>>();
-        private readonly Dictionary<TGroup, IMultiLinkedList<TItem>> _dictionary = new Dictionary<TGroup, IMultiLinkedList<TItem>>();
+        private readonly List<MultiLinkedList<TItem>> _lists = new List<MultiLinkedList<TItem>>();
+        private readonly Dictionary<TGroup, MultiLinkedList<TItem>> _dictionary = new Dictionary<TGroup, MultiLinkedList<TItem>>();
 
-        private IMultiLinkedList<TItem> EnsureList(TGroup group)
+        private MultiLinkedList<TItem> EnsureList(TGroup group)
         {
             if (group == null)
             {
@@ -36,7 +34,7 @@ namespace ical.net.collections
             return list;
         }
 
-        private IMultiLinkedList<TItem> ListForIndex(int index, out int relativeIndex)
+        private MultiLinkedList<TItem> ListForIndex(int index, out int relativeIndex)
         {
             foreach (var list in _lists.Where(list => list.StartIndex <= index && list.ExclusiveEnd > index))
             {

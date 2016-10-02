@@ -10,7 +10,7 @@ namespace ical.net
     /// A class that represents an RFC 2445 VALARM component.
     /// FIXME: move GetOccurrences() logic into an AlarmEvaluator.
     /// </summary>    
-    public class Alarm : CalendarComponent//, IAlarm
+    public class Alarm : CalendarComponent
     {
         public virtual AlarmAction Action
         {
