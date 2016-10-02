@@ -155,7 +155,7 @@ namespace ical.net
             set { Properties.Set("DTEND", value); }
         }
 
-        public virtual FreeBusyStatus GetFreeBusyStatus(IPeriod period)
+        public virtual FreeBusyStatus GetFreeBusyStatus(Period period)
         {
             var status = FreeBusyStatus.Free;
             if (period == null)

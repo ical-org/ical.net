@@ -1,12 +1,11 @@
 using System;
-using ical.net.Interfaces.DataTypes;
 using ical.net.Interfaces.Evaluation;
 
 namespace ical.net.DataTypes
 {
     public class Occurrence : IComparable<Occurrence>
     {
-        public IPeriod Period { get; set; }
+        public Period Period { get; set; }
         public IRecurrable Source { get; set; }
 
         public Occurrence(Occurrence ao)
@@ -15,7 +14,7 @@ namespace ical.net.DataTypes
             Source = ao.Source;
         }
 
-        public Occurrence(IRecurrable recurrable, IPeriod period)
+        public Occurrence(IRecurrable recurrable, Period period)
         {
             Source = recurrable;
             Period = period;

@@ -75,12 +75,12 @@ namespace ical.net.Evaluation
             }
         }
 
-        public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // TODO items can only recur if a start date is specified
             if (Todo.Start == null)
             {
-                return new HashSet<IPeriod>();
+                return new HashSet<Period>();
             }
 
             base.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);

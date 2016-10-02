@@ -14,7 +14,7 @@ namespace ical.net.DataTypes
     /// </remarks>
     public class AlarmOccurrence : IComparable<AlarmOccurrence>
     {
-        public IPeriod Period { get; set; }
+        public Period Period { get; set; }
 
         public IRecurringComponent Component { get; set; }
 

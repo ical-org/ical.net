@@ -901,7 +901,7 @@ namespace ical.net.Evaluation
             return dates;
         }
 
-        private IPeriod CreatePeriod(DateTime dt, IDateTime referenceDate)
+        private Period CreatePeriod(DateTime dt, IDateTime referenceDate)
         {
             // Turn each resulting date/time into an IDateTime and associate it
             // with the reference date.
@@ -916,7 +916,7 @@ namespace ical.net.Evaluation
             return new Period(newDt);
         }
 
-        public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Create a recurrence pattern suitable for use during evaluation.
             var pattern = ProcessRecurrencePattern(referenceDate);

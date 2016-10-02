@@ -17,7 +17,7 @@ namespace ical.net.Evaluation
         private ICalendarObject _mAssociatedObject;
         private readonly ICalendarDataType _mAssociatedDataType;
 
-        protected HashSet<IPeriod> MPeriods;
+        protected HashSet<Period> MPeriods;
 
         protected Evaluator()
         {
@@ -41,7 +41,7 @@ namespace ical.net.Evaluation
         private void Initialize()
         {
             Calendar = CultureInfo.CurrentCulture.Calendar;
-            MPeriods = new HashSet<IPeriod>();
+            MPeriods = new HashSet<Period>();
         }
 
         protected IDateTime ConvertToIDateTime(DateTime dt, IDateTime referenceDate)
@@ -112,7 +112,7 @@ namespace ical.net.Evaluation
             protected set { _mAssociatedObject = value; }
         }
 
-        public virtual HashSet<IPeriod> Periods => MPeriods;
+        public virtual HashSet<Period> Periods => MPeriods;
 
         public virtual void Clear()
         {
@@ -121,6 +121,6 @@ namespace ical.net.Evaluation
             MPeriods.Clear();
         }
 
-        public abstract HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults);
+        public abstract HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults);
     }
 }
