@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ical.net.DataTypes;
 using ical.net.Interfaces.DataTypes;
 using ical.net.Interfaces.Evaluation;
 
@@ -6,7 +7,7 @@ namespace ical.net.Interfaces.Components
 {
     public interface IRecurringComponent : IUniqueComponent, IRecurrable
     {
-        IList<IAttachment> Attachments { get; set; }
+        IList<Attachment> Attachments { get; set; }
         IList<string> Categories { get; set; }
         string Class { get; set; }
         IList<string> Contacts { get; set; }

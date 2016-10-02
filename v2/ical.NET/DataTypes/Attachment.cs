@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Text;
-using ical.net.Interfaces.DataTypes;
 using ical.net.Interfaces.General;
 using ical.net.Serialization.iCalendar.Serializers.DataTypes;
 using ical.net.Utility;
@@ -13,7 +12,7 @@ namespace ical.net.DataTypes
     /// 1) A string representing a URI which is typically human-readable, OR
     /// 2) A base64-encoded string that can represent anything
     /// </summary>
-    public class Attachment : EncodableDataType, IAttachment
+    public class Attachment : EncodableDataType//, IAttachment
     {
         public virtual Uri Uri { get; set; }
         public virtual byte[] Data { get; set; }

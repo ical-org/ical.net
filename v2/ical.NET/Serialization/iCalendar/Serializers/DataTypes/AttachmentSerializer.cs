@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using ical.net.DataTypes;
-using ical.net.Interfaces.DataTypes;
 
 namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 {
@@ -11,7 +10,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var a = obj as IAttachment;
+            var a = obj as Attachment;
             if (a == null)
             {
                 return null;
