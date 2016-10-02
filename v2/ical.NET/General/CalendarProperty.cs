@@ -28,7 +28,7 @@ namespace ical.net.General
     [DebuggerDisplay("{Name}:{Value}")]
     public class CalendarProperty : CalendarObject, ICalendarProperty
     {
-        private IList<object> _values = new List<object>(128);
+        private HashSet<object> _values = new HashSet<object>();
 
         /// <summary>
         /// Returns a list of parameters that are associated with the iCalendar object.
@@ -91,23 +91,11 @@ namespace ical.net.General
                     _values = null;
                     return;
                 }
-
-                if (_values != null && _values.Count > 0)
-                {
-                    _values[0] = value;
-                }
-                else
-                {
-                    _values?.Clear();
-                    _values?.Add(value);
-                }
+                _values.Add(value);
             }
         }
 
-        public virtual bool ContainsValue(object value)
-        {
-            return _values.Contains(value);
-        }
+        public virtual bool ContainsValue(object value) => _values.Contains(value);
 
         public virtual int ValueCount => _values?.Count ?? 0;
 
@@ -120,7 +108,7 @@ namespace ical.net.General
             else if (value != null)
             {
                 // Our list contains values.  Let's set the first value!
-                _values[0] = value;
+                _values.Add(value);
             }
             else
             {
@@ -132,7 +120,7 @@ namespace ical.net.General
         {
             // Remove all previous values
             _values.Clear();
-            _values.AddRange(values);
+            _values.UnionWith(values);
         }
 
         public virtual void AddValue(object value)

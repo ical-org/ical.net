@@ -20,7 +20,7 @@ namespace ical.net
             }
             var getOccurrences = (IGetOccurrencesTyped) obj;
             var occurrences = getOccurrences.GetOccurrences<Event>(freeBusyRequest.Start, freeBusyRequest.End);
-            var contacts = new List<string>(32);
+            var contacts = new HashSet<string>(StringComparer.Ordinal);
             var isFilteredByAttendees = false;
 
             if (freeBusyRequest.Attendees != null && freeBusyRequest.Attendees.Count > 0)
@@ -29,7 +29,7 @@ namespace ical.net
                 var attendees = freeBusyRequest.Attendees
                     .Where(a => a.Value != null)
                     .Select(a => a.Value.OriginalString.Trim());
-                contacts.AddRange(attendees);
+                contacts.UnionWith(attendees);
             }
 
             var fb = freeBusyRequest;
@@ -66,8 +66,8 @@ namespace ical.net
                     var participatingAttendeeQuery = uc.Attendees
                         .Where(attendee =>
                             attendee.Value != null
-                            && contacts.Contains(attendee.Value.OriginalString.Trim())
-                            && attendee.ParticipationStatus != null)
+                            && attendee.ParticipationStatus != null
+                            && contacts.Contains(attendee.Value.OriginalString.Trim()))
                         .Select(pa => pa.ParticipationStatus.ToUpperInvariant());
 
                     foreach (var participatingAttendee in participatingAttendeeQuery)

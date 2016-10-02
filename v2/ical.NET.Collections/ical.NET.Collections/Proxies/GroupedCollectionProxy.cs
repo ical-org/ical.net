@@ -85,10 +85,7 @@ namespace ical.net.collections.Proxies
             }
         }
 
-        public virtual bool Contains(TNew item)
-        {
-            return RealObject.Contains(item);
-        }
+        public virtual bool Contains(TNew item) => RealObject.Contains(item);
 
         public virtual void CopyTo(TNew[] array, int arrayIndex)
         {

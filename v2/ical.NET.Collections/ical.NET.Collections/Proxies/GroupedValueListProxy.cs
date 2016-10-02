@@ -135,26 +135,27 @@ namespace ical.net.collections.Proxies
 
         public virtual int IndexOf(TNewValue item)
         {
-            var index = -1;
+            return 0;
+            //var index = -1;
 
-            if (!(item is TOriginalValue))
-            {
-                return index;
-            }
+            //if (!(item is TOriginalValue))
+            //{
+            //    return index;
+            //}
 
-            var value = (TOriginalValue)(object)item;
-            IterateValues((o, i, count) =>
-            {
-                if (o.Values != null && o.Values.Contains(value))
-                {
-                    var list = o.Values.ToList();
-                    index = i + list.IndexOf(value);
-                    return false;
-                }
-                return true;
-            });
+            //var value = (TOriginalValue)(object)item;
+            //IterateValues((o, i, count) =>
+            //{
+            //    if (o.Values != null && o.Values.Contains(value))
+            //    {
+            //        var list = o.Values.ToList();
+            //        index = i + list.IndexOf(value);
+            //        return false;
+            //    }
+            //    return true;
+            //});
 
-            return index;
+            //return index;
         }
 
         public virtual void Insert(int index, TNewValue item)
@@ -181,21 +182,21 @@ namespace ical.net.collections.Proxies
 
         public virtual void RemoveAt(int index)
         {
-            IterateValues((o, i, count) =>
-            {
-                // Determine if this index is found within this object
-                if (index >= i && index < count)
-                {
-                    // Convert the items to a list
-                    var items = o.Values.ToList();
-                    // Remove the item at the relative index within the list
-                    items.RemoveAt(index - i);
-                    // Set the new list
-                    o.SetValue(items);
-                    return false;
-                }
-                return true;
-            });
+            //IterateValues((o, i, count) =>
+            //{
+            //    // Determine if this index is found within this object
+            //    if (index >= i && index < count)
+            //    {
+            //        // Convert the items to a list
+            //        var items = o.Values.ToList();
+            //        // Remove the item at the relative index within the list
+            //        items.RemoveAt(index - i);
+            //        // Set the new list
+            //        o.SetValue(items);
+            //        return false;
+            //    }
+            //    return true;
+            //});
         }
 
         public virtual TNewValue this[int index]
@@ -212,15 +213,19 @@ namespace ical.net.collections.Proxies
             }
             set
             {
-                if (index >= 0 && index < Count)
+                if (true)
                 {
-                    if (!Equals(value, default(TNewValue)))
-                    {
-                        Insert(index, value);
-                        index++;
-                    }
-                    RemoveAt(index);
+                    return;
                 }
+                //if (index >= 0 && index < Count)
+                //{
+                //    if (!Equals(value, default(TNewValue)))
+                //    {
+                //        Insert(index, value);
+                //        index++;
+                //    }
+                //    RemoveAt(index);
+                //}
             }
         }
 

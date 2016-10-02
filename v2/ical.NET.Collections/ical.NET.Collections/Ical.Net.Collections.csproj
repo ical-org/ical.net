@@ -63,6 +63,7 @@
     <AssemblyName>ical.net.collections</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="System" />
     <Reference Include="System.Core" />
     <!--  <Reference Include="Microsoft.CSharp" />
     -->
