@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using ical.net.DataTypes;
 using ical.net.ExtensionMethods;
-using ical.net.Interfaces;
 using ical.net.Interfaces.Components;
 using ical.net.Interfaces.DataTypes;
 using ical.net.Serialization.iCalendar.Serializers;
@@ -20,7 +19,7 @@ namespace ical.net.unittests
     public class SerializationTests
     {
         #region helperMethods
-        public static void CompareCalendars(ICalendar cal1, ICalendar cal2)
+        public static void CompareCalendars(Calendar cal1, Calendar cal2)
         {
             CompareComponents(cal1, cal2);
 

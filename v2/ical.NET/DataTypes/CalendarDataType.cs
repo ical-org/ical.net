@@ -2,7 +2,6 @@ using System;
 using System.Runtime.Serialization;
 using ical.net.General;
 using ical.net.General.Proxies;
-using ical.net.Interfaces;
 using ical.net.Interfaces.DataTypes;
 using ical.net.Interfaces.General;
 
@@ -123,7 +122,7 @@ namespace ical.net.DataTypes
             }
         }
 
-        public virtual ICalendar Calendar => _AssociatedObject?.Calendar;
+        public virtual Calendar Calendar => _AssociatedObject?.Calendar;
 
         public virtual string Language
         {

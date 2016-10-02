@@ -27,9 +27,7 @@ namespace ical.net.Interfaces.Components
         /// Returns the iCalendar that this object
         /// is associated with.
         /// </summary>
-        ICalendar Calendar { get; }
-
-        ICalendar ICalendar { get; }
+        Calendar Calendar { get; }
 
         /// <summary>
         /// Returns the line number where this calendar

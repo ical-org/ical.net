@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using ical.net.DataTypes;
 using ical.net.ExtensionMethods;
-using ical.net.Interfaces;
 using ical.net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
 
@@ -17,7 +16,7 @@ namespace ical.net.unittests
         [Test, Category("Event")]
         public void Add1()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
             var evt = new Event
             {
@@ -37,7 +36,7 @@ namespace ical.net.unittests
         [Test, Category("Event")]
         public void Remove1()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
             var evt = new Event
             {
@@ -61,7 +60,7 @@ namespace ical.net.unittests
         [Test, Category("Event")]
         public void Remove2()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
             var evt = new Event
             {
@@ -85,7 +84,7 @@ namespace ical.net.unittests
         [Test, Category("Event")]
         public void EnsureDTSTAMPisNotNull()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
             // Do not set DTSTAMP manually
             var evt = new Event
@@ -105,7 +104,7 @@ namespace ical.net.unittests
         [Test, Category("Event")]
         public void EnsureDTSTAMPisOfTypeUTC()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
             var evt = new Event
             {

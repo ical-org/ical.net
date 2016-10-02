@@ -1,5 +1,4 @@
 using ical.net.DataTypes;
-using ical.net.Interfaces;
 using NUnit.Framework;
 
 namespace ical.net.unittests
@@ -13,7 +12,7 @@ namespace ical.net.unittests
         [Test, Category("FreeBusy")]
         public void GetFreeBusyStatus1()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
             Event evt = cal.Create<Event>();
             evt.Summary = "Test event";
