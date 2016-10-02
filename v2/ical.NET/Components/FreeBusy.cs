@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ical.net.DataTypes;
+using ical.net.ExtensionMethods;
 using ical.net.Interfaces.Components;
 using ical.net.Interfaces.DataTypes;
 using ical.net.Interfaces.Evaluation;
@@ -95,7 +96,7 @@ namespace ical.net
             return fb;
         }
 
-        public static FreeBusy CreateRequest(IDateTime fromInclusive, IDateTime toExclusive, Organizer organizer, Attendee[] contacts)
+        public static FreeBusy CreateRequest(IDateTime fromInclusive, IDateTime toExclusive, Organizer organizer, IEnumerable<Attendee> contacts)
         {
             var fb = new FreeBusy
             {
@@ -112,11 +113,8 @@ namespace ical.net
             {
                 return fb;
             }
-            foreach (var attendee in contacts)
-            {
-                fb.Attendees.Add(attendee);
-            }
 
+            fb.Attendees.AddRange(contacts);
             return fb;
         }
 
