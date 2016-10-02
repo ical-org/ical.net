@@ -12,7 +12,7 @@ namespace ical.net.DataTypes
     {
         private string _mDescription;
         private string _mExtraData;
-        private IStatusCode _mStatusCode;
+        private StatusCode _mStatusCode;
 
         public virtual string Description
         {
@@ -26,7 +26,7 @@ namespace ical.net.DataTypes
             set { _mExtraData = value; }
         }
 
-        public virtual IStatusCode StatusCode
+        public virtual StatusCode StatusCode
         {
             get { return _mStatusCode; }
             set { _mStatusCode = value; }

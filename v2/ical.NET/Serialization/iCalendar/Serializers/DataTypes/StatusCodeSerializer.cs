@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using ical.net.DataTypes;
-using ical.net.Interfaces.DataTypes;
 using ical.net.Serialization.iCalendar.Serializers.Other;
 
 namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
@@ -13,7 +12,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var sc = obj as IStatusCode;
+            var sc = obj as StatusCode;
             if (sc == null)
             {
                 return null;
@@ -33,7 +32,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
         {
             var value = tr.ReadToEnd();
 
-            var sc = CreateAndAssociate() as IStatusCode;
+            var sc = CreateAndAssociate() as StatusCode;
             if (sc == null)
             {
                 return null;
