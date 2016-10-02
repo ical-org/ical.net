@@ -41,7 +41,7 @@ namespace ical.net.DataTypes
 
         public IList<int> ByHour { get; set; } = new List<int>(16);
 
-        public IList<IWeekDay> ByDay { get; set; } = new List<IWeekDay>(16);
+        public IList<WeekDay> ByDay { get; set; } = new List<WeekDay>(16);
 
         public IList<int> ByMonthDay { get; set; } = new List<int>(16);
 
@@ -187,7 +187,7 @@ namespace ical.net.DataTypes
             BySecond = new List<int>(r.BySecond);
             ByMinute = new List<int>(r.ByMinute);
             ByHour = new List<int>(r.ByHour);
-            ByDay = new List<IWeekDay>(r.ByDay);
+            ByDay = new List<WeekDay>(r.ByDay);
             ByMonthDay = new List<int>(r.ByMonthDay);
             ByYearDay = new List<int>(r.ByYearDay);
             ByWeekNo = new List<int>(r.ByWeekNo);

@@ -163,7 +163,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
             {
                 var bydayValues = new List<string>(128);
 
-                var serializer = factory.Build(typeof (IWeekDay), SerializationContext) as IStringSerializer;
+                var serializer = factory.Build(typeof (WeekDay), SerializationContext) as IStringSerializer;
                 if (serializer != null)
                 {
                     bydayValues.AddRange(recur.ByDay.Select(byday => serializer.SerializeToString(byday)));

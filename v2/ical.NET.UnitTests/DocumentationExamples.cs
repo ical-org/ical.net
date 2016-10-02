@@ -81,7 +81,7 @@ namespace ical.net.unittests
                 Frequency = FrequencyType.Yearly,
                 Interval = 1,
                 ByMonth = new List<int> { 11 },
-                ByDay = new List<IWeekDay> { new WeekDay { DayOfWeek = DayOfWeek.Thursday, Offset = 4 } },
+                ByDay = new List<WeekDay> { new WeekDay { DayOfWeek = DayOfWeek.Thursday, Offset = 4 } },
                 Until = DateTime.MaxValue
             };
             vEvent.RecurrenceRules = new List<IRecurrencePattern> { rrule };
@@ -111,7 +111,7 @@ namespace ical.net.unittests
             //Define the exceptions: Sunday
             var exceptionRule = new RecurrencePattern(FrequencyType.Weekly, 1)
             {
-                ByDay = new List<IWeekDay> { new WeekDay(DayOfWeek.Sunday) }
+                ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Sunday) }
             };
             vEvent.ExceptionRules = new List<IRecurrencePattern> {exceptionRule};
 

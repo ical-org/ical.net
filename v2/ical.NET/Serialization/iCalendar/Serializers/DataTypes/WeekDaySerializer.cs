@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using ical.net.DataTypes;
-using ical.net.Interfaces.DataTypes;
 
 namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 {
@@ -12,7 +11,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var ds = obj as IWeekDay;
+            var ds = obj as WeekDay;
             if (ds != null)
             {
                 var value = string.Empty;
@@ -34,7 +33,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
             var value = tr.ReadToEnd();
 
             // Create the day specifier and associate it with a calendar object
-            var ds = CreateAndAssociate() as IWeekDay;
+            var ds = CreateAndAssociate() as WeekDay;
 
             // Decode the value, if necessary
             value = Decode(ds, value);
