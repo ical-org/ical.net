@@ -3,7 +3,6 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using ical.net.DataTypes;
-using ical.net.Interfaces.DataTypes;
 using ical.net.Interfaces.Serialization;
 using ical.net.Interfaces.Serialization.Factory;
 using ical.net.Serialization.iCalendar.Serializers.Other;
@@ -18,7 +17,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
         {
             try
             {
-                var rs = obj as IRequestStatus;
+                var rs = obj as RequestStatus;
                 if (rs == null)
                 {
                     return null;
@@ -66,7 +65,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
         {
             var value = tr.ReadToEnd();
 
-            var rs = CreateAndAssociate() as IRequestStatus;
+            var rs = CreateAndAssociate() as RequestStatus;
             if (rs == null)
             {
                 return null;
