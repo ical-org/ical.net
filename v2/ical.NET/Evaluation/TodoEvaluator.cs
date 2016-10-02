@@ -50,7 +50,7 @@ namespace ical.net.Evaluation
             Evaluate(Todo.Start, DateUtil.GetSimpleDateTimeData(beginningDate), DateUtil.GetSimpleDateTimeData(currDt).AddTicks(1), true);
         }
 
-        public void DetermineStartingRecurrence(IPeriodList rdate, ref IDateTime referenceDateTime)
+        public void DetermineStartingRecurrence(PeriodList rdate, ref IDateTime referenceDateTime)
         {
             var evaluator = rdate.GetService<IEvaluator>();
 

@@ -76,9 +76,9 @@ namespace ical.net
             set { Properties.Set("DTSTART", value); }
         }
 
-        public virtual IList<IPeriodList> ExceptionDates
+        public virtual IList<PeriodList> ExceptionDates
         {
-            get { return Properties.GetMany<IPeriodList>("EXDATE"); }
+            get { return Properties.GetMany<PeriodList>("EXDATE"); }
             set { Properties.Set("EXDATE", value); }
         }
 
@@ -100,9 +100,9 @@ namespace ical.net
             set { Properties.Set("PRIORITY", value); }
         }
 
-        public virtual IList<IPeriodList> RecurrenceDates
+        public virtual IList<PeriodList> RecurrenceDates
         {
-            get { return Properties.GetMany<IPeriodList>("RDATE"); }
+            get { return Properties.GetMany<PeriodList>("RDATE"); }
             set { Properties.Set("RDATE", value); }
         }
 

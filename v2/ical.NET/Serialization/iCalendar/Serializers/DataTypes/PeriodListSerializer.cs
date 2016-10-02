@@ -14,7 +14,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var rdt = obj as IPeriodList;
+            var rdt = obj as PeriodList;
             var factory = GetService<ISerializerFactory>();
             if (rdt == null || factory == null)
             {
@@ -49,7 +49,7 @@ namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
             var value = tr.ReadToEnd();
 
             // Create the day specifier and associate it with a calendar object
-            var rdt = CreateAndAssociate() as IPeriodList;
+            var rdt = CreateAndAssociate() as PeriodList;
             var factory = GetService<ISerializerFactory>();
             if (rdt == null || factory == null)
             {

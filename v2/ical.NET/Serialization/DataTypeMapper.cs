@@ -35,7 +35,7 @@ namespace ical.net.Serialization
             AddPropertyMapping("DTSTART", typeof (IDateTime), false);
             AddPropertyMapping("DUE", typeof (IDateTime), false);
             AddPropertyMapping("DURATION", typeof (TimeSpan), false);
-            AddPropertyMapping("EXDATE", typeof (IPeriodList), false);
+            AddPropertyMapping("EXDATE", typeof (PeriodList), false);
             AddPropertyMapping("EXRULE", typeof (RecurrencePattern), false);
             AddPropertyMapping("FREEBUSY", typeof (FreeBusyEntry), true);
             AddPropertyMapping("GEO", typeof (IGeographicLocation), false);
@@ -43,7 +43,7 @@ namespace ical.net.Serialization
             AddPropertyMapping("ORGANIZER", typeof (Organizer), false);
             AddPropertyMapping("PERCENT-COMPLETE", typeof (int), false);
             AddPropertyMapping("PRIORITY", typeof (int), false);
-            AddPropertyMapping("RDATE", typeof (IPeriodList), false);
+            AddPropertyMapping("RDATE", typeof (PeriodList), false);
             AddPropertyMapping("RECURRENCE-ID", typeof (IDateTime), false);
             AddPropertyMapping("RELATED-TO", typeof (string), false);
             AddPropertyMapping("REQUEST-STATUS", typeof (RequestStatus), false);
