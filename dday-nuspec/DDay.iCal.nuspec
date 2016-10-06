@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>DDay.iCal</id>
+        <version>2.0.0</version>
+        <title>Obsolete: DDay.iCal / Use ical.net instead</title>
+        <authors>Doug Day, DDay Software</authors>
+        <owners>Khalid Abuhakmeh, Rian Stockbower</owners>
+        <projectUrl>https://github.com/rianjs/ical.net</projectUrl>
+        <licenseUrl>https://github.com/rianjs/ical.net/blob/master/license.md</licenseUrl>
+        <iconUrl>https://github.com/rianjs/ical.net/raw/master/logo.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Obsolete. Use ical.net: https://www.nuget.org/packages/Ical.Net/</description>
+        <summary>Obsolete. Use ical.net: https://www.nuget.org/packages/Ical.Net/</summary>
+        <dependencies>
+           <group>
+              <dependency id="ical.net" version="[2.2.3,)" />
+           </group>
+        </dependencies>
+    </metadata>
+</package>

@@ -26,7 +26,7 @@ namespace Ical.Net
         /// This will create a new VTIMEZONE component including STANDARD +/- DAYLIGHT components.
         /// It will be deprecated as soon as a more up to date spec is released
         /// If you do not wish to include this information (required under the spec but archaic)
-        /// simply create a new VTimeZone instance and set TZID = timeZoneInfoInstance.StandardName
+        /// simply create a new VTimeZone instance and set TZID = timeZoneInfoInstance.Id
         /// </summary>
         public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo)
         {
@@ -119,9 +119,9 @@ namespace Ical.Net
         //
         //The plan would be to remove this method as soon as the iCalendar spec has been updated to account for more modern techniques of
         //communicating timezone information
-        //Serialisation is included for now as (while this format is unambiguously mandated in the spec):
-        //- an email client interpreting iCalendar information might rely on the information within the calendar component
-        //- validation will fail if using a TimeZoneId on any times within the calendar
+        //Serialising TimeZoneInfo components remains while this format remains mandated in the spec, as:
+        //- an ancient email client interpreting iCalendar information might rely on the information within the calendar component
+        //- validation will fail if DAYLIGHT or STANDARD components are missing, and passing validation may be useful to the developer using this library
         //BM
         public void AddTimeZone(TimeZoneInfo tzi, DateTime earliest)
         {
