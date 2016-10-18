@@ -47,22 +47,23 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             // NOTE: we don't use a 'using' statement here because
             // we don't want the stream to be closed by this serialization.
             // Fixes bug #3177278 - Serialize closes stream
-            var sw = new StreamWriter(stream, encoding);
+            using (var sw = new StreamWriter(stream, encoding))
+            {
+                // Push the current object onto the serialization stack
+                SerializationContext.Push(obj);
 
-            // Push the current object onto the serialization stack
-            SerializationContext.Push(obj);
+                // Push the current encoding on the stack
+                var encodingStack = GetService<EncodingStack>();
+                encodingStack.Push(encoding);
 
-            // Push the current encoding on the stack
-            var encodingStack = GetService<IEncodingStack>();
-            encodingStack.Push(encoding);
+                sw.Write(SerializeToString(obj));
 
-            sw.Write(SerializeToString(obj));
+                // Pop the current encoding off the serialization stack
+                encodingStack.Pop();
 
-            // Pop the current encoding off the serialization stack
-            encodingStack.Pop();
-
-            // Pop the current object off the serialization stack
-            SerializationContext.Pop();
+                // Pop the current object off the serialization stack
+                SerializationContext.Pop();
+            }
         }
 
         public virtual object GetService(Type serviceType)
