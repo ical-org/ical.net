@@ -1,15 +1,14 @@
 ﻿using System;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.General;
 
-namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
+namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 {
     public abstract class DataTypeSerializer : SerializerBase
     {
         protected DataTypeSerializer() {}
 
-        protected DataTypeSerializer(ISerializationContext ctx) : base(ctx) {}
+        protected DataTypeSerializer(SerializationContext ctx) : base(ctx) {}
 
         protected virtual ICalendarDataType CreateAndAssociate()
         {

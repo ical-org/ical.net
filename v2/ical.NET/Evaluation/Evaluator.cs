@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Evaluation;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Utility;
+using ical.net.DataTypes;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.Evaluation;
+using ical.net.Interfaces.General;
+using ical.net.Utility;
 
-namespace Ical.Net.Evaluation
+namespace ical.net.Evaluation
 {
     public abstract class Evaluator : IEvaluator
     {
@@ -17,7 +17,7 @@ namespace Ical.Net.Evaluation
         private ICalendarObject _mAssociatedObject;
         private readonly ICalendarDataType _mAssociatedDataType;
 
-        protected HashSet<IPeriod> MPeriods;
+        protected HashSet<Period> MPeriods;
 
         protected Evaluator()
         {
@@ -41,7 +41,7 @@ namespace Ical.Net.Evaluation
         private void Initialize()
         {
             Calendar = CultureInfo.CurrentCulture.Calendar;
-            MPeriods = new HashSet<IPeriod>();
+            MPeriods = new HashSet<Period>();
         }
 
         protected IDateTime ConvertToIDateTime(DateTime dt, IDateTime referenceDate)
@@ -51,7 +51,7 @@ namespace Ical.Net.Evaluation
             return newDt;
         }
 
-        protected void IncrementDate(ref DateTime dt, IRecurrencePattern pattern, int interval)
+        protected void IncrementDate(ref DateTime dt, RecurrencePattern pattern, int interval)
         {
             // FIXME: use a more specific exception.
             if (interval == 0)
@@ -112,7 +112,7 @@ namespace Ical.Net.Evaluation
             protected set { _mAssociatedObject = value; }
         }
 
-        public virtual HashSet<IPeriod> Periods => MPeriods;
+        public virtual HashSet<Period> Periods => MPeriods;
 
         public virtual void Clear()
         {
@@ -121,6 +121,6 @@ namespace Ical.Net.Evaluation
             MPeriods.Clear();
         }
 
-        public abstract HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults);
+        public abstract HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults);
     }
 }

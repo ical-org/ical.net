@@ -1,16 +1,15 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using Ical.Net.General;
-using Ical.Net.Interfaces.Serialization;
+using ical.net.General;
 
-namespace Ical.Net.Serialization.iCalendar.Serializers
+namespace ical.net.Serialization.iCalendar.Serializers
 {
     public class ParameterSerializer : SerializerBase
     {
         public ParameterSerializer() {}
 
-        public ParameterSerializer(ISerializationContext ctx) : base(ctx) {}
+        public ParameterSerializer(SerializationContext ctx) : base(ctx) {}
 
         public override Type TargetType => typeof (CalendarParameter);
 

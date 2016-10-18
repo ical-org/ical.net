@@ -1,9 +1,10 @@
 ﻿using System;
+using ical.net.Serialization;
 
-namespace Ical.Net.Interfaces.Serialization.Factory
+namespace ical.net.Interfaces.Serialization.Factory
 {
     public interface ISerializerFactory
     {
-        ISerializer Build(Type objectType, ISerializationContext ctx);
+        ISerializer Build(Type objectType, SerializationContext ctx);
     }
 }

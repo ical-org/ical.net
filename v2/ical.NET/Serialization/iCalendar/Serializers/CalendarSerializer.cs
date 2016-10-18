@@ -1,27 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Serialization.iCalendar.Serializers.Components;
-using Ical.Net.Utility;
+using ical.net.Interfaces.General;
+using ical.net.Serialization.iCalendar.Serializers.Components;
+using ical.net.Utility;
 
-namespace Ical.Net.Serialization.iCalendar.Serializers
+namespace ical.net.Serialization.iCalendar.Serializers
 {
     public class CalendarSerializer : ComponentSerializer
     {
-        private readonly ICalendar _calendar;
+        private readonly Calendar _calendar;
 
         public CalendarSerializer()
             :this(new SerializationContext()) { }
 
-        public CalendarSerializer(ICalendar cal)
+        public CalendarSerializer(Calendar cal)
         {
             _calendar = cal;
         }
 
-        public CalendarSerializer(ISerializationContext ctx) : base(ctx) {}
+        public CalendarSerializer(SerializationContext ctx) : base(ctx) {}
 
         public virtual string SerializeToString() => SerializeToString(_calendar);
 
@@ -29,7 +27,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         public override string SerializeToString(object obj)
         {
-            var iCal = obj as ICalendar;
+            var iCal = obj as Calendar;
 
             // Ensure VERSION and PRODUCTID are both set,
             // as they are required by RFC5545.

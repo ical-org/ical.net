@@ -1,9 +1,8 @@
-﻿using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
+﻿using ical.net.Interfaces.General;
 
-namespace Ical.Net.DataTypes
+namespace ical.net.DataTypes
 {
-    public class FreeBusyEntry : Period, IFreeBusyEntry
+    public class FreeBusyEntry : Period
     {
         public virtual FreeBusyStatus Status { get; set; }
 
@@ -12,7 +11,7 @@ namespace Ical.Net.DataTypes
             Status = FreeBusyStatus.Busy;
         }
 
-        public FreeBusyEntry(IPeriod period, FreeBusyStatus status)
+        public FreeBusyEntry(Period period, FreeBusyStatus status)
         {
             //Sets the status associated with a given period, which requires copying the period values
             //Probably the Period object should just have a FreeBusyStatus directly?
@@ -24,7 +23,7 @@ namespace Ical.Net.DataTypes
         {
             base.CopyFrom(obj);
 
-            var fb = obj as IFreeBusyEntry;
+            var fb = obj as FreeBusyEntry;
             if (fb != null)
             {
                 Status = fb.Status;

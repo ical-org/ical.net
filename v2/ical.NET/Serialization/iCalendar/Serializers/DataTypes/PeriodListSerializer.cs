@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Interfaces.Serialization.Factory;
+using ical.net.DataTypes;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.Serialization;
+using ical.net.Interfaces.Serialization.Factory;
 
-namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
+namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class PeriodListSerializer : EncodableDataTypeSerializer
     {
@@ -14,7 +14,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var rdt = obj as IPeriodList;
+            var rdt = obj as PeriodList;
             var factory = GetService<ISerializerFactory>();
             if (rdt == null || factory == null)
             {
@@ -22,7 +22,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             }
 
             var dtSerializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
-            var periodSerializer = factory.Build(typeof (IPeriod), SerializationContext) as IStringSerializer;
+            var periodSerializer = factory.Build(typeof (Period), SerializationContext) as IStringSerializer;
             if (dtSerializer == null || periodSerializer == null)
             {
                 return null;
@@ -49,7 +49,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             var value = tr.ReadToEnd();
 
             // Create the day specifier and associate it with a calendar object
-            var rdt = CreateAndAssociate() as IPeriodList;
+            var rdt = CreateAndAssociate() as PeriodList;
             var factory = GetService<ISerializerFactory>();
             if (rdt == null || factory == null)
             {
@@ -60,7 +60,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             value = Decode(rdt, value);
 
             var dtSerializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
-            var periodSerializer = factory.Build(typeof (IPeriod), SerializationContext) as IStringSerializer;
+            var periodSerializer = factory.Build(typeof (Period), SerializationContext) as IStringSerializer;
             if (dtSerializer == null || periodSerializer == null)
             {
                 return null;
@@ -70,7 +70,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             foreach (var v in values)
             {
                 var dt = dtSerializer.Deserialize(new StringReader(v)) as IDateTime;
-                var p = periodSerializer.Deserialize(new StringReader(v)) as IPeriod;
+                var p = periodSerializer.Deserialize(new StringReader(v)) as Period;
 
                 if (dt != null)
                 {

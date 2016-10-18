@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 
-namespace ical.NET.Collections.Interfaces
+namespace ical.net.collections.Interfaces
 {
-    public interface IGroupedCollection<TGroup, TItem> :
+    //Isn't this effectively a Dictionary<TGroup, IList<TItem>>?
+    public interface IGroupedCollection<in TGroup, TItem> :
         ICollection<TItem>
         where TItem : class, IGroupedObject<TGroup>
     {

@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Ical.Net.Evaluation;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Utility;
+using ical.net.DataTypes;
+using ical.net.Evaluation;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Utility;
 
-namespace Ical.Net
+namespace ical.net
 {
     /// <summary>
     /// A class that represents an RFC 5545 VEVENT component.
@@ -23,7 +24,7 @@ namespace Ical.Net
     ///         <item>Create a TextCollection DataType for 'text' items separated by commas</item>
     ///     </list>
     /// </note>
-    public class Event : RecurringComponent, IEvent
+    public class Event : RecurringComponent, IAlarmContainer
     {
         internal const string ComponentName = "VEVENT";
 
@@ -145,9 +146,9 @@ namespace Ical.Net
         /// <summary>
         /// The geographic location (lat/long) of the event.
         /// </summary>
-        public IGeographicLocation GeographicLocation
+        public GeographicLocation GeographicLocation
         {
-            get { return Properties.Get<IGeographicLocation>("GEO"); }
+            get { return Properties.Get<GeographicLocation>("GEO"); }
             set { Properties.Set("GEO", value); }
         }
 
@@ -301,7 +302,7 @@ namespace Ical.Net
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((Event)obj);
         }
 

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
+using ical.net.DataTypes;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.DataTypes;
 
-namespace Ical.Net.Interfaces.Evaluation
+namespace ical.net.Interfaces.Evaluation
 {
     public interface IGetOccurrences
     {

@@ -1,12 +1,9 @@
 using System.Runtime.Serialization;
-using Ical.Net.Interfaces.Components;
 
-namespace Ical.Net
+namespace ical.net
 {
-    /// <summary>
-    /// A class that represents an RFC 5545 VJOURNAL component.
-    /// </summary>
-    public class Journal : RecurringComponent, IJournal
+    /// <summary> A class that represents an RFC 5545 VJOURNAL component. </summary>
+    public class Journal : RecurringComponent
     {
         public JournalStatus Status
         {

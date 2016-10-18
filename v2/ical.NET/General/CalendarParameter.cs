@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using ical.NET.Collections.Interfaces;
-using Ical.Net.Interfaces.General;
+using ical.net.collections.Interfaces;
+using ical.net.Interfaces.General;
 
-namespace Ical.Net.General
+namespace ical.net.General
 {
     [DebuggerDisplay("{Name}={string.Join(\",\", Values)}")]
     public class CalendarParameter : CalendarObject, IValueObject<string>
@@ -60,16 +60,13 @@ namespace Ical.Net.General
                 return;
             }
 
-            _values = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            _values = new HashSet<string>(StringComparer.Ordinal);
             _values.UnionWith(p.Values);
         }
 
         public virtual IEnumerable<string> Values => _values;
 
-        public virtual bool ContainsValue(string value)
-        {
-            return _values.Contains(value);
-        }
+        public virtual bool ContainsValue(string value) => _values.Contains(value);
 
         public virtual int ValueCount => _values?.Count ?? 0;
 

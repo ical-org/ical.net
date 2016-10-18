@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
+using ical.net.DataTypes;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.General;
+using ical.net.Interfaces.Serialization;
 
-namespace Ical.Net.Serialization
+namespace ical.net.Serialization
 {
     public delegate Type TypeResolverDelegate(object context);
 
@@ -23,8 +23,8 @@ namespace Ical.Net.Serialization
         public DataTypeMapper()
         {
             AddPropertyMapping("ACTION", typeof (AlarmAction), false);
-            AddPropertyMapping("ATTACH", typeof (IAttachment), false);
-            AddPropertyMapping("ATTENDEE", typeof (IAttendee), false);
+            AddPropertyMapping("ATTACH", typeof (Attachment), false);
+            AddPropertyMapping("ATTENDEE", typeof (Attendee), false);
             AddPropertyMapping("CATEGORIES", typeof (string), true);
             AddPropertyMapping("COMMENT", typeof (string), false);
             AddPropertyMapping("COMPLETED", typeof (IDateTime), false);
@@ -35,28 +35,28 @@ namespace Ical.Net.Serialization
             AddPropertyMapping("DTSTART", typeof (IDateTime), false);
             AddPropertyMapping("DUE", typeof (IDateTime), false);
             AddPropertyMapping("DURATION", typeof (TimeSpan), false);
-            AddPropertyMapping("EXDATE", typeof (IPeriodList), false);
-            AddPropertyMapping("EXRULE", typeof (IRecurrencePattern), false);
-            AddPropertyMapping("FREEBUSY", typeof (IFreeBusyEntry), true);
-            AddPropertyMapping("GEO", typeof (IGeographicLocation), false);
+            AddPropertyMapping("EXDATE", typeof (PeriodList), false);
+            AddPropertyMapping("EXRULE", typeof (RecurrencePattern), false);
+            AddPropertyMapping("FREEBUSY", typeof (FreeBusyEntry), true);
+            AddPropertyMapping("GEO", typeof (GeographicLocation), false);
             AddPropertyMapping("LAST-MODIFIED", typeof (IDateTime), false);
-            AddPropertyMapping("ORGANIZER", typeof (IOrganizer), false);
+            AddPropertyMapping("ORGANIZER", typeof (Organizer), false);
             AddPropertyMapping("PERCENT-COMPLETE", typeof (int), false);
             AddPropertyMapping("PRIORITY", typeof (int), false);
-            AddPropertyMapping("RDATE", typeof (IPeriodList), false);
+            AddPropertyMapping("RDATE", typeof (PeriodList), false);
             AddPropertyMapping("RECURRENCE-ID", typeof (IDateTime), false);
             AddPropertyMapping("RELATED-TO", typeof (string), false);
-            AddPropertyMapping("REQUEST-STATUS", typeof (IRequestStatus), false);
+            AddPropertyMapping("REQUEST-STATUS", typeof (RequestStatus), false);
             AddPropertyMapping("REPEAT", typeof (int), false);
             AddPropertyMapping("RESOURCES", typeof (string), true);
-            AddPropertyMapping("RRULE", typeof (IRecurrencePattern), false);
+            AddPropertyMapping("RRULE", typeof (RecurrencePattern), false);
             AddPropertyMapping("SEQUENCE", typeof (int), false);
             AddPropertyMapping("STATUS", ResolveStatusProperty, false);
             AddPropertyMapping("TRANSP", typeof (TransparencyType), false);
-            AddPropertyMapping("TRIGGER", typeof (ITrigger), false);
+            AddPropertyMapping("TRIGGER", typeof (Trigger), false);
             AddPropertyMapping("TZNAME", typeof (string), false);
-            AddPropertyMapping("TZOFFSETFROM", typeof (IUtcOffset), false);
-            AddPropertyMapping("TZOFFSETTO", typeof (IUtcOffset), false);
+            AddPropertyMapping("TZOFFSETFROM", typeof (UtcOffset), false);
+            AddPropertyMapping("TZOFFSETTO", typeof (UtcOffset), false);
             AddPropertyMapping("TZURL", typeof (Uri), false);
             AddPropertyMapping("URL", typeof (Uri), false);
         }
@@ -66,15 +66,15 @@ namespace Ical.Net.Serialization
             var obj = context as ICalendarObject;
             if (obj != null)
             {
-                if (obj.Parent is IEvent)
+                if (obj.Parent is Event)
                 {
                     return typeof (EventStatus);
                 }
-                if (obj.Parent is ITodo)
+                if (obj.Parent is Todo)
                 {
                     return typeof (TodoStatus);
                 }
-                if (obj.Parent is IJournal)
+                if (obj.Parent is Journal)
                 {
                     return typeof (JournalStatus);
                 }

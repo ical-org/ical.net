@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Interfaces.Serialization.Factory;
-using Ical.Net.Serialization.iCalendar.Serializers.Other;
+using ical.net.DataTypes;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.Serialization;
+using ical.net.Interfaces.Serialization.Factory;
+using ical.net.Serialization.iCalendar.Serializers.Other;
 
-namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
+namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class TriggerSerializer : StringSerializer
     {
@@ -16,7 +16,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         {
             try
             {
-                var t = obj as ITrigger;
+                var t = obj as Trigger;
                 if (t != null)
                 {
                     // Push the trigger onto the serialization stack
@@ -53,7 +53,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         {
             var value = tr.ReadToEnd();
 
-            var t = CreateAndAssociate() as ITrigger;
+            var t = CreateAndAssociate() as Trigger;
             if (t != null)
             {
                 // Push the trigger onto the serialization stack

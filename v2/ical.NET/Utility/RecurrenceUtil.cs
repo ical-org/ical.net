@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Evaluation;
-using Ical.Net.Interfaces.General;
+using ical.net.DataTypes;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.Evaluation;
+using ical.net.Interfaces.General;
 
-namespace Ical.Net.Utility
+namespace ical.net.Utility
 {
     public class RecurrenceUtil
     {
@@ -50,7 +50,7 @@ namespace Ical.Net.Utility
             return occurrences;
         }
 
-        public static bool?[] GetExpandBehaviorList(IRecurrencePattern p)
+        public static bool?[] GetExpandBehaviorList(RecurrencePattern p)
         {
             // See the table in RFC 5545 Section 3.3.10 (Page 43).
             switch (p.Frequency)

@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using Ical.Net.DataTypes;
-using Ical.Net.Evaluation;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
+using ical.net.DataTypes;
+using ical.net.Evaluation;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.DataTypes;
 
-namespace Ical.Net
+namespace ical.net
 {
     /// <summary>
     /// A class that represents an RFC 5545 VTODO component.
     /// </summary> 
     [DebuggerDisplay("{Summary} - {Status}")]
-    public class Todo : RecurringComponent, ITodo
+    public class Todo : RecurringComponent, IAlarmContainer
     {
         private readonly TodoEvaluator _mEvaluator;
 
@@ -76,9 +76,9 @@ namespace Ical.Net
             }
         }
 
-        public virtual IGeographicLocation GeographicLocation
+        public virtual GeographicLocation GeographicLocation
         {
-            get { return Properties.Get<IGeographicLocation>("GEO"); }
+            get { return Properties.Get<GeographicLocation>("GEO"); }
             set { Properties.Set("GEO", value); }
         }
 

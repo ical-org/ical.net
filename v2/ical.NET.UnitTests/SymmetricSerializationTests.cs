@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Serialization;
-using Ical.Net.Serialization.iCalendar.Serializers;
+using ical.net.DataTypes;
+using ical.net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
-namespace Ical.Net.UnitTests
+namespace ical.net.unittests
 {
     public class SymmetricSerializationTests
     {
@@ -22,7 +19,7 @@ namespace Ical.Net.UnitTests
         private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
         private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
         private static Event GetSimpleEvent() => new Event {DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime};
-        private static ICalendar UnserializeCalendar(string s) => Calendar.LoadFromStream(new StringReader(s)).Single();
+        private static Calendar UnserializeCalendar(string s) => Calendar.LoadFromStream(new StringReader(s)).Single();
 
         [Test, TestCaseSource(nameof(Event_TestCases))]
         public void Event_Tests(Calendar iCalendar)
@@ -47,7 +44,7 @@ namespace Ical.Net.UnitTests
                 DtStart = new CalDateTime(_nowTime),
                 DtEnd = new CalDateTime(_later),
                 Duration = TimeSpan.FromHours(1),
-                RecurrenceRules = new List<IRecurrencePattern> { rrule },
+                RecurrenceRules = new List<RecurrencePattern> { rrule }
             };
 
             var calendar = new Calendar();
@@ -86,7 +83,7 @@ namespace Ical.Net.UnitTests
             var calendar = new Calendar();
             calendar.AddTimeZone(new VTimeZone("America/Los_Angeles"));
             var someEvent = GetSimpleEvent();
-            someEvent.Attendees = new List<IAttendee> {attendee};
+            someEvent.Attendees = new List<Attendee> {attendee};
             calendar.Events.Add(someEvent);
 
             var serialized = SerializeToString(calendar);
@@ -132,7 +129,7 @@ namespace Ical.Net.UnitTests
 
             var calendar = new Calendar();
             var vEvent = GetSimpleEvent();
-            vEvent.Attachments = new List<IAttachment> { binaryAttachment };
+            vEvent.Attachments = new List<Attachment> { binaryAttachment };
             calendar.Events.Add(vEvent);
 
             var serialized = SerializeToString(calendar);
@@ -175,7 +172,7 @@ namespace Ical.Net.UnitTests
 
             var calendar = new Calendar();
             var vEvent = GetSimpleEvent();
-            vEvent.Attachments = new List<IAttachment> { attachment };
+            vEvent.Attachments = new List<Attachment> { attachment };
             calendar.Events.Add(vEvent);
 
             var serialized = SerializeToString(calendar);

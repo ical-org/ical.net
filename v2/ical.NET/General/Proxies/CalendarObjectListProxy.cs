@@ -1,9 +1,9 @@
 ﻿using System.Linq;
-using ical.NET.Collections.Interfaces;
-using ical.NET.Collections.Proxies;
-using Ical.Net.Interfaces.General;
+using ical.net.collections.Interfaces;
+using ical.net.collections.Proxies;
+using ical.net.Interfaces.General;
 
-namespace Ical.Net.General.Proxies
+namespace ical.net.General.Proxies
 {
     public class CalendarObjectListProxy<TType> : GroupedCollectionProxy<string, ICalendarObject, TType>, ICalendarObjectList<TType>
         where TType : class, ICalendarObject

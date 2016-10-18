@@ -1,9 +1,7 @@
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.Components;
+using ical.net.DataTypes;
 using NUnit.Framework;
 
-namespace Ical.Net.UnitTests
+namespace ical.net.unittests
 {
     [TestFixture]
     public class FreeBusyTest
@@ -14,9 +12,9 @@ namespace Ical.Net.UnitTests
         [Test, Category("FreeBusy")]
         public void GetFreeBusyStatus1()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
-            IEvent evt = cal.Create<Event>();
+            Event evt = cal.Create<Event>();
             evt.Summary = "Test event";
             evt.Start = new CalDateTime(2010, 10, 1, 8, 0, 0);
             evt.End = new CalDateTime(2010, 10, 1, 9, 0, 0);

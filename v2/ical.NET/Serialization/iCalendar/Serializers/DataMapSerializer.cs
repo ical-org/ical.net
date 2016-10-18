@@ -1,16 +1,16 @@
 ﻿using System;
 using System.IO;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Interfaces.Serialization.Factory;
-using Ical.Net.Serialization.iCalendar.Serializers.Other;
+using ical.net.Interfaces.Serialization;
+using ical.net.Interfaces.Serialization.Factory;
+using ical.net.Serialization.iCalendar.Serializers.Other;
 
-namespace Ical.Net.Serialization.iCalendar.Serializers
+namespace ical.net.Serialization.iCalendar.Serializers
 {
     public class DataMapSerializer : SerializerBase
     {
         public DataMapSerializer() {}
 
-        public DataMapSerializer(ISerializationContext ctx) : base(ctx) {}
+        public DataMapSerializer(SerializationContext ctx) : base(ctx) {}
 
         protected IStringSerializer GetMappedSerializer()
         {

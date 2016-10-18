@@ -1,12 +1,11 @@
 using System;
-using Ical.Net.Interfaces.Components;
 
-namespace Ical.Net
+namespace ical.net
 {
     /// <summary>
     /// Represents an RFC 5545 VTIMEZONE component.
     /// </summary>
-    public class VTimeZone : CalendarComponent, ITimeZone
+    public class VTimeZone : CalendarComponent
     {
         public static VTimeZone FromLocalTimeZone()
         {
@@ -79,7 +78,7 @@ namespace Ical.Net
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((VTimeZone)obj);
         }
 

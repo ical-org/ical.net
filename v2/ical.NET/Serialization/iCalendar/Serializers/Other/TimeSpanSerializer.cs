@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Ical.Net.Serialization.iCalendar.Serializers.Other
+namespace ical.net.Serialization.iCalendar.Serializers.Other
 {
     public class TimeSpanSerializer : SerializerBase
     {

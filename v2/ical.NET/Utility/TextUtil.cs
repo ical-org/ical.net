@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using Ical.Net.Interfaces.Serialization;
+using ical.net.Interfaces.Serialization;
+using ical.net.Serialization;
 
-namespace Ical.Net.Utility
+namespace ical.net.Utility
 {
     public static class TextUtil
     {
@@ -53,7 +54,7 @@ namespace Ical.Net.Utility
         /// <summary>
         /// Normalizes line endings, converting "\r" into "\r\n" and "\n" into "\r\n".        
         /// </summary>
-        public static TextReader Normalize(string s, ISerializationContext ctx)
+        public static TextReader Normalize(string s, SerializationContext ctx)
         {
             // Replace \r and \n with \r\n.
             s = NormalizeToCrLf.Replace(s, SerializationConstants.LineBreak);

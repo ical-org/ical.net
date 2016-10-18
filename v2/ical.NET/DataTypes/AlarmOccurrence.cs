@@ -1,8 +1,8 @@
 using System;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.DataTypes;
 
-namespace Ical.Net.DataTypes
+namespace ical.net.DataTypes
 {
     /// <summary>
     /// A class that represents a specific occurrence of an <see cref="Alarm"/>.        
@@ -14,11 +14,11 @@ namespace Ical.Net.DataTypes
     /// </remarks>
     public class AlarmOccurrence : IComparable<AlarmOccurrence>
     {
-        public IPeriod Period { get; set; }
+        public Period Period { get; set; }
 
         public IRecurringComponent Component { get; set; }
 
-        public IAlarm Alarm { get; set; }
+        public Alarm Alarm { get; set; }
 
         public IDateTime DateTime
         {
@@ -33,7 +33,7 @@ namespace Ical.Net.DataTypes
             Alarm = ao.Alarm;
         }
 
-        public AlarmOccurrence(IAlarm a, IDateTime dt, IRecurringComponent rc)
+        public AlarmOccurrence(Alarm a, IDateTime dt, IRecurringComponent rc)
         {
             Alarm = a;
             Period = new Period(dt);
@@ -54,7 +54,7 @@ namespace Ical.Net.DataTypes
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((AlarmOccurrence)obj);
         }
 

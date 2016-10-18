@@ -1,6 +1,6 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalParser.cs"$
 
-namespace Ical.Net.Serialization.iCalendar
+namespace ical.net.Serialization.iCalendar
 {
     public class iCalParserTokenTypes
     {

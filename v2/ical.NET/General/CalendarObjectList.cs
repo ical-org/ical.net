@@ -1,7 +1,7 @@
-using ical.NET.Collections;
-using Ical.Net.Interfaces.General;
+using ical.net.collections;
+using ical.net.Interfaces.General;
 
-namespace Ical.Net.General
+namespace ical.net.General
 {
     /// <summary>
     /// A collection of calendar objects.

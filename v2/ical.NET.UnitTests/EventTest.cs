@@ -1,11 +1,11 @@
-using Ical.Net.DataTypes;
-using Ical.Net.ExtensionMethods;
-using Ical.Net.Interfaces;
-using NUnit.Framework;
 using System;
 using System.Linq;
+using ical.net.DataTypes;
+using ical.net.ExtensionMethods;
+using ical.net.Serialization.iCalendar.Serializers;
+using NUnit.Framework;
 
-namespace Ical.Net.UnitTests
+namespace ical.net.unittests
 {
     [TestFixture]
     public class EventTest
@@ -16,7 +16,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Event")]
         public void Add1()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
             var evt = new Event
             {
@@ -36,7 +36,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Event")]
         public void Remove1()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
             var evt = new Event
             {
@@ -60,7 +60,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Event")]
         public void Remove2()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
             var evt = new Event
             {
@@ -84,7 +84,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Event")]
         public void EnsureDTSTAMPisNotNull()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
             // Do not set DTSTAMP manually
             var evt = new Event
@@ -104,7 +104,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Event")]
         public void EnsureDTSTAMPisOfTypeUTC()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
             var evt = new Event
             {
@@ -123,15 +123,15 @@ namespace Ical.Net.UnitTests
         [Test, Category("Deserialization")]
         public void EnsureCorrectSetDTSTAMPisSerializedAsKindUTC()
         {
-            var ical = new Ical.Net.Calendar();
-            var evt = new Ical.Net.Event();
+            var ical = new Calendar();
+            var evt = new Event();
             evt.DtStamp = new CalDateTime(new DateTime(2016, 8, 17, 2, 30, 0, DateTimeKind.Utc));
             ical.Events.Add(evt);
 
-            var serializer = new Ical.Net.Serialization.iCalendar.Serializers.CalendarSerializer();
+            var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(ical);
 
-            var lines = serializedCalendar.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var lines = serializedCalendar.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             var result = lines.First(s => s.StartsWith("DTSTAMP"));
             Assert.AreEqual("DTSTAMP:20160817T023000Z", result);
         }
@@ -142,14 +142,14 @@ namespace Ical.Net.UnitTests
         [Test, Category("Deserialization")]
         public void EnsureAutomaticallySetDTSTAMPisSerializedAsKindUTC()
         {
-            var ical = new Ical.Net.Calendar();
-            var evt = new Ical.Net.Event();
+            var ical = new Calendar();
+            var evt = new Event();
             ical.Events.Add(evt);
 
-            var serializer = new Ical.Net.Serialization.iCalendar.Serializers.CalendarSerializer();
+            var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(ical);
 
-            var lines = serializedCalendar.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var lines = serializedCalendar.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             var result = lines.First(s => s.StartsWith("DTSTAMP"));
             Assert.AreEqual($"DTSTAMP:{evt.DtStamp.Year}{evt.DtStamp.Month:00}{evt.DtStamp.Day:00}T{evt.DtStamp.Hour:00}{evt.DtStamp.Minute:00}{evt.DtStamp.Second:00}Z", result);
         }

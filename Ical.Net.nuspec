@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
-        <id>Ical.Net</id>
+        <id>ical.net</id>
         <version>2.2.14</version>
-        <title>Ical.Net</title>
+        <title>ical.net</title>
         <authors>Rian Stockbower, Douglas Day, M. David Peterson</authors>
         <owners>Rian Stockbower</owners>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -15,31 +15,31 @@
     </metadata>
     <files>
         <!-- .NET 4.6 -->
-        <file src="ical.NET\bin\Release\net46\Ical.Net.Collections.dll" target="lib\net46\Ical.Net.Collections.dll" />
-        <file src="ical.NET\bin\Release\net46\Ical.Net.Collections.pdb" target="lib\net46\Ical.Net.Collections.pdb" />
-        <file src="ical.NET\bin\Release\net46\Ical.Net.dll" target="lib\net46\Ical.Net.dll" />
-        <file src="ical.NET\bin\Release\net46\Ical.Net.xml" target="lib\net46\Ical.Net.xml" />
-        <file src="ical.NET\bin\Release\net46\Ical.Net.pdb" target="lib\net46\Ical.Net.pdb" />
+        <file src="ical.NET\bin\Release\net46\ical.net.collections.dll" target="lib\net46\ical.net.collections.dll" />
+        <file src="ical.NET\bin\Release\net46\ical.net.collections.pdb" target="lib\net46\ical.net.collections.pdb" />
+        <file src="ical.NET\bin\Release\net46\ical.net.dll" target="lib\net46\ical.net.dll" />
+        <file src="ical.NET\bin\Release\net46\ical.net.xml" target="lib\net46\ical.net.xml" />
+        <file src="ical.NET\bin\Release\net46\ical.net.pdb" target="lib\net46\ical.net.pdb" />
         <file src="ical.NET\bin\Release\net46\antlr.runtime.dll" target="lib\net46\antlr.runtime.dll" />
         <file src="ical.NET\bin\Release\net46\NodaTime.dll" target="lib\net46\NodaTime.dll" />
         <file src="ical.NET\bin\Release\net46\antlr.runtime.pdb" target="lib\net46\antlr.runtime.pdb" />
         <file src="ical.NET\bin\Release\net46\antlr.runtime.xml" target="lib\net46\antlr.runtime.xml" />
         <!-- .NET 4.5 -->
-        <file src="ical.NET\bin\Release\net45\Ical.Net.Collections.dll" target="lib\net45\Ical.Net.Collections.dll" />
-        <file src="ical.NET\bin\Release\net45\Ical.Net.Collections.pdb" target="lib\net45\Ical.Net.Collections.pdb" />
-        <file src="ical.NET\bin\Release\net45\Ical.Net.dll" target="lib\net45\Ical.Net.dll" />
-        <file src="ical.NET\bin\Release\net45\Ical.Net.xml" target="lib\net45\Ical.Net.xml" />
-        <file src="ical.NET\bin\Release\net45\Ical.Net.pdb" target="lib\net45\Ical.Net.pdb" />
+        <file src="ical.NET\bin\Release\net45\ical.net.collections.dll" target="lib\net45\ical.net.collections.dll" />
+        <file src="ical.NET\bin\Release\net45\ical.net.collections.pdb" target="lib\net45\ical.net.collections.pdb" />
+        <file src="ical.NET\bin\Release\net45\ical.net.dll" target="lib\net45\ical.net.dll" />
+        <file src="ical.NET\bin\Release\net45\ical.net.xml" target="lib\net45\ical.net.xml" />
+        <file src="ical.NET\bin\Release\net45\ical.net.pdb" target="lib\net45\ical.net.pdb" />
         <file src="ical.NET\bin\Release\net45\antlr.runtime.dll" target="lib\net45\antlr.runtime.dll" />
         <file src="ical.NET\bin\Release\net45\NodaTime.dll" target="lib\net45\NodaTime.dll" />
         <file src="ical.NET\bin\Release\net45\antlr.runtime.pdb" target="lib\net45\antlr.runtime.pdb" />
         <file src="ical.NET\bin\Release\net45\antlr.runtime.xml" target="lib\net45\antlr.runtime.xml" />
         <!-- .NET 4.0 -->
-        <file src="ical.NET\bin\Release\net40\Ical.Net.Collections.dll" target="lib\net40\Ical.Net.Collections.dll" />
-        <file src="ical.NET\bin\Release\net40\Ical.Net.Collections.pdb" target="lib\net40\Ical.Net.Collections.pdb" />
-        <file src="ical.NET\bin\Release\net40\Ical.Net.dll" target="lib\net40\Ical.Net.dll" />
-        <file src="ical.NET\bin\Release\net40\Ical.Net.xml" target="lib\net40\Ical.Net.xml" />
-        <file src="ical.NET\bin\Release\net40\Ical.Net.pdb" target="lib\net40\Ical.Net.pdb" />
+        <file src="ical.NET\bin\Release\net40\ical.net.collections.dll" target="lib\net40\ical.net.Collections.dll" />
+        <file src="ical.NET\bin\Release\net40\ical.net.collections.pdb" target="lib\net40\ical.net.Ccollections.pdb" />
+        <file src="ical.NET\bin\Release\net40\ical.net.dll" target="lib\net40\ical.net.dll" />
+        <file src="ical.NET\bin\Release\net40\ical.net.xml" target="lib\net40\ical.net.xml" />
+        <file src="ical.NET\bin\Release\net40\ical.net.pdb" target="lib\net40\ical.net.pdb" />
         <file src="ical.NET\bin\Release\net40\antlr.runtime.dll" target="lib\net40\antlr.runtime.dll" />
         <file src="ical.NET\bin\Release\net40\NodaTime.dll" target="lib\net40\NodaTime.dll" />
         <file src="ical.NET\bin\Release\net40\antlr.runtime.pdb" target="lib\net40\antlr.runtime.pdb" />

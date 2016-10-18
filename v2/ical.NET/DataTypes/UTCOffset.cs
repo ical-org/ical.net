@@ -1,13 +1,12 @@
 using System;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using ical.net.Serialization.iCalendar.Serializers.DataTypes;
 
-namespace Ical.Net.DataTypes
+namespace ical.net.DataTypes
 {
     /// <summary>
     /// Represents a time offset from UTC (Coordinated Universal Time).
     /// </summary>
-    public class UtcOffset : EncodableDataType, IUtcOffset
+    public class UtcOffset : EncodableDataType
     {
         public TimeSpan Offset { get; }
 

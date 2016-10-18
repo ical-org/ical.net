@@ -2,22 +2,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ical.NET.Collections.Enumerators;
-using ical.NET.Collections.Interfaces;
+using ical.net.collections.Enumerators;
+using ical.net.collections.Interfaces;
 
-namespace ical.NET.Collections
+namespace ical.net.collections
 {
-    /// <summary>
-    /// A list of objects that are keyed.
-    /// </summary>
+    /// <summary> A list of objects that are keyed. </summary>
     public class GroupedList<TGroup, TItem> :
         IGroupedList<TGroup, TItem>
         where TItem : class, IGroupedObject<TGroup>
     {
-        private readonly List<IMultiLinkedList<TItem>> _lists = new List<IMultiLinkedList<TItem>>();
-        private readonly Dictionary<TGroup, IMultiLinkedList<TItem>> _dictionary = new Dictionary<TGroup, IMultiLinkedList<TItem>>();
+        private readonly HashSet<HashSet<TItem>> _lists = new HashSet<HashSet<TItem>>();
+        private readonly Dictionary<TGroup, HashSet<TItem>> _dictionary = new Dictionary<TGroup, HashSet<TItem>>();
 
-        private IMultiLinkedList<TItem> EnsureList(TGroup group)
+        private HashSet<TItem> EnsureList(TGroup group)
         {
             if (group == null)
             {
@@ -29,18 +27,18 @@ namespace ical.NET.Collections
                 return _dictionary[group];
             }
 
-            var list = new MultiLinkedList<TItem>();
+            var list = new HashSet<TItem>();
             _dictionary[group] = list;
 
             _lists.Add(list);
             return list;
         }
 
-        private IMultiLinkedList<TItem> ListForIndex(int index, out int relativeIndex)
+        private HashSet<TItem> ListForIndex(int index, out int relativeIndex)
         {
-            foreach (var list in _lists.Where(list => list.StartIndex <= index && list.ExclusiveEnd > index))
+            foreach (var list in _lists.Where(list => list.Count > index))
             {
-                relativeIndex = index - list.StartIndex;
+                relativeIndex = index;
                 return list;
             }
             relativeIndex = -1;
@@ -66,27 +64,28 @@ namespace ical.NET.Collections
             var list = EnsureList(group);
             var index = list.Count;
             list.Add(item);
-            OnItemAdded(item, list.StartIndex + index);
+            OnItemAdded(item, index);
         }
 
         public virtual int IndexOf(TItem item)
         {
-            var group = item.Group;
-            if (!_dictionary.ContainsKey(group))
-            {
-                return -1;
-            }
+            return 0;
+            //var group = item.Group;
+            //if (!_dictionary.ContainsKey(group))
+            //{
+            //    return -1;
+            //}
 
-            // Get the list associated with this object's group
-            var list = _dictionary[group];
+            //// Get the list associated with this object's group
+            //var list = _dictionary[group];
 
-            // Find the object within the list.
-            var index = list.IndexOf(item);
+            //// Find the object within the list.
+            //var index = list.IndexOf(item);
 
-            // Return the index within the overall KeyedList
-            if (index >= 0)
-                return list.StartIndex + index;
-            return -1;
+            //// Return the index within the overall KeyedList
+            //if (index >= 0)
+            //    return index;
+            //return -1;
         }
 
         public virtual void Clear(TGroup group)
@@ -106,7 +105,7 @@ namespace ical.NET.Collections
             _lists.Clear();
         }
 
-        public virtual bool ContainsKey(TGroup group) => _dictionary.ContainsKey(@group);
+        public virtual bool ContainsKey(TGroup group) => _dictionary.ContainsKey(group);
 
         public virtual int Count => _lists.Sum(list => list.Count);
 
@@ -121,8 +120,8 @@ namespace ical.NET.Collections
 
         public virtual IEnumerable<TItem> AllOf(TGroup group)
         {
-            return _dictionary.ContainsKey(@group)
-                ? (IEnumerable<TItem>) _dictionary[@group]
+            return _dictionary.ContainsKey(group)
+                ? (IEnumerable<TItem>) _dictionary[group]
                 : new TItem[0];
         }
 
@@ -134,16 +133,18 @@ namespace ical.NET.Collections
                 return false;
             }
 
-            var items = _dictionary[group];
-            var index = items.IndexOf(obj);
+            return _dictionary[obj.Group].Remove(obj);
 
-            if (index < 0)
-            {
-                return false;
-            }
+            //var items = _dictionary[group];
+            //var index = items.IndexOf(obj);
 
-            items.RemoveAt(index);
-            return true;
+            //if (index < 0)
+            //{
+            //    return false;
+            //}
+
+            //items.RemoveAt(index);
+            //return true;
         }
 
         public virtual bool Remove(TGroup group)
@@ -153,12 +154,14 @@ namespace ical.NET.Collections
                 return false;
             }
 
-            var list = _dictionary[group];
-            for (var i = list.Count - 1; i >= 0; i--)
-            {
-                list.RemoveAt(i);
-            }
-            return true;
+            return _dictionary.Remove(group);
+
+            //var list = _dictionary[group];
+            //for (var i = list.Count - 1; i >= 0; i--)
+            //{
+            //    list.RemoveAt(i);
+            //}
+            //return true;
         }
 
         public virtual bool Contains(TItem item)
@@ -176,51 +179,68 @@ namespace ical.NET.Collections
 
         public virtual void Insert(int index, TItem item)
         {
-            int relativeIndex;
-            var list = ListForIndex(index, out relativeIndex);
-            if (list == null)
+            if (!_dictionary.ContainsKey(item.Group))
             {
+                _dictionary[item.Group] = new HashSet<TItem> {item};
                 return;
             }
 
-            list.Insert(relativeIndex, item);
+            _dictionary[item.Group].Add(item);
+            //int relativeIndex;
+            //var list = ListForIndex(index, out relativeIndex);
+            //if (list == null)
+            //{
+            //    return;
+            //}
+
+            //list.Insert(relativeIndex, item);
             OnItemAdded(item, index);
         }
 
         public virtual void RemoveAt(int index)
         {
-            int relativeIndex;
-            var list = ListForIndex(index, out relativeIndex);
-            if (list == null)
+            if (true)
             {
                 return;
             }
-            var item = list[relativeIndex];
-            list.RemoveAt(relativeIndex);
+            //int relativeIndex;
+            //var list = ListForIndex(index, out relativeIndex);
+            //if (list == null)
+            //{
+            //    return;
+            //}
+            //var item = list[relativeIndex];
+            //list.RemoveAt(relativeIndex);
         }
 
         public virtual TItem this[int index]
         {
             get
             {
-                int relativeIndex;
-                var list = ListForIndex(index, out relativeIndex);
-                return list?[relativeIndex];
+                return default(TItem);
+                //int relativeIndex;
+                //var list = ListForIndex(index, out relativeIndex);
+                //return list?[relativeIndex];
             }
             set
             {
-                int relativeIndex;
-                var list = ListForIndex(index, out relativeIndex);
-                if (list == null)
+                if (true)
                 {
                     return;
                 }
+                //int relativeIndex;
+                //var list = ListForIndex(index, out relativeIndex);
+                //if (list == null)
+                //{
+                //    return;
+                //}
 
-                // Remove the item at that index and replace it
-                var item = list[relativeIndex];
-                list.RemoveAt(relativeIndex);
-                list.Insert(relativeIndex, value);
-                OnItemAdded(item, index);
+                //// Remove the item at that index and replace it
+                //var item = list[relativeIndex];
+                //list.RemoveAt(relativeIndex);
+                //list.Insert(relativeIndex, value);
+
+                //OnItemAdded(item, index);
             }
         }
 

@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Ical.Net.Interfaces;
 using NUnit.Framework;
 
-namespace Ical.Net.UnitTests
+namespace ical.net.unittests
 {
     public class ConcurrentDeserializationTests
     {
@@ -18,12 +17,12 @@ namespace Ical.Net.UnitTests
                 IcsFiles.DailyInterval2,
                 IcsFiles.DailyByDay1,
                 IcsFiles.RecurrenceDates1,
-                IcsFiles.DailyByHourMinute1,
+                IcsFiles.DailyByHourMinute1
             };
 
             var deserializedCalendars = calendars.AsParallel().SelectMany(c =>
             {
-                IICalendarCollection calendar;
+                CalendarCollection calendar;
                 using (var reader = new StringReader(c ?? string.Empty))
                 {
                     calendar = Calendar.LoadFromStream(reader);

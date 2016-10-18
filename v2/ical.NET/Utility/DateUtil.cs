@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
+using ical.net.DataTypes;
+using ical.net.Interfaces.DataTypes;
 using NodaTime;
 using NodaTime.TimeZones;
 
-namespace Ical.Net.Utility
+namespace ical.net.Utility
 {
     public class DateUtil
     {

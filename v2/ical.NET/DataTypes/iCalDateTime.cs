@@ -1,12 +1,11 @@
 using System;
 using System.IO;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
-using Ical.Net.Utility;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.General;
+using ical.net.Serialization.iCalendar.Serializers.DataTypes;
+using ical.net.Utility;
 
-namespace Ical.Net.DataTypes
+namespace ical.net.DataTypes
 {
     /// <summary>
     /// The iCalendar equivalent of the .NET <see cref="DateTime"/> class.
@@ -52,7 +51,7 @@ namespace Ical.Net.DataTypes
             HasTime = true;
         }
 
-        public CalDateTime(int year, int month, int day, int hour, int minute, int second, string tzId, ICalendar cal)
+        public CalDateTime(int year, int month, int day, int hour, int minute, int second, string tzId, Calendar cal)
         {
             Initialize(year, month, day, hour, minute, second, tzId, cal);
             HasTime = true;
@@ -67,12 +66,12 @@ namespace Ical.Net.DataTypes
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
-        private void Initialize(int year, int month, int day, int hour, int minute, int second, string tzId, ICalendar cal)
+        private void Initialize(int year, int month, int day, int hour, int minute, int second, string tzId, Calendar cal)
         {
             Initialize(CoerceDateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzId, cal);
         }
 
-        private void Initialize(DateTime value, string tzId, ICalendar cal)
+        private void Initialize(DateTime value, string tzId, Calendar cal)
         {
             if (value.Kind == DateTimeKind.Utc)
             {

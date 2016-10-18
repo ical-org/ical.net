@@ -4,7 +4,7 @@ using System.IO;
 using antlr;
 using antlr.collections;
 
-namespace Ical.Net.Serialization.iCalendar
+namespace ical.net.Serialization.iCalendar
 {
     // Generate header specific to lexer CSharp file
 

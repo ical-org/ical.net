@@ -1,18 +1,17 @@
 using System.IO;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using ical.net.Interfaces.General;
+using ical.net.Serialization.iCalendar.Serializers.DataTypes;
 
-namespace Ical.Net.DataTypes
+namespace ical.net.DataTypes
 {
     /// <summary>
     /// A class that represents the return status of an iCalendar request.
     /// </summary>
-    public class RequestStatus : EncodableDataType, IRequestStatus
+    public class RequestStatus : EncodableDataType
     {
         private string _mDescription;
         private string _mExtraData;
-        private IStatusCode _mStatusCode;
+        private StatusCode _mStatusCode;
 
         public virtual string Description
         {
@@ -26,7 +25,7 @@ namespace Ical.Net.DataTypes
             set { _mExtraData = value; }
         }
 
-        public virtual IStatusCode StatusCode
+        public virtual StatusCode StatusCode
         {
             get { return _mStatusCode; }
             set { _mStatusCode = value; }
@@ -43,12 +42,12 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (!(obj is IRequestStatus))
+            if (!(obj is RequestStatus))
             {
                 return;
             }
 
-            var rs = (IRequestStatus) obj;
+            var rs = (RequestStatus) obj;
             if (rs.StatusCode != null)
             {
                 StatusCode = rs.StatusCode;

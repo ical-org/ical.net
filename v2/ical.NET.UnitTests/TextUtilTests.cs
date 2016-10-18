@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Ical.Net.Utility;
+using ical.net.Utility;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
-namespace Ical.Net.UnitTests
+namespace ical.net.unittests
 {
     public class TextUtilTests
     {

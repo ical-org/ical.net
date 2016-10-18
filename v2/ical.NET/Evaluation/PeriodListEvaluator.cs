@@ -1,26 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
+using ical.net.DataTypes;
+using ical.net.Interfaces.DataTypes;
 
-namespace Ical.Net.Evaluation
+namespace ical.net.Evaluation
 {
     public class PeriodListEvaluator : Evaluator
     {
-        private readonly IPeriodList _mPeriodList;
+        private readonly PeriodList _mPeriodList;
 
-        public PeriodListEvaluator(IPeriodList rdt)
+        public PeriodListEvaluator(PeriodList rdt)
         {
             _mPeriodList = rdt;
         }
 
-        public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
-            var periods = new HashSet<IPeriod>();
+            var periods = new HashSet<Period>();
 
             if (includeReferenceDateInResults)
             {
-                IPeriod p = new Period(referenceDate);
+                Period p = new Period(referenceDate);
                 periods.Add(p);
             }
 

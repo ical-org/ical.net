@@ -4,18 +4,17 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using antlr;
-using Ical.Net.DataTypes;
-using Ical.Net.General;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Serialization;
-using Ical.Net.Serialization.iCalendar.Serializers;
-using Ical.Net.Serialization.iCalendar.Serializers.Other;
+using ical.net.DataTypes;
+using ical.net.General;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.General;
+using ical.net.Interfaces.Serialization;
+using ical.net.Serialization;
+using ical.net.Serialization.iCalendar.Serializers;
+using ical.net.Serialization.iCalendar.Serializers.Other;
 using NUnit.Framework;
 
-namespace Ical.Net.UnitTests
+namespace ical.net.unittests
 {
     [TestFixture]
     public class DeserializationTests
@@ -447,7 +446,7 @@ END:VCALENDAR
             var longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
             var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Outlook2007LineFolds))[0];
             var events = iCal.GetOccurrences<Event>(new CalDateTime(2009, 06, 20), new CalDateTime(2009, 06, 22)).OrderBy(o => o.Period.StartTime).ToList();
-            Assert.AreEqual(longName, ((IEvent)events[0].Source).Location);
+            Assert.AreEqual(longName, ((Event)events[0].Source).Location);
         }
 
         /// <summary>

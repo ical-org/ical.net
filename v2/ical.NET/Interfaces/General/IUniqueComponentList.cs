@@ -1,6 +1,6 @@
-﻿using Ical.Net.Interfaces.Components;
+﻿using ical.net.Interfaces.Components;
 
-namespace Ical.Net.Interfaces.General
+namespace ical.net.Interfaces.General
 {
     public interface IUniqueComponentList<TComponentType> : ICalendarObjectList<TComponentType> where TComponentType : class, IUniqueComponent
     {

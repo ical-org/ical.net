@@ -2,10 +2,10 @@
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
+using ical.net.DataTypes;
+using ical.net.Interfaces.DataTypes;
 
-namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
+namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class DateTimeSerializer : EncodableDataTypeSerializer
     {

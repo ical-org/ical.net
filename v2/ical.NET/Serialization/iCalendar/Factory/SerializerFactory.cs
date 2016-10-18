@@ -1,17 +1,16 @@
-﻿using System;
+using System;
 using System.Reflection;
-using Ical.Net.General;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Interfaces.Serialization.Factory;
-using Ical.Net.Serialization.iCalendar.Serializers;
-using Ical.Net.Serialization.iCalendar.Serializers.Components;
-using Ical.Net.Serialization.iCalendar.Serializers.Other;
+using ical.net.General;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.General;
+using ical.net.Interfaces.Serialization;
+using ical.net.Interfaces.Serialization.Factory;
+using ical.net.Serialization.iCalendar.Serializers;
+using ical.net.Serialization.iCalendar.Serializers.Components;
+using ical.net.Serialization.iCalendar.Serializers.Other;
 
-namespace Ical.Net.Serialization.iCalendar.Factory
+namespace ical.net.Serialization.iCalendar.Factory
 {
     public class SerializerFactory : ISerializerFactory
     {
@@ -31,31 +30,35 @@ namespace Ical.Net.Serialization.iCalendar.Factory
         /// </summary>
         /// <param name="objectType">The type of object to be serialized.</param>
         /// <param name="ctx">The serialization context.</param>
-        public virtual ISerializer Build(Type objectType, ISerializationContext ctx)
+        public virtual ISerializer Build(Type objectType, SerializationContext ctx)
         {
             if (objectType != null)
             {
                 ISerializer s;
 
-                if (typeof (ICalendar).IsAssignableFrom(objectType))
+<<<<<<< 04a4548e1359eb71128fc9ab11e4d0dd22141eac:v2/ical.NET/Serialization/iCalendar/Factory/SerializerFactory.cs
+                if (typeof (ICalendar).GetTypeInfo().IsAssignableFrom(objectType))
+=======
+                if (typeof (Calendar).IsAssignableFrom(objectType))
+>>>>>>> ICalendar is a pointless interface:v2/ical.net/Serialization/iCalendar/Factory/SerializerFactory.cs
                 {
                     s = new CalendarSerializer();
                 }
-                else if (typeof (ICalendarComponent).IsAssignableFrom(objectType))
+                else if (typeof (ICalendarComponent).GetTypeInfo().IsAssignableFrom(objectType))
                 {
-                    s = typeof (IEvent).IsAssignableFrom(objectType)
+                    s = typeof (IEvent).GetTypeInfo().IsAssignableFrom(objectType)
                         ? new EventSerializer()
                         : new ComponentSerializer();
                 }
-                else if (typeof (ICalendarProperty).IsAssignableFrom(objectType))
+                else if (typeof (ICalendarProperty).GetTypeInfo().IsAssignableFrom(objectType))
                 {
                     s = new PropertySerializer();
                 }
-                else if (typeof (CalendarParameter).IsAssignableFrom(objectType))
+                else if (typeof (CalendarParameter).GetTypeInfo().IsAssignableFrom(objectType))
                 {
                     s = new ParameterSerializer();
                 }
-                else if (typeof (string).IsAssignableFrom(objectType))
+                else if (typeof (string).GetTypeInfo().IsAssignableFrom(objectType))
                 {
                     s = new StringSerializer();
                 }
@@ -70,19 +73,19 @@ namespace Ical.Net.Serialization.iCalendar.Factory
                     s = new EnumSerializer(objectType);
                 }
 #endif
-                else if (typeof (TimeSpan).IsAssignableFrom(objectType))
+                else if (typeof (TimeSpan).GetTypeInfo().IsAssignableFrom(objectType))
                 {
                     s = new TimeSpanSerializer();
                 }
-                else if (typeof (int).IsAssignableFrom(objectType))
+                else if (typeof (int).GetTypeInfo().IsAssignableFrom(objectType))
                 {
                     s = new IntegerSerializer();
                 }
-                else if (typeof (Uri).IsAssignableFrom(objectType))
+                else if (typeof (Uri).GetTypeInfo().IsAssignableFrom(objectType))
                 {
                     s = new UriSerializer();
                 }
-                else if (typeof (ICalendarDataType).IsAssignableFrom(objectType))
+                else if (typeof (ICalendarDataType).GetTypeInfo().IsAssignableFrom(objectType))
                 {
                     s = _mDataTypeSerializerFactory.Build(objectType, ctx);
                 }

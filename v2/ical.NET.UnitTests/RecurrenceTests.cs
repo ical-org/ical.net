@@ -4,18 +4,16 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Ical.Net.DataTypes;
-using Ical.Net.Evaluation;
-using Ical.Net.Exceptions;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Evaluation;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
-using Ical.Net.Utility;
+using ical.net.DataTypes;
+using ical.net.Evaluation;
+using ical.net.Exceptions;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.Evaluation;
+using ical.net.Serialization.iCalendar.Serializers.DataTypes;
+using ical.net.Utility;
 using NUnit.Framework;
 
-namespace Ical.Net.UnitTests
+namespace ical.net.unittests
 {
     [TestFixture]
     public class RecurrenceTests
@@ -23,7 +21,7 @@ namespace Ical.Net.UnitTests
         private const string _tzid = "US-Eastern";
 
         private void EventOccurrenceTest(
-            ICalendar cal,
+            Calendar cal,
             IDateTime fromDate,
             IDateTime toDate,
             IDateTime[] dateTimes,
@@ -62,7 +60,7 @@ namespace Ical.Net.UnitTests
         }
 
         private void EventOccurrenceTest(
-            ICalendar cal,
+            Calendar cal,
             IDateTime fromDate,
             IDateTime toDate,
             IDateTime[] dateTimes,
@@ -348,8 +346,8 @@ namespace Ical.Net.UnitTests
             var iCal2 = Calendar.LoadFromStream(new StringReader(IcsFiles.ByMonth2))[0];
             ProgramTest.TestCal(iCal1);
             ProgramTest.TestCal(iCal2);
-            IEvent evt1 = (Event)iCal1.Events.First();
-            IEvent evt2 = (Event)iCal2.Events.First();
+            Event evt1 = iCal1.Events.First();
+            Event evt2 = iCal2.Events.First();
 
             var evt1Occurrences = evt1.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(2000, 12, 31)).OrderBy(o => o.Period.StartTime).ToList();
             var evt2Occurrences = evt2.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(2000, 12, 31)).OrderBy(o => o.Period.StartTime).ToList();
@@ -2654,7 +2652,7 @@ namespace Ical.Net.UnitTests
                 {"Lincoln's Birthday", new CalDateTime(2006, 2, 12)},
                 {"Groundhog Day", new CalDateTime(2006, 2, 2)},
                 {"Martin Luther King, Jr. Day", new CalDateTime(2006, 1, 16)},
-                { "New Year's Day", new CalDateTime(2006, 1, 1)},
+                { "New Year's Day", new CalDateTime(2006, 1, 1)}
             };
 
             var occurrences = iCal.GetOccurrences(
@@ -2664,7 +2662,7 @@ namespace Ical.Net.UnitTests
             Assert.AreEqual(items.Count, occurrences.Count, "The number of holidays did not evaluate correctly.");
             foreach (var o in occurrences)
             {
-                var evt = o.Source as IEvent;
+                var evt = o.Source as Event;
                 Assert.IsNotNull(evt);
                 Assert.IsTrue(items.ContainsKey(evt.Summary), "Holiday text '" + evt.Summary + "' did not match known holidays.");
                 Assert.AreEqual(items[evt.Summary], o.Period.StartTime, "Date/time of holiday '" + evt.Summary + "' did not match.");
@@ -2679,8 +2677,8 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Evaluate1()
         {
-            ICalendar cal = new Calendar();
-            IEvent evt = cal.Create<Event>();
+            Calendar cal = new Calendar();
+            Event evt = cal.Create<Event>();
             evt.Summary = "Event summary";
 
             // Start at midnight, UTC time
@@ -2698,7 +2696,7 @@ namespace Ical.Net.UnitTests
         {
             // NOTE: evaluators are not generally meant to be used directly like this.
             // However, this does make a good test to ensure they behave as they should.
-            IRecurrencePattern pattern = new RecurrencePattern("FREQ=SECONDLY;INTERVAL=10");
+            RecurrencePattern pattern = new RecurrencePattern("FREQ=SECONDLY;INTERVAL=10");
             pattern.RestrictionType = RecurrenceRestrictionType.NoRestriction;
 
             var us = new CultureInfo("en-US");
@@ -2751,8 +2749,8 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void GetOccurrences1()
         {
-            ICalendar cal = new Calendar();
-            IEvent evt = cal.Create<Event>();
+            Calendar cal = new Calendar();
+            Event evt = cal.Create<Event>();
             evt.Start = new CalDateTime(2009, 11, 18, 5, 0, 0);
             evt.End = new CalDateTime(2009, 11, 18, 5, 10, 0);
             evt.RecurrenceRules.Add(new RecurrencePattern(FrequencyType.Daily));
@@ -2799,12 +2797,12 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Test1()
         {
-            ICalendar cal = new Calendar();
-            IEvent evt = cal.Create<Event>();
+            Calendar cal = new Calendar();
+            Event evt = cal.Create<Event>();
             evt.Summary = "Event summary";
             evt.Start = new CalDateTime(DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc));
 
-            IRecurrencePattern recur = new RecurrencePattern();
+            RecurrencePattern recur = new RecurrencePattern();
             evt.RecurrenceRules.Add(recur);
 
             try
@@ -2818,12 +2816,12 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Test2()
         {
-            ICalendar cal = new Calendar();
-            IEvent evt = cal.Create<Event>();
+            Calendar cal = new Calendar();
+            Event evt = cal.Create<Event>();
             evt.Summary = "Event summary";
             evt.Start = new CalDateTime(DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc));
 
-            IRecurrencePattern recur = new RecurrencePattern();
+            RecurrencePattern recur = new RecurrencePattern();
             recur.Frequency = FrequencyType.Daily;
             recur.Count = 3;
             recur.ByDay.Add(new WeekDay(DayOfWeek.Monday));
@@ -2839,7 +2837,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Test4()
         {
-            IRecurrencePattern rpattern = new RecurrencePattern();
+            RecurrencePattern rpattern = new RecurrencePattern();
             rpattern.ByDay.Add(new WeekDay(DayOfWeek.Saturday));
             rpattern.ByDay.Add(new WeekDay(DayOfWeek.Sunday));
 
@@ -2961,18 +2959,18 @@ END:VCALENDAR";
             var rrule = new RecurrencePattern(FrequencyType.Weekly, interval: 1)
             {
                 Until = DateTime.Parse("2016-08-31T07:00:00"),
-                ByDay = new List<IWeekDay> { new WeekDay(DayOfWeek.Wednesday)},
+                ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Wednesday)}
             };
 
             var start = DateTime.Parse("2016-08-01T07:00:00");
             var end = start.AddHours(1);
-            var e = new Event()
+            var e = new Event
             {
                 DtStart = new CalDateTime(start, "UTC"),
                 DtEnd = new CalDateTime(end, "UTC"),
-                RecurrenceRules = new List<IRecurrencePattern> { rrule },
+                RecurrenceRules = new List<RecurrencePattern> { rrule },
                 Summary = "This is an event",
-                Uid = "abab717c-1786-4efc-87dd-6859c2b48eb6",
+                Uid = "abab717c-1786-4efc-87dd-6859c2b48eb6"
             };
 
             var collection = Calendar.LoadFromStream(new StringReader(ical));

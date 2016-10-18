@@ -4,62 +4,61 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-using Ical.Net.DataTypes;
-using Ical.Net.ExtensionMethods;
-using Ical.Net.General.Proxies;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Evaluation;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Serialization.iCalendar.Serializers;
-using Ical.Net.Utility;
+using ical.net.DataTypes;
+using ical.net.ExtensionMethods;
+using ical.net.General.Proxies;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.Evaluation;
+using ical.net.Interfaces.General;
+using ical.net.Interfaces.Serialization;
+using ical.net.Serialization.iCalendar.Serializers;
+using ical.net.Utility;
 
-namespace Ical.Net
+namespace ical.net
 {
-    public class Calendar : CalendarComponent, ICalendar, IDisposable
+    public class Calendar : CalendarComponent, IDisposable, IGetOccurrencesTyped, IGetFreeBusy, IMergeable
     {
         /// <summary>
         /// Loads an <see cref="Calendar"/> from the file system.
         /// </summary>
         /// <param name="filepath">The path to the file to load.</param>
         /// <returns>An <see cref="Calendar"/> object</returns>        
-        public static IICalendarCollection LoadFromFile(string filepath)
+        public static CalendarCollection LoadFromFile(string filepath)
         {
             return LoadFromFile(filepath, Encoding.UTF8, new CalendarSerializer());
         }
 
-        public static IICalendarCollection LoadFromFile<T>(string filepath) where T : ICalendar
+        public static CalendarCollection LoadFromFile<T>(string filepath) where T : Calendar
         {
             return LoadFromFile(typeof (T), filepath);
         }
 
-        public static IICalendarCollection LoadFromFile(Type iCalendarType, string filepath)
+        public static CalendarCollection LoadFromFile(Type iCalendarType, string filepath)
         {
             ISerializer serializer = new CalendarSerializer();
             serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
             return LoadFromFile(filepath, Encoding.UTF8, serializer);
         }
 
-        public static IICalendarCollection LoadFromFile(string filepath, Encoding encoding)
+        public static CalendarCollection LoadFromFile(string filepath, Encoding encoding)
         {
             return LoadFromFile(filepath, encoding, new CalendarSerializer());
         }
 
-        public static IICalendarCollection LoadFromFile<T>(string filepath, Encoding encoding) where T : ICalendar
+        public static CalendarCollection LoadFromFile<T>(string filepath, Encoding encoding) where T : Calendar
         {
             return LoadFromFile(typeof (T), filepath, encoding);
         }
 
-        public static IICalendarCollection LoadFromFile(Type iCalendarType, string filepath, Encoding encoding)
+        public static CalendarCollection LoadFromFile(Type iCalendarType, string filepath, Encoding encoding)
         {
             ISerializer serializer = new CalendarSerializer();
             serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
             return LoadFromFile(filepath, encoding, serializer);
         }
 
-        public static IICalendarCollection LoadFromFile(string filepath, Encoding encoding, ISerializer serializer)
+        public static CalendarCollection LoadFromFile(string filepath, Encoding encoding, ISerializer serializer)
         {
             // NOTE: Fixes bug #3211934 - Bug in iCalendar.cs - UnauthorizedAccessException
             using (var fs = new FileStream(filepath, FileMode.Open, FileAccess.Read))
@@ -74,63 +73,63 @@ namespace Ical.Net
         /// </summary>
         /// <param name="s">The stream from which to load the <see cref="Calendar"/> object</param>
         /// <returns>An <see cref="Calendar"/> object</returns>
-        public new static IICalendarCollection LoadFromStream(Stream s)
+        public new static CalendarCollection LoadFromStream(Stream s)
         {
             return LoadFromStream(s, Encoding.UTF8, new CalendarSerializer());
         }
 
-        public static IICalendarCollection LoadFromStream<T>(Stream s) where T : ICalendar
+        public static CalendarCollection LoadFromStream<T>(Stream s) where T : Calendar
         {
             return LoadFromStream(typeof (T), s);
         }
 
-        public static IICalendarCollection LoadFromStream(Type iCalendarType, Stream s)
+        public static CalendarCollection LoadFromStream(Type iCalendarType, Stream s)
         {
             ISerializer serializer = new CalendarSerializer();
             serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
             return LoadFromStream(s, Encoding.UTF8, serializer);
         }
 
-        public new static IICalendarCollection LoadFromStream(Stream s, Encoding encoding)
+        public new static CalendarCollection LoadFromStream(Stream s, Encoding encoding)
         {
             return LoadFromStream(s, encoding, new CalendarSerializer());
         }
 
-        public new static IICalendarCollection LoadFromStream<T>(Stream s, Encoding encoding) where T : ICalendar
+        public new static CalendarCollection LoadFromStream<T>(Stream s, Encoding encoding) where T : Calendar
         {
             return LoadFromStream(typeof (T), s, encoding);
         }
 
-        public static IICalendarCollection LoadFromStream(Type iCalendarType, Stream s, Encoding encoding)
+        public static CalendarCollection LoadFromStream(Type iCalendarType, Stream s, Encoding encoding)
         {
             ISerializer serializer = new CalendarSerializer();
             serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
             return LoadFromStream(s, encoding, serializer);
         }
 
-        public new static IICalendarCollection LoadFromStream(Stream s, Encoding e, ISerializer serializer)
+        public new static CalendarCollection LoadFromStream(Stream s, Encoding e, ISerializer serializer)
         {
-            return serializer.Deserialize(s, e) as IICalendarCollection;
+            return serializer.Deserialize(s, e) as CalendarCollection;
         }
 
-        public static IICalendarCollection LoadFromStream(TextReader tr)
+        public static CalendarCollection LoadFromStream(TextReader tr)
         {
             return LoadFromStream(tr, new CalendarSerializer());
         }
 
-        public static IICalendarCollection LoadFromStream<T>(TextReader tr) where T : ICalendar
+        public static CalendarCollection LoadFromStream<T>(TextReader tr) where T : Calendar
         {
             return LoadFromStream(typeof (T), tr);
         }
 
-        public static IICalendarCollection LoadFromStream(Type iCalendarType, TextReader tr)
+        public static CalendarCollection LoadFromStream(Type iCalendarType, TextReader tr)
         {
             ISerializer serializer = new CalendarSerializer();
             serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
             return LoadFromStream(tr, serializer);
         }
 
-        public static IICalendarCollection LoadFromStream(TextReader tr, ISerializer serializer)
+        public static CalendarCollection LoadFromStream(TextReader tr, ISerializer serializer)
         {
             var text = tr.ReadToEnd();
             var ms = new MemoryStream(Encoding.UTF8.GetBytes(text));
@@ -138,11 +137,11 @@ namespace Ical.Net
         }
 
         private IUniqueComponentList<IUniqueComponent> _mUniqueComponents;
-        private IUniqueComponentList<IEvent> _mEvents;
-        private IUniqueComponentList<ITodo> _mTodos;
-        private ICalendarObjectList<IJournal> _mJournals;
-        private IUniqueComponentList<IFreeBusy> _mFreeBusy;
-        private ICalendarObjectList<ITimeZone> _mTimeZones;
+        private IUniqueComponentList<Event> _mEvents;
+        private IUniqueComponentList<Todo> _mTodos;
+        private ICalendarObjectList<Journal> _mJournals;
+        private IUniqueComponentList<FreeBusy> _mFreeBusy;
+        private ICalendarObjectList<VTimeZone> _mTimeZones;
 
         /// <summary>
         /// To load an existing an iCalendar object, use one of the provided LoadFromXXX methods.
@@ -163,11 +162,11 @@ namespace Ical.Net
         private void Initialize()
         {
             _mUniqueComponents = new UniqueComponentListProxy<IUniqueComponent>(Children);
-            _mEvents = new UniqueComponentListProxy<IEvent>(Children);
-            _mTodos = new UniqueComponentListProxy<ITodo>(Children);
-            _mJournals = new CalendarObjectListProxy<IJournal>(Children);
-            _mFreeBusy = new UniqueComponentListProxy<IFreeBusy>(Children);
-            _mTimeZones = new CalendarObjectListProxy<ITimeZone>(Children);
+            _mEvents = new UniqueComponentListProxy<Event>(Children);
+            _mTodos = new UniqueComponentListProxy<Todo>(Children);
+            _mJournals = new CalendarObjectListProxy<Journal>(Children);
+            _mFreeBusy = new UniqueComponentListProxy<FreeBusy>(Children);
+            _mTimeZones = new CalendarObjectListProxy<VTimeZone>(Children);
         }
 
         protected override void OnDeserializing(StreamingContext context)
@@ -220,65 +219,62 @@ namespace Ical.Net
             }
         }
 
+        /// <summary> Gets a list of unique components contained in the calendar. </summary>
         public virtual IUniqueComponentList<IUniqueComponent> UniqueComponents => _mUniqueComponents;
 
         public virtual IEnumerable<IRecurrable> RecurringItems => Children.OfType<IRecurrable>();
 
-        /// <summary>
-        /// A collection of <see cref="Components.Event"/> components in the iCalendar.
-        /// </summary>
-        public virtual IUniqueComponentList<IEvent> Events => _mEvents;
+        /// <summary> Gets a list of Events contained in the calendar. </summary>
+        public virtual IUniqueComponentList<Event> Events => _mEvents;
 
-        /// <summary>
-        /// A collection of <see cref="Net.FreeBusy"/> components in the iCalendar.
-        /// </summary>
-        public virtual IUniqueComponentList<IFreeBusy> FreeBusy => _mFreeBusy;
+        /// <summary> Gets a list of Free/Busy components contained in the calendar. </summary>
+        public virtual IUniqueComponentList<FreeBusy> FreeBusy => _mFreeBusy;
 
-        /// <summary>
-        /// A collection of <see cref="Components.Journal"/> components in the iCalendar.
-        /// </summary>
-        public virtual ICalendarObjectList<IJournal> Journals => _mJournals;
+        /// <summary> Gets a list of Journal entries contained in the calendar. </summary>
+        public virtual ICalendarObjectList<Journal> Journals => _mJournals;
 
-        /// <summary>
-        /// A collection of TimeZone components in the iCalendar.
-        /// </summary>
-        public virtual ICalendarObjectList<ITimeZone> TimeZones => _mTimeZones;
+        /// <summary> Gets a list of time zones contained in the calendar. </summary>
+        public virtual ICalendarObjectList<VTimeZone> TimeZones => _mTimeZones;
 
-        /// <summary>
-        /// A collection of <see cref="Components.Todo"/> components in the iCalendar.
-        /// </summary>
-        public virtual IUniqueComponentList<ITodo> Todos => _mTodos;
+        /// <summary> Gets a list of To-do items contained in the calendar. </summary>
+        public virtual IUniqueComponentList<Todo> Todos => _mTodos;
 
+        /// <summary> Gets/sets the calendar version.  Defaults to "2.0". </summary>
         public virtual string Version
         {
             get { return Properties.Get<string>("VERSION"); }
             set { Properties.Set("VERSION", value); }
         }
 
+        /// <summary> Gets/sets the product ID for the calendar. </summary>
         public virtual string ProductId
         {
             get { return Properties.Get<string>("PRODID"); }
             set { Properties.Set("PRODID", value); }
         }
 
+        /// <summary> Gets/sets the scale of the calendar. </summary>
         public virtual string Scale
         {
             get { return Properties.Get<string>("CALSCALE"); }
             set { Properties.Set("CALSCALE", value); }
         }
 
+        /// <summary> Gets/sets the calendar method. </summary>
         public virtual string Method
         {
             get { return Properties.Get<string>("METHOD"); }
             set { Properties.Set("METHOD", value); }
         }
 
+        /// <summary> Gets/sets the restriction on how evaluation of  recurrence patterns occurs within this calendar. </summary>
         public virtual RecurrenceRestrictionType RecurrenceRestriction
         {
             get { return Properties.Get<RecurrenceRestrictionType>("X-DDAY-ICAL-RECURRENCE-RESTRICTION"); }
             set { Properties.Set("X-DDAY-ICAL-RECURRENCE-RESTRICTION", value); }
         }
 
+        /// <summary> Gets/sets the evaluation mode during recurrence evaluation.  Default is ThrowException. </summary>
         public virtual RecurrenceEvaluationModeType RecurrenceEvaluationMode
         {
             get { return Properties.Get<RecurrenceEvaluationModeType>("X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE"); }
@@ -291,7 +287,7 @@ namespace Ical.Net
         /// calendar.
         /// </summary>        
         /// <returns>The time zone added to the calendar.</returns>
-        public ITimeZone AddTimeZone(ITimeZone tz)
+        public VTimeZone AddTimeZone(VTimeZone tz)
         {
             this.AddChild(tz);
             return tz;
@@ -417,20 +413,9 @@ namespace Ical.Net
         }
 
         /// <summary>
-        /// Creates a typed object that is a direct child of the iCalendar itself.  Generally,
-        /// you would invoke this method to create an Event, Todo, Journal, TimeZone, FreeBusy,
-        /// or other base component type.
+        /// Creates a typed object that is a direct child of the iCalendar itself.  Generally, you would invoke this method to create an Event, Todo,
+        /// Journal, TimeZone, FreeBusy, or other base component type.
         /// </summary>
-        /// <example>
-        /// To create an event, use the following:
-        /// <code>
-        /// IICalendar iCal = new iCalendar();
-        /// 
-        /// Event evt = iCal.Create&lt;Event&gt;();
-        /// </code>
-        /// 
-        /// This creates the event, and adds it to the Events list of the iCalendar.
-        /// </example>
         /// <typeparam name="T">The type of object to create</typeparam>
         /// <returns>An object of the type specified</returns>
         public T Create<T>() where T : ICalendarComponent
@@ -451,7 +436,7 @@ namespace Ical.Net
 
         public virtual void MergeWith(IMergeable obj)
         {
-            var c = obj as ICalendar;
+            var c = obj as Calendar;
             if (c != null)
             {
                 if (Name == null)
@@ -486,19 +471,19 @@ namespace Ical.Net
             }
         }
 
-        public virtual IFreeBusy GetFreeBusy(IFreeBusy freeBusyRequest)
+        public virtual FreeBusy GetFreeBusy(FreeBusy freeBusyRequest)
         {
-            return Net.FreeBusy.Create(this, freeBusyRequest);
+            return net.FreeBusy.Create(this, freeBusyRequest);
         }
 
-        public virtual IFreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive)
+        public virtual FreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive)
         {
-            return Net.FreeBusy.Create(this, Net.FreeBusy.CreateRequest(fromInclusive, toExclusive, null, null));
+            return net.FreeBusy.Create(this, net.FreeBusy.CreateRequest(fromInclusive, toExclusive, null, null));
         }
 
-        public virtual IFreeBusy GetFreeBusy(IOrganizer organizer, IAttendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive)
+        public virtual FreeBusy GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, IDateTime fromInclusive, IDateTime toExclusive)
         {
-            return Net.FreeBusy.Create(this, Net.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
+            return net.FreeBusy.Create(this, net.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
         }
     }
 }

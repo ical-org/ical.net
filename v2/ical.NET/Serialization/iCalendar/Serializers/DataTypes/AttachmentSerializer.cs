@@ -1,10 +1,8 @@
 ﻿using System;
 using System.IO;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Serialization;
+using ical.net.DataTypes;
 
-namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
+namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class AttachmentSerializer : EncodableDataTypeSerializer
     {
@@ -12,7 +10,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var a = obj as IAttachment;
+            var a = obj as Attachment;
             if (a == null)
             {
                 return null;
@@ -51,7 +49,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 var data = DecodeData(a, attachment);
 
                 // Get the currently-used encoding off the encoding stack.
-                var encodingStack = GetService<IEncodingStack>();
+                var encodingStack = GetService<EncodingStack>();
                 a.ValueEncoding = encodingStack.Current;
 
                 // Get the format of the attachment

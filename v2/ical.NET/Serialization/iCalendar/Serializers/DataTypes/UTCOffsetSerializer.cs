@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Text.RegularExpressions;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
+using ical.net.DataTypes;
 
-namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
+namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class UtcOffsetSerializer : EncodableDataTypeSerializer
     {
@@ -12,7 +11,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var offset = obj as IUtcOffset;
+            var offset = obj as UtcOffset;
             if (offset != null)
             {
                 var value = (offset.Positive ? "+" : "-") + offset.Hours.ToString("00") + offset.Minutes.ToString("00") +

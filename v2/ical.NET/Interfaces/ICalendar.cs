@@ -1,8 +1,8 @@
-﻿using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.Evaluation;
-using Ical.Net.Interfaces.General;
+﻿using ical.net.Interfaces.Components;
+using ical.net.Interfaces.Evaluation;
+using ical.net.Interfaces.General;
 
-namespace Ical.Net.Interfaces
+namespace ical.net.Interfaces
 {
     public interface ICalendar : ICalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, IMergeable
     {
@@ -52,26 +52,26 @@ namespace Ical.Net.Interfaces
         /// <summary>
         /// Gets a list of Events contained in the calendar.
         /// </summary>
-        IUniqueComponentList<IEvent> Events { get; }
+        IUniqueComponentList<Event> Events { get; }
 
         /// <summary>
         /// Gets a list of Free/Busy components contained in the calendar.
         /// </summary>
-        IUniqueComponentList<IFreeBusy> FreeBusy { get; }
+        IUniqueComponentList<FreeBusy> FreeBusy { get; }
 
         /// <summary>
         /// Gets a list of Journal entries contained in the calendar.
         /// </summary>
-        ICalendarObjectList<IJournal> Journals { get; }
+        ICalendarObjectList<Journal> Journals { get; }
 
         /// <summary>
         /// Gets a list of time zones contained in the calendar.
         /// </summary>
-        ICalendarObjectList<ITimeZone> TimeZones { get; }
+        ICalendarObjectList<VTimeZone> TimeZones { get; }
 
         /// <summary>
         /// Gets a list of To-do items contained in the calendar.
         /// </summary>
-        IUniqueComponentList<ITodo> Todos { get; }
+        IUniqueComponentList<Todo> Todos { get; }
     }
 }

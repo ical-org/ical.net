@@ -1,6 +1,6 @@
-﻿using Ical.Net.General;
+﻿using ical.net.General;
 
-namespace Ical.Net.Interfaces.General
+namespace ical.net.Interfaces.General
 {
     public interface ICalendarPropertyListContainer : ICalendarObject
     {

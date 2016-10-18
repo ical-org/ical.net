@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Interfaces.Serialization.Factory;
-using Ical.Net.Utility;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.General;
+using ical.net.Interfaces.Serialization;
+using ical.net.Interfaces.Serialization.Factory;
+using ical.net.Utility;
 
-namespace Ical.Net.Serialization.iCalendar.Serializers.Components
+namespace ical.net.Serialization.iCalendar.Serializers.Components
 {
     public class ComponentSerializer : SerializerBase
     {
@@ -17,7 +17,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
 
         public ComponentSerializer() { }
 
-        public ComponentSerializer(ISerializationContext ctx) : base(ctx) { }
+        public ComponentSerializer(SerializationContext ctx) : base(ctx) { }
 
         public override Type TargetType => typeof(CalendarComponent);
 

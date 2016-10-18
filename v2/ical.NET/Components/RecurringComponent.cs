@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Ical.Net.DataTypes;
-using Ical.Net.Evaluation;
-using Ical.Net.General.Proxies;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Utility;
+using ical.net.DataTypes;
+using ical.net.Evaluation;
+using ical.net.General.Proxies;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.General;
+using ical.net.Utility;
 
-namespace Ical.Net
+namespace ical.net
 {
     /// <summary>
     /// An iCalendar component that recurs.
@@ -31,9 +31,9 @@ namespace Ical.Net
 
         protected virtual bool EvaluationIncludesReferenceDate => false;
 
-        public virtual IList<IAttachment> Attachments
+        public virtual IList<Attachment> Attachments
         {
-            get { return Properties.GetMany<IAttachment>("ATTACH"); }
+            get { return Properties.GetMany<Attachment>("ATTACH"); }
             set { Properties.Set("ATTACH", value); }
         }
 
@@ -76,15 +76,15 @@ namespace Ical.Net
             set { Properties.Set("DTSTART", value); }
         }
 
-        public virtual IList<IPeriodList> ExceptionDates
+        public virtual IList<PeriodList> ExceptionDates
         {
-            get { return Properties.GetMany<IPeriodList>("EXDATE"); }
+            get { return Properties.GetMany<PeriodList>("EXDATE"); }
             set { Properties.Set("EXDATE", value); }
         }
 
-        public virtual IList<IRecurrencePattern> ExceptionRules
+        public virtual IList<RecurrencePattern> ExceptionRules
         {
-            get { return Properties.GetMany<IRecurrencePattern>("EXRULE"); }
+            get { return Properties.GetMany<RecurrencePattern>("EXRULE"); }
             set { Properties.Set("EXRULE", value); }
         }
 
@@ -100,15 +100,15 @@ namespace Ical.Net
             set { Properties.Set("PRIORITY", value); }
         }
 
-        public virtual IList<IPeriodList> RecurrenceDates
+        public virtual IList<PeriodList> RecurrenceDates
         {
-            get { return Properties.GetMany<IPeriodList>("RDATE"); }
+            get { return Properties.GetMany<PeriodList>("RDATE"); }
             set { Properties.Set("RDATE", value); }
         }
 
-        public virtual IList<IRecurrencePattern> RecurrenceRules
+        public virtual IList<RecurrencePattern> RecurrenceRules
         {
-            get { return Properties.GetMany<IRecurrencePattern>("RRULE"); }
+            get { return Properties.GetMany<RecurrencePattern>("RRULE"); }
             set { Properties.Set("RRULE", value); }
         }
 
@@ -148,7 +148,7 @@ namespace Ical.Net
         /// <summary>
         /// A list of <see cref="Alarm"/>s for this recurring component.
         /// </summary>
-        public virtual ICalendarObjectList<IAlarm> Alarms => new CalendarObjectListProxy<IAlarm>(Children);
+        public virtual ICalendarObjectList<Alarm> Alarms => new CalendarObjectListProxy<Alarm>(Children);
 
         public RecurringComponent()
         {

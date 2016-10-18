@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Interfaces.Serialization.Factory;
+using ical.net.DataTypes;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.Serialization;
+using ical.net.Interfaces.Serialization.Factory;
 
-namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
+namespace ical.net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class PeriodSerializer : EncodableDataTypeSerializer
     {
@@ -14,7 +14,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var p = obj as IPeriod;
+            var p = obj as Period;
             var factory = GetService<ISerializerFactory>();
 
             if (p != null && factory != null)
@@ -54,7 +54,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         {
             var value = tr.ReadToEnd();
 
-            var p = CreateAndAssociate() as IPeriod;
+            var p = CreateAndAssociate() as Period;
             var factory = GetService<ISerializerFactory>();
             if (p != null && factory != null)
             {

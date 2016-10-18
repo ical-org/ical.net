@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
+using ical.net.DataTypes;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
-namespace Ical.Net.UnitTests
+namespace ical.net.unittests
 {
     public class EqualityAndHashingTests
     {
@@ -52,14 +51,14 @@ namespace Ical.Net.UnitTests
             {
                 DtStart = new CalDateTime(_nowTime),
                 DtEnd = new CalDateTime(_later),
-                Duration = TimeSpan.FromHours(1),
+                Duration = TimeSpan.FromHours(1)
             };
 
             var expected = new Event
             {
                 DtStart = new CalDateTime(_nowTime),
                 DtEnd = new CalDateTime(_later),
-                Duration = TimeSpan.FromHours(1),
+                Duration = TimeSpan.FromHours(1)
             };
             yield return new TestCaseData(outgoing, expected).SetName("Events with start, end, and duration");
 
@@ -72,8 +71,8 @@ namespace Ical.Net.UnitTests
             {
                 Count = 5
             };
-            outgoing.RecurrenceRules = new List<IRecurrencePattern> {fiveA};
-            expected.RecurrenceRules = new List<IRecurrencePattern> {fiveB};
+            outgoing.RecurrenceRules = new List<RecurrencePattern> {fiveA};
+            expected.RecurrenceRules = new List<RecurrencePattern> {fiveB};
             yield return new TestCaseData(outgoing, expected).SetName("Events with start, end, duration, and one recurrence rule");
         }
 
@@ -90,7 +89,7 @@ namespace Ical.Net.UnitTests
                 DtStart = new CalDateTime(_nowTime),
                 DtEnd = new CalDateTime(_later),
                 Duration = TimeSpan.FromHours(1),
-                RecurrenceRules = new List<IRecurrencePattern> { rruleA },
+                RecurrenceRules = new List<RecurrencePattern> { rruleA }
             };
 
             var actualCalendar = new Calendar();
@@ -108,7 +107,7 @@ namespace Ical.Net.UnitTests
                 DtStart = new CalDateTime(_nowTime),
                 DtEnd = new CalDateTime(_later),
                 Duration = TimeSpan.FromHours(1),
-                RecurrenceRules = new List<IRecurrencePattern> { rruleB },
+                RecurrenceRules = new List<RecurrencePattern> { rruleB }
             });
 
             Assert.AreEqual(actualCalendar.GetHashCode(), expectedCalendar.GetHashCode());
@@ -196,8 +195,8 @@ namespace Ical.Net.UnitTests
         [Test, TestCaseSource(nameof(CalendarCollection_TestCases))]
         public void CalendarCollection_Tests(string rawCalendar)
         {
-            var a = Calendar.LoadFromStream(new StringReader(IcsFiles.USHolidays)) as CalendarCollection;
-            var b = Calendar.LoadFromStream(new StringReader(IcsFiles.USHolidays)) as CalendarCollection;
+            var a = Calendar.LoadFromStream(new StringReader(IcsFiles.USHolidays));
+            var b = Calendar.LoadFromStream(new StringReader(IcsFiles.USHolidays));
             
             Assert.IsNotNull(a);
             Assert.IsNotNull(b);

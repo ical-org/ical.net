@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
+using ical.net.DataTypes;
+using ical.net.Interfaces.DataTypes;
 
-namespace Ical.Net.Evaluation
+namespace ical.net.Evaluation
 {
     public class EventEvaluator : RecurringEvaluator
     {
-        protected IEvent Event
+        protected Event Event
         {
-            get { return Recurrable as IEvent; }
+            get { return Recurrable as Event; }
             set { Recurrable = value; }
         }
 
-        public EventEvaluator(IEvent evt) : base(evt) {}
+        public EventEvaluator(Event evt) : base(evt) {}
 
         /// <summary>
         /// Evaluates this event to determine the dates and times for which the event occurs.
@@ -33,7 +33,7 @@ namespace Ical.Net.Evaluation
         /// <param name="periodEnd">The end date of the range to evaluate.</param>
         /// <param name="includeReferenceDateInResults"></param>
         /// <returns></returns>
-        public override HashSet<IPeriod> Evaluate(IDateTime referenceTime, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override HashSet<Period> Evaluate(IDateTime referenceTime, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Evaluate recurrences normally
             base.Evaluate(referenceTime, periodStart, periodEnd, includeReferenceDateInResults);

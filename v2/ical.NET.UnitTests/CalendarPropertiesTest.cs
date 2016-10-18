@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Serialization;
-using Ical.Net.Serialization.iCalendar.Factory;
+using ical.net.Interfaces.Serialization;
+using ical.net.Serialization;
+using ical.net.Serialization.iCalendar.Factory;
 using NUnit.Framework;
 
-namespace Ical.Net.UnitTests
+namespace ical.net.unittests
 {
     [TestFixture]
     public class CalendarPropertiesTest

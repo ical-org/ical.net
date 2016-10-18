@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text;
-using Ical.Net.Interfaces.Serialization;
+using ical.net.Interfaces.Serialization;
 
-namespace Ical.Net.Serialization
+namespace ical.net.Serialization
 {
     public class EncodingProvider : IEncodingProvider
     {
@@ -10,9 +10,9 @@ namespace Ical.Net.Serialization
 
         public delegate byte[] DecoderDelegate(string value);
 
-        private readonly ISerializationContext _mSerializationContext;
+        private readonly SerializationContext _mSerializationContext;
 
-        public EncodingProvider(ISerializationContext ctx)
+        public EncodingProvider(SerializationContext ctx)
         {
             _mSerializationContext = ctx;
         }
@@ -160,7 +160,7 @@ namespace Ical.Net.Serialization
             }
 
             // Decode the string into the current encoding
-            var encodingStack = _mSerializationContext.GetService(typeof (IEncodingStack)) as IEncodingStack;
+            var encodingStack = _mSerializationContext.GetService(typeof (EncodingStack)) as EncodingStack;
             return encodingStack.Current.GetString(data);
         }
 

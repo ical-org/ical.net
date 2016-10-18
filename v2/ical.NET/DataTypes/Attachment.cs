@@ -1,19 +1,18 @@
 using System;
 using System.Linq;
 using System.Text;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
-using Ical.Net.Utility;
+using ical.net.Interfaces.General;
+using ical.net.Serialization.iCalendar.Serializers.DataTypes;
+using ical.net.Utility;
 
-namespace Ical.Net.DataTypes
+namespace ical.net.DataTypes
 {
     /// <summary>
     /// Attachments represent the ATTACH element that can be associated with Alarms, Journals, Todos, and Events. There are two kinds of attachments:
     /// 1) A string representing a URI which is typically human-readable, OR
     /// 2) A base64-encoded string that can represent anything
     /// </summary>
-    public class Attachment : EncodableDataType, IAttachment
+    public class Attachment : EncodableDataType//, IAttachment
     {
         public virtual Uri Uri { get; set; }
         public virtual byte[] Data { get; set; }

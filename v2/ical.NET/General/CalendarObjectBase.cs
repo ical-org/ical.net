@@ -1,7 +1,7 @@
 ﻿using System;
-using Ical.Net.Interfaces.General;
+using ical.net.Interfaces.General;
 
-namespace Ical.Net.General
+namespace ical.net.General
 {
     public class CalendarObjectBase : ICopyable, ILoadable
     {
@@ -41,7 +41,7 @@ namespace Ical.Net.General
 
         public virtual bool IsLoaded => _mIsLoaded;
 
-        [field: NonSerialized]
+        //[field: NonSerialized]
         public event EventHandler Loaded;
 
         public virtual void OnLoaded()

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
+using ical.net.DataTypes;
 using NUnit.Framework;
 
-namespace Ical.Net.UnitTests
+namespace ical.net.unittests
 {
     public class DocumentationExamples
     {
@@ -16,7 +15,7 @@ namespace Ical.Net.UnitTests
             var vEvent = new Event
             {
                 DtStart = new CalDateTime(DateTime.Parse("2016-07-01T07:00")),
-                DtEnd = new CalDateTime(DateTime.Parse("2016-07-01T08:00")),
+                DtEnd = new CalDateTime(DateTime.Parse("2016-07-01T08:00"))
             };
 
             //Recur daily through the end of the day, July 31, 2016
@@ -25,7 +24,7 @@ namespace Ical.Net.UnitTests
                 Until = DateTime.Parse("2016-07-31T11:59:59")
             };
 
-            vEvent.RecurrenceRules = new List<IRecurrencePattern> {recurrenceRule};
+            vEvent.RecurrenceRules = new List<RecurrencePattern> {recurrenceRule};
             var calendar = new Calendar();
             calendar.Events.Add(vEvent);
 
@@ -45,7 +44,7 @@ namespace Ical.Net.UnitTests
             var vEvent = new Event
             {
                 DtStart = new CalDateTime(DateTime.Parse("2016-07-05T07:00")),
-                DtEnd = new CalDateTime(DateTime.Parse("2016-07-05T08:00")),
+                DtEnd = new CalDateTime(DateTime.Parse("2016-07-05T08:00"))
             };
 
             // Recurring every other Tuesday until Dec 31
@@ -53,7 +52,7 @@ namespace Ical.Net.UnitTests
             {
                 Until = DateTime.Parse("2016-12-31T11:59:59")
             };
-            vEvent.RecurrenceRules = new List<IRecurrencePattern> { rrule };
+            vEvent.RecurrenceRules = new List<RecurrencePattern> { rrule };
 
             // Count every other Tuesday between July 1 and Dec 31.
             // The first Tuesday is July 5. There should be 13 in total
@@ -72,7 +71,7 @@ namespace Ical.Net.UnitTests
             var vEvent = new Event
             {
                 DtStart = new CalDateTime(DateTime.Parse("2000-11-23T07:00")),
-                DtEnd = new CalDateTime(DateTime.Parse("2000-11-23T19:00")),
+                DtEnd = new CalDateTime(DateTime.Parse("2000-11-23T19:00"))
             };
 
             // Recurring every other Tuesday until Dec 31
@@ -81,10 +80,10 @@ namespace Ical.Net.UnitTests
                 Frequency = FrequencyType.Yearly,
                 Interval = 1,
                 ByMonth = new List<int> { 11 },
-                ByDay = new List<IWeekDay> { new WeekDay { DayOfWeek = DayOfWeek.Thursday, Offset = 4 } },
+                ByDay = new List<WeekDay> { new WeekDay { DayOfWeek = DayOfWeek.Thursday, Offset = 4 } },
                 Until = DateTime.MaxValue
             };
-            vEvent.RecurrenceRules = new List<IRecurrencePattern> { rrule };
+            vEvent.RecurrenceRules = new List<RecurrencePattern> { rrule };
 
             var searchStart = DateTime.Parse("2000-01-01");
             var searchEnd = DateTime.Parse("2017-01-01");
@@ -105,15 +104,15 @@ namespace Ical.Net.UnitTests
             {
                 DtStart = new CalDateTime(DateTime.Parse("2016-01-01T07:00")),
                 DtEnd = new CalDateTime(DateTime.Parse("2016-12-31T08:00")),
-                RecurrenceRules = new List<IRecurrencePattern> { new RecurrencePattern(FrequencyType.Daily, 1)},
+                RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Daily, 1)}
             };
 
             //Define the exceptions: Sunday
             var exceptionRule = new RecurrencePattern(FrequencyType.Weekly, 1)
             {
-                ByDay = new List<IWeekDay> { new WeekDay(DayOfWeek.Sunday) }
+                ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Sunday) }
             };
-            vEvent.ExceptionRules = new List<IRecurrencePattern> {exceptionRule};
+            vEvent.ExceptionRules = new List<RecurrencePattern> {exceptionRule};
 
             var calendar = new Calendar();
             calendar.Events.Add(vEvent);

@@ -21,7 +21,7 @@
     <DefineConstants>TRACE,NET_4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\net40\Ical.Net.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net40\ical.net.xml</DocumentationFile>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
     <NoWarn>CS7035</NoWarn>
@@ -30,7 +30,7 @@
     <OutputPath>bin\Release\net45\</OutputPath>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>bin\Release\net45\Ical.Net.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net45\ical.net.xml</DocumentationFile>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -41,7 +41,7 @@
     <OutputPath>bin\Release\net46\</OutputPath>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>bin\Release\net46\Ical.Net.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net46\ical.net.xml</DocumentationFile>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -51,17 +51,21 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <ProjectGuid>{F88DB6D3-CB95-4707-9C88-B53403AADC61}</ProjectGuid>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
   <PropertyGroup>
-    <RootNamespace>Ical.Net</RootNamespace>
+    <RootNamespace>ical.net</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyName>ical.net</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NodaTime, Version=1.3.0.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
-      <HintPath>..\packages\NodaTime.1.3.1\lib\net35-Client\NodaTime.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="NodaTime">
+      <HintPath>..\packages\NodaTime.2.0.0-alpha20160729\lib\netstandard1.1\NodaTime.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -111,16 +115,12 @@
     <Compile Include="General\Proxies\ParameterCollectionProxy.cs" />
     <Compile Include="General\ServiceProvider.cs" />
     <Compile Include="General\Proxies\UniqueComponentListProxy.cs" />
-    <Compile Include="Interfaces\DataTypes\IFreeBusyEntry.cs" />
     <Compile Include="Interfaces\Evaluation\IGetFreeBusy.cs" />
     <Compile Include="Interfaces\Evaluation\IGetOccurrences.cs" />
     <Compile Include="Interfaces\Components\IAlarmContainer.cs" />
     <Compile Include="Interfaces\DataTypes\ICalendarDataType.cs" />
     <Compile Include="Interfaces\DataTypes\IDateTime.cs" />
-    <Compile Include="Interfaces\DataTypes\IWeekDay.cs" />
     <Compile Include="Interfaces\DataTypes\IEncodableDataType.cs" />
-    <Compile Include="Interfaces\DataTypes\IGeographicLocation.cs" />
-    <Compile Include="Interfaces\DataTypes\IPeriod.cs" />
     <Compile Include="Interfaces\Evaluation\IEvaluator.cs" />
     <Compile Include="Interfaces\Evaluation\IRecurrable.cs" />
     <Compile Include="Interfaces\General\ICalendarObjectList.cs" />
@@ -130,9 +130,6 @@
     <Compile Include="Interfaces\Serialization\Factory\ISerializerFactory.cs" />
     <Compile Include="Interfaces\Serialization\IDataTypeMapper.cs" />
     <Compile Include="Interfaces\Serialization\IEncodingProvider.cs" />
-    <Compile Include="Interfaces\Serialization\IEncodingStack.cs" />
-    <Compile Include="Interfaces\Serialization\ISerializationContext.cs" />
-    <Compile Include="Interfaces\Serialization\ISerializationProcessor.cs" />
     <Compile Include="Interfaces\Serialization\ISerializationSettings.cs" />
     <Compile Include="Interfaces\Serialization\ISerializer.cs" />
     <Compile Include="Interfaces\Serialization\IStringSerializer.cs" />
@@ -190,22 +187,6 @@
     <Compile Include="CalendarCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Interfaces\Components\IAlarm.cs" />
-    <Compile Include="Interfaces\Components\IEvent.cs" />
-    <Compile Include="Interfaces\Components\IFreeBusy.cs" />
-    <Compile Include="Interfaces\Components\IJournal.cs" />
-    <Compile Include="Interfaces\Components\ITimeZone.cs" />
-    <Compile Include="Interfaces\Components\ITodo.cs" />
-    <Compile Include="Interfaces\DataTypes\IAttendee.cs" />
-    <Compile Include="Interfaces\DataTypes\IAttachment.cs" />
-    <Compile Include="Interfaces\DataTypes\IOrganizer.cs" />
-    <Compile Include="Interfaces\DataTypes\IPeriodList.cs" />
-    <Compile Include="Interfaces\DataTypes\IRecurrencePattern.cs" />
-    <Compile Include="Interfaces\DataTypes\IRequestStatus.cs" />
-    <Compile Include="Interfaces\DataTypes\IStatusCode.cs" />
-    <Compile Include="Interfaces\DataTypes\ITrigger.cs" />
-    <Compile Include="Interfaces\DataTypes\IUTCOffset.cs" />
-    <Compile Include="Interfaces\IICalendarCollection.cs" />
     <Compile Include="Interfaces\Components\IRecurringComponent.cs" />
     <Compile Include="Interfaces\Components\IUniqueComponent.cs" />
     <Compile Include="Interfaces\Components\ICalendarComponent.cs" />
@@ -213,13 +194,10 @@
     <Compile Include="Interfaces\General\IParameterCollection.cs" />
     <Compile Include="Interfaces\General\ICalendarParameterCollectionContainer.cs" />
     <Compile Include="Interfaces\General\ICalendarProperty.cs" />
-    <Compile Include="Interfaces\General\ICalendarPropertyListContainer.cs" />
     <Compile Include="Interfaces\General\ICopyable.cs" />
     <Compile Include="Interfaces\General\ILoadable.cs" />
     <Compile Include="Interfaces\General\IMergeable.cs" />
-    <Compile Include="Interfaces\ICalendar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="packages.config" />
     <Compile Include="Serialization\DataTypeMapper.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataMapSerializer.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\DataTypes\DateTimeSerializer.cs" />
@@ -263,12 +241,14 @@
       <Project>{cb7cc882-ed47-46c0-aaae-7a437f22f1c6}</Project>
       <Name>antlr.runtime</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ical.NET.Collections\ical.NET.Collections\Ical.Net.Collections.csproj">
+    <ProjectReference Include="..\ical.NET.Collections\ical.NET.Collections\ical.net.collections.csproj">
       <Project>{E04EFEB6-4625-4D58-AC91-7B8B8A2C97BB}</Project>
-      <Name>Ical.Net.Collections</Name>
+      <Name>ical.net.collections</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -289,10 +269,11 @@
     <!-- Package the project -->
     <Exec WorkingDirectory="$(BuildDir)" Command="NuGet.exe pack -IncludeReferencedProjects -Verbosity detailed -Symbols -OutputDir &quot;NuGet&quot; -Version %(OutputAssemblyInfo.Version) -Properties &quot;Configuration=$(Configuration)&quot;" />
   </Target>
-  <PropertyGroup>
-    <!--    <PreBuildEvent>subwcrev.exe $(ProjectDir). $(ProjectDir)Properties\AssemblyInfo.cs.template $(ProjectDir)Properties\AssemblyInfo.cs</PreBuildEvent>
-    -->
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
+  <Import Project="..\packages\NodaTime.2.0.0-alpha20160729\build\NodaTime.targets" Condition="Exists('..\packages\NodaTime.2.0.0-alpha20160729\build\NodaTime.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\NodaTime.2.0.0-alpha20160729\build\NodaTime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NodaTime.2.0.0-alpha20160729\build\NodaTime.targets'))" />
+  </Target>
 </Project>

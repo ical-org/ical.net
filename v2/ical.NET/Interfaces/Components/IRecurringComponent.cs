@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Evaluation;
+using ical.net.DataTypes;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.Evaluation;
 
-namespace Ical.Net.Interfaces.Components
+namespace ical.net.Interfaces.Components
 {
-    public interface IRecurringComponent : IUniqueComponent, IRecurrable, IAlarmContainer
+    public interface IRecurringComponent : IUniqueComponent, IRecurrable
     {
-        IList<IAttachment> Attachments { get; set; }
+        IList<Attachment> Attachments { get; set; }
         IList<string> Categories { get; set; }
         string Class { get; set; }
         IList<string> Contacts { get; set; }

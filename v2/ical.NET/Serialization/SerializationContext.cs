@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using Ical.Net.General;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Serialization.Factory;
-using Ical.Net.Serialization.iCalendar.Factory;
-using Ical.Net.Serialization.iCalendar.Processors;
+using ical.net.General;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.General;
+using ical.net.Serialization.Factory;
+using ical.net.Serialization.iCalendar.Factory;
+using ical.net.Serialization.iCalendar.Processors;
+using IServiceProvider = ical.net.Interfaces.General.IServiceProvider;
 
-namespace Ical.Net.Serialization
+namespace ical.net.Serialization
 {
-    public class SerializationContext : ISerializationContext
+    public class SerializationContext : IServiceProvider// : SerializationContext
     {
         private static SerializationContext _default;
 
         /// <summary>
         /// Gets the Singleton instance of the SerializationContext class.
         /// </summary>
-        public static ISerializationContext Default
+        public static SerializationContext Default
         {
             get
             {
@@ -53,7 +52,7 @@ namespace Ical.Net.Serialization
             SetService(new DataTypeMapper());
             SetService(new EncodingStack());
             SetService(new EncodingProvider(this));
-            SetService(new CompositeProcessor<ICalendar>());
+            SetService(new CompositeProcessor<Calendar>());
             SetService(new CompositeProcessor<ICalendarComponent>());
             SetService(new CompositeProcessor<ICalendarProperty>());
         }

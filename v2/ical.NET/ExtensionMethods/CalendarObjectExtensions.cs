@@ -1,6 +1,6 @@
-﻿using Ical.Net.Interfaces.General;
+﻿using ical.net.Interfaces.General;
 
-namespace Ical.Net.ExtensionMethods
+namespace ical.net.ExtensionMethods
 {
     public static class CalendarObjectExtensions
     {

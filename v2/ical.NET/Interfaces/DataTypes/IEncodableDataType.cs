@@ -1,6 +1,6 @@
-﻿namespace Ical.Net.Interfaces.DataTypes
+﻿namespace ical.net.Interfaces.DataTypes
 {
-    public interface IEncodableDataType : ICalendarDataType
+    public interface IEncodableDataType
     {
         string Encoding { get; set; }
     }

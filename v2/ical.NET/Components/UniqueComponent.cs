@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
+using ical.net.DataTypes;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.DataTypes;
 
-namespace Ical.Net
+namespace ical.net
 {
     /// <summary>
     /// Represents a unique component, a component with a unique UID,
@@ -50,9 +50,9 @@ namespace Ical.Net
             }
         }
 
-        public virtual IList<IAttendee> Attendees
+        public virtual IList<Attendee> Attendees
         {
-            get { return Properties.GetMany<IAttendee>("ATTENDEE"); }
+            get { return Properties.GetMany<Attendee>("ATTENDEE"); }
             set { Properties.Set("ATTENDEE", value); }
         }
 
@@ -68,15 +68,15 @@ namespace Ical.Net
             set { Properties.Set("DTSTAMP", value); }
         }
 
-        public virtual IOrganizer Organizer
+        public virtual Organizer Organizer
         {
-            get { return Properties.Get<IOrganizer>("ORGANIZER"); }
+            get { return Properties.Get<Organizer>("ORGANIZER"); }
             set { Properties.Set("ORGANIZER", value); }
         }
 
-        public virtual IList<IRequestStatus> RequestStatuses
+        public virtual IList<RequestStatus> RequestStatuses
         {
-            get { return Properties.GetMany<IRequestStatus>("REQUEST-STATUS"); }
+            get { return Properties.GetMany<RequestStatus>("REQUEST-STATUS"); }
             set { Properties.Set("REQUEST-STATUS", value); }
         }
 

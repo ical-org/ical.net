@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Ical.Net.Interfaces.General
+namespace ical.net.Interfaces.General
 {
     public interface IServiceProvider : System.IServiceProvider
     {

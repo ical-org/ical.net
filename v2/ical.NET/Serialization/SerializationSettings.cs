@@ -1,7 +1,7 @@
 ﻿using System;
-using Ical.Net.Interfaces.Serialization;
+using ical.net.Interfaces.Serialization;
 
-namespace Ical.Net.Serialization
+namespace ical.net.Serialization
 {
     public class SerializationSettings : ISerializationSettings
     {

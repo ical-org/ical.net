@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
-using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
+using ical.net.DataTypes;
+using ical.net.Interfaces.Components;
+using ical.net.Interfaces.DataTypes;
 
-namespace Ical.Net
+namespace ical.net
 {
     /// <summary>
     /// A class that represents an RFC 2445 VALARM component.
     /// FIXME: move GetOccurrences() logic into an AlarmEvaluator.
     /// </summary>    
-    public class Alarm : CalendarComponent, IAlarm
+    public class Alarm : CalendarComponent
     {
         public virtual AlarmAction Action
         {
@@ -18,15 +18,15 @@ namespace Ical.Net
             set { Properties.Set("ACTION", value); }
         }
 
-        public virtual IAttachment Attachment
+        public virtual Attachment Attachment
         {
-            get { return Properties.Get<IAttachment>("ATTACH"); }
+            get { return Properties.Get<Attachment>("ATTACH"); }
             set { Properties.Set("ATTACH", value); }
         }
 
-        public virtual IList<IAttendee> Attendees
+        public virtual IList<Attendee> Attendees
         {
-            get { return Properties.GetMany<IAttendee>("ATTENDEE"); }
+            get { return Properties.GetMany<Attendee>("ATTENDEE"); }
             set { Properties.Set("ATTENDEE", value); }
         }
 
@@ -54,9 +54,9 @@ namespace Ical.Net
             set { Properties.Set("SUMMARY", value); }
         }
 
-        public virtual ITrigger Trigger
+        public virtual Trigger Trigger
         {
-            get { return Properties.Get<ITrigger>("TRIGGER"); }
+            get { return Properties.Get<Trigger>("TRIGGER"); }
             set { Properties.Set("TRIGGER", value); }
         }
 

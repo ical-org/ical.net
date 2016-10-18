@@ -1,12 +1,12 @@
 using System;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using ical.net.Interfaces.DataTypes;
+using ical.net.Interfaces.General;
+using ical.net.Serialization.iCalendar.Serializers.DataTypes;
 
-namespace Ical.Net.DataTypes
+namespace ical.net.DataTypes
 {
     /// <summary> Represents an iCalendar period of time. </summary>    
-    public class Period : EncodableDataType, IPeriod
+    public class Period : EncodableDataType, IComparable<Period>
     {
         public Period() { }
 
@@ -50,7 +50,7 @@ namespace Ical.Net.DataTypes
         {
             base.CopyFrom(obj);
 
-            var p = obj as IPeriod;
+            var p = obj as Period;
             if (p == null)
             {
                 return;
@@ -69,7 +69,7 @@ namespace Ical.Net.DataTypes
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((Period) obj);
         }
 
@@ -172,13 +172,13 @@ namespace Ical.Net.DataTypes
             return EndTime == null || EndTime.GreaterThan(dt);
         }
 
-        public virtual bool CollidesWith(IPeriod period)
+        public virtual bool CollidesWith(Period period)
         {
             return period != null
                 && ((period.StartTime != null && Contains(period.StartTime)) || (period.EndTime != null && Contains(period.EndTime)));
         }
 
-        public int CompareTo(IPeriod p)
+        public int CompareTo(Period p)
         {
             if (p == null)
             {

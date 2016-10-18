@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Ical.Net.Interfaces.DataTypes;
+using ical.net.Interfaces.DataTypes;
 
-namespace Ical.Net.Interfaces.Components
+namespace ical.net.Interfaces.Components
 {
-    public interface IEvent : IRecurringComponent
+    public interface IEvent : IRecurringComponent, IAlarmContainer
     {
         /// <summary>
         /// The end date/time of the event.

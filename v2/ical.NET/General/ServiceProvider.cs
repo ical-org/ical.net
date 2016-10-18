@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
-namespace Ical.Net.General
+namespace ical.net.General
 {
     public class ServiceProvider //: IServiceProvider
     {
@@ -59,7 +60,7 @@ namespace Ical.Net.General
                 _mTypedServices[type] = obj;
 
                 // Get interfaces for the given type
-                foreach (var iface in type.GetInterfaces())
+                foreach (var iface in type.GetTypeInfo().ImplementedInterfaces)
                 {
                     _mTypedServices[iface] = obj;
                 }
@@ -76,7 +77,7 @@ namespace Ical.Net.General
                 }
 
                 // Get interfaces for the given type
-                foreach (var iface in type.GetInterfaces().Where(iface => _mTypedServices.ContainsKey(iface)))
+                foreach (var iface in type.GetTypeInfo().ImplementedInterfaces.Where(iface => _mTypedServices.ContainsKey(iface)))
                 {
                     _mTypedServices.Remove(iface);
                 }

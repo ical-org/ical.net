@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Ical.Net.Interfaces.Serialization
+namespace ical.net.Interfaces.Serialization
 {
     public interface IStringSerializer : ISerializer
     {

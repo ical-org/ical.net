@@ -1,16 +1,15 @@
 using System.IO;
 using System.Linq;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
-using Ical.Net.Utility;
+using ical.net.Interfaces.General;
+using ical.net.Serialization.iCalendar.Serializers.DataTypes;
+using ical.net.Utility;
 
-namespace Ical.Net.DataTypes
+namespace ical.net.DataTypes
 {
     /// <summary>
     /// An iCalendar status code.
     /// </summary>
-    public class StatusCode : EncodableDataType, IStatusCode
+    public class StatusCode : EncodableDataType//, IStatusCode
     {
         public int[] Parts { get; private set; }
 
@@ -62,9 +61,9 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (obj is IStatusCode)
+            if (obj is StatusCode)
             {
-                var sc = (IStatusCode) obj;
+                var sc = (StatusCode) obj;
                 Parts = new int[sc.Parts.Length];
                 sc.Parts.CopyTo(Parts, 0);
             }
