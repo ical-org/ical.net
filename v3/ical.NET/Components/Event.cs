@@ -23,7 +23,7 @@ namespace Ical.Net
     ///         <item>Create a TextCollection DataType for 'text' items separated by commas</item>
     ///     </list>
     /// </note>
-    public class Event : RecurringComponent, IEvent
+    public class Event : RecurringComponent, IAlarmContainer, IEvent
     {
         internal const string ComponentName = "VEVENT";
 

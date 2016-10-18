@@ -4,7 +4,7 @@ using Ical.Net.Interfaces.DataTypes;
 
 namespace Ical.Net.Interfaces.Components
 {
-    public interface IEvent : IRecurringComponent
+    public interface IEvent : IRecurringComponent, IAlarmContainer
     {
         /// <summary>
         /// The end date/time of the event.
