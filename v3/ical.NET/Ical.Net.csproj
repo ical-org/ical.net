@@ -191,7 +191,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Interfaces\Components\IEvent.cs" />
-    <Compile Include="Interfaces\Components\IFreeBusy.cs" />
     <Compile Include="Interfaces\Components\ITimeZone.cs" />
     <Compile Include="Interfaces\Components\ITodo.cs" />
     <Compile Include="Interfaces\DataTypes\IAttendee.cs" />

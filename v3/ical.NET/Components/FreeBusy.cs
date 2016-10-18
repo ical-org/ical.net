@@ -9,9 +9,9 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net
 {
-    public class FreeBusy : UniqueComponent, IFreeBusy
+    public class FreeBusy : UniqueComponent, IMergeable
     {
-        public static IFreeBusy Create(ICalendarObject obj, IFreeBusy freeBusyRequest)
+        public static FreeBusy Create(ICalendarObject obj, FreeBusy freeBusyRequest)
         {
             if (!(obj is IGetOccurrencesTyped))
             {
@@ -95,7 +95,7 @@ namespace Ical.Net
             return fb;
         }
 
-        public static IFreeBusy CreateRequest(IDateTime fromInclusive, IDateTime toExclusive, IOrganizer organizer, IAttendee[] contacts)
+        public static FreeBusy CreateRequest(IDateTime fromInclusive, IDateTime toExclusive, IOrganizer organizer, IAttendee[] contacts)
         {
             var fb = new FreeBusy
             {
@@ -187,7 +187,7 @@ namespace Ical.Net
 
         public virtual void MergeWith(IMergeable obj)
         {
-            var fb = obj as IFreeBusy;
+            var fb = obj as FreeBusy;
             if (fb == null)
             {
                 return;
