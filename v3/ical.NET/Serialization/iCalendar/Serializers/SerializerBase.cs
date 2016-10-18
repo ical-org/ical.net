@@ -47,7 +47,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             // NOTE: we don't use a 'using' statement here because
             // we don't want the stream to be closed by this serialization.
             // Fixes bug #3177278 - Serialize closes stream
-            using (var sw = new StreamWriter(stream, encoding))
+
+            const int defaultBuffer = 1024;     //This is StreamWriter's built-in default buffer size
+            using (var sw = new StreamWriter(stream, encoding, defaultBuffer, leaveOpen: true))
             {
                 // Push the current object onto the serialization stack
                 SerializationContext.Push(obj);
