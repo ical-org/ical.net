@@ -140,7 +140,7 @@ namespace Ical.Net
         private IUniqueComponentList<IUniqueComponent> _mUniqueComponents;
         private IUniqueComponentList<IEvent> _mEvents;
         private IUniqueComponentList<ITodo> _mTodos;
-        private ICalendarObjectList<IJournal> _mJournals;
+        private ICalendarObjectList<Journal> _mJournals;
         private IUniqueComponentList<IFreeBusy> _mFreeBusy;
         private ICalendarObjectList<ITimeZone> _mTimeZones;
 
@@ -165,7 +165,7 @@ namespace Ical.Net
             _mUniqueComponents = new UniqueComponentListProxy<IUniqueComponent>(Children);
             _mEvents = new UniqueComponentListProxy<IEvent>(Children);
             _mTodos = new UniqueComponentListProxy<ITodo>(Children);
-            _mJournals = new CalendarObjectListProxy<IJournal>(Children);
+            _mJournals = new CalendarObjectListProxy<Journal>(Children);
             _mFreeBusy = new UniqueComponentListProxy<IFreeBusy>(Children);
             _mTimeZones = new CalendarObjectListProxy<ITimeZone>(Children);
         }
@@ -237,7 +237,7 @@ namespace Ical.Net
         /// <summary>
         /// A collection of <see cref="Components.Journal"/> components in the iCalendar.
         /// </summary>
-        public virtual ICalendarObjectList<IJournal> Journals => _mJournals;
+        public virtual ICalendarObjectList<Journal> Journals => _mJournals;
 
         /// <summary>
         /// A collection of TimeZone components in the iCalendar.

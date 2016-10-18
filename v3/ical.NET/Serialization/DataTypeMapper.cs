@@ -74,7 +74,7 @@ namespace Ical.Net.Serialization
                 {
                     return typeof (TodoStatus);
                 }
-                if (obj.Parent is IJournal)
+                if (obj.Parent is Journal)
                 {
                     return typeof (JournalStatus);
                 }
