@@ -18,7 +18,7 @@ namespace Ical.Net.DataTypes
 
         public IRecurringComponent Component { get; set; }
 
-        public IAlarm Alarm { get; set; }
+        public Alarm Alarm { get; set; }
 
         public IDateTime DateTime
         {
@@ -33,7 +33,7 @@ namespace Ical.Net.DataTypes
             Alarm = ao.Alarm;
         }
 
-        public AlarmOccurrence(IAlarm a, IDateTime dt, IRecurringComponent rc)
+        public AlarmOccurrence(Alarm a, IDateTime dt, IRecurringComponent rc)
         {
             Alarm = a;
             Period = new Period(dt);

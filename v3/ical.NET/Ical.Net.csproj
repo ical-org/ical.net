@@ -190,7 +190,6 @@
     <Compile Include="CalendarCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Interfaces\Components\IAlarm.cs" />
     <Compile Include="Interfaces\Components\IEvent.cs" />
     <Compile Include="Interfaces\Components\IFreeBusy.cs" />
     <Compile Include="Interfaces\Components\IJournal.cs" />
