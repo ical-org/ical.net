@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Ical.Net.Interfaces;
 using NUnit.Framework;
 
 namespace Ical.Net.UnitTests
@@ -23,7 +22,7 @@ namespace Ical.Net.UnitTests
 
             var deserializedCalendars = calendars.AsParallel().SelectMany(c =>
             {
-                IICalendarCollection calendar;
+                CalendarCollection calendar;
                 using (var reader = new StringReader(c ?? string.Empty))
                 {
                     calendar = Calendar.LoadFromStream(reader);

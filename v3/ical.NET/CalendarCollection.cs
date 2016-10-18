@@ -12,7 +12,7 @@ namespace Ical.Net
     /// <summary>
     /// A list of iCalendars.
     /// </summary>
-    public class CalendarCollection : List<ICalendar>, IICalendarCollection
+    public class CalendarCollection : List<ICalendar>//, CalendarCollection
     {
         public void ClearEvaluation()
         {

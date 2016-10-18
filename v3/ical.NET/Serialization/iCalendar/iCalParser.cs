@@ -80,9 +80,9 @@ namespace Ical.Net.Serialization.iCalendar
             initialize();
         }
 
-        public IICalendarCollection icalendar(ISerializationContext ctx) //throws RecognitionException, TokenStreamException
+        public CalendarCollection icalendar(ISerializationContext ctx) //throws RecognitionException, TokenStreamException
         {
-            IICalendarCollection iCalendars = new CalendarCollection();
+            CalendarCollection iCalendars = new CalendarCollection();
 
 
             SerializationUtil.OnDeserializing(iCalendars);
