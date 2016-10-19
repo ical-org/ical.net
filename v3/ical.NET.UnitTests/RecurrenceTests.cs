@@ -8,7 +8,6 @@ using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Exceptions;
 using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;

@@ -1,6 +1,5 @@
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.Components;
 using NUnit.Framework;
 
 namespace Ical.Net.UnitTests

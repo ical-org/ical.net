@@ -1,5 +1,4 @@
 ﻿using System;
-using Ical.Net.Interfaces.Components;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.Components
 {
