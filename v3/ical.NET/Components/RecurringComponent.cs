@@ -31,9 +31,9 @@ namespace Ical.Net
 
         protected virtual bool EvaluationIncludesReferenceDate => false;
 
-        public virtual IList<IAttachment> Attachments
+        public virtual IList<Attachment> Attachments
         {
-            get { return Properties.GetMany<IAttachment>("ATTACH"); }
+            get { return Properties.GetMany<Attachment>("ATTACH"); }
             set { Properties.Set("ATTACH", value); }
         }
 

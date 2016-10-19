@@ -185,7 +185,6 @@
     <Compile Include="CalendarCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Interfaces\DataTypes\IAttachment.cs" />
     <Compile Include="Interfaces\DataTypes\IPeriodList.cs" />
     <Compile Include="Interfaces\Components\IRecurringComponent.cs" />
     <Compile Include="Interfaces\Components\IUniqueComponent.cs" />

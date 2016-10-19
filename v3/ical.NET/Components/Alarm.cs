@@ -18,9 +18,9 @@ namespace Ical.Net
             set { Properties.Set("ACTION", value); }
         }
 
-        public virtual IAttachment Attachment
+        public virtual Attachment Attachment
         {
-            get { return Properties.Get<IAttachment>("ATTACH"); }
+            get { return Properties.Get<Attachment>("ATTACH"); }
             set { Properties.Set("ATTACH", value); }
         }
 

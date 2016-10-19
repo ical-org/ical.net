@@ -25,7 +25,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
             {
                 ISerializer s;
 
-                if (typeof (IAttachment).IsAssignableFrom(objectType))
+                if (typeof (Attachment).IsAssignableFrom(objectType))
                 {
                     s = new AttachmentSerializer();
                 }
