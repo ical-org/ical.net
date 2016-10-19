@@ -73,7 +73,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
                 {
                     s = new TriggerSerializer();
                 }
-                else if (typeof (IUtcOffset).IsAssignableFrom(objectType))
+                else if (typeof (UtcOffset).IsAssignableFrom(objectType))
                 {
                     s = new UtcOffsetSerializer();
                 }

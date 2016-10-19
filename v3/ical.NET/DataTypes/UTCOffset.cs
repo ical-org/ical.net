@@ -7,7 +7,7 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// Represents a time offset from UTC (Coordinated Universal Time).
     /// </summary>
-    public class UtcOffset : EncodableDataType, IUtcOffset
+    public class UtcOffset : EncodableDataType, UtcOffset
     {
         public TimeSpan Offset { get; }
 
