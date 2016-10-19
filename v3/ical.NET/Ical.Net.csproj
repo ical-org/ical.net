@@ -194,7 +194,6 @@
     <Compile Include="Interfaces\General\ICopyable.cs" />
     <Compile Include="Interfaces\General\ILoadable.cs" />
     <Compile Include="Interfaces\General\IMergeable.cs" />
-    <Compile Include="Interfaces\ICalendar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="packages.config" />
     <Compile Include="Serialization\DataTypeMapper.cs" />

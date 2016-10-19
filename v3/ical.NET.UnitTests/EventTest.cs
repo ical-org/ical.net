@@ -1,6 +1,5 @@
 using Ical.Net.DataTypes;
 using Ical.Net.ExtensionMethods;
-using Ical.Net.Interfaces;
 using NUnit.Framework;
 using System;
 using System.Linq;
@@ -16,7 +15,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Event")]
         public void Add1()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
             var evt = new CalendarEvent
             {
@@ -36,7 +35,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Event")]
         public void Remove1()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
             var evt = new CalendarEvent
             {
@@ -60,7 +59,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Event")]
         public void Remove2()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
             var evt = new CalendarEvent
             {
@@ -84,7 +83,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Event")]
         public void EnsureDTSTAMPisNotNull()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
             // Do not set DTSTAMP manually
             var evt = new CalendarEvent
@@ -104,7 +103,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Event")]
         public void EnsureDTSTAMPisOfTypeUTC()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
             var evt = new CalendarEvent
             {

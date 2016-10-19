@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Ical.Net.DataTypes;
-using Ical.Net.Interfaces;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
@@ -20,7 +19,7 @@ namespace Ical.Net.UnitTests
         private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
         private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
         private static CalendarEvent GetSimpleEvent() => new CalendarEvent {DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime};
-        private static ICalendar UnserializeCalendar(string s) => Calendar.LoadFromStream(new StringReader(s)).Single();
+        private static Calendar UnserializeCalendar(string s) => Calendar.LoadFromStream(new StringReader(s)).Single();
 
         [Test, TestCaseSource(nameof(Event_TestCases))]
         public void Event_Tests(Calendar iCalendar)

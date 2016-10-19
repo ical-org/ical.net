@@ -8,7 +8,6 @@ using antlr;
 using antlr.collections;
 using Ical.Net.ExtensionMethods;
 using Ical.Net.General;
-using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Interfaces.Serialization;
@@ -87,7 +86,7 @@ namespace Ical.Net.Serialization.iCalendar
 
             SerializationUtil.OnDeserializing(iCalendars);
 
-            ICalendar cal = null;
+            Calendar cal = null;
             ctx.GetService<ISerializationSettings>();
 
             { // ( ... )*
@@ -129,7 +128,7 @@ namespace Ical.Net.Serialization.iCalendar
                             ;
                         } // ( ... )*
 
-                        var processor = ctx.GetService(typeof(CompositeProcessor<ICalendar>)) as CompositeProcessor<ICalendar>;
+                        var processor = ctx.GetService(typeof(CompositeProcessor<Calendar>)) as CompositeProcessor<Calendar>;
 
                         // Do some pre-processing on the calendar:
                         processor?.PreDeserialization(cal);
@@ -186,7 +185,7 @@ namespace Ical.Net.Serialization.iCalendar
             return iCalendars;
         }
 
-        public void icalbody(SerializationContext ctx, ICalendar cal) //throws RecognitionException, TokenStreamException
+        public void icalbody(SerializationContext ctx, Calendar cal) //throws RecognitionException, TokenStreamException
         {
             var sf = ctx.GetService(typeof(ISerializerFactory)) as ISerializerFactory;
             var cf = ctx.GetService(typeof(ICalendarComponentFactory)) as ICalendarComponentFactory;

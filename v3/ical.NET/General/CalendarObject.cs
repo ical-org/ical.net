@@ -2,7 +2,6 @@ using System;
 using System.Runtime.Serialization;
 using ical.NET.Collections;
 using Ical.Net.ExtensionMethods;
-using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.General
@@ -126,31 +125,25 @@ namespace Ical.Net.General
         public virtual string Name { get; set; }
 
         /// <summary>
-        /// Returns the <see cref="ICalendar"/> that this DDayiCalObject belongs to.
+        /// Returns the <see cref="Calendar"/> that this DDayiCalObject belongs to.
         /// </summary>
-        public virtual ICalendar Calendar
+        public virtual Calendar Calendar
         {
             get
             {
                 ICalendarObject obj = this;
-                while (!(obj is ICalendar) && obj.Parent != null)
+                while (!(obj is Calendar) && obj.Parent != null)
                 {
                     obj = obj.Parent;
                 }
 
-                if (obj is ICalendar)
+                if (obj is Calendar)
                 {
-                    return (ICalendar) obj;
+                    return (Calendar) obj;
                 }
                 return null;
             }
             protected set { }
-        }
-
-        public virtual ICalendar ICalendar
-        {
-            get { return Calendar; }
-            protected set { Calendar = value; }
         }
 
         public virtual int Line { get; set; }

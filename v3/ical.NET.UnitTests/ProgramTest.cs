@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using Ical.Net.DataTypes;
-using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.DataTypes;
 
 using Ical.Net.Utility;
@@ -24,7 +23,7 @@ namespace Ical.Net.UnitTests
 
         private const string _tzid = "US-Eastern";
 
-        public static void TestCal(ICalendar cal)
+        public static void TestCal(Calendar cal)
         {
             Assert.IsNotNull(cal, "The iCalendar was not loaded");
             if (cal.Events.Count > 0)

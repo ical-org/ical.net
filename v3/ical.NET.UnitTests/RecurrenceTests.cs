@@ -7,7 +7,6 @@ using System.Threading;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Exceptions;
-using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
@@ -22,7 +21,7 @@ namespace Ical.Net.UnitTests
         private const string _tzid = "US-Eastern";
 
         private void EventOccurrenceTest(
-            ICalendar cal,
+            Calendar cal,
             IDateTime fromDate,
             IDateTime toDate,
             IDateTime[] dateTimes,
@@ -61,7 +60,7 @@ namespace Ical.Net.UnitTests
         }
 
         private void EventOccurrenceTest(
-            ICalendar cal,
+            Calendar cal,
             IDateTime fromDate,
             IDateTime toDate,
             IDateTime[] dateTimes,
@@ -2678,7 +2677,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Evaluate1()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
             CalendarEvent evt = cal.Create<CalendarEvent>();
             evt.Summary = "Event summary";
 
@@ -2750,7 +2749,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void GetOccurrences1()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
             CalendarEvent evt = cal.Create<CalendarEvent>();
             evt.Start = new CalDateTime(2009, 11, 18, 5, 0, 0);
             evt.End = new CalDateTime(2009, 11, 18, 5, 10, 0);
@@ -2798,7 +2797,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Test1()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
             CalendarEvent evt = cal.Create<CalendarEvent>();
             evt.Summary = "Event summary";
             evt.Start = new CalDateTime(DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc));
@@ -2817,7 +2816,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Test2()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
             CalendarEvent evt = cal.Create<CalendarEvent>();
             evt.Summary = "Event summary";
             evt.Start = new CalDateTime(DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc));

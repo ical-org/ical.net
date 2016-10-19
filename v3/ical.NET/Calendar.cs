@@ -7,7 +7,6 @@ using System.Text;
 using Ical.Net.DataTypes;
 using Ical.Net.ExtensionMethods;
 using Ical.Net.General.Proxies;
-using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
@@ -18,7 +17,7 @@ using Ical.Net.Utility;
 
 namespace Ical.Net
 {
-    public class Calendar : CalendarComponent, ICalendar, IDisposable
+    public class Calendar : CalendarComponent, IDisposable, IGetOccurrencesTyped, IGetFreeBusy, IMergeable
     {
         /// <summary>
         /// Loads an <see cref="Calendar"/> from the file system.
@@ -30,7 +29,7 @@ namespace Ical.Net
             return LoadFromFile(filepath, Encoding.UTF8, new CalendarSerializer());
         }
 
-        public static CalendarCollection LoadFromFile<T>(string filepath) where T : ICalendar
+        public static CalendarCollection LoadFromFile<T>(string filepath) where T : Calendar
         {
             return LoadFromFile(typeof (T), filepath);
         }
@@ -47,7 +46,7 @@ namespace Ical.Net
             return LoadFromFile(filepath, encoding, new CalendarSerializer());
         }
 
-        public static CalendarCollection LoadFromFile<T>(string filepath, Encoding encoding) where T : ICalendar
+        public static CalendarCollection LoadFromFile<T>(string filepath, Encoding encoding) where T : Calendar
         {
             return LoadFromFile(typeof (T), filepath, encoding);
         }
@@ -79,7 +78,7 @@ namespace Ical.Net
             return LoadFromStream(s, Encoding.UTF8, new CalendarSerializer());
         }
 
-        public static CalendarCollection LoadFromStream<T>(Stream s) where T : ICalendar
+        public static CalendarCollection LoadFromStream<T>(Stream s) where T : Calendar
         {
             return LoadFromStream(typeof (T), s);
         }
@@ -96,7 +95,7 @@ namespace Ical.Net
             return LoadFromStream(s, encoding, new CalendarSerializer());
         }
 
-        public new static CalendarCollection LoadFromStream<T>(Stream s, Encoding encoding) where T : ICalendar
+        public new static CalendarCollection LoadFromStream<T>(Stream s, Encoding encoding) where T : Calendar
         {
             return LoadFromStream(typeof (T), s, encoding);
         }
@@ -118,7 +117,7 @@ namespace Ical.Net
             return LoadFromStream(tr, new CalendarSerializer());
         }
 
-        public static CalendarCollection LoadFromStream<T>(TextReader tr) where T : ICalendar
+        public static CalendarCollection LoadFromStream<T>(TextReader tr) where T : Calendar
         {
             return LoadFromStream(typeof (T), tr);
         }
@@ -451,7 +450,7 @@ namespace Ical.Net
 
         public virtual void MergeWith(IMergeable obj)
         {
-            var c = obj as ICalendar;
+            var c = obj as Calendar;
             if (c != null)
             {
                 if (Name == null)

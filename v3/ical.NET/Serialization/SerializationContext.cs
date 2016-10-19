@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Ical.Net.General;
-using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.Factory;
@@ -52,7 +51,7 @@ namespace Ical.Net.Serialization
             SetService(new DataTypeMapper());
             SetService(new EncodingStack());
             SetService(new EncodingProvider(this));
-            SetService(new CompositeProcessor<ICalendar>());
+            SetService(new CompositeProcessor<Calendar>());
             SetService(new CompositeProcessor<ICalendarComponent>());
             SetService(new CompositeProcessor<ICalendarProperty>());
         }
