@@ -10,7 +10,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
     {
         public DataMapSerializer() {}
 
-        public DataMapSerializer(ISerializationContext ctx) : base(ctx) {}
+        public DataMapSerializer(SerializationContext ctx) : base(ctx) {}
 
         protected IStringSerializer GetMappedSerializer()
         {

@@ -7,7 +7,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
     {
         protected EncodableDataTypeSerializer() {}
 
-        protected EncodableDataTypeSerializer(ISerializationContext ctx) : base(ctx) {}
+        protected EncodableDataTypeSerializer(SerializationContext ctx) : base(ctx) {}
 
         protected string Encode(IEncodableDataType dt, string value)
         {

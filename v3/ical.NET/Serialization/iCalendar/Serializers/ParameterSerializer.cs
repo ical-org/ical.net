@@ -2,7 +2,6 @@
 using System.IO;
 using System.Text;
 using Ical.Net.General;
-using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers
 {
@@ -10,7 +9,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
     {
         public ParameterSerializer() {}
 
-        public ParameterSerializer(ISerializationContext ctx) : base(ctx) {}
+        public ParameterSerializer(SerializationContext ctx) : base(ctx) {}
 
         public override Type TargetType => typeof (CalendarParameter);
 

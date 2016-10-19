@@ -16,7 +16,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
     {
         public StringSerializer() {}
 
-        public StringSerializer(ISerializationContext ctx) : base(ctx) {}
+        public StringSerializer(SerializationContext ctx) : base(ctx) {}
 
         internal static readonly Regex SingleBackslashMatch = new Regex(@"(?<!\\)\\(?!\\)", RegexOptions.Compiled);
 

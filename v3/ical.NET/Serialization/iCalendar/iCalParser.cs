@@ -1,6 +1,5 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalParser.cs"$
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -80,7 +79,7 @@ namespace Ical.Net.Serialization.iCalendar
             initialize();
         }
 
-        public CalendarCollection icalendar(ISerializationContext ctx) //throws RecognitionException, TokenStreamException
+        public CalendarCollection icalendar(SerializationContext ctx)
         {
             CalendarCollection iCalendars = new CalendarCollection();
 
@@ -88,8 +87,7 @@ namespace Ical.Net.Serialization.iCalendar
             SerializationUtil.OnDeserializing(iCalendars);
 
             ICalendar cal = null;
-            Type foo = typeof(ISerializationSettings);
-            var settings = ctx.GetService<ISerializationSettings>();
+            ctx.GetService<ISerializationSettings>();
 
             { // ( ... )*
                 for (;;)
@@ -187,7 +185,7 @@ namespace Ical.Net.Serialization.iCalendar
             return iCalendars;
         }
 
-        public void icalbody(ISerializationContext ctx, ICalendar cal) //throws RecognitionException, TokenStreamException
+        public void icalbody(SerializationContext ctx, ICalendar cal) //throws RecognitionException, TokenStreamException
         {
             var sf = ctx.GetService(typeof(ISerializerFactory)) as ISerializerFactory;
             var cf = ctx.GetService(typeof(ICalendarComponentFactory)) as ICalendarComponentFactory;
@@ -217,7 +215,7 @@ namespace Ical.Net.Serialization.iCalendar
             ;
         }
 
-        public ICalendarProperty property(ISerializationContext ctx, ICalendarPropertyListContainer c) //throws RecognitionException, TokenStreamException
+        public ICalendarProperty property(SerializationContext ctx, ICalendarPropertyListContainer c) //throws RecognitionException, TokenStreamException
         {
             ICalendarProperty p;
             {
@@ -340,7 +338,7 @@ namespace Ical.Net.Serialization.iCalendar
             return p;
         }
 
-        public ICalendarComponent component(ISerializationContext ctx, ISerializerFactory sf, ICalendarComponentFactory cf, ICalendarObject o)
+        public ICalendarComponent component(SerializationContext ctx, ISerializerFactory sf, ICalendarComponentFactory cf, ICalendarObject o)
             //throws RecognitionException, TokenStreamException
         {
             ICalendarComponent c;
@@ -462,7 +460,7 @@ namespace Ical.Net.Serialization.iCalendar
             return c;
         }
 
-        public CalendarParameter parameter(ISerializationContext ctx, ICalendarParameterCollectionContainer container)
+        public CalendarParameter parameter(SerializationContext ctx, ICalendarParameterCollectionContainer container)
         {
             CalendarParameter p;
             var values = new List<string>(128);
