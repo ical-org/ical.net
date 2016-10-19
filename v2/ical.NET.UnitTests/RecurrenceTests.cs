@@ -2535,21 +2535,21 @@ namespace Ical.Net.UnitTests
             var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Bug3007244))[0];
 
             EventOccurrenceTest(
-                iCal,
-                new CalDateTime(2010, 7, 18, 0, 0, 0),
-                new CalDateTime(2010, 7, 26, 0, 0, 0),
-                new IDateTime[] {} ,
-                null,
-                0
+                cal: iCal,
+                fromDate: new CalDateTime(2010, 7, 18, 0, 0, 0),
+                toDate: new CalDateTime(2010, 7, 26, 0, 0, 0),
+                dateTimes: new[] { new CalDateTime(2010, 05, 23, 0, 0, 0), },
+                timeZones: null,
+                eventIndex: 0
             );
 
             EventOccurrenceTest(
-                iCal,
-                new CalDateTime(2011, 7, 18, 0, 0, 0),
-                new CalDateTime(2011, 7, 26, 0, 0, 0),
-                new IDateTime[] {},
-                null,
-                0
+                cal: iCal,
+                fromDate: new CalDateTime(2011, 7, 18, 0, 0, 0),
+                toDate: new CalDateTime(2011, 7, 26, 0, 0, 0),
+                dateTimes: new[] { new CalDateTime(2011, 05, 23, 0, 0, 0), },
+                timeZones: null,
+                eventIndex: 0
             );
         }
 
