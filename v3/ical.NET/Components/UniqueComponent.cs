@@ -50,9 +50,9 @@ namespace Ical.Net
             }
         }
 
-        public virtual IList<IAttendee> Attendees
+        public virtual IList<Attendee> Attendees
         {
-            get { return Properties.GetMany<IAttendee>("ATTENDEE"); }
+            get { return Properties.GetMany<Attendee>("ATTENDEE"); }
             set { Properties.Set("ATTENDEE", value); }
         }
 

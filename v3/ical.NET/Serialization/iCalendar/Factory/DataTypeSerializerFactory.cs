@@ -29,7 +29,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
                 {
                     s = new AttachmentSerializer();
                 }
-                else if (typeof (IAttendee).IsAssignableFrom(objectType))
+                else if (typeof (Attendee).IsAssignableFrom(objectType))
                 {
                     s = new AttendeeSerializer();
                 }

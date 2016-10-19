@@ -12,7 +12,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var a = obj as IAttendee;
+            var a = obj as Attendee;
             return a?.Value == null
                 ? null
                 : Encode(a, a.Value.OriginalString);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 
 namespace Ical.Net.Interfaces.Components
@@ -8,7 +9,7 @@ namespace Ical.Net.Interfaces.Components
     {
         string Uid { get; set; }
 
-        IList<IAttendee> Attendees { get; set; }
+        IList<Attendee> Attendees { get; set; }
         IList<string> Comments { get; set; }
         IDateTime DtStamp { get; set; }
         IOrganizer Organizer { get; set; }
