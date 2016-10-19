@@ -1,5 +1,4 @@
-﻿using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
+﻿using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.DataTypes
 {

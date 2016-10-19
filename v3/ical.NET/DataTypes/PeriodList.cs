@@ -11,7 +11,7 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// An iCalendar list of recurring dates (or date exclusions)
     /// </summary>
-    public class PeriodList : EncodableDataType, IPeriodList
+    public class PeriodList : EncodableDataType, IEnumerable<Period>
     {
         public string TzId { get; set; }
         public int Count => Periods.Count;
@@ -54,7 +54,7 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            var list = obj as IPeriodList;
+            var list = obj as PeriodList;
             if (list == null)
             {
                 return;

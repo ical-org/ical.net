@@ -16,9 +16,9 @@ namespace Ical.Net.Interfaces.Evaluation
         /// </summary>
         IDateTime Start { get; set; }
 
-        IList<IPeriodList> ExceptionDates { get; set; }
+        IList<PeriodList> ExceptionDates { get; set; }
         IList<RecurrencePattern> ExceptionRules { get; set; }
-        IList<IPeriodList> RecurrenceDates { get; set; }
+        IList<PeriodList> RecurrenceDates { get; set; }
         IList<RecurrencePattern> RecurrenceRules { get; set; }
         IDateTime RecurrenceId { get; set; }
     }
