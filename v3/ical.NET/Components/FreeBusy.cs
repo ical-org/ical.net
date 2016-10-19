@@ -125,9 +125,9 @@ namespace Ical.Net
             Name = Components.Freebusy;
         }
 
-        public virtual IList<IFreeBusyEntry> Entries
+        public virtual IList<FreeBusyEntry> Entries
         {
-            get { return Properties.GetMany<IFreeBusyEntry>("FREEBUSY"); }
+            get { return Properties.GetMany<FreeBusyEntry>("FREEBUSY"); }
             set { Properties.Set("FREEBUSY", value); }
         }
 

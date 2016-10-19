@@ -3,7 +3,7 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.DataTypes
 {
-    public class FreeBusyEntry : Period, IFreeBusyEntry
+    public class FreeBusyEntry : Period
     {
         public virtual FreeBusyStatus Status { get; set; }
 
@@ -24,7 +24,7 @@ namespace Ical.Net.DataTypes
         {
             base.CopyFrom(obj);
 
-            var fb = obj as IFreeBusyEntry;
+            var fb = obj as FreeBusyEntry;
             if (fb != null)
             {
                 Status = fb.Status;
