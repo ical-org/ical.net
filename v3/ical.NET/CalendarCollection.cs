@@ -12,7 +12,7 @@ namespace Ical.Net
     /// <summary>
     /// A list of iCalendars.
     /// </summary>
-    public class CalendarCollection : List<ICalendar>//, CalendarCollection
+    public class CalendarCollection : List<ICalendar>
     {
         public void ClearEvaluation()
         {
@@ -118,7 +118,7 @@ namespace Ical.Net
             return this.Aggregate<ICalendar, FreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(fromInclusive, toExclusive)));
         }
 
-        public FreeBusy GetFreeBusy(Organizer organizer, Attendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive)
+        public FreeBusy GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, IDateTime fromInclusive, IDateTime toExclusive)
         {
             return this.Aggregate<ICalendar, FreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(organizer, contacts, fromInclusive, toExclusive)));
         }

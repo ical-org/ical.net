@@ -95,7 +95,7 @@ namespace Ical.Net
             return fb;
         }
 
-        public static FreeBusy CreateRequest(IDateTime fromInclusive, IDateTime toExclusive, Organizer organizer, Attendee[] contacts)
+        public static FreeBusy CreateRequest(IDateTime fromInclusive, IDateTime toExclusive, Organizer organizer, IEnumerable<Attendee> contacts)
         {
             var fb = new FreeBusy
             {

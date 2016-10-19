@@ -1,4 +1,5 @@
-﻿using Ical.Net.DataTypes;
+﻿using System.Collections.Generic;
+using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 
 namespace Ical.Net.Interfaces.Evaluation
@@ -7,6 +8,6 @@ namespace Ical.Net.Interfaces.Evaluation
     {
         FreeBusy GetFreeBusy(FreeBusy freeBusyRequest);
         FreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive);
-        FreeBusy GetFreeBusy(Organizer organizer, Attendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive);
+        FreeBusy GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, IDateTime fromInclusive, IDateTime toExclusive);
     }
 }
