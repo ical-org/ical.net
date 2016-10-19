@@ -83,6 +83,7 @@
     <Compile Include="FreeBusyTest.cs" />
     <Compile Include="EventTest.cs" />
     <Compile Include="CopyTest.cs" />
+    <Compile Include="GetOccurrenceTests.cs" />
     <Compile Include="IcsFiles.cs" />
     <Compile Include="JournalTest.cs" />
     <Compile Include="ProgramTest.cs" />
