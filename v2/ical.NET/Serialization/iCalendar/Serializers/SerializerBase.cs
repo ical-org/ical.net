@@ -48,24 +48,22 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             // we don't want the stream to be closed by this serialization.
             // Fixes bug #3177278 - Serialize closes stream
 
-            const int defaultBuffer = 1024;     //This is StreamWriter's built-in default buffer size
-            using (var sw = new StreamWriter(stream, encoding, defaultBuffer, leaveOpen: true))
-            {
-                // Push the current object onto the serialization stack
-                SerializationContext.Push(obj);
+            var sw = new StreamWriter(stream, encoding);
+            // Push the current object onto the serialization stack
+            SerializationContext.Push(obj);
 
-                // Push the current encoding on the stack
-                var encodingStack = GetService<EncodingStack>();
-                encodingStack.Push(encoding);
+            // Push the current encoding on the stack
+            var encodingStack = GetService<EncodingStack>();
+            encodingStack.Push(encoding);
 
-                sw.Write(SerializeToString(obj));
+            sw.Write(SerializeToString(obj));
 
-                // Pop the current encoding off the serialization stack
-                encodingStack.Pop();
+            // Pop the current encoding off the serialization stack
+            encodingStack.Pop();
 
-                // Pop the current object off the serialization stack
-                SerializationContext.Pop();
-            }
+            // Pop the current object off the serialization stack
+            SerializationContext.Pop();
+            sw.Flush();
         }
 
         public virtual object GetService(Type serviceType)
