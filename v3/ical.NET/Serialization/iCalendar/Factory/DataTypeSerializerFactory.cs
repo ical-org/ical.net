@@ -65,7 +65,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
                 {
                     s = new RequestStatusSerializer();
                 }
-                else if (typeof (IStatusCode).IsAssignableFrom(objectType))
+                else if (typeof (StatusCode).IsAssignableFrom(objectType))
                 {
                     s = new StatusCodeSerializer();
                 }

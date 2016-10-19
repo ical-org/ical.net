@@ -30,7 +30,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 try
                 {
                     var factory = GetService<ISerializerFactory>();
-                    var serializer = factory?.Build(typeof (IStatusCode), SerializationContext) as IStringSerializer;
+                    var serializer = factory?.Build(typeof (StatusCode), SerializationContext) as IStringSerializer;
                     if (serializer == null)
                     {
                         return null;
@@ -94,13 +94,13 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
                 if (match.Success)
                 {
-                    var serializer = factory.Build(typeof(IStatusCode), SerializationContext) as IStringSerializer;
+                    var serializer = factory.Build(typeof(StatusCode), SerializationContext) as IStringSerializer;
                     if (serializer == null)
                     {
                         return null;
                     }
 
-                    rs.StatusCode = serializer.Deserialize(new StringReader(Unescape(match.Groups[1].Value))) as IStatusCode;
+                    rs.StatusCode = serializer.Deserialize(new StringReader(Unescape(match.Groups[1].Value))) as StatusCode;
                     rs.Description = Unescape(match.Groups[2].Value);
                     if (match.Groups.Count == 4)
                     {
