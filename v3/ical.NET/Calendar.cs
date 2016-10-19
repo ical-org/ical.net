@@ -17,7 +17,7 @@ using Ical.Net.Utility;
 
 namespace Ical.Net
 {
-    public class Calendar : CalendarComponent, IDisposable, IGetOccurrencesTyped, IGetFreeBusy, IMergeable
+    public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, IMergeable
     {
         /// <summary>
         /// Loads an <see cref="Calendar"/> from the file system.
