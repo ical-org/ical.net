@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
@@ -196,6 +197,22 @@ namespace Ical.Net.UnitTests
             yield return new TestCaseData(_ldapUri, new Uri(_ldapUri)).SetName("ldap URL");
             yield return new TestCaseData("C:\\path\\to\\file.txt", new Uri("C:\\path\\to\\file.txt")).SetName("Local file path URL");
             yield return new TestCaseData("\\\\uncPath\\to\\resource.txt", new Uri("\\\\uncPath\\to\\resource.txt")).SetName("UNC path URL");
+        }
+
+        [Test, Ignore("TODO: Fix CATEGORIES multiple serializations")]
+        public void CategoriesTest()
+        {
+            var vEvent = GetSimpleEvent();
+            vEvent.Categories = new List<string> { "Foo", "Bar", "Baz" };
+            var c = new Calendar();
+            c.Events.Add(vEvent);
+
+            var serialized = SerializeToString(c);
+            var categoriesCount = Regex.Matches(serialized, "CATEGORIES").Count;
+            Assert.AreEqual(1, categoriesCount);
+
+            var deserialized = UnserializeCalendar(serialized);
+            Assert.AreEqual(vEvent, deserialized);
         }
     }
 }
