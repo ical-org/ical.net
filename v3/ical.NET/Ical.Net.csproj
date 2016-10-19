@@ -116,7 +116,6 @@
     <Compile Include="Interfaces\Components\IAlarmContainer.cs" />
     <Compile Include="Interfaces\DataTypes\ICalendarDataType.cs" />
     <Compile Include="Interfaces\DataTypes\IDateTime.cs" />
-    <Compile Include="Interfaces\DataTypes\IWeekDay.cs" />
     <Compile Include="Interfaces\DataTypes\IEncodableDataType.cs" />
     <Compile Include="Interfaces\DataTypes\IGeographicLocation.cs" />
     <Compile Include="Interfaces\DataTypes\IPeriod.cs" />

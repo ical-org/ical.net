@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ical.Net.DataTypes;
 
 namespace Ical.Net.Interfaces.DataTypes
 {
@@ -12,7 +13,7 @@ namespace Ical.Net.Interfaces.DataTypes
         IList<int> BySecond { get; set; }
         IList<int> ByMinute { get; set; }
         IList<int> ByHour { get; set; }
-        IList<IWeekDay> ByDay { get; set; }
+        IList<WeekDay> ByDay { get; set; }
         IList<int> ByMonthDay { get; set; }
         IList<int> ByYearDay { get; set; }
         IList<int> ByWeekNo { get; set; }

@@ -657,7 +657,7 @@ namespace Ical.Net.Evaluation
          * @return
          */
 
-        private List<DateTime> GetAbsWeekDays(DateTime date, IWeekDay weekDay, IRecurrencePattern pattern)
+        private List<DateTime> GetAbsWeekDays(DateTime date, WeekDay weekDay, IRecurrencePattern pattern)
         {
             var days = new List<DateTime>(64);
 

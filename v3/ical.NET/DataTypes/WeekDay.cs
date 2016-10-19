@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
@@ -9,7 +8,7 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// Represents an RFC 5545 "BYDAY" value.
     /// </summary>
-    public class WeekDay : EncodableDataType, IWeekDay
+    public class WeekDay : EncodableDataType
     {
         public virtual int Offset { get; set; } = int.MinValue;
 
@@ -57,9 +56,9 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (obj is IWeekDay)
+            if (obj is WeekDay)
             {
-                var bd = (IWeekDay) obj;
+                var bd = (WeekDay) obj;
                 Offset = bd.Offset;
                 DayOfWeek = bd.DayOfWeek;
             }
@@ -67,14 +66,14 @@ namespace Ical.Net.DataTypes
 
         public int CompareTo(object obj)
         {
-            IWeekDay bd = null;
+            WeekDay bd = null;
             if (obj is string)
             {
                 bd = new WeekDay(obj.ToString());
             }
-            else if (obj is IWeekDay)
+            else if (obj is WeekDay)
             {
-                bd = (IWeekDay) obj;
+                bd = (WeekDay) obj;
             }
 
             if (bd == null)

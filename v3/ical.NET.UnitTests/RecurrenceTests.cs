@@ -2960,7 +2960,7 @@ END:VCALENDAR";
             var rrule = new RecurrencePattern(FrequencyType.Weekly, interval: 1)
             {
                 Until = DateTime.Parse("2016-08-31T07:00:00"),
-                ByDay = new List<IWeekDay> { new WeekDay(DayOfWeek.Wednesday)},
+                ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Wednesday)},
             };
 
             var start = DateTime.Parse("2016-08-01T07:00:00");

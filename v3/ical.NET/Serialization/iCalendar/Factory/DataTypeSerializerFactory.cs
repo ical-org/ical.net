@@ -77,7 +77,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
                 {
                     s = new UtcOffsetSerializer();
                 }
-                else if (typeof (IWeekDay).IsAssignableFrom(objectType))
+                else if (typeof (WeekDay).IsAssignableFrom(objectType))
                 {
                     s = new WeekDaySerializer();
                 }
