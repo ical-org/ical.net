@@ -61,7 +61,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
                 {
                     s = new RecurrencePatternSerializer();
                 }
-                else if (typeof (IRequestStatus).IsAssignableFrom(objectType))
+                else if (typeof (RequestStatus).IsAssignableFrom(objectType))
                 {
                     s = new RequestStatusSerializer();
                 }

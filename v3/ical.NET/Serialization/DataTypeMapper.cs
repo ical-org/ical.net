@@ -46,7 +46,7 @@ namespace Ical.Net.Serialization
             AddPropertyMapping("RDATE", typeof (IPeriodList), false);
             AddPropertyMapping("RECURRENCE-ID", typeof (IDateTime), false);
             AddPropertyMapping("RELATED-TO", typeof (string), false);
-            AddPropertyMapping("REQUEST-STATUS", typeof (IRequestStatus), false);
+            AddPropertyMapping("REQUEST-STATUS", typeof (RequestStatus), false);
             AddPropertyMapping("REPEAT", typeof (int), false);
             AddPropertyMapping("RESOURCES", typeof (string), true);
             AddPropertyMapping("RRULE", typeof (IRecurrencePattern), false);
