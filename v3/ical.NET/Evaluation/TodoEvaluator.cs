@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Utility;
@@ -60,7 +61,7 @@ namespace Ical.Net.Evaluation
             }
         }
 
-        public void DetermineStartingRecurrence(IRecurrencePattern recur, ref IDateTime referenceDateTime)
+        public void DetermineStartingRecurrence(RecurrencePattern recur, ref IDateTime referenceDateTime)
         {
             if (recur.Count != int.MinValue)
             {

@@ -46,7 +46,7 @@ namespace Ical.Net.UnitTests
                 DtStart = new CalDateTime(_nowTime),
                 DtEnd = new CalDateTime(_later),
                 Duration = TimeSpan.FromHours(1),
-                RecurrenceRules = new List<IRecurrencePattern> { rrule },
+                RecurrenceRules = new List<RecurrencePattern> { rrule },
             };
 
             var calendar = new Calendar();

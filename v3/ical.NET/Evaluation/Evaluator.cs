@@ -51,7 +51,7 @@ namespace Ical.Net.Evaluation
             return newDt;
         }
 
-        protected void IncrementDate(ref DateTime dt, IRecurrencePattern pattern, int interval)
+        protected void IncrementDate(ref DateTime dt, RecurrencePattern pattern, int interval)
         {
             // FIXME: use a more specific exception.
             if (interval == 0)

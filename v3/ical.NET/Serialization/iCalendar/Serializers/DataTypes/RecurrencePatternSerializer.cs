@@ -104,7 +104,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var recur = obj as IRecurrencePattern;
+            var recur = obj as RecurrencePattern;
             var factory = GetService<ISerializerFactory>();
             if (recur == null || factory == null)
             {
@@ -215,7 +215,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             var value = tr.ReadToEnd();
 
             // Instantiate the data type
-            var r = CreateAndAssociate() as IRecurrencePattern;
+            var r = CreateAndAssociate() as RecurrencePattern;
             var factory = GetService<ISerializerFactory>();
             if (r == null || factory == null)
             {

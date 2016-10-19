@@ -57,7 +57,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
                 {
                     s = new PeriodListSerializer();
                 }
-                else if (typeof (IRecurrencePattern).IsAssignableFrom(objectType))
+                else if (typeof (RecurrencePattern).IsAssignableFrom(objectType))
                 {
                     s = new RecurrencePatternSerializer();
                 }

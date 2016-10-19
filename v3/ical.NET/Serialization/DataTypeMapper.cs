@@ -36,7 +36,7 @@ namespace Ical.Net.Serialization
             AddPropertyMapping("DUE", typeof (IDateTime), false);
             AddPropertyMapping("DURATION", typeof (TimeSpan), false);
             AddPropertyMapping("EXDATE", typeof (IPeriodList), false);
-            AddPropertyMapping("EXRULE", typeof (IRecurrencePattern), false);
+            AddPropertyMapping("EXRULE", typeof (RecurrencePattern), false);
             AddPropertyMapping("FREEBUSY", typeof (FreeBusyEntry), true);
             AddPropertyMapping("GEO", typeof (IGeographicLocation), false);
             AddPropertyMapping("LAST-MODIFIED", typeof (IDateTime), false);
@@ -49,7 +49,7 @@ namespace Ical.Net.Serialization
             AddPropertyMapping("REQUEST-STATUS", typeof (RequestStatus), false);
             AddPropertyMapping("REPEAT", typeof (int), false);
             AddPropertyMapping("RESOURCES", typeof (string), true);
-            AddPropertyMapping("RRULE", typeof (IRecurrencePattern), false);
+            AddPropertyMapping("RRULE", typeof (RecurrencePattern), false);
             AddPropertyMapping("SEQUENCE", typeof (int), false);
             AddPropertyMapping("STATUS", ResolveStatusProperty, false);
             AddPropertyMapping("TRANSP", typeof (TransparencyType), false);

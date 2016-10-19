@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 using IServiceProvider = Ical.Net.Interfaces.General.IServiceProvider;
 
@@ -16,9 +17,9 @@ namespace Ical.Net.Interfaces.Evaluation
         IDateTime Start { get; set; }
 
         IList<IPeriodList> ExceptionDates { get; set; }
-        IList<IRecurrencePattern> ExceptionRules { get; set; }
+        IList<RecurrencePattern> ExceptionRules { get; set; }
         IList<IPeriodList> RecurrenceDates { get; set; }
-        IList<IRecurrencePattern> RecurrenceRules { get; set; }
+        IList<RecurrencePattern> RecurrenceRules { get; set; }
         IDateTime RecurrenceId { get; set; }
     }
 }
