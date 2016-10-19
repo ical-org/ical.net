@@ -189,7 +189,6 @@
     <Compile Include="CalendarCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Interfaces\Components\ITimeZone.cs" />
     <Compile Include="Interfaces\DataTypes\IAttendee.cs" />
     <Compile Include="Interfaces\DataTypes\IAttachment.cs" />
     <Compile Include="Interfaces\DataTypes\IOrganizer.cs" />

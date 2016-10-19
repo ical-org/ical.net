@@ -67,7 +67,7 @@ namespace Ical.Net.Interfaces
         /// <summary>
         /// Gets a list of time zones contained in the calendar.
         /// </summary>
-        ICalendarObjectList<ITimeZone> TimeZones { get; }
+        ICalendarObjectList<VTimeZone> TimeZones { get; }
 
         /// <summary>
         /// Gets a list of To-do items contained in the calendar.
