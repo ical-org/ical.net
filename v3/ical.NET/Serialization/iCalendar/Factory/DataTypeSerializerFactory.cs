@@ -41,7 +41,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
                 {
                     s = new FreeBusyEntrySerializer();
                 }
-                else if (typeof (IGeographicLocation).IsAssignableFrom(objectType))
+                else if (typeof (GeographicLocation).IsAssignableFrom(objectType))
                 {
                     s = new GeographicLocationSerializer();
                 }

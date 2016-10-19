@@ -76,9 +76,9 @@ namespace Ical.Net
             }
         }
 
-        public virtual IGeographicLocation GeographicLocation
+        public virtual GeographicLocation GeographicLocation
         {
-            get { return Properties.Get<IGeographicLocation>("GEO"); }
+            get { return Properties.Get<GeographicLocation>("GEO"); }
             set { Properties.Set("GEO", value); }
         }
 

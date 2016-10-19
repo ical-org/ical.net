@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
 using System.Globalization;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
@@ -12,7 +11,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var g = obj as IGeographicLocation;
+            var g = obj as GeographicLocation;
             if (g == null)
             {
                 return null;
