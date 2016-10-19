@@ -168,7 +168,7 @@ namespace Ical.Net.UnitTests
             var tzi = TimeZoneInfo.FindSystemTimeZoneById(exampleTz);
             var timezone = VTimeZone.FromSystemTimeZone(tzi);
             cal.AddTimeZone(timezone);
-            var evt = new Event
+            var evt = new CalendarEvent
             {
                 Summary = "Testing",
                 Start = new CalDateTime(2016, 7, 14, timezone.TzId),
@@ -203,7 +203,7 @@ namespace Ical.Net.UnitTests
                 Version = "2.0"
             };
 
-            var evt = new Event
+            var evt = new CalendarEvent
             {
                 Class = "PRIVATE",
                 Created = new CalDateTime(2010, 3, 25, 12, 53, 35),
@@ -238,7 +238,7 @@ namespace Ical.Net.UnitTests
                 Version = "2.0"
             };
 
-            var evt = new Event
+            var evt = new CalendarEvent
             {
                 Class = "PRIVATE",
                 Created = new CalDateTime(2010, 3, 25, 12, 53, 35),

@@ -7,13 +7,13 @@ namespace Ical.Net.Evaluation
 {
     public class EventEvaluator : RecurringEvaluator
     {
-        protected Event Event
+        protected CalendarEvent CalendarEvent
         {
-            get { return Recurrable as Event; }
+            get { return Recurrable as CalendarEvent; }
             set { Recurrable = value; }
         }
 
-        public EventEvaluator(Event evt) : base(evt) {}
+        public EventEvaluator(CalendarEvent evt) : base(evt) {}
 
         /// <summary>
         /// Evaluates this event to determine the dates and times for which the event occurs.
@@ -39,8 +39,8 @@ namespace Ical.Net.Evaluation
 
             foreach (var period in Periods.Where(period => period.EndTime == null))
             {
-                period.Duration = Event.Duration;
-                period.EndTime = period.Duration == null ? period.StartTime : period.StartTime.Add(Event.Duration);
+                period.Duration = CalendarEvent.Duration;
+                period.EndTime = period.Duration == null ? period.StartTime : period.StartTime.Add(CalendarEvent.Duration);
             }
 
             // Ensure each period has a duration

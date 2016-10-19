@@ -20,7 +20,7 @@ namespace Ical.Net.UnitTests
         private static readonly DateTime _later = _nowTime.AddHours(1);
         private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
         private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
-        private static Event GetSimpleEvent() => new Event {DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime};
+        private static CalendarEvent GetSimpleEvent() => new CalendarEvent {DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime};
         private static ICalendar UnserializeCalendar(string s) => Calendar.LoadFromStream(new StringReader(s)).Single();
 
         [Test, TestCaseSource(nameof(Event_TestCases))]
@@ -41,7 +41,7 @@ namespace Ical.Net.UnitTests
         public static IEnumerable<ITestCaseData> Event_TestCases()
         {
             var rrule = new RecurrencePattern(FrequencyType.Daily, 1) { Count = 5};
-            var e = new Event
+            var e = new CalendarEvent
             {
                 DtStart = new CalDateTime(_nowTime),
                 DtEnd = new CalDateTime(_later),

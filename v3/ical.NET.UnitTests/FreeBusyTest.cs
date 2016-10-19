@@ -15,7 +15,7 @@ namespace Ical.Net.UnitTests
         {
             ICalendar cal = new Calendar();
 
-            Event evt = cal.Create<Event>();
+            CalendarEvent evt = cal.Create<CalendarEvent>();
             evt.Summary = "Test event";
             evt.Start = new CalDateTime(2010, 10, 1, 8, 0, 0);
             evt.End = new CalDateTime(2010, 10, 1, 9, 0, 0);

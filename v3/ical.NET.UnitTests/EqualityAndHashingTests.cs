@@ -33,7 +33,7 @@ namespace Ical.Net.UnitTests
         }
 
         [Test, TestCaseSource(nameof(Event_TestCases))]
-        public void Event_Tests(Event incoming, Event expected)
+        public void Event_Tests(CalendarEvent incoming, CalendarEvent expected)
         {
             Assert.AreEqual(incoming.DtStart, expected.DtStart);
             Assert.AreEqual(incoming.DtEnd, expected.DtEnd);
@@ -48,14 +48,14 @@ namespace Ical.Net.UnitTests
 
         public static IEnumerable<ITestCaseData> Event_TestCases()
         {
-            var outgoing = new Event
+            var outgoing = new CalendarEvent
             {
                 DtStart = new CalDateTime(_nowTime),
                 DtEnd = new CalDateTime(_later),
                 Duration = TimeSpan.FromHours(1),
             };
 
-            var expected = new Event
+            var expected = new CalendarEvent
             {
                 DtStart = new CalDateTime(_nowTime),
                 DtEnd = new CalDateTime(_later),
@@ -85,7 +85,7 @@ namespace Ical.Net.UnitTests
                 Count = 5
             };
 
-            var e = new Event
+            var e = new CalendarEvent
             {
                 DtStart = new CalDateTime(_nowTime),
                 DtEnd = new CalDateTime(_later),
@@ -103,7 +103,7 @@ namespace Ical.Net.UnitTests
             };
 
             var expectedCalendar = new Calendar();
-            expectedCalendar.Events.Add(new Event
+            expectedCalendar.Events.Add(new CalendarEvent
             {
                 DtStart = new CalDateTime(_nowTime),
                 DtEnd = new CalDateTime(_later),

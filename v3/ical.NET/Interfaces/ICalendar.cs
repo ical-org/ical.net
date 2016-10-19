@@ -52,7 +52,7 @@ namespace Ical.Net.Interfaces
         /// <summary>
         /// Gets a list of Events contained in the calendar.
         /// </summary>
-        IUniqueComponentList<Event> Events { get; }
+        IUniqueComponentList<CalendarEvent> Events { get; }
 
         /// <summary>
         /// Gets a list of Free/Busy components contained in the calendar.

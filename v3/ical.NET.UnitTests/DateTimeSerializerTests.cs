@@ -13,7 +13,7 @@ namespace Ical.Net.UnitTests.Serialization.iCalendar.Serializers.DataTypes
         public void TZIDPropertyMustNotBeAppliedToUtcDateTime()
         {
             var ical = new Ical.Net.Calendar();
-            var evt = new Ical.Net.Event();
+            var evt = new Ical.Net.CalendarEvent();
             evt.DtStamp = new CalDateTime(new DateTime(2016, 8, 17, 2, 30, 0, DateTimeKind.Utc));
             ical.Events.Add(evt);
 

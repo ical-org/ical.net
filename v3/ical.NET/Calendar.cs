@@ -138,7 +138,7 @@ namespace Ical.Net
         }
 
         private IUniqueComponentList<IUniqueComponent> _mUniqueComponents;
-        private IUniqueComponentList<Event> _mEvents;
+        private IUniqueComponentList<CalendarEvent> _mEvents;
         private IUniqueComponentList<Todo> _mTodos;
         private ICalendarObjectList<Journal> _mJournals;
         private IUniqueComponentList<FreeBusy> _mFreeBusy;
@@ -163,7 +163,7 @@ namespace Ical.Net
         private void Initialize()
         {
             _mUniqueComponents = new UniqueComponentListProxy<IUniqueComponent>(Children);
-            _mEvents = new UniqueComponentListProxy<Event>(Children);
+            _mEvents = new UniqueComponentListProxy<CalendarEvent>(Children);
             _mTodos = new UniqueComponentListProxy<Todo>(Children);
             _mJournals = new CalendarObjectListProxy<Journal>(Children);
             _mFreeBusy = new UniqueComponentListProxy<FreeBusy>(Children);
@@ -227,7 +227,7 @@ namespace Ical.Net
         /// <summary>
         /// A collection of <see cref="Components.Event"/> components in the iCalendar.
         /// </summary>
-        public virtual IUniqueComponentList<Event> Events => _mEvents;
+        public virtual IUniqueComponentList<CalendarEvent> Events => _mEvents;
 
         /// <summary>
         /// A collection of <see cref="Net.FreeBusy"/> components in the iCalendar.

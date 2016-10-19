@@ -13,7 +13,7 @@ namespace Ical.Net.UnitTests
         {
             // The first instance of an event taking place on July 1, 2016 between 07:00 and 08:00.
             // We want it to recur through the end of July.
-            var vEvent = new Event
+            var vEvent = new CalendarEvent
             {
                 DtStart = new CalDateTime(DateTime.Parse("2016-07-01T07:00")),
                 DtEnd = new CalDateTime(DateTime.Parse("2016-07-01T08:00")),
@@ -42,7 +42,7 @@ namespace Ical.Net.UnitTests
         public void EveryOtherTuesdayUntilTheEndOfTheYear_Test()
         {
             // An event taking place between 07:00 and 08:00, beginning July 5 (a Tuesday)
-            var vEvent = new Event
+            var vEvent = new CalendarEvent
             {
                 DtStart = new CalDateTime(DateTime.Parse("2016-07-05T07:00")),
                 DtEnd = new CalDateTime(DateTime.Parse("2016-07-05T08:00")),
@@ -69,7 +69,7 @@ namespace Ical.Net.UnitTests
         {
             // (The number of US thanksgivings between 2000 and 2016)
             // An event taking place between 07:00 and 19:00, beginning July 5 (a Tuesday)
-            var vEvent = new Event
+            var vEvent = new CalendarEvent
             {
                 DtStart = new CalDateTime(DateTime.Parse("2000-11-23T07:00")),
                 DtEnd = new CalDateTime(DateTime.Parse("2000-11-23T19:00")),
@@ -101,7 +101,7 @@ namespace Ical.Net.UnitTests
         public void DailyExceptSunday_Test()
         {
             //An event that happens daily through 2016, except for Sundays
-            var vEvent = new Event
+            var vEvent = new CalendarEvent
             {
                 DtStart = new CalDateTime(DateTime.Parse("2016-01-01T07:00")),
                 DtEnd = new CalDateTime(DateTime.Parse("2016-12-31T08:00")),

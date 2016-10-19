@@ -78,7 +78,7 @@
     <Compile Include="Components\CalendarComponent.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Components\Event.cs" />
+    <Compile Include="Components\CalendarEvent.cs" />
     <Compile Include="Components\RecurringComponent.cs" />
     <Compile Include="Components\Todo.cs" />
     <Compile Include="Components\UniqueComponent.cs" />
