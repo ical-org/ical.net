@@ -72,7 +72,6 @@
     <Compile Include="Proxies\GroupedCollectionProxy.cs" />
     <Compile Include="Interfaces\IGroupedList.cs" />
     <Compile Include="Interfaces\IGroupedObject.cs" />
-    <Compile Include="Interfaces\IMultiLinkedList.cs" />
     <Compile Include="Interfaces\IValueObject.cs" />
     <Compile Include="GroupedList.cs" />
     <Compile Include="GroupedValueList.cs" />

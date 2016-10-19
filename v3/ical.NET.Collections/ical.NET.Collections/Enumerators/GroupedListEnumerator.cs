@@ -1,17 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using ical.NET.Collections.Interfaces;
 
 namespace ical.NET.Collections.Enumerators
 {
     public class GroupedListEnumerator<TType> :
         IEnumerator<TType>
     {
-        private readonly IList<IMultiLinkedList<TType>> _lists;
-        private IEnumerator<IMultiLinkedList<TType>> _listsEnumerator;
+        private readonly IList<MultiLinkedList<TType>> _lists;
+        private IEnumerator<MultiLinkedList<TType>> _listsEnumerator;
         private IEnumerator<TType> _listEnumerator;
 
-        public GroupedListEnumerator(IList<IMultiLinkedList<TType>> lists)
+        public GroupedListEnumerator(IList<MultiLinkedList<TType>> lists)
         {
             _lists = lists;
         }

@@ -1,21 +1,19 @@
 ﻿using System.Collections.Generic;
-using ical.NET.Collections.Interfaces;
 
 namespace ical.NET.Collections
 {
     public class MultiLinkedList<TType> :
-        List<TType>,
-        IMultiLinkedList<TType>
+        List<TType>
     {
-        private IMultiLinkedList<TType> _previous;
-        private IMultiLinkedList<TType> _next;
+        private MultiLinkedList<TType> _previous;
+        private MultiLinkedList<TType> _next;
 
-        public virtual void SetPrevious(IMultiLinkedList<TType> previous)
+        public virtual void SetPrevious(MultiLinkedList<TType> previous)
         {
             _previous = previous;
         }
 
-        public virtual void SetNext(IMultiLinkedList<TType> next)
+        public virtual void SetNext(MultiLinkedList<TType> next)
         {
             _next = next;
         }
