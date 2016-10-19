@@ -11,12 +11,12 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// An iCalendar list of recurring dates (or date exclusions)
     /// </summary>
-    public class PeriodList : EncodableDataType, IPeriodList
+    public class PeriodList : EncodableDataType, IEnumerable<Period>
     {
         public string TzId { get; set; }
         public int Count => Periods.Count;
 
-        protected IList<IPeriod> Periods { get; set; } = new List<IPeriod>(64);
+        protected IList<Period> Periods { get; set; } = new List<Period>(64);
 
 
         public PeriodList()
@@ -54,7 +54,7 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            var list = obj as IPeriodList;
+            var list = obj as PeriodList;
             if (list == null)
             {
                 return;
@@ -70,15 +70,15 @@ namespace Ical.Net.DataTypes
 
         public virtual void Add(IDateTime dt) => Periods.Add(new Period(dt));
 
-        public IPeriod this[int index]
+        public Period this[int index]
         {
             get { return Periods[index]; }
             set { Periods[index] = value; }
         }
 
-        public virtual void Add(IPeriod item) => Periods.Add(item);
+        public virtual void Add(Period item) => Periods.Add(item);
 
-        public IEnumerator<IPeriod> GetEnumerator() => Periods.GetEnumerator();
+        public IEnumerator<Period> GetEnumerator() => Periods.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => Periods.GetEnumerator();
     }

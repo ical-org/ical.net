@@ -1,6 +1,5 @@
 // $ANTLR 2.7.6 (20061021): "iCal.g" -> "iCalParser.cs"$
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -9,11 +8,11 @@ using antlr;
 using antlr.collections;
 using Ical.Net.ExtensionMethods;
 using Ical.Net.General;
-using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Interfaces.Serialization;
 using Ical.Net.Interfaces.Serialization.Factory;
+using Ical.Net.Serialization.iCalendar.Processors;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using Ical.Net.Utility;
 
@@ -80,16 +79,15 @@ namespace Ical.Net.Serialization.iCalendar
             initialize();
         }
 
-        public IICalendarCollection icalendar(ISerializationContext ctx) //throws RecognitionException, TokenStreamException
+        public CalendarCollection icalendar(SerializationContext ctx)
         {
-            IICalendarCollection iCalendars = new CalendarCollection();
+            CalendarCollection iCalendars = new CalendarCollection();
 
 
             SerializationUtil.OnDeserializing(iCalendars);
 
-            ICalendar cal = null;
-            Type foo = typeof(ISerializationSettings);
-            var settings = ctx.GetService<ISerializationSettings>();
+            Calendar cal = null;
+            ctx.GetService<ISerializationSettings>();
 
             { // ( ... )*
                 for (;;)
@@ -130,7 +128,7 @@ namespace Ical.Net.Serialization.iCalendar
                             ;
                         } // ( ... )*
 
-                        var processor = ctx.GetService(typeof(ISerializationProcessor<ICalendar>)) as ISerializationProcessor<ICalendar>;
+                        var processor = ctx.GetService(typeof(CompositeProcessor<Calendar>)) as CompositeProcessor<Calendar>;
 
                         // Do some pre-processing on the calendar:
                         processor?.PreDeserialization(cal);
@@ -187,7 +185,7 @@ namespace Ical.Net.Serialization.iCalendar
             return iCalendars;
         }
 
-        public void icalbody(ISerializationContext ctx, ICalendar cal) //throws RecognitionException, TokenStreamException
+        public void icalbody(SerializationContext ctx, Calendar cal) //throws RecognitionException, TokenStreamException
         {
             var sf = ctx.GetService(typeof(ISerializerFactory)) as ISerializerFactory;
             var cf = ctx.GetService(typeof(ICalendarComponentFactory)) as ICalendarComponentFactory;
@@ -217,7 +215,7 @@ namespace Ical.Net.Serialization.iCalendar
             ;
         }
 
-        public ICalendarProperty property(ISerializationContext ctx, ICalendarPropertyListContainer c) //throws RecognitionException, TokenStreamException
+        public ICalendarProperty property(SerializationContext ctx, ICalendarPropertyListContainer c) //throws RecognitionException, TokenStreamException
         {
             ICalendarProperty p;
             {
@@ -254,7 +252,7 @@ namespace Ical.Net.Serialization.iCalendar
                 }
             }
 
-            var processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarProperty>)) as ISerializationProcessor<ICalendarProperty>;
+            var processor = ctx.GetService(typeof(CompositeProcessor<ICalendarProperty>)) as CompositeProcessor<ICalendarProperty>;
             // Do some pre-processing on the property
             processor?.PreDeserialization(p);
 
@@ -340,7 +338,7 @@ namespace Ical.Net.Serialization.iCalendar
             return p;
         }
 
-        public ICalendarComponent component(ISerializationContext ctx, ISerializerFactory sf, ICalendarComponentFactory cf, ICalendarObject o)
+        public ICalendarComponent component(SerializationContext ctx, ISerializerFactory sf, ICalendarComponentFactory cf, ICalendarObject o)
             //throws RecognitionException, TokenStreamException
         {
             ICalendarComponent c;
@@ -372,7 +370,7 @@ namespace Ical.Net.Serialization.iCalendar
                 }
             }
 
-            var processor = ctx.GetService(typeof(ISerializationProcessor<ICalendarComponent>)) as ISerializationProcessor<ICalendarComponent>;
+            var processor = ctx.GetService(typeof(CompositeProcessor<ICalendarComponent>)) as CompositeProcessor<ICalendarComponent>;
             // Do some pre-processing on the component
             processor?.PreDeserialization(c);
 
@@ -462,7 +460,7 @@ namespace Ical.Net.Serialization.iCalendar
             return c;
         }
 
-        public CalendarParameter parameter(ISerializationContext ctx, ICalendarParameterCollectionContainer container)
+        public CalendarParameter parameter(SerializationContext ctx, ICalendarParameterCollectionContainer container)
         {
             CalendarParameter p;
             var values = new List<string>(128);

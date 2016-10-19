@@ -1,12 +1,13 @@
-﻿using Ical.Net.Interfaces.Components;
+﻿using System.Collections.Generic;
+using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 
 namespace Ical.Net.Interfaces.Evaluation
 {
     public interface IGetFreeBusy
     {
-        IFreeBusy GetFreeBusy(IFreeBusy freeBusyRequest);
-        IFreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive);
-        IFreeBusy GetFreeBusy(IOrganizer organizer, IAttendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive);
+        FreeBusy GetFreeBusy(FreeBusy freeBusyRequest);
+        FreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive);
+        FreeBusy GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, IDateTime fromInclusive, IDateTime toExclusive);
     }
 }

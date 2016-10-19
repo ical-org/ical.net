@@ -3,7 +3,6 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Serialization;
 using Ical.Net.Interfaces.Serialization.Factory;
 using Ical.Net.Serialization.iCalendar.Serializers.Other;
@@ -18,7 +17,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         {
             try
             {
-                var rs = obj as IRequestStatus;
+                var rs = obj as RequestStatus;
                 if (rs == null)
                 {
                     return null;
@@ -30,7 +29,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 try
                 {
                     var factory = GetService<ISerializerFactory>();
-                    var serializer = factory?.Build(typeof (IStatusCode), SerializationContext) as IStringSerializer;
+                    var serializer = factory?.Build(typeof (StatusCode), SerializationContext) as IStringSerializer;
                     if (serializer == null)
                     {
                         return null;
@@ -66,7 +65,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         {
             var value = tr.ReadToEnd();
 
-            var rs = CreateAndAssociate() as IRequestStatus;
+            var rs = CreateAndAssociate() as RequestStatus;
             if (rs == null)
             {
                 return null;
@@ -94,13 +93,13 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
                 if (match.Success)
                 {
-                    var serializer = factory.Build(typeof(IStatusCode), SerializationContext) as IStringSerializer;
+                    var serializer = factory.Build(typeof(StatusCode), SerializationContext) as IStringSerializer;
                     if (serializer == null)
                     {
                         return null;
                     }
 
-                    rs.StatusCode = serializer.Deserialize(new StringReader(Unescape(match.Groups[1].Value))) as IStatusCode;
+                    rs.StatusCode = serializer.Deserialize(new StringReader(Unescape(match.Groups[1].Value))) as StatusCode;
                     rs.Description = Unescape(match.Groups[2].Value);
                     if (match.Groups.Count == 4)
                     {

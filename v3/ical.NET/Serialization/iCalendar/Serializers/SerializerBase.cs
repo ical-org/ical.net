@@ -7,19 +7,19 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 {
     public abstract class SerializerBase : IStringSerializer
     {
-        private ISerializationContext _mSerializationContext;
+        private SerializationContext _mSerializationContext;
 
         protected SerializerBase()
         {
-            _mSerializationContext = Serialization.SerializationContext.Default;
+            _mSerializationContext = SerializationContext.Default;
         }
 
-        protected SerializerBase(ISerializationContext ctx)
+        protected SerializerBase(SerializationContext ctx)
         {
             _mSerializationContext = ctx;
         }
 
-        public virtual ISerializationContext SerializationContext
+        public virtual SerializationContext SerializationContext
         {
             get { return _mSerializationContext; }
             set { _mSerializationContext = value; }
@@ -34,7 +34,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             object obj;
             using (var sr = new StreamReader(stream, encoding))
             {
-                var encodingStack = GetService<IEncodingStack>();
+                var encodingStack = GetService<EncodingStack>();
                 encodingStack.Push(encoding);
                 obj = Deserialize(sr);
                 encodingStack.Pop();

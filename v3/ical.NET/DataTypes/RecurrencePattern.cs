@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Ical.Net.Evaluation;
-using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
@@ -12,7 +11,7 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// An iCalendar representation of the <c>RRULE</c> property.
     /// </summary>
-    public class RecurrencePattern : EncodableDataType, IRecurrencePattern
+    public class RecurrencePattern : EncodableDataType
     {
         private int _interval = int.MinValue;
         private RecurrenceRestrictionType? _restrictionType;
@@ -41,7 +40,7 @@ namespace Ical.Net.DataTypes
 
         public IList<int> ByHour { get; set; } = new List<int>(16);
 
-        public IList<IWeekDay> ByDay { get; set; } = new List<IWeekDay>(16);
+        public IList<WeekDay> ByDay { get; set; } = new List<WeekDay>(16);
 
         public IList<int> ByMonthDay { get; set; } = new List<int>(16);
 
@@ -173,12 +172,12 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (!(obj is IRecurrencePattern))
+            if (!(obj is RecurrencePattern))
             {
                 return;
             }
 
-            var r = (IRecurrencePattern) obj;
+            var r = (RecurrencePattern) obj;
 
             Frequency = r.Frequency;
             Until = r.Until;
@@ -187,7 +186,7 @@ namespace Ical.Net.DataTypes
             BySecond = new List<int>(r.BySecond);
             ByMinute = new List<int>(r.ByMinute);
             ByHour = new List<int>(r.ByHour);
-            ByDay = new List<IWeekDay>(r.ByDay);
+            ByDay = new List<WeekDay>(r.ByDay);
             ByMonthDay = new List<int>(r.ByMonthDay);
             ByYearDay = new List<int>(r.ByYearDay);
             ByWeekNo = new List<int>(r.ByWeekNo);

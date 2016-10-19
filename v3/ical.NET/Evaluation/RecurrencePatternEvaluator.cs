@@ -55,14 +55,14 @@ namespace Ical.Net.Evaluation
         // FIXME: in ical4j this is configurable.
         private static readonly int _maxIncrementCount = 1000;
 
-        protected IRecurrencePattern Pattern { get; set; }
+        protected RecurrencePattern Pattern { get; set; }
 
-        public RecurrencePatternEvaluator(IRecurrencePattern pattern)
+        public RecurrencePatternEvaluator(RecurrencePattern pattern)
         {
             Pattern = pattern;
         }
 
-        private IRecurrencePattern ProcessRecurrencePattern(IDateTime referenceDate)
+        private RecurrencePattern ProcessRecurrencePattern(IDateTime referenceDate)
         {
             var r = new RecurrencePattern();
             r.CopyFrom(Pattern);
@@ -124,7 +124,7 @@ namespace Ical.Net.Evaluation
             return r;
         }
 
-        private void EnforceEvaluationRestrictions(IRecurrencePattern pattern)
+        private void EnforceEvaluationRestrictions(RecurrencePattern pattern)
         {
             RecurrenceEvaluationModeType? evaluationMode = pattern.EvaluationMode;
             RecurrenceRestrictionType? evaluationRestriction = pattern.RestrictionType;
@@ -227,7 +227,7 @@ namespace Ical.Net.Evaluation
          * 9:00AM, and not 12:19PM.
          */
 
-        private HashSet<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd, int maxCount, IRecurrencePattern pattern,
+        private HashSet<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd, int maxCount, RecurrencePattern pattern,
             bool includeReferenceDateInResults)
         {
             var dates = new HashSet<DateTime>();
@@ -332,7 +332,7 @@ namespace Ical.Net.Evaluation
          * @return a DateList
          */
 
-        private List<DateTime> GetCandidates(DateTime date, IRecurrencePattern pattern, bool?[] expandBehaviors)
+        private List<DateTime> GetCandidates(DateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
         {
             var dates = new List<DateTime>(128) {date};
             dates = GetMonthVariants(dates, pattern, expandBehaviors[0]);
@@ -353,7 +353,7 @@ namespace Ical.Net.Evaluation
          * @param dates
          */
 
-        private List<DateTime> ApplySetPosRules(List<DateTime> dates, IRecurrencePattern pattern)
+        private List<DateTime> ApplySetPosRules(List<DateTime> dates, RecurrencePattern pattern)
         {
             // return if no SETPOS rules specified..
             if (pattern.BySetPosition.Count == 0)
@@ -388,7 +388,7 @@ namespace Ical.Net.Evaluation
          * @return
          */
 
-        private List<DateTime> GetMonthVariants(List<DateTime> dates, IRecurrencePattern pattern, bool? expand)
+        private List<DateTime> GetMonthVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByMonth.Count == 0)
             {
@@ -430,7 +430,7 @@ namespace Ical.Net.Evaluation
          * @return
          */
 
-        private List<DateTime> GetWeekNoVariants(List<DateTime> dates, IRecurrencePattern pattern, bool? expand)
+        private List<DateTime> GetWeekNoVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByWeekNo.Count == 0)
             {
@@ -487,7 +487,7 @@ namespace Ical.Net.Evaluation
          * @return
          */
 
-        private List<DateTime> GetYearDayVariants(List<DateTime> dates, IRecurrencePattern pattern, bool? expand)
+        private List<DateTime> GetYearDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByYearDay.Count == 0)
             {
@@ -539,7 +539,7 @@ namespace Ical.Net.Evaluation
          * @return
          */
 
-        private List<DateTime> GetMonthDayVariants(List<DateTime> dates, IRecurrencePattern pattern, bool? expand)
+        private List<DateTime> GetMonthDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByMonthDay.Count == 0)
             {
@@ -602,7 +602,7 @@ namespace Ical.Net.Evaluation
          * @return
          */
 
-        private List<DateTime> GetDayVariants(List<DateTime> dates, IRecurrencePattern pattern, bool? expand)
+        private List<DateTime> GetDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByDay.Count == 0)
             {
@@ -657,7 +657,7 @@ namespace Ical.Net.Evaluation
          * @return
          */
 
-        private List<DateTime> GetAbsWeekDays(DateTime date, IWeekDay weekDay, IRecurrencePattern pattern)
+        private List<DateTime> GetAbsWeekDays(DateTime date, WeekDay weekDay, RecurrencePattern pattern)
         {
             var days = new List<DateTime>(64);
 
@@ -758,7 +758,7 @@ namespace Ical.Net.Evaluation
          * @return
          */
 
-        private List<DateTime> GetHourVariants(List<DateTime> dates, IRecurrencePattern pattern, bool? expand)
+        private List<DateTime> GetHourVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByHour.Count == 0)
             {
@@ -808,7 +808,7 @@ namespace Ical.Net.Evaluation
          * @return
          */
 
-        private List<DateTime> GetMinuteVariants(List<DateTime> dates, IRecurrencePattern pattern, bool? expand)
+        private List<DateTime> GetMinuteVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByMinute.Count == 0)
             {
@@ -858,7 +858,7 @@ namespace Ical.Net.Evaluation
          * @return
          */
 
-        private List<DateTime> GetSecondVariants(List<DateTime> dates, IRecurrencePattern pattern, bool? expand)
+        private List<DateTime> GetSecondVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.BySecond.Count == 0)
             {
@@ -901,7 +901,7 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        private IPeriod CreatePeriod(DateTime dt, IDateTime referenceDate)
+        private Period CreatePeriod(DateTime dt, IDateTime referenceDate)
         {
             // Turn each resulting date/time into an IDateTime and associate it
             // with the reference date.
@@ -916,7 +916,7 @@ namespace Ical.Net.Evaluation
             return new Period(newDt);
         }
 
-        public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Create a recurrence pattern suitable for use during evaluation.
             var pattern = ProcessRecurrencePattern(referenceDate);

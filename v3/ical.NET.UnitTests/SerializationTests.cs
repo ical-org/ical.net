@@ -7,10 +7,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 using Ical.Net.ExtensionMethods;
-using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using Ical.Net.Serialization.iCalendar.Serializers.Other;
 using NUnit.Framework;
@@ -21,7 +19,7 @@ namespace Ical.Net.UnitTests
     public class SerializationTests
     {
         #region helperMethods
-        public static void CompareCalendars(ICalendar cal1, ICalendar cal2)
+        public static void CompareCalendars(Calendar cal1, Calendar cal2)
         {
             CompareComponents(cal1, cal2);
 
@@ -169,7 +167,7 @@ namespace Ical.Net.UnitTests
             var tzi = TimeZoneInfo.FindSystemTimeZoneById(exampleTz);
             var timezone = VTimeZone.FromSystemTimeZone(tzi);
             cal.AddTimeZone(timezone);
-            var evt = new Event
+            var evt = new CalendarEvent
             {
                 Summary = "Testing",
                 Start = new CalDateTime(2016, 7, 14, timezone.TzId),
@@ -204,7 +202,7 @@ namespace Ical.Net.UnitTests
                 Version = "2.0"
             };
 
-            var evt = new Event
+            var evt = new CalendarEvent
             {
                 Class = "PRIVATE",
                 Created = new CalDateTime(2010, 3, 25, 12, 53, 35),
@@ -239,7 +237,7 @@ namespace Ical.Net.UnitTests
                 Version = "2.0"
             };
 
-            var evt = new Event
+            var evt = new CalendarEvent
             {
                 Class = "PRIVATE",
                 Created = new CalDateTime(2010, 3, 25, 12, 53, 35),

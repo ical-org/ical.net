@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Serialization.iCalendar.Serializers.Other;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
@@ -12,7 +11,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var a = obj as IAttendee;
+            var a = obj as Attendee;
             return a?.Value == null
                 ? null
                 : Encode(a, a.Value.OriginalString);

@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
@@ -10,7 +9,7 @@ namespace Ical.Net.DataTypes
     /// <see cref="Components.Event"/> or <see cref="Components.Todo"/> item.
     /// </summary>
     [DebuggerDisplay("{Latitude};{Longitude}")]
-    public class GeographicLocation : EncodableDataType, IGeographicLocation
+    public class GeographicLocation : EncodableDataType
     {
         public double Latitude { get; set; }
         public double Longitude { get; set; }

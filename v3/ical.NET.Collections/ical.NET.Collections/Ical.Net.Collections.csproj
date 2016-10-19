@@ -72,12 +72,10 @@
     <Compile Include="Proxies\GroupedCollectionProxy.cs" />
     <Compile Include="Interfaces\IGroupedList.cs" />
     <Compile Include="Interfaces\IGroupedObject.cs" />
-    <Compile Include="Interfaces\IMultiLinkedList.cs" />
     <Compile Include="Interfaces\IValueObject.cs" />
     <Compile Include="GroupedList.cs" />
     <Compile Include="GroupedValueList.cs" />
     <Compile Include="Proxies\GroupedValueListProxy.cs" />
-    <Compile Include="MultiLinkedList.cs" />
     <Compile Include="Enumerators\GroupedListEnumerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Interfaces\Proxies\IGroupedCollectionProxy.cs" />

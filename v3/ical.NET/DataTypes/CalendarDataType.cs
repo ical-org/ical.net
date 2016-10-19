@@ -2,7 +2,6 @@ using System;
 using System.Runtime.Serialization;
 using Ical.Net.General;
 using Ical.Net.General.Proxies;
-using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
 
@@ -74,9 +73,9 @@ namespace Ical.Net.DataTypes
                     case "INTEGER":
                         return typeof (int);
                     case "PERIOD":
-                        return typeof (IPeriod);
+                        return typeof (Period);
                     case "RECUR":
-                        return typeof (IRecurrencePattern);
+                        return typeof (RecurrencePattern);
                     case "TEXT":
                         return typeof (string);
                     case "TIME":
@@ -85,7 +84,7 @@ namespace Ical.Net.DataTypes
                     case "URI":
                         return typeof (Uri);
                     case "UTC-OFFSET":
-                        return typeof (IUtcOffset);
+                        return typeof (UtcOffset);
                     default:
                         return null;
                 }
@@ -123,7 +122,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public virtual ICalendar Calendar => _AssociatedObject?.Calendar;
+        public virtual Calendar Calendar => _AssociatedObject?.Calendar;
 
         public virtual string Language
         {

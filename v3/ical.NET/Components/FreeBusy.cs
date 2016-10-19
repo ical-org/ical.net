@@ -9,16 +9,16 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net
 {
-    public class FreeBusy : UniqueComponent, IFreeBusy
+    public class FreeBusy : UniqueComponent, IMergeable
     {
-        public static IFreeBusy Create(ICalendarObject obj, IFreeBusy freeBusyRequest)
+        public static FreeBusy Create(ICalendarObject obj, FreeBusy freeBusyRequest)
         {
             if (!(obj is IGetOccurrencesTyped))
             {
                 return null;
             }
             var getOccurrences = (IGetOccurrencesTyped) obj;
-            var occurrences = getOccurrences.GetOccurrences<IEvent>(freeBusyRequest.Start, freeBusyRequest.End);
+            var occurrences = getOccurrences.GetOccurrences<CalendarEvent>(freeBusyRequest.Start, freeBusyRequest.End);
             var contacts = new List<string>(32);
             var isFilteredByAttendees = false;
 
@@ -45,7 +45,7 @@ namespace Ical.Net
                     continue;
                 }
 
-                var evt = uc as IEvent;
+                var evt = uc as CalendarEvent;
                 var accepted = false;
                 var type = FreeBusyStatus.Busy;
 
@@ -95,7 +95,7 @@ namespace Ical.Net
             return fb;
         }
 
-        public static IFreeBusy CreateRequest(IDateTime fromInclusive, IDateTime toExclusive, IOrganizer organizer, IAttendee[] contacts)
+        public static FreeBusy CreateRequest(IDateTime fromInclusive, IDateTime toExclusive, Organizer organizer, IEnumerable<Attendee> contacts)
         {
             var fb = new FreeBusy
             {
@@ -125,9 +125,9 @@ namespace Ical.Net
             Name = Components.Freebusy;
         }
 
-        public virtual IList<IFreeBusyEntry> Entries
+        public virtual IList<FreeBusyEntry> Entries
         {
-            get { return Properties.GetMany<IFreeBusyEntry>("FREEBUSY"); }
+            get { return Properties.GetMany<FreeBusyEntry>("FREEBUSY"); }
             set { Properties.Set("FREEBUSY", value); }
         }
 
@@ -155,7 +155,7 @@ namespace Ical.Net
             set { Properties.Set("DTEND", value); }
         }
 
-        public virtual FreeBusyStatus GetFreeBusyStatus(IPeriod period)
+        public virtual FreeBusyStatus GetFreeBusyStatus(Period period)
         {
             var status = FreeBusyStatus.Free;
             if (period == null)
@@ -187,7 +187,7 @@ namespace Ical.Net
 
         public virtual void MergeWith(IMergeable obj)
         {
-            var fb = obj as IFreeBusy;
+            var fb = obj as FreeBusy;
             if (fb == null)
             {
                 return;

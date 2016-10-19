@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ical.Net.Interfaces.Components;
+using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Utility;
@@ -10,9 +10,9 @@ namespace Ical.Net.Evaluation
 {
     public class TodoEvaluator : RecurringEvaluator
     {
-        protected ITodo Todo => Recurrable as ITodo;
+        protected Todo Todo => Recurrable as Todo;
 
-        public TodoEvaluator(ITodo todo) : base(todo) {}
+        public TodoEvaluator(Todo todo) : base(todo) {}
 
         public void EvaluateToPreviousOccurrence(IDateTime completedDate, IDateTime currDt)
         {
@@ -50,7 +50,7 @@ namespace Ical.Net.Evaluation
             Evaluate(Todo.Start, DateUtil.GetSimpleDateTimeData(beginningDate), DateUtil.GetSimpleDateTimeData(currDt).AddTicks(1), true);
         }
 
-        public void DetermineStartingRecurrence(IPeriodList rdate, ref IDateTime referenceDateTime)
+        public void DetermineStartingRecurrence(PeriodList rdate, ref IDateTime referenceDateTime)
         {
             var evaluator = rdate.GetService<IEvaluator>();
 
@@ -61,7 +61,7 @@ namespace Ical.Net.Evaluation
             }
         }
 
-        public void DetermineStartingRecurrence(IRecurrencePattern recur, ref IDateTime referenceDateTime)
+        public void DetermineStartingRecurrence(RecurrencePattern recur, ref IDateTime referenceDateTime)
         {
             if (recur.Count != int.MinValue)
             {
@@ -75,12 +75,12 @@ namespace Ical.Net.Evaluation
             }
         }
 
-        public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // TODO items can only recur if a start date is specified
             if (Todo.Start == null)
             {
-                return new HashSet<IPeriod>();
+                return new HashSet<Period>();
             }
 
             base.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);

@@ -1,5 +1,4 @@
 using Ical.Net.DataTypes;
-using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
 using System;
@@ -11,9 +10,9 @@ namespace Ical.Net.UnitTests
     [TestFixture]
     public class AttendeeTest
     {
-        internal static Event VEventFactory()
+        internal static CalendarEvent VEventFactory()
         {
-            return new Event
+            return new CalendarEvent
             {
                 Summary = "Testing",
                 Start = new CalDateTime(2010, 3, 25),

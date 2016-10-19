@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
@@ -23,7 +24,7 @@ namespace Ical.Net
     ///         <item>Create a TextCollection DataType for 'text' items separated by commas</item>
     ///     </list>
     /// </note>
-    public class Event : RecurringComponent, IEvent
+    public class CalendarEvent : RecurringComponent, IAlarmContainer
     {
         internal const string ComponentName = "VEVENT";
 
@@ -145,9 +146,9 @@ namespace Ical.Net
         /// <summary>
         /// The geographic location (lat/long) of the event.
         /// </summary>
-        public IGeographicLocation GeographicLocation
+        public GeographicLocation GeographicLocation
         {
-            get { return Properties.Get<IGeographicLocation>("GEO"); }
+            get { return Properties.Get<GeographicLocation>("GEO"); }
             set { Properties.Set("GEO", value); }
         }
 
@@ -199,7 +200,7 @@ namespace Ical.Net
         /// Constructs an Event object, with an iCalObject
         /// (usually an iCalendar object) as its parent.
         /// </summary>
-        public Event()
+        public CalendarEvent()
         {
             Initialize();
         }
@@ -240,7 +241,7 @@ namespace Ical.Net
         }
 
         /// <summary>
-        /// Determines whether or not the <see cref="Event"/> is actively displayed
+        /// Determines whether or not the <see cref="CalendarEvent"/> is actively displayed
         /// as an upcoming or occurred event.
         /// </summary>
         /// <returns>True if the event has not been cancelled, False otherwise.</returns>
@@ -281,7 +282,7 @@ namespace Ical.Net
             }
         }
 
-        protected bool Equals(Event other)
+        protected bool Equals(CalendarEvent other)
         {
             var resourcesSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             resourcesSet.UnionWith(Resources);
@@ -302,7 +303,7 @@ namespace Ical.Net
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Event)obj);
+            return Equals((CalendarEvent)obj);
         }
 
         public override int GetHashCode()

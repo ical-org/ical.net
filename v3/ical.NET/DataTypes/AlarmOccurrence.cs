@@ -14,11 +14,11 @@ namespace Ical.Net.DataTypes
     /// </remarks>
     public class AlarmOccurrence : IComparable<AlarmOccurrence>
     {
-        public IPeriod Period { get; set; }
+        public Period Period { get; set; }
 
         public IRecurringComponent Component { get; set; }
 
-        public IAlarm Alarm { get; set; }
+        public Alarm Alarm { get; set; }
 
         public IDateTime DateTime
         {
@@ -33,7 +33,7 @@ namespace Ical.Net.DataTypes
             Alarm = ao.Alarm;
         }
 
-        public AlarmOccurrence(IAlarm a, IDateTime dt, IRecurringComponent rc)
+        public AlarmOccurrence(Alarm a, IDateTime dt, IRecurringComponent rc)
         {
             Alarm = a;
             Period = new Period(dt);

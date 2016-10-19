@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using Ical.Net.General;
-using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
@@ -31,19 +30,19 @@ namespace Ical.Net.Serialization.iCalendar.Factory
         /// </summary>
         /// <param name="objectType">The type of object to be serialized.</param>
         /// <param name="ctx">The serialization context.</param>
-        public virtual ISerializer Build(Type objectType, ISerializationContext ctx)
+        public virtual ISerializer Build(Type objectType, SerializationContext ctx)
         {
             if (objectType != null)
             {
                 ISerializer s;
 
-                if (typeof (ICalendar).IsAssignableFrom(objectType))
+                if (typeof (Calendar).IsAssignableFrom(objectType))
                 {
                     s = new CalendarSerializer();
                 }
                 else if (typeof (ICalendarComponent).IsAssignableFrom(objectType))
                 {
-                    s = typeof (IEvent).IsAssignableFrom(objectType)
+                    s = typeof (CalendarEvent).IsAssignableFrom(objectType)
                         ? new EventSerializer()
                         : new ComponentSerializer();
                 }

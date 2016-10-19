@@ -7,20 +7,20 @@ namespace Ical.Net.Evaluation
 {
     public class PeriodListEvaluator : Evaluator
     {
-        private readonly IPeriodList _mPeriodList;
+        private readonly PeriodList _mPeriodList;
 
-        public PeriodListEvaluator(IPeriodList rdt)
+        public PeriodListEvaluator(PeriodList rdt)
         {
             _mPeriodList = rdt;
         }
 
-        public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
-            var periods = new HashSet<IPeriod>();
+            var periods = new HashSet<Period>();
 
             if (includeReferenceDateInResults)
             {
-                IPeriod p = new Period(referenceDate);
+                Period p = new Period(referenceDate);
                 periods.Add(p);
             }
 

@@ -78,7 +78,7 @@
     <Compile Include="Components\CalendarComponent.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Components\Event.cs" />
+    <Compile Include="Components\CalendarEvent.cs" />
     <Compile Include="Components\RecurringComponent.cs" />
     <Compile Include="Components\Todo.cs" />
     <Compile Include="Components\UniqueComponent.cs" />
@@ -111,16 +111,12 @@
     <Compile Include="General\Proxies\ParameterCollectionProxy.cs" />
     <Compile Include="General\ServiceProvider.cs" />
     <Compile Include="General\Proxies\UniqueComponentListProxy.cs" />
-    <Compile Include="Interfaces\DataTypes\IFreeBusyEntry.cs" />
     <Compile Include="Interfaces\Evaluation\IGetFreeBusy.cs" />
     <Compile Include="Interfaces\Evaluation\IGetOccurrences.cs" />
     <Compile Include="Interfaces\Components\IAlarmContainer.cs" />
     <Compile Include="Interfaces\DataTypes\ICalendarDataType.cs" />
     <Compile Include="Interfaces\DataTypes\IDateTime.cs" />
-    <Compile Include="Interfaces\DataTypes\IWeekDay.cs" />
     <Compile Include="Interfaces\DataTypes\IEncodableDataType.cs" />
-    <Compile Include="Interfaces\DataTypes\IGeographicLocation.cs" />
-    <Compile Include="Interfaces\DataTypes\IPeriod.cs" />
     <Compile Include="Interfaces\Evaluation\IEvaluator.cs" />
     <Compile Include="Interfaces\Evaluation\IRecurrable.cs" />
     <Compile Include="Interfaces\General\ICalendarObjectList.cs" />
@@ -130,9 +126,6 @@
     <Compile Include="Interfaces\Serialization\Factory\ISerializerFactory.cs" />
     <Compile Include="Interfaces\Serialization\IDataTypeMapper.cs" />
     <Compile Include="Interfaces\Serialization\IEncodingProvider.cs" />
-    <Compile Include="Interfaces\Serialization\IEncodingStack.cs" />
-    <Compile Include="Interfaces\Serialization\ISerializationContext.cs" />
-    <Compile Include="Interfaces\Serialization\ISerializationProcessor.cs" />
     <Compile Include="Interfaces\Serialization\ISerializationSettings.cs" />
     <Compile Include="Interfaces\Serialization\ISerializer.cs" />
     <Compile Include="Interfaces\Serialization\IStringSerializer.cs" />
@@ -190,22 +183,6 @@
     <Compile Include="CalendarCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Interfaces\Components\IAlarm.cs" />
-    <Compile Include="Interfaces\Components\IEvent.cs" />
-    <Compile Include="Interfaces\Components\IFreeBusy.cs" />
-    <Compile Include="Interfaces\Components\IJournal.cs" />
-    <Compile Include="Interfaces\Components\ITimeZone.cs" />
-    <Compile Include="Interfaces\Components\ITodo.cs" />
-    <Compile Include="Interfaces\DataTypes\IAttendee.cs" />
-    <Compile Include="Interfaces\DataTypes\IAttachment.cs" />
-    <Compile Include="Interfaces\DataTypes\IOrganizer.cs" />
-    <Compile Include="Interfaces\DataTypes\IPeriodList.cs" />
-    <Compile Include="Interfaces\DataTypes\IRecurrencePattern.cs" />
-    <Compile Include="Interfaces\DataTypes\IRequestStatus.cs" />
-    <Compile Include="Interfaces\DataTypes\IStatusCode.cs" />
-    <Compile Include="Interfaces\DataTypes\ITrigger.cs" />
-    <Compile Include="Interfaces\DataTypes\IUTCOffset.cs" />
-    <Compile Include="Interfaces\IICalendarCollection.cs" />
     <Compile Include="Interfaces\Components\IRecurringComponent.cs" />
     <Compile Include="Interfaces\Components\IUniqueComponent.cs" />
     <Compile Include="Interfaces\Components\ICalendarComponent.cs" />
@@ -217,7 +194,6 @@
     <Compile Include="Interfaces\General\ICopyable.cs" />
     <Compile Include="Interfaces\General\ILoadable.cs" />
     <Compile Include="Interfaces\General\IMergeable.cs" />
-    <Compile Include="Interfaces\ICalendar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="packages.config" />
     <Compile Include="Serialization\DataTypeMapper.cs" />

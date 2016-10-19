@@ -1,6 +1,5 @@
 using Ical.Net.DataTypes;
 using Ical.Net.ExtensionMethods;
-using Ical.Net.Interfaces;
 using NUnit.Framework;
 using System;
 using System.Linq;
@@ -16,9 +15,9 @@ namespace Ical.Net.UnitTests
         [Test, Category("Event")]
         public void Add1()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
-            var evt = new Event
+            var evt = new CalendarEvent
             {
                 Summary = "Testing",
                 Start = new CalDateTime(2010, 3, 25),
@@ -36,9 +35,9 @@ namespace Ical.Net.UnitTests
         [Test, Category("Event")]
         public void Remove1()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
-            var evt = new Event
+            var evt = new CalendarEvent
             {
                 Summary = "Testing",
                 Start = new CalDateTime(2010, 3, 25),
@@ -60,9 +59,9 @@ namespace Ical.Net.UnitTests
         [Test, Category("Event")]
         public void Remove2()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
-            var evt = new Event
+            var evt = new CalendarEvent
             {
                 Summary = "Testing",
                 Start = new CalDateTime(2010, 3, 25),
@@ -84,10 +83,10 @@ namespace Ical.Net.UnitTests
         [Test, Category("Event")]
         public void EnsureDTSTAMPisNotNull()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
             // Do not set DTSTAMP manually
-            var evt = new Event
+            var evt = new CalendarEvent
             {
                 Summary = "Testing",
                 Start = new CalDateTime(2010, 3, 25),
@@ -104,9 +103,9 @@ namespace Ical.Net.UnitTests
         [Test, Category("Event")]
         public void EnsureDTSTAMPisOfTypeUTC()
         {
-            ICalendar cal = new Calendar();
+            Calendar cal = new Calendar();
 
-            var evt = new Event
+            var evt = new CalendarEvent
             {
                 Summary = "Testing",
                 Start = new CalDateTime(2010, 3, 25),
@@ -124,7 +123,7 @@ namespace Ical.Net.UnitTests
         public void EnsureCorrectSetDTSTAMPisSerializedAsKindUTC()
         {
             var ical = new Ical.Net.Calendar();
-            var evt = new Ical.Net.Event();
+            var evt = new Ical.Net.CalendarEvent();
             evt.DtStamp = new CalDateTime(new DateTime(2016, 8, 17, 2, 30, 0, DateTimeKind.Utc));
             ical.Events.Add(evt);
 
@@ -143,7 +142,7 @@ namespace Ical.Net.UnitTests
         public void EnsureAutomaticallySetDTSTAMPisSerializedAsKindUTC()
         {
             var ical = new Ical.Net.Calendar();
-            var evt = new Ical.Net.Event();
+            var evt = new Ical.Net.CalendarEvent();
             ical.Events.Add(evt);
 
             var serializer = new Ical.Net.Serialization.iCalendar.Serializers.CalendarSerializer();

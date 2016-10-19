@@ -14,7 +14,7 @@ namespace Ical.Net
     /// A class that represents an RFC 5545 VTODO component.
     /// </summary> 
     [DebuggerDisplay("{Summary} - {Status}")]
-    public class Todo : RecurringComponent, ITodo
+    public class Todo : RecurringComponent, IAlarmContainer
     {
         private readonly TodoEvaluator _mEvaluator;
 
@@ -76,9 +76,9 @@ namespace Ical.Net
             }
         }
 
-        public virtual IGeographicLocation GeographicLocation
+        public virtual GeographicLocation GeographicLocation
         {
-            get { return Properties.Get<IGeographicLocation>("GEO"); }
+            get { return Properties.Get<GeographicLocation>("GEO"); }
             set { Properties.Set("GEO", value); }
         }
 

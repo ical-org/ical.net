@@ -104,7 +104,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var recur = obj as IRecurrencePattern;
+            var recur = obj as RecurrencePattern;
             var factory = GetService<ISerializerFactory>();
             if (recur == null || factory == null)
             {
@@ -162,7 +162,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             {
                 var bydayValues = new List<string>(128);
 
-                var serializer = factory.Build(typeof (IWeekDay), SerializationContext) as IStringSerializer;
+                var serializer = factory.Build(typeof (WeekDay), SerializationContext) as IStringSerializer;
                 if (serializer != null)
                 {
                     bydayValues.AddRange(recur.ByDay.Select(byday => serializer.SerializeToString(byday)));
@@ -215,7 +215,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             var value = tr.ReadToEnd();
 
             // Instantiate the data type
-            var r = CreateAndAssociate() as IRecurrencePattern;
+            var r = CreateAndAssociate() as RecurrencePattern;
             var factory = GetService<ISerializerFactory>();
             if (r == null || factory == null)
             {
