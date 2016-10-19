@@ -69,7 +69,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
                 {
                     s = new StatusCodeSerializer();
                 }
-                else if (typeof (ITrigger).IsAssignableFrom(objectType))
+                else if (typeof (Trigger).IsAssignableFrom(objectType))
                 {
                     s = new TriggerSerializer();
                 }

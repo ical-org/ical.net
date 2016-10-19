@@ -10,7 +10,7 @@ namespace Ical.Net.DataTypes
     /// A class that is used to specify exactly when an <see cref="Components.Alarm"/> component will trigger.
     /// Usually this date/time is relative to the component to which the Alarm is associated.
     /// </summary>    
-    public class Trigger : EncodableDataType, ITrigger
+    public class Trigger : EncodableDataType
     {
         private IDateTime _mDateTime;
         private TimeSpan? _mDuration;
@@ -76,9 +76,9 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (obj is ITrigger)
+            if (obj is Trigger)
             {
-                var t = (ITrigger) obj;
+                var t = (Trigger) obj;
                 DateTime = t.DateTime;
                 Duration = t.Duration;
                 Related = t.Related;
