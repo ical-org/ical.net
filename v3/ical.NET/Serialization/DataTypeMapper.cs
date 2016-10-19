@@ -67,7 +67,7 @@ namespace Ical.Net.Serialization
             var obj = context as ICalendarObject;
             if (obj != null)
             {
-                if (obj.Parent is IEvent)
+                if (obj.Parent is Event)
                 {
                     return typeof (EventStatus);
                 }
