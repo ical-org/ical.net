@@ -45,7 +45,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
                 {
                     s = new GeographicLocationSerializer();
                 }
-                else if (typeof (IOrganizer).IsAssignableFrom(objectType))
+                else if (typeof (Organizer).IsAssignableFrom(objectType))
                 {
                     s = new OrganizerSerializer();
                 }

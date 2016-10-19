@@ -68,9 +68,9 @@ namespace Ical.Net
             set { Properties.Set("DTSTAMP", value); }
         }
 
-        public virtual IOrganizer Organizer
+        public virtual Organizer Organizer
         {
-            get { return Properties.Get<IOrganizer>("ORGANIZER"); }
+            get { return Properties.Get<Organizer>("ORGANIZER"); }
             set { Properties.Set("ORGANIZER", value); }
         }
 

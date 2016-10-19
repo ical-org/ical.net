@@ -118,7 +118,7 @@ namespace Ical.Net
             return this.Aggregate<ICalendar, FreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(fromInclusive, toExclusive)));
         }
 
-        public FreeBusy GetFreeBusy(IOrganizer organizer, Attendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive)
+        public FreeBusy GetFreeBusy(Organizer organizer, Attendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive)
         {
             return this.Aggregate<ICalendar, FreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(organizer, contacts, fromInclusive, toExclusive)));
         }

@@ -7,6 +7,6 @@ namespace Ical.Net.Interfaces.Evaluation
     {
         FreeBusy GetFreeBusy(FreeBusy freeBusyRequest);
         FreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive);
-        FreeBusy GetFreeBusy(IOrganizer organizer, Attendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive);
+        FreeBusy GetFreeBusy(Organizer organizer, Attendee[] contacts, IDateTime fromInclusive, IDateTime toExclusive);
     }
 }

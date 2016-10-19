@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Serialization.iCalendar.Serializers.Other;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
@@ -14,7 +13,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         {
             try
             {
-                var o = obj as IOrganizer;
+                var o = obj as Organizer;
                 return o?.Value == null
                     ? null
                     : Encode(o, Escape(o.Value.OriginalString));
@@ -29,10 +28,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         {
             var value = tr.ReadToEnd();
 
-            IOrganizer o = null;
+            Organizer o = null;
             try
             {
-                o = CreateAndAssociate() as IOrganizer;
+                o = CreateAndAssociate() as Organizer;
                 if (o != null)
                 {
                     var uriString = Unescape(Decode(o, value));
