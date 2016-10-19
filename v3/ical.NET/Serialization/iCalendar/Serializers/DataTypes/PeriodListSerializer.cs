@@ -22,7 +22,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             }
 
             var dtSerializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
-            var periodSerializer = factory.Build(typeof (IPeriod), SerializationContext) as IStringSerializer;
+            var periodSerializer = factory.Build(typeof (Period), SerializationContext) as IStringSerializer;
             if (dtSerializer == null || periodSerializer == null)
             {
                 return null;
@@ -60,7 +60,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             value = Decode(rdt, value);
 
             var dtSerializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
-            var periodSerializer = factory.Build(typeof (IPeriod), SerializationContext) as IStringSerializer;
+            var periodSerializer = factory.Build(typeof (Period), SerializationContext) as IStringSerializer;
             if (dtSerializer == null || periodSerializer == null)
             {
                 return null;
@@ -70,7 +70,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             foreach (var v in values)
             {
                 var dt = dtSerializer.Deserialize(new StringReader(v)) as IDateTime;
-                var p = periodSerializer.Deserialize(new StringReader(v)) as IPeriod;
+                var p = periodSerializer.Deserialize(new StringReader(v)) as Period;
 
                 if (dt != null)
                 {

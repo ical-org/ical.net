@@ -14,13 +14,13 @@ namespace Ical.Net.Evaluation
             _mPeriodList = rdt;
         }
 
-        public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
-            var periods = new HashSet<IPeriod>();
+            var periods = new HashSet<Period>();
 
             if (includeReferenceDateInResults)
             {
-                IPeriod p = new Period(referenceDate);
+                Period p = new Period(referenceDate);
                 periods.Add(p);
             }
 

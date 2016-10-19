@@ -74,7 +74,7 @@ namespace Ical.Net.DataTypes
                     case "INTEGER":
                         return typeof (int);
                     case "PERIOD":
-                        return typeof (IPeriod);
+                        return typeof (Period);
                     case "RECUR":
                         return typeof (RecurrencePattern);
                     case "TEXT":

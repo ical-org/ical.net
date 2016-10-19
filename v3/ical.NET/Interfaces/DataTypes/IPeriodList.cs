@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using Ical.Net.DataTypes;
 
 namespace Ical.Net.Interfaces.DataTypes
 {
-    public interface IPeriodList : IEncodableDataType, IEnumerable<IPeriod>
+    public interface IPeriodList : IEncodableDataType, IEnumerable<Period>
     {
         string TzId { get; }
-        IPeriod this[int index] { get; }
+        Period this[int index] { get; }
         void Add(IDateTime dt);
-        void Add(IPeriod item);
-        IEnumerator<IPeriod> GetEnumerator();
+        void Add(Period item);
+        IEnumerator<Period> GetEnumerator();
         int Count { get; }
     }
 }

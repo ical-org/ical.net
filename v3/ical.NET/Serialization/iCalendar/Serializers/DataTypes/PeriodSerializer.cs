@@ -14,7 +14,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var p = obj as IPeriod;
+            var p = obj as Period;
             var factory = GetService<ISerializerFactory>();
 
             if (p != null && factory != null)
@@ -54,7 +54,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         {
             var value = tr.ReadToEnd();
 
-            var p = CreateAndAssociate() as IPeriod;
+            var p = CreateAndAssociate() as Period;
             var factory = GetService<ISerializerFactory>();
             if (p != null && factory != null)
             {

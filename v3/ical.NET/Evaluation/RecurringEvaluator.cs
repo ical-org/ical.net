@@ -37,17 +37,17 @@ namespace Ical.Net.Evaluation
         /// <param name="periodStart">The beginning date of the range to evaluate.</param>
         /// <param name="periodEnd">The end date of the range to evaluate.</param>
         /// <param name="includeReferenceDateInResults"></param>
-        protected HashSet<IPeriod> EvaluateRRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        protected HashSet<Period> EvaluateRRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             if (Recurrable.RecurrenceRules == null || !Recurrable.RecurrenceRules.Any())
             {
-                return new HashSet<IPeriod>();
+                return new HashSet<Period>();
             }
 
             var evaluator = Recurrable.RecurrenceRules.First().GetService(typeof(IEvaluator)) as IEvaluator;
             if (evaluator == null)
             {
-                return new HashSet<IPeriod>();
+                return new HashSet<Period>();
             }
             var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
 
@@ -59,14 +59,14 @@ namespace Ical.Net.Evaluation
         }
 
         /// <summary> Evalates the RDate component, and adds each specified DateTime or Period to the Periods collection. </summary>
-        protected HashSet<IPeriod> EvaluateRDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
+        protected HashSet<Period> EvaluateRDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             if (Recurrable.RecurrenceDates == null || !Recurrable.RecurrenceDates.Any())
             {
-                return new HashSet<IPeriod>();
+                return new HashSet<Period>();
             }
 
-            var recurrences = new HashSet<IPeriod>(Recurrable.RecurrenceDates.SelectMany(rdate => rdate));
+            var recurrences = new HashSet<Period>(Recurrable.RecurrenceDates.SelectMany(rdate => rdate));
             return recurrences;
         }
 
@@ -76,21 +76,21 @@ namespace Ical.Net.Evaluation
         /// <param name="referenceDate"></param>
         /// <param name="periodStart">The beginning date of the range to evaluate.</param>
         /// <param name="periodEnd">The end date of the range to evaluate.</param>
-        protected HashSet<IPeriod> EvaluateExRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
+        protected HashSet<Period> EvaluateExRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             if (Recurrable.ExceptionRules == null || !Recurrable.ExceptionRules.Any())
             {
-                return new HashSet<IPeriod>();
+                return new HashSet<Period>();
             }
 
             var evaluator = Recurrable.ExceptionRules.First().GetService(typeof(IEvaluator)) as IEvaluator;
             if (evaluator == null)
             {
-                return new HashSet<IPeriod>();
+                return new HashSet<Period>();
             }
 
             var exRuleEvaluatorQuery = Recurrable.ExceptionRules.SelectMany(exRule => evaluator.Evaluate(referenceDate, periodStart, periodEnd, false));
-            var exRuleExclusions = new HashSet<IPeriod>(exRuleEvaluatorQuery);
+            var exRuleExclusions = new HashSet<Period>(exRuleEvaluatorQuery);
             return exRuleExclusions;
         }
 
@@ -100,18 +100,18 @@ namespace Ical.Net.Evaluation
         /// <param name="referenceDate"></param>
         /// <param name="periodStart">The beginning date of the range to evaluate.</param>
         /// <param name="periodEnd">The end date of the range to evaluate.</param>
-        protected HashSet<IPeriod> EvaluateExDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
+        protected HashSet<Period> EvaluateExDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             if (Recurrable.ExceptionDates == null || !Recurrable.ExceptionDates.Any())
             {
-                return new HashSet<IPeriod>();
+                return new HashSet<Period>();
             }
 
-            var exDates = new HashSet<IPeriod>(Recurrable.ExceptionDates.SelectMany(exDate => exDate));
+            var exDates = new HashSet<Period>(Recurrable.ExceptionDates.SelectMany(exDate => exDate));
             return exDates;
         }
 
-        public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             // Evaluate extra time periods, without re-evaluating ones that were already evaluated
             if ((EvaluationStartBounds == DateTime.MaxValue && EvaluationEndBounds == DateTime.MinValue) || periodEnd.Equals(EvaluationStartBounds) ||

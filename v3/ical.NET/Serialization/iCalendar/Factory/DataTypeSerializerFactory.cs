@@ -49,7 +49,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
                 {
                     s = new OrganizerSerializer();
                 }
-                else if (typeof (IPeriod).IsAssignableFrom(objectType))
+                else if (typeof (Period).IsAssignableFrom(objectType))
                 {
                     s = new PeriodSerializer();
                 }

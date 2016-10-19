@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
 
@@ -31,7 +32,7 @@ namespace Ical.Net.Interfaces.Evaluation
         /// Gets a list of periods collected so far during
         /// the evaluation process.
         /// </summary>
-        HashSet<IPeriod> Periods { get; }
+        HashSet<Period> Periods { get; }
 
         /// <summary>
         /// Gets the object associated with this evaluator.
@@ -69,6 +70,6 @@ namespace Ical.Net.Interfaces.Evaluation
         ///     A list of <see cref="System.DateTime"/> objects for
         ///     each date/time when this item occurs/recurs.
         /// </returns>
-        HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults);
+        HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults);
     }
 }
