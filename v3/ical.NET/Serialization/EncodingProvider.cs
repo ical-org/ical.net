@@ -160,7 +160,7 @@ namespace Ical.Net.Serialization
             }
 
             // Decode the string into the current encoding
-            var encodingStack = _mSerializationContext.GetService(typeof (IEncodingStack)) as IEncodingStack;
+            var encodingStack = _mSerializationContext.GetService(typeof (EncodingStack)) as EncodingStack;
             return encodingStack.Current.GetString(data);
         }
 

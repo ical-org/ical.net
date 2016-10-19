@@ -22,7 +22,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             }
 
             // Return the value in the current encoding
-            var encodingStack = GetService<IEncodingStack>();
+            var encodingStack = GetService<EncodingStack>();
             return Encode(dt, encodingStack.Current.GetBytes(value));
         }
 
@@ -36,7 +36,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             if (dt?.Encoding == null)
             {
                 // Default to the current encoding
-                var encodingStack = GetService<IEncodingStack>();
+                var encodingStack = GetService<EncodingStack>();
                 return encodingStack.Current.GetString(data);
             }
 
@@ -53,7 +53,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             }
 
             // Default to the current encoding
-            var encodingStack = GetService<IEncodingStack>();
+            var encodingStack = GetService<EncodingStack>();
             return encodingStack.Current.GetString(data);
         }
 
@@ -67,7 +67,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             if (dt?.Encoding == null)
             {
                 // Default to the current encoding
-                var encodingStack = GetService<IEncodingStack>();
+                var encodingStack = GetService<EncodingStack>();
                 return encodingStack.Current.GetBytes(value);
             }
 

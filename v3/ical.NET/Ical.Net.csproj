@@ -129,7 +129,6 @@
     <Compile Include="Interfaces\Serialization\Factory\ISerializerFactory.cs" />
     <Compile Include="Interfaces\Serialization\IDataTypeMapper.cs" />
     <Compile Include="Interfaces\Serialization\IEncodingProvider.cs" />
-    <Compile Include="Interfaces\Serialization\IEncodingStack.cs" />
     <Compile Include="Interfaces\Serialization\ISerializationContext.cs" />
     <Compile Include="Interfaces\Serialization\ISerializationProcessor.cs" />
     <Compile Include="Interfaces\Serialization\ISerializationSettings.cs" />
