@@ -6,11 +6,11 @@ namespace ical.NET.Collections.Enumerators
     public class GroupedListEnumerator<TType> :
         IEnumerator<TType>
     {
-        private readonly IList<MultiLinkedList<TType>> _lists;
-        private IEnumerator<MultiLinkedList<TType>> _listsEnumerator;
+        private readonly IList<List<TType>> _lists;
+        private IEnumerator<List<TType>> _listsEnumerator;
         private IEnumerator<TType> _listEnumerator;
 
-        public GroupedListEnumerator(IList<MultiLinkedList<TType>> lists)
+        public GroupedListEnumerator(IList<List<TType>> lists)
         {
             _lists = lists;
         }

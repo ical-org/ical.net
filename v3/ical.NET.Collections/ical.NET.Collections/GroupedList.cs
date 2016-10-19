@@ -14,10 +14,10 @@ namespace ical.NET.Collections
         IGroupedList<TGroup, TItem>
         where TItem : class, IGroupedObject<TGroup>
     {
-        private readonly List<MultiLinkedList<TItem>> _lists = new List<MultiLinkedList<TItem>>();
-        private readonly Dictionary<TGroup, MultiLinkedList<TItem>> _dictionary = new Dictionary<TGroup, MultiLinkedList<TItem>>();
+        private readonly List<List<TItem>> _lists = new List<List<TItem>>();
+        private readonly Dictionary<TGroup, List<TItem>> _dictionary = new Dictionary<TGroup, List<TItem>>();
 
-        private MultiLinkedList<TItem> EnsureList(TGroup group)
+        private List<TItem> EnsureList(TGroup group)
         {
             if (group == null)
             {
@@ -29,18 +29,18 @@ namespace ical.NET.Collections
                 return _dictionary[group];
             }
 
-            var list = new MultiLinkedList<TItem>();
+            var list = new List<TItem>();
             _dictionary[group] = list;
 
             _lists.Add(list);
             return list;
         }
 
-        private MultiLinkedList<TItem> ListForIndex(int index, out int relativeIndex)
+        private List<TItem> ListForIndex(int index, out int relativeIndex)
         {
-            foreach (var list in _lists.Where(list => list.StartIndex <= index && list.ExclusiveEnd > index))
+            foreach (var list in _lists.Where(list => list.Count > index))
             {
-                relativeIndex = index - list.StartIndex;
+                relativeIndex = index;
                 return list;
             }
             relativeIndex = -1;
@@ -66,7 +66,7 @@ namespace ical.NET.Collections
             var list = EnsureList(group);
             var index = list.Count;
             list.Add(item);
-            OnItemAdded(item, list.StartIndex + index);
+            OnItemAdded(item, index);
         }
 
         public virtual int IndexOf(TItem item)
@@ -84,9 +84,9 @@ namespace ical.NET.Collections
             var index = list.IndexOf(item);
 
             // Return the index within the overall KeyedList
-            if (index >= 0)
-                return list.StartIndex + index;
-            return -1;
+            return index >= 0
+                ? index
+                : -1;
         }
 
         public virtual void Clear(TGroup group)

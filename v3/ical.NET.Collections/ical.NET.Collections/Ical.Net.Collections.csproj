@@ -76,7 +76,6 @@
     <Compile Include="GroupedList.cs" />
     <Compile Include="GroupedValueList.cs" />
     <Compile Include="Proxies\GroupedValueListProxy.cs" />
-    <Compile Include="MultiLinkedList.cs" />
     <Compile Include="Enumerators\GroupedListEnumerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Interfaces\Proxies\IGroupedCollectionProxy.cs" />
