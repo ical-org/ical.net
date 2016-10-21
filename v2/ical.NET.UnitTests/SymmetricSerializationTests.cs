@@ -51,11 +51,10 @@ namespace Ical.Net.UnitTests
 
             var calendar = new Calendar();
             calendar.Events.Add(e);
-
             yield return new TestCaseData(calendar).SetName("readme.md example");
+
             e = GetSimpleEvent();
             e.Description = "This is an event description that is really rather long. Hopefully the line breaks work now, and it's serialized properly.";
-
             calendar = new Calendar();
             calendar.Events.Add(e);
             yield return new TestCaseData(calendar).SetName("Description serialization isn't working properly. Issue #60");

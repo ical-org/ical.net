@@ -32,6 +32,16 @@ namespace Ical.Net.UnitTests
             yield return new TestCaseData(nowCalDtWithTz, new CalDateTime(_nowTime, _someTz)).SetName("Now, with time zone");
         }
 
+        [Test]
+        public void RecurrencePatternTests()
+        {
+            var patternA = GetSimpleRecurrencePattern();
+            var patternB = GetSimpleRecurrencePattern();
+
+            Assert.AreEqual(patternA, patternB);
+            Assert.AreEqual(patternA.GetHashCode(), patternB.GetHashCode());
+        }
+
         [Test, TestCaseSource(nameof(Event_TestCases))]
         public void Event_Tests(Event incoming, Event expected)
         {
@@ -46,34 +56,31 @@ namespace Ical.Net.UnitTests
             Assert.IsTrue(incoming.Equals(expected));
         }
 
+        private static RecurrencePattern GetSimpleRecurrencePattern() => new RecurrencePattern(FrequencyType.Daily, 1)
+        {
+            Count = 5
+        };
+
+        private static Event GetSimpleEvent() => new Event
+        {
+            DtStart = new CalDateTime(_nowTime),
+            DtEnd = new CalDateTime(_later),
+            Duration = TimeSpan.FromHours(1),
+        };
+
         public static IEnumerable<ITestCaseData> Event_TestCases()
         {
-            var outgoing = new Event
-            {
-                DtStart = new CalDateTime(_nowTime),
-                DtEnd = new CalDateTime(_later),
-                Duration = TimeSpan.FromHours(1),
-            };
-
-            var expected = new Event
-            {
-                DtStart = new CalDateTime(_nowTime),
-                DtEnd = new CalDateTime(_later),
-                Duration = TimeSpan.FromHours(1),
-            };
+            var outgoing = GetSimpleEvent();
+            var expected = GetSimpleEvent();
             yield return new TestCaseData(outgoing, expected).SetName("Events with start, end, and duration");
 
-            var fiveA = new RecurrencePattern(FrequencyType.Daily, 1)
-            {
-                Count = 5
-            };
+            var fiveA = GetSimpleRecurrencePattern();
+            var fiveB = GetSimpleRecurrencePattern();
 
-            var fiveB = new RecurrencePattern(FrequencyType.Daily, 1)
-            {
-                Count = 5
-            };
-            outgoing.RecurrenceRules = new List<IRecurrencePattern> {fiveA};
-            expected.RecurrenceRules = new List<IRecurrencePattern> {fiveB};
+            outgoing = GetSimpleEvent();
+            expected = GetSimpleEvent();
+            outgoing.RecurrenceRules = new List<IRecurrencePattern> { fiveA };
+            expected.RecurrenceRules = new List<IRecurrencePattern> { fiveB };
             yield return new TestCaseData(outgoing, expected).SetName("Events with start, end, duration, and one recurrence rule");
         }
 

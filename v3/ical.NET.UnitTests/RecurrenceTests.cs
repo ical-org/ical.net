@@ -2942,8 +2942,7 @@ END:VCALENDAR";
         {
             //https://github.com/rianjs/ical.net/issues/121
 
-            const string ical =
-    @"BEGIN:VCALENDAR
+            const string ical = @"BEGIN:VCALENDAR
 PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
 VERSION:2.0
 BEGIN:VEVENT
@@ -2951,7 +2950,7 @@ SUMMARY:This is an event
 DTEND;TZID=UTC:20160801T080000
 DTSTAMP:20160905T142724Z
 DTSTART;TZID=UTC:20160801T070000
-RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=WE;UNTIL=20160901T070000
+RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=WE;UNTIL=20160831T070000
 UID:abab717c-1786-4efc-87dd-6859c2b48eb6
 END:VEVENT
 END:VCALENDAR";
@@ -3085,63 +3084,6 @@ END:VCALENDAR";
             var expectedSept3End = new CalDateTime(DateTime.Parse("2016-09-01T12:30:00"), "Europe/Bucharest");
             Assert.AreEqual(expectedSept3Start, orderedOccurrences[5].StartTime);
             Assert.AreEqual(expectedSept3End, orderedOccurrences[5].EndTime);
-        }
-
-        [Test]
-        public void EventWithExDateShouldNotBeEqualToSameEventWithoutExDate()
-        {
-            const string icalNoException = @"BEGIN:VCALENDAR
-PRODID:-//Telerik Inc.//NONSGML RadScheduler//EN
-VERSION:2.0
-CALSCALE:GREGORIAN
-METHOD:PUBLISH
-BEGIN:VTIMEZONE
-TZID:UTC
-BEGIN:STANDARD
-TZNAME:UTC
-TZOFFSETTO:+0000
-TZOFFSETFROM:+0000
-DTSTART:16010101T000000
-END:STANDARD
-END:VTIMEZONE
-BEGIN:VEVENT
-DTSTART;TZID=UTC:20161020T170000
-DTEND;TZID=UTC:20161020T230000
-UID:694f818f-6d67-4307-9c4d-0b5211686ff0
-IMPORTANCE:None
-RRULE:FREQ=DAILY
-END:VEVENT
-END:VCALENDAR";
-
-            const string icalWithException = @"BEGIN:VCALENDAR
-PRODID:-//Telerik Inc.//NONSGML RadScheduler//EN
-VERSION:2.0
-CALSCALE:GREGORIAN
-METHOD:PUBLISH
-BEGIN:VTIMEZONE
-TZID:UTC
-BEGIN:STANDARD
-TZNAME:UTC
-TZOFFSETTO:+0000
-TZOFFSETFROM:+0000
-DTSTART:16010101T000000
-END:STANDARD
-END:VTIMEZONE
-BEGIN:VEVENT
-DTSTART;TZID=UTC:20161020T170000
-DTEND;TZID=UTC:20161020T230000
-UID:694f818f-6d67-4307-9c4d-0b5211686ff0
-IMPORTANCE:None
-RRULE:FREQ=DAILY
-EXDATE;TZID=UTC:20161020T170000
-END:VEVENT
-END:VCALENDAR";
-
-            var noException = Calendar.LoadFromStream(new StringReader(icalNoException)).First().Events.First();
-            var withException = Calendar.LoadFromStream(new StringReader(icalWithException)).First().Events.First();
-
-            Assert.AreNotEqual(noException, withException);
-            Assert.AreNotEqual(noException.GetHashCode(), withException.GetHashCode());
         }
     }
 }

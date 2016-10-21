@@ -287,7 +287,7 @@ namespace Ical.Net
             var resourcesSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             resourcesSet.UnionWith(Resources);
 
-            return Equals(DtStart, other.DtStart)
+            var result = Equals(DtStart, other.DtStart)
                 && Equals(DtEnd, other.DtEnd)
                 && string.Equals(Location, other.Location, StringComparison.OrdinalIgnoreCase)
                 && resourcesSet.SetEquals(other.Resources)
@@ -297,7 +297,11 @@ namespace Ical.Net
                 && EvaluationIncludesReferenceDate == other.EvaluationIncludesReferenceDate
                 && Attachments.SequenceEqual(other.Attachments)
                 && (ExceptionDates != null && CollectionHelpers.Equals(ExceptionDates, other.ExceptionDates))
-                && (ExceptionRules != null && CollectionHelpers.Equals(ExceptionRules, other.ExceptionRules));
+                && (ExceptionRules != null && CollectionHelpers.Equals(ExceptionRules, other.ExceptionRules))
+                && (RecurrenceRules != null && CollectionHelpers.Equals(RecurrenceRules, other.RecurrenceRules, true))
+                && (RecurrenceDates != null && CollectionHelpers.Equals(RecurrenceDates, other.RecurrenceDates, true));
+
+            return result;
         }
 
         public override bool Equals(object obj)
@@ -321,6 +325,8 @@ namespace Ical.Net
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Resources);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionDates);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionRules);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(RecurrenceRules);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(RecurrenceDates);
                 return hashCode;
             }
         }
