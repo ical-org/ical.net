@@ -6,6 +6,7 @@ using Ical.Net.Evaluation;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes
 {
@@ -106,68 +107,62 @@ namespace Ical.Net.DataTypes
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
-        public override bool Equals(object obj)
-        {
-            if (!(obj is RecurrencePattern))
-            {
-                return false;
-            }
-
-            var r = (RecurrencePattern) obj;
-            if (!CollectionEquals(r.ByDay, ByDay) || !CollectionEquals(r.ByHour, ByHour) || !CollectionEquals(r.ByMinute, ByMinute) ||
-                !CollectionEquals(r.ByMonth, ByMonth) || !CollectionEquals(r.ByMonthDay, ByMonthDay) || !CollectionEquals(r.BySecond, BySecond) ||
-                !CollectionEquals(r.BySetPosition, BySetPosition) || !CollectionEquals(r.ByWeekNo, ByWeekNo) || !CollectionEquals(r.ByYearDay, ByYearDay))
-            {
-                return false;
-            }
-            if (r.Count != Count)
-            {
-                return false;
-            }
-            if (r.Frequency != Frequency)
-            {
-                return false;
-            }
-            if (r.Interval != Interval)
-            {
-                return false;
-            }
-            if (r.Until != DateTime.MinValue && !r.Until.Equals(Until))
-            {
-                return false;
-            }
-            if (Until != DateTime.MinValue)
-            {
-                return false;
-            }
-            return r.FirstDayOfWeek == FirstDayOfWeek;
-        }
-
         public override string ToString()
         {
             var serializer = new RecurrencePatternSerializer();
             return serializer.SerializeToString(this);
         }
 
-        //ToDo: This needs a memberwise hash code implementation
+        protected bool Equals(RecurrencePattern other)
+        {
+            return (Interval == other.Interval)
+                && (RestrictionType == other.RestrictionType)
+                && (EvaluationMode == other.EvaluationMode)
+                && (Frequency == other.Frequency)
+                && Until.Equals(other.Until)
+                && (Count == other.Count)
+                && (FirstDayOfWeek == other.FirstDayOfWeek)
+                && CollectionEquals(BySecond, other.BySecond)
+                && CollectionEquals(ByMinute, other.ByMinute)
+                && CollectionEquals(ByHour, other.ByHour)
+                && CollectionEquals(ByDay, other.ByDay)
+                && CollectionEquals(ByMonthDay, other.ByMonthDay)
+                && CollectionEquals(ByYearDay, other.ByYearDay)
+                && CollectionEquals(ByWeekNo, other.ByWeekNo)
+                && CollectionEquals(ByMonth, other.ByMonth)
+                && CollectionEquals(BySetPosition, other.BySetPosition);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((RecurrencePattern) obj);
+        }
+
         public override int GetHashCode()
         {
-            var hashCode = ByDay.GetHashCode() ^ ByHour.GetHashCode() ^ ByMinute.GetHashCode() ^ ByMonth.GetHashCode()
-                ^ ByMonthDay.GetHashCode() ^ BySecond.GetHashCode() ^ BySetPosition.GetHashCode() ^ ByWeekNo.GetHashCode()
-                ^ ByYearDay.GetHashCode() ^ Count.GetHashCode() ^ Frequency.GetHashCode();
-
-            if (Interval.Equals(1))
+            unchecked
             {
-                hashCode ^= 0x1;
+                var hashCode = _interval;
+                hashCode = (hashCode * 397) ^ _restrictionType.GetHashCode();
+                hashCode = (hashCode * 397) ^ _evaluationMode.GetHashCode();
+                hashCode = (hashCode * 397) ^ (int) Frequency;
+                hashCode = (hashCode * 397) ^ Until.GetHashCode();
+                hashCode = (hashCode * 397) ^ Count;
+                hashCode = (hashCode * 397) ^ (int)FirstDayOfWeek;
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(BySecond);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByMinute);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByHour);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByDay);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByMonthDay);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByYearDay);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByWeekNo);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByMonth);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(BySetPosition);
+                return hashCode;
             }
-            else
-            {
-                hashCode ^= Interval.GetHashCode();
-            }
-
-            hashCode ^= Until.GetHashCode();
-            hashCode ^= FirstDayOfWeek.GetHashCode();
-            return hashCode;
         }
 
         public override void CopyFrom(ICopyable obj)

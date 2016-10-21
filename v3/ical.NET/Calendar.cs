@@ -208,7 +208,7 @@ namespace Ical.Net
         {
             unchecked
             {
-                var hashCode = Name.GetHashCode();
+                var hashCode = Name?.GetHashCode() ?? 0;
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(UniqueComponents);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Events);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Todos);
