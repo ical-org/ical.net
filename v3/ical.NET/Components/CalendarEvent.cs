@@ -295,7 +295,9 @@ namespace Ical.Net
                 && IsActive() == other.IsActive()
                 && Transparency.Equals(other.Transparency)
                 && EvaluationIncludesReferenceDate == other.EvaluationIncludesReferenceDate
-                && Attachments.SequenceEqual(other.Attachments);
+                && Attachments.SequenceEqual(other.Attachments)
+                && (ExceptionDates != null && CollectionHelpers.Equals(ExceptionDates, other.ExceptionDates))
+                && (ExceptionRules != null && CollectionHelpers.Equals(ExceptionRules, other.ExceptionRules));
         }
 
         public override bool Equals(object obj)
@@ -317,6 +319,8 @@ namespace Ical.Net
                 hashCode = (hashCode * 397) ^ IsActive().GetHashCode();
                 hashCode = (hashCode * 397) ^ Transparency.GetHashCode();
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Resources);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionDates);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionRules);
                 return hashCode;
             }
         }
