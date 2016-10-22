@@ -3,7 +3,7 @@ using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization
 {
-    public class SerializationSettings : ISerializationSettings
+    internal class SerializationSettings : ISerializationSettings
     {
         public virtual Type CalendarType { get; set; } = typeof (Calendar);
 

@@ -9,7 +9,7 @@ namespace Ical.Net.Serialization
 {
     public delegate Type TypeResolverDelegate(object context);
 
-    public class DataTypeMapper : IDataTypeMapper
+    internal class DataTypeMapper : IDataTypeMapper
     {
         private class PropertyMapping
         {
