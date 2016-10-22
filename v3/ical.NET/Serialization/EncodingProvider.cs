@@ -4,7 +4,7 @@ using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization
 {
-    public class EncodingProvider : IEncodingProvider
+    internal class EncodingProvider : IEncodingProvider
     {
         public delegate string EncoderDelegate(byte[] data);
 

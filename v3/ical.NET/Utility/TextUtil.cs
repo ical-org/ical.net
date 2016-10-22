@@ -7,7 +7,7 @@ using Ical.Net.Serialization;
 
 namespace Ical.Net.Utility
 {
-    public static class TextUtil
+    internal static class TextUtil
     {
         /// <summary> Folds lines at 75 characters, and prepends the next line with a space per RFC https://tools.ietf.org/html/rfc5545#section-3.1 </summary>
         public static string FoldLines(string incoming)

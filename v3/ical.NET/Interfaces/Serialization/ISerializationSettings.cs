@@ -2,7 +2,7 @@
 
 namespace Ical.Net.Interfaces.Serialization
 {
-    public interface ISerializationSettings
+    internal interface ISerializationSettings
     {
         Type CalendarType { get; set; }
         bool EnsureAccurateLineNumbers { get; set; }
@@ -10,7 +10,7 @@ namespace Ical.Net.Interfaces.Serialization
         bool StoreExtraSerializationData { get; set; }
     }
 
-    public enum ParsingModeType
+    internal enum ParsingModeType
     {
         Strict,
         Loose

@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Ical.Net.Serialization
 {
-    public class EncodingStack
+    internal class EncodingStack
     {
         private readonly Stack<Encoding> _mStack;
 

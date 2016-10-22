@@ -86,6 +86,7 @@
     <Compile Include="GetOccurrenceTests.cs" />
     <Compile Include="IcsFiles.cs" />
     <Compile Include="JournalTest.cs" />
+    <Compile Include="ListExtensions.cs" />
     <Compile Include="ProgramTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="app.config" />

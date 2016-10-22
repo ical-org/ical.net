@@ -7,7 +7,7 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.Utility
 {
-    public class RecurrenceUtil
+    internal class RecurrenceUtil
     {
         public static void ClearEvaluation(IRecurrable recurrable)
         {

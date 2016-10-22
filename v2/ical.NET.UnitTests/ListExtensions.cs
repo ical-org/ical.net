@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Ical.Net.ExtensionMethods
+namespace Ical.Net.UnitTests.ExtensionMethods
 {
-    public static class ListExtensions
+    internal static class ListExtensions
     {
         public static void AddRange<T>(this IList<T> list, IEnumerable<T> values)
         {

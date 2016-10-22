@@ -36,23 +36,23 @@ namespace Ical.Net.DataTypes
             set { _interval = value; }
         }
 
-        public IList<int> BySecond { get; set; } = new List<int>(16);
+        public List<int> BySecond { get; set; } = new List<int>(16);
 
-        public IList<int> ByMinute { get; set; } = new List<int>(16);
+        public List<int> ByMinute { get; set; } = new List<int>(16);
 
-        public IList<int> ByHour { get; set; } = new List<int>(16);
+        public List<int> ByHour { get; set; } = new List<int>(16);
 
-        public IList<IWeekDay> ByDay { get; set; } = new List<IWeekDay>(16);
+        public List<IWeekDay> ByDay { get; set; } = new List<IWeekDay>(16);
 
-        public IList<int> ByMonthDay { get; set; } = new List<int>(16);
+        public List<int> ByMonthDay { get; set; } = new List<int>(16);
 
-        public IList<int> ByYearDay { get; set; } = new List<int>(16);
+        public List<int> ByYearDay { get; set; } = new List<int>(16);
 
-        public IList<int> ByWeekNo { get; set; } = new List<int>(16);
+        public List<int> ByWeekNo { get; set; } = new List<int>(16);
 
-        public IList<int> ByMonth { get; set; } = new List<int>(16);
+        public List<int> ByMonth { get; set; } = new List<int>(16);
 
-        public IList<int> BySetPosition { get; set; } = new List<int>(16);
+        public List<int> BySetPosition { get; set; } = new List<int>(16);
 
         public DayOfWeek FirstDayOfWeek { get; set; } = DayOfWeek.Monday;
 
@@ -145,9 +145,9 @@ namespace Ical.Net.DataTypes
         {
             unchecked
             {
-                var hashCode = _interval;
-                hashCode = (hashCode * 397) ^ _restrictionType.GetHashCode();
-                hashCode = (hashCode * 397) ^ _evaluationMode.GetHashCode();
+                var hashCode = Interval.GetHashCode();
+                hashCode = (hashCode * 397) ^ RestrictionType.GetHashCode();
+                hashCode = (hashCode * 397) ^ EvaluationMode.GetHashCode();
                 hashCode = (hashCode * 397) ^ (int) Frequency;
                 hashCode = (hashCode * 397) ^ Until.GetHashCode();
                 hashCode = (hashCode * 397) ^ Count;
