@@ -16,15 +16,27 @@ namespace Ical.Net.Utility
 
         internal static bool Equals<T>(IEnumerable<T> left, IEnumerable<T> right, bool orderSignificant = false)
         {
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+
+            if (left == null && right != null)
+            {
+                return false;
+            }
+
+            if (left != null && right == null)
+            {
+                return false;
+            }
+
             if (orderSignificant)
             {
                 return left.SequenceEqual(right);
             }
 
-            var sortedLeft = left.OrderBy(l => l).ToList();
-            var sortedRight = right.OrderBy(r => r).ToList();
-
-            return sortedLeft.SequenceEqual(sortedRight);
+            return left.OrderBy(l => l).SequenceEqual(right.OrderBy(r => r));
         }
     }
 }
