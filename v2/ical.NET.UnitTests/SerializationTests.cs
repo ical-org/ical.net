@@ -13,6 +13,7 @@ using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using Ical.Net.Serialization.iCalendar.Serializers.Other;
+using Ical.Net.UnitTests.ExtensionMethods;
 using NUnit.Framework;
 
 namespace Ical.Net.UnitTests

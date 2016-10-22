@@ -9,15 +9,15 @@ namespace Ical.Net.Interfaces.DataTypes
         DateTime Until { get; set; }
         int Count { get; set; }
         int Interval { get; set; }
-        IList<int> BySecond { get; set; }
-        IList<int> ByMinute { get; set; }
-        IList<int> ByHour { get; set; }
-        IList<IWeekDay> ByDay { get; set; }
-        IList<int> ByMonthDay { get; set; }
-        IList<int> ByYearDay { get; set; }
-        IList<int> ByWeekNo { get; set; }
-        IList<int> ByMonth { get; set; }
-        IList<int> BySetPosition { get; set; }
+        List<int> BySecond { get; set; }
+        List<int> ByMinute { get; set; }
+        List<int> ByHour { get; set; }
+        List<IWeekDay> ByDay { get; set; }
+        List<int> ByMonthDay { get; set; }
+        List<int> ByYearDay { get; set; }
+        List<int> ByWeekNo { get; set; }
+        List<int> ByMonth { get; set; }
+        List<int> BySetPosition { get; set; }
         DayOfWeek FirstDayOfWeek { get; set; }
 
         RecurrenceRestrictionType RestrictionType { get; set; }
