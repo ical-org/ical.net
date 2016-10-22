@@ -144,7 +144,7 @@ namespace Ical.Net.DataTypes
         {
             unchecked
             {
-                var hashCode = Interval;
+                var hashCode = Interval.GetHashCode();
                 hashCode = (hashCode * 397) ^ RestrictionType.GetHashCode();
                 hashCode = (hashCode * 397) ^ EvaluationMode.GetHashCode();
                 hashCode = (hashCode * 397) ^ (int)Frequency;
