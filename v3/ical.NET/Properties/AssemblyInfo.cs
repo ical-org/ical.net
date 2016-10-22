@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 
@@ -34,3 +35,4 @@ using System.Security;
 
 [assembly: AssemblyVersion("2.1.0.*")]
 [assembly: AssemblyFileVersion("2.1.0.*")]
+[assembly: InternalsVisibleTo("Ical.Net.UnitTests")]

@@ -3,7 +3,7 @@ using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.Utility
 {
-    public class AssociationUtil
+    internal class AssociationUtil
     {
         public static void AssociateItem(object item, ICalendarObject objectToAssociate)
         {

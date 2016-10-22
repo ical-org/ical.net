@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Ical.Net.Utility
 {
-    public static class CollectionHelpers
+    internal static class CollectionHelpers
     {
         internal static int GetHashCode<T>(IEnumerable<T> collection)
         {

@@ -8,7 +8,7 @@ using NodaTime.TimeZones;
 
 namespace Ical.Net.Utility
 {
-    public class DateUtil
+    internal class DateUtil
     {
         public static IDateTime StartOfDay(IDateTime dt)
         {

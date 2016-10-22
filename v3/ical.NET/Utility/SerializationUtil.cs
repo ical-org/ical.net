@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 
 namespace Ical.Net.Utility
 {
-    public class SerializationUtil
+    internal class SerializationUtil
     {
         public static void OnDeserializing(object obj)
         {
