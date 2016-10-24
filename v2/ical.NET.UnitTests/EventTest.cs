@@ -321,5 +321,61 @@ END:VCALENDAR";
             Assert.AreNotEqual(eventA, eventB);
             Assert.AreNotEqual(eventA.GetHashCode(), eventB.GetHashCode());
         }
+
+        [Test]
+        public void EventsDifferingByDtStampAreEqual()
+        {
+            const string eventA = @"BEGIN:VCALENDAR
+PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
+VERSION:2.0
+BEGIN:VEVENT
+ATTACH;FMTTYPE=application/json;VALUE=BINARY;ENCODING=BASE64:eyJzdWJqZWN0I
+ joiSFAgQ29hdGVyIGFuZCBDdXR0ZXIgQ2xlYW51cCIsInVuaXF1ZUlkZW50aWZpZXIiOiIwND
+ EwNzI1NGRjNWM5MDk0YWY3MWEwZTE5N2U2NWE1NTdkZmJjYjg0IiwiaWNhbFN0cmluZyI6IiI
+ sImxhYm9yRG93bnRpbWVzIjpbXSwiZGlzYWJsZWRFcXVpcG1lbnQiOlt7ImRpc2FibGVkRXF1
+ aXBtZW50SW5zdGFuY2VOYW1lcyI6WyJEaWdpdGFsIFByaW50XFxIUCAyOCIsIkRpZ2l0YWwgU
+ HJpbnRcXEhQIDQ0Il0sImZ1bGxUaW1lRXF1aXZhbGVudHNDb3VudCI6MC4wfV0sIm1vZGVzTm
+ 90QWxsb3dlZCI6W10sInJhd01hdGVyaWFsc05vdEFsbG93ZWQiOltdLCJsYWJvckFsbG9jYXR
+ pb25zIjpbXX0=
+DTEND;TZID=UTC:20150615T055000
+DTSTAMP:20161011T195316Z
+DTSTART;TZID=UTC:20150615T054000
+EXDATE;TZID=UTC:20151023T054000
+IMPORTANCE:None
+RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR,SA
+UID:04107254dc5c9094af71a0e197e65a557dfbcb84
+END:VEVENT
+END:VCALENDAR";
+
+            const string eventB = @"BEGIN:VCALENDAR
+PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
+VERSION:2.0
+BEGIN:VEVENT
+ATTACH;FMTTYPE=application/json;VALUE=BINARY;ENCODING=BASE64:eyJzdWJqZWN0I
+ joiSFAgQ29hdGVyIGFuZCBDdXR0ZXIgQ2xlYW51cCIsInVuaXF1ZUlkZW50aWZpZXIiOiIwND
+ EwNzI1NGRjNWM5MDk0YWY3MWEwZTE5N2U2NWE1NTdkZmJjYjg0IiwiaWNhbFN0cmluZyI6IiI
+ sImxhYm9yRG93bnRpbWVzIjpbXSwiZGlzYWJsZWRFcXVpcG1lbnQiOlt7ImRpc2FibGVkRXF1
+ aXBtZW50SW5zdGFuY2VOYW1lcyI6WyJEaWdpdGFsIFByaW50XFxIUCAyOCIsIkRpZ2l0YWwgU
+ HJpbnRcXEhQIDQ0Il0sImZ1bGxUaW1lRXF1aXZhbGVudHNDb3VudCI6MC4wfV0sIm1vZGVzTm
+ 90QWxsb3dlZCI6W10sInJhd01hdGVyaWFsc05vdEFsbG93ZWQiOltdLCJsYWJvckFsbG9jYXR
+ pb25zIjpbXX0=
+DTEND;TZID=UTC:20150615T055000
+DTSTAMP:20161024T201419Z
+DTSTART;TZID=UTC:20150615T054000
+EXDATE;TZID=UTC:20151023T054000
+IMPORTANCE:None
+RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR,SA
+UID:04107254dc5c9094af71a0e197e65a557dfbcb84
+END:VEVENT
+END:VCALENDAR";
+
+            var calendarA = Calendar.LoadFromStream(new StringReader(eventA)).First();
+            var calendarB = Calendar.LoadFromStream(new StringReader(eventB)).First();
+
+            Assert.AreEqual(calendarA.Events.First().GetHashCode(), calendarB.Events.First().GetHashCode());
+            Assert.AreEqual(calendarA.Events.First(), calendarB.Events.First());
+            Assert.AreEqual(calendarA.GetHashCode(), calendarB.GetHashCode());
+            Assert.AreEqual(calendarA, calendarB);
+        }
     }
 }
