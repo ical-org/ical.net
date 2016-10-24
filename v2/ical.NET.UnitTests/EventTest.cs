@@ -303,5 +303,23 @@ END:VCALENDAR";
             Assert.AreNotEqual(deserializedNoExDate.Events.First().GetHashCode(), deserializedWithExDate.Events.First().GetHashCode());
             Assert.AreNotEqual(deserializedNoExDate, deserializedWithExDate);
         }
+
+        [Test]
+        public void ChangingRrulesShouldNotBeEqualToOriginalEvent()
+        {
+            var eventA = GetSimpleEvent();
+            eventA.RecurrenceRules = GetSimpleRecurrenceList();
+
+            var eventB = GetSimpleEvent();
+            eventB.RecurrenceRules = GetSimpleRecurrenceList();
+            Assert.IsFalse(ReferenceEquals(eventA, eventB));
+            Assert.AreEqual(eventA, eventB);
+
+            var foreverDailyRule = new RecurrencePattern(FrequencyType.Daily, 1);
+            eventB.RecurrenceRules = new List<IRecurrencePattern> {foreverDailyRule};
+
+            Assert.AreNotEqual(eventA, eventB);
+            Assert.AreNotEqual(eventA.GetHashCode(), eventB.GetHashCode());
+        }
     }
 }
