@@ -5,6 +5,7 @@ using Ical.Net.Evaluation;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes
 {
@@ -17,7 +18,6 @@ namespace Ical.Net.DataTypes
         public int Count => Periods.Count;
 
         protected IList<IPeriod> Periods { get; set; } = new List<IPeriod>(64);
-
 
         public PeriodList()
         {
@@ -32,22 +32,22 @@ namespace Ical.Net.DataTypes
 
         protected bool Equals(PeriodList other)
         {
-            return Equals(Periods, other.Periods) && string.Equals(TzId, other.TzId);
+            return string.Equals(TzId, other.TzId) && CollectionHelpers.Equals(Periods, other.Periods);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((PeriodList)obj);
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((PeriodList) obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return ((Periods?.GetHashCode() ?? 0) * 397) ^ (TzId?.GetHashCode() ?? 0);
+                return ((TzId?.GetHashCode() ?? 0) * 397) ^ CollectionHelpers.GetHashCode(Periods);
             }
         }
 

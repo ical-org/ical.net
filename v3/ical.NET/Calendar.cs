@@ -178,13 +178,14 @@ namespace Ical.Net
 
         protected bool Equals(Calendar other)
         {
+            var foo = CollectionHelpers.Equals(UniqueComponents, other.UniqueComponents);
             return string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)
-                   && UniqueComponents.SequenceEqual(other.UniqueComponents)
-                   && Events.SequenceEqual(other.Events)
-                   && Todos.SequenceEqual(other.Todos)
-                   && Journals.SequenceEqual(other.Journals)
-                   && FreeBusy.SequenceEqual(other.FreeBusy)
-                   && TimeZones.SequenceEqual(other.TimeZones);
+                && CollectionHelpers.Equals(UniqueComponents, other.UniqueComponents)
+                && CollectionHelpers.Equals(Events, other.Events)
+                && CollectionHelpers.Equals(Todos, other.Todos)
+                && CollectionHelpers.Equals(Journals, other.Journals)
+                && CollectionHelpers.Equals(FreeBusy, other.FreeBusy)
+                && CollectionHelpers.Equals(TimeZones, other.TimeZones);
         }
 
         public override bool Equals(object obj)
@@ -201,7 +202,7 @@ namespace Ical.Net
             {
                 return false;
             }
-            return Equals((Calendar) obj);
+            return Equals((Calendar)obj);
         }
 
         public override int GetHashCode()

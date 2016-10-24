@@ -202,8 +202,8 @@ namespace Ical.Net.UnitTests
         [Test, TestCaseSource(nameof(CalendarCollection_TestCases))]
         public void CalendarCollection_Tests(string rawCalendar)
         {
-            var a = Calendar.LoadFromStream(new StringReader(IcsFiles.USHolidays)) as CalendarCollection;
-            var b = Calendar.LoadFromStream(new StringReader(IcsFiles.USHolidays)) as CalendarCollection;
+            var a = Calendar.LoadFromStream(new StringReader(IcsFiles.USHolidays));
+            var b = Calendar.LoadFromStream(new StringReader(IcsFiles.USHolidays));
             
             Assert.IsNotNull(a);
             Assert.IsNotNull(b);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Ical.Net.Utility
@@ -36,7 +37,20 @@ namespace Ical.Net.Utility
                 return left.SequenceEqual(right);
             }
 
-            return left.OrderBy(l => l).SequenceEqual(right.OrderBy(r => r));
+            try
+            {
+                //Many things have natural IComparers defined, but some don't, because no natural comparer exists
+                return left.OrderBy(l => l).SequenceEqual(right.OrderBy(r => r));
+            }
+            catch (Exception)
+            {
+                //It's not possible to sort some collections of things (like Calendars) in any meaningful way. Properties can be null, and there's no natural
+                //ordering for the contents therein. In cases like that, the best we can do is treat them like sets, and compare them. We don't maintain
+                //fidelity with respect to duplicates, but it seems better than doing nothing
+                var leftSet = new HashSet<T>(left);
+                var rightSet = new HashSet<T>(right);
+                return leftSet.SetEquals(rightSet);
+            }
         }
     }
 }

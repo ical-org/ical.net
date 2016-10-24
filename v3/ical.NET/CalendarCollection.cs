@@ -122,15 +122,9 @@ namespace Ical.Net
             return this.Aggregate<Calendar, FreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(organizer, contacts, fromInclusive, toExclusive)));
         }
 
-        public override int GetHashCode()
-        {
-            return CollectionHelpers.GetHashCode(this);
-        }
+        public override int GetHashCode() => CollectionHelpers.GetHashCode(this);
 
-        protected bool Equals(CalendarCollection obj)
-        {
-            return this.SequenceEqual(obj);
-        }
+        protected bool Equals(CalendarCollection obj) => CollectionHelpers.Equals(this, obj);
 
         public override bool Equals(object obj)
         {
