@@ -23,7 +23,7 @@ namespace Ical.Net
     ///         <item>Create a TextCollection DataType for 'text' items separated by commas</item>
     ///     </list>
     /// </note>
-    public class Event : RecurringComponent, IEvent
+    public class Event : RecurringComponent, IEvent, IComparable<Event>
     {
         internal const string ComponentName = "VEVENT";
 
@@ -295,10 +295,10 @@ namespace Ical.Net
                 && Transparency.Equals(other.Transparency)
                 && EvaluationIncludesReferenceDate == other.EvaluationIncludesReferenceDate
                 && Attachments.SequenceEqual(other.Attachments)
-                && (ExceptionDates != null && CollectionHelpers.Equals(ExceptionDates, other.ExceptionDates))
-                && (ExceptionRules != null && CollectionHelpers.Equals(ExceptionRules, other.ExceptionRules))
-                && (RecurrenceRules != null && CollectionHelpers.Equals(RecurrenceRules, other.RecurrenceRules, true))
-                && (RecurrenceDates != null && CollectionHelpers.Equals(RecurrenceDates, other.RecurrenceDates, true));
+                && CollectionHelpers.Equals(ExceptionDates, other.ExceptionDates)
+                && CollectionHelpers.Equals(ExceptionRules, other.ExceptionRules)
+                && CollectionHelpers.Equals(RecurrenceRules, other.RecurrenceRules, true)
+                && CollectionHelpers.Equals(RecurrenceDates, other.RecurrenceDates, true);
                 
             return result;
         }
@@ -328,6 +328,23 @@ namespace Ical.Net
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(RecurrenceDates);
                 return hashCode;
             }
+        }
+
+        public int CompareTo(Event other)
+        {
+            if (DtStart.Equals(other.DtStart))
+            {
+                return 0;
+            }
+            if (DtStart.LessThan(other.DtStart))
+            {
+                return -1;
+            }
+            if (DtStart.GreaterThan(other.DtStart))
+            {
+                return 1;
+            }
+            throw new Exception("An error occurred while comparing two CalDateTimes.");
         }
     }
 }

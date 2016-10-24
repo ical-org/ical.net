@@ -74,6 +74,7 @@
     <Compile Include="AlarmTest.cs" />
     <Compile Include="AttendeeTest.cs" />
     <Compile Include="CalendarPropertiesTest.cs" />
+    <Compile Include="CollectionHelpersTests.cs" />
     <Compile Include="ComponentTest.cs" />
     <Compile Include="ConcurrentDeserializationTests.cs" />
     <Compile Include="DateTimeSerializerTests.cs" />
@@ -81,7 +82,7 @@
     <Compile Include="DocumentationExamples.cs" />
     <Compile Include="EqualityAndHashingTests.cs" />
     <Compile Include="FreeBusyTest.cs" />
-    <Compile Include="EventTest.cs" />
+    <Compile Include="CalendarEventTest.cs" />
     <Compile Include="CopyTest.cs" />
     <Compile Include="IcsFiles.cs" />
     <Compile Include="JournalTest.cs" />

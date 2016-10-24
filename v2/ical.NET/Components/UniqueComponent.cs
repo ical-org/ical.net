@@ -11,7 +11,7 @@ namespace Ical.Net
     /// Represents a unique component, a component with a unique UID,
     /// which can be used to uniquely identify the component.    
     /// </summary>
-    public class UniqueComponent : CalendarComponent, IUniqueComponent
+    public class UniqueComponent : CalendarComponent, IUniqueComponent, IComparable<UniqueComponent>
     {
         // TODO: Add AddRelationship() public method.
         // This method will add the UID of a related component
@@ -93,6 +93,8 @@ namespace Ical.Net
             EnsureProperties();
         }
 
+        public int CompareTo(UniqueComponent other) => string.Compare(Uid, other.Uid, StringComparison.OrdinalIgnoreCase);
+
         public override bool Equals(object obj)
         {
             if (obj is RecurringComponent && obj != this)
@@ -107,10 +109,7 @@ namespace Ical.Net
             return base.Equals(obj);
         }
 
-        public override int GetHashCode()
-        {
-            return Uid?.GetHashCode() ?? base.GetHashCode();
-        }
+        public override int GetHashCode() => Uid?.GetHashCode() ?? base.GetHashCode();
 
         public virtual string Uid
         {

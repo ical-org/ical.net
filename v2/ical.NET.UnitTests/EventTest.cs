@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Ical.Net.Interfaces.DataTypes;
-using NUnit.Framework.Internal;
+using Ical.Net.Serialization.iCalendar.Serializers;
 
 namespace Ical.Net.UnitTests
 {
@@ -16,6 +16,7 @@ namespace Ical.Net.UnitTests
     {
         private static readonly DateTime _now = DateTime.UtcNow;
         private static readonly DateTime _later = _now.AddHours(1);
+        private static readonly string _uid = Guid.NewGuid().ToString();
 
         /// <summary>
         /// Ensures that events can be properly added to a calendar.
@@ -222,6 +223,7 @@ END:VCALENDAR";
         {
             DtStart = new CalDateTime(_now),
             DtEnd = new CalDateTime(_later),
+            Uid = _uid,
         };
 
         [Test]
@@ -239,6 +241,67 @@ END:VCALENDAR";
             testRdate.RecurrenceDates = new List<IPeriodList> {new PeriodList {new Period(new CalDateTime(_now))} };
             Assert.AreNotEqual(simpleEvent, testRdate);
             Assert.AreNotEqual(simpleEvent.GetHashCode(), testRdate.GetHashCode());
+        }
+
+        private static List<IRecurrencePattern> GetSimpleRecurrenceList()
+            => new List<IRecurrencePattern> {new RecurrencePattern(FrequencyType.Daily, 1) {Count = 5}};
+        private static List<IPeriodList> GetExceptionDates()
+            => new List<IPeriodList> { new PeriodList { new Period(new CalDateTime(_now.AddDays(1).Date)) } };
+
+        [Test]
+        public void EventWithRecurrenceAndExceptionComparison()
+        {
+            var vEvent = GetSimpleEvent();
+            vEvent.RecurrenceRules = GetSimpleRecurrenceList();
+            vEvent.ExceptionDates = GetExceptionDates();
+
+            var calendar = new Calendar();
+            calendar.Events.Add(vEvent);
+
+            var vEvent2 = GetSimpleEvent();
+            vEvent2.RecurrenceRules = GetSimpleRecurrenceList();
+            vEvent2.ExceptionDates = GetExceptionDates();
+            
+            var cal2 = new Calendar();
+            cal2.Events.Add(vEvent2);
+
+            var eventA = calendar.Events.First();
+            var eventB = cal2.Events.First();
+
+            Assert.AreEqual(eventA.RecurrenceRules.First(), eventB.RecurrenceRules.First());
+            Assert.AreEqual(eventA.RecurrenceRules.First().GetHashCode(), eventB.RecurrenceRules.First().GetHashCode());
+            Assert.AreEqual(eventA.ExceptionDates.First(), eventB.ExceptionDates.First());
+            Assert.AreEqual(eventA.ExceptionDates.First().GetHashCode(), eventB.ExceptionDates.First().GetHashCode());
+            Assert.AreEqual(eventA.GetHashCode(), eventB.GetHashCode());
+            Assert.AreEqual(eventA, eventB);
+            Assert.AreEqual(calendar, cal2);
+        }
+
+        [Test]
+        public void AddingExdateToEventShouldNotBeEqualToOriginal()
+        {
+            //Create a calendar with an event with a recurrence rule
+            //Serialize to string, and deserialize
+            //Change the original calendar.Event to have an ExDate
+            //Serialize to string, and deserialize
+            //Event and Calendar hash codes and equality should NOT be the same
+            var serializer = new CalendarSerializer();
+
+            var vEvent = GetSimpleEvent();
+            vEvent.RecurrenceRules = GetSimpleRecurrenceList();
+            var cal1 = new Calendar();
+            cal1.Events.Add(vEvent);
+            var serialized = serializer.SerializeToString(cal1);
+            var deserializedNoExDate = Calendar.LoadFromStream(new StringReader(serialized)).First() as Calendar;
+            Assert.AreEqual(cal1, deserializedNoExDate);
+
+            vEvent.ExceptionDates = GetExceptionDates();
+            serialized = serializer.SerializeToString(cal1);
+            var deserializedWithExDate = Calendar.LoadFromStream(new StringReader(serialized)).First() as Calendar;
+
+            Assert.AreNotEqual(deserializedNoExDate.Events.First(), deserializedWithExDate.Events.First());
+            Assert.AreNotEqual(deserializedNoExDate.Events.First().GetHashCode(), deserializedWithExDate.Events.First().GetHashCode());
+            Assert.AreNotEqual(deserializedNoExDate, deserializedWithExDate);
         }
     }
 }

@@ -6,7 +6,7 @@ using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 namespace Ical.Net.DataTypes
 {
     /// <summary> Represents an iCalendar period of time. </summary>    
-    public class Period : EncodableDataType
+    public class Period : EncodableDataType, IComparable<Period>
     {
         public Period() { }
 
@@ -178,25 +178,21 @@ namespace Ical.Net.DataTypes
                 && ((period.StartTime != null && Contains(period.StartTime)) || (period.EndTime != null && Contains(period.EndTime)));
         }
 
-        public int CompareTo(Period p)
+        public int CompareTo(Period other)
         {
-            if (p == null)
-            {
-                throw new ArgumentNullException(nameof(p));
-            }
-            if (Equals(p))
+            if (StartTime.Equals(other.StartTime))
             {
                 return 0;
             }
-            if (StartTime.LessThan(p.StartTime))
+            if (StartTime.LessThan(other.StartTime))
             {
                 return -1;
             }
-            if (StartTime.GreaterThanOrEqual(p.StartTime))
+            if (StartTime.GreaterThan(other.StartTime))
             {
                 return 1;
             }
-            throw new Exception("An error occurred while comparing Period values.");
+            throw new Exception("An error occurred while comparing two Periods.");
         }
     }
 }

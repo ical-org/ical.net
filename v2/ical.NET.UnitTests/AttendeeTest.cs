@@ -1,5 +1,4 @@
 using Ical.Net.DataTypes;
-using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
 using System;

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Ical.Net.ExtensionMethods;
 using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.General
