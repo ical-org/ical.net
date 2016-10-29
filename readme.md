@@ -37,15 +37,18 @@ ical.net uses [semantic versioning](http://semver.org/). In a nutshell:
 * [Contribute code by submitting a pull request](https://github.com/rianjs/ical.net/wiki/Contributing-a-(good)-pull-request)
 * [Ask a question](https://github.com/rianjs/ical.net/issues)
 
-### Immediate wins
+## Support
 
-#### v2 - Current version
+ical.net is a something I do in my spare time around my family, day job, friends, and other hobbies. That means support is "when I get to it". I recognize that sometimes this isn't good enough, especially if you have a production issue. To that end, I [offer paid support and bugfixes](http://rianjs.net/consulting). A few basic rules before you contact me:
 
-Bug fixes and unit tests are the order of the day, particularly focusing on symmetric serialization and deserialization. dday.ical had many unit tests showing that various aspects of _deserialization_ worked properly, but did not have many (any?) tests that showed that _serialization_ worked. I am working on making sure these operations are reliably symmetrical.
+* Changes made to the ical.net library are open source.
+* You do not own the changes I make to the library.
+* Congruence with my vision for the future for ical.net is required. That means I won't do things like add Exchange interop, or take  dependencies on third-party libraries that benefit on your use case.
+* New versions of the library that result from changes made will be published on nuget for others to consume.
 
-Secondly, I am working on a .NET Core port. This work is largely done, but the tooling support for .NET Core isn't great. I have postponed work on that until such time as .NET Core versions can be emitted as part of a standard "Batch Build" alongside normal .NET binaries.
+Please email me if paid support is something you require, and we can work out the details via email.
 
-#### v3 - Future version
+## The future: v3 and beyond
 
 I have written a fairly detailed collection of things I'd like to get done for v3, which will involve some significant API changes, and simplifications of serialization and deserialization.
 
