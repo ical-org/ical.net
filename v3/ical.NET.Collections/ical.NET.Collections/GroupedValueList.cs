@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ical.NET.Collections.Interfaces;
-using ical.NET.Collections.Proxies;
+using Ical.Net.Collections.Interfaces;
+using Ical.Net.Collections.Proxies;
 
-namespace ical.NET.Collections
+namespace Ical.Net.Collections
 {
     public class GroupedValueList<TGroup, TInterface, TItem, TValueType> :
         GroupedList<TGroup, TInterface>

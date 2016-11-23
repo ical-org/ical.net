@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using ical.NET.Collections.Interfaces;
+using Ical.Net.Collections.Interfaces;
 
-namespace ical.NET.Collections
+namespace Ical.Net.Collections
 {
     public class MultiLinkedList<TType> :
         List<TType>,

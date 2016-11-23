@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ical.NET.Collections;
-using ical.NET.Collections.Interfaces;
-using ical.NET.Collections.Proxies;
+using Ical.Net.Collections;
+using Ical.Net.Collections.Interfaces;
+using Ical.Net.Collections.Proxies;
 using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.General.Proxies

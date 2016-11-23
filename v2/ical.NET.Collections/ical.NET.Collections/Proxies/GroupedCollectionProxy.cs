@@ -2,10 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ical.NET.Collections.Interfaces;
-using ical.NET.Collections.Interfaces.Proxies;
+using Ical.Net.Collections.Interfaces;
+using Ical.Net.Collections.Interfaces.Proxies;
 
-namespace ical.NET.Collections.Proxies
+namespace Ical.Net.Collections.Proxies
 {
     /// <summary>
     /// A proxy for a keyed list.
