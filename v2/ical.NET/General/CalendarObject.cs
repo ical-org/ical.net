@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.Serialization;
-using ical.NET.Collections;
+using Ical.Net.Collections;
 using Ical.Net.ExtensionMethods;
 using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.General;

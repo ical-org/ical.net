@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using ical.NET.Collections.Interfaces;
+using Ical.Net.Collections.Interfaces;
 using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.General

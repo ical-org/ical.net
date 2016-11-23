@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ical.NET.Collections.Interfaces;
+using Ical.Net.Collections.Interfaces;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.General;
 
