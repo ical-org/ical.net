@@ -27,6 +27,7 @@ namespace Ical.Net.UnitTests
         internal static string Attachment4 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Attachment4.ics");
         internal static string Attendee1 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Attendee1.ics");
         internal static string Attendee2 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Attendee2.ics");
+        internal static string Attendee3 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Attendee3.ics");
         internal static string Bug1741093 => ReadStream("Ical.Net.UnitTests.Calendars.Recurrence.Bug1741093.ics");
         internal static string Bug2033495 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Bug2033495.ics");
         internal static string Bug2148092 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Bug2148092.ics");

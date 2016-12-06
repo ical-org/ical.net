@@ -7,6 +7,7 @@ namespace Ical.Net.Interfaces.DataTypes
     {
         Uri SentBy { get; set; }
         string CommonName { get; set; }
+        string UserAddress { get; set; }
         Uri DirectoryEntry { get; set; }
         string Type { get; set; }
         IList<string> Members { get; }

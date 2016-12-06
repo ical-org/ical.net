@@ -225,6 +225,9 @@ namespace Ical.Net.DataTypes
             }
         }
 
+        /// <summary> Raw uri associated with the attendee, typically an email address </summary>
+        public virtual string UserAddress { get; set; }
+
         /// <summary> Uri associated with the attendee, typically an email address </summary>
         public virtual Uri Value { get; set; }
 
@@ -233,6 +236,7 @@ namespace Ical.Net.DataTypes
         public Attendee(Uri attendee)
         {
             Value = attendee;
+            UserAddress = attendee.OriginalString;
         }
 
         public Attendee(string attendeeUri)
@@ -242,6 +246,7 @@ namespace Ical.Net.DataTypes
                 throw new ArgumentException("attendeeUri");
             }
             Value = new Uri(attendeeUri);
+            UserAddress = attendeeUri;
         }
 
         //ToDo: See if this can be deleted
