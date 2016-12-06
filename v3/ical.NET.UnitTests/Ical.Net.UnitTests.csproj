@@ -529,6 +529,9 @@
     <EmbeddedResource Include="Calendars\Serialization\Attendee2.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Calendars\Serialization\Attendee3.ics">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Calendars\Recurrence\Bug2916581.ics">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>

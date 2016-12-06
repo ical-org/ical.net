@@ -12,9 +12,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         public override string SerializeToString(object obj)
         {
             var a = obj as Attendee;
-            return a?.Value == null
+            return a == null
                 ? null
-                : Encode(a, a.Value.OriginalString);
+                : Encode(a, a.UserAddress);
         }
 
         public Attendee Deserialize(string attendee)
@@ -30,7 +30,13 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                     uriString = "mailto:" + uriString;
                 }
 
-                a.Value = new Uri(uriString);
+                a.UserAddress = uriString;
+
+                Uri uri;
+                if (Uri.TryCreate(uriString, UriKind.RelativeOrAbsolute, out uri))
+                {
+                    a.Value = uri;
+                }
                 return a;
             }
             catch

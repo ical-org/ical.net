@@ -80,6 +80,33 @@ namespace Ical.Net.UnitTests
         }
 
         /// <summary>
+        /// Tests that malformed mailto
+        /// 
+        /// </summary>
+        [Test, Category("Deserialization")]
+        public void Attendee3()
+        {
+            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Attendee3))[0];
+            Assert.AreEqual(1, iCal.Events.Count);
+
+            var evt = iCal.Events.First();
+
+            var iteratedValues = new List<Attendee>();
+            var indexedValues = new List<Attendee>();
+
+            indexedValues.Add(evt.Attendees[0]);
+            indexedValues.Add(evt.Attendees[1]);
+            foreach (var evtAttendee in evt.Attendees)
+            {
+                iteratedValues.Add(evtAttendee);
+            }
+
+            CollectionAssert.AreEquivalent(iteratedValues, indexedValues);
+            Assert.AreEqual("mailto:abcde.fghijkl@123456789.com", indexedValues[0].UserAddress);
+            Assert.AreEqual(@"mailto:'""""Mnopqrs.tuvwxyz12@123456789.com+v\/'?""""", indexedValues[1].UserAddress);
+        }
+
+        /// <summary>
         /// Tests that Lotus Notes-style properties are properly handled.
         /// https://sourceforge.net/tracker/?func=detail&aid=2033495&group_id=187422&atid=921236
         /// Sourceforge bug #2033495
