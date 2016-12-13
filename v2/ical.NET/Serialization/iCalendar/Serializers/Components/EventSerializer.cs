@@ -11,10 +11,16 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
         {
             var evt = obj as IEvent;
 
-            var actualEvent = evt.Properties.ContainsKey("DURATION") && evt.Properties.ContainsKey("DTEND")
-                ? evt.Copy<IEvent>()
-                : evt;
-
+            IEvent actualEvent;
+            if (evt.Properties.ContainsKey("DURATION") && evt.Properties.ContainsKey("DTEND"))
+            {
+                actualEvent = evt.Copy<IEvent>();
+                actualEvent.Properties.Remove("DURATION");
+            }
+            else
+            {
+                actualEvent = evt;
+            }
             return base.SerializeToString(actualEvent);
         }
     }
