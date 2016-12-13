@@ -364,8 +364,9 @@ namespace Ical.Net.UnitTests
             var originalDuration = e.Duration;
             var c = new Calendar();
             c.Events.Add(e);
-            SerializeToString(c);
+            var serialized = SerializeToString(c);
             Assert.AreEqual(originalDuration, e.Duration);
+            Assert.IsTrue(!serialized.Contains("DURATION"));
         }
     }
 }
