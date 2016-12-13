@@ -18,7 +18,13 @@ namespace Ical.Net.UnitTests
     [TestFixture]
     public class SerializationTests
     {
-        #region helperMethods
+        private static readonly DateTime _nowTime = DateTime.Now;
+        private static readonly DateTime _later = _nowTime.AddHours(1);
+        private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
+        private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
+        private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime };
+        private static Calendar UnserializeCalendar(string s) => Calendar.LoadFromStream(new StringReader(s)).Single();
+
         public static void CompareCalendars(Calendar cal1, Calendar cal2)
         {
             CompareComponents(cal1, cal2);
@@ -150,9 +156,7 @@ namespace Ical.Net.UnitTests
                 ? new Dictionary<string, string>()
                 : match.Groups[1].Value.Substring(1).Split(';').Select(v=>v.Split('=')).ToDictionary(v=>v[0], v=>v.Length>1 ? v[1] : null);
         }
-        #endregion //helperMethods
 
-        #region tests
         [Test, Category("Serialization"), Ignore("TODO: standard time, for NZ standard time (current example)")]
         public void TimeZoneSerialize()
         {
@@ -351,6 +355,16 @@ namespace Ical.Net.UnitTests
             var result = new TimeSpanSerializer().SerializeToString(TimeSpan.Zero);
             Assert.IsTrue("P0D".Equals(result, StringComparison.Ordinal));
         }
-        #endregion
+
+        [Test]
+        public void DurationIsStable_Tests()
+        {
+            var e = GetSimpleEvent();
+            var originalDuration = e.Duration;
+            var c = new Calendar();
+            c.Events.Add(e);
+            SerializeToString(c);
+            Assert.AreEqual(originalDuration, e.Duration);
+        }
     }
 }
