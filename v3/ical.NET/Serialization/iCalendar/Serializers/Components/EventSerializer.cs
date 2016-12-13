@@ -10,15 +10,11 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
         {
             var evt = obj as CalendarEvent;
 
-            // NOTE: DURATION and DTEND cannot co-exist on an event.
-            // Some systems do not support DURATION, so we serialize
-            // all events using DTEND instead.
-            if (evt.Properties.ContainsKey("DURATION") && evt.Properties.ContainsKey("DTEND"))
-            {
-                evt.Properties.Remove("DURATION");
-            }
+            var actualEvent = evt.Properties.ContainsKey("DURATION") && evt.Properties.ContainsKey("DTEND")
+                ? evt.Copy<CalendarEvent>()
+                : evt;
 
-            return base.SerializeToString(evt);
+            return base.SerializeToString(actualEvent);
         }
     }
 }
