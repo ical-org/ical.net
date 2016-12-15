@@ -401,13 +401,19 @@ namespace Ical.Net
         /// <param name="endTime">The ending date range</param>
         public virtual HashSet<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
         {
-            var occurrences = new HashSet<Occurrence>(RecurringItems.OfType<T>().SelectMany(recurrable => recurrable.GetOccurrences(startTime, endTime)));
+            var occurrences = new HashSet<Occurrence>(RecurringItems
+                .OfType<T>()
+                .SelectMany(recurrable => recurrable.GetOccurrences(startTime, endTime)));
 
-            occurrences.ExceptWith(
-                occurrences.Where(o => o.Source is IUniqueComponent)
+            var removeOccurrencesQuery = occurrences
+                .Where(o => o.Source is UniqueComponent)
+                .GroupBy(o => ((UniqueComponent)o.Source).Uid)
+                .SelectMany(group => group
                     .Where(o => o.Source.RecurrenceId != null)
-                    .Where(o => o.Source.RecurrenceId.Equals(o.Period.StartTime)));
+                    .SelectMany(occurrence => group.
+                        Where(o => o.Source.RecurrenceId == null && occurrence.Source.RecurrenceId.Date.Equals(o.Period.StartTime.Date))));
 
+            occurrences.ExceptWith(removeOccurrencesQuery);
             return occurrences;
         }
 

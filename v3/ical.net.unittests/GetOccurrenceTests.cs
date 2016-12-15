@@ -8,27 +8,18 @@ namespace Ical.Net.UnitTests
 {
     internal class GetOccurrenceTests
     {
-        public static CalendarCollection GetCalendars(string incoming) =>
-            Calendar.LoadFromStream(new StringReader(incoming)) as CalendarCollection;
+        public static CalendarCollection GetCalendars(string incoming) => Calendar.LoadFromStream(new StringReader(incoming));
 
         [Test]
         public void WrongDurationTest()
         {
             var firstStart = new CalDateTime(DateTime.Parse("2016-01-01"));
             var firstEnd = new CalDateTime(DateTime.Parse("2016-01-05"));
-            var vEvent = new Event
-            {
-                DtStart = firstStart,
-                DtEnd = firstEnd,
-            };
+            var vEvent = new CalendarEvent {DtStart = firstStart, DtEnd = firstEnd,};
 
             var secondStart = new CalDateTime(DateTime.Parse("2016-03-01"));
             var secondEnd = new CalDateTime(DateTime.Parse("2016-03-05"));
-            var vEvent2 = new Event
-            {
-                DtStart = secondStart,
-                DtEnd = secondEnd,
-            };
+            var vEvent2 = new CalendarEvent {DtStart = secondStart, DtEnd = secondEnd,};
 
             var calendar = new Calendar();
             calendar.Events.Add(vEvent);
@@ -164,7 +155,7 @@ END:VCALENDAR
 
             var collection = Calendar.LoadFromStream(new StringReader(ical));
             var startCheck = new DateTime(2016, 11, 11);
-            var occurrences = collection.GetOccurrences<Event>(startCheck, startCheck.AddMonths(1));
+            var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck, startCheck.AddMonths(1));
 
             Assert.IsTrue(occurrences.Count == 4);
         }
