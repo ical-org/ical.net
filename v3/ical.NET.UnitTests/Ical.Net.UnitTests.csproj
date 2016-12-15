@@ -84,6 +84,7 @@
     <Compile Include="FreeBusyTest.cs" />
     <Compile Include="CalendarEventTest.cs" />
     <Compile Include="CopyTest.cs" />
+    <Compile Include="GetOccurrenceTests.cs" />
     <Compile Include="IcsFiles.cs" />
     <Compile Include="JournalTest.cs" />
     <Compile Include="ListExtensions.cs" />
