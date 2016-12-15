@@ -102,6 +102,11 @@ namespace Ical.Net.Utility
                 return LocalDateTimeZone;
             }
 
+            if (tzId.StartsWith("/"))
+            {
+                tzId = tzId.Substring(1, tzId.Length - 1);
+            }
+
             var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(tzId);
             if (zone != null)
             {
