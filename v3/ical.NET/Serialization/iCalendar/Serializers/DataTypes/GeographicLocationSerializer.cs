@@ -17,7 +17,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 return null;
             }
 
-            var value = g.Latitude.ToString("0.000000") + ";" + g.Longitude.ToString("0.000000");
+            var value = g.Latitude.ToString("0.000000", CultureInfo.InvariantCulture.NumberFormat) + ";"
+                + g.Longitude.ToString("0.000000", CultureInfo.InvariantCulture.NumberFormat);
             return Encode(g, value);
         }
 
