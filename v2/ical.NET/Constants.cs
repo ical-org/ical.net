@@ -107,6 +107,7 @@
     public class SerializationConstants
     {
         public const string LineBreak = "\r\n";
+        public const string NonStandardPropertyPrefix = "X-";
     }
 
     /// <summary>
