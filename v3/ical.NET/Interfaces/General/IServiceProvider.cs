@@ -2,9 +2,10 @@
 
 namespace Ical.Net.Interfaces.General
 {
-    public interface IServiceProvider : System.IServiceProvider
+    public interface IServiceProvider
     {
         object GetService(string name);
+        object GetService(Type type);
         T GetService<T>();
         T GetService<T>(string name);
         void SetService(string name, object obj);
