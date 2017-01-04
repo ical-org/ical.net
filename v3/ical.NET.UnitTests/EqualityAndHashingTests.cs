@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Ical.Net.DataTypes;
+using Ical.Net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
@@ -66,6 +67,9 @@ namespace Ical.Net.UnitTests
             DtEnd = new CalDateTime(_later),
             Duration = TimeSpan.FromHours(1),
         };
+
+        private static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } });
+
 
         public static IEnumerable<ITestCaseData> Event_TestCases()
         {
@@ -216,6 +220,39 @@ namespace Ical.Net.UnitTests
             yield return new TestCaseData(IcsFiles.Google1).SetName("Google calendar test case");
             yield return new TestCaseData(IcsFiles.Parse1).SetName("Weird file parse test case");
             yield return new TestCaseData(IcsFiles.USHolidays).SetName("US Holidays (quite large)");
+        }
+
+        [Test]
+        public void Resources_Tests()
+        {
+            var origContents = new[] { "Foo", "Bar" };
+            var e = GetSimpleEvent();
+            e.Resources = new HashSet<string>(origContents);
+            Assert.IsTrue(e.Resources.Count == 2);
+
+            e.Resources.Add("Baz");
+            Assert.IsTrue(e.Resources.Count == 3);
+            var serialized = SerializeEvent(e);
+            Assert.IsTrue(serialized.Contains("Baz"));
+
+            e.Resources.Remove("Baz");
+            Assert.IsTrue(e.Resources.Count == 2);
+            serialized = SerializeEvent(e);
+            Assert.IsFalse(serialized.Contains("Baz"));
+
+            e.Resources.Add("Hello");
+            Assert.IsTrue(e.Resources.Contains("Hello"));
+            serialized = SerializeEvent(e);
+            Assert.IsTrue(serialized.Contains("Hello"));
+
+            e.Resources.Clear();
+            e.Resources.UnionWith(origContents);
+            CollectionAssert.AreEquivalent(e.Resources, origContents);
+            serialized = SerializeEvent(e);
+            Assert.IsTrue(serialized.Contains("Foo"));
+            Assert.IsTrue(serialized.Contains("Bar"));
+            Assert.IsFalse(serialized.Contains("Baz"));
+            Assert.IsFalse(serialized.Contains("Hello"));
         }
     }
 }
