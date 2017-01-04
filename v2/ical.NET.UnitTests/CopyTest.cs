@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using Ical.Net.DataTypes;
 using Ical.Net.Interfaces;
 
 using NUnit.Framework;
@@ -41,6 +43,29 @@ namespace Ical.Net.UnitTests
             yield return new TestCaseData(IcsFiles.TimeZone3).SetName("TimeZone3");
             yield return new TestCaseData(IcsFiles.XProperty1).SetName("XProperty1");
             yield return new TestCaseData(IcsFiles.XProperty2).SetName("XProperty2");
+        }
+
+        private static readonly DateTime _now = DateTime.Now;
+        private static readonly DateTime _later = _now.AddHours(1);
+
+        private static Event GetSimpleEvent() => new Event
+        {
+            DtStart = new CalDateTime(_now),
+            DtEnd = new CalDateTime(_later),
+            Duration = TimeSpan.FromHours(1),
+        };
+
+        [Test]
+        public void EventUid_Tests()
+        {
+            var e = GetSimpleEvent();
+            e.Uid = "Hello";
+            var copy = e.Copy<Event>();
+            Assert.AreEqual(e.Uid, copy.Uid);
+            Assert.IsFalse(ReferenceEquals(e.Uid, copy.Uid));
+
+            copy.Uid = "Goodbye";
+            Assert.AreNotEqual(e.Uid, copy.Uid);
         }
     }
 }
