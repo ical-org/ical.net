@@ -161,6 +161,7 @@ namespace Ical.Net
             set { Properties.Set("LOCATION", value); }
         }
 
+        private readonly HashSet<string> _resources = new HashSet<string>();
         /// <summary>
         /// Resources that will be used during the event.
         /// <example>Conference room #2</example>
@@ -168,8 +169,17 @@ namespace Ical.Net
         /// </summary>
         public ISet<string> Resources
         {
-            get { return new HashSet<string>(Properties.GetMany<string>("RESOURCES")); }
-            set { Properties.Set("RESOURCES", value); }
+            get
+            {
+                Properties.Set("RESOURCES", _resources);
+                return _resources;
+            }
+            set
+            {
+                _resources.Clear();
+                _resources.UnionWith(value);
+                Properties.Set("RESOURCES", _resources);
+            }
         }
 
         /// <summary>
