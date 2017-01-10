@@ -86,13 +86,6 @@ namespace Ical.Net
             Properties.Clear();
             foreach (var p in c.Properties)
             {
-                var s = p.Value as string;
-                if (s != null)
-                {
-                    var copy = string.Copy(s);
-                    var newProperty = new CalendarProperty(p.Name, copy);
-                    Properties.Add(newProperty);
-                }
                 Properties.Add(p);
             }
         }
