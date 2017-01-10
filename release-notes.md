@@ -3,6 +3,7 @@
 A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) version represents.
 
 ### v2
+
 * 2.2.27: Working with `Resources` on `Event`s didn't allow you to do normal set operations: `Add`, `Remove`, `UnionWith`, `ExceptWith`, etc. [#189](https://github.com/rianjs/ical.net/issues/189)
 * 2.2.26: Unpublished due to data duplication bug
  * ~~Working with `Resources` on `Event`s didn't allow you to do normal set operations: `Add`, `Remove`, `UnionWith`, `ExceptWith`, etc. [#189](https://github.com/rianjs/ical.net/issues/189)~~
