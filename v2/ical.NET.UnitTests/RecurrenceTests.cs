@@ -3087,5 +3087,48 @@ END:VCALENDAR";
             Assert.AreEqual(expectedSept3Start, orderedOccurrences[5].StartTime);
             Assert.AreEqual(expectedSept3End, orderedOccurrences[5].EndTime);
         }
+
+        [Test]
+        public void AddExDateToEventAfterGetOccurrencesShouldRecomputeResult()
+        {
+            var searchStart = _now.AddDays(-1);
+            var searchEnd = _now.AddDays(7);
+            var e = GetEventWithRecurrenceRules();
+            var occurrences = e.GetOccurrences(searchStart, searchEnd);
+            Assert.IsTrue(occurrences.Count == 5);
+
+            var exDate = _now.AddDays(1);
+            var period = new Period(new CalDateTime(exDate));
+            var periodList = new PeriodList {period};
+            e.ExceptionDates.Add(periodList);
+            occurrences = e.GetOccurrences(searchStart, searchEnd);
+            Assert.IsTrue(occurrences.Count == 4);
+
+            //Specifying just a date should "black out" that date
+            var excludeTwoDaysFromNow = _now.AddDays(2).Date;
+            period = new Period(new CalDateTime(excludeTwoDaysFromNow));
+            periodList.Add(period);
+            occurrences = e.GetOccurrences(searchStart, searchEnd);
+            Assert.IsTrue(occurrences.Count == 3);
+        }
+
+        private static readonly DateTime _now = DateTime.Now;
+        private static readonly DateTime _later = _now.AddHours(1);
+        private static Event GetEventWithRecurrenceRules()
+        {
+            var dailyForFiveDays = new RecurrencePattern(FrequencyType.Daily, 1)
+            {
+                Count = 5,
+            };
+
+            var calendarEvent = new Event
+            {
+                Start = new CalDateTime(_now),
+                End = new CalDateTime(_later),
+                RecurrenceRules = new List<IRecurrencePattern> { dailyForFiveDays },
+                Resources = new HashSet<string>(new[] {"Foo", "Bar", "Baz"}),
+            };
+            return calendarEvent;
+        }
     }
 }

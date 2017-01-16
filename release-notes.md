@@ -4,6 +4,7 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ### v2
 
+* 2.2.29: Calling `GetOccurrences()` on a recurrable component should recompute the recurrence set. Specifying `EXDATE` values that don't have a `TimeOfDay` component should "black out" that day from a recurring component's `StartTime`.[#223](https://github.com/rianjs/ical.net/issues/223)
 * 2.2.28: Working with `Resources` on `Event`s didn't allow you to do normal set operations: `Add`, `Remove`, `UnionWith`, `ExceptWith`, etc. [#189](https://github.com/rianjs/ical.net/issues/189)
 * 2.2.27: N/A -- unpublished, no downloads
 * 2.2.26: Unpublished due to data duplication bug

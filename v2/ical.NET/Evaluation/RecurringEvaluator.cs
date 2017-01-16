@@ -113,49 +113,45 @@ namespace Ical.Net.Evaluation
 
         public override HashSet<IPeriod> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
-            // Evaluate extra time periods, without re-evaluating ones that were already evaluated
-            if ((EvaluationStartBounds == DateTime.MaxValue && EvaluationEndBounds == DateTime.MinValue) || periodEnd.Equals(EvaluationStartBounds) ||
-                periodStart.Equals(EvaluationEndBounds))
+            Periods.Clear();
+
+            var rruleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
+            if (includeReferenceDateInResults)
             {
-                //Exclusions take precedence over inclusions, so build the master set, then subtract the exclusions from it
-                var rruleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
-                if (includeReferenceDateInResults)
-                {
-                    rruleOccurrences.UnionWith(new [] {new Period(referenceDate), });
-                }
-
-                var rdateOccurrences = EvaluateRDate(referenceDate, periodStart, periodEnd);
-
-                var exRuleExclusions = EvaluateExRule(referenceDate, periodStart, periodEnd);
-                var exDateExclusions = EvaluateExDate(referenceDate, periodStart, periodEnd);
-
-                Periods.UnionWith(rruleOccurrences);
-                Periods.UnionWith(rdateOccurrences);
-                Periods.ExceptWith(exRuleExclusions);
-                Periods.ExceptWith(exDateExclusions);
-
-                if (EvaluationStartBounds == DateTime.MaxValue || EvaluationStartBounds > periodStart)
-                {
-                    EvaluationStartBounds = periodStart;
-                }
-                if (EvaluationEndBounds == DateTime.MinValue || EvaluationEndBounds < periodEnd)
-                {
-                    EvaluationEndBounds = periodEnd;
-                }
+                rruleOccurrences.UnionWith(new[] { new Period(referenceDate), });
             }
-            else
+
+            var rdateOccurrences = EvaluateRDate(referenceDate, periodStart, periodEnd);
+
+            var exRuleExclusions = EvaluateExRule(referenceDate, periodStart, periodEnd);
+            var exDateExclusions = EvaluateExDate(referenceDate, periodStart, periodEnd);
+
+            //Exclusions trump inclusions
+            Periods.UnionWith(rruleOccurrences);
+            Periods.UnionWith(rdateOccurrences);
+            Periods.ExceptWith(exRuleExclusions);
+            Periods.ExceptWith(exDateExclusions);
+
+            var dateOverlaps = FindDateOverlaps(exDateExclusions);
+            Periods.ExceptWith(dateOverlaps);
+
+            if (EvaluationStartBounds == DateTime.MaxValue || EvaluationStartBounds > periodStart)
             {
-                if (EvaluationStartBounds != DateTime.MaxValue && periodStart < EvaluationStartBounds)
-                {
-                    Evaluate(referenceDate, periodStart, EvaluationStartBounds, includeReferenceDateInResults);
-                }
-                if (EvaluationEndBounds != DateTime.MinValue && periodEnd > EvaluationEndBounds)
-                {
-                    Evaluate(referenceDate, EvaluationEndBounds, periodEnd, includeReferenceDateInResults);
-                }
+                EvaluationStartBounds = periodStart;
+            }
+            if (EvaluationEndBounds == DateTime.MinValue || EvaluationEndBounds < periodEnd)
+            {
+                EvaluationEndBounds = periodEnd;
             }
 
             return Periods;
+        }
+
+        private HashSet<IPeriod> FindDateOverlaps(HashSet<IPeriod> dates)
+        {
+            var datesWithoutTimes = new HashSet<DateTime>(dates.Where(d => d.StartTime.Value.TimeOfDay == TimeSpan.Zero).Select(d => d.StartTime.Value));
+            var overlaps = new HashSet<IPeriod>(Periods.Where(p => datesWithoutTimes.Contains(p.StartTime.Value.Date)));
+            return overlaps;
         }
     }
 }
