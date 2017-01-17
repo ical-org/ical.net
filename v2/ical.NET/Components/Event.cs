@@ -160,25 +160,15 @@ namespace Ical.Net
             set { Properties.Set("LOCATION", value); }
         }
 
-        private readonly HashSet<string> _resources = new HashSet<string>();
         /// <summary>
         /// Resources that will be used during the event.
         /// <example>Conference room #2</example>
         /// <example>Projector</example>
         /// </summary>
-        public ISet<string> Resources
+        public virtual IList<string> Resources
         {
-            get
-            {
-                Properties.Set("RESOURCES", _resources);
-                return _resources;
-            }
-            set
-            {
-                _resources.Clear();
-                _resources.UnionWith(value);
-                Properties.Set("RESOURCES", _resources);
-            }
+            get { return Properties.GetMany<string>("RESOURCES"); }
+            set { Properties.Set("RESOURCES", value); }
         }
 
         /// <summary>

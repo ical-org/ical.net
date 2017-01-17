@@ -3126,7 +3126,7 @@ END:VCALENDAR";
                 Start = new CalDateTime(_now),
                 End = new CalDateTime(_later),
                 RecurrenceRules = new List<IRecurrencePattern> { dailyForFiveDays },
-                Resources = new HashSet<string>(new[] {"Foo", "Bar", "Baz"}),
+                Resources = new List<string>(new[] {"Foo", "Bar", "Baz"}),
             };
             return calendarEvent;
         }
