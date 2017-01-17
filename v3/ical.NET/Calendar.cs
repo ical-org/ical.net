@@ -19,52 +19,11 @@ namespace Ical.Net
 {
     public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, IMergeable
     {
-        /// <summary>
-        /// Loads an <see cref="Calendar"/> from the file system.
-        /// </summary>
-        /// <param name="filepath">The path to the file to load.</param>
-        /// <returns>An <see cref="Calendar"/> object</returns>        
-        public static CalendarCollection LoadFromFile(string filepath)
+        public static CalendarCollection LoadFromString(string calendarCollection)
         {
-            return LoadFromFile(filepath, Encoding.UTF8, new CalendarSerializer());
-        }
-
-        public static CalendarCollection LoadFromFile<T>(string filepath) where T : Calendar
-        {
-            return LoadFromFile(typeof (T), filepath);
-        }
-
-        public static CalendarCollection LoadFromFile(Type iCalendarType, string filepath)
-        {
-            ISerializer serializer = new CalendarSerializer();
-            serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
-            return LoadFromFile(filepath, Encoding.UTF8, serializer);
-        }
-
-        public static CalendarCollection LoadFromFile(string filepath, Encoding encoding)
-        {
-            return LoadFromFile(filepath, encoding, new CalendarSerializer());
-        }
-
-        public static CalendarCollection LoadFromFile<T>(string filepath, Encoding encoding) where T : Calendar
-        {
-            return LoadFromFile(typeof (T), filepath, encoding);
-        }
-
-        public static CalendarCollection LoadFromFile(Type iCalendarType, string filepath, Encoding encoding)
-        {
-            ISerializer serializer = new CalendarSerializer();
-            serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
-            return LoadFromFile(filepath, encoding, serializer);
-        }
-
-        public static CalendarCollection LoadFromFile(string filepath, Encoding encoding, ISerializer serializer)
-        {
-            // NOTE: Fixes bug #3211934 - Bug in iCalendar.cs - UnauthorizedAccessException
-            using (var fs = new FileStream(filepath, FileMode.Open, FileAccess.Read))
+            using (var reader = new StringReader(calendarCollection))
             {
-                var calendars = LoadFromStream(fs, encoding, serializer);
-                return calendars;
+                return LoadFromStream(reader);
             }
         }
 
@@ -90,7 +49,7 @@ namespace Ical.Net
             return LoadFromStream(s, Encoding.UTF8, serializer);
         }
 
-        public new static CalendarCollection LoadFromStream(Stream s, Encoding encoding)
+        public static CalendarCollection LoadFromStream(Stream s, Encoding encoding)
         {
             return LoadFromStream(s, encoding, new CalendarSerializer());
         }

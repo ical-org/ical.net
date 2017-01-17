@@ -67,7 +67,7 @@ namespace Ical.Net.Interfaces.Components
         /// <example>Conference room #2</example>
         /// <example>Projector</example>
         /// </summary>
-        ISet<string> Resources { get; set; }
+        IList<string> Resources { get; set; }
 
         /// <summary>
         /// The status of the event.

@@ -161,24 +161,19 @@ namespace Ical.Net
             set { Properties.Set("LOCATION", value); }
         }
 
-        private readonly HashSet<string> _resources = new HashSet<string>();
         /// <summary>
         /// Resources that will be used during the event.
         /// <example>Conference room #2</example>
         /// <example>Projector</example>
         /// </summary>
-        public ISet<string> Resources
+        public IList<string> Resources
         {
-            get
-            {
-                Properties.Set("RESOURCES", _resources);
-                return _resources;
-            }
+            get { return Properties.GetMany<string>("RESOURCES"); }
             set
             {
-                _resources.Clear();
-                _resources.UnionWith(value);
-                Properties.Set("RESOURCES", _resources);
+                var currentProperties = new HashSet<string>(Properties.GetMany<string>("RESOURCES"), StringComparer.Ordinal);
+                currentProperties.UnionWith(value);
+                Properties.Set("RESOURCES", currentProperties);
             }
         }
 

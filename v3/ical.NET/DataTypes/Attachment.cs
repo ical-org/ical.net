@@ -15,7 +15,7 @@ namespace Ical.Net.DataTypes
     public class Attachment : EncodableDataType
     {
         public virtual Uri Uri { get; set; }
-        public virtual byte[] Data { get; set; }
+        public virtual byte[] Data { get; }
 
         private Encoding _valueEncoding = System.Text.Encoding.UTF8;
         public virtual Encoding ValueEncoding

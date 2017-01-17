@@ -20,6 +20,8 @@ namespace Ical.Net.UnitTests
         private static readonly DateTime _later = _nowTime.AddHours(1);
         private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
         private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
+        private static string SerializeToString(Event e) => SerializeToString(new Calendar { Events = { e } });
+        private static string SerializeToString(Todo t) => SerializeToString(new Calendar {Todos = {t}});
         private static Event GetSimpleEvent() => new Event {DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime};
         private static ICalendar UnserializeCalendar(string s) => Calendar.LoadFromStream(new StringReader(s)).Single();
 
@@ -197,6 +199,31 @@ namespace Ical.Net.UnitTests
             yield return new TestCaseData(_ldapUri, new Uri(_ldapUri)).SetName("ldap URL");
             yield return new TestCaseData("C:\\path\\to\\file.txt", new Uri("C:\\path\\to\\file.txt")).SetName("Local file path URL");
             yield return new TestCaseData("\\\\uncPath\\to\\resource.txt", new Uri("\\\\uncPath\\to\\resource.txt")).SetName("UNC path URL");
+        }
+
+        [Test]
+        public void Resources_Tests()
+        {
+            var set = new[] {"Foo", "Bar", "Baz"};
+
+            var todo = new Todo {Resources = new List<string>(set)};
+
+            var serializedTodo = SerializeToString(todo);
+            var unserializedTodo = UnserializeCalendar(serializedTodo).Todos.Single();
+            CollectionAssert.AreEquivalent(unserializedTodo.Resources, set);
+
+            var e = GetSimpleEvent();
+            e.Resources = new List<string>(set);
+            CollectionAssert.AreEquivalent(e.Resources, set);
+
+            var serialized = SerializeToString(e);
+
+            //Resource deserialization seems broken
+            var unserialize = UnserializeCalendar(serialized);
+
+            var unserializedEvent = unserialize.Events.First();
+            Assert.IsTrue(unserializedEvent.Resources.Count == set.Length);
+            CollectionAssert.AreEquivalent(unserializedEvent.Resources, set);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization.iCalendar.Serializers;
+using Ical.Net.UnitTests.ExtensionMethods;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
@@ -227,7 +228,7 @@ namespace Ical.Net.UnitTests
         {
             var origContents = new[] { "Foo", "Bar" };
             var e = GetSimpleEvent();
-            e.Resources = new HashSet<string>(origContents);
+            e.Resources = new List<string>(origContents);
             Assert.IsTrue(e.Resources.Count == 2);
 
             e.Resources.Add("Baz");
@@ -246,7 +247,7 @@ namespace Ical.Net.UnitTests
             Assert.IsTrue(serialized.Contains("Hello"));
 
             e.Resources.Clear();
-            e.Resources.UnionWith(origContents);
+            e.Resources.AddRange(origContents);
             CollectionAssert.AreEquivalent(e.Resources, origContents);
             serialized = SerializeEvent(e);
             Assert.IsTrue(serialized.Contains("Foo"));
