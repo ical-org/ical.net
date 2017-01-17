@@ -168,13 +168,12 @@ namespace Ical.Net
         /// </summary>
         public IList<string> Resources
         {
-            get
-            {
-                return Properties.GetMany<string>("RESOURCES");
-            }
+            get { return Properties.GetMany<string>("RESOURCES"); }
             set
             {
-                Properties.Set("RESOURCES", value.Distinct(StringComparer.Ordinal));
+                var currentProperties = new HashSet<string>(Properties.GetMany<string>("RESOURCES"), StringComparer.Ordinal);
+                currentProperties.UnionWith(value);
+                Properties.Set("RESOURCES", currentProperties);
             }
         }
 
