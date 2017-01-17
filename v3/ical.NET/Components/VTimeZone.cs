@@ -7,27 +7,6 @@ namespace Ical.Net
     /// </summary>
     public class VTimeZone : CalendarComponent
     {
-        public static VTimeZone FromLocalTimeZone()
-        {
-            return FromSystemTimeZone(TimeZoneInfo.Local);
-        }
-
-        public static VTimeZone FromLocalTimeZone(DateTime earlistDateTimeToSupport, bool includeHistoricalData)
-        {
-            return FromSystemTimeZone(TimeZoneInfo.Local, earlistDateTimeToSupport, includeHistoricalData);
-        }
-
-        public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo)
-        {
-            // Support date/times for January 1st of the previous year by default.
-            return FromSystemTimeZone(tzinfo, new DateTime(DateTime.Now.Year, 1, 1).AddYears(-1), false);
-        }
-
-        public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
-        {
-            return new VTimeZone {TzId = tzinfo.Id};
-        }
-
         public VTimeZone()
         {
             Name = Components.Timezone;

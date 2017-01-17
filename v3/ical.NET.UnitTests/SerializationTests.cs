@@ -169,13 +169,13 @@ namespace Ical.Net.UnitTests
 
             const string exampleTz = "New Zealand Standard Time";
             var tzi = TimeZoneInfo.FindSystemTimeZoneById(exampleTz);
-            var timezone = VTimeZone.FromSystemTimeZone(tzi);
-            cal.AddTimeZone(timezone);
+            var tz = new VTimeZone(exampleTz);
+            cal.AddTimeZone(tz);
             var evt = new CalendarEvent
             {
                 Summary = "Testing",
-                Start = new CalDateTime(2016, 7, 14, timezone.TzId),
-                End = new CalDateTime(2016, 7, 15, timezone.TzId)
+                Start = new CalDateTime(2016, 7, 14, tz.TzId),
+                End = new CalDateTime(2016, 7, 15, tz.TzId)
             };
             cal.Events.Add(evt);
 
@@ -184,7 +184,7 @@ namespace Ical.Net.UnitTests
 
             Console.Write(serializedCalendar);
 
-            var vTimezone = InspectSerializedSection(serializedCalendar, "VTIMEZONE", new[] {"TZID:" + timezone.TzId});
+            var vTimezone = InspectSerializedSection(serializedCalendar, "VTIMEZONE", new[] {"TZID:" + tz.TzId});
             var o = tzi.BaseUtcOffset.ToString("hhmm", CultureInfo.InvariantCulture);
 
             InspectSerializedSection(vTimezone, "STANDARD", new[] {"TZNAME:" + tzi.StandardName, "TZOFFSETTO:" + o
