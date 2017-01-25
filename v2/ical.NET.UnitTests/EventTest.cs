@@ -377,5 +377,24 @@ END:VCALENDAR";
             Assert.AreEqual(calendarA.GetHashCode(), calendarB.GetHashCode());
             Assert.AreEqual(calendarA, calendarB);
         }
+
+        [Test]
+        public void EventResourcesCanBeZeroedOut()
+        {
+            var e = GetSimpleEvent();
+            var resources = new[] {"Foo", "Bar", "Baz"};
+            
+            e.Resources = new List<string>(resources);
+            CollectionAssert.AreEquivalent(e.Resources, resources);
+
+            var newResources = new[] {"Hello", "Goodbye"};
+            e.Resources = new List<string>(newResources);
+            CollectionAssert.AreEquivalent(e.Resources, newResources);
+            Assert.IsFalse(e.Resources.Any(r => resources.Contains(r)));
+
+            e.Resources = null;
+            //See https://github.com/rianjs/ical.net/issues/208 -- this should be changed later so the collection is really null
+            Assert.AreEqual(0, e.Resources?.Count);
+        }
     }
 }
