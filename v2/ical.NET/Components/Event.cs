@@ -168,12 +168,7 @@ namespace Ical.Net
         public virtual IList<string> Resources
         {
             get { return Properties.GetMany<string>("RESOURCES"); }
-            set
-            {
-                var currentProperties = new HashSet<string>(Properties.GetMany<string>("RESOURCES"), StringComparer.Ordinal);
-                currentProperties.UnionWith(value);
-                Properties.Set("RESOURCES", currentProperties);
-            }
+            set { Properties.Set("RESOURCES", value ?? new List<string>()); }
         }
 
         /// <summary>
