@@ -261,7 +261,7 @@
       <Project>{cb7cc882-ed47-46c0-aaae-7a437f22f1c6}</Project>
       <Name>antlr.runtime</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Ical.Net.Collections\Ical.Net.Collections\Ical.Net.Collections.csproj">
+    <ProjectReference Include="..\ical.NET.Collections\ical.NET.Collections\Ical.Net.Collections.csproj">
       <Project>{E04EFEB6-4625-4D58-AC91-7B8B8A2C97BB}</Project>
       <Name>Ical.Net.Collections</Name>
     </ProjectReference>

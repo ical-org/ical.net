@@ -1,0 +1,14 @@
+language: csharp
+
+sudo: false  # use the new container-based Travis infrastructure 
+
+install:
+  - nuget restore v2
+  - nuget restore v3
+  - nuget install NUnit.Runners -Version 3.4.1 -OutputDirectory testrunner
+
+script: 
+  - xbuild v2/ical-v2.sln
+  - mono ./testrunner/NUnit.ConsoleRunner.3.4.1/tools/nunit3-console.exe v2/ical.NET.UnitTests/bin/Debug/net46/Ical.Net.UnitTests.dll
+  - xbuild v3/ical-v3.sln
+  - mono ./testrunner/NUnit.ConsoleRunner.3.4.1/tools/nunit3-console.exe v3/ical.NET.UnitTests/bin/Debug/net46/Ical.Net.UnitTests.dll

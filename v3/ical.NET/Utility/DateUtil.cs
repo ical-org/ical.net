@@ -10,6 +10,8 @@ namespace Ical.Net.Utility
 {
     internal class DateUtil
     {
+        private const string UNIX_TIME_ZONE_CONFIG_FILE = "/etc/timezone";
+
         public static IDateTime StartOfDay(IDateTime dt)
         {
             return dt.AddHours(-dt.Hour).AddMinutes(-dt.Minute).AddSeconds(-dt.Second);
@@ -94,7 +96,42 @@ namespace Ical.Net.Utility
 
         private static readonly Dictionary<string, string> _windowsMapping =
             TzdbDateTimeZoneSource.Default.WindowsMapping.PrimaryMapping.ToDictionary(k => k.Key, v => v.Value, StringComparer.OrdinalIgnoreCase);
-        public static readonly DateTimeZone LocalDateTimeZone = DateTimeZoneProviders.Tzdb.GetSystemDefault();
+        public static readonly DateTimeZone LocalDateTimeZone = GetLocalDateTimeZone();
+
+        /// <summary>
+        /// Alternative to NodaTime.DateTimeZoneProviders.Tzdb.GetSystemDefault that works on both Windows and
+        /// Linux/Mono systems.
+        /// System.TimeZoneInfo.Local on Mono contains "Local" for the Local property.  NodaTime cannot deal with this,
+        /// and throws DateTimeZoneNotFoundException whenever you call
+        /// NodaTime.DateTimeZoneProviders.Tzdb.GetSystemDefault().
+        /// This workaround will, on PlatformID.Unix systems, manually open and read the content of the /etc/timezone
+        /// file as the timezone ID.  Typically, this will be something like "US/Central" which NodaTime can indeed
+        /// recognize and happily give us back a NodaTime.DateTimeZone.
+        /// </summary>
+        /// <remarks>Source: https://github.com/nodatime/nodatime/issues/235#issuecomment-80932114 </remarks>
+        private static DateTimeZone GetLocalDateTimeZone()
+        {
+            // If we aren't running on Linux (which assumes Mono), then get the DTZ from NodaTime like normal.
+            if (Environment.OSVersion.Platform != PlatformID.Unix)
+            {
+                return DateTimeZoneProviders.Tzdb.GetSystemDefault();
+            }
+
+            string sTimezoneId;
+            try
+            {
+                using(var reader = System.IO.File.OpenText(UNIX_TIME_ZONE_CONFIG_FILE))
+                {
+                    sTimezoneId = reader.ReadLine();
+                }
+            }
+            catch(Exception ex)
+            {
+                throw new Exception($"Could not open and read '{UNIX_TIME_ZONE_CONFIG_FILE}'", ex);
+            }
+            return DateTimeZoneProviders.Tzdb.GetZoneOrNull(sTimezoneId);
+        }
+
         public static DateTimeZone GetZone(string tzId)
         {
             if (string.IsNullOrWhiteSpace(tzId))
