@@ -393,5 +393,57 @@ END:VCALENDAR";
             //See https://github.com/rianjs/ical.net/issues/208 -- this should be changed later so the collection is really null
             Assert.AreEqual(0, e.Resources?.Count);
         }
+
+        [Test]
+        public void HourMinuteSecondOffsetParsingTest()
+        {
+            const string ical =
+@"BEGIN:VCALENDAR
+PRODID:-//1&1 Mail & Media GmbH/GMX Kalender Server 3.10.0//NONSGML//DE
+VERSION:2.0
+CALSCALE:GREGORIAN
+METHOD:REQUEST
+BEGIN:VTIMEZONE
+TZID:Europe/Brussels
+TZURL:http://tzurl.org/zoneinfo/Europe/Brussels
+X-LIC-LOCATION:Europe/Brussels
+BEGIN:DAYLIGHT
+TZOFFSETFROM:-001730
+TZOFFSETTO:-001730
+TZNAME:CEST
+DTSTART:19810329T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+001730
+TZOFFSETTO:+001730
+TZNAME:BMT
+DTSTART:18800101T000000
+RDATE:18800101T000000
+END:STANDARD
+END:VTIMEZONE
+END:VCALENDAR";
+
+            using (var reader = new StringReader(ical))
+            {
+                var timezones = Calendar.LoadFromStream(reader)
+                    .First()
+                    .TimeZones.First()
+                    .Children.Cast<CalendarComponent>();
+
+                var positiveOffset = timezones
+                    .Skip(1).Take(1).First()
+                    .Properties.First().Value as UtcOffset;
+                var expectedPositive = TimeSpan.FromMinutes(17.5);
+                Assert.AreEqual(expectedPositive, positiveOffset?.Offset);
+
+                var negativeOffset = timezones
+                    .First()
+                    .Properties.First().Value as UtcOffset;
+
+                var expectedNegative = TimeSpan.FromMinutes(-17.5);
+                Assert.AreEqual(expectedNegative, negativeOffset?.Offset);
+            }
+        }
     }
 }

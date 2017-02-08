@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
@@ -39,8 +41,29 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             {
                 rawOffset = rawOffset.Substring(0, rawOffset.Length - 2);
             }
-            var dummyOffset = DateTimeOffset.Parse("2016-01-01 00:00:00 " + rawOffset);
-            return dummyOffset.Offset;
+
+            DateTimeOffset temp;
+            if (DateTimeOffset.TryParse("2016-01-01 00:00:00 " + rawOffset, out temp))
+            {
+                return temp.Offset;
+            }
+
+            TimeSpan ts;
+            var isNegative = rawOffset.StartsWith("-");
+
+            if (isNegative || rawOffset.StartsWith("+"))
+            {
+                rawOffset = rawOffset.Substring(1, rawOffset.Length - 1);
+            }
+
+            if (!TimeSpan.TryParseExact(rawOffset, "hhmmss", CultureInfo.InvariantCulture, out ts))
+            {
+                throw new FormatException($"{rawOffset} is not a valid UTC offset");
+            }
+
+            return isNegative
+                ? -ts
+                : ts;
         }
     }
 }
