@@ -5,7 +5,7 @@ using static System.Reflection.TypeExtensions;
 
 namespace Ical.Net.General
 {
-    public class ServiceProvider //: IServiceProvider
+    public class ServiceProvider
     {
         private readonly IDictionary<Type, object> _mTypedServices = new Dictionary<Type, object>();
         private readonly IDictionary<string, object> _mNamedServices = new Dictionary<string, object>();
