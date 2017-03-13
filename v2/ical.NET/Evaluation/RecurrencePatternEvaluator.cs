@@ -679,10 +679,22 @@ namespace Ical.Net.Evaluation
                     date = date.AddDays(1);
                 }
 
-                while (Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek) == weekNo)
+                var nextWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek,
+                    pattern.FirstDayOfWeek);
+
+                var currentWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek,
+                    pattern.FirstDayOfWeek);
+                while (currentWeekNo == weekNo ||
+                       //When we manage weekly recurring pattern and we have boundary case:
+                       //Weekdays: 31.12, 01.01, 02.01, 03.01, 04.01, 05.01, 06.01
+                       //31.12 - It's a 53th week number, but all another are 1st week number.
+                       //So, we should add exception rule for this situation(only for weekly events).
+                       (nextWeekNo < weekNo && currentWeekNo == nextWeekNo && pattern.Frequency == FrequencyType.Weekly))
                 {
                     days.Add(date);
                     date = date.AddDays(7);
+                    currentWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek,
+                        pattern.FirstDayOfWeek);
                 }
             }
             else if (pattern.Frequency == FrequencyType.Monthly || pattern.ByMonth.Count > 0)
