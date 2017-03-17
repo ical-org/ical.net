@@ -27,7 +27,7 @@ namespace Ical.Net.General
     [DebuggerDisplay("{Name}:{Value}")]
     public class CalendarProperty : CalendarObject, ICalendarProperty
     {
-        private List<object> _values = new List<object>(128);
+        private List<object> _values = new List<object>();
 
         /// <summary>
         /// Returns a list of parameters that are associated with the iCalendar object.

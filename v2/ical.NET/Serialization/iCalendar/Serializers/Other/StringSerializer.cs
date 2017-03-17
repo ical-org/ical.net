@@ -69,7 +69,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 return null;
             }
 
-            var values = new List<string>(128);
+            var values = new List<string>();
             if (obj is string)
             {
                 values.Add((string) obj);

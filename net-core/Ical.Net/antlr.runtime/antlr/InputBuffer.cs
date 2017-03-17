@@ -47,7 +47,7 @@ namespace antlr
 		protected internal int numToConsume;
 		
 		// Circular queue
-	    protected List<char> Buffer = new List<char>(128);
+	    protected List<char> Buffer = new List<char>();
 		
 		/*This method updates the state of the input buffer so that
 		*  the text matched since the most recent mark() is no longer

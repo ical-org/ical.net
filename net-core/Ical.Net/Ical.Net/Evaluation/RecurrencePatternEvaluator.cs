@@ -334,7 +334,7 @@ namespace Ical.Net.Evaluation
 
         private List<DateTime> GetCandidates(DateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
         {
-            var dates = new List<DateTime>(128) {date};
+            var dates = new List<DateTime> {date};
             dates = GetMonthVariants(dates, pattern, expandBehaviors[0]);
             dates = GetWeekNoVariants(dates, pattern, expandBehaviors[1]);
             dates = GetYearDayVariants(dates, pattern, expandBehaviors[2]);
@@ -398,7 +398,7 @@ namespace Ical.Net.Evaluation
             if (expand.Value)
             {
                 // Expand behavior
-                var monthlyDates = new List<DateTime>(128);
+                var monthlyDates = new List<DateTime>();
                 foreach (var date in dates)
                 {
                     monthlyDates.AddRange(pattern.ByMonth.Select(month => date.AddMonths(month - date.Month)));
@@ -443,7 +443,7 @@ namespace Ical.Net.Evaluation
             }
 
             // Expand behavior
-            var weekNoDates = new List<DateTime>(128);
+            var weekNoDates = new List<DateTime>();
             for (var i = 0; i < dates.Count; i++)
             {
                 var date = dates[i];
@@ -548,7 +548,7 @@ namespace Ical.Net.Evaluation
 
             if (expand.Value)
             {
-                var monthDayDates = new List<DateTime>(128);
+                var monthDayDates = new List<DateTime>();
                 for (var i = 0; i < dates.Count; i++)
                 {
                     var date = dates[i];
@@ -768,7 +768,7 @@ namespace Ical.Net.Evaluation
             if (expand.Value)
             {
                 // Expand behavior
-                var hourlyDates = new List<DateTime>(128);
+                var hourlyDates = new List<DateTime>();
                 for (var i = 0; i < dates.Count; i++)
                 {
                     var date = dates[i];
@@ -818,7 +818,7 @@ namespace Ical.Net.Evaluation
             if (expand.Value)
             {
                 // Expand behavior
-                var minutelyDates = new List<DateTime>(128);
+                var minutelyDates = new List<DateTime>();
                 for (var i = 0; i < dates.Count; i++)
                 {
                     var date = dates[i];
@@ -868,7 +868,7 @@ namespace Ical.Net.Evaluation
             if (expand.Value)
             {
                 // Expand behavior
-                var secondlyDates = new List<DateTime>(128);
+                var secondlyDates = new List<DateTime>();
                 for (var i = 0; i < dates.Count; i++)
                 {
                     var date = dates[i];
