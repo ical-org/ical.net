@@ -8,6 +8,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class AttachmentSerializer : EncodableDataTypeSerializer
     {
+        public AttachmentSerializer() { }
+
+        public AttachmentSerializer(ISerializationContext ctx) : base(ctx) { }
+
         public override Type TargetType => typeof (Attachment);
 
         public override string SerializeToString(object obj)

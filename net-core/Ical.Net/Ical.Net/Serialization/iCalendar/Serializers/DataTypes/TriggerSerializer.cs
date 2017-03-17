@@ -10,6 +10,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class TriggerSerializer : StringSerializer
     {
+        public TriggerSerializer() { }
+
+        public TriggerSerializer(SerializationContext ctx) : base(ctx) { }
+
         public override Type TargetType => typeof (Trigger);
 
         public override string SerializeToString(object obj)

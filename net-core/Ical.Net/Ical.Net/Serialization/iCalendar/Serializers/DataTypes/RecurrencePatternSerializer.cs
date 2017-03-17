@@ -13,6 +13,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class RecurrencePatternSerializer : EncodableDataTypeSerializer
     {
+        public RecurrencePatternSerializer() { }
+
+        public RecurrencePatternSerializer(SerializationContext ctx) : base(ctx) { }
+
         public static DayOfWeek GetDayOfWeek(string value)
         {
             switch (value.ToUpper())

@@ -8,6 +8,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 {
     public class IntegerSerializer : EncodableDataTypeSerializer
     {
+        public IntegerSerializer() { }
+
+        public IntegerSerializer(SerializationContext ctx) : base(ctx) { }
+
         public override Type TargetType => typeof (int);
 
         public override string SerializeToString(object integer)

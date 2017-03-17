@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ical.Net.Interfaces.Serialization;
+using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -7,6 +8,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 {
     public class TimeSpanSerializer : SerializerBase
     {
+        public TimeSpanSerializer() { }
+
+        public TimeSpanSerializer(ISerializationContext ctx) : base(ctx) { }
+
         public override Type TargetType => typeof (TimeSpan);
 
         public override string SerializeToString(object obj)

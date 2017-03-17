@@ -3,11 +3,16 @@ using System.IO;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 using System.Globalization;
+using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class GeographicLocationSerializer : EncodableDataTypeSerializer
     {
+        public GeographicLocationSerializer() { }
+
+        public GeographicLocationSerializer(ISerializationContext ctx) : base(ctx) { }
+
         public override Type TargetType => typeof (GeographicLocation);
 
         public override string SerializeToString(object obj)
