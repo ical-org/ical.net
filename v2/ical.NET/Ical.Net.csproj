@@ -136,6 +136,7 @@
     <Compile Include="Interfaces\Serialization\ISerializer.cs" />
     <Compile Include="Interfaces\Serialization\IStringSerializer.cs" />
     <Compile Include="Serialization\EncodingStack.cs" />
+    <Compile Include="Serialization\SimpleDeserializer.cs" />
     <Compile Include="Serialization\iCalendar\Factory\DataTypeSerializerFactory.cs" />
     <Compile Include="Serialization\iCalendar\Processors\CompositeProcessor.cs" />
     <Compile Include="Serialization\iCalendar\Serializers\Components\EventSerializer.cs" />
