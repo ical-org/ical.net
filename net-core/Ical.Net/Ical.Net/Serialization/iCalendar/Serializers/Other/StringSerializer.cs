@@ -126,8 +126,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 serializeAsList = GetService<IDataTypeMapper>().GetPropertyAllowsMultipleValues(co);
             }
 
-            value = TextUtil.Normalize(value, SerializationContext).ReadToEnd();
-
             // Try to decode the string
             EncodableDataType dt = null;
             if (co != null)

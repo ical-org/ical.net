@@ -52,8 +52,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                     value = Decode(dt, value);
                 }
 
-                value = TextUtil.Normalize(value, SerializationContext).ReadToEnd();
-
                 try
                 {
                     var uri = new Uri(value);
