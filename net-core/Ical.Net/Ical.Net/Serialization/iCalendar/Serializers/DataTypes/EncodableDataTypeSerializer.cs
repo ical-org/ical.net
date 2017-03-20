@@ -46,6 +46,11 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         protected string Decode(IEncodableDataType dt, string value)
         {
+            if (dt?.Encoding == null)
+            {
+                return value;
+            }
+
             var data = DecodeData(dt, value);
             if (data == null)
             {

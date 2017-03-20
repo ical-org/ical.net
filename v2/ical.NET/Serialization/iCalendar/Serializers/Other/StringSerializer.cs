@@ -69,7 +69,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 return null;
             }
 
-            var values = new List<string>(128);
+            var values = new List<string>();
             if (obj is string)
             {
                 values.Add((string) obj);
@@ -102,7 +102,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
             return string.Join(",", values);
         }
 
-        internal static readonly Regex UnescapedCommas = new Regex(@"[^\\](,)", RegexOptions.Compiled);
+        internal static readonly Regex UnescapedCommas = new Regex(@"(?<!\\),", RegexOptions.Compiled);
         public override object Deserialize(TextReader tr)
         {
             if (tr == null)
@@ -126,8 +126,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 serializeAsList = GetService<IDataTypeMapper>().GetPropertyAllowsMultipleValues(co);
             }
 
-            value = TextUtil.Normalize(value, SerializationContext).ReadToEnd();
-
             // Try to decode the string
             EncodableDataType dt = null;
             if (co != null)
@@ -138,28 +136,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 };
             }
 
-            var escapedValues = new List<string>(128);
-            var values = new List<string>(128);
-
-            var i = 0;
-            if (serializeAsList)
-            {
-                var matches = UnescapedCommas.Matches(value);
-                foreach (Match match in matches)
-                {
-                    var newValue = Decode(dt, value.Substring(i, match.Index - i + 1));
-                    escapedValues.Add(newValue);
-                    values.Add(Unescape(newValue));
-                    i = match.Index + 2;
-                }
-            }
-
-            if (i < value.Length)
-            {
-                var newValue = dt != null ? Decode(dt, value.Substring(i, value.Length - i)) : value.Substring(i, value.Length - i);
-                escapedValues.Add(newValue);
-                values.Add(Unescape(newValue));
-            }
+            var encodedValues = serializeAsList ? UnescapedCommas.Split(value) : new[] { value };
+            var escapedValues = Array.ConvertAll(encodedValues, v => Decode(dt, v));
+            var values = Array.ConvertAll(escapedValues, v => Unescape(v));
 
             if (co is ICalendarProperty)
             {
@@ -169,12 +148,12 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 if (settings != null && settings.StoreExtraSerializationData)
                 {
                     // Store the escaped value
-                    co.SetService("EscapedValue", escapedValues.Count == 1 ? escapedValues[0] : (object) escapedValues);
+                    co.SetService("EscapedValue", escapedValues.Length == 1 ? escapedValues[0] : (object) escapedValues);
                 }
             }
 
             // Return either a single value, or the entire list.
-            if (values.Count == 1)
+            if (values.Length == 1)
             {
                 return values[0];
             }
