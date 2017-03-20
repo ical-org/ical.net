@@ -84,11 +84,11 @@ namespace Ical.Net.UnitTests
                 .OrderBy(dt => dt)
                 .ToList();
             Assert.AreEqual(evaluationsCount, occurrences.Count);
-            for (DateTime currentOccurrence = intervalStart.AsUtc;
-                currentOccurrence.CompareTo(intervalEnd.AsUtc) < 0; currentOccurrence = currentOccurrence.AddDays(7))
+
+            for (var currentOccurrence = intervalStart.AsUtc; currentOccurrence.CompareTo(intervalEnd.AsUtc) < 0; currentOccurrence = currentOccurrence.AddDays(7))
             {
                 Assert.IsTrue(occurrences.Contains(new CalDateTime(currentOccurrence)),
-                    string.Format("Collection does not contain {0}, but it is a {1}", currentOccurrence, currentOccurrence.DayOfWeek));
+                    $"Collection does not contain {currentOccurrence}, but it is a {currentOccurrence.DayOfWeek}");
             }
         }
 
