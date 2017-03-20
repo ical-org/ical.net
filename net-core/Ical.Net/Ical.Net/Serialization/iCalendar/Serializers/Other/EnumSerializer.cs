@@ -15,6 +15,11 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
             _mEnumType = enumType;
         }
 
+        public EnumSerializer(Type enumType, SerializationContext ctx) : base(ctx)
+        {
+            _mEnumType = enumType;
+        }
+
         public override Type TargetType => _mEnumType;
 
         public override string SerializeToString(object enumValue)

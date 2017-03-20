@@ -7,6 +7,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class GeographicLocationSerializer : EncodableDataTypeSerializer
     {
+        public GeographicLocationSerializer() { }
+
+        public GeographicLocationSerializer(SerializationContext ctx) : base(ctx) { }
+
         public override Type TargetType => typeof (GeographicLocation);
 
         public override string SerializeToString(object obj)

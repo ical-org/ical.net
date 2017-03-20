@@ -7,6 +7,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 {
     public class TimeSpanSerializer : SerializerBase
     {
+        public TimeSpanSerializer() { }
+
+        public TimeSpanSerializer(SerializationContext ctx) : base(ctx) { }
+
         public override Type TargetType => typeof (TimeSpan);
 
         public override string SerializeToString(object obj)

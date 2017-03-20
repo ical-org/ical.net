@@ -26,70 +26,66 @@ namespace Ical.Net.Serialization.iCalendar.Factory
 
                 if (typeof (IAttachment).IsAssignableFrom(objectType))
                 {
-                    s = new AttachmentSerializer();
+                    s = new AttachmentSerializer(ctx);
                 }
                 else if (typeof (IAttendee).IsAssignableFrom(objectType))
                 {
-                    s = new AttendeeSerializer();
+                    s = new AttendeeSerializer(ctx);
                 }
                 else if (typeof (IDateTime).IsAssignableFrom(objectType))
                 {
-                    s = new DateTimeSerializer();
+                    s = new DateTimeSerializer(ctx);
                 }
                 else if (typeof (IFreeBusyEntry).IsAssignableFrom(objectType))
                 {
-                    s = new FreeBusyEntrySerializer();
+                    s = new FreeBusyEntrySerializer(ctx);
                 }
                 else if (typeof (IGeographicLocation).IsAssignableFrom(objectType))
                 {
-                    s = new GeographicLocationSerializer();
+                    s = new GeographicLocationSerializer(ctx);
                 }
                 else if (typeof (IOrganizer).IsAssignableFrom(objectType))
                 {
-                    s = new OrganizerSerializer();
+                    s = new OrganizerSerializer(ctx);
                 }
                 else if (typeof (IPeriod).IsAssignableFrom(objectType))
                 {
-                    s = new PeriodSerializer();
+                    s = new PeriodSerializer(ctx);
                 }
                 else if (typeof (IPeriodList).IsAssignableFrom(objectType))
                 {
-                    s = new PeriodListSerializer();
+                    s = new PeriodListSerializer(ctx);
                 }
                 else if (typeof (IRecurrencePattern).IsAssignableFrom(objectType))
                 {
-                    s = new RecurrencePatternSerializer();
+                    s = new RecurrencePatternSerializer(ctx);
                 }
                 else if (typeof (IRequestStatus).IsAssignableFrom(objectType))
                 {
-                    s = new RequestStatusSerializer();
+                    s = new RequestStatusSerializer(ctx);
                 }
                 else if (typeof (IStatusCode).IsAssignableFrom(objectType))
                 {
-                    s = new StatusCodeSerializer();
+                    s = new StatusCodeSerializer(ctx);
                 }
                 else if (typeof (ITrigger).IsAssignableFrom(objectType))
                 {
-                    s = new TriggerSerializer();
+                    s = new TriggerSerializer(ctx);
                 }
                 else if (typeof (IUtcOffset).IsAssignableFrom(objectType))
                 {
-                    s = new UtcOffsetSerializer();
+                    s = new UtcOffsetSerializer(ctx);
                 }
                 else if (typeof (IWeekDay).IsAssignableFrom(objectType))
                 {
-                    s = new WeekDaySerializer();
+                    s = new WeekDaySerializer(ctx);
                 }
                 // Default to a string serializer, which simply calls
                 // ToString() on the value to serialize it.
                 else
                 {
-                    s = new StringSerializer();
+                    s = new StringSerializer(ctx);
                 }
-
-                // Set the serialization context
-                s.SerializationContext = ctx;
-
                 return s;
             }
             return null;

@@ -12,6 +12,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class RequestStatusSerializer : StringSerializer
     {
+        public RequestStatusSerializer() { }
+
+        public RequestStatusSerializer(ISerializationContext ctx) : base(ctx) { }
+
         public override Type TargetType => typeof (RequestStatus);
 
         public override string SerializeToString(object obj)

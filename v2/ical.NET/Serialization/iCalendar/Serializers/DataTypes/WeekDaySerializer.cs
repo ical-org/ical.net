@@ -3,11 +3,16 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class WeekDaySerializer : EncodableDataTypeSerializer
     {
+        public WeekDaySerializer() { }
+
+        public WeekDaySerializer(ISerializationContext ctx) : base(ctx) { }
+
         public override Type TargetType => typeof (WeekDay);
 
         public override string SerializeToString(object obj)

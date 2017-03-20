@@ -30,6 +30,9 @@ namespace Ical.Net.Serialization.Factory
                 case Components.Todo:
                     c = new Todo();
                     break;
+                case Components.Calendar:
+                    c = new Calendar();
+                    break;
                 default:
                     c = new CalendarComponent();
                     break;

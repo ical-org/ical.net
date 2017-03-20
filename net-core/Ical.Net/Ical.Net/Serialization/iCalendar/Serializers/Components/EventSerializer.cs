@@ -4,6 +4,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
 {
     public class EventSerializer : ComponentSerializer
     {
+        public EventSerializer() { }
+
+        public EventSerializer(SerializationContext ctx) : base(ctx) { }
+
         public override Type TargetType => typeof (CalendarEvent);
 
         public override string SerializeToString(object obj)

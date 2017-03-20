@@ -7,6 +7,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class OrganizerSerializer : StringSerializer
     {
+        public OrganizerSerializer() { }
+
+        public OrganizerSerializer(SerializationContext ctx) : base(ctx) { }
+
         public override Type TargetType => typeof (Organizer);
 
         public override string SerializeToString(object obj)

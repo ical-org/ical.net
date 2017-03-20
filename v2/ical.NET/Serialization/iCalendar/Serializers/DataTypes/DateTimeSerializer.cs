@@ -4,11 +4,16 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class DateTimeSerializer : EncodableDataTypeSerializer
     {
+        public DateTimeSerializer() { }
+
+        public DateTimeSerializer(ISerializationContext ctx) : base(ctx) { }
+
         private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
         {
             var dt = DateTime.MinValue;

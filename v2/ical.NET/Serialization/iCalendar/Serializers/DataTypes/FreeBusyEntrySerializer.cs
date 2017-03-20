@@ -2,11 +2,16 @@
 using System.IO;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class FreeBusyEntrySerializer : PeriodSerializer
     {
+        public FreeBusyEntrySerializer() { }
+
+        public FreeBusyEntrySerializer(ISerializationContext ctx) : base(ctx) { }
+
         public override Type TargetType => typeof (FreeBusyEntry);
 
         public override string SerializeToString(object obj)

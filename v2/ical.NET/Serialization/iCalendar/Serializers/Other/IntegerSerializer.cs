@@ -3,11 +3,16 @@ using System.IO;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 {
     public class IntegerSerializer : EncodableDataTypeSerializer
     {
+        public IntegerSerializer() { }
+
+        public IntegerSerializer(ISerializationContext ctx) : base(ctx) { }
+
         public override Type TargetType => typeof (int);
 
         public override string SerializeToString(object integer)

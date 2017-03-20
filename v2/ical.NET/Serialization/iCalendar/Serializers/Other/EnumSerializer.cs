@@ -3,6 +3,7 @@ using System.IO;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 {
@@ -11,6 +12,11 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
         private readonly Type _mEnumType;
 
         public EnumSerializer(Type enumType)
+        {
+            _mEnumType = enumType;
+        }
+
+        public EnumSerializer(Type enumType, ISerializationContext ctx) : base(ctx)
         {
             _mEnumType = enumType;
         }

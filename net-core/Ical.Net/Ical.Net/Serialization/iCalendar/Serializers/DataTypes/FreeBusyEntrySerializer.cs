@@ -6,6 +6,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class FreeBusyEntrySerializer : PeriodSerializer
     {
+        public FreeBusyEntrySerializer() { }
+
+        public FreeBusyEntrySerializer(SerializationContext ctx) : base(ctx) { }
+
         public override Type TargetType => typeof (FreeBusyEntry);
 
         public override string SerializeToString(object obj)

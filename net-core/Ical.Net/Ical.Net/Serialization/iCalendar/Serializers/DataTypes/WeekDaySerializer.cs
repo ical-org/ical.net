@@ -7,6 +7,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 {
     public class WeekDaySerializer : EncodableDataTypeSerializer
     {
+        public WeekDaySerializer() { }
+
+        public WeekDaySerializer(SerializationContext ctx) : base(ctx) { }
+
         public override Type TargetType => typeof (WeekDay);
 
         public override string SerializeToString(object obj)
