@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Ical.Net.DataTypes;
+using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Utility;
 using NUnit.Framework;
 
 namespace Ical.Net.UnitTests
@@ -49,6 +52,44 @@ namespace Ical.Net.UnitTests
             var secondEndCopy = secondEnd.Copy<CalDateTime>();
             Assert.AreEqual(secondStartCopy, secondOccurrence.Period.StartTime);
             Assert.AreEqual(secondEndCopy, secondOccurrence.Period.EndTime);
+        }
+
+        [Test]
+        public void SkippedOccurrenceOnWeeklyPattern()
+        {
+            const int evaluationsCount = 1000;
+            var eventStart = new CalDateTime(new DateTime(2016, 1, 1, 10, 0, 0, DateTimeKind.Utc));
+            var eventEnd = new CalDateTime(new DateTime(2016, 1, 1, 11, 0, 0, DateTimeKind.Utc));
+            var vEvent = new Event
+            {
+                DtStart = eventStart,
+                DtEnd = eventEnd,
+            };
+
+            var pattern = new RecurrencePattern
+            {
+                Frequency = FrequencyType.Weekly,
+                ByDay = new List<IWeekDay> { new WeekDay(DayOfWeek.Friday) }
+
+            };
+            vEvent.RecurrenceRules.Add(pattern);
+            var calendar = new Calendar();
+            calendar.Events.Add(vEvent);
+
+            var intervalStart = eventStart;
+            var intervalEnd = intervalStart.AddDays(7 * evaluationsCount);
+
+            var occurrences = RecurrenceUtil.GetOccurrences(vEvent, intervalStart, intervalEnd, false)
+                .Select(o => o.Period.StartTime)
+                .OrderBy(dt => dt)
+                .ToList();
+            Assert.AreEqual(evaluationsCount, occurrences.Count);
+            for (DateTime currentOccurrence = intervalStart.AsUtc;
+                currentOccurrence.CompareTo(intervalEnd.AsUtc) < 0; currentOccurrence = currentOccurrence.AddDays(7))
+            {
+                Assert.IsTrue(occurrences.Contains(new CalDateTime(currentOccurrence)),
+                    string.Format("Collection does not contain {0}, but it is a {1}", currentOccurrence, currentOccurrence.DayOfWeek));
+            }
         }
 
         [Test]
