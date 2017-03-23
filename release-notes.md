@@ -2,6 +2,11 @@
 
 A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) version represents.
 
+### v3
+
+* 3.0.2-net-core-alpha: Fix nuspec file to declare NodaTime as dependency
+* 3.0.1-alpha: Initial publishing of .NET Core release
+
 ### v2
 
 * 2.2.33: Bugfix for [#235](https://github.com/rianjs/ical.net/issues/235) when years have 53 weeks. Contains a new deserializer that's twice as fast as the default ANTLR implementation, and several other (smaller) performance enhancements. _This will become the default deserializer in a future release._ [PR 246](https://github.com/rianjs/ical.net/pull/246), [PR 247](https://github.com/rianjs/ical.net/pull/247)
