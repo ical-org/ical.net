@@ -78,6 +78,7 @@
     <Compile Include="ComponentTest.cs" />
     <Compile Include="ConcurrentDeserializationTests.cs" />
     <Compile Include="DateTimeSerializerTests.cs" />
+    <Compile Include="SerializationHelpers.cs" />
     <Compile Include="SimpleDeserializationTests.cs" />
     <Compile Include="DeserializationTests.cs" />
     <Compile Include="DocumentationExamples.cs" />

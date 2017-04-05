@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
@@ -11,9 +12,11 @@ using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
+using Ical.Net.Serialization.iCalendar.Serializers;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 using Ical.Net.Utility;
 using NUnit.Framework;
+using static Ical.Net.UnitTests.SerializationHelpers;
 
 namespace Ical.Net.UnitTests
 {
@@ -3129,6 +3132,55 @@ END:VCALENDAR";
                 Resources = new List<string>(new[] {"Foo", "Bar", "Baz"}),
             };
             return calendarEvent;
+        }
+
+        [Test]
+        public void ExDateFold_Tests()
+        {
+            var start = _now.AddYears(-1);
+            var end = start.AddHours(1);
+            var rrule = new RecurrencePattern(FrequencyType.Daily) { Until = start.AddYears(2) };
+            var e = new Event
+            {
+                DtStart = new CalDateTime(start),
+                DtEnd = new CalDateTime(end),
+                RecurrenceRules = new List<IRecurrencePattern> { rrule }
+            };
+
+            var firstExclusion = new CalDateTime(start.AddDays(4));
+            e.ExceptionDates = new List<IPeriodList> { new PeriodList { new Period(firstExclusion) } };
+            var serialized = SerializeToString(e);
+            Assert.AreEqual(1, Regex.Matches(serialized, "EXDATE:").Count);
+
+            var secondExclusion = new CalDateTime(start.AddDays(5));
+            e.ExceptionDates.Add(new PeriodList { new Period(secondExclusion) });
+            serialized = SerializeToString(e);
+            Assert.AreEqual(1, Regex.Matches(serialized, "EXDATE:").Count);
+        }
+
+        [Test]
+        public void ExDateTimeZone_Tests()
+        {
+            const string tzid = "Europe/Stockholm";
+
+            //Repeat daily for 10 days
+            var rrule = new RecurrencePattern(FrequencyType.Daily, 1) { Count = 10 };
+
+            var e = new Event
+            {
+                DtStart = new CalDateTime(_now, tzid),
+                DtEnd = new CalDateTime(_later, tzid),
+                RecurrenceRules = new List<IRecurrencePattern> { rrule },
+            };
+
+            var exceptionDateList = new PeriodList();
+            exceptionDateList.TzId = tzid;
+            exceptionDateList.Add(new Period(new CalDateTime(_now.AddDays(1), tzid)));
+            e.ExceptionDates.Add(exceptionDateList);
+
+            var serialized = SerializeToString(e);
+            const string expected = "EXDATE;TZID=Europe/Stockholm:";
+            Assert.AreEqual(1, Regex.Matches(serialized, expected).Count);
         }
     }
 }
