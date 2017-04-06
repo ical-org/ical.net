@@ -8,7 +8,6 @@ namespace Ical.Net.Interfaces.DataTypes
         IPeriod this[int index] { get; }
         void Add(IDateTime dt);
         void Add(IPeriod item);
-        IEnumerator<IPeriod> GetEnumerator();
         int Count { get; }
     }
 }
