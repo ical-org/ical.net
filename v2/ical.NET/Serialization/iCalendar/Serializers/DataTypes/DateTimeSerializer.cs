@@ -45,12 +45,11 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         {
             var dt = obj as IDateTime;
 
-            // Assign the TZID for the date/time value.
-            if (dt.IsUniversalTime)
-            {
-                dt.Parameters.Remove("TZID");
-            }
-            else if (dt.TzId != null)
+            //Historically, dday.ical substituted TZID=UTC with Z suffixes on DateTimes. However this behavior isn't part of the spec. Some popular libraries
+            //like Telerik's RadSchedule components will only understand the DateTimeKind.Utc if the ical text says TZID=UTC. Anything but that is treated as
+            //DateTimeKind.Unspecified, which is problematic.
+
+            if (!string.IsNullOrWhiteSpace(dt.TzId))
             {
                 dt.Parameters.Set("TZID", dt.TzId);
             }
@@ -69,7 +68,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             if (dt.HasTime)
             {
                 value.Append($"T{dt.Hour:00}{dt.Minute:00}{dt.Second:00}");
-                if (dt.IsUniversalTime)
+                if (dt.IsUniversalTime && string.IsNullOrWhiteSpace(dt.Parameters.Get("TZID")))
                 {
                     value.Append("Z");
                 }

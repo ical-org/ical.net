@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Serialization;
@@ -18,9 +19,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var rdt = obj as IPeriodList;
+            var periodList = obj as IPeriodList;
             var factory = GetService<ISerializerFactory>();
-            if (rdt == null || factory == null)
+            if (periodList == null || factory == null)
             {
                 return null;
             }
@@ -32,8 +33,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 return null;
             }
 
-            var parts = new List<string>(rdt.Count);
-            foreach (var p in rdt)
+            var parts = new List<string>(periodList.Count);
+
+            foreach (var p in periodList)
             {
                 if (p.EndTime != null)
                 {
@@ -45,7 +47,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 }
             }
 
-            return Encode(rdt, string.Join(",", parts));
+            return Encode(periodList, string.Join(",", parts));
         }
 
         public override object Deserialize(TextReader tr)

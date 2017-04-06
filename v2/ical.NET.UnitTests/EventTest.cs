@@ -1,13 +1,14 @@
-using Ical.Net.DataTypes;
-using Ical.Net.ExtensionMethods;
-using Ical.Net.Interfaces;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Ical.Net.DataTypes;
+using Ical.Net.ExtensionMethods;
+using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Serialization.iCalendar.Serializers;
+using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 
 namespace Ical.Net.UnitTests
 {
@@ -126,40 +127,39 @@ namespace Ical.Net.UnitTests
         }
 
         /// <summary>
-        /// Ensures that correct set DTSTAMP property is being serialized with kind UTC.
-        /// </summary>
-        [Test, Category("Deserialization")]
-        public void EnsureCorrectSetDTSTAMPisSerializedAsKindUTC()
-        {
-            var ical = new Ical.Net.Calendar();
-            var evt = new Ical.Net.Event();
-            evt.DtStamp = new CalDateTime(new DateTime(2016, 8, 17, 2, 30, 0, DateTimeKind.Utc));
-            ical.Events.Add(evt);
-
-            var serializer = new Ical.Net.Serialization.iCalendar.Serializers.CalendarSerializer();
-            var serializedCalendar = serializer.SerializeToString(ical);
-
-            var lines = serializedCalendar.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            var result = lines.First(s => s.StartsWith("DTSTAMP"));
-            Assert.AreEqual("DTSTAMP:20160817T023000Z", result);
-        }
-
-        /// <summary>
         /// Ensures that automatically set DTSTAMP property is being serialized with kind UTC.
         /// </summary>
-        [Test, Category("Deserialization")]
-        public void EnsureAutomaticallySetDTSTAMPisSerializedAsKindUTC()
+        [Test, Category("Deserialization"), TestCaseSource(nameof(EnsureAutomaticallySetDtStampIsSerializedAsUtcKind_TestCases))]
+        public bool EnsureAutomaticallySetDTSTAMPisSerializedAsKindUTC(string serialized)
         {
-            var ical = new Ical.Net.Calendar();
-            var evt = new Ical.Net.Event();
-            ical.Events.Add(evt);
-
-            var serializer = new Ical.Net.Serialization.iCalendar.Serializers.CalendarSerializer();
-            var serializedCalendar = serializer.SerializeToString(ical);
-
-            var lines = serializedCalendar.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var lines = serialized.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             var result = lines.First(s => s.StartsWith("DTSTAMP"));
-            Assert.AreEqual($"DTSTAMP:{evt.DtStamp.Year}{evt.DtStamp.Month:00}{evt.DtStamp.Day:00}T{evt.DtStamp.Hour:00}{evt.DtStamp.Minute:00}{evt.DtStamp.Second:00}Z", result);
+
+            //Both of these are correct, since the library no longer asserts that UTC must elide an explicit TZID in favor of the Z suffix on UTC times
+            return !result.Contains("TZID=") && result.EndsWith("Z")
+                || result.Contains("TZID=") && !result.EndsWith("Z");
+        }
+
+        public static IEnumerable<ITestCaseData> EnsureAutomaticallySetDtStampIsSerializedAsUtcKind_TestCases()
+        {
+            var emptyCalendar = new Calendar();
+            var evt = new Event();
+            emptyCalendar.Events.Add(evt);
+
+            var serializer = new CalendarSerializer();
+            yield return new TestCaseData(serializer.SerializeToString(emptyCalendar))
+                .SetName("Empty calendar with empty event returns true")
+                .Returns(true);
+
+            var explicitDtStampCalendar = new Calendar();
+            var explicitDtStampEvent = new Event
+            {
+                DtStamp = new CalDateTime(new DateTime(2016, 8, 17, 2, 30, 0, DateTimeKind.Utc))
+            };
+            explicitDtStampCalendar.Events.Add(explicitDtStampEvent);
+            yield return new TestCaseData(serializer.SerializeToString(explicitDtStampCalendar))
+                .SetName("Event with explicitly-set DTSTAMP property returns true")
+                .Returns(true);
         }
 
         [Test]

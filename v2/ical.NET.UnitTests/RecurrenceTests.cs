@@ -3152,7 +3152,7 @@ END:VCALENDAR";
             Assert.AreEqual(1, Regex.Matches(serialized, "EXDATE:").Count);
 
             var secondExclusion = new CalDateTime(start.AddDays(5));
-            e.ExceptionDates.Add(new PeriodList { new Period(secondExclusion) });
+            e.ExceptionDates.First().Add(new Period(secondExclusion));
             serialized = SerializeToString(e);
             Assert.AreEqual(1, Regex.Matches(serialized, "EXDATE:").Count);
         }
@@ -3172,14 +3172,17 @@ END:VCALENDAR";
                 RecurrenceRules = new List<IRecurrencePattern> { rrule },
             };
 
-            var exceptionDateList = new PeriodList();
-            exceptionDateList.TzId = tzid;
-            exceptionDateList.Add(new Period(new CalDateTime(_now.AddDays(1), tzid)));
+            var exceptionDateList = new PeriodList {TzId = tzid};
+            exceptionDateList.Add(new Period(new CalDateTime(_now.AddDays(1))));
             e.ExceptionDates.Add(exceptionDateList);
 
             var serialized = SerializeToString(e);
-            const string expected = "EXDATE;TZID=Europe/Stockholm:";
-            Assert.AreEqual(1, Regex.Matches(serialized, expected).Count);
+            const string expected = "TZID=Europe/Stockholm";
+            Assert.AreEqual(3, Regex.Matches(serialized, expected).Count);
+
+            e.ExceptionDates.First().Add(new Period(new CalDateTime(_now.AddDays(2))));
+            serialized = SerializeToString(e);
+            Assert.AreEqual(3, Regex.Matches(serialized, expected).Count);
         }
     }
 }
