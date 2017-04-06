@@ -12,7 +12,7 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// An iCalendar list of recurring dates (or date exclusions)
     /// </summary>
-    public class PeriodList : EncodableDataType, IEnumerable<Period>
+    public class PeriodList : EncodableDataType, IList<Period>
     {
         public string TzId { get; set; }
         public int Count => Periods.Count;
@@ -80,5 +80,32 @@ namespace Ical.Net.DataTypes
         public IEnumerator<Period> GetEnumerator() => Periods.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => Periods.GetEnumerator();
+        public void Clear()
+        {
+            Periods.Clear();
+        }
+
+        public bool Contains(Period item) => Periods.Contains(item);
+
+        public void CopyTo(Period[] array, int arrayIndex)
+        {
+            Periods.CopyTo(array, arrayIndex);
+        }
+
+        public bool Remove(Period item) => Periods.Remove(item);
+
+        public bool IsReadOnly => Periods.IsReadOnly;
+
+        public int IndexOf(Period item) => Periods.IndexOf(item);
+
+        public void Insert(int index, Period item)
+        {
+            Periods.Insert(index, item);
+        }
+
+        public void RemoveAt(int index)
+        {
+            Periods.RemoveAt(index);
+        }
     }
 }

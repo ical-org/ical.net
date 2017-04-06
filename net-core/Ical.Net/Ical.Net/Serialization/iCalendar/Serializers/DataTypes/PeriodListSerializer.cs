@@ -18,22 +18,23 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var rdt = obj as PeriodList;
+            var periodList = obj as PeriodList;
             var factory = GetService<ISerializerFactory>();
-            if (rdt == null || factory == null)
+            if (periodList == null || factory == null)
             {
                 return null;
             }
 
-            var dtSerializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
-            var periodSerializer = factory.Build(typeof (Period), SerializationContext) as IStringSerializer;
+            var dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
+            var periodSerializer = factory.Build(typeof(Period), SerializationContext) as IStringSerializer;
             if (dtSerializer == null || periodSerializer == null)
             {
                 return null;
             }
 
-            var parts = new List<string>(rdt.Count);
-            foreach (var p in rdt)
+            var parts = new List<string>(periodList.Count);
+
+            foreach (var p in periodList)
             {
                 if (p.EndTime != null)
                 {
@@ -45,7 +46,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 }
             }
 
-            return Encode(rdt, string.Join(",", parts));
+            return Encode(periodList, string.Join(",", parts));
         }
 
         public override object Deserialize(TextReader tr)
