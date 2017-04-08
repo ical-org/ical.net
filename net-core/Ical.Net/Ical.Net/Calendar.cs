@@ -17,7 +17,7 @@ using Ical.Net.Utility;
 
 namespace Ical.Net
 {
-    public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, IMergeable
+    public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, IMergeable, IEquatable<Calendar>
     {
         public static CalendarCollection Load(string iCalendarString)
         {
@@ -109,7 +109,7 @@ namespace Ical.Net
             Initialize();
         }
 
-        protected bool Equals(Calendar other)
+        public bool Equals(Calendar other)
         {
             var foo = CollectionHelpers.Equals(UniqueComponents, other.UniqueComponents);
             return string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)

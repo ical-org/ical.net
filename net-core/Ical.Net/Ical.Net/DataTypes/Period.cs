@@ -6,7 +6,7 @@ using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 namespace Ical.Net.DataTypes
 {
     /// <summary> Represents an iCalendar period of time. </summary>    
-    public class Period : EncodableDataType, IComparable<Period>
+    public class Period : EncodableDataType, IComparable<Period>, IEquatable<Period>
     {
         public Period() { }
 
@@ -60,7 +60,7 @@ namespace Ical.Net.DataTypes
             Duration = p.Duration;
         }
 
-        protected bool Equals(Period other)
+        public bool Equals(Period other)
         {
             return Equals(StartTime, other.StartTime) && Equals(EndTime, other.EndTime) && Duration.Equals(other.Duration);
         }

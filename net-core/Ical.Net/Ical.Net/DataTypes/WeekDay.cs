@@ -8,7 +8,7 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// Represents an RFC 5545 "BYDAY" value.
     /// </summary>
-    public class WeekDay : EncodableDataType
+    public class WeekDay : EncodableDataType, IEquatable<WeekDay>
     {
         public virtual int Offset { get; set; } = int.MinValue;
 
@@ -36,6 +36,8 @@ namespace Ical.Net.DataTypes
             var serializer = new WeekDaySerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
+
+        public bool Equals(WeekDay other) => other.Offset == Offset && other.DayOfWeek == DayOfWeek;
 
         public override bool Equals(object obj)
         {

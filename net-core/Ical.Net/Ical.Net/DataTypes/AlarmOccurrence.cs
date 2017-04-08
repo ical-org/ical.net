@@ -12,7 +12,7 @@ namespace Ical.Net.DataTypes
     /// the alarm occurs, the <see cref="Alarm"/> that fired, and the 
     /// component on which the alarm fired.
     /// </remarks>
-    public class AlarmOccurrence : IComparable<AlarmOccurrence>
+    public class AlarmOccurrence : IComparable<AlarmOccurrence>, IEquatable<AlarmOccurrence>
     {
         public Period Period { get; set; }
 
@@ -45,7 +45,7 @@ namespace Ical.Net.DataTypes
             return Period.CompareTo(other.Period);
         }
 
-        protected bool Equals(AlarmOccurrence other)
+        public bool Equals(AlarmOccurrence other)
         {
             return Equals(Period, other.Period) && Equals(Component, other.Component) && Equals(Alarm, other.Alarm);
         }

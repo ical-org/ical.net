@@ -10,7 +10,7 @@ namespace Ical.Net.DataTypes
     /// A class that represents the organizer of an event/todo/journal.
     /// </summary>
     [DebuggerDisplay("{Value}")]
-    public class Organizer : EncodableDataType
+    public class Organizer : EncodableDataType, IEquatable<Organizer>
     {
         public virtual Uri SentBy
         {
@@ -60,7 +60,7 @@ namespace Ical.Net.DataTypes
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
-        protected bool Equals(Organizer other)
+        public bool Equals(Organizer other)
         {
             return Equals(Value, other.Value);
         }
