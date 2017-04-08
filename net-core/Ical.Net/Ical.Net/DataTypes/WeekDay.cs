@@ -8,7 +8,7 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// Represents an RFC 5545 "BYDAY" value.
     /// </summary>
-    public class WeekDay : EncodableDataType, IEquatable<WeekDay>
+    public class WeekDay : EncodableDataType, IComparable, IComparable<WeekDay>, IEquatable<WeekDay>
     {
         public virtual int Offset { get; set; } = int.MinValue;
 
@@ -66,6 +66,20 @@ namespace Ical.Net.DataTypes
             }
         }
 
+        public int CompareTo(WeekDay other)
+        {
+            if (other == null)
+            {
+                throw new ArgumentException();
+            }
+            var compare = DayOfWeek.CompareTo(other.DayOfWeek);
+            if (compare == 0)
+            {
+                compare = Offset.CompareTo(other.Offset);
+            }
+            return compare;
+        }
+
         public int CompareTo(object obj)
         {
             WeekDay bd = null;
@@ -78,16 +92,7 @@ namespace Ical.Net.DataTypes
                 bd = (WeekDay) obj;
             }
 
-            if (bd == null)
-            {
-                throw new ArgumentException();
-            }
-            var compare = DayOfWeek.CompareTo(bd.DayOfWeek);
-            if (compare == 0)
-            {
-                compare = Offset.CompareTo(bd.Offset);
-            }
-            return compare;
+            return CompareTo(bd);
         }
     }
 }
