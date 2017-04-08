@@ -18,7 +18,7 @@ using Ical.Net.Utility;
 
 namespace Ical.Net
 {
-    public class Calendar : CalendarComponent, ICalendar
+    public class Calendar : CalendarComponent, ICalendar, IEquatable<Calendar>
     {
         /// <summary>
         /// Loads an <see cref="Calendar"/> from the file system.
@@ -177,7 +177,7 @@ namespace Ical.Net
             Initialize();
         }
 
-        protected bool Equals(Calendar other)
+        public bool Equals(Calendar other)
         {
             return string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)
                 && CollectionHelpers.Equals(UniqueComponents, other.UniqueComponents)

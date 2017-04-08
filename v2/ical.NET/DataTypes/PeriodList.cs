@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +13,7 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// An iCalendar list of recurring dates (or date exclusions)
     /// </summary>
-    public class PeriodList : EncodableDataType, IPeriodList
+    public class PeriodList : EncodableDataType, IPeriodList, IEquatable<PeriodList>
     {
         public string TzId { get; set; }
         public int Count => Periods.Count;
@@ -30,7 +31,7 @@ namespace Ical.Net.DataTypes
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
-        protected bool Equals(PeriodList other)
+        public bool Equals(PeriodList other)
         {
             return string.Equals(TzId, other.TzId) && CollectionHelpers.Equals(Periods, other.Periods);
         }

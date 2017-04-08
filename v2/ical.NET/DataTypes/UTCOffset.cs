@@ -7,7 +7,7 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// Represents a time offset from UTC (Coordinated Universal Time).
     /// </summary>
-    public class UtcOffset : EncodableDataType, IUtcOffset
+    public class UtcOffset : EncodableDataType, IUtcOffset, IEquatable<UtcOffset>
     {
         public TimeSpan Offset { get; }
 
@@ -39,7 +39,7 @@ namespace Ical.Net.DataTypes
 
         public virtual DateTime ToLocal(DateTime dt) => DateTime.SpecifyKind(dt.Add(Offset), DateTimeKind.Local);
 
-        protected bool Equals(UtcOffset other)
+        public bool Equals(UtcOffset other)
         {
             return Offset == other.Offset;
         }

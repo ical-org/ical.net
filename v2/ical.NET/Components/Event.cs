@@ -23,7 +23,7 @@ namespace Ical.Net
     ///         <item>Create a TextCollection DataType for 'text' items separated by commas</item>
     ///     </list>
     /// </note>
-    public class Event : RecurringComponent, IEvent, IComparable<Event>
+    public class Event : RecurringComponent, IEvent, IComparable<Event>, IEquatable<Event>
     {
         internal const string ComponentName = "VEVENT";
 
@@ -281,7 +281,7 @@ namespace Ical.Net
             }
         }
 
-        protected bool Equals(Event other)
+        public bool Equals(Event other)
         {
             var resourcesSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             resourcesSet.UnionWith(Resources);

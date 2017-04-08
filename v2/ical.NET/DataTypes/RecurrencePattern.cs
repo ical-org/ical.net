@@ -13,7 +13,7 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// An iCalendar representation of the <c>RRULE</c> property.
     /// </summary>
-    public class RecurrencePattern : EncodableDataType, IRecurrencePattern
+    public class RecurrencePattern : EncodableDataType, IRecurrencePattern, IEquatable<RecurrencePattern>
     {
         private int _interval = int.MinValue;
         private RecurrenceRestrictionType? _restrictionType;
@@ -113,7 +113,7 @@ namespace Ical.Net.DataTypes
             return serializer.SerializeToString(this);
         }
 
-        protected bool Equals(RecurrencePattern other)
+        public bool Equals(RecurrencePattern other)
         {
             return (Interval == other.Interval)
                 && (RestrictionType == other.RestrictionType)

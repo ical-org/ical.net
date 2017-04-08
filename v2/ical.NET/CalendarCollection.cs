@@ -12,7 +12,7 @@ namespace Ical.Net
     /// <summary>
     /// A list of iCalendars.
     /// </summary>
-    public class CalendarCollection : List<ICalendar>, IICalendarCollection
+    public class CalendarCollection : List<ICalendar>, IICalendarCollection, IEquatable<CalendarCollection>
     {
         public void ClearEvaluation()
         {
@@ -125,7 +125,7 @@ namespace Ical.Net
 
         public override int GetHashCode() => CollectionHelpers.GetHashCode(this);
 
-        protected bool Equals(CalendarCollection obj) => CollectionHelpers.Equals(this, obj);
+        public bool Equals(CalendarCollection other) => CollectionHelpers.Equals(this, other);
 
         public override bool Equals(object obj)
         {

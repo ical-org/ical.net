@@ -10,7 +10,7 @@ namespace Ical.Net.General
     /// <summary>
     /// The base class for all iCalendar objects and components.
     /// </summary>
-    public class CalendarObject : CalendarObjectBase, ICalendarObject
+    public class CalendarObject : CalendarObjectBase, ICalendarObject, IEquatable<CalendarObject>
     {
         private ICalendarObjectList<ICalendarObject> _children;
         private ServiceProvider _serviceProvider;
@@ -65,7 +65,7 @@ namespace Ical.Net.General
             e.First.Parent = this;
         }
 
-        protected bool Equals(CalendarObject other) => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
+        public bool Equals(CalendarObject other) => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
 
         public override bool Equals(object obj)
         {

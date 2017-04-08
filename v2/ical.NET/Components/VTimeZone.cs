@@ -6,7 +6,7 @@ namespace Ical.Net
     /// <summary>
     /// Represents an RFC 5545 VTIMEZONE component.
     /// </summary>
-    public class VTimeZone : CalendarComponent, ITimeZone
+    public class VTimeZone : CalendarComponent, ITimeZone, IEquatable<VTimeZone>
     {
         public static VTimeZone FromLocalTimeZone()
         {
@@ -68,7 +68,7 @@ namespace Ical.Net
             }
         }
 
-        protected bool Equals(VTimeZone other)
+        public bool Equals(VTimeZone other)
         {
             return string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)
                 && string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase)

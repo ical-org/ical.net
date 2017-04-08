@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using Ical.Net.Interfaces.DataTypes;
@@ -10,7 +11,7 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// An iCalendar status code.
     /// </summary>
-    public class StatusCode : EncodableDataType, IStatusCode
+    public class StatusCode : EncodableDataType, IStatusCode, IEquatable<StatusCode>
     {
         public int[] Parts { get; private set; }
 
@@ -72,7 +73,7 @@ namespace Ical.Net.DataTypes
 
         public override string ToString() => new StatusCodeSerializer().SerializeToString(this);
 
-        protected bool Equals(StatusCode other) => Parts.SequenceEqual(other.Parts);
+        public bool Equals(StatusCode other) => Parts.SequenceEqual(other.Parts);
 
         public override bool Equals(object obj)
         {

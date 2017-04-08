@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
@@ -8,7 +9,7 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// A class that represents the return status of an iCalendar request.
     /// </summary>
-    public class RequestStatus : EncodableDataType, IRequestStatus
+    public class RequestStatus : EncodableDataType, IRequestStatus, IEquatable<RequestStatus>
     {
         private string _mDescription;
         private string _mExtraData;
@@ -63,7 +64,7 @@ namespace Ical.Net.DataTypes
             return serializer.SerializeToString(this);
         }
 
-        protected bool Equals(RequestStatus other)
+        public bool Equals(RequestStatus other)
         {
             return string.Equals(_mDescription, other._mDescription) && string.Equals(_mExtraData, other._mExtraData) &&
                    Equals(_mStatusCode, other._mStatusCode);

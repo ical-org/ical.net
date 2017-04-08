@@ -4,7 +4,7 @@ using Ical.Net.Interfaces.Evaluation;
 
 namespace Ical.Net.DataTypes
 {
-    public class Occurrence : IComparable<Occurrence>
+    public class Occurrence : IComparable<Occurrence>, IEquatable<Occurrence>
     {
         public IPeriod Period { get; set; }
         public IRecurrable Source { get; set; }
