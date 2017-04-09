@@ -66,7 +66,8 @@ namespace Ical.Net.DataTypes
 
         public bool Equals(RequestStatus other)
         {
-            return string.Equals(_mDescription, other._mDescription) && string.Equals(_mExtraData, other._mExtraData) &&
+            return string.Equals(_mDescription, other._mDescription, StringComparison.OrdinalIgnoreCase) && 
+                   string.Equals(_mExtraData, other._mExtraData, StringComparison.OrdinalIgnoreCase) &&
                    Equals(_mStatusCode, other._mStatusCode);
         }
 

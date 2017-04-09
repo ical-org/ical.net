@@ -33,7 +33,7 @@ namespace Ical.Net.DataTypes
 
         public bool Equals(PeriodList other)
         {
-            return string.Equals(TzId, other.TzId) && CollectionHelpers.Equals(Periods, other.Periods);
+            return string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase) && CollectionHelpers.Equals(Periods, other.Periods);
         }
 
         public override bool Equals(object obj)
