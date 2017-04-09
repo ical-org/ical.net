@@ -333,19 +333,19 @@ namespace Ical.Net
 
         public int CompareTo(CalendarEvent other)
         {
-            if (DtStart.Equals(other.DtStart))
+            if (ReferenceEquals(other, null))
             {
-                return 0;
-            }
-            if (DtStart.LessThan(other.DtStart))
-            {
-                return -1;
+                return 1;
             }
             if (DtStart.GreaterThan(other.DtStart))
             {
                 return 1;
             }
-            throw new Exception("An error occurred while comparing two CalDateTimes.");
+            if (DtStart.Equals(other.DtStart))
+            {
+                return 0;
+            }
+            return -1;
         }
     }
 }

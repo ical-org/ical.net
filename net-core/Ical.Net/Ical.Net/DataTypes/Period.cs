@@ -180,19 +180,19 @@ namespace Ical.Net.DataTypes
 
         public int CompareTo(Period other)
         {
-            if (StartTime.Equals(other.StartTime))
-            {
-                return 0;
-            }
-            if (StartTime.LessThan(other.StartTime))
-            {
-                return -1;
-            }
-            if (StartTime.GreaterThan(other.StartTime))
+            if (ReferenceEquals(other, null))
             {
                 return 1;
             }
-            throw new Exception("An error occurred while comparing two Periods.");
+            if (StartTime.GreaterThanOrEqual(other.StartTime))
+            {
+                return 1;
+            }
+            if (Equals(other))
+            {
+                return 0;
+            }
+            return -1;
         }
     }
 }

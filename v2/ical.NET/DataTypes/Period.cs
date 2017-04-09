@@ -84,22 +84,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public int CompareTo(Period other)
-        {
-            if (StartTime.Equals(other.StartTime))
-            {
-                return 0;
-            }
-            if (StartTime.LessThan(other.StartTime))
-            {
-                return -1;
-            }
-            if (StartTime.GreaterThan(other.StartTime))
-            {
-                return 1;
-            }
-            throw new Exception("An error occurred while comparing two Periods.");
-        }
+        public int CompareTo(Period other) => CompareTo((IPeriod)other);
 
         public override string ToString()
         {
@@ -195,25 +180,21 @@ namespace Ical.Net.DataTypes
                 && ((period.StartTime != null && Contains(period.StartTime)) || (period.EndTime != null && Contains(period.EndTime)));
         }
 
-        public int CompareTo(IPeriod p)
+        public int CompareTo(IPeriod other)
         {
-            if (p == null)
-            {
-                throw new ArgumentNullException(nameof(p));
-            }
-            if (Equals(p))
-            {
-                return 0;
-            }
-            if (StartTime.LessThan(p.StartTime))
-            {
-                return -1;
-            }
-            if (StartTime.GreaterThanOrEqual(p.StartTime))
+            if (ReferenceEquals(other, null))
             {
                 return 1;
             }
-            throw new Exception("An error occurred while comparing Period values.");
+            if (StartTime.GreaterThanOrEqual(other.StartTime))
+            {
+                return 1;
+            }
+            if (Equals(other)) 
+            {
+                return 0;
+            }
+            return -1;
         }
     }
 }
