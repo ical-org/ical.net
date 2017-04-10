@@ -1,0 +1,16 @@
+os: Visual Studio 2015
+
+version: 2.2.1.{build}
+
+init:
+  - git config --global core.autocrlf input
+
+cache:
+  - v2\packages -> **\packages.config
+  
+before_build:
+  - nuget restore v2/ical.NET/packages.config -PackagesDirectory v2/packages
+  - nuget restore v2/ical.NET.UnitTests/packages.config -PackagesDirectory v2/packages
+  
+build_script:                                                                   
+  - msbuild v2/ical-v2.sln /verbosity:minimal /t:rebuild
