@@ -53,7 +53,7 @@ namespace Ical.Net.DataTypes
                 StatusCode = rs.StatusCode;
             }
             Description = rs.Description;
-            rs.ExtraData = rs.ExtraData;
+            ExtraData = rs.ExtraData;
         }
 
         public override string ToString()
