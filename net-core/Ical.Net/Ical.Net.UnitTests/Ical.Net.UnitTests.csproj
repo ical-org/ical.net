@@ -13,4 +13,7 @@
     <ProjectReference Include="..\Ical.Net.Collections\Ical.Net.Collections.csproj" />
     <ProjectReference Include="..\Ical.Net\Ical.Net.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataTypes\" />
+  </ItemGroup>
 </Project>
