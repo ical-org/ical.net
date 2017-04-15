@@ -1,123 +1,127 @@
-﻿using Ical.Net.DataTypes;
+﻿using System.Collections.Generic;
+using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.General;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 
 namespace Ical.Net.UnitTests
 {
-    [TestFixture]
     public class RequestStatusTest
     {
-        [Test]
-        public void InitialObjectState_Constructor_Default()
+        private static IEnumerable<ITestCaseData> ConstructorTestCases() 
         {
-            var requestStatus = new RequestStatus();
+            var emptyRequestStatus = new RequestStatus();
+            yield return new TestCaseData(emptyRequestStatus, null, null, null)
+                .SetName("Default request status constructor has null properties");
 
-            Assert.IsNull(requestStatus.StatusCode);
-            Assert.IsNull(requestStatus.Description);
-            Assert.IsNull(requestStatus.ExtraData);
+            var invalidSerializedValue = new RequestStatus("ABC");
+            yield return new TestCaseData(invalidSerializedValue, null, null, null)
+                .SetName("Constructor with invalid serialised text has null properties");
         }
 
-        [Test]
-        public void InitialObjectState_Constructor_InvalidSerialisedValue() 
+        [Test, TestCaseSource(nameof(ConstructorTestCases))]
+        public void ConstructorTests(RequestStatus incoming, string expectedDescription, string expectedStatusCode, string expectedExtraData) 
         {
-            var requestStatus = new RequestStatus("ABC");
-
-            Assert.IsNull(requestStatus.StatusCode);
-            Assert.IsNull(requestStatus.Description);
-            Assert.IsNull(requestStatus.ExtraData);
+            Assert.AreEqual(incoming.StatusCode, expectedStatusCode);
+            Assert.AreEqual(incoming.Description, expectedDescription);
+            Assert.AreEqual(incoming.ExtraData, expectedExtraData);
         }
 
         [Test, Ignore("Understand what 'valid' values RequestStatusSerializer expects")]
         public void InitialObjectState_Constructor_ValidSerialisedValue() { }
 
-        [Test]
-        public void ToString_ValidInputWithNullStatusCode()
+        private static IEnumerable<ITestCaseData> ToStringTestCases() 
         {
-            var requestStatusA = new RequestStatus();
-            var requestStatusB = new RequestStatus()
+            var emptyRequestStatus = new RequestStatus();
+            yield return new TestCaseData(emptyRequestStatus, ";")
+                .SetName("ToString() for empty request status should return semicolon");
+
+            var emptyStringPropertiesRequestStatus = new RequestStatus()
             {
                 Description = "",
                 ExtraData = ""
             };
-            var requestStatusC = new RequestStatus() 
+            yield return new TestCaseData(emptyStringPropertiesRequestStatus, ";")
+                .SetName("ToString() for request status with empty string properties should return semicolon");
+
+            var nonEmptyStringPropertiesRequestStatus = new RequestStatus() 
             {
                 Description = "ABC Description",
                 ExtraData = "ABC ExtraData"
             };
-
-            Assert.AreEqual(";", requestStatusA.ToString());
-            Assert.AreEqual(";", requestStatusB.ToString());
-            Assert.AreEqual(";ABC Description;ABC ExtraData", requestStatusC.ToString());
+            yield return new TestCaseData(nonEmptyStringPropertiesRequestStatus, ";ABC Description;ABC ExtraData")
+                .SetName("ToString() for request status should return semicolon separated values");
         }
 
-        [Test]
-        public void EqualsGeneric() 
+        [Test, TestCaseSource(nameof(ToStringTestCases))]
+        public void ToStringTests(RequestStatus incoming, string expected) 
         {
-            var requestStatusA = new RequestStatus();
-            var requestStatusB = new RequestStatus();
-            var requestStatusC = requestStatusA;
-            var requestStatusD = new RequestStatus() 
+            Assert.AreEqual(expected, incoming.ToString());
+        }
+
+        private static IEnumerable<ITestCaseData> EqualsTestCases() 
+        {
+            var requestStatus = new RequestStatus();
+            yield return new TestCaseData(requestStatus, requestStatus, true)
+                .SetName("Equals() same request status should return true");
+
+            yield return new TestCaseData(requestStatus, new RequestStatus(), true)
+                .SetName("Equals() for request statuses with equal properties should return true");
+
+            var secondReferenceVariable = requestStatus;
+            yield return new TestCaseData(requestStatus, secondReferenceVariable, true)
+                .SetName("Equals() for two variables referencing the same object should return true");
+
+            var requestStatusWithPropertyValues = new RequestStatus() 
             {
                 Description = "ABC Description"
             };
-
-            Assert.IsTrue(requestStatusA.Equals(requestStatusA));
-            Assert.IsTrue(requestStatusA.Equals(requestStatusB));
-            Assert.IsTrue(requestStatusA.Equals(requestStatusC));
-            Assert.IsFalse(requestStatusA.Equals(requestStatusD));
+            yield return new TestCaseData(requestStatus, requestStatusWithPropertyValues, false)
+                .SetName("Equals() for request statuses with inequal properties should return false");
         }
 
-        [Test]
-        public void EqualsNonGeneric() 
+        [Test, TestCaseSource(nameof(EqualsTestCases))]
+        public void EqualsGenericTests(RequestStatus incoming, RequestStatus other, bool expected) 
         {
-            object requestStatusA = new RequestStatus();
-            object requestStatusB = new RequestStatus();
-            object requestStatusC = requestStatusA;
-            object requestStatusD = new RequestStatus()
-            {
-                Description = "ABC Description"
-            };
-
-            Assert.IsFalse(requestStatusA.Equals(null));
-            Assert.IsFalse(requestStatusA.Equals("Invalid type value"));
-            Assert.IsTrue(requestStatusA.Equals(requestStatusA));
-            Assert.IsTrue(requestStatusA.Equals(requestStatusB));
-            Assert.IsTrue(requestStatusA.Equals(requestStatusC));
-            Assert.IsFalse(requestStatusA.Equals(requestStatusD));
+            Assert.AreEqual(expected, incoming.Equals(other));
         }
 
-        [Test]
-        public void GetHashCode_ValidObject()
+        [Test, TestCaseSource(nameof(EqualsTestCases))]
+        public void EqualsTests(RequestStatus incoming, object other, bool expected) 
         {
-            var requestStatusA = new RequestStatus();
-            var requestStatusB = new RequestStatus() 
+            Assert.AreEqual(expected, incoming.Equals((object) other));
+        }
+
+        private static IEnumerable<ITestCaseData> GetHashCodeTestCases() 
+        {
+            var emptyRequestStatus = new RequestStatus();
+            yield return new TestCaseData(emptyRequestStatus, 0)
+                .SetName("GetHashCode() for empty request status");
+
+            var emptyPropertiesRequestStatus = new RequestStatus() 
             {
                 Description = "",
                 ExtraData = "",
                 StatusCode = new StatusCode()
             };
-            var requestStatusC = new RequestStatus() 
+            yield return new TestCaseData(emptyPropertiesRequestStatus, 666477112)
+                .SetName("GetHashCode() for request status with empty properties");
+
+            var normalRequestStatus = new RequestStatus() 
             {
                 Description = "ABC Description",
                 ExtraData = "ABC ExtraData",
                 StatusCode = new StatusCode()
             };
-
-            Assert.AreEqual(0,  requestStatusA.GetHashCode());
-            Assert.AreEqual(666477112, requestStatusB.GetHashCode());
-            Assert.AreEqual(-150101454, requestStatusC.GetHashCode());
+            yield return new TestCaseData(normalRequestStatus, -150101454)
+                .SetName("GetHashCode() for initialised request status");
         }
 
-        [Test]
-        public void CopyFrom_NullInput() 
+        [Test, TestCaseSource(nameof(GetHashCodeTestCases))]
+        public void GetHashCodeTests(RequestStatus incoming, int expected) 
         {
-            var requestStatus = new RequestStatus();
-            requestStatus.CopyFrom(null);
-
-            Assert.IsNull(requestStatus.StatusCode);
-            Assert.IsNull(requestStatus.Description);
-            Assert.IsNull(requestStatus.ExtraData);
-        }
+            Assert.AreEqual(expected, incoming.GetHashCode());
+        }      
 
         private class Copyable : ICopyable
         {
@@ -126,56 +130,63 @@ namespace Ical.Net.UnitTests
             public void CopyFrom(ICopyable obj) { }
         }
 
-        [Test]
-        public void CopyFrom_NonIRequestStatusTypeInput() 
+        private static IEnumerable<ITestCaseData> CopyFrom_InvalidTestCases() 
         {
-            var requestStatus = new RequestStatus();
-            requestStatus.CopyFrom(new Copyable());
-
-            Assert.IsNull(requestStatus.StatusCode);
-            Assert.IsNull(requestStatus.Description);
-            Assert.IsNull(requestStatus.ExtraData);
+            yield return new TestCaseData(new RequestStatus(), null).SetName("Request status CopyFrom() null");
+            yield return new TestCaseData(new RequestStatus(), new Copyable()).SetName("Request status CopyFrom() non-IRequestStatus type");
         }
 
-        [Test]
-        public void CopyFrom_IRequestStatusTypeInput() 
+        [Test, TestCaseSource(nameof(CopyFrom_InvalidTestCases))]
+        public void CopyFromTests(RequestStatus incoming, ICopyable copyable) 
         {
-            var requestStatus = new RequestStatus();
-            var requestStatusCopyable = new RequestStatus() 
+            incoming.CopyFrom(copyable);
+
+            Assert.IsNull(incoming.StatusCode);
+            Assert.IsNull(incoming.Description);
+            Assert.IsNull(incoming.ExtraData);
+        }
+
+        private static IEnumerable<ITestCaseData> CopyFromTestCases() 
+        {
+            var emptyRequestStatus = new RequestStatus();
+            var copySource = new RequestStatus() 
             {
                 Description = "XYZ Description",
                 ExtraData = "XYZ ExtraData",
                 StatusCode = new StatusCode()
             };
+            yield return new TestCaseData(emptyRequestStatus, copySource, copySource.Description, copySource.ExtraData)
+                .SetName("Empty request status copy from IRequestStatus type");
 
-            requestStatus.CopyFrom(requestStatusCopyable);
-
-            Assert.AreEqual("XYZ Description", requestStatus.Description);
-            Assert.AreEqual("XYZ ExtraData", requestStatus.ExtraData);
-            Assert.IsNotNull(requestStatus.StatusCode);
-        }
-
-        [Test]
-        public void CopyFrom_IRequestStatusTypeInputWithNullStatusCode() 
-        {
-            var requestStatus = new RequestStatus()
+            var normalRequestStatus = new RequestStatus() 
             {
                 Description = "ABC Description",
                 ExtraData = "ABC ExtraData",
                 StatusCode = new StatusCode()
             };
-            var requestStatusCopyable = new RequestStatus() 
+            yield return new TestCaseData(normalRequestStatus, copySource, copySource.Description, copySource.ExtraData)
+                .SetName("Request status copy from IRequestStatus type");
+
+            var copySourceWithNullStatusCode = new RequestStatus() 
             {
                 Description = "XYZ Description",
                 ExtraData = "XYZ ExtraData",
                 StatusCode = null
             };
+            yield return new TestCaseData(
+                    normalRequestStatus, copySourceWithNullStatusCode, 
+                    copySourceWithNullStatusCode.Description, copySourceWithNullStatusCode.ExtraData)
+                .SetName("Request status copy from IRequestStatus type with null StatusCode");
+        }
 
-            requestStatus.CopyFrom(requestStatusCopyable);
+        [Test, TestCaseSource(nameof(CopyFromTestCases))]
+        public void CopyFromTests(RequestStatus incoming, ICopyable copyable, string expectedDescription, string expectedExtraData) 
+        {
+            incoming.CopyFrom(copyable);
 
-            Assert.AreEqual("XYZ Description", requestStatus.Description);
-            Assert.AreEqual("XYZ ExtraData", requestStatus.ExtraData);
-            Assert.IsNotNull(requestStatus.StatusCode);
+            Assert.AreEqual(expectedDescription, incoming.Description);
+            Assert.AreEqual(expectedExtraData, incoming.ExtraData);
+            Assert.IsNotNull(incoming.StatusCode);
         }
     }
 }
