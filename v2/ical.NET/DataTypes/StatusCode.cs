@@ -12,51 +12,29 @@ namespace Ical.Net.DataTypes
     /// </summary>
     public class StatusCode : EncodableDataType, IStatusCode
     {
-        public int[] Parts { get; private set; }
+        public int[] Parts { get; private set; } = new int[0];
 
-        public int Primary
-        {
-            get
-            {
-                if (Parts.Length > 0)
-                {
-                    return Parts[0];
-                }
-                return 0;
-            }
-        }
+        public int Primary => Parts.Length > 0 ? Parts[0] : 0;
 
-        public int Secondary
-        {
-            get
-            {
-                return Parts.Length > 1
-                    ? Parts[1]
-                    : 0;
-            }
-        }
+        public int Secondary => Parts.Length > 1 ? Parts[1] : 0;
 
-        public int Tertiary
-        {
-            get
-            {
-                return Parts.Length > 2
-                    ? Parts[2]
-                    : 0;
-            }
-        }
+        public int Tertiary => Parts.Length > 2 ? Parts[2] : 0;
 
         public StatusCode() {}
 
         public StatusCode(int[] parts)
         {
+            if (parts == null) { return; }
+
             Parts = parts;
         }
 
-        public StatusCode(string value) : this()
+        public StatusCode(string serializedValue)
         {
+            if (serializedValue == null) { return; }
+
             var serializer = new StatusCodeSerializer();
-            CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
+            CopyFrom(serializer.Deserialize(new StringReader(serializedValue)) as ICopyable);
         }
 
         public override void CopyFrom(ICopyable obj)
