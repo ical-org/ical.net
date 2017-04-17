@@ -1,4 +1,5 @@
-﻿using Ical.Net.Collections.Interfaces;
+﻿using System;
+using Ical.Net.Collections.Interfaces;
 
 namespace Ical.Net.Interfaces.General
 {
@@ -27,6 +28,7 @@ namespace Ical.Net.Interfaces.General
         /// </summary>
         ICalendar Calendar { get; }
 
+        [Obsolete("Use Calendar property instead. Marked obsolete on version on version 2.x and it will be removed in a future version.")]
         ICalendar ICalendar { get; }
 
         /// <summary>

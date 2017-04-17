@@ -38,7 +38,7 @@ namespace Ical.Net.General
             _children = new CalendarObjectList(this);
             _serviceProvider = new ServiceProvider();
 
-            _children.ItemAdded += _Children_ItemAdded;
+            _children.ItemAdded += ChildItemAdded;
         }
 
         [OnDeserializing]
@@ -60,25 +60,20 @@ namespace Ical.Net.General
 
         protected virtual void OnDeserialized(StreamingContext context) {}
 
-        private void _Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e)
-        {
-            e.First.Parent = this;
-        }
+        private void ChildItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e) => e.First.Parent = this;
 
         protected bool Equals(CalendarObject other) => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
+            if (ReferenceEquals(null, obj)) { return false; }
+            if (ReferenceEquals(this, obj)) { return true; }
+            if (obj.GetType() != GetType()) { return false; }
+
             return Equals((CalendarObject) obj);
         }
 
-        public override int GetHashCode()
-        {
-            return Name?.GetHashCode() ?? 0;
-        }
+        public override int GetHashCode() => Name?.GetHashCode() ?? 0;
 
         public override void CopyFrom(ICopyable c)
         {
@@ -147,6 +142,7 @@ namespace Ical.Net.General
             protected set { }
         }
 
+        [Obsolete("Use Calendar property instead. Marked obsolete on version on version 2.x and it will be removed in a future version.")]
         public virtual ICalendar ICalendar
         {
             get { return Calendar; }
@@ -157,53 +153,26 @@ namespace Ical.Net.General
 
         public virtual int Column { get; set; }
 
-        public virtual object GetService(Type serviceType)
-        {
-            return _serviceProvider.GetService(serviceType);
-        }
+        public virtual object GetService(Type serviceType) => _serviceProvider.GetService(serviceType);
 
-        public virtual object GetService(string name)
-        {
-            return _serviceProvider.GetService(name);
-        }
+        public virtual object GetService(string name) => _serviceProvider.GetService(name);
 
-        public virtual T GetService<T>()
-        {
-            return _serviceProvider.GetService<T>();
-        }
+        public virtual T GetService<T>() => _serviceProvider.GetService<T>();
 
-        public virtual T GetService<T>(string name)
-        {
-            return _serviceProvider.GetService<T>(name);
-        }
+        public virtual T GetService<T>(string name) => _serviceProvider.GetService<T>(name);
 
-        public virtual void SetService(string name, object obj)
-        {
-            _serviceProvider.SetService(name, obj);
-        }
+        public virtual void SetService(string name, object obj) => _serviceProvider.SetService(name, obj);
 
-        public virtual void SetService(object obj)
-        {
-            _serviceProvider.SetService(obj);
-        }
+        public virtual void SetService(object obj) => _serviceProvider.SetService(obj);
 
-        public virtual void RemoveService(Type type)
-        {
-            _serviceProvider.RemoveService(type);
-        }
+        public virtual void RemoveService(Type type) => _serviceProvider.RemoveService(type);
 
-        public virtual void RemoveService(string name)
-        {
-            _serviceProvider.RemoveService(name);
-        }
+        public virtual void RemoveService(string name) => _serviceProvider.RemoveService(name);
 
         public virtual string Group
         {
             get { return Name; }
-            set
-            {
-                Name = value;
-            }
+            set { Name = value; }
         }
     }
 }
