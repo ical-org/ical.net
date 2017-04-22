@@ -154,6 +154,11 @@ namespace Ical.Net.Collections
                 return false;
             }
 
+            if (!_lists.Remove(_dictionary[group]))
+            {
+                return false;
+            }
+
             return _dictionary.Remove(group);
 
             //var list = _dictionary[group];
