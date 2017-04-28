@@ -226,5 +226,52 @@ namespace Ical.Net
             }
             return occurrences;
         }
+
+        protected bool Equals(RecurringComponent other)
+        {
+            var result = Equals(DtStart, other.DtStart)
+                && Equals(Priority, other.Priority)
+                && string.Equals(Summary, other.Summary, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(Class, other.Class, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(Description, other.Description, StringComparison.OrdinalIgnoreCase)
+                && Equals(RecurrenceId, other.RecurrenceId)
+                && Attachments.SequenceEqual(other.Attachments)
+                && CollectionHelpers.Equals(Categories, other.Categories)
+                && CollectionHelpers.Equals(Contacts, other.Contacts)
+                && CollectionHelpers.Equals(ExceptionDates, other.ExceptionDates)
+                && CollectionHelpers.Equals(ExceptionRules, other.ExceptionRules)
+                && CollectionHelpers.Equals(RecurrenceDates, other.RecurrenceDates, orderSignificant: true)
+                && CollectionHelpers.Equals(RecurrenceRules, other.RecurrenceRules, orderSignificant: true);
+
+            return result;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((RecurringComponent)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = DtStart?.GetHashCode() ?? 0;
+                hashCode = (hashCode * 397) ^ Priority.GetHashCode();
+                hashCode = (hashCode * 397) ^ (Summary?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (Class?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (Description?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (RecurrenceId?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Attachments);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Categories);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Contacts);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionDates);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionRules);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(RecurrenceDates);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(RecurrenceRules);
+                return hashCode;
+            }
+        }
     }
 }

@@ -297,8 +297,8 @@ namespace Ical.Net
                 && Attachments.SequenceEqual(other.Attachments)
                 && CollectionHelpers.Equals(ExceptionDates, other.ExceptionDates)
                 && CollectionHelpers.Equals(ExceptionRules, other.ExceptionRules)
-                && CollectionHelpers.Equals(RecurrenceRules, other.RecurrenceRules, true)
-                && CollectionHelpers.Equals(RecurrenceDates, other.RecurrenceDates, true);
+                && CollectionHelpers.Equals(RecurrenceDates, other.RecurrenceDates, orderSignificant: true)
+                && CollectionHelpers.Equals(RecurrenceRules, other.RecurrenceRules, orderSignificant: true);
                 
             return result;
         }
@@ -325,8 +325,8 @@ namespace Ical.Net
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Resources);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionDates);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionRules);
-                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(RecurrenceRules);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(RecurrenceDates);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(RecurrenceRules);
                 return hashCode;
             }
         }
