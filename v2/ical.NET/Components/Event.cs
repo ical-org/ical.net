@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
@@ -295,20 +296,43 @@ namespace Ical.Net
                 && Transparency.Equals(other.Transparency)
                 && EvaluationIncludesReferenceDate == other.EvaluationIncludesReferenceDate
                 && Attachments.SequenceEqual(other.Attachments)
-                && CollectionHelpers.Equals(ExceptionDates, other.ExceptionDates)
                 && CollectionHelpers.Equals(ExceptionRules, other.ExceptionRules)
-                && CollectionHelpers.Equals(RecurrenceDates, other.RecurrenceDates, orderSignificant: true)
-                && CollectionHelpers.Equals(RecurrenceRules, other.RecurrenceRules, orderSignificant: true);
-                
-            return result;
+                && CollectionHelpers.Equals(RecurrenceRules, other.RecurrenceRules);
+
+            if (!result)
+            {
+                return false;
+            }
+
+            //RDATEs and EXDATEs are all List<PeriodList>, because the spec allows for multiple declarations of collections.
+            //Consequently we have to contrive a normalized representation before we can determine whether two events are equal
+
+            var exDates = PeriodList.GetGroupedPeriods(ExceptionDates);
+            var otherExDates = PeriodList.GetGroupedPeriods(other.ExceptionDates);
+            if (exDates.Keys.Count != otherExDates.Keys.Count
+                || !exDates.Keys.OrderBy(k => k).SequenceEqual(otherExDates.Keys.OrderBy(k => k))
+                || exDates.Any(exDate => !exDate.Value.SequenceEqual(otherExDates[exDate.Key])))
+            {
+                return false;
+            }
+
+            var rDates = PeriodList.GetGroupedPeriods(RecurrenceDates);
+            var otherRDates = PeriodList.GetGroupedPeriods(other.RecurrenceDates);
+            if (rDates.Keys.Count != otherRDates.Keys.Count
+                || !rDates.Keys.OrderBy(k => k).SequenceEqual(otherRDates.Keys.OrderBy(k => k))
+                || rDates.Any(exDate => !exDate.Value.SequenceEqual(otherRDates[exDate.Key])))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((Event)obj);
+            return obj.GetType() == GetType() && Equals((Event)obj);
         }
 
         public override int GetHashCode()
@@ -323,9 +347,9 @@ namespace Ical.Net
                 hashCode = (hashCode * 397) ^ Transparency.GetHashCode();
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Attachments);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Resources);
-                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionDates);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCodeForNestedCollection(ExceptionDates);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionRules);
-                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(RecurrenceDates);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCodeForNestedCollection(RecurrenceDates);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(RecurrenceRules);
                 return hashCode;
             }

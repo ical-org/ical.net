@@ -12,6 +12,7 @@ using Ical.Net.Interfaces;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
+using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 using Ical.Net.Utility;
 using NUnit.Framework;
@@ -3163,7 +3164,7 @@ END:VCALENDAR";
             const string tzid = "Europe/Stockholm";
 
             //Repeat daily for 10 days
-            var rrule = new RecurrencePattern(FrequencyType.Daily, 1) { Count = 10 };
+            var rrule = GetSimpleRecurrencePattern(10);
 
             var e = new Event
             {
@@ -3183,6 +3184,117 @@ END:VCALENDAR";
             e.ExceptionDates.First().Add(new Period(new CalDateTime(_now.AddDays(2))));
             serialized = SerializeToString(e);
             Assert.AreEqual(3, Regex.Matches(serialized, expected).Count);
+        }
+
+        private static RecurrencePattern GetSimpleRecurrencePattern(int count) => new RecurrencePattern(FrequencyType.Daily, 1){ Count = count, };
+
+        private static Event GetSimpleEvent()
+        {
+            var e = new Event
+            {
+                DtStart = new CalDateTime(_now, _tzid),
+                DtEnd = new CalDateTime(_later, _tzid),
+            };
+            return e;
+        }
+
+        [Test]
+        public void RecurrenceRuleTests()
+        {
+            var five = GetSimpleRecurrencePattern(5);
+            var ten = GetSimpleRecurrencePattern(10);
+            Assert.AreNotEqual(five, ten);
+            var eventA = GetSimpleEvent();
+            eventA.RecurrenceRules.Add(five);
+            eventA.RecurrenceRules.Add(ten);
+
+            var eventB = GetSimpleEvent();
+            eventB.RecurrenceRules.Add(ten);
+            eventB.RecurrenceRules.Add(five);
+
+            Assert.AreEqual(eventA, eventB);
+
+            const string aString = @"BEGIN:VCALENDAR
+PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
+VERSION:2.0
+BEGIN:VEVENT
+DTEND;TZID=UTC:20170228T140000
+DTSTAMP;TZID=UTC:20170413T135927
+DTSTART;TZID=UTC:20170228T060000
+EXDATE;TZID=UTC:20170302T060000,20170303T060000,20170306T060000,20170307T0
+ 60000,20170308T060000,20170309T060000,20170310T060000,20170313T060000,201
+ 70314T060000,20170317T060000,20170320T060000,20170321T060000,20170322T060
+ 000,20170323T060000,20170324T060000,20170327T060000,20170328T060000,20170
+ 329T060000,20170330T060000,20170331T060000,20170403T060000,20170405T06000
+ 0,20170406T060000,20170407T060000,20170410T060000,20170411T060000,2017041
+ 2T060000,20170413T060000,20170417T060000
+IMPORTANCE:None
+RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR
+UID:001b7e43-98df-4fcc-b9ec-345a28a4fc14
+END:VEVENT
+END:VCALENDAR";
+
+            const string bString = @"BEGIN:VCALENDAR
+PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
+VERSION:2.0
+BEGIN:VEVENT
+DTEND;TZID=UTC:20170228T140000
+DTSTAMP;TZID=UTC:20170428T171444
+DTSTART;TZID=UTC:20170228T060000
+EXDATE;TZID=UTC:20170302T060000,20170303T060000,20170306T060000,20170307T0
+ 60000,20170308T060000,20170309T060000,20170310T060000,20170313T060000,201
+ 70314T060000,20170317T060000,20170320T060000,20170321T060000,20170322T060
+ 000,20170323T060000,20170324T060000,20170327T060000,20170328T060000,20170
+ 329T060000,20170330T060000,20170331T060000,20170403T060000,20170405T06000
+ 0,20170406T060000,20170407T060000,20170410T060000,20170411T060000,2017041
+ 2T060000
+EXDATE;TZID=UTC:20170413T060000,20170417T060000
+IMPORTANCE:None
+RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR
+UID:001b7e43-98df-4fcc-b9ec-345a28a4fc14
+END:VEVENT
+END:VCALENDAR";
+
+            var simpleA = SimpleDeserializer.Default.Deserialize(new StringReader(aString)).Cast<Calendar>().Single();
+            var normalA = Calendar.LoadFromStream(new StringReader(aString)).Cast<Calendar>().Single();
+            var simpleB = SimpleDeserializer.Default.Deserialize(new StringReader(bString)).Cast<Calendar>().Single();
+            var normalB = Calendar.LoadFromStream(new StringReader(bString)).Cast<Calendar>().Single();
+
+            var calendarList = new List<Calendar> { simpleA, normalA, simpleB, normalB };
+            var eventList = new List<Event>
+            {
+                simpleA.Events.Cast<Event>().Single(),
+                normalA.Events.Cast<Event>().Single(),
+                simpleB.Events.Cast<Event>().Single(),
+                normalB.Events.Cast<Event>().Single(),
+            };
+
+            //GetHashCode tests
+            var calendarSet = new HashSet<Calendar>(calendarList);
+            Assert.AreEqual(1, calendarSet.Count);
+            var eventSet = new HashSet<Event>(eventList);
+            Assert.AreEqual(1, eventSet.Count);
+
+            //Equals tests
+            var newCalendarList = new List<Calendar>();
+            foreach (var calendar in calendarList)
+            {
+                if (!newCalendarList.Contains(calendar))
+                {
+                    newCalendarList.Add(calendar);
+                }
+            }
+            Assert.AreEqual(1, newCalendarList.Count);
+
+            var newEventList = new List<Event>();
+            foreach (var e in eventList)
+            {
+                if (!newEventList.Contains(e))
+                {
+                    newEventList.Add(e);
+                }
+            }
+            Assert.AreEqual(1, newEventList.Count);
         }
     }
 }

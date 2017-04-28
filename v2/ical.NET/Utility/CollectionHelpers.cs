@@ -10,8 +10,30 @@ namespace Ical.Net.Utility
         {
             unchecked
             {
-                return collection?.Where(e => e != null)
-                    .Aggregate(397, (current, element) => current * 397 + element.GetHashCode()) ?? 0;
+                if (collection == null)
+                {
+                    return 0;
+                }
+
+                return collection
+                    .Where(e => e != null)
+                    .Aggregate(397, (current, element) => current * 397 + element.GetHashCode());
+            }
+        }
+
+        public static int GetHashCodeForNestedCollection<T>(IEnumerable<IEnumerable<T>> nestedCollection)
+        {
+            unchecked
+            {
+                if (nestedCollection == null)
+                {
+                    return 0;
+                }
+
+                return nestedCollection
+                    .SelectMany(c => c)
+                    .Where(e => e != null)
+                    .Aggregate(397, (current, element) => current * 397 + element.GetHashCode());
             }
         }
 
