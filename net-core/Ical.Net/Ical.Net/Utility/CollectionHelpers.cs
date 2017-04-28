@@ -6,6 +6,7 @@ namespace Ical.Net.Utility
 {
     internal static class CollectionHelpers
     {
+        /// <summary> Commutative, stable, order-independent hashing for collections of collections. </summary>
         public static int GetHashCode<T>(IEnumerable<T> collection)
         {
             unchecked
@@ -17,10 +18,11 @@ namespace Ical.Net.Utility
 
                 return collection
                     .Where(e => e != null)
-                    .Aggregate(397, (current, element) => current * 397 + element.GetHashCode());
+                    .Aggregate(0, (current, element) => current + element.GetHashCode());
             }
         }
 
+        /// <summary> Commutative, stable, order-independent hashing for collections of collections. </summary>
         public static int GetHashCodeForNestedCollection<T>(IEnumerable<IEnumerable<T>> nestedCollection)
         {
             unchecked
@@ -33,7 +35,7 @@ namespace Ical.Net.Utility
                 return nestedCollection
                     .SelectMany(c => c)
                     .Where(e => e != null)
-                    .Aggregate(397, (current, element) => current * 397 + element.GetHashCode());
+                    .Aggregate(0, (current, element) => current + element.GetHashCode());
             }
         }
 

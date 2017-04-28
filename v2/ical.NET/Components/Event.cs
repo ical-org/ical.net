@@ -311,7 +311,7 @@ namespace Ical.Net
             var otherExDates = PeriodList.GetGroupedPeriods(other.ExceptionDates);
             if (exDates.Keys.Count != otherExDates.Keys.Count
                 || !exDates.Keys.OrderBy(k => k).SequenceEqual(otherExDates.Keys.OrderBy(k => k))
-                || exDates.Any(exDate => !exDate.Value.SequenceEqual(otherExDates[exDate.Key])))
+                || exDates.Any(exDate => !exDate.Value.SequenceEqual(otherExDates[exDate.Key].OrderBy(d => d.StartTime))))
             {
                 return false;
             }
@@ -320,7 +320,7 @@ namespace Ical.Net
             var otherRDates = PeriodList.GetGroupedPeriods(other.RecurrenceDates);
             if (rDates.Keys.Count != otherRDates.Keys.Count
                 || !rDates.Keys.OrderBy(k => k).SequenceEqual(otherRDates.Keys.OrderBy(k => k))
-                || rDates.Any(exDate => !exDate.Value.SequenceEqual(otherRDates[exDate.Key])))
+                || rDates.Any(exDate => !exDate.Value.SequenceEqual(otherRDates[exDate.Key].OrderBy(d => d.StartTime))))
             {
                 return false;
             }
