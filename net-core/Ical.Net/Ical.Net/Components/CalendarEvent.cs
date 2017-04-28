@@ -322,6 +322,7 @@ namespace Ical.Net
                 hashCode = (hashCode * 397) ^ Status.GetHashCode();
                 hashCode = (hashCode * 397) ^ IsActive().GetHashCode();
                 hashCode = (hashCode * 397) ^ Transparency.GetHashCode();
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Attachments);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Resources);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionDates);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionRules);

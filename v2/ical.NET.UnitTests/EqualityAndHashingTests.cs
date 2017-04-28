@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Serialization.iCalendar.Serializers;
@@ -254,6 +255,25 @@ namespace Ical.Net.UnitTests
             Assert.IsTrue(serialized.Contains("Bar"));
             Assert.IsFalse(serialized.Contains("Baz"));
             Assert.IsFalse(serialized.Contains("Hello"));
+        }
+
+        [Test]
+        public void Attachment_Tests()
+        {
+            var payload = Encoding.UTF8.GetBytes("This is an attachment!");
+            var payloadCopy = new byte[payload.Length];
+            Array.Copy(payload, payloadCopy, payload.Length);
+
+            var withAttachment = GetSimpleEvent();
+            withAttachment.Attachments.Add(new Attachment(payload));
+
+            var noAttachment = GetSimpleEvent();
+            Assert.AreNotEqual(withAttachment, noAttachment);
+            Assert.AreNotEqual(withAttachment.GetHashCode(), noAttachment.GetHashCode());
+
+            noAttachment.Attachments.Add(new Attachment(payloadCopy));
+            Assert.AreEqual(withAttachment, noAttachment);
+            Assert.AreEqual(withAttachment.GetHashCode(), noAttachment.GetHashCode());
         }
     }
 }
