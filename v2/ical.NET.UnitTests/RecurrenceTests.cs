@@ -3296,5 +3296,90 @@ END:VCALENDAR";
             }
             Assert.AreEqual(1, newEventList.Count);
         }
+
+        [Test]
+        public void ManyExclusionDatesEqualityTesting()
+        {
+            const string icalA = @"BEGIN:VCALENDAR
+PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
+VERSION:2.0
+BEGIN:VEVENT
+DTEND;TZID=UTC:20170228T140000
+DTSTAMP;TZID=UTC:20170428T145334
+DTSTART;TZID=UTC:20170228T060000
+EXDATE;TZID=UTC:20170302T060000,20170303T060000,20170306T060000,20170307T0
+ 60000,20170308T060000,20170309T060000,20170310T060000,20170313T060000,201
+ 70314T060000,20170317T060000,20170320T060000,20170321T060000,20170322T060
+ 000,20170323T060000,20170324T060000,20170327T060000,20170328T060000,20170
+ 329T060000,20170330T060000,20170331T060000,20170403T060000,20170405T06000
+ 0,20170406T060000,20170407T060000,20170410T060000,20170411T060000,2017041
+ 2T060000,20170413T060000,20170417T060000,20170418T060000,20170419T060000,
+ 20170420T060000,20170421T060000,20170424T060000,20170425T060000,20170427T
+ 060000,20170428T060000,20170501T060000
+IMPORTANCE:None
+RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR
+UID:001b7e43-98df-4fcc-b9ec-345a28a4fc14
+END:VEVENT
+END:VCALENDAR";
+
+            const string icalB = @"BEGIN:VCALENDAR
+PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
+VERSION:2.0
+BEGIN:VEVENT
+DTEND;TZID=UTC:20170228T140000
+DTSTAMP;TZID=UTC:20170501T131355
+DTSTART;TZID=UTC:20170228T060000
+EXDATE;TZID=UTC:20170302T060000,20170303T060000,20170306T060000,20170307T0
+ 60000,20170308T060000,20170309T060000,20170310T060000,20170313T060000,201
+ 70314T060000,20170317T060000,20170320T060000,20170321T060000,20170322T060
+ 000,20170323T060000,20170324T060000,20170327T060000,20170328T060000,20170
+ 329T060000,20170330T060000,20170331T060000,20170403T060000,20170405T06000
+ 0,20170406T060000,20170407T060000,20170410T060000,20170411T060000,2017041
+ 2T060000,20170413T060000,20170417T060000,20170418T060000,20170419T060000,
+ 20170420T060000,20170421T060000,20170424T060000,20170425T060000,20170427T
+ 060000,20170428T060000,20170501T060000
+IMPORTANCE:None
+RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR
+UID:001b7e43-98df-4fcc-b9ec-345a28a4fc14
+END:VEVENT
+END:VCALENDAR";
+
+            //The only textual difference between A and B is a different DTSTAMP, which is not considered significant for equality or hashing
+
+            //Tautologies...
+            var collectionA = DeserializeCalendar(icalA);
+            Assert.AreEqual(collectionA, collectionA);
+            Assert.AreEqual(collectionA.GetHashCode(), collectionA.GetHashCode());
+            var calendarA = collectionA.First();
+            Assert.AreEqual(calendarA, calendarA);
+            Assert.AreEqual(calendarA.GetHashCode(), calendarA.GetHashCode());
+            var eventA = calendarA.Events.First();
+            Assert.AreEqual(eventA, eventA);
+            Assert.AreEqual(eventA.GetHashCode(), eventA.GetHashCode());
+
+            var collectionB = DeserializeCalendar(icalB);
+            Assert.AreEqual(collectionB, collectionB);
+            Assert.AreEqual(collectionB.GetHashCode(), collectionB.GetHashCode());
+            var calendarB = collectionB.First();
+            Assert.AreEqual(calendarB, calendarB);
+            Assert.AreEqual(calendarB.GetHashCode(), calendarB.GetHashCode());
+            var eventB = calendarB.Events.First();
+            Assert.AreEqual(eventB, eventB);
+            Assert.AreEqual(eventB.GetHashCode(), eventB.GetHashCode());
+
+            //Comparing the two...
+            Assert.AreEqual(collectionA, collectionB);
+            Assert.AreEqual(collectionA.GetHashCode(), collectionB.GetHashCode());
+            Assert.AreEqual(calendarA, calendarB);
+            Assert.AreEqual(calendarA.GetHashCode(), calendarB.GetHashCode());
+            Assert.AreEqual(eventA, eventB);
+            Assert.AreEqual(eventA.GetHashCode(), eventB.GetHashCode());
+
+            var exDatesA = eventA.ExceptionDates;
+            var exDatesB = eventB.ExceptionDates;
+            Assert.AreEqual(exDatesA, exDatesB);
+
+        }
     }
 }
+

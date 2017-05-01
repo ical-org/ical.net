@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using Ical.Net.UnitTests.ExtensionMethods;
+using Ical.Net.Utility;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
@@ -297,6 +299,119 @@ namespace Ical.Net.UnitTests
             var eventWithAttach = GetSimpleEvent();
             eventWithAttach.Attachments.Add(new Attachment(attachments.original));
             yield return new TestCaseData(eventNoAttach, eventWithAttach).SetName("Event recurring component attachment");
+        }
+
+        [Test]
+        public void PeriodListTests()
+        {
+            var startTimesA = new List<DateTime>
+            {
+                new DateTime(2017, 03, 02, 06, 00, 00),
+                new DateTime(2017, 03, 03, 06, 00, 00),
+                new DateTime(2017, 03, 06, 06, 00, 00),
+                new DateTime(2017, 03, 07, 06, 00, 00),
+                new DateTime(2017, 03, 08, 06, 00, 00),
+                new DateTime(2017, 03, 09, 06, 00, 00),
+                new DateTime(2017, 03, 10, 06, 00, 00),
+                new DateTime(2017, 03, 13, 06, 00, 00),
+                new DateTime(2017, 03, 14, 06, 00, 00),
+                new DateTime(2017, 03, 17, 06, 00, 00),
+                new DateTime(2017, 03, 20, 06, 00, 00),
+                new DateTime(2017, 03, 21, 06, 00, 00),
+                new DateTime(2017, 03, 22, 06, 00, 00),
+                new DateTime(2017, 03, 23, 06, 00, 00),
+                new DateTime(2017, 03, 24, 06, 00, 00),
+                new DateTime(2017, 03, 27, 06, 00, 00),
+                new DateTime(2017, 03, 28, 06, 00, 00),
+                new DateTime(2017, 03, 29, 06, 00, 00),
+                new DateTime(2017, 03, 30, 06, 00, 00),
+                new DateTime(2017, 03, 31, 06, 00, 00),
+                new DateTime(2017, 04, 03, 06, 00, 00),
+                new DateTime(2017, 04, 05, 06, 00, 00),
+                new DateTime(2017, 04, 06, 06, 00, 00),
+                new DateTime(2017, 04, 07, 06, 00, 00),
+                new DateTime(2017, 04, 10, 06, 00, 00),
+                new DateTime(2017, 04, 11, 06, 00, 00),
+                new DateTime(2017, 04, 12, 06, 00, 00),
+                new DateTime(2017, 04, 13, 06, 00, 00),
+                new DateTime(2017, 04, 17, 06, 00, 00),
+                new DateTime(2017, 04, 18, 06, 00, 00),
+                new DateTime(2017, 04, 19, 06, 00, 00),
+                new DateTime(2017, 04, 20, 06, 00, 00),
+                new DateTime(2017, 04, 21, 06, 00, 00),
+                new DateTime(2017, 04, 24, 06, 00, 00),
+                new DateTime(2017, 04, 25, 06, 00, 00),
+                new DateTime(2017, 04, 27, 06, 00, 00),
+                new DateTime(2017, 04, 28, 06, 00, 00),
+                new DateTime(2017, 05, 01, 06, 00, 00),
+            }
+            .Select(dt => new Period(new CalDateTime(dt))).ToList();
+            var a = new PeriodList();
+            foreach (var period in startTimesA)
+            {
+                a.Add(period);
+            }
+
+            //Difference from A: first element became the second, and last element became the second-to-last element
+            var startTimesB = new List<DateTime>
+            {
+                new DateTime(2017, 03, 03, 06, 00, 00),
+                new DateTime(2017, 03, 02, 06, 00, 00),
+                new DateTime(2017, 03, 06, 06, 00, 00),
+                new DateTime(2017, 03, 07, 06, 00, 00),
+                new DateTime(2017, 03, 08, 06, 00, 00),
+                new DateTime(2017, 03, 09, 06, 00, 00),
+                new DateTime(2017, 03, 10, 06, 00, 00),
+                new DateTime(2017, 03, 13, 06, 00, 00),
+                new DateTime(2017, 03, 14, 06, 00, 00),
+                new DateTime(2017, 03, 17, 06, 00, 00),
+                new DateTime(2017, 03, 20, 06, 00, 00),
+                new DateTime(2017, 03, 21, 06, 00, 00),
+                new DateTime(2017, 03, 22, 06, 00, 00),
+                new DateTime(2017, 03, 23, 06, 00, 00),
+                new DateTime(2017, 03, 24, 06, 00, 00),
+                new DateTime(2017, 03, 27, 06, 00, 00),
+                new DateTime(2017, 03, 28, 06, 00, 00),
+                new DateTime(2017, 03, 29, 06, 00, 00),
+                new DateTime(2017, 03, 30, 06, 00, 00),
+                new DateTime(2017, 03, 31, 06, 00, 00),
+                new DateTime(2017, 04, 03, 06, 00, 00),
+                new DateTime(2017, 04, 05, 06, 00, 00),
+                new DateTime(2017, 04, 06, 06, 00, 00),
+                new DateTime(2017, 04, 07, 06, 00, 00),
+                new DateTime(2017, 04, 10, 06, 00, 00),
+                new DateTime(2017, 04, 11, 06, 00, 00),
+                new DateTime(2017, 04, 12, 06, 00, 00),
+                new DateTime(2017, 04, 13, 06, 00, 00),
+                new DateTime(2017, 04, 17, 06, 00, 00),
+                new DateTime(2017, 04, 18, 06, 00, 00),
+                new DateTime(2017, 04, 19, 06, 00, 00),
+                new DateTime(2017, 04, 20, 06, 00, 00),
+                new DateTime(2017, 04, 21, 06, 00, 00),
+                new DateTime(2017, 04, 24, 06, 00, 00),
+                new DateTime(2017, 04, 25, 06, 00, 00),
+                new DateTime(2017, 04, 27, 06, 00, 00),
+                new DateTime(2017, 05, 01, 06, 00, 00),
+                new DateTime(2017, 04, 28, 06, 00, 00),
+            }
+            .Select(dt => new Period(new CalDateTime(dt))).ToList();
+            var b = new PeriodList();
+            foreach (var period in startTimesB)
+            {
+                b.Add(period);
+            }
+
+            var collectionEqual = CollectionHelpers.Equals(a, b);
+            Assert.AreEqual(true, collectionEqual);
+            Assert.AreEqual(a.GetHashCode(), b.GetHashCode());
+
+            var listOfListA = new List<IPeriodList> {a};
+            var listOfListB = new List<IPeriodList> {b};
+            Assert.IsTrue(CollectionHelpers.Equals(listOfListA, listOfListB));
+
+            var aThenB = new List<IPeriodList> {a, b};
+            var bThenA = new List<IPeriodList> {b, a};
+            Assert.IsTrue(CollectionHelpers.Equals(aThenB, bThenA));
         }
     }
 }
