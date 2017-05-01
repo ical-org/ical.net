@@ -4,6 +4,7 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ### v3
 
+* 3.0.8-net-core-alpha: Bugfix: Better CalDateTime equality and hashing, because time zones matter. [#275](https://github.com/rianjs/ical.net/issues/275)
 * 3.0.7-net-core-alpha: Bugfix: Fixed a small ordering bug when evaluating `EXDATE`s and `RDATE`s [#275](https://github.com/rianjs/ical.net/issues/275)
 * 3.0.6-net-core-alpha: Bugfix: `CalendarEvent`'s `Equals()` and `GetHashCode()` were buggy in that they did not consider `RecurrenceDates` and `ExceptionDates` properly. Both methods treated these properties as if they were a single collection. Now they are normalized by time zone when before determining whether complete set of `RDATE`s or `EXDATE`s are the same. [#275](https://github.com/rianjs/ical.net/issues/275)
 * 3.0.4-net-core-alpha: `CalendarEvent`'s `Equals()` and `GetHashCode()` methods were asymmetric. Both now consider `Attachment`s. In addition, several calendar components did not implement `Equals()` and `GetHashCode()`, namely `Journal` and `Todo`. They both delegate to `RecurringComponent` for the properties owned by that parent object, and extend the methods for the child properties that they respectively own. [#271](https://github.com/rianjs/ical.net/issues/271)
@@ -13,6 +14,7 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ### v2
 
+* 2.2.39: Bugfix: Better CalDateTime equality and hashing, because time zones matter. [#275](https://github.com/rianjs/ical.net/issues/275)
 * 2.2.38: Bugfix: Fixed a small ordering bug when evaluating `EXDATE`s and `RDATE`s [#275](https://github.com/rianjs/ical.net/issues/275)
 * 2.2.37: Bugfix: `Event`'s `Equals()` and `GetHashCode()` were buggy in that they did not consider `RecurrenceDates` and `ExceptionDates` properly. Both methods treated these properties as if they were a single collection. Now they are normalized by time zone when before determining whether complete set of `RDATE`s or `EXDATE`s are the same. [#275](https://github.com/rianjs/ical.net/issues/275)
 * 2.2.35: Bugfix: `Event`'s `Equals()` and `GetHashCode()` methods were asymmetric. Both now consider `Attachment`s. In addition, several calendar components did not implement `Equals()` and `GetHashCode()`, namely `Journal` and `Todo`. They both delegate to `RecurringComponent` for the properties owned by that parent object, and extend the methods for the child properties that they respectively own. [#271](https://github.com/rianjs/ical.net/issues/271)
