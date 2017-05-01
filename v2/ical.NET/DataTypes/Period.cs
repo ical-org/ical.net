@@ -69,8 +69,7 @@ namespace Ical.Net.DataTypes
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((Period) obj);
+            return obj.GetType() == GetType() && Equals((Period) obj);
         }
 
         public override int GetHashCode()
@@ -126,7 +125,9 @@ namespace Ical.Net.DataTypes
         private IDateTime _startTime;
         public virtual IDateTime StartTime
         {
-            get { return _startTime; }
+            get => _startTime.HasTime
+                ? _startTime
+                : new CalDateTime(new DateTime(_startTime.Value.Year, _startTime.Value.Month, _startTime.Value.Day, 0,0,0), _startTime.TzId);
             set
             {
                 if (Equals(_startTime, value))
