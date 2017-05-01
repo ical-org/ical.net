@@ -309,18 +309,24 @@ namespace Ical.Net
 
             var exDates = PeriodList.GetGroupedPeriods(ExceptionDates);
             var otherExDates = PeriodList.GetGroupedPeriods(other.ExceptionDates);
-            if (exDates.Keys.Count != otherExDates.Keys.Count
-                || !exDates.Keys.OrderBy(k => k).SequenceEqual(otherExDates.Keys.OrderBy(k => k))
-                || exDates.Any(exDate => !exDate.Value.SequenceEqual(otherExDates[exDate.Key].OrderBy(d => d.StartTime))))
+            if (exDates.Keys.Count != otherExDates.Keys.Count || !exDates.Keys.OrderBy(k => k).SequenceEqual(otherExDates.Keys.OrderBy(k => k)))
+            {
+                return false;
+            }
+
+            if (exDates.Any(exDate => !exDate.Value.OrderBy(d => d).SequenceEqual(otherExDates[exDate.Key].OrderBy(d => d))))
             {
                 return false;
             }
 
             var rDates = PeriodList.GetGroupedPeriods(RecurrenceDates);
             var otherRDates = PeriodList.GetGroupedPeriods(other.RecurrenceDates);
-            if (rDates.Keys.Count != otherRDates.Keys.Count
-                || !rDates.Keys.OrderBy(k => k).SequenceEqual(otherRDates.Keys.OrderBy(k => k))
-                || rDates.Any(exDate => !exDate.Value.SequenceEqual(otherRDates[exDate.Key].OrderBy(d => d.StartTime))))
+            if (rDates.Keys.Count != otherRDates.Keys.Count || !rDates.Keys.OrderBy(k => k).SequenceEqual(otherRDates.Keys.OrderBy(k => k)))
+            {
+                return false;
+            }
+
+            if (rDates.Any(exDate => !exDate.Value.OrderBy(d => d).SequenceEqual(otherRDates[exDate.Key].OrderBy(d => d))))
             {
                 return false;
             }
