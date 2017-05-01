@@ -184,7 +184,7 @@
     <Compile Include="General\CalendarPropertyList.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DataTypes\iCalDateTime.cs" />
+    <Compile Include="DataTypes\CalDateTime.cs" />
     <Compile Include="Calendar.cs" />
     <Compile Include="CalendarCollection.cs">
       <SubType>Code</SubType>

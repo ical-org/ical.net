@@ -25,14 +25,14 @@ namespace Ical.Net.DataTypes
         private bool _hasTime;
         private bool _isUniversalTime;
 
-        public CalDateTime() {}
+        public CalDateTime() { }
 
         public CalDateTime(IDateTime value)
         {
             Initialize(value.Value, value.TzId, null);
         }
 
-        public CalDateTime(DateTime value) : this(value, null) {}
+        public CalDateTime(DateTime value) : this(value, null) { }
 
         public CalDateTime(DateTime value, string tzId)
         {
@@ -57,8 +57,8 @@ namespace Ical.Net.DataTypes
             HasTime = true;
         }
 
-        public CalDateTime(int year, int month, int day) : this(year, month, day, 0, 0, 0) {}
-        public CalDateTime(int year, int month, int day, string tzId) : this(year, month, day, 0, 0, 0, tzId) {}
+        public CalDateTime(int year, int month, int day) : this(year, month, day, 0, 0, 0) { }
+        public CalDateTime(int year, int month, int day, string tzId) : this(year, month, day, 0, 0, 0, tzId) { }
 
         public CalDateTime(string value)
         {
@@ -106,7 +106,7 @@ namespace Ical.Net.DataTypes
                     dt = new DateTime(year, month, day, hour, minute, second, kind);
                 }
             }
-            catch {}
+            catch { }
 
             return dt;
         }
@@ -139,100 +139,44 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        //ToDo: Time zone equality should include time zone values. Perhaps we should separate the idea of "equal" with "equivalent
-        /// <summary>Equality is determined by the unambiguous UTC representation of the time. Time zone string values are ignored.</summary>
+        private bool Equals(CalDateTime other)
+        {
+            return Value.Equals(other.Value)
+                   && HasDate == other.HasDate
+                   && AsUtc.Equals(other.AsUtc)
+                   && string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase);
+        }
+
         public override bool Equals(object obj)
         {
-            if (obj is IDateTime)
-            {
-                AssociateWith((IDateTime)obj);
-                var thisDt = ((IDateTime)obj).AsUtc;
-                return thisDt.Equals(AsUtc);
-            }
-            if (obj is DateTime)
-            {
-                var dt = (CalDateTime) obj;
-                AssociateWith(dt);
-                return Equals(dt.AsUtc, AsUtc);
-            }
-            return false;
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj is CalDateTime && Equals((CalDateTime)obj);
         }
 
         public override int GetHashCode()
         {
-            return Value.GetHashCode();
-        }
-
-        public override string ToString()
-        {
-            return ToString(null, null);
-        }
-
-        public static bool operator <(CalDateTime left, IDateTime right)
-        {
-            left.AssociateWith(right);
-
-            if (left.HasTime || right.HasTime)
+            unchecked
             {
-                return left.AsUtc < right.AsUtc;
+                var hashCode = Value.GetHashCode();
+                hashCode = (hashCode * 397) ^ HasDate.GetHashCode();
+                hashCode = (hashCode * 397) ^ AsUtc.GetHashCode();
+                hashCode = (hashCode * 397) ^ (TzId != null ? TzId.GetHashCode() : 0);
+                return hashCode;
             }
-            return left.AsUtc.Date < right.AsUtc.Date;
         }
 
-        public static bool operator >(CalDateTime left, IDateTime right)
-        {
-            left.AssociateWith(right);
+        public static bool operator <(CalDateTime left, IDateTime right) => left.AsUtc < right.AsUtc;
 
-            if (left.HasTime || right.HasTime)
-            {
-                return left.AsUtc > right.AsUtc;
-            }
-            return left.AsUtc.Date > right.AsUtc.Date;
-        }
+        public static bool operator >(CalDateTime left, IDateTime right) => left.AsUtc > right.AsUtc;
 
-        public static bool operator <=(CalDateTime left, IDateTime right)
-        {
-            left.AssociateWith(right);
+        public static bool operator <=(CalDateTime left, IDateTime right) => left.AsUtc <= right.AsUtc;
 
-            if (left.HasTime || right.HasTime)
-            {
-                return left.AsUtc <= right.AsUtc;
-            }
-            return left.AsUtc.Date <= right.AsUtc.Date;
-        }
+        public static bool operator >=(CalDateTime left, IDateTime right) => left.AsUtc >= right.AsUtc;
 
-        public static bool operator >=(CalDateTime left, IDateTime right)
-        {
-            left.AssociateWith(right);
+        public static bool operator ==(CalDateTime left, IDateTime right) => left.Equals(right);
 
-            if (left.HasTime || right.HasTime)
-            {
-                return left.AsUtc >= right.AsUtc;
-            }
-            return left.AsUtc.Date >= right.AsUtc.Date;
-        }
-
-        public static bool operator ==(CalDateTime left, IDateTime right)
-        {
-            left.AssociateWith(right);
-
-            if (left.HasTime || right.HasTime)
-            {
-                return left.AsUtc.Equals(right.AsUtc);
-            }
-            return left.AsUtc.Date.Equals(right.AsUtc.Date);
-        }
-
-        public static bool operator !=(CalDateTime left, IDateTime right)
-        {
-            left.AssociateWith(right);
-
-            if (left.HasTime || right.HasTime)
-            {
-                return !left.AsUtc.Equals(right.AsUtc);
-            }
-            return !left.AsUtc.Date.Equals(right.AsUtc.Date);
-        }
+        public static bool operator !=(CalDateTime left, IDateTime right) => !left.Equals(right);
 
         public static TimeSpan operator -(CalDateTime left, IDateTime right)
         {
@@ -484,25 +428,13 @@ namespace Ical.Net.DataTypes
             return dt;
         }
 
-        public bool LessThan(IDateTime dt)
-        {
-            return this < dt;
-        }
+        public bool LessThan(IDateTime dt) => this < dt;
 
-        public bool GreaterThan(IDateTime dt)
-        {
-            return this > dt;
-        }
+        public bool GreaterThan(IDateTime dt) => this > dt;
 
-        public bool LessThanOrEqual(IDateTime dt)
-        {
-            return this <= dt;
-        }
+        public bool LessThanOrEqual(IDateTime dt) => this <= dt;
 
-        public bool GreaterThanOrEqual(IDateTime dt)
-        {
-            return this >= dt;
-        }
+        public bool GreaterThanOrEqual(IDateTime dt) => this >= dt;
 
         public void AssociateWith(IDateTime dt)
         {
@@ -533,10 +465,9 @@ namespace Ical.Net.DataTypes
             throw new Exception("An error occurred while comparing two IDateTime values.");
         }
 
-        public string ToString(string format)
-        {
-            return ToString(format, null);
-        }
+        public override string ToString() => ToString(null, null);
+
+        public string ToString(string format) => ToString(format, null);
 
         public string ToString(string format, IFormatProvider formatProvider)
         {

@@ -301,6 +301,19 @@ namespace Ical.Net.UnitTests
             yield return new TestCaseData(eventNoAttach, eventWithAttach).SetName("Event recurring component attachment");
         }
 
+        [Test, TestCaseSource(nameof(PeriodTestCases))]
+        public void PeriodTests(Period a, Period b)
+        {
+            Assert.AreEqual(a.GetHashCode(), b.GetHashCode());
+            Assert.AreEqual(a, b);
+        }
+
+        public static IEnumerable<ITestCaseData> PeriodTestCases()
+        {
+            yield return new TestCaseData(new Period(new CalDateTime(_nowTime)), new Period(new CalDateTime(_nowTime)))
+                .SetName("Two identical CalDateTimes are equal");
+        }
+
         [Test]
         public void PeriodListTests()
         {
@@ -412,6 +425,18 @@ namespace Ical.Net.UnitTests
             var aThenB = new List<IPeriodList> {a, b};
             var bThenA = new List<IPeriodList> {b, a};
             Assert.IsTrue(CollectionHelpers.Equals(aThenB, bThenA));
+        }
+
+        [Test]
+        public void CalDateTimeTests()
+        {
+            var nowLocal = DateTime.Now;
+            var nowUtc = nowLocal.ToUniversalTime();
+
+            var asLocal = new CalDateTime(nowLocal, "America/New_York");
+            var asUtc = new CalDateTime(nowUtc, "UTC");
+
+            Assert.AreNotEqual(asLocal, asUtc);
         }
     }
 }
