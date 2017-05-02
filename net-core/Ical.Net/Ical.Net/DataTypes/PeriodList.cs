@@ -49,19 +49,7 @@ namespace Ical.Net.DataTypes
 
         public override string ToString() => new PeriodListSerializer().SerializeToString(this);
 
-        public virtual void Add(IDateTime dt) => Periods.Add(new Period(dt));
-
-        public Period this[int index]
-        {
-            get { return Periods[index]; }
-            set { Periods[index] = value; }
-        }
-
-        public virtual void Add(Period item) => Periods.Add(item);
-
-        public IEnumerator<Period> GetEnumerator() => Periods.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => Periods.GetEnumerator();
+        public void Add(IDateTime dt) => Periods.Add(new Period(dt));
 
         public static Dictionary<string, List<Period>> GetGroupedPeriods(IList<PeriodList> periodLists)
         {
@@ -118,32 +106,21 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public void Clear()
+        public Period this[int index]
         {
-            Periods.Clear();
-        }
-
-        public bool Contains(Period item) => Periods.Contains(item);
-
-        public void CopyTo(Period[] array, int arrayIndex)
-        {
-            Periods.CopyTo(array, arrayIndex);
+            get => Periods[index];
+            set => Periods[index] = value;
         }
 
         public bool Remove(Period item) => Periods.Remove(item);
-
-        public bool IsReadOnly => Periods.IsReadOnly;
-
         public int IndexOf(Period item) => Periods.IndexOf(item);
-
-        public void Insert(int index, Period item)
-        {
-            Periods.Insert(index, item);
-        }
-
-        public void RemoveAt(int index)
-        {
-            Periods.RemoveAt(index);
-        }
+        public void Insert(int index, Period item) => Periods.Insert(index, item);
+        public void RemoveAt(int index) => Periods.RemoveAt(index);
+        public void Add(Period item) => Periods.Add(item);
+        public void Clear() => Periods.Clear();
+        public bool Contains(Period item) => Periods.Contains(item);
+        public void CopyTo(Period[] array, int arrayIndex) => Periods.CopyTo(array, arrayIndex);
+        public IEnumerator<Period> GetEnumerator() => Periods.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => Periods.GetEnumerator();
     }
 }

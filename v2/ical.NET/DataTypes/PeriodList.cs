@@ -14,10 +14,12 @@ namespace Ical.Net.DataTypes
     /// <summary>
     /// An iCalendar list of recurring dates (or date exclusions)
     /// </summary>
-    public class PeriodList : EncodableDataType, IPeriodList
+    public class PeriodList : EncodableDataType, IPeriodList, IList<IPeriod>
     {
         public string TzId { get; set; }
+        
         public int Count => Periods.Count;
+        public bool IsReadOnly => Periods.IsReadOnly;
 
         protected IList<IPeriod> Periods { get; set; } = new List<IPeriod>();
 
@@ -49,19 +51,7 @@ namespace Ical.Net.DataTypes
 
         public override string ToString() => new PeriodListSerializer().SerializeToString(this);
 
-        public virtual void Add(IDateTime dt) => Periods.Add(new Period(dt));
-
-        public IPeriod this[int index]
-        {
-            get { return Periods[index]; }
-            set { Periods[index] = value; }
-        }
-
-        public virtual void Add(IPeriod item) => Periods.Add(item);
-
-        public IEnumerator<IPeriod> GetEnumerator() => Periods.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => Periods.GetEnumerator();
+        public void Add(IDateTime dt) => Periods.Add(new Period(dt));
 
         public static Dictionary<string, List<Period>> GetGroupedPeriods(IList<IPeriodList> periodLists)
         {
@@ -98,7 +88,7 @@ namespace Ical.Net.DataTypes
         protected bool Equals(PeriodList other)
         {
             return string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase)
-                && CollectionHelpers.Equals(Periods, other.Periods);
+                   && CollectionHelpers.Equals(Periods, other.Periods);
         }
 
         public override bool Equals(object obj)
@@ -117,5 +107,22 @@ namespace Ical.Net.DataTypes
                 return hashCode;
             }
         }
+
+        public IPeriod this[int index]
+        {
+            get => Periods[index];
+            set => Periods[index] = value;
+        }
+
+        public bool Remove(IPeriod item) => Periods.Remove(item);
+        public int IndexOf(IPeriod item) => Periods.IndexOf(item);
+        public void Insert(int index, IPeriod item) => Periods.Insert(index, item);
+        public void RemoveAt(int index) => Periods.RemoveAt(index);
+        public void Add(IPeriod item) => Periods.Add(item);
+        public void Clear() => Periods.Clear();
+        public bool Contains(IPeriod item) => Periods.Contains(item);
+        public void CopyTo(IPeriod[] array, int arrayIndex) => Periods.CopyTo(array, arrayIndex);
+        public IEnumerator<IPeriod> GetEnumerator() => Periods.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => Periods.GetEnumerator();
     }
 }
