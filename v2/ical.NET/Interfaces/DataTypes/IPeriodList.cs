@@ -2,12 +2,9 @@
 
 namespace Ical.Net.Interfaces.DataTypes
 {
-    public interface IPeriodList : IEncodableDataType, IEnumerable<IPeriod>
+    public interface IPeriodList : IEncodableDataType, IList<IPeriod>
     {
         string TzId { get; }
-        IPeriod this[int index] { get; }
         void Add(IDateTime dt);
-        void Add(IPeriod item);
-        int Count { get; }
     }
 }
