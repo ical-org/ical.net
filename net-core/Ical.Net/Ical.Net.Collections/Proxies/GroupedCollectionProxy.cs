@@ -49,7 +49,7 @@ namespace Ical.Net.Collections.Proxies
 
         public virtual bool ContainsKey(TGroup group)
         {
-            return RealObject.ContainsKey(group);
+            return RealObject.ContainsKey(group);            
         }
 
         public virtual int CountOf(TGroup group)
@@ -85,7 +85,10 @@ namespace Ical.Net.Collections.Proxies
             }
         }
 
-        public virtual bool Contains(TNew item) => RealObject.Contains(item);
+        public virtual bool Contains(TNew item)
+        {
+            return RealObject.Contains(item);
+        }
 
         public virtual void CopyTo(TNew[] array, int arrayIndex)
         {
