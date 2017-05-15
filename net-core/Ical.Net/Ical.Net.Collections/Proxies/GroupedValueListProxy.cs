@@ -204,7 +204,8 @@ namespace Ical.Net.Collections.Proxies
             {
                 if (index >= 0 && index < Count)
                 {
-                    return this
+                    return Items
+                        .SelectMany(i => i.Values?.OfType<TNewValue>())
                         .Skip(index)
                         .FirstOrDefault();
                 }
