@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ical.Net", "ical.net\Ical.N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ical.Net.UnitTests", "ical.net.UnitTests\Ical.Net.UnitTests.csproj", "{38A02D06-15CC-436A-9C8F-07B84A7E2CE0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ical.Net.Collections", "ical.net.Collections\ical.net.Collections\Ical.Net.Collections.csproj", "{E04EFEB6-4625-4D58-AC91-7B8B8A2C97BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ical.Net.Collections", "ical.net.Collections\Ical.Net.Collections.csproj", "{E04EFEB6-4625-4D58-AC91-7B8B8A2C97BB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "antlr.runtime", "antlr.runtime\antlr.runtime.csproj", "{CB7CC882-ED47-46C0-AAAE-7A437F22F1C6}"
 EndProject

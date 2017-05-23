@@ -2,10 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ical.net.collections.Interfaces;
-using ical.net.collections.Interfaces.Proxies;
+using Ical.Net.Collections.Interfaces;
+using Ical.Net.Collections.Interfaces.Proxies;
 
-namespace ical.net.collections.Proxies
+namespace Ical.Net.Collections.Proxies
 {
     /// <summary>
     /// A proxy for a keyed list.
@@ -49,7 +49,7 @@ namespace ical.net.collections.Proxies
 
         public virtual bool ContainsKey(TGroup group)
         {
-            return RealObject.ContainsKey(group);
+            return RealObject.ContainsKey(group);            
         }
 
         public virtual int CountOf(TGroup group)
@@ -85,7 +85,10 @@ namespace ical.net.collections.Proxies
             }
         }
 
-        public virtual bool Contains(TNew item) => RealObject.Contains(item);
+        public virtual bool Contains(TNew item)
+        {
+            return RealObject.Contains(item);
+        }
 
         public virtual void CopyTo(TNew[] array, int arrayIndex)
         {
