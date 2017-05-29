@@ -16,5 +16,6 @@ namespace Ical.Net.Interfaces.DataTypes
         IList<string> DelegatedTo { get; }
         IList<string> DelegatedFrom { get; }
         Uri Value { get; set; }
+        string Comment { get; set; }
     }
 }
