@@ -565,5 +565,27 @@ END:VCALENDAR
             Assert.AreEqual(110, iCal.Todos["4836c236-1e75-11db-835f-a024e2a6131f"].Properties["LOCATION"].Line);
             Assert.AreEqual(123, iCal.Todos["2df60496-1e73-11db-ba96-e3cfe6793b5f"].Properties["UID"].Line);
         }
+
+        /// <summary>
+        /// Tests that attendee's reply from Google Calendar is read correctly
+        /// </summary>
+        [Test, Category("Deserialization")]
+        public void GoogleReply1()
+        {
+            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.GoogleReply1))[0];
+            Assert.AreEqual(1, iCal.Events.Count);
+
+            var evt = iCal.Events.First();
+            // Ensure there is 1 attendee
+            Assert.AreEqual(1, evt.Attendees.Count);
+
+            var attendee1 = evt.Attendees[0];
+
+            // Values
+            Assert.AreEqual(new Uri("mailto:attendee.test@test.test"), attendee1.Value);
+
+            // MEMBERS
+            Assert.AreEqual("Maybe I will attend", attendee1.Comment);
+        }
     }
 }

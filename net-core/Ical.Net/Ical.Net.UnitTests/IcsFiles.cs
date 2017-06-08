@@ -71,6 +71,7 @@ namespace Ical.Net.UnitTests
         internal static string Event4 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Event4.ics");
         internal static string GeographicLocation1 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.GeographicLocation1.ics");
         internal static string Google1 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Google1.ics");
+        internal static string GoogleReply1 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.GoogleReply1.ics");
         internal static string Hourly1 => ReadStream("Ical.Net.UnitTests.Calendars.Recurrence.Hourly1.ics");
         internal static string HourlyInterval1 => ReadStream("Ical.Net.UnitTests.Calendars.Recurrence.HourlyInterval1.ics");
         internal static string HourlyInterval2 => ReadStream("Ical.Net.UnitTests.Calendars.Recurrence.HourlyInterval2.ics");

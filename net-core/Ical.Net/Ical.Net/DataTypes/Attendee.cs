@@ -224,6 +224,29 @@ namespace Ical.Net.DataTypes
             }
         }
 
+        private string _comment;
+        /// <summary> X-RESPONSE-COMMENT, commonly used by gmail when an attendee respons with a comment </summary>
+        public virtual string Comment
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_comment))
+                {
+                  _comment = Parameters.Get("X-RESPONSE-COMMENT");
+                }
+                return _comment;
+            }
+            set
+            {
+                if (string.Equals(_comment, value, StringComparison.OrdinalIgnoreCase))
+                {
+                  return;
+                }
+                _comment = value;
+                Parameters.Set("X-RESPONSE-COMMENT", value);
+            }
+        }
+
         /// <summary> Uri associated with the attendee, typically an email address </summary>
         public virtual Uri Value { get; set; }
 
