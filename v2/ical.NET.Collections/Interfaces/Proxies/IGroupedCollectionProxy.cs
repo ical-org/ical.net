@@ -1,4 +1,4 @@
-﻿namespace ical.net.collections.Interfaces.Proxies
+﻿namespace Ical.Net.Collections.Interfaces.Proxies
 {
     public interface IGroupedCollectionProxy<TGroup, TOriginal, TNew> :
         IGroupedCollection<TGroup, TNew>
@@ -6,6 +6,6 @@
         where TNew : class, TOriginal
     {
         IGroupedCollection<TGroup, TOriginal> RealObject { get; }
-        void SetProxiedObject(IGroupedCollection<TGroup, TOriginal> realObject);
+        void SetProxiedObject(IGroupedCollection<TGroup, TOriginal> realObject);        
     }
 }

@@ -115,6 +115,7 @@ namespace Ical.Net.DataTypes
         }
 
         public bool Remove(Period item) => Periods.Remove(item);
+        public bool IsReadOnly => Periods.IsReadOnly;
         public int IndexOf(Period item) => Periods.IndexOf(item);
         public void Insert(int index, Period item) => Periods.Insert(index, item);
         public void RemoveAt(int index) => Periods.RemoveAt(index);

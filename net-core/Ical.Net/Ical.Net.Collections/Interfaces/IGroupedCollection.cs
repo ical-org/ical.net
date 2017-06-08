@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 namespace Ical.Net.Collections.Interfaces
 {
-    //Isn't this effectively a Dictionary<TGroup, IList<TItem>>?
-    public interface IGroupedCollection<in TGroup, TItem> :
+    public interface IGroupedCollection<TGroup, TItem> :
         ICollection<TItem>
         where TItem : class, IGroupedObject<TGroup>
     {

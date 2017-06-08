@@ -2,16 +2,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ical.net.collections.Interfaces;
+using Ical.Net.Collections.Interfaces;
 
-namespace ical.net.collections.Proxies
+namespace Ical.Net.Collections.Proxies
 {
     /// <summary>
     /// A proxy for a keyed list.
     /// </summary>
     public class GroupedValueListProxy<TGroup, TInterface, TItem, TOriginalValue, TNewValue> : IList<TNewValue>
         where TInterface : class, IGroupedObject<TGroup>, IValueObject<TOriginalValue>
-        where TItem : new()
+        where TItem : new()        
     {
         private readonly GroupedValueList<TGroup, TInterface, TItem, TOriginalValue> _realObject;
         private readonly TGroup _group;
@@ -99,13 +99,13 @@ namespace ical.net.collections.Proxies
 
         public virtual void CopyTo(TNewValue[] array, int arrayIndex)
         {
-            Items
+            Items                
                 .Where(o => o.Values != null)
                 .SelectMany(o => o.Values)
                 .ToArray()
                 .CopyTo(array, arrayIndex);
         }
-
+        
         public virtual int Count => Items.Sum(o => o.ValueCount);
 
         public virtual bool IsReadOnly => false;
@@ -135,27 +135,26 @@ namespace ical.net.collections.Proxies
 
         public virtual int IndexOf(TNewValue item)
         {
-            return 0;
-            //var index = -1;
+            var index = -1;
 
-            //if (!(item is TOriginalValue))
-            //{
-            //    return index;
-            //}
+            if (!(item is TOriginalValue))
+            {
+                return index;
+            }
 
-            //var value = (TOriginalValue)(object)item;
-            //IterateValues((o, i, count) =>
-            //{
-            //    if (o.Values != null && o.Values.Contains(value))
-            //    {
-            //        var list = o.Values.ToList();
-            //        index = i + list.IndexOf(value);
-            //        return false;
-            //    }
-            //    return true;
-            //});
+            var value = (TOriginalValue)(object)item;
+            IterateValues((o, i, count) =>
+            {
+                if (o.Values != null && o.Values.Contains(value))
+                {
+                    var list = o.Values.ToList();
+                    index = i + list.IndexOf(value);
+                    return false;
+                }
+                return true;
+            });
 
-            //return index;
+            return index;
         }
 
         public virtual void Insert(int index, TNewValue item)
@@ -182,21 +181,21 @@ namespace ical.net.collections.Proxies
 
         public virtual void RemoveAt(int index)
         {
-            //IterateValues((o, i, count) =>
-            //{
-            //    // Determine if this index is found within this object
-            //    if (index >= i && index < count)
-            //    {
-            //        // Convert the items to a list
-            //        var items = o.Values.ToList();
-            //        // Remove the item at the relative index within the list
-            //        items.RemoveAt(index - i);
-            //        // Set the new list
-            //        o.SetValue(items);
-            //        return false;
-            //    }
-            //    return true;
-            //});
+            IterateValues((o, i, count) =>
+            {
+                // Determine if this index is found within this object
+                if (index >= i && index < count)
+                {
+                    // Convert the items to a list
+                    var items = o.Values.ToList();
+                    // Remove the item at the relative index within the list
+                    items.RemoveAt(index - i);
+                    // Set the new list
+                    o.SetValue(items);
+                    return false;
+                }
+                return true;
+            });
         }
 
         public virtual TNewValue this[int index]
@@ -213,19 +212,15 @@ namespace ical.net.collections.Proxies
             }
             set
             {
-                if (true)
-                {
-                    return;
+                if (index >= 0 && index < Count)
+                {   
+                    if (!Equals(value, default(TNewValue)))
+                    {
+                        Insert(index, value);
+                        index++;
+                    }
+                    RemoveAt(index);
                 }
-                //if (index >= 0 && index < Count)
-                //{
-                //    if (!Equals(value, default(TNewValue)))
-                //    {
-                //        Insert(index, value);
-                //        index++;
-                //    }
-                //    RemoveAt(index);
-                //}
             }
         }
 

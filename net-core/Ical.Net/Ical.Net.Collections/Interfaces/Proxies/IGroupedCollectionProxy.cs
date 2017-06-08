@@ -6,6 +6,6 @@
         where TNew : class, TOriginal
     {
         IGroupedCollection<TGroup, TOriginal> RealObject { get; }
-        void SetProxiedObject(IGroupedCollection<TGroup, TOriginal> realObject);
+        void SetProxiedObject(IGroupedCollection<TGroup, TOriginal> realObject);        
     }
 }
