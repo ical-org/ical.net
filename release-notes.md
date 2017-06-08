@@ -4,6 +4,7 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ### v3
 
+* 3.0.9-net-core-beta: Bugfixes: `PeriodList` now fully implements `IList<Period>`. Keep data structures in sync in GroupedList.Remove() [#253](https://github.com/rianjs/ical.net/issues/253). Fix for StackOverflow exception [#257](https://github.com/rianjs/ical.net/issues/257). UnitTests can now be run in VS test runner!
 * 3.0.8-net-core-alpha: Bugfix: Better CalDateTime equality and hashing, because time zones matter. [#275](https://github.com/rianjs/ical.net/issues/275)
 * 3.0.7-net-core-alpha: Bugfix: Fixed a small ordering bug when evaluating `EXDATE`s and `RDATE`s [#275](https://github.com/rianjs/ical.net/issues/275)
 * 3.0.6-net-core-alpha: Bugfix: `CalendarEvent`'s `Equals()` and `GetHashCode()` were buggy in that they did not consider `RecurrenceDates` and `ExceptionDates` properly. Both methods treated these properties as if they were a single collection. Now they are normalized by time zone when before determining whether complete set of `RDATE`s or `EXDATE`s are the same. [#275](https://github.com/rianjs/ical.net/issues/275)
