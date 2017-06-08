@@ -46,6 +46,8 @@ namespace Ical.Net.DataTypes
                 Add(p);
             }
         }
+        
+        public bool IsReadOnly => Periods.IsReadOnly;
 
         public override string ToString() => new PeriodListSerializer().SerializeToString(this);
 
