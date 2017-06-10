@@ -110,21 +110,15 @@ namespace Ical.Net.Collections
 
         public virtual int Count => _lists.Sum(list => list.Count);
 
-        public virtual int CountOf(TGroup group)
-        {
-            return _dictionary.ContainsKey(group)
-                ? _dictionary[group].Count
-                : 0;
-        }
+        public virtual int CountOf(TGroup group) => _dictionary.ContainsKey(group)
+            ? _dictionary[group].Count
+            : 0;
 
         public virtual IEnumerable<TItem> Values() => _dictionary.Values.SelectMany(i => i);
 
-        public virtual IEnumerable<TItem> AllOf(TGroup group)
-        {
-            return _dictionary.ContainsKey(@group)
-                ? (IEnumerable<TItem>) _dictionary[@group]
-                : new TItem[0];
-        }
+        public virtual IEnumerable<TItem> AllOf(TGroup group) => _dictionary.ContainsKey(@group)
+            ? (IEnumerable<TItem>) _dictionary[@group]
+            : new TItem[0];
 
         public virtual bool Remove(TItem obj)
         {
@@ -231,14 +225,8 @@ namespace Ical.Net.Collections
             }
         }
 
-        public IEnumerator<TItem> GetEnumerator()
-        {
-            return new GroupedListEnumerator<TItem>(_lists);
-        }
+        public IEnumerator<TItem> GetEnumerator() => new GroupedListEnumerator<TItem>(_lists);
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return new GroupedListEnumerator<TItem>(_lists);
-        }
+        IEnumerator IEnumerable.GetEnumerator() => new GroupedListEnumerator<TItem>(_lists);
     }    
 }

@@ -12,10 +12,7 @@ namespace Ical.Net.Serialization
 
         private readonly SerializationContext _mSerializationContext;
 
-        public EncodingProvider(SerializationContext ctx)
-        {
-            _mSerializationContext = ctx;
-        }
+        public EncodingProvider(SerializationContext ctx) => _mSerializationContext = ctx;
 
         protected byte[] Decode7Bit(string value)
         {

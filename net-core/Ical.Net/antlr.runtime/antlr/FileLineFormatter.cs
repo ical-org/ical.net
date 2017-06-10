@@ -20,12 +20,9 @@ namespace antlr
 		
 		private static FileLineFormatter formatter = new DefaultFileLineFormatter();
 		
-		public static FileLineFormatter getFormatter()
-		{
-			return formatter;
-		}
-		
-		public static void  setFormatter(FileLineFormatter f)
+		public static FileLineFormatter getFormatter() => formatter;
+
+	    public static void  setFormatter(FileLineFormatter f)
 		{
 			formatter = f;
 		}

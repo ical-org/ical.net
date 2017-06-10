@@ -34,7 +34,6 @@ namespace Ical.Net.UnitTests
 
         /// <summary>
         /// The following test is an aggregate of MonthlyCountByMonthDay3() and MonthlyByDay1() in the
-        /// <see cref="Recurrence"/> class.
         /// </summary>
         [Test]
         public void Merge1()

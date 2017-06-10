@@ -10,20 +10,11 @@ namespace Ical.Net.Utility
 {
     internal class DateUtil
     {
-        public static IDateTime StartOfDay(IDateTime dt)
-        {
-            return dt.AddHours(-dt.Hour).AddMinutes(-dt.Minute).AddSeconds(-dt.Second);
-        }
+        public static IDateTime StartOfDay(IDateTime dt) => dt.AddHours(-dt.Hour).AddMinutes(-dt.Minute).AddSeconds(-dt.Second);
 
-        public static IDateTime EndOfDay(IDateTime dt)
-        {
-            return StartOfDay(dt).AddDays(1).AddTicks(-1);
-        }
+        public static IDateTime EndOfDay(IDateTime dt) => StartOfDay(dt).AddDays(1).AddTicks(-1);
 
-        public static DateTime GetSimpleDateTimeData(IDateTime dt)
-        {
-            return DateTime.SpecifyKind(dt.Value, dt.IsUniversalTime ? DateTimeKind.Utc : DateTimeKind.Local);
-        }
+        public static DateTime GetSimpleDateTimeData(IDateTime dt) => DateTime.SpecifyKind(dt.Value, dt.IsUniversalTime ? DateTimeKind.Utc : DateTimeKind.Local);
 
         public static DateTime SimpleDateTimeToMatch(IDateTime dt, IDateTime toMatch)
         {

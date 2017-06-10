@@ -14,7 +14,7 @@ namespace Ical.Net.DataTypes
     {
         public virtual Uri SentBy
         {
-            get { return new Uri(Parameters.Get("SENT-BY")); }
+            get => new Uri(Parameters.Get("SENT-BY"));
             set
             {
                 if (value != null)
@@ -30,13 +30,13 @@ namespace Ical.Net.DataTypes
 
         public virtual string CommonName
         {
-            get { return Parameters.Get("CN"); }
-            set { Parameters.Set("CN", value); }
+            get => Parameters.Get("CN");
+            set => Parameters.Set("CN", value);
         }
 
         public virtual Uri DirectoryEntry
         {
-            get { return new Uri(Parameters.Get("DIR")); }
+            get => new Uri(Parameters.Get("DIR"));
             set
             {
                 if (value != null)
@@ -60,10 +60,7 @@ namespace Ical.Net.DataTypes
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
-        protected bool Equals(Organizer other)
-        {
-            return Equals(Value, other.Value);
-        }
+        protected bool Equals(Organizer other) => Equals(Value, other.Value);
 
         public override bool Equals(object obj)
         {
@@ -82,10 +79,7 @@ namespace Ical.Net.DataTypes
             return Equals((Organizer) obj);
         }
 
-        public override int GetHashCode()
-        {
-            return Value?.GetHashCode() ?? 0;
-        }
+        public override int GetHashCode() => Value?.GetHashCode() ?? 0;
 
         public override void CopyFrom(ICopyable obj)
         {

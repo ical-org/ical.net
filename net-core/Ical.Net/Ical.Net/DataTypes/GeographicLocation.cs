@@ -30,15 +30,9 @@ namespace Ical.Net.DataTypes
 
         public override void CopyFrom(ICopyable obj) {}
 
-        public override string ToString()
-        {
-            return Latitude.ToString("0.000000") + ";" + Longitude.ToString("0.000000");
-        }
+        public override string ToString() => Latitude.ToString("0.000000") + ";" + Longitude.ToString("0.000000");
 
-        protected bool Equals(GeographicLocation other)
-        {
-            return Latitude.Equals(other.Latitude) && Longitude.Equals(other.Longitude);
-        }
+        protected bool Equals(GeographicLocation other) => Latitude.Equals(other.Latitude) && Longitude.Equals(other.Longitude);
 
         public override bool Equals(object obj)
         {

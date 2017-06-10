@@ -52,38 +52,38 @@ namespace Ical.Net
 
         public virtual IList<Attendee> Attendees
         {
-            get { return Properties.GetMany<Attendee>("ATTENDEE"); }
-            set { Properties.Set("ATTENDEE", value); }
+            get => Properties.GetMany<Attendee>("ATTENDEE");
+            set => Properties.Set("ATTENDEE", value);
         }
 
         public virtual IList<string> Comments
         {
-            get { return Properties.GetMany<string>("COMMENT"); }
-            set { Properties.Set("COMMENT", value); }
+            get => Properties.GetMany<string>("COMMENT");
+            set => Properties.Set("COMMENT", value);
         }
 
         public virtual IDateTime DtStamp
         {
-            get { return Properties.Get<IDateTime>("DTSTAMP"); }
-            set { Properties.Set("DTSTAMP", value); }
+            get => Properties.Get<IDateTime>("DTSTAMP");
+            set => Properties.Set("DTSTAMP", value);
         }
 
         public virtual Organizer Organizer
         {
-            get { return Properties.Get<Organizer>("ORGANIZER"); }
-            set { Properties.Set("ORGANIZER", value); }
+            get => Properties.Get<Organizer>("ORGANIZER");
+            set => Properties.Set("ORGANIZER", value);
         }
 
         public virtual IList<RequestStatus> RequestStatuses
         {
-            get { return Properties.GetMany<RequestStatus>("REQUEST-STATUS"); }
-            set { Properties.Set("REQUEST-STATUS", value); }
+            get => Properties.GetMany<RequestStatus>("REQUEST-STATUS");
+            set => Properties.Set("REQUEST-STATUS", value);
         }
 
         public virtual Uri Url
         {
-            get { return Properties.Get<Uri>("URL"); }
-            set { Properties.Set("URL", value); }
+            get => Properties.Get<Uri>("URL");
+            set => Properties.Set("URL", value);
         }
 
         protected override void OnDeserialized(StreamingContext context)
@@ -114,8 +114,8 @@ namespace Ical.Net
 
         public virtual string Uid
         {
-            get { return Properties.Get<string>("UID"); }
-            set { Properties.Set("UID", value); }
+            get => Properties.Get<string>("UID");
+            set => Properties.Set("UID", value);
         }
     }
 }

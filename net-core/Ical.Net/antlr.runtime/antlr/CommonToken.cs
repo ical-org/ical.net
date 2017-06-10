@@ -34,22 +34,13 @@ namespace antlr
 		    text = txt;
 		}
 		
-		public CommonToken(string s)
-		{
-			text = s;
-		}
-		
-		public override int getLine()
-		{
-			return line;
-		}
-		
-		public override string getText()
-		{
-			return text;
-		}
-		
-		public override void  setLine(int l)
+		public CommonToken(string s) => text = s;
+
+	    public override int getLine() => line;
+
+	    public override string getText() => text;
+
+	    public override void  setLine(int l)
 		{
 			line = l;
 		}
@@ -59,18 +50,12 @@ namespace antlr
 			text = s;
 		}
 		
-		public override string ToString()
-		{
-			return "[\"" + getText() + "\",<" + type_ + ">,line=" + line + ",col=" + col + "]";
-		}
-		
-		/*Return token's start column */
-		public override int getColumn()
-		{
-			return col;
-		}
-		
-		public override void  setColumn(int c)
+		public override string ToString() => "[\"" + getText() + "\",<" + type_ + ">,line=" + line + ",col=" + col + "]";
+
+	    /*Return token's start column */
+		public override int getColumn() => col;
+
+	    public override void  setColumn(int c)
 		{
 			col = c;
 		}

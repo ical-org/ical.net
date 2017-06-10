@@ -94,30 +94,32 @@ namespace Ical.Net.DataTypes
 
         public virtual void SetValueType(string type)
         {
-            _proxy?.Set("VALUE", type != null ? type : type.ToUpper());
+            _proxy?.Set("VALUE", type ?? type.ToUpper());
         }
 
         public virtual ICalendarObject AssociatedObject
         {
-            get { return _AssociatedObject; }
+            get => _AssociatedObject;
             set
             {
-                if (!Equals(_AssociatedObject, value))
+                if (Equals(_AssociatedObject, value))
                 {
-                    _AssociatedObject = value;
-                    if (_AssociatedObject != null)
+                    return;
+                }
+
+                _AssociatedObject = value;
+                if (_AssociatedObject != null)
+                {
+                    _proxy.SetParent(_AssociatedObject);
+                    if (_AssociatedObject is ICalendarParameterCollectionContainer)
                     {
-                        _proxy.SetParent(_AssociatedObject);
-                        if (_AssociatedObject is ICalendarParameterCollectionContainer)
-                        {
-                            _proxy.SetProxiedObject(((ICalendarParameterCollectionContainer) _AssociatedObject).Parameters);
-                        }
+                        _proxy.SetProxiedObject(((ICalendarParameterCollectionContainer) _AssociatedObject).Parameters);
                     }
-                    else
-                    {
-                        _proxy.SetParent(null);
-                        _proxy.SetProxiedObject(_parameters);
-                    }
+                }
+                else
+                {
+                    _proxy.SetParent(null);
+                    _proxy.SetProxiedObject(_parameters);
                 }
             }
         }
@@ -126,8 +128,8 @@ namespace Ical.Net.DataTypes
 
         public virtual string Language
         {
-            get { return Parameters.Get("LANGUAGE"); }
-            set { Parameters.Set("LANGUAGE", value); }
+            get => Parameters.Get("LANGUAGE");
+            set => Parameters.Set("LANGUAGE", value);
         }
 
         /// <summary>
@@ -136,13 +138,15 @@ namespace Ical.Net.DataTypes
         /// </summary>
         public virtual void CopyFrom(ICopyable obj)
         {
-            if (obj is ICalendarDataType)
+            if (!(obj is ICalendarDataType))
             {
-                var dt = (ICalendarDataType) obj;
-                _AssociatedObject = dt.AssociatedObject;
-                _proxy.SetParent(_AssociatedObject);
-                _proxy.SetProxiedObject(dt.Parameters);
+                return;
             }
+
+            var dt = (ICalendarDataType) obj;
+            _AssociatedObject = dt.AssociatedObject;
+            _proxy.SetParent(_AssociatedObject);
+            _proxy.SetProxiedObject(dt.Parameters);
         }
 
         /// <summary>
@@ -165,44 +169,20 @@ namespace Ical.Net.DataTypes
 
         public virtual IParameterCollection Parameters => _proxy;
 
-        public virtual object GetService(Type serviceType)
-        {
-            return _serviceProvider.GetService(serviceType);
-        }
+        public virtual object GetService(Type serviceType) => _serviceProvider.GetService(serviceType);
 
-        public object GetService(string name)
-        {
-            return _serviceProvider.GetService(name);
-        }
+        public object GetService(string name) => _serviceProvider.GetService(name);
 
-        public T GetService<T>()
-        {
-            return _serviceProvider.GetService<T>();
-        }
+        public T GetService<T>() => _serviceProvider.GetService<T>();
 
-        public T GetService<T>(string name)
-        {
-            return _serviceProvider.GetService<T>(name);
-        }
+        public T GetService<T>(string name) => _serviceProvider.GetService<T>(name);
 
-        public void SetService(string name, object obj)
-        {
-            _serviceProvider.SetService(name, obj);
-        }
+        public void SetService(string name, object obj) => _serviceProvider.SetService(name, obj);
 
-        public void SetService(object obj)
-        {
-            _serviceProvider.SetService(obj);
-        }
+        public void SetService(object obj) => _serviceProvider.SetService(obj);
 
-        public void RemoveService(Type type)
-        {
-            _serviceProvider.RemoveService(type);
-        }
+        public void RemoveService(Type type) => _serviceProvider.RemoveService(type);
 
-        public void RemoveService(string name)
-        {
-            _serviceProvider.RemoveService(name);
-        }
+        public void RemoveService(string name) => _serviceProvider.RemoveService(name);
     }
 }

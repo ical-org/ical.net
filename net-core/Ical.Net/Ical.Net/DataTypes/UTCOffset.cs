@@ -20,15 +20,9 @@ namespace Ical.Net.DataTypes
 
         public UtcOffset() {}
 
-        public UtcOffset(string value) : this()
-        {
-            Offset = UtcOffsetSerializer.GetOffset(value);
-        }
+        public UtcOffset(string value) : this() => Offset = UtcOffsetSerializer.GetOffset(value);
 
-        public UtcOffset(TimeSpan ts)
-        {
-            Offset = ts;
-        }
+        public UtcOffset(TimeSpan ts) => Offset = ts;
 
         public static implicit operator UtcOffset(TimeSpan ts) => new UtcOffset(ts);
 
@@ -38,10 +32,7 @@ namespace Ical.Net.DataTypes
 
         public virtual DateTime ToLocal(DateTime dt) => DateTime.SpecifyKind(dt.Add(Offset), DateTimeKind.Local);
 
-        protected bool Equals(UtcOffset other)
-        {
-            return Offset == other.Offset;
-        }
+        protected bool Equals(UtcOffset other) => Offset == other.Offset;
 
         public override bool Equals(object obj)
         {
@@ -60,14 +51,8 @@ namespace Ical.Net.DataTypes
             return Equals((UtcOffset) obj);
         }
 
-        public override int GetHashCode()
-        {
-            return Offset.GetHashCode();
-        }
+        public override int GetHashCode() => Offset.GetHashCode();
 
-        public override string ToString()
-        {
-            return (Positive ? "+" : "-") + Hours.ToString("00") + Minutes.ToString("00") + (Seconds != 0 ? Seconds.ToString("00") : string.Empty);
-        }
+        public override string ToString() => (Positive ? "+" : "-") + Hours.ToString("00") + Minutes.ToString("00") + (Seconds != 0 ? Seconds.ToString("00") : string.Empty);
     }
 }

@@ -11,10 +11,7 @@ namespace Ical.Net.Collections.Enumerators
         private IEnumerator<IMultiLinkedList<TType>> _listsEnumerator;
         private IEnumerator<TType> _listEnumerator;
 
-        public GroupedListEnumerator(IList<IMultiLinkedList<TType>> lists)
-        {
-            _lists = lists;
-        }
+        public GroupedListEnumerator(IList<IMultiLinkedList<TType>> lists) => _lists = lists;
 
         public virtual TType Current
         {

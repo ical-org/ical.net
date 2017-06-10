@@ -9,20 +9,14 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
     {
         private SerializationContext _mSerializationContext;
 
-        protected SerializerBase()
-        {
-            _mSerializationContext = SerializationContext.Default;
-        }
+        protected SerializerBase() => _mSerializationContext = SerializationContext.Default;
 
-        protected SerializerBase(SerializationContext ctx)
-        {
-            _mSerializationContext = ctx;
-        }
+        protected SerializerBase(SerializationContext ctx) => _mSerializationContext = ctx;
 
         public virtual SerializationContext SerializationContext
         {
-            get { return _mSerializationContext; }
-            set { _mSerializationContext = value; }
+            get => _mSerializationContext;
+            set => _mSerializationContext = value;
         }
 
         public abstract Type TargetType { get; }
@@ -68,15 +62,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             }
         }
 
-        public virtual object GetService(Type serviceType)
-        {
-            return SerializationContext?.GetService(serviceType);
-        }
+        public virtual object GetService(Type serviceType) => SerializationContext?.GetService(serviceType);
 
-        public virtual object GetService(string name)
-        {
-            return SerializationContext?.GetService(name);
-        }
+        public virtual object GetService(string name) => SerializationContext?.GetService(name);
 
         public virtual T GetService<T>()
         {

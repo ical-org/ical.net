@@ -25,9 +25,6 @@ namespace antlr
         public IOException io;
 
         public CharStreamIOException(IOException io)
-            : base(io.Message)
-        {
-            this.io = io;
-        }
+            : base(io.Message) => this.io = io;
     }
 }

@@ -22,10 +22,7 @@ namespace Ical.Net
     /// </remarks>
     public class RecurringComponent : UniqueComponent, IRecurringComponent
     {
-        public static IEnumerable<IRecurringComponent> SortByDate(IEnumerable<IRecurringComponent> list)
-        {
-            return SortByDate<IRecurringComponent>(list);
-        }
+        public static IEnumerable<IRecurringComponent> SortByDate(IEnumerable<IRecurringComponent> list) => SortByDate<IRecurringComponent>(list);
 
         public static IEnumerable<TRecurringComponent> SortByDate<TRecurringComponent>(IEnumerable<TRecurringComponent> list) => list.OrderBy(d => d);
 
@@ -33,38 +30,38 @@ namespace Ical.Net
 
         public virtual IList<Attachment> Attachments
         {
-            get { return Properties.GetMany<Attachment>("ATTACH"); }
-            set { Properties.Set("ATTACH", value); }
+            get => Properties.GetMany<Attachment>("ATTACH");
+            set => Properties.Set("ATTACH", value);
         }
 
         public virtual IList<string> Categories
         {
-            get { return Properties.GetMany<string>("CATEGORIES"); }
-            set { Properties.Set("CATEGORIES", value); }
+            get => Properties.GetMany<string>("CATEGORIES");
+            set => Properties.Set("CATEGORIES", value);
         }
 
         public virtual string Class
         {
-            get { return Properties.Get<string>("CLASS"); }
-            set { Properties.Set("CLASS", value); }
+            get => Properties.Get<string>("CLASS");
+            set => Properties.Set("CLASS", value);
         }
 
         public virtual IList<string> Contacts
         {
-            get { return Properties.GetMany<string>("CONTACT"); }
-            set { Properties.Set("CONTACT", value); }
+            get => Properties.GetMany<string>("CONTACT");
+            set => Properties.Set("CONTACT", value);
         }
 
         public virtual IDateTime Created
         {
-            get { return Properties.Get<IDateTime>("CREATED"); }
-            set { Properties.Set("CREATED", value); }
+            get => Properties.Get<IDateTime>("CREATED");
+            set => Properties.Set("CREATED", value);
         }
 
         public virtual string Description
         {
-            get { return Properties.Get<string>("DESCRIPTION"); }
-            set { Properties.Set("DESCRIPTION", value); }
+            get => Properties.Get<string>("DESCRIPTION");
+            set => Properties.Set("DESCRIPTION", value);
         }
 
         /// <summary>
@@ -72,62 +69,62 @@ namespace Ical.Net
         /// </summary>
         public virtual IDateTime DtStart
         {
-            get { return Properties.Get<IDateTime>("DTSTART"); }
-            set { Properties.Set("DTSTART", value); }
+            get => Properties.Get<IDateTime>("DTSTART");
+            set => Properties.Set("DTSTART", value);
         }
 
         public virtual IList<PeriodList> ExceptionDates
         {
-            get { return Properties.GetMany<PeriodList>("EXDATE"); }
-            set { Properties.Set("EXDATE", value); }
+            get => Properties.GetMany<PeriodList>("EXDATE");
+            set => Properties.Set("EXDATE", value);
         }
 
         public virtual IList<RecurrencePattern> ExceptionRules
         {
-            get { return Properties.GetMany<RecurrencePattern>("EXRULE"); }
-            set { Properties.Set("EXRULE", value); }
+            get => Properties.GetMany<RecurrencePattern>("EXRULE");
+            set => Properties.Set("EXRULE", value);
         }
 
         public virtual IDateTime LastModified
         {
-            get { return Properties.Get<IDateTime>("LAST-MODIFIED"); }
-            set { Properties.Set("LAST-MODIFIED", value); }
+            get => Properties.Get<IDateTime>("LAST-MODIFIED");
+            set => Properties.Set("LAST-MODIFIED", value);
         }
 
         public virtual int Priority
         {
-            get { return Properties.Get<int>("PRIORITY"); }
-            set { Properties.Set("PRIORITY", value); }
+            get => Properties.Get<int>("PRIORITY");
+            set => Properties.Set("PRIORITY", value);
         }
 
         public virtual IList<PeriodList> RecurrenceDates
         {
-            get { return Properties.GetMany<PeriodList>("RDATE"); }
-            set { Properties.Set("RDATE", value); }
+            get => Properties.GetMany<PeriodList>("RDATE");
+            set => Properties.Set("RDATE", value);
         }
 
         public virtual IList<RecurrencePattern> RecurrenceRules
         {
-            get { return Properties.GetMany<RecurrencePattern>("RRULE"); }
-            set { Properties.Set("RRULE", value); }
+            get => Properties.GetMany<RecurrencePattern>("RRULE");
+            set => Properties.Set("RRULE", value);
         }
 
         public virtual IDateTime RecurrenceId
         {
-            get { return Properties.Get<IDateTime>("RECURRENCE-ID"); }
-            set { Properties.Set("RECURRENCE-ID", value); }
+            get => Properties.Get<IDateTime>("RECURRENCE-ID");
+            set => Properties.Set("RECURRENCE-ID", value);
         }
 
         public virtual IList<string> RelatedComponents
         {
-            get { return Properties.GetMany<string>("RELATED-TO"); }
-            set { Properties.Set("RELATED-TO", value); }
+            get => Properties.GetMany<string>("RELATED-TO");
+            set => Properties.Set("RELATED-TO", value);
         }
 
         public virtual int Sequence
         {
-            get { return Properties.Get<int>("SEQUENCE"); }
-            set { Properties.Set("SEQUENCE", value); }
+            get => Properties.Get<int>("SEQUENCE");
+            set => Properties.Set("SEQUENCE", value);
         }
 
         /// <summary>
@@ -135,14 +132,14 @@ namespace Ical.Net
         /// </summary>
         public virtual IDateTime Start
         {
-            get { return DtStart; }
-            set { DtStart = value; }
+            get => DtStart;
+            set => DtStart = value;
         }
 
         public virtual string Summary
         {
-            get { return Properties.Get<string>("SUMMARY"); }
-            set { Properties.Set("SUMMARY", value); }
+            get => Properties.Get<string>("SUMMARY");
+            set => Properties.Set("SUMMARY", value);
         }
 
         /// <summary>
@@ -162,10 +159,7 @@ namespace Ical.Net
             EnsureProperties();
         }
 
-        private void Initialize()
-        {
-            SetService(new RecurringEvaluator(this));
-        }
+        private void Initialize() => SetService(new RecurringEvaluator(this));
 
         private void EnsureProperties()
         {
@@ -182,35 +176,20 @@ namespace Ical.Net
             Initialize();
         }
 
-        public virtual void ClearEvaluation()
-        {
-            RecurrenceUtil.ClearEvaluation(this);
-        }
+        public virtual void ClearEvaluation() => RecurrenceUtil.ClearEvaluation(this);
 
-        public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt)
-        {
-            return RecurrenceUtil.GetOccurrences(this, dt, EvaluationIncludesReferenceDate);
-        }
+        public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt) => RecurrenceUtil.GetOccurrences(this, dt, EvaluationIncludesReferenceDate);
 
         public virtual HashSet<Occurrence> GetOccurrences(DateTime dt)
-        {
-            return RecurrenceUtil.GetOccurrences(this, new CalDateTime(dt), EvaluationIncludesReferenceDate);
-        }
+            => RecurrenceUtil.GetOccurrences(this, new CalDateTime(dt), EvaluationIncludesReferenceDate);
 
         public virtual HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
-        {
-            return RecurrenceUtil.GetOccurrences(this, startTime, endTime, EvaluationIncludesReferenceDate);
-        }
+            => RecurrenceUtil.GetOccurrences(this, startTime, endTime, EvaluationIncludesReferenceDate);
 
         public virtual HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
-        {
-            return RecurrenceUtil.GetOccurrences(this, new CalDateTime(startTime), new CalDateTime(endTime), EvaluationIncludesReferenceDate);
-        }
+            => RecurrenceUtil.GetOccurrences(this, new CalDateTime(startTime), new CalDateTime(endTime), EvaluationIncludesReferenceDate);
 
-        public virtual IList<AlarmOccurrence> PollAlarms()
-        {
-            return PollAlarms(null, null);
-        }
+        public virtual IList<AlarmOccurrence> PollAlarms() => PollAlarms(null, null);
 
         public virtual IList<AlarmOccurrence> PollAlarms(IDateTime startTime, IDateTime endTime)
         {

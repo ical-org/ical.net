@@ -18,7 +18,7 @@ namespace Ical.Net.DataTypes
 
         public virtual IDateTime DateTime
         {
-            get { return _mDateTime; }
+            get => _mDateTime;
             set
             {
                 _mDateTime = value;
@@ -38,7 +38,7 @@ namespace Ical.Net.DataTypes
 
         public virtual TimeSpan? Duration
         {
-            get { return _mDuration; }
+            get => _mDuration;
             set
             {
                 _mDuration = value;
@@ -54,18 +54,15 @@ namespace Ical.Net.DataTypes
 
         public virtual TriggerRelation Related
         {
-            get { return _mRelated; }
-            set { _mRelated = value; }
+            get => _mRelated;
+            set => _mRelated = value;
         }
 
         public virtual bool IsRelative => _mDuration != null;
 
         public Trigger() {}
 
-        public Trigger(TimeSpan ts)
-        {
-            Duration = ts;
-        }
+        public Trigger(TimeSpan ts) => Duration = ts;
 
         public Trigger(string value) : this()
         {
@@ -85,10 +82,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        protected bool Equals(Trigger other)
-        {
-            return Equals(_mDateTime, other._mDateTime) && _mDuration.Equals(other._mDuration) && _mRelated == other._mRelated;
-        }
+        protected bool Equals(Trigger other) => Equals(_mDateTime, other._mDateTime) && _mDuration.Equals(other._mDuration) && _mRelated == other._mRelated;
 
         public override bool Equals(object obj)
         {

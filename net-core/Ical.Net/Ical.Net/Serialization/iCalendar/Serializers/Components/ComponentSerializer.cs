@@ -93,7 +93,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
         {
             public int Compare(ICalendarProperty x, ICalendarProperty y)
             {
-                if (x == y || (x == null && y == null))
+                if (x == y)
                 {
                     return 0;
                 }
@@ -101,11 +101,9 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
                 {
                     return -1;
                 }
-                if (y == null)
-                {
-                    return 1;
-                }
-                return string.Compare(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
+                return y == null
+                    ? 1
+                    : string.Compare(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
             }
         }
     }

@@ -57,10 +57,7 @@ namespace Ical.Net.Evaluation
 
         protected RecurrencePattern Pattern { get; set; }
 
-        public RecurrencePatternEvaluator(RecurrencePattern pattern)
-        {
-            Pattern = pattern;
-        }
+        public RecurrencePatternEvaluator(RecurrencePattern pattern) => Pattern = pattern;
 
         private RecurrencePattern ProcessRecurrencePattern(IDateTime referenceDate)
         {
@@ -409,12 +406,9 @@ namespace Ical.Net.Evaluation
             for (var i = dates.Count - 1; i >= 0; i--)
             {
                 var date = dates[i];
-                for (var j = 0; j < pattern.ByMonth.Count; j++)
+                foreach (var t in pattern.ByMonth.Where(t => date.Month == t))
                 {
-                    if (date.Month == pattern.ByMonth[j])
-                    {
-                        goto Next;
-                    }
+                    goto Next;
                 }
                 dates.RemoveAt(i);
                 Next:
@@ -444,9 +438,9 @@ namespace Ical.Net.Evaluation
 
             // Expand behavior
             var weekNoDates = new List<DateTime>();
-            for (var i = 0; i < dates.Count; i++)
+            foreach (var t in dates)
             {
-                var date = dates[i];
+                var date = t;
                 foreach (var weekNo in pattern.ByWeekNo)
                 {
                     // Determine our current week number

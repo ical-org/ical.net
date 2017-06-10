@@ -15,20 +15,20 @@ namespace Ical.Net.DataTypes
 
         public virtual string Description
         {
-            get { return _mDescription; }
-            set { _mDescription = value; }
+            get => _mDescription;
+            set => _mDescription = value;
         }
 
         public virtual string ExtraData
         {
-            get { return _mExtraData; }
-            set { _mExtraData = value; }
+            get => _mExtraData;
+            set => _mExtraData = value;
         }
 
         public virtual StatusCode StatusCode
         {
-            get { return _mStatusCode; }
-            set { _mStatusCode = value; }
+            get => _mStatusCode;
+            set => _mStatusCode = value;
         }
 
         public RequestStatus() {}
@@ -62,11 +62,8 @@ namespace Ical.Net.DataTypes
             return serializer.SerializeToString(this);
         }
 
-        protected bool Equals(RequestStatus other)
-        {
-            return string.Equals(_mDescription, other._mDescription) && string.Equals(_mExtraData, other._mExtraData) &&
-                   Equals(_mStatusCode, other._mStatusCode);
-        }
+        protected bool Equals(RequestStatus other) => string.Equals(_mDescription, other._mDescription) && string.Equals(_mExtraData, other._mExtraData) &&
+            Equals(_mStatusCode, other._mStatusCode);
 
         public override bool Equals(object obj)
         {

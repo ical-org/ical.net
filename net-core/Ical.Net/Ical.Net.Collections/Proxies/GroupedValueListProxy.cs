@@ -225,14 +225,8 @@ namespace Ical.Net.Collections.Proxies
             }
         }
 
-        public virtual IEnumerable<TInterface> Items
-        {
-            get
-            {
-                return _group == null
-                    ? _realObject
-                    : _realObject.AllOf(_group);
-            }
-        }
+        public virtual IEnumerable<TInterface> Items => _group == null
+            ? _realObject
+            : _realObject.AllOf(_group);
     }
 }

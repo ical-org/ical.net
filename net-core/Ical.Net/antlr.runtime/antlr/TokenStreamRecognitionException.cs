@@ -25,14 +25,8 @@ namespace antlr
         public RecognitionException recog;
 
         public TokenStreamRecognitionException(RecognitionException re) :
-            base(re.Message)
-        {
-            recog = re;
-        }
+            base(re.Message) => recog = re;
 
-        public override string ToString()
-        {
-            return recog.ToString();
-        }
+        public override string ToString() => recog.ToString();
     }
 }

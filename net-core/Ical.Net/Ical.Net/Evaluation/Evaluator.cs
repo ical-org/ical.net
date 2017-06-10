@@ -93,23 +93,20 @@ namespace Ical.Net.Evaluation
 
         public virtual DateTime EvaluationStartBounds
         {
-            get { return _mEvaluationStartBounds; }
-            set { _mEvaluationStartBounds = value; }
+            get => _mEvaluationStartBounds;
+            set => _mEvaluationStartBounds = value;
         }
 
         public virtual DateTime EvaluationEndBounds
         {
-            get { return _mEvaluationEndBounds; }
-            set { _mEvaluationEndBounds = value; }
+            get => _mEvaluationEndBounds;
+            set => _mEvaluationEndBounds = value;
         }
 
         public virtual ICalendarObject AssociatedObject
         {
-            get
-            {
-                return _mAssociatedObject ?? _mAssociatedDataType?.AssociatedObject;
-            }
-            protected set { _mAssociatedObject = value; }
+            get => _mAssociatedObject ?? _mAssociatedDataType?.AssociatedObject;
+            protected set => _mAssociatedObject = value;
         }
 
         public virtual HashSet<Period> Periods => MPeriods;

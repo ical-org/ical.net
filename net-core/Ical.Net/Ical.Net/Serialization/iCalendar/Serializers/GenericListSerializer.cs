@@ -24,11 +24,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         public override Type TargetType => _objectType;
 
-        public override string SerializeToString(object obj)
-        {
-            // NOTE: this behavior is implemented in the PropertySerializer.
-            throw new NotImplementedException();
-        }
+        public override string SerializeToString(object obj) => throw new NotImplementedException();
 
         private MethodInfo _addMethodInfo;
         public override object Deserialize(TextReader tr)

@@ -71,10 +71,6 @@ namespace Ical.Net.Utility
         internal static readonly Regex NewLineMatch = new Regex(@"(\r\n[ \t])", RegexOptions.Compiled);
 
         /// <summary> Unwraps lines from the RFC 5545 "line folding" technique. </summary>
-        public static string UnwrapLines(string s)
-        {
-            //(NOTE: this method makes the line/ col numbers output from antlr incorrect.)
-            return NewLineMatch.Replace(s, string.Empty);
-        }
+        public static string UnwrapLines(string s) => NewLineMatch.Replace(s, string.Empty);
     }
 }

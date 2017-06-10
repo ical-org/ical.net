@@ -7,13 +7,7 @@ namespace Ical.Net.General
     {
         private bool _mIsLoaded;
 
-        public CalendarObjectBase()
-        {
-            // Objects that are loaded using a normal constructor
-            // are "Loaded" by default.  Objects that are being
-            // deserialized do not use the constructor.
-            _mIsLoaded = true;
-        }
+        public CalendarObjectBase() => _mIsLoaded = true;
 
         /// <summary>
         /// Copies values from the target object to the

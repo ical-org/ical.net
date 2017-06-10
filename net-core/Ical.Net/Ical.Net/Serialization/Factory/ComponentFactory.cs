@@ -7,7 +7,7 @@ namespace Ical.Net.Serialization.Factory
     {
         public virtual ICalendarComponent Build(string objectName)
         {
-            ICalendarComponent c = null;
+            ICalendarComponent c;
             var name = objectName.ToUpper();
 
             switch (name)

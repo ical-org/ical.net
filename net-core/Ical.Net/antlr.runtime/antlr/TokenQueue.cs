@@ -61,12 +61,9 @@ namespace antlr
 		/*Fetch a token from the queue by index
 		* @param idx The index of the token to fetch, where zero is the token at the front of the queue
 		*/
-		public IToken elementAt(int idx)
-		{
-			return buffer[(offset + idx) & sizeLessOne];
-		}
-		
-		/*Expand the token buffer by doubling its capacity */
+		public IToken elementAt(int idx) => buffer[(offset + idx) & sizeLessOne];
+
+	    /*Expand the token buffer by doubling its capacity */
 		private void  expand()
 		{
 			IToken[] newBuffer = new IToken[buffer.Length * 2];

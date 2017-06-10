@@ -34,45 +34,31 @@ namespace antlr
 		// the illegal token object
 		public static Token badToken = new Token(INVALID_TYPE, "<no text>");
 		
-		public Token()
-		{
-			type_ = INVALID_TYPE;
-		}
-		public Token(int t)
-		{
-			type_ = t;
-		}
-		public Token(int t, string txt)
+		public Token() => type_ = INVALID_TYPE;
+
+	    public Token(int t) => type_ = t;
+
+	    public Token(int t, string txt)
 		{
 			type_ = t;
 			setText(txt);
 		}
-		public virtual int getColumn()
-		{
-			return 0;
-		}
-		public virtual int getLine()
-		{
-			return 0;
-		}
-		public virtual string getFilename() 
-		{
-			return null;
-		}
+		public virtual int getColumn() => 0;
 
-		public virtual void setFilename(string name) 
+	    public virtual int getLine() => 0;
+
+	    public virtual string getFilename() => null;
+
+	    public virtual void setFilename(string name) 
 		{
 		}
 
-		public virtual string getText()
-		{
-			return "<no text>";
-		}
+		public virtual string getText() => "<no text>";
 
-		public int Type
+	    public int Type
 		{
-			get { return type_;  }
-			set { type_ = value; }
+			get => type_;
+		    set => type_ = value;
 		}
 
 		public virtual void setType(int newType)	{ Type = newType; }
@@ -86,9 +72,6 @@ namespace antlr
 		public virtual void  setText(string t)
 		{
 		}
-		public override string ToString()
-		{
-			return "[\"" + getText() + "\",<" + type_ + ">]";
-		}
+		public override string ToString() => "[\"" + getText() + "\",<" + type_ + ">]";
 	}
 }

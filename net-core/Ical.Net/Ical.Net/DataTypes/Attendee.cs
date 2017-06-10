@@ -111,7 +111,7 @@ namespace Ical.Net.DataTypes
         /// <summary> MEMBER: the groups the user belongs to </summary>
         public virtual IList<string> Members
         {
-            get { return _members ?? (_members = new List<string>(Parameters.GetMany("MEMBER"))); }
+            get => _members ?? (_members = new List<string>(Parameters.GetMany("MEMBER")));
             set
             {
                 _members = new List<string>(value);
@@ -196,7 +196,7 @@ namespace Ical.Net.DataTypes
         /// <summary> DELEGATED-TO, to indicate the calendar users that the original request was delegated to </summary>
         public virtual IList<string> DelegatedTo
         {
-            get { return _delegatedTo ?? (_delegatedTo = new List<string>(Parameters.GetMany("DELEGATED-TO"))); }
+            get => _delegatedTo ?? (_delegatedTo = new List<string>(Parameters.GetMany("DELEGATED-TO")));
             set
             {
                 if (value == null)
@@ -212,7 +212,7 @@ namespace Ical.Net.DataTypes
         /// <summary> DELEGATED-FROM, to indicate whom the request was delegated from </summary>
         public virtual IList<string> DelegatedFrom
         {
-            get { return _delegatedFrom ?? (_delegatedFrom = new List<string>(Parameters.GetMany("DELEGATED-FROM"))); }
+            get => _delegatedFrom ?? (_delegatedFrom = new List<string>(Parameters.GetMany("DELEGATED-FROM")));
             set
             {
                 if (value == null)
@@ -229,10 +229,7 @@ namespace Ical.Net.DataTypes
 
         public Attendee() {}
 
-        public Attendee(Uri attendee)
-        {
-            Value = attendee;
-        }
+        public Attendee(Uri attendee) => Value = attendee;
 
         public Attendee(string attendeeUri)
         {
@@ -246,20 +243,17 @@ namespace Ical.Net.DataTypes
         //ToDo: See if this can be deleted
         public override void CopyFrom(ICopyable obj) {}
 
-        protected bool Equals(Attendee other)
-        {
-            return Equals(SentBy, other.SentBy)
-                && string.Equals(CommonName, other.CommonName, StringComparison.OrdinalIgnoreCase)
-                && Equals(DirectoryEntry, other.DirectoryEntry)
-                && string.Equals(Type, other.Type, StringComparison.OrdinalIgnoreCase)
-                && string.Equals(Role, other.Role)
-                && string.Equals(ParticipationStatus, other.ParticipationStatus, StringComparison.OrdinalIgnoreCase)
-                && Rsvp == other.Rsvp
-                && Equals(Value, other.Value)
-                && Members.SequenceEqual(other.Members)
-                && DelegatedTo.SequenceEqual(other.DelegatedTo)
-                && DelegatedFrom.SequenceEqual(other.DelegatedFrom);
-        }
+        protected bool Equals(Attendee other) => Equals(SentBy, other.SentBy)
+            && string.Equals(CommonName, other.CommonName, StringComparison.OrdinalIgnoreCase)
+            && Equals(DirectoryEntry, other.DirectoryEntry)
+            && string.Equals(Type, other.Type, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(Role, other.Role)
+            && string.Equals(ParticipationStatus, other.ParticipationStatus, StringComparison.OrdinalIgnoreCase)
+            && Rsvp == other.Rsvp
+            && Equals(Value, other.Value)
+            && Members.SequenceEqual(other.Members)
+            && DelegatedTo.SequenceEqual(other.DelegatedTo)
+            && DelegatedFrom.SequenceEqual(other.DelegatedFrom);
 
         public override bool Equals(object obj)
         {

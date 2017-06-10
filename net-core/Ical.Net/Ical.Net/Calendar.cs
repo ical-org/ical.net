@@ -184,38 +184,38 @@ namespace Ical.Net
 
         public virtual string Version
         {
-            get { return Properties.Get<string>("VERSION"); }
-            set { Properties.Set("VERSION", value); }
+            get => Properties.Get<string>("VERSION");
+            set => Properties.Set("VERSION", value);
         }
 
         public virtual string ProductId
         {
-            get { return Properties.Get<string>("PRODID"); }
-            set { Properties.Set("PRODID", value); }
+            get => Properties.Get<string>("PRODID");
+            set => Properties.Set("PRODID", value);
         }
 
         public virtual string Scale
         {
-            get { return Properties.Get<string>("CALSCALE"); }
-            set { Properties.Set("CALSCALE", value); }
+            get => Properties.Get<string>("CALSCALE");
+            set => Properties.Set("CALSCALE", value);
         }
 
         public virtual string Method
         {
-            get { return Properties.Get<string>("METHOD"); }
-            set { Properties.Set("METHOD", value); }
+            get => Properties.Get<string>("METHOD");
+            set => Properties.Set("METHOD", value);
         }
 
         public virtual RecurrenceRestrictionType RecurrenceRestriction
         {
-            get { return Properties.Get<RecurrenceRestrictionType>("X-DDAY-ICAL-RECURRENCE-RESTRICTION"); }
-            set { Properties.Set("X-DDAY-ICAL-RECURRENCE-RESTRICTION", value); }
+            get => Properties.Get<RecurrenceRestrictionType>("X-DDAY-ICAL-RECURRENCE-RESTRICTION");
+            set => Properties.Set("X-DDAY-ICAL-RECURRENCE-RESTRICTION", value);
         }
 
         public virtual RecurrenceEvaluationModeType RecurrenceEvaluationMode
         {
-            get { return Properties.Get<RecurrenceEvaluationModeType>("X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE"); }
-            set { Properties.Set("X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE", value); }
+            get => Properties.Get<RecurrenceEvaluationModeType>("X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE");
+            set => Properties.Set("X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE", value);
         }
 
         /// <summary>
@@ -276,15 +276,9 @@ namespace Ical.Net
         /// </summary>
         /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
         /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
-        public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt)
-        {
-            return GetOccurrences<IRecurringComponent>(new CalDateTime(dt.AsSystemLocal.Date), new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)));
-        }
+        public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt) => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.AsSystemLocal.Date), new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)));
 
-        public virtual HashSet<Occurrence> GetOccurrences(DateTime dt)
-        {
-            return GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)));
-        }
+        public virtual HashSet<Occurrence> GetOccurrences(DateTime dt) => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)));
 
         /// <summary>
         /// Returns a list of occurrences of each recurring component

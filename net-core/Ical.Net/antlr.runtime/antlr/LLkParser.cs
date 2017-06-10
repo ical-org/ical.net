@@ -25,11 +25,9 @@ namespace antlr
 	{
 		internal int k;
 		
-		public LLkParser(int k_)
-		{
-			k = k_;
-		}
-		public LLkParser(ParserSharedInputState state, int k_)
+		public LLkParser(int k_) => k = k_;
+
+	    public LLkParser(ParserSharedInputState state, int k_)
 		{
 			k = k_;
 			inputState = state;
@@ -56,13 +54,7 @@ namespace antlr
 		{
 			inputState.input.consume();
 		}
-		public override int LA(int i)
-		{
-			return inputState.input.LA(i);
-		}
-		public override IToken LT(int i)
-		{
-			return inputState.input.LT(i);
-		}
+		public override int LA(int i) => inputState.input.LA(i);
+	    public override IToken LT(int i) => inputState.input.LT(i);
 	}
 }

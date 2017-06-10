@@ -22,16 +22,10 @@ namespace antlr
         public char foundChar;
 
         public NoViableAltForCharException(char c, CharScanner scanner) :
-            base("NoViableAlt", scanner.getFilename(), scanner.getLine(), scanner.getColumn())
-        {
-            foundChar = c;
-        }
+            base("NoViableAlt", scanner.getFilename(), scanner.getLine(), scanner.getColumn()) => foundChar = c;
 
         public NoViableAltForCharException(char c, string fileName, int line, int column) :
-            base("NoViableAlt", fileName, line, column)
-        {
-            foundChar = c;
-        }
+            base("NoViableAlt", fileName, line, column) => foundChar = c;
 
         /*
         * Returns a clean error message (no line number/column information)

@@ -26,13 +26,10 @@ namespace Ical.Net.DataTypes
 
         public int Interval
         {
-            get
-            {
-                return _interval == int.MinValue
-                    ? 1
-                    : _interval;
-            }
-            set { _interval = value; }
+            get => _interval == int.MinValue
+                ? 1
+                : _interval;
+            set => _interval = value;
         }
 
         public List<int> BySecond { get; set; } = new List<int>(16);
@@ -66,7 +63,7 @@ namespace Ical.Net.DataTypes
                 }
                 return Calendar?.RecurrenceRestriction ?? RecurrenceRestrictionType.Default;
             }
-            set { _restrictionType = value; }
+            set => _restrictionType = value;
         }
 
         public RecurrenceEvaluationModeType EvaluationMode
@@ -80,7 +77,7 @@ namespace Ical.Net.DataTypes
                 }
                 return Calendar?.RecurrenceEvaluationMode ?? RecurrenceEvaluationModeType.Default;
             }
-            set { _evaluationMode = value; }
+            set => _evaluationMode = value;
         }
 
         public RecurrencePattern()
@@ -112,25 +109,22 @@ namespace Ical.Net.DataTypes
             return serializer.SerializeToString(this);
         }
 
-        protected bool Equals(RecurrencePattern other)
-        {
-            return (Interval == other.Interval)
-                && (RestrictionType == other.RestrictionType)
-                && (EvaluationMode == other.EvaluationMode)
-                && (Frequency == other.Frequency)
-                && Until.Equals(other.Until)
-                && (Count == other.Count)
-                && (FirstDayOfWeek == other.FirstDayOfWeek)
-                && CollectionEquals(BySecond, other.BySecond)
-                && CollectionEquals(ByMinute, other.ByMinute)
-                && CollectionEquals(ByHour, other.ByHour)
-                && CollectionEquals(ByDay, other.ByDay)
-                && CollectionEquals(ByMonthDay, other.ByMonthDay)
-                && CollectionEquals(ByYearDay, other.ByYearDay)
-                && CollectionEquals(ByWeekNo, other.ByWeekNo)
-                && CollectionEquals(ByMonth, other.ByMonth)
-                && CollectionEquals(BySetPosition, other.BySetPosition);
-        }
+        protected bool Equals(RecurrencePattern other) => (Interval == other.Interval)
+            && (RestrictionType == other.RestrictionType)
+            && (EvaluationMode == other.EvaluationMode)
+            && (Frequency == other.Frequency)
+            && Until.Equals(other.Until)
+            && (Count == other.Count)
+            && (FirstDayOfWeek == other.FirstDayOfWeek)
+            && CollectionEquals(BySecond, other.BySecond)
+            && CollectionEquals(ByMinute, other.ByMinute)
+            && CollectionEquals(ByHour, other.ByHour)
+            && CollectionEquals(ByDay, other.ByDay)
+            && CollectionEquals(ByMonthDay, other.ByMonthDay)
+            && CollectionEquals(ByYearDay, other.ByYearDay)
+            && CollectionEquals(ByWeekNo, other.ByWeekNo)
+            && CollectionEquals(ByMonth, other.ByMonth)
+            && CollectionEquals(BySetPosition, other.BySetPosition);
 
         public override bool Equals(object obj)
         {

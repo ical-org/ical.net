@@ -20,10 +20,7 @@ namespace Ical.Net.DataTypes
             Period = period;
         }
 
-        public bool Equals(Occurrence other)
-        {
-            return Equals(Period, other.Period) && Equals(Source, other.Source);
-        }
+        public bool Equals(Occurrence other) => Equals(Period, other.Period) && Equals(Source, other.Source);
 
         public override bool Equals(object obj)
         {
@@ -58,9 +55,6 @@ namespace Ical.Net.DataTypes
             return s;
         }
 
-        public int CompareTo(Occurrence other)
-        {
-            return Period.CompareTo(other.Period);
-        }
+        public int CompareTo(Occurrence other) => Period.CompareTo(other.Period);
     }
 }

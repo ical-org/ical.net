@@ -113,7 +113,7 @@ namespace Ical.Net.DataTypes
 
         public override ICalendarObject AssociatedObject
         {
-            get { return base.AssociatedObject; }
+            get => base.AssociatedObject;
             set
             {
                 if (!Equals(AssociatedObject, value))
@@ -139,13 +139,10 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private bool Equals(CalDateTime other)
-        {
-            return Value.Equals(other.Value)
-                   && HasDate == other.HasDate
-                   && AsUtc.Equals(other.AsUtc)
-                   && string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase);
-        }
+        private bool Equals(CalDateTime other) => Value.Equals(other.Value)
+            && HasDate == other.HasDate
+            && AsUtc.Equals(other.AsUtc)
+            && string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase);
 
         public override bool Equals(object obj)
         {
@@ -198,10 +195,7 @@ namespace Ical.Net.DataTypes
             return copy;
         }
 
-        public static implicit operator CalDateTime(DateTime left)
-        {
-            return new CalDateTime(left);
-        }
+        public static implicit operator CalDateTime(DateTime left) => new CalDateTime(left);
 
         /// <summary>
         /// Converts the date/time to this computer's local date/time.
@@ -251,28 +245,28 @@ namespace Ical.Net.DataTypes
 
         public bool IsUniversalTime
         {
-            get { return _isUniversalTime; }
-            set { _isUniversalTime = value; }
+            get => _isUniversalTime;
+            set => _isUniversalTime = value;
         }
 
         public string TimeZoneName => TzId;
 
         public DateTime Value
         {
-            get { return _value; }
-            set { _value = value; }
+            get => _value;
+            set => _value = value;
         }
 
         public bool HasDate
         {
-            get { return _hasDate; }
-            set { _hasDate = value; }
+            get => _hasDate;
+            set => _hasDate = value;
         }
 
         public bool HasTime
         {
-            get { return _hasTime; }
-            set { _hasTime = value; }
+            get => _hasTime;
+            set => _hasTime = value;
         }
 
         private string _tzId = string.Empty;
@@ -340,20 +334,11 @@ namespace Ical.Net.DataTypes
             return new CalDateTime(newDt, newTimeZone);
         }
 
-        public IDateTime Add(TimeSpan ts)
-        {
-            return this + ts;
-        }
+        public IDateTime Add(TimeSpan ts) => this + ts;
 
-        public IDateTime Subtract(TimeSpan ts)
-        {
-            return this - ts;
-        }
+        public IDateTime Subtract(TimeSpan ts) => this - ts;
 
-        public TimeSpan Subtract(IDateTime dt)
-        {
-            return this - dt;
-        }
+        public TimeSpan Subtract(IDateTime dt) => this - dt;
 
         public IDateTime AddYears(int years)
         {
