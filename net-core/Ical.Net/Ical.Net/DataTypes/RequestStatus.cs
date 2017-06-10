@@ -62,11 +62,8 @@ namespace Ical.Net.DataTypes
             return serializer.SerializeToString(this);
         }
 
-        protected bool Equals(RequestStatus other)
-        {
-            return string.Equals(_mDescription, other._mDescription) && string.Equals(_mExtraData, other._mExtraData) &&
-                   Equals(_mStatusCode, other._mStatusCode);
-        }
+        protected bool Equals(RequestStatus other) => string.Equals(_mDescription, other._mDescription) && string.Equals(_mExtraData, other._mExtraData) &&
+            Equals(_mStatusCode, other._mStatusCode);
 
         public override bool Equals(object obj)
         {

@@ -100,10 +100,7 @@ namespace Ical.Net.General
             }
         }
 
-        public virtual bool ContainsValue(object value)
-        {
-            return _values.Contains(value);
-        }
+        public virtual bool ContainsValue(object value) => _values.Contains(value);
 
         public virtual int ValueCount => _values?.Count ?? 0;
 

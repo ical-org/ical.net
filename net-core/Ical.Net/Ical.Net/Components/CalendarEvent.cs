@@ -245,10 +245,7 @@ namespace Ical.Net
         /// as an upcoming or occurred event.
         /// </summary>
         /// <returns>True if the event has not been cancelled, False otherwise.</returns>
-        public virtual bool IsActive()
-        {
-            return (Status != EventStatus.Cancelled);
-        }
+        public virtual bool IsActive() => (Status != EventStatus.Cancelled);
 
         protected override bool EvaluationIncludesReferenceDate => true;
 

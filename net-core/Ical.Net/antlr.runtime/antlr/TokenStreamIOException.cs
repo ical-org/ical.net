@@ -28,9 +28,6 @@ namespace antlr
         * @param s java.lang.String
         */
         public TokenStreamIOException(IOException io)
-            : base(io.Message)
-        {
-            this.io = io;
-        }
+            : base(io.Message) => this.io = io;
     }
 }

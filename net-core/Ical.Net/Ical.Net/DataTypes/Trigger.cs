@@ -62,10 +62,7 @@ namespace Ical.Net.DataTypes
 
         public Trigger() {}
 
-        public Trigger(TimeSpan ts)
-        {
-            Duration = ts;
-        }
+        public Trigger(TimeSpan ts) => Duration = ts;
 
         public Trigger(string value) : this()
         {
@@ -85,10 +82,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        protected bool Equals(Trigger other)
-        {
-            return Equals(_mDateTime, other._mDateTime) && _mDuration.Equals(other._mDuration) && _mRelated == other._mRelated;
-        }
+        protected bool Equals(Trigger other) => Equals(_mDateTime, other._mDateTime) && _mDuration.Equals(other._mDuration) && _mRelated == other._mRelated;
 
         public override bool Equals(object obj)
         {

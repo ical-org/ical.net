@@ -37,33 +37,21 @@ namespace Ical.Net.Collections.Proxies
             ItemRemoved?.Invoke(this, new ObjectEventArgs<TNew, int>(item, index));
         }
 
-        public virtual bool Remove(TGroup group)
-        {
-            return RealObject.Remove(group);
-        }
+        public virtual bool Remove(TGroup group) => RealObject.Remove(group);
 
         public virtual void Clear(TGroup group)
         {
             RealObject.Clear(group);
         }
 
-        public virtual bool ContainsKey(TGroup group)
-        {
-            return RealObject.ContainsKey(group);            
-        }
+        public virtual bool ContainsKey(TGroup group) => RealObject.ContainsKey(group);
 
-        public virtual int CountOf(TGroup group)
-        {
-            return RealObject.OfType<TGroup>().Count();
-        }
+        public virtual int CountOf(TGroup group) => RealObject.OfType<TGroup>().Count();
 
-        public virtual IEnumerable<TNew> AllOf(TGroup group)
-        {
-            return RealObject
-                .AllOf(group)
-                .OfType<TNew>()
-                .Where(_predicate);
-        }
+        public virtual IEnumerable<TNew> AllOf(TGroup group) => RealObject
+            .AllOf(group)
+            .OfType<TNew>()
+            .Where(_predicate);
 
         public virtual void Add(TNew item)
         {
@@ -85,10 +73,7 @@ namespace Ical.Net.Collections.Proxies
             }
         }
 
-        public virtual bool Contains(TNew item)
-        {
-            return RealObject.Contains(item);
-        }
+        public virtual bool Contains(TNew item) => RealObject.Contains(item);
 
         public virtual void CopyTo(TNew[] array, int arrayIndex)
         {
@@ -105,24 +90,15 @@ namespace Ical.Net.Collections.Proxies
 
         public virtual bool IsReadOnly => false;
 
-        public virtual bool Remove(TNew item)
-        {
-            return RealObject.Remove(item);
-        }
+        public virtual bool Remove(TNew item) => RealObject.Remove(item);
 
-        public virtual IEnumerator<TNew> GetEnumerator()
-        {
-            return RealObject
-                .OfType<TNew>()
-                .GetEnumerator();
-        }
+        public virtual IEnumerator<TNew> GetEnumerator() => RealObject
+            .OfType<TNew>()
+            .GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return RealObject
-                .OfType<TNew>()
-                .GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => RealObject
+            .OfType<TNew>()
+            .GetEnumerator();
 
         public IGroupedCollection<TGroup, TOriginal> RealObject { get; private set; }
 

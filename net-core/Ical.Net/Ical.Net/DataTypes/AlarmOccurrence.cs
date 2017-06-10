@@ -40,15 +40,9 @@ namespace Ical.Net.DataTypes
             Component = rc;
         }
 
-        public int CompareTo(AlarmOccurrence other)
-        {
-            return Period.CompareTo(other.Period);
-        }
+        public int CompareTo(AlarmOccurrence other) => Period.CompareTo(other.Period);
 
-        protected bool Equals(AlarmOccurrence other)
-        {
-            return Equals(Period, other.Period) && Equals(Component, other.Component) && Equals(Alarm, other.Alarm);
-        }
+        protected bool Equals(AlarmOccurrence other) => Equals(Period, other.Period) && Equals(Component, other.Component) && Equals(Alarm, other.Alarm);
 
         public override bool Equals(object obj)
         {

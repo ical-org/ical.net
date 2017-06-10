@@ -138,7 +138,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 
             var encodedValues = serializeAsList ? UnescapedCommas.Split(value) : new[] { value };
             var escapedValues = encodedValues.Select(v => Decode(dt, v)).ToList();
-            var values = escapedValues.Select(v => Unescape(v)).ToList();
+            var values = escapedValues.Select(Unescape).ToList();
 
             if (co is ICalendarProperty)
             {

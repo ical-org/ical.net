@@ -159,10 +159,7 @@ namespace Ical.Net
             EnsureProperties();
         }
 
-        private void Initialize()
-        {
-            SetService(new RecurringEvaluator(this));
-        }
+        private void Initialize() => SetService(new RecurringEvaluator(this));
 
         private void EnsureProperties()
         {
@@ -179,35 +176,20 @@ namespace Ical.Net
             Initialize();
         }
 
-        public virtual void ClearEvaluation()
-        {
-            RecurrenceUtil.ClearEvaluation(this);
-        }
+        public virtual void ClearEvaluation() => RecurrenceUtil.ClearEvaluation(this);
 
-        public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt)
-        {
-            return RecurrenceUtil.GetOccurrences(this, dt, EvaluationIncludesReferenceDate);
-        }
+        public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt) => RecurrenceUtil.GetOccurrences(this, dt, EvaluationIncludesReferenceDate);
 
         public virtual HashSet<Occurrence> GetOccurrences(DateTime dt)
-        {
-            return RecurrenceUtil.GetOccurrences(this, new CalDateTime(dt), EvaluationIncludesReferenceDate);
-        }
+            => RecurrenceUtil.GetOccurrences(this, new CalDateTime(dt), EvaluationIncludesReferenceDate);
 
         public virtual HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
-        {
-            return RecurrenceUtil.GetOccurrences(this, startTime, endTime, EvaluationIncludesReferenceDate);
-        }
+            => RecurrenceUtil.GetOccurrences(this, startTime, endTime, EvaluationIncludesReferenceDate);
 
         public virtual HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
-        {
-            return RecurrenceUtil.GetOccurrences(this, new CalDateTime(startTime), new CalDateTime(endTime), EvaluationIncludesReferenceDate);
-        }
+            => RecurrenceUtil.GetOccurrences(this, new CalDateTime(startTime), new CalDateTime(endTime), EvaluationIncludesReferenceDate);
 
-        public virtual IList<AlarmOccurrence> PollAlarms()
-        {
-            return PollAlarms(null, null);
-        }
+        public virtual IList<AlarmOccurrence> PollAlarms() => PollAlarms(null, null);
 
         public virtual IList<AlarmOccurrence> PollAlarms(IDateTime startTime, IDateTime endTime)
         {

@@ -83,11 +83,8 @@ namespace Ical.Net.DataTypes
             return grouped.ToDictionary(k => k.Key, v => v.Value.OrderBy(d => d.StartTime).ToList());
         }
 
-        protected bool Equals(PeriodList other)
-        {
-            return string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase)
-                   && CollectionHelpers.Equals(Periods, other.Periods);
-        }
+        protected bool Equals(PeriodList other) => string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase)
+            && CollectionHelpers.Equals(Periods, other.Periods);
 
         public override bool Equals(object obj)
         {

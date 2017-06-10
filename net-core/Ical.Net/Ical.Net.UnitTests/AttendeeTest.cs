@@ -10,15 +10,12 @@ namespace Ical.Net.UnitTests
     [TestFixture]
     public class AttendeeTest
     {
-        internal static CalendarEvent VEventFactory()
+        internal static CalendarEvent VEventFactory() => new CalendarEvent
         {
-            return new CalendarEvent
-            {
-                Summary = "Testing",
-                Start = new CalDateTime(2010, 3, 25),
-                End = new CalDateTime(2010, 3, 26)
-            };
-        }
+            Summary = "Testing",
+            Start = new CalDateTime(2010, 3, 25),
+            End = new CalDateTime(2010, 3, 26)
+        };
 
         private static readonly IList<Attendee> _attendees = new List<Attendee>
         {

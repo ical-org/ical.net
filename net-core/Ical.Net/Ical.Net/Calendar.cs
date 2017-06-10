@@ -276,15 +276,9 @@ namespace Ical.Net
         /// </summary>
         /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
         /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
-        public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt)
-        {
-            return GetOccurrences<IRecurringComponent>(new CalDateTime(dt.AsSystemLocal.Date), new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)));
-        }
+        public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt) => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.AsSystemLocal.Date), new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)));
 
-        public virtual HashSet<Occurrence> GetOccurrences(DateTime dt)
-        {
-            return GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)));
-        }
+        public virtual HashSet<Occurrence> GetOccurrences(DateTime dt) => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)));
 
         /// <summary>
         /// Returns a list of occurrences of each recurring component

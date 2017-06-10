@@ -60,10 +60,7 @@ namespace Ical.Net.DataTypes
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
-        protected bool Equals(Organizer other)
-        {
-            return Equals(Value, other.Value);
-        }
+        protected bool Equals(Organizer other) => Equals(Value, other.Value);
 
         public override bool Equals(object obj)
         {
@@ -82,10 +79,7 @@ namespace Ical.Net.DataTypes
             return Equals((Organizer) obj);
         }
 
-        public override int GetHashCode()
-        {
-            return Value?.GetHashCode() ?? 0;
-        }
+        public override int GetHashCode() => Value?.GetHashCode() ?? 0;
 
         public override void CopyFrom(ICopyable obj)
         {

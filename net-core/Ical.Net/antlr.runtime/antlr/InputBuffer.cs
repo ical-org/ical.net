@@ -94,12 +94,9 @@ namespace antlr
 			return marked.ToString();
 		}
 		
-		public virtual bool isMarked()
-		{
-			return (nMarkers != 0);
-		}
-		
-		/*Get a lookahead character */
+		public virtual bool isMarked() => (nMarkers != 0);
+
+	    /*Get a lookahead character */
 		public virtual char LA(int i)
 		{
 			fill(i);

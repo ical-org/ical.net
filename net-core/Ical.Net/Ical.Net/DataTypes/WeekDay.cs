@@ -14,20 +14,11 @@ namespace Ical.Net.DataTypes
 
         public virtual DayOfWeek DayOfWeek { get; set; }
 
-        public WeekDay()
-        {
-            Offset = int.MinValue;
-        }
+        public WeekDay() => Offset = int.MinValue;
 
-        public WeekDay(DayOfWeek day) : this()
-        {
-            DayOfWeek = day;
-        }
+        public WeekDay(DayOfWeek day) : this() => DayOfWeek = day;
 
-        public WeekDay(DayOfWeek day, int num) : this(day)
-        {
-            Offset = num;
-        }
+        public WeekDay(DayOfWeek day, int num) : this(day) => Offset = num;
 
         public WeekDay(DayOfWeek day, FrequencyOccurrence type) : this(day, (int) type) {}
 
@@ -48,10 +39,7 @@ namespace Ical.Net.DataTypes
             return ds.Offset == Offset && ds.DayOfWeek == DayOfWeek;
         }
 
-        public override int GetHashCode()
-        {
-            return Offset.GetHashCode() ^ DayOfWeek.GetHashCode();
-        }
+        public override int GetHashCode() => Offset.GetHashCode() ^ DayOfWeek.GetHashCode();
 
         public override void CopyFrom(ICopyable obj)
         {

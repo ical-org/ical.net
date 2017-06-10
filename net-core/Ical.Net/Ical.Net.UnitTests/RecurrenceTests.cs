@@ -2896,7 +2896,7 @@ END:VCALENDAR";
             var startSearch = new CalDateTime(2010, 1, 1, _tzid);
             var endSearch = new CalDateTime(2016, 12, 31, _tzid);
 
-            var occurrences = firstEvent.GetOccurrences(startSearch, endSearch).Select(o => o.Period as Period).ToList();
+            var occurrences = firstEvent.GetOccurrences(startSearch, endSearch).Select(o => o.Period).ToList();
             Assert.IsTrue(occurrences.Count == 0);
         }
 
@@ -2926,7 +2926,7 @@ END:VCALENDAR";
             var endSearch = new CalDateTime(DateTime.Parse("2016-08-28T07:00:00").AddDays(7), _tzid);
 
             var occurrences = firstEvent.GetOccurrences(startSearch, endSearch)
-                .Select(o => o.Period as Period)
+                .Select(o => o.Period)
                 .OrderBy(p => p.StartTime)
                 .ToList();
 
@@ -2987,7 +2987,7 @@ END:VCALENDAR";
 
             var lastExpected = new CalDateTime(DateTime.Parse("2016-08-31T07:00:00"), "UTC");
             var occurrences = firstEvent.GetOccurrences(startSearch, endSearch)
-                    .Select(o => o.Period as Period)
+                    .Select(o => o.Period)
                     .OrderBy(p => p.StartTime)
                     .ToList();
 
@@ -2996,7 +2996,7 @@ END:VCALENDAR";
             //Create 1 second of overlap
             endSearch = new CalDateTime(endSearch.Value.AddSeconds(1), "UTC");
             occurrences = firstEvent.GetOccurrences(startSearch, endSearch)
-                .Select(o => o.Period as Period)
+                .Select(o => o.Period)
                 .OrderBy(p => p.StartTime)
                 .ToList();
 
@@ -3074,7 +3074,7 @@ END:VCALENDAR";
             var occurrences = new HashSet<Occurrence>();
 
             var orderedOccurrences = occurrences
-                .Select(o => o.Period as Period)
+                .Select(o => o.Period)
                 .OrderBy(p => p.StartTime)
                 .ToList();
 

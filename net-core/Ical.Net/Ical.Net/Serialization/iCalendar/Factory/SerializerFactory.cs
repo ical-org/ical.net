@@ -16,10 +16,7 @@ namespace Ical.Net.Serialization.iCalendar.Factory
     {
         private readonly ISerializerFactory _mDataTypeSerializerFactory;
 
-        public SerializerFactory()
-        {
-            _mDataTypeSerializerFactory = new DataTypeSerializerFactory();
-        }
+        public SerializerFactory() => _mDataTypeSerializerFactory = new DataTypeSerializerFactory();
 
         /// <summary>
         /// Returns a serializer that can be used to serialize and object

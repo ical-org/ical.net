@@ -48,14 +48,8 @@ namespace antlr
         }
 
         [Obsolete("Replaced by Message property since version 2.7.0", true)]
-        public virtual string getErrorMessage()
-        {
-            return Message;
-        }
+        public virtual string getErrorMessage() => Message;
 
-        public override string ToString()
-        {
-            return FileLineFormatter.getFormatter().getFormatString(fileName, line, column) + Message;
-        }
+        public override string ToString() => FileLineFormatter.getFormatter().getFormatString(fileName, line, column) + Message;
     }
 }

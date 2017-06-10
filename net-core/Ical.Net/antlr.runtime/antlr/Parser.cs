@@ -44,12 +44,9 @@ namespace antlr
 		
 		/*Get another token object from the token stream */
 		public abstract void  consume();
-		public virtual string getFilename()
-		{
-			return inputState.filename;
-		}
-		
-		/*Return the token type of the ith token of lookahead where i=1
+		public virtual string getFilename() => inputState.filename;
+
+	    /*Return the token type of the ith token of lookahead where i=1
 		* is the current token being examined by the parser (i.e., it
 		* has not been matched yet).
 		*/

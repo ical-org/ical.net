@@ -66,10 +66,7 @@ namespace Ical.Net.General
 
         public virtual IEnumerable<string> Values => _values;
 
-        public virtual bool ContainsValue(string value)
-        {
-            return _values.Contains(value);
-        }
+        public virtual bool ContainsValue(string value) => _values.Contains(value);
 
         public virtual int ValueCount => _values?.Count ?? 0;
 

@@ -14,10 +14,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         public CalendarSerializer()
             :this(new SerializationContext()) { }
 
-        public CalendarSerializer(Calendar cal)
-        {
-            _calendar = cal;
-        }
+        public CalendarSerializer(Calendar cal) => _calendar = cal;
 
         public CalendarSerializer(SerializationContext ctx) : base(ctx) {}
 

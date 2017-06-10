@@ -39,10 +39,7 @@ namespace Ical.Net.DataTypes
 
         public Attachment() {}
 
-        public Attachment(byte[] value) : this()
-        {
-            Data = value;
-        }
+        public Attachment(byte[] value) : this() => Data = value;
 
         public Attachment(string value) : this()
         {
@@ -59,12 +56,9 @@ namespace Ical.Net.DataTypes
             Uri = a.Uri;
         }
 
-        public override string ToString()
-        {
-            return Data == null
-                ? string.Empty
-                : ValueEncoding.GetString(Data);
-        }
+        public override string ToString() => Data == null
+            ? string.Empty
+            : ValueEncoding.GetString(Data);
 
         //ToDo: See if this can be deleted
         public override void CopyFrom(ICopyable obj) { }

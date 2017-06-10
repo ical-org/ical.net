@@ -12,10 +12,7 @@ namespace Ical.Net.General.Proxies
     {
         private readonly Dictionary<string, TComponentType> _lookup;
 
-        public UniqueComponentListProxy(IGroupedCollection<string, ICalendarObject> children) : base(children)
-        {
-            _lookup = new Dictionary<string, TComponentType>();
-        }
+        public UniqueComponentListProxy(IGroupedCollection<string, ICalendarObject> children) : base(children) => _lookup = new Dictionary<string, TComponentType>();
 
         private TComponentType Search(string uid)
         {

@@ -185,10 +185,7 @@ namespace Ical.Net
         /// Returns True if the todo item was cancelled.
         /// </summary>
         /// <returns>True if the todo was cancelled, False otherwise.</returns>
-        public virtual bool IsCancelled()
-        {
-            return Status == TodoStatus.Cancelled;
-        }
+        public virtual bool IsCancelled() => Status == TodoStatus.Cancelled;
 
         protected override bool EvaluationIncludesReferenceDate => true;
 

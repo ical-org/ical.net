@@ -97,7 +97,7 @@ namespace antlr
         }
 
         // From interface TokenStream
-        public virtual IToken nextToken() { return null; }
+        public virtual IToken nextToken() => null;
 
         public virtual void append(char c)
         {
@@ -162,56 +162,32 @@ namespace antlr
             }
         }
 
-        public virtual int getColumn()
-        {
-            return inputState.column;
-        }
+        public virtual int getColumn() => inputState.column;
 
         public virtual void setColumn(int c)
         {
             inputState.column = c;
         }
 
-        public virtual bool getCommitToPath()
-        {
-            return commitToPath;
-        }
+        public virtual bool getCommitToPath() => commitToPath;
 
-        public virtual string getFilename()
-        {
-            return inputState.filename;
-        }
+        public virtual string getFilename() => inputState.filename;
 
-        public virtual InputBuffer getInputBuffer()
-        {
-            return inputState.input;
-        }
+        public virtual InputBuffer getInputBuffer() => inputState.input;
 
-        public virtual LexerSharedInputState getInputState()
-        {
-            return inputState;
-        }
+        public virtual LexerSharedInputState getInputState() => inputState;
 
         public virtual void setInputState(LexerSharedInputState state)
         {
             inputState = state;
         }
 
-        public virtual int getLine()
-        {
-            return inputState.line;
-        }
+        public virtual int getLine() => inputState.line;
 
         /*return a copy of the current text buffer */
-        public virtual string getText()
-        {
-            return text.ToString();
-        }
+        public virtual string getText() => text.ToString();
 
-        public virtual IToken getTokenObject()
-        {
-            return returnToken_;
-        }
+        public virtual IToken getTokenObject() => returnToken_;
 
         public virtual char LA(int i)
         {
@@ -257,10 +233,7 @@ namespace antlr
             return newToken;
         }
 
-        public virtual int mark()
-        {
-            return inputState.input.mark();
-        }
+        public virtual int mark() => inputState.input.mark();
 
         public virtual void match(char c)
         {
@@ -347,10 +320,7 @@ namespace antlr
             tabsize = size;
         }
 
-        public virtual int getTabSize()
-        {
-            return tabsize;
-        }
+        public virtual int getTabSize() => tabsize;
 
         public virtual void panic()
         {

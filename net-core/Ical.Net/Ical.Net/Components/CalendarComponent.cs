@@ -20,15 +20,9 @@ namespace Ical.Net
         /// <summary>
         /// Loads an iCalendar component (Event, Todo, Journal, etc.) from an open stream.
         /// </summary>
-        public static ICalendarComponent LoadFromStream(Stream s)
-        {
-            return LoadFromStream(s, Encoding.UTF8);
-        }
+        public static ICalendarComponent LoadFromStream(Stream s) => LoadFromStream(s, Encoding.UTF8);
 
-        public static ICalendarComponent LoadFromStream(Stream stream, Encoding encoding)
-        {
-            return LoadFromStream(stream, encoding, new ComponentSerializer());
-        }
+        public static ICalendarComponent LoadFromStream(Stream stream, Encoding encoding) => LoadFromStream(stream, encoding, new ComponentSerializer());
 
         public static T LoadFromStream<T>(Stream stream, Encoding encoding) where T : ICalendarComponent
         {
@@ -41,10 +35,7 @@ namespace Ical.Net
             return default(T);
         }
 
-        public static ICalendarComponent LoadFromStream(Stream stream, Encoding encoding, ISerializer serializer)
-        {
-            return serializer.Deserialize(stream, encoding) as ICalendarComponent;
-        }
+        public static ICalendarComponent LoadFromStream(Stream stream, Encoding encoding, ISerializer serializer) => serializer.Deserialize(stream, encoding) as ICalendarComponent;
 
         /// <summary>
         /// Returns a list of properties that are associated with the iCalendar object.

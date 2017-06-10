@@ -60,10 +60,7 @@ namespace Ical.Net.DataTypes
             Duration = p.Duration;
         }
 
-        protected bool Equals(Period other)
-        {
-            return Equals(StartTime, other.StartTime) && Equals(EndTime, other.EndTime) && Duration.Equals(other.Duration);
-        }
+        protected bool Equals(Period other) => Equals(StartTime, other.StartTime) && Equals(EndTime, other.EndTime) && Duration.Equals(other.Duration);
 
         public override bool Equals(object obj)
         {
@@ -173,11 +170,8 @@ namespace Ical.Net.DataTypes
             return EndTime == null || EndTime.GreaterThan(dt);
         }
 
-        public virtual bool CollidesWith(Period period)
-        {
-            return period != null
-                && ((period.StartTime != null && Contains(period.StartTime)) || (period.EndTime != null && Contains(period.EndTime)));
-        }
+        public virtual bool CollidesWith(Period period) => period != null
+            && ((period.StartTime != null && Contains(period.StartTime)) || (period.EndTime != null && Contains(period.EndTime)));
 
         public int CompareTo(Period other)
         {

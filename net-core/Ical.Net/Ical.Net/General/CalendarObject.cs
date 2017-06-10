@@ -14,15 +14,9 @@ namespace Ical.Net.General
         private ICalendarObjectList<ICalendarObject> _children;
         private ServiceProvider _serviceProvider;
 
-        internal CalendarObject()
-        {
-            Initialize();
-        }
+        internal CalendarObject() => Initialize();
 
-        public CalendarObject(string name) : this()
-        {
-            Name = name;
-        }
+        public CalendarObject(string name) : this() => Name = name;
 
         public CalendarObject(int line, int col) : this()
         {
@@ -41,28 +35,16 @@ namespace Ical.Net.General
         }
 
         [OnDeserializing]
-        internal void DeserializingInternal(StreamingContext context)
-        {
-            OnDeserializing(context);
-        }
+        internal void DeserializingInternal(StreamingContext context) => OnDeserializing(context);
 
         [OnDeserialized]
-        internal void DeserializedInternal(StreamingContext context)
-        {
-            OnDeserialized(context);
-        }
+        internal void DeserializedInternal(StreamingContext context) => OnDeserialized(context);
 
-        protected virtual void OnDeserializing(StreamingContext context)
-        {
-            Initialize();
-        }
+        protected virtual void OnDeserializing(StreamingContext context) => Initialize();
 
         protected virtual void OnDeserialized(StreamingContext context) {}
 
-        private void Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e)
-        {
-            e.First.Parent = this;
-        }
+        private void Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e) => e.First.Parent = this;
 
         protected bool Equals(CalendarObject other) => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
 
@@ -70,14 +52,10 @@ namespace Ical.Net.General
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((CalendarObject) obj);
+            return obj.GetType() == GetType() && Equals((CalendarObject) obj);
         }
 
-        public override int GetHashCode()
-        {
-            return Name?.GetHashCode() ?? 0;
-        }
+        public override int GetHashCode() => Name?.GetHashCode() ?? 0;
 
         public override void CopyFrom(ICopyable c)
         {
@@ -113,14 +91,6 @@ namespace Ical.Net.General
 
         /// <summary>
         /// Gets or sets the name of the iCalObject.  For iCalendar components, this is the RFC 5545 name of the component.
-        /// <example>
-        ///     <list type="bullet">
-        ///         <item>Event - "VEVENT"</item>
-        ///         <item>Todo - "VTODO"</item>
-        ///         <item>TimeZone - "VTIMEZONE"</item>
-        ///         <item>etc.</item>
-        ///     </list>
-        /// </example>
         /// </summary>        
         public virtual string Name { get; set; }
 
@@ -137,11 +107,7 @@ namespace Ical.Net.General
                     obj = obj.Parent;
                 }
 
-                if (obj is Calendar)
-                {
-                    return (Calendar) obj;
-                }
-                return null;
+                return obj as Calendar;
             }
             protected set { }
         }
@@ -150,45 +116,21 @@ namespace Ical.Net.General
 
         public virtual int Column { get; set; }
 
-        public virtual object GetService(Type serviceType)
-        {
-            return _serviceProvider.GetService(serviceType);
-        }
+        public virtual object GetService(Type serviceType) => _serviceProvider.GetService(serviceType);
 
-        public virtual object GetService(string name)
-        {
-            return _serviceProvider.GetService(name);
-        }
+        public virtual object GetService(string name) => _serviceProvider.GetService(name);
 
-        public virtual T GetService<T>()
-        {
-            return _serviceProvider.GetService<T>();
-        }
+        public virtual T GetService<T>() => _serviceProvider.GetService<T>();
 
-        public virtual T GetService<T>(string name)
-        {
-            return _serviceProvider.GetService<T>(name);
-        }
+        public virtual T GetService<T>(string name) => _serviceProvider.GetService<T>(name);
 
-        public virtual void SetService(string name, object obj)
-        {
-            _serviceProvider.SetService(name, obj);
-        }
+        public virtual void SetService(string name, object obj) => _serviceProvider.SetService(name, obj);
 
-        public virtual void SetService(object obj)
-        {
-            _serviceProvider.SetService(obj);
-        }
+        public virtual void SetService(object obj) => _serviceProvider.SetService(obj);
 
-        public virtual void RemoveService(Type type)
-        {
-            _serviceProvider.RemoveService(type);
-        }
+        public virtual void RemoveService(Type type) => _serviceProvider.RemoveService(type);
 
-        public virtual void RemoveService(string name)
-        {
-            _serviceProvider.RemoveService(name);
-        }
+        public virtual void RemoveService(string name) => _serviceProvider.RemoveService(name);
 
         public virtual string Group
         {

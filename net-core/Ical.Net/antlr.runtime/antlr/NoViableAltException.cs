@@ -23,10 +23,7 @@ namespace antlr
         public AST node; // handles parsing and treeparsing
 
         public NoViableAltException(IToken t, string fileName_) :
-            base("NoViableAlt", fileName_, t.getLine(), t.getColumn())
-        {
-            token = t;
-        }
+            base("NoViableAlt", fileName_, t.getLine(), t.getColumn()) => token = t;
 
         /*
         * Returns a clean error message (no line number/column information)

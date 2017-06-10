@@ -120,10 +120,7 @@ namespace Ical.Net
             return fb;
         }
 
-        public FreeBusy()
-        {
-            Name = Components.Freebusy;
-        }
+        public FreeBusy() => Name = Components.Freebusy;
 
         public virtual IList<FreeBusyEntry> Entries
         {

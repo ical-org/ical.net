@@ -50,18 +50,12 @@ namespace antlr.collections
         protected internal long[] dataBits;
 
         /*Construction from a static array of longs */
-        public BitSet(long[] bits_)
-        {
-            dataBits = bits_;
-        }
+        public BitSet(long[] bits_) => dataBits = bits_;
 
         /*Construct a bitset given the size
         * @param nbits The size of the bitset in bits
         */
-        public BitSet(int nbits)
-        {
-            dataBits = new long[((nbits - 1) >> LOG_BITS) + 1];
-        }
+        public BitSet(int nbits) => dataBits = new long[((nbits - 1) >> LOG_BITS) + 1];
 
         private static long bitMask(int bitNumber)
         {
@@ -96,10 +90,7 @@ namespace antlr.collections
             return deg;
         }
 
-        protected bool Equals(BitSet other)
-        {
-            return dataBits.SequenceEqual(other.dataBits);
-        }
+        protected bool Equals(BitSet other) => dataBits.SequenceEqual(other.dataBits);
 
         public override bool Equals(object obj)
         {
@@ -141,10 +132,7 @@ namespace antlr.collections
             return elems;
         }
 
-        public override string ToString()
-        {
-            return ToString(",");
-        }
+        public override string ToString() => ToString(",");
 
         /*Transform a bit set into a string by formatting each element as an integer
         * @separator The string to put in between elements

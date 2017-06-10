@@ -42,10 +42,7 @@ namespace antlr
 
 
         /*Create a character buffer */
-        public CharBuffer(TextReader input_)
-        {
-            input = input_;
-        }
+        public CharBuffer(TextReader input_) => input = input_;
 
         /*Ensure that the character buffer is sufficiently full */
         public override void fill(int amount)

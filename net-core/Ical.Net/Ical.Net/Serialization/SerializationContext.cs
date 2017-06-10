@@ -90,25 +90,13 @@ namespace Ical.Net.Serialization
             return null;
         }
 
-        public virtual object GetService(Type serviceType)
-        {
-            return _mServiceProvider.GetService(serviceType);
-        }
+        public virtual object GetService(Type serviceType) => _mServiceProvider.GetService(serviceType);
 
-        public virtual object GetService(string name)
-        {
-            return _mServiceProvider.GetService(name);
-        }
+        public virtual object GetService(string name) => _mServiceProvider.GetService(name);
 
-        public virtual T GetService<T>()
-        {
-            return _mServiceProvider.GetService<T>();
-        }
+        public virtual T GetService<T>() => _mServiceProvider.GetService<T>();
 
-        public virtual T GetService<T>(string name)
-        {
-            return _mServiceProvider.GetService<T>(name);
-        }
+        public virtual T GetService<T>(string name) => _mServiceProvider.GetService<T>(name);
 
         public virtual void SetService(string name, object obj)
         {

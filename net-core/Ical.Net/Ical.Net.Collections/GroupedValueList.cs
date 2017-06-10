@@ -49,9 +49,6 @@ namespace Ical.Net.Collections
             return default(TType);
         }
 
-        public virtual IList<TType> GetMany<TType>(TGroup group)
-        {
-            return new GroupedValueListProxy<TGroup, TInterface, TItem, TValueType, TType>(this, group);
-        }
+        public virtual IList<TType> GetMany<TType>(TGroup group) => new GroupedValueListProxy<TGroup, TInterface, TItem, TValueType, TType>(this, group);
     }
 }

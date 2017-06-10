@@ -34,10 +34,7 @@ namespace Ical.Net.General.Proxies
             return parameter?.Value;
         }
 
-        public virtual IList<string> GetMany(string name)
-        {
-            return new GroupedValueListProxy<string, CalendarParameter, CalendarParameter, string, string>(Parameters, name);
-        }
+        public virtual IList<string> GetMany(string name) => new GroupedValueListProxy<string, CalendarParameter, CalendarParameter, string, string>(Parameters, name);
 
         public virtual void Set(string name, string value)
         {
@@ -67,10 +64,7 @@ namespace Ical.Net.General.Proxies
             }
         }
 
-        public virtual int IndexOf(CalendarParameter obj)
-        {
-            return 0;
-        }
+        public virtual int IndexOf(CalendarParameter obj) => 0;
 
         public virtual void Insert(int index, CalendarParameter item) {}
 
