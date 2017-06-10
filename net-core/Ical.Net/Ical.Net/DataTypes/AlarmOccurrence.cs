@@ -22,8 +22,8 @@ namespace Ical.Net.DataTypes
 
         public IDateTime DateTime
         {
-            get { return Period.StartTime; }
-            set { Period = new Period(value); }
+            get => Period.StartTime;
+            set => Period = new Period(value);
         }
 
         public AlarmOccurrence(AlarmOccurrence ao)

@@ -127,32 +127,32 @@ namespace Ical.Net
 
         public virtual IList<FreeBusyEntry> Entries
         {
-            get { return Properties.GetMany<FreeBusyEntry>("FREEBUSY"); }
-            set { Properties.Set("FREEBUSY", value); }
+            get => Properties.GetMany<FreeBusyEntry>("FREEBUSY");
+            set => Properties.Set("FREEBUSY", value);
         }
 
         public virtual IDateTime DtStart
         {
-            get { return Properties.Get<IDateTime>("DTSTART"); }
-            set { Properties.Set("DTSTART", value); }
+            get => Properties.Get<IDateTime>("DTSTART");
+            set => Properties.Set("DTSTART", value);
         }
 
         public virtual IDateTime DtEnd
         {
-            get { return Properties.Get<IDateTime>("DTEND"); }
-            set { Properties.Set("DTEND", value); }
+            get => Properties.Get<IDateTime>("DTEND");
+            set => Properties.Set("DTEND", value);
         }
 
         public virtual IDateTime Start
         {
-            get { return Properties.Get<IDateTime>("DTSTART"); }
-            set { Properties.Set("DTSTART", value); }
+            get => Properties.Get<IDateTime>("DTSTART");
+            set => Properties.Set("DTSTART", value);
         }
 
         public virtual IDateTime End
         {
-            get { return Properties.Get<IDateTime>("DTEND"); }
-            set { Properties.Set("DTEND", value); }
+            get => Properties.Get<IDateTime>("DTEND");
+            set => Properties.Set("DTEND", value);
         }
 
         public virtual FreeBusyStatus GetFreeBusyStatus(Period period)

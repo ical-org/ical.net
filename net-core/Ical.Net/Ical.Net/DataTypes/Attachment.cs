@@ -20,10 +20,7 @@ namespace Ical.Net.DataTypes
         private Encoding _valueEncoding = System.Text.Encoding.UTF8;
         public virtual Encoding ValueEncoding
         {
-            get
-            {
-                return _valueEncoding;
-            }
+            get => _valueEncoding;
             set
             {
                 if (value == null)
@@ -36,8 +33,8 @@ namespace Ical.Net.DataTypes
 
         public virtual string FormatType
         {
-            get { return Parameters.Get("FMTTYPE"); }
-            set { Parameters.Set("FMTTYPE", value); }
+            get => Parameters.Get("FMTTYPE");
+            set => Parameters.Set("FMTTYPE", value);
         }
 
         public Attachment() {}

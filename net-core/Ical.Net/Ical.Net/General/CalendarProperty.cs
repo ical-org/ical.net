@@ -79,10 +79,7 @@ namespace Ical.Net.General
 
         public object Value
         {
-            get
-            {
-                return _values?.FirstOrDefault();
-            }
+            get => _values?.FirstOrDefault();
             set
             {
                 if (value == null)

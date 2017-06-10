@@ -21,14 +21,8 @@ namespace Ical.Net.General
             e.First.Parent = _mParent;
         }
 
-        public ICalendarProperty this[string name]
-        {
-            get
-            {
-                return ContainsKey(name)
-                    ? AllOf(name).FirstOrDefault()
-                    : null;
-            }
-        }
+        public ICalendarProperty this[string name] => ContainsKey(name)
+            ? AllOf(name).FirstOrDefault()
+            : null;
     }
 }

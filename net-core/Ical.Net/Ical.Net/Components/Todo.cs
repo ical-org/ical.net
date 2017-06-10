@@ -23,8 +23,8 @@ namespace Ical.Net
         /// </summary>
         public virtual IDateTime Completed
         {
-            get { return Properties.Get<IDateTime>("COMPLETED"); }
-            set { Properties.Set("COMPLETED", value); }
+            get => Properties.Get<IDateTime>("COMPLETED");
+            set => Properties.Set("COMPLETED", value);
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Ical.Net
         /// </summary>
         public override IDateTime DtStart
         {
-            get { return base.DtStart; }
+            get => base.DtStart;
             set
             {
                 base.DtStart = value;
@@ -45,7 +45,7 @@ namespace Ical.Net
         /// </summary>
         public virtual IDateTime Due
         {
-            get { return Properties.Get<IDateTime>("DUE"); }
+            get => Properties.Get<IDateTime>("DUE");
             set
             {
                 Properties.Set("DUE", value);
@@ -68,7 +68,7 @@ namespace Ical.Net
         // should always be extrapolated from the duration.
         public virtual TimeSpan Duration
         {
-            get { return Properties.Get<TimeSpan>("DURATION"); }
+            get => Properties.Get<TimeSpan>("DURATION");
             set
             {
                 Properties.Set("DURATION", value);
@@ -78,26 +78,26 @@ namespace Ical.Net
 
         public virtual GeographicLocation GeographicLocation
         {
-            get { return Properties.Get<GeographicLocation>("GEO"); }
-            set { Properties.Set("GEO", value); }
+            get => Properties.Get<GeographicLocation>("GEO");
+            set => Properties.Set("GEO", value);
         }
 
         public virtual string Location
         {
-            get { return Properties.Get<string>("LOCATION"); }
-            set { Properties.Set("LOCATION", value); }
+            get => Properties.Get<string>("LOCATION");
+            set => Properties.Set("LOCATION", value);
         }
 
         public virtual int PercentComplete
         {
-            get { return Properties.Get<int>("PERCENT-COMPLETE"); }
-            set { Properties.Set("PERCENT-COMPLETE", value); }
+            get => Properties.Get<int>("PERCENT-COMPLETE");
+            set => Properties.Set("PERCENT-COMPLETE", value);
         }
 
         public virtual IList<string> Resources
         {
-            get { return Properties.GetMany<string>("RESOURCES"); }
-            set { Properties.Set("RESOURCES", value ?? new List<string>()); }
+            get => Properties.GetMany<string>("RESOURCES");
+            set => Properties.Set("RESOURCES", value ?? new List<string>());
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Ical.Net
         /// </summary>
         public virtual TodoStatus Status
         {
-            get { return Properties.Get<TodoStatus>("STATUS"); }
+            get => Properties.Get<TodoStatus>("STATUS");
             set
             {
                 if (Status != value)

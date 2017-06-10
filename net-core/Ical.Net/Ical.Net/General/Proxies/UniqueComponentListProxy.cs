@@ -37,7 +37,7 @@ namespace Ical.Net.General.Proxies
 
         public virtual TComponentType this[string uid]
         {
-            get { return Search(uid); }
+            get => Search(uid);
             set
             {
                 // Find the item matching the UID

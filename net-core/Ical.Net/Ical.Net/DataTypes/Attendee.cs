@@ -111,7 +111,7 @@ namespace Ical.Net.DataTypes
         /// <summary> MEMBER: the groups the user belongs to </summary>
         public virtual IList<string> Members
         {
-            get { return _members ?? (_members = new List<string>(Parameters.GetMany("MEMBER"))); }
+            get => _members ?? (_members = new List<string>(Parameters.GetMany("MEMBER")));
             set
             {
                 _members = new List<string>(value);
@@ -196,7 +196,7 @@ namespace Ical.Net.DataTypes
         /// <summary> DELEGATED-TO, to indicate the calendar users that the original request was delegated to </summary>
         public virtual IList<string> DelegatedTo
         {
-            get { return _delegatedTo ?? (_delegatedTo = new List<string>(Parameters.GetMany("DELEGATED-TO"))); }
+            get => _delegatedTo ?? (_delegatedTo = new List<string>(Parameters.GetMany("DELEGATED-TO")));
             set
             {
                 if (value == null)
@@ -212,7 +212,7 @@ namespace Ical.Net.DataTypes
         /// <summary> DELEGATED-FROM, to indicate whom the request was delegated from </summary>
         public virtual IList<string> DelegatedFrom
         {
-            get { return _delegatedFrom ?? (_delegatedFrom = new List<string>(Parameters.GetMany("DELEGATED-FROM"))); }
+            get => _delegatedFrom ?? (_delegatedFrom = new List<string>(Parameters.GetMany("DELEGATED-FROM")));
             set
             {
                 if (value == null)

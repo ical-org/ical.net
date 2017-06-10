@@ -26,13 +26,10 @@ namespace Ical.Net.DataTypes
 
         public int Interval
         {
-            get
-            {
-                return _interval == int.MinValue
-                    ? 1
-                    : _interval;
-            }
-            set { _interval = value; }
+            get => _interval == int.MinValue
+                ? 1
+                : _interval;
+            set => _interval = value;
         }
 
         public List<int> BySecond { get; set; } = new List<int>(16);
@@ -66,7 +63,7 @@ namespace Ical.Net.DataTypes
                 }
                 return Calendar?.RecurrenceRestriction ?? RecurrenceRestrictionType.Default;
             }
-            set { _restrictionType = value; }
+            set => _restrictionType = value;
         }
 
         public RecurrenceEvaluationModeType EvaluationMode
@@ -80,7 +77,7 @@ namespace Ical.Net.DataTypes
                 }
                 return Calendar?.RecurrenceEvaluationMode ?? RecurrenceEvaluationModeType.Default;
             }
-            set { _evaluationMode = value; }
+            set => _evaluationMode = value;
         }
 
         public RecurrencePattern()

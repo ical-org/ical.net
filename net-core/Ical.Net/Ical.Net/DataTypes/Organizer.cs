@@ -14,7 +14,7 @@ namespace Ical.Net.DataTypes
     {
         public virtual Uri SentBy
         {
-            get { return new Uri(Parameters.Get("SENT-BY")); }
+            get => new Uri(Parameters.Get("SENT-BY"));
             set
             {
                 if (value != null)
@@ -30,13 +30,13 @@ namespace Ical.Net.DataTypes
 
         public virtual string CommonName
         {
-            get { return Parameters.Get("CN"); }
-            set { Parameters.Set("CN", value); }
+            get => Parameters.Get("CN");
+            set => Parameters.Set("CN", value);
         }
 
         public virtual Uri DirectoryEntry
         {
-            get { return new Uri(Parameters.Get("DIR")); }
+            get => new Uri(Parameters.Get("DIR"));
             set
             {
                 if (value != null)

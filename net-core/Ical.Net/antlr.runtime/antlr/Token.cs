@@ -71,8 +71,8 @@ namespace antlr
 
 		public int Type
 		{
-			get { return type_;  }
-			set { type_ = value; }
+			get => type_;
+		    set => type_ = value;
 		}
 
 		public virtual void setType(int newType)	{ Type = newType; }

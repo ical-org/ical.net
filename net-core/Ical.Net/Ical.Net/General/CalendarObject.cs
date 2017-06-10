@@ -192,11 +192,8 @@ namespace Ical.Net.General
 
         public virtual string Group
         {
-            get { return Name; }
-            set
-            {
-                Name = value;
-            }
+            get => Name;
+            set => Name = value;
         }
     }
 }

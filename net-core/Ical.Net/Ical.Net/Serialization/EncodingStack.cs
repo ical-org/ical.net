@@ -12,15 +12,9 @@ namespace Ical.Net.Serialization
             _mStack = new Stack<Encoding>();
         }
 
-        public Encoding Current
-        {
-            get
-            {
-                return _mStack.Count > 0
-                    ? _mStack.Peek()
-                    : Encoding.UTF8;
-            }
-        }
+        public Encoding Current => _mStack.Count > 0
+            ? _mStack.Peek()
+            : Encoding.UTF8;
 
         public void Push(Encoding encoding)
         {

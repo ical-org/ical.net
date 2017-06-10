@@ -99,7 +99,7 @@ namespace Ical.Net.DataTypes
 
         public virtual ICalendarObject AssociatedObject
         {
-            get { return _AssociatedObject; }
+            get => _AssociatedObject;
             set
             {
                 if (!Equals(_AssociatedObject, value))
@@ -126,8 +126,8 @@ namespace Ical.Net.DataTypes
 
         public virtual string Language
         {
-            get { return Parameters.Get("LANGUAGE"); }
-            set { Parameters.Set("LANGUAGE", value); }
+            get => Parameters.Get("LANGUAGE");
+            set => Parameters.Set("LANGUAGE", value);
         }
 
         /// <summary>

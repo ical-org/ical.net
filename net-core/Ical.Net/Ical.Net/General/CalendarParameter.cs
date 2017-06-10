@@ -97,11 +97,8 @@ namespace Ical.Net.General
 
         public virtual string Value
         {
-            get
-            {
-                return Values?.FirstOrDefault();
-            }
-            set { SetValue(value); }
+            get => Values?.FirstOrDefault();
+            set => SetValue(value);
         }
     }
 }

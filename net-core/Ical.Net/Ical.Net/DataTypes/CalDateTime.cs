@@ -113,7 +113,7 @@ namespace Ical.Net.DataTypes
 
         public override ICalendarObject AssociatedObject
         {
-            get { return base.AssociatedObject; }
+            get => base.AssociatedObject;
             set
             {
                 if (!Equals(AssociatedObject, value))
@@ -251,28 +251,28 @@ namespace Ical.Net.DataTypes
 
         public bool IsUniversalTime
         {
-            get { return _isUniversalTime; }
-            set { _isUniversalTime = value; }
+            get => _isUniversalTime;
+            set => _isUniversalTime = value;
         }
 
         public string TimeZoneName => TzId;
 
         public DateTime Value
         {
-            get { return _value; }
-            set { _value = value; }
+            get => _value;
+            set => _value = value;
         }
 
         public bool HasDate
         {
-            get { return _hasDate; }
-            set { _hasDate = value; }
+            get => _hasDate;
+            set => _hasDate = value;
         }
 
         public bool HasTime
         {
-            get { return _hasTime; }
-            set { _hasTime = value; }
+            get => _hasTime;
+            set => _hasTime = value;
         }
 
         private string _tzId = string.Empty;

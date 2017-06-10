@@ -14,50 +14,50 @@ namespace Ical.Net
     {
         public virtual AlarmAction Action
         {
-            get { return Properties.Get<AlarmAction>("ACTION"); }
-            set { Properties.Set("ACTION", value); }
+            get => Properties.Get<AlarmAction>("ACTION");
+            set => Properties.Set("ACTION", value);
         }
 
         public virtual Attachment Attachment
         {
-            get { return Properties.Get<Attachment>("ATTACH"); }
-            set { Properties.Set("ATTACH", value); }
+            get => Properties.Get<Attachment>("ATTACH");
+            set => Properties.Set("ATTACH", value);
         }
 
         public virtual IList<Attendee> Attendees
         {
-            get { return Properties.GetMany<Attendee>("ATTENDEE"); }
-            set { Properties.Set("ATTENDEE", value); }
+            get => Properties.GetMany<Attendee>("ATTENDEE");
+            set => Properties.Set("ATTENDEE", value);
         }
 
         public virtual string Description
         {
-            get { return Properties.Get<string>("DESCRIPTION"); }
-            set { Properties.Set("DESCRIPTION", value); }
+            get => Properties.Get<string>("DESCRIPTION");
+            set => Properties.Set("DESCRIPTION", value);
         }
 
         public virtual TimeSpan Duration
         {
-            get { return Properties.Get<TimeSpan>("DURATION"); }
-            set { Properties.Set("DURATION", value); }
+            get => Properties.Get<TimeSpan>("DURATION");
+            set => Properties.Set("DURATION", value);
         }
 
         public virtual int Repeat
         {
-            get { return Properties.Get<int>("REPEAT"); }
-            set { Properties.Set("REPEAT", value); }
+            get => Properties.Get<int>("REPEAT");
+            set => Properties.Set("REPEAT", value);
         }
 
         public virtual string Summary
         {
-            get { return Properties.Get<string>("SUMMARY"); }
-            set { Properties.Set("SUMMARY", value); }
+            get => Properties.Get<string>("SUMMARY");
+            set => Properties.Set("SUMMARY", value);
         }
 
         public virtual Trigger Trigger
         {
-            get { return Properties.Get<Trigger>("TRIGGER"); }
-            set { Properties.Set("TRIGGER", value); }
+            get => Properties.Get<Trigger>("TRIGGER");
+            set => Properties.Set("TRIGGER", value);
         }
 
         protected virtual IList<AlarmOccurrence> Occurrences { get; set; }

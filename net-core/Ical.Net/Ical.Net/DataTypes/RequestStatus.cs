@@ -15,20 +15,20 @@ namespace Ical.Net.DataTypes
 
         public virtual string Description
         {
-            get { return _mDescription; }
-            set { _mDescription = value; }
+            get => _mDescription;
+            set => _mDescription = value;
         }
 
         public virtual string ExtraData
         {
-            get { return _mExtraData; }
-            set { _mExtraData = value; }
+            get => _mExtraData;
+            set => _mExtraData = value;
         }
 
         public virtual StatusCode StatusCode
         {
-            get { return _mStatusCode; }
-            set { _mStatusCode = value; }
+            get => _mStatusCode;
+            set => _mStatusCode = value;
         }
 
         public RequestStatus() {}

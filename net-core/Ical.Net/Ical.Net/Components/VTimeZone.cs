@@ -38,7 +38,7 @@ namespace Ical.Net
         private Uri _url;
         public virtual Uri Url
         {
-            get { return _url ?? (_url = Properties.Get<Uri>("TZURL")); }
+            get => _url ?? (_url = Properties.Get<Uri>("TZURL"));
             set
             {
                 _url = value;

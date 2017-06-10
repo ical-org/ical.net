@@ -25,25 +25,13 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public int Secondary
-        {
-            get
-            {
-                return Parts.Length > 1
-                    ? Parts[1]
-                    : 0;
-            }
-        }
+        public int Secondary => Parts.Length > 1
+            ? Parts[1]
+            : 0;
 
-        public int Tertiary
-        {
-            get
-            {
-                return Parts.Length > 2
-                    ? Parts[2]
-                    : 0;
-            }
-        }
+        public int Tertiary => Parts.Length > 2
+            ? Parts[2]
+            : 0;
 
         public StatusCode() {}
 

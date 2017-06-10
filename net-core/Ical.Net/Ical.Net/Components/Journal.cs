@@ -9,8 +9,8 @@ namespace Ical.Net
     {
         public JournalStatus Status
         {
-            get { return Properties.Get<JournalStatus>("STATUS"); }
-            set { Properties.Set("STATUS", value); }
+            get => Properties.Get<JournalStatus>("STATUS");
+            set => Properties.Set("STATUS", value);
         }
 
         private void Initialize()

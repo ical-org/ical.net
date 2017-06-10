@@ -125,7 +125,7 @@ namespace Ical.Net.DataTypes
         private IDateTime _endTime;
         public virtual IDateTime EndTime
         {
-            get { return _endTime; }
+            get => _endTime;
             set
             {
                 if (Equals(_endTime, value))

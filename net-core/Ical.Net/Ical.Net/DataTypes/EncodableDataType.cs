@@ -9,8 +9,8 @@ namespace Ical.Net.DataTypes
     {
         public virtual string Encoding
         {
-            get { return Parameters.Get("ENCODING"); }
-            set { Parameters.Set("ENCODING", value); }
+            get => Parameters.Get("ENCODING");
+            set => Parameters.Set("ENCODING", value);
         }
     }
 }

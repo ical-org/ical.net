@@ -21,8 +21,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         public virtual SerializationContext SerializationContext
         {
-            get { return _mSerializationContext; }
-            set { _mSerializationContext = value; }
+            get => _mSerializationContext;
+            set => _mSerializationContext = value;
         }
 
         public abstract Type TargetType { get; }
