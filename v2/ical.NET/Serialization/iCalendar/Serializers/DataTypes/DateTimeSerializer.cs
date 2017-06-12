@@ -45,11 +45,16 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         {
             var dt = obj as IDateTime;
 
-            //Historically, dday.ical substituted TZID=UTC with Z suffixes on DateTimes. However this behavior isn't part of the spec. Some popular libraries
-            //like Telerik's RadSchedule components will only understand the DateTimeKind.Utc if the ical text says TZID=UTC. Anything but that is treated as
-            //DateTimeKind.Unspecified, which is problematic.
+                      // RFC 5545 3.3.5: 
+            // The date with UTC time, or absolute time, is identified by a LATIN
+            // CAPITAL LETTER Z suffix character, the UTC designator, appended to
+            // the time value. The "TZID" property parameter MUST NOT be applied to DATE-TIME
+            // properties whose time values are specified in UTC.
+            if (dt.IsUniversalTime)
+            {
+                dt.Parameters.Remove("TZID");
 
-            if (!string.IsNullOrWhiteSpace(dt.TzId))
+            } else if (!string.IsNullOrWhiteSpace(dt.TzId))
             {
                 dt.Parameters.Set("TZID", dt.TzId);
             }
