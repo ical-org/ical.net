@@ -133,7 +133,6 @@ namespace Ical.Net.UnitTests
             var lines = serialized.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             var result = lines.First(s => s.StartsWith("DTSTAMP"));
 
-            //Both of these are correct, since the library no longer asserts that UTC must elide an explicit TZID in favor of the Z suffix on UTC times
             return !result.Contains("TZID=") && result.EndsWith("Z");
         }
 
