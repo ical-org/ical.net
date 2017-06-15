@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ical.net.collections.Interfaces
+namespace Ical.Net.Collections.Interfaces
 {
     public interface IValueObject<T>
     {
