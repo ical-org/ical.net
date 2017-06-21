@@ -158,7 +158,8 @@
         Daily,
         Weekly,
         Monthly,
-        Yearly
+        Yearly,
+        Quarterly
     }
 
     /// <summary>
