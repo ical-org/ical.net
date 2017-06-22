@@ -80,6 +80,7 @@
     <Compile Include="CollectionHelpersTests.cs" />
     <Compile Include="ComponentTest.cs" />
     <Compile Include="ConcurrentDeserializationTests.cs" />
+    <Compile Include="DataTypeTest.cs" />
     <Compile Include="DateTimeSerializerTests.cs" />
     <Compile Include="SerializationHelpers.cs" />
     <Compile Include="SimpleDeserializationTests.cs" />
