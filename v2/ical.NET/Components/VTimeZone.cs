@@ -66,7 +66,7 @@ namespace Ical.Net
             var latestStandardInterval = standardIntervals.OrderByDescending(x => x.Start).FirstOrDefault();
             List<ZoneInterval> matchingStandardIntervals =
                 GetMatchingIntervals(standardIntervals, latestStandardInterval, true);
-            var latestStandardTimeZoneInfo = CreateTimeZoneInfo(zone, matchingStandardIntervals, intervals, earliest);
+            var latestStandardTimeZoneInfo = CreateTimeZoneInfo(matchingStandardIntervals, intervals);
             vTimeZone.AddChild(latestStandardTimeZoneInfo);
 
             //daylight
@@ -74,7 +74,7 @@ namespace Ical.Net
             var latestDaylightInterval = daylightIntervals.OrderByDescending(x => x.Start).FirstOrDefault();
             List<ZoneInterval> matchingDaylightIntervals =
                 GetMatchingIntervals(daylightIntervals, latestDaylightInterval, true);
-            var latestDaylightTimeZoneInfo = CreateTimeZoneInfo(zone, matchingDaylightIntervals, intervals, earliest);
+            var latestDaylightTimeZoneInfo = CreateTimeZoneInfo(matchingDaylightIntervals, intervals);
             vTimeZone.AddChild(latestDaylightTimeZoneInfo);
 
             if (includeHistoricalData)
@@ -91,7 +91,7 @@ namespace Ical.Net
                     }
                         
                     var matchedIntervals = GetMatchingIntervals(historicIntervals, interval);
-                    var timeZoneInfo = CreateTimeZoneInfo(zone, matchedIntervals, intervals, earliest, false);
+                    var timeZoneInfo = CreateTimeZoneInfo(matchedIntervals, intervals, false);
                     vTimeZone.AddChild(timeZoneInfo);
                     historicIntervals = historicIntervals.Where(x => !matchedIntervals.Contains(x)).ToList();
                 }
@@ -100,11 +100,12 @@ namespace Ical.Net
             return vTimeZone;
         }
 
-        private static ITimeZoneInfo CreateTimeZoneInfo(DateTimeZone zone, List<ZoneInterval> matchedIntervals, List<ZoneInterval> intervals, Instant earliest, bool isRRule = true)
+        private static ITimeZoneInfo CreateTimeZoneInfo(List<ZoneInterval> matchedIntervals, List<ZoneInterval> intervals, bool isRRule = true)
         {
             var oldestInterval = matchedIntervals.OrderBy(x => x.Start).FirstOrDefault();
 
             var previousInterval = intervals.SingleOrDefault(x => x.End == oldestInterval.Start);
+
             var delta = new TimeSpan(1,0,0);
             if (previousInterval != null)
             {
@@ -193,7 +194,6 @@ namespace Ical.Net
                 var weekday = interval.IsoLocalStart.ToDateTimeUnspecified().DayOfWeek;
                 ByDay.Add(new WeekDay(weekday, 1));
             }
-
         }
 
         private static void PopulateTimeZoneInfoRecurrenceDates(ITimeZoneInfo tzi, List<ZoneInterval> intervals, TimeSpan delta)
@@ -201,11 +201,13 @@ namespace Ical.Net
             foreach (var interval in intervals)
             {
                 var periodList = new PeriodList();
-                var date = new CalDateTime(interval.IsoLocalStart.ToDateTimeUnspecified());
-                periodList.Add(date.Add(delta));
+                var time = interval.IsoLocalStart.ToDateTimeUnspecified();
+                var date = new CalDateTime(time);
+                //if (delta != new TimeSpan(0))
+                //    date =  as CalDateTime;
+                periodList.Add(date.Add(delta)); // BUG:  Prints 
                 tzi.RecurrenceDates.Add(periodList);
             }
-            
         }
 
         private static void PopulateTimeZoneInfoRecurrenceRules(ITimeZoneInfo tzi, ZoneInterval interval)
