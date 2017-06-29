@@ -37,8 +37,7 @@ namespace Ical.Net
 
         public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
         {
-            var zone = DateTimeZoneProviders.Bcl.GetZoneOrNull(tzinfo.Id);
-            
+            var zone = BclDateTimeZone.FromTimeZoneInfo(tzinfo);
             return FromDateTimeZone(zone, earlistDateTimeToSupport, includeHistoricalData);
         }
 
@@ -50,6 +49,11 @@ namespace Ical.Net
         public static VTimeZone FromDateTimeZone(DateTimeZone zone, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
         {
             var vTimeZone = new VTimeZone(zone.Id);
+            var isBlc = DateTimeZoneProviders.Bcl.Ids.Any(x => x == zone.Id);
+            
+            if (!isBlc)
+                vTimeZone.Url = new Uri("http://tzurl.org/zoneinfo/" + zone.Id);
+
             var earliestYear = 1900;
             if (earlistDateTimeToSupport.Year > 1900)
                 earliestYear = earlistDateTimeToSupport.Year - 1;
@@ -115,7 +119,7 @@ namespace Ical.Net
            
             var utcOffset = oldestInterval.StandardOffset.ToTimeSpan();
 
-            ITimeZoneInfo timeZoneInfo = new VTimeZoneInfo();
+            var timeZoneInfo = new VTimeZoneInfo();
 
             var isDaylight = oldestInterval.Savings.Ticks > 0;
 
@@ -136,6 +140,7 @@ namespace Ical.Net
 
             var start = oldestInterval.IsoLocalStart.ToDateTimeUnspecified() + delta;
             timeZoneInfo.Start = new CalDateTime(start);
+            timeZoneInfo.Start.HasTime = true;
 
             //if (start < earliest.InZone(zone).ToDateTimeUnspecified())
               //  timeZoneInfo.Start = timeZoneInfo.Start.AddYears(earliest.InZone(zone).Year - timeZoneInfo.Start.Year);
@@ -202,10 +207,9 @@ namespace Ical.Net
             {
                 var periodList = new PeriodList();
                 var time = interval.IsoLocalStart.ToDateTimeUnspecified();
-                var date = new CalDateTime(time);
-                //if (delta != new TimeSpan(0))
-                //    date =  as CalDateTime;
-                periodList.Add(date.Add(delta)); // BUG:  Prints 
+                var date = new CalDateTime(time).Add(delta) as CalDateTime;
+                date.HasTime = true;
+                periodList.Add(date); // BUG:  Prints 
                 tzi.RecurrenceDates.Add(periodList);
             }
         }
@@ -262,7 +266,7 @@ namespace Ical.Net
         }
 
         public IDateTime LastModified { get; set; }
-        public Uri TZUrl { get; set; }
+        //public Uri TZUrl { get; set; }
 
         private Uri _url;
 

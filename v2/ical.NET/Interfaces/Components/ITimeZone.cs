@@ -10,7 +10,6 @@ namespace Ical.Net.Interfaces.Components
         string TzId { get; set; }
 
         IDateTime LastModified { get; set; }
-        Uri TZUrl { get; set; }
         Uri Url { get; set; }
         HashSet<ITimeZoneInfo> TimeZoneInfos { get; set; }
     }
