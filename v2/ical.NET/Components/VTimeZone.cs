@@ -42,6 +42,12 @@ namespace Ical.Net
             return FromDateTimeZone(zone, earlistDateTimeToSupport, includeHistoricalData);
         }
 
+        public static VTimeZone FromTzId(string tzId)
+        {
+            var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(tzId) ?? DateTimeZoneProviders.Bcl.GetZoneOrNull(tzId);
+            return FromDateTimeZone(zone, new DateTime(DateTime.Now.Year, 1, 1).AddYears(-1), false);
+        }
+
         public static VTimeZone FromTzId(string tzId, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
         {
             var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(tzId) ?? DateTimeZoneProviders.Bcl.GetZoneOrNull(tzId);
@@ -59,7 +65,7 @@ namespace Ical.Net
             var vTimeZone = new VTimeZone(zone.Id);
             //var isBlc = DateTimeZoneProviders.Bcl.Ids.Any(x => x == zone.Id);
             
-            //if (!isBlc)
+            //if (!isBlc)  // thoughts?
             //    vTimeZone.Url = new Uri("http://tzurl.org/zoneinfo/" + zone.Id);
 
             var earliestYear = 1900;
@@ -89,7 +95,10 @@ namespace Ical.Net
             var latestDaylightTimeZoneInfo = CreateTimeZoneInfo(matchingDaylightIntervals, intervals);
             vTimeZone.AddChild(latestDaylightTimeZoneInfo);
 
-            if (!includeHistoricalData) return vTimeZone;
+            if (!includeHistoricalData)
+            {
+                return vTimeZone;
+            }
             
             // then, do the historic intervals, using RDATE for them
             var historicIntervals = intervals.Where(x => !matchingDaylightIntervals.Contains(x) && !matchingStandardIntervals.Contains(x)).ToList();
@@ -176,7 +185,8 @@ namespace Ical.Net
                             && x.IsoLocalStart.Hour == intervalToMatch.IsoLocalStart.Hour
                             && x.IsoLocalStart.Minute == intervalToMatch.IsoLocalStart.Minute
                             && x.IsoLocalStart.ToDateTimeUnspecified().DayOfWeek == intervalToMatch.IsoLocalStart.ToDateTimeUnspecified().DayOfWeek
-                            && x.WallOffset == intervalToMatch.WallOffset)
+                            && x.WallOffset == intervalToMatch.WallOffset
+                            && x.Name == intervalToMatch.Name)
                 .ToList();
 
             if (!consecutiveOnly)

@@ -306,6 +306,13 @@ namespace Ical.Net
             return tz;
         }
 
+        public ITimeZone AddTimeZone(string tzId)
+        {
+            ITimeZone tz = VTimeZone.FromTzId(tzId);
+            this.AddChild(tz);
+            return tz;
+        }
+
         public ITimeZone AddTimeZone(string tzId, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
         {
             ITimeZone tz = VTimeZone.FromTzId(tzId, earliestDateTimeToSupport, includeHistoricalData);
