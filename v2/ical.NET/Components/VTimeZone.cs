@@ -8,6 +8,7 @@ using Ical.Net.ExtensionMethods;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
+using Ical.Net.Utility;
 using NodaTime;
 using NodaTime.TimeZones;
 using Period = NodaTime.Period;
@@ -43,6 +44,7 @@ namespace Ical.Net
 
         public static VTimeZone FromDateTimeZone(DateTimeZone zone)
         {
+            // Support date/times for January 1st of the previous year by default.
             return FromDateTimeZone(zone, new DateTime(DateTime.Now.Year, 1, 1).AddYears(-1), false);
         }
 
@@ -81,32 +83,38 @@ namespace Ical.Net
             var latestDaylightTimeZoneInfo = CreateTimeZoneInfo(matchingDaylightIntervals, intervals);
             vTimeZone.AddChild(latestDaylightTimeZoneInfo);
 
-            if (includeHistoricalData)
-            {
-                // then, do the historic intervals, using RDATE for them
-                var historicIntervals = intervals.Where(x => !matchingDaylightIntervals.Contains(x) && !matchingStandardIntervals.Contains(x)).ToList();
+            if (!includeHistoricalData) return vTimeZone;
+            
+            // then, do the historic intervals, using RDATE for them
+            var historicIntervals = intervals.Where(x => !matchingDaylightIntervals.Contains(x) && !matchingStandardIntervals.Contains(x)).ToList();
 
-                while (historicIntervals.Any(x=>x.Start != Instant.MinValue))
+            while (historicIntervals.Any(x=>x.Start != Instant.MinValue))
+            {
+                var interval = historicIntervals.FirstOrDefault();
+                if (interval == null || interval.Start == Instant.MinValue)
                 {
-                    var interval = historicIntervals.FirstOrDefault();
-                    if (interval == null || interval.Start == Instant.MinValue)
-                    {
-                        continue;
-                    }
-                        
-                    var matchedIntervals = GetMatchingIntervals(historicIntervals, interval);
-                    var timeZoneInfo = CreateTimeZoneInfo(matchedIntervals, intervals, false);
-                    vTimeZone.AddChild(timeZoneInfo);
-                    historicIntervals = historicIntervals.Where(x => !matchedIntervals.Contains(x)).ToList();
+                    continue;
                 }
+                        
+                var matchedIntervals = GetMatchingIntervals(historicIntervals, interval);
+                var timeZoneInfo = CreateTimeZoneInfo(matchedIntervals, intervals, false);
+                vTimeZone.AddChild(timeZoneInfo);
+                historicIntervals = historicIntervals.Where(x => !matchedIntervals.Contains(x)).ToList();
             }
+            
 
             return vTimeZone;
         }
 
         private static ITimeZoneInfo CreateTimeZoneInfo(List<ZoneInterval> matchedIntervals, List<ZoneInterval> intervals, bool isRRule = true)
         {
+            if(matchedIntervals == null || !matchedIntervals.Any())
+                throw new ArgumentException("No intervals found in atchedIntervals");
+
             var oldestInterval = matchedIntervals.OrderBy(x => x.Start).FirstOrDefault();
+
+            if (oldestInterval == null)
+                throw new InvalidOperationException("oldestInterval was now found");
 
             var previousInterval = intervals.SingleOrDefault(x => x.End == oldestInterval.Start);
 
@@ -125,7 +133,7 @@ namespace Ical.Net
 
             if (isDaylight)
             {
-                timeZoneInfo.Name = "Daylight";
+                timeZoneInfo.Name = "DAYLIGHT";
                 timeZoneInfo.OffsetFrom = new UtcOffset(utcOffset);
                 timeZoneInfo.OffsetTo = new UtcOffset(utcOffset - delta);
             }
@@ -165,7 +173,6 @@ namespace Ical.Net
                             && x.WallOffset == intervalToMatch.WallOffset)
                 .ToList();
 
-
             if (!consecutiveOnly)
                 return matchedIntervals;
 
@@ -174,7 +181,7 @@ namespace Ical.Net
             var currentYear = 0;
 
             // return only the intervals where there are no gaps in years
-            foreach (var interval in matchedIntervals.OrderBy(x=>x.IsoLocalStart.Year))
+            foreach (var interval in matchedIntervals.OrderByDescending(x=>x.IsoLocalStart.Year))
             {
                 if (currentYear == 0)
                     currentYear = interval.IsoLocalStart.Year;
@@ -183,7 +190,7 @@ namespace Ical.Net
                     break;
                 
                 consecutiveIntervals.Add(interval);
-                currentYear++;
+                currentYear--;
             }
 
             return consecutiveIntervals;
@@ -196,11 +203,15 @@ namespace Ical.Net
                 Frequency = FrequencyType.Yearly;
                 ByMonth.Add(interval.IsoLocalStart.Month);
 
-                var weekday = interval.IsoLocalStart.ToDateTimeUnspecified().DayOfWeek;
-                ByDay.Add(new WeekDay(weekday, 1));
+                var date = interval.IsoLocalStart.ToDateTimeUnspecified();
+                var weekday = date.DayOfWeek;
+                var num = DateUtil.WeekOfMonth(date);
+
+                ByDay.Add(num != 5 ? new WeekDay(weekday, num) : new WeekDay(weekday, -1));
             }
         }
 
+        
         private static void PopulateTimeZoneInfoRecurrenceDates(ITimeZoneInfo tzi, List<ZoneInterval> intervals, TimeSpan delta)
         {
             foreach (var interval in intervals)

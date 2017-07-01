@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using Ical.Net.DataTypes;
 using Ical.Net.ExtensionMethods;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using NodaTime;
-using NodaTime.TimeZones;
 using NUnit.Framework;
 
 namespace Ical.Net.UnitTests
@@ -20,6 +16,27 @@ namespace Ical.Net.UnitTests
         public void InvalidTzIdShouldThrowException()
         {
             Assert.Throws<ArgumentException>(() => { new VTimeZone("shouldFail"); });
+        }
+
+        [Test, Category("VTimeZone")]
+        public void VTimeZoneAmericaLosAngelesShouldSerializeProperly()
+        {
+            var tzId = "America/Los_Angeles";
+            var iCal = CreateTestICal(tzId);
+
+            CalendarSerializer serializer = new CalendarSerializer();
+            var serialized = serializer.SerializeToString(iCal);
+
+            Assert.IsTrue(serialized.Contains("TZID:America/Los_Angeles"), "Time zone not found in serialization");
+            Assert.IsTrue(serialized.Contains("BEGIN:STANDARD"), "The standard timezone info was not serialized");
+            Assert.IsTrue(serialized.Contains("BEGIN:DAYLIGHT"), "The daylight timezone info was not serialized");
+            Assert.IsTrue(serialized.Contains("BYDAY=2SU"), "BYDAY=2SU was not serialized");
+
+            Assert.IsTrue(serialized.Contains("TZNAME:PDT"), "The daylight timezone info was not serialized");
+            Assert.IsTrue(serialized.Contains("DTSTART:19180331T020000"), "DTSTART:19180331T020000 was not serialized");
+            Assert.IsTrue(serialized.Contains("DTSTART:20071104T020000"), "DTSTART:20071104T020000 was not serialized");
+            Assert.IsTrue(serialized.Contains("TZURL:http://tzurl.org/zoneinfo/America/Los_Angeles"), "TZURL:http://tzurl.org/zoneinfo/America/Los_Angeles was not serialized");
+            //Assert.IsTrue(serialized.Contains("RDATE:19600424T010000"), "RDATE:19600424T010000 was not serialized");  // NodaTime doesn't match with what tzurl has
         }
 
         [Test, Category("VTimeZone")]
@@ -45,7 +62,7 @@ namespace Ical.Net.UnitTests
             Assert.IsTrue(serialized.Contains("RDATE:19731028T020000"), "RDATE:19731028T020000 was not serialized");
             Assert.IsTrue(serialized.Contains("RDATE:19801026T020000"), "RDATE:19801026T020000 was not serialized");
             Assert.IsTrue(serialized.Contains("DTSTART:19420209T020000"), "DTSTART:19420209T020000 was not serialized");
-            Assert.IsFalse(serialized.Contains("RDATE:19670401/P1D"), "RDate was not properly serialized, should be RDATE:19670401T000000");
+            Assert.IsFalse(serialized.Contains("RDATE:19670401/P1D"), "RDate was not properly serialized for vtimezone, should be RDATE:19670401T000000");
         }
 
         private static Calendar CreateTestICal(string tzId)
