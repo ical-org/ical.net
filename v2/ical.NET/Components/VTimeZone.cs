@@ -45,7 +45,7 @@ namespace Ical.Net
         public static VTimeZone FromTzId(string tzId)
         {
             var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(tzId) ?? DateTimeZoneProviders.Bcl.GetZoneOrNull(tzId);
-            return FromDateTimeZone(zone, new DateTime(DateTime.Now.Year, 1, 1).AddYears(-1), false);
+            return FromDateTimeZone(zone);
         }
 
         public static VTimeZone FromTzId(string tzId, DateTime earlistDateTimeToSupport, bool includeHistoricalData)

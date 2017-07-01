@@ -17,6 +17,30 @@ namespace Ical.Net.UnitTests
         }
 
         [Test, Category("VTimeZone")]
+        public void VTimeZoneEuropeMoscowShouldSerializeProperly()
+        {
+            var tzId = "Europe/Moscow";
+            var iCal = CreateTestCalendar(tzId);
+            CalendarSerializer serializer = new CalendarSerializer();
+            var serialized = serializer.SerializeToString(iCal);
+
+            Assert.IsTrue(serialized.Contains("TZID:Europe/Moscow"), "Time zone not found in serialization");
+            Assert.IsTrue(serialized.Contains("BEGIN:STANDARD"), "The standard timezone info was not serialized");
+            Assert.IsTrue(serialized.Contains("BEGIN:DAYLIGHT"), "The daylight timezone info was not serialized");
+
+            Assert.IsTrue(serialized.Contains("TZNAME:MSD"), "MSD was not serialized");
+            Assert.IsTrue(serialized.Contains("TZNAME:MSK"), "MSK info was not serialized");
+            Assert.IsTrue(serialized.Contains("TZNAME:MSD"), "MSD was not serialized");
+            Assert.IsTrue(serialized.Contains("TZNAME:MST"), "MST was not serialized");
+            Assert.IsTrue(serialized.Contains("TZNAME:MMT"), "MMT was not serialized");
+            Assert.IsTrue(serialized.Contains("TZOFFSETFROM:+023017"), "TZOFFSETFROM:+023017 was not serialized");
+            Assert.IsTrue(serialized.Contains("TZOFFSETTO:+023017"), "TZOFFSETTO:+023017 was not serialized");
+            Assert.IsTrue(serialized.Contains("DTSTART:19180916T010000"), "DTSTART:19180916T010000 was not serialized");
+            Assert.IsTrue(serialized.Contains("DTSTART:19171228T000000"), "DTSTART:19171228T000000 was not serialized");
+            Assert.IsTrue(serialized.Contains("RDATE:19991031T030000"), "RDATE:19991031T030000 was not serialized");
+        }
+
+        [Test, Category("VTimeZone")]
         public void VTimeZoneAmericaChicagoShouldSerializeProperly()
         {
             var tzId = "America/Chicago";
