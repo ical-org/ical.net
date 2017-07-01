@@ -57,10 +57,10 @@ namespace Ical.Net
         private static VTimeZone FromDateTimeZone(DateTimeZone zone, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
         {
             var vTimeZone = new VTimeZone(zone.Id);
-            var isBlc = DateTimeZoneProviders.Bcl.Ids.Any(x => x == zone.Id);
+            //var isBlc = DateTimeZoneProviders.Bcl.Ids.Any(x => x == zone.Id);
             
-            if (!isBlc)
-                vTimeZone.Url = new Uri("http://tzurl.org/zoneinfo/" + zone.Id);
+            //if (!isBlc)
+            //    vTimeZone.Url = new Uri("http://tzurl.org/zoneinfo/" + zone.Id);
 
             var earliestYear = 1900;
             if (earlistDateTimeToSupport.Year > 1900)
