@@ -42,13 +42,19 @@ namespace Ical.Net
             return FromDateTimeZone(zone, earlistDateTimeToSupport, includeHistoricalData);
         }
 
-        public static VTimeZone FromDateTimeZone(DateTimeZone zone)
+        public static VTimeZone FromTzId(string tzId, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
+        {
+            var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(tzId) ?? DateTimeZoneProviders.Bcl.GetZoneOrNull(tzId);
+            return FromDateTimeZone(zone, earlistDateTimeToSupport, includeHistoricalData);
+        }
+
+        private static VTimeZone FromDateTimeZone(DateTimeZone zone)
         {
             // Support date/times for January 1st of the previous year by default.
             return FromDateTimeZone(zone, new DateTime(DateTime.Now.Year, 1, 1).AddYears(-1), false);
         }
 
-        public static VTimeZone FromDateTimeZone(DateTimeZone zone, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
+        private static VTimeZone FromDateTimeZone(DateTimeZone zone, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
         {
             var vTimeZone = new VTimeZone(zone.Id);
             var isBlc = DateTimeZoneProviders.Bcl.Ids.Any(x => x == zone.Id);
@@ -210,7 +216,6 @@ namespace Ical.Net
                 ByDay.Add(num != 5 ? new WeekDay(weekday, num) : new WeekDay(weekday, -1));
             }
         }
-
         
         private static void PopulateTimeZoneInfoRecurrenceDates(ITimeZoneInfo tzi, List<ZoneInterval> intervals, TimeSpan delta)
         {
@@ -319,6 +324,7 @@ namespace Ical.Net
             }
         }
 
-       
+
+        
     }
 }

@@ -306,6 +306,12 @@ namespace Ical.Net
             return tz;
         }
 
+        public ITimeZone AddTimeZone(string tzId, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
+        {
+            ITimeZone tz = VTimeZone.FromTzId(tzId, earliestDateTimeToSupport, includeHistoricalData);
+            this.AddChild(tz);
+            return tz;
+        }
 
         /// <summary>
         /// Adds a time zone to the iCalendar.  This time zone may

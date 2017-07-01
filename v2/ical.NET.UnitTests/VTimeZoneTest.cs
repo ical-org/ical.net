@@ -32,7 +32,10 @@ namespace Ical.Net.UnitTests
             Assert.IsTrue(serialized.Contains("BEGIN:DAYLIGHT"), "The daylight timezone info was not serialized");
             Assert.IsTrue(serialized.Contains("BYDAY=2SU"), "BYDAY=2SU was not serialized");
 
-            Assert.IsTrue(serialized.Contains("TZNAME:PDT"), "The daylight timezone info was not serialized");
+            Assert.IsTrue(serialized.Contains("TZNAME:PDT"), "PDT was not serialized");
+            Assert.IsTrue(serialized.Contains("TZNAME:PST"), "PST was not serialized");
+            Assert.IsTrue(serialized.Contains("TZNAME:PPT"), "PPT was not serialized");
+            Assert.IsTrue(serialized.Contains("TZNAME:PWT"), "PWT was not serialized");
             Assert.IsTrue(serialized.Contains("DTSTART:19180331T020000"), "DTSTART:19180331T020000 was not serialized");
             Assert.IsTrue(serialized.Contains("DTSTART:20071104T020000"), "DTSTART:20071104T020000 was not serialized");
             Assert.IsTrue(serialized.Contains("TZURL:http://tzurl.org/zoneinfo/America/Los_Angeles"), "TZURL:http://tzurl.org/zoneinfo/America/Los_Angeles was not serialized");
@@ -70,7 +73,7 @@ namespace Ical.Net.UnitTests
             Calendar iCal = new Calendar();
             var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(tzId) ?? DateTimeZoneProviders.Bcl.GetZoneOrNull(tzId);
 
-            VTimeZone tz = VTimeZone.FromDateTimeZone(zone, new DateTime(1900, 1, 1), true);
+            VTimeZone tz = VTimeZone.FromTzId(tzId, new DateTime(1900, 1, 1), true);
             Assert.IsNotNull(tz);
             iCal.AddChild(tz);
 
