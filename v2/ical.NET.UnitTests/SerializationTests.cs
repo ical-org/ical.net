@@ -341,7 +341,7 @@ namespace Ical.Net.UnitTests
                 })
                 {
                     Assert.IsTrue(vals.ContainsKey(v.Key), $"could not find key '{v.Key}'");
-                    Assert.AreEqual(v.Value, vals[v.Key], $"ATENDEE prop '{v.Key}' differ");
+                    Assert.AreEqual(v.Value, vals[v.Key], $"ATTENDEE prop '{v.Key}' differ");
                 }
             }
         }
