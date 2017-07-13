@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using Ical.Net.Interfaces.DataTypes;
 using IServiceProvider = Ical.Net.Interfaces.General.IServiceProvider;
+using Ical.Net.Interfaces.Components;
 
 namespace Ical.Net.Interfaces.Evaluation
 {
-    public interface IRecurrable : IGetOccurrences, IServiceProvider
+    public interface IRecurrable : IGetOccurrences, IServiceProvider, IUniqueComponent
     {
         [Obsolete("Use the Start property instead.")]
         IDateTime DtStart { get; set; }

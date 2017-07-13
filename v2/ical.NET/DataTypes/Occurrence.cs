@@ -23,7 +23,8 @@ namespace Ical.Net.DataTypes
 
         public bool Equals(Occurrence other)
         {
-            return Equals(Period, other.Period) && Equals(Source, other.Source);
+            bool isequal = Equals(Period, other.Period) && Equals(Source, other.Source) && Equals(Source.Uid, other.Source.Uid);
+            return isequal;
         }
 
         public override bool Equals(object obj)
@@ -39,7 +40,7 @@ namespace Ical.Net.DataTypes
         {
             unchecked
             {
-                return ((Period?.GetHashCode() ?? 0) * 397) ^ (Source?.GetHashCode() ?? 0);
+                return ((Period?.GetHashCode() ?? 0) * 397) ^ (Source?.GetHashCode() ?? 0 ^ (Source?.Uid.GetHashCode() ?? 0));
             }
         }
 
