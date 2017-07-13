@@ -17,6 +17,41 @@ namespace Ical.Net.UnitTests
         }
 
         [Test, Category("VTimeZone")]
+        public void VTimeZoneUSMountainStandardTimeShouldSerializeProperly()
+        {
+            var tzId = "US Mountain Standard Time";
+            var iCal = CreateTestCalendar(tzId);
+            CalendarSerializer serializer = new CalendarSerializer();
+            var serialized = serializer.SerializeToString(iCal);
+
+            Assert.IsTrue(serialized.Contains("TZID:US Mountain Standard Time"), "Time zone not found in serialization");
+            Assert.IsTrue(serialized.Contains("BEGIN:STANDARD"));
+            Assert.IsFalse(serialized.Contains("BEGIN:DAYLIGHT"));
+        }
+
+        [Test, Category("VTimeZone")]
+        public void VTimeZoneCentralAmericaStandardTimeShouldSerializeProperly()
+        {
+            var tzId = "Central America Standard Time";
+            var iCal = CreateTestCalendar(tzId);
+            CalendarSerializer serializer = new CalendarSerializer();
+            var serialized = serializer.SerializeToString(iCal);
+
+            Assert.IsTrue(serialized.Contains("TZID:Central America Standard Time"), "Time zone not found in serialization");
+        }
+
+        [Test, Category("VTimeZone")]
+        public void VTimeZoneEasternStandardTimeShouldSerializeProperly()
+        {
+            var tzId = "Eastern Standard Time";
+            var iCal = CreateTestCalendar(tzId);
+            CalendarSerializer serializer = new CalendarSerializer();
+            var serialized = serializer.SerializeToString(iCal);
+
+            Assert.IsTrue(serialized.Contains("TZID:Eastern Standard Time"), "Time zone not found in serialization");
+        }
+
+        [Test, Category("VTimeZone")]
         public void VTimeZoneEuropeMoscowShouldSerializeProperly()
         {
             var tzId = "Europe/Moscow";
@@ -61,6 +96,8 @@ namespace Ical.Net.UnitTests
             Assert.IsTrue(serialized.Contains("DTSTART:19450814T180000"), "DTSTART:19450814T180000 was not serialized");
             Assert.IsTrue(serialized.Contains("DTSTART:19420209T020000"), "DTSTART:19420209T020000 was not serialized");
             Assert.IsTrue(serialized.Contains("DTSTART:19360301T020000"), "DTSTART:19360301T020000 was not serialized");
+            Assert.IsTrue(serialized.Contains("DTSTART:20070311T020000"), "DTSTART:20070311T020000 was not serialized");
+            Assert.IsTrue(serialized.Contains("DTSTART:20071104T020000"), "DTSTART:20071104T020000 was not serialized");
         }
 
         [Test, Category("VTimeZone")]
@@ -76,13 +113,14 @@ namespace Ical.Net.UnitTests
             Assert.IsTrue(serialized.Contains("BEGIN:STANDARD"), "The standard timezone info was not serialized");
             Assert.IsTrue(serialized.Contains("BEGIN:DAYLIGHT"), "The daylight timezone info was not serialized");
             Assert.IsTrue(serialized.Contains("BYDAY=2SU"), "BYDAY=2SU was not serialized");
-
             Assert.IsTrue(serialized.Contains("TZNAME:PDT"), "PDT was not serialized");
             Assert.IsTrue(serialized.Contains("TZNAME:PST"), "PST was not serialized");
             Assert.IsTrue(serialized.Contains("TZNAME:PPT"), "PPT was not serialized");
             Assert.IsTrue(serialized.Contains("TZNAME:PWT"), "PWT was not serialized");
             Assert.IsTrue(serialized.Contains("DTSTART:19180331T020000"), "DTSTART:19180331T020000 was not serialized");
             Assert.IsTrue(serialized.Contains("DTSTART:20071104T020000"), "DTSTART:20071104T020000 was not serialized");
+            Assert.IsTrue(serialized.Contains("DTSTART:20070311T020000"), "DTSTART:20070311T020000 was not serialized");
+
             //Assert.IsTrue(serialized.Contains("TZURL:http://tzurl.org/zoneinfo/America/Los_Angeles"), "TZURL:http://tzurl.org/zoneinfo/America/Los_Angeles was not serialized");
             //Assert.IsTrue(serialized.Contains("RDATE:19600424T010000"), "RDATE:19600424T010000 was not serialized");  // NodaTime doesn't match with what tzurl has
         }
@@ -131,7 +169,7 @@ namespace Ical.Net.UnitTests
             Assert.IsTrue(serialized.Contains("DTSTART:19311003T110000"), "DTSTART:19311003T110000 was not serialized");
             Assert.IsTrue(serialized.Contains("DTSTART:19320401T000000"), "DTSTART:19320401T000000 was not serialized");
             Assert.IsTrue(serialized.Contains("DTSTART:20080624T000000"), "DTSTART:20080624T000000 was not serialized");
-
+            Assert.IsTrue(serialized.Contains("DTSTART:19501201T000000"), "DTSTART:19501201T000000 was not serialized");
             // Should not contain the following
             Assert.IsFalse(serialized.Contains("RDATE:19501201T000000/P1D"), "The RDATE was not serialized correctly, should be RDATE:19501201T000000");
         }

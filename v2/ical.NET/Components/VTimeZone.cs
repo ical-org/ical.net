@@ -78,24 +78,44 @@ namespace Ical.Net
             // use only the most recent adjustment rules available.
             var intervals = zone.GetZoneIntervals(earliest.Minus(Duration.FromStandardDays(365)), SystemClock.Instance.Now).Where(x => x.Start != Instant.MinValue).ToList();
 
-            // first, get the latest standard and daylight intervals, find the oldest recurring date in both, set the RRULES for it, and create a VTimeZoneInfos out of them.
-            //standard
-            var standardIntervals = intervals.Where(x => x.Savings.ToTimeSpan() == new TimeSpan(0)).ToList();
-            var latestStandardInterval = standardIntervals.OrderByDescending(x => x.Start).FirstOrDefault();
-            List<ZoneInterval> matchingStandardIntervals =
-                GetMatchingIntervals(standardIntervals, latestStandardInterval, true);
-            var latestStandardTimeZoneInfo = CreateTimeZoneInfo(matchingStandardIntervals, intervals);
-            vTimeZone.AddChild(latestStandardTimeZoneInfo);
+            List<ZoneInterval> matchingDaylightIntervals = new List<ZoneInterval>();
+            List<ZoneInterval> matchingStandardIntervals = new List<ZoneInterval>();
 
-            //daylight
-            var daylightIntervals = intervals.Where(x => x.Savings.ToTimeSpan() != new TimeSpan(0)).ToList();
-            var latestDaylightInterval = daylightIntervals.OrderByDescending(x => x.Start).FirstOrDefault();
-            List<ZoneInterval> matchingDaylightIntervals =
-                GetMatchingIntervals(daylightIntervals, latestDaylightInterval, true);
-            var latestDaylightTimeZoneInfo = CreateTimeZoneInfo(matchingDaylightIntervals, intervals);
-            vTimeZone.AddChild(latestDaylightTimeZoneInfo);
+            // if there are no intervals, create at least one standard interval
+            if (!intervals.Any())
+            {
+                var start = new DateTimeOffset(new DateTime(DateTime.Now.Year, 1, 1), new TimeSpan(zone.MinOffset.Ticks));
+                
+                ZoneInterval interval = new ZoneInterval(zone.Id, Instant.FromDateTimeOffset(start), Instant.FromDateTimeOffset(start) + Duration.FromHours(1),  zone.MinOffset, Offset.Zero) ;
+                intervals.Add(interval);
+                var zoneInfo = CreateTimeZoneInfo(intervals, new List<ZoneInterval>(), true, true);
+                vTimeZone.AddChild(zoneInfo);
+            }
+            else
+            {
+                // first, get the latest standard and daylight intervals, find the oldest recurring date in both, set the RRULES for it, and create a VTimeZoneInfos out of them.
+                //standard
+                var standardIntervals = intervals.Where(x => x.Savings.ToTimeSpan() == new TimeSpan(0)).ToList();
+                var latestStandardInterval = standardIntervals.OrderByDescending(x => x.Start).FirstOrDefault();
+                matchingStandardIntervals =
+                    GetMatchingIntervals(standardIntervals, latestStandardInterval, true);
+                var latestStandardTimeZoneInfo = CreateTimeZoneInfo(matchingStandardIntervals, intervals);
+                vTimeZone.AddChild(latestStandardTimeZoneInfo);
 
-            if (!includeHistoricalData)
+                //daylight
+                var daylightIntervals = intervals.Where(x => x.Savings.ToTimeSpan() != new TimeSpan(0)).ToList();
+                
+                if (daylightIntervals.Any())
+                {
+                    var latestDaylightInterval = daylightIntervals.OrderByDescending(x => x.Start).FirstOrDefault();
+                    matchingDaylightIntervals =
+                        GetMatchingIntervals(daylightIntervals, latestDaylightInterval, true);
+                    var latestDaylightTimeZoneInfo = CreateTimeZoneInfo(matchingDaylightIntervals, intervals);
+                    vTimeZone.AddChild(latestDaylightTimeZoneInfo);
+                }
+            }
+
+            if (!includeHistoricalData || intervals.Count == 1)
             {
                 return vTimeZone;
             }
@@ -121,7 +141,7 @@ namespace Ical.Net
             return vTimeZone;
         }
 
-        private static ITimeZoneInfo CreateTimeZoneInfo(List<ZoneInterval> matchedIntervals, List<ZoneInterval> intervals, bool isRRule = true)
+        private static ITimeZoneInfo CreateTimeZoneInfo(List<ZoneInterval> matchedIntervals, List<ZoneInterval> intervals, bool isRRule = true, bool isOnlyInterval = false)
         {
             if(matchedIntervals == null || !matchedIntervals.Any())
                 throw new ArgumentException("No intervals found in atchedIntervals");
@@ -138,6 +158,10 @@ namespace Ical.Net
             {
                 delta = (intervals.SingleOrDefault(x => x.End == oldestInterval.Start).WallOffset -
                          oldestInterval.WallOffset).ToTimeSpan();
+            }
+            else if(isOnlyInterval)
+            {
+                delta = new TimeSpan();
             }
            
             var utcOffset = oldestInterval.StandardOffset.ToTimeSpan();
