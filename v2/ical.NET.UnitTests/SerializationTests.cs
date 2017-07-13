@@ -254,10 +254,10 @@ namespace Ical.Net.UnitTests
                 Location = "here",
                 Summary = "test",
                 DtStart = new CalDateTime(2012, 3, 25, 12, 50, 00),
-                DtEnd = new CalDateTime(2012, 3, 25, 13, 10, 00)
+                DtEnd = new CalDateTime(2012, 3, 25, 13, 10, 00),
                 //not yet testing property below as serialized output currently does not comply with RTFC 2445
-                //Transparency = TransparencyType.Opaque,
-                //Status = EventStatus.Confirmed
+                Transparency = TransparencyType.Opaque,
+                Status = EventStatus.Confirmed
             };
             cal.Events.Add(evt);
 
@@ -280,9 +280,9 @@ namespace Ical.Net.UnitTests
                 {
                     "CLASS:" + evt.Class, "CREATED:" + CalDateString(evt.Created), "DTSTAMP:" + CalDateString(evt.DtStamp),
                     "LAST-MODIFIED:" + CalDateString(evt.LastModified), "SEQUENCE:" + evt.Sequence, "UID:" + evt.Uid, "PRIORITY:" + evt.Priority,
-                    "LOCATION:" + evt.Location, "SUMMARY:" + evt.Summary, "DTSTART:" + CalDateString(evt.DtStart), "DTEND:" + CalDateString(evt.DtEnd)
-                    //"TRANSPARENCY:" + TransparencyType.Opaque.ToString().ToUpperInvariant(),
-                    //"STATUS:" + EventStatus.Confirmed.ToString().ToUpperInvariant()
+                    "LOCATION:" + evt.Location, "SUMMARY:" + evt.Summary, "DTSTART:" + CalDateString(evt.DtStart), "DTEND:" + CalDateString(evt.DtEnd),
+                    "TRANSP:" + TransparencyType.Opaque.ToString().ToUpperInvariant(),
+                    "STATUS:" + EventStatus.Confirmed.ToString().ToUpperInvariant()
                 });
         }
 

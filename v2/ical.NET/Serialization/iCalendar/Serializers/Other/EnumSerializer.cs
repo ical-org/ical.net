@@ -27,7 +27,13 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
         {
             try
             {
+                string value = enumValue.ToString();
+
+                if (TargetType == typeof(EventStatus) || TargetType == typeof(TransparencyType))
+                    value = value.ToUpperInvariant();
+
                 var obj = SerializationContext.Peek() as ICalendarObject;
+
                 if (obj != null)
                 {
                     // Encode the value as needed.
@@ -35,9 +41,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                     {
                         AssociatedObject = obj
                     };
-                    return Encode(dt, enumValue.ToString());
+                    return Encode(dt, value);
                 }
-                return enumValue.ToString();
+
+                return value;
             }
             catch
             {
