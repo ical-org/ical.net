@@ -17,7 +17,7 @@ namespace Ical.Net.UnitTests
         }
 
         [Test, Category("VTimeZone")]
-        public void VTimeZoneUSMountainStandardTimeShouldSerializeProperly()
+        public void VTimeZoneUsMountainStandardTimeShouldSerializeProperly()
         {
             var tzId = "US Mountain Standard Time";
             var iCal = CreateTestCalendar(tzId);
@@ -27,6 +27,7 @@ namespace Ical.Net.UnitTests
             Assert.IsTrue(serialized.Contains("TZID:US Mountain Standard Time"), "Time zone not found in serialization");
             Assert.IsTrue(serialized.Contains("BEGIN:STANDARD"));
             Assert.IsFalse(serialized.Contains("BEGIN:DAYLIGHT"));
+            Assert.IsTrue(serialized.Contains("X-LIC-LOCATION"));
         }
 
         [Test, Category("VTimeZone")]
@@ -199,20 +200,22 @@ namespace Ical.Net.UnitTests
 
             iCal.AddTimeZone(tzId, new DateTime(1900, 1, 1), true);
 
-            Event calEvent = new Event();
-            calEvent.Description = "Test Recurring Event";
-            calEvent.Start = new CalDateTime(DateTime.Now, tzId);
-            calEvent.End = new CalDateTime(DateTime.Now.AddHours(1), tzId);
-            calEvent.RecurrenceRules = new List<IRecurrencePattern>();
-            calEvent.RecurrenceRules.Add(new RecurrencePattern(FrequencyType.Daily));
+            Event calEvent = new Event
+            {
+                Description = "Test Recurring Event",
+                Start = new CalDateTime(DateTime.Now, tzId),
+                End = new CalDateTime(DateTime.Now.AddHours(1), tzId),
+                RecurrenceRules = new List<IRecurrencePattern> {new RecurrencePattern(FrequencyType.Daily)}
+            };
             iCal.Events.Add(calEvent);
 
-            Event calEvent2 = new Event();
-            calEvent2.Description = "Test Recurring Event 2";
-            calEvent2.Start = new CalDateTime(DateTime.Now.AddHours(2), tzId);
-            calEvent2.End = new CalDateTime(DateTime.Now.AddHours(3), tzId);
-            calEvent2.RecurrenceRules = new List<IRecurrencePattern>();
-            calEvent2.RecurrenceRules.Add(new RecurrencePattern(FrequencyType.Daily));
+            Event calEvent2 = new Event
+            {
+                Description = "Test Recurring Event 2",
+                Start = new CalDateTime(DateTime.Now.AddHours(2), tzId),
+                End = new CalDateTime(DateTime.Now.AddHours(3), tzId),
+                RecurrenceRules = new List<IRecurrencePattern> {new RecurrencePattern(FrequencyType.Daily)}
+            };
             iCal.Events.Add(calEvent2);
             return iCal;
         }

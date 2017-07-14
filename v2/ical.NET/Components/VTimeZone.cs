@@ -14,7 +14,7 @@ namespace Ical.Net
     /// <summary>
     /// Represents an RFC 5545 VTIMEZONE component.
     /// </summary>
-    public sealed class VTimeZone : CalendarComponent, ITimeZone
+    public class VTimeZone : CalendarComponent, ITimeZone
     {
         public static VTimeZone FromLocalTimeZone()
         {
@@ -28,8 +28,7 @@ namespace Ical.Net
 
         public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo)
         {
-            // Support date/times for January 1st of the previous year by default.
-            return FromSystemTimeZone(tzinfo, new DateTime(DateTime.Now.Year, 1, 1).AddYears(-1), false);
+            return FromSystemTimeZone(tzinfo, new DateTime(DateTime.Now.Year, 1, 1), false);
         }
 
         public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
@@ -52,8 +51,8 @@ namespace Ical.Net
 
         private static VTimeZone FromDateTimeZone(DateTimeZone zone)
         {
-            // Support date/times for January 1st of the previous year by default.
-            return FromDateTimeZone(zone, new DateTime(DateTime.Now.Year, 1, 1).AddYears(-1), false);
+            
+            return FromDateTimeZone(zone, new DateTime(DateTime.Now.Year, 1, 1), false);
         }
 
         private static VTimeZone FromDateTimeZone(DateTimeZone zone, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
@@ -65,6 +64,7 @@ namespace Ical.Net
             //    vTimeZone.Url = new Uri("http://tzurl.org/zoneinfo/" + zone.Id);
 
             var earliestYear = 1900;
+            // Support date/times for January 1st of the previous year by default.
             if (earlistDateTimeToSupport.Year > 1900)
                 earliestYear = earlistDateTimeToSupport.Year - 1;
             var earliest = Instant.FromUtc(earliestYear, earlistDateTimeToSupport.Month,
@@ -72,7 +72,7 @@ namespace Ical.Net
 
             // Only include historical data if asked to do so.  Otherwise,
             // use only the most recent adjustment rules available.
-            var intervals = zone.GetZoneIntervals(earliest.Minus(Duration.FromStandardDays(365)), SystemClock.Instance.Now).Where(x => x.Start != Instant.MinValue).ToList();
+            var intervals = zone.GetZoneIntervals(earliest, SystemClock.Instance.Now).Where(x => x.Start != Instant.MinValue).ToList();
 
             var matchingDaylightIntervals = new List<ZoneInterval>();
             var matchingStandardIntervals = new List<ZoneInterval>();
@@ -133,23 +133,23 @@ namespace Ical.Net
                 historicIntervals = historicIntervals.Where(x => !matchedIntervals.Contains(x)).ToList();
             }
             
-
             return vTimeZone;
         }
 
         private static ITimeZoneInfo CreateTimeZoneInfo(List<ZoneInterval> matchedIntervals, List<ZoneInterval> intervals, bool isRRule = true, bool isOnlyInterval = false)
         {
             if(matchedIntervals == null || !matchedIntervals.Any())
-                throw new ArgumentException("No intervals found in atchedIntervals");
+                throw new ArgumentException("No intervals found in matchedIntervals");
 
             var oldestInterval = matchedIntervals.OrderBy(x => x.Start).FirstOrDefault();
 
             if (oldestInterval == null)
-                throw new InvalidOperationException("oldestInterval was now found");
+                throw new InvalidOperationException("oldestInterval was not found");
 
             var previousInterval = intervals.SingleOrDefault(x => x.End == oldestInterval.Start);
 
             var delta = new TimeSpan(1,0,0);
+
             if (previousInterval != null)
             {
                 delta = (previousInterval.WallOffset - oldestInterval.WallOffset).ToTimeSpan();
@@ -183,8 +183,10 @@ namespace Ical.Net
             var start = oldestInterval.IsoLocalStart.ToDateTimeUnspecified() + delta;
             timeZoneInfo.Start = new CalDateTime(start) {HasTime = true};
 
-            if(isRRule)
+            if (isRRule)
+            {
                 PopulateTimeZoneInfoRecurrenceRules(timeZoneInfo, oldestInterval);
+            }
             else
             {
                 PopulateTimeZoneInfoRecurrenceDates(timeZoneInfo, matchedIntervals, delta);
@@ -249,12 +251,10 @@ namespace Ical.Net
                 var periodList = new PeriodList();
                 var time = interval.IsoLocalStart.ToDateTimeUnspecified();
                 var date = new CalDateTime(time).Add(delta) as CalDateTime;
-                if (date != null)
-                {
-                    date.HasTime = true;
-                    periodList.Add(date); 
-                    tzi.RecurrenceDates.Add(periodList);
-                }
+                if (date == null) continue;
+                date.HasTime = true;
+                periodList.Add(date); 
+                tzi.RecurrenceDates.Add(periodList);
             }
         }
 
@@ -311,7 +311,6 @@ namespace Ical.Net
         }
 
         public IDateTime LastModified { get; set; }
-        //public Uri TZUrl { get; set; }
 
         private Uri _url;
 
@@ -362,8 +361,5 @@ namespace Ical.Net
                 return hashCode;
             }
         }
-
-
-        
     }
 }
