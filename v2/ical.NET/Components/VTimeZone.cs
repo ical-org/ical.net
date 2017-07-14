@@ -78,15 +78,15 @@ namespace Ical.Net
             // use only the most recent adjustment rules available.
             var intervals = zone.GetZoneIntervals(earliest.Minus(Duration.FromStandardDays(365)), SystemClock.Instance.Now).Where(x => x.Start != Instant.MinValue).ToList();
 
-            List<ZoneInterval> matchingDaylightIntervals = new List<ZoneInterval>();
-            List<ZoneInterval> matchingStandardIntervals = new List<ZoneInterval>();
+            var matchingDaylightIntervals = new List<ZoneInterval>();
+            var matchingStandardIntervals = new List<ZoneInterval>();
 
             // if there are no intervals, create at least one standard interval
             if (!intervals.Any())
             {
-                var start = new DateTimeOffset(new DateTime(DateTime.Now.Year, 1, 1), new TimeSpan(zone.MinOffset.Ticks));
+                var start = new DateTimeOffset(new DateTime(earliestYear, 1, 1), new TimeSpan(zone.MaxOffset.Ticks));
                 
-                ZoneInterval interval = new ZoneInterval(zone.Id, Instant.FromDateTimeOffset(start), Instant.FromDateTimeOffset(start) + Duration.FromHours(1),  zone.MinOffset, Offset.Zero) ;
+                var interval = new ZoneInterval(zone.Id, Instant.FromDateTimeOffset(start), Instant.FromDateTimeOffset(start) + Duration.FromHours(1),  zone.MinOffset, Offset.Zero) ;
                 intervals.Add(interval);
                 var zoneInfo = CreateTimeZoneInfo(intervals, new List<ZoneInterval>(), true, true);
                 vTimeZone.AddChild(zoneInfo);
