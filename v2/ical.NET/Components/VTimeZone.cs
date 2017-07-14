@@ -1,24 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Reflection.Emit;
 using Ical.Net.DataTypes;
 using Ical.Net.ExtensionMethods;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
 using Ical.Net.Utility;
 using NodaTime;
 using NodaTime.TimeZones;
-using Period = NodaTime.Period;
 
 namespace Ical.Net
 {
     /// <summary>
     /// Represents an RFC 5545 VTIMEZONE component.
     /// </summary>
-    public class VTimeZone : CalendarComponent, ITimeZone
+    public sealed class VTimeZone : CalendarComponent, ITimeZone
     {
         public static VTimeZone FromLocalTimeZone()
         {
@@ -156,8 +152,7 @@ namespace Ical.Net
             var delta = new TimeSpan(1,0,0);
             if (previousInterval != null)
             {
-                delta = (intervals.SingleOrDefault(x => x.End == oldestInterval.Start).WallOffset -
-                         oldestInterval.WallOffset).ToTimeSpan();
+                delta = (previousInterval.WallOffset - oldestInterval.WallOffset).ToTimeSpan();
             }
             else if(isOnlyInterval)
             {
@@ -186,11 +181,7 @@ namespace Ical.Net
             timeZoneInfo.TimeZoneName = oldestInterval.Name;
 
             var start = oldestInterval.IsoLocalStart.ToDateTimeUnspecified() + delta;
-            timeZoneInfo.Start = new CalDateTime(start);
-            timeZoneInfo.Start.HasTime = true;
-
-            //if (start < earliest.InZone(zone).ToDateTimeUnspecified())
-              //  timeZoneInfo.Start = timeZoneInfo.Start.AddYears(earliest.InZone(zone).Year - timeZoneInfo.Start.Year);
+            timeZoneInfo.Start = new CalDateTime(start) {HasTime = true};
 
             if(isRRule)
                 PopulateTimeZoneInfoRecurrenceRules(timeZoneInfo, oldestInterval);
@@ -258,9 +249,12 @@ namespace Ical.Net
                 var periodList = new PeriodList();
                 var time = interval.IsoLocalStart.ToDateTimeUnspecified();
                 var date = new CalDateTime(time).Add(delta) as CalDateTime;
-                date.HasTime = true;
-                periodList.Add(date); // BUG:  Prints 
-                tzi.RecurrenceDates.Add(periodList);
+                if (date != null)
+                {
+                    date.HasTime = true;
+                    periodList.Add(date); 
+                    tzi.RecurrenceDates.Add(periodList);
+                }
             }
         }
 
@@ -295,10 +289,11 @@ namespace Ical.Net
             }
 
             TzId = tzId;
+            Location = tzId;
         }
 
         private string _tzId;
-        public virtual string TzId
+        public string TzId
         {
             get
             {
@@ -320,9 +315,9 @@ namespace Ical.Net
 
         private Uri _url;
 
-        public virtual Uri Url
+        public Uri Url
         {
-            get { return _url ?? (_url = Properties.Get<Uri>("TZURL")); }
+            get => _url ?? (_url = Properties.Get<Uri>("TZURL"));
             set
             {
                 _url = value;
@@ -330,9 +325,20 @@ namespace Ical.Net
             }
         }
 
+        private string _location;
+        public string Location
+        {
+            get => _location ?? (_location = Properties.Get<string>("X-LIC-LOCATION"));
+            set
+            {
+                _location = value;
+                Properties.Set("X-LIC-LOCATION", _location);
+            }
+        }
+
         public HashSet<ITimeZoneInfo> TimeZoneInfos { get; set; }
 
-        protected bool Equals(VTimeZone other)
+        private bool Equals(VTimeZone other)
         {
             return string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)
                 && string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase)
@@ -343,8 +349,7 @@ namespace Ical.Net
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((VTimeZone)obj);
+            return obj.GetType() == GetType() && Equals((VTimeZone)obj);
         }
 
         public override int GetHashCode()
