@@ -15,7 +15,13 @@ namespace Ical.Net.UnitTests
         {
             Assert.Throws<ArgumentException>(() => { new VTimeZone("shouldFail"); });
         }
-        
+
+        [Test, Category("VTimeZone")]
+        public void VTimeZoneFromDateTimeZoneNullZoneShouldThrowException()
+        {
+            Assert.Throws<ArgumentException>(() => { CreateTestCalendar("shouldFail"); });
+        }
+
         [Test, Category("VTimeZone")]
         public void VTimeZoneAmericaPhoenixShouldSerializeProperly()
         {

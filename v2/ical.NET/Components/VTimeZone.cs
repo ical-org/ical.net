@@ -57,6 +57,9 @@ namespace Ical.Net
 
         private static VTimeZone FromDateTimeZone(DateTimeZone zone, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
         {
+            if (zone == null)
+                throw new ArgumentException("Invalid time zone", "zone");
+
             var vTimeZone = new VTimeZone(zone.Id);
 
             var earliestYear = 1900;
