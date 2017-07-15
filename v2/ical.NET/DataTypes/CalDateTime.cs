@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
@@ -47,7 +46,6 @@ namespace Ical.Net.DataTypes
             HasTime = true;
         }
 
-
         public CalDateTime(int year, int month, int day, int hour, int minute, int second, string tzId)
         {
             Initialize(year, month, day, hour, minute, second, tzId, null);
@@ -73,8 +71,6 @@ namespace Ical.Net.DataTypes
         {
             Initialize(CoerceDateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzId, cal);
         }
-
-        
 
         private void Initialize(DateTime value, string tzId, ICalendar cal)
         {

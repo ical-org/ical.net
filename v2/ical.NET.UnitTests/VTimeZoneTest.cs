@@ -15,7 +15,7 @@ namespace Ical.Net.UnitTests
         {
             Assert.Throws<ArgumentException>(() => { new VTimeZone("shouldFail"); });
         }
-
+        
         [Test, Category("VTimeZone")]
         public void VTimeZoneAmericaPhoenixShouldSerializeProperly()
         {
@@ -25,6 +25,19 @@ namespace Ical.Net.UnitTests
             var serialized = serializer.SerializeToString(iCal);
 
             Assert.IsTrue(serialized.Contains("TZID:America/Phoenix"), "Time zone not found in serialization");
+            Assert.IsTrue(serialized.Contains("RDATE:19670430T020000"), "Daylight savings for Phoenix was not serialized properly.");
+        }
+
+        [Test, Category("VTimeZone")]
+        public void VTimeZoneAmericaPhoenixShouldSerializeProperly2()
+        {
+            var tzId = "America/Phoenix";
+            var iCal = CreateTestCalendar(tzId, DateTime.Now, false);
+            CalendarSerializer serializer = new CalendarSerializer();
+            var serialized = serializer.SerializeToString(iCal);
+
+            Assert.IsTrue(serialized.Contains("TZID:America/Phoenix"), "Time zone not found in serialization");
+            Assert.IsFalse(serialized.Contains("BEGIN:DAYLIGHT"), "Daylight savings should not exist for Phoenix.");
         }
 
         [Test, Category("VTimeZone")]
@@ -205,13 +218,17 @@ namespace Ical.Net.UnitTests
             Assert.IsTrue(serialized.Contains("DTSTART:20071104T020000"), "DTSTART:20071104T020000 was not serialized");
         }
 
-        private static Calendar CreateTestCalendar(string tzId)
+        private static Calendar CreateTestCalendar(string tzId, DateTime? earliestTime = null, bool includeHistoricalData = true)
         {
-            Calendar iCal = new Calendar();
+            var iCal = new Calendar();
 
-            iCal.AddTimeZone(tzId, new DateTime(1900, 1, 1), true);
+            if (earliestTime == null)
+            {
+                earliestTime = new DateTime(1900,1,1);
+            }
+            iCal.AddTimeZone(tzId, earliestTime.Value, includeHistoricalData);
 
-            Event calEvent = new Event
+            var calEvent = new Event
             {
                 Description = "Test Recurring Event",
                 Start = new CalDateTime(DateTime.Now, tzId),
@@ -220,7 +237,7 @@ namespace Ical.Net.UnitTests
             };
             iCal.Events.Add(calEvent);
 
-            Event calEvent2 = new Event
+            var calEvent2 = new Event
             {
                 Description = "Test Recurring Event 2",
                 Start = new CalDateTime(DateTime.Now.AddHours(2), tzId),
