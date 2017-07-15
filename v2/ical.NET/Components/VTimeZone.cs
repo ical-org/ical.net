@@ -98,16 +98,19 @@ namespace Ical.Net
                 var latestStandardTimeZoneInfo = CreateTimeZoneInfo(matchingStandardIntervals, intervals);
                 vTimeZone.AddChild(latestStandardTimeZoneInfo);
 
-                //daylight
-                var daylightIntervals = intervals.Where(x => x.Savings.ToTimeSpan() != new TimeSpan(0)).ToList();
-                
-                if (daylightIntervals.Any())
+                if(latestStandardInterval != null && latestStandardInterval.End != Instant.MaxValue)
                 {
-                    var latestDaylightInterval = daylightIntervals.OrderByDescending(x => x.Start).FirstOrDefault();
-                    matchingDaylightIntervals =
-                        GetMatchingIntervals(daylightIntervals, latestDaylightInterval, true);
-                    var latestDaylightTimeZoneInfo = CreateTimeZoneInfo(matchingDaylightIntervals, intervals);
-                    vTimeZone.AddChild(latestDaylightTimeZoneInfo);
+                    //daylight
+                    var daylightIntervals = intervals.Where(x => x.Savings.ToTimeSpan() != new TimeSpan(0)).ToList();
+
+                    if (daylightIntervals.Any())
+                    {
+                        var latestDaylightInterval = daylightIntervals.OrderByDescending(x => x.Start).FirstOrDefault();
+                        matchingDaylightIntervals =
+                            GetMatchingIntervals(daylightIntervals, latestDaylightInterval, true);
+                        var latestDaylightTimeZoneInfo = CreateTimeZoneInfo(matchingDaylightIntervals, intervals);
+                        vTimeZone.AddChild(latestDaylightTimeZoneInfo);
+                    }
                 }
             }
 

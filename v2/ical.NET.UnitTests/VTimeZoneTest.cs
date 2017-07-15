@@ -17,6 +17,17 @@ namespace Ical.Net.UnitTests
         }
 
         [Test, Category("VTimeZone")]
+        public void VTimeZoneAmericaPhoenixShouldSerializeProperly()
+        {
+            var tzId = "America/Phoenix";
+            var iCal = CreateTestCalendar(tzId);
+            CalendarSerializer serializer = new CalendarSerializer();
+            var serialized = serializer.SerializeToString(iCal);
+
+            Assert.IsTrue(serialized.Contains("TZID:America/Phoenix"), "Time zone not found in serialization");
+        }
+
+        [Test, Category("VTimeZone")]
         public void VTimeZoneUsMountainStandardTimeShouldSerializeProperly()
         {
             var tzId = "US Mountain Standard Time";
