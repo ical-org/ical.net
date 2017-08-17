@@ -19,6 +19,15 @@ namespace Ical.Net
             Name = Components.Journal;
         }
 
+        /// <summary>
+        /// Constructs an Journal object, with an iCalObject
+        /// (usually an iCalendar object) as its parent.
+        /// </summary>
+        public Journal()
+        {
+            Initialize();
+        }
+
         protected override bool EvaluationIncludesReferenceDate => true;
 
         protected override void OnDeserializing(StreamingContext context)
