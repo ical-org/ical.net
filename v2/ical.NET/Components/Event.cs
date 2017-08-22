@@ -68,7 +68,7 @@ namespace Ical.Net
                 if (!Equals(DtEnd, value))
                 {
                     Properties.Set("DTEND", value);
-                    ExtrapolateTimes(nameof(DtEnd));
+                    ExtrapolateTimes();
                 }
             }
         }
@@ -102,7 +102,7 @@ namespace Ical.Net
                 if (!Equals(Duration, value))
                 {
                     Properties.Set("DURATION", value);
-                    ExtrapolateTimes(nameof(Duration));
+                    ExtrapolateTimes();
                 }
             }
         }
@@ -266,36 +266,20 @@ namespace Ical.Net
             ExtrapolateTimes();
         }
 
-        /// <summary>
-        /// Flag to check if ExtrapolaTimes is currently invoking to prevent multi extrapolating
-        /// </summary>
-        private bool _isExtrapolating;
-        private void ExtrapolateTimes(string propertyName = null)
+        private void ExtrapolateTimes()
         {
-            if (_isExtrapolating) return;
-            _isExtrapolating = true;
-
             if (DtEnd == null && DtStart != null && Duration != default(TimeSpan))
             {
-                if (propertyName == nameof(DtEnd))
-                    Duration = TimeSpan.Zero;
-
-                if (propertyName != nameof(DtEnd))
-                    DtEnd = DtStart.Add(Duration);
+                DtEnd = DtStart.Add(Duration);
+            }
+            else if (Duration == default(TimeSpan) && DtStart != null && DtEnd != null)
+            {
+                Duration = DtEnd.Subtract(DtStart);
             }
             else if (DtStart == null && Duration != default(TimeSpan) && DtEnd != null)
             {
                 DtStart = DtEnd.Subtract(Duration);
             }
-            else if (/*Duration == default(TimeSpan) && */ DtStart != null && DtEnd != null)
-            {
-                if (propertyName == nameof(Duration))
-                    DtEnd = DtStart.Add(Duration);
-                else
-                    Duration = DtEnd.Subtract(DtStart);
-            }
-
-            _isExtrapolating = false;
         }
 
         protected bool Equals(Event other)

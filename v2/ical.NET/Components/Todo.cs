@@ -36,7 +36,7 @@ namespace Ical.Net
             set
             {
                 base.DtStart = value;
-                ExtrapolateTimes(nameof(DtStart));
+                ExtrapolateTimes();
             }
         }
 
@@ -49,7 +49,7 @@ namespace Ical.Net
             set
             {
                 Properties.Set("DUE", value);
-                ExtrapolateTimes(nameof(Due));
+                ExtrapolateTimes();
             }
         }
 
@@ -72,7 +72,7 @@ namespace Ical.Net
             set
             {
                 Properties.Set("DURATION", value);
-                ExtrapolateTimes(nameof(Duration));
+                ExtrapolateTimes();
             }
         }
 
@@ -198,36 +198,20 @@ namespace Ical.Net
             base.OnDeserializing(context);
         }
 
-        /// <summary>
-        /// Flag to check if ExtrapolaTimes is currently invoking to prevent multi extrapolating
-        /// </summary>
-        private bool _isExtrapolating;
-        private void ExtrapolateTimes(string propertyName = null)
+        private void ExtrapolateTimes()
         {
-            if (_isExtrapolating) return;
-            _isExtrapolating = true;
-
             if (Due == null && DtStart != null && Duration != default(TimeSpan))
             {
-                if (propertyName == nameof(Due))
-                    Duration = TimeSpan.Zero;
-
-                if (propertyName != nameof(Due))
-                    Due = DtStart.Add(Duration);
+                Due = DtStart.Add(Duration);
+            }
+            else if (Duration == default(TimeSpan) && DtStart != null && Due != null)
+            {
+                Duration = Due.Subtract(DtStart);
             }
             else if (DtStart == null && Duration != default(TimeSpan) && Due != null)
             {
                 DtStart = Due.Subtract(Duration);
             }
-            else if (DtStart != null && Due != null)
-            {
-                if (propertyName == nameof(Duration))
-                    Due = DtStart.Add(Duration);
-                else
-                    Duration = Due.Subtract(DtStart);
-            }
-
-            _isExtrapolating = false;
         }
     }
 }

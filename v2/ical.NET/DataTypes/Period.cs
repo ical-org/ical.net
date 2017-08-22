@@ -106,36 +106,20 @@ namespace Ical.Net.DataTypes
             return periodSerializer.SerializeToString(this);
         }
 
-        /// <summary>
-        /// Flag to check if ExtrapolaTimes is currently invoking to prevent multi extrapolating
-        /// </summary>
-        private bool _isExtrapolating;
-        private void ExtrapolateTimes(string propertyName = null)
+        private void ExtrapolateTimes()
         {
-            if (_isExtrapolating) return;
-            _isExtrapolating = true;
-
             if (EndTime == null && StartTime != null && Duration != default(TimeSpan))
             {
-                if (propertyName == nameof(EndTime))
-                    Duration = TimeSpan.Zero;
-
-                if (propertyName != nameof(EndTime))
-                    EndTime = StartTime.Add(Duration);
+                EndTime = StartTime.Add(Duration);
+            }
+            else if (Duration == default(TimeSpan) && StartTime != null && EndTime != null)
+            {
+                Duration = EndTime.Subtract(StartTime);
             }
             else if (StartTime == null && Duration != default(TimeSpan) && EndTime != null)
             {
                 StartTime = EndTime.Subtract(Duration);
             }
-            else if (StartTime != null && EndTime != null)
-            {
-                if (propertyName == nameof(Duration))
-                    EndTime = StartTime.Add(Duration);
-                else
-                    Duration = EndTime.Subtract(StartTime);
-            }
-
-            _isExtrapolating = false;
         }
 
         private IDateTime _startTime;
@@ -151,7 +135,7 @@ namespace Ical.Net.DataTypes
                     return;
                 }
                 _startTime = value;
-                ExtrapolateTimes(nameof(StartTime));
+                ExtrapolateTimes();
             }
         }
 
@@ -166,7 +150,7 @@ namespace Ical.Net.DataTypes
                     return;
                 }
                 _endTime = value;
-                ExtrapolateTimes(nameof(EndTime));
+                ExtrapolateTimes();
             }
         }
 
@@ -190,7 +174,7 @@ namespace Ical.Net.DataTypes
                     return;
                 }
                 _duration = value;
-                ExtrapolateTimes(nameof(Duration));
+                ExtrapolateTimes();
             }
         }
 
