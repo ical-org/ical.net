@@ -14,27 +14,16 @@ namespace Ical.Net
             set { Properties.Set("STATUS", value); }
         }
 
-        private void Initialize()
-        {
-            Name = Components.Journal;
-        }
-
         /// <summary>
         /// Constructs an Journal object, with an iCalObject
         /// (usually an iCalendar object) as its parent.
         /// </summary>
         public Journal()
         {
-            Initialize();
+            Name = Components.Journal;
         }
 
         protected override bool EvaluationIncludesReferenceDate => true;
-
-        protected override void OnDeserializing(StreamingContext context)
-        {
-            base.OnDeserializing(context);
-            Initialize();
-        }
 
         protected bool Equals(Journal other) => Start.Equals(other.Start) && Equals(other as RecurringComponent);
 
