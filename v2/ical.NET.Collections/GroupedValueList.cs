@@ -20,11 +20,11 @@ namespace Ical.Net.Collections
         {
             if (ContainsKey(group))
             {
-                var items = AllOf(group);
-                if (items != null)
+                // Add a value to the first matching item in the list
+                var item = AllOf(group).FirstOrDefault();
+                if (item != null)
                 {
-                    // Add a value to the first matching item in the list
-                    items.First().SetValue(values);
+                    item.SetValue(values);
                     return;
                 }
             }
