@@ -23,6 +23,11 @@ namespace Ical.Net
         }
         
         protected override bool EvaluationIncludesReferenceDate => true;
+        
+        protected override void OnDeserializing(StreamingContext context)
+        {
+            base.OnDeserializing(context);
+        }
 
         protected bool Equals(Journal other) => Start.Equals(other.Start) && Equals(other as RecurringComponent);
 
