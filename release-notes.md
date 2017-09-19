@@ -3,7 +3,10 @@
 A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) version represents.
 
 ### v3
-
+* 3.0.12: Several improvements rolled up:
+  * `CalendarEvent` now considers Summary and Description for equality and hashing. [PR 309](https://github.com/rianjs/ical.net/pull/309).
+  * Protection against `InvalidOperationException`s in some collections usage scenarios [PR 312](https://github.com/rianjs/ical.net/pull/312)
+  * Normalized `Journal` implementation. [PR 310](https://github.com/rianjs/ical.net/pull/310)
 * 3.0.11-net-core-beta: Targeting netstandard1.3 and net46
 * 3.0.10-net-core-beta: Reverts a change made in 3.0.3 which allowed UTC timestamps to specify `TZID=UTC` instead of being suffixed with `Z`. The spec requires `Z` suffixes, and broke many applications, including Outlook. [#263](https://github.com/rianjs/ical.net/issues/263)
 * 3.0.9-net-core-beta: Bugfixes: `PeriodList` now fully implements `IList<Period>`. Keep data structures in sync in GroupedList.Remove() [#253](https://github.com/rianjs/ical.net/issues/253). Fix for StackOverflow exception [#257](https://github.com/rianjs/ical.net/issues/257). UnitTests can now be run in VS test runner!
@@ -17,6 +20,10 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ### v2
 
+* 2.3.3: Several improvements rolled up:
+  * `Event` now considers Summary and Description for equality and hashing. [PR 309](https://github.com/rianjs/ical.net/pull/309).
+  * Protection against `InvalidOperationException`s in some collections usage scenarios [PR 312](https://github.com/rianjs/ical.net/pull/312)
+  * Normalized `Journal` implementation. [PR 310](https://github.com/rianjs/ical.net/pull/310)
 * 2.3.2: Reverts a change made in 2.2.34 which allowed UTC timestamps to specify `TZID=UTC` instead of being suffixed with `Z`. The spec requires `Z` suffixes, and broke many applications, including Outlook. [#263](https://github.com/rianjs/ical.net/issues/263)
 * 2.3.0: PeriodList now implements `IList` [#280](https://github.com/rianjs/ical.net/issues/280)
 * 2.2.39: Bugfix: Better CalDateTime equality and hashing, because time zones matter. [#275](https://github.com/rianjs/ical.net/issues/275)
