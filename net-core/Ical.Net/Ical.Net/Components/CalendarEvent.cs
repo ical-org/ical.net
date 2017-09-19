@@ -345,6 +345,8 @@ namespace Ical.Net
             unchecked
             {
                 var hashCode = DtStart?.GetHashCode() ?? 0;
+                hashCode = (hashCode * 397) ^ (Summary?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (Description?.GetHashCode() ?? 0);
                 hashCode = (hashCode * 397) ^ (DtEnd?.GetHashCode() ?? 0);
                 hashCode = (hashCode * 397) ^ (Location?.GetHashCode() ?? 0);
                 hashCode = (hashCode * 397) ^ Status.GetHashCode();
