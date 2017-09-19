@@ -20,13 +20,8 @@ namespace Ical.Net.Collections
         {
             if (ContainsKey(group))
             {
-                // Add a value to the first matching item in the list
-                var item = AllOf(group).FirstOrDefault();
-                if (item != null)
-                {
-                    item.SetValue(values);
-                    return;
-                }
+                AllOf(group)?.FirstOrDefault()?.SetValue(values);
+                return;
             }
 
             // No matching item was found, add a new item to the list
