@@ -285,6 +285,8 @@ namespace Ical.Net
             resourcesSet.UnionWith(Resources);
 
             var result = Equals(DtStart, other.DtStart)
+                         && string.Equals(Summary, other.Summary, StringComparison.OrdinalIgnoreCase)
+                         && string.Equals(Description, other.Description, StringComparison.OrdinalIgnoreCase)
                          && Equals(DtEnd, other.DtEnd)
                          && string.Equals(Location, other.Location, StringComparison.OrdinalIgnoreCase)
                          && resourcesSet.SetEquals(other.Resources)
