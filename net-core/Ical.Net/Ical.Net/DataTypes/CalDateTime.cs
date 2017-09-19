@@ -139,10 +139,8 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private bool Equals(CalDateTime other) => Value.Equals(other.Value)
-            && HasDate == other.HasDate
-            && AsUtc.Equals(other.AsUtc)
-            && string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase);
+        private bool Equals(CalDateTime other) => HasDate == other.HasDate
+            && AsUtc.Equals(other.AsUtc);
 
         public override bool Equals(object obj)
         {

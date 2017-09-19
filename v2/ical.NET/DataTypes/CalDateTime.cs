@@ -142,10 +142,8 @@ namespace Ical.Net.DataTypes
 
         private bool Equals(CalDateTime other)
         {
-            return Value.Equals(other.Value)
-                && HasDate == other.HasDate
-                && AsUtc.Equals(other.AsUtc)
-                && string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase);
+            return HasDate == other.HasDate
+                && AsUtc.Equals(other.AsUtc);
         }
 
         public override bool Equals(object obj)
@@ -159,10 +157,8 @@ namespace Ical.Net.DataTypes
         {
             unchecked
             {
-                var hashCode = Value.GetHashCode();
-                hashCode = (hashCode * 397) ^ HasDate.GetHashCode();
+                var hashCode = HasDate.GetHashCode();
                 hashCode = (hashCode * 397) ^ AsUtc.GetHashCode();
-                hashCode = (hashCode * 397) ^ (TzId != null ? TzId.GetHashCode() : 0);
                 return hashCode;
             }
         }
