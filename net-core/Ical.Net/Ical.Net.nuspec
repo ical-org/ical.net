@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ical.Net</id>
-        <version>3.0.12</version>
+        <version>3.0.13</version>
         <title>Ical.Net</title>
         <authors>Rian Stockbower, Douglas Day, M. David Peterson</authors>
         <owners>Rian Stockbower</owners>
