@@ -3,7 +3,7 @@
 A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) version represents.
 
 ### v3
-* 3.0.13: Fix if DTSTART is not set for VTODO
+* 3.0.13: `DTSTART` is not required for `VTODO` components. [PR 322](https://github.com/rianjs/ical.net/pull/322)
 * 3.0.12: Several improvements rolled up:
   * `CalendarEvent` now considers Summary and Description for equality and hashing. [PR 309](https://github.com/rianjs/ical.net/pull/309).
   * Protection against `InvalidOperationException`s in some collections usage scenarios [PR 312](https://github.com/rianjs/ical.net/pull/312)
@@ -21,7 +21,7 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 
 ### v2
 
-* 2.3.4: Fix if DTSTART is not set for VTODO
+* 2.3.4: `DTSTART` is not required for `VTODO` components. [PR 322](https://github.com/rianjs/ical.net/pull/322)
 * 2.3.3: Several improvements rolled up:
   * `Event` now considers Summary and Description for equality and hashing. [PR 309](https://github.com/rianjs/ical.net/pull/309).
   * Protection against `InvalidOperationException`s in some collections usage scenarios [PR 312](https://github.com/rianjs/ical.net/pull/312)
