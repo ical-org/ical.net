@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ical.Net</id>
-        <version>3.0.13</version>
+        <version>3.0.14</version>
         <title>Ical.Net</title>
         <authors>Rian Stockbower, Douglas Day, M. David Peterson</authors>
         <owners>Rian Stockbower</owners>
@@ -15,6 +15,7 @@
         <tags>iCal Calendar icalendar ics outlook events rfc-5545 rfc-2445 dday</tags>
         <dependencies>
             <dependency id="NodaTime" version="2.0.2" />
+            <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         </dependencies>
     </metadata>
     <files>
