@@ -16,9 +16,13 @@ namespace NugetTester
         {
             try
             {
-                var hello = "Hello" + "Goodbye";
-                Console.WriteLine(hello);
                 var c = new Calendar();
+                c.Events.Add(GetSampleEvent());
+                var serialized = SerializeToString(GetSampleEvent());
+                Console.WriteLine(serialized);
+
+                var unserialized = DeserializeCalendarEvent(serialized);
+                Console.WriteLine(unserialized.Start);
             }
             catch (Exception e)
             {
@@ -26,6 +30,22 @@ namespace NugetTester
             }
             Console.ReadLine();
         }
+
+        private static readonly DateTime _now = DateTime.Now;
+        private static readonly DateTime _later = _now.AddHours(1);
+        private static CalendarEvent GetSampleEvent()
+        {
+            var e = new CalendarEvent
+            {
+                Start = new CalDateTime(_now),
+                End = new CalDateTime(_later),
+                RecurrenceRules = new List<RecurrencePattern> {GetSampleRecurrenceRules()}
+            };
+            return e;
+        }
+
+        private static RecurrencePattern GetSampleRecurrenceRules()
+            => new RecurrencePattern(FrequencyType.Daily, 1);
 
         private static CalendarEvent DeserializeCalendarEvent(string ical)
         {

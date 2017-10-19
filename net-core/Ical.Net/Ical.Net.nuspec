@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ical.Net</id>
-        <version>3.0.14</version>
+        <version>3.0.15</version>
         <title>Ical.Net</title>
         <authors>Rian Stockbower, Douglas Day, M. David Peterson</authors>
         <owners>Rian Stockbower</owners>
@@ -16,6 +16,7 @@
         <dependencies>
             <dependency id="NodaTime" version="2.0.2" />
             <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
+            <dependency id="System.Reflection.TypeExtensions" version="4.3.0" />
         </dependencies>
     </metadata>
     <files>
