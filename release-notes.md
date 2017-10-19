@@ -3,6 +3,7 @@
 A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) version represents.
 
 ### v3
+* 3.0.14: .NET Standard version (aka v3 aka `net-core`) is missing System.Runtime.Serialization.Primitives dependency. [#324](https://github.com/rianjs/ical.net/issues/324)
 * 3.0.13: `DTSTART` is not required for `VTODO` components. [PR 322](https://github.com/rianjs/ical.net/pull/322)
 * 3.0.12: Several improvements rolled up:
   * `CalendarEvent` now considers Summary and Description for equality and hashing. [PR 309](https://github.com/rianjs/ical.net/pull/309).
