@@ -60,7 +60,7 @@ namespace Ical.Net.DataTypes
             Duration = p.Duration;
         }
 
-        protected bool Equals(Period other) => Equals(StartTime, other.StartTime) && Equals(EndTime, other.EndTime) && Duration.Equals(other.Duration);
+        protected bool Equals(Period other) => IsSameInstant(StartTime, other.StartTime) && IsSameInstant(EndTime, other.EndTime) && Duration.Equals(other.Duration);
 
         public override bool Equals(object obj)
         {
@@ -69,12 +69,21 @@ namespace Ical.Net.DataTypes
             return obj.GetType() == GetType() && Equals((Period) obj);
         }
 
+        public static bool IsSameInstant(IDateTime a, IDateTime b)
+        {
+            if (a == null || b == null)
+            {
+                return a == b;
+            }
+            return Equals(a.AsUtc, b.AsUtc);
+        }
+
         public override int GetHashCode()
         {
             unchecked
             {
-                var hashCode = StartTime?.GetHashCode() ?? 0;
-                hashCode = (hashCode * 397) ^ (EndTime?.GetHashCode() ?? 0);
+                var hashCode = StartTime?.AsUtc.GetHashCode() ?? 0;
+                hashCode = (hashCode * 397) ^ (EndTime?.AsUtc.GetHashCode() ?? 0);
                 hashCode = (hashCode * 397) ^ Duration.GetHashCode();
                 return hashCode;
             }
