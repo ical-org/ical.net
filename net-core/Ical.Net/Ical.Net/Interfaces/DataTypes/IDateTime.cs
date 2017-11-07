@@ -18,7 +18,7 @@ namespace Ical.Net.Interfaces.DataTypes
         /// Gets/sets whether the Value of this date/time represents
         /// a universal time.
         /// </summary>
-        bool IsUniversalTime { get; set; }
+        bool IsUtc { get; }
 
         /// <summary>
         /// Gets the time zone name this time is in, if it references a time zone.
@@ -28,7 +28,7 @@ namespace Ical.Net.Interfaces.DataTypes
         /// <summary>
         /// Gets/sets the underlying DateTime value stored.  This should always
         /// use DateTimeKind.Utc, regardless of its actual representation.
-        /// Use IsUniversalTime along with the TZID to control how this
+        /// Use IsUtc along with the TZID to control how this
         /// date/time is handled.
         /// </summary>
         DateTime Value { get; set; }
@@ -102,7 +102,7 @@ namespace Ical.Net.Interfaces.DataTypes
         /// Converts the date/time value to a local time
         /// within the specified time zone.
         /// </summary>
-        IDateTime ToTimeZone(string newTimeZone);
+        IDateTime ToTimeZone(string tzId);
 
         IDateTime Add(TimeSpan ts);
         IDateTime Subtract(TimeSpan ts);

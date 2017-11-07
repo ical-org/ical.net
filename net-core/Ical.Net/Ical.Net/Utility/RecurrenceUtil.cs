@@ -11,16 +11,16 @@ namespace Ical.Net.Utility
     {
         public static void ClearEvaluation(IRecurrable recurrable)
         {
-            var evaluator = recurrable.GetService(typeof (IEvaluator)) as IEvaluator;
+            var evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
             evaluator?.Clear();
         }
 
-        public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt, bool includeReferenceDateInResults) => GetOccurrences(recurrable, new CalDateTime(dt.AsSystemLocal.Date), new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)),
-            includeReferenceDateInResults);
+        public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt, bool includeReferenceDateInResults) => GetOccurrences(recurrable,
+            new CalDateTime(dt.AsSystemLocal.Date), new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)), includeReferenceDateInResults);
 
         public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime periodStart, IDateTime periodEnd, bool includeReferenceDateInResults)
         {
-            var evaluator = recurrable.GetService(typeof (IEvaluator)) as IEvaluator;
+            var evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
             if (evaluator == null || recurrable.Start == null)
             {
                 return new HashSet<Occurrence>();
@@ -32,13 +32,14 @@ namespace Ical.Net.Utility
 
             // Change the time zone of periodStart/periodEnd as needed 
             // so they can be used during the evaluation process.
-            periodStart = DateUtil.MatchTimeZone(start, periodStart);
-            periodEnd = DateUtil.MatchTimeZone(start, periodEnd);
 
-            var periods = evaluator.Evaluate(start, DateUtil.GetSimpleDateTimeData(periodStart), DateUtil.GetSimpleDateTimeData(periodEnd), includeReferenceDateInResults);
+            periodStart.TzId = start.TzId;
+            periodEnd.TzId = start.TzId;
 
-            var otherOccurrences =
-                from p in periods
+            var periods = evaluator.Evaluate(start, DateUtil.GetSimpleDateTimeData(periodStart), DateUtil.GetSimpleDateTimeData(periodEnd),
+                includeReferenceDateInResults);
+
+            var otherOccurrences = from p in periods
                 let endTime = p.EndTime ?? p.StartTime
                 where endTime.GreaterThan(periodStart) && p.StartTime.LessThanOrEqual(periodEnd)
                 select new Occurrence(recurrable, p);

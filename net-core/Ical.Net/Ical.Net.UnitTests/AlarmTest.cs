@@ -1,9 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
-
 using NUnit.Framework;
 
 namespace Ical.Net.UnitTests
@@ -22,10 +22,12 @@ namespace Ical.Net.UnitTests
             // Poll all alarms that occurred between Start and End
             var alarms = evt.PollAlarms(start, end);
 
+            var utcDates = new HashSet<DateTime>(dates.Select(d => d.AsUtc));
+
             //Only compare the UTC values here, since we care about the time coordinate when the alarm fires, and nothing else
             foreach (var alarm in alarms.Select(a => a.DateTime.AsUtc))
             {
-                Assert.IsTrue(dates.Select(d => d.AsUtc).Contains(alarm), "Alarm triggers at " + alarm + ", but it should not.");
+                Assert.IsTrue(utcDates.Contains(alarm), "Alarm triggers at " + alarm + ", but it should not.");
             }
             Assert.IsTrue(dates.Count == alarms.Count, "There were " + alarms.Count + " alarm occurrences; there should have been " + dates.Count + ".");
         }

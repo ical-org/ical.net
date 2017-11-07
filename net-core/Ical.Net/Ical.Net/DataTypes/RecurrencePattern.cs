@@ -17,10 +17,24 @@ namespace Ical.Net.DataTypes
         private int _interval = int.MinValue;
         private RecurrenceRestrictionType? _restrictionType;
         private RecurrenceEvaluationModeType? _evaluationMode;
+        
 
         public FrequencyType Frequency { get; set; }
 
-        public DateTime Until { get; set; } = DateTime.MinValue;
+        private DateTime _until = DateTime.MinValue;
+        public DateTime Until
+        {
+            get => _until;
+            set
+            {
+                if (_until == value && _until.Kind == value.Kind)
+                {
+                    return;
+                }
+
+                _until = value;
+            }
+        }
 
         public int Count { get; set; } = int.MinValue;
 

@@ -43,20 +43,31 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         public override string SerializeToString(object obj)
         {
             var dt = obj as IDateTime;
+            if (dt == null)
+            {
+                return null;
+            }
 
             // RFC 5545 3.3.5: 
             // The date with UTC time, or absolute time, is identified by a LATIN
             // CAPITAL LETTER Z suffix character, the UTC designator, appended to
             // the time value. The "TZID" property parameter MUST NOT be applied to DATE-TIME
             // properties whose time values are specified in UTC.
-            if (dt.IsUniversalTime)
+
+            var kind = dt.IsUtc
+                ? DateTimeKind.Utc
+                : DateTimeKind.Local;
+
+            if (dt.IsUtc)
             {
                 dt.Parameters.Remove("TZID");
-
-            } else if (!string.IsNullOrWhiteSpace(dt.TzId))
+            }
+            else if (!string.IsNullOrWhiteSpace(dt.TzId))
             {
                 dt.Parameters.Set("TZID", dt.TzId);
             }
+
+            DateTime.SpecifyKind(dt.Value, kind);
 
             // FIXME: what if DATE is the default value type for this?
             // Also, what if the DATE-TIME value type is specified on something
@@ -72,7 +83,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             if (dt.HasTime)
             {
                 value.Append($"T{dt.Hour:00}{dt.Minute:00}{dt.Second:00}");
-                if (dt.IsUniversalTime && string.IsNullOrWhiteSpace(dt.Parameters.Get("TZID")))
+                if (dt.IsUtc)
                 {
                     value.Append("Z");
                 }
@@ -91,55 +102,60 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
             var value = tr.ReadToEnd();
 
             var dt = CreateAndAssociate() as IDateTime;
-            if (dt != null)
+            if (dt == null)
             {
-                // Decode the value as necessary
-                value = Decode(dt, value);
-
-                var match = FullDateTimePatternMatch.Match(value);
-                if (!match.Success)
-                {
-                    match = DateOnlyMatch.Match(value);
-                }
-
-                if (!match.Success)
-                {
-                    return null;
-                }
-                var now = DateTime.Now;
-
-                var year = now.Year;
-                var month = now.Month;
-                var date = now.Day;
-                var hour = 0;
-                var minute = 0;
-                var second = 0;
-
-                if (match.Groups[1].Success)
-                {
-                    dt.HasDate = true;
-                    year = Convert.ToInt32(match.Groups[2].Value);
-                    month = Convert.ToInt32(match.Groups[3].Value);
-                    date = Convert.ToInt32(match.Groups[4].Value);
-                }
-                if (match.Groups.Count >= 6 && match.Groups[5].Success)
-                {
-                    dt.HasTime = true;
-                    hour = Convert.ToInt32(match.Groups[6].Value);
-                    minute = Convert.ToInt32(match.Groups[7].Value);
-                    second = Convert.ToInt32(match.Groups[8].Value);
-                }
-
-                if (match.Groups[9].Success)
-                {
-                    dt.IsUniversalTime = true;
-                }
-
-                dt.Value = CoerceDateTime(year, month, date, hour, minute, second, DateTimeKind.Utc);
-                return dt;
+                return null;
             }
 
-            return null;
+            // Decode the value as necessary
+            value = Decode(dt, value);
+
+            var match = FullDateTimePatternMatch.Match(value);
+            if (!match.Success)
+            {
+                match = DateOnlyMatch.Match(value);
+            }
+
+            if (!match.Success)
+            {
+                return null;
+            }
+            var now = DateTime.Now;
+
+            var year = now.Year;
+            var month = now.Month;
+            var date = now.Day;
+            var hour = 0;
+            var minute = 0;
+            var second = 0;
+
+            if (match.Groups[1].Success)
+            {
+                dt.HasDate = true;
+                year = Convert.ToInt32(match.Groups[2].Value);
+                month = Convert.ToInt32(match.Groups[3].Value);
+                date = Convert.ToInt32(match.Groups[4].Value);
+            }
+            if (match.Groups.Count >= 6 && match.Groups[5].Success)
+            {
+                dt.HasTime = true;
+                hour = Convert.ToInt32(match.Groups[6].Value);
+                minute = Convert.ToInt32(match.Groups[7].Value);
+                second = Convert.ToInt32(match.Groups[8].Value);
+            }
+
+            var isUtc = match.Groups[9].Success;
+            var kind = isUtc
+                ? DateTimeKind.Utc
+                : DateTimeKind.Local;
+
+            if (isUtc)
+            {
+                dt.TzId = "UTC";
+            }
+
+            dt.Value = CoerceDateTime(year, month, date, hour, minute, second, kind);
+            return dt;
         }
     }
 }

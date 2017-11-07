@@ -11,9 +11,11 @@ using Ical.Net.Exceptions;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Serialization;
+using Ical.Net.Serialization.iCalendar.Serializers;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 using Ical.Net.Utility;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 using static Ical.Net.UnitTests.SerializationHelpers;
 
 namespace Ical.Net.UnitTests
@@ -3377,6 +3379,56 @@ END:VCALENDAR";
             var exDatesB = eventB.ExceptionDates;
             Assert.AreEqual(exDatesA, exDatesB);
 
+        }
+
+        [Test, TestCaseSource(nameof(UntilTimeZoneSerializationTestCases))]
+        public void UntilTimeZoneSerializationTests(string tzid, DateTimeKind expectedKind)
+        {
+            var now = DateTime.SpecifyKind(DateTime.Parse("2017-11-08 10:30:00"), expectedKind);
+            var later = now.AddHours(1);
+
+            var until = DateTime.SpecifyKind(now.AddDays(7), expectedKind);
+
+            var rrule = new RecurrencePattern(FrequencyType.Daily)
+            {
+                Until = until,
+            };
+            var e = new CalendarEvent
+            {
+                Start = new CalDateTime(now, tzid),
+                End = new CalDateTime(later, tzid)
+            };
+            e.RecurrenceRules.Add(rrule);
+            var calendar = new Calendar
+            {
+                Events = { e },
+            };
+
+            var serializer = new CalendarSerializer();
+            var serialized = serializer.SerializeToString(calendar);
+
+            const string contains = "20171108T103000";
+            var expectedContains = expectedKind == DateTimeKind.Local
+                ? $"{contains}{SerializationConstants.LineBreak}"
+                : $"{contains}Z{SerializationConstants.LineBreak}";
+
+            Assert.IsTrue(serialized.Contains(expectedContains));
+
+            var deserializedKind = (serializer.Deserialize(new StringReader(serialized)) as CalendarCollection).First()
+                .Events.First()
+                .RecurrenceRules.First().Until.Kind;
+
+            Assert.AreEqual(expectedKind, deserializedKind);
+        }
+
+        public static IEnumerable<ITestCaseData> UntilTimeZoneSerializationTestCases()
+        {
+            yield return new TestCaseData("America/New_York", DateTimeKind.Local)
+                .SetName("IANA time time zone results in a local DateTimeKind");
+            yield return new TestCaseData("Eastern Standard Time", DateTimeKind.Local)
+                .SetName("BCL time zone results in a Local DateTimeKind");
+            yield return new TestCaseData("UTC", DateTimeKind.Utc)
+                .SetName("UTC results in DateTimeKind.Utc");
         }
     }
 }

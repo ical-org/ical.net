@@ -135,7 +135,7 @@ namespace Ical.Net.UnitTests
         static string CalDateString(IDateTime cdt)
         {
             var returnVar = $"{cdt.Year}{cdt.Month:D2}{cdt.Day:D2}T{cdt.Hour:D2}{cdt.Minute:D2}{cdt.Second:D2}";
-            if (cdt.IsUniversalTime)
+            if (cdt.IsUtc)
             {
                 return returnVar + 'Z';
             }

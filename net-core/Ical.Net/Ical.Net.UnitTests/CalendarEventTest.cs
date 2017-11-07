@@ -121,7 +121,7 @@ namespace Ical.Net.UnitTests
             };
 
             cal.Events.Add(evt);
-            Assert.IsTrue(evt.DtStamp.IsUniversalTime, "DTSTAMP should always be of type UTC.");
+            Assert.IsTrue(evt.DtStamp.IsUtc, "DTSTAMP should always be of type UTC.");
         }
 
         /// <summary>

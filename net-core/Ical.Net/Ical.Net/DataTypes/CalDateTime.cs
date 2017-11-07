@@ -4,6 +4,7 @@ using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 using Ical.Net.Utility;
+using NodaTime;
 
 namespace Ical.Net.DataTypes
 {
@@ -23,7 +24,6 @@ namespace Ical.Net.DataTypes
         private DateTime _value;
         private bool _hasDate;
         private bool _hasTime;
-        private bool _isUniversalTime;
 
         public CalDateTime() { }
 
@@ -73,16 +73,27 @@ namespace Ical.Net.DataTypes
 
         private void Initialize(DateTime value, string tzId, Calendar cal)
         {
-            if (value.Kind == DateTimeKind.Utc)
+            if (!string.IsNullOrWhiteSpace(tzId) && !tzId.Equals("UTC", StringComparison.OrdinalIgnoreCase))
             {
-                IsUniversalTime = true;
+                // Definitely local
+                value = DateTime.SpecifyKind(value, DateTimeKind.Local);
+                TzId = tzId;
+            }
+            else if (string.Equals("UTC", tzId, StringComparison.OrdinalIgnoreCase) || value.Kind == DateTimeKind.Utc)
+            {
+                // Probably UTC
+                value = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+                TzId = "UTC";
+            }
+            else
+            {
+                // Ambiguous, but probably local
+                value = DateTime.SpecifyKind(value, DateTimeKind.Unspecified);
             }
 
-            // Convert all incoming values to UTC.
-            Value = new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second, DateTimeKind.Utc);
+            Value = new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Kind);
             HasDate = true;
             HasTime = value.Second != 0 || value.Minute != 0 || value.Hour != 0;
-            TzId = tzId;
             AssociatedObject = cal;
         }
 
@@ -128,15 +139,16 @@ namespace Ical.Net.DataTypes
             base.CopyFrom(obj);
 
             var dt = obj as IDateTime;
-            if (dt != null)
+            if (dt == null)
             {
-                _value = dt.Value;
-                _isUniversalTime = dt.IsUniversalTime;
-                _hasDate = dt.HasDate;
-                _hasTime = dt.HasTime;
-
-                AssociateWith(dt);
+                return;
             }
+
+            _value = dt.Value;
+            _hasDate = dt.HasDate;
+            _hasTime = dt.HasTime;
+
+            AssociateWith(dt);
         }
 
         private bool Equals(CalDateTime other) => Value.Equals(other.Value)
@@ -198,56 +210,40 @@ namespace Ical.Net.DataTypes
         public static implicit operator CalDateTime(DateTime left) => new CalDateTime(left);
 
         /// <summary>
-        /// Converts the date/time to this computer's local date/time.
+        /// Converts the date/time to the date/time of the computer running the program
         /// </summary>
-        public DateTime AsSystemLocal
-        {
-            get
-            {
-                if (!HasTime)
-                {
-                    return DateTime.SpecifyKind(Value.Date, DateTimeKind.Local);
-                }
-                if (IsUniversalTime)
-                {
-                    return Value.ToLocalTime();
-                }
-                return AsUtc.ToLocalTime();
-            }
-        }
-
-        private DateTime _utc;
+        public DateTime AsSystemLocal => HasTime
+            ? Value.ToLocalTime()
+            : Value.ToLocalTime().Date;
 
         /// <summary>
-        /// Converts the date/time to UTC (Coordinated Universal Time)
+        /// Returns a representation of the DateTime in Coordinated Universal Time (UTC)
         /// </summary>
         public DateTime AsUtc
         {
             get
             {
-                if (IsUniversalTime)
-                {
-                    _utc = DateTime.SpecifyKind(_value, DateTimeKind.Utc);
-                    return _utc;
-                }
+                // In order of weighting:
+                //  1) Specified TzId
+                //  2) Value having a DateTimeKind.Utc
+
                 if (!string.IsNullOrWhiteSpace(TzId))
                 {
-                    var newUtc = DateUtil.ToZonedDateTimeLeniently(Value, TzId);
-                    _utc = newUtc.ToDateTimeUtc();
-                    return _utc;
+                    var asLocal = DateUtil.ToZonedDateTimeLeniently(Value, TzId);
+                    return asLocal.ToDateTimeUtc();
                 }
-                _utc = DateTime.SpecifyKind(Value, DateTimeKind.Local).ToUniversalTime();
 
-                // Fallback to the OS-conversion
-                return _utc;
+                if (IsUtc || Value.Kind == DateTimeKind.Utc)
+                {
+                    return DateTime.SpecifyKind(_value, DateTimeKind.Utc);
+                }
+
+                // Fall back to the OS conversion
+                return DateTime.SpecifyKind(Value, DateTimeKind.Local).ToUniversalTime();
             }
         }
 
-        public bool IsUniversalTime
-        {
-            get => _isUniversalTime;
-            set => _isUniversalTime = value;
-        }
+        public bool IsUtc => _value.Kind == DateTimeKind.Utc;
 
         public string TimeZoneName => TzId;
 
@@ -270,25 +266,45 @@ namespace Ical.Net.DataTypes
         }
 
         private string _tzId = string.Empty;
+
+        /// <summary>
+        /// Setting the TzId to a local time zone will set Value.Kind to Local. Setting TzId to UTC will set Value.Kind to Utc. If the incoming value is null
+        /// or whitespace, Value.Kind will be set to Unspecified. Setting the TzId will NOT incur a UTC offset conversion under any circumstances. To convert
+        /// to another time zone, use the ToTimeZone() method.
+        /// </summary>
         public string TzId
         {
             get
             {
-                if (IsUniversalTime)
+                if (string.IsNullOrWhiteSpace(_tzId))
                 {
-                    return "UTC";
+                    _tzId = Parameters.Get("TZID");
                 }
-                return !string.IsNullOrWhiteSpace(_tzId)
-                    ? _tzId
-                    : Parameters.Get("TZID");
+                return _tzId;
             }
             set
             {
-                if (!Equals(TzId, value))
+                if (string.Equals(_tzId, value, StringComparison.OrdinalIgnoreCase))
                 {
-                    Parameters.Set("TZID", value);
-                    _tzId = value;
+                    return;
                 }
+
+                var isEmpty = string.IsNullOrWhiteSpace(value);
+                if (isEmpty)
+                {
+                    Parameters.Remove("TZID");
+                    _tzId = null;
+                    Value = DateTime.SpecifyKind(Value, DateTimeKind.Local);
+                    return;
+                }
+
+                var kind = string.Equals(value, "UTC", StringComparison.OrdinalIgnoreCase)
+                    ? DateTimeKind.Utc
+                    : DateTimeKind.Local;
+
+                Value = DateTime.SpecifyKind(Value, kind);
+                Parameters.Set("TZID", value);
+                _tzId = value;
             }
         }
 
@@ -316,22 +332,27 @@ namespace Ical.Net.DataTypes
 
         public TimeSpan TimeOfDay => Value.TimeOfDay;
 
-        public IDateTime ToTimeZone(string newTimeZone)
+        /// <summary>
+        /// Returns a representation of the IDateTime in the specified time zone
+        /// </summary>
+        public IDateTime ToTimeZone(string tzId)
         {
-            if (string.IsNullOrWhiteSpace(newTimeZone))
+            if (string.IsNullOrWhiteSpace(tzId))
             {
-                throw new ArgumentException("You must provide a valid TZID to the ToTimeZone() method", nameof(newTimeZone));
-            }
-            if (Calendar == null)
-            {
-                throw new Exception("The iCalDateTime object must have an iCalendar associated with it in order to use TimeZones.");
+                throw new ArgumentException("You must provide a valid time zone id", nameof(tzId));
             }
 
-            var newDt = string.IsNullOrWhiteSpace(TzId)
-                ? DateUtil.ToZonedDateTimeLeniently(Value, newTimeZone).ToDateTimeUtc()
-                : DateUtil.FromTimeZoneToTimeZone(Value, TzId, newTimeZone).ToDateTimeUtc();
+            // If TzId is empty, it's a system-local datetime, so we should use the system time zone as the starting point.
+            var originalTzId = string.IsNullOrWhiteSpace(TzId)
+                ? TimeZoneInfo.Local.Id
+                : TzId;
 
-            return new CalDateTime(newDt, newTimeZone);
+            var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, originalTzId);
+            var converted = zonedOriginal.WithZone(DateUtil.GetZone(tzId));
+
+            return converted.Zone == DateTimeZone.Utc
+                ? new CalDateTime(converted.ToDateTimeUtc(), tzId)
+                : new CalDateTime(DateTime.SpecifyKind(converted.ToDateTimeUnspecified(), DateTimeKind.Local), tzId);
         }
 
         public IDateTime Add(TimeSpan ts) => this + ts;

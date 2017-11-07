@@ -8,7 +8,6 @@ using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Interfaces.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 {

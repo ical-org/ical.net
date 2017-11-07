@@ -21,7 +21,7 @@ namespace Ical.Net.UnitTests
             //Recur daily through the end of the day, July 31, 2016
             var recurrenceRule = new RecurrencePattern(FrequencyType.Daily, 1)
             {
-                Until = DateTime.Parse("2016-07-31T11:59:59")
+                Until = DateTime.Parse("2016-07-31T23:59:59")
             };
 
             vEvent.RecurrenceRules = new List<RecurrencePattern> {recurrenceRule};

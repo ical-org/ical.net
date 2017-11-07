@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net
 {
@@ -41,12 +42,10 @@ namespace Ical.Net
             // See https://sourceforge.net/projects/dday-ical/forums/forum/656447/topic/3754354
             if (DtStamp == null)
             {
-                // Here, we don't simply set to DateTime.Now because DateTime.Now contains milliseconds, and
-                // the iCalendar standard doesn't care at all about milliseconds.  Therefore, when comparing
-                // two calendars, one generated, and one loaded from file, they may be functionally identical,
-                // but be determined to be different due to millisecond differences.
-                var now = DateTime.SpecifyKind(DateTime.Today.Add(DateTime.UtcNow.TimeOfDay), DateTimeKind.Utc);
-                DtStamp = new CalDateTime(now);
+                // icalendar RFC doesn't care about sub-second time resolution, so shave off everything smaller than seconds.
+
+                var utcNow = DateTime.UtcNow.Truncate(TimeSpan.FromSeconds(1)); //DateTimeKind.Utc is preserved
+                DtStamp = new CalDateTime(utcNow, "UTC");
             }
         }
 
