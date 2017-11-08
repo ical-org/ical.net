@@ -12,6 +12,7 @@ using Ical.Net.Serialization.iCalendar.Serializers;
 using Ical.Net.Serialization.iCalendar.Serializers.Other;
 using Ical.Net.UnitTests.ExtensionMethods;
 using NUnit.Framework;
+using Ical.Net.Utility;
 
 namespace Ical.Net.UnitTests
 {
@@ -22,6 +23,7 @@ namespace Ical.Net.UnitTests
         private static readonly DateTime _later = _nowTime.AddHours(1);
         private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
         private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
+        private static string SerializeToString(CalendarEvent e) => SerializeToString(new Calendar { Events = { e } });
         private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime };
         private static Calendar UnserializeCalendar(string s) => Calendar.LoadFromStream(new StringReader(s)).Single();
 
@@ -366,6 +368,19 @@ namespace Ical.Net.UnitTests
             var serialized = SerializeToString(c);
             Assert.AreEqual(originalDuration, e.Duration);
             Assert.IsTrue(!serialized.Contains("DURATION"));
+        }
+
+        [Test]
+        public void EventStatusAllCaps()
+        {
+            var e = GetSimpleEvent();
+            e.Status = EventStatus.Confirmed;
+            var serialized = SerializeToString(e);
+            Assert.IsTrue(serialized.Contains(EventStatus.Confirmed, EventStatus.Comparison));
+
+            var calendar = UnserializeCalendar(serialized);
+            var eventStatus = calendar.Events.First().Status;
+            Assert.IsTrue(string.Equals(EventStatus.Confirmed, eventStatus, EventStatus.Comparison));
         }
     }
 }

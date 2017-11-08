@@ -53,7 +53,7 @@ namespace Ical.Net.UnitTests
             Assert.AreEqual(incoming.DtEnd, expected.DtEnd);
             Assert.AreEqual(incoming.Location, expected.Location);
             Assert.AreEqual(incoming.Status, expected.Status);
-            Assert.AreEqual(incoming.IsActive(), expected.IsActive());
+            Assert.AreEqual(incoming.IsActive, expected.IsActive);
             Assert.AreEqual(incoming.Duration, expected.Duration);
             Assert.AreEqual(incoming.Transparency, expected.Transparency);
             Assert.AreEqual(incoming.GetHashCode(), expected.GetHashCode());

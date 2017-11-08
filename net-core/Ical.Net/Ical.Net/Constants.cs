@@ -14,11 +14,10 @@
         End
     }
 
-    public class Components
+    public static class Components
     {
         public const string Alarm = "VALARM";
         public const string Calendar = "VCALENDAR";
-        public const string Event = "VEVENT";
         public const string Freebusy = "VFREEBUSY";
         public const string Todo = "VTODO";
         public const string Journal = "VJOURNAL";
@@ -112,11 +111,11 @@
     /// <summary>
     /// Status codes available to an <see cref="Components.Event"/> item
     /// </summary>
-    public enum EventStatus
+    public static class EventStatus
     {
-        Tentative,
-        Confirmed,
-        Cancelled
+        public const string Tentative = "TENTATIVE";
+        public const string Confirmed = "CONFIRMED";
+        public const string Cancelled = "CANCELLED";
     }
 
     /// <summary>

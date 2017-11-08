@@ -72,5 +72,8 @@ namespace Ical.Net.Utility
 
         /// <summary> Unwraps lines from the RFC 5545 "line folding" technique. </summary>
         public static string UnwrapLines(string s) => NewLineMatch.Replace(s, string.Empty);
+
+        public static bool Contains(this string haystack, string needle, StringComparison stringComparison)
+            => haystack.IndexOf(needle, stringComparison) >= 0;
     }
 }

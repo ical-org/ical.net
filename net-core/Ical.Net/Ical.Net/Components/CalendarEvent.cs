@@ -175,9 +175,9 @@ namespace Ical.Net
         /// <summary>
         /// The status of the event.
         /// </summary>
-        public EventStatus Status
+        public string Status
         {
-            get => Properties.Get<EventStatus>("STATUS");
+            get => Properties.Get<string>("STATUS");
             set => Properties.Set("STATUS", value);
         }
 
@@ -207,7 +207,7 @@ namespace Ical.Net
 
         private void Initialize()
         {
-            Name = Components.Event;
+            Name = EventStatus.Name;
 
             _mEvaluator = new EventEvaluator(this);
             SetService(_mEvaluator);
@@ -245,7 +245,7 @@ namespace Ical.Net
         /// as an upcoming or occurred event.
         /// </summary>
         /// <returns>True if the event has not been cancelled, False otherwise.</returns>
-        public virtual bool IsActive() => (Status != EventStatus.Cancelled);
+        public virtual bool IsActive => string.Equals(Status, EventStatus.Cancelled, EventStatus.Comparison);
 
         protected override bool EvaluationIncludesReferenceDate => true;
 
@@ -284,19 +284,20 @@ namespace Ical.Net
             var resourcesSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             resourcesSet.UnionWith(Resources);
 
-            var result = Equals(DtStart, other.DtStart)
-                         && string.Equals(Summary, other.Summary, StringComparison.OrdinalIgnoreCase)
-                         && string.Equals(Description, other.Description, StringComparison.OrdinalIgnoreCase)
-                         && Equals(DtEnd, other.DtEnd)
-                         && string.Equals(Location, other.Location, StringComparison.OrdinalIgnoreCase)
-                         && resourcesSet.SetEquals(other.Resources)
-                         && Status.Equals(other.Status)
-                         && IsActive() == other.IsActive()
-                         && Transparency.Equals(other.Transparency)
-                         && EvaluationIncludesReferenceDate == other.EvaluationIncludesReferenceDate
-                         && Attachments.SequenceEqual(other.Attachments)
-                         && CollectionHelpers.Equals(ExceptionRules, other.ExceptionRules)
-                         && CollectionHelpers.Equals(RecurrenceRules, other.RecurrenceRules);
+            var result =
+                Equals(DtStart, other.DtStart)
+                && string.Equals(Summary, other.Summary, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(Description, other.Description, StringComparison.OrdinalIgnoreCase)
+                && Equals(DtEnd, other.DtEnd)
+                && string.Equals(Location, other.Location, StringComparison.OrdinalIgnoreCase)
+                && resourcesSet.SetEquals(other.Resources)
+                && string.Equals(Status, other.Status, StringComparison.Ordinal)
+                && IsActive == other.IsActive
+                && Transparency.Equals(other.Transparency)
+                && EvaluationIncludesReferenceDate == other.EvaluationIncludesReferenceDate
+                && Attachments.SequenceEqual(other.Attachments)
+                && CollectionHelpers.Equals(ExceptionRules, other.ExceptionRules)
+                && CollectionHelpers.Equals(RecurrenceRules, other.RecurrenceRules);
 
             if (!result)
             {
@@ -349,8 +350,8 @@ namespace Ical.Net
                 hashCode = (hashCode * 397) ^ (Description?.GetHashCode() ?? 0);
                 hashCode = (hashCode * 397) ^ (DtEnd?.GetHashCode() ?? 0);
                 hashCode = (hashCode * 397) ^ (Location?.GetHashCode() ?? 0);
-                hashCode = (hashCode * 397) ^ Status.GetHashCode();
-                hashCode = (hashCode * 397) ^ IsActive().GetHashCode();
+                hashCode = (hashCode * 397) ^ Status?.GetHashCode() ?? 0;
+                hashCode = (hashCode * 397) ^ IsActive.GetHashCode();
                 hashCode = (hashCode * 397) ^ Transparency.GetHashCode();
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Attachments);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Resources);

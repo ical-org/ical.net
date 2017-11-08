@@ -15,7 +15,7 @@ namespace Ical.Net.Serialization.Factory
                 case Components.Alarm:
                     c = new Alarm();
                     break;
-                case Components.Event:
+                case EventStatus.Name:
                     c = new CalendarEvent();
                     break;
                 case Components.Freebusy:
