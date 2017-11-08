@@ -7,10 +7,10 @@ namespace Ical.Net
     /// </summary>
     public class Journal : RecurringComponent
     {
-        public JournalStatus Status
+        public string Status
         {
-            get => Properties.Get<JournalStatus>("STATUS");
-            set => Properties.Set("STATUS", value);
+            get => Properties.Get<string>(JournalStatus.Key);
+            set => Properties.Set(JournalStatus.Key, value);
         }
 
         /// <summary>
@@ -19,7 +19,7 @@ namespace Ical.Net
         /// </summary>
         public Journal()
         {
-            Name = Components.Journal;
+            Name = JournalStatus.Name;
         }
         
         protected override bool EvaluationIncludesReferenceDate => true;

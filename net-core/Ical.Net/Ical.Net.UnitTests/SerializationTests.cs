@@ -399,5 +399,22 @@ namespace Ical.Net.UnitTests
             var status = calendar.Todos.First().Status;
             Assert.IsTrue(string.Equals(TodoStatus.NeedsAction, status, TodoStatus.Comparison));
         }
+
+        [Test]
+        public void JournalStatusAllCaps()
+        {
+            var component = new Journal
+            {
+                Status = JournalStatus.Final,
+            };
+
+            var c = new Calendar { Journals = {component} };
+            var serialized = SerializeToString(c);
+            Assert.IsTrue(serialized.Contains(JournalStatus.Final, JournalStatus.Comparison));
+
+            var calendar = UnserializeCalendar(serialized);
+            var status = calendar.Journals.First().Status;
+            Assert.IsTrue(string.Equals(JournalStatus.Final, status, JournalStatus.Comparison));
+        }
     }
 }

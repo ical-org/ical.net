@@ -21,7 +21,6 @@ namespace Ical.Net
         public const string Alarm = "VALARM";
         public const string Calendar = "VCALENDAR";
         public const string Freebusy = "VFREEBUSY";
-        public const string Journal = "VJOURNAL";
         public const string Timezone = "VTIMEZONE";
         public const string Daylight = "DAYLIGHT";
         public const string Standard = "STANDARD";
@@ -140,11 +139,15 @@ namespace Ical.Net
     /// <summary>
     /// Status codes available to a <see cref="Components.Journal"/> entry.
     /// </summary>    
-    public enum JournalStatus
+    public static class JournalStatus
     {
-        Draft, // Indicates journal is draft.
-        Final, // Indicates journal is final.
-        Cancelled // Indicates journal is removed.
+        public const string Name = "VJOURNAL";
+        public const string Key = "STATUS";
+        public static readonly StringComparison Comparison = StringComparison.Ordinal;
+
+        public const string Draft = "DRAFT";
+        public const string Final = "FINAL";
+        public const string Cancelled = "CANCELLED";
     }
 
     public enum FreeBusyStatus

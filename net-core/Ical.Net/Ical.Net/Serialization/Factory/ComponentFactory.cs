@@ -21,7 +21,7 @@ namespace Ical.Net.Serialization.Factory
                 case Components.Freebusy:
                     c = new FreeBusy();
                     break;
-                case Components.Journal:
+                case JournalStatus.Name:
                     c = new Journal();
                     break;
                 case Components.Timezone:
