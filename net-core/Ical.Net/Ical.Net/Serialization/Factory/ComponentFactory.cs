@@ -27,7 +27,7 @@ namespace Ical.Net.Serialization.Factory
                 case Components.Timezone:
                     c = new VTimeZone();
                     break;
-                case Components.Todo:
+                case TodoStatus.Name:
                     c = new Todo();
                     break;
                 case Components.Calendar:

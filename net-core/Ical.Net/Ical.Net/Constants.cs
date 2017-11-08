@@ -1,4 +1,6 @@
-﻿namespace Ical.Net
+﻿using System;
+
+namespace Ical.Net
 {
     public enum AlarmAction
     {
@@ -19,7 +21,6 @@
         public const string Alarm = "VALARM";
         public const string Calendar = "VCALENDAR";
         public const string Freebusy = "VFREEBUSY";
-        public const string Todo = "VTODO";
         public const string Journal = "VJOURNAL";
         public const string Timezone = "VTIMEZONE";
         public const string Daylight = "DAYLIGHT";
@@ -113,20 +114,27 @@
     /// </summary>
     public static class EventStatus
     {
+        public const string Name = "VEVENT";
+        public static readonly StringComparison Comparison = StringComparison.Ordinal;
+
         public const string Tentative = "TENTATIVE";
         public const string Confirmed = "CONFIRMED";
         public const string Cancelled = "CANCELLED";
     }
 
     /// <summary>
-    /// Status codes available to a <see cref="Components.Todo"/> item.
+    /// Status codes available to a <see cref="Todo"/> item.
     /// </summary>
-    public enum TodoStatus
+    public static class TodoStatus
     {
-        NeedsAction,
-        Completed,
-        InProcess,
-        Cancelled
+        public const string Name = "VTODO";
+        public const string Key = "STATUS";
+        public static readonly StringComparison Comparison = StringComparison.Ordinal;
+
+        public const string NeedsAction = "NEEDS-ACTION";
+        public const string Completed = "COMPLETED";
+        public const string InProcess = "IN-PROCESS";
+        public const string Cancelled = "CANCELLED";
     }
 
     /// <summary>

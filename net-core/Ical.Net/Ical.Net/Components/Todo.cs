@@ -103,32 +103,34 @@ namespace Ical.Net
         /// <summary>
         /// The status of the todo item.
         /// </summary>
-        public virtual TodoStatus Status
+        public virtual string Status
         {
-            get => Properties.Get<TodoStatus>("STATUS");
+            get => Properties.Get<string>(TodoStatus.Key);
             set
             {
-                if (Status != value)
+                if (string.Equals(Status, value, TodoStatus.Comparison))
                 {
-                    // Automatically set/unset the Completed time, once the
-                    // component is fully loaded (When deserializing, it shouldn't
-                    // automatically set the completed time just because the
-                    // status was changed).
-                    if (IsLoaded)
-                    {
-                        Completed = value == TodoStatus.Completed
-                            ? CalDateTime.Now
-                            : null;
-                    }
-
-                    Properties.Set("STATUS", value);
+                    return;
                 }
+
+                // Automatically set/unset the Completed time, once the
+                // component is fully loaded (When deserializing, it shouldn't
+                // automatically set the completed time just because the
+                // status was changed).
+                if (IsLoaded)
+                {
+                    Completed = string.Equals(value, TodoStatus.Completed, TodoStatus.Comparison)
+                        ? CalDateTime.Now
+                        : null;
+                }
+
+                Properties.Set(TodoStatus.Key, value);
             }
         }
 
         public Todo()
         {
-            Name = Components.Todo;
+            Name = TodoStatus.Name;
 
             _mEvaluator = new TodoEvaluator(this);
             SetService(_mEvaluator);
@@ -169,23 +171,14 @@ namespace Ical.Net
         /// <param name="currDt">The date and time to test.</param>
         /// <returns>True if the item is Active as of <paramref name="currDt"/>, False otherwise.</returns>
         public virtual bool IsActive(IDateTime currDt)
-        {
-            if (DtStart == null)
-            {
-                return !IsCompleted(currDt) && !IsCancelled();
-            }
-            if (currDt.GreaterThanOrEqual(DtStart))
-            {
-                return !IsCompleted(currDt) && !IsCancelled();
-            }
-            return false;
-        }
+            => (DtStart == null || currDt.GreaterThanOrEqual(DtStart))
+                && (!IsCompleted(currDt) && !IsCancelled);
 
         /// <summary>
         /// Returns True if the todo item was cancelled.
         /// </summary>
         /// <returns>True if the todo was cancelled, False otherwise.</returns>
-        public virtual bool IsCancelled() => Status == TodoStatus.Cancelled;
+        public virtual bool IsCancelled => string.Equals(Status, TodoStatus.Cancelled, TodoStatus.Comparison);
 
         protected override bool EvaluationIncludesReferenceDate => true;
 
