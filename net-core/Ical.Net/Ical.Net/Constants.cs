@@ -279,22 +279,18 @@ namespace Ical.Net
         public const string Transparent = "TRANSPARENT";
     }
 
-    public class CalendarProductIDs
+    public static class LibraryMetadata
     {
-        public const string Default = "-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN";
+        public const string Version = "2.0";
+        public static readonly string ProdId = $"-//github.com/rianjs/ical.net//NONSGML ical.net {Version}//EN";
     }
 
-    public class CalendarVersions
-    {
-        public const string Latest = "2.0";
-    }
-
-    public class CalendarScales
+    public static class CalendarScales
     {
         public const string Gregorian = "GREGORIAN";
     }
 
-    public class CalendarMethods
+    public static class CalendarMethods
     {
         /// <summary>
         /// Used to publish an iCalendar object to one or

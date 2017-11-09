@@ -30,11 +30,11 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             // as they are required by RFC5545.
             if (string.IsNullOrWhiteSpace(iCal.Version))
             {
-                iCal.Version = CalendarVersions.Latest;
+                iCal.Version = LibraryMetadata.Version;
             }
             if (string.IsNullOrWhiteSpace(iCal.ProductId))
             {
-                iCal.ProductId = CalendarProductIDs.Default;
+                iCal.ProductId = LibraryMetadata.ProdId;
             }
 
             return base.SerializeToString(iCal);
