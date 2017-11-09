@@ -1570,15 +1570,16 @@ namespace Ical.Net.UnitTests
             var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.HourlyUntil1))[0];
             EventOccurrenceTest(
                 iCal,
-                new CalDateTime(1996, 1, 1, _tzid),
-                new CalDateTime(1998, 3, 31, _tzid),
-                new[]
+                fromDate: new CalDateTime(1996, 1, 1, _tzid),
+                toDate: new CalDateTime(1998, 3, 31, _tzid),
+                dateTimes: new[]
                 {
                     new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 2, 12, 0, 0, _tzid),
-                    new CalDateTime(1997, 9, 2, 15, 0, 0, _tzid)
+                    new CalDateTime(1997, 9, 2, 15, 0, 0, _tzid),
+                    new CalDateTime(1997, 9, 2, 18, 0, 0, _tzid),
                 },
-                null
+                timeZones: null
             );
         }
 
@@ -3429,6 +3430,37 @@ END:VCALENDAR";
                 .SetName("BCL time zone results in a Local DateTimeKind");
             yield return new TestCaseData("UTC", DateTimeKind.Utc)
                 .SetName("UTC results in DateTimeKind.Utc");
+        }
+
+        [Test]
+        public void InclusiveRruleUntil()
+        {
+            const string icalText = @"BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20180101
+DTEND;VALUE=DATE:20180102
+RRULE:FREQ=WEEKLY;UNTIL=20180105;BYDAY=MO,TU,WE,TH,FR
+DTSTAMP:20170926T001103Z
+UID:5kvks79u4nurqopt7qv4fi1jo8@google.com
+CREATED:20170922T131958Z
+DESCRIPTION:
+LAST-MODIFIED:20170922T131958Z
+LOCATION:
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Holiday Break - No School
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR
+";
+            const string timeZoneId = @"Eastern Standard Time";
+            var collection = Calendar.LoadFromStream(new StringReader(icalText));
+            var firstEvent = collection.First().Events.First();
+            var startSearch = new CalDateTime(DateTime.Parse("2017-07-01T00:00:00"), timeZoneId);
+            var endSearch = new CalDateTime(DateTime.Parse("2018-07-01T00:00:00"), timeZoneId);
+
+            var occurrences = firstEvent.GetOccurrences(startSearch, endSearch);
+            Assert.AreEqual(5, occurrences.Count);
         }
     }
 }

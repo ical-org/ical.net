@@ -210,11 +210,25 @@ namespace Ical.Net.DataTypes
         public static implicit operator CalDateTime(DateTime left) => new CalDateTime(left);
 
         /// <summary>
-        /// Converts the date/time to the date/time of the computer running the program
+        /// Converts the date/time to the date/time of the computer running the program. If the DateTimeKind is Unspecified, it's assumed that the underlying
+        /// Value already represents the system's datetime.
         /// </summary>
-        public DateTime AsSystemLocal => HasTime
-            ? Value.ToLocalTime()
-            : Value.ToLocalTime().Date;
+        public DateTime AsSystemLocal
+        {
+            get
+            {
+                if (Value.Kind == DateTimeKind.Unspecified)
+                {
+                    return HasTime
+                        ? Value
+                        : Value.Date;
+                }
+
+                return HasTime
+                    ? Value.ToLocalTime()
+                    : Value.ToLocalTime().Date;
+            }
+        }
 
         /// <summary>
         /// Returns a representation of the DateTime in Coordinated Universal Time (UTC)
