@@ -12,6 +12,7 @@ using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Interfaces.General;
 using Ical.Net.Interfaces.Serialization;
+using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using Ical.Net.Utility;
 
@@ -20,53 +21,44 @@ namespace Ical.Net
     public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, IMergeable
     {
         public static CalendarCollection Load(string iCalendarString)
-        {
-            using (var reader = new StringReader(iCalendarString))
-            {
-                return LoadFromStream(reader);
-            }
-        }
+            => SimpleDeserializer.Default.Deserialize(new StringReader(iCalendarString)).Cast<CalendarCollection>().FirstOrDefault();
 
         /// <summary>
         /// Loads an <see cref="Calendar"/> from an open stream.
         /// </summary>
         /// <param name="s">The stream from which to load the <see cref="Calendar"/> object</param>
         /// <returns>An <see cref="Calendar"/> object</returns>
-        public new static CalendarCollection LoadFromStream(Stream s) => LoadFromStream(s, Encoding.UTF8, new CalendarSerializer());
+        public new static CalendarCollection LoadFromStream(Stream s)
+            => SimpleDeserializer.Default.Deserialize(new StreamReader(s)).Cast<CalendarCollection>().FirstOrDefault();
 
         public static CalendarCollection LoadFromStream<T>(Stream s) where T : Calendar => LoadFromStream(typeof (T), s);
 
         public static CalendarCollection LoadFromStream(Type iCalendarType, Stream s)
-        {
-            ISerializer serializer = new CalendarSerializer();
-            serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
-            return LoadFromStream(s, Encoding.UTF8, serializer);
-        }
+            => SimpleDeserializer.Default.Deserialize(new StreamReader(s)).Cast<CalendarCollection>().FirstOrDefault();
 
         public static CalendarCollection LoadFromStream(Type iCalendarType, Stream s, Encoding encoding)
-        {
-            ISerializer serializer = new CalendarSerializer();
-            serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
-            return LoadFromStream(s, encoding, serializer);
-        }
+            => SimpleDeserializer.Default.Deserialize(new StreamReader(s, encoding)).Cast<CalendarCollection>().FirstOrDefault();
 
-        public new static CalendarCollection LoadFromStream(Stream s, Encoding e, ISerializer serializer) => serializer.Deserialize(s, e) as CalendarCollection;
+        public new static CalendarCollection LoadFromStream(Stream s, Encoding e, ISerializer serializer)
+        {
+            var foo = new StreamReader(s, e);
+            return SimpleDeserializer.Default.Deserialize(foo).Cast<CalendarCollection>().FirstOrDefault();
+            //return serializer.Deserialize(s, e) as CalendarCollection;
+        }
 
         public static CalendarCollection LoadFromStream(TextReader tr) => LoadFromStream(tr, new CalendarSerializer());
 
         public static CalendarCollection LoadFromStream<T>(TextReader tr) where T : Calendar => LoadFromStream(typeof (T), tr);
 
         public static CalendarCollection LoadFromStream(Type iCalendarType, TextReader tr)
-        {
-            ISerializer serializer = new CalendarSerializer();
-            serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
-            return LoadFromStream(tr, serializer);
-        }
+            => SimpleDeserializer.Default.Deserialize(tr).Cast<CalendarCollection>().FirstOrDefault();
 
         public static CalendarCollection LoadFromStream(TextReader tr, ISerializer serializer)
         {
-            var text = tr.ReadToEnd();
-            var ms = new MemoryStream(Encoding.UTF8.GetBytes(text));
+            var deserialized = SimpleDeserializer.Default.Deserialize(tr);
+            return SimpleDeserializer.Default.Deserialize(tr).Cast<CalendarCollection>().FirstOrDefault();
+            //var text = tr.ReadToEnd();
+            //var ms = new MemoryStream(Encoding.UTF8.GetBytes(text));
             return LoadFromStream(ms, Encoding.UTF8, serializer);
         }
 
