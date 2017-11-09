@@ -29,7 +29,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
                 return null;
             }
 
-            var sb = new StringBuilder(512);
+            var sb = new StringBuilder();
             var upperName = c.Name.ToUpperInvariant();
             sb.Append(TextUtil.FoldLines($"BEGIN:{upperName}"));
 

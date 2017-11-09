@@ -35,7 +35,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             // the property and parameter values
             var sf = GetService<ISerializerFactory>();
 
-            var result = new StringBuilder(1024);
+            var result = new StringBuilder();
             foreach (var v in prop.Values.Where(value => value != null))
             {
                 // Get a serializer to serialize the property's value.
@@ -77,7 +77,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
                     }
                 }
 
-                var sb = new StringBuilder(256);
+                var sb = new StringBuilder();
                 sb.Append(prop.Name);
                 if (parameterList.Any())
                 {

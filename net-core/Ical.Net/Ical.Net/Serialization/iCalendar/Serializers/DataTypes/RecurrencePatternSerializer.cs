@@ -117,7 +117,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
 
             // Push the recurrence pattern onto the serialization stack
             SerializationContext.Push(recur);
-            var values = new List<string>(16)
+            var values = new List<string>()
             {
                 "FREQ=" + Enum.GetName(typeof(FrequencyType), recur.Frequency).ToUpper()
             };

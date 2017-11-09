@@ -17,7 +17,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         {
             var p = obj as CalendarParameter;
 
-            var builder = new StringBuilder(512);
+            var builder = new StringBuilder();
             builder.Append(p.Name + "=");
 
             // "Section 3.2:  Property parameter values MUST NOT contain the DQUOTE character."

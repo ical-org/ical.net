@@ -39,7 +39,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                         return null;
                     }
 
-                    var builder = new StringBuilder(256);
+                    var builder = new StringBuilder();
                     builder.Append(Escape(serializer.SerializeToString(rs.StatusCode)));
                     builder.Append(";");
                     builder.Append(Escape(rs.Description));

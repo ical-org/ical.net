@@ -543,9 +543,8 @@ namespace Ical.Net.Evaluation
             if (expand.Value)
             {
                 var monthDayDates = new List<DateTime>();
-                for (var i = 0; i < dates.Count; i++)
+                foreach (var date in dates)
                 {
-                    var date = dates[i];
                     monthDayDates.AddRange(
                         from monthDay in pattern.ByMonthDay
                         let daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month)
@@ -553,7 +552,7 @@ namespace Ical.Net.Evaluation
                         select monthDay > 0
                             ? date.AddDays(-date.Day + monthDay)
                             : date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay)
-                   );
+                    );
                 }
                 return monthDayDates;
             }
@@ -607,17 +606,17 @@ namespace Ical.Net.Evaluation
             {
                 // Expand behavior
                 var weekDayDates = new List<DateTime>();
-                for (var i = 0; i < dates.Count; i++)
+                foreach (var date in dates)
                 {
-                    var date = dates[i];
-                    for (var j = 0; j < pattern.ByDay.Count; j++)
+                    foreach (var day in pattern.ByDay)
                     {
-                        weekDayDates.AddRange(GetAbsWeekDays(date, pattern.ByDay[j], pattern));
+                        weekDayDates.AddRange(GetAbsWeekDays(date, day, pattern));
                     }
                 }
 
                 return weekDayDates;
             }
+
             // Limit behavior
             for (var i = dates.Count - 1; i >= 0; i--)
             {
@@ -653,7 +652,7 @@ namespace Ical.Net.Evaluation
 
         private List<DateTime> GetAbsWeekDays(DateTime date, WeekDay weekDay, RecurrencePattern pattern)
         {
-            var days = new List<DateTime>(64);
+            var days = new List<DateTime>();
 
             var dayOfWeek = weekDay.DayOfWeek;
             if (pattern.Frequency == FrequencyType.Daily)
@@ -739,7 +738,7 @@ namespace Ical.Net.Evaluation
                 return dates;
             }
 
-            var offsetDates = new List<DateTime>(16);
+            var offsetDates = new List<DateTime>();
             var size = dates.Count;
             if (offset < 0 && offset >= -size)
             {

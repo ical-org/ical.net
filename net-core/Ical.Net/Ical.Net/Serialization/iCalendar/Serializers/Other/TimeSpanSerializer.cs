@@ -27,7 +27,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
                 return "P0D";
             }
 
-            var sb = new StringBuilder(32);
+            var sb = new StringBuilder();
 
             if (ts < TimeSpan.Zero)
             {

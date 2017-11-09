@@ -198,7 +198,7 @@ namespace Ical.Net
                 return new List<AlarmOccurrence>();
             }
 
-            var occurrences = new List<AlarmOccurrence>(16);
+            var occurrences = new List<AlarmOccurrence>();
             foreach (var alarm in Alarms)
             {
                 occurrences.AddRange(alarm.Poll(startTime, endTime));

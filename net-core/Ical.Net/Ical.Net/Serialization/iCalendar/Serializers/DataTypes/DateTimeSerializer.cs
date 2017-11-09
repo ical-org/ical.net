@@ -78,7 +78,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 dt.SetValueType("DATE");
             }
 
-            var value = new StringBuilder(32);
+            var value = new StringBuilder();
             value.Append($"{dt.Year:0000}{dt.Month:00}{dt.Day:00}");
             if (dt.HasTime)
             {

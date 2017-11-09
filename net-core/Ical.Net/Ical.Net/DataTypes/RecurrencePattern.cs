@@ -46,23 +46,23 @@ namespace Ical.Net.DataTypes
             set => _interval = value;
         }
 
-        public List<int> BySecond { get; set; } = new List<int>(16);
+        public List<int> BySecond { get; set; } = new List<int>();
 
-        public List<int> ByMinute { get; set; } = new List<int>(16);
+        public List<int> ByMinute { get; set; } = new List<int>();
 
-        public List<int> ByHour { get; set; } = new List<int>(16);
+        public List<int> ByHour { get; set; } = new List<int>();
 
-        public List<WeekDay> ByDay { get; set; } = new List<WeekDay>(16);
+        public List<WeekDay> ByDay { get; set; } = new List<WeekDay>();
 
-        public List<int> ByMonthDay { get; set; } = new List<int>(16);
+        public List<int> ByMonthDay { get; set; } = new List<int>();
 
-        public List<int> ByYearDay { get; set; } = new List<int>(16);
+        public List<int> ByYearDay { get; set; } = new List<int>();
 
-        public List<int> ByWeekNo { get; set; } = new List<int>(16);
+        public List<int> ByWeekNo { get; set; } = new List<int>();
 
-        public List<int> ByMonth { get; set; } = new List<int>(16);
+        public List<int> ByMonth { get; set; } = new List<int>();
 
-        public List<int> BySetPosition { get; set; } = new List<int>(16);
+        public List<int> BySetPosition { get; set; } = new List<int>();
 
         public DayOfWeek FirstDayOfWeek { get; set; } = DayOfWeek.Monday;
 
