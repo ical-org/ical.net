@@ -195,21 +195,24 @@ namespace Ical.Net.Serialization
                 {
                     break;
                 }
-                if (nextLine.Length > 0)
+
+                if (nextLine.Length <= 0)
                 {
-                    if ((nextLine[0] == ' ' || nextLine[0] == '\t'))
+                    continue;
+                }
+
+                if ((nextLine[0] == ' ' || nextLine[0] == '\t'))
+                {
+                    currentLine.Append(nextLine, 1, nextLine.Length - 1);
+                }
+                else
+                {
+                    if (currentLine.Length > 0)
                     {
-                        currentLine.Append(nextLine, 1, nextLine.Length - 1);
+                        yield return currentLine.ToString();
                     }
-                    else
-                    {
-                        if (currentLine.Length > 0)
-                        {
-                            yield return currentLine.ToString();
-                        }
-                        currentLine.Clear();
-                        currentLine.Append(nextLine);
-                    }
+                    currentLine.Clear();
+                    currentLine.Append(nextLine);
                 }
             }
             if (currentLine.Length > 0)

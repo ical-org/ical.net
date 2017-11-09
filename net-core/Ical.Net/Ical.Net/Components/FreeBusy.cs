@@ -6,6 +6,7 @@ using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Interfaces.General;
+using Ical.Net.Utility;
 
 namespace Ical.Net
 {
@@ -120,7 +121,10 @@ namespace Ical.Net
             return fb;
         }
 
-        public FreeBusy() => Name = Components.Freebusy;
+        public FreeBusy()
+        {
+            Name = Components.Freebusy;
+        }
 
         public virtual IList<FreeBusyEntry> Entries
         {
@@ -184,16 +188,12 @@ namespace Ical.Net
 
         public virtual void MergeWith(IMergeable obj)
         {
-            var fb = obj as FreeBusy;
-            if (fb == null)
+            if (!(obj is FreeBusy fb))
             {
                 return;
             }
 
-            foreach (var entry in fb.Entries.Where(entry => !Entries.Contains(entry)))
-            {
-                Entries.Add(entry);
-            }
+            Entries.AddRange(fb.Entries.Where(entry => !Entries.Contains(entry)));
         }
     }
 }

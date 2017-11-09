@@ -192,19 +192,8 @@ namespace Ical.Net
         public virtual IList<AlarmOccurrence> PollAlarms() => PollAlarms(null, null);
 
         public virtual IList<AlarmOccurrence> PollAlarms(IDateTime startTime, IDateTime endTime)
-        {
-            if (Alarms == null || !Alarms.Any())
-            {
-                return new List<AlarmOccurrence>();
-            }
-
-            var occurrences = new List<AlarmOccurrence>();
-            foreach (var alarm in Alarms)
-            {
-                occurrences.AddRange(alarm.Poll(startTime, endTime));
-            }
-            return occurrences;
-        }
+            => Alarms?.SelectMany(a => a.Poll(startTime, endTime)).ToList()
+                ?? new List<AlarmOccurrence>();
 
         protected bool Equals(RecurringComponent other)
         {

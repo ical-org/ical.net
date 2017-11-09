@@ -124,11 +124,11 @@ namespace Ical.Net.DataTypes
         }
 
         protected bool Equals(RecurrencePattern other) => (Interval == other.Interval)
-            && (RestrictionType == other.RestrictionType)
-            && (EvaluationMode == other.EvaluationMode)
-            && (Frequency == other.Frequency)
+            && RestrictionType == other.RestrictionType
+            && EvaluationMode == other.EvaluationMode
+            && Frequency == other.Frequency
             && Until.Equals(other.Until)
-            && (Count == other.Count)
+            && Count == other.Count
             && (FirstDayOfWeek == other.FirstDayOfWeek)
             && CollectionEquals(BySecond, other.BySecond)
             && CollectionEquals(ByMinute, other.ByMinute)
@@ -144,8 +144,7 @@ namespace Ical.Net.DataTypes
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((RecurrencePattern)obj);
+            return obj.GetType() == GetType() && Equals((RecurrencePattern)obj);
         }
 
         public override int GetHashCode()

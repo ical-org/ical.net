@@ -76,5 +76,13 @@ namespace Ical.Net.Utility
                 return leftSet.SetEquals(rightSet);
             }
         }
+
+        public static void AddRange<T>(this ICollection<T> destination, IEnumerable<T> source)
+        {
+            foreach (var element in source)
+            {
+                destination.Add(element);
+            }
+        }
     }
 }

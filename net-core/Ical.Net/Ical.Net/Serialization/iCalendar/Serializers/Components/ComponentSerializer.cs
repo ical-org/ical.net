@@ -23,8 +23,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
 
         public override string SerializeToString(object obj)
         {
-            var c = obj as ICalendarComponent;
-            if (c == null)
+            if (!(obj is ICalendarComponent c))
             {
                 return null;
             }

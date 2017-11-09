@@ -15,7 +15,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         public override string SerializeToString(object obj)
         {
-            var p = obj as CalendarParameter;
+            if (!(obj is CalendarParameter p))
+            {
+                return null;
+            }
 
             var builder = new StringBuilder();
             builder.Append(p.Name + "=");

@@ -110,16 +110,13 @@ namespace Ical.Net
         }
 
         protected bool Equals(Calendar other)
-        {
-            var foo = CollectionHelpers.Equals(UniqueComponents, other.UniqueComponents);
-            return string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)
+            => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)
                 && CollectionHelpers.Equals(UniqueComponents, other.UniqueComponents)
                 && CollectionHelpers.Equals(Events, other.Events)
                 && CollectionHelpers.Equals(Todos, other.Todos)
                 && CollectionHelpers.Equals(Journals, other.Journals)
                 && CollectionHelpers.Equals(FreeBusy, other.FreeBusy)
                 && CollectionHelpers.Equals(TimeZones, other.TimeZones);
-        }
 
         public override bool Equals(object obj)
         {
@@ -131,11 +128,7 @@ namespace Ical.Net
             {
                 return true;
             }
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
-            return Equals((Calendar)obj);
+            return obj.GetType() == GetType() && Equals((Calendar)obj);
         }
 
         public override int GetHashCode()
@@ -276,9 +269,11 @@ namespace Ical.Net
         /// </summary>
         /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
         /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
-        public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt) => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.AsSystemLocal.Date), new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)));
+        public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt)
+            => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.AsSystemLocal.Date), new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)));
 
-        public virtual HashSet<Occurrence> GetOccurrences(DateTime dt) => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)));
+        public virtual HashSet<Occurrence> GetOccurrences(DateTime dt)
+            => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)));
 
         /// <summary>
         /// Returns a list of occurrences of each recurring component
