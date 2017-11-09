@@ -149,18 +149,18 @@ namespace Ical.Net.DataTypes
             {
                 if (string.IsNullOrEmpty(_participationStatus))
                 {
-                    _participationStatus = Parameters.Get("PARTSTAT");
+                    _participationStatus = Parameters.Get(EventParticipationStatus.Key);
                 }
                 return _participationStatus;
             }
             set
             {
-                if (string.Equals(_participationStatus, value, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(_participationStatus, value, EventParticipationStatus.Comparison))
                 {
                     return;
                 }
                 _participationStatus = value;
-                Parameters.Set("PARTSTAT", value);
+                Parameters.Set(EventParticipationStatus.Key, value);
             }
         }
 

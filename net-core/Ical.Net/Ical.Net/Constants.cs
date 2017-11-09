@@ -38,7 +38,9 @@ namespace Ical.Net
 
     public static class EventParticipationStatus
     {
-        public const string ParticipationStatus = "PARTSTAT";
+        public const string Name = "PARTSTAT";
+        public const string Key = "PARTSTAT";
+        public static readonly StringComparison Comparison = StringComparison.Ordinal;
 
         /// <summary> Event needs action </summary>
         public const string NeedsAction = "NEEDS-ACTION";
@@ -51,13 +53,14 @@ namespace Ical.Net
         /// <summary> Event delegated </summary>
         public const string Delegated = "DELEGATED";
 
-        public static string ParamName => ParticipationStatus;
         public static string Default => NeedsAction;
     }
 
     public static class ToDoParticipationStatus
     {
-        public const string ParticipationStatus = "PARTSTAT";
+        public const string Name = "PARTSTAT";
+        public const string Key = "PARTSTAT";
+        public static readonly StringComparison Comparison = StringComparison.Ordinal;
 
         /// <summary> To-do needs action </summary>
         public const string NeedsAction = "NEEDS-ACTION";
@@ -74,22 +77,19 @@ namespace Ical.Net
         /// <summary> To-do in process </summary>
         public const string InProcess = "IN-PROCESS";
 
-        public static string ParamName => ParticipationStatus;
         public static string Default => NeedsAction;
     }
 
     public static class JournalParticipationStatus
     {
-        public const string ParticipationStatus = "PARTSTAT";
+        public const string Name = "PARTSTAT";
+        public const string Key = "PARTSTAT";
+        public static readonly StringComparison Comparison = StringComparison.Ordinal;
 
-        /// <summary> Event needs action </summary>
         public const string NeedsAction = "NEEDS-ACTION";
-        /// <summary> Event accepted </summary>
         public const string Accepted = "ACCEPTED";
-        /// <summary> Event declined </summary>
         public const string Declined = "DECLINED";
 
-        public static string ParamName => ParticipationStatus;
         public static string Default => NeedsAction;
     }
 
