@@ -2,12 +2,18 @@
 
 namespace Ical.Net
 {
-    public enum AlarmAction
+    public static class AlarmAction
     {
-        Audio,
-        Display,
-        Email,
-        Procedure
+        public const string Name = "ACTION";
+        public const string Key = "ACTION";
+        public static readonly StringComparison Comparison = StringComparison.Ordinal;
+
+        public const string Audio = "AUDIO";
+        public const string Display = "DISPLAY";
+        public const string Email = "EMAIL";
+
+        [Obsolete("Procedure was deprecated by RFC-5545")]
+        public const string Procedure = "PROCEDURE";
     }
 
     public enum TriggerRelation

@@ -22,7 +22,7 @@ namespace Ical.Net.Serialization
 
         public DataTypeMapper()
         {
-            AddPropertyMapping("ACTION", typeof (AlarmAction), false);
+            AddPropertyMapping(AlarmAction.Name, typeof (AlarmAction), false);
             AddPropertyMapping("ATTACH", typeof (Attachment), false);
             AddPropertyMapping("ATTENDEE", typeof (Attendee), false);
             AddPropertyMapping("CATEGORIES", typeof (string), true);

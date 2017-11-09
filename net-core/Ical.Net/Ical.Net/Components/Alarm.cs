@@ -12,10 +12,10 @@ namespace Ical.Net
     /// </summary>    
     public class Alarm : CalendarComponent
     {
-        public virtual AlarmAction Action
+        public virtual string Action
         {
-            get => Properties.Get<AlarmAction>("ACTION");
-            set => Properties.Set("ACTION", value);
+            get => Properties.Get<string>(AlarmAction.Key);
+            set => Properties.Set(AlarmAction.Key, value);
         }
 
         public virtual Attachment Attachment
