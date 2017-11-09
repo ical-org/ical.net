@@ -252,7 +252,6 @@ namespace Ical.Net.Evaluation
 
             var expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
 
-            var invalidCandidateCount = 0;
             var noCandidateIncrementCount = 0;
             var candidate = DateTime.MinValue;
             while (maxCount < 0 || dates.Count < maxCount)
@@ -267,20 +266,12 @@ namespace Ical.Net.Evaluation
                     break;
                 }
 
-                if (pattern.Count >= 1 && (dates.Count + invalidCandidateCount) >= pattern.Count)
-                {
-                    break;
-                }
-
                 var candidates = GetCandidates(seedCopy, pattern, expandBehavior);
                 if (candidates.Count > 0)
                 {
                     noCandidateIncrementCount = 0;
 
-                    // sort candidates for identifying when UNTIL date is exceeded..
-                    candidates.Sort();
-
-                    foreach (var t in candidates.Where(t => t >= originalDate))
+                    foreach (var t in candidates.OrderBy(c => c).Where(t => t >= originalDate))
                     {
                         candidate = t;
 
@@ -289,20 +280,19 @@ namespace Ical.Net.Evaluation
                         // from the previous year.
                         //
                         // candidates exclusive of periodEnd..
-                        if (candidate >= periodEnd)
-                        {
-                            invalidCandidateCount++;
-                        }
-                        else if (pattern.Count >= 1 && (dates.Count + invalidCandidateCount) >= pattern.Count)
+                        if (pattern.Count >= 1 && dates.Count >= pattern.Count)
                         {
                             break;
                         }
-                        else if (pattern.Until == DateTime.MinValue || candidate <= pattern.Until)
+
+                        if (candidate >= periodEnd)
                         {
-                            if (!dates.Contains(candidate))
-                            {
-                                dates.Add(candidate);
-                            }
+                            continue;
+                        }
+
+                        if (pattern.Until == DateTime.MinValue || candidate <= pattern.Until)
+                        {
+                            dates.Add(candidate);
                         }
                     }
                 }
