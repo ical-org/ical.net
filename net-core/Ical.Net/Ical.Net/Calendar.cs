@@ -161,7 +161,7 @@ namespace Ical.Net
         public virtual IUniqueComponentList<FreeBusy> FreeBusy => _mFreeBusy;
 
         /// <summary>
-        /// A collection of <see cref="Components.Journal"/> components in the iCalendar.
+        /// A collection of <see cref="Journal"/> components in the iCalendar.
         /// </summary>
         public virtual ICalendarObjectList<Journal> Journals => _mJournals;
 
@@ -171,7 +171,7 @@ namespace Ical.Net
         public virtual ICalendarObjectList<VTimeZone> TimeZones => _mTimeZones;
 
         /// <summary>
-        /// A collection of <see cref="Components.Todo"/> components in the iCalendar.
+        /// A collection of <see cref="Todo"/> components in the iCalendar.
         /// </summary>
         public virtual IUniqueComponentList<Todo> Todos => _mTodos;
 

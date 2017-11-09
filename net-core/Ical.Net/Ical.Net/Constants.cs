@@ -147,7 +147,7 @@ namespace Ical.Net
     }
 
     /// <summary>
-    /// Status codes available to a <see cref="Components.Journal"/> entry.
+    /// Status codes available to a <see cref="Journal"/> entry.
     /// </summary>    
     public static class JournalStatus
     {
