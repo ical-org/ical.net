@@ -269,10 +269,14 @@ namespace Ical.Net
         ThrowException
     }
 
-    public enum TransparencyType
+    public static class TransparencyType
     {
-        Opaque,
-        Transparent
+        public const string Name = "TRANSP";
+        public const string Key = "TRANSP";
+        public static readonly StringComparison Comparison = StringComparison.Ordinal;
+
+        public const string Opaque = "OPAQUE";
+        public const string Transparent = "TRANSPARENT";
     }
 
     public class CalendarProductIDs

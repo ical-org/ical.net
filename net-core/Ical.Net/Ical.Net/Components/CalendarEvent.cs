@@ -188,10 +188,10 @@ namespace Ical.Net
         /// or if the time cannot be scheduled for anything
         /// else (opaque).
         /// </summary>
-        public TransparencyType Transparency
+        public string Transparency
         {
-            get => Properties.Get<TransparencyType>("TRANSP");
-            set => Properties.Set("TRANSP", value);
+            get => Properties.Get<string>(TransparencyType.Key);
+            set => Properties.Set(TransparencyType.Key, value);
         }
 
         private EventEvaluator _mEvaluator;
@@ -293,7 +293,7 @@ namespace Ical.Net
                 && resourcesSet.SetEquals(other.Resources)
                 && string.Equals(Status, other.Status, StringComparison.Ordinal)
                 && IsActive == other.IsActive
-                && Transparency.Equals(other.Transparency)
+                && string.Equals(Transparency, other.Transparency, TransparencyType.Comparison)
                 && EvaluationIncludesReferenceDate == other.EvaluationIncludesReferenceDate
                 && Attachments.SequenceEqual(other.Attachments)
                 && CollectionHelpers.Equals(ExceptionRules, other.ExceptionRules)
@@ -352,7 +352,7 @@ namespace Ical.Net
                 hashCode = (hashCode * 397) ^ (Location?.GetHashCode() ?? 0);
                 hashCode = (hashCode * 397) ^ Status?.GetHashCode() ?? 0;
                 hashCode = (hashCode * 397) ^ IsActive.GetHashCode();
-                hashCode = (hashCode * 397) ^ Transparency.GetHashCode();
+                hashCode = (hashCode * 397) ^ Transparency?.GetHashCode() ?? 0;
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Attachments);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Resources);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCodeForNestedCollection(ExceptionDates);
