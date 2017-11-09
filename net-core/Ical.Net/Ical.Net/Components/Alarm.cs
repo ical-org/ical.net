@@ -56,8 +56,8 @@ namespace Ical.Net
 
         public virtual Trigger Trigger
         {
-            get => Properties.Get<Trigger>("TRIGGER");
-            set => Properties.Set("TRIGGER", value);
+            get => Properties.Get<Trigger>(TriggerRelation.Key);
+            set => Properties.Set(TriggerRelation.Key, value);
         }
 
         protected virtual IList<AlarmOccurrence> Occurrences { get; set; }
@@ -96,7 +96,7 @@ namespace Ical.Net
                 foreach (var o in rc.GetOccurrences(fromDate, toDate))
                 {
                     var dt = o.Period.StartTime;
-                    if (Trigger.Related == TriggerRelation.End)
+                    if (string.Equals(Trigger.Related, TriggerRelation.End, TriggerRelation.Comparison))
                     {
                         if (o.Period.EndTime != null)
                         {

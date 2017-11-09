@@ -16,10 +16,14 @@ namespace Ical.Net
         public const string Procedure = "PROCEDURE";
     }
 
-    public enum TriggerRelation
+    public static class TriggerRelation
     {
-        Start,
-        End
+        public const string Name = "TRIGGER";
+        public const string Key = "TRIGGER";
+        public static readonly StringComparison Comparison = StringComparison.Ordinal;
+
+        public const string Start = "START";
+        public const string End = "END";
     }
 
     public static class Components

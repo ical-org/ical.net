@@ -14,7 +14,7 @@ namespace Ical.Net.DataTypes
     {
         private IDateTime _mDateTime;
         private TimeSpan? _mDuration;
-        private TriggerRelation _mRelated = TriggerRelation.Start;
+        private string _mRelated = TriggerRelation.Start;
 
         public virtual IDateTime DateTime
         {
@@ -22,17 +22,19 @@ namespace Ical.Net.DataTypes
             set
             {
                 _mDateTime = value;
-                if (_mDateTime != null)
+                if (_mDateTime == null)
                 {
-                    // NOTE: this, along with the "Duration" setter, fixes the bug tested in
-                    // TODO11(), as well as this thread: https://sourceforge.net/forum/forum.php?thread_id=1926742&forum_id=656447
-
-                    // DateTime and Duration are mutually exclusive
-                    Duration = null;
-
-                    // Do not allow timeless date/time values
-                    _mDateTime.HasTime = true;
+                    return;
                 }
+
+                // NOTE: this, along with the "Duration" setter, fixes the bug tested in
+                // TODO11(), as well as this thread: https://sourceforge.net/forum/forum.php?thread_id=1926742&forum_id=656447
+
+                // DateTime and Duration are mutually exclusive
+                Duration = null;
+
+                // Do not allow timeless date/time values
+                _mDateTime.HasTime = true;
             }
         }
 
@@ -52,7 +54,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public virtual TriggerRelation Related
+        public virtual string Related
         {
             get => _mRelated;
             set => _mRelated = value;
@@ -62,7 +64,10 @@ namespace Ical.Net.DataTypes
 
         public Trigger() {}
 
-        public Trigger(TimeSpan ts) => Duration = ts;
+        public Trigger(TimeSpan ts)
+        {
+            Duration = ts;
+        }
 
         public Trigger(string value) : this()
         {
@@ -73,13 +78,15 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (obj is Trigger)
+            if (!(obj is Trigger))
             {
-                var t = (Trigger) obj;
-                DateTime = t.DateTime;
-                Duration = t.Duration;
-                Related = t.Related;
+                return;
             }
+
+            var t = (Trigger) obj;
+            DateTime = t.DateTime;
+            Duration = t.Duration;
+            Related = t.Related;
         }
 
         protected bool Equals(Trigger other) => Equals(_mDateTime, other._mDateTime) && _mDuration.Equals(other._mDuration) && _mRelated == other._mRelated;
@@ -107,7 +114,7 @@ namespace Ical.Net.DataTypes
             {
                 var hashCode = _mDateTime?.GetHashCode() ?? 0;
                 hashCode = (hashCode * 397) ^ _mDuration.GetHashCode();
-                hashCode = (hashCode * 397) ^ (int) _mRelated;
+                hashCode = (hashCode * 397) ^ _mRelated?.GetHashCode() ?? 0;
                 return hashCode;
             }
         }

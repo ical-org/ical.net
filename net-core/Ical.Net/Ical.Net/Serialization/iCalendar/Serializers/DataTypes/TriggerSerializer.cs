@@ -20,32 +20,37 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         {
             try
             {
-                var t = obj as Trigger;
-                if (t != null)
+                if (!(obj is Trigger t))
                 {
-                    // Push the trigger onto the serialization stack
-                    SerializationContext.Push(t);
-                    try
-                    {
-                        var factory = GetService<ISerializerFactory>();
-                        if (factory != null)
-                        {
-                            var valueType = t.GetValueType() ?? typeof (TimeSpan);
-                            var serializer = factory.Build(valueType, SerializationContext) as IStringSerializer;
-                            if (serializer != null)
-                            {
-                                var value = (valueType == typeof (IDateTime)) ? t.DateTime : (object) t.Duration;
-                                return serializer.SerializeToString(value);
-                            }
-                        }
-                    }
-                    finally
-                    {
-                        // Pop the trigger off the serialization stack
-                        SerializationContext.Pop();
-                    }
+                    return null;
                 }
-                return null;
+
+                // Push the trigger onto the serialization stack
+                SerializationContext.Push(t);
+                try
+                {
+                    var factory = GetService<ISerializerFactory>();
+                    if (factory == null)
+                    {
+                        return null;
+                    }
+
+                    var valueType = t.GetValueType() ?? typeof(TimeSpan);
+                    if (!(factory.Build(valueType, SerializationContext) is IStringSerializer serializer))
+                    {
+                        return null;
+                    }
+
+                    var value = valueType == typeof(IDateTime)
+                        ? t.DateTime
+                        : (object) t.Duration;
+                    return serializer.SerializeToString(value);
+                }
+                finally
+                {
+                    // Pop the trigger off the serialization stack
+                    SerializationContext.Pop();
+                }
             }
             catch
             {
@@ -57,50 +62,52 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         {
             var value = tr.ReadToEnd();
 
-            var t = CreateAndAssociate() as Trigger;
-            if (t != null)
+            if (!(CreateAndAssociate() is Trigger t))
             {
-                // Push the trigger onto the serialization stack
-                SerializationContext.Push(t);
-                try
-                {
-                    // Decode the value as needed
-                    value = Decode(t, value);
-
-                    // Set the trigger relation
-                    if (t.Parameters.ContainsKey("RELATED") && t.Parameters.Get("RELATED").Equals("END"))
-                    {
-                        t.Related = TriggerRelation.End;
-                    }
-
-                    var factory = GetService<ISerializerFactory>();
-                    if (factory != null)
-                    {
-                        var valueType = t.GetValueType() ?? typeof (TimeSpan);
-                        var serializer = factory.Build(valueType, SerializationContext) as IStringSerializer;
-                        var obj = serializer?.Deserialize(new StringReader(value));
-                        if (obj != null)
-                        {
-                            if (obj is IDateTime)
-                            {
-                                t.DateTime = (IDateTime) obj;
-                            }
-                            else
-                            {
-                                t.Duration = (TimeSpan) obj;
-                            }
-
-                            return t;
-                        }
-                    }
-                }
-                finally
-                {
-                    // Pop the trigger off the serialization stack
-                    SerializationContext.Pop();
-                }
+                return null;
             }
-            return null;
+
+            // Push the trigger onto the serialization stack
+            SerializationContext.Push(t);
+            try
+            {
+                // Decode the value as needed
+                value = Decode(t, value);
+
+                // Set the trigger relation
+                if (t.Parameters.ContainsKey("RELATED") && t.Parameters.Get("RELATED").Equals("END"))
+                {
+                    t.Related = TriggerRelation.End;
+                }
+
+                var factory = GetService<ISerializerFactory>();
+                if (factory == null)
+                {
+                    return null;
+                }
+
+                var valueType = t.GetValueType() ?? typeof(TimeSpan);
+                var serializer = factory.Build(valueType, SerializationContext) as IStringSerializer;
+                var obj = serializer?.Deserialize(new StringReader(value));
+                switch (obj)
+                {
+                    case null:
+                        return null;
+                    case IDateTime _:
+                        t.DateTime = (IDateTime) obj;
+                        break;
+                    default:
+                        t.Duration = (TimeSpan) obj;
+                        break;
+                }
+
+                return t;
+            }
+            finally
+            {
+                // Pop the trigger off the serialization stack
+                SerializationContext.Pop();
+            }
         }
     }
 }

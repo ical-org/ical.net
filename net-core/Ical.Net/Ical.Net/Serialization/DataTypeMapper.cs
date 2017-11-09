@@ -53,7 +53,7 @@ namespace Ical.Net.Serialization
             AddPropertyMapping("SEQUENCE", typeof (int), false);
             AddPropertyMapping("STATUS", ResolveStatusProperty, false);
             AddPropertyMapping("TRANSP", typeof (TransparencyType), false);
-            AddPropertyMapping("TRIGGER", typeof (Trigger), false);
+            AddPropertyMapping(TriggerRelation.Name, typeof (Trigger), false);
             AddPropertyMapping("TZNAME", typeof (string), false);
             AddPropertyMapping("TZOFFSETFROM", typeof (UtcOffset), false);
             AddPropertyMapping("TZOFFSETTO", typeof (UtcOffset), false);
