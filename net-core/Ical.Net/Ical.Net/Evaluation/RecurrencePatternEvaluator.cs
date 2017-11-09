@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net.Sockets;
 using Ical.Net.DataTypes;
 using Ical.Net.Exceptions;
 using Ical.Net.Interfaces.DataTypes;
@@ -254,7 +255,7 @@ namespace Ical.Net.Evaluation
             var invalidCandidateCount = 0;
             var noCandidateIncrementCount = 0;
             var candidate = DateTime.MinValue;
-            while ((maxCount < 0) || (dates.Count < maxCount))
+            while (maxCount < 0 || dates.Count < maxCount)
             {
                 if (pattern.Until != DateTime.MinValue && candidate != DateTime.MinValue && candidate > pattern.Until)
                 {
@@ -309,7 +310,7 @@ namespace Ical.Net.Evaluation
                 else
                 {
                     noCandidateIncrementCount++;
-                    if ((_maxIncrementCount > 0) && (noCandidateIncrementCount > _maxIncrementCount))
+                    if (_maxIncrementCount > 0 && noCandidateIncrementCount > _maxIncrementCount)
                     {
                         break;
                     }
@@ -318,7 +319,6 @@ namespace Ical.Net.Evaluation
                 IncrementDate(ref seedCopy, pattern, pattern.Interval);
             }
 
-            // sort final list..
             return dates;
         }
 
@@ -349,7 +349,6 @@ namespace Ical.Net.Evaluation
          * positions are ignored.
          * @param dates
          */
-
         private List<DateTime> ApplySetPosRules(List<DateTime> dates, RecurrencePattern pattern)
         {
             // return if no SETPOS rules specified..
@@ -361,20 +360,13 @@ namespace Ical.Net.Evaluation
             // sort the list before processing..
             dates.Sort();
 
-            var setPosDates = new List<DateTime>(dates.Count);
             var size = dates.Count;
-
-            foreach (var pos in pattern.BySetPosition)
-            {
-                if (pos > 0 && pos <= size)
-                {
-                    setPosDates.Add(dates[pos - 1]);
-                }
-                else if (pos < 0 && pos >= -size)
-                {
-                    setPosDates.Add(dates[size + pos]);
-                }
-            }
+            var setPosDates = pattern.BySetPosition
+                .Where(p => p > 0 && p <= size || p < 0 && p >= -size)  //Protect against out of range access
+                .Select(p => p > 0 && p <= size
+                    ? dates[p - 1]
+                    : dates[size + p])
+                .ToList();
             return setPosDates;
         }
 
@@ -384,7 +376,6 @@ namespace Ical.Net.Evaluation
          * @param dates
          * @return
          */
-
         private List<DateTime> GetMonthVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByMonth.Count == 0)
@@ -395,26 +386,15 @@ namespace Ical.Net.Evaluation
             if (expand.Value)
             {
                 // Expand behavior
-                var monthlyDates = new List<DateTime>();
-                foreach (var date in dates)
-                {
-                    monthlyDates.AddRange(pattern.ByMonth.Select(month => date.AddMonths(month - date.Month)));
-                }
-                return monthlyDates;
+                return dates
+                    .SelectMany(d => pattern.ByMonth.Select(month => d.AddMonths(month - d.Month)))
+                    .ToList();
             }
+
             // Limit behavior
-            for (var i = dates.Count - 1; i >= 0; i--)
-            {
-                var date = dates[i];
-                foreach (var t in pattern.ByMonth.Where(t => date.Month == t))
-                {
-                    goto Next;
-                }
-                dates.RemoveAt(i);
-                Next:
-                ;
-            }
-            return dates;
+            var dateSet = new HashSet<DateTime>(dates);
+            dateSet.ExceptWith(dates.Where(date => pattern.ByMonth.All(t => t != date.Month)));
+            return dateSet.ToList();
         }
 
         /**
@@ -423,7 +403,6 @@ namespace Ical.Net.Evaluation
          * @param dates
          * @return
          */
-
         private List<DateTime> GetWeekNoVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByWeekNo.Count == 0)
