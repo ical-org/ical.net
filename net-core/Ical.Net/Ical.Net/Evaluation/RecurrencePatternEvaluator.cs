@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Utility;
-using Period = Ical.Net.DataTypes.Period;
 
 namespace Ical.Net.Evaluation
 {

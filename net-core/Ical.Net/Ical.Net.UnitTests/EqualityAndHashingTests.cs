@@ -209,8 +209,8 @@ namespace Ical.Net.UnitTests
         [Test, TestCaseSource(nameof(CalendarCollection_TestCases))]
         public void CalendarCollection_Tests(string rawCalendar)
         {
-            var a = Calendar.Load(IcsFiles.USHolidays);
-            var b = Calendar.Load(IcsFiles.USHolidays);
+            var a = Calendar.Load(IcsFiles.UsHolidays);
+            var b = Calendar.Load(IcsFiles.UsHolidays);
             
             Assert.IsNotNull(a);
             Assert.IsNotNull(b);
@@ -222,7 +222,7 @@ namespace Ical.Net.UnitTests
         {
             yield return new TestCaseData(IcsFiles.Google1).SetName("Google calendar test case");
             yield return new TestCaseData(IcsFiles.Parse1).SetName("Weird file parse test case");
-            yield return new TestCaseData(IcsFiles.USHolidays).SetName("US Holidays (quite large)");
+            yield return new TestCaseData(IcsFiles.UsHolidays).SetName("US Holidays (quite large)");
         }
 
         [Test]

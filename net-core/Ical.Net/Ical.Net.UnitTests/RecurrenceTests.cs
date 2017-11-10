@@ -2627,7 +2627,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void UsHolidays()
         {
-            var iCal = Calendar.Load(IcsFiles.USHolidays);
+            var iCal = Calendar.Load(IcsFiles.UsHolidays);
             Assert.IsNotNull(iCal, "iCalendar was not loaded.");
             var items = new Dictionary<string, CalDateTime>
             {

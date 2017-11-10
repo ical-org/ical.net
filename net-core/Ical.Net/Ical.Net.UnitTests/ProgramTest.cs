@@ -14,7 +14,7 @@ namespace Ical.Net.UnitTests
         {
             // The following code loads and displays an iCalendar
             // with US Holidays for 2006.
-            var iCal = Calendar.Load(IcsFiles.USHolidays);
+            var iCal = Calendar.Load(IcsFiles.UsHolidays);
             Assert.IsNotNull(iCal, "iCalendar did not load.");
         }
 
