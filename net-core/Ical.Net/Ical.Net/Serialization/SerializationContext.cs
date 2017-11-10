@@ -46,7 +46,7 @@ namespace Ical.Net.Serialization
         {
             // Add some services by default
             SetService(new SerializerFactory());
-            SetService(new ComponentFactory());
+            SetService(new CalendarComponentFactory());
             SetService(new DataTypeMapper());
             SetService(new EncodingStack());
             SetService(new EncodingProvider(this));

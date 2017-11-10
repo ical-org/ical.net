@@ -1,9 +1,8 @@
 ﻿using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.Serialization.Factory;
 
 namespace Ical.Net.Serialization.Factory
 {
-    public class ComponentFactory : ICalendarComponentFactory
+    public class CalendarComponentFactory
     {
         public virtual ICalendarComponent Build(string objectName)
         {

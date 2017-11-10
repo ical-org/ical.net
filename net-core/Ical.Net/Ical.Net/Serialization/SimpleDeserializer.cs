@@ -19,7 +19,7 @@ namespace Ical.Net.Serialization
         internal SimpleDeserializer(
             DataTypeMapper dataTypeMapper,
             ISerializerFactory serializerFactory,
-            ICalendarComponentFactory componentFactory)
+            CalendarComponentFactory componentFactory)
         {
             _dataTypeMapper = dataTypeMapper;
             _serializerFactory = serializerFactory;
@@ -29,7 +29,7 @@ namespace Ical.Net.Serialization
         public static readonly SimpleDeserializer Default = new SimpleDeserializer(
             new DataTypeMapper(),
             new SerializerFactory(),
-            new ComponentFactory());
+            new CalendarComponentFactory());
 
         private const string _nameGroup = "name";
         private const string _valueGroup = "value";
@@ -40,7 +40,7 @@ namespace Ical.Net.Serialization
 
         private readonly DataTypeMapper _dataTypeMapper;
         private readonly ISerializerFactory _serializerFactory;
-        private readonly ICalendarComponentFactory _componentFactory;
+        private readonly CalendarComponentFactory _componentFactory;
 
         private static string BuildContentLineRegex()
         {
