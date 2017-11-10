@@ -60,32 +60,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
 
         public override object Deserialize(TextReader tr)
         {
-            if (tr == null)
-            {
-                return null;
-            }
-
-            using (tr)
-            {
-                var ctx = SerializationContext;
-                var contents = tr.ReadToEnd();
-
-                using (var normalized = TextUtil.Normalize(contents, ctx))
-                {
-                    // Create a lexer for our text stream
-                    var lexer = new IcalLexer(normalized);
-                    var parser = new IcalParser(lexer);
-
-                    // Get a serializer factory from our serialization services
-                    var sf = GetService<ISerializerFactory>();
-
-                    // Get a calendar component factory from our serialization services
-                    var cf = GetService<ICalendarComponentFactory>();
-
-                    var parsedComponent = parser.component(ctx, sf, cf, null);
-                    return parsedComponent;
-                }
-            }
+            return null;
         }
 
         public class PropertyAlphabetizer : IComparer<ICalendarProperty>

@@ -39,13 +39,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
 
         public override object Deserialize(TextReader tr)
         {
-            using (tr)
-            {
-                var lexer = new IcalLexer(tr);
-                var parser = new IcalParser(lexer);
-                var p = parser.parameter(SerializationContext, null);
-                return p;
-            }
+            return null;
         }
     }
 }

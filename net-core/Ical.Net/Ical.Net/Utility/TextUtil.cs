@@ -39,7 +39,6 @@ namespace Ical.Net.Utility
         /// <summary> Removes blank lines from a string with normalized (\r\n) line endings </summary>
         public static string RemoveEmptyLines(string s)
         {
-            //NOTE: this method makes the line/col numbers output from antlr incorrect
             var len = -1;
             while (len != s.Length)
             {
