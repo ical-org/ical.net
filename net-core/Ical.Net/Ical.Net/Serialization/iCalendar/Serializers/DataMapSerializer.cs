@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using Ical.Net.Interfaces.Serialization;
 using Ical.Net.Interfaces.Serialization.Factory;
 using Ical.Net.Serialization.iCalendar.Serializers.Other;
 
@@ -15,7 +14,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         protected IStringSerializer GetMappedSerializer()
         {
             var sf = GetService<ISerializerFactory>();
-            var mapper = GetService<IDataTypeMapper>();
+            var mapper = GetService<DataTypeMapper>();
             if (sf != null && mapper != null)
             {
                 var obj = SerializationContext.Peek();

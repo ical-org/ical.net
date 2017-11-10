@@ -122,7 +122,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
             var co = SerializationContext.Peek() as ICalendarObject;
             if (co is ICalendarProperty)
             {
-                serializeAsList = GetService<IDataTypeMapper>().GetPropertyAllowsMultipleValues(co);
+                serializeAsList = GetService<DataTypeMapper>().GetPropertyAllowsMultipleValues(co);
             }
 
             // Try to decode the string

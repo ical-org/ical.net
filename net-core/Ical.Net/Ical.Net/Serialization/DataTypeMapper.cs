@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization
 {
     public delegate Type TypeResolverDelegate(object context);
 
-    internal class DataTypeMapper : IDataTypeMapper
+    internal class DataTypeMapper
     {
         private class PropertyMapping
         {

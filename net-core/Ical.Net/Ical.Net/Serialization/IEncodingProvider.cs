@@ -1,4 +1,4 @@
-﻿namespace Ical.Net.Interfaces.Serialization
+﻿namespace Ical.Net.Serialization
 {
     internal interface IEncodingProvider
     {

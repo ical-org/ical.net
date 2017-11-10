@@ -1,6 +1,5 @@
 ﻿using Ical.Net.General;
 using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.Serialization;
 using Ical.Net.Interfaces.Serialization.Factory;
 using Ical.Net.Serialization.Factory;
 using Ical.Net.Serialization.iCalendar.Factory;
@@ -18,7 +17,7 @@ namespace Ical.Net.Serialization
     public class SimpleDeserializer
     {
         internal SimpleDeserializer(
-            IDataTypeMapper dataTypeMapper,
+            DataTypeMapper dataTypeMapper,
             ISerializerFactory serializerFactory,
             ICalendarComponentFactory componentFactory)
         {
@@ -39,7 +38,7 @@ namespace Ical.Net.Serialization
 
         private static readonly Regex _contentLineRegex = new Regex(BuildContentLineRegex(), RegexOptions.Compiled);
 
-        private readonly IDataTypeMapper _dataTypeMapper;
+        private readonly DataTypeMapper _dataTypeMapper;
         private readonly ISerializerFactory _serializerFactory;
         private readonly ICalendarComponentFactory _componentFactory;
 

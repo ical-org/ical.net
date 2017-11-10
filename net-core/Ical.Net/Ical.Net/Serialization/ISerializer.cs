@@ -1,10 +1,9 @@
 using System;
 using System.IO;
 using System.Text;
-using Ical.Net.Serialization;
-using IServiceProvider = Ical.Net.Interfaces.General.IServiceProvider;
+using Ical.Net.Interfaces.General;
 
-namespace Ical.Net.Interfaces.Serialization
+namespace Ical.Net.Serialization
 {
     public interface ISerializer : IServiceProvider
     {
