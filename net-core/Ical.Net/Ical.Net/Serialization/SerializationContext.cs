@@ -45,7 +45,6 @@ namespace Ical.Net.Serialization
         public SerializationContext()
         {
             // Add some services by default
-            SetService(new SerializationSettings());
             SetService(new SerializerFactory());
             SetService(new ComponentFactory());
             SetService(new DataTypeMapper());

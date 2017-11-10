@@ -58,11 +58,7 @@ namespace Ical.Net.Utility
             // Replace \r and \n with \r\n.
             s = NormalizeToCrLf.Replace(s, SerializationConstants.LineBreak);
 
-            var settings = ctx.GetService(typeof (ISerializationSettings)) as ISerializationSettings;
-            if (settings == null || !settings.EnsureAccurateLineNumbers)
-            {
-                s = RemoveEmptyLines(UnwrapLines(s));
-            }
+            s = RemoveEmptyLines(UnwrapLines(s));
 
             return new StringReader(s);
         }

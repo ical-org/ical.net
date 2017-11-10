@@ -141,14 +141,8 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Other
 
             if (co is ICalendarProperty)
             {
-                // Determine if our we're supposed to store extra information during
-                // the serialization process.  If so, let's store the escaped value.
-                var settings = GetService<ISerializationSettings>();
-                if (settings != null && settings.StoreExtraSerializationData)
-                {
-                    // Store the escaped value
-                    co.SetService("EscapedValue", escapedValues.Count == 1 ? escapedValues[0] : (object) escapedValues);
-                }
+                // Is this necessary?
+                co.SetService("EscapedValue", escapedValues.Count == 1 ? escapedValues[0] : (object)escapedValues);
             }
 
             // Return either a single value, or the entire list.
