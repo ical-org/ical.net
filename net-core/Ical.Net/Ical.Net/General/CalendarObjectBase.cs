@@ -7,7 +7,10 @@ namespace Ical.Net.General
     {
         private bool _mIsLoaded;
 
-        public CalendarObjectBase() => _mIsLoaded = true;
+        public CalendarObjectBase()
+        {
+            _mIsLoaded = true;
+        }
 
         /// <summary>
         /// Copies values from the target object to the

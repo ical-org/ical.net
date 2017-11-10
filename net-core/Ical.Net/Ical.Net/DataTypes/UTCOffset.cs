@@ -20,9 +20,15 @@ namespace Ical.Net.DataTypes
 
         public UtcOffset() {}
 
-        public UtcOffset(string value) : this() => Offset = UtcOffsetSerializer.GetOffset(value);
+        public UtcOffset(string value) : this()
+        {
+            Offset = UtcOffsetSerializer.GetOffset(value);
+        }
 
-        public UtcOffset(TimeSpan ts) => Offset = ts;
+        public UtcOffset(TimeSpan ts)
+        {
+            Offset = ts;
+        }
 
         public static implicit operator UtcOffset(TimeSpan ts) => new UtcOffset(ts);
 

@@ -35,7 +35,10 @@ namespace Ical.Net.DataTypes
 
         public StatusCode() {}
 
-        public StatusCode(int[] parts) => Parts = parts;
+        public StatusCode(int[] parts)
+        {
+            Parts = parts;
+        }
 
         public StatusCode(string value) : this()
         {

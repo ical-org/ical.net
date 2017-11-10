@@ -58,10 +58,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.Components
             return sb.ToString();
         }
 
-        public override object Deserialize(TextReader tr)
-        {
-            return null;
-        }
+        public override object Deserialize(TextReader tr) => null;
 
         public class PropertyAlphabetizer : IComparer<ICalendarProperty>
         {

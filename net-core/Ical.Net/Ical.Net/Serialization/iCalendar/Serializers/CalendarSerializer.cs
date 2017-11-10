@@ -13,7 +13,10 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
         public CalendarSerializer()
             :this(new SerializationContext()) { }
 
-        public CalendarSerializer(Calendar cal) => _calendar = cal;
+        public CalendarSerializer(Calendar cal)
+        {
+            _calendar = cal;
+        }
 
         public CalendarSerializer(SerializationContext ctx) : base(ctx) {}
 
@@ -39,10 +42,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             return base.SerializeToString(iCal);
         }
 
-        public override object Deserialize(TextReader tr)
-        {
-            return null;
-        }
+        public override object Deserialize(TextReader tr) => null;
 
         private class CalendarPropertySorter : IComparer<ICalendarProperty>
         {

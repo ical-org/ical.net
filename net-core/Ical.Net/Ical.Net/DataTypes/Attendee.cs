@@ -229,7 +229,10 @@ namespace Ical.Net.DataTypes
 
         public Attendee() {}
 
-        public Attendee(Uri attendee) => Value = attendee;
+        public Attendee(Uri attendee)
+        {
+            Value = attendee;
+        }
 
         public Attendee(string attendeeUri)
         {

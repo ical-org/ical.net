@@ -7,9 +7,15 @@ namespace Ical.Net
     /// </summary>
     public class VTimeZone : CalendarComponent
     {
-        public VTimeZone() => Name = Components.Timezone;
+        public VTimeZone()
+        {
+            Name = Components.Timezone;
+        }
 
-        public VTimeZone(string tzId) : this() => TzId = tzId;
+        public VTimeZone(string tzId) : this()
+        {
+            TzId = tzId;
+        }
 
         private string _tzId;
         public virtual string TzId

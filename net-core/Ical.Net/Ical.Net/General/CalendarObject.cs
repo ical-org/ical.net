@@ -14,9 +14,15 @@ namespace Ical.Net.General
         private ICalendarObjectList<ICalendarObject> _children;
         private ServiceProvider _serviceProvider;
 
-        internal CalendarObject() => Initialize();
+        internal CalendarObject()
+        {
+            Initialize();
+        }
 
-        public CalendarObject(string name) : this() => Name = name;
+        public CalendarObject(string name) : this()
+        {
+            Name = name;
+        }
 
         public CalendarObject(int line, int col) : this()
         {

@@ -39,7 +39,10 @@ namespace Ical.Net.DataTypes
 
         public Attachment() {}
 
-        public Attachment(byte[] value) : this() => Data = value;
+        public Attachment(byte[] value) : this()
+        {
+            Data = value;
+        }
 
         public Attachment(string value) : this()
         {

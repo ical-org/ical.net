@@ -102,9 +102,6 @@ namespace Ical.Net.Serialization.iCalendar.Serializers
             return result.ToString();
         }
 
-        public override object Deserialize(TextReader tr)
-        {
-            return null;
-        }
+        public override object Deserialize(TextReader tr) => null;
     }
 }
