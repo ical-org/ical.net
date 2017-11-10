@@ -1,13 +1,11 @@
 ﻿using System;
+using System.Reflection;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Interfaces.Serialization.Factory;
 using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 using Ical.Net.Serialization.iCalendar.Serializers.Other;
-using static System.Reflection.TypeExtensions;
 
-namespace Ical.Net.Serialization.iCalendar.Factory
+namespace Ical.Net.Serialization
 {
     public class DataTypeSerializerFactory : ISerializerFactory
     {

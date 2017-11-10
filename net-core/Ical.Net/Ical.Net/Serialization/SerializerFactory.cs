@@ -4,13 +4,11 @@ using Ical.Net.General;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Interfaces.Serialization.Factory;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using Ical.Net.Serialization.iCalendar.Serializers.Components;
 using Ical.Net.Serialization.iCalendar.Serializers.Other;
 
-namespace Ical.Net.Serialization.iCalendar.Factory
+namespace Ical.Net.Serialization
 {
     public class SerializerFactory : ISerializerFactory
     {

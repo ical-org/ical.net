@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Interfaces.Serialization.Factory;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers
 {

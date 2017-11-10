@@ -5,8 +5,6 @@ using System.Linq;
 using System.Text;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Interfaces.Serialization.Factory;
 using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers.Components

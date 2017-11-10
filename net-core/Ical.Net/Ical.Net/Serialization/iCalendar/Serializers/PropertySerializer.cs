@@ -6,8 +6,6 @@ using Ical.Net.DataTypes;
 using Ical.Net.General;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Interfaces.Serialization.Factory;
 using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization.iCalendar.Serializers

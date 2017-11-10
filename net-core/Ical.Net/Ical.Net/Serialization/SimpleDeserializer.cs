@@ -1,8 +1,5 @@
 ﻿using Ical.Net.General;
 using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.Serialization.Factory;
-using Ical.Net.Serialization.Factory;
-using Ical.Net.Serialization.iCalendar.Factory;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using Ical.Net.Utility;
 using System;

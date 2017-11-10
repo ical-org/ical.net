@@ -1,7 +1,6 @@
 ﻿using System;
-using Ical.Net.Serialization;
 
-namespace Ical.Net.Interfaces.Serialization.Factory
+namespace Ical.Net.Serialization
 {
     public interface ISerializerFactory
     {

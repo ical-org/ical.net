@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using Ical.Net.General;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.General;
-using Ical.Net.Serialization.Factory;
-using Ical.Net.Serialization.iCalendar.Factory;
 using Ical.Net.Serialization.iCalendar.Processors;
 
 namespace Ical.Net.Serialization

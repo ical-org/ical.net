@@ -1,6 +1,6 @@
 ﻿using Ical.Net.Interfaces.Components;
 
-namespace Ical.Net.Serialization.Factory
+namespace Ical.Net.Serialization
 {
     public class CalendarComponentFactory
     {

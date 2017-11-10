@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using Ical.Net.Interfaces.Serialization;
 using Ical.Net.Serialization;
 
 namespace Ical.Net.Utility
