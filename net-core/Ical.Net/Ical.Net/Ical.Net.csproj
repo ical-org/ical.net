@@ -15,7 +15,6 @@
     <ProjectReference Include="..\Ical.Net.Collections\Ical.Net.Collections.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Interfaces\Serialization\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

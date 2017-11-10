@@ -1,6 +1,6 @@
 using System;
 using Ical.Net.DataTypes;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using Ical.Net.Serialization.DataTypes;
 using NUnit.Framework;
 
 namespace Ical.Net.UnitTests.Serialization.iCalendar.Serializers.DataTypes

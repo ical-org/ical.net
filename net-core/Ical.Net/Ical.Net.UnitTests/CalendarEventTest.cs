@@ -4,7 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ical.Net.Serialization.iCalendar.Serializers;
+using Ical.Net.Serialization;
 using NUnit.Framework.Interfaces;
 
 namespace Ical.Net.UnitTests

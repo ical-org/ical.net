@@ -7,8 +7,8 @@ using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.Components;
 using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Serialization.iCalendar.Serializers;
-using Ical.Net.Serialization.iCalendar.Serializers.Other;
+using Ical.Net.Serialization;
+using Ical.Net.Serialization.DataTypes;
 using NUnit.Framework;
 using Ical.Net.Utility;
 

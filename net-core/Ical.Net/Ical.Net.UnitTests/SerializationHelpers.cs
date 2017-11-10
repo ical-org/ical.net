@@ -1,4 +1,4 @@
-﻿using Ical.Net.Serialization.iCalendar.Serializers;
+﻿using Ical.Net.Serialization;
 
 namespace Ical.Net.UnitTests
 {

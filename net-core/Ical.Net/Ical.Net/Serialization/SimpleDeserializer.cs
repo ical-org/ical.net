@@ -1,6 +1,5 @@
 ﻿using Ical.Net.General;
 using Ical.Net.Interfaces.Components;
-using Ical.Net.Serialization.iCalendar.Serializers;
 using Ical.Net.Utility;
 using System;
 using System.Collections.Generic;

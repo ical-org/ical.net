@@ -2,7 +2,7 @@
 using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.General;
-using Ical.Net.Serialization.iCalendar.Serializers;
+using Ical.Net.Serialization;
 using NUnit.Framework;
 
 namespace Ical.Net.UnitTests

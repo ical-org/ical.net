@@ -1,9 +1,9 @@
 using Ical.Net.DataTypes;
-using Ical.Net.Serialization.iCalendar.Serializers;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ical.Net.Serialization;
 
 namespace Ical.Net.UnitTests
 {

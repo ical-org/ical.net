@@ -2,8 +2,7 @@
 using System.Reflection;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
-using Ical.Net.Serialization.iCalendar.Serializers.Other;
+using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.Serialization
 {

@@ -8,8 +8,8 @@ using Ical.Net.DataTypes;
 using Ical.Net.General;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
-using Ical.Net.Serialization.iCalendar.Serializers;
-using Ical.Net.Serialization.iCalendar.Serializers.Other;
+using Ical.Net.Serialization;
+using Ical.Net.Serialization.DataTypes;
 using NUnit.Framework;
 
 namespace Ical.Net.UnitTests
