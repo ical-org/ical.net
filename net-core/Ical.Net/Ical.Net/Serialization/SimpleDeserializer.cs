@@ -37,20 +37,20 @@ namespace Ical.Net.Serialization
         private const string _paramNameGroup = "paramName";
         private const string _paramValueGroup = "paramValue";
 
-        private static Regex _contentLineRegex = new Regex(BuildContentLineRegex(), RegexOptions.Compiled);
+        private static readonly Regex _contentLineRegex = new Regex(BuildContentLineRegex(), RegexOptions.Compiled);
 
         private readonly IDataTypeMapper _dataTypeMapper;
         private readonly ISerializerFactory _serializerFactory;
         private readonly ICalendarComponentFactory _componentFactory;
 
-        static string BuildContentLineRegex()
+        private static string BuildContentLineRegex()
         {
             // name          = iana-token / x-name
             // iana-token    = 1*(ALPHA / DIGIT / "-")
             // x-name        = "X-" [vendorid "-"] 1*(ALPHA / DIGIT / "-")
             // vendorid      = 3*(ALPHA / DIGIT)
             // Add underscore to match behavior of bug 2033495
-            var identifier = "[-A-Za-z0-9_]+";
+            const string identifier = "[-A-Za-z0-9_]+";
 
             // param-value   = paramtext / quoted-string
             // paramtext     = *SAFE-CHAR

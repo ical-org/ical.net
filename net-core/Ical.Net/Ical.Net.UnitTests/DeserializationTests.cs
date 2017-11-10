@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
-using antlr;
 using Ical.Net.DataTypes;
 using Ical.Net.General;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Serialization;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using Ical.Net.Serialization.iCalendar.Serializers.Other;
 using NUnit.Framework;
@@ -488,7 +486,7 @@ END:VCALENDAR
             }
             catch (Exception e)
             {
-                Assert.IsInstanceOf<MismatchedTokenException>(e);
+                Assert.IsInstanceOf<SerializationException>(e);
             }
         }
 
@@ -504,66 +502,9 @@ END:VCALENDAR
             Assert.AreEqual(2, props.Count);
 
             for (var i = 0; i < props.Count; i++)
+            {
                 Assert.AreEqual("2." + i, props[i].Value);
-        }
-
-        /// <summary>
-        /// Tests that line/column numbers are correctly tracked for
-        /// parsed (deserialized) calendars.
-        /// </summary>
-        [Test, Category("Deserialization")]
-        public void LineColumns1()
-        {
-            var ctx = new SerializationContext();
-
-            var settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
-            settings.EnsureAccurateLineNumbers = true;
-
-            var serializer = new CalendarSerializer
-            {
-                SerializationContext = ctx
-            };
-
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.EmptyLines1), serializer)[0];
-
-            Assert.AreEqual(2, iCal.Events.Count);
-            Assert.AreEqual(4, iCal.Events.First().Line);
-            Assert.AreEqual(18, iCal.Events[1].Line);
-            Assert.AreEqual(5, iCal.Events.First().Properties["CREATED"].Line);
-            Assert.AreEqual(6, iCal.Events.First().Properties["LAST-MODIFIED"].Line);
-            Assert.AreEqual(7, iCal.Events.First().Properties["DTSTAMP"].Line);
-            Assert.AreEqual(8, iCal.Events.First().Properties["UID"].Line);
-            Assert.AreEqual(9, iCal.Events.First().Properties["SUMMARY"].Line);
-            Assert.AreEqual(10, iCal.Events.First().Properties["CLASS"].Line);
-            Assert.AreEqual(11, iCal.Events.First().Properties["DTSTART"].Line);
-            Assert.AreEqual(12, iCal.Events.First().Properties["DTEND"].Line);
-            Assert.AreEqual(13, iCal.Events.First().Properties["CATEGORIES"].Line);
-            Assert.AreEqual(14, iCal.Events.First().Properties["X-MOZILLA-ALARM-DEFAULT-LENGTH"].Line);
-            Assert.AreEqual(15, iCal.Events.First().Properties["LOCATION"].Line);
-        }
-
-        /// <summary>
-        /// Tests that line/column numbers are correctly tracked for
-        /// parsed (deserialized) calendars.
-        /// </summary>
-        [Test, Category("Deserialization")]
-        public void LineColumns2()
-        {
-            var ctx = new SerializationContext();
-
-            var settings = ctx.GetService(typeof(ISerializationSettings)) as ISerializationSettings;
-            settings.EnsureAccurateLineNumbers = true;
-
-            var serializer = new CalendarSerializer
-            {
-                SerializationContext = ctx
-            };
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Calendar1), serializer)[0];
-
-            Assert.IsNotNull(iCal.Todos["2df60496-1e73-11db-ba96-e3cfe6793b5f"]);
-            Assert.IsNotNull(iCal.Todos["4836c236-1e75-11db-835f-a024e2a6131f"]);
-            Assert.AreEqual(110, iCal.Todos["4836c236-1e75-11db-835f-a024e2a6131f"].Properties["LOCATION"].Line);
-            Assert.AreEqual(123, iCal.Todos["2df60496-1e73-11db-ba96-e3cfe6793b5f"].Properties["UID"].Line);
+            }
         }
     }
 }

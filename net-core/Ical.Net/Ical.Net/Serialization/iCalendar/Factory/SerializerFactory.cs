@@ -29,69 +29,62 @@ namespace Ical.Net.Serialization.iCalendar.Factory
         /// <param name="ctx">The serialization context.</param>
         public virtual ISerializer Build(Type objectType, SerializationContext ctx)
         {
-            if (objectType != null)
+            if (objectType == null)
             {
-                ISerializer s;
-
-                if (typeof (Calendar).IsAssignableFrom(objectType))
-                {
-                    s = new CalendarSerializer(ctx);
-                }
-                else if (typeof (ICalendarComponent).IsAssignableFrom(objectType))
-                {
-                    s = typeof (CalendarEvent).IsAssignableFrom(objectType)
-                        ? new EventSerializer(ctx)
-                        : new ComponentSerializer(ctx);
-                }
-                else if (typeof (ICalendarProperty).IsAssignableFrom(objectType))
-                {
-                    s = new PropertySerializer(ctx);
-                }
-                else if (typeof (CalendarParameter).IsAssignableFrom(objectType))
-                {
-                    s = new ParameterSerializer(ctx);
-                }
-                else if (typeof (string).IsAssignableFrom(objectType))
-                {
-                    s = new StringSerializer(ctx);
-                }
-#if NET_4
-                else if (objectType.IsEnum)
-                {
-                    s = new EnumSerializer(objectType, ctx);
-                }
-#else
-                else if (objectType.GetTypeInfo().IsEnum)
-                {
-                    s = new EnumSerializer(objectType, ctx);
-                }
-#endif
-                else if (typeof (TimeSpan).IsAssignableFrom(objectType))
-                {
-                    s = new TimeSpanSerializer(ctx);
-                }
-                else if (typeof (int).IsAssignableFrom(objectType))
-                {
-                    s = new IntegerSerializer(ctx);
-                }
-                else if (typeof (Uri).IsAssignableFrom(objectType))
-                {
-                    s = new UriSerializer(ctx);
-                }
-                else if (typeof (ICalendarDataType).IsAssignableFrom(objectType))
-                {
-                    s = _mDataTypeSerializerFactory.Build(objectType, ctx);
-                }
-                // Default to a string serializer, which simply calls
-                // ToString() on the value to serialize it.
-                else
-                {
-                    s = new StringSerializer(ctx);
-                }
-
-                return s;
+                return null;
             }
-            return null;
+            ISerializer s;
+
+            if (typeof (Calendar).IsAssignableFrom(objectType))
+            {
+                s = new CalendarSerializer(ctx);
+            }
+            else if (typeof (ICalendarComponent).IsAssignableFrom(objectType))
+            {
+                s = typeof (CalendarEvent).IsAssignableFrom(objectType)
+                    ? new EventSerializer(ctx)
+                    : new ComponentSerializer(ctx);
+            }
+            else if (typeof (ICalendarProperty).IsAssignableFrom(objectType))
+            {
+                s = new PropertySerializer(ctx);
+            }
+            else if (typeof (CalendarParameter).IsAssignableFrom(objectType))
+            {
+                s = new ParameterSerializer(ctx);
+            }
+            else if (typeof (string).IsAssignableFrom(objectType))
+            {
+                s = new StringSerializer(ctx);
+            }
+            else if (objectType.GetTypeInfo().IsEnum)
+            {
+                s = new EnumSerializer(objectType, ctx);
+            }
+            else if (typeof (TimeSpan).IsAssignableFrom(objectType))
+            {
+                s = new TimeSpanSerializer(ctx);
+            }
+            else if (typeof (int).IsAssignableFrom(objectType))
+            {
+                s = new IntegerSerializer(ctx);
+            }
+            else if (typeof (Uri).IsAssignableFrom(objectType))
+            {
+                s = new UriSerializer(ctx);
+            }
+            else if (typeof (ICalendarDataType).IsAssignableFrom(objectType))
+            {
+                s = _mDataTypeSerializerFactory.Build(objectType, ctx);
+            }
+            // Default to a string serializer, which simply calls
+            // ToString() on the value to serialize it.
+            else
+            {
+                s = new StringSerializer(ctx);
+            }
+
+            return s;
         }
     }
 }
