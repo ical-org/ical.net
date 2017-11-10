@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net.Sockets;
 using Ical.Net.DataTypes;
 using Ical.Net.Exceptions;
 using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Utility;
-using NodaTime;
 using Period = Ical.Net.DataTypes.Period;
 
 namespace Ical.Net.Evaluation
