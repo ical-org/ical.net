@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
@@ -15,7 +14,7 @@ namespace Ical.Net.UnitTests
 
         public void TestAlarm(string calendarString, List<IDateTime> dates, CalDateTime start, CalDateTime end)
         {
-            var iCal = Calendar.Load(new StringReader(calendarString));
+            var iCal = Calendar.Load(calendarString);
             ProgramTest.TestCal(iCal);
             var evt = iCal.Events.First();
 

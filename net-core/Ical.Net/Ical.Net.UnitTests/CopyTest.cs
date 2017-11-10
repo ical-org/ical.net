@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization.iCalendar.Serializers;
@@ -64,10 +63,8 @@ namespace Ical.Net.UnitTests
             e.Uid = "Hello";
             var copy = e.Copy<CalendarEvent>();
             Assert.AreEqual(e.Uid, copy.Uid);
-            //Assert.IsFalse(ReferenceEquals(e.Uid, copy.Uid));
 
             copy.Uid = "Goodbye";
-            //Assert.AreNotEqual(e.Uid, copy.Uid);
 
             const string uidPattern = "UID:";
             var serializedOrig = SerializeEvent(e);

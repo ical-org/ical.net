@@ -3,7 +3,6 @@ using Ical.Net.ExtensionMethods;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Ical.Net.Serialization.iCalendar.Serializers;
 using NUnit.Framework.Interfaces;

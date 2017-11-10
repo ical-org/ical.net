@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Ical.Net.DataTypes;
-
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
@@ -16,7 +14,7 @@ namespace Ical.Net.UnitTests
         [Test, TestCaseSource(nameof(ActiveTodo_TestCases)), Category("Todo")]
         public void ActiveTodo_Tests(string calendarString, IList<KeyValuePair<CalDateTime, bool>> incoming)
         {
-            var iCal = Calendar.Load(new StringReader(calendarString));
+            var iCal = Calendar.Load(calendarString);
             ProgramTest.TestCal(iCal);
             var todo = iCal.Todos;
 
@@ -166,7 +164,7 @@ namespace Ical.Net.UnitTests
         [Test, TestCaseSource(nameof(CompletedTodo_TestCases)), Category("Todo")]
         public void CompletedTodo_Tests(string calendarString, IList<KeyValuePair<CalDateTime, bool>> incoming)
         {
-            var iCal = Calendar.Load(new StringReader(calendarString));
+            var iCal = Calendar.Load(calendarString);
             ProgramTest.TestCal(iCal);
             var todo = iCal.Todos;
 
@@ -192,7 +190,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Todo")]
         public void Todo7_1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.Todo7));
+            var iCal = Calendar.Load(IcsFiles.Todo7);
             var todo = iCal.Todos;
 
             var items = new List<CalDateTime>

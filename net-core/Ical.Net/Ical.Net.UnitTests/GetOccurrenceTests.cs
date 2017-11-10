@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Interfaces.DataTypes;
@@ -11,7 +10,7 @@ namespace Ical.Net.UnitTests
 {
     internal class GetOccurrenceTests
     {
-        public static CalendarCollection GetCalendars(string incoming) => CalendarCollection.Load(new StringReader(incoming));
+        public static CalendarCollection GetCalendars(string incoming) => CalendarCollection.Load(incoming);
 
         [Test]
         public void WrongDurationTest()
@@ -197,7 +196,7 @@ END:VEVENT
 END:VCALENDAR
 ";
 
-            var collection = Calendar.Load(new StringReader(ical));
+            var collection = Calendar.Load(ical);
             var startCheck = new DateTime(2016, 11, 11);
             var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck, startCheck.AddMonths(1));
 

@@ -81,7 +81,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void YearlyComplex1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.YearlyComplex1));
+            var iCal = Calendar.Load(IcsFiles.YearlyComplex1);
             ProgramTest.TestCal(iCal);
             var evt = iCal.Events.First();
             var occurrences = evt.GetOccurrences(
@@ -114,7 +114,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void DailyCount1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.DailyCount1));
+            var iCal = Calendar.Load(IcsFiles.DailyCount1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2006, 7, 1, _tzid),
@@ -142,7 +142,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void DailyUntil1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.DailyUntil1));
+            var iCal = Calendar.Load(IcsFiles.DailyUntil1);
             ProgramTest.TestCal(iCal);
             var evt = iCal.Events.First();
 
@@ -175,7 +175,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Daily1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.Daily1));
+            var iCal = Calendar.Load(IcsFiles.Daily1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1997, 9, 1, _tzid),
@@ -289,7 +289,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void DailyCount2()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.DailyCount2));
+            var iCal = Calendar.Load(IcsFiles.DailyCount2);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1997, 9, 1, _tzid),
@@ -312,7 +312,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void ByMonth1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.ByMonth1));
+            var iCal = Calendar.Load(IcsFiles.ByMonth1);
             ProgramTest.TestCal(iCal);
             var evt = iCal.Events.First();
 
@@ -347,12 +347,12 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void ByMonth2()
         {
-            var iCal1 = Calendar.Load(new StringReader(IcsFiles.ByMonth1));
-            var iCal2 = Calendar.Load(new StringReader(IcsFiles.ByMonth2));
+            var iCal1 = Calendar.Load(IcsFiles.ByMonth1);
+            var iCal2 = Calendar.Load(IcsFiles.ByMonth2);
             ProgramTest.TestCal(iCal1);
             ProgramTest.TestCal(iCal2);
-            CalendarEvent evt1 = (CalendarEvent)iCal1.Events.First();
-            CalendarEvent evt2 = (CalendarEvent)iCal2.Events.First();
+            var evt1 = iCal1.Events.First();
+            var evt2 = iCal2.Events.First();
 
             var evt1Occurrences = evt1.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(2000, 12, 31)).OrderBy(o => o.Period.StartTime).ToList();
             var evt2Occurrences = evt2.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(2000, 12, 31)).OrderBy(o => o.Period.StartTime).ToList();
@@ -367,7 +367,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void WeeklyCount1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.WeeklyCount1));
+            var iCal = Calendar.Load(IcsFiles.WeeklyCount1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1997, 9, 1, _tzid),
@@ -407,7 +407,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void WeeklyUntil1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.WeeklyUntil1));
+            var iCal = Calendar.Load(IcsFiles.WeeklyUntil1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1997, 9, 1, _tzid),
@@ -461,7 +461,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void WeeklyWkst1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.WeeklyWkst1));
+            var iCal = Calendar.Load(IcsFiles.WeeklyWkst1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1997, 9, 1, _tzid),
@@ -503,7 +503,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void WeeklyUntilWkst1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.WeeklyUntilWkst1));
+            var iCal = Calendar.Load(IcsFiles.WeeklyUntilWkst1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1997, 9, 1, _tzid),
@@ -531,8 +531,8 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void WeeklyCountWkst1()
         {
-            var iCal1 = Calendar.Load(new StringReader(IcsFiles.WeeklyUntilWkst1));
-            var iCal2 = Calendar.Load(new StringReader(IcsFiles.WeeklyCountWkst1));
+            var iCal1 = Calendar.Load(IcsFiles.WeeklyUntilWkst1);
+            var iCal2 = Calendar.Load(IcsFiles.WeeklyCountWkst1);
             ProgramTest.TestCal(iCal1);
             ProgramTest.TestCal(iCal2);
             var evt1 = iCal1.Events.First();
@@ -542,7 +542,9 @@ namespace Ical.Net.UnitTests
             var evt2Occ = evt2.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(1999, 1, 1)).OrderBy(o => o.Period.StartTime).ToList();
             Assert.AreEqual(evt1Occ.Count, evt2Occ.Count, "WeeklyCountWkst1() does not match WeeklyUntilWkst1() as it should");
             for (var i = 0; i < evt1Occ.Count; i++)
+            {
                 Assert.AreEqual(evt1Occ[i].Period, evt2Occ[i].Period, "PERIOD " + i + " from WeeklyUntilWkst1 (" + evt1Occ[i].Period + ") does not match PERIOD " + i + " from WeeklyCountWkst1 (" + evt2Occ[i].Period + ")");
+            }
         }
 
         /// <summary>
@@ -551,7 +553,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void WeeklyUntilWkst2()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.WeeklyUntilWkst2));
+            var iCal = Calendar.Load(IcsFiles.WeeklyUntilWkst2);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -621,7 +623,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void WeeklyUntilWkst2_1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.WeeklyUntilWkst2));
+            var iCal = Calendar.Load(IcsFiles.WeeklyUntilWkst2);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1997, 9, 9, _tzid),
@@ -685,7 +687,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void WeeklyCountWkst2()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.WeeklyCountWkst2));
+            var iCal = Calendar.Load(IcsFiles.WeeklyCountWkst2);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -711,7 +713,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MonthlyCountByDay1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.MonthlyCountByDay1));
+            var iCal = Calendar.Load(IcsFiles.MonthlyCountByDay1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -751,7 +753,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MonthlyUntilByDay1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.MonthlyUntilByDay1));
+            var iCal = Calendar.Load(IcsFiles.MonthlyUntilByDay1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -779,7 +781,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MonthlyCountByDay2()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.MonthlyCountByDay2));
+            var iCal = Calendar.Load(IcsFiles.MonthlyCountByDay2);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -819,7 +821,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MonthlyCountByDay3()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.MonthlyCountByDay3));
+            var iCal = Calendar.Load(IcsFiles.MonthlyCountByDay3);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -851,7 +853,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void ByMonthDay1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.ByMonthDay1));
+            var iCal = Calendar.Load(IcsFiles.ByMonthDay1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -883,7 +885,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MonthlyCountByMonthDay1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.MonthlyCountByMonthDay1));
+            var iCal = Calendar.Load(IcsFiles.MonthlyCountByMonthDay1);
 
             EventOccurrenceTest(
                 iCal,
@@ -924,7 +926,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MonthlyCountByMonthDay2()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.MonthlyCountByMonthDay2));
+            var iCal = Calendar.Load(IcsFiles.MonthlyCountByMonthDay2);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -964,7 +966,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MonthlyCountByMonthDay3()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.MonthlyCountByMonthDay3));
+            var iCal = Calendar.Load(IcsFiles.MonthlyCountByMonthDay3);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1004,7 +1006,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MonthlyByDay1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.MonthlyByDay1));
+            var iCal = Calendar.Load(IcsFiles.MonthlyByDay1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1060,7 +1062,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void YearlyByMonth1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.YearlyByMonth1));
+            var iCal = Calendar.Load(IcsFiles.YearlyByMonth1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1088,7 +1090,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void YearlyCountByMonth1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.YearlyCountByMonth1));
+            var iCal = Calendar.Load(IcsFiles.YearlyCountByMonth1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1116,7 +1118,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void YearlyCountByYearDay1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.YearlyCountByYearDay1));
+            var iCal = Calendar.Load(IcsFiles.YearlyCountByYearDay1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1156,7 +1158,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void YearlyByDay1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.YearlyByDay1));
+            var iCal = Calendar.Load(IcsFiles.YearlyByDay1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1177,7 +1179,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void YearlyByWeekNo1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.YearlyByWeekNo1));
+            var iCal = Calendar.Load(IcsFiles.YearlyByWeekNo1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1203,7 +1205,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void YearlyByWeekNo2()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.YearlyByWeekNo2));
+            var iCal = Calendar.Load(IcsFiles.YearlyByWeekNo2);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1228,7 +1230,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void YearlyByWeekNo3()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.YearlyByWeekNo3));
+            var iCal = Calendar.Load(IcsFiles.YearlyByWeekNo3);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2001, 1, 1, _tzid),
@@ -1251,7 +1253,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void YearlyByWeekNo4()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.YearlyByWeekNo4));
+            var iCal = Calendar.Load(IcsFiles.YearlyByWeekNo4);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1295,7 +1297,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void YearlyByWeekNo5()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.YearlyByWeekNo5));
+            var iCal = Calendar.Load(IcsFiles.YearlyByWeekNo5);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2001, 1, 1, _tzid),
@@ -1326,7 +1328,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void YearlyByMonth2()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.YearlyByMonth2));
+            var iCal = Calendar.Load(IcsFiles.YearlyByMonth2);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1355,7 +1357,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void YearlyByMonth3()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.YearlyByMonth3));
+            var iCal = Calendar.Load(IcsFiles.YearlyByMonth3);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1414,7 +1416,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MonthlyByMonthDay1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.MonthlyByMonthDay1));
+            var iCal = Calendar.Load(IcsFiles.MonthlyByMonthDay1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1444,7 +1446,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MonthlyByMonthDay2()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.MonthlyByMonthDay2));
+            var iCal = Calendar.Load(IcsFiles.MonthlyByMonthDay2);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1484,7 +1486,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void YearlyByMonthDay1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.YearlyByMonthDay1));
+            var iCal = Calendar.Load(IcsFiles.YearlyByMonthDay1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1505,7 +1507,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MonthlyBySetPos1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.MonthlyBySetPos1));
+            var iCal = Calendar.Load(IcsFiles.MonthlyBySetPos1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1531,7 +1533,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MonthlyBySetPos2()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.MonthlyBySetPos2));
+            var iCal = Calendar.Load(IcsFiles.MonthlyBySetPos2);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1567,7 +1569,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void HourlyUntil1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.HourlyUntil1));
+            var iCal = Calendar.Load(IcsFiles.HourlyUntil1);
             EventOccurrenceTest(
                 iCal,
                 fromDate: new CalDateTime(1996, 1, 1, _tzid),
@@ -1589,7 +1591,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MinutelyCount1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.MinutelyCount1));
+            var iCal = Calendar.Load(IcsFiles.MinutelyCount1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1997, 9, 2, _tzid),
@@ -1613,7 +1615,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MinutelyCount2()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.MinutelyCount2));
+            var iCal = Calendar.Load(IcsFiles.MinutelyCount2);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1635,7 +1637,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MinutelyCount3()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.MinutelyCount3));
+            var iCal = Calendar.Load(IcsFiles.MinutelyCount3);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2010, 8, 27, _tzid),
@@ -1663,7 +1665,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MinutelyCount4()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.MinutelyCount4));
+            var iCal = Calendar.Load(IcsFiles.MinutelyCount4);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2010, 8, 27, _tzid),
@@ -1691,7 +1693,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void DailyByHourMinute1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.DailyByHourMinute1));
+            var iCal = Calendar.Load(IcsFiles.DailyByHourMinute1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1997, 9, 2, _tzid),
@@ -1757,8 +1759,8 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MinutelyByHour1()
         {
-            var iCal1 = Calendar.Load(new StringReader(IcsFiles.DailyByHourMinute1));
-            var iCal2 = Calendar.Load(new StringReader(IcsFiles.MinutelyByHour1));
+            var iCal1 = Calendar.Load(IcsFiles.DailyByHourMinute1);
+            var iCal2 = Calendar.Load(IcsFiles.MinutelyByHour1);
             ProgramTest.TestCal(iCal1);
             ProgramTest.TestCal(iCal2);
             var evt1 = iCal1.Events.First();
@@ -1777,7 +1779,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void WeeklyCountWkst3()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.WeeklyCountWkst3));
+            var iCal = Calendar.Load(IcsFiles.WeeklyCountWkst3);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1800,7 +1802,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void WeeklyCountWkst4()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.WeeklyCountWkst4));
+            var iCal = Calendar.Load(IcsFiles.WeeklyCountWkst4);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(1996, 1, 1, _tzid),
@@ -1823,7 +1825,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Bug1741093()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.Bug1741093));
+            var iCal = Calendar.Load(IcsFiles.Bug1741093);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2007, 7, 1, _tzid),
@@ -1857,7 +1859,7 @@ namespace Ical.Net.UnitTests
 
             try
             {
-                var iCal = Calendar.Load(new StringReader(IcsFiles.Secondly1));
+                var iCal = Calendar.Load(IcsFiles.Secondly1);
                 var occurrences = iCal.GetOccurrences(new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid), new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
             }
             catch (EvaluationEngineException)
@@ -1875,7 +1877,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Secondly1_1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.Secondly1));
+            var iCal = Calendar.Load(IcsFiles.Secondly1);
             iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
 
             EventOccurrenceTest(
@@ -1908,7 +1910,7 @@ namespace Ical.Net.UnitTests
         {
             try
             {
-                var iCal = Calendar.Load(new StringReader(IcsFiles.Minutely1));
+                var iCal = Calendar.Load(IcsFiles.Minutely1);
                 iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictMinutely;
                 var occurrences = iCal.GetOccurrences(
                     new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
@@ -1927,7 +1929,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Minutely1_1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.Minutely1));
+            var iCal = Calendar.Load(IcsFiles.Minutely1);
             iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictMinutely;
             iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
 
@@ -1955,7 +1957,7 @@ namespace Ical.Net.UnitTests
         {
             try
             {
-                var iCal = Calendar.Load(new StringReader(IcsFiles.Hourly1));
+                var iCal = Calendar.Load(IcsFiles.Hourly1);
                 iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictHourly;
                 var occurrences = iCal.GetOccurrences(new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid), new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
             }
@@ -1973,7 +1975,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Hourly1_1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.Hourly1));
+            var iCal = Calendar.Load(IcsFiles.Hourly1);
             iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictHourly;
             iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
 
@@ -1999,7 +2001,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MonthlyInterval1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.MonthlyInterval1));
+            var iCal = Calendar.Load(IcsFiles.MonthlyInterval1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2008, 1, 1, 7, 0, 0, _tzid),
@@ -2019,7 +2021,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void YearlyInterval1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.YearlyInterval1));
+            var iCal = Calendar.Load(IcsFiles.YearlyInterval1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2006, 1, 1, 7, 0, 0, _tzid),
@@ -2039,7 +2041,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void DailyInterval1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.DailyInterval1));
+            var iCal = Calendar.Load(IcsFiles.DailyInterval1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2007, 4, 11, 7, 0, 0, _tzid),
@@ -2059,7 +2061,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void HourlyInterval1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.HourlyInterval1));
+            var iCal = Calendar.Load(IcsFiles.HourlyInterval1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2007, 4, 9, 10, 0, 0, _tzid),
@@ -2086,7 +2088,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void YearlyBySetPos1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.YearlyBySetPos1));
+            var iCal = Calendar.Load(IcsFiles.YearlyBySetPos1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2009, 1, 1, 0, 0, 0, _tzid),
@@ -2115,7 +2117,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Empty1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.Empty1));
+            var iCal = Calendar.Load(IcsFiles.Empty1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2009, 1, 1, 0, 0, 0, _tzid),
@@ -2134,7 +2136,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void HourlyInterval2()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.HourlyInterval2));
+            var iCal = Calendar.Load(IcsFiles.HourlyInterval2);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2007, 4, 9, 7, 0, 0),
@@ -2163,7 +2165,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void MinutelyInterval1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.MinutelyInterval1));
+            var iCal = Calendar.Load(IcsFiles.MinutelyInterval1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2007, 4, 9, 7, 0, 0),
@@ -2192,7 +2194,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void DailyInterval2()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.DailyInterval2));
+            var iCal = Calendar.Load(IcsFiles.DailyInterval2);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2007, 4, 9, 7, 0, 0),
@@ -2220,7 +2222,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void DailyByDay1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.DailyByDay1));
+            var iCal = Calendar.Load(IcsFiles.DailyByDay1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2007, 9, 10, 7, 0, 0),
@@ -2244,7 +2246,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void WeeklyWeekStartsLastYear()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.WeeklyWeekStartsLastYear));
+            var iCal = Calendar.Load(IcsFiles.WeeklyWeekStartsLastYear);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2012, 1, 1, 7, 0, 0),
@@ -2272,7 +2274,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void WeeklyInterval1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.WeeklyInterval1));
+            var iCal = Calendar.Load(IcsFiles.WeeklyInterval1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2007, 9, 10, 7, 0, 0),
@@ -2299,7 +2301,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Monthly1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.Monthly1));
+            var iCal = Calendar.Load(IcsFiles.Monthly1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2007, 9, 10, 7, 0, 0),
@@ -2330,7 +2332,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Yearly1()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.Yearly1));
+            var iCal = Calendar.Load(IcsFiles.Yearly1);
             EventOccurrenceTest(
                 iCal,
                 new CalDateTime(2007, 9, 10, 7, 0, 0),
@@ -2364,7 +2366,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Bug2912657()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.Bug2912657));
+            var iCal = Calendar.Load(IcsFiles.Bug2912657);
             var localTzid = iCal.TimeZones[0].TzId;
 
             // Daily recurrence
@@ -2422,7 +2424,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Bug2916581()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.Bug2916581));
+            var iCal = Calendar.Load(IcsFiles.Bug2916581);
             var localTzid = iCal.TimeZones[0].TzId;
 
             // Weekly across year boundary
@@ -2462,7 +2464,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Bug2959692()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.Bug2959692));
+            var iCal = Calendar.Load(IcsFiles.Bug2959692);
             var localTzid = iCal.TimeZones[0].TzId;
 
             EventOccurrenceTest(
@@ -2492,7 +2494,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Bug2966236()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.Bug2966236));
+            var iCal = Calendar.Load(IcsFiles.Bug2966236);
             var localTzid = iCal.TimeZones[0].TzId;
 
             EventOccurrenceTest(
@@ -2536,7 +2538,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void Bug3007244()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.Bug3007244));
+            var iCal = Calendar.Load(IcsFiles.Bug3007244);
 
             EventOccurrenceTest(
                 cal: iCal,
@@ -2572,7 +2574,7 @@ namespace Ical.Net.UnitTests
                 var rpe = new RecurrencePatternEvaluator(rp);
                 var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, rp.Until, false);
                 
-                var period = recurringPeriods.ElementAt(recurringPeriods.Count() - 1);
+                var period = recurringPeriods.ElementAt(recurringPeriods.Count - 1);
 
                 Assert.AreEqual(new CalDateTime(2025, 11, 24, 9, 0, 0), period.StartTime);
             }
@@ -2628,7 +2630,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Recurrence")]
         public void UsHolidays()
         {
-            var iCal = Calendar.Load(new StringReader(IcsFiles.USHolidays));
+            var iCal = Calendar.Load(IcsFiles.USHolidays);
             Assert.IsNotNull(iCal, "iCalendar was not loaded.");
             var items = new Dictionary<string, CalDateTime>
             {
@@ -2894,7 +2896,7 @@ CREATED:20120621T142631Z
 TRANSP:TRANSPARENT
 END:VEVENT
 END:VCALENDAR";
-            var calendar = Calendar.Load(new StringReader(ical));
+            var calendar = Calendar.Load(ical);
             var firstEvent = calendar.Events.First();
             var startSearch = new CalDateTime(2010, 1, 1, _tzid);
             var endSearch = new CalDateTime(2016, 12, 31, _tzid);
@@ -2923,7 +2925,7 @@ UID:abab717c-1786-4efc-87dd-6859c2b48eb6
 END:VEVENT
 END:VCALENDAR";
 
-            var calendar = Calendar.Load(new StringReader(ical));
+            var calendar = Calendar.Load(ical);
             var firstEvent = calendar.Events.First();
             var startSearch = new CalDateTime(DateTime.Parse("2015-08-28T07:00:00"), _tzid);
             var endSearch = new CalDateTime(DateTime.Parse("2016-08-28T07:00:00").AddDays(7), _tzid);
@@ -2978,7 +2980,7 @@ END:VCALENDAR";
                 Uid = "abab717c-1786-4efc-87dd-6859c2b48eb6",
             };
 
-            var deserializedCalendar = Calendar.Load(new StringReader(ical));
+            var deserializedCalendar = Calendar.Load(ical);
             var firstEvent = deserializedCalendar.Events.First();
             var calendar = new Calendar();
             calendar.Events.Add(e);
@@ -3256,9 +3258,9 @@ UID:001b7e43-98df-4fcc-b9ec-345a28a4fc14
 END:VEVENT
 END:VCALENDAR";
 
-            var simpleA = SimpleDeserializer.Default.Deserialize(new StringReader(aString)).Cast<Calendar>().Single();
+            var simpleA = Calendar.Load(aString);
             var normalA = Calendar.Load(aString);
-            var simpleB = SimpleDeserializer.Default.Deserialize(new StringReader(bString)).Cast<Calendar>().Single();
+            var simpleB = Calendar.Load(bString);
             var normalB = Calendar.Load(bString);
 
             var calendarList = new List<Calendar> { simpleA, normalA, simpleB, normalB };
@@ -3270,22 +3272,11 @@ END:VCALENDAR";
                 normalB.Events.Single(),
             };
 
-            //GetHashCode tests
+            //GetHashCode tests also tests Equals()
             var calendarSet = new HashSet<Calendar>(calendarList);
             Assert.AreEqual(1, calendarSet.Count);
             var eventSet = new HashSet<CalendarEvent>(eventList);
             Assert.AreEqual(1, eventSet.Count);
-
-            //Equals tests
-            var newCalendarList = new List<Calendar>();
-            foreach (var calendar in calendarList)
-            {
-                if (!newCalendarList.Contains(calendar))
-                {
-                    newCalendarList.Add(calendar);
-                }
-            }
-            Assert.AreEqual(1, newCalendarList.Count);
 
             var newEventList = new HashSet<CalendarEvent>();
             newEventList.UnionWith(eventList);
@@ -3446,7 +3437,7 @@ END:VEVENT
 END:VCALENDAR
 ";
             const string timeZoneId = @"Eastern Standard Time";
-            var calendar = Calendar.Load(new StringReader(icalText));
+            var calendar = Calendar.Load(icalText);
             var firstEvent = calendar.Events.First();
             var startSearch = new CalDateTime(DateTime.Parse("2017-07-01T00:00:00"), timeZoneId);
             var endSearch = new CalDateTime(DateTime.Parse("2018-07-01T00:00:00"), timeZoneId);

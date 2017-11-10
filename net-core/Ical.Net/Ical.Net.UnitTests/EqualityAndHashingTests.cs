@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization.iCalendar.Serializers;
-using Ical.Net.UnitTests.ExtensionMethods;
 using Ical.Net.Utility;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
@@ -210,8 +208,8 @@ namespace Ical.Net.UnitTests
         [Test, TestCaseSource(nameof(CalendarCollection_TestCases))]
         public void CalendarCollection_Tests(string rawCalendar)
         {
-            var a = Calendar.Load(new StringReader(IcsFiles.USHolidays));
-            var b = Calendar.Load(new StringReader(IcsFiles.USHolidays));
+            var a = Calendar.Load(IcsFiles.USHolidays);
+            var b = Calendar.Load(IcsFiles.USHolidays);
             
             Assert.IsNotNull(a);
             Assert.IsNotNull(b);
