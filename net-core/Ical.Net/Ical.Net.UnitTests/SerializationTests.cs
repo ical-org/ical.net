@@ -25,7 +25,7 @@ namespace Ical.Net.UnitTests
         private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
         private static string SerializeToString(CalendarEvent e) => SerializeToString(new Calendar { Events = { e } });
         private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime };
-        private static Calendar UnserializeCalendar(string s) => Calendar.LoadFromStream(new StringReader(s)).Single();
+        private static Calendar UnserializeCalendar(string s) => Calendar.Load(new StringReader(s));
 
         public static void CompareCalendars(Calendar cal1, Calendar cal2)
         {
@@ -228,7 +228,7 @@ namespace Ical.Net.UnitTests
             var serializedCalendar = serializer.SerializeToString(cal1);
             using (var sr = new StringReader(serializedCalendar))
             {
-                var cal2 = Calendar.LoadFromStream(sr)[0];
+                var cal2 = Calendar.Load(sr);
                 CompareCalendars(cal1, cal2);
             }
         }

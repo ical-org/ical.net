@@ -18,29 +18,24 @@ namespace Ical.Net
 {
     public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, IMergeable
     {
-        public static CalendarCollection Load(string iCalendarString)
-            => LoadFromStream(new StringReader(iCalendarString));
+        public static Calendar Load(string iCalendarString)
+            => CalendarCollection.Load(new StringReader(iCalendarString)).SingleOrDefault();
 
         /// <summary>
         /// Loads an <see cref="Calendar"/> from an open stream.
         /// </summary>
         /// <param name="s">The stream from which to load the <see cref="Calendar"/> object</param>
         /// <returns>An <see cref="Calendar"/> object</returns>
-        public static CalendarCollection LoadFromStream(Stream s)
-            => LoadFromStream(new StreamReader(s, Encoding.UTF8));
+        public static Calendar Load(Stream s)
+            => CalendarCollection.Load(new StreamReader(s, Encoding.UTF8)).SingleOrDefault();
 
-        public static CalendarCollection LoadFromStream(TextReader tr)
-        {
-            var calendars = SimpleDeserializer.Default.Deserialize(tr).OfType<Calendar>();
-            var collection = new CalendarCollection();
-            collection.AddRange(calendars);
-            return collection;
-        }
+        public static Calendar Load(TextReader tr)
+            => CalendarCollection.Load(tr).OfType<Calendar>().SingleOrDefault();
 
-        public static IList<T> LoadFromStream<T>(Stream s, Encoding e)
-            => LoadFromStream<T>(new StreamReader(s, e));
+        public static IList<T> Load<T>(Stream s, Encoding e)
+            => Load<T>(new StreamReader(s, e));
 
-        public static IList<T> LoadFromStream<T>(TextReader tr)
+        public static IList<T> Load<T>(TextReader tr)
             => SimpleDeserializer.Default.Deserialize(tr).OfType<T>().ToList();
 
         private IUniqueComponentList<IUniqueComponent> _mUniqueComponents;

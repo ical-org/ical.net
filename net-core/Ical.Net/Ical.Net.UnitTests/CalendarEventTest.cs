@@ -208,8 +208,8 @@ EXDATE;TZID=UTC:20161020T170000
 END:VEVENT
 END:VCALENDAR";
 
-            var noException = Calendar.LoadFromStream(new StringReader(icalNoException)).First().Events.First();
-            var withException = Calendar.LoadFromStream(new StringReader(icalWithException)).First().Events.First();
+            var noException = Calendar.Load(icalNoException).Events.First();
+            var withException = Calendar.Load(icalWithException).Events.First();
 
             Assert.AreNotEqual(noException, withException);
             Assert.AreNotEqual(noException.GetHashCode(), withException.GetHashCode());
@@ -288,12 +288,12 @@ END:VCALENDAR";
             var cal1 = new Calendar();
             cal1.Events.Add(vEvent);
             var serialized = serializer.SerializeToString(cal1);
-            var deserializedNoExDate = Calendar.LoadFromStream(new StringReader(serialized)).First();
+            var deserializedNoExDate = Calendar.Load(serialized);
             Assert.AreEqual(cal1, deserializedNoExDate);
 
             vEvent.ExceptionDates = GetExceptionDates();
             serialized = serializer.SerializeToString(cal1);
-            var deserializedWithExDate = Calendar.LoadFromStream(new StringReader(serialized)).First();
+            var deserializedWithExDate = Calendar.Load(serialized);
 
             Assert.AreNotEqual(deserializedNoExDate.Events.First(), deserializedWithExDate.Events.First());
             Assert.AreNotEqual(deserializedNoExDate.Events.First().GetHashCode(), deserializedWithExDate.Events.First().GetHashCode());
@@ -365,8 +365,8 @@ UID:04107254dc5c9094af71a0e197e65a557dfbcb84
 END:VEVENT
 END:VCALENDAR";
 
-            var calendarA = Calendar.LoadFromStream(new StringReader(eventA)).First();
-            var calendarB = Calendar.LoadFromStream(new StringReader(eventB)).First();
+            var calendarA = Calendar.Load(eventA);
+            var calendarB = Calendar.Load(eventB);
 
             Assert.AreEqual(calendarA.Events.First().GetHashCode(), calendarB.Events.First().GetHashCode());
             Assert.AreEqual(calendarA.Events.First(), calendarB.Events.First());
@@ -422,26 +422,22 @@ RDATE:18800101T000000
 END:STANDARD
 END:VTIMEZONE
 END:VCALENDAR";
-            using (var reader = new StringReader(ical))
-            {
-                var timezones = Calendar.LoadFromStream(reader)
-                    .First()
-                    .TimeZones.First()
-                    .Children.Cast<CalendarComponent>();
+            var timezones = Calendar.Load(ical)
+                .TimeZones.First()
+                .Children.Cast<CalendarComponent>();
 
-                var positiveOffset = timezones
-                    .Skip(1).Take(1).First()
-                    .Properties.First().Value as UtcOffset;
-                var expectedPositive = TimeSpan.FromMinutes(17.5);
-                Assert.AreEqual(expectedPositive, positiveOffset?.Offset);
+            var positiveOffset = timezones
+                .Skip(1).Take(1).First()
+                .Properties.First().Value as UtcOffset;
+            var expectedPositive = TimeSpan.FromMinutes(17.5);
+            Assert.AreEqual(expectedPositive, positiveOffset?.Offset);
 
-                var negativeOffset = timezones
-                    .First()
-                    .Properties.First().Value as UtcOffset;
+            var negativeOffset = timezones
+                .First()
+                .Properties.First().Value as UtcOffset;
 
-                var expectedNegative = TimeSpan.FromMinutes(-17.5);
-                Assert.AreEqual(expectedNegative, negativeOffset?.Offset);
-            }
+            var expectedNegative = TimeSpan.FromMinutes(-17.5);
+            Assert.AreEqual(expectedNegative, negativeOffset?.Offset);
         }
     }
 }

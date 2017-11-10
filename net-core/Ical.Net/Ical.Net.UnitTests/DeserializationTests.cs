@@ -21,7 +21,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Deserialization")]
         public void Attendee1()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Attendee1))[0];
+            var iCal = Calendar.Load(IcsFiles.Attendee1);
             Assert.AreEqual(1, iCal.Events.Count);
             
             var evt = iCal.Events.First();
@@ -58,23 +58,23 @@ namespace Ical.Net.UnitTests
         [Test, Category("Deserialization")]
         public void Attendee2()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Attendee2))[0];
+            var iCal = Calendar.Load(IcsFiles.Attendee2);
             Assert.AreEqual(1, iCal.Events.Count);
 
             var evt = iCal.Events.First();
             // Ensure there is 1 attendee
             Assert.AreEqual(1, evt.Attendees.Count);
 
-            var attendee1 = evt.Attendees[0];
+            var attendee1 = evt.Attendees;
 
             // Values
-            Assert.AreEqual(new Uri("mailto:joecool@example.com"), attendee1.Value);
+            Assert.AreEqual(new Uri("mailto:joecool@example.com"), attendee1[0].Value);
 
             // MEMBERS
-            Assert.AreEqual(3, attendee1.Members.Count);
-            Assert.AreEqual(new Uri("mailto:DEV-GROUP@example.com"), attendee1.Members[0]);
-            Assert.AreEqual(new Uri("mailto:ANOTHER-GROUP@example.com"), attendee1.Members[1]);
-            Assert.AreEqual(new Uri("mailto:THIRD-GROUP@example.com"), attendee1.Members[2]);
+            Assert.AreEqual(3, attendee1[0].Members.Count);
+            Assert.AreEqual(new Uri("mailto:DEV-GROUP@example.com"), attendee1[0].Members[0]);
+            Assert.AreEqual(new Uri("mailto:ANOTHER-GROUP@example.com"), attendee1[0].Members[1]);
+            Assert.AreEqual(new Uri("mailto:THIRD-GROUP@example.com"), attendee1[0].Members[2]);
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Deserialization")]
         public void Bug2033495()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Bug2033495))[0];
+            var iCal = Calendar.Load(IcsFiles.Bug2033495);
             Assert.AreEqual(1, iCal.Events.Count);
             Assert.AreEqual(iCal.Properties["X-LOTUS-CHILD_UID"].Value, "XXX");
         }
@@ -97,7 +97,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Deserialization")]
         public void Bug2938007()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Bug2938007))[0];
+            var iCal = Calendar.Load(IcsFiles.Bug2938007);
             Assert.AreEqual(1, iCal.Events.Count);
 
             var evt = iCal.Events.First();
@@ -133,14 +133,14 @@ namespace Ical.Net.UnitTests
         [Test, Category("Deserialization")]
         public void CaseInsensitive4()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.CaseInsensitive4))[0];
+            var iCal = Calendar.Load(IcsFiles.CaseInsensitive4);
             Assert.AreEqual("2.5", iCal.Version);
         }
 
         [Test, Category("Deserialization")]
         public void Categories1_2()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Categories1))[0];
+            var iCal = Calendar.Load(IcsFiles.Categories1);
             ProgramTest.TestCal(iCal);
             var evt = iCal.Events.First();
 
@@ -159,20 +159,22 @@ namespace Ical.Net.UnitTests
             }
 
             foreach (string item in items)
+            {
                 Assert.IsTrue(found.ContainsKey(item), "Event should contain CATEGORY '" + item + "', but it was not found.");
+            }
         }
 
         [Test, Category("Deserialization")]
         public void EmptyLines1()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.EmptyLines1))[0];
+            var iCal = Calendar.Load(IcsFiles.EmptyLines1);
             Assert.AreEqual(2, iCal.Events.Count, "iCalendar should have 2 events");
         }
 
         [Test, Category("Deserialization")]
         public void EmptyLines2()
         {
-            var calendars = Calendar.LoadFromStream(new StringReader(IcsFiles.EmptyLines2));
+            var calendars = CalendarCollection.Load(IcsFiles.EmptyLines2);
             Assert.AreEqual(2, calendars.Count);
             Assert.AreEqual(2, calendars[0].Events.Count, "iCalendar should have 2 events");
             Assert.AreEqual(2, calendars[1].Events.Count, "iCalendar should have 2 events");
@@ -185,7 +187,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Deserialization")]
         public void EmptyLines3()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.EmptyLines3))[0];
+            var iCal = Calendar.Load(IcsFiles.EmptyLines3);
             Assert.AreEqual(1, iCal.Todos.Count, "iCalendar should have 1 todo");
         }
 
@@ -195,14 +197,14 @@ namespace Ical.Net.UnitTests
         [Test, Category("Deserialization")]
         public void EmptyLines4()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.EmptyLines4))[0];
+            var iCal = Calendar.Load(IcsFiles.EmptyLines4);
             Assert.AreEqual(28, iCal.Events.Count);
         }
 
         [Test]
         public void Encoding2()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Encoding2))[0];
+            var iCal = Calendar.Load(IcsFiles.Encoding2);
             ProgramTest.TestCal(iCal);
             var evt = iCal.Events.First();
 
@@ -226,7 +228,7 @@ namespace Ical.Net.UnitTests
         [Test]
         public void Encoding3()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Encoding3))[0];
+            var iCal = Calendar.Load(IcsFiles.Encoding3);
             ProgramTest.TestCal(iCal);
             var evt = iCal.Events.First();
 
@@ -237,7 +239,7 @@ namespace Ical.Net.UnitTests
         [Test, Category("Deserialization")]
         public void Event8()
         {
-            var sr = new StringReader(@"BEGIN:VCALENDAR
+            var sr = @"BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Apple Computer\, Inc//iCal 1.0//EN
 CALSCALE:GREGORIAN
@@ -266,8 +268,8 @@ SEQUENCE:1
 UID:ebfbd3e3-cc1e-4a64-98eb-ced2598b3908
 END:VEVENT
 END:VCALENDAR
-");
-            var iCal = Calendar.LoadFromStream(sr)[0];
+";
+            var iCal = Calendar.Load(sr);
             Assert.IsTrue(iCal.Events.Count == 2, "There should be 2 events in the parsed calendar");
             Assert.IsNotNull(iCal.Events["fd940618-45e2-4d19-b118-37fd7a8e3906"], "Event fd940618-45e2-4d19-b118-37fd7a8e3906 should exist in the calendar");
             Assert.IsNotNull(iCal.Events["ebfbd3e3-cc1e-4a64-98eb-ced2598b3908"], "Event ebfbd3e3-cc1e-4a64-98eb-ced2598b3908 should exist in the calendar");
@@ -276,7 +278,7 @@ END:VCALENDAR
         [Test]
         public void GeographicLocation1_2()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.GeographicLocation1))[0];
+            var iCal = Calendar.Load(IcsFiles.GeographicLocation1);
             ProgramTest.TestCal(iCal);
             var evt = iCal.Events.First();
 
@@ -288,7 +290,7 @@ END:VCALENDAR
         public void Google1()
         {
             var tzId = "Europe/Berlin";
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Google1))[0];
+            var iCal = Calendar.Load(IcsFiles.Google1);
             var evt = iCal.Events["594oeajmftl3r9qlkb476rpr3c@google.com"];
             Assert.IsNotNull(evt);
 
@@ -317,7 +319,7 @@ END:VCALENDAR
         [Test, Category("Deserialization")]
         public void RecurrenceDates1()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.RecurrenceDates1))[0];
+            var iCal = Calendar.Load(IcsFiles.RecurrenceDates1);
             Assert.AreEqual(1, iCal.Events.Count);
             Assert.AreEqual(3, iCal.Events.First().RecurrenceDates.Count);
             
@@ -343,7 +345,7 @@ END:VCALENDAR
         [Test, Category("Deserialization")]
         public void RequestStatus1()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.RequestStatus1))[0];
+            var iCal = Calendar.Load(IcsFiles.RequestStatus1);
             Assert.AreEqual(1, iCal.Events.Count);
             Assert.AreEqual(4, iCal.Events.First().RequestStatuses.Count);
 
@@ -397,7 +399,7 @@ END:VCALENDAR
         [Test, Category("Deserialization")]
         public void Transparency2()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Transparency2))[0];
+            var iCal = Calendar.Load(IcsFiles.Transparency2);
 
             Assert.AreEqual(1, iCal.Events.Count);
             var evt = iCal.Events.First();
@@ -412,7 +414,7 @@ END:VCALENDAR
         [Test, Category("Deserialization")]
         public void DateTime1()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.DateTime1))[0];
+            var iCal = Calendar.Load(IcsFiles.DateTime1);
             Assert.AreEqual(6, iCal.Events.Count);
 
             var evt = iCal.Events["nc2o66s0u36iesitl2l0b8inn8@google.com"];
@@ -426,14 +428,14 @@ END:VCALENDAR
         [Test, Category("Deserialization")]
         public void Language4()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Language4))[0];
+            var iCal = Calendar.Load(IcsFiles.Language4);
             Assert.IsNotNull(iCal);
         }
 
         [Test, Category("Deserialization")]
         public void Outlook2007_LineFolds1()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Outlook2007LineFolds))[0];
+            var iCal = Calendar.Load(IcsFiles.Outlook2007LineFolds);
             var events = iCal.GetOccurrences(new CalDateTime(2009, 06, 20), new CalDateTime(2009, 06, 22));
             Assert.AreEqual(1, events.Count);
         }
@@ -442,7 +444,7 @@ END:VCALENDAR
         public void Outlook2007_LineFolds2()
         {
             var longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Outlook2007LineFolds))[0];
+            var iCal = Calendar.Load(IcsFiles.Outlook2007LineFolds);
             var events = iCal.GetOccurrences<CalendarEvent>(new CalDateTime(2009, 06, 20), new CalDateTime(2009, 06, 22)).OrderBy(o => o.Period.StartTime).ToList();
             Assert.AreEqual(longName, ((CalendarEvent)events[0].Source).Location);
         }
@@ -453,7 +455,7 @@ END:VCALENDAR
         [Test, Category("Deserialization")]
         public void Parameter1()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Parameter1))[0];
+            var iCal = Calendar.Load(IcsFiles.Parameter1);
 
             var evt = iCal.Events.First();
             IList<CalendarParameter> parms = evt.Properties["DTSTART"].Parameters.AllOf("VALUE").ToList();
@@ -468,7 +470,7 @@ END:VCALENDAR
         [Test, Category("Deserialization")]
         public void Parameter2()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Parameter2))[0];
+            var iCal = Calendar.Load(IcsFiles.Parameter2);
             Assert.AreEqual(2, iCal.Events.Count);
         }
 
@@ -481,7 +483,7 @@ END:VCALENDAR
             try
             {
                 var content = IcsFiles.Parse1;
-                var iCal = Calendar.LoadFromStream(new StringReader(content))[0];
+                var iCal = Calendar.Load(content);
                 Assert.IsNotNull(iCal);
             }
             catch (Exception e)
@@ -496,7 +498,7 @@ END:VCALENDAR
         [Test, Category("Deserialization")]
         public void Property1()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Property1))[0];
+            var iCal = Calendar.Load(IcsFiles.Property1);
 
             IList<ICalendarProperty> props = iCal.Properties.AllOf("VERSION").ToList();
             Assert.AreEqual(2, props.Count);

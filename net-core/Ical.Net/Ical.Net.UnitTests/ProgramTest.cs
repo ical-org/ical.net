@@ -17,7 +17,7 @@ namespace Ical.Net.UnitTests
         {
             // The following code loads and displays an iCalendar
             // with US Holidays for 2006.
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.USHolidays))[0];
+            var iCal = Calendar.Load(new StringReader(IcsFiles.USHolidays));
             Assert.IsNotNull(iCal, "iCalendar did not load.");
         }
 
@@ -38,8 +38,8 @@ namespace Ical.Net.UnitTests
         [Test]
         public void Merge1()
         {
-            var iCal1 = Calendar.LoadFromStream(new StringReader(IcsFiles.MonthlyCountByMonthDay3))[0];
-            var iCal2 = Calendar.LoadFromStream(new StringReader(IcsFiles.MonthlyByDay1))[0];
+            var iCal1 = Calendar.Load(new StringReader(IcsFiles.MonthlyCountByMonthDay3));
+            var iCal2 = Calendar.Load(new StringReader(IcsFiles.MonthlyByDay1));
 
             // Change the UID of the 2nd event to make sure it's different
             iCal2.Events[iCal1.Events[0].Uid].Uid = "1234567890";

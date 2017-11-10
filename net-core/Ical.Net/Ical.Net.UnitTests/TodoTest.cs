@@ -16,15 +16,15 @@ namespace Ical.Net.UnitTests
         [Test, TestCaseSource(nameof(ActiveTodo_TestCases)), Category("Todo")]
         public void ActiveTodo_Tests(string calendarString, IList<KeyValuePair<CalDateTime, bool>> incoming)
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(calendarString))[0];
+            var iCal = Calendar.Load(new StringReader(calendarString));
             ProgramTest.TestCal(iCal);
-            var todo = iCal.Todos[0];
+            var todo = iCal.Todos;
 
             foreach (var calDateTime in incoming)
             {
                 var dt = calDateTime.Key;
                 dt.TzId = _tzid;
-                Assert.AreEqual(calDateTime.Value, todo.IsActive(dt));
+                Assert.AreEqual(calDateTime.Value, todo[0].IsActive(dt));
             }
         }
 
@@ -166,15 +166,15 @@ namespace Ical.Net.UnitTests
         [Test, TestCaseSource(nameof(CompletedTodo_TestCases)), Category("Todo")]
         public void CompletedTodo_Tests(string calendarString, IList<KeyValuePair<CalDateTime, bool>> incoming)
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(calendarString))[0];
+            var iCal = Calendar.Load(new StringReader(calendarString));
             ProgramTest.TestCal(iCal);
-            var todo = iCal.Todos[0];
+            var todo = iCal.Todos;
 
             foreach (var calDateTime in incoming)
             {
                 var dt = calDateTime.Key;
                 dt.TzId = _tzid;
-                Assert.AreEqual(calDateTime.Value, todo.IsCompleted(dt));
+                Assert.AreEqual(calDateTime.Value, todo[0].IsCompleted(dt));
             }
         }
 
@@ -192,8 +192,8 @@ namespace Ical.Net.UnitTests
         [Test, Category("Todo")]
         public void Todo7_1()
         {
-            var iCal = Calendar.LoadFromStream(new StringReader(IcsFiles.Todo7))[0];
-            var todo = iCal.Todos[0];
+            var iCal = Calendar.Load(new StringReader(IcsFiles.Todo7));
+            var todo = iCal.Todos;
 
             var items = new List<CalDateTime>
             {
@@ -209,7 +209,7 @@ namespace Ical.Net.UnitTests
                 new CalDateTime(2007, 4, 6, 9, 0, 0, _tzid)
             };
 
-            var occurrences = todo.GetOccurrences(
+            var occurrences = todo[0].GetOccurrences(
                 new CalDateTime(2006, 7, 1, 9, 0, 0),
                 new CalDateTime(2007, 7, 1, 9, 0, 0)).OrderBy(o => o.Period.StartTime).ToList();
 

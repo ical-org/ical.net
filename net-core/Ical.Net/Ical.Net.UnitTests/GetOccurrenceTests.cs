@@ -11,7 +11,7 @@ namespace Ical.Net.UnitTests
 {
     internal class GetOccurrenceTests
     {
-        public static CalendarCollection GetCalendars(string incoming) => Calendar.LoadFromStream(new StringReader(incoming));
+        public static CalendarCollection GetCalendars(string incoming) => CalendarCollection.Load(new StringReader(incoming));
 
         [Test]
         public void WrongDurationTest()
@@ -135,7 +135,7 @@ END:VCALENDAR";
 
             var calendar = GetCalendars(ical);
             var date = new DateTime(2016, 10, 11);
-            var occurrences = calendar[0].GetOccurrences(date);
+            var occurrences = calendar.GetOccurrences(date);
 
             //We really want to make sure this doesn't explode
             Assert.AreEqual(1, occurrences.Count);
@@ -197,7 +197,7 @@ END:VEVENT
 END:VCALENDAR
 ";
 
-            var collection = Calendar.LoadFromStream(new StringReader(ical));
+            var collection = Calendar.Load(new StringReader(ical));
             var startCheck = new DateTime(2016, 11, 11);
             var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck, startCheck.AddMonths(1));
 
