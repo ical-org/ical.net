@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.Serialization
 {

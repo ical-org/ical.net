@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using Ical.Net.Interfaces.General;
+using Ical.Net.CalendarComponents;
 using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes

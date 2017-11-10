@@ -1,7 +1,4 @@
 ﻿using Ical.Net.DataTypes;
-using Ical.Net.General;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization;
 using NUnit.Framework;
 using System;
@@ -10,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using Ical.Net.CalendarComponents;
 using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.UnitTests

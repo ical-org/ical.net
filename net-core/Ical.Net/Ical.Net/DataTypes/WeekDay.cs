@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes

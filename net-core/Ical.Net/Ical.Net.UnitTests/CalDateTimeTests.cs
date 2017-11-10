@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;

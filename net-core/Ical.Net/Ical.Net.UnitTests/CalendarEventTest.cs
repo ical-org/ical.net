@@ -1,9 +1,9 @@
 using Ical.Net.DataTypes;
-using Ical.Net.ExtensionMethods;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ical.Net.CalendarComponents;
 using Ical.Net.Serialization;
 using NUnit.Framework.Interfaces;
 

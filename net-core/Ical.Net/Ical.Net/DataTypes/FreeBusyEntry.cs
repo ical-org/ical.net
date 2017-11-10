@@ -1,6 +1,4 @@
-﻿using Ical.Net.Interfaces.General;
-
-namespace Ical.Net.DataTypes
+﻿namespace Ical.Net.DataTypes
 {
     public class FreeBusyEntry : Period
     {

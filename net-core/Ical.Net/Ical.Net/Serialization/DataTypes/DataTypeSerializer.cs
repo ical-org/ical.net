@@ -1,6 +1,5 @@
 ﻿using System;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
+using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -13,18 +12,17 @@ namespace Ical.Net.Serialization.DataTypes
         protected virtual ICalendarDataType CreateAndAssociate()
         {
             // Create an instance of the object
-            var dt = Activator.CreateInstance(TargetType) as ICalendarDataType;
-            if (dt != null)
+            if (!(Activator.CreateInstance(TargetType) is ICalendarDataType dt))
             {
-                var associatedObject = SerializationContext.Peek() as ICalendarObject;
-                if (associatedObject != null)
-                {
-                    dt.AssociatedObject = associatedObject;
-                }
-
-                return dt;
+                return null;
             }
-            return null;
+
+            if (SerializationContext.Peek() is ICalendarObject associatedObject)
+            {
+                dt.AssociatedObject = associatedObject;
+            }
+
+            return dt;
         }
     }
 }

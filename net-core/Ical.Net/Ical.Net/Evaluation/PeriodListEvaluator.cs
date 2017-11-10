@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
 
 namespace Ical.Net.Evaluation
 {

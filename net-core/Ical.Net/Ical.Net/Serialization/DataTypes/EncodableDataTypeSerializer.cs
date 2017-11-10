@@ -1,7 +1,6 @@
-﻿using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Serialization.DataTypes;
+﻿using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
+namespace Ical.Net.Serialization.DataTypes
 {
     public abstract class EncodableDataTypeSerializer : DataTypeSerializer
     {

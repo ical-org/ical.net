@@ -5,8 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {

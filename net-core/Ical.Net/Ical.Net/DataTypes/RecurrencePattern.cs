@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Ical.Net.Evaluation;
-using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 

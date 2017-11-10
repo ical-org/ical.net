@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Evaluation;
-using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.Evaluation
 {

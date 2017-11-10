@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Ical.Net.DataTypes;
-using Ical.Net.Exceptions;
-using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Utility;
 using Period = Ical.Net.DataTypes.Period;
 
@@ -189,7 +187,7 @@ namespace Ical.Net.Evaluation
                                     case RecurrenceRestrictionType.RestrictSecondly:
                                     case RecurrenceRestrictionType.RestrictMinutely:
                                     case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new EvaluationEngineException();
+                                        throw new ArgumentException();
                                 }
                             }
                                 break;
@@ -199,7 +197,7 @@ namespace Ical.Net.Evaluation
                                 {
                                     case RecurrenceRestrictionType.RestrictMinutely:
                                     case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new EvaluationEngineException();
+                                        throw new ArgumentException();
                                 }
                             }
                                 break;
@@ -208,7 +206,7 @@ namespace Ical.Net.Evaluation
                                 switch (evaluationRestriction)
                                 {
                                     case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new EvaluationEngineException();
+                                        throw new ArgumentException();
                                 }
                             }
                                 break;

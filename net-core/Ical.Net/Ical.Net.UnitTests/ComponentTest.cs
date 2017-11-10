@@ -1,3 +1,4 @@
+using Ical.Net.CalendarComponents;
 using NUnit.Framework;
 
 namespace Ical.Net.UnitTests

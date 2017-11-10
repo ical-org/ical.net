@@ -3,9 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Ical.Net.DataTypes;
-using Ical.Net.General;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
 using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization

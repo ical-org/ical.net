@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.IO;
 using Ical.Net.DataTypes;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {

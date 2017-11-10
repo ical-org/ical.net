@@ -1,4 +1,5 @@
 ﻿using System;
+using Ical.Net.CalendarComponents;
 
 namespace Ical.Net
 {

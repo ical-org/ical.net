@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Text;
-using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.Serialization
 {

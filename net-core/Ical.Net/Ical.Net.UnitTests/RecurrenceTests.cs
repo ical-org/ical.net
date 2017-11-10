@@ -5,11 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
-using Ical.Net.Exceptions;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Evaluation;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
@@ -1861,7 +1859,7 @@ namespace Ical.Net.UnitTests
                 var iCal = Calendar.Load(IcsFiles.Secondly1);
                 var occurrences = iCal.GetOccurrences(new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid), new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
             }
-            catch (EvaluationEngineException)
+            catch (ArgumentException)
             {
                 evt.Set();
             }
@@ -1917,7 +1915,7 @@ namespace Ical.Net.UnitTests
             }
             catch (Exception e)
             {
-                Assert.IsInstanceOf<EvaluationEngineException>(e);
+                Assert.IsInstanceOf<ArgumentException>(e);
             }
         }
 
@@ -1962,7 +1960,7 @@ namespace Ical.Net.UnitTests
             }
             catch (Exception e)
             {
-                Assert.IsInstanceOf<EvaluationEngineException>(e);
+                Assert.IsInstanceOf<ArgumentException>(e);
             }
             
         }

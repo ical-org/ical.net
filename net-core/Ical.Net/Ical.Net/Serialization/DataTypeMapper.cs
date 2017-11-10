@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
 
 namespace Ical.Net.Serialization
 {
