@@ -55,6 +55,11 @@ namespace Ical.Net.DataTypes
 
         public Organizer(string value) : this()
         {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return;
+            }
+
             var serializer = new OrganizerSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }

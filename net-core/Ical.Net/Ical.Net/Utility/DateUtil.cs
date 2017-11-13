@@ -89,7 +89,7 @@ namespace Ical.Net.Utility
         /// that.
         /// </summary>
         /// <param name="tzId">A BCL, IANA, or serialization time zone identifier</param>
-        public static DateTimeZone GetZone(string tzId)
+        public static DateTimeZone GetZone(string tzId, bool useLocalIfNotFound = true)
         {
             if (string.IsNullOrWhiteSpace(tzId))
             {
@@ -144,6 +144,11 @@ namespace Ical.Net.Utility
                 return DateTimeZoneProviders.Serialization.GetZoneOrNull(providerId);
             }
 
+            if (!useLocalIfNotFound)
+            {
+                throw new ArgumentException($"Unrecognized time zone id {tzId}");
+            }
+            
             return LocalDateTimeZone;
         }
 
@@ -195,5 +200,14 @@ namespace Ical.Net.Utility
             => timeSpan == TimeSpan.Zero
                 ? dateTime
                 : dateTime.AddTicks(-(dateTime.Ticks % timeSpan.Ticks));
+
+        public static int WeekOfMonth(DateTime d)
+        {
+            var isExact = d.Day % 7 == 0;
+            var offset = isExact
+                ? 0
+                : 1;
+            return (int) Math.Floor(d.Day / 7.0) + offset;
+        }
     }
 }

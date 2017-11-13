@@ -124,7 +124,8 @@ namespace Ical.Net
         {
             // Remove all previous values
             _values.Clear();
-            _values.AddRange(values);
+            var toAdd = values ?? Enumerable.Empty<object>();
+            _values.AddRange(toAdd);
         }
 
         public virtual void AddValue(object value)

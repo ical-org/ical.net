@@ -139,12 +139,12 @@ namespace Ical.Net.UnitTests
 
         public static IEnumerable<ITestCaseData> VTimeZone_TestCases()
         {
+            const string nzSt = "New Zealand Standard Time";
             var first = new VTimeZone
             {
-                TzId = "New Zealand Standard Time"
+                TzId = nzSt,
             };
-
-            var second = new VTimeZone("New Zealand Standard Time");
+            var second = new VTimeZone(nzSt);
             yield return new TestCaseData(first, second);
 
             first.Url = new Uri("http://example.com/");

@@ -377,5 +377,47 @@ namespace Ical.Net
 
         public virtual FreeBusy GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, IDateTime fromInclusive, IDateTime toExclusive)
             => CalendarComponents.FreeBusy.Create(this, CalendarComponents.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
+
+        /// <summary>
+        /// Adds a system time zone to the iCalendar.  This time zone may
+        /// then be used in date/time objects contained in the 
+        /// calendar.
+        /// </summary>
+        /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>
+        /// <returns>The time zone added to the calendar.</returns>
+        public VTimeZone AddTimeZone(TimeZoneInfo tzi)
+        {
+            var tz = VTimeZone.FromSystemTimeZone(tzi);
+            this.AddChild(tz);
+            return tz;
+        }
+
+        public VTimeZone AddTimeZone(TimeZoneInfo tzi, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
+        {
+            var tz = VTimeZone.FromSystemTimeZone(tzi, earliestDateTimeToSupport, includeHistoricalData);
+            this.AddChild(tz);
+            return tz;
+        }
+
+        public VTimeZone AddTimeZone(string tzId)
+        {
+            var tz = VTimeZone.FromDateTimeZone(tzId);
+            this.AddChild(tz);
+            return tz;
+        }
+
+        public VTimeZone AddTimeZone(string tzId, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
+        {
+            var tz = VTimeZone.FromDateTimeZone(tzId, earliestDateTimeToSupport, includeHistoricalData);
+            this.AddChild(tz);
+            return tz;
+        }
+
+        public VTimeZone AddLocalTimeZone(DateTime earliestDateTimeToSupport, bool includeHistoricalData)
+        {
+            var tz = VTimeZone.FromLocalTimeZone(earliestDateTimeToSupport, includeHistoricalData);
+            this.AddChild(tz);
+            return tz;
+        }
     }
 }
