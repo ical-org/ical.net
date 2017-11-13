@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
-using Ical.Net.Utility;
+using Ical.Net.Evaluation;
 using NUnit.Framework;
 
 namespace Ical.Net.UnitTests
 {
     internal class GetOccurrenceTests
     {
-        public static CalendarCollection GetCalendars(string incoming) => Calendar.LoadFromStream(new StringReader(incoming));
+        public static CalendarCollection GetCalendars(string incoming) => CalendarCollection.Load(incoming);
 
         [Test]
         public void WrongDurationTest()
@@ -68,16 +68,19 @@ namespace Ical.Net.UnitTests
             var intervalStart = eventStart;
             var intervalEnd = intervalStart.AddDays(7 * evaluationsCount);
 
-            var occurrences = RecurrenceUtil.GetOccurrences(vEvent, intervalStart, intervalEnd, false)
-                .Select(o => o.Period.StartTime)
-                .OrderBy(dt => dt)
-                .ToList();
-            Assert.AreEqual(evaluationsCount, occurrences.Count);
+            var occurrences = RecurrenceUtil.GetOccurrences(
+                recurrable: vEvent,
+                periodStart: intervalStart,
+                periodEnd: intervalEnd,
+                includeReferenceDateInResults: false);
+            var occurrenceSet = new HashSet<IDateTime>(occurrences.Select(o => o.Period.StartTime));
 
-            for (var currentOccurrence = intervalStart.AsUtc; currentOccurrence.CompareTo(intervalEnd.AsUtc) < 0; currentOccurrence = currentOccurrence.AddDays(7))
+            Assert.AreEqual(evaluationsCount, occurrenceSet.Count);
+
+            for (var currentOccurrence = intervalStart; currentOccurrence.CompareTo(intervalEnd) < 0; currentOccurrence = (CalDateTime)currentOccurrence.AddDays(7))
             {
-                Assert.IsTrue(occurrences.Contains(new CalDateTime(currentOccurrence)),
-                    $"Collection does not contain {currentOccurrence}, but it is a {currentOccurrence.DayOfWeek}");
+                var contains = occurrenceSet.Contains(currentOccurrence);
+                Assert.IsTrue(contains, $"Collection does not contain {currentOccurrence}, but it is a {currentOccurrence.DayOfWeek}");
             }
         }
 
@@ -131,7 +134,7 @@ END:VCALENDAR";
 
             var calendar = GetCalendars(ical);
             var date = new DateTime(2016, 10, 11);
-            var occurrences = calendar[0].GetOccurrences(date);
+            var occurrences = calendar.GetOccurrences(date);
 
             //We really want to make sure this doesn't explode
             Assert.AreEqual(1, occurrences.Count);
@@ -193,7 +196,7 @@ END:VEVENT
 END:VCALENDAR
 ";
 
-            var collection = Calendar.LoadFromStream(new StringReader(ical));
+            var collection = Calendar.Load(ical);
             var startCheck = new DateTime(2016, 11, 11);
             var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck, startCheck.AddMonths(1));
 

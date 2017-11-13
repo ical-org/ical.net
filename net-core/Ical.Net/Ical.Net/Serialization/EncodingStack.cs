@@ -7,7 +7,10 @@ namespace Ical.Net.Serialization
     {
         private readonly Stack<Encoding> _mStack;
 
-        public EncodingStack() => _mStack = new Stack<Encoding>();
+        public EncodingStack()
+        {
+            _mStack = new Stack<Encoding>();
+        }
 
         public Encoding Current =>
             _mStack.Count > 0

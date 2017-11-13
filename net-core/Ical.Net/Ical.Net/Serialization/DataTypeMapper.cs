@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization
 {
     public delegate Type TypeResolverDelegate(object context);
 
-    internal class DataTypeMapper : IDataTypeMapper
+    internal class DataTypeMapper
     {
         private class PropertyMapping
         {
@@ -22,7 +20,7 @@ namespace Ical.Net.Serialization
 
         public DataTypeMapper()
         {
-            AddPropertyMapping("ACTION", typeof (AlarmAction), false);
+            AddPropertyMapping(AlarmAction.Name, typeof (AlarmAction), false);
             AddPropertyMapping("ATTACH", typeof (Attachment), false);
             AddPropertyMapping("ATTENDEE", typeof (Attendee), false);
             AddPropertyMapping("CATEGORIES", typeof (string), true);
@@ -53,7 +51,7 @@ namespace Ical.Net.Serialization
             AddPropertyMapping("SEQUENCE", typeof (int), false);
             AddPropertyMapping("STATUS", ResolveStatusProperty, false);
             AddPropertyMapping("TRANSP", typeof (TransparencyType), false);
-            AddPropertyMapping("TRIGGER", typeof (Trigger), false);
+            AddPropertyMapping(TriggerRelation.Name, typeof (Trigger), false);
             AddPropertyMapping("TZNAME", typeof (string), false);
             AddPropertyMapping("TZOFFSETFROM", typeof (UtcOffset), false);
             AddPropertyMapping("TZOFFSETTO", typeof (UtcOffset), false);
@@ -63,21 +61,19 @@ namespace Ical.Net.Serialization
 
         protected Type ResolveStatusProperty(object context)
         {
-            var obj = context as ICalendarObject;
-            if (obj != null)
+            if (!(context is ICalendarObject obj))
             {
-                if (obj.Parent is CalendarEvent)
-                {
+                return null;
+            }
+
+            switch (obj.Parent)
+            {
+                case CalendarEvent _:
                     return typeof (EventStatus);
-                }
-                if (obj.Parent is Todo)
-                {
+                case Todo _:
                     return typeof (TodoStatus);
-                }
-                if (obj.Parent is Journal)
-                {
+                case Journal _:
                     return typeof (JournalStatus);
-                }
             }
 
             return null;
@@ -85,30 +81,34 @@ namespace Ical.Net.Serialization
 
         public void AddPropertyMapping(string name, Type objectType, bool allowsMultipleValues)
         {
-            if (name != null && objectType != null)
+            if (name == null || objectType == null)
             {
-                var m = new PropertyMapping
-                {
-                    ObjectType = objectType,
-                    AllowsMultipleValuesPerProperty = allowsMultipleValues
-                };
-
-                _propertyMap[name] = m;
+                return;
             }
+
+            var m = new PropertyMapping
+            {
+                ObjectType = objectType,
+                AllowsMultipleValuesPerProperty = allowsMultipleValues
+            };
+
+            _propertyMap[name] = m;
         }
 
         public void AddPropertyMapping(string name, TypeResolverDelegate resolver, bool allowsMultipleValues)
         {
-            if (name != null && resolver != null)
+            if (name == null || resolver == null)
             {
-                var m = new PropertyMapping
-                {
-                    Resolver = resolver,
-                    AllowsMultipleValuesPerProperty = allowsMultipleValues
-                };
-
-                _propertyMap[name] = m;
+                return;
             }
+
+            var m = new PropertyMapping
+            {
+                Resolver = resolver,
+                AllowsMultipleValuesPerProperty = allowsMultipleValues
+            };
+
+            _propertyMap[name] = m;
         }
 
         public void RemovePropertyMapping(string name)
@@ -122,8 +122,9 @@ namespace Ical.Net.Serialization
         public virtual bool GetPropertyAllowsMultipleValues(object obj)
         {
             var p = obj as ICalendarProperty;
-            PropertyMapping m;
-            return p?.Name != null && _propertyMap.TryGetValue(p.Name, out m) && m.AllowsMultipleValuesPerProperty;
+            return !string.IsNullOrWhiteSpace(p?.Name)
+                && _propertyMap.TryGetValue(p.Name, out var m)
+                && m.AllowsMultipleValuesPerProperty;
         }
 
         public virtual Type GetPropertyMapping(object obj)
@@ -134,8 +135,7 @@ namespace Ical.Net.Serialization
                 return null;
             }
 
-            PropertyMapping m;
-            if (!_propertyMap.TryGetValue(p.Name, out m))
+            if (!_propertyMap.TryGetValue(p.Name, out var m))
             {
                 return null;
             }

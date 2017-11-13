@@ -3,11 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Ical.Net.DataTypes;
-using Ical.Net.Exceptions;
-using Ical.Net.Interfaces.DataTypes;
 using Ical.Net.Utility;
-using NodaTime;
-using Period = Ical.Net.DataTypes.Period;
 
 namespace Ical.Net.Evaluation
 {
@@ -53,11 +49,14 @@ namespace Ical.Net.Evaluation
     public class RecurrencePatternEvaluator : Evaluator
     {
         // FIXME: in ical4j this is configurable.
-        private static readonly int _maxIncrementCount = 1000;
+        private const int _maxIncrementCount = 1000;
 
         protected RecurrencePattern Pattern { get; set; }
 
-        public RecurrencePatternEvaluator(RecurrencePattern pattern) => Pattern = pattern;
+        public RecurrencePatternEvaluator(RecurrencePattern pattern)
+        {
+            Pattern = pattern;
+        }
 
         private RecurrencePattern ProcessRecurrencePattern(IDateTime referenceDate)
         {
@@ -67,7 +66,7 @@ namespace Ical.Net.Evaluation
             // Convert the UNTIL value to one that matches the same time information as the reference date
             if (r.Until != DateTime.MinValue)
             {
-                r.Until = DateUtil.MatchTimeZone(referenceDate, new CalDateTime(r.Until)).Value;
+                r.Until = DateUtil.MatchTimeZone(referenceDate, new CalDateTime(r.Until, referenceDate.TzId)).Value;
             }
 
             if (r.Frequency > FrequencyType.Secondly && r.BySecond.Count == 0 && referenceDate.HasTime
@@ -187,7 +186,7 @@ namespace Ical.Net.Evaluation
                                     case RecurrenceRestrictionType.RestrictSecondly:
                                     case RecurrenceRestrictionType.RestrictMinutely:
                                     case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new EvaluationEngineException();
+                                        throw new ArgumentException();
                                 }
                             }
                                 break;
@@ -197,7 +196,7 @@ namespace Ical.Net.Evaluation
                                 {
                                     case RecurrenceRestrictionType.RestrictMinutely:
                                     case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new EvaluationEngineException();
+                                        throw new ArgumentException();
                                 }
                             }
                                 break;
@@ -206,7 +205,7 @@ namespace Ical.Net.Evaluation
                                 switch (evaluationRestriction)
                                 {
                                     case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new EvaluationEngineException();
+                                        throw new ArgumentException();
                                 }
                             }
                                 break;
@@ -251,10 +250,9 @@ namespace Ical.Net.Evaluation
 
             var expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
 
-            var invalidCandidateCount = 0;
             var noCandidateIncrementCount = 0;
             var candidate = DateTime.MinValue;
-            while ((maxCount < 0) || (dates.Count < maxCount))
+            while (maxCount < 0 || dates.Count < maxCount)
             {
                 if (pattern.Until != DateTime.MinValue && candidate != DateTime.MinValue && candidate > pattern.Until)
                 {
@@ -266,20 +264,12 @@ namespace Ical.Net.Evaluation
                     break;
                 }
 
-                if (pattern.Count >= 1 && (dates.Count + invalidCandidateCount) >= pattern.Count)
-                {
-                    break;
-                }
-
                 var candidates = GetCandidates(seedCopy, pattern, expandBehavior);
                 if (candidates.Count > 0)
                 {
                     noCandidateIncrementCount = 0;
 
-                    // sort candidates for identifying when UNTIL date is exceeded..
-                    candidates.Sort();
-
-                    foreach (var t in candidates.Where(t => t >= originalDate))
+                    foreach (var t in candidates.OrderBy(c => c).Where(t => t >= originalDate))
                     {
                         candidate = t;
 
@@ -288,28 +278,26 @@ namespace Ical.Net.Evaluation
                         // from the previous year.
                         //
                         // candidates exclusive of periodEnd..
-                        if (candidate >= periodEnd)
-                        {
-                            invalidCandidateCount++;
-                        }
-                        else if (pattern.Count >= 1 && (dates.Count + invalidCandidateCount) >= pattern.Count)
+                        if (pattern.Count >= 1 && dates.Count >= pattern.Count)
                         {
                             break;
                         }
-                        else if (pattern.Until == DateTime.MinValue || candidate <= pattern.Until)
+
+                        if (candidate >= periodEnd)
                         {
-                            var utcCandidate = DateUtil.FromTimeZoneToTimeZone(candidate, DateUtil.GetZone(seed.TzId), DateTimeZone.Utc).ToDateTimeUtc();
-                            if (!dates.Contains(candidate) && (pattern.Until == DateTime.MinValue || utcCandidate <= pattern.Until))
-                            {
-                                dates.Add(candidate);
-                            }
+                            continue;
+                        }
+
+                        if (pattern.Until == DateTime.MinValue || candidate <= pattern.Until)
+                        {
+                            dates.Add(candidate);
                         }
                     }
                 }
                 else
                 {
                     noCandidateIncrementCount++;
-                    if ((_maxIncrementCount > 0) && (noCandidateIncrementCount > _maxIncrementCount))
+                    if (_maxIncrementCount > 0 && noCandidateIncrementCount > _maxIncrementCount)
                     {
                         break;
                     }
@@ -318,7 +306,6 @@ namespace Ical.Net.Evaluation
                 IncrementDate(ref seedCopy, pattern, pattern.Interval);
             }
 
-            // sort final list..
             return dates;
         }
 
@@ -349,7 +336,6 @@ namespace Ical.Net.Evaluation
          * positions are ignored.
          * @param dates
          */
-
         private List<DateTime> ApplySetPosRules(List<DateTime> dates, RecurrencePattern pattern)
         {
             // return if no SETPOS rules specified..
@@ -361,20 +347,13 @@ namespace Ical.Net.Evaluation
             // sort the list before processing..
             dates.Sort();
 
-            var setPosDates = new List<DateTime>(dates.Count);
             var size = dates.Count;
-
-            foreach (var pos in pattern.BySetPosition)
-            {
-                if (pos > 0 && pos <= size)
-                {
-                    setPosDates.Add(dates[pos - 1]);
-                }
-                else if (pos < 0 && pos >= -size)
-                {
-                    setPosDates.Add(dates[size + pos]);
-                }
-            }
+            var setPosDates = pattern.BySetPosition
+                .Where(p => p > 0 && p <= size || p < 0 && p >= -size)  //Protect against out of range access
+                .Select(p => p > 0 && p <= size
+                    ? dates[p - 1]
+                    : dates[size + p])
+                .ToList();
             return setPosDates;
         }
 
@@ -384,7 +363,6 @@ namespace Ical.Net.Evaluation
          * @param dates
          * @return
          */
-
         private List<DateTime> GetMonthVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByMonth.Count == 0)
@@ -395,26 +373,15 @@ namespace Ical.Net.Evaluation
             if (expand.Value)
             {
                 // Expand behavior
-                var monthlyDates = new List<DateTime>();
-                foreach (var date in dates)
-                {
-                    monthlyDates.AddRange(pattern.ByMonth.Select(month => date.AddMonths(month - date.Month)));
-                }
-                return monthlyDates;
+                return dates
+                    .SelectMany(d => pattern.ByMonth.Select(month => d.AddMonths(month - d.Month)))
+                    .ToList();
             }
+
             // Limit behavior
-            for (var i = dates.Count - 1; i >= 0; i--)
-            {
-                var date = dates[i];
-                foreach (var t in pattern.ByMonth.Where(t => date.Month == t))
-                {
-                    goto Next;
-                }
-                dates.RemoveAt(i);
-                Next:
-                ;
-            }
-            return dates;
+            var dateSet = new HashSet<DateTime>(dates);
+            dateSet.ExceptWith(dates.Where(date => pattern.ByMonth.All(t => t != date.Month)));
+            return dateSet.ToList();
         }
 
         /**
@@ -423,7 +390,6 @@ namespace Ical.Net.Evaluation
          * @param dates
          * @return
          */
-
         private List<DateTime> GetWeekNoVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByWeekNo.Count == 0)
@@ -543,9 +509,8 @@ namespace Ical.Net.Evaluation
             if (expand.Value)
             {
                 var monthDayDates = new List<DateTime>();
-                for (var i = 0; i < dates.Count; i++)
+                foreach (var date in dates)
                 {
-                    var date = dates[i];
                     monthDayDates.AddRange(
                         from monthDay in pattern.ByMonthDay
                         let daysInMonth = Calendar.GetDaysInMonth(date.Year, date.Month)
@@ -553,7 +518,7 @@ namespace Ical.Net.Evaluation
                         select monthDay > 0
                             ? date.AddDays(-date.Day + monthDay)
                             : date.AddDays(-date.Day + 1).AddMonths(1).AddDays(monthDay)
-                   );
+                    );
                 }
                 return monthDayDates;
             }
@@ -607,17 +572,17 @@ namespace Ical.Net.Evaluation
             {
                 // Expand behavior
                 var weekDayDates = new List<DateTime>();
-                for (var i = 0; i < dates.Count; i++)
+                foreach (var date in dates)
                 {
-                    var date = dates[i];
-                    for (var j = 0; j < pattern.ByDay.Count; j++)
+                    foreach (var day in pattern.ByDay)
                     {
-                        weekDayDates.AddRange(GetAbsWeekDays(date, pattern.ByDay[j], pattern));
+                        weekDayDates.AddRange(GetAbsWeekDays(date, day, pattern));
                     }
                 }
 
                 return weekDayDates;
             }
+
             // Limit behavior
             for (var i = dates.Count - 1; i >= 0; i--)
             {
@@ -653,7 +618,7 @@ namespace Ical.Net.Evaluation
 
         private List<DateTime> GetAbsWeekDays(DateTime date, WeekDay weekDay, RecurrencePattern pattern)
         {
-            var days = new List<DateTime>(64);
+            var days = new List<DateTime>();
 
             var dayOfWeek = weekDay.DayOfWeek;
             if (pattern.Frequency == FrequencyType.Daily)
@@ -739,7 +704,7 @@ namespace Ical.Net.Evaluation
                 return dates;
             }
 
-            var offsetDates = new List<DateTime>(16);
+            var offsetDates = new List<DateTime>();
             var size = dates.Count;
             if (offset < 0 && offset >= -size)
             {

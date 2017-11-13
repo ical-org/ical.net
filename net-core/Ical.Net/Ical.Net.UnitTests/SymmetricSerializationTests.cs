@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
-using Ical.Net.Serialization.iCalendar.Serializers;
+using Ical.Net.Serialization;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
@@ -20,7 +20,7 @@ namespace Ical.Net.UnitTests
         private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
         private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
         private static CalendarEvent GetSimpleEvent() => new CalendarEvent {DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime};
-        private static Calendar UnserializeCalendar(string s) => Calendar.LoadFromStream(new StringReader(s)).Single();
+        private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
 
         [Test, TestCaseSource(nameof(Event_TestCases))]
         public void Event_Tests(Calendar iCalendar)
@@ -70,7 +70,7 @@ namespace Ical.Net.UnitTests
             originalCalendar.AddTimeZone(tz);
             var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(originalCalendar);
-            var unserializedCalendar = Calendar.LoadFromStream(new StringReader(serializedCalendar)).Single();
+            var unserializedCalendar = Calendar.Load(serializedCalendar);
 
             CollectionAssert.AreEqual(originalCalendar.TimeZones, unserializedCalendar.TimeZones);
             Assert.AreEqual(originalCalendar, unserializedCalendar);

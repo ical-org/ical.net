@@ -12,7 +12,6 @@
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\antlr.runtime\antlr.runtime.csproj" />
     <ProjectReference Include="..\Ical.Net.Collections\Ical.Net.Collections.csproj" />
   </ItemGroup>
   <ItemGroup>

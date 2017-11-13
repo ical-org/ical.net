@@ -1,12 +1,12 @@
 using System.Diagnostics;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using Ical.Net.CalendarComponents;
+using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes
 {
     /// <summary>
     /// A class that represents the geographical location of an
-    /// <see cref="Components.Event"/> or <see cref="Components.Todo"/> item.
+    /// <see cref="Components.Event"/> or <see cref="Todo"/> item.
     /// </summary>
     [DebuggerDisplay("{Latitude};{Longitude}")]
     public class GeographicLocation : EncodableDataType
@@ -38,8 +38,7 @@ namespace Ical.Net.DataTypes
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((GeographicLocation)obj);
+            return obj.GetType() == GetType() && Equals((GeographicLocation)obj);
         }
 
         public override int GetHashCode()

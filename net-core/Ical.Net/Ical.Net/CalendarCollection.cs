@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.Serialization;
 using Ical.Net.Utility;
 
 namespace Ical.Net
@@ -13,6 +15,25 @@ namespace Ical.Net
     /// </summary>
     public class CalendarCollection : List<Calendar>
     {
+        public static CalendarCollection Load(string iCalendarString)
+            => Load(new StringReader(iCalendarString));
+
+        /// <summary>
+        /// Loads an <see cref="Calendar"/> from an open stream.
+        /// </summary>
+        /// <param name="s">The stream from which to load the <see cref="Calendar"/> object</param>
+        /// <returns>An <see cref="Calendar"/> object</returns>
+        public static CalendarCollection Load(Stream s)
+            => Load(new StreamReader(s, Encoding.UTF8));
+
+        public static CalendarCollection Load(TextReader tr)
+        {
+            var calendars = SimpleDeserializer.Default.Deserialize(tr).OfType<Calendar>();
+            var collection = new CalendarCollection();
+            collection.AddRange(calendars);
+            return collection;
+        }
+
         public void ClearEvaluation()
         {
             foreach (var iCal in this)
@@ -130,8 +151,7 @@ namespace Ical.Net
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((CalendarEvent)obj);
+            return obj.GetType() == GetType() && Equals((CalendarEvent)obj);
         }
     }
 }

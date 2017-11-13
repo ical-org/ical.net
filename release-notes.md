@@ -2,6 +2,19 @@
 
 A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) version represents.
 
+### v4
+* 4.0.0:
+  * `DateTimeKind` is preserved during serialization round trips. `Z` suffixed (i.e. UTC) `DATE-TIME`s produce a `DateTimeKind.Utc`, and everything else produces a `DateTimeKind.Local`. Similarly, when creating `CalDateTime`s with ambiguous timezones, the `DateTimeKind` is examined in an attempt to infer whether it's a UTC time or not. In order of importance, the way of determining `DateTimeKind` is: time zone id, `DateTimeKind` on the incoming `DateTime`, and then a fallback. This should improve interop with other ical libraries like Telerik. [#331](https://github.com/rianjs/ical.net/issues/331)
+  * `RRULE`'s `UNTIL` property is now inclusive, and doesn't rely on UTC time comparisons. [#320](https://github.com/rianjs/ical.net/issues/320)
+  * `CalDateTime.ToTimeZone` produces the correct local time [#330](https://github.com/rianjs/ical.net/issues/330)
+  * `VEVENT` status should be uppercase during serialization. A subtle (but breaking) change, necessitating a major version bump. [#318](https://github.com/rianjs/ical.net/issues/318)
+  * `VTIMEZONE`s are once again serialized, this time pulling historic time zone data from NodaTime -- thanks [beriniwlew](https://github.com/beriniwlew)! [PR 304](https://github.com/rianjs/ical.net/pull/304)
+  * Entry points are now consolidated into the right places, and make sense:
+    * `CalendarCollection.Load()` loads a `CalendarCollection`
+    * `Calendar.Load` loads a `Calendar`.
+    * `CalendarComponent.Load()` loads whatever type you're looking for.
+  * The ANTLR-based parser is gone. [chescock](https://github.com/beriniwlew)'s `SimpleDeserializer` is used everywhere.
+
 ### v3
 * 3.0.15: .NET Standard version (aka v3 aka `net-core`) is missing System.Reflection.TypeExtensions dependency. [#326](https://github.com/rianjs/ical.net/issues/326)
 * 3.0.14: .NET Standard version (aka v3 aka `net-core`) is missing System.Runtime.Serialization.Primitives dependency. [#324](https://github.com/rianjs/ical.net/issues/324)

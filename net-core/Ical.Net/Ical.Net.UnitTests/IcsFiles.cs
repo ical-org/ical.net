@@ -16,13 +16,12 @@ namespace Ical.Net.UnitTests
         }
 
         internal static string Alarm1 => ReadStream("Ical.Net.UnitTests.Calendars.Alarm.ALARM1.ics");
-        internal static string ALARM1 => ReadStream("Ical.Net.UnitTests.Calendars.Alarm.ALARM1.ics");
-        internal static string ALARM2 => ReadStream("Ical.Net.UnitTests.Calendars.Alarm.ALARM2.ics");
-        internal static string ALARM3 => ReadStream("Ical.Net.UnitTests.Calendars.Alarm.ALARM3.ics");
-        internal static string ALARM4 => ReadStream("Ical.Net.UnitTests.Calendars.Alarm.ALARM4.ics");
-        internal static string ALARM5 => ReadStream("Ical.Net.UnitTests.Calendars.Alarm.ALARM5.ics");
-        internal static string ALARM6 => ReadStream("Ical.Net.UnitTests.Calendars.Alarm.ALARM6.ics");
-        internal static string ALARM7 => ReadStream("Ical.Net.UnitTests.Calendars.Alarm.ALARM7.ics");
+        internal static string Alarm2 => ReadStream("Ical.Net.UnitTests.Calendars.Alarm.ALARM2.ics");
+        internal static string Alarm3 => ReadStream("Ical.Net.UnitTests.Calendars.Alarm.ALARM3.ics");
+        internal static string Alarm4 => ReadStream("Ical.Net.UnitTests.Calendars.Alarm.ALARM4.ics");
+        internal static string Alarm5 => ReadStream("Ical.Net.UnitTests.Calendars.Alarm.ALARM5.ics");
+        internal static string Alarm6 => ReadStream("Ical.Net.UnitTests.Calendars.Alarm.ALARM6.ics");
+        internal static string Alarm7 => ReadStream("Ical.Net.UnitTests.Calendars.Alarm.ALARM7.ics");
         internal static string Attachment3 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Attachment3.ics");
         internal static string Attachment4 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Attachment4.ics");
         internal static string Attendee1 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Attendee1.ics");
@@ -75,8 +74,8 @@ namespace Ical.Net.UnitTests
         internal static string HourlyInterval1 => ReadStream("Ical.Net.UnitTests.Calendars.Recurrence.HourlyInterval1.ics");
         internal static string HourlyInterval2 => ReadStream("Ical.Net.UnitTests.Calendars.Recurrence.HourlyInterval2.ics");
         internal static string HourlyUntil1 => ReadStream("Ical.Net.UnitTests.Calendars.Recurrence.HourlyUntil1.ics");
-        internal static string JOURNAL1 => ReadStream("Ical.Net.UnitTests.Calendars.Journal.JOURNAL1.ics");
-        internal static string JOURNAL2 => ReadStream("Ical.Net.UnitTests.Calendars.Journal.JOURNAL2.ics");
+        internal static string Journal1 => ReadStream("Ical.Net.UnitTests.Calendars.Journal.JOURNAL1.ics");
+        internal static string Journal2 => ReadStream("Ical.Net.UnitTests.Calendars.Journal.JOURNAL2.ics");
         internal static string Language1 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Language1.ics");
         internal static string Language2 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Language2.ics");
         internal static string Language3 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Language3.ics");
@@ -106,9 +105,9 @@ namespace Ical.Net.UnitTests
         internal static string Parameter1 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Parameter1.ics");
         internal static string Parameter2 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Parameter2.ics");
         internal static string Parse1 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Parse1.ics");
-        internal static string PARSE17 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.PARSE17.ics");
-        internal static string ProdID1 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.ProdID1.ics");
-        internal static string ProdID2 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.ProdID2.ics");
+        internal static string Parse17 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.PARSE17.ics");
+        internal static string ProdId1 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.ProdID1.ics");
+        internal static string ProdId2 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.ProdID2.ics");
         internal static string Property1 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Property1.ics");
         internal static string RecurrenceDates1 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.RecurrenceDates1.ics");
         internal static string RequestStatus1 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.RequestStatus1.ics");
@@ -128,7 +127,7 @@ namespace Ical.Net.UnitTests
         internal static string Transparency1 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Transparency1.ics");
         internal static string Transparency2 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Transparency2.ics");
         internal static string Trigger1 => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.Trigger1.ics");
-        internal static string USHolidays => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.USHolidays.ics");
+        internal static string UsHolidays => ReadStream("Ical.Net.UnitTests.Calendars.Serialization.USHolidays.ics");
         internal static string WeeklyCount1 => ReadStream("Ical.Net.UnitTests.Calendars.Recurrence.WeeklyCount1.ics");
         internal static string WeeklyCountWkst1 => ReadStream("Ical.Net.UnitTests.Calendars.Recurrence.WeeklyCountWkst1.ics");
         internal static string WeeklyCountWkst2 => ReadStream("Ical.Net.UnitTests.Calendars.Recurrence.WeeklyCountWkst2.ics");

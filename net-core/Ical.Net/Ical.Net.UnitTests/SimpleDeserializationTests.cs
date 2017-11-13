@@ -1,12 +1,5 @@
 ﻿using Ical.Net.DataTypes;
-using Ical.Net.General;
-using Ical.Net.Interfaces;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
 using Ical.Net.Serialization;
-using Ical.Net.Serialization.iCalendar.Serializers;
-using Ical.Net.Serialization.iCalendar.Serializers.Other;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -14,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using Ical.Net.CalendarComponents;
+using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.UnitTests
 {
@@ -31,25 +26,25 @@ namespace Ical.Net.UnitTests
             // Ensure there are 2 attendees
             Assert.AreEqual(2, evt.Attendees.Count);
 
-            var attendee1 = evt.Attendees[0];
+            var attendee1 = evt.Attendees;
             var attendee2 = evt.Attendees[1];
 
             // Values
-            Assert.AreEqual(new Uri("mailto:joecool@example.com"), attendee1.Value);
+            Assert.AreEqual(new Uri("mailto:joecool@example.com"), attendee1[0].Value);
             Assert.AreEqual(new Uri("mailto:ildoit@example.com"), attendee2.Value);
 
             // MEMBERS
-            Assert.AreEqual(1, attendee1.Members.Count);
+            Assert.AreEqual(1, attendee1[0].Members.Count);
             Assert.AreEqual(0, attendee2.Members.Count);
-            Assert.AreEqual(new Uri("mailto:DEV-GROUP@example.com"), attendee1.Members[0]);
+            Assert.AreEqual(new Uri("mailto:DEV-GROUP@example.com"), attendee1[0].Members[0]);
 
             // DELEGATED-FROM
-            Assert.AreEqual(0, attendee1.DelegatedFrom.Count);
+            Assert.AreEqual(0, attendee1[0].DelegatedFrom.Count);
             Assert.AreEqual(1, attendee2.DelegatedFrom.Count);
             Assert.AreEqual(new Uri("mailto:immud@example.com"), attendee2.DelegatedFrom[0]);
 
             // DELEGATED-TO
-            Assert.AreEqual(0, attendee1.DelegatedTo.Count);
+            Assert.AreEqual(0, attendee1[0].DelegatedTo.Count);
             Assert.AreEqual(0, attendee2.DelegatedTo.Count);
         }
 
@@ -68,16 +63,16 @@ namespace Ical.Net.UnitTests
             // Ensure there is 1 attendee
             Assert.AreEqual(1, evt.Attendees.Count);
 
-            var attendee1 = evt.Attendees[0];
+            var attendee1 = evt.Attendees;
 
             // Values
-            Assert.AreEqual(new Uri("mailto:joecool@example.com"), attendee1.Value);
+            Assert.AreEqual(new Uri("mailto:joecool@example.com"), attendee1[0].Value);
 
             // MEMBERS
-            Assert.AreEqual(3, attendee1.Members.Count);
-            Assert.AreEqual(new Uri("mailto:DEV-GROUP@example.com"), attendee1.Members[0]);
-            Assert.AreEqual(new Uri("mailto:ANOTHER-GROUP@example.com"), attendee1.Members[1]);
-            Assert.AreEqual(new Uri("mailto:THIRD-GROUP@example.com"), attendee1.Members[2]);
+            Assert.AreEqual(3, attendee1[0].Members.Count);
+            Assert.AreEqual(new Uri("mailto:DEV-GROUP@example.com"), attendee1[0].Members[0]);
+            Assert.AreEqual(new Uri("mailto:ANOTHER-GROUP@example.com"), attendee1[0].Members[1]);
+            Assert.AreEqual(new Uri("mailto:THIRD-GROUP@example.com"), attendee1[0].Members[2]);
         }
 
         /// <summary>
@@ -346,7 +341,7 @@ END:VCALENDAR
         [Test, Category("Deserialization")]
         public void RequestStatus1()
         {
-            var iCal = SimpleDeserializer.Default.Deserialize(new StringReader(IcsFiles.RequestStatus1)).Cast<Calendar>().Single();
+            var iCal = Calendar.Load(IcsFiles.RequestStatus1);
             Assert.AreEqual(1, iCal.Events.Count);
             Assert.AreEqual(4, iCal.Events.First().RequestStatuses.Count);
 

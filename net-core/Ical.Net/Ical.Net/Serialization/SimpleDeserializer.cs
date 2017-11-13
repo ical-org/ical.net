@@ -1,26 +1,20 @@
-﻿using Ical.Net.General;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Interfaces.Serialization.Factory;
-using Ical.Net.Serialization.Factory;
-using Ical.Net.Serialization.iCalendar.Factory;
-using Ical.Net.Serialization.iCalendar.Serializers;
-using Ical.Net.Utility;
+﻿using Ical.Net.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
+using Ical.Net.CalendarComponents;
 
 namespace Ical.Net.Serialization
 {
     public class SimpleDeserializer
     {
         internal SimpleDeserializer(
-            IDataTypeMapper dataTypeMapper,
+            DataTypeMapper dataTypeMapper,
             ISerializerFactory serializerFactory,
-            ICalendarComponentFactory componentFactory)
+            CalendarComponentFactory componentFactory)
         {
             _dataTypeMapper = dataTypeMapper;
             _serializerFactory = serializerFactory;
@@ -30,27 +24,27 @@ namespace Ical.Net.Serialization
         public static readonly SimpleDeserializer Default = new SimpleDeserializer(
             new DataTypeMapper(),
             new SerializerFactory(),
-            new ComponentFactory());
+            new CalendarComponentFactory());
 
         private const string _nameGroup = "name";
         private const string _valueGroup = "value";
         private const string _paramNameGroup = "paramName";
         private const string _paramValueGroup = "paramValue";
 
-        private static Regex _contentLineRegex = new Regex(BuildContentLineRegex(), RegexOptions.Compiled);
+        private static readonly Regex _contentLineRegex = new Regex(BuildContentLineRegex(), RegexOptions.Compiled);
 
-        private readonly IDataTypeMapper _dataTypeMapper;
+        private readonly DataTypeMapper _dataTypeMapper;
         private readonly ISerializerFactory _serializerFactory;
-        private readonly ICalendarComponentFactory _componentFactory;
+        private readonly CalendarComponentFactory _componentFactory;
 
-        static string BuildContentLineRegex()
+        private static string BuildContentLineRegex()
         {
             // name          = iana-token / x-name
             // iana-token    = 1*(ALPHA / DIGIT / "-")
             // x-name        = "X-" [vendorid "-"] 1*(ALPHA / DIGIT / "-")
             // vendorid      = 3*(ALPHA / DIGIT)
             // Add underscore to match behavior of bug 2033495
-            var identifier = "[-A-Za-z0-9_]+";
+            const string identifier = "[-A-Za-z0-9_]+";
 
             // param-value   = paramtext / quoted-string
             // paramtext     = *SAFE-CHAR
@@ -195,21 +189,24 @@ namespace Ical.Net.Serialization
                 {
                     break;
                 }
-                if (nextLine.Length > 0)
+
+                if (nextLine.Length <= 0)
                 {
-                    if ((nextLine[0] == ' ' || nextLine[0] == '\t'))
+                    continue;
+                }
+
+                if ((nextLine[0] == ' ' || nextLine[0] == '\t'))
+                {
+                    currentLine.Append(nextLine, 1, nextLine.Length - 1);
+                }
+                else
+                {
+                    if (currentLine.Length > 0)
                     {
-                        currentLine.Append(nextLine, 1, nextLine.Length - 1);
+                        yield return currentLine.ToString();
                     }
-                    else
-                    {
-                        if (currentLine.Length > 0)
-                        {
-                            yield return currentLine.ToString();
-                        }
-                        currentLine.Clear();
-                        currentLine.Append(nextLine);
-                    }
+                    currentLine.Clear();
+                    currentLine.Append(nextLine);
                 }
             }
             if (currentLine.Length > 0)

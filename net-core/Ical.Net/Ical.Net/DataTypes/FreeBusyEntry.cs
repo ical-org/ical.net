@@ -1,12 +1,13 @@
-﻿using Ical.Net.Interfaces.General;
-
-namespace Ical.Net.DataTypes
+﻿namespace Ical.Net.DataTypes
 {
     public class FreeBusyEntry : Period
     {
         public virtual FreeBusyStatus Status { get; set; }
 
-        public FreeBusyEntry() => Status = FreeBusyStatus.Busy;
+        public FreeBusyEntry()
+        {
+            Status = FreeBusyStatus.Busy;
+        }
 
         public FreeBusyEntry(Period period, FreeBusyStatus status)
         {

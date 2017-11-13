@@ -1,27 +1,37 @@
-﻿namespace Ical.Net
+﻿using System;
+using Ical.Net.CalendarComponents;
+
+namespace Ical.Net
 {
-    public enum AlarmAction
+    public static class AlarmAction
     {
-        Audio,
-        Display,
-        Email,
-        Procedure
+        public const string Name = "ACTION";
+        public const string Key = "ACTION";
+        public static readonly StringComparison Comparison = StringComparison.Ordinal;
+
+        public const string Audio = "AUDIO";
+        public const string Display = "DISPLAY";
+        public const string Email = "EMAIL";
+
+        [Obsolete("Procedure was deprecated by RFC-5545")]
+        public const string Procedure = "PROCEDURE";
     }
 
-    public enum TriggerRelation
+    public static class TriggerRelation
     {
-        Start,
-        End
+        public const string Name = "TRIGGER";
+        public const string Key = "TRIGGER";
+        public static readonly StringComparison Comparison = StringComparison.Ordinal;
+
+        public const string Start = "START";
+        public const string End = "END";
     }
 
-    public class Components
+    public static class Components
     {
         public const string Alarm = "VALARM";
         public const string Calendar = "VCALENDAR";
-        public const string Event = "VEVENT";
         public const string Freebusy = "VFREEBUSY";
-        public const string Todo = "VTODO";
-        public const string Journal = "VJOURNAL";
         public const string Timezone = "VTIMEZONE";
         public const string Daylight = "DAYLIGHT";
         public const string Standard = "STANDARD";
@@ -29,7 +39,9 @@
 
     public static class EventParticipationStatus
     {
-        public const string ParticipationStatus = "PARTSTAT";
+        public const string Name = "PARTSTAT";
+        public const string Key = "PARTSTAT";
+        public static readonly StringComparison Comparison = StringComparison.Ordinal;
 
         /// <summary> Event needs action </summary>
         public const string NeedsAction = "NEEDS-ACTION";
@@ -42,13 +54,14 @@
         /// <summary> Event delegated </summary>
         public const string Delegated = "DELEGATED";
 
-        public static string ParamName => ParticipationStatus;
         public static string Default => NeedsAction;
     }
 
     public static class ToDoParticipationStatus
     {
-        public const string ParticipationStatus = "PARTSTAT";
+        public const string Name = "PARTSTAT";
+        public const string Key = "PARTSTAT";
+        public static readonly StringComparison Comparison = StringComparison.Ordinal;
 
         /// <summary> To-do needs action </summary>
         public const string NeedsAction = "NEEDS-ACTION";
@@ -65,22 +78,19 @@
         /// <summary> To-do in process </summary>
         public const string InProcess = "IN-PROCESS";
 
-        public static string ParamName => ParticipationStatus;
         public static string Default => NeedsAction;
     }
 
     public static class JournalParticipationStatus
     {
-        public const string ParticipationStatus = "PARTSTAT";
+        public const string Name = "PARTSTAT";
+        public const string Key = "PARTSTAT";
+        public static readonly StringComparison Comparison = StringComparison.Ordinal;
 
-        /// <summary> Event needs action </summary>
         public const string NeedsAction = "NEEDS-ACTION";
-        /// <summary> Event accepted </summary>
         public const string Accepted = "ACCEPTED";
-        /// <summary> Event declined </summary>
         public const string Declined = "DECLINED";
 
-        public static string ParamName => ParticipationStatus;
         public static string Default => NeedsAction;
     }
 
@@ -112,32 +122,43 @@
     /// <summary>
     /// Status codes available to an <see cref="Components.Event"/> item
     /// </summary>
-    public enum EventStatus
+    public static class EventStatus
     {
-        Tentative,
-        Confirmed,
-        Cancelled
+        public const string Name = "VEVENT";
+        public static readonly StringComparison Comparison = StringComparison.Ordinal;
+
+        public const string Tentative = "TENTATIVE";
+        public const string Confirmed = "CONFIRMED";
+        public const string Cancelled = "CANCELLED";
     }
 
     /// <summary>
-    /// Status codes available to a <see cref="Components.Todo"/> item.
+    /// Status codes available to a <see cref="Todo"/> item.
     /// </summary>
-    public enum TodoStatus
+    public static class TodoStatus
     {
-        NeedsAction,
-        Completed,
-        InProcess,
-        Cancelled
+        public const string Name = "VTODO";
+        public const string Key = "STATUS";
+        public static readonly StringComparison Comparison = StringComparison.Ordinal;
+
+        public const string NeedsAction = "NEEDS-ACTION";
+        public const string Completed = "COMPLETED";
+        public const string InProcess = "IN-PROCESS";
+        public const string Cancelled = "CANCELLED";
     }
 
     /// <summary>
-    /// Status codes available to a <see cref="Components.Journal"/> entry.
+    /// Status codes available to a <see cref="Journal"/> entry.
     /// </summary>    
-    public enum JournalStatus
+    public static class JournalStatus
     {
-        Draft, // Indicates journal is draft.
-        Final, // Indicates journal is final.
-        Cancelled // Indicates journal is removed.
+        public const string Name = "VJOURNAL";
+        public const string Key = "STATUS";
+        public static readonly StringComparison Comparison = StringComparison.Ordinal;
+
+        public const string Draft = "DRAFT";
+        public const string Final = "FINAL";
+        public const string Cancelled = "CANCELLED";
     }
 
     public enum FreeBusyStatus
@@ -249,28 +270,28 @@
         ThrowException
     }
 
-    public enum TransparencyType
+    public static class TransparencyType
     {
-        Opaque,
-        Transparent
+        public const string Name = "TRANSP";
+        public const string Key = "TRANSP";
+        public static readonly StringComparison Comparison = StringComparison.Ordinal;
+
+        public const string Opaque = "OPAQUE";
+        public const string Transparent = "TRANSPARENT";
     }
 
-    public class CalendarProductIDs
+    public static class LibraryMetadata
     {
-        public const string Default = "-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN";
+        public const string Version = "2.0";
+        public static readonly string ProdId = $"-//github.com/rianjs/ical.net//NONSGML ical.net {Version}//EN";
     }
 
-    public class CalendarVersions
-    {
-        public const string Latest = "2.0";
-    }
-
-    public class CalendarScales
+    public static class CalendarScales
     {
         public const string Gregorian = "GREGORIAN";
     }
 
-    public class CalendarMethods
+    public static class CalendarMethods
     {
         /// <summary>
         /// Used to publish an iCalendar object to one or
