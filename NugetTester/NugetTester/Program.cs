@@ -8,7 +8,7 @@ using Ical.Net.Serialization;
 
 namespace NugetTester
 {
-    class FrameworkNuget
+    class Program
     {
         static void Main(string[] args)
         {

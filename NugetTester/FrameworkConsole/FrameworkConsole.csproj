@@ -62,12 +62,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\net-core\Ical.Net\Ical.Net.Collections\Ical.Net.Collections.csproj">
-      <Project>{79c87279-e395-4487-8549-3e2e24904859}</Project>
-      <Name>Ical.Net.Collections</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\net-core\Ical.Net\Ical.Net\Ical.Net.csproj">
-      <Project>{c34a070b-7e23-4641-bfa0-0812d5034c47}</Project>
+      <Project>{f5fc48d2-8e37-4f75-974b-c6b0631d544a}</Project>
       <Name>Ical.Net</Name>
     </ProjectReference>
   </ItemGroup>
