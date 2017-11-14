@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
+using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
-using Ical.Net.Serialization.iCalendar.Serializers;
-using Ical.Net.UnitTests.ExtensionMethods;
+using Ical.Net.Serialization;
 using Ical.Net.Utility;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
@@ -53,7 +52,7 @@ namespace Ical.Net.UnitTests
             Assert.AreEqual(incoming.DtEnd, expected.DtEnd);
             Assert.AreEqual(incoming.Location, expected.Location);
             Assert.AreEqual(incoming.Status, expected.Status);
-            Assert.AreEqual(incoming.IsActive(), expected.IsActive());
+            Assert.AreEqual(incoming.IsActive, expected.IsActive);
             Assert.AreEqual(incoming.Duration, expected.Duration);
             Assert.AreEqual(incoming.Transparency, expected.Transparency);
             Assert.AreEqual(incoming.GetHashCode(), expected.GetHashCode());
@@ -140,12 +139,12 @@ namespace Ical.Net.UnitTests
 
         public static IEnumerable<ITestCaseData> VTimeZone_TestCases()
         {
+            const string nzSt = "New Zealand Standard Time";
             var first = new VTimeZone
             {
-                TzId = "New Zealand Standard Time"
+                TzId = nzSt,
             };
-
-            var second = new VTimeZone("New Zealand Standard Time");
+            var second = new VTimeZone(nzSt);
             yield return new TestCaseData(first, second);
 
             first.Url = new Uri("http://example.com/");
@@ -210,8 +209,8 @@ namespace Ical.Net.UnitTests
         [Test, TestCaseSource(nameof(CalendarCollection_TestCases))]
         public void CalendarCollection_Tests(string rawCalendar)
         {
-            var a = Calendar.LoadFromStream(new StringReader(IcsFiles.USHolidays));
-            var b = Calendar.LoadFromStream(new StringReader(IcsFiles.USHolidays));
+            var a = Calendar.Load(IcsFiles.UsHolidays);
+            var b = Calendar.Load(IcsFiles.UsHolidays);
             
             Assert.IsNotNull(a);
             Assert.IsNotNull(b);
@@ -223,7 +222,7 @@ namespace Ical.Net.UnitTests
         {
             yield return new TestCaseData(IcsFiles.Google1).SetName("Google calendar test case");
             yield return new TestCaseData(IcsFiles.Parse1).SetName("Weird file parse test case");
-            yield return new TestCaseData(IcsFiles.USHolidays).SetName("US Holidays (quite large)");
+            yield return new TestCaseData(IcsFiles.UsHolidays).SetName("US Holidays (quite large)");
         }
 
         [Test]

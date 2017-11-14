@@ -1,8 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes
 {
@@ -56,6 +55,11 @@ namespace Ical.Net.DataTypes
 
         public Organizer(string value) : this()
         {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return;
+            }
+
             var serializer = new OrganizerSerializer();
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }

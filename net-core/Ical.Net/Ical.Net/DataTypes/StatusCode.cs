@@ -1,7 +1,6 @@
 using System.IO;
 using System.Linq;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes
@@ -35,7 +34,10 @@ namespace Ical.Net.DataTypes
 
         public StatusCode() {}
 
-        public StatusCode(int[] parts) => Parts = parts;
+        public StatusCode(int[] parts)
+        {
+            Parts = parts;
+        }
 
         public StatusCode(string value) : this()
         {

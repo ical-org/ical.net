@@ -1,7 +1,6 @@
 using System;
 using System.IO;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes
 {
@@ -14,11 +13,20 @@ namespace Ical.Net.DataTypes
 
         public virtual DayOfWeek DayOfWeek { get; set; }
 
-        public WeekDay() => Offset = int.MinValue;
+        public WeekDay()
+        {
+            Offset = int.MinValue;
+        }
 
-        public WeekDay(DayOfWeek day) : this() => DayOfWeek = day;
+        public WeekDay(DayOfWeek day) : this()
+        {
+            DayOfWeek = day;
+        }
 
-        public WeekDay(DayOfWeek day, int num) : this(day) => Offset = num;
+        public WeekDay(DayOfWeek day, int num) : this(day)
+        {
+            Offset = num;
+        }
 
         public WeekDay(DayOfWeek day, FrequencyOccurrence type) : this(day, (int) type) {}
 

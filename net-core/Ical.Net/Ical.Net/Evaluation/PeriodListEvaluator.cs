@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.DataTypes;
 
 namespace Ical.Net.Evaluation
 {
@@ -9,7 +8,10 @@ namespace Ical.Net.Evaluation
     {
         private readonly PeriodList _mPeriodList;
 
-        public PeriodListEvaluator(PeriodList rdt) => _mPeriodList = rdt;
+        public PeriodListEvaluator(PeriodList rdt)
+        {
+            _mPeriodList = rdt;
+        }
 
         public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {

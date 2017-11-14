@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using Ical.Net.Interfaces.Serialization;
 
 namespace Ical.Net.Serialization
 {
@@ -12,7 +11,10 @@ namespace Ical.Net.Serialization
 
         private readonly SerializationContext _mSerializationContext;
 
-        public EncodingProvider(SerializationContext ctx) => _mSerializationContext = ctx;
+        public EncodingProvider(SerializationContext ctx)
+        {
+            _mSerializationContext = ctx;
+        }
 
         protected byte[] Decode7Bit(string value)
         {

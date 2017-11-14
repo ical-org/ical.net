@@ -1,18 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3</TargetFrameworks>
+    <Version>4.0.1</Version>
+    <Authors>Rian Stockbower, Douglas Day</Authors>
+    <Company />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\Ical.Net.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="NodaTime" Version="2.0.2" />
-    <PackageReference Include="System.Linq.Parallel" Version="4.3.0" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\antlr.runtime\antlr.runtime.csproj" />
-    <ProjectReference Include="..\Ical.Net.Collections\Ical.Net.Collections.csproj" />
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

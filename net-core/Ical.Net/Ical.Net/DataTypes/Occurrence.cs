@@ -1,5 +1,5 @@
 using System;
-using Ical.Net.Interfaces.Evaluation;
+using Ical.Net.CalendarComponents;
 
 namespace Ical.Net.DataTypes
 {

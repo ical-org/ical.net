@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using Ical.Net.Interfaces.Serialization;
 using Ical.Net.Serialization;
 
 namespace Ical.Net.Utility
@@ -39,7 +38,6 @@ namespace Ical.Net.Utility
         /// <summary> Removes blank lines from a string with normalized (\r\n) line endings </summary>
         public static string RemoveEmptyLines(string s)
         {
-            //NOTE: this method makes the line/col numbers output from antlr incorrect
             var len = -1;
             while (len != s.Length)
             {
@@ -59,11 +57,7 @@ namespace Ical.Net.Utility
             // Replace \r and \n with \r\n.
             s = NormalizeToCrLf.Replace(s, SerializationConstants.LineBreak);
 
-            var settings = ctx.GetService(typeof (ISerializationSettings)) as ISerializationSettings;
-            if (settings == null || !settings.EnsureAccurateLineNumbers)
-            {
-                s = RemoveEmptyLines(UnwrapLines(s));
-            }
+            s = RemoveEmptyLines(UnwrapLines(s));
 
             return new StringReader(s);
         }
@@ -72,5 +66,8 @@ namespace Ical.Net.Utility
 
         /// <summary> Unwraps lines from the RFC 5545 "line folding" technique. </summary>
         public static string UnwrapLines(string s) => NewLineMatch.Replace(s, string.Empty);
+
+        public static bool Contains(this string haystack, string needle, StringComparison stringComparison)
+            => haystack.IndexOf(needle, stringComparison) >= 0;
     }
 }

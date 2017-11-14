@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Ical.Net.Evaluation;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes
@@ -35,8 +33,7 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            var list = obj as PeriodList;
-            if (list == null)
+            if (!(obj is PeriodList list))
             {
                 return;
             }
@@ -97,7 +94,7 @@ namespace Ical.Net.DataTypes
         {
             unchecked
             {
-                var hashCode = string.IsNullOrWhiteSpace(TzId) ? 0 : TzId.GetHashCode();
+                var hashCode = TzId?.GetHashCode() ?? 0;
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Periods);
                 return hashCode;
             }

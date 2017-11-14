@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
+using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
-using Ical.Net.General;
-using Ical.Net.Serialization.iCalendar.Serializers;
+using Ical.Net.Serialization;
 using NUnit.Framework;
 
 namespace Ical.Net.UnitTests
@@ -48,6 +48,13 @@ namespace Ical.Net.UnitTests
 
             var serialized = new CalendarSerializer().SerializeToString(calendar);
             Assert.IsTrue(serialized.Contains("X-ALT-DESC;"));
+        }
+
+        [Test]
+        public void PropertySetValueMustAllowNull()
+        {
+            var property = new CalendarProperty();
+            Assert.DoesNotThrow(() => property.SetValue(null));
         }
     }
 }

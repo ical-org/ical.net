@@ -1,8 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes
@@ -39,10 +38,21 @@ namespace Ical.Net.DataTypes
 
         public Attachment() {}
 
-        public Attachment(byte[] value) : this() => Data = value;
+        public Attachment(byte[] value) : this()
+        {
+            if (value != null)
+            {
+                Data = value;
+            }
+        }
 
         public Attachment(string value) : this()
         {
+            if (string.IsNullOrEmpty(value))
+            {
+                return;
+            }
+
             var serializer = new AttachmentSerializer();
             var a = serializer.Deserialize(value);
             if (a == null)
@@ -56,9 +66,10 @@ namespace Ical.Net.DataTypes
             Uri = a.Uri;
         }
 
-        public override string ToString() => Data == null
-            ? string.Empty
-            : ValueEncoding.GetString(Data);
+        public override string ToString()
+            => Data == null
+                ? string.Empty
+                : ValueEncoding.GetString(Data);
 
         //ToDo: See if this can be deleted
         public override void CopyFrom(ICopyable obj) { }
@@ -75,8 +86,7 @@ namespace Ical.Net.DataTypes
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((Attachment) obj);
+            return obj.GetType() == GetType() && Equals((Attachment) obj);
         }
 
         public override int GetHashCode()

@@ -2,12 +2,12 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ical.Net</id>
-        <version>3.0.11-net-core-beta</version>
+        <version>4.0.1</version>
         <title>Ical.Net</title>
-        <authors>Rian Stockbower, Douglas Day, M. David Peterson</authors>
+        <authors>Rian Stockbower, Douglas Day</authors>
         <owners>Rian Stockbower</owners>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>An iCalendar (RFC 5545) control library for .NET. A fork and continuation of the original dday.ical library including bug fixes and many performance enhancements.</description>
+        <description>An iCalendar (RFC 5545) control library for .NET.</description>
         <projectUrl>https://github.com/rianjs/ical.net</projectUrl>
         <licenseUrl>https://github.com/rianjs/ical.net/blob/master/license.md</licenseUrl>
         <releaseNotes>https://github.com/rianjs/ical.net/blob/master/release-notes.md</releaseNotes>
@@ -15,19 +15,15 @@
         <tags>iCal Calendar icalendar ics outlook events rfc-5545 rfc-2445 dday</tags>
         <dependencies>
             <dependency id="NodaTime" version="2.0.2" />
+            <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
+            <dependency id="System.Reflection.TypeExtensions" version="4.3.0" />
         </dependencies>
     </metadata>
     <files>
         <!-- netstandard 1.3, which covers net46 -->
-        <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.Collections.dll" target="lib\netstandard1.3\Ical.Net.Collections.dll" />
-        <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.Collections.pdb" target="lib\netstandard1.3\Ical.Net.Collections.pdb" />
-        <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.Collections.xml" target="lib\netstandard1.3\Ical.Net.Collections.xml" />
         <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.dll" target="lib\netstandard1.3\Ical.Net.dll" />
         <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.pdb" target="lib\netstandard1.3\Ical.Net.pdb" />
         <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.xml" target="lib\netstandard1.3\Ical.Net.xml" />
-        <file src="Ical.Net\bin\Release\netstandard1.3\antlr.runtime.dll" target="lib\netstandard1.3\antlr.runtime.dll" />
-        <file src="Ical.Net\bin\Release\netstandard1.3\antlr.runtime.pdb" target="lib\netstandard1.3\antlr.runtime.pdb" />
-        <file src="Ical.Net\bin\Release\netstandard1.3\antlr.runtime.xml" target="lib\netstandard1.3\antlr.runtime.xml" />
         <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.deps.json" target="lib\netstandard1.3\Ical.Net.deps.json" />
     </files>
 </package>

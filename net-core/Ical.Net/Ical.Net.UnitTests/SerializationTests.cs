@@ -2,16 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Serialization.iCalendar.Serializers;
-using Ical.Net.Serialization.iCalendar.Serializers.Other;
-using Ical.Net.UnitTests.ExtensionMethods;
+using Ical.Net.Serialization;
+using Ical.Net.Serialization.DataTypes;
 using NUnit.Framework;
+using Ical.Net.Utility;
 
 namespace Ical.Net.UnitTests
 {
@@ -22,8 +20,9 @@ namespace Ical.Net.UnitTests
         private static readonly DateTime _later = _nowTime.AddHours(1);
         private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
         private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
+        private static string SerializeToString(CalendarEvent e) => SerializeToString(new Calendar { Events = { e } });
         private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime };
-        private static Calendar UnserializeCalendar(string s) => Calendar.LoadFromStream(new StringReader(s)).Single();
+        private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
 
         public static void CompareCalendars(Calendar cal1, Calendar cal2)
         {
@@ -135,7 +134,7 @@ namespace Ical.Net.UnitTests
         static string CalDateString(IDateTime cdt)
         {
             var returnVar = $"{cdt.Year}{cdt.Month:D2}{cdt.Day:D2}T{cdt.Hour:D2}{cdt.Minute:D2}{cdt.Second:D2}";
-            if (cdt.IsUniversalTime)
+            if (cdt.IsUtc)
             {
                 return returnVar + 'Z';
             }
@@ -224,11 +223,8 @@ namespace Ical.Net.UnitTests
 
             var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(cal1);
-            using (var sr = new StringReader(serializedCalendar))
-            {
-                var cal2 = Calendar.LoadFromStream(sr)[0];
-                CompareCalendars(cal1, cal2);
-            }
+            var cal2 = Calendar.Load(serializedCalendar);
+            CompareCalendars(cal1, cal2);
         }
 
         [Test, Category("Serialization")]
@@ -366,6 +362,53 @@ namespace Ical.Net.UnitTests
             var serialized = SerializeToString(c);
             Assert.AreEqual(originalDuration, e.Duration);
             Assert.IsTrue(!serialized.Contains("DURATION"));
+        }
+
+        [Test]
+        public void EventStatusAllCaps()
+        {
+            var e = GetSimpleEvent();
+            e.Status = EventStatus.Confirmed;
+            var serialized = SerializeToString(e);
+            Assert.IsTrue(serialized.Contains(EventStatus.Confirmed, EventStatus.Comparison));
+
+            var calendar = UnserializeCalendar(serialized);
+            var eventStatus = calendar.Events.First().Status;
+            Assert.IsTrue(string.Equals(EventStatus.Confirmed, eventStatus, EventStatus.Comparison));
+        }
+
+        [Test]
+        public void ToDoStatusAllCaps()
+        {
+            var component = new Todo
+            {
+                Status = TodoStatus.NeedsAction
+            };
+
+            var c = new Calendar {Todos = {component}};
+            var serialized = SerializeToString(c);
+            Assert.IsTrue(serialized.Contains(TodoStatus.NeedsAction, TodoStatus.Comparison));
+
+            var calendar = UnserializeCalendar(serialized);
+            var status = calendar.Todos.First().Status;
+            Assert.IsTrue(string.Equals(TodoStatus.NeedsAction, status, TodoStatus.Comparison));
+        }
+
+        [Test]
+        public void JournalStatusAllCaps()
+        {
+            var component = new Journal
+            {
+                Status = JournalStatus.Final,
+            };
+
+            var c = new Calendar { Journals = {component} };
+            var serialized = SerializeToString(c);
+            Assert.IsTrue(serialized.Contains(JournalStatus.Final, JournalStatus.Comparison));
+
+            var calendar = UnserializeCalendar(serialized);
+            var status = calendar.Journals.First().Status;
+            Assert.IsTrue(string.Equals(JournalStatus.Final, status, JournalStatus.Comparison));
         }
     }
 }

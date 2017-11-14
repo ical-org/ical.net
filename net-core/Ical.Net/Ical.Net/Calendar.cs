@@ -4,71 +4,35 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
-using Ical.Net.ExtensionMethods;
-using Ical.Net.General.Proxies;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
-using Ical.Net.Interfaces.Evaluation;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Interfaces.Serialization;
-using Ical.Net.Serialization.iCalendar.Serializers;
+using Ical.Net.Proxies;
+using Ical.Net.Serialization;
 using Ical.Net.Utility;
 
 namespace Ical.Net
 {
     public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, IMergeable
     {
-        public static CalendarCollection Load(string iCalendarString)
-        {
-            using (var reader = new StringReader(iCalendarString))
-            {
-                return LoadFromStream(reader);
-            }
-        }
+        public static Calendar Load(string iCalendarString)
+            => CalendarCollection.Load(new StringReader(iCalendarString)).SingleOrDefault();
 
         /// <summary>
         /// Loads an <see cref="Calendar"/> from an open stream.
         /// </summary>
         /// <param name="s">The stream from which to load the <see cref="Calendar"/> object</param>
         /// <returns>An <see cref="Calendar"/> object</returns>
-        public new static CalendarCollection LoadFromStream(Stream s) => LoadFromStream(s, Encoding.UTF8, new CalendarSerializer());
+        public static Calendar Load(Stream s)
+            => CalendarCollection.Load(new StreamReader(s, Encoding.UTF8)).SingleOrDefault();
 
-        public static CalendarCollection LoadFromStream<T>(Stream s) where T : Calendar => LoadFromStream(typeof (T), s);
+        public static Calendar Load(TextReader tr)
+            => CalendarCollection.Load(tr).OfType<Calendar>().SingleOrDefault();
 
-        public static CalendarCollection LoadFromStream(Type iCalendarType, Stream s)
-        {
-            ISerializer serializer = new CalendarSerializer();
-            serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
-            return LoadFromStream(s, Encoding.UTF8, serializer);
-        }
+        public static IList<T> Load<T>(Stream s, Encoding e)
+            => Load<T>(new StreamReader(s, e));
 
-        public static CalendarCollection LoadFromStream(Type iCalendarType, Stream s, Encoding encoding)
-        {
-            ISerializer serializer = new CalendarSerializer();
-            serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
-            return LoadFromStream(s, encoding, serializer);
-        }
-
-        public new static CalendarCollection LoadFromStream(Stream s, Encoding e, ISerializer serializer) => serializer.Deserialize(s, e) as CalendarCollection;
-
-        public static CalendarCollection LoadFromStream(TextReader tr) => LoadFromStream(tr, new CalendarSerializer());
-
-        public static CalendarCollection LoadFromStream<T>(TextReader tr) where T : Calendar => LoadFromStream(typeof (T), tr);
-
-        public static CalendarCollection LoadFromStream(Type iCalendarType, TextReader tr)
-        {
-            ISerializer serializer = new CalendarSerializer();
-            serializer.GetService<ISerializationSettings>().CalendarType = iCalendarType;
-            return LoadFromStream(tr, serializer);
-        }
-
-        public static CalendarCollection LoadFromStream(TextReader tr, ISerializer serializer)
-        {
-            var text = tr.ReadToEnd();
-            var ms = new MemoryStream(Encoding.UTF8.GetBytes(text));
-            return LoadFromStream(ms, Encoding.UTF8, serializer);
-        }
+        public static IList<T> Load<T>(TextReader tr)
+            => SimpleDeserializer.Default.Deserialize(tr).OfType<T>().ToList();
 
         private IUniqueComponentList<IUniqueComponent> _mUniqueComponents;
         private IUniqueComponentList<CalendarEvent> _mEvents;
@@ -110,16 +74,13 @@ namespace Ical.Net
         }
 
         protected bool Equals(Calendar other)
-        {
-            var foo = CollectionHelpers.Equals(UniqueComponents, other.UniqueComponents);
-            return string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)
+            => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)
                 && CollectionHelpers.Equals(UniqueComponents, other.UniqueComponents)
                 && CollectionHelpers.Equals(Events, other.Events)
                 && CollectionHelpers.Equals(Todos, other.Todos)
                 && CollectionHelpers.Equals(Journals, other.Journals)
                 && CollectionHelpers.Equals(FreeBusy, other.FreeBusy)
                 && CollectionHelpers.Equals(TimeZones, other.TimeZones);
-        }
 
         public override bool Equals(object obj)
         {
@@ -131,11 +92,7 @@ namespace Ical.Net
             {
                 return true;
             }
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
-            return Equals((Calendar)obj);
+            return obj.GetType() == GetType() && Equals((Calendar)obj);
         }
 
         public override int GetHashCode()
@@ -163,12 +120,12 @@ namespace Ical.Net
         public virtual IUniqueComponentList<CalendarEvent> Events => _mEvents;
 
         /// <summary>
-        /// A collection of <see cref="Net.FreeBusy"/> components in the iCalendar.
+        /// A collection of <see cref="CalendarComponents.FreeBusy"/> components in the iCalendar.
         /// </summary>
         public virtual IUniqueComponentList<FreeBusy> FreeBusy => _mFreeBusy;
 
         /// <summary>
-        /// A collection of <see cref="Components.Journal"/> components in the iCalendar.
+        /// A collection of <see cref="Journal"/> components in the iCalendar.
         /// </summary>
         public virtual ICalendarObjectList<Journal> Journals => _mJournals;
 
@@ -178,7 +135,7 @@ namespace Ical.Net
         public virtual ICalendarObjectList<VTimeZone> TimeZones => _mTimeZones;
 
         /// <summary>
-        /// A collection of <see cref="Components.Todo"/> components in the iCalendar.
+        /// A collection of <see cref="Todo"/> components in the iCalendar.
         /// </summary>
         public virtual IUniqueComponentList<Todo> Todos => _mTodos;
 
@@ -276,9 +233,11 @@ namespace Ical.Net
         /// </summary>
         /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
         /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
-        public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt) => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.AsSystemLocal.Date), new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)));
+        public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt)
+            => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.AsSystemLocal.Date), new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)));
 
-        public virtual HashSet<Occurrence> GetOccurrences(DateTime dt) => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)));
+        public virtual HashSet<Occurrence> GetOccurrences(DateTime dt)
+            => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)));
 
         /// <summary>
         /// Returns a list of occurrences of each recurring component
@@ -411,12 +370,54 @@ namespace Ical.Net
             }
         }
 
-        public virtual FreeBusy GetFreeBusy(FreeBusy freeBusyRequest) => Net.FreeBusy.Create(this, freeBusyRequest);
+        public virtual FreeBusy GetFreeBusy(FreeBusy freeBusyRequest) => CalendarComponents.FreeBusy.Create(this, freeBusyRequest);
 
         public virtual FreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive)
-            => Net.FreeBusy.Create(this, Net.FreeBusy.CreateRequest(fromInclusive, toExclusive, null, null));
+            => CalendarComponents.FreeBusy.Create(this, CalendarComponents.FreeBusy.CreateRequest(fromInclusive, toExclusive, null, null));
 
         public virtual FreeBusy GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, IDateTime fromInclusive, IDateTime toExclusive)
-            => Net.FreeBusy.Create(this, Net.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
+            => CalendarComponents.FreeBusy.Create(this, CalendarComponents.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
+
+        /// <summary>
+        /// Adds a system time zone to the iCalendar.  This time zone may
+        /// then be used in date/time objects contained in the 
+        /// calendar.
+        /// </summary>
+        /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>
+        /// <returns>The time zone added to the calendar.</returns>
+        public VTimeZone AddTimeZone(TimeZoneInfo tzi)
+        {
+            var tz = VTimeZone.FromSystemTimeZone(tzi);
+            this.AddChild(tz);
+            return tz;
+        }
+
+        public VTimeZone AddTimeZone(TimeZoneInfo tzi, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
+        {
+            var tz = VTimeZone.FromSystemTimeZone(tzi, earliestDateTimeToSupport, includeHistoricalData);
+            this.AddChild(tz);
+            return tz;
+        }
+
+        public VTimeZone AddTimeZone(string tzId)
+        {
+            var tz = VTimeZone.FromDateTimeZone(tzId);
+            this.AddChild(tz);
+            return tz;
+        }
+
+        public VTimeZone AddTimeZone(string tzId, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
+        {
+            var tz = VTimeZone.FromDateTimeZone(tzId, earliestDateTimeToSupport, includeHistoricalData);
+            this.AddChild(tz);
+            return tz;
+        }
+
+        public VTimeZone AddLocalTimeZone(DateTime earliestDateTimeToSupport, bool includeHistoricalData)
+        {
+            var tz = VTimeZone.FromLocalTimeZone(earliestDateTimeToSupport, includeHistoricalData);
+            this.AddChild(tz);
+            return tz;
+        }
     }
 }

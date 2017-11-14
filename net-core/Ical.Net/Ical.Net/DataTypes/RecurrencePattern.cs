@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Ical.Net.Evaluation;
-using Ical.Net.Interfaces.General;
-using Ical.Net.Serialization.iCalendar.Serializers.DataTypes;
+using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes
@@ -17,10 +16,24 @@ namespace Ical.Net.DataTypes
         private int _interval = int.MinValue;
         private RecurrenceRestrictionType? _restrictionType;
         private RecurrenceEvaluationModeType? _evaluationMode;
+        
 
         public FrequencyType Frequency { get; set; }
 
-        public DateTime Until { get; set; } = DateTime.MinValue;
+        private DateTime _until = DateTime.MinValue;
+        public DateTime Until
+        {
+            get => _until;
+            set
+            {
+                if (_until == value && _until.Kind == value.Kind)
+                {
+                    return;
+                }
+
+                _until = value;
+            }
+        }
 
         public int Count { get; set; } = int.MinValue;
 
@@ -32,23 +45,23 @@ namespace Ical.Net.DataTypes
             set => _interval = value;
         }
 
-        public List<int> BySecond { get; set; } = new List<int>(16);
+        public List<int> BySecond { get; set; } = new List<int>();
 
-        public List<int> ByMinute { get; set; } = new List<int>(16);
+        public List<int> ByMinute { get; set; } = new List<int>();
 
-        public List<int> ByHour { get; set; } = new List<int>(16);
+        public List<int> ByHour { get; set; } = new List<int>();
 
-        public List<WeekDay> ByDay { get; set; } = new List<WeekDay>(16);
+        public List<WeekDay> ByDay { get; set; } = new List<WeekDay>();
 
-        public List<int> ByMonthDay { get; set; } = new List<int>(16);
+        public List<int> ByMonthDay { get; set; } = new List<int>();
 
-        public List<int> ByYearDay { get; set; } = new List<int>(16);
+        public List<int> ByYearDay { get; set; } = new List<int>();
 
-        public List<int> ByWeekNo { get; set; } = new List<int>(16);
+        public List<int> ByWeekNo { get; set; } = new List<int>();
 
-        public List<int> ByMonth { get; set; } = new List<int>(16);
+        public List<int> ByMonth { get; set; } = new List<int>();
 
-        public List<int> BySetPosition { get; set; } = new List<int>(16);
+        public List<int> BySetPosition { get; set; } = new List<int>();
 
         public DayOfWeek FirstDayOfWeek { get; set; } = DayOfWeek.Monday;
 
@@ -110,11 +123,11 @@ namespace Ical.Net.DataTypes
         }
 
         protected bool Equals(RecurrencePattern other) => (Interval == other.Interval)
-            && (RestrictionType == other.RestrictionType)
-            && (EvaluationMode == other.EvaluationMode)
-            && (Frequency == other.Frequency)
+            && RestrictionType == other.RestrictionType
+            && EvaluationMode == other.EvaluationMode
+            && Frequency == other.Frequency
             && Until.Equals(other.Until)
-            && (Count == other.Count)
+            && Count == other.Count
             && (FirstDayOfWeek == other.FirstDayOfWeek)
             && CollectionEquals(BySecond, other.BySecond)
             && CollectionEquals(ByMinute, other.ByMinute)
@@ -130,8 +143,7 @@ namespace Ical.Net.DataTypes
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((RecurrencePattern)obj);
+            return obj.GetType() == GetType() && Equals((RecurrencePattern)obj);
         }
 
         public override int GetHashCode()

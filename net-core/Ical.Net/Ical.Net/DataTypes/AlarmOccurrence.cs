@@ -1,6 +1,5 @@
 using System;
-using Ical.Net.Interfaces.Components;
-using Ical.Net.Interfaces.DataTypes;
+using Ical.Net.CalendarComponents;
 
 namespace Ical.Net.DataTypes
 {
@@ -42,29 +41,26 @@ namespace Ical.Net.DataTypes
 
         public int CompareTo(AlarmOccurrence other) => Period.CompareTo(other.Period);
 
-        protected bool Equals(AlarmOccurrence other) => Equals(Period, other.Period) && Equals(Component, other.Component) && Equals(Alarm, other.Alarm);
+        protected bool Equals(AlarmOccurrence other)
+            => Equals(Period, other.Period) 
+                && Equals(Component, other.Component)
+                && Equals(Alarm, other.Alarm);
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((AlarmOccurrence)obj);
+            return obj.GetType() == GetType() && Equals((AlarmOccurrence)obj);
         }
 
         public override int GetHashCode()
         {
+            // ToDo: Alarm doesn't implement Equals or GetHashCode()
             unchecked
             {
-                var hashCode = (Period != null
-                    ? Period.GetHashCode()
-                    : 0);
-                hashCode = (hashCode * 397) ^ (Component != null
-                    ? Component.GetHashCode()
-                    : 0);
-                hashCode = (hashCode * 397) ^ (Alarm != null
-                    ? Alarm.GetHashCode()
-                    : 0);
+                var hashCode = Period?.GetHashCode() ?? 0;
+                hashCode = (hashCode * 397) ^ (Component?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (Alarm?.GetHashCode() ?? 0);
                 return hashCode;
             }
         }
