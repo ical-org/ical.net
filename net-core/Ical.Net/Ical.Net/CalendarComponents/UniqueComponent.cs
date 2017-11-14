@@ -41,8 +41,7 @@ namespace Ical.Net.CalendarComponents
             if (DtStamp == null)
             {
                 // icalendar RFC doesn't care about sub-second time resolution, so shave off everything smaller than seconds.
-
-                var utcNow = DateTime.UtcNow.Truncate(TimeSpan.FromSeconds(1)); //DateTimeKind.Utc is preserved
+                var utcNow = DateTime.UtcNow.Truncate(TimeSpan.FromSeconds(1));
                 DtStamp = new CalDateTime(utcNow, "UTC");
             }
         }

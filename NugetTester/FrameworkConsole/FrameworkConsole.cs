@@ -6,9 +6,9 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 
-namespace NugetTester
+namespace FrameworkConsole
 {
-    class Program
+    class FrameworkConsole
     {
         static void Main(string[] args)
         {

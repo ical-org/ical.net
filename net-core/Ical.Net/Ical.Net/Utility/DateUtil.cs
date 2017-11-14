@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Ical.Net.DataTypes;
 using NodaTime;
 using NodaTime.TimeZones;
@@ -9,9 +10,11 @@ namespace Ical.Net.Utility
 {
     internal static class DateUtil
     {
-        public static IDateTime StartOfDay(IDateTime dt) => dt.AddHours(-dt.Hour).AddMinutes(-dt.Minute).AddSeconds(-dt.Second);
+        public static IDateTime StartOfDay(IDateTime dt)
+            => dt.AddHours(-dt.Hour).AddMinutes(-dt.Minute).AddSeconds(-dt.Second);
 
-        public static IDateTime EndOfDay(IDateTime dt) => StartOfDay(dt).AddDays(1).AddTicks(-1);
+        public static IDateTime EndOfDay(IDateTime dt)
+            => StartOfDay(dt).AddDays(1).AddTicks(-1);
 
         public static DateTime GetSimpleDateTimeData(IDateTime dt)
             => DateTime.SpecifyKind(dt.Value, dt.IsUtc ? DateTimeKind.Utc : DateTimeKind.Local);
@@ -78,8 +81,13 @@ namespace Ical.Net.Utility
             return dt;
         }
 
-        private static readonly Dictionary<string, string> _windowsMapping =
-            TzdbDateTimeZoneSource.Default.WindowsMapping.PrimaryMapping.ToDictionary(k => k.Key, v => v.Value, StringComparer.OrdinalIgnoreCase);
+        private static readonly Lazy<Dictionary<string, string>> _windowsMapping
+            = new Lazy<Dictionary<string, string>>(InitializeWindowsMappings, LazyThreadSafetyMode.PublicationOnly);
+
+        private static Dictionary<string, string> InitializeWindowsMappings()
+            => TzdbDateTimeZoneSource.Default.WindowsMapping.PrimaryMapping
+                .ToDictionary(k => k.Key, v => v.Value, StringComparer.OrdinalIgnoreCase);
+
         public static readonly DateTimeZone LocalDateTimeZone = DateTimeZoneProviders.Tzdb.GetSystemDefault();
 
         /// <summary>
@@ -89,6 +97,8 @@ namespace Ical.Net.Utility
         /// that.
         /// </summary>
         /// <param name="tzId">A BCL, IANA, or serialization time zone identifier</param>
+        /// <param name="useLocalIfNotFound">If true, this method will return the system local time zone if tzId doesn't match a known time zone identifier.
+        /// Otherwise, it will throw an exception.</param>
         public static DateTimeZone GetZone(string tzId, bool useLocalIfNotFound = true)
         {
             if (string.IsNullOrWhiteSpace(tzId))
@@ -107,7 +117,7 @@ namespace Ical.Net.Utility
                 return zone;
             }
 
-            if (_windowsMapping.TryGetValue(tzId, out var ianaZone))
+            if (_windowsMapping.Value.TryGetValue(tzId, out var ianaZone))
             {
                 return DateTimeZoneProviders.Tzdb.GetZoneOrNull(ianaZone);
             }
@@ -131,9 +141,9 @@ namespace Ical.Net.Utility
                 return DateTimeZoneProviders.Tzdb.GetZoneOrNull(providerId);
             }
 
-            if (_windowsMapping.Keys
+            if (_windowsMapping.Value.Keys
                     .Where(tzId.Contains)
-                    .Any(providerId => _windowsMapping.TryGetValue(providerId, out ianaZone))
+                    .Any(providerId => _windowsMapping.Value.TryGetValue(providerId, out ianaZone))
                )
             {
                 return DateTimeZoneProviders.Tzdb.GetZoneOrNull(ianaZone);
@@ -144,12 +154,12 @@ namespace Ical.Net.Utility
                 return DateTimeZoneProviders.Serialization.GetZoneOrNull(providerId);
             }
 
-            if (!useLocalIfNotFound)
+            if (useLocalIfNotFound)
             {
-                throw new ArgumentException($"Unrecognized time zone id {tzId}");
+                return LocalDateTimeZone;
             }
-            
-            return LocalDateTimeZone;
+
+            throw new ArgumentException($"Unrecognized time zone id {tzId}");
         }
 
         public static ZonedDateTime AddYears(ZonedDateTime zonedDateTime, int years)

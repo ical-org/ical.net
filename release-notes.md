@@ -3,6 +3,11 @@
 A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) version represents.
 
 ### v4
+* 4.0.1 [#335](https://github.com/rianjs/ical.net/issues/335):
+  * Technically this should be 5.0, but given 4.0.0 only has 24 downloads, I've just done a minor version bump.
+  * Moved everything from Ical.Net.Collections into the Ical.Net assembly.
+  * Updated the `PRODID` stamp to say 4.0.
+  * Fixed a bug with a missing nuget dependency
 * 4.0.0:
   * `DateTimeKind` is preserved during serialization round trips. `Z` suffixed (i.e. UTC) `DATE-TIME`s produce a `DateTimeKind.Utc`, and everything else produces a `DateTimeKind.Local`. Similarly, when creating `CalDateTime`s with ambiguous timezones, the `DateTimeKind` is examined in an attempt to infer whether it's a UTC time or not. In order of importance, the way of determining `DateTimeKind` is: time zone id, `DateTimeKind` on the incoming `DateTime`, and then a fallback. This should improve interop with other ical libraries like Telerik. [#331](https://github.com/rianjs/ical.net/issues/331)
   * `RRULE`'s `UNTIL` property is now inclusive, and doesn't rely on UTC time comparisons. [#320](https://github.com/rianjs/ical.net/issues/320)

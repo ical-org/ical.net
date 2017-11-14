@@ -6,9 +6,9 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 
-namespace NugetTester
+namespace NetCoreConsole
 {
-    class Program
+    class CoreConsole
     {
         static void Main(string[] args)
         {
@@ -38,7 +38,6 @@ END:VCALENDAR";
 
                 var deserializedBroken = Calendar.Load(brokenIcal);
                 var firstEvent = deserializedBroken.Events.First();
-                Console.WriteLine(firstEvent.Start);
             }
             catch (Exception e)
             {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 
-namespace Ical.Net.Utility
+namespace Ical.Net.Serialization
 {
     internal class SerializationUtil
     {
