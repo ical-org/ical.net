@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ical.Net</id>
-        <version>4.0.0</version>
+        <version>4.0.1</version>
         <title>Ical.Net</title>
         <authors>Rian Stockbower, Douglas Day</authors>
         <owners>Rian Stockbower</owners>
@@ -21,9 +21,6 @@
     </metadata>
     <files>
         <!-- netstandard 1.3, which covers net46 -->
-        <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.Collections.dll" target="lib\netstandard1.3\Ical.Net.Collections.dll" />
-        <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.Collections.pdb" target="lib\netstandard1.3\Ical.Net.Collections.pdb" />
-        <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.Collections.xml" target="lib\netstandard1.3\Ical.Net.Collections.xml" />
         <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.dll" target="lib\netstandard1.3\Ical.Net.dll" />
         <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.pdb" target="lib\netstandard1.3\Ical.Net.pdb" />
         <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.xml" target="lib\netstandard1.3\Ical.Net.xml" />

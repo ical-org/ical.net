@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Ical.Net.Collections.Interfaces;
+using Ical.Net.Collections;
 
 namespace Ical.Net
 {

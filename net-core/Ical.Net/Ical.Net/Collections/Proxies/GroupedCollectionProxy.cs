@@ -2,17 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Ical.Net.Collections.Interfaces;
-using Ical.Net.Collections.Interfaces.Proxies;
 
 namespace Ical.Net.Collections.Proxies
 {
     /// <summary>
     /// A proxy for a keyed list.
     /// </summary>
-
     public class GroupedCollectionProxy<TGroup, TOriginal, TNew> :
-        IGroupedCollectionProxy<TGroup, TOriginal, TNew>
+        IGroupedCollection<TGroup, TNew>
         where TOriginal : class, IGroupedObject<TGroup>
         where TNew : class, TOriginal
     {
