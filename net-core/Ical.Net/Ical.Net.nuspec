@@ -17,6 +17,7 @@
             <dependency id="NodaTime" version="2.0.2" />
             <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
             <dependency id="System.Reflection.TypeExtensions" version="4.3.0" />
+            <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         </dependencies>
     </metadata>
     <files>
