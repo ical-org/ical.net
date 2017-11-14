@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\net-core\Ical.Net\Ical.Net.Collections\Ical.Net.Collections.csproj" />
+    <ProjectReference Include="..\..\net-core\Ical.Net\Ical.Net\Ical.Net.csproj" />
+  </ItemGroup>
+
+</Project>
