@@ -63,7 +63,7 @@ namespace Ical.Net.Serialization
             // contentline   = name *(";" param ) ":" value CRLF
             var name = $"(?<{_nameGroup}>{identifier})";
             // value         = *VALUE-CHAR
-            var value = $"(?<{_valueGroup}>[^\\x00-\\x19]*)";
+            var value = $"(?<{_valueGroup}>[^\\x00-\\x08\\x0E-\\x1F\\x7F]*)";
             var contentLine = $"^{name}(;{param})*:{value}$";
             return contentLine;
         }
