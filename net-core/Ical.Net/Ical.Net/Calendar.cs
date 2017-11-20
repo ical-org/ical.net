@@ -34,6 +34,9 @@ namespace Ical.Net
         public static IList<T> Load<T>(TextReader tr)
             => SimpleDeserializer.Default.Deserialize(tr).OfType<T>().ToList();
 
+        public static IList<T> Load<T>(string ical)
+            => Load<T>(new StringReader(ical));
+
         private IUniqueComponentList<IUniqueComponent> _mUniqueComponents;
         private IUniqueComponentList<CalendarEvent> _mEvents;
         private IUniqueComponentList<Todo> _mTodos;

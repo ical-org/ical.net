@@ -410,5 +410,37 @@ namespace Ical.Net.UnitTests
             var status = calendar.Journals.First().Status;
             Assert.IsTrue(string.Equals(JournalStatus.Final, status, JournalStatus.Comparison));
         }
+
+        [Test]
+        public void UnicodeDescription()
+        {
+            const string ics = @"BEGIN:VEVENT
+DTSTAMP:20171120T124856Z
+DTSTART;TZID=Europe/Helsinki:20160707T110000
+DTEND;TZID=Europe/Helsinki:20160707T140000
+SUMMARY:Some summary
+UID:20160627T123608Z-182847102@atlassian.net
+DESCRIPTION:Key points:\n•	Some text (text,
+ , text\, text\, TP) some text\;\n•	some tex
+ t Some text (Text\, Text)\;\n•	Some tex
+ t some text\, some text\, text.\;\n\nsome te
+ xt some tex‘t some text. 
+ORGANIZER;X-CONFLUENCE-USER-KEY=ff801df01547101c6720006;CN=Some
+ user;CUTYPE=INDIVIDUAL:mailto:some.mail@domain.com
+CREATED:20160627T123608Z
+LAST-MODIFIED:20160627T123608Z
+ATTENDEE;X-CONFLUENCE-USER-KEY=ff8080ef1df01547101c6720006;CN=Some
+ text;CUTYPE=INDIVIDUAL:mailto:some.mail@domain.com
+SEQUENCE:1
+X-CONFLUENCE-SUBCALENDAR-TYPE:other
+TRANSP:TRANSPARENT
+STATUS:CONFIRMED
+END:VEVENT";
+            var deserializedEvent = Calendar.Load<CalendarEvent>(ics).Single();
+
+            Assert.IsTrue(deserializedEvent.Description.Contains("\t"));
+            Assert.IsTrue(deserializedEvent.Description.Contains("•"));
+            Assert.IsTrue(deserializedEvent.Description.Contains("‘"));
+        }
     }
 }

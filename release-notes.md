@@ -3,6 +3,7 @@
 A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) version represents.
 
 ### v4
+* 4.0.3 [#337](https://github.com/rianjs/ical.net/issues/337). Fixed a bug in `SimpleDeserializer` where tab characters (`\t`) were excluded from regex match.
 * 4.0.1 [#335](https://github.com/rianjs/ical.net/issues/335). Technically this should be 5.0, but given 4.0.0 only has 24 downloads, I've just done a minor version bump.
   * Moved everything from Ical.Net.Collections into the Ical.Net assembly.
   * Updated the `PRODID` stamp to say 4.0.
