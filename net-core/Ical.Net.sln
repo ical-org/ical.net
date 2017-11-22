@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ical.Net.CoreUnitTests", "I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ical.Net.FrameworkUnitTests", "Ical.Net.FrameworkUnitTests\Ical.Net.FrameworkUnitTests.csproj", "{90400333-D639-4303-B8F4-DBE0DA5D379D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PerfTests", "PerfTests\PerfTests.csproj", "{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{90400333-D639-4303-B8F4-DBE0DA5D379D}.Release|x64.Build.0 = Release|Any CPU
 		{90400333-D639-4303-B8F4-DBE0DA5D379D}.Release|x86.ActiveCfg = Release|Any CPU
 		{90400333-D639-4303-B8F4-DBE0DA5D379D}.Release|x86.Build.0 = Release|Any CPU
+		{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}.Debug|x64.Build.0 = Debug|Any CPU
+		{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}.Debug|x86.Build.0 = Debug|Any CPU
+		{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}.Release|x64.ActiveCfg = Release|Any CPU
+		{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}.Release|x64.Build.0 = Release|Any CPU
+		{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}.Release|x86.ActiveCfg = Release|Any CPU
+		{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
