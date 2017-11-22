@@ -19,7 +19,6 @@ namespace Ical.Net.DataTypes
 
         public static CalDateTime Today => new CalDateTime(DateTime.Today);
 
-        private DateTime _value;
         private bool _hasDate;
         private bool _hasTime;
 
@@ -228,6 +227,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
+        private DateTime _asUtc = DateTime.MinValue;
         /// <summary>
         /// Returns a representation of the DateTime in Coordinated Universal Time (UTC)
         /// </summary>
@@ -235,35 +235,48 @@ namespace Ical.Net.DataTypes
         {
             get
             {
-                // In order of weighting:
-                //  1) Specified TzId
-                //  2) Value having a DateTimeKind.Utc
-
-                if (!string.IsNullOrWhiteSpace(TzId))
+                if (_asUtc == DateTime.MinValue)
                 {
-                    var asLocal = DateUtil.ToZonedDateTimeLeniently(Value, TzId);
-                    return asLocal.ToDateTimeUtc();
+                    // In order of weighting:
+                    //  1) Specified TzId
+                    //  2) Value having a DateTimeKind.Utc
+                    //  3) Use the OS's time zone
+
+                    if (!string.IsNullOrWhiteSpace(TzId))
+                    {
+                        var asLocal = DateUtil.ToZonedDateTimeLeniently(Value, TzId);
+                        _asUtc = asLocal.ToDateTimeUtc();
+                    }
+                    else if(IsUtc || Value.Kind == DateTimeKind.Utc)
+                    {
+                        _asUtc = DateTime.SpecifyKind(Value, DateTimeKind.Utc);
+                    }
+                    else
+                    {
+                        _asUtc = DateTime.SpecifyKind(Value, DateTimeKind.Local).ToUniversalTime();
+                    }
+                }
+                return _asUtc;
+            }
+        }
+
+        private DateTime _value;
+        public DateTime Value
+        {
+            get => _value;
+            set
+            {
+                if (_value == value && _value.Kind == value.Kind)
+                {
+                    return;
                 }
 
-                if (IsUtc || Value.Kind == DateTimeKind.Utc)
-                {
-                    return DateTime.SpecifyKind(_value, DateTimeKind.Utc);
-                }
-
-                // Fall back to the OS conversion
-                return DateTime.SpecifyKind(Value, DateTimeKind.Local).ToUniversalTime();
+                _asUtc = DateTime.MinValue;
+                _value = value;
             }
         }
 
         public bool IsUtc => _value.Kind == DateTimeKind.Utc;
-
-        public string TimeZoneName => TzId;
-
-        public DateTime Value
-        {
-            get => _value;
-            set => _value = value;
-        }
 
         public bool HasDate
         {
@@ -319,6 +332,8 @@ namespace Ical.Net.DataTypes
                 _tzId = value;
             }
         }
+
+        public string TimeZoneName => TzId;
 
         public int Year => Value.Year;
 
