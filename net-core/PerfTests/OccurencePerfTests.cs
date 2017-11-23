@@ -72,35 +72,32 @@ namespace PerfTests
         private Calendar GetManyCalendarEvents()
         {
             const string tzid = "America/New_York";
-            const int limit = 10;
-            var list = new List<CalendarEvent>(limit);
+            const int limit = 4;
 
             var startTime = DateTime.Now.AddDays(-1);
             var interval = TimeSpan.FromDays(1);
 
-            for (var i = 0; i < limit; i++)
-            {
-                var rrule = new RecurrencePattern(FrequencyType.Hourly, 1)
+            var events = Enumerable
+                .Range(0, limit)
+                .Select(n =>
                 {
-                    Until = startTime.AddYears(1),
-                };
+                    var rrule = new RecurrencePattern(FrequencyType.Hourly, 1)
+                    {
+                        Until = startTime.AddDays(10),
+                    };
 
-                var e = new CalendarEvent
-                {
-                    Start = new CalDateTime(startTime.AddMinutes(5), tzid),
-                    End = new CalDateTime(startTime.AddMinutes(10), tzid),
-                    RecurrenceRules = new List<RecurrencePattern> {rrule},
-                };
-                list.Add(e);
-
-                startTime += interval;
-            }
+                    var e = new CalendarEvent
+                    {
+                        Start = new CalDateTime(startTime.AddMinutes(5), tzid),
+                        End = new CalDateTime(startTime.AddMinutes(10), tzid),
+                        RecurrenceRules = new List<RecurrencePattern> {rrule},
+                    };
+                    startTime += interval;
+                    return e;
+                });
 
             var c = new Calendar();
-            foreach (var e in list)
-            {
-                c.Events.Add(e);
-            }
+            c.Events.AddRange(events);
             return c;
         }
     }
