@@ -134,6 +134,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CalDateTimePerfTests.cs" />
+    <Compile Include="OccurrencePerfTests.cs" />
     <Compile Include="Runner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerializationPerfTests.cs" />
