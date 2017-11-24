@@ -59,8 +59,7 @@ namespace Ical.Net
                 return;
             }
 
-            _values = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            _values.UnionWith(p.Values);
+            _values = new HashSet<string>(p.Values.Where(IsValidValue), StringComparer.OrdinalIgnoreCase);
         }
 
         public virtual IEnumerable<string> Values => _values;
@@ -78,18 +77,24 @@ namespace Ical.Net
         {
             // Remove all previous values
             _values.Clear();
-            _values.UnionWith(values);
+            _values.UnionWith(values.Where(IsValidValue));
         }
+
+        private bool IsValidValue(string value) => !string.IsNullOrWhiteSpace(value);
 
         public virtual void AddValue(string value)
         {
-            if (value != null)
+            if (!IsValidValue(value))
             {
-                _values.Add(value);
+                return;
             }
+            _values.Add(value);
         }
 
-        public virtual void RemoveValue(string value) {}
+        public virtual void RemoveValue(string value)
+        {
+            _values.Remove(value);
+        }
 
         public virtual string Value
         {

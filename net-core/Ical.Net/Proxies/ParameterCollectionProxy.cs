@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.Collections;
 using Ical.Net.Collections.Proxies;
@@ -27,7 +28,7 @@ namespace Ical.Net.Proxies
 
         public virtual string Get(string name)
         {
-            var parameter = RealObject.FirstOrDefault(o => o.Name == name);
+            var parameter = RealObject.FirstOrDefault(o => string.Equals(o.Name, name, StringComparison.Ordinal));
 
             return parameter?.Value;
         }
@@ -36,7 +37,7 @@ namespace Ical.Net.Proxies
 
         public virtual void Set(string name, string value)
         {
-            var parameter = RealObject.FirstOrDefault(o => o.Name == name);
+            var parameter = RealObject.FirstOrDefault(o => string.Equals(o.Name, name, StringComparison.Ordinal));
 
             if (parameter == null)
             {
@@ -50,7 +51,7 @@ namespace Ical.Net.Proxies
 
         public virtual void Set(string name, IEnumerable<string> values)
         {
-            var parameter = RealObject.FirstOrDefault(o => o.Name == name);
+            var parameter = RealObject.FirstOrDefault(o => string.Equals(o.Name, name, StringComparison.Ordinal));
 
             if (parameter == null)
             {

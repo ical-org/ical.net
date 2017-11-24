@@ -1,8 +1,0 @@
-﻿namespace PerfTests
-{
-    class CalDateTimePerf
-    {
-
-
-    }
-}

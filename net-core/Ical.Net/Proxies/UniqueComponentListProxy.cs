@@ -6,7 +6,9 @@ using Ical.Net.Collections;
 
 namespace Ical.Net.Proxies
 {
-    public class UniqueComponentListProxy<TComponentType> : CalendarObjectListProxy<TComponentType>, IUniqueComponentList<TComponentType>
+    public class UniqueComponentListProxy<TComponentType> :
+        CalendarObjectListProxy<TComponentType>,
+        IUniqueComponentList<TComponentType>
         where TComponentType : class, IUniqueComponent
     {
         private readonly Dictionary<string, TComponentType> _lookup;
@@ -51,6 +53,14 @@ namespace Ical.Net.Proxies
                 {
                     Add(value);
                 }
+            }
+        }
+
+        public void AddRange(IEnumerable<TComponentType> collection)
+        {
+            foreach (var element in collection)
+            {
+                Add(element);
             }
         }
     }
