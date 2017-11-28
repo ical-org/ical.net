@@ -282,7 +282,7 @@ namespace Ical.Net
     public static class LibraryMetadata
     {
         public const string Version = "2.0";
-        public static readonly string ProdId = $"-//github.com/rianjs/ical.net//NONSGML ical.net {Version}//EN";
+        public static readonly string ProdId = "-//github.com/rianjs/ical.net//NONSGML ical.net 4.0//EN";
     }
 
     public static class CalendarScales
