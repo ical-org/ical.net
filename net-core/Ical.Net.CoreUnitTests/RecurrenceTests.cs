@@ -2604,6 +2604,30 @@ namespace Ical.Net.CoreUnitTests
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void ReccurencePattern_MaxDate_StopsOnCount()
+        {
+            var evt = new CalendarEvent
+            {
+                Start = new CalDateTime(2018, 1, 1, 12, 0, 0),
+                Duration = TimeSpan.FromHours(1)
+            };
+
+            var pattern = new RecurrencePattern
+            {
+                Frequency = FrequencyType.Daily,
+                Count = 10
+            };
+
+            evt.RecurrenceRules.Add(pattern);
+
+            var occurrences = evt.GetOccurrences(new DateTime(2018, 1, 1), DateTime.MaxValue);
+            Assert.AreEqual(10, occurrences.Count, "There should be 10 occurrences of this event.");
+        }
+
+        /// <summary>
         /// Tests bug #3292737 - Google Repeating Task Until Time  Bug
         /// See https://sourceforge.net/tracker/?func=detail&aid=3292737&group_id=187422&atid=921236
         /// </summary>

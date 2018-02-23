@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -259,7 +259,17 @@ namespace Ical.Net.Evaluation
                     break;
                 }
 
+                if (pattern.Until != DateTime.MinValue && candidate != DateTime.MinValue && candidate > pattern.Until)
+                {
+                    break;
+                }
+
                 if (candidate != DateTime.MinValue && candidate > periodEnd)
+                {
+                    break;
+                }
+
+                if (pattern.Count >= 1 && dates.Count >= pattern.Count)
                 {
                     break;
                 }
