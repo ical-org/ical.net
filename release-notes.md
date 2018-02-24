@@ -20,7 +20,7 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
     * `CalendarCollection.Load()` loads a `CalendarCollection`
     * `Calendar.Load` loads a `Calendar`.
     * `CalendarComponent.Load()` loads whatever type you're looking for.
-  * The ANTLR-based parser is gone. [chescock](https://github.com/beriniwlew)'s `SimpleDeserializer` is used everywhere.
+  * The ANTLR-based parser is gone. [chescock](https://github.com/chescock)'s `SimpleDeserializer` is used everywhere.
 
 ### v3
 * 3.0.15: .NET Standard version (aka v3 aka `net-core`) is missing System.Reflection.TypeExtensions dependency. [#326](https://github.com/rianjs/ical.net/issues/326)
