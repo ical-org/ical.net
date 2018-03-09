@@ -70,7 +70,7 @@ namespace Ical.Net.Evaluation
             // Convert the UNTIL value to one that matches the same time information as the reference date
             if (r.Until != DateTime.MinValue)
             {
-                r.Until = DateUtil.MatchTimeZone(referenceDate, new CalDateTime(r.Until)).Value;
+                r.Until = DateUtil.GetSimpleDateTimeData(DateUtil.MatchTimeZone(referenceDate, new CalDateTime(r.Until, r.Until.Kind == DateTimeKind.Utc ? "UTC" : referenceDate.TzId)));
             }
 
             if (r.Frequency > FrequencyType.Secondly && r.BySecond.Count == 0 && referenceDate.HasTime
@@ -279,10 +279,7 @@ namespace Ical.Net.Evaluation
                 {
                     noCandidateIncrementCount = 0;
 
-                    // sort candidates for identifying when UNTIL date is exceeded..
-                    candidates.Sort();
-
-                    foreach (var t in candidates.Where(t => t >= originalDate))
+                    foreach (var t in candidates.OrderBy(c => c).Where(t => t >= originalDate))
                     {
                         candidate = t;
 
@@ -301,8 +298,7 @@ namespace Ical.Net.Evaluation
                         }
                         else if (pattern.Until == DateTime.MinValue || candidate <= pattern.Until)
                         {
-                            var utcCandidate = DateUtil.FromTimeZoneToTimeZone(candidate, DateUtil.GetZone(seed.TzId), DateTimeZone.Utc).ToDateTimeUtc();
-                            if (!dates.Contains(candidate) && (pattern.Until == DateTime.MinValue || utcCandidate <= pattern.Until))
+                            if (!dates.Contains(candidate))
                             {
                                 dates.Add(candidate);
                             }
@@ -321,7 +317,6 @@ namespace Ical.Net.Evaluation
                 IncrementDate(ref seedCopy, pattern, pattern.Interval);
             }
 
-            // sort final list..
             return dates;
         }
 

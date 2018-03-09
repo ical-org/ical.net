@@ -254,7 +254,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                                 var dt = serializer?.Deserialize(new StringReader(keyValue)) as IDateTime;
                                 if (dt != null)
                                 {
-                                    r.Until = dt.Value;
+                                    r.Until = Utility.DateUtil.GetSimpleDateTimeData(dt);
                                 }
                             }
                                 break;

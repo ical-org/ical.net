@@ -35,8 +35,16 @@ namespace Ical.Net.Utility
 
             // Change the time zone of periodStart/periodEnd as needed 
             // so they can be used during the evaluation process.
-            periodStart = DateUtil.MatchTimeZone(start, periodStart);
-            periodEnd = DateUtil.MatchTimeZone(start, periodEnd);
+            if (string.IsNullOrEmpty(periodStart.TzId) && !periodStart.IsUniversalTime)
+            {
+                periodStart.TzId = start.TzId;
+                periodEnd.TzId = start.TzId;
+            }
+            else
+            {
+                periodStart = DateUtil.MatchTimeZone(start, periodStart);
+                periodEnd = DateUtil.MatchTimeZone(start, periodEnd);
+            }
 
             var periods = evaluator.Evaluate(start, DateUtil.GetSimpleDateTimeData(periodStart), DateUtil.GetSimpleDateTimeData(periodEnd), includeReferenceDateInResults);
 
