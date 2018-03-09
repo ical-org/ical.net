@@ -125,9 +125,12 @@ namespace Ical.Net.DataTypes
         private IDateTime _startTime;
         public virtual IDateTime StartTime
         {
-            get => _startTime.HasTime
-                ? _startTime
-                : new CalDateTime(new DateTime(_startTime.Value.Year, _startTime.Value.Month, _startTime.Value.Day, 0,0,0), _startTime.TzId);
+            get
+            {
+                return _startTime.HasTime
+                    ? _startTime
+                    : new CalDateTime(new DateTime(_startTime.Value.Year, _startTime.Value.Month, _startTime.Value.Day, 0, 0, 0), _startTime.TzId);
+            }
             set
             {
                 if (Equals(_startTime, value))

@@ -323,7 +323,10 @@ namespace Ical.Net
 
         public Uri Url
         {
-            get => _url ?? (_url = Properties.Get<Uri>("TZURL"));
+            get
+            {
+                return _url ?? (_url = Properties.Get<Uri>("TZURL"));
+            }
             set
             {
                 _url = value;
@@ -334,7 +337,10 @@ namespace Ical.Net
         private string _location;
         public string Location
         {
-            get => _location ?? (_location = Properties.Get<string>("X-LIC-LOCATION"));
+            get
+            {
+                return _location ?? (_location = Properties.Get<string>("X-LIC-LOCATION"));
+            }
             set
             {
                 _location = value;

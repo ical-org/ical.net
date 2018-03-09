@@ -14,8 +14,8 @@ namespace Ical.Net.Evaluation
 
         protected ITimeZoneInfo TimeZoneInfo
         {
-            get => Recurrable as ITimeZoneInfo;
-            set => Recurrable = value;
+            get { return Recurrable as ITimeZoneInfo; }
+            set { Recurrable = value; }
         }
 
         #endregion

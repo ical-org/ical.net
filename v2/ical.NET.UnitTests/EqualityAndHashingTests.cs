@@ -259,12 +259,12 @@ namespace Ical.Net.UnitTests
             Assert.IsFalse(serialized.Contains("Hello"));
         }
 
-        internal static (byte[] original, byte[] copy) GetAttachments()
+        internal static Tuple<byte[] /*original*/, byte[] /*copy*/> GetAttachments()
         {
             var payload = Encoding.UTF8.GetBytes("This is an attachment!");
             var payloadCopy = new byte[payload.Length];
             Array.Copy(payload, payloadCopy, payload.Length);
-            return (payload, payloadCopy);
+            return Tuple.Create(payload, payloadCopy);
         }
 
         [Test, TestCaseSource(nameof(RecurringComponentAttachment_TestCases))]
@@ -275,7 +275,7 @@ namespace Ical.Net.UnitTests
             Assert.AreNotEqual(noAttachment, withAttachment);
             Assert.AreNotEqual(noAttachment.GetHashCode(), withAttachment.GetHashCode());
 
-            noAttachment.Attachments.Add(new Attachment(attachments.copy));
+            noAttachment.Attachments.Add(new Attachment(attachments.Item2/*copy*/));
 
             Assert.AreEqual(noAttachment, withAttachment);
             Assert.AreEqual(noAttachment.GetHashCode(), withAttachment.GetHashCode());
@@ -287,17 +287,17 @@ namespace Ical.Net.UnitTests
 
             var journalNoAttach = new Journal {Start = new CalDateTime(_nowTime), Summary = "A summary!", Class = "Some class!"};
             var journalWithAttach = new Journal {Start = new CalDateTime(_nowTime), Summary = "A summary!", Class = "Some class!"};
-            journalWithAttach.Attachments.Add(new Attachment(attachments.original));
+            journalWithAttach.Attachments.Add(new Attachment(attachments.Item1/*original*/));
             yield return new TestCaseData(journalNoAttach, journalWithAttach).SetName("Journal recurring component attachment");
 
             var todoNoAttach = new Todo { Start = new CalDateTime(_nowTime), Summary = "A summary!", Class = "Some class!" };
             var todoWithAttach = new Todo { Start = new CalDateTime(_nowTime), Summary = "A summary!", Class = "Some class!"};
-            todoWithAttach.Attachments.Add(new Attachment(attachments.original));
+            todoWithAttach.Attachments.Add(new Attachment(attachments.Item1/*original*/));
             yield return new TestCaseData(todoNoAttach, todoWithAttach).SetName("Todo recurring component attachment");
 
             var eventNoAttach = GetSimpleEvent();
             var eventWithAttach = GetSimpleEvent();
-            eventWithAttach.Attachments.Add(new Attachment(attachments.original));
+            eventWithAttach.Attachments.Add(new Attachment(attachments.Item1/*original*/));
             yield return new TestCaseData(eventNoAttach, eventWithAttach).SetName("Event recurring component attachment");
         }
 

@@ -110,8 +110,8 @@ namespace Ical.Net.DataTypes
 
         public IPeriod this[int index]
         {
-            get => Periods[index];
-            set => Periods[index] = value;
+            get { return Periods[index]; }
+            set { Periods[index] = value; }
         }
 
         public bool Remove(IPeriod item) => Periods.Remove(item);
