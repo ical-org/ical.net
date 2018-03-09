@@ -259,11 +259,6 @@ namespace Ical.Net.Evaluation
                     break;
                 }
 
-                if (pattern.Until != DateTime.MinValue && candidate != DateTime.MinValue && candidate > pattern.Until)
-                {
-                    break;
-                }
-
                 if (candidate != DateTime.MinValue && candidate > periodEnd)
                 {
                     break;
