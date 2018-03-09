@@ -330,11 +330,14 @@ namespace Ical.Net.DataTypes
                 throw new ArgumentException("You must provide a valid TZID to the ToTimeZone() method", nameof(newTimeZone));
             }
 
-            var newDt = string.IsNullOrWhiteSpace(TzId)
-                ? DateUtil.ToZonedDateTimeLeniently(Value, newTimeZone).ToDateTimeUtc()
-                : DateUtil.FromTimeZoneToTimeZone(Value, TzId, newTimeZone).ToDateTimeUtc();
+            // If TzId is empty, it's a system-local datetime, so we should use the system time zone as the starting point.
+            var originalTzId = string.IsNullOrWhiteSpace(TzId) ? TimeZoneInfo.Local.Id : TzId;
 
-            return new CalDateTime(newDt, newTimeZone);
+            var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, originalTzId);
+            var converted = zonedOriginal.WithZone(DateUtil.GetZone(newTimeZone));
+
+            return new CalDateTime(converted.Zone == NodaTime.DateTimeZone.Utc ?
+                converted.ToDateTimeUtc() : converted.ToDateTimeUnspecified(), newTimeZone);
         }
 
         public IDateTime Add(TimeSpan ts)

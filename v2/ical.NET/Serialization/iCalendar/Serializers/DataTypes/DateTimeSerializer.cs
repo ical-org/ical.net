@@ -45,7 +45,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
         {
             var dt = obj as IDateTime;
 
-                      // RFC 5545 3.3.5: 
+            // RFC 5545 3.3.5:
             // The date with UTC time, or absolute time, is identified by a LATIN
             // CAPITAL LETTER Z suffix character, the UTC designator, appended to
             // the time value. The "TZID" property parameter MUST NOT be applied to DATE-TIME
@@ -134,6 +134,7 @@ namespace Ical.Net.Serialization.iCalendar.Serializers.DataTypes
                 if (match.Groups[9].Success)
                 {
                     dt.IsUniversalTime = true;
+                    dt.TzId = "UTC";
                 }
 
                 dt.Value = CoerceDateTime(year, month, date, hour, minute, second, DateTimeKind.Utc);
