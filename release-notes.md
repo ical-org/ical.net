@@ -3,6 +3,7 @@
 A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) version represents.
 
 ### v4
+* 4.1.0 [#383](https://github.com/rianjs/ical.net/issues/383). Add a read-only `AsDateTimeOffset` property to `IDateTime`. Add a few docs to `RecurrencePattern`.
 * 4.0.6 [#344](https://github.com/rianjs/ical.net/issues/344). Fix the VERSION property so it's 2.0 as RFC-5545 requires.
 * 4.0.4 [PR 341](https://github.com/rianjs/ical.net/pull/341). Cache the UTC representation for `CalDateTime`s. This results in a 12-16% reduction in unit test runtime.
 * 4.0.3 [#337](https://github.com/rianjs/ical.net/issues/337). Fixed a bug in `SimpleDeserializer` where tab characters (`\t`) were excluded from regex match.

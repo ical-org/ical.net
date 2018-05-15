@@ -382,6 +382,15 @@ namespace Ical.Net.DataTypes
                 : new CalDateTime(DateTime.SpecifyKind(converted.ToDateTimeUnspecified(), DateTimeKind.Local), tzId);
         }
 
+        /// <summary>
+        /// Returns a DateTimeOffset representation of the Value. If a TzId is specified, it will use that time zone's UTC offset, otherwise it will use the
+        /// system-local time zone.
+        /// </summary>
+        public DateTimeOffset AsDateTimeOffset =>
+            string.IsNullOrWhiteSpace(TzId)
+                ? new DateTimeOffset(AsSystemLocal)
+                : DateUtil.ToZonedDateTimeLeniently(Value, TzId).ToDateTimeOffset();
+
         public IDateTime Add(TimeSpan ts) => this + ts;
 
         public IDateTime Subtract(TimeSpan ts) => this - ts;

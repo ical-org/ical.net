@@ -65,5 +65,38 @@ namespace Ical.Net.FrameworkUnitTests
             yield return new TestCaseData(ianaEvent, bclCst)
                 .SetName($"IANA to BCL: {ianaNy} to {bclCst}");
         }
+
+        [TestCaseSource(nameof(AsDateTimeOffsetTestCases))]
+        public DateTimeOffset AsDateTimeOffsetTests(CalDateTime incoming)
+            => incoming.AsDateTimeOffset;
+
+        public static IEnumerable<ITestCaseData> AsDateTimeOffsetTestCases()
+        {
+            const string nyTzId = "America/New_York";
+            var summerDate = DateTime.Parse("2018-05-15T11:00");
+
+            var nySummerOffset = TimeSpan.FromHours(-4);
+            var nySummer = new CalDateTime(summerDate, nyTzId);
+            yield return new TestCaseData(nySummer)
+                .SetName("NY Summer DateTime returns DateTimeOffset with UTC-4")
+                .Returns(new DateTimeOffset(summerDate, nySummerOffset));
+
+            var utc = new CalDateTime(summerDate, "UTC");
+            yield return new TestCaseData(utc)
+                .SetName("UTC summer DateTime returns a DateTimeOffset with UTC-0")
+                .Returns(new DateTimeOffset(summerDate, TimeSpan.Zero));
+
+            var convertedToNySummer = new CalDateTime(summerDate, "UTC");
+            convertedToNySummer.TzId = nyTzId;
+            yield return new TestCaseData(convertedToNySummer)
+                .SetName("Summer UTC DateTime converted to NY time zone by setting TzId returns a DateTimeOffset with UTC-4")
+                .Returns(new DateTimeOffset(summerDate, nySummerOffset));
+
+            var noTz = new CalDateTime(summerDate);
+            var currentSystemOffset = TimeZoneInfo.Local.GetUtcOffset(summerDate);
+            yield return new TestCaseData(noTz)
+                .SetName($"Summer DateTime with no time zone information returns the system-local's UTC offset ({currentSystemOffset})")
+                .Returns(new DateTimeOffset(summerDate, currentSystemOffset));
+        }
     }
 }

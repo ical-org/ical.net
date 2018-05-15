@@ -10,6 +10,7 @@ namespace Ical.Net.DataTypes
 {
     /// <summary>
     /// An iCalendar representation of the <c>RRULE</c> property.
+    /// https://tools.ietf.org/html/rfc5545#section-3.3.10
     /// </summary>
     public class RecurrencePattern : EncodableDataType
     {
@@ -17,7 +18,6 @@ namespace Ical.Net.DataTypes
         private RecurrenceRestrictionType? _restrictionType;
         private RecurrenceEvaluationModeType? _evaluationMode;
         
-
         public FrequencyType Frequency { get; set; }
 
         private DateTime _until = DateTime.MinValue;
@@ -37,6 +37,12 @@ namespace Ical.Net.DataTypes
 
         public int Count { get; set; } = int.MinValue;
 
+        /// <summary>
+        /// Specifies how often the recurrence should repeat.
+        /// - 1 = every
+        /// - 2 = every second
+        /// - 3 = every third
+        /// </summary>
         public int Interval
         {
             get => _interval == int.MinValue
@@ -47,18 +53,31 @@ namespace Ical.Net.DataTypes
 
         public List<int> BySecond { get; set; } = new List<int>();
 
+        /// <summary> The ordinal minutes of the hour associated with this recurrence pattern. Valid values are 0-59. </summary>
         public List<int> ByMinute { get; set; } = new List<int>();
 
         public List<int> ByHour { get; set; } = new List<int>();
 
         public List<WeekDay> ByDay { get; set; } = new List<WeekDay>();
 
+        /// <summary> The ordinal days of the month associated with this recurrence pattern. Valid values are 1-31. </summary>
         public List<int> ByMonthDay { get; set; } = new List<int>();
 
+        /// <summary>
+        /// The ordinal days of the year associated with this recurrence pattern. Something recurring on the first day of the year would be a list containing
+        /// 1, and would also be New Year's Day.
+        /// </summary>
         public List<int> ByYearDay { get; set; } = new List<int>();
 
+        /// <summary>
+        /// The ordinal week of the year. Valid values are -53 to +53. Negative values count backwards from the end of the specified year.
+        /// A week is defined by ISO.8601.2004
+        /// </summary>
         public List<int> ByWeekNo { get; set; } = new List<int>();
 
+        /// <summary>
+        /// List of months in the year associated with this rule. Valid values are 1 through 12.
+        /// </summary>
         public List<int> ByMonth { get; set; } = new List<int>();
 
         public List<int> BySetPosition { get; set; } = new List<int>();
