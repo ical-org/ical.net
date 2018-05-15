@@ -15,6 +15,12 @@ namespace Ical.Net.DataTypes
         DateTime AsUtc { get; }
 
         /// <summary>
+        /// Returns a DateTimeOffset representation of the Value. If a TzId is specified, it will use that time zone's UTC offset, otherwise it will use the
+        /// system-local time zone.
+        /// </summary>
+        DateTimeOffset AsDateTimeOffset { get; }
+
+        /// <summary>
         /// Gets/sets whether the Value of this date/time represents
         /// a universal time.
         /// </summary>
