@@ -314,6 +314,8 @@ namespace Ical.Net.DataTypes
                     return;
                 }
 
+                _asUtc = DateTime.MinValue;
+
                 var isEmpty = string.IsNullOrWhiteSpace(value);
                 if (isEmpty)
                 {
