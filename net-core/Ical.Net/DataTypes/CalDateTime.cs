@@ -31,6 +31,11 @@ namespace Ical.Net.DataTypes
 
         public CalDateTime(DateTime value) : this(value, null) { }
 
+        /// <summary>
+        /// Specifying a `tzId` value will override `value`'s `DateTimeKind` property. If the time zone specified is UTC, the underlying `DateTimeKind` will be
+        /// `Utc`. If a non-UTC time zone is specified, the underlying `DateTimeKind` property will be `Local`. If no time zone is specified, the `DateTimeKind`
+        /// property will be left untouched.
+        /// </summary>
         public CalDateTime(DateTime value, string tzId)
         {
             Initialize(value, tzId, null);
@@ -81,11 +86,6 @@ namespace Ical.Net.DataTypes
                 // Probably UTC
                 value = DateTime.SpecifyKind(value, DateTimeKind.Utc);
                 TzId = "UTC";
-            }
-            else
-            {
-                // Ambiguous, but probably local
-                value = DateTime.SpecifyKind(value, DateTimeKind.Unspecified);
             }
 
             Value = new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Kind);
