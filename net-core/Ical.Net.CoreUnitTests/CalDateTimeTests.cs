@@ -98,5 +98,19 @@ namespace Ical.Net.CoreUnitTests
                 .SetName($"Summer DateTime with no time zone information returns the system-local's UTC offset ({currentSystemOffset})")
                 .Returns(new DateTimeOffset(summerDate, currentSystemOffset));
         }
+
+        [Test(Description = "Calling AsUtc should always return the proper UTC time, even if the TzId has changed")]
+        public void TestTzidChanges()
+        {
+            var someTime = DateTimeOffset.Parse("2018-05-21T11:35:00-04:00");
+
+            var someDt = new CalDateTime(someTime.DateTime) { TzId = "America/New_York" };
+            var firstUtc = someDt.AsUtc;
+            Assert.AreEqual(someTime.UtcDateTime, firstUtc);
+
+            someDt.TzId = "Europe/Berlin";
+            var berlinUtc = someDt.AsUtc;
+            Assert.AreNotEqual(firstUtc, berlinUtc);
+        }
     }
 }
