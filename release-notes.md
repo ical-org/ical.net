@@ -3,7 +3,7 @@
 A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) version represents.
 
 ### v4
-* 4.1.4 [#392](https://github.com/rianjs/ical.net/issues/392). .NET Standard (still) doesn't play nicely with .NET Framework applications, so I have also targeted .NET 4.6 (`net46`). As a consequence of that, I had to downgrade `System.Reflection.TypeExtensions` to 4.1.0, because the original targeted version (4.3.0) [was retargeted as `netstandard2.0`(https://github.com/dotnet/standard/issues/282), rendering it incompatible with a `netstandard1.3` library.
+* 4.1.4 [#392](https://github.com/rianjs/ical.net/issues/392). .NET Standard (still) doesn't play nicely with .NET Framework applications, so I have also targeted .NET 4.6 (`net46`). As a consequence of that, I had to downgrade `System.Reflection.TypeExtensions` to 4.1.0, because the original targeted version (4.3.0) [was retargeted as `netstandard2.0`](https://github.com/dotnet/standard/issues/282), rendering it incompatible with a `netstandard1.3` library.
 * 4.1.2 [#388](https://github.com/rianjs/ical.net/issues/388). Bugfix: Specifying a time zone identifier in the `CalDateTime` constructor should override the backing `DateTime`'s `Kind` property. If no time zone identifier is specified, then the `Kind` property shouldn't be changed.
 * 4.1.1 [#387](https://github.com/rianjs/ical.net/issues/387). Bugfix: Calling `CalDateTime.AsUtc` caches the UTC time, but the cache was not being reset if the `TzId` property changed.
 * 4.1.0 [#383](https://github.com/rianjs/ical.net/issues/383). Add a read-only `AsDateTimeOffset` property to `IDateTime`. Add a few docs to `RecurrencePattern`.
