@@ -437,5 +437,34 @@ namespace Ical.Net.FrameworkUnitTests
 
             Assert.AreNotEqual(asLocal, asUtc);
         }
+
+        private void TestComparison(Func<CalDateTime, IDateTime, bool> calOp, Func<int?, int?, bool> intOp)
+        {
+            int? intSome = 1;
+            int? intGreater = 2;
+
+            var dtSome = new CalDateTime(2018, 1, 1);
+            var dtGreater = new CalDateTime(2019, 1, 1);
+
+            Assert.AreEqual(intOp(null, null), calOp(null, null));
+            Assert.AreEqual(intOp(null, intSome), calOp(null, dtSome));
+            Assert.AreEqual(intOp(intSome, null), calOp(dtSome, null));
+            Assert.AreEqual(intOp(intSome, intSome), calOp(dtSome, dtSome));
+            Assert.AreEqual(intOp(intSome, intGreater), calOp(dtSome, dtGreater));
+            Assert.AreEqual(intOp(intGreater, intSome), calOp(dtGreater, dtSome));
+        }
+
+        [Test]
+        public void CalDateTimeComparisonOperatorTests()
+        {
+            // Assumption: comparison operators on CalDateTime are expected to 
+            // work like operators on Nullable<int>.
+            TestComparison((dt1, dt2) => dt1 == dt2, (i1, i2) => i1 == i2);
+            TestComparison((dt1, dt2) => dt1 != dt2, (i1, i2) => i1 != i2);
+            TestComparison((dt1, dt2) => dt1 > dt2, (i1, i2) => i1 > i2);
+            TestComparison((dt1, dt2) => dt1 >= dt2, (i1, i2) => i1 >= i2);
+            TestComparison((dt1, dt2) => dt1 < dt2, (i1, i2) => i1 < i2);
+            TestComparison((dt1, dt2) => dt1 <= dt2, (i1, i2) => i1 <= i2);
+        }
     }
 }

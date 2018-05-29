@@ -148,17 +148,11 @@ namespace Ical.Net.DataTypes
             AssociateWith(dt);
         }
 
-        private bool Equals(CalDateTime other) => Value.Equals(other.Value)
-            && HasDate == other.HasDate
-            && AsUtc.Equals(other.AsUtc)
-            && string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase);
+        public bool Equals(CalDateTime other)
+            => this == other;
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj is CalDateTime && Equals((CalDateTime)obj);
-        }
+        public override bool Equals(object other)
+            => other is IDateTime && (CalDateTime) other == this;
 
         public override int GetHashCode()
         {
@@ -172,17 +166,31 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public static bool operator <(CalDateTime left, IDateTime right) => left.AsUtc < right.AsUtc;
+        public static bool operator <(CalDateTime left, IDateTime right)
+            => left != null && right != null && left.AsUtc < right.AsUtc;
 
-        public static bool operator >(CalDateTime left, IDateTime right) => left.AsUtc > right.AsUtc;
+        public static bool operator >(CalDateTime left, IDateTime right)
+            => left != null && right != null && left.AsUtc > right.AsUtc;
 
-        public static bool operator <=(CalDateTime left, IDateTime right) => left.AsUtc <= right.AsUtc;
+        public static bool operator <=(CalDateTime left, IDateTime right)
+            => left != null && right != null && left.AsUtc <= right.AsUtc;
 
-        public static bool operator >=(CalDateTime left, IDateTime right) => left.AsUtc >= right.AsUtc;
+        public static bool operator >=(CalDateTime left, IDateTime right)
+            => left != null && right != null && left.AsUtc >= right.AsUtc;
 
-        public static bool operator ==(CalDateTime left, IDateTime right) => left.Equals(right);
+        public static bool operator ==(CalDateTime left, IDateTime right)
+        {
+            return ReferenceEquals(left, null) || ReferenceEquals(right, null)
+                ? ReferenceEquals(left, right)
+                : right is CalDateTime
+                    && left.Value.Equals(right.Value)
+                    && left.HasDate == right.HasDate
+                    && left.AsUtc.Equals(right.AsUtc)
+                    && string.Equals(left.TzId, right.TzId, StringComparison.OrdinalIgnoreCase);
+        }
 
-        public static bool operator !=(CalDateTime left, IDateTime right) => !left.Equals(right);
+        public static bool operator !=(CalDateTime left, IDateTime right)
+            => !(left == right);
 
         public static TimeSpan operator -(CalDateTime left, IDateTime right)
         {
