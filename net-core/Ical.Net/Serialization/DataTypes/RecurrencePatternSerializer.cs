@@ -161,7 +161,7 @@ namespace Ical.Net.Serialization.DataTypes
 
             if (recur.ByDay.Count > 0)
             {
-                var bydayValues = new List<string>();
+                var bydayValues = new List<string>(recur.ByDay.Count);
 
                 var serializer = factory.Build(typeof (WeekDay), SerializationContext) as IStringSerializer;
                 if (serializer != null)
@@ -169,7 +169,7 @@ namespace Ical.Net.Serialization.DataTypes
                     bydayValues.AddRange(recur.ByDay.Select(byday => serializer.SerializeToString(byday)));
                 }
 
-                values.Add("BYDAY=" + string.Join(",", bydayValues.ToArray()));
+                values.Add("BYDAY=" + string.Join(",", bydayValues));
             }
 
             SerializeByValue(values, recur.ByHour, "BYHOUR");
@@ -184,7 +184,7 @@ namespace Ical.Net.Serialization.DataTypes
             // Pop the recurrence pattern off the serialization stack
             SerializationContext.Pop();
 
-            return Encode(recur, string.Join(";", values.ToArray()));
+            return Encode(recur, string.Join(";", values));
         }
 
         //Compiling these is a one-time penalty of about 80ms
