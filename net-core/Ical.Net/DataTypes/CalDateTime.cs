@@ -172,17 +172,35 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public static bool operator <(CalDateTime left, IDateTime right) => left.AsUtc < right.AsUtc;
+        public static bool operator <(CalDateTime left, IDateTime right) =>
+            (ReferenceEquals(left, null) || ReferenceEquals(right, null))
+            ? false
+            : left.AsUtc < right.AsUtc;
 
-        public static bool operator >(CalDateTime left, IDateTime right) => left.AsUtc > right.AsUtc;
+        public static bool operator >(CalDateTime left, IDateTime right) =>
+            (ReferenceEquals(left, null) || ReferenceEquals(right, null)) 
+            ? false
+            : left.AsUtc > right.AsUtc;
 
-        public static bool operator <=(CalDateTime left, IDateTime right) => left.AsUtc <= right.AsUtc;
+        public static bool operator <=(CalDateTime left, IDateTime right) =>
+            (ReferenceEquals(left, null) || ReferenceEquals(right, null))
+            ? false
+            : left.AsUtc <= right.AsUtc;
 
-        public static bool operator >=(CalDateTime left, IDateTime right) => left.AsUtc >= right.AsUtc;
+        public static bool operator >=(CalDateTime left, IDateTime right) =>
+            (ReferenceEquals(left, null) || ReferenceEquals(right, null))
+            ? false
+            : left.AsUtc >= right.AsUtc;
 
-        public static bool operator ==(CalDateTime left, IDateTime right) => left.Equals(right);
+        public static bool operator ==(CalDateTime left, IDateTime right) =>
+            (ReferenceEquals(left, null) || ReferenceEquals(right, null))
+            ? ReferenceEquals(left, right)
+            : left.Equals(right);
 
-        public static bool operator !=(CalDateTime left, IDateTime right) => !left.Equals(right);
+        public static bool operator !=(CalDateTime left, IDateTime right) =>
+            (ReferenceEquals(left, null) || ReferenceEquals(right, null))
+            ? !ReferenceEquals(left, right)
+            : !left.Equals(right);
 
         public static TimeSpan operator -(CalDateTime left, IDateTime right)
         {
