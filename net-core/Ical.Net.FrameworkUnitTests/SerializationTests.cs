@@ -442,5 +442,33 @@ END:VEVENT";
             Assert.IsTrue(deserializedEvent.Description.Contains("•"));
             Assert.IsTrue(deserializedEvent.Description.Contains("‘"));
         }
+
+        [Test]
+        public void TestRRuleUntilSerialization()
+        {
+            var rrule = new RecurrencePattern(FrequencyType.Daily)
+            {
+                Until = _nowTime.AddDays(7),
+            };
+            const string someTz = "Europe/Volgograd";
+            var e = new CalendarEvent
+            {
+                Start = new CalDateTime(_nowTime, someTz),
+                End = new CalDateTime(_nowTime.AddHours(1), someTz),
+                RecurrenceRules = new List<RecurrencePattern> {rrule},
+            };
+            var c = new Calendar
+            {
+                Events = { e },
+            };
+            var serialized = new CalendarSerializer().SerializeToString(c);
+            var serializedUntilNotContainsZSuffix = serialized
+                .Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries)
+                .Single(line => line.StartsWith("RRULE:", StringComparison.Ordinal));
+            var untilIndex = serializedUntilNotContainsZSuffix.IndexOf("UNTIL", StringComparison.Ordinal);
+            var until = serializedUntilNotContainsZSuffix.Substring(untilIndex);
+
+            Assert.IsTrue(!until.EndsWith("Z"));
+        }
     }
 }

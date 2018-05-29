@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Ical.Net</id>
-        <version>4.1.4</version>
+        <version>4.1.5</version>
         <title>Ical.Net</title>
         <authors>Rian Stockbower, Douglas Day</authors>
         <owners>Rian Stockbower</owners>
@@ -27,8 +27,8 @@
         <!--<file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.xml" target="lib\netstandard1.3\Ical.Net.xml" />-->
         <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.deps.json" target="lib\netstandard1.3\Ical.Net.deps.json" />
 
-        <file src="Ical.Net\bin\Release\net46\Ical.Net.dll" target="lib\net46\Ical.Net.dll" />
-        <file src="Ical.Net\bin\Release\net46\Ical.Net.pdb" target="lib\net46\Ical.Net.pdb" />
-        <!--<file src="Ical.Net\bin\Release\net46\Ical.Net.xml" target="lib\net46\Ical.Net.xml" />-->
+        <file src="Ical.Net\bin\Release\net45\Ical.Net.dll" target="lib\net45\Ical.Net.dll" />
+        <file src="Ical.Net\bin\Release\net45\Ical.Net.pdb" target="lib\net45\Ical.Net.pdb" />
+        <!--<file src="Ical.Net\bin\Release\net45\Ical.Net.xml" target="lib\net45\Ical.Net.xml" />-->
     </files>
 </package>
