@@ -3,15 +3,16 @@
 A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) version represents.
 
 ### v4
-* 4.1.5
+* 4.1.6 - (2018-06-01) - Target `net46` instead of `net45`. It seems that [`System.Reflection.TypeExtensions`](https://www.nuget.org/packages/System.Reflection.TypeExtensions/), doesn't support framework versions below 4.6. Bummer.
+* 4.1.5 - (2018-05-28)
   * Target `net45` instead of `net46` which opens up the applications that can consume the latest version! [#392](https://github.com/rianjs/ical.net/issues/392)
   * NodaTime doesn't specify an end times for time zones which don't observe DST (such as `America/Phoenix`). We need to handle unbounded end times. [#378](https://github.com/rianjs/ical.net/issues/378)
   * Better `null` handling for `CalDateTime`s. [#372](https://github.com/rianjs/ical.net/issues/372)
-* 4.1.4 [#392](https://github.com/rianjs/ical.net/issues/392). .NET Standard (still) doesn't play nicely with .NET Framework applications, so I have also targeted .NET 4.6 (`net46`). As a consequence of that, I had to downgrade `System.Reflection.TypeExtensions` to 4.1.0, because the original targeted version (4.3.0) was retargeted as `netstandard2.0`, rendering it incompatible with a `netstandard1.3` library.
-* 4.1.2 [#388](https://github.com/rianjs/ical.net/issues/388). Bugfix: Specifying a time zone identifier in the `CalDateTime` constructor should override the backing `DateTime`'s `Kind` property. If no time zone identifier is specified, then the `Kind` property shouldn't be changed.
-* 4.1.1 [#387](https://github.com/rianjs/ical.net/issues/387). Bugfix: Calling `CalDateTime.AsUtc` caches the UTC time, but the cache was not being reset if the `TzId` property changed.
-* 4.1.0 [#383](https://github.com/rianjs/ical.net/issues/383). Add a read-only `AsDateTimeOffset` property to `IDateTime`. Add a few docs to `RecurrencePattern`.
-* 4.0.6 [#344](https://github.com/rianjs/ical.net/issues/344). Fix the VERSION property so it's 2.0 as RFC-5545 requires.
+* 4.1.4 - (2018-05-24) - [#392](https://github.com/rianjs/ical.net/issues/392). .NET Standard (still) doesn't play nicely with .NET Framework applications, so I have also targeted .NET 4.6 (`net46`). As a consequence of that, I had to downgrade `System.Reflection.TypeExtensions` to 4.1.0, because the original targeted version (4.3.0) was retargeted as `netstandard2.0`, rendering it incompatible with a `netstandard1.3` library.
+* 4.1.2 - (2018-05-21) - [#388](https://github.com/rianjs/ical.net/issues/388). Bugfix: Specifying a time zone identifier in the `CalDateTime` constructor should override the backing `DateTime`'s `Kind` property. If no time zone identifier is specified, then the `Kind` property shouldn't be changed.
+* 4.1.1 - (2018-05-21) - [#387](https://github.com/rianjs/ical.net/issues/387). Bugfix: Calling `CalDateTime.AsUtc` caches the UTC time, but the cache was not being reset if the `TzId` property changed.
+* 4.1.0/4.0.7  - (2018-05-15) - [#383](https://github.com/rianjs/ical.net/issues/383). Add a read-only `AsDateTimeOffset` property to `IDateTime`. Add a few docs to `RecurrencePattern`.
+* 4.0.6 - (2017-11-28) - [#344](https://github.com/rianjs/ical.net/issues/344). Fix the VERSION property so it's 2.0 as RFC-5545 requires.
 * 4.0.4 [PR 341](https://github.com/rianjs/ical.net/pull/341). Cache the UTC representation for `CalDateTime`s. This results in a 12-16% reduction in unit test runtime.
 * 4.0.3 [#337](https://github.com/rianjs/ical.net/issues/337). Fixed a bug in `SimpleDeserializer` where tab characters (`\t`) were excluded from regex match.
 * 4.0.1 [#335](https://github.com/rianjs/ical.net/issues/335). Technically this should be 5.0, but given 4.0.0 only has 24 downloads, I've just done a minor version bump.
