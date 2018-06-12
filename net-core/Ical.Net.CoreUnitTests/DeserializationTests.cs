@@ -12,19 +12,18 @@ using NUnit.Framework;
 
 namespace Ical.Net.CoreUnitTests
 {
-    [TestFixture]
+    [TestFixture, Category("Deserialization")]
     public class DeserializationTests
     {
-
-        [Test, Category("Deserialization")]
+        [Test]
         public void Attendee1()
         {
             var iCal = Calendar.Load(IcsFiles.Attendee1);
             Assert.AreEqual(1, iCal.Events.Count);
-            
+
             var evt = iCal.Events.First();
             // Ensure there are 2 attendees
-            Assert.AreEqual(2, evt.Attendees.Count);            
+            Assert.AreEqual(2, evt.Attendees.Count);
 
             var attendee1 = evt.Attendees[0];
             var attendee2 = evt.Attendees[1];
@@ -53,7 +52,7 @@ namespace Ical.Net.CoreUnitTests
         /// same name are correctly aggregated into
         /// a single list.
         /// </summary>
-        [Test, Category("Deserialization")]
+        [Test]
         public void Attendee2()
         {
             var iCal = Calendar.Load(IcsFiles.Attendee2);
@@ -80,7 +79,7 @@ namespace Ical.Net.CoreUnitTests
         /// https://sourceforge.net/tracker/?func=detail&aid=2033495&group_id=187422&atid=921236
         /// Sourceforge bug #2033495
         /// </summary>
-        [Test, Category("Deserialization")]
+        [Test]
         public void Bug2033495()
         {
             var iCal = Calendar.Load(IcsFiles.Bug2033495);
@@ -92,7 +91,7 @@ namespace Ical.Net.CoreUnitTests
         /// Tests bug #2938007 - involving the HasTime property in IDateTime values.
         /// See https://sourceforge.net/tracker/?func=detail&aid=2938007&group_id=187422&atid=921236
         /// </summary>
-        [Test, Category("Deserialization")]
+        [Test]
         public void Bug2938007()
         {
             var iCal = Calendar.Load(IcsFiles.Bug2938007);
@@ -113,7 +112,7 @@ namespace Ical.Net.CoreUnitTests
         /// Tests bug #3177278 - Serialize closes stream
         /// See https://sourceforge.net/tracker/?func=detail&aid=3177278&group_id=187422&atid=921236
         /// </summary>
-        [Test, Category("Deserialization")]
+        [Test]
         public void Bug3177278()
         {
             var calendar = new Calendar();
@@ -128,14 +127,14 @@ namespace Ical.Net.CoreUnitTests
         /// <summary>
         /// Tests that a mixed-case VERSION property is loaded properly
         /// </summary>
-        [Test, Category("Deserialization")]
+        [Test]
         public void CaseInsensitive4()
         {
             var iCal = Calendar.Load(IcsFiles.CaseInsensitive4);
             Assert.AreEqual("2.5", iCal.Version);
         }
 
-        [Test, Category("Deserialization")]
+        [Test]
         public void Categories1_2()
         {
             var iCal = Calendar.Load(IcsFiles.Categories1);
@@ -162,14 +161,14 @@ namespace Ical.Net.CoreUnitTests
             }
         }
 
-        [Test, Category("Deserialization")]
+        [Test]
         public void EmptyLines1()
         {
             var iCal = Calendar.Load(IcsFiles.EmptyLines1);
             Assert.AreEqual(2, iCal.Events.Count, "iCalendar should have 2 events");
         }
 
-        [Test, Category("Deserialization")]
+        [Test]
         public void EmptyLines2()
         {
             var calendars = CalendarCollection.Load(IcsFiles.EmptyLines2);
@@ -182,7 +181,7 @@ namespace Ical.Net.CoreUnitTests
         /// Verifies that blank lines between components are allowed
         /// (as occurs with some applications/parsers - i.e. KOrganizer)
         /// </summary>
-        [Test, Category("Deserialization")]
+        [Test]
         public void EmptyLines3()
         {
             var iCal = Calendar.Load(IcsFiles.EmptyLines3);
@@ -192,7 +191,7 @@ namespace Ical.Net.CoreUnitTests
         /// <summary>
         /// Similar to PARSE4 and PARSE5 tests.
         /// </summary>
-        [Test, Category("Deserialization")]
+        [Test]
         public void EmptyLines4()
         {
             var iCal = Calendar.Load(IcsFiles.EmptyLines4);
@@ -234,7 +233,7 @@ namespace Ical.Net.CoreUnitTests
             Assert.AreEqual(1, evt.Sequence, "SEQUENCE should be 1; it is " + evt.Sequence);
         }
 
-        [Test, Category("Deserialization")]
+        [Test]
         public void Event8()
         {
             var sr = @"BEGIN:VCALENDAR
@@ -284,7 +283,7 @@ END:VCALENDAR
             Assert.AreEqual(-122.082932, evt.GeographicLocation.Longitude, "Longitude should be -122.082932; it is not.");
         }
 
-        [Test, Category("Deserialization")]
+        [Test]
         public void Google1()
         {
             var tzId = "Europe/Berlin";
@@ -314,13 +313,13 @@ END:VCALENDAR
         /// <summary>
         /// Tests that valid RDATE properties are parsed correctly.
         /// </summary>
-        [Test, Category("Deserialization")]
+        [Test]
         public void RecurrenceDates1()
         {
             var iCal = Calendar.Load(IcsFiles.RecurrenceDates1);
             Assert.AreEqual(1, iCal.Events.Count);
             Assert.AreEqual(3, iCal.Events.First().RecurrenceDates.Count);
-            
+
             Assert.AreEqual((CalDateTime)new DateTime(1997, 7, 14, 12, 30, 0, DateTimeKind.Utc), iCal.Events.First().RecurrenceDates[0][0].StartTime);
             Assert.AreEqual((CalDateTime)new DateTime(1996, 4, 3, 2, 0, 0, DateTimeKind.Utc), iCal.Events.First().RecurrenceDates[1][0].StartTime);
             Assert.AreEqual((CalDateTime)new DateTime(1996, 4, 3, 4, 0, 0, DateTimeKind.Utc), iCal.Events.First().RecurrenceDates[1][0].EndTime);
@@ -340,7 +339,7 @@ END:VCALENDAR
         /// <summary>
         /// Tests that valid REQUEST-STATUS properties are parsed correctly.
         /// </summary>
-        [Test, Category("Deserialization")]
+        [Test]
         public void RequestStatus1()
         {
             var iCal = Calendar.Load(IcsFiles.RequestStatus1);
@@ -375,7 +374,7 @@ END:VCALENDAR
         /// <summary>
         /// Tests that string escaping works with Text elements.
         /// </summary>
-        [Test, Category("Deserialization")]
+        [Test]
         public void String2()
         {
             var serializer = new StringSerializer();
@@ -394,7 +393,7 @@ END:VCALENDAR
             Assert.AreEqual("\"This\\r\nis\na, test\";\\;,", unescaped, "String unescaping was incorrect.");
         }
 
-        [Test, Category("Deserialization")]
+        [Test]
         public void Transparency2()
         {
             var iCal = Calendar.Load(IcsFiles.Transparency2);
@@ -409,7 +408,7 @@ END:VCALENDAR
         /// Tests that DateTime values that are out-of-range are still parsed correctly
         /// and set to the closest representable date/time in .NET.
         /// </summary>
-        [Test, Category("Deserialization")]
+        [Test]
         public void DateTime1()
         {
             var iCal = Calendar.Load(IcsFiles.DateTime1);
@@ -423,14 +422,14 @@ END:VCALENDAR
             Assert.AreEqual(DateTime.MinValue, evt.Created.Value);
         }
 
-        [Test, Category("Deserialization")]
+        [Test]
         public void Language4()
         {
             var iCal = Calendar.Load(IcsFiles.Language4);
             Assert.IsNotNull(iCal);
         }
 
-        [Test, Category("Deserialization")]
+        [Test]
         public void Outlook2007_LineFolds1()
         {
             var iCal = Calendar.Load(IcsFiles.Outlook2007LineFolds);
@@ -438,7 +437,7 @@ END:VCALENDAR
             Assert.AreEqual(1, events.Count);
         }
 
-        [Test, Category("Deserialization")]
+        [Test]
         public void Outlook2007_LineFolds2()
         {
             var longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
@@ -450,7 +449,7 @@ END:VCALENDAR
         /// <summary>
         /// Tests that multiple parameters are allowed in iCalObjects
         /// </summary>
-        [Test, Category("Deserialization")]
+        [Test]
         public void Parameter1()
         {
             var iCal = Calendar.Load(IcsFiles.Parameter1);
@@ -465,7 +464,7 @@ END:VCALENDAR
         /// <summary>
         /// Tests that empty parameters are allowed in iCalObjects
         /// </summary>
-        [Test, Category("Deserialization")]
+        [Test]
         public void Parameter2()
         {
             var iCal = Calendar.Load(IcsFiles.Parameter2);
@@ -475,7 +474,7 @@ END:VCALENDAR
         /// <summary>
         /// Tests a calendar that should fail to properly parse.
         /// </summary>
-        [Test, Category("Deserialization")]
+        [Test]
         public void Parse1()
         {
             try
@@ -493,7 +492,7 @@ END:VCALENDAR
         /// <summary>
         /// Tests that multiple properties are allowed in iCalObjects
         /// </summary>
-        [Test, Category("Deserialization")]
+        [Test]
         public void Property1()
         {
             var iCal = Calendar.Load(IcsFiles.Property1);

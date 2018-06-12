@@ -26,16 +26,9 @@ namespace Ical.Net.Serialization
         {
             var iCal = obj as Calendar;
 
-            // Ensure VERSION and PRODUCTID are both set,
-            // as they are required by RFC5545.
-            if (string.IsNullOrWhiteSpace(iCal.Version))
-            {
-                iCal.Version = LibraryMetadata.Version;
-            }
-            if (string.IsNullOrWhiteSpace(iCal.ProductId))
-            {
-                iCal.ProductId = LibraryMetadata.ProdId;
-            }
+            // If we're serializing a calendar, we should indicate that we're using ical.net to do the work
+            iCal.Version = LibraryMetadata.Version;
+            iCal.ProductId = LibraryMetadata.ProdId;
 
             return base.SerializeToString(iCal);
         }
