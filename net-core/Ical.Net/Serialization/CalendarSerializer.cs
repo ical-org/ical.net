@@ -26,9 +26,13 @@ namespace Ical.Net.Serialization
         {
             var iCal = obj as Calendar;
 
-            // If we're serializing a calendar, we should indicate that we're using ical.net to do the work
-            iCal.Version = LibraryMetadata.Version;
-            iCal.ProductId = LibraryMetadata.ProdId;
+            if (iCal != null)
+            {
+                if (string.IsNullOrEmpty(iCal.Version))
+                    iCal.Version = LibraryMetadata.Version;
+                if (string.IsNullOrEmpty(iCal.ProductId))
+                    iCal.ProductId = LibraryMetadata.ProdId;
+            }
 
             return base.SerializeToString(iCal);
         }

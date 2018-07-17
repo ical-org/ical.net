@@ -471,14 +471,28 @@ END:VEVENT";
             Assert.IsTrue(!until.EndsWith("Z"));
         }
 
-        [Test(Description = "PRODID and VERSION should use ical.net values instead of preserving deserialized values")]
-        public void LibraryMetadataTests()
+
+        [Test(Description = "PRODID and VERSION should retain ical.net values if they are provided")]
+        public void CalendarProductIdVersionTests()
         {
             var c = new Calendar
             {
                 ProductId = "FOO",
                 Version = "BAR"
             };
+            var serialized = new CalendarSerializer().SerializeToString(c);
+            var expectedProdid = $"PRODID:{c.ProductId}";
+            Assert.IsTrue(serialized.Contains(expectedProdid, StringComparison.Ordinal));
+
+            var expectedVersion = $"VERSION:{c.Version}";
+            Assert.IsTrue(serialized.Contains(expectedVersion, StringComparison.Ordinal));
+        }
+
+        [Test(Description = "PRODID and VERSION should use ical.net values if they are not provided")]
+        public void LibraryMetadataTests()
+        {
+            var c = new Calendar();
+
             var serialized = new CalendarSerializer().SerializeToString(c);
             var expectedProdid = $"PRODID:{LibraryMetadata.ProdId}";
             Assert.IsTrue(serialized.Contains(expectedProdid, StringComparison.Ordinal));
