@@ -2603,9 +2603,6 @@ namespace Ical.Net.CoreUnitTests
             Assert.AreEqual(10, occurrences.Count, "There should be 10 occurrences of this event, one for each month except February and December.");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         [Test, Category("Recurrence")]
         public void ReccurencePattern_MaxDate_StopsOnCount()
         {
