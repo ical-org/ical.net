@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,6 +10,7 @@ using Ical.Net.Serialization;
 using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 using NUnit.Framework;
+using System.IO;
 
 namespace Ical.Net.FrameworkUnitTests
 {
@@ -420,11 +421,11 @@ DTSTART;TZID=Europe/Helsinki:20160707T110000
 DTEND;TZID=Europe/Helsinki:20160707T140000
 SUMMARY:Some summary
 UID:20160627T123608Z-182847102@atlassian.net
-DESCRIPTION:Key points:\n•	Some text (text,
- , text\, text\, TP) some text\;\n•	some tex
- t Some text (Text\, Text)\;\n•	Some tex
+DESCRIPTION:Key points:\nâ€¢	Some text (text,
+ , text\, text\, TP) some text\;\nâ€¢	some tex
+ t Some text (Text\, Text)\;\nâ€¢	Some tex
  t some text\, some text\, text.\;\n\nsome te
- xt some tex‘t some text. 
+ xt some texâ€˜t some text. 
 ORGANIZER;X-CONFLUENCE-USER-KEY=ff801df01547101c6720006;CN=Some
  user;CUTYPE=INDIVIDUAL:mailto:some.mail@domain.com
 CREATED:20160627T123608Z
@@ -439,8 +440,40 @@ END:VEVENT";
             var deserializedEvent = Calendar.Load<CalendarEvent>(ics).Single();
 
             Assert.IsTrue(deserializedEvent.Description.Contains("\t"));
-            Assert.IsTrue(deserializedEvent.Description.Contains("•"));
-            Assert.IsTrue(deserializedEvent.Description.Contains("‘"));
+            Assert.IsTrue(deserializedEvent.Description.Contains("â€¢"));
+            Assert.IsTrue(deserializedEvent.Description.Contains("â€˜"));
+        }
+
+        [Test]
+        public void TestStandardDaylightTimeZoneInfoDeserialization()
+        {
+
+            const string ics = @"BEGIN:VTIMEZONE
+TZID:
+BEGIN:STANDARD
+DTSTART:16010101T030000
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=10
+END:STANDARD
+BEGIN:DAYLIGHT
+DTSTART:16010101T020000
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=3
+END:DAYLIGHT
+END:VTIMEZONE";
+            var timeZone = Calendar.Load<VTimeZone>(ics).Single();
+            Assert.IsNotNull(timeZone, "Expected the TimeZone to be successfully deserialized");
+            var timeZoneInfos = timeZone.TimeZoneInfos;
+            Assert.IsNotNull(timeZoneInfos, "Expected TimeZoneInfos to be deserialized");
+            Assert.AreEqual(2, timeZoneInfos.Count, "Expected 2 TimeZoneInfos");
+            Assert.AreEqual("STANDARD", timeZoneInfos[0].Name);
+            Assert.AreEqual(new UtcOffset("+0200"), timeZoneInfos[0].OffsetFrom);
+            Assert.AreEqual(new UtcOffset("+0100"), timeZoneInfos[0].OffsetTo);
+            Assert.AreEqual("DAYLIGHT", timeZoneInfos[1].Name);
+            Assert.AreEqual(new UtcOffset("+0100"), timeZoneInfos[1].OffsetFrom);
+            Assert.AreEqual(new UtcOffset("+0200"), timeZoneInfos[1].OffsetTo);
         }
 
         [Test]

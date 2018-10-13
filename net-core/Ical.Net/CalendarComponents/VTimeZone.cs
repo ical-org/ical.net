@@ -5,6 +5,7 @@ using Ical.Net.DataTypes;
 using Ical.Net.Utility;
 using NodaTime;
 using NodaTime.TimeZones;
+using Ical.Net.Proxies;
 
 namespace Ical.Net.CalendarComponents
 {
@@ -151,13 +152,13 @@ namespace Ical.Net.CalendarComponents
 
             if (isDaylight)
             {
-                timeZoneInfo.Name = "DAYLIGHT";
+                timeZoneInfo.Name = Components.Daylight;
                 timeZoneInfo.OffsetFrom = new UtcOffset(utcOffset);
                 timeZoneInfo.OffsetTo = new UtcOffset(utcOffset - delta);
             }
             else
             {
-                timeZoneInfo.Name = "STANDARD";
+                timeZoneInfo.Name = Components.Standard;
                 timeZoneInfo.OffsetFrom = new UtcOffset(utcOffset + delta);
                 timeZoneInfo.OffsetTo = new UtcOffset(utcOffset);
             }
@@ -341,7 +342,7 @@ namespace Ical.Net.CalendarComponents
             }
         }
 
-        public HashSet<VTimeZoneInfo> TimeZoneInfos { get; set; }
+        public ICalendarObjectList<VTimeZoneInfo> TimeZoneInfos => new CalendarObjectListProxy<VTimeZoneInfo>(Children);
 
         protected bool Equals(VTimeZone other)
             => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)

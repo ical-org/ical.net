@@ -32,6 +32,10 @@ namespace Ical.Net.Serialization
                 case Components.Calendar:
                     c = new Calendar();
                     break;
+                case Components.Daylight:
+                case Components.Standard:
+                    c = new VTimeZoneInfo();
+                    break;
                 default:
                     c = new CalendarComponent();
                     break;
