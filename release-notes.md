@@ -3,6 +3,7 @@
 A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) version represents.
 
 ### v4
+* 4.1.9 - (2018-07-18) - Associate attachments with their events when VALUE is BINARY. Without the association, parameters such as FMTTYPE would be lost. [PR 411](https://github.com/rianjs/ical.net/pull/411)
 * 4.1.8 - (2018-06-12) - `PRODID` and `VERSION` are unconditionally set when serializing a calendar so as not to mislead consumers about where the serialized output came from. Previous behavior would use the values that came from deserialization. #403
 * 4.1.6 - (2018-06-01) - Target `net46` instead of `net45`. It seems that [`System.Reflection.TypeExtensions`](https://www.nuget.org/packages/System.Reflection.TypeExtensions/), doesn't support framework versions below 4.6. Bummer.
 * 4.1.5 - (2018-05-28)

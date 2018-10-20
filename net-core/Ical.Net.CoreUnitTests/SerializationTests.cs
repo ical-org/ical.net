@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
@@ -485,6 +486,31 @@ END:VEVENT";
 
             var expectedVersion = $"VERSION:{LibraryMetadata.Version}";
             Assert.IsTrue(serialized.Contains(expectedVersion, StringComparison.Ordinal));
+        }
+
+        [Test]
+        public void AttachmentFormatType()
+        {
+            var cal1 = new Calendar
+            {
+                Events =
+                {
+                    new CalendarEvent
+                    {
+                        Attachments =
+                        {
+                            new Attachment(Encoding.UTF8.GetBytes("{}"))
+                            {
+                                FormatType = "application/json",
+                            },
+                        },
+                    },
+                },
+            };
+            var serializer = new CalendarSerializer();
+            var serializedCalendar = serializer.SerializeToString(cal1);
+            var cal2 = Calendar.Load(serializedCalendar);
+            Assert.AreEqual("application/json", cal2.Events.Single().Attachments.Single().FormatType);
         }
     }
 }

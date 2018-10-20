@@ -62,7 +62,11 @@ namespace Ical.Net.Serialization.DataTypes
                 {
                     // If the VALUE type is specifically set to BINARY,
                     // then set the Data property instead.                    
-                    return new Attachment(data) {ValueEncoding = a.ValueEncoding};
+                    return new Attachment(data)
+                    {
+                        ValueEncoding = a.ValueEncoding,
+                        AssociatedObject = a.AssociatedObject,
+                    };
                 }
 
                 // The default VALUE type for attachments is URI.  So, let's
