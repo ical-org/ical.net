@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ical.Net.CoreUnitTests", "I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ical.Net.FrameworkUnitTests", "Ical.Net.FrameworkUnitTests\Ical.Net.FrameworkUnitTests.csproj", "{90400333-D639-4303-B8F4-DBE0DA5D379D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PerfTests", "PerfTests\PerfTests.csproj", "{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerfTests", "PerfTests\PerfTests.csproj", "{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

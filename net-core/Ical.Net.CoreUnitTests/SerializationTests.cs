@@ -512,5 +512,21 @@ END:VEVENT";
             var cal2 = Calendar.Load(serializedCalendar);
             Assert.AreEqual("application/json", cal2.Events.Single().Attachments.Single().FormatType);
         }
+
+        [Test(Description = "It should be possible to serialize a calendar component instead of a whole calendar")]
+        public void SerializeSubcomponent()
+        {
+            const string expectedString = "This is an expected string";
+            var e = new CalendarEvent
+            {
+                Start = new CalDateTime(_nowTime),
+                End = new CalDateTime(_later),
+                Summary = expectedString,
+            };
+
+            var serialized = new CalendarSerializer().SerializeToString(e);
+            Assert.IsTrue(serialized.Contains(expectedString, StringComparison.Ordinal));
+            Assert.IsTrue(!serialized.Contains("VCALENDAR", StringComparison.Ordinal));
+        }
     }
 }

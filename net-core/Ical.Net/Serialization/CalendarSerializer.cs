@@ -24,13 +24,17 @@ namespace Ical.Net.Serialization
 
         public override string SerializeToString(object obj)
         {
-            var iCal = obj as Calendar;
+            if (obj is Calendar)
+            {
+                // If we're serializing a calendar, we should indicate that we're using ical.net to do the work
+                var calendar = (Calendar) obj;
+                calendar.Version = LibraryMetadata.Version;
+                calendar.ProductId = LibraryMetadata.ProdId;
 
-            // If we're serializing a calendar, we should indicate that we're using ical.net to do the work
-            iCal.Version = LibraryMetadata.Version;
-            iCal.ProductId = LibraryMetadata.ProdId;
+                return base.SerializeToString(calendar);
+            }
 
-            return base.SerializeToString(iCal);
+            return base.SerializeToString(obj);
         }
 
         public override object Deserialize(TextReader tr) => null;
