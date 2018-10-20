@@ -54,6 +54,9 @@
     <OutputType>Library</OutputType>
     <ProjectGuid>{CB7CC882-ED47-46C0-AAAE-7A437F22F1C6}</ProjectGuid>
     <TargetFrameworkProfile />
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <NoWarn>NU1603;NU1605</NoWarn>
+    <RuntimeIdentifier>win</RuntimeIdentifier>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />

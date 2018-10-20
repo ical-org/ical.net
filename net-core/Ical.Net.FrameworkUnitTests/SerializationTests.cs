@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
@@ -485,6 +486,47 @@ END:VEVENT";
 
             var expectedVersion = $"VERSION:{LibraryMetadata.Version}";
             Assert.IsTrue(serialized.Contains(expectedVersion, StringComparison.Ordinal));
+        }
+
+        [Test]
+        public void AttachmentFormatType()
+        {
+            var cal1 = new Calendar
+            {
+                Events =
+                {
+                    new CalendarEvent
+                    {
+                        Attachments =
+                        {
+                            new Attachment(Encoding.UTF8.GetBytes("{}"))
+                            {
+                                FormatType = "application/json",
+                            },
+                        },
+                    },
+                },
+            };
+            var serializer = new CalendarSerializer();
+            var serializedCalendar = serializer.SerializeToString(cal1);
+            var cal2 = Calendar.Load(serializedCalendar);
+            Assert.AreEqual("application/json", cal2.Events.Single().Attachments.Single().FormatType);
+        }
+
+        [Test(Description = "It should be possible to serialize a calendar component instead of a whole calendar")]
+        public void SerializeSubcomponent()
+        {
+            const string expectedString = "This is an expected string";
+            var e = new CalendarEvent
+            {
+                Start = new CalDateTime(_nowTime),
+                End = new CalDateTime(_later),
+                Summary = expectedString,
+            };
+
+            var serialized = new CalendarSerializer().SerializeToString(e);
+            Assert.IsTrue(serialized.Contains(expectedString, StringComparison.Ordinal));
+            Assert.IsTrue(!serialized.Contains("VCALENDAR", StringComparison.Ordinal));
         }
     }
 }

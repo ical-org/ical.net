@@ -49,6 +49,10 @@
     <OutputType>Library</OutputType>
     <ProjectGuid>{38A02D06-15CC-436A-9C8F-07B84A7E2CE0}</ProjectGuid>
     <TargetFrameworkProfile />
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <NoWarn>NU1603;NU1605</NoWarn>
+    <RuntimeIdentifier>win</RuntimeIdentifier>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -103,7 +107,6 @@
     <Compile Include="SymmetricSerializationTests.cs" />
     <Compile Include="TextUtilTests.cs" />
     <Compile Include="TodoTest.cs" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\antlr.runtime\antlr.runtime.csproj">
