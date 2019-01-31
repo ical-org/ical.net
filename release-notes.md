@@ -53,6 +53,7 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 * 3.0.1-alpha: Initial publishing of .NET Core release
 
 ### v2
+* 2.3.6: Strong-named assemblies. Thanks, [josteink](https://github.com/josteink) #159
 * 2.3.5: `VTIMEZONE`s are once again serialized, this time pulling historic time zone data from NodaTime -- thanks [beriniwlew](https://github.com/beriniwlew)! [PR 304](https://github.com/rianjs/ical.net/pull/304)
 * 2.3.4: `DTSTART` is not required for `VTODO` components. [PR 322](https://github.com/rianjs/ical.net/pull/322)
 * 2.3.3: Several improvements rolled up:
