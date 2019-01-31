@@ -3,6 +3,7 @@
 A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) version represents.
 
 ### v4
+* 4.1.10 - (2019-01-31) - Strong-named assemblies. Thanks, [josteink](https://github.com/josteink) #159
 * 4.1.9 - (2018-07-18) - Associate attachments with their events when VALUE is BINARY. Without the association, parameters such as FMTTYPE would be lost. [PR 411](https://github.com/rianjs/ical.net/pull/411)
 * 4.1.8 - (2018-06-12) - `PRODID` and `VERSION` are unconditionally set when serializing a calendar so as not to mislead consumers about where the serialized output came from. Previous behavior would use the values that came from deserialization. #403
 * 4.1.6 - (2018-06-01) - Target `net46` instead of `net45`. It seems that [`System.Reflection.TypeExtensions`](https://www.nuget.org/packages/System.Reflection.TypeExtensions/), doesn't support framework versions below 4.6. Bummer.
@@ -53,7 +54,7 @@ A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) 
 * 3.0.1-alpha: Initial publishing of .NET Core release
 
 ### v2
-* 2.3.6: Strong-named assemblies. Thanks, [josteink](https://github.com/josteink) #159
+* 2.3.6 - (2019-01-30) - Strong-named assemblies. Thanks, [josteink](https://github.com/josteink) #159
 * 2.3.5: `VTIMEZONE`s are once again serialized, this time pulling historic time zone data from NodaTime -- thanks [beriniwlew](https://github.com/beriniwlew)! [PR 304](https://github.com/rianjs/ical.net/pull/304)
 * 2.3.4: `DTSTART` is not required for `VTODO` components. [PR 322](https://github.com/rianjs/ical.net/pull/322)
 * 2.3.3: Several improvements rolled up:
