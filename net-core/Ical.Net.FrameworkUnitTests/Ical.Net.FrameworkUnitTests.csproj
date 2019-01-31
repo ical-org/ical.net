@@ -36,7 +36,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
     <PackageReference Include="nunit" Version="3.7.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.8.0-alpha1" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.1.0" />
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
