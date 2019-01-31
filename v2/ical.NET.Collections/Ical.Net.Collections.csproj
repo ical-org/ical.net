@@ -62,6 +62,12 @@
   <PropertyGroup>
     <RootNamespace>Ical.Net.Collections</RootNamespace>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\IcalNetStrongnameKey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Core" />
     <!--  <Reference Include="Microsoft.CSharp" />
