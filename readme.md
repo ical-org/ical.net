@@ -48,14 +48,6 @@ ical.net is a something I do in my spare time around my family, day job, friends
 
 Please email me if paid support is something you require, and we can work out the details via email.
 
-## The future: v3 and beyond
-
-I have written a fairly detailed collection of things I'd like to get done for v3, which will involve some significant API changes, and simplifications of serialization and deserialization.
-
-http://rianjs.net/2016/07/api-changes-for-ical-net-v3
-
-I don't have clear plans beyond what I have outlined there. It may be that ical.net can be put on a shelf for a while after that.
-
 ## Creative Commons
 
 iCal.NET logo adapted from [Love Calendar](https://thenounproject.com/term/love-calendar/116866/) By Sergey Demushkin, RU
