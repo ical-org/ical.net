@@ -556,7 +556,6 @@ namespace Ical.Net.FrameworkUnitTests
                 new CalDateTime(1999, 1, 1, _tzid),
                 new[]
                 {
-                    new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 3, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 5, 9, 0, 0, _tzid),
                     new CalDateTime(1997, 9, 15, 9, 0, 0, _tzid),
@@ -2621,6 +2620,48 @@ namespace Ical.Net.FrameworkUnitTests
         }
 
         /// <summary>
+        /// Tests Issue #432
+        /// See https://github.com/rianjs/ical.net/issues/432
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void Issue432()
+        {
+            var rrule = new RecurrencePattern
+            {
+                Frequency = FrequencyType.Daily,
+                Until = DateTime.Today.AddMonths(4),
+            };
+            var vEvent = new CalendarEvent
+            {
+                Start = new CalDateTime(DateTime.Parse("2019-01-04T08:00Z")),
+            };
+
+            vEvent.RecurrenceRules.Add(rrule);
+
+            //Testing on both the first day and the next, results used to be different
+            for (var i = 0; i <= 1; i++)
+            {
+                var checkTime = DateTime.Parse("2019-01-04T08:00Z");
+                checkTime = checkTime.AddDays(i);
+                //Valid asking for the exact moment
+                var occurrences = vEvent.GetOccurrences(checkTime, checkTime);
+                Assert.AreEqual(1, occurrences.Count);
+
+                //Valid if asking for a range starting at the same moment
+                occurrences = vEvent.GetOccurrences(checkTime, checkTime.AddSeconds(1));
+                Assert.AreEqual(1, occurrences.Count);
+
+                //Valid if asking for a range starting before and ending after
+                occurrences = vEvent.GetOccurrences(checkTime.AddSeconds(-1), checkTime.AddSeconds(1));
+                Assert.AreEqual(1, occurrences.Count);
+
+                //Not valid if asking for a range starting before but ending at the same moment
+                occurrences = vEvent.GetOccurrences(checkTime.AddSeconds(-1), checkTime);
+                Assert.AreEqual(0, occurrences.Count);
+            }
+        }
+
+        /// <summary>
         /// Tests the iCal holidays downloaded from apple.com
         /// </summary>
         [Test, Category("Recurrence")]
@@ -2786,10 +2827,10 @@ namespace Ical.Net.FrameworkUnitTests
             evt.ClearEvaluation();
 
             occurrences = evt.GetOccurrences(previousDateAndTime, end);
-            Assert.AreEqual(11, occurrences.Count);
+            Assert.AreEqual(10, occurrences.Count);
 
             occurrences = evt.GetOccurrences(previousDateOnly, end);
-            Assert.AreEqual(11, occurrences.Count);
+            Assert.AreEqual(10, occurrences.Count);
 
             occurrences = evt.GetOccurrences(laterDateOnly, end);
             Assert.AreEqual(8, occurrences.Count);
