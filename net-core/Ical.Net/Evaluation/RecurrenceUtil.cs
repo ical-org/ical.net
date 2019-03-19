@@ -40,7 +40,7 @@ namespace Ical.Net.Evaluation
 
             var otherOccurrences = from p in periods
                 let endTime = p.EndTime ?? p.StartTime
-                where endTime.GreaterThan(periodStart) && p.StartTime.LessThanOrEqual(periodEnd)
+                where endTime.GreaterThanOrEqual(periodStart) && p.StartTime.LessThanOrEqual(periodEnd)
                 select new Occurrence(recurrable, p);
 
             var occurrences = new HashSet<Occurrence>(otherOccurrences);

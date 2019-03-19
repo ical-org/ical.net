@@ -230,17 +230,11 @@ namespace Ical.Net.Evaluation
             var originalDate = DateUtil.GetSimpleDateTimeData(seed);
             var seedCopy = DateUtil.GetSimpleDateTimeData(seed);
 
-            if (includeReferenceDateInResults)
-            {
-                dates.Add(seedCopy);
-            }
-
             // optimize the start time for selecting candidates
             // (only applicable where a COUNT is not specified)
             if (pattern.Count == int.MinValue)
             {
                 var incremented = seedCopy;
-                IncrementDate(ref incremented, pattern, pattern.Interval);
                 while (incremented < periodStart)
                 {
                     seedCopy = incremented;
@@ -264,6 +258,12 @@ namespace Ical.Net.Evaluation
                     break;
                 }
 
+                //No need to continue if the seed is after the periodEnd
+                if (seedCopy > periodEnd)
+                {
+                    break;
+                }
+
                 var candidates = GetCandidates(seedCopy, pattern, expandBehavior);
                 if (candidates.Count > 0)
                 {
@@ -277,13 +277,13 @@ namespace Ical.Net.Evaluation
                         // For example, FREQ=YEARLY;BYWEEKNO=1 could return dates
                         // from the previous year.
                         //
-                        // candidates exclusive of periodEnd..
+                        // exclude candidates that start at the same moment as periodEnd if the period is a range but keep them if targeting a specific moment
                         if (pattern.Count >= 1 && dates.Count >= pattern.Count)
                         {
                             break;
                         }
 
-                        if (candidate >= periodEnd)
+                        if ((candidate >= periodEnd && periodStart != periodEnd) || candidate > periodEnd && periodStart == periodEnd)
                         {
                             continue;
                         }
