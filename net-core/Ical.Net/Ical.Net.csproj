@@ -6,6 +6,8 @@
     <Company />
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\IcalNetStrongnameKey.snk</AssemblyOriginatorKeyFile>
+    <DebugSymbols Condition=" '$(TargetFramework)' == 'net46' ">true</DebugSymbols>
+    <DebugType Condition=" '$(TargetFramework)' == 'net46' ">full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\Ical.Net.xml</DocumentationFile>
