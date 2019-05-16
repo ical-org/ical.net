@@ -422,6 +422,29 @@ END:VCALENDAR
         }
 
         [Test, Category("Deserialization")]
+        public void EventStatus()
+        {
+            var iCal = SimpleDeserializer.Default.Deserialize(new StringReader(IcsFiles.EventStatus)).Cast<Calendar>().Single();
+            Assert.AreEqual(4, iCal.Events.Count);
+
+            Assert.AreEqual("No status", iCal.Events[0].Summary);
+            Assert.IsNull(iCal.Events[0].Status);
+            Assert.IsTrue(iCal.Events[0].IsActive);
+
+            Assert.AreEqual("Confirmed", iCal.Events[1].Summary);
+            Assert.AreEqual("CONFIRMED", iCal.Events[1].Status);
+            Assert.IsTrue(iCal.Events[1].IsActive);
+
+            Assert.AreEqual("Cancelled", iCal.Events[2].Summary);
+            Assert.AreEqual("CANCELLED", iCal.Events[2].Status);
+            Assert.IsFalse(iCal.Events[2].IsActive);
+
+            Assert.AreEqual("Tentative", iCal.Events[3].Summary);
+            Assert.AreEqual("TENTATIVE", iCal.Events[3].Status);
+            Assert.IsTrue(iCal.Events[3].IsActive);
+        }
+
+        [Test, Category("Deserialization")]
         public void Language4()
         {
             var iCal = SimpleDeserializer.Default.Deserialize(new StringReader(IcsFiles.Language4)).Cast<Calendar>().Single();

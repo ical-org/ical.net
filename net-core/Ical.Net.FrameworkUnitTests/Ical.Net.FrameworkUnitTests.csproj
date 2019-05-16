@@ -194,6 +194,7 @@
     <Content Include="Calendars\Serialization\Event2.ics" />
     <Content Include="Calendars\Serialization\Event3.ics" />
     <Content Include="Calendars\Serialization\Event4.ics" />
+    <Content Include="Calendars\Serialization\EventStatus.ics" />
     <Content Include="Calendars\Serialization\GeographicLocation1.ics" />
     <Content Include="Calendars\Serialization\Google1.ics" />
     <Content Include="Calendars\Serialization\Language1.ics" />
