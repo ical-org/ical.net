@@ -70,6 +70,7 @@ namespace Ical.Net
 
         public virtual void SetValue(string value)
         {
+            _values.Clear();
             _values.Add(value);
         }
 
