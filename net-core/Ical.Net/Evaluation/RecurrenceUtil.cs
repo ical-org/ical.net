@@ -40,7 +40,9 @@ namespace Ical.Net.Evaluation
 
             var otherOccurrences = from p in periods
                 let endTime = p.EndTime ?? p.StartTime
-                where endTime.GreaterThanOrEqual(periodStart) && p.StartTime.LessThanOrEqual(periodEnd)
+                where
+                    (endTime.GreaterThan(periodStart) && p.StartTime.LessThanOrEqual(periodEnd)) ||
+                    (p.StartTime.Equals(endTime) && periodStart.Equals(p.StartTime)) //Specific moment in time on an event without any duration
                 select new Occurrence(recurrable, p);
 
             var occurrences = new HashSet<Occurrence>(otherOccurrences);

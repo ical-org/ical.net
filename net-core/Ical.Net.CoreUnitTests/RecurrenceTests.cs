@@ -3226,6 +3226,61 @@ END:VCALENDAR";
             Assert.AreEqual(3, Regex.Matches(serialized, expected).Count);
         }
 
+        [Test, Category("Recurrence")]
+        public void OneDayRange()
+        {
+            var vEvent = new CalendarEvent
+            {
+                Start = new CalDateTime(DateTime.Parse("2019-06-07 0:00:00")),
+                End = new CalDateTime(DateTime.Parse("2019-06-08 00:00:00"))
+            };
+
+            //Testing on both the first day and the next, results used to be different
+            for (var i = 0; i <= 1; i++)
+            {
+                var checkTime = DateTime.Parse("2019-06-07 00:00:00");
+                checkTime = checkTime.AddDays(i);
+
+                //Valid if asking for a range starting at the same moment
+                var occurrences = vEvent.GetOccurrences(checkTime, checkTime.AddDays(1));
+                Assert.AreEqual(i == 0 ? 1 : 0, occurrences.Count);
+            }
+        }
+
+        [Test, Category("Recurrence")]
+        public void SpecificMinute()
+        {
+            var rrule = new RecurrencePattern
+            {
+                Frequency = FrequencyType.Daily
+            };
+            var vEvent = new CalendarEvent
+            {
+                Start = new CalDateTime(DateTime.Parse("2009-01-01 09:00:00")),
+                End = new CalDateTime(DateTime.Parse("2009-01-01 17:00:00"))
+            };
+
+            vEvent.RecurrenceRules.Add(rrule);
+
+            // Exactly on start time
+            var testingTime = new DateTime(2019, 6, 7, 9, 0, 0);
+
+            var occurrences = vEvent.GetOccurrences(testingTime, testingTime);
+            Assert.AreEqual(1, occurrences.Count);
+
+            // One second before end time
+            testingTime = new DateTime(2019, 6, 7, 16, 59, 59);
+
+            occurrences = vEvent.GetOccurrences(testingTime, testingTime);
+            Assert.AreEqual(1, occurrences.Count);
+
+            // Exactly on end time
+            testingTime = new DateTime(2019, 6, 7, 17, 0, 0);
+
+            occurrences = vEvent.GetOccurrences(testingTime, testingTime);
+            Assert.AreEqual(0, occurrences.Count);
+        }
+
         private static RecurrencePattern GetSimpleRecurrencePattern(int count) => new RecurrencePattern(FrequencyType.Daily, 1) { Count = count, };
 
         private static CalendarEvent GetSimpleEvent()
