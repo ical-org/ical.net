@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2009
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ical.Net", "Ical.Net\Ical.Net.csproj", "{71446356-D4EC-4141-B25C-4FAE6FA86265}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ical.Net.FrameworkUnitTests", "Ical.Net.FrameworkUnitTests\Ical.Net.FrameworkUnitTests.csproj", "{90400333-D639-4303-B8F4-DBE0DA5D379D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerfTests", "PerfTests\PerfTests.csproj", "{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ical.Net.Core", "Ical.Net.Core\Ical.Net.Core.csproj", "{483EC28B-51D2-458A-8112-5E47CD5895A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,18 @@ Global
 		{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}.Release|x64.Build.0 = Release|Any CPU
 		{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}.Release|x86.ActiveCfg = Release|Any CPU
 		{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}.Release|x86.Build.0 = Release|Any CPU
+		{483EC28B-51D2-458A-8112-5E47CD5895A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{483EC28B-51D2-458A-8112-5E47CD5895A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{483EC28B-51D2-458A-8112-5E47CD5895A3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{483EC28B-51D2-458A-8112-5E47CD5895A3}.Debug|x64.Build.0 = Debug|Any CPU
+		{483EC28B-51D2-458A-8112-5E47CD5895A3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{483EC28B-51D2-458A-8112-5E47CD5895A3}.Debug|x86.Build.0 = Debug|Any CPU
+		{483EC28B-51D2-458A-8112-5E47CD5895A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{483EC28B-51D2-458A-8112-5E47CD5895A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{483EC28B-51D2-458A-8112-5E47CD5895A3}.Release|x64.ActiveCfg = Release|Any CPU
+		{483EC28B-51D2-458A-8112-5E47CD5895A3}.Release|x64.Build.0 = Release|Any CPU
+		{483EC28B-51D2-458A-8112-5E47CD5895A3}.Release|x86.ActiveCfg = Release|Any CPU
+		{483EC28B-51D2-458A-8112-5E47CD5895A3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
