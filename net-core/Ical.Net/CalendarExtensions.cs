@@ -22,7 +22,7 @@ namespace Ical.Net
             }
 
             // Return the week of our adjusted day
-            return calendar.GetIso8601WeekOfYear(time, rule, firstDayOfWeek);
+            return calendar.GetWeekOfYear(time, rule, firstDayOfWeek);
         }
     }
 }
