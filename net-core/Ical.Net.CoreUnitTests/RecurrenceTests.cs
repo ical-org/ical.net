@@ -57,7 +57,7 @@ namespace Ical.Net.CoreUnitTests
                 Assert.AreEqual(dt, occurrences[i].Period.StartTime, "Event should occur on " + dt);
                 if (timeZones != null)
                     Assert.AreEqual(timeZones[i], dt.TimeZoneName, "Event " + dt + " should occur in the " + timeZones[i] + " timezone");
-            }            
+            }
         }
 
         private void EventOccurrenceTest(
@@ -1209,8 +1209,8 @@ namespace Ical.Net.CoreUnitTests
                 new[]
                 {
                     new CalDateTime(1997, 5, 12, 9, 0, 0, _tzid),
-                    new CalDateTime(1998, 5, 11, 9, 0, 0, _tzid),                    
-                    new CalDateTime(1999, 5, 17, 9, 0, 0, _tzid)                    
+                    new CalDateTime(1998, 5, 11, 9, 0, 0, _tzid),
+                    new CalDateTime(1999, 5, 17, 9, 0, 0, _tzid)
                 },
                 null
             );
@@ -1305,7 +1305,7 @@ namespace Ical.Net.CoreUnitTests
                     new CalDateTime(2002, 1, 3, 10, 0, 0, _tzid),
                     new CalDateTime(2002, 1, 4, 10, 0, 0, _tzid),
                     new CalDateTime(2002, 1, 5, 10, 0, 0, _tzid),
-                    new CalDateTime(2002, 1, 6, 10, 0, 0, _tzid),                    
+                    new CalDateTime(2002, 1, 6, 10, 0, 0, _tzid),
                     new CalDateTime(2002, 12, 30, 10, 0, 0, _tzid),
                     new CalDateTime(2002, 12, 31, 10, 0, 0, _tzid),
                     new CalDateTime(2003, 1, 1, 10, 0, 0, _tzid),
@@ -1961,7 +1961,7 @@ namespace Ical.Net.CoreUnitTests
             {
                 Assert.IsInstanceOf<ArgumentException>(e);
             }
-            
+
         }
 
         /// <summary>
@@ -2068,7 +2068,7 @@ namespace Ical.Net.CoreUnitTests
                     // after the start of the evaluation period.
                     // See bug #3007244.
                     // https://sourceforge.net/tracker/?func=detail&aid=3007244&group_id=187422&atid=921236
-                    new CalDateTime(2007, 4, 9, 7, 0, 0, _tzid), 
+                    new CalDateTime(2007, 4, 9, 7, 0, 0, _tzid),
                     new CalDateTime(2007, 4, 10, 1, 0, 0, _tzid),
                     new CalDateTime(2007, 4, 10, 19, 0, 0, _tzid)
                 },
@@ -2152,7 +2152,7 @@ namespace Ical.Net.CoreUnitTests
                     new CalDateTime(2007, 4, 10, 23, 0, 0)
                 },
                 null
-            );            
+            );
         }
 
         /// <summary>
@@ -2515,7 +2515,7 @@ namespace Ical.Net.CoreUnitTests
                 new CalDateTime(2010, 2, 1, 0, 0, 0, localTzid),
                 new CalDateTime(2010, 3, 1, 0, 0, 0, localTzid),
                 new[]
-                {                    
+                {
                     new CalDateTime(2010, 2, 2, 8, 00, 00, localTzid),
                     new CalDateTime(2010, 2, 9, 8, 00, 00, localTzid),
                     new CalDateTime(2010, 2, 16, 8, 00, 00, localTzid),
@@ -2569,11 +2569,68 @@ namespace Ical.Net.CoreUnitTests
                 var rp = (RecurrencePattern)serializer.Deserialize(sr);
                 var rpe = new RecurrencePatternEvaluator(rp);
                 var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, rp.Until, false);
-                
+
                 var period = recurringPeriods.ElementAt(recurringPeriods.Count - 1);
 
                 Assert.AreEqual(new CalDateTime(2025, 11, 24, 9, 0, 0), period.StartTime);
             }
+        }
+
+        /// <summary>
+        /// Tests bug BYWEEKNO not working
+        /// See https://sourceforge.net/tracker/?func=detail&aid=3119920&group_id=187422&atid=921236
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void BugByWeekNoNotWorking()
+        {
+            var start = new DateTime(2019, 1, 1);
+            var end = new DateTime(2019, 12, 31);
+            var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=WEEKLY;BYDAY=MO;BYWEEKNO=2"));
+
+            var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, end, false);
+
+            Assert.AreEqual(1, recurringPeriods.Count);
+            Assert.AreEqual(new CalDateTime(2019, 1, 7), recurringPeriods.First().StartTime);
+        }
+
+        /// <summary>
+        /// Tests bug BYMONTH while FREQ=WEEKLY not working
+        /// See https://sourceforge.net/tracker/?func=detail&aid=3119920&group_id=187422&atid=921236
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void BugByMonthWhileFreqIsWeekly()
+        {
+            var start = new DateTime(2020, 1, 1);
+            var end = new DateTime(2020, 12, 31);
+            var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=WEEKLY;BYDAY=MO;BYMONTH=1"));
+
+            var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, end, false).OrderBy(x => x).ToList();
+
+            Assert.AreEqual(4, recurringPeriods.Count);
+            Assert.AreEqual(new CalDateTime(2020, 1, 6), recurringPeriods[0].StartTime);
+            Assert.AreEqual(new CalDateTime(2020, 1, 13), recurringPeriods[1].StartTime);
+            Assert.AreEqual(new CalDateTime(2020, 1, 20), recurringPeriods[2].StartTime);
+            Assert.AreEqual(new CalDateTime(2020, 1, 27), recurringPeriods[3].StartTime);
+        }
+
+        /// <summary>
+        /// Tests bug BYMONTH while FREQ=MONTHLY not working
+        /// See https://sourceforge.net/tracker/?func=detail&aid=3119920&group_id=187422&atid=921236
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void BugByMonthWhileFreqIsMontly()
+        {
+            var start = new DateTime(2020, 1, 1);
+            var end = new DateTime(2020, 12, 31);
+            var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=MONTHLY;BYDAY=MO;BYMONTH=1"));
+
+            var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, end, false).OrderBy(x => x).ToList();
+
+            Assert.AreEqual(4, recurringPeriods.Count);
+            Assert.AreEqual(new CalDateTime(2020, 1, 6), recurringPeriods[0].StartTime);
+            Assert.AreEqual(new CalDateTime(2020, 1, 13), recurringPeriods[1].StartTime);
+            Assert.AreEqual(new CalDateTime(2020, 1, 20), recurringPeriods[2].StartTime);
+            Assert.AreEqual(new CalDateTime(2020, 1, 27), recurringPeriods[3].StartTime);
         }
 
         /// <summary>
@@ -2590,7 +2647,8 @@ namespace Ical.Net.CoreUnitTests
                 Summary = "29th February Test"
             };
 
-            var pattern = new RecurrencePattern {
+            var pattern = new RecurrencePattern
+            {
                 Frequency = FrequencyType.Monthly,
                 Until = new DateTime(2011, 12, 25, 0, 0, 0, DateTimeKind.Utc),
                 FirstDayOfWeek = DayOfWeek.Sunday,
@@ -2713,8 +2771,8 @@ namespace Ical.Net.CoreUnitTests
             Assert.IsNotNull(evaluator);
 
             var occurrences = evaluator.Evaluate(
-                startDate, 
-                DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
+                startDate,
+                DateUtil.SimpleDateTimeToMatch(fromDate, startDate),
                 DateUtil.SimpleDateTimeToMatch(toDate, startDate),
                 false)
                 .OrderBy(o => o.StartTime)
@@ -2743,8 +2801,8 @@ namespace Ical.Net.CoreUnitTests
             Assert.IsNotNull(evaluator);
 
             var occurrences = evaluator.Evaluate(
-                startDate, 
-                DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
+                startDate,
+                DateUtil.SimpleDateTimeToMatch(fromDate, startDate),
                 DateUtil.SimpleDateTimeToMatch(toDate, startDate),
                 false);
             Assert.AreNotEqual(0, occurrences.Count);
@@ -2759,7 +2817,7 @@ namespace Ical.Net.CoreUnitTests
             evt.End = new CalDateTime(2009, 11, 18, 5, 10, 0);
             evt.RecurrenceRules.Add(new RecurrencePattern(FrequencyType.Daily));
             evt.Summary = "xxxxxxxxxxxxx";
- 
+
             var previousDateAndTime = new CalDateTime(2009, 11, 17, 0, 15, 0);
             var previousDateOnly = new CalDateTime(2009, 11, 17, 23, 15, 0);
             var laterDateOnly = new CalDateTime(2009, 11, 19, 3, 15, 0);
@@ -2856,7 +2914,7 @@ namespace Ical.Net.CoreUnitTests
             // Add the exception dates
             var periods = evaluator.Evaluate(
                 evtStart,
-                DateUtil.GetSimpleDateTimeData(evtStart), 
+                DateUtil.GetSimpleDateTimeData(evtStart),
                 DateUtil.SimpleDateTimeToMatch(evtEnd, evtStart),
                 false)
                 .OrderBy(p => p.StartTime)
@@ -2962,7 +3020,7 @@ END:VCALENDAR";
             var rrule = new RecurrencePattern(FrequencyType.Weekly, interval: 1)
             {
                 Until = DateTime.Parse("2016-08-31T07:00:00"),
-                ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Wednesday)},
+                ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Wednesday) },
             };
 
             var start = DateTime.Parse("2016-08-01T07:00:00");

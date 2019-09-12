@@ -133,44 +133,44 @@ namespace Ical.Net.Evaluation
                         switch (pattern.Frequency)
                         {
                             case FrequencyType.Secondly:
-                            {
-                                switch (evaluationRestriction)
                                 {
-                                    case RecurrenceRestrictionType.Default:
-                                    case RecurrenceRestrictionType.RestrictSecondly:
-                                        pattern.Frequency = FrequencyType.Minutely;
-                                        break;
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                        pattern.Frequency = FrequencyType.Hourly;
-                                        break;
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        pattern.Frequency = FrequencyType.Daily;
-                                        break;
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.Default:
+                                        case RecurrenceRestrictionType.RestrictSecondly:
+                                            pattern.Frequency = FrequencyType.Minutely;
+                                            break;
+                                        case RecurrenceRestrictionType.RestrictMinutely:
+                                            pattern.Frequency = FrequencyType.Hourly;
+                                            break;
+                                        case RecurrenceRestrictionType.RestrictHourly:
+                                            pattern.Frequency = FrequencyType.Daily;
+                                            break;
+                                    }
                                 }
-                            }
                                 break;
                             case FrequencyType.Minutely:
-                            {
-                                switch (evaluationRestriction)
                                 {
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                        pattern.Frequency = FrequencyType.Hourly;
-                                        break;
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        pattern.Frequency = FrequencyType.Daily;
-                                        break;
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.RestrictMinutely:
+                                            pattern.Frequency = FrequencyType.Hourly;
+                                            break;
+                                        case RecurrenceRestrictionType.RestrictHourly:
+                                            pattern.Frequency = FrequencyType.Daily;
+                                            break;
+                                    }
                                 }
-                            }
                                 break;
                             case FrequencyType.Hourly:
-                            {
-                                switch (evaluationRestriction)
                                 {
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        pattern.Frequency = FrequencyType.Daily;
-                                        break;
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.RestrictHourly:
+                                            pattern.Frequency = FrequencyType.Daily;
+                                            break;
+                                    }
                                 }
-                            }
                                 break;
                         }
                         break;
@@ -179,35 +179,35 @@ namespace Ical.Net.Evaluation
                         switch (pattern.Frequency)
                         {
                             case FrequencyType.Secondly:
-                            {
-                                switch (evaluationRestriction)
                                 {
-                                    case RecurrenceRestrictionType.Default:
-                                    case RecurrenceRestrictionType.RestrictSecondly:
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new ArgumentException();
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.Default:
+                                        case RecurrenceRestrictionType.RestrictSecondly:
+                                        case RecurrenceRestrictionType.RestrictMinutely:
+                                        case RecurrenceRestrictionType.RestrictHourly:
+                                            throw new ArgumentException();
+                                    }
                                 }
-                            }
                                 break;
                             case FrequencyType.Minutely:
-                            {
-                                switch (evaluationRestriction)
                                 {
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new ArgumentException();
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.RestrictMinutely:
+                                        case RecurrenceRestrictionType.RestrictHourly:
+                                            throw new ArgumentException();
+                                    }
                                 }
-                            }
                                 break;
                             case FrequencyType.Hourly:
-                            {
-                                switch (evaluationRestriction)
                                 {
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new ArgumentException();
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.RestrictHourly:
+                                            throw new ArgumentException();
+                                    }
                                 }
-                            }
                                 break;
                         }
                         break;
@@ -318,7 +318,7 @@ namespace Ical.Net.Evaluation
 
         private List<DateTime> GetCandidates(DateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
         {
-            var dates = new List<DateTime> {date};
+            var dates = new List<DateTime> { date };
             dates = GetMonthVariants(dates, pattern, expandBehaviors[0]);
             dates = GetWeekNoVariants(dates, pattern, expandBehaviors[1]);
             dates = GetYearDayVariants(dates, pattern, expandBehaviors[2]);
@@ -410,7 +410,7 @@ namespace Ical.Net.Evaluation
                 foreach (var weekNo in pattern.ByWeekNo)
                 {
                     // Determine our current week number
-                    var currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+                    var currWeekNo = Calendar.GetIso8601WeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
                     while (currWeekNo > weekNo)
                     {
                         // If currWeekNo > weekNo, then we're likely at the start of a year
@@ -418,7 +418,7 @@ namespace Ical.Net.Evaluation
                         // we should be back to week 1, where we can easily make the calculation
                         // to move to weekNo.
                         date = date.AddDays(7);
-                        currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+                        currWeekNo = Calendar.GetIso8601WeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
                     }
 
                     // Move ahead to the correct week of the year
@@ -485,7 +485,7 @@ namespace Ical.Net.Evaluation
                 }
 
                 dates.RemoveAt(i);
-                Next:
+            Next:
                 ;
             }
 
@@ -547,7 +547,7 @@ namespace Ical.Net.Evaluation
                     }
                 }
 
-                Next:
+            Next:
                 dates.RemoveAt(i);
             }
 
@@ -601,7 +601,7 @@ namespace Ical.Net.Evaluation
                     }
                 }
                 dates.RemoveAt(i);
-                Next:
+            Next:
                 ;
             }
 
@@ -630,7 +630,7 @@ namespace Ical.Net.Evaluation
             }
             else if (pattern.Frequency == FrequencyType.Weekly || pattern.ByWeekNo.Count > 0)
             {
-                var weekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+                var weekNo = Calendar.GetIso8601WeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
 
                 // construct a list of possible week days..
                 while (date.DayOfWeek != dayOfWeek)
@@ -638,17 +638,22 @@ namespace Ical.Net.Evaluation
                     date = date.AddDays(1);
                 }
 
-                var nextWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
-                var currentWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+                var nextWeekNo = Calendar.GetIso8601WeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+                var currentWeekNo = Calendar.GetIso8601WeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
 
                 //When we manage weekly recurring pattern and we have boundary case:
                 //Weekdays: Dec 31, Jan 1, Feb 1, Mar 1, Apr 1, May 1, June 1, Dec 31 - It's the 53th week of the year, but all another are 1st week number.
                 //So we need an EXRULE for this situation, but only for weekly events
                 while (currentWeekNo == weekNo || (nextWeekNo < weekNo && currentWeekNo == nextWeekNo && pattern.Frequency == FrequencyType.Weekly))
                 {
-                    days.Add(date);
+                    if ((pattern.ByWeekNo.Count == 0 || pattern.ByWeekNo.Contains(currentWeekNo)) &&
+                        (pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month)))
+                    {
+                        days.Add(date);
+                    }
+
                     date = date.AddDays(7);
-                    currentWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+                    currentWeekNo = Calendar.GetIso8601WeekOfYear(date, CalendarWeekRule.FirstFourDayWeek,pattern.FirstDayOfWeek);
                 }
             }
             else if (pattern.Frequency == FrequencyType.Monthly || pattern.ByMonth.Count > 0)
@@ -664,7 +669,13 @@ namespace Ical.Net.Evaluation
 
                 while (date.Month == month)
                 {
-                    days.Add(date);
+                    var currentWeekNo = Calendar.GetIso8601WeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+
+                    if ((pattern.ByWeekNo.Count == 0 || pattern.ByWeekNo.Contains(currentWeekNo)) &&
+                        (pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month)))
+                    {
+                        days.Add(date);
+                    }
                     date = date.AddDays(7);
                 }
             }
@@ -761,7 +772,7 @@ namespace Ical.Net.Evaluation
                 }
                 // Remove unmatched dates
                 dates.RemoveAt(i);
-                Next:
+            Next:
                 ;
             }
             return dates;
@@ -811,7 +822,7 @@ namespace Ical.Net.Evaluation
                 }
                 // Remove unmatched dates
                 dates.RemoveAt(i);
-                Next:
+            Next:
                 ;
             }
             return dates;
@@ -861,7 +872,7 @@ namespace Ical.Net.Evaluation
                 }
                 // Remove unmatched dates
                 dates.RemoveAt(i);
-                Next:
+            Next:
                 ;
             }
             return dates;
