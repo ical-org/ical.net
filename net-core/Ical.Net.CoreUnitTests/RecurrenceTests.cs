@@ -2578,7 +2578,6 @@ namespace Ical.Net.CoreUnitTests
 
         /// <summary>
         /// Tests bug BYWEEKNO not working
-        /// See https://sourceforge.net/tracker/?func=detail&aid=3119920&group_id=187422&atid=921236
         /// </summary>
         [Test, Category("Recurrence")]
         public void BugByWeekNoNotWorking()
@@ -2595,7 +2594,6 @@ namespace Ical.Net.CoreUnitTests
 
         /// <summary>
         /// Tests bug BYMONTH while FREQ=WEEKLY not working
-        /// See https://sourceforge.net/tracker/?func=detail&aid=3119920&group_id=187422&atid=921236
         /// </summary>
         [Test, Category("Recurrence")]
         public void BugByMonthWhileFreqIsWeekly()
@@ -2615,7 +2613,6 @@ namespace Ical.Net.CoreUnitTests
 
         /// <summary>
         /// Tests bug BYMONTH while FREQ=MONTHLY not working
-        /// See https://sourceforge.net/tracker/?func=detail&aid=3119920&group_id=187422&atid=921236
         /// </summary>
         [Test, Category("Recurrence")]
         public void BugByMonthWhileFreqIsMontly()
