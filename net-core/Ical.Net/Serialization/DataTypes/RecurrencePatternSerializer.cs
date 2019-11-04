@@ -75,6 +75,14 @@ namespace Ical.Net.Serialization.DataTypes
             {
                 return;
             }
+
+            // For some reason GetField("MinValue") sometimes returns 'null' when the obj is an int
+            // Casting the object to an int and directly checking for MinValue works though.
+            if (obj1 is int c && c == int.MinValue)
+            {
+                return;
+            }
+
             // If the object is MinValue instead of its default, consider
             // that to be unassigned.
 
