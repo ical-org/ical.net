@@ -34,6 +34,6 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Agent.BuildDirectory)'
+    PathtoPublish: '$(Agent.BuildDirectory)/s/net-core/Ical.Net/bin/Release'
     ArtifactName: 'drop'
     publishLocation: 'Container'
