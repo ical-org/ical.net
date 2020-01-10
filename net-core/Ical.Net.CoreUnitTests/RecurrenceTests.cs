@@ -2661,6 +2661,20 @@ namespace Ical.Net.CoreUnitTests
             }
         }
 
+        [Test, Category("Recurrence")]
+        public void Issue432_AllDay()
+        {
+            var vEvent = new CalendarEvent
+            {
+                Start = new CalDateTime(DateTime.Parse("2020-01-11T00:00")),
+                End = new CalDateTime(DateTime.Parse("2020-01-11T00:00")),
+                IsAllDay = true,
+            };
+
+            var occurrences = vEvent.GetOccurrences(DateTime.Parse("2020-01-10T00:00"), DateTime.Parse("2020-01-11T00:00"));
+            Assert.AreEqual(0, occurrences.Count);
+        }
+
         /// <summary>
         /// Tests the iCal holidays downloaded from apple.com
         /// </summary>
