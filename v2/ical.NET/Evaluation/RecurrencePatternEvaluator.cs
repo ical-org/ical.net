@@ -299,7 +299,7 @@ namespace Ical.Net.Evaluation
                         {
                             break;
                         }
-                        else if (pattern.Until == DateTime.MinValue || candidate <= pattern.Until)
+                        else
                         {
                             var utcCandidate = DateUtil.FromTimeZoneToTimeZone(candidate, DateUtil.GetZone(seed.TzId), DateTimeZone.Utc).ToDateTimeUtc();
                             if (!dates.Contains(candidate) && (pattern.Until == DateTime.MinValue || utcCandidate <= pattern.Until))
