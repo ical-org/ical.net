@@ -1,4 +1,4 @@
-def releasableBranch = '(?:origin/)?(?:(?:master)|(?:release\\d*))'
+def releasableBranch = '(?:origin/)?(?:(?:master)|(?:release\\d*)|(?:jenkins-integration))'
 
 pipeline {
     options {
@@ -29,7 +29,6 @@ pipeline {
             steps {
                 dir('net-core') {
                     powershell '.\\build.ps1'
-
                 }
             }
         }
@@ -48,6 +47,7 @@ pipeline {
                 expression { env.BRANCH_NAME ==~ releasableBranch }
             }
             steps {
+                // Build will already do the package, so we only need to upload of that.
 
                 script {
                     def server = Artifactory.server('DISCO')
