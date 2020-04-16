@@ -1,13 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;net46</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3</TargetFrameworks>
     <Version>4.1.8</Version>
     <Authors>Rian Stockbower, Douglas Day</Authors>
     <Company />
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\IcalNetStrongnameKey.snk</AssemblyOriginatorKeyFile>
-    <DebugSymbols Condition=" '$(TargetFramework)' == 'net46' ">true</DebugSymbols>
-    <DebugType Condition=" '$(TargetFramework)' == 'net46' ">full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\Ical.Net.xml</DocumentationFile>

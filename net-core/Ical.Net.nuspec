@@ -26,9 +26,5 @@
         <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.pdb" target="lib\netstandard1.3\Ical.Net.pdb" />
         <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.xml" target="lib\netstandard1.3\Ical.Net.xml" />
         <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.deps.json" target="lib\netstandard1.3\Ical.Net.deps.json" />
-
-        <file src="Ical.Net\bin\Release\net46\Ical.Net.dll" target="lib\net46\Ical.Net.dll" />
-        <file src="Ical.Net\bin\Release\net46\Ical.Net.pdb" target="lib\net46\Ical.Net.pdb" />
-        <file src="Ical.Net\bin\Release\net46\Ical.Net.xml" target="lib\net46\Ical.Net.xml" />
     </files>
 </package>
