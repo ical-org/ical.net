@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Ical.Net.Serialization
 {
@@ -54,6 +56,54 @@ namespace Ical.Net.Serialization
             }
         }
 
+        protected byte[] DecodeQuotedPrintable(string value)
+        {
+            try
+            {
+                var encodingStack = _mSerializationContext.GetService<EncodingStack>();
+                value = DecodeQuotedPrintables(value, encodingStack.Current.WebName);
+                return encodingStack.Current.GetBytes(value);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static string DecodeQuotedPrintables(string input, string charSet)
+        {
+            Encoding enc = new ASCIIEncoding();
+            try
+            {
+                enc = Encoding.GetEncoding(charSet);
+            }
+            catch
+            {
+                enc = new UTF8Encoding();
+            }
+
+            var occurences = new Regex(@"(=[0-9A-Z]{2}){1,}", RegexOptions.Multiline);
+            var matches = occurences.Matches(input);
+
+            foreach (Match match in matches)
+            {
+                try
+                {
+                    byte[] b = new byte[match.Groups[0].Value.Length / 3];
+                    for (int i = 0; i < match.Groups[0].Value.Length / 3; i++)
+                    {
+                        b[i] = byte.Parse(match.Groups[0].Value.Substring(i * 3 + 1, 2), System.Globalization.NumberStyles.AllowHexSpecifier);
+                    }
+                    char[] hexChar = enc.GetChars(b);
+                    input = input.Replace(match.Groups[0].Value, hexChar[0].ToString());
+                }
+                catch {; }
+            }
+            input = input.Replace("?=", "").Replace("=\r\n", "");
+
+            return input;
+        }
+
         protected virtual DecoderDelegate GetDecoderFor(string encoding)
         {
             if (encoding == null)
@@ -69,6 +119,8 @@ namespace Ical.Net.Serialization
                     return Decode8Bit;
                 case "BASE64":
                     return DecodeBase64;
+                case "QUOTED-PRINTABLE":
+                    return DecodeQuotedPrintable;
                 default:
                     return null;
             }
