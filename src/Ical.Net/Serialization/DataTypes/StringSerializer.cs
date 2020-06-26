@@ -16,6 +16,8 @@ namespace Ical.Net.Serialization.DataTypes
 
         internal static readonly Regex SingleBackslashMatch = new Regex(@"(?<!\\)\\(?!\\)", RegexOptions.Compiled);
 
+        internal static readonly Regex AlmostPerfectEmailMatch = new Regex(@"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$", RegexOptions.Compiled);
+
         protected virtual string Unescape(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
