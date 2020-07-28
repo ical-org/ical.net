@@ -87,14 +87,14 @@ namespace Ical.Net.Serialization.DataTypes
                 var obj = serializer?.Deserialize(new StringReader(value));
                 switch (obj)
                 {
-                    case null:
-                        return null;
                     case IDateTime _:
                         t.DateTime = (IDateTime) obj;
                         break;
-                    default:
+                    case TimeSpan _:
                         t.Duration = (TimeSpan) obj;
                         break;
+                    default:
+                        return null;
                 }
 
                 return t;
