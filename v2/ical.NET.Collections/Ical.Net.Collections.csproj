@@ -1,98 +1,18 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\net46</OutputPath>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <NoWarn>CS1591,CS7035</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>bin\Release\net46\</OutputPath>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>bin\Release\net46\Ical.Net.Collections.xml</DocumentationFile>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <NoWarn>CS1591,CS7035</NoWarn>
-  </PropertyGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>Library</OutputType>
     <ProjectGuid>{E04EFEB6-4625-4D58-AC91-7B8B8A2C97BB}</ProjectGuid>
-    <TargetFrameworkProfile />
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NoWarn>NU1603;NU1605</NoWarn>
     <RuntimeIdentifier>win</RuntimeIdentifier>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
-  <PropertyGroup>
-    <RootNamespace>Ical.Net.Collections</RootNamespace>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\..\IcalNetStrongnameKey.snk</AssemblyOriginatorKeyFile>
+    <AssemblyTitle>ical.net.collections</AssemblyTitle>
+    <Product>ical.net.collections</Product>
+    <AssemblyVersion>5.0.0</AssemblyVersion>
+    <FileVersion>5.0.0</FileVersion>
+    <NoWarn>CS1591,CS7035</NoWarn>
+    <BuildDependsOn>$(BuildDependsOn);AfterBuildMigrated</BuildDependsOn>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System.Core" />
-    <!--  <Reference Include="Microsoft.CSharp" />
-    -->
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Constants.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Interfaces\IGroupedCollection.cs" />
-    <Compile Include="Proxies\GroupedCollectionProxy.cs" />
-    <Compile Include="Interfaces\IGroupedList.cs" />
-    <Compile Include="Interfaces\IGroupedObject.cs" />
-    <Compile Include="Interfaces\IMultiLinkedList.cs" />
-    <Compile Include="Interfaces\IValueObject.cs" />
-    <Compile Include="GroupedList.cs" />
-    <Compile Include="GroupedValueList.cs" />
-    <Compile Include="Proxies\GroupedValueListProxy.cs" />
-    <Compile Include="MultiLinkedList.cs" />
-    <Compile Include="Enumerators\GroupedListEnumerator.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Interfaces\Proxies\IGroupedCollectionProxy.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="System.ValueTuple">
-      <Version>4.5.0</Version>
-    </PackageReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  -->
-  <Target Name="AfterBuild">
-    <!-- Load up the information from the assembly -->
-    <GetAssemblyIdentity AssemblyFiles="$(OutputPath)$(AssemblyName).dll">
-      <Output TaskParameter="Assemblies" ItemName="OutputAssemblyInfo" />
-    </GetAssemblyIdentity>
-    <Message Text="Info: %(OutputAssemblyInfo.Version)" />
-  </Target>
-  <Target Name="Package">
-    <!-- Ensure the Package directory exists for this project -->
-    <RemoveDir Directories="NuGet" />
-    <MakeDir Directories="NuGet" />
-    <!-- Package the project -->
-    <Exec WorkingDirectory="$(BuildDir)" Command="NuGet.exe pack -IncludeReferencedProjects -Verbosity detailed -Symbols -OutputDir &quot;NuGet&quot; -Version %(OutputAssemblyInfo.Version) -Properties &quot;Configuration=$(Configuration)&quot;" />
-  </Target>
 </Project>

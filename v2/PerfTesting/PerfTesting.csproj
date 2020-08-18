@@ -1,67 +1,27 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{76704332-B13A-440F-99E6-358B50BE86C7}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>PerfTesting</RootNamespace>
-    <AssemblyName>PerfTesting</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFramework>net472</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NoWarn>NU1603;NU1605</NoWarn>
     <RuntimeIdentifier>win</RuntimeIdentifier>
-    <TargetFrameworkProfile />
+    <AssemblyTitle>PerfTesting</AssemblyTitle>
+    <Product>PerfTesting</Product>
+    <Copyright>Copyright ©  2017</Copyright>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="CalDateTimePerfTests.cs" />
-    <Compile Include="OccurrencePerfTests.cs" />
-    <Compile Include="Runner.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SerializationPerfTests.cs" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <ProjectReference Include="..\ical.net.Collections\Ical.Net.Collections.csproj" />
+    <ProjectReference Include="..\ical.net\Ical.Net.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet">
-      <Version>0.12.1</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ical.net.Collections\Ical.Net.Collections.csproj">
-      <Project>{e04efeb6-4625-4d58-ac91-7b8b8a2c97bb}</Project>
-      <Name>Ical.Net.Collections</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ical.net\Ical.Net.csproj">
-      <Project>{f88db6d3-cb95-4707-9c88-b53403aadc61}</Project>
-      <Name>Ical.Net</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Reflection;
 using System.Security;
 
@@ -9,16 +9,6 @@ using System.Security;
 // TODO: Review the values of the assembly attributes
 
 [assembly: AllowPartiallyTrustedCallers]
-
-[assembly: AssemblyTitle("antlr.runtime")]
-[assembly: AssemblyDescription("ANTLR Runtime for .NET")]
-[assembly: AssemblyCompany("www.antlr.org")]
-[assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-
-[assembly: AssemblyVersion("2.7.6.02")]
 
 
 // Version information for an assembly consists of the following four values:
