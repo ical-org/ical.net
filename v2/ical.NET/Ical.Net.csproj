@@ -5,14 +5,7 @@
     <NoWarn>NU1603;NU1605</NoWarn>
     <AssemblyTitle>Ical.Net</AssemblyTitle>
     <Product>Ical.Net</Product>
-    <Description>An iCalendar (RFC 5545) control library. See https://github.com/rianjs/ical.net for details.
-This is a forked version. This version has been cleaned and upgraded to netstandard 2.0
-Other changes compared to official package:
- - Converted to sdk style project
- - Upgrade noda time package to latest version
- - Removed unusued references + sdk style cleanup
-
-Fork: https://github.com/davidroth/ical.net/tree/modernize</Description>
+    <Description>An iCalendar (RFC 5545) control library. See https://github.com/rianjs/ical.net for details.</Description>
     <Deterministic>false</Deterministic>
     <AssemblyVersion>5.0.0.0</AssemblyVersion>
     <FileVersion>5.0.0.0</FileVersion>
@@ -20,11 +13,11 @@ Fork: https://github.com/davidroth/ical.net/tree/modernize</Description>
     <BuildDependsOn>$(BuildDependsOn);AfterBuildMigrated</BuildDependsOn>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>5.0.1</Version>
-    <PackageId>Fusonic.Ical.Net</PackageId>
+    <Version>5.0.0</Version>
+    <PackageId>Ical.Net</PackageId>
     <Authors>Ical.Net &amp; Contributors</Authors>
     <PackageLicenseFile>license.md</PackageLicenseFile>
-    <RepositoryUrl>https://github.com/davidroth/ical.net/tree/modernize</RepositoryUrl>
+    <RepositoryUrl>https://github.com/rianjs/ical.net</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\antlr.runtime\antlr.runtime.csproj" PrivateAssets="all" />
