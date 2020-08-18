@@ -72,7 +72,7 @@ namespace Ical.Net
 
             // Only include historical data if asked to do so.  Otherwise,
             // use only the most recent adjustment rules available.
-            var intervals = zone.GetZoneIntervals(earliest, SystemClock.Instance.GetCurrentInstant()).Where(x => x.Start != Instant.MinValue).ToList();
+            var intervals = zone.GetZoneIntervals(earliest, SystemClock.Instance.GetCurrentInstant()).Where(x => x.HasStart && x.Start != Instant.MinValue).ToList();
 
             var matchingDaylightIntervals = new List<ZoneInterval>();
             var matchingStandardIntervals = new List<ZoneInterval>();
@@ -98,7 +98,7 @@ namespace Ical.Net
                 vTimeZone.AddChild(latestStandardTimeZoneInfo);
 
                 // check to see if there is no active, future daylight savings (ie, America/Phoenix)
-                if(latestStandardInterval != null && latestStandardInterval.End != Instant.MaxValue)
+                if(latestStandardInterval != null && latestStandardInterval.HasEnd && latestStandardInterval.End != Instant.MaxValue)
                 {
                     //daylight
                     var daylightIntervals = intervals.Where(x => x.Savings.ToTimeSpan() != new TimeSpan(0)).ToList();
@@ -149,7 +149,7 @@ namespace Ical.Net
             if (oldestInterval == null)
                 throw new InvalidOperationException("oldestInterval was not found");
 
-            var previousInterval = intervals.SingleOrDefault(x => x.End == oldestInterval.Start);
+            var previousInterval = intervals.SingleOrDefault(x => x.HasEnd && x.End == oldestInterval.Start);
 
             var delta = new TimeSpan(1,0,0);
 
