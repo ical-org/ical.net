@@ -3,10 +3,16 @@
     <ProjectGuid>{F88DB6D3-CB95-4707-9C88-B53403AADC61}</ProjectGuid>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NoWarn>NU1603;NU1605</NoWarn>
-    <RuntimeIdentifier>win</RuntimeIdentifier>
     <AssemblyTitle>Ical.Net</AssemblyTitle>
     <Product>Ical.Net</Product>
-    <Description>An iCalendar (RFC 5545) control library. See https://github.com/rianjs/ical.net for details.</Description>
+    <Description>An iCalendar (RFC 5545) control library. See https://github.com/rianjs/ical.net for details.
+This is a forked version. This version has been cleaned and upgraded to netstandard 2.0
+Other changes compared to official package:
+ - Converted to sdk style project
+ - Upgrade noda time package to latest version
+ - Removed unusued references + sdk style cleanup
+
+Fork: https://github.com/davidroth/ical.net/tree/modernize</Description>
     <Deterministic>false</Deterministic>
     <AssemblyVersion>5.0.0.0</AssemblyVersion>
     <FileVersion>5.0.0.0</FileVersion>
@@ -15,12 +21,22 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>5.0.0</Version>
+    <PackageId>Fusonic.Ical.Net</PackageId>
+    <Authors>Ical.Net &amp; Contributors</Authors>
+    <PackageLicenseFile>license.md</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/davidroth/ical.net/tree/modernize</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\antlr.runtime\antlr.runtime.csproj" />
-    <ProjectReference Include="..\ical.net.Collections\Ical.Net.Collections.csproj" />
+    <ProjectReference Include="..\antlr.runtime\antlr.runtime.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\ical.net.Collections\Ical.Net.Collections.csproj" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NodaTime" Version="3.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\license.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 </Project>

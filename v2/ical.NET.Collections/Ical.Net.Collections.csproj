@@ -3,13 +3,10 @@
     <ProjectGuid>{E04EFEB6-4625-4D58-AC91-7B8B8A2C97BB}</ProjectGuid>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NoWarn>NU1603;NU1605</NoWarn>
-    <RuntimeIdentifier>win</RuntimeIdentifier>
     <AssemblyTitle>ical.net.collections</AssemblyTitle>
-    <Product>ical.net.collections</Product>
     <AssemblyVersion>5.0.0</AssemblyVersion>
     <FileVersion>5.0.0</FileVersion>
     <NoWarn>CS1591,CS7035</NoWarn>
-    <BuildDependsOn>$(BuildDependsOn);AfterBuildMigrated</BuildDependsOn>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 </Project>

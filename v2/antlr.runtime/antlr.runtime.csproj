@@ -3,7 +3,6 @@
     <ProjectGuid>{CB7CC882-ED47-46C0-AAAE-7A437F22F1C6}</ProjectGuid>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NoWarn>NU1603;NU1605</NoWarn>
-    <RuntimeIdentifier>win</RuntimeIdentifier>
     <AssemblyTitle>antlr.runtime</AssemblyTitle>
     <Company>www.antlr.org</Company>
     <Description>ANTLR Runtime for .NET</Description>

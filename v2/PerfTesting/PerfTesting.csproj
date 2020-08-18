@@ -5,7 +5,6 @@
     <TargetFramework>net472</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NoWarn>NU1603;NU1605</NoWarn>
-    <RuntimeIdentifier>win</RuntimeIdentifier>
     <AssemblyTitle>PerfTesting</AssemblyTitle>
     <Product>PerfTesting</Product>
     <Copyright>Copyright ©  2017</Copyright>
