@@ -17,7 +17,6 @@ namespace Ical.Net
         #region Private Fields
 
         TimeZoneInfoEvaluator _evaluator;
-        DateTime _end;
 
         #endregion
 

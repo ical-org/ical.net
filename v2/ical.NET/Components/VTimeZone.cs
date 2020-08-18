@@ -39,13 +39,14 @@ namespace Ical.Net
 
         public static VTimeZone FromTzId(string tzId)
         {
-            var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(tzId) ?? DateTimeZoneProviders.Bcl.GetZoneOrNull(tzId) ?? DateTimeZoneProviders.Serialization.GetZoneOrNull(tzId);
+            
+            var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(tzId) ?? DateTimeZoneProviders.Bcl.GetZoneOrNull(tzId) ?? NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(tzId);
             return FromDateTimeZone(zone);
         }
 
         public static VTimeZone FromTzId(string tzId, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
         {
-            var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(tzId) ?? DateTimeZoneProviders.Bcl.GetZoneOrNull(tzId) ?? DateTimeZoneProviders.Serialization.GetZoneOrNull(tzId);
+            var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(tzId) ?? DateTimeZoneProviders.Bcl.GetZoneOrNull(tzId) ?? NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(tzId);
             return FromDateTimeZone(zone, earlistDateTimeToSupport, includeHistoricalData);
         }
 
@@ -71,7 +72,7 @@ namespace Ical.Net
 
             // Only include historical data if asked to do so.  Otherwise,
             // use only the most recent adjustment rules available.
-            var intervals = zone.GetZoneIntervals(earliest, SystemClock.Instance.Now).Where(x => x.Start != Instant.MinValue).ToList();
+            var intervals = zone.GetZoneIntervals(earliest, SystemClock.Instance.GetCurrentInstant()).Where(x => x.Start != Instant.MinValue).ToList();
 
             var matchingDaylightIntervals = new List<ZoneInterval>();
             var matchingStandardIntervals = new List<ZoneInterval>();
@@ -286,7 +287,7 @@ namespace Ical.Net
                 
                 if (string.IsNullOrEmpty(zone))
                 {
-                    zone = DateTimeZoneProviders.Serialization.Ids.SingleOrDefault(x => x == tzId);
+                    zone = NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.Ids.SingleOrDefault(x => x == tzId);
 
                     if (string.IsNullOrEmpty(zone))
                     {
