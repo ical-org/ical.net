@@ -22,6 +22,5 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NodaTime" Version="3.0.0" />
-    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
   </ItemGroup>
 </Project>
