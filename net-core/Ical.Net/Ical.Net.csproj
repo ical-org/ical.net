@@ -17,7 +17,7 @@
     <DocumentationFile>bin\Release\Ical.Net.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NodaTime" Version="2.0.2" />
+    <PackageReference Include="NodaTime" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
