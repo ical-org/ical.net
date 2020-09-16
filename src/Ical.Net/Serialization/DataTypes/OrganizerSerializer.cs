@@ -40,7 +40,7 @@ namespace Ical.Net.Serialization.DataTypes
                     var uriString = Unescape(Decode(o, value));
 
                     // Prepend "mailto:" if necessary
-                    if (!uriString.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase) && AlmostPerfectEmailMatch.Match(uriString).Success)
+                    if (!uriString.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase) && AlmostPerfectEmailMatch.Match(uriString.ToLower()).Success)
                     {
                         uriString = "mailto:" + uriString;
                     }
