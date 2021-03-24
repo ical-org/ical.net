@@ -14,7 +14,7 @@
     <AssemblyOriginatorKeyFile>..\..\IcalNetStrongnameKey.snk</AssemblyOriginatorKeyFile>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <PackageId>Ical.Net</PackageId>
+    <PackageId>Consolidate.Ical.Net</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>An iCalendar (RFC 5545) library. See https://github.com/rianjs/ical.net for details.</Description>
   </PropertyGroup>

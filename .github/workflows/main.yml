@@ -23,4 +23,4 @@ jobs:
         working-directory: net-core/Ical.Net
 
       - run: dotnet nuget add source https://nuget.pkg.github.com/Consolidate-Software/index.json --name "github"
-      - run: dotnet nuget push output/Ical.Net.*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "github"
+      - run: dotnet nuget push output/Consolidate.Ical.Net.*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "github"
