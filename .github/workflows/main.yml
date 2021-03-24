@@ -1,0 +1,26 @@
+name: Deploy package
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy_package:
+    name: Deploy package
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x'
+
+      - run: dotnet build -c Release
+        working-directory: net-core/Ical.Net
+
+      - run: dotnet pack -c Release --no-build --output ../../output --version-suffix=${{ github.run_id }}
+        working-directory: net-core/Ical.Net
+
+      - run: dotnet nuget add source https://nuget.pkg.github.com/Consolidate-Software/index.json --name "github"
+      - run: dotnet nuget push output/Ical.Net.*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "github"
