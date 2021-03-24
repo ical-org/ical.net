@@ -40,7 +40,7 @@ namespace Ical.Net.Serialization.DataTypes
                 sb.Append(dtSerializer.SerializeToString(p.StartTime));
 
                 // Serialize the duration
-                if (!p.StartTime.HasTime)
+                if (!p.StartTime.HasTime && !HasDateValueParameter(p))
                 {
                     // Serialize the duration
                     sb.Append("/");
@@ -98,6 +98,12 @@ namespace Ical.Net.Serialization.DataTypes
             }
 
             return null;
+        }
+
+        private bool HasDateValueParameter(Period p)
+        {
+            if (!p.Parameters.ContainsKey("VALUE")) return false;
+            return p.Parameters.Get("VALUE") == "DATE";
         }
     }
 }

@@ -158,5 +158,17 @@ namespace Ical.Net.CoreUnitTests
         internal static string YearlyCountByMonth1 => ReadStream("Ical.Net.CoreUnitTests.Calendars.Recurrence.YearlyCountByMonth1.ics");
         internal static string YearlyCountByYearDay1 => ReadStream("Ical.Net.CoreUnitTests.Calendars.Recurrence.YearlyCountByYearDay1.ics");
         internal static string YearlyInterval1 => ReadStream("Ical.Net.CoreUnitTests.Calendars.Recurrence.YearlyInterval1.ics");
+        internal static string Organizer1_Dualoo => ReadStream("Ical.Net.CoreUnitTests.Calendars.Serialization.Organizer1_Dualoo.ics");
+
+        // IcalCleaner
+        internal static string Cleaner_Attendees1 => ReadStream("Ical.Net.CoreUnitTests.Calendars.IcalCleaner.CAL_1675163_1.ics");
+        internal static string Cleaner_Attendees2 => ReadStream("Ical.Net.CoreUnitTests.Calendars.IcalCleaner.CAL_20005655_0.ics");
+        internal static string Cleaner_Attendees3 => ReadStream("Ical.Net.CoreUnitTests.Calendars.IcalCleaner.RFC_attendees.ics");
+        internal static string Cleaner_QuotedPrintable1 => ReadStream("Ical.Net.CoreUnitTests.Calendars.IcalCleaner.quotedprintable1.ics");
+        internal static string Cleaner_QuotedPrintable2 => ReadStream("Ical.Net.CoreUnitTests.Calendars.IcalCleaner.quotedprintable2.ics");
+        internal static string Cleaner_QuotedPrintable3 => ReadStream("Ical.Net.CoreUnitTests.Calendars.IcalCleaner.quotedprintable3.ics");
+        internal static string Cleaner_QuotedPrintable4 => ReadStream("Ical.Net.CoreUnitTests.Calendars.IcalCleaner.quotedprintable4.ics");
+        internal static string Cleaner_QuotedPrintable_UmlauteAndSpecialCharacters => ReadStream("Ical.Net.CoreUnitTests.Calendars.IcalCleaner.quotedprintable_umlaute_specialcharacters.ics");
+        internal static string Cleaner_NormalTextLineBreaks => ReadStream("Ical.Net.CoreUnitTests.Calendars.IcalCleaner.normaltext_linebreaks.ics");
     }
 }

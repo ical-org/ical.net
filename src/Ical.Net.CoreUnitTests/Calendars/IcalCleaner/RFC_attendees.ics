@@ -1,0 +1,77 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Zarafa//7.1.4-41394//EN
+CALSCALE:GREGORIAN
+METHOD:REQUEST
+BEGIN:VTIMEZONE
+TZID:W. Europe Standard Time
+BEGIN:STANDARD
+DTSTART:19700101T030000
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10;WKST=SU
+END:STANDARD
+BEGIN:DAYLIGHT
+DTSTART:19700101T020000
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3;WKST=SU
+END:DAYLIGHT
+END:VTIMEZONE
+BEGIN:VEVENT
+STATUS:CONFIRMED
+
+X-INFO: The following are examples of this property's use for a to-do:
+ATTENDEE;MEMBER="mailto:DEV-GROUP@example.com":mailto:joecool@example.com
+ATTENDEE;DELEGATED-FROM="mailto:immud@example.com":mailto:ildoit@example.com
+
+X-INFO: The following is an example of this property used for specifyingmultiple attendees to an event:
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=TENTATIVE;CN=Henry Cabot:mailto:hcabot@example.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;DELEGATED-FROM="mailto:bob@example.com";PARTSTAT=ACCEPTED;CN=Jane Doe:mailto:jdoe@example.com
+
+X-INFO: The following is an example of this property with a URI to the directory information associated with the attendee:
+ATTENDEE;CN=John Smith;DIR="ldap://example.com:6666/o=ABC%20Industries,c=US???(cn=Jim%20Dolittle)":mailto:jimdo@example.com
+
+X-INFO: The following is an example of this property with "delegatee" and "delegator" information for an event:
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=TENTATIVE;DELEGATED-FROM="mailto:iamboss@example.com";CN=Henry Cabot:mailto:hcabot2@example.com
+ATTENDEE;ROLE=NON-PARTICIPANT;PARTSTAT=DELEGATED;DELEGATED-TO="mailto:hcabot@example.com";CN=The Big Cheese:mailto:iamboss@example.com
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;CN=Jane Doe:mailto:jdoe2@example.com
+
+X-INFO: The following is an example of this property's use when another calendar user is acting on behalf of the "Attendee":
+ATTENDEE;SENT-BY=mailto:jan_doe@example.com;CN=John Smith:mailto:jsmith@example.com
+
+X-MOZ-SEND-INVITATIONS:TRUE
+ORGANIZER;CN=PRETTNER Beate:mailto:Beate.PRETTNER@ktn.gv.at
+TRANSP:OPAQUE
+X-MICROSOFT-CDO-INTENDEDSTATUS:BUSY
+CREATED:20150923T091716Z
+DTSTAMP:20150923T091715Z
+LAST-MODIFIED:20150923T091716Z
+DTSTART;TZID=W. Europe Standard Time:20151014T130000
+DTEND;TZID=W. Europe Standard Time:20151014T143000
+SUMMARY:BP-Z- Nephrologische Versorgung in Kärnten\; Informationen über 
+ das Versorgungskonzept Niere 60/20 durch Dr. Koinig (steirischer 
+ Gesundheitsfonds)
+LOCATION:KGF\, Bahnhofstraße 24\, 6. Stock\, 9020 Klagenfurt
+DESCRIPTION:Dr. Koinig wurde von Gerhard Stadtschreiber 
+ eingeladen.\n\n\n\n\n
+PRIORITY:5
+CLASS:PUBLIC
+UID:
+ 040000008200E00074C5B7101A82E0080000000080BF120E92E5D001000000000000000010
+ 00000094ED0FF59DFBBB44AAF5524526627DFD
+SEQUENCE:1
+X-MOZ-SNOOZE-TIME:20151014T104500Z
+X-MICROSOFT-CDO-OWNER-CRITICAL-CHANGE:20150923T091715Z
+X-MICROSOFT-CDO-ATTENDEE-CRITICAL-CHANGE:20150923T091715Z
+X-MICROSOFT-CDO-APPT-SEQUENCE:1
+X-MICROSOFT-CDO-OWNERAPPTID:-321808417
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+BEGIN:VALARM
+TRIGGER;VALUE=DURATION:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+END:VCALENDAR
+

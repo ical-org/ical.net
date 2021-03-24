@@ -60,9 +60,19 @@ namespace Ical.Net.Serialization
         {
             try
             {
-                var encodingStack = _mSerializationContext.GetService<EncodingStack>();
-                value = DecodeQuotedPrintables(value, encodingStack.Current.WebName);
-                return encodingStack.Current.GetBytes(value);
+                // We use Windows-1252 for decoding quoted printable text as
+                // this works for most of the cases. There is no better solution 
+                // at the moment.
+                const string CHARSET = "Windows-1252";
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                var quotedPrintableEncoding = Encoding.GetEncoding(CHARSET);
+                var icalEncoding = _mSerializationContext.GetService<EncodingStack>().Current;
+
+                value = DecodeQuotedPrintables(value, CHARSET);
+                var bytes = quotedPrintableEncoding.GetBytes(value);
+
+                bytes = Encoding.Convert(quotedPrintableEncoding, icalEncoding, bytes);
+                return bytes;
             }
             catch
             {
@@ -72,35 +82,55 @@ namespace Ical.Net.Serialization
 
         private static string DecodeQuotedPrintables(string input, string charSet)
         {
+            if (string.IsNullOrEmpty(charSet))
+            {
+                var charSetOccurences = new Regex(@"=\?.*\?Q\?", RegexOptions.IgnoreCase);
+                var charSetMatches = charSetOccurences.Matches(input);
+                foreach (Match match in charSetMatches)
+                {
+                    charSet = match.Groups[0].Value.Replace("=?", "").Replace("?Q?", "");
+                    input = input.Replace(match.Groups[0].Value, "").Replace("?=", "");
+                }
+            }
+
             Encoding enc = new ASCIIEncoding();
-            try
+            if (!string.IsNullOrEmpty(charSet))
             {
-                enc = Encoding.GetEncoding(charSet);
-            }
-            catch
-            {
-                enc = new UTF8Encoding();
+                try
+                {
+                    enc = Encoding.GetEncoding(charSet);
+                }
+                catch
+                {
+                    enc = new ASCIIEncoding();
+                }
             }
 
-            var occurences = new Regex(@"(=[0-9A-Z]{2}){1,}", RegexOptions.Multiline);
+            //decode iso-8859-[0-9]
+            var occurences = new Regex(@"=[0-9A-Z]{2}", RegexOptions.Multiline);
             var matches = occurences.Matches(input);
-
             foreach (Match match in matches)
             {
                 try
                 {
-                    byte[] b = new byte[match.Groups[0].Value.Length / 3];
-                    for (int i = 0; i < match.Groups[0].Value.Length / 3; i++)
-                    {
-                        b[i] = byte.Parse(match.Groups[0].Value.Substring(i * 3 + 1, 2), System.Globalization.NumberStyles.AllowHexSpecifier);
-                    }
+                    byte[] b = new byte[] { byte.Parse(match.Groups[0].Value.Substring(1), System.Globalization.NumberStyles.AllowHexSpecifier) };
                     char[] hexChar = enc.GetChars(b);
                     input = input.Replace(match.Groups[0].Value, hexChar[0].ToString());
                 }
-                catch {; }
+                catch { }
             }
-            input = input.Replace("?=", "").Replace("=\r\n", "");
 
+            //decode base64String (utf-8?B?)
+            occurences = new Regex(@"\?utf-8\?B\?.*\?", RegexOptions.IgnoreCase);
+            matches = occurences.Matches(input);
+            foreach (Match match in matches)
+            {
+                byte[] b = Convert.FromBase64String(match.Groups[0].Value.Replace("?utf-8?B?", "").Replace("?UTF-8?B?", "").Replace("?", ""));
+                string temp = Encoding.UTF8.GetString(b);
+                input = input.Replace(match.Groups[0].Value, temp);
+            }
+
+            input = input.Replace("=\r\n", "");
             return input;
         }
 

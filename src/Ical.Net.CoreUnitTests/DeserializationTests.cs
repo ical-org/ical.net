@@ -505,5 +505,18 @@ END:VCALENDAR
                 Assert.AreEqual("2." + i, props[i].Value);
             }
         }
+
+        /// <summary>
+        /// Tests the organizer of iCals created by the Software Dualoo.
+        /// Doaloo formats the organizer like this:
+        /// ORGANIZER;CN=Judith Alpiger:mailto:Dualoo%20%3Cno-reply@dualoo.com%3E
+        /// URL decoded it's: Dualoo <no-reply@dualoo.com>
+        /// </summary>
+        [Test]
+        public void Organizer1()
+        {
+            var iCal = Calendar.Load(IcsFiles.Organizer1_Dualoo);
+            Assert.AreEqual("mailto:no-reply@dualoo.com", iCal.Events[0].Organizer.Value.ToString());
+        }
     }
 }

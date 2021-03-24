@@ -70,6 +70,8 @@ namespace Ical.Net.Serialization
 
         public IEnumerable<ICalendarComponent> Deserialize(TextReader reader)
         {
+            reader = CleanIcal(reader);
+
             var context = new SerializationContext();
             var stack = new Stack<ICalendarComponent>();
             var current = default(ICalendarComponent);
@@ -212,6 +214,14 @@ namespace Ical.Net.Serialization
             {
                 yield return currentLine.ToString();
             }
+        }
+
+        private static TextReader CleanIcal(TextReader reader)
+        {
+            var rawIcal = reader.ReadToEnd();
+            var cleanediCal = IcalCleaner.CleanVCalFile(rawIcal);
+            reader = new StringReader(cleanediCal);
+            return reader;
         }
     }
 }

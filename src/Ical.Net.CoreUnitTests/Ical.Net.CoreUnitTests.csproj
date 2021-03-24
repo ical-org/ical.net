@@ -17,6 +17,17 @@
     <EmbeddedResource Include="Calendars\**\*.ics" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Calendars\IcalCleaner\CAL_1675163_1.ics" />
+    <None Remove="Calendars\IcalCleaner\CAL_20005655_0.ics" />
+    <None Remove="Calendars\IcalCleaner\normaltext_linebreaks.ics" />
+    <None Remove="Calendars\IcalCleaner\quotedprintable1.ics" />
+    <None Remove="Calendars\IcalCleaner\quotedprintable2.ics" />
+    <None Remove="Calendars\IcalCleaner\quotedprintable3.ics" />
+    <None Remove="Calendars\IcalCleaner\quotedprintable4.ics" />
+    <None Remove="Calendars\IcalCleaner\quotedprintable_umlaute_specialcharacters.ics" />
+    <None Remove="Calendars\IcalCleaner\RFC_attendees.ics" />
+  </ItemGroup>
+  <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
 </Project>

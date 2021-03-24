@@ -1,0 +1,34 @@
+﻿BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:Dualoo
+METHOD:REQUEST
+BEGIN:VEVENT
+UID:26a64b76-2fab-4979-a541-7f8927cfa6de
+DTSTAMP:20201201T135112Z
+DTSTART:20201211T133000Z
+DTEND:20201211T143000Z
+ORGANIZER;CN=Judith Alpiger:mailto:Dualoo%20%3Cno-reply@dualoo.com%3E
+SUMMARY:Termin Vorstellungsgespräch Nr. 1 Badr Amouiriche
+DESCRIPTION:Hallo Anja Edelmann\n\nJudith Alpiger möchte Sie über folgenden
+  Termin informieren. Sollten Sie diesen Termin nicht wahrnehmen können\, n
+ ehmen Sie mit Judith Alpiger Kontakt auf.\n\nBewerber: Badr Amouiriche\nSc
+ hritt: Vorstellungsgespräch Nr. 1\nBeginn: 11.12.2020 - 14:30\nEnde: 11.12
+ .2020 - 15:30\n\nStellenart: Stelle\nBeruf: Berechnungsingenieur / Produkt
+  Spezialist Koch-Kühlanlagen m/w\nStellenantritt am: nach Vereinbarung\n\n
+ Dossier ansehen: https://protect-us.mimecast.com/s/fyxBCgJkoYul8vRxhNuVh2\
+ n\n
+CLASS:PUBLIC
+TRANSP:OPAQUE
+X-ALT-DESC;FMTTYPE=text/html:<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//E
+ N">\n<HTML>\n<HEAD>\n</HEAD>\n<BODY>Hallo Anja Edelmann\n\nJudith Alpiger 
+ m&ouml\;chte Sie &uuml\;ber folgenden Termin informieren. Sollten Sie dies
+ en Termin nicht wahrnehmen k&ouml\;nnen\, nehmen Sie mit Judith Alpiger Ko
+ ntakt auf.\n\nBewerber: Badr Amouiriche\nSchritt: Vorstellungsgespr&auml\;
+ ch Nr. 1\nBeginn: 11.12.2020 - 14:30\nEnde: 11.12.2020 - 15:30\n\nStellena
+ rt: Stelle\nBeruf: Berechnungsingenieur / Produkt Spezialist Koch-K&uuml\;
+ hlanlagen m/w\nStellenantritt am: nach Vereinbarung\n\nDossier ansehen: <a
+  href="https://protect-us.mimecast.com/s/fyxBCgJkoYul8vRxhNuVh2">https://h
+ 2k.dualoo.com/#/recruiting/dossier/detail/3db5048f-35fa-459f-a9ce-5cda97a7
+ fd20?aid=5444815e-aacc-4089-aa7e-551e3306e641</a>\n\n</BODY>\n</HTML>
+END:VEVENT
+END:VCALENDAR
