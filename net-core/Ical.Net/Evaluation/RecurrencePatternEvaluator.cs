@@ -406,9 +406,9 @@ namespace Ical.Net.Evaluation
             var weekNoDates = new List<DateTime>();
             foreach (var t in dates)
             {
-                var date = t;
                 foreach (var weekNo in pattern.ByWeekNo)
                 {
+                    var date = t;
                     // Determine our current week number
                     var currWeekNo = Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
                     while (currWeekNo > weekNo)
