@@ -2571,6 +2571,60 @@ namespace Ical.Net.CoreUnitTests
                 eventIndex: 0
             );
         }
+        
+                /// <summary>
+        /// Tests bug BYWEEKNO not working
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void BugByWeekNoNotWorking()
+        {
+            var start = new DateTime(2019, 1, 1);
+            var end = new DateTime(2019, 12, 31);
+            var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=WEEKLY;BYDAY=MO;BYWEEKNO=2"));
+
+            var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, end, false);
+
+            Assert.AreEqual(1, recurringPeriods.Count);
+            Assert.AreEqual(new CalDateTime(2019, 1, 7), recurringPeriods.First().StartTime);
+        }
+
+        /// <summary>
+        /// Tests bug BYMONTH while FREQ=WEEKLY not working
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void BugByMonthWhileFreqIsWeekly()
+        {
+            var start = new DateTime(2020, 1, 1);
+            var end = new DateTime(2020, 12, 31);
+            var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=WEEKLY;BYDAY=MO;BYMONTH=1"));
+
+            var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, end, false).OrderBy(x => x).ToList();
+
+            Assert.AreEqual(4, recurringPeriods.Count);
+            Assert.AreEqual(new CalDateTime(2020, 1, 6), recurringPeriods[0].StartTime);
+            Assert.AreEqual(new CalDateTime(2020, 1, 13), recurringPeriods[1].StartTime);
+            Assert.AreEqual(new CalDateTime(2020, 1, 20), recurringPeriods[2].StartTime);
+            Assert.AreEqual(new CalDateTime(2020, 1, 27), recurringPeriods[3].StartTime);
+        }
+
+        /// <summary>
+        /// Tests bug BYMONTH while FREQ=MONTHLY not working
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void BugByMonthWhileFreqIsMonthly()
+        {
+            var start = new DateTime(2020, 1, 1);
+            var end = new DateTime(2020, 12, 31);
+            var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=MONTHLY;BYDAY=MO;BYMONTH=1"));
+
+            var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, end, false).OrderBy(x => x).ToList();
+
+            Assert.AreEqual(4, recurringPeriods.Count);
+            Assert.AreEqual(new CalDateTime(2020, 1, 6), recurringPeriods[0].StartTime);
+            Assert.AreEqual(new CalDateTime(2020, 1, 13), recurringPeriods[1].StartTime);
+            Assert.AreEqual(new CalDateTime(2020, 1, 20), recurringPeriods[2].StartTime);
+            Assert.AreEqual(new CalDateTime(2020, 1, 27), recurringPeriods[3].StartTime);
+        }
 
         /// <summary>
         /// Tests bug #3119920 - missing weekly occurences
