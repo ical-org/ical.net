@@ -11,7 +11,7 @@ namespace PerfTests
     {
         static void Main(string[] args)
         {
-            BenchmarkRunnerCore.Run(BenchmarkConverter.TypeToBenchmarks(typeof(ApplicationWorkflows)), t => InProcessToolchain.Instance);
+            BenchmarkRunner.Run(BenchmarkConverter.TypeToBenchmarks(typeof(ApplicationWorkflows)));
 
 
             //BenchmarkRunnerCore.Run(BenchmarkConverter.TypeToBenchmarks(typeof(OccurencePerfTests)), t => InProcessToolchain.Instance);

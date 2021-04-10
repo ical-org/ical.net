@@ -10,7 +10,6 @@ namespace Ical.Net
     public class VTimeZoneInfo : CalendarComponent, IRecurrable
     {
         TimeZoneInfoEvaluator _evaluator;
-        DateTime _end;
 
         public VTimeZoneInfo()
         {

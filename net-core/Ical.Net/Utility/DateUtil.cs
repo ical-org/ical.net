@@ -122,7 +122,7 @@ namespace Ical.Net.Utility
                 return DateTimeZoneProviders.Tzdb.GetZoneOrNull(ianaZone);
             }
 
-            zone = DateTimeZoneProviders.Serialization.GetZoneOrNull(tzId);
+            zone = NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(tzId);
             if (zone != null)
             {
                 return zone;
@@ -130,7 +130,7 @@ namespace Ical.Net.Utility
 
             //US/Eastern is commonly represented as US-Eastern
             var newTzId = tzId.Replace("-", "/");
-            zone = DateTimeZoneProviders.Serialization.GetZoneOrNull(newTzId);
+            zone = NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(newTzId);
             if (zone != null)
             {
                 return zone;
@@ -149,9 +149,9 @@ namespace Ical.Net.Utility
                 return DateTimeZoneProviders.Tzdb.GetZoneOrNull(ianaZone);
             }
 
-            foreach (var providerId in DateTimeZoneProviders.Serialization.Ids.Where(tzId.Contains))
+            foreach (var providerId in NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.Ids.Where(tzId.Contains))
             {
-                return DateTimeZoneProviders.Serialization.GetZoneOrNull(providerId);
+                return NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(providerId);
             }
 
             if (useLocalIfNotFound)
@@ -198,7 +198,7 @@ namespace Ical.Net.Utility
             return newZone;
         }
 
-        public static bool IsSerializationTimeZone(DateTimeZone zone) => DateTimeZoneProviders.Serialization.GetZoneOrNull(zone.Id) != null;
+        public static bool IsSerializationTimeZone(DateTimeZone zone) => NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(zone.Id) != null;
 
         /// <summary>
         /// Truncate to the specified TimeSpan's magnitude. For example, to truncate to the nearest second, use TimeSpan.FromSeconds(1)
