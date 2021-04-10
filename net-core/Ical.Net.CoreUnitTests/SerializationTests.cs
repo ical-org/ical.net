@@ -317,6 +317,9 @@ namespace Ical.Net.CoreUnitTests
             evt.Organizer = new Organizer(org);
 
             evt.Attendees.AddRange(_attendees);
+            
+            // However a bug, when a participation value is changed, ultimately re-serialises as an array (PARTSTAT=ACCEPTED,DECLINED)
+            evt.Attendees[0].ParticipationStatus = EventParticipationStatus.Declined;
 
             var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(cal);
@@ -422,11 +425,11 @@ DTSTART;TZID=Europe/Helsinki:20160707T110000
 DTEND;TZID=Europe/Helsinki:20160707T140000
 SUMMARY:Some summary
 UID:20160627T123608Z-182847102@atlassian.net
-DESCRIPTION:Key points:\n•	Some text (text,
- , text\, text\, TP) some text\;\n•	some tex
- t Some text (Text\, Text)\;\n•	Some tex
+DESCRIPTION:Key points:\nï¿½	Some text (text,
+ , text\, text\, TP) some text\;\nï¿½	some tex
+ t Some text (Text\, Text)\;\nï¿½	Some tex
  t some text\, some text\, text.\;\n\nsome te
- xt some tex‘t some text. 
+ xt some texï¿½t some text. 
 ORGANIZER;X-CONFLUENCE-USER-KEY=ff801df01547101c6720006;CN=Some
  user;CUTYPE=INDIVIDUAL:mailto:some.mail@domain.com
 CREATED:20160627T123608Z
@@ -441,8 +444,8 @@ END:VEVENT";
             var deserializedEvent = Calendar.Load<CalendarEvent>(ics).Single();
 
             Assert.IsTrue(deserializedEvent.Description.Contains("\t"));
-            Assert.IsTrue(deserializedEvent.Description.Contains("•"));
-            Assert.IsTrue(deserializedEvent.Description.Contains("‘"));
+            Assert.IsTrue(deserializedEvent.Description.Contains("ï¿½"));
+            Assert.IsTrue(deserializedEvent.Description.Contains("ï¿½"));
         }
 
         [Test]
