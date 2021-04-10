@@ -45,7 +45,7 @@ namespace Ical.Net
             set
             {
                 base.DtStart = value;
-                ExtrapolateTimes();
+                ExtrapolateTimes(2);
             }
         }
 
@@ -68,7 +68,7 @@ namespace Ical.Net
                 if (!Equals(DtEnd, value))
                 {
                     Properties.Set("DTEND", value);
-                    ExtrapolateTimes();
+                    ExtrapolateTimes(0);
                 }
             }
         }
@@ -102,7 +102,7 @@ namespace Ical.Net
                 if (!Equals(Duration, value))
                 {
                     Properties.Set("DURATION", value);
-                    ExtrapolateTimes();
+                    ExtrapolateTimes(1);
                 }
             }
         }
@@ -263,20 +263,27 @@ namespace Ical.Net
         {
             base.OnDeserialized(context);
 
-            ExtrapolateTimes();
+            ExtrapolateTimes(-1);
         }
 
-        private void ExtrapolateTimes()
+        private void ExtrapolateTimes(int source)
         {
-            if (DtEnd == null && DtStart != null && Duration != default(TimeSpan))
+            /*
+			 * Source values, a fix introduced to prevent stack overflow exceptions from occuring.
+			 *   -1 = Anybody, stack overflow could maybe still occur in this case?
+			 *    0 = End
+			 *	  1 = Duration
+			 *	  2 = DtStart
+			 */
+            if (DtEnd == null && DtStart != null && Duration != default(TimeSpan) && source != 0)
             {
                 DtEnd = DtStart.Add(Duration);
             }
-            else if (Duration == default(TimeSpan) && DtStart != null && DtEnd != null)
+            else if (Duration == default(TimeSpan) && DtStart != null && DtEnd != null && source != 1)
             {
                 Duration = DtEnd.Subtract(DtStart);
             }
-            else if (DtStart == null && Duration != default(TimeSpan) && DtEnd != null)
+            else if (DtStart == null && Duration != default(TimeSpan) && DtEnd != null && source != 2)
             {
                 DtStart = DtEnd.Subtract(Duration);
             }

@@ -36,7 +36,7 @@ namespace Ical.Net
             set
             {
                 base.DtStart = value;
-                ExtrapolateTimes();
+                ExtrapolateTimes(2);
             }
         }
 
@@ -49,7 +49,7 @@ namespace Ical.Net
             set
             {
                 Properties.Set("DUE", value);
-                ExtrapolateTimes();
+                ExtrapolateTimes(0);
             }
         }
 
@@ -72,7 +72,7 @@ namespace Ical.Net
             set
             {
                 Properties.Set("DURATION", value);
-                ExtrapolateTimes();
+                ExtrapolateTimes(1);
             }
         }
 
@@ -198,17 +198,23 @@ namespace Ical.Net
             base.OnDeserializing(context);
         }
 
-        private void ExtrapolateTimes()
+        private void ExtrapolateTimes(int source)
         {
-            if (Due == null && DtStart != null && Duration != default(TimeSpan))
+            /*
+			 * Source values, a fix introduced to prevent StackOverflow exceptions from occuring.
+			 *    0 = Due
+			 *	  1 = Duration
+			 *	  2 = DtStart
+			 */
+            if (Due == null && DtStart != null && Duration != default(TimeSpan) && source != 0)
             {
                 Due = DtStart.Add(Duration);
             }
-            else if (Duration == default(TimeSpan) && DtStart != null && Due != null)
+            else if (Duration == default(TimeSpan) && DtStart != null && Due != null && source != 1)
             {
                 Duration = Due.Subtract(DtStart);
             }
-            else if (DtStart == null && Duration != default(TimeSpan) && Due != null)
+            else if (DtStart == null && Duration != default(TimeSpan) && Due != null && source != 2)
             {
                 DtStart = Due.Subtract(Duration);
             }
