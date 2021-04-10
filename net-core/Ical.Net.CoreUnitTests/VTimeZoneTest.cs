@@ -57,6 +57,14 @@ namespace Ical.Net.CoreUnitTests
         }
 
         [Test, Category("VTimeZone")]
+        public void VTimeZonePacificKiritimatiShouldSerializeProperly()
+        {
+            var iCal = CreateTestCalendar("Pacific/Kiritimati");
+            var serializer = new CalendarSerializer();
+            Assert.DoesNotThrow(() => serializer.SerializeToString(iCal));
+        }
+
+        [Test, Category("VTimeZone")]
         public void VTimeZoneCentralAmericaStandardTimeShouldSerializeProperly()
         {
             var iCal = CreateTestCalendar("Central America Standard Time");

@@ -136,7 +136,7 @@ namespace Ical.Net.CalendarComponents
 
             if (previousInterval != null)
             {
-                delta = (previousInterval.WallOffset - oldestInterval.WallOffset).ToTimeSpan();
+                delta = new TimeSpan(0, 0, previousInterval.WallOffset.Seconds - oldestInterval.WallOffset.Seconds);
             }
             else if (isOnlyInterval)
             {
