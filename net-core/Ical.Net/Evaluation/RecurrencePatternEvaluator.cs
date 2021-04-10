@@ -263,6 +263,11 @@ namespace Ical.Net.Evaluation
                 {
                     break;
                 }
+                
+                if (pattern.Count >= 1 && dates.Count >= pattern.Count)
+                {
+                    break;
+                }
 
                 var candidates = GetCandidates(seedCopy, pattern, expandBehavior);
                 if (candidates.Count > 0)
