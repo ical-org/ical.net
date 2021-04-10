@@ -243,7 +243,7 @@ namespace Ical.Net.CalendarComponents
         /// as an upcoming or occurred event.
         /// </summary>
         /// <returns>True if the event has not been cancelled, False otherwise.</returns>
-        public virtual bool IsActive => string.Equals(Status, EventStatus.Cancelled, EventStatus.Comparison);
+        public virtual bool IsActive => !string.Equals(Status, EventStatus.Cancelled, EventStatus.Comparison);
 
         protected override bool EvaluationIncludesReferenceDate => true;
 
