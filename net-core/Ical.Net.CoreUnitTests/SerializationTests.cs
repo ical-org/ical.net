@@ -442,6 +442,38 @@ END:VEVENT";
             Assert.IsTrue(deserializedEvent.Description.Contains("�"));
             Assert.IsTrue(deserializedEvent.Description.Contains("�"));
         }
+        
+        [Test]
+        public void TestStandardDaylightTimeZoneInfoDeserialization()
+        {
+
+            const string ics = @"BEGIN:VTIMEZONE
+TZID:
+BEGIN:STANDARD
+DTSTART:16010101T030000
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=10
+END:STANDARD
+BEGIN:DAYLIGHT
+DTSTART:16010101T020000
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=3
+END:DAYLIGHT
+END:VTIMEZONE";
+            var timeZone = Calendar.Load<VTimeZone>(ics).Single();
+            Assert.IsNotNull(timeZone, "Expected the TimeZone to be successfully deserialized");
+            var timeZoneInfos = timeZone.TimeZoneInfos;
+            Assert.IsNotNull(timeZoneInfos, "Expected TimeZoneInfos to be deserialized");
+            Assert.AreEqual(2, timeZoneInfos.Count, "Expected 2 TimeZoneInfos");
+            Assert.AreEqual("STANDARD", timeZoneInfos[0].Name);
+            Assert.AreEqual(new UtcOffset("+0200"), timeZoneInfos[0].OffsetFrom);
+            Assert.AreEqual(new UtcOffset("+0100"), timeZoneInfos[0].OffsetTo);
+            Assert.AreEqual("DAYLIGHT", timeZoneInfos[1].Name);
+            Assert.AreEqual(new UtcOffset("+0100"), timeZoneInfos[1].OffsetFrom);
+            Assert.AreEqual(new UtcOffset("+0200"), timeZoneInfos[1].OffsetTo);
+        }
 
         [Test]
         public void TestRRuleUntilSerialization()
