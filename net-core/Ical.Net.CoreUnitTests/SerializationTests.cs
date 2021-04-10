@@ -183,8 +183,6 @@ namespace Ical.Net.CoreUnitTests
             var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(cal);
 
-            Console.Write(serializedCalendar);
-
             var vTimezone = InspectSerializedSection(serializedCalendar, "VTIMEZONE", new[] { "TZID:" + tz.TzId });
             var o = tzi.BaseUtcOffset.ToString("hhmm", CultureInfo.InvariantCulture);
 
@@ -261,7 +259,6 @@ namespace Ical.Net.CoreUnitTests
             var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(cal);
 
-            Console.Write(serializedCalendar);
             Assert.IsTrue(serializedCalendar.StartsWith("BEGIN:VCALENDAR"));
             Assert.IsTrue(serializedCalendar.EndsWith("END:VCALENDAR" + SerializationConstants.LineBreak));
 
@@ -323,8 +320,6 @@ namespace Ical.Net.CoreUnitTests
 
             var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(cal);
-
-            Console.Write(serializedCalendar);
 
             var vEvt = InspectSerializedSection(serializedCalendar, "VEVENT", new[] { "ORGANIZER:" + org });
 
