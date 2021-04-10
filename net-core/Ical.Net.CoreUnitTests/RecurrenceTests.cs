@@ -2606,6 +2606,27 @@ namespace Ical.Net.CoreUnitTests
             Assert.AreEqual(new CalDateTime(2020, 1, 20), recurringPeriods[2].StartTime);
             Assert.AreEqual(new CalDateTime(2020, 1, 27), recurringPeriods[3].StartTime);
         }
+        
+        [Test, Category("Recurrence")]
+        public void ReccurencePattern_MaxDate_StopsOnCount()
+        {
+            var evt = new CalendarEvent
+            {
+                Start = new CalDateTime(2018, 1, 1, 12, 0, 0),
+                Duration = TimeSpan.FromHours(1)
+            };
+
+            var pattern = new RecurrencePattern
+            {
+                Frequency = FrequencyType.Daily,
+                Count = 10
+            };
+
+            evt.RecurrenceRules.Add(pattern);
+
+            var occurrences = evt.GetOccurrences(new DateTime(2018, 1, 1), DateTime.MaxValue);
+            Assert.AreEqual(10, occurrences.Count, "There should be 10 occurrences of this event.");
+        }
 
         /// <summary>
         /// Tests bug BYMONTH while FREQ=MONTHLY not working
