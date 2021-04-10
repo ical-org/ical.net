@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <PropertyGroup>
+    <LangVersion>8</LangVersion>
+    <PackageVersion>4.2.0</PackageVersion>
+    <Title>Ical.Net</Title>
+    <PackageProjectUrl>https://github.com/rianjs/ical.net</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/rianjs/ical.net</RepositoryUrl>
+    <PackageReleaseNotes>hhttps://github.com/rianjs/ical.net/blob/master/release-notes.md</PackageReleaseNotes>
+    <TargetFrameworks>netstandard2.0;net50</TargetFrameworks>
+    <Authors>Rian Stockbower, Douglas Day, &amp; Contributors</Authors>
+    <Company />
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\IcalNetStrongnameKey.snk</AssemblyOriginatorKeyFile>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <PackageId>Ical.Net</PackageId>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>An iCalendar (RFC 5545) library. See https://github.com/rianjs/ical.net for details.</Description>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\Ical.Net.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="NodaTime" Version="3.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+</Project>

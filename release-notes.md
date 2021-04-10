@@ -3,6 +3,15 @@
 A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) version represents.
 
 ### v4
+* 4.2.0 - (2021-04-10) - Many bugbixes from the community
+  * Fix infinite loop with MaxDate for GetOccurrences #364
+  * Deserializes STANDARD and DAYLIGHT timezone infos #420
+  * BYWEEKNO & BYMONTHNO fix for ISO-8601 formatting #463
+  * Fixed bug where changing a property value appended the value instead of clearing it. #450
+  * Fixed `IsActive` regression #449
+  * Fixed bug where ordering of week numbers mattered for equality #513
+  * Target `netstandard20` and `net50`, unified build targets
+  * Updated to NodaTime 3 and `netcoreapp3.1` for unit tests (later changed to `net50`) #449
 * 4.1.11 - (2019-03-21) - Add some conditional debug symbols so VSTS doesn't choke on strong-named assemblies. Thanks, [eriknuds](https://github.com/eriknuds) #442
 * 4.1.10 - (2019-01-31) - Strong-named assemblies. Thanks, [josteink](https://github.com/josteink) #159
 * 4.1.9 - (2018-07-18) - Associate attachments with their events when VALUE is BINARY. Without the association, parameters such as FMTTYPE would be lost. [PR 411](https://github.com/rianjs/ical.net/pull/411)
