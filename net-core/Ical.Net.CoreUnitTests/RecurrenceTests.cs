@@ -1170,6 +1170,23 @@ namespace Ical.Net.CoreUnitTests
         }
 
         /// <summary>
+        /// Ordering of byweekno should not matter
+        /// </summary>
+        [Test, Category("Recurrence")]
+        public void WeekNoOrderingShouldNotMatter()
+        {
+            var start = new DateTime(2019, 1, 1);
+            var end = new DateTime(2019, 12, 31);
+            var rpe1 = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53"));
+            var rpe2 = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=53,51,49,47,45,43,41,39,37,35,33,31,29,27,25,23,21,19,17,15,13,11,9,7,5,3,1"));
+
+            var recurringPeriods1 = rpe1.Evaluate(new CalDateTime(start), start, end, false);
+            var recurringPeriods2 = rpe2.Evaluate(new CalDateTime(start), start, end, false);
+
+            Assert.AreEqual(recurringPeriods1.Count, recurringPeriods2.Count);
+        }
+
+        /// <summary>
         /// See Page 123 of RFC 2445 - RRULE:FREQ=YEARLY;BYWEEKNO=20;BYDAY=MO
         /// </summary>
         [Test, Category("Recurrence")]
