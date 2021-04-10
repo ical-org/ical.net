@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
-    <Version>5.0.0</Version>
-    <Authors>Rian Stockbower, Douglas Day &amp; Contributors</Authors>
+    <TargetFrameworks>netstandard2.0;net50</TargetFrameworks>
+    <Version>4.2.0</Version>
+    <Authors>Rian Stockbower, Douglas Day, &amp; Contributors</Authors>
     <Company />
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\IcalNetStrongnameKey.snk</AssemblyOriginatorKeyFile>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <PackageId>Fusonic.Ical.Net</PackageId>
+    <PackageId>Ical.Net</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseFile>license.md</PackageLicenseFile>
-    <Description>An iCalendar (RFC 5545) control library. See https://github.com/rianjs/ical.net for details.</Description>
+    <Description>An iCalendar (RFC 5545) library. See https://github.com/rianjs/ical.net for details.</Description>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\Ical.Net.xml</DocumentationFile>
