@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 using Ical.Net.CalendarComponents;
+using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization
 {
@@ -68,16 +69,22 @@ namespace Ical.Net.Serialization
             return contentLine;
         }
 
-        public IEnumerable<ICalendarComponent> Deserialize(TextReader reader)
+        public IEnumerable<ICalendarComponent> Deserialize(TextReader reader, bool collectErrors = false)
         {
             reader = CleanIcal(reader);
 
             var context = new SerializationContext();
             var stack = new Stack<ICalendarComponent>();
             var current = default(ICalendarComponent);
+            var serializationErrors = new List<SerializationError>();
             foreach (var contentLineString in GetContentLines(reader))
             {
-                var contentLine = ParseContentLine(context, contentLineString);
+                var contentLine = ParseContentLine(context, contentLineString, serializationErrors, collectErrors);
+                if (contentLine is null)
+                {
+                    continue;
+                }
+
                 if (string.Equals(contentLine.Name, "BEGIN", StringComparison.OrdinalIgnoreCase))
                 {
                     stack.Push(current);
@@ -105,6 +112,7 @@ namespace Ical.Net.Serialization
                         }
                         else
                         {
+                            finished.SerializationErrors = serializationErrors;
                             current.Children.Add(finished);
                         }
                     }
@@ -120,11 +128,20 @@ namespace Ical.Net.Serialization
             }
         }
 
-        private CalendarProperty ParseContentLine(SerializationContext context, string input)
+        private CalendarProperty ParseContentLine(SerializationContext context, string input,
+            ICollection<SerializationError> serializationErrors, bool collectErrors)
         {
             var match = _contentLineRegex.Match(input);
             if (!match.Success)
             {
+                // If the name of the content line can be parsed it is added to the serialization error list
+                var contentLineNameMatch = Regex.Match(input, "^([-A-Za-z0-9_]+)[;:,]");
+                if (collectErrors && contentLineNameMatch.Success)
+                {
+                    serializationErrors.Add(new SerializationError(contentLineNameMatch.Groups[1].Value, input));
+                    return null;
+                }
+
                 throw new SerializationException($"Could not parse line: '{input}'");
             }
             var name = match.Groups[_nameGroup].Value;

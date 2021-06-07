@@ -1,4 +1,7 @@
-﻿using Ical.Net.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Ical.Net.Collections;
+using Ical.Net.Serialization;
 
 namespace Ical.Net
 {
@@ -38,5 +41,10 @@ namespace Ical.Net
         /// object was found during parsing.
         /// </summary>
         int Column { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        IEnumerable<SerializationError> SerializationErrors { get; set; }
     }
 }

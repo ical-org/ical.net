@@ -525,5 +525,18 @@ END:VCALENDAR
             for (var i = 0; i < props.Count; i++)
                 Assert.AreEqual("2." + i, props[i].Value);
         }
+
+        /// <summary>
+        /// Tests that errors are collected instead of throwing a SerializationException
+        /// </summary>
+        [Test, Category("Deserialization")]
+        public void DeserializationErrorList()
+        {
+            var iCal = SimpleDeserializer.Default.Deserialize(new StringReader(IcsFiles.CollectErrors), true).Cast<Calendar>().Single();
+
+            Assert.AreEqual(2, iCal.Events[0].SerializationErrors.Count());
+            Assert.Contains("ATTENDEE", iCal.Events[0].SerializationErrors.Select(x => x.PropertyName).ToList());
+            Assert.Contains("ORGANIZER", iCal.Events[0].SerializationErrors.Select(x => x.PropertyName).ToList());
+        }
     }
 }

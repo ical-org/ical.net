@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//SmartCJM//NONSGML v1.0//EN
+BEGIN:VEVENT
+UID:terminbuchung@smart-cjm.com
+DTSTAMP:20200401T180000Z
+ATTENDEE;:FAIL;:MEMBER="mailto:DEV-GROUP@example.com":mailto:joecool@example.com
+ORGANIZER;CN=Termin
+DTSTART:20210506T110000
+LOCATION:B�rgerb�ro Wangen
+DESCRIPTION:<h3>Vielen Dank für Ihre Terminvereinbarung.</h3>Möchten Sie Ihren Termin stornieren? Klicken Sie bitte <a href="https://lk-ravensburg.saas.smartcjm.com/m/lra-ravensburg/extern/calendar/cancel?uid=dd389870-2ef7-49da-9fe8-5eacc55976cd&appointment_uid=20b6069e-3c5c-44a5-8474-c10f441cb1bc&sec=0DPNdr&lang=de">hier</a><br /><br />Mit freundlichen Grüßen<br /><br />Landratsamt Ravensburg</h4>
+X-ALT-DESC;FMTTYPE=text/html:<h3>Vielen Dank für Ihre Terminvereinbarung.</h3>Möchten Sie Ihren Termin stornieren? Klicken Sie bitte <a href="https://lk-ravensburg.saas.smartcjm.com/m/lra-ravensburg/extern/calendar/cancel?uid=dd389870-2ef7-49da-9fe8-5eacc55976cd&appointment_uid=20b6069e-3c5c-44a5-8474-c10f441cb1bc&sec=0DPNdr&lang=de">hier</a><br /><br />Mit freundlichen Grüßen<br /><br />Landratsamt Ravensburg</h4>
+SUMMARY:Terminbuchung
+END:VEVENT
+END:VCALENDAR

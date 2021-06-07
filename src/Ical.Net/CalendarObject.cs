@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Ical.Net.Collections;
+using Ical.Net.Serialization;
 
 namespace Ical.Net
 {
@@ -36,6 +38,7 @@ namespace Ical.Net
             _serviceProvider = new ServiceProvider();
 
             _children.ItemAdded += Children_ItemAdded;
+            SerializationErrors = new List<SerializationError>();
         }
 
         [OnDeserializing]
@@ -119,6 +122,7 @@ namespace Ical.Net
         public virtual int Line { get; set; }
 
         public virtual int Column { get; set; }
+        public IEnumerable<SerializationError> SerializationErrors { get; set; }
 
         public virtual object GetService(Type serviceType) => _serviceProvider.GetService(serviceType);
 

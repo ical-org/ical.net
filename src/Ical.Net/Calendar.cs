@@ -34,6 +34,9 @@ namespace Ical.Net
         public static IList<T> Load<T>(TextReader tr)
             => SimpleDeserializer.Default.Deserialize(tr).OfType<T>().ToList();
 
+        public static IList<T> Load<T>(TextReader tr, bool collectErrors)
+            => SimpleDeserializer.Default.Deserialize(tr, collectErrors).OfType<T>().ToList();
+
         public static IList<T> Load<T>(string ical)
             => Load<T>(new StringReader(ical));
 

@@ -159,6 +159,7 @@ namespace Ical.Net.CoreUnitTests
         internal static string YearlyCountByYearDay1 => ReadStream("Ical.Net.CoreUnitTests.Calendars.Recurrence.YearlyCountByYearDay1.ics");
         internal static string YearlyInterval1 => ReadStream("Ical.Net.CoreUnitTests.Calendars.Recurrence.YearlyInterval1.ics");
         internal static string Organizer1_Dualoo => ReadStream("Ical.Net.CoreUnitTests.Calendars.Serialization.Organizer1_Dualoo.ics");
+        internal static string CollectErrors => ReadStream("Ical.Net.CoreUnitTests.Calendars.Serialization.CollectErrors.ics");
 
         // IcalCleaner
         internal static string Cleaner_Attendees1 => ReadStream("Ical.Net.CoreUnitTests.Calendars.IcalCleaner.CAL_1675163_1.ics");
