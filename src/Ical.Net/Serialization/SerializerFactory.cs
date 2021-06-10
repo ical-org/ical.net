@@ -50,6 +50,10 @@ namespace Ical.Net.Serialization
             {
                 s = new ParameterSerializer(ctx);
             }
+            else if (typeof(QuotedPrintableString).IsAssignableFrom(objectType))
+            {
+                s = new QuotedPrintableStringSerializer(ctx);
+            }
             else if (typeof (string).IsAssignableFrom(objectType))
             {
                 s = new StringSerializer(ctx);

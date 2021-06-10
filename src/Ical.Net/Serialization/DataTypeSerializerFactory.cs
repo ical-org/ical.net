@@ -78,6 +78,10 @@ namespace Ical.Net.Serialization
                 {
                     s = new WeekDaySerializer(ctx);
                 }
+                else if (typeof(QuotedPrintableString).IsAssignableFrom(objectType))
+                {
+                    s = new QuotedPrintableStringSerializer(ctx);
+                }
                 // Default to a string serializer, which simply calls
                 // ToString() on the value to serialize it.
                 else

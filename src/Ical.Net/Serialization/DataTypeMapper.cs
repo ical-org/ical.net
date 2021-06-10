@@ -135,6 +135,18 @@ namespace Ical.Net.Serialization
                 return null;
             }
 
+            if (p.Parameters.ContainsKey("ENCODING"))
+            {
+                var encoding = p.Parameters.Get("ENCODING");
+                switch(encoding?.ToUpperInvariant())
+                {
+                    case "QUOTED-PRINTABLE":
+                        return typeof(QuotedPrintableString);
+                    default:
+                        break;
+                }
+            }
+
             if (!_propertyMap.TryGetValue(p.Name, out var m))
             {
                 return null;

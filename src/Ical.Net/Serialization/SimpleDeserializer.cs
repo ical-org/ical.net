@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
@@ -180,7 +181,9 @@ namespace Ical.Net.Serialization
 
         private static IEnumerable<string> GetContentLines(TextReader reader)
         {
+            var culture = CultureInfo.InvariantCulture;
             var currentLine = new StringBuilder();
+            bool isQuotedPrintable = false;
             while (true)
             {
                 var nextLine = reader.ReadLine();
@@ -194,23 +197,41 @@ namespace Ical.Net.Serialization
                     continue;
                 }
 
-                if ((nextLine[0] == ' ' || nextLine[0] == '\t'))
+                if (nextLine[0] == ' ' || nextLine[0] == '\t')
                 {
                     currentLine.Append(nextLine, 1, nextLine.Length - 1);
+                }
+                else if (isQuotedPrintable)
+                {
+                    isQuotedPrintable = nextLine[nextLine.Length - 1] == '=';
+                    var trimTail = isQuotedPrintable ? 1 : 0;
+                    currentLine.Append(nextLine, 0, nextLine.Length - trimTail);
                 }
                 else
                 {
                     if (currentLine.Length > 0)
                     {
                         yield return currentLine.ToString();
+                        isQuotedPrintable = false;
                     }
                     currentLine.Clear();
-                    currentLine.Append(nextLine);
+
+                    if (culture.CompareInfo.IndexOf(nextLine, ";ENCODING=QUOTED-PRINTABLE", CompareOptions.IgnoreCase) >= 0
+                        && nextLine[nextLine.Length - 1] == '=')
+                    {
+                        isQuotedPrintable = true;
+                        currentLine.Append(nextLine, 0, nextLine.Length - 1);
+                    }
+                    else
+                    {
+                        currentLine.Append(nextLine);
+                    }
                 }
             }
             if (currentLine.Length > 0)
             {
                 yield return currentLine.ToString();
+                isQuotedPrintable = false;
             }
         }
     }

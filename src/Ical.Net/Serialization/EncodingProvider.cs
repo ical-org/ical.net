@@ -100,11 +100,37 @@ namespace Ical.Net.Serialization
             }
         }
 
+        protected string EncodeUnicode(byte[] data)
+        {
+            try
+            {
+                var utf16 = new UnicodeEncoding();
+                return utf16.GetString(data);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         protected string EncodeBase64(byte[] data)
         {
             try
             {
                 return Convert.ToBase64String(data);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        protected string EncodeSJIS(byte[] data)
+        {
+            try
+            {
+                var sjis = Encoding.GetEncoding("shift-jis");
+                return sjis.GetString(data);
             }
             catch
             {
@@ -124,9 +150,20 @@ namespace Ical.Net.Serialization
                 case "7BIT":
                     return Encode7Bit;
                 case "8BIT":
+                case "UTF8":
+                case "UTF-8":
                     return Encode8Bit;
+                case "UNICODE":
+                case "UTF16":
+                case "UTF-16":
+                    return EncodeUnicode;
                 case "BASE64":
                     return EncodeBase64;
+                case "SJIS":
+                case "S-JIS":
+                case "SHIFT_JIS":
+                case "SHIFT-JIS":
+                    return EncodeSJIS;
                 default:
                     return null;
             }
