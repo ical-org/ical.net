@@ -68,6 +68,8 @@ namespace Ical.Net.CoreUnitTests
         internal static string Event2 => ReadStream("Ical.Net.CoreUnitTests.Calendars.Serialization.Event2.ics");
         internal static string Event3 => ReadStream("Ical.Net.CoreUnitTests.Calendars.Serialization.Event3.ics");
         internal static string Event4 => ReadStream("Ical.Net.CoreUnitTests.Calendars.Serialization.Event4.ics");
+        internal static string QuotedPrintableContent => ReadStream("Ical.Net.CoreUnitTests.Calendars.Serialization.QuotedPrintableContent.ics");
+        internal static string QuotedPrintableSJISEncoding => ReadStream("Ical.Net.CoreUnitTests.Calendars.Serialization.QuotedPrintable-NSEncoding.ics");
         internal static string EventStatus => ReadStream("Ical.Net.CoreUnitTests.Calendars.Serialization.EventStatus.ics");
         internal static string GeographicLocation1 => ReadStream("Ical.Net.CoreUnitTests.Calendars.Serialization.GeographicLocation1.ics");
         internal static string Google1 => ReadStream("Ical.Net.CoreUnitTests.Calendars.Serialization.Google1.ics");
