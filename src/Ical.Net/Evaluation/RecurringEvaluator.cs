@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.CalendarComponents;
@@ -42,12 +42,17 @@ namespace Ical.Net.Evaluation
                 return new HashSet<Period>();
             }
 
-            var evaluator = Recurrable.RecurrenceRules.First().GetService(typeof(IEvaluator)) as IEvaluator;
-            if (evaluator == null)
+            var periodsQuery = Recurrable.RecurrenceRules.SelectMany(rule =>
             {
-                return new HashSet<Period>();
-            }
-            var periods = evaluator.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
+                var ruleEvaluator = rule.GetService(typeof(IEvaluator)) as IEvaluator;
+                if (ruleEvaluator == null)
+                {
+                    return Enumerable.Empty<Period>();
+                }
+                return ruleEvaluator.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
+            });
+
+            var periods = new HashSet<Period>(periodsQuery);
 
             if (includeReferenceDateInResults)
             {
@@ -81,13 +86,16 @@ namespace Ical.Net.Evaluation
                 return new HashSet<Period>();
             }
 
-            var evaluator = Recurrable.ExceptionRules.First().GetService(typeof(IEvaluator)) as IEvaluator;
-            if (evaluator == null)
+            var exRuleEvaluatorQuery = Recurrable.ExceptionRules.SelectMany(exRule =>
             {
-                return new HashSet<Period>();
-            }
+                var exRuleEvaluator = exRule.GetService(typeof(IEvaluator)) as IEvaluator;
+                if (exRuleEvaluator == null)
+                {
+                    return Enumerable.Empty<Period>();
+                }
+                return exRuleEvaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
+            });
 
-            var exRuleEvaluatorQuery = Recurrable.ExceptionRules.SelectMany(exRule => evaluator.Evaluate(referenceDate, periodStart, periodEnd, false));
             var exRuleExclusions = new HashSet<Period>(exRuleEvaluatorQuery);
             return exRuleExclusions;
         }
