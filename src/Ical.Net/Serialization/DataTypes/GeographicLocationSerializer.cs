@@ -21,11 +21,21 @@ namespace Ical.Net.Serialization.DataTypes
                 return null;
             }
 
-            var value = g.Latitude.ToString("0.000000######", CultureInfo.InvariantCulture.NumberFormat) + ";"
-                + g.Longitude.ToString("0.000000######", CultureInfo.InvariantCulture.NumberFormat);
+            var value = TruncateValue(g.Latitude, 12).ToString("0.000000######", CultureInfo.InvariantCulture.NumberFormat) + ";"
+                + TruncateValue(g.Longitude, 12).ToString("0.000000######", CultureInfo.InvariantCulture.NumberFormat);
             return Encode(g, value);
         }
+        private double TruncateValue(double val, int precision)
+        {
+            if (precision <= 0)
+                return val;
 
+            double retVal = val * Math.Pow(10, precision);
+            if (double.IsInfinity(retVal))
+                return val;
+            retVal = Math.Truncate(retVal) / Math.Pow(10, precision);
+            return retVal.Equals(Double.NaN) ? val : retVal;
+        }
         public GeographicLocation Deserialize(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
