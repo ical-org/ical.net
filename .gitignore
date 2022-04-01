@@ -1,3 +1,6 @@
+## OS-specific files
+.DS_Store
+
 ## Benchmark.net files
 *.html
 *.csv

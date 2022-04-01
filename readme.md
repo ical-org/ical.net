@@ -43,7 +43,7 @@ ical.net is a something I do in my spare time around my family, day job, friends
 
 * Changes made to the ical.net library are open source.
 * You do not own the changes I make to the library.
-* Congruence with my vision for the future for ical.net is required. That means I won't do things like add Exchange interop, or take  dependencies on third-party libraries that benefit on your use case.
+* Congruence with my vision for the future for ical.net is required. That means I won't do things like add Exchange interop, or take  dependencies on third-party libraries that benefit only your use case.
 * New versions of the library that result from changes made will be published on nuget for others to consume.
 
 Please email me if paid support is something you require, and we can work out the details via email.

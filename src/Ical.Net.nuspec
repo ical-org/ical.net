@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>Ical.Net</id>
+        <version>4.1.11</version>
+        <title>Ical.Net</title>
+        <authors>Rian Stockbower, Douglas Day</authors>
+        <owners>Rian Stockbower</owners>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>An iCalendar (RFC 5545) control library for .NET.</description>
+        <projectUrl>https://github.com/rianjs/ical.net</projectUrl>
+        <licenseUrl>https://github.com/rianjs/ical.net/blob/master/license.md</licenseUrl>
+        <releaseNotes>https://github.com/rianjs/ical.net/blob/master/release-notes.md</releaseNotes>
+        <iconUrl>https://github.com/rianjs/ical.net/raw/master/nuget_logo_150px.png</iconUrl>
+        <tags>iCal Calendar icalendar ics outlook events rfc-5545 rfc-2445 dday</tags>
+        <dependencies>
+            <dependency id="NodaTime" version="2.0.2" />
+            <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
+            <dependency id="System.Reflection.TypeExtensions" version="4.1.0" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="Ical.Net\bin\Release\Ical.Net.xml" target="lib\Ical.Net.xml" />
+
+        <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.dll" target="lib\netstandard1.3\Ical.Net.dll" />
+        <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.pdb" target="lib\netstandard1.3\Ical.Net.pdb" />
+        <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.xml" target="lib\netstandard1.3\Ical.Net.xml" />
+        <file src="Ical.Net\bin\Release\netstandard1.3\Ical.Net.deps.json" target="lib\netstandard1.3\Ical.Net.deps.json" />
+
+        <file src="Ical.Net\bin\Release\net46\Ical.Net.dll" target="lib\net46\Ical.Net.dll" />
+        <file src="Ical.Net\bin\Release\net46\Ical.Net.pdb" target="lib\net46\Ical.Net.pdb" />
+        <file src="Ical.Net\bin\Release\net46\Ical.Net.xml" target="lib\net46\Ical.Net.xml" />
+    </files>
+</package>
