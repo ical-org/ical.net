@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Ical.Net.Serialization
 {
-    internal class EncodingProvider : IEncodingProvider
+	internal class EncodingProvider : IEncodingProvider
     {
         public delegate string EncoderDelegate(byte[] data);
 
@@ -54,6 +56,52 @@ namespace Ical.Net.Serialization
             }
         }
 
+		protected byte[] DecodeQuotedPrintable(string value)
+		{
+			var outBuffer = new List<byte>();
+			for (var i = 0; i < value.Length; i++)
+			{
+				if (value[i] != '=')
+				{
+					outBuffer.Add((byte)value[i]);
+					continue;
+				}
+
+				var hex = value.Substring(i + 1, 2);
+				i += 2;
+
+				if (hex == "\r\n")
+					continue;
+
+				if (!isValidHex(hex))
+				{
+					/* Not wrapping or valid hex, just pass it through - when getting the value, other code tends to strip out the value, meaning this code parses:
+					 *    <p>Normal   0         false   false   false                             Mic=rosoftInternetExplorer4</p>=0D=0A<br class=3D"clear" />
+					 *
+					 * When the source has:
+					 *    <p>Normal   0         false   false   false                             Mic=
+					 *     rosoftInternetExplorer4</p>=0D=0A<br class=3D"clear" />
+					 *
+					 * So we just want to drop the = and pass the other characters through.
+					 */
+					foreach (var c in hex)
+						outBuffer.Add((byte)c);
+					continue;
+				}
+                
+				var codePoint = Convert.ToInt32(hex, 16);
+				outBuffer.Add(Convert.ToByte(codePoint));
+			}
+
+			return outBuffer.ToArray();
+		}
+
+		private static Regex hexRegex = new Regex("[0-9a-f]{2}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static bool isValidHex(string test)
+        {
+	        return hexRegex.IsMatch(test);
+        }
+
         protected virtual DecoderDelegate GetDecoderFor(string encoding)
         {
             if (encoding == null)
@@ -69,6 +117,9 @@ namespace Ical.Net.Serialization
                     return Decode8Bit;
                 case "BASE64":
                     return DecodeBase64;
+                case "QUOTED-PRINTABLE":
+                    // Not technically permitted under RFC, but GoToTraining uses it anyway, so let's play it safe.
+	                return DecodeQuotedPrintable;
                 default:
                     return null;
             }
@@ -112,6 +163,23 @@ namespace Ical.Net.Serialization
             }
         }
 
+        protected string EncodeQuotedPrintable(byte[] data)
+        {
+	        var sb = new StringBuilder();
+	        foreach (var b in data)
+	        {
+		        if (b >= 33 && b <= 126 && b != 61)
+		        {
+			        sb.Append(Convert.ToChar(b));
+			        continue;
+		        }
+
+		        sb.Append($"={b:X2}");
+	        }
+
+	        return sb.ToString();
+        }
+
         protected virtual EncoderDelegate GetEncoderFor(string encoding)
         {
             if (encoding == null)
@@ -127,6 +195,9 @@ namespace Ical.Net.Serialization
                     return Encode8Bit;
                 case "BASE64":
                     return EncodeBase64;
+                case "QUOTED-PRINTABLE":
+                    // Not technically permitted under RFC, but GoToTraining uses it anyway, so let's play it safe.
+	                return EncodeQuotedPrintable;
                 default:
                     return null;
             }
