@@ -293,6 +293,7 @@ namespace Ical.Net.CalendarComponents
                 Equals(DtStart, other.DtStart)
                 && string.Equals(Summary, other.Summary, StringComparison.OrdinalIgnoreCase)
                 && string.Equals(Description, other.Description, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(Group, other.Group, StringComparison.OrdinalIgnoreCase)
                 && Equals(DtEnd, other.DtEnd)
                 && string.Equals(Location, other.Location, StringComparison.OrdinalIgnoreCase)
                 && resourcesSet.SetEquals(other.Resources)
@@ -353,6 +354,7 @@ namespace Ical.Net.CalendarComponents
                 var hashCode = DtStart?.GetHashCode() ?? 0;
                 hashCode = (hashCode * 397) ^ (Summary?.GetHashCode() ?? 0);
                 hashCode = (hashCode * 397) ^ (Description?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (Group?.GetHashCode() ?? 0);
                 hashCode = (hashCode * 397) ^ (DtEnd?.GetHashCode() ?? 0);
                 hashCode = (hashCode * 397) ^ (Location?.GetHashCode() ?? 0);
                 hashCode = (hashCode * 397) ^ Status?.GetHashCode() ?? 0;
