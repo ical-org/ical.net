@@ -1,4 +1,4 @@
-using Ical.Net.DataTypes;
+﻿using Ical.Net.DataTypes;
 using Ical.Net.Proxies;
 using Ical.Net.Utility;
 using NodaTime;
@@ -177,7 +177,7 @@ namespace Ical.Net.CalendarComponents
             timeZoneInfo.TimeZoneName = oldestInterval.Name;
 
             var start = oldestInterval.IsoLocalStart.ToDateTimeUnspecified() + delta;
-            timeZoneInfo.Start = new CalDateTime(start) { HasTime = true };
+            timeZoneInfo.Start = new CalDateTime(start);
 
             if (isRRule)
             {
@@ -244,7 +244,6 @@ namespace Ical.Net.CalendarComponents
                     continue;
                 }
 
-                date.HasTime = true;
                 periodList.Add(date);
                 tzi.RecurrenceDates.Add(periodList);
             }

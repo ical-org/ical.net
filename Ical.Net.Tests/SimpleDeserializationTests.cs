@@ -451,22 +451,15 @@ END:VCALENDAR
             Assert.That(evt.Transparency, Is.EqualTo(TransparencyType.Transparent));
         }
 
-        /// <summary>
-        /// Tests that DateTime values that are out-of-range are still parsed correctly
-        /// and set to the closest representable date/time in .NET.
-        /// </summary>
         [Test, Category("Deserialization")]
-        public void DateTime1()
+        public void DateTime1_Unrepresentable_DateTimeArgs_ShouldThrow()
         {
-            var iCal = SimpleDeserializer.Default.Deserialize(new StringReader(IcsFiles.DateTime1)).Cast<Calendar>().Single();
-            Assert.That(iCal.Events, Has.Count.EqualTo(6));
-
-            var evt = iCal.Events["nc2o66s0u36iesitl2l0b8inn8@google.com"];
-            Assert.That(evt, Is.Not.Null);
-
-            // The "Created" date is out-of-bounds.  It should be coerced to the
-            // closest representable date/time.
-            Assert.That(evt.Created.Value, Is.EqualTo(DateTime.MinValue));
+            Assert.That(() =>
+            {
+                _ = SimpleDeserializer.Default.Deserialize(new StringReader(IcsFiles.DateTime1))
+                    .Cast<Calendar>()
+                    .Single();
+            }, Throws.Exception.TypeOf<ArgumentOutOfRangeException>());
         }
 
         [Test, Category("Deserialization"), Ignore("Ignore until @thoemy commits the EventStatus.ics file")]

@@ -6,43 +6,27 @@ using System.Text.RegularExpressions;
 
 namespace Ical.Net.Serialization.DataTypes
 {
+    /// <summary>
+    /// A serializer for the <see cref="CalDateTime"/> data type.
+    /// </summary>
     public class DateTimeSerializer : EncodableDataTypeSerializer
     {
+        /// <summary>
+        /// This constructor is required for the SerializerFactory to work.
+        /// </summary>
         public DateTimeSerializer() { }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="DateTimeSerializer"/> class.
+        /// </summary>
+        /// <param name="ctx"></param>
         public DateTimeSerializer(SerializationContext ctx) : base(ctx) { }
-
-        private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
-        {
-            var dt = DateTime.MinValue;
-
-            // NOTE: determine if a date/time value exceeds the representable date/time values in .NET.
-            // If so, let's automatically adjust the date/time to compensate.
-            // FIXME: should we have a parsing setting that will throw an exception
-            // instead of automatically adjusting the date/time value to the
-            // closest representable date/time?
-            try
-            {
-                if (year > 9999)
-                {
-                    dt = DateTime.MaxValue;
-                }
-                else if (year > 0)
-                {
-                    dt = new DateTime(year, month, day, hour, minute, second, kind);
-                }
-            }
-            catch { }
-
-            return dt;
-        }
 
         public override Type TargetType => typeof(CalDateTime);
 
         public override string SerializeToString(object obj)
         {
-            var dt = obj as IDateTime;
-            if (dt == null)
+            if (obj is not IDateTime dt)
             {
                 return null;
             }
@@ -77,7 +61,7 @@ namespace Ical.Net.Serialization.DataTypes
                 dt.SetValueType("DATE");
             }
 
-            var value = new StringBuilder();
+            var value = new StringBuilder(512);
             value.Append($"{dt.Year:0000}{dt.Month:00}{dt.Day:00}");
             if (dt.HasTime)
             {
@@ -92,16 +76,16 @@ namespace Ical.Net.Serialization.DataTypes
             return Encode(dt, value.ToString());
         }
 
-        private const RegexOptions _ciCompiled = RegexOptions.Compiled | RegexOptions.IgnoreCase;
-        internal static readonly Regex DateOnlyMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))?$", _ciCompiled, RegexDefaults.Timeout);
-        internal static readonly Regex FullDateTimePatternMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))T((\d{2})(\d{2})(\d{2})(Z)?)$", _ciCompiled, RegexDefaults.Timeout);
+        private const RegexOptions Options = RegexOptions.Compiled | RegexOptions.IgnoreCase;
+        internal static readonly Regex DateOnlyMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))?$", Options, RegexDefaults.Timeout);
+        internal static readonly Regex FullDateTimePatternMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))T((\d{2})(\d{2})(\d{2})(Z)?)$", Options, RegexDefaults.Timeout);
 
         public override object Deserialize(TextReader tr)
         {
             var value = tr.ReadToEnd();
 
-            var dt = CreateAndAssociate() as IDateTime;
-            if (dt == null)
+            // CalDateTime is defined as the Target type
+            if (CreateAndAssociate() is not CalDateTime dt)
             {
                 return null;
             }
@@ -119,28 +103,21 @@ namespace Ical.Net.Serialization.DataTypes
             {
                 return null;
             }
-            var now = DateTime.Now;
 
-            var year = now.Year;
-            var month = now.Month;
-            var date = now.Day;
-            var hour = 0;
-            var minute = 0;
-            var second = 0;
+            var datePart = new DateOnly(); // Initialize. At this point, we know that the date part is present
+            TimeOnly? timePart = null;
 
             if (match.Groups[1].Success)
             {
-                dt.HasDate = true;
-                year = Convert.ToInt32(match.Groups[2].Value);
-                month = Convert.ToInt32(match.Groups[3].Value);
-                date = Convert.ToInt32(match.Groups[4].Value);
+                datePart = new DateOnly(Convert.ToInt32(match.Groups[2].Value),
+                    Convert.ToInt32(match.Groups[3].Value),
+                    Convert.ToInt32(match.Groups[4].Value));
             }
             if (match.Groups.Count >= 6 && match.Groups[5].Success)
             {
-                dt.HasTime = true;
-                hour = Convert.ToInt32(match.Groups[6].Value);
-                minute = Convert.ToInt32(match.Groups[7].Value);
-                second = Convert.ToInt32(match.Groups[8].Value);
+                timePart = new TimeOnly(Convert.ToInt32(match.Groups[6].Value),
+                    Convert.ToInt32(match.Groups[7].Value),
+                    Convert.ToInt32(match.Groups[8].Value));
             }
 
             var isUtc = match.Groups[9].Success;
@@ -153,7 +130,8 @@ namespace Ical.Net.Serialization.DataTypes
                 dt.TzId = "UTC";
             }
 
-            dt.Value = CoerceDateTime(year, month, date, hour, minute, second, kind);
+            dt.SetValue(datePart, timePart, kind);
+ 
             return dt;
         }
     }
