@@ -538,13 +538,13 @@ namespace Ical.Net.DataTypes
             }
             if (HasTime && HasDate)
             {
-                return Value + tz;
+                return Value.ToString(formatProvider) + tz;
             }
             if (HasTime)
             {
                 return Value.TimeOfDay + tz;
             }
-            return Value.ToString("d") + tz;
+            return Value.ToString("d", formatProvider) + tz;
         }
     }
 }

@@ -174,6 +174,14 @@ namespace Ical.Net.Tests
             yield return new TestCaseData(new DateTime(2022, 8, 30), "o", null)
                 .Returns("2022-08-30T00:00:00.0000000+12:00 Pacific/Auckland")
                 .SetName("Date and time formatted using format string with no culture returns string using BCL formatter");
+
+            yield return new TestCaseData(new DateTime(2022, 8, 30, 10, 30, 0), null, CultureInfo.InvariantCulture)
+                .Returns("08/30/2022 10:30:00 Pacific/Auckland")
+                .SetName("Date and time with format provider");
+
+            yield return new TestCaseData(new DateTime(2022, 8, 30), null, CultureInfo.InvariantCulture)
+                .Returns("08/30/2022 Pacific/Auckland")
+                .SetName("Date only with current format provider");
         }
     }
 }
