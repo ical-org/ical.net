@@ -1,4 +1,6 @@
-﻿using Ical.Net.CalendarComponents;
+using System.Collections.Generic;
+using System.Globalization;
+using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using NUnit.Framework;
 using System;
@@ -149,6 +151,29 @@ namespace Ical.Net.Tests
             yield return new TestCaseData(DateTime.SpecifyKind(localDt, DateTimeKind.Unspecified), null)
                 .Returns(DateTimeKind.Unspecified)
                 .SetName("DateTime with Kind = Unspecified and null tzid returns DateTimeKind.Unspecified");
+        }
+
+        [Test, TestCaseSource(nameof(ToStringTestCases))]
+        public string ToStringTests(DateTime localDateTime, string format, IFormatProvider formatProvider)
+            => new CalDateTime(localDateTime, "Pacific/Auckland").ToString(format, formatProvider);
+
+        public static IEnumerable<ITestCaseData> ToStringTestCases()
+        {
+            yield return new TestCaseData(new DateTime(2022, 8, 30, 10, 30, 0), null, null)
+                .Returns($"{new DateTime(2022, 8, 30, 10, 30, 0)} Pacific/Auckland")
+                .SetName("Date and time with current culture formatting returns string using BCL current culture formatted date and time");
+
+            yield return new TestCaseData(new DateTime(2022, 8, 30), null, null)
+                .Returns($"{new DateTime(2022, 8, 30):d} Pacific/Auckland")
+                .SetName("Date only with current culture formatting returns string using BCL current culture formatted date");
+
+            yield return new TestCaseData(new DateTime(2022, 8, 30, 10, 30, 0), "o", null)
+                .Returns("2022-08-30T10:30:00.0000000+12:00 Pacific/Auckland")
+                .SetName("Date and time formatted using format string with no culture returns string using BCL formatter");
+
+            yield return new TestCaseData(new DateTime(2022, 8, 30), "o", null)
+                .Returns("2022-08-30T00:00:00.0000000+12:00 Pacific/Auckland")
+                .SetName("Date and time formatted using format string with no culture returns string using BCL formatter");
         }
     }
 }
