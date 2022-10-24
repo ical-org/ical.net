@@ -256,7 +256,7 @@ namespace Ical.Net.CalendarComponents
                 var weekday = date.DayOfWeek;
                 var num = DateUtil.WeekOfMonth(date);
 
-                ByDay.Add(num != 5 ? new WeekDay(weekday, num) : new WeekDay(weekday, -1));
+                ByDay.Add(num < 4 ? new WeekDay(weekday, num) : new WeekDay(weekday, -1));
             }
         }
 

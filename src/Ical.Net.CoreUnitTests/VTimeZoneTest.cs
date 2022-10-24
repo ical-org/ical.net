@@ -213,6 +213,28 @@ namespace Ical.Net.CoreUnitTests
             Assert.IsTrue(serialized.Contains("DTSTART:20071104T020000"), "DTSTART:20071104T020000 was not serialized");
         }
 
+        [Test, Category("VTimeZone")]
+        public void TimeChangeForEuropeanTimeZoneIsCorrect()
+        {
+            var iCal = CreateTestCalendar("Europe/Vienna", new DateTime(2022, 1, 1), includeHistoricalData: false);
+            var serializer = new CalendarSerializer();
+            var serialized = serializer.SerializeToString(iCal);
+
+            Assert.IsTrue(serialized.Contains("RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10"), "RRULE for standard time is wrong");
+            Assert.IsTrue(serialized.Contains("RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3"), "RRULE for daylight saving time is wrong");
+        }
+
+        [Test, Category("VTimeZone")]
+        public void TimeChangeForAmericanTimeZoneIsCorrect()
+        {
+            var iCal = CreateTestCalendar("America/Detroit", new DateTime(2022, 1, 1), includeHistoricalData: false);
+            var serializer = new CalendarSerializer();
+            var serialized = serializer.SerializeToString(iCal);
+
+            Assert.IsTrue(serialized.Contains("RRULE:FREQ=YEARLY;BYDAY=1SU;BYMONTH=11"), "RRULE for standard time is wrong");
+            Assert.IsTrue(serialized.Contains("RRULE:FREQ=YEARLY;BYDAY=2SU;BYMONTH=3"), "RRULE for daylight saving time is wrong");
+        }
+
         private static Calendar CreateTestCalendar(string tzId, DateTime? earliestTime = null, bool includeHistoricalData = true)
         {
             var iCal = new Calendar();
