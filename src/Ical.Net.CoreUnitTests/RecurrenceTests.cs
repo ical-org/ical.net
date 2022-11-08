@@ -2795,7 +2795,7 @@ namespace Ical.Net.CoreUnitTests
             RecurrencePattern pattern = new RecurrencePattern("FREQ=SECONDLY;INTERVAL=10");
             pattern.RestrictionType = RecurrenceRestrictionType.NoRestriction;
 
-            var us = new CultureInfo("en-US");
+            var us = new CultureInfo("en-US", false);
 
             var startDate = new CalDateTime(DateTime.Parse("3/30/08 11:59:40 PM", us));
             var fromDate = new CalDateTime(DateTime.Parse("3/30/08 11:59:40 PM", us));
