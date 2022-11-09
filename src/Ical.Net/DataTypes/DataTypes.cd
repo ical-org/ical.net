@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Ical.Net.DataTypes.AlarmOccurrence" Collapsed="true">
+    <Position X="1" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAgAAAAAAAAAAAAIQAAABAAAAAAAI=</HashCode>
+      <FileName>DataTypes\AlarmOccurrence.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Ical.Net.DataTypes.Attachment" Collapsed="true">
+    <Position X="6.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAACAEhAAAAAAAAAAAAJAACAAAAgAAAAA=</HashCode>
+      <FileName>DataTypes\Attachment.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ical.Net.DataTypes.Attendee" Collapsed="true">
+    <Position X="3" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAgSAgAIACTAkAAAAAAIAAIAAIAAAQAlCAAIEAA=</HashCode>
+      <FileName>DataTypes\Attendee.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ical.Net.DataTypes.CalDateTime" Collapsed="true">
+    <Position X="9.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ADICACAgJpiAASXGwAmDAsKAAGQICqIFIAAkIQBQByA=</HashCode>
+      <FileName>DataTypes\CalDateTime.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.286" />
+  </Class>
+  <Class Name="Ical.Net.DataTypes.CalendarDataType" Collapsed="true">
+    <Position X="5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAABEACAQEATACAAABAAAEBgAAAIAEAIAAAAABAFQ=</HashCode>
+      <FileName>DataTypes\CalendarDataType.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Ical.Net.DataTypes.EncodableDataType" Collapsed="true">
+    <Position X="5" Y="1.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataTypes\EncodableDataType.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Left" Position="0.1" />
+  </Class>
+  <Class Name="Ical.Net.DataTypes.FreeBusyEntry" Collapsed="true">
+    <Position X="14.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataTypes\FreeBusyEntry.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ical.Net.DataTypes.GeographicLocation" Collapsed="true">
+    <Position X="5" Y="3.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAACAEgAAIAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataTypes\GeographicLocation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ical.Net.DataTypes.Occurrence" Collapsed="true">
+    <Position X="1" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAQEgAAAAAAAAAAAAIAAAAAAAAAAAAI=</HashCode>
+      <FileName>DataTypes\Occurrence.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Ical.Net.DataTypes.Organizer" Collapsed="true">
+    <Position X="11.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAACAAgAAAAAAAAAAAAIAAAAAkAAAAEAA=</HashCode>
+      <FileName>DataTypes\Organizer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ical.Net.DataTypes.Period" Collapsed="true">
+    <Position X="14.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAIAACACQEgBAABAAAIAAgAIAAAAAAAAAQIAA=</HashCode>
+      <FileName>DataTypes\Period.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Right" Position="0.1" />
+  </Class>
+  <Class Name="Ical.Net.DataTypes.PeriodList" Collapsed="true">
+    <Position X="2" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEIABEAAAAAAADAUiAABBAQAAAAAAIAECAQAAABQIAA=</HashCode>
+      <FileName>DataTypes\PeriodList.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Left" Position="0.1" />
+  </Class>
+  <Class Name="Ical.Net.DataTypes.RecurrencePattern" Collapsed="true">
+    <Position X="8.25" Y="4.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>gIAwAAAAAIAASCAEkIAAIEQAAIABAIAAAQAsAAAgAAQ=</HashCode>
+      <FileName>DataTypes\RecurrencePattern.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ical.Net.DataTypes.RequestStatus" Collapsed="true">
+    <Position X="7.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgACAEgAAAAAAAAAAAAIAAJAAAAAAQQAA=</HashCode>
+      <FileName>DataTypes\RequestStatus.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ical.Net.DataTypes.StatusCode" Collapsed="true">
+    <Position X="12.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAACAEgBAAAAAAAAAQAIAAAAAAAACAAAA=</HashCode>
+      <FileName>DataTypes\StatusCode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ical.Net.DataTypes.Trigger" Collapsed="true">
+    <Position X="10.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAQAAACAKAAgAAAAAAAAAAAAIQAACAAAAAEAAA=</HashCode>
+      <FileName>DataTypes\Trigger.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ical.Net.DataTypes.UtcOffset" Collapsed="true">
+    <Position X="4" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAQAAAEwACAAAAAAAAAAICEAAAFAAAAgAA=</HashCode>
+      <FileName>DataTypes\UTCOffset.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ical.Net.DataTypes.WeekDay" Collapsed="true">
+    <Position X="1" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACQAgAAAAAAAAAAAAIAAAAAEAAAAgAA=</HashCode>
+      <FileName>DataTypes\WeekDay.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Ical.Net.DataTypes.ICalendarDataType" Collapsed="true">
+    <Position X="9.25" Y="1.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAACAAABAAAAAAAAAAAEAAAAAAAAABA=</HashCode>
+      <FileName>DataTypes\ICalendarDataType.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Ical.Net.DataTypes.ICalendarParameterCollectionContainer" Collapsed="true">
+    <Position X="8.5" Y="0.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>DataTypes\ICalendarParameterCollectionContainer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Ical.Net.DataTypes.IDateTime" Collapsed="true">
+    <Position X="11.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACICACAgJoiAAABAAAADAAKAAEAICCIFIAAkIQBQACA=</HashCode>
+      <FileName>DataTypes\IDateTime.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Ical.Net.DataTypes.IEncodableDataType" Collapsed="true">
+    <Position X="13.5" Y="1.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataTypes\IEncodableDataType.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

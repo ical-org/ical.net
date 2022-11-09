@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Ical.Net.Calendar">
+    <Position X="1.5" Y="0.75" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>MAAAgABAECYAGwAAhAIkAgIAAgAgANYAMIQAAgIAAAA=</HashCode>
+      <FileName>Calendar.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Right" Position="2.767" />
+  </Class>
+  <Class Name="Ical.Net.CalendarComponents.CalendarComponent">
+    <Position X="4.5" Y="0.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAASAAAAAAAAAAAAAAAAAIAAAAAAACAAA=</HashCode>
+      <FileName>CalendarComponents\CalendarComponent.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Ical.Net.CalendarObject">
+    <Position X="7" Y="0.75" Width="1.5" />
+    <Members>
+      <Field Name="_children" Hidden="true" />
+      <Field Name="_serviceProvider" Hidden="true" />
+      <Method Name="CalendarObject" Hidden="true" />
+      <Method Name="Children_ItemAdded" Hidden="true" />
+      <Method Name="CopyFrom" Hidden="true" />
+      <Method Name="DeserializedInternal" Hidden="true" />
+      <Method Name="DeserializingInternal" Hidden="true" />
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="GetService" Hidden="true" />
+      <Method Name="Initialize" Hidden="true" />
+      <Method Name="OnDeserialized" Hidden="true" />
+      <Method Name="OnDeserializing" Hidden="true" />
+      <Method Name="RemoveService" Hidden="true" />
+      <Method Name="SetService" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAQAFEAAEQAASAAgABEQAQABAAAAIAEAAAAAAABAEQ=</HashCode>
+      <FileName>CalendarObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Ical.Net.CalendarObjectBase">
+    <Position X="9" Y="0.75" Width="1.75" />
+    <Members>
+      <Field Name="_mIsLoaded" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAECAIQAAAAAAAAgAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CalendarObjectBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

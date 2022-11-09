@@ -10,9 +10,7 @@ using Ical.Net.Utility;
 
 namespace Ical.Net
 {
-    /// <summary>
-    /// A list of iCalendars.
-    /// </summary>
+    /// <summary> A list of iCalendars that can be loaded from a <see cref="TextReader"/>. </summary>
     public class CalendarCollection : List<Calendar>
     {
         public static CalendarCollection Load(string iCalendarString)
@@ -21,14 +19,14 @@ namespace Ical.Net
         /// <summary>
         /// Loads an <see cref="Calendar"/> from an open stream.
         /// </summary>
-        /// <param name="s">The stream from which to load the <see cref="Calendar"/> object</param>
+        /// <param name="stream">The stream from which to load the <see cref="Calendar"/> object</param>
         /// <returns>An <see cref="Calendar"/> object</returns>
-        public static CalendarCollection Load(Stream s)
-            => Load(new StreamReader(s, Encoding.UTF8));
+        public static CalendarCollection Load(Stream stream)
+            => Load(new StreamReader(stream, Encoding.UTF8));
 
-        public static CalendarCollection Load(TextReader tr)
+        public static CalendarCollection Load(TextReader reader)
         {
-            var calendars = SimpleDeserializer.Default.Deserialize(tr).OfType<Calendar>();
+            var calendars = SimpleDeserializer.Default.Deserialize(reader).OfType<Calendar>();
             var collection = new CalendarCollection();
             collection.AddRange(calendars);
             return collection;
@@ -122,7 +120,7 @@ namespace Ical.Net
             return occurrences;
         }
 
-        private FreeBusy CombineFreeBusy(FreeBusy main, FreeBusy current)
+        private static FreeBusy CombineFreeBusy(FreeBusy main, FreeBusy current)
         {
             main?.MergeWith(current);
             return current;

@@ -4,11 +4,10 @@ using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes
 {
-    /// <summary>
-    /// Represents an RFC 5545 "BYDAY" value.
-    /// </summary>
-    public class WeekDay : EncodableDataType
+    /// <summary> <see cref="DayOfWeek"/> represents an RFC 5545 "BYDAY" value. </summary>
+    public class WeekDay : EncodableDataType, IEquatable<WeekDay>, IComparable<WeekDay>
     {
+        /// <summary> First day of Week Offset; <see cref="int.MinValue"/> indicate no Offset </summary>
         public virtual int Offset { get; set; } = int.MinValue;
 
         public virtual DayOfWeek DayOfWeek { get; set; }
@@ -23,9 +22,9 @@ namespace Ical.Net.DataTypes
             DayOfWeek = day;
         }
 
-        public WeekDay(DayOfWeek day, int num) : this(day)
+        public WeekDay(DayOfWeek day, int offset) : this(day)
         {
-            Offset = num;
+            Offset = offset;
         }
 
         public WeekDay(DayOfWeek day, FrequencyOccurrence type) : this(day, (int) type) {}
@@ -38,13 +37,17 @@ namespace Ical.Net.DataTypes
 
         public override bool Equals(object obj)
         {
-            if (!(obj is WeekDay))
+	        if (!(obj is WeekDay weekDay))
             {
                 return false;
             }
 
-            var ds = (WeekDay) obj;
-            return ds.Offset == Offset && ds.DayOfWeek == DayOfWeek;
+	        return Equals(weekDay);
+        }
+
+        public bool Equals(WeekDay weekDay)
+        {
+            return weekDay != null && weekDay.Offset == Offset && weekDay.DayOfWeek == DayOfWeek;
         }
 
         public override int GetHashCode() => Offset.GetHashCode() ^ DayOfWeek.GetHashCode();
@@ -62,26 +65,31 @@ namespace Ical.Net.DataTypes
 
         public int CompareTo(object obj)
         {
-            WeekDay bd = null;
-            if (obj is string)
+	        WeekDay wd = null;
+	        if (obj is string)
             {
-                bd = new WeekDay(obj.ToString());
+                wd = new WeekDay(obj.ToString());
             }
-            else if (obj is WeekDay)
+            else if (obj is WeekDay day)
             {
-                bd = (WeekDay) obj;
+                wd = day;
             }
 
-            if (bd == null)
-            {
-                throw new ArgumentException();
-            }
-            var compare = DayOfWeek.CompareTo(bd.DayOfWeek);
-            if (compare == 0)
-            {
-                compare = Offset.CompareTo(bd.Offset);
-            }
-            return compare;
+            return CompareTo(wd);
+        }
+
+        public int CompareTo(WeekDay wd)
+        {
+	        if (wd == null)
+	        {
+		        throw new ArgumentException();
+	        }
+	        var compare = DayOfWeek.CompareTo(wd.DayOfWeek);
+	        if (compare == 0)
+	        {
+		        compare = Offset.CompareTo(wd.Offset);
+	        }
+	        return compare;
         }
     }
 }

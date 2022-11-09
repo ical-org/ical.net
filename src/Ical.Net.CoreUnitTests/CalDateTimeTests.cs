@@ -67,8 +67,7 @@ namespace Ical.Net.CoreUnitTests
         }
 
         [TestCaseSource(nameof(AsDateTimeOffsetTestCases))]
-        public DateTimeOffset AsDateTimeOffsetTests(CalDateTime incoming)
-            => incoming.AsDateTimeOffset;
+        public DateTimeOffset AsDateTimeOffsetTests(CalDateTime incoming) => incoming.AsDateTimeOffset;
 
         public static IEnumerable<ITestCaseData> AsDateTimeOffsetTestCases()
         {

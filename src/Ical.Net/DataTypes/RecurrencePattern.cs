@@ -8,10 +8,10 @@ using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes
 {
-    /// <summary>
-    /// An iCalendar representation of the <c>RRULE</c> property.
-    /// https://tools.ietf.org/html/rfc5545#section-3.3.10
-    /// </summary>
+    /// <summary> An iCalendar representation of the <c>RRULE</c> property. https://tools.ietf.org/html/rfc5545#section-3.3.10 </summary>
+    /// <remarks>
+    /// This is closely related to the Unix Cron Pattern, but with additionsl <see cref="Until"/>
+    /// </remarks>
     public class RecurrencePattern : EncodableDataType
     {
         private int _interval = int.MinValue;
@@ -51,13 +51,16 @@ namespace Ical.Net.DataTypes
             set => _interval = value;
         }
 
+        /// <summary> List of Seconds from 0 to 59 when this Event recurs </summary>
         public List<int> BySecond { get; set; } = new List<int>();
 
         /// <summary> The ordinal minutes of the hour associated with this recurrence pattern. Valid values are 0-59. </summary>
         public List<int> ByMinute { get; set; } = new List<int>();
 
+        /// <summary> The ordinal hours of the day associated with this recurrence pattern. Valid values are 0-23. </summary>
         public List<int> ByHour { get; set; } = new List<int>();
 
+        /// <summary> The ordinal days of the week associated with this recurrence pattern. Valid values are 0-23. </summary>
         public List<WeekDay> ByDay { get; set; } = new List<WeekDay>();
 
         /// <summary> The ordinal days of the month associated with this recurrence pattern. Valid values are 1-31. </summary>
