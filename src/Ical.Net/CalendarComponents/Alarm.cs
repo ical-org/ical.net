@@ -136,18 +136,16 @@ namespace Ical.Net.CalendarComponents
 
         /// <summary>
         /// Polls the <see cref="Alarm"/> component for alarms that have been triggered
-        /// since the provided <paramref name="start"/> date/time.  If <paramref name="start"/>
-        /// is null, all triggered alarms will be returned.
+        /// between <paramref name="start"/> and <paramref name="end"/> date/time.
+        /// If <paramref name="start"/> is null, all triggered alarms will be returned.
         /// </summary>
-        /// <param name="start">The earliest date/time to poll trigered alarms for.</param>
         /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
         public virtual IList<AlarmOccurrence> Poll(IDateTime start, IDateTime end)
         {
             var results = new List<AlarmOccurrence>();
 
             // Evaluate the alarms to determine the recurrences
-            var rc = Parent as RecurringComponent;
-            if (rc == null)
+            if (!(Parent is RecurringComponent rc))
             {
                 return results;
             }

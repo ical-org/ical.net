@@ -12,6 +12,13 @@ using Ical.Net.Utility;
 
 namespace Ical.Net
 {
+    /// <summary> A Calendar is a Set of <see cref="Events"/>, <see cref="Todos"/>, <see cref="RecurringItems"/>, <see cref="Journals"/> and <see cref="FreeBusy"/> Info </summary>
+    /// <remarks>
+    /// Definite are the IETF RFCs # 2445 (1998) 5545 (2009) and 7986 (not supported in this Code yet).
+    /// <a href='https://icalendar.org/'>iCalendar.org</a> is also a good Resource.
+    /// 
+    /// Additionally WebDAV HTTP Protocol Extensions are defined in RFCs #4791 and 6638. 
+    /// </remarks>
     public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, IMergeable
     {
         public static Calendar Load(string iCalendarString)

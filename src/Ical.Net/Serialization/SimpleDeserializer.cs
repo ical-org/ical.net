@@ -25,36 +25,46 @@ namespace Ical.Net.Serialization
             new SerializerFactory(),
             new CalendarComponentFactory());
 
+        #region RegEx Group Names
+
         private const string _nameGroup = "name";
         private const string _valueGroup = "value";
         private const string _paramNameGroup = "paramName";
         private const string _paramValueGroup = "paramValue";
 
-        private static readonly Regex _contentLineRegex = new Regex(BuildContentLineRegex(), RegexOptions.Compiled);
+        #endregion RegEx Group Names
 
         private readonly DataTypeMapper _dataTypeMapper;
         private readonly ISerializerFactory _serializerFactory;
         private readonly CalendarComponentFactory _componentFactory;
 
+        /// <summary> Regular Expression for an Identifier </summary>
+        /// <remarks>
+        /// name          = iana-token / x-name
+        /// iana-token    = 1*(ALPHA / DIGIT / "-")
+        /// x-name        = "X-" [vendorid "-"] 1*(ALPHA / DIGIT / "-")
+        /// vendorid      = 3*(ALPHA / DIGIT)
+        /// Added underscore to match behavior of bug 2033495
+        /// </remarks>
+        static readonly Regex identifier = new Regex("[-A-Za-z0-9_]+");
+
+        /// <summary> Regular Expression for a Parameter Value </summary>
+        /// <remarks>
+        /// param-value   = paramtext / quoted-string
+        /// paramtext     = *SAFE-CHAR
+        /// quoted-string = DQUOTE *QSAFE-CHAR DQUOTE
+        /// QSAFE-CHAR    = WSP / %x21 / %x23-7E / NON-US-ASCII
+        /// ; Any character except CONTROL and DQUOTE
+        /// SAFE-CHAR     = WSP / %x21 / %x23-2B / %x2D-39 / %x3C-7E
+        ///               / NON-US-ASCII
+        /// ; Any character except CONTROL, DQUOTE, ";", ":", ","
+        /// </remarks>
+        static readonly string paramValue = $"((?<{_paramValueGroup}>[^\\x00-\\x08\\x0A-\\x1F\\x7F\";:,]*)|\"(?<{_paramValueGroup}>[^\\x00-\\x08\\x0A-\\x1F\\x7F\"]*)\")";
+
+        private static readonly Regex _contentLineRegex = new Regex(BuildContentLineRegex(), RegexOptions.Compiled);
+
         private static string BuildContentLineRegex()
         {
-            // name          = iana-token / x-name
-            // iana-token    = 1*(ALPHA / DIGIT / "-")
-            // x-name        = "X-" [vendorid "-"] 1*(ALPHA / DIGIT / "-")
-            // vendorid      = 3*(ALPHA / DIGIT)
-            // Add underscore to match behavior of bug 2033495
-            const string identifier = "[-A-Za-z0-9_]+";
-
-            // param-value   = paramtext / quoted-string
-            // paramtext     = *SAFE-CHAR
-            // quoted-string = DQUOTE *QSAFE-CHAR DQUOTE
-            // QSAFE-CHAR    = WSP / %x21 / %x23-7E / NON-US-ASCII
-            // ; Any character except CONTROL and DQUOTE
-            // SAFE-CHAR     = WSP / %x21 / %x23-2B / %x2D-39 / %x3C-7E
-            //               / NON-US-ASCII
-            // ; Any character except CONTROL, DQUOTE, ";", ":", ","
-            var paramValue = $"((?<{_paramValueGroup}>[^\\x00-\\x08\\x0A-\\x1F\\x7F\";:,]*)|\"(?<{_paramValueGroup}>[^\\x00-\\x08\\x0A-\\x1F\\x7F\"]*)\")";
-
             // param         = param-name "=" param-value *("," param-value)
             // param-name    = iana-token / x-name
             var paramName = $"(?<{_paramNameGroup}>{identifier})";

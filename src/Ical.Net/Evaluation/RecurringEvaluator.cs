@@ -28,13 +28,7 @@ namespace Ical.Net.Evaluation
             }
         }
 
-        /// <summary>
-        /// Evaulates the RRule component, and adds each specified Period to the Periods collection.
-        /// </summary>
-        /// <param name="referenceDate"></param>
-        /// <param name="periodStart">The beginning date of the range to evaluate.</param>
-        /// <param name="periodEnd">The end date of the range to evaluate.</param>
-        /// <param name="includeReferenceDateInResults"></param>
+        /// <summary> Evaluates the RRule component, and adds each specified Period to the Periods collection. </summary>
         protected HashSet<Period> EvaluateRRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             if (Recurrable.RecurrenceRules == null || !Recurrable.RecurrenceRules.Any())
@@ -68,12 +62,7 @@ namespace Ical.Net.Evaluation
             return recurrences;
         }
 
-        /// <summary>
-        /// Evaulates the ExRule component, and excludes each specified DateTime from the Periods collection.
-        /// </summary>
-        /// <param name="referenceDate"></param>
-        /// <param name="periodStart">The beginning date of the range to evaluate.</param>
-        /// <param name="periodEnd">The end date of the range to evaluate.</param>
+        /// <summary> Evaluates the ExRule component, and excludes each specified DateTime from the Periods collection. </summary>
         protected HashSet<Period> EvaluateExRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             if (Recurrable.ExceptionRules == null || !Recurrable.ExceptionRules.Any())
@@ -92,9 +81,7 @@ namespace Ical.Net.Evaluation
             return exRuleExclusions;
         }
 
-        /// <summary>
-        /// Evalates the ExDate component, and excludes each specified DateTime or Period from the Periods collection.
-        /// </summary>
+        /// <summary> Evaluates the ExDate component, and excludes each specified DateTime or Period from the Periods collection. </summary>
         /// <param name="referenceDate"></param>
         /// <param name="periodStart">The beginning date of the range to evaluate.</param>
         /// <param name="periodEnd">The end date of the range to evaluate.</param>

@@ -28,6 +28,7 @@ namespace Ical.Net
             Column = col;
         }
 
+        /// <summary> Instead of Constructor to support <see cref="OnDeserializing"/>, which skips the Constructor </summary>
         private void Initialize()
         {
             //ToDo: I'm fairly certain this is ONLY used for null checking. If so, maybe it can just be a bool? CalendarObjectList is an empty object, and
