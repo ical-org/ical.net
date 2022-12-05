@@ -9,21 +9,21 @@ namespace Ical.Net
         private readonly IDictionary<Type, object> _mTypedServices = new Dictionary<Type, object>();
         private readonly IDictionary<string, object> _mNamedServices = new Dictionary<string, object>();
 
-        public virtual object GetService(Type serviceType)
+        public object GetService(Type serviceType)
         {
             object service;
             _mTypedServices.TryGetValue(serviceType, out service);
             return service;
         }
 
-        public virtual object GetService(string name)
+        public object GetService(string name)
         {
             object service;
             _mNamedServices.TryGetValue(name, out service);
             return service;
         }
 
-        public virtual T GetService<T>()
+        public T GetService<T>()
         {
             var service = GetService(typeof (T));
             if (service is T)
@@ -33,7 +33,7 @@ namespace Ical.Net
             return default(T);
         }
 
-        public virtual T GetService<T>(string name)
+        public T GetService<T>(string name)
         {
             var service = GetService(name);
             if (service is T)
@@ -43,7 +43,7 @@ namespace Ical.Net
             return default(T);
         }
 
-        public virtual void SetService(string name, object obj)
+        public void SetService(string name, object obj)
         {
             if (!string.IsNullOrEmpty(name) && obj != null)
             {
@@ -51,7 +51,7 @@ namespace Ical.Net
             }
         }
 
-        public virtual void SetService(object obj)
+        public void SetService(object obj)
         {
             if (obj != null)
             {
@@ -66,7 +66,7 @@ namespace Ical.Net
             }
         }
 
-        public virtual void RemoveService(Type type)
+        public void RemoveService(Type type)
         {
             if (type != null)
             {
@@ -83,7 +83,7 @@ namespace Ical.Net
             }
         }
 
-        public virtual void RemoveService(string name)
+        public void RemoveService(string name)
         {
             if (_mNamedServices.ContainsKey(name))
             {

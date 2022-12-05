@@ -52,7 +52,7 @@ namespace Ical.Net.Collections
             ItemAdded?.Invoke(this, new ObjectEventArgs<TItem, int>(obj, index));
         }
 
-        public virtual void Add(TItem item)
+        public void Add(TItem item)
         {
             if (item == null)
             {
@@ -67,7 +67,7 @@ namespace Ical.Net.Collections
             OnItemAdded(item, list.StartIndex + index);
         }
 
-        public virtual int IndexOf(TItem item)
+        public int IndexOf(TItem item)
         {
             var group = item.Group;
             if (!_dictionary.ContainsKey(group))
@@ -87,7 +87,7 @@ namespace Ical.Net.Collections
             return -1;
         }
 
-        public virtual void Clear(TGroup group)
+        public void Clear(TGroup group)
         {
             if (!_dictionary.ContainsKey(group))
             {
@@ -98,27 +98,27 @@ namespace Ical.Net.Collections
             _dictionary[group].Clear();
         }
 
-        public virtual void Clear()
+        public void Clear()
         {
             _dictionary.Clear();
             _lists.Clear();
         }
 
-        public virtual bool ContainsKey(TGroup group) => _dictionary.ContainsKey(@group);
+        public bool ContainsKey(TGroup group) => _dictionary.ContainsKey(@group);
 
-        public virtual int Count => _lists.Sum(list => list.Count);
+        public int Count => _lists.Sum(list => list.Count);
 
-        public virtual int CountOf(TGroup group) => _dictionary.ContainsKey(group)
+        public int CountOf(TGroup group) => _dictionary.ContainsKey(group)
             ? _dictionary[group].Count
             : 0;
 
-        public virtual IEnumerable<TItem> Values() => _dictionary.Values.SelectMany(i => i);
+        public IEnumerable<TItem> Values() => _dictionary.Values.SelectMany(i => i);
 
-        public virtual IEnumerable<TItem> AllOf(TGroup group) => _dictionary.ContainsKey(@group)
+        public IEnumerable<TItem> AllOf(TGroup group) => _dictionary.ContainsKey(@group)
             ? (IEnumerable<TItem>) _dictionary[@group]
             : new TItem[0];
 
-        public virtual bool Remove(TItem obj)
+        public bool Remove(TItem obj)
         {
             var group = obj.Group;
             if (!_dictionary.ContainsKey(group))
@@ -138,7 +138,7 @@ namespace Ical.Net.Collections
             return true;
         }
 
-        public virtual bool Remove(TGroup group)
+        public bool Remove(TGroup group)
         {
             if (!_dictionary.ContainsKey(group))
             {
@@ -153,20 +153,20 @@ namespace Ical.Net.Collections
             return true;
         }
 
-        public virtual bool Contains(TItem item)
+        public bool Contains(TItem item)
         {
             var group = item.Group;
             return _dictionary.ContainsKey(group) && _dictionary[group].Contains(item);
         }
 
-        public virtual void CopyTo(TItem[] array, int arrayIndex)
+        public void CopyTo(TItem[] array, int arrayIndex)
         {
             _dictionary.SelectMany(kvp => kvp.Value).ToArray().CopyTo(array, arrayIndex);
         }
 
-        public virtual bool IsReadOnly => false;
+        public bool IsReadOnly => false;
 
-        public virtual void Insert(int index, TItem item)
+        public void Insert(int index, TItem item)
         {
             int relativeIndex;
             var list = ListForIndex(index, out relativeIndex);
@@ -179,7 +179,7 @@ namespace Ical.Net.Collections
             OnItemAdded(item, index);
         }
 
-        public virtual void RemoveAt(int index)
+        public void RemoveAt(int index)
         {
             int relativeIndex;
             var list = ListForIndex(index, out relativeIndex);
@@ -191,7 +191,7 @@ namespace Ical.Net.Collections
             list.RemoveAt(relativeIndex);
         }
 
-        public virtual TItem this[int index]
+        public TItem this[int index]
         {
             get
             {

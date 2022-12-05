@@ -119,7 +119,7 @@ namespace Ical.Net.Serialization
             }
         }
 
-        public virtual bool GetPropertyAllowsMultipleValues(object obj)
+        public bool GetPropertyAllowsMultipleValues(object obj)
         {
             var p = obj as ICalendarProperty;
             return !string.IsNullOrWhiteSpace(p?.Name)
@@ -127,7 +127,7 @@ namespace Ical.Net.Serialization
                 && m.AllowsMultipleValuesPerProperty;
         }
 
-        public virtual Type GetPropertyMapping(object obj)
+        public Type GetPropertyMapping(object obj)
         {
             var p = obj as ICalendarProperty;
             if (p?.Name == null)

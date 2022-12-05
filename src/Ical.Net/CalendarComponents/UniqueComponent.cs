@@ -46,37 +46,37 @@ namespace Ical.Net.CalendarComponents
             }
         }
 
-        public virtual IList<Attendee> Attendees
+        public IList<Attendee> Attendees
         {
             get => Properties.GetMany<Attendee>("ATTENDEE");
             set => Properties.Set("ATTENDEE", value);
         }
 
-        public virtual IList<string> Comments
+        public IList<string> Comments
         {
             get => Properties.GetMany<string>("COMMENT");
             set => Properties.Set("COMMENT", value);
         }
 
-        public virtual IDateTime DtStamp
+        public IDateTime DtStamp
         {
             get => Properties.Get<IDateTime>("DTSTAMP");
             set => Properties.Set("DTSTAMP", value);
         }
 
-        public virtual Organizer Organizer
+        public Organizer Organizer
         {
             get => Properties.Get<Organizer>("ORGANIZER");
             set => Properties.Set("ORGANIZER", value);
         }
 
-        public virtual IList<RequestStatus> RequestStatuses
+        public IList<RequestStatus> RequestStatuses
         {
             get => Properties.GetMany<RequestStatus>("REQUEST-STATUS");
             set => Properties.Set("REQUEST-STATUS", value);
         }
 
-        public virtual Uri Url
+        public Uri Url
         {
             get => Properties.Get<Uri>("URL");
             set => Properties.Set("URL", value);
@@ -108,7 +108,7 @@ namespace Ical.Net.CalendarComponents
 
         public override int GetHashCode() => Uid?.GetHashCode() ?? base.GetHashCode();
 
-        public virtual string Uid
+        public string Uid
         {
             get => Properties.Get<string>("UID");
             set => Properties.Set("UID", value);

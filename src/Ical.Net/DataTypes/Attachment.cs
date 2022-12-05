@@ -13,11 +13,11 @@ namespace Ical.Net.DataTypes
     /// </summary>
     public class Attachment : EncodableDataType
     {
-        public virtual Uri Uri { get; set; }
-        public virtual byte[] Data { get; }
+        public Uri Uri { get; set; }
+        public byte[] Data { get; }
 
         private Encoding _valueEncoding = System.Text.Encoding.UTF8;
-        public virtual Encoding ValueEncoding
+        public Encoding ValueEncoding
         {
             get => _valueEncoding;
             set
@@ -30,7 +30,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public virtual string FormatType
+        public string FormatType
         {
             get => Parameters.Get("FMTTYPE");
             set => Parameters.Set("FMTTYPE", value);

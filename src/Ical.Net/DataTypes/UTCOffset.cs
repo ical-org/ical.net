@@ -34,9 +34,9 @@ namespace Ical.Net.DataTypes
 
         public static explicit operator TimeSpan(UtcOffset o) => o.Offset;
 
-        public virtual DateTime ToUtc(DateTime dt) => DateTime.SpecifyKind(dt.Add(-Offset), DateTimeKind.Utc);
+        public DateTime ToUtc(DateTime dt) => DateTime.SpecifyKind(dt.Add(-Offset), DateTimeKind.Utc);
 
-        public virtual DateTime ToLocal(DateTime dt) => DateTime.SpecifyKind(dt.Add(Offset), DateTimeKind.Local);
+        public DateTime ToLocal(DateTime dt) => DateTime.SpecifyKind(dt.Add(Offset), DateTimeKind.Local);
 
         protected bool Equals(UtcOffset other) => Offset == other.Offset;
 

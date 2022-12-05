@@ -12,12 +12,12 @@ namespace Ical.Net.Collections
 
         public GroupedListEnumerator(IList<IMultiLinkedList<TType>> lists) => _lists = lists;
 
-        public virtual TType Current
+        public TType Current
             => _listEnumerator == null
                 ? default(TType)
                 : _listEnumerator.Current;
 
-        public virtual void Dispose()
+        public void Dispose()
         {
             Reset();
         }
@@ -64,7 +64,7 @@ namespace Ical.Net.Collections
             return true;
         }
 
-        public virtual bool MoveNext()
+        public bool MoveNext()
         {
             while (true)
             {
@@ -91,7 +91,7 @@ namespace Ical.Net.Collections
             }
         }
 
-        public virtual void Reset()
+        public void Reset()
         {
             if (_listsEnumerator == null)
             {

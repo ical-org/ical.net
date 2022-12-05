@@ -21,7 +21,7 @@ namespace Ical.Net
         /// Creates a copy of the object.
         /// </summary>
         /// <returns>The copy of the object.</returns>
-        public virtual T Copy<T>()
+        public T Copy<T>()
         {
             var type = GetType();
             var obj = Activator.CreateInstance(type) as ICopyable;
@@ -35,11 +35,11 @@ namespace Ical.Net
             return default(T);
         }
 
-        public virtual bool IsLoaded => _mIsLoaded;
+        public bool IsLoaded => _mIsLoaded;
 
         public event EventHandler Loaded;
 
-        public virtual void OnLoaded()
+        public void OnLoaded()
         {
             _mIsLoaded = true;
             Loaded?.Invoke(this, EventArgs.Empty);

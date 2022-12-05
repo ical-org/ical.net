@@ -13,7 +13,7 @@ namespace Ical.Net.CalendarComponents
         /// <summary>
         /// Returns a list of properties that are associated with the iCalendar object.
         /// </summary>
-        public virtual CalendarPropertyList Properties { get; protected set; }
+        public CalendarPropertyList Properties { get; protected set; }
 
         public CalendarComponent() : base()
         {
@@ -56,7 +56,7 @@ namespace Ical.Net.CalendarComponents
         /// <summary>
         /// Adds a property to this component.
         /// </summary>
-        public virtual void AddProperty(string name, string value)
+        public void AddProperty(string name, string value)
         {
             var p = new CalendarProperty(name, value);
             AddProperty(p);
@@ -65,7 +65,7 @@ namespace Ical.Net.CalendarComponents
         /// <summary>
         /// Adds a property to this component.
         /// </summary>
-        public virtual void AddProperty(ICalendarProperty p)
+        public void AddProperty(ICalendarProperty p)
         {
             p.Parent = this;
             Properties.Set(p.Name, p.Value);

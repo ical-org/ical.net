@@ -14,7 +14,7 @@ namespace Ical.Net.DataTypes
         private TimeSpan? _mDuration;
         private string _mRelated = TriggerRelation.Start;
 
-        public virtual IDateTime DateTime
+        public IDateTime DateTime
         {
             get => _mDateTime;
             set
@@ -36,7 +36,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public virtual TimeSpan? Duration
+        public TimeSpan? Duration
         {
             get => _mDuration;
             set
@@ -52,13 +52,13 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public virtual string Related
+        public string Related
         {
             get => _mRelated;
             set => _mRelated = value;
         }
 
-        public virtual bool IsRelative => _mDuration != null;
+        public bool IsRelative => _mDuration != null;
 
         public Trigger() {}
 

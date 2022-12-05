@@ -120,66 +120,66 @@ namespace Ical.Net
             }
         }
 
-        public virtual IUniqueComponentList<IUniqueComponent> UniqueComponents => _mUniqueComponents;
+        public IUniqueComponentList<IUniqueComponent> UniqueComponents => _mUniqueComponents;
 
-        public virtual IEnumerable<IRecurrable> RecurringItems => Children.OfType<IRecurrable>();
+        public IEnumerable<IRecurrable> RecurringItems => Children.OfType<IRecurrable>();
 
         /// <summary>
         /// A collection of <see cref="Components.Event"/> components in the iCalendar.
         /// </summary>
-        public virtual IUniqueComponentList<CalendarEvent> Events => _mEvents;
+        public IUniqueComponentList<CalendarEvent> Events => _mEvents;
 
         /// <summary>
         /// A collection of <see cref="CalendarComponents.FreeBusy"/> components in the iCalendar.
         /// </summary>
-        public virtual IUniqueComponentList<FreeBusy> FreeBusy => _mFreeBusy;
+        public IUniqueComponentList<FreeBusy> FreeBusy => _mFreeBusy;
 
         /// <summary>
         /// A collection of <see cref="Journal"/> components in the iCalendar.
         /// </summary>
-        public virtual ICalendarObjectList<Journal> Journals => _mJournals;
+        public ICalendarObjectList<Journal> Journals => _mJournals;
 
         /// <summary>
         /// A collection of VTimeZone components in the iCalendar.
         /// </summary>
-        public virtual ICalendarObjectList<VTimeZone> TimeZones => _mTimeZones;
+        public ICalendarObjectList<VTimeZone> TimeZones => _mTimeZones;
 
         /// <summary>
         /// A collection of <see cref="Todo"/> components in the iCalendar.
         /// </summary>
-        public virtual IUniqueComponentList<Todo> Todos => _mTodos;
+        public IUniqueComponentList<Todo> Todos => _mTodos;
 
-        public virtual string Version
+        public string Version
         {
             get => Properties.Get<string>("VERSION");
             set => Properties.Set("VERSION", value);
         }
 
-        public virtual string ProductId
+        public string ProductId
         {
             get => Properties.Get<string>("PRODID");
             set => Properties.Set("PRODID", value);
         }
 
-        public virtual string Scale
+        public string Scale
         {
             get => Properties.Get<string>("CALSCALE");
             set => Properties.Set("CALSCALE", value);
         }
 
-        public virtual string Method
+        public string Method
         {
             get => Properties.Get<string>("METHOD");
             set => Properties.Set("METHOD", value);
         }
 
-        public virtual RecurrenceRestrictionType RecurrenceRestriction
+        public RecurrenceRestrictionType RecurrenceRestriction
         {
             get => Properties.Get<RecurrenceRestrictionType>("X-DDAY-ICAL-RECURRENCE-RESTRICTION");
             set => Properties.Set("X-DDAY-ICAL-RECURRENCE-RESTRICTION", value);
         }
 
-        public virtual RecurrenceEvaluationModeType RecurrenceEvaluationMode
+        public RecurrenceEvaluationModeType RecurrenceEvaluationMode
         {
             get => Properties.Get<RecurrenceEvaluationModeType>("X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE");
             set => Properties.Set("X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE", value);
@@ -243,10 +243,10 @@ namespace Ical.Net
         /// </summary>
         /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
         /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
-        public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt)
+        public HashSet<Occurrence> GetOccurrences(IDateTime dt)
             => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.AsSystemLocal.Date), new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)));
 
-        public virtual HashSet<Occurrence> GetOccurrences(DateTime dt)
+        public HashSet<Occurrence> GetOccurrences(DateTime dt)
             => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)));
 
         /// <summary>
@@ -256,10 +256,10 @@ namespace Ical.Net
         /// <param name="startTime">The beginning date/time of the range.</param>
         /// <param name="endTime">The end date/time of the range.</param>
         /// <returns>A list of occurrences that fall between the dates provided.</returns>
-        public virtual HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
+        public HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
             => GetOccurrences<IRecurringComponent>(startTime, endTime);
 
-        public virtual HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
+        public HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
             => GetOccurrences<IRecurringComponent>(new CalDateTime(startTime), new CalDateTime(endTime));
 
         /// <summary>
@@ -274,10 +274,10 @@ namespace Ical.Net
         /// </summary>
         /// <param name="dt">The date for which to return occurrences.</param>
         /// <returns>A list of Periods representing the occurrences of this object.</returns>
-        public virtual HashSet<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
+        public HashSet<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
             => GetOccurrences<T>(new CalDateTime(dt.AsSystemLocal.Date), new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddTicks(-1)));
 
-        public virtual HashSet<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
+        public HashSet<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
             => GetOccurrences<T>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddTicks(-1)));
 
         /// <summary>
@@ -287,7 +287,7 @@ namespace Ical.Net
         /// </summary>
         /// <param name="startTime">The starting date range</param>
         /// <param name="endTime">The ending date range</param>
-        public virtual HashSet<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
+        public HashSet<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
         {
             var occurrences = new HashSet<Occurrence>(RecurringItems
                 .OfType<T>()
@@ -305,7 +305,7 @@ namespace Ical.Net
             return occurrences;
         }
 
-        public virtual HashSet<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent
+        public HashSet<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent
             => GetOccurrences<T>(new CalDateTime(startTime), new CalDateTime(endTime));
 
         /// <summary>
@@ -341,7 +341,7 @@ namespace Ical.Net
             Children.Clear();
         }
 
-        public virtual void MergeWith(IMergeable obj)
+        public void MergeWith(IMergeable obj)
         {
             if (!(obj is Calendar c))
             {
@@ -379,12 +379,12 @@ namespace Ical.Net
             }
         }
 
-        public virtual FreeBusy GetFreeBusy(FreeBusy freeBusyRequest) => CalendarComponents.FreeBusy.Create(this, freeBusyRequest);
+        public FreeBusy GetFreeBusy(FreeBusy freeBusyRequest) => CalendarComponents.FreeBusy.Create(this, freeBusyRequest);
 
-        public virtual FreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive)
+        public FreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive)
             => CalendarComponents.FreeBusy.Create(this, CalendarComponents.FreeBusy.CreateRequest(fromInclusive, toExclusive, null, null));
 
-        public virtual FreeBusy GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, IDateTime fromInclusive, IDateTime toExclusive)
+        public FreeBusy GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, IDateTime fromInclusive, IDateTime toExclusive)
             => CalendarComponents.FreeBusy.Create(this, CalendarComponents.FreeBusy.CreateRequest(fromInclusive, toExclusive, organizer, contacts));
 
         /// <summary>

@@ -88,25 +88,25 @@ namespace Ical.Net.Evaluation
 
         public System.Globalization.Calendar Calendar { get; private set; }
 
-        public virtual DateTime EvaluationStartBounds
+        public DateTime EvaluationStartBounds
         {
             get => _mEvaluationStartBounds;
             set => _mEvaluationStartBounds = value;
         }
 
-        public virtual DateTime EvaluationEndBounds
+        public DateTime EvaluationEndBounds
         {
             get => _mEvaluationEndBounds;
             set => _mEvaluationEndBounds = value;
         }
 
-        public virtual ICalendarObject AssociatedObject
+        public ICalendarObject AssociatedObject
         {
             get => _mAssociatedObject ?? _mAssociatedDataType?.AssociatedObject;
             protected set => _mAssociatedObject = value;
         }
 
-        public virtual HashSet<Period> Periods => MPeriods;
+        public HashSet<Period> Periods => MPeriods;
 
         public virtual void Clear()
         {

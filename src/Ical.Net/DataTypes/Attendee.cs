@@ -9,7 +9,7 @@ namespace Ical.Net.DataTypes
     {
         private Uri _sentBy;
         /// <summary> SENT-BY, to indicate who is acting on behalf of the ATTENDEE </summary>
-        public virtual Uri SentBy
+        public Uri SentBy
         {
             get
             {
@@ -35,7 +35,7 @@ namespace Ical.Net.DataTypes
 
         private string _commonName;
         /// <summary> CN: to show the common or displayable name associated with the calendar address </summary>
-        public virtual string CommonName
+        public string CommonName
         {
             get
             {
@@ -58,7 +58,7 @@ namespace Ical.Net.DataTypes
 
         private Uri _directoryEntry;
         /// <summary> DIR, to indicate the URI that points to the directory information corresponding to the attendee </summary>
-        public virtual Uri DirectoryEntry
+        public Uri DirectoryEntry
         {
             get
             {
@@ -84,7 +84,7 @@ namespace Ical.Net.DataTypes
 
         private string _type;
         /// <summary> CUTYPE: the type of calendar user </summary>
-        public virtual string Type
+        public string Type
         {
             get
             {
@@ -108,7 +108,7 @@ namespace Ical.Net.DataTypes
 
         private List<string> _members;
         /// <summary> MEMBER: the groups the user belongs to </summary>
-        public virtual IList<string> Members
+        public IList<string> Members
         {
             get => _members ?? (_members = new List<string>(Parameters.GetMany("MEMBER")));
             set
@@ -120,7 +120,7 @@ namespace Ical.Net.DataTypes
 
         private string _role;
         /// <summary> ROLE: the intended role the attendee will have </summary>
-        public virtual string Role
+        public string Role
         {
             get
             {
@@ -142,7 +142,7 @@ namespace Ical.Net.DataTypes
         }
 
         private string _participationStatus;
-        public virtual string ParticipationStatus
+        public string ParticipationStatus
         {
             get
             {
@@ -165,7 +165,7 @@ namespace Ical.Net.DataTypes
 
         private bool? _rsvp;
         /// <summary> RSVP, to indicate whether a reply is requested </summary>
-        public virtual bool Rsvp
+        public bool Rsvp
         {
             get
             {
@@ -193,7 +193,7 @@ namespace Ical.Net.DataTypes
 
         private List<string> _delegatedTo;
         /// <summary> DELEGATED-TO, to indicate the calendar users that the original request was delegated to </summary>
-        public virtual IList<string> DelegatedTo
+        public IList<string> DelegatedTo
         {
             get => _delegatedTo ?? (_delegatedTo = new List<string>(Parameters.GetMany("DELEGATED-TO")));
             set
@@ -209,7 +209,7 @@ namespace Ical.Net.DataTypes
 
         private List<string> _delegatedFrom;
         /// <summary> DELEGATED-FROM, to indicate whom the request was delegated from </summary>
-        public virtual IList<string> DelegatedFrom
+        public IList<string> DelegatedFrom
         {
             get => _delegatedFrom ?? (_delegatedFrom = new List<string>(Parameters.GetMany("DELEGATED-FROM")));
             set
@@ -224,7 +224,7 @@ namespace Ical.Net.DataTypes
         }
 
         /// <summary> Uri associated with the attendee, typically an email address </summary>
-        public virtual Uri Value { get; set; }
+        public Uri Value { get; set; }
 
         public Attendee() {}
 

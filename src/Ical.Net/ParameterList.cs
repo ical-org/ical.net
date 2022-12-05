@@ -5,7 +5,7 @@ namespace Ical.Net
 {
     public class ParameterList : GroupedValueList<string, CalendarParameter, CalendarParameter, string>, IParameterCollection
     {
-        public virtual void SetParent(ICalendarObject parent)
+        public void SetParent(ICalendarObject parent)
         {
             foreach (var parameter in this)
             {
@@ -13,13 +13,13 @@ namespace Ical.Net
             }
         }
 
-        public virtual void Add(string name, string value)
+        public void Add(string name, string value)
         {
             Add(new CalendarParameter(name, value));
         }
 
-        public virtual string Get(string name) => Get<string>(name);
+        public string Get(string name) => Get<string>(name);
 
-        public virtual IList<string> GetMany(string name) => GetMany<string>(name);
+        public IList<string> GetMany(string name) => GetMany<string>(name);
     }
 }

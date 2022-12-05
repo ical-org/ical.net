@@ -18,7 +18,7 @@ namespace Ical.Net.Serialization
             _mSerializationContext = ctx;
         }
 
-        public virtual SerializationContext SerializationContext
+        public SerializationContext SerializationContext
         {
             get => _mSerializationContext;
             set => _mSerializationContext = value;
@@ -67,11 +67,11 @@ namespace Ical.Net.Serialization
             }
         }
 
-        public virtual object GetService(Type serviceType) => SerializationContext?.GetService(serviceType);
+        public object GetService(Type serviceType) => SerializationContext?.GetService(serviceType);
 
-        public virtual object GetService(string name) => SerializationContext?.GetService(name);
+        public object GetService(string name) => SerializationContext?.GetService(name);
 
-        public virtual T GetService<T>()
+        public T GetService<T>()
         {
             if (SerializationContext != null)
             {
@@ -80,7 +80,7 @@ namespace Ical.Net.Serialization
             return default(T);
         }
 
-        public virtual T GetService<T>(string name)
+        public T GetService<T>(string name)
         {
             if (SerializationContext != null)
             {

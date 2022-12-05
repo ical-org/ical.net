@@ -8,9 +8,9 @@ namespace Ical.Net.DataTypes
     public class WeekDay : EncodableDataType, IEquatable<WeekDay>, IComparable<WeekDay>
     {
         /// <summary> First day of Week Offset; <see cref="int.MinValue"/> indicate no Offset </summary>
-        public virtual int Offset { get; set; } = int.MinValue;
+        public int Offset { get; set; } = int.MinValue;
 
-        public virtual DayOfWeek DayOfWeek { get; set; }
+        public DayOfWeek DayOfWeek { get; set; }
 
         public WeekDay()
         {

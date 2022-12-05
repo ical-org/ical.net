@@ -19,7 +19,7 @@ namespace Ical.Net.CalendarComponents
         /// <summary>
         /// The date/time the todo was completed.
         /// </summary>
-        public virtual IDateTime Completed
+        public IDateTime Completed
         {
             get => Properties.Get<IDateTime>("COMPLETED");
             set => Properties.Set("COMPLETED", value);
@@ -41,7 +41,7 @@ namespace Ical.Net.CalendarComponents
         /// <summary>
         /// The due date of the todo item.
         /// </summary>
-        public virtual IDateTime Due
+        public IDateTime Due
         {
             get => Properties.Get<IDateTime>("DUE");
             set
@@ -64,7 +64,7 @@ namespace Ical.Net.CalendarComponents
         //
         // Therefore, Duration is not serialized, as Due
         // should always be extrapolated from the duration.
-        public virtual TimeSpan Duration
+        public TimeSpan Duration
         {
             get => Properties.Get<TimeSpan>("DURATION");
             set
@@ -74,25 +74,25 @@ namespace Ical.Net.CalendarComponents
             }
         }
 
-        public virtual GeographicLocation GeographicLocation
+        public GeographicLocation GeographicLocation
         {
             get => Properties.Get<GeographicLocation>("GEO");
             set => Properties.Set("GEO", value);
         }
 
-        public virtual string Location
+        public string Location
         {
             get => Properties.Get<string>("LOCATION");
             set => Properties.Set("LOCATION", value);
         }
 
-        public virtual int PercentComplete
+        public int PercentComplete
         {
             get => Properties.Get<int>("PERCENT-COMPLETE");
             set => Properties.Set("PERCENT-COMPLETE", value);
         }
 
-        public virtual IList<string> Resources
+        public IList<string> Resources
         {
             get => Properties.GetMany<string>("RESOURCES");
             set => Properties.Set("RESOURCES", value ?? new List<string>());
@@ -101,7 +101,7 @@ namespace Ical.Net.CalendarComponents
         /// <summary>
         /// The status of the todo item.
         /// </summary>
-        public virtual string Status
+        public string Status
         {
             get => Properties.Get<string>(TodoStatus.Key);
             set
@@ -145,7 +145,7 @@ namespace Ical.Net.CalendarComponents
         /// </note>
         /// </summary>
         /// <returns>True if the todo item has been completed</returns>
-        public virtual bool IsCompleted(IDateTime currDt)
+        public bool IsCompleted(IDateTime currDt)
         {
             if (Status == TodoStatus.Completed)
             {
@@ -168,7 +168,7 @@ namespace Ical.Net.CalendarComponents
         /// </summary>
         /// <param name="currDt">The date and time to test.</param>
         /// <returns>True if the item is Active as of <paramref name="currDt"/>, False otherwise.</returns>
-        public virtual bool IsActive(IDateTime currDt)
+        public bool IsActive(IDateTime currDt)
             => (DtStart == null || currDt.GreaterThanOrEqual(DtStart))
                 && (!IsCompleted(currDt) && !IsCancelled);
 
@@ -176,7 +176,7 @@ namespace Ical.Net.CalendarComponents
         /// Returns True if the todo item was cancelled.
         /// </summary>
         /// <returns>True if the todo was cancelled, False otherwise.</returns>
-        public virtual bool IsCancelled => string.Equals(Status, TodoStatus.Cancelled, TodoStatus.Comparison);
+        public bool IsCancelled => string.Equals(Status, TodoStatus.Cancelled, TodoStatus.Comparison);
 
         protected override bool EvaluationIncludesReferenceDate => true;
 

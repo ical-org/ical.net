@@ -45,7 +45,7 @@ namespace Ical.Net.Serialization.DataTypes
             }
         }
 
-        public virtual void CheckRange(string name, IList<int> values, int min, int max)
+        public void CheckRange(string name, IList<int> values, int min, int max)
         {
             var allowZero = (min == 0 || max == 0);
             foreach (var value in values)
@@ -54,13 +54,13 @@ namespace Ical.Net.Serialization.DataTypes
             }
         }
 
-        public virtual void CheckRange(string name, int value, int min, int max)
+        public void CheckRange(string name, int value, int min, int max)
         {
             var allowZero = min == 0 || max == 0;
             CheckRange(name, value, min, max, allowZero);
         }
 
-        public virtual void CheckRange(string name, int value, int min, int max, bool allowZero)
+        public void CheckRange(string name, int value, int min, int max, bool allowZero)
         {
             if (value != int.MinValue && (value < min || value > max || (!allowZero && value == 0)))
             {
@@ -69,7 +69,7 @@ namespace Ical.Net.Serialization.DataTypes
             }
         }
 
-        public virtual void CheckMutuallyExclusive<T, TU>(string name1, string name2, T obj1, TU obj2)
+        public void CheckMutuallyExclusive<T, TU>(string name1, string name2, T obj1, TU obj2)
         {
             if (Equals(obj1, default(T)) || Equals(obj2, default(TU)))
             {

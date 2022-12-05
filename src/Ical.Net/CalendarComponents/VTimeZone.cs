@@ -279,7 +279,7 @@ namespace Ical.Net.CalendarComponents
 
         private DateTimeZone _nodaZone;
         private string _tzId;
-        public virtual string TzId
+        public string TzId
         {
             get
             {
@@ -321,7 +321,7 @@ namespace Ical.Net.CalendarComponents
         }
 
         private Uri _url;
-        public virtual Uri Url
+        public Uri Url
         {
             get => _url ?? (_url = Properties.Get<Uri>("TZURL"));
             set

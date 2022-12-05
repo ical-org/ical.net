@@ -100,7 +100,7 @@ namespace Ical.Net
         /// <summary>
         /// Returns the <see cref="Calendar"/> that this DDayiCalObject belongs to.
         /// </summary>
-        public virtual Calendar Calendar
+        public Calendar Calendar
         {
             get
             {
@@ -119,23 +119,23 @@ namespace Ical.Net
 
         public int Column { get; set; }
 
-        public virtual object GetService(Type serviceType) => _serviceProvider.GetService(serviceType);
+        public object GetService(Type serviceType) => _serviceProvider.GetService(serviceType);
 
-        public virtual object GetService(string name) => _serviceProvider.GetService(name);
+        public object GetService(string name) => _serviceProvider.GetService(name);
 
-        public virtual T GetService<T>() => _serviceProvider.GetService<T>();
+        public T GetService<T>() => _serviceProvider.GetService<T>();
 
-        public virtual T GetService<T>(string name) => _serviceProvider.GetService<T>(name);
+        public T GetService<T>(string name) => _serviceProvider.GetService<T>(name);
 
-        public virtual void SetService(string name, object obj) => _serviceProvider.SetService(name, obj);
+        public void SetService(string name, object obj) => _serviceProvider.SetService(name, obj);
 
-        public virtual void SetService(object obj) => _serviceProvider.SetService(obj);
+        public void SetService(object obj) => _serviceProvider.SetService(obj);
 
-        public virtual void RemoveService(Type type) => _serviceProvider.RemoveService(type);
+        public void RemoveService(Type type) => _serviceProvider.RemoveService(type);
 
-        public virtual void RemoveService(string name) => _serviceProvider.RemoveService(name);
+        public void RemoveService(string name) => _serviceProvider.RemoveService(name);
 
-        public virtual string Group
+        public string Group
         {
             get => Name;
             set => Name = value;

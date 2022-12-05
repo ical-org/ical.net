@@ -36,7 +36,7 @@ namespace Ical.Net.Proxies
             return item;
         }
 
-        public virtual TComponentType this[string uid]
+        public TComponentType this[string uid]
         {
             get => Search(uid);
             set

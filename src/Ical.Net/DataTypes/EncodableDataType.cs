@@ -5,7 +5,7 @@
     /// </summary>
     public class EncodableDataType : CalendarDataType, IEncodableDataType
     {
-        public virtual string Encoding
+        public string Encoding
         {
             get => Parameters.Get("ENCODING");
             set => Parameters.Set("ENCODING", value);

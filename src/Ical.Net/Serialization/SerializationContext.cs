@@ -46,7 +46,7 @@ namespace Ical.Net.Serialization
             SetService(new EncodingProvider(this));
         }
 
-        public virtual void Push(object item)
+        public void Push(object item)
         {
             if (item != null)
             {
@@ -54,7 +54,7 @@ namespace Ical.Net.Serialization
             }
         }
 
-        public virtual object Pop()
+        public object Pop()
         {
             if (_mStack.Count > 0)
             {
@@ -67,7 +67,7 @@ namespace Ical.Net.Serialization
             return null;
         }
 
-        public virtual object Peek()
+        public object Peek()
         {
             if (_mStack.Count > 0)
             {
@@ -80,30 +80,30 @@ namespace Ical.Net.Serialization
             return null;
         }
 
-        public virtual object GetService(Type serviceType) => _mServiceProvider.GetService(serviceType);
+        public object GetService(Type serviceType) => _mServiceProvider.GetService(serviceType);
 
-        public virtual object GetService(string name) => _mServiceProvider.GetService(name);
+        public object GetService(string name) => _mServiceProvider.GetService(name);
 
-        public virtual T GetService<T>() => _mServiceProvider.GetService<T>();
+        public T GetService<T>() => _mServiceProvider.GetService<T>();
 
-        public virtual T GetService<T>(string name) => _mServiceProvider.GetService<T>(name);
+        public T GetService<T>(string name) => _mServiceProvider.GetService<T>(name);
 
-        public virtual void SetService(string name, object obj)
+        public void SetService(string name, object obj)
         {
             _mServiceProvider.SetService(name, obj);
         }
 
-        public virtual void SetService(object obj)
+        public void SetService(object obj)
         {
             _mServiceProvider.SetService(obj);
         }
 
-        public virtual void RemoveService(Type type)
+        public void RemoveService(Type type)
         {
             _mServiceProvider.RemoveService(type);
         }
 
-        public virtual void RemoveService(string name)
+        public void RemoveService(string name)
         {
             _mServiceProvider.RemoveService(name);
         }

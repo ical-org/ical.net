@@ -74,7 +74,7 @@ namespace Ical.Net.Collections.Proxies
                 .GetEnumerator();
         }
 
-        public virtual void Add(TNewValue item)
+        public void Add(TNewValue item)
         {
             // Add the value to the object
             if (item is TOriginalValue)
@@ -84,7 +84,7 @@ namespace Ical.Net.Collections.Proxies
             }
         }
 
-        public virtual void Clear()
+        public void Clear()
         {
             var items = Items.Where(o => o.Values != null);
 
@@ -95,9 +95,9 @@ namespace Ical.Net.Collections.Proxies
             }
         }
 
-        public virtual bool Contains(TNewValue item) => Items.Any(o => o.ContainsValue((TOriginalValue)(object)item));
+        public bool Contains(TNewValue item) => Items.Any(o => o.ContainsValue((TOriginalValue)(object)item));
 
-        public virtual void CopyTo(TNewValue[] array, int arrayIndex)
+        public void CopyTo(TNewValue[] array, int arrayIndex)
         {
             Items                
                 .Where(o => o.Values != null)
@@ -106,11 +106,11 @@ namespace Ical.Net.Collections.Proxies
                 .CopyTo(array, arrayIndex);
         }
         
-        public virtual int Count => Items.Sum(o => o.ValueCount);
+        public int Count => Items.Sum(o => o.ValueCount);
 
-        public virtual bool IsReadOnly => false;
+        public bool IsReadOnly => false;
 
-        public virtual bool Remove(TNewValue item)
+        public bool Remove(TNewValue item)
         {
             if (!(item is TOriginalValue))
             {
@@ -129,11 +129,11 @@ namespace Ical.Net.Collections.Proxies
             return true;
         }
 
-        public virtual IEnumerator<TNewValue> GetEnumerator() => GetEnumeratorInternal();
+        public IEnumerator<TNewValue> GetEnumerator() => GetEnumeratorInternal();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumeratorInternal();
 
-        public virtual int IndexOf(TNewValue item)
+        public int IndexOf(TNewValue item)
         {
             var index = -1;
 
@@ -157,7 +157,7 @@ namespace Ical.Net.Collections.Proxies
             return index;
         }
 
-        public virtual void Insert(int index, TNewValue item)
+        public void Insert(int index, TNewValue item)
         {
             IterateValues((o, i, count) =>
             {
@@ -179,7 +179,7 @@ namespace Ical.Net.Collections.Proxies
             });
         }
 
-        public virtual void RemoveAt(int index)
+        public void RemoveAt(int index)
         {
             IterateValues((o, i, count) =>
             {
@@ -198,7 +198,7 @@ namespace Ical.Net.Collections.Proxies
             });
         }
 
-        public virtual TNewValue this[int index]
+        public TNewValue this[int index]
         {
             get
             {
@@ -225,7 +225,7 @@ namespace Ical.Net.Collections.Proxies
             }
         }
 
-        public virtual IEnumerable<TInterface> Items => _group == null
+        public IEnumerable<TInterface> Items => _group == null
             ? _realObject
             : _realObject.AllOf(_group);
     }

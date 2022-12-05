@@ -12,19 +12,19 @@ namespace Ical.Net.DataTypes
         private string _mExtraData;
         private StatusCode _mStatusCode;
 
-        public virtual string Description
+        public string Description
         {
             get => _mDescription;
             set => _mDescription = value;
         }
 
-        public virtual string ExtraData
+        public string ExtraData
         {
             get => _mExtraData;
             set => _mExtraData = value;
         }
 
-        public virtual StatusCode StatusCode
+        public StatusCode StatusCode
         {
             get => _mStatusCode;
             set => _mStatusCode = value;
