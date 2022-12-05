@@ -19,8 +19,7 @@ namespace Ical.Net.Evaluation
 
         public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime periodStart, IDateTime periodEnd, bool includeReferenceDateInResults)
         {
-            var evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
-            if (evaluator == null || recurrable.Start == null)
+            if (!(recurrable.GetService(typeof(IEvaluator)) is IEvaluator evaluator) || recurrable.Start == null)
             {
                 return new HashSet<Occurrence>();
             }

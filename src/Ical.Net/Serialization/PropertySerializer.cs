@@ -77,8 +77,7 @@ namespace Ical.Net.Serialization
                 if (parameterList.Any())
                 {
                     // Get a serializer for parameters
-                    var parameterSerializer = sf.Build(typeof (CalendarParameter), SerializationContext) as IStringSerializer;
-                    if (parameterSerializer != null)
+                    if (sf.Build(typeof (CalendarParameter), SerializationContext) is IStringSerializer parameterSerializer)
                     {
                         // Serialize each parameter
                         // Separate parameters with semicolons

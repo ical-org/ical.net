@@ -16,8 +16,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var offset = obj as UtcOffset;
-            if (offset != null)
+            if (obj is UtcOffset offset)
             {
                 var value = (offset.Positive ? "+" : "-") + offset.Hours.ToString("00") + offset.Minutes.ToString("00") +
                             (offset.Seconds != 0 ? offset.Seconds.ToString("00") : string.Empty);

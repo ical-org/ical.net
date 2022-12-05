@@ -75,8 +75,7 @@ namespace Ical.Net.Serialization.DataTypes
                 values.AddRange(from object child in (IEnumerable) obj select child.ToString());
             }
 
-            var co = SerializationContext.Peek() as ICalendarObject;
-            if (co != null)
+            if (SerializationContext.Peek() is ICalendarObject co)
             {
                 // Encode the string as needed.
                 var dt = new EncodableDataType

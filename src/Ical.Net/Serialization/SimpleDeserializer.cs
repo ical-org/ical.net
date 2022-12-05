@@ -173,8 +173,7 @@ namespace Ical.Net.Serialization
             using (var valueReader = new StringReader(value))
             {
                 var propertyValue = serializer.Deserialize(valueReader);
-                var propertyValues = propertyValue as IEnumerable<string>;
-                if (propertyValues != null)
+                if (propertyValue is IEnumerable<string> propertyValues)
                 {
                     foreach (var singlePropertyValue in propertyValues)
                     {

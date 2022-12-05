@@ -41,8 +41,7 @@ namespace Ical.Net.CalendarComponents
         {
             base.CopyFrom(obj);
 
-            var c = obj as ICalendarComponent;
-            if (c == null)
+            if (!(obj is ICalendarComponent c))
             {
                 return;
             }

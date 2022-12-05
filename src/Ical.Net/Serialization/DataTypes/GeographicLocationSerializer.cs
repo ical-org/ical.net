@@ -15,8 +15,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var g = obj as GeographicLocation;
-            if (g == null)
+            if (!(obj is GeographicLocation g))
             {
                 return null;
             }
@@ -33,8 +32,7 @@ namespace Ical.Net.Serialization.DataTypes
                 return null;
             }
 
-            var g = CreateAndAssociate() as GeographicLocation;
-            if (g == null)
+            if (!(CreateAndAssociate() is GeographicLocation g))
             {
                 return null;
             }

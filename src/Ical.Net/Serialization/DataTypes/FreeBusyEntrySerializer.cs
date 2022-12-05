@@ -14,8 +14,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var entry = obj as FreeBusyEntry;
-            if (entry == null)
+            if (!(obj is FreeBusyEntry entry))
             {
                 return base.SerializeToString(obj);
             }

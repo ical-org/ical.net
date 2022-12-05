@@ -35,9 +35,7 @@ namespace Ical.Net.CalendarComponents
 
             foreach (var o in occurrences)
             {
-                var uc = o.Source as IUniqueComponent;
-
-                if (uc == null)
+                if (!(o.Source is IUniqueComponent uc))
                 {
                     continue;
                 }

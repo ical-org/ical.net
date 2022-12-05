@@ -9,10 +9,10 @@ using Ical.Net.Utility;
 
 namespace Ical.Net.CalendarComponents
 {
-    /// <summary>
-    /// An iCalendar component that recurs.
-    /// </summary>
+    /// <summary> iCalendar component that contains multiple <see cref="RecurrencePattern"/>s in <see cref="RecurrenceRules"/> and <see cref="ExceptionRules"/>. </summary>
     /// <remarks>
+    /// All <see cref="RecurrencePattern"/>s have individual End Dates, but share the common <see cref="Start"/> Date.
+    /// <see cref=""/>
     /// This component automatically handles
     /// RRULEs, RDATE, EXRULEs, and EXDATEs, as well as the DTSTART
     /// for the recurring item (all recurring items must have a DTSTART).
@@ -31,12 +31,14 @@ namespace Ical.Net.CalendarComponents
             set => Properties.Set("ATTACH", value);
         }
 
+        /// <summary> AKA Tags; a List of <see cref="String"/> Category Names </summary>
         public virtual IList<string> Categories
         {
             get => Properties.GetMany<string>("CATEGORIES");
             set => Properties.Set("CATEGORIES", value);
         }
 
+        /// <summary> String for the distinguished 'class' in the <see cref="Categories"/> </summary>
         public virtual string Class
         {
             get => Properties.Get<string>("CLASS");
@@ -55,21 +57,24 @@ namespace Ical.Net.CalendarComponents
             set => Properties.Set("CREATED", value);
         }
 
+        /// <summary> Longer than the <see cref="Summary"/> </summary>
         public virtual string Description
         {
             get => Properties.Get<string>("DESCRIPTION");
             set => Properties.Set("DESCRIPTION", value);
         }
 
-        /// <summary>
-        /// The start date/time of the component.
-        /// </summary>
+        /// <summary> The start date/time of the component. </summary>
+        /// <remarks>common to all <see cref="RecurrenceRules"/> and <see cref="ExceptionRules"/></remarks>
         public virtual IDateTime DtStart
         {
             get => Properties.Get<IDateTime>("DTSTART");
             set => Properties.Set("DTSTART", value);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual IList<PeriodList> ExceptionDates
         {
             get => Properties.GetMany<PeriodList>("EXDATE");
@@ -133,6 +138,7 @@ namespace Ical.Net.CalendarComponents
             set => DtStart = value;
         }
 
+        /// <summary> Summary of the long <see cref="Description"/> </summary>
         public virtual string Summary
         {
             get => Properties.Get<string>("SUMMARY");

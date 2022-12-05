@@ -65,8 +65,7 @@ namespace Ical.Net
         {
             base.CopyFrom(obj);
 
-            var p = obj as ICalendarProperty;
-            if (p == null)
+            if (!(obj is ICalendarProperty p))
             {
                 return;
             }

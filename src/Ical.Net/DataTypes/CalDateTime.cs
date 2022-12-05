@@ -138,8 +138,7 @@ namespace Ical.Net.DataTypes
         {
             base.CopyFrom(obj);
 
-            var dt = obj as IDateTime;
-            if (dt == null)
+            if (!(obj is IDateTime dt))
             {
                 return;
             }

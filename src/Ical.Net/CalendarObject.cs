@@ -9,7 +9,6 @@ namespace Ical.Net
     /// </summary>
     public class CalendarObject : CalendarObjectBase, ICalendarObject
     {
-        private ICalendarObjectList<ICalendarObject> _children;
         private ServiceProvider _serviceProvider;
 
         internal CalendarObject()
@@ -33,10 +32,10 @@ namespace Ical.Net
         {
             //ToDo: I'm fairly certain this is ONLY used for null checking. If so, maybe it can just be a bool? CalendarObjectList is an empty object, and
             //ToDo: its constructor parameter is ignored
-            _children = new CalendarObjectList(this);
+            Children = new CalendarObjectList(this);
             _serviceProvider = new ServiceProvider();
 
-            _children.ItemAdded += Children_ItemAdded;
+            Children.ItemAdded += Children_ItemAdded;
         }
 
         [OnDeserializing]
@@ -64,8 +63,7 @@ namespace Ical.Net
 
         public override void CopyFrom(ICopyable c)
         {
-            var obj = c as ICalendarObject;
-            if (obj == null)
+            if (!(c is ICalendarObject obj))
             {
                 return;
             }
@@ -87,17 +85,17 @@ namespace Ical.Net
         /// <summary>
         /// Returns the parent iCalObject that owns this one.
         /// </summary>
-        public virtual ICalendarObject Parent { get; set; }
+        public ICalendarObject Parent { get; set; }
 
         /// <summary>
         /// A collection of iCalObjects that are children of the current object.
         /// </summary>
-        public virtual ICalendarObjectList<ICalendarObject> Children => _children;
+        public ICalendarObjectList<ICalendarObject> Children { get; private set; }
 
         /// <summary>
         /// Gets or sets the name of the iCalObject.  For iCalendar components, this is the RFC 5545 name of the component.
         /// </summary>        
-        public virtual string Name { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Returns the <see cref="Calendar"/> that this DDayiCalObject belongs to.
@@ -117,9 +115,9 @@ namespace Ical.Net
             protected set { }
         }
 
-        public virtual int Line { get; set; }
+        public int Line { get; set; }
 
-        public virtual int Column { get; set; }
+        public int Column { get; set; }
 
         public virtual object GetService(Type serviceType) => _serviceProvider.GetService(serviceType);
 

@@ -40,8 +40,7 @@ namespace Ical.Net
 
         public override bool Equals(object obj)
         {
-            var tzi = obj as VTimeZoneInfo;
-            if (tzi != null)
+            if (obj is VTimeZoneInfo tzi)
             {
                 return Equals(TimeZoneName, tzi.TimeZoneName) &&
                        Equals(OffsetFrom, tzi.OffsetFrom) &&

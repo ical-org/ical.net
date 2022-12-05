@@ -33,9 +33,7 @@ namespace Ical.Net.CoreUnitTests
 
             for (var i = 0; i < cal1.Children.Count; i++)
             {
-                var component1 = cal1.Children[i] as ICalendarComponent;
-                var component2 = cal2.Children[i] as ICalendarComponent;
-                if (component1 != null && component2 != null)
+                if (cal1.Children[i] is ICalendarComponent component1 && cal2.Children[i] is ICalendarComponent component2)
                 {
                     CompareComponents(component1, component2);
                 }

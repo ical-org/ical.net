@@ -343,8 +343,7 @@ namespace Ical.Net
 
         public virtual void MergeWith(IMergeable obj)
         {
-            var c = obj as Calendar;
-            if (c == null)
+            if (!(obj is Calendar c))
             {
                 return;
             }

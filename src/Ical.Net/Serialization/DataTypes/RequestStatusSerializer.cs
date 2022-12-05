@@ -18,8 +18,7 @@ namespace Ical.Net.Serialization.DataTypes
         {
             try
             {
-                var rs = obj as RequestStatus;
-                if (rs == null)
+                if (!(obj is RequestStatus rs))
                 {
                     return null;
                 }
@@ -66,8 +65,7 @@ namespace Ical.Net.Serialization.DataTypes
         {
             var value = tr.ReadToEnd();
 
-            var rs = CreateAndAssociate() as RequestStatus;
-            if (rs == null)
+            if (!(CreateAndAssociate() is RequestStatus rs))
             {
                 return null;
             }

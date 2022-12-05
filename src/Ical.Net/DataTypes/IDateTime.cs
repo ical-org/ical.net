@@ -2,6 +2,7 @@
 
 namespace Ical.Net.DataTypes
 {
+    /// <summary> <see cref="DateTime"/> <see cref="Value"/> with <see cref="TimeZoneName"/> </summary>
     public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormattable, ICalendarDataType
     {
         /// <summary>
@@ -26,17 +27,14 @@ namespace Ical.Net.DataTypes
         /// </summary>
         bool IsUtc { get; }
 
-        /// <summary>
-        /// Gets the time zone name this time is in, if it references a time zone.
-        /// </summary>
+        /// <summary> Gets the time zone name this time is in, if it references a time zone. </summary>
         string TimeZoneName { get; }
 
-        /// <summary>
-        /// Gets/sets the underlying DateTime value stored.  This should always
-        /// use DateTimeKind.Utc, regardless of its actual representation.
-        /// Use IsUtc along with the TZID to control how this
-        /// date/time is handled.
-        /// </summary>
+        /// <summary> Gets/sets the underlying DateTime value stored. </summary>
+        /// <remarks>
+        /// This should always use DateTimeKind.Utc, regardless of its actual representation.
+        /// Use IsUtc along with the TZID to control how this date/time is handled.
+        /// </remarks>
         DateTime Value { get; set; }
 
         /// <summary>

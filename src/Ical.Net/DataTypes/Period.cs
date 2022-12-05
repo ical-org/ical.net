@@ -48,8 +48,7 @@ namespace Ical.Net.DataTypes
         {
             base.CopyFrom(obj);
 
-            var p = obj as Period;
-            if (p == null)
+            if (!(obj is Period p))
             {
                 return;
             }

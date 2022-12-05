@@ -89,8 +89,7 @@ namespace Ical.Net.DataTypes
         {
             base.CopyFrom(obj);
 
-            var o = obj as Organizer;
-            if (o != null)
+            if (obj is Organizer o)
             {
                 Value = o.Value;
             }

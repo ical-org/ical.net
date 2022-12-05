@@ -41,8 +41,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var dt = obj as IDateTime;
-            if (dt == null)
+            if (!(obj is IDateTime dt))
             {
                 return null;
             }
@@ -100,8 +99,7 @@ namespace Ical.Net.Serialization.DataTypes
         {
             var value = tr.ReadToEnd();
 
-            var dt = CreateAndAssociate() as IDateTime;
-            if (dt == null)
+            if (!(CreateAndAssociate() is IDateTime dt))
             {
                 return null;
             }

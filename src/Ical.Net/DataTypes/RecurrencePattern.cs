@@ -10,7 +10,8 @@ namespace Ical.Net.DataTypes
 {
     /// <summary> An iCalendar representation of the <c>RRULE</c> property. https://tools.ietf.org/html/rfc5545#section-3.3.10 </summary>
     /// <remarks>
-    /// This is closely related to the Unix Cron Pattern, but with additionsl <see cref="Until"/>
+    /// Multiple Patterns are combined into a <see cref="CalendarComponents.CalendarEvent"/>
+    /// This is closely related to the Unix Cron Pattern, but with additional <see cref="Until"/> Time.
     /// </remarks>
     public class RecurrencePattern : EncodableDataType
     {

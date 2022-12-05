@@ -59,7 +59,7 @@ namespace Ical.Net.CalendarComponents
             set => Properties.Set(TriggerRelation.Key, value);
         }
 
-        protected virtual IList<AlarmOccurrence> Occurrences { get; set; }
+        protected IList<AlarmOccurrence> Occurrences { get; set; }
 
         public Alarm()
         {

@@ -1,15 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Ical.Net.Calendar">
-    <Position X="1.5" Y="0.75" Width="2" />
+    <Position X="3" Y="4" Width="2" />
+    <Members>
+      <Field Name="_mEvents" Hidden="true" />
+      <Field Name="_mFreeBusy" Hidden="true" />
+      <Field Name="_mJournals" Hidden="true" />
+      <Field Name="_mTimeZones" Hidden="true" />
+      <Field Name="_mTodos" Hidden="true" />
+      <Field Name="_mUniqueComponents" Hidden="true" />
+      <Method Name="AddLocalTimeZone" Hidden="true" />
+      <Method Name="AddTimeZone" Hidden="true" />
+      <Method Name="Calendar" Hidden="true" />
+      <Method Name="ClearEvaluation" Hidden="true" />
+      <Method Name="Create" Hidden="true" />
+      <Method Name="Dispose" Hidden="true" />
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="Evaluate" Hidden="true" />
+      <Method Name="GetFreeBusy" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="GetOccurrences" Hidden="true" />
+      <Method Name="Initialize" Hidden="true" />
+      <Method Name="Load" Hidden="true" />
+      <Method Name="MergeWith" Hidden="true" />
+      <Method Name="OnDeserializing" Hidden="true" />
+    </Members>
     <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
       <HashCode>MAAAgABAECYAGwAAhAIkAgIAAgAgANYAMIQAAgIAAAA=</HashCode>
       <FileName>Calendar.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Orientation="Right" Position="2.767" />
+    <Lollipop Orientation="Bottom" Position="1.8" />
   </Class>
   <Class Name="Ical.Net.CalendarComponents.CalendarComponent">
     <Position X="4.5" Y="0.75" Width="1.75" />
@@ -52,6 +75,36 @@
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAEAECAIQAAAAAAAAgAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>CalendarObjectBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Ical.Net.CalendarComponents.Alarm" Collapsed="true">
+    <Position X="1" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IACCAAAQAAAiABAAAAAABAAAAAAACBAAAAIAAAAAAAQ=</HashCode>
+      <FileName>CalendarComponents\Alarm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ical.Net.CalendarComponents.UniqueComponent" Collapsed="true">
+    <Position X="5.5" Y="4" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEIIAAAAAQCgBAABAAAAAAIAIAACAAAAAAAIAA=</HashCode>
+      <FileName>CalendarComponents\UniqueComponent.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Bottom" Position="0.1" />
+  </Class>
+  <Class Name="Ical.Net.CalendarComponents.VTimeZone" Collapsed="true">
+    <Position X="7.5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgABAAAIAAoEIBAAAAAAQAAIAgCiAAAAAIAAA=</HashCode>
+      <FileName>CalendarComponents\VTimeZone.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ical.Net.VTimeZoneInfo" Collapsed="true">
+    <Position X="9.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAiQAAQBgoIAhAACAQAQAABACAIQAAAEAAAA=</HashCode>
+      <FileName>VTimeZoneInfo.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>

@@ -140,8 +140,7 @@ namespace Ical.Net.Serialization.DataTypes
 
             if (recur.Until != DateTime.MinValue)
             {
-                var serializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
-                if (serializer != null)
+                if (factory.Build(typeof (IDateTime), SerializationContext) is IStringSerializer serializer)
                 {
                     IDateTime until = new CalDateTime(recur.Until);
                     until.HasTime = true;
@@ -163,8 +162,7 @@ namespace Ical.Net.Serialization.DataTypes
             {
                 var bydayValues = new List<string>(recur.ByDay.Count);
 
-                var serializer = factory.Build(typeof (WeekDay), SerializationContext) as IStringSerializer;
-                if (serializer != null)
+                if (factory.Build(typeof (WeekDay), SerializationContext) is IStringSerializer serializer)
                 {
                     bydayValues.AddRange(recur.ByDay.Select(byday => serializer.SerializeToString(byday)));
                 }
@@ -249,8 +247,7 @@ namespace Ical.Net.Serialization.DataTypes
                             case "UNTIL":
                             {
                                 var serializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
-                                var dt = serializer?.Deserialize(new StringReader(keyValue)) as IDateTime;
-                                if (dt != null)
+                                if (serializer?.Deserialize(new StringReader(keyValue)) is IDateTime dt)
                                 {
                                     r.Until = dt.Value;
                                 }

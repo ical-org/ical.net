@@ -2,6 +2,12 @@
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Ical.Net.CalendarComponents.Alarm" Collapsed="true">
     <Position X="5" Y="2" Width="1.5" />
+    <Members>
+      <Method Name="AddRepeatedItems" Hidden="true" />
+      <Method Name="Alarm" Hidden="true" />
+      <Method Name="GetOccurrences" Hidden="true" />
+      <Method Name="Poll" Hidden="true" />
+    </Members>
     <TypeIdentifier>
       <HashCode>IACCAAAQAAAiABAAAAAABAAAAAAACBAAAAIAAAAAAAQ=</HashCode>
       <FileName>CalendarComponents\Alarm.cs</FileName>
@@ -15,8 +21,22 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Ical.Net.CalendarComponents.CalendarEvent" Collapsed="true">
+  <Class Name="Ical.Net.CalendarComponents.CalendarEvent">
     <Position X="8" Y="4.75" Width="1.5" />
+    <Members>
+      <Field Name="_mEvaluator" Hidden="true" />
+      <Method Name="CalendarEvent" Hidden="true" />
+      <Method Name="CompareTo" Hidden="true" />
+      <Field Name="ComponentName" Hidden="true" />
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="ExtrapolateTimes" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="Initialize" Hidden="true" />
+      <Method Name="OccursAt" Hidden="true" />
+      <Method Name="OccursOn" Hidden="true" />
+      <Method Name="OnDeserialized" Hidden="true" />
+      <Method Name="OnDeserializing" Hidden="true" />
+    </Members>
     <TypeIdentifier>
       <HashCode>AAJAAAEEIgUCAQQAkAIAAAQAAACAAIQAAAARAAAAIAA=</HashCode>
       <FileName>CalendarComponents\CalendarEvent.cs</FileName>
@@ -40,6 +60,18 @@
   </Class>
   <Class Name="Ical.Net.CalendarComponents.RecurringComponent" Collapsed="true">
     <Position X="6" Y="3.5" Width="1.75" />
+    <Members>
+      <Method Name="ClearEvaluation" Hidden="true" />
+      <Method Name="EnsureProperties" Hidden="true" />
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="GetOccurrences" Hidden="true" />
+      <Method Name="Initialize" Hidden="true" />
+      <Method Name="OnDeserializing" Hidden="true" />
+      <Method Name="PollAlarms" Hidden="true" />
+      <Method Name="RecurringComponent" Hidden="true" />
+      <Method Name="SortByDate" Hidden="true" />
+    </Members>
     <TypeIdentifier>
       <HashCode>BACAAAAIAiQgAQEloIIhAAACAAAAEJQCAIBAAAEAIAA=</HashCode>
       <FileName>CalendarComponents\RecurringComponent.cs</FileName>

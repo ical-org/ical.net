@@ -36,8 +36,7 @@ namespace Ical.Net.Evaluation
                 return new HashSet<Period>();
             }
 
-            var evaluator = Recurrable.RecurrenceRules.First().GetService(typeof(IEvaluator)) as IEvaluator;
-            if (evaluator == null)
+            if (!(Recurrable.RecurrenceRules.First().GetService(typeof(IEvaluator)) is IEvaluator evaluator))
             {
                 return new HashSet<Period>();
             }
@@ -70,8 +69,7 @@ namespace Ical.Net.Evaluation
                 return new HashSet<Period>();
             }
 
-            var evaluator = Recurrable.ExceptionRules.First().GetService(typeof(IEvaluator)) as IEvaluator;
-            if (evaluator == null)
+            if (!(Recurrable.ExceptionRules.First().GetService(typeof(IEvaluator)) is IEvaluator evaluator))
             {
                 return new HashSet<Period>();
             }

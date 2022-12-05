@@ -15,8 +15,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var sc = obj as StatusCode;
-            if (sc == null)
+            if (!(obj is StatusCode sc))
             {
                 return null;
             }
@@ -35,8 +34,7 @@ namespace Ical.Net.Serialization.DataTypes
         {
             var value = tr.ReadToEnd();
 
-            var sc = CreateAndAssociate() as StatusCode;
-            if (sc == null)
+            if (!(CreateAndAssociate() is StatusCode sc))
             {
                 return null;
             }

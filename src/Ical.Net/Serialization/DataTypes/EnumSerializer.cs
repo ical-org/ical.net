@@ -24,8 +24,7 @@ namespace Ical.Net.Serialization.DataTypes
         {
             try
             {
-                var obj = SerializationContext.Peek() as ICalendarObject;
-                if (obj != null)
+                if (SerializationContext.Peek() is ICalendarObject obj)
                 {
                     // Encode the value as needed.
                     var dt = new EncodableDataType
@@ -48,8 +47,7 @@ namespace Ical.Net.Serialization.DataTypes
 
             try
             {
-                var obj = SerializationContext.Peek() as ICalendarObject;
-                if (obj != null)
+                if (SerializationContext.Peek() is ICalendarObject obj)
                 {
                     // Decode the value, if necessary!
                     var dt = new EncodableDataType
