@@ -26,21 +26,21 @@ namespace Ical.Net
         public T GetService<T>()
         {
             var service = GetService(typeof (T));
-            if (service is T)
+            if (service is T service1)
             {
-                return (T) service;
+                return service1;
             }
-            return default(T);
+            return default;
         }
 
         public T GetService<T>(string name)
         {
             var service = GetService(name);
-            if (service is T)
+            if (service is T service1)
             {
-                return (T) service;
+                return service1;
             }
-            return default(T);
+            return default;
         }
 
         public void SetService(string name, object obj)

@@ -2806,8 +2806,8 @@ namespace Ical.Net.CoreUnitTests
 
             var occurrences = evaluator.Evaluate(
                 startDate, 
-                DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
-                DateUtil.SimpleDateTimeToMatch(toDate, startDate),
+                fromDate.SimpleDateTimeToMatch(startDate), 
+                toDate.SimpleDateTimeToMatch(startDate),
                 false)
                 .OrderBy(o => o.StartTime)
                 .ToList();
@@ -2836,8 +2836,8 @@ namespace Ical.Net.CoreUnitTests
 
             var occurrences = evaluator.Evaluate(
                 startDate, 
-                DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
-                DateUtil.SimpleDateTimeToMatch(toDate, startDate),
+                fromDate.SimpleDateTimeToMatch(startDate), 
+                toDate.SimpleDateTimeToMatch(startDate),
                 false);
             Assert.AreNotEqual(0, occurrences.Count);
         }
@@ -2948,8 +2948,8 @@ namespace Ical.Net.CoreUnitTests
             // Add the exception dates
             var periods = evaluator.Evaluate(
                 evtStart,
-                DateUtil.GetSimpleDateTimeData(evtStart), 
-                DateUtil.SimpleDateTimeToMatch(evtEnd, evtStart),
+                evtStart.GetSimpleDateTimeData(), 
+                evtEnd.SimpleDateTimeToMatch(evtStart),
                 false)
                 .OrderBy(p => p.StartTime)
                 .ToList();

@@ -254,7 +254,7 @@ namespace Ical.Net.CalendarComponents
 
                 var date = interval.IsoLocalStart.ToDateTimeUnspecified();
                 var weekday = date.DayOfWeek;
-                var num = DateUtil.WeekOfMonth(date);
+                var num = date.WeekOfMonth();
 
                 ByDay.Add(num != 5 ? new WeekDay(weekday, num) : new WeekDay(weekday, -1));
             }

@@ -24,10 +24,9 @@ namespace Ical.Net.Serialization
 
         public override string SerializeToString(object obj)
         {
-            if (obj is Calendar)
+            if (obj is Calendar calendar)
             {
                 // If we're serializing a calendar, we should indicate that we're using ical.net to do the work
-                var calendar = (Calendar) obj;
                 calendar.Version = LibraryMetadata.Version;
                 calendar.ProductId = LibraryMetadata.ProdId;
 

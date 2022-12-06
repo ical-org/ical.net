@@ -14,7 +14,7 @@ namespace Ical.Net.Collections
 
         public TType Current
             => _listEnumerator == null
-                ? default(TType)
+                ? default
                 : _listEnumerator.Current;
 
         public void Dispose()
@@ -34,7 +34,7 @@ namespace Ical.Net.Collections
 
         object IEnumerator.Current
             => _listEnumerator == null
-                ? default(TType)
+                ? default
                 : _listEnumerator.Current;
 
         private bool MoveNextList()

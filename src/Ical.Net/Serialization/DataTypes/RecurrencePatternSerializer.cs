@@ -16,24 +16,17 @@ namespace Ical.Net.Serialization.DataTypes
 
         public static DayOfWeek GetDayOfWeek(string value)
         {
-            switch (value.ToUpper())
+            return value.ToUpper() switch
             {
-                case "SU":
-                    return DayOfWeek.Sunday;
-                case "MO":
-                    return DayOfWeek.Monday;
-                case "TU":
-                    return DayOfWeek.Tuesday;
-                case "WE":
-                    return DayOfWeek.Wednesday;
-                case "TH":
-                    return DayOfWeek.Thursday;
-                case "FR":
-                    return DayOfWeek.Friday;
-                case "SA":
-                    return DayOfWeek.Saturday;
-            }
-            throw new ArgumentException(value + " is not a valid iCal day-of-week indicator.");
+                "SU" => DayOfWeek.Sunday,
+                "MO" => DayOfWeek.Monday,
+                "TU" => DayOfWeek.Tuesday,
+                "WE" => DayOfWeek.Wednesday,
+                "TH" => DayOfWeek.Thursday,
+                "FR" => DayOfWeek.Friday,
+                "SA" => DayOfWeek.Saturday,
+                _ => throw new ArgumentException(value + " is not a valid iCal day-of-week indicator.")
+            };
         }
 
         protected static void AddInt32Values(IList<int> list, string value)
@@ -320,30 +313,17 @@ namespace Ical.Net.Serialization.DataTypes
                     r.Interval = 1;
                 }
 
-                switch (match.Groups["Freq"].Value.ToLower())
+                r.Frequency = match.Groups["Freq"].Value.ToLower() switch
                 {
-                    case "second":
-                        r.Frequency = FrequencyType.Secondly;
-                        break;
-                    case "minute":
-                        r.Frequency = FrequencyType.Minutely;
-                        break;
-                    case "hour":
-                        r.Frequency = FrequencyType.Hourly;
-                        break;
-                    case "day":
-                        r.Frequency = FrequencyType.Daily;
-                        break;
-                    case "week":
-                        r.Frequency = FrequencyType.Weekly;
-                        break;
-                    case "month":
-                        r.Frequency = FrequencyType.Monthly;
-                        break;
-                    case "year":
-                        r.Frequency = FrequencyType.Yearly;
-                        break;
-                }
+                    "second" => FrequencyType.Secondly,
+                    "minute" => FrequencyType.Minutely,
+                    "hour" => FrequencyType.Hourly,
+                    "day" => FrequencyType.Daily,
+                    "week" => FrequencyType.Weekly,
+                    "month" => FrequencyType.Monthly,
+                    "year" => FrequencyType.Yearly,
+                    _ => r.Frequency
+                };
 
                 var values = match.Groups["More"].Value.Split(',');
                 foreach (var item in values)

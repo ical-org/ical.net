@@ -50,14 +50,14 @@ namespace Ical.Net.CoreUnitTests
                     try
                     {
                         Assert.AreEqual(p1, p2, "The properties '" + p1.Name + "' are not equal.");
-                        if (p1.Value is IComparable)
+                        if (p1.Value is IComparable comparable)
                         {
-                            if (((IComparable)p1.Value).CompareTo(p2.Value) != 0)
+                            if (comparable.CompareTo(p2.Value) != 0)
                                 continue;
                         }
-                        else if (p1.Value is IEnumerable)
+                        else if (p1.Value is IEnumerable value)
                         {
-                            CompareEnumerables((IEnumerable)p1.Value, (IEnumerable)p2.Value, p1.Name);
+                            CompareEnumerables(value, (IEnumerable)p2.Value, p1.Name);
                         }
                         else
                         {

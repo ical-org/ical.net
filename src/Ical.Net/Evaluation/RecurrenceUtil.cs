@@ -34,7 +34,7 @@ namespace Ical.Net.Evaluation
             periodStart.TzId = start.TzId;
             periodEnd.TzId = start.TzId;
 
-            var periods = evaluator.Evaluate(start, DateUtil.GetSimpleDateTimeData(periodStart), DateUtil.GetSimpleDateTimeData(periodEnd),
+            var periods = evaluator.Evaluate(start, periodStart.GetSimpleDateTimeData(), periodEnd.GetSimpleDateTimeData(),
                 includeReferenceDateInResults);
 
             var otherOccurrences = from p in periods

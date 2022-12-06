@@ -254,7 +254,7 @@ namespace Ical.Net.DataTypes
 
                     if (!string.IsNullOrWhiteSpace(TzId))
                     {
-                        var asLocal = DateUtil.ToZonedDateTimeLeniently(Value, TzId);
+                        var asLocal = Value.ToZonedDateTimeLeniently(TzId);
                         _asUtc = asLocal.ToDateTimeUtc();
                     }
                     else if(IsUtc || Value.Kind == DateTimeKind.Utc)
@@ -386,7 +386,7 @@ namespace Ical.Net.DataTypes
                 ? TimeZoneInfo.Local.Id
                 : TzId;
 
-            var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, originalTzId);
+            var zonedOriginal = Value.ToZonedDateTimeLeniently(originalTzId);
             var converted = zonedOriginal.WithZone(DateUtil.GetZone(tzId));
 
             return converted.Zone == DateTimeZone.Utc
@@ -401,7 +401,7 @@ namespace Ical.Net.DataTypes
         public DateTimeOffset AsDateTimeOffset =>
             string.IsNullOrWhiteSpace(TzId)
                 ? new DateTimeOffset(AsSystemLocal)
-                : DateUtil.ToZonedDateTimeLeniently(Value, TzId).ToDateTimeOffset();
+                : Value.ToZonedDateTimeLeniently(TzId).ToDateTimeOffset();
 
         public IDateTime Add(TimeSpan ts) => this + ts;
 

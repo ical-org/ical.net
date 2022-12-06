@@ -66,7 +66,7 @@ namespace Ical.Net.Evaluation
             // Convert the UNTIL value to one that matches the same time information as the reference date
             if (r.Until != DateTime.MinValue)
             {
-                r.Until = DateUtil.MatchTimeZone(referenceDate, new CalDateTime(r.Until, referenceDate.TzId)).Value;
+                r.Until = referenceDate.MatchTimeZone(new CalDateTime(r.Until, referenceDate.TzId)).Value;
             }
 
             if (r.Frequency > FrequencyType.Secondly && r.BySecond.Count == 0 && referenceDate.HasTime
@@ -120,115 +120,115 @@ namespace Ical.Net.Evaluation
             return r;
         }
 
-        private void EnforceEvaluationRestrictions(RecurrencePattern pattern)
+        private static void EnforceEvaluationRestrictions(RecurrencePattern pattern)
         {
             RecurrenceEvaluationModeType? evaluationMode = pattern.EvaluationMode;
             RecurrenceRestrictionType? evaluationRestriction = pattern.RestrictionType;
 
-            if (evaluationRestriction != RecurrenceRestrictionType.NoRestriction)
+            if (evaluationRestriction == RecurrenceRestrictionType.NoRestriction)
             {
-                switch (evaluationMode)
-                {
-                    case RecurrenceEvaluationModeType.AdjustAutomatically:
-                        switch (pattern.Frequency)
+                return;
+            }
+
+            switch (evaluationMode)
+            {
+                case RecurrenceEvaluationModeType.AdjustAutomatically:
+                    switch (pattern.Frequency)
+                    {
+                        case FrequencyType.Secondly:
                         {
-                            case FrequencyType.Secondly:
+                            switch (evaluationRestriction)
                             {
-                                switch (evaluationRestriction)
-                                {
-                                    case RecurrenceRestrictionType.Default:
-                                    case RecurrenceRestrictionType.RestrictSecondly:
-                                        pattern.Frequency = FrequencyType.Minutely;
-                                        break;
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                        pattern.Frequency = FrequencyType.Hourly;
-                                        break;
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        pattern.Frequency = FrequencyType.Daily;
-                                        break;
-                                }
+                                case RecurrenceRestrictionType.Default:
+                                case RecurrenceRestrictionType.RestrictSecondly:
+                                    pattern.Frequency = FrequencyType.Minutely;
+                                    break;
+                                case RecurrenceRestrictionType.RestrictMinutely:
+                                    pattern.Frequency = FrequencyType.Hourly;
+                                    break;
+                                case RecurrenceRestrictionType.RestrictHourly:
+                                    pattern.Frequency = FrequencyType.Daily;
+                                    break;
                             }
-                                break;
-                            case FrequencyType.Minutely:
-                            {
-                                switch (evaluationRestriction)
-                                {
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                        pattern.Frequency = FrequencyType.Hourly;
-                                        break;
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        pattern.Frequency = FrequencyType.Daily;
-                                        break;
-                                }
-                            }
-                                break;
-                            case FrequencyType.Hourly:
-                            {
-                                switch (evaluationRestriction)
-                                {
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        pattern.Frequency = FrequencyType.Daily;
-                                        break;
-                                }
-                            }
-                                break;
                         }
-                        break;
-                    case RecurrenceEvaluationModeType.ThrowException:
-                    case RecurrenceEvaluationModeType.Default:
-                        switch (pattern.Frequency)
+                            break;
+                        case FrequencyType.Minutely:
                         {
-                            case FrequencyType.Secondly:
+                            pattern.Frequency = evaluationRestriction switch
                             {
-                                switch (evaluationRestriction)
-                                {
-                                    case RecurrenceRestrictionType.Default:
-                                    case RecurrenceRestrictionType.RestrictSecondly:
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new ArgumentException();
-                                }
-                            }
-                                break;
-                            case FrequencyType.Minutely:
-                            {
-                                switch (evaluationRestriction)
-                                {
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new ArgumentException();
-                                }
-                            }
-                                break;
-                            case FrequencyType.Hourly:
-                            {
-                                switch (evaluationRestriction)
-                                {
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new ArgumentException();
-                                }
-                            }
-                                break;
+                                RecurrenceRestrictionType.RestrictMinutely => FrequencyType.Hourly,
+                                RecurrenceRestrictionType.RestrictHourly => FrequencyType.Daily,
+                                _ => pattern.Frequency
+                            };
                         }
-                        break;
-                }
+                            break;
+                        case FrequencyType.Hourly:
+                        {
+                            pattern.Frequency = evaluationRestriction switch
+                            {
+                                RecurrenceRestrictionType.RestrictHourly => FrequencyType.Daily,
+                                _ => pattern.Frequency
+                            };
+                        }
+                            break;
+                    }
+                    break;
+                case RecurrenceEvaluationModeType.ThrowException:
+                case RecurrenceEvaluationModeType.Default:
+                    switch (pattern.Frequency)
+                    {
+                        case FrequencyType.Secondly:
+                        {
+                            switch (evaluationRestriction)
+                            {
+                                case RecurrenceRestrictionType.Default:
+                                case RecurrenceRestrictionType.RestrictSecondly:
+                                case RecurrenceRestrictionType.RestrictMinutely:
+                                case RecurrenceRestrictionType.RestrictHourly:
+                                    throw new ArgumentException();
+                            }
+                        }
+                            break;
+                        case FrequencyType.Minutely:
+                        {
+                            switch (evaluationRestriction)
+                            {
+                                case RecurrenceRestrictionType.RestrictMinutely:
+                                case RecurrenceRestrictionType.RestrictHourly:
+                                    throw new ArgumentException();
+                            }
+                        }
+                            break;
+                        case FrequencyType.Hourly:
+                        {
+                            switch (evaluationRestriction)
+                            {
+                                case RecurrenceRestrictionType.RestrictHourly:
+                                    throw new ArgumentException();
+                            }
+                        }
+                            break;
+                    }
+                    break;
             }
         }
 
-        /**
-         * Returns a list of start dates in the specified period represented by this recur. This method includes a base date
-         * argument, which indicates the start of the fist occurrence of this recurrence. The base date is used to inject
-         * default values to return a set of dates in the correct format. For example, if the search start date (start) is
-         * Wed, Mar 23, 12:19PM, but the recurrence is Mon - Fri, 9:00AM - 5:00PM, the start dates returned should all be at
-         * 9:00AM, and not 12:19PM.
-         */
-
-        private HashSet<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd, int maxCount, RecurrencePattern pattern,
-            bool includeReferenceDateInResults)
+        /// <summary> Returns a list of <paramref name="maxCount"/> dates of this recurrence in the specified period. </summary>
+        /// <remarks>
+        /// This method includes a <see cref="seed"/> date argument,
+        /// which indicates the start of the fist occurrence of this recurrence.
+        /// The base date is used to inject default values to return a set of dates in the correct format.
+        ///
+        /// For example, if the search start date (start) is Wed, Mar 23, 12:19PM,
+        /// but the recurrence is Mon - Fri, 9:00AM - 5:00PM,
+        /// the start dates returned should all be at 9:00AM, and not 12:19PM.
+        /// </remarks>
+        private HashSet<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd
+            , int maxCount, RecurrencePattern pattern, bool includeReferenceDateInResults)
         {
             var dates = new HashSet<DateTime>();
-            var originalDate = DateUtil.GetSimpleDateTimeData(seed);
-            var seedCopy = DateUtil.GetSimpleDateTimeData(seed);
+            var originalDate = seed.GetSimpleDateTimeData();
+            var seedCopy = seed.GetSimpleDateTimeData();
 
             if (includeReferenceDateInResults)
             {
@@ -240,11 +240,11 @@ namespace Ical.Net.Evaluation
             if (pattern.Count == int.MinValue)
             {
                 var incremented = seedCopy;
-                IncrementDate(ref incremented, pattern, pattern.Interval);
+                IncrementDate(pattern, ref incremented, pattern.Interval);
                 while (incremented < periodStart)
                 {
                     seedCopy = incremented;
-                    IncrementDate(ref incremented, pattern, pattern.Interval);
+                    IncrementDate(pattern, ref incremented, pattern.Interval);
                 }
             }
 
@@ -308,7 +308,7 @@ namespace Ical.Net.Evaluation
                     }
                 }
 
-                IncrementDate(ref seedCopy, pattern, pattern.Interval);
+                IncrementDate(pattern, ref seedCopy, pattern.Interval);
             }
 
             return dates;
@@ -883,18 +883,18 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        private Period CreatePeriod(DateTime dt, IDateTime referenceDate)
+        /// <summary> Create a period with unspecified Duration from the <paramref name="startDateTime"/>. </summary>
+        private static Period CreatePeriod(DateTime startDateTime, IDateTime referenceDate)
         {
             // Turn each resulting date/time into an IDateTime and associate it
             // with the reference date.
-            IDateTime newDt = new CalDateTime(dt, referenceDate.TzId);
+            IDateTime newDt = new CalDateTime(startDateTime, referenceDate.TzId);
 
             // NOTE: fixes bug #2938007 - hasTime missing
             newDt.HasTime = referenceDate.HasTime;
 
             newDt.AssociateWith(referenceDate);
 
-            // Create a period from the new date/time.
             return new Period(newDt);
         }
 

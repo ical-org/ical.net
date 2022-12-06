@@ -100,13 +100,13 @@ namespace Ical.Net.CalendarComponents
                         if (o.Period.EndTime != null)
                         {
                             dt = o.Period.EndTime;
-                            if (d == default(TimeSpan))
+                            if (d == default)
                             {
                                 d = o.Period.Duration;
                             }
                         }
                         // Use the "last-found" duration as a reference point
-                        else if (d != default(TimeSpan))
+                        else if (d != default)
                         {
                             dt = o.Period.StartTime.Add(d);
                         }

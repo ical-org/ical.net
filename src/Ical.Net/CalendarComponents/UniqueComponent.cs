@@ -94,14 +94,13 @@ namespace Ical.Net.CalendarComponents
 
         public override bool Equals(object obj)
         {
-            if (obj is RecurringComponent && obj != this)
+            if (obj is RecurringComponent o && o != this)
             {
-                var r = (RecurringComponent) obj;
                 if (Uid != null)
                 {
-                    return Uid.Equals(r.Uid);
+                    return Uid.Equals(o.Uid);
                 }
-                return Uid == r.Uid;
+                return Uid == o.Uid;
             }
             return base.Equals(obj);
         }

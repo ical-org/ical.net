@@ -66,13 +66,13 @@ namespace Ical.Net.Serialization.DataTypes
             }
 
             var values = new List<string>();
-            if (obj is string)
+            if (obj is string s)
             {
-                values.Add((string) obj);
+                values.Add(s);
             }
-            else if (obj is IEnumerable)
+            else if (obj is IEnumerable enumerable)
             {
-                values.AddRange(from object child in (IEnumerable) obj select child.ToString());
+                values.AddRange(from object child in enumerable select child.ToString());
             }
 
             if (SerializationContext.Peek() is ICalendarObject co)

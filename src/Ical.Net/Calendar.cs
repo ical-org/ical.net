@@ -328,12 +328,12 @@ namespace Ical.Net
         public T Create<T>() where T : ICalendarComponent
         {
             var obj = Activator.CreateInstance(typeof (T)) as ICalendarObject;
-            if (obj is T)
+            if (obj is T component)
             {
                 this.AddChild(obj);
-                return (T) obj;
+                return component;
             }
-            return default(T);
+            return default;
         }
 
         public void Dispose()
@@ -365,9 +365,9 @@ namespace Ical.Net
 
             foreach (var child in c.Children)
             {
-                if (child is IUniqueComponent)
+                if (child is IUniqueComponent component)
                 {
-                    if (!UniqueComponents.ContainsKey(((IUniqueComponent) child).Uid))
+                    if (!UniqueComponents.ContainsKey(component.Uid))
                     {
                         this.AddChild(child);
                     }

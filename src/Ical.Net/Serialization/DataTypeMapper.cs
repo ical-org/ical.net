@@ -66,17 +66,13 @@ namespace Ical.Net.Serialization
                 return null;
             }
 
-            switch (obj.Parent)
+            return obj.Parent switch
             {
-                case CalendarEvent _:
-                    return typeof (EventStatus);
-                case Todo _:
-                    return typeof (TodoStatus);
-                case Journal _:
-                    return typeof (JournalStatus);
-            }
-
-            return null;
+                CalendarEvent _ => typeof(EventStatus),
+                Todo _ => typeof(TodoStatus),
+                Journal _ => typeof(JournalStatus),
+                _ => null
+            };
         }
 
         public void AddPropertyMapping(string name, Type objectType, bool allowsMultipleValues)

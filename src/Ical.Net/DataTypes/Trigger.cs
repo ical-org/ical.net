@@ -76,15 +76,14 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (!(obj is Trigger))
+            if (!(obj is Trigger trigger))
             {
                 return;
             }
 
-            var t = (Trigger) obj;
-            DateTime = t.DateTime;
-            Duration = t.Duration;
-            Related = t.Related;
+            DateTime = trigger.DateTime;
+            Duration = trigger.Duration;
+            Related = trigger.Related;
         }
 
         protected bool Equals(Trigger other) => Equals(_mDateTime, other._mDateTime) && _mDuration.Equals(other._mDuration) && _mRelated == other._mRelated;

@@ -55,9 +55,8 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (obj is WeekDay)
+            if (obj is WeekDay bd)
             {
-                var bd = (WeekDay) obj;
                 Offset = bd.Offset;
                 DayOfWeek = bd.DayOfWeek;
             }

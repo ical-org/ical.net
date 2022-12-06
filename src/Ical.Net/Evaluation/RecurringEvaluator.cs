@@ -17,13 +17,12 @@ namespace Ical.Net.Evaluation
             // We're not sure if the object is a calendar object
             // or a calendar data type, so we need to assign
             // the associated object manually
-            if (obj is ICalendarObject)
+            if (obj is ICalendarObject calendarObject)
             {
-                AssociatedObject = (ICalendarObject) obj;
+                AssociatedObject = calendarObject;
             }
-            if (obj is ICalendarDataType)
+            if (obj is ICalendarDataType dt)
             {
-                var dt = (ICalendarDataType) obj;
                 AssociatedObject = dt.AssociatedObject;
             }
         }

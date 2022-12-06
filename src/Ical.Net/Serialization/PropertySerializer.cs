@@ -53,9 +53,9 @@ namespace Ical.Net.Serialization
 
                 // Get the list of parameters we'll be serializing
                 var parameterList = prop.Parameters;
-                if (v is ICalendarDataType)
+                if (v is ICalendarDataType type)
                 {
-                    parameterList = (v as ICalendarDataType).Parameters;
+                    parameterList = type.Parameters;
                 }
 
                 //This says that the TZID property of an RDATE/EXDATE collection is owned by the PeriodList that contains it. There's nothing in the spec that
@@ -63,9 +63,8 @@ namespace Ical.Net.Serialization
                 //that we should work with a single collection of zoned datetime objects, and we should create distinct RDATE and EXDATE collections based on
                 //those values. Right now, if you add CalDateTime objects, each of which specifies a different time zone, the first one "wins". This means
                 //application developers will need to handle those cases outside the library.
-                if (v is PeriodList)
+                if (v is PeriodList typed)
                 {
-                    var typed = (PeriodList)v;
                     if (!string.IsNullOrWhiteSpace(typed.TzId) && parameterList.All(p => string.Equals("TZID", p.Value, StringComparison.OrdinalIgnoreCase)))
                     {
                         parameterList.Set("TZID", typed.TzId);

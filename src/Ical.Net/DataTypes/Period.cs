@@ -3,7 +3,7 @@ using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes
 {
-    /// <summary> Represents an iCalendar period of time. </summary>    
+    /// <summary> <see cref="StartTime"/> with optional <see cref="Duration"/> and <see cref="EndTime"/>. </summary>    
     public class Period : EncodableDataType, IComparable<Period>
     {
         public Period() { }
@@ -11,7 +11,7 @@ namespace Ical.Net.DataTypes
         public Period(IDateTime occurs)
             : this(occurs, default(TimeSpan)) {}
 
-        public Period(IDateTime start, IDateTime end)
+        public Period(IDateTime start, IDateTime? end)
         {
             if (end != null && end.LessThanOrEqual(start))
             {
@@ -35,7 +35,7 @@ namespace Ical.Net.DataTypes
             }
 
             StartTime = start;
-            if (duration == default(TimeSpan))
+            if (duration == default)
             {
                 return;
             }
@@ -85,15 +85,15 @@ namespace Ical.Net.DataTypes
 
         private void ExtrapolateTimes()
         {
-            if (EndTime == null && StartTime != null && Duration != default(TimeSpan))
+            if (EndTime == null && StartTime != null && Duration != default)
             {
                 EndTime = StartTime.Add(Duration);
             }
-            else if (Duration == default(TimeSpan) && StartTime != null && EndTime != null)
+            else if (Duration == default && StartTime != null && EndTime != null)
             {
                 Duration = EndTime.Subtract(StartTime);
             }
-            else if (StartTime == null && Duration != default(TimeSpan) && EndTime != null)
+            else if (StartTime == null && Duration != default && EndTime != null)
             {
                 StartTime = EndTime.Subtract(Duration);
             }
@@ -116,8 +116,8 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private IDateTime _endTime;
-        public IDateTime EndTime
+        private IDateTime? _endTime;
+        public IDateTime? EndTime
         {
             get => _endTime;
             set

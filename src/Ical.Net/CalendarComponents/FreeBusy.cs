@@ -10,11 +10,10 @@ namespace Ical.Net.CalendarComponents
     {
         public static FreeBusy Create(ICalendarObject obj, FreeBusy freeBusyRequest)
         {
-            if (!(obj is IGetOccurrencesTyped))
+            if (!(obj is IGetOccurrencesTyped getOccurrences))
             {
                 return null;
             }
-            var getOccurrences = (IGetOccurrencesTyped) obj;
             var occurrences = getOccurrences.GetOccurrences<CalendarEvent>(freeBusyRequest.Start, freeBusyRequest.End);
             var contacts = new List<string>();
             var isFilteredByAttendees = false;

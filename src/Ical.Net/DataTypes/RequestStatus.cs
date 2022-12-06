@@ -41,12 +41,11 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (!(obj is RequestStatus))
+            if (!(obj is RequestStatus rs))
             {
                 return;
             }
 
-            var rs = (RequestStatus) obj;
             if (rs.StatusCode != null)
             {
                 StatusCode = rs.StatusCode;

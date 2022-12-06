@@ -46,48 +46,29 @@ namespace Ical.Net.DataTypes
 
         protected virtual void OnDeserialized(StreamingContext context) {}
 
+        /// <summary> See RFC 5545 Section 3.2.20. </summary>
+        /// <exception cref="NotImplementedException">for "TIME" only </exception>
         public Type GetValueType()
-        {
-            // See RFC 5545 Section 3.2.20.
-            if (_proxy != null && _proxy.ContainsKey("VALUE"))
-            {
-                switch (_proxy.Get("VALUE"))
+            => _proxy == null || !_proxy.ContainsKey("VALUE")
+                ? null
+                : _proxy.Get("VALUE") switch
                 {
-                    case "BINARY":
-                        return typeof (byte[]);
-                    case "BOOLEAN":
-                        return typeof (bool);
-                    case "CAL-ADDRESS":
-                        return typeof (Uri);
-                    case "DATE":
-                        return typeof (IDateTime);
-                    case "DATE-TIME":
-                        return typeof (IDateTime);
-                    case "DURATION":
-                        return typeof (TimeSpan);
-                    case "FLOAT":
-                        return typeof (double);
-                    case "INTEGER":
-                        return typeof (int);
-                    case "PERIOD":
-                        return typeof (Period);
-                    case "RECUR":
-                        return typeof (RecurrencePattern);
-                    case "TEXT":
-                        return typeof (string);
-                    case "TIME":
-                        // FIXME: implement ISO.8601.2004
-                        throw new NotImplementedException();
-                    case "URI":
-                        return typeof (Uri);
-                    case "UTC-OFFSET":
-                        return typeof (UtcOffset);
-                    default:
-                        return null;
-                }
-            }
-            return null;
-        }
+                    "BINARY" => typeof(byte[]),
+                    "BOOLEAN" => typeof(bool),
+                    "CAL-ADDRESS" => typeof(Uri),
+                    "DATE" => typeof(IDateTime),
+                    "DATE-TIME" => typeof(IDateTime),
+                    "DURATION" => typeof(TimeSpan),
+                    "FLOAT" => typeof(double),
+                    "INTEGER" => typeof(int),
+                    "PERIOD" => typeof(Period),
+                    "RECUR" => typeof(RecurrencePattern),
+                    "TEXT" => typeof(string),
+                    "TIME" => throw new NotImplementedException(), // FIXME: implement ISO.8601.2004
+                    "URI" => typeof(Uri),
+                    "UTC-OFFSET" => typeof(UtcOffset),
+                    _ => null
+                };
 
         public void SetValueType(string type)
         {
@@ -108,9 +89,9 @@ namespace Ical.Net.DataTypes
                 if (_AssociatedObject != null)
                 {
                     _proxy.SetParent(_AssociatedObject);
-                    if (_AssociatedObject is ICalendarParameterCollectionContainer)
+                    if (_AssociatedObject is ICalendarParameterCollectionContainer container)
                     {
-                        _proxy.SetProxiedObject(((ICalendarParameterCollectionContainer) _AssociatedObject).Parameters);
+                        _proxy.SetProxiedObject(container.Parameters);
                     }
                 }
                 else
@@ -135,12 +116,11 @@ namespace Ical.Net.DataTypes
         /// </summary>
         public virtual void CopyFrom(ICopyable obj)
         {
-            if (!(obj is ICalendarDataType))
+            if (!(obj is ICalendarDataType dt))
             {
                 return;
             }
 
-            var dt = (ICalendarDataType) obj;
             _AssociatedObject = dt.AssociatedObject;
             _proxy.SetParent(_AssociatedObject);
             _proxy.SetProxiedObject(dt.Parameters);
@@ -156,12 +136,12 @@ namespace Ical.Net.DataTypes
             var obj = Activator.CreateInstance(type) as ICopyable;
 
             // Duplicate our values
-            if (obj is T)
+            if (obj is T obj1)
             {
                 obj.CopyFrom(this);
-                return (T) obj;
+                return obj1;
             }
-            return default(T);
+            return default;
         }
 
         public IParameterCollection Parameters => _proxy;

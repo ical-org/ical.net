@@ -14,12 +14,10 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            if (!(obj is Uri))
+            if (!(obj is Uri uri))
             {
                 return null;
             }
-
-            var uri = (Uri) obj;
 
             if (SerializationContext.Peek() is ICalendarObject co)
             {

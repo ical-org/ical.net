@@ -209,7 +209,7 @@ namespace Ical.Net.Collections.Proxies
                         .Skip(index)
                         .FirstOrDefault();
                 }
-                return default(TNewValue);
+                return default;
             }
             set
             {

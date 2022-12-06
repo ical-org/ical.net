@@ -18,7 +18,19 @@ namespace Ical.Net.DataTypes
         private int _interval = int.MinValue;
         private RecurrenceRestrictionType? _restrictionType;
         private RecurrenceEvaluationModeType? _evaluationMode;
-        
+
+        /// <summary> Period of this Pattern; </summary>
+        /// <remarks>
+        /// defines when this Event Happens, together with these Lists of Filters:
+        /// * <see cref="BySecond"/>
+        /// * <see cref="ByMinute"/>
+        /// * <see cref="ByHour"/>
+        /// * <see cref="ByDay"/>
+        /// * <see cref="ByMonthDay"/>
+        /// * <see cref="ByYearDay"/>
+        /// * <see cref="ByWeekNo"/>
+        /// * <see cref="BySetPosition"/>
+        /// </remarks>
         public FrequencyType Frequency { get; set; }
 
         private DateTime _until = DateTime.MinValue;
@@ -36,14 +48,18 @@ namespace Ical.Net.DataTypes
             }
         }
 
+        /// <summary> Specifies how often this recurrence should repeat. </summary>
+        /// <remarks>
+        /// <see cref="int.MinValue"/> specifies unlimited Count.
+        /// </remarks>
         public int Count { get; set; } = int.MinValue;
 
-        /// <summary>
-        /// Specifies how often the recurrence should repeat.
+        /// <summary> Specifies the Period Length of the recurrence. </summary>
+        /// <remarks>
         /// - 1 = every
         /// - 2 = every second
         /// - 3 = every third
-        /// </summary>
+        /// </remarks>
         public int Interval
         {
             get => _interval == int.MinValue
@@ -74,7 +90,8 @@ namespace Ical.Net.DataTypes
         public List<int> ByYearDay { get; set; } = new List<int>();
 
         /// <summary>
-        /// The ordinal week of the year. Valid values are -53 to +53. Negative values count backwards from the end of the specified year.
+        /// The ordinal week of the year. Valid values are -53 to +53.
+        /// Negative values count backwards from the end of the specified year.
         /// A week is defined by ISO.8601.2004
         /// </summary>
         public List<int> ByWeekNo { get; set; } = new List<int>();
@@ -196,29 +213,27 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (!(obj is RecurrencePattern))
+            if (!(obj is RecurrencePattern pattern))
             {
                 return;
             }
 
-            var r = (RecurrencePattern) obj;
-
-            Frequency = r.Frequency;
-            Until = r.Until;
-            Count = r.Count;
-            Interval = r.Interval;
-            BySecond = new List<int>(r.BySecond);
-            ByMinute = new List<int>(r.ByMinute);
-            ByHour = new List<int>(r.ByHour);
-            ByDay = new List<WeekDay>(r.ByDay);
-            ByMonthDay = new List<int>(r.ByMonthDay);
-            ByYearDay = new List<int>(r.ByYearDay);
-            ByWeekNo = new List<int>(r.ByWeekNo);
-            ByMonth = new List<int>(r.ByMonth);
-            BySetPosition = new List<int>(r.BySetPosition);
-            FirstDayOfWeek = r.FirstDayOfWeek;
-            RestrictionType = r.RestrictionType;
-            EvaluationMode = r.EvaluationMode;
+            Frequency = pattern.Frequency;
+            Until = pattern.Until;
+            Count = pattern.Count;
+            Interval = pattern.Interval;
+            BySecond = new List<int>(pattern.BySecond);
+            ByMinute = new List<int>(pattern.ByMinute);
+            ByHour = new List<int>(pattern.ByHour);
+            ByDay = new List<WeekDay>(pattern.ByDay);
+            ByMonthDay = new List<int>(pattern.ByMonthDay);
+            ByYearDay = new List<int>(pattern.ByYearDay);
+            ByWeekNo = new List<int>(pattern.ByWeekNo);
+            ByMonth = new List<int>(pattern.ByMonth);
+            BySetPosition = new List<int>(pattern.BySetPosition);
+            FirstDayOfWeek = pattern.FirstDayOfWeek;
+            RestrictionType = pattern.RestrictionType;
+            EvaluationMode = pattern.EvaluationMode;
         }
 
         private static bool CollectionEquals<T>(IEnumerable<T> c1, IEnumerable<T> c2) => c1.SequenceEqual(c2);

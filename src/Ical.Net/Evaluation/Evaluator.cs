@@ -48,7 +48,7 @@ namespace Ical.Net.Evaluation
             return newDt;
         }
 
-        protected void IncrementDate(ref DateTime dt, RecurrencePattern pattern, int interval)
+        protected void IncrementDate(RecurrencePattern pattern, ref DateTime dt, int interval)
         {
             // FIXME: use a more specific exception.
             if (interval == 0)
@@ -57,33 +57,18 @@ namespace Ical.Net.Evaluation
             }
 
             var old = dt;
-            switch (pattern.Frequency)
+            dt = pattern.Frequency switch
             {
-                case FrequencyType.Secondly:
-                    dt = old.AddSeconds(interval);
-                    break;
-                case FrequencyType.Minutely:
-                    dt = old.AddMinutes(interval);
-                    break;
-                case FrequencyType.Hourly:
-                    dt = old.AddHours(interval);
-                    break;
-                case FrequencyType.Daily:
-                    dt = old.AddDays(interval);
-                    break;
-                case FrequencyType.Weekly:
-                    dt = DateUtil.AddWeeks(old, interval, pattern.FirstDayOfWeek);
-                    break;
-                case FrequencyType.Monthly:
-                    dt = old.AddDays(-old.Day + 1).AddMonths(interval);
-                    break;
-                case FrequencyType.Yearly:
-                    dt = old.AddDays(-old.DayOfYear + 1).AddYears(interval);
-                    break;
-                // FIXME: use a more specific exception.
-                default:
-                    throw new Exception("FrequencyType.NONE cannot be evaluated. Please specify a FrequencyType before evaluating the recurrence.");
-            }
+                FrequencyType.Secondly => old.AddSeconds(interval),
+                FrequencyType.Minutely => old.AddMinutes(interval),
+                FrequencyType.Hourly => old.AddHours(interval),
+                FrequencyType.Daily => old.AddDays(interval),
+                FrequencyType.Weekly => old.AddWeeks(interval, pattern.FirstDayOfWeek),
+                FrequencyType.Monthly => old.AddDays(-old.Day + 1).AddMonths(interval),
+                FrequencyType.Yearly => old.AddDays(-old.DayOfYear + 1).AddYears(interval),
+                _ => throw new Exception(
+                    "FrequencyType.NONE cannot be evaluated. Please specify a FrequencyType before evaluating the recurrence.")
+            };
         }
 
         public System.Globalization.Calendar Calendar { get; private set; }

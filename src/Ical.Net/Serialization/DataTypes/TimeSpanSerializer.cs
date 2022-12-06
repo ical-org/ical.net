@@ -15,12 +15,10 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            if (!(obj is TimeSpan))
+            if (!(obj is TimeSpan ts))
             {
                 return null;
             }
-
-            var ts = (TimeSpan) obj;
 
             if (ts == TimeSpan.Zero)
             {

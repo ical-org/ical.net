@@ -5,26 +5,20 @@ namespace Ical.Net.DataTypes
     /// <summary> <see cref="DateTime"/> <see cref="Value"/> with <see cref="TimeZoneName"/> </summary>
     public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormattable, ICalendarDataType
     {
-        /// <summary>
-        /// Converts the date/time to this computer's local date/time.
-        /// </summary>
+        /// <summary> Converts the date/time to this computer's local date/time. </summary>
         DateTime AsSystemLocal { get; }
 
-        /// <summary>
-        /// Converts the date/time to UTC (Coordinated Universal Time)
-        /// </summary>
+        /// <summary> Converts the date/time to UTC (Coordinated Universal Time) </summary>
         DateTime AsUtc { get; }
 
-        /// <summary>
-        /// Returns a DateTimeOffset representation of the Value. If a TzId is specified, it will use that time zone's UTC offset, otherwise it will use the
-        /// system-local time zone.
-        /// </summary>
+        /// <summary> Returns a DateTimeOffset representation of the Value. </summary>
+        /// <remarks>
+        /// If a TzId is specified, it will use that time zone's UTC offset,
+        /// otherwise it will use the system-local time zone.
+        /// </remarks>
         DateTimeOffset AsDateTimeOffset { get; }
 
-        /// <summary>
-        /// Gets/sets whether the Value of this date/time represents
-        /// a universal time.
-        /// </summary>
+        /// <summary> Gets/sets whether the Value of this date/time represents a universal time. </summary>
         bool IsUtc { get; }
 
         /// <summary> Gets the time zone name this time is in, if it references a time zone. </summary>
@@ -37,75 +31,47 @@ namespace Ical.Net.DataTypes
         /// </remarks>
         DateTime Value { get; set; }
 
-        /// <summary>
-        /// Gets/sets whether or not this date/time value contains a 'date' part.
-        /// </summary>
+        /// <summary> Gets/sets whether or not this date/time value contains a 'date' part. </summary>
         bool HasDate { get; set; }
 
-        /// <summary>
-        /// Gets/sets whether or not this date/time value contains a 'time' part.
-        /// </summary>
+        /// <summary> Gets/sets whether or not this date/time value contains a 'time' part. </summary>
         bool HasTime { get; set; }
 
-        /// <summary>
-        /// Gets/sets the time zone ID for this date/time value.
-        /// </summary>
+        /// <summary> Gets/sets the time zone ID for this date/time value. </summary>
         string TzId { get; set; }
 
-        /// <summary>
-        /// Gets the year for this date/time value.
-        /// </summary>
+        /// <summary> Gets the year for this date/time value. </summary>
         int Year { get; }
 
-        /// <summary>
-        /// Gets the month for this date/time value.
-        /// </summary>
+        /// <summary> Gets the month for this date/time value. </summary>
         int Month { get; }
 
-        /// <summary>
-        /// Gets the day for this date/time value.
-        /// </summary>
+        /// <summary> Gets the day for this date/time value. </summary>
         int Day { get; }
 
-        /// <summary>
-        /// Gets the hour for this date/time value.
-        /// </summary>
+        /// <summary> Gets the hour for this date/time value. </summary>
         int Hour { get; }
 
-        /// <summary>
-        /// Gets the minute for this date/time value.
-        /// </summary>
+        /// <summary> Gets the minute for this date/time value. </summary>
         int Minute { get; }
 
-        /// <summary>
-        /// Gets the second for this date/time value.
-        /// </summary>
+        /// <summary> Gets the second for this date/time value. </summary>
         int Second { get; }
 
-        /// <summary>
-        /// Gets the millisecond for this date/time value.
-        /// </summary>
+        /// <summary> Gets the millisecond for this date/time value. </summary>
         int Millisecond { get; }
 
-        /// <summary>
-        /// Gets the ticks for this date/time value.
-        /// </summary>
+        /// <summary> Gets the ticks for this date/time value. </summary>
         long Ticks { get; }
 
-        /// <summary>
-        /// Gets the DayOfWeek for this date/time value.
-        /// </summary>
+        /// <summary> Gets the DayOfWeek for this date/time value. </summary>
         DayOfWeek DayOfWeek { get; }
 
-        /// <summary>
-        /// Gets the date portion of the date/time value.
-        /// </summary>
+        /// <summary> Gets the date portion of the date/time value. </summary>
         DateTime Date { get; }
 
-        /// <summary>
-        /// Converts the date/time value to a local time
-        /// within the specified time zone.
-        /// </summary>
+        /// <summary> Converts the date/time value to a local time
+        /// within the specified time zone. </summary>
         IDateTime ToTimeZone(string tzId);
 
         IDateTime Add(TimeSpan ts);
@@ -126,6 +92,7 @@ namespace Ical.Net.DataTypes
         bool LessThanOrEqual(IDateTime dt);
         bool GreaterThanOrEqual(IDateTime dt);
 
-        void AssociateWith(IDateTime dt);
+        /// <summary> Synchronizes the <see cref="ICalendarDataType.AssociatedObject"/> between this and <paramref name="that"/> <see cref="IDateTime"/> </summary>
+        void AssociateWith(IDateTime that);
     }
 }

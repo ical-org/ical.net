@@ -41,7 +41,7 @@ namespace Ical.Net.Collections
                     .OfType<TType>()
                     .FirstOrDefault();
             }
-            return default(TType);
+            return default;
         }
 
         public IList<TType> GetMany<TType>(TGroup group)

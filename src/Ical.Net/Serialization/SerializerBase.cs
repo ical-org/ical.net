@@ -77,7 +77,7 @@ namespace Ical.Net.Serialization
             {
                 return SerializationContext.GetService<T>();
             }
-            return default(T);
+            return default;
         }
 
         public T GetService<T>(string name)
@@ -86,7 +86,7 @@ namespace Ical.Net.Serialization
             {
                 return SerializationContext.GetService<T>(name);
             }
-            return default(T);
+            return default;
         }
 
         public void SetService(string name, object obj)

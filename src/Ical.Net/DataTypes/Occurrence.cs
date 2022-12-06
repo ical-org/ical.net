@@ -28,7 +28,7 @@ namespace Ical.Net.DataTypes
             {
                 return false;
             }
-            return obj is Occurrence && Equals((Occurrence) obj);
+            return obj is Occurrence occurrence && Equals(occurrence);
         }
 
         public override int GetHashCode()

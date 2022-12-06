@@ -29,7 +29,7 @@ namespace Ical.Net.Proxies
 
             if (item == null)
             {
-                return default(TComponentType);
+                return default;
             }
 
             _lookup[uid] = item;

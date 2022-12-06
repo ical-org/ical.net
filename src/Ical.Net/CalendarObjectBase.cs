@@ -27,12 +27,12 @@ namespace Ical.Net
             var obj = Activator.CreateInstance(type) as ICopyable;
 
             // Duplicate our values
-            if (obj is T)
+            if (obj is T obj1)
             {
                 obj.CopyFrom(this);
-                return (T) obj;
+                return obj1;
             }
-            return default(T);
+            return default;
         }
 
         public bool IsLoaded => _mIsLoaded;

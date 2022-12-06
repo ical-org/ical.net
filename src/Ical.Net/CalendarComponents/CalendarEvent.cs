@@ -135,7 +135,7 @@ namespace Ical.Net.CalendarComponents
 
                 if (value && Start != null && End != null && Equals(Start.Date, End.Date))
                 {
-                    Duration = default(TimeSpan);
+                    Duration = default;
                     End = Start.AddDays(1);
                 }
             }
@@ -270,15 +270,15 @@ namespace Ical.Net.CalendarComponents
 			 *	  1 = Duration
 			 *	  2 = DtStart
 			 */
-            if (DtEnd == null && DtStart != null && Duration != default(TimeSpan) && source != 0)
+            if (DtEnd == null && DtStart != null && Duration != default && source != 0)
             {
                 DtEnd = DtStart.Add(Duration);
             }
-            else if (Duration == default(TimeSpan) && DtStart != null && DtEnd != null && source != 1)
+            else if (Duration == default && DtStart != null && DtEnd != null && source != 1)
             {
                 Duration = DtEnd.Subtract(DtStart);
             }
-            else if (DtStart == null && Duration != default(TimeSpan) && DtEnd != null && source != 2)
+            else if (DtStart == null && Duration != default && DtEnd != null && source != 2)
             {
                 DtStart = DtEnd.Subtract(Duration);
             }

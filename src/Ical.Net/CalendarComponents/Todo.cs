@@ -194,15 +194,15 @@ namespace Ical.Net.CalendarComponents
 			 *	  1 = Duration
 			 *	  2 = DtStart
 			 */
-            if (Due == null && DtStart != null && Duration != default(TimeSpan) && source != 0)
+            if (Due == null && DtStart != null && Duration != default && source != 0)
             {
                 Due = DtStart.Add(Duration);
             }
-            else if (Duration == default(TimeSpan) && DtStart != null && Due != null && source != 1)
+            else if (Duration == default && DtStart != null && Due != null && source != 1)
             {
                 Duration = Due.Subtract(DtStart);
             }
-            else if (DtStart == null && Duration != default(TimeSpan) && Due != null && source != 2)
+            else if (DtStart == null && Duration != default && Due != null && source != 2)
             {
                 DtStart = Due.Subtract(Duration);
             }
