@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using Ical.Net.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.Evaluation
 {
@@ -41,34 +40,11 @@ namespace Ical.Net.Evaluation
             MPeriods = new HashSet<Period>();
         }
 
-        protected IDateTime ConvertToIDateTime(DateTime dt, IDateTime referenceDate)
+        protected static IDateTime ConvertToIDateTime(DateTime dt, IDateTime referenceDate)
         {
             IDateTime newDt = new CalDateTime(dt, referenceDate.TzId);
             newDt.AssociateWith(referenceDate);
             return newDt;
-        }
-
-        protected void IncrementDate(RecurrencePattern pattern, ref DateTime dt, int interval)
-        {
-            // FIXME: use a more specific exception.
-            if (interval == 0)
-            {
-                throw new Exception("Cannot evaluate with an interval of zero.  Please use an interval other than zero.");
-            }
-
-            var old = dt;
-            dt = pattern.Frequency switch
-            {
-                FrequencyType.Secondly => old.AddSeconds(interval),
-                FrequencyType.Minutely => old.AddMinutes(interval),
-                FrequencyType.Hourly => old.AddHours(interval),
-                FrequencyType.Daily => old.AddDays(interval),
-                FrequencyType.Weekly => old.AddWeeks(interval, pattern.FirstDayOfWeek),
-                FrequencyType.Monthly => old.AddDays(-old.Day + 1).AddMonths(interval),
-                FrequencyType.Yearly => old.AddDays(-old.DayOfYear + 1).AddYears(interval),
-                _ => throw new Exception(
-                    "FrequencyType.NONE cannot be evaluated. Please specify a FrequencyType before evaluating the recurrence.")
-            };
         }
 
         public System.Globalization.Calendar Calendar { get; private set; }

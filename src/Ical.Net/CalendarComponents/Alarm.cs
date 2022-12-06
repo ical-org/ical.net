@@ -53,7 +53,7 @@ namespace Ical.Net.CalendarComponents
             set => Properties.Set("SUMMARY", value);
         }
 
-        public Trigger Trigger
+        public Trigger? Trigger
         {
             get => Properties.Get<Trigger>(TriggerRelation.Key);
             set => Properties.Set(TriggerRelation.Key, value);
@@ -91,7 +91,7 @@ namespace Ical.Net.CalendarComponents
                     fromDate = rc.Start.Copy<IDateTime>();
                 }
 
-                var d = default(TimeSpan);
+                TimeSpan? d = default;
                 foreach (var o in rc.GetOccurrences(fromDate, toDate))
                 {
                     var dt = o.Period.StartTime;
@@ -108,12 +108,12 @@ namespace Ical.Net.CalendarComponents
                         // Use the "last-found" duration as a reference point
                         else if (d != default)
                         {
-                            dt = o.Period.StartTime.Add(d);
+                            dt = o.Period.StartTime.Add(d.Value);
                         }
                         else
                         {
                             throw new ArgumentException(
-                                "Alarm trigger is relative to the START of the occurrence; however, the occurence has no discernible end.");
+                                "Alarm trigger is relative to the START of the occurrence; however, the occurrence has no discernible end.");
                         }
                     }
 

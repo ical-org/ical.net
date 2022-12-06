@@ -59,9 +59,9 @@ namespace Ical.Net.DataTypes
 
         protected bool Equals(Period other) => Equals(StartTime, other.StartTime) && Equals(EndTime, other.EndTime) && Duration.Equals(other.Duration);
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             return obj.GetType() == GetType() && Equals((Period) obj);
         }
@@ -85,17 +85,17 @@ namespace Ical.Net.DataTypes
 
         private void ExtrapolateTimes()
         {
-            if (EndTime == null && StartTime != null && Duration != default)
+            if (EndTime == null && StartTime != null && Duration != null)
             {
-                EndTime = StartTime.Add(Duration);
+                EndTime = StartTime.Add(Duration.Value);
             }
-            else if (Duration == default && StartTime != null && EndTime != null)
+            else if (Duration == null && StartTime != null && EndTime != null)
             {
                 Duration = EndTime.Subtract(StartTime);
             }
-            else if (StartTime == null && Duration != default && EndTime != null)
+            else if (StartTime == null && Duration != null && EndTime != null)
             {
-                StartTime = EndTime.Subtract(Duration);
+                StartTime = EndTime.Subtract(Duration.Value);
             }
         }
 
@@ -131,8 +131,8 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private TimeSpan _duration;
-        public TimeSpan Duration
+        private TimeSpan? _duration;
+        public TimeSpan? Duration
         {
             get
             {

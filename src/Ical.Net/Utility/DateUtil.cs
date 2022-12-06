@@ -5,6 +5,7 @@ using System.Threading;
 using Ical.Net.DataTypes;
 using NodaTime;
 using NodaTime.TimeZones;
+using NodaTime.Xml;
 
 namespace Ical.Net.Utility
 {
@@ -126,7 +127,7 @@ namespace Ical.Net.Utility
                 return DateTimeZoneProviders.Tzdb.GetZoneOrNull(ianaZone);
             }
 
-            zone = NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(tzId);
+            zone = XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(tzId);
             if (zone != null)
             {
                 return zone;
@@ -134,7 +135,7 @@ namespace Ical.Net.Utility
 
             //US/Eastern is commonly represented as US-Eastern
             var newTzId = tzId.Replace("-", "/");
-            zone = NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(newTzId);
+            zone = XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(newTzId);
             if (zone != null)
             {
                 return zone;
@@ -153,9 +154,9 @@ namespace Ical.Net.Utility
                 return DateTimeZoneProviders.Tzdb.GetZoneOrNull(ianaZone);
             }
 
-            foreach (var providerId in NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.Ids.Where(tzId.Contains))
+            foreach (var providerId in XmlSerializationSettings.DateTimeZoneProvider.Ids.Where(tzId.Contains))
             {
-                return NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(providerId);
+                return XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(providerId);
             }
 
             if (useLocalIfNotFound)
@@ -202,7 +203,7 @@ namespace Ical.Net.Utility
             return newZone;
         }
 
-        public static bool IsSerializationTimeZone(this DateTimeZone zone) => NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(zone.Id) != null;
+        public static bool IsSerializationTimeZone(this DateTimeZone zone) => XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(zone.Id) != null;
 
         /// <summary> Truncate the accuracy to the specified TimeSpan's magnitude/Period. </summary>
         /// <remarks>

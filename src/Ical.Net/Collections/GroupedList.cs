@@ -104,7 +104,7 @@ namespace Ical.Net.Collections
             _lists.Clear();
         }
 
-        public bool ContainsKey(TGroup group) => _dictionary.ContainsKey(@group);
+        public bool ContainsKey(TGroup group) => _dictionary.ContainsKey(group);
 
         public int Count => _lists.Sum(list => list.Count);
 
@@ -114,8 +114,8 @@ namespace Ical.Net.Collections
 
         public IEnumerable<TItem> Values() => _dictionary.Values.SelectMany(i => i);
 
-        public IEnumerable<TItem> AllOf(TGroup group) => _dictionary.ContainsKey(@group)
-            ? (IEnumerable<TItem>) _dictionary[@group]
+        public IEnumerable<TItem> AllOf(TGroup group) => _dictionary.ContainsKey(group)
+            ? (IEnumerable<TItem>) _dictionary[group]
             : new TItem[0];
 
         public bool Remove(TItem obj)

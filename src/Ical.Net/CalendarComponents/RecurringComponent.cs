@@ -31,7 +31,7 @@ namespace Ical.Net.CalendarComponents
             set => Properties.Set("ATTACH", value);
         }
 
-        /// <summary> AKA Tags; a List of <see cref="String"/> Category Names </summary>
+        /// <summary> AKA Tags; a List of <see cref="string"/> Category Names </summary>
         public IList<string> Categories
         {
             get => Properties.GetMany<string>("CATEGORIES");

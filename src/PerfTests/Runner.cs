@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using BenchmarkDotNet.Running;
-using BenchmarkDotNet.Toolchains.InProcess;
+﻿using BenchmarkDotNet.Running;
 
 namespace PerfTests
 {

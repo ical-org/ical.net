@@ -240,11 +240,11 @@ namespace Ical.Net.Evaluation
             if (pattern.Count == int.MinValue)
             {
                 var incremented = seedCopy;
-                IncrementDate(pattern, ref incremented, pattern.Interval);
+                pattern.IncrementDate(ref incremented);
                 while (incremented < periodStart)
                 {
                     seedCopy = incremented;
-                    IncrementDate(pattern, ref incremented, pattern.Interval);
+                    pattern.IncrementDate(ref incremented);
                 }
             }
 
@@ -269,7 +269,7 @@ namespace Ical.Net.Evaluation
                     break;
                 }
 
-                var candidates = GetCandidates(seedCopy, pattern, expandBehavior);
+                var candidates = GetCandidates_(seedCopy, pattern, expandBehavior);
                 if (candidates.Count > 0)
                 {
                     noCandidateIncrementCount = 0;
@@ -308,22 +308,16 @@ namespace Ical.Net.Evaluation
                     }
                 }
 
-                IncrementDate(pattern, ref seedCopy, pattern.Interval);
+                pattern.IncrementDate(ref seedCopy);
             }
 
             return dates;
         }
 
-        /**
-         * Returns a list of possible dates generated from the applicable BY* rules, using the specified date as a seed.
-         * @param date the seed date
-         * @param value the type of date list to return
-         * @return a DateList
-         */
-
-        private List<DateTime> GetCandidates(DateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
+        /// <summary> Returns a list of possible dates generated from the applicable BY* rules, using the specified date as a seed. </summary>
+        private List<DateTime> GetCandidates_(DateTime seedDate, RecurrencePattern pattern, IReadOnlyList<bool?> expandBehaviors)
         {
-            var dates = new List<DateTime> {date};
+            var dates = new List<DateTime> {seedDate};
             dates = GetMonthVariants(dates, pattern, expandBehaviors[0]);
             dates = GetWeekNoVariants(dates, pattern, expandBehaviors[1]);
             dates = GetYearDayVariants(dates, pattern, expandBehaviors[2]);
@@ -336,12 +330,8 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        /**
-         * Applies BYSETPOS rules to <code>dates</code>. Valid positions are from 1 to the size of the date list. Invalid
-         * positions are ignored.
-         * @param dates
-         */
-        private List<DateTime> ApplySetPosRules(List<DateTime> dates, RecurrencePattern pattern)
+        /// <summary> Applies BYSETPOS rules to <code>dates</code>. Valid positions are from 1 to the size of the date list. Invalid positions are ignored. </summary>
+        private static List<DateTime> ApplySetPosRules(List<DateTime> dates, RecurrencePattern pattern)
         {
             // return if no SETPOS rules specified..
             if (pattern.BySetPosition.Count == 0)
@@ -368,7 +358,7 @@ namespace Ical.Net.Evaluation
          * @param dates
          * @return
          */
-        private List<DateTime> GetMonthVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        private static List<DateTime> GetMonthVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByMonth.Count == 0)
             {
@@ -389,12 +379,10 @@ namespace Ical.Net.Evaluation
             return dateSet.ToList();
         }
 
-        /**
-         * Applies BYWEEKNO rules specified in this Recur instance to the specified date list. If no BYWEEKNO rules are
-         * specified the date list is returned unmodified.
-         * @param dates
-         * @return
-         */
+        /// <summary> Applies BYWEEKNO rules specified in this Recur instance to the specified date list. </summary>
+        /// <remarks>
+        /// If no BYWEEKNO rules are specified the date list is returned unmodified.
+        /// </remarks>
         private List<DateTime> GetWeekNoVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByWeekNo.Count == 0)
@@ -452,7 +440,7 @@ namespace Ical.Net.Evaluation
          * @return
          */
 
-        private List<DateTime> GetYearDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        private static List<DateTime> GetYearDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByYearDay.Count == 0)
             {
@@ -713,7 +701,7 @@ namespace Ical.Net.Evaluation
          * @param sublist
          */
 
-        private List<DateTime> GetOffsetDates(List<DateTime> dates, int offset)
+        private static List<DateTime> GetOffsetDates(List<DateTime> dates, int offset)
         {
             if (offset == int.MinValue)
             {
@@ -740,7 +728,7 @@ namespace Ical.Net.Evaluation
          * @return
          */
 
-        private List<DateTime> GetHourVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        private static List<DateTime> GetHourVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByHour.Count == 0)
             {
@@ -790,7 +778,7 @@ namespace Ical.Net.Evaluation
          * @return
          */
 
-        private List<DateTime> GetMinuteVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        private static List<DateTime> GetMinuteVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByMinute.Count == 0)
             {
@@ -840,7 +828,7 @@ namespace Ical.Net.Evaluation
          * @return
          */
 
-        private List<DateTime> GetSecondVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        private static List<DateTime> GetSecondVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.BySecond.Count == 0)
             {

@@ -21,7 +21,7 @@ namespace Ical.Net.CoreUnitTests
     {
         private const string _tzid = "US-Eastern";
 
-        private void EventOccurrenceTest(
+        private static void EventOccurrenceTest(
             Calendar cal,
             IDateTime fromDate,
             IDateTime toDate,

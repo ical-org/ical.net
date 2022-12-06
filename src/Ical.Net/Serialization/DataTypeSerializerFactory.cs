@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization.DataTypes;
 

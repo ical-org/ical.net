@@ -157,7 +157,7 @@ namespace Ical.Net.CalendarComponents
                 // Evaluate to the previous occurrence.
                 _mEvaluator.EvaluateToPreviousOccurrence(Completed, currDt);
 
-                return _mEvaluator.Periods.Cast<Period>().All(p => !p.StartTime.GreaterThan(Completed) || !currDt.GreaterThanOrEqual(p.StartTime));
+                return _mEvaluator.Periods.All(p => !p.StartTime.GreaterThan(Completed) || !currDt.GreaterThanOrEqual(p.StartTime));
             }
             return false;
         }

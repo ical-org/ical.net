@@ -17,6 +17,7 @@
     <PackageId>Ical.Net</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>An iCalendar (RFC 5545) library. See https://github.com/rianjs/ical.net for details.</Description>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\Ical.Net.xml</DocumentationFile>

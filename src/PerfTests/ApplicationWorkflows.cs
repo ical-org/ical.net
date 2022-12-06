@@ -30,7 +30,7 @@ namespace PerfTests
         }
 
         [Benchmark]
-        public List<Occurrence> SingleThreaded()
+        public static List<Occurrence> SingleThreaded()
         {
             return _manyCalendars
                 .SelectMany(Calendar.Load<Calendar>)
@@ -40,7 +40,7 @@ namespace PerfTests
         }
 
         [Benchmark]
-        public List<Occurrence> ParallelUponDeserialize()
+        public static List<Occurrence> ParallelUponDeserialize()
         {
             return _manyCalendars
                 .AsParallel()
@@ -51,7 +51,7 @@ namespace PerfTests
         }
 
         [Benchmark]
-        public List<Occurrence> ParallelUponGetOccurrences()
+        public static List<Occurrence> ParallelUponGetOccurrences()
         {
             return _manyCalendars
                 .SelectMany(Calendar.Load<Calendar>)
@@ -62,7 +62,7 @@ namespace PerfTests
         }
 
         [Benchmark]
-        public List<Occurrence> ParallelDeserializeSequentialGatherEventsParallelGetOccurrences()
+        public static List<Occurrence> ParallelDeserializeSequentialGatherEventsParallelGetOccurrences()
         {
             return _manyCalendars
                 .AsParallel()

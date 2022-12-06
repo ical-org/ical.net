@@ -12,7 +12,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public DateTimeSerializer(SerializationContext ctx) : base(ctx) { }
 
-        private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
+        private static DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
         {
             var dt = DateTime.MinValue;
 

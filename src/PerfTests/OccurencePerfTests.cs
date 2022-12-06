@@ -42,7 +42,7 @@ namespace PerfTests
                 .ToList();
         }
 
-        private Calendar GetFourCalendarEventsWithUntilRule()
+        private static Calendar GetFourCalendarEventsWithUntilRule()
         {
             const string tzid = "America/New_York";
             const int limit = 4;
@@ -106,7 +106,7 @@ namespace PerfTests
                 .ToList();
         }
 
-        private Calendar GetFourCalendarEventsWithCountRule()
+        private static Calendar GetFourCalendarEventsWithCountRule()
         {
             const string tzid = "America/New_York";
             const int limit = 4;

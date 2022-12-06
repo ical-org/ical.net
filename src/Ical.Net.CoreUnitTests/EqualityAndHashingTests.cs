@@ -438,7 +438,7 @@ namespace Ical.Net.CoreUnitTests
             Assert.AreNotEqual(asLocal, asUtc);
         }
 
-        private void TestComparison(Func<CalDateTime, IDateTime, bool> calOp, Func<int?, int?, bool> intOp)
+        private static void TestComparison(Func<CalDateTime, IDateTime, bool> calOp, Func<int?, int?, bool> intOp)
         {
             int? intSome = 1;
             int? intGreater = 2;

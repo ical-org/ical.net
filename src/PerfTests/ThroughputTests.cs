@@ -8,7 +8,7 @@ namespace PerfTests
     public class ThroughputTests
     {
         [Benchmark]
-        public void DeserializeAndComputeUntilOccurrences()
+        public static void DeserializeAndComputeUntilOccurrences()
         {
             const string e = @"BEGIN:VCALENDAR
 PRODID:-//Microsoft Corporation//Outlook 12.0 MIMEDIR//EN
@@ -70,7 +70,7 @@ END:VCALENDAR";
         }
 
         [Benchmark]
-        public void DeserializeAndComputeCountOccurrences()
+        public static void DeserializeAndComputeCountOccurrences()
         {
             const string e = @"BEGIN:VCALENDAR
 PRODID:-//Microsoft Corporation//Outlook 12.0 MIMEDIR//EN

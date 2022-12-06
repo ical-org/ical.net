@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 
@@ -53,7 +52,7 @@ namespace Ical.Net.Serialization.DataTypes
             CheckRange(name, value, min, max, allowZero);
         }
 
-        public void CheckRange(string name, int value, int min, int max, bool allowZero)
+        public static void CheckRange(string name, int value, int min, int max, bool allowZero)
         {
             if (value != int.MinValue && (value < min || value > max || (!allowZero && value == 0)))
             {
@@ -62,7 +61,7 @@ namespace Ical.Net.Serialization.DataTypes
             }
         }
 
-        public void CheckMutuallyExclusive<T, TU>(string name1, string name2, T obj1, TU obj2)
+        public static void CheckMutuallyExclusive<T, TU>(string name1, string name2, T obj1, TU obj2)
         {
             if (Equals(obj1, default(T)) || Equals(obj2, default(TU)))
             {
@@ -86,7 +85,7 @@ namespace Ical.Net.Serialization.DataTypes
             throw new ArgumentException("Both " + name1 + " and " + name2 + " cannot be supplied together; they are mutually exclusive.");
         }
 
-        private void SerializeByValue(List<string> aggregate, IList<int> byValue, string name)
+        private static void SerializeByValue(List<string> aggregate, IList<int> byValue, string name)
         {
             if (byValue.Any())
             {
@@ -107,7 +106,7 @@ namespace Ical.Net.Serialization.DataTypes
 
             // Push the recurrence pattern onto the serialization stack
             SerializationContext.Push(recur);
-            var values = new List<string>()
+            var values = new List<string>
             {
                 "FREQ=" + Enum.GetName(typeof(FrequencyType), recur.Frequency).ToUpper()
             };

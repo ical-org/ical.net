@@ -89,7 +89,7 @@ namespace Ical.Net.Serialization
                 if (string.Equals(contentLine.Name, "BEGIN", StringComparison.OrdinalIgnoreCase))
                 {
                     stack.Push(current);
-                    current = _componentFactory.Build((string)contentLine.Value);
+                    current = CalendarComponentFactory.Build((string)contentLine.Value);
                     SerializationUtil.OnDeserializing(current);
                 }
                 else

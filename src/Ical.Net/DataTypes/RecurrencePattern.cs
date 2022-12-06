@@ -8,6 +8,35 @@ using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes
 {
+
+    public static class XRecurrence
+    {
+        public static void IncrementDate(this RecurrencePattern pattern, ref DateTime dt) => pattern.IncrementDate_(ref dt, pattern.Interval);
+        public static void DecrementDate(this RecurrencePattern pattern, ref DateTime dt) => pattern.IncrementDate_(ref dt, -pattern.Interval);
+        static void IncrementDate_(this RecurrencePattern pattern, ref DateTime dt, int interval)
+        {
+            // FIXME: use a more specific exception.
+            if (interval == 0)
+            {
+                throw new Exception("Cannot evaluate with an interval of zero.  Please use an interval other than zero.");
+            }
+
+            var old = dt;
+            dt = pattern.Frequency switch
+            {
+                FrequencyType.Secondly => old.AddSeconds(interval),
+                FrequencyType.Minutely => old.AddMinutes(interval),
+                FrequencyType.Hourly => old.AddHours(interval),
+                FrequencyType.Daily => old.AddDays(interval),
+                FrequencyType.Weekly => old.AddWeeks(interval, pattern.FirstDayOfWeek),
+                FrequencyType.Monthly => old.AddDays(-old.Day + 1).AddMonths(interval),
+                FrequencyType.Yearly => old.AddDays(-old.DayOfYear + 1).AddYears(interval),
+                _ => throw new Exception(
+                    "FrequencyType.NONE cannot be evaluated. Please specify a FrequencyType before evaluating the recurrence.")
+            };
+        }
+
+    }
     /// <summary> An iCalendar representation of the <c>RRULE</c> property. https://tools.ietf.org/html/rfc5545#section-3.3.10 </summary>
     /// <remarks>
     /// Multiple Patterns are combined into a <see cref="CalendarComponents.CalendarEvent"/>
