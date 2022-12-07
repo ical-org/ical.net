@@ -8,7 +8,7 @@ using Ical.Net.DataTypes;
 
 namespace PerfTests
 {
-    public class OccurencePerfTests
+    public class OccurrencePerfTests
     {
         [Benchmark]
         public void MultipleEventsWithUntilOccurrencesSearchingByWholeCalendar()
@@ -16,7 +16,7 @@ namespace PerfTests
             var calendar = GetFourCalendarEventsWithUntilRule();
             var searchStart = calendar.Events.First().DtStart.AddYears(-1);
             var searchEnd = calendar.Events.Last().DtStart.AddYears(1);
-            var occurences = calendar.GetOccurrences(searchStart, searchEnd);
+            var occurrences = calendar.GetOccurrences(searchStart, searchEnd);
         }
 
         [Benchmark]

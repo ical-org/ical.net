@@ -64,10 +64,10 @@ END:VCALENDAR
 ";
 
         [Benchmark]
-        public static void Deserialize() => Calendar.Load(_sampleEvent).Events.First();
+        public void Deserialize() => Calendar.Load(_sampleEvent).Events.First();
 
         [Benchmark]
-        public static void SerializeCalendar() => new CalendarSerializer().SerializeToString(SimpleCalendar);
+        public void SerializeCalendar() => new CalendarSerializer().SerializeToString(SimpleCalendar);
 
         private const string _aTzid = "America/New_York";
         private static readonly Calendar SimpleCalendar = new Calendar

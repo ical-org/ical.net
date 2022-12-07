@@ -10,13 +10,13 @@ namespace PerfTests
         private const string _bTzid = "America/New_York";
 
         [Benchmark]
-        public static IDateTime EmptyTzid() => new CalDateTime(DateTime.Now);
+        public IDateTime EmptyTzid() => new CalDateTime(DateTime.Now);
 
         [Benchmark]
-        public static IDateTime SpecifiedTzid() => new CalDateTime(DateTime.Now, _aTzid);
+        public IDateTime SpecifiedTzid() => new CalDateTime(DateTime.Now, _aTzid);
 
         [Benchmark]
-        public static IDateTime UtcDateTime() => new CalDateTime(DateTime.UtcNow);
+        public IDateTime UtcDateTime() => new CalDateTime(DateTime.UtcNow);
 
         [Benchmark]
         public IDateTime EmptyTzidToTzid() => EmptyTzid().ToTimeZone(_bTzid);

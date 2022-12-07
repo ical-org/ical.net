@@ -2,7 +2,7 @@
 
 namespace Ical.Net.Serialization
 {
-    public static class CalendarComponentFactory
+    public class CalendarComponentFactory
     {
         public static ICalendarComponent Build(string objectName)
         {

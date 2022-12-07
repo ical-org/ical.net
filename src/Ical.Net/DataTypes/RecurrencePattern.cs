@@ -97,40 +97,46 @@ namespace Ical.Net.DataTypes
             set => _interval = value;
         }
 
-        /// <summary> List of Seconds from 0 to 59 when this Event recurs </summary>
+        #region optional enumerated Event Filters
+
+        /// <summary> BYSECOND; optional List of Seconds Filter from 0 to 59 when this Event recurs </summary>
+        /// <returns> * (every Second) when no Rules were specified. </returns>
         public List<int> BySecond { get; set; } = new List<int>();
 
-        /// <summary> The ordinal minutes of the hour associated with this recurrence pattern. Valid values are 0-59. </summary>
+        /// <summary> BYMINUTE; optional List of Minutes Filter from 0 to 59 when this Event recurs </summary>
+        /// <returns> * (every Minute) when no Rules were specified. </returns>
         public List<int> ByMinute { get; set; } = new List<int>();
 
-        /// <summary> The ordinal hours of the day associated with this recurrence pattern. Valid values are 0-23. </summary>
+        /// <summary> BYHOUR; optional List of Hours Filter from 0 to 23 when this Event recurs </summary>
+        /// <returns> * (every Hour) when no Rules were specified. </returns>
         public List<int> ByHour { get; set; } = new List<int>();
 
-        /// <summary> The ordinal days of the week associated with this recurrence pattern. Valid values are 0-23. </summary>
+        /// <summary> BYDAY; optional List of <see cref="WeekDay"/> Filter from 0 to 7 when this Event recurs </summary>
+        /// <returns> * (every Day) when no Rules were specified. </returns>
         public List<WeekDay> ByDay { get; set; } = new List<WeekDay>();
 
-        /// <summary> The ordinal days of the month associated with this recurrence pattern. Valid values are 1-31. </summary>
+        /// <summary> BYMONTHDAY; optional List of Month-Day Filter from 1 to 31 when this Event recurs </summary>
+        /// <returns> * (every Day) when no Rules were specified. </returns>
         public List<int> ByMonthDay { get; set; } = new List<int>();
 
-        /// <summary>
-        /// The ordinal days of the year associated with this recurrence pattern. Something recurring on the first day of the year would be a list containing
-        /// 1, and would also be New Year's Day.
-        /// </summary>
+        /// <summary> BYYEARDAY; optional List of Year-Day Filter from 1 to 366 when this Event recurs </summary>
+        /// <returns> * (every Year) when no Rules were specified. </returns>
         public List<int> ByYearDay { get; set; } = new List<int>();
 
-        /// <summary>
-        /// The ordinal week of the year. Valid values are -53 to +53.
+        /// <summary> BYWEEKNO; optional List of week of the year Filter from -53 to +53 when this Event recurs </summary>
+        /// <remarks>
         /// Negative values count backwards from the end of the specified year.
         /// A week is defined by ISO.8601.2004
-        /// </summary>
+        /// </remarks>
         public List<int> ByWeekNo { get; set; } = new List<int>();
 
-        /// <summary>
-        /// List of months in the year associated with this rule. Valid values are 1 through 12.
-        /// </summary>
+        /// <summary> BYMONTH; optional List of months in the year from 1 through 12. </summary>
         public List<int> ByMonth { get; set; } = new List<int>();
 
+        /// <summary> BYSETPOS; optional List of Positions in the Set of recurring Events. </summary>
         public List<int> BySetPosition { get; set; } = new List<int>();
+
+        #endregion optional enumerated Event Filters
 
         public DayOfWeek FirstDayOfWeek { get; set; } = DayOfWeek.Monday;
 

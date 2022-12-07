@@ -19,7 +19,7 @@ namespace PerfTests
         private static List<string> GetIcalStrings()
         {
             var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var topLevelIcsPath = Path.GetFullPath(Path.Combine(currentDirectory, @"..\..\..\..\", @"Ical.Net.CoreUnitTests\Calendars"));
+            var topLevelIcsPath = Path.GetFullPath(Path.Combine(currentDirectory, @"..\..\..\..\..\..\", @"Ical.Net.CoreUnitTests\Calendars"));
             return Directory.EnumerateFiles(topLevelIcsPath, "*.ics", SearchOption.AllDirectories)
                 .Select(File.ReadAllText)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -30,7 +30,8 @@ namespace PerfTests
         }
 
         [Benchmark]
-        public static List<Occurrence> SingleThreaded()
+        public List<Occurrence> SingleThreaded() => SingleThreaded_();
+        public static List<Occurrence> SingleThreaded_()
         {
             return _manyCalendars
                 .SelectMany(Calendar.Load<Calendar>)
@@ -40,7 +41,8 @@ namespace PerfTests
         }
 
         [Benchmark]
-        public static List<Occurrence> ParallelUponDeserialize()
+        public List<Occurrence> ParallelUponDeserialize() => ParallelUponDeserialize_();
+        public static List<Occurrence> ParallelUponDeserialize_()
         {
             return _manyCalendars
                 .AsParallel()
@@ -51,7 +53,8 @@ namespace PerfTests
         }
 
         [Benchmark]
-        public static List<Occurrence> ParallelUponGetOccurrences()
+        public List<Occurrence> ParallelUponGetOccurrences() => ParallelUponGetOccurrences_();
+        public static List<Occurrence> ParallelUponGetOccurrences_()
         {
             return _manyCalendars
                 .SelectMany(Calendar.Load<Calendar>)
@@ -62,7 +65,9 @@ namespace PerfTests
         }
 
         [Benchmark]
-        public static List<Occurrence> ParallelDeserializeSequentialGatherEventsParallelGetOccurrences()
+        public List<Occurrence> ParallelDeserializeSequentialGatherEventsParallelGetOccurrences()
+            => ParallelDeserializeSequentialGatherEventsParallelGetOccurrences_();
+        public static List<Occurrence> ParallelDeserializeSequentialGatherEventsParallelGetOccurrences_()
         {
             return _manyCalendars
                 .AsParallel()
