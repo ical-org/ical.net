@@ -44,9 +44,9 @@ namespace Ical.Net.DataTypes
     /// </remarks>
     public class RecurrencePattern : EncodableDataType
     {
-        private int _interval = int.MinValue;
-        private RecurrenceRestrictionType? _restrictionType;
-        private RecurrenceEvaluationModeType? _evaluationMode;
+        int _interval = int.MinValue;
+        RecurrenceRestrictionType? _restrictionType;
+        RecurrenceEvaluationModeType? _evaluationMode;
 
         /// <summary> Period of this Pattern; </summary>
         /// <remarks>
@@ -62,7 +62,7 @@ namespace Ical.Net.DataTypes
         /// </remarks>
         public FrequencyType Frequency { get; set; }
 
-        private DateTime _until = DateTime.MinValue;
+        DateTime _until = DateTime.MinValue;
         public DateTime Until
         {
             get => _until;
@@ -271,6 +271,6 @@ namespace Ical.Net.DataTypes
             EvaluationMode = pattern.EvaluationMode;
         }
 
-        private static bool CollectionEquals<T>(IEnumerable<T> c1, IEnumerable<T> c2) => c1.SequenceEqual(c2);
+        static bool CollectionEquals<T>(IEnumerable<T> c1, IEnumerable<T> c2) => c1.SequenceEqual(c2);
     }
 }

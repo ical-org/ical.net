@@ -44,12 +44,12 @@ namespace Ical.Net
         public static IList<T> Load<T>(string ical)
             => Load<T>(new StringReader(ical));
 
-        private IUniqueComponentList<IUniqueComponent> _mUniqueComponents;
-        private IUniqueComponentList<CalendarEvent> _mEvents;
-        private IUniqueComponentList<Todo> _mTodos;
-        private ICalendarObjectList<Journal> _mJournals;
-        private IUniqueComponentList<FreeBusy> _mFreeBusy;
-        private ICalendarObjectList<VTimeZone> _mTimeZones;
+        IUniqueComponentList<IUniqueComponent> _mUniqueComponents;
+        IUniqueComponentList<CalendarEvent> _mEvents;
+        IUniqueComponentList<Todo> _mTodos;
+        ICalendarObjectList<Journal> _mJournals;
+        IUniqueComponentList<FreeBusy> _mFreeBusy;
+        ICalendarObjectList<VTimeZone> _mTimeZones;
 
         /// <summary>
         /// To load an existing an iCalendar object, use one of the provided LoadFromXXX methods.
@@ -66,7 +66,7 @@ namespace Ical.Net
             Initialize();
         }
 
-        private void Initialize()
+        void Initialize()
         {
             _mUniqueComponents = new UniqueComponentListProxy<IUniqueComponent>(Children);
             _mEvents = new UniqueComponentListProxy<CalendarEvent>(Children);

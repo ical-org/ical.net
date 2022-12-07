@@ -117,7 +117,7 @@ namespace Ical.Net.CalendarComponents
             return vTimeZone;
         }
 
-        private static VTimeZoneInfo CreateTimeZoneInfo(List<ZoneInterval> matchedIntervals, List<ZoneInterval> intervals, bool isRRule = true,
+        static VTimeZoneInfo CreateTimeZoneInfo(List<ZoneInterval> matchedIntervals, List<ZoneInterval> intervals, bool isRRule = true,
             bool isOnlyInterval = false)
         {
             if (matchedIntervals == null || !matchedIntervals.Any())
@@ -180,7 +180,7 @@ namespace Ical.Net.CalendarComponents
             return timeZoneInfo;
         }
 
-        private static List<ZoneInterval> GetMatchingIntervals(List<ZoneInterval> intervals, ZoneInterval intervalToMatch, bool consecutiveOnly = false)
+        static List<ZoneInterval> GetMatchingIntervals(List<ZoneInterval> intervals, ZoneInterval intervalToMatch, bool consecutiveOnly = false)
         {
             var matchedIntervals = intervals
                 .Where(x => x.Start != Instant.MinValue)
@@ -221,7 +221,7 @@ namespace Ical.Net.CalendarComponents
             return consecutiveIntervals;
         }
 
-        private static void PopulateTimeZoneInfoRecurrenceDates(VTimeZoneInfo tzi, List<ZoneInterval> intervals, TimeSpan delta)
+        static void PopulateTimeZoneInfoRecurrenceDates(VTimeZoneInfo tzi, List<ZoneInterval> intervals, TimeSpan delta)
         {
             foreach (var interval in intervals)
             {
@@ -239,13 +239,13 @@ namespace Ical.Net.CalendarComponents
             }
         }
 
-        private static void PopulateTimeZoneInfoRecurrenceRules(VTimeZoneInfo tzi, ZoneInterval interval)
+        static void PopulateTimeZoneInfoRecurrenceRules(VTimeZoneInfo tzi, ZoneInterval interval)
         {
             var recurrence = new IntervalRecurrencePattern(interval);
             tzi.RecurrenceRules.Add(recurrence);
         }
 
-        private class IntervalRecurrencePattern : RecurrencePattern
+        class IntervalRecurrencePattern : RecurrencePattern
         {
             public IntervalRecurrencePattern(ZoneInterval interval)
             {
@@ -277,8 +277,8 @@ namespace Ical.Net.CalendarComponents
             Location = _nodaZone.Id;
         }
 
-        private DateTimeZone _nodaZone;
-        private string _tzId;
+        DateTimeZone _nodaZone;
+        string _tzId;
         public string TzId
         {
             get
@@ -320,7 +320,7 @@ namespace Ical.Net.CalendarComponents
             }
         }
 
-        private Uri _url;
+        Uri _url;
         public Uri Url
         {
             get => _url ?? (_url = Properties.Get<Uri>("TZURL"));
@@ -331,7 +331,7 @@ namespace Ical.Net.CalendarComponents
             }
         }
 
-        private string _location;
+        string _location;
         public string Location
         {
             get => _location ?? (_location = Properties.Get<string>("X-LIC-LOCATION"));

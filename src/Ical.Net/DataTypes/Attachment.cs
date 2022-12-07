@@ -16,7 +16,7 @@ namespace Ical.Net.DataTypes
         public Uri Uri { get; set; }
         public byte[] Data { get; }
 
-        private Encoding _valueEncoding = System.Text.Encoding.UTF8;
+        Encoding _valueEncoding = System.Text.Encoding.UTF8;
         public Encoding ValueEncoding
         {
             get => _valueEncoding;

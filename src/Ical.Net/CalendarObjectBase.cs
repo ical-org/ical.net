@@ -4,7 +4,7 @@ namespace Ical.Net
 {
     public class CalendarObjectBase : ICopyable, ILoadable
     {
-        private bool _mIsLoaded;
+        bool _mIsLoaded;
 
         public CalendarObjectBase()
         {

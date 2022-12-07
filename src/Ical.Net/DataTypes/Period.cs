@@ -83,7 +83,7 @@ namespace Ical.Net.DataTypes
             return periodSerializer.SerializeToString(this);
         }
 
-        private void ExtrapolateTimes()
+        void ExtrapolateTimes()
         {
             if (EndTime == null && StartTime != null && Duration != null)
             {
@@ -99,7 +99,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private IDateTime _startTime;
+        IDateTime _startTime;
         public IDateTime StartTime
         {
             get => _startTime.HasTime
@@ -116,7 +116,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private IDateTime? _endTime;
+        IDateTime? _endTime;
         public IDateTime? EndTime
         {
             get => _endTime;
@@ -131,7 +131,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private TimeSpan? _duration;
+        TimeSpan? _duration;
         public TimeSpan? Duration
         {
             get

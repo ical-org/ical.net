@@ -9,7 +9,7 @@ namespace Ical.Net
     /// </summary>
     public class CalendarObject : CalendarObjectBase, ICalendarObject
     {
-        private ServiceProvider _serviceProvider;
+        ServiceProvider _serviceProvider;
 
         internal CalendarObject()
         {
@@ -28,7 +28,7 @@ namespace Ical.Net
         }
 
         /// <summary> Instead of Constructor to support <see cref="OnDeserializing"/>, which skips the Constructor </summary>
-        private void Initialize()
+        void Initialize()
         {
             //ToDo: I'm fairly certain this is ONLY used for null checking. If so, maybe it can just be a bool? CalendarObjectList is an empty object, and
             //ToDo: its constructor parameter is ignored
@@ -48,7 +48,7 @@ namespace Ical.Net
 
         protected virtual void OnDeserialized(StreamingContext context) {}
 
-        private void Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e) => e.First.Parent = this;
+        void Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e) => e.First.Parent = this;
 
         protected bool Equals(CalendarObject other) => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
 

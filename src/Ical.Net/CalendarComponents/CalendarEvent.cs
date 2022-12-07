@@ -192,7 +192,7 @@ namespace Ical.Net.CalendarComponents
             set => Properties.Set(TransparencyType.Key, value);
         }
 
-        private EventEvaluator _mEvaluator;
+        EventEvaluator _mEvaluator;
 
         /// <summary>
         /// Constructs an Event object, with an iCalObject
@@ -203,7 +203,7 @@ namespace Ical.Net.CalendarComponents
             Initialize();
         }
 
-        private void Initialize()
+        void Initialize()
         {
             Name = EventStatus.Name;
 
@@ -261,7 +261,7 @@ namespace Ical.Net.CalendarComponents
             ExtrapolateTimes(-1);
         }
 
-        private void ExtrapolateTimes(int source)
+        void ExtrapolateTimes(int source)
         {
             /*
 			 * Source values, a fix introduced to prevent stack overflow exceptions from occuring.

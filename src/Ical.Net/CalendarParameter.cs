@@ -10,7 +10,7 @@ namespace Ical.Net
     [DebuggerDisplay("{Name}={string.Join(\",\", Values)}")]
     public class CalendarParameter : CalendarObject, IValueObject<string>
     {
-        private HashSet<string> _values;
+        HashSet<string> _values;
 
         public CalendarParameter()
         {
@@ -37,7 +37,7 @@ namespace Ical.Net
             }
         }
 
-        private void Initialize()
+        void Initialize()
         {
             _values = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         }
@@ -81,7 +81,7 @@ namespace Ical.Net
             _values.UnionWith(values.Where(IsValidValue));
         }
 
-        private bool IsValidValue(string value) => !string.IsNullOrWhiteSpace(value);
+        bool IsValidValue(string value) => !string.IsNullOrWhiteSpace(value);
 
         public void AddValue(string value)
         {

@@ -28,7 +28,7 @@ namespace Ical.Net.CalendarComponents
             EnsureProperties();
         }
 
-        private void EnsureProperties()
+        void EnsureProperties()
         {
             if (string.IsNullOrEmpty(Uid))
             {

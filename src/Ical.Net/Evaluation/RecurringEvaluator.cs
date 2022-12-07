@@ -129,7 +129,7 @@ namespace Ical.Net.Evaluation
             return Periods;
         }
 
-        private HashSet<Period> FindDateOverlaps(HashSet<Period> dates)
+        HashSet<Period> FindDateOverlaps(HashSet<Period> dates)
         {
             var datesWithoutTimes = new HashSet<DateTime>(dates.Where(d => d.StartTime.Value.TimeOfDay == TimeSpan.Zero).Select(d => d.StartTime.Value));
             var overlaps = new HashSet<Period>(Periods.Where(p => datesWithoutTimes.Contains(p.StartTime.Value.Date)));

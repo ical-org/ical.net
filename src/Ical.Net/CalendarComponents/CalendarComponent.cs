@@ -25,7 +25,7 @@ namespace Ical.Net.CalendarComponents
             Initialize();
         }
 
-        private void Initialize()
+        void Initialize()
         {
             Properties = new CalendarPropertyList(this);
         }

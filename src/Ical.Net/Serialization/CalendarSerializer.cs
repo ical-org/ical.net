@@ -6,7 +6,7 @@ namespace Ical.Net.Serialization
 {
     public class CalendarSerializer : ComponentSerializer
     {
-        private readonly Calendar _calendar;
+        readonly Calendar _calendar;
 
         public CalendarSerializer()
             :this(new SerializationContext()) { }
@@ -38,7 +38,7 @@ namespace Ical.Net.Serialization
 
         public override object Deserialize(TextReader tr) => null;
 
-        private class CalendarPropertySorter : IComparer<ICalendarProperty>
+        class CalendarPropertySorter : IComparer<ICalendarProperty>
         {
             public int Compare(ICalendarProperty x, ICalendarProperty y)
             {

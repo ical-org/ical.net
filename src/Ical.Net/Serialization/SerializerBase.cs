@@ -6,7 +6,7 @@ namespace Ical.Net.Serialization
 {
     public abstract class SerializerBase : IStringSerializer
     {
-        private SerializationContext _mSerializationContext;
+        SerializationContext _mSerializationContext;
 
         protected SerializerBase()
         {

@@ -6,8 +6,8 @@ namespace PerfTests
 {
     public class CalDateTimePerfTests
     {
-        private const string _aTzid = "Australia/Sydney";
-        private const string _bTzid = "America/New_York";
+        const string _aTzid = "Australia/Sydney";
+        const string _bTzid = "America/New_York";
 
         [Benchmark]
         public IDateTime EmptyTzid() => new CalDateTime(DateTime.Now);

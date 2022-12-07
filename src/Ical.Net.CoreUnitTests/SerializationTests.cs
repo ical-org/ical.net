@@ -17,13 +17,13 @@ namespace Ical.Net.CoreUnitTests
     [TestFixture]
     public class SerializationTests
     {
-        private static readonly DateTime _nowTime = DateTime.Now;
-        private static readonly DateTime _later = _nowTime.AddHours(1);
-        private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
-        private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
-        private static string SerializeToString(CalendarEvent e) => SerializeToString(new Calendar { Events = { e } });
-        private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime };
-        private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
+        static readonly DateTime _nowTime = DateTime.Now;
+        static readonly DateTime _later = _nowTime.AddHours(1);
+        static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
+        static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
+        static string SerializeToString(CalendarEvent e) => SerializeToString(new Calendar { Events = { e } });
+        static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime };
+        static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
 
         public static void CompareCalendars(Calendar cal1, Calendar cal2)
         {
@@ -278,7 +278,7 @@ namespace Ical.Net.CoreUnitTests
                 });
         }
 
-        private static readonly IList<Attendee> _attendees = new List<Attendee>
+        static readonly IList<Attendee> _attendees = new List<Attendee>
         {
             new Attendee("MAILTO:james@example.com")
             {

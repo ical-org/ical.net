@@ -120,7 +120,7 @@ namespace Ical.Net
             return occurrences;
         }
 
-        private static FreeBusy CombineFreeBusy(FreeBusy main, FreeBusy current)
+        static FreeBusy CombineFreeBusy(FreeBusy main, FreeBusy current)
         {
             main?.MergeWith(current);
             return current;

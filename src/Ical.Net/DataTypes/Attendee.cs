@@ -7,7 +7,7 @@ namespace Ical.Net.DataTypes
 {
     public class Attendee : EncodableDataType
     {
-        private Uri _sentBy;
+        Uri _sentBy;
         /// <summary> SENT-BY, to indicate who is acting on behalf of the ATTENDEE </summary>
         public Uri SentBy
         {
@@ -33,7 +33,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private string _commonName;
+        string _commonName;
         /// <summary> CN: to show the common or displayable name associated with the calendar address </summary>
         public string CommonName
         {
@@ -56,7 +56,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private Uri _directoryEntry;
+        Uri _directoryEntry;
         /// <summary> DIR, to indicate the URI that points to the directory information corresponding to the attendee </summary>
         public Uri DirectoryEntry
         {
@@ -82,7 +82,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private string _type;
+        string _type;
         /// <summary> CUTYPE: the type of calendar user </summary>
         public string Type
         {
@@ -106,7 +106,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private List<string> _members;
+        List<string> _members;
         /// <summary> MEMBER: the groups the user belongs to </summary>
         public IList<string> Members
         {
@@ -118,7 +118,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private string _role;
+        string _role;
         /// <summary> ROLE: the intended role the attendee will have </summary>
         public string Role
         {
@@ -141,7 +141,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private string _participationStatus;
+        string _participationStatus;
         public string ParticipationStatus
         {
             get
@@ -163,7 +163,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private bool? _rsvp;
+        bool? _rsvp;
         /// <summary> RSVP, to indicate whether a reply is requested </summary>
         public bool Rsvp
         {
@@ -191,7 +191,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private List<string> _delegatedTo;
+        List<string> _delegatedTo;
         /// <summary> DELEGATED-TO, to indicate the calendar users that the original request was delegated to </summary>
         public IList<string> DelegatedTo
         {
@@ -207,7 +207,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private List<string> _delegatedFrom;
+        List<string> _delegatedFrom;
         /// <summary> DELEGATED-FROM, to indicate whom the request was delegated from </summary>
         public IList<string> DelegatedFrom
         {

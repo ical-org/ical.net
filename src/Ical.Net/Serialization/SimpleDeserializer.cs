@@ -27,16 +27,16 @@ namespace Ical.Net.Serialization
 
         #region RegEx Group Names
 
-        private const string _nameGroup = "name";
-        private const string _valueGroup = "value";
-        private const string _paramNameGroup = "paramName";
-        private const string _paramValueGroup = "paramValue";
+        const string _nameGroup = "name";
+        const string _valueGroup = "value";
+        const string _paramNameGroup = "paramName";
+        const string _paramValueGroup = "paramValue";
 
         #endregion RegEx Group Names
 
-        private readonly DataTypeMapper _dataTypeMapper;
-        private readonly ISerializerFactory _serializerFactory;
-        private readonly CalendarComponentFactory _componentFactory;
+        readonly DataTypeMapper _dataTypeMapper;
+        readonly ISerializerFactory _serializerFactory;
+        readonly CalendarComponentFactory _componentFactory;
 
         /// <summary> Regular Expression for an Identifier </summary>
         /// <remarks>
@@ -61,9 +61,9 @@ namespace Ical.Net.Serialization
         /// </remarks>
         static readonly string paramValue = $"((?<{_paramValueGroup}>[^\\x00-\\x08\\x0A-\\x1F\\x7F\";:,]*)|\"(?<{_paramValueGroup}>[^\\x00-\\x08\\x0A-\\x1F\\x7F\"]*)\")";
 
-        private static readonly Regex _contentLineRegex = new Regex(BuildContentLineRegex(), RegexOptions.Compiled);
+        static readonly Regex _contentLineRegex = new Regex(BuildContentLineRegex(), RegexOptions.Compiled);
 
-        private static string BuildContentLineRegex()
+        static string BuildContentLineRegex()
         {
             // param         = param-name "=" param-value *("," param-value)
             // param-name    = iana-token / x-name
@@ -128,7 +128,7 @@ namespace Ical.Net.Serialization
             }
         }
 
-        private CalendarProperty ParseContentLine(SerializationContext context, string input)
+        CalendarProperty ParseContentLine(SerializationContext context, string input)
         {
             var match = _contentLineRegex.Match(input);
             if (!match.Success)
@@ -148,7 +148,7 @@ namespace Ical.Net.Serialization
             return property;
         }
 
-        private static void SetPropertyParameters(CalendarProperty property, CaptureCollection paramNames, CaptureCollection paramValues)
+        static void SetPropertyParameters(CalendarProperty property, CaptureCollection paramNames, CaptureCollection paramValues)
         {
             var paramValueIndex = 0;
             for (var paramNameIndex = 0; paramNameIndex < paramNames.Count; paramNameIndex++)
@@ -166,7 +166,7 @@ namespace Ical.Net.Serialization
             }
         }
 
-        private void SetPropertyValue(SerializationContext context, CalendarProperty property, string value)
+        void SetPropertyValue(SerializationContext context, CalendarProperty property, string value)
         {
             var type = _dataTypeMapper.GetPropertyMapping(property) ?? typeof(string);
             var serializer = (SerializerBase)_serializerFactory.Build(type, context);
@@ -187,7 +187,7 @@ namespace Ical.Net.Serialization
             }
         }
 
-        private static IEnumerable<string> GetContentLines(TextReader reader)
+        static IEnumerable<string> GetContentLines(TextReader reader)
         {
             var currentLine = new StringBuilder();
             while (true)

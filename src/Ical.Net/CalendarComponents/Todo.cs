@@ -14,7 +14,7 @@ namespace Ical.Net.CalendarComponents
     [DebuggerDisplay("{Summary} - {Status}")]
     public class Todo : RecurringComponent, IAlarmContainer
     {
-        private readonly TodoEvaluator _mEvaluator;
+        readonly TodoEvaluator _mEvaluator;
 
         /// <summary>
         /// The date/time the todo was completed.
@@ -186,7 +186,7 @@ namespace Ical.Net.CalendarComponents
             base.OnDeserializing(context);
         }
 
-        private void ExtrapolateTimes(int source)
+        void ExtrapolateTimes(int source)
         {
             /*
 			 * Source values, a fix introduced to prevent StackOverflow exceptions from occuring.

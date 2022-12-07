@@ -162,9 +162,9 @@ namespace Ical.Net.CalendarComponents
             EnsureProperties();
         }
 
-        private void Initialize() => SetService(new RecurringEvaluator(this));
+        void Initialize() => SetService(new RecurringEvaluator(this));
 
-        private void EnsureProperties()
+        void EnsureProperties()
         {
             if (!Properties.ContainsKey("SEQUENCE"))
             {

@@ -22,8 +22,8 @@ namespace Ical.Net.DataTypes
 
         public static CalDateTime Today => new CalDateTime(DateTime.Today);
 
-        private bool _hasDate;
-        private bool _hasTime;
+        bool _hasDate;
+        bool _hasTime;
 
         public CalDateTime() { }
 
@@ -71,12 +71,12 @@ namespace Ical.Net.DataTypes
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
-        private void Initialize(int year, int month, int day, int hour, int minute, int second, string tzId, ICalendarObject cal)
+        void Initialize(int year, int month, int day, int hour, int minute, int second, string tzId, ICalendarObject cal)
         {
             Initialize(CoerceDateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzId, cal);
         }
 
-        private void Initialize(DateTime value, string tzId, ICalendarObject cal)
+        void Initialize(DateTime value, string tzId, ICalendarObject cal)
         {
             if (!string.IsNullOrWhiteSpace(tzId) && !tzId.Equals("UTC", StringComparison.OrdinalIgnoreCase))
             {
@@ -97,7 +97,7 @@ namespace Ical.Net.DataTypes
             AssociatedObject = cal;
         }
 
-        private static DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
+        static DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
         {
             // NOTE: determine if a date/time value exceeds the representable date/time values in .NET.
             // If so, let's automatically adjust the date/time to compensate.
@@ -237,7 +237,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private DateTime _asUtc = DateTime.MinValue;
+        DateTime _asUtc = DateTime.MinValue;
         /// <summary>
         /// Returns a representation of the DateTime in Coordinated Universal Time (UTC)
         /// </summary>
@@ -270,7 +270,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private DateTime _value;
+        DateTime _value;
         public DateTime Value
         {
             get => _value;
@@ -300,7 +300,7 @@ namespace Ical.Net.DataTypes
             set => _hasTime = value;
         }
 
-        private string _tzId = string.Empty;
+        string _tzId = string.Empty;
 
         /// <summary>
         /// Setting the TzId to a local time zone will set Value.Kind to Local. Setting TzId to UTC will set Value.Kind to Utc. If the incoming value is null

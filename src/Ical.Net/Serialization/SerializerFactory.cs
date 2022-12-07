@@ -8,7 +8,7 @@ namespace Ical.Net.Serialization
 {
     public class SerializerFactory : ISerializerFactory
     {
-        private readonly ISerializerFactory _mDataTypeSerializerFactory;
+        readonly ISerializerFactory _mDataTypeSerializerFactory;
 
         public SerializerFactory()
         {

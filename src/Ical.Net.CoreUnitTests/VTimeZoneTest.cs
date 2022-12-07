@@ -213,7 +213,7 @@ namespace Ical.Net.CoreUnitTests
             Assert.IsTrue(serialized.Contains("DTSTART:20071104T020000"), "DTSTART:20071104T020000 was not serialized");
         }
 
-        private static Calendar CreateTestCalendar(string tzId, DateTime? earliestTime = null, bool includeHistoricalData = true)
+        static Calendar CreateTestCalendar(string tzId, DateTime? earliestTime = null, bool includeHistoricalData = true)
         {
             var iCal = new Calendar();
 

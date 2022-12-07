@@ -8,8 +8,8 @@ namespace Ical.Net.Serialization
 {
     public class GenericListSerializer : SerializerBase
     {
-        private readonly Type _innerType;
-        private readonly Type _objectType;
+        readonly Type _innerType;
+        readonly Type _objectType;
 
         public GenericListSerializer(Type objectType)
         {
@@ -23,7 +23,7 @@ namespace Ical.Net.Serialization
 
         public override string SerializeToString(object obj) => throw new NotImplementedException();
 
-        private MethodInfo _addMethodInfo;
+        MethodInfo _addMethodInfo;
         public override object Deserialize(TextReader tr)
         {
             if (!(SerializationContext.Peek() is ICalendarProperty p))

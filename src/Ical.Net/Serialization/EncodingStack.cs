@@ -5,7 +5,7 @@ namespace Ical.Net.Serialization
 {
     internal class EncodingStack
     {
-        private readonly Stack<Encoding> _mStack;
+        readonly Stack<Encoding> _mStack;
 
         public EncodingStack()
         {

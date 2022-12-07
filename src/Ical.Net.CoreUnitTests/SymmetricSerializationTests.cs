@@ -13,14 +13,14 @@ namespace Ical.Net.CoreUnitTests
 {
     public class SymmetricSerializationTests
     {
-        private const string _ldapUri = "ldap://example.com:6666/o=eDABC Industries,c=3DUS??(cn=3DBMary Accepted)";
+        const string _ldapUri = "ldap://example.com:6666/o=eDABC Industries,c=3DUS??(cn=3DBMary Accepted)";
 
-        private static readonly DateTime _nowTime = DateTime.Now;
-        private static readonly DateTime _later = _nowTime.AddHours(1);
-        private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
-        private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
-        private static CalendarEvent GetSimpleEvent() => new CalendarEvent {DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime};
-        private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
+        static readonly DateTime _nowTime = DateTime.Now;
+        static readonly DateTime _later = _nowTime.AddHours(1);
+        static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
+        static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
+        static CalendarEvent GetSimpleEvent() => new CalendarEvent {DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime};
+        static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
 
         [Test, TestCaseSource(nameof(Event_TestCases))]
         public void Event_Tests(Calendar iCalendar)

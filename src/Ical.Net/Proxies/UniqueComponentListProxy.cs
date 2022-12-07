@@ -11,14 +11,14 @@ namespace Ical.Net.Proxies
         IUniqueComponentList<TComponentType>
         where TComponentType : class, IUniqueComponent
     {
-        private readonly Dictionary<string, TComponentType> _lookup;
+        readonly Dictionary<string, TComponentType> _lookup;
 
         public UniqueComponentListProxy(IGroupedCollection<string, ICalendarObject> children) : base(children)
         {
             _lookup = new Dictionary<string, TComponentType>();
         }
 
-        private TComponentType Search(string uid)
+        TComponentType Search(string uid)
         {
             if (_lookup.TryGetValue(uid, out var componentType))
             {

@@ -5,7 +5,7 @@ namespace Ical.Net.CoreUnitTests
 {
     internal class IcsFiles
     {
-        private static readonly Assembly _assembly = typeof(IcsFiles).GetTypeInfo().Assembly;
+        static readonly Assembly _assembly = typeof(IcsFiles).GetTypeInfo().Assembly;
 
         internal static string ReadStream(string manifestResource)
         {

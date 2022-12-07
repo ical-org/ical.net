@@ -6,7 +6,7 @@ namespace Ical.Net.Serialization.DataTypes
 {
     public class EnumSerializer : EncodableDataTypeSerializer
     {
-        private readonly Type _mEnumType;
+        readonly Type _mEnumType;
 
         public EnumSerializer(Type enumType)
         {

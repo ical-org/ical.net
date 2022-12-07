@@ -7,11 +7,11 @@ namespace Ical.Net.Evaluation
 {
     public abstract class Evaluator : IEvaluator
     {
-        private DateTime _mEvaluationStartBounds = DateTime.MaxValue;
-        private DateTime _mEvaluationEndBounds = DateTime.MinValue;
+        DateTime _mEvaluationStartBounds = DateTime.MaxValue;
+        DateTime _mEvaluationEndBounds = DateTime.MinValue;
 
-        private ICalendarObject _mAssociatedObject;
-        private readonly ICalendarDataType _mAssociatedDataType;
+        ICalendarObject _mAssociatedObject;
+        readonly ICalendarDataType _mAssociatedDataType;
 
         protected HashSet<Period> MPeriods;
 
@@ -34,7 +34,7 @@ namespace Ical.Net.Evaluation
             Initialize();
         }
 
-        private void Initialize()
+        void Initialize()
         {
             Calendar = CultureInfo.CurrentCulture.Calendar;
             MPeriods = new HashSet<Period>();

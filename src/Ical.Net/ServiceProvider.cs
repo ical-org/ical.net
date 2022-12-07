@@ -6,8 +6,8 @@ namespace Ical.Net
 {
     public class ServiceProvider
     {
-        private readonly IDictionary<Type, object> _mTypedServices = new Dictionary<Type, object>();
-        private readonly IDictionary<string, object> _mNamedServices = new Dictionary<string, object>();
+        readonly IDictionary<Type, object> _mTypedServices = new Dictionary<Type, object>();
+        readonly IDictionary<string, object> _mNamedServices = new Dictionary<string, object>();
 
         public object GetService(Type serviceType)
         {

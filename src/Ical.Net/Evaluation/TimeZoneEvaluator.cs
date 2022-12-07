@@ -10,7 +10,7 @@ namespace Ical.Net.Evaluation
     {
         protected VTimeZone TimeZone { get; set; }
 
-        private List<Occurrence> _occurrences;
+        List<Occurrence> _occurrences;
         public List<Occurrence> Occurrences
         {
             get => _occurrences;

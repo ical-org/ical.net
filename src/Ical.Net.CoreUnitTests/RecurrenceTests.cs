@@ -19,9 +19,9 @@ namespace Ical.Net.CoreUnitTests
     [TestFixture]
     public class RecurrenceTests
     {
-        private const string _tzid = "US-Eastern";
+        const string _tzid = "US-Eastern";
 
-        private static void EventOccurrenceTest(
+        static void EventOccurrenceTest(
             Calendar cal,
             IDateTime fromDate,
             IDateTime toDate,
@@ -60,7 +60,7 @@ namespace Ical.Net.CoreUnitTests
             }            
         }
 
-        private void EventOccurrenceTest(
+        void EventOccurrenceTest(
             Calendar cal,
             IDateTime fromDate,
             IDateTime toDate,
@@ -3206,9 +3206,10 @@ END:VCALENDAR";
             Assert.IsTrue(occurrences.Count == 3);
         }
 
-        private static readonly DateTime _now = DateTime.Now;
-        private static readonly DateTime _later = _now.AddHours(1);
-        private static CalendarEvent GetEventWithRecurrenceRules()
+        static readonly DateTime _now = DateTime.Now;
+        static readonly DateTime _later = _now.AddHours(1);
+
+        static CalendarEvent GetEventWithRecurrenceRules()
         {
             var dailyForFiveDays = new RecurrencePattern(FrequencyType.Daily, 1)
             {
@@ -3277,9 +3278,9 @@ END:VCALENDAR";
             Assert.AreEqual(3, Regex.Matches(serialized, expected).Count);
         }
 
-        private static RecurrencePattern GetSimpleRecurrencePattern(int count) => new RecurrencePattern(FrequencyType.Daily, 1) { Count = count, };
+        static RecurrencePattern GetSimpleRecurrencePattern(int count) => new RecurrencePattern(FrequencyType.Daily, 1) { Count = count, };
 
-        private static CalendarEvent GetSimpleEvent()
+        static CalendarEvent GetSimpleEvent()
         {
             var e = new CalendarEvent
             {

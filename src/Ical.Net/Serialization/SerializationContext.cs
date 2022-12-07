@@ -5,7 +5,7 @@ namespace Ical.Net.Serialization
 {
     public class SerializationContext
     {
-        private static SerializationContext _default;
+        static SerializationContext _default;
 
         /// <summary>
         /// Gets the Singleton instance of the SerializationContext class.
@@ -33,8 +33,8 @@ namespace Ical.Net.Serialization
             }
         }
 
-        private readonly Stack<WeakReference> _mStack = new Stack<WeakReference>();
-        private ServiceProvider _mServiceProvider = new ServiceProvider();
+        readonly Stack<WeakReference> _mStack = new Stack<WeakReference>();
+        ServiceProvider _mServiceProvider = new ServiceProvider();
 
         public SerializationContext()
         {

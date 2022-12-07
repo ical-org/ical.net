@@ -9,14 +9,14 @@ namespace Ical.Net.Serialization
 
     internal class DataTypeMapper
     {
-        private class PropertyMapping
+        class PropertyMapping
         {
             public Type ObjectType { get; set; }
             public TypeResolverDelegate Resolver { get; set; }
             public bool AllowsMultipleValuesPerProperty { get; set; }
         }
 
-        private readonly IDictionary<string, PropertyMapping> _propertyMap = new Dictionary<string, PropertyMapping>(StringComparer.OrdinalIgnoreCase);
+        readonly IDictionary<string, PropertyMapping> _propertyMap = new Dictionary<string, PropertyMapping>(StringComparer.OrdinalIgnoreCase);
 
         public DataTypeMapper()
         {

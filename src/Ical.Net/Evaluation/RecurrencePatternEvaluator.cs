@@ -49,7 +49,7 @@ namespace Ical.Net.Evaluation
     public class RecurrencePatternEvaluator : Evaluator
     {
         // FIXME: in ical4j this is configurable.
-        private const int _maxIncrementCount = 1000;
+        const int _maxIncrementCount = 1000;
 
         protected RecurrencePattern Pattern { get; set; }
 
@@ -58,7 +58,7 @@ namespace Ical.Net.Evaluation
             Pattern = pattern;
         }
 
-        private RecurrencePattern ProcessRecurrencePattern(IDateTime referenceDate)
+        RecurrencePattern ProcessRecurrencePattern(IDateTime referenceDate)
         {
             var r = new RecurrencePattern();
             r.CopyFrom(Pattern);
@@ -120,7 +120,7 @@ namespace Ical.Net.Evaluation
             return r;
         }
 
-        private static void EnforceEvaluationRestrictions(RecurrencePattern pattern)
+        static void EnforceEvaluationRestrictions(RecurrencePattern pattern)
         {
             RecurrenceEvaluationModeType? evaluationMode = pattern.EvaluationMode;
             RecurrenceRestrictionType? evaluationRestriction = pattern.RestrictionType;
@@ -223,7 +223,7 @@ namespace Ical.Net.Evaluation
         /// but the recurrence is Mon - Fri, 9:00AM - 5:00PM,
         /// the start dates returned should all be at 9:00AM, and not 12:19PM.
         /// </remarks>
-        private HashSet<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd
+        HashSet<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd
             , int maxCount, RecurrencePattern pattern, bool includeReferenceDateInResults)
         {
             var dates = new HashSet<DateTime>();
@@ -315,7 +315,7 @@ namespace Ical.Net.Evaluation
         }
 
         /// <summary> Returns a list of possible dates generated from the applicable BY* rules, using the <paramref name="seedDate"/>. </summary>
-        private List<DateTime> GetCandidates_(DateTime seedDate, RecurrencePattern pattern, IReadOnlyList<bool?> expandBehaviors)
+        List<DateTime> GetCandidates_(DateTime seedDate, RecurrencePattern pattern, IReadOnlyList<bool?> expandBehaviors)
         {
             var dates = new List<DateTime> {seedDate};
             dates = GetMonthVariants(dates, pattern, expandBehaviors[0]);
@@ -336,7 +336,7 @@ namespace Ical.Net.Evaluation
         /// <remarks>
         /// Invalid positions are ignored. 
         /// </remarks>
-        private static List<DateTime> ApplySetPosRules(List<DateTime> dates, RecurrencePattern pattern)
+        static List<DateTime> ApplySetPosRules(List<DateTime> dates, RecurrencePattern pattern)
         {
             // return if no SETPOS rules specified..
             if (pattern.BySetPosition.Count == 0)
@@ -360,7 +360,7 @@ namespace Ical.Net.Evaluation
 
         /// <summary> Applies <see cref="RecurrencePattern.ByMonth"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
         /// <returns>the full <paramref name="dates"/> when no Rules were specified. </returns>
-        private static List<DateTime> GetMonthVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        static List<DateTime> GetMonthVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByMonth.Count == 0)
             {
@@ -383,7 +383,7 @@ namespace Ical.Net.Evaluation
 
         /// <summary> Applies <see cref="RecurrencePattern.ByWeekNo"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
         /// <returns>the full <paramref name="dates"/> when no Rules were specified. </returns>
-        private List<DateTime> GetWeekNoVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        List<DateTime> GetWeekNoVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByWeekNo.Count == 0)
             {
@@ -435,7 +435,7 @@ namespace Ical.Net.Evaluation
 
         /// <summary> Applies <see cref="RecurrencePattern.ByYearDay"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
         /// <returns>the full <paramref name="dates"/> when no Rules were specified. </returns>
-        private static List<DateTime> GetYearDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        static List<DateTime> GetYearDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByYearDay.Count == 0)
             {
@@ -482,7 +482,7 @@ namespace Ical.Net.Evaluation
 
         /// <summary> Applies <see cref="RecurrencePattern.ByMonthDay"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
         /// <returns>the full <paramref name="dates"/> when no Rules were specified. </returns>
-        private List<DateTime> GetMonthDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        List<DateTime> GetMonthDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByMonthDay.Count == 0)
             {
@@ -539,7 +539,7 @@ namespace Ical.Net.Evaluation
 
         /// <summary> Applies <see cref="RecurrencePattern.ByDay"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
         /// <returns>the full <paramref name="dates"/> when no Rules were specified. </returns>
-        private List<DateTime> GetDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        List<DateTime> GetDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByDay.Count == 0)
             {
@@ -587,7 +587,7 @@ namespace Ical.Net.Evaluation
         }
 
         /// <summary> Returns a list of times with <paramref name="pattern"/> frequency on the <paramref name="weekDay"/>. </summary>
-        private List<DateTime> GetAbsWeekDays(DateTime date, WeekDay weekDay, RecurrencePattern pattern)
+        List<DateTime> GetAbsWeekDays(DateTime date, WeekDay weekDay, RecurrencePattern pattern)
         {
             var days = new List<DateTime>();
 
@@ -675,7 +675,7 @@ namespace Ical.Net.Evaluation
         /// Valid <paramref name="offset"/> are from -<paramref name="dates"/>.Length to <paramref name="dates"/>.Length.
         /// </remarks>
         /// <returns> an empty list, when an invalid offset is supplied. </returns>
-        private static List<DateTime> GetOffsetDate(List<DateTime> dates, int offset)
+        static List<DateTime> GetOffsetDate(List<DateTime> dates, int offset)
         {
             if (offset == int.MinValue)
             {
@@ -697,7 +697,7 @@ namespace Ical.Net.Evaluation
 
         /// <summary> Applies <see cref="RecurrencePattern.ByHour"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
         /// <returns>the full <paramref name="dates"/> when no Rules were specified. </returns>
-        private static List<DateTime> GetHourVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        static List<DateTime> GetHourVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByHour.Count == 0)
             {
@@ -742,7 +742,7 @@ namespace Ical.Net.Evaluation
 
         /// <summary> Applies <see cref="RecurrencePattern.ByMinute"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
         /// <returns>the full <paramref name="dates"/> when no Rules were specified. </returns>
-        private static List<DateTime> GetMinuteVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        static List<DateTime> GetMinuteVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByMinute.Count == 0)
             {
@@ -787,7 +787,7 @@ namespace Ical.Net.Evaluation
 
         /// <summary> Applies <see cref="RecurrencePattern.BySecond"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
         /// <returns>the full <paramref name="dates"/> when no Rules were specified. </returns>
-        private static List<DateTime> GetSecondVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        static List<DateTime> GetSecondVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.BySecond.Count == 0)
             {
@@ -831,7 +831,7 @@ namespace Ical.Net.Evaluation
         }
 
         /// <summary> Create a period with unspecified Duration from the <paramref name="startDateTime"/>. </summary>
-        private static Period CreatePeriod(DateTime startDateTime, IDateTime referenceDate)
+        static Period CreatePeriod(DateTime startDateTime, IDateTime referenceDate)
         {
             // Turn each resulting date/time into an IDateTime and associate it
             // with the reference date.

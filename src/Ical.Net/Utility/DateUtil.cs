@@ -82,10 +82,10 @@ namespace Ical.Net.Utility
             return dt;
         }
 
-        private static readonly Lazy<Dictionary<string, string>> _windowsMapping
+        static readonly Lazy<Dictionary<string, string>> _windowsMapping
             = new Lazy<Dictionary<string, string>>(InitializeWindowsMappings, LazyThreadSafetyMode.PublicationOnly);
 
-        private static Dictionary<string, string> InitializeWindowsMappings()
+        static Dictionary<string, string> InitializeWindowsMappings()
             => TzdbDateTimeZoneSource.Default.WindowsMapping.PrimaryMapping
                 .ToDictionary(k => k.Key, v => v.Value, StringComparer.OrdinalIgnoreCase);
 

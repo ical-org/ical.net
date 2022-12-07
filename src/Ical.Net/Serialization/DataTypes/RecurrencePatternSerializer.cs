@@ -85,7 +85,7 @@ namespace Ical.Net.Serialization.DataTypes
             throw new ArgumentException("Both " + name1 + " and " + name2 + " cannot be supplied together; they are mutually exclusive.");
         }
 
-        private static void SerializeByValue(List<string> aggregate, IList<int> byValue, string name)
+        static void SerializeByValue(List<string> aggregate, IList<int> byValue, string name)
         {
             if (byValue.Any())
             {
@@ -178,7 +178,7 @@ namespace Ical.Net.Serialization.DataTypes
         }
 
         //Compiling these is a one-time penalty of about 80ms
-        private const RegexOptions _ciCompiled = RegexOptions.IgnoreCase | RegexOptions.Compiled;
+        const RegexOptions _ciCompiled = RegexOptions.IgnoreCase | RegexOptions.Compiled;
 
         internal static readonly Regex OtherInterval =
             new Regex(@"every\s+(?<Interval>other|\d+)?\w{0,2}\s*(?<Freq>second|minute|hour|day|week|month|year)s?,?\s*(?<More>.+)", _ciCompiled);

@@ -9,9 +9,9 @@ namespace Ical.Net.DataTypes
     /// </summary>
     public abstract class CalendarDataType : ICalendarDataType
     {
-        private IParameterCollection _parameters;
-        private ParameterCollectionProxy _proxy;
-        private ServiceProvider _serviceProvider;
+        IParameterCollection _parameters;
+        ParameterCollectionProxy _proxy;
+        ServiceProvider _serviceProvider;
 
         protected ICalendarObject _AssociatedObject;
 
@@ -20,7 +20,7 @@ namespace Ical.Net.DataTypes
             Initialize();
         }
 
-        private void Initialize()
+        void Initialize()
         {
             _parameters = new ParameterList();
             _proxy = new ParameterCollectionProxy(_parameters);

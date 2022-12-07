@@ -13,12 +13,12 @@ namespace PerfTests
     public class ApplicationWorkflows
     {
         const int DaysPerYear = 365;
-        private static readonly TimeSpan _oneYear = TimeSpan.FromDays(DaysPerYear);
-        private static readonly DateTime _searchStart = DateTime.Now.Subtract(_oneYear);
-        private static readonly DateTime _searchEnd = DateTime.Now.Add(_oneYear);
-        private static readonly List<string> _manyCalendars = GetIcalStrings();
+        static readonly TimeSpan _oneYear = TimeSpan.FromDays(DaysPerYear);
+        static readonly DateTime _searchStart = DateTime.Now.Subtract(_oneYear);
+        static readonly DateTime _searchEnd = DateTime.Now.Add(_oneYear);
+        static readonly List<string> _manyCalendars = GetIcalStrings();
 
-        private static List<string> GetIcalStrings()
+        static List<string> GetIcalStrings()
         {
             var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var topLevelIcsPath = Path.GetFullPath(Path.Combine(currentDirectory!, @".\Calendars"));
