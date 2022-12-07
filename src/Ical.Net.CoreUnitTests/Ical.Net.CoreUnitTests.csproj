@@ -14,17 +14,14 @@
     <ProjectReference Include="..\Ical.Net\Ical.Net.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Calendars\**\*.ics" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Calendars\Alarm\ALARM1.ics">
+    <None Include="Calendars\**\*" Exclude="**\*.vrn;**\*.vrn.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
+    </None>
   </ItemGroup>
 </Project>
