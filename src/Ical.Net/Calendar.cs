@@ -44,13 +44,6 @@ namespace Ical.Net
         public static IList<T> Load<T>(string ical)
             => Load<T>(new StringReader(ical));
 
-        IUniqueComponentList<IUniqueComponent> _mUniqueComponents;
-        IUniqueComponentList<CalendarEvent> _mEvents;
-        IUniqueComponentList<Todo> _mTodos;
-        ICalendarObjectList<Journal> _mJournals;
-        IUniqueComponentList<FreeBusy> _mFreeBusy;
-        ICalendarObjectList<VTimeZone> _mTimeZones;
-
         /// <summary>
         /// To load an existing an iCalendar object, use one of the provided LoadFromXXX methods.
         /// <example>
@@ -68,12 +61,12 @@ namespace Ical.Net
 
         void Initialize()
         {
-            _mUniqueComponents = new UniqueComponentListProxy<IUniqueComponent>(Children);
-            _mEvents = new UniqueComponentListProxy<CalendarEvent>(Children);
-            _mTodos = new UniqueComponentListProxy<Todo>(Children);
-            _mJournals = new CalendarObjectListProxy<Journal>(Children);
-            _mFreeBusy = new UniqueComponentListProxy<FreeBusy>(Children);
-            _mTimeZones = new CalendarObjectListProxy<VTimeZone>(Children);
+            UniqueComponents = new UniqueComponentListProxy<IUniqueComponent>(Children);
+            Events = new UniqueComponentListProxy<CalendarEvent>(Children);
+            Todos = new UniqueComponentListProxy<Todo>(Children);
+            Journals = new CalendarObjectListProxy<Journal>(Children);
+            FreeBusy = new UniqueComponentListProxy<FreeBusy>(Children);
+            TimeZones = new CalendarObjectListProxy<VTimeZone>(Children);
         }
 
         protected override void OnDeserializing(StreamingContext context)
@@ -120,34 +113,34 @@ namespace Ical.Net
             }
         }
 
-        public IUniqueComponentList<IUniqueComponent> UniqueComponents => _mUniqueComponents;
+        public IUniqueComponentList<IUniqueComponent> UniqueComponents { get; private set; }
 
         public IEnumerable<IRecurrable> RecurringItems => Children.OfType<IRecurrable>();
 
         /// <summary>
         /// A collection of <see cref="Components.Event"/> components in the iCalendar.
         /// </summary>
-        public IUniqueComponentList<CalendarEvent> Events => _mEvents;
+        public IUniqueComponentList<CalendarEvent> Events { get; private set; }
 
         /// <summary>
         /// A collection of <see cref="CalendarComponents.FreeBusy"/> components in the iCalendar.
         /// </summary>
-        public IUniqueComponentList<FreeBusy> FreeBusy => _mFreeBusy;
+        public IUniqueComponentList<FreeBusy> FreeBusy { get; private set; }
 
         /// <summary>
         /// A collection of <see cref="Journal"/> components in the iCalendar.
         /// </summary>
-        public ICalendarObjectList<Journal> Journals => _mJournals;
+        public ICalendarObjectList<Journal> Journals { get; private set; }
 
         /// <summary>
         /// A collection of VTimeZone components in the iCalendar.
         /// </summary>
-        public ICalendarObjectList<VTimeZone> TimeZones => _mTimeZones;
+        public ICalendarObjectList<VTimeZone> TimeZones { get; private set; }
 
         /// <summary>
         /// A collection of <see cref="Todo"/> components in the iCalendar.
         /// </summary>
-        public IUniqueComponentList<Todo> Todos => _mTodos;
+        public IUniqueComponentList<Todo> Todos { get; private set; }
 
         public string Version
         {

@@ -117,11 +117,11 @@ namespace Ical.Net.Evaluation
             var dateOverlaps = FindDateOverlaps(exDateExclusions);
             Periods.ExceptWith(dateOverlaps);
 
-            if (EvaluationStartBounds == DateTime.MaxValue || EvaluationStartBounds > periodStart)
+            if (EvaluationStartBounds > periodStart)
             {
                 EvaluationStartBounds = periodStart;
             }
-            if (EvaluationEndBounds == DateTime.MinValue || EvaluationEndBounds < periodEnd)
+            if (EvaluationEndBounds < periodEnd)
             {
                 EvaluationEndBounds = periodEnd;
             }

@@ -7,9 +7,6 @@ namespace Ical.Net.Evaluation
 {
     public abstract class Evaluator : IEvaluator
     {
-        DateTime _mEvaluationStartBounds = DateTime.MaxValue;
-        DateTime _mEvaluationEndBounds = DateTime.MinValue;
-
         ICalendarObject _mAssociatedObject;
         readonly ICalendarDataType _mAssociatedDataType;
 
@@ -49,17 +46,9 @@ namespace Ical.Net.Evaluation
 
         public System.Globalization.Calendar Calendar { get; private set; }
 
-        public DateTime EvaluationStartBounds
-        {
-            get => _mEvaluationStartBounds;
-            set => _mEvaluationStartBounds = value;
-        }
+        public DateTime EvaluationStartBounds { get; set; } = DateTime.MaxValue;
 
-        public DateTime EvaluationEndBounds
-        {
-            get => _mEvaluationEndBounds;
-            set => _mEvaluationEndBounds = value;
-        }
+        public DateTime EvaluationEndBounds { get; set; } = DateTime.MinValue;
 
         public ICalendarObject AssociatedObject
         {
@@ -71,8 +60,8 @@ namespace Ical.Net.Evaluation
 
         public virtual void Clear()
         {
-            _mEvaluationStartBounds = DateTime.MaxValue;
-            _mEvaluationEndBounds = DateTime.MinValue;
+            EvaluationStartBounds = DateTime.MaxValue;
+            EvaluationEndBounds = DateTime.MinValue;
             MPeriods.Clear();
         }
 

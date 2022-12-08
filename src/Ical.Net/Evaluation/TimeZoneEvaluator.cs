@@ -10,23 +10,18 @@ namespace Ical.Net.Evaluation
     {
         protected VTimeZone TimeZone { get; set; }
 
-        List<Occurrence> _occurrences;
-        public List<Occurrence> Occurrences
-        {
-            get => _occurrences;
-            set => _occurrences = value;
-        }
+        public List<Occurrence> Occurrences { get; set; }
 
         public TimeZoneEvaluator(VTimeZone tz)
         {
             TimeZone = tz;
-            _occurrences = new List<Occurrence>();
+            Occurrences = new List<Occurrence>();
         }
 
         void ProcessOccurrences(IDateTime referenceDate)
         {
             // Sort the occurrences by start time
-            _occurrences.Sort(
+            Occurrences.Sort(
                 delegate (Occurrence o1, Occurrence o2)
                 {
                     if (o1.Period?.StartTime == null)
@@ -39,10 +34,10 @@ namespace Ical.Net.Evaluation
                 }
             );
 
-            for (var i = 0; i < _occurrences.Count; i++)
+            for (var i = 0; i < Occurrences.Count; i++)
             {
-                var curr = _occurrences[i];
-                var next = i < _occurrences.Count - 1 ? _occurrences[i + 1] : null;
+                var curr = Occurrences[i];
+                var next = i < Occurrences.Count - 1 ? Occurrences[i + 1] : null;
 
                 // Determine end times for our periods, overwriting previously calculated end times.
                 // This is important because we don't want to overcalculate our time zone information,
@@ -58,7 +53,7 @@ namespace Ical.Net.Evaluation
         public override void Clear()
         {
             base.Clear();
-            _occurrences.Clear();
+            Occurrences.Clear();
         }
 
         public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
@@ -109,9 +104,9 @@ namespace Ical.Net.Evaluation
                     {
                         Periods.Add(period);
                         var o = new Occurrence(curr, period);
-                        if (!_occurrences.Contains(o))
+                        if (!Occurrences.Contains(o))
                         {
-                            _occurrences.Add(o);
+                            Occurrences.Add(o);
                         }
                     }
 

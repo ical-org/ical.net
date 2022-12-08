@@ -12,7 +12,6 @@ namespace Ical.Net.DataTypes
     {
         IDateTime _mDateTime;
         TimeSpan? _mDuration;
-        string _mRelated = TriggerRelation.Start;
 
         public IDateTime DateTime
         {
@@ -52,11 +51,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public string Related
-        {
-            get => _mRelated;
-            set => _mRelated = value;
-        }
+        public string Related { get; set; } = TriggerRelation.Start;
 
         public bool IsRelative => _mDuration != null;
 
@@ -86,7 +81,7 @@ namespace Ical.Net.DataTypes
             Related = trigger.Related;
         }
 
-        protected bool Equals(Trigger other) => Equals(_mDateTime, other._mDateTime) && _mDuration.Equals(other._mDuration) && _mRelated == other._mRelated;
+        protected bool Equals(Trigger other) => Equals(_mDateTime, other._mDateTime) && _mDuration.Equals(other._mDuration) && Related == other.Related;
 
         public override bool Equals(object obj)
         {
@@ -111,7 +106,7 @@ namespace Ical.Net.DataTypes
             {
                 var hashCode = _mDateTime?.GetHashCode() ?? 0;
                 hashCode = (hashCode * 397) ^ _mDuration.GetHashCode();
-                hashCode = (hashCode * 397) ^ _mRelated?.GetHashCode() ?? 0;
+                hashCode = (hashCode * 397) ^ Related?.GetHashCode() ?? 0;
                 return hashCode;
             }
         }

@@ -6,23 +6,17 @@ namespace Ical.Net.Serialization
 {
     public abstract class SerializerBase : IStringSerializer
     {
-        SerializationContext _mSerializationContext;
-
         protected SerializerBase()
         {
-            _mSerializationContext = SerializationContext.Default;
+            SerializationContext = SerializationContext.Default;
         }
 
         protected SerializerBase(SerializationContext ctx)
         {
-            _mSerializationContext = ctx;
+            SerializationContext = ctx;
         }
 
-        public SerializationContext SerializationContext
-        {
-            get => _mSerializationContext;
-            set => _mSerializationContext = value;
-        }
+        public SerializationContext SerializationContext { get; set; }
 
         public abstract Type TargetType { get; }
         public abstract string SerializeToString(object obj);

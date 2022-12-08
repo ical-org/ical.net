@@ -22,9 +22,6 @@ namespace Ical.Net.DataTypes
 
         public static CalDateTime Today => new CalDateTime(DateTime.Today);
 
-        bool _hasDate;
-        bool _hasTime;
-
         public CalDateTime() { }
 
         public CalDateTime(IDateTime value)
@@ -144,8 +141,8 @@ namespace Ical.Net.DataTypes
             }
 
             _value = dt.Value;
-            _hasDate = dt.HasDate;
-            _hasTime = dt.HasTime;
+            HasDate = dt.HasDate;
+            HasTime = dt.HasTime;
 
             AssociateWith(dt);
         }
@@ -288,17 +285,9 @@ namespace Ical.Net.DataTypes
 
         public bool IsUtc => _value.Kind == DateTimeKind.Utc;
 
-        public bool HasDate
-        {
-            get => _hasDate;
-            set => _hasDate = value;
-        }
+        public bool HasDate { get; set; }
 
-        public bool HasTime
-        {
-            get => _hasTime;
-            set => _hasTime = value;
-        }
+        public bool HasTime { get; set; }
 
         string _tzId = string.Empty;
 

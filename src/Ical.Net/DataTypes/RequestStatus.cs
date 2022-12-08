@@ -8,27 +8,11 @@ namespace Ical.Net.DataTypes
     /// </summary>
     public class RequestStatus : EncodableDataType
     {
-        string _mDescription;
-        string _mExtraData;
-        StatusCode _mStatusCode;
+        public string Description { get; set; }
 
-        public string Description
-        {
-            get => _mDescription;
-            set => _mDescription = value;
-        }
+        public string ExtraData { get; set; }
 
-        public string ExtraData
-        {
-            get => _mExtraData;
-            set => _mExtraData = value;
-        }
-
-        public StatusCode StatusCode
-        {
-            get => _mStatusCode;
-            set => _mStatusCode = value;
-        }
+        public StatusCode StatusCode { get; set; }
 
         public RequestStatus() {}
 
@@ -60,8 +44,8 @@ namespace Ical.Net.DataTypes
             return serializer.SerializeToString(this);
         }
 
-        protected bool Equals(RequestStatus other) => string.Equals(_mDescription, other._mDescription) && string.Equals(_mExtraData, other._mExtraData) &&
-            Equals(_mStatusCode, other._mStatusCode);
+        protected bool Equals(RequestStatus other) => string.Equals(Description, other.Description) && string.Equals(ExtraData, other.ExtraData) &&
+            Equals(StatusCode, other.StatusCode);
 
         public override bool Equals(object obj)
         {
@@ -84,9 +68,9 @@ namespace Ical.Net.DataTypes
         {
             unchecked
             {
-                var hashCode = _mDescription?.GetHashCode() ?? 0;
-                hashCode = (hashCode * 397) ^ (_mExtraData?.GetHashCode() ?? 0);
-                hashCode = (hashCode * 397) ^ (_mStatusCode?.GetHashCode() ?? 0);
+                var hashCode = Description?.GetHashCode() ?? 0;
+                hashCode = (hashCode * 397) ^ (ExtraData?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (StatusCode?.GetHashCode() ?? 0);
                 return hashCode;
             }
         }
