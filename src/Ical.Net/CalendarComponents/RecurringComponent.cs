@@ -194,7 +194,7 @@ namespace Ical.Net.CalendarComponents
 
         public IList<AlarmOccurrence> PollAlarms() => PollAlarms(null, null);
 
-        public IList<AlarmOccurrence> PollAlarms(IDateTime startTime, IDateTime endTime)
+        public IList<AlarmOccurrence> PollAlarms(IDateTime? startTime, IDateTime? endTime)
             => Alarms?.SelectMany(a => a.Poll(startTime, endTime)).ToList()
                 ?? new List<AlarmOccurrence>();
 

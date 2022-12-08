@@ -13,7 +13,7 @@ namespace Ical.Net.Proxies
 
         public ParameterCollectionProxy(IGroupedList<string, CalendarParameter> realObject) : base(realObject) {}
 
-        public void SetParent(ICalendarObject parent)
+        public void SetParent(ICalendarObject? parent)
         {
             foreach (var parameter in this)
             {

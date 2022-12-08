@@ -71,7 +71,7 @@ namespace Ical.Net.CalendarComponents
         /// Gets a list of alarm occurrences for the given recurring component, <paramref name="rc"/>
         /// that occur between <paramref name="fromDate"/> and <paramref name="toDate"/>.
         /// </summary>
-        public IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, IDateTime fromDate, IDateTime toDate)
+        public IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, IDateTime? fromDate, IDateTime? toDate)
         {
             Occurrences.Clear();
 
@@ -140,7 +140,7 @@ namespace Ical.Net.CalendarComponents
         /// If <paramref name="start"/> is null, all triggered alarms will be returned.
         /// </summary>
         /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
-        public IList<AlarmOccurrence> Poll(IDateTime start, IDateTime end)
+        public IList<AlarmOccurrence> Poll(IDateTime? start, IDateTime? end)
         {
             var results = new List<AlarmOccurrence>();
 

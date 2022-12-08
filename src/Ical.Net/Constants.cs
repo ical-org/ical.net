@@ -170,14 +170,13 @@ namespace Ical.Net
 
     public enum FrequencyType
     {
-        None,
-        Secondly,
-        Minutely,
-        Hourly,
-        Daily,
-        Weekly,
-        Monthly,
-        Yearly
+        Secondly = 1,
+        Minutely = 60,
+        Hourly = 60 * Minutely,
+        Daily = 24 * Hourly,
+        Weekly = 7 * Daily,
+        Monthly = 30 * Weekly,
+        Yearly = 365 * Daily
     }
 
     /// <summary>

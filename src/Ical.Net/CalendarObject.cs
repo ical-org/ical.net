@@ -82,25 +82,17 @@ namespace Ical.Net
             }
         }
 
-        /// <summary>
-        /// Returns the parent iCalObject that owns this one.
-        /// </summary>
-        public ICalendarObject Parent { get; set; }
+        /// <summary> Returns the parent iCalObject that owns this one. </summary>
+        public ICalendarObject? Parent { get; set; }
 
-        /// <summary>
-        /// A collection of iCalObjects that are children of the current object.
-        /// </summary>
+        /// <summary> A collection of iCalObjects that are children of the current object. </summary>
         public ICalendarObjectList<ICalendarObject> Children { get; private set; }
 
-        /// <summary>
-        /// Gets or sets the name of the iCalObject.  For iCalendar components, this is the RFC 5545 name of the component.
-        /// </summary>        
+        /// <summary> Gets or sets the name of the iCalObject.  For iCalendar components, this is the RFC 5545 name of the component. </summary>
         public string Name { get; set; }
 
-        /// <summary>
-        /// Returns the <see cref="Calendar"/> that this DDayiCalObject belongs to.
-        /// </summary>
-        public Calendar Calendar
+        /// <summary> Returns the <see cref="Calendar"/> that this DDayiCalObject belongs to. </summary>
+        public Calendar? Calendar
         {
             get
             {

@@ -69,52 +69,51 @@ namespace Ical.Net.Evaluation
                 r.Until = referenceDate.MatchTimeZone(new CalDateTime(r.Until, referenceDate.TzId)).Value;
             }
 
-            if (r.Frequency > FrequencyType.Secondly && r.BySecond.Count == 0 && referenceDate.HasTime
-                /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
+            if (referenceDate.HasTime)
             {
-                r.BySecond.Add(referenceDate.Second);
-            }
-            if (r.Frequency > FrequencyType.Minutely && r.ByMinute.Count == 0 && referenceDate.HasTime
-                /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
-            {
-                r.ByMinute.Add(referenceDate.Minute);
-            }
-            if (r.Frequency > FrequencyType.Hourly && r.ByHour.Count == 0 && referenceDate.HasTime
-                /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
-            {
-                r.ByHour.Add(referenceDate.Hour);
+                if (r.Frequency > FrequencyType.Secondly && 
+                    r.BySecond.Count == 0) { //once, at the referenceDate.Second
+                    r.BySecond.Add(referenceDate.Second);
+                }
+                if (r.Frequency > FrequencyType.Minutely && 
+                    r.ByMinute.Count == 0) { //once, at the referenceDate.Minute
+                    r.ByMinute.Add(referenceDate.Minute);
+                }
+                if (r.Frequency > FrequencyType.Hourly && 
+                    r.ByHour.Count == 0) { //once, at the referenceDate.Hour
+                    r.ByHour.Add(referenceDate.Hour);
+                }
             }
 
             // If BYDAY, BYYEARDAY, or BYWEEKNO is specified, then
             // we don't default BYDAY, BYMONTH or BYMONTHDAY
-            if (r.ByDay.Count == 0)
-            {
-                // If the frequency is weekly, use the original date's day of week.
-                // NOTE: fixes WeeklyCount1() and WeeklyUntil1() handling
-                // If BYWEEKNO is specified and BYMONTHDAY/BYYEARDAY is not specified,
-                // then let's add BYDAY to BYWEEKNO.
-                // NOTE: fixes YearlyByWeekNoX() handling
-                if (r.Frequency == FrequencyType.Weekly || (r.ByWeekNo.Count > 0 && r.ByMonthDay.Count == 0 && r.ByYearDay.Count == 0))
-                {
-                    r.ByDay.Add(new WeekDay(referenceDate.DayOfWeek));
-                }
+            if (r.ByDay.Count != 0) {
+                return r;
+            }
 
-                // If BYMONTHDAY is not specified,
-                // default to the current day of month.
-                // NOTE: fixes YearlyByMonth1() handling, added BYYEARDAY exclusion
-                // to fix YearlyCountByYearDay1() handling
-                if (r.Frequency > FrequencyType.Weekly && r.ByWeekNo.Count == 0 && r.ByYearDay.Count == 0 && r.ByMonthDay.Count == 0)
-                {
-                    r.ByMonthDay.Add(referenceDate.Day);
-                }
+            // If the frequency is weekly, use the original date's day of week.
+            // NOTE: fixes WeeklyCount1() and WeeklyUntil1() handling
+            // If BYWEEKNO is specified and BYMONTHDAY/BYYEARDAY is not specified,
+            // then let's add BYDAY to BYWEEKNO.
+            // NOTE: fixes YearlyByWeekNoX() handling
+            if (r.Frequency == FrequencyType.Weekly || (r.ByWeekNo.Count > 0 && r.ByMonthDay.Count == 0 && 
+                r.ByYearDay.Count == 0)) { //once, at the referenceDate.Hour
+                r.ByDay.Add(new WeekDay(referenceDate.DayOfWeek));
+            }
 
-                // If BYMONTH is not specified, default to
-                // the current month.
-                // NOTE: fixes YearlyCountByYearDay1() handling
-                if (r.Frequency > FrequencyType.Monthly && r.ByWeekNo.Count == 0 && r.ByYearDay.Count == 0 && r.ByMonth.Count == 0)
-                {
-                    r.ByMonth.Add(referenceDate.Month);
-                }
+            // If BYMONTHDAY is not specified, default to the current day of month.
+            // NOTE: fixes YearlyByMonth1() handling, added BYYEARDAY exclusion
+            // to fix YearlyCountByYearDay1() handling
+            if (r.Frequency > FrequencyType.Weekly && r.ByWeekNo.Count == 0 && r.ByYearDay.Count == 0 && 
+                r.ByMonthDay.Count == 0) { //once, at the referenceDate.Day
+                r.ByMonthDay.Add(referenceDate.Day);
+            }
+
+            // If BYMONTH is not specified, default to the current month.
+            // NOTE: fixes YearlyCountByYearDay1() handling
+            if (r.Frequency > FrequencyType.Monthly && r.ByWeekNo.Count == 0 && r.ByYearDay.Count == 0 && 
+                r.ByMonth.Count == 0) { //once, at the referenceDate.Month
+                r.ByMonth.Add(referenceDate.Month);
             }
 
             return r;
@@ -239,12 +238,11 @@ namespace Ical.Net.Evaluation
             // (only applicable where a COUNT is not specified)
             if (pattern.Count == int.MinValue)
             {
-                var incremented = seedCopy;
-                pattern.IncrementDate(ref incremented);
-                while (incremented < periodStart)
+                for(var incremented = pattern.IncrementDate(seedCopy)
+                    ; incremented < periodStart
+                    ; incremented = pattern.IncrementDate(incremented))
                 {
                     seedCopy = incremented;
-                    pattern.IncrementDate(ref incremented);
                 }
             }
 
@@ -308,7 +306,7 @@ namespace Ical.Net.Evaluation
                     }
                 }
 
-                pattern.IncrementDate(ref seedCopy);
+                seedCopy = pattern.IncrementDate(seedCopy);
             }
 
             return dates;

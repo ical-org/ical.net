@@ -48,7 +48,7 @@ namespace Ical.Net.Evaluation
             return periods;
         }
 
-        /// <summary> Evalates the RDate component, and adds each specified DateTime or Period to the Periods collection. </summary>
+        /// <summary> Evaluates the RDate component, and adds each specified DateTime or Period to the Periods collection. </summary>
         protected HashSet<Period> EvaluateRDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             if (Recurrable.RecurrenceDates == null || !Recurrable.RecurrenceDates.Any())
@@ -97,20 +97,20 @@ namespace Ical.Net.Evaluation
         {
             Periods.Clear();
 
-            var rruleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
+            var rRuleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
             if (includeReferenceDateInResults)
             {
-                rruleOccurrences.UnionWith(new[] { new Period(referenceDate), });
+                rRuleOccurrences.UnionWith(new[] { new Period(referenceDate), });
             }
 
-            var rdateOccurrences = EvaluateRDate(referenceDate, periodStart, periodEnd);
+            var rDateOccurrences = EvaluateRDate(referenceDate, periodStart, periodEnd);
 
             var exRuleExclusions = EvaluateExRule(referenceDate, periodStart, periodEnd);
             var exDateExclusions = EvaluateExDate(referenceDate, periodStart, periodEnd);
 
             //Exclusions trump inclusions
-            Periods.UnionWith(rruleOccurrences);
-            Periods.UnionWith(rdateOccurrences);
+            Periods.UnionWith(rRuleOccurrences);
+            Periods.UnionWith(rDateOccurrences);
             Periods.ExceptWith(exRuleExclusions);
             Periods.ExceptWith(exDateExclusions);
 

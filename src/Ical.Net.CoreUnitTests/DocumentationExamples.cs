@@ -49,11 +49,12 @@ namespace Ical.Net.CoreUnitTests
             };
 
             // Recurring every other Tuesday until Dec 31
-            var rrule = new RecurrencePattern(FrequencyType.Weekly, 2)
+            var rRule = new RecurrencePattern(FrequencyType.Weekly, 2)
             {
-                Until = DateTime.Parse("2016-12-31T11:59:59")
+                Until = DateTime.Parse("2016-12-31T11:59:59"),
+                ByMonthDay = new List<int> { 1, 2, 3, 4 }
             };
-            vEvent.RecurrenceRules = new List<RecurrencePattern> { rrule };
+            vEvent.RecurrenceRules = new List<RecurrencePattern> { rRule };
 
             // Count every other Tuesday between July 1 and Dec 31.
             // The first Tuesday is July 5. There should be 13 in total

@@ -39,7 +39,7 @@ namespace Ical.Net.DataTypes
         /// `Utc`. If a non-UTC time zone is specified, the underlying `DateTimeKind` property will be `Local`. If no time zone is specified, the `DateTimeKind`
         /// property will be left untouched.
         /// </summary>
-        public CalDateTime(DateTime value, string tzId)
+        public CalDateTime(DateTime value, string? tzId)
         {
             Initialize(value, tzId, null);
         }
@@ -71,14 +71,14 @@ namespace Ical.Net.DataTypes
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
-        void Initialize(int year, int month, int day, int hour, int minute, int second, string tzId, ICalendarObject cal)
+        void Initialize(int year, int month, int day, int hour, int minute, int second, string? tzId, ICalendarObject? cal)
         {
             Initialize(CoerceDateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzId, cal);
         }
 
-        void Initialize(DateTime value, string tzId, ICalendarObject cal)
+        void Initialize(DateTime value, string? tzId, ICalendarObject? cal)
         {
-            if (!string.IsNullOrWhiteSpace(tzId) && !tzId.Equals("UTC", StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrWhiteSpace(tzId) && !tzId!.Equals("UTC", StringComparison.OrdinalIgnoreCase))
             {
                 // Definitely local
                 value = DateTime.SpecifyKind(value, DateTimeKind.Local);
@@ -122,7 +122,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public override ICalendarObject AssociatedObject
+        public override ICalendarObject? AssociatedObject
         {
             get => base.AssociatedObject;
             set

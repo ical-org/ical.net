@@ -13,7 +13,7 @@ namespace Ical.Net.DataTypes
         ParameterCollectionProxy _proxy;
         ServiceProvider _serviceProvider;
 
-        protected ICalendarObject _AssociatedObject;
+        protected ICalendarObject? _AssociatedObject;
 
         protected CalendarDataType()
         {
@@ -75,7 +75,7 @@ namespace Ical.Net.DataTypes
             _proxy?.Set("VALUE", type ?? type.ToUpper());
         }
 
-        public virtual ICalendarObject AssociatedObject
+        public virtual ICalendarObject? AssociatedObject
         {
             get => _AssociatedObject;
             set

@@ -69,7 +69,7 @@ namespace Ical.Net.Evaluation
             else
             {
                 var dtVal = referenceDateTime.Value;
-                recur.DecrementDate(ref dtVal);
+                dtVal = recur.DecrementDate(dtVal);
                 referenceDateTime.Value = dtVal;
             }
         }
