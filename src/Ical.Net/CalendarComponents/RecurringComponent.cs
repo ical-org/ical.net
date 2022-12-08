@@ -14,7 +14,7 @@ namespace Ical.Net.CalendarComponents
     /// All <see cref="RecurrencePattern"/>s have individual End Dates, but share the common <see cref="Start"/> Date.
     /// <see cref=""/>
     /// This component automatically handles
-    /// RRULEs, RDATE, EXRULEs, and EXDATEs, as well as the DTSTART
+    /// RRULEs, RDATE, EXRULEs, and EXDATEs, as well as the DTSTART <see cref="Start"/>
     /// for the recurring item (all recurring items must have a DTSTART).
     /// </remarks>
     public class RecurringComponent : UniqueComponent, IRecurringComponent
@@ -64,7 +64,7 @@ namespace Ical.Net.CalendarComponents
             set => Properties.Set("DESCRIPTION", value);
         }
 
-        /// <summary> The start date/time of the component. </summary>
+        /// <summary>DTSTART; The start date/time of the component. </summary>
         /// <remarks>common to all <see cref="RecurrenceRules"/> and <see cref="ExceptionRules"/></remarks>
         public virtual IDateTime DtStart
         {
@@ -72,16 +72,21 @@ namespace Ical.Net.CalendarComponents
             set => Properties.Set("DTSTART", value);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
+        /// <summary> Additional explicit exempted Dates </summary>
+        /// <remarks>
+        /// Opposite to <see cref="RecurrenceDates"/>
+        /// </remarks>
         public IList<PeriodList> ExceptionDates
         {
             get => Properties.GetMany<PeriodList>("EXDATE");
             set => Properties.Set("EXDATE", value);
         }
 
-        public IList<RecurrencePattern> ExceptionRules
+        /// <summary> periodic Exception-Dates </summary>
+        /// <remarks>
+        /// Opposite to <see cref="RecurrenceRules"/>
+        /// </remarks>
+        public IList<RecurrencePattern>? ExceptionRules
         {
             get => Properties.GetMany<RecurrencePattern>("EXRULE");
             set => Properties.Set("EXRULE", value);
@@ -99,12 +104,20 @@ namespace Ical.Net.CalendarComponents
             set => Properties.Set("PRIORITY", value);
         }
 
+        /// <summary> Additional explicit Recurrence Dates </summary>
+        /// <remarks>
+        /// Opposite to <see cref="ExceptionDates"/>
+        /// </remarks>
         public IList<PeriodList> RecurrenceDates
         {
             get => Properties.GetMany<PeriodList>("RDATE");
             set => Properties.Set("RDATE", value);
         }
 
+        /// <summary> periodic Rules-Dates </summary>
+        /// <remarks>
+        /// Opposite to <see cref="ExceptionRules"/>
+        /// </remarks>
         public IList<RecurrencePattern> RecurrenceRules
         {
             get => Properties.GetMany<RecurrencePattern>("RRULE");
@@ -129,8 +142,7 @@ namespace Ical.Net.CalendarComponents
             set => Properties.Set("SEQUENCE", value);
         }
 
-        /// <summary>
-        /// An alias to the DTStart field (i.e. start date/time).
+        /// <summary>DTSTART; An alias to the DTStart field (i.e. start date/time).
         /// </summary>
         public IDateTime Start
         {

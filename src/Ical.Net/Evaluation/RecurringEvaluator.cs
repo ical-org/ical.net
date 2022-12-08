@@ -56,7 +56,7 @@ namespace Ical.Net.Evaluation
                 return new HashSet<Period>();
             }
 
-            var recurrences = new HashSet<Period>(Recurrable.RecurrenceDates.SelectMany(rdate => rdate));
+            var recurrences = new HashSet<Period>(Recurrable.RecurrenceDates.SelectMany(rDate => rDate));
             return recurrences;
         }
 
@@ -100,7 +100,7 @@ namespace Ical.Net.Evaluation
             var rRuleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
             if (includeReferenceDateInResults)
             {
-                rRuleOccurrences.UnionWith(new[] { new Period(referenceDate), });
+                rRuleOccurrences.UnionWith(new[] { new Period(referenceDate) });
             }
 
             var rDateOccurrences = EvaluateRDate(referenceDate, periodStart, periodEnd);
