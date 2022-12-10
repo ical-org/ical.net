@@ -58,7 +58,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof (string);
 
-        public override string SerializeToString(object obj)
+        public override string? SerializeToString(object? obj)
         {
             if (obj == null)
             {
@@ -78,22 +78,32 @@ namespace Ical.Net.Serialization.DataTypes
             if (SerializationContext.Peek() is ICalendarObject co)
             {
                 // Encode the string as needed.
-                var dt = new EncodableDataType
-                {
-                    AssociatedObject = co
-                };
-                for (var i = 0; i < values.Count; i++)
-                {
-                    values[i] = Encode(dt, Escape(values[i]));
-                }
-
-                return string.Join(",", values);
+                return SerializeToString(values, co);
             }
 
+            return SerializeToString(values);
+        }
+
+        public string SerializeToString(IList<string> values)
+        {
             for (var i = 0; i < values.Count; i++)
             {
                 values[i] = Escape(values[i]);
             }
+            return string.Join(",", values);
+        }
+
+        public string? SerializeToString(IList<string> values, ICalendarObject co)
+        {
+            var dt = new EncodableDataType
+            {
+                AssociatedObject = co
+            };
+            for (var i = 0; i < values.Count; i++)
+            {
+                values[i] = Encode(dt, Escape(values[i]));
+            }
+
             return string.Join(",", values);
         }
 

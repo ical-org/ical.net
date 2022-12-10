@@ -2654,18 +2654,16 @@ namespace Ical.Net.CoreUnitTests
         [Test, Category("Recurrence")]
         public void Bug3119920()
         {
-            using (var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126T120000;INTERVAL=1;BYDAY=MO"))
-            {
-                var start = DateTime.Parse("2010-11-27 9:00:00");
-                var serializer = new RecurrencePatternSerializer();
-                var rp = (RecurrencePattern)serializer.Deserialize(sr);
-                var rpe = new RecurrencePatternEvaluator(rp);
-                var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, rp.Until, false);
+            using var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126T120000;INTERVAL=1;BYDAY=MO");
+            var start = DateTime.Parse("2010-11-27 9:00:00");
+            var serializer = new RecurrencePatternSerializer();
+            var rp = (RecurrencePattern)serializer.Deserialize(sr);
+            var rpe = new RecurrencePatternEvaluator(rp);
+            var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, rp.Until, false);
                 
-                var period = recurringPeriods.ElementAt(recurringPeriods.Count - 1);
+            var period = recurringPeriods.ElementAt(recurringPeriods.Count - 1);
 
-                Assert.AreEqual(new CalDateTime(2025, 11, 24, 9, 0, 0), period.StartTime);
-            }
+            Assert.AreEqual(new CalDateTime(2025, 11, 24, 9, 0, 0), period.StartTime);
         }
 
         /// <summary>
@@ -2702,14 +2700,12 @@ namespace Ical.Net.CoreUnitTests
         [Test, Category("Recurrence")]
         public void Bug3292737()
         {
-            using (var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126"))
-            {
-                var serializer = new RecurrencePatternSerializer();
-                var rp = (RecurrencePattern)serializer.Deserialize(sr);
+            using var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126");
+            var serializer = new RecurrencePatternSerializer();
+            var rp = (RecurrencePattern)serializer.Deserialize(sr);
 
-                Assert.IsNotNull(rp);
-                Assert.AreEqual(new DateTime(2025, 11, 26), rp.Until);
-            }
+            Assert.IsNotNull(rp);
+            Assert.AreEqual(new DateTime(2025, 11, 26), rp.Until);
         }
 
         /// <summary>

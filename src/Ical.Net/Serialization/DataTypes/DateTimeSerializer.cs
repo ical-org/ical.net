@@ -39,19 +39,19 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof (CalDateTime);
 
-        public override string SerializeToString(object obj)
-        {
-            if (!(obj is IDateTime dt))
-            {
-                return null;
-            }
+        public override string? SerializeToString(object? obj) => obj is IDateTime dt ? SerializeToString(dt) : null;
 
-            // RFC 5545 3.3.5: 
-            // The date with UTC time, or absolute time, is identified by a LATIN
-            // CAPITAL LETTER Z suffix character, the UTC designator, appended to
-            // the time value. The "TZID" property parameter MUST NOT be applied to DATE-TIME
-            // properties whose time values are specified in UTC.
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// RFC 5545 3.3.5:  The date with UTC time, or absolute time,
+        /// is identified by a LATIN CAPITAL LETTER Z suffix character,
+        /// the UTC designator, appended to the time value.
+        /// The "TZID" property parameter MUST NOT be applied to DATE-TIME properties
+        /// whose time values are specified in UTC.
+        /// </remarks>
+        public string? SerializeToString(IDateTime dt) {
             var kind = dt.IsUtc
                 ? DateTimeKind.Utc
                 : DateTimeKind.Local;

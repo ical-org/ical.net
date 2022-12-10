@@ -13,19 +13,16 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof (WeekDay);
 
-        public override string SerializeToString(object obj)
-        {
-            if (!(obj is WeekDay ds))
-            {
-                return null;
-            }
+        public override string? SerializeToString(object? obj) => obj is WeekDay ds ? SerializeToString(ds) : null;
 
+        string? SerializeToString(WeekDay ds)
+        {
             var value = string.Empty;
             if (ds.Offset != int.MinValue)
             {
                 value += ds.Offset;
             }
-            value += Enum.GetName(typeof (DayOfWeek), ds.DayOfWeek).ToUpper().Substring(0, 2);
+            value += Enum.GetName(typeof(DayOfWeek), ds.DayOfWeek).ToUpper().Substring(0, 2);
 
             return Encode(ds, value);
         }

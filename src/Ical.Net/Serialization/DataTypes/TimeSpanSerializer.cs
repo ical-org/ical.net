@@ -20,43 +20,49 @@ namespace Ical.Net.Serialization.DataTypes
                 return null;
             }
 
-            if (ts == TimeSpan.Zero)
+            return SerializeToString(ts);
+        }
+
+        /// <summary> Converts the <paramref name="timeSpan"/> to a Standard Period "P..." String </summary>
+        public static string SerializeToString(TimeSpan timeSpan)
+        {
+            if (timeSpan == TimeSpan.Zero)
             {
                 return "P0D";
             }
 
             var sb = new StringBuilder();
 
-            if (ts < TimeSpan.Zero)
+            if (timeSpan < TimeSpan.Zero)
             {
                 sb.Append("-");
             }
 
             sb.Append("P");
-            if (ts.Days > 7 && ts.Days % 7 == 0 && ts.Hours == 0 && ts.Minutes == 0 && ts.Seconds == 0)
+            if (timeSpan.Days > 7 && timeSpan.Days % 7 == 0 && timeSpan.Hours == 0 && timeSpan.Minutes == 0 && timeSpan.Seconds == 0)
             {
-                sb.Append(Math.Round(Math.Abs((double) ts.Days) / 7) + "W");
+                sb.Append(Math.Round(Math.Abs((double) timeSpan.Days) / 7) + "W");
             }
             else
             {
-                if (ts.Days != 0)
+                if (timeSpan.Days != 0)
                 {
-                    sb.Append(Math.Abs(ts.Days) + "D");
+                    sb.Append(Math.Abs(timeSpan.Days) + "D");
                 }
-                if (ts.Hours != 0 || ts.Minutes != 0 || ts.Seconds != 0)
+                if (timeSpan.Hours != 0 || timeSpan.Minutes != 0 || timeSpan.Seconds != 0)
                 {
                     sb.Append("T");
-                    if (ts.Hours != 0)
+                    if (timeSpan.Hours != 0)
                     {
-                        sb.Append(Math.Abs(ts.Hours) + "H");
+                        sb.Append(Math.Abs(timeSpan.Hours) + "H");
                     }
-                    if (ts.Minutes != 0)
+                    if (timeSpan.Minutes != 0)
                     {
-                        sb.Append(Math.Abs(ts.Minutes) + "M");
+                        sb.Append(Math.Abs(timeSpan.Minutes) + "M");
                     }
-                    if (ts.Seconds != 0)
+                    if (timeSpan.Seconds != 0)
                     {
-                        sb.Append(Math.Abs(ts.Seconds) + "S");
+                        sb.Append(Math.Abs(timeSpan.Seconds) + "S");
                     }
                 }
             }

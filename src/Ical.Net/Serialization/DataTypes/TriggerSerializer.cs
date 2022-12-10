@@ -12,45 +12,45 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof (Trigger);
 
-        public override string SerializeToString(object obj)
+        public override string? SerializeToString(object? obj)
         {
             try
             {
-                if (!(obj is Trigger t))
-                {
-                    return null;
-                }
-
-                // Push the trigger onto the serialization stack
-                SerializationContext.Push(t);
-                try
-                {
-                    var factory = GetService<ISerializerFactory>();
-                    if (factory == null)
-                    {
-                        return null;
-                    }
-
-                    var valueType = t.GetValueType() ?? typeof(TimeSpan);
-                    if (!(factory.Build(valueType, SerializationContext) is IStringSerializer serializer))
-                    {
-                        return null;
-                    }
-
-                    var value = valueType == typeof(IDateTime)
-                        ? t.DateTime
-                        : (object) t.Duration;
-                    return serializer.SerializeToString(value);
-                }
-                finally
-                {
-                    // Pop the trigger off the serialization stack
-                    SerializationContext.Pop();
-                }
+                return obj is Trigger t ? SerializeToString(t) : null;
             }
             catch
             {
                 return null;
+            }
+        }
+
+        public string? SerializeToString(Trigger t)
+        {
+            // Push the trigger onto the serialization stack
+            SerializationContext.Push(t);
+            try
+            {
+                var factory = GetService<ISerializerFactory>();
+                if (factory == null)
+                {
+                    return null;
+                }
+
+                var valueType = t.GetValueType() ?? typeof(TimeSpan);
+                if (!(factory.Build(valueType, SerializationContext) is IStringSerializer serializer))
+                {
+                    return null;
+                }
+
+                var value = valueType == typeof(IDateTime)
+                    ? t.DateTime
+                    : (object?) t.Duration;
+                return serializer.SerializeToString(value);
+            }
+            finally
+            {
+                // Pop the trigger off the serialization stack
+                SerializationContext.Pop();
             }
         }
 

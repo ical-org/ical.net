@@ -156,7 +156,9 @@ namespace Ical.Net.CoreUnitTests
                 : match.Groups[1].Value.Substring(1).Split(';').Select(v => v.Split('=')).ToDictionary(v => v[0], v => v.Length > 1 ? v[1] : null);
         }
 
-        [Test, Category("Serialization"), Ignore("TODO: standard time, for NZ standard time (current example)")]
+        [Test]
+        [Category("Serialization")]
+        //[Ignore("TODO: standard time, for NZ standard time (current example)")]
         public void TimeZoneSerialize()
         {
             //ToDo: This test is broken as of 2016-07-13
@@ -193,6 +195,7 @@ namespace Ical.Net.CoreUnitTests
 
             InspectSerializedSection(vTimezone, "DAYLIGHT", new[] { "TZNAME:" + tzi.DaylightName, "TZOFFSETFROM:" + o });
         }
+
         [Test, Category("Serialization")]
         public void SerializeDeserialize()
         {

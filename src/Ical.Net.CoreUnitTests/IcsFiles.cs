@@ -9,10 +9,8 @@ namespace Ical.Net.CoreUnitTests
 
         internal static string ReadStream(string manifestResource)
         {
-            using (var stream = new FileStream(manifestResource, FileMode.Open))
-            {
-                return new StreamReader(stream).ReadToEnd();
-            }
+            using var stream = new FileStream(manifestResource, FileMode.Open);
+            return new StreamReader(stream).ReadToEnd();
         }
 
         internal static string Alarm1 => ReadStream("Calendars/Alarm/ALARM1.ics");

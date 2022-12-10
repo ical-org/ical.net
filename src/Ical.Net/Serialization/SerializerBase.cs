@@ -19,19 +19,19 @@ namespace Ical.Net.Serialization
         public SerializationContext SerializationContext { get; set; }
 
         public abstract Type TargetType { get; }
-        public abstract string SerializeToString(object obj);
+
+        /// <summary> Converts <paramref name="obj"/> into the vCard Value Format </summary>
+        /// <returns>null when <paramref name="obj"/> is null or not of the proper Type</returns>
+        public abstract string? SerializeToString(object? obj);
         public abstract object Deserialize(TextReader tr);
 
         public object Deserialize(Stream stream, Encoding encoding)
         {
-            object obj;
-            using (var sr = new StreamReader(stream, encoding))
-            {
-                var encodingStack = GetService<EncodingStack>();
-                encodingStack.Push(encoding);
-                obj = Deserialize(sr);
-                encodingStack.Pop();
-            }
+            using var sr = new StreamReader(stream, encoding);
+            var encodingStack = GetService<EncodingStack>();
+            encodingStack.Push(encoding);
+            var obj = Deserialize(sr);
+            encodingStack.Pop();
             return obj;
         }
 
@@ -42,23 +42,21 @@ namespace Ical.Net.Serialization
             // Fixes bug #3177278 - Serialize closes stream
 
             const int defaultBuffer = 1024;     //This is StreamWriter's built-in default buffer size
-            using (var sw = new StreamWriter(stream, encoding, defaultBuffer, leaveOpen: true))
-            {
-                // Push the current object onto the serialization stack
-                SerializationContext.Push(obj);
+            using var sw = new StreamWriter(stream, encoding, defaultBuffer, leaveOpen: true);
+            // Push the current object onto the serialization stack
+            SerializationContext.Push(obj);
 
-                // Push the current encoding on the stack
-                var encodingStack = GetService<EncodingStack>();
-                encodingStack.Push(encoding);
+            // Push the current encoding on the stack
+            var encodingStack = GetService<EncodingStack>();
+            encodingStack.Push(encoding);
 
-                sw.Write(SerializeToString(obj));
+            sw.Write(SerializeToString(obj));
 
-                // Pop the current encoding off the serialization stack
-                encodingStack.Pop();
+            // Pop the current encoding off the serialization stack
+            encodingStack.Pop();
 
-                // Pop the current object off the serialization stack
-                SerializationContext.Pop();
-            }
+            // Pop the current object off the serialization stack
+            SerializationContext.Pop();
         }
 
         public object GetService(Type serviceType) => SerializationContext?.GetService(serviceType);
@@ -71,7 +69,7 @@ namespace Ical.Net.Serialization
             {
                 return SerializationContext.GetService<T>();
             }
-            return default;
+            return default!;
         }
 
         public T GetService<T>(string name)

@@ -14,17 +14,15 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof (UtcOffset);
 
-        public override string SerializeToString(object obj)
-        {
-            if (obj is UtcOffset offset)
-            {
-                var value = (offset.Positive ? "+" : "-") + offset.Hours.ToString("00") + offset.Minutes.ToString("00") +
-                            (offset.Seconds != 0 ? offset.Seconds.ToString("00") : string.Empty);
+        public override string? SerializeToString(object? obj) => obj is UtcOffset offset ? SerializeToString(offset) : null;
 
-                // Encode the value as necessary
-                return Encode(offset, value);
-            }
-            return null;
+        public string SerializeToString(UtcOffset offset)
+        {
+            var value = (offset.Positive ? "+" : "-") + offset.Hours.ToString("00") + offset.Minutes.ToString("00") +
+                        (offset.Seconds != 0 ? offset.Seconds.ToString("00") : string.Empty);
+
+            // Encode the value as necessary
+            return Encode(offset, value);
         }
 
         internal static readonly Regex DecodeOffset = new Regex(@"(\+|-)(\d{2})(\d{2})(\d{2})?", RegexOptions.Compiled | RegexOptions.IgnoreCase);

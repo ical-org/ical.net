@@ -14,47 +14,47 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof (RequestStatus);
 
-        public override string SerializeToString(object obj)
+        public override string? SerializeToString(object? obj)
         {
             try
             {
-                if (!(obj is RequestStatus rs))
-                {
-                    return null;
-                }
-
-                // Push the object onto the serialization stack
-                SerializationContext.Push(rs);
-
-                try
-                {
-                    var factory = GetService<ISerializerFactory>();
-                    var serializer = factory?.Build(typeof (StatusCode), SerializationContext) as IStringSerializer;
-                    if (serializer == null)
-                    {
-                        return null;
-                    }
-
-                    var builder = new StringBuilder();
-                    builder.Append(Escape(serializer.SerializeToString(rs.StatusCode)));
-                    builder.Append(";");
-                    builder.Append(Escape(rs.Description));
-                    if (!string.IsNullOrWhiteSpace(rs.ExtraData))
-                    {
-                        builder.Append(";");
-                        builder.Append(Escape(rs.ExtraData));
-                    }
-                    return Encode(rs, builder.ToString());
-                }
-                finally
-                {
-                    // Pop the object off the serialization stack
-                    SerializationContext.Pop();
-                }
+                return obj is RequestStatus rs ? SerializeToString(rs) : null;
             }
             catch
             {
                 return null;
+            }
+        }
+
+        public string? SerializeToString(RequestStatus rs)
+        {
+            // Push the object onto the serialization stack
+            SerializationContext.Push(rs);
+
+            try
+            {
+                var factory = GetService<ISerializerFactory>();
+                var serializer = factory?.Build(typeof(StatusCode), SerializationContext) as IStringSerializer;
+                if (serializer == null)
+                {
+                    return null;
+                }
+
+                var builder = new StringBuilder();
+                builder.Append(Escape(serializer.SerializeToString(rs.StatusCode)));
+                builder.Append(";");
+                builder.Append(Escape(rs.Description));
+                if (!string.IsNullOrWhiteSpace(rs.ExtraData))
+                {
+                    builder.Append(";");
+                    builder.Append(Escape(rs.ExtraData));
+                }
+                return Encode(rs, builder.ToString());
+            }
+            finally
+            {
+                // Pop the object off the serialization stack
+                SerializationContext.Pop();
             }
         }
 
