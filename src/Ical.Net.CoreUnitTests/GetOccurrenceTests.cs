@@ -68,9 +68,7 @@ namespace Ical.Net.CoreUnitTests
             var intervalStart = eventStart;
             var intervalEnd = intervalStart.AddDays(7 * evaluationsCount);
 
-            var occurrences = RecurrenceUtil.GetOccurrences(
-                recurrable: vEvent,
-                periodStart: intervalStart,
+            var occurrences = vEvent.GetOccurrences(periodStart: intervalStart,
                 periodEnd: intervalEnd,
                 includeReferenceDateInResults: false);
             var occurrenceSet = new HashSet<IDateTime>(occurrences.Select(o => o.Period.StartTime));

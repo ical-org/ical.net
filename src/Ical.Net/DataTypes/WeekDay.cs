@@ -7,7 +7,7 @@ namespace Ical.Net.DataTypes
     /// <summary> <see cref="DayOfWeek"/> represents an RFC 5545 "BYDAY" value. </summary>
     public class WeekDay : EncodableDataType, IEquatable<WeekDay>, IComparable<WeekDay>
     {
-        /// <summary> First day of Week Offset; <see cref="int.MinValue"/> indicate no Offset </summary>
+        /// <summary> 1...4. Week in the Month: ; <see cref="int.MinValue"/> indicate no Offset </summary>
         public int Offset { get; set; } = int.MinValue;
 
         public DayOfWeek DayOfWeek { get; set; }

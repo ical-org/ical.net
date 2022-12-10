@@ -245,8 +245,6 @@ namespace Ical.Net.CalendarComponents
         /// <returns>True if the event has not been cancelled, False otherwise.</returns>
         public bool IsActive => !string.Equals(Status, EventStatus.Cancelled, EventStatus.Comparison);
 
-        protected override bool EvaluationIncludesReferenceDate => true;
-
         protected override void OnDeserializing(StreamingContext context)
         {
             base.OnDeserializing(context);
@@ -299,7 +297,7 @@ namespace Ical.Net.CalendarComponents
                 && string.Equals(Status, other.Status, StringComparison.Ordinal)
                 && IsActive == other.IsActive
                 && string.Equals(Transparency, other.Transparency, TransparencyType.Comparison)
-                && EvaluationIncludesReferenceDate == other.EvaluationIncludesReferenceDate
+                && IncludeReferenceDate == other.IncludeReferenceDate
                 && Attachments.SequenceEqual(other.Attachments)
                 && CollectionHelpers.Equals(ExceptionRules, other.ExceptionRules)
                 && CollectionHelpers.Equals(RecurrenceRules, other.RecurrenceRules);

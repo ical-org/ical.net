@@ -46,7 +46,10 @@ namespace Ical.Net.Evaluation
             return occurrences;
         }
 
-        /// <summary> See the table in RFC 5545 Section 3.3.10 (Page 43). </summary>
+        /// <summary> Nullable <see cref="bool"/> Flags to control whether to use the .By* Values for Restriction or Expansion or not at all </summary>
+        /// <remarks>
+        /// See the table in RFC 5545 Section 3.3.10 (Page 43).
+        /// </remarks>
         public static bool?[] GetExpandBehaviorList(this RecurrencePattern p)
             => p.Frequency switch { // Limit if BYMONTHDAY is present; otherwise, special expand for MONTHLY.
                 FrequencyType.Monthly => new bool?[] {false, null, null, true, p.ByMonthDay.Count <= 0, true, true, true, false},

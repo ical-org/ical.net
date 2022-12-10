@@ -23,7 +23,7 @@ namespace Ical.Net.CalendarComponents
 
         public static IEnumerable<TRecurringComponent> SortByDate<TRecurringComponent>(IEnumerable<TRecurringComponent> list) => list.OrderBy(d => d);
 
-        protected virtual bool EvaluationIncludesReferenceDate => false;
+        public bool IncludeReferenceDate { get; set; } = true;
 
         public IList<Attachment> Attachments
         {
@@ -193,16 +193,16 @@ namespace Ical.Net.CalendarComponents
 
         public void ClearEvaluation() => RecurrenceUtil.ClearEvaluation(this);
 
-        public HashSet<Occurrence> GetOccurrences(IDateTime dt) => RecurrenceUtil.GetOccurrences(this, dt, EvaluationIncludesReferenceDate);
+        public HashSet<Occurrence> GetOccurrences(IDateTime dt) => this.GetOccurrences(dt, IncludeReferenceDate);
 
         public HashSet<Occurrence> GetOccurrences(DateTime dt)
-            => RecurrenceUtil.GetOccurrences(this, new CalDateTime(dt), EvaluationIncludesReferenceDate);
+            => this.GetOccurrences(new CalDateTime(dt), IncludeReferenceDate);
 
         public HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
-            => RecurrenceUtil.GetOccurrences(this, startTime, endTime, EvaluationIncludesReferenceDate);
+            => this.GetOccurrences(startTime, endTime, IncludeReferenceDate);
 
         public HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
-            => RecurrenceUtil.GetOccurrences(this, new CalDateTime(startTime), new CalDateTime(endTime), EvaluationIncludesReferenceDate);
+            => this.GetOccurrences(new CalDateTime(startTime), new CalDateTime(endTime), IncludeReferenceDate);
 
         public IList<AlarmOccurrence> PollAlarms() => PollAlarms(null, null);
 

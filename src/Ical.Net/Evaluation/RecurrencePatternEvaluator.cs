@@ -246,7 +246,7 @@ namespace Ical.Net.Evaluation
                 }
             }
 
-            var expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
+            var expandBehavior = pattern.GetExpandBehaviorList();
 
             var noCandidateIncrementCount = 0;
             var candidate = DateTime.MinValue;
@@ -488,7 +488,7 @@ namespace Ical.Net.Evaluation
             }
 
             if (expand.Value)
-            {
+            {// expand behavior
                 var monthDayDates = new List<DateTime>();
                 foreach (var date in dates)
                 {

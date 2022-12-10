@@ -178,14 +178,6 @@ namespace Ical.Net.CalendarComponents
         /// <returns>True if the todo was cancelled, False otherwise.</returns>
         public bool IsCancelled => string.Equals(Status, TodoStatus.Cancelled, TodoStatus.Comparison);
 
-        protected override bool EvaluationIncludesReferenceDate => true;
-
-        protected override void OnDeserializing(StreamingContext context)
-        {
-            //ToDo: a necessary evil, for now
-            base.OnDeserializing(context);
-        }
-
         void ExtrapolateTimes(int source)
         {
             /*

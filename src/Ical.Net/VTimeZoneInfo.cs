@@ -159,15 +159,15 @@ namespace Ical.Net
         }
 
         public HashSet<Occurrence> GetOccurrences(IDateTime dt)
-            => RecurrenceUtil.GetOccurrences(this, dt, true);
+            => this.GetOccurrences(dt, true);
 
         public HashSet<Occurrence> GetOccurrences(DateTime dt)
-            => RecurrenceUtil.GetOccurrences(this, new CalDateTime(dt), true);
+            => this.GetOccurrences(new CalDateTime(dt), true);
 
         public HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
-            => RecurrenceUtil.GetOccurrences(this, startTime, endTime, true);
+            => this.GetOccurrences(startTime, endTime, true);
 
         public HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
-            => RecurrenceUtil.GetOccurrences(this, new CalDateTime(startTime), new CalDateTime(endTime), true);
+            => this.GetOccurrences(new CalDateTime(startTime), new CalDateTime(endTime), true);
     }
 }

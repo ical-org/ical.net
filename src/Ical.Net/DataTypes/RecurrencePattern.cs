@@ -36,11 +36,66 @@ namespace Ical.Net.DataTypes
         }
 
     }
+
     /// <summary> An iCalendar representation of the <c>RRULE</c> property. https://tools.ietf.org/html/rfc5545#section-3.3.10 </summary>
     /// <remarks>
     /// Multiple Patterns are combined into a <see cref="CalendarComponents.CalendarEvent"/>
     /// This is closely related to the Unix Cron Pattern, but with additional <see cref="Until"/> Time.
+    ///
+    /// BYxxx rule parts define explicit Occurrences for the xxx Frequency.
+    /// This means they have a different Effect, depending on
+    /// * xxx being smaller than the Frequency where only the single Seed Time would be used or
+    /// * xxx NOT smaller than the Frequency, where ALL Times would be used.
+    ///
+    /// If multiple BYxxx rule parts are specified,
+    /// then after evaluating the specified FREQ and INTERVAL rule parts,
+    /// the BYxxx rule parts are applied to the current set of evaluated occurrences
+    /// in the following order: BYMONTH, BYWEEKNO, BYYEARDAY, BYMONTHDAY, BYDAY,
+    /// BYHOUR, BYMINUTE, BYSECOND and BYSETPOS; then COUNT and UNTIL are evaluated.
+    ///
+    ///   +----------+--------+--------+-------+-------+------+-------+------+
+    ///   |Frequency:|SECONDLY|MINUTELY|HOURLY |DAILY  |WEEKLY|MONTHLY|YEARLY|
+    ///   +----------+--------+--------+-------+-------+------+-------+------+
+    ///   |BYMONTH   |Limit   |Limit   |Limit  |Limit  |Limit |Limit  |Expand|
+    ///   +----------+--------+--------+-------+-------+------+-------+------+
+    ///   |BYWEEKNO  |N/A     |N/A     |N/A    |N/A    |N/A   |N/A    |Expand|
+    ///   +----------+--------+--------+-------+-------+------+-------+------+
+    ///   |BYYEARDAY |Limit   |Limit   |Limit  |N/A    |N/A   |N/A    |Expand|
+    ///   +----------+--------+--------+-------+-------+------+-------+------+
+    ///   |BYMONTHDAY|Limit   |Limit   |Limit  |Limit  |N/A   |Expand |Expand|
+    ///   +----------+--------+--------+-------+-------+------+-------+------+
+    ///   |BYDAY     |Limit   |Limit   |Limit  |Limit  |Expand|Note 1 |Note 2|
+    ///   +----------+--------+--------+-------+-------+------+-------+------+
+    ///   |BYHOUR    |Limit   |Limit   |Limit  |Expand |Expand|Expand |Expand|
+    ///   +----------+--------+--------+-------+-------+------+-------+------+
+    ///   |BYMINUTE  |Limit   |Limit   |Expand |Expand |Expand|Expand |Expand|
+    ///   +----------+--------+--------+-------+-------+------+-------+------+
+    ///   |BYSECOND  |Limit   |Expand  |Expand |Expand |Expand|Expand |Expand|
+    ///   +----------+--------+--------+-------+-------+------+-------+------+
+    ///   |BYSETPOS  |Limit   |Limit   |Limit  |Limit  |Limit |Limit  |Limit |
+    ///   +----------+--------+--------+-------+-------+------+-------+------+
+    ///
+    /// "N/A" means that the corresponding BYxxx rule part MUST NOT be used with the corresponding FREQ value.
+    ///
+    /// Note 1:  Limit if BYMONTHDAY is present; otherwise, special expand for MONTHLY.
+    ///
+    /// Note 2:  Limit if BYYEARDAY or BYMONTHDAY is present; otherwise,
+    ///          special expand for WEEKLY if BYWEEKNO present; otherwise,
+    ///          special expand for MONTHLY if BYMONTH present; otherwise,
+    ///          special expand for YEARLY.
+    ///
     /// </remarks>
+    /// <example>
+    /// For example, "FREQ=DAILY;BYMONTH=1" limits the number of recurrence instances
+    /// from all days (if BYMONTH rule part was not present) to all days in January only.
+    /// BYxxx rule parts for a period of time
+    /// * less than the frequency generally increase or expand the number of occurrences of the recurrence.
+    /// For example, "FREQ=YEARLY;BYMONTH=1,2" increases the number of
+    /// days within the yearly recurrence set from 1 (if BYMONTH rule part
+    /// is not present) to 2.
+    ///
+    /// </example>
+    /// 
     public class RecurrencePattern : EncodableDataType
     {
         int _interval = int.MinValue;

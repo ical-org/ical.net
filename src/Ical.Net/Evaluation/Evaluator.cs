@@ -7,8 +7,8 @@ namespace Ical.Net.Evaluation
 {
     public abstract class Evaluator : IEvaluator
     {
-        ICalendarObject _mAssociatedObject;
-        readonly ICalendarDataType _mAssociatedDataType;
+        ICalendarObject? _AssociatedObject;
+        readonly ICalendarDataType _AssociatedDataType;
 
         protected HashSet<Period> MPeriods;
 
@@ -19,14 +19,14 @@ namespace Ical.Net.Evaluation
 
         protected Evaluator(ICalendarObject associatedObject)
         {
-            _mAssociatedObject = associatedObject;
+            _AssociatedObject = associatedObject;
 
             Initialize();
         }
 
         protected Evaluator(ICalendarDataType dataType)
         {
-            _mAssociatedDataType = dataType;
+            _AssociatedDataType = dataType;
 
             Initialize();
         }
@@ -52,8 +52,8 @@ namespace Ical.Net.Evaluation
 
         public ICalendarObject AssociatedObject
         {
-            get => _mAssociatedObject ?? _mAssociatedDataType?.AssociatedObject;
-            protected set => _mAssociatedObject = value;
+            get => _AssociatedObject ?? _AssociatedDataType?.AssociatedObject;
+            protected set => _AssociatedObject = value;
         }
 
         public HashSet<Period> Periods => MPeriods;

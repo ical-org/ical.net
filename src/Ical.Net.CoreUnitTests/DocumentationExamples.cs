@@ -52,7 +52,7 @@ namespace Ical.Net.CoreUnitTests
             var rRule = new RecurrencePattern(FrequencyType.Weekly, 2)
             {
                 Until = DateTime.Parse("2016-12-31T11:59:59"),
-                ByMonthDay = new List<int> { 1, 2, 3, 4 }
+                ByMonth = new List<int> { 10, 12 } //limit the Months, because > Weekly
             };
             vEvent.RecurrenceRules = new List<RecurrencePattern> { rRule };
 
@@ -62,30 +62,31 @@ namespace Ical.Net.CoreUnitTests
             var searchEnd = DateTime.Parse("2016-12-31");
             var tuesdays = vEvent.GetOccurrences(searchStart, searchEnd);
 
-            Assert.AreEqual(13, tuesdays.Count);
+            Assert.AreEqual(5, tuesdays.Count);
         }
 
         [Test]
         public void FourthThursdayOfNovember_Tests()
         {
             // (The number of US thanksgivings between 2000 and 2016)
-            // An event taking place between 07:00 and 19:00, beginning July 5 (a Tuesday)
+            // An event taking place between 07:00 and 19:00
             var vEvent = new CalendarEvent
             {
-                DtStart = new CalDateTime(DateTime.Parse("2000-11-23T07:00")),
-                DtEnd = new CalDateTime(DateTime.Parse("2000-11-23T19:00")),
+                DtStart = new CalDateTime(DateTime.Parse("2000-1-23T07:00")),
+                DtEnd = new CalDateTime(DateTime.Parse("2000-1-23T19:00")),
+                IncludeReferenceDate = false, //don't know the exact date 
             };
 
-            // Recurring every other Tuesday until Dec 31
-            var rrule = new RecurrencePattern(FrequencyType.Yearly, 1)
+            // Recurring every 4. Thursday in November
+            var rRule = new RecurrencePattern(FrequencyType.Yearly, 1)
             {
                 Frequency = FrequencyType.Yearly,
                 Interval = 1,
-                ByMonth = new List<int> { 11 },
+                ByMonth = new List<int> { 11 }, // < Yearly => only in November
                 ByDay = new List<WeekDay> { new WeekDay { DayOfWeek = DayOfWeek.Thursday, Offset = 4 } },
                 Until = DateTime.MaxValue
             };
-            vEvent.RecurrenceRules = new List<RecurrencePattern> { rrule };
+            vEvent.RecurrenceRules = new List<RecurrencePattern> { rRule };
 
             var searchStart = DateTime.Parse("2000-01-01");
             var searchEnd = DateTime.Parse("2017-01-01");
