@@ -20,6 +20,11 @@ namespace Ical.Net.Serialization.DataTypes
                 return null;
             }
 
+            return SerializeToString(g);
+        }
+
+        public string SerializeToString(GeographicLocation g)
+        {
             var value = g.Latitude.ToString("0.000000", CultureInfo.InvariantCulture.NumberFormat) + ";"
                 + g.Longitude.ToString("0.000000", CultureInfo.InvariantCulture.NumberFormat);
             return Encode(g, value);

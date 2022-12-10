@@ -18,13 +18,10 @@ namespace Ical.Net.Serialization
 
         public override Type TargetType => typeof(CalendarComponent);
 
-        public override string SerializeToString(object obj)
-        {
-            if (!(obj is ICalendarComponent c))
-            {
-                return null;
-            }
+        public override string? SerializeToString(object? obj) => obj is ICalendarComponent c ? SerializeToString(c) : null;
 
+        public string SerializeToString(ICalendarComponent c)
+        {
             var sb = new StringBuilder();
             var upperName = c.Name.ToUpperInvariant();
             sb.Append(TextUtil.FoldLines($"BEGIN:{upperName}"));

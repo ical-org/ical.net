@@ -20,7 +20,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => _mEnumType;
 
-        public override string SerializeToString(object enumValue)
+        public override string? SerializeToString(object? enumValue)
         {
             try
             {

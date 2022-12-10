@@ -99,10 +99,10 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        IDateTime _startTime;
-        public IDateTime StartTime
+        IDateTime? _startTime;
+        public IDateTime? StartTime
         {
-            get => _startTime.HasTime
+            get => _startTime?.HasTime ?? false
                 ? _startTime
                 : new CalDateTime(new DateTime(_startTime.Value.Year, _startTime.Value.Month, _startTime.Value.Day, 0, 0, 0), _startTime.TzId);
             set

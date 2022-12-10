@@ -8,7 +8,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         protected EncodableDataTypeSerializer(SerializationContext ctx) : base(ctx) {}
 
-        protected string? Encode(IEncodableDataType dt, string? value)
+        protected string? Encode(IEncodableDataType? dt, string? value)
         {
             if (value == null)
             {

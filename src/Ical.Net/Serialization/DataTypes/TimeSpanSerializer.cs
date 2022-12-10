@@ -13,15 +13,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof (TimeSpan);
 
-        public override string SerializeToString(object obj)
-        {
-            if (!(obj is TimeSpan ts))
-            {
-                return null;
-            }
-
-            return SerializeToString(ts);
-        }
+        public override string? SerializeToString(object? obj) => obj is TimeSpan ts ? SerializeToString(ts) : null;
 
         /// <summary> Converts the <paramref name="timeSpan"/> to a Standard Period "P..." String </summary>
         public static string SerializeToString(TimeSpan timeSpan)

@@ -13,7 +13,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof (Period);
 
-        public override string SerializeToString(object obj)
+        public override string? SerializeToString(object? obj)
         {
             var p = obj as Period;
             var factory = GetService<ISerializerFactory>();
@@ -28,33 +28,41 @@ namespace Ical.Net.Serialization.DataTypes
 
             try
             {
-                var dtSerializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
-                var timeSpanSerializer = factory.Build(typeof (TimeSpan), SerializationContext) as IStringSerializer;
-                if (dtSerializer == null || timeSpanSerializer == null)
-                {
-                    return null;
-                }
-                var sb = new StringBuilder();
-
-                // Serialize the start time                    
-                sb.Append(dtSerializer.SerializeToString(p.StartTime));
-
-                // Serialize the duration
-                if (!p.StartTime.HasTime)
-                {
-                    // Serialize the duration
-                    sb.Append("/");
-                    sb.Append(timeSpanSerializer.SerializeToString(p.Duration));
-                }
-
-                // Encode the value as necessary
-                return Encode(p, sb.ToString());
+                return SerializeToString_(factory, p);
             }
             finally
             {
                 // Pop the period off the serialization context stack
                 SerializationContext.Pop();
             }
+        }
+
+        string? SerializeToString_(ISerializerFactory factory, Period p)
+        {
+            var dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
+            var timeSpanSerializer = factory.Build(typeof(TimeSpan), SerializationContext) as IStringSerializer;
+            if (dtSerializer == null || timeSpanSerializer == null)
+            {
+                {
+                    return null;
+                }
+            }
+
+            var sb = new StringBuilder();
+
+            // Serialize the start time                    
+            sb.Append(dtSerializer.SerializeToString(p.StartTime));
+
+            // Serialize the duration
+            if (!p.StartTime.HasTime)
+            {
+                // Serialize the duration
+                sb.Append("/");
+                sb.Append(timeSpanSerializer.SerializeToString(p.Duration));
+            }
+
+            // Encode the value as necessary
+            return Encode(p, sb.ToString());
         }
 
         public override object Deserialize(TextReader tr)

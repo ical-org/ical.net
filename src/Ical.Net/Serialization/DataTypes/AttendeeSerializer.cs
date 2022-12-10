@@ -12,13 +12,9 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof (Attendee);
 
-        public override string SerializeToString(object obj)
-        {
-            var a = obj as Attendee;
-            return a?.Value == null
-                ? null
-                : Encode(a, a.Value.OriginalString);
-        }
+        public override string? SerializeToString(object? obj) => obj is Attendee a ? SerializeToString(a): null;
+
+        public string? SerializeToString(Attendee a) => Encode(a, a.Value.OriginalString);
 
         public Attendee Deserialize(string attendee)
         {

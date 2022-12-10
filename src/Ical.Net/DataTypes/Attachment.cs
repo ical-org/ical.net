@@ -13,7 +13,7 @@ namespace Ical.Net.DataTypes
     /// </summary>
     public class Attachment : EncodableDataType
     {
-        public Uri Uri { get; set; }
+        public Uri? Uri { get; set; }
         public byte[] Data { get; }
 
         Encoding _valueEncoding = System.Text.Encoding.UTF8;

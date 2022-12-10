@@ -16,14 +16,14 @@ namespace Ical.Net.Serialization
             SerializationContext = ctx;
         }
 
-        public SerializationContext SerializationContext { get; set; }
+        public SerializationContext? SerializationContext { get; set; }
 
         public abstract Type TargetType { get; }
 
         /// <summary> Converts <paramref name="obj"/> into the vCard Value Format </summary>
         /// <returns>null when <paramref name="obj"/> is null or not of the proper Type</returns>
         public abstract string? SerializeToString(object? obj);
-        public abstract object Deserialize(TextReader tr);
+        public abstract object? Deserialize(TextReader tr);
 
         public object Deserialize(Stream stream, Encoding encoding)
         {
@@ -59,9 +59,9 @@ namespace Ical.Net.Serialization
             SerializationContext.Pop();
         }
 
-        public object GetService(Type serviceType) => SerializationContext?.GetService(serviceType);
+        public object? GetService(Type serviceType) => SerializationContext?.GetService(serviceType);
 
-        public object GetService(string name) => SerializationContext?.GetService(name);
+        public object? GetService(string name) => SerializationContext?.GetService(name);
 
         public T GetService<T>()
         {

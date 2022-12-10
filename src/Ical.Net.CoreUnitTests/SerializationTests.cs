@@ -349,7 +349,7 @@ namespace Ical.Net.CoreUnitTests
         [Test]
         public void ZeroTimeSpan_Test()
         {
-            var result = new TimeSpanSerializer().SerializeToString(TimeSpan.Zero);
+            var result = TimeSpanSerializer.SerializeToString(TimeSpan.Zero);
             Assert.IsTrue("P0D".Equals(result, StringComparison.Ordinal));
         }
 

@@ -12,13 +12,10 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof (Attachment);
 
-        public override string SerializeToString(object obj)
-        {
-            if (!(obj is Attachment a))
-            {
-                return null;
-            }
+        public override string? SerializeToString(object? obj) => obj is Attachment a ? SerializeToString(a) : null;
 
+        public string? SerializeToString(Attachment a)
+        {
             if (a.Uri != null)
             {
                 if (a.Parameters.ContainsKey("VALUE"))

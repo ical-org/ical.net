@@ -22,6 +22,11 @@ namespace Ical.Net.Serialization.DataTypes
                 return null;
             }
 
+            return SerializeToString(factory, periodList);
+        }
+
+        string? SerializeToString(ISerializerFactory factory, PeriodList periodList)
+        {
             var dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
             var periodSerializer = factory.Build(typeof(Period), SerializationContext) as IStringSerializer;
             if (dtSerializer == null || periodSerializer == null)

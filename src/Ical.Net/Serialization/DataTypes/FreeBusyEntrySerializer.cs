@@ -12,7 +12,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof (FreeBusyEntry);
 
-        public override string SerializeToString(object obj)
+        public override string? SerializeToString(object? obj)
         {
             if (!(obj is FreeBusyEntry entry))
             {
