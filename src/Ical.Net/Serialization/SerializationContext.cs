@@ -5,7 +5,7 @@ namespace Ical.Net.Serialization
 {
     public class SerializationContext
     {
-        static SerializationContext _default;
+        static readonly SerializationContext Default_ = new SerializationContext();
 
         /// <summary>
         /// Gets the Singleton instance of the SerializationContext class.
@@ -14,11 +14,6 @@ namespace Ical.Net.Serialization
         {
             get
             {
-                if (_default == null)
-                {
-                    _default = new SerializationContext();
-                }
-
                 // Create a new serialization context that doesn't contain any objects
                 // (and is non-static).  That way, if any objects get pushed onto
                 // the serialization stack when the Default serialization context is used,
@@ -27,14 +22,14 @@ namespace Ical.Net.Serialization
                 // objects weren't pushed onto a stack referenced by a static variable.
                 var ctx = new SerializationContext
                 {
-                    _mServiceProvider = _default._mServiceProvider
+                    ServiceProvider_ = Default_.ServiceProvider_
                 };
                 return ctx;
             }
         }
 
-        readonly Stack<WeakReference> _mStack = new Stack<WeakReference>();
-        ServiceProvider _mServiceProvider = new ServiceProvider();
+        readonly Stack<WeakReference> Stack_ = new Stack<WeakReference>();
+        ServiceProvider ServiceProvider_ = new ServiceProvider();
 
         public SerializationContext()
         {
@@ -46,66 +41,56 @@ namespace Ical.Net.Serialization
             SetService(new EncodingProvider(this));
         }
 
-        public void Push(object item)
+        public void Push(object? item)
         {
             if (item != null)
             {
-                _mStack.Push(new WeakReference(item));
+                Stack_.Push(new WeakReference(item));
             }
         }
 
-        public object Pop()
+        public object? Pop()
         {
-            if (_mStack.Count > 0)
+            if (Stack_.Count <= 0)
             {
-                var r = _mStack.Pop();
-                if (r.IsAlive)
-                {
-                    return r.Target;
-                }
+                return null;
+            }
+            var r = Stack_.Pop();
+            if (r.IsAlive)
+            {
+                return r.Target;
             }
             return null;
         }
 
-        public object Peek()
+        public object? Peek()
         {
-            if (_mStack.Count > 0)
+            if (Stack_.Count <= 0)
             {
-                var r = _mStack.Peek();
-                if (r.IsAlive)
-                {
-                    return r.Target;
-                }
+                return null;
+            }
+            var r = Stack_.Peek();
+            if (r.IsAlive)
+            {
+                return r.Target;
             }
             return null;
         }
 
-        public object GetService(Type serviceType) => _mServiceProvider.GetService(serviceType);
+        public object? GetService(Type serviceType) => ServiceProvider_.GetService(serviceType);
 
-        public object GetService(string name) => _mServiceProvider.GetService(name);
+        public object? GetService(string name) => ServiceProvider_.GetService(name);
 
-        public T GetService<T>() => _mServiceProvider.GetService<T>();
+        public T? GetService<T>() where T : class => ServiceProvider_.GetService<T>();
 
-        public T GetService<T>(string name) => _mServiceProvider.GetService<T>(name);
+        public T? GetService<T>(string name) where T : class => ServiceProvider_.GetService<T>(name);
 
-        public void SetService(string name, object obj)
-        {
-            _mServiceProvider.SetService(name, obj);
-        }
+        public void SetService(string name, object obj) => ServiceProvider_.SetService(name, obj);
 
-        public void SetService(object obj)
-        {
-            _mServiceProvider.SetService(obj);
-        }
+        public void SetService(object obj) => ServiceProvider_.SetService(obj);
 
-        public void RemoveService(Type type)
-        {
-            _mServiceProvider.RemoveService(type);
-        }
+        public void RemoveService(Type type) => ServiceProvider_.RemoveService(type);
 
-        public void RemoveService(string name)
-        {
-            _mServiceProvider.RemoveService(name);
-        }
+        public void RemoveService(string name) => ServiceProvider_.RemoveService(name);
     }
 }

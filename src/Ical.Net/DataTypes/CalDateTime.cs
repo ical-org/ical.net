@@ -68,10 +68,7 @@ namespace Ical.Net.DataTypes
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
-        void Initialize(int year, int month, int day, int hour, int minute, int second, string? tzId, ICalendarObject? cal)
-        {
-            Initialize(CoerceDateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzId, cal);
-        }
+        void Initialize(int year, int month, int day, int hour, int minute, int second, string? tzId, ICalendarObject? cal) => Initialize(CoerceDateTime(year, month, day, hour, minute, second, DateTimeKind.Local), tzId, cal);
 
         void Initialize(DateTime value, string? tzId, ICalendarObject? cal)
         {

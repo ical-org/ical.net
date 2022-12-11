@@ -37,10 +37,7 @@ namespace Ical.Net
             }
         }
 
-        void Initialize()
-        {
-            _values = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        }
+        void Initialize() => _values = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         protected override void OnDeserializing(StreamingContext context)
         {
@@ -92,10 +89,7 @@ namespace Ical.Net
             _values.Add(value);
         }
 
-        public void RemoveValue(string value)
-        {
-            _values.Remove(value);
-        }
+        public void RemoveValue(string value) => _values.Remove(value);
 
         public string Value
         {

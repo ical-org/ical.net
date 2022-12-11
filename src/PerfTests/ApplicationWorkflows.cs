@@ -55,15 +55,12 @@ namespace PerfTests
 
         [Benchmark]
         public List<Occurrence> ParallelUponGetOccurrences() => ParallelUponGetOccurrences_();
-        public static List<Occurrence> ParallelUponGetOccurrences_()
-        {
-            return _manyCalendars
+        public static List<Occurrence> ParallelUponGetOccurrences_() => _manyCalendars
                 .SelectMany(Calendar.Load<Calendar>)
                 .SelectMany(c => c.Events)
                 .AsParallel()
                 .SelectMany(e => e.GetOccurrences(_searchStart, _searchEnd))
                 .ToList();
-        }
 
         [Benchmark]
         public int ParallelDeserializeSequentialGatherEventsParallelGetOccurrences()

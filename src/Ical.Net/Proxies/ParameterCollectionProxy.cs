@@ -21,10 +21,7 @@ namespace Ical.Net.Proxies
             }
         }
 
-        public void Add(string name, string value)
-        {
-            RealObject.Add(new CalendarParameter(name, value));
-        }
+        public void Add(string name, string value) => RealObject.Add(new CalendarParameter(name, value));
 
         public string Get(string name)
         {

@@ -47,10 +47,7 @@ namespace Ical.Net.Collections
 
         public event EventHandler<ObjectEventArgs<TItem, int>> ItemAdded;
 
-        protected void OnItemAdded(TItem obj, int index)
-        {
-            ItemAdded?.Invoke(this, new ObjectEventArgs<TItem, int>(obj, index));
-        }
+        protected void OnItemAdded(TItem obj, int index) => ItemAdded?.Invoke(this, new ObjectEventArgs<TItem, int>(obj, index));
 
         public void Add(TItem item)
         {
@@ -159,10 +156,7 @@ namespace Ical.Net.Collections
             return _dictionary.ContainsKey(group) && _dictionary[group].Contains(item);
         }
 
-        public void CopyTo(TItem[] array, int arrayIndex)
-        {
-            _dictionary.SelectMany(kvp => kvp.Value).ToArray().CopyTo(array, arrayIndex);
-        }
+        public void CopyTo(TItem[] array, int arrayIndex) => _dictionary.SelectMany(kvp => kvp.Value).ToArray().CopyTo(array, arrayIndex);
 
         public bool IsReadOnly => false;
 

@@ -16,7 +16,7 @@ namespace Ical.Net.Serialization
             SerializationContext = ctx;
         }
 
-        public SerializationContext? SerializationContext { get; set; }
+        public SerializationContext SerializationContext { get; set; }
 
         public abstract Type TargetType { get; }
 
@@ -63,42 +63,16 @@ namespace Ical.Net.Serialization
 
         public object? GetService(string name) => SerializationContext?.GetService(name);
 
-        public T GetService<T>()
-        {
-            if (SerializationContext != null)
-            {
-                return SerializationContext.GetService<T>();
-            }
-            return default!;
-        }
+        public T? GetService<T>() where T : class => SerializationContext?.GetService<T>();
 
-        public T GetService<T>(string name)
-        {
-            if (SerializationContext != null)
-            {
-                return SerializationContext.GetService<T>(name);
-            }
-            return default;
-        }
+        public T? GetService<T>(string name) where T : class => SerializationContext?.GetService<T>(name);
 
-        public void SetService(string name, object obj)
-        {
-            SerializationContext?.SetService(name, obj);
-        }
+        public void SetService(string name, object obj) => SerializationContext?.SetService(name, obj);
 
-        public void SetService(object obj)
-        {
-            SerializationContext?.SetService(obj);
-        }
+        public void SetService(object obj) => SerializationContext?.SetService(obj);
 
-        public void RemoveService(Type type)
-        {
-            SerializationContext?.RemoveService(type);
-        }
+        public void RemoveService(Type type) => SerializationContext?.RemoveService(type);
 
-        public void RemoveService(string name)
-        {
-            SerializationContext?.RemoveService(name);
-        }
+        public void RemoveService(string name) => SerializationContext?.RemoveService(name);
     }
 }

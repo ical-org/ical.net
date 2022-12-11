@@ -10,16 +10,10 @@ namespace Ical.Net.CoreUnitTests
     public class VTimeZoneTest
     {
         [Test, Category("VTimeZone")]
-        public void InvalidTzIdShouldThrowException()
-        {
-            Assert.Throws<ArgumentException>(() => new VTimeZone("shouldFail"));
-        }
+        public void InvalidTzIdShouldThrowException() => Assert.Throws<ArgumentException>(() => new VTimeZone("shouldFail"));
 
         [Test, Category("VTimeZone")]
-        public void VTimeZoneFromDateTimeZoneNullZoneShouldThrowException()
-        {
-            Assert.Throws<ArgumentException>(() => CreateTestCalendar("shouldFail"));
-        }
+        public void VTimeZoneFromDateTimeZoneNullZoneShouldThrowException() => Assert.Throws<ArgumentException>(() => CreateTestCalendar("shouldFail"));
 
         [Test, Category("VTimeZone")]
         public void VTimeZoneAmericaPhoenixShouldSerializeProperly()

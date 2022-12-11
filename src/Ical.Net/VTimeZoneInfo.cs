@@ -153,10 +153,7 @@ namespace Ical.Net
             set => Properties.Set("RECURRENCE-ID", value);
         }
 
-        public void ClearEvaluation()
-        {
-            RecurrenceUtil.ClearEvaluation(this);
-        }
+        public void ClearEvaluation() => RecurrenceUtil.ClearEvaluation(this);
 
         public HashSet<Occurrence> GetOccurrences(IDateTime dt)
             => this.GetOccurrences(dt, true);

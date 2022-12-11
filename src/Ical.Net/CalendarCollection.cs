@@ -126,20 +126,11 @@ namespace Ical.Net
             return current;
         }
 
-        public FreeBusy GetFreeBusy(FreeBusy freeBusyRequest)
-        {
-            return this.Aggregate<Calendar, FreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(freeBusyRequest)));
-        }
+        public FreeBusy GetFreeBusy(FreeBusy freeBusyRequest) => this.Aggregate<Calendar, FreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(freeBusyRequest)));
 
-        public FreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive)
-        {
-            return this.Aggregate<Calendar, FreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(fromInclusive, toExclusive)));
-        }
+        public FreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive) => this.Aggregate<Calendar, FreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(fromInclusive, toExclusive)));
 
-        public FreeBusy GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, IDateTime fromInclusive, IDateTime toExclusive)
-        {
-            return this.Aggregate<Calendar, FreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(organizer, contacts, fromInclusive, toExclusive)));
-        }
+        public FreeBusy GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, IDateTime fromInclusive, IDateTime toExclusive) => this.Aggregate<Calendar, FreeBusy>(null, (current, iCal) => CombineFreeBusy(current, iCal.GetFreeBusy(organizer, contacts, fromInclusive, toExclusive)));
 
         public override int GetHashCode() => CollectionHelpers.GetHashCode(this);
 

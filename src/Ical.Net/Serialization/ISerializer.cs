@@ -10,6 +10,6 @@ namespace Ical.Net.Serialization
 
         Type TargetType { get; }
         void Serialize(object obj, Stream stream, Encoding encoding);
-        object Deserialize(Stream stream, Encoding encoding);
+        object? Deserialize(Stream stream, Encoding encoding);
     }
 }

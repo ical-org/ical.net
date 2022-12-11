@@ -25,10 +25,7 @@ namespace Ical.Net.CalendarComponents
             Initialize();
         }
 
-        void Initialize()
-        {
-            Properties = new CalendarPropertyList(this);
-        }
+        void Initialize() => Properties = new CalendarPropertyList(this);
 
         protected override void OnDeserializing(StreamingContext context)
         {

@@ -220,23 +220,17 @@ namespace Ical.Net.CalendarComponents
         /// </summary>
         /// <param name="dateTime">The date to test.</param>
         /// <returns>True if the event occurs on the <paramref name="dateTime"/> provided, False otherwise.</returns>
-        public bool OccursOn(IDateTime dateTime)
-        {
-            return _mEvaluator.Periods.Any(p => p.StartTime.Date == dateTime.Date || // It's the start date OR
-                                                (p.StartTime.Date <= dateTime.Date && // It's after the start date AND
-                                                 (p.EndTime.HasTime && p.EndTime.Date >= dateTime.Date || // an end time was specified, and it's after the test date
-                                                  (!p.EndTime.HasTime && p.EndTime.Date > dateTime.Date))));
-        }
+        public bool OccursOn(IDateTime dateTime) => _mEvaluator.Periods.Any(p => p.StartTime.Date == dateTime.Date || // It's the start date OR
+                                                                                                 (p.StartTime.Date <= dateTime.Date && // It's after the start date AND
+                                                                                                  (p.EndTime.HasTime && p.EndTime.Date >= dateTime.Date || // an end time was specified, and it's after the test date
+                                                                                                   (!p.EndTime.HasTime && p.EndTime.Date > dateTime.Date))));
 
         /// <summary>
         /// Use this method to determine if an event begins at a given date and time.
         /// </summary>
         /// <param name="dateTime">The date and time to test.</param>
         /// <returns>True if the event begins at the given date and time</returns>
-        public bool OccursAt(IDateTime dateTime)
-        {
-            return _mEvaluator.Periods.Any(p => p.StartTime.Equals(dateTime));
-        }
+        public bool OccursAt(IDateTime dateTime) => _mEvaluator.Periods.Any(p => p.StartTime.Equals(dateTime));
 
         /// <summary>
         /// Determines whether or not the <see cref="CalendarEvent"/> is actively displayed

@@ -43,7 +43,7 @@ namespace Ical.Net.Serialization.DataTypes
             return encodingProvider?.Encode(dt.Encoding, data);
         }
 
-        protected string Decode(IEncodableDataType dt, string value)
+        protected string? Decode(IEncodableDataType? dt, string value)
         {
             if (dt?.Encoding == null)
             {
@@ -61,7 +61,7 @@ namespace Ical.Net.Serialization.DataTypes
             return encodingStack.Current.GetString(data);
         }
 
-        protected byte[] DecodeData(IEncodableDataType dt, string value)
+        protected byte[]? DecodeData(IEncodableDataType? dt, string? value)
         {
             if (value == null)
             {

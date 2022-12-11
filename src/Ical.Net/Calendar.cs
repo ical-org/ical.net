@@ -201,10 +201,7 @@ namespace Ical.Net
         /// <param name="fromDate">The beginning date/time of the range to test.</param>
         /// <param name="toDate">The end date/time of the range to test.</param>
         [Obsolete("This method is no longer supported.  Use GetOccurrences() instead.")]
-        public void Evaluate(IDateTime fromDate, IDateTime toDate)
-        {
-            throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
-        }
+        public void Evaluate(IDateTime fromDate, IDateTime toDate) => throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
 
         /// <summary>
         /// Evaluates component recurrences for the given range of time, for
@@ -214,10 +211,7 @@ namespace Ical.Net
         /// <param name="fromDate">The beginning date/time of the range to test.</param>
         /// <param name="toDate">The end date/time of the range to test.</param>
         [Obsolete("This method is no longer supported.  Use GetOccurrences() instead.")]
-        public void Evaluate<T>(IDateTime fromDate, IDateTime toDate)
-        {
-            throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
-        }
+        public void Evaluate<T>(IDateTime fromDate, IDateTime toDate) => throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
 
         /// <summary>
         /// Clears recurrence evaluations for recurring components.        
@@ -329,10 +323,7 @@ namespace Ical.Net
             return default;
         }
 
-        public void Dispose()
-        {
-            Children.Clear();
-        }
+        public void Dispose() => Children.Clear();
 
         public void MergeWith(IMergeable obj)
         {

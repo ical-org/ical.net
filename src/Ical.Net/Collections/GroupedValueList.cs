@@ -11,10 +11,7 @@ namespace Ical.Net.Collections
         where TInterface : class, IGroupedObject<TGroup>, IValueObject<TValueType>
         where TItem : new()        
     {
-        public void Set(TGroup group, TValueType value)
-        {
-            Set(group, new[] { value });
-        }
+        public void Set(TGroup group, TValueType value) => Set(group, new[] { value });
 
         public void Set(TGroup group, IEnumerable<TValueType> values)
         {

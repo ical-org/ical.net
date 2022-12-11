@@ -66,10 +66,7 @@ namespace Ical.Net.CoreUnitTests
             IDateTime toDate,
             IDateTime[] dateTimes,
             string[] timeZones
-        )
-        {
-            EventOccurrenceTest(cal, fromDate, toDate, dateTimes, timeZones, 0);
-        }
+        ) => EventOccurrenceTest(cal, fromDate, toDate, dateTimes, timeZones, 0);
 
         /// <summary>
         /// See Page 45 of RFC 2445 - RRULE:FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30

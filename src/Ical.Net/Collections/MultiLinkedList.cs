@@ -9,15 +9,9 @@ namespace Ical.Net.Collections
         IMultiLinkedList<TType> _previous;
         IMultiLinkedList<TType> _next;
 
-        public void SetPrevious(IMultiLinkedList<TType> previous)
-        {
-            _previous = previous;
-        }
+        public void SetPrevious(IMultiLinkedList<TType> previous) => _previous = previous;
 
-        public void SetNext(IMultiLinkedList<TType> next)
-        {
-            _next = next;
-        }
+        public void SetNext(IMultiLinkedList<TType> next) => _next = next;
 
         public int StartIndex => _previous?.ExclusiveEnd ?? 0;
 

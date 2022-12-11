@@ -66,13 +66,10 @@ namespace Ical.Net.Collections.Proxies
             }
         }
 
-        IEnumerator<TNewValue> GetEnumeratorInternal()
-        {
-            return Items
+        IEnumerator<TNewValue> GetEnumeratorInternal() => Items
                 .Where(o => o.ValueCount > 0)
                 .SelectMany(o => o.Values.OfType<TNewValue>())
                 .GetEnumerator();
-        }
 
         public void Add(TNewValue item)
         {
@@ -97,15 +94,12 @@ namespace Ical.Net.Collections.Proxies
 
         public bool Contains(TNewValue item) => Items.Any(o => o.ContainsValue((TOriginalValue)(object)item));
 
-        public void CopyTo(TNewValue[] array, int arrayIndex)
-        {
-            Items                
+        public void CopyTo(TNewValue[] array, int arrayIndex) => Items
                 .Where(o => o.Values != null)
                 .SelectMany(o => o.Values)
                 .ToArray()
                 .CopyTo(array, arrayIndex);
-        }
-        
+
         public int Count => Items.Sum(o => o.ValueCount);
 
         public bool IsReadOnly => false;
@@ -157,46 +151,40 @@ namespace Ical.Net.Collections.Proxies
             return index;
         }
 
-        public void Insert(int index, TNewValue item)
-        {
-            IterateValues((o, i, count) =>
-            {
-                var value = (TOriginalValue)(object)item;
+        public void Insert(int index, TNewValue item) => IterateValues((o, i, count) =>
+                                                                  {
+                                                                      var value = (TOriginalValue)(object)item;
 
-                // Determine if this index is found within this object
-                if (index < i || index >= count)
-                {
-                    return true;
-                }
+                                                                      // Determine if this index is found within this object
+                                                                      if (index < i || index >= count)
+                                                                      {
+                                                                          return true;
+                                                                      }
 
-                // Convert the items to a list
-                var items = o.Values.ToList();
-                // Insert the item at the relative index within the list
-                items.Insert(index - i, value);
-                // Set the new list
-                o.SetValue(items);
-                return false;
-            });
-        }
+                                                                      // Convert the items to a list
+                                                                      var items = o.Values.ToList();
+                                                                      // Insert the item at the relative index within the list
+                                                                      items.Insert(index - i, value);
+                                                                      // Set the new list
+                                                                      o.SetValue(items);
+                                                                      return false;
+                                                                  });
 
-        public void RemoveAt(int index)
-        {
-            IterateValues((o, i, count) =>
-            {
-                // Determine if this index is found within this object
-                if (index >= i && index < count)
-                {
-                    // Convert the items to a list
-                    var items = o.Values.ToList();
-                    // Remove the item at the relative index within the list
-                    items.RemoveAt(index - i);
-                    // Set the new list
-                    o.SetValue(items);
-                    return false;
-                }
-                return true;
-            });
-        }
+        public void RemoveAt(int index) => IterateValues((o, i, count) =>
+                                                    {
+                                                        // Determine if this index is found within this object
+                                                        if (index >= i && index < count)
+                                                        {
+                                                            // Convert the items to a list
+                                                            var items = o.Values.ToList();
+                                                            // Remove the item at the relative index within the list
+                                                            items.RemoveAt(index - i);
+                                                            // Set the new list
+                                                            o.SetValue(items);
+                                                            return false;
+                                                        }
+                                                        return true;
+                                                    });
 
         public TNewValue this[int index]
         {

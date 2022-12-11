@@ -17,10 +17,7 @@ namespace Ical.Net.Collections
                 ? default
                 : _listEnumerator.Current;
 
-        public void Dispose()
-        {
-            Reset();
-        }
+        public void Dispose() => Reset();
 
         void DisposeListEnumerator()
         {

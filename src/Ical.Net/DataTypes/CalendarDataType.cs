@@ -28,21 +28,12 @@ namespace Ical.Net.DataTypes
         }
 
         [OnDeserializing]
-        internal void DeserializingInternal(StreamingContext context)
-        {
-            OnDeserializing(context);
-        }
+        internal void DeserializingInternal(StreamingContext context) => OnDeserializing(context);
 
         [OnDeserialized]
-        internal void DeserializedInternal(StreamingContext context)
-        {
-            OnDeserialized(context);
-        }
+        internal void DeserializedInternal(StreamingContext context) => OnDeserialized(context);
 
-        protected virtual void OnDeserializing(StreamingContext context)
-        {
-            Initialize();
-        }
+        protected virtual void OnDeserializing(StreamingContext context) => Initialize();
 
         protected virtual void OnDeserialized(StreamingContext context) {}
 
@@ -70,10 +61,7 @@ namespace Ical.Net.DataTypes
                     _ => null
                 };
 
-        public void SetValueType(string type)
-        {
-            _proxy?.Set("VALUE", type ?? type.ToUpper());
-        }
+        public void SetValueType(string type) => _proxy?.Set("VALUE", type ?? type.ToUpper());
 
         public virtual ICalendarObject? AssociatedObject
         {

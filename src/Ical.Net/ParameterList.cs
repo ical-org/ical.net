@@ -13,10 +13,7 @@ namespace Ical.Net
             }
         }
 
-        public void Add(string name, string value)
-        {
-            Add(new CalendarParameter(name, value));
-        }
+        public void Add(string name, string value) => Add(new CalendarParameter(name, value));
 
         public string Get(string name) => Get<string>(name);
 

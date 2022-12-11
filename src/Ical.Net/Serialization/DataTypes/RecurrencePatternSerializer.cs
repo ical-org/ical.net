@@ -13,20 +13,17 @@ namespace Ical.Net.Serialization.DataTypes
 
         public RecurrencePatternSerializer(SerializationContext ctx) : base(ctx) { }
 
-        public static DayOfWeek GetDayOfWeek(string value)
+        public static DayOfWeek GetDayOfWeek(string value) => value.ToUpper() switch
         {
-            return value.ToUpper() switch
-            {
-                "SU" => DayOfWeek.Sunday,
-                "MO" => DayOfWeek.Monday,
-                "TU" => DayOfWeek.Tuesday,
-                "WE" => DayOfWeek.Wednesday,
-                "TH" => DayOfWeek.Thursday,
-                "FR" => DayOfWeek.Friday,
-                "SA" => DayOfWeek.Saturday,
-                _ => throw new ArgumentException(value + " is not a valid iCal day-of-week indicator.")
-            };
-        }
+            "SU" => DayOfWeek.Sunday,
+            "MO" => DayOfWeek.Monday,
+            "TU" => DayOfWeek.Tuesday,
+            "WE" => DayOfWeek.Wednesday,
+            "TH" => DayOfWeek.Thursday,
+            "FR" => DayOfWeek.Friday,
+            "SA" => DayOfWeek.Saturday,
+            _ => throw new ArgumentException(value + " is not a valid iCal day-of-week indicator.")
+        };
 
         protected static void AddInt32Values(IList<int> list, string value)
         {

@@ -24,22 +24,13 @@ namespace Ical.Net.Collections.Proxies
         public event EventHandler<ObjectEventArgs<TNew, int>> ItemAdded;
         public event EventHandler<ObjectEventArgs<TNew, int>> ItemRemoved;
 
-        protected void OnItemAdded(TNew item, int index)
-        {
-            ItemAdded?.Invoke(this, new ObjectEventArgs<TNew, int>(item, index));
-        }
+        protected void OnItemAdded(TNew item, int index) => ItemAdded?.Invoke(this, new ObjectEventArgs<TNew, int>(item, index));
 
-        protected void OnItemRemoved(TNew item, int index)
-        {
-            ItemRemoved?.Invoke(this, new ObjectEventArgs<TNew, int>(item, index));
-        }
+        protected void OnItemRemoved(TNew item, int index) => ItemRemoved?.Invoke(this, new ObjectEventArgs<TNew, int>(item, index));
 
         public bool Remove(TGroup group) => RealObject.Remove(group);
 
-        public void Clear(TGroup group)
-        {
-            RealObject.Clear(group);
-        }
+        public void Clear(TGroup group) => RealObject.Clear(group);
 
         public bool ContainsKey(TGroup group) => RealObject.ContainsKey(group);
 
@@ -50,10 +41,7 @@ namespace Ical.Net.Collections.Proxies
             .OfType<TNew>()
             .Where(_predicate);
 
-        public void Add(TNew item)
-        {
-            RealObject.Add(item);
-        }
+        public void Add(TNew item) => RealObject.Add(item);
 
         public void Clear()
         {
@@ -99,9 +87,6 @@ namespace Ical.Net.Collections.Proxies
 
         public IGroupedCollection<TGroup, TOriginal> RealObject { get; private set; }
 
-        public void SetProxiedObject(IGroupedCollection<TGroup, TOriginal> realObject)
-        {
-            RealObject = realObject;
-        }
+        public void SetProxiedObject(IGroupedCollection<TGroup, TOriginal> realObject) => RealObject = realObject;
     }
 }

@@ -40,7 +40,7 @@ namespace Ical.Net.Serialization.DataTypes
             return Encode(a, a.Data);
         }
 
-        public Attachment Deserialize(string attachment)
+        public Attachment? Deserialize(string attachment)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace Ical.Net.Serialization.DataTypes
                 if (valueType == typeof(byte[]))
                 {
                     // If the VALUE type is specifically set to BINARY,
-                    // then set the Data property instead.                    
+                    // then set the Data property instead.
                     return new Attachment(data)
                     {
                         ValueEncoding = a.ValueEncoding,

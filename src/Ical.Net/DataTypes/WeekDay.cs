@@ -45,10 +45,7 @@ namespace Ical.Net.DataTypes
 	        return Equals(weekDay);
         }
 
-        public bool Equals(WeekDay weekDay)
-        {
-            return weekDay != null && weekDay.Offset == Offset && weekDay.DayOfWeek == DayOfWeek;
-        }
+        public bool Equals(WeekDay weekDay) => weekDay != null && weekDay.Offset == Offset && weekDay.DayOfWeek == DayOfWeek;
 
         public override int GetHashCode() => Offset.GetHashCode() ^ DayOfWeek.GetHashCode();
 

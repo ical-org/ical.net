@@ -15,10 +15,7 @@ namespace Ical.Net
             ItemAdded += CalendarPropertyList_ItemAdded;
         }
 
-        void CalendarPropertyList_ItemAdded(object sender, ObjectEventArgs<ICalendarProperty, int> e)
-        {
-            e.First.Parent = _mParent;
-        }
+        void CalendarPropertyList_ItemAdded(object sender, ObjectEventArgs<ICalendarProperty, int> e) => e.First.Parent = _mParent;
 
         public ICalendarProperty this[string name] => ContainsKey(name)
             ? AllOf(name).FirstOrDefault()
