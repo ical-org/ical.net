@@ -25,7 +25,7 @@ namespace Ical.Net.Serialization
         public abstract string? SerializeToString(object? obj);
         public abstract object? Deserialize(TextReader tr);
 
-        public object Deserialize(Stream stream, Encoding encoding)
+        public object? Deserialize(Stream stream, Encoding encoding)
         {
             using var sr = new StreamReader(stream, encoding);
             var encodingStack = GetService<EncodingStack>();
@@ -59,20 +59,20 @@ namespace Ical.Net.Serialization
             SerializationContext.Pop();
         }
 
-        public object? GetService(Type serviceType) => SerializationContext?.GetService(serviceType);
+        public object? GetService(Type serviceType) => SerializationContext.GetService(serviceType);
 
-        public object? GetService(string name) => SerializationContext?.GetService(name);
+        public object? GetService(string name) => SerializationContext.GetService(name);
 
-        public T? GetService<T>() where T : class => SerializationContext?.GetService<T>();
+        public T GetService<T>() => SerializationContext.GetService<T>();
 
-        public T? GetService<T>(string name) where T : class => SerializationContext?.GetService<T>(name);
+        public T GetService<T>(string name) => SerializationContext.GetService<T>(name);
 
-        public void SetService(string name, object obj) => SerializationContext?.SetService(name, obj);
+        public void SetService(string name, object obj) => SerializationContext.SetService(name, obj);
 
-        public void SetService(object obj) => SerializationContext?.SetService(obj);
+        public void SetService(object obj) => SerializationContext.SetService(obj);
 
-        public void RemoveService(Type type) => SerializationContext?.RemoveService(type);
+        public void RemoveService(Type type) => SerializationContext.RemoveService(type);
 
-        public void RemoveService(string name) => SerializationContext?.RemoveService(name);
+        public void RemoveService(string name) => SerializationContext.RemoveService(name);
     }
 }

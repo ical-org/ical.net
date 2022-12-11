@@ -81,9 +81,9 @@ namespace Ical.Net.Serialization
 
         public object? GetService(string name) => ServiceProvider_.GetService(name);
 
-        public T? GetService<T>() where T : class => ServiceProvider_.GetService<T>();
+        public T GetService<T>() => ServiceProvider_.GetService<T>();
 
-        public T? GetService<T>(string name) where T : class => ServiceProvider_.GetService<T>(name);
+        public T GetService<T>(string name) => ServiceProvider_.GetService<T>(name);
 
         public void SetService(string name, object obj) => ServiceProvider_.SetService(name, obj);
 

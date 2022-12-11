@@ -9,21 +9,11 @@ namespace Ical.Net
         readonly IDictionary<Type, object> TypedServices_ = new Dictionary<Type, object>();
         readonly IDictionary<string, object> NamedServices_ = new Dictionary<string, object>();
 
-        public object? GetService(Type serviceType)
-        {
-            TypedServices_.TryGetValue(serviceType, out var service);
-            return service;
-        }
+        public object GetService(Type serviceType) => TypedServices_[serviceType];
+        public object GetService(string name) => NamedServices_[name];
 
-        public object? GetService(string name)
-        {
-            NamedServices_.TryGetValue(name, out var service);
-            return service;
-        }
-
-        public T? GetService<T>() where T : class => GetService(typeof(T)) as T;
-
-        public T? GetService<T>(string name) where T : class => GetService(name) as T;
+        public T GetService<T>() => (T)GetService(typeof(T));
+        public T GetService<T>(string name) => (T)GetService(name);
 
         public void SetService(string name, object? obj)
         {

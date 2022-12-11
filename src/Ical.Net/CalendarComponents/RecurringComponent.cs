@@ -12,7 +12,6 @@ namespace Ical.Net.CalendarComponents
     /// <summary> iCalendar component that contains multiple <see cref="RecurrencePattern"/>s in <see cref="RecurrenceRules"/> and <see cref="ExceptionRules"/>. </summary>
     /// <remarks>
     /// All <see cref="RecurrencePattern"/>s have individual End Dates, but share the common <see cref="Start"/> Date.
-    /// <see cref=""/>
     /// This component automatically handles
     /// RRULEs, RDATE, EXRULEs, and EXDATEs, as well as the DTSTART <see cref="Start"/>
     /// for the recurring item (all recurring items must have a DTSTART).
@@ -86,7 +85,7 @@ namespace Ical.Net.CalendarComponents
         /// <remarks>
         /// Opposite to <see cref="RecurrenceRules"/>
         /// </remarks>
-        public IList<RecurrencePattern>? ExceptionRules
+        public IList<RecurrencePattern> ExceptionRules
         {
             get => Properties.GetMany<RecurrencePattern>("EXRULE");
             set => Properties.Set("EXRULE", value);
@@ -207,8 +206,7 @@ namespace Ical.Net.CalendarComponents
         public IList<AlarmOccurrence> PollAlarms() => PollAlarms(null, null);
 
         public IList<AlarmOccurrence> PollAlarms(IDateTime? startTime, IDateTime? endTime)
-            => Alarms?.SelectMany(a => a.Poll(startTime, endTime)).ToList()
-                ?? new List<AlarmOccurrence>();
+            => Alarms.SelectMany(a => a.Poll(startTime, endTime)).ToList();
 
         protected bool Equals(RecurringComponent other)
         {

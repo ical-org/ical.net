@@ -6,8 +6,8 @@ namespace Ical.Net
     {
         object? GetService(string name);
         object? GetService(Type type);
-        T? GetService<T>() where T : class;
-        T? GetService<T>(string name) where T : class;
+        T GetService<T>();
+        T GetService<T>(string name);
         void SetService(string name, object obj);
         void SetService(object obj);
         void RemoveService(Type type);
