@@ -22,18 +22,18 @@ namespace Ical.Net.Serialization
 
         protected override IComparer<ICalendarProperty> PropertySorter => new CalendarPropertySorter();
 
-        public override string SerializeToString(object obj)
+        public override string SerializeToString(object? obj)
         {
-            if (obj is Calendar calendar)
+            if (!(obj is Calendar calendar))
             {
-                // If we're serializing a calendar, we should indicate that we're using ical.net to do the work
-                calendar.Version = LibraryMetadata.Version;
-                calendar.ProductId = LibraryMetadata.ProdId;
-
-                return base.SerializeToString(calendar);
+                return base.SerializeToString(obj);
             }
+            // If we're serializing a calendar, we should indicate that we're using ical.net to do the work
+            calendar.Version = LibraryMetadata.Version;
+            calendar.ProductId = LibraryMetadata.ProdId;
 
-            return base.SerializeToString(obj);
+            return base.SerializeToString(calendar);
+
         }
 
         public override object Deserialize(TextReader tr) => null;

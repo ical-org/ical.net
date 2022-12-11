@@ -18,9 +18,9 @@ namespace Ical.Net.Serialization
 
         public override Type TargetType => typeof(CalendarComponent);
 
-        public override string? SerializeToString(object? obj) => obj is ICalendarComponent c ? SerializeToString(c) : null;
+        public override string SerializeToString(object obj) => Serialize((ICalendarComponent)obj);
 
-        public string SerializeToString(ICalendarComponent c)
+        public string Serialize(ICalendarComponent c)
         {
             var sb = new StringBuilder();
             var upperName = c.Name.ToUpperInvariant();
