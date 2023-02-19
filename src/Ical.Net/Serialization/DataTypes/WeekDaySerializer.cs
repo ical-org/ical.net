@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -30,8 +30,6 @@ namespace Ical.Net.Serialization.DataTypes
             return Encode(ds, value);
         }
 
-        private static readonly Regex _dayOfWeek = new Regex(@"(\+|-)?(\d{1,2})?(\w{2})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
         public override object Deserialize(TextReader tr)
         {
             var value = tr.ReadToEnd();
@@ -42,7 +40,7 @@ namespace Ical.Net.Serialization.DataTypes
             // Decode the value, if necessary
             value = Decode(ds, value);
 
-            var match = _dayOfWeek.Match(value);
+            var match = CompiledRegularExpressions.DayOfWeek.Match(value);
             if (!match.Success)
             {
                 return null;

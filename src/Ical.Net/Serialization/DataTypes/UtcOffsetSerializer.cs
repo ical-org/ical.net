@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
-using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
@@ -27,8 +26,6 @@ namespace Ical.Net.Serialization.DataTypes
             }
             return null;
         }
-
-        internal static readonly Regex DecodeOffset = new Regex(@"(\+|-)(\d{2})(\d{2})(\d{2})?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public override object Deserialize(TextReader tr)
         {

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -187,30 +187,6 @@ namespace Ical.Net.Serialization.DataTypes
             return Encode(recur, string.Join(";", values));
         }
 
-        //Compiling these is a one-time penalty of about 80ms
-        private const RegexOptions _ciCompiled = RegexOptions.IgnoreCase | RegexOptions.Compiled;
-
-        internal static readonly Regex OtherInterval =
-            new Regex(@"every\s+(?<Interval>other|\d+)?\w{0,2}\s*(?<Freq>second|minute|hour|day|week|month|year)s?,?\s*(?<More>.+)", _ciCompiled);
-
-        internal static readonly Regex AdverbFrequencies = new Regex(@"FREQ=(SECONDLY|MINUTELY|HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY);?(.*)", _ciCompiled);
-
-        internal static readonly Regex NumericTemporalUnits = new Regex(@"(?<Num>\d+)\w\w\s+(?<Type>second|minute|hour|day|week|month)", _ciCompiled);
-
-        internal static readonly Regex TemporalUnitType = new Regex(@"(?<Type>second|minute|hour|day|week|month)\s+(?<Num>\d+)", _ciCompiled);
-
-        internal static readonly Regex RelativeDaysOfWeek =
-            new Regex(
-                @"(?<Num>\d+\w{0,2})?(\w|\s)+?(?<First>first)?(?<Last>last)?\s*((?<Day>sunday|monday|tuesday|wednesday|thursday|friday|saturday)\s*(and|or)?\s*)+",
-                _ciCompiled);
-
-        internal static readonly Regex Time = new Regex(@"at\s+(?<Hour>\d{1,2})(:(?<Minute>\d{2})((:|\.)(?<Second>\d{2}))?)?\s*(?<Meridian>(a|p)m?)?",
-            _ciCompiled);
-
-        internal static readonly Regex RecurUntil = new Regex(@"^\s*until\s+(?<DateTime>.+)$", _ciCompiled);
-
-        internal static readonly Regex SpecificRecurrenceCount = new Regex(@"^\s*for\s+(?<Count>\d+)\s+occurrences\s*$", _ciCompiled);
-
         public override object Deserialize(TextReader tr)
         {
             var value = tr.ReadToEnd();
@@ -226,7 +202,7 @@ namespace Ical.Net.Serialization.DataTypes
             // Decode the value, if necessary
             value = Decode(r, value);
 
-            var match = AdverbFrequencies.Match(value);
+            var match = CompiledRegularExpressions.AdverbFrequencies.Match(value);
             if (match.Success)
             {
                 // Parse the frequency type
@@ -309,7 +285,7 @@ namespace Ical.Net.Serialization.DataTypes
             // "Every 6 minutes"
             // "Every 3 days"
             //
-            else if ((match = OtherInterval.Match(value)).Success)
+            else if ((match = CompiledRegularExpressions.OtherInterval.Match(value)).Success)
             {
                 if (match.Groups["Interval"].Success)
                 {
@@ -351,7 +327,7 @@ namespace Ical.Net.Serialization.DataTypes
                 var values = match.Groups["More"].Value.Split(',');
                 foreach (var item in values)
                 {
-                    if ((match = NumericTemporalUnits.Match(item)).Success || (match = TemporalUnitType.Match(item)).Success)
+                    if ((match = CompiledRegularExpressions.NumericTemporalUnits.Match(item)).Success || (match = CompiledRegularExpressions.TemporalUnitType.Match(item)).Success)
                     {
                         int num;
                         if (!int.TryParse(match.Groups["Num"].Value, out num))
@@ -389,7 +365,7 @@ namespace Ical.Net.Serialization.DataTypes
                                 break;
                         }
                     }
-                    else if ((match = RelativeDaysOfWeek.Match(item)).Success)
+                    else if ((match = CompiledRegularExpressions.RelativeDaysOfWeek.Match(item)).Success)
                     {
                         var num = int.MinValue;
                         if (match.Groups["Num"].Success)
@@ -418,7 +394,7 @@ namespace Ical.Net.Serialization.DataTypes
 
                         r.ByDay.AddRange(dayOfWeekQuery);
                     }
-                    else if ((match = Time.Match(item)).Success)
+                    else if ((match = CompiledRegularExpressions.Time.Match(item)).Success)
                     {
                         int hour;
 
@@ -446,14 +422,14 @@ namespace Ical.Net.Serialization.DataTypes
                             }
                         }
                     }
-                    else if ((match = RecurUntil.Match(item)).Success)
+                    else if ((match = CompiledRegularExpressions.RecurUntil.Match(item)).Success)
                     {
                         var dt = DateTime.Parse(match.Groups["DateTime"].Value);
                         DateTime.SpecifyKind(dt, DateTimeKind.Utc);
 
                         r.Until = dt;
                     }
-                    else if ((match = SpecificRecurrenceCount.Match(item)).Success)
+                    else if ((match = CompiledRegularExpressions.SpecificRecurrenceCount.Match(item)).Success)
                     {
                         int count;
                         if (!int.TryParse(match.Groups["Count"].Value, out count))

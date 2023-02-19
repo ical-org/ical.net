@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -13,8 +13,6 @@ namespace Ical.Net.Serialization.DataTypes
         public StringSerializer() {}
 
         public StringSerializer(SerializationContext ctx) : base(ctx) {}
-
-        internal static readonly Regex SingleBackslashMatch = new Regex(@"(?<!\\)\\(?!\\)", RegexOptions.Compiled);
 
         protected virtual string Unescape(string value)
         {
@@ -31,7 +29,7 @@ namespace Ical.Net.Serialization.DataTypes
             value = value.Replace("\\\"", "\"");
 
             // Replace all single-backslashes with double-backslashes.
-            value = SingleBackslashMatch.Replace(value, "\\\\");
+            value = CompiledRegularExpressions.SingleBackslash.Replace(value, "\\\\");
 
             // Unescape double backslashes
             value = value.Replace(@"\\", @"\");
@@ -98,7 +96,6 @@ namespace Ical.Net.Serialization.DataTypes
             return string.Join(",", values);
         }
 
-        internal static readonly Regex UnescapedCommas = new Regex(@"(?<!\\),", RegexOptions.Compiled);
         public override object Deserialize(TextReader tr)
         {
             if (tr == null)
@@ -132,7 +129,7 @@ namespace Ical.Net.Serialization.DataTypes
                 };
             }
 
-            var encodedValues = serializeAsList ? UnescapedCommas.Split(value) : new[] { value };
+            var encodedValues = serializeAsList ? CompiledRegularExpressions.UnescapedCommas.Split(value) : new[] { value };
             var escapedValues = encodedValues.Select(v => Decode(dt, v)).ToList();
             var values = escapedValues.Select(Unescape).ToList();
 

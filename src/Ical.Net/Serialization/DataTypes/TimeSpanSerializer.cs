@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
+using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -66,17 +66,13 @@ namespace Ical.Net.Serialization.DataTypes
             return sb.ToString();
         }
 
-        internal static readonly Regex TimespanMatch =
-            new Regex(@"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?))$",
-                RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
         public override object Deserialize(TextReader tr)
         {
             var value = tr.ReadToEnd();
 
             try
             {
-                var match = TimespanMatch.Match(value);
+                var match = CompiledRegularExpressions.Timespan.Match(value);
                 var days = 0;
                 var hours = 0;
                 var minutes = 0;

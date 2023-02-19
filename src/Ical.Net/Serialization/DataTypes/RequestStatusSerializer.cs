@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -58,10 +58,7 @@ namespace Ical.Net.Serialization.DataTypes
                 return null;
             }
         }
-
-        internal static readonly Regex NarrowRequestMatch = new Regex(@"(.*?[^\\]);(.*?[^\\]);(.+)", RegexOptions.Compiled);
-        internal static readonly Regex BroadRequestMatch = new Regex(@"(.*?[^\\]);(.+)", RegexOptions.Compiled);
-
+        
         public override object Deserialize(TextReader tr)
         {
             var value = tr.ReadToEnd();
@@ -86,10 +83,10 @@ namespace Ical.Net.Serialization.DataTypes
                     return null;
                 }
 
-                var match = NarrowRequestMatch.Match(value);
+                var match = CompiledRegularExpressions.NarrowRequest.Match(value);
                 if (!match.Success)
                 {
-                    match = BroadRequestMatch.Match(value);
+                    match = CompiledRegularExpressions.BroadRequest.Match(value);
                 }
 
                 if (match.Success)

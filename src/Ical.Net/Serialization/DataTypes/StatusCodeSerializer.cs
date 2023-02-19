@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -29,8 +29,6 @@ namespace Ical.Net.Serialization.DataTypes
             return Encode(sc, Escape(string.Join(".", vals)));
         }
 
-        internal static readonly Regex StatusCode = new Regex(@"\d(\.\d+)*", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-
         public override object Deserialize(TextReader tr)
         {
             var value = tr.ReadToEnd();
@@ -44,7 +42,7 @@ namespace Ical.Net.Serialization.DataTypes
             // Decode the value as needed
             value = Decode(sc, value);
 
-            var match = StatusCode.Match(value);
+            var match = CompiledRegularExpressions.StatusCode.Match(value);
             if (!match.Success)
             {
                 return null;

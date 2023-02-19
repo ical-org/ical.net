@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
 using Ical.Net.Serialization;
 
 namespace Ical.Net.Utility
@@ -47,25 +46,21 @@ namespace Ical.Net.Utility
             return s;
         }
 
-        internal static readonly Regex NormalizeToCrLf = new Regex(@"((\r(?=[^\n]))|((?<=[^\r])\n))", RegexOptions.Compiled);
-
         /// <summary>
         /// Normalizes line endings, converting "\r" into "\r\n" and "\n" into "\r\n".        
         /// </summary>
         public static TextReader Normalize(string s, SerializationContext ctx)
         {
             // Replace \r and \n with \r\n.
-            s = NormalizeToCrLf.Replace(s, SerializationConstants.LineBreak);
+            s = CompiledRegularExpressions.NormalizeToCrLf.Replace(s, SerializationConstants.LineBreak);
 
             s = RemoveEmptyLines(UnwrapLines(s));
 
             return new StringReader(s);
         }
-
-        internal static readonly Regex NewLineMatch = new Regex(@"(\r\n[ \t])", RegexOptions.Compiled);
-
+        
         /// <summary> Unwraps lines from the RFC 5545 "line folding" technique. </summary>
-        public static string UnwrapLines(string s) => NewLineMatch.Replace(s, string.Empty);
+        public static string UnwrapLines(string s) => CompiledRegularExpressions.NewLine.Replace(s, string.Empty);
 
         public static bool Contains(this string haystack, string needle, StringComparison stringComparison)
             => haystack.IndexOf(needle, stringComparison) >= 0;

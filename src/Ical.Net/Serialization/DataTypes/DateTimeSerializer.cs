@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -93,8 +94,6 @@ namespace Ical.Net.Serialization.DataTypes
         }
 
         private const RegexOptions _ciCompiled = RegexOptions.Compiled | RegexOptions.IgnoreCase;
-        internal static readonly Regex DateOnlyMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))?$", _ciCompiled);
-        internal static readonly Regex FullDateTimePatternMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))T((\d{2})(\d{2})(\d{2})(Z)?)$", _ciCompiled);
 
         public override object Deserialize(TextReader tr)
         {
@@ -109,10 +108,10 @@ namespace Ical.Net.Serialization.DataTypes
             // Decode the value as necessary
             value = Decode(dt, value);
 
-            var match = FullDateTimePatternMatch.Match(value);
+            var match = CompiledRegularExpressions.FullDateTime.Match(value);
             if (!match.Success)
             {
-                match = DateOnlyMatch.Match(value);
+                match = CompiledRegularExpressions.DateOnly.Match(value);
             }
 
             if (!match.Success)

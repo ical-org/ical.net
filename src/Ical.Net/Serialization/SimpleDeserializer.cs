@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 using Ical.Net.CalendarComponents;
+using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization
 {
@@ -25,49 +26,10 @@ namespace Ical.Net.Serialization
             new SerializerFactory(),
             new CalendarComponentFactory());
 
-        private const string _nameGroup = "name";
-        private const string _valueGroup = "value";
-        private const string _paramNameGroup = "paramName";
-        private const string _paramValueGroup = "paramValue";
-
-        private static readonly Regex _contentLineRegex = new Regex(BuildContentLineRegex(), RegexOptions.Compiled);
-
         private readonly DataTypeMapper _dataTypeMapper;
         private readonly ISerializerFactory _serializerFactory;
         private readonly CalendarComponentFactory _componentFactory;
-
-        private static string BuildContentLineRegex()
-        {
-            // name          = iana-token / x-name
-            // iana-token    = 1*(ALPHA / DIGIT / "-")
-            // x-name        = "X-" [vendorid "-"] 1*(ALPHA / DIGIT / "-")
-            // vendorid      = 3*(ALPHA / DIGIT)
-            // Add underscore to match behavior of bug 2033495
-            const string identifier = "[-A-Za-z0-9_]+";
-
-            // param-value   = paramtext / quoted-string
-            // paramtext     = *SAFE-CHAR
-            // quoted-string = DQUOTE *QSAFE-CHAR DQUOTE
-            // QSAFE-CHAR    = WSP / %x21 / %x23-7E / NON-US-ASCII
-            // ; Any character except CONTROL and DQUOTE
-            // SAFE-CHAR     = WSP / %x21 / %x23-2B / %x2D-39 / %x3C-7E
-            //               / NON-US-ASCII
-            // ; Any character except CONTROL, DQUOTE, ";", ":", ","
-            var paramValue = $"((?<{_paramValueGroup}>[^\\x00-\\x08\\x0A-\\x1F\\x7F\";:,]*)|\"(?<{_paramValueGroup}>[^\\x00-\\x08\\x0A-\\x1F\\x7F\"]*)\")";
-
-            // param         = param-name "=" param-value *("," param-value)
-            // param-name    = iana-token / x-name
-            var paramName = $"(?<{_paramNameGroup}>{identifier})";
-            var param = $"{paramName}={paramValue}(,{paramValue})*";
-
-            // contentline   = name *(";" param ) ":" value CRLF
-            var name = $"(?<{_nameGroup}>{identifier})";
-            // value         = *VALUE-CHAR
-            var value = $"(?<{_valueGroup}>[^\\x00-\\x08\\x0E-\\x1F\\x7F]*)";
-            var contentLine = $"^{name}(;{param})*:{value}$";
-            return contentLine;
-        }
-
+        
         public IEnumerable<ICalendarComponent> Deserialize(TextReader reader)
         {
             var context = new SerializationContext();
@@ -120,15 +82,15 @@ namespace Ical.Net.Serialization
 
         private CalendarProperty ParseContentLine(SerializationContext context, string input)
         {
-            var match = _contentLineRegex.Match(input);
+            var match = CompiledRegularExpressions.ContentLine.Match(input);
             if (!match.Success)
             {
                 throw new SerializationException($"Could not parse line: '{input}'");
             }
-            var name = match.Groups[_nameGroup].Value;
-            var value = match.Groups[_valueGroup].Value;
-            var paramNames = match.Groups[_paramNameGroup].Captures;
-            var paramValues = match.Groups[_paramValueGroup].Captures;
+            var name = match.Groups[CompiledRegularExpressions.ContentLineNameGroup].Value;
+            var value = match.Groups[CompiledRegularExpressions.ContentLineValueGroup].Value;
+            var paramNames = match.Groups[CompiledRegularExpressions.ContentLineParamNameGroup].Captures;
+            var paramValues = match.Groups[CompiledRegularExpressions.ContentLineParamValueGroup].Captures;
 
             var property = new CalendarProperty(name.ToUpperInvariant());
             context.Push(property);
