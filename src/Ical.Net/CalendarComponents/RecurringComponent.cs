@@ -108,7 +108,12 @@ namespace Ical.Net.CalendarComponents
 
         public virtual IDateTime RecurrenceId
         {
-            get => Properties.Get<IDateTime>("RECURRENCE-ID");
+	        get
+	        {
+		        var retVal = Properties.Get<IDateTime>("RECURRENCE-ID");
+		        return retVal?.Value == DateTime.MinValue ? null : retVal;
+	        }
+
             set => Properties.Set("RECURRENCE-ID", value);
         }
 
