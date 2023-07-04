@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Ical.Net.NaturalLanguage</id>
+    <version>1.0.0</version>
+    <title>Ical.Net.NaturalLanguage</title>
+    <authors>Aviad Pineles</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>https://github.com/rianjs/ical.net</projectUrl>
+    <description>A companion library to Ical.Net that adds natural language support.</description>
+    <releaseNotes>https://github.com/rianjs/ical.net/blob/master/release-notes.md</releaseNotes>
+    <repository url="https://github.com/rianjs/ical.net" />
+    <dependencies>
+      <group targetFramework="net7.0">
+        <dependency id="Ical.Net" version="4.2.0" exclude="Build,Analyzers" />
+        <dependency id="OneOf" version="3.0.255" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="C:\MyProjects\ical.net\src\Ical.Net.NaturalLanguage\bin\Debug\net7.0\Ical.Net.NaturalLanguage.dll" target="lib\net7.0\Ical.Net.NaturalLanguage.dll" />
+  </files>
+</package>

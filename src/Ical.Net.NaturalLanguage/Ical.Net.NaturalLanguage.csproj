@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>Ical.Net.NaturalLanguage</PackageId>
+    <Title>Ical.Net.NaturalLanguage</Title>
+    <Authors>Aviad Pineles</Authors>
+    <Description>A companion library to Ical.Net that adds natural language support.</Description>
+    <PackageProjectUrl>https://github.com/rianjs/ical.net</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/rianjs/ical.net</RepositoryUrl>
+    <PackageReleaseNotes>https://github.com/rianjs/ical.net/blob/master/release-notes.md</PackageReleaseNotes>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OneOf" Version="3.0.255" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ical.Net\Ical.Net.csproj" />
+  </ItemGroup>
+
+</Project>

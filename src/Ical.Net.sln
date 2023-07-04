@@ -1,13 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30406.217
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ical.Net", "Ical.Net\Ical.Net.csproj", "{71446356-D4EC-4141-B25C-4FAE6FA86265}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ical.Net.CoreUnitTests", "Ical.Net.CoreUnitTests\Ical.Net.CoreUnitTests.csproj", "{32252FAF-D2A8-4126-B6E7-F20CA2A22DCF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerfTests", "PerfTests\PerfTests.csproj", "{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ical.Net.NaturalLanguage", "Ical.Net.NaturalLanguage\Ical.Net.NaturalLanguage.csproj", "{43090E2F-7C51-45B1-A33D-0919D85790FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ical.Net.NaturalLanguage.CoreUnitTests", "Ical.Net.NaturalLanguage.CoreUnitTests\Ical.Net.NaturalLanguage.CoreUnitTests.csproj", "{C5CC775D-4B31-40F3-8E1F-AAD65535B809}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +59,30 @@ Global
 		{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}.Release|x64.Build.0 = Release|Any CPU
 		{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}.Release|x86.ActiveCfg = Release|Any CPU
 		{A65F31A8-28ED-4B4C-B314-7E8D06F7FD2D}.Release|x86.Build.0 = Release|Any CPU
+		{43090E2F-7C51-45B1-A33D-0919D85790FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43090E2F-7C51-45B1-A33D-0919D85790FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43090E2F-7C51-45B1-A33D-0919D85790FD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{43090E2F-7C51-45B1-A33D-0919D85790FD}.Debug|x64.Build.0 = Debug|Any CPU
+		{43090E2F-7C51-45B1-A33D-0919D85790FD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{43090E2F-7C51-45B1-A33D-0919D85790FD}.Debug|x86.Build.0 = Debug|Any CPU
+		{43090E2F-7C51-45B1-A33D-0919D85790FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43090E2F-7C51-45B1-A33D-0919D85790FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43090E2F-7C51-45B1-A33D-0919D85790FD}.Release|x64.ActiveCfg = Release|Any CPU
+		{43090E2F-7C51-45B1-A33D-0919D85790FD}.Release|x64.Build.0 = Release|Any CPU
+		{43090E2F-7C51-45B1-A33D-0919D85790FD}.Release|x86.ActiveCfg = Release|Any CPU
+		{43090E2F-7C51-45B1-A33D-0919D85790FD}.Release|x86.Build.0 = Release|Any CPU
+		{C5CC775D-4B31-40F3-8E1F-AAD65535B809}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5CC775D-4B31-40F3-8E1F-AAD65535B809}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5CC775D-4B31-40F3-8E1F-AAD65535B809}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C5CC775D-4B31-40F3-8E1F-AAD65535B809}.Debug|x64.Build.0 = Debug|Any CPU
+		{C5CC775D-4B31-40F3-8E1F-AAD65535B809}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C5CC775D-4B31-40F3-8E1F-AAD65535B809}.Debug|x86.Build.0 = Debug|Any CPU
+		{C5CC775D-4B31-40F3-8E1F-AAD65535B809}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5CC775D-4B31-40F3-8E1F-AAD65535B809}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5CC775D-4B31-40F3-8E1F-AAD65535B809}.Release|x64.ActiveCfg = Release|Any CPU
+		{C5CC775D-4B31-40F3-8E1F-AAD65535B809}.Release|x64.Build.0 = Release|Any CPU
+		{C5CC775D-4B31-40F3-8E1F-AAD65535B809}.Release|x86.ActiveCfg = Release|Any CPU
+		{C5CC775D-4B31-40F3-8E1F-AAD65535B809}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
