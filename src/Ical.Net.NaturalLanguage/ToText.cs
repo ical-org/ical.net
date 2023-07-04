@@ -40,7 +40,7 @@ public class ToText {
         }
     }
 
-    public static string ToFriendlyText(RecurrencePattern rp) => new ToText(rp).ToFriendlyText();
+    public static string ToFriendlyText(RecurrencePattern rp, Culture? culture = null) => new ToText(rp, culture: culture).ToFriendlyText();
 
     private string ToFriendlyText() {
         _text.Clear();

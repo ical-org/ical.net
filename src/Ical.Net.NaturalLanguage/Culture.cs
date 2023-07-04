@@ -80,8 +80,8 @@ public class Culture {
         },
     };
 
-    public Dictionary<DayOfWeek, string> DayNames { get; private init; } = null!;
-    public List<DayOfWeek> WeekDays { get; private init; } = null!;
-    public List<string> MonthNames { get; private init; } = null!;
-    public Dictionary<string, Regex> Tokens { get; private init; } = null!;
+    public Dictionary<DayOfWeek, string> DayNames { get; init; } = null!;
+    public List<DayOfWeek> WeekDays { get; init; } = null!;
+    public List<string> MonthNames { get; init; } = null!;
+    public Dictionary<string, Regex> Tokens { get; init; } = null!;
 }
