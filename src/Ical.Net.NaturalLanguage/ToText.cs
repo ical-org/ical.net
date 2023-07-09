@@ -276,6 +276,11 @@ public class ToText {
         else {
             ByWeekDay();
         }
+
+
+        if (_recurrencePattern.ByHour.Count > 0) {
+            ByHour();
+        }
     }
 
     private string MonthText(int m) {
@@ -361,6 +366,10 @@ public class ToText {
             _text.Add("in");
             _text.Add(Plural(_recurrencePattern.ByWeekNo.Count) ? "weeks" : "week");
             _text.Add(List(_recurrencePattern.ByWeekNo, x => x.ToString(), "and"));
+        }
+
+        if (_recurrencePattern.ByHour.Count > 0) {
+            ByHour();
         }
     }
 
