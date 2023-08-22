@@ -254,9 +254,12 @@ namespace Ical.Net.CalendarComponents
 
                 var date = interval.IsoLocalStart.ToDateTimeUnspecified();
                 var weekday = date.DayOfWeek;
-                var num = DateUtil.WeekOfMonth(date);
+                var weekNumber = DateUtil.WeekOfMonth(date);
 
-                ByDay.Add(num != 5 ? new WeekDay(weekday, num) : new WeekDay(weekday, -1));
+                if (weekNumber >= 4)
+                    ByDay.Add(new WeekDay(weekday, -1)); // Almost certainly likely last X-day of month. Avoid issues with 4/5 sundays in different year/months. Ideally, use the nodazone tz database rule for this interval instead.
+                else
+                    ByDay.Add(new WeekDay(weekday, weekNumber));
             }
         }
 

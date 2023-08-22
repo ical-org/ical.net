@@ -154,6 +154,21 @@ namespace Ical.Net.CoreUnitTests
         }
 
         [Test, Category("VTimeZone")]
+        public void VTimeZoneEuropeOsloShouldSerializeProperly()
+        {
+            var iCal = CreateTestCalendar("Europe/Oslo");
+            var serializer = new CalendarSerializer();
+            var serialized = serializer.SerializeToString(iCal);
+
+            Assert.IsTrue(serialized.Contains("TZID:Europe/Oslo"), "Time zone not found in serialization");
+            Assert.IsTrue(serialized.Contains("BEGIN:STANDARD"), "The standard timezone info was not serialized");
+            Assert.IsTrue(serialized.Contains("BEGIN:DAYLIGHT"), "The daylight timezone info was not serialized");
+            Assert.IsTrue(serialized.Contains("BYDAY=-1SU;BYMONTH=3"), "BYDAY=-1SU;BYMONTH=3 was not serialized");
+            Assert.IsTrue(serialized.Contains("BYDAY=-1SU;BYMONTH=10"), "BYDAY=-1SU;BYMONTH=10 was not serialized");
+
+        }
+
+        [Test, Category("VTimeZone")]
         public void VTimeZoneAmericaAnchorageShouldSerializeProperly()
         {
             var iCal = CreateTestCalendar("America/Anchorage");
