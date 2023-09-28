@@ -122,6 +122,7 @@ namespace Ical.Net.Utility
                 return DateTimeZoneProviders.Tzdb.GetZoneOrNull(ianaZone);
             }
 
+            /*
             zone = NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(tzId);
             if (zone != null)
             {
@@ -135,6 +136,7 @@ namespace Ical.Net.Utility
             {
                 return zone;
             }
+            */
 
             foreach (var providerId in DateTimeZoneProviders.Tzdb.Ids.Where(tzId.Contains))
             {
@@ -148,11 +150,12 @@ namespace Ical.Net.Utility
             {
                 return DateTimeZoneProviders.Tzdb.GetZoneOrNull(ianaZone);
             }
-
+            /*
             foreach (var providerId in NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.Ids.Where(tzId.Contains))
             {
                 return NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(providerId);
             }
+            */
 
             if (useLocalIfNotFound)
             {
@@ -198,7 +201,7 @@ namespace Ical.Net.Utility
             return newZone;
         }
 
-        public static bool IsSerializationTimeZone(DateTimeZone zone) => NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(zone.Id) != null;
+        //public static bool IsSerializationTimeZone(DateTimeZone zone) => NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(zone.Id) != null;
 
         /// <summary>
         /// Truncate to the specified TimeSpan's magnitude. For example, to truncate to the nearest second, use TimeSpan.FromSeconds(1)
