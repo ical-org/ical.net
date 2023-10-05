@@ -34,13 +34,24 @@ namespace Ical.Net.CalendarComponents
             var vTimeZone = new VTimeZone(tzId);
 
             var earliestYear = 1900;
+            var earliestMonth = earlistDateTimeToSupport.Month;
+            var earliestDay = earlistDateTimeToSupport.Day;
             // Support date/times for January 1st of the previous year by default.
             if (earlistDateTimeToSupport.Year > 1900)
             {
                 earliestYear = earlistDateTimeToSupport.Year - 1;
+                // Since we went back a year, we can't still be in a leap-year
+                if (earliestMonth == 2 && earliestDay == 29)
+	                earliestDay = 28;
             }
-            var earliest = Instant.FromUtc(earliestYear, earlistDateTimeToSupport.Month,
-                earlistDateTimeToSupport.Day, earlistDateTimeToSupport.Hour, earlistDateTimeToSupport.Minute);
+            else
+            {
+                // Going back to 1900, which wasn't a leap year, so we need to switch to Feb 20
+                if (earliestMonth == 2 && earliestDay == 29)
+	                earliestDay = 28;
+            }
+            var earliest = Instant.FromUtc(earliestYear, earliestMonth, earliestDay,
+	            earlistDateTimeToSupport.Hour, earlistDateTimeToSupport.Minute);
 
             // Only include historical data if asked to do so.  Otherwise,
             // use only the most recent adjustment rules available.
