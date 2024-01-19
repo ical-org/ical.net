@@ -1,10 +1,10 @@
+using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
+using Ical.Net.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Ical.Net.DataTypes;
-using Ical.Net.Evaluation;
-using Ical.Net.Utility;
 
 namespace Ical.Net.CalendarComponents
 {

@@ -1,13 +1,13 @@
+using Ical.Net.DataTypes;
 using System;
 using System.Collections.Generic;
-using Ical.Net.DataTypes;
 
 namespace Ical.Net.CalendarComponents
 {
     /// <summary>
     /// A class that represents an RFC 2445 VALARM component.
     /// FIXME: move GetOccurrences() logic into an AlarmEvaluator.
-    /// </summary>    
+    /// </summary>
     public class Alarm : CalendarComponent
     {
         //ToDo: Implement IEquatable

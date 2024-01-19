@@ -1,16 +1,16 @@
+using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using Ical.Net.DataTypes;
-using Ical.Net.Evaluation;
 
 namespace Ical.Net.CalendarComponents
 {
     /// <summary>
     /// A class that represents an RFC 5545 VTODO component.
-    /// </summary> 
+    /// </summary>
     [DebuggerDisplay("{Summary} - {Status}")]
     public class Todo : RecurringComponent, IAlarmContainer
     {
@@ -137,7 +137,7 @@ namespace Ical.Net.CalendarComponents
         /// <summary>
         /// Use this method to determine if a todo item has been completed.
         /// This takes into account recurrence items and the previous date
-        /// of completion, if any.        
+        /// of completion, if any.
         /// <note>
         /// This method evaluates the recurrence pattern for this TODO
         /// as necessary to ensure all relevant information is taken

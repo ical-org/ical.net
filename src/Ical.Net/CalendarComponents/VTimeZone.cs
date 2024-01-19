@@ -1,11 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Proxies;
 using Ical.Net.Utility;
 using NodaTime;
 using NodaTime.TimeZones;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Ical.Net.CalendarComponents
 {
@@ -268,7 +268,7 @@ namespace Ical.Net.CalendarComponents
             Name = Components.Timezone;
         }
 
-        
+
         public VTimeZone(string tzId) : this()
         {
             if (string.IsNullOrWhiteSpace(tzId))

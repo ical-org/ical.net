@@ -21,9 +21,9 @@ namespace Ical.Net.CalendarComponents
         {
             Name = JournalStatus.Name;
         }
-        
+
         protected override bool EvaluationIncludesReferenceDate => true;
-        
+
         protected override void OnDeserializing(StreamingContext context)
         {
             base.OnDeserializing(context);

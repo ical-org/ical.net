@@ -1,14 +1,14 @@
+using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Ical.Net.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.CalendarComponents
 {
     /// <summary>
     /// Represents a unique component, a component with a unique UID,
-    /// which can be used to uniquely identify the component.    
+    /// which can be used to uniquely identify the component.
     /// </summary>
     public class UniqueComponent : CalendarComponent, IUniqueComponent, IComparable<UniqueComponent>
     {
@@ -16,7 +16,7 @@ namespace Ical.Net.CalendarComponents
         // This method will add the UID of a related component
         // to the Related_To property, along with any "RELTYPE"
         // parameter ("PARENT", "CHILD", "SIBLING", or other)
-        // TODO: Add RemoveRelationship() public method.        
+        // TODO: Add RemoveRelationship() public method.
 
         public UniqueComponent()
         {
@@ -96,7 +96,7 @@ namespace Ical.Net.CalendarComponents
         {
             if (obj is RecurringComponent && obj != this)
             {
-                var r = (RecurringComponent) obj;
+                var r = (RecurringComponent)obj;
                 if (Uid != null)
                 {
                     return Uid.Equals(r.Uid);

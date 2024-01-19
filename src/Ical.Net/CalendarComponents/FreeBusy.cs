@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Ical.Net.DataTypes;
+using Ical.Net.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ical.Net.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.CalendarComponents
 {
@@ -14,7 +14,7 @@ namespace Ical.Net.CalendarComponents
             {
                 return null;
             }
-            var getOccurrences = (IGetOccurrencesTyped) obj;
+            var getOccurrences = (IGetOccurrencesTyped)obj;
             var occurrences = getOccurrences.GetOccurrences<CalendarEvent>(freeBusyRequest.Start, freeBusyRequest.End);
             var contacts = new List<string>();
             var isFilteredByAttendees = false;
