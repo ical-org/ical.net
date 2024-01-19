@@ -8,7 +8,7 @@ iCal.NET is an iCalendar (RFC 5545) class library for .NET aimed at providing RF
 
 ## Getting iCal.NET
 
-iCal.NET is available as [a nuget package](https://www.nuget.org/packages/Ical.Net).
+iCal.NET is available as [a nuget package](https://www.nuget.org/packages/laget.Ical.Net).
 
 ## Migrating from dday.ical to ical.net
 
