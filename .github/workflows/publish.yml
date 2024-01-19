@@ -37,4 +37,4 @@ jobs:
     - run: dotnet restore
     - run: dotnet build --configuration Release Ical.Net/Ical.Net.csproj
     - run: dotnet pack --configuration Release Ical.Net/Ical.Net.csproj --no-build -p:Version=${{vars.VERSION}}.${{github.run_number}} -p:PackageVersion=${{vars.VERSION}}.${{github.run_number}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:NuspecFile=Ical.Net.nuspec
-    - run: dotnet nuget push Ical.Net/bin/Release/Ical.Net.${{vars.VERSION}}.${{github.run_number}}.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate
+    - run: dotnet nuget push Ical.Net/bin/Release/laget.Ical.Net.${{vars.VERSION}}.${{github.run_number}}.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate
