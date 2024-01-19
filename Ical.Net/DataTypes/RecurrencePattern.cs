@@ -1,10 +1,10 @@
+using Ical.Net.Evaluation;
+using Ical.Net.Serialization.DataTypes;
+using Ical.Net.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Ical.Net.Evaluation;
-using Ical.Net.Serialization.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes
 {
@@ -17,7 +17,7 @@ namespace Ical.Net.DataTypes
         private int _interval = int.MinValue;
         private RecurrenceRestrictionType? _restrictionType;
         private RecurrenceEvaluationModeType? _evaluationMode;
-        
+
         public FrequencyType Frequency { get; set; }
 
         private DateTime _until = DateTime.MinValue;
@@ -117,7 +117,7 @@ namespace Ical.Net.DataTypes
             SetService(new RecurrencePatternEvaluator(this));
         }
 
-        public RecurrencePattern(FrequencyType frequency) : this(frequency, 1) {}
+        public RecurrencePattern(FrequencyType frequency) : this(frequency, 1) { }
 
         public RecurrencePattern(FrequencyType frequency, int interval) : this()
         {
@@ -197,7 +197,7 @@ namespace Ical.Net.DataTypes
                 return;
             }
 
-            var r = (RecurrencePattern) obj;
+            var r = (RecurrencePattern)obj;
 
             Frequency = r.Frequency;
             Until = r.Until;

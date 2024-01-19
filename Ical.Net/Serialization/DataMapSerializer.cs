@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Ical.Net.Serialization.DataTypes;
+using System;
 using System.IO;
-using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.Serialization
 {
     public class DataMapSerializer : SerializerBase
     {
-        public DataMapSerializer() {}
+        public DataMapSerializer() { }
 
-        public DataMapSerializer(SerializationContext ctx) : base(ctx) {}
+        public DataMapSerializer(SerializationContext ctx) : base(ctx) { }
 
         protected IStringSerializer GetMappedSerializer()
         {

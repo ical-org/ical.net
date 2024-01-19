@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Ical.Net.Collections;
+﻿using Ical.Net.Collections;
+using System.Linq;
 
 namespace Ical.Net
 {
@@ -7,7 +7,7 @@ namespace Ical.Net
     {
         private readonly ICalendarObject _mParent;
 
-        public CalendarPropertyList() {}
+        public CalendarPropertyList() { }
 
         public CalendarPropertyList(ICalendarObject parent)
         {

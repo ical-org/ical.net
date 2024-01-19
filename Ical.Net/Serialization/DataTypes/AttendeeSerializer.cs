@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Ical.Net.DataTypes;
+using System;
 using System.IO;
-using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -10,7 +10,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public AttendeeSerializer(SerializationContext ctx) : base(ctx) { }
 
-        public override Type TargetType => typeof (Attendee);
+        public override Type TargetType => typeof(Attendee);
 
         public override string SerializeToString(object obj)
         {

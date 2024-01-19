@@ -1,4 +1,4 @@
-using Ical.Net.DataTypes;
+﻿using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Proxies;
 using Ical.Net.Utility;

@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Ical.Net.DataTypes;
+using System;
 using System.IO;
-using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -10,7 +10,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public TriggerSerializer(SerializationContext ctx) : base(ctx) { }
 
-        public override Type TargetType => typeof (Trigger);
+        public override Type TargetType => typeof(Trigger);
 
         public override string SerializeToString(object obj)
         {
@@ -39,7 +39,7 @@ namespace Ical.Net.Serialization.DataTypes
 
                     var value = valueType == typeof(IDateTime)
                         ? t.DateTime
-                        : (object) t.Duration;
+                        : (object)t.Duration;
                     return serializer.SerializeToString(value);
                 }
                 finally
@@ -90,10 +90,10 @@ namespace Ical.Net.Serialization.DataTypes
                     case null:
                         return null;
                     case IDateTime _:
-                        t.DateTime = (IDateTime) obj;
+                        t.DateTime = (IDateTime)obj;
                         break;
                     default:
-                        t.Duration = (TimeSpan) obj;
+                        t.Duration = (TimeSpan)obj;
                         break;
                 }
 

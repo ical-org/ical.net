@@ -148,7 +148,7 @@ namespace Ical.Net
 
     /// <summary>
     /// Status codes available to a <see cref="Journal"/> entry.
-    /// </summary>    
+    /// </summary>
     public static class JournalStatus
     {
         public const string Name = "VJOURNAL";
@@ -184,24 +184,24 @@ namespace Ical.Net
     /// Indicates the occurrence of the specific day within a
     /// MONTHLY or YEARLY recurrence frequency. For example, within
     /// a MONTHLY frequency, consider the following:
-    /// 
+    ///
     /// RecurrencePattern r = new RecurrencePattern();
     /// r.Frequency = FrequencyType.Monthly;
     /// r.ByDay.Add(new WeekDay(DayOfWeek.Monday, FrequencyOccurrence.First));
-    /// 
+    ///
     /// The above example represents the first Monday within the month,
-    /// whereas if FrequencyOccurrence.Last were specified, it would 
+    /// whereas if FrequencyOccurrence.Last were specified, it would
     /// represent the last Monday of the month.
-    /// 
+    ///
     /// For a YEARLY frequency, consider the following:
-    /// 
+    ///
     /// Recur r = new Recur();
     /// r.Frequency = FrequencyType.Yearly;
     /// r.ByDay.Add(new WeekDay(DayOfWeek.Monday, FrequencyOccurrence.Second));
-    /// 
+    ///
     /// The above example represents the second Monday of the year.  This can
     /// also be represented with the following code:
-    /// 
+    ///
     /// r.ByDay.Add(new WeekDay(DayOfWeek.Monday, 2));
     /// </summary>
     public enum FrequencyOccurrence
@@ -309,7 +309,7 @@ namespace Ical.Net
         /// requests, and the assignment of tasks to other
         /// "Calendar Users" are all examples.  Requests are
         /// also used by the Organizer to update the status
-        /// of an iCalendar object. 
+        /// of an iCalendar object.
         /// </summary>
         public const string Request = "REQUEST";
 
@@ -317,13 +317,13 @@ namespace Ical.Net
         /// A reply is used in response to a request to
         /// convey Attendee status to the Organizer.
         /// Replies are commonly used to respond to meeting
-        /// and task requests.     
+        /// and task requests.
         /// </summary>
         public const string Reply = "REPLY";
 
         /// <summary>
         /// Add one or more new instances to an existing
-        /// recurring iCalendar object. 
+        /// recurring iCalendar object.
         /// </summary>
         public const string Add = "ADD";
 

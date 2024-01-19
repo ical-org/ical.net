@@ -1,39 +1,39 @@
-﻿using System;
+﻿using Ical.Net.DataTypes;
+using Ical.Net.Utility;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Ical.Net.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.Evaluation
 {
     /// <summary>
     /// Much of this code comes from iCal4j, as Ben Fortuna has done an
     /// excellent job with the recurrence pattern evaluation there.
-    /// 
+    ///
     /// Here's the iCal4j license:
     /// ==================
     ///  iCal4j - License
     ///  ==================
-    ///  
+    ///
     /// Copyright (c) 2009, Ben Fortuna
     /// All rights reserved.
-    /// 
+    ///
     /// Redistribution and use in source and binary forms, with or without
     /// modification, are permitted provided that the following conditions
     /// are met:
-    /// 
+    ///
     /// o Redistributions of source code must retain the above copyright
     /// notice, this list of conditions and the following disclaimer.
-    /// 
+    ///
     /// o Redistributions in binary form must reproduce the above copyright
     /// notice, this list of conditions and the following disclaimer in the
     /// documentation and/or other materials provided with the distribution.
-    /// 
+    ///
     /// o Neither the name of Ben Fortuna nor the names of any other contributors
     /// may be used to endorse or promote products derived from this software
     /// without specific prior written permission.
-    /// 
+    ///
     /// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
     /// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
     /// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -133,44 +133,44 @@ namespace Ical.Net.Evaluation
                         switch (pattern.Frequency)
                         {
                             case FrequencyType.Secondly:
-                            {
-                                switch (evaluationRestriction)
                                 {
-                                    case RecurrenceRestrictionType.Default:
-                                    case RecurrenceRestrictionType.RestrictSecondly:
-                                        pattern.Frequency = FrequencyType.Minutely;
-                                        break;
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                        pattern.Frequency = FrequencyType.Hourly;
-                                        break;
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        pattern.Frequency = FrequencyType.Daily;
-                                        break;
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.Default:
+                                        case RecurrenceRestrictionType.RestrictSecondly:
+                                            pattern.Frequency = FrequencyType.Minutely;
+                                            break;
+                                        case RecurrenceRestrictionType.RestrictMinutely:
+                                            pattern.Frequency = FrequencyType.Hourly;
+                                            break;
+                                        case RecurrenceRestrictionType.RestrictHourly:
+                                            pattern.Frequency = FrequencyType.Daily;
+                                            break;
+                                    }
                                 }
-                            }
                                 break;
                             case FrequencyType.Minutely:
-                            {
-                                switch (evaluationRestriction)
                                 {
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                        pattern.Frequency = FrequencyType.Hourly;
-                                        break;
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        pattern.Frequency = FrequencyType.Daily;
-                                        break;
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.RestrictMinutely:
+                                            pattern.Frequency = FrequencyType.Hourly;
+                                            break;
+                                        case RecurrenceRestrictionType.RestrictHourly:
+                                            pattern.Frequency = FrequencyType.Daily;
+                                            break;
+                                    }
                                 }
-                            }
                                 break;
                             case FrequencyType.Hourly:
-                            {
-                                switch (evaluationRestriction)
                                 {
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        pattern.Frequency = FrequencyType.Daily;
-                                        break;
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.RestrictHourly:
+                                            pattern.Frequency = FrequencyType.Daily;
+                                            break;
+                                    }
                                 }
-                            }
                                 break;
                         }
                         break;
@@ -179,35 +179,35 @@ namespace Ical.Net.Evaluation
                         switch (pattern.Frequency)
                         {
                             case FrequencyType.Secondly:
-                            {
-                                switch (evaluationRestriction)
                                 {
-                                    case RecurrenceRestrictionType.Default:
-                                    case RecurrenceRestrictionType.RestrictSecondly:
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new ArgumentException();
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.Default:
+                                        case RecurrenceRestrictionType.RestrictSecondly:
+                                        case RecurrenceRestrictionType.RestrictMinutely:
+                                        case RecurrenceRestrictionType.RestrictHourly:
+                                            throw new ArgumentException();
+                                    }
                                 }
-                            }
                                 break;
                             case FrequencyType.Minutely:
-                            {
-                                switch (evaluationRestriction)
                                 {
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new ArgumentException();
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.RestrictMinutely:
+                                        case RecurrenceRestrictionType.RestrictHourly:
+                                            throw new ArgumentException();
+                                    }
                                 }
-                            }
                                 break;
                             case FrequencyType.Hourly:
-                            {
-                                switch (evaluationRestriction)
                                 {
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new ArgumentException();
+                                    switch (evaluationRestriction)
+                                    {
+                                        case RecurrenceRestrictionType.RestrictHourly:
+                                            throw new ArgumentException();
+                                    }
                                 }
-                            }
                                 break;
                         }
                         break;
@@ -257,7 +257,7 @@ namespace Ical.Net.Evaluation
                 {
                     break;
                 }
-                
+
                 if (pattern.Count >= 1 && dates.Count >= pattern.Count)
                 {
                     break;
@@ -323,7 +323,7 @@ namespace Ical.Net.Evaluation
 
         private List<DateTime> GetCandidates(DateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
         {
-            var dates = new List<DateTime> {date};
+            var dates = new List<DateTime> { date };
             dates = GetMonthVariants(dates, pattern, expandBehaviors[0]);
             dates = GetWeekNoVariants(dates, pattern, expandBehaviors[1]);
             dates = GetYearDayVariants(dates, pattern, expandBehaviors[2]);
@@ -490,7 +490,7 @@ namespace Ical.Net.Evaluation
                 }
 
                 dates.RemoveAt(i);
-                Next:
+            Next:
                 ;
             }
 
@@ -552,7 +552,7 @@ namespace Ical.Net.Evaluation
                     }
                 }
 
-                Next:
+            Next:
                 dates.RemoveAt(i);
             }
 
@@ -606,7 +606,7 @@ namespace Ical.Net.Evaluation
                     }
                 }
                 dates.RemoveAt(i);
-                Next:
+            Next:
                 ;
             }
 
@@ -658,7 +658,7 @@ namespace Ical.Net.Evaluation
                     }
 
                     date = date.AddDays(7);
-                    currentWeekNo = Calendar.GetIso8601WeekOfYear(date, CalendarWeekRule.FirstFourDayWeek,pattern.FirstDayOfWeek);
+                    currentWeekNo = Calendar.GetIso8601WeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
                 }
             }
             else if (pattern.Frequency == FrequencyType.Monthly || pattern.ByMonth.Count > 0)
@@ -777,7 +777,7 @@ namespace Ical.Net.Evaluation
                 }
                 // Remove unmatched dates
                 dates.RemoveAt(i);
-                Next:
+            Next:
                 ;
             }
             return dates;
@@ -827,7 +827,7 @@ namespace Ical.Net.Evaluation
                 }
                 // Remove unmatched dates
                 dates.RemoveAt(i);
-                Next:
+            Next:
                 ;
             }
             return dates;
@@ -877,7 +877,7 @@ namespace Ical.Net.Evaluation
                 }
                 // Remove unmatched dates
                 dates.RemoveAt(i);
-                Next:
+            Next:
                 ;
             }
             return dates;

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Ical.Net.Serialization;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using Ical.Net.Serialization;
 
 namespace Ical.Net.Utility
 {
@@ -50,7 +50,7 @@ namespace Ical.Net.Utility
         internal static readonly Regex NormalizeToCrLf = new Regex(@"((\r(?=[^\n]))|((?<=[^\r])\n))", RegexOptions.Compiled);
 
         /// <summary>
-        /// Normalizes line endings, converting "\r" into "\r\n" and "\n" into "\r\n".        
+        /// Normalizes line endings, converting "\r" into "\r\n" and "\n" into "\r\n".
         /// </summary>
         public static TextReader Normalize(string s, SerializationContext ctx)
         {

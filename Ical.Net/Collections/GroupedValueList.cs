@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Ical.Net.Collections.Interfaces;
+using Ical.Net.Collections.Proxies;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ical.Net.Collections.Interfaces;
-using Ical.Net.Collections.Proxies;
 
 namespace Ical.Net.Collections
 {
     public class GroupedValueList<TGroup, TInterface, TItem, TValueType> :
         GroupedList<TGroup, TInterface>
         where TInterface : class, IGroupedObject<TGroup>, IValueObject<TValueType>
-        where TItem : new()        
+        where TItem : new()
     {
         public virtual void Set(TGroup group, TValueType value)
         {

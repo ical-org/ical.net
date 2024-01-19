@@ -1,13 +1,13 @@
-﻿using System;
-using Ical.Net.DataTypes;
+﻿using Ical.Net.DataTypes;
+using System;
 
 namespace Ical.Net.Serialization.DataTypes
 {
     public abstract class DataTypeSerializer : SerializerBase
     {
-        protected DataTypeSerializer() {}
+        protected DataTypeSerializer() { }
 
-        protected DataTypeSerializer(SerializationContext ctx) : base(ctx) {}
+        protected DataTypeSerializer(SerializationContext ctx) : base(ctx) { }
 
         protected virtual ICalendarDataType CreateAndAssociate()
         {

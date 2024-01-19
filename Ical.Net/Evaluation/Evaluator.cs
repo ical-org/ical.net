@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Ical.Net.DataTypes;
+using Ical.Net.Utility;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Ical.Net.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.Evaluation
 {

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Ical.Net.DataTypes;
+using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -12,7 +12,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public RequestStatusSerializer(SerializationContext ctx) : base(ctx) { }
 
-        public override Type TargetType => typeof (RequestStatus);
+        public override Type TargetType => typeof(RequestStatus);
 
         public override string SerializeToString(object obj)
         {
@@ -30,7 +30,7 @@ namespace Ical.Net.Serialization.DataTypes
                 try
                 {
                     var factory = GetService<ISerializerFactory>();
-                    var serializer = factory?.Build(typeof (StatusCode), SerializationContext) as IStringSerializer;
+                    var serializer = factory?.Build(typeof(StatusCode), SerializationContext) as IStringSerializer;
                     if (serializer == null)
                     {
                         return null;

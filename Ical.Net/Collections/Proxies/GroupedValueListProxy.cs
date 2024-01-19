@@ -1,8 +1,8 @@
+﻿using Ical.Net.Collections.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Ical.Net.Collections.Interfaces;
 
 namespace Ical.Net.Collections.Proxies
 {
@@ -11,7 +11,7 @@ namespace Ical.Net.Collections.Proxies
     /// </summary>
     public class GroupedValueListProxy<TGroup, TInterface, TItem, TOriginalValue, TNewValue> : IList<TNewValue>
         where TInterface : class, IGroupedObject<TGroup>, IValueObject<TOriginalValue>
-        where TItem : new()        
+        where TItem : new()
     {
         private readonly GroupedValueList<TGroup, TInterface, TItem, TOriginalValue> _realObject;
         private readonly TGroup _group;
@@ -99,13 +99,13 @@ namespace Ical.Net.Collections.Proxies
 
         public virtual void CopyTo(TNewValue[] array, int arrayIndex)
         {
-            Items                
+            Items
                 .Where(o => o.Values != null)
                 .SelectMany(o => o.Values)
                 .ToArray()
                 .CopyTo(array, arrayIndex);
         }
-        
+
         public virtual int Count => Items.Sum(o => o.ValueCount);
 
         public virtual bool IsReadOnly => false;
@@ -214,7 +214,7 @@ namespace Ical.Net.Collections.Proxies
             set
             {
                 if (index >= 0 && index < Count)
-                {   
+                {
                     if (!Equals(value, default(TNewValue)))
                     {
                         Insert(index, value);

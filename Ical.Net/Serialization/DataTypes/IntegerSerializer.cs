@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Ical.Net.DataTypes;
+using System;
 using System.IO;
-using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -10,7 +10,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public IntegerSerializer(SerializationContext ctx) : base(ctx) { }
 
-        public override Type TargetType => typeof (int);
+        public override Type TargetType => typeof(int);
 
         public override string SerializeToString(object integer)
         {
@@ -59,7 +59,7 @@ namespace Ical.Net.Serialization.DataTypes
                     return i;
                 }
             }
-            catch {}
+            catch { }
 
             return value;
         }

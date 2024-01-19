@@ -1,5 +1,5 @@
-using System;
 using Ical.Net.CalendarComponents;
+using System;
 
 namespace Ical.Net.DataTypes
 {
@@ -28,7 +28,7 @@ namespace Ical.Net.DataTypes
             {
                 return false;
             }
-            return obj is Occurrence && Equals((Occurrence) obj);
+            return obj is Occurrence && Equals((Occurrence)obj);
         }
 
         public override int GetHashCode()

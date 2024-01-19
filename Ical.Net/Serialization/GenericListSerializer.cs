@@ -15,8 +15,8 @@ namespace Ical.Net.Serialization
         {
             _innerType = objectType.GetGenericArguments()[0];
 
-            var listDef = typeof (List<>);
-            _objectType = listDef.MakeGenericType(typeof (object));
+            var listDef = typeof(List<>);
+            _objectType = listDef.MakeGenericType(typeof(object));
         }
 
         public override Type TargetType => _objectType;
@@ -66,13 +66,13 @@ namespace Ical.Net.Serialization
                 //them individually to our list.
                 foreach (var innerObj in add)
                 {
-                    _addMethodInfo.Invoke(listObj, new[] {innerObj});
+                    _addMethodInfo.Invoke(listObj, new[] { innerObj });
                 }
             }
             else
             {
                 // Add the object to the list
-                _addMethodInfo.Invoke(listObj, new[] {objToAdd});
+                _addMethodInfo.Invoke(listObj, new[] { objToAdd });
             }
             return listObj;
         }

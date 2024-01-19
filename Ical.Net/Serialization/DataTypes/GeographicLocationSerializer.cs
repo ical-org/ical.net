@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Ical.Net.DataTypes;
+using System;
 using System.Globalization;
 using System.IO;
-using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -11,7 +11,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public GeographicLocationSerializer(SerializationContext ctx) : base(ctx) { }
 
-        public override Type TargetType => typeof (GeographicLocation);
+        public override Type TargetType => typeof(GeographicLocation);
 
         public override string SerializeToString(object obj)
         {
@@ -42,7 +42,7 @@ namespace Ical.Net.Serialization.DataTypes
             // Decode the value, if necessary!
             value = Decode(g, value);
 
-            var values = value.Split(new [] {';'}, StringSplitOptions.RemoveEmptyEntries);
+            var values = value.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             if (values.Length != 2)
             {
                 return null;

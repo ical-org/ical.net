@@ -1,4 +1,4 @@
-using Ical.Net.DataTypes;
+﻿using Ical.Net.DataTypes;
 using System;
 using System.Collections.Generic;
 

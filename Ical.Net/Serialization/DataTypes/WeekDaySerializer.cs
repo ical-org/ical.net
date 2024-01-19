@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Ical.Net.DataTypes;
+using System;
 using System.IO;
 using System.Text.RegularExpressions;
-using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -11,7 +11,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public WeekDaySerializer(SerializationContext ctx) : base(ctx) { }
 
-        public override Type TargetType => typeof (WeekDay);
+        public override Type TargetType => typeof(WeekDay);
 
         public override string SerializeToString(object obj)
         {
@@ -25,7 +25,7 @@ namespace Ical.Net.Serialization.DataTypes
             {
                 value += ds.Offset;
             }
-            value += Enum.GetName(typeof (DayOfWeek), ds.DayOfWeek).ToUpper().Substring(0, 2);
+            value += Enum.GetName(typeof(DayOfWeek), ds.DayOfWeek).ToUpper().Substring(0, 2);
 
             return Encode(ds, value);
         }

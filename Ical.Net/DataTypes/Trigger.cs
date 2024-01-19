@@ -1,13 +1,13 @@
+using Ical.Net.Serialization.DataTypes;
 using System;
 using System.IO;
-using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes
 {
     /// <summary>
     /// A class that is used to specify exactly when an <see cref="Components.Alarm"/> component will trigger.
     /// Usually this date/time is relative to the component to which the Alarm is associated.
-    /// </summary>    
+    /// </summary>
     public class Trigger : EncodableDataType
     {
         private IDateTime _mDateTime;
@@ -60,7 +60,7 @@ namespace Ical.Net.DataTypes
 
         public virtual bool IsRelative => _mDuration != null;
 
-        public Trigger() {}
+        public Trigger() { }
 
         public Trigger(TimeSpan ts)
         {
@@ -81,7 +81,7 @@ namespace Ical.Net.DataTypes
                 return;
             }
 
-            var t = (Trigger) obj;
+            var t = (Trigger)obj;
             DateTime = t.DateTime;
             Duration = t.Duration;
             Related = t.Related;
@@ -103,7 +103,7 @@ namespace Ical.Net.DataTypes
             {
                 return false;
             }
-            return Equals((Trigger) obj);
+            return Equals((Trigger)obj);
         }
 
         public override int GetHashCode()

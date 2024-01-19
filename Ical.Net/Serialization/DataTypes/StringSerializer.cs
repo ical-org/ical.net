@@ -1,18 +1,18 @@
-﻿using System;
+﻿using Ical.Net.DataTypes;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {
     public class StringSerializer : EncodableDataTypeSerializer
     {
-        public StringSerializer() {}
+        public StringSerializer() { }
 
-        public StringSerializer(SerializationContext ctx) : base(ctx) {}
+        public StringSerializer(SerializationContext ctx) : base(ctx) { }
 
         internal static readonly Regex SingleBackslashMatch = new Regex(@"(?<!\\)\\(?!\\)", RegexOptions.Compiled);
 
@@ -56,7 +56,7 @@ namespace Ical.Net.Serialization.DataTypes
             return value;
         }
 
-        public override Type TargetType => typeof (string);
+        public override Type TargetType => typeof(string);
 
         public override string SerializeToString(object obj)
         {
@@ -68,11 +68,11 @@ namespace Ical.Net.Serialization.DataTypes
             var values = new List<string>();
             if (obj is string)
             {
-                values.Add((string) obj);
+                values.Add((string)obj);
             }
             else if (obj is IEnumerable)
             {
-                values.AddRange(from object child in (IEnumerable) obj select child.ToString());
+                values.AddRange(from object child in (IEnumerable)obj select child.ToString());
             }
 
             var co = SerializationContext.Peek() as ICalendarObject;

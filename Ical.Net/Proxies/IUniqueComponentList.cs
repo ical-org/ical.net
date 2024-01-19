@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Ical.Net.CalendarComponents;
+﻿using Ical.Net.CalendarComponents;
+using System.Collections.Generic;
 
 namespace Ical.Net.Proxies
 {

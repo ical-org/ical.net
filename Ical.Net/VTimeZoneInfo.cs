@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using Ical.Net.CalendarComponents;
+﻿using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
+using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Ical.Net
 {
     public class VTimeZoneInfo : CalendarComponent, IRecurrable
     {
-        TimeZoneInfoEvaluator _evaluator;
+        private TimeZoneInfoEvaluator _evaluator;
 
         public VTimeZoneInfo()
         {
@@ -25,7 +25,7 @@ namespace Ical.Net
             Name = name;
         }
 
-        void Initialize()
+        private void Initialize()
         {
             _evaluator = new TimeZoneInfoEvaluator(this);
             SetService(_evaluator);

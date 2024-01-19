@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using Ical.Net.CalendarComponents;
+﻿using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
+using System;
+using System.Collections.Generic;
 
 namespace Ical.Net
 {
     public interface IGetOccurrences
     {
         /// <summary>
-        /// Clears a previous evaluation, usually because one of the 
-        /// key elements used for evaluation has changed 
+        /// Clears a previous evaluation, usually because one of the
+        /// key elements used for evaluation has changed
         /// (Start, End, Duration, recurrence rules, exceptions, etc.).
         /// </summary>
         void ClearEvaluation();

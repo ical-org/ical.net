@@ -1,7 +1,7 @@
-using System.IO;
-using System.Linq;
 using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
+using System.IO;
+using System.Linq;
 
 namespace Ical.Net.DataTypes
 {
@@ -32,7 +32,7 @@ namespace Ical.Net.DataTypes
             ? Parts[2]
             : 0;
 
-        public StatusCode() {}
+        public StatusCode() { }
 
         public StatusCode(int[] parts)
         {
@@ -50,7 +50,7 @@ namespace Ical.Net.DataTypes
             base.CopyFrom(obj);
             if (obj is StatusCode)
             {
-                var sc = (StatusCode) obj;
+                var sc = (StatusCode)obj;
                 Parts = new int[sc.Parts.Length];
                 sc.Parts.CopyTo(Parts, 0);
             }
@@ -74,7 +74,7 @@ namespace Ical.Net.DataTypes
             {
                 return false;
             }
-            return Equals((StatusCode) obj);
+            return Equals((StatusCode)obj);
         }
 
         public override int GetHashCode() => CollectionHelpers.GetHashCode(Parts);

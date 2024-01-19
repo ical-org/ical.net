@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Ical.Net.CalendarComponents;
+﻿using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Utility;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Ical.Net.Evaluation
 {
@@ -11,7 +11,7 @@ namespace Ical.Net.Evaluation
     {
         protected Todo Todo => Recurrable as Todo;
 
-        public TodoEvaluator(Todo todo) : base(todo) {}
+        public TodoEvaluator(Todo todo) : base(todo) { }
 
         public void EvaluateToPreviousOccurrence(IDateTime completedDate, IDateTime currDt)
         {

@@ -1,6 +1,6 @@
+﻿using Ical.Net.Collections;
 using System;
 using System.Runtime.Serialization;
-using Ical.Net.Collections;
 
 namespace Ical.Net
 {
@@ -46,7 +46,7 @@ namespace Ical.Net
 
         protected virtual void OnDeserializing(StreamingContext context) => Initialize();
 
-        protected virtual void OnDeserialized(StreamingContext context) {}
+        protected virtual void OnDeserialized(StreamingContext context) { }
 
         private void Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e) => e.First.Parent = this;
 
@@ -56,7 +56,7 @@ namespace Ical.Net
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((CalendarObject) obj);
+            return obj.GetType() == GetType() && Equals((CalendarObject)obj);
         }
 
         public override int GetHashCode() => Name?.GetHashCode() ?? 0;
@@ -95,7 +95,7 @@ namespace Ical.Net
 
         /// <summary>
         /// Gets or sets the name of the iCalObject.  For iCalendar components, this is the RFC 5545 name of the component.
-        /// </summary>        
+        /// </summary>
         public virtual string Name { get; set; }
 
         /// <summary>

@@ -9,14 +9,14 @@ namespace Ical.Net.Serialization
         private readonly Calendar _calendar;
 
         public CalendarSerializer()
-            :this(new SerializationContext()) { }
+            : this(new SerializationContext()) { }
 
         public CalendarSerializer(Calendar cal)
         {
             _calendar = cal;
         }
 
-        public CalendarSerializer(SerializationContext ctx) : base(ctx) {}
+        public CalendarSerializer(SerializationContext ctx) : base(ctx) { }
 
         public virtual string SerializeToString() => SerializeToString(_calendar);
 
@@ -27,7 +27,7 @@ namespace Ical.Net.Serialization
             if (obj is Calendar)
             {
                 // If we're serializing a calendar, we should indicate that we're using ical.net to do the work
-                var calendar = (Calendar) obj;
+                var calendar = (Calendar)obj;
                 calendar.Version = LibraryMetadata.Version;
                 calendar.ProductId = LibraryMetadata.ProdId;
 
@@ -55,7 +55,7 @@ namespace Ical.Net.Serialization
                 {
                     return 1;
                 }
-                // Alphabetize all properties except VERSION, which should appear first. 
+                // Alphabetize all properties except VERSION, which should appear first.
                 if (string.Equals("VERSION", x.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     return -1;

@@ -1,4 +1,4 @@
-using Ical.Net.DataTypes;
+﻿using Ical.Net.DataTypes;
 using Ical.Net.Utility;
 using NUnit.Framework;
 using System;
@@ -129,7 +129,7 @@ namespace Ical.Net.Tests
                 "US-Eastern",
                 "US-Eastern",
                 "US-Eastern",
-                "US-Eastern",                
+                "US-Eastern",
                 "US-Eastern",
                 "US-Eastern",
                 "US-Eastern",
@@ -160,7 +160,7 @@ namespace Ical.Net.Tests
         [Test]
         public void SystemTimeZone3()
         {
-            // Per Jon Udell's test, we should be able to get all 
+            // Per Jon Udell's test, we should be able to get all
             // system time zones on the machine and ensure they
             // are properly translated.
             var zones = TimeZoneInfo.GetSystemTimeZones();
@@ -168,11 +168,11 @@ namespace Ical.Net.Tests
             {
                 try
                 {
-                    TimeZoneInfo.FindSystemTimeZoneById(zone.Id);                    
+                    TimeZoneInfo.FindSystemTimeZoneById(zone.Id);
                 }
                 catch (Exception)
                 {
-                    Assert.Fail("Not found: " + zone.StandardName);                    
+                    Assert.Fail("Not found: " + zone.StandardName);
                 }
             }
         }

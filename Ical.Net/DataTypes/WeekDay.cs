@@ -1,6 +1,6 @@
+using Ical.Net.Serialization.DataTypes;
 using System;
 using System.IO;
-using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes
 {
@@ -28,7 +28,7 @@ namespace Ical.Net.DataTypes
             Offset = num;
         }
 
-        public WeekDay(DayOfWeek day, FrequencyOccurrence type) : this(day, (int) type) {}
+        public WeekDay(DayOfWeek day, FrequencyOccurrence type) : this(day, (int)type) { }
 
         public WeekDay(string value)
         {
@@ -43,7 +43,7 @@ namespace Ical.Net.DataTypes
                 return false;
             }
 
-            var ds = (WeekDay) obj;
+            var ds = (WeekDay)obj;
             return ds.Offset == Offset && ds.DayOfWeek == DayOfWeek;
         }
 
@@ -54,7 +54,7 @@ namespace Ical.Net.DataTypes
             base.CopyFrom(obj);
             if (obj is WeekDay)
             {
-                var bd = (WeekDay) obj;
+                var bd = (WeekDay)obj;
                 Offset = bd.Offset;
                 DayOfWeek = bd.DayOfWeek;
             }
@@ -69,7 +69,7 @@ namespace Ical.Net.DataTypes
             }
             else if (obj is WeekDay)
             {
-                bd = (WeekDay) obj;
+                bd = (WeekDay)obj;
             }
 
             if (bd == null)

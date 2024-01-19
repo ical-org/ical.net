@@ -1,6 +1,6 @@
+using Ical.Net.Proxies;
 using System;
 using System.Runtime.Serialization;
-using Ical.Net.Proxies;
 
 namespace Ical.Net.DataTypes
 {
@@ -44,7 +44,7 @@ namespace Ical.Net.DataTypes
             Initialize();
         }
 
-        protected virtual void OnDeserialized(StreamingContext context) {}
+        protected virtual void OnDeserialized(StreamingContext context) { }
 
         public virtual Type GetValueType()
         {
@@ -54,34 +54,34 @@ namespace Ical.Net.DataTypes
                 switch (_proxy.Get("VALUE"))
                 {
                     case "BINARY":
-                        return typeof (byte[]);
+                        return typeof(byte[]);
                     case "BOOLEAN":
-                        return typeof (bool);
+                        return typeof(bool);
                     case "CAL-ADDRESS":
-                        return typeof (Uri);
+                        return typeof(Uri);
                     case "DATE":
-                        return typeof (IDateTime);
+                        return typeof(IDateTime);
                     case "DATE-TIME":
-                        return typeof (IDateTime);
+                        return typeof(IDateTime);
                     case "DURATION":
-                        return typeof (TimeSpan);
+                        return typeof(TimeSpan);
                     case "FLOAT":
-                        return typeof (double);
+                        return typeof(double);
                     case "INTEGER":
-                        return typeof (int);
+                        return typeof(int);
                     case "PERIOD":
-                        return typeof (Period);
+                        return typeof(Period);
                     case "RECUR":
-                        return typeof (RecurrencePattern);
+                        return typeof(RecurrencePattern);
                     case "TEXT":
-                        return typeof (string);
+                        return typeof(string);
                     case "TIME":
                         // FIXME: implement ISO.8601.2004
                         throw new NotImplementedException();
                     case "URI":
-                        return typeof (Uri);
+                        return typeof(Uri);
                     case "UTC-OFFSET":
-                        return typeof (UtcOffset);
+                        return typeof(UtcOffset);
                     default:
                         return null;
                 }
@@ -110,7 +110,7 @@ namespace Ical.Net.DataTypes
                     _proxy.SetParent(_AssociatedObject);
                     if (_AssociatedObject is ICalendarParameterCollectionContainer)
                     {
-                        _proxy.SetProxiedObject(((ICalendarParameterCollectionContainer) _AssociatedObject).Parameters);
+                        _proxy.SetProxiedObject(((ICalendarParameterCollectionContainer)_AssociatedObject).Parameters);
                     }
                 }
                 else
@@ -140,7 +140,7 @@ namespace Ical.Net.DataTypes
                 return;
             }
 
-            var dt = (ICalendarDataType) obj;
+            var dt = (ICalendarDataType)obj;
             _AssociatedObject = dt.AssociatedObject;
             _proxy.SetParent(_AssociatedObject);
             _proxy.SetProxiedObject(dt.Parameters);
@@ -159,7 +159,7 @@ namespace Ical.Net.DataTypes
             if (obj is T)
             {
                 obj.CopyFrom(this);
-                return (T) obj;
+                return (T)obj;
             }
             return default(T);
         }

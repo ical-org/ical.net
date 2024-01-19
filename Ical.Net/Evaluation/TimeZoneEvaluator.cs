@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
 
 namespace Ical.Net.Evaluation
 {
@@ -23,7 +23,7 @@ namespace Ical.Net.Evaluation
             _occurrences = new List<Occurrence>();
         }
 
-        void ProcessOccurrences(IDateTime referenceDate)
+        private void ProcessOccurrences(IDateTime referenceDate)
         {
             // Sort the occurrences by start time
             _occurrences.Sort(

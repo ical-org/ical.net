@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Ical.Net.DataTypes;
+using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -32,12 +32,12 @@ namespace Ical.Net.Serialization.DataTypes
                     dt = new DateTime(year, month, day, hour, minute, second, kind);
                 }
             }
-            catch {}
+            catch { }
 
             return dt;
         }
 
-        public override Type TargetType => typeof (CalDateTime);
+        public override Type TargetType => typeof(CalDateTime);
 
         public override string SerializeToString(object obj)
         {
@@ -47,7 +47,7 @@ namespace Ical.Net.Serialization.DataTypes
                 return null;
             }
 
-            // RFC 5545 3.3.5: 
+            // RFC 5545 3.3.5:
             // The date with UTC time, or absolute time, is identified by a LATIN
             // CAPITAL LETTER Z suffix character, the UTC designator, appended to
             // the time value. The "TZID" property parameter MUST NOT be applied to DATE-TIME

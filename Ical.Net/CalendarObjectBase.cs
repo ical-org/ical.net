@@ -15,7 +15,7 @@ namespace Ical.Net
         /// Copies values from the target object to the
         /// current object.
         /// </summary>
-        public virtual void CopyFrom(ICopyable c) {}
+        public virtual void CopyFrom(ICopyable c) { }
 
         /// <summary>
         /// Creates a copy of the object.
@@ -30,7 +30,7 @@ namespace Ical.Net
             if (obj is T)
             {
                 obj.CopyFrom(this);
-                return (T) obj;
+                return (T)obj;
             }
             return default(T);
         }

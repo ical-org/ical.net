@@ -1,8 +1,8 @@
-using System;
-using System.IO;
-using Ical.Net.Serialization.DataTypes;
+﻿using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 using NodaTime;
+using System;
+using System.IO;
 
 namespace Ical.Net.DataTypes
 {
@@ -152,7 +152,7 @@ namespace Ical.Net.DataTypes
             => this == other;
 
         public override bool Equals(object other)
-            => other is IDateTime && (CalDateTime) other == this;
+            => other is IDateTime && (CalDateTime)other == this;
 
         public override int GetHashCode()
         {
@@ -255,7 +255,7 @@ namespace Ical.Net.DataTypes
                         var asLocal = DateUtil.ToZonedDateTimeLeniently(Value, TzId);
                         _asUtc = asLocal.ToDateTimeUtc();
                     }
-                    else if(IsUtc || Value.Kind == DateTimeKind.Utc)
+                    else if (IsUtc || Value.Kind == DateTimeKind.Utc)
                     {
                         _asUtc = DateTime.SpecifyKind(Value, DateTimeKind.Utc);
                     }

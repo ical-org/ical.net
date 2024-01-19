@@ -1,8 +1,8 @@
+﻿using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
 
 namespace Ical.Net.Evaluation
 {
@@ -19,11 +19,11 @@ namespace Ical.Net.Evaluation
             // the associated object manually
             if (obj is ICalendarObject)
             {
-                AssociatedObject = (ICalendarObject) obj;
+                AssociatedObject = (ICalendarObject)obj;
             }
             if (obj is ICalendarDataType)
             {
-                var dt = (ICalendarDataType) obj;
+                var dt = (ICalendarDataType)obj;
                 AssociatedObject = dt.AssociatedObject;
             }
         }

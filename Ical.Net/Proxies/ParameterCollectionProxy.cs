@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Ical.Net.Collections;
+using Ical.Net.Collections.Proxies;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ical.Net.Collections;
-using Ical.Net.Collections.Proxies;
 
 namespace Ical.Net.Proxies
 {
@@ -11,7 +11,7 @@ namespace Ical.Net.Proxies
         protected GroupedValueList<string, CalendarParameter, CalendarParameter, string> Parameters
             => RealObject as GroupedValueList<string, CalendarParameter, CalendarParameter, string>;
 
-        public ParameterCollectionProxy(IGroupedList<string, CalendarParameter> realObject) : base(realObject) {}
+        public ParameterCollectionProxy(IGroupedList<string, CalendarParameter> realObject) : base(realObject) { }
 
         public virtual void SetParent(ICalendarObject parent)
         {
@@ -65,9 +65,9 @@ namespace Ical.Net.Proxies
 
         public virtual int IndexOf(CalendarParameter obj) => 0;
 
-        public virtual void Insert(int index, CalendarParameter item) {}
+        public virtual void Insert(int index, CalendarParameter item) { }
 
-        public virtual void RemoveAt(int index) {}
+        public virtual void RemoveAt(int index) { }
 
         public virtual CalendarParameter this[int index]
         {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace Ical.Net
 {
@@ -26,10 +25,10 @@ namespace Ical.Net
 
         public virtual T GetService<T>()
         {
-            var service = GetService(typeof (T));
+            var service = GetService(typeof(T));
             if (service is T)
             {
-                return (T) service;
+                return (T)service;
             }
             return default(T);
         }
@@ -39,7 +38,7 @@ namespace Ical.Net
             var service = GetService(name);
             if (service is T)
             {
-                return (T) service;
+                return (T)service;
             }
             return default(T);
         }

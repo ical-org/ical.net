@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
 
 namespace Ical.Net.Evaluation
 {
@@ -14,7 +14,7 @@ namespace Ical.Net.Evaluation
             set => Recurrable = value;
         }
 
-        public EventEvaluator(CalendarEvent evt) : base(evt) {}
+        public EventEvaluator(CalendarEvent evt) : base(evt) { }
 
         /// <summary>
         /// Evaluates this event to determine the dates and times for which the event occurs.

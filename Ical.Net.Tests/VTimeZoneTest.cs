@@ -206,7 +206,7 @@ namespace Ical.Net.Tests
             Assert.IsTrue(serialized.Contains("DTSTART:19320401T000000"), "DTSTART:19320401T000000 was not serialized");
             Assert.IsTrue(serialized.Contains("DTSTART:20080624T000000"), "DTSTART:20080624T000000 was not serialized");
             Assert.IsTrue(serialized.Contains("DTSTART:19501201T000000"), "DTSTART:19501201T000000 was not serialized");
-            
+
             // Should not contain the following
             Assert.IsFalse(serialized.Contains("RDATE:19501201T000000/P1D"), "The RDATE was not serialized correctly, should be RDATE:19501201T000000");
         }

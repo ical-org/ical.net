@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Ical.Net.DataTypes;
+using System;
 using System.IO;
 using System.Text;
-using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -11,7 +11,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public PeriodSerializer(SerializationContext ctx) : base(ctx) { }
 
-        public override Type TargetType => typeof (Period);
+        public override Type TargetType => typeof(Period);
 
         public override string SerializeToString(object obj)
         {
@@ -28,15 +28,15 @@ namespace Ical.Net.Serialization.DataTypes
 
             try
             {
-                var dtSerializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
-                var timeSpanSerializer = factory.Build(typeof (TimeSpan), SerializationContext) as IStringSerializer;
+                var dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
+                var timeSpanSerializer = factory.Build(typeof(TimeSpan), SerializationContext) as IStringSerializer;
                 if (dtSerializer == null || timeSpanSerializer == null)
                 {
                     return null;
                 }
                 var sb = new StringBuilder();
 
-                // Serialize the start time                    
+                // Serialize the start time
                 sb.Append(dtSerializer.SerializeToString(p.StartTime));
 
                 // Serialize the duration or end time
@@ -74,8 +74,8 @@ namespace Ical.Net.Serialization.DataTypes
                 return null;
             }
 
-            var dtSerializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
-            var durationSerializer = factory.Build(typeof (TimeSpan), SerializationContext) as IStringSerializer;
+            var dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
+            var durationSerializer = factory.Build(typeof(TimeSpan), SerializationContext) as IStringSerializer;
             if (dtSerializer == null || durationSerializer == null)
             {
                 return null;
@@ -94,7 +94,7 @@ namespace Ical.Net.Serialization.DataTypes
             p.EndTime = dtSerializer.Deserialize(new StringReader(values[1])) as IDateTime;
             if (p.EndTime == null)
             {
-                p.Duration = (TimeSpan) durationSerializer.Deserialize(new StringReader(values[1]));
+                p.Duration = (TimeSpan)durationSerializer.Deserialize(new StringReader(values[1]));
             }
 
             // Only return an object if it has been deserialized correctly.

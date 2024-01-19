@@ -1,14 +1,14 @@
+﻿using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using Ical.Net.Proxies;
+using Ical.Net.Serialization;
+using Ical.Net.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
-using Ical.Net.Proxies;
-using Ical.Net.Serialization;
-using Ical.Net.Utility;
 
 namespace Ical.Net
 {
@@ -180,9 +180,9 @@ namespace Ical.Net
 
         /// <summary>
         /// Adds a time zone to the iCalendar.  This time zone may
-        /// then be used in date/time objects contained in the 
+        /// then be used in date/time objects contained in the
         /// calendar.
-        /// </summary>        
+        /// </summary>
         /// <returns>The time zone added to the calendar.</returns>
         public VTimeZone AddTimeZone(VTimeZone tz)
         {
@@ -220,8 +220,8 @@ namespace Ical.Net
         }
 
         /// <summary>
-        /// Clears recurrence evaluations for recurring components.        
-        /// </summary>        
+        /// Clears recurrence evaluations for recurring components.
+        /// </summary>
         public void ClearEvaluation()
         {
             foreach (var recurrable in RecurringItems)
@@ -310,21 +310,21 @@ namespace Ical.Net
         /// To create an event, use the following:
         /// <code>
         /// IICalendar iCal = new iCalendar();
-        /// 
+        ///
         /// Event evt = iCal.Create&lt;Event&gt;();
         /// </code>
-        /// 
+        ///
         /// This creates the event, and adds it to the Events list of the iCalendar.
         /// </example>
         /// <typeparam name="T">The type of object to create</typeparam>
         /// <returns>An object of the type specified</returns>
         public T Create<T>() where T : ICalendarComponent
         {
-            var obj = Activator.CreateInstance(typeof (T)) as ICalendarObject;
+            var obj = Activator.CreateInstance(typeof(T)) as ICalendarObject;
             if (obj is T)
             {
                 this.AddChild(obj);
-                return (T) obj;
+                return (T)obj;
             }
             return default(T);
         }
@@ -361,7 +361,7 @@ namespace Ical.Net
             {
                 if (child is IUniqueComponent)
                 {
-                    if (!UniqueComponents.ContainsKey(((IUniqueComponent) child).Uid))
+                    if (!UniqueComponents.ContainsKey(((IUniqueComponent)child).Uid))
                     {
                         this.AddChild(child);
                     }
@@ -383,7 +383,7 @@ namespace Ical.Net
 
         /// <summary>
         /// Adds a system time zone to the iCalendar.  This time zone may
-        /// then be used in date/time objects contained in the 
+        /// then be used in date/time objects contained in the
         /// calendar.
         /// </summary>
         /// <param name="tzi">A System.TimeZoneInfo object to add to the calendar.</param>

@@ -13,7 +13,7 @@ namespace Ical.Net.Serialization
         {
             foreach (var mi in GetDeserializingMethods(obj.GetType()))
             {
-                mi.Invoke(obj, new object[] {new StreamingContext() });
+                mi.Invoke(obj, new object[] { new StreamingContext() });
             }
         }
 

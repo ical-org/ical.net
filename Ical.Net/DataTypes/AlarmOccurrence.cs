@@ -1,14 +1,14 @@
+﻿using Ical.Net.CalendarComponents;
 using System;
-using Ical.Net.CalendarComponents;
 
 namespace Ical.Net.DataTypes
 {
     /// <summary>
-    /// A class that represents a specific occurrence of an <see cref="Alarm"/>.        
+    /// A class that represents a specific occurrence of an <see cref="Alarm"/>.
     /// </summary>
     /// <remarks>
     /// The <see cref="AlarmOccurrence"/> contains the <see cref="Period"/> when
-    /// the alarm occurs, the <see cref="Alarm"/> that fired, and the 
+    /// the alarm occurs, the <see cref="Alarm"/> that fired, and the
     /// component on which the alarm fired.
     /// </remarks>
     public class AlarmOccurrence : IComparable<AlarmOccurrence>
@@ -42,7 +42,7 @@ namespace Ical.Net.DataTypes
         public int CompareTo(AlarmOccurrence other) => Period.CompareTo(other.Period);
 
         protected bool Equals(AlarmOccurrence other)
-            => Equals(Period, other.Period) 
+            => Equals(Period, other.Period)
                 && Equals(Component, other.Component)
                 && Equals(Alarm, other.Alarm);
 

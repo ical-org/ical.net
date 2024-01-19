@@ -1,7 +1,6 @@
-﻿using System;
-using System.Reflection;
-using Ical.Net.DataTypes;
+﻿using Ical.Net.DataTypes;
 using Ical.Net.Serialization.DataTypes;
+using System;
 
 namespace Ical.Net.Serialization
 {
@@ -22,59 +21,59 @@ namespace Ical.Net.Serialization
             {
                 ISerializer s;
 
-                if (typeof (Attachment).IsAssignableFrom(objectType))
+                if (typeof(Attachment).IsAssignableFrom(objectType))
                 {
                     s = new AttachmentSerializer(ctx);
                 }
-                else if (typeof (Attendee).IsAssignableFrom(objectType))
+                else if (typeof(Attendee).IsAssignableFrom(objectType))
                 {
                     s = new AttendeeSerializer(ctx);
                 }
-                else if (typeof (IDateTime).IsAssignableFrom(objectType))
+                else if (typeof(IDateTime).IsAssignableFrom(objectType))
                 {
                     s = new DateTimeSerializer(ctx);
                 }
-                else if (typeof (FreeBusyEntry).IsAssignableFrom(objectType))
+                else if (typeof(FreeBusyEntry).IsAssignableFrom(objectType))
                 {
                     s = new FreeBusyEntrySerializer(ctx);
                 }
-                else if (typeof (GeographicLocation).IsAssignableFrom(objectType))
+                else if (typeof(GeographicLocation).IsAssignableFrom(objectType))
                 {
                     s = new GeographicLocationSerializer(ctx);
                 }
-                else if (typeof (Organizer).IsAssignableFrom(objectType))
+                else if (typeof(Organizer).IsAssignableFrom(objectType))
                 {
                     s = new OrganizerSerializer(ctx);
                 }
-                else if (typeof (Period).IsAssignableFrom(objectType))
+                else if (typeof(Period).IsAssignableFrom(objectType))
                 {
                     s = new PeriodSerializer(ctx);
                 }
-                else if (typeof (PeriodList).IsAssignableFrom(objectType))
+                else if (typeof(PeriodList).IsAssignableFrom(objectType))
                 {
                     s = new PeriodListSerializer(ctx);
                 }
-                else if (typeof (RecurrencePattern).IsAssignableFrom(objectType))
+                else if (typeof(RecurrencePattern).IsAssignableFrom(objectType))
                 {
                     s = new RecurrencePatternSerializer(ctx);
                 }
-                else if (typeof (RequestStatus).IsAssignableFrom(objectType))
+                else if (typeof(RequestStatus).IsAssignableFrom(objectType))
                 {
                     s = new RequestStatusSerializer(ctx);
                 }
-                else if (typeof (StatusCode).IsAssignableFrom(objectType))
+                else if (typeof(StatusCode).IsAssignableFrom(objectType))
                 {
                     s = new StatusCodeSerializer(ctx);
                 }
-                else if (typeof (Trigger).IsAssignableFrom(objectType))
+                else if (typeof(Trigger).IsAssignableFrom(objectType))
                 {
                     s = new TriggerSerializer(ctx);
                 }
-                else if (typeof (UtcOffset).IsAssignableFrom(objectType))
+                else if (typeof(UtcOffset).IsAssignableFrom(objectType))
                 {
                     s = new UtcOffsetSerializer(ctx);
                 }
-                else if (typeof (WeekDay).IsAssignableFrom(objectType))
+                else if (typeof(WeekDay).IsAssignableFrom(objectType))
                 {
                     s = new WeekDaySerializer(ctx);
                 }

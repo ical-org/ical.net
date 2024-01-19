@@ -1,5 +1,5 @@
+﻿using Ical.Net.Serialization.DataTypes;
 using System.IO;
-using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes
 {
@@ -30,7 +30,7 @@ namespace Ical.Net.DataTypes
             set => _mStatusCode = value;
         }
 
-        public RequestStatus() {}
+        public RequestStatus() { }
 
         public RequestStatus(string value) : this()
         {
@@ -46,7 +46,7 @@ namespace Ical.Net.DataTypes
                 return;
             }
 
-            var rs = (RequestStatus) obj;
+            var rs = (RequestStatus)obj;
             if (rs.StatusCode != null)
             {
                 StatusCode = rs.StatusCode;
@@ -78,7 +78,7 @@ namespace Ical.Net.DataTypes
             {
                 return false;
             }
-            return Equals((RequestStatus) obj);
+            return Equals((RequestStatus)obj);
         }
 
         public override int GetHashCode()

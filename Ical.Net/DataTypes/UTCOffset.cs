@@ -1,5 +1,5 @@
-using System;
 using Ical.Net.Serialization.DataTypes;
+using System;
 
 namespace Ical.Net.DataTypes
 {
@@ -18,7 +18,7 @@ namespace Ical.Net.DataTypes
 
         public int Seconds => Math.Abs(Offset.Seconds);
 
-        public UtcOffset() {}
+        public UtcOffset() { }
 
         public UtcOffset(string value) : this()
         {
@@ -54,7 +54,7 @@ namespace Ical.Net.DataTypes
             {
                 return false;
             }
-            return Equals((UtcOffset) obj);
+            return Equals((UtcOffset)obj);
         }
 
         public override int GetHashCode() => Offset.GetHashCode();

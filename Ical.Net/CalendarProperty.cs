@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -33,16 +33,16 @@ namespace Ical.Net
         /// </summary>
         public virtual IParameterCollection Parameters { get; protected set; } = new ParameterList();
 
-        public CalendarProperty() {}
+        public CalendarProperty() { }
 
-        public CalendarProperty(string name) : base(name) {}
+        public CalendarProperty(string name) : base(name) { }
 
         public CalendarProperty(string name, object value) : base(name)
         {
             _values.Add(value);
         }
 
-        public CalendarProperty(int line, int col) : base(line, col) {}
+        public CalendarProperty(int line, int col) : base(line, col) { }
 
         /// <summary>
         /// Adds a parameter to the iCalendar object.

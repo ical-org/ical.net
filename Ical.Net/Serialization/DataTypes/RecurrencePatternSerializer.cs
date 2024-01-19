@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Ical.Net.DataTypes;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
-using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -101,7 +100,7 @@ namespace Ical.Net.Serialization.DataTypes
             }
         }
 
-        public override Type TargetType => typeof (RecurrencePattern);
+        public override Type TargetType => typeof(RecurrencePattern);
 
         public override string SerializeToString(object obj)
         {
@@ -140,7 +139,7 @@ namespace Ical.Net.Serialization.DataTypes
 
             if (recur.Until != DateTime.MinValue)
             {
-                var serializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
+                var serializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
                 if (serializer != null)
                 {
                     IDateTime until = new CalDateTime(recur.Until);
@@ -151,7 +150,7 @@ namespace Ical.Net.Serialization.DataTypes
 
             if (recur.FirstDayOfWeek != DayOfWeek.Monday)
             {
-                values.Add("WKST=" + Enum.GetName(typeof (DayOfWeek), recur.FirstDayOfWeek).ToUpper().Substring(0, 2));
+                values.Add("WKST=" + Enum.GetName(typeof(DayOfWeek), recur.FirstDayOfWeek).ToUpper().Substring(0, 2));
             }
 
             if (recur.Count != int.MinValue)
@@ -163,7 +162,7 @@ namespace Ical.Net.Serialization.DataTypes
             {
                 var bydayValues = new List<string>(recur.ByDay.Count);
 
-                var serializer = factory.Build(typeof (WeekDay), SerializationContext) as IStringSerializer;
+                var serializer = factory.Build(typeof(WeekDay), SerializationContext) as IStringSerializer;
                 if (serializer != null)
                 {
                     bydayValues.AddRange(recur.ByDay.Select(byday => serializer.SerializeToString(byday)));
@@ -230,7 +229,7 @@ namespace Ical.Net.Serialization.DataTypes
             if (match.Success)
             {
                 // Parse the frequency type
-                r.Frequency = (FrequencyType) Enum.Parse(typeof (FrequencyType), match.Groups[1].Value, true);
+                r.Frequency = (FrequencyType)Enum.Parse(typeof(FrequencyType), match.Groups[1].Value, true);
 
                 // NOTE: fixed a bug where the group 2 match
                 // resulted in an empty string, which caused
@@ -247,14 +246,14 @@ namespace Ical.Net.Serialization.DataTypes
                         switch (keyword.ToUpper())
                         {
                             case "UNTIL":
-                            {
-                                var serializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
-                                var dt = serializer?.Deserialize(new StringReader(keyValue)) as IDateTime;
-                                if (dt != null)
                                 {
-                                    r.Until = dt.Value;
+                                    var serializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
+                                    var dt = serializer?.Deserialize(new StringReader(keyValue)) as IDateTime;
+                                    if (dt != null)
+                                    {
+                                        r.Until = dt.Value;
+                                    }
                                 }
-                            }
                                 break;
                             case "COUNT":
                                 r.Count = Convert.ToInt32(keyValue);
@@ -272,13 +271,13 @@ namespace Ical.Net.Serialization.DataTypes
                                 AddInt32Values(r.ByHour, keyValue);
                                 break;
                             case "BYDAY":
-                            {
-                                var days = keyValue.Split(',');
-                                foreach (var day in days)
                                 {
-                                    r.ByDay.Add(new WeekDay(day));
+                                    var days = keyValue.Split(',');
+                                    foreach (var day in days)
+                                    {
+                                        r.ByDay.Add(new WeekDay(day));
+                                    }
                                 }
-                            }
                                 break;
                             case "BYMONTHDAY":
                                 AddInt32Values(r.ByMonthDay, keyValue);
@@ -413,8 +412,8 @@ namespace Ical.Net.Serialization.DataTypes
                         }
 
                         var dayOfWeekQuery = from Capture capture in match.Groups["Day"].Captures
-                            select (DayOfWeek) Enum.Parse(typeof(DayOfWeek), capture.Value, true) into dayOfWeek
-                            select new WeekDay(dayOfWeek) {Offset = num};
+                                             select (DayOfWeek)Enum.Parse(typeof(DayOfWeek), capture.Value, true) into dayOfWeek
+                                             select new WeekDay(dayOfWeek) { Offset = num };
 
                         r.ByDay.AddRange(dayOfWeekQuery);
                     }

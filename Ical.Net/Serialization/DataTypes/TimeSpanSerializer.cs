@@ -11,7 +11,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public TimeSpanSerializer(SerializationContext ctx) : base(ctx) { }
 
-        public override Type TargetType => typeof (TimeSpan);
+        public override Type TargetType => typeof(TimeSpan);
 
         public override string SerializeToString(object obj)
         {
@@ -20,7 +20,7 @@ namespace Ical.Net.Serialization.DataTypes
                 return null;
             }
 
-            var ts = (TimeSpan) obj;
+            var ts = (TimeSpan)obj;
 
             if (ts == TimeSpan.Zero)
             {
@@ -37,7 +37,7 @@ namespace Ical.Net.Serialization.DataTypes
             sb.Append("P");
             if (ts.Days > 7 && ts.Days % 7 == 0 && ts.Hours == 0 && ts.Minutes == 0 && ts.Seconds == 0)
             {
-                sb.Append(Math.Round(Math.Abs((double) ts.Days) / 7) + "W");
+                sb.Append(Math.Round(Math.Abs((double)ts.Days) / 7) + "W");
             }
             else
             {
@@ -120,7 +120,7 @@ namespace Ical.Net.Serialization.DataTypes
                     return new TimeSpan(days * mult, hours * mult, minutes * mult, seconds * mult);
                 }
             }
-            catch {}
+            catch { }
 
             return value;
         }

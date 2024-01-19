@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Ical.Net.CalendarComponents;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
-using Ical.Net.CalendarComponents;
 
 namespace Ical.Net.Serialization
 {

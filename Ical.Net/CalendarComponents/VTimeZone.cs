@@ -42,16 +42,16 @@ namespace Ical.Net.CalendarComponents
                 earliestYear = earlistDateTimeToSupport.Year - 1;
                 // Since we went back a year, we can't still be in a leap-year
                 if (earliestMonth == 2 && earliestDay == 29)
-	                earliestDay = 28;
+                    earliestDay = 28;
             }
             else
             {
                 // Going back to 1900, which wasn't a leap year, so we need to switch to Feb 20
                 if (earliestMonth == 2 && earliestDay == 29)
-	                earliestDay = 28;
+                    earliestDay = 28;
             }
             var earliest = Instant.FromUtc(earliestYear, earliestMonth, earliestDay,
-	            earlistDateTimeToSupport.Hour, earlistDateTimeToSupport.Minute);
+                earlistDateTimeToSupport.Hour, earlistDateTimeToSupport.Minute);
 
             // Only include historical data if asked to do so.  Otherwise,
             // use only the most recent adjustment rules available.

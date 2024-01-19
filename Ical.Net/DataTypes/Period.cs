@@ -1,15 +1,15 @@
+﻿using Ical.Net.Serialization.DataTypes;
 using System;
-using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes
 {
-    /// <summary> Represents an iCalendar period of time. </summary>    
+    /// <summary> Represents an iCalendar period of time. </summary>
     public class Period : EncodableDataType, IComparable<Period>
     {
         public Period() { }
 
         public Period(IDateTime occurs)
-            : this(occurs, default(TimeSpan)) {}
+            : this(occurs, default(TimeSpan)) { }
 
         public Period(IDateTime start, IDateTime end)
         {
@@ -64,7 +64,7 @@ namespace Ical.Net.DataTypes
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((Period) obj);
+            return obj.GetType() == GetType() && Equals((Period)obj);
         }
 
         public override int GetHashCode()

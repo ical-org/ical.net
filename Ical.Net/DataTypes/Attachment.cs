@@ -1,8 +1,8 @@
+﻿using Ical.Net.Serialization.DataTypes;
+using Ical.Net.Utility;
 using System;
 using System.Linq;
 using System.Text;
-using Ical.Net.Serialization.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes
 {
@@ -36,7 +36,7 @@ namespace Ical.Net.DataTypes
             set => Parameters.Set("FMTTYPE", value);
         }
 
-        public Attachment() {}
+        public Attachment() { }
 
         public Attachment(byte[] value) : this()
         {
@@ -86,7 +86,7 @@ namespace Ical.Net.DataTypes
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((Attachment) obj);
+            return obj.GetType() == GetType() && Equals((Attachment)obj);
         }
 
         public override int GetHashCode()

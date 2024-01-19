@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Ical.Net.DataTypes;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -11,7 +11,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public PeriodListSerializer(SerializationContext ctx) : base(ctx) { }
 
-        public override Type TargetType => typeof (PeriodList);
+        public override Type TargetType => typeof(PeriodList);
 
         public override string SerializeToString(object obj)
         {
@@ -61,8 +61,8 @@ namespace Ical.Net.Serialization.DataTypes
             // Decode the value, if necessary
             value = Decode(rdt, value);
 
-            var dtSerializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
-            var periodSerializer = factory.Build(typeof (Period), SerializationContext) as IStringSerializer;
+            var dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
+            var periodSerializer = factory.Build(typeof(Period), SerializationContext) as IStringSerializer;
             if (dtSerializer == null || periodSerializer == null)
             {
                 return null;

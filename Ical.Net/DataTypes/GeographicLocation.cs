@@ -1,6 +1,6 @@
-using System.Diagnostics;
-using Ical.Net.CalendarComponents;
+﻿using Ical.Net.CalendarComponents;
 using Ical.Net.Serialization.DataTypes;
+using System.Diagnostics;
 
 namespace Ical.Net.DataTypes
 {
@@ -14,7 +14,7 @@ namespace Ical.Net.DataTypes
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 
-        public GeographicLocation() {}
+        public GeographicLocation() { }
 
         public GeographicLocation(string value) : this()
         {
@@ -28,7 +28,7 @@ namespace Ical.Net.DataTypes
             Longitude = longitude;
         }
 
-        public override void CopyFrom(ICopyable obj) {}
+        public override void CopyFrom(ICopyable obj) { }
 
         public override string ToString() => Latitude.ToString("0.000000") + ";" + Longitude.ToString("0.000000");
 

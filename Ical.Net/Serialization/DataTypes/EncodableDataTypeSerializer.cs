@@ -4,9 +4,9 @@ namespace Ical.Net.Serialization.DataTypes
 {
     public abstract class EncodableDataTypeSerializer : DataTypeSerializer
     {
-        protected EncodableDataTypeSerializer() {}
+        protected EncodableDataTypeSerializer() { }
 
-        protected EncodableDataTypeSerializer(SerializationContext ctx) : base(ctx) {}
+        protected EncodableDataTypeSerializer(SerializationContext ctx) : base(ctx) { }
 
         protected string Encode(IEncodableDataType dt, string value)
         {

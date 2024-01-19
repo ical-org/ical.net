@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Ical.Net.Collections
@@ -14,7 +14,7 @@ namespace Ical.Net.Collections
 
         /// <summary>
         /// Removes all items with the matching group from the collection.
-        /// </summary>        
+        /// </summary>
         /// <returns>True if the object was removed, false otherwise.</returns>
         bool Remove(TGroup group);
 
@@ -22,9 +22,9 @@ namespace Ical.Net.Collections
         /// Clears all items matching the specified group.
         /// </summary>
         void Clear(TGroup group);
-        
+
         /// <summary>
-        /// Returns true if the list contains at least one 
+        /// Returns true if the list contains at least one
         /// object with a matching group, false otherwise.
         /// </summary>
         bool ContainsKey(TGroup group);
@@ -34,7 +34,7 @@ namespace Ical.Net.Collections
         /// with a matching group.
         /// </summary>
         int CountOf(TGroup group);
-        
+
         /// <summary>
         /// Returns a list of objects that
         /// match the specified group.

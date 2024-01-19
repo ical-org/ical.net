@@ -1,7 +1,7 @@
+﻿using Ical.Net.Serialization.DataTypes;
 using System;
 using System.Diagnostics;
 using System.IO;
-using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes
 {
@@ -22,7 +22,7 @@ namespace Ical.Net.DataTypes
                 }
                 else
                 {
-                    Parameters.Set("SENT-BY", (string) null);
+                    Parameters.Set("SENT-BY", (string)null);
                 }
             }
         }
@@ -44,14 +44,14 @@ namespace Ical.Net.DataTypes
                 }
                 else
                 {
-                    Parameters.Set("DIR", (string) null);
+                    Parameters.Set("DIR", (string)null);
                 }
             }
         }
 
         public virtual Uri Value { get; set; }
 
-        public Organizer() {}
+        public Organizer() { }
 
         public Organizer(string value) : this()
         {
@@ -80,7 +80,7 @@ namespace Ical.Net.DataTypes
             {
                 return false;
             }
-            return Equals((Organizer) obj);
+            return Equals((Organizer)obj);
         }
 
         public override int GetHashCode() => Value?.GetHashCode() ?? 0;

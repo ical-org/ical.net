@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Ical.Net.DataTypes;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
-using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -12,7 +12,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public UtcOffsetSerializer(SerializationContext ctx) : base(ctx) { }
 
-        public override Type TargetType => typeof (UtcOffset);
+        public override Type TargetType => typeof(UtcOffset);
 
         public override string SerializeToString(object obj)
         {

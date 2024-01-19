@@ -4,7 +4,7 @@ namespace Ical.Net.Benchmarks
 {
     public class Runner
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             BenchmarkRunner.Run(BenchmarkConverter.TypeToBenchmarks(typeof(ApplicationWorkflows)));
 

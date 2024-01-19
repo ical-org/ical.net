@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -115,7 +115,7 @@ namespace Ical.Net.Collections
         public virtual IEnumerable<TItem> Values() => _dictionary.Values.SelectMany(i => i);
 
         public virtual IEnumerable<TItem> AllOf(TGroup group) => _dictionary.ContainsKey(@group)
-            ? (IEnumerable<TItem>) _dictionary[@group]
+            ? (IEnumerable<TItem>)_dictionary[@group]
             : new TItem[0];
 
         public virtual bool Remove(TItem obj)
@@ -219,5 +219,5 @@ namespace Ical.Net.Collections
         public IEnumerator<TItem> GetEnumerator() => new GroupedListEnumerator<TItem>(_lists);
 
         IEnumerator IEnumerable.GetEnumerator() => new GroupedListEnumerator<TItem>(_lists);
-    }    
+    }
 }

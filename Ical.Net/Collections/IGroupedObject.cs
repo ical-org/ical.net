@@ -1,4 +1,4 @@
-namespace Ical.Net.Collections
+﻿namespace Ical.Net.Collections
 {
     public interface IGroupedObject<TGroup>
     {

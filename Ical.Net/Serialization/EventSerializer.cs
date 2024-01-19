@@ -1,5 +1,5 @@
-﻿using System;
-using Ical.Net.CalendarComponents;
+﻿using Ical.Net.CalendarComponents;
+using System;
 
 namespace Ical.Net.Serialization
 {
@@ -9,7 +9,7 @@ namespace Ical.Net.Serialization
 
         public EventSerializer(SerializationContext ctx) : base(ctx) { }
 
-        public override Type TargetType => typeof (CalendarEvent);
+        public override Type TargetType => typeof(CalendarEvent);
 
         public override string SerializeToString(object obj)
         {

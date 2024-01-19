@@ -133,7 +133,7 @@ namespace Ical.Net.Tests
         //3 formats - UTC, local time as defined in vTimeZone, and floating,
         //at some point it would be great to independently unit test string serialization of an IDateTime object, into its 3 forms
         //http://www.kanzaki.com/docs/ical/dateTime.html
-        static string CalDateString(IDateTime cdt)
+        private static string CalDateString(IDateTime cdt)
         {
             var returnVar = $"{cdt.Year}{cdt.Month:D2}{cdt.Day:D2}T{cdt.Hour:D2}{cdt.Minute:D2}{cdt.Second:D2}";
             if (cdt.IsUtc)
@@ -147,7 +147,7 @@ namespace Ical.Net.Tests
         }
 
         //This method needs renaming
-        static Dictionary<string, string> GetValues(string serialized, string name, string value)
+        private static Dictionary<string, string> GetValues(string serialized, string name, string value)
         {
             var lengthened = serialized.Replace(SerializationConstants.LineBreak + ' ', string.Empty);
             //using a regex for now - for the sake of speed, it may be worth creating a C# text search later
