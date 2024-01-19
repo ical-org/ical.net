@@ -1,8 +1,13 @@
-## Release notes
+﻿## Release notes
 
-A listing of what each [Nuget package](https://www.nuget.org/packages/Ical.Net) version represents.
+A listing of what each [Nuget package](https://www.nuget.org/packages/laget.iCal) version represents.
 
 ### v4
+* 4.3.0 - (2024-01-19)
+  * Added target `net8.0`, `net6.0`, `netstandard2.1`
+  * Merged a few pull requests from the original repository that fixes a few bugs
+    * #584, #579, #571, #528, #525, #471, #470, #443  
+  * Changed NUnit to xUnit
 * 4.2.0 - (2021-04-10) - Many bugbixes from the community
   * Fix infinite loop with MaxDate for GetOccurrences #364
   * Deserializes STANDARD and DAYLIGHT timezone infos #420

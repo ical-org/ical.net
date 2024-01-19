@@ -1,4 +1,8 @@
-![iCal.NET for .NET](logo.png)
+﻿# iCal.NET
+> **Note**
+> This repository has been forked from https://github.com/rianjs/ical.net and have been under a few changes, please read [Forking](#Forking)!
+
+![iCal.NET for .NET](assets/logo.png)
 
 iCal.NET is an iCalendar (RFC 5545) class library for .NET aimed at providing RFC 5545 compliance, while providing full compatibility with popular calendaring applications and libraries.
 
@@ -37,6 +41,9 @@ ical.net uses [semantic versioning](http://semver.org/). In a nutshell:
 * [Contribute code by submitting a pull request](https://github.com/rianjs/ical.net/wiki/Contributing-a-(good)-pull-request)
 * [Ask a question](https://github.com/rianjs/ical.net/issues)
 
+## Forking
+This repository is a fork from https://github.com/rianjs/ical.net due to inactivity for merges of vital bug fixes and have been "re-written" to suit or code standard.
+
 ## Support
 
 ical.net is a something I do in my spare time around my family, day job, friends, and other hobbies. That means support is "when I get to it". I recognize that sometimes this isn't good enough, especially if you have a production issue. To that end, I [offer paid support and bugfixes](http://rianjs.net/consulting). A few basic rules before you contact me:
@@ -51,3 +58,5 @@ Please email me if paid support is something you require, and we can work out th
 ## Creative Commons
 
 iCal.NET logo adapted from [Love Calendar](https://thenounproject.com/term/love-calendar/116866/) By Sergey Demushkin, RU
+
+## Benchmarks
