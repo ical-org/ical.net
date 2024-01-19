@@ -14,9 +14,31 @@
     <iconUrl>https://github.com/laget-se/ical.net/raw/master/nuget_logo_150px.png</iconUrl>
     <tags>iCal Calendar icalendar ics outlook events rfc-5545 rfc-2445 dday</tags>
     <dependencies>
-      <dependency id="NodaTime" version="3.1.10" />
-      <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
-      <dependency id="System.Reflection.TypeExtensions" version="4.1.0" />
+      <group targetFramework="net8.0">
+        <dependency id="NodaTime" version="3.1.10" />
+        <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
+        <dependency id="System.Reflection.TypeExtensions" version="4.1.0" />
+      </group>
+      <group targetFramework="net6.0">
+        <dependency id="NodaTime" version="3.1.10" />
+        <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
+        <dependency id="System.Reflection.TypeExtensions" version="4.1.0" />
+      </group>
+      <group targetFramework="net5.0">
+        <dependency id="NodaTime" version="3.1.10" />
+        <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
+        <dependency id="System.Reflection.TypeExtensions" version="4.1.0" />
+      </group>
+      <group targetFramework="netstandard2.1">
+        <dependency id="NodaTime" version="3.1.10" />
+        <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
+        <dependency id="System.Reflection.TypeExtensions" version="4.1.0" />
+      </group>
+      <group targetFramework="netstandard2.1">
+        <dependency id="NodaTime" version="3.1.10" />
+        <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
+        <dependency id="System.Reflection.TypeExtensions" version="4.1.0" />
+      </group>
     </dependencies>
   </metadata>
   <files>
@@ -24,6 +46,7 @@
     <file src="..\assets\logo.png" target="assets\" />
     <file src=".\bin\Release\net8.0\*" target="lib\net8.0\" />
     <file src=".\bin\Release\net6.0\*" target="lib\net6.0\" />
+    <file src=".\bin\Release\net5.0\*" target="lib\net5.0\" />
     <file src=".\bin\Release\netstandard2.1\*" target="lib\netstandard2.1\" />
     <file src=".\bin\Release\netstandard2.0\*" target="lib\netstandard2.0\" />
   </files>
