@@ -1,4 +1,4 @@
-﻿# iCal.NET
+# iCal.NET
 > **Note**
 > This repository has been forked from https://github.com/rianjs/ical.net and have been under a few changes, please read [Forking](#Forking)!
 
@@ -42,7 +42,7 @@ ical.net uses [semantic versioning](http://semver.org/). In a nutshell:
 * [Ask a question](https://github.com/rianjs/ical.net/issues)
 
 ## Forking
-This repository is a fork from https://github.com/rianjs/ical.net due to inactivity for merges of vital bug fixes and have been "re-written" to suit or code standard.
+This repository is a fork from https://github.com/rianjs/ical.net due to inactivity and lack of merges of vital bug fixes and have been "re-written" to suit our code standard.
 
 ## Support
 
