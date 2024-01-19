@@ -10,7 +10,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public AttachmentSerializer(SerializationContext ctx) : base(ctx) { }
 
-        public override Type TargetType => typeof (Attachment);
+        public override Type TargetType => typeof(Attachment);
 
         public override string SerializeToString(object obj)
         {
@@ -72,7 +72,8 @@ namespace Ical.Net.Serialization.DataTypes
                 // The default VALUE type for attachments is URI.  So, let's
                 // grab the URI by default.
                 var uriValue = Decode(a, attachment);
-                a.Uri = new Uri(uriValue);
+                a.Uri = new Uri(uriValue, UriKind.RelativeOrAbsolute);
+
 
                 return a;
             }

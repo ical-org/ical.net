@@ -6,11 +6,11 @@ namespace Ical.Net.Serialization.DataTypes
 {
     public class UriSerializer : EncodableDataTypeSerializer
     {
-        public UriSerializer() {}
+        public UriSerializer() { }
 
-        public UriSerializer(SerializationContext ctx) : base(ctx) {}
+        public UriSerializer(SerializationContext ctx) : base(ctx) { }
 
-        public override Type TargetType => typeof (string);
+        public override Type TargetType => typeof(string);
 
         public override string SerializeToString(object obj)
         {
@@ -19,7 +19,7 @@ namespace Ical.Net.Serialization.DataTypes
                 return null;
             }
 
-            var uri = (Uri) obj;
+            var uri = (Uri)obj;
 
             if (SerializationContext.Peek() is ICalendarObject co)
             {
@@ -52,10 +52,10 @@ namespace Ical.Net.Serialization.DataTypes
 
             try
             {
-                var uri = new Uri(value);
+                var uri = new Uri(value, UriKind.RelativeOrAbsolute);
                 return uri;
             }
-            catch {}
+            catch { }
             return null;
         }
     }
