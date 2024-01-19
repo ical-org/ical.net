@@ -42,7 +42,7 @@ ical.net uses [semantic versioning](http://semver.org/). In a nutshell:
 * [Ask a question](https://github.com/rianjs/ical.net/issues)
 
 ## Forking
-This repository was fork on 19:th February 20124 from https://github.com/rianjs/ical.net due to inactivity and lack of merges of vital bug fixes and have been "re-written" to suit our code standard.
+This repository was fork on 19:th February 2024 from https://github.com/rianjs/ical.net due to inactivity and lack of merges of vital bug fixes and have been "re-written" to suit our code standard.
 
 ## Support
 
