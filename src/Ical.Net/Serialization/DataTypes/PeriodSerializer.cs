@@ -39,8 +39,14 @@ namespace Ical.Net.Serialization.DataTypes
                 // Serialize the start time                    
                 sb.Append(dtSerializer.SerializeToString(p.StartTime));
 
-                // Serialize the duration
-                if (!p.StartTime.HasTime)
+                // Serialize the duration or end time
+                if (p.EndTime.HasTime)
+                {
+                    // serialize the end time
+                    sb.Append("/");
+                    sb.Append(dtSerializer.SerializeToString(p.EndTime));
+                }
+                else
                 {
                     // Serialize the duration
                     sb.Append("/");
