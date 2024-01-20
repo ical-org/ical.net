@@ -12,7 +12,7 @@
     <licenseUrl>https://github.com/laget-se/ical.net/blob/master/license.md</licenseUrl>
     <releaseNotes>https://github.com/laget-se/ical.net/blob/master/release-notes.md</releaseNotes>
     <tags>iCal Calendar icalendar ics outlook events rfc-5545 rfc-2445 dday</tags>
-    <icon>assets\logo.png</icon>
+    <icon>assets\icon.png</icon>
     <readme>assets\readme.md</readme>
     <dependencies>
       <group targetFramework="net8.0">
@@ -44,7 +44,7 @@
   </metadata>
   <files>
     <file src="..\readme.md" target="assets\" />
-    <file src="..\assets\logo.png" target="assets\" />
+    <file src="..\assets\icon.png" target="assets\" />
     <file src=".\bin\Release\net8.0\*" target="lib\net8.0\" />
     <file src=".\bin\Release\net6.0\*" target="lib\net6.0\" />
     <file src=".\bin\Release\net5.0\*" target="lib\net5.0\" />
