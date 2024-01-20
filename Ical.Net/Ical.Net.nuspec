@@ -35,7 +35,7 @@
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Reflection.TypeExtensions" version="4.1.0" />
       </group>
-      <group targetFramework="netstandard2.1">
+      <group targetFramework="netstandard2.0">
         <dependency id="NodaTime" version="3.1.10" />
         <dependency id="System.Runtime.Serialization.Primitives" version="4.3.0" />
         <dependency id="System.Reflection.TypeExtensions" version="4.1.0" />
