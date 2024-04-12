@@ -52,11 +52,11 @@ namespace Ical.Net.Serialization
             return sb.ToString();
         }
 
-        public override object Deserialize(TextReader tr) => null;
+        public override object? Deserialize(TextReader tr) => null;
 
         public class PropertyAlphabetizer : IComparer<ICalendarProperty>
         {
-            public int Compare(ICalendarProperty x, ICalendarProperty y)
+            public int Compare(ICalendarProperty? x, ICalendarProperty? y)
             {
                 if (x == y)
                 {

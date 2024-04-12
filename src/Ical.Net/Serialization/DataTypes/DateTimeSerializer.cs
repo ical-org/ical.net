@@ -92,12 +92,18 @@ namespace Ical.Net.Serialization.DataTypes
         }
 
         const RegexOptions _ciCompiled = RegexOptions.Compiled | RegexOptions.IgnoreCase;
-        internal static readonly Regex DateOnlyMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))?$", _ciCompiled);
-        internal static readonly Regex FullDateTimePatternMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))T((\d{2})(\d{2})(\d{2})(Z)?)$", _ciCompiled);
+        internal static readonly Regex DateOnlyMatch = new Regex(
+            @"^((\d{4})(\d{2})(\d{2}))?$", _ciCompiled);
+        internal static readonly Regex FullDateTimePatternMatch = new Regex(
+            @"^((\d{4})(\d{2})(\d{2}))T´\w((\d{2})(\d{2})(\d{2})(Z)?)$", _ciCompiled);
 
-        public override object Deserialize(TextReader tr)
+        public override object? Deserialize(TextReader tr)
         {
             var value = tr.ReadToEnd();
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return null;
+            }
 
             if (!(CreateAndAssociate() is IDateTime dt))
             {
@@ -115,7 +121,7 @@ namespace Ical.Net.Serialization.DataTypes
 
             if (!match.Success)
             {
-                return null;
+                throw new FormatException("Could not be parsed as a Date or DateTime: " + value);
             }
             var now = DateTime.Now;
 

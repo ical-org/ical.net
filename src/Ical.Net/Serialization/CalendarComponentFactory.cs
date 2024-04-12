@@ -6,42 +6,25 @@ namespace Ical.Net.Serialization
     {
         public static ICalendarComponent Build(string objectName)
         {
-            ICalendarComponent c;
             var name = objectName.ToUpper();
-
-            switch (name)
-            {
-                case Components.Alarm:
-                    c = new Alarm();
-                    break;
-                case EventStatus.Name:
-                    c = new CalendarEvent();
-                    break;
-                case Components.Freebusy:
-                    c = new FreeBusy();
-                    break;
-                case JournalStatus.Name:
-                    c = new Journal();
-                    break;
-                case Components.Timezone:
-                    c = new VTimeZone();
-                    break;
-                case TodoStatus.Name:
-                    c = new Todo();
-                    break;
-                case Components.Calendar:
-                    c = new Calendar();
-                    break;
-                case Components.Daylight:
-                case Components.Standard:
-                    c = new VTimeZoneInfo();
-                    break;
-                default:
-                    c = new CalendarComponent();
-                    break;
-            }
+            var c = Create_(name);
             c.Name = name;
             return c;
         }
+
+        static ICalendarComponent Create_(string name)
+            => name switch
+            {
+                Components.Alarm => new Alarm(),
+                EventStatus.Name => new CalendarEvent(),
+                Components.Freebusy => new FreeBusy(),
+                JournalStatus.Name => new Journal(),
+                Components.Timezone => new VTimeZone(),
+                TodoStatus.Name => new Todo(),
+                Components.Calendar => new Calendar(),
+                Components.Daylight => new VTimeZoneInfo(),
+                Components.Standard => new VTimeZoneInfo(),
+                _ => new CalendarComponent()
+            };
     }
 }

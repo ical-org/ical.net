@@ -4,14 +4,12 @@ using System.Linq;
 
 namespace Ical.Net
 {
-    /// <summary>
-    /// A class that represents a property of the <see cref="Calendar"/>
-    /// itself or one of its components.  It can also represent non-standard
+    /// <summary> <see cref="CalendarObject.Name"/>d property of the <see cref="Calendar"/> itself or one of its components. </summary>
+    /// <remarks>
+    /// It can also represent non-standard
     /// (X-) properties of an iCalendar component, as seen with many
     /// applications, such as with Apple's iCal.
     /// X-WR-CALNAME:US Holidays
-    /// </summary>
-    /// <remarks>
     /// Currently, the "known" properties for an iCalendar are as
     /// follows:
     /// <list type="bullet">

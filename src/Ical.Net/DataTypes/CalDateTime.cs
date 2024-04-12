@@ -8,8 +8,9 @@ namespace Ical.Net.DataTypes
 {
     /// <summary> The iCalendar class-equivalent of the .NET <see cref="DateTime"/> struct. </summary>
     /// <remarks>
-    /// In addition to the features of the <see cref="DateTime"/> class, the <see cref="CalDateTime"/>
-    /// class handles time zone differences, and integrates seamlessly into the iCalendar framework.
+    /// In addition to the features of the <see cref="DateTime"/> class,
+    /// the <see cref="CalDateTime"/> class handles time zone differences,
+    /// and integrates seamlessly into the iCalendar framework.
     /// 
     /// Sole <see cref="IDateTime"/> Implementation.
     /// </remarks>
@@ -231,34 +232,35 @@ namespace Ical.Net.DataTypes
             }
         }
 
+        /// <summary> Cache for the UTC Value </summary>
         DateTime _asUtc = DateTime.MinValue;
-        /// <summary>
-        /// Returns a representation of the DateTime in Coordinated Universal Time (UTC)
-        /// </summary>
+
+        /// <summary> Returns a representation of the DateTime in Coordinated Universal Time (UTC) </summary>
         public DateTime AsUtc
         {
             get
             {
-                if (_asUtc == DateTime.MinValue)
+                if (_asUtc != DateTime.MinValue)
                 {
-                    // In order of weighting:
-                    //  1) Specified TzId
-                    //  2) Value having a DateTimeKind.Utc
-                    //  3) Use the OS's time zone
+                    return _asUtc;
+                }
+                // In order of weighting:
+                //  1) Specified TzId
+                //  2) Value having a DateTimeKind.Utc
+                //  3) Use the OS's time zone
 
-                    if (!string.IsNullOrWhiteSpace(TzId))
-                    {
-                        var asLocal = Value.ToZonedDateTimeLeniently(TzId);
-                        _asUtc = asLocal.ToDateTimeUtc();
-                    }
-                    else if(IsUtc || Value.Kind == DateTimeKind.Utc)
-                    {
-                        _asUtc = DateTime.SpecifyKind(Value, DateTimeKind.Utc);
-                    }
-                    else
-                    {
-                        _asUtc = DateTime.SpecifyKind(Value, DateTimeKind.Local).ToUniversalTime();
-                    }
+                if (!string.IsNullOrWhiteSpace(TzId))
+                {
+                    var asLocal = Value.ToZonedDateTimeLeniently(TzId);
+                    _asUtc = asLocal.ToDateTimeUtc();
+                }
+                else if(IsUtc || Value.Kind == DateTimeKind.Utc)
+                {
+                    _asUtc = DateTime.SpecifyKind(Value, DateTimeKind.Utc);
+                }
+                else
+                {
+                    _asUtc = DateTime.SpecifyKind(Value, DateTimeKind.Local).ToUniversalTime();
                 }
                 return _asUtc;
             }
@@ -288,11 +290,13 @@ namespace Ical.Net.DataTypes
 
         string _tzId = string.Empty;
 
-        /// <summary>
-        /// Setting the TzId to a local time zone will set Value.Kind to Local. Setting TzId to UTC will set Value.Kind to Utc. If the incoming value is null
-        /// or whitespace, Value.Kind will be set to Unspecified. Setting the TzId will NOT incur a UTC offset conversion under any circumstances. To convert
-        /// to another time zone, use the ToTimeZone() method.
-        /// </summary>
+        /// <summary> To convert to another time zone, use <see cref="ToTimeZone"/>. </summary>
+        /// <remarks>
+        /// Setting the TzId to a local time zone will set Value.Kind to Local.
+        /// Setting TzId to UTC will set Value.Kind to Utc.
+        /// If the incoming value is null or whitespace, Value.Kind will be set to Unspecified.
+        /// Setting the TzId will NOT incur a UTC offset conversion under any circumstances.
+        /// </remarks>
         public string TzId
         {
             get
@@ -357,9 +361,7 @@ namespace Ical.Net.DataTypes
 
         public TimeSpan TimeOfDay => Value.TimeOfDay;
 
-        /// <summary>
-        /// Returns a representation of the IDateTime in the specified time zone
-        /// </summary>
+        /// <summary> Returns a representation of the IDateTime in the specified time zone </summary>
         public IDateTime ToTimeZone(string tzId)
         {
             if (string.IsNullOrWhiteSpace(tzId))

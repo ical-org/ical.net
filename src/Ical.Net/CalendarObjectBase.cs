@@ -2,6 +2,9 @@
 
 namespace Ical.Net
 {
+    /// <summary> Base Class for all Calendar Objects </summary>
+    /// <inheritdoc cref="ICopyable"/>
+    /// <inheritdoc cref="ILoadable"/>
     public class CalendarObjectBase : ICopyable, ILoadable
     {
         public CalendarObjectBase()
@@ -9,16 +12,8 @@ namespace Ical.Net
             IsLoaded = true;
         }
 
-        /// <summary>
-        /// Copies values from the target object to the
-        /// current object.
-        /// </summary>
         public virtual void CopyFrom(ICopyable c) {}
 
-        /// <summary>
-        /// Creates a copy of the object.
-        /// </summary>
-        /// <returns>The copy of the object.</returns>
         public T Copy<T>()
         {
             var type = GetType();
@@ -35,7 +30,7 @@ namespace Ical.Net
 
         public bool IsLoaded { get; private set; }
 
-        public event EventHandler Loaded;
+        public event EventHandler? Loaded;
 
         public void OnLoaded()
         {

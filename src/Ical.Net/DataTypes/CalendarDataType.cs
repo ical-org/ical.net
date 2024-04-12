@@ -114,10 +114,7 @@ namespace Ical.Net.DataTypes
             _proxy.SetProxiedObject(dt.Parameters);
         }
 
-        /// <summary>
-        /// Creates a copy of the object.
-        /// </summary>
-        /// <returns>The copy of the object.</returns>
+        /// <returns>The copy of this object.</returns>
         public T Copy<T>()
         {
             var type = GetType();

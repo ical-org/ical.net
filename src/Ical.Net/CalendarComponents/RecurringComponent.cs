@@ -141,8 +141,7 @@ namespace Ical.Net.CalendarComponents
             set => Properties.Set("SEQUENCE", value);
         }
 
-        /// <summary>DTSTART; An alias to the DTStart field (i.e. start date/time).
-        /// </summary>
+        /// <summary>DTSTART; An alias to the <see cref="DtStart"/> field (i.e. start date/time). </summary>
         public IDateTime Start
         {
             get => DtStart;

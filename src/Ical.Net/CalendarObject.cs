@@ -4,9 +4,7 @@ using Ical.Net.Collections;
 
 namespace Ical.Net
 {
-    /// <summary>
-    /// The base class for all iCalendar objects and components.
-    /// </summary>
+    /// <summary> <see cref="Name"/>d base class for all iCalendar objects and components. </summary>
     public class CalendarObject : CalendarObjectBase, ICalendarObject
     {
         ServiceProvider _serviceProvider;
@@ -30,7 +28,8 @@ namespace Ical.Net
         /// <summary> Instead of Constructor to support <see cref="OnDeserializing"/>, which skips the Constructor </summary>
         void Initialize()
         {
-            //ToDo: I'm fairly certain this is ONLY used for null checking. If so, maybe it can just be a bool? CalendarObjectList is an empty object, and
+            //ToDo: I'm fairly certain this is ONLY used for null checking.
+            // If so, maybe it can just be a bool? CalendarObjectList is an empty object, and
             //ToDo: its constructor parameter is ignored
             Children = new CalendarObjectList(this);
             _serviceProvider = new ServiceProvider();
@@ -52,7 +51,7 @@ namespace Ical.Net
 
         protected bool Equals(CalendarObject other) => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;

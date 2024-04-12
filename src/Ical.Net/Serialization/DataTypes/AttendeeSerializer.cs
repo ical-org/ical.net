@@ -16,7 +16,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public string? SerializeToString(Attendee a) => Encode(a, a.Value.OriginalString);
 
-        public Attendee Deserialize(string attendee)
+        public Attendee? Deserialize(string attendee)
         {
             try
             {
@@ -40,6 +40,6 @@ namespace Ical.Net.Serialization.DataTypes
             return null;
         }
 
-        public override object Deserialize(TextReader tr) => Deserialize(tr.ReadToEnd());
+        public override object? Deserialize(TextReader tr) => Deserialize(tr.ReadToEnd());
     }
 }

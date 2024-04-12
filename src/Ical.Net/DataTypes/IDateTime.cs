@@ -22,6 +22,7 @@ namespace Ical.Net.DataTypes
         bool IsUtc { get; }
 
         /// <summary> Gets the time zone name this time is in, if it references a time zone. </summary>
+        /// <remarks>Same as <see cref="TzId"/></remarks>
         string TimeZoneName { get; }
 
         /// <summary> Gets/sets the underlying DateTime value stored. </summary>
@@ -38,6 +39,7 @@ namespace Ical.Net.DataTypes
         bool HasTime { get; set; }
 
         /// <summary> Gets/sets the time zone ID for this date/time value. </summary>
+        /// <remarks>Same as <see cref="TimeZoneName"/></remarks>
         string TzId { get; set; }
 
         /// <summary> Gets the year for this date/time value. </summary>

@@ -80,48 +80,51 @@ namespace Ical.Net.Serialization
 
         public IEnumerable<ICalendarComponent> Deserialize(TextReader reader)
         {
+            var lineNo = 0;
             var context = new SerializationContext();
             var stack = new Stack<ICalendarComponent>();
             var current = default(ICalendarComponent);
             foreach (var contentLineString in GetContentLines(reader))
             {
+                ++lineNo;
                 var contentLine = ParseContentLine(context, contentLineString);
+
                 if (string.Equals(contentLine.Name, "BEGIN", StringComparison.OrdinalIgnoreCase))
-                {
+                { //start/push a new Sub-Component
                     stack.Push(current);
                     current = CalendarComponentFactory.Build((string)contentLine.Value);
                     SerializationUtil.OnDeserializing(current);
+                    continue;
                 }
-                else
+
+                if (string.Equals(contentLine.Name, "END", StringComparison.OrdinalIgnoreCase))
                 {
+                    if (!string.Equals((string)contentLine.Value, current.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        throw new SerializationException($"Expected 'END:{current.Name}' in lineNo {lineNo}, found 'END:{contentLine.Value}'");
+                    }
+                    SerializationUtil.OnDeserialized(current);
+                    var finished = current;
+                    current = stack.Pop();
                     if (current == null)
                     {
-                        throw new SerializationException($"Expected 'BEGIN', found '{contentLine.Name}'");
-                    }
-                    if (string.Equals(contentLine.Name, "END", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (!string.Equals((string)contentLine.Value, current.Name, StringComparison.OrdinalIgnoreCase))
-                        {
-                            throw new SerializationException($"Expected 'END:{current.Name}', found 'END:{contentLine.Value}'");
-                        }
-                        SerializationUtil.OnDeserialized(current);
-                        var finished = current;
-                        current = stack.Pop();
-                        if (current == null)
-                        {
-                            yield return finished;
-                        }
-                        else
-                        {
-                            current.Children.Add(finished);
-                        }
+                        yield return finished;
                     }
                     else
                     {
-                        current.Properties.Add(contentLine);
+                        current.Children.Add(finished);
                     }
+                    continue;
                 }
+
+                if (current == null)
+                {
+                    throw new SerializationException($"Expected 'BEGIN' in lineNo {lineNo}, found '{contentLine.Name}'");
+                }
+
+                current.Properties.Add(contentLine);
             }
+
             if (current != null)
             {
                 throw new SerializationException($"Unclosed component {current.Name}");

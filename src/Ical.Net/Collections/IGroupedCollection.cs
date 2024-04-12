@@ -3,42 +3,27 @@ using System.Collections.Generic;
 
 namespace Ical.Net.Collections
 {
-    public interface IGroupedCollection<TGroup, TItem> :
+    public interface IGroupedCollection<in TGroup, TItem> :
         ICollection<TItem>
         where TItem : class, IGroupedObject<TGroup>
     {
-        /// <summary>
-        /// Fired after an item is added to the collection.
-        /// </summary>
+        /// <summary> Fired after an item is added to the collection. </summary>
         event EventHandler<ObjectEventArgs<TItem, int>> ItemAdded;
 
-        /// <summary>
-        /// Removes all items with the matching group from the collection.
-        /// </summary>        
+        /// <summary> Removes all items with <paramref name="group"/> from the collection. </summary>
         /// <returns>True if the object was removed, false otherwise.</returns>
         bool Remove(TGroup group);
 
-        /// <summary>
-        /// Clears all items matching the specified group.
-        /// </summary>
+        /// <summary> Clears all items matching the specified <paramref name="group"/>. </summary>
         void Clear(TGroup group);
         
-        /// <summary>
-        /// Returns true if the list contains at least one 
-        /// object with a matching group, false otherwise.
-        /// </summary>
+        /// <summary> Returns true if the list contains at least one object with a matching <paramref name="group"/>. </summary>
         bool ContainsKey(TGroup group);
 
-        /// <summary>
-        /// Returns the number of objects in the list
-        /// with a matching group.
-        /// </summary>
+        /// <summary> Returns the number of objects in the list with a matching <paramref name="group"/>. </summary>
         int CountOf(TGroup group);
         
-        /// <summary>
-        /// Returns a list of objects that
-        /// match the specified group.
-        /// </summary>
+        /// <summary> Returns a list of objects that match the specified <paramref name="group"/>. </summary>
         IEnumerable<TItem> AllOf(TGroup group);
     }
 }

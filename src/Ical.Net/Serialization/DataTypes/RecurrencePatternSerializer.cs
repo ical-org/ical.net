@@ -27,6 +27,10 @@ namespace Ical.Net.Serialization.DataTypes
 
         protected static void AddInt32Values(IList<int> list, string value)
         {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return;
+            }
             var values = value.Split(',');
             foreach (var v in values)
             {

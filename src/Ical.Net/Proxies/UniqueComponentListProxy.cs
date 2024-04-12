@@ -6,6 +6,8 @@ using Ical.Net.Collections;
 
 namespace Ical.Net.Proxies
 {
+    /// <summary> Typed Proxy/Filter for a List of generic Instances </summary>
+    /// <typeparam name="TComponentType">the Type to filter for</typeparam>
     public class UniqueComponentListProxy<TComponentType> :
         CalendarObjectListProxy<TComponentType>,
         IUniqueComponentList<TComponentType>

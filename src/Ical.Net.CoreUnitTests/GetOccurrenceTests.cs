@@ -32,7 +32,7 @@ namespace Ical.Net.CoreUnitTests
             var occurrences = calendar.GetOccurrences(searchStart, searchEnd).OrderBy(o => o.Period.StartTime).ToList();
 
             var firstOccurrence = occurrences.First();
-            var firstStartCopy = firstStart.Copy<CalDateTime>();
+            CalDateTime firstStartCopy = firstStart.Copy<CalDateTime>();
             var firstEndCopy = firstEnd.Copy<CalDateTime>();
             Assert.AreEqual(firstStartCopy, firstOccurrence.Period.StartTime);
             Assert.AreEqual(firstEndCopy, firstOccurrence.Period.EndTime);
