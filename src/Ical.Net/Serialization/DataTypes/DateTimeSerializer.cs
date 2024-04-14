@@ -95,7 +95,7 @@ namespace Ical.Net.Serialization.DataTypes
         internal static readonly Regex DateOnlyMatch = new Regex(
             @"^((\d{4})(\d{2})(\d{2}))?$", _ciCompiled);
         internal static readonly Regex FullDateTimePatternMatch = new Regex(
-            @"^((\d{4})(\d{2})(\d{2}))T´\w((\d{2})(\d{2})(\d{2})(Z)?)$", _ciCompiled);
+            @"^((\d{4})(\d{2})(\d{2}))\w((\d{2})(\d{2})(\d{2})(Z)?)$", _ciCompiled);
 
         public override object? Deserialize(TextReader tr)
         {
