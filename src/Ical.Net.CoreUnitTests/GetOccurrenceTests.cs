@@ -59,7 +59,7 @@ namespace Ical.Net.CoreUnitTests
             var pattern = new RecurrencePattern
             {
                 Frequency = FrequencyType.Weekly,
-                ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Friday) }
+                ByWeekDay = new List<WeekDay> { new WeekDay(DayOfWeek.Friday) }
             };
             vEvent.RecurrenceRules.Add(pattern);
             var calendar = new Calendar();

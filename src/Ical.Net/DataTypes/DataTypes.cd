@@ -10,6 +10,14 @@
   </Class>
   <Class Name="Ical.Net.DataTypes.Attachment" Collapsed="true">
     <Position X="6.25" Y="4.25" Width="1.5" />
+    <InheritanceLine Type="Ical.Net.DataTypes.EncodableDataType" ManuallyRouted="true">
+      <Path>
+        <Point X="5.875" Y="2.191" />
+        <Point X="5.875" Y="2.891" />
+        <Point X="7" Y="2.891" />
+        <Point X="7" Y="4.25" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>AACAAAAAAAAAACAEhAAAAAAAAAAAAJAACAAAAgAAAAA=</HashCode>
       <FileName>DataTypes\Attachment.cs</FileName>
@@ -17,6 +25,14 @@
   </Class>
   <Class Name="Ical.Net.DataTypes.Attendee" Collapsed="true">
     <Position X="3" Y="3.25" Width="1.5" />
+    <InheritanceLine Type="Ical.Net.DataTypes.EncodableDataType" ManuallyRouted="true">
+      <Path>
+        <Point X="5.875" Y="2.191" />
+        <Point X="5.875" Y="2.858" />
+        <Point X="3.75" Y="2.858" />
+        <Point X="3.75" Y="3.25" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>AAAAEAgSAgAIACTAkAAAAAAIAAIAAIAAAQAlCAAIEAA=</HashCode>
       <FileName>DataTypes\Attendee.cs</FileName>
@@ -24,8 +40,16 @@
   </Class>
   <Class Name="Ical.Net.DataTypes.CalDateTime" Collapsed="true">
     <Position X="9.5" Y="3.25" Width="1.5" />
+    <InheritanceLine Type="Ical.Net.DataTypes.EncodableDataType" ManuallyRouted="true">
+      <Path>
+        <Point X="5.875" Y="2.191" />
+        <Point X="5.875" Y="2.874" />
+        <Point X="10.25" Y="2.874" />
+        <Point X="10.25" Y="3.25" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
-      <HashCode>ADICACAgJpiAASXGwAmDAsKAAGQICqIFIAAkIQBQByA=</HashCode>
+      <HashCode>ADICACAgJpiAASTGwAmDAkKAAGQICqIFIAAkIQhQByA=</HashCode>
       <FileName>DataTypes\CalDateTime.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.286" />
@@ -39,7 +63,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Ical.Net.DataTypes.EncodableDataType" Collapsed="true">
-    <Position X="5" Y="1.75" Width="1.75" />
+    <Position X="5" Y="1.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DataTypes\EncodableDataType.cs</FileName>
@@ -81,10 +105,18 @@
       <HashCode>AAEAAAAAIAACACQEgBAABAAAIAAgAIAAAAAAAAAQIAA=</HashCode>
       <FileName>DataTypes\Period.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Orientation="Right" Position="0.1" />
+    <Lollipop Position="0.1" />
   </Class>
   <Class Name="Ical.Net.DataTypes.PeriodList" Collapsed="true">
     <Position X="2" Y="4.25" Width="1.5" />
+    <InheritanceLine Type="Ical.Net.DataTypes.EncodableDataType" ManuallyRouted="true">
+      <Path>
+        <Point X="5.875" Y="2.191" />
+        <Point X="5.875" Y="2.883" />
+        <Point X="2.75" Y="2.883" />
+        <Point X="2.75" Y="4.25" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>AEIABEAAAAAAADAUiAABBAQAAAAAAIAECAQAAABQIAA=</HashCode>
       <FileName>DataTypes\PeriodList.cs</FileName>
@@ -101,7 +133,7 @@
   <Class Name="Ical.Net.DataTypes.RequestStatus" Collapsed="true">
     <Position X="7.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAgACAEgAAAAAAAAAAAAIAAJAAAAAAQQAA=</HashCode>
+      <HashCode>AAAAAAAAAAAgACAEgAAAAAAAAAAAAIAAIAAAAAAAAAA=</HashCode>
       <FileName>DataTypes\RequestStatus.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -115,12 +147,20 @@
   <Class Name="Ical.Net.DataTypes.Trigger" Collapsed="true">
     <Position X="10.75" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAABAAAQAAACAKAAgAAAAAAAAAAAAIQAACAAAAAEAAA=</HashCode>
+      <HashCode>AAAAAAAQAAACAKAAgAAAAAAAAAAAAIQAACAAAAAEAAA=</HashCode>
       <FileName>DataTypes\Trigger.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Ical.Net.DataTypes.UtcOffset" Collapsed="true">
     <Position X="4" Y="4.25" Width="1.5" />
+    <InheritanceLine Type="Ical.Net.DataTypes.EncodableDataType" ManuallyRouted="true">
+      <Path>
+        <Point X="5.875" Y="2.191" />
+        <Point X="5.875" Y="2.895" />
+        <Point X="4.75" Y="2.895" />
+        <Point X="4.75" Y="4.25" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>AIAAAAAAAAAQAAAEwACAAAAAAAAAAICEAAAFAAAAgAA=</HashCode>
       <FileName>DataTypes\UTCOffset.cs</FileName>
@@ -132,6 +172,7 @@
       <HashCode>AAAAAAAAAAAAACQAgAAAAAAAAAAAAIAAAAAEAAAAgAA=</HashCode>
       <FileName>DataTypes\WeekDay.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Interface Name="Ical.Net.DataTypes.ICalendarDataType" Collapsed="true">
     <Position X="9.25" Y="1.5" Width="1.75" />

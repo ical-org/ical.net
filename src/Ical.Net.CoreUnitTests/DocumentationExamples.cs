@@ -82,7 +82,7 @@ namespace Ical.Net.CoreUnitTests
                 Frequency = FrequencyType.Yearly,
                 Interval = 1,
                 ByMonth = new List<int> { 11 }, // < Yearly => only in November
-                ByDay = new List<WeekDay> { new WeekDay { DayOfWeek = DayOfWeek.Thursday, Offset = 4 } },
+                ByWeekDay = new List<WeekDay> { new WeekDay { DayOfWeek = DayOfWeek.Thursday, Offset = 4 } },
                 Until = DateTime.MaxValue
             };
             vEvent.RecurrenceRules = new List<RecurrencePattern> { rRule };
@@ -112,7 +112,7 @@ namespace Ical.Net.CoreUnitTests
             //Define the exceptions: Sunday
             var exceptionRule = new RecurrencePattern(FrequencyType.Weekly, 1)
             {
-                ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Sunday) }
+                ByWeekDay = new List<WeekDay> { new WeekDay(DayOfWeek.Sunday) }
             };
             vEvent.ExceptionRules = new List<RecurrencePattern> {exceptionRule};
 

@@ -87,7 +87,7 @@ namespace Ical.Net.Evaluation
 
             // If BYDAY, BYYEARDAY, or BYWEEKNO is specified, then
             // we don't default BYDAY, BYMONTH or BYMONTHDAY
-            if (r.ByDay.Count != 0) {
+            if (r.ByWeekDay.Count != 0) {
                 return r;
             }
 
@@ -98,7 +98,7 @@ namespace Ical.Net.Evaluation
             // NOTE: fixes YearlyByWeekNoX() handling
             if (r.Frequency == FrequencyType.Weekly || (r.ByWeekNo.Count > 0 && r.ByMonthDay.Count == 0 && 
                 r.ByYearDay.Count == 0)) { //once, at the referenceDate.Hour
-                r.ByDay.Add(new WeekDay(referenceDate.DayOfWeek));
+                r.ByWeekDay.Add(new WeekDay(referenceDate.DayOfWeek));
             }
 
             // If BYMONTHDAY is not specified, default to the current day of month.
@@ -535,11 +535,11 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        /// <summary> Applies <see cref="RecurrencePattern.ByDay"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
+        /// <summary> Applies <see cref="RecurrencePattern.ByWeekDay"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
         /// <returns>the full <paramref name="dates"/> when no Rules were specified. </returns>
         List<DateTime> GetDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
-            if (expand == null || pattern.ByDay.Count == 0)
+            if (expand == null || pattern.ByWeekDay.Count == 0)
             {
                 return dates;
             }
@@ -550,7 +550,7 @@ namespace Ical.Net.Evaluation
                 var weekDayDates = new List<DateTime>();
                 foreach (var date in dates)
                 {
-                    foreach (var day in pattern.ByDay)
+                    foreach (var day in pattern.ByWeekDay)
                     {
                         weekDayDates.AddRange(GetAbsWeekDays(date, day, pattern));
                     }
@@ -563,9 +563,9 @@ namespace Ical.Net.Evaluation
             for (var i = dates.Count - 1; i >= 0; i--)
             {
                 var date = dates[i];
-                for (var j = 0; j < pattern.ByDay.Count; j++)
+                for (var j = 0; j < pattern.ByWeekDay.Count; j++)
                 {
-                    var weekDay = pattern.ByDay[j];
+                    var weekDay = pattern.ByWeekDay[j];
                     if (weekDay.DayOfWeek.Equals(date.DayOfWeek))
                     {
                         // If no offset is specified, simply test the day of week!

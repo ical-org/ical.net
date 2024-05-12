@@ -151,13 +151,13 @@ namespace Ical.Net.Serialization.DataTypes
                 values.Add("COUNT=" + recur.Count);
             }
 
-            if (recur.ByDay.Count > 0)
+            if (recur.ByWeekDay.Count > 0)
             {
-                var bydayValues = new List<string>(recur.ByDay.Count);
+                var bydayValues = new List<string>(recur.ByWeekDay.Count);
 
                 if (factory.Build(typeof (WeekDay), SerializationContext) is IStringSerializer serializer)
                 {
-                    bydayValues.AddRange(recur.ByDay.Select(byday => serializer.SerializeToString(byday)));
+                    bydayValues.AddRange(recur.ByWeekDay.Select(byday => serializer.SerializeToString(byday)));
                 }
 
                 values.Add("BYDAY=" + string.Join(",", bydayValues));
@@ -266,7 +266,7 @@ namespace Ical.Net.Serialization.DataTypes
                                 var days = keyValue.Split(',');
                                 foreach (var day in days)
                                 {
-                                    r.ByDay.Add(new WeekDay(day));
+                                    r.ByWeekDay.Add(new WeekDay(day));
                                 }
                             }
                                 break;
@@ -393,7 +393,7 @@ namespace Ical.Net.Serialization.DataTypes
                             select (DayOfWeek) Enum.Parse(typeof(DayOfWeek), capture.Value, true) into dayOfWeek
                             select new WeekDay(dayOfWeek) {Offset = num};
 
-                        r.ByDay.AddRange(dayOfWeekQuery);
+                        r.ByWeekDay.AddRange(dayOfWeekQuery);
                     }
                     else if ((match = Time.Match(item)).Success)
                     {

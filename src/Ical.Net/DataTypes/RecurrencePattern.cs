@@ -108,7 +108,7 @@ namespace Ical.Net.DataTypes
         /// * <see cref="BySecond"/>
         /// * <see cref="ByMinute"/>
         /// * <see cref="ByHour"/>
-        /// * <see cref="ByDay"/>
+        /// * <see cref="ByWeekDay"/>
         /// * <see cref="ByMonthDay"/>
         /// * <see cref="ByYearDay"/>
         /// * <see cref="ByWeekNo"/>
@@ -167,7 +167,7 @@ namespace Ical.Net.DataTypes
 
         /// <summary> BYDAY; optional List of <see cref="WeekDay"/> Filter from 0 to 7 when this Event recurs </summary>
         /// <returns> * (every Day) when no Rules were specified. </returns>
-        public List<WeekDay> ByDay { get; set; } = new List<WeekDay>();
+        public List<WeekDay> ByWeekDay { get; set; } = new List<WeekDay>();
 
         /// <summary> BYMONTHDAY; optional List of Month-Day Filter from 1 to 31 when this Event recurs </summary>
         /// <returns> * (every Day) when no Rules were specified. </returns>
@@ -261,7 +261,7 @@ namespace Ical.Net.DataTypes
             && CollectionEquals(BySecond, other.BySecond)
             && CollectionEquals(ByMinute, other.ByMinute)
             && CollectionEquals(ByHour, other.ByHour)
-            && CollectionEquals(ByDay, other.ByDay)
+            && CollectionEquals(ByWeekDay, other.ByWeekDay)
             && CollectionEquals(ByMonthDay, other.ByMonthDay)
             && CollectionEquals(ByYearDay, other.ByYearDay)
             && CollectionEquals(ByWeekNo, other.ByWeekNo)
@@ -289,7 +289,7 @@ namespace Ical.Net.DataTypes
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(BySecond);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByMinute);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByHour);
-                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByDay);
+                hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByWeekDay);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByMonthDay);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByYearDay);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByWeekNo);
@@ -314,7 +314,7 @@ namespace Ical.Net.DataTypes
             BySecond = new List<int>(pattern.BySecond);
             ByMinute = new List<int>(pattern.ByMinute);
             ByHour = new List<int>(pattern.ByHour);
-            ByDay = new List<WeekDay>(pattern.ByDay);
+            ByWeekDay = new List<WeekDay>(pattern.ByWeekDay);
             ByMonthDay = new List<int>(pattern.ByMonthDay);
             ByYearDay = new List<int>(pattern.ByYearDay);
             ByWeekNo = new List<int>(pattern.ByWeekNo);

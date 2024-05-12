@@ -83,7 +83,10 @@ namespace Ical.Net.CalendarComponents
 
         /// <summary> periodic Exception-Dates </summary>
         /// <remarks>
-        /// Opposite to <see cref="RecurrenceRules"/>
+        /// Opposite to <see cref="RecurrenceRules"/>.
+        /// According to <a href='https://icalendar.org/iCalendar-RFC-5545/3-8-5-3-recurrence-rule.html'
+        /// >RFC-5545</a> each Component should have only a single <see cref="RecurrencePattern"/>,
+        /// otherwise the Schedule is undefined!
         /// </remarks>
         public IList<RecurrencePattern> ExceptionRules
         {
@@ -115,7 +118,10 @@ namespace Ical.Net.CalendarComponents
 
         /// <summary> periodic Rules-Dates </summary>
         /// <remarks>
-        /// Opposite to <see cref="ExceptionRules"/>
+        /// Opposite to <see cref="ExceptionRules"/>.
+        /// According to <a href='https://icalendar.org/iCalendar-RFC-5545/3-8-5-3-recurrence-rule.html'
+        /// >RFC-5545</a> each Component should have only a single <see cref="RecurrencePattern"/>,
+        /// otherwise the Schedule is undefined!
         /// </remarks>
         public IList<RecurrencePattern> RecurrenceRules
         {

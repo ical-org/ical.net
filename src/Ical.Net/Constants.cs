@@ -175,7 +175,7 @@ namespace Ical.Net
         Hourly = 60 * Minutely,
         Daily = 24 * Hourly,
         Weekly = 7 * Daily,
-        Monthly = 30 * Weekly,
+        Monthly = 30 * Daily,
         Yearly = 365 * Daily
     }
 

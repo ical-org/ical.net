@@ -2913,9 +2913,9 @@ namespace Ical.Net.CoreUnitTests
             RecurrencePattern recur = new RecurrencePattern();
             recur.Frequency = FrequencyType.Daily;
             recur.Count = 3;
-            recur.ByDay.Add(new WeekDay(DayOfWeek.Monday));
-            recur.ByDay.Add(new WeekDay(DayOfWeek.Wednesday));
-            recur.ByDay.Add(new WeekDay(DayOfWeek.Friday));
+            recur.ByWeekDay.Add(new WeekDay(DayOfWeek.Monday));
+            recur.ByWeekDay.Add(new WeekDay(DayOfWeek.Wednesday));
+            recur.ByWeekDay.Add(new WeekDay(DayOfWeek.Friday));
             evt.RecurrenceRules.Add(recur);
 
             var serializer = new RecurrencePatternSerializer();
@@ -2927,8 +2927,8 @@ namespace Ical.Net.CoreUnitTests
         public void Test4()
         {
             RecurrencePattern rpattern = new RecurrencePattern();
-            rpattern.ByDay.Add(new WeekDay(DayOfWeek.Saturday));
-            rpattern.ByDay.Add(new WeekDay(DayOfWeek.Sunday));
+            rpattern.ByWeekDay.Add(new WeekDay(DayOfWeek.Saturday));
+            rpattern.ByWeekDay.Add(new WeekDay(DayOfWeek.Sunday));
 
             rpattern.Frequency = FrequencyType.Weekly;
 
@@ -3047,7 +3047,7 @@ END:VCALENDAR";
             var rrule = new RecurrencePattern(FrequencyType.Weekly, interval: 1)
             {
                 Until = DateTime.Parse("2016-08-31T07:00:00"),
-                ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Wednesday)},
+                ByWeekDay = new List<WeekDay> { new WeekDay(DayOfWeek.Wednesday)},
             };
 
             var start = DateTime.Parse("2016-08-01T07:00:00");
