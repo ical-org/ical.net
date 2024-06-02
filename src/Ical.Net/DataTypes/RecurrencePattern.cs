@@ -171,6 +171,7 @@ namespace Ical.Net.DataTypes
 
         /// <summary> BYMONTHDAY; optional List of Month-Day Filter from 1 to 31 when this Event recurs </summary>
         /// <returns> * (every Day) when no Rules were specified. </returns>
+        /// <remarks> Negative Days are counted from the End of the current Month. </remarks>
         public List<int> ByMonthDay { get; set; } = new List<int>();
 
         /// <summary> BYYEARDAY; optional List of Year-Day Filter from 1 to 366 when this Event recurs </summary>
