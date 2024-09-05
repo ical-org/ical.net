@@ -15,12 +15,16 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var g = obj as GeographicLocation;
-            if (g == null)
+            if (!(obj is GeographicLocation g))
             {
                 return null;
             }
 
+            return SerializeToString(g);
+        }
+
+        public string SerializeToString(GeographicLocation g)
+        {
             var value = g.Latitude.ToString("0.000000", CultureInfo.InvariantCulture.NumberFormat) + ";"
                 + g.Longitude.ToString("0.000000", CultureInfo.InvariantCulture.NumberFormat);
             return Encode(g, value);
@@ -33,8 +37,7 @@ namespace Ical.Net.Serialization.DataTypes
                 return null;
             }
 
-            var g = CreateAndAssociate() as GeographicLocation;
-            if (g == null)
+            if (!(CreateAndAssociate() is GeographicLocation g))
             {
                 return null;
             }

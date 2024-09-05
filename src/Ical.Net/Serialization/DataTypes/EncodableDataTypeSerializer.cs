@@ -8,7 +8,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         protected EncodableDataTypeSerializer(SerializationContext ctx) : base(ctx) {}
 
-        protected string Encode(IEncodableDataType dt, string value)
+        protected string? Encode(IEncodableDataType? dt, string? value)
         {
             if (value == null)
             {
@@ -25,7 +25,7 @@ namespace Ical.Net.Serialization.DataTypes
             return Encode(dt, encodingStack.Current.GetBytes(value));
         }
 
-        protected string Encode(IEncodableDataType dt, byte[] data)
+        protected string? Encode(IEncodableDataType dt, byte[]? data)
         {
             if (data == null)
             {
@@ -43,7 +43,7 @@ namespace Ical.Net.Serialization.DataTypes
             return encodingProvider?.Encode(dt.Encoding, data);
         }
 
-        protected string Decode(IEncodableDataType dt, string value)
+        protected string? Decode(IEncodableDataType? dt, string value)
         {
             if (dt?.Encoding == null)
             {
@@ -61,7 +61,7 @@ namespace Ical.Net.Serialization.DataTypes
             return encodingStack.Current.GetString(data);
         }
 
-        protected byte[] DecodeData(IEncodableDataType dt, string value)
+        protected byte[]? DecodeData(IEncodableDataType? dt, string? value)
         {
             if (value == null)
             {

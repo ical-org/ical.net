@@ -10,7 +10,7 @@ namespace Ical.Net
     [DebuggerDisplay("{Name}={string.Join(\",\", Values)}")]
     public class CalendarParameter : CalendarObject, IValueObject<string>
     {
-        private HashSet<string> _values;
+        HashSet<string> _values;
 
         public CalendarParameter()
         {
@@ -37,10 +37,7 @@ namespace Ical.Net
             }
         }
 
-        private void Initialize()
-        {
-            _values = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        }
+        void Initialize() => _values = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         protected override void OnDeserializing(StreamingContext context)
         {
@@ -62,28 +59,28 @@ namespace Ical.Net
             _values = new HashSet<string>(p.Values.Where(IsValidValue), StringComparer.OrdinalIgnoreCase);
         }
 
-        public virtual IEnumerable<string> Values => _values;
+        public IEnumerable<string> Values => _values;
 
-        public virtual bool ContainsValue(string value) => _values.Contains(value);
+        public bool ContainsValue(string value) => _values.Contains(value);
 
-        public virtual int ValueCount => _values?.Count ?? 0;
+        public int ValueCount => _values?.Count ?? 0;
 
-        public virtual void SetValue(string value)
+        public void SetValue(string value)
         {
             _values.Clear();
             _values.Add(value);
         }
 
-        public virtual void SetValue(IEnumerable<string> values)
+        public void SetValue(IEnumerable<string> values)
         {
             // Remove all previous values
             _values.Clear();
             _values.UnionWith(values.Where(IsValidValue));
         }
 
-        private bool IsValidValue(string value) => !string.IsNullOrWhiteSpace(value);
+        bool IsValidValue(string value) => !string.IsNullOrWhiteSpace(value);
 
-        public virtual void AddValue(string value)
+        public void AddValue(string value)
         {
             if (!IsValidValue(value))
             {
@@ -92,12 +89,9 @@ namespace Ical.Net
             _values.Add(value);
         }
 
-        public virtual void RemoveValue(string value)
-        {
-            _values.Remove(value);
-        }
+        public void RemoveValue(string value) => _values.Remove(value);
 
-        public virtual string Value
+        public string Value
         {
             get => Values?.FirstOrDefault();
             set => SetValue(value);

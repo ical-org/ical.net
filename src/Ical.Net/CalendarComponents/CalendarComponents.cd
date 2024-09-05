@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Ical.Net.CalendarComponents.Alarm" Collapsed="true">
+    <Position X="2.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IACCAAAQAAAiABAAAAAABAAAAAAACBAAAAIAAAAAAAQ=</HashCode>
+      <FileName>CalendarComponents\Alarm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ical.Net.CalendarComponents.CalendarComponent" Collapsed="true">
+    <Position X="4.75" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAASAAAAAAAAAAAAAAAAAIAAAAAAACAAA=</HashCode>
+      <FileName>CalendarComponents\CalendarComponent.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Ical.Net.CalendarComponents.CalendarEvent">
+    <Position X="6" Y="4.5" Width="1.5" />
+    <Members>
+      <Field Name="_mEvaluator" Hidden="true" />
+      <Method Name="CalendarEvent" Hidden="true" />
+      <Method Name="CompareTo" Hidden="true" />
+      <Field Name="ComponentName" Hidden="true" />
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="ExtrapolateTimes" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="Initialize" Hidden="true" />
+      <Method Name="OccursAt" Hidden="true" />
+      <Method Name="OccursOn" Hidden="true" />
+      <Method Name="OnDeserialized" Hidden="true" />
+      <Method Name="OnDeserializing" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAJAAAEEIgUCAQQAkAIAAAQAAACAAIQAAAARAAAAIAA=</HashCode>
+      <FileName>CalendarComponents\CalendarEvent.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Bottom" Position="0.1" />
+  </Class>
+  <Class Name="Ical.Net.CalendarComponents.FreeBusy" Collapsed="true">
+    <Position X="6" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAiEAACAkAAAAAAAAAAAgAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>CalendarComponents\FreeBusy.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Ical.Net.CalendarComponents.Journal" Collapsed="true">
+    <Position X="2" Y="3.5" Width="1.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAAAgAAAAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>CalendarComponents\Journal.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ical.Net.CalendarComponents.RecurringComponent">
+    <Position X="3.75" Y="3.5" Width="1.75" />
+    <Members>
+      <Method Name="ClearEvaluation" Hidden="true" />
+      <Method Name="EnsureProperties" Hidden="true" />
+      <Method Name="Equals" Hidden="true" />
+      <Method Name="GetHashCode" Hidden="true" />
+      <Method Name="GetOccurrences" Hidden="true" />
+      <Method Name="Initialize" Hidden="true" />
+      <Method Name="OnDeserializing" Hidden="true" />
+      <Method Name="PollAlarms" Hidden="true" />
+      <Method Name="RecurringComponent" Hidden="true" />
+      <Method Name="SortByDate" Hidden="true" />
+    </Members>
+    <AssociationLine Name="RecurrenceRules" Type="Ical.Net.DataTypes.RecurrencePattern" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="3.75" Y="7.188" />
+        <Point X="3.375" Y="7.188" />
+        <Point X="3.375" Y="7.182" />
+        <Point X="2.5" Y="7.182" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>BACAAAAIAiQgCQEloIIhAAACAAAAEJQCAIBAAAEAAAA=</HashCode>
+      <FileName>CalendarComponents\RecurringComponent.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="RecurrenceDates" />
+      <Property Name="ExceptionDates" />
+      <Property Name="RecurrenceRules" />
+      <Property Name="ExceptionRules" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Ical.Net.CalendarComponents.Todo" Collapsed="true">
+    <Position X="1.75" Y="4.5" Width="1.25" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAEIgACAQIAEAIAAAAAAAAAABAAAAAQIAAAMAA=</HashCode>
+      <FileName>CalendarComponents\Todo.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Bottom" Position="0.1" />
+  </Class>
+  <Class Name="Ical.Net.CalendarComponents.UniqueComponent" Collapsed="true">
+    <Position X="4.75" Y="2" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEIIAAAAAQCgBAABAAAAAAIAIAACAAAAAAAIAA=</HashCode>
+      <FileName>CalendarComponents\UniqueComponent.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Bottom" Position="0.1" />
+  </Class>
+  <Class Name="Ical.Net.CalendarComponents.VTimeZone" Collapsed="true">
+    <Position X="7" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgABAAAIAAoEIBAAAAAAQAAIAgCiAAAAAIAAA=</HashCode>
+      <FileName>CalendarComponents\VTimeZone.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Ical.Net.CalendarObject" Collapsed="true">
+    <Position X="3" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAFEAAEQAASAAgABEQAQABAAAAIAEAAAAAAABAEQ=</HashCode>
+      <FileName>CalendarObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Ical.Net.CalendarObjectBase" Collapsed="true">
+    <Position X="1" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAACAIQAAAAAAAAgAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CalendarObjectBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Ical.Net.DataTypes.PeriodList" Collapsed="true">
+    <Position X="1" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEIABEAAAAAAADAUiAABBAQAAAAAAIAECAQAAABQIAA=</HashCode>
+      <FileName>DataTypes\PeriodList.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Ical.Net.DataTypes.RecurrencePattern" Collapsed="true">
+    <Position X="0.75" Y="6.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>gIAwAAAAAIAASCAEkIAAIEQAAIABAIAAAQAsAAAgAAQ=</HashCode>
+      <FileName>DataTypes\RecurrencePattern.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Ical.Net.CalendarComponents.IAlarmContainer" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <Members>
+      <Method Name="PollAlarms" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>CalendarComponents\IAlarmContainer.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Alarms" />
+    </ShowAsCollectionAssociation>
+  </Interface>
+  <Interface Name="Ical.Net.CalendarComponents.ICalendarComponent" Collapsed="true">
+    <Position X="9.5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CalendarComponents\ICalendarComponent.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Ical.Net.CalendarComponents.IRecurrable">
+    <Position X="7.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAgIIAgAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>CalendarComponents\IRecurrable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Ical.Net.CalendarComponents.IRecurringComponent" Collapsed="true">
+    <Position X="9.5" Y="3" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>BACAAAAAAAAgAAEEAAIAAAACAAAAEAQAAAAAAAEAAAA=</HashCode>
+      <FileName>CalendarComponents\IRecurringComponent.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Ical.Net.CalendarComponents.IUniqueComponent" Collapsed="true">
+    <Position X="9.5" Y="2" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAAACABAABAAAAAAIAAAACAAAAAAAIAA=</HashCode>
+      <FileName>CalendarComponents\IUniqueComponent.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Ical.Net.ICalendarPropertyListContainer" Collapsed="true">
+    <Position X="6.75" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>ICalendarPropertyListContainer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

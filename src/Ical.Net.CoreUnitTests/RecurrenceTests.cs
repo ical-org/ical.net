@@ -19,9 +19,9 @@ namespace Ical.Net.CoreUnitTests
     [TestFixture]
     public class RecurrenceTests
     {
-        private const string _tzid = "US-Eastern";
+        const string _tzid = "US-Eastern";
 
-        private void EventOccurrenceTest(
+        static void EventOccurrenceTest(
             Calendar cal,
             IDateTime fromDate,
             IDateTime toDate,
@@ -60,16 +60,13 @@ namespace Ical.Net.CoreUnitTests
             }            
         }
 
-        private void EventOccurrenceTest(
+        void EventOccurrenceTest(
             Calendar cal,
             IDateTime fromDate,
             IDateTime toDate,
             IDateTime[] dateTimes,
             string[] timeZones
-        )
-        {
-            EventOccurrenceTest(cal, fromDate, toDate, dateTimes, timeZones, 0);
-        }
+        ) => EventOccurrenceTest(cal, fromDate, toDate, dateTimes, timeZones, 0);
 
         /// <summary>
         /// See Page 45 of RFC 2445 - RRULE:FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30
@@ -2654,18 +2651,16 @@ namespace Ical.Net.CoreUnitTests
         [Test, Category("Recurrence")]
         public void Bug3119920()
         {
-            using (var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126T120000;INTERVAL=1;BYDAY=MO"))
-            {
-                var start = DateTime.Parse("2010-11-27 9:00:00");
-                var serializer = new RecurrencePatternSerializer();
-                var rp = (RecurrencePattern)serializer.Deserialize(sr);
-                var rpe = new RecurrencePatternEvaluator(rp);
-                var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, rp.Until, false);
+            using var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126T120000;INTERVAL=1;BYDAY=MO");
+            var start = DateTime.Parse("2010-11-27 9:00:00");
+            var serializer = new RecurrencePatternSerializer();
+            var rp = (RecurrencePattern)serializer.Deserialize(sr);
+            var rpe = new RecurrencePatternEvaluator(rp);
+            var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, rp.Until, false);
                 
-                var period = recurringPeriods.ElementAt(recurringPeriods.Count - 1);
+            var period = recurringPeriods.ElementAt(recurringPeriods.Count - 1);
 
-                Assert.AreEqual(new CalDateTime(2025, 11, 24, 9, 0, 0), period.StartTime);
-            }
+            Assert.AreEqual(new CalDateTime(2025, 11, 24, 9, 0, 0), period.StartTime);
         }
 
         /// <summary>
@@ -2702,14 +2697,12 @@ namespace Ical.Net.CoreUnitTests
         [Test, Category("Recurrence")]
         public void Bug3292737()
         {
-            using (var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126"))
-            {
-                var serializer = new RecurrencePatternSerializer();
-                var rp = (RecurrencePattern)serializer.Deserialize(sr);
+            using var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126");
+            var serializer = new RecurrencePatternSerializer();
+            var rp = (RecurrencePattern)serializer.Deserialize(sr);
 
-                Assert.IsNotNull(rp);
-                Assert.AreEqual(new DateTime(2025, 11, 26), rp.Until);
-            }
+            Assert.IsNotNull(rp);
+            Assert.AreEqual(new DateTime(2025, 11, 26), rp.Until);
         }
 
         /// <summary>
@@ -2795,7 +2788,7 @@ namespace Ical.Net.CoreUnitTests
             RecurrencePattern pattern = new RecurrencePattern("FREQ=SECONDLY;INTERVAL=10");
             pattern.RestrictionType = RecurrenceRestrictionType.NoRestriction;
 
-            var us = new CultureInfo("en-US");
+            var us = new CultureInfo("en-US", false);
 
             var startDate = new CalDateTime(DateTime.Parse("3/30/08 11:59:40 PM", us));
             var fromDate = new CalDateTime(DateTime.Parse("3/30/08 11:59:40 PM", us));
@@ -2806,8 +2799,8 @@ namespace Ical.Net.CoreUnitTests
 
             var occurrences = evaluator.Evaluate(
                 startDate, 
-                DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
-                DateUtil.SimpleDateTimeToMatch(toDate, startDate),
+                fromDate.SimpleDateTimeToMatch(startDate), 
+                toDate.SimpleDateTimeToMatch(startDate),
                 false)
                 .OrderBy(o => o.StartTime)
                 .ToList();
@@ -2836,8 +2829,8 @@ namespace Ical.Net.CoreUnitTests
 
             var occurrences = evaluator.Evaluate(
                 startDate, 
-                DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
-                DateUtil.SimpleDateTimeToMatch(toDate, startDate),
+                fromDate.SimpleDateTimeToMatch(startDate), 
+                toDate.SimpleDateTimeToMatch(startDate),
                 false);
             Assert.AreNotEqual(0, occurrences.Count);
         }
@@ -2920,9 +2913,9 @@ namespace Ical.Net.CoreUnitTests
             RecurrencePattern recur = new RecurrencePattern();
             recur.Frequency = FrequencyType.Daily;
             recur.Count = 3;
-            recur.ByDay.Add(new WeekDay(DayOfWeek.Monday));
-            recur.ByDay.Add(new WeekDay(DayOfWeek.Wednesday));
-            recur.ByDay.Add(new WeekDay(DayOfWeek.Friday));
+            recur.ByWeekDay.Add(new WeekDay(DayOfWeek.Monday));
+            recur.ByWeekDay.Add(new WeekDay(DayOfWeek.Wednesday));
+            recur.ByWeekDay.Add(new WeekDay(DayOfWeek.Friday));
             evt.RecurrenceRules.Add(recur);
 
             var serializer = new RecurrencePatternSerializer();
@@ -2934,8 +2927,8 @@ namespace Ical.Net.CoreUnitTests
         public void Test4()
         {
             RecurrencePattern rpattern = new RecurrencePattern();
-            rpattern.ByDay.Add(new WeekDay(DayOfWeek.Saturday));
-            rpattern.ByDay.Add(new WeekDay(DayOfWeek.Sunday));
+            rpattern.ByWeekDay.Add(new WeekDay(DayOfWeek.Saturday));
+            rpattern.ByWeekDay.Add(new WeekDay(DayOfWeek.Sunday));
 
             rpattern.Frequency = FrequencyType.Weekly;
 
@@ -2948,8 +2941,8 @@ namespace Ical.Net.CoreUnitTests
             // Add the exception dates
             var periods = evaluator.Evaluate(
                 evtStart,
-                DateUtil.GetSimpleDateTimeData(evtStart), 
-                DateUtil.SimpleDateTimeToMatch(evtEnd, evtStart),
+                evtStart.GetSimpleDateTimeData(), 
+                evtEnd.SimpleDateTimeToMatch(evtStart),
                 false)
                 .OrderBy(p => p.StartTime)
                 .ToList();
@@ -3054,7 +3047,7 @@ END:VCALENDAR";
             var rrule = new RecurrencePattern(FrequencyType.Weekly, interval: 1)
             {
                 Until = DateTime.Parse("2016-08-31T07:00:00"),
-                ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Wednesday)},
+                ByWeekDay = new List<WeekDay> { new WeekDay(DayOfWeek.Wednesday)},
             };
 
             var start = DateTime.Parse("2016-08-01T07:00:00");
@@ -3206,9 +3199,10 @@ END:VCALENDAR";
             Assert.IsTrue(occurrences.Count == 3);
         }
 
-        private static readonly DateTime _now = DateTime.Now;
-        private static readonly DateTime _later = _now.AddHours(1);
-        private static CalendarEvent GetEventWithRecurrenceRules()
+        static readonly DateTime _now = DateTime.Now;
+        static readonly DateTime _later = _now.AddHours(1);
+
+        static CalendarEvent GetEventWithRecurrenceRules()
         {
             var dailyForFiveDays = new RecurrencePattern(FrequencyType.Daily, 1)
             {
@@ -3277,9 +3271,9 @@ END:VCALENDAR";
             Assert.AreEqual(3, Regex.Matches(serialized, expected).Count);
         }
 
-        private static RecurrencePattern GetSimpleRecurrencePattern(int count) => new RecurrencePattern(FrequencyType.Daily, 1) { Count = count, };
+        static RecurrencePattern GetSimpleRecurrencePattern(int count) => new RecurrencePattern(FrequencyType.Daily, 1) { Count = count, };
 
-        private static CalendarEvent GetSimpleEvent()
+        static CalendarEvent GetSimpleEvent()
         {
             var e = new CalendarEvent
             {

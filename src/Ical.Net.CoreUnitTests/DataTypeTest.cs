@@ -7,10 +7,7 @@ namespace Ical.Net.CoreUnitTests
     public class DataTypeTest
     {
         [Test, Category("DataType")]
-        public void OrganizerConstructorMustAcceptNull()
-        {
-            Assert.DoesNotThrow(() => { var o = new Organizer(null); });
-        }
+        public void OrganizerConstructorMustAcceptNull() => Assert.DoesNotThrow(() => { var o = new Organizer(null); });
 
         [Test, Category("DataType")]
         public void AttachmentConstructorMustAcceptNull()

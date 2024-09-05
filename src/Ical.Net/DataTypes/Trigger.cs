@@ -10,11 +10,10 @@ namespace Ical.Net.DataTypes
     /// </summary>    
     public class Trigger : EncodableDataType
     {
-        private IDateTime _mDateTime;
-        private TimeSpan? _mDuration;
-        private string _mRelated = TriggerRelation.Start;
+        IDateTime _mDateTime;
+        TimeSpan? _mDuration;
 
-        public virtual IDateTime DateTime
+        public IDateTime DateTime
         {
             get => _mDateTime;
             set
@@ -36,7 +35,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public virtual TimeSpan? Duration
+        public TimeSpan? Duration
         {
             get => _mDuration;
             set
@@ -52,13 +51,9 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public virtual string Related
-        {
-            get => _mRelated;
-            set => _mRelated = value;
-        }
+        public string Related { get; set; } = TriggerRelation.Start;
 
-        public virtual bool IsRelative => _mDuration != null;
+        public bool IsRelative => _mDuration != null;
 
         public Trigger() {}
 
@@ -76,18 +71,17 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (!(obj is Trigger))
+            if (!(obj is Trigger trigger))
             {
                 return;
             }
 
-            var t = (Trigger) obj;
-            DateTime = t.DateTime;
-            Duration = t.Duration;
-            Related = t.Related;
+            DateTime = trigger.DateTime;
+            Duration = trigger.Duration;
+            Related = trigger.Related;
         }
 
-        protected bool Equals(Trigger other) => Equals(_mDateTime, other._mDateTime) && _mDuration.Equals(other._mDuration) && _mRelated == other._mRelated;
+        protected bool Equals(Trigger other) => Equals(_mDateTime, other._mDateTime) && _mDuration.Equals(other._mDuration) && Related == other.Related;
 
         public override bool Equals(object obj)
         {
@@ -112,7 +106,7 @@ namespace Ical.Net.DataTypes
             {
                 var hashCode = _mDateTime?.GetHashCode() ?? 0;
                 hashCode = (hashCode * 397) ^ _mDuration.GetHashCode();
-                hashCode = (hashCode * 397) ^ _mRelated?.GetHashCode() ?? 0;
+                hashCode = (hashCode * 397) ^ Related?.GetHashCode() ?? 0;
                 return hashCode;
             }
         }

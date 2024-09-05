@@ -12,10 +12,9 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof (FreeBusyEntry);
 
-        public override string SerializeToString(object obj)
+        public override string? SerializeToString(object? obj)
         {
-            var entry = obj as FreeBusyEntry;
-            if (entry == null)
+            if (!(obj is FreeBusyEntry entry))
             {
                 return base.SerializeToString(obj);
             }
@@ -58,21 +57,14 @@ namespace Ical.Net.Serialization.DataTypes
                 return entry;
             }
 
-            switch (value.ToUpperInvariant())
+            entry.Status = value.ToUpperInvariant() switch
             {
-                case "FREE":
-                    entry.Status = FreeBusyStatus.Free;
-                    break;
-                case "BUSY":
-                    entry.Status = FreeBusyStatus.Busy;
-                    break;
-                case "BUSY-UNAVAILABLE":
-                    entry.Status = FreeBusyStatus.BusyUnavailable;
-                    break;
-                case "BUSY-TENTATIVE":
-                    entry.Status = FreeBusyStatus.BusyTentative;
-                    break;
-            }
+                "FREE" => FreeBusyStatus.Free,
+                "BUSY" => FreeBusyStatus.Busy,
+                "BUSY-UNAVAILABLE" => FreeBusyStatus.BusyUnavailable,
+                "BUSY-TENTATIVE" => FreeBusyStatus.BusyTentative,
+                _ => entry.Status
+            };
 
             return entry;
         }

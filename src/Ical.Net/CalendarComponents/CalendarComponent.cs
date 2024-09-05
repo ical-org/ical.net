@@ -13,9 +13,9 @@ namespace Ical.Net.CalendarComponents
         /// <summary>
         /// Returns a list of properties that are associated with the iCalendar object.
         /// </summary>
-        public virtual CalendarPropertyList Properties { get; protected set; }
+        public CalendarPropertyList Properties { get; protected set; }
 
-        public CalendarComponent() : base()
+        public CalendarComponent()
         {
             Initialize();
         }
@@ -25,10 +25,7 @@ namespace Ical.Net.CalendarComponents
             Initialize();
         }
 
-        private void Initialize()
-        {
-            Properties = new CalendarPropertyList(this);
-        }
+        void Initialize() => Properties = new CalendarPropertyList(this);
 
         protected override void OnDeserializing(StreamingContext context)
         {
@@ -41,8 +38,7 @@ namespace Ical.Net.CalendarComponents
         {
             base.CopyFrom(obj);
 
-            var c = obj as ICalendarComponent;
-            if (c == null)
+            if (!(obj is ICalendarComponent c))
             {
                 return;
             }
@@ -57,7 +53,7 @@ namespace Ical.Net.CalendarComponents
         /// <summary>
         /// Adds a property to this component.
         /// </summary>
-        public virtual void AddProperty(string name, string value)
+        public void AddProperty(string name, string value)
         {
             var p = new CalendarProperty(name, value);
             AddProperty(p);
@@ -66,7 +62,7 @@ namespace Ical.Net.CalendarComponents
         /// <summary>
         /// Adds a property to this component.
         /// </summary>
-        public virtual void AddProperty(ICalendarProperty p)
+        public void AddProperty(ICalendarProperty p)
         {
             p.Parent = this;
             Properties.Set(p.Name, p.Value);

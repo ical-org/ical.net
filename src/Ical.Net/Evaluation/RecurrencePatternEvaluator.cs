@@ -49,7 +49,7 @@ namespace Ical.Net.Evaluation
     public class RecurrencePatternEvaluator : Evaluator
     {
         // FIXME: in ical4j this is configurable.
-        private const int _maxIncrementCount = 1000;
+        const int _maxIncrementCount = 1000;
 
         protected RecurrencePattern Pattern { get; set; }
 
@@ -58,7 +58,7 @@ namespace Ical.Net.Evaluation
             Pattern = pattern;
         }
 
-        private RecurrencePattern ProcessRecurrencePattern(IDateTime referenceDate)
+        RecurrencePattern ProcessRecurrencePattern(IDateTime referenceDate)
         {
             var r = new RecurrencePattern();
             r.CopyFrom(Pattern);
@@ -66,169 +66,168 @@ namespace Ical.Net.Evaluation
             // Convert the UNTIL value to one that matches the same time information as the reference date
             if (r.Until != DateTime.MinValue)
             {
-                r.Until = DateUtil.MatchTimeZone(referenceDate, new CalDateTime(r.Until, referenceDate.TzId)).Value;
+                r.Until = referenceDate.MatchTimeZone(new CalDateTime(r.Until, referenceDate.TzId)).Value;
             }
 
-            if (r.Frequency > FrequencyType.Secondly && r.BySecond.Count == 0 && referenceDate.HasTime
-                /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
+            if (referenceDate.HasTime)
             {
-                r.BySecond.Add(referenceDate.Second);
-            }
-            if (r.Frequency > FrequencyType.Minutely && r.ByMinute.Count == 0 && referenceDate.HasTime
-                /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
-            {
-                r.ByMinute.Add(referenceDate.Minute);
-            }
-            if (r.Frequency > FrequencyType.Hourly && r.ByHour.Count == 0 && referenceDate.HasTime
-                /* NOTE: Fixes a bug where all-day events have BySecond/ByMinute/ByHour added incorrectly */)
-            {
-                r.ByHour.Add(referenceDate.Hour);
+                if (r.Frequency > FrequencyType.Secondly && 
+                    r.BySecond.Count == 0) { //once, at the referenceDate.Second
+                    r.BySecond.Add(referenceDate.Second);
+                }
+                if (r.Frequency > FrequencyType.Minutely && 
+                    r.ByMinute.Count == 0) { //once, at the referenceDate.Minute
+                    r.ByMinute.Add(referenceDate.Minute);
+                }
+                if (r.Frequency > FrequencyType.Hourly && 
+                    r.ByHour.Count == 0) { //once, at the referenceDate.Hour
+                    r.ByHour.Add(referenceDate.Hour);
+                }
             }
 
             // If BYDAY, BYYEARDAY, or BYWEEKNO is specified, then
             // we don't default BYDAY, BYMONTH or BYMONTHDAY
-            if (r.ByDay.Count == 0)
-            {
-                // If the frequency is weekly, use the original date's day of week.
-                // NOTE: fixes WeeklyCount1() and WeeklyUntil1() handling
-                // If BYWEEKNO is specified and BYMONTHDAY/BYYEARDAY is not specified,
-                // then let's add BYDAY to BYWEEKNO.
-                // NOTE: fixes YearlyByWeekNoX() handling
-                if (r.Frequency == FrequencyType.Weekly || (r.ByWeekNo.Count > 0 && r.ByMonthDay.Count == 0 && r.ByYearDay.Count == 0))
-                {
-                    r.ByDay.Add(new WeekDay(referenceDate.DayOfWeek));
-                }
+            if (r.ByWeekDay.Count != 0) {
+                return r;
+            }
 
-                // If BYMONTHDAY is not specified,
-                // default to the current day of month.
-                // NOTE: fixes YearlyByMonth1() handling, added BYYEARDAY exclusion
-                // to fix YearlyCountByYearDay1() handling
-                if (r.Frequency > FrequencyType.Weekly && r.ByWeekNo.Count == 0 && r.ByYearDay.Count == 0 && r.ByMonthDay.Count == 0)
-                {
-                    r.ByMonthDay.Add(referenceDate.Day);
-                }
+            // If the frequency is weekly, use the original date's day of week.
+            // NOTE: fixes WeeklyCount1() and WeeklyUntil1() handling
+            // If BYWEEKNO is specified and BYMONTHDAY/BYYEARDAY is not specified,
+            // then let's add BYDAY to BYWEEKNO.
+            // NOTE: fixes YearlyByWeekNoX() handling
+            if (r.Frequency == FrequencyType.Weekly || (r.ByWeekNo.Count > 0 && r.ByMonthDay.Count == 0 && 
+                r.ByYearDay.Count == 0)) { //once, at the referenceDate.Hour
+                r.ByWeekDay.Add(new WeekDay(referenceDate.DayOfWeek));
+            }
 
-                // If BYMONTH is not specified, default to
-                // the current month.
-                // NOTE: fixes YearlyCountByYearDay1() handling
-                if (r.Frequency > FrequencyType.Monthly && r.ByWeekNo.Count == 0 && r.ByYearDay.Count == 0 && r.ByMonth.Count == 0)
-                {
-                    r.ByMonth.Add(referenceDate.Month);
-                }
+            // If BYMONTHDAY is not specified, default to the current day of month.
+            // NOTE: fixes YearlyByMonth1() handling, added BYYEARDAY exclusion
+            // to fix YearlyCountByYearDay1() handling
+            if (r.Frequency > FrequencyType.Weekly && r.ByWeekNo.Count == 0 && r.ByYearDay.Count == 0 && 
+                r.ByMonthDay.Count == 0) { //once, at the referenceDate.Day
+                r.ByMonthDay.Add(referenceDate.Day);
+            }
+
+            // If BYMONTH is not specified, default to the current month.
+            // NOTE: fixes YearlyCountByYearDay1() handling
+            if (r.Frequency > FrequencyType.Monthly && r.ByWeekNo.Count == 0 && r.ByYearDay.Count == 0 && 
+                r.ByMonth.Count == 0) { //once, at the referenceDate.Month
+                r.ByMonth.Add(referenceDate.Month);
             }
 
             return r;
         }
 
-        private void EnforceEvaluationRestrictions(RecurrencePattern pattern)
+        static void EnforceEvaluationRestrictions(RecurrencePattern pattern)
         {
             RecurrenceEvaluationModeType? evaluationMode = pattern.EvaluationMode;
             RecurrenceRestrictionType? evaluationRestriction = pattern.RestrictionType;
 
-            if (evaluationRestriction != RecurrenceRestrictionType.NoRestriction)
+            if (evaluationRestriction == RecurrenceRestrictionType.NoRestriction)
             {
-                switch (evaluationMode)
-                {
-                    case RecurrenceEvaluationModeType.AdjustAutomatically:
-                        switch (pattern.Frequency)
+                return;
+            }
+
+            switch (evaluationMode)
+            {
+                case RecurrenceEvaluationModeType.AdjustAutomatically:
+                    switch (pattern.Frequency)
+                    {
+                        case FrequencyType.Secondly:
                         {
-                            case FrequencyType.Secondly:
+                            switch (evaluationRestriction)
                             {
-                                switch (evaluationRestriction)
-                                {
-                                    case RecurrenceRestrictionType.Default:
-                                    case RecurrenceRestrictionType.RestrictSecondly:
-                                        pattern.Frequency = FrequencyType.Minutely;
-                                        break;
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                        pattern.Frequency = FrequencyType.Hourly;
-                                        break;
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        pattern.Frequency = FrequencyType.Daily;
-                                        break;
-                                }
+                                case RecurrenceRestrictionType.Default:
+                                case RecurrenceRestrictionType.RestrictSecondly:
+                                    pattern.Frequency = FrequencyType.Minutely;
+                                    break;
+                                case RecurrenceRestrictionType.RestrictMinutely:
+                                    pattern.Frequency = FrequencyType.Hourly;
+                                    break;
+                                case RecurrenceRestrictionType.RestrictHourly:
+                                    pattern.Frequency = FrequencyType.Daily;
+                                    break;
                             }
-                                break;
-                            case FrequencyType.Minutely:
-                            {
-                                switch (evaluationRestriction)
-                                {
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                        pattern.Frequency = FrequencyType.Hourly;
-                                        break;
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        pattern.Frequency = FrequencyType.Daily;
-                                        break;
-                                }
-                            }
-                                break;
-                            case FrequencyType.Hourly:
-                            {
-                                switch (evaluationRestriction)
-                                {
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        pattern.Frequency = FrequencyType.Daily;
-                                        break;
-                                }
-                            }
-                                break;
                         }
-                        break;
-                    case RecurrenceEvaluationModeType.ThrowException:
-                    case RecurrenceEvaluationModeType.Default:
-                        switch (pattern.Frequency)
+                            break;
+                        case FrequencyType.Minutely:
                         {
-                            case FrequencyType.Secondly:
+                            pattern.Frequency = evaluationRestriction switch
                             {
-                                switch (evaluationRestriction)
-                                {
-                                    case RecurrenceRestrictionType.Default:
-                                    case RecurrenceRestrictionType.RestrictSecondly:
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new ArgumentException();
-                                }
-                            }
-                                break;
-                            case FrequencyType.Minutely:
-                            {
-                                switch (evaluationRestriction)
-                                {
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new ArgumentException();
-                                }
-                            }
-                                break;
-                            case FrequencyType.Hourly:
-                            {
-                                switch (evaluationRestriction)
-                                {
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new ArgumentException();
-                                }
-                            }
-                                break;
+                                RecurrenceRestrictionType.RestrictMinutely => FrequencyType.Hourly,
+                                RecurrenceRestrictionType.RestrictHourly => FrequencyType.Daily,
+                                _ => pattern.Frequency
+                            };
                         }
-                        break;
-                }
+                            break;
+                        case FrequencyType.Hourly:
+                        {
+                            pattern.Frequency = evaluationRestriction switch
+                            {
+                                RecurrenceRestrictionType.RestrictHourly => FrequencyType.Daily,
+                                _ => pattern.Frequency
+                            };
+                        }
+                            break;
+                    }
+                    break;
+                case RecurrenceEvaluationModeType.ThrowException:
+                case RecurrenceEvaluationModeType.Default:
+                    switch (pattern.Frequency)
+                    {
+                        case FrequencyType.Secondly:
+                        {
+                            switch (evaluationRestriction)
+                            {
+                                case RecurrenceRestrictionType.Default:
+                                case RecurrenceRestrictionType.RestrictSecondly:
+                                case RecurrenceRestrictionType.RestrictMinutely:
+                                case RecurrenceRestrictionType.RestrictHourly:
+                                    throw new ArgumentException();
+                            }
+                        }
+                            break;
+                        case FrequencyType.Minutely:
+                        {
+                            switch (evaluationRestriction)
+                            {
+                                case RecurrenceRestrictionType.RestrictMinutely:
+                                case RecurrenceRestrictionType.RestrictHourly:
+                                    throw new ArgumentException();
+                            }
+                        }
+                            break;
+                        case FrequencyType.Hourly:
+                        {
+                            switch (evaluationRestriction)
+                            {
+                                case RecurrenceRestrictionType.RestrictHourly:
+                                    throw new ArgumentException();
+                            }
+                        }
+                            break;
+                    }
+                    break;
             }
         }
 
-        /**
-         * Returns a list of start dates in the specified period represented by this recur. This method includes a base date
-         * argument, which indicates the start of the fist occurrence of this recurrence. The base date is used to inject
-         * default values to return a set of dates in the correct format. For example, if the search start date (start) is
-         * Wed, Mar 23, 12:19PM, but the recurrence is Mon - Fri, 9:00AM - 5:00PM, the start dates returned should all be at
-         * 9:00AM, and not 12:19PM.
-         */
-
-        private HashSet<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd, int maxCount, RecurrencePattern pattern,
-            bool includeReferenceDateInResults)
+        /// <summary> Returns a list of <paramref name="maxCount"/> dates of this recurrence in the specified period. </summary>
+        /// <remarks>
+        /// This method includes a <see cref="seed"/> date argument,
+        /// which indicates the start of the fist occurrence of this recurrence.
+        /// The base date is used to inject default values to return a set of dates in the correct format.
+        ///
+        /// For example, if the search start date (start) is Wed, Mar 23, 12:19PM,
+        /// but the recurrence is Mon - Fri, 9:00AM - 5:00PM,
+        /// the start dates returned should all be at 9:00AM, and not 12:19PM.
+        /// </remarks>
+        HashSet<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd
+            , int maxCount, RecurrencePattern pattern, bool includeReferenceDateInResults)
         {
             var dates = new HashSet<DateTime>();
-            var originalDate = DateUtil.GetSimpleDateTimeData(seed);
-            var seedCopy = DateUtil.GetSimpleDateTimeData(seed);
+            var originalDate = seed.GetSimpleDateTimeData();
+            var seedCopy = seed.GetSimpleDateTimeData();
 
             if (includeReferenceDateInResults)
             {
@@ -239,16 +238,15 @@ namespace Ical.Net.Evaluation
             // (only applicable where a COUNT is not specified)
             if (pattern.Count == int.MinValue)
             {
-                var incremented = seedCopy;
-                IncrementDate(ref incremented, pattern, pattern.Interval);
-                while (incremented < periodStart)
+                for(var incremented = pattern.IncrementDate(seedCopy)
+                    ; incremented < periodStart
+                    ; incremented = pattern.IncrementDate(incremented))
                 {
                     seedCopy = incremented;
-                    IncrementDate(ref incremented, pattern, pattern.Interval);
                 }
             }
 
-            var expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
+            var expandBehavior = pattern.GetExpandBehaviorList();
 
             var noCandidateIncrementCount = 0;
             var candidate = DateTime.MinValue;
@@ -269,7 +267,7 @@ namespace Ical.Net.Evaluation
                     break;
                 }
 
-                var candidates = GetCandidates(seedCopy, pattern, expandBehavior);
+                var candidates = GetCandidates_(seedCopy, pattern, expandBehavior);
                 if (candidates.Count > 0)
                 {
                     noCandidateIncrementCount = 0;
@@ -308,22 +306,16 @@ namespace Ical.Net.Evaluation
                     }
                 }
 
-                IncrementDate(ref seedCopy, pattern, pattern.Interval);
+                seedCopy = pattern.IncrementDate(seedCopy);
             }
 
             return dates;
         }
 
-        /**
-         * Returns a list of possible dates generated from the applicable BY* rules, using the specified date as a seed.
-         * @param date the seed date
-         * @param value the type of date list to return
-         * @return a DateList
-         */
-
-        private List<DateTime> GetCandidates(DateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
+        /// <summary> Returns a list of possible dates generated from the applicable BY* rules, using the <paramref name="seedDate"/>. </summary>
+        List<DateTime> GetCandidates_(DateTime seedDate, RecurrencePattern pattern, IReadOnlyList<bool?> expandBehaviors)
         {
-            var dates = new List<DateTime> {date};
+            var dates = new List<DateTime> {seedDate};
             dates = GetMonthVariants(dates, pattern, expandBehaviors[0]);
             dates = GetWeekNoVariants(dates, pattern, expandBehaviors[1]);
             dates = GetYearDayVariants(dates, pattern, expandBehaviors[2]);
@@ -336,12 +328,13 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        /**
-         * Applies BYSETPOS rules to <code>dates</code>. Valid positions are from 1 to the size of the date list. Invalid
-         * positions are ignored.
-         * @param dates
-         */
-        private List<DateTime> ApplySetPosRules(List<DateTime> dates, RecurrencePattern pattern)
+        /// <summary> Applies <see cref="RecurrencePattern.BySetPosition"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
+        /// <returns>the full <paramref name="dates"/> when no Rules were specified. </returns>
+        /// <summary> Selects only the  positions from the <paramref name="dates"/> list. </summary>
+        /// <remarks>
+        /// Invalid positions are ignored. 
+        /// </remarks>
+        static List<DateTime> ApplySetPosRules(List<DateTime> dates, RecurrencePattern pattern)
         {
             // return if no SETPOS rules specified..
             if (pattern.BySetPosition.Count == 0)
@@ -354,21 +347,18 @@ namespace Ical.Net.Evaluation
 
             var size = dates.Count;
             var setPosDates = pattern.BySetPosition
-                .Where(p => p > 0 && p <= size || p < 0 && p >= -size)  //Protect against out of range access
-                .Select(p => p > 0 && p <= size
-                    ? dates[p - 1]
-                    : dates[size + p])
+                .Where(p => p > 0 && p <= size
+                             || p < 0 && p >= -size)  //Protect against out of range access
+                .Select(p => p > 0
+                    ? dates[p - 1] //starting at 1! 
+                    : dates[size + p])  //starting at -1!
                 .ToList();
             return setPosDates;
         }
 
-        /**
-         * Applies BYMONTH rules specified in this Recur instance to the specified date list. If no BYMONTH rules are
-         * specified the date list is returned unmodified.
-         * @param dates
-         * @return
-         */
-        private List<DateTime> GetMonthVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        /// <summary> Applies <see cref="RecurrencePattern.ByMonth"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
+        /// <returns>the full <paramref name="dates"/> when no Rules were specified. </returns>
+        static List<DateTime> GetMonthVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByMonth.Count == 0)
             {
@@ -389,13 +379,9 @@ namespace Ical.Net.Evaluation
             return dateSet.ToList();
         }
 
-        /**
-         * Applies BYWEEKNO rules specified in this Recur instance to the specified date list. If no BYWEEKNO rules are
-         * specified the date list is returned unmodified.
-         * @param dates
-         * @return
-         */
-        private List<DateTime> GetWeekNoVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        /// <summary> Applies <see cref="RecurrencePattern.ByWeekNo"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
+        /// <returns>the full <paramref name="dates"/> when no Rules were specified. </returns>
+        List<DateTime> GetWeekNoVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByWeekNo.Count == 0)
             {
@@ -445,14 +431,9 @@ namespace Ical.Net.Evaluation
             return weekNoDates;
         }
 
-        /**
-         * Applies BYYEARDAY rules specified in this Recur instance to the specified date list. If no BYYEARDAY rules are
-         * specified the date list is returned unmodified.
-         * @param dates
-         * @return
-         */
-
-        private List<DateTime> GetYearDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        /// <summary> Applies <see cref="RecurrencePattern.ByYearDay"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
+        /// <returns>the full <paramref name="dates"/> when no Rules were specified. </returns>
+        static List<DateTime> GetYearDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByYearDay.Count == 0)
             {
@@ -497,14 +478,9 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        /**
-         * Applies BYMONTHDAY rules specified in this Recur instance to the specified date list. If no BYMONTHDAY rules are
-         * specified the date list is returned unmodified.
-         * @param dates
-         * @return
-         */
-
-        private List<DateTime> GetMonthDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        /// <summary> Applies <see cref="RecurrencePattern.ByMonthDay"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
+        /// <returns>the full <paramref name="dates"/> when no Rules were specified. </returns>
+        List<DateTime> GetMonthDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByMonthDay.Count == 0)
             {
@@ -512,7 +488,7 @@ namespace Ical.Net.Evaluation
             }
 
             if (expand.Value)
-            {
+            {// expand behavior
                 var monthDayDates = new List<DateTime>();
                 foreach (var date in dates)
                 {
@@ -559,16 +535,11 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        /**
-         * Applies BYDAY rules specified in this Recur instance to the specified date list. If no BYDAY rules are specified
-         * the date list is returned unmodified.
-         * @param dates
-         * @return
-         */
-
-        private List<DateTime> GetDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        /// <summary> Applies <see cref="RecurrencePattern.ByWeekDay"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
+        /// <returns>the full <paramref name="dates"/> when no Rules were specified. </returns>
+        List<DateTime> GetDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
-            if (expand == null || pattern.ByDay.Count == 0)
+            if (expand == null || pattern.ByWeekDay.Count == 0)
             {
                 return dates;
             }
@@ -579,7 +550,7 @@ namespace Ical.Net.Evaluation
                 var weekDayDates = new List<DateTime>();
                 foreach (var date in dates)
                 {
-                    foreach (var day in pattern.ByDay)
+                    foreach (var day in pattern.ByWeekDay)
                     {
                         weekDayDates.AddRange(GetAbsWeekDays(date, day, pattern));
                     }
@@ -592,9 +563,9 @@ namespace Ical.Net.Evaluation
             for (var i = dates.Count - 1; i >= 0; i--)
             {
                 var date = dates[i];
-                for (var j = 0; j < pattern.ByDay.Count; j++)
+                for (var j = 0; j < pattern.ByWeekDay.Count; j++)
                 {
-                    var weekDay = pattern.ByDay[j];
+                    var weekDay = pattern.ByWeekDay[j];
                     if (weekDay.DayOfWeek.Equals(date.DayOfWeek))
                     {
                         // If no offset is specified, simply test the day of week!
@@ -613,15 +584,8 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        /**
-         * Returns a list of applicable dates corresponding to the specified week day in accordance with the frequency
-         * specified by this recurrence rule.
-         * @param date
-         * @param weekDay
-         * @return
-         */
-
-        private List<DateTime> GetAbsWeekDays(DateTime date, WeekDay weekDay, RecurrencePattern pattern)
+        /// <summary> Returns a list of times with <paramref name="pattern"/> frequency on the <paramref name="weekDay"/>. </summary>
+        List<DateTime> GetAbsWeekDays(DateTime date, WeekDay weekDay, RecurrencePattern pattern)
         {
             var days = new List<DateTime>();
 
@@ -701,19 +665,15 @@ namespace Ical.Net.Evaluation
                     date = date.AddDays(7);
                 }
             }
-            return GetOffsetDates(days, weekDay.Offset);
+            return GetOffsetDate(days, weekDay.Offset);
         }
 
-        /**
-         * Returns a single-element sublist containing the element of <code>list</code> at <code>offset</code>. Valid
-         * offsets are from 1 to the size of the list. If an invalid offset is supplied, all elements from <code>list</code>
-         * are added to <code>sublist</code>.
-         * @param list
-         * @param offset
-         * @param sublist
-         */
-
-        private List<DateTime> GetOffsetDates(List<DateTime> dates, int offset)
+        /// <summary> Returns a single-element sublist containing <paramref name="dates"/>[<paramref name="offset"/>-1]. </summary>
+        /// <remarks>
+        /// Valid <paramref name="offset"/> are from -<paramref name="dates"/>.Length to <paramref name="dates"/>.Length.
+        /// </remarks>
+        /// <returns> an empty list, when an invalid offset is supplied. </returns>
+        static List<DateTime> GetOffsetDate(List<DateTime> dates, int offset)
         {
             if (offset == int.MinValue)
             {
@@ -733,14 +693,9 @@ namespace Ical.Net.Evaluation
             return offsetDates;
         }
 
-        /**
-         * Applies BYHOUR rules specified in this Recur instance to the specified date list. If no BYHOUR rules are
-         * specified the date list is returned unmodified.
-         * @param dates
-         * @return
-         */
-
-        private List<DateTime> GetHourVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        /// <summary> Applies <see cref="RecurrencePattern.ByHour"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
+        /// <returns>the full <paramref name="dates"/> when no Rules were specified. </returns>
+        static List<DateTime> GetHourVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByHour.Count == 0)
             {
@@ -783,14 +738,9 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        /**
-         * Applies BYMINUTE rules specified in this Recur instance to the specified date list. If no BYMINUTE rules are
-         * specified the date list is returned unmodified.
-         * @param dates
-         * @return
-         */
-
-        private List<DateTime> GetMinuteVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        /// <summary> Applies <see cref="RecurrencePattern.ByMinute"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
+        /// <returns>the full <paramref name="dates"/> when no Rules were specified. </returns>
+        static List<DateTime> GetMinuteVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByMinute.Count == 0)
             {
@@ -833,14 +783,9 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        /**
-         * Applies BYSECOND rules specified in this Recur instance to the specified date list. If no BYSECOND rules are
-         * specified the date list is returned unmodified.
-         * @param dates
-         * @return
-         */
-
-        private List<DateTime> GetSecondVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
+        /// <summary> Applies <see cref="RecurrencePattern.BySecond"/> rules specified in the <paramref name="pattern"/> to the <paramref name="dates"/> list. </summary>
+        /// <returns>the full <paramref name="dates"/> when no Rules were specified. </returns>
+        static List<DateTime> GetSecondVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.BySecond.Count == 0)
             {
@@ -883,18 +828,18 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        private Period CreatePeriod(DateTime dt, IDateTime referenceDate)
+        /// <summary> Create a period with unspecified Duration from the <paramref name="startDateTime"/>. </summary>
+        static Period CreatePeriod(DateTime startDateTime, IDateTime referenceDate)
         {
             // Turn each resulting date/time into an IDateTime and associate it
             // with the reference date.
-            IDateTime newDt = new CalDateTime(dt, referenceDate.TzId);
+            IDateTime newDt = new CalDateTime(startDateTime, referenceDate.TzId);
 
             // NOTE: fixes bug #2938007 - hasTime missing
             newDt.HasTime = referenceDate.HasTime;
 
             newDt.AssociateWith(referenceDate);
 
-            // Create a period from the new date/time.
             return new Period(newDt);
         }
 

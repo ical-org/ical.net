@@ -18,13 +18,10 @@ namespace Ical.Net.Serialization
 
         public override Type TargetType => typeof(CalendarComponent);
 
-        public override string SerializeToString(object obj)
-        {
-            if (!(obj is ICalendarComponent c))
-            {
-                return null;
-            }
+        public override string SerializeToString(object obj) => Serialize((ICalendarComponent)obj);
 
+        public string Serialize(ICalendarComponent c)
+        {
             var sb = new StringBuilder();
             var upperName = c.Name.ToUpperInvariant();
             sb.Append(TextUtil.FoldLines($"BEGIN:{upperName}"));
@@ -55,11 +52,11 @@ namespace Ical.Net.Serialization
             return sb.ToString();
         }
 
-        public override object Deserialize(TextReader tr) => null;
+        public override object? Deserialize(TextReader tr) => null;
 
         public class PropertyAlphabetizer : IComparer<ICalendarProperty>
         {
-            public int Compare(ICalendarProperty x, ICalendarProperty y)
+            public int Compare(ICalendarProperty? x, ICalendarProperty? y)
             {
                 if (x == y)
                 {

@@ -6,20 +6,22 @@ using System.Reflection;
 using BenchmarkDotNet.Attributes;
 using Ical.Net;
 using Ical.Net.DataTypes;
+using NUnit.Framework;
 
 namespace PerfTests
 {
     public class ApplicationWorkflows
     {
-        private static readonly TimeSpan _oneYear = TimeSpan.FromDays(365);
-        private static readonly DateTime _searchStart = DateTime.Now.Subtract(_oneYear);
-        private static readonly DateTime _searchEnd = DateTime.Now.Add(_oneYear);
-        private static readonly List<string> _manyCalendars = GetIcalStrings();
+        const int DaysPerYear = 365;
+        static readonly TimeSpan _oneYear = TimeSpan.FromDays(DaysPerYear);
+        static readonly DateTime _searchStart = DateTime.Now.Subtract(_oneYear);
+        static readonly DateTime _searchEnd = DateTime.Now.Add(_oneYear);
+        static readonly List<string> _manyCalendars = GetIcalStrings();
 
-        private static List<string> GetIcalStrings()
+        static List<string> GetIcalStrings()
         {
             var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var topLevelIcsPath = Path.GetFullPath(Path.Combine(currentDirectory, @"..\..\..\..\", @"Ical.Net.CoreUnitTests\Calendars"));
+            var topLevelIcsPath = Path.GetFullPath(Path.Combine(currentDirectory!, @".\Calendars"));
             return Directory.EnumerateFiles(topLevelIcsPath, "*.ics", SearchOption.AllDirectories)
                 .Select(File.ReadAllText)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -30,47 +32,46 @@ namespace PerfTests
         }
 
         [Benchmark]
-        public List<Occurrence> SingleThreaded()
+        public void SingleThreaded() => SingleThreaded_();
+        [Test(ExpectedResult = 364)]
+        public static int SingleThreaded_()
         {
-            return _manyCalendars
+            var list = _manyCalendars
                 .SelectMany(Calendar.Load<Calendar>)
                 .SelectMany(c => c.Events)
-                .SelectMany(e => e.GetOccurrences(_searchStart, _searchEnd))
-                .ToList();
+                .SelectMany(e => e.GetOccurrences(_searchStart, _searchEnd)).ToList();
+            return list.Count;
         }
 
         [Benchmark]
-        public List<Occurrence> ParallelUponDeserialize()
-        {
-            return _manyCalendars
+        public int ParallelUponDeserialize() => ParallelUponDeserialize_();
+        [Test(ExpectedResult = 364)]
+        public static int ParallelUponDeserialize_() => _manyCalendars
                 .AsParallel()
                 .SelectMany(Calendar.Load<Calendar>)
                 .SelectMany(c => c.Events)
                 .SelectMany(e => e.GetOccurrences(_searchStart, _searchEnd))
-                .ToList();
-        }
+                .Count();
 
         [Benchmark]
-        public List<Occurrence> ParallelUponGetOccurrences()
-        {
-            return _manyCalendars
+        public List<Occurrence> ParallelUponGetOccurrences() => ParallelUponGetOccurrences_();
+        public static List<Occurrence> ParallelUponGetOccurrences_() => _manyCalendars
                 .SelectMany(Calendar.Load<Calendar>)
                 .SelectMany(c => c.Events)
                 .AsParallel()
                 .SelectMany(e => e.GetOccurrences(_searchStart, _searchEnd))
                 .ToList();
-        }
 
         [Benchmark]
-        public List<Occurrence> ParallelDeserializeSequentialGatherEventsParallelGetOccurrences()
-        {
-            return _manyCalendars
+        public int ParallelDeserializeSequentialGatherEventsParallelGetOccurrences()
+            => ParallelDeserializeSequentialGatherEventsParallelGetOccurrences_();
+        [Test(ExpectedResult = 364)]
+        public static int ParallelDeserializeSequentialGatherEventsParallelGetOccurrences_() => _manyCalendars
                 .AsParallel()
                 .SelectMany(Calendar.Load<Calendar>)
                 .AsSequential()
                 .SelectMany(c => c.Events)
                 .SelectMany(e => e.GetOccurrences(_searchStart, _searchEnd))
-                .ToList();
-        }
+                .Count();
     }
 }

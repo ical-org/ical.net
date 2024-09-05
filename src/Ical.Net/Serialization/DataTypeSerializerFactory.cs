@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization.DataTypes;
 
@@ -16,7 +15,7 @@ namespace Ical.Net.Serialization
         /// </summary>
         /// <param name="objectType">The type of object to be serialized.</param>
         /// <param name="ctx">The serialization context.</param>
-        public virtual ISerializer Build(Type objectType, SerializationContext ctx)
+        public ISerializer Build(Type objectType, SerializationContext ctx)
         {
             if (objectType != null)
             {

@@ -18,7 +18,7 @@ namespace Ical.Net.CoreUnitTests
             Assert.IsNotNull(iCal, "iCalendar did not load.");
         }
 
-        private const string _tzid = "US-Eastern";
+        const string _tzid = "US-Eastern";
 
         public static void TestCal(Calendar cal)
         {

@@ -2,13 +2,16 @@
 using System.Linq;
 using BenchmarkDotNet.Attributes;
 using Ical.Net;
+using NUnit.Framework;
 
 namespace PerfTests
 {
     public class ThroughputTests
     {
         [Benchmark]
-        public void DeserializeAndComputeUntilOccurrences()
+        public void DeserializeAndComputeUntilOccurrences() => DeserializeAndComputeUntilOccurrences_();
+        [Test(ExpectedResult = 366)]
+        public static int DeserializeAndComputeUntilOccurrences_()
         {
             const string e = @"BEGIN:VCALENDAR
 PRODID:-//Microsoft Corporation//Outlook 12.0 MIMEDIR//EN
@@ -66,11 +69,13 @@ END:VCALENDAR";
             var calendarEvent = calendar.Events.First();
             var searchStart = new DateTime(2009, 06, 20);
             var searchEnd = new DateTime(2011,06,23);
-            var occurrences = calendarEvent.GetOccurrences(searchStart, searchEnd);
+            return calendarEvent.GetOccurrences(searchStart, searchEnd).Count;
         }
 
         [Benchmark]
-        public void DeserializeAndComputeCountOccurrences()
+        public void DeserializeAndComputeCountOccurrences() => DeserializeAndComputeCountOccurrences_();
+        [Test(ExpectedResult = 365)]
+        public static int DeserializeAndComputeCountOccurrences_()
         {
             const string e = @"BEGIN:VCALENDAR
 PRODID:-//Microsoft Corporation//Outlook 12.0 MIMEDIR//EN
@@ -128,7 +133,7 @@ END:VCALENDAR";
             var calendarEvent = calendar.Events.First();
             var searchStart = new DateTime(2009, 06, 20);
             var searchEnd = new DateTime(2011, 06, 23);
-            var occurrences = calendarEvent.GetOccurrences(searchStart, searchEnd);
+            return calendarEvent.GetOccurrences(searchStart, searchEnd).Count;
         }
     }
 }

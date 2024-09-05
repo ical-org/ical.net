@@ -13,14 +13,10 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof (StatusCode);
 
-        public override string SerializeToString(object obj)
-        {
-            var sc = obj as StatusCode;
-            if (sc == null)
-            {
-                return null;
-            }
+        public override string? SerializeToString(object? obj) => obj is StatusCode sc ? SerializeToString(sc) : null;
 
+        public string SerializeToString(StatusCode sc)
+        {
             var vals = new string[sc.Parts.Length];
             for (var i = 0; i < sc.Parts.Length; i++)
             {
@@ -35,8 +31,7 @@ namespace Ical.Net.Serialization.DataTypes
         {
             var value = tr.ReadToEnd();
 
-            var sc = CreateAndAssociate() as StatusCode;
-            if (sc == null)
+            if (!(CreateAndAssociate() is StatusCode sc))
             {
                 return null;
             }

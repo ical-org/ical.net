@@ -45,17 +45,17 @@ namespace Ical.Net.CoreUnitTests
             yield return new TestCaseData(IcsFiles.XProperty2).SetName("XProperty2");
         }
 
-        private static readonly DateTime _now = DateTime.Now;
-        private static readonly DateTime _later = _now.AddHours(1);
+        static readonly DateTime _now = DateTime.Now;
+        static readonly DateTime _later = _now.AddHours(1);
 
-        private static CalendarEvent GetSimpleEvent() => new CalendarEvent
+        static CalendarEvent GetSimpleEvent() => new CalendarEvent
         {
             DtStart = new CalDateTime(_now),
             DtEnd = new CalDateTime(_later),
             Duration = TimeSpan.FromHours(1),
         };
 
-        private static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } });
+        static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } });
 
         [Test]
         public void EventUid_Tests()

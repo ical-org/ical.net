@@ -12,7 +12,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof (Organizer);
 
-        public override string SerializeToString(object obj)
+        public override string? SerializeToString(object? obj)
         {
             try
             {

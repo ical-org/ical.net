@@ -6,7 +6,8 @@ namespace Ical.Net.DataTypes
     {
         Type GetValueType();
         void SetValueType(string type);
-        ICalendarObject AssociatedObject { get; set; }
+
+        ICalendarObject? AssociatedObject { get; set; }
         Calendar Calendar { get; }
 
         string Language { get; set; }

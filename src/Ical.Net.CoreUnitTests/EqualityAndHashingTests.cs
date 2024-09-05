@@ -13,9 +13,9 @@ namespace Ical.Net.CoreUnitTests
 {
     public class EqualityAndHashingTests
     {
-        private const string _someTz = "America/Los_Angeles";
-        private static readonly DateTime _nowTime = DateTime.Parse("2016-07-16T16:47:02.9310521-04:00");
-        private static readonly DateTime _later = _nowTime.AddHours(1);
+        const string _someTz = "America/Los_Angeles";
+        static readonly DateTime _nowTime = DateTime.Parse("2016-07-16T16:47:02.9310521-04:00");
+        static readonly DateTime _later = _nowTime.AddHours(1);
 
         [Test, TestCaseSource(nameof(CalDateTime_TestCases))]
         public void CalDateTime_Tests(CalDateTime incomingDt, CalDateTime expectedDt)
@@ -59,19 +59,19 @@ namespace Ical.Net.CoreUnitTests
             Assert.IsTrue(incoming.Equals(expected));
         }
 
-        private static RecurrencePattern GetSimpleRecurrencePattern() => new RecurrencePattern(FrequencyType.Daily, 1)
+        static RecurrencePattern GetSimpleRecurrencePattern() => new RecurrencePattern(FrequencyType.Daily, 1)
         {
             Count = 5
         };
 
-        private static CalendarEvent GetSimpleEvent() => new CalendarEvent
+        static CalendarEvent GetSimpleEvent() => new CalendarEvent
         {
             DtStart = new CalDateTime(_nowTime),
             DtEnd = new CalDateTime(_later),
             Duration = TimeSpan.FromHours(1),
         };
 
-        private static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } });
+        static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } });
 
 
         public static IEnumerable<ITestCaseData> Event_TestCases()
@@ -438,7 +438,7 @@ namespace Ical.Net.CoreUnitTests
             Assert.AreNotEqual(asLocal, asUtc);
         }
 
-        private void TestComparison(Func<CalDateTime, IDateTime, bool> calOp, Func<int?, int?, bool> intOp)
+        static void TestComparison(Func<CalDateTime, IDateTime, bool> calOp, Func<int?, int?, bool> intOp)
         {
             int? intSome = 1;
             int? intGreater = 2;

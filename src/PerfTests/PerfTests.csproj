@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>netcoreapp3.1;net50</TargetFrameworks>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Ical.Net.CoreUnitTests\Ical.Net.CoreUnitTests.csproj" />
     <ProjectReference Include="..\Ical.Net\Ical.Net.csproj" />
   </ItemGroup>
 

@@ -8,8 +8,8 @@ namespace Ical.Net.Serialization
 {
     public class GenericListSerializer : SerializerBase
     {
-        private readonly Type _innerType;
-        private readonly Type _objectType;
+        readonly Type _innerType;
+        readonly Type _objectType;
 
         public GenericListSerializer(Type objectType)
         {
@@ -23,11 +23,10 @@ namespace Ical.Net.Serialization
 
         public override string SerializeToString(object obj) => throw new NotImplementedException();
 
-        private MethodInfo _addMethodInfo;
+        MethodInfo _addMethodInfo;
         public override object Deserialize(TextReader tr)
         {
-            var p = SerializationContext.Peek() as ICalendarProperty;
-            if (p == null)
+            if (!(SerializationContext.Peek() is ICalendarProperty p))
             {
                 return null;
             }
@@ -41,8 +40,7 @@ namespace Ical.Net.Serialization
 
             // Get a serializer for the inner type
             var sf = GetService<ISerializerFactory>();
-            var stringSerializer = sf.Build(_innerType, SerializationContext) as IStringSerializer;
-            if (stringSerializer == null)
+            if (!(sf.Build(_innerType, SerializationContext) is IStringSerializer stringSerializer))
             {
                 return null;
             }
@@ -59,8 +57,7 @@ namespace Ical.Net.Serialization
             }
 
             // Determine if the returned object is an IList<ObjectType>, rather than just an ObjectType.
-            var add = objToAdd as IList;
-            if (add != null)
+            if (objToAdd is IList add)
             {
                 //Deserialization returned an IList<ObjectType>, instead of an ObjectType.  So enumerate through the items in the list and add
                 //them individually to our list.

@@ -24,6 +24,7 @@ namespace Ical.Net.DataTypes
             SetService(new PeriodListEvaluator(this));
         }
 
+        /// <summary> Deserializes the vCard Representation </summary>
         public PeriodList(string value) : this()
         {
             var serializer = new PeriodListSerializer();

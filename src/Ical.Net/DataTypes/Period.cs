@@ -3,7 +3,7 @@ using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes
 {
-    /// <summary> Represents an iCalendar period of time. </summary>    
+    /// <summary> <see cref="StartTime"/> with optional <see cref="Duration"/> and <see cref="EndTime"/>. </summary>    
     public class Period : EncodableDataType, IComparable<Period>
     {
         public Period() { }
@@ -11,7 +11,7 @@ namespace Ical.Net.DataTypes
         public Period(IDateTime occurs)
             : this(occurs, default(TimeSpan)) {}
 
-        public Period(IDateTime start, IDateTime end)
+        public Period(IDateTime start, IDateTime? end)
         {
             if (end != null && end.LessThanOrEqual(start))
             {
@@ -35,7 +35,7 @@ namespace Ical.Net.DataTypes
             }
 
             StartTime = start;
-            if (duration == default(TimeSpan))
+            if (duration == default)
             {
                 return;
             }
@@ -48,8 +48,7 @@ namespace Ical.Net.DataTypes
         {
             base.CopyFrom(obj);
 
-            var p = obj as Period;
-            if (p == null)
+            if (!(obj is Period p))
             {
                 return;
             }
@@ -60,9 +59,9 @@ namespace Ical.Net.DataTypes
 
         protected bool Equals(Period other) => Equals(StartTime, other.StartTime) && Equals(EndTime, other.EndTime) && Duration.Equals(other.Duration);
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             return obj.GetType() == GetType() && Equals((Period) obj);
         }
@@ -84,26 +83,26 @@ namespace Ical.Net.DataTypes
             return periodSerializer.SerializeToString(this);
         }
 
-        private void ExtrapolateTimes()
+        void ExtrapolateTimes()
         {
-            if (EndTime == null && StartTime != null && Duration != default(TimeSpan))
+            if (EndTime == null && StartTime != null && Duration != null)
             {
-                EndTime = StartTime.Add(Duration);
+                EndTime = StartTime.Add(Duration.Value);
             }
-            else if (Duration == default(TimeSpan) && StartTime != null && EndTime != null)
+            else if (Duration == null && StartTime != null && EndTime != null)
             {
                 Duration = EndTime.Subtract(StartTime);
             }
-            else if (StartTime == null && Duration != default(TimeSpan) && EndTime != null)
+            else if (StartTime == null && Duration != null && EndTime != null)
             {
-                StartTime = EndTime.Subtract(Duration);
+                StartTime = EndTime.Subtract(Duration.Value);
             }
         }
 
-        private IDateTime _startTime;
-        public virtual IDateTime StartTime
+        IDateTime? _startTime;
+        public IDateTime? StartTime
         {
-            get => _startTime.HasTime
+            get => _startTime?.HasTime ?? false
                 ? _startTime
                 : new CalDateTime(new DateTime(_startTime.Value.Year, _startTime.Value.Month, _startTime.Value.Day, 0, 0, 0), _startTime.TzId);
             set
@@ -117,8 +116,8 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private IDateTime _endTime;
-        public virtual IDateTime EndTime
+        IDateTime? _endTime;
+        public IDateTime? EndTime
         {
             get => _endTime;
             set
@@ -132,8 +131,8 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private TimeSpan _duration;
-        public virtual TimeSpan Duration
+        TimeSpan? _duration;
+        public TimeSpan? Duration
         {
             get
             {
@@ -156,7 +155,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public virtual bool Contains(IDateTime dt)
+        public bool Contains(IDateTime dt)
         {
             // Start time is inclusive
             if (dt == null || StartTime == null || !StartTime.LessThanOrEqual(dt))
@@ -168,7 +167,7 @@ namespace Ical.Net.DataTypes
             return EndTime == null || EndTime.GreaterThan(dt);
         }
 
-        public virtual bool CollidesWith(Period period) => period != null
+        public bool CollidesWith(Period period) => period != null
             && ((period.StartTime != null && Contains(period.StartTime)) || (period.EndTime != null && Contains(period.EndTime)));
 
         public int CompareTo(Period other)

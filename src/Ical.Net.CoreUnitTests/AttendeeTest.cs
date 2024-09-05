@@ -18,7 +18,7 @@ namespace Ical.Net.CoreUnitTests
             End = new CalDateTime(2010, 3, 26)
         };
 
-        private static readonly IList<Attendee> _attendees = new List<Attendee>
+        static readonly IList<Attendee> _attendees = new List<Attendee>
         {
             new Attendee("MAILTO:james@example.com")
             {

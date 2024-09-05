@@ -2,7 +2,7 @@
 {
     public class FreeBusyEntry : Period
     {
-        public virtual FreeBusyStatus Status { get; set; }
+        public FreeBusyStatus Status { get; set; }
 
         public FreeBusyEntry()
         {
@@ -21,8 +21,7 @@
         {
             base.CopyFrom(obj);
 
-            var fb = obj as FreeBusyEntry;
-            if (fb != null)
+            if (obj is FreeBusyEntry fb)
             {
                 Status = fb.Status;
             }

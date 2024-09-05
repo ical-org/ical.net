@@ -6,21 +6,15 @@ namespace Ical.Net.Collections
         List<TType>,
         IMultiLinkedList<TType>
     {
-        private IMultiLinkedList<TType> _previous;
-        private IMultiLinkedList<TType> _next;
+        IMultiLinkedList<TType> _previous;
+        IMultiLinkedList<TType> _next;
 
-        public virtual void SetPrevious(IMultiLinkedList<TType> previous)
-        {
-            _previous = previous;
-        }
+        public void SetPrevious(IMultiLinkedList<TType> previous) => _previous = previous;
 
-        public virtual void SetNext(IMultiLinkedList<TType> next)
-        {
-            _next = next;
-        }
+        public void SetNext(IMultiLinkedList<TType> next) => _next = next;
 
-        public virtual int StartIndex => _previous?.ExclusiveEnd ?? 0;
+        public int StartIndex => _previous?.ExclusiveEnd ?? 0;
 
-        public virtual int ExclusiveEnd => Count > 0 ? StartIndex + Count : StartIndex;
+        public int ExclusiveEnd => Count > 0 ? StartIndex + Count : StartIndex;
     }
 }

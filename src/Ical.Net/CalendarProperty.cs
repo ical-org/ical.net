@@ -4,14 +4,12 @@ using System.Linq;
 
 namespace Ical.Net
 {
-    /// <summary>
-    /// A class that represents a property of the <see cref="Calendar"/>
-    /// itself or one of its components.  It can also represent non-standard
+    /// <summary> <see cref="CalendarObject.Name"/>d property of the <see cref="Calendar"/> itself or one of its components. </summary>
+    /// <remarks>
+    /// It can also represent non-standard
     /// (X-) properties of an iCalendar component, as seen with many
     /// applications, such as with Apple's iCal.
     /// X-WR-CALNAME:US Holidays
-    /// </summary>
-    /// <remarks>
     /// Currently, the "known" properties for an iCalendar are as
     /// follows:
     /// <list type="bullet">
@@ -26,12 +24,12 @@ namespace Ical.Net
     [DebuggerDisplay("{Name}:{Value}")]
     public class CalendarProperty : CalendarObject, ICalendarProperty
     {
-        private List<object> _values = new List<object>();
+        List<object> _values = new List<object>();
 
         /// <summary>
         /// Returns a list of parameters that are associated with the iCalendar object.
         /// </summary>
-        public virtual IParameterCollection Parameters { get; protected set; } = new ParameterList();
+        public IParameterCollection Parameters { get; protected set; } = new ParameterList();
 
         public CalendarProperty() {}
 
@@ -47,7 +45,7 @@ namespace Ical.Net
         /// <summary>
         /// Adds a parameter to the iCalendar object.
         /// </summary>
-        public virtual void AddParameter(string name, string value)
+        public void AddParameter(string name, string value)
         {
             var p = new CalendarParameter(name, value);
             Parameters.Add(p);
@@ -56,17 +54,13 @@ namespace Ical.Net
         /// <summary>
         /// Adds a parameter to the iCalendar object.
         /// </summary>
-        public virtual void AddParameter(CalendarParameter p)
-        {
-            Parameters.Add(p);
-        }
+        public void AddParameter(CalendarParameter p) => Parameters.Add(p);
 
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
 
-            var p = obj as ICalendarProperty;
-            if (p == null)
+            if (!(obj is ICalendarProperty p))
             {
                 return;
             }
@@ -74,7 +68,7 @@ namespace Ical.Net
             SetValue(p.Values);
         }
 
-        public virtual IEnumerable<object> Values => _values;
+        public IEnumerable<object> Values => _values;
 
         public object Value
         {
@@ -99,11 +93,11 @@ namespace Ical.Net
             }
         }
 
-        public virtual bool ContainsValue(object value) => _values.Contains(value);
+        public bool ContainsValue(object value) => _values.Contains(value);
 
-        public virtual int ValueCount => _values?.Count ?? 0;
+        public int ValueCount => _values?.Count ?? 0;
 
-        public virtual void SetValue(object value)
+        public void SetValue(object value)
         {
             if (_values.Count == 0)
             {
@@ -120,7 +114,7 @@ namespace Ical.Net
             }
         }
 
-        public virtual void SetValue(IEnumerable<object> values)
+        public void SetValue(IEnumerable<object> values)
         {
             // Remove all previous values
             _values.Clear();
@@ -128,7 +122,7 @@ namespace Ical.Net
             _values.AddRange(toAdd);
         }
 
-        public virtual void AddValue(object value)
+        public void AddValue(object value)
         {
             if (value == null)
             {
@@ -138,7 +132,7 @@ namespace Ical.Net
             _values.Add(value);
         }
 
-        public virtual void RemoveValue(object value)
+        public void RemoveValue(object value)
         {
             if (value == null)
             {

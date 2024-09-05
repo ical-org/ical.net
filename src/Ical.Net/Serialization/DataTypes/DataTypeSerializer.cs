@@ -9,7 +9,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         protected DataTypeSerializer(SerializationContext ctx) : base(ctx) {}
 
-        protected virtual ICalendarDataType CreateAndAssociate()
+        protected virtual ICalendarDataType? CreateAndAssociate()
         {
             // Create an instance of the object
             if (!(Activator.CreateInstance(TargetType) is ICalendarDataType dt))

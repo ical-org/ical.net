@@ -11,55 +11,55 @@ namespace Ical.Net.CalendarComponents
     public class Alarm : CalendarComponent
     {
         //ToDo: Implement IEquatable
-        public virtual string Action
+        public string Action
         {
             get => Properties.Get<string>(AlarmAction.Key);
             set => Properties.Set(AlarmAction.Key, value);
         }
 
-        public virtual Attachment Attachment
+        public Attachment Attachment
         {
             get => Properties.Get<Attachment>("ATTACH");
             set => Properties.Set("ATTACH", value);
         }
 
-        public virtual IList<Attendee> Attendees
+        public IList<Attendee> Attendees
         {
             get => Properties.GetMany<Attendee>("ATTENDEE");
             set => Properties.Set("ATTENDEE", value);
         }
 
-        public virtual string Description
+        public string Description
         {
             get => Properties.Get<string>("DESCRIPTION");
             set => Properties.Set("DESCRIPTION", value);
         }
 
-        public virtual TimeSpan Duration
+        public TimeSpan Duration
         {
             get => Properties.Get<TimeSpan>("DURATION");
             set => Properties.Set("DURATION", value);
         }
 
-        public virtual int Repeat
+        public int Repeat
         {
             get => Properties.Get<int>("REPEAT");
             set => Properties.Set("REPEAT", value);
         }
 
-        public virtual string Summary
+        public string Summary
         {
             get => Properties.Get<string>("SUMMARY");
             set => Properties.Set("SUMMARY", value);
         }
 
-        public virtual Trigger Trigger
+        public Trigger? Trigger
         {
             get => Properties.Get<Trigger>(TriggerRelation.Key);
             set => Properties.Set(TriggerRelation.Key, value);
         }
 
-        protected virtual IList<AlarmOccurrence> Occurrences { get; set; }
+        protected IList<AlarmOccurrence> Occurrences { get; set; }
 
         public Alarm()
         {
@@ -71,7 +71,7 @@ namespace Ical.Net.CalendarComponents
         /// Gets a list of alarm occurrences for the given recurring component, <paramref name="rc"/>
         /// that occur between <paramref name="fromDate"/> and <paramref name="toDate"/>.
         /// </summary>
-        public virtual IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, IDateTime fromDate, IDateTime toDate)
+        public IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, IDateTime? fromDate, IDateTime? toDate)
         {
             Occurrences.Clear();
 
@@ -91,7 +91,7 @@ namespace Ical.Net.CalendarComponents
                     fromDate = rc.Start.Copy<IDateTime>();
                 }
 
-                var d = default(TimeSpan);
+                TimeSpan? d = default;
                 foreach (var o in rc.GetOccurrences(fromDate, toDate))
                 {
                     var dt = o.Period.StartTime;
@@ -100,20 +100,20 @@ namespace Ical.Net.CalendarComponents
                         if (o.Period.EndTime != null)
                         {
                             dt = o.Period.EndTime;
-                            if (d == default(TimeSpan))
+                            if (d == default)
                             {
                                 d = o.Period.Duration;
                             }
                         }
                         // Use the "last-found" duration as a reference point
-                        else if (d != default(TimeSpan))
+                        else if (d != default)
                         {
-                            dt = o.Period.StartTime.Add(d);
+                            dt = o.Period.StartTime.Add(d.Value);
                         }
                         else
                         {
                             throw new ArgumentException(
-                                "Alarm trigger is relative to the START of the occurrence; however, the occurence has no discernible end.");
+                                "Alarm trigger is relative to the START of the occurrence; however, the occurrence has no discernible end.");
                         }
                     }
 
@@ -136,18 +136,16 @@ namespace Ical.Net.CalendarComponents
 
         /// <summary>
         /// Polls the <see cref="Alarm"/> component for alarms that have been triggered
-        /// since the provided <paramref name="start"/> date/time.  If <paramref name="start"/>
-        /// is null, all triggered alarms will be returned.
+        /// between <paramref name="start"/> and <paramref name="end"/> date/time.
+        /// If <paramref name="start"/> is null, all triggered alarms will be returned.
         /// </summary>
-        /// <param name="start">The earliest date/time to poll trigered alarms for.</param>
         /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
-        public virtual IList<AlarmOccurrence> Poll(IDateTime start, IDateTime end)
+        public IList<AlarmOccurrence> Poll(IDateTime? start, IDateTime? end)
         {
             var results = new List<AlarmOccurrence>();
 
             // Evaluate the alarms to determine the recurrences
-            var rc = Parent as RecurringComponent;
-            if (rc == null)
+            if (!(Parent is RecurringComponent rc))
             {
                 return results;
             }

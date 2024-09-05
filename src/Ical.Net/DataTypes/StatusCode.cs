@@ -48,9 +48,8 @@ namespace Ical.Net.DataTypes
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (obj is StatusCode)
+            if (obj is StatusCode sc)
             {
-                var sc = (StatusCode) obj;
                 Parts = new int[sc.Parts.Length];
                 sc.Parts.CopyTo(Parts, 0);
             }

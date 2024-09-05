@@ -12,9 +12,9 @@ namespace Ical.Net.CoreUnitTests
     [TestFixture]
     public class CalendarEventTest
     {
-        private static readonly DateTime _now = DateTime.UtcNow;
-        private static readonly DateTime _later = _now.AddHours(1);
-        private static readonly string _uid = Guid.NewGuid().ToString();
+        static readonly DateTime _now = DateTime.UtcNow;
+        static readonly DateTime _later = _now.AddHours(1);
+        static readonly string _uid = Guid.NewGuid().ToString();
 
         /// <summary>
         /// Ensures that events can be properly added to a calendar.
@@ -214,7 +214,7 @@ END:VCALENDAR";
             Assert.AreNotEqual(noException.GetHashCode(), withException.GetHashCode());
         }
 
-        private static CalendarEvent GetSimpleEvent() => new CalendarEvent
+        static CalendarEvent GetSimpleEvent() => new CalendarEvent
         {
             DtStart = new CalDateTime(_now),
             DtEnd = new CalDateTime(_later),
@@ -238,9 +238,10 @@ END:VCALENDAR";
             Assert.AreNotEqual(simpleEvent.GetHashCode(), testRdate.GetHashCode());
         }
 
-        private static List<RecurrencePattern> GetSimpleRecurrenceList()
+        static List<RecurrencePattern> GetSimpleRecurrenceList()
             => new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Daily, 1) { Count = 5 } };
-        private static List<PeriodList> GetExceptionDates()
+
+        static List<PeriodList> GetExceptionDates()
             => new List<PeriodList> { new PeriodList { new Period(new CalDateTime(_now.AddDays(1).Date)) } };
 
         [Test]

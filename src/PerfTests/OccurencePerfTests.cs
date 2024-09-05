@@ -5,44 +5,52 @@ using BenchmarkDotNet.Attributes;
 using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
+using NUnit.Framework;
 
 namespace PerfTests
 {
-    public class OccurencePerfTests
+    public class OccurrencePerfTests
     {
         [Benchmark]
         public void MultipleEventsWithUntilOccurrencesSearchingByWholeCalendar()
+            => MultipleEventsWithUntilOccurrencesSearchingByWholeCalendar_();
+        [Test(ExpectedResult = 40)]
+        public static int MultipleEventsWithUntilOccurrencesSearchingByWholeCalendar_()
         {
             var calendar = GetFourCalendarEventsWithUntilRule();
             var searchStart = calendar.Events.First().DtStart.AddYears(-1);
             var searchEnd = calendar.Events.Last().DtStart.AddYears(1);
-            var occurences = calendar.GetOccurrences(searchStart, searchEnd);
+            return calendar.GetOccurrences(searchStart, searchEnd).Count;
         }
 
         [Benchmark]
-        public void MultipleEventsWithUntilOccurrences()
+        public void MultipleEventsWithUntilOccurrences() => MultipleEventsWithUntilOccurrences_();
+        [Test(ExpectedResult = 40)]
+        public static int MultipleEventsWithUntilOccurrences_()
         {
             var calendar = GetFourCalendarEventsWithUntilRule();
             var searchStart = calendar.Events.First().DtStart.AddYears(-1);
             var searchEnd = calendar.Events.Last().DtStart.AddYears(1);
-            var eventOccurrences = calendar.Events
+            return calendar.Events
                 .SelectMany(e => e.GetOccurrences(searchStart, searchEnd))
-                .ToList();
+                .Count();
         }
 
         [Benchmark]
-        public void MultipleEventsWithUntilOccurrencesEventsAsParallel()
+        public void MultipleEventsWithUntilOccurrencesEventsAsParallel() => MultipleEventsWithUntilOccurrencesEventsAsParallel_();
+        [Test(ExpectedResult = 40)]
+        public static int MultipleEventsWithUntilOccurrencesEventsAsParallel_()
         {
             var calendar = GetFourCalendarEventsWithUntilRule();
             var searchStart = calendar.Events.First().DtStart.AddYears(-1);
             var searchEnd = calendar.Events.Last().DtStart.AddYears(1).AddDays(10);
-            var eventOccurrences = calendar.Events
+            return calendar.Events
                 .AsParallel()
                 .SelectMany(e => e.GetOccurrences(searchStart, searchEnd))
-                .ToList();
+                .Count();
         }
 
-        private Calendar GetFourCalendarEventsWithUntilRule()
+        static Calendar GetFourCalendarEventsWithUntilRule()
         {
             const string tzid = "America/New_York";
             const int limit = 4;
@@ -76,37 +84,45 @@ namespace PerfTests
 
         [Benchmark]
         public void MultipleEventsWithCountOccurrencesSearchingByWholeCalendar()
+            => MultipleEventsWithCountOccurrencesSearchingByWholeCalendar_();
+        [Test(ExpectedResult = 400)]
+        public static int MultipleEventsWithCountOccurrencesSearchingByWholeCalendar_()
         {
             var calendar = GetFourCalendarEventsWithCountRule();
             var searchStart = calendar.Events.First().DtStart.AddYears(-1);
             var searchEnd = calendar.Events.Last().DtStart.AddYears(1);
-            var occurences = calendar.GetOccurrences(searchStart, searchEnd);
+            return calendar.GetOccurrences(searchStart, searchEnd).Count;
         }
 
         [Benchmark]
-        public void MultipleEventsWithCountOccurrences()
+        public static int MultipleEventsWithCountOccurrences() => MultipleEventsWithCountOccurrences_();
+        [Test(ExpectedResult = 400)]
+        public static int MultipleEventsWithCountOccurrences_()
         {
             var calendar = GetFourCalendarEventsWithCountRule();
             var searchStart = calendar.Events.First().DtStart.AddYears(-1);
             var searchEnd = calendar.Events.Last().DtStart.AddYears(1);
-            var eventOccurrences = calendar.Events
+            return calendar.Events
                 .SelectMany(e => e.GetOccurrences(searchStart, searchEnd))
-                .ToList();
+                .Count();
         }
 
         [Benchmark]
         public void MultipleEventsWithCountOccurrencesEventsAsParallel()
+            => MultipleEventsWithCountOccurrencesEventsAsParallel_();
+        [Test(ExpectedResult = 400)]
+        public static int MultipleEventsWithCountOccurrencesEventsAsParallel_()
         {
             var calendar = GetFourCalendarEventsWithCountRule();
             var searchStart = calendar.Events.First().DtStart.AddYears(-1);
             var searchEnd = calendar.Events.Last().DtStart.AddYears(1).AddDays(10);
-            var eventOccurrences = calendar.Events
+            return calendar.Events
                 .AsParallel()
                 .SelectMany(e => e.GetOccurrences(searchStart, searchEnd))
-                .ToList();
+                .Count();
         }
 
-        private Calendar GetFourCalendarEventsWithCountRule()
+        static Calendar GetFourCalendarEventsWithCountRule()
         {
             const string tzid = "America/New_York";
             const int limit = 4;

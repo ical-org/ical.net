@@ -58,7 +58,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof (string);
 
-        public override string SerializeToString(object obj)
+        public override string? SerializeToString(object? obj)
         {
             if (obj == null)
             {
@@ -66,31 +66,26 @@ namespace Ical.Net.Serialization.DataTypes
             }
 
             var values = new List<string>();
-            if (obj is string)
+            if (obj is string s)
             {
-                values.Add((string) obj);
+                values.Add(s);
             }
-            else if (obj is IEnumerable)
+            else if (obj is IEnumerable enumerable)
             {
-                values.AddRange(from object child in (IEnumerable) obj select child.ToString());
+                values.AddRange(from object child in enumerable select child.ToString());
             }
 
-            var co = SerializationContext.Peek() as ICalendarObject;
-            if (co != null)
+            if (SerializationContext.Peek() is ICalendarObject co)
             {
                 // Encode the string as needed.
-                var dt = new EncodableDataType
-                {
-                    AssociatedObject = co
-                };
-                for (var i = 0; i < values.Count; i++)
-                {
-                    values[i] = Encode(dt, Escape(values[i]));
-                }
-
-                return string.Join(",", values);
+                return SerializeToString(values, co);
             }
 
+            return SerializeToString(values);
+        }
+
+        public string SerializeToString(IList<string> values)
+        {
             for (var i = 0; i < values.Count; i++)
             {
                 values[i] = Escape(values[i]);
@@ -98,8 +93,22 @@ namespace Ical.Net.Serialization.DataTypes
             return string.Join(",", values);
         }
 
+        public string? SerializeToString(IList<string> values, ICalendarObject co)
+        {
+            var dt = new EncodableDataType
+            {
+                AssociatedObject = co
+            };
+            for (var i = 0; i < values.Count; i++)
+            {
+                values[i] = Encode(dt, Escape(values[i]));
+            }
+
+            return string.Join(",", values);
+        }
+
         internal static readonly Regex UnescapedCommas = new Regex(@"(?<!\\),", RegexOptions.Compiled);
-        public override object Deserialize(TextReader tr)
+        public override object? Deserialize(TextReader? tr)
         {
             if (tr == null)
             {

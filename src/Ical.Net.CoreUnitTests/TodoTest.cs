@@ -9,7 +9,7 @@ namespace Ical.Net.CoreUnitTests
     [TestFixture]
     public class TodoTest
     {
-        private const string _tzid = "US-Eastern";
+        const string _tzid = "US-Eastern";
 
         [Test, TestCaseSource(nameof(ActiveTodo_TestCases)), Category("Todo")]
         public void ActiveTodo_Tests(string calendarString, IList<KeyValuePair<CalDateTime, bool>> incoming)

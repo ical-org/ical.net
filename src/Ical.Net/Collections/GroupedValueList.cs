@@ -11,12 +11,9 @@ namespace Ical.Net.Collections
         where TInterface : class, IGroupedObject<TGroup>, IValueObject<TValueType>
         where TItem : new()        
     {
-        public virtual void Set(TGroup group, TValueType value)
-        {
-            Set(group, new[] { value });
-        }
+        public void Set(TGroup group, TValueType value) => Set(group, new[] { value });
 
-        public virtual void Set(TGroup group, IEnumerable<TValueType> values)
+        public void Set(TGroup group, IEnumerable<TValueType> values)
         {
             if (ContainsKey(group))
             {
@@ -31,7 +28,7 @@ namespace Ical.Net.Collections
             obj.SetValue(values);
         }
 
-        public virtual TType Get<TType>(TGroup group)
+        public TType Get<TType>(TGroup group)
         {
             var firstItem = AllOf(group).FirstOrDefault();
             if (firstItem?.Values != null)
@@ -41,9 +38,10 @@ namespace Ical.Net.Collections
                     .OfType<TType>()
                     .FirstOrDefault();
             }
-            return default(TType);
+            return default;
         }
 
-        public virtual IList<TType> GetMany<TType>(TGroup group) => new GroupedValueListProxy<TGroup, TInterface, TItem, TValueType, TType>(this, group);
+        public IList<TType> GetMany<TType>(TGroup group)
+            => new GroupedValueListProxy<TGroup, TInterface, TItem, TValueType, TType>(this, group);
     }
 }

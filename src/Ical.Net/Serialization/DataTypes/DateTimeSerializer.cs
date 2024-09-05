@@ -12,7 +12,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public DateTimeSerializer(SerializationContext ctx) : base(ctx) { }
 
-        private DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
+        static DateTime CoerceDateTime(int year, int month, int day, int hour, int minute, int second, DateTimeKind kind)
         {
             var dt = DateTime.MinValue;
 
@@ -39,20 +39,19 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof (CalDateTime);
 
-        public override string SerializeToString(object obj)
-        {
-            var dt = obj as IDateTime;
-            if (dt == null)
-            {
-                return null;
-            }
+        public override string? SerializeToString(object? obj) => obj is IDateTime dt ? SerializeToString(dt) : null;
 
-            // RFC 5545 3.3.5: 
-            // The date with UTC time, or absolute time, is identified by a LATIN
-            // CAPITAL LETTER Z suffix character, the UTC designator, appended to
-            // the time value. The "TZID" property parameter MUST NOT be applied to DATE-TIME
-            // properties whose time values are specified in UTC.
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// RFC 5545 3.3.5:  The date with UTC time, or absolute time,
+        /// is identified by a LATIN CAPITAL LETTER Z suffix character,
+        /// the UTC designator, appended to the time value.
+        /// The "TZID" property parameter MUST NOT be applied to DATE-TIME properties
+        /// whose time values are specified in UTC.
+        /// </remarks>
+        public string? SerializeToString(IDateTime dt) {
             var kind = dt.IsUtc
                 ? DateTimeKind.Utc
                 : DateTimeKind.Local;
@@ -92,16 +91,21 @@ namespace Ical.Net.Serialization.DataTypes
             return Encode(dt, value.ToString());
         }
 
-        private const RegexOptions _ciCompiled = RegexOptions.Compiled | RegexOptions.IgnoreCase;
-        internal static readonly Regex DateOnlyMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))?$", _ciCompiled);
-        internal static readonly Regex FullDateTimePatternMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))T((\d{2})(\d{2})(\d{2})(Z)?)$", _ciCompiled);
+        const RegexOptions _ciCompiled = RegexOptions.Compiled | RegexOptions.IgnoreCase;
+        internal static readonly Regex DateOnlyMatch = new Regex(
+            @"^((\d{4})(\d{2})(\d{2}))?$", _ciCompiled);
+        internal static readonly Regex FullDateTimePatternMatch = new Regex(
+            @"^((\d{4})(\d{2})(\d{2}))\w((\d{2})(\d{2})(\d{2})(Z)?)$", _ciCompiled);
 
-        public override object Deserialize(TextReader tr)
+        public override object? Deserialize(TextReader tr)
         {
             var value = tr.ReadToEnd();
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return null;
+            }
 
-            var dt = CreateAndAssociate() as IDateTime;
-            if (dt == null)
+            if (!(CreateAndAssociate() is IDateTime dt))
             {
                 return null;
             }
@@ -117,7 +121,7 @@ namespace Ical.Net.Serialization.DataTypes
 
             if (!match.Success)
             {
-                return null;
+                throw new FormatException("Could not be parsed as a Date or DateTime: " + value);
             }
             var now = DateTime.Now;
 

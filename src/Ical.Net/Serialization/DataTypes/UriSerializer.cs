@@ -12,24 +12,19 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof (string);
 
-        public override string SerializeToString(object obj)
+        public override string? SerializeToString(object? obj) => obj is Uri uri ? SerializeToString(uri) : null;
+
+        public string SerializeToString(Uri uri)
         {
-            if (!(obj is Uri))
+            if (!(SerializationContext.Peek() is ICalendarObject co))
             {
-                return null;
+                return uri.OriginalString;
             }
-
-            var uri = (Uri) obj;
-
-            if (SerializationContext.Peek() is ICalendarObject co)
+            var dt = new EncodableDataType
             {
-                var dt = new EncodableDataType
-                {
-                    AssociatedObject = co
-                };
-                return Encode(dt, uri.OriginalString);
-            }
-            return uri.OriginalString;
+                AssociatedObject = co
+            };
+            return Encode(dt, uri.OriginalString);
         }
 
         public override object Deserialize(TextReader tr)

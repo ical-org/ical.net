@@ -32,7 +32,7 @@ namespace Ical.Net.CoreUnitTests
             var occurrences = calendar.GetOccurrences(searchStart, searchEnd).OrderBy(o => o.Period.StartTime).ToList();
 
             var firstOccurrence = occurrences.First();
-            var firstStartCopy = firstStart.Copy<CalDateTime>();
+            CalDateTime firstStartCopy = firstStart.Copy<CalDateTime>();
             var firstEndCopy = firstEnd.Copy<CalDateTime>();
             Assert.AreEqual(firstStartCopy, firstOccurrence.Period.StartTime);
             Assert.AreEqual(firstEndCopy, firstOccurrence.Period.EndTime);
@@ -59,7 +59,7 @@ namespace Ical.Net.CoreUnitTests
             var pattern = new RecurrencePattern
             {
                 Frequency = FrequencyType.Weekly,
-                ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Friday) }
+                ByWeekDay = new List<WeekDay> { new WeekDay(DayOfWeek.Friday) }
             };
             vEvent.RecurrenceRules.Add(pattern);
             var calendar = new Calendar();
@@ -68,9 +68,7 @@ namespace Ical.Net.CoreUnitTests
             var intervalStart = eventStart;
             var intervalEnd = intervalStart.AddDays(7 * evaluationsCount);
 
-            var occurrences = RecurrenceUtil.GetOccurrences(
-                recurrable: vEvent,
-                periodStart: intervalStart,
+            var occurrences = vEvent.GetOccurrences(periodStart: intervalStart,
                 periodEnd: intervalEnd,
                 includeReferenceDateInResults: false);
             var occurrenceSet = new HashSet<IDateTime>(occurrences.Select(o => o.Period.StartTime));

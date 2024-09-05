@@ -11,7 +11,7 @@ namespace PerfTests
 {
     public class SerializationPerfTests
     {
-        private const string _sampleEvent = @"BEGIN:VCALENDAR
+        const string _sampleEvent = @"BEGIN:VCALENDAR
 PRODID:-//Microsoft Corporation//Outlook 12.0 MIMEDIR//EN
 VERSION:2.0
 METHOD:PUBLISH
@@ -69,13 +69,14 @@ END:VCALENDAR
         [Benchmark]
         public void SerializeCalendar() => new CalendarSerializer().SerializeToString(SimpleCalendar);
 
-        private const string _aTzid = "America/New_York";
-        private static readonly Calendar SimpleCalendar = new Calendar
+        const string _aTzid = "America/New_York";
+
+        static readonly Calendar SimpleCalendar = new Calendar
         {
             Events = { _e },
         };
 
-        private static readonly CalendarEvent _e = new CalendarEvent
+        static readonly CalendarEvent _e = new CalendarEvent
         {
             Start = new CalDateTime(DateTime.Now, _aTzid),
             End = new CalDateTime(DateTime.Now + TimeSpan.FromHours(1), _aTzid),

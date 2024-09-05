@@ -6,19 +6,21 @@ using Ical.Net.Collections;
 
 namespace Ical.Net.Proxies
 {
+    /// <summary> Typed Proxy/Filter for a List of generic Instances </summary>
+    /// <typeparam name="TComponentType">the Type to filter for</typeparam>
     public class UniqueComponentListProxy<TComponentType> :
         CalendarObjectListProxy<TComponentType>,
         IUniqueComponentList<TComponentType>
         where TComponentType : class, IUniqueComponent
     {
-        private readonly Dictionary<string, TComponentType> _lookup;
+        readonly Dictionary<string, TComponentType> _lookup;
 
         public UniqueComponentListProxy(IGroupedCollection<string, ICalendarObject> children) : base(children)
         {
             _lookup = new Dictionary<string, TComponentType>();
         }
 
-        private TComponentType Search(string uid)
+        TComponentType Search(string uid)
         {
             if (_lookup.TryGetValue(uid, out var componentType))
             {
@@ -29,14 +31,14 @@ namespace Ical.Net.Proxies
 
             if (item == null)
             {
-                return default(TComponentType);
+                return default;
             }
 
             _lookup[uid] = item;
             return item;
         }
 
-        public virtual TComponentType this[string uid]
+        public TComponentType this[string uid]
         {
             get => Search(uid);
             set

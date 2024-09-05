@@ -12,13 +12,15 @@ namespace Ical.Net.Serialization
 
         public override Type TargetType => typeof (CalendarParameter);
 
-        public override string SerializeToString(object obj)
-        {
-            if (!(obj is CalendarParameter p))
-            {
-                return null;
-            }
+        public override object? Deserialize(TextReader tr) => null;
+        public override string? SerializeToString(object? obj) => obj is CalendarParameter p ? p.SerializeToString() : null;
 
+    }
+
+    public static class XCalendarParameter
+    {
+        public static string SerializeToString(this CalendarParameter p)
+        {
             var builder = new StringBuilder();
             builder.Append(p.Name + "=");
 
@@ -36,6 +38,6 @@ namespace Ical.Net.Serialization
             return builder.ToString();
         }
 
-        public override object Deserialize(TextReader tr) => null;
+
     }
 }

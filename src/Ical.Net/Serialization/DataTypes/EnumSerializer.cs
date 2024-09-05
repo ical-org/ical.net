@@ -6,7 +6,7 @@ namespace Ical.Net.Serialization.DataTypes
 {
     public class EnumSerializer : EncodableDataTypeSerializer
     {
-        private readonly Type _mEnumType;
+        readonly Type _mEnumType;
 
         public EnumSerializer(Type enumType)
         {
@@ -20,12 +20,11 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => _mEnumType;
 
-        public override string SerializeToString(object enumValue)
+        public override string? SerializeToString(object? enumValue)
         {
             try
             {
-                var obj = SerializationContext.Peek() as ICalendarObject;
-                if (obj != null)
+                if (SerializationContext.Peek() is ICalendarObject obj)
                 {
                     // Encode the value as needed.
                     var dt = new EncodableDataType
@@ -48,8 +47,7 @@ namespace Ical.Net.Serialization.DataTypes
 
             try
             {
-                var obj = SerializationContext.Peek() as ICalendarObject;
-                if (obj != null)
+                if (SerializationContext.Peek() is ICalendarObject obj)
                 {
                     // Decode the value, if necessary!
                     var dt = new EncodableDataType

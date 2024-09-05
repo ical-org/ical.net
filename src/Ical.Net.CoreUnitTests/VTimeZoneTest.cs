@@ -10,16 +10,10 @@ namespace Ical.Net.CoreUnitTests
     public class VTimeZoneTest
     {
         [Test, Category("VTimeZone")]
-        public void InvalidTzIdShouldThrowException()
-        {
-            Assert.Throws<ArgumentException>(() => new VTimeZone("shouldFail"));
-        }
+        public void InvalidTzIdShouldThrowException() => Assert.Throws<ArgumentException>(() => new VTimeZone("shouldFail"));
 
         [Test, Category("VTimeZone")]
-        public void VTimeZoneFromDateTimeZoneNullZoneShouldThrowException()
-        {
-            Assert.Throws<ArgumentException>(() => CreateTestCalendar("shouldFail"));
-        }
+        public void VTimeZoneFromDateTimeZoneNullZoneShouldThrowException() => Assert.Throws<ArgumentException>(() => CreateTestCalendar("shouldFail"));
 
         [Test, Category("VTimeZone")]
         public void VTimeZoneAmericaPhoenixShouldSerializeProperly()
@@ -213,7 +207,7 @@ namespace Ical.Net.CoreUnitTests
             Assert.IsTrue(serialized.Contains("DTSTART:20071104T020000"), "DTSTART:20071104T020000 was not serialized");
         }
 
-        private static Calendar CreateTestCalendar(string tzId, DateTime? earliestTime = null, bool includeHistoricalData = true)
+        static Calendar CreateTestCalendar(string tzId, DateTime? earliestTime = null, bool includeHistoricalData = true)
         {
             var iCal = new Calendar();
 

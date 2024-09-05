@@ -12,14 +12,10 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof (Attachment);
 
-        public override string SerializeToString(object obj)
-        {
-            var a = obj as Attachment;
-            if (a == null)
-            {
-                return null;
-            }
+        public override string? SerializeToString(object? obj) => obj is Attachment a ? SerializeToString(a) : null;
 
+        public string? SerializeToString(Attachment a)
+        {
             if (a.Uri != null)
             {
                 if (a.Parameters.ContainsKey("VALUE"))
@@ -44,7 +40,7 @@ namespace Ical.Net.Serialization.DataTypes
             return Encode(a, a.Data);
         }
 
-        public Attachment Deserialize(string attachment)
+        public Attachment? Deserialize(string attachment)
         {
             try
             {
@@ -61,7 +57,7 @@ namespace Ical.Net.Serialization.DataTypes
                 if (valueType == typeof(byte[]))
                 {
                     // If the VALUE type is specifically set to BINARY,
-                    // then set the Data property instead.                    
+                    // then set the Data property instead.
                     return new Attachment(data)
                     {
                         ValueEncoding = a.ValueEncoding,

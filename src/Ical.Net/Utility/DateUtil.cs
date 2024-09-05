@@ -5,21 +5,22 @@ using System.Threading;
 using Ical.Net.DataTypes;
 using NodaTime;
 using NodaTime.TimeZones;
+using NodaTime.Xml;
 
 namespace Ical.Net.Utility
 {
     internal static class DateUtil
     {
-        public static IDateTime StartOfDay(IDateTime dt)
+        public static IDateTime StartOfDay(this IDateTime dt)
             => dt.AddHours(-dt.Hour).AddMinutes(-dt.Minute).AddSeconds(-dt.Second);
 
-        public static IDateTime EndOfDay(IDateTime dt)
+        public static IDateTime EndOfDay(this IDateTime dt)
             => StartOfDay(dt).AddDays(1).AddTicks(-1);
 
-        public static DateTime GetSimpleDateTimeData(IDateTime dt)
+        public static DateTime GetSimpleDateTimeData(this IDateTime dt)
             => DateTime.SpecifyKind(dt.Value, dt.IsUtc ? DateTimeKind.Utc : DateTimeKind.Local);
 
-        public static DateTime SimpleDateTimeToMatch(IDateTime dt, IDateTime toMatch)
+        public static DateTime SimpleDateTimeToMatch(this IDateTime dt, IDateTime toMatch)
         {
             if (toMatch.IsUtc && dt.IsUtc)
             {
@@ -36,7 +37,7 @@ namespace Ical.Net.Utility
             return dt.Value;
         }
 
-        public static IDateTime MatchTimeZone(IDateTime dt1, IDateTime dt2)
+        public static IDateTime MatchTimeZone(this IDateTime dt1, IDateTime dt2)
         {
             // Associate the date/time with the first.
             var copy = dt2;
@@ -57,7 +58,7 @@ namespace Ical.Net.Utility
                 : new CalDateTime(copy.AsSystemLocal);
         }
 
-        public static DateTime AddWeeks(DateTime dt, int interval, DayOfWeek firstDayOfWeek)
+        public static DateTime AddWeeks(this DateTime dt, int interval, DayOfWeek firstDayOfWeek)
         {
             // NOTE: fixes WeeklyUntilWkst2() eval.
             // NOTE: simplified the execution of this - fixes bug #3119920 - missing weekly occurences also
@@ -70,7 +71,7 @@ namespace Ical.Net.Utility
             return dt;
         }
 
-        public static DateTime FirstDayOfWeek(DateTime dt, DayOfWeek firstDayOfWeek, out int offset)
+        public static DateTime FirstDayOfWeek(this DateTime dt, DayOfWeek firstDayOfWeek, out int offset)
         {
             offset = 0;
             while (dt.DayOfWeek != firstDayOfWeek)
@@ -81,22 +82,26 @@ namespace Ical.Net.Utility
             return dt;
         }
 
-        private static readonly Lazy<Dictionary<string, string>> _windowsMapping
+        static readonly Lazy<Dictionary<string, string>> _windowsMapping
             = new Lazy<Dictionary<string, string>>(InitializeWindowsMappings, LazyThreadSafetyMode.PublicationOnly);
 
-        private static Dictionary<string, string> InitializeWindowsMappings()
+        static Dictionary<string, string> InitializeWindowsMappings()
             => TzdbDateTimeZoneSource.Default.WindowsMapping.PrimaryMapping
                 .ToDictionary(k => k.Key, v => v.Value, StringComparer.OrdinalIgnoreCase);
 
         public static readonly DateTimeZone LocalDateTimeZone = DateTimeZoneProviders.Tzdb.GetSystemDefault();
 
-        /// <summary>
-        /// Use this method to turn a raw string into a NodaTime DateTimeZone. It searches all time zone providers (IANA, BCL, serialization, etc) to see if
-        /// the string matches. If it doesn't, it walks each provider, and checks to see if the time zone the provider knows about is contained within the
-        /// target time zone string. Some older icalendar programs would generate nonstandard time zone strings, and this secondary check works around
-        /// that.
-        /// </summary>
-        /// <param name="tzId">A BCL, IANA, or serialization time zone identifier</param>
+        /// <summary> Use this method to turn a raw string into a NodaTime DateTimeZone. </summary>
+        /// <remarks>
+        /// It searches all time zone providers (IANA, BCL, serialization, etc) to see if the string matches.
+        /// If it doesn't, it walks each provider,
+        /// and checks to see if the time zone the provider knows about
+        /// is contained within the target time zone string.
+        ///
+        /// Some older icalendar programs would generate nonstandard time zone strings,
+        /// and this secondary check works around that.
+        /// </remarks>
+        /// <param name="tzId">A BCL, IANA, or serialization time zone identifier. </param>
         /// <param name="useLocalIfNotFound">If true, this method will return the system local time zone if tzId doesn't match a known time zone identifier.
         /// Otherwise, it will throw an exception.</param>
         public static DateTimeZone GetZone(string tzId, bool useLocalIfNotFound = true)
@@ -122,7 +127,7 @@ namespace Ical.Net.Utility
                 return DateTimeZoneProviders.Tzdb.GetZoneOrNull(ianaZone);
             }
 
-            zone = NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(tzId);
+            zone = XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(tzId);
             if (zone != null)
             {
                 return zone;
@@ -130,7 +135,7 @@ namespace Ical.Net.Utility
 
             //US/Eastern is commonly represented as US-Eastern
             var newTzId = tzId.Replace("-", "/");
-            zone = NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(newTzId);
+            zone = XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(newTzId);
             if (zone != null)
             {
                 return zone;
@@ -149,9 +154,9 @@ namespace Ical.Net.Utility
                 return DateTimeZoneProviders.Tzdb.GetZoneOrNull(ianaZone);
             }
 
-            foreach (var providerId in NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.Ids.Where(tzId.Contains))
+            foreach (var providerId in XmlSerializationSettings.DateTimeZoneProvider.Ids.Where(tzId.Contains))
             {
-                return NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(providerId);
+                return XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(providerId);
             }
 
             if (useLocalIfNotFound)
@@ -162,7 +167,7 @@ namespace Ical.Net.Utility
             throw new ArgumentException($"Unrecognized time zone id {tzId}");
         }
 
-        public static ZonedDateTime AddYears(ZonedDateTime zonedDateTime, int years)
+        public static ZonedDateTime AddYears(this ZonedDateTime zonedDateTime, int years)
         {
             var futureDate = zonedDateTime.Date.PlusYears(years);
             var futureLocalDateTime = new LocalDateTime(futureDate.Year, futureDate.Month, futureDate.Day, zonedDateTime.Hour, zonedDateTime.Minute,
@@ -171,7 +176,7 @@ namespace Ical.Net.Utility
             return zonedFutureDate;
         }
 
-        public static ZonedDateTime AddMonths(ZonedDateTime zonedDateTime, int months)
+        public static ZonedDateTime AddMonths(this ZonedDateTime zonedDateTime, int months)
         {
             var futureDate = zonedDateTime.Date.PlusMonths(months);
             var futureLocalDateTime = new LocalDateTime(futureDate.Year, futureDate.Month, futureDate.Day, zonedDateTime.Hour, zonedDateTime.Minute,
@@ -180,7 +185,7 @@ namespace Ical.Net.Utility
             return zonedFutureDate;
         }
 
-        public static ZonedDateTime ToZonedDateTimeLeniently(DateTime dateTime, string tzId)
+        public static ZonedDateTime ToZonedDateTimeLeniently(this DateTime dateTime, string tzId)
         {
             var zone = GetZone(tzId);
             var localDt = LocalDateTime.FromDateTime(dateTime); //19:00 UTC
@@ -188,30 +193,29 @@ namespace Ical.Net.Utility
             return lenientZonedDateTime;
         }
 
-        public static ZonedDateTime FromTimeZoneToTimeZone(DateTime dateTime, string fromZoneId, string toZoneId)
+        public static ZonedDateTime FromTimeZoneToTimeZone(this DateTime dateTime, string fromZoneId, string toZoneId)
             => FromTimeZoneToTimeZone(dateTime, GetZone(fromZoneId), GetZone(toZoneId));
 
-        public static ZonedDateTime FromTimeZoneToTimeZone(DateTime dateTime, DateTimeZone fromZone, DateTimeZone toZone)
+        public static ZonedDateTime FromTimeZoneToTimeZone(this DateTime dateTime, DateTimeZone fromZone, DateTimeZone toZone)
         {
             var oldZone = LocalDateTime.FromDateTime(dateTime).InZoneLeniently(fromZone);
             var newZone = oldZone.WithZone(toZone);
             return newZone;
         }
 
-        public static bool IsSerializationTimeZone(DateTimeZone zone) => NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(zone.Id) != null;
+        public static bool IsSerializationTimeZone(this DateTimeZone zone) => XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(zone.Id) != null;
 
-        /// <summary>
-        /// Truncate to the specified TimeSpan's magnitude. For example, to truncate to the nearest second, use TimeSpan.FromSeconds(1)
-        /// </summary>
-        /// <param name="dateTime"></param>
-        /// <param name="timeSpan"></param>
-        /// <returns></returns>
+        /// <summary> Truncate the accuracy to the specified TimeSpan's magnitude/Period. </summary>
+        /// <remarks>
+        /// For example, to truncate to the nearest second, use TimeSpan.FromSeconds(1)
+        /// 
+        /// </remarks>
         public static DateTime Truncate(this DateTime dateTime, TimeSpan timeSpan)
             => timeSpan == TimeSpan.Zero
                 ? dateTime
                 : dateTime.AddTicks(-(dateTime.Ticks % timeSpan.Ticks));
 
-        public static int WeekOfMonth(DateTime d)
+        public static int WeekOfMonth(this DateTime d)
         {
             var isExact = d.Day % 7 == 0;
             var offset = isExact

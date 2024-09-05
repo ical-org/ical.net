@@ -9,9 +9,9 @@ namespace Ical.Net.CoreUnitTests
     [TestFixture]
     public class AlarmTest
     {
-        private const string _tzid = "US-Eastern";
+        const string _tzid = "US-Eastern";
 
-        public void TestAlarm(string calendarString, List<IDateTime> dates, CalDateTime start, CalDateTime end)
+        public static void TestAlarm(string calendarString, List<IDateTime> dates, CalDateTime start, CalDateTime end)
         {
             var iCal = Calendar.Load(calendarString);
             ProgramTest.TestCal(iCal);

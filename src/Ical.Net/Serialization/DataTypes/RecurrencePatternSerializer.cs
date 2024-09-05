@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using Ical.Net.DataTypes;
 
@@ -14,30 +13,24 @@ namespace Ical.Net.Serialization.DataTypes
 
         public RecurrencePatternSerializer(SerializationContext ctx) : base(ctx) { }
 
-        public static DayOfWeek GetDayOfWeek(string value)
+        public static DayOfWeek GetDayOfWeek(string value) => value.ToUpper() switch
         {
-            switch (value.ToUpper())
-            {
-                case "SU":
-                    return DayOfWeek.Sunday;
-                case "MO":
-                    return DayOfWeek.Monday;
-                case "TU":
-                    return DayOfWeek.Tuesday;
-                case "WE":
-                    return DayOfWeek.Wednesday;
-                case "TH":
-                    return DayOfWeek.Thursday;
-                case "FR":
-                    return DayOfWeek.Friday;
-                case "SA":
-                    return DayOfWeek.Saturday;
-            }
-            throw new ArgumentException(value + " is not a valid iCal day-of-week indicator.");
-        }
+            "SU" => DayOfWeek.Sunday,
+            "MO" => DayOfWeek.Monday,
+            "TU" => DayOfWeek.Tuesday,
+            "WE" => DayOfWeek.Wednesday,
+            "TH" => DayOfWeek.Thursday,
+            "FR" => DayOfWeek.Friday,
+            "SA" => DayOfWeek.Saturday,
+            _ => throw new ArgumentException(value + " is not a valid iCal day-of-week indicator.")
+        };
 
         protected static void AddInt32Values(IList<int> list, string value)
         {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return;
+            }
             var values = value.Split(',');
             foreach (var v in values)
             {
@@ -45,7 +38,7 @@ namespace Ical.Net.Serialization.DataTypes
             }
         }
 
-        public virtual void CheckRange(string name, IList<int> values, int min, int max)
+        public void CheckRange(string name, IList<int> values, int min, int max)
         {
             var allowZero = (min == 0 || max == 0);
             foreach (var value in values)
@@ -54,13 +47,13 @@ namespace Ical.Net.Serialization.DataTypes
             }
         }
 
-        public virtual void CheckRange(string name, int value, int min, int max)
+        public void CheckRange(string name, int value, int min, int max)
         {
             var allowZero = min == 0 || max == 0;
             CheckRange(name, value, min, max, allowZero);
         }
 
-        public virtual void CheckRange(string name, int value, int min, int max, bool allowZero)
+        public static void CheckRange(string name, int value, int min, int max, bool allowZero)
         {
             if (value != int.MinValue && (value < min || value > max || (!allowZero && value == 0)))
             {
@@ -69,7 +62,7 @@ namespace Ical.Net.Serialization.DataTypes
             }
         }
 
-        public virtual void CheckMutuallyExclusive<T, TU>(string name1, string name2, T obj1, TU obj2)
+        public static void CheckMutuallyExclusive<T, TU>(string name1, string name2, T obj1, TU obj2)
         {
             if (Equals(obj1, default(T)) || Equals(obj2, default(TU)))
             {
@@ -93,7 +86,7 @@ namespace Ical.Net.Serialization.DataTypes
             throw new ArgumentException("Both " + name1 + " and " + name2 + " cannot be supplied together; they are mutually exclusive.");
         }
 
-        private void SerializeByValue(List<string> aggregate, IList<int> byValue, string name)
+        static void SerializeByValue(List<string> aggregate, IList<int> byValue, string name)
         {
             if (byValue.Any())
             {
@@ -114,7 +107,7 @@ namespace Ical.Net.Serialization.DataTypes
 
             // Push the recurrence pattern onto the serialization stack
             SerializationContext.Push(recur);
-            var values = new List<string>()
+            var values = new List<string>
             {
                 "FREQ=" + Enum.GetName(typeof(FrequencyType), recur.Frequency).ToUpper()
             };
@@ -140,8 +133,7 @@ namespace Ical.Net.Serialization.DataTypes
 
             if (recur.Until != DateTime.MinValue)
             {
-                var serializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
-                if (serializer != null)
+                if (factory.Build(typeof (IDateTime), SerializationContext) is IStringSerializer serializer)
                 {
                     IDateTime until = new CalDateTime(recur.Until);
                     until.HasTime = true;
@@ -159,14 +151,13 @@ namespace Ical.Net.Serialization.DataTypes
                 values.Add("COUNT=" + recur.Count);
             }
 
-            if (recur.ByDay.Count > 0)
+            if (recur.ByWeekDay.Count > 0)
             {
-                var bydayValues = new List<string>(recur.ByDay.Count);
+                var bydayValues = new List<string>(recur.ByWeekDay.Count);
 
-                var serializer = factory.Build(typeof (WeekDay), SerializationContext) as IStringSerializer;
-                if (serializer != null)
+                if (factory.Build(typeof (WeekDay), SerializationContext) is IStringSerializer serializer)
                 {
-                    bydayValues.AddRange(recur.ByDay.Select(byday => serializer.SerializeToString(byday)));
+                    bydayValues.AddRange(recur.ByWeekDay.Select(byday => serializer.SerializeToString(byday)));
                 }
 
                 values.Add("BYDAY=" + string.Join(",", bydayValues));
@@ -188,7 +179,7 @@ namespace Ical.Net.Serialization.DataTypes
         }
 
         //Compiling these is a one-time penalty of about 80ms
-        private const RegexOptions _ciCompiled = RegexOptions.IgnoreCase | RegexOptions.Compiled;
+        const RegexOptions _ciCompiled = RegexOptions.IgnoreCase | RegexOptions.Compiled;
 
         internal static readonly Regex OtherInterval =
             new Regex(@"every\s+(?<Interval>other|\d+)?\w{0,2}\s*(?<Freq>second|minute|hour|day|week|month|year)s?,?\s*(?<More>.+)", _ciCompiled);
@@ -249,8 +240,7 @@ namespace Ical.Net.Serialization.DataTypes
                             case "UNTIL":
                             {
                                 var serializer = factory.Build(typeof (IDateTime), SerializationContext) as IStringSerializer;
-                                var dt = serializer?.Deserialize(new StringReader(keyValue)) as IDateTime;
-                                if (dt != null)
+                                if (serializer?.Deserialize(new StringReader(keyValue)) is IDateTime dt)
                                 {
                                     r.Until = dt.Value;
                                 }
@@ -276,7 +266,7 @@ namespace Ical.Net.Serialization.DataTypes
                                 var days = keyValue.Split(',');
                                 foreach (var day in days)
                                 {
-                                    r.ByDay.Add(new WeekDay(day));
+                                    r.ByWeekDay.Add(new WeekDay(day));
                                 }
                             }
                                 break;
@@ -323,30 +313,17 @@ namespace Ical.Net.Serialization.DataTypes
                     r.Interval = 1;
                 }
 
-                switch (match.Groups["Freq"].Value.ToLower())
+                r.Frequency = match.Groups["Freq"].Value.ToLower() switch
                 {
-                    case "second":
-                        r.Frequency = FrequencyType.Secondly;
-                        break;
-                    case "minute":
-                        r.Frequency = FrequencyType.Minutely;
-                        break;
-                    case "hour":
-                        r.Frequency = FrequencyType.Hourly;
-                        break;
-                    case "day":
-                        r.Frequency = FrequencyType.Daily;
-                        break;
-                    case "week":
-                        r.Frequency = FrequencyType.Weekly;
-                        break;
-                    case "month":
-                        r.Frequency = FrequencyType.Monthly;
-                        break;
-                    case "year":
-                        r.Frequency = FrequencyType.Yearly;
-                        break;
-                }
+                    "second" => FrequencyType.Secondly,
+                    "minute" => FrequencyType.Minutely,
+                    "hour" => FrequencyType.Hourly,
+                    "day" => FrequencyType.Daily,
+                    "week" => FrequencyType.Weekly,
+                    "month" => FrequencyType.Monthly,
+                    "year" => FrequencyType.Yearly,
+                    _ => r.Frequency
+                };
 
                 var values = match.Groups["More"].Value.Split(',');
                 foreach (var item in values)
@@ -416,7 +393,7 @@ namespace Ical.Net.Serialization.DataTypes
                             select (DayOfWeek) Enum.Parse(typeof(DayOfWeek), capture.Value, true) into dayOfWeek
                             select new WeekDay(dayOfWeek) {Offset = num};
 
-                        r.ByDay.AddRange(dayOfWeekQuery);
+                        r.ByWeekDay.AddRange(dayOfWeekQuery);
                     }
                     else if ((match = Time.Match(item)).Success)
                     {

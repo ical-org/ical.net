@@ -46,10 +46,10 @@ namespace Ical.Net.Evaluation
                 }
             }
 
-            Evaluate(Todo.Start, DateUtil.GetSimpleDateTimeData(beginningDate), DateUtil.GetSimpleDateTimeData(currDt).AddTicks(1), true);
+            Evaluate(Todo.Start, beginningDate.GetSimpleDateTimeData(), currDt.GetSimpleDateTimeData().AddTicks(1), true);
         }
 
-        public void DetermineStartingRecurrence(PeriodList rdate, ref IDateTime referenceDateTime)
+        public static void DetermineStartingRecurrence(PeriodList rdate, ref IDateTime referenceDateTime)
         {
             var evaluator = rdate.GetService<IEvaluator>();
 
@@ -69,7 +69,7 @@ namespace Ical.Net.Evaluation
             else
             {
                 var dtVal = referenceDateTime.Value;
-                IncrementDate(ref dtVal, recur, -recur.Interval);
+                dtVal = recur.DecrementDate(dtVal);
                 referenceDateTime.Value = dtVal;
             }
         }

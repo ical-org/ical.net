@@ -9,6 +9,6 @@ namespace Ical.Net.Proxies
     {
         public CalendarObjectListProxy(IGroupedCollection<string, ICalendarObject> list) : base(list) {}
 
-        public virtual TType this[int index] => this.Skip(index).FirstOrDefault();
+        public TType this[int index] => this.Skip(index).FirstOrDefault();
     }
 }

@@ -9,9 +9,10 @@ namespace Ical.Net.CoreUnitTests
 {
     public class CalDateTimeTests
     {
-        private static readonly DateTime _now = DateTime.Now;
-        private static readonly DateTime _later = _now.AddHours(1);
-        private static CalendarEvent GetEventWithRecurrenceRules(string tzId)
+        static readonly DateTime _now = DateTime.Now;
+        static readonly DateTime _later = _now.AddHours(1);
+
+        static CalendarEvent GetEventWithRecurrenceRules(string tzId)
         {
             var dailyForFiveDays = new RecurrencePattern(FrequencyType.Daily, 1)
             {
@@ -67,8 +68,7 @@ namespace Ical.Net.CoreUnitTests
         }
 
         [TestCaseSource(nameof(AsDateTimeOffsetTestCases))]
-        public DateTimeOffset AsDateTimeOffsetTests(CalDateTime incoming)
-            => incoming.AsDateTimeOffset;
+        public DateTimeOffset AsDateTimeOffsetTests(CalDateTime incoming) => incoming.AsDateTimeOffset;
 
         public static IEnumerable<ITestCaseData> AsDateTimeOffsetTestCases()
         {

@@ -22,6 +22,11 @@ namespace Ical.Net.Serialization.DataTypes
                 return null;
             }
 
+            return SerializeToString(factory, periodList);
+        }
+
+        string? SerializeToString(ISerializerFactory factory, PeriodList periodList)
+        {
             var dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
             var periodSerializer = factory.Build(typeof(Period), SerializationContext) as IStringSerializer;
             if (dtSerializer == null || periodSerializer == null)
@@ -71,15 +76,12 @@ namespace Ical.Net.Serialization.DataTypes
             var values = value.Split(',');
             foreach (var v in values)
             {
-                var dt = dtSerializer.Deserialize(new StringReader(v)) as IDateTime;
-                var p = periodSerializer.Deserialize(new StringReader(v)) as Period;
-
-                if (dt != null)
+                if (dtSerializer.Deserialize(new StringReader(v)) is IDateTime dt)
                 {
                     dt.AssociatedObject = rdt.AssociatedObject;
                     rdt.Add(dt);
                 }
-                else if (p != null)
+                else if (periodSerializer.Deserialize(new StringReader(v)) is Period p)
                 {
                     p.AssociatedObject = rdt.AssociatedObject;
                     rdt.Add(p);

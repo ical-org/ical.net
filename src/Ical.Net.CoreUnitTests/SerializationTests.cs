@@ -17,13 +17,13 @@ namespace Ical.Net.CoreUnitTests
     [TestFixture]
     public class SerializationTests
     {
-        private static readonly DateTime _nowTime = DateTime.Now;
-        private static readonly DateTime _later = _nowTime.AddHours(1);
-        private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
-        private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
-        private static string SerializeToString(CalendarEvent e) => SerializeToString(new Calendar { Events = { e } });
-        private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime };
-        private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
+        static readonly DateTime _nowTime = DateTime.Now;
+        static readonly DateTime _later = _nowTime.AddHours(1);
+        static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
+        static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
+        static string SerializeToString(CalendarEvent e) => SerializeToString(new Calendar { Events = { e } });
+        static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime };
+        static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
 
         public static void CompareCalendars(Calendar cal1, Calendar cal2)
         {
@@ -33,9 +33,7 @@ namespace Ical.Net.CoreUnitTests
 
             for (var i = 0; i < cal1.Children.Count; i++)
             {
-                var component1 = cal1.Children[i] as ICalendarComponent;
-                var component2 = cal2.Children[i] as ICalendarComponent;
-                if (component1 != null && component2 != null)
+                if (cal1.Children[i] is ICalendarComponent component1 && cal2.Children[i] is ICalendarComponent component2)
                 {
                     CompareComponents(component1, component2);
                 }
@@ -49,17 +47,16 @@ namespace Ical.Net.CoreUnitTests
                 var isMatch = false;
                 foreach (var p2 in cb2.Properties.AllOf(p1.Name))
                 {
-                    try
                     {
                         Assert.AreEqual(p1, p2, "The properties '" + p1.Name + "' are not equal.");
-                        if (p1.Value is IComparable)
+                        if (p1.Value is IComparable comparable)
                         {
-                            if (((IComparable)p1.Value).CompareTo(p2.Value) != 0)
+                            if (comparable.CompareTo(p2.Value) != 0)
                                 continue;
                         }
-                        else if (p1.Value is IEnumerable)
+                        else if (p1.Value is IEnumerable value)
                         {
-                            CompareEnumerables((IEnumerable)p1.Value, (IEnumerable)p2.Value, p1.Name);
+                            CompareEnumerables(value, (IEnumerable)p2.Value, p1.Name);
                         }
                         else
                         {
@@ -69,7 +66,6 @@ namespace Ical.Net.CoreUnitTests
                         isMatch = true;
                         break;
                     }
-                    catch { }
                 }
 
                 Assert.IsTrue(isMatch, "Could not find a matching property - " + p1.Name + ":" + (p1.Value?.ToString() ?? string.Empty));
@@ -109,15 +105,18 @@ namespace Ical.Net.CoreUnitTests
             }
         }
 
+        public static string InspectSerializedSection(string serialized, string sectionName, params string[] elements)
+            => InspectSerializedSection(serialized, sectionName, elements.AsEnumerable());
+
         public static string InspectSerializedSection(string serialized, string sectionName, IEnumerable<string> elements)
         {
             const string notFound = "expected '{0}' not found";
             var searchFor = "BEGIN:" + sectionName;
-            var begin = serialized.IndexOf(searchFor);
+            var begin = serialized.IndexOf(searchFor, StringComparison.Ordinal);
             Assert.AreNotEqual(-1, begin, notFound, searchFor);
 
             searchFor = "END:" + sectionName;
-            var end = serialized.IndexOf(searchFor, begin);
+            var end = serialized.IndexOf(searchFor, begin, StringComparison.Ordinal);
             Assert.AreNotEqual(-1, end, notFound, searchFor);
 
             var searchRegion = serialized.Substring(begin, end - begin + 1);
@@ -158,7 +157,9 @@ namespace Ical.Net.CoreUnitTests
                 : match.Groups[1].Value.Substring(1).Split(';').Select(v => v.Split('=')).ToDictionary(v => v[0], v => v.Length > 1 ? v[1] : null);
         }
 
-        [Test, Category("Serialization"), Ignore("TODO: standard time, for NZ standard time (current example)")]
+        [Test]
+        [Category("Serialization")]
+        [Ignore("TODO: standard time, for NZ standard time (current example)")]
         public void TimeZoneSerialize()
         {
             //ToDo: This test is broken as of 2016-07-13
@@ -183,18 +184,13 @@ namespace Ical.Net.CoreUnitTests
             var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(cal);
 
-            var vTimezone = InspectSerializedSection(serializedCalendar, "VTIMEZONE", new[] { "TZID:" + tz.TzId });
+            var vTimezone = InspectSerializedSection(serializedCalendar, "VTIMEZONE", "TZID:" + tz.TzId);
             var o = tzi.BaseUtcOffset.ToString("hhmm", CultureInfo.InvariantCulture);
 
-            InspectSerializedSection(vTimezone, "STANDARD", new[] {"TZNAME:" + tzi.StandardName, "TZOFFSETTO:" + o
-                //"DTSTART:20150402T030000",
-                //"RRULE:FREQ=YEARLY;BYDAY=1SU;BYHOUR=3;BYMINUTE=0;BYMONTH=4",
-                //"TZOFFSETFROM:+1300"
-            });
-
-
-            InspectSerializedSection(vTimezone, "DAYLIGHT", new[] { "TZNAME:" + tzi.DaylightName, "TZOFFSETFROM:" + o });
+            InspectSerializedSection(vTimezone, "STANDARD", "TZNAME:" + tzi.StandardName, "TZOFFSETTO:" + o);
+            InspectSerializedSection(vTimezone, "DAYLIGHT", "TZNAME:" + tzi.DaylightName, "TZOFFSETFROM:" + o);
         }
+
         [Test, Category("Serialization")]
         public void SerializeDeserialize()
         {
@@ -269,18 +265,10 @@ namespace Ical.Net.CoreUnitTests
                 Assert.IsTrue(serializedCalendar.Contains(SerializationConstants.LineBreak + p + SerializationConstants.LineBreak), "expected '" + p + "' not found");
             }
 
-            InspectSerializedSection(serializedCalendar, "VEVENT",
-                new[]
-                {
-                    "CLASS:" + evt.Class, "CREATED:" + CalDateString(evt.Created), "DTSTAMP:" + CalDateString(evt.DtStamp),
-                    "LAST-MODIFIED:" + CalDateString(evt.LastModified), "SEQUENCE:" + evt.Sequence, "UID:" + evt.Uid, "PRIORITY:" + evt.Priority,
-                    "LOCATION:" + evt.Location, "SUMMARY:" + evt.Summary, "DTSTART:" + CalDateString(evt.DtStart), "DTEND:" + CalDateString(evt.DtEnd)
-                    //"TRANSPARENCY:" + TransparencyType.Opaque.ToString().ToUpperInvariant(),
-                    //"STATUS:" + EventStatus.Confirmed.ToString().ToUpperInvariant()
-                });
+            InspectSerializedSection(serializedCalendar, "VEVENT", "CLASS:" + evt.Class, "CREATED:" + CalDateString(evt.Created), "DTSTAMP:" + CalDateString(evt.DtStamp), "LAST-MODIFIED:" + CalDateString(evt.LastModified), "SEQUENCE:" + evt.Sequence, "UID:" + evt.Uid, "PRIORITY:" + evt.Priority, "LOCATION:" + evt.Location, "SUMMARY:" + evt.Summary, "DTSTART:" + CalDateString(evt.DtStart), "DTEND:" + CalDateString(evt.DtEnd));
         }
 
-        private static readonly IList<Attendee> _attendees = new List<Attendee>
+        static readonly IList<Attendee> _attendees = new List<Attendee>
         {
             new Attendee("MAILTO:james@example.com")
             {
@@ -321,7 +309,7 @@ namespace Ical.Net.CoreUnitTests
             var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(cal);
 
-            var vEvt = InspectSerializedSection(serializedCalendar, "VEVENT", new[] { "ORGANIZER:" + org });
+            var vEvt = InspectSerializedSection(serializedCalendar, "VEVENT", "ORGANIZER:" + org);
 
             foreach (var a in evt.Attendees)
             {
@@ -348,7 +336,7 @@ namespace Ical.Net.CoreUnitTests
         [Test]
         public void ZeroTimeSpan_Test()
         {
-            var result = new TimeSpanSerializer().SerializeToString(TimeSpan.Zero);
+            var result = TimeSpanSerializer.SerializeToString(TimeSpan.Zero);
             Assert.IsTrue("P0D".Equals(result, StringComparison.Ordinal));
         }
 

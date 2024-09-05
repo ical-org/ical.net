@@ -9,14 +9,14 @@ namespace Ical.Net.Serialization
 
     internal class DataTypeMapper
     {
-        private class PropertyMapping
+        class PropertyMapping
         {
             public Type ObjectType { get; set; }
             public TypeResolverDelegate Resolver { get; set; }
             public bool AllowsMultipleValuesPerProperty { get; set; }
         }
 
-        private readonly IDictionary<string, PropertyMapping> _propertyMap = new Dictionary<string, PropertyMapping>(StringComparer.OrdinalIgnoreCase);
+        readonly IDictionary<string, PropertyMapping> _propertyMap = new Dictionary<string, PropertyMapping>(StringComparer.OrdinalIgnoreCase);
 
         public DataTypeMapper()
         {
@@ -66,17 +66,13 @@ namespace Ical.Net.Serialization
                 return null;
             }
 
-            switch (obj.Parent)
+            return obj.Parent switch
             {
-                case CalendarEvent _:
-                    return typeof (EventStatus);
-                case Todo _:
-                    return typeof (TodoStatus);
-                case Journal _:
-                    return typeof (JournalStatus);
-            }
-
-            return null;
+                CalendarEvent _ => typeof(EventStatus),
+                Todo _ => typeof(TodoStatus),
+                Journal _ => typeof(JournalStatus),
+                _ => null
+            };
         }
 
         public void AddPropertyMapping(string name, Type objectType, bool allowsMultipleValues)
@@ -119,7 +115,7 @@ namespace Ical.Net.Serialization
             }
         }
 
-        public virtual bool GetPropertyAllowsMultipleValues(object obj)
+        public bool GetPropertyAllowsMultipleValues(object obj)
         {
             var p = obj as ICalendarProperty;
             return !string.IsNullOrWhiteSpace(p?.Name)
@@ -127,7 +123,7 @@ namespace Ical.Net.Serialization
                 && m.AllowsMultipleValuesPerProperty;
         }
 
-        public virtual Type GetPropertyMapping(object obj)
+        public Type GetPropertyMapping(object obj)
         {
             var p = obj as ICalendarProperty;
             if (p?.Name == null)
