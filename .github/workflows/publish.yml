@@ -8,15 +8,13 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
           8.0.x
-          7.0.x
           6.0.x
-          5.0.x
           3.1.x
     - name: Restore dependencies
       run: dotnet restore
@@ -30,11 +28,11 @@ jobs:
     needs: tests
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-dotnet@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
     - run: dotnet restore
-    - run: dotnet build --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{vars.VERSION}}.${{github.run_number}}
+    - run: dotnet build --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{vars.VERSION}}.${{github.run_number}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true
     - run: dotnet pack --configuration Release Ical.Net/Ical.Net.csproj --no-build -p:Version=${{vars.VERSION}}.${{github.run_number}} -p:PackageVersion=${{vars.VERSION}}.${{github.run_number}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:NuspecFile=Ical.Net.nuspec
-    - run: dotnet nuget push Ical.Net/bin/Release/laget.Ical.Net.${{vars.VERSION}}.${{github.run_number}}.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate
+    - run: dotnet nuget push Ical.Net/bin/Release/Ical.Net.${{vars.VERSION}}.${{github.run_number}}.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate
