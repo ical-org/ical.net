@@ -49,7 +49,7 @@ ical.net uses [semantic versioning](http://semver.org/). In a nutshell:
 
 ### Paid support
 
-In case you need it, [Rian Stockbower may offer paid support and bugfixes](http://rianjs.net/consulting).
+In case you need it, [Rian Stockbower may offer paid support and bugfixes](https://rianjs.net/consulting).
  A few basic rules to consider when asking for this kind of support:
 
 * Any changes made to the ical.net library are open source, and will always be published on nuget for others to consume.
