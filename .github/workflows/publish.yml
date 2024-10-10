@@ -32,7 +32,16 @@ jobs:
     - uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
-    - run: dotnet restore
-    - run: dotnet build --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{vars.VERSION}}.${{github.run_number}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true
-    - run: dotnet pack --configuration Release Ical.Net/Ical.Net.csproj --no-build -p:Version=${{vars.VERSION}}.${{github.run_number}} -p:PackageVersion=${{vars.VERSION}}.${{github.run_number}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:NuspecFile=Ical.Net.nuspec
-    - run: dotnet nuget push Ical.Net/bin/Release/Ical.Net.${{vars.VERSION}}.${{github.run_number}}.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate
+    - name: Build and pack for publishing
+      run: |
+        dotnet restore
+        dotnet build --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{vars.VERSION}}.${{github.run_number}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true
+        dotnet pack --configuration Release Ical.Net/Ical.Net.csproj --no-build -p:Version=${{vars.VERSION}}.${{github.run_number}} -p:PackageVersion=${{vars.VERSION}}.${{github.run_number}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:NuspecFile=Ical.Net.nuspec
+    - name: Store artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-package_${{vars.VERSION}}
+        path: Ical.Net/bin/Release/
+    - name: Push package to NuGet
+      run: dotnet nuget push Ical.Net/bin/Release/Ical.Net.${{vars.VERSION}}.${{github.run_number}}.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
