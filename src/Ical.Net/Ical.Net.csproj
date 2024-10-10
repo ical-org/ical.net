@@ -6,7 +6,7 @@
     <PackageProjectUrl>https://github.com/rianjs/ical.net</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/rianjs/ical.net</RepositoryUrl>
-    <PackageReleaseNotes>hhttps://github.com/rianjs/ical.net/blob/master/release-notes.md</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/rianjs/ical.net/blob/master/release-notes.md</PackageReleaseNotes>
     <TargetFrameworks>netstandard2.0;net50</TargetFrameworks>
     <Authors>Rian Stockbower, Douglas Day, &amp; Contributors</Authors>
     <Company />
