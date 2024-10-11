@@ -1,14 +1,18 @@
 ﻿name: Publish
-
+# This job builds and and publishes the package to NuGet.
+# It depends on the included tests job to complete successfully.
+# The version number is determined by the latest tag for the 'main' branch selected with workflow dispatch.
 on:
   workflow_dispatch: {}
 
 jobs:
   tests:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for all tags and branches
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -19,9 +23,9 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore --configuration Release
+      run: dotnet build --no-restore --configuration Release -p:nowarn=1591
     - name: Test
-      run: dotnet test --no-build --configuration Release --verbosity normal
+      run: dotnet test --no-build --configuration Release --verbosity quiet
 
   publish:
     runs-on: ubuntu-latest
@@ -29,19 +33,30 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for all tags and branches
     - uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
+    - name: Get version tag
+      # The latest tag for the selected branch.
+      # Get it and strip off any leading 'v' from the version tag
+      run: | 
+         Version=$(git describe --tags --abbrev=0 | sed 's/^v//')
+         echo "VERSION=$Version" >> $GITHUB_ENV
+         echo "Version: $Version"
     - name: Build and pack for publishing
       run: |
         dotnet restore
-        dotnet build --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{vars.VERSION}}.${{github.run_number}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true
-        dotnet pack --configuration Release Ical.Net/Ical.Net.csproj --no-build -p:Version=${{vars.VERSION}}.${{github.run_number}} -p:PackageVersion=${{vars.VERSION}}.${{github.run_number}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:NuspecFile=Ical.Net.nuspec
+        dotnet build --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{env.VERSION}} -p:FileVersion=${{env.VERSION}}.${{github.run_number}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true
+        dotnet pack --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{env.VERSION}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg --no-build -p:PackageVersion=${{env.VERSION}}.${{github.run_number}} -p:NuspecFile=Ical.Net.nuspec
     - name: Store artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: nuget-package_${{vars.VERSION}}
-        path: Ical.Net/bin/Release/
+        name: ICal.Net_pkg_${{env.VERSION}}.${{github.run_number}}
+        path: |
+          Ical.Net/bin/Release/**/*.nupkg
+          Ical.Net/bin/Release/**/*.snupkg
     - name: Push package to NuGet
-      run: dotnet nuget push Ical.Net/bin/Release/Ical.Net.${{vars.VERSION}}.${{github.run_number}}.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate
-
+      # Does not fail, if the package already exists
+      run: dotnet nuget push Ical.Net/bin/Release/Ical.Net.${{env.VERSION}}.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate

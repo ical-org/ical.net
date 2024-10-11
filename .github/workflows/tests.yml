@@ -12,10 +12,13 @@ on:
 
 jobs:
   tests:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for all tags and branches
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -26,6 +29,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore --configuration Release
+      run: dotnet build --no-restore --configuration Release -p:nowarn=1591
     - name: Test
-      run: dotnet test --no-build --configuration Release --verbosity normal 
+      run: dotnet test --no-build --configuration Release --verbosity quiet
