@@ -5,6 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NodaTime" Version="3.1.11" />
+    <PackageReference Include="NodaTime" Version="3.1.*" />
   </ItemGroup>
 </Project>
