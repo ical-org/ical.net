@@ -1,4 +1,4 @@
-using Ical.Net.Proxies;
+﻿using Ical.Net.Proxies;
 using System;
 using System.Runtime.Serialization;
 
@@ -13,7 +13,7 @@ namespace Ical.Net.DataTypes
         private ParameterCollectionProxy _proxy;
         private ServiceProvider _serviceProvider;
 
-        protected ICalendarObject _AssociatedObject;
+        private ICalendarObject _associatedObject;
 
         protected CalendarDataType()
         {
@@ -96,21 +96,21 @@ namespace Ical.Net.DataTypes
 
         public virtual ICalendarObject AssociatedObject
         {
-            get => _AssociatedObject;
+            get => _associatedObject;
             set
             {
-                if (Equals(_AssociatedObject, value))
+                if (Equals(_associatedObject, value))
                 {
                     return;
                 }
 
-                _AssociatedObject = value;
-                if (_AssociatedObject != null)
+                _associatedObject = value;
+                if (_associatedObject != null)
                 {
-                    _proxy.SetParent(_AssociatedObject);
-                    if (_AssociatedObject is ICalendarParameterCollectionContainer)
+                    _proxy.SetParent(_associatedObject);
+                    if (_associatedObject is ICalendarParameterCollectionContainer)
                     {
-                        _proxy.SetProxiedObject(((ICalendarParameterCollectionContainer)_AssociatedObject).Parameters);
+                        _proxy.SetProxiedObject(((ICalendarParameterCollectionContainer)_associatedObject).Parameters);
                     }
                 }
                 else
@@ -121,7 +121,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public virtual Calendar Calendar => _AssociatedObject?.Calendar;
+        public virtual Calendar Calendar => _associatedObject?.Calendar;
 
         public virtual string Language
         {
@@ -141,8 +141,8 @@ namespace Ical.Net.DataTypes
             }
 
             var dt = (ICalendarDataType)obj;
-            _AssociatedObject = dt.AssociatedObject;
-            _proxy.SetParent(_AssociatedObject);
+            _associatedObject = dt.AssociatedObject;
+            _proxy.SetParent(_associatedObject);
             _proxy.SetProxiedObject(dt.Parameters);
         }
 
