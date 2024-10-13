@@ -68,7 +68,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         internal static readonly Regex TimespanMatch =
             new Regex(@"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?))$",
-                RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                RegexOptions.Compiled | RegexOptions.IgnoreCase, RegexDefaults.Timeout);
 
         public override object Deserialize(TextReader tr)
         {

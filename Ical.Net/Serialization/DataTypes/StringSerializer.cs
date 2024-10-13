@@ -14,7 +14,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public StringSerializer(SerializationContext ctx) : base(ctx) { }
 
-        internal static readonly Regex SingleBackslashMatch = new Regex(@"(?<!\\)\\(?!\\)", RegexOptions.Compiled);
+        internal static readonly Regex SingleBackslashMatch = new Regex(@"(?<!\\)\\(?!\\)", RegexOptions.Compiled, RegexDefaults.Timeout);
 
         protected virtual string Unescape(string value)
         {
@@ -98,7 +98,7 @@ namespace Ical.Net.Serialization.DataTypes
             return string.Join(",", values);
         }
 
-        internal static readonly Regex UnescapedCommas = new Regex(@"(?<!\\),", RegexOptions.Compiled);
+        internal static readonly Regex UnescapedCommas = new Regex(@"(?<!\\),", RegexOptions.Compiled, RegexDefaults.Timeout);
         public override object Deserialize(TextReader tr)
         {
             if (tr == null)

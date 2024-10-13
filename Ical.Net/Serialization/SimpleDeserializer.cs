@@ -30,7 +30,7 @@ namespace Ical.Net.Serialization
         private const string _paramNameGroup = "paramName";
         private const string _paramValueGroup = "paramValue";
 
-        private static readonly Regex _contentLineRegex = new Regex(BuildContentLineRegex(), RegexOptions.Compiled);
+        private static readonly Regex _contentLineRegex = new Regex(BuildContentLineRegex(), RegexOptions.Compiled, RegexDefaults.Timeout);
 
         private readonly DataTypeMapper _dataTypeMapper;
         private readonly ISerializerFactory _serializerFactory;

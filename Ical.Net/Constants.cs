@@ -353,4 +353,19 @@ namespace Ical.Net
         /// </summary>
         public const string DeclineCounter = "DECLINECOUNTER";
     }
+
+    /// <summary>
+    /// The defaults used for regular expressions.
+    /// </summary>
+    public static class RegexDefaults
+    {
+        /// <summary>
+        /// The default timeout for regular expressions in milliseconds.
+        /// </summary>
+        public const int TimeoutMilliseconds = 200;
+        /// <summary>
+        /// The default timeout for regular expressions.
+        /// </summary>
+        public static readonly TimeSpan Timeout = TimeSpan.FromMilliseconds(TimeoutMilliseconds);
+    }
 }

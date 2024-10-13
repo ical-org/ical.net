@@ -30,7 +30,7 @@ namespace Ical.Net.Serialization.DataTypes
             return Encode(ds, value);
         }
 
-        private static readonly Regex _dayOfWeek = new Regex(@"(\+|-)?(\d{1,2})?(\w{2})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex _dayOfWeek = new Regex(@"(\+|-)?(\d{1,2})?(\w{2})", RegexOptions.Compiled | RegexOptions.IgnoreCase, RegexDefaults.Timeout);
 
         public override object Deserialize(TextReader tr)
         {

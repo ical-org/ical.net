@@ -29,7 +29,7 @@ namespace Ical.Net.Serialization.DataTypes
             return Encode(sc, Escape(string.Join(".", vals)));
         }
 
-        internal static readonly Regex StatusCode = new Regex(@"\d(\.\d+)*", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        internal static readonly Regex StatusCode = new Regex(@"\d(\.\d+)*", RegexOptions.Compiled | RegexOptions.CultureInvariant, RegexDefaults.Timeout);
 
         public override object Deserialize(TextReader tr)
         {
