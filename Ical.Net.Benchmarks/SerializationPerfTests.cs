@@ -10,7 +10,7 @@ namespace Ical.Net.Benchmarks
 {
     public class SerializationPerfTests
     {
-        private const string _sampleEvent = @"BEGIN:VCALENDAR
+        private const string SampleEvent = @"BEGIN:VCALENDAR
 PRODID:-//Microsoft Corporation//Outlook 12.0 MIMEDIR//EN
 VERSION:2.0
 METHOD:PUBLISH
@@ -63,29 +63,32 @@ END:VCALENDAR
 ";
 
         [Benchmark]
-        public void Deserialize() => Calendar.Load(_sampleEvent).Events.First();
+        public void Deserialize() => Calendar.Load(SampleEvent).Events.First();
 
         [Benchmark]
-        public void SerializeCalendar() => new CalendarSerializer().SerializeToString(SimpleCalendar);
+        public void BenchmarkSerializeCalendar() => new CalendarSerializer().SerializeToString(CreateSimpleCalendar());
 
-        private const string _aTzid = "America/New_York";
-        private static readonly Calendar SimpleCalendar = new Calendar
+        private static Calendar CreateSimpleCalendar()
         {
-            Events = { _e },
-        };
+            const string timeZoneId = "America/New_York";
 
-        private static readonly CalendarEvent _e = new CalendarEvent
-        {
-            Start = new CalDateTime(DateTime.Now, _aTzid),
-            End = new CalDateTime(DateTime.Now + TimeSpan.FromHours(1), _aTzid),
-            RecurrenceRules = new List<RecurrencePattern>
+            var simpleCalendar = new Calendar();
+            var calendarEvent = new CalendarEvent
             {
-                new RecurrencePattern(FrequencyType.Daily, 1)
+                Start = new CalDateTime(DateTime.Now, timeZoneId),
+                End = new CalDateTime(DateTime.Now + TimeSpan.FromHours(1), timeZoneId),
+                RecurrenceRules = new List<RecurrencePattern>
                 {
-                    Count = 100,
+                    new RecurrencePattern(FrequencyType.Daily, 1)
+                    {
+                        Count = 100,
+                    }
                 }
-            }
-        };
+            };
+
+            simpleCalendar.Events.Add(calendarEvent);
+            return simpleCalendar;
+        }
     }
 }
 
