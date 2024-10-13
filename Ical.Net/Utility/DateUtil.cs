@@ -1,4 +1,4 @@
-using Ical.Net.DataTypes;
+﻿using Ical.Net.DataTypes;
 using NodaTime;
 using NodaTime.TimeZones;
 using System;
@@ -128,7 +128,7 @@ namespace Ical.Net.Utility
                 return zone;
             }
 
-            //US/Eastern is commonly represented as US-Eastern
+            // US/Eastern is commonly represented as US-Eastern
             var newTzId = tzId.Replace("-", "/");
             zone = NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(newTzId);
             if (zone != null)
@@ -136,20 +136,22 @@ namespace Ical.Net.Utility
                 return zone;
             }
 
-            foreach (var providerId in DateTimeZoneProviders.Tzdb.Ids.Where(tzId.Contains))
+            var providerId = DateTimeZoneProviders.Tzdb.Ids.FirstOrDefault(tzId.Contains);
+            if (providerId != null)
             {
                 return DateTimeZoneProviders.Tzdb.GetZoneOrNull(providerId);
             }
 
             if (_windowsMapping.Value.Keys
                     .Where(tzId.Contains)
-                    .Any(providerId => _windowsMapping.Value.TryGetValue(providerId, out ianaZone))
+                    .Any(pId => _windowsMapping.Value.TryGetValue(pId, out ianaZone))
                )
             {
                 return DateTimeZoneProviders.Tzdb.GetZoneOrNull(ianaZone);
             }
 
-            foreach (var providerId in NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.Ids.Where(tzId.Contains))
+            providerId = NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.Ids.FirstOrDefault(tzId.Contains);
+            if (providerId != null)
             {
                 return NodaTime.Xml.XmlSerializationSettings.DateTimeZoneProvider.GetZoneOrNull(providerId);
             }
