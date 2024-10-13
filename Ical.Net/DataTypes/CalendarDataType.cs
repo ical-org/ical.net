@@ -91,7 +91,7 @@ namespace Ical.Net.DataTypes
 
         public virtual void SetValueType(string type)
         {
-            _proxy?.Set("VALUE", type ?? type.ToUpper());
+            _proxy?.Set("VALUE", type?.ToUpper());
         }
 
         public virtual ICalendarObject AssociatedObject
