@@ -15,7 +15,7 @@ namespace Ical.Net.Benchmarks
             var calendar = GetFourCalendarEventsWithUntilRule();
             var searchStart = calendar.Events.First().DtStart.AddYears(-1);
             var searchEnd = calendar.Events.Last().DtStart.AddYears(1);
-            var occurences = calendar.GetOccurrences(searchStart, searchEnd);
+            _ = calendar.GetOccurrences(searchStart, searchEnd);
         }
 
         [Benchmark]
@@ -24,7 +24,7 @@ namespace Ical.Net.Benchmarks
             var calendar = GetFourCalendarEventsWithUntilRule();
             var searchStart = calendar.Events.First().DtStart.AddYears(-1);
             var searchEnd = calendar.Events.Last().DtStart.AddYears(1);
-            var eventOccurrences = calendar.Events
+            _ = calendar.Events
                 .SelectMany(e => e.GetOccurrences(searchStart, searchEnd))
                 .ToList();
         }
@@ -35,7 +35,7 @@ namespace Ical.Net.Benchmarks
             var calendar = GetFourCalendarEventsWithUntilRule();
             var searchStart = calendar.Events.First().DtStart.AddYears(-1);
             var searchEnd = calendar.Events.Last().DtStart.AddYears(1).AddDays(10);
-            var eventOccurrences = calendar.Events
+            _ = calendar.Events
                 .AsParallel()
                 .SelectMany(e => e.GetOccurrences(searchStart, searchEnd))
                 .ToList();
@@ -79,7 +79,7 @@ namespace Ical.Net.Benchmarks
             var calendar = GetFourCalendarEventsWithCountRule();
             var searchStart = calendar.Events.First().DtStart.AddYears(-1);
             var searchEnd = calendar.Events.Last().DtStart.AddYears(1);
-            var occurences = calendar.GetOccurrences(searchStart, searchEnd);
+            _ = calendar.GetOccurrences(searchStart, searchEnd);
         }
 
         [Benchmark]
@@ -88,7 +88,7 @@ namespace Ical.Net.Benchmarks
             var calendar = GetFourCalendarEventsWithCountRule();
             var searchStart = calendar.Events.First().DtStart.AddYears(-1);
             var searchEnd = calendar.Events.Last().DtStart.AddYears(1);
-            var eventOccurrences = calendar.Events
+            _ = calendar.Events
                 .SelectMany(e => e.GetOccurrences(searchStart, searchEnd))
                 .ToList();
         }
