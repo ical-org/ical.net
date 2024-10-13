@@ -135,12 +135,11 @@ namespace Ical.Net.DataTypes
         /// </summary>
         public virtual void CopyFrom(ICopyable obj)
         {
-            if (!(obj is ICalendarDataType))
+            if (!(obj is ICalendarDataType dt))
             {
                 return;
             }
 
-            var dt = (ICalendarDataType)obj;
             _associatedObject = dt.AssociatedObject;
             _proxy.SetParent(_associatedObject);
             _proxy.SetProxiedObject(dt.Parameters);
