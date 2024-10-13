@@ -36,7 +36,8 @@ namespace Ical.Net.Collections
 
         private IMultiLinkedList<TItem> ListForIndex(int index, out int relativeIndex)
         {
-            foreach (var list in _lists.Where(list => list.StartIndex <= index && list.ExclusiveEnd > index))
+            var list = _lists.FirstOrDefault(l => l.StartIndex <= index && l.ExclusiveEnd > index);
+            if (list != null)
             {
                 relativeIndex = index - list.StartIndex;
                 return list;
