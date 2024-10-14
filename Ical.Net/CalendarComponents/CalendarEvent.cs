@@ -275,7 +275,6 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
          *   -1 = Anybody, stack overflow could maybe still occur in this case?
          *    0 = End
          *	  1 = Duration
-         *	  2 = DtStart
          */
         if (DtEnd == null && DtStart != null && Duration != default(TimeSpan) && source != 0)
         {
@@ -284,10 +283,6 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
         else if (Duration == default(TimeSpan) && DtStart != null && DtEnd != null && source != 1)
         {
             Duration = DtEnd.Subtract(DtStart);
-        }
-        else if (DtStart == null && Duration != default(TimeSpan) && DtEnd != null && source != 2)
-        {
-            DtStart = DtEnd.Subtract(Duration);
         }
     }
 
