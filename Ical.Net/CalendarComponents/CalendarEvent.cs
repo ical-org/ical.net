@@ -32,27 +32,6 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     internal const string ComponentName = "VEVENT";
 
     /// <summary>
-    /// The start date/time of the event.
-    /// <note>
-    /// If the duration has not been set, but
-    /// the start/end time of the event is available,
-    /// the duration is automatically determined.
-    /// Likewise, if the end date/time has not been
-    /// set, but a start and duration are available,
-    /// the end date/time will be extrapolated.
-    /// </note>
-    /// </summary>
-    public override IDateTime DtStart
-    {
-        get => base.DtStart;
-        set
-        {
-            base.DtStart = value;
-            ExtrapolateTimes(2);
-        }
-    }
-
-    /// <summary>
     /// The end date/time of the event.
     /// <note>
     /// If the duration has not been set, but
@@ -71,7 +50,6 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
             if (!Equals(DtEnd, value))
             {
                 Properties.Set("DTEND", value);
-                ExtrapolateTimes(0);
             }
         }
     }
@@ -105,10 +83,57 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
             if (!Equals(Duration, value))
             {
                 Properties.Set("DURATION", value);
-                ExtrapolateTimes(1);
             }
         }
     }
+
+    /// <summary>
+    /// Calculates and returns the duration of the first occurrence of this event.
+    /// </summary>
+    /// <remarks>
+    /// If the 'DURATION' property is set, this method will return its value.
+    /// Otherwise, if DTSTART and DTEND are set, it will return DTSTART minus DTEND.
+    /// Otherwise it will return `default(TimeSpan)`.
+    /// Note that for recurring events, the duration of individual occurrences may vary
+    /// if they span a DST change.
+    /// </remarks>
+    /// <returns>The effective duration of this event.</returns>
+    public virtual TimeSpan GetFirstDuration()
+    {
+        if (Properties.ContainsKey("DURATION"))
+            return Duration;
+
+        if (DtStart is not null)
+        {
+            if (DtEnd is not null)
+            {
+                // The "DTEND" property
+                // for a "VEVENT" calendar component specifies the non-inclusive end
+                // of the event.
+                return DtEnd.Subtract(DtStart);
+            }
+            else if (!DtStart.HasTime)
+            {
+                // For cases where a "VEVENT" calendar component
+                // specifies a "DTSTART" property with a DATE value type but no
+                // "DTEND" nor "DURATION" property, the event's duration is taken to
+                // be one day.
+                return TimeSpan.FromDays(1);
+            }
+            else
+            {
+                // For cases where a "VEVENT" calendar component
+                // specifies a "DTSTART" property with a DATE-TIME value type but no
+                // "DTEND" property, the event ends on the same calendar date and
+                // time of day specified by the "DTSTART" property.
+                return TimeSpan.Zero;
+            }
+        }
+
+        // This is an illegal state. We return zero for compatibility reasons.
+        return TimeSpan.Zero;
+    }
+
 
     /// <summary>
     /// An alias to the DtEnd field (i.e. end date/time).
@@ -264,26 +289,6 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     protected override void OnDeserialized(StreamingContext context)
     {
         base.OnDeserialized(context);
-
-        ExtrapolateTimes(-1);
-    }
-
-    private void ExtrapolateTimes(int source)
-    {
-        /*
-         * Source values, a fix introduced to prevent stack overflow exceptions from occuring.
-         *   -1 = Anybody, stack overflow could maybe still occur in this case?
-         *    0 = End
-         *	  1 = Duration
-         */
-        if (DtEnd == null && DtStart != null && Duration != default(TimeSpan) && source != 0)
-        {
-            DtEnd = DtStart.Add(Duration);
-        }
-        else if (Duration == default(TimeSpan) && DtStart != null && DtEnd != null && source != 1)
-        {
-            Duration = DtEnd.Subtract(DtStart);
-        }
     }
 
     protected bool Equals(CalendarEvent other)
@@ -296,6 +301,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
             && string.Equals(Summary, other.Summary, StringComparison.OrdinalIgnoreCase)
             && string.Equals(Description, other.Description, StringComparison.OrdinalIgnoreCase)
             && Equals(DtEnd, other.DtEnd)
+            && Equals(Duration, other.Duration)
             && string.Equals(Location, other.Location, StringComparison.OrdinalIgnoreCase)
             && resourcesSet.SetEquals(other.Resources)
             && string.Equals(Status, other.Status, StringComparison.Ordinal)
@@ -356,6 +362,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
             hashCode = (hashCode * 397) ^ (Summary?.GetHashCode() ?? 0);
             hashCode = (hashCode * 397) ^ (Description?.GetHashCode() ?? 0);
             hashCode = (hashCode * 397) ^ (DtEnd?.GetHashCode() ?? 0);
+            hashCode = (hashCode * 397) ^ Duration.GetHashCode();
             hashCode = (hashCode * 397) ^ (Location?.GetHashCode() ?? 0);
             hashCode = (hashCode * 397) ^ Status?.GetHashCode() ?? 0;
             hashCode = (hashCode * 397) ^ IsActive.GetHashCode();

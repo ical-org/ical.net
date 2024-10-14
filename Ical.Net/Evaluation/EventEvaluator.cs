@@ -45,19 +45,19 @@ public class EventEvaluator : RecurringEvaluator
 
         foreach (var period in Periods)
         {
-            period.Duration = CalendarEvent.Duration;
+            period.Duration = CalendarEvent.GetFirstDuration();
             period.EndTime = period.Duration == default
                 ? period.StartTime
-                : period.StartTime.Add(CalendarEvent.Duration);
+                : period.StartTime.Add(CalendarEvent.GetFirstDuration());
         }
 
         // Ensure each period has a duration
         foreach (var period in Periods.Where(p => p.EndTime == null))
         {
-            period.Duration = CalendarEvent.Duration;
+            period.Duration = CalendarEvent.GetFirstDuration();
             period.EndTime = period.Duration == default
                 ? period.StartTime
-                : period.StartTime.Add(CalendarEvent.Duration);
+                : period.StartTime.Add(CalendarEvent.GetFirstDuration());
         }
 
         return Periods;
