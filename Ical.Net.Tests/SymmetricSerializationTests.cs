@@ -25,7 +25,7 @@ public class SymmetricSerializationTests
     private static readonly DateTime _later = _nowTime.AddHours(1);
     private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
     private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
-    private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime };
+    private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later) };
     private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
 
     [Test, TestCaseSource(nameof(Event_TestCases))]
@@ -53,7 +53,6 @@ public class SymmetricSerializationTests
         {
             DtStart = new CalDateTime(_nowTime),
             DtEnd = new CalDateTime(_later),
-            Duration = TimeSpan.FromHours(1),
             RecurrenceRules = new List<RecurrencePattern> { rrule },
         };
 
