@@ -3,10 +3,19 @@
 A listing of what each [Nuget package](https://www.nuget.org/packages/laget.iCal) version represents.
 
 ### v4
-* 4.3.0 - (2024-01-19)
-  * Added target `net8.0`, `net6.0`, `netstandard2.1`
-  * Merged a few pull requests from the original repository that fixes a few bugs
+* 4.3.1 - (2024-10-14)
+  * Update Ical.Net.csproj to use NodaTime 3.2.0 instead of 3.1.12. NodaTime v3.2.0 which brings some welcome changes
+  * Replace Ical.Net.nuspec with Directory.Build.props
+  * Remove unnecessary nuget dependencies, so `NodaTime` is again the only one
+* 4.3.0 - (2024-10-13)
+  * Update the repository from fork `laget.se/ical net`
+  * * Remove net5.0 as target framework from all projects
+  * Merged a few pull requests  that fixes a few bugs
     * #584, #579, #571, #528, #525, #471, #470, #443
+  * Update CI workflows `publish.yml` and `tests.yml`
+  * Update ProdId constant and NodaTime package version
+  * Add back assembly signing to projects and include strong name key
+  * Add class `RegexDefaults` and update all Regex with `RegexDefaults.Timeout` which is set to 200 milliseconds
 * 4.2.0 - (2021-04-10) - Many bugbixes from the community
   * Fix infinite loop with MaxDate for GetOccurrences #364
   * Deserializes STANDARD and DAYLIGHT timezone infos #420
