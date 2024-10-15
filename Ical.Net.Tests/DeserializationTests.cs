@@ -1,4 +1,4 @@
-using Ical.Net.CalendarComponents;
+﻿using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.DataTypes;
@@ -504,6 +504,26 @@ END:VCALENDAR
             {
                 Assert.AreEqual("2." + i, props[i].Value);
             }
+        }
+
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void KeepApartDtEndAndDuration_Tests(bool useDtEnd)
+        {
+            var calStr = $@"BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART:20070406T230000Z
+{(useDtEnd ? "DTEND:20070407T010000Z" : "DURATION:PT1H")}
+END:VEVENT
+END:VCALENDAR
+";
+
+            var calendar = Calendar.Load(calStr);
+
+            Assert.AreEqual(useDtEnd, calendar.Events.Single().DtEnd != null);
+            Assert.AreEqual(!useDtEnd, calendar.Events.Single().Duration != default);
         }
     }
 }
