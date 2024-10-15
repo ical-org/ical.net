@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace Ical.Net.Benchmarks
 {
@@ -17,8 +16,8 @@ namespace Ical.Net.Benchmarks
 
         private static List<string> GetIcalStrings()
         {
-            var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var topLevelIcsPath = Path.GetFullPath(Path.Combine(currentDirectory, @"..\..\..\..\", @"Ical.Net.CoreUnitTests\Calendars"));
+            var testProjectDirectory = Runner.FindParentFolder("Ical.Net.Tests", Directory.GetCurrentDirectory());
+            var topLevelIcsPath = Path.GetFullPath(Path.Combine(testProjectDirectory, "Calendars"));
             return Directory.EnumerateFiles(topLevelIcsPath, "*.ics", SearchOption.AllDirectories)
                 .Select(File.ReadAllText)
                 .Distinct(StringComparer.OrdinalIgnoreCase)

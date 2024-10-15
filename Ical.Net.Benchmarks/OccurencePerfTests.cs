@@ -41,7 +41,7 @@ namespace Ical.Net.Benchmarks
                 .ToList();
         }
 
-        private Calendar GetFourCalendarEventsWithUntilRule()
+        private static Calendar GetFourCalendarEventsWithUntilRule()
         {
             const string tzid = "America/New_York";
             const int limit = 4;
@@ -99,13 +99,13 @@ namespace Ical.Net.Benchmarks
             var calendar = GetFourCalendarEventsWithCountRule();
             var searchStart = calendar.Events.First().DtStart.AddYears(-1);
             var searchEnd = calendar.Events.Last().DtStart.AddYears(1).AddDays(10);
-            var eventOccurrences = calendar.Events
+            _ = calendar.Events
                 .AsParallel()
                 .SelectMany(e => e.GetOccurrences(searchStart, searchEnd))
                 .ToList();
         }
 
-        private Calendar GetFourCalendarEventsWithCountRule()
+        private static Calendar GetFourCalendarEventsWithCountRule()
         {
             const string tzid = "America/New_York";
             const int limit = 4;
