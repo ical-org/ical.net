@@ -35,7 +35,7 @@ namespace Ical.Net.Tests
             var searchStart = DateTime.Parse("2016-07-20");
             var searchEnd = DateTime.Parse("2016-08-05");
             var occurrences = calendar.GetOccurrences(searchStart, searchEnd);
-            Assert.AreEqual(12, occurrences.Count);
+            Assert.That(occurrences, Has.Count.EqualTo(12));
         }
 
         [Test]
@@ -61,7 +61,7 @@ namespace Ical.Net.Tests
             var searchEnd = DateTime.Parse("2016-12-31");
             var tuesdays = vEvent.GetOccurrences(searchStart, searchEnd);
 
-            Assert.AreEqual(13, tuesdays.Count);
+            Assert.That(tuesdays, Has.Count.EqualTo(13));
         }
 
         [Test]
@@ -90,10 +90,10 @@ namespace Ical.Net.Tests
             var searchEnd = DateTime.Parse("2017-01-01");
             var usThanksgivings = vEvent.GetOccurrences(searchStart, searchEnd);
 
-            Assert.AreEqual(17, usThanksgivings.Count);
+            Assert.That(usThanksgivings, Has.Count.EqualTo(17));
             foreach (var thanksgiving in usThanksgivings)
             {
-                Assert.IsTrue(thanksgiving.Period.StartTime.DayOfWeek == DayOfWeek.Thursday);
+                Assert.That(thanksgiving.Period.StartTime.DayOfWeek == DayOfWeek.Thursday, Is.True);
             }
         }
 
@@ -122,7 +122,7 @@ namespace Ical.Net.Tests
             var searchStart = DateTime.Parse("2015-12-31");
             var searchEnd = DateTime.Parse("2017-01-01");
             var occurrences = calendar.GetOccurrences(searchStart, searchEnd);
-            Assert.AreEqual(314, occurrences.Count);
+            Assert.That(occurrences, Has.Count.EqualTo(314));
         }
     }
 }

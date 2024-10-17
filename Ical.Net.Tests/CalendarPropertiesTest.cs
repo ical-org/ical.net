@@ -23,7 +23,7 @@ namespace Ical.Net.Tests
 
             var lines = result.Split(new [] { SerializationConstants.LineBreak }, StringSplitOptions.None);
             var propLine = lines.FirstOrDefault(x => x.StartsWith("X-WR-CALNAME:"));
-            Assert.AreEqual($"{propName}:{propValue}", propLine);
+            Assert.That(propLine, Is.EqualTo($"{propName}:{propValue}"));
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace Ical.Net.Tests
             calendar.Events.Add(@event);
 
             var serialized = new CalendarSerializer().SerializeToString(calendar);
-            Assert.IsTrue(serialized.Contains("X-ALT-DESC;"));
+            Assert.That(serialized.Contains("X-ALT-DESC;"), Is.True);
         }
 
         [Test]

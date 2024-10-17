@@ -1,18 +1,17 @@
-using Ical.Net.CalendarComponents;
+﻿using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
 using Ical.Net.Serialization;
 using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 using NUnit.Framework;
-using NUnit.Framework.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace Ical.Net.Tests
 {
@@ -38,14 +37,14 @@ namespace Ical.Net.Tests
                 .OrderBy(o => o.Period.StartTime)
                 .ToList();
 
-            Assert.AreEqual(
-                dateTimes.Length,
-                occurrences.Count,
+            Assert.That(
+                occurrences,
+Has.Count.EqualTo(dateTimes.Length),
                 "There should be exactly " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
 
             if (evt.RecurrenceRules.Count > 0)
             {
-                Assert.AreEqual(1, evt.RecurrenceRules.Count);
+                Assert.That(evt.RecurrenceRules, Has.Count.EqualTo(1));
             }
 
             for (var i = 0; i < dateTimes.Length; i++)
@@ -54,9 +53,9 @@ namespace Ical.Net.Tests
                 dateTimes[i].AssociatedObject = cal;
 
                 var dt = dateTimes[i];
-                Assert.AreEqual(dt, occurrences[i].Period.StartTime, "Event should occur on " + dt);
+                Assert.That(occurrences[i].Period.StartTime, Is.EqualTo(dt), "Event should occur on " + dt);
                 if (timeZones != null)
-                    Assert.AreEqual(timeZones[i], dt.TimeZoneName, "Event " + dt + " should occur in the " + timeZones[i] + " timezone");
+                    Assert.That(dt.TimeZoneName, Is.EqualTo(timeZones[i]), "Event " + dt + " should occur in the " + timeZones[i] + " timezone");
             }            
         }
 
@@ -95,8 +94,11 @@ namespace Ical.Net.Tests
                     (dt.DayOfWeek == DayOfWeek.Sunday))
                 {
                     var dt1 = dt.AddHours(1);
-                    Assert.AreEqual(dt, occurrences[i].Period.StartTime, "Event should occur at " + dt);
-                    Assert.AreEqual(dt1, occurrences[i + 1].Period.StartTime, "Event should occur at " + dt);
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(occurrences[i].Period.StartTime, Is.EqualTo(dt), "Event should occur at " + dt);
+                        Assert.That(occurrences[i + 1].Period.StartTime, Is.EqualTo(dt1), "Event should occur at " + dt);
+                    });
                     i += 2;
                 }
 
@@ -153,11 +155,15 @@ namespace Ical.Net.Tests
                 if (dt.GreaterThanOrEqual(evt.Start) &&
                     dt.LessThan(new CalDateTime(1997, 12, 24, 0, 0, 0, _tzid)))
                 {
-                    Assert.AreEqual(dt, occurrences[i].Period.StartTime, "Event should occur at " + dt);
-                    Assert.IsTrue(
-                        (dt.LessThan(new CalDateTime(1997, 10, 26, _tzid)) && dt.TimeZoneName == "US-Eastern") ||
-                        (dt.GreaterThan(new CalDateTime(1997, 10, 26, _tzid)) && dt.TimeZoneName == "US-Eastern"),
-                        "Event " + dt + " doesn't occur in the correct time zone (including Daylight & Standard time zones)");
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(occurrences[i].Period.StartTime, Is.EqualTo(dt), "Event should occur at " + dt);
+                        Assert.That(
+                            (dt.LessThan(new CalDateTime(1997, 10, 26, _tzid)) && dt.TimeZoneName == "US-Eastern") ||
+                            (dt.GreaterThan(new CalDateTime(1997, 10, 26, _tzid)) && dt.TimeZoneName == "US-Eastern"),
+                            Is.True,
+                            "Event " + dt + " doesn't occur in the correct time zone (including Daylight & Standard time zones)");
+                    });
                     i++;
                 }
 
@@ -324,7 +330,7 @@ namespace Ical.Net.Tests
                     dt.Month == 1 &&
                     dt.LessThanOrEqual(new CalDateTime(2000, 1, 31, 9, 0, 0, _tzid)))
                 {
-                    Assert.AreEqual(dt, occurrences[i].Period.StartTime, "Event should occur at " + dt);
+                    Assert.That(occurrences[i].Period.StartTime, Is.EqualTo(dt), "Event should occur at " + dt);
                     i++;
                 }
 
@@ -352,9 +358,9 @@ namespace Ical.Net.Tests
 
             var evt1Occurrences = evt1.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(2000, 12, 31)).OrderBy(o => o.Period.StartTime).ToList();
             var evt2Occurrences = evt2.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(2000, 12, 31)).OrderBy(o => o.Period.StartTime).ToList();
-            Assert.IsTrue(evt1Occurrences.Count == evt2Occurrences.Count, "ByMonth1 does not match ByMonth2 as it should");
+            Assert.That(evt1Occurrences.Count == evt2Occurrences.Count, Is.True, "ByMonth1 does not match ByMonth2 as it should");
             for (var i = 0; i < evt1Occurrences.Count; i++)
-                Assert.AreEqual(evt1Occurrences[i].Period, evt2Occurrences[i].Period, "PERIOD " + i + " from ByMonth1 (" + evt1Occurrences[i] + ") does not match PERIOD " + i + " from ByMonth2 (" + evt2Occurrences[i] + ")");
+                Assert.That(evt2Occurrences[i].Period, Is.EqualTo(evt1Occurrences[i].Period), "PERIOD " + i + " from ByMonth1 (" + evt1Occurrences[i] + ") does not match PERIOD " + i + " from ByMonth2 (" + evt2Occurrences[i] + ")");
         }
 
         /// <summary>
@@ -536,10 +542,10 @@ namespace Ical.Net.Tests
 
             var evt1Occ = evt1.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(1999, 1, 1)).OrderBy(o => o.Period.StartTime).ToList();
             var evt2Occ = evt2.GetOccurrences(new CalDateTime(1997, 9, 1), new CalDateTime(1999, 1, 1)).OrderBy(o => o.Period.StartTime).ToList();
-            Assert.AreEqual(evt1Occ.Count, evt2Occ.Count, "WeeklyCountWkst1() does not match WeeklyUntilWkst1() as it should");
+            Assert.That(evt2Occ, Has.Count.EqualTo(evt1Occ.Count), "WeeklyCountWkst1() does not match WeeklyUntilWkst1() as it should");
             for (var i = 0; i < evt1Occ.Count; i++)
             {
-                Assert.AreEqual(evt1Occ[i].Period, evt2Occ[i].Period, "PERIOD " + i + " from WeeklyUntilWkst1 (" + evt1Occ[i].Period + ") does not match PERIOD " + i + " from WeeklyCountWkst1 (" + evt2Occ[i].Period + ")");
+                Assert.That(evt2Occ[i].Period, Is.EqualTo(evt1Occ[i].Period), "PERIOD " + i + " from WeeklyUntilWkst1 (" + evt1Occ[i].Period + ") does not match PERIOD " + i + " from WeeklyCountWkst1 (" + evt2Occ[i].Period + ")");
             }
         }
 
@@ -1182,7 +1188,7 @@ namespace Ical.Net.Tests
             var recurringPeriods1 = rpe1.Evaluate(new CalDateTime(start), start, end, false);
             var recurringPeriods2 = rpe2.Evaluate(new CalDateTime(start), start, end, false);
 
-            Assert.AreEqual(recurringPeriods1.Count, recurringPeriods2.Count);
+            Assert.That(recurringPeriods2, Has.Count.EqualTo(recurringPeriods1.Count));
         }
 
         /// <summary>
@@ -1780,9 +1786,9 @@ namespace Ical.Net.Tests
 
             var evt1Occ = evt1.GetOccurrences(new CalDateTime(1997, 9, 1, _tzid), new CalDateTime(1997, 9, 3, _tzid)).OrderBy(o => o.Period.StartTime).ToList();
             var evt2Occ = evt2.GetOccurrences(new CalDateTime(1997, 9, 1, _tzid), new CalDateTime(1997, 9, 3, _tzid)).OrderBy(o => o.Period.StartTime).ToList();
-            Assert.IsTrue(evt1Occ.Count == evt2Occ.Count, "MinutelyByHour1() does not match DailyByHourMinute1() as it should");
+            Assert.That(evt1Occ.Count == evt2Occ.Count, Is.True, "MinutelyByHour1() does not match DailyByHourMinute1() as it should");
             for (var i = 0; i < evt1Occ.Count; i++)
-                Assert.AreEqual(evt1Occ[i].Period, evt2Occ[i].Period, "PERIOD " + i + " from DailyByHourMinute1 (" + evt1Occ[i].Period + ") does not match PERIOD " + i + " from MinutelyByHour1 (" + evt2Occ[i].Period + ")");
+                Assert.That(evt2Occ[i].Period, Is.EqualTo(evt1Occ[i].Period), "PERIOD " + i + " from DailyByHourMinute1 (" + evt1Occ[i].Period + ") does not match PERIOD " + i + " from MinutelyByHour1 (" + evt2Occ[i].Period + ")");
         }
 
         /// <summary>
@@ -1867,19 +1873,11 @@ namespace Ical.Net.Tests
         [Test, Category("Recurrence")]
         public void Secondly1()
         {
-            var evt = new AutoResetEvent(false);
-
-            try
+            Assert.That(() =>
             {
                 var iCal = Calendar.Load(IcsFiles.Secondly1);
-                var occurrences = iCal.GetOccurrences(new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid), new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
-            }
-            catch (ArgumentException)
-            {
-                evt.Set();
-            }
-
-            Assert.IsTrue(evt.WaitOne(2000), "Evaluation engine should have failed.");
+                _ = iCal.GetOccurrences(new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid), new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
+            }, Throws.Exception.TypeOf<ArgumentException>(), "Evaluation engine should have failed.");
         }
 
         /// <summary>
@@ -1917,21 +1915,17 @@ namespace Ical.Net.Tests
         /// <summary>
         /// Ensures that if configured, MINUTELY recurrence rules are not allowed.
         /// </summary>
-        [Test, Category("Recurrence")/*, ExpectedException(typeof(EvaluationEngineException))*/]
+        [Test, Category("Recurrence")]
         public void Minutely1()
         {
-            try
+            Assert.That(() =>
             {
                 var iCal = Calendar.Load(IcsFiles.Minutely1);
                 iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictMinutely;
                 var occurrences = iCal.GetOccurrences(
                     new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
                     new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
-            }
-            catch (Exception e)
-            {
-                Assert.IsInstanceOf<ArgumentException>(e);
-            }
+            }, Throws.Exception.TypeOf<ArgumentException>());
         }
 
         /// <summary>
@@ -1967,17 +1961,13 @@ namespace Ical.Net.Tests
         [Test, Category("Recurrence")/*, ExpectedException(typeof(EvaluationEngineException))*/]
         public void Hourly1()
         {
-            try
+            Assert.That(() =>
             {
                 var iCal = Calendar.Load(IcsFiles.Hourly1);
                 iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictHourly;
-                var occurrences = iCal.GetOccurrences(new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid), new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
-            }
-            catch (Exception e)
-            {
-                Assert.IsInstanceOf<ArgumentException>(e);
-            }
-            
+                _ = iCal.GetOccurrences(new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid), new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
+
+            }, Throws.Exception.TypeOf<ArgumentException>());
         }
 
         /// <summary>
@@ -2583,8 +2573,8 @@ namespace Ical.Net.Tests
 
             var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, end, false);
 
-            Assert.AreEqual(1, recurringPeriods.Count);
-            Assert.AreEqual(new CalDateTime(2019, 1, 7), recurringPeriods.First().StartTime);
+            Assert.That(recurringPeriods, Has.Count.EqualTo(1));
+            Assert.That(recurringPeriods.First().StartTime, Is.EqualTo(new CalDateTime(2019, 1, 7)));
         }
 
         /// <summary>
@@ -2599,11 +2589,14 @@ namespace Ical.Net.Tests
 
             var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, end, false).OrderBy(x => x).ToList();
 
-            Assert.AreEqual(4, recurringPeriods.Count);
-            Assert.AreEqual(new CalDateTime(2020, 1, 6), recurringPeriods[0].StartTime);
-            Assert.AreEqual(new CalDateTime(2020, 1, 13), recurringPeriods[1].StartTime);
-            Assert.AreEqual(new CalDateTime(2020, 1, 20), recurringPeriods[2].StartTime);
-            Assert.AreEqual(new CalDateTime(2020, 1, 27), recurringPeriods[3].StartTime);
+            Assert.That(recurringPeriods, Has.Count.EqualTo(4));
+            Assert.Multiple(() =>
+            {
+                Assert.That(recurringPeriods[0].StartTime, Is.EqualTo(new CalDateTime(2020, 1, 6)));
+                Assert.That(recurringPeriods[1].StartTime, Is.EqualTo(new CalDateTime(2020, 1, 13)));
+                Assert.That(recurringPeriods[2].StartTime, Is.EqualTo(new CalDateTime(2020, 1, 20)));
+                Assert.That(recurringPeriods[3].StartTime, Is.EqualTo(new CalDateTime(2020, 1, 27)));
+            });
         }
         
         [Test, Category("Recurrence")]
@@ -2624,7 +2617,7 @@ namespace Ical.Net.Tests
             evt.RecurrenceRules.Add(pattern);
 
             var occurrences = evt.GetOccurrences(new DateTime(2018, 1, 1), DateTime.MaxValue);
-            Assert.AreEqual(10, occurrences.Count, "There should be 10 occurrences of this event.");
+            Assert.That(occurrences, Has.Count.EqualTo(10), "There should be 10 occurrences of this event.");
         }
 
         /// <summary>
@@ -2639,11 +2632,14 @@ namespace Ical.Net.Tests
 
             var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, end, false).OrderBy(x => x).ToList();
 
-            Assert.AreEqual(4, recurringPeriods.Count);
-            Assert.AreEqual(new CalDateTime(2020, 1, 6), recurringPeriods[0].StartTime);
-            Assert.AreEqual(new CalDateTime(2020, 1, 13), recurringPeriods[1].StartTime);
-            Assert.AreEqual(new CalDateTime(2020, 1, 20), recurringPeriods[2].StartTime);
-            Assert.AreEqual(new CalDateTime(2020, 1, 27), recurringPeriods[3].StartTime);
+            Assert.That(recurringPeriods, Has.Count.EqualTo(4));
+            Assert.Multiple(() =>
+            {
+                Assert.That(recurringPeriods[0].StartTime, Is.EqualTo(new CalDateTime(2020, 1, 6)));
+                Assert.That(recurringPeriods[1].StartTime, Is.EqualTo(new CalDateTime(2020, 1, 13)));
+                Assert.That(recurringPeriods[2].StartTime, Is.EqualTo(new CalDateTime(2020, 1, 20)));
+                Assert.That(recurringPeriods[3].StartTime, Is.EqualTo(new CalDateTime(2020, 1, 27)));
+            });
         }
 
         /// <summary>
@@ -2663,7 +2659,7 @@ namespace Ical.Net.Tests
                 
                 var period = recurringPeriods.ElementAt(recurringPeriods.Count - 1);
 
-                Assert.AreEqual(new CalDateTime(2025, 11, 24, 9, 0, 0), period.StartTime);
+                Assert.That(period.StartTime, Is.EqualTo(new CalDateTime(2025, 11, 24, 9, 0, 0)));
             }
         }
 
@@ -2691,7 +2687,7 @@ namespace Ical.Net.Tests
             evt.RecurrenceRules.Add(pattern);
 
             var occurrences = evt.GetOccurrences(new DateTime(2011, 1, 1), new DateTime(2012, 1, 1));
-            Assert.AreEqual(10, occurrences.Count, "There should be 10 occurrences of this event, one for each month except February and December.");
+            Assert.That(occurrences, Has.Count.EqualTo(10), "There should be 10 occurrences of this event, one for each month except February and December.");
         }
 
         /// <summary>
@@ -2706,8 +2702,8 @@ namespace Ical.Net.Tests
                 var serializer = new RecurrencePatternSerializer();
                 var rp = (RecurrencePattern)serializer.Deserialize(sr);
 
-                Assert.IsNotNull(rp);
-                Assert.AreEqual(new DateTime(2025, 11, 26), rp.Until);
+                Assert.That(rp, Is.Not.Null);
+                Assert.That(rp.Until, Is.EqualTo(new DateTime(2025, 11, 26)));
             }
         }
 
@@ -2737,19 +2733,19 @@ namespace Ical.Net.Tests
                 checkTime = checkTime.AddDays(i);
                 //Valid asking for the exact moment
                 var occurrences = vEvent.GetOccurrences(checkTime, checkTime);
-                Assert.AreEqual(1, occurrences.Count);
+                Assert.That(occurrences, Has.Count.EqualTo(1));
 
                 //Valid if asking for a range starting at the same moment
                 occurrences = vEvent.GetOccurrences(checkTime, checkTime.AddSeconds(1));
-                Assert.AreEqual(1, occurrences.Count);
+                Assert.That(occurrences, Has.Count.EqualTo(1));
 
                 //Valid if asking for a range starting before and ending after
                 occurrences = vEvent.GetOccurrences(checkTime.AddSeconds(-1), checkTime.AddSeconds(1));
-                Assert.AreEqual(1, occurrences.Count);
+                Assert.That(occurrences, Has.Count.EqualTo(1));
 
                 //Not valid if asking for a range starting before but ending at the same moment
                 occurrences = vEvent.GetOccurrences(checkTime.AddSeconds(-1), checkTime);
-                Assert.AreEqual(0, occurrences.Count);
+                Assert.That(occurrences.Count, Is.EqualTo(0));
             }
         }
 
@@ -2764,7 +2760,7 @@ namespace Ical.Net.Tests
             };
 
             var occurrences = vEvent.GetOccurrences(DateTime.Parse("2020-01-10T00:00"), DateTime.Parse("2020-01-11T00:00"));
-            Assert.AreEqual(0, occurrences.Count);
+            Assert.That(occurrences.Count, Is.EqualTo(0));
         }
 
         /// <summary>
@@ -2774,7 +2770,7 @@ namespace Ical.Net.Tests
         public void UsHolidays()
         {
             var iCal = Calendar.Load(IcsFiles.UsHolidays);
-            Assert.IsNotNull(iCal, "iCalendar was not loaded.");
+            Assert.That(iCal, Is.Not.Null, "iCalendar was not loaded.");
             var items = new Dictionary<string, CalDateTime>
             {
                 { "Christmas", new CalDateTime(2006, 12, 25)},
@@ -2810,13 +2806,16 @@ namespace Ical.Net.Tests
                 new CalDateTime(2006, 1, 1),
                 new CalDateTime(2006, 12, 31));
 
-            Assert.AreEqual(items.Count, occurrences.Count, "The number of holidays did not evaluate correctly.");
+            Assert.That(occurrences, Has.Count.EqualTo(items.Count), "The number of holidays did not evaluate correctly.");
             foreach (var o in occurrences)
             {
                 var evt = o.Source as CalendarEvent;
-                Assert.IsNotNull(evt);
-                Assert.IsTrue(items.ContainsKey(evt.Summary), "Holiday text '" + evt.Summary + "' did not match known holidays.");
-                Assert.AreEqual(items[evt.Summary], o.Period.StartTime, "Date/time of holiday '" + evt.Summary + "' did not match.");
+                Assert.That(evt, Is.Not.Null);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(items.ContainsKey(evt.Summary), Is.True, "Holiday text '" + evt.Summary + "' did not match known holidays.");
+                    Assert.That(o.Period.StartTime, Is.EqualTo(items[evt.Summary]), "Date/time of holiday '" + evt.Summary + "' did not match.");
+                });
             }
         }
 
@@ -2839,7 +2838,7 @@ namespace Ical.Net.Tests
             var occurrences = evt.GetOccurrences(CalDateTime.Today.AddDays(1), CalDateTime.Today.AddDays(2));
 
             foreach (var o in occurrences)
-                Assert.IsTrue(o.Period.StartTime.HasTime, "All recurrences of this event should have a time set.");
+                Assert.That(o.Period.StartTime.HasTime, Is.True, "All recurrences of this event should have a time set.");
         }
 
         [Test, Category("Recurrence")]
@@ -2857,7 +2856,7 @@ namespace Ical.Net.Tests
             var toDate = new CalDateTime(DateTime.Parse("3/31/08 12:00:11 AM", us));
 
             var evaluator = pattern.GetService(typeof(IEvaluator)) as IEvaluator;
-            Assert.IsNotNull(evaluator);
+            Assert.That(evaluator, Is.Not.Null);
 
             var occurrences = evaluator.Evaluate(
                 startDate, 
@@ -2866,11 +2865,14 @@ namespace Ical.Net.Tests
                 false)
                 .OrderBy(o => o.StartTime)
                 .ToList();
-            Assert.AreEqual(4, occurrences.Count);
-            Assert.AreEqual(new CalDateTime(DateTime.Parse("03/30/08 11:59:40 PM", us)), occurrences[0].StartTime);
-            Assert.AreEqual(new CalDateTime(DateTime.Parse("03/30/08 11:59:50 PM", us)), occurrences[1].StartTime);
-            Assert.AreEqual(new CalDateTime(DateTime.Parse("03/31/08 12:00:00 AM", us)), occurrences[2].StartTime);
-            Assert.AreEqual(new CalDateTime(DateTime.Parse("03/31/08 12:00:10 AM", us)), occurrences[3].StartTime);
+            Assert.That(occurrences, Has.Count.EqualTo(4));
+            Assert.Multiple(() =>
+            {
+                Assert.That(occurrences[0].StartTime, Is.EqualTo(new CalDateTime(DateTime.Parse("03/30/08 11:59:40 PM", us))));
+                Assert.That(occurrences[1].StartTime, Is.EqualTo(new CalDateTime(DateTime.Parse("03/30/08 11:59:50 PM", us))));
+                Assert.That(occurrences[2].StartTime, Is.EqualTo(new CalDateTime(DateTime.Parse("03/31/08 12:00:00 AM", us))));
+                Assert.That(occurrences[3].StartTime, Is.EqualTo(new CalDateTime(DateTime.Parse("03/31/08 12:00:10 AM", us))));
+            });
         }
 
         [Test, Category("Recurrence")]
@@ -2887,14 +2889,14 @@ namespace Ical.Net.Tests
             var toDate = new CalDateTime(DateTime.Parse("4/1/2008 10:43:23 AM", us));
 
             var evaluator = pattern.GetService(typeof(IEvaluator)) as IEvaluator;
-            Assert.IsNotNull(evaluator);
+            Assert.That(evaluator, Is.Not.Null);
 
             var occurrences = evaluator.Evaluate(
                 startDate, 
                 DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
                 DateUtil.SimpleDateTimeToMatch(toDate, startDate),
                 false);
-            Assert.AreNotEqual(0, occurrences.Count);
+            Assert.That(occurrences.Count, Is.Not.EqualTo(0));
         }
 
         [Test, Category("Recurrence")]
@@ -2914,16 +2916,16 @@ namespace Ical.Net.Tests
             var end = new CalDateTime(2009, 11, 23, 0, 0, 0);
 
             var occurrences = evt.GetOccurrences(previousDateAndTime, end);
-            Assert.AreEqual(5, occurrences.Count);
+            Assert.That(occurrences, Has.Count.EqualTo(5));
 
             occurrences = evt.GetOccurrences(previousDateOnly, end);
-            Assert.AreEqual(5, occurrences.Count);
+            Assert.That(occurrences, Has.Count.EqualTo(5));
 
             occurrences = evt.GetOccurrences(laterDateOnly, end);
-            Assert.AreEqual(4, occurrences.Count);
+            Assert.That(occurrences, Has.Count.EqualTo(4));
 
             occurrences = evt.GetOccurrences(laterDateAndTime, end);
-            Assert.AreEqual(3, occurrences.Count);
+            Assert.That(occurrences, Has.Count.EqualTo(3));
 
             // Add ByHour "9" and "12"            
             evt.RecurrenceRules[0].ByHour.Add(9);
@@ -2933,16 +2935,16 @@ namespace Ical.Net.Tests
             evt.ClearEvaluation();
 
             occurrences = evt.GetOccurrences(previousDateAndTime, end);
-            Assert.AreEqual(10, occurrences.Count);
+            Assert.That(occurrences, Has.Count.EqualTo(10));
 
             occurrences = evt.GetOccurrences(previousDateOnly, end);
-            Assert.AreEqual(10, occurrences.Count);
+            Assert.That(occurrences, Has.Count.EqualTo(10));
 
             occurrences = evt.GetOccurrences(laterDateOnly, end);
-            Assert.AreEqual(8, occurrences.Count);
+            Assert.That(occurrences, Has.Count.EqualTo(8));
 
             occurrences = evt.GetOccurrences(laterDateAndTime, end);
-            Assert.AreEqual(7, occurrences.Count);
+            Assert.That(occurrences, Has.Count.EqualTo(7));
         }
 
         [Test, Category("Recurrence")]
@@ -2955,13 +2957,11 @@ namespace Ical.Net.Tests
 
             RecurrencePattern recur = new RecurrencePattern();
             evt.RecurrenceRules.Add(recur);
-
-            try
+            
+            Assert.That(() =>
             {
-                var occurrences = evt.GetOccurrences(DateTime.Today.AddDays(1), DateTime.Today.AddDays(2));
-                Assert.Fail("An exception should be thrown when evaluating a recurrence with no specified FREQUENCY");
-            }
-            catch { }
+                _ = evt.GetOccurrences(DateTime.Today.AddDays(1), DateTime.Today.AddDays(2));
+            }, Throws.Exception, "An exception should be thrown when evaluating a recurrence with no specified FREQUENCY");
         }
 
         [Test, Category("Recurrence")]
@@ -2981,7 +2981,8 @@ namespace Ical.Net.Tests
             evt.RecurrenceRules.Add(recur);
 
             var serializer = new RecurrencePatternSerializer();
-            Assert.IsTrue(string.Compare(serializer.SerializeToString(recur), "FREQ=DAILY;COUNT=3;BYDAY=MO,WE,FR", StringComparison.Ordinal) == 0,
+            Assert.That(string.Compare(serializer.SerializeToString(recur), "FREQ=DAILY;COUNT=3;BYDAY=MO,WE,FR", StringComparison.Ordinal) == 0,
+                Is.True,
                 "Serialized recurrence string is incorrect");
         }
 
@@ -2998,7 +2999,7 @@ namespace Ical.Net.Tests
             IDateTime evtEnd = new CalDateTime(2007, 1, 1);
 
             var evaluator = rpattern.GetService(typeof(IEvaluator)) as IEvaluator;
-            Assert.IsNotNull(evaluator);
+            Assert.That(evaluator, Is.Not.Null);
 
             // Add the exception dates
             var periods = evaluator.Evaluate(
@@ -3008,17 +3009,20 @@ namespace Ical.Net.Tests
                 false)
                 .OrderBy(p => p.StartTime)
                 .ToList();
-            Assert.AreEqual(10, periods.Count);
-            Assert.AreEqual(2, periods[0].StartTime.Day);
-            Assert.AreEqual(3, periods[1].StartTime.Day);
-            Assert.AreEqual(9, periods[2].StartTime.Day);
-            Assert.AreEqual(10, periods[3].StartTime.Day);
-            Assert.AreEqual(16, periods[4].StartTime.Day);
-            Assert.AreEqual(17, periods[5].StartTime.Day);
-            Assert.AreEqual(23, periods[6].StartTime.Day);
-            Assert.AreEqual(24, periods[7].StartTime.Day);
-            Assert.AreEqual(30, periods[8].StartTime.Day);
-            Assert.AreEqual(31, periods[9].StartTime.Day);
+            Assert.That(periods, Has.Count.EqualTo(10));
+            Assert.Multiple(() =>
+            {
+                Assert.That(periods[0].StartTime.Day, Is.EqualTo(2));
+                Assert.That(periods[1].StartTime.Day, Is.EqualTo(3));
+                Assert.That(periods[2].StartTime.Day, Is.EqualTo(9));
+                Assert.That(periods[3].StartTime.Day, Is.EqualTo(10));
+                Assert.That(periods[4].StartTime.Day, Is.EqualTo(16));
+                Assert.That(periods[5].StartTime.Day, Is.EqualTo(17));
+                Assert.That(periods[6].StartTime.Day, Is.EqualTo(23));
+                Assert.That(periods[7].StartTime.Day, Is.EqualTo(24));
+                Assert.That(periods[8].StartTime.Day, Is.EqualTo(30));
+                Assert.That(periods[9].StartTime.Day, Is.EqualTo(31));
+            });
         }
 
         [Test, Category("Recurrence")]
@@ -3045,7 +3049,7 @@ END:VCALENDAR";
             var endSearch = new CalDateTime(2016, 12, 31, _tzid);
 
             var occurrences = firstEvent.GetOccurrences(startSearch, endSearch).Select(o => o.Period).ToList();
-            Assert.IsTrue(occurrences.Count == 0);
+            Assert.That(occurrences.Count == 0, Is.True);
         }
 
         [Test, Category("Recurrence")]
@@ -3079,13 +3083,13 @@ END:VCALENDAR";
                 .ToList();
 
             var firstExpectedOccurrence = new CalDateTime(DateTime.Parse("2016-08-29T08:00:00"), _tzid);
-            Assert.AreEqual(firstExpectedOccurrence, occurrences.First().StartTime);
+            Assert.That(occurrences.First().StartTime, Is.EqualTo(firstExpectedOccurrence));
 
             var firstExpectedRDate = new CalDateTime(DateTime.Parse("2016-08-30T10:00:00"), _tzid);
-            Assert.IsTrue(occurrences[1].StartTime.Equals(firstExpectedRDate));
+            Assert.That(occurrences[1].StartTime.Equals(firstExpectedRDate), Is.True);
 
             var secondExpectedRDate = new CalDateTime(DateTime.Parse("2016-08-31T10:00:00"), _tzid);
-            Assert.IsTrue(occurrences[2].StartTime.Equals(secondExpectedRDate));
+            Assert.That(occurrences[2].StartTime.Equals(secondExpectedRDate), Is.True);
         }
 
         [Test]
@@ -3128,7 +3132,7 @@ END:VCALENDAR";
             var calendar = new Calendar();
             calendar.Events.Add(e);
 
-            Assert.AreEqual(e, firstEvent);
+            Assert.That(firstEvent, Is.EqualTo(e));
 
             var startSearch = new CalDateTime(DateTime.Parse("2016-07-01T00:00:00"), "UTC");
             var endSearch = new CalDateTime(DateTime.Parse("2016-08-31T07:00:00"), "UTC");
@@ -3139,7 +3143,7 @@ END:VCALENDAR";
                     .OrderBy(p => p.StartTime)
                     .ToList();
 
-            Assert.IsFalse(occurrences.Last().StartTime.Equals(lastExpected));
+            Assert.That(occurrences.Last().StartTime.Equals(lastExpected), Is.False);
 
             //Create 1 second of overlap
             endSearch = new CalDateTime(endSearch.Value.AddSeconds(1), "UTC");
@@ -3148,7 +3152,7 @@ END:VCALENDAR";
                 .OrderBy(p => p.StartTime)
                 .ToList();
 
-            Assert.IsTrue(occurrences.Last().StartTime.Equals(lastExpected));
+            Assert.That(occurrences.Last().StartTime.Equals(lastExpected), Is.True);
         }
 
         [Test, Ignore("Turn on in v3")]
@@ -3228,13 +3232,19 @@ END:VCALENDAR";
 
             var expectedSept1Start = new CalDateTime(DateTime.Parse("2016-09-01T16:30:00"), "Europe/Bucharest");
             var expectedSept1End = new CalDateTime(DateTime.Parse("2016-09-01T22:00:00"), "Europe/Bucharest");
-            Assert.AreEqual(expectedSept1Start, orderedOccurrences[3].StartTime);
-            Assert.AreEqual(expectedSept1End, orderedOccurrences[3].EndTime);
+            Assert.Multiple(() =>
+            {
+                Assert.That(orderedOccurrences[3].StartTime, Is.EqualTo(expectedSept1Start));
+                Assert.That(orderedOccurrences[3].EndTime, Is.EqualTo(expectedSept1End));
+            });
 
             var expectedSept3Start = new CalDateTime(DateTime.Parse("2016-09-03T07:00:00"), "Europe/Bucharest");
             var expectedSept3End = new CalDateTime(DateTime.Parse("2016-09-01T12:30:00"), "Europe/Bucharest");
-            Assert.AreEqual(expectedSept3Start, orderedOccurrences[5].StartTime);
-            Assert.AreEqual(expectedSept3End, orderedOccurrences[5].EndTime);
+            Assert.Multiple(() =>
+            {
+                Assert.That(orderedOccurrences[5].StartTime, Is.EqualTo(expectedSept3Start));
+                Assert.That(orderedOccurrences[5].EndTime, Is.EqualTo(expectedSept3End));
+            });
         }
 
         [Test]
@@ -3244,21 +3254,21 @@ END:VCALENDAR";
             var searchEnd = _now.AddDays(7);
             var e = GetEventWithRecurrenceRules();
             var occurrences = e.GetOccurrences(searchStart, searchEnd);
-            Assert.IsTrue(occurrences.Count == 5);
+            Assert.That(occurrences.Count == 5, Is.True);
 
             var exDate = _now.AddDays(1);
             var period = new Period(new CalDateTime(exDate));
             var periodList = new PeriodList { period };
             e.ExceptionDates.Add(periodList);
             occurrences = e.GetOccurrences(searchStart, searchEnd);
-            Assert.IsTrue(occurrences.Count == 4);
+            Assert.That(occurrences.Count == 4, Is.True);
 
             //Specifying just a date should "black out" that date
             var excludeTwoDaysFromNow = _now.AddDays(2).Date;
             period = new Period(new CalDateTime(excludeTwoDaysFromNow));
             periodList.Add(period);
             occurrences = e.GetOccurrences(searchStart, searchEnd);
-            Assert.IsTrue(occurrences.Count == 3);
+            Assert.That(occurrences.Count == 3, Is.True);
         }
 
         private static readonly DateTime _now = DateTime.Now;
@@ -3296,12 +3306,12 @@ END:VCALENDAR";
             var firstExclusion = new CalDateTime(start.AddDays(4));
             e.ExceptionDates = new List<PeriodList> { new PeriodList { new Period(firstExclusion) } };
             var serialized = SerializationHelpers.SerializeToString(e);
-            Assert.AreEqual(1, Regex.Matches(serialized, "EXDATE:").Count);
+            Assert.That(Regex.Matches(serialized, "EXDATE:"), Has.Count.EqualTo(1));
 
             var secondExclusion = new CalDateTime(start.AddDays(5));
             e.ExceptionDates.First().Add(new Period(secondExclusion));
             serialized = SerializationHelpers.SerializeToString(e);
-            Assert.AreEqual(1, Regex.Matches(serialized, "EXDATE:").Count);
+            Assert.That(Regex.Matches(serialized, "EXDATE:"), Has.Count.EqualTo(1));
         }
 
         [Test]
@@ -3325,11 +3335,11 @@ END:VCALENDAR";
 
             var serialized = SerializationHelpers.SerializeToString(e);
             const string expected = "TZID=Europe/Stockholm";
-            Assert.AreEqual(3, Regex.Matches(serialized, expected).Count);
+            Assert.That(Regex.Matches(serialized, expected), Has.Count.EqualTo(3));
 
             e.ExceptionDates.First().Add(new Period(new CalDateTime(_now.AddDays(2))));
             serialized = SerializationHelpers.SerializeToString(e);
-            Assert.AreEqual(3, Regex.Matches(serialized, expected).Count);
+            Assert.That(Regex.Matches(serialized, expected), Has.Count.EqualTo(3));
         }
 
         [Test, Category("Recurrence")]
@@ -3349,7 +3359,7 @@ END:VCALENDAR";
 
                 //Valid if asking for a range starting at the same moment
                 var occurrences = vEvent.GetOccurrences(checkTime, checkTime.AddDays(1));
-                Assert.AreEqual(i == 0 ? 1 : 0, occurrences.Count);
+                Assert.That(occurrences, Has.Count.EqualTo(i == 0 ? 1 : 0));
             }
         }
 
@@ -3372,19 +3382,19 @@ END:VCALENDAR";
             var testingTime = new DateTime(2019, 6, 7, 9, 0, 0);
 
             var occurrences = vEvent.GetOccurrences(testingTime, testingTime);
-            Assert.AreEqual(1, occurrences.Count);
+            Assert.That(occurrences, Has.Count.EqualTo(1));
 
             // One second before end time
             testingTime = new DateTime(2019, 6, 7, 16, 59, 59);
 
             occurrences = vEvent.GetOccurrences(testingTime, testingTime);
-            Assert.AreEqual(1, occurrences.Count);
+            Assert.That(occurrences, Has.Count.EqualTo(1));
 
             // Exactly on end time
             testingTime = new DateTime(2019, 6, 7, 17, 0, 0);
 
             occurrences = vEvent.GetOccurrences(testingTime, testingTime);
-            Assert.AreEqual(0, occurrences.Count);
+            Assert.That(occurrences.Count, Is.EqualTo(0));
         }
 
         private static RecurrencePattern GetSimpleRecurrencePattern(int count) => new RecurrencePattern(FrequencyType.Daily, 1) { Count = count, };
@@ -3404,7 +3414,7 @@ END:VCALENDAR";
         {
             var five = GetSimpleRecurrencePattern(5);
             var ten = GetSimpleRecurrencePattern(10);
-            Assert.AreNotEqual(five, ten);
+            Assert.That(ten, Is.Not.EqualTo(five));
             var eventA = GetSimpleEvent();
             eventA.RecurrenceRules.Add(five);
             eventA.RecurrenceRules.Add(ten);
@@ -3413,7 +3423,7 @@ END:VCALENDAR";
             eventB.RecurrenceRules.Add(ten);
             eventB.RecurrenceRules.Add(five);
 
-            Assert.AreEqual(eventA, eventB);
+            Assert.That(eventB, Is.EqualTo(eventA));
 
             const string aString = @"BEGIN:VCALENDAR
 PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
@@ -3472,13 +3482,13 @@ END:VCALENDAR";
 
             //GetHashCode tests also tests Equals()
             var calendarSet = new HashSet<Calendar>(calendarList);
-            Assert.AreEqual(1, calendarSet.Count);
+            Assert.That(calendarSet, Has.Count.EqualTo(1));
             var eventSet = new HashSet<CalendarEvent>(eventList);
-            Assert.AreEqual(1, eventSet.Count);
+            Assert.That(eventSet, Has.Count.EqualTo(1));
 
             var newEventList = new HashSet<CalendarEvent>();
             newEventList.UnionWith(eventList);
-            Assert.AreEqual(1, newEventList.Count);
+            Assert.That(newEventList, Has.Count.EqualTo(1));
         }
 
         [Test]
@@ -3532,36 +3542,38 @@ END:VCALENDAR";
 
             //Tautologies...
             var collectionA = CalendarCollection.Load(icalA);
-            Assert.AreEqual(collectionA, collectionA);
-            Assert.AreEqual(collectionA.GetHashCode(), collectionA.GetHashCode());
+            Assert.That(collectionA, Is.EqualTo(collectionA));
+            Assert.That(collectionA.GetHashCode(), Is.EqualTo(collectionA.GetHashCode()));
             var calendarA = collectionA.First();
-            Assert.AreEqual(calendarA, calendarA);
-            Assert.AreEqual(calendarA.GetHashCode(), calendarA.GetHashCode());
+            Assert.That(calendarA, Is.EqualTo(calendarA));
+            Assert.That(calendarA.GetHashCode(), Is.EqualTo(calendarA.GetHashCode()));
             var eventA = calendarA.Events.First();
-            Assert.AreEqual(eventA, eventA);
-            Assert.AreEqual(eventA.GetHashCode(), eventA.GetHashCode());
+            Assert.That(eventA, Is.EqualTo(eventA));
+            Assert.That(eventA.GetHashCode(), Is.EqualTo(eventA.GetHashCode()));
 
             var collectionB = CalendarCollection.Load(icalB);
-            Assert.AreEqual(collectionB, collectionB);
-            Assert.AreEqual(collectionB.GetHashCode(), collectionB.GetHashCode());
+            Assert.That(collectionB, Is.EqualTo(collectionB));
+            Assert.That(collectionB.GetHashCode(), Is.EqualTo(collectionB.GetHashCode()));
             var calendarB = collectionB.First();
-            Assert.AreEqual(calendarB, calendarB);
-            Assert.AreEqual(calendarB.GetHashCode(), calendarB.GetHashCode());
+            Assert.That(calendarB, Is.EqualTo(calendarB));
+            Assert.That(calendarB.GetHashCode(), Is.EqualTo(calendarB.GetHashCode()));
             var eventB = calendarB.Events.First();
-            Assert.AreEqual(eventB, eventB);
-            Assert.AreEqual(eventB.GetHashCode(), eventB.GetHashCode());
-
-            //Comparing the two...
-            Assert.AreEqual(collectionA, collectionB);
-            Assert.AreEqual(collectionA.GetHashCode(), collectionB.GetHashCode());
-            Assert.AreEqual(calendarA, calendarB);
-            Assert.AreEqual(calendarA.GetHashCode(), calendarB.GetHashCode());
-            Assert.AreEqual(eventA, eventB);
-            Assert.AreEqual(eventA.GetHashCode(), eventB.GetHashCode());
+            
+            Assert.Multiple(() =>
+            {
+                //Comparing the two...
+                Assert.That(collectionB, Is.EqualTo(collectionA));
+                Assert.That(collectionB.GetHashCode(), Is.EqualTo(collectionA.GetHashCode()));
+                Assert.That(calendarB, Is.EqualTo(calendarA));
+                Assert.That(calendarB.GetHashCode(), Is.EqualTo(calendarA.GetHashCode()));
+                Assert.That(eventB, Is.EqualTo(eventA));
+                Assert.That(eventB.GetHashCode(), Is.EqualTo(eventA.GetHashCode()));
+            });
+            
 
             var exDatesA = eventA.ExceptionDates;
             var exDatesB = eventB.ExceptionDates;
-            Assert.AreEqual(exDatesA, exDatesB);
+            Assert.That(exDatesB, Is.EqualTo(exDatesA));
 
         }
 
@@ -3596,14 +3608,14 @@ END:VCALENDAR";
                 ? $"{contains}{SerializationConstants.LineBreak}"
                 : $"{contains}Z{SerializationConstants.LineBreak}";
 
-            Assert.IsTrue(serialized.Contains(expectedContains));
+            Assert.That(serialized.Contains(expectedContains), Is.True);
 
             var deserializedKind = Calendar.Load(serialized).Events.First().RecurrenceRules.First().Until.Kind;
 
-            Assert.AreEqual(expectedKind, deserializedKind);
+            Assert.That(deserializedKind, Is.EqualTo(expectedKind));
         }
 
-        public static IEnumerable<ITestCaseData> UntilTimeZoneSerializationTestCases()
+        public static IEnumerable UntilTimeZoneSerializationTestCases()
         {
             yield return new TestCaseData("America/New_York", DateTimeKind.Local)
                 .SetName("IANA time time zone results in a local DateTimeKind");
@@ -3641,7 +3653,7 @@ END:VCALENDAR
             var endSearch = new CalDateTime(DateTime.Parse("2018-07-01T00:00:00"), timeZoneId);
 
             var occurrences = firstEvent.GetOccurrences(startSearch, endSearch);
-            Assert.AreEqual(5, occurrences.Count);
+            Assert.That(occurrences, Has.Count.EqualTo(5));
         }
     }
 }
