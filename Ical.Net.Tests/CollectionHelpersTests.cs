@@ -20,14 +20,17 @@ namespace Ical.Net.Tests
         [Test]
         public void ExDateTests()
         {
-            Assert.AreEqual(GetExceptionDates(), GetExceptionDates());
-            Assert.AreNotEqual(GetExceptionDates(), null);
-            Assert.AreNotEqual(null, GetExceptionDates());
+            Assert.Multiple(() =>
+            {
+                Assert.That(GetExceptionDates(), Is.EqualTo(GetExceptionDates()));
+                Assert.That(GetExceptionDates(), Is.Not.Null);
+                Assert.That(GetExceptionDates(), Is.Not.EqualTo(null));
+            });
 
             var changedPeriod = GetExceptionDates();
             changedPeriod.First().First().StartTime = new CalDateTime(_now.AddHours(-1));
 
-            Assert.AreNotEqual(GetExceptionDates(), changedPeriod);
+            Assert.That(changedPeriod, Is.Not.EqualTo(GetExceptionDates()));
         }
     }
 }

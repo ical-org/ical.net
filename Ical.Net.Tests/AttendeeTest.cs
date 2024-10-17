@@ -42,26 +42,29 @@ namespace Ical.Net.Tests
         public void Add1Attendee()
         {
             var evt = VEventFactory();
-            Assert.AreEqual(0, evt.Attendees.Count);
+            Assert.That(evt.Attendees.Count, Is.EqualTo(0));
 
             evt.Attendees.Add(_attendees[0]);
-            Assert.AreEqual(1, evt.Attendees.Count);
+            Assert.That(evt.Attendees, Has.Count.EqualTo(1));
 
-            //the properties below had been set to null during the Attendees.Add operation in NuGet version 2.1.4
-            Assert.AreEqual(ParticipationRole.RequiredParticipant, evt.Attendees[0].Role);
-            Assert.AreEqual(EventParticipationStatus.Tentative, evt.Attendees[0].ParticipationStatus);
+            Assert.Multiple(() =>
+            {
+                //the properties below had been set to null during the Attendees.Add operation in NuGet version 2.1.4
+                Assert.That(evt.Attendees[0].Role, Is.EqualTo(ParticipationRole.RequiredParticipant));
+                Assert.That(evt.Attendees[0].ParticipationStatus, Is.EqualTo(EventParticipationStatus.Tentative));
+            });
         }
 
         [Test, Category("Attendee")]
         public void Add2Attendees()
         {
             var evt = VEventFactory();
-            Assert.AreEqual(0, evt.Attendees.Count);
+            Assert.That(evt.Attendees.Count, Is.EqualTo(0));
 
             evt.Attendees.Add(_attendees[0]);
             evt.Attendees.Add(_attendees[1]);
-            Assert.AreEqual(2, evt.Attendees.Count);
-            Assert.AreEqual(ParticipationRole.RequiredParticipant, evt.Attendees[1].Role);
+            Assert.That(evt.Attendees, Has.Count.EqualTo(2));
+            Assert.That(evt.Attendees[1].Role, Is.EqualTo(ParticipationRole.RequiredParticipant));
         }
 
         /// <summary>
@@ -71,17 +74,17 @@ namespace Ical.Net.Tests
         public void Remove1Attendee()
         {
             var evt = VEventFactory();
-            Assert.AreEqual(0, evt.Attendees.Count);
+            Assert.That(evt.Attendees.Count, Is.EqualTo(0));
 
             var attendee = _attendees.First();
             evt.Attendees.Add(attendee);
-            Assert.AreEqual(1, evt.Attendees.Count);
+            Assert.That(evt.Attendees, Has.Count.EqualTo(1));
 
             evt.Attendees.Remove(attendee);
-            Assert.AreEqual(0, evt.Attendees.Count);
+            Assert.That(evt.Attendees.Count, Is.EqualTo(0));
 
             evt.Attendees.Remove(_attendees.Last());
-            Assert.AreEqual(0, evt.Attendees.Count);
+            Assert.That(evt.Attendees.Count, Is.EqualTo(0));
         }
     }
 }

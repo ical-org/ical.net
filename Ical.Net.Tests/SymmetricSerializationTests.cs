@@ -4,6 +4,7 @@ using Ical.Net.Serialization;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,9 +33,12 @@ namespace Ical.Net.Tests
 
             var onlyEvent = unserializedCalendar.Events.Single();
 
-            Assert.AreEqual(originalEvent.GetHashCode(), onlyEvent.GetHashCode());
-            Assert.AreEqual(originalEvent, onlyEvent);
-            Assert.AreEqual(iCalendar, unserializedCalendar);
+            Assert.Multiple(() =>
+            {
+                Assert.That(onlyEvent.GetHashCode(), Is.EqualTo(originalEvent.GetHashCode()));
+                Assert.That(onlyEvent, Is.EqualTo(originalEvent));
+                Assert.That(unserializedCalendar, Is.EqualTo(iCalendar));
+            });
         }
 
         public static IEnumerable<ITestCaseData> Event_TestCases()
@@ -72,9 +76,12 @@ namespace Ical.Net.Tests
             var serializedCalendar = serializer.SerializeToString(originalCalendar);
             var unserializedCalendar = Calendar.Load(serializedCalendar);
 
-            CollectionAssert.AreEqual(originalCalendar.TimeZones, unserializedCalendar.TimeZones);
-            Assert.AreEqual(originalCalendar, unserializedCalendar);
-            Assert.AreEqual(originalCalendar.GetHashCode(), unserializedCalendar.GetHashCode());
+            Assert.Multiple(() =>
+            {
+                Assert.That(unserializedCalendar.TimeZones, Is.EqualTo(originalCalendar.TimeZones).AsCollection);
+                Assert.That(unserializedCalendar, Is.EqualTo(originalCalendar));
+            });
+            Assert.That(unserializedCalendar.GetHashCode(), Is.EqualTo(originalCalendar.GetHashCode()));
         }
 
         [Test, TestCaseSource(nameof(AttendeeSerialization_TestCases))]
@@ -89,9 +96,12 @@ namespace Ical.Net.Tests
             var serialized = SerializeToString(calendar);
             var unserialized = UnserializeCalendar(serialized);
 
-            Assert.AreEqual(calendar.GetHashCode(), unserialized.GetHashCode());
-            Assert.IsTrue(calendar.Events.SequenceEqual(unserialized.Events));
-            Assert.AreEqual(calendar, unserialized);
+            Assert.Multiple(() =>
+            {
+                Assert.That(unserialized.GetHashCode(), Is.EqualTo(calendar.GetHashCode()));
+                Assert.That(calendar.Events.SequenceEqual(unserialized.Events), Is.True);
+                Assert.That(unserialized, Is.EqualTo(calendar));
+            });
         }
 
         public static IEnumerable<ITestCaseData> AttendeeSerialization_TestCases()
@@ -141,12 +151,15 @@ namespace Ical.Net.Tests
                 .Select(a => Encoding.UTF8.GetString(a.Data))
                 .First();
 
-            Assert.AreEqual(expectedAttachment, unserializedAttachment);
-            Assert.AreEqual(calendar.GetHashCode(), unserialized.GetHashCode());
-            Assert.AreEqual(calendar, unserialized);
+            Assert.Multiple(() =>
+            {
+                Assert.That(unserializedAttachment, Is.EqualTo(expectedAttachment));
+                Assert.That(unserialized.GetHashCode(), Is.EqualTo(calendar.GetHashCode()));
+                Assert.That(unserialized, Is.EqualTo(calendar));
+            });
         }
 
-        public static IEnumerable<ITestCaseData> BinaryAttachment_TestCases()
+        public static IEnumerable BinaryAttachment_TestCases()
         {
             const string shortString = "This is a string.";
             yield return new TestCaseData(shortString, shortString)
@@ -184,12 +197,15 @@ namespace Ical.Net.Tests
                 .Select(a => a.Uri)
                 .Single();
 
-            Assert.AreEqual(expectedUri, unserializedUri);
-            Assert.AreEqual(calendar.GetHashCode(), unserialized.GetHashCode());
-            Assert.AreEqual(calendar, unserialized);
+            Assert.Multiple(() =>
+            {
+                Assert.That(unserializedUri, Is.EqualTo(expectedUri));
+                Assert.That(unserialized.GetHashCode(), Is.EqualTo(calendar.GetHashCode()));
+                Assert.That(unserialized, Is.EqualTo(calendar));
+            });
         }
 
-        public static IEnumerable<ITestCaseData> UriAttachment_TestCases()
+        public static IEnumerable UriAttachment_TestCases()
         {
             yield return new TestCaseData("http://www.google.com", new Uri("http://www.google.com")).SetName("HTTP URL");
             yield return new TestCaseData("mailto:rstockbower@gmail.com", new Uri("mailto:rstockbower@gmail.com")).SetName("mailto: URL");
@@ -208,10 +224,10 @@ namespace Ical.Net.Tests
 
             var serialized = SerializeToString(c);
             var categoriesCount = Regex.Matches(serialized, "CATEGORIES").Count;
-            Assert.AreEqual(1, categoriesCount);
+            Assert.That(categoriesCount, Is.EqualTo(1));
 
             var deserialized = UnserializeCalendar(serialized);
-            Assert.AreEqual(vEvent, deserialized);
+            Assert.That(deserialized, Is.EqualTo(c));
         }
     }
 }

@@ -25,11 +25,11 @@ namespace Ical.Net.Tests
         private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime };
         private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
 
-        public static void CompareCalendars(Calendar cal1, Calendar cal2)
+        internal static void CompareCalendars(Calendar cal1, Calendar cal2)
         {
             CompareComponents(cal1, cal2);
 
-            Assert.AreEqual(cal1.Children.Count, cal2.Children.Count, "Children count is different between calendars.");
+            Assert.That(cal2.Children, Has.Count.EqualTo(cal1.Children.Count), "Children count is different between calendars.");
 
             for (var i = 0; i < cal1.Children.Count; i++)
             {
@@ -42,40 +42,37 @@ namespace Ical.Net.Tests
             }
         }
 
-        public static void CompareComponents(ICalendarComponent cb1, ICalendarComponent cb2)
+        internal static void CompareComponents(ICalendarComponent cb1, ICalendarComponent cb2)
         {
             foreach (var p1 in cb1.Properties)
             {
                 var isMatch = false;
                 foreach (var p2 in cb2.Properties.AllOf(p1.Name))
                 {
-                    try
+                    Assert.That(p2, Is.EqualTo(p1), "The properties '" + p1.Name + "' are not equal.");
+                    if (p1.Value is IComparable)
                     {
-                        Assert.AreEqual(p1, p2, "The properties '" + p1.Name + "' are not equal.");
-                        if (p1.Value is IComparable)
-                        {
-                            if (((IComparable)p1.Value).CompareTo(p2.Value) != 0)
-                                continue;
-                        }
-                        else if (p1.Value is IEnumerable)
-                        {
-                            CompareEnumerables((IEnumerable)p1.Value, (IEnumerable)p2.Value, p1.Name);
-                        }
-                        else
-                        {
-                            Assert.AreEqual(p1.Value, p2.Value, "The '" + p1.Name + "' property values are not equal.");
-                        }
-
-                        isMatch = true;
-                        break;
+                        if (((IComparable)p1.Value).CompareTo(p2.Value) != 0)
+                            continue;
                     }
-                    catch { }
+                    else if (p1.Value is IEnumerable)
+                    {
+                        CompareEnumerables((IEnumerable)p1.Value, (IEnumerable)p2.Value, p1.Name);
+                    }
+                    else
+                    {
+                        Assert.That(p2.Value, Is.EqualTo(p1.Value),
+                            "The '" + p1.Name + "' property values are not equal.");
+                    }
+
+                    isMatch = true;
+                    break;
                 }
 
-                Assert.IsTrue(isMatch, "Could not find a matching property - " + p1.Name + ":" + (p1.Value?.ToString() ?? string.Empty));
+                Assert.That(isMatch, Is.True, "Could not find a matching property - " + p1.Name + ":" + (p1.Value?.ToString() ?? string.Empty));
             }
 
-            Assert.AreEqual(cb1.Children.Count, cb2.Children.Count, "The number of children are not equal.");
+            Assert.That(cb2.Children, Has.Count.EqualTo(cb1.Children.Count), "The number of children are not equal.");
             for (var i = 0; i < cb1.Children.Count; i++)
             {
                 var child1 = cb1.Children[i] as ICalendarComponent;
@@ -86,7 +83,7 @@ namespace Ical.Net.Tests
                 }
                 else
                 {
-                    Assert.AreEqual(child1, child2, "The child objects are not equal.");
+                    Assert.That(child2, Is.EqualTo(child1), "The child objects are not equal.");
                 }
             }
         }
@@ -98,14 +95,14 @@ namespace Ical.Net.Tests
                 return;
             }
 
-            Assert.IsFalse((a1 == null && a2 != null) || (a1 != null && a2 == null), value + " do not match - one item is null");
+            Assert.That((a1 == null && a2 != null) || (a1 != null && a2 == null), Is.False, value + " do not match - one item is null");
 
             var enum1 = a1.GetEnumerator();
             var enum2 = a2.GetEnumerator();
 
             while (enum1.MoveNext() && enum2.MoveNext())
             {
-                Assert.AreEqual(enum1.Current, enum2.Current, value + " do not match");
+                Assert.That(enum2.Current, Is.EqualTo(enum1.Current), value + " do not match");
             }
         }
 
@@ -114,17 +111,17 @@ namespace Ical.Net.Tests
             const string notFound = "expected '{0}' not found";
             var searchFor = "BEGIN:" + sectionName;
             var begin = serialized.IndexOf(searchFor);
-            Assert.AreNotEqual(-1, begin, notFound, searchFor);
+            Assert.That(begin, Is.Not.EqualTo(-1), () => string.Format(notFound, searchFor));
 
             searchFor = "END:" + sectionName;
             var end = serialized.IndexOf(searchFor, begin);
-            Assert.AreNotEqual(-1, end, notFound, searchFor);
+            Assert.That(end, Is.Not.EqualTo(-1), () => string.Format(notFound, searchFor));
 
             var searchRegion = serialized.Substring(begin, end - begin + 1);
 
             foreach (var e in elements)
             {
-                Assert.IsTrue(searchRegion.Contains(SerializationConstants.LineBreak + e + SerializationConstants.LineBreak), notFound, e);
+                Assert.That(searchRegion.Contains(SerializationConstants.LineBreak + e + SerializationConstants.LineBreak), Is.True, () => string.Format(notFound, e));
             }
 
             return searchRegion;
@@ -152,7 +149,7 @@ namespace Ical.Net.Tests
             var lengthened = serialized.Replace(SerializationConstants.LineBreak + ' ', string.Empty);
             //using a regex for now - for the sake of speed, it may be worth creating a C# text search later
             var match = Regex.Match(lengthened, '^' + Regex.Escape(name) + "(;.+)?:" + Regex.Escape(value) + SerializationConstants.LineBreak, RegexOptions.Multiline);
-            Assert.IsTrue(match.Success, $"could not find a(n) '{name}' with value '{value}'");
+            Assert.That(match.Success, Is.True, $"could not find a(n) '{name}' with value '{value}'");
             return match.Groups[1].Value.Length == 0
                 ? new Dictionary<string, string>()
                 : match.Groups[1].Value.Substring(1).Split(';').Select(v => v.Split('=')).ToDictionary(v => v[0], v => v.Length > 1 ? v[1] : null);
@@ -259,14 +256,17 @@ namespace Ical.Net.Tests
             var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(cal);
 
-            Assert.IsTrue(serializedCalendar.StartsWith("BEGIN:VCALENDAR"));
-            Assert.IsTrue(serializedCalendar.EndsWith("END:VCALENDAR" + SerializationConstants.LineBreak));
+            Assert.Multiple(() =>
+            {
+                Assert.That(serializedCalendar.StartsWith("BEGIN:VCALENDAR"), Is.True);
+                Assert.That(serializedCalendar.EndsWith("END:VCALENDAR" + SerializationConstants.LineBreak), Is.True);
+            });
 
             var expectProperties = new[] { "METHOD:PUBLISH", "VERSION:2.0" };
 
             foreach (var p in expectProperties)
             {
-                Assert.IsTrue(serializedCalendar.Contains(SerializationConstants.LineBreak + p + SerializationConstants.LineBreak), "expected '" + p + "' not found");
+                Assert.That(serializedCalendar.Contains(SerializationConstants.LineBreak + p + SerializationConstants.LineBreak), Is.True, "expected '" + p + "' not found");
             }
 
             InspectSerializedSection(serializedCalendar, "VEVENT",
@@ -335,8 +335,11 @@ namespace Ical.Net.Tests
                     ["PARTSTAT"] = a.ParticipationStatus
                 })
                 {
-                    Assert.IsTrue(vals.ContainsKey(v.Key), $"could not find key '{v.Key}'");
-                    Assert.AreEqual(v.Value, vals[v.Key], $"ATENDEE prop '{v.Key}' differ");
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(vals.ContainsKey(v.Key), Is.True, $"could not find key '{v.Key}'");
+                        Assert.That(vals[v.Key], Is.EqualTo(v.Value), $"ATENDEE prop '{v.Key}' differ");
+                    });
                 }
             }
         }
@@ -349,7 +352,7 @@ namespace Ical.Net.Tests
         public void ZeroTimeSpan_Test()
         {
             var result = new TimeSpanSerializer().SerializeToString(TimeSpan.Zero);
-            Assert.IsTrue("P0D".Equals(result, StringComparison.Ordinal));
+            Assert.That("P0D".Equals(result, StringComparison.Ordinal), Is.True);
         }
 
         [Test]
@@ -360,8 +363,11 @@ namespace Ical.Net.Tests
             var c = new Calendar();
             c.Events.Add(e);
             var serialized = SerializeToString(c);
-            Assert.AreEqual(originalDuration, e.Duration);
-            Assert.IsTrue(!serialized.Contains("DURATION"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(e.Duration, Is.EqualTo(originalDuration));
+                Assert.That(!serialized.Contains("DURATION"), Is.True);
+            });
         }
 
         [Test]
@@ -370,11 +376,11 @@ namespace Ical.Net.Tests
             var e = GetSimpleEvent();
             e.Status = EventStatus.Confirmed;
             var serialized = SerializeToString(e);
-            Assert.IsTrue(serialized.Contains(EventStatus.Confirmed, EventStatus.Comparison));
+            Assert.That(serialized.Contains(EventStatus.Confirmed, EventStatus.Comparison), Is.True);
 
             var calendar = UnserializeCalendar(serialized);
             var eventStatus = calendar.Events.First().Status;
-            Assert.IsTrue(string.Equals(EventStatus.Confirmed, eventStatus, EventStatus.Comparison));
+            Assert.That(string.Equals(EventStatus.Confirmed, eventStatus, EventStatus.Comparison), Is.True);
         }
 
         [Test]
@@ -387,11 +393,11 @@ namespace Ical.Net.Tests
 
             var c = new Calendar { Todos = { component } };
             var serialized = SerializeToString(c);
-            Assert.IsTrue(serialized.Contains(TodoStatus.NeedsAction, TodoStatus.Comparison));
+            Assert.That(serialized.Contains(TodoStatus.NeedsAction, TodoStatus.Comparison), Is.True);
 
             var calendar = UnserializeCalendar(serialized);
             var status = calendar.Todos.First().Status;
-            Assert.IsTrue(string.Equals(TodoStatus.NeedsAction, status, TodoStatus.Comparison));
+            Assert.That(string.Equals(TodoStatus.NeedsAction, status, TodoStatus.Comparison), Is.True);
         }
 
         [Test]
@@ -404,11 +410,11 @@ namespace Ical.Net.Tests
 
             var c = new Calendar { Journals = { component } };
             var serialized = SerializeToString(c);
-            Assert.IsTrue(serialized.Contains(JournalStatus.Final, JournalStatus.Comparison));
+            Assert.That(serialized.Contains(JournalStatus.Final, JournalStatus.Comparison), Is.True);
 
             var calendar = UnserializeCalendar(serialized);
             var status = calendar.Journals.First().Status;
-            Assert.IsTrue(string.Equals(JournalStatus.Final, status, JournalStatus.Comparison));
+            Assert.That(string.Equals(JournalStatus.Final, status, JournalStatus.Comparison), Is.True);
         }
 
         [Test]
@@ -438,9 +444,12 @@ STATUS:CONFIRMED
 END:VEVENT";
             var deserializedEvent = Calendar.Load<CalendarEvent>(ics).Single();
 
-            Assert.IsTrue(deserializedEvent.Description.Contains("\t"));
-            Assert.IsTrue(deserializedEvent.Description.Contains("�"));
-            Assert.IsTrue(deserializedEvent.Description.Contains("�"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(deserializedEvent.Description.Contains("\t"), Is.True);
+                Assert.That(deserializedEvent.Description.Contains("�"), Is.True);
+                Assert.That(deserializedEvent.Description.Contains("�"), Is.True);
+            });
         }
 
         [Test]
@@ -463,16 +472,19 @@ RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=3
 END:DAYLIGHT
 END:VTIMEZONE";
             var timeZone = Calendar.Load<VTimeZone>(ics).Single();
-            Assert.IsNotNull(timeZone, "Expected the TimeZone to be successfully deserialized");
+            Assert.That(timeZone, Is.Not.Null, "Expected the TimeZone to be successfully deserialized");
             var timeZoneInfos = timeZone.TimeZoneInfos;
-            Assert.IsNotNull(timeZoneInfos, "Expected TimeZoneInfos to be deserialized");
-            Assert.AreEqual(2, timeZoneInfos.Count, "Expected 2 TimeZoneInfos");
-            Assert.AreEqual("STANDARD", timeZoneInfos[0].Name);
-            Assert.AreEqual(new UtcOffset("+0200"), timeZoneInfos[0].OffsetFrom);
-            Assert.AreEqual(new UtcOffset("+0100"), timeZoneInfos[0].OffsetTo);
-            Assert.AreEqual("DAYLIGHT", timeZoneInfos[1].Name);
-            Assert.AreEqual(new UtcOffset("+0100"), timeZoneInfos[1].OffsetFrom);
-            Assert.AreEqual(new UtcOffset("+0200"), timeZoneInfos[1].OffsetTo);
+            Assert.Multiple(() =>
+            {
+                Assert.That(timeZoneInfos, Is.Not.Null, "Expected TimeZoneInfos to be deserialized");
+                Assert.That(timeZoneInfos, Has.Count.EqualTo(2), "Expected 2 TimeZoneInfos");
+                Assert.That(timeZoneInfos[0].Name, Is.EqualTo("STANDARD"));
+                Assert.That(timeZoneInfos[0].OffsetFrom, Is.EqualTo(new UtcOffset("+0200")));
+                Assert.That(timeZoneInfos[0].OffsetTo, Is.EqualTo(new UtcOffset("+0100")));
+                Assert.That(timeZoneInfos[1].Name, Is.EqualTo("DAYLIGHT"));
+                Assert.That(timeZoneInfos[1].OffsetFrom, Is.EqualTo(new UtcOffset("+0100")));
+                Assert.That(timeZoneInfos[1].OffsetTo, Is.EqualTo(new UtcOffset("+0200")));
+            });
         }
 
         [Test]
@@ -500,7 +512,7 @@ END:VTIMEZONE";
             var untilIndex = serializedUntilNotContainsZSuffix.IndexOf("UNTIL", StringComparison.Ordinal);
             var until = serializedUntilNotContainsZSuffix.Substring(untilIndex);
 
-            Assert.IsTrue(!until.EndsWith("Z"));
+            Assert.That(!until.EndsWith("Z"), Is.True);
         }
 
         [Test(Description = "PRODID and VERSION should use ical.net values instead of preserving deserialized values")]
@@ -513,10 +525,10 @@ END:VTIMEZONE";
             };
             var serialized = new CalendarSerializer().SerializeToString(c);
             var expectedProdid = $"PRODID:{LibraryMetadata.ProdId}";
-            Assert.IsTrue(serialized.Contains(expectedProdid, StringComparison.Ordinal));
+            Assert.That(serialized.Contains(expectedProdid, StringComparison.Ordinal), Is.True);
 
             var expectedVersion = $"VERSION:{LibraryMetadata.Version}";
-            Assert.IsTrue(serialized.Contains(expectedVersion, StringComparison.Ordinal));
+            Assert.That(serialized.Contains(expectedVersion, StringComparison.Ordinal), Is.True);
         }
 
         [Test]
@@ -541,7 +553,7 @@ END:VTIMEZONE";
             var serializer = new CalendarSerializer();
             var serializedCalendar = serializer.SerializeToString(cal1);
             var cal2 = Calendar.Load(serializedCalendar);
-            Assert.AreEqual("application/json", cal2.Events.Single().Attachments.Single().FormatType);
+            Assert.That(cal2.Events.Single().Attachments.Single().FormatType, Is.EqualTo("application/json"));
         }
 
         [Test(Description = "It should be possible to serialize a calendar component instead of a whole calendar")]
@@ -556,8 +568,11 @@ END:VTIMEZONE";
             };
 
             var serialized = new CalendarSerializer().SerializeToString(e);
-            Assert.IsTrue(serialized.Contains(expectedString, StringComparison.Ordinal));
-            Assert.IsTrue(!serialized.Contains("VCALENDAR", StringComparison.Ordinal));
+            Assert.Multiple(() =>
+            {
+                Assert.That(serialized.Contains(expectedString, StringComparison.Ordinal), Is.True);
+                Assert.That(!serialized.Contains("VCALENDAR", StringComparison.Ordinal), Is.True);
+            });
         }
     }
 }

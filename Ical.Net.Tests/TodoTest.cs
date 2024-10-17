@@ -1,6 +1,6 @@
+﻿using System.Collections;
 using Ical.Net.DataTypes;
 using NUnit.Framework;
-using NUnit.Framework.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,11 +22,11 @@ namespace Ical.Net.Tests
             {
                 var dt = calDateTime.Key;
                 dt.TzId = _tzid;
-                Assert.AreEqual(calDateTime.Value, todo[0].IsActive(dt));
+                Assert.That(todo[0].IsActive(dt), Is.EqualTo(calDateTime.Value));
             }
         }
 
-        public static IEnumerable<ITestCaseData> ActiveTodo_TestCases()
+        public static IEnumerable ActiveTodo_TestCases()
         {
             var testVals = new List<KeyValuePair<CalDateTime, bool>>
             {
@@ -172,11 +172,11 @@ namespace Ical.Net.Tests
             {
                 var dt = calDateTime.Key;
                 dt.TzId = _tzid;
-                Assert.AreEqual(calDateTime.Value, todo[0].IsCompleted(dt));
+                Assert.That(todo[0].IsCompleted(dt), Is.EqualTo(calDateTime.Value));
             }
         }
 
-        public static IEnumerable<ITestCaseData> CompletedTodo_TestCases()
+        public static IEnumerable CompletedTodo_TestCases()
         {
             var testVals = new List<KeyValuePair<CalDateTime, bool>>
             {
@@ -211,9 +211,9 @@ namespace Ical.Net.Tests
                 new CalDateTime(2006, 7, 1, 9, 0, 0),
                 new CalDateTime(2007, 7, 1, 9, 0, 0)).OrderBy(o => o.Period.StartTime).ToList();
 
-            Assert.AreEqual(
-                items.Count,
-                occurrences.Count);
+            Assert.That(
+                occurrences,
+Has.Count.EqualTo(items.Count));
         }
     }
 }

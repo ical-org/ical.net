@@ -1,8 +1,8 @@
 ﻿using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using NUnit.Framework;
-using NUnit.Framework.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Ical.Net.Tests
@@ -36,10 +36,10 @@ namespace Ical.Net.Tests
             var convertedStart = calendarEvent.Start.ToTimeZone(targetTimeZone);
             var convertedAsUtc = convertedStart.AsUtc;
 
-            Assert.AreEqual(startAsUtc, convertedAsUtc);
+            Assert.That(convertedAsUtc, Is.EqualTo(startAsUtc));
         }
 
-        public static IEnumerable<ITestCaseData> ToTimeZoneTestCases()
+        public static IEnumerable ToTimeZoneTestCases()
         {
             const string bclCst = "Central Standard Time";
             const string bclEastern = "Eastern Standard Time";
@@ -70,7 +70,7 @@ namespace Ical.Net.Tests
         public DateTimeOffset AsDateTimeOffsetTests(CalDateTime incoming)
             => incoming.AsDateTimeOffset;
 
-        public static IEnumerable<ITestCaseData> AsDateTimeOffsetTestCases()
+        public static IEnumerable AsDateTimeOffsetTestCases()
         {
             const string nyTzId = "America/New_York";
             var summerDate = DateTime.Parse("2018-05-15T11:00");
@@ -106,18 +106,18 @@ namespace Ical.Net.Tests
 
             var someDt = new CalDateTime(someTime.DateTime) { TzId = "America/New_York" };
             var firstUtc = someDt.AsUtc;
-            Assert.AreEqual(someTime.UtcDateTime, firstUtc);
+            Assert.That(firstUtc, Is.EqualTo(someTime.UtcDateTime));
 
             someDt.TzId = "Europe/Berlin";
             var berlinUtc = someDt.AsUtc;
-            Assert.AreNotEqual(firstUtc, berlinUtc);
+            Assert.That(berlinUtc, Is.Not.EqualTo(firstUtc));
         }
 
         [Test, TestCaseSource(nameof(DateTimeKindOverrideTestCases))]
         public DateTimeKind DateTimeKindOverrideTests(DateTime dateTime, string tzId)
             => new CalDateTime(dateTime, tzId).Value.Kind;
 
-        public static IEnumerable<ITestCaseData> DateTimeKindOverrideTestCases()
+        public static IEnumerable DateTimeKindOverrideTestCases()
         {
             const string localTz = "America/New_York";
             var localDt = DateTime.SpecifyKind(DateTime.Parse("2018-05-21T11:35:33"), DateTimeKind.Local);

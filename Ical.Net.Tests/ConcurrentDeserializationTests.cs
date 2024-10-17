@@ -21,7 +21,7 @@ namespace Ical.Net.Tests
 
             var deserializedCalendars = calendars.AsParallel().SelectMany(CalendarCollection.Load);
             var materialized = deserializedCalendars.ToList();
-            Assert.AreEqual(5, materialized.Count);
+            Assert.That(materialized, Has.Count.EqualTo(5));
         }
     }
 }

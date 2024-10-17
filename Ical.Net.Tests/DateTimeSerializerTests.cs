@@ -17,7 +17,7 @@ namespace Ical.Net.Tests
                 new CalDateTime(new DateTime(1997, 7, 14, 13, 30, 0, DateTimeKind.Local), "US-Eastern"));
 
             // TZID is applied elsewhere - just make sure this doesn't have 'Z' appended. 
-            Assert.AreEqual("19970714T133000", result);
+            Assert.That(result, Is.EqualTo("19970714T133000"));
         }
     }
 }

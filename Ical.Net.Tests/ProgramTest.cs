@@ -15,18 +15,18 @@ namespace Ical.Net.Tests
             // The following code loads and displays an iCalendar
             // with US Holidays for 2006.
             var iCal = Calendar.Load(IcsFiles.UsHolidays);
-            Assert.IsNotNull(iCal, "iCalendar did not load.");
+            Assert.That(iCal, Is.Not.Null, "iCalendar did not load.");
         }
 
         private const string _tzid = "US-Eastern";
 
         public static void TestCal(Calendar cal)
         {
-            Assert.IsNotNull(cal, "The iCalendar was not loaded");
+            Assert.That(cal, Is.Not.Null, "The iCalendar was not loaded");
             if (cal.Events.Count > 0)
-                Assert.IsTrue(cal.Events.Count == 1, "Calendar should contain 1 event; however, the iCalendar loaded " + cal.Events.Count + " events");
+                Assert.That(cal.Events.Count == 1, Is.True, "Calendar should contain 1 event; however, the iCalendar loaded " + cal.Events.Count + " events");
             else if (cal.Todos.Count > 0)
-                Assert.IsTrue(cal.Todos.Count == 1, "Calendar should contain 1 todo; however, the iCalendar loaded " + cal.Todos.Count + " todos");
+                Assert.That(cal.Todos.Count == 1, Is.True, "Calendar should contain 1 todo; however, the iCalendar loaded " + cal.Todos.Count + " todos");
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Ical.Net.Tests
             {
                 IDateTime dt = dateTimes[i];
                 var start = occurrences[i].Period.StartTime;
-                Assert.AreEqual(dt, start);
+                Assert.That(start, Is.EqualTo(dt));
 
                 var expectedZone = DateUtil.GetZone(dt.TimeZoneName);
                 var actualZone = DateUtil.GetZone(timeZones[i]);
@@ -90,12 +90,12 @@ namespace Ical.Net.Tests
                 //Assert.AreEqual();
 
                 //Normalize the time zones and then compare equality
-                Assert.AreEqual(expectedZone, actualZone);
+                Assert.That(actualZone, Is.EqualTo(expectedZone));
 
                 //Assert.IsTrue(dt.TimeZoneName == TimeZones[i], "Event " + dt + " should occur in the " + TimeZones[i] + " timezone");
             }
 
-            Assert.IsTrue(occurrences.Count == dateTimes.Length, "There should be exactly " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
+            Assert.That(occurrences.Count == dateTimes.Length, Is.True, "There should be exactly " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
 
             // Get occurrences for the 2nd event
             occurrences = evt2.GetOccurrences(
@@ -150,11 +150,14 @@ namespace Ical.Net.Tests
             {
                 IDateTime dt = dateTimes1[i];
                 var start = occurrences[i].Period.StartTime;
-                Assert.AreEqual(dt, start);
-                Assert.IsTrue(dt.TimeZoneName == timeZones1[i], "Event " + dt + " should occur in the " + timeZones1[i] + " timezone");
+                Assert.Multiple(() =>
+                {
+                    Assert.That(start, Is.EqualTo(dt));
+                    Assert.That(dt.TimeZoneName == timeZones1[i], Is.True, "Event " + dt + " should occur in the " + timeZones1[i] + " timezone");
+                });
             }
 
-            Assert.AreEqual(dateTimes1.Length, occurrences.Count, "There should be exactly " + dateTimes1.Length + " occurrences; there were " + occurrences.Count);
+            Assert.That(occurrences, Has.Count.EqualTo(dateTimes1.Length), "There should be exactly " + dateTimes1.Length + " occurrences; there were " + occurrences.Count);
         }
 
         [Test]
@@ -166,14 +169,10 @@ namespace Ical.Net.Tests
             var zones = TimeZoneInfo.GetSystemTimeZones();
             foreach (var zone in zones)
             {
-                try
+                Assert.That(() =>
                 {
                     TimeZoneInfo.FindSystemTimeZoneById(zone.Id);
-                }
-                catch (Exception)
-                {
-                    Assert.Fail("Not found: " + zone.StandardName);
-                }
+                }, Throws.Nothing, "Time zone should be found.");
             }
         }
     }

@@ -13,9 +13,9 @@ namespace Ical.Net.Tests
             var iCal = new Calendar();
             var evt = iCal.Create<CalendarEvent>();
 
-            Assert.IsNotNull(evt.Uid);
-            Assert.IsNull(evt.Created); // We don't want this to be set automatically
-            Assert.IsNotNull(evt.DtStamp);
+            Assert.That(evt.Uid, Is.Not.Null);
+            Assert.That(evt.Created, Is.Null); // We don't want this to be set automatically
+            Assert.That(evt.DtStamp, Is.Not.Null);
         }
 
         [Test, Category("Components")]
@@ -36,8 +36,11 @@ namespace Ical.Net.Tests
             var secondStartAsUtc = e.Start.AsUtc;
             var secondEndAsUtc = e.End.AsUtc;
 
-            Assert.AreNotEqual(firstStartAsUtc, secondStartAsUtc);
-            Assert.AreNotEqual(firstEndAsUtc, secondEndAsUtc);
+            Assert.Multiple(() =>
+            {
+                Assert.That(secondStartAsUtc, Is.Not.EqualTo(firstStartAsUtc));
+                Assert.That(secondEndAsUtc, Is.Not.EqualTo(firstEndAsUtc));
+            });
         }
     }
 }

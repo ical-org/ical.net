@@ -3,8 +3,8 @@ using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using Ical.Net.Utility;
 using NUnit.Framework;
-using NUnit.Framework.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,13 +20,16 @@ namespace Ical.Net.Tests
         [Test, TestCaseSource(nameof(CalDateTime_TestCases))]
         public void CalDateTime_Tests(CalDateTime incomingDt, CalDateTime expectedDt)
         {
-            Assert.AreEqual(incomingDt.Value, expectedDt.Value);
-            Assert.AreEqual(incomingDt.GetHashCode(), expectedDt.GetHashCode());
-            Assert.AreEqual(incomingDt.TzId, expectedDt.TzId);
-            Assert.IsTrue(incomingDt.Equals(expectedDt));
+            Assert.Multiple(() =>
+            {
+                Assert.That(expectedDt.Value, Is.EqualTo(incomingDt.Value));
+                Assert.That(expectedDt.GetHashCode(), Is.EqualTo(incomingDt.GetHashCode()));
+                Assert.That(expectedDt.TzId, Is.EqualTo(incomingDt.TzId));
+                Assert.That(incomingDt.Equals(expectedDt), Is.True);
+            });
         }
 
-        public static IEnumerable<ITestCaseData> CalDateTime_TestCases()
+        public static IEnumerable CalDateTime_TestCases()
         {
             var nowCalDt = new CalDateTime(_nowTime);
             yield return new TestCaseData(nowCalDt, new CalDateTime(_nowTime)).SetName("Now, no time zone");
@@ -41,22 +44,25 @@ namespace Ical.Net.Tests
             var patternA = GetSimpleRecurrencePattern();
             var patternB = GetSimpleRecurrencePattern();
 
-            Assert.AreEqual(patternA, patternB);
-            Assert.AreEqual(patternA.GetHashCode(), patternB.GetHashCode());
+            Assert.That(patternB, Is.EqualTo(patternA));
+            Assert.That(patternB.GetHashCode(), Is.EqualTo(patternA.GetHashCode()));
         }
 
         [Test, TestCaseSource(nameof(Event_TestCases))]
         public void Event_Tests(CalendarEvent incoming, CalendarEvent expected)
         {
-            Assert.AreEqual(incoming.DtStart, expected.DtStart);
-            Assert.AreEqual(incoming.DtEnd, expected.DtEnd);
-            Assert.AreEqual(incoming.Location, expected.Location);
-            Assert.AreEqual(incoming.Status, expected.Status);
-            Assert.AreEqual(incoming.IsActive, expected.IsActive);
-            Assert.AreEqual(incoming.Duration, expected.Duration);
-            Assert.AreEqual(incoming.Transparency, expected.Transparency);
-            Assert.AreEqual(incoming.GetHashCode(), expected.GetHashCode());
-            Assert.IsTrue(incoming.Equals(expected));
+            Assert.Multiple(() =>
+            {
+                Assert.That(expected.DtStart, Is.EqualTo(incoming.DtStart));
+                Assert.That(expected.DtEnd, Is.EqualTo(incoming.DtEnd));
+                Assert.That(expected.Location, Is.EqualTo(incoming.Location));
+                Assert.That(expected.Status, Is.EqualTo(incoming.Status));
+                Assert.That(expected.IsActive, Is.EqualTo(incoming.IsActive));
+                Assert.That(expected.Duration, Is.EqualTo(incoming.Duration));
+                Assert.That(expected.Transparency, Is.EqualTo(incoming.Transparency));
+                Assert.That(expected.GetHashCode(), Is.EqualTo(incoming.GetHashCode()));
+                Assert.That(incoming.Equals(expected), Is.True);
+            });
         }
 
         private static RecurrencePattern GetSimpleRecurrencePattern() => new RecurrencePattern(FrequencyType.Daily, 1)
@@ -74,7 +80,7 @@ namespace Ical.Net.Tests
         private static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } });
 
 
-        public static IEnumerable<ITestCaseData> Event_TestCases()
+        public static IEnumerable Event_TestCases()
         {
             var outgoing = GetSimpleEvent();
             var expected = GetSimpleEvent();
@@ -124,20 +130,26 @@ namespace Ical.Net.Tests
                 RecurrenceRules = new List<RecurrencePattern> { rruleB },
             });
 
-            Assert.AreEqual(actualCalendar.GetHashCode(), expectedCalendar.GetHashCode());
-            Assert.IsTrue(actualCalendar.Equals(expectedCalendar));
+            Assert.Multiple(() =>
+            {
+                Assert.That(expectedCalendar.GetHashCode(), Is.EqualTo(actualCalendar.GetHashCode()));
+                Assert.That(actualCalendar.Equals(expectedCalendar), Is.True);
+            });
         }
 
         [Test, TestCaseSource(nameof(VTimeZone_TestCases))]
         public void VTimeZone_Tests(VTimeZone actual, VTimeZone expected)
         {
-            Assert.AreEqual(actual.Url, expected.Url);
-            Assert.AreEqual(actual.TzId, expected.TzId);
-            Assert.AreEqual(actual, expected);
-            Assert.AreEqual(actual.GetHashCode(), expected.GetHashCode());
+            Assert.Multiple(() =>
+            {
+                Assert.That(expected.Url, Is.EqualTo(actual.Url));
+                Assert.That(expected.TzId, Is.EqualTo(actual.TzId));
+                Assert.That(expected, Is.EqualTo(actual));
+                Assert.That(expected.GetHashCode(), Is.EqualTo(actual.GetHashCode()));
+            });
         }
 
-        public static IEnumerable<ITestCaseData> VTimeZone_TestCases()
+        public static IEnumerable VTimeZone_TestCases()
         {
             const string nzSt = "New Zealand Standard Time";
             var first = new VTimeZone
@@ -155,11 +167,14 @@ namespace Ical.Net.Tests
         [Test, TestCaseSource(nameof(Attendees_TestCases))]
         public void Attendees_Tests(Attendee actual, Attendee expected)
         {
-            Assert.AreEqual(expected.GetHashCode(), actual.GetHashCode());
-            Assert.AreEqual(expected, actual);
+            Assert.Multiple(() =>
+            {
+                Assert.That(actual.GetHashCode(), Is.EqualTo(expected.GetHashCode()));
+                Assert.That(actual, Is.EqualTo(expected));
+            });
         }
 
-        public static IEnumerable<ITestCaseData> Attendees_TestCases()
+        public static IEnumerable Attendees_TestCases()
         {
             var tentative1 = new Attendee("MAILTO:james@example.com")
             {
@@ -212,13 +227,16 @@ namespace Ical.Net.Tests
             var a = Calendar.Load(IcsFiles.UsHolidays);
             var b = Calendar.Load(IcsFiles.UsHolidays);
 
-            Assert.IsNotNull(a);
-            Assert.IsNotNull(b);
-            Assert.AreEqual(a.GetHashCode(), b.GetHashCode());
-            Assert.AreEqual(a, b);
+            Assert.That(a, Is.Not.Null);
+            Assert.That(b, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(b.GetHashCode(), Is.EqualTo(a.GetHashCode()));
+                Assert.That(b, Is.EqualTo(a));
+            });
         }
 
-        public static IEnumerable<ITestCaseData> CalendarCollection_TestCases()
+        public static IEnumerable CalendarCollection_TestCases()
         {
             yield return new TestCaseData(IcsFiles.Google1).SetName("Google calendar test case");
             yield return new TestCaseData(IcsFiles.Parse1).SetName("Weird file parse test case");
@@ -231,31 +249,34 @@ namespace Ical.Net.Tests
             var origContents = new[] { "Foo", "Bar" };
             var e = GetSimpleEvent();
             e.Resources = new List<string>(origContents);
-            Assert.IsTrue(e.Resources.Count == 2);
+            Assert.That(e.Resources.Count == 2, Is.True);
 
             e.Resources.Add("Baz");
-            Assert.IsTrue(e.Resources.Count == 3);
+            Assert.That(e.Resources.Count == 3, Is.True);
             var serialized = SerializeEvent(e);
-            Assert.IsTrue(serialized.Contains("Baz"));
+            Assert.That(serialized.Contains("Baz"), Is.True);
 
             e.Resources.Remove("Baz");
-            Assert.IsTrue(e.Resources.Count == 2);
+            Assert.That(e.Resources.Count == 2, Is.True);
             serialized = SerializeEvent(e);
-            Assert.IsFalse(serialized.Contains("Baz"));
+            Assert.That(serialized.Contains("Baz"), Is.False);
 
             e.Resources.Add("Hello");
-            Assert.IsTrue(e.Resources.Contains("Hello"));
+            Assert.That(e.Resources.Contains("Hello"), Is.True);
             serialized = SerializeEvent(e);
-            Assert.IsTrue(serialized.Contains("Hello"));
+            Assert.That(serialized.Contains("Hello"), Is.True);
 
             e.Resources.Clear();
             e.Resources.AddRange(origContents);
-            CollectionAssert.AreEquivalent(e.Resources, origContents);
+            Assert.That(origContents, Is.EquivalentTo(e.Resources));
             serialized = SerializeEvent(e);
-            Assert.IsTrue(serialized.Contains("Foo"));
-            Assert.IsTrue(serialized.Contains("Bar"));
-            Assert.IsFalse(serialized.Contains("Baz"));
-            Assert.IsFalse(serialized.Contains("Hello"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(serialized.Contains("Foo"), Is.True);
+                Assert.That(serialized.Contains("Bar"), Is.True);
+                Assert.That(serialized.Contains("Baz"), Is.False);
+                Assert.That(serialized.Contains("Hello"), Is.False);
+            });
         }
 
         internal static (byte[] original, byte[] copy) GetAttachments()
@@ -271,16 +292,16 @@ namespace Ical.Net.Tests
         {
             var attachments = GetAttachments();
 
-            Assert.AreNotEqual(noAttachment, withAttachment);
-            Assert.AreNotEqual(noAttachment.GetHashCode(), withAttachment.GetHashCode());
+            Assert.That(withAttachment, Is.Not.EqualTo(noAttachment));
+            Assert.That(withAttachment.GetHashCode(), Is.Not.EqualTo(noAttachment.GetHashCode()));
 
             noAttachment.Attachments.Add(new Attachment(attachments.copy));
 
-            Assert.AreEqual(noAttachment, withAttachment);
-            Assert.AreEqual(noAttachment.GetHashCode(), withAttachment.GetHashCode());
+            Assert.That(withAttachment, Is.EqualTo(noAttachment));
+            Assert.That(withAttachment.GetHashCode(), Is.EqualTo(noAttachment.GetHashCode()));
         }
 
-        public static IEnumerable<ITestCaseData> RecurringComponentAttachment_TestCases()
+        public static IEnumerable RecurringComponentAttachment_TestCases()
         {
             var attachments = GetAttachments();
 
@@ -303,11 +324,14 @@ namespace Ical.Net.Tests
         [Test, TestCaseSource(nameof(PeriodTestCases))]
         public void PeriodTests(Period a, Period b)
         {
-            Assert.AreEqual(a.GetHashCode(), b.GetHashCode());
-            Assert.AreEqual(a, b);
+            Assert.Multiple(() =>
+            {
+                Assert.That(b.GetHashCode(), Is.EqualTo(a.GetHashCode()));
+                Assert.That(b, Is.EqualTo(a));
+            });
         }
 
-        public static IEnumerable<ITestCaseData> PeriodTestCases()
+        public static IEnumerable PeriodTestCases()
         {
             yield return new TestCaseData(new Period(new CalDateTime(_nowTime)), new Period(new CalDateTime(_nowTime)))
                 .SetName("Two identical CalDateTimes are equal");
@@ -414,16 +438,19 @@ namespace Ical.Net.Tests
             }
 
             var collectionEqual = CollectionHelpers.Equals(a, b);
-            Assert.AreEqual(true, collectionEqual);
-            Assert.AreEqual(a.GetHashCode(), b.GetHashCode());
+            Assert.Multiple(() =>
+            {
+                Assert.That(collectionEqual, Is.EqualTo(true));
+                Assert.That(b.GetHashCode(), Is.EqualTo(a.GetHashCode()));
+            });
 
             var listOfListA = new List<PeriodList> { a };
             var listOfListB = new List<PeriodList> { b };
-            Assert.IsTrue(CollectionHelpers.Equals(listOfListA, listOfListB));
+            Assert.That(CollectionHelpers.Equals(listOfListA, listOfListB), Is.True);
 
             var aThenB = new List<PeriodList> { a, b };
             var bThenA = new List<PeriodList> { b, a };
-            Assert.IsTrue(CollectionHelpers.Equals(aThenB, bThenA));
+            Assert.That(CollectionHelpers.Equals(aThenB, bThenA), Is.True);
         }
 
         [Test]
@@ -435,7 +462,7 @@ namespace Ical.Net.Tests
             var asLocal = new CalDateTime(nowLocal, "America/New_York");
             var asUtc = new CalDateTime(nowUtc, "UTC");
 
-            Assert.AreNotEqual(asLocal, asUtc);
+            Assert.That(asUtc, Is.Not.EqualTo(asLocal));
         }
 
         private void TestComparison(Func<CalDateTime, IDateTime, bool> calOp, Func<int?, int?, bool> intOp)
@@ -446,12 +473,15 @@ namespace Ical.Net.Tests
             var dtSome = new CalDateTime(2018, 1, 1);
             var dtGreater = new CalDateTime(2019, 1, 1);
 
-            Assert.AreEqual(intOp(null, null), calOp(null, null));
-            Assert.AreEqual(intOp(null, intSome), calOp(null, dtSome));
-            Assert.AreEqual(intOp(intSome, null), calOp(dtSome, null));
-            Assert.AreEqual(intOp(intSome, intSome), calOp(dtSome, dtSome));
-            Assert.AreEqual(intOp(intSome, intGreater), calOp(dtSome, dtGreater));
-            Assert.AreEqual(intOp(intGreater, intSome), calOp(dtGreater, dtSome));
+            Assert.Multiple(() =>
+            {
+                Assert.That(calOp(null, null), Is.EqualTo(intOp(null, null)));
+                Assert.That(calOp(null, dtSome), Is.EqualTo(intOp(null, intSome)));
+                Assert.That(calOp(dtSome, null), Is.EqualTo(intOp(intSome, null)));
+                Assert.That(calOp(dtSome, dtSome), Is.EqualTo(intOp(intSome, intSome)));
+                Assert.That(calOp(dtSome, dtGreater), Is.EqualTo(intOp(intSome, intGreater)));
+                Assert.That(calOp(dtGreater, dtSome), Is.EqualTo(intOp(intGreater, intSome)));
+            });
         }
 
         [Test]
