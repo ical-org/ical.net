@@ -1,9 +1,9 @@
-using Ical.Net.CalendarComponents;
+﻿using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using NUnit.Framework;
-using NUnit.Framework.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -32,8 +32,8 @@ namespace Ical.Net.Tests
             };
 
             cal.Events.Add(evt);
-            Assert.AreEqual(1, cal.Children.Count);
-            Assert.AreSame(evt, cal.Children[0]);
+            Assert.That(cal.Children, Has.Count.EqualTo(1));
+            Assert.That(cal.Children[0], Is.SameAs(evt));
         }
 
         /// <summary>
@@ -52,12 +52,17 @@ namespace Ical.Net.Tests
             };
 
             cal.Events.Add(evt);
-            Assert.AreEqual(1, cal.Children.Count);
-            Assert.AreSame(evt, cal.Children[0]);
-
+            Assert.Multiple(() =>
+            {
+                Assert.That(cal.Children, Has.Count.EqualTo(1));
+                Assert.That(cal.Children[0], Is.SameAs(evt));
+            });
             cal.RemoveChild(evt);
-            Assert.AreEqual(0, cal.Children.Count);
-            Assert.AreEqual(0, cal.Events.Count);
+            Assert.Multiple(() =>
+            {
+                Assert.That(cal.Children.Count, Is.EqualTo(0));
+                Assert.That(cal.Events.Count, Is.EqualTo(0));
+            });
         }
 
         /// <summary>
@@ -76,12 +81,18 @@ namespace Ical.Net.Tests
             };
 
             cal.Events.Add(evt);
-            Assert.AreEqual(1, cal.Children.Count);
-            Assert.AreSame(evt, cal.Children[0]);
+            Assert.Multiple(() =>
+            {
+                Assert.That(cal.Children, Has.Count.EqualTo(1));
+                Assert.That(cal.Children[0], Is.SameAs(evt));
+            });
 
             cal.Events.Remove(evt);
-            Assert.AreEqual(0, cal.Children.Count);
-            Assert.AreEqual(0, cal.Events.Count);
+            Assert.Multiple(() =>
+            {
+                Assert.That(cal.Children.Count, Is.EqualTo(0));
+                Assert.That(cal.Events.Count, Is.EqualTo(0));
+            });
         }
 
         /// <summary>
@@ -101,7 +112,7 @@ namespace Ical.Net.Tests
             };
 
             cal.Events.Add(evt);
-            Assert.IsNotNull(evt.DtStamp);
+            Assert.That(evt.DtStamp, Is.Not.Null);
         }
 
         /// <summary>
@@ -120,7 +131,7 @@ namespace Ical.Net.Tests
             };
 
             cal.Events.Add(evt);
-            Assert.IsTrue(evt.DtStamp.IsUtc, "DTSTAMP should always be of type UTC.");
+            Assert.That(evt.DtStamp.IsUtc, Is.True, "DTSTAMP should always be of type UTC.");
         }
 
         /// <summary>
@@ -135,7 +146,7 @@ namespace Ical.Net.Tests
             return !result.Contains("TZID=") && result.EndsWith("Z");
         }
 
-        public static IEnumerable<ITestCaseData> EnsureAutomaticallySetDtStampIsSerializedAsUtcKind_TestCases()
+        public static IEnumerable EnsureAutomaticallySetDtStampIsSerializedAsUtcKind_TestCases()
         {
             var emptyCalendar = new Calendar();
             var evt = new CalendarEvent();
@@ -210,8 +221,8 @@ END:VCALENDAR";
             var noException = Calendar.Load(icalNoException).Events.First();
             var withException = Calendar.Load(icalWithException).Events.First();
 
-            Assert.AreNotEqual(noException, withException);
-            Assert.AreNotEqual(noException.GetHashCode(), withException.GetHashCode());
+            Assert.That(withException, Is.Not.EqualTo(noException));
+            Assert.That(withException.GetHashCode(), Is.Not.EqualTo(noException.GetHashCode()));
         }
 
         private static CalendarEvent GetSimpleEvent() => new CalendarEvent
@@ -229,13 +240,13 @@ END:VCALENDAR";
             testRrule.RecurrenceRules = new List<RecurrencePattern> { rrule };
 
             var simpleEvent = GetSimpleEvent();
-            Assert.AreNotEqual(simpleEvent, testRrule);
-            Assert.AreNotEqual(simpleEvent.GetHashCode(), testRrule.GetHashCode());
+            Assert.That(testRrule, Is.Not.EqualTo(simpleEvent));
+            Assert.That(testRrule.GetHashCode(), Is.Not.EqualTo(simpleEvent.GetHashCode()));
 
             var testRdate = GetSimpleEvent();
             testRdate.RecurrenceDates = new List<PeriodList> { new PeriodList { new Period(new CalDateTime(_now)) } };
-            Assert.AreNotEqual(simpleEvent, testRdate);
-            Assert.AreNotEqual(simpleEvent.GetHashCode(), testRdate.GetHashCode());
+            Assert.That(testRdate, Is.Not.EqualTo(simpleEvent));
+            Assert.That(testRdate.GetHashCode(), Is.Not.EqualTo(simpleEvent.GetHashCode()));
         }
 
         private static List<RecurrencePattern> GetSimpleRecurrenceList()
@@ -263,13 +274,16 @@ END:VCALENDAR";
             var eventA = calendar.Events.First();
             var eventB = cal2.Events.First();
 
-            Assert.AreEqual(eventA.RecurrenceRules.First(), eventB.RecurrenceRules.First());
-            Assert.AreEqual(eventA.RecurrenceRules.First().GetHashCode(), eventB.RecurrenceRules.First().GetHashCode());
-            Assert.AreEqual(eventA.ExceptionDates.First(), eventB.ExceptionDates.First());
-            Assert.AreEqual(eventA.ExceptionDates.First().GetHashCode(), eventB.ExceptionDates.First().GetHashCode());
-            Assert.AreEqual(eventA.GetHashCode(), eventB.GetHashCode());
-            Assert.AreEqual(eventA, eventB);
-            Assert.AreEqual(calendar, cal2);
+            Assert.Multiple(() =>
+            {
+                Assert.That(eventB.RecurrenceRules.First(), Is.EqualTo(eventA.RecurrenceRules.First()));
+                Assert.That(eventB.RecurrenceRules.First().GetHashCode(), Is.EqualTo(eventA.RecurrenceRules.First().GetHashCode()));
+                Assert.That(eventB.ExceptionDates.First(), Is.EqualTo(eventA.ExceptionDates.First()));
+                Assert.That(eventB.ExceptionDates.First().GetHashCode(), Is.EqualTo(eventA.ExceptionDates.First().GetHashCode()));
+                Assert.That(eventB.GetHashCode(), Is.EqualTo(eventA.GetHashCode()));
+                Assert.That(eventB, Is.EqualTo(eventA));
+                Assert.That(cal2, Is.EqualTo(calendar));
+            });
         }
 
         [Test]
@@ -288,15 +302,18 @@ END:VCALENDAR";
             cal1.Events.Add(vEvent);
             var serialized = serializer.SerializeToString(cal1);
             var deserializedNoExDate = Calendar.Load(serialized);
-            Assert.AreEqual(cal1, deserializedNoExDate);
+            Assert.That(deserializedNoExDate, Is.EqualTo(cal1));
 
             vEvent.ExceptionDates = GetExceptionDates();
             serialized = serializer.SerializeToString(cal1);
             var deserializedWithExDate = Calendar.Load(serialized);
 
-            Assert.AreNotEqual(deserializedNoExDate.Events.First(), deserializedWithExDate.Events.First());
-            Assert.AreNotEqual(deserializedNoExDate.Events.First().GetHashCode(), deserializedWithExDate.Events.First().GetHashCode());
-            Assert.AreNotEqual(deserializedNoExDate, deserializedWithExDate);
+            Assert.Multiple(() =>
+            {
+                Assert.That(deserializedWithExDate.Events.First(), Is.Not.EqualTo(deserializedNoExDate.Events.First()));
+                Assert.That(deserializedWithExDate.Events.First().GetHashCode(), Is.Not.EqualTo(deserializedNoExDate.Events.First().GetHashCode()));
+                Assert.That(deserializedWithExDate, Is.Not.EqualTo(deserializedNoExDate));
+            });
         }
 
         [Test]
@@ -307,14 +324,17 @@ END:VCALENDAR";
 
             var eventB = GetSimpleEvent();
             eventB.RecurrenceRules = GetSimpleRecurrenceList();
-            Assert.IsFalse(ReferenceEquals(eventA, eventB));
-            Assert.AreEqual(eventA, eventB);
+            Assert.Multiple(() =>
+            {
+                Assert.That(ReferenceEquals(eventA, eventB), Is.False);
+                Assert.That(eventB, Is.EqualTo(eventA));
+            });
 
             var foreverDailyRule = new RecurrencePattern(FrequencyType.Daily, 1);
             eventB.RecurrenceRules = new List<RecurrencePattern> { foreverDailyRule };
 
-            Assert.AreNotEqual(eventA, eventB);
-            Assert.AreNotEqual(eventA.GetHashCode(), eventB.GetHashCode());
+            Assert.That(eventB, Is.Not.EqualTo(eventA));
+            Assert.That(eventB.GetHashCode(), Is.Not.EqualTo(eventA.GetHashCode()));
         }
 
         [Test]
@@ -367,10 +387,13 @@ END:VCALENDAR";
             var calendarA = Calendar.Load(eventA);
             var calendarB = Calendar.Load(eventB);
 
-            Assert.AreEqual(calendarA.Events.First().GetHashCode(), calendarB.Events.First().GetHashCode());
-            Assert.AreEqual(calendarA.Events.First(), calendarB.Events.First());
-            Assert.AreEqual(calendarA.GetHashCode(), calendarB.GetHashCode());
-            Assert.AreEqual(calendarA, calendarB);
+            Assert.Multiple(() =>
+            {
+                Assert.That(calendarB.Events.First().GetHashCode(), Is.EqualTo(calendarA.Events.First().GetHashCode()));
+                Assert.That(calendarB.Events.First(), Is.EqualTo(calendarA.Events.First()));
+                Assert.That(calendarB.GetHashCode(), Is.EqualTo(calendarA.GetHashCode()));
+                Assert.That(calendarB, Is.EqualTo(calendarA));
+            });
         }
 
         [Test]
@@ -380,16 +403,19 @@ END:VCALENDAR";
             var resources = new[] { "Foo", "Bar", "Baz" };
 
             e.Resources = new List<string>(resources);
-            CollectionAssert.AreEquivalent(e.Resources, resources);
+            Assert.That(resources, Is.EquivalentTo(e.Resources));
 
             var newResources = new[] { "Hello", "Goodbye" };
             e.Resources = new List<string>(newResources);
-            CollectionAssert.AreEquivalent(e.Resources, newResources);
-            Assert.IsFalse(e.Resources.Any(r => resources.Contains(r)));
+            Assert.Multiple(() =>
+            {
+                Assert.That(newResources, Is.EquivalentTo(e.Resources));
+                Assert.That(e.Resources.Any(r => resources.Contains(r)), Is.False);
+            });
 
             e.Resources = null;
             //See https://github.com/rianjs/ical.net/issues/208 -- this should be changed later so the collection is really null
-            Assert.AreEqual(0, e.Resources?.Count);
+            Assert.That(e.Resources?.Count, Is.EqualTo(0));
         }
 
         [Test]
@@ -429,14 +455,14 @@ END:VCALENDAR";
                 .Skip(1).Take(1).First()
                 .Properties.First().Value as UtcOffset;
             var expectedPositive = TimeSpan.FromMinutes(17.5);
-            Assert.AreEqual(expectedPositive, positiveOffset?.Offset);
+            Assert.That(positiveOffset?.Offset, Is.EqualTo(expectedPositive));
 
             var negativeOffset = timezones
                 .First()
                 .Properties.First().Value as UtcOffset;
 
             var expectedNegative = TimeSpan.FromMinutes(-17.5);
-            Assert.AreEqual(expectedNegative, negativeOffset?.Offset);
+            Assert.That(negativeOffset?.Offset, Is.EqualTo(expectedNegative));
         }
     }
 }

@@ -25,9 +25,9 @@ namespace Ical.Net.Tests
             //Only compare the UTC values here, since we care about the time coordinate when the alarm fires, and nothing else
             foreach (var alarm in alarms.Select(a => a.DateTime.AsUtc))
             {
-                Assert.IsTrue(utcDates.Contains(alarm), "Alarm triggers at " + alarm + ", but it should not.");
+                Assert.That(utcDates.Contains(alarm), Is.True, "Alarm triggers at " + alarm + ", but it should not.");
             }
-            Assert.IsTrue(dates.Count == alarms.Count, "There were " + alarms.Count + " alarm occurrences; there should have been " + dates.Count + ".");
+            Assert.That(dates.Count == alarms.Count, Is.True, "There were " + alarms.Count + " alarm occurrences; there should have been " + dates.Count + ".");
         }
 
         [Test, Category("Alarm")]
