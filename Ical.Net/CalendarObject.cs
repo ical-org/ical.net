@@ -30,11 +30,8 @@ namespace Ical.Net
 
         private void Initialize()
         {
-            //ToDo: I'm fairly certain this is ONLY used for null checking. If so, maybe it can just be a bool? CalendarObjectList is an empty object, and
-            //ToDo: its constructor parameter is ignored
-            _children = new CalendarObjectList(this);
+            _children = new CalendarObjectList();
             _serviceProvider = new ServiceProvider();
-
             _children.ItemAdded += Children_ItemAdded;
         }
 
@@ -61,10 +58,10 @@ namespace Ical.Net
 
         public override int GetHashCode() => Name?.GetHashCode() ?? 0;
 
+        /// <inheritdoc/>
         public override void CopyFrom(ICopyable c)
         {
-            var obj = c as ICalendarObject;
-            if (obj == null)
+            if (c is not ICalendarObject obj)
             {
                 return;
             }
@@ -74,12 +71,13 @@ namespace Ical.Net
             Parent = obj.Parent;
             Line = obj.Line;
             Column = obj.Column;
-
+            
             // Add each child
             Children.Clear();
             foreach (var child in obj.Children)
             {
-                this.AddChild(child);
+                // Add a deep copy of the child instead of the child itself
+                this.AddChild(child.Copy<ICalendarObject>());
             }
         }
 
@@ -99,21 +97,22 @@ namespace Ical.Net
         public virtual string Name { get; set; }
 
         /// <summary>
-        /// Returns the <see cref="Calendar"/> that this DDayiCalObject belongs to.
+        /// Gets the <see cref="Net.Calendar"/> object.
+        /// The setter must be implemented in a derived class.
         /// </summary>
         public virtual Calendar Calendar
         {
             get
             {
                 ICalendarObject obj = this;
-                while (!(obj is Calendar) && obj.Parent != null)
+                while (obj is not Net.Calendar && obj.Parent != null)
                 {
                     obj = obj.Parent;
                 }
 
                 return obj as Calendar;
             }
-            protected set { }
+            protected set => throw new NotSupportedException();
         }
 
         public virtual int Line { get; set; }

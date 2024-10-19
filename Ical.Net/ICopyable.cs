@@ -3,16 +3,18 @@
     public interface ICopyable
     {
         /// <summary>
-        /// Copies all relevant fields/properties from
-        /// the target object to the current one.
+        /// (Deep) copies all relevant members from
+        /// the source object to the current one.
+        /// <para/>
+        /// If an object cannot use the <see cref="CopyFrom"/> implementation of a base class,
+        /// it must override this method and implement the copy logic itself.
         /// </summary>
         void CopyFrom(ICopyable obj);
 
         /// <summary>
-        /// Returns a deep copy of the current object. For the most part, this is only necessary when working with mutable reference types,
-        /// (i.e. iCalDateTime). For most other types, it's unnecessary overhead. The pattern that identifies whether it's necessary to copy
-        /// or not is whether arithmetic operations mutate fields or properties. iCalDateTime is a good example where + and - would otherwise
-        /// change the Value of the underlying DateTime.
+        /// Returns a deep copy of the current object, mostly by using the <see cref="CopyFrom"/> method
+        /// of the object when it is overridden, otherwise is used the implementation of the base class.
+        /// This is necessary when working with mutable reference types.
         /// </summary>
         T Copy<T>();
     }

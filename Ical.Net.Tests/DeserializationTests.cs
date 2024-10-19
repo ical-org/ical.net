@@ -229,20 +229,20 @@ namespace Ical.Net.Tests
             var evt = iCal.Events.First();
 
             Assert.That(
-evt.Attachments[0].ToString(),
-                Is.EqualTo("This is a test to try out base64 encoding without being too large.\r\n" +
-"This is a test to try out base64 encoding without being too large.\r\n" +
-"This is a test to try out base64 encoding without being too large.\r\n" +
-"This is a test to try out base64 encoding without being too large.\r\n" +
-"This is a test to try out base64 encoding without being too large.\r\n" +
-"This is a test to try out base64 encoding without being too large.\r\n" +
-"This is a test to try out base64 encoding without being too large.\r\n" +
-"This is a test to try out base64 encoding without being too large.\r\n" +
-"This is a test to try out base64 encoding without being too large.\r\n" +
-"This is a test to try out base64 encoding without being too large.\r\n" +
-"This is a test to try out base64 encoding without being too large.\r\n" +
-"This is a test to try out base64 encoding without being too large."),
-                "Attached value does not match.");
+        evt.Attachments[0].ToString(),
+       Is.EqualTo("This is a test to try out base64 encoding without being too large.\r\n" +
+                "This is a test to try out base64 encoding without being too large.\r\n" +
+                "This is a test to try out base64 encoding without being too large.\r\n" +
+                "This is a test to try out base64 encoding without being too large.\r\n" +
+                "This is a test to try out base64 encoding without being too large.\r\n" +
+                "This is a test to try out base64 encoding without being too large.\r\n" +
+                "This is a test to try out base64 encoding without being too large.\r\n" +
+                "This is a test to try out base64 encoding without being too large.\r\n" +
+                "This is a test to try out base64 encoding without being too large.\r\n" +
+                "This is a test to try out base64 encoding without being too large.\r\n" +
+                "This is a test to try out base64 encoding without being too large.\r\n" +
+                "This is a test to try out base64 encoding without being too large."),
+        "Attached value does not match.");
         }
 
         [Test]

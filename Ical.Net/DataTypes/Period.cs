@@ -44,15 +44,13 @@ namespace Ical.Net.DataTypes
             EndTime = start.Add(duration);
         }
 
+        /// <inheritdoc/>
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
 
-            var p = obj as Period;
-            if (p == null)
-            {
-                return;
-            }
+            if (obj is not Period p) return;
+
             StartTime = p.StartTime;
             EndTime = p.EndTime;
             Duration = p.Duration;

@@ -85,12 +85,12 @@ namespace Ical.Net.DataTypes
 
         public override int GetHashCode() => Value?.GetHashCode() ?? 0;
 
+        /// <inheritdoc/>
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
 
-            var o = obj as Organizer;
-            if (o != null)
+            if (obj is Organizer o)
             {
                 Value = o.Value;
             }

@@ -2,37 +2,33 @@
 
 namespace Ical.Net
 {
+    // This class should be declared as abstract
     public class CalendarObjectBase : ICopyable, ILoadable
     {
-        private bool _mIsLoaded;
+        private bool _mIsLoaded = true;
 
-        public CalendarObjectBase()
+        /// <summary>
+        /// Makes a deep copy of the <see cref="ICopyable"/> source
+        /// to the current object. This method must be overridden in a derived class.
+        /// </summary>
+        public virtual void CopyFrom(ICopyable c)
         {
-            _mIsLoaded = true;
+            throw new NotImplementedException("Must be implemented in a derived class.");
         }
 
         /// <summary>
-        /// Copies values from the target object to the
-        /// current object.
+        /// Creates a deep copy of the <see cref="T"/> object.
         /// </summary>
-        public virtual void CopyFrom(ICopyable c) { }
-
-        /// <summary>
-        /// Creates a copy of the object.
-        /// </summary>
-        /// <returns>The copy of the object.</returns>
+        /// <returns>The copy of the <see cref="T"/> object.</returns>
         public virtual T Copy<T>()
         {
             var type = GetType();
             var obj = Activator.CreateInstance(type) as ICopyable;
+            
+            if (obj is not T objOfT) return default(T);
 
-            // Duplicate our values
-            if (obj is T)
-            {
-                obj.CopyFrom(this);
-                return (T)obj;
-            }
-            return default(T);
+            obj.CopyFrom(this);
+            return objOfT;
         }
 
         public virtual bool IsLoaded => _mIsLoaded;

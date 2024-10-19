@@ -161,8 +161,10 @@ namespace Ical.Net.CalendarComponents
 
         /// <summary>
         /// Resources that will be used during the event.
-        /// <example>Conference room #2</example>
-        /// <example>Projector</example>
+        /// To change existing values, assign a new <see cref="IList{T}"/>.
+        /// <example>Examples:
+        /// Conference room, Projector
+        /// </example>
         /// </summary>
         public virtual IList<string> Resources
         {
