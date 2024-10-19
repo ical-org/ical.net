@@ -37,10 +37,9 @@ namespace Ical.Net.Tests
                 .OrderBy(o => o.Period.StartTime)
                 .ToList();
 
-            Assert.That(
-                occurrences,
-Has.Count.EqualTo(dateTimes.Length),
-                "There should be exactly " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
+            Assert.That(occurrences,
+        Has.Count.EqualTo(dateTimes.Length),
+        "There should be exactly " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
 
             if (evt.RecurrenceRules.Count > 0)
             {
