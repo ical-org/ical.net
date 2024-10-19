@@ -1,0 +1,1 @@
+Files in this folder have originally been developed as part of [the libical project](https://github.com/libical/libical). The files may have been modified after copying from libical. To identify the modifications made since copying, refer to the Git history of the individual file or compare with the source file in the libical project.
