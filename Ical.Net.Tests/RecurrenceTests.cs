@@ -3676,5 +3676,93 @@ END:VCALENDAR
             var occurrences = firstEvent.GetOccurrences(startSearch, endSearch);
             Assert.That(occurrences, Has.Count.EqualTo(5));
         }
+
+        public class LibicalTestCase
+        {
+            public string RRule { get; set; }
+
+            public CalDateTime DtStart { get; set; }
+
+            public IReadOnlyList<CalDateTime> Instances { get; set; }
+
+            public override string ToString()
+                => $"{DtStart}, {RRule}";
+        }
+
+        private static IEnumerable<LibicalTestCase> ParseLibicalIcalrecurTestCases(string fileContent)
+        {
+            LibicalTestCase current = null;
+
+            var rd = new StringReader(fileContent);
+            for (string line = rd.ReadLine(); line != null; line = rd.ReadLine())
+            {
+                if (string.IsNullOrEmpty(line))
+                {
+                    if (current != null)
+                    {
+                        yield return current;
+                        current = null;
+                    }
+                    continue;
+                }
+
+                current = current ?? new LibicalTestCase();
+
+                var m = Regex.Match(line, @"^(?<h>[A-Z-]+):(?<v>.*)$");
+                if (!m.Success)
+                    continue;
+
+                var hdr = m.Groups["h"].Value;
+                var val = m.Groups["v"].Value;
+
+                switch (hdr)
+                {
+                    case "RRULE":
+                        current.RRule = val;
+                        break;
+
+                    case "DTSTART":
+                        current.DtStart = new CalDateTime(val);
+                        break;
+
+                    case "INSTANCES":
+                        current.Instances = val.Split(',').Select(dt => new CalDateTime(dt)).ToList();
+                        break;
+                }
+            }
+
+            if (current != null)
+                yield return current;
+        }
+
+        private static IEnumerable<LibicalTestCase> TestLibicalTestCasesSource
+            => ParseLibicalIcalrecurTestCases(IcsFiles.LibicalIcalrecurTest);
+
+        [TestCaseSource(nameof(TestLibicalTestCasesSource))]
+        public void TestLibicalTestCases(LibicalTestCase testCase)
+        {
+            Calendar cal = new Calendar();
+
+            CalendarEvent evt = cal.Create<CalendarEvent>();
+            evt.Summary = "Event summary";
+
+            // Start at midnight, UTC time
+            evt.Start = testCase.DtStart;
+
+            // This case (DTSTART of type DATE and FREQ=MINUTELY) is undefined in RFC 5545.
+            // ical.net handles the case by pretending DTSTART has the time set to midnight.
+            evt.RecurrenceRules.Add(new RecurrencePattern(testCase.RRule)
+            {
+                RestrictionType = RecurrenceRestrictionType.NoRestriction,
+            });
+
+            var occurrences = evt.GetOccurrences(DateTime.MinValue, DateTime.MaxValue)
+                .OrderBy(x => x)
+                .ToList();
+
+            var startDates = occurrences.Select(x => x.Period.StartTime).ToList();
+
+            Assert.That(startDates, Is.EqualTo(testCase.Instances));
+        }
     }
 }
