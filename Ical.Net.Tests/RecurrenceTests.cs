@@ -3683,6 +3683,8 @@ END:VCALENDAR
 
             public CalDateTime DtStart { get; set; }
 
+            public CalDateTime StartAt { get; set; }
+
             public IReadOnlyList<CalDateTime> Instances { get; set; }
 
             public override string ToString()
@@ -3725,6 +3727,10 @@ END:VCALENDAR
                         current.DtStart = new CalDateTime(val);
                         break;
 
+                    case "START-AT":
+                        current.StartAt = new CalDateTime(val);
+                        break;
+
                     case "INSTANCES":
                         current.Instances = val.Split(',').Select(dt => new CalDateTime(dt)).ToList();
                         break;
@@ -3756,7 +3762,7 @@ END:VCALENDAR
                 RestrictionType = RecurrenceRestrictionType.NoRestriction,
             });
 
-            var occurrences = evt.GetOccurrences(DateTime.MinValue, DateTime.MaxValue)
+            var occurrences = evt.GetOccurrences(testCase.StartAt?.Value ?? DateTime.MinValue, DateTime.MaxValue)
                 .OrderBy(x => x)
                 .ToList();
 
