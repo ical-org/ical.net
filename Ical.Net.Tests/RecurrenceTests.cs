@@ -3724,15 +3724,15 @@ END:VCALENDAR
                         break;
 
                     case "DTSTART":
-                        current.DtStart = new CalDateTime(val);
+                        current.DtStart = new CalDateTime(val) { TzId = "UTC" };
                         break;
 
                     case "START-AT":
-                        current.StartAt = new CalDateTime(val);
+                        current.StartAt = new CalDateTime(val) { TzId = "UTC" };
                         break;
 
                     case "INSTANCES":
-                        current.Instances = val.Split(',').Select(dt => new CalDateTime(dt)).ToList();
+                        current.Instances = val.Split(',').Select(dt => new CalDateTime(dt) { TzId = "UTC" }).ToList();
                         break;
                 }
             }
