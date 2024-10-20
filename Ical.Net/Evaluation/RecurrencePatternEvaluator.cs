@@ -467,7 +467,8 @@ namespace Ical.Net.Evaluation
                     var date1 = date;
                     yearDayDates.AddRange(pattern.ByYearDay.Select(yearDay => yearDay > 0
                         ? date1.AddDays(-date1.DayOfYear + yearDay)
-                        : date1.AddDays(-date1.DayOfYear + 1).AddYears(1).AddDays(yearDay)));
+                        : date1.AddDays(-date1.DayOfYear + 1).AddYears(1).AddDays(yearDay))
+                        .Where(d => d.Year == date1.Year));
                 }
                 return yearDayDates;
             }
@@ -483,7 +484,7 @@ namespace Ical.Net.Evaluation
                         ? date.AddDays(-date.DayOfYear + yearDay)
                         : date.AddDays(-date.DayOfYear + 1).AddYears(1).AddDays(yearDay);
 
-                    if (newDate.DayOfYear == date.DayOfYear)
+                    if (newDate.Date == date.Date)
                     {
                         goto Next;
                     }
