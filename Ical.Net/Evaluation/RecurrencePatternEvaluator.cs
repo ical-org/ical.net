@@ -898,6 +898,14 @@ namespace Ical.Net.Evaluation
             return new Period(newDt);
         }
 
+        /// <summary>
+        /// Evaluate the occurrences of this recurrence pattern.
+        /// </summary>
+        /// <param name="referenceDate">The reference date, i.e. DTSTART.</param>
+        /// <param name="periodStart">Start (incl.) of the period occurrences are generated for.</param>
+        /// <param name="periodEnd">End (excl.) of the period occurrences are generated for.</param>
+        /// <param name="includeReferenceDateInResults">Whether the referenceDate itself should be returned. Ignored as the reference data MUST equal the first occurrence of an RRULE.</param>
+        /// <returns></returns>
         public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
             if ((this.Pattern.Frequency != FrequencyType.None) && (this.Pattern.Frequency < FrequencyType.Daily) && !referenceDate.HasTime)
