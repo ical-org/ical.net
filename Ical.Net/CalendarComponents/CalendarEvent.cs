@@ -27,27 +27,6 @@ namespace Ical.Net.CalendarComponents
         internal const string ComponentName = "VEVENT";
 
         /// <summary>
-        /// The start date/time of the event.
-        /// <note>
-        /// If the duration has not been set, but
-        /// the start/end time of the event is available,
-        /// the duration is automatically determined.
-        /// Likewise, if the end date/time has not been
-        /// set, but a start and duration are available,
-        /// the end date/time will be extrapolated.
-        /// </note>
-        /// </summary>
-        public override IDateTime DtStart
-        {
-            get => base.DtStart;
-            set
-            {
-                base.DtStart = value;
-                ExtrapolateTimes(2);
-            }
-        }
-
-        /// <summary>
         /// The end date/time of the event.
         /// <note>
         /// If the duration has not been set, but
@@ -66,7 +45,6 @@ namespace Ical.Net.CalendarComponents
                 if (!Equals(DtEnd, value))
                 {
                     Properties.Set("DTEND", value);
-                    ExtrapolateTimes(0);
                 }
             }
         }
@@ -100,10 +78,24 @@ namespace Ical.Net.CalendarComponents
                 if (!Equals(Duration, value))
                 {
                     Properties.Set("DURATION", value);
-                    ExtrapolateTimes(1);
                 }
             }
         }
+
+        /// <summary>
+        /// Calculates and returns the effective duration of this event.
+        /// </summary>
+        /// <remarks>
+        /// If the 'DURATION' property iis set, this method will return it.
+        /// Otherwise, if DTSTART and DTEND are set, it will calculate the duration from those.
+        /// Otherwise it will return `default(TimeSpan)`.
+        /// </remarks>
+        /// <returns>The effective duration of this event.</returns>
+        public virtual TimeSpan GetEffectiveDuration()
+            => (Properties.ContainsKey("DURATION")) ? Duration
+            : ((DtEnd != null) && (DtStart != null)) ? DtEnd.Subtract(DtStart)
+            : ((DtStart != null) && !DtStart.HasTime) ? TimeSpan.FromDays(1)
+            : default(TimeSpan);
 
         /// <summary>
         /// An alias to the DtEnd field (i.e. end date/time).
@@ -257,31 +249,6 @@ namespace Ical.Net.CalendarComponents
         protected override void OnDeserialized(StreamingContext context)
         {
             base.OnDeserialized(context);
-
-            ExtrapolateTimes(-1);
-        }
-
-        private void ExtrapolateTimes(int source)
-        {
-            /*
-			 * Source values, a fix introduced to prevent stack overflow exceptions from occuring.
-			 *   -1 = Anybody, stack overflow could maybe still occur in this case?
-			 *    0 = End
-			 *	  1 = Duration
-			 *	  2 = DtStart
-			 */
-            if (DtEnd == null && DtStart != null && Duration != default(TimeSpan) && source != 0)
-            {
-                DtEnd = DtStart.Add(Duration);
-            }
-            else if (Duration == default(TimeSpan) && DtStart != null && DtEnd != null && source != 1)
-            {
-                Duration = DtEnd.Subtract(DtStart);
-            }
-            else if (DtStart == null && Duration != default(TimeSpan) && DtEnd != null && source != 2)
-            {
-                DtStart = DtEnd.Subtract(Duration);
-            }
         }
 
         protected bool Equals(CalendarEvent other)
@@ -294,6 +261,7 @@ namespace Ical.Net.CalendarComponents
                 && string.Equals(Summary, other.Summary, StringComparison.OrdinalIgnoreCase)
                 && string.Equals(Description, other.Description, StringComparison.OrdinalIgnoreCase)
                 && Equals(DtEnd, other.DtEnd)
+                && Equals(Duration, other.Duration)
                 && string.Equals(Location, other.Location, StringComparison.OrdinalIgnoreCase)
                 && resourcesSet.SetEquals(other.Resources)
                 && string.Equals(Status, other.Status, StringComparison.Ordinal)
@@ -353,6 +321,7 @@ namespace Ical.Net.CalendarComponents
                 var hashCode = DtStart?.GetHashCode() ?? 0;
                 hashCode = (hashCode * 397) ^ (Summary?.GetHashCode() ?? 0);
                 hashCode = (hashCode * 397) ^ (Description?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ Duration.GetHashCode();
                 hashCode = (hashCode * 397) ^ (DtEnd?.GetHashCode() ?? 0);
                 hashCode = (hashCode * 397) ^ (Location?.GetHashCode() ?? 0);
                 hashCode = (hashCode * 397) ^ Status?.GetHashCode() ?? 0;
