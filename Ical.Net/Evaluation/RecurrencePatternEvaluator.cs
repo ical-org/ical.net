@@ -900,6 +900,15 @@ namespace Ical.Net.Evaluation
 
         public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
+            if ((this.Pattern.Frequency != FrequencyType.None) && (this.Pattern.Frequency < FrequencyType.Daily) && !referenceDate.HasTime)
+            {
+                // This case is not defined by RFC 5545. We handle it by evaluating the rule
+                // as if referenceDate had a time (i.e. set to midnight).
+
+                referenceDate = referenceDate.Copy<IDateTime>();
+                referenceDate.HasTime = true;
+            }
+
             // Create a recurrence pattern suitable for use during evaluation.
             var pattern = ProcessRecurrencePattern(referenceDate);
 

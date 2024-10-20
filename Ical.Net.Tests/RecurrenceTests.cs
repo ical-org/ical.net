@@ -2823,21 +2823,43 @@ namespace Ical.Net.Tests
         /// HasTime set to true if the beginning time had HasTime set
         /// to false.
         /// </summary>
-        [Test, Category("Recurrence")]
-        public void Evaluate1()
+        [Category("Recurrence")]
+        [TestCase("SECONDLY", 1, true)]
+        [TestCase("MINUTELY", 60, true)]
+        [TestCase("HOURLY", 3600, true)]
+        [TestCase("DAILY", 24*3600, false)]
+        public void Evaluate1(string freq, int secsPerInterval, bool hasTime)
         {
             Calendar cal = new Calendar();
+
             CalendarEvent evt = cal.Create<CalendarEvent>();
             evt.Summary = "Event summary";
 
             // Start at midnight, UTC time
-            evt.Start = new CalDateTime(DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc));
+            evt.Start = new CalDateTime(DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc)) { HasTime = false };
 
-            evt.RecurrenceRules.Add(new RecurrencePattern("FREQ=MINUTELY;INTERVAL=10;COUNT=5"));
-            var occurrences = evt.GetOccurrences(CalDateTime.Today.AddDays(1), CalDateTime.Today.AddDays(2));
+            // This case (DTSTART of type DATE and FREQ=MINUTELY) is undefined in RFC 5545.
+            // ical.net handles the case by pretending DTSTART has the time set to midnight.
+            evt.RecurrenceRules.Add(new RecurrencePattern($"FREQ={freq};INTERVAL=10;COUNT=5")
+            {
+                RestrictionType = RecurrenceRestrictionType.NoRestriction,
+            });
 
-            foreach (var o in occurrences)
-                Assert.That(o.Period.StartTime.HasTime, Is.True, "All recurrences of this event should have a time set.");
+            var occurrences = evt.GetOccurrences(CalDateTime.Today.AddDays(-1), CalDateTime.Today.AddDays(100))
+                .OrderBy(x => x)
+                .ToList();
+
+            var startDates = occurrences.Select(x => x.Period.StartTime.Value).ToList();
+
+            var expectedStartDates = Enumerable.Range(0, 5)
+                .Select(i => DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc).AddSeconds(i * secsPerInterval * 10))
+                .ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(occurrences.Select(x => x.Period.StartTime.HasTime == hasTime), Is.All.True);
+                Assert.That(startDates, Is.EqualTo(expectedStartDates));
+            });
         }
 
         [Test, Category("Recurrence")]
