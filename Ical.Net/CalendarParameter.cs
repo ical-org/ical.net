@@ -49,6 +49,7 @@ namespace Ical.Net
             Initialize();
         }
 
+        /// <inheritdoc/>
         public override void CopyFrom(ICopyable c)
         {
             base.CopyFrom(c);

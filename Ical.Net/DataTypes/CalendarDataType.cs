@@ -129,13 +129,10 @@ namespace Ical.Net.DataTypes
             set => Parameters.Set("LANGUAGE", value);
         }
 
-        /// <summary>
-        /// Copies values from the target object to the
-        /// current object.
-        /// </summary>
+        /// <inheritdoc/>
         public virtual void CopyFrom(ICopyable obj)
         {
-            if (!(obj is ICalendarDataType dt))
+            if (obj is not ICalendarDataType dt)
             {
                 return;
             }
@@ -146,21 +143,18 @@ namespace Ical.Net.DataTypes
         }
 
         /// <summary>
-        /// Creates a copy of the object.
+        /// Creates a deep copy of the <see cref="T"/> object.
         /// </summary>
-        /// <returns>The copy of the object.</returns>
+        /// <returns>The copy of the <see cref="T"/> object.</returns>
         public virtual T Copy<T>()
         {
             var type = GetType();
             var obj = Activator.CreateInstance(type) as ICopyable;
 
-            // Duplicate our values
-            if (obj is T)
-            {
-                obj.CopyFrom(this);
-                return (T)obj;
-            }
-            return default(T);
+            if (obj is not T o) return default(T);
+
+            obj.CopyFrom(this);
+            return o;
         }
 
         public virtual IParameterCollection Parameters => _proxy;

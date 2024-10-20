@@ -27,8 +27,8 @@ namespace Ical.Net.Collections
             // No matching item was found, add a new item to the list
             var obj = Activator.CreateInstance(typeof(TItem)) as TInterface;
             obj.Group = group;
-            Add(obj);
             obj.SetValue(values);
+            Add(obj);
         }
 
         public virtual TType Get<TType>(TGroup group)

@@ -1,4 +1,4 @@
-using Ical.Net.Evaluation;
+﻿using Ical.Net.Evaluation;
 using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 using System;
@@ -30,18 +30,22 @@ namespace Ical.Net.DataTypes
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
+        /// <inheritdoc/>
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (!(obj is PeriodList list))
+            if (obj is not PeriodList list)
             {
                 return;
             }
 
             foreach (var p in list)
             {
-                Add(p);
+                Add(p.Copy<Period>());
             }
+
+            // String assignments create new instances
+            TzId = list.TzId;
         }
 
         public override string ToString() => new PeriodListSerializer().SerializeToString(this);

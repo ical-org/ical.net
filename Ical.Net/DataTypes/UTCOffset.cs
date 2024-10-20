@@ -1,4 +1,4 @@
-using Ical.Net.Serialization.DataTypes;
+﻿using Ical.Net.Serialization.DataTypes;
 using System;
 
 namespace Ical.Net.DataTypes
@@ -8,7 +8,7 @@ namespace Ical.Net.DataTypes
     /// </summary>
     public class UtcOffset : EncodableDataType
     {
-        public TimeSpan Offset { get; }
+        public TimeSpan Offset { get; private set; }
 
         public bool Positive => Offset >= TimeSpan.Zero;
 
@@ -60,5 +60,16 @@ namespace Ical.Net.DataTypes
         public override int GetHashCode() => Offset.GetHashCode();
 
         public override string ToString() => (Positive ? "+" : "-") + Hours.ToString("00") + Minutes.ToString("00") + (Seconds != 0 ? Seconds.ToString("00") : string.Empty);
+
+        /// <inheritdoc/>
+        public override void CopyFrom(ICopyable obj)
+        {
+            base.CopyFrom(obj);
+
+            if (obj is UtcOffset o)
+            {
+                Offset = o.Offset;
+            }
+        }
     }
 }

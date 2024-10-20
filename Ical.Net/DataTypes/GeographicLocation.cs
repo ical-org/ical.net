@@ -28,7 +28,20 @@ namespace Ical.Net.DataTypes
             Longitude = longitude;
         }
 
-        public override void CopyFrom(ICopyable obj) { }
+        /// <inheritdoc/>
+        public override void CopyFrom(ICopyable obj)
+        {
+            base.CopyFrom(obj);
+
+            var geo = obj as GeographicLocation;
+            if (geo == null)
+            {
+                return;
+            }
+
+            Latitude = geo.Latitude;
+            Longitude = geo.Longitude;
+        }
 
         public override string ToString() => Latitude.ToString("0.000000") + ";" + Longitude.ToString("0.000000");
 

@@ -131,6 +131,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
+        /// <inheritdoc/>
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
@@ -144,6 +145,8 @@ namespace Ical.Net.DataTypes
             _value = dt.Value;
             _hasDate = dt.HasDate;
             _hasTime = dt.HasTime;
+            // String assignments create new instances
+            TzId = dt.TzId;
 
             AssociateWith(dt);
         }

@@ -117,7 +117,7 @@ namespace Ical.Net.Tests
             var end = serialized.IndexOf(searchFor, begin);
             Assert.That(end, Is.Not.EqualTo(-1), () => string.Format(notFound, searchFor));
 
-            var searchRegion = serialized.Substring(begin, end - begin + 1);
+            var searchRegion = serialized.Substring(begin, end - begin + searchFor.Length);
 
             foreach (var e in elements)
             {
@@ -284,14 +284,14 @@ namespace Ical.Net.Tests
         {
             new Attendee("MAILTO:james@example.com")
             {
-                CommonName = "James James",
+                CommonName = "James",
                 Role = ParticipationRole.RequiredParticipant,
                 Rsvp = true,
                 ParticipationStatus = EventParticipationStatus.Tentative
             },
             new Attendee("MAILTO:mary@example.com")
             {
-                CommonName = "Mary Mary",
+                CommonName = "Mary",
                 Role = ParticipationRole.RequiredParticipant,
                 Rsvp = true,
                 ParticipationStatus = EventParticipationStatus.Accepted
@@ -301,7 +301,6 @@ namespace Ical.Net.Tests
         [Test, Category("Serialization")]
         public void AttendeesSerialized()
         {
-            //ToDo: This test is broken as of 2016-07-13
             var cal = new Calendar
             {
                 Method = "REQUEST",
@@ -310,12 +309,14 @@ namespace Ical.Net.Tests
 
             var evt = AttendeeTest.VEventFactory();
             cal.Events.Add(evt);
-            const string org = "MAILTO:james@example.com";
+            // new Uri() creates lowercase for the "MAILTO:" part
+            // according to the RFC 2368 specification
+            const string org = "MAILTO:james@example.com"; 
             evt.Organizer = new Organizer(org);
 
             evt.Attendees.AddRange(_attendees);
 
-            // However a bug, when a participation value is changed, ultimately re-serialises as an array (PARTSTAT=ACCEPTED,DECLINED)
+            // Changing the ParticipationStatus just keeps the last status
             evt.Attendees[0].ParticipationStatus = EventParticipationStatus.Declined;
 
             var serializer = new CalendarSerializer();
@@ -325,7 +326,7 @@ namespace Ical.Net.Tests
 
             foreach (var a in evt.Attendees)
             {
-                var vals = GetValues(vEvt, "ATTENDEE", a.Value.OriginalString);
+                var vals = GetValues(vEvt, "ATTENDEE", a.Value.ToString());
                 foreach (var v in new Dictionary<string, string>
                 {
                     ["CN"] = a.CommonName,
@@ -338,7 +339,7 @@ namespace Ical.Net.Tests
                     Assert.Multiple(() =>
                     {
                         Assert.That(vals.ContainsKey(v.Key), Is.True, $"could not find key '{v.Key}'");
-                        Assert.That(vals[v.Key], Is.EqualTo(v.Value), $"ATENDEE prop '{v.Key}' differ");
+                        Assert.That(vals[v.Key], Is.EqualTo(v.Value), $"ATTENDEE prop '{v.Key}' differ");
                     });
                 }
             }

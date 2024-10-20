@@ -1,4 +1,4 @@
-using Ical.Net.Serialization.DataTypes;
+﻿using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 using System.IO;
 using System.Linq;
@@ -45,15 +45,14 @@ namespace Ical.Net.DataTypes
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
+        /// <inheritdoc/>
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (obj is StatusCode)
-            {
-                var sc = (StatusCode)obj;
-                Parts = new int[sc.Parts.Length];
-                sc.Parts.CopyTo(Parts, 0);
-            }
+            if (obj is not StatusCode statusCode) return;
+
+            Parts = new int[statusCode.Parts.Length];
+            statusCode.Parts.CopyTo(Parts, 0);
         }
 
         public override string ToString() => new StatusCodeSerializer().SerializeToString(this);

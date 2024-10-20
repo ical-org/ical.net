@@ -1,4 +1,4 @@
-using Ical.Net.Serialization.DataTypes;
+﻿using Ical.Net.Serialization.DataTypes;
 using System;
 using System.IO;
 
@@ -49,37 +49,34 @@ namespace Ical.Net.DataTypes
 
         public override int GetHashCode() => Offset.GetHashCode() ^ DayOfWeek.GetHashCode();
 
+        /// <inheritdoc/>
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (obj is WeekDay)
-            {
-                var bd = (WeekDay)obj;
-                Offset = bd.Offset;
-                DayOfWeek = bd.DayOfWeek;
-            }
+            if (obj is not WeekDay weekday) return;
+
+            Offset = weekday.Offset;
+            DayOfWeek = weekday.DayOfWeek;
         }
 
         public int CompareTo(object obj)
         {
-            WeekDay bd = null;
-            if (obj is string)
+            var weekday = obj switch
             {
-                bd = new WeekDay(obj.ToString());
-            }
-            else if (obj is WeekDay)
-            {
-                bd = (WeekDay)obj;
-            }
+                string => new WeekDay(obj.ToString()),
+                WeekDay day => day,
+                _ => null
+            };
 
-            if (bd == null)
+            if (weekday == null)
             {
                 throw new ArgumentException();
             }
-            var compare = DayOfWeek.CompareTo(bd.DayOfWeek);
+
+            var compare = DayOfWeek.CompareTo(weekday.DayOfWeek);
             if (compare == 0)
             {
-                compare = Offset.CompareTo(bd.Offset);
+                compare = Offset.CompareTo(weekday.Offset);
             }
             return compare;
         }
