@@ -11,7 +11,7 @@ namespace Ical.Net
         /// Makes a deep copy of the <see cref="ICopyable"/> source
         /// to the current object. This method must be overridden in a derived class.
         /// </summary>
-        public virtual void CopyFrom(ICopyable c)
+        public virtual void CopyFrom(ICopyable obj)
         {
             throw new NotImplementedException("Must be implemented in a derived class.");
         }
