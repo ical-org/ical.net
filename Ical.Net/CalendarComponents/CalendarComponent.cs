@@ -37,6 +37,7 @@ namespace Ical.Net.CalendarComponents
             Initialize();
         }
 
+        /// <inheritdoc/>
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
@@ -50,7 +51,8 @@ namespace Ical.Net.CalendarComponents
             Properties.Clear();
             foreach (var p in c.Properties)
             {
-                Properties.Add(p);
+                // Uses CalendarObjectBase.Copy<T>() for a deep copy
+                Properties.Add(p.Copy<ICalendarProperty>());
             }
         }
 

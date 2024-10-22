@@ -14,7 +14,7 @@ namespace Ical.Net.DataTypes
     public class Attachment : EncodableDataType
     {
         public virtual Uri Uri { get; set; }
-        public virtual byte[] Data { get; }
+        public virtual byte[] Data { get; private set; } // private set for CopyFrom
 
         private Encoding _valueEncoding = System.Text.Encoding.UTF8;
         public virtual Encoding ValueEncoding
@@ -71,8 +71,22 @@ namespace Ical.Net.DataTypes
                 ? string.Empty
                 : ValueEncoding.GetString(Data);
 
-        //ToDo: See if this can be deleted
-        public override void CopyFrom(ICopyable obj) { }
+        /// <inheritdoc/>
+        public override void CopyFrom(ICopyable obj)
+        {
+            if (obj is not Attachment att) return;
+            base.CopyFrom(obj);
+
+            Uri = att.Uri != null ? new Uri(att.Uri.ToString()) : null;
+            if (att.Data != null)
+            {
+                Data = new byte[att.Data.Length];
+                Array.Copy(att.Data, Data, att.Data.Length);
+            }
+
+            ValueEncoding = att.ValueEncoding;
+            FormatType = att.FormatType;
+        }
 
         protected bool Equals(Attachment other)
         {

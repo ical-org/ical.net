@@ -1,4 +1,4 @@
-using Ical.Net.Evaluation;
+﻿using Ical.Net.Evaluation;
 using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 using System;
@@ -189,15 +189,14 @@ namespace Ical.Net.DataTypes
             }
         }
 
+        /// <inheritdoc/>
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (!(obj is RecurrencePattern))
+            if (obj is not RecurrencePattern r)
             {
                 return;
             }
-
-            var r = (RecurrencePattern)obj;
 
             Frequency = r.Frequency;
             Until = r.Until;

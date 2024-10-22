@@ -1,4 +1,4 @@
-using Ical.Net.Serialization.DataTypes;
+﻿using Ical.Net.Serialization.DataTypes;
 using System;
 using System.IO;
 
@@ -73,16 +73,16 @@ namespace Ical.Net.DataTypes
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
+        /// <inheritdoc/>
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (!(obj is Trigger))
+            if (obj is not Trigger t)
             {
                 return;
             }
-
-            var t = (Trigger)obj;
-            DateTime = t.DateTime;
+            
+            DateTime = t.DateTime?.Copy<IDateTime>();
             Duration = t.Duration;
             Related = t.Related;
         }

@@ -10,7 +10,6 @@ namespace Ical.Net.CalendarComponents
     /// </summary>
     public class Alarm : CalendarComponent
     {
-        //ToDo: Implement IEquatable
         public virtual string Action
         {
             get => Properties.Get<string>(AlarmAction.Key);

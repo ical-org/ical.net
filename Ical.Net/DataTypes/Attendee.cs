@@ -242,9 +242,26 @@ namespace Ical.Net.DataTypes
             Value = new Uri(attendeeUri);
         }
 
-        //ToDo: See if this can be deleted
-        public override void CopyFrom(ICopyable obj) { }
+        /// <inheritdoc/>
+        public override void CopyFrom(ICopyable obj)
+        {
+            if (obj is not Attendee atn) return;
+            base.CopyFrom(obj);
 
+            Value = new Uri(atn.Value.ToString());
+
+            // String assignments create new instances
+            CommonName = atn.CommonName;
+            ParticipationStatus = atn.ParticipationStatus;
+            Role = atn.Role;
+            Type = atn.Type;
+
+            Rsvp = atn.Rsvp;
+
+            SentBy = atn.SentBy != null ? new Uri(atn.SentBy.ToString()) : null;
+            DirectoryEntry = atn.DirectoryEntry != null ? new Uri(atn.DirectoryEntry.ToString()) : null;
+        }
+        
         protected bool Equals(Attendee other) => Equals(SentBy, other.SentBy)
             && string.Equals(CommonName, other.CommonName, StringComparison.OrdinalIgnoreCase)
             && Equals(DirectoryEntry, other.DirectoryEntry)

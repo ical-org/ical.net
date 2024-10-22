@@ -17,12 +17,12 @@
             Status = status;
         }
 
+        /// <inheritdoc/>
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
 
-            var fb = obj as FreeBusyEntry;
-            if (fb != null)
+            if (obj is FreeBusyEntry fb)
             {
                 Status = fb.Status;
             }

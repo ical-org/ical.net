@@ -16,16 +16,13 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override string SerializeToString(object obj)
         {
-            var offset = obj as UtcOffset;
-            if (offset != null)
-            {
-                var value = (offset.Positive ? "+" : "-") + offset.Hours.ToString("00") + offset.Minutes.ToString("00") +
-                            (offset.Seconds != 0 ? offset.Seconds.ToString("00") : string.Empty);
+            if (obj is not UtcOffset offset) return null;
 
-                // Encode the value as necessary
-                return Encode(offset, value);
-            }
-            return null;
+            var value = (offset.Positive ? "+" : "-") + offset.Hours.ToString("00") + offset.Minutes.ToString("00") +
+                        (offset.Seconds != 0 ? offset.Seconds.ToString("00") : string.Empty);
+
+            // Encode the value as necessary
+            return Encode(offset, value);
         }
 
         internal static readonly Regex DecodeOffset = new Regex(@"(\+|-)(\d{2})(\d{2})(\d{2})?", RegexOptions.Compiled | RegexOptions.IgnoreCase, RegexDefaults.Timeout);

@@ -61,12 +61,12 @@ namespace Ical.Net
             Parameters.Add(p);
         }
 
+        /// <inheritdoc/>
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
 
-            var p = obj as ICalendarProperty;
-            if (p == null)
+            if (obj is not ICalendarProperty p)
             {
                 return;
             }
@@ -124,7 +124,9 @@ namespace Ical.Net
         {
             // Remove all previous values
             _values.Clear();
-            var toAdd = values ?? Enumerable.Empty<object>();
+            // If the values are ICopyable, create a deep copy of each value,
+            // otherwise just add the value
+            var toAdd = values?.Select(x => (x as ICopyable)?.Copy<object>() ?? x) ?? Enumerable.Empty<object>();
             _values.AddRange(toAdd);
         }
 

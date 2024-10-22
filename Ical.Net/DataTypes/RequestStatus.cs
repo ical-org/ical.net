@@ -38,10 +38,11 @@ namespace Ical.Net.DataTypes
             CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
         }
 
+        /// <inheritdoc/>
         public override void CopyFrom(ICopyable obj)
         {
             base.CopyFrom(obj);
-            if (!(obj is RequestStatus rs))
+            if (obj is not RequestStatus rs)
             {
                 return;
             }

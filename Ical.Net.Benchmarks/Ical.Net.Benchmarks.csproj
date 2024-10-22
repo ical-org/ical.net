@@ -1,17 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFrameworks>net8.0;net6.0;netcoreapp3.1;net48</TargetFrameworks>
-    <OutputType>Exe</OutputType>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Ical.Net\Ical.Net.csproj" />
-  </ItemGroup>
-
+    <PropertyGroup>
+        <TargetFrameworks>net8.0;net6.0;netcoreapp3.1;net48</TargetFrameworks>
+        <OutputType>Exe</OutputType>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Ical.Net\Ical.Net.csproj" />
+    </ItemGroup>
 </Project>
