@@ -78,7 +78,7 @@ namespace Ical.Net.DataTypes
             base.CopyFrom(obj);
 
             Uri = att.Uri != null ? new Uri(att.Uri.ToString()) : null;
-            if (att.Data != null && att.Data.Length != 0)
+            if (att.Data != null)
             {
                 Data = new byte[att.Data.Length];
                 Array.Copy(att.Data, Data, att.Data.Length);

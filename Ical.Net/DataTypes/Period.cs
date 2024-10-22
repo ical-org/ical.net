@@ -51,8 +51,8 @@ namespace Ical.Net.DataTypes
 
             if (obj is not Period p) return;
 
-            StartTime = p.StartTime;
-            EndTime = p.EndTime;
+            StartTime = p.StartTime?.Copy<IDateTime>();
+            EndTime = p.EndTime?.Copy<IDateTime>();
             Duration = p.Duration;
         }
 

@@ -82,7 +82,7 @@ namespace Ical.Net.DataTypes
                 return;
             }
             
-            DateTime = t.DateTime;
+            DateTime = t.DateTime?.Copy<IDateTime>();
             Duration = t.Duration;
             Related = t.Related;
         }
