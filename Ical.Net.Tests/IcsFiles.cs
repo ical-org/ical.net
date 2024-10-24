@@ -159,6 +159,8 @@ namespace Ical.Net.Tests
         internal static string YearlyCountByYearDay1 => ReadStream("Ical.Net.Tests.Calendars.Recurrence.YearlyCountByYearDay1.ics");
         internal static string YearlyInterval1 => ReadStream("Ical.Net.Tests.Calendars.Recurrence.YearlyInterval1.ics");
 
+        internal static string RecurrrenceTestCases => ReadStream("Ical.Net.Tests.Calendars.Recurrence.RecurrenceTestCases.txt");
+
         internal static string LibicalIcalrecurTest => ReadStream("Ical.Net.Tests.contrib.libical.icalrecur_test.out");
 
     }

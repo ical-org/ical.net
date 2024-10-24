@@ -3759,6 +3759,13 @@ END:VCALENDAR
         public void TestLibicalTestCases(RecurrenceTestCase testCase)
             => ExecuteRecurrenceTestCase(testCase);
 
+        private static IEnumerable<RecurrenceTestCase> TestFileBasedRecurrenceTestCaseSource
+            => ParseTestCaseFile(IcsFiles.RecurrrenceTestCases);
+
+        [TestCaseSource(nameof(TestFileBasedRecurrenceTestCaseSource))]
+        public void TestFileBasedRecurrenceTestCase(RecurrenceTestCase testCase)
+            => ExecuteRecurrenceTestCase(testCase);
+
         public void ExecuteRecurrenceTestCase(RecurrenceTestCase testCase)
         {
             Calendar cal = new Calendar();

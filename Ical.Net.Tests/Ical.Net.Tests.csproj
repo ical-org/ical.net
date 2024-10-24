@@ -18,7 +18,7 @@
         <ProjectReference Include="..\Ical.Net\Ical.Net.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Include="Calendars\**\*.ics" />
+        <EmbeddedResource Include="Calendars\**\*" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="contrib\libical\icalrecur_test.out" />
