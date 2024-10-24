@@ -24,3 +24,12 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
+=====================
+
+
+The following directories and their subdirectories contain code
+thatw as developed by different projects and is therefore available
+under different licenses. The applicable licensing terms are listed
+in the individual directories and subdirectories.
+
+- `/Ical.Net.Tests/contrib`
