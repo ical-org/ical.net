@@ -3677,5 +3677,116 @@ END:VCALENDAR
             var occurrences = firstEvent.GetOccurrences(startSearch, endSearch);
             Assert.That(occurrences, Has.Count.EqualTo(5));
         }
+
+        public class RecurrenceTestCase
+        {
+            public int LineNumber { get; set; }
+
+            public string RRule { get; set; }
+
+            public CalDateTime DtStart { get; set; }
+
+            public CalDateTime StartAt { get; set; }
+
+            public IReadOnlyList<CalDateTime> Instances { get; set; }
+
+            public override string ToString()
+                => $"Line {LineNumber}: {DtStart}, {RRule}";
+        }
+
+        private static IEnumerable<RecurrenceTestCase> ParseTestCaseFile(string fileContent)
+        {
+            RecurrenceTestCase current = null;
+
+            var rd = new StringReader(fileContent);
+            var lineNo = 0;
+
+            for (string line = rd.ReadLine(); line != null; line = rd.ReadLine())
+            {
+                lineNo++;
+
+                if (string.IsNullOrEmpty(line))
+                {
+                    if (current != null)
+                    {
+                        yield return current;
+                        current = null;
+                    }
+                    continue;
+                }
+
+                if (line.StartsWith("#"))
+                    continue;
+
+                current = current ?? new RecurrenceTestCase();
+
+                var m = Regex.Match(line, @"^(?<h>[A-Z-]+):(?<v>.*)$");
+                if (!m.Success)
+                    continue;
+
+                var hdr = m.Groups["h"].Value;
+                var val = m.Groups["v"].Value;
+
+                switch (hdr)
+                {
+                    case "RRULE":
+                        current.RRule = val;
+                        current.LineNumber = lineNo;
+                        break;
+
+                    case "DTSTART":
+                        current.DtStart = new CalDateTime(val) { TzId = "UTC" };
+                        break;
+
+                    case "START-AT":
+                        current.StartAt = new CalDateTime(val) { TzId = "UTC" };
+                        break;
+
+                    case "INSTANCES":
+                        current.Instances = val.Split(',').Select(dt => new CalDateTime(dt) { TzId = "UTC" }).ToList();
+                        break;
+                }
+            }
+
+            if (current != null)
+                yield return current;
+        }
+
+        private static IEnumerable<RecurrenceTestCase> TestLibicalTestCasesSource
+            => ParseTestCaseFile(IcsFiles.LibicalIcalrecurTest);
+
+        [TestCaseSource(nameof(TestLibicalTestCasesSource))]
+        public void TestLibicalTestCases(RecurrenceTestCase testCase)
+            => ExecuteRecurrenceTestCase(testCase);
+
+        private static IEnumerable<RecurrenceTestCase> TestFileBasedRecurrenceTestCaseSource
+            => ParseTestCaseFile(IcsFiles.RecurrrenceTestCases);
+
+        [TestCaseSource(nameof(TestFileBasedRecurrenceTestCaseSource))]
+        public void TestFileBasedRecurrenceTestCase(RecurrenceTestCase testCase)
+            => ExecuteRecurrenceTestCase(testCase);
+
+        public void ExecuteRecurrenceTestCase(RecurrenceTestCase testCase)
+        {
+            Calendar cal = new Calendar();
+
+            CalendarEvent evt = cal.Create<CalendarEvent>();
+            evt.Summary = "Event summary";
+
+            // Start at midnight, UTC time
+            evt.Start = testCase.DtStart;
+            evt.RecurrenceRules.Add(new RecurrencePattern(testCase.RRule)
+            {
+                RestrictionType = RecurrenceRestrictionType.NoRestriction,
+            });
+
+            var occurrences = evt.GetOccurrences(testCase.StartAt?.Value ?? DateTime.MinValue, DateTime.MaxValue)
+                .OrderBy(x => x)
+                .ToList();
+
+            var startDates = occurrences.Select(x => x.Period.StartTime).ToList();
+
+            Assert.That(startDates, Is.EqualTo(testCase.Instances));
+        }
     }
 }
