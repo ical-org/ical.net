@@ -3,14 +3,13 @@
 # The report is stored as artifact, and uploaded to Codecov.
 
 on:
-  workflow_dispatch: {}  # temprorarily enable the workflow for manual runs
-  # comment out the following lines to enable the workflow for pull requests and pushes
-  # pull_request:
-  #  branches:
-  #    - main
-  # push:
-  #  branches:
-  #    - main
+  # workflow_dispatch: {}  # temporarily enable the workflow for manual runs
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
 
 jobs:
   coverage:
