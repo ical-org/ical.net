@@ -1,0 +1,17 @@
+﻿coverage:
+  precision: 0      # no decimals
+  round: nearest    # round up/down
+  range: "80...100"
+
+  status:
+    project:        # show status on project level
+      default:
+        target: 80  # Set the target coverage percentage
+    patch:          # show status on patch level
+      default:
+        target: 80  # minimum coverage for successful commit 
+
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default
+  require_changes: true  # Only comment if there are changes in coverage

@@ -1,0 +1,49 @@
+﻿﻿name: Code Coverage
+# This job runs unit tests and generates a code coverage report.
+# The report is stored as artifact, and uploaded to Codecov.
+
+on:
+  # workflow_dispatch: {}  # temporarily enable the workflow for manual runs
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for all tags and branches
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: |
+          8.0.x
+    - name: Restore dependencies --verbosity quiet
+      run: dotnet restore
+    - name: Add AltCover package to test project
+      run: dotnet add ./Ical.Net.Tests/Ical.Net.Tests.csproj package AltCover
+
+    - name: Build
+      run: dotnet build --no-restore --configuration Release -p:nowarn=1591
+    - name: Test
+      run: dotnet test --no-build --configuration Release --verbosity quiet /p:AltCover=true /p:AltCoverXmlReport="coverage.xml" /p:AltCoverStrongNameKey="../IcalNetStrongnameKey.snk" /p:AltCoverAssemblyExcludeFilter="Ical.Net.Tests|NUnit3.TestAdapter|AltCover" /p:AltCoverAttributeFilter="ExcludeFromCodeCoverage" /p:AltCoverLineCover="false"
+
+    - name: Store coverage report as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: ./Ical.Net.Tests/coverage.*.xml  # store all coverage reports
+    - name: Upload coverage to Codecov  
+      uses: codecov/codecov-action@v4  
+      with:  
+        # files: automatically finds all in ./Ical.Net.Tests/
+        name: coverage
+        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: false
