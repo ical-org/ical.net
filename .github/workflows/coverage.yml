@@ -1,4 +1,4 @@
-﻿﻿name: Code Coverage
+﻿name: Code Coverage
 # This job runs unit tests and generates a code coverage report.
 # The report is stored as artifact, and uploaded to Codecov.
 
