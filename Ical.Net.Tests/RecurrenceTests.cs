@@ -42,7 +42,7 @@ namespace Ical.Net.Tests
                 Assert.That(
                     occurrences,
                     Has.Count.GreaterThanOrEqualTo(dateTimes.Length),
-                    "There should have " + dateTimes.Length + " or more occurrences; there were " + occurrences.Count);
+                    "There should have been " + dateTimes.Length + " or more occurrences; there were " + occurrences.Count);
 
                 if (evt.RecurrenceRules.Count > 0)
                 {
@@ -1871,11 +1871,8 @@ namespace Ical.Net.Tests
             );
         }
 
-        /// <summary>
-        /// At least a few SECONDLY occurrences are generated without TimeoutException.
-        /// </summary>
         [Test, Category("Recurrence")]
-        public void Secondly_DefinedNumberOfOccurrences_ShouldSucceed()
+        public void Secondly_AtLeastDefinedNumberOfOccurrences_ShouldSucceed()
         {
             var iCal = Calendar.Load(IcsFiles.Secondly1);
 
@@ -1901,11 +1898,8 @@ namespace Ical.Net.Tests
             );
         }
 
-        /// <summary>
-        /// At least a few MINUTELY occurrences are generated without TimeoutException.
-        /// </summary>
         [Test, Category("Recurrence")]
-        public void Minutely_DefinedNumberOfOccurrences_ShouldSucceed()
+        public void Minutely_AtLeastDefinedNumberOfOccurrences_ShouldSucceed()
         {
             var iCal = Calendar.Load(IcsFiles.Minutely1);
 
@@ -1925,11 +1919,8 @@ namespace Ical.Net.Tests
             );
         }
 
-        /// <summary>
-        /// At least a few HOURLY occurrences are generated without TimeoutException.
-        /// </summary>
         [Test, Category("Recurrence")]
-        public void Hourly_DefinedNumberOfOccurrences_ShouldSucceed()
+        public void Hourly_AtLeastDefinedNumberOfOccurrences_ShouldSucceed()
         {
             var iCal = Calendar.Load(IcsFiles.Hourly1);
 
