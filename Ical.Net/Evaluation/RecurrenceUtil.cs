@@ -1,22 +1,13 @@
 ﻿using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Utility;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Ical.Net.Evaluation
 {
     internal class RecurrenceUtil
     {
-        // Should be a good default value to cover most cases
-        public const int DefaultTimeout = 1000;
-
-        // for v5 the timeout should be configurable (likely to result in a breaking change)
-        public static int RecurrenceTimeout = DefaultTimeout; // NOSONAR
-
         public static void ClearEvaluation(IRecurrable recurrable)
         {
             var evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
@@ -26,8 +17,7 @@ namespace Ical.Net.Evaluation
         public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt, bool includeReferenceDateInResults) => GetOccurrences(recurrable,
             new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)), includeReferenceDateInResults);
 
-        public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime periodStart,
-            IDateTime periodEnd, bool includeReferenceDateInResults)
+        public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime periodStart, IDateTime periodEnd, bool includeReferenceDateInResults)
         {
             var evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
             if (evaluator == null || recurrable.Start == null)
@@ -45,41 +35,19 @@ namespace Ical.Net.Evaluation
             periodStart.TzId = start.TzId;
             periodEnd.TzId = start.TzId;
 
-            using var cancellationTokenSource = new CancellationTokenSource();
-            var task = Task.Run(() =>
-            {
-                var periods = evaluator.Evaluate(start, DateUtil.GetSimpleDateTimeData(periodStart),
-                    DateUtil.GetSimpleDateTimeData(periodEnd),
-                    includeReferenceDateInResults);
+            var periods = evaluator.Evaluate(start, DateUtil.GetSimpleDateTimeData(periodStart), DateUtil.GetSimpleDateTimeData(periodEnd),
+                includeReferenceDateInResults);
 
-                var otherOccurrences = from p in periods
-                                       let endTime = p.EndTime ?? p.StartTime
-                                       where
-                                           (endTime.GreaterThan(periodStart) && p.StartTime.LessThan(periodEnd) ||
-                                            (periodStart.Equals(periodEnd) && p.StartTime.LessThanOrEqual(periodStart) &&
-                                             endTime.GreaterThan(periodEnd))) || //A period that starts at the same time it ends
-                                           (p.StartTime.Equals(endTime) &&
-                                            periodStart.Equals(p.StartTime)) //An event that starts at the same time it ends
-                                       select new Occurrence(recurrable, p);
+            var otherOccurrences = from p in periods
+                                   let endTime = p.EndTime ?? p.StartTime
+                                   where
+                                       (endTime.GreaterThan(periodStart) && p.StartTime.LessThan(periodEnd) ||
+                                       (periodStart.Equals(periodEnd) && p.StartTime.LessThanOrEqual(periodStart) && endTime.GreaterThan(periodEnd))) || //A period that starts at the same time it ends
+                                       (p.StartTime.Equals(endTime) && periodStart.Equals(p.StartTime)) //An event that starts at the same time it ends
+                                   select new Occurrence(recurrable, p);
 
-                var occurrences = new HashSet<Occurrence>(otherOccurrences);
-                return occurrences;
-            }, cancellationTokenSource.Token);
-
-            if (task.Wait(TimeSpan.FromMilliseconds(RecurrenceTimeout)))
-            {
-                if (task.IsFaulted && task.Exception != null)
-                {
-                    // maintain original exception details
-                    throw task.Exception;
-                }
-
-                return task.Result;
-            }
-
-            cancellationTokenSource.Cancel();
-            // maintain any exception inside the task before timeout
-            throw new TimeoutException("Getting recurrences has timed out.", task.Exception);
+            var occurrences = new HashSet<Occurrence>(otherOccurrences);
+            return occurrences;
         }
 
         public static bool?[] GetExpandBehaviorList(RecurrencePattern p)

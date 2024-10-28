@@ -192,7 +192,7 @@ namespace Ical.Net
             return tz;
         }
 
- 
+
         /// <summary>
         /// Clears recurrence evaluations for recurring components.
         /// </summary>
@@ -213,6 +213,7 @@ namespace Ical.Net
         public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt)
             => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)));
 
+        /// <inheritdoc cref="GetOccurrences(IDateTime)"/>
         public virtual HashSet<Occurrence> GetOccurrences(DateTime dt)
             => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)));
 
@@ -222,10 +223,11 @@ namespace Ical.Net
         /// </summary>
         /// <param name="startTime">The beginning date/time of the range.</param>
         /// <param name="endTime">The end date/time of the range.</param>
-        /// <returns>A list of occurrences that fall between the dates provided.</returns>
+        /// <returns>A list of occurrences that fall between the date/time arguments provided.</returns>
         public virtual HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
             => GetOccurrences<IRecurringComponent>(startTime, endTime);
 
+        /// <inheritdoc cref="GetOccurrences(IDateTime, IDateTime)"/>
         public virtual HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
             => GetOccurrences<IRecurringComponent>(new CalDateTime(startTime), new CalDateTime(endTime));
 
@@ -239,14 +241,16 @@ namespace Ical.Net
         /// the occurrences.
         /// </note>
         /// </summary>
-        /// <param name="dt">The date for which to return occurrences.</param>
+        /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
         /// <returns>A list of Periods representing the occurrences of this object.</returns>
         public virtual HashSet<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
             => GetOccurrences<T>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddTicks(-1)));
 
+        /// <inheritdoc cref="GetOccurrences(IDateTime)"/>
         public virtual HashSet<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
             => GetOccurrences<T>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddTicks(-1)));
 
+        /// <inheritdoc cref="GetOccurrences(IDateTime, IDateTime)"/>
         public virtual HashSet<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent
             => GetOccurrences<T>(new CalDateTime(startTime), new CalDateTime(endTime));
 
@@ -259,21 +263,21 @@ namespace Ical.Net
         /// <param name="endTime">The ending date range</param>
         public virtual HashSet<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
         {
-                var occurrences = new HashSet<Occurrence>(RecurringItems
-                    .OfType<T>()
-                    .SelectMany(recurrable => recurrable.GetOccurrences(startTime, endTime)));
+            var occurrences = new HashSet<Occurrence>(RecurringItems
+                .OfType<T>()
+                .SelectMany(recurrable => recurrable.GetOccurrences(startTime, endTime)));
 
-                var removeOccurrencesQuery = occurrences
-                    .Where(o => o.Source is UniqueComponent)
-                    .GroupBy(o => ((UniqueComponent)o.Source).Uid)
-                    .SelectMany(group => group
-                        .Where(o => o.Source.RecurrenceId != null)
-                        .SelectMany(occurrence => group.
-                            Where(o => o.Source.RecurrenceId == null && occurrence.Source.RecurrenceId.Date.Equals(o.Period.StartTime.Date))));
+            var removeOccurrencesQuery = occurrences
+                .Where(o => o.Source is UniqueComponent)
+                .GroupBy(o => ((UniqueComponent)o.Source).Uid)
+                .SelectMany(group => group
+                    .Where(o => o.Source.RecurrenceId != null)
+                    .SelectMany(occurrence => group.
+                        Where(o => o.Source.RecurrenceId == null && occurrence.Source.RecurrenceId.Date.Equals(o.Period.StartTime.Date))));
 
-                occurrences.ExceptWith(removeOccurrencesQuery);
-                return occurrences;
-            }
+            occurrences.ExceptWith(removeOccurrencesQuery);
+            return occurrences;
+        }
 
         /// <summary>
         /// Creates a typed object that is a direct child of the iCalendar itself.  Generally,

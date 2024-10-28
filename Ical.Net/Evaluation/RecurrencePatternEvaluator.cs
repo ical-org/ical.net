@@ -48,6 +48,8 @@ namespace Ical.Net.Evaluation
     /// </summary>
     public class RecurrencePatternEvaluator : Evaluator
     {
+        private const int _maxIncrementCount = 1000;
+
         protected RecurrencePattern Pattern { get; set; }
 
         public RecurrencePatternEvaluator(RecurrencePattern pattern)
@@ -237,7 +239,7 @@ namespace Ical.Net.Evaluation
         /// the start dates returned should all be at 9:00AM, and not 12:19PM.
         /// </summary>
         private HashSet<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd, int maxCount, RecurrencePattern pattern,
-            bool includeReferenceDateInResults)
+             bool includeReferenceDateInResults)
         {
             var dates = new HashSet<DateTime>();
             var originalDate = DateUtil.GetSimpleDateTimeData(seed);
@@ -257,6 +259,7 @@ namespace Ical.Net.Evaluation
 
             var expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
 
+            var noCandidateIncrementCount = 0;
             var candidate = DateTime.MinValue;
             while (maxCount < 0 || dates.Count < maxCount)
             {
@@ -284,6 +287,8 @@ namespace Ical.Net.Evaluation
                 var candidates = GetCandidates(seedCopy, pattern, expandBehavior);
                 if (candidates.Count > 0)
                 {
+                    noCandidateIncrementCount = 0;
+
                     foreach (var t in candidates.OrderBy(c => c).Where(t => t >= originalDate))
                     {
                         candidate = t;
@@ -307,6 +312,14 @@ namespace Ical.Net.Evaluation
                         {
                             dates.Add(candidate);
                         }
+                    }
+                }
+                else
+                {
+                    noCandidateIncrementCount++;
+                    if (_maxIncrementCount > 0 && noCandidateIncrementCount > _maxIncrementCount)
+                    {
+                        break;
                     }
                 }
 

@@ -18,12 +18,6 @@ namespace Ical.Net.Tests
     [TestFixture]
     public class RecurrenceTests
     {
-        [SetUp]
-        public void SetupBeforeEachTest()
-        {
-            RecurrenceUtil.RecurrenceTimeout = RecurrenceUtil.DefaultTimeout;
-        }
-
         private const string _tzid = "US-Eastern";
 
         private void EventOccurrenceTest(
@@ -543,7 +537,6 @@ namespace Ical.Net.Tests
         [Test, Category("Recurrence")]
         public void WeeklyCountWkst1()
         {
-            RecurrenceUtil.RecurrenceTimeout = 1500;
             var iCal1 = Calendar.Load(IcsFiles.WeeklyUntilWkst1);
             var iCal2 = Calendar.Load(IcsFiles.WeeklyCountWkst1);
             ProgramTest.TestCal(iCal1);
@@ -1879,27 +1872,12 @@ namespace Ical.Net.Tests
         }
 
         /// <summary>
-        /// Too many SECONDLY recurrences should time out.
-        /// </summary>
-        [Test, Category("Recurrence")]
-        public void Secondly_HighNumberOfOccurrences_ShouldTimeout()
-        {
-            RecurrenceUtil.RecurrenceTimeout = 50; // reduce below default to ensure timeout
-            Assert.That(() =>
-            {
-                var iCal = Calendar.Load(IcsFiles.Secondly1);
-                _ = iCal.GetOccurrences(new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid), new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
-            }, Throws.Exception.TypeOf<TimeoutException>(), "Too many occurrences should timeout.");
-        }
-
-        /// <summary>
         /// At least a few SECONDLY occurrences are generated without TimeoutException.
         /// </summary>
         [Test, Category("Recurrence")]
-        public void Secondly_LowNumberOfOccurrences_ShouldSucceed()
+        public void Secondly_DefinedNumberOfOccurrences_ShouldSucceed()
         {
             var iCal = Calendar.Load(IcsFiles.Secondly1);
-            RecurrenceUtil.RecurrenceTimeout = 1500;
 
             EventOccurrenceTest(
                 iCal,
@@ -1924,27 +1902,10 @@ namespace Ical.Net.Tests
         }
 
         /// <summary>
-        /// Too many MINUTELY occurrences time out.
-        /// </summary>
-        [Test, Category("Recurrence")]
-        public void Minutely_HighNumberOfOccurrences_ShouldTimeout()
-        {
-            RecurrenceUtil.RecurrenceTimeout = 50; // reduce below default to ensure timeout
-            Assert.That(() =>
-            {
-                var iCal = Calendar.Load(IcsFiles.Minutely1);
-                var evt = iCal.Events.First();
-                var occurrences = evt.GetOccurrences(
-                    new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
-                    new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
-            }, Throws.Exception.TypeOf<TimeoutException>(), "Too many occurrences should timeout.");
-        }
-
-        /// <summary>
         /// At least a few MINUTELY occurrences are generated without TimeoutException.
         /// </summary>
         [Test, Category("Recurrence")]
-        public void Minutely_LowNumberOfOccurrences_ShouldSucceed()
+        public void Minutely_DefinedNumberOfOccurrences_ShouldSucceed()
         {
             var iCal = Calendar.Load(IcsFiles.Minutely1);
 
@@ -1965,26 +1926,10 @@ namespace Ical.Net.Tests
         }
 
         /// <summary>
-        /// Too many HOURLY occurrences time out.
-        /// </summary>
-        [Test, Category("Recurrence")]
-        public void Hourly_HighNumberOfOccurrences_ShouldTimeout()
-        {
-            RecurrenceUtil.RecurrenceTimeout = 50; // reduce below default to ensure timeout
-            Assert.That(() =>
-                {
-                var iCal = Calendar.Load(IcsFiles.Hourly1);
-                _ = iCal.GetOccurrences(new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
-                    new CalDateTime(2013, 7, 21, 8, 0, 0, _tzid));
-            },
-    Throws.Exception.TypeOf<TimeoutException>(), "Too many occurrences should timeout.");
-        }
-
-        /// <summary>
         /// At least a few HOURLY occurrences are generated without TimeoutException.
         /// </summary>
         [Test, Category("Recurrence")]
-        public void Hourly_LowNumberOfOccurrences_ShouldSucceed()
+        public void Hourly_DefinedNumberOfOccurrences_ShouldSucceed()
         {
             var iCal = Calendar.Load(IcsFiles.Hourly1);
 
@@ -3765,7 +3710,6 @@ END:VCALENDAR
         [TestCaseSource(nameof(TestLibicalTestCasesSource))]
         public void TestLibicalTestCases(RecurrenceTestCase testCase)
         {
-            RecurrenceUtil.RecurrenceTimeout = 1500;
             ExecuteRecurrenceTestCase(testCase);
         }
 
