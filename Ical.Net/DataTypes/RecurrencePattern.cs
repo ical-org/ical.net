@@ -84,6 +84,11 @@ namespace Ical.Net.DataTypes
 
         public DayOfWeek FirstDayOfWeek { get; set; } = DayOfWeek.Monday;
 
+        /// <summary>
+        /// The type of restriction to apply to the evaluation of this recurrence pattern.
+        /// Returns <see cref="RecurrenceRestrictionType.NoRestriction"/> if not set.
+        /// </summary>
+        [Obsolete("Usage may cause undesired results or exceptions. Will be removed.", false)]
         public RecurrenceRestrictionType RestrictionType
         {
             get
@@ -93,11 +98,12 @@ namespace Ical.Net.DataTypes
                 {
                     return _restrictionType.Value;
                 }
-                return Calendar?.RecurrenceRestriction ?? RecurrenceRestrictionType.Default;
+                return RecurrenceRestrictionType.NoRestriction;
             }
             set => _restrictionType = value;
         }
 
+        [Obsolete("Usage may cause undesired results or exceptions. Will be removed.", false)]
         public RecurrenceEvaluationModeType EvaluationMode
         {
             get
