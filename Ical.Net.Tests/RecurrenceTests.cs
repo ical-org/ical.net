@@ -41,8 +41,8 @@ namespace Ical.Net.Tests
             {
                 Assert.That(
                     occurrences,
-                    Has.Count.GreaterThanOrEqualTo(dateTimes.Length),
-                    "There should have been " + dateTimes.Length + " or more occurrences; there were " + occurrences.Count);
+                    Has.Count.EqualTo(dateTimes.Length),
+                    "There should have been " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
 
                 if (evt.RecurrenceRules.Count > 0)
                 {
@@ -1872,72 +1872,54 @@ namespace Ical.Net.Tests
         }
 
         [Test, Category("Recurrence")]
-        public void Secondly_AtLeastDefinedNumberOfOccurrences_ShouldSucceed()
+        public void Secondly_DefinedNumberOfOccurrences_ShouldSucceed()
         {
             var iCal = Calendar.Load(IcsFiles.Secondly1);
 
-            EventOccurrenceTest(
-                iCal,
-                new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
-                new CalDateTime(2007, 6, 21, 8, 1, 1, _tzid), // End period is exclusive, not inclusive.
-                new[]
-                {
-                    new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 0, 1, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 0, 2, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 0, 3, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 0, 4, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 0, 5, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 0, 6, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 0, 7, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 0, 8, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 0, 9, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 0, 10, _tzid)
-                },
-                null
-            );
+            var start = new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid);
+            var end = new CalDateTime(2007, 6, 21, 8, 1, 0, _tzid); // End period is exclusive, not inclusive.
+
+            var dateTimes = new List<IDateTime>();
+            for (var dt = start; dt.LessThan(end); dt = (CalDateTime) dt.AddSeconds(1))
+            {
+                dateTimes.Add(new CalDateTime(dt));
+            }
+
+            EventOccurrenceTest(iCal, start, end, dateTimes.ToArray(), null);
         }
 
         [Test, Category("Recurrence")]
-        public void Minutely_AtLeastDefinedNumberOfOccurrences_ShouldSucceed()
+        public void Minutely_DefinedNumberOfOccurrences_ShouldSucceed()
         {
             var iCal = Calendar.Load(IcsFiles.Minutely1);
 
-            EventOccurrenceTest(
-                iCal,
-                new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
-                new CalDateTime(2007, 6, 21, 12, 0, 1, _tzid), // End period is exclusive, not inclusive.
-                new[]
-                {
-                    new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 1, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 2, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 3, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 4, 0, _tzid)
-                },
-                null
-            );
+            var start = new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid);
+            var end = new CalDateTime(2007, 6, 21, 12, 0, 1, _tzid); // End period is exclusive, not inclusive.
+
+            var dateTimes = new List<IDateTime>();
+            for (var dt = start; dt.LessThan(end); dt = (CalDateTime)dt.AddMinutes(1))
+            {
+                dateTimes.Add(new CalDateTime(dt));
+            }
+
+            EventOccurrenceTest(iCal, start, end, dateTimes.ToArray(), null);
         }
 
         [Test, Category("Recurrence")]
-        public void Hourly_AtLeastDefinedNumberOfOccurrences_ShouldSucceed()
+        public void Hourly_DefinedNumberOfOccurrences_ShouldSucceed()
         {
             var iCal = Calendar.Load(IcsFiles.Hourly1);
 
-            EventOccurrenceTest(
-                iCal,
-                new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
-                new CalDateTime(2007, 6, 25, 8, 0, 1, _tzid), // End period is exclusive, not inclusive.
-                new[]
-                {
-                    new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 9, 0, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 10, 0, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 11, 0, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 12, 0, 0, _tzid)
-                },
-                null
-            );
+            var start = new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid);
+            var end = new CalDateTime(2007, 6, 25, 8, 0, 1, _tzid); // End period is exclusive, not inclusive.
+
+            var dateTimes = new List<IDateTime>();
+            for (var dt = start; dt.LessThan(end); dt = (CalDateTime)dt.AddHours(1))
+            {
+                dateTimes.Add(new CalDateTime(dt));
+            }
+
+            EventOccurrenceTest(iCal, start, end, dateTimes.ToArray(), null);
         }
 
         /// <summary>
