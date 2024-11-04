@@ -135,7 +135,7 @@ namespace Ical.Net.Evaluation
 
             return r;
         }
-
+#pragma warning disable 0618
         private void EnforceEvaluationRestrictions(RecurrencePattern pattern)
         {
             RecurrenceEvaluationModeType? evaluationMode = pattern.EvaluationMode;
@@ -230,7 +230,7 @@ namespace Ical.Net.Evaluation
                 }
             }
         }
-
+#pragma warning 0618 restore
         /// <summary>
         /// Returns a list of start dates in the specified period represented by this recurrence pattern.
         /// This method includes a base date argument, which indicates the start of the first occurrence of this recurrence.
