@@ -1,11 +1,11 @@
-using System.Collections.Generic;
-using System.Globalization;
-using Ical.Net.CalendarComponents;
+﻿using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Globalization;
 
 namespace Ical.Net.Tests
 {
@@ -13,6 +13,7 @@ namespace Ical.Net.Tests
     {
         private static readonly DateTime _now = DateTime.Now;
         private static readonly DateTime _later = _now.AddHours(1);
+
         private static CalendarEvent GetEventWithRecurrenceRules(string tzId)
         {
             var dailyForFiveDays = new RecurrencePattern(FrequencyType.Daily, 1)
@@ -34,7 +35,7 @@ namespace Ical.Net.Tests
         public void ToTimeZoneTests(CalendarEvent calendarEvent, string targetTimeZone)
         {
             var startAsUtc = calendarEvent.Start.AsUtc;
-            
+
             var convertedStart = calendarEvent.Start.ToTimeZone(targetTimeZone);
             var convertedAsUtc = convertedStart.AsUtc;
 
@@ -91,13 +92,15 @@ namespace Ical.Net.Tests
             var convertedToNySummer = new CalDateTime(summerDate, "UTC");
             convertedToNySummer.TzId = nyTzId;
             yield return new TestCaseData(convertedToNySummer)
-                .SetName("Summer UTC DateTime converted to NY time zone by setting TzId returns a DateTimeOffset with UTC-4")
+                .SetName(
+                    "Summer UTC DateTime converted to NY time zone by setting TzId returns a DateTimeOffset with UTC-4")
                 .Returns(new DateTimeOffset(summerDate, nySummerOffset));
 
             var noTz = new CalDateTime(summerDate);
             var currentSystemOffset = TimeZoneInfo.Local.GetUtcOffset(summerDate);
             yield return new TestCaseData(noTz)
-                .SetName($"Summer DateTime with no time zone information returns the system-local's UTC offset ({currentSystemOffset})")
+                .SetName(
+                    $"Summer DateTime with no time zone information returns the system-local's UTC offset ({currentSystemOffset})")
                 .Returns(new DateTimeOffset(summerDate, currentSystemOffset));
         }
 
@@ -154,34 +157,70 @@ namespace Ical.Net.Tests
         }
 
         [Test, TestCaseSource(nameof(ToStringTestCases))]
-        public string ToStringTests(DateTime localDateTime, string format, IFormatProvider formatProvider)
-            => new CalDateTime(localDateTime, "Pacific/Auckland").ToString(format, formatProvider);
+        public string ToStringTests(CalDateTime calDateTime, string format, IFormatProvider formatProvider)
+            => calDateTime.ToString(format, formatProvider);
 
-        public static IEnumerable<ITestCaseData> ToStringTestCases()
+        public static IEnumerable ToStringTestCases()
         {
-            yield return new TestCaseData(new DateTime(2022, 8, 30, 10, 30, 0), null, null)
-                .Returns($"{new DateTime(2022, 8, 30, 10, 30, 0)} Pacific/Auckland")
-                .SetName("Date and time with current culture formatting returns string using BCL current culture formatted date and time");
+            yield return new TestCaseData(new CalDateTime(2024, 8, 30, 10, 30, 0, tzId: "Pacific/Auckland"), "O", null)
+                .Returns("2024-08-30T10:30:00.0000000+12:00 Pacific/Auckland")
+                .SetName("Date and time with 'O' format arg, default culture");
 
-            yield return new TestCaseData(new DateTime(2022, 8, 30), null, null)
-                .Returns($"{new DateTime(2022, 8, 30):d} Pacific/Auckland")
-                .SetName("Date only with current culture formatting returns string using BCL current culture formatted date");
+            yield return new TestCaseData(new CalDateTime(2024, 8, 30, tzId: "Pacific/Auckland"), "O", null)
+                .Returns("08/30/2024 Pacific/Auckland")
+                .SetName("Date only with 'O' format arg, default culture");
 
-            yield return new TestCaseData(new DateTime(2022, 8, 30, 10, 30, 0), "o", null)
-                .Returns("2022-08-30T10:30:00.0000000+12:00 Pacific/Auckland")
-                .SetName("Date and time formatted using format string with no culture returns string using BCL formatter");
+            yield return new TestCaseData(new CalDateTime(2024, 8, 30, 10, 30, 0, tzId: "Pacific/Auckland"), "O",
+                    CultureInfo.GetCultureInfo("fr-FR"))
+                .Returns("2024-08-30T10:30:00.0000000+12:00 Pacific/Auckland")
+                .SetName("Date and time with 'O' format arg, French culture");
 
-            yield return new TestCaseData(new DateTime(2022, 8, 30), "o", null)
-                .Returns("2022-08-30T00:00:00.0000000+12:00 Pacific/Auckland")
-                .SetName("Date and time formatted using format string with no culture returns string using BCL formatter");
+            yield return new TestCaseData(new CalDateTime(2024, 8, 30, 10, 30, 0, tzId: "Pacific/Auckland"),
+                    "yyyy-MM-dd", CultureInfo.InvariantCulture)
+                .Returns("2024-08-30 Pacific/Auckland")
+                .SetName("Date and time with custom format, default culture");
 
-            yield return new TestCaseData(new DateTime(2022, 8, 30, 10, 30, 0), null, CultureInfo.InvariantCulture)
-                .Returns("08/30/2022 10:30:00 Pacific/Auckland")
-                .SetName("Date and time with format provider");
+            yield return new TestCaseData(new CalDateTime(2024, 8, 30, 10, 30, 0, tzId: "Pacific/Auckland"),
+                    "MM/dd/yyyy HH:mm:ss", CultureInfo.GetCultureInfo("FR"))
+                .Returns("08/30/2024 10:30:00 Pacific/Auckland")
+                .SetName("Date and time with format and 'FR' CultureInfo");
 
-            yield return new TestCaseData(new DateTime(2022, 8, 30), null, CultureInfo.InvariantCulture)
-                .Returns("08/30/2022 Pacific/Auckland")
-                .SetName("Date only with current format provider");
+            yield return new TestCaseData(new CalDateTime(2024, 8, 30, tzId: "Pacific/Auckland"), null,
+                    CultureInfo.GetCultureInfo("IT"))
+                .Returns("30/08/2024 Pacific/Auckland")
+                .SetName("Date only with 'IT' CultureInfo and default format arg");
+        }
+
+        [Test]
+        public void Simple_PropertyAndMethod_Tests()
+        {
+            var dt = new DateTime(2025, 1, 2, 10, 20, 30, DateTimeKind.Utc);
+            var c = new CalDateTime(dt, tzId: "Europe/Berlin");
+
+            var c2 = new CalDateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, c.TzId, null);
+            var c3 = new CalDateTime(new DateOnly(dt.Year, dt.Month, dt.Day),
+                new TimeOnly(dt.Hour, dt.Minute, dt.Second), c.TzId);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(c2.Ticks, Is.EqualTo(c3.Ticks));
+                Assert.That(c2.TzId, Is.EqualTo(c3.TzId));
+                Assert.That(CalDateTime.UtcNow.Value.Kind, Is.EqualTo(DateTimeKind.Utc));
+                Assert.That(c.Millisecond, Is.EqualTo(0));
+                Assert.That(c.Ticks, Is.EqualTo(dt.Ticks));
+                Assert.That(c.DayOfYear, Is.EqualTo(dt.DayOfYear));
+                Assert.That(c.TimeOfDay, Is.EqualTo(dt.TimeOfDay));
+                Assert.That(c.Subtract(TimeSpan.FromSeconds(dt.Second)).Value.Second, Is.EqualTo(0));
+                Assert.That(c.AddYears(1).Value, Is.EqualTo(dt.AddYears(1)));
+                Assert.That(c.AddMonths(1).Value, Is.EqualTo(dt.AddMonths(1)));
+                Assert.That(c.AddMinutes(1).Value, Is.EqualTo(dt.AddMinutes(1)));
+                Assert.That(c.AddSeconds(15).Value, Is.EqualTo(dt.AddSeconds(15)));
+                Assert.That(c.AddMilliseconds(100).Value, Is.EqualTo(dt.AddMilliseconds(0))); // truncated
+                Assert.That(c.AddMilliseconds(1000).Value, Is.EqualTo(dt.AddMilliseconds(1000)));
+                Assert.That(c.AddTicks(1).Value, Is.EqualTo(dt.AddTicks(0))); // truncated
+                Assert.That(c.AddTicks(TimeSpan.FromMinutes(1).Ticks).Value, Is.EqualTo(dt.AddTicks(TimeSpan.FromMinutes(1).Ticks)));
+                Assert.That(c.ToString("dd.MM.yyyy"), Is.EqualTo("02.01.2025 Europe/Berlin"));
+            });
         }
     }
 }

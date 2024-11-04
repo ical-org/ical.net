@@ -126,11 +126,37 @@ namespace Ical.Net.CalendarComponents
                 // has a time value.
                 if (Start != null)
                 {
-                    Start.HasTime = !value;
+                    if (value)
+                    {
+                        // Ensure time part is not set
+                        var dt = new CalDateTime(Start);
+                        dt.SetValue(DateOnly.FromDateTime(Start.Value), null, Start.Value.Kind);
+                        Start = dt;
+                    }
+                    else
+                    {
+                        // Ensure time part is set
+                        var dt = new CalDateTime(Start);
+                        dt.SetValue(DateOnly.FromDateTime(Start.Value), TimeOnly.FromDateTime(Start.Value), Start.Value.Kind);
+                        Start = dt;
+                    }
                 }
                 if (End != null)
                 {
-                    End.HasTime = !value;
+                    if (value)
+                    {
+                        // Ensure time part is not set
+                        var dt = new CalDateTime(End);
+                        dt.SetValue(DateOnly.FromDateTime(End.Value), null, End.Value.Kind);
+                        End = dt;
+                    }
+                    else
+                    {
+                        // Ensure time part is set
+                        var dt = new CalDateTime(End);
+                        dt.SetValue(DateOnly.FromDateTime(End.Value), TimeOnly.FromDateTime(End.Value), End.Value.Kind);
+                        End = dt;
+                    }
                 }
 
                 if (value && Start != null && End != null && Equals(Start.Date, End.Date))

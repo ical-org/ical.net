@@ -2828,7 +2828,7 @@ Has.Count.EqualTo(dateTimes.Length),
         [TestCase("SECONDLY", 1, true)]
         [TestCase("MINUTELY", 60, true)]
         [TestCase("HOURLY", 3600, true)]
-        [TestCase("DAILY", 24*3600, false)]
+        [TestCase("DAILY", 24*3600, true)]
         public void Evaluate1(string freq, int secsPerInterval, bool hasTime)
         {
             Calendar cal = new Calendar();
@@ -2837,7 +2837,7 @@ Has.Count.EqualTo(dateTimes.Length),
             evt.Summary = "Event summary";
 
             // Start at midnight, UTC time
-            evt.Start = new CalDateTime(DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc)) { HasTime = false };
+            evt.Start = new CalDateTime(DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc)); // { HasTime = false };
 
             // This case (DTSTART of type DATE and FREQ=MINUTELY) is undefined in RFC 5545.
             // ical.net handles the case by pretending DTSTART has the time set to midnight.

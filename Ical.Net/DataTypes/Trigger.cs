@@ -31,8 +31,8 @@ namespace Ical.Net.DataTypes
                 // DateTime and Duration are mutually exclusive
                 Duration = null;
 
-                // Do not allow timeless date/time values
-                _mDateTime.HasTime = true;
+                // Ensure date/time has a time part
+                _mDateTime = new CalDateTime(_mDateTime.Value);
             }
         }
 

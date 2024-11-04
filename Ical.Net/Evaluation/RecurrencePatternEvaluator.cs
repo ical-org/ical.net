@@ -908,9 +908,6 @@ namespace Ical.Net.Evaluation
             // with the reference date.
             IDateTime newDt = new CalDateTime(dt, referenceDate.TzId);
 
-            // NOTE: fixes bug #2938007 - hasTime missing
-            newDt.HasTime = referenceDate.HasTime;
-
             newDt.AssociateWith(referenceDate);
 
             // Create a period from the new date/time.
@@ -932,8 +929,8 @@ namespace Ical.Net.Evaluation
                 // This case is not defined by RFC 5545. We handle it by evaluating the rule
                 // as if referenceDate had a time (i.e. set to midnight).
 
-                referenceDate = referenceDate.Copy<IDateTime>();
-                referenceDate.HasTime = true;
+                // Ensure referenceDate has a time part
+                referenceDate = new CalDateTime(referenceDate);
             }
 
             // Create a recurrence pattern suitable for use during evaluation.
