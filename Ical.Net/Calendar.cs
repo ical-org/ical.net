@@ -26,7 +26,7 @@ namespace Ical.Net
             => CalendarCollection.Load(new StreamReader(s, Encoding.UTF8)).SingleOrDefault();
 
         public static Calendar Load(TextReader tr)
-            => CalendarCollection.Load(tr).OfType<Calendar>().SingleOrDefault();
+            => CalendarCollection.Load(tr)?.SingleOrDefault();
 
         public static IList<T> Load<T>(Stream s, Encoding e)
             => Load<T>(new StreamReader(s, e));
@@ -118,7 +118,7 @@ namespace Ical.Net
         public virtual IEnumerable<IRecurrable> RecurringItems => Children.OfType<IRecurrable>();
 
         /// <summary>
-        /// A collection of <see cref="Components.Event"/> components in the iCalendar.
+        /// A collection of <see cref="CalendarEvent"/> components in the iCalendar.
         /// </summary>
         public virtual IUniqueComponentList<CalendarEvent> Events => _mEvents;
 
@@ -166,12 +166,14 @@ namespace Ical.Net
             set => Properties.Set("METHOD", value);
         }
 
+        [Obsolete("Usage may cause undesired results or exceptions. Will be removed.", false)]
         public virtual RecurrenceRestrictionType RecurrenceRestriction
         {
             get => Properties.Get<RecurrenceRestrictionType>("X-DDAY-ICAL-RECURRENCE-RESTRICTION");
             set => Properties.Set("X-DDAY-ICAL-RECURRENCE-RESTRICTION", value);
         }
 
+        [Obsolete("Usage may cause undesired results or exceptions. Will be removed.", false)]
         public virtual RecurrenceEvaluationModeType RecurrenceEvaluationMode
         {
             get => Properties.Get<RecurrenceEvaluationModeType>("X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE");
@@ -190,34 +192,6 @@ namespace Ical.Net
             return tz;
         }
 
-        /// <summary>
-        /// Evaluates component recurrences for the given range of time.
-        /// <example>
-        ///     For example, if you are displaying a month-view for January 2007,
-        ///     you would want to evaluate recurrences for Jan. 1, 2007 to Jan. 31, 2007
-        ///     to display relevant information for those dates.
-        /// </example>
-        /// </summary>
-        /// <param name="fromDate">The beginning date/time of the range to test.</param>
-        /// <param name="toDate">The end date/time of the range to test.</param>
-        [Obsolete("This method is no longer supported.  Use GetOccurrences() instead.")]
-        public void Evaluate(IDateTime fromDate, IDateTime toDate)
-        {
-            throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
-        }
-
-        /// <summary>
-        /// Evaluates component recurrences for the given range of time, for
-        /// the type of recurring component specified.
-        /// </summary>
-        /// <typeparam name="T">The type of component to be evaluated for recurrences.</typeparam>
-        /// <param name="fromDate">The beginning date/time of the range to test.</param>
-        /// <param name="toDate">The end date/time of the range to test.</param>
-        [Obsolete("This method is no longer supported.  Use GetOccurrences() instead.")]
-        public void Evaluate<T>(IDateTime fromDate, IDateTime toDate)
-        {
-            throw new NotSupportedException("Evaluate() is no longer supported as a public method.  Use GetOccurrences() instead.");
-        }
 
         /// <summary>
         /// Clears recurrence evaluations for recurring components.
@@ -237,8 +211,9 @@ namespace Ical.Net
         /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
         /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
         public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt)
-            => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.AsSystemLocal.Date), new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddSeconds(-1)));
+            => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)));
 
+        /// <inheritdoc cref="GetOccurrences(IDateTime)"/>
         public virtual HashSet<Occurrence> GetOccurrences(DateTime dt)
             => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)));
 
@@ -248,10 +223,11 @@ namespace Ical.Net
         /// </summary>
         /// <param name="startTime">The beginning date/time of the range.</param>
         /// <param name="endTime">The end date/time of the range.</param>
-        /// <returns>A list of occurrences that fall between the dates provided.</returns>
+        /// <returns>A list of occurrences that fall between the date/time arguments provided.</returns>
         public virtual HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
             => GetOccurrences<IRecurringComponent>(startTime, endTime);
 
+        /// <inheritdoc cref="GetOccurrences(IDateTime, IDateTime)"/>
         public virtual HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
             => GetOccurrences<IRecurringComponent>(new CalDateTime(startTime), new CalDateTime(endTime));
 
@@ -265,13 +241,18 @@ namespace Ical.Net
         /// the occurrences.
         /// </note>
         /// </summary>
-        /// <param name="dt">The date for which to return occurrences.</param>
+        /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
         /// <returns>A list of Periods representing the occurrences of this object.</returns>
         public virtual HashSet<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
-            => GetOccurrences<T>(new CalDateTime(dt.AsSystemLocal.Date), new CalDateTime(dt.AsSystemLocal.Date.AddDays(1).AddTicks(-1)));
+            => GetOccurrences<T>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddTicks(-1)));
 
+        /// <inheritdoc cref="GetOccurrences(IDateTime)"/>
         public virtual HashSet<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
             => GetOccurrences<T>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddTicks(-1)));
+
+        /// <inheritdoc cref="GetOccurrences(IDateTime, IDateTime)"/>
+        public virtual HashSet<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent
+            => GetOccurrences<T>(new CalDateTime(startTime), new CalDateTime(endTime));
 
         /// <summary>
         /// Returns all occurrences of components of type T that start within the date range provided.
@@ -297,9 +278,6 @@ namespace Ical.Net
             occurrences.ExceptWith(removeOccurrencesQuery);
             return occurrences;
         }
-
-        public virtual HashSet<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent
-            => GetOccurrences<T>(new CalDateTime(startTime), new CalDateTime(endTime));
 
         /// <summary>
         /// Creates a typed object that is a direct child of the iCalendar itself.  Generally,

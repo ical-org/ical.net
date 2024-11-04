@@ -31,4 +31,4 @@ jobs:
     - name: Build
       run: dotnet build --no-restore --configuration Release -p:nowarn=1591
     - name: Test
-      run: dotnet test --no-build --configuration Release --verbosity quiet
+      run: dotnet test --no-build --configuration Release --verbosity normal

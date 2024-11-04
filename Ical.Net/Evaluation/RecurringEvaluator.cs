@@ -29,7 +29,7 @@ namespace Ical.Net.Evaluation
         }
 
         /// <summary>
-        /// Evaulates the RRule component, and adds each specified Period to the Periods collection.
+        /// Evaluates the RRule component, and adds each specified Period to the Periods collection.
         /// </summary>
         /// <param name="referenceDate"></param>
         /// <param name="periodStart">The beginning date of the range to evaluate.</param>
@@ -62,7 +62,7 @@ namespace Ical.Net.Evaluation
             return periods;
         }
 
-        /// <summary> Evalates the RDate component, and adds each specified DateTime or Period to the Periods collection. </summary>
+        /// <summary> Evaluates the RDate component, and adds each specified DateTime or Period to the Periods collection. </summary>
         protected HashSet<Period> EvaluateRDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
         {
             if (Recurrable.RecurrenceDates == null || !Recurrable.RecurrenceDates.Any())
@@ -75,7 +75,7 @@ namespace Ical.Net.Evaluation
         }
 
         /// <summary>
-        /// Evaulates the ExRule component, and excludes each specified DateTime from the Periods collection.
+        /// Evaluates the ExRule component, and excludes each specified DateTime from the Periods collection.
         /// </summary>
         /// <param name="referenceDate"></param>
         /// <param name="periodStart">The beginning date of the range to evaluate.</param>
@@ -102,7 +102,7 @@ namespace Ical.Net.Evaluation
         }
 
         /// <summary>
-        /// Evalates the ExDate component, and excludes each specified DateTime or Period from the Periods collection.
+        /// Evaluates the ExDate component, and excludes each specified DateTime or Period from the Periods collection.
         /// </summary>
         /// <param name="referenceDate"></param>
         /// <param name="periodStart">The beginning date of the range to evaluate.</param>

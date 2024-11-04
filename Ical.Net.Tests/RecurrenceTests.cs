@@ -30,6 +30,10 @@ namespace Ical.Net.Tests
         )
         {
             var evt = cal.Events.Skip(eventIndex).First();
+            var rule = evt.RecurrenceRules.FirstOrDefault();
+#pragma warning disable 0618
+            if (rule != null) rule.RestrictionType = RecurrenceRestrictionType.NoRestriction;
+#pragma warning restore 0618
             fromDate.AssociatedObject = cal;
             toDate.AssociatedObject = cal;
 
@@ -37,26 +41,30 @@ namespace Ical.Net.Tests
                 .OrderBy(o => o.Period.StartTime)
                 .ToList();
 
-            Assert.That(
-                occurrences,
-Has.Count.EqualTo(dateTimes.Length),
-                "There should be exactly " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
-
-            if (evt.RecurrenceRules.Count > 0)
+            Assert.Multiple(() =>
             {
-                Assert.That(evt.RecurrenceRules, Has.Count.EqualTo(1));
-            }
+                Assert.That(
+                    occurrences,
+                    Has.Count.EqualTo(dateTimes.Length),
+                    "There should have been " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
 
-            for (var i = 0; i < dateTimes.Length; i++)
-            {
-                // Associate each incoming date/time with the calendar.
-                dateTimes[i].AssociatedObject = cal;
+                if (evt.RecurrenceRules.Count > 0)
+                {
+                    Assert.That(evt.RecurrenceRules, Has.Count.EqualTo(1));
+                }
 
-                var dt = dateTimes[i];
-                Assert.That(occurrences[i].Period.StartTime, Is.EqualTo(dt), "Event should occur on " + dt);
-                if (timeZones != null)
-                    Assert.That(dt.TimeZoneName, Is.EqualTo(timeZones[i]), "Event " + dt + " should occur in the " + timeZones[i] + " timezone");
-            }            
+                for (var i = 0; i < dateTimes.Length; i++)
+                {
+                    // Associate each incoming date/time with the calendar.
+                    dateTimes[i].AssociatedObject = cal;
+
+                    var dt = dateTimes[i];
+                    Assert.That(occurrences[i].Period.StartTime, Is.EqualTo(dt), "Event should occur on " + dt);
+                    if (timeZones != null)
+                        Assert.That(dt.TimeZoneName, Is.EqualTo(timeZones[i]),
+                            "Event " + dt + " should occur in the " + timeZones[i] + " timezone");
+                }
+            });
         }
 
         private void EventOccurrenceTest(
@@ -1867,134 +1875,55 @@ Has.Count.EqualTo(dateTimes.Length),
             );
         }
 
-        /// <summary>
-        /// Ensures that, by default, SECONDLY recurrence rules are not allowed.
-        /// </summary>
         [Test, Category("Recurrence")]
-        public void Secondly1()
-        {
-            Assert.That(() =>
-            {
-                var iCal = Calendar.Load(IcsFiles.Secondly1);
-                _ = iCal.GetOccurrences(new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid), new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
-            }, Throws.Exception.TypeOf<ArgumentException>(), "Evaluation engine should have failed.");
-        }
-
-        /// <summary>
-        /// Ensures that the proper behavior occurs when the evaluation
-        /// mode is set to adjust automatically for SECONDLY evaluation
-        /// </summary>
-        [Test, Category("Recurrence")]
-        public void Secondly1_1()
+        public void Secondly_DefinedNumberOfOccurrences_ShouldSucceed()
         {
             var iCal = Calendar.Load(IcsFiles.Secondly1);
-            iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
 
-            EventOccurrenceTest(
-                iCal,
-                new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
-                new CalDateTime(2007, 6, 21, 8, 10, 1, _tzid), // End period is exclusive, not inclusive.
-                new[]
-                {
-                    new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 1, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 2, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 3, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 4, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 5, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 6, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 7, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 8, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 9, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 8, 10, 0, _tzid)
-                },
-                null
-            );
-        }
+            var start = new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid);
+            var end = new CalDateTime(2007, 6, 21, 8, 1, 0, _tzid); // End period is exclusive, not inclusive.
 
-        /// <summary>
-        /// Ensures that if configured, MINUTELY recurrence rules are not allowed.
-        /// </summary>
-        [Test, Category("Recurrence")]
-        public void Minutely1()
-        {
-            Assert.That(() =>
+            var dateTimes = new List<IDateTime>();
+            for (var dt = start; dt.LessThan(end); dt = (CalDateTime) dt.AddSeconds(1))
             {
-                var iCal = Calendar.Load(IcsFiles.Minutely1);
-                iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictMinutely;
-                var occurrences = iCal.GetOccurrences(
-                    new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
-                    new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
-            }, Throws.Exception.TypeOf<ArgumentException>());
+                dateTimes.Add(new CalDateTime(dt));
+            }
+
+            EventOccurrenceTest(iCal, start, end, dateTimes.ToArray(), null);
         }
 
-        /// <summary>
-        /// Ensures that the proper behavior occurs when the evaluation
-        /// mode is set to adjust automatically for MINUTELY evaluation
-        /// </summary>
         [Test, Category("Recurrence")]
-        public void Minutely1_1()
+        public void Minutely_DefinedNumberOfOccurrences_ShouldSucceed()
         {
             var iCal = Calendar.Load(IcsFiles.Minutely1);
-            iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictMinutely;
-            iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
 
-            EventOccurrenceTest(
-                iCal,
-                new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
-                new CalDateTime(2007, 6, 21, 12, 0, 1, _tzid), // End period is exclusive, not inclusive.
-                new[]
-                {
-                    new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 9, 0, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 10, 0, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 11, 0, 0, _tzid),
-                    new CalDateTime(2007, 6, 21, 12, 0, 0, _tzid)
-                },
-                null
-            );
-        }
+            var start = new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid);
+            var end = new CalDateTime(2007, 6, 21, 12, 0, 1, _tzid); // End period is exclusive, not inclusive.
 
-        /// <summary>
-        /// Ensures that if configured, HOURLY recurrence rules are not allowed.
-        /// </summary>
-        [Test, Category("Recurrence")/*, ExpectedException(typeof(EvaluationEngineException))*/]
-        public void Hourly1()
-        {
-            Assert.That(() =>
+            var dateTimes = new List<IDateTime>();
+            for (var dt = start; dt.LessThan(end); dt = (CalDateTime)dt.AddMinutes(1))
             {
-                var iCal = Calendar.Load(IcsFiles.Hourly1);
-                iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictHourly;
-                _ = iCal.GetOccurrences(new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid), new CalDateTime(2007, 7, 21, 8, 0, 0, _tzid));
+                dateTimes.Add(new CalDateTime(dt));
+            }
 
-            }, Throws.Exception.TypeOf<ArgumentException>());
+            EventOccurrenceTest(iCal, start, end, dateTimes.ToArray(), null);
         }
 
-        /// <summary>
-        /// Ensures that the proper behavior occurs when the evaluation
-        /// mode is set to adjust automatically for HOURLY evaluation
-        /// </summary>
         [Test, Category("Recurrence")]
-        public void Hourly1_1()
+        public void Hourly_DefinedNumberOfOccurrences_ShouldSucceed()
         {
             var iCal = Calendar.Load(IcsFiles.Hourly1);
-            iCal.RecurrenceRestriction = RecurrenceRestrictionType.RestrictHourly;
-            iCal.RecurrenceEvaluationMode = RecurrenceEvaluationModeType.AdjustAutomatically;
 
-            EventOccurrenceTest(
-                iCal,
-                new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
-                new CalDateTime(2007, 6, 25, 8, 0, 1, _tzid), // End period is exclusive, not inclusive.
-                new[]
-                {
-                    new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid),
-                    new CalDateTime(2007, 6, 22, 8, 0, 0, _tzid),
-                    new CalDateTime(2007, 6, 23, 8, 0, 0, _tzid),
-                    new CalDateTime(2007, 6, 24, 8, 0, 0, _tzid),
-                    new CalDateTime(2007, 6, 25, 8, 0, 0, _tzid)
-                },
-                null
-            );
+            var start = new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid);
+            var end = new CalDateTime(2007, 6, 25, 8, 0, 1, _tzid); // End period is exclusive, not inclusive.
+
+            var dateTimes = new List<IDateTime>();
+            for (var dt = start; dt.LessThan(end); dt = (CalDateTime)dt.AddHours(1))
+            {
+                dateTimes.Add(new CalDateTime(dt));
+            }
+
+            EventOccurrenceTest(iCal, start, end, dateTimes.ToArray(), null);
         }
 
         /// <summary>
@@ -2038,7 +1967,7 @@ Has.Count.EqualTo(dateTimes.Length),
         }
 
         /// <summary>
-        /// Ensures that "off-day" calcuation works correctly
+        /// Ensures that "off-day" calculation works correctly
         /// </summary>
         [Test, Category("Recurrence")]
         public void DailyInterval1()
@@ -2841,10 +2770,10 @@ Has.Count.EqualTo(dateTimes.Length),
 
             // This case (DTSTART of type DATE and FREQ=MINUTELY) is undefined in RFC 5545.
             // ical.net handles the case by pretending DTSTART has the time set to midnight.
-            evt.RecurrenceRules.Add(new RecurrencePattern($"FREQ={freq};INTERVAL=10;COUNT=5")
-            {
-                RestrictionType = RecurrenceRestrictionType.NoRestriction,
-            });
+            evt.RecurrenceRules.Add(new RecurrencePattern($"FREQ={freq};INTERVAL=10;COUNT=5"));
+#pragma warning disable 0618
+            evt.RecurrenceRules[0].RestrictionType = RecurrenceRestrictionType.NoRestriction;
+#pragma warning restore 0618
 
             var occurrences = evt.GetOccurrences(CalDateTime.Today.AddDays(-1), CalDateTime.Today.AddDays(100))
                 .OrderBy(x => x)
@@ -2868,8 +2797,10 @@ Has.Count.EqualTo(dateTimes.Length),
         {
             // NOTE: evaluators are not generally meant to be used directly like this.
             // However, this does make a good test to ensure they behave as they should.
-            RecurrencePattern pattern = new RecurrencePattern("FREQ=SECONDLY;INTERVAL=10");
+            var pattern = new RecurrencePattern("FREQ=SECONDLY;INTERVAL=10");
+#pragma warning disable 0618
             pattern.RestrictionType = RecurrenceRestrictionType.NoRestriction;
+#pragma warning restore 0618
 
             var us = new CultureInfo("en-US");
 
@@ -3177,10 +3108,14 @@ END:VCALENDAR";
             Assert.That(occurrences.Last().StartTime.Equals(lastExpected), Is.True);
         }
 
-        [Test, Ignore("Turn on in v3")]
+        /// <summary>
+        /// Evaluate relevancy and validity of the request.
+        /// Find a solution for issue #120 or close forever
+        /// </summary>
+        [Test, Ignore("Turn on in v3", Until = "2024-12-31")]
         public void EventsWithShareUidsShouldGenerateASingleRecurrenceSet()
         {
-            //https://github.com/rianjs/ical.net/issues/120
+            //https://github.com/rianjs/ical.net/issues/120 dated Sep 5, 2016
             const string ical =
 @"BEGIN:VCALENDAR
 PRODID:-//Google Inc//Google Calendar 70.9054//EN
@@ -3757,7 +3692,9 @@ END:VCALENDAR
 
         [TestCaseSource(nameof(TestLibicalTestCasesSource))]
         public void TestLibicalTestCases(RecurrenceTestCase testCase)
-            => ExecuteRecurrenceTestCase(testCase);
+        {
+            ExecuteRecurrenceTestCase(testCase);
+        }
 
         private static IEnumerable<RecurrenceTestCase> TestFileBasedRecurrenceTestCaseSource
             => ParseTestCaseFile(IcsFiles.RecurrrenceTestCases);
@@ -3775,10 +3712,7 @@ END:VCALENDAR
 
             // Start at midnight, UTC time
             evt.Start = testCase.DtStart;
-            evt.RecurrenceRules.Add(new RecurrencePattern(testCase.RRule)
-            {
-                RestrictionType = RecurrenceRestrictionType.NoRestriction,
-            });
+            evt.RecurrenceRules.Add(new RecurrencePattern(testCase.RRule));
 
             var occurrences = evt.GetOccurrences(testCase.StartAt?.Value ?? DateTime.MinValue, DateTime.MaxValue)
                 .OrderBy(x => x)
