@@ -48,7 +48,6 @@ namespace Ical.Net.Evaluation
     /// </summary>
     public class RecurrencePatternEvaluator : Evaluator
     {
-        // FIXME: in ical4j this is configurable.
         private const int _maxIncrementCount = 1000;
 
         protected RecurrencePattern Pattern { get; set; }
@@ -136,7 +135,7 @@ namespace Ical.Net.Evaluation
 
             return r;
         }
-
+#pragma warning disable 0618
         private void EnforceEvaluationRestrictions(RecurrencePattern pattern)
         {
             RecurrenceEvaluationModeType? evaluationMode = pattern.EvaluationMode;
@@ -231,17 +230,16 @@ namespace Ical.Net.Evaluation
                 }
             }
         }
-
-        /**
-         * Returns a list of start dates in the specified period represented by this recur. This method includes a base date
-         * argument, which indicates the start of the fist occurrence of this recurrence. The base date is used to inject
-         * default values to return a set of dates in the correct format. For example, if the search start date (start) is
-         * Wed, Mar 23, 12:19PM, but the recurrence is Mon - Fri, 9:00AM - 5:00PM, the start dates returned should all be at
-         * 9:00AM, and not 12:19PM.
-         */
-
+#pragma warning 0618 restore
+        /// <summary>
+        /// Returns a list of start dates in the specified period represented by this recurrence pattern.
+        /// This method includes a base date argument, which indicates the start of the first occurrence of this recurrence.
+        /// The base date is used to inject default values to return a set of dates in the correct format.
+        /// For example, if the search start date (start) is Wed, Mar 23, 12:19PM, but the recurrence is Mon - Fri, 9:00AM - 5:00PM,
+        /// the start dates returned should all be at 9:00AM, and not 12:19PM.
+        /// </summary>
         private HashSet<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd, int maxCount, RecurrencePattern pattern,
-            bool includeReferenceDateInResults)
+             bool includeReferenceDateInResults)
         {
             var dates = new HashSet<DateTime>();
             var originalDate = DateUtil.GetSimpleDateTimeData(seed);
@@ -331,13 +329,13 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        /**
-         * Returns a list of possible dates generated from the applicable BY* rules, using the specified date as a seed.
-         * @param date the seed date
-         * @param value the type of date list to return
-         * @return a DateList
-         */
-
+        /// <summary>
+        /// Returns a list of possible dates generated from the applicable BY* rules, using the specified date as a seed.
+        /// </summary>
+        /// <param name="date">The seed date.</param>
+        /// <param name="pattern"></param>
+        /// <param name="expandBehaviors"></param>
+        /// <returns>A list of possible dates.</returns>
         private List<DateTime> GetCandidates(DateTime date, RecurrencePattern pattern, bool?[] expandBehaviors)
         {
             var dates = new List<DateTime> { date };
@@ -353,11 +351,12 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        /**
-         * Applies BYSETPOS rules to <code>dates</code>. Valid positions are from 1 to the size of the date list. Invalid
-         * positions are ignored.
-         * @param dates
-         */
+        /// <summary>
+        /// Applies BYSETPOS rules to <paramref name="dates"/>. Valid positions are from 1 to the size of the date list. Invalid
+        /// positions are ignored.
+        /// </summary>
+        /// <param name="dates">The list of dates to which the BYSETPOS rules will be applied.</param>
+        /// <param name="pattern"></param>
         private List<DateTime> ApplySetPosRules(List<DateTime> dates, RecurrencePattern pattern)
         {
             // return if no SETPOS rules specified..
@@ -379,12 +378,14 @@ namespace Ical.Net.Evaluation
             return setPosDates;
         }
 
-        /**
-         * Applies BYMONTH rules specified in this Recur instance to the specified date list. If no BYMONTH rules are
-         * specified the date list is returned unmodified.
-         * @param dates
-         * @return
-         */
+        /// <summary>
+        /// Applies BYMONTH rules specified in this Recur instance to the specified date list. 
+        /// If no BYMONTH rules are specified, the date list is returned unmodified.
+        /// </summary>
+        /// <param name="dates">The list of dates to which the BYMONTH rules will be applied.</param>
+        /// <param name="pattern"></param>
+        /// <param name="expand"></param>
+        /// <returns>The modified list of dates after applying the BYMONTH rules.</returns>
         private List<DateTime> GetMonthVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByMonth.Count == 0)
@@ -406,12 +407,12 @@ namespace Ical.Net.Evaluation
             return dateSet.ToList();
         }
 
-        /**
-         * Applies BYWEEKNO rules specified in this Recur instance to the specified date list. If no BYWEEKNO rules are
-         * specified the date list is returned unmodified.
-         * @param dates
-         * @return
-         */
+        /// <summary>
+        /// Applies BYWEEKNO rules specified in this Recur instance to the specified date list. 
+        /// If no BYWEEKNO rules are specified, the date list is returned unmodified.
+        /// </summary>
+        /// <param name="dates">The list of dates to which the BYWEEKNO rules will be applied.</param>
+        /// <returns>The modified list of dates after applying the BYWEEKNO rules.</returns>
         private List<DateTime> GetWeekNoVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByWeekNo.Count == 0)
@@ -462,13 +463,12 @@ namespace Ical.Net.Evaluation
             return weekNoDates;
         }
 
-        /**
-         * Applies BYYEARDAY rules specified in this Recur instance to the specified date list. If no BYYEARDAY rules are
-         * specified the date list is returned unmodified.
-         * @param dates
-         * @return
-         */
-
+        /// <summary>
+        /// Applies BYYEARDAY rules specified in this Recur instance to the specified date list. 
+        /// If no BYYEARDAY rules are specified, the date list is returned unmodified.
+        /// </summary>
+        /// <param name="dates">The list of dates to which the BYYEARDAY rules will be applied.</param>
+        /// <returns>The modified list of dates after applying the BYYEARDAY rules.</returns>
         private List<DateTime> GetYearDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByYearDay.Count == 0)
@@ -516,13 +516,12 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        /**
-         * Applies BYMONTHDAY rules specified in this Recur instance to the specified date list. If no BYMONTHDAY rules are
-         * specified the date list is returned unmodified.
-         * @param dates
-         * @return
-         */
-
+        /// <summary>
+        /// Applies BYMONTHDAY rules specified in this Recur instance to the specified date list. 
+        /// If no BYMONTHDAY rules are specified, the date list is returned unmodified.
+        /// </summary>
+        /// <param name="dates">The list of dates to which the BYMONTHDAY rules will be applied.</param>
+        /// <returns>The modified list of dates after applying the BYMONTHDAY rules.</returns>
         private List<DateTime> GetMonthDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByMonthDay.Count == 0)
@@ -571,20 +570,19 @@ namespace Ical.Net.Evaluation
                     }
                 }
 
-            Next:
+                Next:
                 dates.RemoveAt(i);
             }
 
             return dates;
         }
 
-        /**
-         * Applies BYDAY rules specified in this Recur instance to the specified date list. If no BYDAY rules are specified
-         * the date list is returned unmodified.
-         * @param dates
-         * @return
-         */
-
+        /// <summary>
+        /// Applies BYDAY rules specified in this Recur instance to the specified date list. 
+        /// If no BYDAY rules are specified, the date list is returned unmodified.
+        /// </summary>
+        /// <param name="dates">The list of dates to which BYDAY rules will be applied.</param>
+        /// <returns>The modified list of dates after applying BYDAY rules, or the original list if no BYDAY rules are specified.</returns>
         private List<DateTime> GetDayVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByDay.Count == 0)
@@ -632,14 +630,13 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        /**
-         * Returns a list of applicable dates corresponding to the specified week day in accordance with the frequency
-         * specified by this recurrence rule.
-         * @param date
-         * @param weekDay
-         * @return
-         */
-
+        /// <summary>
+        /// Returns a list of applicable dates corresponding to the specified week day in accordance with the frequency
+        /// specified by this recurrence rule.
+        /// </summary>
+        /// <param name="date">The date to start the evaluation from.</param>
+        /// <param name="weekDay">The week day to evaluate.</param>
+        /// <returns>A list of applicable dates.</returns>
         private List<DateTime> GetAbsWeekDays(DateTime date, WeekDay weekDay, RecurrencePattern pattern)
         {
             var days = new List<DateTime>();
@@ -723,15 +720,13 @@ namespace Ical.Net.Evaluation
             return GetOffsetDates(days, weekDay.Offset);
         }
 
-        /**
-         * Returns a single-element sublist containing the element of <code>list</code> at <code>offset</code>. Valid
-         * offsets are from 1 to the size of the list. If an invalid offset is supplied, all elements from <code>list</code>
-         * are added to <code>sublist</code>.
-         * @param list
-         * @param offset
-         * @param sublist
-         */
-
+        /// <summary>
+        /// Returns a single-element sublist containing the element of <paramref name="dates"/> at <paramref name="offset"/>. 
+        /// Valid offsets are from 1 to the size of the list. If an invalid offset is supplied, all elements from <paramref name="dates"/>
+        /// are added to result.
+        /// </summary>
+        /// <param name="dates">The list from which to extract the element.</param>
+        /// <param name="offset">The position of the element to extract.</param>
         private List<DateTime> GetOffsetDates(List<DateTime> dates, int offset)
         {
             if (offset == int.MinValue)
@@ -752,13 +747,14 @@ namespace Ical.Net.Evaluation
             return offsetDates;
         }
 
-        /**
-         * Applies BYHOUR rules specified in this Recur instance to the specified date list. If no BYHOUR rules are
-         * specified the date list is returned unmodified.
-         * @param dates
-         * @return
-         */
-
+        /// <summary>
+        /// Applies BYHOUR rules specified in this Recur instance to the specified date list. 
+        /// If no BYHOUR rules are specified, the date list is returned unmodified.
+        /// </summary>
+        /// <param name="dates">The list of dates to which the BYHOUR rules will be applied.</param>
+        /// <param name="pattern"></param>
+        /// <param name="expand"></param>
+        /// <returns>The modified list of dates after applying the BYHOUR rules.</returns>
         private List<DateTime> GetHourVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByHour.Count == 0)
@@ -802,13 +798,14 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        /**
-         * Applies BYMINUTE rules specified in this Recur instance to the specified date list. If no BYMINUTE rules are
-         * specified the date list is returned unmodified.
-         * @param dates
-         * @return
-         */
-
+        /// <summary>
+        /// Applies BYMINUTE rules specified in this Recur instance to the specified date list. 
+        /// If no BYMINUTE rules are specified, the date list is returned unmodified.
+        /// </summary>
+        /// <param name="dates">The list of dates to which the BYMINUTE rules will be applied.</param>
+        /// <param name="pattern"></param>
+        /// <param name="expand"></param>
+        /// <returns>The modified list of dates after applying the BYMINUTE rules.</returns>
         private List<DateTime> GetMinuteVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.ByMinute.Count == 0)
@@ -852,13 +849,14 @@ namespace Ical.Net.Evaluation
             return dates;
         }
 
-        /**
-         * Applies BYSECOND rules specified in this Recur instance to the specified date list. If no BYSECOND rules are
-         * specified the date list is returned unmodified.
-         * @param dates
-         * @return
-         */
-
+        /// <summary>
+        /// Applies BYSECOND rules specified in this Recur instance to the specified date list. 
+        /// If no BYSECOND rules are specified, the date list is returned unmodified.
+        /// </summary>
+        /// <param name="dates">The list of dates to which the BYSECOND rules will be applied.</param>
+        /// <param name="pattern"></param>
+        /// <param name="expand"></param>
+        /// <returns>The modified list of dates after applying the BYSECOND rules.</returns>
         private List<DateTime> GetSecondVariants(List<DateTime> dates, RecurrencePattern pattern, bool? expand)
         {
             if (expand == null || pattern.BySecond.Count == 0)
@@ -924,7 +922,7 @@ namespace Ical.Net.Evaluation
         /// <returns></returns>
         public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
         {
-            if ((this.Pattern.Frequency != FrequencyType.None) && (this.Pattern.Frequency < FrequencyType.Daily) && !referenceDate.HasTime)
+            if (Pattern.Frequency != FrequencyType.None && Pattern.Frequency < FrequencyType.Daily && !referenceDate.HasTime)
             {
                 // This case is not defined by RFC 5545. We handle it by evaluating the rule
                 // as if referenceDate had a time (i.e. set to midnight).

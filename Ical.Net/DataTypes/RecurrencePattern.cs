@@ -15,9 +15,10 @@ namespace Ical.Net.DataTypes
     public class RecurrencePattern : EncodableDataType
     {
         private int _interval = int.MinValue;
+#pragma warning disable 0618
         private RecurrenceRestrictionType? _restrictionType;
         private RecurrenceEvaluationModeType? _evaluationMode;
-
+#pragma warning restore 0618
         public FrequencyType Frequency { get; set; }
 
         private DateTime _until = DateTime.MinValue;
@@ -84,6 +85,12 @@ namespace Ical.Net.DataTypes
 
         public DayOfWeek FirstDayOfWeek { get; set; } = DayOfWeek.Monday;
 
+#pragma warning disable 0618
+        /// <summary>
+        /// The type of restriction to apply to the evaluation of this recurrence pattern.
+        /// Returns <see cref="RecurrenceRestrictionType.NoRestriction"/> if not set.
+        /// </summary>
+        [Obsolete("Usage may cause undesired results or exceptions. Will be removed.", false)]
         public RecurrenceRestrictionType RestrictionType
         {
             get
@@ -98,6 +105,7 @@ namespace Ical.Net.DataTypes
             set => _restrictionType = value;
         }
 
+        [Obsolete("Usage may cause undesired results or exceptions. Will be removed.", false)]
         public RecurrenceEvaluationModeType EvaluationMode
         {
             get
@@ -111,6 +119,7 @@ namespace Ical.Net.DataTypes
             }
             set => _evaluationMode = value;
         }
+#pragma warning restore 0618
 
         public RecurrencePattern()
         {
@@ -142,8 +151,10 @@ namespace Ical.Net.DataTypes
         }
 
         protected bool Equals(RecurrencePattern other) => (Interval == other.Interval)
+#pragma warning disable 0618
             && RestrictionType == other.RestrictionType
             && EvaluationMode == other.EvaluationMode
+#pragma warning restore 0618
             && Frequency == other.Frequency
             && Until.Equals(other.Until)
             && Count == other.Count
@@ -170,8 +181,10 @@ namespace Ical.Net.DataTypes
             unchecked
             {
                 var hashCode = Interval.GetHashCode();
+#pragma warning disable 0618
                 hashCode = (hashCode * 397) ^ RestrictionType.GetHashCode();
                 hashCode = (hashCode * 397) ^ EvaluationMode.GetHashCode();
+#pragma warning restore 0618
                 hashCode = (hashCode * 397) ^ (int)Frequency;
                 hashCode = (hashCode * 397) ^ Until.GetHashCode();
                 hashCode = (hashCode * 397) ^ Count;
@@ -212,8 +225,10 @@ namespace Ical.Net.DataTypes
             ByMonth = new List<int>(r.ByMonth);
             BySetPosition = new List<int>(r.BySetPosition);
             FirstDayOfWeek = r.FirstDayOfWeek;
+#pragma warning disable 0618
             RestrictionType = r.RestrictionType;
             EvaluationMode = r.EvaluationMode;
+#pragma warning restore 0618
         }
 
         private static bool CollectionEquals<T>(IEnumerable<T> c1, IEnumerable<T> c2) => c1.SequenceEqual(c2);

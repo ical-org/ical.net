@@ -219,6 +219,7 @@ namespace Ical.Net
         Fifth = 5
     }
 
+    [Obsolete("Usage may cause undesired results or exceptions. Will be removed.", false)]
     public enum RecurrenceRestrictionType
     {
         /// <summary>
@@ -247,6 +248,7 @@ namespace Ical.Net
         RestrictHourly
     }
 
+    [Obsolete("Usage may cause undesired results or exceptions. Will be removed.", false)]
     public enum RecurrenceEvaluationModeType
     {
         /// <summary>
