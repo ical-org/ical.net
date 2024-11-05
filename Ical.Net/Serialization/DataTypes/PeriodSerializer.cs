@@ -1,7 +1,12 @@
-﻿using Ical.Net.DataTypes;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.IO;
 using System.Text;
+using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -94,7 +99,7 @@ namespace Ical.Net.Serialization.DataTypes
             p.EndTime = dtSerializer.Deserialize(new StringReader(values[1])) as IDateTime;
             if (p.EndTime == null)
             {
-                p.Duration = (TimeSpan)durationSerializer.Deserialize(new StringReader(values[1]));
+                p.Duration = (TimeSpan) durationSerializer.Deserialize(new StringReader(values[1]));
             }
 
             // Only return an object if it has been deserialized correctly.

@@ -1,6 +1,11 @@
-﻿using Ical.Net.Serialization.DataTypes;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.IO;
+using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes
 {
@@ -81,7 +86,7 @@ namespace Ical.Net.DataTypes
             {
                 return;
             }
-            
+
             DateTime = t.DateTime?.Copy<IDateTime>();
             Duration = t.Duration;
             Related = t.Related;
@@ -103,7 +108,7 @@ namespace Ical.Net.DataTypes
             {
                 return false;
             }
-            return Equals((Trigger)obj);
+            return Equals((Trigger) obj);
         }
 
         public override int GetHashCode()

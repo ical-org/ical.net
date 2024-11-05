@@ -1,5 +1,10 @@
-﻿using Ical.Net.Serialization.DataTypes;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
+using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes
 {
@@ -54,7 +59,7 @@ namespace Ical.Net.DataTypes
             {
                 return false;
             }
-            return Equals((UtcOffset)obj);
+            return Equals((UtcOffset) obj);
         }
 
         public override int GetHashCode() => Offset.GetHashCode();

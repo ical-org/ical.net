@@ -1,8 +1,13 @@
-﻿using Ical.Net.Collections.Interfaces;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Ical.Net.Collections.Interfaces;
 
 namespace Ical.Net.Collections.Proxies
 {
@@ -44,7 +49,7 @@ namespace Ical.Net.Collections.Proxies
                 throw new Exception("Could not create a container for the value - the container is not of type " + typeof(TInterface).Name);
             }
 
-            _container = (TInterface)(object)container;
+            _container = (TInterface) (object) container;
             _container.Group = _group;
             _realObject.Add(_container);
             return _container;
@@ -79,7 +84,7 @@ namespace Ical.Net.Collections.Proxies
             // Add the value to the object
             if (item is TOriginalValue)
             {
-                var value = (TOriginalValue)(object)item;
+                var value = (TOriginalValue) (object) item;
                 EnsureContainer().AddValue(value);
             }
         }
@@ -95,7 +100,7 @@ namespace Ical.Net.Collections.Proxies
             }
         }
 
-        public virtual bool Contains(TNewValue item) => Items.Any(o => o.ContainsValue((TOriginalValue)(object)item));
+        public virtual bool Contains(TNewValue item) => Items.Any(o => o.ContainsValue((TOriginalValue) (object) item));
 
         public virtual void CopyTo(TNewValue[] array, int arrayIndex)
         {
@@ -117,7 +122,7 @@ namespace Ical.Net.Collections.Proxies
                 return false;
             }
 
-            var value = (TOriginalValue)(object)item;
+            var value = (TOriginalValue) (object) item;
             var container = Items.FirstOrDefault(o => o.ContainsValue(value));
 
             if (container == null)
@@ -142,7 +147,7 @@ namespace Ical.Net.Collections.Proxies
                 return index;
             }
 
-            var value = (TOriginalValue)(object)item;
+            var value = (TOriginalValue) (object) item;
             IterateValues((o, i, count) =>
             {
                 if (o.Values != null && o.Values.Contains(value))
@@ -161,7 +166,7 @@ namespace Ical.Net.Collections.Proxies
         {
             IterateValues((o, i, count) =>
             {
-                var value = (TOriginalValue)(object)item;
+                var value = (TOriginalValue) (object) item;
 
                 // Determine if this index is found within this object
                 if (index < i || index >= count)

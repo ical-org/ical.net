@@ -1,8 +1,13 @@
-﻿using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
 
 namespace Ical.Net.Evaluation
 {
@@ -27,8 +32,7 @@ namespace Ical.Net.Evaluation
         {
             // Sort the occurrences by start time
             _occurrences.Sort(
-                delegate (Occurrence o1, Occurrence o2)
-                {
+                delegate (Occurrence o1, Occurrence o2) {
                     if (o1.Period?.StartTime == null)
                     {
                         return -1;

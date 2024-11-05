@@ -1,4 +1,9 @@
-﻿using Ical.Net.CalendarComponents;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
+using Ical.Net.CalendarComponents;
 
 namespace Ical.Net.Serialization
 {

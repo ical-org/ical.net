@@ -1,9 +1,14 @@
-﻿using BenchmarkDotNet.Attributes;
-using Ical.Net.DataTypes;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using BenchmarkDotNet.Attributes;
+using Ical.Net.DataTypes;
 
 namespace Ical.Net.Benchmarks
 {

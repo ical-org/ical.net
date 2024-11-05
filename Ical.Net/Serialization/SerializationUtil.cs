@@ -1,4 +1,9 @@
-﻿using System;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,8 +66,7 @@ namespace Ical.Net.Serialization
             }
 
             methodInfos = targetType.GetMethods(_bindingFlags)
-                .Select(targetTypeMethodInfo => new
-                {
+                .Select(targetTypeMethodInfo => new {
                     targetTypeMethodInfo,
                     attrs = targetTypeMethodInfo.GetCustomAttributes(typeof(OnDeserializedAttribute), false).ToList()
                 })

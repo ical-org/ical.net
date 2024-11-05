@@ -1,4 +1,9 @@
-﻿using System.Collections.Generic;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
+using System.Collections.Generic;
 using System.Text;
 
 namespace Ical.Net.Serialization

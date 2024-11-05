@@ -1,5 +1,10 @@
-﻿using Ical.Net.Serialization.DataTypes;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
+using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes
 {
@@ -62,7 +67,7 @@ namespace Ical.Net.DataTypes
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((Period)obj);
+            return obj.GetType() == GetType() && Equals((Period) obj);
         }
 
         public override int GetHashCode()

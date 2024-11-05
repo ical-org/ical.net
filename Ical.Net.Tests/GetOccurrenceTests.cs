@@ -1,10 +1,15 @@
-﻿using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
-using Ical.Net.Evaluation;
-using NUnit.Framework;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
+using NUnit.Framework;
 
 namespace Ical.Net.Tests
 {
@@ -17,11 +22,11 @@ namespace Ical.Net.Tests
         {
             var firstStart = new CalDateTime(DateTime.Parse("2016-01-01"));
             var firstEnd = new CalDateTime(DateTime.Parse("2016-01-05"));
-            var vEvent = new CalendarEvent {DtStart = firstStart, DtEnd = firstEnd,};
+            var vEvent = new CalendarEvent { DtStart = firstStart, DtEnd = firstEnd, };
 
             var secondStart = new CalDateTime(DateTime.Parse("2016-03-01"));
             var secondEnd = new CalDateTime(DateTime.Parse("2016-03-05"));
-            var vEvent2 = new CalendarEvent {DtStart = secondStart, DtEnd = secondEnd,};
+            var vEvent2 = new CalendarEvent { DtStart = secondStart, DtEnd = secondEnd, };
 
             var calendar = new Calendar();
             calendar.Events.Add(vEvent);
@@ -83,7 +88,7 @@ namespace Ical.Net.Tests
 
             Assert.That(occurrenceSet, Has.Count.EqualTo(evaluationsCount));
 
-            for (var currentOccurrence = intervalStart; currentOccurrence.CompareTo(intervalEnd) < 0; currentOccurrence = (CalDateTime)currentOccurrence.AddDays(7))
+            for (var currentOccurrence = intervalStart; currentOccurrence.CompareTo(intervalEnd) < 0; currentOccurrence = (CalDateTime) currentOccurrence.AddDays(7))
             {
                 var contains = occurrenceSet.Contains(currentOccurrence);
                 Assert.That(contains, Is.True, $"Collection does not contain {currentOccurrence}, but it is a {currentOccurrence.DayOfWeek}");

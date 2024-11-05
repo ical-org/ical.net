@@ -1,10 +1,15 @@
-﻿using Ical.Net.CalendarComponents;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
+using Ical.Net.CalendarComponents;
 
 namespace Ical.Net.Serialization
 {
@@ -79,7 +84,7 @@ namespace Ical.Net.Serialization
                 if (string.Equals(contentLine.Name, "BEGIN", StringComparison.OrdinalIgnoreCase))
                 {
                     stack.Push(current);
-                    current = _componentFactory.Build((string)contentLine.Value);
+                    current = _componentFactory.Build((string) contentLine.Value);
                     SerializationUtil.OnDeserializing(current);
                 }
                 else
@@ -90,7 +95,7 @@ namespace Ical.Net.Serialization
                     }
                     if (string.Equals(contentLine.Name, "END", StringComparison.OrdinalIgnoreCase))
                     {
-                        if (!string.Equals((string)contentLine.Value, current.Name, StringComparison.OrdinalIgnoreCase))
+                        if (!string.Equals((string) contentLine.Value, current.Name, StringComparison.OrdinalIgnoreCase))
                         {
                             throw new SerializationException($"Expected 'END:{current.Name}', found 'END:{contentLine.Value}'");
                         }
@@ -159,7 +164,7 @@ namespace Ical.Net.Serialization
         private void SetPropertyValue(SerializationContext context, CalendarProperty property, string value)
         {
             var type = _dataTypeMapper.GetPropertyMapping(property) ?? typeof(string);
-            var serializer = (SerializerBase)_serializerFactory.Build(type, context);
+            var serializer = (SerializerBase) _serializerFactory.Build(type, context);
             using (var valueReader = new StringReader(value))
             {
                 var propertyValue = serializer.Deserialize(valueReader);

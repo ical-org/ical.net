@@ -1,7 +1,12 @@
-﻿using Ical.Net.Utility;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes
 {
@@ -261,7 +266,7 @@ namespace Ical.Net.DataTypes
             SentBy = atn.SentBy != null ? new Uri(atn.SentBy.ToString()) : null;
             DirectoryEntry = atn.DirectoryEntry != null ? new Uri(atn.DirectoryEntry.ToString()) : null;
         }
-        
+
         protected bool Equals(Attendee other) => Equals(SentBy, other.SentBy)
             && string.Equals(CommonName, other.CommonName, StringComparison.OrdinalIgnoreCase)
             && Equals(DirectoryEntry, other.DirectoryEntry)
@@ -279,7 +284,7 @@ namespace Ical.Net.DataTypes
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((Attendee)obj);
+            return Equals((Attendee) obj);
         }
 
         public override int GetHashCode()

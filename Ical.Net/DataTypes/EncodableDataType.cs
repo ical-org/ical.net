@@ -1,4 +1,9 @@
-﻿namespace Ical.Net.DataTypes
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
+namespace Ical.Net.DataTypes
 {
     /// <summary>
     /// An abstract class from which all iCalendar data types inherit.

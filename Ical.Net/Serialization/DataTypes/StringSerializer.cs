@@ -1,10 +1,15 @@
-﻿using Ical.Net.DataTypes;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -68,11 +73,11 @@ namespace Ical.Net.Serialization.DataTypes
             var values = new List<string>();
             if (obj is string)
             {
-                values.Add((string)obj);
+                values.Add((string) obj);
             }
             else if (obj is IEnumerable)
             {
-                values.AddRange(from object child in (IEnumerable)obj select child.ToString());
+                values.AddRange(from object child in (IEnumerable) obj select child.ToString());
             }
 
             var co = SerializationContext.Peek() as ICalendarObject;
@@ -139,7 +144,7 @@ namespace Ical.Net.Serialization.DataTypes
             if (co is ICalendarProperty)
             {
                 // Is this necessary?
-                co.SetService("EscapedValue", escapedValues.Count == 1 ? escapedValues[0] : (object)escapedValues);
+                co.SetService("EscapedValue", escapedValues.Count == 1 ? escapedValues[0] : (object) escapedValues);
             }
 
             // Return either a single value, or the entire list.

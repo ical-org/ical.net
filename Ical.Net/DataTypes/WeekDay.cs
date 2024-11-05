@@ -1,6 +1,11 @@
-﻿using Ical.Net.Serialization.DataTypes;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.IO;
+using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes
 {
@@ -28,7 +33,7 @@ namespace Ical.Net.DataTypes
             Offset = num;
         }
 
-        public WeekDay(DayOfWeek day, FrequencyOccurrence type) : this(day, (int)type) { }
+        public WeekDay(DayOfWeek day, FrequencyOccurrence type) : this(day, (int) type) { }
 
         public WeekDay(string value)
         {
@@ -43,7 +48,7 @@ namespace Ical.Net.DataTypes
                 return false;
             }
 
-            var ds = (WeekDay)obj;
+            var ds = (WeekDay) obj;
             return ds.Offset == Offset && ds.DayOfWeek == DayOfWeek;
         }
 

@@ -1,10 +1,15 @@
-﻿using Ical.Net.DataTypes;
-using NodaTime;
-using NodaTime.TimeZones;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Ical.Net.DataTypes;
+using NodaTime;
+using NodaTime.TimeZones;
 
 namespace Ical.Net.Utility
 {
@@ -219,7 +224,7 @@ namespace Ical.Net.Utility
             var offset = isExact
                 ? 0
                 : 1;
-            return (int)Math.Floor(d.Day / 7.0) + offset;
+            return (int) Math.Floor(d.Day / 7.0) + offset;
         }
     }
 }

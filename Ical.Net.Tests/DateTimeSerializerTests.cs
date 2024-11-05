@@ -1,7 +1,12 @@
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
+using System;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization.DataTypes;
 using NUnit.Framework;
-using System;
 
 namespace Ical.Net.Tests
 {

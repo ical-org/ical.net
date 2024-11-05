@@ -1,4 +1,9 @@
-﻿namespace Ical.Net
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
+namespace Ical.Net
 {
     public interface ICopyable
     {

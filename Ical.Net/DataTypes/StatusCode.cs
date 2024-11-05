@@ -1,7 +1,12 @@
-﻿using Ical.Net.Serialization.DataTypes;
-using Ical.Net.Utility;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System.IO;
 using System.Linq;
+using Ical.Net.Serialization.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes
 {
@@ -73,7 +78,7 @@ namespace Ical.Net.DataTypes
             {
                 return false;
             }
-            return Equals((StatusCode)obj);
+            return Equals((StatusCode) obj);
         }
 
         public override int GetHashCode() => CollectionHelpers.GetHashCode(Parts);

@@ -1,11 +1,16 @@
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Proxies;
 using Ical.Net.Utility;
 using NodaTime;
 using NodaTime.TimeZones;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Ical.Net.CalendarComponents
 {
@@ -368,7 +373,7 @@ namespace Ical.Net.CalendarComponents
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((VTimeZone)obj);
+            return Equals((VTimeZone) obj);
         }
 
         public override int GetHashCode()

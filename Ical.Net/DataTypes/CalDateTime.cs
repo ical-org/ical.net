@@ -1,8 +1,13 @@
-﻿using Ical.Net.Serialization.DataTypes;
-using Ical.Net.Utility;
-using NodaTime;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.IO;
+using Ical.Net.Serialization.DataTypes;
+using Ical.Net.Utility;
+using NodaTime;
 
 namespace Ical.Net.DataTypes
 {
@@ -155,7 +160,7 @@ namespace Ical.Net.DataTypes
             => this == other;
 
         public override bool Equals(object other)
-            => other is IDateTime && (CalDateTime)other == this;
+            => other is IDateTime && (CalDateTime) other == this;
 
         public override int GetHashCode()
         {

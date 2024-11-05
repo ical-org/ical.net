@@ -1,6 +1,11 @@
-﻿using Ical.Net.DataTypes;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.IO;
+using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -19,7 +24,7 @@ namespace Ical.Net.Serialization.DataTypes
                 return null;
             }
 
-            var uri = (Uri)obj;
+            var uri = (Uri) obj;
 
             if (SerializationContext.Peek() is ICalendarObject co)
             {

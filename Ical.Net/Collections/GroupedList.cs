@@ -1,4 +1,9 @@
-﻿using System;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,7 +121,7 @@ namespace Ical.Net.Collections
         public virtual IEnumerable<TItem> Values() => _dictionary.Values.SelectMany(i => i);
 
         public virtual IEnumerable<TItem> AllOf(TGroup group) => _dictionary.ContainsKey(@group)
-            ? (IEnumerable<TItem>)_dictionary[@group]
+            ? (IEnumerable<TItem>) _dictionary[@group]
             : new TItem[0];
 
         public virtual bool Remove(TItem obj)

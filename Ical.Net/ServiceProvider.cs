@@ -1,4 +1,9 @@
-﻿using System;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,7 +33,7 @@ namespace Ical.Net
             var service = GetService(typeof(T));
             if (service is T)
             {
-                return (T)service;
+                return (T) service;
             }
             return default(T);
         }
@@ -38,7 +43,7 @@ namespace Ical.Net
             var service = GetService(name);
             if (service is T)
             {
-                return (T)service;
+                return (T) service;
             }
             return default(T);
         }

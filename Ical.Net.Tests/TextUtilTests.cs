@@ -1,4 +1,9 @@
-﻿using System.Collections;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
+using System.Collections;
 using Ical.Net.Utility;
 using NUnit.Framework;
 

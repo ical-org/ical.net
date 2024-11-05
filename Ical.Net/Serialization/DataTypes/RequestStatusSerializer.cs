@@ -1,8 +1,13 @@
-﻿using Ical.Net.DataTypes;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {

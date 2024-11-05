@@ -1,7 +1,12 @@
-﻿using Ical.Net.Serialization.DataTypes;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Diagnostics;
 using System.IO;
+using Ical.Net.Serialization.DataTypes;
 
 namespace Ical.Net.DataTypes
 {
@@ -22,7 +27,7 @@ namespace Ical.Net.DataTypes
                 }
                 else
                 {
-                    Parameters.Set("SENT-BY", (string)null);
+                    Parameters.Set("SENT-BY", (string) null);
                 }
             }
         }
@@ -44,7 +49,7 @@ namespace Ical.Net.DataTypes
                 }
                 else
                 {
-                    Parameters.Set("DIR", (string)null);
+                    Parameters.Set("DIR", (string) null);
                 }
             }
         }
@@ -80,7 +85,7 @@ namespace Ical.Net.DataTypes
             {
                 return false;
             }
-            return Equals((Organizer)obj);
+            return Equals((Organizer) obj);
         }
 
         public override int GetHashCode() => Value?.GetHashCode() ?? 0;

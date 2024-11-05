@@ -1,6 +1,11 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Linq;
+using BenchmarkDotNet.Attributes;
 
 namespace Ical.Net.Benchmarks
 {
@@ -64,7 +69,7 @@ END:VCALENDAR";
             var calendar = Calendar.Load(e);
             var calendarEvent = calendar.Events.First();
             var searchStart = new DateTime(2009, 06, 20);
-            var searchEnd = new DateTime(2011,06,23);
+            var searchEnd = new DateTime(2011, 06, 23);
             var occurrences = calendarEvent.GetOccurrences(searchStart, searchEnd);
         }
 

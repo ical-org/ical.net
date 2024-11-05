@@ -1,5 +1,10 @@
-﻿using Ical.Net.CalendarComponents;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
+using Ical.Net.CalendarComponents;
 
 namespace Ical.Net.DataTypes
 {
@@ -50,7 +55,7 @@ namespace Ical.Net.DataTypes
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((AlarmOccurrence)obj);
+            return obj.GetType() == GetType() && Equals((AlarmOccurrence) obj);
         }
 
         public override int GetHashCode()

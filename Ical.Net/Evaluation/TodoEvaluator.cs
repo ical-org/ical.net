@@ -1,9 +1,14 @@
-﻿using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
-using Ical.Net.Utility;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.Evaluation
 {

@@ -1,10 +1,15 @@
-﻿using Ical.Net.DataTypes;
-using Ical.Net.Evaluation;
-using Ical.Net.Utility;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
+using Ical.Net.Utility;
 
 namespace Ical.Net.CalendarComponents
 {
@@ -345,7 +350,7 @@ namespace Ical.Net.CalendarComponents
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((CalendarEvent)obj);
+            return obj.GetType() == GetType() && Equals((CalendarEvent) obj);
         }
 
         public override int GetHashCode()

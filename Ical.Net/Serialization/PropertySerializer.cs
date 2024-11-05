@@ -1,9 +1,14 @@
-﻿using Ical.Net.DataTypes;
-using Ical.Net.Utility;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.Serialization
 {
@@ -65,7 +70,7 @@ namespace Ical.Net.Serialization
                 //application developers will need to handle those cases outside the library.
                 if (v is PeriodList)
                 {
-                    var typed = (PeriodList)v;
+                    var typed = (PeriodList) v;
                     if (!string.IsNullOrWhiteSpace(typed.TzId) && parameterList.All(p => string.Equals("TZID", p.Value, StringComparison.OrdinalIgnoreCase)))
                     {
                         parameterList.Set("TZID", typed.TzId);

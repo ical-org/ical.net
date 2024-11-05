@@ -1,4 +1,9 @@
-﻿using Ical.Net.Collections;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
+using Ical.Net.Collections;
 
 namespace Ical.Net
 {

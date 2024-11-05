@@ -1,8 +1,13 @@
-﻿using Ical.Net.Collections.Interfaces;
-using Ical.Net.Collections.Proxies;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ical.Net.Collections.Interfaces;
+using Ical.Net.Collections.Proxies;
 
 namespace Ical.Net.Collections
 {

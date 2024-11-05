@@ -1,6 +1,11 @@
-﻿using Ical.Net.Proxies;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Runtime.Serialization;
+using Ical.Net.Proxies;
 
 namespace Ical.Net.DataTypes
 {
@@ -110,7 +115,7 @@ namespace Ical.Net.DataTypes
                     _proxy.SetParent(_associatedObject);
                     if (_associatedObject is ICalendarParameterCollectionContainer)
                     {
-                        _proxy.SetProxiedObject(((ICalendarParameterCollectionContainer)_associatedObject).Parameters);
+                        _proxy.SetProxiedObject(((ICalendarParameterCollectionContainer) _associatedObject).Parameters);
                     }
                 }
                 else

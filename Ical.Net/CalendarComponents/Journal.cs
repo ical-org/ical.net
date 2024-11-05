@@ -1,3 +1,8 @@
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System.Runtime.Serialization;
 
 namespace Ical.Net.CalendarComponents
@@ -35,7 +40,7 @@ namespace Ical.Net.CalendarComponents
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((Journal)obj);
+            return obj.GetType() == GetType() && Equals((Journal) obj);
         }
 
         public override int GetHashCode()

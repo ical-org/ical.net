@@ -1,14 +1,19 @@
-﻿using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
-using Ical.Net.Serialization;
-using NUnit.Framework;
-using NUnit.Framework.Interfaces;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using Ical.Net.Serialization;
+using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 
 namespace Ical.Net.Tests
 {
@@ -20,7 +25,7 @@ namespace Ical.Net.Tests
         private static readonly DateTime _later = _nowTime.AddHours(1);
         private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
         private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
-        private static CalendarEvent GetSimpleEvent() => new CalendarEvent {DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime};
+        private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime };
         private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
 
         [Test, TestCaseSource(nameof(Event_TestCases))]
@@ -90,7 +95,7 @@ namespace Ical.Net.Tests
             var calendar = new Calendar();
             calendar.AddTimeZone(new VTimeZone("America/Los_Angeles"));
             var someEvent = GetSimpleEvent();
-            someEvent.Attendees = new List<Attendee> {attendee};
+            someEvent.Attendees = new List<Attendee> { attendee };
             calendar.Events.Add(someEvent);
 
             var serialized = SerializeToString(calendar);

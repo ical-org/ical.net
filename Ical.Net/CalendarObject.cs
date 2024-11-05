@@ -1,6 +1,11 @@
-﻿using Ical.Net.Collections;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Runtime.Serialization;
+using Ical.Net.Collections;
 
 namespace Ical.Net
 {
@@ -53,7 +58,7 @@ namespace Ical.Net
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((CalendarObject)obj);
+            return obj.GetType() == GetType() && Equals((CalendarObject) obj);
         }
 
         public override int GetHashCode() => Name?.GetHashCode() ?? 0;
@@ -71,7 +76,7 @@ namespace Ical.Net
             Parent = obj.Parent;
             Line = obj.Line;
             Column = obj.Column;
-            
+
             // Add each child
             Children.Clear();
             foreach (var child in obj.Children)

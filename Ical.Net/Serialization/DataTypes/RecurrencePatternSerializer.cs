@@ -1,9 +1,14 @@
-﻿using Ical.Net.DataTypes;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes
 {
@@ -229,7 +234,7 @@ namespace Ical.Net.Serialization.DataTypes
             if (match.Success)
             {
                 // Parse the frequency type
-                r.Frequency = (FrequencyType)Enum.Parse(typeof(FrequencyType), match.Groups[1].Value, true);
+                r.Frequency = (FrequencyType) Enum.Parse(typeof(FrequencyType), match.Groups[1].Value, true);
 
                 // NOTE: fixed a bug where the group 2 match
                 // resulted in an empty string, which caused
@@ -412,7 +417,7 @@ namespace Ical.Net.Serialization.DataTypes
                         }
 
                         var dayOfWeekQuery = from Capture capture in match.Groups["Day"].Captures
-                                             select (DayOfWeek)Enum.Parse(typeof(DayOfWeek), capture.Value, true) into dayOfWeek
+                                             select (DayOfWeek) Enum.Parse(typeof(DayOfWeek), capture.Value, true) into dayOfWeek
                                              select new WeekDay(dayOfWeek) { Offset = num };
 
                         r.ByDay.AddRange(dayOfWeekQuery);

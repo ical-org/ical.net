@@ -1,5 +1,10 @@
-﻿using Ical.Net.CalendarComponents;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System.Collections.Generic;
+using Ical.Net.CalendarComponents;
 
 namespace Ical.Net.Proxies
 {

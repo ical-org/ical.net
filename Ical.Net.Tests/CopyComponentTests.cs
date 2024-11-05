@@ -1,11 +1,16 @@
-﻿using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
-using Ical.Net.Serialization;
-using NUnit.Framework;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using Ical.Net.Serialization;
+using NUnit.Framework;
 
 namespace Ical.Net.Tests
 {
@@ -71,7 +76,7 @@ namespace Ical.Net.Tests
             orig.Transparency = TransparencyType.Opaque;
             orig.Attachments.Add(new Attachment("https://original.org/"));
             var copy = orig.Copy<CalendarEvent>();
-            
+
             copy.Uid = "Goodbye";
             copy.Summary = "Copy summary";
 
@@ -106,7 +111,7 @@ namespace Ical.Net.Tests
             {
                 Start = new CalDateTime(_now),
                 End = new CalDateTime(_later),
-                Entries = { new FreeBusyEntry { Language = "English", StartTime = new CalDateTime(2024, 10, 1), Duration = TimeSpan.FromDays(1), Status = FreeBusyStatus.Busy}}
+                Entries = { new FreeBusyEntry { Language = "English", StartTime = new CalDateTime(2024, 10, 1), Duration = TimeSpan.FromDays(1), Status = FreeBusyStatus.Busy } }
             };
 
             var copy = orig.Copy<FreeBusy>();

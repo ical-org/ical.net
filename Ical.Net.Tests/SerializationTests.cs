@@ -1,9 +1,8 @@
-﻿using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
-using Ical.Net.Serialization;
-using Ical.Net.Serialization.DataTypes;
-using Ical.Net.Utility;
-using NUnit.Framework;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,6 +10,12 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using Ical.Net.Serialization;
+using Ical.Net.Serialization.DataTypes;
+using Ical.Net.Utility;
+using NUnit.Framework;
 
 namespace Ical.Net.Tests
 {
@@ -52,12 +57,12 @@ namespace Ical.Net.Tests
                     Assert.That(p2, Is.EqualTo(p1), "The properties '" + p1.Name + "' are not equal.");
                     if (p1.Value is IComparable)
                     {
-                        if (((IComparable)p1.Value).CompareTo(p2.Value) != 0)
+                        if (((IComparable) p1.Value).CompareTo(p2.Value) != 0)
                             continue;
                     }
                     else if (p1.Value is IEnumerable)
                     {
-                        CompareEnumerables((IEnumerable)p1.Value, (IEnumerable)p2.Value, p1.Name);
+                        CompareEnumerables((IEnumerable) p1.Value, (IEnumerable) p2.Value, p1.Name);
                     }
                     else
                     {
@@ -311,7 +316,7 @@ namespace Ical.Net.Tests
             cal.Events.Add(evt);
             // new Uri() creates lowercase for the "MAILTO:" part
             // according to the RFC 2368 specification
-            const string org = "MAILTO:james@example.com"; 
+            const string org = "MAILTO:james@example.com";
             evt.Organizer = new Organizer(org);
 
             evt.Attendees.AddRange(_attendees);

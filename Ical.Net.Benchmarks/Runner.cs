@@ -1,6 +1,11 @@
-﻿using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Running;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System.IO;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Running;
 
 namespace Ical.Net.Benchmarks
 {

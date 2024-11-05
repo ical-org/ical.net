@@ -1,9 +1,14 @@
-﻿using Ical.Net.DataTypes;
-using Ical.Net.Utility;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.Evaluation
 {
@@ -570,7 +575,7 @@ namespace Ical.Net.Evaluation
                     }
                 }
 
-                Next:
+            Next:
                 dates.RemoveAt(i);
             }
 

@@ -1,5 +1,10 @@
-﻿using Ical.Net.Collections;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System.Linq;
+using Ical.Net.Collections;
 
 namespace Ical.Net
 {

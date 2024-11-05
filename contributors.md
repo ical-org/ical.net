@@ -1,4 +1,4 @@
-### Maintainers
+﻿### Maintainers
 * Rian Stockbower <rstockbower@gmail.com>
 
 ### Contributors

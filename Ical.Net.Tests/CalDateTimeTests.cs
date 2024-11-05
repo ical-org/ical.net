@@ -1,9 +1,14 @@
-﻿using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
-using NUnit.Framework;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using NUnit.Framework;
 
 namespace Ical.Net.Tests
 {
@@ -32,7 +37,7 @@ namespace Ical.Net.Tests
         public void ToTimeZoneTests(CalendarEvent calendarEvent, string targetTimeZone)
         {
             var startAsUtc = calendarEvent.Start.AsUtc;
-            
+
             var convertedStart = calendarEvent.Start.ToTimeZone(targetTimeZone);
             var convertedAsUtc = convertedStart.AsUtc;
 

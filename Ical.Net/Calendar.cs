@@ -1,14 +1,19 @@
-﻿using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
-using Ical.Net.Proxies;
-using Ical.Net.Serialization;
-using Ical.Net.Utility;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using Ical.Net.Proxies;
+using Ical.Net.Serialization;
+using Ical.Net.Utility;
 
 namespace Ical.Net
 {
@@ -95,7 +100,7 @@ namespace Ical.Net
             {
                 return true;
             }
-            return obj.GetType() == GetType() && Equals((Calendar)obj);
+            return obj.GetType() == GetType() && Equals((Calendar) obj);
         }
 
         public override int GetHashCode()
@@ -269,7 +274,7 @@ namespace Ical.Net
 
             var removeOccurrencesQuery = occurrences
                 .Where(o => o.Source is UniqueComponent)
-                .GroupBy(o => ((UniqueComponent)o.Source).Uid)
+                .GroupBy(o => ((UniqueComponent) o.Source).Uid)
                 .SelectMany(group => group
                     .Where(o => o.Source.RecurrenceId != null)
                     .SelectMany(occurrence => group.
@@ -302,7 +307,7 @@ namespace Ical.Net
             if (obj is T)
             {
                 this.AddChild(obj);
-                return (T)obj;
+                return (T) obj;
             }
             return default(T);
         }
@@ -339,7 +344,7 @@ namespace Ical.Net
             {
                 if (child is IUniqueComponent)
                 {
-                    if (!UniqueComponents.ContainsKey(((IUniqueComponent)child).Uid))
+                    if (!UniqueComponents.ContainsKey(((IUniqueComponent) child).Uid))
                     {
                         this.AddChild(child);
                     }

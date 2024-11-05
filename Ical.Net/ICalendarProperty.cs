@@ -1,4 +1,9 @@
-﻿using Ical.Net.Collections.Interfaces;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
+using Ical.Net.Collections.Interfaces;
 using Ical.Net.DataTypes;
 
 namespace Ical.Net

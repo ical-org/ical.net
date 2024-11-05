@@ -1,9 +1,14 @@
-﻿using Ical.Net.CalendarComponents;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
+using System;
+using System.Collections.Generic;
+using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 
 namespace Ical.Net.Tests
 {

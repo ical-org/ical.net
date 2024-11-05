@@ -1,5 +1,10 @@
-using Ical.Net.CalendarComponents;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
+using Ical.Net.CalendarComponents;
 
 namespace Ical.Net.DataTypes
 {
@@ -28,7 +33,7 @@ namespace Ical.Net.DataTypes
             {
                 return false;
             }
-            return obj is Occurrence && Equals((Occurrence)obj);
+            return obj is Occurrence && Equals((Occurrence) obj);
         }
 
         public override int GetHashCode()

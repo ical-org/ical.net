@@ -1,9 +1,14 @@
-﻿using Ical.Net.Collections.Interfaces;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
+using Ical.Net.Collections.Interfaces;
 
 namespace Ical.Net
 {

@@ -1,8 +1,13 @@
-﻿using Ical.Net.Serialization;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using Ical.Net.Serialization;
 
 namespace Ical.Net.Utility
 {

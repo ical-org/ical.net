@@ -1,6 +1,11 @@
-﻿using NUnit.Framework;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System.Collections.Generic;
 using System.Linq;
+using NUnit.Framework;
 
 namespace Ical.Net.Tests
 {

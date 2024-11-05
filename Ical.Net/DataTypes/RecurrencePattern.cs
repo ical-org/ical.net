@@ -1,10 +1,15 @@
-﻿using Ical.Net.Evaluation;
-using Ical.Net.Serialization.DataTypes;
-using Ical.Net.Utility;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Ical.Net.Evaluation;
+using Ical.Net.Serialization.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes
 {
@@ -173,7 +178,7 @@ namespace Ical.Net.DataTypes
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((RecurrencePattern)obj);
+            return obj.GetType() == GetType() && Equals((RecurrencePattern) obj);
         }
 
         public override int GetHashCode()
@@ -185,10 +190,10 @@ namespace Ical.Net.DataTypes
                 hashCode = (hashCode * 397) ^ RestrictionType.GetHashCode();
                 hashCode = (hashCode * 397) ^ EvaluationMode.GetHashCode();
 #pragma warning restore 0618
-                hashCode = (hashCode * 397) ^ (int)Frequency;
+                hashCode = (hashCode * 397) ^ (int) Frequency;
                 hashCode = (hashCode * 397) ^ Until.GetHashCode();
                 hashCode = (hashCode * 397) ^ Count;
-                hashCode = (hashCode * 397) ^ (int)FirstDayOfWeek;
+                hashCode = (hashCode * 397) ^ (int) FirstDayOfWeek;
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(BySecond);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByMinute);
                 hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByHour);

@@ -1,4 +1,9 @@
-﻿using System.IO;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
+using System.IO;
 using System.Reflection;
 
 namespace Ical.Net.Tests

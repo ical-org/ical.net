@@ -1,4 +1,9 @@
-﻿using System;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
+using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -20,7 +25,7 @@ namespace Ical.Net.Serialization.DataTypes
                 return null;
             }
 
-            var ts = (TimeSpan)obj;
+            var ts = (TimeSpan) obj;
 
             if (ts == TimeSpan.Zero)
             {
@@ -37,7 +42,7 @@ namespace Ical.Net.Serialization.DataTypes
             sb.Append("P");
             if (ts.Days > 7 && ts.Days % 7 == 0 && ts.Hours == 0 && ts.Minutes == 0 && ts.Seconds == 0)
             {
-                sb.Append(Math.Round(Math.Abs((double)ts.Days) / 7) + "W");
+                sb.Append(Math.Round(Math.Abs((double) ts.Days) / 7) + "W");
             }
             else
             {

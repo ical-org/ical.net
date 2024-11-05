@@ -1,10 +1,8 @@
-﻿using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
-using Ical.Net.Evaluation;
-using Ical.Net.Serialization;
-using Ical.Net.Serialization.DataTypes;
-using Ical.Net.Utility;
-using NUnit.Framework;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +10,13 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using Ical.Net.Evaluation;
+using Ical.Net.Serialization;
+using Ical.Net.Serialization.DataTypes;
+using Ical.Net.Utility;
+using NUnit.Framework;
 
 namespace Ical.Net.Tests
 {
@@ -1239,8 +1244,8 @@ namespace Ical.Net.Tests
                 new[]
                 {
                     new CalDateTime(1997, 5, 12, 9, 0, 0, _tzid),
-                    new CalDateTime(1998, 5, 11, 9, 0, 0, _tzid),                    
-                    new CalDateTime(1999, 5, 17, 9, 0, 0, _tzid)                    
+                    new CalDateTime(1998, 5, 11, 9, 0, 0, _tzid),
+                    new CalDateTime(1999, 5, 17, 9, 0, 0, _tzid)
                 },
                 null
             );
@@ -1335,7 +1340,7 @@ namespace Ical.Net.Tests
                     new CalDateTime(2002, 1, 3, 10, 0, 0, _tzid),
                     new CalDateTime(2002, 1, 4, 10, 0, 0, _tzid),
                     new CalDateTime(2002, 1, 5, 10, 0, 0, _tzid),
-                    new CalDateTime(2002, 1, 6, 10, 0, 0, _tzid),                    
+                    new CalDateTime(2002, 1, 6, 10, 0, 0, _tzid),
                     new CalDateTime(2002, 12, 30, 10, 0, 0, _tzid),
                     new CalDateTime(2002, 12, 31, 10, 0, 0, _tzid),
                     new CalDateTime(2003, 1, 1, 10, 0, 0, _tzid),
@@ -1901,7 +1906,7 @@ namespace Ical.Net.Tests
             var end = new CalDateTime(2007, 6, 21, 12, 0, 1, _tzid); // End period is exclusive, not inclusive.
 
             var dateTimes = new List<IDateTime>();
-            for (var dt = start; dt.LessThan(end); dt = (CalDateTime)dt.AddMinutes(1))
+            for (var dt = start; dt.LessThan(end); dt = (CalDateTime) dt.AddMinutes(1))
             {
                 dateTimes.Add(new CalDateTime(dt));
             }
@@ -1918,7 +1923,7 @@ namespace Ical.Net.Tests
             var end = new CalDateTime(2007, 6, 25, 8, 0, 1, _tzid); // End period is exclusive, not inclusive.
 
             var dateTimes = new List<IDateTime>();
-            for (var dt = start; dt.LessThan(end); dt = (CalDateTime)dt.AddHours(1))
+            for (var dt = start; dt.LessThan(end); dt = (CalDateTime) dt.AddHours(1))
             {
                 dateTimes.Add(new CalDateTime(dt));
             }
@@ -2003,7 +2008,7 @@ namespace Ical.Net.Tests
                     // after the start of the evaluation period.
                     // See bug #3007244.
                     // https://sourceforge.net/tracker/?func=detail&aid=3007244&group_id=187422&atid=921236
-                    new CalDateTime(2007, 4, 9, 7, 0, 0, _tzid), 
+                    new CalDateTime(2007, 4, 9, 7, 0, 0, _tzid),
                     new CalDateTime(2007, 4, 10, 1, 0, 0, _tzid),
                     new CalDateTime(2007, 4, 10, 19, 0, 0, _tzid)
                 },
@@ -2087,7 +2092,7 @@ namespace Ical.Net.Tests
                     new CalDateTime(2007, 4, 10, 23, 0, 0)
                 },
                 null
-            );            
+            );
         }
 
         /// <summary>
@@ -2450,7 +2455,7 @@ namespace Ical.Net.Tests
                 new CalDateTime(2010, 2, 1, 0, 0, 0, localTzid),
                 new CalDateTime(2010, 3, 1, 0, 0, 0, localTzid),
                 new[]
-                {                    
+                {
                     new CalDateTime(2010, 2, 2, 8, 00, 00, localTzid),
                     new CalDateTime(2010, 2, 9, 8, 00, 00, localTzid),
                     new CalDateTime(2010, 2, 16, 8, 00, 00, localTzid),
@@ -2489,8 +2494,8 @@ namespace Ical.Net.Tests
                 eventIndex: 0
             );
         }
-        
-                /// <summary>
+
+        /// <summary>
         /// Tests bug BYWEEKNO not working
         /// </summary>
         [Test, Category("Recurrence")]
@@ -2527,7 +2532,7 @@ namespace Ical.Net.Tests
                 Assert.That(recurringPeriods[3].StartTime, Is.EqualTo(new CalDateTime(2020, 1, 27)));
             });
         }
-        
+
         [Test, Category("Recurrence")]
         public void ReccurencePattern_MaxDate_StopsOnCount()
         {
@@ -2582,10 +2587,10 @@ namespace Ical.Net.Tests
             {
                 var start = DateTime.Parse("2010-11-27 9:00:00");
                 var serializer = new RecurrencePatternSerializer();
-                var rp = (RecurrencePattern)serializer.Deserialize(sr);
+                var rp = (RecurrencePattern) serializer.Deserialize(sr);
                 var rpe = new RecurrencePatternEvaluator(rp);
                 var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, rp.Until, false);
-                
+
                 var period = recurringPeriods.ElementAt(recurringPeriods.Count - 1);
 
                 Assert.That(period.StartTime, Is.EqualTo(new CalDateTime(2025, 11, 24, 9, 0, 0)));
@@ -2606,7 +2611,8 @@ namespace Ical.Net.Tests
                 Summary = "29th February Test"
             };
 
-            var pattern = new RecurrencePattern {
+            var pattern = new RecurrencePattern
+            {
                 Frequency = FrequencyType.Monthly,
                 Until = new DateTime(2011, 12, 25, 0, 0, 0, DateTimeKind.Utc),
                 FirstDayOfWeek = DayOfWeek.Sunday,
@@ -2629,7 +2635,7 @@ namespace Ical.Net.Tests
             using (var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126"))
             {
                 var serializer = new RecurrencePatternSerializer();
-                var rp = (RecurrencePattern)serializer.Deserialize(sr);
+                var rp = (RecurrencePattern) serializer.Deserialize(sr);
 
                 Assert.That(rp, Is.Not.Null);
                 Assert.That(rp.Until, Is.EqualTo(new DateTime(2025, 11, 26)));
@@ -2757,7 +2763,7 @@ namespace Ical.Net.Tests
         [TestCase("SECONDLY", 1, true)]
         [TestCase("MINUTELY", 60, true)]
         [TestCase("HOURLY", 3600, true)]
-        [TestCase("DAILY", 24*3600, false)]
+        [TestCase("DAILY", 24 * 3600, false)]
         public void Evaluate1(string freq, int secsPerInterval, bool hasTime)
         {
             Calendar cal = new Calendar();
@@ -2812,8 +2818,8 @@ namespace Ical.Net.Tests
             Assert.That(evaluator, Is.Not.Null);
 
             var occurrences = evaluator.Evaluate(
-                startDate, 
-                DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
+                startDate,
+                DateUtil.SimpleDateTimeToMatch(fromDate, startDate),
                 DateUtil.SimpleDateTimeToMatch(toDate, startDate),
                 false)
                 .OrderBy(o => o.StartTime)
@@ -2845,8 +2851,8 @@ namespace Ical.Net.Tests
             Assert.That(evaluator, Is.Not.Null);
 
             var occurrences = evaluator.Evaluate(
-                startDate, 
-                DateUtil.SimpleDateTimeToMatch(fromDate, startDate), 
+                startDate,
+                DateUtil.SimpleDateTimeToMatch(fromDate, startDate),
                 DateUtil.SimpleDateTimeToMatch(toDate, startDate),
                 false);
             Assert.That(occurrences.Count, Is.Not.EqualTo(0));
@@ -2861,7 +2867,7 @@ namespace Ical.Net.Tests
             evt.End = new CalDateTime(2009, 11, 18, 5, 10, 0);
             evt.RecurrenceRules.Add(new RecurrencePattern(FrequencyType.Daily));
             evt.Summary = "xxxxxxxxxxxxx";
- 
+
             var previousDateAndTime = new CalDateTime(2009, 11, 17, 0, 15, 0);
             var previousDateOnly = new CalDateTime(2009, 11, 17, 23, 15, 0);
             var laterDateOnly = new CalDateTime(2009, 11, 19, 3, 15, 0);
@@ -2910,7 +2916,7 @@ namespace Ical.Net.Tests
 
             RecurrencePattern recur = new RecurrencePattern();
             evt.RecurrenceRules.Add(recur);
-            
+
             Assert.That(() =>
             {
                 _ = evt.GetOccurrences(DateTime.Today.AddDays(1), DateTime.Today.AddDays(2));
@@ -2957,7 +2963,7 @@ namespace Ical.Net.Tests
             // Add the exception dates
             var periods = evaluator.Evaluate(
                 evtStart,
-                DateUtil.GetSimpleDateTimeData(evtStart), 
+                DateUtil.GetSimpleDateTimeData(evtStart),
                 DateUtil.SimpleDateTimeToMatch(evtEnd, evtStart),
                 false)
                 .OrderBy(p => p.StartTime)
@@ -3066,7 +3072,7 @@ END:VCALENDAR";
             var rrule = new RecurrencePattern(FrequencyType.Weekly, interval: 1)
             {
                 Until = DateTime.Parse("2016-08-31T07:00:00"),
-                ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Wednesday)},
+                ByDay = new List<WeekDay> { new WeekDay(DayOfWeek.Wednesday) },
             };
 
             var start = DateTime.Parse("2016-08-01T07:00:00");
@@ -3515,7 +3521,7 @@ END:VCALENDAR";
             Assert.That(calendarB, Is.EqualTo(calendarB));
             Assert.That(calendarB.GetHashCode(), Is.EqualTo(calendarB.GetHashCode()));
             var eventB = calendarB.Events.First();
-            
+
             Assert.Multiple(() =>
             {
                 //Comparing the two...
@@ -3526,7 +3532,7 @@ END:VCALENDAR";
                 Assert.That(eventB, Is.EqualTo(eventA));
                 Assert.That(eventB.GetHashCode(), Is.EqualTo(eventA.GetHashCode()));
             });
-            
+
 
             var exDatesA = eventA.ExceptionDates;
             var exDatesB = eventB.ExceptionDates;

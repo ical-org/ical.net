@@ -1,4 +1,9 @@
-﻿using System;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
+using System;
 
 namespace Ical.Net
 {
@@ -24,7 +29,7 @@ namespace Ical.Net
         {
             var type = GetType();
             var obj = Activator.CreateInstance(type) as ICopyable;
-            
+
             if (obj is not T objOfT) return default(T);
 
             obj.CopyFrom(this);
