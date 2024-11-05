@@ -9,64 +9,63 @@ using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.Collections;
 
-namespace Ical.Net.Proxies
+namespace Ical.Net.Proxies;
+
+public class UniqueComponentListProxy<TComponentType> :
+    CalendarObjectListProxy<TComponentType>,
+    IUniqueComponentList<TComponentType>
+    where TComponentType : class, IUniqueComponent
 {
-    public class UniqueComponentListProxy<TComponentType> :
-        CalendarObjectListProxy<TComponentType>,
-        IUniqueComponentList<TComponentType>
-        where TComponentType : class, IUniqueComponent
+    private readonly Dictionary<string, TComponentType> _lookup;
+
+    public UniqueComponentListProxy(IGroupedCollection<string, ICalendarObject> children) : base(children)
     {
-        private readonly Dictionary<string, TComponentType> _lookup;
+        _lookup = new Dictionary<string, TComponentType>();
+    }
 
-        public UniqueComponentListProxy(IGroupedCollection<string, ICalendarObject> children) : base(children)
+    private TComponentType Search(string uid)
+    {
+        if (_lookup.TryGetValue(uid, out var componentType))
         {
-            _lookup = new Dictionary<string, TComponentType>();
+            return componentType;
         }
 
-        private TComponentType Search(string uid)
+        var item = this.FirstOrDefault(c => string.Equals(c.Uid, uid, StringComparison.OrdinalIgnoreCase));
+
+        if (item == null)
         {
-            if (_lookup.TryGetValue(uid, out var componentType))
-            {
-                return componentType;
-            }
-
-            var item = this.FirstOrDefault(c => string.Equals(c.Uid, uid, StringComparison.OrdinalIgnoreCase));
-
-            if (item == null)
-            {
-                return default(TComponentType);
-            }
-
-            _lookup[uid] = item;
-            return item;
+            return default(TComponentType);
         }
 
-        public virtual TComponentType this[string uid]
+        _lookup[uid] = item;
+        return item;
+    }
+
+    public virtual TComponentType this[string uid]
+    {
+        get => Search(uid);
+        set
         {
-            get => Search(uid);
-            set
+            // Find the item matching the UID
+            var item = Search(uid);
+
+            if (item != null)
             {
-                // Find the item matching the UID
-                var item = Search(uid);
+                Remove(item);
+            }
 
-                if (item != null)
-                {
-                    Remove(item);
-                }
-
-                if (value != null)
-                {
-                    Add(value);
-                }
+            if (value != null)
+            {
+                Add(value);
             }
         }
+    }
 
-        public void AddRange(IEnumerable<TComponentType> collection)
+    public void AddRange(IEnumerable<TComponentType> collection)
+    {
+        foreach (var element in collection)
         {
-            foreach (var element in collection)
-            {
-                Add(element);
-            }
+            Add(element);
         }
     }
 }

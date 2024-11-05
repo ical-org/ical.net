@@ -6,77 +6,76 @@
 using System.Diagnostics;
 using System.Runtime.Serialization;
 
-namespace Ical.Net.CalendarComponents
+namespace Ical.Net.CalendarComponents;
+
+/// <summary>
+/// This class is used by the parsing framework for iCalendar components.
+/// Generally, you should not need to use this class directly.
+/// </summary>
+[DebuggerDisplay("Component: {Name}")]
+public class CalendarComponent : CalendarObject, ICalendarComponent
 {
     /// <summary>
-    /// This class is used by the parsing framework for iCalendar components.
-    /// Generally, you should not need to use this class directly.
+    /// Returns a list of properties that are associated with the iCalendar object.
     /// </summary>
-    [DebuggerDisplay("Component: {Name}")]
-    public class CalendarComponent : CalendarObject, ICalendarComponent
+    public virtual CalendarPropertyList Properties { get; protected set; }
+
+    public CalendarComponent() : base()
     {
-        /// <summary>
-        /// Returns a list of properties that are associated with the iCalendar object.
-        /// </summary>
-        public virtual CalendarPropertyList Properties { get; protected set; }
+        Initialize();
+    }
 
-        public CalendarComponent() : base()
+    public CalendarComponent(string name) : base(name)
+    {
+        Initialize();
+    }
+
+    private void Initialize()
+    {
+        Properties = new CalendarPropertyList(this);
+    }
+
+    protected override void OnDeserializing(StreamingContext context)
+    {
+        base.OnDeserializing(context);
+
+        Initialize();
+    }
+
+    /// <inheritdoc/>
+    public override void CopyFrom(ICopyable obj)
+    {
+        base.CopyFrom(obj);
+
+        var c = obj as ICalendarComponent;
+        if (c == null)
         {
-            Initialize();
+            return;
         }
 
-        public CalendarComponent(string name) : base(name)
+        Properties.Clear();
+        foreach (var p in c.Properties)
         {
-            Initialize();
+            // Uses CalendarObjectBase.Copy<T>() for a deep copy
+            Properties.Add(p.Copy<ICalendarProperty>());
         }
+    }
 
-        private void Initialize()
-        {
-            Properties = new CalendarPropertyList(this);
-        }
+    /// <summary>
+    /// Adds a property to this component.
+    /// </summary>
+    public virtual void AddProperty(string name, string value)
+    {
+        var p = new CalendarProperty(name, value);
+        AddProperty(p);
+    }
 
-        protected override void OnDeserializing(StreamingContext context)
-        {
-            base.OnDeserializing(context);
-
-            Initialize();
-        }
-
-        /// <inheritdoc/>
-        public override void CopyFrom(ICopyable obj)
-        {
-            base.CopyFrom(obj);
-
-            var c = obj as ICalendarComponent;
-            if (c == null)
-            {
-                return;
-            }
-
-            Properties.Clear();
-            foreach (var p in c.Properties)
-            {
-                // Uses CalendarObjectBase.Copy<T>() for a deep copy
-                Properties.Add(p.Copy<ICalendarProperty>());
-            }
-        }
-
-        /// <summary>
-        /// Adds a property to this component.
-        /// </summary>
-        public virtual void AddProperty(string name, string value)
-        {
-            var p = new CalendarProperty(name, value);
-            AddProperty(p);
-        }
-
-        /// <summary>
-        /// Adds a property to this component.
-        /// </summary>
-        public virtual void AddProperty(ICalendarProperty p)
-        {
-            p.Parent = this;
-            Properties.Set(p.Name, p.Value);
-        }
+    /// <summary>
+    /// Adds a property to this component.
+    /// </summary>
+    public virtual void AddProperty(ICalendarProperty p)
+    {
+        p.Parent = this;
+        Properties.Set(p.Name, p.Value);
     }
 }

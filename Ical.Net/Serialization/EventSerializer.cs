@@ -6,31 +6,30 @@
 using System;
 using Ical.Net.CalendarComponents;
 
-namespace Ical.Net.Serialization
+namespace Ical.Net.Serialization;
+
+public class EventSerializer : ComponentSerializer
 {
-    public class EventSerializer : ComponentSerializer
+    public EventSerializer() { }
+
+    public EventSerializer(SerializationContext ctx) : base(ctx) { }
+
+    public override Type TargetType => typeof(CalendarEvent);
+
+    public override string SerializeToString(object obj)
     {
-        public EventSerializer() { }
+        var evt = obj as CalendarEvent;
 
-        public EventSerializer(SerializationContext ctx) : base(ctx) { }
-
-        public override Type TargetType => typeof(CalendarEvent);
-
-        public override string SerializeToString(object obj)
+        CalendarEvent actualEvent;
+        if (evt.Properties.ContainsKey("DURATION") && evt.Properties.ContainsKey("DTEND"))
         {
-            var evt = obj as CalendarEvent;
-
-            CalendarEvent actualEvent;
-            if (evt.Properties.ContainsKey("DURATION") && evt.Properties.ContainsKey("DTEND"))
-            {
-                actualEvent = evt.Copy<CalendarEvent>();
-                actualEvent.Properties.Remove("DURATION");
-            }
-            else
-            {
-                actualEvent = evt;
-            }
-            return base.SerializeToString(actualEvent);
+            actualEvent = evt.Copy<CalendarEvent>();
+            actualEvent.Properties.Remove("DURATION");
         }
+        else
+        {
+            actualEvent = evt;
+        }
+        return base.SerializeToString(actualEvent);
     }
 }

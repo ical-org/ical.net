@@ -6,75 +6,74 @@
 using System;
 using Ical.Net.Serialization.DataTypes;
 
-namespace Ical.Net.DataTypes
+namespace Ical.Net.DataTypes;
+
+/// <summary>
+/// Represents a time offset from UTC (Coordinated Universal Time).
+/// </summary>
+public class UtcOffset : EncodableDataType
 {
-    /// <summary>
-    /// Represents a time offset from UTC (Coordinated Universal Time).
-    /// </summary>
-    public class UtcOffset : EncodableDataType
+    public TimeSpan Offset { get; private set; }
+
+    public bool Positive => Offset >= TimeSpan.Zero;
+
+    public int Hours => Math.Abs(Offset.Hours);
+
+    public int Minutes => Math.Abs(Offset.Minutes);
+
+    public int Seconds => Math.Abs(Offset.Seconds);
+
+    public UtcOffset() { }
+
+    public UtcOffset(string value) : this()
     {
-        public TimeSpan Offset { get; private set; }
+        Offset = UtcOffsetSerializer.GetOffset(value);
+    }
 
-        public bool Positive => Offset >= TimeSpan.Zero;
+    public UtcOffset(TimeSpan ts)
+    {
+        Offset = ts;
+    }
 
-        public int Hours => Math.Abs(Offset.Hours);
+    public static implicit operator UtcOffset(TimeSpan ts) => new UtcOffset(ts);
 
-        public int Minutes => Math.Abs(Offset.Minutes);
+    public static explicit operator TimeSpan(UtcOffset o) => o.Offset;
 
-        public int Seconds => Math.Abs(Offset.Seconds);
+    public virtual DateTime ToUtc(DateTime dt) => DateTime.SpecifyKind(dt.Add(-Offset), DateTimeKind.Utc);
 
-        public UtcOffset() { }
+    public virtual DateTime ToLocal(DateTime dt) => DateTime.SpecifyKind(dt.Add(Offset), DateTimeKind.Local);
 
-        public UtcOffset(string value) : this()
+    protected bool Equals(UtcOffset other) => Offset == other.Offset;
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj))
         {
-            Offset = UtcOffsetSerializer.GetOffset(value);
+            return false;
         }
-
-        public UtcOffset(TimeSpan ts)
+        if (ReferenceEquals(this, obj))
         {
-            Offset = ts;
+            return true;
         }
-
-        public static implicit operator UtcOffset(TimeSpan ts) => new UtcOffset(ts);
-
-        public static explicit operator TimeSpan(UtcOffset o) => o.Offset;
-
-        public virtual DateTime ToUtc(DateTime dt) => DateTime.SpecifyKind(dt.Add(-Offset), DateTimeKind.Utc);
-
-        public virtual DateTime ToLocal(DateTime dt) => DateTime.SpecifyKind(dt.Add(Offset), DateTimeKind.Local);
-
-        protected bool Equals(UtcOffset other) => Offset == other.Offset;
-
-        public override bool Equals(object obj)
+        if (obj.GetType() != GetType())
         {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
-            return Equals((UtcOffset) obj);
+            return false;
         }
+        return Equals((UtcOffset) obj);
+    }
 
-        public override int GetHashCode() => Offset.GetHashCode();
+    public override int GetHashCode() => Offset.GetHashCode();
 
-        public override string ToString() => (Positive ? "+" : "-") + Hours.ToString("00") + Minutes.ToString("00") + (Seconds != 0 ? Seconds.ToString("00") : string.Empty);
+    public override string ToString() => (Positive ? "+" : "-") + Hours.ToString("00") + Minutes.ToString("00") + (Seconds != 0 ? Seconds.ToString("00") : string.Empty);
 
-        /// <inheritdoc/>
-        public override void CopyFrom(ICopyable obj)
+    /// <inheritdoc/>
+    public override void CopyFrom(ICopyable obj)
+    {
+        base.CopyFrom(obj);
+
+        if (obj is UtcOffset o)
         {
-            base.CopyFrom(obj);
-
-            if (obj is UtcOffset o)
-            {
-                Offset = o.Offset;
-            }
+            Offset = o.Offset;
         }
     }
 }

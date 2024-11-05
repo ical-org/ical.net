@@ -3,13 +3,12 @@
 // Licensed under the MIT license.
 //
 
-namespace Ical.Net
+namespace Ical.Net;
+
+public interface IMergeable
 {
-    public interface IMergeable
-    {
-        /// <summary>
-        /// Merges this object with another.
-        /// </summary>
-        void MergeWith(IMergeable obj);
-    }
+    /// <summary>
+    /// Merges this object with another.
+    /// </summary>
+    void MergeWith(IMergeable obj);
 }

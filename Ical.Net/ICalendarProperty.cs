@@ -6,10 +6,9 @@
 using Ical.Net.Collections.Interfaces;
 using Ical.Net.DataTypes;
 
-namespace Ical.Net
+namespace Ical.Net;
+
+public interface ICalendarProperty : ICalendarParameterCollectionContainer, ICalendarObject, IValueObject<object>
 {
-    public interface ICalendarProperty : ICalendarParameterCollectionContainer, ICalendarObject, IValueObject<object>
-    {
-        object Value { get; set; }
-    }
+    object Value { get; set; }
 }

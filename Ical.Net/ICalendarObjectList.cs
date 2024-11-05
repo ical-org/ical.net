@@ -5,11 +5,10 @@
 
 using Ical.Net.Collections;
 
-namespace Ical.Net
+namespace Ical.Net;
+
+public interface ICalendarObjectList<TType> :
+    IGroupedCollection<string, TType> where TType : class, ICalendarObject
 {
-    public interface ICalendarObjectList<TType> :
-        IGroupedCollection<string, TType> where TType : class, ICalendarObject
-    {
-        TType this[int index] { get; }
-    }
+    TType this[int index] { get; }
 }

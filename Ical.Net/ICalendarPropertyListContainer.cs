@@ -3,10 +3,9 @@
 // Licensed under the MIT license.
 //
 
-namespace Ical.Net
+namespace Ical.Net;
+
+public interface ICalendarPropertyListContainer : ICalendarObject
 {
-    public interface ICalendarPropertyListContainer : ICalendarObject
-    {
-        CalendarPropertyList Properties { get; }
-    }
+    CalendarPropertyList Properties { get; }
 }
