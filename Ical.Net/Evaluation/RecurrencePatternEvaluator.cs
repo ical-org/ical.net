@@ -230,7 +230,7 @@ namespace Ical.Net.Evaluation
                 }
             }
         }
-#pragma warning 0618 restore
+#pragma warning restore 0618
         /// <summary>
         /// Returns a list of start dates in the specified period represented by this recurrence pattern.
         /// This method includes a base date argument, which indicates the start of the first occurrence of this recurrence.

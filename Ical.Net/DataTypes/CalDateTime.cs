@@ -30,6 +30,11 @@ namespace Ical.Net.DataTypes
         /// </summary>
         public CalDateTime() { }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="CalDateTime"/> class
+        /// respecting the <see cref="IDateTime.HasTime"/> setting.
+        /// </summary>
+        /// <param name="value"></param>
         public CalDateTime(IDateTime value)
         {
             if (value.HasTime)
@@ -38,49 +43,118 @@ namespace Ical.Net.DataTypes
                 Initialize(new DateOnly(value.Year, value.Month, value.Day), null, value.Date.Kind, value.TzId, null);
         }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="CalDateTime"/> class
+        /// and sets the <see cref="TzId"/> to "UTC" if the <paramref name="value"/>
+        /// has a <see cref="DateTime.Kind"/> of <see cref="DateTimeKind.Utc"/>.
+        /// </summary>
+        /// <param name="value"></param>
         public CalDateTime(DateTime value) : this(value, value.Kind == DateTimeKind.Utc ? "UTC" : null)
         { }
 
         /// <summary>
-        /// Specifying a `tzId` value will override `value`'s `DateTimeKind` property. If the time zone specified is UTC, the underlying `DateTimeKind` will be
-        /// `Utc`. If a non-UTC time zone is specified, the underlying `DateTimeKind` property will be `Local`. If no time zone is specified, the `DateTimeKind`
-        /// property will be left untouched.
+        /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified time zone.
         /// </summary>
+        /// <param name="value"></param>
+        /// <param name="tzId">The specified value will override value's <see cref="DateTime.Kind"/> property.
+        /// If the time zone specified is UTC, the underlying <see cref="DateTime.Kind"/> will be
+        /// <see cref="DateTimeKind.Utc"/>. If a non-UTC time zone is specified, the underlying
+        /// <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Local"/>.
+        /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be left untouched.</param>
         public CalDateTime(DateTime value, string tzId)
         {
             Initialize(new DateOnly(value.Year, value.Month, value.Day), new TimeOnly(value.Hour, value.Minute, value.Second), value.Date.Kind, tzId, null);
         }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="CalDateTime"/> class
+        /// with the <see cref="Value"/>'s <see cref="DateTime.Kind"/> set to <see cref="DateTimeKind.Unspecified"/>.
+        /// </summary>
         public CalDateTime(int year, int month, int day, int hour, int minute, int second)
         {
             Initialize(new DateOnly(year, month, day), new TimeOnly(hour, minute, second), DateTimeKind.Unspecified, null, null);
         }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified time zone.
+        /// </summary>
+        /// <param name="second"></param>
+        /// <param name="tzId">The specified value will override value's <see cref="DateTime.Kind"/> property.
+        /// If a non-UTC time zone is specified, the underlying  <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Local"/>.
+        /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Unspecified"/>.
+        /// </param>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <param name="day"></param>
+        /// <param name="hour"></param>
+        /// <param name="minute"></param>
         public CalDateTime(int year, int month, int day, int hour, int minute, int second, string tzId)
         {
             Initialize(new DateOnly(year, month, day), new TimeOnly(hour, minute, second), DateTimeKind.Unspecified, tzId, null);
         }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified time zone.
+        /// </summary>
+        /// <param name="second"></param>
+        /// <param name="tzId">The specified value will override value's <see cref="DateTime.Kind"/> property.
+        /// If a non-UTC time zone is specified, the underlying  <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Local"/>.
+        /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Unspecified"/>.
+        /// </param>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <param name="day"></param>
+        /// <param name="hour"></param>
+        /// <param name="minute"></param>
+        /// <param name="cal"></param>
         public CalDateTime(int year, int month, int day, int hour, int minute, int second, string tzId, Calendar cal)
         {
             Initialize(new DateOnly(year, month, day), new TimeOnly(hour, minute, second), DateTimeKind.Unspecified, tzId, cal);
         }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="CalDateTime"/> class
+        /// with the <see cref="Value"/>'s <see cref="DateTime.Kind"/> set to <see cref="DateTimeKind.Unspecified"/>.
+        /// </summary>
         public CalDateTime(int year, int month, int day)
         {
             Initialize(new DateOnly(year, month, day), null, DateTimeKind.Unspecified, null, null);
         }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified time zone.
+        /// </summary>
+        /// <param name="tzId">The specified value will override value's <see cref="DateTime.Kind"/> property.
+        /// If a non-UTC time zone is specified, the underlying  <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Local"/>.
+        /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Unspecified"/>.
+        /// </param>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <param name="day"></param>
         public CalDateTime(int year, int month, int day, string tzId)
         {
             Initialize(new DateOnly(year, month, day), null, DateTimeKind.Unspecified, tzId, null);
         }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified time zone.
+        /// </summary>
+        /// <param name="tzId">The specified value will override value's <see cref="DateTime.Kind"/> property.
+        /// If a non-UTC time zone is specified, the underlying  <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Local"/>.
+        /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Unspecified"/>.
+        /// </param>
+        /// <param name="date"></param>
+        /// <param name="time"></param>
         public CalDateTime(DateOnly date, TimeOnly time, string tzId = null)
         {
             Initialize(date, time, DateTimeKind.Unspecified, tzId, null);
         }
 
+        /// <summary>
+        /// Creates a new instance of the <see cref="CalDateTime"/> class by parsing <paramref name="value"/>
+        /// using the <see cref="DateTimeSerializer"/>.
+        /// </summary>
+        /// <param name="value">An iCalendar-compatible date or date-time string.</param>
         public CalDateTime(string value)
         {
             var serializer = new DateTimeSerializer();
@@ -88,7 +162,7 @@ namespace Ical.Net.DataTypes
         }
 
         /// <summary>
-        /// Sets the date/time for <see cref="Value"/> so that it
+        /// Sets the <see cref="DateTime"/> <see cref="Value"/> so that it
         /// can be used as a date-only or a date-time value.
         /// </summary>
         /// <param name="date"></param>
@@ -110,7 +184,7 @@ namespace Ical.Net.DataTypes
             _timeOnly = time;
 
             if ((!string.IsNullOrWhiteSpace(tzId) && !tzId.Equals("UTC", StringComparison.OrdinalIgnoreCase))
-                || (string.IsNullOrEmpty(tzId) && kind == DateTimeKind.Local))
+                || (string.IsNullOrWhiteSpace(tzId) && kind == DateTimeKind.Local))
             {
                 // Definitely local
                 TzId = tzId;
@@ -134,13 +208,14 @@ namespace Ical.Net.DataTypes
                 TzId = string.Empty;
 
                 _value = time.HasValue
-                    ? new DateTime(date.Year, date.Month, date.Day, time.Value.Hour, time.Value.Minute, time.Value.Second, DateTimeKind.Unspecified)
-                    : new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, DateTimeKind.Unspecified);
+                    ? new DateTime(date.Year, date.Month, date.Day, time.Value.Hour, time.Value.Minute, time.Value.Second, kind)
+                    : new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, kind);
             }
 
             AssociatedObject = cal;
         }
 
+        /// <inheritdoc/>
         public override ICalendarObject AssociatedObject
         {
             get => base.AssociatedObject;
@@ -180,9 +255,11 @@ namespace Ical.Net.DataTypes
         public bool Equals(CalDateTime other)
             => this == other;
 
+        /// <inheritdoc/>
         public override bool Equals(object? obj)
             => obj is IDateTime && (CalDateTime)obj == this;
 
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             unchecked
@@ -265,7 +342,7 @@ namespace Ical.Net.DataTypes
         }
 
         /// <summary>
-        /// Returns a representation of the DateTime in Coordinated Universal Time (UTC)
+        /// Returns a representation of the <see cref="DateTime"/> in UTC.
         /// </summary>
         public DateTime AsUtc
         {
@@ -297,8 +374,8 @@ namespace Ical.Net.DataTypes
         private DateTime _value;
 
         /// <summary>
-        /// Gets/sets the underlying DateTime value stored.
-        /// Use <see cref="SetValue"/> instead.
+        /// Gets the underlying <see cref="DateTime"/> <see cref="Value"/>.
+        /// Use <see cref="SetValue"/> for setting the value.
         /// </summary>
         public DateTime Value
         {
@@ -329,13 +406,12 @@ namespace Ical.Net.DataTypes
         }
 
         /// <summary>
-        /// Returns true if the underlying DateTime value is in UTC.
+        /// Returns true if the underlying <see cref="DateTime"/> <see cref="Value"/> is in UTC.
         /// </summary>
         public bool IsUtc => _value.Kind == DateTimeKind.Utc;
 
         /// <summary>
-        /// Returns true if the underlying DateTime has a 'date' part (year, month, day),
-        /// otherwise the DateTime is considered a 'time' only.
+        /// Returns <see langword="true"/> if the underlying <see cref="DateTime"/> <see cref="Value"/> has a 'date' part (year, month, day).
         /// </summary>
         public bool HasDate
         {
@@ -349,8 +425,7 @@ namespace Ical.Net.DataTypes
         }
 
         /// <summary>
-        /// Returns true if the underlying DateTime has a 'time' part (hour, minute, second),
-        /// otherwise the DateTime is considered a 'date' only.
+        /// Returns <see langword="true"/> if the underlying <see cref="DateTime"/> <see cref="Value"/> has a 'time' part (hour, minute, second).
         /// </summary>
         public bool HasTime
         {
@@ -408,30 +483,46 @@ namespace Ical.Net.DataTypes
             }
         }
 
+        /// <summary>
+        /// Gets the time zone name, if it references a time zone.
+        /// This is an alias for <see cref="TzId"/>.
+        /// </summary>
         public string TimeZoneName => TzId;
 
+        /// <inheritdoc cref="DateTime.Year"/>
         public int Year => Value.Year;
 
+        /// <inheritdoc cref="DateTime.Month"/>
         public int Month => Value.Month;
 
+        /// <inheritdoc cref="DateTime.Day"/>
         public int Day => Value.Day;
 
+        /// <inheritdoc cref="DateTime.Hour"/>
         public int Hour => Value.Hour;
 
+        /// <inheritdoc cref="DateTime.Minute"/>
         public int Minute => Value.Minute;
 
+        /// <inheritdoc cref="DateTime.Second"/>
         public int Second => Value.Second;
 
+        /// <inheritdoc cref="DateTime.Millisecond"/>
         public int Millisecond => Value.Millisecond;
 
+        /// <inheritdoc cref="DateTime.Ticks"/>
         public long Ticks => Value.Ticks;
 
+        /// <inheritdoc cref="DateTime.DayOfWeek"/>
         public DayOfWeek DayOfWeek => Value.DayOfWeek;
 
+        /// <inheritdoc cref="DateTime.DayOfYear"/>
         public int DayOfYear => Value.DayOfYear;
 
+        /// <inheritdoc cref="DateTime.Date"/>
         public DateTime Date => Value.Date;
 
+        /// <inheritdoc cref="DateTime.TimeOfDay"/>
         public TimeSpan TimeOfDay => Value.TimeOfDay;
 
         /// <summary>
@@ -542,14 +633,31 @@ namespace Ical.Net.DataTypes
             return dt;
         }
 
+        /// <summary>
+        /// Returns <see langword="true"/> if the current <see cref="IDateTime"/> instance is less than <paramref name="dt"/>.
+        /// </summary>
         public bool LessThan(IDateTime dt) => this < dt;
 
+        /// <summary>
+        /// Returns <see langword="true"/> if the current <see cref="IDateTime"/> instance is greater than <paramref name="dt"/>.
+        /// </summary>
         public bool GreaterThan(IDateTime dt) => this > dt;
 
+        /// <summary>
+        /// Returns <see langword="true"/> if the current <see cref="IDateTime"/> instance is less than or equal to <paramref name="dt"/>.
+        /// </summary>
         public bool LessThanOrEqual(IDateTime dt) => this <= dt;
 
+        /// <summary>
+        /// Returns <see langword="true"/> if the current <see cref="IDateTime"/> instance is greater than or equal to <paramref name="dt"/>.
+        /// </summary>
         public bool GreaterThanOrEqual(IDateTime dt) => this >= dt;
 
+
+        /// <summary>
+        /// Associates the current instance with the specified <see cref="IDateTime"/> object.
+        /// </summary>
+        /// <param name="dt">The <see cref="IDateTime"/> object to associate with.</param>
         public void AssociateWith(IDateTime dt)
         {
             if (AssociatedObject == null && dt.AssociatedObject != null)
@@ -562,6 +670,15 @@ namespace Ical.Net.DataTypes
             }
         }
 
+        /// <summary>
+        /// Compares the current instance with another <see cref="IDateTime"/> object and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other IDateTime.
+        /// </summary>
+        /// <param name="dt">The <see cref="IDateTime"/> object to compare with this instance.</param>
+        /// <returns>A value that indicates the relative order of the objects being compared. The return value has these meanings:
+        /// Less than zero: This instance is less than <paramref name="dt"/>.
+        /// Zero: This instance is equal to <paramref name="dt"/>.
+        /// Greater than zero: This instance is greater than <paramref name="dt"/>.
+        /// </returns>
         public int CompareTo(IDateTime dt)
         {
             if (Equals(dt))
@@ -572,17 +689,18 @@ namespace Ical.Net.DataTypes
             {
                 return -1;
             }
-            if (this > dt)
-            {
-                return 1;
-            }
-            throw new Exception("An error occurred while comparing two IDateTime values.");
+
+            // Meaning "this > dt"
+            return 1;
         }
 
+        /// <inheritdoc />
         public override string ToString() => ToString(null, null);
 
+        /// <inheritdoc cref="ToString()"/>
         public string ToString(string format) => ToString(format, null);
 
+        /// <inheritdoc cref="ToString()"/>
         public string ToString(string format, IFormatProvider formatProvider)
         {
             formatProvider ??= CultureInfo.InvariantCulture;
