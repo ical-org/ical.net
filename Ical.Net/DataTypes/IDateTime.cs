@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 
 namespace Ical.Net.DataTypes
 {
@@ -29,7 +30,7 @@ namespace Ical.Net.DataTypes
         /// <summary>
         /// Gets the time zone name this time is in, if it references a time zone.
         /// </summary>
-        string TimeZoneName { get; }
+        string? TimeZoneName { get; }
 
         /// <summary>
         /// Gets/sets the underlying DateTime value stored.  This should always
@@ -52,7 +53,7 @@ namespace Ical.Net.DataTypes
         /// <summary>
         /// Gets/sets the time zone ID for this date/time value.
         /// </summary>
-        string TzId { get; set; }
+        string? TzId { get; set; }
 
         /// <summary>
         /// Gets the year for this date/time value.

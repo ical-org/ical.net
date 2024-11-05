@@ -131,9 +131,7 @@ namespace Ical.Net.Serialization.DataTypes
                 dt.TzId = "UTC";
             }
 
-            dt.SetValue(datePart, timePart, kind);
- 
-            return dt;
-        }
+            return dt.SetValue(datePart, timePart, kind);
+         }
     }
 }

@@ -68,39 +68,13 @@ namespace Ical.Net.DataTypes
         }
 
         /// <summary>
-        /// Creates a new instance of the <see cref="CalDateTime"/> class
-        /// with the <see cref="Value"/>'s <see cref="DateTime.Kind"/> set to <see cref="DateTimeKind.Unspecified"/>.
-        /// </summary>
-        public CalDateTime(int year, int month, int day, int hour, int minute, int second)
-        {
-            Initialize(new DateOnly(year, month, day), new TimeOnly(hour, minute, second), DateTimeKind.Unspecified, null, null);
-        }
-
-        /// <summary>
         /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified time zone.
+        /// Sets <see cref="DateTimeKind.Unspecified"/> for the <see cref="Value"/> property.
         /// </summary>
         /// <param name="second"></param>
         /// <param name="tzId">The specified value will override value's <see cref="DateTime.Kind"/> property.
         /// If a non-UTC time zone is specified, the underlying  <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Local"/>.
-        /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Unspecified"/>.
-        /// </param>
-        /// <param name="year"></param>
-        /// <param name="month"></param>
-        /// <param name="day"></param>
-        /// <param name="hour"></param>
-        /// <param name="minute"></param>
-        public CalDateTime(int year, int month, int day, int hour, int minute, int second, string tzId)
-        {
-            Initialize(new DateOnly(year, month, day), new TimeOnly(hour, minute, second), DateTimeKind.Unspecified, tzId, null);
-        }
-
-        /// <summary>
-        /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified time zone.
-        /// </summary>
-        /// <param name="second"></param>
-        /// <param name="tzId">The specified value will override value's <see cref="DateTime.Kind"/> property.
-        /// If a non-UTC time zone is specified, the underlying  <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Local"/>.
-        /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Unspecified"/>.
+        /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be left untouched.
         /// </param>
         /// <param name="year"></param>
         /// <param name="month"></param>
@@ -108,31 +82,23 @@ namespace Ical.Net.DataTypes
         /// <param name="hour"></param>
         /// <param name="minute"></param>
         /// <param name="cal"></param>
-        public CalDateTime(int year, int month, int day, int hour, int minute, int second, string? tzId, Calendar cal) //NOSONAR - must keep this signature
+        public CalDateTime(int year, int month, int day, int hour, int minute, int second, string? tzId = null, Calendar? cal = null) //NOSONAR - must keep this signature
         {
             Initialize(new DateOnly(year, month, day), new TimeOnly(hour, minute, second), DateTimeKind.Unspecified, tzId, cal);
         }
 
         /// <summary>
-        /// Creates a new instance of the <see cref="CalDateTime"/> class
-        /// with the <see cref="Value"/>'s <see cref="DateTime.Kind"/> set to <see cref="DateTimeKind.Unspecified"/>.
-        /// </summary>
-        public CalDateTime(int year, int month, int day)
-        {
-            Initialize(new DateOnly(year, month, day), null, DateTimeKind.Unspecified, null, null);
-        }
-
-        /// <summary>
         /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified time zone.
+        /// Sets <see cref="DateTimeKind.Unspecified"/> for the <see cref="Value"/> property.
         /// </summary>
         /// <param name="tzId">The specified value will override value's <see cref="DateTime.Kind"/> property.
         /// If a non-UTC time zone is specified, the underlying  <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Local"/>.
-        /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Unspecified"/>.
+        /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be left untouched.
         /// </param>
         /// <param name="year"></param>
         /// <param name="month"></param>
         /// <param name="day"></param>
-        public CalDateTime(int year, int month, int day, string tzId)
+        public CalDateTime(int year, int month, int day, string? tzId = null)
         {
             Initialize(new DateOnly(year, month, day), null, DateTimeKind.Unspecified, tzId, null);
         }
@@ -140,15 +106,16 @@ namespace Ical.Net.DataTypes
         /// <summary>
         /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified time zone.
         /// </summary>
+        /// <param name="kind">If <see langword="null"/>, <see cref="DateTimeKind.Unspecified"/> is used.</param>
         /// <param name="tzId">The specified value will override value's <see cref="DateTime.Kind"/> property.
-        /// If a non-UTC time zone is specified, the underlying  <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Local"/>.
-        /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Unspecified"/>.
+        /// If a non-UTC time zone is specified, the underlying <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Local"/>.
+        /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be left untouched.
         /// </param>
         /// <param name="date"></param>
         /// <param name="time"></param>
-        public CalDateTime(DateOnly date, TimeOnly time, string? tzId = null)
+        public CalDateTime(DateOnly date, TimeOnly? time, DateTimeKind? kind = null, string? tzId = null)
         {
-            Initialize(date, time, DateTimeKind.Unspecified, tzId, null);
+            Initialize(date, time, kind ?? DateTimeKind.Unspecified, tzId, null);
         }
 
         /// <summary>
@@ -164,20 +131,24 @@ namespace Ical.Net.DataTypes
         }
 
         /// <summary>
-        /// Sets the <see cref="DateTime"/> <see cref="Value"/> so that it
-        /// can be used as a date-only or a date-time value.
+        /// Sets the <see cref="Value"/> by re-initialing the <see cref="CalDateTime"/> instance.
+        /// Keeps any associated <see cref="Calendar"/> unchanged.
         /// </summary>
         /// <param name="date"></param>
         /// <param name="time"></param>
         /// <param name="kind"></param>
-        public void SetValue(DateOnly date, TimeOnly? time, DateTimeKind kind)
+        /// <param name="tzId">The time zone ID. If <see langword="null"/> (default) the current <see cref="TzId"/> applies.
+        /// <para/>
+        /// The time zone will override date values' <see cref="DateTime.Kind"/> property.
+        /// If a non-UTC time zone is specified, the underlying  <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Local"/>.
+        /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be left untouched.
+        /// </param>
+        /// <returns>This <see cref="CalDateTime"/> instance.</returns>
+        public CalDateTime SetValue(DateOnly date, TimeOnly? time, DateTimeKind kind, string? tzId = null)
         {
-            _value = time.HasValue
-                ? new DateTime(date.Year, date.Month, date.Day, time.Value.Hour, time.Value.Minute, time.Value.Second, kind)
-                : new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, kind);
-
-            _dateOnly = date;
-            _timeOnly = time;
+             tzId ??= TzId;
+             Initialize(date, time, kind, tzId, Calendar);
+             return this;
         }
 
         private void Initialize(DateOnly date, TimeOnly? time, DateTimeKind kind, string? tzId, Calendar? cal)
@@ -323,7 +294,8 @@ namespace Ical.Net.DataTypes
         public static implicit operator CalDateTime(DateTime left) => new CalDateTime(left);
 
         /// <summary>
-        /// Converts the date/time to the date/time of the computer running the program. If the DateTimeKind is Unspecified, it's assumed that the underlying
+        /// Converts the date/time to the date/time of the computer running the program.
+        /// If the DateTimeKind is Unspecified, it's assumed that the underlying
         /// Value already represents the system's datetime.
         /// </summary>
         public DateTime AsSystemLocal
@@ -575,8 +547,7 @@ namespace Ical.Net.DataTypes
         {
             var dt = Copy<CalDateTime>();
             var newValue = Value.AddMonths(months);
-            dt.SetValue(DateOnly.FromDateTime(newValue), dt._timeOnly, newValue.Kind);
-            return dt;
+            return dt.SetValue(DateOnly.FromDateTime(newValue), dt._timeOnly, newValue.Kind);
         }
 
         /// <inheritdoc cref="DateTime.AddDays"/>
@@ -584,8 +555,7 @@ namespace Ical.Net.DataTypes
         {
             var dt = Copy<CalDateTime>();
             var newValue = Value.AddDays(days);
-            dt.SetValue(DateOnly.FromDateTime(newValue), dt._timeOnly, newValue.Kind);
-            return dt;
+            return dt.SetValue(DateOnly.FromDateTime(newValue), dt._timeOnly, newValue.Kind);
         }
 
         /// <inheritdoc cref="DateTime.AddHours"/>
@@ -593,8 +563,7 @@ namespace Ical.Net.DataTypes
         {
             var dt = Copy<CalDateTime>();
             var newValue = Value.AddHours(hours);
-            dt.SetValue(DateOnly.FromDateTime(newValue), TimeOnly.FromDateTime(newValue), newValue.Kind);
-            return dt;
+            return dt.SetValue(DateOnly.FromDateTime(newValue), TimeOnly.FromDateTime(newValue), newValue.Kind);
         }
 
         /// <inheritdoc cref="DateTime.AddMinutes"/>
@@ -602,8 +571,7 @@ namespace Ical.Net.DataTypes
         {
             var dt = Copy<CalDateTime>();
             var newValue = Value.AddMinutes(minutes);
-            dt.SetValue(DateOnly.FromDateTime(newValue), TimeOnly.FromDateTime(newValue), newValue.Kind);
-            return dt;
+            return dt.SetValue(DateOnly.FromDateTime(newValue), TimeOnly.FromDateTime(newValue), newValue.Kind);
         }
 
         /// <inheritdoc cref="DateTime.AddSeconds"/>
@@ -611,8 +579,7 @@ namespace Ical.Net.DataTypes
         {
             var dt = Copy<CalDateTime>();
             var newValue = Value.AddSeconds(seconds);
-            dt.SetValue(DateOnly.FromDateTime(newValue), TimeOnly.FromDateTime(newValue), newValue.Kind);
-            return dt;
+            return dt.SetValue(DateOnly.FromDateTime(newValue), TimeOnly.FromDateTime(newValue), newValue.Kind);
         }
 
         /// <inheritdoc cref="DateTime.AddMilliseconds"/>
@@ -621,8 +588,7 @@ namespace Ical.Net.DataTypes
         {
             var dt = Copy<CalDateTime>();
             var newValue = Value.AddMilliseconds(milliseconds);
-            dt.SetValue(DateOnly.FromDateTime(newValue), TimeOnly.FromDateTime(newValue), newValue.Kind);
-            return dt;
+            return dt.SetValue(DateOnly.FromDateTime(newValue), TimeOnly.FromDateTime(newValue), newValue.Kind);
         }
 
         /// <inheritdoc cref="DateTime.AddTicks"/>
@@ -631,8 +597,7 @@ namespace Ical.Net.DataTypes
         {
             var dt = Copy<CalDateTime>();
             var newValue = Value.AddTicks(ticks);
-            dt.SetValue(DateOnly.FromDateTime(newValue), TimeOnly.FromDateTime(newValue), newValue.Kind);
-            return dt;
+            return dt.SetValue(DateOnly.FromDateTime(newValue), TimeOnly.FromDateTime(newValue), newValue.Kind);
         }
 
         /// <summary>

@@ -191,6 +191,46 @@ namespace Ical.Net.Tests
         }
 
         [Test]
+        public void SetValue_AppliesSameRulesAsWith_CTOR()
+        {
+            var dateTime = new DateTime(2024, 8, 30, 10, 30, 0, DateTimeKind.Unspecified);
+            var tzId = "Europe/Berlin";
+
+            var dt1 = new CalDateTime(dateTime, tzId);
+            var dt2 = new CalDateTime().SetValue(DateOnly.FromDateTime(dateTime), TimeOnly.FromDateTime(dateTime), dateTime.Kind, tzId);
+
+            Assert.Multiple(() =>
+            {
+                // TzId changes the DateTimeKind to Local
+                Assert.That(dt1.Value.Kind, Is.Not.EqualTo(dateTime.Kind));
+                Assert.That(dt1.Value.Kind, Is.EqualTo(dt2.Value.Kind));
+                Assert.That(dt1.TzId, Is.EqualTo(dt2.TzId));
+            });
+        }
+
+        [Test]
+        public void SetValue_LeavesExistingPropertiesUnchanged()
+        {
+            var cal = new Calendar();
+            var dateTime = new DateTime(2024, 8, 30, 10, 30, 0, DateTimeKind.Unspecified);
+            var tzId = "Europe/Berlin";
+
+            var dt1 = new CalDateTime(dateTime, tzId)
+            {
+                AssociatedObject = cal
+            };
+
+            dt1.SetValue(DateOnly.FromDateTime(dateTime), TimeOnly.FromDateTime(dateTime), dateTime.Kind);
+
+            // Properties should remain unchanged
+            Assert.Multiple(() =>
+            {
+                Assert.That(dt1.TzId, Is.EqualTo(tzId));
+                Assert.That(dt1.Calendar, Is.SameAs(cal));
+            });
+        }
+
+        [Test]
         public void Simple_PropertyAndMethod_Tests()
         {
             var dt = new DateTime(2025, 1, 2, 10, 20, 30, DateTimeKind.Utc);
@@ -198,7 +238,7 @@ namespace Ical.Net.Tests
 
             var c2 = new CalDateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, c.TzId, null);
             var c3 = new CalDateTime(new DateOnly(dt.Year, dt.Month, dt.Day),
-                new TimeOnly(dt.Hour, dt.Minute, dt.Second), c.TzId);
+                new TimeOnly(dt.Hour, dt.Minute, dt.Second), dt.Kind, c.TzId);
 
             Assert.Multiple(() =>
             {
