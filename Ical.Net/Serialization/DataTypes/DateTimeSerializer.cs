@@ -1,4 +1,5 @@
-﻿using Ical.Net.DataTypes;
+﻿#nullable enable
+using Ical.Net.DataTypes;
 using System;
 using System.IO;
 using System.Text;
@@ -24,7 +25,7 @@ namespace Ical.Net.Serialization.DataTypes
 
         public override Type TargetType => typeof(CalDateTime);
 
-        public override string SerializeToString(object obj)
+        public override string? SerializeToString(object obj)
         {
             if (obj is not IDateTime dt)
             {
@@ -80,7 +81,7 @@ namespace Ical.Net.Serialization.DataTypes
         internal static readonly Regex DateOnlyMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))?$", Options, RegexDefaults.Timeout);
         internal static readonly Regex FullDateTimePatternMatch = new Regex(@"^((\d{4})(\d{2})(\d{2}))T((\d{2})(\d{2})(\d{2})(Z)?)$", Options, RegexDefaults.Timeout);
 
-        public override object Deserialize(TextReader tr)
+        public override object? Deserialize(TextReader tr)
         {
             var value = tr.ReadToEnd();
 

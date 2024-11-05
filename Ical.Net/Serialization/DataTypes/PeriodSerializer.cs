@@ -98,7 +98,7 @@ namespace Ical.Net.Serialization.DataTypes
             }
 
             // Only return an object if it has been deserialized correctly.
-            if (p.StartTime != null && p.Duration != null)
+            if (p.StartTime != null)
             {
                 return p;
             }

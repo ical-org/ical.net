@@ -23,7 +23,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore --configuration Release -p:nowarn=1591
+      run: dotnet build --no-restore --configuration Release -p:Nullable=disable -p:nowarn=1591
     - name: Test
       run: dotnet test --no-build --configuration Release --verbosity quiet
 
@@ -48,7 +48,7 @@ jobs:
     - name: Build and pack for publishing
       run: |
         dotnet restore
-        dotnet build --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{env.VERSION}} -p:FileVersion=${{env.VERSION}}.${{github.run_number}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true
+        dotnet build --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{env.VERSION}} -p:FileVersion=${{env.VERSION}}.${{github.run_number}} -p:Nullable=disable -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true
         dotnet pack --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{env.VERSION}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg --no-build -p:PackageVersion=${{env.VERSION}}
     - name: Store artifacts
       uses: actions/upload-artifact@v4

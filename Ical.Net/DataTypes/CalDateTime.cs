@@ -1,4 +1,5 @@
-﻿using Ical.Net.Serialization.DataTypes;
+﻿#nullable enable
+using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
 using NodaTime;
 using System;
@@ -61,7 +62,7 @@ namespace Ical.Net.DataTypes
         /// <see cref="DateTimeKind.Utc"/>. If a non-UTC time zone is specified, the underlying
         /// <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Local"/>.
         /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be left untouched.</param>
-        public CalDateTime(DateTime value, string tzId)
+        public CalDateTime(DateTime value, string? tzId)
         {
             Initialize(new DateOnly(value.Year, value.Month, value.Day), new TimeOnly(value.Hour, value.Minute, value.Second), value.Date.Kind, tzId, null);
         }
@@ -107,7 +108,7 @@ namespace Ical.Net.DataTypes
         /// <param name="hour"></param>
         /// <param name="minute"></param>
         /// <param name="cal"></param>
-        public CalDateTime(int year, int month, int day, int hour, int minute, int second, string tzId, Calendar cal)
+        public CalDateTime(int year, int month, int day, int hour, int minute, int second, string? tzId, Calendar cal) //NOSONAR - must keep this signature
         {
             Initialize(new DateOnly(year, month, day), new TimeOnly(hour, minute, second), DateTimeKind.Unspecified, tzId, cal);
         }
@@ -145,7 +146,7 @@ namespace Ical.Net.DataTypes
         /// </param>
         /// <param name="date"></param>
         /// <param name="time"></param>
-        public CalDateTime(DateOnly date, TimeOnly time, string tzId = null)
+        public CalDateTime(DateOnly date, TimeOnly time, string? tzId = null)
         {
             Initialize(date, time, DateTimeKind.Unspecified, tzId, null);
         }
@@ -158,7 +159,8 @@ namespace Ical.Net.DataTypes
         public CalDateTime(string value)
         {
             var serializer = new DateTimeSerializer();
-            CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
+            CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable 
+                     ?? throw new InvalidOperationException("Failure deserializing value"));
         }
 
         /// <summary>
@@ -178,12 +180,12 @@ namespace Ical.Net.DataTypes
             _timeOnly = time;
         }
 
-        private void Initialize(DateOnly date, TimeOnly? time, DateTimeKind kind, string tzId, Calendar cal)
+        private void Initialize(DateOnly date, TimeOnly? time, DateTimeKind kind, string? tzId, Calendar? cal)
         {
             _dateOnly = date;
             _timeOnly = time;
 
-            if ((!string.IsNullOrWhiteSpace(tzId) && !tzId.Equals("UTC", StringComparison.OrdinalIgnoreCase))
+            if ((tzId != null && !string.IsNullOrWhiteSpace(tzId) && !tzId.Equals("UTC", StringComparison.OrdinalIgnoreCase))
                 || (string.IsNullOrWhiteSpace(tzId) && kind == DateTimeKind.Local))
             {
                 // Definitely local
@@ -205,7 +207,7 @@ namespace Ical.Net.DataTypes
             else
             {
                 // Unspecified
-                TzId = string.Empty;
+                TzId = null;
 
                 _value = time.HasValue
                     ? new DateTime(date.Year, date.Month, date.Day, time.Value.Hour, time.Value.Minute, time.Value.Second, kind)
@@ -216,7 +218,7 @@ namespace Ical.Net.DataTypes
         }
 
         /// <inheritdoc/>
-        public override ICalendarObject AssociatedObject
+        public override ICalendarObject? AssociatedObject
         {
             get => base.AssociatedObject;
             set
@@ -272,19 +274,19 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        public static bool operator <(CalDateTime left, IDateTime right)
+        public static bool operator <(CalDateTime? left, IDateTime? right)
             => left != null && right != null && left.AsUtc < right.AsUtc;
 
-        public static bool operator >(CalDateTime left, IDateTime right)
+        public static bool operator >(CalDateTime? left, IDateTime? right)
             => left != null && right != null && left.AsUtc > right.AsUtc;
 
-        public static bool operator <=(CalDateTime left, IDateTime right)
+        public static bool operator <=(CalDateTime? left, IDateTime? right)
             => left != null && right != null && left.AsUtc <= right.AsUtc;
 
-        public static bool operator >=(CalDateTime left, IDateTime right)
+        public static bool operator >=(CalDateTime? left, IDateTime? right)
             => left != null && right != null && left.AsUtc >= right.AsUtc;
 
-        public static bool operator ==(CalDateTime left, IDateTime right)
+        public static bool operator ==(CalDateTime? left, IDateTime? right)
         {
             return ReferenceEquals(left, null) || ReferenceEquals(right, null)
                 ? ReferenceEquals(left, right)
@@ -295,13 +297,13 @@ namespace Ical.Net.DataTypes
                     && string.Equals(left.TzId, right.TzId, StringComparison.OrdinalIgnoreCase);
         }
 
-        public static bool operator !=(CalDateTime left, IDateTime right)
+        public static bool operator !=(CalDateTime? left, IDateTime? right)
             => !(left == right);
 
-        public static TimeSpan operator -(CalDateTime left, IDateTime right)
+        public static TimeSpan? operator -(CalDateTime? left, IDateTime? right)
         {
-            left.AssociateWith(right);
-            return left.AsUtc - right.AsUtc;
+            left?.AssociateWith(right);
+            return left?.AsUtc - right?.AsUtc;
         }
 
         public static IDateTime operator -(CalDateTime left, TimeSpan right)
@@ -438,7 +440,7 @@ namespace Ical.Net.DataTypes
             }
         }
 
-        private string _tzId = string.Empty;
+        private string? _tzId = string.Empty;
 
         /// <summary>
         /// Setting the <see cref="TzId"/> to a local time zone will set <see cref="Value"/> to <see cref="DateTimeKind.Local"/>.
@@ -447,7 +449,7 @@ namespace Ical.Net.DataTypes
         /// Setting the TzId will NOT incur a UTC offset conversion.
         /// To convert to another time zone, use <see cref="ToTimeZone"/>.
         /// </summary>
-        public string TzId
+        public string? TzId
         {
             get
             {
@@ -487,7 +489,7 @@ namespace Ical.Net.DataTypes
         /// Gets the time zone name, if it references a time zone.
         /// This is an alias for <see cref="TzId"/>.
         /// </summary>
-        public string TimeZoneName => TzId;
+        public string? TimeZoneName => TzId;
 
         /// <inheritdoc cref="DateTime.Year"/>
         public int Year => Value.Year;
@@ -528,7 +530,7 @@ namespace Ical.Net.DataTypes
         /// <summary>
         /// Returns a representation of the <see cref="IDateTime"/> in the <paramref name="tzId"/> time zone
         /// </summary>
-        public IDateTime ToTimeZone(string tzId)
+        public IDateTime ToTimeZone(string? tzId)
         {
             // If TzId is empty, it's a system-local datetime, so we should use the system time zone as the starting point.
             var originalTzId = string.IsNullOrWhiteSpace(TzId)
@@ -558,7 +560,7 @@ namespace Ical.Net.DataTypes
 
         public IDateTime Subtract(TimeSpan ts) => this - ts;
 
-        public TimeSpan Subtract(IDateTime dt) => this - dt;
+        public TimeSpan Subtract(IDateTime dt) => (TimeSpan)(this - dt)!;
 
         /// <inheritdoc cref="DateTime.AddYears"/>
         public IDateTime AddYears(int years)
@@ -658,13 +660,13 @@ namespace Ical.Net.DataTypes
         /// Associates the current instance with the specified <see cref="IDateTime"/> object.
         /// </summary>
         /// <param name="dt">The <see cref="IDateTime"/> object to associate with.</param>
-        public void AssociateWith(IDateTime dt)
+        public void AssociateWith(IDateTime? dt)
         {
-            if (AssociatedObject == null && dt.AssociatedObject != null)
+            if (AssociatedObject == null && dt?.AssociatedObject != null)
             {
                 AssociatedObject = dt.AssociatedObject;
             }
-            else if (AssociatedObject != null && dt.AssociatedObject == null)
+            else if (AssociatedObject != null && dt?.AssociatedObject == null && dt != null)
             {
                 dt.AssociatedObject = AssociatedObject;
             }
@@ -679,12 +681,18 @@ namespace Ical.Net.DataTypes
         /// Zero: This instance is equal to <paramref name="dt"/>.
         /// Greater than zero: This instance is greater than <paramref name="dt"/>.
         /// </returns>
-        public int CompareTo(IDateTime dt)
+        public int CompareTo(IDateTime? dt)
         {
             if (Equals(dt))
             {
                 return 0;
             }
+
+            if (dt == null)
+            {
+                return 1;
+            }
+
             if (this < dt)
             {
                 return -1;
@@ -698,10 +706,10 @@ namespace Ical.Net.DataTypes
         public override string ToString() => ToString(null, null);
 
         /// <inheritdoc cref="ToString()"/>
-        public string ToString(string format) => ToString(format, null);
+        public string ToString(string? format) => ToString(format, null);
 
         /// <inheritdoc cref="ToString()"/>
-        public string ToString(string format, IFormatProvider formatProvider)
+        public string ToString(string? format, IFormatProvider? formatProvider)
         {
             formatProvider ??= CultureInfo.InvariantCulture;
             var dateTimeOffset = AsDateTimeOffset;
