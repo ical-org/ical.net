@@ -32,7 +32,7 @@ namespace Ical.Net.DataTypes
                 Duration = null;
 
                 // Ensure date/time has a time part
-                _mDateTime = new CalDateTime(_mDateTime.Value);
+                _mDateTime = new CalDateTime(_mDateTime.Value, _mDateTime.TzId) { AssociatedObject = _mDateTime.AssociatedObject };
             }
         }
 
