@@ -447,15 +447,12 @@ namespace Ical.Net.Serialization.DataTypes
                     }
                     else if ((match = RecurUntil.Match(item)).Success)
                     {
-                        var dt = DateTime.Parse(match.Groups["DateTime"].Value);
-                        DateTime.SpecifyKind(dt, DateTimeKind.Utc);
-
+                        var dt = DateTime.SpecifyKind(DateTime.Parse(match.Groups["DateTime"].Value), DateTimeKind.Utc);
                         r.Until = dt;
                     }
                     else if ((match = SpecificRecurrenceCount.Match(item)).Success)
                     {
-                        int count;
-                        if (!int.TryParse(match.Groups["Count"].Value, out count))
+                        if (!int.TryParse(match.Groups["Count"].Value, out var count))
                         {
                             return false;
                         }

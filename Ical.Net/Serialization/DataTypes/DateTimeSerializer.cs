@@ -51,7 +51,11 @@ namespace Ical.Net.Serialization.DataTypes
                 dt.Parameters.Set("TZID", dt.TzId);
             }
 
-            DateTime.SpecifyKind(dt.Value, kind);
+            var dateWithNewKind = DateTime.SpecifyKind(dt.Value, kind);
+            // We can't use 'Copy' because we need to change the value
+            dt = dt.HasTime
+                ? new CalDateTime(dateWithNewKind, dt.TzId) { AssociatedObject = dt.AssociatedObject }
+                : new CalDateTime(DateOnly.FromDateTime(dateWithNewKind), null, kind, dt.TzId) { AssociatedObject = dt.AssociatedObject };
 
             // FIXME: what if DATE is the default value type for this?
             // Also, what if the DATE-TIME value type is specified on something
