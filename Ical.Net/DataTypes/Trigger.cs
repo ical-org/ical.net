@@ -36,7 +36,7 @@ public class Trigger : EncodableDataType
             // DateTime and Duration are mutually exclusive
             Duration = null;
 
-            // Do not allow timeless date/time values
+            // Ensure date/time has a time part
             _mDateTime.HasTime = true;
         }
     }
@@ -108,7 +108,7 @@ public class Trigger : EncodableDataType
         {
             return false;
         }
-        return Equals((Trigger) obj);
+        return Equals((Trigger)obj);
     }
 
     public override int GetHashCode()

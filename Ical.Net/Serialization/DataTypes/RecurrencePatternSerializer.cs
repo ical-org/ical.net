@@ -251,14 +251,14 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
                     switch (keyword.ToUpper())
                     {
                         case "UNTIL":
-                        {
-                            var serializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
-                            var dt = serializer?.Deserialize(new StringReader(keyValue)) as IDateTime;
-                            if (dt != null)
                             {
-                                r.Until = dt.Value;
+                                var serializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
+                                var dt = serializer?.Deserialize(new StringReader(keyValue)) as IDateTime;
+                                if (dt != null)
+                                {
+                                    r.Until = dt.Value;
+                                }
                             }
-                        }
                             break;
                         case "COUNT":
                             r.Count = Convert.ToInt32(keyValue);
@@ -276,13 +276,13 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
                             AddInt32Values(r.ByHour, keyValue);
                             break;
                         case "BYDAY":
-                        {
-                            var days = keyValue.Split(',');
-                            foreach (var day in days)
                             {
-                                r.ByDay.Add(new WeekDay(day));
+                                var days = keyValue.Split(',');
+                                foreach (var day in days)
+                                {
+                                    r.ByDay.Add(new WeekDay(day));
+                                }
                             }
-                        }
                             break;
                         case "BYMONTHDAY":
                             AddInt32Values(r.ByMonthDay, keyValue);
@@ -417,8 +417,8 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
                     }
 
                     var dayOfWeekQuery = from Capture capture in match.Groups["Day"].Captures
-                        select (DayOfWeek) Enum.Parse(typeof(DayOfWeek), capture.Value, true) into dayOfWeek
-                        select new WeekDay(dayOfWeek) { Offset = num };
+                                         select (DayOfWeek) Enum.Parse(typeof(DayOfWeek), capture.Value, true) into dayOfWeek
+                                         select new WeekDay(dayOfWeek) { Offset = num };
 
                     r.ByDay.AddRange(dayOfWeekQuery);
                 }

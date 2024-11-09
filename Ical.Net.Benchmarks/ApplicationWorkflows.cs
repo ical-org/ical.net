@@ -3,12 +3,12 @@
 // Licensed under the MIT license.
 //
 
+using BenchmarkDotNet.Attributes;
+using Ical.Net.DataTypes;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using BenchmarkDotNet.Attributes;
-using Ical.Net.DataTypes;
 
 namespace Ical.Net.Benchmarks;
 

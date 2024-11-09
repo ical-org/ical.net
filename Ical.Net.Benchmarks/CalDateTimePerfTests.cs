@@ -3,9 +3,9 @@
 // Licensed under the MIT license.
 //
 
-using System;
 using BenchmarkDotNet.Attributes;
 using Ical.Net.DataTypes;
+using System;
 
 namespace Ical.Net.Benchmarks;
 

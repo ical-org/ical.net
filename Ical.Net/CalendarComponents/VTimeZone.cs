@@ -1,16 +1,16 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Proxies;
 using Ical.Net.Utility;
 using NodaTime;
 using NodaTime.TimeZones;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Ical.Net.CalendarComponents;
 
@@ -182,7 +182,7 @@ public class VTimeZone : CalendarComponent
         timeZoneInfo.TimeZoneName = oldestInterval.Name;
 
         var start = oldestInterval.IsoLocalStart.ToDateTimeUnspecified() + delta;
-        timeZoneInfo.Start = new CalDateTime(start) { HasTime = true };
+        timeZoneInfo.Start = new CalDateTime(start, true);
 
         if (isRRule)
         {
@@ -201,11 +201,11 @@ public class VTimeZone : CalendarComponent
         var matchedIntervals = intervals
             .Where(x => x.Start != Instant.MinValue)
             .Where(x => x.IsoLocalStart.Month == intervalToMatch.IsoLocalStart.Month
-                        && x.IsoLocalStart.Hour == intervalToMatch.IsoLocalStart.Hour
-                        && x.IsoLocalStart.Minute == intervalToMatch.IsoLocalStart.Minute
-                        && x.IsoLocalStart.ToDateTimeUnspecified().DayOfWeek == intervalToMatch.IsoLocalStart.ToDateTimeUnspecified().DayOfWeek
-                        && x.WallOffset == intervalToMatch.WallOffset
-                        && x.Name == intervalToMatch.Name)
+                    && x.IsoLocalStart.Hour == intervalToMatch.IsoLocalStart.Hour
+                    && x.IsoLocalStart.Minute == intervalToMatch.IsoLocalStart.Minute
+                    && x.IsoLocalStart.ToDateTimeUnspecified().DayOfWeek == intervalToMatch.IsoLocalStart.ToDateTimeUnspecified().DayOfWeek
+                    && x.WallOffset == intervalToMatch.WallOffset
+                    && x.Name == intervalToMatch.Name)
             .ToList();
 
         if (!consecutiveOnly)
@@ -243,13 +243,12 @@ public class VTimeZone : CalendarComponent
         {
             var periodList = new PeriodList();
             var time = interval.IsoLocalStart.ToDateTimeUnspecified();
-            var date = new CalDateTime(time).Add(delta) as CalDateTime;
+            var date = new CalDateTime(time, true).Add(delta) as CalDateTime;
             if (date == null)
             {
                 continue;
             }
 
-            date.HasTime = true;
             periodList.Add(date);
             tzi.RecurrenceDates.Add(periodList);
         }
@@ -365,15 +364,15 @@ public class VTimeZone : CalendarComponent
 
     protected bool Equals(VTimeZone other)
         => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase)
-           && string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase)
-           && Equals(Url, other.Url);
+            && string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase)
+            && Equals(Url, other.Url);
 
     public override bool Equals(object obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != this.GetType()) return false;
-        return Equals((VTimeZone) obj);
+        return Equals((VTimeZone)obj);
     }
 
     public override int GetHashCode()

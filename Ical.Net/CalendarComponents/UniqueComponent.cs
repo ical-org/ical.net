@@ -47,7 +47,7 @@ public class UniqueComponent : CalendarComponent, IUniqueComponent, IComparable<
         {
             // icalendar RFC doesn't care about sub-second time resolution, so shave off everything smaller than seconds.
             var utcNow = DateTime.UtcNow.Truncate(TimeSpan.FromSeconds(1));
-            DtStamp = new CalDateTime(utcNow, "UTC");
+            DtStamp = CalDateTime.UtcNow;
         }
     }
 
@@ -101,7 +101,7 @@ public class UniqueComponent : CalendarComponent, IUniqueComponent, IComparable<
     {
         if (obj is RecurringComponent && obj != this)
         {
-            var r = (RecurringComponent) obj;
+            var r = (RecurringComponent)obj;
             if (Uid != null)
             {
                 return Uid.Equals(r.Uid);

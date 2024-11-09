@@ -3,13 +3,12 @@
 // Licensed under the MIT license.
 //
 
-using System.Collections.Generic;
-using System.Linq;
+using Ical.Net;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using NUnit.Framework;
-
-namespace Ical.Net.Tests;
+using System.Collections.Generic;
+using System.Linq;
 
 [TestFixture]
 public class AttendeeTest

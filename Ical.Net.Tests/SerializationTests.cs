@@ -57,12 +57,12 @@ public class SerializationTests
                 Assert.That(p2, Is.EqualTo(p1), "The properties '" + p1.Name + "' are not equal.");
                 if (p1.Value is IComparable)
                 {
-                    if (((IComparable) p1.Value).CompareTo(p2.Value) != 0)
+                    if (((IComparable)p1.Value).CompareTo(p2.Value) != 0)
                         continue;
                 }
                 else if (p1.Value is IEnumerable)
                 {
-                    CompareEnumerables((IEnumerable) p1.Value, (IEnumerable) p2.Value, p1.Name);
+                    CompareEnumerables((IEnumerable)p1.Value, (IEnumerable)p2.Value, p1.Name);
                 }
                 else
                 {
@@ -115,11 +115,11 @@ public class SerializationTests
     {
         const string notFound = "expected '{0}' not found";
         var searchFor = "BEGIN:" + sectionName;
-        var begin = serialized.IndexOf(searchFor);
+        var begin = serialized.IndexOf(searchFor, StringComparison.Ordinal);
         Assert.That(begin, Is.Not.EqualTo(-1), () => string.Format(notFound, searchFor));
 
         searchFor = "END:" + sectionName;
-        var end = serialized.IndexOf(searchFor, begin);
+        var end = serialized.IndexOf(searchFor, begin, StringComparison.Ordinal);
         Assert.That(end, Is.Not.EqualTo(-1), () => string.Format(notFound, searchFor));
 
         var searchRegion = serialized.Substring(begin, end - begin + searchFor.Length);
@@ -163,7 +163,6 @@ public class SerializationTests
     [Test, Category("Serialization"), Ignore("TODO: standard time, for NZ standard time (current example)")]
     public void TimeZoneSerialize()
     {
-        //ToDo: This test is broken as of 2016-07-13
         var cal = new Calendar
         {
             Method = "PUBLISH",
@@ -197,10 +196,10 @@ public class SerializationTests
 
         InspectSerializedSection(vTimezone, "DAYLIGHT", new[] { "TZNAME:" + tzi.DaylightName, "TZOFFSETFROM:" + o });
     }
+
     [Test, Category("Serialization")]
     public void SerializeDeserialize()
     {
-        //ToDo: This test is broken as of 2016-07-13
         var cal1 = new Calendar
         {
             Method = "PUBLISH",
@@ -232,7 +231,6 @@ public class SerializationTests
     [Test, Category("Serialization")]
     public void EventPropertiesSerialized()
     {
-        //ToDo: This test is broken as of 2016-07-13
         var cal = new Calendar
         {
             Method = "PUBLISH",
@@ -333,13 +331,13 @@ public class SerializationTests
         {
             var vals = GetValues(vEvt, "ATTENDEE", a.Value.OriginalString.ToString());
             foreach (var v in new Dictionary<string, string>
-                     {
-                         ["CN"] = a.CommonName,
-                         ["ROLE"] = a.Role,
-                         ["RSVP"] = a.Rsvp.ToString()
-                             .ToUpperInvariant(),
-                         ["PARTSTAT"] = a.ParticipationStatus
-                     })
+            {
+                ["CN"] = a.CommonName,
+                ["ROLE"] = a.Role,
+                ["RSVP"] = a.Rsvp.ToString()
+                    .ToUpperInvariant(),
+                ["PARTSTAT"] = a.ParticipationStatus
+            })
             {
                 Assert.Multiple(() =>
                 {
@@ -426,28 +424,31 @@ public class SerializationTests
     [Test]
     public void UnicodeDescription()
     {
-        const string ics = @"BEGIN:VEVENT
-DTSTAMP:20171120T124856Z
-DTSTART;TZID=Europe/Helsinki:20160707T110000
-DTEND;TZID=Europe/Helsinki:20160707T140000
-SUMMARY:Some summary
-UID:20160627T123608Z-182847102@atlassian.net
-DESCRIPTION:Key points:\n�	Some text (text,
- , text\, text\, TP) some text\;\n�	some tex
- t Some text (Text\, Text)\;\n�	Some tex
- t some text\, some text\, text.\;\n\nsome te
- xt some tex�t some text. 
-ORGANIZER;X-CONFLUENCE-USER-KEY=ff801df01547101c6720006;CN=Some
- user;CUTYPE=INDIVIDUAL:mailto:some.mail@domain.com
-CREATED:20160627T123608Z
-LAST-MODIFIED:20160627T123608Z
-ATTENDEE;X-CONFLUENCE-USER-KEY=ff8080ef1df01547101c6720006;CN=Some
- text;CUTYPE=INDIVIDUAL:mailto:some.mail@domain.com
-SEQUENCE:1
-X-CONFLUENCE-SUBCALENDAR-TYPE:other
-TRANSP:TRANSPARENT
-STATUS:CONFIRMED
-END:VEVENT";
+        const string ics =
+           """
+           BEGIN:VEVENT
+           DTSTAMP:20171120T124856Z
+           DTSTART;TZID=Europe/Helsinki:20160707T110000
+           DTEND;TZID=Europe/Helsinki:20160707T140000
+           SUMMARY:Some summary
+           UID:20160627T123608Z-182847102@atlassian.net
+           DESCRIPTION:Key points:\n�	Some text (text,
+            , text\, text\, TP) some text\;\n�	some tex
+            t Some text (Text\, Text)\;\n�	Some tex
+            t some text\, some text\, text.\;\n\nsome te
+            xt some tex�t some text. 
+           ORGANIZER;X-CONFLUENCE-USER-KEY=ff801df01547101c6720006;CN=Some
+            user;CUTYPE=INDIVIDUAL:mailto:some.mail@domain.com
+           CREATED:20160627T123608Z
+           LAST-MODIFIED:20160627T123608Z
+           ATTENDEE;X-CONFLUENCE-USER-KEY=ff8080ef1df01547101c6720006;CN=Some
+            text;CUTYPE=INDIVIDUAL:mailto:some.mail@domain.com
+           SEQUENCE:1
+           X-CONFLUENCE-SUBCALENDAR-TYPE:other
+           TRANSP:TRANSPARENT
+           STATUS:CONFIRMED
+           END:VEVENT
+           """;
         var deserializedEvent = Calendar.Load<CalendarEvent>(ics).Single();
 
         Assert.Multiple(() =>
@@ -462,21 +463,24 @@ END:VEVENT";
     public void TestStandardDaylightTimeZoneInfoDeserialization()
     {
 
-        const string ics = @"BEGIN:VTIMEZONE
-TZID:
-BEGIN:STANDARD
-DTSTART:16010101T030000
-TZOFFSETFROM:+0200
-TZOFFSETTO:+0100
-RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=10
-END:STANDARD
-BEGIN:DAYLIGHT
-DTSTART:16010101T020000
-TZOFFSETFROM:+0100
-TZOFFSETTO:+0200
-RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=3
-END:DAYLIGHT
-END:VTIMEZONE";
+        const string ics =
+          """
+           BEGIN:VTIMEZONE
+           TZID:
+           BEGIN:STANDARD
+           DTSTART:16010101T030000
+           TZOFFSETFROM:+0200
+           TZOFFSETTO:+0100
+           RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=10
+           END:STANDARD
+           BEGIN:DAYLIGHT
+           DTSTART:16010101T020000
+           TZOFFSETFROM:+0100
+           TZOFFSETTO:+0200
+           RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=3
+           END:DAYLIGHT
+           END:VTIMEZONE
+           """;
         var timeZone = Calendar.Load<VTimeZone>(ics).Single();
         Assert.That(timeZone, Is.Not.Null, "Expected the TimeZone to be successfully deserialized");
         var timeZoneInfos = timeZone.TimeZoneInfos;

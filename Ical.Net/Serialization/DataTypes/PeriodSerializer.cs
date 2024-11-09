@@ -99,11 +99,11 @@ public class PeriodSerializer : EncodableDataTypeSerializer
         p.EndTime = dtSerializer.Deserialize(new StringReader(values[1])) as IDateTime;
         if (p.EndTime == null)
         {
-            p.Duration = (TimeSpan) durationSerializer.Deserialize(new StringReader(values[1]));
+            p.Duration = (TimeSpan)durationSerializer.Deserialize(new StringReader(values[1]));
         }
 
         // Only return an object if it has been deserialized correctly.
-        if (p.StartTime != null && p.Duration != null)
+        if (p.StartTime != null)
         {
             return p;
         }
