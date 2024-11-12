@@ -1,35 +1,39 @@
-﻿using Ical.Net.DataTypes;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.Collections.Generic;
+using Ical.Net.DataTypes;
 
-namespace Ical.Net.Evaluation
+namespace Ical.Net.Evaluation;
+
+public class PeriodListEvaluator : Evaluator
 {
-    public class PeriodListEvaluator : Evaluator
-    {
-        private readonly PeriodList _mPeriodList;
+    private readonly PeriodList _mPeriodList;
 
-        public PeriodListEvaluator(PeriodList rdt)
+    public PeriodListEvaluator(PeriodList rdt)
+    {
+        _mPeriodList = rdt;
+    }
+
+    public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+    {
+        var periods = new HashSet<Period>();
+
+        if (includeReferenceDateInResults)
         {
-            _mPeriodList = rdt;
+            Period p = new Period(referenceDate);
+            periods.Add(p);
         }
 
-        public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+        if (periodEnd < periodStart)
         {
-            var periods = new HashSet<Period>();
-
-            if (includeReferenceDateInResults)
-            {
-                Period p = new Period(referenceDate);
-                periods.Add(p);
-            }
-
-            if (periodEnd < periodStart)
-            {
-                return periods;
-            }
-
-            periods.UnionWith(_mPeriodList);
             return periods;
         }
+
+        periods.UnionWith(_mPeriodList);
+        return periods;
     }
 }

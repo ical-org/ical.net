@@ -1,14 +1,18 @@
-﻿namespace Ical.Net.DataTypes
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
+namespace Ical.Net.DataTypes;
+
+/// <summary>
+/// An abstract class from which all iCalendar data types inherit.
+/// </summary>
+public class EncodableDataType : CalendarDataType, IEncodableDataType
 {
-    /// <summary>
-    /// An abstract class from which all iCalendar data types inherit.
-    /// </summary>
-    public class EncodableDataType : CalendarDataType, IEncodableDataType
+    public virtual string Encoding
     {
-        public virtual string Encoding
-        {
-            get => Parameters.Get("ENCODING");
-            set => Parameters.Set("ENCODING", value);
-        }
+        get => Parameters.Get("ENCODING");
+        set => Parameters.Set("ENCODING", value);
     }
 }

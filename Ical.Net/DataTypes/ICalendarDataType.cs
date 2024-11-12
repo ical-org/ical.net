@@ -1,14 +1,18 @@
-﻿using System;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
 
-namespace Ical.Net.DataTypes
+using System;
+
+namespace Ical.Net.DataTypes;
+
+public interface ICalendarDataType : ICalendarParameterCollectionContainer, ICopyable, IServiceProvider
 {
-    public interface ICalendarDataType : ICalendarParameterCollectionContainer, ICopyable, IServiceProvider
-    {
-        Type GetValueType();
-        void SetValueType(string type);
-        ICalendarObject AssociatedObject { get; set; }
-        Calendar Calendar { get; }
+    Type GetValueType();
+    void SetValueType(string type);
+    ICalendarObject AssociatedObject { get; set; }
+    Calendar Calendar { get; }
 
-        string Language { get; set; }
-    }
+    string Language { get; set; }
 }

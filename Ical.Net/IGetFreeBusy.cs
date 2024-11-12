@@ -1,13 +1,17 @@
-﻿using Ical.Net.CalendarComponents;
-using Ical.Net.DataTypes;
-using System.Collections.Generic;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
 
-namespace Ical.Net
+using System.Collections.Generic;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+
+namespace Ical.Net;
+
+public interface IGetFreeBusy
 {
-    public interface IGetFreeBusy
-    {
-        FreeBusy GetFreeBusy(FreeBusy freeBusyRequest);
-        FreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive);
-        FreeBusy GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, IDateTime fromInclusive, IDateTime toExclusive);
-    }
+    FreeBusy GetFreeBusy(FreeBusy freeBusyRequest);
+    FreeBusy GetFreeBusy(IDateTime fromInclusive, IDateTime toExclusive);
+    FreeBusy GetFreeBusy(Organizer organizer, IEnumerable<Attendee> contacts, IDateTime fromInclusive, IDateTime toExclusive);
 }

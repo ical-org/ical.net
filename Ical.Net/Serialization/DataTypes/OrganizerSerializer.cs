@@ -1,56 +1,60 @@
-﻿using Ical.Net.DataTypes;
+﻿//
+// Copyright ical.net project maintainers and contributors.
+// Licensed under the MIT license.
+//
+
 using System;
 using System.IO;
+using Ical.Net.DataTypes;
 
-namespace Ical.Net.Serialization.DataTypes
+namespace Ical.Net.Serialization.DataTypes;
+
+public class OrganizerSerializer : StringSerializer
 {
-    public class OrganizerSerializer : StringSerializer
+    public OrganizerSerializer() { }
+
+    public OrganizerSerializer(SerializationContext ctx) : base(ctx) { }
+
+    public override Type TargetType => typeof(Organizer);
+
+    public override string SerializeToString(object obj)
     {
-        public OrganizerSerializer() { }
-
-        public OrganizerSerializer(SerializationContext ctx) : base(ctx) { }
-
-        public override Type TargetType => typeof(Organizer);
-
-        public override string SerializeToString(object obj)
+        try
         {
-            try
-            {
-                var o = obj as Organizer;
-                return o?.Value == null
-                    ? null
-                    : Encode(o, Escape(o.Value.OriginalString));
-            }
-            catch
-            {
-                return null;
-            }
+            var o = obj as Organizer;
+            return o?.Value == null
+                ? null
+                : Encode(o, Escape(o.Value.OriginalString));
         }
-
-        public override object Deserialize(TextReader tr)
+        catch
         {
-            var value = tr.ReadToEnd();
+            return null;
+        }
+    }
 
-            Organizer o = null;
-            try
+    public override object Deserialize(TextReader tr)
+    {
+        var value = tr.ReadToEnd();
+
+        Organizer o = null;
+        try
+        {
+            o = CreateAndAssociate() as Organizer;
+            if (o != null)
             {
-                o = CreateAndAssociate() as Organizer;
-                if (o != null)
+                var uriString = Unescape(Decode(o, value));
+
+                // Prepend "mailto:" if necessary
+                if (!uriString.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase))
                 {
-                    var uriString = Unescape(Decode(o, value));
-
-                    // Prepend "mailto:" if necessary
-                    if (!uriString.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase))
-                    {
-                        uriString = "mailto:" + uriString;
-                    }
-
-                    o.Value = new Uri(uriString);
+                    uriString = "mailto:" + uriString;
                 }
-            }
-            catch { }
 
-            return o;
+                o.Value = new Uri(uriString);
+            }
         }
+        catch { }
+
+        return o;
     }
 }

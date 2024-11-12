@@ -1,4 +1,4 @@
-## History
+﻿## History
 
 ical.net is a fork of Douglas Day's dday.ical library for .NET 2.0 as it appeared on SourceForge. This is why you may see references to dday throughout the code. I contacted Doug, and was able to get his permission to re-license it. Per his wishes, I chose the most permissive license I could: the MIT license, which you will find in license.md.
 
@@ -78,7 +78,7 @@ For posterity, here is the original license, now void. It has been superceded by
 
 ```
 The DDay.iCal library, its documentation, and its source code
-are Copyright © 2007 Douglas Day <doug@ddaysoftware.com>.
+are Copyright Â© 2007 Douglas Day <doug@ddaysoftware.com>.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or
