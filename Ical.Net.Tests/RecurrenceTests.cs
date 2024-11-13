@@ -2783,14 +2783,14 @@ public class RecurrenceTests
         evt.RecurrenceRules[0].RestrictionType = RecurrenceRestrictionType.NoRestriction;
 #pragma warning restore 0618
 
-        var occurrences = evt.GetOccurrences(CalDateTime.Today.AddDays(-1), CalDateTime.Today.AddDays(100))
+        var occurrences = evt.GetOccurrences(evt.Start.AddDays(-1), evt.Start.AddDays(100))
             .OrderBy(x => x)
             .ToList();
 
         var startDates = occurrences.Select(x => x.Period.StartTime.Value).ToList();
 
         var expectedStartDates = Enumerable.Range(0, 5)
-            .Select(i => DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc).AddSeconds(i * secsPerInterval * 10))
+            .Select(i => DateTime.UtcNow.Date.AddSeconds(i * secsPerInterval * 10))
             .ToList();
 
         Assert.Multiple(() =>
