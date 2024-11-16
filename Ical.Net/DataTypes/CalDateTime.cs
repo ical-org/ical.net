@@ -30,7 +30,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     // The time part that is used to return the Value property.
     private TimeOnly? _timeOnly;
 
-    const double AlmostZeroEpsilon = 1e-10;
+    private const double AlmostZeroEpsilon = 1e-10;
 
     public static CalDateTime Now => new CalDateTime(DateTime.Now);
 

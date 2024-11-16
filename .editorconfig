@@ -85,12 +85,13 @@ csharp_prefer_braces = false:suggestion
 
 # Expression-bodied members
 csharp_style_expression_bodied_methods = false:suggestion
-csharp_style_expression_bodied_properties = true:suggestion
+csharp_style_expression_bodied_properties = true
 csharp_style_expression_bodied_properties = when_on_single_line:suggestion
+csharp_style_expression_bodied_indexers = false:warning
 #prefer block bodies for constructors
-csharp_style_expression_bodied_constructors = false:suggestion
+csharp_style_expression_bodied_constructors = true
 #prefer block bodies for accessors
-csharp_style_expression_bodied_accessors = false:suggestion
+csharp_style_expression_bodied_accessors = true
 
 
 #Style - expression level options
