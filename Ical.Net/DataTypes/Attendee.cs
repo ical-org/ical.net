@@ -253,7 +253,7 @@ public class Attendee : EncodableDataType
         if (obj is not Attendee atn) return;
         base.CopyFrom(obj);
 
-        Value = new Uri(atn.Value.ToString());
+        Value = atn.Value;
 
         // String assignments create new instances
         CommonName = atn.CommonName;
@@ -263,8 +263,8 @@ public class Attendee : EncodableDataType
 
         Rsvp = atn.Rsvp;
 
-        SentBy = atn.SentBy != null ? new Uri(atn.SentBy.ToString()) : null;
-        DirectoryEntry = atn.DirectoryEntry != null ? new Uri(atn.DirectoryEntry.ToString()) : null;
+        SentBy = atn.SentBy;
+        DirectoryEntry = atn.DirectoryEntry;
     }
 
     protected bool Equals(Attendee other) => Equals(SentBy, other.SentBy)
