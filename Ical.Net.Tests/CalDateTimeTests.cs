@@ -140,20 +140,20 @@ public class CalDateTimeTests
             .SetName("DateTime with Kind = Utc and no tzid returns DateTimeKind.Utc");
 
         yield return new TestCaseData(localDt, localTz)
-            .Returns(DateTimeKind.Local)
-            .SetName("Local datetime with local tzid returns DateTimeKind.Local");
+            .Returns(DateTimeKind.Unspecified)
+            .SetName("Datetime with kind Local and local tzid returns DateTimeKind.Unspecified");
 
         yield return new TestCaseData(DateTime.SpecifyKind(localDt, DateTimeKind.Utc), localTz)
-            .Returns(DateTimeKind.Local)
-            .SetName("DateTime with Kind = Utc with explicit local tzid returns DateTimeKind.Local");
+            .Returns(DateTimeKind.Unspecified)
+            .SetName("DateTime with Kind = Utc with explicit local tzid returns DateTimeKind.Unspecified");
 
         yield return new TestCaseData(DateTime.SpecifyKind(localDt, DateTimeKind.Unspecified), localTz)
-            .Returns(DateTimeKind.Local)
-            .SetName("DateTime with Kind = Unspecified with explicit local tzid returns DateTimeKind.Local");
+            .Returns(DateTimeKind.Unspecified)
+            .SetName("DateTime with Kind = Unspecified with explicit local tzid returns DateTimeKind.Unspecified");
 
         yield return new TestCaseData(localDt, null)
-            .Returns(DateTimeKind.Local)
-            .SetName("DateTime with Kind = Local with null tzid returns DateTimeKind.Local");
+            .Returns(DateTimeKind.Unspecified)
+            .SetName("DateTime with Kind = Local with null tzid returns DateTimeKind.Unspecified");
 
         yield return new TestCaseData(DateTime.SpecifyKind(localDt, DateTimeKind.Unspecified), null)
             .Returns(DateTimeKind.Unspecified)
@@ -207,8 +207,8 @@ public class CalDateTimeTests
 
         Assert.Multiple(() =>
         {
-            // TzId changes the DateTimeKind to Local
-            Assert.That(dt1.Value.Kind, Is.Not.EqualTo(dateTime.Kind));
+            // TzId changes the DateTimeKind to Unspecified
+            Assert.That(dt1.Value.Kind, Is.EqualTo(dateTime.Kind));
             Assert.That(dt1.Value.Kind, Is.EqualTo(dt2.Value.Kind));
             Assert.That(dt1.TzId, Is.EqualTo(dt2.TzId));
         });

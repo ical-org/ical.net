@@ -45,7 +45,7 @@ public class DateTimeSerializer : EncodableDataTypeSerializer
 
         var kind = dt.IsUtc
             ? DateTimeKind.Utc
-            : DateTimeKind.Local;
+            : DateTimeKind.Unspecified;
 
         if (dt.IsUtc)
         {
@@ -133,7 +133,7 @@ public class DateTimeSerializer : EncodableDataTypeSerializer
         var isUtc = match.Groups[9].Success;
         var kind = isUtc
             ? DateTimeKind.Utc
-            : DateTimeKind.Local;
+            : DateTimeKind.Unspecified;
 
         if (isUtc)
         {

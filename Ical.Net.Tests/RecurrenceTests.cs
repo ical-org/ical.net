@@ -3567,7 +3567,7 @@ END:VCALENDAR";
         var serialized = serializer.SerializeToString(calendar);
 
         const string contains = "20171108T103000";
-        var expectedContains = expectedKind == DateTimeKind.Local
+        var expectedContains = expectedKind == DateTimeKind.Unspecified
             ? $"{contains}{SerializationConstants.LineBreak}"
             : $"{contains}Z{SerializationConstants.LineBreak}";
 
@@ -3580,9 +3580,9 @@ END:VCALENDAR";
 
     public static IEnumerable UntilTimeZoneSerializationTestCases()
     {
-        yield return new TestCaseData("America/New_York", DateTimeKind.Local)
+        yield return new TestCaseData("America/New_York", DateTimeKind.Unspecified)
             .SetName("IANA time time zone results in a local DateTimeKind");
-        yield return new TestCaseData("Eastern Standard Time", DateTimeKind.Local)
+        yield return new TestCaseData("Eastern Standard Time", DateTimeKind.Unspecified)
             .SetName("BCL time zone results in a Local DateTimeKind");
         yield return new TestCaseData("UTC", DateTimeKind.Utc)
             .SetName("UTC results in DateTimeKind.Utc");

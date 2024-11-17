@@ -70,7 +70,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// <param name="tzId">The specified value will override value's <see cref="DateTime.Kind"/> property.
     /// If the time zone specified is UTC, the underlying <see cref="DateTime.Kind"/> will be
     /// <see cref="DateTimeKind.Utc"/>. If a non-UTC time zone is specified, the underlying
-    /// <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Local"/>.
+    /// <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Unspecified"/>.
     /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be left untouched.</param>
     /// <param name="hasTime">Set to <see langword="true"/> (default), if the <see cref="DateTime.TimeOfDay"/> must be included.</param>
     public CalDateTime(DateTime value, string? tzId, bool hasTime = true)
@@ -84,7 +84,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// </summary>
     /// <param name="second"></param>
     /// <param name="tzId">The specified value will override value's <see cref="DateTime.Kind"/> property.
-    /// If a non-UTC time zone is specified, the underlying  <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Local"/>.
+    /// If a non-UTC time zone is specified, the underlying  <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Unspecified"/>.
     /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be left untouched.
     /// </param>
     /// <param name="year"></param>
@@ -103,7 +103,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// Sets <see cref="DateTimeKind.Unspecified"/> for the <see cref="Value"/> property.
     /// </summary>
     /// <param name="tzId">The specified value will override value's <see cref="DateTime.Kind"/> property.
-    /// If a non-UTC time zone is specified, the underlying  <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Local"/>.
+    /// If a non-UTC time zone is specified, the underlying  <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Unspecified"/>.
     /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be left untouched.
     /// </param>
     /// <param name="year"></param>
@@ -119,7 +119,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// </summary>
     /// <param name="kind">If <see langword="null"/>, <see cref="DateTimeKind.Unspecified"/> is used.</param>
     /// <param name="tzId">The specified value will override value's <see cref="DateTime.Kind"/> property.
-    /// If a non-UTC time zone is specified, the underlying <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Local"/>.
+    /// If a non-UTC time zone is specified, the underlying <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Unspecified"/>.
     /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be left untouched.
     /// </param>
     /// <param name="date"></param>
@@ -150,12 +150,12 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         DateTime initialValue;
 
         if ((tzId != null && !string.IsNullOrWhiteSpace(tzId) && !tzId.Equals("UTC", StringComparison.OrdinalIgnoreCase))
-            || (string.IsNullOrWhiteSpace(tzId) && dateTime.Kind == DateTimeKind.Local))
+            || (string.IsNullOrWhiteSpace(tzId) && dateTime.Kind == DateTimeKind.Unspecified))
         {
             // Definitely local
             _tzId = tzId;
 
-            initialValue = DateTime.SpecifyKind(dateTime, DateTimeKind.Local);
+            initialValue = DateTime.SpecifyKind(dateTime, DateTimeKind.Unspecified);
 
         }
         else if (string.Equals("UTC", tzId, StringComparison.OrdinalIgnoreCase) || dateTime.Kind == DateTimeKind.Utc)
@@ -395,7 +395,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     private string? _tzId = string.Empty;
 
     /// <summary>
-    /// Setting the <see cref="TzId"/> to a local time zone will set <see cref="Value"/> to <see cref="DateTimeKind.Local"/>.
+    /// Setting the <see cref="TzId"/> to a local time zone will set <see cref="Value"/> to <see cref="DateTimeKind.Unspecified"/>.
     /// Setting <see cref="TzId"/> to UTC will set <see cref="Value"/> to <see cref="DateTimeKind.Utc"/>.
     /// If the value is set to <see langword="null"/>  or whitespace, <see cref="Value"/> will be <see cref="DateTimeKind.Unspecified"/>.
     /// <para/>
@@ -488,7 +488,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
 
         return converted.Zone == DateTimeZone.Utc
             ? new CalDateTime(converted.ToDateTimeUtc(), tzId)
-            : new CalDateTime(DateTime.SpecifyKind(converted.ToDateTimeUnspecified(), DateTimeKind.Local), tzId);
+            : new CalDateTime(DateTime.SpecifyKind(converted.ToDateTimeUnspecified(), DateTimeKind.Unspecified), tzId);
     }
 
     /// <summary>

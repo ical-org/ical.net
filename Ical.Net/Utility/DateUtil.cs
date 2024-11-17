@@ -22,7 +22,7 @@ internal static class DateUtil
         => StartOfDay(dt).AddDays(1).AddTicks(-1);
 
     public static DateTime GetSimpleDateTimeData(IDateTime dt)
-        => DateTime.SpecifyKind(dt.Value, dt.IsUtc ? DateTimeKind.Utc : DateTimeKind.Local);
+        => DateTime.SpecifyKind(dt.Value, dt.IsUtc ? DateTimeKind.Utc : DateTimeKind.Unspecified);
 
     public static DateTime SimpleDateTimeToMatch(IDateTime dt, IDateTime toMatch)
     {
