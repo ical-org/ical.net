@@ -314,8 +314,8 @@ public class SerializationTests
 
         var evt = AttendeeTest.VEventFactory();
         cal.Events.Add(evt);
-        // new Uri() creates lowercase for the "MAILTO:" part
-        // according to the RFC 2368 specification
+        // The casing of `MAILTO` is not in line with RFC 2368, but we should
+        // be able to deal with it nevertheless and preserve it the way it is.
         const string org = "MAILTO:james@example.com";
         evt.Organizer = new Organizer(org);
 
@@ -331,7 +331,7 @@ public class SerializationTests
 
         foreach (var a in evt.Attendees)
         {
-            var vals = GetValues(vEvt, "ATTENDEE", a.Value.ToString());
+            var vals = GetValues(vEvt, "ATTENDEE", a.Value.OriginalString.ToString());
             foreach (var v in new Dictionary<string, string>
                      {
                          ["CN"] = a.CommonName,
