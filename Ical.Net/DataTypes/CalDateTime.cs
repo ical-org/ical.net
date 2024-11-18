@@ -17,26 +17,33 @@ namespace Ical.Net.DataTypes;
 /// The iCalendar equivalent of the .NET <see cref="DateTime"/> class.
 /// <remarks>
 /// In addition to the features of the <see cref="DateTime"/> class, the <see cref="CalDateTime"/>
-/// class handles time zones, and integrates seamlessly into the iCalendar framework.
+/// class handles timezones, and integrates seamlessly into the iCalendar framework.
 /// </remarks>
 /// </summary>
 public sealed class CalDateTime : EncodableDataType, IDateTime
 {
-    // The date and time parts that were used to initialize the instance
-    // or by the Value setter.
-    private DateTime _value;
     // The date part that is used to return the Value property.
-    private DateOnly? _dateOnly;
+    private DateOnly _dateOnly;
     // The time part that is used to return the Value property.
-    private TimeOnly? _timeOnly;
+    private TimeOnly _timeOnly;
 
     private const double AlmostZeroEpsilon = 1e-10;
+    private const string UtcTzId = "UTC";
 
-    public static CalDateTime Now => new CalDateTime(DateTime.Now);
+    /// <summary>
+    /// Gets the current date/time in the local timezone.
+    /// </summary>
+    public static CalDateTime Now => new CalDateTime(DateTime.Now, null, true);
 
-    public static CalDateTime Today => new CalDateTime(DateTime.Today);
+    /// <summary>
+    /// Gets the current date in the local timezone.
+    /// </summary>
+    public static CalDateTime Today => new CalDateTime(DateTime.Today, null, false);
 
-    public static CalDateTime UtcNow => new CalDateTime(DateTime.UtcNow);
+    /// <summary>
+    /// Gets the current date/time in the Coordinated Universal Time (UTC) timezone.
+    /// </summary>
+    public static CalDateTime UtcNow => new CalDateTime(DateTime.UtcNow, UtcTzId, true);
 
     /// <summary>
     /// This constructor is required for the SerializerFactory to work.
@@ -44,93 +51,107 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     public CalDateTime() { }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class
-    /// respecting the <see cref="IDateTime.HasTime"/> setting.
+    /// Creates a new instance of the <see cref="CalDateTime"/> class.
     /// </summary>
     /// <param name="value"></param>
     public CalDateTime(IDateTime value)
     {
-        Initialize(value.Value, value.HasTime, value.TzId, value.Calendar);
+        if (value.HasTime)
+            Initialize(DateOnly.FromDateTime(value.Value), TimeOnly.FromDateTime(value.Value), value.TzId, value.Calendar);
+        else
+            Initialize(DateOnly.FromDateTime(value.Value), null, value.TzId, value.Calendar);
     }
 
     /// <summary>
     /// Creates a new instance of the <see cref="CalDateTime"/> class
     /// and sets the <see cref="TzId"/> to "UTC" if the <paramref name="value"/>
-    /// has a <see cref="DateTime.Kind"/> of <see cref="DateTimeKind.Utc"/>.
+    /// has <see cref="DateTimeKind.Utc"/>, otherwise it will be left as <see langword="null"/>.
+    /// <para/>
+    /// The timezone will be set to UTC if the <paramref name="value"/> has <see cref="DateTimeKind.Utc"/>.
+    /// Else, the timezone will be <see langword="null"/>.
     /// </summary>
     /// <param name="value"></param>
     /// <param name="hasTime">Set to <see langword="true"/> (default), if the <see cref="DateTime.TimeOfDay"/> must be included.</param>
-    public CalDateTime(DateTime value, bool hasTime = true) : this(value, value.Kind == DateTimeKind.Utc ? "UTC" : null, hasTime)
+    public CalDateTime(DateTime value, bool hasTime = true) : this(value, value.Kind == DateTimeKind.Utc ? UtcTzId : null, hasTime)
     { }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified time zone.
+    /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified timezone.
     /// </summary>
     /// <param name="value"></param>
     /// <param name="tzId">The specified value will override value's <see cref="DateTime.Kind"/> property.
-    /// If the time zone specified is UTC, the underlying <see cref="DateTime.Kind"/> will be
-    /// <see cref="DateTimeKind.Utc"/>. If a non-UTC time zone is specified, the underlying
-    /// <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Unspecified"/>.
-    /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be left untouched.</param>
+    /// If the timezone specified is UTC, the underlying <see cref="DateTime.Kind"/> will be
+    /// <see cref="DateTimeKind.Utc"/>. If a non-UTC timezone or no timezone is specified, the
+    /// <see cref="DateTimeKind.Unspecified"/> will be used. A timezone of <see langword="null"/> represents
+    /// the system's local timezone.
+    /// </param>
     /// <param name="hasTime">Set to <see langword="true"/> (default), if the <see cref="DateTime.TimeOfDay"/> must be included.</param>
     public CalDateTime(DateTime value, string? tzId, bool hasTime = true)
     {
-        Initialize(value, hasTime, tzId, null);
+        if (value.Kind == DateTimeKind.Utc && tzId is null or UtcTzId)
+            tzId = UtcTzId;
+
+        if (hasTime)
+            Initialize(DateOnly.FromDateTime(value), TimeOnly.FromDateTime(value), tzId, null);
+        else
+            Initialize(DateOnly.FromDateTime(value), null, tzId, null);
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified time zone.
-    /// Sets <see cref="DateTimeKind.Unspecified"/> for the <see cref="Value"/> property.
+    /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified timezone.
     /// </summary>
-    /// <param name="second"></param>
-    /// <param name="tzId">The specified value will override value's <see cref="DateTime.Kind"/> property.
-    /// If a non-UTC time zone is specified, the underlying  <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Unspecified"/>.
-    /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be left untouched.
+    /// <param name="tzId">The specified value will determine the <see cref="DateTime.Kind"/> property.
+    /// If the timezone specified is UTC, the underlying <see cref="DateTime.Kind"/> will be
+    /// <see cref="DateTimeKind.Utc"/>. If a non-UTC timezone or no timezone is specified, the underlying
+    /// <see cref="DateTimeKind.Unspecified"/> will be used. A timezone of <see langword="null"/> represents
+    /// the system's local timezone.
     /// </param>
     /// <param name="year"></param>
     /// <param name="month"></param>
     /// <param name="day"></param>
     /// <param name="hour"></param>
     /// <param name="minute"></param>
+    /// <param name="second"></param>
     /// <param name="cal"></param>
     public CalDateTime(int year, int month, int day, int hour, int minute, int second, string? tzId = null, Calendar? cal = null) //NOSONAR - must keep this signature
     {
-        Initialize(new DateTime(year, month, day, hour, minute, second, DateTimeKind.Unspecified), true, tzId, cal);
+        Initialize(new DateOnly(year, month, day), new TimeOnly(hour, minute, second), tzId, cal);
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified time zone.
+    /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified timezone.
     /// Sets <see cref="DateTimeKind.Unspecified"/> for the <see cref="Value"/> property.
     /// </summary>
-    /// <param name="tzId">The specified value will override value's <see cref="DateTime.Kind"/> property.
-    /// If a non-UTC time zone is specified, the underlying  <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Unspecified"/>.
-    /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be left untouched.
+    /// <param name="tzId">The specified value will determine the <see cref="DateTime.Kind"/> property.
+    /// If the timezone specified is UTC, the underlying <see cref="DateTime.Kind"/> will be
+    /// <see cref="DateTimeKind.Utc"/>. If a non-UTC timezone or no timezone is specified, the underlying
+    /// <see cref="DateTimeKind.Unspecified"/> will be used. A timezone of <see langword="null"/> represents
+    /// the system's local timezone.
     /// </param>
     /// <param name="year"></param>
     /// <param name="month"></param>
     /// <param name="day"></param>
     public CalDateTime(int year, int month, int day, string? tzId = null)
     {
-        Initialize(new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Unspecified), false, tzId, null);
+        Initialize(new DateOnly(year, month, day), null, tzId, null);
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified time zone.
+    /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified timezone.
     /// </summary>
     /// <param name="kind">If <see langword="null"/>, <see cref="DateTimeKind.Unspecified"/> is used.</param>
-    /// <param name="tzId">The specified value will override value's <see cref="DateTime.Kind"/> property.
-    /// If a non-UTC time zone is specified, the underlying <see cref="DateTime.Kind"/> property will be <see cref="DateTimeKind.Unspecified"/>.
-    /// If no time zone is specified, the <see cref="DateTime.Kind"/> property will be left untouched.
+    /// <param name="tzId">The specified value will determine the <see cref="DateTime.Kind"/> property.
+    /// If the timezone specified is UTC, the underlying <see cref="DateTime.Kind"/> will be
+    /// <see cref="DateTimeKind.Utc"/>. If a non-UTC timezone or no timezone is specified, the underlying
+    /// <see cref="DateTimeKind.Unspecified"/> will be used. A timezone of <see langword="null"/> represents
+    /// the system's local timezone.
     /// </param>
     /// <param name="date"></param>
     /// <param name="time"></param>
     /// <param name="cal"></param>
     public CalDateTime(DateOnly date, TimeOnly? time, DateTimeKind kind, string? tzId = null, Calendar? cal = null)
     {
-        if (time.HasValue)
-            Initialize(new DateTime(date.Year, date.Month, date.Day, time.Value.Hour, time.Value.Minute, time.Value.Second, kind), true, tzId, cal);
-        else
-            Initialize(new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, kind), false, tzId, cal);
+        Initialize(date, time, tzId, cal);
     }
 
     /// <summary>
@@ -138,42 +159,28 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// using the <see cref="DateTimeSerializer"/>.
     /// </summary>
     /// <param name="value">An iCalendar-compatible date or date-time string.</param>
-    public CalDateTime(string value)
+    /// <param name="tzId">The specified value will determine the <see cref="DateTime.Kind"/> property.
+    /// If the timezone specified is UTC, the underlying <see cref="DateTime.Kind"/> will be
+    /// <see cref="DateTimeKind.Utc"/>. If a non-UTC timezone or no timezone is specified, the underlying
+    /// <see cref="DateTimeKind.Unspecified"/> will be used. A timezone of <see langword="null"/> represents
+    /// the system's local timezone.
+    /// </param>
+    public CalDateTime(string value, string? tzId = null)
     {
         var serializer = new DateTimeSerializer();
         CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable
                  ?? throw new InvalidOperationException("Failure deserializing value"));
+        TzId = tzId;
     }
 
-    private void Initialize(DateTime dateTime, bool hasTime, string? tzId, Calendar? cal)
+    private void Initialize(DateOnly dateOnly, TimeOnly? timeOnly, string? tzId, Calendar? cal)
     {
-        DateTime initialValue;
+        HasTime = timeOnly.HasValue;
+        HasDate = true;
+        _dateOnly = dateOnly;
+        _timeOnly = timeOnly ?? new TimeOnly();
 
-        if ((tzId != null && !string.IsNullOrWhiteSpace(tzId) && !tzId.Equals("UTC", StringComparison.OrdinalIgnoreCase))
-            || (string.IsNullOrWhiteSpace(tzId) && dateTime.Kind == DateTimeKind.Unspecified))
-        {
-            // Definitely local
-            _tzId = tzId;
-
-            initialValue = DateTime.SpecifyKind(dateTime, DateTimeKind.Unspecified);
-
-        }
-        else if (string.Equals("UTC", tzId, StringComparison.OrdinalIgnoreCase) || dateTime.Kind == DateTimeKind.Utc)
-        {
-            // It is UTC
-            _tzId = "UTC";
-
-            initialValue = DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
-        }
-        else
-        {
-            // Unspecified
-            _tzId = null;
-
-            initialValue = DateTime.SpecifyKind(dateTime, DateTimeKind.Unspecified);
-        }
-
-        SynchronizeDateTimeFields(initialValue, hasTime);
+        _tzId = string.Equals(UtcTzId, tzId, StringComparison.OrdinalIgnoreCase) ? UtcTzId : tzId;
 
         AssociatedObject = cal;
     }
@@ -206,10 +213,9 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
             // Maintain the private date/time backing fields
             _dateOnly = calDt._dateOnly;
             _timeOnly = calDt._timeOnly;
-
-            // Copy the underlying DateTime value and time zone
-            _value = calDt._value;
             _tzId = calDt._tzId;
+            HasTime = calDt.HasTime;
+            HasDate = calDt.HasDate;
         }
 
         AssociateWith(dt);
@@ -318,12 +324,12 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// <summary>
     /// Gets the underlying <see cref="DateOnlyValue"/> of <see cref="Value"/>.
     /// </summary>
-    public DateOnly? DateOnlyValue => _dateOnly;
+    public DateOnly? DateOnlyValue => HasDate ? _dateOnly : null;
 
     /// <summary>
     /// Gets the underlying <see cref="TimeOnlyValue"/> of <see cref="Value"/>.
     /// </summary>
-    public TimeOnly? TimeOnlyValue => _timeOnly;
+    public TimeOnly? TimeOnlyValue => HasTime ? _timeOnly : null;
 
     /// <summary>
     /// Gets the underlying <see cref="DateTime"/> <see cref="Value"/>.
@@ -338,76 +344,60 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         get
         {
             // HasDate and HasTime both have setters, so they can be changed.
-            if (_dateOnly.HasValue && _timeOnly.HasValue)
+            if (HasDate && HasTime)
             {
-                return new DateTime(_dateOnly.Value.Year, _dateOnly.Value.Month,
-                    _dateOnly.Value.Day, _timeOnly.Value.Hour, _timeOnly.Value.Minute, _timeOnly.Value.Second,
-                    _value.Kind);
+                return new DateTime(_dateOnly.Year, _dateOnly.Month,
+                    _dateOnly.Day, _timeOnly.Hour, _timeOnly.Minute, _timeOnly.Second,
+                    IsUtc ? DateTimeKind.Utc : DateTimeKind.Unspecified);
             }
 
-            if (_dateOnly.HasValue) // _timeOnly is null here
-                return new DateTime(_dateOnly.Value.Year, _dateOnly.Value.Month, _dateOnly.Value.Day,
+            if (HasDate) // but no time
+                return new DateTime(_dateOnly.Year, _dateOnly.Month, _dateOnly.Day,
                     0, 0, 0,
-                    _value.Kind);
+                    IsUtc ? DateTimeKind.Utc : DateTimeKind.Unspecified);
 
             throw new InvalidOperationException($"Cannot create DateTime when {nameof(HasDate)} is false.");
         }
 
         set
         {
-            // Kind must be checked in addition to the value,
-            // as the value can be the same but the Kind different.
-            if (_value == value && _value.Kind == value.Kind)
-            {
-                return;
-            }
-
-            // Initialize with the new value, keeping current 'HasTime' setting
-            Initialize(value, _timeOnly.HasValue, TzId, Calendar);
+            // Initialize, keeping the HasTime setting
+            if (HasTime)
+                Initialize(DateOnly.FromDateTime(value), TimeOnly.FromDateTime(value), _tzId, Calendar);
+            else
+                Initialize(DateOnly.FromDateTime(value), null, _tzId, Calendar);
         }
     }
 
     /// <summary>
     /// Returns true if the underlying <see cref="DateTime"/> <see cref="Value"/> is in UTC.
     /// </summary>
-    public bool IsUtc => _value.Kind == DateTimeKind.Utc;
+    public bool IsUtc => string.Equals(_tzId, UtcTzId, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
-    /// Toggles the <see cref="DateTime.TimeOfDay"/> part of the underlying <see cref="Value"/>.
     /// <see langword="true"/> if the underlying <see cref="DateTime"/> <see cref="Value"/> has a 'date' part (year, month, day).
     /// </summary>
-    public bool HasDate
-    {
-        get => _dateOnly.HasValue;
-        set => _dateOnly = value ? DateOnly.FromDateTime(_value) : null;
-    }
+    public bool HasDate { get; set; } = true;
 
     /// <summary>
-    /// Toggles the <see cref="DateTime.TimeOfDay"/> part of the underlying <see cref="Value"/>.
     /// <see langword="true"/> if the underlying <see cref="DateTime"/> <see cref="Value"/> has a 'time' part (hour, minute, second).
     /// </summary>
-    public bool HasTime
-    {
-        get => _timeOnly.HasValue;
-        set => _timeOnly = value ? TimeOnly.FromDateTime(_value) : null;
-    }
+    public bool HasTime { get; set; } = true;
 
     private string? _tzId = string.Empty;
 
     /// <summary>
-    /// Setting the <see cref="TzId"/> to a local time zone will set <see cref="Value"/> to <see cref="DateTimeKind.Unspecified"/>.
+    /// Setting the <see cref="TzId"/> to a local timezone will set <see cref="Value"/> to <see cref="DateTimeKind.Unspecified"/>.
     /// Setting <see cref="TzId"/> to UTC will set <see cref="Value"/> to <see cref="DateTimeKind.Utc"/>.
-    /// If the value is set to <see langword="null"/>  or whitespace, <see cref="Value"/> will be <see cref="DateTimeKind.Unspecified"/>.
+    /// If the value is set to <see langword="null"/>, <see cref="Value"/> will be <see cref="DateTimeKind.Unspecified"/>,
+    /// and the system's local timezone will be used.
     /// <para/>
     /// Setting the <see cref="TzId"/> will initialize in the same way aw with the <seealso cref="CalDateTime(DateTime, string, bool)"/>.<br/>
-    /// To convert to another time zone, use <see cref="ToTimeZone"/>.
+    /// To convert to another timezone, use <see cref="ToTimeZone"/>.
     /// </summary>
     public string? TzId
     {
-        get
-        {
-            return _tzId;
-        }
+        get => _tzId;
         set
         {
             if (string.Equals(_tzId, value, StringComparison.OrdinalIgnoreCase))
@@ -415,12 +405,12 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
                 return;
             }
 
-            Initialize(_value, _timeOnly.HasValue, value, Calendar);
+            Initialize(_dateOnly, HasTime ? _timeOnly : null, value, Calendar);
         }
     }
 
     /// <summary>
-    /// Gets the time zone name, if it references a time zone.
+    /// Gets the timezone name, if it references a timezone.
     /// This is an alias for <see cref="TzId"/>.
     /// </summary>
     public string? TimeZoneName => TzId;
@@ -462,14 +452,12 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     public TimeSpan TimeOfDay => Value.TimeOfDay;
 
     /// <summary>
-    /// Returns a representation of the <see cref="IDateTime"/> in the <paramref name="tzId"/> time zone
+    /// Returns a representation of the <see cref="IDateTime"/> in the <paramref name="tzId"/> timezone
     /// </summary>
     public IDateTime ToTimeZone(string? tzId)
     {
-        // If TzId is empty, it's a system-local datetime, so we should use the system time zone as the starting point.
-        var originalTzId = string.IsNullOrWhiteSpace(TzId)
-            ? TimeZoneInfo.Local.Id
-            : TzId;
+        // If TzId is empty, it's a system-local datetime, so we should use the system timezone as the starting point.
+        var originalTzId = TzId ?? TimeZoneInfo.Local.Id;
 
         var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, originalTzId);
         var converted = zonedOriginal.WithZone(DateUtil.GetZone(tzId));
@@ -481,11 +469,11 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
 
     /// <summary>
     /// Returns a <see cref="DateTimeOffset"/> representation of the <see cref="Value"/>.
-    /// If a TzId is specified, it will use that time zone's UTC offset, otherwise it will use the
-    /// system-local time zone.
+    /// If a TzId is specified, it will use that timezone's UTC offset, otherwise it will use the
+    /// system-local timezone.
     /// </summary>
     public DateTimeOffset AsDateTimeOffset =>
-        string.IsNullOrWhiteSpace(TzId)
+        TzId is null
             ? new DateTimeOffset(Value)
             : DateUtil.ToZonedDateTimeLeniently(Value, TzId).ToDateTimeOffset();
 
@@ -501,7 +489,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     public TimeSpan Subtract(IDateTime dt) => (AsUtc - dt.AsUtc)!;
 
     /// <summary>Returns a new <see cref="IDateTime"/> by subtracting the specified <see cref="TimeSpan" /> from the value of this instance.</summary>
-    /// <param name="ts">A interval.</param>
+    /// <param name="ts">An interval.</param>
     /// <returns>An object whose value is the difference of the date and time represented by this instance and the time interval represented by <paramref name="ts" />.</returns>
     /// <remarks>
     /// This will also set <seealso cref="HasTime"/> to <see langword="true"/>,
@@ -717,12 +705,5 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         }
 
         return $"{dateTimeOffset.ToString("d", formatProvider)} {_tzId}";
-    }
-
-    private void SynchronizeDateTimeFields(DateTime dateTime, bool hasTime)
-    {
-        _value = dateTime;
-        _dateOnly = DateOnly.FromDateTime(_value);
-        _timeOnly = hasTime ? TimeOnly.FromDateTime(_value) : null;
     }
 }

@@ -129,7 +129,7 @@ public class CalDateTimeTests
     public static IEnumerable DateTimeKindOverrideTestCases()
     {
         const string localTz = "America/New_York";
-        var localDt = DateTime.SpecifyKind(DateTime.Parse("2018-05-21T11:35:33"), DateTimeKind.Local);
+        var localDt = DateTime.SpecifyKind(DateTime.Parse("2018-05-21T11:35:33"), DateTimeKind.Unspecified);
 
         yield return new TestCaseData(localDt, "UTC")
             .Returns(DateTimeKind.Utc)
@@ -250,9 +250,11 @@ public class CalDateTimeTests
 
         Assert.Multiple(() =>
         {
+            Assert.That(c2.Value, Is.EqualTo(c3.Value));
             Assert.That(c2.Ticks, Is.EqualTo(c3.Ticks));
             Assert.That(c2.TzId, Is.EqualTo(c3.TzId));
             Assert.That(CalDateTime.UtcNow.Value.Kind, Is.EqualTo(DateTimeKind.Utc));
+            Assert.That(CalDateTime.Today.Value.Kind, Is.EqualTo(DateTimeKind.Unspecified));
             Assert.That(c.Millisecond, Is.EqualTo(0));
             Assert.That(c.Ticks, Is.EqualTo(dt.Ticks));
             Assert.That(c.DayOfYear, Is.EqualTo(dt.DayOfYear));
@@ -284,19 +286,19 @@ public class CalDateTimeTests
         Assert.Multiple(() =>
         {
             var result = c.AddHours(1);
-            Assert.That(result.HasTime, Is.EqualTo(true));
+            Assert.That(result.HasTime, Is.True);
 
             result = c.AddMinutes(1);
-            Assert.That(result.HasTime, Is.EqualTo(true));
+            Assert.That(result.HasTime, Is.True);
 
             result = c.AddSeconds(1);
-            Assert.That(result.HasTime, Is.EqualTo(true));
+            Assert.That(result.HasTime, Is.True);
 
             result = c.AddMilliseconds(1000);
-            Assert.That(result.HasTime, Is.EqualTo(true));
+            Assert.That(result.HasTime, Is.True);
 
             result = c.AddTicks(TimeSpan.FromMinutes(1).Ticks);
-            Assert.That(result.HasTime, Is.EqualTo(true));
+            Assert.That(result.HasTime, Is.True);
         });
     }
 
