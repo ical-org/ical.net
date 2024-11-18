@@ -406,10 +406,6 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     {
         get
         {
-            if (string.IsNullOrWhiteSpace(_tzId))
-            {
-                _tzId = Parameters.Get("TZID");
-            }
             return _tzId;
         }
         set
@@ -419,15 +415,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                Initialize(_value, _timeOnly.HasValue, value, Calendar);
-                Parameters.Remove("TZID");
-                return;
-            }
-
             Initialize(_value, _timeOnly.HasValue, value, Calendar);
-            Parameters.Set("TZID", _tzId); // Use the value after the initialization
         }
     }
 

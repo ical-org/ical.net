@@ -95,10 +95,11 @@ public class DateTimeSerializer : EncodableDataTypeSerializer
         var value = tr.ReadToEnd();
 
         // CalDateTime is defined as the Target type
-        if (CreateAndAssociate() is not CalDateTime dt)
-        {
-            return null;
-        }
+        var dt = (CalDateTime) CreateAndAssociate();
+
+        // The associated object is an ICalendarObject of type CalendarProperty
+        // that contains any timezone ("TZID" property) deserialized in a prior step
+        dt.TzId = dt.Parameters.Get("TZID");
 
         // Decode the value as necessary
         value = Decode(dt, value);
@@ -135,10 +136,7 @@ public class DateTimeSerializer : EncodableDataTypeSerializer
             ? DateTimeKind.Utc
             : DateTimeKind.Unspecified;
 
-        if (isUtc)
-        {
-            dt.TzId = "UTC";
-        }
+        if (isUtc) dt.TzId = "UTC";
 
         dt.Value = timePart.HasValue
             ? new DateTime(datePart.Year, datePart.Month, datePart.Day, timePart.Value.Hour, timePart.Value.Minute, timePart.Value.Second, kind)
