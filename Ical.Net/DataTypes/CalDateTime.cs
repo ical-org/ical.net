@@ -57,9 +57,9 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     public CalDateTime(IDateTime value)
     {
         if (value.HasTime)
-            Initialize(DateOnly.FromDateTime(value.Value), TimeOnly.FromDateTime(value.Value), value.TzId, value.Calendar);
+            Initialize(DateOnly.FromDateTime(value.Value), TimeOnly.FromDateTime(value.Value), value.TzId);
         else
-            Initialize(DateOnly.FromDateTime(value.Value), null, value.TzId, value.Calendar);
+            Initialize(DateOnly.FromDateTime(value.Value), null, value.TzId);
     }
 
     /// <summary>
@@ -92,9 +92,9 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
             tzId = UtcTzId;
 
         if (hasTime)
-            Initialize(DateOnly.FromDateTime(value), TimeOnly.FromDateTime(value), tzId, null);
+            Initialize(DateOnly.FromDateTime(value), TimeOnly.FromDateTime(value), tzId);
         else
-            Initialize(DateOnly.FromDateTime(value), null, tzId, null);
+            Initialize(DateOnly.FromDateTime(value), null, tzId);
     }
 
     /// <summary>
@@ -112,10 +112,9 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// <param name="hour"></param>
     /// <param name="minute"></param>
     /// <param name="second"></param>
-    /// <param name="cal"></param>
-    public CalDateTime(int year, int month, int day, int hour, int minute, int second, string? tzId = null, Calendar? cal = null) //NOSONAR - must keep this signature
+    public CalDateTime(int year, int month, int day, int hour, int minute, int second, string? tzId = null) //NOSONAR - must keep this signature
     {
-        Initialize(new DateOnly(year, month, day), new TimeOnly(hour, minute, second), tzId, cal);
+        Initialize(new DateOnly(year, month, day), new TimeOnly(hour, minute, second), tzId);
     }
 
     /// <summary>
@@ -133,7 +132,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// <param name="day"></param>
     public CalDateTime(int year, int month, int day, string? tzId = null)
     {
-        Initialize(new DateOnly(year, month, day), null, tzId, null);
+        Initialize(new DateOnly(year, month, day), null, tzId);
     }
 
     /// <summary>
@@ -148,10 +147,9 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// </param>
     /// <param name="date"></param>
     /// <param name="time"></param>
-    /// <param name="cal"></param>
-    public CalDateTime(DateOnly date, TimeOnly? time, DateTimeKind kind, string? tzId = null, Calendar? cal = null)
+    public CalDateTime(DateOnly date, TimeOnly? time, string? tzId = null)
     {
-        Initialize(date, time, tzId, cal);
+        Initialize(date, time, tzId);
     }
 
     /// <summary>
@@ -173,7 +171,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         TzId = tzId;
     }
 
-    private void Initialize(DateOnly dateOnly, TimeOnly? timeOnly, string? tzId, Calendar? cal)
+    private void Initialize(DateOnly dateOnly, TimeOnly? timeOnly, string? tzId)
     {
         HasTime = timeOnly.HasValue;
         HasDate = true;
@@ -181,8 +179,6 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         _timeOnly = timeOnly ?? new TimeOnly();
 
         _tzId = string.Equals(UtcTzId, tzId, StringComparison.OrdinalIgnoreCase) ? UtcTzId : tzId;
-
-        AssociatedObject = cal;
     }
 
     /// <inheritdoc/>
@@ -363,9 +359,9 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         {
             // Initialize, keeping the HasTime setting
             if (HasTime)
-                Initialize(DateOnly.FromDateTime(value), TimeOnly.FromDateTime(value), _tzId, Calendar);
+                Initialize(DateOnly.FromDateTime(value), TimeOnly.FromDateTime(value), _tzId);
             else
-                Initialize(DateOnly.FromDateTime(value), null, _tzId, Calendar);
+                Initialize(DateOnly.FromDateTime(value), null, _tzId);
         }
     }
 
@@ -405,7 +401,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
                 return;
             }
 
-            Initialize(_dateOnly, HasTime ? _timeOnly : null, value, Calendar);
+            Initialize(_dateOnly, HasTime ? _timeOnly : null, value);
         }
     }
 

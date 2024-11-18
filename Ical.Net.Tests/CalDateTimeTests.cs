@@ -244,9 +244,9 @@ public class CalDateTimeTests
         var dt = new DateTime(2025, 1, 2, 10, 20, 30, DateTimeKind.Utc);
         var c = new CalDateTime(dt, tzId: "Europe/Berlin");
 
-        var c2 = new CalDateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, c.TzId, null);
+        var c2 = new CalDateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, c.TzId);
         var c3 = new CalDateTime(new DateOnly(dt.Year, dt.Month, dt.Day),
-            new TimeOnly(dt.Hour, dt.Minute, dt.Second), dt.Kind, c.TzId);
+            new TimeOnly(dt.Hour, dt.Minute, dt.Second), c.TzId);
 
         Assert.Multiple(() =>
         {
