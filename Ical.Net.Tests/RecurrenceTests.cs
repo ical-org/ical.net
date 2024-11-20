@@ -3728,4 +3728,35 @@ END:VCALENDAR
 
         Assert.That(startDates, Is.EqualTo(testCase.Instances));
     }
+
+    [Test]
+    // Reproducer from https://github.com/ical-org/ical.net/issues/629
+    public void ShouldCreateARecurringYearlyEvent()
+    {
+        var springAdminEvent = new CalendarEvent
+        {
+            Start = new CalDateTime(DateTime.Parse("2024-04-15")),
+            End = new CalDateTime(DateTime.Parse("2024-04-15")),
+            RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Yearly, 1) },
+        };
+
+        var calendar = new Calendar();
+        calendar.Events.Add(springAdminEvent);
+        var searchStart = DateTime.Parse("2024-04-15");
+        var searchEnd = DateTime.Parse("2050-5-31");
+        var occurrences = calendar.GetOccurrences(searchStart, searchEnd);
+        Assert.That(occurrences.Count, Is.EqualTo(27));
+
+        springAdminEvent.Start = new CalDateTime(DateTime.Parse("2024-04-16"));
+        springAdminEvent.End = new CalDateTime(DateTime.Parse("2024-04-16"));
+        springAdminEvent.RecurrenceRules = new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Yearly, 1) };
+
+        searchStart = DateTime.Parse("2024-04-16");
+        searchEnd = DateTime.Parse("2050-5-31");
+        occurrences = calendar.GetOccurrences(searchStart, searchEnd);
+
+        //occurences is 26 here, omitting 4/16/2024
+        Assert.That(occurrences.Count, Is.EqualTo(27));
+    }
 }
+

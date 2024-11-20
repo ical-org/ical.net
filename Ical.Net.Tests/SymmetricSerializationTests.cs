@@ -25,7 +25,17 @@ public class SymmetricSerializationTests
     private static readonly DateTime _later = _nowTime.AddHours(1);
     private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
     private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
-    private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime };
+    private static CalendarEvent GetSimpleEvent(bool useDtEnd = true)
+    {
+        var evt = new CalendarEvent { DtStart = new CalDateTime(_nowTime) };
+        if (useDtEnd)
+            evt.DtEnd = new CalDateTime(_later);
+        else
+            evt.Duration = _later - _nowTime;
+
+        return evt;
+    }
+
     private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
 
     [Test, TestCaseSource(nameof(Event_TestCases))]
@@ -48,24 +58,32 @@ public class SymmetricSerializationTests
 
     public static IEnumerable<ITestCaseData> Event_TestCases()
     {
+        return Event_TestCasesInt(true).Concat(Event_TestCasesInt(false));
+    }
+
+    private static IEnumerable<ITestCaseData> Event_TestCasesInt(bool useDtEnd)
+    {
         var rrule = new RecurrencePattern(FrequencyType.Daily, 1) { Count = 5 };
         var e = new CalendarEvent
         {
             DtStart = new CalDateTime(_nowTime),
-            DtEnd = new CalDateTime(_later),
-            Duration = TimeSpan.FromHours(1),
             RecurrenceRules = new List<RecurrencePattern> { rrule },
         };
 
+        if (useDtEnd)
+            e.DtEnd = new CalDateTime(_later);
+        else
+            e.Duration = _later - _nowTime;
+
         var calendar = new Calendar();
         calendar.Events.Add(e);
-        yield return new TestCaseData(calendar).SetName("readme.md example");
+        yield return new TestCaseData(calendar).SetName($"readme.md example with {(useDtEnd ? "DTEND" : "DURATION")}");
 
-        e = GetSimpleEvent();
+        e = GetSimpleEvent(useDtEnd);
         e.Description = "This is an event description that is really rather long. Hopefully the line breaks work now, and it's serialized properly.";
         calendar = new Calendar();
         calendar.Events.Add(e);
-        yield return new TestCaseData(calendar).SetName("Description serialization isn't working properly. Issue #60");
+        yield return new TestCaseData(calendar).SetName($"Description serialization isn't working properly. Issue #60 {(useDtEnd ? "DTEND" : "DURATION")}");
     }
 
     [Test]
