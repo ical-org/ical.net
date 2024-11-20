@@ -552,4 +552,26 @@ END:VCALENDAR
             Assert.That(props[i].Value, Is.EqualTo("2." + i));
         }
     }
+
+    [Test]
+    [TestCase(true)]
+    [TestCase(false)]
+    public void KeepApartDtEndAndDuration_Tests(bool useDtEnd)
+    {
+        var calStr = $@"BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART:20070406T230000Z
+{(useDtEnd ? "DTEND:20070407T010000Z" : "DURATION:PT1H")}
+END:VEVENT
+END:VCALENDAR
+";
+
+        var calendar = Calendar.Load(calStr);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(calendar.Events.Single().DtEnd != null, Is.EqualTo(useDtEnd));
+            Assert.That(calendar.Events.Single().Duration != default, Is.EqualTo(!useDtEnd));
+        });
+    }
 }

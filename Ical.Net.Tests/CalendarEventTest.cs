@@ -469,4 +469,81 @@ END:VCALENDAR";
         var expectedNegative = TimeSpan.FromMinutes(-17.5);
         Assert.That(negativeOffset?.Offset, Is.EqualTo(expectedNegative));
     }
+
+
+    [Test, Category("CalendarEvent")]
+    public void TestGetEffectiveDuration()
+    {
+        var now = _now.Subtract(TimeSpan.FromTicks(_now.Ticks % TimeSpan.TicksPerSecond));
+
+        var evt = new CalendarEvent()
+        {
+            DtStart = new CalDateTime(now) { HasTime = true },
+            DtEnd = new CalDateTime(now.AddHours(1)) { HasTime = true },
+        };
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(evt.DtStart.Value, Is.EqualTo(now));
+            Assert.That(evt.DtEnd.Value, Is.EqualTo(now.AddHours(1)));
+            Assert.That(evt.GetFirstDuration(), Is.EqualTo(TimeSpan.FromHours(1)));
+        });
+
+        evt = new CalendarEvent()
+        {
+            DtStart = new CalDateTime(now.Date) { HasTime = true },
+            DtEnd = new CalDateTime(now.Date.AddHours(1)) { HasTime = true },
+        };
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(evt.DtStart.Value, Is.EqualTo(now.Date));
+            Assert.That(evt.GetFirstDuration(), Is.EqualTo(TimeSpan.FromHours(1)));
+        });
+
+        evt = new CalendarEvent()
+        {
+            DtStart = new CalDateTime(now.Date) { HasTime = false },
+        };
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(evt.DtStart.Value, Is.EqualTo(now.Date));
+            Assert.That(evt.GetFirstDuration(), Is.EqualTo(TimeSpan.FromDays(1)));
+        });
+
+        evt = new CalendarEvent()
+        {
+            DtStart = new CalDateTime(now) { HasTime = true },
+            Duration = TimeSpan.FromHours(2),
+        };
+
+        Assert.Multiple(() => {
+            Assert.That(evt.DtStart.Value, Is.EqualTo(now));
+            Assert.That(evt.DtEnd, Is.Null);
+            Assert.That(evt.GetFirstDuration(), Is.EqualTo(TimeSpan.FromHours(2)));
+        });
+
+        evt = new CalendarEvent()
+        {
+            DtStart = new CalDateTime(now.Date) { HasTime = true },
+            Duration = TimeSpan.FromHours(2),
+        };
+
+        Assert.Multiple(() => {
+            Assert.That(evt.DtStart.Value, Is.EqualTo(now.Date));
+            Assert.That(evt.GetFirstDuration(), Is.EqualTo(TimeSpan.FromHours(2)));
+        });
+
+        evt = new CalendarEvent()
+        {
+            DtStart = new CalDateTime(now.Date) { HasTime = false },
+            Duration = TimeSpan.FromDays(1),
+        };
+
+        Assert.Multiple(() => {
+            Assert.That(evt.DtStart.Value, Is.EqualTo(now.Date));
+            Assert.That(evt.GetFirstDuration(), Is.EqualTo(TimeSpan.FromDays(1)));
+        });
+    }
 }
