@@ -2821,8 +2821,8 @@ public class RecurrenceTests
 
         var occurrences = evaluator.Evaluate(
             startDate,
-            DateUtil.SimpleDateTimeToMatch(fromDate, startDate),
-            DateUtil.SimpleDateTimeToMatch(toDate, startDate),
+            SimpleDateTimeToMatch(fromDate, startDate),
+            SimpleDateTimeToMatch(toDate, startDate),
             false)
             .OrderBy(o => o.StartTime)
             .ToList();
@@ -2854,8 +2854,8 @@ public class RecurrenceTests
 
         var occurrences = evaluator.Evaluate(
             startDate,
-            DateUtil.SimpleDateTimeToMatch(fromDate, startDate),
-            DateUtil.SimpleDateTimeToMatch(toDate, startDate),
+            SimpleDateTimeToMatch(fromDate, startDate),
+            SimpleDateTimeToMatch(toDate, startDate),
             false);
         Assert.That(occurrences.Count, Is.Not.EqualTo(0));
     }
@@ -2966,7 +2966,7 @@ public class RecurrenceTests
         var periods = evaluator.Evaluate(
             evtStart,
             DateUtil.GetSimpleDateTimeData(evtStart),
-            DateUtil.SimpleDateTimeToMatch(evtEnd, evtStart),
+            SimpleDateTimeToMatch(evtEnd, evtStart),
             false)
             .OrderBy(p => p.StartTime)
             .ToList();
@@ -3757,6 +3757,23 @@ END:VCALENDAR
 
         //occurences is 26 here, omitting 4/16/2024
         Assert.That(occurrences.Count, Is.EqualTo(27));
+    }
+
+    private static DateTime SimpleDateTimeToMatch(IDateTime dt, IDateTime toMatch)
+    {
+        if (toMatch.IsUtc && dt.IsUtc)
+        {
+            return dt.Value;
+        }
+        if (toMatch.IsUtc)
+        {
+            return dt.Value.ToUniversalTime();
+        }
+        if (dt.IsUtc)
+        {
+            return dt.Value.ToLocalTime();
+        }
+        return dt.Value;
     }
 }
 

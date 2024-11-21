@@ -27,7 +27,6 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     // The time part that is used to return the Value property.
     private TimeOnly _timeOnly;
 
-    private const double AlmostZeroEpsilon = 1e-10;
     private const string UtcTzId = "UTC";
 
     /// <summary>
@@ -274,7 +273,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     public static IDateTime operator -(CalDateTime left, TimeSpan right)
     {
         var copy = left.Copy<CalDateTime>();
-        if (Math.Abs(right.TotalDays % 1) > AlmostZeroEpsilon)
+        if ((right.Ticks % TimeSpan.TicksPerDay) != 0)
         {
             copy.HasTime = true;
         }
@@ -292,7 +291,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     public static IDateTime operator +(CalDateTime left, TimeSpan right)
     {
         var copy = left.Copy<CalDateTime>();
-        if (Math.Abs(right.TotalDays % 1) > AlmostZeroEpsilon)
+        if ((right.Ticks % TimeSpan.TicksPerDay) != 0)
         {
             copy.HasTime = true;
         }
@@ -600,7 +599,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     public IDateTime AddTicks(long ticks)
     {
         var dt = Copy<CalDateTime>();
-        if (!dt.HasTime && Math.Abs(TimeSpan.FromTicks(ticks).TotalDays % 1) > AlmostZeroEpsilon)
+        if (!dt.HasTime && (ticks % TimeSpan.TicksPerDay) != 0)
         {
             dt.HasTime = true;
         }

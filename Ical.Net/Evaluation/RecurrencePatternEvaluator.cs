@@ -31,7 +31,7 @@ public class RecurrencePatternEvaluator : Evaluator
         // Convert the UNTIL value to one that matches the same time information as the reference date
         if (r.Until != DateTime.MinValue)
         {
-            r.Until = DateUtil.MatchTimeZone(referenceDate, new CalDateTime(r.Until, referenceDate.TzId)).Value;
+            r.Until = MatchTimeZone(referenceDate, new CalDateTime(r.Until, referenceDate.TzId)).Value;
         }
 
         if (referenceDate.HasTime)
@@ -937,5 +937,26 @@ public class RecurrencePatternEvaluator : Evaluator
         Periods.UnionWith(periodQuery);
 
         return Periods;
+    }
+
+    private static IDateTime MatchTimeZone(IDateTime dt1, IDateTime dt2)
+    {
+        // Associate the date/time with the first.
+        var copy = dt2;
+        copy.AssociateWith(dt1);
+
+        // If the dt1 time does not occur in the same time zone as the
+        // dt2 time, then let's convert it so they can be used in the
+        // same context (i.e. evaluation).
+        if (dt1.TzId != null)
+        {
+            return string.Equals(dt1.TzId, copy.TzId, StringComparison.OrdinalIgnoreCase)
+                ? copy
+                : copy.ToTimeZone(dt1.TzId);
+        }
+
+        return dt1.IsUtc
+            ? new CalDateTime(copy.AsUtc)
+            : new CalDateTime(copy.AsSystemLocal);
     }
 }
