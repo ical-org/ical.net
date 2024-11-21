@@ -658,6 +658,9 @@ public class RecurrencePatternEvaluator : Evaluator
         {
             var weekNo = Calendar.GetIso8601WeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
 
+            // Go to the first day of the week
+            date = date.AddDays(-GetWeekDayOffset(date, pattern.FirstDayOfWeek));
+
             // construct a list of possible week days..
             while (date.DayOfWeek != dayOfWeek)
             {
@@ -724,6 +727,12 @@ public class RecurrencePatternEvaluator : Evaluator
         }
         return GetOffsetDates(days, weekDay.Offset);
     }
+
+    /// <summary>
+    /// Returns the days since the start of the week, 0 if the date is on the first day of the week.
+    /// </summary>
+    private static int GetWeekDayOffset(DateTime date, DayOfWeek startOfWeek)
+        => date.DayOfWeek + ((date.DayOfWeek < startOfWeek) ? 7 : 0) - startOfWeek;
 
     /// <summary>
     /// Returns a single-element sublist containing the element of <paramref name="dates"/> at <paramref name="offset"/>. 

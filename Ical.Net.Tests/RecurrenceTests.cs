@@ -3631,6 +3631,8 @@ END:VCALENDAR
 
         public IReadOnlyList<CalDateTime> Instances { get; set; }
 
+        public string Exception { get; set; }
+
         public override string ToString()
             => $"Line {LineNumber}: {DtStart}, {RRule}";
     }
@@ -3686,6 +3688,10 @@ END:VCALENDAR
                 case "INSTANCES":
                     current.Instances = val.Split(',').Select(dt => new CalDateTime(dt) { TzId = "UTC" }).ToList();
                     break;
+
+                case "EXCEPTION":
+                    current.Exception = val;
+                    break;
             }
         }
 
@@ -3718,6 +3724,14 @@ END:VCALENDAR
 
         // Start at midnight, UTC time
         evt.Start = testCase.DtStart;
+
+        if (testCase.Exception != null)
+        {
+            var exceptionType = Type.GetType(testCase.Exception);
+            Assert.Throws(exceptionType, () => new RecurrencePattern(testCase.RRule));
+            return;
+        }
+
         evt.RecurrenceRules.Add(new RecurrencePattern(testCase.RRule));
 
         var occurrences = evt.GetOccurrences(testCase.StartAt?.Value ?? DateTime.MinValue, DateTime.MaxValue)
