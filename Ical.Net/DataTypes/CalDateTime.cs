@@ -137,7 +137,6 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// <summary>
     /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified timezone.
     /// </summary>
-    /// <param name="kind">If <see langword="null"/>, <see cref="DateTimeKind.Unspecified"/> is used.</param>
     /// <param name="tzId">The specified value will determine the <see cref="DateTime.Kind"/> property.
     /// If the timezone specified is UTC, the underlying <see cref="DateTime.Kind"/> will be
     /// <see cref="DateTimeKind.Utc"/>. If a non-UTC timezone or no timezone is specified, the underlying
@@ -400,6 +399,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
                 return;
             }
 
+            _tzId = value;
             Initialize(_dateOnly, HasTime ? _timeOnly : null, value);
         }
     }
@@ -694,7 +694,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
             return $"{dateTimeOffset.TimeOfDay.ToString(format, formatProvider)} {_tzId}";
         }
 
-        if (HasTime && HasDate)
+        if (HasTime)
         {
             return $"{dateTimeOffset.ToString(format, formatProvider)} {_tzId}";
         }

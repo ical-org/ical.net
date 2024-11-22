@@ -14,7 +14,7 @@ namespace Ical.Net.Evaluation;
 
 public class RecurrencePatternEvaluator : Evaluator
 {
-    private const int _maxIncrementCount = 1000;
+    private const int MaxIncrementCount = 1000;
 
     protected RecurrencePattern Pattern { get; set; }
 
@@ -284,7 +284,7 @@ public class RecurrencePatternEvaluator : Evaluator
             else
             {
                 noCandidateIncrementCount++;
-                if (_maxIncrementCount > 0 && noCandidateIncrementCount > _maxIncrementCount)
+                if (noCandidateIncrementCount > MaxIncrementCount)
                 {
                     break;
                 }

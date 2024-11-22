@@ -45,8 +45,6 @@ public class UniqueComponent : CalendarComponent, IUniqueComponent, IComparable<
         // See https://sourceforge.net/projects/dday-ical/forums/forum/656447/topic/3754354
         if (DtStamp == null)
         {
-            // icalendar RFC doesn't care about sub-second time resolution, so shave off everything smaller than seconds.
-            var utcNow = DateTime.UtcNow.Truncate(TimeSpan.FromSeconds(1));
             DtStamp = CalDateTime.UtcNow;
         }
     }
