@@ -244,7 +244,20 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
                 var keywordPairs = match.Groups[2].Value.Split(';');
                 foreach (var keywordPair in keywordPairs)
                 {
+                    if (keywordPair.Length == 0)
+                    {
+                        // This is illegal but ignore for now.
+                        continue;
+                    }
+
                     var keyValues = keywordPair.Split('=');
+                    if (keyValues.Length != 2)
+                    {
+                        // ArgumentExceptions seem to be the Exception of choise for this class. Should
+                        // probably be changed to a more specific exception type.
+                        throw new ArgumentException($"The recurrence rule part '{keywordPair}' is invalid.");
+                    }
+
                     var keyword = keyValues[0];
                     var keyValue = keyValues[1];
 
