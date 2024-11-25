@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using Ical.Net.DataTypes;
 using Ical.Net.Utility;
@@ -400,7 +399,7 @@ public class RecurrencePatternEvaluator : Evaluator
             {
                 var date = t;
                 // Determine our current week number
-                var currWeekNo = Calendar.GetIso8601WeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+                var currWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
                 while (currWeekNo > weekNo)
                 {
                     // If currWeekNo > weekNo, then we're likely at the start of a year
@@ -408,7 +407,7 @@ public class RecurrencePatternEvaluator : Evaluator
                     // we should be back to week 1, where we can easily make the calculation
                     // to move to weekNo.
                     date = date.AddDays(7);
-                    currWeekNo = Calendar.GetIso8601WeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+                    currWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
                 }
 
                 // Move ahead to the correct week of the year
@@ -629,7 +628,7 @@ public class RecurrencePatternEvaluator : Evaluator
         }
         else if (pattern.Frequency == FrequencyType.Weekly || pattern.ByWeekNo.Count > 0)
         {
-            var weekNo = Calendar.GetIso8601WeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+            var weekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
 
             // Go to the first day of the week
             date = date.AddDays(-GetWeekDayOffset(date, pattern.FirstDayOfWeek));
@@ -640,8 +639,8 @@ public class RecurrencePatternEvaluator : Evaluator
                 date = date.AddDays(1);
             }
 
-            var nextWeekNo = Calendar.GetIso8601WeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
-            var currentWeekNo = Calendar.GetIso8601WeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+            var nextWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
+            var currentWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
 
             //When we manage weekly recurring pattern and we have boundary case:
             //Weekdays: Dec 31, Jan 1, Feb 1, Mar 1, Apr 1, May 1, June 1, Dec 31 - It's the 53th week of the year, but all another are 1st week number.
@@ -655,7 +654,7 @@ public class RecurrencePatternEvaluator : Evaluator
                 }
 
                 date = date.AddDays(7);
-                currentWeekNo = Calendar.GetIso8601WeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+                currentWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
             }
         }
         else if (pattern.Frequency == FrequencyType.Monthly || pattern.ByMonth.Count > 0)
@@ -671,7 +670,7 @@ public class RecurrencePatternEvaluator : Evaluator
 
             while (date.Month == month)
             {
-                var currentWeekNo = Calendar.GetIso8601WeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, pattern.FirstDayOfWeek);
+                var currentWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
 
                 if ((pattern.ByWeekNo.Count == 0 || pattern.ByWeekNo.Contains(currentWeekNo))
                     && (pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month)))
