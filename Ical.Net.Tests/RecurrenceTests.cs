@@ -1906,7 +1906,7 @@ public class RecurrenceTests
         var end = new CalDateTime(2007, 6, 21, 12, 0, 1, _tzid); // End period is exclusive, not inclusive.
 
         var dateTimes = new List<IDateTime>();
-        for (var dt = start; dt.LessThan(end); dt = (CalDateTime) dt.AddMinutes(1))
+        for (var dt = start; dt.LessThan(end); dt = (CalDateTime)dt.AddMinutes(1))
         {
             dateTimes.Add(new CalDateTime(dt));
         }
@@ -1923,7 +1923,7 @@ public class RecurrenceTests
         var end = new CalDateTime(2007, 6, 25, 8, 0, 1, _tzid); // End period is exclusive, not inclusive.
 
         var dateTimes = new List<IDateTime>();
-        for (var dt = start; dt.LessThan(end); dt = (CalDateTime) dt.AddHours(1))
+        for (var dt = start; dt.LessThan(end); dt = (CalDateTime)dt.AddHours(1))
         {
             dateTimes.Add(new CalDateTime(dt));
         }
@@ -2476,20 +2476,22 @@ public class RecurrenceTests
     {
         var iCal = Calendar.Load(IcsFiles.Bug3007244);
 
+        // CalDateTimes.HasTime = false
         EventOccurrenceTest(
             cal: iCal,
-            fromDate: new CalDateTime(2010, 7, 18, 0, 0, 0),
-            toDate: new CalDateTime(2010, 7, 26, 0, 0, 0),
-            dateTimes: new[] { new CalDateTime(2010, 05, 23, 0, 0, 0), },
+            fromDate: new CalDateTime(2010, 7, 18),
+            toDate: new CalDateTime(2010, 7, 26),
+            dateTimes: new[] { new CalDateTime(2010, 05, 23) },
             timeZones: null,
             eventIndex: 0
         );
 
+        // CalDateTimes.HasTime = false
         EventOccurrenceTest(
             cal: iCal,
-            fromDate: new CalDateTime(2011, 7, 18, 0, 0, 0),
-            toDate: new CalDateTime(2011, 7, 26, 0, 0, 0),
-            dateTimes: new[] { new CalDateTime(2011, 05, 23, 0, 0, 0), },
+            fromDate: new CalDateTime(2011, 7, 18),
+            toDate: new CalDateTime(2011, 7, 26),
+            dateTimes: new[] { new CalDateTime(2011, 05, 23) },
             timeZones: null,
             eventIndex: 0
         );
@@ -2505,7 +2507,7 @@ public class RecurrenceTests
         var end = new DateTime(2019, 12, 31);
         var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=WEEKLY;BYDAY=MO;BYWEEKNO=2"));
 
-        var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, end, false);
+        var recurringPeriods = rpe.Evaluate(new CalDateTime(start, false), start, end, false);
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(1));
         Assert.That(recurringPeriods.First().StartTime, Is.EqualTo(new CalDateTime(2019, 1, 7)));
@@ -2521,7 +2523,7 @@ public class RecurrenceTests
         var end = new DateTime(2020, 12, 31);
         var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=WEEKLY;BYDAY=MO;BYMONTH=1"));
 
-        var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, end, false).OrderBy(x => x).ToList();
+        var recurringPeriods = rpe.Evaluate(new CalDateTime(start, false), start, end, false).OrderBy(x => x).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(4));
         Assert.Multiple(() =>
@@ -2564,7 +2566,7 @@ public class RecurrenceTests
         var end = new DateTime(2020, 12, 31);
         var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=MONTHLY;BYDAY=MO;BYMONTH=1"));
 
-        var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, end, false).OrderBy(x => x).ToList();
+        var recurringPeriods = rpe.Evaluate(new CalDateTime(start, false), start, end, false).OrderBy(x => x).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(4));
         Assert.Multiple(() =>
@@ -2587,7 +2589,7 @@ public class RecurrenceTests
         {
             var start = DateTime.Parse("2010-11-27 9:00:00");
             var serializer = new RecurrencePatternSerializer();
-            var rp = (RecurrencePattern) serializer.Deserialize(sr);
+            var rp = (RecurrencePattern)serializer.Deserialize(sr);
             var rpe = new RecurrencePatternEvaluator(rp);
             var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, rp.Until, false);
 
@@ -2635,7 +2637,7 @@ public class RecurrenceTests
         using (var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126"))
         {
             var serializer = new RecurrencePatternSerializer();
-            var rp = (RecurrencePattern) serializer.Deserialize(sr);
+            var rp = (RecurrencePattern)serializer.Deserialize(sr);
 
             Assert.That(rp, Is.Not.Null);
             Assert.That(rp.Until, Is.EqualTo(new DateTime(2025, 11, 26)));
@@ -2772,7 +2774,7 @@ public class RecurrenceTests
         evt.Summary = "Event summary";
 
         // Start at midnight, UTC time
-        evt.Start = new CalDateTime(DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc)) { HasTime = false };
+        evt.Start = new CalDateTime(DateTime.UtcNow.Date, false);
 
         // This case (DTSTART of type DATE and FREQ=MINUTELY) is undefined in RFC 5545.
         // ical.net handles the case by pretending DTSTART has the time set to midnight.
@@ -2781,14 +2783,14 @@ public class RecurrenceTests
         evt.RecurrenceRules[0].RestrictionType = RecurrenceRestrictionType.NoRestriction;
 #pragma warning restore 0618
 
-        var occurrences = evt.GetOccurrences(CalDateTime.Today.AddDays(-1), CalDateTime.Today.AddDays(100))
+        var occurrences = evt.GetOccurrences(evt.Start.AddDays(-1), evt.Start.AddDays(100))
             .OrderBy(x => x)
             .ToList();
 
         var startDates = occurrences.Select(x => x.Period.StartTime.Value).ToList();
 
         var expectedStartDates = Enumerable.Range(0, 5)
-            .Select(i => DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc).AddSeconds(i * secsPerInterval * 10))
+            .Select(i => DateTime.UtcNow.Date.AddSeconds(i * secsPerInterval * 10))
             .ToList();
 
         Assert.Multiple(() =>
@@ -2818,10 +2820,10 @@ public class RecurrenceTests
         Assert.That(evaluator, Is.Not.Null);
 
         var occurrences = evaluator.Evaluate(
-                startDate,
-                DateUtil.SimpleDateTimeToMatch(fromDate, startDate),
-                DateUtil.SimpleDateTimeToMatch(toDate, startDate),
-                false)
+            startDate,
+            SimpleDateTimeToMatch(fromDate, startDate),
+            SimpleDateTimeToMatch(toDate, startDate),
+            false)
             .OrderBy(o => o.StartTime)
             .ToList();
         Assert.That(occurrences, Has.Count.EqualTo(4));
@@ -2852,8 +2854,8 @@ public class RecurrenceTests
 
         var occurrences = evaluator.Evaluate(
             startDate,
-            DateUtil.SimpleDateTimeToMatch(fromDate, startDate),
-            DateUtil.SimpleDateTimeToMatch(toDate, startDate),
+            SimpleDateTimeToMatch(fromDate, startDate),
+            SimpleDateTimeToMatch(toDate, startDate),
             false);
         Assert.That(occurrences.Count, Is.Not.EqualTo(0));
     }
@@ -2962,10 +2964,10 @@ public class RecurrenceTests
 
         // Add the exception dates
         var periods = evaluator.Evaluate(
-                evtStart,
-                DateUtil.GetSimpleDateTimeData(evtStart),
-                DateUtil.SimpleDateTimeToMatch(evtEnd, evtStart),
-                false)
+            evtStart,
+            DateUtil.GetSimpleDateTimeData(evtStart),
+            SimpleDateTimeToMatch(evtEnd, evtStart),
+            false)
             .OrderBy(p => p.StartTime)
             .ToList();
         Assert.That(periods, Has.Count.EqualTo(10));
@@ -3016,7 +3018,7 @@ END:VCALENDAR";
     {
         //Issues #118 and #107 on Github
         const string ical =
-            @"BEGIN:VCALENDAR
+@"BEGIN:VCALENDAR
 PRODID:-//ddaysoftware.com//NONSGML DDay.iCal 1.0//EN
 VERSION:2.0
 BEGIN:VEVENT
@@ -3098,9 +3100,9 @@ END:VCALENDAR";
 
         var lastExpected = new CalDateTime(DateTime.Parse("2016-08-31T07:00:00"), "UTC");
         var occurrences = firstEvent.GetOccurrences(startSearch, endSearch)
-            .Select(o => o.Period)
-            .OrderBy(p => p.StartTime)
-            .ToList();
+                .Select(o => o.Period)
+                .OrderBy(p => p.StartTime)
+                .ToList();
 
         Assert.That(occurrences.Last().StartTime.Equals(lastExpected), Is.False);
 
@@ -3118,12 +3120,12 @@ END:VCALENDAR";
     /// Evaluate relevancy and validity of the request.
     /// Find a solution for issue #120 or close forever
     /// </summary>
-    [Test, Ignore("Turn on in v3", Until = "2024-12-31")]
+    [Test, Ignore("No solution for issue #120 yet", Until = "2024-12-31")]
     public void EventsWithShareUidsShouldGenerateASingleRecurrenceSet()
     {
         //https://github.com/rianjs/ical.net/issues/120 dated Sep 5, 2016
         const string ical =
-            @"BEGIN:VCALENDAR
+@"BEGIN:VCALENDAR
 PRODID:-//Google Inc//Google Calendar 70.9054//EN
 VERSION:2.0
 CALSCALE:GREGORIAN
@@ -3217,21 +3219,21 @@ END:VCALENDAR";
         var searchEnd = _now.AddDays(7);
         var e = GetEventWithRecurrenceRules();
         var occurrences = e.GetOccurrences(searchStart, searchEnd);
-        Assert.That(occurrences.Count == 5, Is.True);
+        Assert.That(occurrences, Has.Count.EqualTo(5));
 
         var exDate = _now.AddDays(1);
-        var period = new Period(new CalDateTime(exDate));
+        var period = new Period(new CalDateTime(exDate, false));
         var periodList = new PeriodList { period };
         e.ExceptionDates.Add(periodList);
         occurrences = e.GetOccurrences(searchStart, searchEnd);
-        Assert.That(occurrences.Count == 4, Is.True);
+        Assert.That(occurrences, Has.Count.EqualTo(4));
 
         //Specifying just a date should "black out" that date
         var excludeTwoDaysFromNow = _now.AddDays(2).Date;
-        period = new Period(new CalDateTime(excludeTwoDaysFromNow));
+        period = new Period(new CalDateTime(excludeTwoDaysFromNow, false));
         periodList.Add(period);
         occurrences = e.GetOccurrences(searchStart, searchEnd);
-        Assert.That(occurrences.Count == 3, Is.True);
+        Assert.That(occurrences, Has.Count.EqualTo(3));
     }
 
     private static readonly DateTime _now = DateTime.Now;
@@ -3388,46 +3390,52 @@ END:VCALENDAR";
 
         Assert.That(eventB, Is.EqualTo(eventA));
 
-        const string aString = @"BEGIN:VCALENDAR
-PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
-VERSION:2.0
-BEGIN:VEVENT
-DTEND;TZID=UTC:20170228T140000
-DTSTAMP;TZID=UTC:20170413T135927
-DTSTART;TZID=UTC:20170228T060000
-EXDATE;TZID=UTC:20170302T060000,20170303T060000,20170306T060000,20170307T0
- 60000,20170308T060000,20170309T060000,20170310T060000,20170313T060000,201
- 70314T060000,20170317T060000,20170320T060000,20170321T060000,20170322T060
- 000,20170323T060000,20170324T060000,20170327T060000,20170328T060000,20170
- 329T060000,20170330T060000,20170331T060000,20170403T060000,20170405T06000
- 0,20170406T060000,20170407T060000,20170410T060000,20170411T060000,2017041
- 2T060000,20170413T060000,20170417T060000
-IMPORTANCE:None
-RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR
-UID:001b7e43-98df-4fcc-b9ec-345a28a4fc14
-END:VEVENT
-END:VCALENDAR";
+        const string aString =
+            """
+               BEGIN:VCALENDAR
+               PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
+               VERSION:2.0
+               BEGIN:VEVENT
+               DTEND;TZID=UTC:20170228T140000
+               DTSTAMP;TZID=UTC:20170413T135927
+               DTSTART;TZID=UTC:20170228T060000
+               EXDATE;TZID=UTC:20170302T060000,20170303T060000,20170306T060000,20170307T0
+                60000,20170308T060000,20170309T060000,20170310T060000,20170313T060000,201
+                70314T060000,20170317T060000,20170320T060000,20170321T060000,20170322T060
+                000,20170323T060000,20170324T060000,20170327T060000,20170328T060000,20170
+                329T060000,20170330T060000,20170331T060000,20170403T060000,20170405T06000
+                0,20170406T060000,20170407T060000,20170410T060000,20170411T060000,2017041
+                2T060000,20170413T060000,20170417T060000
+               IMPORTANCE:None
+               RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR
+               UID:001b7e43-98df-4fcc-b9ec-345a28a4fc14
+               END:VEVENT
+               END:VCALENDAR
+               """;
 
-        const string bString = @"BEGIN:VCALENDAR
-PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
-VERSION:2.0
-BEGIN:VEVENT
-DTEND;TZID=UTC:20170228T140000
-DTSTAMP;TZID=UTC:20170428T171444
-DTSTART;TZID=UTC:20170228T060000
-EXDATE;TZID=UTC:20170302T060000,20170303T060000,20170306T060000,20170307T0
- 60000,20170308T060000,20170309T060000,20170310T060000,20170313T060000,201
- 70314T060000,20170317T060000,20170320T060000,20170321T060000,20170322T060
- 000,20170323T060000,20170324T060000,20170327T060000,20170328T060000,20170
- 329T060000,20170330T060000,20170331T060000,20170403T060000,20170405T06000
- 0,20170406T060000,20170407T060000,20170410T060000,20170411T060000,2017041
- 2T060000
-EXDATE;TZID=UTC:20170417T060000,20170413T060000
-IMPORTANCE:None
-RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR
-UID:001b7e43-98df-4fcc-b9ec-345a28a4fc14
-END:VEVENT
-END:VCALENDAR";
+        const string bString =
+            """
+               BEGIN:VCALENDAR
+               PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
+               VERSION:2.0
+               BEGIN:VEVENT
+               DTEND;TZID=UTC:20170228T140000
+               DTSTAMP;TZID=UTC:20170428T171444
+               DTSTART;TZID=UTC:20170228T060000
+               EXDATE;TZID=UTC:20170302T060000,20170303T060000,20170306T060000,20170307T0
+                60000,20170308T060000,20170309T060000,20170310T060000,20170313T060000,201
+                70314T060000,20170317T060000,20170320T060000,20170321T060000,20170322T060
+                000,20170323T060000,20170324T060000,20170327T060000,20170328T060000,20170
+                329T060000,20170330T060000,20170331T060000,20170403T060000,20170405T06000
+                0,20170406T060000,20170407T060000,20170410T060000,20170411T060000,2017041
+                2T060000
+               EXDATE;TZID=UTC:20170417T060000,20170413T060000
+               IMPORTANCE:None
+               RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR
+               UID:001b7e43-98df-4fcc-b9ec-345a28a4fc14
+               END:VEVENT
+               END:VCALENDAR
+               """;
 
         var simpleA = Calendar.Load(aString);
         var normalA = Calendar.Load(aString);
@@ -3457,70 +3465,67 @@ END:VCALENDAR";
     [Test]
     public void ManyExclusionDatesEqualityTesting()
     {
-        const string icalA = @"BEGIN:VCALENDAR
-PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
-VERSION:2.0
-BEGIN:VEVENT
-DTEND;TZID=UTC:20170228T140000
-DTSTAMP;TZID=UTC:20170428T145334
-DTSTART;TZID=UTC:20170228T060000
-EXDATE;TZID=UTC:20170302T060000,20170303T060000,20170306T060000,20170307T0
- 60000,20170308T060000,20170309T060000,20170310T060000,20170313T060000,201
- 70314T060000,20170317T060000,20170320T060000,20170321T060000,20170322T060
- 000,20170323T060000,20170324T060000,20170327T060000,20170328T060000,20170
- 329T060000,20170330T060000,20170331T060000,20170403T060000,20170405T06000
- 0,20170406T060000,20170407T060000,20170410T060000,20170411T060000,2017041
- 2T060000,20170413T060000,20170417T060000,20170418T060000,20170419T060000,
- 20170420T060000,20170421T060000,20170424T060000,20170425T060000,20170427T
- 060000,20170428T060000,20170501T060000
-IMPORTANCE:None
-RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR
-UID:001b7e43-98df-4fcc-b9ec-345a28a4fc14
-END:VEVENT
-END:VCALENDAR";
+        const string icalA =
+            """
+             BEGIN:VCALENDAR
+             PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
+             VERSION:2.0
+             BEGIN:VEVENT
+             DTEND;TZID=UTC:20170228T140000
+             DTSTAMP;TZID=UTC:20170428T145334
+             DTSTART;TZID=UTC:20170228T060000
+             EXDATE;TZID=UTC:20170302T060000,20170303T060000,20170306T060000,20170307T0
+              60000,20170308T060000,20170309T060000,20170310T060000,20170313T060000,201
+              70314T060000,20170317T060000,20170320T060000,20170321T060000,20170322T060
+              000,20170323T060000,20170324T060000,20170327T060000,20170328T060000,20170
+              329T060000,20170330T060000,20170331T060000,20170403T060000,20170405T06000
+              0,20170406T060000,20170407T060000,20170410T060000,20170411T060000,2017041
+              2T060000,20170413T060000,20170417T060000,20170418T060000,20170419T060000,
+              20170420T060000,20170421T060000,20170424T060000,20170425T060000,20170427T
+              060000,20170428T060000,20170501T060000
+             IMPORTANCE:None
+             RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR
+             UID:001b7e43-98df-4fcc-b9ec-345a28a4fc14
+             END:VEVENT
+             END:VCALENDAR
+             """;
 
-        const string icalB = @"BEGIN:VCALENDAR
-PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
-VERSION:2.0
-BEGIN:VEVENT
-DTEND;TZID=UTC:20170228T140000
-DTSTAMP;TZID=UTC:20170501T131355
-DTSTART;TZID=UTC:20170228T060000
-EXDATE;TZID=UTC:20170302T060000,20170303T060000,20170306T060000,20170307T0
- 60000,20170308T060000,20170309T060000,20170310T060000,20170313T060000,201
- 70314T060000,20170317T060000,20170320T060000,20170321T060000,20170322T060
- 000,20170323T060000,20170324T060000,20170327T060000,20170328T060000,20170
- 329T060000,20170330T060000,20170331T060000,20170403T060000,20170405T06000
- 0,20170406T060000,20170407T060000,20170410T060000,20170411T060000,2017041
- 2T060000,20170413T060000,20170417T060000,20170418T060000,20170419T060000,
- 20170420T060000,20170421T060000,20170424T060000,20170425T060000,20170427T
- 060000,20170428T060000,20170501T060000
-IMPORTANCE:None
-RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR
-UID:001b7e43-98df-4fcc-b9ec-345a28a4fc14
-END:VEVENT
-END:VCALENDAR";
+        const string icalB =
+            """
+             BEGIN:VCALENDAR
+             PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
+             VERSION:2.0
+             BEGIN:VEVENT
+             DTEND;TZID=UTC:20170228T140000
+             DTSTAMP;TZID=UTC:20170501T131355
+             DTSTART;TZID=UTC:20170228T060000
+             EXDATE;TZID=UTC:20170302T060000,20170303T060000,20170306T060000,20170307T0
+              60000,20170308T060000,20170309T060000,20170310T060000,20170313T060000,201
+              70314T060000,20170317T060000,20170320T060000,20170321T060000,20170322T060
+              000,20170323T060000,20170324T060000,20170327T060000,20170328T060000,20170
+              329T060000,20170330T060000,20170331T060000,20170403T060000,20170405T06000
+              0,20170406T060000,20170407T060000,20170410T060000,20170411T060000,2017041
+              2T060000,20170413T060000,20170417T060000,20170418T060000,20170419T060000,
+              20170420T060000,20170421T060000,20170424T060000,20170425T060000,20170427T
+              060000,20170428T060000,20170501T060000
+             IMPORTANCE:None
+             RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR
+             UID:001b7e43-98df-4fcc-b9ec-345a28a4fc14
+             END:VEVENT
+             END:VCALENDAR
+             """;
 
-        //The only textual difference between A and B is a different DTSTAMP, which is not considered significant for equality or hashing
+        // The only textual difference between A and B
+        // is a different DTSTAMP, which is not considered significant for equality or hashing
 
-        //Tautologies...
         var collectionA = CalendarCollection.Load(icalA);
-        Assert.That(collectionA, Is.EqualTo(collectionA));
-        Assert.That(collectionA.GetHashCode(), Is.EqualTo(collectionA.GetHashCode()));
-        var calendarA = collectionA.First();
-        Assert.That(calendarA, Is.EqualTo(calendarA));
-        Assert.That(calendarA.GetHashCode(), Is.EqualTo(calendarA.GetHashCode()));
-        var eventA = calendarA.Events.First();
-        Assert.That(eventA, Is.EqualTo(eventA));
-        Assert.That(eventA.GetHashCode(), Is.EqualTo(eventA.GetHashCode()));
-
         var collectionB = CalendarCollection.Load(icalB);
-        Assert.That(collectionB, Is.EqualTo(collectionB));
-        Assert.That(collectionB.GetHashCode(), Is.EqualTo(collectionB.GetHashCode()));
+        var calendarA = collectionA.First();
         var calendarB = collectionB.First();
-        Assert.That(calendarB, Is.EqualTo(calendarB));
-        Assert.That(calendarB.GetHashCode(), Is.EqualTo(calendarB.GetHashCode()));
+        var eventA = calendarA.Events.First();
         var eventB = calendarB.Events.First();
+        var exDatesA = eventA.ExceptionDates;
+        var exDatesB = eventB.ExceptionDates;
 
         Assert.Multiple(() =>
         {
@@ -3531,17 +3536,12 @@ END:VCALENDAR";
             Assert.That(calendarB.GetHashCode(), Is.EqualTo(calendarA.GetHashCode()));
             Assert.That(eventB, Is.EqualTo(eventA));
             Assert.That(eventB.GetHashCode(), Is.EqualTo(eventA.GetHashCode()));
+            Assert.That(exDatesB, Is.EqualTo(exDatesA));
         });
-
-
-        var exDatesA = eventA.ExceptionDates;
-        var exDatesB = eventB.ExceptionDates;
-        Assert.That(exDatesB, Is.EqualTo(exDatesA));
-
     }
 
     [Test, TestCaseSource(nameof(UntilTimeZoneSerializationTestCases))]
-    public void UntilTimeZoneSerializationTests(string tzid, DateTimeKind expectedKind)
+    public void UntilTimeZoneSerializationTests(string tzId, DateTimeKind expectedKind)
     {
         var now = DateTime.SpecifyKind(DateTime.Parse("2017-11-08 10:30:00"), expectedKind);
         var later = now.AddHours(1);
@@ -3554,8 +3554,8 @@ END:VCALENDAR";
         };
         var e = new CalendarEvent
         {
-            Start = new CalDateTime(now, tzid),
-            End = new CalDateTime(later, tzid)
+            Start = new CalDateTime(now, tzId),
+            End = new CalDateTime(later, tzId)
         };
         e.RecurrenceRules.Add(rrule);
         var calendar = new Calendar
@@ -3567,7 +3567,7 @@ END:VCALENDAR";
         var serialized = serializer.SerializeToString(calendar);
 
         const string contains = "20171108T103000";
-        var expectedContains = expectedKind == DateTimeKind.Local
+        var expectedContains = expectedKind == DateTimeKind.Unspecified
             ? $"{contains}{SerializationConstants.LineBreak}"
             : $"{contains}Z{SerializationConstants.LineBreak}";
 
@@ -3580,9 +3580,9 @@ END:VCALENDAR";
 
     public static IEnumerable UntilTimeZoneSerializationTestCases()
     {
-        yield return new TestCaseData("America/New_York", DateTimeKind.Local)
+        yield return new TestCaseData("America/New_York", DateTimeKind.Unspecified)
             .SetName("IANA time time zone results in a local DateTimeKind");
-        yield return new TestCaseData("Eastern Standard Time", DateTimeKind.Local)
+        yield return new TestCaseData("Eastern Standard Time", DateTimeKind.Unspecified)
             .SetName("BCL time zone results in a Local DateTimeKind");
         yield return new TestCaseData("UTC", DateTimeKind.Utc)
             .SetName("UTC results in DateTimeKind.Utc");
@@ -3771,6 +3771,23 @@ END:VCALENDAR
 
         //occurences is 26 here, omitting 4/16/2024
         Assert.That(occurrences.Count, Is.EqualTo(27));
+    }
+
+    private static DateTime SimpleDateTimeToMatch(IDateTime dt, IDateTime toMatch)
+    {
+        if (toMatch.IsUtc && dt.IsUtc)
+        {
+            return dt.Value;
+        }
+        if (toMatch.IsUtc)
+        {
+            return dt.Value.ToUniversalTime();
+        }
+        if (dt.IsUtc)
+        {
+            return dt.Value.ToLocalTime();
+        }
+        return dt.Value;
     }
 }
 

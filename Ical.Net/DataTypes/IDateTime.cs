@@ -1,8 +1,9 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 
 namespace Ical.Net.DataTypes;
@@ -34,7 +35,7 @@ public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormat
     /// <summary>
     /// Gets the time zone name this time is in, if it references a time zone.
     /// </summary>
-    string TimeZoneName { get; }
+    string? TimeZoneName { get; }
 
     /// <summary>
     /// Gets/sets the underlying DateTime value stored.  This should always
@@ -57,7 +58,7 @@ public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormat
     /// <summary>
     /// Gets/sets the time zone ID for this date/time value.
     /// </summary>
-    string TzId { get; set; }
+    string? TzId { get; set; }
 
     /// <summary>
     /// Gets the year for this date/time value.

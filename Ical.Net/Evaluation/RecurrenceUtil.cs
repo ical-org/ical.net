@@ -44,12 +44,12 @@ internal class RecurrenceUtil
             includeReferenceDateInResults);
 
         var otherOccurrences = from p in periods
-            let endTime = p.EndTime ?? p.StartTime
-            where
-                (endTime.GreaterThan(periodStart) && p.StartTime.LessThan(periodEnd) ||
-                 (periodStart.Equals(periodEnd) && p.StartTime.LessThanOrEqual(periodStart) && endTime.GreaterThan(periodEnd))) || //A period that starts at the same time it ends
-                (p.StartTime.Equals(endTime) && periodStart.Equals(p.StartTime)) //An event that starts at the same time it ends
-            select new Occurrence(recurrable, p);
+                               let endTime = p.EndTime ?? p.StartTime
+                               where
+                                   (endTime.GreaterThan(periodStart) && p.StartTime.LessThan(periodEnd) ||
+                                    (periodStart.Equals(periodEnd) && p.StartTime.LessThanOrEqual(periodStart) && endTime.GreaterThan(periodEnd))) || //A period that starts at the same time it ends
+                                   (p.StartTime.Equals(endTime) && periodStart.Equals(p.StartTime)) //An event that starts at the same time it ends
+                               select new Occurrence(recurrable, p);
 
         var occurrences = new HashSet<Occurrence>(otherOccurrences);
         return occurrences;
@@ -69,32 +69,32 @@ internal class RecurrenceUtil
             case FrequencyType.Weekly:
                 return new bool?[] { false, null, null, null, true, true, true, true, false };
             case FrequencyType.Monthly:
-            {
-                var row = new bool?[] { false, null, null, true, true, true, true, true, false };
-
-                // Limit if BYMONTHDAY is present; otherwise, special expand for MONTHLY.
-                if (p.ByMonthDay.Count > 0)
                 {
-                    row[4] = false;
-                }
+                    var row = new bool?[] { false, null, null, true, true, true, true, true, false };
 
-                return row;
-            }
+                    // Limit if BYMONTHDAY is present; otherwise, special expand for MONTHLY.
+                    if (p.ByMonthDay.Count > 0)
+                    {
+                        row[4] = false;
+                    }
+
+                    return row;
+                }
             case FrequencyType.Yearly:
-            {
-                var row = new bool?[] { true, true, true, true, true, true, true, true, false };
-
-                // Limit if BYYEARDAY or BYMONTHDAY is present; otherwise,
-                // special expand for WEEKLY if BYWEEKNO present; otherwise,
-                // special expand for MONTHLY if BYMONTH present; otherwise,
-                // special expand for YEARLY.
-                if (p.ByYearDay.Count > 0 || p.ByMonthDay.Count > 0)
                 {
-                    row[4] = false;
-                }
+                    var row = new bool?[] { true, true, true, true, true, true, true, true, false };
 
-                return row;
-            }
+                    // Limit if BYYEARDAY or BYMONTHDAY is present; otherwise,
+                    // special expand for WEEKLY if BYWEEKNO present; otherwise,
+                    // special expand for MONTHLY if BYMONTH present; otherwise,
+                    // special expand for YEARLY.
+                    if (p.ByYearDay.Count > 0 || p.ByMonthDay.Count > 0)
+                    {
+                        row[4] = false;
+                    }
+
+                    return row;
+                }
             default:
                 return new bool?[] { false, null, false, false, false, false, false, false, false };
         }

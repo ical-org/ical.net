@@ -1,174 +1,94 @@
-﻿//
+//
 // Copyright ical.net project maintainers and contributors.
 // Licensed under the MIT license.
 //
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Ical.Net.Tests;
 
 [TestFixture]
-public class AlarmTest
+public class AttendeeTest
 {
-    private const string _tzid = "US-Eastern";
-
-    public void TestAlarm(string calendarString, List<IDateTime> dates, CalDateTime start, CalDateTime end)
+    internal static CalendarEvent VEventFactory() => new CalendarEvent
     {
-        var iCal = Calendar.Load(calendarString);
-        ProgramTest.TestCal(iCal);
-        var evt = iCal.Events.First();
+        Summary = "Testing",
+        Start = new CalDateTime(2010, 3, 25),
+        End = new CalDateTime(2010, 3, 26)
+    };
 
-        // Poll all alarms that occurred between Start and End
-        var alarms = evt.PollAlarms(start, end);
-
-        var utcDates = new HashSet<DateTime>(dates.Select(d => d.AsUtc));
-
-        //Only compare the UTC values here, since we care about the time coordinate when the alarm fires, and nothing else
-        foreach (var alarm in alarms.Select(a => a.DateTime.AsUtc))
+    private static readonly IList<Attendee> _attendees = new List<Attendee>
+    {
+        new Attendee("MAILTO:james@example.com")
         {
-            Assert.That(utcDates.Contains(alarm), Is.True, "Alarm triggers at " + alarm + ", but it should not.");
+            CommonName = "James James",
+            Role = ParticipationRole.RequiredParticipant,
+            Rsvp = true,
+            ParticipationStatus = EventParticipationStatus.Tentative
+        },
+        new Attendee("MAILTO:mary@example.com")
+        {
+            CommonName = "Mary Mary",
+            Role = ParticipationRole.RequiredParticipant,
+            Rsvp = true,
+            ParticipationStatus = EventParticipationStatus.Accepted
         }
-        Assert.That(dates.Count == alarms.Count, Is.True, "There were " + alarms.Count + " alarm occurrences; there should have been " + dates.Count + ".");
+    }.AsReadOnly();
+
+
+    /// <summary>
+    /// Ensures that attendees can be properly added to an event.
+    /// </summary>
+    [Test, Category("Attendee")]
+    public void Add1Attendee()
+    {
+        var evt = VEventFactory();
+        Assert.That(evt.Attendees.Count, Is.EqualTo(0));
+
+        evt.Attendees.Add(_attendees[0]);
+        Assert.That(evt.Attendees, Has.Count.EqualTo(1));
+
+        Assert.Multiple(() =>
+        {
+            //the properties below had been set to null during the Attendees.Add operation in NuGet version 2.1.4
+            Assert.That(evt.Attendees[0].Role, Is.EqualTo(ParticipationRole.RequiredParticipant));
+            Assert.That(evt.Attendees[0].ParticipationStatus, Is.EqualTo(EventParticipationStatus.Tentative));
+        });
     }
 
-    [Test, Category("Alarm")]
-    public void Alarm1()
+    [Test, Category("Attendee")]
+    public void Add2Attendees()
     {
-        var dateTimes = new List<IDateTime>();
-        dateTimes.AddRange(new[]
-        {
-            new CalDateTime(2006, 7, 18, 9, 30, 0, _tzid)
-        });
+        var evt = VEventFactory();
+        Assert.That(evt.Attendees.Count, Is.EqualTo(0));
 
-        var content = IcsFiles.Alarm1;
-        TestAlarm(content, dateTimes, new CalDateTime(2006, 7, 1, _tzid), new CalDateTime(2006, 9, 1, _tzid));
+        evt.Attendees.Add(_attendees[0]);
+        evt.Attendees.Add(_attendees[1]);
+        Assert.That(evt.Attendees, Has.Count.EqualTo(2));
+        Assert.That(evt.Attendees[1].Role, Is.EqualTo(ParticipationRole.RequiredParticipant));
     }
 
-    [Test, Category("Alarm")]
-    public void Alarm2()
+    /// <summary>
+    /// Ensures that attendees can be properly removed from an event.
+    /// </summary>
+    [Test, Category("Attendee")]
+    public void Remove1Attendee()
     {
-        var dateTimes = new List<IDateTime>();
-        dateTimes.AddRange(new[]
-        {
-            new CalDateTime(2006, 7, 18, 9, 30, 0, _tzid),
-            new CalDateTime(2006, 7, 20, 9, 30, 0, _tzid),
-            new CalDateTime(2006, 7, 22, 9, 30, 0, _tzid),
-            new CalDateTime(2006, 7, 24, 9, 30, 0, _tzid),
-            new CalDateTime(2006, 7, 26, 9, 30, 0, _tzid),
-            new CalDateTime(2006, 7, 28, 9, 30, 0, _tzid),
-            new CalDateTime(2006, 7, 30, 9, 30, 0, _tzid),
-            new CalDateTime(2006, 8, 1, 9, 30, 0, _tzid),
-            new CalDateTime(2006, 8, 3, 9, 30, 0, _tzid),
-            new CalDateTime(2006, 8, 5, 9, 30, 0, _tzid)
-        });
+        var evt = VEventFactory();
+        Assert.That(evt.Attendees.Count, Is.EqualTo(0));
 
-        var content = IcsFiles.Alarm2;
-        TestAlarm(content, dateTimes, new CalDateTime(2006, 7, 1, _tzid), new CalDateTime(2006, 9, 1, _tzid));
-    }
+        var attendee = _attendees.First();
+        evt.Attendees.Add(attendee);
+        Assert.That(evt.Attendees, Has.Count.EqualTo(1));
 
-    [Test, Category("Alarm")]
-    public void Alarm3()
-    {
-        var dateTimes = new List<IDateTime>();
-        dateTimes.AddRange(new[]
-        {
-            new CalDateTime(1998, 2, 11, 9, 0, 0, _tzid),
-            new CalDateTime(1998, 3, 11, 9, 0, 0, _tzid),
-            new CalDateTime(1998, 11, 11, 9, 0, 0, _tzid),
-            new CalDateTime(1999, 8, 11, 9, 0, 0, _tzid),
-            new CalDateTime(2000, 10, 11, 9, 0, 0, _tzid)
-        });
+        evt.Attendees.Remove(attendee);
+        Assert.That(evt.Attendees.Count, Is.EqualTo(0));
 
-        var content = IcsFiles.Alarm3;
-        TestAlarm(content, dateTimes, new CalDateTime(1997, 1, 1, _tzid), new CalDateTime(2000, 12, 31, _tzid));
-    }
-
-    [Test, Category("Alarm")]
-    public void Alarm4()
-    {
-        var dateTimes = new List<IDateTime>();
-        dateTimes.AddRange(new[]
-        {
-            new CalDateTime(1998, 2, 11, 9, 0, 0, _tzid),
-            new CalDateTime(1998, 2, 11, 11, 0, 0, _tzid),
-            new CalDateTime(1998, 2, 11, 13, 0, 0, _tzid),
-            new CalDateTime(1998, 2, 11, 15, 0, 0, _tzid),
-            new CalDateTime(1998, 3, 11, 9, 0, 0, _tzid),
-            new CalDateTime(1998, 3, 11, 11, 0, 0, _tzid),
-            new CalDateTime(1998, 3, 11, 13, 0, 0, _tzid),
-            new CalDateTime(1998, 3, 11, 15, 0, 0, _tzid),
-            new CalDateTime(1998, 11, 11, 9, 0, 0, _tzid),
-            new CalDateTime(1998, 11, 11, 11, 0, 0, _tzid),
-            new CalDateTime(1998, 11, 11, 13, 0, 0, _tzid),
-            new CalDateTime(1998, 11, 11, 15, 0, 0, _tzid),
-            new CalDateTime(1999, 8, 11, 9, 0, 0, _tzid),
-            new CalDateTime(1999, 8, 11, 11, 0, 0, _tzid),
-            new CalDateTime(1999, 8, 11, 13, 0, 0, _tzid),
-            new CalDateTime(1999, 8, 11, 15, 0, 0, _tzid),
-            new CalDateTime(2000, 10, 11, 9, 0, 0, _tzid),
-            new CalDateTime(2000, 10, 11, 11, 0, 0, _tzid),
-            new CalDateTime(2000, 10, 11, 13, 0, 0, _tzid),
-            new CalDateTime(2000, 10, 11, 15, 0, 0, _tzid)
-        });
-
-        var content = IcsFiles.Alarm4;
-        TestAlarm(content, dateTimes, new CalDateTime(1997, 1, 1, _tzid), new CalDateTime(2000, 12, 31, _tzid));
-    }
-
-    [Test, Category("Alarm")]
-    public void Alarm5()
-    {
-        var dateTimes = new List<IDateTime>();
-        dateTimes.AddRange(new[]
-        {
-            new CalDateTime(1998, 1, 2, 8, 0, 0, _tzid)
-        });
-
-        var content = IcsFiles.Alarm5;
-        TestAlarm(content, dateTimes, new CalDateTime(1997, 7, 1, _tzid), new CalDateTime(2000, 12, 31, _tzid));
-    }
-
-    [Test, Category("Alarm")]
-    public void Alarm6()
-    {
-        var dateTimes = new List<IDateTime>();
-        dateTimes.AddRange(new[]
-        {
-            new CalDateTime(1998, 1, 2, 8, 0, 0, _tzid),
-            new CalDateTime(1998, 1, 5, 8, 0, 0, _tzid),
-            new CalDateTime(1998, 1, 8, 8, 0, 0, _tzid),
-            new CalDateTime(1998, 1, 11, 8, 0, 0, _tzid),
-            new CalDateTime(1998, 1, 14, 8, 0, 0, _tzid),
-            new CalDateTime(1998, 1, 17, 8, 0, 0, _tzid)
-        });
-
-        var content = IcsFiles.Alarm6;
-        TestAlarm(content, dateTimes, new CalDateTime(1997, 7, 1, _tzid), new CalDateTime(2000, 12, 31, _tzid));
-    }
-
-    [Test, Category("Alarm")]
-    public void Alarm7()
-    {
-        var dateTimes = new List<IDateTime>();
-        dateTimes.AddRange(new[]
-        {
-            new CalDateTime(2006, 7, 18, 10, 30, 0, _tzid),
-            new CalDateTime(2006, 7, 20, 10, 30, 0, _tzid),
-            new CalDateTime(2006, 7, 22, 10, 30, 0, _tzid),
-            new CalDateTime(2006, 7, 24, 10, 30, 0, _tzid),
-            new CalDateTime(2006, 7, 26, 10, 30, 0, _tzid),
-            new CalDateTime(2006, 7, 28, 10, 30, 0, _tzid),
-            new CalDateTime(2006, 7, 30, 10, 30, 0, _tzid),
-            new CalDateTime(2006, 8, 1, 10, 30, 0, _tzid),
-            new CalDateTime(2006, 8, 3, 10, 30, 0, _tzid),
-            new CalDateTime(2006, 8, 5, 10, 30, 0, _tzid)
-        });
-
-        var content = IcsFiles.Alarm7;
-        TestAlarm(content, dateTimes, new CalDateTime(2006, 7, 1, _tzid), new CalDateTime(2006, 9, 1, _tzid));
+        evt.Attendees.Remove(_attendees.Last());
+        Assert.That(evt.Attendees.Count, Is.EqualTo(0));
     }
 }

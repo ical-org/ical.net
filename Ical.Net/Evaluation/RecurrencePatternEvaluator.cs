@@ -12,48 +12,9 @@ using Ical.Net.Utility;
 
 namespace Ical.Net.Evaluation;
 
-/// <summary>
-/// Much of this code comes from iCal4j, as Ben Fortuna has done an
-/// excellent job with the recurrence pattern evaluation there.
-///
-/// Here's the iCal4j license:
-/// ==================
-///  iCal4j - License
-///  ==================
-///
-/// Copyright (c) 2009, Ben Fortuna
-/// All rights reserved.
-///
-/// Redistribution and use in source and binary forms, with or without
-/// modification, are permitted provided that the following conditions
-/// are met:
-///
-/// o Redistributions of source code must retain the above copyright
-/// notice, this list of conditions and the following disclaimer.
-///
-/// o Redistributions in binary form must reproduce the above copyright
-/// notice, this list of conditions and the following disclaimer in the
-/// documentation and/or other materials provided with the distribution.
-///
-/// o Neither the name of Ben Fortuna nor the names of any other contributors
-/// may be used to endorse or promote products derived from this software
-/// without specific prior written permission.
-///
-/// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-/// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-/// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-/// A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
-/// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-/// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-/// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-/// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-/// LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-/// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-/// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-/// </summary>
 public class RecurrencePatternEvaluator : Evaluator
 {
-    private const int _maxIncrementCount = 1000;
+    private const int MaxIncrementCount = 1000;
 
     protected RecurrencePattern Pattern { get; set; }
 
@@ -70,7 +31,7 @@ public class RecurrencePatternEvaluator : Evaluator
         // Convert the UNTIL value to one that matches the same time information as the reference date
         if (r.Until != DateTime.MinValue)
         {
-            r.Until = DateUtil.MatchTimeZone(referenceDate, new CalDateTime(r.Until, referenceDate.TzId)).Value;
+            r.Until = MatchTimeZone(referenceDate, new CalDateTime(r.Until, referenceDate.TzId)).Value;
         }
 
         if (referenceDate.HasTime)
@@ -154,44 +115,44 @@ public class RecurrencePatternEvaluator : Evaluator
                     switch (pattern.Frequency)
                     {
                         case FrequencyType.Secondly:
-                        {
-                            switch (evaluationRestriction)
                             {
-                                case RecurrenceRestrictionType.Default:
-                                case RecurrenceRestrictionType.RestrictSecondly:
-                                    pattern.Frequency = FrequencyType.Minutely;
-                                    break;
-                                case RecurrenceRestrictionType.RestrictMinutely:
-                                    pattern.Frequency = FrequencyType.Hourly;
-                                    break;
-                                case RecurrenceRestrictionType.RestrictHourly:
-                                    pattern.Frequency = FrequencyType.Daily;
-                                    break;
+                                switch (evaluationRestriction)
+                                {
+                                    case RecurrenceRestrictionType.Default:
+                                    case RecurrenceRestrictionType.RestrictSecondly:
+                                        pattern.Frequency = FrequencyType.Minutely;
+                                        break;
+                                    case RecurrenceRestrictionType.RestrictMinutely:
+                                        pattern.Frequency = FrequencyType.Hourly;
+                                        break;
+                                    case RecurrenceRestrictionType.RestrictHourly:
+                                        pattern.Frequency = FrequencyType.Daily;
+                                        break;
+                                }
                             }
-                        }
                             break;
                         case FrequencyType.Minutely:
-                        {
-                            switch (evaluationRestriction)
                             {
-                                case RecurrenceRestrictionType.RestrictMinutely:
-                                    pattern.Frequency = FrequencyType.Hourly;
-                                    break;
-                                case RecurrenceRestrictionType.RestrictHourly:
-                                    pattern.Frequency = FrequencyType.Daily;
-                                    break;
+                                switch (evaluationRestriction)
+                                {
+                                    case RecurrenceRestrictionType.RestrictMinutely:
+                                        pattern.Frequency = FrequencyType.Hourly;
+                                        break;
+                                    case RecurrenceRestrictionType.RestrictHourly:
+                                        pattern.Frequency = FrequencyType.Daily;
+                                        break;
+                                }
                             }
-                        }
                             break;
                         case FrequencyType.Hourly:
-                        {
-                            switch (evaluationRestriction)
                             {
-                                case RecurrenceRestrictionType.RestrictHourly:
-                                    pattern.Frequency = FrequencyType.Daily;
-                                    break;
+                                switch (evaluationRestriction)
+                                {
+                                    case RecurrenceRestrictionType.RestrictHourly:
+                                        pattern.Frequency = FrequencyType.Daily;
+                                        break;
+                                }
                             }
-                        }
                             break;
                     }
                     break;
@@ -200,42 +161,42 @@ public class RecurrencePatternEvaluator : Evaluator
                     switch (pattern.Frequency)
                     {
                         case FrequencyType.Secondly:
-                        {
-                            switch (evaluationRestriction)
                             {
-                                case RecurrenceRestrictionType.Default:
-                                case RecurrenceRestrictionType.RestrictSecondly:
-                                case RecurrenceRestrictionType.RestrictMinutely:
-                                case RecurrenceRestrictionType.RestrictHourly:
-                                    throw new ArgumentException();
+                                switch (evaluationRestriction)
+                                {
+                                    case RecurrenceRestrictionType.Default:
+                                    case RecurrenceRestrictionType.RestrictSecondly:
+                                    case RecurrenceRestrictionType.RestrictMinutely:
+                                    case RecurrenceRestrictionType.RestrictHourly:
+                                        throw new ArgumentException();
+                                }
                             }
-                        }
                             break;
                         case FrequencyType.Minutely:
-                        {
-                            switch (evaluationRestriction)
                             {
-                                case RecurrenceRestrictionType.RestrictMinutely:
-                                case RecurrenceRestrictionType.RestrictHourly:
-                                    throw new ArgumentException();
+                                switch (evaluationRestriction)
+                                {
+                                    case RecurrenceRestrictionType.RestrictMinutely:
+                                    case RecurrenceRestrictionType.RestrictHourly:
+                                        throw new ArgumentException();
+                                }
                             }
-                        }
                             break;
                         case FrequencyType.Hourly:
-                        {
-                            switch (evaluationRestriction)
                             {
-                                case RecurrenceRestrictionType.RestrictHourly:
-                                    throw new ArgumentException();
+                                switch (evaluationRestriction)
+                                {
+                                    case RecurrenceRestrictionType.RestrictHourly:
+                                        throw new ArgumentException();
+                                }
                             }
-                        }
                             break;
                     }
                     break;
             }
         }
     }
-#pragma warning 0618 restore
+#pragma warning restore 0618
     /// <summary>
     /// Returns a list of start dates in the specified period represented by this recurrence pattern.
     /// This method includes a base date argument, which indicates the start of the first occurrence of this recurrence.
@@ -244,9 +205,10 @@ public class RecurrencePatternEvaluator : Evaluator
     /// the start dates returned should all be at 9:00AM, and not 12:19PM.
     /// </summary>
     private HashSet<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd, int maxCount, RecurrencePattern pattern,
-        bool includeReferenceDateInResults)
+         bool includeReferenceDateInResults)
     {
         var dates = new HashSet<DateTime>();
+        // In the first step, we work with DateTime values, so we need to convert the IDateTime to DateTime
         var originalDate = DateUtil.GetSimpleDateTimeData(seed);
         var seedCopy = DateUtil.GetSimpleDateTimeData(seed);
 
@@ -322,7 +284,7 @@ public class RecurrencePatternEvaluator : Evaluator
             else
             {
                 noCandidateIncrementCount++;
-                if (_maxIncrementCount > 0 && noCandidateIncrementCount > _maxIncrementCount)
+                if (noCandidateIncrementCount > MaxIncrementCount)
                 {
                     break;
                 }
@@ -488,8 +450,8 @@ public class RecurrencePatternEvaluator : Evaluator
             {
                 var date1 = date;
                 yearDayDates.AddRange(pattern.ByYearDay.Select(yearDay => yearDay > 0
-                        ? date1.AddDays(-date1.DayOfYear + yearDay)
-                        : date1.AddDays(-date1.DayOfYear + 1).AddYears(1).AddDays(yearDay))
+                    ? date1.AddDays(-date1.DayOfYear + yearDay)
+                    : date1.AddDays(-date1.DayOfYear + 1).AddYears(1).AddDays(yearDay))
                     // Ignore the BY values that don't fit into the current year (i.e. +-366 in non-leap-years).
                     .Where(d => d.Year == date1.Year));
             }
@@ -499,6 +461,7 @@ public class RecurrencePatternEvaluator : Evaluator
         for (var i = dates.Count - 1; i >= 0; i--)
         {
             var date = dates[i];
+            var keepDate = false;
             for (var j = 0; j < pattern.ByYearDay.Count; j++)
             {
                 var yearDay = pattern.ByYearDay[j];
@@ -509,13 +472,15 @@ public class RecurrencePatternEvaluator : Evaluator
 
                 if (newDate.Date == date.Date)
                 {
-                    goto Next;
+                    keepDate = true;
+                    break;
                 }
             }
 
-            dates.RemoveAt(i);
-            Next:
-            ;
+            if (!keepDate)
+            {
+                dates.RemoveAt(i);
+            }
         }
 
         return dates;
@@ -554,6 +519,7 @@ public class RecurrencePatternEvaluator : Evaluator
         for (var i = dates.Count - 1; i >= 0; i--)
         {
             var date = dates[i];
+            var keepDate = true;
             for (var j = 0; j < pattern.ByMonthDay.Count; j++)
             {
                 var monthDay = pattern.ByMonthDay[j];
@@ -571,12 +537,15 @@ public class RecurrencePatternEvaluator : Evaluator
 
                 if (newDate.Day.Equals(date.Day))
                 {
-                    goto Next;
+                    keepDate = false;
+                    break;
                 }
             }
 
-            Next:
-            dates.RemoveAt(i);
+            if (!keepDate)
+            {
+                dates.RemoveAt(i);
+            }
         }
 
         return dates;
@@ -614,6 +583,7 @@ public class RecurrencePatternEvaluator : Evaluator
         for (var i = dates.Count - 1; i >= 0; i--)
         {
             var date = dates[i];
+            var keepDate = false;
             for (var j = 0; j < pattern.ByDay.Count; j++)
             {
                 var weekDay = pattern.ByDay[j];
@@ -623,13 +593,16 @@ public class RecurrencePatternEvaluator : Evaluator
                     // FIXME: test with offset...
                     if (date.DayOfWeek.Equals(weekDay.DayOfWeek))
                     {
-                        goto Next;
+                        keepDate = true;
+                        break;
                     }
                 }
             }
-            dates.RemoveAt(i);
-            Next:
-            ;
+
+            if (!keepDate)
+            {
+                dates.RemoveAt(i);
+            }
         }
 
         return dates;
@@ -796,18 +769,21 @@ public class RecurrencePatternEvaluator : Evaluator
         for (var i = dates.Count - 1; i >= 0; i--)
         {
             var date = dates[i];
+            var keepDate = false;
             for (var j = 0; j < pattern.ByHour.Count; j++)
             {
                 var hour = pattern.ByHour[j];
                 if (date.Hour == hour)
                 {
-                    goto Next;
+                    keepDate = true;
+                    break;
                 }
             }
             // Remove unmatched dates
-            dates.RemoveAt(i);
-            Next:
-            ;
+            if (!keepDate)
+            {
+                dates.RemoveAt(i);
+            }
         }
         return dates;
     }
@@ -847,18 +823,20 @@ public class RecurrencePatternEvaluator : Evaluator
         for (var i = dates.Count - 1; i >= 0; i--)
         {
             var date = dates[i];
+            var keepDate = false;
             for (var j = 0; j < pattern.ByMinute.Count; j++)
             {
                 var minute = pattern.ByMinute[j];
                 if (date.Minute == minute)
                 {
-                    goto Next;
+                    keepDate = true;
                 }
             }
             // Remove unmatched dates
-            dates.RemoveAt(i);
-            Next:
-            ;
+            if (!keepDate)
+            {
+                dates.RemoveAt(i);
+            }
         }
         return dates;
     }
@@ -898,30 +876,37 @@ public class RecurrencePatternEvaluator : Evaluator
         for (var i = dates.Count - 1; i >= 0; i--)
         {
             var date = dates[i];
+            var keepDate = false;
             for (var j = 0; j < pattern.BySecond.Count; j++)
             {
                 var second = pattern.BySecond[j];
                 if (date.Second == second)
                 {
-                    goto Next;
+                    keepDate = true;
+                    break;
                 }
             }
+
             // Remove unmatched dates
-            dates.RemoveAt(i);
-            Next:
-            ;
+            if (!keepDate)
+            {
+                dates.RemoveAt(i);
+            }
         }
+
         return dates;
     }
 
-    private Period CreatePeriod(DateTime dt, IDateTime referenceDate)
+    /// <summary>
+    /// Creates a new period from the specified date/time,
+    /// where the <see cref="IDateTime.HasTime"/> is taken into account.
+    /// when initializing the new period with a new <see cref="CalDateTime"/>.
+    /// </summary>
+    private static Period CreatePeriod(DateTime dateTime, IDateTime referenceDate)
     {
         // Turn each resulting date/time into an IDateTime and associate it
         // with the reference date.
-        IDateTime newDt = new CalDateTime(dt, referenceDate.TzId);
-
-        // NOTE: fixes bug #2938007 - hasTime missing
-        newDt.HasTime = referenceDate.HasTime;
+        IDateTime newDt = new CalDateTime(dateTime, referenceDate.TzId, referenceDate.HasTime);
 
         newDt.AssociateWith(referenceDate);
 
@@ -961,5 +946,26 @@ public class RecurrencePatternEvaluator : Evaluator
         Periods.UnionWith(periodQuery);
 
         return Periods;
+    }
+
+    private static IDateTime MatchTimeZone(IDateTime dt1, IDateTime dt2)
+    {
+        // Associate the date/time with the first.
+        var copy = dt2;
+        copy.AssociateWith(dt1);
+
+        // If the dt1 time does not occur in the same time zone as the
+        // dt2 time, then let's convert it so they can be used in the
+        // same context (i.e. evaluation).
+        if (dt1.TzId != null)
+        {
+            return string.Equals(dt1.TzId, copy.TzId, StringComparison.OrdinalIgnoreCase)
+                ? copy
+                : copy.ToTimeZone(dt1.TzId);
+        }
+
+        return dt1.IsUtc
+            ? new CalDateTime(copy.AsUtc)
+            : new CalDateTime(copy.AsSystemLocal);
     }
 }

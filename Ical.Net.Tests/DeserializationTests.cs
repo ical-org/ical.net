@@ -234,20 +234,20 @@ public class DeserializationTests
         var evt = iCal.Events.First();
 
         Assert.That(
-            evt.Attachments[0].ToString(),
-            Is.EqualTo("This is a test to try out base64 encoding without being too large.\r\n" +
-                       "This is a test to try out base64 encoding without being too large.\r\n" +
-                       "This is a test to try out base64 encoding without being too large.\r\n" +
-                       "This is a test to try out base64 encoding without being too large.\r\n" +
-                       "This is a test to try out base64 encoding without being too large.\r\n" +
-                       "This is a test to try out base64 encoding without being too large.\r\n" +
-                       "This is a test to try out base64 encoding without being too large.\r\n" +
-                       "This is a test to try out base64 encoding without being too large.\r\n" +
-                       "This is a test to try out base64 encoding without being too large.\r\n" +
-                       "This is a test to try out base64 encoding without being too large.\r\n" +
-                       "This is a test to try out base64 encoding without being too large.\r\n" +
-                       "This is a test to try out base64 encoding without being too large."),
-            "Attached value does not match.");
+    evt.Attachments[0].ToString(),
+   Is.EqualTo("This is a test to try out base64 encoding without being too large.\r\n" +
+            "This is a test to try out base64 encoding without being too large.\r\n" +
+            "This is a test to try out base64 encoding without being too large.\r\n" +
+            "This is a test to try out base64 encoding without being too large.\r\n" +
+            "This is a test to try out base64 encoding without being too large.\r\n" +
+            "This is a test to try out base64 encoding without being too large.\r\n" +
+            "This is a test to try out base64 encoding without being too large.\r\n" +
+            "This is a test to try out base64 encoding without being too large.\r\n" +
+            "This is a test to try out base64 encoding without being too large.\r\n" +
+            "This is a test to try out base64 encoding without being too large.\r\n" +
+            "This is a test to try out base64 encoding without being too large.\r\n" +
+            "This is a test to try out base64 encoding without being too large."),
+    "Attached value does not match.");
     }
 
     [Test]
@@ -356,9 +356,9 @@ END:VCALENDAR
 
         Assert.Multiple(() =>
         {
-            Assert.That(iCal.Events.First().RecurrenceDates[0][0].StartTime, Is.EqualTo((CalDateTime) new DateTime(1997, 7, 14, 12, 30, 0, DateTimeKind.Utc)));
-            Assert.That(iCal.Events.First().RecurrenceDates[1][0].StartTime, Is.EqualTo((CalDateTime) new DateTime(1996, 4, 3, 2, 0, 0, DateTimeKind.Utc)));
-            Assert.That(iCal.Events.First().RecurrenceDates[1][0].EndTime, Is.EqualTo((CalDateTime) new DateTime(1996, 4, 3, 4, 0, 0, DateTimeKind.Utc)));
+            Assert.That(iCal.Events.First().RecurrenceDates[0][0].StartTime, Is.EqualTo((CalDateTime)new DateTime(1997, 7, 14, 12, 30, 0, DateTimeKind.Utc)));
+            Assert.That(iCal.Events.First().RecurrenceDates[1][0].StartTime, Is.EqualTo((CalDateTime)new DateTime(1996, 4, 3, 2, 0, 0, DateTimeKind.Utc)));
+            Assert.That(iCal.Events.First().RecurrenceDates[1][0].EndTime, Is.EqualTo((CalDateTime)new DateTime(1996, 4, 3, 4, 0, 0, DateTimeKind.Utc)));
             Assert.That(iCal.Events.First().RecurrenceDates[2][0].StartTime, Is.EqualTo(new CalDateTime(1997, 1, 1)));
             Assert.That(iCal.Events.First().RecurrenceDates[2][1].StartTime, Is.EqualTo(new CalDateTime(1997, 1, 20)));
             Assert.That(iCal.Events.First().RecurrenceDates[2][2].StartTime, Is.EqualTo(new CalDateTime(1997, 2, 17)));
@@ -428,16 +428,16 @@ END:VCALENDAR
     {
         var serializer = new StringSerializer();
         var value = @"test\with\;characters";
-        var unescaped = (string) serializer.Deserialize(new StringReader(value));
+        var unescaped = (string)serializer.Deserialize(new StringReader(value));
 
         Assert.That(unescaped, Is.EqualTo(@"test\with;characters"), "String unescaping was incorrect.");
 
         value = @"C:\Path\To\My\New\Information";
-        unescaped = (string) serializer.Deserialize(new StringReader(value));
+        unescaped = (string)serializer.Deserialize(new StringReader(value));
         Assert.That(unescaped, Is.EqualTo("C:\\Path\\To\\My\new\\Information"), "String unescaping was incorrect.");
 
         value = @"\""This\r\nis\Na\, test\""\;\\;,";
-        unescaped = (string) serializer.Deserialize(new StringReader(value));
+        unescaped = (string)serializer.Deserialize(new StringReader(value));
 
         Assert.That(unescaped, Is.EqualTo("\"This\\r\nis\na, test\";\\;,"), "String unescaping was incorrect.");
     }
@@ -453,22 +453,13 @@ END:VCALENDAR
         Assert.That(evt.Transparency, Is.EqualTo(TransparencyType.Transparent));
     }
 
-    /// <summary>
-    /// Tests that DateTime values that are out-of-range are still parsed correctly
-    /// and set to the closest representable date/time in .NET.
-    /// </summary>
     [Test]
-    public void DateTime1()
+    public void DateTime1_Unrepresentable_DateTimeArgs_ShouldThrow()
     {
-        var iCal = Calendar.Load(IcsFiles.DateTime1);
-        Assert.That(iCal.Events, Has.Count.EqualTo(6));
-
-        var evt = iCal.Events["nc2o66s0u36iesitl2l0b8inn8@google.com"];
-        Assert.That(evt, Is.Not.Null);
-
-        // The "Created" date is out-of-bounds.  It should be coerced to the
-        // closest representable date/time.
-        Assert.That(evt.Created.Value, Is.EqualTo(DateTime.MinValue));
+        Assert.That(() =>
+        {
+            _ = Calendar.Load(IcsFiles.DateTime1);
+        }, Throws.Exception.TypeOf<ArgumentOutOfRangeException>());
     }
 
     [Test]
@@ -492,7 +483,7 @@ END:VCALENDAR
         var longName = "The Exceptionally Long Named Meeting Room Whose Name Wraps Over Several Lines When Exported From Leading Calendar and Office Software Application Microsoft Office 2007";
         var iCal = Calendar.Load(IcsFiles.Outlook2007LineFolds);
         var events = iCal.GetOccurrences<CalendarEvent>(new CalDateTime(2009, 06, 20), new CalDateTime(2009, 06, 22)).OrderBy(o => o.Period.StartTime).ToList();
-        Assert.That(((CalendarEvent) events[0].Source).Location, Is.EqualTo(longName));
+        Assert.That(((CalendarEvent)events[0].Source).Location, Is.EqualTo(longName));
     }
 
     /// <summary>

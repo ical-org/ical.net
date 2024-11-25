@@ -22,45 +22,7 @@ internal static class DateUtil
         => StartOfDay(dt).AddDays(1).AddTicks(-1);
 
     public static DateTime GetSimpleDateTimeData(IDateTime dt)
-        => DateTime.SpecifyKind(dt.Value, dt.IsUtc ? DateTimeKind.Utc : DateTimeKind.Local);
-
-    public static DateTime SimpleDateTimeToMatch(IDateTime dt, IDateTime toMatch)
-    {
-        if (toMatch.IsUtc && dt.IsUtc)
-        {
-            return dt.Value;
-        }
-        if (toMatch.IsUtc)
-        {
-            return dt.Value.ToUniversalTime();
-        }
-        if (dt.IsUtc)
-        {
-            return dt.Value.ToLocalTime();
-        }
-        return dt.Value;
-    }
-
-    public static IDateTime MatchTimeZone(IDateTime dt1, IDateTime dt2)
-    {
-        // Associate the date/time with the first.
-        var copy = dt2;
-        copy.AssociateWith(dt1);
-
-        // If the dt1 time does not occur in the same time zone as the
-        // dt2 time, then let's convert it so they can be used in the
-        // same context (i.e. evaluation).
-        if (dt1.TzId != null)
-        {
-            return string.Equals(dt1.TzId, copy.TzId, StringComparison.OrdinalIgnoreCase)
-                ? copy
-                : copy.ToTimeZone(dt1.TzId);
-        }
-
-        return dt1.IsUtc
-            ? new CalDateTime(copy.AsUtc)
-            : new CalDateTime(copy.AsSystemLocal);
-    }
+        => dt.Value;
 
     public static DateTime AddWeeks(DateTime dt, int interval, DayOfWeek firstDayOfWeek)
     {

@@ -24,11 +24,11 @@ public class RecurringEvaluator : Evaluator
         // the associated object manually
         if (obj is ICalendarObject)
         {
-            AssociatedObject = (ICalendarObject) obj;
+            AssociatedObject = (ICalendarObject)obj;
         }
         if (obj is ICalendarDataType)
         {
-            var dt = (ICalendarDataType) obj;
+            var dt = (ICalendarDataType)obj;
             AssociatedObject = dt.AssociatedObject;
         }
     }
@@ -162,7 +162,7 @@ public class RecurringEvaluator : Evaluator
 
     private HashSet<Period> FindDateOverlaps(HashSet<Period> dates)
     {
-        var datesWithoutTimes = new HashSet<DateTime>(dates.Where(d => d.StartTime.Value.TimeOfDay == TimeSpan.Zero).Select(d => d.StartTime.Value));
+        var datesWithoutTimes = new HashSet<DateTime>(dates.Where(d => !d.StartTime.HasTime).Select(d => d.StartTime.Value));
         var overlaps = new HashSet<Period>(Periods.Where(p => datesWithoutTimes.Contains(p.StartTime.Value.Date)));
         return overlaps;
     }

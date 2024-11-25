@@ -67,7 +67,7 @@ public class Period : EncodableDataType, IComparable<Period>
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((Period) obj);
+        return obj.GetType() == GetType() && Equals((Period)obj);
     }
 
     public override int GetHashCode()
@@ -87,6 +87,9 @@ public class Period : EncodableDataType, IComparable<Period>
         return periodSerializer.SerializeToString(this);
     }
 
+    /// <summary>
+    /// Infers or calculates values based on existing time data.
+    /// </summary>
     private void ExtrapolateTimes()
     {
         if (EndTime == null && StartTime != null && Duration != default(TimeSpan))
@@ -106,9 +109,7 @@ public class Period : EncodableDataType, IComparable<Period>
     private IDateTime _startTime;
     public virtual IDateTime StartTime
     {
-        get => _startTime.HasTime
-            ? _startTime
-            : new CalDateTime(new DateTime(_startTime.Value.Year, _startTime.Value.Month, _startTime.Value.Day, 0, 0, 0), _startTime.TzId);
+        get => _startTime;
         set
         {
             if (Equals(_startTime, value))
@@ -142,7 +143,7 @@ public class Period : EncodableDataType, IComparable<Period>
         {
             if (StartTime != null
                 && EndTime == null
-                && StartTime.Value.TimeOfDay == TimeSpan.Zero)
+                && !StartTime.HasTime)
             {
                 return TimeSpan.FromDays(1);
             }
@@ -172,7 +173,7 @@ public class Period : EncodableDataType, IComparable<Period>
     }
 
     public virtual bool CollidesWith(Period period) => period != null
-                                                       && ((period.StartTime != null && Contains(period.StartTime)) || (period.EndTime != null && Contains(period.EndTime)));
+        && ((period.StartTime != null && Contains(period.StartTime)) || (period.EndTime != null && Contains(period.EndTime)));
 
     public int CompareTo(Period other)
     {

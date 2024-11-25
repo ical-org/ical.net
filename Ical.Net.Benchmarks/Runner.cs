@@ -3,9 +3,9 @@
 // Licensed under the MIT license.
 //
 
-using System.IO;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Running;
+using System.IO;
 
 namespace Ical.Net.Benchmarks;
 
@@ -15,7 +15,7 @@ public class Runner
     {
 #if DEBUG
         BenchmarkSwitcher.FromAssembly(typeof(ApplicationWorkflows).Assembly).Run(args, new DebugInProcessConfig());
-#else 
+#else
             #region * ApplicationWorkflows results *
             /*
                // * Summary *
