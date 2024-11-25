@@ -3,178 +3,146 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Text;
 
 namespace Ical.Net.Serialization;
 
+/// <summary>
+/// Provides encoding and decoding services for byte arrays and strings.
+/// </summary>
 internal class EncodingProvider : IEncodingProvider
 {
-    public delegate string EncoderDelegate(byte[] data);
-
-    public delegate byte[] DecoderDelegate(string value);
-
     private readonly SerializationContext _mSerializationContext;
 
+    /// <summary>
+    /// Represents a method that encodes a byte array into a string.
+    /// </summary>
+    public delegate string? EncoderDelegate(byte[] data);
+
+    /// <summary>
+    /// Represents a method that decodes a string into a byte array.
+    /// </summary>
+    public delegate byte[] DecoderDelegate(string value);
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="EncodingProvider"/> class.
+    /// </summary>
+    /// <param name="ctx"></param>
     public EncodingProvider(SerializationContext ctx)
     {
         _mSerializationContext = ctx;
     }
 
-    protected byte[] Decode7Bit(string value)
-    {
-        try
-        {
-            var utf7 = new UTF7Encoding();
-            return utf7.GetBytes(value);
-        }
-        catch
-        {
-            return null;
-        }
-    }
-
+    /// <summary>
+    /// Decodes an 8-bit string into a byte array.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns>A byte array of the decoded string.</returns>
     protected byte[] Decode8Bit(string value)
     {
-        try
-        {
-            var utf8 = new UTF8Encoding();
-            return utf8.GetBytes(value);
-        }
-        catch
-        {
-            return null;
-        }
+        var utf8 = new UTF8Encoding();
+        return utf8.GetBytes(value);
     }
 
+    /// <summary>
+    /// Decodes a base-64 encoded string into a byte array.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns>A byte array of the decoded string.</returns>
     protected byte[] DecodeBase64(string value)
     {
-        try
-        {
-            return Convert.FromBase64String(value);
-        }
-        catch
-        {
-            return null;
-        }
+        return Convert.FromBase64String(value);
     }
 
-    protected virtual DecoderDelegate GetDecoderFor(string encoding)
+    /// <summary>
+    /// Gets a decoder for the specified encoding.
+    /// </summary>
+    /// <param name="encoding"></param>
+    /// <returns></returns>
+    protected virtual DecoderDelegate? GetDecoderFor(string encoding)
     {
-        if (encoding == null)
+        return encoding.ToUpper() switch
         {
-            return null;
-        }
-
-        switch (encoding.ToUpper())
-        {
-            case "7BIT":
-                return Decode7Bit;
-            case "8BIT":
-                return Decode8Bit;
-            case "BASE64":
-                return DecodeBase64;
-            default:
-                return null;
-        }
+            "8BIT" => Decode8Bit,
+            "BASE64" => DecodeBase64,
+            _ => null,
+        };
     }
 
-    protected string Encode7Bit(byte[] data)
-    {
-        try
-        {
-            var utf7 = new UTF7Encoding();
-            return utf7.GetString(data);
-        }
-        catch
-        {
-            return null;
-        }
-    }
-
+    /// <summary>
+    /// Encodes a byte array into an 8-bit string.
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns>An 8-bit string, if encoding is successful, else <see langword="null"/></returns>
     protected string Encode8Bit(byte[] data)
     {
-        try
-        {
-            var utf8 = new UTF8Encoding();
-            return utf8.GetString(data);
-        }
-        catch
-        {
-            return null;
-        }
+        var utf8 = new UTF8Encoding();
+        return utf8.GetString(data);
     }
 
+    /// <summary>
+    /// Encodes a byte array into a base-64 encoded string.
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns>A base-64 encoded string.</returns>
     protected string EncodeBase64(byte[] data)
     {
-        try
-        {
-            return Convert.ToBase64String(data);
-        }
-        catch
-        {
-            return null;
-        }
+        return Convert.ToBase64String(data);
     }
 
-    protected virtual EncoderDelegate GetEncoderFor(string encoding)
+    /// <summary>
+    /// Gets an encoder for the specified encoding.
+    /// </summary>
+    /// <param name="encoding"></param>
+    /// <returns></returns>
+    protected virtual EncoderDelegate? GetEncoderFor(string encoding)
     {
-        if (encoding == null)
+        return encoding.ToUpper() switch
         {
-            return null;
-        }
-
-        switch (encoding.ToUpper())
-        {
-            case "7BIT":
-                return Encode7Bit;
-            case "8BIT":
-                return Encode8Bit;
-            case "BASE64":
-                return EncodeBase64;
-            default:
-                return null;
-        }
+            "8BIT" => Encode8Bit,
+            "BASE64" => EncodeBase64,
+            _ => null
+        };
     }
 
-    public string Encode(string encoding, byte[] data)
+    /// <summary>
+    /// Encodes a byte array into a string.
+    /// </summary>
+    /// <param name="encoding"></param>
+    /// <param name="data"></param>
+    /// <returns>A string representation of <paramref name="data"/> using the specified <see paramref="encoding"/>, or <see langword="null"/> if encoding fails.</returns>
+    public string? Encode(string encoding, byte[] data)
     {
-        if (encoding == null || data == null)
-        {
-            return null;
-        }
-
         var encoder = GetEncoderFor(encoding);
-        //var wrapped = TextUtil.FoldLines(encoder?.Invoke(data));
-        //return wrapped;
         return encoder?.Invoke(data);
     }
 
-    public string DecodeString(string encoding, string value)
+    /// <summary>
+    /// Encodes a string into an encoded string by using the <see cref="EncodingStack"/> service.
+    /// </summary>
+    /// <param name="encoding"></param>
+    /// <param name="value"></param>
+    /// <returns>A string representation of <paramref name="value"/> using the specified <see paramref="encoding"/>.</returns>
+    /// <exception cref="FormatException">Base64 string is invalid.</exception>
+    public string? DecodeString(string encoding, string value)
     {
-        if (encoding == null || value == null)
-        {
-            return null;
-        }
-
         var data = DecodeData(encoding, value);
-        if (data == null)
-        {
-            return null;
-        }
 
         // Decode the string into the current encoding
         var encodingStack = _mSerializationContext.GetService(typeof(EncodingStack)) as EncodingStack;
-        return encodingStack.Current.GetString(data);
+        return data != null ? encodingStack?.Current.GetString(data) : null;
     }
 
-    public byte[] DecodeData(string encoding, string value)
+    /// <summary>
+    /// Decodes an encoded string into a byte array.
+    /// </summary>
+    /// <param name="encoding"></param>
+    /// <param name="value"></param>
+    /// <returns>A string representation of <paramref name="value"/> using the specified <see paramref="encoding"/>, or <see langword="null"/> when decoding fails.</returns>
+    public byte[]? DecodeData(string encoding, string value)
     {
-        if (encoding == null || value == null)
-        {
-            return null;
-        }
-
         var decoder = GetDecoderFor(encoding);
         return decoder?.Invoke(value);
     }
