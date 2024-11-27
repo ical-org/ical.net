@@ -28,7 +28,7 @@ public class TimeZoneEvaluator : Evaluator
         _occurrences = new List<Occurrence>();
     }
 
-    private void ProcessOccurrences(IDateTime referenceDate)
+    private void ProcessOccurrences(IDateTime referenceDate, DateTime evaluationEndBounds)
     {
         // Sort the occurrences by start time
         _occurrences.Sort(
@@ -55,19 +55,15 @@ public class TimeZoneEvaluator : Evaluator
             // new end times are determined.
             curr.Period.EndTime = next != null
                 ? next.Period.StartTime.AddTicks(-1)
-                : ConvertToIDateTime(EvaluationEndBounds, referenceDate);
+                : ConvertToIDateTime(evaluationEndBounds, referenceDate);
         }
-    }
-
-    public override void Clear()
-    {
-        base.Clear();
-        _occurrences.Clear();
     }
 
     public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
     {
         var res = new HashSet<Period>();
+        var evaluationStartBounds = DateTime.MaxValue;
+        var evaluationEndBounds = DateTime.MinValue;
 
         // Ensure the reference date is associated with the time zone
         if (referenceDate.AssociatedObject == null)
@@ -76,9 +72,9 @@ public class TimeZoneEvaluator : Evaluator
         var infos = new List<VTimeZoneInfo>(TimeZone.TimeZoneInfos);
 
         // Evaluate extra time periods, without re-evaluating ones that were already evaluated
-        if ((EvaluationStartBounds == DateTime.MaxValue && EvaluationEndBounds == DateTime.MinValue)
-            || periodEnd.Equals(EvaluationStartBounds)
-            || periodStart.Equals(EvaluationEndBounds))
+        if ((evaluationStartBounds == DateTime.MaxValue && evaluationEndBounds == DateTime.MinValue)
+            || periodEnd.Equals(evaluationStartBounds)
+            || periodStart.Equals(evaluationEndBounds))
         {
             foreach (var curr in infos)
             {
@@ -95,9 +91,9 @@ public class TimeZoneEvaluator : Evaluator
                 }
 
                 // Set the start bounds
-                if (EvaluationStartBounds > periodStart)
+                if (evaluationStartBounds > periodStart)
                 {
-                    EvaluationStartBounds = periodStart;
+                    evaluationStartBounds = periodStart;
                 }
 
                 // FIXME: 5 years is an arbitrary number, to eliminate the need
@@ -121,19 +117,19 @@ public class TimeZoneEvaluator : Evaluator
                     }
                 }
 
-                if (EvaluationEndBounds == DateTime.MinValue || EvaluationEndBounds < offsetEnd)
+                if (evaluationEndBounds == DateTime.MinValue || evaluationEndBounds < offsetEnd)
                 {
-                    EvaluationEndBounds = offsetEnd;
+                    evaluationEndBounds = offsetEnd;
                 }
             }
 
-            ProcessOccurrences(referenceDate);
+            ProcessOccurrences(referenceDate, evaluationEndBounds);
         }
         else
         {
-            if (EvaluationEndBounds != DateTime.MinValue && periodEnd > EvaluationEndBounds)
+            if (evaluationEndBounds != DateTime.MinValue && periodEnd > evaluationEndBounds)
             {
-                Evaluate(referenceDate, EvaluationEndBounds, periodEnd, includeReferenceDateInResults);
+                Evaluate(referenceDate, evaluationEndBounds, periodEnd, includeReferenceDateInResults);
             }
         }
 

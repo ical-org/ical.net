@@ -148,15 +148,6 @@ public class RecurringEvaluator : Evaluator
         var dateOverlaps = FindDateOverlaps(periods, exDateExclusions);
         periods.ExceptWith(dateOverlaps);
 
-        if (EvaluationStartBounds == DateTime.MaxValue || EvaluationStartBounds > periodStart)
-        {
-            EvaluationStartBounds = periodStart;
-        }
-        if (EvaluationEndBounds == DateTime.MinValue || EvaluationEndBounds < periodEnd)
-        {
-            EvaluationEndBounds = periodEnd;
-        }
-
         return periods;
     }
 
