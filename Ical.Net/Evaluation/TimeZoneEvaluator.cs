@@ -67,6 +67,8 @@ public class TimeZoneEvaluator : Evaluator
 
     public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
     {
+        var res = new HashSet<Period>();
+
         // Ensure the reference date is associated with the time zone
         if (referenceDate.AssociatedObject == null)
             referenceDate.AssociatedObject = TimeZone;
@@ -111,7 +113,7 @@ public class TimeZoneEvaluator : Evaluator
 
                 foreach (var period in periods)
                 {
-                    Periods.Add(period);
+                    res.Add(period);
                     var o = new Occurrence(curr, period);
                     if (!_occurrences.Contains(o))
                     {
@@ -135,6 +137,6 @@ public class TimeZoneEvaluator : Evaluator
             }
         }
 
-        return Periods;
+        return res;
     }
 }

@@ -17,38 +17,9 @@ public interface IEvaluator
     System.Globalization.Calendar Calendar { get; }
 
     /// <summary>
-    /// The start bounds of the evaluation.  This gives
-    /// the first date/time that is covered by the evaluation.
-    /// This together with EvaluationEndBounds determines
-    /// what time frames have already been evaluated, so
-    /// duplicate evaluation doesn't occur.
-    /// </summary>
-    DateTime EvaluationStartBounds { get; }
-
-    /// <summary>
-    /// The end bounds of the evaluation.
-    /// See <see cref="EvaluationStartBounds"/> for more info.
-    /// </summary>
-    DateTime EvaluationEndBounds { get; }
-
-    /// <summary>
-    /// Gets a list of periods collected so far during
-    /// the evaluation process.
-    /// </summary>
-    HashSet<Period> Periods { get; }
-
-    /// <summary>
     /// Gets the object associated with this evaluator.
     /// </summary>
     ICalendarObject AssociatedObject { get; }
-
-    /// <summary>
-    /// Clears the evaluation, eliminating all data that has
-    /// been collected up to this point.  Since this data is cached
-    /// as needed, this method can be useful to gather information
-    /// that is guaranteed to not be out-of-date.
-    /// </summary>
-    void Clear();
 
     /// <summary>
     /// Evaluates this item to determine the dates and times for which it occurs/recurs.

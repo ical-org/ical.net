@@ -199,17 +199,6 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
 
 
     /// <summary>
-    /// Clears recurrence evaluations for recurring components.
-    /// </summary>
-    public void ClearEvaluation()
-    {
-        foreach (var recurrable in RecurringItems)
-        {
-            recurrable.ClearEvaluation();
-        }
-    }
-
-    /// <summary>
     /// Returns a list of occurrences of each recurring component
     /// for the date provided (<paramref name="dt"/>).
     /// </summary>

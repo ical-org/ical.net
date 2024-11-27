@@ -2892,9 +2892,6 @@ public class RecurrenceTests
         evt.RecurrenceRules[0].ByHour.Add(9);
         evt.RecurrenceRules[0].ByHour.Add(12);
 
-        // Clear the evaluation so we can calculate recurrences again.
-        evt.ClearEvaluation();
-
         occurrences = evt.GetOccurrences(previousDateAndTime, end);
         Assert.That(occurrences, Has.Count.EqualTo(10));
 

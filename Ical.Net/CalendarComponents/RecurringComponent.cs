@@ -178,8 +178,6 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         Initialize();
     }
 
-    public virtual void ClearEvaluation() => RecurrenceUtil.ClearEvaluation(this);
-
     public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt) => RecurrenceUtil.GetOccurrences(this, dt, EvaluationIncludesReferenceDate);
 
     public virtual HashSet<Occurrence> GetOccurrences(DateTime dt)

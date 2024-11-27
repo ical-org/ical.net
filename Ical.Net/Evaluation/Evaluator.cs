@@ -19,8 +19,6 @@ public abstract class Evaluator : IEvaluator
     private ICalendarObject _mAssociatedObject;
     private readonly ICalendarDataType _mAssociatedDataType;
 
-    protected HashSet<Period> MPeriods;
-
     protected Evaluator()
     {
         Initialize();
@@ -43,7 +41,6 @@ public abstract class Evaluator : IEvaluator
     private void Initialize()
     {
         Calendar = CultureInfo.CurrentCulture.Calendar;
-        MPeriods = new HashSet<Period>();
     }
 
     protected IDateTime ConvertToIDateTime(DateTime dt, IDateTime referenceDate)
@@ -111,13 +108,10 @@ public abstract class Evaluator : IEvaluator
         protected set => _mAssociatedObject = value;
     }
 
-    public virtual HashSet<Period> Periods => MPeriods;
-
     public virtual void Clear()
     {
         _mEvaluationStartBounds = DateTime.MaxValue;
         _mEvaluationEndBounds = DateTime.MinValue;
-        MPeriods.Clear();
     }
 
     public abstract HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults);

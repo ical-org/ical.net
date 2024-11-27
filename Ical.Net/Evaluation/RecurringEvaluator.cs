@@ -34,7 +34,7 @@ public class RecurringEvaluator : Evaluator
     }
 
     /// <summary>
-    /// Evaluates the RRule component, and adds each specified Period to the Periods collection.
+    /// Evaluates the RRule component.
     /// </summary>
     /// <param name="referenceDate"></param>
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
@@ -67,7 +67,7 @@ public class RecurringEvaluator : Evaluator
         return periods;
     }
 
-    /// <summary> Evaluates the RDate component, and adds each specified DateTime or Period to the Periods collection. </summary>
+    /// <summary> Evaluates the RDate component. </summary>
     protected HashSet<Period> EvaluateRDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
     {
         if (Recurrable.RecurrenceDates == null || !Recurrable.RecurrenceDates.Any())
@@ -80,7 +80,7 @@ public class RecurringEvaluator : Evaluator
     }
 
     /// <summary>
-    /// Evaluates the ExRule component, and excludes each specified DateTime from the Periods collection.
+    /// Evaluates the ExRule component.
     /// </summary>
     /// <param name="referenceDate"></param>
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
@@ -107,7 +107,7 @@ public class RecurringEvaluator : Evaluator
     }
 
     /// <summary>
-    /// Evaluates the ExDate component, and excludes each specified DateTime or Period from the Periods collection.
+    /// Evaluates the ExDate component.
     /// </summary>
     /// <param name="referenceDate"></param>
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
@@ -125,7 +125,7 @@ public class RecurringEvaluator : Evaluator
 
     public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
     {
-        Periods.Clear();
+        var periods = new HashSet<Period>();
 
         var rruleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
         //Only add referenceDate if there are no RecurrenceRules defined
@@ -140,13 +140,13 @@ public class RecurringEvaluator : Evaluator
         var exDateExclusions = EvaluateExDate(referenceDate, periodStart, periodEnd);
 
         //Exclusions trump inclusions
-        Periods.UnionWith(rruleOccurrences);
-        Periods.UnionWith(rdateOccurrences);
-        Periods.ExceptWith(exRuleExclusions);
-        Periods.ExceptWith(exDateExclusions);
+        periods.UnionWith(rruleOccurrences);
+        periods.UnionWith(rdateOccurrences);
+        periods.ExceptWith(exRuleExclusions);
+        periods.ExceptWith(exDateExclusions);
 
-        var dateOverlaps = FindDateOverlaps(exDateExclusions);
-        Periods.ExceptWith(dateOverlaps);
+        var dateOverlaps = FindDateOverlaps(periods, exDateExclusions);
+        periods.ExceptWith(dateOverlaps);
 
         if (EvaluationStartBounds == DateTime.MaxValue || EvaluationStartBounds > periodStart)
         {
@@ -157,13 +157,13 @@ public class RecurringEvaluator : Evaluator
             EvaluationEndBounds = periodEnd;
         }
 
-        return Periods;
+        return periods;
     }
 
-    private HashSet<Period> FindDateOverlaps(HashSet<Period> dates)
+    private static HashSet<Period> FindDateOverlaps(HashSet<Period> periods, HashSet<Period> dates)
     {
         var datesWithoutTimes = new HashSet<DateTime>(dates.Where(d => !d.StartTime.HasTime).Select(d => d.StartTime.Value));
-        var overlaps = new HashSet<Period>(Periods.Where(p => datesWithoutTimes.Contains(p.StartTime.Value.Date)));
+        var overlaps = new HashSet<Period>(periods.Where(p => datesWithoutTimes.Contains(p.StartTime.Value.Date)));
         return overlaps;
     }
 }

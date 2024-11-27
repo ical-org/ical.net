@@ -159,11 +159,6 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         set => Properties.Set("RECURRENCE-ID", value);
     }
 
-    public virtual void ClearEvaluation()
-    {
-        RecurrenceUtil.ClearEvaluation(this);
-    }
-
     public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt)
         => RecurrenceUtil.GetOccurrences(this, dt, true);
 

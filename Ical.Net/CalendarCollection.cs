@@ -39,14 +39,6 @@ public class CalendarCollection : List<Calendar>
         return collection;
     }
 
-    public void ClearEvaluation()
-    {
-        foreach (var iCal in this)
-        {
-            iCal.ClearEvaluation();
-        }
-    }
-
     public HashSet<Occurrence> GetOccurrences(IDateTime dt)
     {
         var occurrences = new HashSet<Occurrence>();

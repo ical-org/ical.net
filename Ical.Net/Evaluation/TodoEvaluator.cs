@@ -85,10 +85,10 @@ public class TodoEvaluator : RecurringEvaluator
             return new HashSet<Period>();
         }
 
-        base.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
+        var periods = base.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
 
         // Ensure each period has a duration
-        foreach (var period in Periods.Where(period => period.EndTime == null))
+        foreach (var period in periods.Where(period => period.EndTime == null))
         {
             period.Duration = Todo.Duration;
             if (period.Duration != default)
@@ -100,6 +100,6 @@ public class TodoEvaluator : RecurringEvaluator
                 period.Duration = Todo.Duration;
             }
         }
-        return Periods;
+        return periods;
     }
 }
