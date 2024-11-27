@@ -63,12 +63,9 @@ public class Alarm : CalendarComponent
         set => Properties.Set(TriggerRelation.Key, value);
     }
 
-    protected virtual IList<AlarmOccurrence> Occurrences { get; set; }
-
     public Alarm()
     {
         Name = Components.Alarm;
-        Occurrences = new List<AlarmOccurrence>();
     }
 
     /// <summary>
@@ -77,12 +74,12 @@ public class Alarm : CalendarComponent
     /// </summary>
     public virtual IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, IDateTime fromDate, IDateTime toDate)
     {
-        Occurrences.Clear();
-
         if (Trigger == null)
         {
-            return Occurrences;
+            return [];
         }
+
+        var occurrences = new List<AlarmOccurrence>();
 
         // If the trigger is relative, it can recur right along with
         // the recurring items, otherwise, it happens once and
@@ -121,21 +118,21 @@ public class Alarm : CalendarComponent
                     }
                 }
 
-                Occurrences.Add(new AlarmOccurrence(this, dt.Add(Trigger.Duration.Value), rc));
+                occurrences.Add(new AlarmOccurrence(this, dt.Add(Trigger.Duration.Value), rc));
             }
         }
         else
         {
             var dt = Trigger.DateTime.Copy<IDateTime>();
             dt.AssociatedObject = this;
-            Occurrences.Add(new AlarmOccurrence(this, dt, rc));
+            occurrences.Add(new AlarmOccurrence(this, dt, rc));
         }
 
         // If a REPEAT and DURATION value were specified,
         // then handle those repetitions here.
-        AddRepeatedItems();
+        AddRepeatedItems(occurrences);
 
-        return Occurrences;
+        return occurrences;
     }
 
     /// <summary>
@@ -165,18 +162,18 @@ public class Alarm : CalendarComponent
     /// <c>DURATION</c> properties.  Each recurrence of the alarm will
     /// have its own set of generated repetitions.
     /// </summary>
-    protected virtual void AddRepeatedItems()
+    private void AddRepeatedItems(List<AlarmOccurrence> occurrences)
     {
-        var len = Occurrences.Count;
+        var len = occurrences.Count;
         for (var i = 0; i < len; i++)
         {
-            var ao = Occurrences[i];
+            var ao = occurrences[i];
             var alarmTime = ao.DateTime.Copy<IDateTime>();
 
             for (var j = 0; j < Repeat; j++)
             {
                 alarmTime = alarmTime.Add(Duration);
-                Occurrences.Add(new AlarmOccurrence(this, alarmTime.Copy<IDateTime>(), ao.Component));
+                occurrences.Add(new AlarmOccurrence(this, alarmTime.Copy<IDateTime>(), ao.Component));
             }
         }
     }
