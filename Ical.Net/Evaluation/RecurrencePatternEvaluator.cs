@@ -395,7 +395,7 @@ public class RecurrencePatternEvaluator : Evaluator
         var weekNoDates = new List<DateTime>();
         foreach (var t in dates)
         {
-            foreach (var weekNo in pattern.ByWeekNo)
+            foreach (var weekNo in GetByWeekNoForYearNormalized(pattern, t.Year))
             {
                 var date = t;
                 // Determine our current week number
@@ -427,6 +427,17 @@ public class RecurrencePatternEvaluator : Evaluator
             }
         }
         return weekNoDates;
+    }
+
+    /// <summary>
+    /// Normalize the BYWEEKNO values to be positive integers.
+    /// </summary>
+    private List<int> GetByWeekNoForYearNormalized(RecurrencePattern pattern, int year)
+    {
+        var weeksInYear = new Lazy<int>(() => Calendar.GetIso8601WeeksInYear(year, pattern.FirstDayOfWeek));
+        return pattern.ByWeekNo
+            .Select(weekNo => weekNo >= 0 ? weekNo : weeksInYear.Value + weekNo + 1)
+            .ToList();
     }
 
     /// <summary>
@@ -641,13 +652,14 @@ public class RecurrencePatternEvaluator : Evaluator
 
             var nextWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
             var currentWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
+            var byWeekNoNormalized = GetByWeekNoForYearNormalized(pattern, Calendar.GetIso8601YearOfWeek(date, pattern.FirstDayOfWeek));
 
             //When we manage weekly recurring pattern and we have boundary case:
             //Weekdays: Dec 31, Jan 1, Feb 1, Mar 1, Apr 1, May 1, June 1, Dec 31 - It's the 53th week of the year, but all another are 1st week number.
             //So we need an EXRULE for this situation, but only for weekly events
             while (currentWeekNo == weekNo || (nextWeekNo < weekNo && currentWeekNo == nextWeekNo && pattern.Frequency == FrequencyType.Weekly))
             {
-                if ((pattern.ByWeekNo.Count == 0 || pattern.ByWeekNo.Contains(currentWeekNo))
+                if ((byWeekNoNormalized.Count == 0 || byWeekNoNormalized.Contains(currentWeekNo))
                     && (pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month)))
                 {
                     days.Add(date);
@@ -668,11 +680,12 @@ public class RecurrencePatternEvaluator : Evaluator
                 date = date.AddDays(1);
             }
 
+            var byWeekNoNormalized = GetByWeekNoForYearNormalized(pattern, Calendar.GetIso8601YearOfWeek(date, pattern.FirstDayOfWeek));
             while (date.Month == month)
             {
                 var currentWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
 
-                if ((pattern.ByWeekNo.Count == 0 || pattern.ByWeekNo.Contains(currentWeekNo))
+                if ((byWeekNoNormalized.Count == 0 || byWeekNoNormalized.Contains(currentWeekNo))
                     && (pattern.ByMonth.Count == 0 || pattern.ByMonth.Contains(date.Month)))
                 {
                     days.Add(date);
