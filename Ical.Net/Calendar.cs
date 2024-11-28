@@ -204,13 +204,13 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// </summary>
     /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
     /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
-    public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt)
+    public virtual IEnumerable<Occurrence> GetOccurrences(IDateTime dt)
     {
         return GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1)));
     }
 
     /// <inheritdoc cref="GetOccurrences(IDateTime)"/>
-    public virtual HashSet<Occurrence> GetOccurrences(DateTime dt)
+    public virtual IEnumerable<Occurrence> GetOccurrences(DateTime dt)
     {
         return GetOccurrences<IRecurringComponent>(new CalDateTime(DateOnly.FromDateTime(dt)), new CalDateTime(DateOnly.FromDateTime(dt.Date.AddDays(1))));
     }
@@ -222,11 +222,11 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <param name="startTime">The beginning date/time of the range.</param>
     /// <param name="endTime">The end date/time of the range.</param>
     /// <returns>A list of occurrences that fall between the date/time arguments provided.</returns>
-    public virtual HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
+    public virtual IEnumerable<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
         => GetOccurrences<IRecurringComponent>(startTime, endTime);
 
     /// <inheritdoc cref="GetOccurrences(IDateTime, IDateTime)"/>
-    public virtual HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
+    public virtual IEnumerable<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
         => GetOccurrences<IRecurringComponent>(new CalDateTime(DateOnly.FromDateTime(startTime), TimeOnly.FromDateTime(startTime)), new CalDateTime(DateOnly.FromDateTime(endTime), TimeOnly.FromDateTime(endTime)));
 
     /// <summary>
@@ -241,19 +241,19 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// </summary>
     /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
     /// <returns>A list of Periods representing the occurrences of this object.</returns>
-    public virtual HashSet<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
+    public virtual IEnumerable<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
     {
         return GetOccurrences<T>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1)));
     }
 
     /// <inheritdoc cref="GetOccurrences(IDateTime)"/>
-    public virtual HashSet<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
+    public virtual IEnumerable<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
     {
         return GetOccurrences<T>(new CalDateTime(DateOnly.FromDateTime(dt)), new CalDateTime(DateOnly.FromDateTime(dt.Date.AddDays(1))));
     }
 
     /// <inheritdoc cref="GetOccurrences(IDateTime, IDateTime)"/>
-    public virtual HashSet<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent
+    public virtual IEnumerable<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent
         => GetOccurrences<T>(new CalDateTime(startTime), new CalDateTime(endTime));
 
     /// <summary>
@@ -263,7 +263,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// </summary>
     /// <param name="startTime">The starting date range</param>
     /// <param name="endTime">The ending date range</param>
-    public virtual HashSet<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
+    public virtual IEnumerable<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
     {
         // These are the UID/RECURRENCE-ID combinations that replace other occurrences.
         var recurrenceIdsAndUids = this.Children.OfType<IRecurrable>()
@@ -272,14 +272,27 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
             .Where(r => r.Uid != null)
             .ToDictionary(x => x);
 
-        var occurrences = new HashSet<Occurrence>(RecurringItems
+        var occurrences = RecurringItems
             .OfType<T>()
-            .SelectMany(recurrable => recurrable.GetOccurrences(startTime, endTime))
+            .Select(recurrable => recurrable.GetOccurrences(startTime, endTime))
+
+            // Enumerate the list of occurrences (not the occurrences themselves) now to ensure
+            // the initialization code is run, including validation and error handling.
+            // This way we receive validation errors early, not only when enumeration starts.
+            .ToList()
+
+            // Merge the individual sequences into a single one. Take advantage of them
+            // being ordered to avoid full enumeration.
+            .OrderedMergeMany()
+
+            // Remove duplicates and take advantage of being ordered to avoid full enumeration.
+            .OrderedDistinct()
+
             // Remove the occurrence if it has been replaced by a different one.
             .Where(r =>
                 (r.Source.RecurrenceId != null) ||
                 !(r.Source is IUniqueComponent) ||
-                !recurrenceIdsAndUids.ContainsKey(new { ((IUniqueComponent) r.Source).Uid, Dt = r.Period.StartTime.Value })));
+                !recurrenceIdsAndUids.ContainsKey(new { ((IUniqueComponent)r.Source).Uid, Dt = r.Period.StartTime.Value }));
 
         return occurrences;
     }

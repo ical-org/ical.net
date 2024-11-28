@@ -159,15 +159,15 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         set => Properties.Set("RECURRENCE-ID", value);
     }
 
-    public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt)
+    public virtual IEnumerable<Occurrence> GetOccurrences(IDateTime dt)
         => RecurrenceUtil.GetOccurrences(this, dt, true);
 
-    public virtual HashSet<Occurrence> GetOccurrences(DateTime dt)
+    public virtual IEnumerable<Occurrence> GetOccurrences(DateTime dt)
         => RecurrenceUtil.GetOccurrences(this, new CalDateTime(dt), true);
 
-    public virtual HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
+    public virtual IEnumerable<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
         => RecurrenceUtil.GetOccurrences(this, startTime, endTime, true);
 
-    public virtual HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
+    public virtual IEnumerable<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
         => RecurrenceUtil.GetOccurrences(this, new CalDateTime(startTime), new CalDateTime(endTime), true);
 }

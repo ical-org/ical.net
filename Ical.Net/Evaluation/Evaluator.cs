@@ -75,5 +75,5 @@ public abstract class Evaluator : IEvaluator
         protected set => _mAssociatedObject = value;
     }
 
-    public abstract HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults);
+    public abstract IEnumerable<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults);
 }

@@ -145,7 +145,7 @@ END:VCALENDAR";
 
         var calendar = GetCalendars(ical);
         var date = new DateTime(2016, 10, 11);
-        var occurrences = calendar.GetOccurrences(date);
+        var occurrences = calendar.GetOccurrences(date).ToList();
 
         //We really want to make sure this doesn't explode
         Assert.That(occurrences, Has.Count.EqualTo(1));
@@ -209,9 +209,7 @@ END:VCALENDAR";
 
         var collection = Calendar.Load(ical);
         var startCheck = new DateTime(2016, 11, 11);
-        var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck, startCheck.AddMonths(1))
-            .OrderBy(x => x)
-            .ToList();
+        var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck, startCheck.AddMonths(1)).ToList();
 
         CalDateTime[] expectedStartDates = [
             new CalDateTime("20161114T000100", "W. Europe Standard Time"),
@@ -227,7 +225,6 @@ END:VCALENDAR";
         // Specify end time that is between the original occurrence ta 20161128T0001 and the overridden one at 20161128T0030.
         // The overridden one shouldn't be returned, because it was replaced and the other one is in the future.
         var occurrences2 = collection.GetOccurrences<CalendarEvent>(new CalDateTime(startCheck), new CalDateTime("20161128T002000", "W. Europe Standard Time"))
-            .OrderBy(x => x)
             .ToList();
 
         Assert.Multiple(() =>
@@ -267,11 +264,9 @@ END:VCALENDAR";
         var collection = Calendar.Load(ical);
         var startCheck = new DateTime(2023, 10, 1);
         var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck, startCheck.AddMonths(1))
-            .OrderBy(x => x)
             .ToList();
 
         var occurrences2 = collection.GetOccurrences<CalendarEvent>(new CalDateTime(startCheck), new CalDateTime(2023, 12, 31))
-            .OrderBy(x => x)
             .ToList();
 
         CalDateTime[] expectedStartDates = [

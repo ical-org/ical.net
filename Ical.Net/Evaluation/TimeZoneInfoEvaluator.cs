@@ -20,14 +20,12 @@ public class TimeZoneInfoEvaluator : RecurringEvaluator
 
     public TimeZoneInfoEvaluator(IRecurrable tzi) : base(tzi) { }
 
-    public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
     {
         // Time zones must include an effective start date/time
         // and must provide an evaluator.
         if (TimeZoneInfo == null)
-        {
-            return new HashSet<Period>();
-        }
+            return [];
 
         // Always include the reference date in the results
         var periods = base.Evaluate(referenceDate, periodStart, periodEnd, true);

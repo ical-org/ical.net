@@ -506,7 +506,7 @@ END:VCALENDAR
     public void Outlook2007_LineFolds1()
     {
         var iCal = SimpleDeserializer.Default.Deserialize(new StringReader(IcsFiles.Outlook2007LineFolds)).Cast<Calendar>().Single();
-        var events = iCal.GetOccurrences(new CalDateTime(2009, 06, 20), new CalDateTime(2009, 06, 22));
+        var events = iCal.GetOccurrences(new CalDateTime(2009, 06, 20), new CalDateTime(2009, 06, 22)).ToList();
         Assert.That(events, Has.Count.EqualTo(1));
     }
 

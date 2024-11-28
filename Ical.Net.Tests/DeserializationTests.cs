@@ -473,7 +473,7 @@ END:VCALENDAR
     public void Outlook2007_LineFolds1()
     {
         var iCal = Calendar.Load(IcsFiles.Outlook2007LineFolds);
-        var events = iCal.GetOccurrences(new CalDateTime(2009, 06, 20), new CalDateTime(2009, 06, 22));
+        var events = iCal.GetOccurrences(new CalDateTime(2009, 06, 20), new CalDateTime(2009, 06, 22)).ToList();
         Assert.That(events, Has.Count.EqualTo(1));
     }
 

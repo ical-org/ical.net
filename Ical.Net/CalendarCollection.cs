@@ -49,75 +49,47 @@ public class CalendarCollection : List<Calendar>
         return occurrences;
     }
 
-    public HashSet<Occurrence> GetOccurrences(DateTime dt)
-    {
-        var occurrences = new HashSet<Occurrence>();
-        foreach (var iCal in this)
-        {
-            occurrences.UnionWith(iCal.GetOccurrences(dt));
-        }
-        return occurrences;
-    }
+    public IEnumerable<Occurrence> GetOccurrences(DateTime dt)
+        => this
+        .Select(iCal => iCal.GetOccurrences(dt))
+        .ToArray()
+        .OrderedMergeMany();
 
-    public HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
-    {
-        var occurrences = new HashSet<Occurrence>();
-        foreach (var iCal in this)
-        {
-            occurrences.UnionWith(iCal.GetOccurrences(startTime, endTime));
-        }
-        return occurrences;
-    }
+    public IEnumerable<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
+        => this
+        .Select(iCal => iCal.GetOccurrences(startTime, endTime))
+        .ToArray()
+        .OrderedMergeMany();
 
-    public HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
-    {
-        var occurrences = new HashSet<Occurrence>();
-        foreach (var iCal in this)
-        {
-            occurrences.UnionWith(iCal.GetOccurrences(startTime, endTime));
-        }
-        return occurrences;
-    }
+    public IEnumerable<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
+        => this
+        .Select(iCal => iCal.GetOccurrences(startTime, endTime))
+        .ToArray()
+        .OrderedMergeMany();
 
-    public HashSet<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
-    {
-        var occurrences = new HashSet<Occurrence>();
-        foreach (var iCal in this)
-        {
-            occurrences.UnionWith(iCal.GetOccurrences<T>(dt));
-        }
-        return occurrences;
-    }
+    public IEnumerable<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
+        => this
+        .Select(iCal => iCal.GetOccurrences(dt))
+        .ToArray()
+        .OrderedMergeMany();
 
-    public HashSet<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
-    {
-        var occurrences = new HashSet<Occurrence>();
-        foreach (var iCal in this)
-        {
-            occurrences.UnionWith(iCal.GetOccurrences<T>(dt));
-        }
-        return occurrences;
-    }
+    public IEnumerable<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
+        => this
+        .Select(iCal => iCal.GetOccurrences<T>(dt))
+        .ToArray()
+        .OrderedMergeMany();
 
-    public HashSet<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
-    {
-        var occurrences = new HashSet<Occurrence>();
-        foreach (var iCal in this)
-        {
-            occurrences.UnionWith(iCal.GetOccurrences<T>(startTime, endTime));
-        }
-        return occurrences;
-    }
+    public IEnumerable<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
+        => this
+        .Select(iCal => iCal.GetOccurrences<T>(startTime, endTime))
+        .ToArray()
+        .OrderedMergeMany();
 
-    public HashSet<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent
-    {
-        var occurrences = new HashSet<Occurrence>();
-        foreach (var iCal in this)
-        {
-            occurrences.UnionWith(iCal.GetOccurrences<T>(startTime, endTime));
-        }
-        return occurrences;
-    }
+    public IEnumerable<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent
+        => this
+        .Select(iCal => iCal.GetOccurrences<T>(startTime, endTime))
+        .ToArray()
+        .OrderedMergeMany();
 
     private FreeBusy CombineFreeBusy(FreeBusy main, FreeBusy current)
     {

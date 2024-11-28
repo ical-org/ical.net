@@ -38,27 +38,25 @@ public class EventEvaluator : RecurringEvaluator
     /// <param name="periodEnd">The end date of the range to evaluate.</param>
     /// <param name="includeReferenceDateInResults"></param>
     /// <returns></returns>
-    public override HashSet<Period> Evaluate(IDateTime referenceTime, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(IDateTime referenceTime, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
     {
+        Period WithDuration(Period period)
+        {
+            var duration = CalendarEvent.GetFirstDuration();
+            var endTime = duration == default
+                ? period.StartTime
+                : period.StartTime.Add(CalendarEvent.GetFirstDuration());
+
+            return new Period(period.StartTime)
+            {
+                Duration = duration,
+                EndTime = endTime,
+            };
+        }
+
         // Evaluate recurrences normally
-        var periods = base.Evaluate(referenceTime, periodStart, periodEnd, includeReferenceDateInResults);
-
-        foreach (var period in periods)
-        {
-            period.Duration = CalendarEvent.GetFirstDuration();
-            period.EndTime = period.Duration == default
-                ? period.StartTime
-                : period.StartTime.Add(CalendarEvent.GetFirstDuration());
-        }
-
-        // Ensure each period has a duration
-        foreach (var period in periods.Where(p => p.EndTime == null))
-        {
-            period.Duration = CalendarEvent.GetFirstDuration();
-            period.EndTime = period.Duration == default
-                ? period.StartTime
-                : period.StartTime.Add(CalendarEvent.GetFirstDuration());
-        }
+        var periods = base.Evaluate(referenceTime, periodStart, periodEnd, includeReferenceDateInResults)
+            .Select(WithDuration);
 
         return periods;
     }

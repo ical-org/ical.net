@@ -18,9 +18,9 @@ public class PeriodListEvaluator : Evaluator
         _mPeriodList = rdt;
     }
 
-    public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
     {
-        var periods = new HashSet<Period>();
+        var periods = new SortedSet<Period>();
 
         if (includeReferenceDateInResults)
         {
