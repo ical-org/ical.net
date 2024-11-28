@@ -14,24 +14,9 @@ namespace Ical.Net.Evaluation;
 public abstract class Evaluator : IEvaluator
 {
     private ICalendarObject _mAssociatedObject;
-    private readonly ICalendarDataType _mAssociatedDataType;
 
     protected Evaluator()
     {
-        Initialize();
-    }
-
-    protected Evaluator(ICalendarObject associatedObject)
-    {
-        _mAssociatedObject = associatedObject;
-
-        Initialize();
-    }
-
-    protected Evaluator(ICalendarDataType dataType)
-    {
-        _mAssociatedDataType = dataType;
-
         Initialize();
     }
 
@@ -89,7 +74,7 @@ public abstract class Evaluator : IEvaluator
 
     public virtual ICalendarObject AssociatedObject
     {
-        get => _mAssociatedObject ?? _mAssociatedDataType?.AssociatedObject;
+        get => _mAssociatedObject;
         protected set => _mAssociatedObject = value;
     }
 
