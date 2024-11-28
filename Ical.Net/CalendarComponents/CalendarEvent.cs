@@ -224,8 +224,6 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
         set => Properties.Set(TransparencyType.Key, value);
     }
 
-    private EventEvaluator _mEvaluator;
-
     /// <summary>
     /// Constructs an Event object, with an iCalObject
     /// (usually an iCalendar object) as its parent.
@@ -239,8 +237,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     {
         Name = EventStatus.Name;
 
-        _mEvaluator = new EventEvaluator(this);
-        SetService(_mEvaluator);
+        SetService(new EventEvaluator(this));
     }
 
 
