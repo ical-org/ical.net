@@ -18,7 +18,7 @@ public class TodoEvaluator : RecurringEvaluator
 
     public TodoEvaluator(Todo todo) : base(todo) { }
 
-    public void EvaluateToPreviousOccurrence(IDateTime completedDate, IDateTime currDt)
+    internal HashSet<Period> EvaluateToPreviousOccurrence(IDateTime completedDate, IDateTime currDt)
     {
         var beginningDate = completedDate.Copy<IDateTime>();
 
@@ -51,21 +51,19 @@ public class TodoEvaluator : RecurringEvaluator
             }
         }
 
-        Evaluate(Todo.Start, DateUtil.GetSimpleDateTimeData(beginningDate), DateUtil.GetSimpleDateTimeData(currDt).AddTicks(1), true);
+        return Evaluate(Todo.Start, DateUtil.GetSimpleDateTimeData(beginningDate), DateUtil.GetSimpleDateTimeData(currDt).AddTicks(1), true);
     }
 
-    public void DetermineStartingRecurrence(PeriodList rdate, ref IDateTime referenceDateTime)
+    private void DetermineStartingRecurrence(PeriodList rdate, ref IDateTime referenceDateTime)
     {
-        var evaluator = rdate.GetService<IEvaluator>();
-
         var dt2 = referenceDateTime;
-        foreach (var p in evaluator.Periods.Where(p => p.StartTime.LessThan(dt2)))
+        foreach (var p in rdate.Where(p => p.StartTime.LessThan(dt2)))
         {
             referenceDateTime = p.StartTime;
         }
     }
 
-    public void DetermineStartingRecurrence(RecurrencePattern recur, ref IDateTime referenceDateTime)
+    private void DetermineStartingRecurrence(RecurrencePattern recur, ref IDateTime referenceDateTime)
     {
         if (recur.Count != int.MinValue)
         {

@@ -160,9 +160,9 @@ public class Todo : RecurringComponent, IAlarmContainer
             }
 
             // Evaluate to the previous occurrence.
-            _mEvaluator.EvaluateToPreviousOccurrence(Completed, currDt);
+            var periods = _mEvaluator.EvaluateToPreviousOccurrence(Completed, currDt);
 
-            return _mEvaluator.Periods.Cast<Period>().All(p => !p.StartTime.GreaterThan(Completed) || !currDt.GreaterThanOrEqual(p.StartTime));
+            return periods.Cast<Period>().All(p => !p.StartTime.GreaterThan(Completed) || !currDt.GreaterThanOrEqual(p.StartTime));
         }
         return false;
     }
