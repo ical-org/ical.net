@@ -55,11 +55,8 @@ public abstract class Evaluator : IEvaluator
 
     protected void IncrementDate(ref DateTime dt, RecurrencePattern pattern, int interval)
     {
-        // FIXME: use a more specific exception.
         if (interval == 0)
-        {
-            throw new Exception("Cannot evaluate with an interval of zero.  Please use an interval other than zero.");
-        }
+            return;
 
         var old = dt;
         switch (pattern.Frequency)
