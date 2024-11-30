@@ -46,5 +46,5 @@ public interface IEvaluator
     ///     A sequence of <see cref="Ical.Net.DataTypes.Period"/> objects for
     ///     each date/time when this item occurs/recurs.
     /// </returns>
-    IEnumerable<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults = true);
+    IEnumerable<Period> Evaluate(IDateTime referenceDate, DateTime? periodStart = null, DateTime? periodEnd = null, bool includeReferenceDateInResults = true);
 }

@@ -77,7 +77,7 @@ public class TodoEvaluator : RecurringEvaluator
         }
     }
 
-    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, DateTime? periodStart, DateTime? periodEnd, bool includeReferenceDateInResults)
     {
         // TODO items can only recur if a start date is specified
         if (Todo.Start == null)

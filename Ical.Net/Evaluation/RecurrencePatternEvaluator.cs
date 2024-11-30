@@ -203,7 +203,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// For example, if the search start date (start) is Wed, Mar 23, 12:19PM, but the recurrence is Mon - Fri, 9:00AM - 5:00PM,
     /// the start dates returned should all be at 9:00AM, and not 12:19PM.
     /// </summary>
-    private IEnumerable<DateTime> GetDates(IDateTime seed, DateTime periodStart, DateTime periodEnd, int maxCount, RecurrencePattern pattern,
+    private IEnumerable<DateTime> GetDates(IDateTime seed, DateTime? periodStart, DateTime? periodEnd, int maxCount, RecurrencePattern pattern,
          bool includeReferenceDateInResults)
     {
         // In the first step, we work with DateTime values, so we need to convert the IDateTime to DateTime
@@ -236,7 +236,7 @@ public class RecurrencePatternEvaluator : Evaluator
         return EnumerateDates(originalDate, seedCopy, periodStart, periodEnd, maxCount, pattern);
     }
 
-    private IEnumerable<DateTime> EnumerateDates(DateTime originalDate, DateTime seedCopy, DateTime periodStart, DateTime periodEnd, int maxCount, RecurrencePattern pattern)
+    private IEnumerable<DateTime> EnumerateDates(DateTime originalDate, DateTime seedCopy, DateTime? periodStart, DateTime? periodEnd, int maxCount, RecurrencePattern pattern)
     {
         var expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
 
@@ -954,7 +954,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="periodEnd">End (excl.) of the period occurrences are generated for.</param>
     /// <param name="includeReferenceDateInResults">Whether the referenceDate itself should be returned. Ignored as the reference data MUST equal the first occurrence of an RRULE.</param>
     /// <returns></returns>
-    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, DateTime? periodStart, DateTime? periodEnd, bool includeReferenceDateInResults)
     {
         if (Pattern.Frequency != FrequencyType.None && Pattern.Frequency < FrequencyType.Daily && !referenceDate.HasTime)
         {
