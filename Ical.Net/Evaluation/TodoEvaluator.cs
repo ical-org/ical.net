@@ -73,7 +73,7 @@ public class TodoEvaluator : RecurringEvaluator
         {
             var dtVal = referenceDateTime.Value;
             IncrementDate(ref dtVal, recur, -recur.Interval);
-            referenceDateTime.Value = dtVal;
+            referenceDateTime = new CalDateTime(DateOnly.FromDateTime(dtVal), TimeOnly.FromDateTime(dtVal)) { AssociatedObject = referenceDateTime.AssociatedObject };
         }
     }
 

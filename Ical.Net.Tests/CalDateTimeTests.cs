@@ -93,8 +93,7 @@ public class CalDateTimeTests
             .SetName("UTC summer DateTime returns a DateTimeOffset with UTC-0")
             .Returns(new DateTimeOffset(summerDate, TimeSpan.Zero));
 
-        var convertedToNySummer = new CalDateTime(summerDate, "UTC");
-        convertedToNySummer.TzId = nyTzId;
+        var convertedToNySummer = new CalDateTime(summerDate, nyTzId);
         yield return new TestCaseData(convertedToNySummer)
             .SetName(
                 "Summer UTC DateTime converted to NY time zone by setting TzId returns a DateTimeOffset with UTC-4")
@@ -111,13 +110,15 @@ public class CalDateTimeTests
     [Test(Description = "Calling AsUtc should always return the proper UTC time, even if the TzId has changed")]
     public void TestTzidChanges()
     {
+        var x = new CalDateTime(2018, 5, 21).AsDateTimeOffset;
+
         var someTime = DateTimeOffset.Parse("2018-05-21T11:35:00-04:00");
 
-        var someDt = new CalDateTime(someTime.DateTime) { TzId = "America/New_York" };
+        var someDt = new CalDateTime(someTime.DateTime, "America/New_York");
         var firstUtc = someDt.AsUtc;
         Assert.That(firstUtc, Is.EqualTo(someTime.UtcDateTime));
 
-        someDt.TzId = "Europe/Berlin";
+        someDt = new CalDateTime(someTime.DateTime, "Europe/Berlin");
         var berlinUtc = someDt.AsUtc;
         Assert.That(berlinUtc, Is.Not.EqualTo(firstUtc));
     }
@@ -132,12 +133,12 @@ public class CalDateTimeTests
         var localDt = DateTime.SpecifyKind(DateTime.Parse("2018-05-21T11:35:33"), DateTimeKind.Unspecified);
 
         yield return new TestCaseData(localDt, "UTC")
-            .Returns(DateTimeKind.Utc)
-            .SetName("Explicit tzid = UTC time zone returns DateTimeKind.Utc");
+            .Returns(DateTimeKind.Unspecified)
+            .SetName("Explicit tzid = UTC time zone returns DateTimeKind.Unspecified");
 
         yield return new TestCaseData(DateTime.SpecifyKind(localDt, DateTimeKind.Utc), null)
-            .Returns(DateTimeKind.Utc)
-            .SetName("DateTime with Kind = Utc and no tzid returns DateTimeKind.Utc");
+            .Returns(DateTimeKind.Unspecified)
+            .SetName("DateTime with Kind = Utc and no tzid returns DateTimeKind.Unspecified");
 
         yield return new TestCaseData(localDt, localTz)
             .Returns(DateTimeKind.Unspecified)
@@ -170,8 +171,8 @@ public class CalDateTimeTests
             .Returns("2024-08-30T10:30:00.0000000+12:00 Pacific/Auckland")
             .SetName("Date and time with 'O' format arg, default culture");
 
-        yield return new TestCaseData(new CalDateTime(2024, 8, 30, tzId: "Pacific/Auckland"), "O", null)
-            .Returns("08/30/2024 Pacific/Auckland")
+        yield return new TestCaseData(new CalDateTime(2024, 8, 30), "O", null)
+            .Returns("2024-08-30") // Date only cannot have timezone
             .SetName("Date only with 'O' format arg, default culture");
 
         yield return new TestCaseData(new CalDateTime(2024, 8, 30, 10, 30, 0, tzId: "Pacific/Auckland"), "O",
@@ -189,58 +190,150 @@ public class CalDateTimeTests
             .Returns("08/30/2024 10:30:00 Pacific/Auckland")
             .SetName("Date and time with format and 'FR' CultureInfo");
 
-        yield return new TestCaseData(new CalDateTime(2024, 8, 30, tzId: "Pacific/Auckland"), null,
-                CultureInfo.GetCultureInfo("IT"))
-            .Returns("30/08/2024 Pacific/Auckland")
+        yield return new TestCaseData(new CalDateTime(2024, 8, 30), null,
+                CultureInfo.GetCultureInfo("IT")) // Date only cannot have timezone
+            .Returns("30/08/2024") 
             .SetName("Date only with 'IT' CultureInfo and default format arg");
     }
 
-    [Test]
-    public void SetValue_AppliesSameRulesAsWith_CTOR()
+    [Test, TestCaseSource(nameof(DateTimeArithmeticTestCases))]
+    public DateTime DateTimeArithmeticTests(Func<IDateTime, IDateTime> operation)
     {
-        var dateTime = new DateTime(2024, 8, 30, 10, 30, 0, DateTimeKind.Unspecified);
-        var tzId = "Europe/Berlin";
-
-        var dt1 = new CalDateTime(dateTime, tzId);
-        var dt2 = new CalDateTime(DateTime.Now, tzId);
-        dt2.Value = dateTime;
-
-        Assert.Multiple(() =>
-        {
-            // TzId changes the DateTimeKind to Unspecified
-            Assert.That(dt1.Value.Kind, Is.EqualTo(dateTime.Kind));
-            Assert.That(dt1.Value.Kind, Is.EqualTo(dt2.Value.Kind));
-            Assert.That(dt1.TzId, Is.EqualTo(dt2.TzId));
-        });
+        var result = operation(new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: CalDateTime.UtcTzId));
+        return result.Value;
     }
 
-    [Test]
-    public void SetValue_LeavesExistingPropertiesUnchanged()
+    public static IEnumerable DateTimeArithmeticTestCases()
     {
-        var cal = new Calendar();
-        var dateTime = new DateTime(2024, 8, 30, 10, 30, 0, DateTimeKind.Unspecified);
-        var tzId = "Europe/Berlin";
+        var dateTime = new DateTime(2025, 1, 15, 10, 20, 30);
 
-        var dt = new CalDateTime(dateTime, tzId, false)
-        {
-            AssociatedObject = cal
-        };
-        var hasTimeInitial = dt.HasTime;
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddHours(1)))
+            .Returns(dateTime.AddHours(1))
+            .SetName($"{nameof(IDateTime.AddHours)} 1 hour");
 
-        dt.Value = DateTime.MinValue;
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(TimeSpan.FromSeconds(30))))
+            .Returns(dateTime.Add(TimeSpan.FromSeconds(30)))
+            .SetName($"{nameof(IDateTime.Add)} 30 seconds");
 
-        // Properties should remain unchanged
-        Assert.Multiple(() =>
-        {
-            Assert.That(dt.HasTime, Is.EqualTo(hasTimeInitial));
-            Assert.That(dt.TzId, Is.EqualTo(tzId));
-            Assert.That(dt.Calendar, Is.SameAs(cal));
-        });
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(TimeSpan.FromMilliseconds(100))))
+            .Returns(dateTime.Add(TimeSpan.FromMilliseconds(0)))
+            .SetName($"{nameof(IDateTime.Add)} 100 milliseconds round down");
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddMilliseconds(500)))
+            .Returns(dateTime.AddMilliseconds(1000))
+            .SetName($"{nameof(IDateTime.AddMilliseconds)} 500 milliseconds round up");
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddMinutes(70)))
+            .Returns(dateTime.AddMinutes(70))
+            .SetName($"{nameof(IDateTime.AddMinutes)} 70 minutes");
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddTicks(100)))
+            .Returns(dateTime.AddTicks(0))
+            .SetName($"{nameof(IDateTime.AddTicks)} 100 ticks truncated");
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddTicks(TimeSpan.FromHours(1).Ticks)))
+            .Returns(dateTime.AddTicks(TimeSpan.FromHours(1).Ticks))
+            .SetName($"{nameof(IDateTime.AddTicks)} ticks of 1 hour");
+    }
+
+    [Test, TestCaseSource(nameof(EqualityTestCases))]
+    public bool EqualityTests(Func<IDateTime, bool> operation)
+    {
+        return operation(new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: CalDateTime.UtcTzId));
+    }
+
+    public static IEnumerable EqualityTestCases()
+    {
+        yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime) dt == new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: CalDateTime.UtcTzId)))
+            .Returns(true)
+            .SetName("== operator 2 UTC timezones");
+
+        yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime) dt != new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: "Europe/Berlin")))
+            .Returns(true)
+            .SetName("!= operator 2 timezones");
+
+        yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime) dt == new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: null)))
+            .Returns(true)
+            .SetName("== operator UTC vs. floating");
+    }
+
+    [Test, TestCaseSource(nameof(DateOnlyArithmeticTestCases))]
+    public (DateTime Value, bool HasTime) DateOnlyArithmeticTests(Func<IDateTime, IDateTime> operation)
+    {
+        var result = operation(new CalDateTime(2025, 1, 15));
+        return (result.Value, result.HasTime);
+    }
+
+    public static IEnumerable DateOnlyArithmeticTestCases()
+    {
+        var dateTime = new DateTime(2025, 1, 15);
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Subtract(TimeSpan.FromDays(1))))
+            .Returns((dateTime.AddDays(-1), false))
+            .SetName($"{nameof(IDateTime.Subtract)} 1 day TimeSpan HasTime=false");
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddYears(1)))
+            .Returns((dateTime.AddYears(1), false))
+            .SetName($"{nameof(IDateTime.AddYears)} 1 year");
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddMonths(2)))
+            .Returns((dateTime.AddMonths(2), false))
+            .SetName($"{nameof(IDateTime.AddMonths)} 2 months");
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddDays(7)))
+            .Returns((dateTime.AddDays(7), false))
+            .SetName($"{nameof(IDateTime.AddDays)} 7 days");
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddHours(24)))
+            .Returns((dateTime.AddHours(24), false))
+            .SetName($"{nameof(IDateTime.AddHours)} 24 hours HasTime=false");
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddHours(1)))
+            .Returns((dateTime.AddHours(1), true))
+            .SetName($"{nameof(IDateTime.AddHours)} 1 hour HasTime=true");
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddMinutes(24 * 60)))
+            .Returns((dateTime.AddMinutes(24 * 60), false))
+            .SetName($"{nameof(IDateTime.AddMinutes)} 1 day in minutes HasTime=false");
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddMinutes(23 * 60)))
+            .Returns((dateTime.AddMinutes(23 * 60), true))
+            .SetName($"{nameof(IDateTime.AddMinutes)} 23 hours in minutes HasTime=true");
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddSeconds(TimeSpan.FromDays(1).Seconds)))
+            .Returns((dateTime.AddSeconds(TimeSpan.FromDays(1).Seconds), false))
+            .SetName($"{nameof(IDateTime.AddSeconds)} 1 day in seconds HasTime=false");
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(TimeSpan.FromDays(1))))
+            .Returns((dateTime.Add(TimeSpan.FromDays(1)), false))
+            .SetName($"{nameof(IDateTime.Add)} 1 day TimeSpan HasTime=false");
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(TimeSpan.FromSeconds(30))))
+            .Returns((dateTime.Add(TimeSpan.FromSeconds(30)), true))
+            .SetName($"{nameof(IDateTime.Add)} 30 seconds TimeSpan HasTime=true");
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddMilliseconds(TimeSpan.FromDays(2).Milliseconds)))
+            .Returns((dateTime.AddMilliseconds(TimeSpan.FromDays(2).Milliseconds), false))
+            .SetName($"{nameof(IDateTime.AddMilliseconds)} 2 days in milliseconds");
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddMilliseconds(TimeSpan.FromHours(2).TotalMilliseconds)))
+            .Returns((dateTime.AddMilliseconds(TimeSpan.FromHours(2).TotalMilliseconds), true))
+            .SetName($"{nameof(IDateTime.AddMilliseconds)} 2 hours in milliseconds");
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddTicks(TimeSpan.FromDays(2).Ticks)))
+            .Returns((dateTime.AddTicks(TimeSpan.FromDays(2).Ticks), false))
+            .SetName($"{nameof(IDateTime.AddTicks)} ticks of 2 days");
+
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddTicks(TimeSpan.FromHours(2).Ticks)))
+            .Returns((dateTime.AddTicks(TimeSpan.FromHours(2).Ticks), true))
+            .SetName($"{nameof(IDateTime.AddTicks)} ticks of 2 hours");
     }
 
     [Test]
     public void Simple_PropertyAndMethod_HasTime_Tests()
     {
+        // A collection of tests that are not covered elsewhere
+
         var dt = new DateTime(2025, 1, 2, 10, 20, 30, DateTimeKind.Utc);
         var c = new CalDateTime(dt, tzId: "Europe/Berlin");
 
@@ -253,26 +346,16 @@ public class CalDateTimeTests
             Assert.That(c2.Value, Is.EqualTo(c3.Value));
             Assert.That(c2.Ticks, Is.EqualTo(c3.Ticks));
             Assert.That(c2.TzId, Is.EqualTo(c3.TzId));
-            Assert.That(CalDateTime.UtcNow.Value.Kind, Is.EqualTo(DateTimeKind.Utc));
+            Assert.That(CalDateTime.UtcNow.Value.Kind, Is.EqualTo(DateTimeKind.Unspecified));
             Assert.That(CalDateTime.Today.Value.Kind, Is.EqualTo(DateTimeKind.Unspecified));
             Assert.That(c.Millisecond, Is.EqualTo(0));
             Assert.That(c.Ticks, Is.EqualTo(dt.Ticks));
             Assert.That(c.DayOfYear, Is.EqualTo(dt.DayOfYear));
-            Assert.That(c.TimeOfDay, Is.EqualTo(dt.TimeOfDay));
+            Assert.That(c.Time?.ToTimeSpan(), Is.EqualTo(dt.TimeOfDay));
             Assert.That(c.Subtract(TimeSpan.FromSeconds(dt.Second)).Value.Second, Is.EqualTo(0));
-            Assert.That(c.AddYears(1).Value, Is.EqualTo(dt.AddYears(1)));
-            Assert.That(c.AddMonths(1).Value, Is.EqualTo(dt.AddMonths(1)));
-            Assert.That(c.AddDays(1).Value, Is.EqualTo(dt.AddDays(1)));
-            Assert.That(c.AddHours(1).Value, Is.EqualTo(dt.AddHours(1)));
-            Assert.That(c.AddMinutes(1).Value, Is.EqualTo(dt.AddMinutes(1)));
-            Assert.That(c.AddSeconds(15).Value, Is.EqualTo(dt.AddSeconds(15)));
-            Assert.That(c.AddMilliseconds(100).Value, Is.EqualTo(dt.AddMilliseconds(0))); // truncated
-            Assert.That(c.AddMilliseconds(1000).Value, Is.EqualTo(dt.AddMilliseconds(1000)));
-            Assert.That(c.AddTicks(1).Value, Is.EqualTo(dt.AddTicks(0))); // truncated
-            Assert.That(c.AddTicks(TimeSpan.FromMinutes(1).Ticks).Value, Is.EqualTo(dt.AddTicks(TimeSpan.FromMinutes(1).Ticks)));
-            Assert.That(c.DateOnlyValue, Is.EqualTo(new DateOnly(dt.Year, dt.Month, dt.Day)));
-            Assert.That(c.TimeOnlyValue, Is.EqualTo(new TimeOnly(dt.Hour, dt.Minute, dt.Second)));
             Assert.That(c.ToString("dd.MM.yyyy"), Is.EqualTo("02.01.2025 Europe/Berlin"));
+            // Create a date-only CalDateTime from a CalDateTime
+            Assert.That(new CalDateTime(new CalDateTime(2025, 1, 1)), Is.EqualTo(new CalDateTime(2025, 1, 1)));
         });
     }
 
@@ -299,26 +382,6 @@ public class CalDateTimeTests
 
             result = c.AddTicks(TimeSpan.FromMinutes(1).Ticks);
             Assert.That(result.HasTime, Is.True);
-        });
-    }
-
-    [Test]
-    public void Toggling_HasDate_ShouldSucceed()
-    {
-        var dateTime = new DateTime(2025, 1, 2, 10, 20, 30, DateTimeKind.Utc);
-        var dt = new CalDateTime(dateTime);
-        Assert.Multiple(() =>
-        {
-            Assert.That(dt.HasTime, Is.True);
-            Assert.That(dt.HasDate, Is.True);
-
-            dt.HasDate = false;
-            Assert.That(dt.HasDate, Is.False);
-            Assert.That(dt.DateOnlyValue.HasValue, Is.False);
-            Assert.That(() => dt.Value, Throws.InstanceOf<InvalidOperationException>());
-
-            dt.HasDate = true;
-            Assert.That(dt.HasDate, Is.True);
         });
     }
 }

@@ -325,8 +325,8 @@ END:VCALENDAR
         var evt = iCal.Events["594oeajmftl3r9qlkb476rpr3c@google.com"];
         Assert.That(evt, Is.Not.Null);
 
-        IDateTime dtStart = new CalDateTime(2006, 12, 18, tzId);
-        IDateTime dtEnd = new CalDateTime(2006, 12, 23, tzId);
+        IDateTime dtStart = new CalDateTime(2006, 12, 18);
+        IDateTime dtEnd = new CalDateTime(2006, 12, 23);
         var occurrences = iCal.GetOccurrences(dtStart, dtEnd).OrderBy(o => o.Period.StartTime).ToList();
 
         var dateTimes = new[]

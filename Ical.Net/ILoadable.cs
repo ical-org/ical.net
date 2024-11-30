@@ -10,7 +10,7 @@ namespace Ical.Net;
 public interface ILoadable
 {
     /// <summary>
-    /// Gets whether or not the object has been loaded.
+    /// Gets whether the object has been loaded.
     /// </summary>
     bool IsLoaded { get; }
 

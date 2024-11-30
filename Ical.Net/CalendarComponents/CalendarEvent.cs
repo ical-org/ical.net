@@ -152,15 +152,19 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
         get => !Start.HasTime;
         set
         {
-            // Set whether or not the start date/time
+            // Set whether the start date/time
             // has a time value.
             if (Start != null)
             {
-                Start.HasTime = !value;
+                Start = value
+                    ? new CalDateTime(Start.Date)
+                    : new CalDateTime(Start.Date, Start.Time, Start.TzId);
             }
             if (End != null)
             {
-                End.HasTime = !value;
+                End = value
+                    ? new CalDateTime(End.Date)
+                    : new CalDateTime(End.Date, End.Time, End.TzId);
             }
 
             if (value && Start != null && End != null && Equals(Start.Date, End.Date))
@@ -213,7 +217,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
 
     /// <summary>
     /// The transparency of the event.  In other words,
-    /// whether or not the period of time this event
+    /// whether the period of time this event
     /// occupies can contain other events (transparent),
     /// or if the time cannot be scheduled for anything
     /// else (opaque).
@@ -242,7 +246,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
 
 
     /// <summary>
-    /// Determines whether or not the <see cref="CalendarEvent"/> is actively displayed
+    /// Determines whether the <see cref="CalendarEvent"/> is actively displayed
     /// as an upcoming or occurred event.
     /// </summary>
     /// <returns>True if the event has not been cancelled, False otherwise.</returns>

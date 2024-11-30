@@ -478,8 +478,8 @@ END:VCALENDAR";
 
         var evt = new CalendarEvent()
         {
-            DtStart = new CalDateTime(now) { HasTime = true },
-            DtEnd = new CalDateTime(now.AddHours(1)) { HasTime = true },
+            DtStart = new CalDateTime(DateOnly.FromDateTime(now), TimeOnly.FromDateTime(now)),
+            DtEnd = new CalDateTime(DateOnly.FromDateTime(now.AddHours(1)), TimeOnly.FromDateTime(now.AddHours(1)))
         };
 
         Assert.Multiple(() =>
@@ -491,8 +491,8 @@ END:VCALENDAR";
 
         evt = new CalendarEvent()
         {
-            DtStart = new CalDateTime(now.Date) { HasTime = true },
-            DtEnd = new CalDateTime(now.Date.AddHours(1)) { HasTime = true },
+            DtStart = new CalDateTime(DateOnly.FromDateTime(now.Date), TimeOnly.FromDateTime(now.Date)),
+            DtEnd = new CalDateTime(DateOnly.FromDateTime(now.Date.AddHours(1)), TimeOnly.FromDateTime(now.Date.AddHours(1)))
         };
 
         Assert.Multiple(() =>
@@ -503,7 +503,7 @@ END:VCALENDAR";
 
         evt = new CalendarEvent()
         {
-            DtStart = new CalDateTime(now.Date) { HasTime = false },
+            DtStart = new CalDateTime(DateOnly.FromDateTime(now)),
         };
 
         Assert.Multiple(() =>
@@ -514,7 +514,7 @@ END:VCALENDAR";
 
         evt = new CalendarEvent()
         {
-            DtStart = new CalDateTime(now) { HasTime = true },
+            DtStart = new CalDateTime(DateOnly.FromDateTime(now), TimeOnly.FromDateTime(now)),
             Duration = TimeSpan.FromHours(2),
         };
 
@@ -526,7 +526,7 @@ END:VCALENDAR";
 
         evt = new CalendarEvent()
         {
-            DtStart = new CalDateTime(now.Date) { HasTime = true },
+            DtStart = new CalDateTime(DateOnly.FromDateTime(now.Date), TimeOnly.FromDateTime(now.Date)),
             Duration = TimeSpan.FromHours(2),
         };
 
@@ -537,7 +537,7 @@ END:VCALENDAR";
 
         evt = new CalendarEvent()
         {
-            DtStart = new CalDateTime(now.Date) { HasTime = false },
+            DtStart = new CalDateTime(DateOnly.FromDateTime(now)),
             Duration = TimeSpan.FromDays(1),
         };
 

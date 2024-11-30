@@ -205,11 +205,17 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
     /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
     public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt)
-        => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)));
+    {
+        var endTimeOnly = dt.Time?.Add(TimeSpan.FromSeconds(-1));
+        return GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date, dt.Time), new CalDateTime(dt.Date.AddDays(1), endTimeOnly));
+    }
 
     /// <inheritdoc cref="GetOccurrences(IDateTime)"/>
     public virtual HashSet<Occurrence> GetOccurrences(DateTime dt)
-        => GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)));
+    {
+        var endDateTime = dt.Date.AddDays(1).AddSeconds(-1);
+        return GetOccurrences<IRecurringComponent>(new CalDateTime(DateOnly.FromDateTime(dt), TimeOnly.FromDateTime(dt)), new CalDateTime(DateOnly.FromDateTime(endDateTime), TimeOnly.FromDateTime(endDateTime)));
+    }
 
     /// <summary>
     /// Returns a list of occurrences of each recurring component
@@ -223,7 +229,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
 
     /// <inheritdoc cref="GetOccurrences(IDateTime, IDateTime)"/>
     public virtual HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
-        => GetOccurrences<IRecurringComponent>(new CalDateTime(startTime), new CalDateTime(endTime));
+        => GetOccurrences<IRecurringComponent>(new CalDateTime(DateOnly.FromDateTime(startTime), TimeOnly.FromDateTime(startTime)), new CalDateTime(DateOnly.FromDateTime(endTime), TimeOnly.FromDateTime(endTime)));
 
     /// <summary>
     /// Returns all occurrences of components of type T that start on the date provided.
@@ -238,11 +244,17 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
     /// <returns>A list of Periods representing the occurrences of this object.</returns>
     public virtual HashSet<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
-        => GetOccurrences<T>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddTicks(-1)));
+    {
+        var endTimeOnly = dt.Time?.Add(TimeSpan.FromTicks(-1));
+        return GetOccurrences<T>(new CalDateTime(dt.Date, dt.Time), new CalDateTime(dt.Date.AddDays(1), endTimeOnly));
+    }
 
     /// <inheritdoc cref="GetOccurrences(IDateTime)"/>
     public virtual HashSet<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
-        => GetOccurrences<T>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddTicks(-1)));
+    {
+        var endDateTime = dt.Date.AddDays(1).AddTicks(-1);
+        return GetOccurrences<T>(new CalDateTime(DateOnly.FromDateTime(dt), TimeOnly.FromDateTime(dt)), new CalDateTime(DateOnly.FromDateTime(endDateTime), TimeOnly.FromDateTime(endDateTime)));
+    }
 
     /// <inheritdoc cref="GetOccurrences(IDateTime, IDateTime)"/>
     public virtual HashSet<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent

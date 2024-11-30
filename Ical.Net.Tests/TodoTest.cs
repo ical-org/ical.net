@@ -25,8 +25,7 @@ public class TodoTest
 
         foreach (var calDateTime in incoming)
         {
-            var dt = calDateTime.Key;
-            dt.TzId = _tzid;
+            var dt = new CalDateTime(calDateTime.Key.Date, calDateTime.Key.Time, _tzid);
             Assert.That(todo[0].IsActive(dt), Is.EqualTo(calDateTime.Value));
         }
     }
@@ -175,8 +174,7 @@ public class TodoTest
 
         foreach (var calDateTime in incoming)
         {
-            var dt = calDateTime.Key;
-            dt.TzId = _tzid;
+            var dt = new CalDateTime(calDateTime.Key.Date, calDateTime.Key.Time, _tzid);
             Assert.That(todo[0].IsCompleted(dt), Is.EqualTo(calDateTime.Value));
         }
     }

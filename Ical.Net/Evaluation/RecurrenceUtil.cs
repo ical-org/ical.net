@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.CalendarComponents;
@@ -13,8 +14,12 @@ namespace Ical.Net.Evaluation;
 
 internal class RecurrenceUtil
 {
-    public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt, bool includeReferenceDateInResults) => GetOccurrences(recurrable,
-        new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)), includeReferenceDateInResults);
+    public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt, bool includeReferenceDateInResults)
+    {
+        var endTimeOnly = dt.Time?.Add(TimeSpan.FromSeconds(-1));
+        return GetOccurrences(recurrable,
+        new CalDateTime(dt.Date, dt.Time), new CalDateTime(dt.Date.AddDays(1), endTimeOnly), includeReferenceDateInResults);
+    }
 
     public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime periodStart, IDateTime periodEnd, bool includeReferenceDateInResults)
     {
@@ -31,8 +36,8 @@ internal class RecurrenceUtil
         // Change the time zone of periodStart/periodEnd as needed
         // so they can be used during the evaluation process.
 
-        periodStart.TzId = start.TzId;
-        periodEnd.TzId = start.TzId;
+        periodStart = new CalDateTime(periodStart.Date, periodStart.Time, start.TzId);
+        periodEnd = new CalDateTime(periodEnd.Date, periodEnd.Time, start.TzId);
 
         var periods = evaluator.Evaluate(start, DateUtil.GetSimpleDateTimeData(periodStart), DateUtil.GetSimpleDateTimeData(periodEnd),
             includeReferenceDateInResults);

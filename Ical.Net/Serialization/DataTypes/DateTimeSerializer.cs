@@ -99,7 +99,7 @@ public class DateTimeSerializer : EncodableDataTypeSerializer
 
         // The associated object is an ICalendarObject of type CalendarProperty
         // that contains any timezone ("TZID" property) deserialized in a prior step
-        dt.TzId = dt.Parameters.Get("TZID");
+        var timeZoneId = dt.Parameters.Get("TZID");
 
         // Decode the value as necessary
         value = Decode(dt, value);
@@ -132,16 +132,11 @@ public class DateTimeSerializer : EncodableDataTypeSerializer
         }
 
         var isUtc = match.Groups[9].Success;
-        var kind = isUtc
-            ? DateTimeKind.Utc
-            : DateTimeKind.Unspecified;
+        if (isUtc) timeZoneId = "UTC";
 
-        if (isUtc) dt.TzId = "UTC";
-
-        dt.Value = timePart.HasValue
-            ? new DateTime(datePart.Year, datePart.Month, datePart.Day, timePart.Value.Hour, timePart.Value.Minute, timePart.Value.Second, kind)
-            : new DateTime(datePart.Year, datePart.Month, datePart.Day, 0, 0, 0, kind);
-        dt.HasTime = timePart.HasValue;
+        dt = timePart.HasValue
+            ? new CalDateTime(datePart, timePart.Value, timeZoneId) { AssociatedObject = dt.AssociatedObject }
+            : new CalDateTime(datePart) { AssociatedObject = dt.AssociatedObject };
 
         return dt;
     }
