@@ -211,6 +211,14 @@ public class RecurrencePatternEvaluator : Evaluator
         var originalDate = DateUtil.GetSimpleDateTimeData(seed);
         var seedCopy = DateUtil.GetSimpleDateTimeData(seed);
 
+        if ((pattern.Frequency == FrequencyType.Yearly) && (pattern.ByWeekNo.Count != 0))
+        {
+            // Dates in the first or last week of the year could belong weeks that belong to
+            // the prev/next year, in which case we must adjust that year. This is necessary
+            // to get the invervals right.
+            IncrementDate(ref seedCopy, pattern, Calendar.GetIso8601YearOfWeek(seedCopy, pattern.FirstDayOfWeek) - seedCopy.Year);
+        }
+
         // optimize the start time for selecting candidates
         // (only applicable where a COUNT is not specified)
         if (pattern.Count == int.MinValue)
@@ -398,34 +406,39 @@ public class RecurrencePatternEvaluator : Evaluator
             foreach (var weekNo in GetByWeekNoForYearNormalized(pattern, t.Year))
             {
                 var date = t;
+
+                // Make sure we start from a reference date that is in a week that belongs to the current year.
+                // Its not important that the date lies in a certain week, but that the week belongs to the
+                // current year and that the week day is preserved.
+                if (date.Month == 1)
+                    date = date.AddDays(7);
+                else if (date.Month >= 12)
+                    date = date.AddDays(-7);
+
                 // Determine our current week number
                 var currWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
-                while (currWeekNo > weekNo)
-                {
-                    // If currWeekNo > weekNo, then we're likely at the start of a year
-                    // where currWeekNo could be 52 or 53.  If we simply step ahead 7 days
-                    // we should be back to week 1, where we can easily make the calculation
-                    // to move to weekNo.
-                    date = date.AddDays(7);
-                    currWeekNo = Calendar.GetIso8601WeekOfYear(date, pattern.FirstDayOfWeek);
-                }
 
                 // Move ahead to the correct week of the year
                 date = date.AddDays((weekNo - currWeekNo) * 7);
 
-                // Step backward single days until we're at the correct DayOfWeek
-                while (date.DayOfWeek != pattern.FirstDayOfWeek)
+                // Ignore the week if it doesn't belong to the current year.
+                if (Calendar.GetIso8601YearOfWeek(date, pattern.FirstDayOfWeek) == t.Year)
                 {
-                    date = date.AddDays(-1);
-                }
+                    // Step backward single days until we're at the correct DayOfWeek
+                    while (date.DayOfWeek != pattern.FirstDayOfWeek)
+                    {
+                        date = date.AddDays(-1);
+                    }
 
-                for (var k = 0; k < 7; k++)
-                {
-                    weekNoDates.Add(date);
-                    date = date.AddDays(1);
+                    for (var k = 0; k < 7; k++)
+                    {
+                        weekNoDates.Add(date);
+                        date = date.AddDays(1);
+                    }
                 }
             }
         }
+
         return weekNoDates;
     }
 
