@@ -24,6 +24,9 @@ internal static class DateUtil
     public static DateTime GetSimpleDateTimeData(IDateTime dt)
         => dt.Value;
 
+    public static CalDateTime AsCalDateTime(this DateTime t)
+        => new CalDateTime(t);
+
     public static DateTime AddWeeks(DateTime dt, int interval, DayOfWeek firstDayOfWeek)
     {
         // NOTE: fixes WeeklyUntilWkst2() eval.

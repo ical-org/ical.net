@@ -32,19 +32,21 @@ internal class RecurrenceUtil
         // Change the time zone of periodStart/periodEnd as needed
         // so they can be used during the evaluation process.
 
-        periodStart = new CalDateTime(periodStart.Date, periodStart.Time, start.TzId);
-        periodEnd = new CalDateTime(periodEnd.Date, periodEnd.Time, start.TzId);
+        if (periodStart != null)
+            periodStart = new CalDateTime(periodStart.Date, periodStart.Time, start.TzId);
+        if (periodEnd != null)
+            periodEnd = new CalDateTime(periodEnd.Date, periodEnd.Time, start.TzId);
 
-        var periods = evaluator.Evaluate(start, DateUtil.GetSimpleDateTimeData(periodStart), DateUtil.GetSimpleDateTimeData(periodEnd),
+        var periods = evaluator.Evaluate(start, periodStart?.Value, periodEnd?.Value,
             includeReferenceDateInResults);
 
         var occurrences =
             from p in periods
             let endTime = p.EndTime ?? p.StartTime
             where
-                (endTime.GreaterThan(periodStart) && p.StartTime.LessThan(periodEnd) ||
+                (((periodStart == null) || endTime.GreaterThan(periodStart)) && ((periodEnd == null) || p.StartTime.LessThan(periodEnd)) ||
                 (periodStart.Equals(periodEnd) && p.StartTime.LessThanOrEqual(periodStart) && endTime.GreaterThan(periodEnd))) || //A period that starts at the same time it ends
-                (p.StartTime.Equals(endTime) && periodStart.Equals(p.StartTime)) //An event that starts at the same time it ends
+                (p.StartTime.Equals(endTime) && p.StartTime.Equals(periodStart)) //An event that starts at the same time it ends
             select new Occurrence(recurrable, p);
 
         return occurrences;

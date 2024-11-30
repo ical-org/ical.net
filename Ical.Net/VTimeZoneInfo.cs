@@ -9,6 +9,7 @@ using System.Runtime.Serialization;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
+using Ical.Net.Utility;
 
 namespace Ical.Net;
 
@@ -168,6 +169,6 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
     public virtual IEnumerable<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
         => RecurrenceUtil.GetOccurrences(this, startTime, endTime, true);
 
-    public virtual IEnumerable<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
-        => RecurrenceUtil.GetOccurrences(this, new CalDateTime(startTime), new CalDateTime(endTime), true);
+    public virtual IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime)
+        => RecurrenceUtil.GetOccurrences(this, startTime?.AsCalDateTime(), endTime?.AsCalDateTime(), true);
 }

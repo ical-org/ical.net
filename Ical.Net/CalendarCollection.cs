@@ -61,7 +61,7 @@ public class CalendarCollection : List<Calendar>
         .ToArray()
         .OrderedMergeMany();
 
-    public IEnumerable<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
+    public IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime)
         => this
         .Select(iCal => iCal.GetOccurrences(startTime, endTime))
         .ToArray()
@@ -85,7 +85,7 @@ public class CalendarCollection : List<Calendar>
         .ToArray()
         .OrderedMergeMany();
 
-    public IEnumerable<Occurrence> GetOccurrences<T>(DateTime startTime, DateTime endTime) where T : IRecurringComponent
+    public IEnumerable<Occurrence> GetOccurrences<T>(DateTime? startTime, DateTime? endTime) where T : IRecurringComponent
         => this
         .Select(iCal => iCal.GetOccurrences<T>(startTime, endTime))
         .ToArray()

@@ -38,7 +38,7 @@ public class EventEvaluator : RecurringEvaluator
     /// <param name="periodEnd">The end date of the range to evaluate.</param>
     /// <param name="includeReferenceDateInResults"></param>
     /// <returns></returns>
-    public override IEnumerable<Period> Evaluate(IDateTime referenceTime, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(IDateTime referenceTime, DateTime? periodStart, DateTime? periodEnd, bool includeReferenceDateInResults)
     {
         Period WithDuration(Period period)
         {

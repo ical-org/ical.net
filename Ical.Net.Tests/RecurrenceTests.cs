@@ -3810,4 +3810,31 @@ END:VCALENDAR
 
         Assert.That(occurrences, Is.Empty);
     }
+
+    [Test]
+    public void TestGetOccurrenceIndefinite()
+    {
+        var ical = """
+            BEGIN:VCALENDAR
+            VERSION:2.0
+            BEGIN:VEVENT
+            DTSTART:20241130
+            RRULE:FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR,SA
+            EXRULE:FREQ=DAILY;INTERVAL=3
+            RDATE:20241201
+            EXDATE:20241202
+            END:VEVENT
+            END:VCALENDAR
+            """;
+
+        var calendar = Calendar.Load(ical);
+
+        // Although the occurrences are unbounded, we can still call GetOccurrences without
+        // specifying bounds, because the instances are only generated on enumeration.
+        var occurrences = calendar.GetOccurrences();
+
+        var instances = occurrences.Take(100).ToList();
+
+        Assert.That(instances.Count(), Is.EqualTo(100));
+    }
 }
