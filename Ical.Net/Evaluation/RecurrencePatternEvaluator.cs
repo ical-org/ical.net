@@ -963,14 +963,11 @@ public class RecurrencePatternEvaluator : Evaluator
 
         // Enforce evaluation restrictions on the pattern.
         EnforceEvaluationRestrictions(pattern);
-        Periods.Clear();
 
         var periodQuery = GetDates(referenceDate, periodStart, periodEnd, -1, pattern, includeReferenceDateInResults)
             .Select(dt => CreatePeriod(dt, referenceDate));
 
-        Periods.UnionWith(periodQuery);
-
-        return Periods;
+        return new HashSet<Period>(periodQuery);
     }
 
     private static IDateTime MatchTimeZone(IDateTime dt1, IDateTime dt2)

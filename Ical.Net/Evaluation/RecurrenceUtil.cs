@@ -13,12 +13,6 @@ namespace Ical.Net.Evaluation;
 
 internal class RecurrenceUtil
 {
-    public static void ClearEvaluation(IRecurrable recurrable)
-    {
-        var evaluator = recurrable.GetService(typeof(IEvaluator)) as IEvaluator;
-        evaluator?.Clear();
-    }
-
     public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt, bool includeReferenceDateInResults) => GetOccurrences(recurrable,
         new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1).AddSeconds(-1)), includeReferenceDateInResults);
 

@@ -13,37 +13,16 @@ namespace Ical.Net.Evaluation;
 
 public abstract class Evaluator : IEvaluator
 {
-    private DateTime _mEvaluationStartBounds = DateTime.MaxValue;
-    private DateTime _mEvaluationEndBounds = DateTime.MinValue;
-
     private ICalendarObject _mAssociatedObject;
-    private readonly ICalendarDataType _mAssociatedDataType;
-
-    protected HashSet<Period> MPeriods;
 
     protected Evaluator()
     {
         Initialize();
     }
 
-    protected Evaluator(ICalendarObject associatedObject)
-    {
-        _mAssociatedObject = associatedObject;
-
-        Initialize();
-    }
-
-    protected Evaluator(ICalendarDataType dataType)
-    {
-        _mAssociatedDataType = dataType;
-
-        Initialize();
-    }
-
     private void Initialize()
     {
         Calendar = CultureInfo.CurrentCulture.Calendar;
-        MPeriods = new HashSet<Period>();
     }
 
     protected IDateTime ConvertToIDateTime(DateTime dt, IDateTime referenceDate)
@@ -90,31 +69,10 @@ public abstract class Evaluator : IEvaluator
 
     public System.Globalization.Calendar Calendar { get; private set; }
 
-    public virtual DateTime EvaluationStartBounds
-    {
-        get => _mEvaluationStartBounds;
-        set => _mEvaluationStartBounds = value;
-    }
-
-    public virtual DateTime EvaluationEndBounds
-    {
-        get => _mEvaluationEndBounds;
-        set => _mEvaluationEndBounds = value;
-    }
-
     public virtual ICalendarObject AssociatedObject
     {
-        get => _mAssociatedObject ?? _mAssociatedDataType?.AssociatedObject;
+        get => _mAssociatedObject;
         protected set => _mAssociatedObject = value;
-    }
-
-    public virtual HashSet<Period> Periods => MPeriods;
-
-    public virtual void Clear()
-    {
-        _mEvaluationStartBounds = DateTime.MaxValue;
-        _mEvaluationEndBounds = DateTime.MinValue;
-        MPeriods.Clear();
     }
 
     public abstract HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults);

@@ -224,8 +224,6 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
         set => Properties.Set(TransparencyType.Key, value);
     }
 
-    private EventEvaluator _mEvaluator;
-
     /// <summary>
     /// Constructs an Event object, with an iCalObject
     /// (usually an iCalendar object) as its parent.
@@ -239,36 +237,9 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     {
         Name = EventStatus.Name;
 
-        _mEvaluator = new EventEvaluator(this);
-        SetService(_mEvaluator);
+        SetService(new EventEvaluator(this));
     }
 
-    /// <summary>
-    /// Use this method to determine if an event occurs on a given date.
-    /// <note type="caution">
-    ///     This event should be called only after the Evaluate
-    ///     method has calculated the dates for which this event occurs.
-    /// </note>
-    /// </summary>
-    /// <param name="dateTime">The date to test.</param>
-    /// <returns>True if the event occurs on the <paramref name="dateTime"/> provided, False otherwise.</returns>
-    public virtual bool OccursOn(IDateTime dateTime)
-    {
-        return _mEvaluator.Periods.Any(p => p.StartTime.Date == dateTime.Date || // It's the start date OR
-                                            (p.StartTime.Date <= dateTime.Date && // It's after the start date AND
-                                             (p.EndTime.HasTime && p.EndTime.Date >= dateTime.Date || // an end time was specified, and it's after the test date
-                                              (!p.EndTime.HasTime && p.EndTime.Date > dateTime.Date))));
-    }
-
-    /// <summary>
-    /// Use this method to determine if an event begins at a given date and time.
-    /// </summary>
-    /// <param name="dateTime">The date and time to test.</param>
-    /// <returns>True if the event begins at the given date and time</returns>
-    public virtual bool OccursAt(IDateTime dateTime)
-    {
-        return _mEvaluator.Periods.Any(p => p.StartTime.Equals(dateTime));
-    }
 
     /// <summary>
     /// Determines whether or not the <see cref="CalendarEvent"/> is actively displayed

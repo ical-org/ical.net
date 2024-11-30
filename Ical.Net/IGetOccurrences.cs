@@ -13,13 +13,6 @@ namespace Ical.Net;
 public interface IGetOccurrences
 {
     /// <summary>
-    /// Clears a previous evaluation, usually because one of the
-    /// key elements used for evaluation has changed
-    /// (Start, End, Duration, recurrence rules, exceptions, etc.).
-    /// </summary>
-    void ClearEvaluation();
-
-    /// <summary>
     /// Returns all occurrences of this component that start on the date provided.
     /// All components starting between 12:00:00AM and 11:59:59 PM will be
     /// returned.

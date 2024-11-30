@@ -41,9 +41,9 @@ public class EventEvaluator : RecurringEvaluator
     public override HashSet<Period> Evaluate(IDateTime referenceTime, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
     {
         // Evaluate recurrences normally
-        base.Evaluate(referenceTime, periodStart, periodEnd, includeReferenceDateInResults);
+        var periods = base.Evaluate(referenceTime, periodStart, periodEnd, includeReferenceDateInResults);
 
-        foreach (var period in Periods)
+        foreach (var period in periods)
         {
             period.Duration = CalendarEvent.GetFirstDuration();
             period.EndTime = period.Duration == default
@@ -52,7 +52,7 @@ public class EventEvaluator : RecurringEvaluator
         }
 
         // Ensure each period has a duration
-        foreach (var period in Periods.Where(p => p.EndTime == null))
+        foreach (var period in periods.Where(p => p.EndTime == null))
         {
             period.Duration = CalendarEvent.GetFirstDuration();
             period.EndTime = period.Duration == default
@@ -60,6 +60,6 @@ public class EventEvaluator : RecurringEvaluator
                 : period.StartTime.Add(CalendarEvent.GetFirstDuration());
         }
 
-        return Periods;
+        return periods;
     }
 }
