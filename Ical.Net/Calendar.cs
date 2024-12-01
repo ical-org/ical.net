@@ -257,19 +257,22 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <param name="endTime">The ending date range</param>
     public virtual HashSet<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
     {
+        // These are the UID/RECURRENCE-ID combinations that replace other occurrences.
+        var recurrenceIdsAndUids = this.Children.OfType<IRecurrable>()
+            .Where(r => r.RecurrenceId != null)
+            .Select(r => new { (r as IUniqueComponent)?.Uid, Dt = r.RecurrenceId.Value })
+            .Where(r => r.Uid != null)
+            .ToDictionary(x => x);
+
         var occurrences = new HashSet<Occurrence>(RecurringItems
             .OfType<T>()
-            .SelectMany(recurrable => recurrable.GetOccurrences(startTime, endTime)));
+            .SelectMany(recurrable => recurrable.GetOccurrences(startTime, endTime))
+            // Remove the occurrence if it has been replaced by a different one.
+            .Where(r =>
+                (r.Source.RecurrenceId != null) ||
+                !(r.Source is IUniqueComponent) ||
+                !recurrenceIdsAndUids.ContainsKey(new { ((IUniqueComponent) r.Source).Uid, Dt = r.Period.StartTime.Value })));
 
-        var removeOccurrencesQuery = occurrences
-            .Where(o => o.Source is UniqueComponent)
-            .GroupBy(o => ((UniqueComponent) o.Source).Uid)
-            .SelectMany(group => group
-                .Where(o => o.Source.RecurrenceId != null)
-                .SelectMany(occurrence => group.
-                    Where(o => o.Source.RecurrenceId == null && occurrence.Source.RecurrenceId.Date.Equals(o.Period.StartTime.Date))));
-
-        occurrences.ExceptWith(removeOccurrencesQuery);
         return occurrences;
     }
 

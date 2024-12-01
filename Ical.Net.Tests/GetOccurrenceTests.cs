@@ -152,65 +152,165 @@ END:VCALENDAR";
     }
 
     [Test]
-    public void GetOccurrencesShouldEnumerate()
+    public void GetOccurrencesWithRecurrenceIdShouldEnumerate()
     {
-        const string ical =
-            @"BEGIN:VCALENDAR
-PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
-VERSION:2.0
-BEGIN:VTIMEZONE
-TZID:W. Europe Standard Time
-BEGIN:STANDARD
-DTSTART:16010101T030000
-RRULE:FREQ=YEARLY;BYDAY=SU;BYMONTH=10;BYSETPOS=-1
-TZNAME:Mitteleuropäische Zeit
-TZOFFSETFROM:+0200
-TZOFFSETTO:+0100
-END:STANDARD
-BEGIN:DAYLIGHT
-DTSTART:00010101T020000
-RRULE:FREQ=YEARLY;BYDAY=SU;BYMONTH=3;BYSETPOS=-1
-TZNAME:Mitteleuropäische Sommerzeit
-TZOFFSETFROM:+0100
-TZOFFSETTO:+0200
-END:DAYLIGHT
-END:VTIMEZONE
-BEGIN:VEVENT
-BACKGROUND:BUSY
-DESCRIPTION:Backup Daten
-DTEND;TZID=W. Europe Standard Time:20150305T043000
-DTSTAMP:20161122T120652Z
-DTSTART;TZID=W. Europe Standard Time:20150305T000100
-RESOURCES:server
-RRULE:FREQ=WEEKLY;BYDAY=MO
-SUMMARY:Server
-UID:a30ed847-8000-4c53-9e58-99c8f9cf7c4b
-X-LIGHTSOUT-ACTION:START=WakeUp\;END=Reboot\,Force
-X-LIGHTSOUT-MODE:TimeSpan
-X-MICROSOFT-CDO-BUSYSTATUS:BUSY
-END:VEVENT
-BEGIN:VEVENT
-BACKGROUND:BUSY
-DESCRIPTION:Backup Daten
-DTEND;TZID=W. Europe Standard Time:20161128T043000
-DTSTAMP:20161122T120652Z
-DTSTART;TZID=W. Europe Standard Time:20161128T000100
-RECURRENCE-ID:20161128T000100
-RESOURCES:server
-SEQUENCE:0
-SUMMARY:Server
-UID:a30ed847-8000-4c53-9e58-99c8f9cf7c4b
-X-LIGHTSOUT-ACTION:START=WakeUp\;END=Reboot\,Force
-X-LIGHTSOUT-MODE:TimeSpan
-X-MICROSOFT-CDO-BUSYSTATUS:BUSY
-END:VEVENT
-END:VCALENDAR
-";
+        const string ical = """
+            BEGIN:VCALENDAR
+            PRODID:-//github.com/rianjs/ical.net//NONSGML ical.net 2.2//EN
+            VERSION:2.0
+            BEGIN:VTIMEZONE
+            TZID:W. Europe Standard Time
+            BEGIN:STANDARD
+            DTSTART:16010101T030000
+            RRULE:FREQ=YEARLY;BYDAY=SU;BYMONTH=10;BYSETPOS=-1
+            TZNAME:Mitteleuropäische Zeit
+            TZOFFSETFROM:+0200
+            TZOFFSETTO:+0100
+            END:STANDARD
+            BEGIN:DAYLIGHT
+            DTSTART:00010101T020000
+            RRULE:FREQ=YEARLY;BYDAY=SU;BYMONTH=3;BYSETPOS=-1
+            TZNAME:Mitteleuropäische Sommerzeit
+            TZOFFSETFROM:+0100
+            TZOFFSETTO:+0200
+            END:DAYLIGHT
+            END:VTIMEZONE
+            BEGIN:VEVENT
+            BACKGROUND:BUSY
+            DESCRIPTION:Backup Daten
+            DTEND;TZID=W. Europe Standard Time:20150305T043000
+            DTSTAMP:20161122T120652Z
+            DTSTART;TZID=W. Europe Standard Time:20150305T000100
+            RESOURCES:server
+            RRULE:FREQ=WEEKLY;BYDAY=MO;BYHOUR=0,12
+            SUMMARY:Server
+            UID:a30ed847-8000-4c53-9e58-99c8f9cf7c4b
+            X-LIGHTSOUT-ACTION:START=WakeUp\;END=Reboot\,Force
+            X-LIGHTSOUT-MODE:TimeSpan
+            X-MICROSOFT-CDO-BUSYSTATUS:BUSY
+            END:VEVENT
+            BEGIN:VEVENT
+            BACKGROUND:BUSY
+            DESCRIPTION:Backup Daten
+            DTEND;TZID=W. Europe Standard Time:20161128T043000
+            DTSTAMP:20161122T120652Z
+            DTSTART;TZID=W. Europe Standard Time:20161128T150100
+            RECURRENCE-ID:20161128T000100
+            RESOURCES:server
+            SEQUENCE:0
+            SUMMARY:Server
+            UID:a30ed847-8000-4c53-9e58-99c8f9cf7c4b
+            X-LIGHTSOUT-ACTION:START=WakeUp\;END=Reboot\,Force
+            X-LIGHTSOUT-MODE:TimeSpan
+            X-MICROSOFT-CDO-BUSYSTATUS:BUSY
+            END:VEVENT
+            END:VCALENDAR
+            """;
 
         var collection = Calendar.Load(ical);
         var startCheck = new DateTime(2016, 11, 11);
-        var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck, startCheck.AddMonths(1));
+        var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck, startCheck.AddMonths(1))
+            .OrderBy(x => x)
+            .ToList();
 
-        Assert.That(occurrences.Count == 4, Is.True);
+        CalDateTime[] expectedStartDates = [
+            new CalDateTime("20161114T000100", "W. Europe Standard Time"),
+            new CalDateTime("20161114T120100", "W. Europe Standard Time"),
+            new CalDateTime("20161121T000100", "W. Europe Standard Time"),
+            new CalDateTime("20161121T120100", "W. Europe Standard Time"),
+            new CalDateTime("20161128T120100", "W. Europe Standard Time"),
+            new CalDateTime("20161128T150100", "W. Europe Standard Time"), // The replaced entry
+            new CalDateTime("20161205T000100", "W. Europe Standard Time"),
+            new CalDateTime("20161205T120100", "W. Europe Standard Time")
+        ];
+
+        // Specify end time that is between the original occurrence ta 20161128T0001 and the overridden one at 20161128T0030.
+        // The overridden one shouldn't be returned, because it was replaced and the other one is in the future.
+        var occurrences2 = collection.GetOccurrences<CalendarEvent>(new CalDateTime(startCheck), new CalDateTime("20161128T002000", "W. Europe Standard Time"))
+            .OrderBy(x => x)
+            .ToList();
+
+        Assert.Multiple(() =>
+        {
+            // endTime = 20161211T000000
+            Assert.That(occurrences.Select(x => x.Period.StartTime), Is.EqualTo(expectedStartDates));
+
+            // endTime = 20161128T002000
+            Assert.That(occurrences2.Select(x => x.Period.StartTime), Is.EqualTo(expectedStartDates.Take(4)));
+        });
+    }
+
+    [Test]
+    public void GetOccurrencesWithRecurrenceId_DateOnly_ShouldEnumerate()
+    {
+        const string ical = """
+            BEGIN:VCALENDAR
+            PRODID:-//github.com/ical-org/ical.net//NONSGML ical.net 5.0//EN
+            VERSION:2.0
+            BEGIN:VEVENT
+            UID:789012
+            DTSTART;VALUE=DATE:20231001
+            DTEND;VALUE=DATE:20231002
+            RRULE:FREQ=MONTHLY;BYMONTHDAY=1
+            SUMMARY:Monthly Report Due
+            END:VEVENT
+            BEGIN:VEVENT
+            UID:789012
+            RECURRENCE-ID;VALUE=DATE:20231101
+            DTSTART;VALUE=DATE:20231115
+            DTEND;VALUE=DATE:20231116
+            SUMMARY:Monthly Report Due (Rescheduled)
+            END:VEVENT
+            END:VCALENDAR
+            """;
+
+        var collection = Calendar.Load(ical);
+        var startCheck = new DateTime(2023, 10, 1);
+        var occurrences = collection.GetOccurrences<CalendarEvent>(startCheck, startCheck.AddMonths(1))
+            .OrderBy(x => x)
+            .ToList();
+
+        var occurrences2 = collection.GetOccurrences<CalendarEvent>(new CalDateTime(startCheck), new CalDateTime(2023, 12, 31))
+            .OrderBy(x => x)
+            .ToList();
+
+        CalDateTime[] expectedStartDates = [
+            new CalDateTime(2023, 10, 1),
+            new CalDateTime(2023, 11, 15), // the replaced occurrence
+            new CalDateTime(2023, 12,1)
+        ];
+
+        Assert.Multiple(() =>
+        {
+            // For endTime=20231002
+            Assert.That(occurrences.Select(x => x.Period.StartTime), Is.EqualTo(expectedStartDates.Take(1)));
+
+            // For endTime=20231231
+            Assert.That(occurrences2.Select(x => x.Period.StartTime), Is.EqualTo(expectedStartDates.Take(3)));
+        });
+    }
+
+    [TestCase]
+    public void TestOccurenceEquals()
+    {
+        var occurrence = new Occurrence(new CalendarEvent() { Description = "o1" }, new Period(new CalDateTime(2023, 10, 1), new CalDateTime(2023, 10, 2)));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(occurrence.Equals((object)new Occurrence(
+                new CalendarEvent() { Description = "o1" }, new Period(new CalDateTime(2023, 10, 1), new CalDateTime(2023, 10, 2)))),
+                Is.True);
+
+            Assert.That(occurrence.Equals((object)new Occurrence(
+                new CalendarEvent() { Description = "different" }, new Period(new CalDateTime(2023, 10, 1), new CalDateTime(2023, 10, 2)))),
+                Is.False);
+
+            Assert.That(occurrence.Equals((object)new Occurrence(
+                new CalendarEvent() { Description = "o1" }, new Period(new CalDateTime(2000, 10, 1), new CalDateTime(2023, 10, 2)))),
+                Is.False);
+
+            Assert.That(occurrence.Equals((object)null),
+                Is.False);
+        });
     }
 }
