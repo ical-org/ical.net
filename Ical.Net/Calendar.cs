@@ -267,7 +267,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
             .SelectMany(group => group
                 .Where(o => o.Source.RecurrenceId != null)
                 .SelectMany(occurrence => group.
-                    Where(o => o.Source.RecurrenceId == null && occurrence.Source.RecurrenceId.Date.Equals(o.Period.StartTime.Date))));
+                    Where(o => o.Source.RecurrenceId == null && occurrence.Source.RecurrenceId.Value.Equals(o.Period.StartTime.Value))));
 
         occurrences.ExceptWith(removeOccurrencesQuery);
         return occurrences;
