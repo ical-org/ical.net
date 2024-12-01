@@ -289,4 +289,28 @@ END:VCALENDAR";
             Assert.That(occurrences2.Select(x => x.Period.StartTime), Is.EqualTo(expectedStartDates.Take(3)));
         });
     }
+
+    [TestCase]
+    public void TestOccurenceEquals()
+    {
+        var occurrence = new Occurrence(new CalendarEvent() { Description = "o1" }, new Period(new CalDateTime(2023, 10, 1), new CalDateTime(2023, 10, 2)));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(occurrence.Equals((object)new Occurrence(
+                new CalendarEvent() { Description = "o1" }, new Period(new CalDateTime(2023, 10, 1), new CalDateTime(2023, 10, 2)))),
+                Is.True);
+
+            Assert.That(occurrence.Equals((object)new Occurrence(
+                new CalendarEvent() { Description = "different" }, new Period(new CalDateTime(2023, 10, 1), new CalDateTime(2023, 10, 2)))),
+                Is.False);
+
+            Assert.That(occurrence.Equals((object)new Occurrence(
+                new CalendarEvent() { Description = "o1" }, new Period(new CalDateTime(2000, 10, 1), new CalDateTime(2023, 10, 2)))),
+                Is.False);
+
+            Assert.That(occurrence.Equals((object)null),
+                Is.False);
+        });
+    }
 }
