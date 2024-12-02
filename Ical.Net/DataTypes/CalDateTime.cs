@@ -201,7 +201,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
 
         _tzId = tzId switch
         {
-            _ when string.Equals(UtcTzId, tzId, StringComparison.OrdinalIgnoreCase) => UtcTzId,
+            _ when !timeOnly.HasValue && string.Equals(UtcTzId, tzId, StringComparison.OrdinalIgnoreCase) => UtcTzId,
             _ when !timeOnly.HasValue => null,
             _ => tzId
         };
