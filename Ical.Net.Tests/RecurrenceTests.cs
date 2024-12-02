@@ -3786,5 +3786,28 @@ END:VCALENDAR
         }
         return dt.Value;
     }
-}
 
+    [Test]
+    public void GetOccurrenceShouldExcludeDtEnd()
+    {
+        var ical = """
+                   BEGIN:VCALENDAR
+                   VERSION:2.0
+                   PRODID:-//github.com/ical-org/ical.net//NONSGML ical.net 5.0//EN
+                   BEGIN:VEVENT
+                   UID:123456
+                   DTSTAMP:20240630T000000Z
+                   DTSTART;VALUE=DATE:20241001
+                   DTEND;VALUE=DATE:20241202
+                   SUMMARY:Don't include the end date of this event
+                   END:VEVENT
+                   END:VCALENDAR
+                   """;
+
+        var calendar = Calendar.Load(ical);
+        // Set start date for occurrences to search to the end date of the event
+        var occurrences = calendar.GetOccurrences(new CalDateTime(2024, 12, 2));
+
+        Assert.That(occurrences, Is.Empty);
+    }
+}

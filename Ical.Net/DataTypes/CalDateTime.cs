@@ -17,10 +17,10 @@ namespace Ical.Net.DataTypes;
 /// The iCalendar equivalent of the .NET <see cref="DateTime"/> class.
 /// <remarks>
 /// In addition to the features of the <see cref="DateTime"/> class, the <see cref="CalDateTime"/>
-/// class handles timezones, and integrates seamlessly into the iCalendar framework.
+/// class handles timezones, floating date/times and integrates seamlessly into the iCalendar framework.
 /// <para/>
 /// Any <see cref="Time"/> values are always rounded to the nearest second.
-/// This is because RFC 5545, Section 3.3.5 does not allow for fractional seconds.
+/// This is because RFC 5545, Section 3.3.5, does not allow for fractional seconds.
 /// </remarks>
 /// </summary>
 public sealed class CalDateTime : EncodableDataType, IDateTime
@@ -190,6 +190,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         var serializer = new DateTimeSerializer();
         CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable
                  ?? throw new InvalidOperationException("Failure deserializing value"));
+        // The string may contain a date only, meaning that the tzId should be ignored.
         _tzId = HasTime ? tzId : null;
     }
 
@@ -357,18 +358,10 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// </summary>
     public static implicit operator CalDateTime(DateTime left) => new CalDateTime(left);
 
-    /// <summary>
-    /// Returns a representation of the <see cref="DateTime"/> in UTC.
-    /// </summary>
-    public DateTime AsUtc => ToTimeZone(UtcTzId).Value;
+/// <inheritdoc/>
+    public DateTime AsUtc => DateTime.SpecifyKind(ToTimeZone(UtcTzId).Value, DateTimeKind.Utc);
 
-    /// <summary>
-    /// Gets the date and time value in the ISO calendar as a <see cref="DateTime"/> type with <see cref="DateTimeKind.Unspecified"/>.
-    /// The value has no associated timezone.
-    /// The precision of the time part is up to seconds.
-    /// <para/>
-    /// The value is equivalent to <seealso cref="NodaTime.LocalDateTime"/>.
-    /// </summary>
+    /// <inheritdoc/>
     public DateTime Value
     {
         get
@@ -477,9 +470,10 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     }
 
     /// <inheritdoc/>
-    /// <remarks>If <see paramref="otherTzId"/> is not a well-known timezone ID, the system's local timezone will be used.</remarks>
     public IDateTime ToTimeZone(string otherTzId)
     {
+        if (IsFloating) return new CalDateTime(_dateOnly, _timeOnly, otherTzId);
+
         var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, TzId);
         var converted = zonedOriginal.WithZone(DateUtil.GetZone(otherTzId));
 

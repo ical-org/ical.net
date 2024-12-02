@@ -73,8 +73,8 @@ public class CalDateTimeTests
             .SetName($"IANA to BCL: {ianaNy} to {bclCst}");
     }
 
-    [Test(Description = "Calling AsUtc should always return the proper UTC time, even if the TzId has changed")]
-    public void TestTzidChanges()
+    [Test(Description = "A certain date/time value applied to different timezones should return the same UTC date/time")]
+    public void SameDateTimeWithDifferentTzIdShouldReturnSameUtc()
     {
         var someTime = DateTimeOffset.Parse("2018-05-21T11:35:00-04:00");
 
@@ -87,7 +87,7 @@ public class CalDateTimeTests
         Assert.That(berlinUtc, Is.Not.EqualTo(firstUtc));
     }
 
-    [Test, TestCaseSource(nameof(DateTimeKindOverrideTestCases))]
+    [Test, TestCaseSource(nameof(DateTimeKindOverrideTestCases)), Description("DateTimeKind of values is always DateTimeKind.Unspecified")]
     public DateTimeKind DateTimeKindOverrideTests(DateTime dateTime, string tzId)
         => new CalDateTime(dateTime, tzId).Value.Kind;
 
@@ -120,9 +120,9 @@ public class CalDateTimeTests
             .Returns(DateTimeKind.Unspecified)
             .SetName("DateTime with Kind = Local with null tzid returns DateTimeKind.Unspecified");
 
-        yield return new TestCaseData(DateTime.SpecifyKind(localDt, DateTimeKind.Unspecified), null)
+        yield return new TestCaseData(DateTime.SpecifyKind(localDt, DateTimeKind.Local), null)
             .Returns(DateTimeKind.Unspecified)
-            .SetName("DateTime with Kind = Unspecified and null tzid returns DateTimeKind.Unspecified");
+            .SetName("DateTime with Kind = Local and null tzid returns DateTimeKind.Unspecified");
     }
 
     [Test, TestCaseSource(nameof(ToStringTestCases))]

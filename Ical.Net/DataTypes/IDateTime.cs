@@ -12,6 +12,9 @@ public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormat
 {
     /// <summary>
     /// Converts the date/time to UTC (Coordinated Universal Time)
+    /// If <see cref="IsFloating"/>==<see langword="true"/>
+    /// it means that the <see cref="Value"/> is considered as local time for every timezone:
+    /// The returned <see cref="Value"/> is unchanged, but with <see cref="DateTimeKind.Utc"/>.
     /// </summary>
     DateTime AsUtc { get; }
 
@@ -27,10 +30,12 @@ public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormat
     string? TimeZoneName { get; }
 
     /// <summary>
-    /// Gets the underlying DateTime value. This should always
-    /// use DateTimeKind.Utc, regardless of its actual representation.
-    /// Use IsUtc along with the TZID to control how this
-    /// date/time is handled.
+    /// Gets the date and time value in the ISO calendar as a <see cref="DateTime"/> type with <see cref="DateTimeKind.Unspecified"/>.
+    /// The value has no associated timezone.<br/>
+    /// The precision of the time part is up to seconds.
+    /// <para/>
+    /// Use <see cref="IsUtc"/> along with <see cref="TzId"/> and <see cref="IsFloating"/>
+    /// to control how this date/time is handled.
     /// </summary>
     DateTime Value { get; }
 
@@ -114,6 +119,10 @@ public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormat
     /// <summary>
     /// Converts the <see cref="Value"/> to a date/time
     /// within the specified <see paramref="otherTzId"/> timezone.
+    /// <para/>
+    /// If <see cref="IsFloating"/>==<see langword="true"/>
+    /// it means that the <see cref="Value"/> is considered as local time for every timezone:
+    /// The returned <see cref="Value"/> is unchanged and the <see paramref="otherTzId"/> is set as <see cref="TzId"/>.
     /// </summary>
     IDateTime ToTimeZone(string otherTzId);
     IDateTime Add(TimeSpan ts);
