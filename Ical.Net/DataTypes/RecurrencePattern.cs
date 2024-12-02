@@ -29,7 +29,7 @@ public class RecurrencePattern : EncodableDataType
 
     public DateTime? Until { get; set; }
 
-    public int Count { get; set; } = int.MinValue;
+    public int? Count { get; set; }
 
     /// <summary>
     /// Specifies how often the recurrence should repeat.
@@ -181,7 +181,7 @@ public class RecurrencePattern : EncodableDataType
 #pragma warning restore 0618
             hashCode = (hashCode * 397) ^ (int) Frequency;
             hashCode = (hashCode * 397) ^ Until.GetHashCode();
-            hashCode = (hashCode * 397) ^ Count;
+            hashCode = (hashCode * 397) ^ (Count ?? 0);
             hashCode = (hashCode * 397) ^ (int) FirstDayOfWeek;
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(BySecond);
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByMinute);

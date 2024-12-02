@@ -221,7 +221,7 @@ public class RecurrencePatternEvaluator : Evaluator
 
         // optimize the start time for selecting candidates
         // (only applicable where a COUNT is not specified)
-        if (pattern.Count == int.MinValue)
+        if (pattern.Count is null)
         {
             var incremented = seedCopy;
             while (incremented < periodStart)
@@ -229,6 +229,10 @@ public class RecurrencePatternEvaluator : Evaluator
                 seedCopy = incremented;
                 IncrementDate(ref incremented, pattern, pattern.Interval);
             }
+        } else
+        {
+            if (pattern.Count < 1)
+                throw new Exception("Count must be greater than 0");
         }
 
         // Do the enumeration in a separate method, as it is a generator method that is
@@ -256,7 +260,7 @@ public class RecurrencePatternEvaluator : Evaluator
                 break;
             }
 
-            if (pattern.Count >= 1 && dateCount >= pattern.Count)
+            if (dateCount >= pattern.Count)
             {
                 break;
             }
@@ -281,7 +285,7 @@ public class RecurrencePatternEvaluator : Evaluator
                     // from the previous year.
                     //
                     // exclude candidates that start at the same moment as periodEnd if the period is a range but keep them if targeting a specific moment
-                    if (pattern.Count >= 1 && dateCount >= pattern.Count)
+                    if (dateCount >= pattern.Count)
                     {
                         break;
                     }
