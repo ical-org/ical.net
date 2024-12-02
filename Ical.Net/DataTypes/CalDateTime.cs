@@ -488,13 +488,6 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
             : new CalDateTime(converted.ToDateTimeUnspecified(), otherTzId);
     }
 
-    /// <inheritdoc />
-    /// <remarks>
-    /// If the <see cref="TzId"/> is <see langword="null"/> or does not represent an
-    /// IANA or other well-known timezone ID, the system's local timezone will be used.
-    /// </remarks>
-    public DateTimeOffset AsDateTimeOffset => DateUtil.ToZonedDateTimeLeniently(Value, TzId).ToDateTimeOffset();
-
     /// <inheritdoc cref="DateTime.Add"/>
     /// <remarks>
     /// This will also add a <see cref="IDateTime.Time"/> part that did not exist before the operation,
@@ -720,7 +713,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
         formatProvider ??= CultureInfo.InvariantCulture;
-        var dateTimeOffset = AsDateTimeOffset;
+        var dateTimeOffset = DateUtil.ToZonedDateTimeLeniently(Value, _tzId).ToDateTimeOffset();
 
         // Use the .NET format options to format the DateTimeOffset
         var tzIdString = _tzId is not null ? $" {_tzId}" : string.Empty;

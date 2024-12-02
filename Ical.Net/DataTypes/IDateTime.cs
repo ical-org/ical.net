@@ -16,11 +16,6 @@ public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormat
     DateTime AsUtc { get; }
 
     /// <summary>
-    /// Returns a DateTimeOffset representation of the <see cref="Value"/> in the <see cref="TzId"/> timezone.
-    /// </summary>
-    DateTimeOffset AsDateTimeOffset { get; }
-
-    /// <summary>
     /// Gets/sets whether the Value of this date/time represents
     /// a universal time.
     /// </summary>

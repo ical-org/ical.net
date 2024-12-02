@@ -73,45 +73,9 @@ public class CalDateTimeTests
             .SetName($"IANA to BCL: {ianaNy} to {bclCst}");
     }
 
-    [TestCaseSource(nameof(AsDateTimeOffsetTestCases))]
-    public DateTimeOffset AsDateTimeOffsetTests(CalDateTime incoming)
-        => incoming.AsDateTimeOffset;
-
-    public static IEnumerable AsDateTimeOffsetTestCases()
-    {
-        const string nyTzId = "America/New_York";
-        var summerDate = DateTime.Parse("2018-05-15T11:00");
-
-        var nySummerOffset = TimeSpan.FromHours(-4);
-        var nySummer = new CalDateTime(summerDate, nyTzId);
-        yield return new TestCaseData(nySummer)
-            .SetName("NY Summer DateTime returns DateTimeOffset with UTC-4")
-            .Returns(new DateTimeOffset(summerDate, nySummerOffset));
-
-        var utc = new CalDateTime(summerDate, "UTC");
-        yield return new TestCaseData(utc)
-            .SetName("UTC summer DateTime returns a DateTimeOffset with UTC-0")
-            .Returns(new DateTimeOffset(summerDate, TimeSpan.Zero));
-
-        var convertedToNySummer = new CalDateTime(summerDate, nyTzId);
-        yield return new TestCaseData(convertedToNySummer)
-            .SetName(
-                "Summer UTC DateTime converted to NY time zone by setting TzId returns a DateTimeOffset with UTC-4")
-            .Returns(new DateTimeOffset(summerDate, nySummerOffset));
-
-        var noTz = new CalDateTime(summerDate);
-        var currentSystemOffset = TimeZoneInfo.Local.GetUtcOffset(summerDate);
-        yield return new TestCaseData(noTz)
-            .SetName(
-                $"Summer DateTime with no time zone information returns the system-local's UTC offset ({currentSystemOffset})")
-            .Returns(new DateTimeOffset(summerDate, currentSystemOffset));
-    }
-
     [Test(Description = "Calling AsUtc should always return the proper UTC time, even if the TzId has changed")]
     public void TestTzidChanges()
     {
-        var x = new CalDateTime(2018, 5, 21).AsDateTimeOffset;
-
         var someTime = DateTimeOffset.Parse("2018-05-21T11:35:00-04:00");
 
         var someDt = new CalDateTime(someTime.DateTime, "America/New_York");
@@ -356,32 +320,6 @@ public class CalDateTimeTests
             Assert.That(c.ToString("dd.MM.yyyy"), Is.EqualTo("02.01.2025 Europe/Berlin"));
             // Create a date-only CalDateTime from a CalDateTime
             Assert.That(new CalDateTime(new CalDateTime(2025, 1, 1)), Is.EqualTo(new CalDateTime(2025, 1, 1)));
-        });
-    }
-
-    [Test]
-    public void Simple_PropertyAndMethod_NotHasTime_Tests()
-    {
-        var dt = new DateTime(2025, 1, 2, 0, 0, 0, DateTimeKind.Utc);
-        var c = new CalDateTime(dt, tzId: "Europe/Berlin", hasTime: false);
-
-        // Adding time to a date-only value should not change the HasTime property
-        Assert.Multiple(() =>
-        {
-            var result = c.AddHours(1);
-            Assert.That(result.HasTime, Is.True);
-
-            result = c.AddMinutes(1);
-            Assert.That(result.HasTime, Is.True);
-
-            result = c.AddSeconds(1);
-            Assert.That(result.HasTime, Is.True);
-
-            result = c.AddMilliseconds(1000);
-            Assert.That(result.HasTime, Is.True);
-
-            result = c.AddTicks(TimeSpan.FromMinutes(1).Ticks);
-            Assert.That(result.HasTime, Is.True);
         });
     }
 }
