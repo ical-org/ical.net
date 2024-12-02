@@ -20,7 +20,7 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public class RecurrencePattern : EncodableDataType
 {
-    private int _interval = int.MinValue;
+    private int? _interval;
 #pragma warning disable 0618
     private RecurrenceRestrictionType? _restrictionType;
     private RecurrenceEvaluationModeType? _evaluationMode;
@@ -39,9 +39,7 @@ public class RecurrencePattern : EncodableDataType
     /// </summary>
     public int Interval
     {
-        get => _interval == int.MinValue
-            ? 1
-            : _interval;
+        get => _interval ?? 1;
         set => _interval = value;
     }
 

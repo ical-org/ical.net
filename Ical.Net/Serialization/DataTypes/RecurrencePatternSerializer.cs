@@ -157,11 +157,6 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         //every week for a WEEKLY rule, every month for a MONTHLY rule and
         //every year for a YEARLY rule.
         var interval = recur.Interval;
-        if (interval == int.MinValue)
-        {
-            interval = 1;
-        }
-
         if (interval != 1)
         {
             values.Add("INTERVAL=" + interval);
