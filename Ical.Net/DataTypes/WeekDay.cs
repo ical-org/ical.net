@@ -4,6 +4,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Ical.Net.Serialization.DataTypes;
 
@@ -14,14 +15,12 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public class WeekDay : EncodableDataType
 {
-    public virtual int Offset { get; set; } = int.MinValue;
+    public virtual int? Offset { get; set; }
 
     public virtual DayOfWeek DayOfWeek { get; set; }
 
     public WeekDay()
-    {
-        Offset = int.MinValue;
-    }
+    { }
 
     public WeekDay(DayOfWeek day) : this()
     {
@@ -52,7 +51,7 @@ public class WeekDay : EncodableDataType
         return ds.Offset == Offset && ds.DayOfWeek == DayOfWeek;
     }
 
-    public override int GetHashCode() => Offset.GetHashCode() ^ DayOfWeek.GetHashCode();
+    public override int GetHashCode() => (Offset ?? 0).GetHashCode() ^ DayOfWeek.GetHashCode();
 
     /// <inheritdoc/>
     public override void CopyFrom(ICopyable obj)
@@ -81,7 +80,7 @@ public class WeekDay : EncodableDataType
         var compare = DayOfWeek.CompareTo(weekday.DayOfWeek);
         if (compare == 0)
         {
-            compare = Offset.CompareTo(weekday.Offset);
+            compare = Comparer<int?>.Default.Compare(Offset, weekday.Offset);
         }
         return compare;
     }

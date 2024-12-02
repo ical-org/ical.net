@@ -26,7 +26,7 @@ public class WeekDaySerializer : EncodableDataTypeSerializer
         }
 
         var value = string.Empty;
-        if (ds.Offset != int.MinValue)
+        if (ds.Offset.HasValue)
         {
             value += ds.Offset;
         }

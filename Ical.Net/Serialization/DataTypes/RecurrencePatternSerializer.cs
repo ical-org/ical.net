@@ -81,7 +81,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
 
     public virtual void CheckRange(string name, int value, int min, int max, bool allowZero)
     {
-        if (value != int.MinValue && (value < min || value > max || (!allowZero && value == 0)))
+        if ((value < min || value > max || (!allowZero && value == 0)))
         {
             throw new ArgumentException(name + " value " + value + " is out of range. Valid values are between " + min + " and " + max +
                                         (allowZero ? "" : ", excluding zero (0)") + ".");
@@ -429,11 +429,12 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
                 }
                 else if ((match = RelativeDaysOfWeek.Match(item)).Success)
                 {
-                    var num = int.MinValue;
+                    int? num = null;
                     if (match.Groups["Num"].Success)
                     {
-                        if (int.TryParse(match.Groups["Num"].Value, out num))
+                        if (int.TryParse(match.Groups["Num"].Value, out var n))
                         {
+                            num = n;
                             if (match.Groups["Last"].Success)
                             {
                                 // Make number negative

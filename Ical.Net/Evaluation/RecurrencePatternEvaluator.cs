@@ -751,9 +751,9 @@ public class RecurrencePatternEvaluator : Evaluator
     /// </summary>
     /// <param name="dates">The list from which to extract the element.</param>
     /// <param name="offset">The position of the element to extract.</param>
-    private List<DateTime> GetOffsetDates(List<DateTime> dates, int offset)
+    private List<DateTime> GetOffsetDates(List<DateTime> dates, int? offset)
     {
-        if (offset == int.MinValue)
+        if (offset is null)
         {
             return dates;
         }
@@ -762,11 +762,11 @@ public class RecurrencePatternEvaluator : Evaluator
         var size = dates.Count;
         if (offset < 0 && offset >= -size)
         {
-            offsetDates.Add(dates[size + offset]);
+            offsetDates.Add(dates[size + offset.Value]);
         }
         else if (offset > 0 && offset <= size)
         {
-            offsetDates.Add(dates[offset - 1]);
+            offsetDates.Add(dates[offset.Value - 1]);
         }
         return offsetDates;
     }
