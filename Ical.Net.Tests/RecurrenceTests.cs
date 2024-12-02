@@ -3788,7 +3788,7 @@ END:VCALENDAR
     }
 
     [Test]
-    public void GetOccurrenceShouldExcludeDtEnd()
+    public void GetOccurrenceShouldExcludeDtEndFloating()
     {
         var ical = """
                    BEGIN:VCALENDAR
@@ -3807,6 +3807,30 @@ END:VCALENDAR
         var calendar = Calendar.Load(ical);
         // Set start date for occurrences to search to the end date of the event
         var occurrences = calendar.GetOccurrences(new CalDateTime(2024, 12, 2));
+
+        Assert.That(occurrences, Is.Empty);
+    }
+
+    [Test]
+    public void GetOccurrenceShouldExcludeDtEndZoned()
+    {
+        var ical = """
+                   BEGIN:VCALENDAR
+                   VERSION:2.0
+                   PRODID:Video Wall
+                   BEGIN:VEVENT
+                   UID:VW6
+                   DTSTAMP:20240630T000000Z
+                   DTSTART;TZID=Europe/London;VALUE=DATE:20241001
+                   DTEND;TZID=Europe/London;VALUE=DATE:20241128
+                   SUMMARY:New home speech.mp4
+                   COMMENT:New location announcement; may need update before Thanksgiving
+                   END:VEVENT
+                   END:VCALENDAR
+                   """;
+
+        var calendar = Calendar.Load(ical);
+        var occurrences = calendar.GetOccurrences(new CalDateTime("20241128")).ToList();
 
         Assert.That(occurrences, Is.Empty);
     }
