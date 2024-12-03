@@ -197,7 +197,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     private void Initialize(DateOnly dateOnly, TimeOnly? timeOnly, string? tzId)
     {
         _dateOnly = dateOnly;
-        _timeOnly = RoundTimeToNearestSecond(timeOnly);
+        _timeOnly = TruncateTimeToSeconds(timeOnly);
 
         _tzId = tzId switch
         {
@@ -234,7 +234,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         {
             // Maintain the private date/time backing fields
             _dateOnly = calDt._dateOnly;
-            _timeOnly = RoundTimeToNearestSecond(calDt._timeOnly);
+            _timeOnly = TruncateTimeToSeconds(calDt._timeOnly);
             _tzId = calDt._tzId;
         }
 
@@ -318,14 +318,14 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     {
         var copy = left.Copy<CalDateTime>();
         var newValue = copy.Value - right;
-        if ((right.Ticks % TimeSpan.TicksPerDay) != 0)
+        if (!copy.HasTime && (right.Ticks % TimeSpan.TicksPerDay) == 0)
         {
             copy._dateOnly = DateOnly.FromDateTime(newValue);
-            copy._timeOnly = RoundTimeToNearestSecond(newValue);
         }
         else
         {
             copy._dateOnly = DateOnly.FromDateTime(newValue);
+            copy._timeOnly = TruncateTimeToSeconds(newValue);
         }
         return copy;
     }
@@ -341,14 +341,14 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     {
         var copy = left.Copy<CalDateTime>();
         var newValue = copy.Value + right;
-        if ((right.Ticks % TimeSpan.TicksPerDay) != 0)
+        if (!copy.HasTime && (right.Ticks % TimeSpan.TicksPerDay) == 0)
         {
             copy._dateOnly = DateOnly.FromDateTime(newValue);
-            copy._timeOnly = RoundTimeToNearestSecond(newValue);
         }
         else
         {
             copy._dateOnly = DateOnly.FromDateTime(newValue);
+            copy._timeOnly = TruncateTimeToSeconds(newValue);
         }
         return copy;
     }
@@ -445,7 +445,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// Any <see cref="Time"/> values are always rounded to the nearest second.
     /// RFC 5545, Section 3.3.5 does not allow for fractional seconds.
     /// </summary>
-    private static TimeOnly? RoundTimeToNearestSecond(TimeOnly? time)
+    private static TimeOnly? TruncateTimeToSeconds(TimeOnly? time)
     {
         if (time is null)
         {
@@ -461,12 +461,9 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// Any <see cref="Time"/> values are always rounded to the nearest second.
     /// RFC 5545, Section 3.3.5 does not allow for fractional seconds.
     /// </summary>
-    private static TimeOnly? RoundTimeToNearestSecond(DateTime dateTime)
+    private static TimeOnly? TruncateTimeToSeconds(DateTime dateTime)
     {
-        var roundedSecond = dateTime.Second + (dateTime.Millisecond >= 500 ? 1 : 0);
-        return roundedSecond == 60
-            ? new TimeOnly(dateTime.Hour, dateTime.Minute, 0).AddMinutes(1)
-            : new TimeOnly(dateTime.Hour, dateTime.Minute, roundedSecond);
+        return new TimeOnly(dateTime.Hour, dateTime.Minute, dateTime.Second);
     }
 
     /// <inheritdoc/>
@@ -538,7 +535,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         else
         {
             copy._dateOnly = DateOnly.FromDateTime(newValue);
-            copy._timeOnly = RoundTimeToNearestSecond(newValue);
+            copy._timeOnly = TruncateTimeToSeconds(newValue);
         }
         return copy;
     }
@@ -559,7 +556,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         else
         {
             copy._dateOnly = DateOnly.FromDateTime(newValue);
-            copy._timeOnly = RoundTimeToNearestSecond(newValue);
+            copy._timeOnly = TruncateTimeToSeconds(newValue);
         }
         return copy;
     }
@@ -580,53 +577,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         else
         {
             copy._dateOnly = DateOnly.FromDateTime(newValue);
-            copy._timeOnly = RoundTimeToNearestSecond(newValue);
-        }
-        return copy;
-    }
-
-    /// <inheritdoc cref="DateTime.AddMilliseconds"/>
-    /// <remarks>
-    /// This will also add a <see cref="IDateTime.Time"/> part that did not exist before the operation,
-    /// if the milliseconds are not a multiple of 86400000.
-    /// <para/>
-    /// Milliseconds less than full seconds get truncated.
-    /// </remarks>
-    public IDateTime AddMilliseconds(double milliseconds)
-    {
-        var copy = Copy<CalDateTime>();
-        var newValue = copy.Value.AddMilliseconds(milliseconds);
-        if (!copy.HasTime && ((long) milliseconds % 86400000) == 0)
-        {
-            copy._dateOnly = DateOnly.FromDateTime(newValue);
-        }
-        else
-        {
-            copy._dateOnly = DateOnly.FromDateTime(newValue);
-            copy._timeOnly = RoundTimeToNearestSecond(newValue);
-        }
-        return copy;
-    }
-
-    /// <inheritdoc cref="DateTime.AddTicks"/>
-    /// <remarks>
-    /// This will also add a <see cref="IDateTime.Time"/> part that did not exist before the operation,
-    /// if ticks do not result in multiple of full days.
-    /// <para/>
-    /// Ticks less than full seconds get truncated.
-    /// </remarks>
-    public IDateTime AddTicks(long ticks)
-    {
-        var copy = Copy<CalDateTime>();
-        var newValue = copy.Value.AddTicks(ticks);
-        if (!copy.HasTime && (ticks % TimeSpan.TicksPerDay == 0))
-        {
-            copy._dateOnly = DateOnly.FromDateTime(newValue);
-        }
-        else
-        {
-            copy._dateOnly = DateOnly.FromDateTime(newValue);
-            copy._timeOnly = RoundTimeToNearestSecond(newValue);
+            copy._timeOnly = TruncateTimeToSeconds(newValue);
         }
         return copy;
     }

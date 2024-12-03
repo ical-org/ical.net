@@ -183,21 +183,9 @@ public class CalDateTimeTests
             .Returns(dateTime.Add(TimeSpan.FromMilliseconds(0)))
             .SetName($"{nameof(IDateTime.Add)} 100 milliseconds round down");
 
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddMilliseconds(500)))
-            .Returns(dateTime.AddMilliseconds(1000))
-            .SetName($"{nameof(IDateTime.AddMilliseconds)} 500 milliseconds round up");
-
         yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddMinutes(70)))
             .Returns(dateTime.AddMinutes(70))
             .SetName($"{nameof(IDateTime.AddMinutes)} 70 minutes");
-
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddTicks(100)))
-            .Returns(dateTime.AddTicks(0))
-            .SetName($"{nameof(IDateTime.AddTicks)} 100 ticks truncated");
-
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddTicks(TimeSpan.FromHours(1).Ticks)))
-            .Returns(dateTime.AddTicks(TimeSpan.FromHours(1).Ticks))
-            .SetName($"{nameof(IDateTime.AddTicks)} ticks of 1 hour");
     }
 
     [Test, TestCaseSource(nameof(EqualityTestCases))]
@@ -275,22 +263,6 @@ public class CalDateTimeTests
         yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(TimeSpan.FromSeconds(30))))
             .Returns((dateTime.Add(TimeSpan.FromSeconds(30)), true))
             .SetName($"{nameof(IDateTime.Add)} 30 seconds TimeSpan HasTime=true");
-
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddMilliseconds(TimeSpan.FromDays(2).Milliseconds)))
-            .Returns((dateTime.AddMilliseconds(TimeSpan.FromDays(2).Milliseconds), false))
-            .SetName($"{nameof(IDateTime.AddMilliseconds)} 2 days in milliseconds");
-
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddMilliseconds(TimeSpan.FromHours(2).TotalMilliseconds)))
-            .Returns((dateTime.AddMilliseconds(TimeSpan.FromHours(2).TotalMilliseconds), true))
-            .SetName($"{nameof(IDateTime.AddMilliseconds)} 2 hours in milliseconds");
-
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddTicks(TimeSpan.FromDays(2).Ticks)))
-            .Returns((dateTime.AddTicks(TimeSpan.FromDays(2).Ticks), false))
-            .SetName($"{nameof(IDateTime.AddTicks)} ticks of 2 days");
-
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddTicks(TimeSpan.FromHours(2).Ticks)))
-            .Returns((dateTime.AddTicks(TimeSpan.FromHours(2).Ticks), true))
-            .SetName($"{nameof(IDateTime.AddTicks)} ticks of 2 hours");
     }
 
     [Test]

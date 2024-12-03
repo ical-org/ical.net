@@ -134,8 +134,6 @@ public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormat
     IDateTime AddHours(int hours);
     IDateTime AddMinutes(int minutes);
     IDateTime AddSeconds(int seconds);
-    IDateTime AddMilliseconds(double milliseconds);
-    IDateTime AddTicks(long ticks);
     bool LessThan(IDateTime dt);
     bool GreaterThan(IDateTime dt);
     bool LessThanOrEqual(IDateTime dt);
