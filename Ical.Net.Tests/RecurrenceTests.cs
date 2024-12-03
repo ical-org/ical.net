@@ -2691,9 +2691,8 @@ public class RecurrenceTests
     {
         var vEvent = new CalendarEvent
         {
-            Start = new CalDateTime(DateTime.Parse("2020-01-11T00:00")),
+            Start = new CalDateTime(DateTime.Parse("2020-01-11")), // no time means all day
             End = new CalDateTime(DateTime.Parse("2020-01-11T00:00")),
-            IsAllDay = true,
         };
 
         var occurrences = vEvent.GetOccurrences(DateTime.Parse("2020-01-10T00:00"), DateTime.Parse("2020-01-11T00:00"));

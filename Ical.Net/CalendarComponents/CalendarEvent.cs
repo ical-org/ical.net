@@ -150,29 +150,6 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     public virtual bool IsAllDay
     {
         get => !Start.HasTime;
-        set
-        {
-            // Set whether the start date/time
-            // has a time value.
-            if (Start != null)
-            {
-                Start = value
-                    ? new CalDateTime(Start.Date)
-                    : new CalDateTime(Start.Date, Start.Time, Start.TzId);
-            }
-            if (End != null)
-            {
-                End = value
-                    ? new CalDateTime(End.Date)
-                    : new CalDateTime(End.Date, End.Time, End.TzId);
-            }
-
-            if (value && Start != null && End != null && Equals(Start.Date, End.Date))
-            {
-                Duration = default(TimeSpan);
-                End = Start.AddDays(1);
-            }
-        }
     }
 
     /// <summary>

@@ -201,9 +201,8 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
 
         _tzId = tzId switch
         {
-            _ when !timeOnly.HasValue && string.Equals(UtcTzId, tzId, StringComparison.OrdinalIgnoreCase) => UtcTzId,
             _ when !timeOnly.HasValue => null,
-            _ => tzId
+            _ => tzId // can also be UtcTzId
         };
     }
 
@@ -451,10 +450,8 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         {
             return null;
         }
-        var roundedSecond = time.Value.Second + (time.Value.Millisecond >= 500 ? 1 : 0);
-        return roundedSecond == 60
-            ? new TimeOnly(time.Value.Hour, time.Value.Minute, 0).AddMinutes(1)
-            : new TimeOnly(time.Value.Hour, time.Value.Minute, roundedSecond);
+
+        return new TimeOnly(time.Value.Hour, time.Value.Minute, time.Value.Second);
     }
 
     /// <summary>
