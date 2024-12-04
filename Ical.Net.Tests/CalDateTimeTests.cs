@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace Ical.Net.Tests;
 
@@ -205,9 +206,33 @@ public class CalDateTimeTests
             .SetName("!= operator 2 timezones");
 
         yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime) dt == new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: null)))
-            .Returns(true)
+            .Returns(false)
             .SetName("== operator UTC vs. floating");
     }
+
+    [Test]
+    public void EqualityShouldBeTransitive()
+    {
+        var seq1 =
+            new CalDateTime[]
+            {
+                new("20241204T000000", tzId: "Europe/Vienna"),
+                new("20241204T000000", tzId: null),
+                new("20241204T000000", tzId: "America/New_York")
+            }.Distinct();
+
+        var seq2 =
+            new CalDateTime[]
+            {
+                new("20241204T000000", tzId: "America/New_York"),
+                new("20241204T000000", tzId: "Europe/Vienna"),
+                new("20241204T000000", tzId: null)
+            }.Distinct();
+
+        // Equality using GetHashCode()
+        Assert.That(seq1.Count(), Is.EqualTo(seq2.Count()));
+    }
+
 
     [Test, TestCaseSource(nameof(DateOnlyArithmeticTestCases))]
     public (DateTime Value, bool HasTime) DateOnlyArithmeticTests(Func<IDateTime, IDateTime> operation)

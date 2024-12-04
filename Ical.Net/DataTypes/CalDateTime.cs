@@ -292,10 +292,9 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
             return false;
         }
 
-        if (left.IsFloating || right.IsFloating)
+        if (left.IsFloating != right.IsFloating)
         {
-            return left.Value.Equals(right.Value)
-                   && left.HasTime == right.HasTime;
+            return false;
         }
 
         return left.Value.Equals(right.Value)
