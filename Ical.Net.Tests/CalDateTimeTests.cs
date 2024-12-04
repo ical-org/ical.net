@@ -305,12 +305,9 @@ public class CalDateTimeTests
         Assert.Multiple(() =>
         {
             Assert.That(c2.Value, Is.EqualTo(c3.Value));
-            Assert.That(c2.Ticks, Is.EqualTo(c3.Ticks));
             Assert.That(c2.TzId, Is.EqualTo(c3.TzId));
             Assert.That(CalDateTime.UtcNow.Value.Kind, Is.EqualTo(DateTimeKind.Unspecified));
             Assert.That(CalDateTime.Today.Value.Kind, Is.EqualTo(DateTimeKind.Unspecified));
-            Assert.That(c.Millisecond, Is.EqualTo(0));
-            Assert.That(c.Ticks, Is.EqualTo(dt.Ticks));
             Assert.That(c.DayOfYear, Is.EqualTo(dt.DayOfYear));
             Assert.That(c.Time?.ToTimeSpan(), Is.EqualTo(dt.TimeOfDay));
             Assert.That(c.Subtract(TimeSpan.FromSeconds(dt.Second)).Value.Second, Is.EqualTo(0));

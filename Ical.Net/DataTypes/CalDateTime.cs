@@ -421,12 +421,6 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// <inheritdoc cref="DateTime.Second"/>
     public int Second => Value.Second;
 
-    /// <inheritdoc cref="DateTime.Millisecond"/>
-    public int Millisecond => Value.Millisecond;
-
-    /// <inheritdoc cref="DateTime.Ticks"/>
-    public long Ticks => Value.Ticks;
-
     /// <inheritdoc cref="DateTime.DayOfWeek"/>
     public DayOfWeek DayOfWeek => Value.DayOfWeek;
 

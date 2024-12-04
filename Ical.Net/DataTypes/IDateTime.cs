@@ -92,16 +92,6 @@ public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormat
     int Second { get; }
 
     /// <summary>
-    /// Gets the millisecond that applies to the <see cref="Value"/>.
-    /// </summary>
-    int Millisecond { get; }
-
-    /// <summary>
-    /// Gets the ticks that applies to the <see cref="Value"/>.
-    /// </summary>
-    long Ticks { get; }
-
-    /// <summary>
     /// Gets the DayOfWeek that applies to the <see cref="Value"/>.
     /// </summary>
     DayOfWeek DayOfWeek { get; }
