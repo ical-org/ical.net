@@ -206,15 +206,13 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
     public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt)
     {
-        var endTimeOnly = dt.Time?.Add(TimeSpan.FromSeconds(-1));
-        return GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date, dt.Time), new CalDateTime(dt.Date.AddDays(1), endTimeOnly));
+        return GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1)));
     }
 
     /// <inheritdoc cref="GetOccurrences(IDateTime)"/>
     public virtual HashSet<Occurrence> GetOccurrences(DateTime dt)
     {
-        var endDateTime = dt.Date.AddDays(1).AddSeconds(-1);
-        return GetOccurrences<IRecurringComponent>(new CalDateTime(DateOnly.FromDateTime(dt), TimeOnly.FromDateTime(dt)), new CalDateTime(DateOnly.FromDateTime(endDateTime), TimeOnly.FromDateTime(endDateTime)));
+        return GetOccurrences<IRecurringComponent>(new CalDateTime(DateOnly.FromDateTime(dt)), new CalDateTime(DateOnly.FromDateTime(dt.Date.AddDays(1))));
     }
 
     /// <summary>
@@ -245,15 +243,13 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <returns>A list of Periods representing the occurrences of this object.</returns>
     public virtual HashSet<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
     {
-        var endTimeOnly = dt.Time?.Add(TimeSpan.FromTicks(-1));
-        return GetOccurrences<T>(new CalDateTime(dt.Date, dt.Time), new CalDateTime(dt.Date.AddDays(1), endTimeOnly));
+        return GetOccurrences<T>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1)));
     }
 
     /// <inheritdoc cref="GetOccurrences(IDateTime)"/>
     public virtual HashSet<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
     {
-        var endDateTime = dt.Date.AddDays(1).AddTicks(-1);
-        return GetOccurrences<T>(new CalDateTime(DateOnly.FromDateTime(dt), TimeOnly.FromDateTime(dt)), new CalDateTime(DateOnly.FromDateTime(endDateTime), TimeOnly.FromDateTime(endDateTime)));
+        return GetOccurrences<T>(new CalDateTime(DateOnly.FromDateTime(dt)), new CalDateTime(DateOnly.FromDateTime(dt.Date.AddDays(1))));
     }
 
     /// <inheritdoc cref="GetOccurrences(IDateTime, IDateTime)"/>
