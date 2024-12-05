@@ -16,9 +16,8 @@ internal class RecurrenceUtil
 {
     public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime dt, bool includeReferenceDateInResults)
     {
-        var endTimeOnly = dt.Time?.Add(TimeSpan.FromSeconds(-1));
         return GetOccurrences(recurrable,
-        new CalDateTime(dt.Date, dt.Time), new CalDateTime(dt.Date.AddDays(1), endTimeOnly), includeReferenceDateInResults);
+        new CalDateTime(dt.Date, dt.Time), new CalDateTime(dt.Date.AddDays(1)), includeReferenceDateInResults);
     }
 
     public static HashSet<Occurrence> GetOccurrences(IRecurrable recurrable, IDateTime periodStart, IDateTime periodEnd, bool includeReferenceDateInResults)
