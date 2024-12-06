@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ public class RecurrencePatternEvaluator : Evaluator
         // Convert the UNTIL value to one that matches the same time information as the reference date
         if (r.Until != DateTime.MinValue)
         {
-            r.Until = MatchTimeZone(referenceDate, new CalDateTime(r.Until, referenceDate.TzId)).Value;
+            r.Until = MatchTimeZone(referenceDate, r.Until);
         }
 
         if (referenceDate.HasTime)
@@ -968,24 +969,40 @@ public class RecurrencePatternEvaluator : Evaluator
         return new HashSet<Period>(periodQuery);
     }
 
-    private static IDateTime MatchTimeZone(IDateTime dt1, IDateTime dt2)
+    private static DateTime MatchTimeZone(IDateTime reference, DateTime until)
     {
-        // Associate the date/time with the first.
-        var copy = dt2;
-        copy.AssociateWith(dt1);
+        /*
+           The value of the "UNTIL" rule part MUST have the same value type as the
+           "DTSTART" property.  Furthermore, if the "DTSTART" property is
+           specified as a date with local time, then the UNTIL rule part MUST
+           also be specified as a date with local time.
 
-        // If the dt1 time does not occur in the same time zone as the
-        // dt2 time, then let's convert it so they can be used in the
-        // same context (i.e. evaluation).
-        if (dt1.TzId != null)
+           If the "DTSTART" property is specified as a date with UTC time or a date with local
+           time and time zone reference, then the UNTIL rule part MUST be
+           specified as a date with UTC time.
+         */
+        string? untilTzId;
+        if (reference.IsFloating)
         {
-            return string.Equals(dt1.TzId, copy.TzId, StringComparison.OrdinalIgnoreCase)
-                ? copy
-                : copy.ToTimeZone(dt1.TzId);
+            // If 'reference' is floating, then 'until' must be floating
+            untilTzId = null;
+        }
+        else
+        {
+            // If 'reference' has a timezone, 'until' MUST be UTC,
+            // but in case of UTC rule violation we fall back to the 'reference' timezone
+            untilTzId = until.Kind == DateTimeKind.Utc
+                ? CalDateTime.UtcTzId
+                : reference.TzId;
         }
 
-        return dt1.IsUtc
-            ? new CalDateTime(copy.AsUtc)
-            : copy;
+        var untilCalDt = new CalDateTime(until, untilTzId, reference.HasTime);
+        untilCalDt.AssociateWith(reference);
+
+        // If 'reference' is floating, then 'until' is floating, too
+        return reference.TzId is null
+            ? untilCalDt.Value
+            // convert to the reference timezone
+            : untilCalDt.ToTimeZone(reference.TzId).Value;
     }
 }
