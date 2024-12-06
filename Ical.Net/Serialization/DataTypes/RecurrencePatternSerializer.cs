@@ -147,8 +147,9 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
             var serializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
             if (serializer != null)
             {
-                IDateTime until = new CalDateTime(recur.Until);
-                until.HasTime = true;
+                var until = new CalDateTime(DateOnly.FromDateTime(recur.Until), TimeOnly.FromDateTime(recur.Until),
+                    recur.Until.Kind == DateTimeKind.Utc ? "UTC" : null);
+
                 values.Add("UNTIL=" + serializer.SerializeToString(until));
             }
         }
@@ -269,7 +270,7 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
                                 var dt = serializer?.Deserialize(new StringReader(keyValue)) as IDateTime;
                                 if (dt != null)
                                 {
-                                    r.Until = dt.Value;
+                                    r.Until = DateTime.SpecifyKind(dt.Value, dt.IsUtc ? DateTimeKind.Utc : DateTimeKind.Unspecified);
                                 }
                             }
                             break;

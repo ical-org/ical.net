@@ -19,7 +19,7 @@ internal static class DateUtil
         => dt.AddHours(-dt.Hour).AddMinutes(-dt.Minute).AddSeconds(-dt.Second);
 
     public static IDateTime EndOfDay(IDateTime dt)
-        => StartOfDay(dt).AddDays(1).AddTicks(-1);
+        => StartOfDay(dt).AddDays(1).AddSeconds(-1);
 
     public static DateTime GetSimpleDateTimeData(IDateTime dt)
         => dt.Value;

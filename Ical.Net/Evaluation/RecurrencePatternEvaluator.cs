@@ -953,9 +953,7 @@ public class RecurrencePatternEvaluator : Evaluator
         {
             // This case is not defined by RFC 5545. We handle it by evaluating the rule
             // as if referenceDate had a time (i.e. set to midnight).
-
-            referenceDate = referenceDate.Copy<IDateTime>();
-            referenceDate.HasTime = true;
+            referenceDate = new CalDateTime(referenceDate.Date, new TimeOnly(), referenceDate.TzId) { AssociatedObject = referenceDate.AssociatedObject };
         }
 
         // Create a recurrence pattern suitable for use during evaluation.
@@ -988,6 +986,6 @@ public class RecurrencePatternEvaluator : Evaluator
 
         return dt1.IsUtc
             ? new CalDateTime(copy.AsUtc)
-            : new CalDateTime(copy.AsSystemLocal);
+            : copy;
     }
 }

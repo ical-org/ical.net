@@ -11,20 +11,12 @@ namespace Ical.Net.DataTypes;
 public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormattable, ICalendarDataType
 {
     /// <summary>
-    /// Converts the date/time to this computer's local date/time.
-    /// </summary>
-    DateTime AsSystemLocal { get; }
-
-    /// <summary>
     /// Converts the date/time to UTC (Coordinated Universal Time)
+    /// If <see cref="IsFloating"/>==<see langword="true"/>
+    /// it means that the <see cref="Value"/> is considered as local time for every timezone:
+    /// The returned <see cref="Value"/> is unchanged, but with <see cref="DateTimeKind.Utc"/>.
     /// </summary>
     DateTime AsUtc { get; }
-
-    /// <summary>
-    /// Returns a DateTimeOffset representation of the Value. If a TzId is specified, it will use that time zone's UTC offset, otherwise it will use the
-    /// system-local time zone.
-    /// </summary>
-    DateTimeOffset AsDateTimeOffset { get; }
 
     /// <summary>
     /// Gets/sets whether the Value of this date/time represents
@@ -33,106 +25,108 @@ public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormat
     bool IsUtc { get; }
 
     /// <summary>
-    /// Gets the time zone name this time is in, if it references a time zone.
+    /// Gets the timezone name this time is in, if it references a timezone.
     /// </summary>
     string? TimeZoneName { get; }
 
     /// <summary>
-    /// Gets/sets the underlying DateTime value stored.  This should always
-    /// use DateTimeKind.Utc, regardless of its actual representation.
-    /// Use IsUtc along with the TZID to control how this
-    /// date/time is handled.
+    /// Gets the date and time value in the ISO calendar as a <see cref="DateTime"/> type with <see cref="DateTimeKind.Unspecified"/>.
+    /// The value has no associated timezone.<br/>
+    /// The precision of the time part is up to seconds.
+    /// <para/>
+    /// Use <see cref="IsUtc"/> along with <see cref="TzId"/> and <see cref="IsFloating"/>
+    /// to control how this date/time is handled.
     /// </summary>
-    DateTime Value { get; set; }
+    DateTime Value { get; }
 
     /// <summary>
-    /// Gets/sets whether or not this date/time value contains a 'date' part.
+    /// Returns <see langword="true"/>, if the date/time value contains a 'time' part.
     /// </summary>
-    bool HasDate { get; set; }
+    bool HasTime { get; }
 
     /// <summary>
-    /// Gets/sets whether or not this date/time value contains a 'time' part.
+    /// Returns <see langword="true"/>, if the date/time value is floating.
+    /// <para/>
+    /// A floating date/time value does not include a timezone identifier or UTC offset,
+    /// so it is interpreted as local time in the context where it is used.
+    /// <para/>
+    /// A floating date/time value is useful when the exact timezone is not
+    /// known or when the event should be interpreted in the local timezone of
+    /// the user or system processing the calendar data.
     /// </summary>
-    bool HasTime { get; set; }
+    bool IsFloating { get; }
 
     /// <summary>
-    /// Gets/sets the time zone ID for this date/time value.
+    /// Gets the timezone ID that applies to the <see cref="Value"/>.
     /// </summary>
-    string? TzId { get; set; }
+    string? TzId { get; }
 
     /// <summary>
-    /// Gets the year for this date/time value.
+    /// Gets the year that applies to the <see cref="Value"/>.
     /// </summary>
     int Year { get; }
 
     /// <summary>
-    /// Gets the month for this date/time value.
+    /// Gets the month that applies to the <see cref="Value"/>.
     /// </summary>
     int Month { get; }
 
     /// <summary>
-    /// Gets the day for this date/time value.
+    /// Gets the day that applies to the <see cref="Value"/>.
     /// </summary>
     int Day { get; }
 
     /// <summary>
-    /// Gets the hour for this date/time value.
+    /// Gets the hour that applies to the <see cref="Value"/>.
     /// </summary>
     int Hour { get; }
 
     /// <summary>
-    /// Gets the minute for this date/time value.
+    /// Gets the minute that applies to the <see cref="Value"/>.
     /// </summary>
     int Minute { get; }
 
     /// <summary>
-    /// Gets the second for this date/time value.
+    /// Gets the second that applies to the <see cref="Value"/>.
     /// </summary>
     int Second { get; }
 
     /// <summary>
-    /// Gets the millisecond for this date/time value.
-    /// </summary>
-    int Millisecond { get; }
-
-    /// <summary>
-    /// Gets the ticks for this date/time value.
-    /// </summary>
-    long Ticks { get; }
-
-    /// <summary>
-    /// Gets the DayOfWeek for this date/time value.
+    /// Gets the DayOfWeek that applies to the <see cref="Value"/>.
     /// </summary>
     DayOfWeek DayOfWeek { get; }
 
     /// <summary>
-    /// Gets the date portion of the date/time value.
+    /// Gets the date portion of the <see cref="Value"/>.
     /// </summary>
-    DateTime Date { get; }
+    DateOnly Date { get; }
 
     /// <summary>
-    /// Converts the date/time value to a local time
-    /// within the specified time zone.
+    /// Gets the time portion of the <see cref="Value"/>, or <see langword="null"/> if the <see cref="Value"/> is a pure date.
     /// </summary>
-    IDateTime ToTimeZone(string tzId);
+    TimeOnly? Time { get; }
 
+    /// <summary>
+    /// Converts the <see cref="Value"/> to a date/time
+    /// within the specified <see paramref="otherTzId"/> timezone.
+    /// <para/>
+    /// If <see cref="IsFloating"/>==<see langword="true"/>
+    /// it means that the <see cref="Value"/> is considered as local time for every timezone:
+    /// The returned <see cref="Value"/> is unchanged and the <see paramref="otherTzId"/> is set as <see cref="TzId"/>.
+    /// </summary>
+    IDateTime ToTimeZone(string otherTzId);
     IDateTime Add(TimeSpan ts);
     IDateTime Subtract(TimeSpan ts);
     TimeSpan Subtract(IDateTime dt);
-
     IDateTime AddYears(int years);
     IDateTime AddMonths(int months);
     IDateTime AddDays(int days);
     IDateTime AddHours(int hours);
     IDateTime AddMinutes(int minutes);
     IDateTime AddSeconds(int seconds);
-    IDateTime AddMilliseconds(int milliseconds);
-    IDateTime AddTicks(long ticks);
-
     bool LessThan(IDateTime dt);
     bool GreaterThan(IDateTime dt);
     bool LessThanOrEqual(IDateTime dt);
     bool GreaterThanOrEqual(IDateTime dt);
-
     void AssociateWith(IDateTime dt);
 }

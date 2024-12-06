@@ -176,8 +176,8 @@ public class SerializationTests
         var evt = new CalendarEvent
         {
             Summary = "Testing",
-            Start = new CalDateTime(2016, 7, 14, tz.TzId),
-            End = new CalDateTime(2016, 7, 15, tz.TzId)
+            Start = new CalDateTime(2016, 7, 14),
+            End = new CalDateTime(2016, 7, 15)
         };
         cal.Events.Add(evt);
 

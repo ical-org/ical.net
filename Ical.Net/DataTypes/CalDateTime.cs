@@ -17,7 +17,10 @@ namespace Ical.Net.DataTypes;
 /// The iCalendar equivalent of the .NET <see cref="DateTime"/> class.
 /// <remarks>
 /// In addition to the features of the <see cref="DateTime"/> class, the <see cref="CalDateTime"/>
-/// class handles timezones, and integrates seamlessly into the iCalendar framework.
+/// class handles timezones, floating date/times and integrates seamlessly into the iCalendar framework.
+/// <para/>
+/// Any <see cref="Time"/> values are always rounded to the nearest second.
+/// This is because RFC 5545, Section 3.3.5, does not allow for fractional seconds.
 /// </remarks>
 /// </summary>
 public sealed class CalDateTime : EncodableDataType, IDateTime
@@ -25,22 +28,28 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     // The date part that is used to return the Value property.
     private DateOnly _dateOnly;
     // The time part that is used to return the Value property.
-    private TimeOnly _timeOnly;
-
-    private const string UtcTzId = "UTC";
+    private TimeOnly? _timeOnly;
 
     /// <summary>
-    /// Gets the current date/time in the local timezone.
+    /// The timezone ID for Universal Coordinated Time (UTC).
+    /// </summary>
+    public const string UtcTzId = "UTC";
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="CalDateTime"/> class
+    /// with the current date/time and sets the <see cref="TzId"/> to <see langword="null"/>.
     /// </summary>
     public static CalDateTime Now => new CalDateTime(DateTime.Now, null, true);
 
     /// <summary>
-    /// Gets the current date in the local timezone.
+    /// Creates a new instance of the <see cref="CalDateTime"/> class
+    /// with the current date and sets the <see cref="TzId"/> to <see langword="null"/>.
     /// </summary>
     public static CalDateTime Today => new CalDateTime(DateTime.Today, null, false);
 
     /// <summary>
-    /// Gets the current date/time in the Coordinated Universal Time (UTC) timezone.
+    /// Creates a new instance of the <see cref="CalDateTime"/> class
+    /// with the current date/time in the Coordinated Universal Time (UTC) timezone.
     /// </summary>
     public static CalDateTime UtcNow => new CalDateTime(DateTime.UtcNow, UtcTzId, true);
 
@@ -51,6 +60,8 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
 
     /// <summary>
     /// Creates a new instance of the <see cref="CalDateTime"/> class.
+    /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value, if <see cref="IDateTime.HasTime"/> is <see langword="true"/>.
+    /// It will represent an RFC 5545, Section 3.3.4, DATE value, if <see cref="IDateTime.HasTime"/> is <see langword="false"/>.
     /// </summary>
     /// <param name="value"></param>
     public CalDateTime(IDateTime value)
@@ -62,34 +73,39 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class
-    /// and sets the <see cref="TzId"/> to "UTC" if the <paramref name="value"/>
-    /// has <see cref="DateTimeKind.Utc"/>, otherwise it will be left as <see langword="null"/>.
+    /// Creates a new instance of the <see cref="CalDateTime"/> class.
+    /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value, if <see paramref="hasTime"/> is <see langword="true"/>.
+    /// It will represent an RFC 5545, Section 3.3.4, DATE value, if <see paramref="hasTime"/> is <see langword="false"/>.
     /// <para/>
-    /// The timezone will be set to UTC if the <paramref name="value"/> has <see cref="DateTimeKind.Utc"/>.
-    /// Else, the timezone will be <see langword="null"/>.
+    /// The <see cref="TzId"/> will be set to "UTC" if the <paramref name="value"/>
+    /// has <see cref="DateTimeKind.Utc"/> and <paramref name="hasTime"/> is <see langword="true"/>.
+    /// Otherwise <see cref="TzId"/> will be <see langword="null"/>.
     /// </summary>
-    /// <param name="value"></param>
-    /// <param name="hasTime">Set to <see langword="true"/> (default), if the <see cref="DateTime.TimeOfDay"/> must be included.</param>
+    /// <param name="value">The <see cref="DateTime"/> value. Its <see cref="DateTimeKind"/> will be ignored.</param>
+    /// <param name="hasTime">
+    /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value, if <see paramref="hasTime"/> is <see langword="true"/>.
+    /// It will represent an RFC 5545, Section 3.3.4, DATE value, if <see paramref="hasTime"/> is <see langword="false"/>.
+    /// </param>
     public CalDateTime(DateTime value, bool hasTime = true) : this(value, value.Kind == DateTimeKind.Utc ? UtcTzId : null, hasTime)
     { }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified timezone.
+    /// Creates a new instance of the <see cref="CalDateTime"/> class.
+    /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value, if <see paramref="hasTime"/> is <see langword="true"/>.
+    /// It will represent an RFC 5545, Section 3.3.4, DATE value, if <see paramref="hasTime"/> is <see langword="false"/>.
+    /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value, if <see paramref="hasTime"/> is <see langword="true"/>.
     /// </summary>
-    /// <param name="value"></param>
-    /// <param name="tzId">The specified value will override value's <see cref="DateTime.Kind"/> property.
-    /// If the timezone specified is UTC, the underlying <see cref="DateTime.Kind"/> will be
-    /// <see cref="DateTimeKind.Utc"/>. If a non-UTC timezone or no timezone is specified, the
-    /// <see cref="DateTimeKind.Unspecified"/> will be used. A timezone of <see langword="null"/> represents
-    /// the system's local timezone.
+    /// <param name="value">The <see cref="DateTime"/> value. Its <see cref="DateTimeKind"/> will be ignored.</param>
+    /// <param name="tzId">A timezone of <see langword="null"/> represents
+    /// a floating date/time, which is the same in all timezones. (<seealso cref="UtcTzId"/>) represents the Coordinated Universal Time.
+    /// Other values determine the timezone of the date/time.
     /// </param>
-    /// <param name="hasTime">Set to <see langword="true"/> (default), if the <see cref="DateTime.TimeOfDay"/> must be included.</param>
+    /// <param name="hasTime">
+    /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value, if <see paramref="hasTime"/> is <see langword="true"/>.
+    /// It will represent an RFC 5545, Section 3.3.4, DATE value, if <see paramref="hasTime"/> is <see langword="false"/>.
+    /// </param>
     public CalDateTime(DateTime value, string? tzId, bool hasTime = true)
     {
-        if (value.Kind == DateTimeKind.Utc && tzId is null or UtcTzId)
-            tzId = UtcTzId;
-
         if (hasTime)
             Initialize(DateOnly.FromDateTime(value), TimeOnly.FromDateTime(value), tzId);
         else
@@ -98,12 +114,11 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
 
     /// <summary>
     /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified timezone.
+    /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value.
     /// </summary>
-    /// <param name="tzId">The specified value will determine the <see cref="DateTime.Kind"/> property.
-    /// If the timezone specified is UTC, the underlying <see cref="DateTime.Kind"/> will be
-    /// <see cref="DateTimeKind.Utc"/>. If a non-UTC timezone or no timezone is specified, the underlying
-    /// <see cref="DateTimeKind.Unspecified"/> will be used. A timezone of <see langword="null"/> represents
-    /// the system's local timezone.
+    /// <param name="tzId">A timezone of <see langword="null"/> represents
+    /// a floating date/time, which is the same in all timezones. (<seealso cref="UtcTzId"/>) represents the Coordinated Universal Time.
+    /// Other values determine the timezone of the date/time.
     /// </param>
     /// <param name="year"></param>
     /// <param name="month"></param>
@@ -117,31 +132,36 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified timezone.
-    /// Sets <see cref="DateTimeKind.Unspecified"/> for the <see cref="Value"/> property.
+    /// Creates a new instance of the <see cref="CalDateTime"/> class with <see cref="TzId"/> set to <see langword="null"/>.
+    /// The instance will represent an RFC 5545, Section 3.3.4, DATE value,
+    /// and thus it cannot have a timezone.
     /// </summary>
-    /// <param name="tzId">The specified value will determine the <see cref="DateTime.Kind"/> property.
-    /// If the timezone specified is UTC, the underlying <see cref="DateTime.Kind"/> will be
-    /// <see cref="DateTimeKind.Utc"/>. If a non-UTC timezone or no timezone is specified, the underlying
-    /// <see cref="DateTimeKind.Unspecified"/> will be used. A timezone of <see langword="null"/> represents
-    /// the system's local timezone.
-    /// </param>
     /// <param name="year"></param>
     /// <param name="month"></param>
     /// <param name="day"></param>
-    public CalDateTime(int year, int month, int day, string? tzId = null)
+    public CalDateTime(int year, int month, int day)
     {
-        Initialize(new DateOnly(year, month, day), null, tzId);
+        Initialize(new DateOnly(year, month, day), null, null);
+    }
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="CalDateTime"/> class with <see cref="TzId"/> set to <see langword="null"/>.
+    /// The instance will represent an RFC 5545, Section 3.3.4, DATE value,
+    /// and thus it cannot have a timezone.
+    /// </summary>
+    /// <param name="date"></param>
+    public CalDateTime(DateOnly date)
+    {
+        Initialize(date, null, null);
     }
 
     /// <summary>
     /// Creates a new instance of the <see cref="CalDateTime"/> class using the specified timezone.
+    /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value.
     /// </summary>
-    /// <param name="tzId">The specified value will determine the <see cref="DateTime.Kind"/> property.
-    /// If the timezone specified is UTC, the underlying <see cref="DateTime.Kind"/> will be
-    /// <see cref="DateTimeKind.Utc"/>. If a non-UTC timezone or no timezone is specified, the underlying
-    /// <see cref="DateTimeKind.Unspecified"/> will be used. A timezone of <see langword="null"/> represents
-    /// the system's local timezone.
+    /// <param name="tzId">A timezone of <see langword="null"/> represents
+    /// a floating date/time, which is the same in all timezones. (<seealso cref="UtcTzId"/>) represents the Coordinated Universal Time.
+    /// Other values determine the timezone of the date/time.
     /// </param>
     /// <param name="date"></param>
     /// <param name="time"></param>
@@ -154,29 +174,36 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// Creates a new instance of the <see cref="CalDateTime"/> class by parsing <paramref name="value"/>
     /// using the <see cref="DateTimeSerializer"/>.
     /// </summary>
-    /// <param name="value">An iCalendar-compatible date or date-time string.</param>
-    /// <param name="tzId">The specified value will determine the <see cref="DateTime.Kind"/> property.
-    /// If the timezone specified is UTC, the underlying <see cref="DateTime.Kind"/> will be
-    /// <see cref="DateTimeKind.Utc"/>. If a non-UTC timezone or no timezone is specified, the underlying
-    /// <see cref="DateTimeKind.Unspecified"/> will be used. A timezone of <see langword="null"/> represents
-    /// the system's local timezone.
+    /// <param name="value">An iCalendar-compatible date or date-time string.
+    /// <para/>
+    /// If the parsed string represents an RFC 5545, Section 3.3.4, DATE value,
+    /// it cannot have a timezone, and the <see paramref="tzId"/> will be ignored.
+    /// <para/>
+    /// If the parsed string represents an RFC 5545, DATE-TIME value, the <see paramref="tzId"/> will be used.
+    /// </param>
+    /// <param name="tzId">A timezone of <see langword="null"/> represents
+    /// a floating date/time, which is the same in all timezones. (<seealso cref="UtcTzId"/>) represents the Coordinated Universal Time.
+    /// Other values determine the timezone of the date/time.
     /// </param>
     public CalDateTime(string value, string? tzId = null)
     {
         var serializer = new DateTimeSerializer();
         CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable
                  ?? throw new InvalidOperationException("Failure deserializing value"));
-        TzId = tzId;
+        // The string may contain a date only, meaning that the tzId should be ignored.
+        _tzId = HasTime ? tzId : null;
     }
 
     private void Initialize(DateOnly dateOnly, TimeOnly? timeOnly, string? tzId)
     {
-        HasTime = timeOnly.HasValue;
-        HasDate = true;
         _dateOnly = dateOnly;
-        _timeOnly = timeOnly ?? new TimeOnly();
+        _timeOnly = TruncateTimeToSeconds(timeOnly);
 
-        _tzId = string.Equals(UtcTzId, tzId, StringComparison.OrdinalIgnoreCase) ? UtcTzId : tzId;
+        _tzId = tzId switch
+        {
+            _ when !timeOnly.HasValue => null,
+            _ => tzId // can also be UtcTzId
+        };
     }
 
     /// <inheritdoc/>
@@ -206,10 +233,8 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         {
             // Maintain the private date/time backing fields
             _dateOnly = calDt._dateOnly;
-            _timeOnly = calDt._timeOnly;
+            _timeOnly = TruncateTimeToSeconds(calDt._timeOnly);
             _tzId = calDt._tzId;
-            HasTime = calDt.HasTime;
-            HasDate = calDt.HasDate;
         }
 
         AssociateWith(dt);
@@ -228,7 +253,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         unchecked
         {
             var hashCode = Value.GetHashCode();
-            hashCode = (hashCode * 397) ^ HasDate.GetHashCode();
+            hashCode = (hashCode * 397) ^ HasTime.GetHashCode();
             hashCode = (hashCode * 397) ^ AsUtc.GetHashCode();
             hashCode = (hashCode * 397) ^ (TzId != null ? TzId.GetHashCode() : 0);
             return hashCode;
@@ -236,27 +261,45 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     }
 
     public static bool operator <(CalDateTime? left, IDateTime? right)
-        => left != null && right != null && left.AsUtc < right.AsUtc;
+        => left != null
+           && right != null
+           && (left.IsFloating || right.IsFloating ? left.Value < right.Value : left.AsUtc < right.AsUtc);
 
     public static bool operator >(CalDateTime? left, IDateTime? right)
-        => left != null && right != null && left.AsUtc > right.AsUtc;
-
+        => left != null
+           && right != null
+           && (left.IsFloating || right.IsFloating ? left.Value > right.Value : left.AsUtc > right.AsUtc);
+    
     public static bool operator <=(CalDateTime? left, IDateTime? right)
-        => left != null && right != null && left.AsUtc <= right.AsUtc;
+        => left != null
+           && right != null
+           && (left.IsFloating || right.IsFloating ? left.Value <= right.Value : left.AsUtc <= right.AsUtc);
 
     public static bool operator >=(CalDateTime? left, IDateTime? right)
-        => left != null && right != null && left.AsUtc >= right.AsUtc;
-
+        => left != null
+           && right != null
+           && (left.IsFloating || right.IsFloating ? left.Value >= right.Value : left.AsUtc >= right.AsUtc);
+    
     public static bool operator ==(CalDateTime? left, IDateTime? right)
     {
-        return ReferenceEquals(left, null) || ReferenceEquals(right, null)
-            ? ReferenceEquals(left, right)
-            : right is CalDateTime calDateTime
-                && left.Value.Equals(calDateTime.Value)
-                && left.HasDate == calDateTime.HasDate
-                && left.HasTime == calDateTime.HasTime
-                && left.AsUtc.Equals(calDateTime.AsUtc)
-                && string.Equals(left.TzId, calDateTime.TzId, StringComparison.OrdinalIgnoreCase);
+        if (ReferenceEquals(left, right))
+        {
+            return true;
+        }
+
+        if (left is null || right is null)
+        {
+            return false;
+        }
+
+        if (left.IsFloating != right.IsFloating)
+        {
+            return false;
+        }
+
+        return left.Value.Equals(right.Value)
+               && left.HasTime == right.HasTime
+               && string.Equals(left.TzId, right.TzId, StringComparison.OrdinalIgnoreCase);
     }
 
     public static bool operator !=(CalDateTime? left, IDateTime? right)
@@ -266,17 +309,22 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// Subtracts a <see cref="TimeSpan"/> from the <see cref="CalDateTime"/>.
     /// </summary>
     /// <remarks>
-    /// This will also set <seealso cref="HasTime"/> to <see langword="true"/>,
+    /// This will also add a <see cref="IDateTime.Time"/> part that did not exist before the operation,
     /// if the <see cref="TimeSpan"/> is not a multiple of 24 hours.
     /// </remarks>
     public static IDateTime operator -(CalDateTime left, TimeSpan right)
     {
         var copy = left.Copy<CalDateTime>();
-        if ((right.Ticks % TimeSpan.TicksPerDay) != 0)
+        var newValue = copy.Value - right;
+        if (!copy.HasTime && (right.Ticks % TimeSpan.TicksPerDay) == 0)
         {
-            copy.HasTime = true;
+            copy._dateOnly = DateOnly.FromDateTime(newValue);
         }
-        copy.Value -= right;
+        else
+        {
+            copy._dateOnly = DateOnly.FromDateTime(newValue);
+            copy._timeOnly = TruncateTimeToSeconds(newValue);
+        }
         return copy;
     }
 
@@ -284,17 +332,22 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// Adds a <see cref="TimeSpan"/> to the <see cref="CalDateTime"/>.
     /// </summary>
     /// <remarks>
-    /// This will also set <seealso cref="HasTime"/> to <see langword="true"/>,
+    /// This will also add a <see cref="IDateTime.Time"/> part that did not exist before the operation,
     /// if the <see cref="TimeSpan"/> is not a multiple of 24 hours.
     /// </remarks>
     public static IDateTime operator +(CalDateTime left, TimeSpan right)
     {
         var copy = left.Copy<CalDateTime>();
-        if ((right.Ticks % TimeSpan.TicksPerDay) != 0)
+        var newValue = copy.Value + right;
+        if (!copy.HasTime && (right.Ticks % TimeSpan.TicksPerDay) == 0)
         {
-            copy.HasTime = true;
+            copy._dateOnly = DateOnly.FromDateTime(newValue);
         }
-        copy.Value += right;
+        else
+        {
+            copy._dateOnly = DateOnly.FromDateTime(newValue);
+            copy._timeOnly = TruncateTimeToSeconds(newValue);
+        }
         return copy;
     }
 
@@ -303,111 +356,51 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// </summary>
     public static implicit operator CalDateTime(DateTime left) => new CalDateTime(left);
 
-    /// <summary>
-    /// Converts the date/time to the date/time of the computer running the program.
-    /// If the DateTimeKind is Unspecified, it's assumed that the underlying
-    /// Value already represents the system's datetime.
-    /// </summary>
-    public DateTime AsSystemLocal => AsDateTimeOffset.LocalDateTime;
+/// <inheritdoc/>
+    public DateTime AsUtc => DateTime.SpecifyKind(ToTimeZone(UtcTzId).Value, DateTimeKind.Utc);
 
-    /// <summary>
-    /// Returns a representation of the <see cref="DateTime"/> in UTC.
-    /// </summary>
-    public DateTime AsUtc => AsDateTimeOffset.UtcDateTime;
-
-    /// <summary>
-    /// Gets the underlying <see cref="DateOnlyValue"/> of <see cref="Value"/>.
-    /// </summary>
-    public DateOnly? DateOnlyValue => HasDate ? _dateOnly : null;
-
-    /// <summary>
-    /// Gets the underlying <see cref="TimeOnlyValue"/> of <see cref="Value"/>.
-    /// </summary>
-    public TimeOnly? TimeOnlyValue => HasTime ? _timeOnly : null;
-
-    /// <summary>
-    /// Gets the underlying <see cref="DateTime"/> <see cref="Value"/>.
-    /// Depending on <see cref="HasTime"/> setting,
-    /// the <see cref="DateTime"/> returned has <see cref="DateTime.TimeOfDay"/>
-    /// set to midnight or the time from initialization. The precision of the time part is up to seconds.
-    /// <para/>
-    /// See also <seealso cref="DateOnlyValue"/> and <seealso cref="TimeOnlyValue"/> for the date and time parts.
-    /// </summary>
+    /// <inheritdoc/>
     public DateTime Value
     {
         get
         {
             // HasDate and HasTime both have setters, so they can be changed.
-            if (HasDate && HasTime)
+            if (_timeOnly.HasValue)
             {
                 return new DateTime(_dateOnly.Year, _dateOnly.Month,
-                    _dateOnly.Day, _timeOnly.Hour, _timeOnly.Minute, _timeOnly.Second,
-                    IsUtc ? DateTimeKind.Utc : DateTimeKind.Unspecified);
+                    _dateOnly.Day, _timeOnly.Value.Hour, _timeOnly.Value.Minute, _timeOnly.Value.Second,
+                    DateTimeKind.Unspecified);
             }
 
-            if (HasDate) // but no time
-                return new DateTime(_dateOnly.Year, _dateOnly.Month, _dateOnly.Day,
-                    0, 0, 0,
-                    IsUtc ? DateTimeKind.Utc : DateTimeKind.Unspecified);
-
-            throw new InvalidOperationException($"Cannot create DateTime when {nameof(HasDate)} is false.");
-        }
-
-        set
-        {
-            // Initialize, keeping the HasTime setting
-            if (HasTime)
-                Initialize(DateOnly.FromDateTime(value), TimeOnly.FromDateTime(value), _tzId);
-            else
-                Initialize(DateOnly.FromDateTime(value), null, _tzId);
+            // No time part
+            return new DateTime(_dateOnly.Year, _dateOnly.Month, _dateOnly.Day,
+                0, 0, 0,
+                DateTimeKind.Unspecified);
         }
     }
 
-    /// <summary>
-    /// Returns true if the underlying <see cref="DateTime"/> <see cref="Value"/> is in UTC.
-    /// </summary>
-    public bool IsUtc => string.Equals(_tzId, UtcTzId, StringComparison.OrdinalIgnoreCase);
+    /// <inheritdoc/>
+    public bool IsFloating => _tzId is null;
 
-    /// <summary>
-    /// <see langword="true"/> if the underlying <see cref="DateTime"/> <see cref="Value"/> has a 'date' part (year, month, day).
-    /// </summary>
-    public bool HasDate { get; set; } = true;
+    /// <inheritdoc/>
+    public bool IsUtc => string.Equals(_tzId, UtcTzId, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// <see langword="true"/> if the underlying <see cref="DateTime"/> <see cref="Value"/> has a 'time' part (hour, minute, second).
     /// </summary>
-    public bool HasTime { get; set; } = true;
+    public bool HasTime => _timeOnly.HasValue;
 
-    private string? _tzId = string.Empty;
-
-    /// <summary>
-    /// Setting the <see cref="TzId"/> to a local timezone will set <see cref="Value"/> to <see cref="DateTimeKind.Unspecified"/>.
-    /// Setting <see cref="TzId"/> to UTC will set <see cref="Value"/> to <see cref="DateTimeKind.Utc"/>.
-    /// If the value is set to <see langword="null"/>, <see cref="Value"/> will be <see cref="DateTimeKind.Unspecified"/>,
-    /// and the system's local timezone will be used.
-    /// <para/>
-    /// Setting the <see cref="TzId"/> will initialize in the same way aw with the <seealso cref="CalDateTime(DateTime, string, bool)"/>.<br/>
-    /// To convert to another timezone, use <see cref="ToTimeZone"/>.
-    /// </summary>
-    public string? TzId
-    {
-        get => _tzId;
-        set
-        {
-            if (string.Equals(_tzId, value, StringComparison.OrdinalIgnoreCase))
-            {
-                return;
-            }
-
-            _tzId = value;
-            Initialize(_dateOnly, HasTime ? _timeOnly : null, value);
-        }
-    }
+    private string? _tzId;
 
     /// <summary>
-    /// Gets the timezone name, if it references a timezone.
-    /// This is an alias for <see cref="TzId"/>.
+    /// Gets the IANA timezone ID of this <see cref="CalDateTime"/> instance.
+    /// It can be <see cref="UtcTzId"/> for Coordinated Universal Time,
+    /// or <see langword="null"/> for a floating date/time, or value for a specific timezone.
     /// </summary>
+    public string? TzId => _tzId;
+
+    /// <inheritdoc cref="TzId"/>
+    /// <remarks>This is an alias for <see cref="TzId"/></remarks>
     public string? TimeZoneName => TzId;
 
     /// <inheritdoc cref="DateTime.Year"/>
@@ -428,53 +421,57 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// <inheritdoc cref="DateTime.Second"/>
     public int Second => Value.Second;
 
-    /// <inheritdoc cref="DateTime.Millisecond"/>
-    public int Millisecond => Value.Millisecond;
-
-    /// <inheritdoc cref="DateTime.Ticks"/>
-    public long Ticks => Value.Ticks;
-
     /// <inheritdoc cref="DateTime.DayOfWeek"/>
     public DayOfWeek DayOfWeek => Value.DayOfWeek;
 
     /// <inheritdoc cref="DateTime.DayOfYear"/>
     public int DayOfYear => Value.DayOfYear;
 
-    /// <inheritdoc cref="DateTime.Date"/>
-    public DateTime Date => Value.Date;
+    /// <inheritdoc cref="DateOnly"/>
+    public DateOnly Date => _dateOnly;
 
-    /// <inheritdoc cref="DateTime.TimeOfDay"/>
-    public TimeSpan TimeOfDay => Value.TimeOfDay;
+    /// <inheritdoc cref="TimeOnly"/>
+    public TimeOnly? Time => _timeOnly;
 
     /// <summary>
-    /// Returns a representation of the <see cref="IDateTime"/> in the <paramref name="tzId"/> timezone
+    /// Any <see cref="Time"/> values are always rounded to the nearest second.
+    /// RFC 5545, Section 3.3.5 does not allow for fractional seconds.
     /// </summary>
-    public IDateTime ToTimeZone(string? tzId)
+    private static TimeOnly? TruncateTimeToSeconds(TimeOnly? time)
     {
-        // If TzId is empty, it's a system-local datetime, so we should use the system timezone as the starting point.
-        var originalTzId = TzId ?? TimeZoneInfo.Local.Id;
+        if (time is null)
+        {
+            return null;
+        }
 
-        var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, originalTzId);
-        var converted = zonedOriginal.WithZone(DateUtil.GetZone(tzId));
-
-        return converted.Zone == DateTimeZone.Utc
-            ? new CalDateTime(converted.ToDateTimeUtc(), tzId)
-            : new CalDateTime(DateTime.SpecifyKind(converted.ToDateTimeUnspecified(), DateTimeKind.Unspecified), tzId);
+        return new TimeOnly(time.Value.Hour, time.Value.Minute, time.Value.Second);
     }
 
     /// <summary>
-    /// Returns a <see cref="DateTimeOffset"/> representation of the <see cref="Value"/>.
-    /// If a TzId is specified, it will use that timezone's UTC offset, otherwise it will use the
-    /// system-local timezone.
+    /// Any <see cref="Time"/> values are always rounded to the nearest second.
+    /// RFC 5545, Section 3.3.5 does not allow for fractional seconds.
     /// </summary>
-    public DateTimeOffset AsDateTimeOffset =>
-        TzId is null
-            ? new DateTimeOffset(Value)
-            : DateUtil.ToZonedDateTimeLeniently(Value, TzId).ToDateTimeOffset();
+    private static TimeOnly? TruncateTimeToSeconds(DateTime dateTime)
+    {
+        return new TimeOnly(dateTime.Hour, dateTime.Minute, dateTime.Second);
+    }
+
+    /// <inheritdoc/>
+    public IDateTime ToTimeZone(string otherTzId)
+    {
+        if (IsFloating) return new CalDateTime(_dateOnly, _timeOnly, otherTzId);
+
+        var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, TzId);
+        var converted = zonedOriginal.WithZone(DateUtil.GetZone(otherTzId));
+
+        return converted.Zone == DateTimeZone.Utc
+            ? new CalDateTime(converted.ToDateTimeUtc(), UtcTzId)
+            : new CalDateTime(converted.ToDateTimeUnspecified(), otherTzId);
+    }
 
     /// <inheritdoc cref="DateTime.Add"/>
     /// <remarks>
-    /// This will also set <seealso cref="HasTime"/> to <see langword="true"/>,
+    /// This will also add a <see cref="IDateTime.Time"/> part that did not exist before the operation,
     /// if the hours are not a multiple of 24.
     /// </remarks>
     public IDateTime Add(TimeSpan ts) => this + ts;
@@ -486,24 +483,13 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// <summary>Returns a new <see cref="IDateTime"/> by subtracting the specified <see cref="TimeSpan" /> from the value of this instance.</summary>
     /// <param name="ts">An interval.</param>
     /// <returns>An object whose value is the difference of the date and time represented by this instance and the time interval represented by <paramref name="ts" />.</returns>
-    /// <remarks>
-    /// This will also set <seealso cref="HasTime"/> to <see langword="true"/>,
-    /// if the hours are not a multiple of 24.
-    /// </remarks>
     public IDateTime Subtract(TimeSpan ts) => this - ts;
-
-    [Obsolete("This operator will be removed in a future version.", true)]
-    public static TimeSpan? operator -(CalDateTime? left, IDateTime? right)
-    {
-        left?.AssociateWith(right); // Should not be done in operator overloads
-        return left?.AsUtc - right?.AsUtc;
-    }
 
     /// <inheritdoc cref="DateTime.AddYears"/>
     public IDateTime AddYears(int years)
     {
         var dt = Copy<CalDateTime>();
-        dt.Value = Value.AddYears(years);
+        dt._dateOnly = dt._dateOnly.AddYears(years);
         return dt;
     }
 
@@ -511,7 +497,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     public IDateTime AddMonths(int months)
     {
         var dt = Copy<CalDateTime>();
-        dt.Value = Value.AddMonths(months);
+        dt._dateOnly = dt._dateOnly.AddMonths(months);
         return dt;
     }
 
@@ -519,93 +505,71 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     public IDateTime AddDays(int days)
     {
         var dt = Copy<CalDateTime>();
-        dt.Value = Value.AddDays(days);
+        dt._dateOnly = dt._dateOnly.AddDays(days);
         return dt;
     }
 
     /// <inheritdoc cref="DateTime.AddHours"/>
     /// <remarks>
-    /// This will also set <seealso cref="HasTime"/> to <see langword="true"/>,
+    /// This will also add a <see cref="IDateTime.Time"/> part that did not exist before the operation,
     /// if the hours are not a multiple of 24.
     /// </remarks>
     public IDateTime AddHours(int hours)
     {
-        var dt = Copy<CalDateTime>();
-        if (!dt.HasTime && hours % 24 > 0)
+        var copy = Copy<CalDateTime>();
+        var newValue = copy.Value.AddHours(hours);
+        if (!copy.HasTime && (hours % 24 == 0))
         {
-            dt.HasTime = true;
+            copy._dateOnly = DateOnly.FromDateTime(newValue);
         }
-        dt.Value = Value.AddHours(hours);
-        return dt;
+        else
+        {
+            copy._dateOnly = DateOnly.FromDateTime(newValue);
+            copy._timeOnly = TruncateTimeToSeconds(newValue);
+        }
+        return copy;
     }
 
     /// <inheritdoc cref="DateTime.AddMinutes"/>
     /// <remarks>
-    /// This will also set <seealso cref="HasTime"/> to <see langword="true"/>,
+    /// This will also add a <see cref="IDateTime.Time"/> part that did not exist before the operation,
     /// if the minutes are not a multiple of 1440.
     /// </remarks>
     public IDateTime AddMinutes(int minutes)
     {
-        var dt = Copy<CalDateTime>();
-        if (!dt.HasTime && minutes % 1440 > 0)
+        var copy = Copy<CalDateTime>();
+        var newValue = copy.Value.AddMinutes(minutes);
+        if (!copy.HasTime && (minutes % 1440 == 0))
         {
-            dt.HasTime = true;
+            copy._dateOnly = DateOnly.FromDateTime(newValue);
         }
-        dt.Value = Value.AddMinutes(minutes);
-        return dt;
+        else
+        {
+            copy._dateOnly = DateOnly.FromDateTime(newValue);
+            copy._timeOnly = TruncateTimeToSeconds(newValue);
+        }
+        return copy;
     }
 
     /// <inheritdoc cref="DateTime.AddSeconds"/>
     /// <remarks>
-    /// This will also set <seealso cref="HasTime"/> to <see langword="true"/>,
+    /// This will also add a <see cref="IDateTime.Time"/> part that did not exist before the operation,
     /// if the seconds are not a multiple of 86400.
     /// </remarks>
     public IDateTime AddSeconds(int seconds)
     {
-        var dt = Copy<CalDateTime>();
-        if (!dt.HasTime && seconds % 86400 > 0)
+        var copy = Copy<CalDateTime>();
+        var newValue = copy.Value.AddSeconds(seconds);
+        if (!copy.HasTime && (seconds % 86400 == 0))
         {
-            dt.HasTime = true;
+            copy._dateOnly = DateOnly.FromDateTime(newValue);
         }
-        dt.Value = Value.AddSeconds(seconds);
-        return dt;
-    }
-
-    /// <inheritdoc cref="DateTime.AddMilliseconds"/>
-    /// <remarks>
-    /// This will also set <seealso cref="HasTime"/> to <see langword="true"/>
-    /// if the milliseconds are not a multiple of 86400000.
-    /// <para/>
-    /// Milliseconds less than full seconds get truncated.
-    /// </remarks>
-    public IDateTime AddMilliseconds(int milliseconds)
-    {
-        var dt = Copy<CalDateTime>();
-        if (!dt.HasTime && milliseconds % 86400000 > 0)
+        else
         {
-            dt.HasTime = true;
+            copy._dateOnly = DateOnly.FromDateTime(newValue);
+            copy._timeOnly = TruncateTimeToSeconds(newValue);
         }
-        dt.Value = Value.AddMilliseconds(milliseconds);
-        return dt;
-    }
-
-    /// <inheritdoc cref="DateTime.AddTicks"/>
-    /// <remarks>
-    /// This will also set <seealso cref="HasTime"/> to <see langword="true"/>.
-    /// if ticks do not result in multiple of full days.
-    /// <para/>
-    /// Ticks less than full seconds get truncated.
-    /// </remarks>
-    public IDateTime AddTicks(long ticks)
-    {
-        var dt = Copy<CalDateTime>();
-        if (!dt.HasTime && (ticks % TimeSpan.TicksPerDay) != 0)
-        {
-            dt.HasTime = true;
-        }
-
-        dt.Value = Value.AddTicks(ticks);
-        return dt;
+        return copy;
     }
 
     /// <summary>
@@ -627,7 +591,6 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// Returns <see langword="true"/> if the current <see cref="IDateTime"/> instance is greater than or equal to <paramref name="dt"/>.
     /// </summary>
     public bool GreaterThanOrEqual(IDateTime dt) => this >= dt;
-
 
     /// <summary>
     /// Associates the current instance with the specified <see cref="IDateTime"/> object.
@@ -685,20 +648,17 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     public string ToString(string? format, IFormatProvider? formatProvider)
     {
         formatProvider ??= CultureInfo.InvariantCulture;
-        var dateTimeOffset = AsDateTimeOffset;
+        var dateTimeOffset = DateUtil.ToZonedDateTimeLeniently(Value, _tzId).ToDateTimeOffset();
 
         // Use the .NET format options to format the DateTimeOffset
-
-        if (HasTime && !HasDate)
-        {
-            return $"{dateTimeOffset.TimeOfDay.ToString(format, formatProvider)} {_tzId}";
-        }
+        var tzIdString = _tzId is not null ? $" {_tzId}" : string.Empty;
 
         if (HasTime)
         {
-            return $"{dateTimeOffset.ToString(format, formatProvider)} {_tzId}";
+            return $"{dateTimeOffset.ToString(format, formatProvider)}{tzIdString}";
         }
 
-        return $"{dateTimeOffset.ToString("d", formatProvider)} {_tzId}";
+        // No time part
+        return $"{DateOnly.FromDateTime(dateTimeOffset.Date).ToString(format ?? "d", formatProvider)}{tzIdString}";
     }
 }
