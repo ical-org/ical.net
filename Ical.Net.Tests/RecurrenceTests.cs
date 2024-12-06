@@ -3806,7 +3806,7 @@ END:VCALENDAR
 
         var calendar = Calendar.Load(ical);
         // Set start date for occurrences to search to the end date of the event
-        var occurrences = calendar.GetOccurrences(new CalDateTime(2024, 12, 2));
+        var occurrences = calendar.GetOccurrencesOfDay(new CalDateTime(2024, 12, 2));
 
         Assert.That(occurrences, Is.Empty);
     }
