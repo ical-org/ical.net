@@ -204,13 +204,13 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// </summary>
     /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
     /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
-    public virtual IEnumerable<Occurrence> GetOccurrences(IDateTime dt)
+    public virtual IEnumerable<Occurrence> GetOccurrencesOfDay(IDateTime dt)
     {
         return GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1)));
     }
 
-    /// <inheritdoc cref="GetOccurrences(IDateTime)"/>
-    public virtual IEnumerable<Occurrence> GetOccurrences(DateTime dt)
+    /// <inheritdoc cref="GetOccurrencesOfDay(IDateTime)"/>
+    public virtual IEnumerable<Occurrence> GetOccurrencesOfDay(DateTime dt)
     {
         return GetOccurrences<IRecurringComponent>(new CalDateTime(DateOnly.FromDateTime(dt)), new CalDateTime(DateOnly.FromDateTime(dt.Date.AddDays(1))));
     }
@@ -246,7 +246,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         return GetOccurrences<T>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1)));
     }
 
-    /// <inheritdoc cref="GetOccurrences(IDateTime)"/>
+    /// <inheritdoc cref="GetOccurrencesOfDay(IDateTime)"/>
     public virtual IEnumerable<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
     {
         return GetOccurrences<T>(new CalDateTime(DateOnly.FromDateTime(dt)), new CalDateTime(DateOnly.FromDateTime(dt.Date.AddDays(1))));

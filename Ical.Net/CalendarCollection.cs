@@ -39,19 +39,19 @@ public class CalendarCollection : List<Calendar>
         return collection;
     }
 
-    public HashSet<Occurrence> GetOccurrences(IDateTime dt)
+    public HashSet<Occurrence> GetOccurrencesOfDay(IDateTime dt)
     {
         var occurrences = new HashSet<Occurrence>();
         foreach (var iCal in this)
         {
-            occurrences.UnionWith(iCal.GetOccurrences(dt));
+            occurrences.UnionWith(iCal.GetOccurrencesOfDay(dt));
         }
         return occurrences;
     }
 
-    public IEnumerable<Occurrence> GetOccurrences(DateTime dt)
+    public IEnumerable<Occurrence> GetOccurrencesOfDay(DateTime dt)
         => this
-        .Select(iCal => iCal.GetOccurrences(dt))
+        .Select(iCal => iCal.GetOccurrencesOfDay(dt))
         .ToArray()
         .OrderedMergeMany();
 
@@ -69,7 +69,7 @@ public class CalendarCollection : List<Calendar>
 
     public IEnumerable<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
         => this
-        .Select(iCal => iCal.GetOccurrences(dt))
+        .Select(iCal => iCal.GetOccurrencesOfDay(dt))
         .ToArray()
         .OrderedMergeMany();
 

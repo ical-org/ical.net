@@ -178,9 +178,9 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         Initialize();
     }
 
-    public virtual IEnumerable<Occurrence> GetOccurrences(IDateTime dt) => RecurrenceUtil.GetOccurrences(this, dt, EvaluationIncludesReferenceDate);
+    public virtual IEnumerable<Occurrence> GetOccurrencesOfDay(IDateTime dt) => RecurrenceUtil.GetOccurrences(this, dt, EvaluationIncludesReferenceDate);
 
-    public virtual IEnumerable<Occurrence> GetOccurrences(DateTime dt)
+    public virtual IEnumerable<Occurrence> GetOccurrencesOfDay(DateTime dt)
         => RecurrenceUtil.GetOccurrences(this, new CalDateTime(dt), EvaluationIncludesReferenceDate);
 
     public virtual IEnumerable<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)

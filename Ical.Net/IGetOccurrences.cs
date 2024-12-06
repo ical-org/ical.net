@@ -24,9 +24,9 @@ public interface IGetOccurrences
     /// </summary>
     /// <param name="dt">The date for which to return occurrences.</param>
     /// <returns>An IEnumerable that calculates and returns Periods representing the occurrences of this object in ascending order.</returns>
-    IEnumerable<Occurrence> GetOccurrences(IDateTime dt);
+    IEnumerable<Occurrence> GetOccurrencesOfDay(IDateTime dt);
 
-    IEnumerable<Occurrence> GetOccurrences(DateTime dt);
+    IEnumerable<Occurrence> GetOccurrencesOfDay(DateTime dt);
 
     /// <summary>
     /// Returns all occurrences of this component that overlap with the date range provided.
