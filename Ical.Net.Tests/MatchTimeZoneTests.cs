@@ -58,7 +58,7 @@ public class MatchTimeZoneTests
     }
 
     [Test, Category("Recurrence")]
-    public void MatchTimeZone_LocalTimeJapanWithTimeZone()
+    public void MatchTimeZone_LocalTimeAustraliaWithTimeZone()
     {
         // DTSTART with local time and time zone reference (positive offset), UNTIL as UTC
         const string ical =
@@ -69,9 +69,9 @@ public class MatchTimeZoneTests
             BEGIN:VEVENT
             UID:example1
             SUMMARY:Event with local time and time zone
-            DTSTART;TZID=Asia/Tokyo:20231101T090000
-            RRULE:FREQ=DAILY;UNTIL=20231105T130000Z
-            DTEND;TZID=Asia/Tokyo:20231101T100000
+            DTSTART;TZID=Australia/Sydney:20241001T010000
+            RRULE:FREQ=DAILY;UNTIL=20241005T140000Z
+            DTEND;TZID=Australia/Sydney:20241001T020000
             END:VEVENT
             END:VCALENDAR
             """;
@@ -80,8 +80,8 @@ public class MatchTimeZoneTests
         var evt = calendar.Events.First();
         var until = evt.RecurrenceRules.First().Until;
 
-        var expectedUntil = new DateTime(2023, 11, 05, 13, 00, 00, DateTimeKind.Utc);
-        var occurrences = evt.GetOccurrences(new CalDateTime(2023, 11, 01), new CalDateTime(2023, 11, 06));
+        var expectedUntil = new DateTime(2024, 10, 05, 14, 0, 0, DateTimeKind.Utc);
+        var occurrences = evt.GetOccurrences(new CalDateTime(2024, 10, 01), new CalDateTime(2024, 10, 07));
 
         Assert.Multiple(() =>
         {
@@ -89,12 +89,16 @@ public class MatchTimeZoneTests
             Assert.That(occurrences.Count, Is.EqualTo(5));
             /*
                Should have 5 occurrences:
-               November 1, 2023: 09:00 AM - 10:00 AM (UTC+0900) (Asia/Tokyo)
-               November 2, 2023: 09:00 AM - 10:00 AM (UTC+0900) (Asia/Tokyo)
-               November 3, 2023: 09:00 AM - 10:00 AM (UTC+0900) (Asia/Tokyo)
-               November 4, 2023: 09:00 AM - 10:00 AM (UTC+0900) (Asia/Tokyo)
-               November 5, 2023: 09:00 AM - 10:00 AM (UTC+0900) (Asia/Tokyo)
-             */
+               October 1, 2024: 01:00 AM - 02:00 AM (UTC+1000) (Australia/Sydney)
+               October 2, 2024: 01:00 AM - 02:00 AM (UTC+1000) (Australia/Sydney)
+               October 3, 2024: 01:00 AM - 02:00 AM (UTC+1000) (Australia/Sydney)
+               October 4, 2024: 01:00 AM - 02:00 AM (UTC+1000) (Australia/Sydney)
+               October 5, 2024: 01:00 AM - 02:00 AM (UTC+1000) (Australia/Sydney)
+
+               October 6, 2024: 01:00 AM - 02:00 AM (UTC+1100) (Australia/Sydney)
+               must NOT be included, because 20241005T140000Z => October 6, 2024: 01:00 AM (Australia/Sydney)
+               (Daylight Saving Time in Australia/Sydney starts on Sunday, October 6, 2024, at 2:00 AM)
+           */
         });
     }
 
