@@ -49,47 +49,42 @@ public class CalendarCollection : List<Calendar>
         return occurrences;
     }
 
-    public IEnumerable<Occurrence> GetOccurrencesOfDay(DateTime dt)
-        => this
-        .Select(iCal => iCal.GetOccurrencesOfDay(dt))
+    private IEnumerable<Occurrence> GetOccurrences(Func<Calendar, IEnumerable<Occurrence>> f)
+        =>
+
+        // Get the sequence of occurrences for each calendar in the collection,
+        // which will result in a sequence of sequences of occurrences.
+        this.Select(f)
+
+        // Enumerate the list of occurrences (not the occurrences themselves) now to ensure
+        // the initialization code is run, including validation and error handling.
+        // This way we receive validation errors early, not only when enumeration starts.
         .ToArray()
+
+        // Merge the individual sequences into a single one. Take advantage of them
+        // being ordered to avoid full enumeration.
         .OrderedMergeMany();
+
+    public IEnumerable<Occurrence> GetOccurrencesOfDay(DateTime dt)
+        => GetOccurrences(iCal => iCal.GetOccurrencesOfDay(dt));
 
     public IEnumerable<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
-        => this
-        .Select(iCal => iCal.GetOccurrences(startTime, endTime))
-        .ToArray()
-        .OrderedMergeMany();
+        => GetOccurrences(iCal => iCal.GetOccurrences(startTime, endTime));
 
     public IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime)
-        => this
-        .Select(iCal => iCal.GetOccurrences(startTime, endTime))
-        .ToArray()
-        .OrderedMergeMany();
+        => GetOccurrences(iCal => iCal.GetOccurrences(startTime, endTime));
 
     public IEnumerable<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
-        => this
-        .Select(iCal => iCal.GetOccurrencesOfDay(dt))
-        .ToArray()
-        .OrderedMergeMany();
+        => GetOccurrences(iCal => iCal.GetOccurrencesOfDay(dt));
 
     public IEnumerable<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
-        => this
-        .Select(iCal => iCal.GetOccurrences<T>(dt))
-        .ToArray()
-        .OrderedMergeMany();
+        => GetOccurrences(iCal => iCal.GetOccurrences<T>(dt));
 
     public IEnumerable<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
-        => this
-        .Select(iCal => iCal.GetOccurrences<T>(startTime, endTime))
-        .ToArray()
-        .OrderedMergeMany();
+        => GetOccurrences(iCal => iCal.GetOccurrences<T>(startTime, endTime));
 
     public IEnumerable<Occurrence> GetOccurrences<T>(DateTime? startTime, DateTime? endTime) where T : IRecurringComponent
-        => this
-        .Select(iCal => iCal.GetOccurrences<T>(startTime, endTime))
-        .ToArray()
-        .OrderedMergeMany();
+        => GetOccurrences(iCal => iCal.GetOccurrences<T>(startTime, endTime));
 
     private FreeBusy CombineFreeBusy(FreeBusy main, FreeBusy current)
     {
