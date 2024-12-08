@@ -145,7 +145,7 @@ END:VCALENDAR";
 
         var calendar = GetCalendars(ical);
         var date = new DateTime(2016, 10, 11);
-        var occurrences = calendar.GetOccurrencesOfDay(date).ToList();
+        var occurrences = calendar.GetOccurrences(date, date.AddDays(1)).ToList();
 
         //We really want to make sure this doesn't explode
         Assert.That(occurrences, Has.Count.EqualTo(1));
