@@ -197,24 +197,6 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         return tz;
     }
 
-
-    /// <summary>
-    /// Returns a list of occurrences of each recurring component
-    /// for the date provided (<paramref name="dt"/>).
-    /// </summary>
-    /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
-    /// <returns>A list of occurrences that occur on the given date (<paramref name="dt"/>).</returns>
-    public virtual IEnumerable<Occurrence> GetOccurrencesOfDay(IDateTime dt)
-    {
-        return GetOccurrences<IRecurringComponent>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1)));
-    }
-
-    /// <inheritdoc cref="GetOccurrencesOfDay(IDateTime)"/>
-    public virtual IEnumerable<Occurrence> GetOccurrencesOfDay(DateTime dt)
-    {
-        return GetOccurrences<IRecurringComponent>(new CalDateTime(DateOnly.FromDateTime(dt)), new CalDateTime(DateOnly.FromDateTime(dt.Date.AddDays(1))));
-    }
-
     /// <summary>
     /// Returns a list of occurrences of each recurring component
     /// that occur between <paramref name="startTime"/> and <paramref name="endTime"/>.
@@ -228,29 +210,6 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <inheritdoc cref="GetOccurrences(IDateTime, IDateTime)"/>
     public virtual IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime)
         => GetOccurrences<IRecurringComponent>(startTime?.AsCalDateTime(), endTime?.AsCalDateTime());
-
-    /// <summary>
-    /// Returns all occurrences of components of type T that start on the date provided.
-    /// All components starting between 12:00:00AM and 11:59:59 PM will be
-    /// returned.
-    /// <note>
-    /// This will first Evaluate() the date range required in order to
-    /// determine the occurrences for the date provided, and then return
-    /// the occurrences.
-    /// </note>
-    /// </summary>
-    /// <param name="dt">The date for which to return occurrences. Time is ignored on this parameter.</param>
-    /// <returns>A list of Periods representing the occurrences of this object.</returns>
-    public virtual IEnumerable<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
-    {
-        return GetOccurrences<T>(new CalDateTime(dt.Date), new CalDateTime(dt.Date.AddDays(1)));
-    }
-
-    /// <inheritdoc cref="GetOccurrencesOfDay(IDateTime)"/>
-    public virtual IEnumerable<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
-    {
-        return GetOccurrences<T>(new CalDateTime(DateOnly.FromDateTime(dt)), new CalDateTime(DateOnly.FromDateTime(dt.Date.AddDays(1))));
-    }
 
     /// <inheritdoc cref="GetOccurrences(IDateTime, IDateTime)"/>
     public virtual IEnumerable<Occurrence> GetOccurrences<T>(DateTime? startTime, DateTime? endTime) where T : IRecurringComponent

@@ -172,12 +172,6 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         set => Properties.Set("RECURRENCE-ID", value);
     }
 
-    public virtual IEnumerable<Occurrence> GetOccurrencesOfDay(IDateTime dt)
-        => RecurrenceUtil.GetOccurrences(this, dt, true);
-
-    public virtual IEnumerable<Occurrence> GetOccurrencesOfDay(DateTime dt)
-        => RecurrenceUtil.GetOccurrences(this, new CalDateTime(dt), true);
-
     public virtual IEnumerable<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
         => RecurrenceUtil.GetOccurrences(this, startTime, endTime, true);
 

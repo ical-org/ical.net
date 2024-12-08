@@ -39,16 +39,6 @@ public class CalendarCollection : List<Calendar>
         return collection;
     }
 
-    public HashSet<Occurrence> GetOccurrencesOfDay(IDateTime dt)
-    {
-        var occurrences = new HashSet<Occurrence>();
-        foreach (var iCal in this)
-        {
-            occurrences.UnionWith(iCal.GetOccurrencesOfDay(dt));
-        }
-        return occurrences;
-    }
-
     private IEnumerable<Occurrence> GetOccurrences(Func<Calendar, IEnumerable<Occurrence>> f)
         =>
 
@@ -65,20 +55,11 @@ public class CalendarCollection : List<Calendar>
         // being ordered to avoid full enumeration.
         .OrderedMergeMany();
 
-    public IEnumerable<Occurrence> GetOccurrencesOfDay(DateTime dt)
-        => GetOccurrences(iCal => iCal.GetOccurrencesOfDay(dt));
-
     public IEnumerable<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
         => GetOccurrences(iCal => iCal.GetOccurrences(startTime, endTime));
 
     public IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime)
         => GetOccurrences(iCal => iCal.GetOccurrences(startTime, endTime));
-
-    public IEnumerable<Occurrence> GetOccurrences<T>(IDateTime dt) where T : IRecurringComponent
-        => GetOccurrences(iCal => iCal.GetOccurrencesOfDay(dt));
-
-    public IEnumerable<Occurrence> GetOccurrences<T>(DateTime dt) where T : IRecurringComponent
-        => GetOccurrences(iCal => iCal.GetOccurrences<T>(dt));
 
     public IEnumerable<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
         => GetOccurrences(iCal => iCal.GetOccurrences<T>(startTime, endTime));
