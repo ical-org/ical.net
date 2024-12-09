@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.Evaluation;
 
@@ -40,14 +41,12 @@ public class RecurringEvaluator : Evaluator
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
     /// <param name="periodEnd">The end date of the range to evaluate.</param>
     /// <param name="includeReferenceDateInResults"></param>
-    protected HashSet<Period> EvaluateRRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+    protected IEnumerable<Period> EvaluateRRule(IDateTime referenceDate, DateTime? periodStart, DateTime? periodEnd, bool includeReferenceDateInResults)
     {
         if (Recurrable.RecurrenceRules == null || !Recurrable.RecurrenceRules.Any())
-        {
-            return new HashSet<Period>();
-        }
+            return [];
 
-        var periodsQuery = Recurrable.RecurrenceRules.SelectMany(rule =>
+        var periodsQueries = Recurrable.RecurrenceRules.Select(rule =>
         {
             var ruleEvaluator = rule.GetService(typeof(IEvaluator)) as IEvaluator;
             if (ruleEvaluator == null)
@@ -55,27 +54,29 @@ public class RecurringEvaluator : Evaluator
                 return Enumerable.Empty<Period>();
             }
             return ruleEvaluator.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
-        });
+        })
+            // Enumerate the outer sequence (not the inner sequences of periods themselves) now to ensure
+            // the initialization code is run, including validation and error handling.
+            // This way we receive validation errors early, not only when enumeration starts.
+            .ToList(); //NOSONAR - deliberately enumerate here
 
-        var periods = new HashSet<Period>(periodsQuery);
 
         //Only add referenceDate if there are no RecurrenceRules defined
         if (includeReferenceDateInResults && (Recurrable.RecurrenceRules == null || !Recurrable.RecurrenceRules.Any()))
         {
-            periods.UnionWith(new[] { new Period(referenceDate) });
+            periodsQueries.Add([new Period(referenceDate)]);
         }
-        return periods;
+
+        return periodsQueries.OrderedMergeMany();
     }
 
     /// <summary> Evaluates the RDate component. </summary>
-    protected HashSet<Period> EvaluateRDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
+    protected IEnumerable<Period> EvaluateRDate(IDateTime referenceDate, DateTime? periodStart, DateTime? periodEnd)
     {
         if (Recurrable.RecurrenceDates == null || !Recurrable.RecurrenceDates.Any())
-        {
-            return new HashSet<Period>();
-        }
+            return [];
 
-        var recurrences = new HashSet<Period>(Recurrable.RecurrenceDates.SelectMany(rdate => rdate));
+        var recurrences = new SortedSet<Period>(Recurrable.RecurrenceDates.SelectMany(rdate => rdate));
         return recurrences;
     }
 
@@ -85,14 +86,12 @@ public class RecurringEvaluator : Evaluator
     /// <param name="referenceDate"></param>
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
     /// <param name="periodEnd">The end date of the range to evaluate.</param>
-    protected HashSet<Period> EvaluateExRule(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
+    protected IEnumerable<Period> EvaluateExRule(IDateTime referenceDate, DateTime? periodStart, DateTime? periodEnd)
     {
         if (Recurrable.ExceptionRules == null || !Recurrable.ExceptionRules.Any())
-        {
-            return new HashSet<Period>();
-        }
+            return [];
 
-        var exRuleEvaluatorQuery = Recurrable.ExceptionRules.SelectMany(exRule =>
+        var exRuleEvaluatorQueries = Recurrable.ExceptionRules.Select(exRule =>
         {
             var exRuleEvaluator = exRule.GetService(typeof(IEvaluator)) as IEvaluator;
             if (exRuleEvaluator == null)
@@ -100,10 +99,13 @@ public class RecurringEvaluator : Evaluator
                 return Enumerable.Empty<Period>();
             }
             return exRuleEvaluator.Evaluate(referenceDate, periodStart, periodEnd, false);
-        });
+        })
+            // Enumerate the outer sequence (not the inner sequences of periods themselves) now to ensure
+            // the initialization code is run, including validation and error handling.
+            // This way we receive validation errors early, not only when enumeration starts.
+            .ToList(); //NOSONAR - deliberately enumerate here
 
-        var exRuleExclusions = new HashSet<Period>(exRuleEvaluatorQuery);
-        return exRuleExclusions;
+        return exRuleEvaluatorQueries.OrderedMergeMany();
     }
 
     /// <summary>
@@ -112,26 +114,22 @@ public class RecurringEvaluator : Evaluator
     /// <param name="referenceDate"></param>
     /// <param name="periodStart">The beginning date of the range to evaluate.</param>
     /// <param name="periodEnd">The end date of the range to evaluate.</param>
-    protected HashSet<Period> EvaluateExDate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd)
+    protected IEnumerable<Period> EvaluateExDate(IDateTime referenceDate, DateTime? periodStart, DateTime? periodEnd)
     {
         if (Recurrable.ExceptionDates == null || !Recurrable.ExceptionDates.Any())
-        {
-            return new HashSet<Period>();
-        }
+            return [];
 
-        var exDates = new HashSet<Period>(Recurrable.ExceptionDates.SelectMany(exDate => exDate));
+        var exDates = new SortedSet<Period>(Recurrable.ExceptionDates.SelectMany(exDate => exDate));
         return exDates;
     }
 
-    public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, DateTime? periodStart, DateTime? periodEnd, bool includeReferenceDateInResults)
     {
-        var periods = new HashSet<Period>();
-
         var rruleOccurrences = EvaluateRRule(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
         //Only add referenceDate if there are no RecurrenceRules defined
         if (includeReferenceDateInResults && (Recurrable.RecurrenceRules == null || !Recurrable.RecurrenceRules.Any()))
         {
-            rruleOccurrences.UnionWith(new[] { new Period(referenceDate), });
+            rruleOccurrences = rruleOccurrences.Append(new Period(referenceDate));
         }
 
         var rdateOccurrences = EvaluateRDate(referenceDate, periodStart, periodEnd);
@@ -139,22 +137,27 @@ public class RecurringEvaluator : Evaluator
         var exRuleExclusions = EvaluateExRule(referenceDate, periodStart, periodEnd);
         var exDateExclusions = EvaluateExDate(referenceDate, periodStart, periodEnd);
 
-        //Exclusions trump inclusions
-        periods.UnionWith(rruleOccurrences);
-        periods.UnionWith(rdateOccurrences);
-        periods.ExceptWith(exRuleExclusions);
-        periods.ExceptWith(exDateExclusions);
-
-        var dateOverlaps = FindDateOverlaps(periods, exDateExclusions);
-        periods.ExceptWith(dateOverlaps);
+        var periods =
+            rruleOccurrences
+            .OrderedMerge(rdateOccurrences)
+            .OrderedDistinct()
+            .OrderedExclude(exRuleExclusions)
+            .OrderedExclude(exDateExclusions, Comparer<Period>.Create(CompareDateOverlap));
 
         return periods;
     }
 
-    private static HashSet<Period> FindDateOverlaps(HashSet<Period> periods, HashSet<Period> dates)
+    /// <summary>
+    /// Compares whether the given period's date overlaps with the given EXDATE. The dates are
+    /// considered to overlap if they start at the same time, or the EXDATE is an all-day date
+    /// and the period's start date is the same as the EXDATE's date.
+    /// </summary>
+    private static int CompareDateOverlap(Period period, Period exDate)
     {
-        var datesWithoutTimes = new HashSet<DateTime>(dates.Where(d => !d.StartTime.HasTime).Select(d => d.StartTime.Value));
-        var overlaps = new HashSet<Period>(periods.Where(p => datesWithoutTimes.Contains(p.StartTime.Value.Date)));
-        return overlaps;
+        var cmp = period.CompareTo(exDate);
+        if ((cmp != 0) && !exDate.StartTime.HasTime && (period.StartTime.Value.Date == exDate.StartTime.Value))
+            cmp = 0;
+
+        return cmp;
     }
 }

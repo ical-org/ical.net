@@ -18,7 +18,7 @@ public class TodoEvaluator : RecurringEvaluator
 
     public TodoEvaluator(Todo todo) : base(todo) { }
 
-    internal HashSet<Period> EvaluateToPreviousOccurrence(IDateTime completedDate, IDateTime currDt)
+    internal IEnumerable<Period> EvaluateToPreviousOccurrence(IDateTime completedDate, IDateTime currDt)
     {
         var beginningDate = completedDate.Copy<IDateTime>();
 
@@ -77,19 +77,19 @@ public class TodoEvaluator : RecurringEvaluator
         }
     }
 
-    public override HashSet<Period> Evaluate(IDateTime referenceDate, DateTime periodStart, DateTime periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, DateTime? periodStart, DateTime? periodEnd, bool includeReferenceDateInResults)
     {
         // TODO items can only recur if a start date is specified
         if (Todo.Start == null)
-        {
-            return new HashSet<Period>();
-        }
+            return [];
 
-        var periods = base.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults);
-
-        // Ensure each period has a duration
-        foreach (var period in periods.Where(period => period.EndTime == null))
+        Period PeriodWithDuration(Period p)
         {
+            if (p.EndTime != null)
+                return p;
+
+            var period = p.Copy<Period>();
+
             period.Duration = Todo.Duration;
             if (period.Duration != default)
             {
@@ -99,7 +99,11 @@ public class TodoEvaluator : RecurringEvaluator
             {
                 period.Duration = Todo.Duration;
             }
+
+            return period;
         }
-        return periods;
+
+        return base.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults)
+            .Select(PeriodWithDuration);
     }
 }

@@ -9,6 +9,7 @@ using System.Runtime.Serialization;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
+using Ical.Net.Utility;
 
 namespace Ical.Net;
 
@@ -53,6 +54,18 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
                    Equals(OffsetTo, tzi.OffsetTo);
         }
         return base.Equals(obj);
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            var hashCode = TimeZoneName?.GetHashCode() ?? 0;
+            hashCode = (hashCode * 397) ^ (OffsetFrom?.GetHashCode() ?? 0);
+            hashCode = (hashCode * 397) ^ (OffsetTo?.GetHashCode() ?? 0);
+
+            return hashCode;
+        }
     }
 
     public virtual string TzId
@@ -159,15 +172,9 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         set => Properties.Set("RECURRENCE-ID", value);
     }
 
-    public virtual HashSet<Occurrence> GetOccurrences(IDateTime dt)
-        => RecurrenceUtil.GetOccurrences(this, dt, true);
-
-    public virtual HashSet<Occurrence> GetOccurrences(DateTime dt)
-        => RecurrenceUtil.GetOccurrences(this, new CalDateTime(dt), true);
-
-    public virtual HashSet<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
+    public virtual IEnumerable<Occurrence> GetOccurrences(IDateTime startTime = null, IDateTime endTime = null)
         => RecurrenceUtil.GetOccurrences(this, startTime, endTime, true);
 
-    public virtual HashSet<Occurrence> GetOccurrences(DateTime startTime, DateTime endTime)
-        => RecurrenceUtil.GetOccurrences(this, new CalDateTime(startTime), new CalDateTime(endTime), true);
+    public virtual IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime)
+        => RecurrenceUtil.GetOccurrences(this, startTime?.AsCalDateTime(), endTime?.AsCalDateTime(), true);
 }
