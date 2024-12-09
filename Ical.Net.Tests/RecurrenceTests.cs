@@ -3570,7 +3570,7 @@ END:VCALENDAR";
 
         Assert.That(serialized.Contains(expectedContains), Is.True);
 
-        var deserializedKind = Calendar.Load(serialized).Events.First().RecurrenceRules.First().Until.Kind;
+        var deserializedKind = Calendar.Load(serialized).Events.First().RecurrenceRules.First().Until?.Kind;
 
         Assert.That(deserializedKind, Is.EqualTo(expectedKind));
     }
