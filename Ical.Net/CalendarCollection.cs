@@ -55,13 +55,13 @@ public class CalendarCollection : List<Calendar>
         // being ordered to avoid full enumeration.
         .OrderedMergeMany();
 
-    public IEnumerable<Occurrence> GetOccurrences(IDateTime startTime, IDateTime endTime)
+    public IEnumerable<Occurrence> GetOccurrences(IDateTime startTime = null, IDateTime endTime = null)
         => GetOccurrences(iCal => iCal.GetOccurrences(startTime, endTime));
 
     public IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime)
         => GetOccurrences(iCal => iCal.GetOccurrences(startTime, endTime));
 
-    public IEnumerable<Occurrence> GetOccurrences<T>(IDateTime startTime, IDateTime endTime) where T : IRecurringComponent
+    public IEnumerable<Occurrence> GetOccurrences<T>(IDateTime startTime = null, IDateTime endTime = null) where T : IRecurringComponent
         => GetOccurrences(iCal => iCal.GetOccurrences<T>(startTime, endTime));
 
     public IEnumerable<Occurrence> GetOccurrences<T>(DateTime? startTime, DateTime? endTime) where T : IRecurringComponent
