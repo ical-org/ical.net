@@ -58,15 +58,6 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         }
     }
 
-    public virtual void CheckRange(string name, IList<int?> values, int min, int max)
-    {
-        var allowZero = (min == 0 || max == 0);
-        foreach (var value in values)
-        {
-            CheckRange(name, value, min, max, allowZero);
-        }
-    }
-
     public virtual void CheckRange(string name, int value, int min, int max)
     {
         var allowZero = min == 0 || max == 0;
