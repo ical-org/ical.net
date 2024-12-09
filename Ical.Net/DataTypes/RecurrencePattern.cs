@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,20 +27,7 @@ public class RecurrencePattern : EncodableDataType
 #pragma warning restore 0618
     public FrequencyType Frequency { get; set; }
 
-    private DateTime _until = DateTime.MinValue;
-    public DateTime Until
-    {
-        get => _until;
-        set
-        {
-            if (_until == value && _until.Kind == value.Kind)
-            {
-                return;
-            }
-
-            _until = value;
-        }
-    }
+    public DateTime? Until { get; set; }
 
     public int Count { get; set; } = int.MinValue;
 
@@ -146,7 +134,8 @@ public class RecurrencePattern : EncodableDataType
             return;
         }
         var serializer = new RecurrencePatternSerializer();
-        CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
+        if (serializer.Deserialize(new StringReader(value)) is ICopyable deserialized)
+            CopyFrom(deserialized);
     }
 
     public override string ToString()
@@ -174,7 +163,7 @@ public class RecurrencePattern : EncodableDataType
                                                       && CollectionEquals(ByMonth, other.ByMonth)
                                                       && CollectionEquals(BySetPosition, other.BySetPosition);
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;

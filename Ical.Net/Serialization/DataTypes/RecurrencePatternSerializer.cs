@@ -83,9 +83,10 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         // that to be unassigned.
 
         var t1 = obj1.GetType();
+        var t2 = obj2.GetType();
 
         var fi1 = t1.GetField("MinValue");
-        var fi2 = t1.GetField("MinValue");
+        var fi2 = t2.GetField("MinValue");
 
         var isMin1 = fi1 != null && obj1.Equals(fi1.GetValue(null));
         var isMin2 = fi2 != null && obj2.Equals(fi2.GetValue(null));
@@ -142,13 +143,13 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
             values.Add("INTERVAL=" + interval);
         }
 
-        if (recur.Until != DateTime.MinValue)
+        if (recur.Until is not null)
         {
             var serializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
             if (serializer != null)
             {
-                var until = new CalDateTime(DateOnly.FromDateTime(recur.Until), TimeOnly.FromDateTime(recur.Until),
-                    recur.Until.Kind == DateTimeKind.Utc ? "UTC" : null);
+                var until = new CalDateTime(DateOnly.FromDateTime(recur.Until.Value), TimeOnly.FromDateTime(recur.Until.Value),
+                    recur.Until.Value.Kind == DateTimeKind.Utc ? "UTC" : null);
 
                 values.Add("UNTIL=" + serializer.SerializeToString(until));
             }

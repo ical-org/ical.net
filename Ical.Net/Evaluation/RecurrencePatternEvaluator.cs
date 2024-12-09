@@ -29,9 +29,9 @@ public class RecurrencePatternEvaluator : Evaluator
         r.CopyFrom(Pattern);
 
         // Convert the UNTIL value to one that matches the same time information as the reference date
-        if (r.Until != DateTime.MinValue)
+        if (r.Until is not null)
         {
-            r.Until = MatchTimeZone(referenceDate, r.Until);
+            r.Until = MatchTimeZone(referenceDate, r.Until.Value);
         }
 
         if (referenceDate.HasTime)
@@ -243,10 +243,10 @@ public class RecurrencePatternEvaluator : Evaluator
 
         var noCandidateIncrementCount = 0;
         var candidate = DateTime.MinValue;
-        int dateCount = 0;
+        var dateCount = 0;
         while (maxCount < 0 || dateCount < maxCount)
         {
-            if (pattern.Until != DateTime.MinValue && candidate != DateTime.MinValue && candidate > pattern.Until)
+            if (pattern.Until is not null && candidate != DateTime.MinValue && candidate > pattern.Until)
             {
                 break;
             }
@@ -291,7 +291,7 @@ public class RecurrencePatternEvaluator : Evaluator
                         continue;
                     }
 
-                    if (pattern.Until == DateTime.MinValue || candidate <= pattern.Until)
+                    if (pattern.Until is null || candidate <= pattern.Until)
                     {
                         yield return candidate;
                         dateCount++;
