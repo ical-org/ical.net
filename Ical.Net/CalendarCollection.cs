@@ -49,7 +49,7 @@ public class CalendarCollection : List<Calendar>
         // Enumerate the list of occurrences (not the occurrences themselves) now to ensure
         // the initialization code is run, including validation and error handling.
         // This way we receive validation errors early, not only when enumeration starts.
-        .ToArray()
+        .ToArray() //NOSONAR - deliberately enumerate here
 
         // Merge the individual sequences into a single one. Take advantage of them
         // being ordered to avoid full enumeration.

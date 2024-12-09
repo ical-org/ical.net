@@ -238,7 +238,7 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
             // Enumerate the list of occurrences (not the occurrences themselves) now to ensure
             // the initialization code is run, including validation and error handling.
             // This way we receive validation errors early, not only when enumeration starts.
-            .ToList()
+            .ToList() //NOSONAR - deliberately enumerate here
 
             // Merge the individual sequences into a single one. Take advantage of them
             // being ordered to avoid full enumeration.

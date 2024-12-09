@@ -58,7 +58,7 @@ public class RecurringEvaluator : Evaluator
             // Enumerate the outer sequence (not the inner sequences of periods themselves) now to ensure
             // the initialization code is run, including validation and error handling.
             // This way we receive validation errors early, not only when enumeration starts.
-            .ToList();
+            .ToList(); //NOSONAR - deliberately enumerate here
 
 
         //Only add referenceDate if there are no RecurrenceRules defined
@@ -103,7 +103,7 @@ public class RecurringEvaluator : Evaluator
             // Enumerate the outer sequence (not the inner sequences of periods themselves) now to ensure
             // the initialization code is run, including validation and error handling.
             // This way we receive validation errors early, not only when enumeration starts.
-            .ToList();
+            .ToList(); //NOSONAR - deliberately enumerate here
 
         return exRuleEvaluatorQueries.OrderedMergeMany();
     }
