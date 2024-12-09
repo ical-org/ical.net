@@ -20,7 +20,7 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public class RecurrencePattern : EncodableDataType
 {
-    private int _interval = int.MinValue;
+    private int? _interval;
 #pragma warning disable 0618
     private RecurrenceRestrictionType? _restrictionType;
     private RecurrenceEvaluationModeType? _evaluationMode;
@@ -29,7 +29,7 @@ public class RecurrencePattern : EncodableDataType
 
     public DateTime? Until { get; set; }
 
-    public int Count { get; set; } = int.MinValue;
+    public int? Count { get; set; }
 
     /// <summary>
     /// Specifies how often the recurrence should repeat.
@@ -39,9 +39,7 @@ public class RecurrencePattern : EncodableDataType
     /// </summary>
     public int Interval
     {
-        get => _interval == int.MinValue
-            ? 1
-            : _interval;
+        get => _interval ?? 1;
         set => _interval = value;
     }
 
@@ -181,7 +179,7 @@ public class RecurrencePattern : EncodableDataType
 #pragma warning restore 0618
             hashCode = (hashCode * 397) ^ (int) Frequency;
             hashCode = (hashCode * 397) ^ Until.GetHashCode();
-            hashCode = (hashCode * 397) ^ Count;
+            hashCode = (hashCode * 397) ^ (Count ?? 0);
             hashCode = (hashCode * 397) ^ (int) FirstDayOfWeek;
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(BySecond);
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ByMinute);

@@ -211,7 +211,6 @@ public enum FrequencyType
 /// </summary>
 public enum FrequencyOccurrence
 {
-    None = int.MinValue,
     Last = -1,
     SecondToLast = -2,
     ThirdToLast = -3,

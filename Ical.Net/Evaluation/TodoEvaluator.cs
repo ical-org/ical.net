@@ -65,7 +65,7 @@ public class TodoEvaluator : RecurringEvaluator
 
     private void DetermineStartingRecurrence(RecurrencePattern recur, ref IDateTime referenceDateTime)
     {
-        if (recur.Count != int.MinValue)
+        if (recur.Count.HasValue)
         {
             referenceDateTime = Todo.Start.Copy<IDateTime>();
         }
