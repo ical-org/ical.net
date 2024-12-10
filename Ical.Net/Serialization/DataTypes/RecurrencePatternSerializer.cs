@@ -88,24 +88,11 @@ public class RecurrencePatternSerializer : EncodableDataTypeSerializer
         }
     }
 
-    public virtual void CheckMutuallyExclusive<T, TU>(string name1, string name2, T obj1, TU obj2)
+    public virtual void CheckMutuallyExclusive<T, TU>(string name1, string name2, T? obj1, TU? obj2)
+        where T : struct
+        where TU : struct
     {
-        if (Equals(obj1, default(T)) || Equals(obj2, default(TU)))
-        {
-            return;
-        }
-        // If the object is MinValue instead of its default, consider
-        // that to be unassigned.
-
-        var t1 = obj1.GetType();
-        var t2 = obj2.GetType();
-
-        var fi1 = t1.GetField("MinValue");
-        var fi2 = t2.GetField("MinValue");
-
-        var isMin1 = fi1 != null && obj1.Equals(fi1.GetValue(null));
-        var isMin2 = fi2 != null && obj2.Equals(fi2.GetValue(null));
-        if (isMin1 || isMin2)
+        if ((obj1 == null) || (obj2 == null))
         {
             return;
         }
