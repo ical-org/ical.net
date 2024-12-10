@@ -246,16 +246,16 @@ public class RecurrencePatternEvaluator : Evaluator
         var expandBehavior = RecurrenceUtil.GetExpandBehaviorList(pattern);
 
         var noCandidateIncrementCount = 0;
-        var candidate = DateTime.MinValue;
+        DateTime? candidate = null;
         var dateCount = 0;
         while (maxCount < 0 || dateCount < maxCount)
         {
-            if (pattern.Until is not null && candidate != DateTime.MinValue && candidate > pattern.Until)
+            if (pattern.Until is not null && candidate > pattern.Until)
             {
                 break;
             }
 
-            if (candidate != DateTime.MinValue && candidate > periodEnd)
+            if (candidate > periodEnd)
             {
                 break;
             }
@@ -297,7 +297,7 @@ public class RecurrencePatternEvaluator : Evaluator
 
                     if (pattern.Until is null || candidate <= pattern.Until)
                     {
-                        yield return candidate;
+                        yield return candidate.Value;
                         dateCount++;
                     }
                 }
