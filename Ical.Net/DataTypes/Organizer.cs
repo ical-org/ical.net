@@ -18,7 +18,15 @@ public class Organizer : EncodableDataType
 {
     public virtual Uri SentBy
     {
-        get => new Uri(Parameters.Get("SENT-BY"));
+        get
+        {
+            string sentBy = Parameters.Get("SENT-BY");
+            if (!string.IsNullOrWhiteSpace(sentBy))
+            {
+                return new Uri(sentBy);
+            }
+            return default;
+        }
         set
         {
             if (value != null)
