@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -16,7 +17,7 @@ namespace Ical.Net.DataTypes;
 [DebuggerDisplay("{Value}")]
 public class Organizer : EncodableDataType
 {
-    public virtual Uri SentBy
+    public virtual Uri? SentBy
     {
         get
         {
@@ -25,7 +26,7 @@ public class Organizer : EncodableDataType
             {
                 return new Uri(sentBy);
             }
-            return default;
+            return null;
         }
         set
         {
@@ -35,7 +36,7 @@ public class Organizer : EncodableDataType
             }
             else
             {
-                Parameters.Set("SENT-BY", (string) null);
+                Parameters.Remove("SENT-BY");
             }
         }
     }
@@ -46,9 +47,18 @@ public class Organizer : EncodableDataType
         set => Parameters.Set("CN", value);
     }
 
-    public virtual Uri DirectoryEntry
+    public virtual Uri? DirectoryEntry
     {
-        get => new Uri(Parameters.Get("DIR"));
+        get
+        {
+            string dir = Parameters.Get("DIR");
+            if (!string.IsNullOrWhiteSpace(dir))
+            {
+                return new Uri(dir);
+            }
+
+            return null;
+        }
         set
         {
             if (value != null)
@@ -57,12 +67,12 @@ public class Organizer : EncodableDataType
             }
             else
             {
-                Parameters.Set("DIR", (string) null);
+                Parameters.Remove("DIR");
             }
         }
     }
 
-    public virtual Uri Value { get; set; }
+    public virtual Uri? Value { get; set; }
 
     public Organizer() { }
 
@@ -79,7 +89,7 @@ public class Organizer : EncodableDataType
 
     protected bool Equals(Organizer other) => Equals(Value, other.Value);
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj))
         {

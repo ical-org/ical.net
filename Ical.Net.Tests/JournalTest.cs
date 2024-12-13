@@ -69,4 +69,15 @@ public class JournalTest
             Assert.That(j.Start, Is.Null);
         });
     }
+
+    [Test, Category("Journal")]
+    public void Journal3()
+    {
+        var iCal = Calendar.Load(IcsFiles.Journal3);
+        ProgramTest.TestCal(iCal);
+        Assert.That(iCal.Journals, Has.Count.EqualTo(1));
+        var j = iCal.Journals.First();
+
+        Assert.That(j.Organizer.SentBy, Is.Null, "Expected Organizer's SENT-BY to be null, but it was not.");
+    }
 }
