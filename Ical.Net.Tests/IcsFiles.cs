@@ -82,6 +82,7 @@ internal class IcsFiles
     internal static string HourlyUntil1 => ReadStream("Ical.Net.Tests.Calendars.Recurrence.HourlyUntil1.ics");
     internal static string Journal1 => ReadStream("Ical.Net.Tests.Calendars.Journal.JOURNAL1.ics");
     internal static string Journal2 => ReadStream("Ical.Net.Tests.Calendars.Journal.JOURNAL2.ics");
+    internal static string Journal3 => ReadStream("Ical.Net.Tests.Calendars.Journal.JOURNAL3.ics");
     internal static string Language1 => ReadStream("Ical.Net.Tests.Calendars.Serialization.Language1.ics");
     internal static string Language2 => ReadStream("Ical.Net.Tests.Calendars.Serialization.Language2.ics");
     internal static string Language3 => ReadStream("Ical.Net.Tests.Calendars.Serialization.Language3.ics");
