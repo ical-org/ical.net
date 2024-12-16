@@ -316,4 +316,26 @@ public class CalDateTimeTests
             Assert.That(new CalDateTime(new CalDateTime(2025, 1, 1)), Is.EqualTo(new CalDateTime(2025, 1, 1)));
         });
     }
+
+    public static IEnumerable<TestCaseData> AddAndSubtractTestCases()
+    {
+     yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: null), TimeSpan.FromHours(4))
+        .SetName("Floating");
+
+     yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: CalDateTime.UtcTzId), TimeSpan.FromHours(4))
+         .SetName("UTC");
+
+     yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: "Europe/Paris"), TimeSpan.FromHours(4))
+         .SetName("Zoned Date/Time with DST change");
+    }
+
+    [Test, TestCaseSource(nameof(AddAndSubtractTestCases))]
+    public void AddAndSubtract_ShouldBeReversible(CalDateTime t, TimeSpan d)
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Add(d).Subtract(d), Is.EqualTo(t));
+            Assert.That(t.Add(d).Subtract(t), Is.EqualTo(d));
+        });
+    }
 }
