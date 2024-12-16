@@ -222,22 +222,17 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// <inheritdoc/>
     public override void CopyFrom(ICopyable obj)
     {
+        if (obj is not CalDateTime calDt)
+            return;
+
         base.CopyFrom(obj);
 
-        if (obj is not IDateTime dt)
-        {
-            return;
-        }
+        // Maintain the private date/time backing fields
+        _dateOnly = calDt._dateOnly;
+        _timeOnly = TruncateTimeToSeconds(calDt._timeOnly);
+        _tzId = calDt._tzId;
 
-        if (dt is CalDateTime calDt)
-        {
-            // Maintain the private date/time backing fields
-            _dateOnly = calDt._dateOnly;
-            _timeOnly = TruncateTimeToSeconds(calDt._timeOnly);
-            _tzId = calDt._tzId;
-        }
-
-        AssociateWith(dt);
+        AssociateWith(calDt);
     }
 
     public bool Equals(CalDateTime other) => this == other;
