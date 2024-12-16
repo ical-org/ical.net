@@ -315,31 +315,6 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     }
 
     /// <summary>
-    /// Subtracts a <see cref="TimeSpan"/> from the <see cref="CalDateTime"/>.
-    /// </summary>
-    /// <remarks>
-    /// This will also add a <see cref="IDateTime.Time"/> part that did not exist before the operation,
-    /// if the <see cref="TimeSpan"/> is not a multiple of 24 hours.
-    /// </remarks>
-    public static IDateTime operator -(CalDateTime left, TimeSpan right)
-    {
-        return left.Subtract(right);
-    }
-
-
-    /// <summary>
-    /// Adds a <see cref="TimeSpan"/> to the <see cref="CalDateTime"/>.
-    /// </summary>
-    /// <remarks>
-    /// This will also add a <see cref="IDateTime.Time"/> part that did not exist before the operation,
-    /// if the <see cref="TimeSpan"/> is not a multiple of 24 hours.
-    /// </remarks>
-    public static IDateTime operator +(CalDateTime left, TimeSpan right)
-    {
-        return left.Add(right);
-    }
-
-    /// <summary>
     /// Creates a new instance of <see cref="CalDateTime"/> with <see langword="true"/> for <see cref="HasTime"/>
     /// </summary>
     public static implicit operator CalDateTime(DateTime left)
