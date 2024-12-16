@@ -84,7 +84,7 @@ csharp_prefer_braces = false:suggestion
 #Style - expression bodied member options
 
 # Expression-bodied members
-csharp_style_expression_bodied_methods = false:suggestion
+csharp_style_expression_bodied_methods = when_on_single_line:suggestion
 csharp_style_expression_bodied_properties = true
 csharp_style_expression_bodied_properties = when_on_single_line:suggestion
 csharp_style_expression_bodied_indexers = false:warning

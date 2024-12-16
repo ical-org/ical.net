@@ -234,20 +234,20 @@ public class CalDateTimeTests
     }
 
 
-    [Test, TestCaseSource(nameof(DateOnlyArithmeticTestCases))]
-    public (DateTime Value, bool HasTime) DateOnlyArithmeticTests(Func<IDateTime, IDateTime> operation)
+    [Test, TestCaseSource(nameof(DateOnlyValidArithmeticTestCases))]
+    public (DateTime Value, bool HasTime) DateOnlyValidArithmeticTests(Func<IDateTime, IDateTime> operation)
     {
         var result = operation(new CalDateTime(2025, 1, 15));
         return (result.Value, result.HasTime);
     }
 
-    public static IEnumerable DateOnlyArithmeticTestCases()
+    public static IEnumerable DateOnlyValidArithmeticTestCases()
     {
         var dateTime = new DateTime(2025, 1, 15);
 
         yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Subtract(TimeSpan.FromDays(1))))
             .Returns((dateTime.AddDays(-1), false))
-            .SetName($"{nameof(IDateTime.Subtract)} 1 day TimeSpan HasTime=false");
+            .SetName($"{nameof(IDateTime.Subtract)} 1 day TimeSpan");
 
         yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddYears(1)))
             .Returns((dateTime.AddYears(1), false))
@@ -263,31 +263,37 @@ public class CalDateTimeTests
 
         yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddHours(24)))
             .Returns((dateTime.AddHours(24), false))
-            .SetName($"{nameof(IDateTime.AddHours)} 24 hours HasTime=false");
-
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddHours(1)))
-            .Returns((dateTime.AddHours(1), true))
-            .SetName($"{nameof(IDateTime.AddHours)} 1 hour HasTime=true");
+            .SetName($"{nameof(IDateTime.AddHours)} 24 hours");
 
         yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddMinutes(24 * 60)))
             .Returns((dateTime.AddMinutes(24 * 60), false))
-            .SetName($"{nameof(IDateTime.AddMinutes)} 1 day in minutes HasTime=false");
-
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddMinutes(23 * 60)))
-            .Returns((dateTime.AddMinutes(23 * 60), true))
-            .SetName($"{nameof(IDateTime.AddMinutes)} 23 hours in minutes HasTime=true");
+            .SetName($"{nameof(IDateTime.AddMinutes)} 1 day in minutes");
 
         yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddSeconds(TimeSpan.FromDays(1).Seconds)))
             .Returns((dateTime.AddSeconds(TimeSpan.FromDays(1).Seconds), false))
-            .SetName($"{nameof(IDateTime.AddSeconds)} 1 day in seconds HasTime=false");
+            .SetName($"{nameof(IDateTime.AddSeconds)} 1 day in seconds");
 
         yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(TimeSpan.FromDays(1))))
             .Returns((dateTime.Add(TimeSpan.FromDays(1)), false))
-            .SetName($"{nameof(IDateTime.Add)} 1 day TimeSpan HasTime=false");
+            .SetName($"{nameof(IDateTime.Add)} 1 day TimeSpan");
 
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(TimeSpan.FromSeconds(30))))
-            .Returns((dateTime.Add(TimeSpan.FromSeconds(30)), true))
-            .SetName($"{nameof(IDateTime.Add)} 30 seconds TimeSpan HasTime=true");
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(TimeSpan.Zero)))
+            .Returns((dateTime.Add(TimeSpan.Zero), false))
+            .SetName($"{nameof(IDateTime.Add)} TimeSpan.Zero");
+    }
+
+    [Test]
+    public void DateOnlyInvalidArithmeticTests()
+    {
+        var dt = new CalDateTime(2025, 1, 15);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(() => dt.Add(TimeSpan.FromHours(1)), Throws.TypeOf<InvalidOperationException>());
+            Assert.That(() => dt.AddHours(2), Throws.TypeOf<InvalidOperationException>());
+            Assert.That(() => dt.AddMinutes(3), Throws.TypeOf<InvalidOperationException>());
+            Assert.That(() => dt.AddSeconds(4), Throws.TypeOf<InvalidOperationException>());
+        });
     }
 
     [Test]
@@ -314,6 +320,28 @@ public class CalDateTimeTests
             Assert.That(c.ToString("dd.MM.yyyy"), Is.EqualTo("02.01.2025 Europe/Berlin"));
             // Create a date-only CalDateTime from a CalDateTime
             Assert.That(new CalDateTime(new CalDateTime(2025, 1, 1)), Is.EqualTo(new CalDateTime(2025, 1, 1)));
+        });
+    }
+
+    public static IEnumerable<TestCaseData> AddAndSubtractTestCases()
+    {
+     yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: null), TimeSpan.FromHours(4))
+        .SetName("Floating");
+
+     yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: CalDateTime.UtcTzId), TimeSpan.FromHours(4))
+         .SetName("UTC");
+
+     yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: "Europe/Paris"), TimeSpan.FromHours(4))
+         .SetName("Zoned Date/Time with DST change");
+    }
+
+    [Test, TestCaseSource(nameof(AddAndSubtractTestCases))]
+    public void AddAndSubtract_ShouldBeReversible(CalDateTime t, TimeSpan d)
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(t.Add(d).Subtract(d), Is.EqualTo(t));
+            Assert.That(t.Add(d).Subtract(t), Is.EqualTo(d));
         });
     }
 }
