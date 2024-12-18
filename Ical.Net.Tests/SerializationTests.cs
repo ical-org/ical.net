@@ -27,7 +27,7 @@ public class SerializationTests
     private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
     private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
     private static string SerializeToString(CalendarEvent e) => SerializeToString(new Calendar { Events = { e } });
-    private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), DtEnd = new CalDateTime(_later), Duration = _later - _nowTime };
+    private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), Duration = _later - _nowTime };
     private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
 
     internal static void CompareCalendars(Calendar cal1, Calendar cal2)
@@ -362,7 +362,7 @@ public class SerializationTests
     [Test]
     public void DurationIsStable_Tests()
     {
-        var e = GetSimpleEvent();
+        var e = GetSimpleEvent(); // DTSTART and DURATION are set
         var originalDuration = e.Duration;
         var c = new Calendar();
         c.Events.Add(e);
@@ -370,7 +370,7 @@ public class SerializationTests
         Assert.Multiple(() =>
         {
             Assert.That(e.Duration, Is.EqualTo(originalDuration));
-            Assert.That(!serialized.Contains("DURATION"), Is.True);
+            Assert.That(serialized.Contains("DURATION"), Is.True);
         });
     }
 
