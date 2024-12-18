@@ -13,6 +13,10 @@
         <PackageIcon>assets/icon.png</PackageIcon>
         <PackageReadmeFile>assets/readme.md</PackageReadmeFile>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+        <!-- netstandard2.0 does not support NRT -->
+        <NoWarn>$(NoWarn);CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8620;CS8714</NoWarn>
+    </PropertyGroup>
     <ItemGroup>
         <None Include="..\readme.md">
             <Pack>true</Pack>
