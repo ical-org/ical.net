@@ -79,7 +79,6 @@ public class EqualityAndHashingTests
     {
         DtStart = new CalDateTime(_nowTime),
         DtEnd = new CalDateTime(_later),
-        Duration = TimeSpan.FromHours(1),
     };
 
     private static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } });
@@ -112,7 +111,6 @@ public class EqualityAndHashingTests
         var e = new CalendarEvent
         {
             DtStart = new CalDateTime(_nowTime),
-            DtEnd = new CalDateTime(_later),
             Duration = TimeSpan.FromHours(1),
             RecurrenceRules = new List<RecurrencePattern> { rruleA },
         };
@@ -130,7 +128,6 @@ public class EqualityAndHashingTests
         expectedCalendar.Events.Add(new CalendarEvent
         {
             DtStart = new CalDateTime(_nowTime),
-            DtEnd = new CalDateTime(_later),
             Duration = TimeSpan.FromHours(1),
             RecurrenceRules = new List<RecurrencePattern> { rruleB },
         });

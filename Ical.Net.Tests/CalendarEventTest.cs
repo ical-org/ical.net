@@ -427,34 +427,37 @@ END:VCALENDAR";
     public void HourMinuteSecondOffsetParsingTest()
     {
         const string ical =
-            @"BEGIN:VCALENDAR
-PRODID:-//1&1 Mail & Media GmbH/GMX Kalender Server 3.10.0//NONSGML//DE
-VERSION:2.0
-CALSCALE:GREGORIAN
-METHOD:REQUEST
-BEGIN:VTIMEZONE
-TZID:Europe/Brussels
-TZURL:http://tzurl.org/zoneinfo/Europe/Brussels
-X-LIC-LOCATION:Europe/Brussels
-BEGIN:DAYLIGHT
-TZOFFSETFROM:-001730
-TZOFFSETTO:-001730
-TZNAME:CEST
-DTSTART:19810329T020000
-RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
-END:DAYLIGHT
-BEGIN:STANDARD
-TZOFFSETFROM:+001730
-TZOFFSETTO:+001730
-TZNAME:BMT
-DTSTART:18800101T000000
-RDATE:18800101T000000
-END:STANDARD
-END:VTIMEZONE
-END:VCALENDAR";
+            """
+            BEGIN:VCALENDAR
+            PRODID:-//1&1 Mail & Media GmbH/GMX Kalender Server 3.10.0//NONSGML//DE
+            VERSION:2.0
+            CALSCALE:GREGORIAN
+            METHOD:REQUEST
+            BEGIN:VTIMEZONE
+            TZID:Europe/Brussels
+            TZURL:http://tzurl.org/zoneinfo/Europe/Brussels
+            X-LIC-LOCATION:Europe/Brussels
+            BEGIN:DAYLIGHT
+            TZOFFSETFROM:-001730
+            TZOFFSETTO:-001730
+            TZNAME:CEST
+            DTSTART:19810329T020000
+            RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU
+            END:DAYLIGHT
+            BEGIN:STANDARD
+            TZOFFSETFROM:+001730
+            TZOFFSETTO:+001730
+            TZNAME:BMT
+            DTSTART:18800101T000000
+            RDATE:18800101T000000
+            END:STANDARD
+            END:VTIMEZONE
+            END:VCALENDAR
+            """;
         var timezones = Calendar.Load(ical)
             .TimeZones.First()
-            .Children.Cast<CalendarComponent>();
+            .Children.Cast<CalendarComponent>()
+            .ToArray();
 
         var positiveOffset = timezones
             .Skip(1).Take(1).First()
@@ -472,78 +475,99 @@ END:VCALENDAR";
 
 
     [Test, Category("CalendarEvent")]
-    public void TestGetEffectiveDuration()
+    public void GetNominalDurationTests()
     {
-        var now = _now.Subtract(TimeSpan.FromTicks(_now.Ticks % TimeSpan.TicksPerSecond));
+        var dt = new DateTime(2025, 3, 1, 14, 30, 0);
+        const string tzIdStart = "America/New_York";
+        const string tzIdEnd = "Europe/London";
 
-        var evt = new CalendarEvent()
+        var evt = new CalendarEvent
         {
-            DtStart = new CalDateTime(DateOnly.FromDateTime(now), TimeOnly.FromDateTime(now)),
-            DtEnd = new CalDateTime(DateOnly.FromDateTime(now.AddHours(1)), TimeOnly.FromDateTime(now.AddHours(1)))
+            DtStart = new CalDateTime(DateOnly.FromDateTime(dt), TimeOnly.FromDateTime(dt), tzIdStart),
+            DtEnd = new CalDateTime(DateOnly.FromDateTime(dt.AddHours(1)), TimeOnly.FromDateTime(dt.AddHours(1)), tzIdEnd)
         };
 
         Assert.Multiple(() =>
         {
-            Assert.That(evt.DtStart.Value, Is.EqualTo(now));
-            Assert.That(evt.DtEnd.Value, Is.EqualTo(now.AddHours(1)));
-            Assert.That(evt.GetFirstDuration(), Is.EqualTo(TimeSpan.FromHours(1)));
+            Assert.That(evt.DtStart.Value, Is.EqualTo(dt));
+            Assert.That(evt.DtEnd.Value, Is.EqualTo(dt.AddHours(1)));
+            Assert.That(evt.CalcFirstNominalDuration(), Is.EqualTo(TimeSpan.FromHours(1)));
         });
 
-        evt = new CalendarEvent()
+        evt = new CalendarEvent
         {
-            DtStart = new CalDateTime(DateOnly.FromDateTime(now.Date), TimeOnly.FromDateTime(now.Date)),
-            DtEnd = new CalDateTime(DateOnly.FromDateTime(now.Date.AddHours(1)), TimeOnly.FromDateTime(now.Date.AddHours(1)))
+            DtStart = new CalDateTime(DateOnly.FromDateTime(dt.Date)),
+            DtEnd = new CalDateTime(DateOnly.FromDateTime(dt.Date))
         };
 
         Assert.Multiple(() =>
         {
-            Assert.That(evt.DtStart.Value, Is.EqualTo(now.Date));
-            Assert.That(evt.GetFirstDuration(), Is.EqualTo(TimeSpan.FromHours(1)));
+            Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
+            Assert.That(evt.CalcFirstNominalDuration(), Is.EqualTo(TimeSpan.Zero));
         });
 
-        evt = new CalendarEvent()
+        evt = new CalendarEvent
         {
-            DtStart = new CalDateTime(DateOnly.FromDateTime(now)),
+            DtStart = new CalDateTime(DateOnly.FromDateTime(dt)),
         };
 
         Assert.Multiple(() =>
         {
-            Assert.That(evt.DtStart.Value, Is.EqualTo(now.Date));
-            Assert.That(evt.GetFirstDuration(), Is.EqualTo(TimeSpan.FromDays(1)));
+            Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
+            Assert.That(evt.Duration, Is.Null);
+            Assert.That(evt.CalcFirstNominalDuration(), Is.EqualTo(TimeSpan.FromDays(1)));
         });
 
-        evt = new CalendarEvent()
+        evt = new CalendarEvent
         {
-            DtStart = new CalDateTime(DateOnly.FromDateTime(now), TimeOnly.FromDateTime(now)),
+            DtStart = new CalDateTime(DateOnly.FromDateTime(dt), TimeOnly.FromDateTime(dt)),
             Duration = TimeSpan.FromHours(2),
         };
 
         Assert.Multiple(() => {
-            Assert.That(evt.DtStart.Value, Is.EqualTo(now));
+            Assert.That(evt.DtStart.Value, Is.EqualTo(dt));
             Assert.That(evt.DtEnd, Is.Null);
-            Assert.That(evt.GetFirstDuration(), Is.EqualTo(TimeSpan.FromHours(2)));
+            Assert.That(evt.CalcFirstNominalDuration(), Is.EqualTo(TimeSpan.FromHours(2)));
         });
 
         evt = new CalendarEvent()
         {
-            DtStart = new CalDateTime(DateOnly.FromDateTime(now.Date), TimeOnly.FromDateTime(now.Date)),
+            DtStart = new CalDateTime(DateOnly.FromDateTime(dt.Date), TimeOnly.FromDateTime(dt.Date)),
             Duration = TimeSpan.FromHours(2),
         };
 
         Assert.Multiple(() => {
-            Assert.That(evt.DtStart.Value, Is.EqualTo(now.Date));
-            Assert.That(evt.GetFirstDuration(), Is.EqualTo(TimeSpan.FromHours(2)));
+            Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
+            Assert.That(evt.CalcFirstNominalDuration(), Is.EqualTo(TimeSpan.FromHours(2)));
         });
 
         evt = new CalendarEvent()
         {
-            DtStart = new CalDateTime(DateOnly.FromDateTime(now)),
+            DtStart = new CalDateTime(DateOnly.FromDateTime(dt)),
             Duration = TimeSpan.FromDays(1),
         };
 
         Assert.Multiple(() => {
-            Assert.That(evt.DtStart.Value, Is.EqualTo(now.Date));
-            Assert.That(evt.GetFirstDuration(), Is.EqualTo(TimeSpan.FromDays(1)));
+            Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
+            Assert.That(evt.CalcFirstNominalDuration(), Is.EqualTo(TimeSpan.FromDays(1)));
+        });
+    }
+
+    [Test]
+    public void EitherEndTime_OrDuraction_CanBeSet()
+    {
+        var evt = new CalendarEvent()
+        {
+            DtStart = new CalDateTime(2025, 10, 11, 12, 13, 14, CalDateTime.UtcTzId)
+        };
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(() => evt.DtEnd = new CalDateTime(2025, 12, 11), Throws.Nothing);
+            Assert.That(() => evt.Duration = TimeSpan.FromDays(1), Throws.InvalidOperationException);
+            Assert.That(() => evt.DtEnd = null, Throws.Nothing);
+            Assert.That(() => evt.Duration = TimeSpan.FromDays(1), Throws.Nothing);
+            Assert.That(() => evt.DtEnd = new CalDateTime(2025, 12, 11), Throws.InvalidOperationException);
         });
     }
 }
