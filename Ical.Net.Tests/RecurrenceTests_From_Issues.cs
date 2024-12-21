@@ -155,7 +155,7 @@ public class RecurrenceTests_From_Issues
             Assert.That(occurrence.Source, Is.SameAs(myEvent));
             Assert.That(occurrence.Period.StartTime.HasTime, Is.False);
             Assert.That(occurrence.Period.StartTime, Is.EqualTo(myEvent.Start));
-            Assert.That(occurrence.Period.EndTime.HasTime, Is.False);
+            Assert.That(occurrence.Period.EndTime?.HasTime, Is.False);
             Assert.That(occurrence.Period.EndTime, Is.EqualTo(myEvent.End));
         });
     }
@@ -194,7 +194,7 @@ public class RecurrenceTests_From_Issues
             Assert.That(occurrence.Source, Is.SameAs(myEvent));
             Assert.That(occurrence.Period.StartTime.HasTime, Is.False);
             Assert.That(occurrence.Period.StartTime, Is.EqualTo(myEvent.Start));
-            Assert.That(occurrence.Period.EndTime.HasTime, Is.False);
+            Assert.That(occurrence.Period.EndTime?.HasTime, Is.False);
             Assert.That(occurrence.Period.EndTime, Is.EqualTo(myEvent.End));
         });
     }
@@ -232,7 +232,7 @@ public class RecurrenceTests_From_Issues
             Assert.That(occurrence.Source, Is.SameAs(myEvent));
             Assert.That(occurrence.Period.StartTime.HasTime, Is.False);
             Assert.That(occurrence.Period.StartTime, Is.EqualTo(myEvent.Start));
-            Assert.That(occurrence.Period.EndTime.HasTime, Is.False);
+            Assert.That(occurrence.Period.EndTime?.HasTime, Is.False);
             Assert.That(occurrence.Period.EndTime, Is.EqualTo(myEvent.End));
         });
     }
@@ -270,7 +270,7 @@ public class RecurrenceTests_From_Issues
             Assert.That(myEvent.IsAllDay, Is.True);
             Assert.That(occurrence.Period.StartTime.HasTime, Is.False);
             Assert.That(occurrence.Period.StartTime, Is.EqualTo(myEvent.Start));
-            Assert.That(occurrence.Period.EndTime.HasTime, Is.False);
+            Assert.That(occurrence.Period.EndTime?.HasTime, Is.False);
             Assert.That(occurrence.Period.EndTime, Is.EqualTo(myEvent.End));
         });
     }

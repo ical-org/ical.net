@@ -491,7 +491,7 @@ END:VCALENDAR";
         {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt));
             Assert.That(evt.DtEnd.Value, Is.EqualTo(dt.AddHours(1)));
-            Assert.That(evt.CalcFirstNominalDuration(), Is.EqualTo(TimeSpan.FromHours(1)));
+            Assert.That(evt.GetTimeSpanToAddToPeriodStartTime(), Is.EqualTo(TimeSpan.FromHours(1)));
         });
 
         evt = new CalendarEvent
@@ -503,7 +503,7 @@ END:VCALENDAR";
         Assert.Multiple(() =>
         {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
-            Assert.That(evt.CalcFirstNominalDuration(), Is.EqualTo(TimeSpan.Zero));
+            Assert.That(evt.GetTimeSpanToAddToPeriodStartTime(), Is.EqualTo(TimeSpan.Zero));
         });
 
         evt = new CalendarEvent
@@ -515,7 +515,7 @@ END:VCALENDAR";
         {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
             Assert.That(evt.Duration, Is.Null);
-            Assert.That(evt.CalcFirstNominalDuration(), Is.EqualTo(TimeSpan.FromDays(1)));
+            Assert.That(evt.GetTimeSpanToAddToPeriodStartTime(), Is.EqualTo(TimeSpan.FromDays(1)));
         });
 
         evt = new CalendarEvent
@@ -527,7 +527,7 @@ END:VCALENDAR";
         Assert.Multiple(() => {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt));
             Assert.That(evt.DtEnd, Is.Null);
-            Assert.That(evt.CalcFirstNominalDuration(), Is.EqualTo(TimeSpan.FromHours(2)));
+            Assert.That(evt.GetTimeSpanToAddToPeriodStartTime(), Is.EqualTo(TimeSpan.FromHours(2)));
         });
 
         evt = new CalendarEvent()
@@ -538,7 +538,7 @@ END:VCALENDAR";
 
         Assert.Multiple(() => {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
-            Assert.That(evt.CalcFirstNominalDuration(), Is.EqualTo(TimeSpan.FromHours(2)));
+            Assert.That(evt.GetTimeSpanToAddToPeriodStartTime(), Is.EqualTo(TimeSpan.FromHours(2)));
         });
 
         evt = new CalendarEvent()
@@ -549,7 +549,7 @@ END:VCALENDAR";
 
         Assert.Multiple(() => {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
-            Assert.That(evt.CalcFirstNominalDuration(), Is.EqualTo(TimeSpan.FromDays(1)));
+            Assert.That(evt.GetTimeSpanToAddToPeriodStartTime(), Is.EqualTo(TimeSpan.FromDays(1)));
         });
     }
 

@@ -91,18 +91,18 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     }
 
     /// <summary>
-    /// Calculates and returns the <b>nominal duration</b> of the first occurrence of this event.
+    /// Gets the time span that gets added to the period start time to get the period end time.
     /// <para/>
     /// If the <see cref="CalendarEvent.Duration"/> property is not null, its value will be returned.<br/>
     /// If <see cref="RecurringComponent.DtStart"/> and <see cref="CalendarEvent.DtEnd"/> are set, it will return <see cref="CalendarEvent.DtEnd"/> minus <see cref="CalendarEvent.DtStart"/>.<br/>
     /// Otherwise, it will return <see cref="TimeSpan.Zero"/>.
     /// </summary>
     /// <remarks>
-    /// Note: For recurring events, the <b>effective duration</b> of individual occurrences may vary due to DST transitions
+    /// Note: For recurring events, the <b>exact duration</b> of individual occurrences may vary due to DST transitions
     /// of the given <see cref="RecurringComponent.DtStart"/> and <see cref="CalendarEvent.DtEnd"/> timezones.
     /// </remarks>
-    /// <returns>The <b>nominal duration</b> of this event.</returns>
-    public virtual TimeSpan CalcFirstNominalDuration()
+    /// <returns>The time span that gets added to the period start time to get the period end time.</returns>
+    public virtual TimeSpan GetTimeSpanToAddToPeriodStartTime()
     {
         // 3.8.5.3. Recurrence Rule
         // If the duration of the recurring component is specified with the
@@ -126,8 +126,9 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
                 "DTEND" or "DUE" property, then the same EXACT duration will apply
                 to all the members of the generated recurrence set.
 
-                We use the nominal duration here, because the caller will set the period end time to the
-                same timezone as the event end time, finally leading to an exact duration
+                We use the difference from DtStart to DtEnd (neglecting timezone),
+                because the caller will set the period end time to the
+                same timezone as the event end time. This finally leads to an exact duration
                 calculation from the zoned start time to the zoned end time.
              */
             return DtEnd.Value - DtStart.Value;
@@ -143,7 +144,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
             return TimeSpan.FromDays(1);
         }
 
-        // For DtStart.HasTime, but also the default case
+        // For DtStart.HasTime but no DtEnd - also the default case
         //
         // RFC 5545 3.6.1:
         // For cases where a "VEVENT" calendar component

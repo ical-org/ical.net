@@ -60,18 +60,19 @@ public class EventEvaluator : RecurringEvaluator
     private Period WithEndTime(Period period)
     {
         /*
-           Calculate the nominal duration of the event which is the duration of the
-           first occurrence from the event's definition.
+           We use a time span to calculate the end time of the event.
+           It evaluates the event's definition of DtStart and either DtEnd or Duration.
            
-           The nominal duration is used, because the period end time gets the same timezone as the event end time.
+           The time span is used, because the period end time gets the same timezone as the event end time.
            This ensures that the end time is correct, even for DST transitions.
+
            The exact duration is calculated from the zoned end time and the zoned start time,
-           and it may differ from the nominal duration.
+           and it may differ from the time span added to the period start time.
          */
-        var nominalDuration = CalendarEvent.CalcFirstNominalDuration();
+        var tsToAdd = CalendarEvent.GetTimeSpanToAddToPeriodStartTime();
 
         IDateTime endTime;
-        if (nominalDuration == TimeSpan.Zero)
+        if (tsToAdd == TimeSpan.Zero)
         {
             // For a zero-duration event, the end time is the same as the start time.
             endTime = period.StartTime;
@@ -79,11 +80,10 @@ public class EventEvaluator : RecurringEvaluator
         else
         {
             // Calculate the end time of the event as a DateTime
-            var endDt = period.StartTime.Value.Add(nominalDuration);
+            var endDt = period.StartTime.Value.Add(tsToAdd);
 
             // Create a CalDateTime object with the calculated end time.
-            // Ensure date-only or date-time consistency with the start time,
-            // and use the timezone from the event's definition.
+            // Ensure date-only or date-time consistency with the start time.
             endTime = new CalDateTime(
                 DateOnly.FromDateTime(endDt),
                 period.StartTime.HasTime ? TimeOnly.FromDateTime(endDt) : null,
