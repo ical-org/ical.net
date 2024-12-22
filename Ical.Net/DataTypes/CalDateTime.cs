@@ -258,28 +258,28 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     {
         return left != null
                && right != null
-               && (left.IsFloating || right.IsFloating ? left.Value < right.Value : left.AsUtc < right.AsUtc);
+               && ((left.IsFloating || right.IsFloating) ? left.Value < right.Value : left.AsUtc < right.AsUtc);
     }
 
     public static bool operator >(CalDateTime? left, IDateTime? right)
     {
         return left != null
                && right != null
-               && (left.IsFloating || right.IsFloating ? left.Value > right.Value : left.AsUtc > right.AsUtc);
+               && ((left.IsFloating || right.IsFloating) ? left.Value > right.Value : left.AsUtc > right.AsUtc);
     }
 
     public static bool operator <=(CalDateTime? left, IDateTime? right)
     {
         return left != null
                && right != null
-               && (left.IsFloating || right.IsFloating ? left.Value <= right.Value : left.AsUtc <= right.AsUtc);
+               && ((left.IsFloating || right.IsFloating) ? left.Value <= right.Value : left.AsUtc <= right.AsUtc);
     }
 
     public static bool operator >=(CalDateTime? left, IDateTime? right)
     {
         return left != null
                && right != null
-               && (left.IsFloating || right.IsFloating ? left.Value >= right.Value : left.AsUtc >= right.AsUtc);
+               && ((left.IsFloating || right.IsFloating) ? left.Value >= right.Value : left.AsUtc >= right.AsUtc);
     }
 
     public static bool operator ==(CalDateTime? left, IDateTime? right)
