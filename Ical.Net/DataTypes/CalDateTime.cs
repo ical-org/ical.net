@@ -222,30 +222,24 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// <inheritdoc/>
     public override void CopyFrom(ICopyable obj)
     {
+        if (obj is not CalDateTime calDt)
+            return;
+
         base.CopyFrom(obj);
 
-        if (obj is not IDateTime dt)
-        {
-            return;
-        }
+        // Maintain the private date/time backing fields
+        _dateOnly = calDt._dateOnly;
+        _timeOnly = TruncateTimeToSeconds(calDt._timeOnly);
+        _tzId = calDt._tzId;
 
-        if (dt is CalDateTime calDt)
-        {
-            // Maintain the private date/time backing fields
-            _dateOnly = calDt._dateOnly;
-            _timeOnly = TruncateTimeToSeconds(calDt._timeOnly);
-            _tzId = calDt._tzId;
-        }
-
-        AssociateWith(dt);
+        AssociateWith(calDt);
     }
 
-    public bool Equals(CalDateTime other)
-        => this == other;
+    public bool Equals(CalDateTime other) => this == other;
 
     /// <inheritdoc/>
     public override bool Equals(object? obj)
-        => obj is IDateTime && (CalDateTime)obj == this;
+        => obj is CalDateTime other && this == other;
 
     /// <inheritdoc/>
     public override int GetHashCode()
@@ -261,25 +255,33 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     }
 
     public static bool operator <(CalDateTime? left, IDateTime? right)
-        => left != null
-           && right != null
-           && (left.IsFloating || right.IsFloating ? left.Value < right.Value : left.AsUtc < right.AsUtc);
+    {
+        return left != null
+               && right != null
+               && ((left.IsFloating || right.IsFloating) ? left.Value < right.Value : left.AsUtc < right.AsUtc);
+    }
 
     public static bool operator >(CalDateTime? left, IDateTime? right)
-        => left != null
-           && right != null
-           && (left.IsFloating || right.IsFloating ? left.Value > right.Value : left.AsUtc > right.AsUtc);
-    
+    {
+        return left != null
+               && right != null
+               && ((left.IsFloating || right.IsFloating) ? left.Value > right.Value : left.AsUtc > right.AsUtc);
+    }
+
     public static bool operator <=(CalDateTime? left, IDateTime? right)
-        => left != null
-           && right != null
-           && (left.IsFloating || right.IsFloating ? left.Value <= right.Value : left.AsUtc <= right.AsUtc);
+    {
+        return left != null
+               && right != null
+               && ((left.IsFloating || right.IsFloating) ? left.Value <= right.Value : left.AsUtc <= right.AsUtc);
+    }
 
     public static bool operator >=(CalDateTime? left, IDateTime? right)
-        => left != null
-           && right != null
-           && (left.IsFloating || right.IsFloating ? left.Value >= right.Value : left.AsUtc >= right.AsUtc);
-    
+    {
+        return left != null
+               && right != null
+               && ((left.IsFloating || right.IsFloating) ? left.Value >= right.Value : left.AsUtc >= right.AsUtc);
+    }
+
     public static bool operator ==(CalDateTime? left, IDateTime? right)
     {
         if (ReferenceEquals(left, right))
@@ -303,60 +305,19 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     }
 
     public static bool operator !=(CalDateTime? left, IDateTime? right)
-        => !(left == right);
-
-    /// <summary>
-    /// Subtracts a <see cref="TimeSpan"/> from the <see cref="CalDateTime"/>.
-    /// </summary>
-    /// <remarks>
-    /// This will also add a <see cref="IDateTime.Time"/> part that did not exist before the operation,
-    /// if the <see cref="TimeSpan"/> is not a multiple of 24 hours.
-    /// </remarks>
-    public static IDateTime operator -(CalDateTime left, TimeSpan right)
     {
-        var copy = left.Copy<CalDateTime>();
-        var newValue = copy.Value - right;
-        if (!copy.HasTime && (right.Ticks % TimeSpan.TicksPerDay) == 0)
-        {
-            copy._dateOnly = DateOnly.FromDateTime(newValue);
-        }
-        else
-        {
-            copy._dateOnly = DateOnly.FromDateTime(newValue);
-            copy._timeOnly = TruncateTimeToSeconds(newValue);
-        }
-        return copy;
-    }
-
-    /// <summary>
-    /// Adds a <see cref="TimeSpan"/> to the <see cref="CalDateTime"/>.
-    /// </summary>
-    /// <remarks>
-    /// This will also add a <see cref="IDateTime.Time"/> part that did not exist before the operation,
-    /// if the <see cref="TimeSpan"/> is not a multiple of 24 hours.
-    /// </remarks>
-    public static IDateTime operator +(CalDateTime left, TimeSpan right)
-    {
-        var copy = left.Copy<CalDateTime>();
-        var newValue = copy.Value + right;
-        if (!copy.HasTime && (right.Ticks % TimeSpan.TicksPerDay) == 0)
-        {
-            copy._dateOnly = DateOnly.FromDateTime(newValue);
-        }
-        else
-        {
-            copy._dateOnly = DateOnly.FromDateTime(newValue);
-            copy._timeOnly = TruncateTimeToSeconds(newValue);
-        }
-        return copy;
+        return !(left == right);
     }
 
     /// <summary>
     /// Creates a new instance of <see cref="CalDateTime"/> with <see langword="true"/> for <see cref="HasTime"/>
     /// </summary>
-    public static implicit operator CalDateTime(DateTime left) => new CalDateTime(left);
+    public static implicit operator CalDateTime(DateTime left)
+    {
+        return new CalDateTime(left);
+    }
 
-/// <inheritdoc/>
+    /// <inheritdoc/>
     public DateTime AsUtc => DateTime.SpecifyKind(ToTimeZone(UtcTzId).Value, DateTimeKind.Utc);
 
     /// <inheritdoc/>
@@ -364,7 +325,6 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     {
         get
         {
-            // HasDate and HasTime both have setters, so they can be changed.
             if (_timeOnly.HasValue)
             {
                 return new DateTime(_dateOnly.Year, _dateOnly.Month,
@@ -393,9 +353,9 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     private string? _tzId;
 
     /// <summary>
-    /// Gets the IANA timezone ID of this <see cref="CalDateTime"/> instance.
+    /// Gets the timezone ID of this <see cref="CalDateTime"/> instance.
     /// It can be <see cref="UtcTzId"/> for Coordinated Universal Time,
-    /// or <see langword="null"/> for a floating date/time, or value for a specific timezone.
+    /// or <see langword="null"/> for a floating date/time, or a value for a specific timezone.
     /// </summary>
     public string? TzId => _tzId;
 
@@ -434,7 +394,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     public TimeOnly? Time => _timeOnly;
 
     /// <summary>
-    /// Any <see cref="Time"/> values are always rounded to the nearest second.
+    /// Any <see cref="Time"/> values are truncated to seconds, because
     /// RFC 5545, Section 3.3.5 does not allow for fractional seconds.
     /// </summary>
     private static TimeOnly? TruncateTimeToSeconds(TimeOnly? time)
@@ -448,13 +408,10 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     }
 
     /// <summary>
-    /// Any <see cref="Time"/> values are always rounded to the nearest second.
+    /// Any <see cref="Time"/> values are truncated to seconds, because
     /// RFC 5545, Section 3.3.5 does not allow for fractional seconds.
     /// </summary>
-    private static TimeOnly? TruncateTimeToSeconds(DateTime dateTime)
-    {
-        return new TimeOnly(dateTime.Hour, dateTime.Minute, dateTime.Second);
-    }
+    private static TimeOnly? TruncateTimeToSeconds(DateTime dateTime) => new TimeOnly(dateTime.Hour, dateTime.Minute, dateTime.Second);
 
     /// <inheritdoc/>
     public IDateTime ToTimeZone(string otherTzId)
@@ -470,20 +427,40 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     }
 
     /// <inheritdoc cref="DateTime.Add"/>
-    /// <remarks>
-    /// This will also add a <see cref="IDateTime.Time"/> part that did not exist before the operation,
-    /// if the hours are not a multiple of 24.
-    /// </remarks>
-    public IDateTime Add(TimeSpan ts) => this + ts;
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when attempting to add a time span to a date-only instance, 
+    /// and the time span is not a multiple of full days.
+    /// </exception>
+    public IDateTime Add(TimeSpan ts)
+    {
+        if (!HasTime && (ts.Ticks % TimeSpan.TicksPerDay) != 0)
+        {
+            throw new InvalidOperationException("This instance represents a 'date-only' value. Only multiples of full days can be added to a 'date-only' instance.");
+        }
+
+        // Ensure to handle DST transitions correctly when timezones are involved.
+        var newDateTime = TzId is null ? Value.Add(ts) : AsUtc.Add(ts);
+
+        var copy = Copy<CalDateTime>();
+        copy._dateOnly = DateOnly.FromDateTime(newDateTime);
+        copy._timeOnly = HasTime ? TruncateTimeToSeconds(newDateTime) : null;
+        copy._tzId = TzId is null ? null : UtcTzId;
+
+        return TzId is null ? copy : copy.ToTimeZone(TzId);
+    }
 
     /// <summary>Returns a new <see cref="TimeSpan" /> from subtracting the specified <see cref="IDateTime"/> from to the value of this instance.</summary>
     /// <param name="dt"></param>
-    public TimeSpan Subtract(IDateTime dt) => (AsUtc - dt.AsUtc)!;
+    public TimeSpan Subtract(IDateTime dt) => AsUtc - dt.AsUtc;
 
     /// <summary>Returns a new <see cref="IDateTime"/> by subtracting the specified <see cref="TimeSpan" /> from the value of this instance.</summary>
     /// <param name="ts">An interval.</param>
     /// <returns>An object whose value is the difference of the date and time represented by this instance and the time interval represented by <paramref name="ts" />.</returns>
-    public IDateTime Subtract(TimeSpan ts) => this - ts;
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when attempting to subtracting a time span from a date-only instance, 
+    /// and the time span is not a multiple of full days.
+    /// </exception>
+    public IDateTime Subtract(TimeSpan ts) => Add(-ts);
 
     /// <inheritdoc cref="DateTime.AddYears"/>
     public IDateTime AddYears(int years)
@@ -510,67 +487,25 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     }
 
     /// <inheritdoc cref="DateTime.AddHours"/>
-    /// <remarks>
-    /// This will also add a <see cref="IDateTime.Time"/> part that did not exist before the operation,
-    /// if the hours are not a multiple of 24.
-    /// </remarks>
-    public IDateTime AddHours(int hours)
-    {
-        var copy = Copy<CalDateTime>();
-        var newValue = copy.Value.AddHours(hours);
-        if (!copy.HasTime && (hours % 24 == 0))
-        {
-            copy._dateOnly = DateOnly.FromDateTime(newValue);
-        }
-        else
-        {
-            copy._dateOnly = DateOnly.FromDateTime(newValue);
-            copy._timeOnly = TruncateTimeToSeconds(newValue);
-        }
-        return copy;
-    }
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when attempting to add a time span to a date-only instance, 
+    /// and the time span is not a multiple of full days.
+    /// </exception>
+    public IDateTime AddHours(int hours) => Add(TimeSpan.FromHours(hours));
 
     /// <inheritdoc cref="DateTime.AddMinutes"/>
-    /// <remarks>
-    /// This will also add a <see cref="IDateTime.Time"/> part that did not exist before the operation,
-    /// if the minutes are not a multiple of 1440.
-    /// </remarks>
-    public IDateTime AddMinutes(int minutes)
-    {
-        var copy = Copy<CalDateTime>();
-        var newValue = copy.Value.AddMinutes(minutes);
-        if (!copy.HasTime && (minutes % 1440 == 0))
-        {
-            copy._dateOnly = DateOnly.FromDateTime(newValue);
-        }
-        else
-        {
-            copy._dateOnly = DateOnly.FromDateTime(newValue);
-            copy._timeOnly = TruncateTimeToSeconds(newValue);
-        }
-        return copy;
-    }
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when attempting to add a time span to a date-only instance, 
+    /// and the time span is not a multiple of full days.
+    /// </exception>
+    public IDateTime AddMinutes(int minutes) => Add(TimeSpan.FromMinutes(minutes));
 
     /// <inheritdoc cref="DateTime.AddSeconds"/>
-    /// <remarks>
-    /// This will also add a <see cref="IDateTime.Time"/> part that did not exist before the operation,
-    /// if the seconds are not a multiple of 86400.
-    /// </remarks>
-    public IDateTime AddSeconds(int seconds)
-    {
-        var copy = Copy<CalDateTime>();
-        var newValue = copy.Value.AddSeconds(seconds);
-        if (!copy.HasTime && (seconds % 86400 == 0))
-        {
-            copy._dateOnly = DateOnly.FromDateTime(newValue);
-        }
-        else
-        {
-            copy._dateOnly = DateOnly.FromDateTime(newValue);
-            copy._timeOnly = TruncateTimeToSeconds(newValue);
-        }
-        return copy;
-    }
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when attempting to add a time span to a date-only instance, 
+    /// and the time span is not a multiple of full days.
+    /// </exception>
+    public IDateTime AddSeconds(int seconds) => Add(TimeSpan.FromSeconds(seconds));
 
     /// <summary>
     /// Returns <see langword="true"/> if the current <see cref="IDateTime"/> instance is less than <paramref name="dt"/>.
