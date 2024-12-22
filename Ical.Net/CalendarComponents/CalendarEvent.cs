@@ -102,7 +102,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// of the given <see cref="RecurringComponent.DtStart"/> and <see cref="CalendarEvent.DtEnd"/> timezones.
     /// </remarks>
     /// <returns>The time span that gets added to the period start time to get the period end time.</returns>
-    public virtual TimeSpan GetTimeSpanToAddToPeriodStartTime()
+    internal TimeSpan GetTimeSpanToAddToPeriodStartTime()
     {
         // 3.8.5.3. Recurrence Rule
         // If the duration of the recurring component is specified with the
