@@ -60,7 +60,6 @@ public class CopyComponentTests
     {
         DtStart = new CalDateTime(_now),
         DtEnd = new CalDateTime(_later),
-        Duration = TimeSpan.FromHours(1),
     };
 
     private static string SerializeEvent(CalendarEvent e) => new CalendarSerializer().SerializeToString(new Calendar { Events = { e } });

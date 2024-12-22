@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,23 +17,34 @@ namespace Ical.Net.CalendarComponents;
 /// <summary>
 /// A class that represents an RFC 5545 VEVENT component.
 /// </summary>
-/// <note>
-///     TODO: Add support for the following properties:
-///     <list type="bullet">
-///         <item>Add support for the Organizer and Attendee properties</item>
-///         <item>Add support for the Class property</item>
-///         <item>Add support for the Geo property</item>
-///         <item>Add support for the Priority property</item>
-///         <item>Add support for the Related property</item>
-///         <item>Create a TextCollection DataType for 'text' items separated by commas</item>
-///     </list>
-/// </note>
+/// <remarks>
+/// The following properties are not supported by this class:
+/// <para/>
+/// - Organizer and Attendee properties
+/// - Class property
+/// - Priority property
+/// - Related property
+/// - TextCollection DataType for 'text' items separated by commas
+/// </remarks>
 public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<CalendarEvent>
 {
     internal const string ComponentName = "VEVENT";
 
+    private void SetProperty<T>(string group, T value)
+    {
+        if (value is not null)
+        {
+            Properties.Set(group, value);
+            return;
+        }
+
+        Properties.Remove(group);
+    }
+
     /// <summary>
     /// The end date/time of the event.
+    /// <para/>
+    /// Either <see cref="Duration"/> OR <see cref="DtEnd"/> can be present in the event, but not both.
     /// <note>
     /// If the duration has not been set, but
     /// the start/end time of the event is available,
@@ -42,132 +54,137 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// will be extrapolated.
     /// </note>
     /// </summary>
-    public virtual IDateTime DtEnd
+    public virtual IDateTime? DtEnd
     {
-        get => Properties.Get<IDateTime>("DTEND");
+        get => Properties.Get<IDateTime?>("DTEND");
         set
         {
-            if (!Equals(DtEnd, value))
-            {
-                Properties.Set("DTEND", value);
-            }
+            if (Duration is not null) throw new InvalidOperationException("DTEND property cannot be set when DURATION property is not null.");
+            SetProperty("DTEND", value);
         }
     }
 
     /// <summary>
     /// The duration of the event.
-    /// <note>
+    /// <para/>
+    /// Either <see cref="Duration"/> OR <see cref="DtEnd"/> can be present in the event, but not both.
+    /// </summary>
+    /// <remarks>
     /// If a start time and duration is available,
     /// the end time is automatically determined.
-    /// Likewise, if the end time and duration is
-    /// available, but a start time is not determined,
-    /// the start time will be extrapolated from
-    /// available information.
-    /// </note>
-    /// </summary>
-    // NOTE: Duration is not supported by all systems,
-    // (i.e. iPhone) and cannot co-exist with DtEnd.
-    // RFC 5545 states:
-    //
-    //      ; either 'dtend' or 'duration' may appear in
-    //      ; a 'eventprop', but 'dtend' and 'duration'
-    //      ; MUST NOT occur in the same 'eventprop'
-    //
-    // Therefore, Duration is not serialized, as DtEnd
-    // should always be extrapolated from the duration.
-    public virtual TimeSpan Duration
+    /// Likewise, the duration is determined with start/end times
+    /// if it is not explicitly set.
+    /// <para/>
+    /// RFC 5545 states:
+    /// Either 'dtend' or 'duration' may appear in
+    /// an 'eventprop', but 'dtend' and 'duration'
+    /// MUST NOT occur in the same 'eventprop'
+    /// </remarks>
+    public virtual TimeSpan? Duration
     {
-        get => Properties.Get<TimeSpan>("DURATION");
+        get => Properties.Get<TimeSpan?>("DURATION");
         set
         {
-            if (!Equals(Duration, value))
-            {
-                Properties.Set("DURATION", value);
-            }
+            if (DtEnd is not null) throw new InvalidOperationException("DURATION property cannot be set when DTEND property is not null.");
+            SetProperty("DURATION", value); 
         }
     }
 
     /// <summary>
-    /// Calculates and returns the duration of the first occurrence of this event.
+    /// Gets the time span that gets added to the period start time to get the period end time.
+    /// <para/>
+    /// If the <see cref="CalendarEvent.Duration"/> property is not null, its value will be returned.<br/>
+    /// If <see cref="RecurringComponent.DtStart"/> and <see cref="CalendarEvent.DtEnd"/> are set, it will return <see cref="CalendarEvent.DtEnd"/> minus <see cref="CalendarEvent.DtStart"/>.<br/>
+    /// Otherwise, it will return <see cref="TimeSpan.Zero"/>.
     /// </summary>
     /// <remarks>
-    /// If the 'DURATION' property is set, this method will return its value.
-    /// Otherwise, if DTSTART and DTEND are set, it will return DTSTART minus DTEND.
-    /// Otherwise it will return `default(TimeSpan)`.
-    /// Note that for recurring events, the duration of individual occurrences may vary
-    /// if they span a DST change.
+    /// Note: For recurring events, the <b>exact duration</b> of individual occurrences may vary due to DST transitions
+    /// of the given <see cref="RecurringComponent.DtStart"/> and <see cref="CalendarEvent.DtEnd"/> timezones.
     /// </remarks>
-    /// <returns>The effective duration of this event.</returns>
-    public virtual TimeSpan GetFirstDuration()
+    /// <returns>The time span that gets added to the period start time to get the period end time.</returns>
+    internal TimeSpan GetTimeSpanToAddToPeriodStartTime()
     {
-        if (Properties.ContainsKey("DURATION"))
-            return Duration;
+        // 3.8.5.3. Recurrence Rule
+        // If the duration of the recurring component is specified with the
+        // "DURATION" property, then the same NOMINAL duration will apply to
+        // all the members of the generated recurrence set and the exact
+        // duration of each recurrence instance will depend on its specific
+        // start time.
+        if (Duration is not null)
+            return Duration.Value;
 
-        if (DtStart is not null)
+        System.Diagnostics.Debug.Assert(DtStart is not null);
+
+        if (DtEnd is not null)
         {
-            if (DtEnd is not null)
-            {
-                // The "DTEND" property
-                // for a "VEVENT" calendar component specifies the non-inclusive end
-                // of the event.
-                return DtEnd.Subtract(DtStart);
-            }
-            else if (!DtStart.HasTime)
-            {
-                // For cases where a "VEVENT" calendar component
-                // specifies a "DTSTART" property with a DATE value type but no
-                // "DTEND" nor "DURATION" property, the event's duration is taken to
-                // be one day.
-                return TimeSpan.FromDays(1);
-            }
-            else
-            {
-                // For cases where a "VEVENT" calendar component
-                // specifies a "DTSTART" property with a DATE-TIME value type but no
-                // "DTEND" property, the event ends on the same calendar date and
-                // time of day specified by the "DTSTART" property.
-                return TimeSpan.Zero;
-            }
+            /*
+                The 'DTEND' property for a 'VEVENT' calendar component specifies the
+                non-inclusive end of the event.
+
+                3.8.5.3. Recurrence Rule:
+                If the duration of the recurring component is specified with the
+                "DTEND" or "DUE" property, then the same EXACT duration will apply
+                to all the members of the generated recurrence set.
+
+                We use the difference from DtStart to DtEnd (neglecting timezone),
+                because the caller will set the period end time to the
+                same timezone as the event end time. This finally leads to an exact duration
+                calculation from the zoned start time to the zoned end time.
+             */
+            return DtEnd.Value - DtStart.Value;
         }
 
-        // This is an illegal state. We return zero for compatibility reasons.
+        if (!DtStart.HasTime)
+        {
+            // RFC 5545 3.6.1:
+            // For cases where a "VEVENT" calendar component
+            // specifies a "DTSTART" property with a DATE value type but no
+            // "DTEND" nor "DURATION" property, the event’s duration is taken to
+            // be one day.
+            return TimeSpan.FromDays(1);
+        }
+
+        // For DtStart.HasTime but no DtEnd - also the default case
+        //
+        // RFC 5545 3.6.1:
+        // For cases where a "VEVENT" calendar component
+        // specifies a "DTSTART" property with a DATE-TIME value type but no
+        // "DTEND" property, the event ends on the same calendar date and
+        // time of day specified by the "DTSTART" property.
         return TimeSpan.Zero;
     }
-
 
     /// <summary>
     /// An alias to the DtEnd field (i.e. end date/time).
     /// </summary>
-    public virtual IDateTime End
+    public virtual IDateTime? End
     {
         get => DtEnd;
         set => DtEnd = value;
     }
 
     /// <summary>
-    /// Returns true if the event is an all-day event.
+    /// Returns <see langword="true"/> if the event is an all-day event,
+    /// meaning the <see cref="RecurringComponent.Start"/> is a 'DATE' value type.
     /// </summary>
-    public virtual bool IsAllDay
-    {
-        get => !Start.HasTime;
-    }
+    public virtual bool IsAllDay => !Start.HasTime;
 
     /// <summary>
     /// The geographic location (lat/long) of the event.
     /// </summary>
-    public GeographicLocation GeographicLocation
+    public virtual GeographicLocation? GeographicLocation
     {
-        get => Properties.Get<GeographicLocation>("GEO");
-        set => Properties.Set("GEO", value);
+        get => Properties.Get<GeographicLocation?>("GEO");
+        set => SetProperty("GEO", value);
     }
 
     /// <summary>
     /// The location of the event.
     /// </summary>
-    public string Location
+    public virtual string? Location
     {
-        get => Properties.Get<string>("LOCATION");
-        set => Properties.Set("LOCATION", value);
+        get => Properties.Get<string?>("LOCATION");
+        set => SetProperty("LOCATION", value);
     }
 
     /// <summary>
@@ -180,29 +197,29 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     public virtual IList<string> Resources
     {
         get => Properties.GetMany<string>("RESOURCES");
-        set => Properties.Set("RESOURCES", value ?? new List<string>());
+        set => Properties.Set("RESOURCES", value);
     }
 
     /// <summary>
-    /// The status of the event.
+    /// The STATUS property of the event.
     /// </summary>
-    public string Status
+    public virtual string? Status
     {
-        get => Properties.Get<string>("STATUS");
-        set => Properties.Set("STATUS", value);
+        get => Properties.Get<string?>("STATUS");
+        set => SetProperty("STATUS", value);
     }
 
     /// <summary>
-    /// The transparency of the event.  In other words,
+    /// The transparency of the event. Determines,
     /// whether the period of time this event
-    /// occupies can contain other events (transparent),
+    /// occupies may overlap with other events (transparent),
     /// or if the time cannot be scheduled for anything
     /// else (opaque).
     /// </summary>
-    public string Transparency
+    public virtual string? Transparency
     {
-        get => Properties.Get<string>(TransparencyType.Key);
-        set => Properties.Set(TransparencyType.Key, value);
+        get => Properties.Get<string?>(TransparencyType.Key);
+        set => SetProperty(TransparencyType.Key, value);
     }
 
     /// <summary>
@@ -217,10 +234,8 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     private void Initialize()
     {
         Name = EventStatus.Name;
-
         SetService(new EventEvaluator(this));
     }
-
 
     /// <summary>
     /// Determines whether the <see cref="CalendarEvent"/> is actively displayed
@@ -229,8 +244,10 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// <returns>True if the event has not been cancelled, False otherwise.</returns>
     public virtual bool IsActive => !string.Equals(Status, EventStatus.Cancelled, EventStatus.Comparison);
 
+    /// <inheritdoc/>
     protected override bool EvaluationIncludesReferenceDate => true;
 
+    /// <inheritdoc/>
     protected override void OnDeserializing(StreamingContext context)
     {
         base.OnDeserializing(context);
@@ -238,13 +255,10 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
         Initialize();
     }
 
-    protected override void OnDeserialized(StreamingContext context)
+    protected bool Equals(CalendarEvent? other)
     {
-        base.OnDeserialized(context);
-    }
+        if (other is null) return false;
 
-    protected bool Equals(CalendarEvent other)
-    {
         var resourcesSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         resourcesSet.UnionWith(Resources);
 
@@ -269,8 +283,8 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
             return false;
         }
 
-        //RDATEs and EXDATEs are all List<PeriodList>, because the spec allows for multiple declarations of collections.
-        //Consequently we have to contrive a normalized representation before we can determine whether two events are equal
+        // RDATEs and EXDATEs are all List<PeriodList>, because the spec allows for multiple declarations of collections.
+        // Consequently we have to contrive a normalized representation before we can determine whether two events are equal
 
         var exDates = PeriodList.GetGroupedPeriods(ExceptionDates);
         var otherExDates = PeriodList.GetGroupedPeriods(other.ExceptionDates);
@@ -299,13 +313,15 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
         return true;
     }
 
-    public override bool Equals(object obj)
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         return obj.GetType() == GetType() && Equals((CalendarEvent)obj);
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
         unchecked
@@ -329,8 +345,13 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
         }
     }
 
-    public int CompareTo(CalendarEvent other)
+    /// <inheritdoc/>
+    public int CompareTo(CalendarEvent? other)
     {
+        if (other is null)
+        {
+            return 1;
+        }
         if (DtStart.Equals(other.DtStart))
         {
             return 0;
@@ -339,10 +360,8 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
         {
             return -1;
         }
-        if (DtStart.GreaterThan(other.DtStart))
-        {
-            return 1;
-        }
-        throw new Exception("An error occurred while comparing two CalDateTimes.");
+
+        // meaning DtStart is greater than other
+        return 1;
     }
 }
