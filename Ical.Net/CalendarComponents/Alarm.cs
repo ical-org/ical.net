@@ -101,9 +101,9 @@ public class Alarm : CalendarComponent
                     if (o.Period.EndTime != null)
                     {
                         dt = o.Period.EndTime;
-                        if (d == default(TimeSpan))
+                        if (d == default)
                         {
-                            d = o.Period.Duration;
+                            d = o.Period.Duration!.Value; // the getter always returns a value
                         }
                     }
                     // Use the "last-found" duration as a reference point

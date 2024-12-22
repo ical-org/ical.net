@@ -84,7 +84,8 @@ public class Organizer : EncodableDataType
         }
 
         var serializer = new OrganizerSerializer();
-        CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable);
+        if (serializer.Deserialize(new StringReader(value)) is ICopyable deserialized)
+            CopyFrom(deserialized);
     }
 
     protected bool Equals(Organizer other) => Equals(Value, other.Value);
@@ -109,7 +110,7 @@ public class Organizer : EncodableDataType
     public override int GetHashCode() => Value?.GetHashCode() ?? 0;
 
     /// <inheritdoc/>
-    public override void CopyFrom(ICopyable obj)
+    public sealed override void CopyFrom(ICopyable obj)
     {
         base.CopyFrom(obj);
 

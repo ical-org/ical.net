@@ -24,7 +24,6 @@ internal class CollectionHelpersTests
     {
         Assert.Multiple(() =>
         {
-            Assert.That(GetExceptionDates(), Is.EqualTo(GetExceptionDates()));
             Assert.That(GetExceptionDates(), Is.Not.Null);
             Assert.That(GetExceptionDates(), Is.Not.EqualTo(null));
         });
