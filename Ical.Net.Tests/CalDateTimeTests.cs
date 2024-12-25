@@ -325,7 +325,7 @@ public class CalDateTimeTests
         Assert.Multiple(() =>
         {
             Assert.That(t.Add(d).Add(-d), Is.EqualTo(t));
-            Assert.That(t.Add(d).Subtract(t), Is.EqualTo(d.ToTimeSpan()));
+            Assert.That(t.Add(d).SubtractExact(t), Is.EqualTo(d.ToTimeSpan()));
         });
     }
 }

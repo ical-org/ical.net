@@ -147,7 +147,7 @@ public class Period : EncodableDataType, IComparable<Period>
             {
                 return TimeSpan.FromDays(1);
             }
-            return _duration ?? _endTime?.Subtract(StartTime);
+            return _duration ?? _endTime?.SubtractExact(StartTime);
         }
         set
         {

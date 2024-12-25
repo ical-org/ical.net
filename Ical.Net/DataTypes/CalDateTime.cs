@@ -451,7 +451,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
 
     /// <summary>Returns a new <see cref="TimeSpan" /> from subtracting the specified <see cref="IDateTime"/> from to the value of this instance.</summary>
     /// <param name="dt"></param>
-    public TimeSpan Subtract(IDateTime dt) => AsUtc - dt.AsUtc;
+    public TimeSpan SubtractExact(IDateTime dt) => AsUtc - dt.AsUtc;
 
     /// <inheritdoc cref="DateTime.AddYears"/>
     public IDateTime AddYears(int years)

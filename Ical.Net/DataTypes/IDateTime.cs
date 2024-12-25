@@ -116,7 +116,7 @@ public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormat
     /// </summary>
     IDateTime ToTimeZone(string otherTzId);
     IDateTime Add(Duration d);
-    TimeSpan Subtract(IDateTime dt);
+    TimeSpan SubtractExact(IDateTime dt);
     IDateTime AddYears(int years);
     IDateTime AddMonths(int months);
     IDateTime AddDays(int days);
