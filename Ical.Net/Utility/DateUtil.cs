@@ -15,12 +15,6 @@ namespace Ical.Net.Utility;
 
 internal static class DateUtil
 {
-    public static IDateTime StartOfDay(IDateTime dt)
-        => dt.AddHours(-dt.Hour).AddMinutes(-dt.Minute).AddSeconds(-dt.Second);
-
-    public static IDateTime EndOfDay(IDateTime dt)
-        => StartOfDay(dt).AddDays(1).AddSeconds(-1);
-
     public static DateTime GetSimpleDateTimeData(IDateTime dt)
         => dt.Value;
 
