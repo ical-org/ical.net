@@ -31,19 +31,6 @@ public class Todo : RecurringComponent, IAlarmContainer
     }
 
     /// <summary>
-    /// The start date/time of the todo item.
-    /// </summary>
-    public override IDateTime DtStart
-    {
-        get => base.DtStart;
-        set
-        {
-            base.DtStart = value;
-            ExtrapolateTimes(2);
-        }
-    }
-
-    /// <summary>
     /// The due date of the todo item.
     /// </summary>
     public virtual IDateTime Due
@@ -52,7 +39,6 @@ public class Todo : RecurringComponent, IAlarmContainer
         set
         {
             Properties.Set("DUE", value);
-            ExtrapolateTimes(0);
         }
     }
 
@@ -75,7 +61,6 @@ public class Todo : RecurringComponent, IAlarmContainer
         set
         {
             Properties.Set("DURATION", value);
-            ExtrapolateTimes(1);
         }
     }
 
@@ -189,27 +174,5 @@ public class Todo : RecurringComponent, IAlarmContainer
     {
         //ToDo: a necessary evil, for now
         base.OnDeserializing(context);
-    }
-
-    private void ExtrapolateTimes(int source)
-    {
-        /*
-         * Source values, a fix introduced to prevent StackOverflow exceptions from occuring.
-         *    0 = Due
-         *	  1 = Duration
-         *	  2 = DtStart
-         */
-        if (Due == null && DtStart != null && Duration != null && source != 0)
-        {
-            Due = DtStart.Add(Duration.Value);
-        }
-        else if (Duration == null && DtStart != null && Due != null && source != 1)
-        {
-            Duration = Due.Subtract(DtStart);
-        }
-        else if (DtStart == null && Duration != null && Due != null && source != 2)
-        {
-            DtStart = Due.Subtract(Duration.Value);
-        }
     }
 }
