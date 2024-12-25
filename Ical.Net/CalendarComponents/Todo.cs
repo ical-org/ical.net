@@ -57,10 +57,10 @@ public class Todo : RecurringComponent, IAlarmContainer
     // should always be extrapolated from the duration.
     public virtual TimeSpan? Duration
     {
-        get => Properties.Get<TimeSpan?>("DURATION");
+        get => Properties.Get<Duration?>("DURATION")?.ToTimeSpan();
         set
         {
-            Properties.Set("DURATION", value);
+            Properties.Set("DURATION", (value == null) ? (Duration?) null : DataTypes.Duration.FromTimeSpan(value));
         }
     }
 

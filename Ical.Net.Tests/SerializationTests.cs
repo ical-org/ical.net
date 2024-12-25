@@ -353,9 +353,9 @@ public class SerializationTests
     //-Alarm
 
     [Test]
-    public void ZeroTimeSpan_Test()
+    public void ZeroDuration_Test()
     {
-        var result = new TimeSpanSerializer().SerializeToString(TimeSpan.Zero);
+        var result = new DurationSerializer().SerializeToString(Duration.Zero);
         Assert.That("P0D".Equals(result, StringComparison.Ordinal), Is.True);
     }
 

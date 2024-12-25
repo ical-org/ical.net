@@ -82,11 +82,11 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// </remarks>
     public virtual TimeSpan? Duration
     {
-        get => Properties.Get<TimeSpan?>("DURATION");
+        get => Properties.Get<Duration?>("DURATION")?.ToTimeSpan();
         set
         {
             if (DtEnd is not null) throw new InvalidOperationException("DURATION property cannot be set when DTEND property is not null.");
-            SetProperty("DURATION", value); 
+            SetProperty("DURATION", (value == null) ? (Duration?)null : DataTypes.Duration.FromTimeSpan(value.Value)); 
         }
     }
 

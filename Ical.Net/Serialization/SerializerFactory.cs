@@ -63,9 +63,9 @@ public class SerializerFactory : ISerializerFactory
         {
             s = new EnumSerializer(objectType, ctx);
         }
-        else if (typeof(TimeSpan).IsAssignableFrom(objectType))
+        else if (typeof(Duration).IsAssignableFrom(objectType))
         {
-            s = new TimeSpanSerializer(ctx);
+            s = new DurationSerializer(ctx);
         }
         else if (typeof(int).IsAssignableFrom(objectType))
         {

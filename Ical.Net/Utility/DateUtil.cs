@@ -191,4 +191,25 @@ internal static class DateUtil
             : 1;
         return (int) Math.Floor(d.Day / 7.0) + offset;
     }
+
+    internal static DateTime Add(this DateTime t, DataTypes.Duration d)
+        => t.Add(d.ToTimeSpan());
+
+    /// <summary>
+    /// Creates an instance that represents the given time span as exact value, that is, time-only.
+    /// </summary>
+    /// <remarks>
+    /// According to RFC5545 the weeks and day fields of a duration are considered nominal durations while the time fields are considered exact values.
+    /// </remarks>
+    internal static DataTypes.Duration ToDurationExact(this TimeSpan timeSpan)
+        => DataTypes.Duration.FromTimeSpanExact(timeSpan);
+
+    /// <summary>
+    /// Creates an instance that represents the given time span, treating the days as nominal duration and the time part as exact.
+    /// </summary>
+    /// <remarks>
+    /// According to RFC5545 the weeks and day fields of a duration are considered nominal durations while the time fields are considered exact values.
+    /// </remarks>
+    internal static DataTypes.Duration ToDuration(this TimeSpan timeSpan)
+        => DataTypes.Duration.FromTimeSpan(timeSpan);
 }

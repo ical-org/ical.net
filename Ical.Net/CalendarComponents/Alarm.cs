@@ -41,8 +41,8 @@ public class Alarm : CalendarComponent
 
     public virtual TimeSpan Duration
     {
-        get => Properties.Get<TimeSpan>("DURATION");
-        set => Properties.Set("DURATION", value);
+        get => Properties.Get<Duration>("DURATION").ToTimeSpan();
+        set => Properties.Set("DURATION", DataTypes.Duration.FromTimeSpan(value));
     }
 
     public virtual int Repeat
