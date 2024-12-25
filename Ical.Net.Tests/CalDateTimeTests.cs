@@ -245,9 +245,9 @@ public class CalDateTimeTests
     {
         var dateTime = new DateTime(2025, 1, 15);
 
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Subtract(TimeSpan.FromDays(1))))
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(-TimeSpan.FromDays(1))))
             .Returns((dateTime.AddDays(-1), false))
-            .SetName($"{nameof(IDateTime.Subtract)} 1 day TimeSpan");
+            .SetName($"{nameof(IDateTime.Add)} -1 day TimeSpan");
 
         yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddYears(1)))
             .Returns((dateTime.AddYears(1), false))
@@ -316,7 +316,7 @@ public class CalDateTimeTests
             Assert.That(CalDateTime.Today.Value.Kind, Is.EqualTo(DateTimeKind.Unspecified));
             Assert.That(c.DayOfYear, Is.EqualTo(dt.DayOfYear));
             Assert.That(c.Time?.ToTimeSpan(), Is.EqualTo(dt.TimeOfDay));
-            Assert.That(c.Subtract(TimeSpan.FromSeconds(dt.Second)).Value.Second, Is.EqualTo(0));
+            Assert.That(c.Add(-TimeSpan.FromSeconds(dt.Second)).Value.Second, Is.EqualTo(0));
             Assert.That(c.ToString("dd.MM.yyyy"), Is.EqualTo("02.01.2025 Europe/Berlin"));
             // Create a date-only CalDateTime from a CalDateTime
             Assert.That(new CalDateTime(new CalDateTime(2025, 1, 1)), Is.EqualTo(new CalDateTime(2025, 1, 1)));
@@ -340,7 +340,7 @@ public class CalDateTimeTests
     {
         Assert.Multiple(() =>
         {
-            Assert.That(t.Add(d).Subtract(d), Is.EqualTo(t));
+            Assert.That(t.Add(d).Add(-d), Is.EqualTo(t));
             Assert.That(t.Add(d).Subtract(t), Is.EqualTo(d));
         });
     }

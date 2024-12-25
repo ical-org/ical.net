@@ -453,15 +453,6 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// <param name="dt"></param>
     public TimeSpan Subtract(IDateTime dt) => AsUtc - dt.AsUtc;
 
-    /// <summary>Returns a new <see cref="IDateTime"/> by subtracting the specified <see cref="TimeSpan" /> from the value of this instance.</summary>
-    /// <param name="ts">An interval.</param>
-    /// <returns>An object whose value is the difference of the date and time represented by this instance and the time interval represented by <paramref name="ts" />.</returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when attempting to subtracting a time span from a date-only instance, 
-    /// and the time span is not a multiple of full days.
-    /// </exception>
-    public IDateTime Subtract(TimeSpan ts) => Add(-ts);
-
     /// <inheritdoc cref="DateTime.AddYears"/>
     public IDateTime AddYears(int years)
     {
