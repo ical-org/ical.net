@@ -243,7 +243,7 @@ public class VTimeZone : CalendarComponent
         {
             var periodList = new PeriodList();
             var time = interval.IsoLocalStart.ToDateTimeUnspecified();
-            var date = new CalDateTime(time, true).Add(delta) as CalDateTime;
+            var date = new CalDateTime(time, true).Add(delta.ToDurationExact()) as CalDateTime;
             if (date == null)
             {
                 continue;

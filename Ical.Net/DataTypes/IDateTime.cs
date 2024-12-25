@@ -115,7 +115,7 @@ public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormat
     /// The returned <see cref="Value"/> is unchanged and the <see paramref="otherTzId"/> is set as <see cref="TzId"/>.
     /// </summary>
     IDateTime ToTimeZone(string otherTzId);
-    IDateTime Add(TimeSpan ts);
+    IDateTime Add(Duration d);
     TimeSpan Subtract(IDateTime dt);
     IDateTime AddYears(int years);
     IDateTime AddMonths(int months);

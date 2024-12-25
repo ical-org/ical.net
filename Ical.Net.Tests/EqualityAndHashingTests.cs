@@ -111,7 +111,7 @@ public class EqualityAndHashingTests
         var e = new CalendarEvent
         {
             DtStart = new CalDateTime(_nowTime),
-            Duration = TimeSpan.FromHours(1),
+            Duration = Duration.FromHours(1),
             RecurrenceRules = new List<RecurrencePattern> { rruleA },
         };
 
@@ -128,7 +128,7 @@ public class EqualityAndHashingTests
         expectedCalendar.Events.Add(new CalendarEvent
         {
             DtStart = new CalDateTime(_nowTime),
-            Duration = TimeSpan.FromHours(1),
+            Duration = Duration.FromHours(1),
             RecurrenceRules = new List<RecurrencePattern> { rruleB },
         });
 

@@ -2541,7 +2541,7 @@ public class RecurrenceTests
         var evt = new CalendarEvent
         {
             Start = new CalDateTime(2018, 1, 1, 12, 0, 0),
-            Duration = TimeSpan.FromHours(1)
+            Duration = Duration.FromHours(1)
         };
 
         var pattern = new RecurrencePattern
@@ -2609,7 +2609,7 @@ public class RecurrenceTests
         var evt = new CalendarEvent
         {
             Start = new CalDateTime(2011, 1, 29, 11, 0, 0),
-            Duration = TimeSpan.FromHours(1.5),
+            Duration = Duration.FromMinutes(90),
             Summary = "29th February Test"
         };
 

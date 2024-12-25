@@ -521,7 +521,7 @@ END:VCALENDAR";
         evt = new CalendarEvent
         {
             DtStart = new CalDateTime(DateOnly.FromDateTime(dt), TimeOnly.FromDateTime(dt)),
-            Duration = TimeSpan.FromHours(2),
+            Duration = Duration.FromHours(2),
         };
 
         Assert.Multiple(() => {
@@ -533,7 +533,7 @@ END:VCALENDAR";
         evt = new CalendarEvent()
         {
             DtStart = new CalDateTime(DateOnly.FromDateTime(dt.Date), TimeOnly.FromDateTime(dt.Date)),
-            Duration = TimeSpan.FromHours(2),
+            Duration = Duration.FromHours(2),
         };
 
         Assert.Multiple(() => {
@@ -544,7 +544,7 @@ END:VCALENDAR";
         evt = new CalendarEvent()
         {
             DtStart = new CalDateTime(DateOnly.FromDateTime(dt)),
-            Duration = TimeSpan.FromDays(1),
+            Duration = Duration.FromDays(1),
         };
 
         Assert.Multiple(() => {
@@ -564,9 +564,9 @@ END:VCALENDAR";
         Assert.Multiple(() =>
         {
             Assert.That(() => evt.DtEnd = new CalDateTime(2025, 12, 11), Throws.Nothing);
-            Assert.That(() => evt.Duration = TimeSpan.FromDays(1), Throws.InvalidOperationException);
+            Assert.That(() => evt.Duration = Duration.FromDays(1), Throws.InvalidOperationException);
             Assert.That(() => evt.DtEnd = null, Throws.Nothing);
-            Assert.That(() => evt.Duration = TimeSpan.FromDays(1), Throws.Nothing);
+            Assert.That(() => evt.Duration = Duration.FromDays(1), Throws.Nothing);
             Assert.That(() => evt.DtEnd = new CalDateTime(2025, 12, 11), Throws.InvalidOperationException);
         });
     }

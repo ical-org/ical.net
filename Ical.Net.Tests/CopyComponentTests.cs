@@ -133,7 +133,7 @@ public class CopyComponentTests
         var orig = new Alarm
         {
             Action = AlarmAction.Display,
-            Trigger = new Trigger(TimeSpan.FromMinutes(15)),
+            Trigger = new Trigger(Duration.FromMinutes(15)),
             Description = "Test Alarm"
         };
 

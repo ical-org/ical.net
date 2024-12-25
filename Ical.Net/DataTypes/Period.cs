@@ -6,6 +6,7 @@
 #nullable enable
 using System;
 using Ical.Net.Serialization.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes;
 
@@ -114,7 +115,7 @@ public class Period : EncodableDataType, IComparable<Period>
     /// </summary>
     public virtual IDateTime? EndTime
     {
-        get => _endTime ?? (_duration != null ? StartTime.Add(_duration.Value) : null);
+        get => _endTime ?? (_duration != null ? StartTime.Add(_duration.Value.ToDuration()) : null);
         set
         {
             _endTime = value;

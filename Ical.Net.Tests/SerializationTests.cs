@@ -27,7 +27,7 @@ public class SerializationTests
     private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
     private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
     private static string SerializeToString(CalendarEvent e) => SerializeToString(new Calendar { Events = { e } });
-    private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), Duration = _later - _nowTime };
+    private static CalendarEvent GetSimpleEvent() => new CalendarEvent { DtStart = new CalDateTime(_nowTime), Duration = (_later - _nowTime).ToDurationExact() };
     private static Calendar UnserializeCalendar(string s) => Calendar.Load(s);
 
     internal static void CompareCalendars(Calendar cal1, Calendar cal2)

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
+using Ical.Net.Utility;
 
 namespace Ical.Net.CalendarComponents;
 
@@ -55,12 +56,12 @@ public class Todo : RecurringComponent, IAlarmContainer
     //
     // Therefore, Duration is not serialized, as Due
     // should always be extrapolated from the duration.
-    public virtual TimeSpan? Duration
+    public virtual Duration? Duration
     {
-        get => Properties.Get<Duration?>("DURATION")?.ToTimeSpan();
+        get => Properties.Get<Duration?>("DURATION");
         set
         {
-            Properties.Set("DURATION", (value == null) ? (Duration?) null : DataTypes.Duration.FromTimeSpan(value));
+            Properties.Set("DURATION", value);
         }
     }
 

@@ -431,15 +431,15 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// Thrown when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
     /// </exception>
-    public IDateTime Add(TimeSpan ts)
+    public IDateTime Add(Duration d)
     {
-        if (!HasTime && (ts.Ticks % TimeSpan.TicksPerDay) != 0)
+        if (!HasTime && d.HasTime)
         {
             throw new InvalidOperationException("This instance represents a 'date-only' value. Only multiples of full days can be added to a 'date-only' instance.");
         }
 
         // Ensure to handle DST transitions correctly when timezones are involved.
-        var newDateTime = TzId is null ? Value.Add(ts) : AsUtc.Add(ts);
+        var newDateTime = TzId is null ? Value.Add(d) : AsUtc.Add(d);
 
         var copy = Copy<CalDateTime>();
         copy._dateOnly = DateOnly.FromDateTime(newDateTime);
@@ -482,21 +482,21 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// Thrown when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
     /// </exception>
-    public IDateTime AddHours(int hours) => Add(TimeSpan.FromHours(hours));
+    public IDateTime AddHours(int hours) => Add(Duration.FromHours(hours));
 
     /// <inheritdoc cref="DateTime.AddMinutes"/>
     /// <exception cref="InvalidOperationException">
     /// Thrown when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
     /// </exception>
-    public IDateTime AddMinutes(int minutes) => Add(TimeSpan.FromMinutes(minutes));
+    public IDateTime AddMinutes(int minutes) => Add(Duration.FromMinutes(minutes));
 
     /// <inheritdoc cref="DateTime.AddSeconds"/>
     /// <exception cref="InvalidOperationException">
     /// Thrown when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
     /// </exception>
-    public IDateTime AddSeconds(int seconds) => Add(TimeSpan.FromSeconds(seconds));
+    public IDateTime AddSeconds(int seconds) => Add(Duration.FromSeconds(seconds));
 
     /// <summary>
     /// Returns <see langword="true"/> if the current <see cref="IDateTime"/> instance is less than <paramref name="dt"/>.

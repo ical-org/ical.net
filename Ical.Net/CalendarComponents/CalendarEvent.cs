@@ -80,13 +80,13 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// an 'eventprop', but 'dtend' and 'duration'
     /// MUST NOT occur in the same 'eventprop'
     /// </remarks>
-    public virtual TimeSpan? Duration
+    public virtual Duration? Duration
     {
-        get => Properties.Get<Duration?>("DURATION")?.ToTimeSpan();
+        get => Properties.Get<Duration?>("DURATION");
         set
         {
             if (DtEnd is not null) throw new InvalidOperationException("DURATION property cannot be set when DTEND property is not null.");
-            SetProperty("DURATION", (value == null) ? (Duration?)null : DataTypes.Duration.FromTimeSpan(value.Value)); 
+            SetProperty("DURATION", value);
         }
     }
 
@@ -95,7 +95,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// <para/>
     /// If the <see cref="CalendarEvent.Duration"/> property is not null, its value will be returned.<br/>
     /// If <see cref="RecurringComponent.DtStart"/> and <see cref="CalendarEvent.DtEnd"/> are set, it will return <see cref="CalendarEvent.DtEnd"/> minus <see cref="CalendarEvent.DtStart"/>.<br/>
-    /// Otherwise, it will return <see cref="TimeSpan.Zero"/>.
+    /// Otherwise, it will return <see cref="Duration.Zero"/>.
     /// </summary>
     /// <remarks>
     /// Note: For recurring events, the <b>exact duration</b> of individual occurrences may vary due to DST transitions
@@ -111,7 +111,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
         // duration of each recurrence instance will depend on its specific
         // start time.
         if (Duration is not null)
-            return Duration.Value;
+            return Duration.Value.ToTimeSpan();
 
         System.Diagnostics.Debug.Assert(DtStart is not null);
 

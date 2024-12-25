@@ -98,7 +98,7 @@ public class TriggerSerializer : StringSerializer
                     t.DateTime = (IDateTime) obj;
                     break;
                 default:
-                    t.Duration = ((Duration) obj).ToTimeSpan();
+                    t.Duration = (Duration) obj;
                     break;
             }
 
