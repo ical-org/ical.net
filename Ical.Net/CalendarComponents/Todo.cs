@@ -69,9 +69,9 @@ public class Todo : RecurringComponent, IAlarmContainer
     //
     // Therefore, Duration is not serialized, as Due
     // should always be extrapolated from the duration.
-    public virtual TimeSpan Duration
+    public virtual TimeSpan? Duration
     {
-        get => Properties.Get<TimeSpan>("DURATION");
+        get => Properties.Get<TimeSpan?>("DURATION");
         set
         {
             Properties.Set("DURATION", value);
@@ -199,17 +199,17 @@ public class Todo : RecurringComponent, IAlarmContainer
          *	  1 = Duration
          *	  2 = DtStart
          */
-        if (Due == null && DtStart != null && Duration != default(TimeSpan) && source != 0)
+        if (Due == null && DtStart != null && Duration != null && source != 0)
         {
-            Due = DtStart.Add(Duration);
+            Due = DtStart.Add(Duration.Value);
         }
-        else if (Duration == default(TimeSpan) && DtStart != null && Due != null && source != 1)
+        else if (Duration == null && DtStart != null && Due != null && source != 1)
         {
             Duration = Due.Subtract(DtStart);
         }
-        else if (DtStart == null && Duration != default(TimeSpan) && Due != null && source != 2)
+        else if (DtStart == null && Duration != null && Due != null && source != 2)
         {
-            DtStart = Due.Subtract(Duration);
+            DtStart = Due.Subtract(Duration.Value);
         }
     }
 }
