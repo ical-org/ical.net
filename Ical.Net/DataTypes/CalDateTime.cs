@@ -414,7 +414,9 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     private static TimeOnly? TruncateTimeToSeconds(DateTime dateTime) => new TimeOnly(dateTime.Hour, dateTime.Minute, dateTime.Second);
 
     /// <inheritdoc/>
-    public IDateTime ToTimeZone(string otherTzId)
+    IDateTime IDateTime.ToTimeZone(string otherTzId) => ToTimeZone(otherTzId);
+
+    public CalDateTime ToTimeZone(string otherTzId)
     {
         if (IsFloating) return new CalDateTime(_dateOnly, _timeOnly, otherTzId);
 
@@ -438,15 +440,42 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
             throw new InvalidOperationException("This instance represents a 'date-only' value. Only multiples of full days can be added to a 'date-only' instance.");
         }
 
-        // Ensure to handle DST transitions correctly when timezones are involved.
-        var newDateTime = TzId is null ? Value.Add(d) : AsUtc.Add(d);
+        // RFC 5545 3.3.6:
+        // If the property permits, multiple "duration" values are specified by a COMMA-separated
+        // list of values.The format is based on the[ISO.8601.2004] complete representation basic
+        // format with designators for the duration of time.The format can represent nominal
+        // durations(weeks and days) and accurate durations(hours, minutes, and seconds).
+        // Note that unlike[ISO.8601.2004], this value type doesn't support the "Y" and "M"
+        // designators to specify durations in terms of years and months.
+        //
+        // The duration of a week or a day depends on its position in the calendar. In the case
+        // of discontinuities in the time scale, such as the change from standard time to daylight
+        // time and back, the computation of the exact duration requires the subtraction or
+        // addition of the change of duration of the discontinuity.Leap seconds MUST NOT be
+        // considered when computing an exact duration.When computing an exact duration, the
+        // greatest order time components MUST be added first, that is, the number of days MUST be
+        // added first, followed by the number of hours, number of minutes, and number of seconds.
 
-        var copy = Copy<CalDateTime>();
-        copy._dateOnly = DateOnly.FromDateTime(newDateTime);
-        copy._timeOnly = HasTime ? TruncateTimeToSeconds(newDateTime) : null;
-        copy._tzId = TzId is null ? null : UtcTzId;
+        (TimeSpan? nominalPart, TimeSpan? exactPart) dt;
+        if (TzId is null)
+            dt = (d.ToTimeSpan(), null);
+        else
+            dt = (d.HasDate ? d.DateAsTimeSpan : null, d.HasTime ? d.TimeAsTimeSpan : null);
 
-        return TzId is null ? copy : copy.ToTimeZone(TzId);
+        var newDateTime = this;
+        if (dt.nominalPart is not null)
+            newDateTime = new CalDateTime(newDateTime.Value.Add(dt.nominalPart.Value), TzId, HasTime);
+
+        if (dt.exactPart is not null)
+            newDateTime = new CalDateTime(newDateTime.AsUtc.Add(dt.exactPart.Value), UtcTzId, HasTime);
+        
+        if (TzId is not null)
+            // Convert to the original timezone even if already set to ensure we're not in a non-existing time.
+            newDateTime = newDateTime.ToTimeZone(TzId);
+
+        AssociateWith(this);
+
+        return newDateTime;
     }
 
     /// <summary>Returns a new <see cref="TimeSpan" /> from subtracting the specified <see cref="IDateTime"/> from to the value of this instance.</summary>

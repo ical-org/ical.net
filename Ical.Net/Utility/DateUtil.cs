@@ -186,9 +186,6 @@ internal static class DateUtil
         return (int) Math.Floor(d.Day / 7.0) + offset;
     }
 
-    internal static DateTime Add(this DateTime t, DataTypes.Duration d)
-        => t.Add(d.ToTimeSpan());
-
     /// <summary>
     /// Creates an instance that represents the given time span as exact value, that is, time-only.
     /// </summary>
