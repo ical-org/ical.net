@@ -475,7 +475,7 @@ END:VCALENDAR";
 
 
     [Test, Category("CalendarEvent")]
-    public void GetNominalDurationTests()
+    public void GetEffectiveDurationTests()
     {
         var dt = new DateTime(2025, 3, 1, 14, 30, 0);
         const string tzIdStart = "America/New_York";
@@ -487,11 +487,12 @@ END:VCALENDAR";
             DtEnd = new CalDateTime(DateOnly.FromDateTime(dt.AddHours(1)), TimeOnly.FromDateTime(dt.AddHours(1)), tzIdEnd)
         };
 
+        var ed = evt.GetEffectiveDuration();
         Assert.Multiple(() =>
         {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt));
             Assert.That(evt.DtEnd.Value, Is.EqualTo(dt.AddHours(1)));
-            Assert.That(evt.GetTimeSpanToAddToPeriodStartTime(), Is.EqualTo(TimeSpan.FromHours(1)));
+            Assert.That(evt.GetEffectiveDuration(), Is.EqualTo(Duration.FromHours(-4)));
         });
 
         evt = new CalendarEvent
@@ -503,7 +504,7 @@ END:VCALENDAR";
         Assert.Multiple(() =>
         {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
-            Assert.That(evt.GetTimeSpanToAddToPeriodStartTime(), Is.EqualTo(TimeSpan.Zero));
+            Assert.That(evt.GetEffectiveDuration().IsZero, Is.True);
         });
 
         evt = new CalendarEvent
@@ -515,7 +516,7 @@ END:VCALENDAR";
         {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
             Assert.That(evt.Duration, Is.Null);
-            Assert.That(evt.GetTimeSpanToAddToPeriodStartTime(), Is.EqualTo(TimeSpan.FromDays(1)));
+            Assert.That(evt.GetEffectiveDuration(), Is.EqualTo(Duration.FromDays(1)));
         });
 
         evt = new CalendarEvent
@@ -527,7 +528,7 @@ END:VCALENDAR";
         Assert.Multiple(() => {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt));
             Assert.That(evt.DtEnd, Is.Null);
-            Assert.That(evt.GetTimeSpanToAddToPeriodStartTime(), Is.EqualTo(TimeSpan.FromHours(2)));
+            Assert.That(evt.GetEffectiveDuration(), Is.EqualTo(Duration.FromHours(2)));
         });
 
         evt = new CalendarEvent()
@@ -538,7 +539,7 @@ END:VCALENDAR";
 
         Assert.Multiple(() => {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
-            Assert.That(evt.GetTimeSpanToAddToPeriodStartTime(), Is.EqualTo(TimeSpan.FromHours(2)));
+            Assert.That(evt.GetEffectiveDuration(), Is.EqualTo(Duration.FromHours(2)));
         });
 
         evt = new CalendarEvent()
@@ -549,7 +550,7 @@ END:VCALENDAR";
 
         Assert.Multiple(() => {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
-            Assert.That(evt.GetTimeSpanToAddToPeriodStartTime(), Is.EqualTo(TimeSpan.FromDays(1)));
+            Assert.That(evt.GetEffectiveDuration(), Is.EqualTo(Duration.FromDays(1)));
         });
     }
 

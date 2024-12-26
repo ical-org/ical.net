@@ -453,6 +453,17 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// <param name="dt"></param>
     public TimeSpan SubtractExact(IDateTime dt) => AsUtc - dt.AsUtc;
 
+    public Duration Subtract(IDateTime dt)
+    {
+        if (this.TzId is not null)
+            return SubtractExact(dt).ToDurationExact();
+
+        if (dt.HasTime != HasTime)
+            throw new InvalidOperationException("Trying to calculate the difference between dates of different types. An instance of type DATE cannot be subtracted from a DATE-TIME and vice versa.");
+
+        return (Value - dt.Value).ToDuration();
+    }
+
     /// <inheritdoc cref="DateTime.AddYears"/>
     public IDateTime AddYears(int years)
     {

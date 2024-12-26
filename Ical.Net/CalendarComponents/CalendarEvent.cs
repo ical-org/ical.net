@@ -102,7 +102,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// of the given <see cref="RecurringComponent.DtStart"/> and <see cref="CalendarEvent.DtEnd"/> timezones.
     /// </remarks>
     /// <returns>The time span that gets added to the period start time to get the period end time.</returns>
-    internal TimeSpan GetTimeSpanToAddToPeriodStartTime()
+    internal Duration GetEffectiveDuration()
     {
         // 3.8.5.3. Recurrence Rule
         // If the duration of the recurring component is specified with the
@@ -111,7 +111,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
         // duration of each recurrence instance will depend on its specific
         // start time.
         if (Duration is not null)
-            return Duration.Value.ToTimeSpan();
+            return Duration.Value;
 
         System.Diagnostics.Debug.Assert(DtStart is not null);
 
@@ -131,7 +131,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
                 same timezone as the event end time. This finally leads to an exact duration
                 calculation from the zoned start time to the zoned end time.
              */
-            return DtEnd.Value - DtStart.Value;
+            return DtEnd.Subtract(DtStart);
         }
 
         if (!DtStart.HasTime)
@@ -141,7 +141,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
             // specifies a "DTSTART" property with a DATE value type but no
             // "DTEND" nor "DURATION" property, the event’s duration is taken to
             // be one day.
-            return TimeSpan.FromDays(1);
+            return DataTypes.Duration.FromDays(1);
         }
 
         // For DtStart.HasTime but no DtEnd - also the default case
@@ -151,7 +151,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
         // specifies a "DTSTART" property with a DATE-TIME value type but no
         // "DTEND" property, the event ends on the same calendar date and
         // time of day specified by the "DTSTART" property.
-        return TimeSpan.Zero;
+        return DataTypes.Duration.Zero;
     }
 
     /// <summary>
