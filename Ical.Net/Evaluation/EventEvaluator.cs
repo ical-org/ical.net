@@ -91,7 +91,7 @@ public class EventEvaluator : RecurringEvaluator
         }
 
         // Return the Period object with the calculated end time and duration.
-        period.Duration = endTime.SubtractExact(period.StartTime); // exact duration
+        period.Duration = endTime.Subtract(period.StartTime); // exact duration
         period.EndTime = endTime; // Only EndTime is relevant for further processing.
 
         return period;

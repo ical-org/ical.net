@@ -93,7 +93,7 @@ public class Alarm : CalendarComponent
                 fromDate = rc.Start.Copy<IDateTime>();
             }
 
-            var d = default(TimeSpan);
+            Duration? d = null;
             foreach (var o in rc.GetOccurrences(fromDate, toDate))
             {
                 var dt = o.Period.StartTime;
@@ -102,16 +102,15 @@ public class Alarm : CalendarComponent
                     if (o.Period.EndTime != null)
                     {
                         dt = o.Period.EndTime;
-                        if (d == default)
+                        if (d == null)
                         {
                             d = o.Period.Duration!.Value; // the getter always returns a value
                         }
                     }
                     // Use the "last-found" duration as a reference point
-                    else if (d != default(TimeSpan))
+                    else if (d != null)
                     {
-                        // TODO: Nominal or exact?
-                        dt = o.Period.StartTime.Add(d.ToDuration());
+                        dt = o.Period.StartTime.Add(d.Value);
                     }
                     else
                     {

@@ -6,7 +6,6 @@
 #nullable enable
 using System;
 using Ical.Net.Serialization.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes;
 
@@ -36,7 +35,7 @@ public class Period : EncodableDataType, IComparable<Period>
         }
 
         StartTime = start ?? throw new ArgumentNullException(nameof(start));
-        _endTime = end;
+        EndTime = end;
     }
 
     /// <summary>
@@ -46,15 +45,13 @@ public class Period : EncodableDataType, IComparable<Period>
     /// <param name="start"></param>
     /// <param name="duration"></param>
     /// <exception cref="ArgumentException"></exception>
-    public Period(IDateTime start, TimeSpan duration)
+    public Period(IDateTime start, Duration duration)
     {
-        if (duration < TimeSpan.Zero)
-        {
+        if (duration.Sign < 0)
             throw new ArgumentException("Duration must be greater than or equal to zero.", nameof(duration));
-        }
 
         StartTime = start;
-        _duration = duration;
+        Duration = duration;
     }
 
     /// <inheritdoc/>
@@ -65,8 +62,8 @@ public class Period : EncodableDataType, IComparable<Period>
         if (obj is not Period p) return;
 
         StartTime = p.StartTime.Copy<IDateTime>();
-        _endTime = p._endTime?.Copy<IDateTime>();
-        _duration = p._duration;
+        EndTime = p.EndTime?.Copy<IDateTime>();
+        Duration = p.Duration;
     }
 
     protected bool Equals(Period other) => Equals(StartTime, other.StartTime) && Equals(EndTime, other.EndTime) && Duration.Equals(other.Duration);
@@ -103,8 +100,6 @@ public class Period : EncodableDataType, IComparable<Period>
     /// </summary>
     public virtual IDateTime StartTime { get; set; } = null!;
 
-    private IDateTime? _endTime;
-
     /// <summary>
     /// Gets either the end time of the period that was set,
     /// or calculates the exact end time based on the nominal duration.
@@ -113,20 +108,7 @@ public class Period : EncodableDataType, IComparable<Period>
     /// Either the <see cref="EndTime"/> or the <see cref="Duration"/> can be set at a time.
     /// The last one set will be stored, and the other will be calculated.
     /// </summary>
-    public virtual IDateTime? EndTime
-    {
-        get => _endTime ?? (_duration != null ? StartTime.Add(_duration.Value.ToDuration()) : null);
-        set
-        {
-            _endTime = value;
-            if (_endTime != null)
-            {
-                _duration = null;
-            }
-        }
-    }
-
-    private TimeSpan? _duration;
+    public virtual IDateTime? EndTime { get; set; }
 
     /// <summary>
     /// Gets either the nominal duration of the period that was set,
@@ -139,34 +121,28 @@ public class Period : EncodableDataType, IComparable<Period>
     /// A <see cref="Period"/> that has a date-only <see cref="StartTime"/>, no <see cref="EndTime"/>
     /// and no duration set, is considered to last for one day.
     /// </summary>
-    public virtual TimeSpan? Duration
+    public virtual Duration? Duration { get; set; }
+
+    internal Duration GetEffectiveDuration()
     {
-        get
-        {
-            if (_endTime == null && !StartTime.HasTime)
-            {
-                return TimeSpan.FromDays(1);
-            }
-            return _duration ?? _endTime?.Subtract(StartTime).ToTimeSpan();
-        }
-        set
-        {
-            _duration = value;
-            if (_duration != null)
-            {
-                _endTime = null;
-            }
-        }
+        if (Duration is { } d)
+            return d;
+
+        if (EndTime is { } endTime)
+            return endTime.Subtract(StartTime);
+
+        if (!StartTime.HasTime)
+            return DataTypes.Duration.FromDays(1);
+
+        return DataTypes.Duration.Zero;
     }
 
-    /// <summary>
-    /// Gets the original start time, end time, and duration as they were set,
-    /// while <see cref="EndTime"/> or <see cref="Duration"/> properties may be calculated.
-    /// </summary>
-    /// <returns></returns>
-    public (IDateTime StartTime, IDateTime? EndTime, TimeSpan? Duration) GetOriginalValues()
+    internal IDateTime GetEffectiveEndTime()
     {
-        return (StartTime, _endTime, _duration);
+        if (EndTime is { } endTime)
+            return endTime;
+
+        return StartTime.Add(GetEffectiveDuration());
     }
 
     /// <summary>
@@ -184,8 +160,9 @@ public class Period : EncodableDataType, IComparable<Period>
             return false;
         }
 
+        var endTime = GetEffectiveEndTime();
         // End time is exclusive
-        return EndTime == null || EndTime.GreaterThan(dt);
+        return endTime == null || endTime.GreaterThan(dt);
     }
 
     /// <summary>
@@ -199,17 +176,10 @@ public class Period : EncodableDataType, IComparable<Period>
     /// <param name="period"></param>
     /// <returns></returns>
     public virtual bool CollidesWith(Period period)
-    {
-        // Check if the start or end time of the given period is within the current period
-        var startContained = Contains(period.StartTime);
-        var endContained = period.EndTime != null && Contains(period.EndTime);
-
-        // Check if the current period is completely within the given period
-        var currentStartContained = period.Contains(StartTime);
-        var currentEndContained = EndTime != null && period.Contains(EndTime);
-
-        return startContained || endContained || currentStartContained || currentEndContained;
-    }
+            => Contains(period.StartTime)
+            || period.Contains(StartTime)
+            || Contains(period.GetEffectiveEndTime())
+            || period.Contains(GetEffectiveEndTime());
 
     public int CompareTo(Period? other)
     {

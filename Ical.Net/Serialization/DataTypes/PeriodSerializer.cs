@@ -45,13 +45,14 @@ public class PeriodSerializer : EncodableDataTypeSerializer
             sb.Append(dtSerializer.SerializeToString(p.StartTime));
 
             // Serialize the duration or end time
-            if (p.EndTime.HasTime)
+            if (p.EndTime != null)
             {
                 // serialize the end time
                 sb.Append("/");
                 sb.Append(dtSerializer.SerializeToString(p.EndTime));
             }
-            else
+
+            if (p.Duration != null)
             {
                 // Serialize the duration
                 sb.Append("/");
@@ -99,7 +100,7 @@ public class PeriodSerializer : EncodableDataTypeSerializer
         p.EndTime = dtSerializer.Deserialize(new StringReader(values[1])) as IDateTime;
         if (p.EndTime == null)
         {
-            p.Duration = ((Duration)durationSerializer.Deserialize(new StringReader(values[1]))).ToTimeSpan();
+            p.Duration = (Duration)durationSerializer.Deserialize(new StringReader(values[1]));
         }
 
         // Only return an object if it has been deserialized correctly.

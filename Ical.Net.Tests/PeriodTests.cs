@@ -18,7 +18,7 @@ public class PeriodTests
     {
         var period = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York"));
         var periodWithEndTime = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York"), new CalDateTime(2025, 1, 1, 1, 0, 0, "America/New_York"));
-        var periodWithDuration = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York"), new TimeSpan(1, 0, 0));
+        var periodWithDuration = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York"), Duration.FromHours(1));
 
         Assert.Multiple(() =>
         {
@@ -27,12 +27,12 @@ public class PeriodTests
             Assert.That(period.Duration, Is.Null);
             
             Assert.That(periodWithEndTime.StartTime, Is.EqualTo(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York")));
-            Assert.That(periodWithEndTime.EndTime, Is.EqualTo(new CalDateTime(2025, 1, 1, 1, 0, 0, "America/New_York")));
-            Assert.That(periodWithEndTime.Duration, Is.EqualTo(new TimeSpan(1, 0, 0)));
+            Assert.That(periodWithEndTime.GetEffectiveEndTime(), Is.EqualTo(new CalDateTime(2025, 1, 1, 1, 0, 0, "America/New_York")));
+            Assert.That(periodWithEndTime.GetEffectiveDuration(), Is.EqualTo(Duration.FromHours(1)));
 
             Assert.That(periodWithDuration.StartTime, Is.EqualTo(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York")));
-            Assert.That(periodWithDuration.EndTime, Is.EqualTo(new CalDateTime(2025, 1, 1, 1, 0, 0, "America/New_York")));
-            Assert.That(periodWithDuration.Duration, Is.EqualTo(new TimeSpan(1, 0, 0)));
+            Assert.That(periodWithDuration.GetEffectiveEndTime(), Is.EqualTo(new CalDateTime(2025, 1, 1, 1, 0, 0, "America/New_York")));
+            Assert.That(periodWithDuration.GetEffectiveDuration(), Is.EqualTo(Duration.FromHours(1)));
         });
     }
 
@@ -42,7 +42,7 @@ public class PeriodTests
         Assert.Throws<ArgumentException>(() => _ = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York"),
             new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York")));
         Assert.Throws<ArgumentException>(() =>
-            _ = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York"), new TimeSpan(-1, 0, 0)));
+            _ = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York"), Duration.FromHours(-1)));
     }
     [Test]
     public void SetAndGetStartTime()
@@ -61,31 +61,31 @@ public class PeriodTests
         var endTime = new CalDateTime(2025, 1, 31, 0, 0, 0);
         period.EndTime = endTime;
 
+        Assert.That(period.GetEffectiveEndTime(), Is.EqualTo(endTime));
         Assert.That(period.EndTime, Is.EqualTo(endTime));
-        Assert.That(period.GetOriginalValues().EndTime, Is.EqualTo(endTime));
-        Assert.That(period.GetOriginalValues().Duration, Is.Null);
-        Assert.That(period.Duration, Is.EqualTo(new TimeSpan(30, 0, 0, 0)));
+        Assert.That(period.Duration, Is.Null);
+        Assert.That(period.GetEffectiveDuration(), Is.EqualTo(Duration.FromDays(30)));
     }
 
     [Test]
     public void SetDuration_GetEndTime()
     {
         var period = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0));
-        var duration = new TimeSpan(1, 0, 0);
+        var duration = Duration.FromHours(1);
         period.Duration = duration;
 
+        Assert.That(period.GetEffectiveDuration(), Is.EqualTo(duration));
         Assert.That(period.Duration, Is.EqualTo(duration));
-        Assert.That(period.GetOriginalValues().Duration, Is.EqualTo(duration));
-        Assert.That(period.GetOriginalValues().EndTime, Is.Null);
-        Assert.That(period.EndTime, Is.EqualTo(new CalDateTime(2025, 1, 1, 1, 0, 0)));
+        Assert.That(period.EndTime, Is.Null);
+        Assert.That(period.GetEffectiveEndTime(), Is.EqualTo(new CalDateTime(2025, 1, 1, 1, 0, 0)));
     }
 
     [Test]
     public void CollidesWithPeriod()
     {
-        var period1 = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0), new TimeSpan(1, 0, 0));
-        var period2 = new Period(new CalDateTime(2025, 1, 1, 0, 30, 0), new TimeSpan(1, 0, 0));
-        var period3 = new Period(new CalDateTime(2025, 1, 1, 1, 30, 0), new TimeSpan(1, 0, 0));
+        var period1 = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0), Duration.FromHours(1));
+        var period2 = new Period(new CalDateTime(2025, 1, 1, 0, 30, 0), Duration.FromHours(1));
+        var period3 = new Period(new CalDateTime(2025, 1, 1, 1, 30, 0), Duration.FromHours(1));
 
         Assert.Multiple(() =>
         {
