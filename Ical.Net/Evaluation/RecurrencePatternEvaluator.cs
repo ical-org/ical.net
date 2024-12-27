@@ -943,7 +943,11 @@ public class RecurrencePatternEvaluator : Evaluator
     {
         // Turn each resulting date/time into an IDateTime and associate it
         // with the reference date.
-        IDateTime newDt = new CalDateTime(dateTime, referenceDate.TzId, referenceDate.HasTime);
+        IDateTime newDt = new CalDateTime(dateTime, null, referenceDate.HasTime);
+        if (referenceDate.TzId != null) {
+            // Adjust nonexistent recurrence instances according to RFC 5545 3.3.5
+            newDt = newDt.ToTimeZone(referenceDate.TzId);
+        }
 
         newDt.AssociateWith(referenceDate);
 
