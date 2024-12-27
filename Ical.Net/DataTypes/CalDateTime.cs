@@ -23,7 +23,7 @@ namespace Ical.Net.DataTypes;
 /// This is because RFC 5545, Section 3.3.5, does not allow for fractional seconds.
 /// </remarks>
 /// </summary>
-public sealed class CalDateTime : EncodableDataType, CalDateTime
+public sealed class CalDateTime : EncodableDataType, IComparable<CalDateTime>, IFormattable
 {
     // The date part that is used to return the Value property.
     private DateOnly _dateOnly;
@@ -327,10 +327,22 @@ public sealed class CalDateTime : EncodableDataType, CalDateTime
         return new CalDateTime(left);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Converts the date/time to UTC (Coordinated Universal Time)
+    /// If <see cref="IsFloating"/>==<see langword="true"/>
+    /// it means that the <see cref="Value"/> is considered as local time for every timezone:
+    /// The returned <see cref="Value"/> is unchanged, but with <see cref="DateTimeKind.Utc"/>.
+    /// </summary>
     public DateTime AsUtc => DateTime.SpecifyKind(ToTimeZone(UtcTzId).Value, DateTimeKind.Utc);
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets the date and time value in the ISO calendar as a <see cref="DateTime"/> type with <see cref="DateTimeKind.Unspecified"/>.
+    /// The value has no associated timezone.<br/>
+    /// The precision of the time part is up to seconds.
+    /// <para/>
+    /// Use <see cref="IsUtc"/> along with <see cref="TzId"/> and <see cref="IsFloating"/>
+    /// to control how this date/time is handled.
+    /// </summary>
     public DateTime Value
     {
         get
@@ -349,10 +361,22 @@ public sealed class CalDateTime : EncodableDataType, CalDateTime
         }
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Returns <see langword="true"/>, if the date/time value is floating.
+    /// <para/>
+    /// A floating date/time value does not include a timezone identifier or UTC offset,
+    /// so it is interpreted as local time in the context where it is used.
+    /// <para/>
+    /// A floating date/time value is useful when the exact timezone is not
+    /// known or when the event should be interpreted in the local timezone of
+    /// the user or system processing the calendar data.
+    /// </summary>
     public bool IsFloating => _tzId is null;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets/sets whether the Value of this date/time represents
+    /// a universal time.
+    /// </summary>
     public bool IsUtc => string.Equals(_tzId, UtcTzId, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
@@ -369,38 +393,60 @@ public sealed class CalDateTime : EncodableDataType, CalDateTime
     /// </summary>
     public string? TzId => _tzId;
 
-    /// <inheritdoc cref="TzId"/>
+    /// <summary>
+    /// Gets the timezone name this time is in, if it references a timezone.
+    /// </summary>
     /// <remarks>This is an alias for <see cref="TzId"/></remarks>
     public string? TimeZoneName => TzId;
 
-    /// <inheritdoc cref="DateTime.Year"/>
+    /// <summary>
+    /// Gets the year that applies to the <see cref="Value"/>.
+    /// </summary>
     public int Year => Value.Year;
 
-    /// <inheritdoc cref="DateTime.Month"/>
+    /// <summary>
+    /// Gets the month that applies to the <see cref="Value"/>.
+    /// </summary>
     public int Month => Value.Month;
 
-    /// <inheritdoc cref="DateTime.Day"/>
+    /// <summary>
+    /// Gets the day that applies to the <see cref="Value"/>.
+    /// </summary>
     public int Day => Value.Day;
 
-    /// <inheritdoc cref="DateTime.Hour"/>
+    /// <summary>
+    /// Gets the hour that applies to the <see cref="Value"/>.
+    /// </summary>
     public int Hour => Value.Hour;
 
-    /// <inheritdoc cref="DateTime.Minute"/>
+    /// <summary>
+    /// Gets the minute that applies to the <see cref="Value"/>.
+    /// </summary>
     public int Minute => Value.Minute;
 
-    /// <inheritdoc cref="DateTime.Second"/>
+    /// <summary>
+    /// Gets the second that applies to the <see cref="Value"/>.
+    /// </summary>
     public int Second => Value.Second;
 
-    /// <inheritdoc cref="DateTime.DayOfWeek"/>
+    /// <summary>
+    /// Gets the DayOfWeek that applies to the <see cref="Value"/>.
+    /// </summary>
     public DayOfWeek DayOfWeek => Value.DayOfWeek;
 
-    /// <inheritdoc cref="DateTime.DayOfYear"/>
+    /// <summary>
+    /// Gets the DayOfYear that applies to the <see cref="Value"/>.
+    /// </summary>
     public int DayOfYear => Value.DayOfYear;
 
-    /// <inheritdoc cref="DateOnly"/>
+    /// <summary>
+    /// Gets the date portion of the <see cref="Value"/>.
+    /// </summary>
     public DateOnly Date => _dateOnly;
 
-    /// <inheritdoc cref="TimeOnly"/>
+    /// <summary>
+    /// Gets the time portion of the <see cref="Value"/>, or <see langword="null"/> if the <see cref="Value"/> is a pure date.
+    /// </summary>
     public TimeOnly? Time => _timeOnly;
 
     /// <summary>
@@ -423,10 +469,15 @@ public sealed class CalDateTime : EncodableDataType, CalDateTime
     /// </summary>
     private static TimeOnly? TruncateTimeToSeconds(DateTime dateTime) => new TimeOnly(dateTime.Hour, dateTime.Minute, dateTime.Second);
 
-    /// <inheritdoc/>
-    CalDateTime CalDateTime.ToTimeZone(string? otherTzId) => ToTimeZone(otherTzId);
-
-    public CalDateTime ToTimeZone(string? otherTzId)
+    /// <summary>
+    /// Converts the <see cref="Value"/> to a date/time
+    /// within the specified <see paramref="otherTzId"/> timezone.
+    /// <para/>
+    /// If <see cref="IsFloating"/>==<see langword="true"/>
+    /// it means that the <see cref="Value"/> is considered as local time for every timezone:
+    /// The returned <see cref="Value"/> is unchanged and the <see paramref="otherTzId"/> is set as <see cref="TzId"/>.
+    /// </summary>
+    public CalDateTime ToTimeZone(string otherTzId)
     {
         if (otherTzId is null)
             return new CalDateTime(Value, null, HasTime);
@@ -448,7 +499,12 @@ public sealed class CalDateTime : EncodableDataType, CalDateTime
             : new CalDateTime(converted.ToDateTimeUnspecified(), otherTzId);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Add the specified <see cref="Duration"/> to this instance/>.
+    /// </summary>
+    /// <remarks>
+    /// In correspondence to RFC5545, the weeks and day fields of a duration are considered nominal durations while the time fields are considered exact values.
+    /// </remarks>
     /// <exception cref="InvalidOperationException">
     /// Thrown when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
@@ -498,10 +554,16 @@ public sealed class CalDateTime : EncodableDataType, CalDateTime
         return newDateTime;
     }
 
-    /// <inheritdoc/>
+    /// <summary>Returns a new <see cref="TimeSpan" /> from subtracting the specified <see cref="CalDateTime"/> from to the value of this instance.</summary>
+    /// <param name="dt"></param>
     public TimeSpan SubtractExact(CalDateTime dt) => AsUtc - dt.AsUtc;
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Returns a new <see cref="Duration"/> from subtracting the specified <see cref="CalDateTime"/> from to the value of this instance.
+    /// </summary>
+    /// <param name="dt"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public Duration Subtract(CalDateTime dt)
     {
         if (this.TzId is not null)
@@ -605,14 +667,14 @@ public sealed class CalDateTime : EncodableDataType, CalDateTime
     /// </returns>
     public int CompareTo(CalDateTime? dt)
     {
-        if (Equals(dt))
-        {
-            return 0;
-        }
-
         if (dt == null)
         {
             return 1;
+        }
+
+        if (Equals(dt))
+        {
+            return 0;
         }
 
         if (this < dt)
