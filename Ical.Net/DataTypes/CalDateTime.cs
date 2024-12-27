@@ -428,7 +428,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
             : new CalDateTime(converted.ToDateTimeUnspecified(), otherTzId);
     }
 
-    /// <inheritdoc cref="DateTime.Add"/>
+    /// <inheritdoc/>
     /// <exception cref="InvalidOperationException">
     /// Thrown when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
@@ -478,10 +478,10 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
         return newDateTime;
     }
 
-    /// <summary>Returns a new <see cref="TimeSpan" /> from subtracting the specified <see cref="IDateTime"/> from to the value of this instance.</summary>
-    /// <param name="dt"></param>
+    /// <inheritdoc/>
     public TimeSpan SubtractExact(IDateTime dt) => AsUtc - dt.AsUtc;
 
+    /// <inheritdoc/>
     public Duration Subtract(IDateTime dt)
     {
         if (this.TzId is not null)

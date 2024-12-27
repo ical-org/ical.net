@@ -115,9 +115,33 @@ public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormat
     /// The returned <see cref="Value"/> is unchanged and the <see paramref="otherTzId"/> is set as <see cref="TzId"/>.
     /// </summary>
     IDateTime ToTimeZone(string otherTzId);
+
+    /// <summary>
+    /// Add the specified <see cref="Duration"/> to this instance/>.
+    /// </summary>
+    /// <remarks>
+    /// In correspondence to RFC5545, the weeks and day fields of a duration are considered nominal durations while the time fields are considered exact values.
+    /// </remarks>
     IDateTime Add(Duration d);
+
+    /// <summary>
+    /// Returns a new <see cref="TimeSpan" /> from subtracting the specified <see cref="CalDateTime"/> from to the value of this instance.
+    /// The returned value represents the exact time difference. I.e. the calculation is done after converting both operands to UTC.
+    /// In case of floating time, no conversion is performed.
+    /// </summary>
     TimeSpan SubtractExact(IDateTime dt);
+
+    /// <summary>
+    /// Returns a new <see cref="Duration" /> from subtracting the specified <see cref="CalDateTime"/> from to the value of this instance.
+    /// </summary>
+    /// <remarks>
+    /// If the operands are date-only, the returned value will be date-only as well, so it
+    /// can be used with <see cref="Add(Duration)"/>. Otherwise the returned value represents
+    /// the exact difference between the two operands, i.e. if the operands are non-floating,
+    /// they will be converted to UTC before the subtraction.
+    /// </remarks>
     Duration Subtract(IDateTime dt);
+
     IDateTime AddYears(int years);
     IDateTime AddMonths(int months);
     IDateTime AddDays(int days);
