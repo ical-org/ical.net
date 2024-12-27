@@ -157,7 +157,7 @@ public class CalDateTimeTests
 
         yield return new TestCaseData(new CalDateTime(2024, 8, 30), null,
                 CultureInfo.GetCultureInfo("IT")) // Date only cannot have timezone
-            .Returns("30/08/2024") 
+            .Returns("30/08/2024")
             .SetName("Date only with 'IT' CultureInfo and default format arg");
     }
 
@@ -193,15 +193,15 @@ public class CalDateTimeTests
 
     public static IEnumerable EqualityTestCases()
     {
-        yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime) dt == new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: CalDateTime.UtcTzId)))
+        yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime)dt == new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: CalDateTime.UtcTzId)))
             .Returns(true)
             .SetName("== operator 2 UTC timezones");
 
-        yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime) dt != new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: "Europe/Berlin")))
+        yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime)dt != new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: "Europe/Berlin")))
             .Returns(true)
             .SetName("!= operator 2 timezones");
 
-        yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime) dt == new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: null)))
+        yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime)dt == new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: null)))
             .Returns(false)
             .SetName("== operator UTC vs. floating");
     }
@@ -309,14 +309,14 @@ public class CalDateTimeTests
 
     public static IEnumerable<TestCaseData> AddAndSubtractTestCases()
     {
-     yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: null), Duration.FromHours(4))
-        .SetName("Floating");
+        yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: null), Duration.FromHours(4))
+           .SetName("Floating");
 
-     yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: CalDateTime.UtcTzId), Duration.FromHours(4))
-         .SetName("UTC");
+        yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: CalDateTime.UtcTzId), Duration.FromHours(4))
+            .SetName("UTC");
 
-     yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: "Europe/Paris"), Duration.FromHours(4))
-         .SetName("Zoned Date/Time with DST change");
+        yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: "Europe/Paris"), Duration.FromHours(4))
+            .SetName("Zoned Date/Time with DST change");
     }
 
     [Test, TestCaseSource(nameof(AddAndSubtractTestCases))]
