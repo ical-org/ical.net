@@ -39,8 +39,10 @@ public class RecurrenceTests
 #pragma warning disable 0618
         if (rule != null) rule.RestrictionType = RecurrenceRestrictionType.NoRestriction;
 #pragma warning restore 0618
-        fromDate.AssociatedObject = cal;
-        toDate.AssociatedObject = cal;
+        if (fromDate != null)
+            fromDate.AssociatedObject = cal;
+        if (toDate != null)
+            toDate.AssociatedObject = cal;
 
         var occurrences = evt.GetOccurrences(fromDate, toDate)
             .OrderBy(o => o.Period.StartTime)
@@ -2489,6 +2491,91 @@ public class RecurrenceTests
             fromDate: new CalDateTime(2011, 7, 18),
             toDate: new CalDateTime(2011, 7, 26),
             expectedPeriods: new[] { new Period(new CalDateTime(2011, 05, 23), Duration.FromDays(102)) },
+            timeZones: null,
+            eventIndex: 0
+        );
+    }
+
+    [Test, Category("Recurrence")]
+    // If duaration is specified via DTEND or time-only, then the ducation is exact.
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DTEND;TZID=Europe/Vienna:20241020T040000", "20241020T010000/PT3H", "20241027T010000/PT3H", "20241103T010000/PT3H")]
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DURATION:PT3H",                            "20241020T010000/PT3H", "20241027T010000/PT3H", "20241103T010000/PT3H")]
+
+    // specified via DTEND: exact
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DTEND;TZID=Europe/Vienna:20241021T040000", "20241020T010000/PT27H", "20241027T010000/PT27H", "20241103T010000/PT27H")]
+    // First days are applied nominal, then time exact
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DURATION:P1DT3H",                          "20241020T010000/PT27H", "20241027T010000/PT28H", "20241103T010000/PT27H")]
+    // Exact, because duration is time-only
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DURATION:PT27H",                           "20241020T010000/PT27H", "20241027T010000/PT27H", "20241103T010000/PT27H")]
+
+    // specified via DTEND: exact
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DTEND;TZID=Europe/Vienna:20241027T040000", "20241020T010000/PT172H", "20241027T010000/PT172H", "20241103T010000/PT172H")]
+    // First days are applied nominal, then time exact
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DURATION:P7DT3H",                          "20241020T010000/PT171H", "20241027T010000/PT172H", "20241103T010000/PT171H")]
+    // Exact, because duration is time-only
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DURATION:PT171H",                          "20241020T010000/PT171H", "20241027T010000/PT171H", "20241103T010000/PT171H")]
+
+    // specified via DTEND: exact
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DTEND;TZID=Europe/Vienna:20241020T023000", "20241020T010000/PT1H30M", "20241027T010000/PT1H30M", "20241103T010000/PT1H30M")]
+    // First days are applied nominal, then time exact
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DURATION:PT1H30M",                         "20241020T010000/PT1H30M", "20241027T010000/PT1H30M", "20241103T010000/PT1H30M")]
+
+    // The following cases cover cases where DTSTART or DTEND are nonexistent.
+    //
+    // There seems to be a conflicting specification in RFC 5545 section 3.3.10 regarding nonexistent recurrences.
+    //
+    // 1)
+    // Recurrence rules may generate recurrence instances with an invalid
+    // date (e.g., February 30) or nonexistent local time (e.g., 1:30 AM
+    // on a day where the local time is moved forward by an hour at 1:00
+    // AM).  Such recurrence instances MUST be ignored and MUST NOT be
+    // counted as part of the recurrence set.
+    //
+    // 2)
+    // If the computed local start time of a recurrence instance does not
+    // exist, or occurs more than once, for the specified time zone, the
+    // time of the recurrence instance is interpreted in the same manner
+    // as an explicit DATE-TIME value describing that date and time, as
+    // specified in Section 3.3.5.
+    //
+    // see https://github.com/ical-org/ical.net/issues/681
+    [TestCase("DTSTART;TZID=Europe/Vienna:20250316T023000", "DTEND;TZID=Europe/Vienna:20250323T023000", "20250316T023000/PT168H", "20250323T023000/PT168H", "20250330T033000/PT168H")]
+    [TestCase("DTSTART;TZID=Europe/Vienna:20250316T023000", "DURATION:P1W",                             "20250316T023000/PT168H", "20250323T023000/PT168H", "20250330T033000/PT168H")]
+    [TestCase("DTSTART;TZID=Europe/Vienna:20250316T023000", "DURATION:P7D",                             "20250316T023000/PT168H", "20250323T023000/PT168H", "20250330T033000/PT168H")]
+
+    public void DurationOfRecurrencesOverDst(string dtStart, string dtEnd, string d1, string d2, string d3)
+    {
+        var iCal = Calendar.Load($"""
+            BEGIN:VCALENDAR
+            BEGIN:VEVENT
+            {dtStart}
+            {dtEnd}
+            RRULE:FREQ=WEEKLY;COUNT=3
+            END:VEVENT
+            END:VCALENDAR
+            """);
+
+        var start = iCal.Events.First().Start;
+
+        var periodSerializer = new PeriodSerializer();
+        var expectedPeriods =
+            new[] { d1, d2, d3 }
+            .Where(x => x != null)
+            .Select(x => (Period)periodSerializer.Deserialize(new StringReader(x)))
+            .ToArray();
+
+        foreach (var p in expectedPeriods)
+        {
+            p.StartTime = p.StartTime.ToTimeZone(start.TzId);
+            p.EndTime = p.StartTime.Add(p.Duration.Value);
+        }
+
+        // date only cannot have a time zone
+        EventOccurrenceTest(
+            cal: iCal,
+            fromDate: null,
+            toDate: null,
+            expectedPeriods: expectedPeriods,
             timeZones: null,
             eventIndex: 0
         );
