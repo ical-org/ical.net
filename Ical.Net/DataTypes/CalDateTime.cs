@@ -418,10 +418,17 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
 
     public CalDateTime ToTimeZone(string otherTzId)
     {
-        if (IsFloating) return new CalDateTime(_dateOnly, _timeOnly, otherTzId);
-
-        var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, TzId);
-        var converted = zonedOriginal.WithZone(DateUtil.GetZone(otherTzId));
+        ZonedDateTime converted;
+        if (IsFloating)
+        {
+            // Make sure, we properly fix the time if it dosen't exist in the target tz.
+            converted = DateUtil.ToZonedDateTimeLeniently(Value, otherTzId);
+        }
+        else
+        {
+            var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, TzId);
+            converted = zonedOriginal.WithZone(DateUtil.GetZone(otherTzId));
+        }
 
         return converted.Zone == DateTimeZone.Utc
             ? new CalDateTime(converted.ToDateTimeUtc(), UtcTzId)
