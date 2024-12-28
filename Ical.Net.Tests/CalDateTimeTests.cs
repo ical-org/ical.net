@@ -36,6 +36,21 @@ public class CalDateTimeTests
         return calendarEvent;
     }
 
+    [Test]
+    public void ToTimeZoneFloating()
+    {
+        var dt = new CalDateTime(2024, 12, 28, 17, 45, 05, "Europe/Vienna");
+        var floating = dt.ToTimeZone(null);
+        var dt2 = floating.ToTimeZone("Europe/Vienna");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt, Is.EqualTo(dt2));
+            Assert.That(floating.TzId, Is.Null);
+            Assert.That(floating.Value, Is.EqualTo(dt.Value));
+        });
+    }
+
     [Test, TestCaseSource(nameof(ToTimeZoneTestCases))]
     public void ToTimeZoneTests(CalendarEvent calendarEvent, string targetTimeZone)
     {

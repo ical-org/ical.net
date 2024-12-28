@@ -108,13 +108,14 @@ public interface IDateTime : IEncodableDataType, IComparable<IDateTime>, IFormat
 
     /// <summary>
     /// Converts the <see cref="Value"/> to a date/time
-    /// within the specified <see paramref="otherTzId"/> timezone.
+    /// within the specified <see paramref="otherTzId"/> timezone or
+    /// to floating time if <paramref name="otherTzId"/> is null.
     /// <para/>
     /// If <see cref="IsFloating"/>==<see langword="true"/>
     /// it means that the <see cref="Value"/> is considered as local time for every timezone:
     /// The returned <see cref="Value"/> is unchanged and the <see paramref="otherTzId"/> is set as <see cref="TzId"/>.
     /// </summary>
-    IDateTime ToTimeZone(string otherTzId);
+    IDateTime ToTimeZone(string? otherTzId);
 
     /// <summary>
     /// Add the specified <see cref="Duration"/> to this instance/>.

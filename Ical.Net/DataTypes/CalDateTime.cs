@@ -414,10 +414,13 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     private static TimeOnly? TruncateTimeToSeconds(DateTime dateTime) => new TimeOnly(dateTime.Hour, dateTime.Minute, dateTime.Second);
 
     /// <inheritdoc/>
-    IDateTime IDateTime.ToTimeZone(string otherTzId) => ToTimeZone(otherTzId);
+    IDateTime IDateTime.ToTimeZone(string? otherTzId) => ToTimeZone(otherTzId);
 
-    public CalDateTime ToTimeZone(string otherTzId)
+    public CalDateTime ToTimeZone(string? otherTzId)
     {
+        if (otherTzId is null)
+            return new CalDateTime(Value, null, HasTime);
+
         ZonedDateTime converted;
         if (IsFloating)
         {
