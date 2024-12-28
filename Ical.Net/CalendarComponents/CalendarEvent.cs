@@ -113,7 +113,11 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
         if (Duration is not null)
             return Duration.Value;
 
-        System.Diagnostics.Debug.Assert(DtStart is not null);
+        if (DtStart is not { } dtStart)
+        {
+            // Mustn't happen
+            throw new InvalidOperationException("DtStart must be set.");
+        }
 
         if (DtEnd is not null)
         {
@@ -131,10 +135,10 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
                 same timezone as the event end time. This finally leads to an exact duration
                 calculation from the zoned start time to the zoned end time.
              */
-            return DtEnd.Subtract(DtStart);
+            return DtEnd.Subtract(dtStart);
         }
 
-        if (!DtStart.HasTime)
+        if (!dtStart.HasTime)
         {
             // RFC 5545 3.6.1:
             // For cases where a "VEVENT" calendar component
