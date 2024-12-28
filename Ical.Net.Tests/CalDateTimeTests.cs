@@ -36,6 +36,21 @@ public class CalDateTimeTests
         return calendarEvent;
     }
 
+    [Test]
+    public void ToTimeZoneFloating()
+    {
+        var dt = new CalDateTime(2024, 12, 28, 17, 45, 05, "Europe/Vienna");
+        var floating = dt.ToTimeZone(null);
+        var dt2 = floating.ToTimeZone("Europe/Vienna");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt, Is.EqualTo(dt2));
+            Assert.That(floating.TzId, Is.Null);
+            Assert.That(floating.Value, Is.EqualTo(dt.Value));
+        });
+    }
+
     [Test, TestCaseSource(nameof(ToTimeZoneTestCases))]
     public void ToTimeZoneTests(CalendarEvent calendarEvent, string targetTimeZone)
     {
@@ -157,7 +172,7 @@ public class CalDateTimeTests
 
         yield return new TestCaseData(new CalDateTime(2024, 8, 30), null,
                 CultureInfo.GetCultureInfo("IT")) // Date only cannot have timezone
-            .Returns("30/08/2024") 
+            .Returns("30/08/2024")
             .SetName("Date only with 'IT' CultureInfo and default format arg");
     }
 
@@ -176,13 +191,9 @@ public class CalDateTimeTests
             .Returns(dateTime.AddHours(1))
             .SetName($"{nameof(IDateTime.AddHours)} 1 hour");
 
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(TimeSpan.FromSeconds(30))))
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(Duration.FromSeconds(30))))
             .Returns(dateTime.Add(TimeSpan.FromSeconds(30)))
             .SetName($"{nameof(IDateTime.Add)} 30 seconds");
-
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(TimeSpan.FromMilliseconds(100))))
-            .Returns(dateTime.Add(TimeSpan.FromMilliseconds(0)))
-            .SetName($"{nameof(IDateTime.Add)} 100 milliseconds round down");
 
         yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddMinutes(70)))
             .Returns(dateTime.AddMinutes(70))
@@ -197,15 +208,15 @@ public class CalDateTimeTests
 
     public static IEnumerable EqualityTestCases()
     {
-        yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime) dt == new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: CalDateTime.UtcTzId)))
+        yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime)dt == new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: CalDateTime.UtcTzId)))
             .Returns(true)
             .SetName("== operator 2 UTC timezones");
 
-        yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime) dt != new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: "Europe/Berlin")))
+        yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime)dt != new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: "Europe/Berlin")))
             .Returns(true)
             .SetName("!= operator 2 timezones");
 
-        yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime) dt == new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: null)))
+        yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime)dt == new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: null)))
             .Returns(false)
             .SetName("== operator UTC vs. floating");
     }
@@ -245,9 +256,9 @@ public class CalDateTimeTests
     {
         var dateTime = new DateTime(2025, 1, 15);
 
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Subtract(TimeSpan.FromDays(1))))
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(-Duration.FromDays(1))))
             .Returns((dateTime.AddDays(-1), false))
-            .SetName($"{nameof(IDateTime.Subtract)} 1 day TimeSpan");
+            .SetName($"{nameof(IDateTime.Add)} -1 day TimeSpan");
 
         yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddYears(1)))
             .Returns((dateTime.AddYears(1), false))
@@ -261,23 +272,11 @@ public class CalDateTimeTests
             .Returns((dateTime.AddDays(7), false))
             .SetName($"{nameof(IDateTime.AddDays)} 7 days");
 
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddHours(24)))
-            .Returns((dateTime.AddHours(24), false))
-            .SetName($"{nameof(IDateTime.AddHours)} 24 hours");
-
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddMinutes(24 * 60)))
-            .Returns((dateTime.AddMinutes(24 * 60), false))
-            .SetName($"{nameof(IDateTime.AddMinutes)} 1 day in minutes");
-
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddSeconds(TimeSpan.FromDays(1).Seconds)))
-            .Returns((dateTime.AddSeconds(TimeSpan.FromDays(1).Seconds), false))
-            .SetName($"{nameof(IDateTime.AddSeconds)} 1 day in seconds");
-
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(TimeSpan.FromDays(1))))
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(Duration.FromDays(1))))
             .Returns((dateTime.Add(TimeSpan.FromDays(1)), false))
             .SetName($"{nameof(IDateTime.Add)} 1 day TimeSpan");
 
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(TimeSpan.Zero)))
+        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(Duration.Zero)))
             .Returns((dateTime.Add(TimeSpan.Zero), false))
             .SetName($"{nameof(IDateTime.Add)} TimeSpan.Zero");
     }
@@ -289,7 +288,7 @@ public class CalDateTimeTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(() => dt.Add(TimeSpan.FromHours(1)), Throws.TypeOf<InvalidOperationException>());
+            Assert.That(() => dt.Add(Duration.FromHours(1)), Throws.TypeOf<InvalidOperationException>());
             Assert.That(() => dt.AddHours(2), Throws.TypeOf<InvalidOperationException>());
             Assert.That(() => dt.AddMinutes(3), Throws.TypeOf<InvalidOperationException>());
             Assert.That(() => dt.AddSeconds(4), Throws.TypeOf<InvalidOperationException>());
@@ -316,7 +315,7 @@ public class CalDateTimeTests
             Assert.That(CalDateTime.Today.Value.Kind, Is.EqualTo(DateTimeKind.Unspecified));
             Assert.That(c.DayOfYear, Is.EqualTo(dt.DayOfYear));
             Assert.That(c.Time?.ToTimeSpan(), Is.EqualTo(dt.TimeOfDay));
-            Assert.That(c.Subtract(TimeSpan.FromSeconds(dt.Second)).Value.Second, Is.EqualTo(0));
+            Assert.That(c.Add(-Duration.FromSeconds(dt.Second)).Value.Second, Is.EqualTo(0));
             Assert.That(c.ToString("dd.MM.yyyy"), Is.EqualTo("02.01.2025 Europe/Berlin"));
             // Create a date-only CalDateTime from a CalDateTime
             Assert.That(new CalDateTime(new CalDateTime(2025, 1, 1)), Is.EqualTo(new CalDateTime(2025, 1, 1)));
@@ -325,23 +324,23 @@ public class CalDateTimeTests
 
     public static IEnumerable<TestCaseData> AddAndSubtractTestCases()
     {
-     yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: null), TimeSpan.FromHours(4))
-        .SetName("Floating");
+        yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: null), Duration.FromHours(4))
+           .SetName("Floating");
 
-     yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: CalDateTime.UtcTzId), TimeSpan.FromHours(4))
-         .SetName("UTC");
+        yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: CalDateTime.UtcTzId), Duration.FromHours(4))
+            .SetName("UTC");
 
-     yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: "Europe/Paris"), TimeSpan.FromHours(4))
-         .SetName("Zoned Date/Time with DST change");
+        yield return new TestCaseData(new CalDateTime(2024, 10, 27, 0, 0, 0, tzId: "Europe/Paris"), Duration.FromHours(4))
+            .SetName("Zoned Date/Time with DST change");
     }
 
     [Test, TestCaseSource(nameof(AddAndSubtractTestCases))]
-    public void AddAndSubtract_ShouldBeReversible(CalDateTime t, TimeSpan d)
+    public void AddAndSubtract_ShouldBeReversible(CalDateTime t, Duration d)
     {
         Assert.Multiple(() =>
         {
-            Assert.That(t.Add(d).Subtract(d), Is.EqualTo(t));
-            Assert.That(t.Add(d).Subtract(t), Is.EqualTo(d));
+            Assert.That(t.Add(d).Add(-d), Is.EqualTo(t));
+            Assert.That(t.Add(d).SubtractExact(t), Is.EqualTo(d.ToTimeSpan()));
         });
     }
 }

@@ -69,10 +69,10 @@ public class EventEvaluator : RecurringEvaluator
            The exact duration is calculated from the zoned end time and the zoned start time,
            and it may differ from the time span added to the period start time.
          */
-        var tsToAdd = CalendarEvent.GetTimeSpanToAddToPeriodStartTime();
+        var tsToAdd = CalendarEvent.GetEffectiveDuration();
 
         IDateTime endTime;
-        if (tsToAdd == TimeSpan.Zero)
+        if (tsToAdd.IsZero)
         {
             // For a zero-duration event, the end time is the same as the start time.
             endTime = period.StartTime;
@@ -80,14 +80,14 @@ public class EventEvaluator : RecurringEvaluator
         else
         {
             // Calculate the end time of the event as a DateTime
-            var endDt = period.StartTime.Value.Add(tsToAdd);
+            var endDt = period.StartTime.Add(tsToAdd);
+            if ((CalendarEvent.End is { } end) && (end.TzId != period.StartTime.TzId) && (end.TzId is { } tzid))
+            {
+                // Ensure the end time has the same timezone as the event end time.
+                endDt = endDt.ToTimeZone(tzid);
+            }
 
-            // Create a CalDateTime object with the calculated end time.
-            // Ensure date-only or date-time consistency with the start time.
-            endTime = new CalDateTime(
-                DateOnly.FromDateTime(endDt),
-                period.StartTime.HasTime ? TimeOnly.FromDateTime(endDt) : null,
-                CalendarEvent.End?.TzId ?? CalendarEvent.Start.TzId);
+            endTime = endDt;
         }
 
         // Return the Period object with the calculated end time and duration.

@@ -562,7 +562,7 @@ END:VCALENDAR
         Assert.Multiple(() =>
         {
             Assert.That(calendar.Events.Single().DtEnd != null, Is.EqualTo(useDtEnd));
-            Assert.That(calendar.Events.Single().Duration != default, Is.EqualTo(!useDtEnd));
+            Assert.That(calendar.Events.Single().Duration != null, Is.EqualTo(!useDtEnd));
         });
     }
 }

@@ -37,7 +37,7 @@ internal class DataTypeMapper
         AddPropertyMapping("DTSTAMP", typeof(IDateTime), false);
         AddPropertyMapping("DTSTART", typeof(IDateTime), false);
         AddPropertyMapping("DUE", typeof(IDateTime), false);
-        AddPropertyMapping("DURATION", typeof(TimeSpan), false);
+        AddPropertyMapping("DURATION", typeof(Duration), false);
         AddPropertyMapping("EXDATE", typeof(PeriodList), false);
         AddPropertyMapping("EXRULE", typeof(RecurrencePattern), false);
         AddPropertyMapping("FREEBUSY", typeof(FreeBusyEntry), true);

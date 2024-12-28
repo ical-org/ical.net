@@ -414,53 +414,94 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     private static TimeOnly? TruncateTimeToSeconds(DateTime dateTime) => new TimeOnly(dateTime.Hour, dateTime.Minute, dateTime.Second);
 
     /// <inheritdoc/>
-    public IDateTime ToTimeZone(string otherTzId)
-    {
-        if (IsFloating) return new CalDateTime(_dateOnly, _timeOnly, otherTzId);
+    IDateTime IDateTime.ToTimeZone(string? otherTzId) => ToTimeZone(otherTzId);
 
-        var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, TzId);
-        var converted = zonedOriginal.WithZone(DateUtil.GetZone(otherTzId));
+    public CalDateTime ToTimeZone(string? otherTzId)
+    {
+        if (otherTzId is null)
+            return new CalDateTime(Value, null, HasTime);
+
+        ZonedDateTime converted;
+        if (IsFloating)
+        {
+            // Make sure, we properly fix the time if it dosen't exist in the target tz.
+            converted = DateUtil.ToZonedDateTimeLeniently(Value, otherTzId);
+        }
+        else
+        {
+            var zonedOriginal = DateUtil.ToZonedDateTimeLeniently(Value, TzId);
+            converted = zonedOriginal.WithZone(DateUtil.GetZone(otherTzId));
+        }
 
         return converted.Zone == DateTimeZone.Utc
             ? new CalDateTime(converted.ToDateTimeUtc(), UtcTzId)
             : new CalDateTime(converted.ToDateTimeUnspecified(), otherTzId);
     }
 
-    /// <inheritdoc cref="DateTime.Add"/>
+    /// <inheritdoc/>
     /// <exception cref="InvalidOperationException">
     /// Thrown when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
     /// </exception>
-    public IDateTime Add(TimeSpan ts)
+    public IDateTime Add(Duration d)
     {
-        if (!HasTime && (ts.Ticks % TimeSpan.TicksPerDay) != 0)
+        if (!HasTime && d.HasTime)
         {
             throw new InvalidOperationException("This instance represents a 'date-only' value. Only multiples of full days can be added to a 'date-only' instance.");
         }
 
-        // Ensure to handle DST transitions correctly when timezones are involved.
-        var newDateTime = TzId is null ? Value.Add(ts) : AsUtc.Add(ts);
+        // RFC 5545 3.3.6:
+        // If the property permits, multiple "duration" values are specified by a COMMA-separated
+        // list of values.The format is based on the[ISO.8601.2004] complete representation basic
+        // format with designators for the duration of time.The format can represent nominal
+        // durations(weeks and days) and accurate durations(hours, minutes, and seconds).
+        // Note that unlike[ISO.8601.2004], this value type doesn't support the "Y" and "M"
+        // designators to specify durations in terms of years and months.
+        //
+        // The duration of a week or a day depends on its position in the calendar. In the case
+        // of discontinuities in the time scale, such as the change from standard time to daylight
+        // time and back, the computation of the exact duration requires the subtraction or
+        // addition of the change of duration of the discontinuity.Leap seconds MUST NOT be
+        // considered when computing an exact duration.When computing an exact duration, the
+        // greatest order time components MUST be added first, that is, the number of days MUST be
+        // added first, followed by the number of hours, number of minutes, and number of seconds.
 
-        var copy = Copy<CalDateTime>();
-        copy._dateOnly = DateOnly.FromDateTime(newDateTime);
-        copy._timeOnly = HasTime ? TruncateTimeToSeconds(newDateTime) : null;
-        copy._tzId = TzId is null ? null : UtcTzId;
+        (TimeSpan? nominalPart, TimeSpan? exactPart) dt;
+        if (TzId is null)
+            dt = (d.ToTimeSpan(), null);
+        else
+            dt = (d.HasDate ? d.DateAsTimeSpan : null, d.HasTime ? d.TimeAsTimeSpan : null);
 
-        return TzId is null ? copy : copy.ToTimeZone(TzId);
+        var newDateTime = this;
+        if (dt.nominalPart is not null)
+            newDateTime = new CalDateTime(newDateTime.Value.Add(dt.nominalPart.Value), TzId, HasTime);
+
+        if (dt.exactPart is not null)
+            newDateTime = new CalDateTime(newDateTime.AsUtc.Add(dt.exactPart.Value), UtcTzId, HasTime);
+        
+        if (TzId is not null)
+            // Convert to the original timezone even if already set to ensure we're not in a non-existing time.
+            newDateTime = newDateTime.ToTimeZone(TzId);
+
+        AssociateWith(this);
+
+        return newDateTime;
     }
 
-    /// <summary>Returns a new <see cref="TimeSpan" /> from subtracting the specified <see cref="IDateTime"/> from to the value of this instance.</summary>
-    /// <param name="dt"></param>
-    public TimeSpan Subtract(IDateTime dt) => AsUtc - dt.AsUtc;
+    /// <inheritdoc/>
+    public TimeSpan SubtractExact(IDateTime dt) => AsUtc - dt.AsUtc;
 
-    /// <summary>Returns a new <see cref="IDateTime"/> by subtracting the specified <see cref="TimeSpan" /> from the value of this instance.</summary>
-    /// <param name="ts">An interval.</param>
-    /// <returns>An object whose value is the difference of the date and time represented by this instance and the time interval represented by <paramref name="ts" />.</returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when attempting to subtracting a time span from a date-only instance, 
-    /// and the time span is not a multiple of full days.
-    /// </exception>
-    public IDateTime Subtract(TimeSpan ts) => Add(-ts);
+    /// <inheritdoc/>
+    public Duration Subtract(IDateTime dt)
+    {
+        if (this.TzId is not null)
+            return SubtractExact(dt).ToDurationExact();
+
+        if (dt.HasTime != HasTime)
+            throw new InvalidOperationException("Trying to calculate the difference between dates of different types. An instance of type DATE cannot be subtracted from a DATE-TIME and vice versa.");
+
+        return (Value - dt.Value).ToDuration();
+    }
 
     /// <inheritdoc cref="DateTime.AddYears"/>
     public IDateTime AddYears(int years)
@@ -491,21 +532,21 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// Thrown when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
     /// </exception>
-    public IDateTime AddHours(int hours) => Add(TimeSpan.FromHours(hours));
+    public IDateTime AddHours(int hours) => Add(Duration.FromHours(hours));
 
     /// <inheritdoc cref="DateTime.AddMinutes"/>
     /// <exception cref="InvalidOperationException">
     /// Thrown when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
     /// </exception>
-    public IDateTime AddMinutes(int minutes) => Add(TimeSpan.FromMinutes(minutes));
+    public IDateTime AddMinutes(int minutes) => Add(Duration.FromMinutes(minutes));
 
     /// <inheritdoc cref="DateTime.AddSeconds"/>
     /// <exception cref="InvalidOperationException">
     /// Thrown when attempting to add a time span to a date-only instance, 
     /// and the time span is not a multiple of full days.
     /// </exception>
-    public IDateTime AddSeconds(int seconds) => Add(TimeSpan.FromSeconds(seconds));
+    public IDateTime AddSeconds(int seconds) => Add(Duration.FromSeconds(seconds));
 
     /// <summary>
     /// Returns <see langword="true"/> if the current <see cref="IDateTime"/> instance is less than <paramref name="dt"/>.

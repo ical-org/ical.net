@@ -36,7 +36,7 @@ public class TriggerSerializer : StringSerializer
                     return null;
                 }
 
-                var valueType = t.GetValueType() ?? typeof(TimeSpan);
+                var valueType = t.GetValueType() ?? typeof(Duration);
                 if (!(factory.Build(valueType, SerializationContext) is IStringSerializer serializer))
                 {
                     return null;
@@ -87,7 +87,7 @@ public class TriggerSerializer : StringSerializer
                 return null;
             }
 
-            var valueType = t.GetValueType() ?? typeof(TimeSpan);
+            var valueType = t.GetValueType() ?? typeof(Duration);
             var serializer = factory.Build(valueType, SerializationContext) as IStringSerializer;
             var obj = serializer?.Deserialize(new StringReader(value));
             switch (obj)
@@ -98,7 +98,7 @@ public class TriggerSerializer : StringSerializer
                     t.DateTime = (IDateTime) obj;
                     break;
                 default:
-                    t.Duration = (TimeSpan) obj;
+                    t.Duration = (Duration) obj;
                     break;
             }
 

@@ -16,7 +16,7 @@ namespace Ical.Net.DataTypes;
 public class Trigger : EncodableDataType
 {
     private IDateTime _mDateTime;
-    private TimeSpan? _mDuration;
+    private Duration? _mDuration;
     private string _mRelated = TriggerRelation.Start;
 
     public virtual IDateTime DateTime
@@ -45,7 +45,7 @@ public class Trigger : EncodableDataType
         }
     }
 
-    public virtual TimeSpan? Duration
+    public virtual Duration? Duration
     {
         get => _mDuration;
         set
@@ -71,7 +71,7 @@ public class Trigger : EncodableDataType
 
     public Trigger() { }
 
-    public Trigger(TimeSpan ts)
+    public Trigger(Duration ts)
     {
         Duration = ts;
     }

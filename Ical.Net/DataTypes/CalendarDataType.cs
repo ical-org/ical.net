@@ -69,7 +69,7 @@ public abstract class CalendarDataType : ICalendarDataType
                 case "DATE-TIME":
                     return typeof(IDateTime);
                 case "DURATION":
-                    return typeof(TimeSpan);
+                    return typeof(Duration);
                 case "FLOAT":
                     return typeof(double);
                 case "INTEGER":

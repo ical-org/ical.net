@@ -74,7 +74,7 @@ public class VTimeZone : CalendarComponent
             var interval = new ZoneInterval(
                 name: vTimeZone._nodaZone.Id,
                 start: Instant.FromDateTimeOffset(start),
-                end: Instant.FromDateTimeOffset(start) + Duration.FromHours(1),
+                end: Instant.FromDateTimeOffset(start) + NodaTime.Duration.FromHours(1),
                 wallOffset: vTimeZone._nodaZone.MinOffset,
                 savings: Offset.Zero);
             intervals.Add(interval);
@@ -243,7 +243,7 @@ public class VTimeZone : CalendarComponent
         {
             var periodList = new PeriodList();
             var time = interval.IsoLocalStart.ToDateTimeUnspecified();
-            var date = new CalDateTime(time, true).Add(delta) as CalDateTime;
+            var date = new CalDateTime(time, true).Add(delta.ToDurationExact()) as CalDateTime;
             if (date == null)
             {
                 continue;

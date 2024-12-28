@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
+using Ical.Net.Utility;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
@@ -31,7 +32,7 @@ public class SymmetricSerializationTests
         if (useDtEnd)
             evt.DtEnd = new CalDateTime(_later);
         else
-            evt.Duration = _later - _nowTime;
+            evt.Duration = (_later - _nowTime).ToDurationExact();
 
         return evt;
     }
@@ -73,7 +74,7 @@ public class SymmetricSerializationTests
         if (useDtEnd)
             e.DtEnd = new CalDateTime(_later);
         else
-            e.Duration = _later - _nowTime;
+            e.Duration = (_later - _nowTime).ToDurationExact();
 
         var calendar = new Calendar();
         calendar.Events.Add(e);

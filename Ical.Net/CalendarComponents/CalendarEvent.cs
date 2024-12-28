@@ -80,13 +80,13 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// an 'eventprop', but 'dtend' and 'duration'
     /// MUST NOT occur in the same 'eventprop'
     /// </remarks>
-    public virtual TimeSpan? Duration
+    public virtual Duration? Duration
     {
-        get => Properties.Get<TimeSpan?>("DURATION");
+        get => Properties.Get<Duration?>("DURATION");
         set
         {
             if (DtEnd is not null) throw new InvalidOperationException("DURATION property cannot be set when DTEND property is not null.");
-            SetProperty("DURATION", value); 
+            SetProperty("DURATION", value);
         }
     }
 
@@ -95,14 +95,14 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// <para/>
     /// If the <see cref="CalendarEvent.Duration"/> property is not null, its value will be returned.<br/>
     /// If <see cref="RecurringComponent.DtStart"/> and <see cref="CalendarEvent.DtEnd"/> are set, it will return <see cref="CalendarEvent.DtEnd"/> minus <see cref="CalendarEvent.DtStart"/>.<br/>
-    /// Otherwise, it will return <see cref="TimeSpan.Zero"/>.
+    /// Otherwise, it will return <see cref="Duration.Zero"/>.
     /// </summary>
     /// <remarks>
     /// Note: For recurring events, the <b>exact duration</b> of individual occurrences may vary due to DST transitions
     /// of the given <see cref="RecurringComponent.DtStart"/> and <see cref="CalendarEvent.DtEnd"/> timezones.
     /// </remarks>
     /// <returns>The time span that gets added to the period start time to get the period end time.</returns>
-    internal TimeSpan GetTimeSpanToAddToPeriodStartTime()
+    internal Duration GetEffectiveDuration()
     {
         // 3.8.5.3. Recurrence Rule
         // If the duration of the recurring component is specified with the
@@ -113,7 +113,11 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
         if (Duration is not null)
             return Duration.Value;
 
-        System.Diagnostics.Debug.Assert(DtStart is not null);
+        if (DtStart is not { } dtStart)
+        {
+            // Mustn't happen
+            throw new InvalidOperationException("DtStart must be set.");
+        }
 
         if (DtEnd is not null)
         {
@@ -131,17 +135,17 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
                 same timezone as the event end time. This finally leads to an exact duration
                 calculation from the zoned start time to the zoned end time.
              */
-            return DtEnd.Value - DtStart.Value;
+            return DtEnd.Subtract(dtStart);
         }
 
-        if (!DtStart.HasTime)
+        if (!dtStart.HasTime)
         {
             // RFC 5545 3.6.1:
             // For cases where a "VEVENT" calendar component
             // specifies a "DTSTART" property with a DATE value type but no
             // "DTEND" nor "DURATION" property, the event’s duration is taken to
             // be one day.
-            return TimeSpan.FromDays(1);
+            return DataTypes.Duration.FromDays(1);
         }
 
         // For DtStart.HasTime but no DtEnd - also the default case
@@ -151,7 +155,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
         // specifies a "DTSTART" property with a DATE-TIME value type but no
         // "DTEND" property, the event ends on the same calendar date and
         // time of day specified by the "DTSTART" property.
-        return TimeSpan.Zero;
+        return DataTypes.Duration.Zero;
     }
 
     /// <summary>

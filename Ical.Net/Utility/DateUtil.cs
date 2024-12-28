@@ -15,12 +15,6 @@ namespace Ical.Net.Utility;
 
 internal static class DateUtil
 {
-    public static IDateTime StartOfDay(IDateTime dt)
-        => dt.AddHours(-dt.Hour).AddMinutes(-dt.Minute).AddSeconds(-dt.Second);
-
-    public static IDateTime EndOfDay(IDateTime dt)
-        => StartOfDay(dt).AddDays(1).AddSeconds(-1);
-
     public static DateTime GetSimpleDateTimeData(IDateTime dt)
         => dt.Value;
 
@@ -155,8 +149,22 @@ internal static class DateUtil
     public static ZonedDateTime ToZonedDateTimeLeniently(DateTime dateTime, string tzId)
     {
         var zone = GetZone(tzId);
-        var localDt = LocalDateTime.FromDateTime(dateTime); //19:00 UTC
-        var lenientZonedDateTime = localDt.InZoneLeniently(zone).WithZone(zone); //15:00 Eastern
+        var localDt = LocalDateTime.FromDateTime(dateTime);
+
+        // RFC 5545 3.3.5
+        // If, based on the definition of the referenced time zone, the local
+        // time described occurs more than once(when changing from daylight
+        // to standard time), the DATE-TIME value refers to the first
+        // occurrence of the referenced time.   Thus, TZID=America/
+        // New_York:20071104T013000 indicates November 4, 2007 at 1:30 A.M.
+        // EDT (UTC-04:00).  If the local time described does not occur (when
+        // changing from standard to daylight time), the DATE-TIME value is
+        // interpreted using the UTC offset before the gap in local times.
+        // Thus, TZID=America/New_York:20070311T023000 indicates March 11,
+        // 2007 at 3:30 A.M. EDT (UTC-04:00), one hour after 1:30 A.M. EST
+        // (UTC-05:00).
+        var lenientZonedDateTime = localDt.InZoneLeniently(zone).WithZone(zone);
+
         return lenientZonedDateTime;
     }
 
@@ -191,4 +199,22 @@ internal static class DateUtil
             : 1;
         return (int) Math.Floor(d.Day / 7.0) + offset;
     }
+
+    /// <summary>
+    /// Creates an instance that represents the given time span as exact value, that is, time-only.
+    /// </summary>
+    /// <remarks>
+    /// According to RFC5545 the weeks and day fields of a duration are considered nominal durations while the time fields are considered exact values.
+    /// </remarks>
+    internal static DataTypes.Duration ToDurationExact(this TimeSpan timeSpan)
+        => DataTypes.Duration.FromTimeSpanExact(timeSpan);
+
+    /// <summary>
+    /// Creates an instance that represents the given time span, treating the days as nominal duration and the time part as exact.
+    /// </summary>
+    /// <remarks>
+    /// According to RFC5545 the weeks and day fields of a duration are considered nominal durations while the time fields are considered exact values.
+    /// </remarks>
+    internal static DataTypes.Duration ToDuration(this TimeSpan timeSpan)
+        => DataTypes.Duration.FromTimeSpan(timeSpan);
 }

@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 
 namespace Ical.Net.CalendarComponents;
 
@@ -39,9 +40,9 @@ public class Alarm : CalendarComponent
         set => Properties.Set("DESCRIPTION", value);
     }
 
-    public virtual TimeSpan Duration
+    public virtual Duration Duration
     {
-        get => Properties.Get<TimeSpan>("DURATION");
+        get => Properties.Get<Duration>("DURATION");
         set => Properties.Set("DURATION", value);
     }
 
@@ -92,7 +93,7 @@ public class Alarm : CalendarComponent
                 fromDate = rc.Start.Copy<IDateTime>();
             }
 
-            var d = default(TimeSpan);
+            Duration? d = null;
             foreach (var o in rc.GetOccurrences(fromDate, toDate))
             {
                 var dt = o.Period.StartTime;
@@ -101,15 +102,15 @@ public class Alarm : CalendarComponent
                     if (o.Period.EndTime != null)
                     {
                         dt = o.Period.EndTime;
-                        if (d == default)
+                        if (d == null)
                         {
                             d = o.Period.Duration!.Value; // the getter always returns a value
                         }
                     }
                     // Use the "last-found" duration as a reference point
-                    else if (d != default(TimeSpan))
+                    else if (d != null)
                     {
-                        dt = o.Period.StartTime.Add(d);
+                        dt = o.Period.StartTime.Add(d.Value);
                     }
                     else
                     {

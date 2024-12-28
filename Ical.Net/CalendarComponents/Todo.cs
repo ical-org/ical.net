@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Ical.Net.DataTypes;
 using Ical.Net.Evaluation;
+using Ical.Net.Utility;
 
 namespace Ical.Net.CalendarComponents;
 
@@ -31,19 +32,6 @@ public class Todo : RecurringComponent, IAlarmContainer
     }
 
     /// <summary>
-    /// The start date/time of the todo item.
-    /// </summary>
-    public override IDateTime DtStart
-    {
-        get => base.DtStart;
-        set
-        {
-            base.DtStart = value;
-            ExtrapolateTimes(2);
-        }
-    }
-
-    /// <summary>
     /// The due date of the todo item.
     /// </summary>
     public virtual IDateTime Due
@@ -52,7 +40,6 @@ public class Todo : RecurringComponent, IAlarmContainer
         set
         {
             Properties.Set("DUE", value);
-            ExtrapolateTimes(0);
         }
     }
 
@@ -69,13 +56,12 @@ public class Todo : RecurringComponent, IAlarmContainer
     //
     // Therefore, Duration is not serialized, as Due
     // should always be extrapolated from the duration.
-    public virtual TimeSpan Duration
+    public virtual Duration? Duration
     {
-        get => Properties.Get<TimeSpan>("DURATION");
+        get => Properties.Get<Duration?>("DURATION");
         set
         {
             Properties.Set("DURATION", value);
-            ExtrapolateTimes(1);
         }
     }
 
@@ -189,27 +175,5 @@ public class Todo : RecurringComponent, IAlarmContainer
     {
         //ToDo: a necessary evil, for now
         base.OnDeserializing(context);
-    }
-
-    private void ExtrapolateTimes(int source)
-    {
-        /*
-         * Source values, a fix introduced to prevent StackOverflow exceptions from occuring.
-         *    0 = Due
-         *	  1 = Duration
-         *	  2 = DtStart
-         */
-        if (Due == null && DtStart != null && Duration != default(TimeSpan) && source != 0)
-        {
-            Due = DtStart.Add(Duration);
-        }
-        else if (Duration == default(TimeSpan) && DtStart != null && Due != null && source != 1)
-        {
-            Duration = Due.Subtract(DtStart);
-        }
-        else if (DtStart == null && Duration != default(TimeSpan) && Due != null && source != 2)
-        {
-            DtStart = Due.Subtract(Duration);
-        }
     }
 }

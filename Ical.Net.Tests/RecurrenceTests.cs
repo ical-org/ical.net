@@ -29,7 +29,7 @@ public class RecurrenceTests
         Calendar cal,
         IDateTime fromDate,
         IDateTime toDate,
-        IDateTime[] dateTimes,
+        Period[] expectedPeriods,
         string[] timeZones,
         int eventIndex
     )
@@ -39,8 +39,10 @@ public class RecurrenceTests
 #pragma warning disable 0618
         if (rule != null) rule.RestrictionType = RecurrenceRestrictionType.NoRestriction;
 #pragma warning restore 0618
-        fromDate.AssociatedObject = cal;
-        toDate.AssociatedObject = cal;
+        if (fromDate != null)
+            fromDate.AssociatedObject = cal;
+        if (toDate != null)
+            toDate.AssociatedObject = cal;
 
         var occurrences = evt.GetOccurrences(fromDate, toDate)
             .OrderBy(o => o.Period.StartTime)
@@ -50,24 +52,26 @@ public class RecurrenceTests
         {
             Assert.That(
                 occurrences,
-                Has.Count.EqualTo(dateTimes.Length),
-                "There should have been " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
+                Has.Count.EqualTo(expectedPeriods.Length),
+                "There should have been " + expectedPeriods.Length + " occurrences; there were " + occurrences.Count);
 
             if (evt.RecurrenceRules.Count > 0)
             {
                 Assert.That(evt.RecurrenceRules, Has.Count.EqualTo(1));
             }
 
-            for (var i = 0; i < dateTimes.Length; i++)
+            for (var i = 0; i < expectedPeriods.Length; i++)
             {
                 // Associate each incoming date/time with the calendar.
-                dateTimes[i].AssociatedObject = cal;
+                expectedPeriods[i].AssociatedObject = cal;
 
-                var dt = dateTimes[i];
-                Assert.That(occurrences[i].Period.StartTime, Is.EqualTo(dt), "Event should occur on " + dt);
+                var period = expectedPeriods[i].Copy<Period>();
+                period.EndTime = period.GetEffectiveEndTime();
+
+                Assert.That(occurrences[i].Period, Is.EqualTo(period), "Event should occur on " + period);
                 if (timeZones != null)
-                    Assert.That(dt.TimeZoneName, Is.EqualTo(timeZones[i]),
-                        "Event " + dt + " should occur in the " + timeZones[i] + " timezone");
+                    Assert.That(period.StartTime.TimeZoneName, Is.EqualTo(timeZones[i]),
+                        "Event " + period + " should occur in the " + timeZones[i] + " timezone");
             }
         });
     }
@@ -76,11 +80,11 @@ public class RecurrenceTests
         Calendar cal,
         IDateTime fromDate,
         IDateTime toDate,
-        IDateTime[] dateTimes,
+        Period[] expectedPeriods,
         string[] timeZones
     )
     {
-        EventOccurrenceTest(cal, fromDate, toDate, dateTimes, timeZones, 0);
+        EventOccurrenceTest(cal, fromDate, toDate, expectedPeriods, timeZones, 0);
     }
 
     /// <summary>
@@ -130,19 +134,18 @@ public class RecurrenceTests
             iCal,
             new CalDateTime(2006, 7, 1),
             new CalDateTime(2006, 9, 1),
-            new[]
-            {
-                new CalDateTime(2006, 07, 18, 10, 00, 00, _tzid),
-                new CalDateTime(2006, 07, 20, 10, 00, 00, _tzid),
-                new CalDateTime(2006, 07, 22, 10, 00, 00, _tzid),
-                new CalDateTime(2006, 07, 24, 10, 00, 00, _tzid),
-                new CalDateTime(2006, 07, 26, 10, 00, 00, _tzid),
-                new CalDateTime(2006, 07, 28, 10, 00, 00, _tzid),
-                new CalDateTime(2006, 07, 30, 10, 00, 00, _tzid),
-                new CalDateTime(2006, 08, 01, 10, 00, 00, _tzid),
-                new CalDateTime(2006, 08, 03, 10, 00, 00, _tzid),
-                new CalDateTime(2006, 08, 05, 10, 00, 00, _tzid)
-            },
+            [
+                new(new CalDateTime(2006, 07, 18, 10, 00, 00, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(2006, 07, 20, 10, 00, 00, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(2006, 07, 22, 10, 00, 00, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(2006, 07, 24, 10, 00, 00, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(2006, 07, 26, 10, 00, 00, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(2006, 07, 28, 10, 00, 00, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(2006, 07, 30, 10, 00, 00, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(2006, 08, 01, 10, 00, 00, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(2006, 08, 03, 10, 00, 00, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(2006, 08, 05, 10, 00, 00, _tzid), Duration.FromHours(1))
+            ],
             null
         );
     }
@@ -195,56 +198,55 @@ public class RecurrenceTests
             iCal,
             new CalDateTime(1997, 9, 1),
             new CalDateTime(1997, 12, 4),
-            new[]
-            {
-                new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 4, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 6, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 8, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 12, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 14, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 16, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 18, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 20, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 22, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 24, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 26, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 28, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 4, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 6, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 8, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 12, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 14, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 16, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 18, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 20, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 22, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 24, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 26, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 28, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 30, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 1, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 3, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 5, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 7, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 9, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 11, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 13, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 15, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 17, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 19, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 21, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 23, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 25, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 27, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 29, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 1, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 3, 9, 0, 0, _tzid)
-            },
+            [
+                new(new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 4, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 6, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 8, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 14, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 16, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 18, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 20, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 22, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 24, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 26, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 28, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 4, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 6, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 8, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 14, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 16, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 18, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 20, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 22, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 24, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 26, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 28, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 30, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 1, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 3, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 5, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 7, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 9, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 13, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 15, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 17, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 21, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 23, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 25, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 27, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 29, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 12, 1, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 12, 3, 9, 0, 0, _tzid), Duration.FromHours(1))
+            ],
             new[]
             {
                 "US-Eastern",
@@ -309,14 +311,13 @@ public class RecurrenceTests
             iCal,
             new CalDateTime(1997, 9, 1),
             new CalDateTime(1998, 1, 1),
-            new[]
-            {
-                new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 12, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 22, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 12, 9, 0, 0, _tzid)
-            },
+            [
+                new(new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 22, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 12, 9, 0, 0, _tzid), Duration.FromHours(1))
+            ],
             null
         );
     }
@@ -387,19 +388,18 @@ public class RecurrenceTests
             iCal,
             new CalDateTime(1997, 9, 1),
             new CalDateTime(1998, 1, 1),
-            new[]
-            {
-                new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 9, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 16, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 23, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 7, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 14, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 21, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 28, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 4, 9, 0, 0, _tzid)
-            },
+            [
+                new(new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 9, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 16, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 23, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 7, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 14, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 21, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 28, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 4, 9, 0, 0, _tzid), Duration.FromHours(1))
+            ],
             new[]
             {
                 "US-Eastern",
@@ -427,26 +427,25 @@ public class RecurrenceTests
             iCal,
             new CalDateTime(1997, 9, 1),
             new CalDateTime(1999, 1, 1),
-            new[]
-            {
-                new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 9, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 16, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 23, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 7, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 14, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 21, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 28, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 4, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 11, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 18, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 25, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 9, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 16, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 23, 9, 0, 0, _tzid)
-            },
+            [
+                new(new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 9, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 16, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 23, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 7, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 14, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 21, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 10, 28, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 4, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 18, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 11, 25, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 12, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 12, 9, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 12, 16, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new(new CalDateTime(1997, 12, 23, 9, 0, 0, _tzid), Duration.FromHours(1))
+            ],
             new[]
             {
                 "US-Eastern",
@@ -483,17 +482,17 @@ public class RecurrenceTests
             new CalDateTime(1998, 1, 31),
             new[]
             {
-                new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 16, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 14, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 28, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 11, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 25, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 9, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 23, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 1, 6, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 1, 20, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 16, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 14, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 28, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 25, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 9, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 23, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 1, 6, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 1, 20, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             new[]
             {
@@ -525,16 +524,16 @@ public class RecurrenceTests
             new CalDateTime(1999, 1, 1),
             new[]
             {
-                new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 4, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 9, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 11, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 16, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 18, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 23, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 25, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 2, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 4, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 9, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 16, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 18, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 23, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 25, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 2, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             null
         );
@@ -575,30 +574,30 @@ public class RecurrenceTests
             new CalDateTime(1999, 1, 1),
             new[]
             {
-                new CalDateTime(1997, 9, 3, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 5, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 15, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 17, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 19, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 29, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 1, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 3, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 13, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 15, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 17, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 27, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 29, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 31, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 12, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 14, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 24, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 26, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 28, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 8, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 12, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 22, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 3, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 5, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 15, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 17, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 29, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 1, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 3, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 13, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 15, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 17, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 27, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 29, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 31, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 14, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 24, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 26, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 28, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 8, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 22, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             new[]
             {
@@ -644,28 +643,28 @@ public class RecurrenceTests
             new CalDateTime(1999, 1, 1),
             new[]
             {
-                new CalDateTime(1997, 9, 15, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 17, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 19, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 29, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 1, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 3, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 13, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 15, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 17, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 27, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 29, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 31, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 12, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 14, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 24, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 26, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 28, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 8, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 12, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 22, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 15, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 17, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 29, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 1, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 3, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 13, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 15, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 17, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 27, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 29, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 31, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 14, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 24, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 26, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 28, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 8, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 22, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             new[]
             {
@@ -708,14 +707,14 @@ public class RecurrenceTests
             new CalDateTime(1999, 1, 1),
             new[]
             {
-                new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 4, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 16, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 18, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 14, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 16, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 4, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 16, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 18, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 14, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 16, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             null
         );
@@ -734,16 +733,16 @@ public class RecurrenceTests
             new CalDateTime(1999, 1, 1),
             new[]
             {
-                new CalDateTime(1997, 9, 5, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 3, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 7, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 5, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 1, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 2, 6, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 3, 6, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 4, 3, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 5, 1, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 6, 5, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 5, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 3, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 7, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 5, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 1, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 2, 6, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 3, 6, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 4, 3, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 5, 1, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 6, 5, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             new[]
             {
@@ -774,10 +773,10 @@ public class RecurrenceTests
             new CalDateTime(1999, 1, 1),
             new[]
             {
-                new CalDateTime(1997, 9, 5, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 3, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 7, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 5, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 5, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 3, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 7, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 5, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             new[]
             {
@@ -802,16 +801,16 @@ public class RecurrenceTests
             new CalDateTime(1999, 1, 1),
             new[]
             {
-                new CalDateTime(1997, 9, 7, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 28, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 30, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 1, 4, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 1, 25, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 3, 1, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 3, 29, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 5, 3, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 5, 31, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 7, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 28, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 30, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 1, 4, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 1, 25, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 3, 1, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 3, 29, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 5, 3, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 5, 31, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             new[]
             {
@@ -842,12 +841,12 @@ public class RecurrenceTests
             new CalDateTime(1999, 1, 1),
             new[]
             {
-                new CalDateTime(1997, 9, 22, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 20, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 17, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 22, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 1, 19, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 2, 16, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 22, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 20, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 17, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 22, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 1, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 2, 16, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             new[]
             {
@@ -874,12 +873,12 @@ public class RecurrenceTests
             new CalDateTime(1998, 3, 1),
             new[]
             {
-                new CalDateTime(1997, 9, 28, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 29, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 28, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 29, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 1, 29, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 2, 26, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 28, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 29, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 28, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 29, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 1, 29, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 2, 26, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             new[]
             {
@@ -907,16 +906,16 @@ public class RecurrenceTests
             new CalDateTime(1998, 3, 1),
             new[]
             {
-                new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 15, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 15, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 15, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 15, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 1, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 1, 15, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 15, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 15, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 15, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 15, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 1, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 1, 15, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             new[]
             {
@@ -947,16 +946,16 @@ public class RecurrenceTests
             new CalDateTime(1998, 3, 1),
             new[]
             {
-                new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 1, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 31, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 1, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 30, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 1, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 31, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 1, 1, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 1, 31, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 2, 1, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 1, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 31, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 1, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 30, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 1, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 31, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 1, 1, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 1, 31, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 2, 1, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             new[]
             {
@@ -987,16 +986,16 @@ public class RecurrenceTests
             new CalDateTime(2000, 1, 1),
             new[]
             {
-                new CalDateTime(1997, 9, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 11, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 12, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 13, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 14, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 15, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 3, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 3, 11, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 3, 12, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 3, 13, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 13, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 14, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 15, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 3, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 3, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 3, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 3, 13, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             new[]
             {
@@ -1027,24 +1026,24 @@ public class RecurrenceTests
             new CalDateTime(1998, 4, 1),
             new[]
             {
-                new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 9, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 16, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 23, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 4, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 11, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 18, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 25, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 1, 6, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 1, 13, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 1, 20, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 1, 27, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 3, 3, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 3, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 3, 17, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 3, 24, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 3, 31, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 9, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 16, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 23, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 30, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 4, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 18, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 25, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 1, 6, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 1, 13, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 1, 20, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 1, 27, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 3, 3, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 3, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 3, 17, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 3, 24, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 3, 31, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             new[]
             {
@@ -1083,16 +1082,16 @@ public class RecurrenceTests
             new CalDateTime(2002, 1, 1),
             new[]
             {
-                new CalDateTime(1997, 6, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 7, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 6, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 7, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 6, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 7, 10, 9, 0, 0, _tzid),
-                new CalDateTime(2000, 6, 10, 9, 0, 0, _tzid),
-                new CalDateTime(2000, 7, 10, 9, 0, 0, _tzid),
-                new CalDateTime(2001, 6, 10, 9, 0, 0, _tzid),
-                new CalDateTime(2001, 7, 10, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 6, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 7, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 6, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 7, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 6, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 7, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2000, 6, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2000, 7, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2001, 6, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2001, 7, 10, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             null
         );
@@ -1111,16 +1110,16 @@ public class RecurrenceTests
             new CalDateTime(2003, 4, 1),
             new[]
             {
-                new CalDateTime(1997, 3, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 1, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 2, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 3, 10, 9, 0, 0, _tzid),
-                new CalDateTime(2001, 1, 10, 9, 0, 0, _tzid),
-                new CalDateTime(2001, 2, 10, 9, 0, 0, _tzid),
-                new CalDateTime(2001, 3, 10, 9, 0, 0, _tzid),
-                new CalDateTime(2003, 1, 10, 9, 0, 0, _tzid),
-                new CalDateTime(2003, 2, 10, 9, 0, 0, _tzid),
-                new CalDateTime(2003, 3, 10, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 3, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 1, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 2, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 3, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2001, 1, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2001, 2, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2001, 3, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2003, 1, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2003, 2, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2003, 3, 10, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             null
         );
@@ -1139,16 +1138,16 @@ public class RecurrenceTests
             new CalDateTime(2007, 1, 1),
             new[]
             {
-                new CalDateTime(1997, 1, 1, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 4, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 7, 19, 9, 0, 0, _tzid),
-                new CalDateTime(2000, 1, 1, 9, 0, 0, _tzid),
-                new CalDateTime(2000, 4, 9, 9, 0, 0, _tzid),
-                new CalDateTime(2000, 7, 18, 9, 0, 0, _tzid),
-                new CalDateTime(2003, 1, 1, 9, 0, 0, _tzid),
-                new CalDateTime(2003, 4, 10, 9, 0, 0, _tzid),
-                new CalDateTime(2003, 7, 19, 9, 0, 0, _tzid),
-                new CalDateTime(2006, 1, 1, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 1, 1, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 4, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 7, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2000, 1, 1, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2000, 4, 9, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2000, 7, 18, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2003, 1, 1, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2003, 4, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2003, 7, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2006, 1, 1, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             new[]
             {
@@ -1179,9 +1178,9 @@ public class RecurrenceTests
             new CalDateTime(1999, 12, 31),
             new[]
             {
-                new CalDateTime(1997, 5, 19, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 5, 18, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 5, 17, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 5, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 5, 18, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 5, 17, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             null
         );
@@ -1217,9 +1216,9 @@ public class RecurrenceTests
             new CalDateTime(1999, 12, 31),
             new[]
             {
-                new CalDateTime(1997, 5, 12, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 5, 11, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 5, 17, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 5, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 5, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 5, 17, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             null
         );
@@ -1243,9 +1242,9 @@ public class RecurrenceTests
             new CalDateTime(1999, 12, 31),
             new[]
             {
-                new CalDateTime(1997, 5, 12, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 5, 11, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 5, 17, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 5, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 5, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 5, 17, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             null
         );
@@ -1268,8 +1267,8 @@ public class RecurrenceTests
             new CalDateTime(2003, 1, 31),
             new[]
             {
-                new CalDateTime(2002, 1, 1, 10, 0, 0, _tzid),
-                new CalDateTime(2002, 12, 31, 10, 0, 0, _tzid)
+                new Period(new CalDateTime(2002, 1, 1, 10, 0, 0, _tzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2002, 12, 31, 10, 0, 0, _tzid), Duration.FromMinutes(30))
             },
             null
         );
@@ -1291,27 +1290,27 @@ public class RecurrenceTests
             new CalDateTime(1999, 12, 31),
             new[]
             {
-                new CalDateTime(1997, 5, 12, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 5, 13, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 5, 14, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 5, 15, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 5, 16, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 5, 17, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 5, 18, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 5, 11, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 5, 12, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 5, 13, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 5, 14, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 5, 15, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 5, 16, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 5, 17, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 5, 17, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 5, 18, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 5, 19, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 5, 20, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 5, 21, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 5, 22, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 5, 23, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 5, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 5, 13, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 5, 14, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 5, 15, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 5, 16, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 5, 17, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 5, 18, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 5, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 5, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 5, 13, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 5, 14, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 5, 15, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 5, 16, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 5, 17, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 5, 17, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 5, 18, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 5, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 5, 20, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 5, 21, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 5, 22, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 5, 23, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             null
         );
@@ -1335,19 +1334,19 @@ public class RecurrenceTests
             new CalDateTime(2003, 1, 31),
             new[]
             {
-                new CalDateTime(2002, 1, 1, 10, 0, 0, _tzid),
-                new CalDateTime(2002, 1, 2, 10, 0, 0, _tzid),
-                new CalDateTime(2002, 1, 3, 10, 0, 0, _tzid),
-                new CalDateTime(2002, 1, 4, 10, 0, 0, _tzid),
-                new CalDateTime(2002, 1, 5, 10, 0, 0, _tzid),
-                new CalDateTime(2002, 1, 6, 10, 0, 0, _tzid),
-                new CalDateTime(2002, 12, 30, 10, 0, 0, _tzid),
-                new CalDateTime(2002, 12, 31, 10, 0, 0, _tzid),
-                new CalDateTime(2003, 1, 1, 10, 0, 0, _tzid),
-                new CalDateTime(2003, 1, 2, 10, 0, 0, _tzid),
-                new CalDateTime(2003, 1, 3, 10, 0, 0, _tzid),
-                new CalDateTime(2003, 1, 4, 10, 0, 0, _tzid),
-                new CalDateTime(2003, 1, 5, 10, 0, 0, _tzid)
+                new Period(new CalDateTime(2002, 1, 1, 10, 0, 0, _tzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2002, 1, 2, 10, 0, 0, _tzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2002, 1, 3, 10, 0, 0, _tzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2002, 1, 4, 10, 0, 0, _tzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2002, 1, 5, 10, 0, 0, _tzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2002, 1, 6, 10, 0, 0, _tzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2002, 12, 30, 10, 0, 0, _tzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2002, 12, 31, 10, 0, 0, _tzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2003, 1, 1, 10, 0, 0, _tzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2003, 1, 2, 10, 0, 0, _tzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2003, 1, 3, 10, 0, 0, _tzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2003, 1, 4, 10, 0, 0, _tzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2003, 1, 5, 10, 0, 0, _tzid), Duration.FromMinutes(30))
             },
             null
         );
@@ -1366,17 +1365,17 @@ public class RecurrenceTests
             new CalDateTime(1999, 12, 31),
             new[]
             {
-                new CalDateTime(1997, 3, 13, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 3, 20, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 3, 27, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 3, 5, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 3, 12, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 3, 19, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 3, 26, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 3, 4, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 3, 11, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 3, 18, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 3, 25, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 3, 13, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 3, 20, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 3, 27, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 3, 5, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 3, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 3, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 3, 26, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 3, 4, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 3, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 3, 18, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 3, 25, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             null
         );
@@ -1395,45 +1394,45 @@ public class RecurrenceTests
             new CalDateTime(1999, 12, 31),
             new[]
             {
-                new CalDateTime(1997, 6, 5, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 6, 12, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 6, 19, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 6, 26, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 7, 3, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 7, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 7, 17, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 7, 24, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 7, 31, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 8, 7, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 8, 14, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 8, 21, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 8, 28, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 6, 4, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 6, 11, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 6, 18, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 6, 25, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 7, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 7, 9, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 7, 16, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 7, 23, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 7, 30, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 8, 6, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 8, 13, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 8, 20, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 8, 27, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 6, 3, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 6, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 6, 17, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 6, 24, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 7, 1, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 7, 8, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 7, 15, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 7, 22, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 7, 29, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 8, 5, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 8, 12, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 8, 19, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 8, 26, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 6, 5, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 6, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 6, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 6, 26, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 7, 3, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 7, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 7, 17, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 7, 24, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 7, 31, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 8, 7, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 8, 14, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 8, 21, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 8, 28, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 6, 4, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 6, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 6, 18, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 6, 25, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 7, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 7, 9, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 7, 16, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 7, 23, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 7, 30, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 8, 6, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 8, 13, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 8, 20, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 8, 27, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 6, 3, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 6, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 6, 17, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 6, 24, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 7, 1, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 7, 8, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 7, 15, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 7, 22, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 7, 29, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 8, 5, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 8, 12, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 8, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 8, 26, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             null
         );
@@ -1454,11 +1453,11 @@ public class RecurrenceTests
             new CalDateTime(2000, 12, 31),
             new[]
             {
-                new CalDateTime(1998, 2, 13, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 3, 13, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 11, 13, 9, 0, 0, _tzid),
-                new CalDateTime(1999, 8, 13, 9, 0, 0, _tzid),
-                new CalDateTime(2000, 10, 13, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1998, 2, 13, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 3, 13, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 11, 13, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1999, 8, 13, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2000, 10, 13, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             new[]
             {
@@ -1484,16 +1483,16 @@ public class RecurrenceTests
             new CalDateTime(1998, 6, 30),
             new[]
             {
-                new CalDateTime(1997, 9, 13, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 11, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 8, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 13, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 1, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 2, 7, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 3, 7, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 4, 11, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 5, 9, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 6, 13, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 13, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 8, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 13, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 1, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 2, 7, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 3, 7, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 4, 11, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 5, 9, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 6, 13, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             new[]
             {
@@ -1524,9 +1523,9 @@ public class RecurrenceTests
             new CalDateTime(2004, 12, 31),
             new[]
             {
-                new CalDateTime(1996, 11, 5, 9, 0, 0, _tzid),
-                new CalDateTime(2000, 11, 7, 9, 0, 0, _tzid),
-                new CalDateTime(2004, 11, 2, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1996, 11, 5, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2000, 11, 7, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(2004, 11, 2, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             null
         );
@@ -1545,9 +1544,9 @@ public class RecurrenceTests
             new CalDateTime(2004, 12, 31),
             new[]
             {
-                new CalDateTime(1997, 9, 4, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 7, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 6, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 4, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 7, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 6, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             new[]
             {
@@ -1571,13 +1570,13 @@ public class RecurrenceTests
             new CalDateTime(1998, 3, 31),
             new[]
             {
-                new CalDateTime(1997, 9, 29, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 10, 30, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 11, 27, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 12, 30, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 1, 29, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 2, 26, 9, 0, 0, _tzid),
-                new CalDateTime(1998, 3, 30, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 29, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 10, 30, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 11, 27, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 12, 30, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 1, 29, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 2, 26, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1998, 3, 30, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             new[]
             {
@@ -1605,12 +1604,12 @@ public class RecurrenceTests
             iCal,
             fromDate: new CalDateTime(1996, 1, 1),
             toDate: new CalDateTime(1998, 3, 31),
-            dateTimes: new[]
+            expectedPeriods: new[]
             {
-                new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 12, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 15, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 18, 0, 0, _tzid),
+                new Period(new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 12, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 15, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 18, 0, 0, _tzid), Duration.FromHours(1)),
             },
             timeZones: null
         );
@@ -1629,12 +1628,12 @@ public class RecurrenceTests
             new CalDateTime(1997, 9, 3),
             new[]
             {
-                new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 9, 15, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 9, 30, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 9, 45, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 10, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 10, 15, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 9, 15, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 9, 30, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 9, 45, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 10, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 10, 15, 0, _tzid), Duration.FromHours(1))
             },
             null
         );
@@ -1653,10 +1652,10 @@ public class RecurrenceTests
             new CalDateTime(1998, 12, 31),
             new[]
             {
-                new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 10, 30, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 12, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 13, 30, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 10, 30, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 12, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 13, 30, 0, _tzid), Duration.FromHours(1))
             },
             null
         );
@@ -1675,16 +1674,16 @@ public class RecurrenceTests
             new CalDateTime(2010, 8, 28),
             new[]
             {
-                new CalDateTime(2010, 8, 27, 11, 0, 0, _tzid),
-                new CalDateTime(2010, 8, 27, 11, 1, 0, _tzid),
-                new CalDateTime(2010, 8, 27, 11, 2, 0, _tzid),
-                new CalDateTime(2010, 8, 27, 11, 3, 0, _tzid),
-                new CalDateTime(2010, 8, 27, 11, 4, 0, _tzid),
-                new CalDateTime(2010, 8, 27, 11, 5, 0, _tzid),
-                new CalDateTime(2010, 8, 27, 11, 6, 0, _tzid),
-                new CalDateTime(2010, 8, 27, 11, 7, 0, _tzid),
-                new CalDateTime(2010, 8, 27, 11, 8, 0, _tzid),
-                new CalDateTime(2010, 8, 27, 11, 9, 0, _tzid)
+                new Period(new CalDateTime(2010, 8, 27, 11, 0, 0, _tzid), Duration.FromMinutes(3)),
+                new Period(new CalDateTime(2010, 8, 27, 11, 1, 0, _tzid), Duration.FromMinutes(3)),
+                new Period(new CalDateTime(2010, 8, 27, 11, 2, 0, _tzid), Duration.FromMinutes(3)),
+                new Period(new CalDateTime(2010, 8, 27, 11, 3, 0, _tzid), Duration.FromMinutes(3)),
+                new Period(new CalDateTime(2010, 8, 27, 11, 4, 0, _tzid), Duration.FromMinutes(3)),
+                new Period(new CalDateTime(2010, 8, 27, 11, 5, 0, _tzid), Duration.FromMinutes(3)),
+                new Period(new CalDateTime(2010, 8, 27, 11, 6, 0, _tzid), Duration.FromMinutes(3)),
+                new Period(new CalDateTime(2010, 8, 27, 11, 7, 0, _tzid), Duration.FromMinutes(3)),
+                new Period(new CalDateTime(2010, 8, 27, 11, 8, 0, _tzid), Duration.FromMinutes(3)),
+                new Period(new CalDateTime(2010, 8, 27, 11, 9, 0, _tzid), Duration.FromMinutes(3))
             },
             null
         );
@@ -1703,16 +1702,16 @@ public class RecurrenceTests
             new CalDateTime(2010, 8, 28),
             new[]
             {
-                new CalDateTime(2010, 8, 27, 11, 0, 0, _tzid),
-                new CalDateTime(2010, 8, 27, 11, 7, 0, _tzid),
-                new CalDateTime(2010, 8, 27, 11, 14, 0, _tzid),
-                new CalDateTime(2010, 8, 27, 11, 21, 0, _tzid),
-                new CalDateTime(2010, 8, 27, 11, 28, 0, _tzid),
-                new CalDateTime(2010, 8, 27, 11, 35, 0, _tzid),
-                new CalDateTime(2010, 8, 27, 11, 42, 0, _tzid),
-                new CalDateTime(2010, 8, 27, 11, 49, 0, _tzid),
-                new CalDateTime(2010, 8, 27, 11, 56, 0, _tzid),
-                new CalDateTime(2010, 8, 27, 12, 3, 0, _tzid)
+                new Period(new CalDateTime(2010, 8, 27, 11, 0, 0, _tzid), Duration.FromMinutes(3)),
+                new Period(new CalDateTime(2010, 8, 27, 11, 7, 0, _tzid), Duration.FromMinutes(3)),
+                new Period(new CalDateTime(2010, 8, 27, 11, 14, 0, _tzid), Duration.FromMinutes(3)),
+                new Period(new CalDateTime(2010, 8, 27, 11, 21, 0, _tzid), Duration.FromMinutes(3)),
+                new Period(new CalDateTime(2010, 8, 27, 11, 28, 0, _tzid), Duration.FromMinutes(3)),
+                new Period(new CalDateTime(2010, 8, 27, 11, 35, 0, _tzid), Duration.FromMinutes(3)),
+                new Period(new CalDateTime(2010, 8, 27, 11, 42, 0, _tzid), Duration.FromMinutes(3)),
+                new Period(new CalDateTime(2010, 8, 27, 11, 49, 0, _tzid), Duration.FromMinutes(3)),
+                new Period(new CalDateTime(2010, 8, 27, 11, 56, 0, _tzid), Duration.FromMinutes(3)),
+                new Period(new CalDateTime(2010, 8, 27, 12, 3, 0, _tzid), Duration.FromMinutes(3))
             },
             null
         );
@@ -1731,54 +1730,54 @@ public class RecurrenceTests
             new CalDateTime(1997, 9, 4),
             new[]
             {
-                new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 9, 20, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 9, 40, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 10, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 10, 20, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 10, 40, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 11, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 11, 20, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 11, 40, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 12, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 12, 20, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 12, 40, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 13, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 13, 20, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 13, 40, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 14, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 14, 20, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 14, 40, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 15, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 15, 20, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 15, 40, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 16, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 16, 20, 0, _tzid),
-                new CalDateTime(1997, 9, 2, 16, 40, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 9, 20, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 9, 40, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 10, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 10, 20, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 10, 40, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 11, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 11, 20, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 11, 40, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 12, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 12, 20, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 12, 40, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 13, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 13, 20, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 13, 40, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 14, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 14, 20, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 14, 40, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 15, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 15, 20, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 15, 40, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 16, 0, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 16, 20, 0, _tzid),
-                new CalDateTime(1997, 9, 3, 16, 40, 0, _tzid)
+                new Period(new CalDateTime(1997, 9, 2, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 9, 20, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 9, 40, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 10, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 10, 20, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 10, 40, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 11, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 11, 20, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 11, 40, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 12, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 12, 20, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 12, 40, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 13, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 13, 20, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 13, 40, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 14, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 14, 20, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 14, 40, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 15, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 15, 20, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 15, 40, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 16, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 16, 20, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 2, 16, 40, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 9, 20, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 9, 40, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 10, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 10, 20, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 10, 40, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 11, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 11, 20, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 11, 40, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 12, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 12, 20, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 12, 40, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 13, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 13, 20, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 13, 40, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 14, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 14, 20, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 14, 40, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 15, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 15, 20, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 15, 40, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 16, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 16, 20, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 9, 3, 16, 40, 0, _tzid), Duration.FromHours(1))
             },
             null
         );
@@ -1817,10 +1816,10 @@ public class RecurrenceTests
             new CalDateTime(1998, 12, 31),
             new[]
             {
-                new CalDateTime(1997, 8, 5, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 8, 10, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 8, 19, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 8, 24, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 8, 5, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 8, 10, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 8, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 8, 24, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             null
         );
@@ -1840,10 +1839,10 @@ public class RecurrenceTests
             new CalDateTime(1998, 12, 31),
             new[]
             {
-                new CalDateTime(1997, 8, 5, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 8, 17, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 8, 19, 9, 0, 0, _tzid),
-                new CalDateTime(1997, 8, 31, 9, 0, 0, _tzid)
+                new Period(new CalDateTime(1997, 8, 5, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 8, 17, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 8, 19, 9, 0, 0, _tzid), Duration.FromHours(1)),
+                new Period(new CalDateTime(1997, 8, 31, 9, 0, 0, _tzid), Duration.FromHours(1))
             },
             null
         );
@@ -1863,18 +1862,18 @@ public class RecurrenceTests
             new CalDateTime(2007, 8, 1),
             new[]
             {
-                new CalDateTime(2007, 7, 2, 8, 0, 0, _tzid),
-                new CalDateTime(2007, 7, 3, 8, 0, 0, _tzid),
-                new CalDateTime(2007, 7, 4, 8, 0, 0, _tzid),
-                new CalDateTime(2007, 7, 5, 8, 0, 0, _tzid),
-                new CalDateTime(2007, 7, 6, 8, 0, 0, _tzid),
-                new CalDateTime(2007, 7, 16, 8, 0, 0, _tzid),
-                new CalDateTime(2007, 7, 17, 8, 0, 0, _tzid),
-                new CalDateTime(2007, 7, 18, 8, 0, 0, _tzid),
-                new CalDateTime(2007, 7, 19, 8, 0, 0, _tzid),
-                new CalDateTime(2007, 7, 20, 8, 0, 0, _tzid),
-                new CalDateTime(2007, 7, 30, 8, 0, 0, _tzid),
-                new CalDateTime(2007, 7, 31, 8, 0, 0, _tzid)
+                new Period(new CalDateTime(2007, 7, 2, 8, 0, 0, _tzid), Duration.FromHours(9)),
+                new Period(new CalDateTime(2007, 7, 3, 8, 0, 0, _tzid), Duration.FromHours(9)),
+                new Period(new CalDateTime(2007, 7, 4, 8, 0, 0, _tzid), Duration.FromHours(9)),
+                new Period(new CalDateTime(2007, 7, 5, 8, 0, 0, _tzid), Duration.FromHours(9)),
+                new Period(new CalDateTime(2007, 7, 6, 8, 0, 0, _tzid), Duration.FromHours(9)),
+                new Period(new CalDateTime(2007, 7, 16, 8, 0, 0, _tzid), Duration.FromHours(9)),
+                new Period(new CalDateTime(2007, 7, 17, 8, 0, 0, _tzid), Duration.FromHours(9)),
+                new Period(new CalDateTime(2007, 7, 18, 8, 0, 0, _tzid), Duration.FromHours(9)),
+                new Period(new CalDateTime(2007, 7, 19, 8, 0, 0, _tzid), Duration.FromHours(9)),
+                new Period(new CalDateTime(2007, 7, 20, 8, 0, 0, _tzid), Duration.FromHours(9)),
+                new Period(new CalDateTime(2007, 7, 30, 8, 0, 0, _tzid), Duration.FromHours(9)),
+                new Period(new CalDateTime(2007, 7, 31, 8, 0, 0, _tzid), Duration.FromHours(9))
             },
             null
         );
@@ -1888,13 +1887,13 @@ public class RecurrenceTests
         var start = new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid);
         var end = new CalDateTime(2007, 6, 21, 8, 1, 0, _tzid); // End period is exclusive, not inclusive.
 
-        var dateTimes = new List<IDateTime>();
+        var periods = new List<Period>();
         for (var dt = start; dt.LessThan(end); dt = (CalDateTime) dt.AddSeconds(1))
         {
-            dateTimes.Add(new CalDateTime(dt));
+            periods.Add(new Period(new CalDateTime(dt), Duration.FromHours(9)));
         }
 
-        EventOccurrenceTest(iCal, start, end, dateTimes.ToArray(), null);
+        EventOccurrenceTest(iCal, start, end, periods.ToArray(), null);
     }
 
     [Test, Category("Recurrence")]
@@ -1905,13 +1904,13 @@ public class RecurrenceTests
         var start = new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid);
         var end = new CalDateTime(2007, 6, 21, 12, 0, 1, _tzid); // End period is exclusive, not inclusive.
 
-        var dateTimes = new List<IDateTime>();
+        var periods = new List<Period>();
         for (var dt = start; dt.LessThan(end); dt = (CalDateTime)dt.AddMinutes(1))
         {
-            dateTimes.Add(new CalDateTime(dt));
+            periods.Add(new Period(new CalDateTime(dt), Duration.FromHours(9)));
         }
 
-        EventOccurrenceTest(iCal, start, end, dateTimes.ToArray(), null);
+        EventOccurrenceTest(iCal, start, end, periods.ToArray(), null);
     }
 
     [Test, Category("Recurrence")]
@@ -1922,13 +1921,13 @@ public class RecurrenceTests
         var start = new CalDateTime(2007, 6, 21, 8, 0, 0, _tzid);
         var end = new CalDateTime(2007, 6, 25, 8, 0, 1, _tzid); // End period is exclusive, not inclusive.
 
-        var dateTimes = new List<IDateTime>();
+        var periods = new List<Period>();
         for (var dt = start; dt.LessThan(end); dt = (CalDateTime)dt.AddHours(1))
         {
-            dateTimes.Add(new CalDateTime(dt));
+            periods.Add(new Period(new CalDateTime(dt), Duration.FromHours(9)));
         }
 
-        EventOccurrenceTest(iCal, start, end, dateTimes.ToArray(), null);
+        EventOccurrenceTest(iCal, start, end, periods.ToArray(), null);
     }
 
     /// <summary>
@@ -1944,8 +1943,8 @@ public class RecurrenceTests
             new CalDateTime(2008, 2, 29, 7, 0, 0, _tzid),
             new[]
             {
-                new CalDateTime(2008, 2, 11, 7, 0, 0, _tzid),
-                new CalDateTime(2008, 2, 12, 7, 0, 0, _tzid)
+                new Period(new CalDateTime(2008, 2, 11, 7, 0, 0, _tzid), Duration.FromHours(24)),
+                new Period(new CalDateTime(2008, 2, 12, 7, 0, 0, _tzid), Duration.FromHours(24))
             },
             null
         );
@@ -1964,8 +1963,8 @@ public class RecurrenceTests
             new CalDateTime(2007, 1, 31, 7, 0, 0, _tzid),
             new[]
             {
-                new CalDateTime(2007, 1, 8, 7, 0, 0, _tzid),
-                new CalDateTime(2007, 1, 9, 7, 0, 0, _tzid)
+                new Period(new CalDateTime(2007, 1, 8, 7, 0, 0, _tzid), Duration.FromHours(24)),
+                new Period(new CalDateTime(2007, 1, 9, 7, 0, 0, _tzid), Duration.FromHours(24))
             },
             null
         );
@@ -1984,8 +1983,8 @@ public class RecurrenceTests
             new CalDateTime(2007, 4, 16, 7, 0, 0, _tzid),
             new[]
             {
-                new CalDateTime(2007, 4, 12, 7, 0, 0, _tzid),
-                new CalDateTime(2007, 4, 15, 7, 0, 0, _tzid)
+                new Period(new CalDateTime(2007, 4, 12, 7, 0, 0, _tzid), Duration.FromHours(24)),
+                new Period(new CalDateTime(2007, 4, 15, 7, 0, 0, _tzid), Duration.FromHours(24))
             },
             null
         );
@@ -2008,9 +2007,9 @@ public class RecurrenceTests
                 // after the start of the evaluation period.
                 // See bug #3007244.
                 // https://sourceforge.net/tracker/?func=detail&aid=3007244&group_id=187422&atid=921236
-                new CalDateTime(2007, 4, 9, 7, 0, 0, _tzid),
-                new CalDateTime(2007, 4, 10, 1, 0, 0, _tzid),
-                new CalDateTime(2007, 4, 10, 19, 0, 0, _tzid)
+                new Period(new CalDateTime(2007, 4, 9, 7, 0, 0, _tzid), Duration.FromHours(24)),
+                new Period(new CalDateTime(2007, 4, 10, 1, 0, 0, _tzid), Duration.FromHours(24)),
+                new Period(new CalDateTime(2007, 4, 10, 19, 0, 0, _tzid), Duration.FromHours(24))
             },
             null
         );
@@ -2031,16 +2030,16 @@ public class RecurrenceTests
             new CalDateTime(2020, 1, 1, 0, 0, 0, _tzid),
             new[]
             {
-                new CalDateTime(2009, 9, 27, 5, 30, 0),
-                new CalDateTime(2010, 9, 26, 5, 30, 0),
-                new CalDateTime(2011, 9, 25, 5, 30, 0),
-                new CalDateTime(2012, 9, 30, 5, 30, 0),
-                new CalDateTime(2013, 9, 29, 5, 30, 0),
-                new CalDateTime(2014, 9, 28, 5, 30, 0),
-                new CalDateTime(2015, 9, 27, 5, 30, 0),
-                new CalDateTime(2016, 9, 25, 5, 30, 0),
-                new CalDateTime(2017, 9, 30, 5, 30, 0),
-                new CalDateTime(2018, 9, 30, 5, 30, 0)
+                new Period(new CalDateTime(2009, 9, 27, 5, 30, 0), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2010, 9, 26, 5, 30, 0), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2011, 9, 25, 5, 30, 0), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2012, 9, 30, 5, 30, 0), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2013, 9, 29, 5, 30, 0), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2014, 9, 28, 5, 30, 0), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2015, 9, 27, 5, 30, 0), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2016, 9, 25, 5, 30, 0), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2017, 9, 30, 5, 30, 0), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2018, 9, 30, 5, 30, 0), Duration.FromMinutes(30))
             },
             null
         );
@@ -2060,7 +2059,7 @@ public class RecurrenceTests
             new CalDateTime(2010, 1, 1, 0, 0, 0, _tzid),
             new[]
             {
-                new CalDateTime(2009, 9, 27, 5, 30, 0)
+                new Period(new CalDateTime(2009, 9, 27, 5, 30, 0), new Duration(days: 3, minutes: 30))
             },
             null
         );
@@ -2079,17 +2078,17 @@ public class RecurrenceTests
             new CalDateTime(2007, 4, 10, 23, 0, 1), // End time is exclusive, not inclusive
             new[]
             {
-                new CalDateTime(2007, 4, 9, 7, 0, 0),
-                new CalDateTime(2007, 4, 9, 11, 0, 0),
-                new CalDateTime(2007, 4, 9, 15, 0, 0),
-                new CalDateTime(2007, 4, 9, 19, 0, 0),
-                new CalDateTime(2007, 4, 9, 23, 0, 0),
-                new CalDateTime(2007, 4, 10, 3, 0, 0),
-                new CalDateTime(2007, 4, 10, 7, 0, 0),
-                new CalDateTime(2007, 4, 10, 11, 0, 0),
-                new CalDateTime(2007, 4, 10, 15, 0, 0),
-                new CalDateTime(2007, 4, 10, 19, 0, 0),
-                new CalDateTime(2007, 4, 10, 23, 0, 0)
+                new Period(new CalDateTime(2007, 4, 9, 7, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 9, 11, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 9, 15, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 9, 19, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 9, 23, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 10, 3, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 10, 7, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 10, 11, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 10, 15, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 10, 19, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 10, 23, 0, 0), Duration.FromDays(1))
             },
             null
         );
@@ -2108,17 +2107,17 @@ public class RecurrenceTests
             new CalDateTime(2007, 4, 9, 12, 0, 1), // End time is exclusive, not inclusive
             new[]
             {
-                new CalDateTime(2007, 4, 9, 7, 0, 0),
-                new CalDateTime(2007, 4, 9, 7, 30, 0),
-                new CalDateTime(2007, 4, 9, 8, 0, 0),
-                new CalDateTime(2007, 4, 9, 8, 30, 0),
-                new CalDateTime(2007, 4, 9, 9, 0, 0),
-                new CalDateTime(2007, 4, 9, 9, 30, 0),
-                new CalDateTime(2007, 4, 9, 10, 0, 0),
-                new CalDateTime(2007, 4, 9, 10, 30, 0),
-                new CalDateTime(2007, 4, 9, 11, 0, 0),
-                new CalDateTime(2007, 4, 9, 11, 30, 0),
-                new CalDateTime(2007, 4, 9, 12, 0, 0)
+                new Period(new CalDateTime(2007, 4, 9, 7, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 9, 7, 30, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 9, 8, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 9, 8, 30, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 9, 9, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 9, 9, 30, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 9, 10, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 9, 10, 30, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 9, 11, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 9, 11, 30, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 9, 12, 0, 0), Duration.FromDays(1))
             },
             null
         );
@@ -2137,16 +2136,16 @@ public class RecurrenceTests
             new CalDateTime(2007, 4, 27, 7, 0, 1), // End time is exclusive, not inclusive
             new[]
             {
-                new CalDateTime(2007, 4, 9, 7, 0, 0),
-                new CalDateTime(2007, 4, 11, 7, 0, 0),
-                new CalDateTime(2007, 4, 13, 7, 0, 0),
-                new CalDateTime(2007, 4, 15, 7, 0, 0),
-                new CalDateTime(2007, 4, 17, 7, 0, 0),
-                new CalDateTime(2007, 4, 19, 7, 0, 0),
-                new CalDateTime(2007, 4, 21, 7, 0, 0),
-                new CalDateTime(2007, 4, 23, 7, 0, 0),
-                new CalDateTime(2007, 4, 25, 7, 0, 0),
-                new CalDateTime(2007, 4, 27, 7, 0, 0)
+                new Period(new CalDateTime(2007, 4, 9, 7, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 11, 7, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 13, 7, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 15, 7, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 17, 7, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 19, 7, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 21, 7, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 23, 7, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 25, 7, 0, 0), Duration.FromDays(1)),
+                new Period(new CalDateTime(2007, 4, 27, 7, 0, 0), Duration.FromDays(1))
             },
             null
         );
@@ -2165,12 +2164,12 @@ public class RecurrenceTests
             new CalDateTime(2007, 9, 27, 7, 0, 1), // End time is exclusive, not inclusive
             new[]
             {
-                new CalDateTime(2007, 9, 10, 7, 0, 0),
-                new CalDateTime(2007, 9, 13, 7, 0, 0),
-                new CalDateTime(2007, 9, 17, 7, 0, 0),
-                new CalDateTime(2007, 9, 20, 7, 0, 0),
-                new CalDateTime(2007, 9, 24, 7, 0, 0),
-                new CalDateTime(2007, 9, 27, 7, 0, 0)
+                new Period(new CalDateTime(2007, 9, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2007, 9, 13, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2007, 9, 17, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2007, 9, 20, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2007, 9, 24, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2007, 9, 27, 7, 0, 0), Duration.FromHours(1))
             },
             null
         );
@@ -2189,16 +2188,16 @@ public class RecurrenceTests
             new CalDateTime(2012, 1, 15, 11, 59, 59),
             new[]
             {
-                new CalDateTime(2012, 1, 2, 7, 0, 0),
-                new CalDateTime(2012, 1, 3, 7, 0, 0),
-                new CalDateTime(2012, 1, 4, 7, 0, 0),
-                new CalDateTime(2012, 1, 5, 7, 0, 0),
-                new CalDateTime(2012, 1, 6, 7, 0, 0),
-                new CalDateTime(2012, 1, 9, 7, 0, 0),
-                new CalDateTime(2012, 1, 10, 7, 0, 0),
-                new CalDateTime(2012, 1, 11, 7, 0, 0),
-                new CalDateTime(2012, 1, 12, 7, 0, 0),
-                new CalDateTime(2012, 1, 13, 7, 0, 0)
+                new Period(new CalDateTime(2012, 1, 2, 7, 0, 0), Duration.Zero),
+                new Period(new CalDateTime(2012, 1, 3, 7, 0, 0), Duration.Zero),
+                new Period(new CalDateTime(2012, 1, 4, 7, 0, 0), Duration.Zero),
+                new Period(new CalDateTime(2012, 1, 5, 7, 0, 0), Duration.Zero),
+                new Period(new CalDateTime(2012, 1, 6, 7, 0, 0), Duration.Zero),
+                new Period(new CalDateTime(2012, 1, 9, 7, 0, 0), Duration.Zero),
+                new Period(new CalDateTime(2012, 1, 10, 7, 0, 0), Duration.Zero),
+                new Period(new CalDateTime(2012, 1, 11, 7, 0, 0), Duration.Zero),
+                new Period(new CalDateTime(2012, 1, 12, 7, 0, 0), Duration.Zero),
+                new Period(new CalDateTime(2012, 1, 13, 7, 0, 0), Duration.Zero)
             },
             null
         );
@@ -2217,15 +2216,15 @@ public class RecurrenceTests
             new CalDateTime(2007, 12, 31, 11, 59, 59),
             new[]
             {
-                new CalDateTime(2007, 9, 10, 7, 0, 0),
-                new CalDateTime(2007, 9, 24, 7, 0, 0),
-                new CalDateTime(2007, 10, 8, 7, 0, 0),
-                new CalDateTime(2007, 10, 22, 7, 0, 0),
-                new CalDateTime(2007, 11, 5, 7, 0, 0),
-                new CalDateTime(2007, 11, 19, 7, 0, 0),
-                new CalDateTime(2007, 12, 3, 7, 0, 0),
-                new CalDateTime(2007, 12, 17, 7, 0, 0),
-                new CalDateTime(2007, 12, 31, 7, 0, 0)
+                new Period(new CalDateTime(2007, 9, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2007, 9, 24, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2007, 10, 8, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2007, 10, 22, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2007, 11, 5, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2007, 11, 19, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2007, 12, 3, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2007, 12, 17, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2007, 12, 31, 7, 0, 0), Duration.FromHours(1))
             },
             null
         );
@@ -2244,19 +2243,19 @@ public class RecurrenceTests
             new CalDateTime(2008, 9, 10, 7, 0, 1), // Period end is exclusive, not inclusive
             new[]
             {
-                new CalDateTime(2007, 9, 10, 7, 0, 0),
-                new CalDateTime(2007, 10, 10, 7, 0, 0),
-                new CalDateTime(2007, 11, 10, 7, 0, 0),
-                new CalDateTime(2007, 12, 10, 7, 0, 0),
-                new CalDateTime(2008, 1, 10, 7, 0, 0),
-                new CalDateTime(2008, 2, 10, 7, 0, 0),
-                new CalDateTime(2008, 3, 10, 7, 0, 0),
-                new CalDateTime(2008, 4, 10, 7, 0, 0),
-                new CalDateTime(2008, 5, 10, 7, 0, 0),
-                new CalDateTime(2008, 6, 10, 7, 0, 0),
-                new CalDateTime(2008, 7, 10, 7, 0, 0),
-                new CalDateTime(2008, 8, 10, 7, 0, 0),
-                new CalDateTime(2008, 9, 10, 7, 0, 0)
+                new Period(new CalDateTime(2007, 9, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2007, 10, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2007, 11, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2007, 12, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2008, 1, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2008, 2, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2008, 3, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2008, 4, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2008, 5, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2008, 6, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2008, 7, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2008, 8, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2008, 9, 10, 7, 0, 0), Duration.FromHours(1))
             },
             null
         );
@@ -2275,20 +2274,20 @@ public class RecurrenceTests
             new CalDateTime(2020, 9, 10, 7, 0, 1), // Period end is exclusive, not inclusive
             new[]
             {
-                new CalDateTime(2007, 9, 10, 7, 0, 0),
-                new CalDateTime(2008, 9, 10, 7, 0, 0),
-                new CalDateTime(2009, 9, 10, 7, 0, 0),
-                new CalDateTime(2010, 9, 10, 7, 0, 0),
-                new CalDateTime(2011, 9, 10, 7, 0, 0),
-                new CalDateTime(2012, 9, 10, 7, 0, 0),
-                new CalDateTime(2013, 9, 10, 7, 0, 0),
-                new CalDateTime(2014, 9, 10, 7, 0, 0),
-                new CalDateTime(2015, 9, 10, 7, 0, 0),
-                new CalDateTime(2016, 9, 10, 7, 0, 0),
-                new CalDateTime(2017, 9, 10, 7, 0, 0),
-                new CalDateTime(2018, 9, 10, 7, 0, 0),
-                new CalDateTime(2019, 9, 10, 7, 0, 0),
-                new CalDateTime(2020, 9, 10, 7, 0, 0)
+                new Period(new CalDateTime(2007, 9, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2008, 9, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2009, 9, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2010, 9, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2011, 9, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2012, 9, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2013, 9, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2014, 9, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2015, 9, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2016, 9, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2017, 9, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2018, 9, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2019, 9, 10, 7, 0, 0), Duration.FromHours(1)),
+                new Period(new CalDateTime(2020, 9, 10, 7, 0, 0), Duration.FromHours(1))
             },
             null
         );
@@ -2312,13 +2311,13 @@ public class RecurrenceTests
             new CalDateTime(2009, 12, 12, 0, 0, 0, localTzid),
             new[]
             {
-                new CalDateTime(2009, 12, 4, 2, 00, 00, localTzid),
-                new CalDateTime(2009, 12, 5, 2, 00, 00, localTzid),
-                new CalDateTime(2009, 12, 6, 2, 00, 00, localTzid),
-                new CalDateTime(2009, 12, 7, 2, 00, 00, localTzid),
-                new CalDateTime(2009, 12, 8, 2, 00, 00, localTzid),
-                new CalDateTime(2009, 12, 9, 2, 00, 00, localTzid),
-                new CalDateTime(2009, 12, 10, 2, 00, 00, localTzid)
+                new Period(new CalDateTime(2009, 12, 4, 2, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2009, 12, 5, 2, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2009, 12, 6, 2, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2009, 12, 7, 2, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2009, 12, 8, 2, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2009, 12, 9, 2, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2009, 12, 10, 2, 00, 00, localTzid), Duration.FromMinutes(30))
             },
             null,
             0
@@ -2331,7 +2330,7 @@ public class RecurrenceTests
             new CalDateTime(2009, 12, 10),
             new[]
             {
-                new CalDateTime(2009, 12, 4, 2, 00, 00, localTzid)
+                new Period(new CalDateTime(2009, 12, 4, 2, 00, 00, localTzid), Duration.FromMinutes(30))
             },
             null,
             1
@@ -2344,8 +2343,8 @@ public class RecurrenceTests
             new CalDateTime(2009, 12, 12),
             new[]
             {
-                new CalDateTime(2009, 12, 4, 2, 00, 00, localTzid),
-                new CalDateTime(2009, 12, 11, 2, 00, 00, localTzid)
+                new Period(new CalDateTime(2009, 12, 4, 2, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2009, 12, 11, 2, 00, 00, localTzid), Duration.FromMinutes(30))
             },
             null,
             2
@@ -2370,8 +2369,8 @@ public class RecurrenceTests
             new CalDateTime(2010, 1, 3, 0, 0, 0, localTzid),
             new[]
             {
-                new CalDateTime(2009, 12, 25, 11, 00, 00, localTzid),
-                new CalDateTime(2010, 1, 1, 11, 00, 00, localTzid)
+                new Period(new CalDateTime(2009, 12, 25, 11, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2010, 1, 1, 11, 00, 00, localTzid), Duration.FromMinutes(30))
             },
             null,
             0
@@ -2384,8 +2383,8 @@ public class RecurrenceTests
             new CalDateTime(2010, 1, 3, 0, 0, 0, localTzid),
             new[]
             {
-                new CalDateTime(2009, 12, 26, 11, 00, 00, localTzid),
-                new CalDateTime(2010, 1, 2, 11, 00, 00, localTzid)
+                new Period(new CalDateTime(2009, 12, 26, 11, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2010, 1, 2, 11, 00, 00, localTzid), Duration.FromMinutes(30))
             },
             null,
             1
@@ -2409,13 +2408,13 @@ public class RecurrenceTests
             new CalDateTime(2008, 4, 1, 0, 0, 0, localTzid),
             new[]
             {
-                new CalDateTime(2008, 1, 3, 17, 00, 00, localTzid),
-                new CalDateTime(2008, 1, 17, 17, 00, 00, localTzid),
-                new CalDateTime(2008, 1, 31, 17, 00, 00, localTzid),
-                new CalDateTime(2008, 2, 14, 17, 00, 00, localTzid),
-                new CalDateTime(2008, 2, 28, 17, 00, 00, localTzid),
-                new CalDateTime(2008, 3, 13, 17, 00, 00, localTzid),
-                new CalDateTime(2008, 3, 27, 17, 00, 00, localTzid)
+                new Period(new CalDateTime(2008, 1, 3, 17, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2008, 1, 17, 17, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2008, 1, 31, 17, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2008, 2, 14, 17, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2008, 2, 28, 17, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2008, 3, 13, 17, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2008, 3, 27, 17, 00, 00, localTzid), Duration.FromMinutes(30))
             },
             null,
             0
@@ -2439,12 +2438,12 @@ public class RecurrenceTests
             new CalDateTime(2010, 3, 1, 0, 0, 0, localTzid),
             new[]
             {
-                new CalDateTime(2010, 1, 19, 8, 00, 00, localTzid),
-                new CalDateTime(2010, 1, 26, 8, 00, 00, localTzid),
-                new CalDateTime(2010, 2, 2, 8, 00, 00, localTzid),
-                new CalDateTime(2010, 2, 9, 8, 00, 00, localTzid),
-                new CalDateTime(2010, 2, 16, 8, 00, 00, localTzid),
-                new CalDateTime(2010, 2, 23, 8, 00, 00, localTzid)
+                new Period(new CalDateTime(2010, 1, 19, 8, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2010, 1, 26, 8, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2010, 2, 2, 8, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2010, 2, 9, 8, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2010, 2, 16, 8, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2010, 2, 23, 8, 00, 00, localTzid), Duration.FromMinutes(30))
             },
             null,
             0
@@ -2456,10 +2455,10 @@ public class RecurrenceTests
             new CalDateTime(2010, 3, 1, 0, 0, 0, localTzid),
             new[]
             {
-                new CalDateTime(2010, 2, 2, 8, 00, 00, localTzid),
-                new CalDateTime(2010, 2, 9, 8, 00, 00, localTzid),
-                new CalDateTime(2010, 2, 16, 8, 00, 00, localTzid),
-                new CalDateTime(2010, 2, 23, 8, 00, 00, localTzid)
+                new Period(new CalDateTime(2010, 2, 2, 8, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2010, 2, 9, 8, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2010, 2, 16, 8, 00, 00, localTzid), Duration.FromMinutes(30)),
+                new Period(new CalDateTime(2010, 2, 23, 8, 00, 00, localTzid), Duration.FromMinutes(30))
             },
             null,
             0
@@ -2481,7 +2480,7 @@ public class RecurrenceTests
             cal: iCal,
             fromDate: new CalDateTime(2010, 7, 18),
             toDate: new CalDateTime(2010, 7, 26),
-            dateTimes: new[] { new CalDateTime(2010, 05, 23) },
+            expectedPeriods: new[] { new Period(new CalDateTime(2010, 05, 23), Duration.FromDays(102)) },
             timeZones: null,
             eventIndex: 0
         );
@@ -2491,7 +2490,92 @@ public class RecurrenceTests
             cal: iCal,
             fromDate: new CalDateTime(2011, 7, 18),
             toDate: new CalDateTime(2011, 7, 26),
-            dateTimes: new[] { new CalDateTime(2011, 05, 23) },
+            expectedPeriods: new[] { new Period(new CalDateTime(2011, 05, 23), Duration.FromDays(102)) },
+            timeZones: null,
+            eventIndex: 0
+        );
+    }
+
+    [Test, Category("Recurrence")]
+    // If duaration is specified via DTEND or time-only, then the ducation is exact.
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DTEND;TZID=Europe/Vienna:20241020T040000", "20241020T010000/PT3H", "20241027T010000/PT3H", "20241103T010000/PT3H")]
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DURATION:PT3H",                            "20241020T010000/PT3H", "20241027T010000/PT3H", "20241103T010000/PT3H")]
+
+    // specified via DTEND: exact
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DTEND;TZID=Europe/Vienna:20241021T040000", "20241020T010000/PT27H", "20241027T010000/PT27H", "20241103T010000/PT27H")]
+    // First days are applied nominal, then time exact
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DURATION:P1DT3H",                          "20241020T010000/PT27H", "20241027T010000/PT28H", "20241103T010000/PT27H")]
+    // Exact, because duration is time-only
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DURATION:PT27H",                           "20241020T010000/PT27H", "20241027T010000/PT27H", "20241103T010000/PT27H")]
+
+    // specified via DTEND: exact
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DTEND;TZID=Europe/Vienna:20241027T040000", "20241020T010000/PT172H", "20241027T010000/PT172H", "20241103T010000/PT172H")]
+    // First days are applied nominal, then time exact
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DURATION:P7DT3H",                          "20241020T010000/PT171H", "20241027T010000/PT172H", "20241103T010000/PT171H")]
+    // Exact, because duration is time-only
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DURATION:PT171H",                          "20241020T010000/PT171H", "20241027T010000/PT171H", "20241103T010000/PT171H")]
+
+    // specified via DTEND: exact
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DTEND;TZID=Europe/Vienna:20241020T023000", "20241020T010000/PT1H30M", "20241027T010000/PT1H30M", "20241103T010000/PT1H30M")]
+    // First days are applied nominal, then time exact
+    [TestCase("DTSTART;TZID=Europe/Vienna:20241020T010000", "DURATION:PT1H30M",                         "20241020T010000/PT1H30M", "20241027T010000/PT1H30M", "20241103T010000/PT1H30M")]
+
+    // The following cases cover cases where DTSTART or DTEND are nonexistent.
+    //
+    // There seems to be a conflicting specification in RFC 5545 section 3.3.10 regarding nonexistent recurrences.
+    //
+    // 1)
+    // Recurrence rules may generate recurrence instances with an invalid
+    // date (e.g., February 30) or nonexistent local time (e.g., 1:30 AM
+    // on a day where the local time is moved forward by an hour at 1:00
+    // AM).  Such recurrence instances MUST be ignored and MUST NOT be
+    // counted as part of the recurrence set.
+    //
+    // 2)
+    // If the computed local start time of a recurrence instance does not
+    // exist, or occurs more than once, for the specified time zone, the
+    // time of the recurrence instance is interpreted in the same manner
+    // as an explicit DATE-TIME value describing that date and time, as
+    // specified in Section 3.3.5.
+    //
+    // see https://github.com/ical-org/ical.net/issues/681
+    [TestCase("DTSTART;TZID=Europe/Vienna:20250316T023000", "DTEND;TZID=Europe/Vienna:20250323T023000", "20250316T023000/PT168H", "20250323T023000/PT168H", "20250330T033000/PT168H")]
+    [TestCase("DTSTART;TZID=Europe/Vienna:20250316T023000", "DURATION:P1W",                             "20250316T023000/PT168H", "20250323T023000/PT168H", "20250330T033000/PT168H")]
+    [TestCase("DTSTART;TZID=Europe/Vienna:20250316T023000", "DURATION:P7D",                             "20250316T023000/PT168H", "20250323T023000/PT168H", "20250330T033000/PT168H")]
+
+    public void DurationOfRecurrencesOverDst(string dtStart, string dtEnd, string d1, string d2, string d3)
+    {
+        var iCal = Calendar.Load($"""
+            BEGIN:VCALENDAR
+            BEGIN:VEVENT
+            {dtStart}
+            {dtEnd}
+            RRULE:FREQ=WEEKLY;COUNT=3
+            END:VEVENT
+            END:VCALENDAR
+            """);
+
+        var start = iCal.Events.First().Start;
+
+        var periodSerializer = new PeriodSerializer();
+        var expectedPeriods =
+            new[] { d1, d2, d3 }
+            .Where(x => x != null)
+            .Select(x => (Period)periodSerializer.Deserialize(new StringReader(x)))
+            .ToArray();
+
+        foreach (var p in expectedPeriods)
+        {
+            p.StartTime = p.StartTime.ToTimeZone(start.TzId);
+            p.EndTime = p.StartTime.Add(p.Duration.Value);
+        }
+
+        // date only cannot have a time zone
+        EventOccurrenceTest(
+            cal: iCal,
+            fromDate: null,
+            toDate: null,
+            expectedPeriods: expectedPeriods,
             timeZones: null,
             eventIndex: 0
         );
@@ -2541,7 +2625,7 @@ public class RecurrenceTests
         var evt = new CalendarEvent
         {
             Start = new CalDateTime(2018, 1, 1, 12, 0, 0),
-            Duration = TimeSpan.FromHours(1)
+            Duration = Duration.FromHours(1)
         };
 
         var pattern = new RecurrencePattern
@@ -2609,7 +2693,7 @@ public class RecurrenceTests
         var evt = new CalendarEvent
         {
             Start = new CalDateTime(2011, 1, 29, 11, 0, 0),
-            Duration = TimeSpan.FromHours(1.5),
+            Duration = Duration.FromMinutes(90),
             Summary = "29th February Test"
         };
 

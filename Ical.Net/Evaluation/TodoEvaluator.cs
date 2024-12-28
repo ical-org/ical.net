@@ -90,14 +90,14 @@ public class TodoEvaluator : RecurringEvaluator
 
             var period = p.Copy<Period>();
 
-            period.Duration = Todo.Duration;
-            if (period.Duration != default)
+            var d = Todo.Duration;
+            if (d != null)
             {
-                period.EndTime = period.StartTime.Add(Todo.Duration);
+                period.EndTime = period.StartTime.Add(d.Value);
             }
             else
             {
-                period.Duration = Todo.Duration;
+                period.Duration = default;
             }
 
             return period;
