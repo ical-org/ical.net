@@ -5,6 +5,8 @@
 
 #nullable enable
 using System;
+using System.ComponentModel.Design;
+using System.Linq;
 using Ical.Net.DataTypes;
 using NUnit.Framework;
 
@@ -27,12 +29,12 @@ public class PeriodTests
             Assert.That(period.Duration, Is.Null);
             
             Assert.That(periodWithEndTime.StartTime, Is.EqualTo(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York")));
-            Assert.That(periodWithEndTime.GetEffectiveEndTime(), Is.EqualTo(new CalDateTime(2025, 1, 1, 1, 0, 0, "America/New_York")));
-            Assert.That(periodWithEndTime.GetEffectiveDuration(), Is.EqualTo(Duration.FromHours(1)));
+            Assert.That(periodWithEndTime.EffectiveEndTime, Is.EqualTo(new CalDateTime(2025, 1, 1, 1, 0, 0, "America/New_York")));
+            Assert.That(periodWithEndTime.EffectiveDuration, Is.EqualTo(Duration.FromHours(1)));
 
             Assert.That(periodWithDuration.StartTime, Is.EqualTo(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York")));
-            Assert.That(periodWithDuration.GetEffectiveEndTime(), Is.EqualTo(new CalDateTime(2025, 1, 1, 1, 0, 0, "America/New_York")));
-            Assert.That(periodWithDuration.GetEffectiveDuration(), Is.EqualTo(Duration.FromHours(1)));
+            Assert.That(periodWithDuration.EffectiveEndTime, Is.EqualTo(new CalDateTime(2025, 1, 1, 1, 0, 0, "America/New_York")));
+            Assert.That(periodWithDuration.EffectiveDuration, Is.EqualTo(Duration.FromHours(1)));
         });
     }
 
@@ -61,10 +63,10 @@ public class PeriodTests
         var endTime = new CalDateTime(2025, 1, 31, 0, 0, 0);
         period.EndTime = endTime;
 
-        Assert.That(period.GetEffectiveEndTime(), Is.EqualTo(endTime));
         Assert.That(period.EndTime, Is.EqualTo(endTime));
         Assert.That(period.Duration, Is.Null);
-        Assert.That(period.GetEffectiveDuration(), Is.EqualTo(Duration.FromDays(30)));
+        Assert.That(period.EffectiveDuration, Is.EqualTo(Duration.FromDays(30)));
+        Assert.That(period.EffectiveEndTime, Is.EqualTo(endTime));
     }
 
     [Test]
@@ -74,10 +76,32 @@ public class PeriodTests
         var duration = Duration.FromHours(1);
         period.Duration = duration;
 
-        Assert.That(period.GetEffectiveDuration(), Is.EqualTo(duration));
         Assert.That(period.Duration, Is.EqualTo(duration));
         Assert.That(period.EndTime, Is.Null);
-        Assert.That(period.GetEffectiveEndTime(), Is.EqualTo(new CalDateTime(2025, 1, 1, 1, 0, 0)));
+        Assert.That(period.EffectiveEndTime, Is.EqualTo(new CalDateTime(2025, 1, 1, 1, 0, 0)));
+        Assert.That(period.EffectiveDuration, Is.EqualTo(duration));
+    }
+
+    [Test]
+    public void Timezones_StartTime_EndTime_MustBeEqual()
+    {
+        var periods = new[]
+        {
+            (new CalDateTime(2025, 1, 1, 0, 0, 0, "Europe/Vienna"),
+                new CalDateTime(2025, 1, 1, 0, 0, 0, CalDateTime.UtcTzId)),
+            (new CalDateTime(2025, 1, 1, 0, 0, 0, null),
+                new CalDateTime(2025, 1, 1, 0, 0, 0, CalDateTime.UtcTzId)),
+            (new CalDateTime(2025, 1, 1, 0, 0, 0, CalDateTime.UtcTzId),
+                new CalDateTime(2025, 1, 1, 0, 0, 0, null))
+        };
+
+        Assert.Multiple(() =>
+        {
+            foreach (var p in periods)
+            {
+                Assert.Throws<ArgumentException>(() => _ = new Period(p.Item1, p.Item2));
+            }
+        });
     }
 
     [Test]

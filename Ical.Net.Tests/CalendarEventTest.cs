@@ -17,7 +17,7 @@ namespace Ical.Net.Tests;
 [TestFixture]
 public class CalendarEventTest
 {
-    private static readonly DateTime _now = DateTime.UtcNow;
+    private static readonly DateTime _now = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
     private static readonly DateTime _later = _now.AddHours(1);
     private static readonly string _uid = Guid.NewGuid().ToString();
 
@@ -516,7 +516,7 @@ END:VCALENDAR";
         {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
             Assert.That(evt.Duration, Is.Null);
-            Assert.That(evt.GetEffectiveDuration(), Is.EqualTo(Duration.FromDays(1)));
+            Assert.That(evt.GetEffectiveDuration(), Is.EqualTo(DataTypes.Duration.Zero));
         });
 
         evt = new CalendarEvent

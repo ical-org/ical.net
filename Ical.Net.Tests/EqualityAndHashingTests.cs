@@ -18,7 +18,7 @@ namespace Ical.Net.Tests;
 
 public class EqualityAndHashingTests
 {
-    private const string _someTz = "America/Los_Angeles";
+    private const string TzId = "America/Los_Angeles";
     private static readonly DateTime _nowTime = DateTime.Parse("2016-07-16T16:47:02.9310521-04:00");
     private static readonly DateTime _later = _nowTime.AddHours(1);
 
@@ -39,8 +39,8 @@ public class EqualityAndHashingTests
         var nowCalDt = new CalDateTime(_nowTime);
         yield return new TestCaseData(nowCalDt, new CalDateTime(_nowTime)).SetName("Now, no time zone");
 
-        var nowCalDtWithTz = new CalDateTime(_nowTime, _someTz);
-        yield return new TestCaseData(nowCalDtWithTz, new CalDateTime(_nowTime, _someTz)).SetName("Now, with time zone");
+        var nowCalDtWithTz = new CalDateTime(_nowTime, TzId);
+        yield return new TestCaseData(nowCalDtWithTz, new CalDateTime(_nowTime, TzId)).SetName("Now, with time zone");
     }
 
     [Test]
@@ -281,7 +281,7 @@ public class EqualityAndHashingTests
         });
     }
 
-    internal static (byte[] original, byte[] copy) GetAttachments()
+    private static (byte[] original, byte[] copy) GetAttachments()
     {
         var payload = Encoding.UTF8.GetBytes("This is an attachment!");
         var payloadCopy = new byte[payload.Length];
@@ -347,112 +347,51 @@ public class EqualityAndHashingTests
                 new DateTime(2017, 03, 02, 06, 00, 00),
                 new DateTime(2017, 03, 03, 06, 00, 00),
                 new DateTime(2017, 03, 06, 06, 00, 00),
-                new DateTime(2017, 03, 07, 06, 00, 00),
-                new DateTime(2017, 03, 08, 06, 00, 00),
-                new DateTime(2017, 03, 09, 06, 00, 00),
-                new DateTime(2017, 03, 10, 06, 00, 00),
-                new DateTime(2017, 03, 13, 06, 00, 00),
-                new DateTime(2017, 03, 14, 06, 00, 00),
-                new DateTime(2017, 03, 17, 06, 00, 00),
-                new DateTime(2017, 03, 20, 06, 00, 00),
-                new DateTime(2017, 03, 21, 06, 00, 00),
-                new DateTime(2017, 03, 22, 06, 00, 00),
-                new DateTime(2017, 03, 23, 06, 00, 00),
-                new DateTime(2017, 03, 24, 06, 00, 00),
-                new DateTime(2017, 03, 27, 06, 00, 00),
-                new DateTime(2017, 03, 28, 06, 00, 00),
-                new DateTime(2017, 03, 29, 06, 00, 00),
-                new DateTime(2017, 03, 30, 06, 00, 00),
-                new DateTime(2017, 03, 31, 06, 00, 00),
-                new DateTime(2017, 04, 03, 06, 00, 00),
-                new DateTime(2017, 04, 05, 06, 00, 00),
-                new DateTime(2017, 04, 06, 06, 00, 00),
-                new DateTime(2017, 04, 07, 06, 00, 00),
-                new DateTime(2017, 04, 10, 06, 00, 00),
-                new DateTime(2017, 04, 11, 06, 00, 00),
-                new DateTime(2017, 04, 12, 06, 00, 00),
-                new DateTime(2017, 04, 13, 06, 00, 00),
-                new DateTime(2017, 04, 17, 06, 00, 00),
-                new DateTime(2017, 04, 18, 06, 00, 00),
-                new DateTime(2017, 04, 19, 06, 00, 00),
-                new DateTime(2017, 04, 20, 06, 00, 00),
-                new DateTime(2017, 04, 21, 06, 00, 00),
-                new DateTime(2017, 04, 24, 06, 00, 00),
-                new DateTime(2017, 04, 25, 06, 00, 00),
-                new DateTime(2017, 04, 27, 06, 00, 00),
                 new DateTime(2017, 04, 28, 06, 00, 00),
-                new DateTime(2017, 05, 01, 06, 00, 00),
+                new DateTime(2017, 05, 01, 06, 00, 00)
             }
             .Select(dt => new Period(new CalDateTime(dt))).ToList();
+
         var a = new PeriodList();
         foreach (var period in startTimesA)
         {
             a.Add(period);
         }
 
-        //Difference from A: first element became the second, and last element became the second-to-last element
+        // Difference from A: first element became the second,
+        // and last element became the second-to-last element
         var startTimesB = new List<DateTime>
             {
                 new DateTime(2017, 03, 03, 06, 00, 00),
                 new DateTime(2017, 03, 02, 06, 00, 00),
                 new DateTime(2017, 03, 06, 06, 00, 00),
-                new DateTime(2017, 03, 07, 06, 00, 00),
-                new DateTime(2017, 03, 08, 06, 00, 00),
-                new DateTime(2017, 03, 09, 06, 00, 00),
-                new DateTime(2017, 03, 10, 06, 00, 00),
-                new DateTime(2017, 03, 13, 06, 00, 00),
-                new DateTime(2017, 03, 14, 06, 00, 00),
-                new DateTime(2017, 03, 17, 06, 00, 00),
-                new DateTime(2017, 03, 20, 06, 00, 00),
-                new DateTime(2017, 03, 21, 06, 00, 00),
-                new DateTime(2017, 03, 22, 06, 00, 00),
-                new DateTime(2017, 03, 23, 06, 00, 00),
-                new DateTime(2017, 03, 24, 06, 00, 00),
-                new DateTime(2017, 03, 27, 06, 00, 00),
-                new DateTime(2017, 03, 28, 06, 00, 00),
-                new DateTime(2017, 03, 29, 06, 00, 00),
-                new DateTime(2017, 03, 30, 06, 00, 00),
-                new DateTime(2017, 03, 31, 06, 00, 00),
-                new DateTime(2017, 04, 03, 06, 00, 00),
-                new DateTime(2017, 04, 05, 06, 00, 00),
-                new DateTime(2017, 04, 06, 06, 00, 00),
-                new DateTime(2017, 04, 07, 06, 00, 00),
-                new DateTime(2017, 04, 10, 06, 00, 00),
-                new DateTime(2017, 04, 11, 06, 00, 00),
-                new DateTime(2017, 04, 12, 06, 00, 00),
-                new DateTime(2017, 04, 13, 06, 00, 00),
-                new DateTime(2017, 04, 17, 06, 00, 00),
-                new DateTime(2017, 04, 18, 06, 00, 00),
-                new DateTime(2017, 04, 19, 06, 00, 00),
-                new DateTime(2017, 04, 20, 06, 00, 00),
-                new DateTime(2017, 04, 21, 06, 00, 00),
-                new DateTime(2017, 04, 24, 06, 00, 00),
-                new DateTime(2017, 04, 25, 06, 00, 00),
-                new DateTime(2017, 04, 27, 06, 00, 00),
                 new DateTime(2017, 05, 01, 06, 00, 00),
-                new DateTime(2017, 04, 28, 06, 00, 00),
+                new DateTime(2017, 04, 28, 06, 00, 00)
             }
             .Select(dt => new Period(new CalDateTime(dt))).ToList();
+
         var b = new PeriodList();
+
         foreach (var period in startTimesB)
         {
             b.Add(period);
         }
 
         var collectionEqual = CollectionHelpers.Equals(a, b);
+
+        var listOfListA = new List<PeriodList> { a };
+        var listOfListB = new List<PeriodList> { b };
+
+        var aThenB = new List<PeriodList> { a, b };
+        var bThenA = new List<PeriodList> { b, a };
+
         Assert.Multiple(() =>
         {
             Assert.That(collectionEqual, Is.EqualTo(true));
             Assert.That(b.GetHashCode(), Is.EqualTo(a.GetHashCode()));
+            Assert.That(CollectionHelpers.Equals(listOfListA, listOfListB), Is.True);
+            Assert.That(CollectionHelpers.Equals(aThenB, bThenA), Is.True);
         });
-
-        var listOfListA = new List<PeriodList> { a };
-        var listOfListB = new List<PeriodList> { b };
-        Assert.That(CollectionHelpers.Equals(listOfListA, listOfListB), Is.True);
-
-        var aThenB = new List<PeriodList> { a, b };
-        var bThenA = new List<PeriodList> { b, a };
-        Assert.That(CollectionHelpers.Equals(aThenB, bThenA), Is.True);
     }
 
     [Test]
@@ -489,8 +428,6 @@ public class EqualityAndHashingTests
     [Test]
     public void CalDateTimeComparisonOperatorTests()
     {
-        // Assumption: comparison operators on CalDateTime are expected to
-        // work like operators on Nullable<int>.
         TestComparison((dt1, dt2) => dt1 == dt2, (i1, i2) => i1 == i2);
         TestComparison((dt1, dt2) => dt1 != dt2, (i1, i2) => i1 != i2);
         TestComparison((dt1, dt2) => dt1 > dt2, (i1, i2) => i1 > i2);

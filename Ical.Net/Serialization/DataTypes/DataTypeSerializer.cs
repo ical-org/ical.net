@@ -17,7 +17,7 @@ public abstract class DataTypeSerializer : SerializerBase
     protected virtual ICalendarDataType CreateAndAssociate()
     {
         // Create an instance of the object
-        if (!(Activator.CreateInstance(TargetType) is ICalendarDataType dt))
+        if (Activator.CreateInstance(TargetType, true) is not ICalendarDataType dt)
         {
             return null;
         }

@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -28,8 +29,8 @@ public class GenericListSerializer : SerializerBase
 
     public override string SerializeToString(object obj) => throw new NotImplementedException();
 
-    private MethodInfo _addMethodInfo;
-    public override object Deserialize(TextReader tr)
+    private MethodInfo? _addMethodInfo;
+    public override object? Deserialize(TextReader tr)
     {
         var p = SerializationContext.Peek() as ICalendarProperty;
         if (p == null)
@@ -38,7 +39,7 @@ public class GenericListSerializer : SerializerBase
         }
 
         // Get a serializer factory to deserialize the contents of this list
-        var listObj = Activator.CreateInstance(_objectType);
+        var listObj = Activator.CreateInstance(_objectType, true);
         if (listObj == null)
         {
             return null;
@@ -64,20 +65,19 @@ public class GenericListSerializer : SerializerBase
         }
 
         // Determine if the returned object is an IList<ObjectType>, rather than just an ObjectType.
-        var add = objToAdd as IList;
-        if (add != null)
+        if (objToAdd is IList add)
         {
             //Deserialization returned an IList<ObjectType>, instead of an ObjectType.  So enumerate through the items in the list and add
             //them individually to our list.
             foreach (var innerObj in add)
             {
-                _addMethodInfo.Invoke(listObj, new[] { innerObj });
+                _addMethodInfo?.Invoke(listObj, new[] { innerObj });
             }
         }
         else
         {
             // Add the object to the list
-            _addMethodInfo.Invoke(listObj, new[] { objToAdd });
+            _addMethodInfo?.Invoke(listObj, new[] { objToAdd });
         }
         return listObj;
     }

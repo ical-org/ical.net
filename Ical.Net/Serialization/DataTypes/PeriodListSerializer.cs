@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,11 +19,10 @@ public class PeriodListSerializer : EncodableDataTypeSerializer
 
     public override Type TargetType => typeof(PeriodList);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object obj)
     {
-        var periodList = obj as PeriodList;
         var factory = GetService<ISerializerFactory>();
-        if (periodList == null || factory == null)
+        if (obj is not PeriodList periodList || factory == null)
         {
             return null;
         }
@@ -38,20 +38,15 @@ public class PeriodListSerializer : EncodableDataTypeSerializer
 
         foreach (var p in periodList)
         {
-            if (p.EndTime != null)
-            {
-                parts.Add(periodSerializer.SerializeToString(p));
-            }
-            else if (p.StartTime != null)
-            {
-                parts.Add(dtSerializer.SerializeToString(p.StartTime));
-            }
+            parts.Add(p.EndTime != null || p.Duration != null
+                ? periodSerializer.SerializeToString(p)
+                : dtSerializer.SerializeToString(p.StartTime));
         }
 
         return Encode(periodList, string.Join(",", parts));
     }
 
-    public override object Deserialize(TextReader tr)
+    public override object? Deserialize(TextReader tr)
     {
         var value = tr.ReadToEnd();
 
