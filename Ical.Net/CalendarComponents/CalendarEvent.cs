@@ -138,15 +138,13 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
             return DtEnd.Subtract(dtStart);
         }
 
-        if (!dtStart.HasTime)
-        {
-            // RFC 5545 3.6.1:
-            // For cases where a "VEVENT" calendar component
-            // specifies a "DTSTART" property with a DATE value type but no
-            // "DTEND" nor "DURATION" property, the event’s duration is taken to
-            // be one day.
-            return DataTypes.Duration.FromDays(1);
-        }
+        // RFC 5545 3.6.1:
+        // For cases where a "VEVENT" calendar component
+        // specifies a "DTSTART" property with a DATE value type but no
+        // "DTEND" nor "DURATION" property, the event’s duration is taken to
+        // be one day.
+        // This is taken care of in the PeriodSerializer class,
+        // so we don't use magic numbers here.
 
         // For DtStart.HasTime but no DtEnd - also the default case
         //

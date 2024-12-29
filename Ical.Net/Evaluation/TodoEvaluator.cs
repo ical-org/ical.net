@@ -83,27 +83,7 @@ public class TodoEvaluator : RecurringEvaluator
         if (Todo.Start == null)
             return [];
 
-        Period PeriodWithDuration(Period p)
-        {
-            if (p.EndTime != null)
-                return p;
-
-            var period = p.Copy<Period>();
-
-            var d = Todo.Duration;
-            if (d != null)
-            {
-                period.EndTime = period.StartTime.Add(d.Value);
-            }
-            else
-            {
-                period.Duration = default;
-            }
-
-            return period;
-        }
-
         return base.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults)
-            .Select(PeriodWithDuration);
+            .Select(p => p);
     }
 }
