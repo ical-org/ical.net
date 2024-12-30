@@ -36,9 +36,20 @@ public class PeriodListSerializer : EncodableDataTypeSerializer
 
         var parts = new List<string>(periodList.Count);
 
+        // Set TzId before ValueType, so that it serializes first
+        if (!string.IsNullOrWhiteSpace(periodList.TzId))
+        {
+            periodList.Parameters.Set("TZID", periodList.TzId);
+        }
+
+        if (periodList.PeriodListKind == PeriodKind.Period)
+        {
+            periodList.SetValueType("PERIOD");
+        }
+
         foreach (var p in periodList)
         {
-            parts.Add(p.EndTime != null || p.Duration != null
+            parts.Add(p.EffectiveDuration != null
                 ? periodSerializer.SerializeToString(p)
                 : dtSerializer.SerializeToString(p.StartTime));
         }
