@@ -23,13 +23,6 @@ public abstract class Evaluator : IEvaluator
         Calendar = CultureInfo.CurrentCulture.Calendar;
     }
 
-    protected IDateTime ConvertToIDateTime(DateTime dt, IDateTime referenceDate)
-    {
-        IDateTime newDt = new CalDateTime(dt, referenceDate.TzId);
-        newDt.AssociateWith(referenceDate);
-        return newDt;
-    }
-
     protected void IncrementDate(ref DateTime dt, RecurrencePattern pattern, int interval)
     {
         if (interval == 0)
