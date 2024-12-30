@@ -3880,4 +3880,38 @@ END:VCALENDAR";
 
         Assert.That(instances.Count(), Is.EqualTo(100));
     }
+
+    [Test, Category("Recurrence")]
+    [TestCase(null)]
+    [TestCase("UTC")]
+    [TestCase("Europe/Vienna")]
+    [TestCase("America/New_York")]
+    public void TestDtStartTimezone(string tzId)
+    {
+        var icalText = """
+            BEGIN:VCALENDAR
+            BEGIN:VEVENT
+            UID:ignore
+            DTSTAMP:20180613T154237Z
+            DTSTART;TZID=Europe/Vienna:20180612T180000
+            DTEND;TZID=Europe/Vienna:20180612T181000
+            RRULE:FREQ=HOURLY
+            END:VEVENT
+            END:VCALENDAR
+            """;
+
+        var cal = Calendar.Load(icalText);
+        var evt = cal.Events.First();
+        var ev = new EventEvaluator(evt);
+        var occurrences = ev.Evaluate(evt.DtStart, evt.DtStart.ToTimeZone(tzId), evt.DtStart.AddMinutes(61).ToTimeZone(tzId), false);
+        var occurrencesStartTimes = occurrences.Select(x => x.StartTime).Take(2).ToList();
+
+        var expectedStartTimes = new[]
+        {
+            new CalDateTime(2018, 06, 12, 18, 0, 0, "Europe/Vienna"),
+            new CalDateTime(2018, 06, 12, 19, 0, 0, "Europe/Vienna"),
+        };
+
+        Assert.That(expectedStartTimes.SequenceEqual(occurrencesStartTimes), Is.True);
+    }
 }
