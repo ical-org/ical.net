@@ -41,11 +41,11 @@ public class Period : EncodableDataType, IComparable<Period>
     {
         if (end != null && end.LessThanOrEqual(start))
         {
-            throw new ArgumentException("End time must be greater than start time.", nameof(end));
+            throw new ArgumentException($"End time ({end}) must be greater than start time ({start}).", nameof(end));
         }
-        
-        if (end?.TzId != null && start.TzId != end.TzId) throw new ArgumentException("Start and end time must have the same timezone.", nameof(end));
-        _startTime = start ?? throw new ArgumentNullException(nameof(start));
+
+        if (end?.TzId != null && start.TzId != end.TzId) throw new ArgumentException($"Start time ({start}) and end time ({end}) must have the same timezone.", nameof(end));
+        _startTime = start ?? throw new ArgumentNullException(nameof(start), "Start time cannot be null.");
         _endTime = end;
     }
 
@@ -65,7 +65,7 @@ public class Period : EncodableDataType, IComparable<Period>
     public Period(IDateTime start, Duration duration)
     {
         if (duration.Sign < 0)
-            throw new ArgumentException("Duration must be greater than or equal to zero.", nameof(duration));
+            throw new ArgumentException($"Duration ({duration}) must be greater than or equal to zero.", nameof(duration));
 
         _startTime = start;
         _duration = duration;
