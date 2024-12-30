@@ -109,12 +109,14 @@ public class RecurrencePatternEvaluator : Evaluator
     /// For example, if the search start date (start) is Wed, Mar 23, 12:19PM, but the recurrence is Mon - Fri, 9:00AM - 5:00PM,
     /// the start dates returned should all be at 9:00AM, and not 12:19PM.
     /// </summary>
-    private IEnumerable<DateTime> GetDates(IDateTime seed, DateTime? periodStart, DateTime? periodEnd, int maxCount, RecurrencePattern pattern,
+    private IEnumerable<DateTime> GetDates(IDateTime seed, IDateTime? periodStart, IDateTime? periodEnd, int maxCount, RecurrencePattern pattern,
          bool includeReferenceDateInResults)
     {
         // In the first step, we work with DateTime values, so we need to convert the IDateTime to DateTime
         var originalDate = DateUtil.GetSimpleDateTimeData(seed);
         var seedCopy = DateUtil.GetSimpleDateTimeData(seed);
+        var periodStartDt = periodStart?.ToTimeZone(seed.TzId)?.Value;
+        var periodEndDt = periodEnd?.ToTimeZone(seed.TzId)?.Value;
 
         if ((pattern.Frequency == FrequencyType.Yearly) && (pattern.ByWeekNo.Count != 0))
         {
@@ -129,7 +131,7 @@ public class RecurrencePatternEvaluator : Evaluator
         if (pattern.Count is null)
         {
             var incremented = seedCopy;
-            while (incremented < periodStart)
+            while (incremented < periodStartDt)
             {
                 seedCopy = incremented;
                 IncrementDate(ref incremented, pattern, pattern.Interval);
@@ -143,7 +145,7 @@ public class RecurrencePatternEvaluator : Evaluator
         // Do the enumeration in a separate method, as it is a generator method that is
         // only executed after enumeration started. In order to do most validation upfront,
         // do as many steps outside the generator as possible.
-        return EnumerateDates(originalDate, seedCopy, periodStart, periodEnd, maxCount, pattern);
+        return EnumerateDates(originalDate, seedCopy, periodStartDt, periodEndDt, maxCount, pattern);
     }
 
     private IEnumerable<DateTime> EnumerateDates(DateTime originalDate, DateTime seedCopy, DateTime? periodStart, DateTime? periodEnd, int maxCount, RecurrencePattern pattern)
@@ -868,7 +870,7 @@ public class RecurrencePatternEvaluator : Evaluator
     /// <param name="periodEnd">End (excl.) of the period occurrences are generated for.</param>
     /// <param name="includeReferenceDateInResults">Whether the referenceDate itself should be returned. Ignored as the reference data MUST equal the first occurrence of an RRULE.</param>
     /// <returns></returns>
-    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, DateTime? periodStart, DateTime? periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, IDateTime? periodStart, IDateTime? periodEnd, bool includeReferenceDateInResults)
     {
         if (Pattern.Frequency != FrequencyType.None && Pattern.Frequency < FrequencyType.Daily && !referenceDate.HasTime)
         {

@@ -37,7 +37,7 @@ internal class RecurrenceUtil
         if (periodEnd != null)
             periodEnd = new CalDateTime(periodEnd.Date, periodEnd.Time, start.TzId);
 
-        var periods = evaluator.Evaluate(start, periodStart?.Value, periodEnd?.Value,
+        var periods = evaluator.Evaluate(start, periodStart, periodEnd,
             includeReferenceDateInResults);
 
         var occurrences =

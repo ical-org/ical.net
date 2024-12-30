@@ -44,7 +44,7 @@ public class TodoEvaluator : RecurringEvaluator
 
         DetermineStartingRecurrence(Todo.ExceptionDates.GetAllDates(), ref beginningDate);
 
-        return Evaluate(Todo.Start, DateUtil.GetSimpleDateTimeData(beginningDate), DateUtil.GetSimpleDateTimeData(currDt).AddTicks(1), true);
+        return Evaluate(Todo.Start, beginningDate, currDt.AddSeconds(1), true);
     }
 
     private static void DetermineStartingRecurrence(IEnumerable<Period> rdate, ref IDateTime referenceDateTime)
@@ -79,7 +79,7 @@ public class TodoEvaluator : RecurringEvaluator
         }
     }
 
-    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, DateTime? periodStart, DateTime? periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, IDateTime? periodStart, IDateTime? periodEnd, bool includeReferenceDateInResults)
     {
         // TODO items can only recur if a start date is specified
         if (Todo.Start == null)

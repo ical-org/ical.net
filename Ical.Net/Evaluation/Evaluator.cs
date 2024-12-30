@@ -56,5 +56,5 @@ public abstract class Evaluator : IEvaluator
 
     public System.Globalization.Calendar Calendar { get; private set; }
 
-    public abstract IEnumerable<Period> Evaluate(IDateTime referenceDate, DateTime? periodStart, DateTime? periodEnd, bool includeReferenceDateInResults);
+    public abstract IEnumerable<Period> Evaluate(IDateTime referenceDate, IDateTime? periodStart, IDateTime? periodEnd, bool includeReferenceDateInResults);
 }
