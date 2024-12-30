@@ -239,7 +239,7 @@ public class PeriodList : EncodableDataType, IList<Period>
     {
         if (Count != 0 && (dt1.TzId != TzId || (dt2 != null && dt2.TzId != TzId)))
         {
-            throw new ArgumentException("All Periods of a PeriodList must have the same timezone");
+            throw new ArgumentException($"All Periods of a PeriodList must have the same timezone. Current TzId: {TzId}, Provided TzId: {dt1.TzId} {dt2?.TzId}");
         }
 
         if (Count == 0) TzId = dt1.TzId;
