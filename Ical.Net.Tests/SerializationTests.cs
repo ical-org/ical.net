@@ -22,7 +22,7 @@ namespace Ical.Net.Tests;
 [TestFixture]
 public class SerializationTests
 {
-    private static readonly DateTime _nowTime = DateTime.Now;
+    private static readonly DateTime _nowTime = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
     private static readonly DateTime _later = _nowTime.AddHours(1);
     private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
     private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);

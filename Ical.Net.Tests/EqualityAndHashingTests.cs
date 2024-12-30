@@ -19,7 +19,7 @@ namespace Ical.Net.Tests;
 public class EqualityAndHashingTests
 {
     private const string TzId = "America/Los_Angeles";
-    private static readonly DateTime _nowTime = DateTime.Parse("2016-07-16T16:47:02.9310521-04:00");
+    private static readonly DateTime _nowTime = DateTime.SpecifyKind(DateTime.Parse("2016-07-16T16:47:02.9310521-04:00"), DateTimeKind.Unspecified);
     private static readonly DateTime _later = _nowTime.AddHours(1);
 
     [Test, TestCaseSource(nameof(CalDateTime_TestCases))]

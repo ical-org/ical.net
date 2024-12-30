@@ -2740,7 +2740,7 @@ public class RecurrenceTests
         };
         var vEvent = new CalendarEvent
         {
-            Start = new CalDateTime(DateTime.Parse("2019-01-04T08:00Z")),
+            Start = new CalDateTime(DateTime.Parse("2019-01-04T08:00Z").ToUniversalTime()),
         };
 
         vEvent.RecurrenceRules.Add(rrule);
@@ -2748,7 +2748,7 @@ public class RecurrenceTests
         //Testing on both the first day and the next, results used to be different
         for (var i = 0; i <= 1; i++)
         {
-            var checkTime = DateTime.Parse("2019-01-04T08:00Z");
+            var checkTime = DateTime.Parse("2019-01-04T08:00Z").ToUniversalTime();
             checkTime = checkTime.AddDays(i);
             //Valid asking for the exact moment
             var occurrences = vEvent.GetOccurrences(checkTime, checkTime).ToList();
@@ -3295,7 +3295,7 @@ END:VCALENDAR";
         Assert.That(occurrences, Has.Count.EqualTo(3));
     }
 
-    private static readonly DateTime _now = DateTime.Now;
+    private static readonly DateTime _now = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
     private static readonly DateTime _later = _now.AddHours(1);
     private static CalendarEvent GetEventWithRecurrenceRules()
     {

@@ -22,7 +22,7 @@ public class SymmetricSerializationTests
 {
     private const string _ldapUri = "ldap://example.com:6666/o=eDABC Industries,c=3DUS??(cn=3DBMary Accepted)";
 
-    private static readonly DateTime _nowTime = DateTime.Now;
+    private static readonly DateTime _nowTime = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
     private static readonly DateTime _later = _nowTime.AddHours(1);
     private static CalendarSerializer GetNewSerializer() => new CalendarSerializer();
     private static string SerializeToString(Calendar c) => GetNewSerializer().SerializeToString(c);
