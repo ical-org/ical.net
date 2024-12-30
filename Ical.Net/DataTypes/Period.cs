@@ -15,7 +15,7 @@ namespace Ical.Net.DataTypes;
 /// A period can be defined<br/>
 /// 1. by a start time and an end time,<br/>
 /// 2. by a start time and a duration,<br/>
-/// 3. by a start time only, with the duration unspecified.
+/// 3. by a start date/time or date-only, with the duration unspecified.
 /// </summary>
 public class Period : EncodableDataType, IComparable<Period>
 {
@@ -44,7 +44,7 @@ public class Period : EncodableDataType, IComparable<Period>
             throw new ArgumentException($"End time ({end}) must be greater than start time ({start}).", nameof(end));
         }
 
-        if (end?.TzId != null && start.TzId != end.TzId) throw new ArgumentException($"Start time ({start}) and end time ({end}) must have the same timezone.", nameof(end));
+        EnsureConsistentTimezones(start, end);
         _startTime = start ?? throw new ArgumentNullException(nameof(start), "Start time cannot be null.");
         _endTime = end;
     }
@@ -118,7 +118,11 @@ public class Period : EncodableDataType, IComparable<Period>
     public virtual IDateTime StartTime //NOSONAR
     {
         get => _startTime;
-        set => _startTime = value;
+        set
+        {
+            EnsureConsistentTimezones(value, _endTime);
+            _startTime = value;
+        }
     }
 
     /// <summary>
@@ -134,6 +138,7 @@ public class Period : EncodableDataType, IComparable<Period>
         get => _endTime;
         set
         {
+            EnsureConsistentTimezones(_startTime, value);
             _endTime = value;
             if (_endTime != null)
             {
@@ -174,6 +179,22 @@ public class Period : EncodableDataType, IComparable<Period>
     /// calculates the exact duration based on the end time.
     /// </summary>
     public virtual Duration? EffectiveDuration => _duration ?? (_endTime != null ? GetEffectiveDuration() : null);
+
+    private static void EnsureConsistentTimezones(IDateTime start, IDateTime? end)
+    {
+        if (end?.TzId != null && start.TzId != end.TzId) throw new ArgumentException($"Start time ({start}) and end time ({end}) must have the same timezone.");
+    }
+
+    internal string? TzId => _startTime.TzId; // same timezone for start and end
+
+    internal PeriodKind GetPeriodKind()
+    {
+        if (EffectiveDuration != null)
+        {
+            return PeriodKind.Period;
+        }
+        return StartTime.HasTime ? PeriodKind.DateTime : PeriodKind.DateOnly;
+    }
 
     private Duration GetEffectiveDuration()
     {
