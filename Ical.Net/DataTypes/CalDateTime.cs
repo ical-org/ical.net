@@ -78,15 +78,25 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     /// It will represent an RFC 5545, Section 3.3.4, DATE value, if <see paramref="hasTime"/> is <see langword="false"/>.
     /// <para/>
     /// The <see cref="TzId"/> will be set to "UTC" if the <paramref name="value"/>
-    /// has <see cref="DateTimeKind.Utc"/> and <paramref name="hasTime"/> is <see langword="true"/>.
-    /// Otherwise <see cref="TzId"/> will be <see langword="null"/>.
+    /// has kind <see cref="DateTimeKind.Utc"/> and <paramref name="hasTime"/> is <see langword="true"/>.
+    /// It will be set to <see langword="null"/> if the kind is kind <see cref="DateTimeKind.Unspecified"/>
+    /// and will throw otherwise.
     /// </summary>
     /// <param name="value">The <see cref="DateTime"/> value. Its <see cref="DateTimeKind"/> will be ignored.</param>
     /// <param name="hasTime">
     /// The instance will represent an RFC 5545, Section 3.3.5, DATE-TIME value, if <see paramref="hasTime"/> is <see langword="true"/>.
     /// It will represent an RFC 5545, Section 3.3.4, DATE value, if <see paramref="hasTime"/> is <see langword="false"/>.
     /// </param>
-    public CalDateTime(DateTime value, bool hasTime = true) : this(value, value.Kind == DateTimeKind.Utc ? UtcTzId : null, hasTime)
+    /// <exception cref="System.ArgumentException">If the specified value's kind is <see cref="DateTimeKind.Local"/></exception>
+    public CalDateTime(DateTime value, bool hasTime = true) : this(
+        value,
+        value.Kind switch
+        {
+            DateTimeKind.Utc => UtcTzId,
+            DateTimeKind.Unspecified => null,
+            _ => throw new ArgumentException($"An instance of {nameof(CalDateTime)} can only be initializd from a {nameof(DateTime)} of kind {nameof(DateTimeKind.Utc)} or {nameof(DateTimeKind.Unspecified)}.")
+        },
+        hasTime)
     { }
 
     /// <summary>

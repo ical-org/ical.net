@@ -6,6 +6,7 @@
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -342,5 +343,22 @@ public class CalDateTimeTests
             Assert.That(t.Add(d).Add(-d), Is.EqualTo(t));
             Assert.That(t.Add(d).SubtractExact(t), Is.EqualTo(d.ToTimeSpan()));
         });
+    }
+
+    private static TestCaseData[] CalDateTime_FromDateTime_HandlesKindCorrectlyTestCases =>
+        [
+            new TestCaseData(DateTimeKind.Unspecified, Is.EqualTo(new CalDateTime(2024, 12, 30, 10, 44, 50, null))),
+            new TestCaseData(DateTimeKind.Utc, Is.EqualTo(new CalDateTime(2024, 12, 30, 10, 44, 50, "UTC"))),
+            new TestCaseData(DateTimeKind.Local, Throws.ArgumentException),
+        ];
+
+    [Test, TestCaseSource(nameof(CalDateTime_FromDateTime_HandlesKindCorrectlyTestCases))]
+
+
+    public void CalDateTime_FromDateTime_HandlesKindCorrectly(DateTimeKind kind, IResolveConstraint constraint)
+    {
+        var dt = new DateTime(2024, 12, 30, 10, 44, 50, kind);
+
+        Assert.That(() => new CalDateTime(dt), constraint);
     }
 }
