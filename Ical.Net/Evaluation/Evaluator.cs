@@ -13,8 +13,6 @@ namespace Ical.Net.Evaluation;
 
 public abstract class Evaluator : IEvaluator
 {
-    private ICalendarObject _mAssociatedObject;
-
     protected Evaluator()
     {
         Initialize();
@@ -68,12 +66,6 @@ public abstract class Evaluator : IEvaluator
     }
 
     public System.Globalization.Calendar Calendar { get; private set; }
-
-    public virtual ICalendarObject AssociatedObject
-    {
-        get => _mAssociatedObject;
-        protected set => _mAssociatedObject = value;
-    }
 
     public abstract IEnumerable<Period> Evaluate(IDateTime referenceDate, DateTime? periodStart, DateTime? periodEnd, bool includeReferenceDateInResults);
 }

@@ -19,19 +19,6 @@ public class RecurringEvaluator : Evaluator
     public RecurringEvaluator(IRecurrable obj)
     {
         Recurrable = obj;
-
-        // We're not sure if the object is a calendar object
-        // or a calendar data type, so we need to assign
-        // the associated object manually
-        if (obj is ICalendarObject)
-        {
-            AssociatedObject = (ICalendarObject)obj;
-        }
-        if (obj is ICalendarDataType)
-        {
-            var dt = (ICalendarDataType)obj;
-            AssociatedObject = dt.AssociatedObject;
-        }
     }
 
     /// <summary>
