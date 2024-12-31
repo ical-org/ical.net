@@ -7,6 +7,7 @@
 using System;
 using System.IO;
 using Ical.Net.DataTypes;
+using Ical.Net.Utility;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -37,7 +38,8 @@ public class PeriodListTests
         var period1 = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0), Duration.FromHours(1));
         var period2 = new Period(new CalDateTime(2025, 2, 1, 0, 0, 0), Duration.FromHours(1));
 
-        periodList.AddPeriod(period1).AddPeriod(period1);
+        periodList.Add(period1);
+        periodList.Add(period1);
 
         // Act
         var retrievedPeriod = periodList[0];
@@ -57,11 +59,14 @@ public class PeriodListTests
     {
         // Arrange
         var periodList = new PeriodList();
-        var pl = PeriodList
-            .FromDateTime(new CalDateTime(2025, 1, 2))
-            .Add(new CalDateTime(2025, 1, 3));
+        var pl = new PeriodList
+        {
+            new CalDateTime(2025, 1, 2),
+            new CalDateTime(2025, 1, 3)
+        };
 
-        var count = pl.Count;
+        periodList.AddRange(pl);
+        var count = periodList.Count;
 
         // Act
         periodList.Clear();
@@ -104,7 +109,8 @@ public class PeriodListTests
         var period1 = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0), Duration.FromHours(1));
         var period2 = new Period(new CalDateTime(2025, 1, 2, 0, 0, 0), Duration.FromHours(1));
         var period3 = new Period(new CalDateTime(2025, 1, 3, 0, 0, 0), Duration.FromHours(1));
-        periodList.AddPeriod(period1).AddPeriod(period3);
+        periodList.Add(period1);
+        periodList.Add(period3);
 
         // Act
         periodList.Insert(1, period2);
@@ -125,7 +131,9 @@ public class PeriodListTests
         var period1 = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0), Duration.FromHours(1));
         var period2 = new Period(new CalDateTime(2025, 1, 2, 0, 0, 0), Duration.FromHours(1));
         var period3 = new Period(new CalDateTime(2025, 1, 3, 0, 0, 0), Duration.FromHours(1));
-        periodList.AddPeriod(period1).AddPeriod(period2).AddPeriod(period3);
+        periodList.Add(period1);
+        periodList.Add(period2);
+        periodList.Add(period3);
 
         // Act
         periodList.RemoveAt(1);

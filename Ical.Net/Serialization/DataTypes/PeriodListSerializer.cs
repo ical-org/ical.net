@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes;
@@ -36,15 +37,22 @@ public class PeriodListSerializer : EncodableDataTypeSerializer
 
         var parts = new List<string>(periodList.Count);
 
+        var firstPeriod = periodList.FirstOrDefault();
+
         // Set TzId before ValueType, so that it serializes first
-        if (!string.IsNullOrWhiteSpace(periodList.TzId))
+        if (firstPeriod != null && !string.IsNullOrEmpty(firstPeriod.TzId))
         {
-            periodList.Parameters.Set("TZID", periodList.TzId);
+            periodList.Parameters.Set("TZID", periodList[0].TzId);
         }
 
-        if (periodList.PeriodListKind == PeriodKind.Period)
+        switch (firstPeriod?.GetPeriodKind()) // default type is DATE-TIME
         {
-            periodList.SetValueType("PERIOD");
+            case PeriodKind.Period:
+                periodList.SetValueType("PERIOD");
+                break;
+            case PeriodKind.DateOnly:
+                periodList.SetValueType("DATE");
+                break;
         }
 
         foreach (var p in periodList)

@@ -22,18 +22,6 @@ namespace Ical.Net.DataTypes;
 public class PeriodList : EncodableDataType, IList<Period>
 {
     /// <summary>
-    /// Gets the timezone ID of the <see cref="PeriodList"/>.<br/>
-    /// The timezone of the first item added determines the timezone for the list.
-    /// </summary>
-    internal string? TzId { get; private set; }
-
-    /// <summary>
-    /// Gets the kind that this <see cref="PeriodList"/> is representing.<br/>
-    /// Only <see cref="Period"/>s with the same <see cref="PeriodKind"/> can be added to the list.
-    /// </summary>
-    internal PeriodKind PeriodListKind { get; private set; }
-
-    /// <summary>
     /// Gets the number of <see cref="Period"/>s of the list.
     /// </summary>
     public int Count => Periods.Count;
@@ -47,7 +35,6 @@ public class PeriodList : EncodableDataType, IList<Period>
     public PeriodList()
     {
         SetService(new PeriodListEvaluator(this));
-        TzId = null;
     }
 
     /// <summary>
@@ -62,6 +49,7 @@ public class PeriodList : EncodableDataType, IList<Period>
         {
             CopyFrom(deserialized);
         }
+
         SetService(new PeriodListEvaluator(this));
     }
 
@@ -71,19 +59,6 @@ public class PeriodList : EncodableDataType, IList<Period>
     /// <param name="value"></param>
     /// <exception cref="ArgumentException"></exception>
     public static PeriodList FromStringReader(StringReader value) => new PeriodList(value);
-
-    /// <summary>
-    /// Creates a new instance of a <see cref="PeriodList"/> class from an <see cref="IDateTime"/> object,
-    /// using the timezone from the <see cref="IDateTime"/>.
-    /// </summary>
-    /// <param name="value"></param>
-    /// <returns>A new instance of the <see cref="PeriodList"/>.</returns>
-    /// <exception cref="ArgumentException"></exception>
-    public static PeriodList FromDateTime(IDateTime value)
-    {
-        var pl = new PeriodList().Add(value);
-        return pl;
-    }
 
     /// <inheritdoc/>
     public override void CopyFrom(ICopyable obj)
@@ -105,7 +80,7 @@ public class PeriodList : EncodableDataType, IList<Period>
     /// </summary>
     /// <returns></returns>
     public override string? ToString() => new PeriodListSerializer().SerializeToString(this);
-    
+
     /// <summary>
     /// Used for equality comparison of two lists of periods.
     /// </summary>
@@ -125,11 +100,10 @@ public class PeriodList : EncodableDataType, IList<Period>
         var grouped = new Dictionary<string, HashSet<Period>>(StringComparer.OrdinalIgnoreCase);
         foreach (var periodList in periodLists)
         {
-            // Dictionary key cannot be null, so an empty string is used for the default bucket
-            var defaultBucket = string.IsNullOrWhiteSpace(periodList.TzId) ? string.Empty : periodList.TzId;
             foreach (var period in periodList)
             {
-                var bucketTzId = period.StartTime.TzId ?? defaultBucket;
+                // Dictionary key cannot be null, so an empty string is used for the default bucket
+                var bucketTzId = period.StartTime.TzId ?? string.Empty;
 
                 if (!grouped.TryGetValue(bucketTzId, out var periods))
                 {
@@ -144,8 +118,7 @@ public class PeriodList : EncodableDataType, IList<Period>
         return grouped.ToDictionary(k => k.Key, v => (IList<Period>) v.Value.OrderBy(d => d.StartTime).ToList());
     }
 
-    protected bool Equals(PeriodList other) => string.Equals(TzId, other.TzId, StringComparison.OrdinalIgnoreCase)
-                                               && CollectionHelpers.Equals(Periods, other.Periods);
+    protected bool Equals(PeriodList other) => CollectionHelpers.Equals(Periods, other.Periods);
 
     /// <inheritdoc/>
     public override bool Equals(object? obj)
@@ -156,15 +129,7 @@ public class PeriodList : EncodableDataType, IList<Period>
     }
 
     /// <inheritdoc/>
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            var hashCode = TzId?.GetHashCode() ?? 0;
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Periods);
-            return hashCode;
-        }
-    }
+    public override int GetHashCode() => CollectionHelpers.GetHashCode(Periods);
 
     /// <inheritdoc/>
     public Period this[int index]
@@ -189,12 +154,11 @@ public class PeriodList : EncodableDataType, IList<Period>
     public void RemoveAt(int index) => Periods.RemoveAt(index);
 
     /// <summary>
-    /// Adds a <see cref="Period"/> for an 'RDATE' to the list.<br/>
-    /// The timezone of the first value added determines the timezone for the list.
+    /// Adds a <see cref="Period"/> to the list.<br/>
+    /// The timezone period kind of the first value added determines the timezone for the whole list.
     /// <para/>
-    /// To add an 'EXDATE', use the <see cref="Add(IDateTime)"/> method instead,
-    /// because <see cref="Period"/>s are not permitted for 'EXDATE' according to
-    /// RFC 5545 section 3.8.5.1.
+    /// Use <see cref="Collections.ExceptionDateCollection"/> and <see cref="Collections.RecurrencePeriodCollection"/>
+    /// to simplify creating 'EXDATE' and 'RDATE' properties.
     /// </summary>
     /// <param name="item">The <see cref="Period"/> for an 'RDATE'.</param>
     /// <exception cref="ArgumentException"></exception>
@@ -206,33 +170,18 @@ public class PeriodList : EncodableDataType, IList<Period>
 
     /// <summary>
     /// Adds a DATE or DATE-TIME value for an 'EXDATE' or 'RDATE' to the list.<br/>
-    /// The timezone of the first value added determines the timezone for the list.
+    /// The timezone period kind of the first value added determines the timezone for the whole list.
     /// <para/>
-    /// To add an 'RDATE' <see cref="Period"/>, use the <see cref="Add(Period)"/> method instead.
+    /// Use <see cref="Collections.ExceptionDateCollection"/> and <see cref="Collections.RecurrencePeriodCollection"/>
+    /// to simplify creating 'EXDATE' and 'RDATE' properties.
     /// </summary>
     /// <param name="dt"></param>
-    /// <returns>This instance of the <see cref="PeriodList"/>.</returns>
     /// <exception cref="ArgumentException"></exception>
-    public PeriodList Add(IDateTime dt)
+    public void Add(IDateTime dt)
     {
         var p = new Period(dt);
         EnsureConsistentTimezoneAndPeriodKind(p);
         Periods.Add(p);
-        return this;
-    }
-
-    /// <summary>
-    /// Adds a <see cref="Period"/> for an 'RDATE' to the list.<br/>
-    /// The timezone of the first value added determines the timezone for the list.
-    /// </summary>
-    /// <param name="item"></param>
-    /// <returns>This instance of the <see cref="PeriodList"/>.</returns>
-    /// <exception cref="ArgumentException"></exception>
-    public PeriodList AddPeriod(Period item)
-    {
-        EnsureConsistentTimezoneAndPeriodKind(item);
-        Add(item);
-        return this;
     }
 
     /// <inheritdoc/>
@@ -246,24 +195,21 @@ public class PeriodList : EncodableDataType, IList<Period>
 
     /// <inheritdoc/>
     public IEnumerator<Period> GetEnumerator() => Periods.GetEnumerator();
+
     IEnumerator IEnumerable.GetEnumerator() => Periods.GetEnumerator();
-    
+
     private void EnsureConsistentTimezoneAndPeriodKind(Period p)
     {
-        if (Count != 0 && p.GetPeriodKind() != PeriodListKind)
+        if (Count != 0 && p.GetPeriodKind() != Periods[0].GetPeriodKind())
         {
-            throw new ArgumentException($"All Periods of a PeriodList must have the same value type. Current ValueType: {PeriodListKind}, Provided ValueType: {p.GetPeriodKind()}");
+            throw new ArgumentException(
+                $"All Periods of a PeriodList must be of the same period kind. Current Kind: {Periods[0].GetPeriodKind()}, Provided Kind: {p.GetPeriodKind()}");
         }
 
-        if (Count != 0 && p.TzId != TzId)
+        if (Count != 0 && p.TzId != Periods[0].TzId)
         {
-            throw new ArgumentException($"All Periods of a PeriodList must have the same timezone. Current TzId: {TzId}, Provided TzId: {p.TzId}");
-        }
-
-        if (Count == 0)
-        {
-            TzId = p.StartTime.TzId;
-            PeriodListKind = p.GetPeriodKind();
+            throw new ArgumentException(
+                $"All Periods of a PeriodList must have the same timezone. Current TzId: {Periods[0].TzId}, Provided TzId: {p.TzId}");
         }
     }
 }
