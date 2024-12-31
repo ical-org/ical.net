@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Ical.Net.CalendarComponents;
+using Ical.Net.Collections;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using NUnit.Framework;
@@ -21,16 +22,16 @@ public class RecurrenceWithRDateTests
     {
         var cal = new Calendar();
         var eventStart = new CalDateTime(2023, 10, 1, 10, 0, 0);
-        PeriodList recurrenceDates =
-        [
+        var recDateCollection = new RecurrencePeriodCollection
+        {
             new Period(new CalDateTime(2023, 10, 2, 10, 0, 0))
-        ];
+        };
 
         var calendarEvent = new CalendarEvent
         {
             Start = eventStart,
             Duration = new Duration(hours: 1),
-            RecurrenceDates = new List<PeriodList> { recurrenceDates }
+            RecurrenceDates = recDateCollection.ToRecurrenceDates()
         };
 
         cal.Events.Add(calendarEvent);
@@ -55,7 +56,10 @@ public class RecurrenceWithRDateTests
         var cal = new Calendar();
         var eventStart = new CalDateTime(2023, 10, 1, 10, 0, 0);
 
-        var recurrenceDates = PeriodList.FromDateTime(new CalDateTime(2023, 10, 2));
+        PeriodList recurrenceDates =
+        [
+            new Period(new CalDateTime(2023, 10, 2))
+        ];
 
         var calendarEvent = new CalendarEvent
         {
@@ -74,7 +78,7 @@ public class RecurrenceWithRDateTests
             Assert.That(occurrences, Has.Count.EqualTo(2));
             Assert.That(occurrences[0].Period.StartTime, Is.EqualTo(new CalDateTime(2023, 10, 1, 10, 0, 0)));
             Assert.That(occurrences[1].Period.StartTime, Is.EqualTo(new CalDateTime(2023, 10, 2)));
-            Assert.That(ics, Does.Contain("RDATE:20231002"));
+            Assert.That(ics, Does.Contain("RDATE;VALUE=DATE:20231002"));
             Assert.That(ics, Does.Not.Contain("DURATION:"));
         });
     }
@@ -85,7 +89,7 @@ public class RecurrenceWithRDateTests
         const string tzId = "America/New_York";
         var cal = new Calendar();
         var eventStart = new CalDateTime(2023, 10, 1, 10, 0, 0, tzId);
-        var recurrenceDates = new PeriodList
+        var recDateCollection = new RecurrencePeriodCollection
         {
             new Period(new CalDateTime(2023, 10, 2, 10, 0, 0, tzId)),
             new Period(new CalDateTime(2023, 10, 3, 10, 0, 0, tzId))
@@ -95,7 +99,7 @@ public class RecurrenceWithRDateTests
         {
             Start = eventStart,
             Duration = new Duration(hours: 2),
-            RecurrenceDates = new List<PeriodList> { recurrenceDates }
+            RecurrenceDates = recDateCollection.ToRecurrenceDates()
         };
 
         cal.Events.Add(calendarEvent);
@@ -121,7 +125,7 @@ public class RecurrenceWithRDateTests
         const string tzId = "America/New_York";
         var cal = new Calendar();
         var eventStart = new CalDateTime(2023, 10, 1, 10, 0, 0, tzId);
-        var recurrenceDates = new PeriodList
+        var recDateCollection = new RecurrencePeriodCollection
         {
             new Period(new CalDateTime(2023, 10, 2, 10, 0, 0, tzId), new Duration(hours: 4)),
             new Period(new CalDateTime(2023, 10, 3, 10, 0, 0, tzId), new Duration(hours: 5))
@@ -131,7 +135,7 @@ public class RecurrenceWithRDateTests
         {
             Start = eventStart,
             Duration = new Duration(hours: 2),
-            RecurrenceDates = new List<PeriodList> { recurrenceDates }
+            RecurrenceDates = recDateCollection.ToRecurrenceDates()
         };
         
         cal.Events.Add(calendarEvent);
@@ -176,12 +180,9 @@ public class RecurrenceWithRDateTests
     {
         var cal = new Calendar();
         var eventStart = new CalDateTime(2023, 10, 1, 10, 0, 0);
-        var recurrenceDates1 = new PeriodList
+        var recDateCollection = new RecurrencePeriodCollection
         {
-            new Period(new CalDateTime(2023, 10, 2, 10, 0, 0)),
-        };
-        var recurrenceDates2 = new PeriodList
-        {
+            new CalDateTime(2023, 10, 2, 10, 0, 0),
             new Period(new CalDateTime(2023, 10, 3, 10, 0, 0), new Duration(hours: 3))
         };
 
@@ -189,7 +190,7 @@ public class RecurrenceWithRDateTests
         {
             Start = eventStart,
             Duration = new Duration(hours: 1),
-            RecurrenceDates = new List<PeriodList> { recurrenceDates1, recurrenceDates2 }
+            RecurrenceDates = recDateCollection.ToRecurrenceDates()
         };
 
         cal.Events.Add(calendarEvent);
@@ -215,20 +216,17 @@ public class RecurrenceWithRDateTests
     {
         var cal = new Calendar();
         var eventStart = new CalDateTime(2023, 10, 1, 10, 0, 0, "America/New_York");
-        var recurrenceDates1 = new PeriodList
+        var recDateCollection = new RecurrencePeriodCollection
         {
-            new Period(new CalDateTime(2023, 10, 2, 10, 0, 0, "America/Los_Angeles"))
+            new CalDateTime(2023, 10, 2, 10, 0, 0, "America/Los_Angeles"),
+            new CalDateTime(2023, 10, 3, 10, 0, 0, "Europe/London")
         };
-        var recurrenceDates2 = new PeriodList
-        {
-            new Period(new CalDateTime(2023, 10, 3, 10, 0, 0, "Europe/London"))
-        };
-
+        
         var calendarEvent = new CalendarEvent
         {
             Start = eventStart,
             Duration = new Duration(hours: 1),
-            RecurrenceDates = new List<PeriodList> { recurrenceDates1, recurrenceDates2 }
+            RecurrenceDates = recDateCollection.ToRecurrenceDates()
         };
 
         cal.Events.Add(calendarEvent);
@@ -256,20 +254,18 @@ public class RecurrenceWithRDateTests
     {
         var cal = new Calendar();
         var eventStart = new CalDateTime(2023, 10, 1, 10, 0, 0);
-        var recurrenceDates1 = new PeriodList
+        var recDateCollection = new RecurrencePeriodCollection
         {
+            // Period and CalDateTime can be added in one go
             new Period(new CalDateTime(2023, 10, 2), new Duration(days: 1)),
-        };
-        var recurrenceDates2 = new PeriodList
-        {
-            new Period(new CalDateTime(2023, 10, 3, 10, 0, 0))
+            new CalDateTime(2023, 10, 3, 10, 0, 0)
         };
 
         var calendarEvent = new CalendarEvent
         {
             Start = eventStart,
             Duration = new Duration(days: 2),
-            RecurrenceDates = new List<PeriodList> { recurrenceDates1, recurrenceDates2 }
+            RecurrenceDates = recDateCollection.ToRecurrenceDates()
         };
 
         cal.Events.Add(calendarEvent);
@@ -296,7 +292,7 @@ public class RecurrenceWithRDateTests
     {
         var cal = new Calendar();
         var eventStart = new CalDateTime(2023, 10, 1, 10, 0, 0);
-        var recurrenceDates = new PeriodList
+        var recDateCollection = new RecurrencePeriodCollection
         {
             new Period(new CalDateTime(2023, 10, 2, 10, 0, 0), new Duration(hours: 2)),
             new Period(new CalDateTime(2023, 10, 2, 11, 0, 0), new Duration(hours: 2))
@@ -306,7 +302,7 @@ public class RecurrenceWithRDateTests
         {
             Start = eventStart,
             Duration = new Duration(hours: 1),
-            RecurrenceDates = new List<PeriodList> { recurrenceDates }
+            RecurrenceDates = recDateCollection.ToRecurrenceDates()
         };
 
         cal.Events.Add(calendarEvent);
@@ -364,6 +360,41 @@ public class RecurrenceWithRDateTests
     }
 
     [Test]
+    public void RDate_DuplicateDates_ShouldBeSerializedJustOnce()
+    {
+        var cal = new Calendar();
+        var eventStart = new CalDateTime(2023, 10, 1, 10, 0, 0);
+
+        var periodDuplicate = new Period(new CalDateTime(2023, 10, 2, 10, 0, 0), new Duration(hours: 2));
+        var recDateCollection = new RecurrencePeriodCollection
+        {
+            periodDuplicate, periodDuplicate
+        };
+
+        var calendarEvent = new CalendarEvent
+        {
+            Start = eventStart,
+            Duration = new Duration(hours: 1),
+            RecurrenceDates = recDateCollection.ToRecurrenceDates()
+        };
+
+        cal.Events.Add(calendarEvent);
+        var serializer = new CalendarSerializer();
+        var ics = serializer.SerializeToString(cal);
+
+        var occurrences = calendarEvent.GetOccurrences().ToList();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(occurrences, Has.Count.EqualTo(2));
+            Assert.That(occurrences[0].Period.StartTime, Is.EqualTo(new CalDateTime(2023, 10, 1, 10, 0, 0)));
+            Assert.That(occurrences[1].Period.StartTime, Is.EqualTo(periodDuplicate.StartTime));
+
+            Assert.That(ics, Does.Contain("RDATE;VALUE=PERIOD:20231002T100000/PT2H"));
+        });
+    }
+
+    [Test]
     public void AddingDifferentTimeZonesToPeriodList_ShouldThrow()
     {
         Assert.That(() =>
@@ -377,7 +408,7 @@ public class RecurrenceWithRDateTests
     }
 
     [Test]
-    public void AddingDifferentPeriodTypes_ShouldThrow()
+    public void AddingDifferentPeriodKinds_ShouldThrow()
     {
         Assert.Multiple(() =>
         {

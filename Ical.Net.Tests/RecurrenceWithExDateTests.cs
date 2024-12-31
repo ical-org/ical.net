@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using Ical.Net.CalendarComponents;
+using Ical.Net.Collections;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using NUnit.Framework;
@@ -29,9 +30,12 @@ public class RecurrenceWithExDateTests
         const string timeZoneId = "Europe/London"; // IANA Time Zone ID
         var start = new CalDateTime(2024, 10, 19, 18, 0, 0, timeZoneId);
         var end = new CalDateTime(2024, 10, 19, 19, 0, 0, timeZoneId);
+
         var exceptionDate = useExDateWithTime
             ? new CalDateTime(2024, 10, 19, 21, 0, 0, timeZoneId)
             : new CalDateTime(2024, 10, 19);
+
+        var exDateCollection = new ExceptionDateCollection(exceptionDate);
 
         var recurrencePattern = new RecurrencePattern(FrequencyType.Hourly)
         {
@@ -47,7 +51,7 @@ public class RecurrenceWithExDateTests
             End = end
         };
         recurringEvent.RecurrenceRules.Add(recurrencePattern);
-        recurringEvent.ExceptionDates.Add(PeriodList.FromDateTime(exceptionDate));
+        recurringEvent.ExceptionDates = exDateCollection.ToExceptionDates();
 
         var calendar = new Calendar();
         calendar.Events.Add(recurringEvent);
@@ -69,7 +73,7 @@ public class RecurrenceWithExDateTests
             else
             {
                 Assert.That(occurrences, Has.Count.EqualTo(0));
-                Assert.That(ics, Does.Contain("EXDATE:20241019"));
+                Assert.That(ics, Does.Contain("EXDATE;VALUE=DATE:20241019"));
             }
         });
 
