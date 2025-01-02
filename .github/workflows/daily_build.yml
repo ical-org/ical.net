@@ -1,0 +1,52 @@
+﻿name: Daily Build
+# This job builds and publishes to GitHub Packages.
+# It uses branch selected with workflow dispatch
+# It depends on the included tests job to complete successfully.
+on:
+  workflow_dispatch: {}
+
+jobs:
+  test_and_publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for all tags and branches
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: |
+          8.0.x
+          6.0.x
+          3.1.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Set version ''5.0.0-daily' variable
+      run: | 
+         Version='5.0.0-daily'
+         echo "VERSION=$Version" >> $GITHUB_ENV
+         echo "Version: $Version"
+    - name: Get commit hash
+      run: |
+         COMMIT_HASH=$(git rev-parse --short HEAD)
+         echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
+         echo "Commit Hash: $COMMIT_HASH"
+    - name: Build Test
+      run: dotnet build --no-restore --configuration Release -p:Nullable=disable -p:nowarn=1591
+    - name: Test
+      run: dotnet test --no-build --configuration Release --verbosity normal
+    - name: Build and pack daily build
+      run: |
+        dotnet build --no-restore --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{env.VERSION}} -p:FileVersion=${{env.VERSION}}.${{github.run_number}} -p:VersionSuffix=${{env.COMMIT_HASH}} -p:Nullable=disable -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true
+        dotnet pack --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{env.VERSION}} -p:PackageReleaseNotes="Commit: ${{env.COMMIT_HASH}}" -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg --no-build -p:PackageVersion=${{env.VERSION}}.${{github.run_number}}
+    - name: Store artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ICal.Net_pkg_${{env.VERSION}}.${{github.run_number}}
+        path: |
+          Ical.Net/bin/Release/**/*.nupkg
+          Ical.Net/bin/Release/**/*.snupkg
+    - name: Push package to GitHub Packages
+      run: dotnet nuget push Ical.Net/bin/Release/Ical.Net.${{env.VERSION}}.${{github.run_number}}.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
