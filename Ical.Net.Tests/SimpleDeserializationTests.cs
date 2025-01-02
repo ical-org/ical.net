@@ -358,9 +358,9 @@ END:VCALENDAR
 
         Assert.Multiple(() =>
         {
-            Assert.That(iCal.Events.First().RecurrenceDates[0][0].StartTime, Is.EqualTo((CalDateTime)new DateTime(1997, 7, 14, 12, 30, 0, DateTimeKind.Utc)));
-            Assert.That(iCal.Events.First().RecurrenceDates[1][0].StartTime, Is.EqualTo((CalDateTime)new DateTime(1996, 4, 3, 2, 0, 0, DateTimeKind.Utc)));
-            Assert.That(iCal.Events.First().RecurrenceDates[1][0].EndTime, Is.EqualTo((CalDateTime)new DateTime(1996, 4, 3, 4, 0, 0, DateTimeKind.Utc)));
+            Assert.That(iCal.Events.First().RecurrenceDates[0][0].StartTime, Is.EqualTo(new CalDateTime(1997, 7, 14, 12, 30, 0, CalDateTime.UtcTzId)));
+            Assert.That(iCal.Events.First().RecurrenceDates[1][0].StartTime, Is.EqualTo(new CalDateTime(1996, 4, 3, 2, 0, 0, CalDateTime.UtcTzId)));
+            Assert.That(iCal.Events.First().RecurrenceDates[1][0].EndTime, Is.EqualTo(new CalDateTime(1996, 4, 3, 4, 0, 0, CalDateTime.UtcTzId)));
             Assert.That(iCal.Events.First().RecurrenceDates[2][0].StartTime, Is.EqualTo(new CalDateTime(1997, 1, 1)));
             Assert.That(iCal.Events.First().RecurrenceDates[2][1].StartTime, Is.EqualTo(new CalDateTime(1997, 1, 20)));
             Assert.That(iCal.Events.First().RecurrenceDates[2][2].StartTime, Is.EqualTo(new CalDateTime(1997, 2, 17)));

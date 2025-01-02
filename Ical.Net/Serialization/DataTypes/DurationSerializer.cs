@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.IO;
 using System.Text;
@@ -19,7 +20,7 @@ public class DurationSerializer : SerializerBase
 
     public override Type TargetType => typeof(Duration);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object obj)
         => (obj is not Duration duration) ? null : SerializeToString(duration);
 
     private static string SerializeToString(Duration ts)
@@ -53,20 +54,24 @@ public class DurationSerializer : SerializerBase
         return sb.ToString();
     }
 
-    internal static readonly Regex TimespanMatch =
+    internal static readonly Regex DurationMatch =
         new Regex(@"^(?<sign>\+|-)?P(((?<week>\d+)W)|(?<main>((?<day>\d+)D)?(?<time>T((?<hour>\d+)H)?((?<minute>\d+)M)?((?<second>\d+)S)?)?))$",
             RegexOptions.Compiled | RegexOptions.IgnoreCase, RegexDefaults.Timeout);
 
-    public override object Deserialize(TextReader tr)
+    public override object? Deserialize(TextReader tr)
     {
         var value = tr.ReadToEnd();
 
         try
         {
-            var match = TimespanMatch.Match(value);
+            var match = DurationMatch.Match(value);
 
             if (!match.Success)
-                return value;
+            {
+                // This happens for EXDATE values, which never have a duration,
+                // and also RDATE values, where the optional duration is missing.
+                return null;
+            }
 
             var sign = 1;
             int? weeks = null;

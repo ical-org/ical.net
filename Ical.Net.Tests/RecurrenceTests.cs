@@ -66,7 +66,7 @@ public class RecurrenceTests
                 expectedPeriods[i].AssociatedObject = cal;
 
                 var period = expectedPeriods[i].Copy<Period>();
-                period.EndTime = period.GetEffectiveEndTime();
+                period.EndTime = period.EffectiveEndTime;
 
                 Assert.That(occurrences[i].Period, Is.EqualTo(period), "Event should occur on " + period);
                 if (timeZones != null)
@@ -2567,7 +2567,7 @@ public class RecurrenceTests
         foreach (var p in expectedPeriods)
         {
             p.StartTime = p.StartTime.ToTimeZone(start.TzId);
-            p.EndTime = p.StartTime.Add(p.Duration.Value);
+            p.EndTime = p.StartTime.Add(p.Duration!.Value);
         }
 
         // date only cannot have a time zone
@@ -3201,10 +3201,10 @@ END:VCALENDAR";
     /// Evaluate relevancy and validity of the request.
     /// Find a solution for issue #120 or close forever
     /// </summary>
-    [Test, Ignore("No solution for issue #120 yet", Until = "2024-12-31")]
+    [Test, Ignore("No solution for issue #120 yet", Until = "2025-02-28")]
     public void EventsWithShareUidsShouldGenerateASingleRecurrenceSet()
     {
-        //https://github.com/rianjs/ical.net/issues/120 dated Sep 5, 2016
+        //https://github.com/ical-org/ical.net/issues/120 dated Sep 5, 2016
         const string ical =
 @"BEGIN:VCALENDAR
 PRODID:-//Google Inc//Google Calendar 70.9054//EN
@@ -3303,16 +3303,14 @@ END:VCALENDAR";
         Assert.That(occurrences, Has.Count.EqualTo(5));
 
         var exDate = _now.AddDays(1);
-        var period = new Period(new CalDateTime(exDate, false));
-        var periodList = new PeriodList { period };
+        var periodList = new PeriodList() { new CalDateTime(exDate, false) };
         e.ExceptionDates.Add(periodList);
         occurrences = e.GetOccurrences(searchStart, searchEnd).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(4));
 
         //Specifying just a date should "black out" that date
         var excludeTwoDaysFromNow = _now.AddDays(2).Date;
-        period = new Period(new CalDateTime(excludeTwoDaysFromNow, false));
-        periodList.Add(period);
+        periodList.Add(new CalDateTime(excludeTwoDaysFromNow, false));
         occurrences = e.GetOccurrences(searchStart, searchEnd).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(3));
     }
@@ -3337,7 +3335,7 @@ END:VCALENDAR";
     }
 
     [Test]
-    public void ExDateFold_Tests()
+    public void ExDatesShouldGetMergedInOutput()
     {
         var start = _now.AddYears(-1);
         var end = start.AddHours(1);
@@ -3350,7 +3348,7 @@ END:VCALENDAR";
         };
 
         var firstExclusion = new CalDateTime(start.AddDays(4));
-        e.ExceptionDates = new List<PeriodList> { new PeriodList { new Period(firstExclusion) } };
+        e.ExceptionDates = new List<PeriodList> { new PeriodList() { new Period(firstExclusion) } };
         var serialized = SerializationHelpers.SerializeToString(e);
         Assert.That(Regex.Matches(serialized, "EXDATE:"), Has.Count.EqualTo(1));
 
@@ -3375,15 +3373,14 @@ END:VCALENDAR";
             RecurrenceRules = new List<RecurrencePattern> { rrule },
         };
 
-        var exceptionDateList = new PeriodList { TzId = tzid };
-        exceptionDateList.Add(new Period(new CalDateTime(_now.AddDays(1))));
+        var exceptionDateList = new PeriodList() { new Period(new CalDateTime(_now.AddDays(1), tzid)) };
         e.ExceptionDates.Add(exceptionDateList);
 
         var serialized = SerializationHelpers.SerializeToString(e);
         const string expected = "TZID=Europe/Stockholm";
         Assert.That(Regex.Matches(serialized, expected), Has.Count.EqualTo(3));
 
-        e.ExceptionDates.First().Add(new Period(new CalDateTime(_now.AddDays(2))));
+        e.ExceptionDates.First().Add(new Period(new CalDateTime(_now.AddDays(2), tzid)));
         serialized = SerializationHelpers.SerializeToString(e);
         Assert.That(Regex.Matches(serialized, expected), Has.Count.EqualTo(3));
     }
@@ -3501,16 +3498,14 @@ END:VCALENDAR";
                VERSION:2.0
                BEGIN:VEVENT
                DTEND;TZID=UTC:20170228T140000
-               DTSTAMP;TZID=UTC:20170428T171444
+               DTSTAMP:20170428T171444Z
                DTSTART;TZID=UTC:20170228T060000
-               EXDATE;TZID=UTC:20170302T060000,20170303T060000,20170306T060000,20170307T0
-                60000,20170308T060000,20170309T060000,20170310T060000,20170313T060000,201
-                70314T060000,20170317T060000,20170320T060000,20170321T060000,20170322T060
-                000,20170323T060000,20170324T060000,20170327T060000,20170328T060000,20170
-                329T060000,20170330T060000,20170331T060000,20170403T060000,20170405T06000
-                0,20170406T060000,20170407T060000,20170410T060000,20170411T060000,2017041
-                2T060000
-               EXDATE;TZID=UTC:20170417T060000,20170413T060000
+               EXDATE;TZID=UTC:20170302T060000,20170303T060000,20170306T060000,20170307T060000,
+                20170308T060000,20170309T060000,20170310T060000,20170313T060000,20170314T060000,
+                20170317T060000,20170320T060000,20170321T060000,20170322T060000,20170323T060000,
+                20170324T060000,20170327T060000,20170328T060000,20170329T060000,20170330T060000,
+                20170331T060000,20170403T060000,20170405T060000,20170406T060000,20170407T060000,
+                20170410T060000,20170411T060000,20170412T060000,20170413T060000,20170417T060000
                IMPORTANCE:None
                RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR
                UID:001b7e43-98df-4fcc-b9ec-345a28a4fc14
@@ -3672,24 +3667,26 @@ END:VCALENDAR";
     [Test]
     public void InclusiveRruleUntil()
     {
-        const string icalText = @"BEGIN:VCALENDAR
-BEGIN:VEVENT
-DTSTART;VALUE=DATE:20180101
-DTEND;VALUE=DATE:20180102
-RRULE:FREQ=WEEKLY;UNTIL=20180105;BYDAY=MO,TU,WE,TH,FR
-DTSTAMP:20170926T001103Z
-UID:5kvks79u4nurqopt7qv4fi1jo8@google.com
-CREATED:20170922T131958Z
-DESCRIPTION:
-LAST-MODIFIED:20170922T131958Z
-LOCATION:
-SEQUENCE:0
-STATUS:CONFIRMED
-SUMMARY:Holiday Break - No School
-TRANSP:TRANSPARENT
-END:VEVENT
-END:VCALENDAR
-";
+        const string icalText =
+            """
+            BEGIN:VCALENDAR
+            BEGIN:VEVENT
+            DTSTART;VALUE=DATE:20180101
+            DTEND;VALUE=DATE:20180102
+            RRULE:FREQ=WEEKLY;UNTIL=20180105;BYDAY=MO,TU,WE,TH,FR
+            DTSTAMP:20170926T001103Z
+            UID:5kvks79u4nurqopt7qv4fi1jo8@google.com
+            CREATED:20170922T131958Z
+            DESCRIPTION:
+            LAST-MODIFIED:20170922T131958Z
+            LOCATION:
+            SEQUENCE:0
+            STATUS:CONFIRMED
+            SUMMARY:Holiday Break - No School
+            TRANSP:TRANSPARENT
+            END:VEVENT
+            END:VCALENDAR
+            """;
         const string timeZoneId = @"Eastern Standard Time";
         var calendar = Calendar.Load(icalText);
         var firstEvent = calendar.Events.First();

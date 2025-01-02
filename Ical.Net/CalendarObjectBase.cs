@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 
 namespace Ical.Net;
@@ -25,20 +26,17 @@ public class CalendarObjectBase : ICopyable, ILoadable
     /// Creates a deep copy of the <see cref="T"/> object.
     /// </summary>
     /// <returns>The copy of the <see cref="T"/> object.</returns>
-    public virtual T Copy<T>()
+    public virtual T? Copy<T>()
     {
-        var type = GetType();
-        var obj = Activator.CreateInstance(type) as ICopyable;
+        if (Activator.CreateInstance(GetType(), true) is not T objOfT) return default;
 
-        if (obj is not T objOfT) return default(T);
-
-        obj.CopyFrom(this);
+        (objOfT as ICopyable)?.CopyFrom(this);
         return objOfT;
     }
 
     public virtual bool IsLoaded => _mIsLoaded;
 
-    public event EventHandler Loaded;
+    public event EventHandler? Loaded;
 
     public virtual void OnLoaded()
     {
