@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Runtime.Serialization;
 using Ical.Net.Collections;
@@ -14,8 +15,9 @@ namespace Ical.Net;
 /// </summary>
 public class CalendarObject : CalendarObjectBase, ICalendarObject
 {
-    private ICalendarObjectList<ICalendarObject> _children;
-    private ServiceProvider _serviceProvider;
+    // Are initialized in the constructor
+    private ICalendarObjectList<ICalendarObject> _children = null!;
+    private ServiceProvider _serviceProvider = null!;
 
     internal CalendarObject()
     {
@@ -50,11 +52,11 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
 
     protected virtual void OnDeserialized(StreamingContext context) { }
 
-    private void Children_ItemAdded(object sender, ObjectEventArgs<ICalendarObject, int> e) => e.First.Parent = this;
+    private void Children_ItemAdded(object? sender, ObjectEventArgs<ICalendarObject, int> e) => e.First.Parent = this;
 
     protected bool Equals(CalendarObject other) => string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
@@ -89,7 +91,7 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
     /// <summary>
     /// Returns the parent iCalObject that owns this one.
     /// </summary>
-    public virtual ICalendarObject Parent { get; set; }
+    public virtual ICalendarObject? Parent { get; set; }
 
     /// <summary>
     /// A collection of iCalObjects that are children of the current object.
@@ -99,18 +101,18 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
     /// <summary>
     /// Gets or sets the name of the iCalObject.  For iCalendar components, this is the RFC 5545 name of the component.
     /// </summary>
-    public virtual string Name { get; set; }
+    public virtual string? Name { get; set; }
 
     /// <summary>
     /// Gets the <see cref="Net.Calendar"/> object.
     /// The setter must be implemented in a derived class.
     /// </summary>
-    public virtual Calendar Calendar
+    public virtual Calendar? Calendar
     {
         get
         {
             ICalendarObject obj = this;
-            while (obj is not Net.Calendar && obj.Parent != null)
+            while (obj is not Net.Calendar && obj?.Parent != null)
             {
                 obj = obj.Parent;
             }
@@ -140,7 +142,7 @@ public class CalendarObject : CalendarObjectBase, ICalendarObject
 
     public virtual void RemoveService(string name) => _serviceProvider.RemoveService(name);
 
-    public virtual string Group
+    public virtual string? Group
     {
         get => Name;
         set => Name = value;
