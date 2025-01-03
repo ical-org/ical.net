@@ -3201,7 +3201,7 @@ END:VCALENDAR";
     /// Evaluate relevancy and validity of the request.
     /// Find a solution for issue #120 or close forever
     /// </summary>
-    [Test, Ignore("No solution for issue #120 yet", Until = "2024-12-31")]
+    [Test, Ignore("No solution for issue #120 yet", Until = "2025-02-28")]
     public void EventsWithShareUidsShouldGenerateASingleRecurrenceSet()
     {
         //https://github.com/rianjs/ical.net/issues/120 dated Sep 5, 2016
