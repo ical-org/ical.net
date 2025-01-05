@@ -1,7 +1,7 @@
 ﻿name: Publish
-# This job builds and and publishes the package to NuGet.
+# This job builds and publishes the package to NuGet.
 # It depends on the included tests job to complete successfully.
-# The version number is determined by the latest tag for the 'main' branch selected with workflow dispatch.
+# The version number is determined by the latest 'v*' tag for the main branch.
 on:
   workflow_dispatch: {}
 
@@ -10,9 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout main
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0  # Fetch all history for all tags and branches
+        ref: main
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -20,6 +22,15 @@ jobs:
           8.0.x
           6.0.x
           3.1.x
+    - name: Get version tag
+      # The latest tag for the selected branch.
+      # Get it and strip off any leading 'v' from the version tag
+      run: | 
+         Version=$(git tag --list 'v*' --sort=-v:refname | head -n 1 | sed 's/^v//')
+         echo "VERSION=$Version" >> $GITHUB_ENV
+         echo "Version: $Version"
+    - name: Reset branch to specified tag
+      run: git reset --hard v${{ env.VERSION }}
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -32,22 +43,29 @@ jobs:
     needs: tests
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout main
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0  # Fetch all history for all tags and branches
-    - uses: actions/setup-dotnet@v4
+        ref: main
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: |
+          8.0.x    
     - name: Get version tag
       # The latest tag for the selected branch.
       # Get it and strip off any leading 'v' from the version tag
       run: | 
-         Version=$(git describe --tags --abbrev=0 | sed 's/^v//')
+         Version=$(git tag --list 'v*' --sort=-v:refname | head -n 1 | sed 's/^v//')
          echo "VERSION=$Version" >> $GITHUB_ENV
          echo "Version: $Version"
+    - name: Reset branch to specified tag
+      run: git reset --hard v${{ env.VERSION }}
+    - name: Restore dependencies
+      run: dotnet restore
     - name: Build and pack for publishing
       run: |
-        dotnet restore
         dotnet build --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{env.VERSION}} -p:FileVersion=${{env.VERSION}}.${{github.run_number}} -p:Nullable=disable -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true
         dotnet pack --configuration Release Ical.Net/Ical.Net.csproj -p:Version=${{env.VERSION}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg --no-build -p:PackageVersion=${{env.VERSION}}
     - name: Store artifacts
