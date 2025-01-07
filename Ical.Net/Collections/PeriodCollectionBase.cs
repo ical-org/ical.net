@@ -134,7 +134,7 @@ public abstract class PeriodCollectionBase : ICollection<Period>
     /// <param name="tzId">The timezone ID to filter periods by.</param>
     /// <returns>An <see cref="IEnumerable{T}"/> of unique <see cref="PeriodKind"/> values that match the specified timezone ID.</returns>
     internal IEnumerable<PeriodKind> GetDistinctPeriodKindsByTzId(string? tzId) =>
-        Periods.Where(p => p.TzId == tzId).Select(p => p.GetPeriodKind()).Distinct();
+        Periods.Where(p => p.TzId == tzId).Select(p => p.PeriodKind).Distinct();
 
     /// <summary>
     /// Gets an <see cref="IEnumerable{T}"/> of periods with the same <see cref="PeriodKind"/> for a given timezone ID.
@@ -143,7 +143,7 @@ public abstract class PeriodCollectionBase : ICollection<Period>
     /// <param name="periodKind">The <see cref="PeriodKind"/> to filter periods by.</param>
     /// <returns>An <see cref="IEnumerable{T}"/> of periods that match the specified timezone ID and <see cref="PeriodKind"/>.</returns>
     internal IEnumerable<Period> GetPeriodsByTzIdAndKind(string? tzId, PeriodKind periodKind) =>
-        Periods.Where(p => p.TzId == tzId && p.GetPeriodKind() == periodKind);
+        Periods.Where(p => p.TzId == tzId && p.PeriodKind == periodKind);
 
     /// <inheritdoc/>
     [ExcludeFromCodeCoverage]

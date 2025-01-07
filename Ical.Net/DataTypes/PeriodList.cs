@@ -200,10 +200,10 @@ public class PeriodList : EncodableDataType, IList<Period>
 
     private void EnsureConsistentTimezoneAndPeriodKind(Period p)
     {
-        if (Count != 0 && p.GetPeriodKind() != Periods[0].GetPeriodKind())
+        if (Count != 0 && p.PeriodKind != Periods[0].PeriodKind)
         {
             throw new ArgumentException(
-                $"All Periods of a PeriodList must be of the same period kind. Current Kind: {Periods[0].GetPeriodKind()}, Provided Kind: {p.GetPeriodKind()}");
+                $"All Periods of a PeriodList must be of the same period kind. Current Kind: {Periods[0].PeriodKind}, Provided Kind: {p.PeriodKind}");
         }
 
         if (Count != 0 && p.TzId != Periods[0].TzId)

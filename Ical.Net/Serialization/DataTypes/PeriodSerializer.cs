@@ -102,19 +102,10 @@ public class PeriodSerializer : EncodableDataTypeSerializer
             return false;
         }
 
-        p.StartTime = (IDateTime) dtSerializer.Deserialize(new StringReader(values[0]));
-        p.EndTime = dtSerializer.Deserialize(new StringReader(values[1])) as IDateTime;
-        if (p.EndTime == null)
-        {
-            p.Duration = (Duration?) durationSerializer.Deserialize(new StringReader(values[1]));
-        }
+        var start = dtSerializer.Deserialize(new StringReader(values[0])) as IDateTime;
+        var end = dtSerializer.Deserialize(new StringReader(values[1])) as IDateTime;
+        var duration = durationSerializer.Deserialize(new StringReader(values[1])) as Duration?;
 
-        // Only return an object if it has been deserialized correctly.
-        if (p.StartTime != null)
-        {
-            return p;
-        }
-
-        return null;
+        return start is null ? null : Period.Create(start, end, duration, p.AssociatedObject);
     }
 }

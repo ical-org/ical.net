@@ -110,7 +110,7 @@ public class CopyComponentTests
         {
             Start = new CalDateTime(_now),
             End = new CalDateTime(_later),
-            Entries = { new FreeBusyEntry { Language = "English", StartTime = new CalDateTime(2024, 10, 1), Duration = Duration.FromDays(1), Status = FreeBusyStatus.Busy } }
+            Entries = { new FreeBusyEntry(new Period(new CalDateTime(2024, 10, 1), Duration.FromDays(1)), FreeBusyStatus.Busy) { Language = "English" }}
         };
 
         var copy = orig.Copy<FreeBusy>();

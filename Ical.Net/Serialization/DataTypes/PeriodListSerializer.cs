@@ -45,7 +45,7 @@ public class PeriodListSerializer : EncodableDataTypeSerializer
             periodList.Parameters.Set("TZID", periodList[0].TzId);
         }
 
-        switch (firstPeriod?.GetPeriodKind()) // default type is DATE-TIME
+        switch (firstPeriod?.PeriodKind) // default type is DATE-TIME
         {
             case PeriodKind.Period:
                 periodList.SetValueType("PERIOD");

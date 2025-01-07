@@ -29,7 +29,7 @@ internal class CollectionHelpersTests
         });
 
         var changedPeriod = GetExceptionDates();
-        changedPeriod.First().First().StartTime = new CalDateTime(_now.AddHours(-1));
+        changedPeriod[0][0] = new Period(new CalDateTime(_now.AddHours(-1)), changedPeriod[0][0].EndTime);
 
         Assert.That(changedPeriod, Is.Not.EqualTo(GetExceptionDates()));
     }

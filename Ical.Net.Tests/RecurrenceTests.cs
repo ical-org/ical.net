@@ -65,8 +65,7 @@ public class RecurrenceTests
                 // Associate each incoming date/time with the calendar.
                 expectedPeriods[i].AssociatedObject = cal;
 
-                var period = expectedPeriods[i].Copy<Period>();
-                period.EndTime = period.EffectiveEndTime;
+                var period = new Period(expectedPeriods[i].StartTime, expectedPeriods[i].EffectiveEndTime) {AssociatedObject = cal};
 
                 Assert.That(occurrences[i].Period, Is.EqualTo(period), "Event should occur on " + period);
                 if (timeZones != null)
@@ -2563,11 +2562,12 @@ public class RecurrenceTests
             .Where(x => x != null)
             .Select(x => (Period)periodSerializer.Deserialize(new StringReader(x)))
             .ToArray();
-
-        foreach (var p in expectedPeriods)
+        
+        for (var index = 0; index < expectedPeriods.Length; index++)
         {
-            p.StartTime = p.StartTime.ToTimeZone(start.TzId);
-            p.EndTime = p.StartTime.Add(p.Duration!.Value);
+            var p = expectedPeriods[index];
+            var newStart = p.StartTime.ToTimeZone(start.TzId);
+            expectedPeriods[index] = Period.Create(newStart, end: newStart.Add(p.Duration!.Value));
         }
 
         // date only cannot have a time zone
