@@ -16,6 +16,8 @@ jobs:
       with:
         fetch-depth: 0  # Fetch all history for all tags and branches
         ref: main
+    - name: Set Git config for line endings
+      run: git config --global core.autocrlf true
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -49,6 +51,8 @@ jobs:
       with:
         fetch-depth: 0  # Fetch all history for all tags and branches
         ref: main
+    - name: Set Git config for line endings
+      run: git config --global core.autocrlf true
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
