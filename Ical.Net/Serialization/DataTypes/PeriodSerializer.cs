@@ -51,17 +51,17 @@ public class PeriodSerializer : EncodableDataTypeSerializer
             // "DTEND" nor "DURATION" property, the event’s duration is taken to
             // be one day:
 
-            if (p.EndTime is { HasTime: true })
+            if (p.EndTime is { } endtime)
             {
                 // Serialize the end date and time...
                 sb.Append('/');
-                sb.Append(dtSerializer.SerializeToString(p.EndTime));
+                sb.Append(dtSerializer.SerializeToString(endtime));
             }
-            if (p.Duration != null) 
+            if (p.Duration is { } duration) 
             {
                 // Serialize the duration
                 sb.Append('/');
-                sb.Append(durationSerializer.SerializeToString(p.Duration));
+                sb.Append(durationSerializer.SerializeToString(duration));
             }
             // else, just the start time gets serialized to comply with the RFC 5545 section 3.6.1
 

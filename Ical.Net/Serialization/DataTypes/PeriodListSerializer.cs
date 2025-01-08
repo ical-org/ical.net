@@ -40,7 +40,7 @@ public class PeriodListSerializer : EncodableDataTypeSerializer
         var firstPeriod = periodList.FirstOrDefault();
 
         // Set TzId before ValueType, so that it serializes first
-        if (firstPeriod != null && !string.IsNullOrEmpty(firstPeriod.TzId))
+        if (firstPeriod != null && !string.IsNullOrEmpty(firstPeriod.TzId) && firstPeriod.TzId != "UTC")
         {
             periodList.Parameters.Set("TZID", periodList[0].TzId);
         }

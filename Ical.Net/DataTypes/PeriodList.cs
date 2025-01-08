@@ -21,6 +21,10 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public class PeriodList : EncodableDataType, IList<Period>
 {
+    internal PeriodKind PeriodKind => Count == 0 ? PeriodKind.Undefined : Periods[0].PeriodKind;
+
+    internal string? TzId => Count == 0 ? null : Periods[0].TzId;
+
     /// <summary>
     /// Gets the number of <see cref="Period"/>s of the list.
     /// </summary>
@@ -135,7 +139,11 @@ public class PeriodList : EncodableDataType, IList<Period>
     public Period this[int index]
     {
         get => Periods[index];
-        set => Periods[index] = value;
+        set
+        {
+            EnsureConsistentTimezoneAndPeriodKind(value);
+            Periods[index] = value;
+        }
     }
 
     /// <inheritdoc/>
@@ -148,7 +156,11 @@ public class PeriodList : EncodableDataType, IList<Period>
     public int IndexOf(Period item) => Periods.IndexOf(item);
 
     /// <inheritdoc/>
-    public void Insert(int index, Period item) => Periods.Insert(index, item);
+    public void Insert(int index, Period item)
+    {
+        EnsureConsistentTimezoneAndPeriodKind(item);
+        Periods.Insert(index, item);
+    }
 
     /// <inheritdoc/>
     public void RemoveAt(int index) => Periods.RemoveAt(index);
