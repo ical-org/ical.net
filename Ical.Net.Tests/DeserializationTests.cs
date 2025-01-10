@@ -267,36 +267,37 @@ public class DeserializationTests
     [Test]
     public void Event8()
     {
-        var sr = @"BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Apple Computer\, Inc//iCal 1.0//EN
-CALSCALE:GREGORIAN
-BEGIN:VEVENT
-CREATED:20070404T211714Z
-DTEND:20070407T010000Z
-DTSTAMP:20070404T211714Z
-DTSTART:20070406T230000Z
-DURATION:PT2H
-RRULE:FREQ=WEEKLY;UNTIL=20070801T070000Z;BYDAY=FR
-SUMMARY:Friday Meetings
-DTSTAMP:20040103T033800Z
-SEQUENCE:1
-UID:fd940618-45e2-4d19-b118-37fd7a8e3906
-END:VEVENT
-BEGIN:VEVENT
-CREATED:20070404T204310Z
-DTEND:20070416T030000Z
-DTSTAMP:20070404T204310Z
-DTSTART:20070414T200000Z
-DURATION:P1DT7H
-RRULE:FREQ=DAILY;COUNT=12;BYDAY=SA,SU
-SUMMARY:Weekend Yea!
-DTSTAMP:20040103T033800Z
-SEQUENCE:1
-UID:ebfbd3e3-cc1e-4a64-98eb-ced2598b3908
-END:VEVENT
-END:VCALENDAR
-";
+        var sr = """
+                 BEGIN:VCALENDAR
+                 VERSION:2.0
+                 PRODID:-//Apple Computer\, Inc//iCal 1.0//EN
+                 CALSCALE:GREGORIAN
+                 BEGIN:VEVENT
+                 CREATED:20070404T211714Z
+                 DTEND:20070407T010000Z
+                 DTSTAMP:20070404T211714Z
+                 DTSTART:20070406T230000Z
+                 DURATION:PT2H
+                 RRULE:FREQ=WEEKLY;UNTIL=20070801T070000Z;BYDAY=FR
+                 SUMMARY:Friday Meetings
+                 DTSTAMP:20040103T033800Z
+                 SEQUENCE:1
+                 UID:fd940618-45e2-4d19-b118-37fd7a8e3906
+                 END:VEVENT
+                 BEGIN:VEVENT
+                 CREATED:20070404T204310Z
+                 DTEND:20070416T030000Z
+                 DTSTAMP:20070404T204310Z
+                 DTSTART:20070414T200000Z
+                 DURATION:P1DT7H
+                 RRULE:FREQ=DAILY;COUNT=12;BYDAY=SA,SU
+                 SUMMARY:Weekend Yea!
+                 DTSTAMP:20040103T033800Z
+                 SEQUENCE:1
+                 UID:ebfbd3e3-cc1e-4a64-98eb-ced2598b3908
+                 END:VEVENT
+                 END:VCALENDAR
+                 """;
         var iCal = Calendar.Load(sr);
         Assert.That(iCal.Events.Count == 2, Is.True, "There should be 2 events in the parsed calendar");
         Assert.That(iCal.Events["fd940618-45e2-4d19-b118-37fd7a8e3906"], Is.Not.Null, "Event fd940618-45e2-4d19-b118-37fd7a8e3906 should exist in the calendar");
@@ -351,25 +352,46 @@ END:VCALENDAR
     public void RecurrenceDates1()
     {
         var iCal = Calendar.Load(IcsFiles.RecurrenceDates1);
-        Assert.That(iCal.Events, Has.Count.EqualTo(1));
-        Assert.That(iCal.Events.First().RecurrenceDates, Has.Count.EqualTo(3));
+
+        var expectedStartTimes = new List<CalDateTime>
+        {
+            // date are unique
+            new CalDateTime(1997, 7, 14, 12, 30, 0, CalDateTime.UtcTzId),
+            new CalDateTime(1996, 4, 3, 2, 0, 0, CalDateTime.UtcTzId),
+            new CalDateTime(1996, 4, 4, 1, 0, 0, CalDateTime.UtcTzId),
+            new CalDateTime(1997, 1, 1),
+            new CalDateTime(1997, 1, 20),
+            new CalDateTime(1997, 2, 17),
+            new CalDateTime(1997, 4, 21),
+            new CalDateTime(1997, 5, 26),
+            new CalDateTime(1997, 7, 4),
+            new CalDateTime(1997, 9, 1),
+            new CalDateTime(1997, 10, 14),
+            new CalDateTime(1997, 11, 28),
+            new CalDateTime(1997, 11, 29),
+            new CalDateTime(1997, 12, 25) 
+        };
+
+        var expectedEndTime = new CalDateTime(new DateTime(1996, 4, 3, 4, 0, 0, DateTimeKind.Utc));
+
+        var actualStartTimes = iCal.Events[0].RecurrenceDates.GetAllPeriods()
+            .Select(p => p.StartTime)
+            .Union(iCal.Events[0].RecurrenceDates.GetAllDates())
+            .ToList();
 
         Assert.Multiple(() =>
         {
-            Assert.That(iCal.Events.First().RecurrenceDates[0][0].StartTime, Is.EqualTo((CalDateTime)new DateTime(1997, 7, 14, 12, 30, 0, DateTimeKind.Utc)));
-            Assert.That(iCal.Events.First().RecurrenceDates[1][0].StartTime, Is.EqualTo((CalDateTime)new DateTime(1996, 4, 3, 2, 0, 0, DateTimeKind.Utc)));
-            Assert.That(iCal.Events.First().RecurrenceDates[1][0].EndTime, Is.EqualTo((CalDateTime)new DateTime(1996, 4, 3, 4, 0, 0, DateTimeKind.Utc)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][0].StartTime, Is.EqualTo(new CalDateTime(1997, 1, 1)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][1].StartTime, Is.EqualTo(new CalDateTime(1997, 1, 20)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][2].StartTime, Is.EqualTo(new CalDateTime(1997, 2, 17)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][3].StartTime, Is.EqualTo(new CalDateTime(1997, 4, 21)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][4].StartTime, Is.EqualTo(new CalDateTime(1997, 5, 26)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][5].StartTime, Is.EqualTo(new CalDateTime(1997, 7, 4)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][6].StartTime, Is.EqualTo(new CalDateTime(1997, 9, 1)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][7].StartTime, Is.EqualTo(new CalDateTime(1997, 10, 14)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][8].StartTime, Is.EqualTo(new CalDateTime(1997, 11, 28)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][9].StartTime, Is.EqualTo(new CalDateTime(1997, 11, 29)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][10].StartTime, Is.EqualTo(new CalDateTime(1997, 12, 25)));
+            Assert.That(iCal.Events, Has.Count.EqualTo(1));
+            Assert.That(iCal.Events[0].RecurrenceDatesPeriodLists, Has.Count.EqualTo(3));
+            Assert.That(actualStartTimes, Has.Count.EqualTo(expectedStartTimes.Count));
+
+            foreach (var date in expectedStartTimes)
+            {
+                Assert.That(actualStartTimes.Single(dt => dt.Equals(date)),
+                    Is.EqualTo(date), "Should contain " + date);
+            }
+
+            Assert.That(iCal.Events[0].RecurrenceDates.Contains(new Period(expectedStartTimes[1], expectedEndTime)));
         });
     }
 
@@ -549,13 +571,14 @@ END:VCALENDAR
     [TestCase(false)]
     public void KeepApartDtEndAndDuration_Tests(bool useDtEnd)
     {
-        var calStr = $@"BEGIN:VCALENDAR
-BEGIN:VEVENT
-DTSTART:20070406T230000Z
-{(useDtEnd ? "DTEND:20070407T010000Z" : "DURATION:PT1H")}
-END:VEVENT
-END:VCALENDAR
-";
+        var calStr = $"""
+                      BEGIN:VCALENDAR
+                      BEGIN:VEVENT
+                      DTSTART:20070406T230000Z
+                      {(useDtEnd ? "DTEND:20070407T010000Z" : "DURATION:PT1H")}
+                      END:VEVENT
+                      END:VCALENDAR
+                      """;
 
         var calendar = Calendar.Load(calStr);
 

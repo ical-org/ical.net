@@ -241,7 +241,6 @@ public class VTimeZone : CalendarComponent
     {
         foreach (var interval in intervals)
         {
-            var periodList = new PeriodList();
             var time = interval.IsoLocalStart.ToDateTimeUnspecified();
             var date = new CalDateTime(time, true).Add(delta.ToDurationExact()) as CalDateTime;
             if (date == null)
@@ -249,8 +248,7 @@ public class VTimeZone : CalendarComponent
                 continue;
             }
 
-            periodList.Add(date);
-            tzi.RecurrenceDates.Add(periodList);
+            tzi.RecurrenceDates.Add(date);
         }
     }
 

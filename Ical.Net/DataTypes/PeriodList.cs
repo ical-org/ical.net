@@ -19,7 +19,7 @@ namespace Ical.Net.DataTypes;
 /// An iCalendar list used to represent a list of <see cref="Period"/> objects
 /// for EXDATE and RDATE properties.
 /// </summary>
-public class PeriodList : EncodableDataType, IList<Period>
+internal class PeriodList : EncodableDataType, IList<Period>
 {
     internal PeriodKind PeriodKind => Count == 0 ? PeriodKind.Undefined : Periods[0].PeriodKind;
 

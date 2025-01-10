@@ -288,8 +288,8 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
         // RDATEs and EXDATEs are all List<PeriodList>, because the spec allows for multiple declarations of collections.
         // Consequently we have to contrive a normalized representation before we can determine whether two events are equal
 
-        var exDates = PeriodList.GetGroupedPeriods(ExceptionDates);
-        var otherExDates = PeriodList.GetGroupedPeriods(other.ExceptionDates);
+        var exDates = PeriodList.GetGroupedPeriods(ExceptionDatesPeriodLists);
+        var otherExDates = PeriodList.GetGroupedPeriods(other.ExceptionDatesPeriodLists);
         if (exDates.Keys.Count != otherExDates.Keys.Count || !exDates.Keys.OrderBy(k => k).SequenceEqual(otherExDates.Keys.OrderBy(k => k)))
         {
             return false;
@@ -300,8 +300,8 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
             return false;
         }
 
-        var rDates = PeriodList.GetGroupedPeriods(RecurrenceDates);
-        var otherRDates = PeriodList.GetGroupedPeriods(other.RecurrenceDates);
+        var rDates = PeriodList.GetGroupedPeriods(RecurrenceDatesPeriodLists);
+        var otherRDates = PeriodList.GetGroupedPeriods(other.RecurrenceDatesPeriodLists);
         if (rDates.Keys.Count != otherRDates.Keys.Count || !rDates.Keys.OrderBy(k => k).SequenceEqual(otherRDates.Keys.OrderBy(k => k)))
         {
             return false;
@@ -339,9 +339,9 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
             hashCode = (hashCode * 397) ^ Transparency?.GetHashCode() ?? 0;
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Attachments);
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Resources);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCodeForNestedCollection(ExceptionDates);
+            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCodeForNestedCollection(ExceptionDatesPeriodLists);
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionRules);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCodeForNestedCollection(RecurrenceDates);
+            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCodeForNestedCollection(RecurrenceDatesPeriodLists);
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(RecurrenceRules);
             return hashCode;
         }

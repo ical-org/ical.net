@@ -23,7 +23,7 @@ public class PeriodListWrapperTests
         var cal = new Calendar();
         var evt = new CalendarEvent();
         cal.Events.Add(evt);
-        var exDates = new ExceptionDates(evt.ExceptionDates);
+        var exDates = evt.ExceptionDates;
 
         exDates // Add date-only
             .Add(new CalDateTime(2025, 1, 1))
@@ -45,22 +45,22 @@ public class PeriodListWrapperTests
         Assert.Multiple(() =>
         {
             // 2 dedicate PeriodList objects
-            Assert.That(evt.ExceptionDates, Has.Count.EqualTo(3));
+            Assert.That(evt.ExceptionDatesPeriodLists, Has.Count.EqualTo(3));
 
             // First PeriodList is date-only
-            Assert.That(evt.ExceptionDates[0], Has.Count.EqualTo(2));
-            Assert.That(evt.ExceptionDates[0].TzId, Is.Null);
-            Assert.That(evt.ExceptionDates[0].PeriodKind, Is.EqualTo(PeriodKind.DateOnly));
+            Assert.That(evt.ExceptionDatesPeriodLists[0], Has.Count.EqualTo(2));
+            Assert.That(evt.ExceptionDatesPeriodLists[0].TzId, Is.Null);
+            Assert.That(evt.ExceptionDatesPeriodLists[0].PeriodKind, Is.EqualTo(PeriodKind.DateOnly));
 
             // Second PeriodList is date-time UTC
-            Assert.That(evt.ExceptionDates[1], Has.Count.EqualTo(1));
-            Assert.That(evt.ExceptionDates[1].TzId, Is.EqualTo(CalDateTime.UtcTzId));
-            Assert.That(evt.ExceptionDates[1].PeriodKind, Is.EqualTo(PeriodKind.DateTime));
+            Assert.That(evt.ExceptionDatesPeriodLists[1], Has.Count.EqualTo(1));
+            Assert.That(evt.ExceptionDatesPeriodLists[1].TzId, Is.EqualTo(CalDateTime.UtcTzId));
+            Assert.That(evt.ExceptionDatesPeriodLists[1].PeriodKind, Is.EqualTo(PeriodKind.DateTime));
 
             // Second PeriodList is date-time
-            Assert.That(evt.ExceptionDates[2], Has.Count.EqualTo(2));
-            Assert.That(evt.ExceptionDates[2].TzId, Is.EqualTo("Europe/Berlin"));
-            Assert.That(evt.ExceptionDates[2].PeriodKind, Is.EqualTo(PeriodKind.DateTime));
+            Assert.That(evt.ExceptionDatesPeriodLists[2], Has.Count.EqualTo(2));
+            Assert.That(evt.ExceptionDatesPeriodLists[2].TzId, Is.EqualTo("Europe/Berlin"));
+            Assert.That(evt.ExceptionDatesPeriodLists[2].PeriodKind, Is.EqualTo(PeriodKind.DateTime));
 
             Assert.That(serialized,
                 Does.Contain(
@@ -77,7 +77,7 @@ public class PeriodListWrapperTests
     public void RemoveExDateTime_ShouldRemove_FromPeriodList()
     {
         var evt = new CalendarEvent();
-        var exDates = new ExceptionDates(evt.ExceptionDates);
+        var exDates = evt.ExceptionDates;
 
         var dateOnly = new CalDateTime(2025, 1, 1);
         var dateTime = new CalDateTime(2025, 1, 1, 10, 11, 12, "Europe/Berlin");
@@ -95,10 +95,10 @@ public class PeriodListWrapperTests
             Assert.That(dateOnlySuccess, Is.True);
             Assert.That(dateTimeSuccess, Is.True);
             Assert.That(dateOnlyFail, Is.True);
-            Assert.That(evt.ExceptionDates[0], Has.Count.EqualTo(1));
-            Assert.That(evt.ExceptionDates[1], Is.Empty);
+            Assert.That(evt.ExceptionDatesPeriodLists[0], Has.Count.EqualTo(1));
+            Assert.That(evt.ExceptionDatesPeriodLists[1], Is.Empty);
             // Empty lists should work as well
-            evt.ExceptionDates.Clear();
+            evt.ExceptionDatesPeriodLists.Clear();
             Assert.That(() => exDates.Remove(dateTime), Is.False);
         });
     }
@@ -113,7 +113,7 @@ public class PeriodListWrapperTests
         var cal = new Calendar();
         var evt = new CalendarEvent();
         cal.Events.Add(evt);
-        var recDates = new RecurrenceDates(evt.RecurrenceDates);
+        var recDates = evt.RecurrenceDates;
 
         recDates // Add date-only
             .Add(new CalDateTime(2025, 1, 1))
@@ -131,17 +131,17 @@ public class PeriodListWrapperTests
         Assert.Multiple(() =>
         {
             // 2 dedicate PeriodList objects
-            Assert.That(evt.RecurrenceDates, Has.Count.EqualTo(2));
+            Assert.That(evt.RecurrenceDatesPeriodLists, Has.Count.EqualTo(2));
 
             // First PeriodList is date-only
-            Assert.That(evt.RecurrenceDates[0], Has.Count.EqualTo(2));
-            Assert.That(evt.RecurrenceDates[0].TzId, Is.Null);
-            Assert.That(evt.RecurrenceDates[0].PeriodKind, Is.EqualTo(PeriodKind.DateOnly));
+            Assert.That(evt.RecurrenceDatesPeriodLists[0], Has.Count.EqualTo(2));
+            Assert.That(evt.RecurrenceDatesPeriodLists[0].TzId, Is.Null);
+            Assert.That(evt.RecurrenceDatesPeriodLists[0].PeriodKind, Is.EqualTo(PeriodKind.DateOnly));
 
             // Third PeriodList is date-time
-            Assert.That(evt.RecurrenceDates[1], Has.Count.EqualTo(2));
-            Assert.That(evt.RecurrenceDates[1].TzId, Is.EqualTo("Europe/Berlin"));
-            Assert.That(evt.RecurrenceDates[1].PeriodKind, Is.EqualTo(PeriodKind.DateTime));
+            Assert.That(evt.RecurrenceDatesPeriodLists[1], Has.Count.EqualTo(2));
+            Assert.That(evt.RecurrenceDatesPeriodLists[1].TzId, Is.EqualTo("Europe/Berlin"));
+            Assert.That(evt.RecurrenceDatesPeriodLists[1].PeriodKind, Is.EqualTo(PeriodKind.DateTime));
 
             Assert.That(serialized,
                 Does.Contain(
@@ -159,7 +159,7 @@ public class PeriodListWrapperTests
         var cal = new Calendar();
         var evt = new CalendarEvent();
         cal.Events.Add(evt);
-        var recPeriod = new RecurrenceDates(evt.RecurrenceDates);
+        var recPeriod = evt.RecurrenceDates;
 
         recPeriod
             // Add date-only period
@@ -194,22 +194,22 @@ public class PeriodListWrapperTests
         Assert.Multiple(() =>
         {
             // 2 dedicate PeriodList objects
-            Assert.That(evt.RecurrenceDates, Has.Count.EqualTo(3));
+            Assert.That(evt.RecurrenceDatesPeriodLists, Has.Count.EqualTo(3));
 
             // First PeriodList has date-only periods
-            Assert.That(evt.RecurrenceDates[0], Has.Count.EqualTo(3));
-            Assert.That(evt.RecurrenceDates[0].TzId, Is.Null);
-            Assert.That(evt.RecurrenceDates[0].PeriodKind, Is.EqualTo(PeriodKind.Period));
+            Assert.That(evt.RecurrenceDatesPeriodLists[0], Has.Count.EqualTo(3));
+            Assert.That(evt.RecurrenceDatesPeriodLists[0].TzId, Is.Null);
+            Assert.That(evt.RecurrenceDatesPeriodLists[0].PeriodKind, Is.EqualTo(PeriodKind.Period));
 
             // Second PeriodList has UTC date-time periods
-            Assert.That(evt.RecurrenceDates[1], Has.Count.EqualTo(2));
-            Assert.That(evt.RecurrenceDates[1].TzId, Is.EqualTo("UTC"));
-            Assert.That(evt.RecurrenceDates[1].PeriodKind, Is.EqualTo(PeriodKind.Period));
+            Assert.That(evt.RecurrenceDatesPeriodLists[1], Has.Count.EqualTo(2));
+            Assert.That(evt.RecurrenceDatesPeriodLists[1].TzId, Is.EqualTo("UTC"));
+            Assert.That(evt.RecurrenceDatesPeriodLists[1].PeriodKind, Is.EqualTo(PeriodKind.Period));
 
             // Third PeriodList has zoned date-time with duration
-            Assert.That(evt.RecurrenceDates[2], Has.Count.EqualTo(1));
-            Assert.That(evt.RecurrenceDates[2].TzId, Is.EqualTo("Europe/Vienna"));
-            Assert.That(evt.RecurrenceDates[2].PeriodKind, Is.EqualTo(PeriodKind.Period));
+            Assert.That(evt.RecurrenceDatesPeriodLists[2], Has.Count.EqualTo(1));
+            Assert.That(evt.RecurrenceDatesPeriodLists[2].TzId, Is.EqualTo("Europe/Vienna"));
+            Assert.That(evt.RecurrenceDatesPeriodLists[2].PeriodKind, Is.EqualTo(PeriodKind.Period));
 
             Assert.That(serialized,
                 Does.Contain(
@@ -229,7 +229,7 @@ public class PeriodListWrapperTests
     public void RemoveRDateTime_ShouldRemove_FromPeriodList()
     {
         var evt = new CalendarEvent();
-        var recDates = new RecurrenceDates(evt.RecurrenceDates);
+        var recDates = evt.RecurrenceDates;
 
         var period1 = new Period(new CalDateTime(2025, 1, 1), Duration.FromDays(5));
         var period2 = new Period(new CalDateTime(2025, 1, 1, 10, 0, 0, "Europe/Berlin"), Duration.FromHours(6));
@@ -246,8 +246,8 @@ public class PeriodListWrapperTests
             Assert.That(period2Success, Is.True);
             Assert.That(period1Success, Is.True);
             Assert.That(period2Fail, Is.True);
-            Assert.That(evt.RecurrenceDates[0], Has.Count.EqualTo(1));
-            Assert.That(evt.RecurrenceDates[1], Is.Empty);
+            Assert.That(evt.RecurrenceDatesPeriodLists[0], Has.Count.EqualTo(1));
+            Assert.That(evt.RecurrenceDatesPeriodLists[1], Is.Empty);
         });
     }
 
@@ -255,7 +255,7 @@ public class PeriodListWrapperTests
     public void Contains_ShouldReturnTrue_IfPeriodExists()
     {
         var evt = new CalendarEvent();
-        var recDates = new RecurrenceDates(evt.RecurrenceDates);
+        var recDates = evt.RecurrenceDates;
 
         var period1 = new Period(new CalDateTime(2025, 1, 1), Duration.FromDays(5));
         var period2 = new Period(new CalDateTime(2025, 1, 1, 10, 0, 0, "Europe/Berlin"), Duration.FromHours(6));
@@ -273,7 +273,7 @@ public class PeriodListWrapperTests
     public void Contains_ShouldReturnFalse_IfPeriodDoesNotExist()
     {
         var evt = new CalendarEvent();
-        var recDates = new RecurrenceDates(evt.RecurrenceDates);
+        var recDates = evt.RecurrenceDates;
 
         var period1 = new Period(new CalDateTime(2025, 1, 1), Duration.FromDays(5));
         var period2 = new Period(new CalDateTime(2025, 1, 1, 10, 0, 0, "Europe/Berlin"), Duration.FromHours(6));
@@ -295,7 +295,7 @@ public class PeriodListWrapperTests
     public void Clear_ShouldRemoveAllPeriods()
     {
         var evt = new CalendarEvent();
-        var exDates = new ExceptionDates(evt.ExceptionDates);
+        var exDates = evt.ExceptionDates;
 
         exDates
             .Add(new CalDateTime(2025, 1, 1))
@@ -303,14 +303,14 @@ public class PeriodListWrapperTests
 
         exDates.Clear();
 
-        Assert.That(evt.ExceptionDates, Is.Empty);
+        Assert.That(evt.ExceptionDatesPeriodLists, Is.Empty);
     }
 
     [Test]
     public void Contains_ShouldReturnTrue_IfDateExists()
     {
         var evt = new CalendarEvent();
-        var exDates = new ExceptionDates(evt.ExceptionDates);
+        var exDates = evt.ExceptionDates;
 
         var dateOnly = new CalDateTime(2025, 1, 1);
         var dateTime = new CalDateTime(2025, 1, 1, 10, 11, 12, "Europe/Berlin");
@@ -328,7 +328,7 @@ public class PeriodListWrapperTests
     public void Contains_ShouldReturnFalse_IfDateDoesNotExist()
     {
         var evt = new CalendarEvent();
-        var exDates = new ExceptionDates(evt.ExceptionDates);
+        var exDates = evt.ExceptionDates;
 
         var dateOnly = new CalDateTime(2025, 1, 1);
         var dateTime = new CalDateTime(2025, 1, 1, 10, 11, 12, "Europe/Berlin");

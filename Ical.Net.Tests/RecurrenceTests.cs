@@ -3292,14 +3292,13 @@ END:VCALENDAR";
         Assert.That(occurrences, Has.Count.EqualTo(5));
 
         var exDate = _now.AddDays(1);
-        var periodList = new PeriodList() { new CalDateTime(exDate, false) };
-        e.ExceptionDates.Add(periodList);
+        e.ExceptionDates.Add(new CalDateTime(exDate, false));
         occurrences = e.GetOccurrences(searchStart, searchEnd).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(4));
 
         //Specifying just a date should "black out" that date
         var excludeTwoDaysFromNow = _now.AddDays(2).Date;
-        periodList.Add(new CalDateTime(excludeTwoDaysFromNow, false));
+        e.ExceptionDates.Add(new CalDateTime(excludeTwoDaysFromNow, false));
         occurrences = e.GetOccurrences(searchStart, searchEnd).ToList();
         Assert.That(occurrences, Has.Count.EqualTo(3));
     }
@@ -3337,12 +3336,12 @@ END:VCALENDAR";
         };
 
         var firstExclusion = new CalDateTime(start.AddDays(4));
-        e.ExceptionDates = new List<PeriodList> { new PeriodList() { new Period(firstExclusion) } };
+        e.ExceptionDates.Add(firstExclusion);
         var serialized = SerializationHelpers.SerializeToString(e);
         Assert.That(Regex.Matches(serialized, "EXDATE:"), Has.Count.EqualTo(1));
 
         var secondExclusion = new CalDateTime(start.AddDays(5));
-        e.ExceptionDates.First().Add(new Period(secondExclusion));
+        e.ExceptionDates.Add(secondExclusion);
         serialized = SerializationHelpers.SerializeToString(e);
         Assert.That(Regex.Matches(serialized, "EXDATE:"), Has.Count.EqualTo(1));
     }
@@ -3362,14 +3361,13 @@ END:VCALENDAR";
             RecurrenceRules = new List<RecurrencePattern> { rrule },
         };
 
-        var exceptionDateList = new PeriodList() { new Period(new CalDateTime(_now.AddDays(1), tzid)) };
-        e.ExceptionDates.Add(exceptionDateList);
+        e.ExceptionDates.Add(new CalDateTime(_now.AddDays(1), tzid));
 
         var serialized = SerializationHelpers.SerializeToString(e);
         const string expected = "TZID=Europe/Stockholm";
         Assert.That(Regex.Matches(serialized, expected), Has.Count.EqualTo(3));
 
-        e.ExceptionDates.First().Add(new Period(new CalDateTime(_now.AddDays(2), tzid)));
+        e.ExceptionDates.Add(new CalDateTime(_now.AddDays(2), tzid));
         serialized = SerializationHelpers.SerializeToString(e);
         Assert.That(Regex.Matches(serialized, expected), Has.Count.EqualTo(3));
     }
@@ -3589,8 +3587,8 @@ END:VCALENDAR";
         var calendarB = collectionB.First();
         var eventA = calendarA.Events.First();
         var eventB = calendarB.Events.First();
-        var exDatesA = eventA.ExceptionDates;
-        var exDatesB = eventB.ExceptionDates;
+        var exDatesA = eventA.ExceptionDates.GetAllDates();
+        var exDatesB = eventB.ExceptionDates.GetAllDates();
 
         Assert.Multiple(() =>
         {

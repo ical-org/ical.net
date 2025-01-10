@@ -17,7 +17,7 @@ namespace Ical.Net.DataTypes;
 /// </remarks>
 public abstract class PeriodListWrapperBase
 {
-    protected IList<PeriodList> ListOfPeriodList;
+    private protected IList<PeriodList> ListOfPeriodList;
 
     private protected PeriodListWrapperBase(IList<PeriodList> periodList) => ListOfPeriodList = periodList;
 
@@ -55,7 +55,7 @@ public abstract class PeriodListWrapperBase
         return periodList.Remove(dtPeriod);
     }
 
-    protected PeriodList GetOrCreatePeriodList(IDateTime dt)
+    private protected PeriodList GetOrCreatePeriodList(IDateTime dt)
     {
         var periodList = GetPeriodList(dt);
 
@@ -66,7 +66,7 @@ public abstract class PeriodListWrapperBase
         return periodList;
     }
 
-    protected PeriodList GetOrCreatePeriodList(Period period)
+    private protected PeriodList GetOrCreatePeriodList(Period period)
     {
         var periodList = GetPeriodList(period);
 
@@ -77,7 +77,7 @@ public abstract class PeriodListWrapperBase
         return periodList;
     }
 
-    protected PeriodList? GetPeriodList(IDateTime dt)
+    private protected PeriodList? GetPeriodList(IDateTime dt)
     {
         // The number of PeriodLists is expected to be small, so a linear search is acceptable.
         return ListOfPeriodList
@@ -86,7 +86,7 @@ public abstract class PeriodListWrapperBase
                 && p.PeriodKind == (dt.HasTime ? PeriodKind.DateTime : PeriodKind.DateOnly));
     }
 
-    protected PeriodList? GetPeriodList(Period period)
+    private protected PeriodList? GetPeriodList(Period period)
     {
         // The number of PeriodLists is expected to be small, so a linear search is acceptable.
         return ListOfPeriodList

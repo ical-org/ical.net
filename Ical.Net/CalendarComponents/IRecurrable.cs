@@ -15,9 +15,9 @@ public interface IRecurrable : IGetOccurrences, IServiceProvider
     /// </summary>
     IDateTime Start { get; set; }
 
-    IList<PeriodList> ExceptionDates { get; set; }
+    ExceptionDates ExceptionDates { get; }
     IList<RecurrencePattern> ExceptionRules { get; set; }
-    IList<PeriodList> RecurrenceDates { get; set; }
+    RecurrenceDates RecurrenceDates { get; }
     IList<RecurrencePattern> RecurrenceRules { get; set; }
     IDateTime RecurrenceId { get; set; }
 }
