@@ -6,6 +6,7 @@
 #nullable enable
 using System.Collections.Generic;
 using System.Linq;
+using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes;
 
@@ -28,11 +29,6 @@ public class RecurrenceDates : PeriodListWrapperBase
     public RecurrenceDates Add(IDateTime dt)
     {
         var periodList = GetOrCreatePeriodList(dt);
-
-        // Don't add the same date twice.
-        if (periodList.FirstOrDefault(period => Equals(period.StartTime, dt)) != null)
-            return this;
-
         var dtPeriod = new Period(dt);
         periodList.Add(dtPeriod);
 
@@ -45,11 +41,6 @@ public class RecurrenceDates : PeriodListWrapperBase
     public RecurrenceDates Add(Period period)
     {
         var periodList = GetOrCreatePeriodList(period);
-
-        // Don't add the same period twice.
-        if (periodList.FirstOrDefault(p => Equals(p, period)) != null)
-            return this;
-
         periodList.Add(period);
 
         return this;
@@ -103,8 +94,9 @@ public class RecurrenceDates : PeriodListWrapperBase
     }
 
     /// <summary>
-    /// Gets a flattened list of all periods in the list.
+    /// Gets a flattened and ordered list of all distinct periods in the list.
     /// </summary>
     public IEnumerable<Period> GetAllPeriods()
-        => ListOfPeriodList.SelectMany(pl => pl.Where(p => p.PeriodKind is PeriodKind.Period));
+        => ListOfPeriodList.
+            SelectMany(pl => pl.Where(p => p.PeriodKind is PeriodKind.Period)).OrderedDistinct();
 }

@@ -156,8 +156,8 @@ public class Period : EncodableDataType, IComparable<Period>
     public virtual IDateTime? EndTime => _endTime;
 
     /// <summary>
-    /// Gets the nominal duration of the period that was set, or - if this is <see langword="null"/> -
-    /// calculates the exact duration based on the duration.
+    /// Gets the end time of the period that was set, or - if this is <see langword="null"/> -
+    /// calculates the end time based by adding <see cref="EffectiveDuration"/> to the <see cref="StartTime"/>.
     /// If <see cref="Duration"/> and <see cref="EndTime"/> are both <see langword="null"/>, the method returns <see langword="null"/>.
     /// </summary>
     public virtual IDateTime? EffectiveEndTime
@@ -183,7 +183,7 @@ public class Period : EncodableDataType, IComparable<Period>
 
     /// <summary>
     /// Gets the duration of the period that was set, or - if this is <see langword="null"/> -
-    /// calculates the exact duration based on the end time.
+    /// calculates the exact duration by subtracting <see cref="StartTime"/> from <see cref="EndTime"/>.
     /// If <see cref="Duration"/> and <see cref="EndTime"/> are both <see langword="null"/>, the method returns <see langword="null"/>.
     /// </summary>
     public virtual Duration? EffectiveDuration

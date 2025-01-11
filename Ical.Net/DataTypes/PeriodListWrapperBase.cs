@@ -6,6 +6,7 @@
 #nullable enable
 using System.Collections.Generic;
 using System.Linq;
+using Ical.Net.Utility;
 
 namespace Ical.Net.DataTypes;
 
@@ -22,10 +23,13 @@ public abstract class PeriodListWrapperBase
     private protected PeriodListWrapperBase(IList<PeriodList> periodList) => ListOfPeriodList = periodList;
 
     /// <summary>
-    /// Gets a flattened list of all dates in the list.
+    /// Gets a flattened and ordered list of all distinct dates in the list
     /// </summary>
     public IEnumerable<IDateTime> GetAllDates()
-        => ListOfPeriodList.SelectMany(pl => pl.Where(p => p.PeriodKind is PeriodKind.DateOnly or PeriodKind.DateTime).Select(p => p.StartTime));
+        => ListOfPeriodList.SelectMany(pl =>
+                pl.Where(p => p.PeriodKind is PeriodKind.DateOnly or PeriodKind.DateTime)
+                    .Select(p => p.StartTime))
+            .OrderedDistinct();
 
     /// <summary>
     /// Clears all elements from the list.
@@ -97,8 +101,9 @@ public abstract class PeriodListWrapperBase
     }
 
     /// <summary>
-    /// Gets a flattened list of all periods with <see cref="PeriodKind.Period"/>, <see cref="PeriodKind.DateOnly"/> and <see cref="PeriodKind.DateTime"/>.
+    /// Gets a flattened and ordered list of all distinct periods with
+    /// <see cref="PeriodKind.Period"/>, <see cref="PeriodKind.DateOnly"/> and <see cref="PeriodKind.DateTime"/>.
     /// </summary>
     internal IEnumerable<Period> GetAllPeriodsByKind(params PeriodKind[] periodKinds)
-        => ListOfPeriodList.SelectMany(pl => pl.Where(p => periodKinds.Contains(p.PeriodKind)));
+        => ListOfPeriodList.SelectMany(pl => pl.Where(p => periodKinds.Contains(p.PeriodKind))).OrderedDistinct();
 }

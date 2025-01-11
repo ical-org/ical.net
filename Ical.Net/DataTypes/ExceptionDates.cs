@@ -5,7 +5,6 @@
 
 #nullable enable
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Ical.Net.DataTypes;
 
@@ -28,10 +27,6 @@ public class ExceptionDates : PeriodListWrapperBase
     public ExceptionDates Add(IDateTime dt)
     {
         var periodList = GetOrCreatePeriodList(dt);
-
-        // Don't add the same date twice.
-        if (periodList.FirstOrDefault(period => Equals(period.StartTime, dt)) != null)
-            return this;
 
         var dtPeriod = new Period(dt);
         periodList.Add(dtPeriod);

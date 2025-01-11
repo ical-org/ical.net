@@ -39,7 +39,7 @@ public class PeriodListTests
         var period2 = new Period(new CalDateTime(2025, 2, 1, 0, 0, 0), Duration.FromHours(1));
 
         periodList.Add(period1);
-        periodList.Add(period1);
+        periodList.Add(period2);
 
         // Act
         var retrievedPeriod = periodList[0];
@@ -54,6 +54,52 @@ public class PeriodListTests
         });
     }
 
+    [Test]
+    public void ExistingPeriod_ShouldNotBeAddedAgain()
+    {
+        // Arrange
+        var periodList = new PeriodList();
+        var period = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0), Duration.FromHours(1));
+
+        periodList.Add(period);
+        periodList.Add(period);
+        periodList.Insert(0, period);
+
+        // Assert
+        Assert.That(periodList, Has.Count.EqualTo(1));
+    }
+
+    [Test]
+    public void AddPeriodWithInconsistentTimezoneOrPeriodKind_ShouldThrow()
+    {
+        // Arrange
+        var periodList = new PeriodList();
+        var dateTimeUtcPeriod = new Period(new CalDateTime(2023, 1, 1, 12, 0, 0, CalDateTime.UtcTzId));
+        var durationPeriod = new Period(new CalDateTime(2023, 1, 2, 12, 0, 0, CalDateTime.UtcTzId), new Duration(1, 0, 0, 0));
+        var dateTimeLocalPeriod = new Period(new CalDateTime(2023, 1, 2, 12, 0, 0, "America/New_York"));
+        var dateOnlyPeriod = new Period(new CalDateTime(2023, 1, 3));
+
+        // The first period determines timezone and period kind
+        periodList.Add(dateTimeUtcPeriod);
+
+        // Act & Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(periodList.Count, Is.EqualTo(1));
+
+            // Test adding a period with inconsistent PeriodKind
+            Assert.That(() => periodList.Add(durationPeriod), Throws.ArgumentException);
+
+            // Test adding a period with inconsistent TzId
+            Assert.That(() => periodList.Add(dateTimeLocalPeriod), Throws.ArgumentException);
+
+            // Test adding period with inconsistent PeriodKind
+            Assert.That(() => periodList.Insert(0, dateOnlyPeriod), Throws.ArgumentException);
+            ;
+            Assert.That(periodList.Count, Is.EqualTo(1));
+        });
+
+    }
     [Test]
     public void Clear_ShouldRemoveAllPeriods()
     {

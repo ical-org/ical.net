@@ -285,29 +285,18 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
             return false;
         }
 
-        // RDATEs and EXDATEs are all List<PeriodList>, because the spec allows for multiple declarations of collections.
-        // Consequently we have to contrive a normalized representation before we can determine whether two events are equal
-
-        var exDates = PeriodList.GetGroupedPeriods(ExceptionDatesPeriodLists);
-        var otherExDates = PeriodList.GetGroupedPeriods(other.ExceptionDatesPeriodLists);
-        if (exDates.Keys.Count != otherExDates.Keys.Count || !exDates.Keys.OrderBy(k => k).SequenceEqual(otherExDates.Keys.OrderBy(k => k)))
+        // exDates and otherExDates are filled with a sorted list of distinct periods
+        var exDates = ExceptionDates.GetAllPeriodsByKind(PeriodKind.Period, PeriodKind.DateOnly, PeriodKind.DateTime).ToList();
+        var otherExDates = other.ExceptionDates.GetAllPeriodsByKind(PeriodKind.Period, PeriodKind.DateOnly, PeriodKind.DateTime).ToList();
+        if (exDates.Count != otherExDates.Count || !exDates.SequenceEqual(otherExDates))
         {
             return false;
         }
 
-        if (exDates.Any(exDate => !exDate.Value.OrderBy(d => d).SequenceEqual(otherExDates[exDate.Key].OrderBy(d => d))))
-        {
-            return false;
-        }
-
-        var rDates = PeriodList.GetGroupedPeriods(RecurrenceDatesPeriodLists);
-        var otherRDates = PeriodList.GetGroupedPeriods(other.RecurrenceDatesPeriodLists);
-        if (rDates.Keys.Count != otherRDates.Keys.Count || !rDates.Keys.OrderBy(k => k).SequenceEqual(otherRDates.Keys.OrderBy(k => k)))
-        {
-            return false;
-        }
-
-        if (rDates.Any(exDate => !exDate.Value.OrderBy(d => d).SequenceEqual(otherRDates[exDate.Key].OrderBy(d => d))))
+        // rDates and otherRDates are filled with a sorted list of distinct periods
+        var rDates = RecurrenceDates.GetAllPeriodsByKind(PeriodKind.Period, PeriodKind.DateOnly, PeriodKind.DateTime).ToList();
+        var otherRDates = other.RecurrenceDates.GetAllPeriodsByKind(PeriodKind.Period, PeriodKind.DateOnly, PeriodKind.DateTime).ToList();
+        if (rDates.Count != otherRDates.Count && !rDates.SequenceEqual(otherRDates))
         {
             return false;
         }
@@ -339,9 +328,9 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
             hashCode = (hashCode * 397) ^ Transparency?.GetHashCode() ?? 0;
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Attachments);
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Resources);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCodeForNestedCollection(ExceptionDatesPeriodLists);
+            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionDates.GetAllPeriodsByKind(PeriodKind.Period, PeriodKind.DateOnly, PeriodKind.DateTime));
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionRules);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCodeForNestedCollection(RecurrenceDatesPeriodLists);
+            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(RecurrenceDates.GetAllPeriodsByKind(PeriodKind.Period, PeriodKind.DateOnly, PeriodKind.DateTime));
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(RecurrenceRules);
             return hashCode;
         }

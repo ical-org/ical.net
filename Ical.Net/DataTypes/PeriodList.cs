@@ -8,7 +8,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Ical.Net.Evaluation;
 using Ical.Net.Serialization.DataTypes;
 using Ical.Net.Utility;
@@ -85,43 +84,6 @@ internal class PeriodList : EncodableDataType, IList<Period>
     /// <returns></returns>
     public override string? ToString() => new PeriodListSerializer().SerializeToString(this);
 
-    /// <summary>
-    /// Used for equality comparison of two lists of periods.
-    /// </summary>
-    public static Dictionary<string, IList<Period>> GetGroupedPeriods(IList<PeriodList> periodLists)
-    {
-        // In order to know if two events are equal, a semantic understanding of exdates, rdates, rrules, and exrules is required. This could be done by
-        // computing the complete recurrence set (expensive) while being time-zone sensitive, or by comparing each List<Period> in each IPeriodList.
-
-        // For example, events containing these rules generate the same recurrence set, including having the same time zone for each occurrence, so
-        // they're the same:
-        // Event A:
-        // RDATE:20170302T060000Z,20170303T060000Z
-        // Event B:
-        // RDATE:20170302T060000Z
-        // RDATE:20170303T060000Z
-
-        var grouped = new Dictionary<string, HashSet<Period>>(StringComparer.OrdinalIgnoreCase);
-        foreach (var periodList in periodLists)
-        {
-            foreach (var period in periodList)
-            {
-                // Dictionary key cannot be null, so an empty string is used for the default bucket
-                var bucketTzId = period.StartTime.TzId ?? string.Empty;
-
-                if (!grouped.TryGetValue(bucketTzId, out var periods))
-                {
-                    periods = new HashSet<Period>();
-                    grouped.Add(bucketTzId, periods);
-                }
-
-                periods.Add(period);
-            }
-        }
-
-        return grouped.ToDictionary(k => k.Key, v => (IList<Period>) v.Value.OrderBy(d => d.StartTime).ToList());
-    }
-
     protected bool Equals(PeriodList other) => CollectionHelpers.Equals(Periods, other.Periods);
 
     /// <inheritdoc/>
@@ -155,10 +117,15 @@ internal class PeriodList : EncodableDataType, IList<Period>
     /// <inheritdoc/>
     public int IndexOf(Period item) => Periods.IndexOf(item);
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Inserts a <see cref="Period"/> to the list if it does not already exist.<br/>
+    /// The timezone period kind of the first value added determines the timezone for the whole list.
+    /// </summary>
+    /// <exception cref="ArgumentException"></exception>
     public void Insert(int index, Period item)
     {
         EnsureConsistentTimezoneAndPeriodKind(item);
+        if (Periods.Contains(item)) return;
         Periods.Insert(index, item);
     }
 
@@ -166,7 +133,7 @@ internal class PeriodList : EncodableDataType, IList<Period>
     public void RemoveAt(int index) => Periods.RemoveAt(index);
 
     /// <summary>
-    /// Adds a <see cref="Period"/> to the list.<br/>
+    /// Adds a <see cref="Period"/> to the list if it does not already exist.<br/>
     /// The timezone period kind of the first value added determines the timezone for the whole list.
     /// </summary>
     /// <param name="item">The <see cref="Period"/> for an 'RDATE'.</param>
@@ -174,11 +141,12 @@ internal class PeriodList : EncodableDataType, IList<Period>
     public void Add(Period item)
     {
         EnsureConsistentTimezoneAndPeriodKind(item);
+        if (Periods.Contains(item)) return;
         Periods.Add(item);
     }
 
     /// <summary>
-    /// Adds a DATE or DATE-TIME value for an 'EXDATE' or 'RDATE' to the list.<br/>
+    /// Adds a DATE or DATE-TIME value for an 'EXDATE' or 'RDATE' to the list if it does not already exist.<br/>
     /// The timezone period kind of the first value added determines the timezone for the whole list.
     /// </summary>
     /// <param name="dt"></param>
@@ -186,8 +154,7 @@ internal class PeriodList : EncodableDataType, IList<Period>
     public void Add(IDateTime dt)
     {
         var p = new Period(dt);
-        EnsureConsistentTimezoneAndPeriodKind(p);
-        Periods.Add(p);
+        Add(p);
     }
 
     /// <inheritdoc/>
