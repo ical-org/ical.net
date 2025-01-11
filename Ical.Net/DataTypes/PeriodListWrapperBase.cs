@@ -95,4 +95,10 @@ public abstract class PeriodListWrapperBase
                 && p.PeriodKind == period.PeriodKind
                 && p[0].StartTime.HasTime == period.StartTime.HasTime);
     }
+
+    /// <summary>
+    /// Gets a flattened list of all periods with <see cref="PeriodKind.Period"/>, <see cref="PeriodKind.DateOnly"/> and <see cref="PeriodKind.DateTime"/>.
+    /// </summary>
+    internal IEnumerable<Period> GetAllPeriodsByKind(params PeriodKind[] periodKinds)
+        => ListOfPeriodList.SelectMany(pl => pl.Where(p => periodKinds.Contains(p.PeriodKind)));
 }

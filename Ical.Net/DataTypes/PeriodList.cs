@@ -168,9 +168,6 @@ internal class PeriodList : EncodableDataType, IList<Period>
     /// <summary>
     /// Adds a <see cref="Period"/> to the list.<br/>
     /// The timezone period kind of the first value added determines the timezone for the whole list.
-    /// <para/>
-    /// Use <see cref="Collections.ExceptionDateCollection"/> and <see cref="Collections.RecurrencePeriodCollection"/>
-    /// to simplify creating 'EXDATE' and 'RDATE' properties.
     /// </summary>
     /// <param name="item">The <see cref="Period"/> for an 'RDATE'.</param>
     /// <exception cref="ArgumentException"></exception>
@@ -183,9 +180,6 @@ internal class PeriodList : EncodableDataType, IList<Period>
     /// <summary>
     /// Adds a DATE or DATE-TIME value for an 'EXDATE' or 'RDATE' to the list.<br/>
     /// The timezone period kind of the first value added determines the timezone for the whole list.
-    /// <para/>
-    /// Use <see cref="Collections.ExceptionDateCollection"/> and <see cref="Collections.RecurrencePeriodCollection"/>
-    /// to simplify creating 'EXDATE' and 'RDATE' properties.
     /// </summary>
     /// <param name="dt"></param>
     /// <exception cref="ArgumentException"></exception>

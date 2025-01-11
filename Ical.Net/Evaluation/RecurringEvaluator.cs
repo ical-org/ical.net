@@ -73,8 +73,9 @@ public class RecurringEvaluator : Evaluator
     /// <summary> Evaluates the RDate component. </summary>
     protected IEnumerable<Period> EvaluateRDate(IDateTime referenceDate, DateTime? periodStart, DateTime? periodEnd)
     {
-        var recurrences = new SortedSet<Period>(Recurrable.RecurrenceDates.GetAllPeriods()
-            .Union(Recurrable.RecurrenceDates.GetAllDates().Select(d => new Period(d))));
+        var recurrences =
+            new SortedSet<Period>(Recurrable.RecurrenceDates
+                .GetAllPeriodsByKind(PeriodKind.Period, PeriodKind.DateOnly, PeriodKind.DateTime));
 
         return recurrences;
     }
@@ -115,7 +116,8 @@ public class RecurringEvaluator : Evaluator
     /// <param name="periodEnd">The end date of the range to evaluate.</param>
     protected IEnumerable<Period> EvaluateExDate(IDateTime referenceDate, DateTime? periodStart, DateTime? periodEnd)
     {
-        var exDates = new SortedSet<Period>(Recurrable.ExceptionDates.GetAllDates().Select(exDate => new Period(exDate)));
+        var exDates = new SortedSet<Period>(Recurrable
+            .ExceptionDates.GetAllPeriodsByKind(PeriodKind.DateOnly, PeriodKind.DateTime));
         return exDates;
     }
 
