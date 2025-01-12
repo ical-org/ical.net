@@ -189,7 +189,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     {
         var serializer = new DateTimeSerializer();
         CopyFrom(serializer.Deserialize(new StringReader(value)) as ICopyable
-                 ?? throw new InvalidOperationException("Failure deserializing value"));
+                 ?? throw new InvalidOperationException($"$Failure for deserializing value '{value}'"));
         // The string may contain a date only, meaning that the tzId should be ignored.
         _tzId = HasTime ? tzId : null;
     }
@@ -447,7 +447,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
     {
         if (!HasTime && d.HasTime)
         {
-            throw new InvalidOperationException("This instance represents a 'date-only' value. Only multiples of full days can be added to a 'date-only' instance.");
+            throw new InvalidOperationException($"This instance represents a 'date-only' value '{ToString()}'. Only multiples of full days can be added to a 'date-only' instance, not '{d}'");
         }
 
         // RFC 5545 3.3.6:
@@ -498,7 +498,7 @@ public sealed class CalDateTime : EncodableDataType, IDateTime
             return SubtractExact(dt).ToDurationExact();
 
         if (dt.HasTime != HasTime)
-            throw new InvalidOperationException("Trying to calculate the difference between dates of different types. An instance of type DATE cannot be subtracted from a DATE-TIME and vice versa.");
+            throw new InvalidOperationException($"Trying to calculate the difference between dates of different types. An instance of type DATE cannot be subtracted from a DATE-TIME and vice versa: {ToString()} - {dt.ToString()}");
 
         return (Value - dt.Value).ToDuration();
     }
