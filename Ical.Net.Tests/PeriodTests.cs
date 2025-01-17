@@ -44,9 +44,6 @@ public class PeriodTests
     {
         Assert.Multiple(() =>
         {
-            // StartTime is null
-            Assert.Throws<ArgumentNullException>(() => _ = new Period(null!));
-
             // EndTime is before StartTime
             Assert.Throws<ArgumentException>(() => _ = new Period(
                 new CalDateTime(2025, 1, 2, 0, 0, 0, "America/New_York"),

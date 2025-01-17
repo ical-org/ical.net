@@ -81,7 +81,7 @@ public class Period : EncodableDataType, IComparable<Period>
         if (end != null && end.LessThan(start))
             throw new ArgumentException($"End time ({end}) must be greater than start time ({start}).", nameof(end));
 
-        _startTime = start ?? throw new ArgumentNullException(nameof(start), "Start time cannot be null.");
+        _startTime = start;
         _endTime = end;
     }
 
@@ -164,12 +164,13 @@ public class Period : EncodableDataType, IComparable<Period>
     {
         get
         {
+            var effectiveDuration = EffectiveDuration;
             return _endTime switch
             {
                 null when _duration is null => null,
                 { } endTime => endTime,
-                _ => EffectiveDuration is not null
-                    ? _startTime.Add(EffectiveDuration.Value)
+                _ => effectiveDuration is not null
+                    ? _startTime.Add(effectiveDuration.Value)
                     : null
             };
         }
@@ -233,7 +234,7 @@ public class Period : EncodableDataType, IComparable<Period>
 
         var endTime = EffectiveEndTime;
         // End time is exclusive
-        return endTime?.GreaterThan(dt) ?? false;
+        return endTime?.GreaterThan(dt) != false;
     }
 
     /// <summary>
@@ -264,7 +265,7 @@ public class Period : EncodableDataType, IComparable<Period>
         {
             return 0;
         }
-        if (StartTime.AsUtc <= other.StartTime.AsUtc)
+        if (StartTime.LessThanOrEqual(other.StartTime))
         {
             return -1;
         }

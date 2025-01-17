@@ -515,7 +515,7 @@ END:VCALENDAR";
         {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
             Assert.That(evt.Duration, Is.Null);
-            Assert.That(evt.GetEffectiveDuration(), Is.EqualTo(DataTypes.Duration.Zero));
+            Assert.That(evt.GetEffectiveDuration(), Is.EqualTo(DataTypes.Duration.FromDays(1)));
         });
 
         evt = new CalendarEvent

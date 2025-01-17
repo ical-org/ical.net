@@ -140,7 +140,7 @@ public class RecurringEvaluator : Evaluator
             .OrderedMerge(rdateOccurrences)
             .OrderedDistinct()
             .OrderedExclude(exRuleExclusions)
-            .OrderedExclude(exDateExclusions, Comparer<Period>.Create(CompareDateOverlap));
+            .OrderedExclude(exDateExclusions, Comparer<Period>.Create(CompareExDateOverlap));
 
         return periods;
     }
@@ -149,8 +149,10 @@ public class RecurringEvaluator : Evaluator
     /// Compares whether the given period's date overlaps with the given EXDATE. The dates are
     /// considered to overlap if they start at the same time, or the EXDATE is an all-day date
     /// and the period's start date is the same as the EXDATE's date.
+    /// <para/>
+    /// Note: <see cref="Period.EffectiveDuration"/> for <paramref name="exDate"/> is always <see langword="null"/>.
     /// </summary>
-    private static int CompareDateOverlap(Period period, Period exDate)
+    private static int CompareExDateOverlap(Period period, Period exDate)
     {
         var cmp = period.CompareTo(exDate);
         if ((cmp != 0) && !exDate.StartTime.HasTime && (period.StartTime.Value.Date == exDate.StartTime.Value))
