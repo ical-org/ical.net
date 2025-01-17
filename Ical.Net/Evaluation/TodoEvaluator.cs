@@ -29,13 +29,10 @@ public class TodoEvaluator : RecurringEvaluator
                 DetermineStartingRecurrence(rrule, ref beginningDate);
             }
         }
-        if (Todo.RecurrenceDates != null)
-        {
-            foreach (var rdate in Todo.RecurrenceDates)
-            {
-                DetermineStartingRecurrence(rdate, ref beginningDate);
-            }
-        }
+
+        DetermineStartingRecurrence(Todo.RecurrenceDates.GetAllPeriods(), ref beginningDate);
+        DetermineStartingRecurrence(Todo.RecurrenceDates.GetAllDates(), ref beginningDate);
+
         if (Todo.ExceptionRules != null)
         {
             foreach (var exrule in Todo.ExceptionRules)
@@ -43,23 +40,27 @@ public class TodoEvaluator : RecurringEvaluator
                 DetermineStartingRecurrence(exrule, ref beginningDate);
             }
         }
-        if (Todo.ExceptionDates != null)
-        {
-            foreach (var exdate in Todo.ExceptionDates)
-            {
-                DetermineStartingRecurrence(exdate, ref beginningDate);
-            }
-        }
+
+        DetermineStartingRecurrence(Todo.ExceptionDates.GetAllDates(), ref beginningDate);
 
         return Evaluate(Todo.Start, DateUtil.GetSimpleDateTimeData(beginningDate), DateUtil.GetSimpleDateTimeData(currDt).AddTicks(1), true);
     }
 
-    private void DetermineStartingRecurrence(PeriodList rdate, ref IDateTime referenceDateTime)
+    private static void DetermineStartingRecurrence(IEnumerable<Period> rdate, ref IDateTime referenceDateTime)
     {
         var dt2 = referenceDateTime;
         foreach (var p in rdate.Where(p => p.StartTime.LessThan(dt2)))
         {
             referenceDateTime = p.StartTime;
+        }
+    }
+
+    private static void DetermineStartingRecurrence(IEnumerable<IDateTime> rdate, ref IDateTime referenceDateTime)
+    {
+        var dt2 = referenceDateTime;
+        foreach (var dt in rdate.Where(dt => dt.LessThan(dt2)))
+        {
+            referenceDateTime = dt;
         }
     }
 
@@ -83,27 +84,7 @@ public class TodoEvaluator : RecurringEvaluator
         if (Todo.Start == null)
             return [];
 
-        Period PeriodWithDuration(Period p)
-        {
-            if (p.EndTime != null)
-                return p;
-
-            var period = p.Copy<Period>();
-
-            var d = Todo.Duration;
-            if (d != null)
-            {
-                period.EndTime = period.StartTime.Add(d.Value);
-            }
-            else
-            {
-                period.Duration = default;
-            }
-
-            return period;
-        }
-
         return base.Evaluate(referenceDate, periodStart, periodEnd, includeReferenceDateInResults)
-            .Select(PeriodWithDuration);
+            .Select(p => p);
     }
 }

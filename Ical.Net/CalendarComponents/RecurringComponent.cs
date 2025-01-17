@@ -75,11 +75,13 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         set => Properties.Set("DTSTART", value);
     }
 
-    public virtual IList<PeriodList> ExceptionDates
+    internal IList<PeriodList> ExceptionDatesPeriodLists
     {
         get => Properties.GetMany<PeriodList>("EXDATE");
         set => Properties.Set("EXDATE", value);
     }
+
+    public virtual ExceptionDates ExceptionDates { get; internal set; }
 
     public virtual IList<RecurrencePattern> ExceptionRules
     {
@@ -99,11 +101,13 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         set => Properties.Set("PRIORITY", value);
     }
 
-    public virtual IList<PeriodList> RecurrenceDates
+    internal virtual IList<PeriodList> RecurrenceDatesPeriodLists
     {
         get => Properties.GetMany<PeriodList>("RDATE");
         set => Properties.Set("RDATE", value);
     }
+
+    public virtual RecurrenceDates RecurrenceDates { get; internal set; }
 
     public virtual IList<RecurrencePattern> RecurrenceRules
     {
@@ -161,7 +165,12 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         EnsureProperties();
     }
 
-    private void Initialize() => SetService(new RecurringEvaluator(this));
+    private void Initialize()
+    {
+        SetService(new RecurringEvaluator(this));
+        ExceptionDates = new ExceptionDates(ExceptionDatesPeriodLists);
+        RecurrenceDates = new RecurrenceDates(RecurrenceDatesPeriodLists);
+    }
 
     private void EnsureProperties()
     {
@@ -201,9 +210,9 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
                      && Attachments.SequenceEqual(other.Attachments)
                      && CollectionHelpers.Equals(Categories, other.Categories)
                      && CollectionHelpers.Equals(Contacts, other.Contacts)
-                     && CollectionHelpers.Equals(ExceptionDates, other.ExceptionDates)
+                     && CollectionHelpers.Equals(ExceptionDatesPeriodLists, other.ExceptionDatesPeriodLists)
                      && CollectionHelpers.Equals(ExceptionRules, other.ExceptionRules)
-                     && CollectionHelpers.Equals(RecurrenceDates, other.RecurrenceDates, orderSignificant: true)
+                     && CollectionHelpers.Equals(RecurrenceDatesPeriodLists, other.RecurrenceDatesPeriodLists, orderSignificant: true)
                      && CollectionHelpers.Equals(RecurrenceRules, other.RecurrenceRules, orderSignificant: true);
 
         return result;
@@ -229,9 +238,9 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Attachments);
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Categories);
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(Contacts);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionDates);
+            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionDatesPeriodLists);
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(ExceptionRules);
-            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(RecurrenceDates);
+            hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(RecurrenceDatesPeriodLists);
             hashCode = (hashCode * 397) ^ CollectionHelpers.GetHashCode(RecurrenceRules);
             return hashCode;
         }

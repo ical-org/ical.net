@@ -43,12 +43,9 @@ public class DateTimeSerializer : EncodableDataTypeSerializer
         // the time value. The "TZID" property parameter MUST NOT be applied to DATE-TIME
         // properties whose time values are specified in UTC.
 
-        var kind = dt.IsUtc
-            ? DateTimeKind.Utc
-            : DateTimeKind.Unspecified;
-
         if (dt.IsUtc)
         {
+            // 'Z' is used as the UTC designator
             dt.Parameters.Remove("TZID");
         }
         else if (!string.IsNullOrWhiteSpace(dt.TzId))
@@ -56,16 +53,6 @@ public class DateTimeSerializer : EncodableDataTypeSerializer
             dt.Parameters.Set("TZID", dt.TzId);
         }
 
-        var dateWithNewKind = DateTime.SpecifyKind(dt.Value, kind);
-        // We can't use 'Copy' because we need to change the value
-        dt = dt.HasTime
-            ? new CalDateTime(dateWithNewKind, dt.TzId, true) { AssociatedObject = dt.AssociatedObject }
-            : new CalDateTime(dateWithNewKind, dt.TzId, false) { AssociatedObject = dt.AssociatedObject };
-
-        // FIXME: what if DATE is the default value type for this?
-        // Also, what if the DATE-TIME value type is specified on something
-        // where DATE-TIME is the default value type?  It should be removed
-        // during serialization, as it's redundant...
         if (!dt.HasTime)
         {
             dt.SetValueType("DATE");
@@ -73,13 +60,12 @@ public class DateTimeSerializer : EncodableDataTypeSerializer
 
         var value = new StringBuilder(512);
         value.Append($"{dt.Year:0000}{dt.Month:00}{dt.Day:00}");
-        if (dt.HasTime)
+        if (!dt.HasTime) return Encode(dt, value.ToString());
+
+        value.Append($"T{dt.Hour:00}{dt.Minute:00}{dt.Second:00}");
+        if (dt.IsUtc)
         {
-            value.Append($"T{dt.Hour:00}{dt.Minute:00}{dt.Second:00}");
-            if (dt.IsUtc)
-            {
-                value.Append("Z");
-            }
+            value.Append("Z");
         }
 
         // Encode the value as necessary

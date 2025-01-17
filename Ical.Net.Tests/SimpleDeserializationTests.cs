@@ -346,36 +346,6 @@ END:VCALENDAR
         Assert.That(occurrences, Has.Count.EqualTo(dateTimes.Length), "There should be exactly " + dateTimes.Length + " occurrences; there were " + occurrences.Count);
     }
 
-    /// <summary>
-    /// Tests that valid RDATE properties are parsed correctly.
-    /// </summary>
-    [Test, Category("Deserialization")]
-    public void RecurrenceDates1()
-    {
-        var iCal = SimpleDeserializer.Default.Deserialize(new StringReader(IcsFiles.RecurrenceDates1)).Cast<Calendar>().Single();
-        Assert.That(iCal.Events, Has.Count.EqualTo(1));
-        Assert.That(iCal.Events.First().RecurrenceDates, Has.Count.EqualTo(3));
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(iCal.Events.First().RecurrenceDates[0][0].StartTime, Is.EqualTo((CalDateTime)new DateTime(1997, 7, 14, 12, 30, 0, DateTimeKind.Utc)));
-            Assert.That(iCal.Events.First().RecurrenceDates[1][0].StartTime, Is.EqualTo((CalDateTime)new DateTime(1996, 4, 3, 2, 0, 0, DateTimeKind.Utc)));
-            Assert.That(iCal.Events.First().RecurrenceDates[1][0].EndTime, Is.EqualTo((CalDateTime)new DateTime(1996, 4, 3, 4, 0, 0, DateTimeKind.Utc)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][0].StartTime, Is.EqualTo(new CalDateTime(1997, 1, 1)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][1].StartTime, Is.EqualTo(new CalDateTime(1997, 1, 20)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][2].StartTime, Is.EqualTo(new CalDateTime(1997, 2, 17)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][3].StartTime, Is.EqualTo(new CalDateTime(1997, 4, 21)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][4].StartTime, Is.EqualTo(new CalDateTime(1997, 5, 26)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][5].StartTime, Is.EqualTo(new CalDateTime(1997, 7, 4)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][6].StartTime, Is.EqualTo(new CalDateTime(1997, 9, 1)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][7].StartTime, Is.EqualTo(new CalDateTime(1997, 10, 14)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][8].StartTime, Is.EqualTo(new CalDateTime(1997, 11, 28)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][9].StartTime, Is.EqualTo(new CalDateTime(1997, 11, 29)));
-            Assert.That(iCal.Events.First().RecurrenceDates[2][10].StartTime, Is.EqualTo(new CalDateTime(1997, 12, 25)));
-        });
-    }
-
-    /// <summary>
     /// Tests that valid REQUEST-STATUS properties are parsed correctly.
     /// </summary>
     [Test, Category("Deserialization")]

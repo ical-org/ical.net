@@ -22,29 +22,29 @@ public class VTimeZone : CalendarComponent
     public static VTimeZone FromLocalTimeZone()
         => FromDateTimeZone(DateUtil.LocalDateTimeZone.Id);
 
-    public static VTimeZone FromLocalTimeZone(DateTime earlistDateTimeToSupport, bool includeHistoricalData)
-        => FromDateTimeZone(DateUtil.LocalDateTimeZone.Id, earlistDateTimeToSupport, includeHistoricalData);
+    public static VTimeZone FromLocalTimeZone(DateTime earliestDateTimeToSupport, bool includeHistoricalData)
+        => FromDateTimeZone(DateUtil.LocalDateTimeZone.Id, earliestDateTimeToSupport, includeHistoricalData);
 
     public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo)
         => FromSystemTimeZone(tzinfo, new DateTime(DateTime.Now.Year, 1, 1), false);
 
-    public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
-        => FromDateTimeZone(tzinfo.Id, earlistDateTimeToSupport, includeHistoricalData);
+    public static VTimeZone FromSystemTimeZone(TimeZoneInfo tzinfo, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
+        => FromDateTimeZone(tzinfo.Id, earliestDateTimeToSupport, includeHistoricalData);
 
     public static VTimeZone FromDateTimeZone(string tzId)
         => FromDateTimeZone(tzId, new DateTime(DateTime.Now.Year, 1, 1), includeHistoricalData: false);
 
-    public static VTimeZone FromDateTimeZone(string tzId, DateTime earlistDateTimeToSupport, bool includeHistoricalData)
+    public static VTimeZone FromDateTimeZone(string tzId, DateTime earliestDateTimeToSupport, bool includeHistoricalData)
     {
         var vTimeZone = new VTimeZone(tzId);
 
         var earliestYear = 1900;
-        var earliestMonth = earlistDateTimeToSupport.Month;
-        var earliestDay = earlistDateTimeToSupport.Day;
+        var earliestMonth = earliestDateTimeToSupport.Month;
+        var earliestDay = earliestDateTimeToSupport.Day;
         // Support date/times for January 1st of the previous year by default.
-        if (earlistDateTimeToSupport.Year > 1900)
+        if (earliestDateTimeToSupport.Year > 1900)
         {
-            earliestYear = earlistDateTimeToSupport.Year - 1;
+            earliestYear = earliestDateTimeToSupport.Year - 1;
             // Since we went back a year, we can't still be in a leap-year
             if (earliestMonth == 2 && earliestDay == 29)
                 earliestDay = 28;
@@ -56,7 +56,7 @@ public class VTimeZone : CalendarComponent
                 earliestDay = 28;
         }
         var earliest = Instant.FromUtc(earliestYear, earliestMonth, earliestDay,
-            earlistDateTimeToSupport.Hour, earlistDateTimeToSupport.Minute);
+            earliestDateTimeToSupport.Hour, earliestDateTimeToSupport.Minute);
 
         // Only include historical data if asked to do so.  Otherwise,
         // use only the most recent adjustment rules available.
@@ -241,7 +241,6 @@ public class VTimeZone : CalendarComponent
     {
         foreach (var interval in intervals)
         {
-            var periodList = new PeriodList();
             var time = interval.IsoLocalStart.ToDateTimeUnspecified();
             var date = new CalDateTime(time, true).Add(delta.ToDurationExact()) as CalDateTime;
             if (date == null)
@@ -249,8 +248,7 @@ public class VTimeZone : CalendarComponent
                 continue;
             }
 
-            periodList.Add(date);
-            tzi.RecurrenceDates.Add(periodList);
+            tzi.RecurrenceDates.Add(date);
         }
     }
 

@@ -17,7 +17,7 @@ namespace Ical.Net.Tests;
 [TestFixture]
 public class CalendarEventTest
 {
-    private static readonly DateTime _now = DateTime.UtcNow;
+    private static readonly DateTime _now = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
     private static readonly DateTime _later = _now.AddHours(1);
     private static readonly string _uid = Guid.NewGuid().ToString();
 
@@ -249,29 +249,29 @@ END:VCALENDAR";
         Assert.That(testRrule.GetHashCode(), Is.Not.EqualTo(simpleEvent.GetHashCode()));
 
         var testRdate = GetSimpleEvent();
-        testRdate.RecurrenceDates = new List<PeriodList> { new PeriodList { new Period(new CalDateTime(_now)) } };
+        testRdate.RecurrenceDatesPeriodLists = new List<PeriodList> { new PeriodList { new Period(new CalDateTime(_now)) } };
         Assert.That(testRdate, Is.Not.EqualTo(simpleEvent));
         Assert.That(testRdate.GetHashCode(), Is.Not.EqualTo(simpleEvent.GetHashCode()));
     }
 
     private static List<RecurrencePattern> GetSimpleRecurrenceList()
         => new List<RecurrencePattern> { new RecurrencePattern(FrequencyType.Daily, 1) { Count = 5 } };
-    private static List<PeriodList> GetExceptionDates()
-        => new List<PeriodList> { new PeriodList { new Period(new CalDateTime(_now.AddDays(1).Date)) } };
+    private static List<IDateTime> GetExceptionDates()
+        => new List<IDateTime> { new CalDateTime(_now.AddDays(1).Date) };
 
     [Test]
     public void EventWithRecurrenceAndExceptionComparison()
     {
         var vEvent = GetSimpleEvent();
         vEvent.RecurrenceRules = GetSimpleRecurrenceList();
-        vEvent.ExceptionDates = GetExceptionDates();
+        vEvent.ExceptionDates.AddRange(GetExceptionDates());
 
         var calendar = new Calendar();
         calendar.Events.Add(vEvent);
 
         var vEvent2 = GetSimpleEvent();
         vEvent2.RecurrenceRules = GetSimpleRecurrenceList();
-        vEvent2.ExceptionDates = GetExceptionDates();
+        vEvent2.ExceptionDates.AddRange(GetExceptionDates());
 
         var cal2 = new Calendar();
         cal2.Events.Add(vEvent2);
@@ -283,8 +283,7 @@ END:VCALENDAR";
         {
             Assert.That(eventB.RecurrenceRules.First(), Is.EqualTo(eventA.RecurrenceRules.First()));
             Assert.That(eventB.RecurrenceRules.First().GetHashCode(), Is.EqualTo(eventA.RecurrenceRules.First().GetHashCode()));
-            Assert.That(eventB.ExceptionDates.First(), Is.EqualTo(eventA.ExceptionDates.First()));
-            Assert.That(eventB.ExceptionDates.First().GetHashCode(), Is.EqualTo(eventA.ExceptionDates.First().GetHashCode()));
+            Assert.That(eventB.ExceptionDates.GetAllDates().First(), Is.EqualTo(eventA.ExceptionDates.GetAllDates().First()));
             Assert.That(eventB.GetHashCode(), Is.EqualTo(eventA.GetHashCode()));
             Assert.That(eventB, Is.EqualTo(eventA));
             Assert.That(cal2, Is.EqualTo(calendar));
@@ -309,7 +308,7 @@ END:VCALENDAR";
         var deserializedNoExDate = Calendar.Load(serialized);
         Assert.That(deserializedNoExDate, Is.EqualTo(cal1));
 
-        vEvent.ExceptionDates = GetExceptionDates();
+        vEvent.ExceptionDates.AddRange(GetExceptionDates());
         serialized = serializer.SerializeToString(cal1);
         var deserializedWithExDate = Calendar.Load(serialized);
 
@@ -516,7 +515,7 @@ END:VCALENDAR";
         {
             Assert.That(evt.DtStart.Value, Is.EqualTo(dt.Date));
             Assert.That(evt.Duration, Is.Null);
-            Assert.That(evt.GetEffectiveDuration(), Is.EqualTo(Duration.FromDays(1)));
+            Assert.That(evt.GetEffectiveDuration(), Is.EqualTo(DataTypes.Duration.FromDays(1)));
         });
 
         evt = new CalendarEvent

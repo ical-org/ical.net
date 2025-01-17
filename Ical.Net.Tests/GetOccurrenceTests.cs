@@ -178,9 +178,9 @@ END:VCALENDAR";
             BEGIN:VEVENT
             BACKGROUND:BUSY
             DESCRIPTION:Backup Daten
+            DTSTART;TZID=W. Europe Standard Time:20150305T000100
             DTEND;TZID=W. Europe Standard Time:20150305T043000
             DTSTAMP:20161122T120652Z
-            DTSTART;TZID=W. Europe Standard Time:20150305T000100
             RESOURCES:server
             RRULE:FREQ=WEEKLY;BYDAY=MO;BYHOUR=0,12
             SUMMARY:Server
@@ -192,9 +192,9 @@ END:VCALENDAR";
             BEGIN:VEVENT
             BACKGROUND:BUSY
             DESCRIPTION:Backup Daten
-            DTEND;TZID=W. Europe Standard Time:20161128T043000
+            DTSTART;TZID=W. Europe Standard Time:20161128T043000
+            DTEND;TZID=W. Europe Standard Time:20161128T150100
             DTSTAMP:20161122T120652Z
-            DTSTART;TZID=W. Europe Standard Time:20161128T150100
             RECURRENCE-ID:20161128T000100
             RESOURCES:server
             SEQUENCE:0
@@ -216,13 +216,13 @@ END:VCALENDAR";
             new CalDateTime("20161114T120100", "W. Europe Standard Time"),
             new CalDateTime("20161121T000100", "W. Europe Standard Time"),
             new CalDateTime("20161121T120100", "W. Europe Standard Time"),
+            new CalDateTime("20161128T043000", "W. Europe Standard Time"), // The replaced entry
             new CalDateTime("20161128T120100", "W. Europe Standard Time"),
-            new CalDateTime("20161128T150100", "W. Europe Standard Time"), // The replaced entry
             new CalDateTime("20161205T000100", "W. Europe Standard Time"),
             new CalDateTime("20161205T120100", "W. Europe Standard Time")
         ];
 
-        // Specify end time that is between the original occurrence ta 20161128T0001 and the overridden one at 20161128T0030.
+        // Specify end time that is between the original occurrence at 20161128T0001 and the overridden one at 20161128T0030.
         // The overridden one shouldn't be returned, because it was replaced and the other one is in the future.
         var occurrences2 = collection.GetOccurrences<CalendarEvent>(new CalDateTime(startCheck), new CalDateTime("20161128T002000", "W. Europe Standard Time"))
             .ToList();

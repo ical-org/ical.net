@@ -90,10 +90,16 @@ public class EventEvaluator : RecurringEvaluator
             endTime = endDt;
         }
 
-        // Return the Period object with the calculated end time and duration.
-        period.Duration = endTime.Subtract(period.StartTime); // exact duration
-        period.EndTime = endTime; // Only EndTime is relevant for further processing.
+        // Return the Period object with the calculated end time.
+        // Only EndTime is relevant for further processing,
+        // so we have to set it.
+        // If the period duration is not null here, it is an RDATE period
+        // and has priority over the calculated end time.
 
-        return period;
+        return new Period(
+            start: period.StartTime,
+            end: period.Duration == null
+                ? endTime
+                : period.EffectiveEndTime);
     }
 }

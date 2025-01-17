@@ -154,7 +154,7 @@ public abstract class CalendarDataType : ICalendarDataType
     public virtual T Copy<T>()
     {
         var type = GetType();
-        var obj = Activator.CreateInstance(type) as ICopyable;
+        var obj = Activator.CreateInstance(type, true) as ICopyable;
 
         if (obj is not T o) return default(T);
 
