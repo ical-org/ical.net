@@ -3,9 +3,11 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Ical.Net.DataTypes;
 
 namespace Ical.Net.Serialization.DataTypes;
@@ -18,11 +20,10 @@ public class PeriodListSerializer : EncodableDataTypeSerializer
 
     public override Type TargetType => typeof(PeriodList);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object obj)
     {
-        var periodList = obj as PeriodList;
         var factory = GetService<ISerializerFactory>();
-        if (periodList == null || factory == null)
+        if (obj is not PeriodList periodList || factory == null)
         {
             return null;
         }
@@ -36,22 +37,35 @@ public class PeriodListSerializer : EncodableDataTypeSerializer
 
         var parts = new List<string>(periodList.Count);
 
+        var firstPeriod = periodList.FirstOrDefault();
+
+        // Set TzId before ValueType, so that it serializes first
+        if (firstPeriod != null && !string.IsNullOrEmpty(firstPeriod.TzId) && firstPeriod.TzId != "UTC")
+        {
+            periodList.Parameters.Set("TZID", periodList[0].TzId);
+        }
+
+        switch (firstPeriod?.PeriodKind) // default type is DATE-TIME
+        {
+            case PeriodKind.Period:
+                periodList.SetValueType("PERIOD");
+                break;
+            case PeriodKind.DateOnly:
+                periodList.SetValueType("DATE");
+                break;
+        }
+
         foreach (var p in periodList)
         {
-            if (p.EndTime != null)
-            {
-                parts.Add(periodSerializer.SerializeToString(p));
-            }
-            else if (p.StartTime != null)
-            {
-                parts.Add(dtSerializer.SerializeToString(p.StartTime));
-            }
+            parts.Add(p.EffectiveDuration != null
+                ? periodSerializer.SerializeToString(p)
+                : dtSerializer.SerializeToString(p.StartTime));
         }
 
         return Encode(periodList, string.Join(",", parts));
     }
 
-    public override object Deserialize(TextReader tr)
+    public override object? Deserialize(TextReader tr)
     {
         var value = tr.ReadToEnd();
 

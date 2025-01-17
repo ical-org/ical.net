@@ -9,7 +9,7 @@ using Ical.Net.DataTypes;
 
 namespace Ical.Net.Evaluation;
 
-public class PeriodListEvaluator : Evaluator
+internal class PeriodListEvaluator : Evaluator
 {
     private readonly PeriodList _mPeriodList;
 
@@ -24,7 +24,7 @@ public class PeriodListEvaluator : Evaluator
 
         if (includeReferenceDateInResults)
         {
-            Period p = new Period(referenceDate);
+            var p = new Period(referenceDate);
             periods.Add(p);
         }
 

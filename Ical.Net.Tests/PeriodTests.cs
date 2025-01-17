@@ -27,57 +27,63 @@ public class PeriodTests
             Assert.That(period.Duration, Is.Null);
             
             Assert.That(periodWithEndTime.StartTime, Is.EqualTo(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York")));
-            Assert.That(periodWithEndTime.GetEffectiveEndTime(), Is.EqualTo(new CalDateTime(2025, 1, 1, 1, 0, 0, "America/New_York")));
-            Assert.That(periodWithEndTime.GetEffectiveDuration(), Is.EqualTo(Duration.FromHours(1)));
+            Assert.That(periodWithEndTime.EffectiveEndTime, Is.EqualTo(new CalDateTime(2025, 1, 1, 1, 0, 0, "America/New_York")));
+            Assert.That(periodWithEndTime.EffectiveDuration, Is.EqualTo(Duration.FromHours(1)));
 
             Assert.That(periodWithDuration.StartTime, Is.EqualTo(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York")));
-            Assert.That(periodWithDuration.GetEffectiveEndTime(), Is.EqualTo(new CalDateTime(2025, 1, 1, 1, 0, 0, "America/New_York")));
-            Assert.That(periodWithDuration.GetEffectiveDuration(), Is.EqualTo(Duration.FromHours(1)));
+            Assert.That(periodWithDuration.EffectiveEndTime, Is.EqualTo(new CalDateTime(2025, 1, 1, 1, 0, 0, "America/New_York")));
+            Assert.That(periodWithDuration.EffectiveDuration, Is.EqualTo(Duration.FromHours(1)));
+
+            Assert.That(Period.Create(period.StartTime).Duration, Is.Null);
+            Assert.That(Period.Create(period.StartTime).EffectiveDuration, Is.Null);
         });
     }
 
     [Test]
     public void CreatePeriodWithInvalidArgumentsShouldThrow()
     {
-        Assert.Throws<ArgumentException>(() => _ = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York"),
-            new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York")));
-        Assert.Throws<ArgumentException>(() =>
-            _ = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York"), Duration.FromHours(-1)));
-    }
-    [Test]
-    public void SetAndGetStartTime()
-    {
-        var period = new Period(new CalDateTime(DateTime.UtcNow));
-        var startTime = new CalDateTime(2025, 1, 1, 0, 0, 0);
-        period.StartTime = startTime;
+        Assert.Multiple(() =>
+        {
+            // EndTime is before StartTime
+            Assert.Throws<ArgumentException>(() => _ = new Period(
+                new CalDateTime(2025, 1, 2, 0, 0, 0, "America/New_York"),
+                new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York")));
 
-        Assert.That(period.StartTime, Is.EqualTo(startTime));
-    }
+            // Duration is negative
+            Assert.Throws<ArgumentException>(() =>
+                _ = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0, "America/New_York"), Duration.FromHours(-1)));
 
-    [Test]
-    public void SetEndTime_GetDuration()
-    {
-        var period = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0));
-        var endTime = new CalDateTime(2025, 1, 31, 0, 0, 0);
-        period.EndTime = endTime;
+            // Timezones are different
+            Assert.Throws<ArgumentException>(() => _ = new Period(
+                new CalDateTime(2025, 1, 2, 0, 0, 0, "America/New_York"),
+                new CalDateTime(2025, 1, 1, 0, 0, 0, "Europe/Vienna")));
 
-        Assert.That(period.GetEffectiveEndTime(), Is.EqualTo(endTime));
-        Assert.That(period.EndTime, Is.EqualTo(endTime));
-        Assert.That(period.Duration, Is.Null);
-        Assert.That(period.GetEffectiveDuration(), Is.EqualTo(Duration.FromDays(30)));
+            // StartTime is date-only while EndTime has time
+            Assert.Throws<ArgumentException>(() => _ = new Period(new CalDateTime(2025, 1, 2, 0, 0, 0),
+                new CalDateTime(2025, 1, 1)));
+        });
     }
 
     [Test]
-    public void SetDuration_GetEndTime()
+    public void Timezones_StartTime_EndTime_MustBeEqual()
     {
-        var period = new Period(new CalDateTime(2025, 1, 1, 0, 0, 0));
-        var duration = Duration.FromHours(1);
-        period.Duration = duration;
+        var periods = new[]
+        {
+            (new CalDateTime(2025, 1, 1, 0, 0, 0, "Europe/Vienna"),
+                new CalDateTime(2025, 1, 1, 0, 0, 0, CalDateTime.UtcTzId)),
+            (new CalDateTime(2025, 1, 1, 0, 0, 0, null),
+                new CalDateTime(2025, 1, 1, 0, 0, 0, CalDateTime.UtcTzId)),
+            (new CalDateTime(2025, 1, 1, 0, 0, 0, CalDateTime.UtcTzId),
+                new CalDateTime(2025, 1, 1, 0, 0, 0, null))
+        };
 
-        Assert.That(period.GetEffectiveDuration(), Is.EqualTo(duration));
-        Assert.That(period.Duration, Is.EqualTo(duration));
-        Assert.That(period.EndTime, Is.Null);
-        Assert.That(period.GetEffectiveEndTime(), Is.EqualTo(new CalDateTime(2025, 1, 1, 1, 0, 0)));
+        Assert.Multiple(() =>
+        {
+            foreach (var p in periods)
+            {
+                Assert.Throws<ArgumentException>(() => _ = new Period(p.Item1, p.Item2));
+            }
+        });
     }
 
     [Test]

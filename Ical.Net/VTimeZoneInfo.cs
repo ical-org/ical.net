@@ -29,12 +29,15 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
     public VTimeZoneInfo(string name) : this()
     {
         Name = name;
+        Initialize();
     }
 
     private void Initialize()
     {
         _evaluator = new TimeZoneInfoEvaluator(this);
         SetService(_evaluator);
+        ExceptionDates = new ExceptionDates(ExceptionDatesPeriodLists);
+        RecurrenceDates = new RecurrenceDates(RecurrenceDatesPeriodLists);
     }
 
     protected override void OnDeserializing(StreamingContext context)
@@ -142,11 +145,13 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         set => Properties.Set("DTSTART", value);
     }
 
-    public virtual IList<PeriodList> ExceptionDates
+    internal IList<PeriodList> ExceptionDatesPeriodLists
     {
         get => Properties.GetMany<PeriodList>("EXDATE");
         set => Properties.Set("EXDATE", value);
     }
+
+    public virtual ExceptionDates ExceptionDates { get; private set; }
 
     public virtual IList<RecurrencePattern> ExceptionRules
     {
@@ -154,11 +159,13 @@ public class VTimeZoneInfo : CalendarComponent, IRecurrable
         set => Properties.Set("EXRULE", value);
     }
 
-    public virtual IList<PeriodList> RecurrenceDates
+    internal IList<PeriodList> RecurrenceDatesPeriodLists
     {
         get => Properties.GetMany<PeriodList>("RDATE");
         set => Properties.Set("RDATE", value);
     }
+
+    public virtual RecurrenceDates RecurrenceDates { get; private set; }
 
     public virtual IList<RecurrencePattern> RecurrenceRules
     {

@@ -275,18 +275,12 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
     /// <returns>An object of the type specified</returns>
     public T Create<T>() where T : ICalendarComponent
     {
-        var obj = Activator.CreateInstance(typeof(T)) as ICalendarObject;
-        if (obj is T)
+        if (Activator.CreateInstance(typeof(T), true) is ICalendarObject cal)
         {
-            this.AddChild(obj);
-            return (T) obj;
+            this.AddChild(cal);
+            return (T) cal;
         }
         return default(T);
-    }
-
-    public void Dispose()
-    {
-        Children.Clear();
     }
 
     public virtual void MergeWith(IMergeable obj)

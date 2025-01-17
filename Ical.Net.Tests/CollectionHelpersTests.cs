@@ -14,7 +14,7 @@ namespace Ical.Net.Tests;
 
 internal class CollectionHelpersTests
 {
-    private static readonly DateTime _now = DateTime.UtcNow;
+    private static readonly DateTime _now = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
 
     private static List<PeriodList> GetExceptionDates()
         => new List<PeriodList> { new PeriodList { new Period(new CalDateTime(_now.AddDays(1).Date)) } };
@@ -29,7 +29,7 @@ internal class CollectionHelpersTests
         });
 
         var changedPeriod = GetExceptionDates();
-        changedPeriod.First().First().StartTime = new CalDateTime(_now.AddHours(-1));
+        changedPeriod[0][0] = new Period(new CalDateTime(_now.AddHours(-1)), changedPeriod[0][0].EndTime);
 
         Assert.That(changedPeriod, Is.Not.EqualTo(GetExceptionDates()));
     }

@@ -11,17 +11,58 @@ namespace Ical.Net.DataTypes;
 
 /// <summary>
 /// Represents an iCalendar period of time.
+/// <para/>
+/// A period can be defined<br/>
+/// 1. by a start time and an end time,<br/>
+/// 2. by a start time and a duration,<br/>
+/// 3. by a start date/time or date-only, with the duration unspecified.
 /// </summary>
 public class Period : EncodableDataType, IComparable<Period>
 {
-    public Period() { }
+    private IDateTime _startTime = null!;
+    private IDateTime? _endTime;
+    private Duration? _duration;
+
+    /// <summary>
+    /// Creates a new <see cref="Period"/> instance starting at the given time.
+    /// It ensures the that a consistent logic is applied to the <paramref name="end"/> and <paramref name="duration"/> parameters.
+    /// TLDR; If <paramref name="end"/> is provided, it will be used as the end time of the period.
+    /// </summary>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
+    /// <param name="duration"></param>
+    /// <param name="associatedObject"></param>
+    /// <returns>
+    /// A new <see cref="Period"/> object if the <paramref name="start"/> parameter is not <see langword="null"/>.
+    /// <para/>
+    /// If the <paramref name="start"/> parameter is <see langword="null"/>, the method returns <see langword="null"/> immediately.
+    /// <para/>
+    /// If the <paramref name="end"/> parameter is not <see langword="null"/>, a new <see cref="Period"/> object is created using the <paramref name="start"/> and <paramref name="end"/> times.
+    /// <para/>
+    /// If the <paramref name="end"/> parameter is <see langword="null"/>, the <paramref name="duration"/> parameter is used to create a new <see cref="Period"/> object using the <paramref name="start"/> time and the specified <paramref name="duration"/>.
+    /// <para/>
+    /// If both <paramref name="end"/> and <paramref name="duration"/> are <see langword="null"/>, a new <see cref="Period"/> object is created using only the <paramref name="start"/> time.
+    /// </returns>
+    internal static Period Create(IDateTime start, IDateTime? end = null, Duration? duration = null, ICalendarObject? associatedObject = null)
+    {
+        if (end is not null)
+            return new Period(start, end) { AssociatedObject = associatedObject };
+
+        if (duration is not null)
+            return new Period(start, duration.Value) { AssociatedObject = associatedObject };
+ 
+        return new Period(start) { AssociatedObject = associatedObject };
+    }
+
+    // Needed for the serialization factory
+    internal Period() { }
 
     /// <summary>
     /// Creates a new <see cref="Period"/> instance starting at the given time
-    /// and ending at the given time. The latter may be null.
+    /// and ending at the given time.
     /// <para/>
-    /// A <see cref="Period"/> that has a date-only <see cref="StartTime"/>, no <see cref="EndTime"/>
-    /// and no duration set, is considered to last for one day.
+    /// If <paramref name="end"/> time is not provided, the period will be considered as starting at the given time,
+    /// while the duration is unspecified.
     /// </summary>
     /// <param name="start"></param>
     /// <param name="end"></param>
@@ -29,18 +70,27 @@ public class Period : EncodableDataType, IComparable<Period>
     /// <exception cref="ArgumentNullException"></exception>
     public Period(IDateTime start, IDateTime? end = null)
     {
-        if (end != null && end.LessThanOrEqual(start))
-        {
-            throw new ArgumentException("End time must be greater than end time.", nameof(end));
-        }
+        // Ensure consistent arguments
+        if (end != null && start.TzId != end.TzId)
+            throw new ArgumentException($"Start time ({start}) and end time ({end}) must have the same timezone.");
 
-        StartTime = start ?? throw new ArgumentNullException(nameof(start));
-        EndTime = end;
+        if (end != null && start.HasTime != end.HasTime)
+            throw new ArgumentException(
+                $"Start time ({start}) and end time ({end}) must both have a time or both be date-only.");
+
+        if (end != null && end.LessThan(start))
+            throw new ArgumentException($"End time ({end}) must be greater than start time ({start}).", nameof(end));
+
+        _startTime = start;
+        _endTime = end;
     }
 
     /// <summary>
     /// Creates a new <see cref="Period"/> instance starting at the given time
     /// and lasting for the given duration.
+    /// <para/>
+    /// If <paramref name="duration"/> is not provided, the period will be considered as starting at the given time,
+    /// while the duration is unspecified.
     /// </summary>
     /// <param name="start"></param>
     /// <param name="duration"></param>
@@ -48,10 +98,10 @@ public class Period : EncodableDataType, IComparable<Period>
     public Period(IDateTime start, Duration duration)
     {
         if (duration.Sign < 0)
-            throw new ArgumentException("Duration must be greater than or equal to zero.", nameof(duration));
+            throw new ArgumentException($"Duration ({duration}) must be greater than or equal to zero.", nameof(duration));
 
-        StartTime = start;
-        Duration = duration;
+        _startTime = start;
+        _duration = duration;
     }
 
     /// <inheritdoc/>
@@ -61,12 +111,12 @@ public class Period : EncodableDataType, IComparable<Period>
 
         if (obj is not Period p) return;
 
-        StartTime = p.StartTime.Copy<IDateTime>();
-        EndTime = p.EndTime?.Copy<IDateTime>();
-        Duration = p.Duration;
+        _startTime = p._startTime.Copy<IDateTime>();
+        _endTime = p._endTime?.Copy<IDateTime>();
+        _duration = p._duration;
     }
 
-    protected bool Equals(Period other) => Equals(StartTime, other.StartTime) && Equals(EndTime, other.EndTime) && Duration.Equals(other.Duration);
+    protected bool Equals(Period other) => Equals(StartTime, other.StartTime) && Equals(EndTime, other.EndTime) && Equals(Duration, other.Duration);
 
     /// <inheritdoc/>
     public override bool Equals(object? obj)
@@ -89,60 +139,82 @@ public class Period : EncodableDataType, IComparable<Period>
     }
 
     /// <inheritdoc/>
-    public override string ToString()
+    public override string? ToString()
     {
         var periodSerializer = new PeriodSerializer();
         return periodSerializer.SerializeToString(this);
     }
 
     /// <summary>
-    /// Gets or sets the start time of the period.
+    /// Gets the start time of the period.
     /// </summary>
-    public virtual IDateTime StartTime { get; set; } = null!;
+    public virtual IDateTime StartTime => _startTime;
 
     /// <summary>
-    /// Gets either the end time of the period that was set,
-    /// or calculates the exact end time based on the nominal duration.
-    /// <para/>
-    /// Sets the end time of the period.
-    /// Either the <see cref="EndTime"/> or the <see cref="Duration"/> can be set at a time.
-    /// The last one set will be stored, and the other will be calculated.
+    /// Gets the original end time that was set,
     /// </summary>
-    public virtual IDateTime? EndTime { get; set; }
+    public virtual IDateTime? EndTime => _endTime;
 
     /// <summary>
-    /// Gets either the nominal duration of the period that was set,
-    /// or calculates the exact duration based on the end time.
-    /// <para/>
-    /// Sets the duration of the period.
-    /// Either the <see cref="EndTime"/> or the <see cref="Duration"/> can be set at a time.
-    /// The last one set will be stored, and the other will be calculated.
-    /// <para/>
-    /// A <see cref="Period"/> that has a date-only <see cref="StartTime"/>, no <see cref="EndTime"/>
-    /// and no duration set, is considered to last for one day.
+    /// Gets the end time of the period that was set, or - if this is <see langword="null"/> -
+    /// calculates the end time based by adding <see cref="EffectiveDuration"/> to the <see cref="StartTime"/>.
+    /// If <see cref="Duration"/> and <see cref="EndTime"/> are both <see langword="null"/>, the method returns <see langword="null"/>.
     /// </summary>
-    public virtual Duration? Duration { get; set; }
-
-    internal Duration GetEffectiveDuration()
+    public virtual IDateTime? EffectiveEndTime
     {
-        if (Duration is { } d)
-            return d;
-
-        if (EndTime is { } endTime)
-            return endTime.Subtract(StartTime);
-
-        if (!StartTime.HasTime)
-            return DataTypes.Duration.FromDays(1);
-
-        return DataTypes.Duration.Zero;
+        get
+        {
+            var effectiveDuration = EffectiveDuration;
+            return _endTime switch
+            {
+                null when _duration is null => null,
+                { } endTime => endTime,
+                _ => effectiveDuration is not null
+                    ? _startTime.Add(effectiveDuration.Value)
+                    : null
+            };
+        }
     }
 
-    internal IDateTime GetEffectiveEndTime()
-    {
-        if (EndTime is { } endTime)
-            return endTime;
+    /// <summary>
+    /// Gets the original duration of the period as it was set.<br/>
+    /// See also <seealso cref="EffectiveDuration"/>.
+    /// </summary>
+    public virtual Duration? Duration => _duration;
 
-        return StartTime.Add(GetEffectiveDuration());
+    /// <summary>
+    /// Gets the duration of the period that was set, or - if this is <see langword="null"/> -
+    /// calculates the exact duration by subtracting <see cref="StartTime"/> from <see cref="EndTime"/>.
+    /// If <see cref="Duration"/> and <see cref="EndTime"/> are both <see langword="null"/>, the method returns <see langword="null"/>.
+    /// </summary>
+    public virtual Duration? EffectiveDuration
+    {
+        get
+        {
+            return _duration switch
+            {
+                null when _endTime is null => null,
+                { } d => d,
+                _ => _endTime is { } endTime
+                    ? endTime.Subtract(_startTime)
+                    : null
+            };
+        }
+    }
+
+    internal string? TzId => _startTime.TzId; // same timezone for start and end
+
+    internal PeriodKind PeriodKind
+    {
+        get
+        {
+            if (EffectiveDuration != null)
+            {
+                return PeriodKind.Period;
+            }
+
+            return StartTime.HasTime ? PeriodKind.DateTime : PeriodKind.DateOnly;
+        }
     }
 
     /// <summary>
@@ -155,14 +227,14 @@ public class Period : EncodableDataType, IComparable<Period>
     public virtual bool Contains(IDateTime? dt)
     {
         // Start time is inclusive
-        if (dt == null || !StartTime.LessThanOrEqual(dt))
+        if (dt == null || !_startTime.LessThanOrEqual(dt))
         {
             return false;
         }
 
-        var endTime = GetEffectiveEndTime();
+        var endTime = EffectiveEndTime;
         // End time is exclusive
-        return endTime == null || endTime.GreaterThan(dt);
+        return endTime?.GreaterThan(dt) != false;
     }
 
     /// <summary>
@@ -178,9 +250,10 @@ public class Period : EncodableDataType, IComparable<Period>
     public virtual bool CollidesWith(Period period)
             => Contains(period.StartTime)
             || period.Contains(StartTime)
-            || Contains(period.GetEffectiveEndTime())
-            || period.Contains(GetEffectiveEndTime());
+            || Contains(period.EffectiveEndTime)
+            || period.Contains(EffectiveEndTime);
 
+    /// <inheritdoc/>
     public int CompareTo(Period? other)
     {
         if (other == null)
@@ -188,11 +261,11 @@ public class Period : EncodableDataType, IComparable<Period>
             return 1;
         }
 
-        if (StartTime.Equals(other.StartTime))
+        if (StartTime.AsUtc.Equals(other.StartTime.AsUtc))
         {
             return 0;
         }
-        if (StartTime.LessThan(other.StartTime))
+        if (StartTime.LessThanOrEqual(other.StartTime))
         {
             return -1;
         }
@@ -201,4 +274,3 @@ public class Period : EncodableDataType, IComparable<Period>
         return 1;
     }
 }
-

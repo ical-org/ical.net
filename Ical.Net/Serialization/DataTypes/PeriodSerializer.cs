@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.IO;
 using System.Text;
@@ -18,12 +19,11 @@ public class PeriodSerializer : EncodableDataTypeSerializer
 
     public override Type TargetType => typeof(Period);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object obj)
     {
-        var p = obj as Period;
         var factory = GetService<ISerializerFactory>();
 
-        if (p == null || factory == null)
+        if (obj is not Period p || factory == null)
         {
             return null;
         }
@@ -34,30 +34,36 @@ public class PeriodSerializer : EncodableDataTypeSerializer
         try
         {
             var dtSerializer = factory.Build(typeof(IDateTime), SerializationContext) as IStringSerializer;
-            var timeSpanSerializer = factory.Build(typeof(Duration), SerializationContext) as IStringSerializer;
-            if (dtSerializer == null || timeSpanSerializer == null)
+            var durationSerializer = factory.Build(typeof(Duration), SerializationContext) as IStringSerializer;
+            if (dtSerializer == null || durationSerializer == null)
             {
                 return null;
             }
+
             var sb = new StringBuilder();
 
             // Serialize the start time
             sb.Append(dtSerializer.SerializeToString(p.StartTime));
 
-            // Serialize the duration or end time
-            if (p.EndTime != null)
-            {
-                // serialize the end time
-                sb.Append("/");
-                sb.Append(dtSerializer.SerializeToString(p.EndTime));
-            }
+            // RFC 5545 section 3.6.1:
+            // For cases where a "VEVENT" calendar component
+            // specifies a "DTSTART" property with a DATE value type but no
+            // "DTEND" nor "DURATION" property, the event’s duration is taken to
+            // be one day:
 
-            if (p.Duration != null)
+            if (p.EndTime is { } endtime)
+            {
+                // Serialize the end date and time...
+                sb.Append('/');
+                sb.Append(dtSerializer.SerializeToString(endtime));
+            }
+            if (p.Duration is { } duration) 
             {
                 // Serialize the duration
-                sb.Append("/");
-                sb.Append(timeSpanSerializer.SerializeToString(p.Duration));
+                sb.Append('/');
+                sb.Append(durationSerializer.SerializeToString(duration));
             }
+            // else, just the start time gets serialized to comply with the RFC 5545 section 3.6.1
 
             // Encode the value as necessary
             return Encode(p, sb.ToString());
@@ -69,7 +75,7 @@ public class PeriodSerializer : EncodableDataTypeSerializer
         }
     }
 
-    public override object Deserialize(TextReader tr)
+    public override object? Deserialize(TextReader tr)
     {
         var value = tr.ReadToEnd();
 
@@ -96,19 +102,10 @@ public class PeriodSerializer : EncodableDataTypeSerializer
             return false;
         }
 
-        p.StartTime = dtSerializer.Deserialize(new StringReader(values[0])) as IDateTime;
-        p.EndTime = dtSerializer.Deserialize(new StringReader(values[1])) as IDateTime;
-        if (p.EndTime == null)
-        {
-            p.Duration = (Duration)durationSerializer.Deserialize(new StringReader(values[1]));
-        }
+        var start = dtSerializer.Deserialize(new StringReader(values[0])) as IDateTime;
+        var end = dtSerializer.Deserialize(new StringReader(values[1])) as IDateTime;
+        var duration = durationSerializer.Deserialize(new StringReader(values[1])) as Duration?;
 
-        // Only return an object if it has been deserialized correctly.
-        if (p.StartTime != null)
-        {
-            return p;
-        }
-
-        return null;
+        return start is null ? null : Period.Create(start, end, duration, p.AssociatedObject);
     }
 }

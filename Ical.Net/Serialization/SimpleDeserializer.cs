@@ -165,21 +165,20 @@ public class SimpleDeserializer
     {
         var type = _dataTypeMapper.GetPropertyMapping(property) ?? typeof(string);
         var serializer = (SerializerBase) _serializerFactory.Build(type, context);
-        using (var valueReader = new StringReader(value))
+        using var valueReader = new StringReader(value);
+
+        var propertyValue = serializer.Deserialize(valueReader);
+
+        if (propertyValue is IEnumerable<string> propertyValues)
         {
-            var propertyValue = serializer.Deserialize(valueReader);
-            var propertyValues = propertyValue as IEnumerable<string>;
-            if (propertyValues != null)
+            foreach (var singlePropertyValue in propertyValues)
             {
-                foreach (var singlePropertyValue in propertyValues)
-                {
-                    property.AddValue(singlePropertyValue);
-                }
+                property.AddValue(singlePropertyValue);
             }
-            else
-            {
-                property.AddValue(propertyValue);
-            }
+        }
+        else
+        {
+            property.AddValue(propertyValue);
         }
     }
 

@@ -3,10 +3,10 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Ical.Net.DataTypes;
-using Ical.Net.Utility;
 
 namespace Ical.Net.CalendarComponents;
 
@@ -58,7 +58,7 @@ public class Alarm : CalendarComponent
         set => Properties.Set("SUMMARY", value);
     }
 
-    public virtual Trigger Trigger
+    public virtual Trigger? Trigger
     {
         get => Properties.Get<Trigger>(TriggerRelation.Key);
         set => Properties.Set(TriggerRelation.Key, value);
@@ -73,7 +73,7 @@ public class Alarm : CalendarComponent
     /// Gets a list of alarm occurrences for the given recurring component, <paramref name="rc"/>
     /// that occur between <paramref name="fromDate"/> and <paramref name="toDate"/>.
     /// </summary>
-    public virtual IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, IDateTime fromDate, IDateTime toDate)
+    public virtual IList<AlarmOccurrence> GetOccurrences(IRecurringComponent rc, IDateTime? fromDate, IDateTime? toDate)
     {
         if (Trigger == null)
         {
@@ -93,7 +93,7 @@ public class Alarm : CalendarComponent
                 fromDate = rc.Start.Copy<IDateTime>();
             }
 
-            Duration? d = null;
+            Duration? duration = null;
             foreach (var o in rc.GetOccurrences(fromDate, toDate))
             {
                 var dt = o.Period.StartTime;
@@ -102,15 +102,15 @@ public class Alarm : CalendarComponent
                     if (o.Period.EndTime != null)
                     {
                         dt = o.Period.EndTime;
-                        if (d == null)
+                        if (duration == null)
                         {
-                            d = o.Period.Duration!.Value; // the getter always returns a value
+                            duration = o.Period.EffectiveDuration;
                         }
                     }
                     // Use the "last-found" duration as a reference point
-                    else if (d != null)
+                    else if (duration != null)
                     {
-                        dt = o.Period.StartTime.Add(d.Value);
+                        dt = o.Period.StartTime.Add(duration.Value);
                     }
                     else
                     {
@@ -119,7 +119,7 @@ public class Alarm : CalendarComponent
                     }
                 }
 
-                occurrences.Add(new AlarmOccurrence(this, dt.Add(Trigger.Duration.Value), rc));
+                occurrences.Add(new AlarmOccurrence(this, dt.Add(Trigger.Duration!.Value), rc));
             }
         }
         else
@@ -142,6 +142,7 @@ public class Alarm : CalendarComponent
     /// is null, all triggered alarms will be returned.
     /// </summary>
     /// <param name="start">The earliest date/time to poll trigered alarms for.</param>
+    /// <param name="end"></param>
     /// <returns>A list of <see cref="AlarmOccurrence"/> objects, each containing a triggered alarm.</returns>
     public virtual IList<AlarmOccurrence> Poll(IDateTime start, IDateTime end)
     {

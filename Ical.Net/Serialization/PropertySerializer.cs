@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.IO;
 using System.Linq;
@@ -20,7 +21,7 @@ public class PropertySerializer : SerializerBase
 
     public override Type TargetType => typeof(CalendarProperty);
 
-    public override string SerializeToString(object obj)
+    public override string? SerializeToString(object obj)
     {
         var prop = obj as ICalendarProperty;
         if (prop?.Values == null || !prop.Values.Any())
@@ -54,27 +55,24 @@ public class PropertySerializer : SerializerBase
             // FIXME: the "parameter modification" operation should
             // be separated from serialization. Perhaps something
             // like PreSerialize(), etc.
-            var value = valueSerializer.SerializeToString(v);
+            var value = valueSerializer?.SerializeToString(v);
 
             // Get the list of parameters we'll be serializing
             var parameterList = prop.Parameters;
             if (v is ICalendarDataType)
             {
-                parameterList = (v as ICalendarDataType).Parameters;
+                parameterList = ((ICalendarDataType) v).Parameters;
             }
 
-            //This says that the TZID property of an RDATE/EXDATE collection is owned by the PeriodList that contains it. There's nothing in the spec that
-            //prohibits having multiple EXDATE or RDATE collections, each of which specifies a different TZID. What *should* happen during serialization is
-            //that we should work with a single collection of zoned datetime objects, and we should create distinct RDATE and EXDATE collections based on
-            //those values. Right now, if you add CalDateTime objects, each of which specifies a different time zone, the first one "wins". This means
-            //application developers will need to handle those cases outside the library.
-            if (v is PeriodList)
+            // The TZID property of an RDATE/EXDATE collection is owned by the PeriodList that contains it. 
+            // It is allowed to have multiple EXDATE or RDATE collections, each with a different TZID.
+            // Using RecurrenceDate and ExceptionDate classes ensures, that all Periods in the
+            // PeriodList have the same TZID and PeriodKind, which allows PeriodList be serialized in one go.
+            // Here, to determine the timezone, we can safely use the first Period's timezone.
+            if (v is PeriodList periodList && periodList[0].TzId != null && periodList[0].TzId != "UTC" &&
+                parameterList.All(p => string.Equals("TZID", p.Value, StringComparison.OrdinalIgnoreCase)))
             {
-                var typed = (PeriodList) v;
-                if (!string.IsNullOrWhiteSpace(typed.TzId) && parameterList.All(p => string.Equals("TZID", p.Value, StringComparison.OrdinalIgnoreCase)))
-                {
-                    parameterList.Set("TZID", typed.TzId);
-                }
+                parameterList.Set("TZID", periodList[0].TzId);
             }
 
             var sb = new StringBuilder();
@@ -102,5 +100,5 @@ public class PropertySerializer : SerializerBase
         return result.ToString();
     }
 
-    public override object Deserialize(TextReader tr) => null;
+    public override object? Deserialize(TextReader tr) => null;
 }

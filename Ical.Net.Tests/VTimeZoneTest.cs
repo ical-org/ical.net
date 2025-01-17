@@ -5,9 +5,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
+using Ical.Net.Utility;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -103,7 +105,8 @@ public class VTimeZoneTest
     {
         var iCal = CreateTestCalendar("Europe/Moscow");
         var serializer = new CalendarSerializer();
-        var serialized = serializer.SerializeToString(iCal);
+        // Unwrap the lines to make it easier to search for specific values
+        var serialized = TextUtil.UnwrapLines(serializer.SerializeToString(iCal));
 
         Assert.Multiple(() =>
         {
@@ -122,7 +125,8 @@ public class VTimeZoneTest
             Assert.That(serialized.Contains("TZOFFSETTO:+023017"), Is.True, "TZOFFSETTO:+023017 was not serialized");
             Assert.That(serialized.Contains("DTSTART:19180916T010000"), Is.True, "DTSTART:19180916T010000 was not serialized");
             Assert.That(serialized.Contains("DTSTART:19171228T000000"), Is.True, "DTSTART:19171228T000000 was not serialized");
-            Assert.That(serialized.Contains("RDATE:19991031T030000"), Is.True, "RDATE:19991031T030000 was not serialized");
+            // RDATE may contain multiple dates, separated by a comma
+            Assert.That(Regex.IsMatch(serialized, $@"RDATE:.*\b19991031T030000\b", RegexOptions.Compiled, RegexDefaults.Timeout), Is.True, "RDATE:19731028T020000 was not serialized");
         });
     }
 
@@ -201,7 +205,8 @@ public class VTimeZoneTest
     {
         var iCal = CreateTestCalendar("America/Anchorage");
         var serializer = new CalendarSerializer();
-        var serialized = serializer.SerializeToString(iCal);
+        // Unwrap the lines to make it easier to search for specific values
+        var serialized = TextUtil.UnwrapLines(serializer.SerializeToString(iCal));
 
         Assert.Multiple(() =>
         {
@@ -214,10 +219,11 @@ public class VTimeZoneTest
             Assert.That(serialized.Contains("TZNAME:YST"), Is.True, "YST was not serialized");
             Assert.That(serialized.Contains("TZNAME:AHDT"), Is.True, "AHDT was not serialized");
             Assert.That(serialized.Contains("TZNAME:LMT"), Is.True, "LMT was not serialized");
-            Assert.That(serialized.Contains("RDATE:19731028T020000"), Is.True, "RDATE:19731028T020000 was not serialized");
-            Assert.That(serialized.Contains("RDATE:19801026T020000"), Is.True, "RDATE:19801026T020000 was not serialized");
-            Assert.That(serialized.Contains("DTSTART:19420209T020000"), Is.True, "DTSTART:19420209T020000 was not serialized");
+            // RDATE may contain multiple dates, separated by a comma
+            Assert.That(Regex.IsMatch(serialized, $@"RDATE:.*\b19731028T020000\b", RegexOptions.Compiled, RegexDefaults.Timeout), Is.True, "RDATE:19731028T020000 was not serialized");
+            Assert.That(Regex.IsMatch(serialized, $@"RDATE:.*\b19801026T020000\b", RegexOptions.Compiled, RegexDefaults.Timeout), Is.True, "RDATE:19731028T020000 was not serialized");
             Assert.That(serialized.Contains("RDATE:19670401/P1D"), Is.False, "RDate was not properly serialized for vtimezone, should be RDATE:19670401T000000");
+            Assert.That(serialized.Contains("DTSTART:19420209T020000"), Is.True, "DTSTART:19420209T020000 was not serialized");
         });
     }
 
