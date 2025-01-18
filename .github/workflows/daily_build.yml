@@ -10,6 +10,10 @@ jobs:
     runs-on: ubuntu-22.04
     # ubuntu-latest = ubuntu-24.04 does not include mono (2025-08-01)
 
+    permissions:
+      packages: write
+      contents: read
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
