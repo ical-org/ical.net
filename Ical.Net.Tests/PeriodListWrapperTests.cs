@@ -213,9 +213,9 @@ public class PeriodListWrapperTests
 
             Assert.That(serialized,
                 Does.Contain(
-            "RDATE;VALUE=PERIOD:20250102/20250105,20250501/20250510,20250501/P9D\r\n" +
-                    "RDATE;VALUE=PERIOD:20250202T000000Z/20250202T060000Z,20250601T120000Z/2025\r\n" +
-                    " 0601T140000Z\r\n" +
+            "RDATE;VALUE=PERIOD:20250102/20250105,20250501/20250510,20250501/P9D" + SerializationConstants.LineBreak +
+                    "RDATE;VALUE=PERIOD:20250202T000000Z/20250202T060000Z,20250601T120000Z/20250" + SerializationConstants.LineBreak +
+                    " 601T140000Z" + SerializationConstants.LineBreak +
                     "RDATE;TZID=Europe/Vienna;VALUE=PERIOD:20250601T120000/PT8H"));
 
             // A flattened list of all dates

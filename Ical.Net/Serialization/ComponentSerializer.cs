@@ -32,7 +32,7 @@ public class ComponentSerializer : SerializerBase
 
         var sb = new StringBuilder();
         var upperName = c.Name.ToUpperInvariant();
-        sb.Append(TextUtil.FoldLines($"BEGIN:{upperName}"));
+        sb.FoldLines($"BEGIN:{upperName}");
 
         // Get a serializer factory
         var sf = GetService<ISerializerFactory>();
@@ -56,7 +56,7 @@ public class ComponentSerializer : SerializerBase
             sb.Append(serializer.SerializeToString(child));
         }
 
-        sb.Append(TextUtil.FoldLines($"END:{upperName}"));
+        sb.FoldLines($"END:{upperName}");
         return sb.ToString();
     }
 
