@@ -55,5 +55,5 @@ jobs:
         path: |
           Ical.Net/bin/Release/**/*.nupkg
           Ical.Net/bin/Release/**/*.snupkg
-    - name: Push package to GitHub Packages
-      run: dotnet nuget push Ical.Net/bin/Release/Ical.Net.${{env.VERSION}}.${{github.run_number}}.nupkg --api-key ${{ secrets.PACKAGE_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
+    - name: Push package to GitHub Packages   # GITHUB_TOKEN requires write access enabled in organization settings
+      run: dotnet nuget push Ical.Net/bin/Release/Ical.Net.${{env.VERSION}}.${{github.run_number}}.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
