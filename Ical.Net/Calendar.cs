@@ -171,20 +171,6 @@ public class Calendar : CalendarComponent, IGetOccurrencesTyped, IGetFreeBusy, I
         set => Properties.Set("METHOD", value);
     }
 
-    [Obsolete("Usage may cause undesired results or exceptions. Will be removed.", false)]
-    public virtual RecurrenceRestrictionType RecurrenceRestriction
-    {
-        get => Properties.Get<RecurrenceRestrictionType>("X-DDAY-ICAL-RECURRENCE-RESTRICTION");
-        set => Properties.Set("X-DDAY-ICAL-RECURRENCE-RESTRICTION", value);
-    }
-
-    [Obsolete("Usage may cause undesired results or exceptions. Will be removed.", false)]
-    public virtual RecurrenceEvaluationModeType RecurrenceEvaluationMode
-    {
-        get => Properties.Get<RecurrenceEvaluationModeType>("X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE");
-        set => Properties.Set("X-DDAY-ICAL-RECURRENCE-EVALUATION-MODE", value);
-    }
-
     /// <summary>
     /// Adds a time zone to the iCalendar.  This time zone may
     /// then be used in date/time objects contained in the
