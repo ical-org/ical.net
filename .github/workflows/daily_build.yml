@@ -10,6 +10,10 @@ jobs:
     runs-on: ubuntu-22.04
     # ubuntu-latest = ubuntu-24.04 does not include mono (2025-08-01)
 
+    permissions:
+      packages: write
+      contents: read
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -51,5 +55,5 @@ jobs:
         path: |
           Ical.Net/bin/Release/**/*.nupkg
           Ical.Net/bin/Release/**/*.snupkg
-    - name: Push package to GitHub Packages
+    - name: Push package to GitHub Packages   # GITHUB_TOKEN requires write access enabled in organization settings
       run: dotnet nuget push Ical.Net/bin/Release/Ical.Net.${{env.VERSION}}.${{github.run_number}}.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
