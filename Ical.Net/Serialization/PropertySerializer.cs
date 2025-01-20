@@ -70,16 +70,6 @@ public class PropertySerializer : SerializerBase
         // Get the list of parameters we'll be serializing
         var parameterList = GetParameterList(prop, value);
 
-        // The TZID property of an RDATE/EXDATE collection is owned by the PeriodList that contains it. 
-        // It is allowed to have multiple EXDATE or RDATE collections, each with a different TZID.
-        // Using RecurrenceDate and ExceptionDate classes ensures, that all Periods in the
-        // PeriodList have the same TZID and PeriodKind, which allows PeriodList be serialized in one go.
-        // Here, to determine the timezone, we can safely use the first Period's timezone.
-        if (value is PeriodList periodList)
-        {
-            UpdateTzId(parameterList, periodList);
-        }
-
         var sb = new StringBuilder();
         sb.Append(prop.Name);
         if (parameterList.Count != 0)
@@ -108,15 +98,6 @@ public class PropertySerializer : SerializerBase
 
     private static IParameterCollection GetParameterList(ICalendarProperty prop, object value)
         => value is ICalendarDataType dataType ? dataType.Parameters : prop.Parameters;
-
-    private static void UpdateTzId(IParameterCollection parameterList, PeriodList periodList)
-    {
-        if (periodList[0].TzId != null && periodList[0].TzId != "UTC" &&
-            parameterList.All(p => string.Equals("TZID", p.Value, StringComparison.OrdinalIgnoreCase)))
-        {
-            parameterList.Set("TZID", periodList[0].TzId);
-        }
-    }
 
     public override object? Deserialize(TextReader tr) => null;
 }
