@@ -101,102 +101,7 @@ public class RecurrencePatternEvaluator : Evaluator
 
         return r;
     }
-#pragma warning disable 0618
-    private void EnforceEvaluationRestrictions(RecurrencePattern pattern)
-    {
-        RecurrenceEvaluationModeType? evaluationMode = pattern.EvaluationMode;
-        RecurrenceRestrictionType? evaluationRestriction = pattern.RestrictionType;
 
-        if (evaluationRestriction != RecurrenceRestrictionType.NoRestriction)
-        {
-            switch (evaluationMode)
-            {
-                case RecurrenceEvaluationModeType.AdjustAutomatically:
-                    switch (pattern.Frequency)
-                    {
-                        case FrequencyType.Secondly:
-                            {
-                                switch (evaluationRestriction)
-                                {
-                                    case RecurrenceRestrictionType.Default:
-                                    case RecurrenceRestrictionType.RestrictSecondly:
-                                        pattern.Frequency = FrequencyType.Minutely;
-                                        break;
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                        pattern.Frequency = FrequencyType.Hourly;
-                                        break;
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        pattern.Frequency = FrequencyType.Daily;
-                                        break;
-                                }
-                            }
-                            break;
-                        case FrequencyType.Minutely:
-                            {
-                                switch (evaluationRestriction)
-                                {
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                        pattern.Frequency = FrequencyType.Hourly;
-                                        break;
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        pattern.Frequency = FrequencyType.Daily;
-                                        break;
-                                }
-                            }
-                            break;
-                        case FrequencyType.Hourly:
-                            {
-                                switch (evaluationRestriction)
-                                {
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        pattern.Frequency = FrequencyType.Daily;
-                                        break;
-                                }
-                            }
-                            break;
-                    }
-                    break;
-                case RecurrenceEvaluationModeType.ThrowException:
-                case RecurrenceEvaluationModeType.Default:
-                    switch (pattern.Frequency)
-                    {
-                        case FrequencyType.Secondly:
-                            {
-                                switch (evaluationRestriction)
-                                {
-                                    case RecurrenceRestrictionType.Default:
-                                    case RecurrenceRestrictionType.RestrictSecondly:
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new ArgumentException();
-                                }
-                            }
-                            break;
-                        case FrequencyType.Minutely:
-                            {
-                                switch (evaluationRestriction)
-                                {
-                                    case RecurrenceRestrictionType.RestrictMinutely:
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new ArgumentException();
-                                }
-                            }
-                            break;
-                        case FrequencyType.Hourly:
-                            {
-                                switch (evaluationRestriction)
-                                {
-                                    case RecurrenceRestrictionType.RestrictHourly:
-                                        throw new ArgumentException();
-                                }
-                            }
-                            break;
-                    }
-                    break;
-            }
-        }
-    }
-#pragma warning restore 0618
     /// <summary>
     /// Returns a list of start dates in the specified period represented by this recurrence pattern.
     /// This method includes a base date argument, which indicates the start of the first occurrence of this recurrence.
@@ -974,9 +879,6 @@ public class RecurrencePatternEvaluator : Evaluator
 
         // Create a recurrence pattern suitable for use during evaluation.
         var pattern = ProcessRecurrencePattern(referenceDate);
-
-        // Enforce evaluation restrictions on the pattern.
-        EnforceEvaluationRestrictions(pattern);
 
         var periodQuery = GetDates(referenceDate, periodStart, periodEnd, -1, pattern, includeReferenceDateInResults)
             .Select(dt => CreatePeriod(dt, referenceDate));

@@ -36,9 +36,7 @@ public class RecurrenceTests
     {
         var evt = cal.Events.Skip(eventIndex).First();
         var rule = evt.RecurrenceRules.FirstOrDefault();
-#pragma warning disable 0618
-        if (rule != null) rule.RestrictionType = RecurrenceRestrictionType.NoRestriction;
-#pragma warning restore 0618
+
         if (fromDate != null)
             fromDate.AssociatedObject = cal;
         if (toDate != null)
@@ -2863,9 +2861,6 @@ public class RecurrenceTests
         // This case (DTSTART of type DATE and FREQ=MINUTELY) is undefined in RFC 5545.
         // ical.net handles the case by pretending DTSTART has the time set to midnight.
         evt.RecurrenceRules.Add(new RecurrencePattern($"FREQ={freq};INTERVAL=10;COUNT=5"));
-#pragma warning disable 0618
-        evt.RecurrenceRules[0].RestrictionType = RecurrenceRestrictionType.NoRestriction;
-#pragma warning restore 0618
 
         var occurrences = evt.GetOccurrences(evt.Start.AddDays(-1), evt.Start.AddDays(100))
             .OrderBy(x => x)
@@ -2890,9 +2885,6 @@ public class RecurrenceTests
         // NOTE: evaluators are not generally meant to be used directly like this.
         // However, this does make a good test to ensure they behave as they should.
         var pattern = new RecurrencePattern("FREQ=SECONDLY;INTERVAL=10");
-#pragma warning disable 0618
-        pattern.RestrictionType = RecurrenceRestrictionType.NoRestriction;
-#pragma warning restore 0618
 
         var us = new CultureInfo("en-US");
 
