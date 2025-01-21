@@ -4,7 +4,6 @@
 //
 
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -30,47 +29,38 @@ internal static class TextUtil
 
         // Use ArrayPool<char> to rent arrays for processing
         // Cannot use Span<char> and stackalloc because netstandard2.0 does not support it
-        var arrayPool = ArrayPool<char>.Shared;
-        var currentLineArray = arrayPool.Rent(76); // 75 characters + 1 space
+        var currentLineArray = new char[76]; // 75 characters + 1 space
 
-        try
+        var currentLineIndex = 0;
+        var byteCount = 0;
+        var charCount = 0;
+
+        while (charCount < inputLine.Length)
         {
-            var currentLineIndex = 0;
-            var byteCount = 0;
-            var charCount = 0;
+            var currentCharByteCount = Encoding.UTF8.GetByteCount([inputLine[charCount]]);
 
-            while (charCount < inputLine.Length)
-            {
-                var currentCharByteCount = Encoding.UTF8.GetByteCount([inputLine[charCount]]);
-
-                if (byteCount + currentCharByteCount > 75)
-                {
-                    result.Append(currentLineArray, 0, currentLineIndex);
-                    result.Append(SerializationConstants.LineBreak);
-
-                    currentLineIndex = 0;
-                    byteCount = 1;
-                    currentLineArray[currentLineIndex++] = ' ';
-                }
-
-                currentLineArray[currentLineIndex++] = inputLine[charCount];
-                byteCount += currentCharByteCount;
-                charCount++;
-            }
-
-            // Append the remaining characters to the result
-            if (currentLineIndex > 0)
+            if (byteCount + currentCharByteCount > 75)
             {
                 result.Append(currentLineArray, 0, currentLineIndex);
+                result.Append(SerializationConstants.LineBreak);
+
+                currentLineIndex = 0;
+                byteCount = 1;
+                currentLineArray[currentLineIndex++] = ' ';
             }
 
-            result.Append(SerializationConstants.LineBreak);
+            currentLineArray[currentLineIndex++] = inputLine[charCount];
+            byteCount += currentCharByteCount;
+            charCount++;
         }
-        finally
+
+        // Append the remaining characters to the result
+        if (currentLineIndex > 0)
         {
-            // Return the rented array to the pool
-            arrayPool.Return(currentLineArray);
+            result.Append(currentLineArray, 0, currentLineIndex);
         }
+
+        result.Append(SerializationConstants.LineBreak);
     }
 
     public static IEnumerable<string> Chunk(string str, int chunkSize = 73)

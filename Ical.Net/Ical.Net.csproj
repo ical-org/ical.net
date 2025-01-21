@@ -11,9 +11,6 @@
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'netstandard2.1'">
         <PackageReference Include="Portable.System.DateTimeOnly" Version="8.0.1" />
     </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-        <PackageReference Include="System.Buffers" Version="4.6.0" />
-    </ItemGroup>
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>Ical.Net.Tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100a1f790f70176d52efbd248577bdb292be2d0acc62f3227c523e267d64767f207f81536c77bb91d17031a5afbc2d69cd3b5b3b9c98fa8df2cd363ec90a08639a1213ad70079eff666bcc14cf6574b899f4ad0eac672c8f763291cb1e0a2304d371053158cb398b2e6f9eeb45db7d1b4d2bbba1f985676c5ca4602fab3671d34bf</_Parameter1>
