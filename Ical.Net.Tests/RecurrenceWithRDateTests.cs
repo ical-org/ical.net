@@ -10,6 +10,7 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.Collections;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
+using Ical.Net.Utility;
 using NUnit.Framework;
 
 namespace Ical.Net.Tests;
@@ -152,7 +153,7 @@ public class RecurrenceWithRDateTests
             Assert.That(occurrences[1].Period.EffectiveDuration, Is.EqualTo(new Duration(hours: 4)));
             Assert.That(occurrences[2].Period.EffectiveDuration, Is.EqualTo(new Duration(hours: 5)));
             // Line folding is used for long lines
-            Assert.That(ics, Does.Contain("RDATE;TZID=America/New_York;VALUE=PERIOD:20231002T100000/PT4H,20231003T100\r\n 000/PT5H"));
+            Assert.That(ics, Does.Contain("RDATE;TZID=America/New_York;VALUE=PERIOD:20231002T100000/PT4H,20231003T1000\r\n 00/PT5H"));
         });
 
         // Deserialization
@@ -342,7 +343,7 @@ public class RecurrenceWithRDateTests
             // First folded line is 75 characters long
             Assert.That(ics, Does.Contain("RDATE:20231002T100000,20231003T100000,20231004T100000,20231005T100000,2023"));
             // Last folded line
-            Assert.That(ics, Does.Contain(" T100000,20240106T100000,20240107T100000,20240108T100000,20240109T100000"));
+            Assert.That(ics, Does.Contain(" 00,20240107T100000,20240108T100000,20240109T100000"));
         });
     }
 

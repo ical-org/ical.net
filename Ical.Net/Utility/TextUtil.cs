@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using Ical.Net.Serialization;
 
@@ -13,23 +14,53 @@ namespace Ical.Net.Utility;
 
 internal static class TextUtil
 {
-    /// <summary> Folds lines at 75 characters, and prepends the next line with a space per RFC https://tools.ietf.org/html/rfc5545#section-3.1 </summary>
-    public static string FoldLines(string incoming)
+    /// <summary>
+    /// Folds lines to 75 octets. It appends a CrLf, and prepends the next line with a space.
+    /// per RFC https://tools.ietf.org/html/rfc5545#section-3.1
+    /// </summary>
+    public static void FoldLines(this StringBuilder result, string inputLine)
     {
-        //The spec says nothing about trimming, but it seems reasonable...
-        var trimmed = incoming.Trim();
-        if (trimmed.Length <= 75)
+        if (Encoding.UTF8.GetByteCount(inputLine) <= 75)
         {
-            return trimmed + SerializationConstants.LineBreak;
+            result.Append(inputLine);
+            result.Append(SerializationConstants.LineBreak);
+            return;
         }
 
-        const int takeLimit = 74;
+        // Use ArrayPool<char> to rent arrays for processing
+        // Cannot use Span<char> and stackalloc because netstandard2.0 does not support it
+        var currentLineArray = new char[76]; // 75 characters + 1 space
 
-        var firstLine = trimmed.Substring(0, takeLimit);
-        var remainder = trimmed.Substring(takeLimit, trimmed.Length - takeLimit);
+        var currentLineIndex = 0;
+        var byteCount = 0;
+        var charCount = 0;
 
-        var chunkedRemainder = string.Join(SerializationConstants.LineBreak + " ", Chunk(remainder));
-        return firstLine + SerializationConstants.LineBreak + " " + chunkedRemainder + SerializationConstants.LineBreak;
+        while (charCount < inputLine.Length)
+        {
+            var currentCharByteCount = Encoding.UTF8.GetByteCount([inputLine[charCount]]);
+
+            if (byteCount + currentCharByteCount > 75)
+            {
+                result.Append(currentLineArray, 0, currentLineIndex);
+                result.Append(SerializationConstants.LineBreak);
+
+                currentLineIndex = 0;
+                byteCount = 1;
+                currentLineArray[currentLineIndex++] = ' ';
+            }
+
+            currentLineArray[currentLineIndex++] = inputLine[charCount];
+            byteCount += currentCharByteCount;
+            charCount++;
+        }
+
+        // Append the remaining characters to the result
+        if (currentLineIndex > 0)
+        {
+            result.Append(currentLineArray, 0, currentLineIndex);
+        }
+
+        result.Append(SerializationConstants.LineBreak);
     }
 
     public static IEnumerable<string> Chunk(string str, int chunkSize = 73)
