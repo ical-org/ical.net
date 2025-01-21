@@ -15,49 +15,52 @@ namespace Ical.Net.Utility;
 internal static class TextUtil
 {
     /// <summary>
+    /// Content line length according to RFC https://tools.ietf.org/html/rfc5545#section-3.1
+    /// </summary>
+    public const int LineLength = 75;
+
+    /// <summary>
     /// Folds lines to 75 octets. It appends a CrLf, and prepends the next line with a space.
     /// per RFC https://tools.ietf.org/html/rfc5545#section-3.1
     /// </summary>
     public static void FoldLines(this StringBuilder result, string inputLine)
     {
-        if (Encoding.UTF8.GetByteCount(inputLine) <= 75)
+        var utf8 = Encoding.UTF8;
+        if (utf8.GetByteCount(inputLine) <= LineLength)
         {
             result.Append(inputLine);
             result.Append(SerializationConstants.LineBreak);
             return;
         }
 
-        // Use ArrayPool<char> to rent arrays for processing
-        // Cannot use Span<char> and stackalloc because netstandard2.0 does not support it
-        var currentLineArray = new char[76]; // 75 characters + 1 space
+        var lineArray = new char[LineLength]; // 75 characters
+        var charIndex = 0;
+        var byteIndex = 0;
 
-        var currentLineIndex = 0;
-        var byteCount = 0;
-        var charCount = 0;
-
-        while (charCount < inputLine.Length)
+        foreach (var ch in inputLine)
         {
-            var currentCharByteCount = Encoding.UTF8.GetByteCount([inputLine[charCount]]);
+            var chBytes = utf8.GetByteCount([ch]);
 
-            if (byteCount + currentCharByteCount > 75)
+            // if current char couldn't be placed on current line
+            // without a break, write it on a new one
+            if (byteIndex + chBytes > LineLength)
             {
-                result.Append(currentLineArray, 0, currentLineIndex);
+                result.Append(lineArray, 0, charIndex);
                 result.Append(SerializationConstants.LineBreak);
 
-                currentLineIndex = 0;
-                byteCount = 1;
-                currentLineArray[currentLineIndex++] = ' ';
+                charIndex = 0;
+                lineArray[charIndex++] = ' ';
+                byteIndex = 1;
             }
 
-            currentLineArray[currentLineIndex++] = inputLine[charCount];
-            byteCount += currentCharByteCount;
-            charCount++;
+            lineArray[charIndex++] = ch;
+            byteIndex += chBytes;
         }
 
         // Append the remaining characters to the result
-        if (currentLineIndex > 0)
+        if (charIndex > 0)
         {
-            result.Append(currentLineArray, 0, currentLineIndex);
+            result.Append(lineArray, 0, charIndex);
         }
 
         result.Append(SerializationConstants.LineBreak);
