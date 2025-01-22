@@ -26,7 +26,7 @@ public class RecurrenceDates : PeriodListWrapperBase
     /// <summary>
     /// Adds a date to the list, if it doesn't already exist.
     /// </summary>
-    public RecurrenceDates Add(IDateTime dt)
+    public RecurrenceDates Add(CalDateTime dt)
     {
         var periodList = GetOrCreatePeriodList(dt);
         var dtPeriod = new Period(dt);
@@ -49,7 +49,7 @@ public class RecurrenceDates : PeriodListWrapperBase
     /// <summary>
     /// Adds a range of dates to the list, if they don't already exist.
     /// </summary>
-    public RecurrenceDates AddRange(IEnumerable<IDateTime> dates)
+    public RecurrenceDates AddRange(IEnumerable<CalDateTime> dates)
     {
         foreach (var dt in dates)
         {

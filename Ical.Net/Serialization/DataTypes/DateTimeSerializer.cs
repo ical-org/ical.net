@@ -32,7 +32,7 @@ public class DateTimeSerializer : EncodableDataTypeSerializer
 
     public override string? SerializeToString(object obj)
     {
-        if (obj is not IDateTime dt)
+        if (obj is not CalDateTime dt)
         {
             return null;
         }

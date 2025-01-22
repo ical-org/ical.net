@@ -65,9 +65,9 @@ public abstract class CalendarDataType : ICalendarDataType
                 case "CAL-ADDRESS":
                     return typeof(Uri);
                 case "DATE":
-                    return typeof(IDateTime);
+                    return typeof(CalDateTime);
                 case "DATE-TIME":
-                    return typeof(IDateTime);
+                    return typeof(CalDateTime);
                 case "DURATION":
                     return typeof(Duration);
                 case "FLOAT":

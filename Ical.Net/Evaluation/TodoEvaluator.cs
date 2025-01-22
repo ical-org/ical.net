@@ -19,9 +19,9 @@ public class TodoEvaluator : RecurringEvaluator
 
     public TodoEvaluator(Todo todo) : base(todo) { }
 
-    internal IEnumerable<Period> EvaluateToPreviousOccurrence(IDateTime completedDate, IDateTime currDt)
+    internal IEnumerable<Period> EvaluateToPreviousOccurrence(CalDateTime completedDate, CalDateTime currDt)
     {
-        var beginningDate = completedDate.Copy<IDateTime>();
+        var beginningDate = completedDate.Copy<CalDateTime>();
 
         if (Todo.RecurrenceRules != null)
         {
@@ -47,7 +47,7 @@ public class TodoEvaluator : RecurringEvaluator
         return Evaluate(Todo.Start, beginningDate, currDt.AddSeconds(1), true);
     }
 
-    private static void DetermineStartingRecurrence(IEnumerable<Period> rdate, ref IDateTime referenceDateTime)
+    private static void DetermineStartingRecurrence(IEnumerable<Period> rdate, ref CalDateTime referenceDateTime)
     {
         var dt2 = referenceDateTime;
         foreach (var p in rdate.Where(p => p.StartTime.LessThan(dt2)))
@@ -56,7 +56,7 @@ public class TodoEvaluator : RecurringEvaluator
         }
     }
 
-    private static void DetermineStartingRecurrence(IEnumerable<IDateTime> rdate, ref IDateTime referenceDateTime)
+    private static void DetermineStartingRecurrence(IEnumerable<CalDateTime> rdate, ref CalDateTime referenceDateTime)
     {
         var dt2 = referenceDateTime;
         foreach (var dt in rdate.Where(dt => dt.LessThan(dt2)))
@@ -65,11 +65,11 @@ public class TodoEvaluator : RecurringEvaluator
         }
     }
 
-    private void DetermineStartingRecurrence(RecurrencePattern recur, ref IDateTime referenceDateTime)
+    private void DetermineStartingRecurrence(RecurrencePattern recur, ref CalDateTime referenceDateTime)
     {
         if (recur.Count.HasValue)
         {
-            referenceDateTime = Todo.Start.Copy<IDateTime>();
+            referenceDateTime = Todo.Start.Copy<CalDateTime>();
         }
         else
         {
@@ -79,7 +79,7 @@ public class TodoEvaluator : RecurringEvaluator
         }
     }
 
-    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, IDateTime? periodStart, IDateTime? periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceDate, CalDateTime? periodStart, CalDateTime? periodEnd, bool includeReferenceDateInResults)
     {
         // TODO items can only recur if a start date is specified
         if (Todo.Start == null)

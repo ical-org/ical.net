@@ -72,8 +72,8 @@ public class RecurrenceTests_From_Issues
         calendar.Events.Add(myEvent);
 
         // Act
-        IDateTime start = new CalDateTime(2025, 3, 30, 0, 0, 0, tzId);
-        IDateTime end = new CalDateTime(2025, 3, 31, 0, 0, 0, tzId);
+        CalDateTime start = new CalDateTime(2025, 3, 30, 0, 0, 0, tzId);
+        CalDateTime end = new CalDateTime(2025, 3, 31, 0, 0, 0, tzId);
 
         var occurrences = calendar.GetOccurrences<CalendarEvent>(start, end).ToList();
         var occurrence = occurrences.Single();
@@ -106,8 +106,8 @@ public class RecurrenceTests_From_Issues
         calendar.Events.Add(myEvent);
 
         // Act
-        IDateTime start = new CalDateTime(2024, 10, 27, 0, 0, 0, tzId);
-        IDateTime end = new CalDateTime(2024, 10, 28, 0, 0, 0, tzId);
+        CalDateTime start = new CalDateTime(2024, 10, 27, 0, 0, 0, tzId);
+        CalDateTime end = new CalDateTime(2024, 10, 28, 0, 0, 0, tzId);
 
         var occurrences = calendar.GetOccurrences<CalendarEvent>(start, end).ToList();
         var occurrence = occurrences.Single();
@@ -142,8 +142,8 @@ public class RecurrenceTests_From_Issues
         calendar.Events.Add(myEvent);
 
         // Act
-        IDateTime start = new CalDateTime(2025, 3, 30, 0, 0, 0, timeZoneId);
-        IDateTime end = new CalDateTime(2025, 3, 31, 0, 0, 0, timeZoneId);
+        CalDateTime start = new CalDateTime(2025, 3, 30, 0, 0, 0, timeZoneId);
+        CalDateTime end = new CalDateTime(2025, 3, 31, 0, 0, 0, timeZoneId);
 
         var occurrences = calendar.GetOccurrences<CalendarEvent>(start, end).ToList();
         var occurrence = occurrences.Single();
@@ -180,8 +180,8 @@ public class RecurrenceTests_From_Issues
         calendar.Events.Add(myEvent);
 
         // Act
-        IDateTime start = new CalDateTime(2024, 10, 27, 0, 0, 0, timeZoneId);
-        IDateTime end = new CalDateTime(2024, 10, 28, 0, 0, 0, timeZoneId);
+        CalDateTime start = new CalDateTime(2024, 10, 27, 0, 0, 0, timeZoneId);
+        CalDateTime end = new CalDateTime(2024, 10, 28, 0, 0, 0, timeZoneId);
         // Duration can't be used at the same time as End.
 
         var occurrences = calendar.GetOccurrences<CalendarEvent>(start, end).ToList();
@@ -218,8 +218,8 @@ public class RecurrenceTests_From_Issues
         calendar.Events.Add(myEvent);
 
         // Act
-        IDateTime start = new CalDateTime(2024, 10, 27, 0, 0, 0, timeZoneId);
-        IDateTime end = new CalDateTime(2024, 10, 28, 0, 0, 0, timeZoneId);
+        CalDateTime start = new CalDateTime(2024, 10, 27, 0, 0, 0, timeZoneId);
+        CalDateTime end = new CalDateTime(2024, 10, 28, 0, 0, 0, timeZoneId);
 
         var occurrences = calendar.GetOccurrences<CalendarEvent>(start, end).ToList();
         var occurrence = occurrences.Single();
@@ -256,8 +256,8 @@ public class RecurrenceTests_From_Issues
         calendar.Events.Add(myEvent);
 
         // Act
-        IDateTime start = new CalDateTime(2025, 3, 30, 0, 0, 0, timeZoneId);
-        IDateTime end = new CalDateTime(2025, 3, 31, 0, 0, 0, timeZoneId);
+        CalDateTime start = new CalDateTime(2025, 3, 30, 0, 0, 0, timeZoneId);
+        CalDateTime end = new CalDateTime(2025, 3, 31, 0, 0, 0, timeZoneId);
 
         var occurrences = calendar.GetOccurrences<CalendarEvent>(start, end).ToList();
         var occurrence = occurrences.Single();

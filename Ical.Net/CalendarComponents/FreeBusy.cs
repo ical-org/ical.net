@@ -97,7 +97,7 @@ public class FreeBusy : UniqueComponent, IMergeable
         return fb;
     }
 
-    public static FreeBusy CreateRequest(IDateTime fromInclusive, IDateTime toExclusive, Organizer organizer, IEnumerable<Attendee> contacts)
+    public static FreeBusy CreateRequest(CalDateTime fromInclusive, CalDateTime toExclusive, Organizer organizer, IEnumerable<Attendee> contacts)
     {
         var fb = new FreeBusy
         {
@@ -133,27 +133,27 @@ public class FreeBusy : UniqueComponent, IMergeable
         set => Properties.Set("FREEBUSY", value);
     }
 
-    public virtual IDateTime DtStart
+    public virtual CalDateTime DtStart
     {
-        get => Properties.Get<IDateTime>("DTSTART");
+        get => Properties.Get<CalDateTime>("DTSTART");
         set => Properties.Set("DTSTART", value);
     }
 
-    public virtual IDateTime DtEnd
+    public virtual CalDateTime DtEnd
     {
-        get => Properties.Get<IDateTime>("DTEND");
+        get => Properties.Get<CalDateTime>("DTEND");
         set => Properties.Set("DTEND", value);
     }
 
-    public virtual IDateTime Start
+    public virtual CalDateTime Start
     {
-        get => Properties.Get<IDateTime>("DTSTART");
+        get => Properties.Get<CalDateTime>("DTSTART");
         set => Properties.Set("DTSTART", value);
     }
 
-    public virtual IDateTime End
+    public virtual CalDateTime End
     {
-        get => Properties.Get<IDateTime>("DTEND");
+        get => Properties.Get<CalDateTime>("DTEND");
         set => Properties.Set("DTEND", value);
     }
 
@@ -172,7 +172,7 @@ public class FreeBusy : UniqueComponent, IMergeable
         return status;
     }
 
-    public virtual FreeBusyStatus GetFreeBusyStatus(IDateTime dt)
+    public virtual FreeBusyStatus GetFreeBusyStatus(CalDateTime dt)
     {
         var status = FreeBusyStatus.Free;
         if (dt == null)

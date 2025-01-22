@@ -25,7 +25,7 @@ public abstract class PeriodListWrapperBase
     /// <summary>
     /// Gets a flattened list of all distinct dates in the list
     /// </summary>
-    public IEnumerable<IDateTime> GetAllDates()
+    public IEnumerable<CalDateTime> GetAllDates()
         => ListOfPeriodList.SelectMany(pl =>
                 pl.Where(p => p.PeriodKind is PeriodKind.DateOnly or PeriodKind.DateTime)
                     .Select(p => p.StartTime))
@@ -39,7 +39,7 @@ public abstract class PeriodListWrapperBase
     /// <summary>
     /// Determines whether the list contains the <paramref name="dt"/>.
     /// </summary>
-    public bool Contains(IDateTime dt)
+    public bool Contains(CalDateTime dt)
     {
         var periodList = GetPeriodList(dt);
 
@@ -48,7 +48,7 @@ public abstract class PeriodListWrapperBase
     }
 
     /// <inheritdoc cref="PeriodList.Remove"/>
-    public bool Remove(IDateTime dt)
+    public bool Remove(CalDateTime dt)
     {
         var periodList = GetPeriodList(dt);
 
@@ -59,7 +59,7 @@ public abstract class PeriodListWrapperBase
         return periodList.Remove(dtPeriod);
     }
 
-    private protected PeriodList GetOrCreatePeriodList(IDateTime dt)
+    private protected PeriodList GetOrCreatePeriodList(CalDateTime dt)
     {
         var periodList = GetPeriodList(dt);
 
@@ -81,7 +81,7 @@ public abstract class PeriodListWrapperBase
         return periodList;
     }
 
-    private protected PeriodList? GetPeriodList(IDateTime dt)
+    private protected PeriodList? GetPeriodList(CalDateTime dt)
     {
         // The number of PeriodLists is expected to be small, so a linear search is acceptable.
         return ListOfPeriodList
