@@ -54,9 +54,9 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// will be extrapolated.
     /// </note>
     /// </summary>
-    public virtual IDateTime? DtEnd
+    public virtual CalDateTime? DtEnd
     {
-        get => Properties.Get<IDateTime?>("DTEND");
+        get => Properties.Get<CalDateTime?>("DTEND");
         set
         {
             if (Duration is not null) throw new InvalidOperationException("DTEND property cannot be set when DURATION property is not null.");
@@ -161,7 +161,7 @@ public class CalendarEvent : RecurringComponent, IAlarmContainer, IComparable<Ca
     /// <summary>
     /// An alias to the DtEnd field (i.e. end date/time).
     /// </summary>
-    public virtual IDateTime? End
+    public virtual CalDateTime? End
     {
         get => DtEnd;
         set => DtEnd = value;

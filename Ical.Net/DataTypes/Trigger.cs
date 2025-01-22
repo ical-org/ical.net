@@ -15,11 +15,11 @@ namespace Ical.Net.DataTypes;
 /// </summary>
 public class Trigger : EncodableDataType
 {
-    private IDateTime _mDateTime;
+    private CalDateTime _mDateTime;
     private Duration? _mDuration;
     private string _mRelated = TriggerRelation.Start;
 
-    public virtual IDateTime DateTime
+    public virtual CalDateTime DateTime
     {
         get => _mDateTime;
         set
@@ -91,7 +91,7 @@ public class Trigger : EncodableDataType
             return;
         }
 
-        DateTime = t.DateTime?.Copy<IDateTime>();
+        DateTime = t.DateTime?.Copy<CalDateTime>();
         Duration = t.Duration;
         Related = t.Related;
     }

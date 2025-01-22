@@ -42,7 +42,7 @@ public class EventEvaluator : RecurringEvaluator
     /// <param name="periodEnd">The end date of the range to evaluate.</param>
     /// <param name="includeReferenceDateInResults"></param>
     /// <returns></returns>
-    public override IEnumerable<Period> Evaluate(IDateTime referenceTime, IDateTime? periodStart, IDateTime? periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(CalDateTime referenceTime, CalDateTime? periodStart, CalDateTime? periodEnd, bool includeReferenceDateInResults)
     {
         // Evaluate recurrences normally
         var periods = base.Evaluate(referenceTime, periodStart, periodEnd, includeReferenceDateInResults)
@@ -71,7 +71,7 @@ public class EventEvaluator : RecurringEvaluator
          */
         var tsToAdd = CalendarEvent.GetEffectiveDuration();
 
-        IDateTime endTime;
+        CalDateTime endTime;
         if (tsToAdd.IsZero)
         {
             // For a zero-duration event, the end time is the same as the start time.

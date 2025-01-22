@@ -178,7 +178,7 @@ public class CalDateTimeTests
     }
 
     [Test, TestCaseSource(nameof(DateTimeArithmeticTestCases))]
-    public DateTime DateTimeArithmeticTests(Func<IDateTime, IDateTime> operation)
+    public DateTime DateTimeArithmeticTests(Func<CalDateTime, CalDateTime> operation)
     {
         var result = operation(new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: CalDateTime.UtcTzId));
         return result.Value;
@@ -188,36 +188,36 @@ public class CalDateTimeTests
     {
         var dateTime = new DateTime(2025, 1, 15, 10, 20, 30);
 
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddHours(1)))
+        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.AddHours(1)))
             .Returns(dateTime.AddHours(1))
-            .SetName($"{nameof(IDateTime.AddHours)} 1 hour");
+            .SetName($"{nameof(CalDateTime.AddHours)} 1 hour");
 
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(Duration.FromSeconds(30))))
+        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.Add(Duration.FromSeconds(30))))
             .Returns(dateTime.Add(TimeSpan.FromSeconds(30)))
-            .SetName($"{nameof(IDateTime.Add)} 30 seconds");
+            .SetName($"{nameof(CalDateTime.Add)} 30 seconds");
 
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddMinutes(70)))
+        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.AddMinutes(70)))
             .Returns(dateTime.AddMinutes(70))
-            .SetName($"{nameof(IDateTime.AddMinutes)} 70 minutes");
+            .SetName($"{nameof(CalDateTime.AddMinutes)} 70 minutes");
     }
 
     [Test, TestCaseSource(nameof(EqualityTestCases))]
-    public bool EqualityTests(Func<IDateTime, bool> operation)
+    public bool EqualityTests(Func<CalDateTime, bool> operation)
     {
         return operation(new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: CalDateTime.UtcTzId));
     }
 
     public static IEnumerable EqualityTestCases()
     {
-        yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime)dt == new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: CalDateTime.UtcTzId)))
+        yield return new TestCaseData(new Func<CalDateTime, bool>(dt => (CalDateTime)dt == new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: CalDateTime.UtcTzId)))
             .Returns(true)
             .SetName("== operator 2 UTC timezones");
 
-        yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime)dt != new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: "Europe/Berlin")))
+        yield return new TestCaseData(new Func<CalDateTime, bool>(dt => (CalDateTime)dt != new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: "Europe/Berlin")))
             .Returns(true)
             .SetName("!= operator 2 timezones");
 
-        yield return new TestCaseData(new Func<IDateTime, bool>(dt => (CalDateTime)dt == new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: null)))
+        yield return new TestCaseData(new Func<CalDateTime, bool>(dt => (CalDateTime)dt == new CalDateTime(2025, 1, 15, 10, 20, 30, tzId: null)))
             .Returns(false)
             .SetName("== operator UTC vs. floating");
     }
@@ -247,7 +247,7 @@ public class CalDateTimeTests
 
 
     [Test, TestCaseSource(nameof(DateOnlyValidArithmeticTestCases))]
-    public (DateTime Value, bool HasTime) DateOnlyValidArithmeticTests(Func<IDateTime, IDateTime> operation)
+    public (DateTime Value, bool HasTime) DateOnlyValidArithmeticTests(Func<CalDateTime, CalDateTime> operation)
     {
         var result = operation(new CalDateTime(2025, 1, 15));
         return (result.Value, result.HasTime);
@@ -257,29 +257,29 @@ public class CalDateTimeTests
     {
         var dateTime = new DateTime(2025, 1, 15);
 
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(-Duration.FromDays(1))))
+        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.Add(-Duration.FromDays(1))))
             .Returns((dateTime.AddDays(-1), false))
-            .SetName($"{nameof(IDateTime.Add)} -1 day TimeSpan");
+            .SetName($"{nameof(CalDateTime.Add)} -1 day TimeSpan");
 
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddYears(1)))
+        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.AddYears(1)))
             .Returns((dateTime.AddYears(1), false))
-            .SetName($"{nameof(IDateTime.AddYears)} 1 year");
+            .SetName($"{nameof(CalDateTime.AddYears)} 1 year");
 
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddMonths(2)))
+        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.AddMonths(2)))
             .Returns((dateTime.AddMonths(2), false))
-            .SetName($"{nameof(IDateTime.AddMonths)} 2 months");
+            .SetName($"{nameof(CalDateTime.AddMonths)} 2 months");
 
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.AddDays(7)))
+        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.AddDays(7)))
             .Returns((dateTime.AddDays(7), false))
-            .SetName($"{nameof(IDateTime.AddDays)} 7 days");
+            .SetName($"{nameof(CalDateTime.AddDays)} 7 days");
 
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(Duration.FromDays(1))))
+        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.Add(Duration.FromDays(1))))
             .Returns((dateTime.Add(TimeSpan.FromDays(1)), false))
-            .SetName($"{nameof(IDateTime.Add)} 1 day TimeSpan");
+            .SetName($"{nameof(CalDateTime.Add)} 1 day TimeSpan");
 
-        yield return new TestCaseData(new Func<IDateTime, IDateTime>(dt => dt.Add(Duration.Zero)))
+        yield return new TestCaseData(new Func<CalDateTime, CalDateTime>(dt => dt.Add(Duration.Zero)))
             .Returns((dateTime.Add(TimeSpan.Zero), false))
-            .SetName($"{nameof(IDateTime.Add)} TimeSpan.Zero");
+            .SetName($"{nameof(CalDateTime.Add)} TimeSpan.Zero");
     }
 
     [Test]

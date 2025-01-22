@@ -85,7 +85,7 @@ public class ProgramTest
 
         for (var i = 0; i < dateTimes.Length; i++)
         {
-            IDateTime dt = dateTimes[i];
+            CalDateTime dt = dateTimes[i];
             var start = occurrences[i].Period.StartTime;
             Assert.That(start, Is.EqualTo(dt));
 
@@ -153,7 +153,7 @@ public class ProgramTest
 
         for (var i = 0; i < dateTimes1.Length; i++)
         {
-            IDateTime dt = dateTimes1[i];
+            CalDateTime dt = dateTimes1[i];
             var start = occurrences[i].Period.StartTime;
             Assert.Multiple(() =>
             {

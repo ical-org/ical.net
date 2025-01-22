@@ -16,7 +16,7 @@ namespace Ical.Net.Utility;
 
 internal static class DateUtil
 {
-    public static DateTime GetSimpleDateTimeData(IDateTime dt)
+    public static DateTime GetSimpleDateTimeData(CalDateTime dt)
         => dt.Value;
 
     public static CalDateTime AsCalDateTime(this DateTime t)

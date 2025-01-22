@@ -24,7 +24,7 @@ public class ExceptionDates : PeriodListWrapperBase
     /// <summary>
     /// Adds a date to the list, if it doesn't already exist.
     /// </summary>
-    public ExceptionDates Add(IDateTime dt)
+    public ExceptionDates Add(CalDateTime dt)
     {
         var periodList = GetOrCreatePeriodList(dt);
 
@@ -37,7 +37,7 @@ public class ExceptionDates : PeriodListWrapperBase
     /// <summary>
     /// Adds a range of dates to the list, if they don't already exist.
     /// </summary>
-    public ExceptionDates AddRange(IEnumerable<IDateTime> dates)
+    public ExceptionDates AddRange(IEnumerable<CalDateTime> dates)
     {
         foreach (var dt in dates)
         {

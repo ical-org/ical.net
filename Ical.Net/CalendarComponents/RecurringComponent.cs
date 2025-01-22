@@ -54,9 +54,9 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         set => Properties.Set("CONTACT", value);
     }
 
-    public virtual IDateTime Created
+    public virtual CalDateTime Created
     {
-        get => Properties.Get<IDateTime>("CREATED");
+        get => Properties.Get<CalDateTime>("CREATED");
         set => Properties.Set("CREATED", value);
     }
 
@@ -69,9 +69,9 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
     /// <summary>
     /// The start date/time of the component.
     /// </summary>
-    public virtual IDateTime DtStart
+    public virtual CalDateTime DtStart
     {
-        get => Properties.Get<IDateTime>("DTSTART");
+        get => Properties.Get<CalDateTime>("DTSTART");
         set => Properties.Set("DTSTART", value);
     }
 
@@ -89,9 +89,9 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         set => Properties.Set("EXRULE", value);
     }
 
-    public virtual IDateTime LastModified
+    public virtual CalDateTime LastModified
     {
-        get => Properties.Get<IDateTime>("LAST-MODIFIED");
+        get => Properties.Get<CalDateTime>("LAST-MODIFIED");
         set => Properties.Set("LAST-MODIFIED", value);
     }
 
@@ -115,9 +115,9 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         set => Properties.Set("RRULE", value);
     }
 
-    public virtual IDateTime RecurrenceId
+    public virtual CalDateTime RecurrenceId
     {
-        get => Properties.Get<IDateTime>("RECURRENCE-ID");
+        get => Properties.Get<CalDateTime>("RECURRENCE-ID");
         set => Properties.Set("RECURRENCE-ID", value);
     }
 
@@ -136,7 +136,7 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
     /// <summary>
     /// An alias to the DTStart field (i.e. start date/time).
     /// </summary>
-    public virtual IDateTime Start
+    public virtual CalDateTime Start
     {
         get => DtStart;
         set => DtStart = value;
@@ -187,7 +187,7 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
         Initialize();
     }
 
-    public virtual IEnumerable<Occurrence> GetOccurrences(IDateTime startTime = null, IDateTime endTime = null)
+    public virtual IEnumerable<Occurrence> GetOccurrences(CalDateTime startTime = null, CalDateTime endTime = null)
         => RecurrenceUtil.GetOccurrences(this, startTime, endTime, EvaluationIncludesReferenceDate);
 
     public virtual IEnumerable<Occurrence> GetOccurrences(DateTime? startTime, DateTime? endTime)
@@ -195,7 +195,7 @@ public class RecurringComponent : UniqueComponent, IRecurringComponent
 
     public virtual IList<AlarmOccurrence> PollAlarms() => PollAlarms(null, null);
 
-    public virtual IList<AlarmOccurrence> PollAlarms(IDateTime startTime, IDateTime endTime)
+    public virtual IList<AlarmOccurrence> PollAlarms(CalDateTime startTime, CalDateTime endTime)
         => Alarms?.SelectMany(a => a.Poll(startTime, endTime)).ToList()
            ?? new List<AlarmOccurrence>();
 

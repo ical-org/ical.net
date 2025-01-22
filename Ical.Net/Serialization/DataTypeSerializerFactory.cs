@@ -34,7 +34,7 @@ public class DataTypeSerializerFactory : ISerializerFactory
             {
                 s = new AttendeeSerializer(ctx);
             }
-            else if (typeof(IDateTime).IsAssignableFrom(objectType))
+            else if (typeof(CalDateTime).IsAssignableFrom(objectType))
             {
                 s = new DateTimeSerializer(ctx);
             }
