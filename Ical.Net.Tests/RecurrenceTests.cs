@@ -37,11 +37,6 @@ public class RecurrenceTests
         var evt = cal.Events.Skip(eventIndex).First();
         var rule = evt.RecurrenceRules.FirstOrDefault();
 
-        if (fromDate != null)
-            fromDate.AssociatedObject = cal;
-        if (toDate != null)
-            toDate.AssociatedObject = cal;
-
         var occurrences = evt.GetOccurrences(fromDate, toDate)
             .OrderBy(o => o.Period.StartTime)
             .ToList();
@@ -60,10 +55,7 @@ public class RecurrenceTests
 
             for (var i = 0; i < expectedPeriods.Length; i++)
             {
-                // Associate each incoming date/time with the calendar.
-                expectedPeriods[i].AssociatedObject = cal;
-
-                var period = new Period(expectedPeriods[i].StartTime, expectedPeriods[i].EffectiveEndTime) {AssociatedObject = cal};
+                var period = new Period(expectedPeriods[i].StartTime, expectedPeriods[i].EffectiveEndTime);
 
                 Assert.That(occurrences[i].Period, Is.EqualTo(period), "Event should occur on " + period);
                 if (timeZones != null)

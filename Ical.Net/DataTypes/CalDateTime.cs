@@ -241,8 +241,6 @@ public sealed class CalDateTime : EncodableDataType, IComparable<CalDateTime>, I
         _dateOnly = calDt._dateOnly;
         _timeOnly = TruncateTimeToSeconds(calDt._timeOnly);
         _tzId = calDt._tzId;
-
-        AssociateWith(calDt);
     }
 
     public bool Equals(CalDateTime other) => this == other;
@@ -549,8 +547,6 @@ public sealed class CalDateTime : EncodableDataType, IComparable<CalDateTime>, I
             // Convert to the original timezone even if already set to ensure we're not in a non-existing time.
             newDateTime = newDateTime.ToTimeZone(TzId);
 
-        AssociateWith(this);
-
         return newDateTime;
     }
 
@@ -639,22 +635,6 @@ public sealed class CalDateTime : EncodableDataType, IComparable<CalDateTime>, I
     /// Returns <see langword="true"/> if the current <see cref="CalDateTime"/> instance is greater than or equal to <paramref name="dt"/>.
     /// </summary>
     public bool GreaterThanOrEqual(CalDateTime dt) => this >= dt;
-
-    /// <summary>
-    /// Associates the current instance with the specified <see cref="CalDateTime"/> object.
-    /// </summary>
-    /// <param name="dt">The <see cref="CalDateTime"/> object to associate with.</param>
-    public void AssociateWith(CalDateTime? dt)
-    {
-        if (AssociatedObject == null && dt?.AssociatedObject != null)
-        {
-            AssociatedObject = dt.AssociatedObject;
-        }
-        else if (AssociatedObject != null && dt?.AssociatedObject == null && dt != null)
-        {
-            dt.AssociatedObject = AssociatedObject;
-        }
-    }
 
     /// <summary>
     /// Compares the current instance with another <see cref="CalDateTime"/> object and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other CalDateTime.

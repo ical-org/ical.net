@@ -856,8 +856,6 @@ public class RecurrencePatternEvaluator : Evaluator
             newDt = newDt.ToTimeZone(referenceDate.TzId);
         }
 
-        newDt.AssociateWith(referenceDate);
-
         // Create a period from the new date/time.
         return new Period(newDt);
     }
@@ -876,7 +874,7 @@ public class RecurrencePatternEvaluator : Evaluator
         {
             // This case is not defined by RFC 5545. We handle it by evaluating the rule
             // as if referenceDate had a time (i.e. set to midnight).
-            referenceDate = new CalDateTime(referenceDate.Date, new TimeOnly(), referenceDate.TzId) { AssociatedObject = referenceDate.AssociatedObject };
+            referenceDate = new CalDateTime(referenceDate.Date, new TimeOnly(), referenceDate.TzId);
         }
 
         // Create a recurrence pattern suitable for use during evaluation.
@@ -916,7 +914,6 @@ public class RecurrencePatternEvaluator : Evaluator
         }
 
         var untilCalDt = new CalDateTime(until, untilTzId, reference.HasTime);
-        untilCalDt.AssociateWith(reference);
 
         // If 'reference' is floating, then 'until' is floating, too
         return reference.TzId is null

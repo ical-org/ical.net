@@ -39,8 +39,7 @@ public class Trigger : EncodableDataType
             // Ensure date/time has a time part
             if (!_mDateTime.HasTime)
             {
-                _mDateTime = new CalDateTime(_mDateTime.Date, new TimeOnly(), _mDateTime.TzId)
-                    { AssociatedObject = _mDateTime.AssociatedObject };
+                _mDateTime = new CalDateTime(_mDateTime.Date, new TimeOnly(), _mDateTime.TzId);
             }
         }
     }
