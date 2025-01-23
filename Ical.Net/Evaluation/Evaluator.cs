@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,11 +15,6 @@ namespace Ical.Net.Evaluation;
 public abstract class Evaluator : IEvaluator
 {
     protected Evaluator()
-    {
-        Initialize();
-    }
-
-    private void Initialize()
     {
         Calendar = CultureInfo.CurrentCulture.Calendar;
     }

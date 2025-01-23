@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Ical.Net.Evaluation;
 
 public class TodoEvaluator : RecurringEvaluator
 {
-    protected Todo Todo => Recurrable as Todo;
+    protected Todo Todo => Recurrable as Todo ?? throw new InvalidOperationException();
 
     public TodoEvaluator(Todo todo) : base(todo) { }
 
