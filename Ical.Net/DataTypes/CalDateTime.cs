@@ -457,7 +457,7 @@ public sealed class CalDateTime : IComparable<CalDateTime>, IFormattable
     /// it means that the <see cref="Value"/> is considered as local time for every timezone:
     /// The returned <see cref="Value"/> is unchanged and the <see paramref="otherTzId"/> is set as <see cref="TzId"/>.
     /// </summary>
-    public CalDateTime ToTimeZone(string otherTzId)
+    public CalDateTime ToTimeZone(string? otherTzId)
     {
         if (otherTzId is null)
             return new CalDateTime(Value, null, HasTime);
