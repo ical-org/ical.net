@@ -95,12 +95,10 @@ public class PeriodListSerializer : EncodableDataTypeSerializer
 
             if (dt != null)
             {
-                dt.AssociatedObject = rdt.AssociatedObject;
                 rdt.Add(dt);
             }
             else if (p != null)
             {
-                p.AssociatedObject = rdt.AssociatedObject;
                 rdt.Add(p);
             }
         }

@@ -125,7 +125,6 @@ public class Alarm : CalendarComponent
         else
         {
             var dt = Trigger.DateTime.Copy<CalDateTime>();
-            dt.AssociatedObject = this;
             occurrences.Add(new AlarmOccurrence(this, dt, rc));
         }
 
