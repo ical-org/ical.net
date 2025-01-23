@@ -1189,8 +1189,8 @@ public class RecurrenceTests
     [Test, Category("Recurrence")]
     public void WeekNoOrderingShouldNotMatter()
     {
-        var start = new DateTime(2019, 1, 1);
-        var end = new DateTime(2019, 12, 31);
+        var start = new CalDateTime(2019, 1, 1);
+        var end = new CalDateTime(2019, 12, 31);
         var rpe1 = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53"));
         var rpe2 = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=YEARLY;WKST=MO;BYDAY=MO;BYWEEKNO=53,51,49,47,45,43,41,39,37,35,33,31,29,27,25,23,21,19,17,15,13,11,9,7,5,3,1"));
 
@@ -2585,11 +2585,11 @@ public class RecurrenceTests
     [Test, Category("Recurrence")]
     public void BugByWeekNoNotWorking()
     {
-        var start = new DateTime(2019, 1, 1);
-        var end = new DateTime(2019, 12, 31);
+        var start = new CalDateTime(2019, 1, 1);
+        var end = new CalDateTime(2019, 12, 31);
         var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=WEEKLY;BYDAY=MO;BYWEEKNO=2"));
 
-        var recurringPeriods = rpe.Evaluate(new CalDateTime(start, false), start, end, false).ToList();
+        var recurringPeriods = rpe.Evaluate(start, start, end, false).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(1));
         Assert.That(recurringPeriods.First().StartTime, Is.EqualTo(new CalDateTime(2019, 1, 7)));
@@ -2601,11 +2601,11 @@ public class RecurrenceTests
     [Test, Category("Recurrence")]
     public void BugByMonthWhileFreqIsWeekly()
     {
-        var start = new DateTime(2020, 1, 1);
-        var end = new DateTime(2020, 12, 31);
+        var start = new CalDateTime(2020, 1, 1);
+        var end = new CalDateTime(2020, 12, 31);
         var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=WEEKLY;BYDAY=MO;BYMONTH=1"));
 
-        var recurringPeriods = rpe.Evaluate(new CalDateTime(start, false), start, end, false).OrderBy(x => x).ToList();
+        var recurringPeriods = rpe.Evaluate(start, start, end, false).OrderBy(x => x).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(4));
         Assert.Multiple(() =>
@@ -2644,11 +2644,11 @@ public class RecurrenceTests
     [Test, Category("Recurrence")]
     public void BugByMonthWhileFreqIsMonthly()
     {
-        var start = new DateTime(2020, 1, 1);
-        var end = new DateTime(2020, 12, 31);
+        var start = new CalDateTime(2020, 1, 1);
+        var end = new CalDateTime(2020, 12, 31);
         var rpe = new RecurrencePatternEvaluator(new RecurrencePattern("FREQ=MONTHLY;BYDAY=MO;BYMONTH=1"));
 
-        var recurringPeriods = rpe.Evaluate(new CalDateTime(start, false), start, end, false).OrderBy(x => x).ToList();
+        var recurringPeriods = rpe.Evaluate(start, start, end, false).OrderBy(x => x).ToList();
 
         Assert.That(recurringPeriods, Has.Count.EqualTo(4));
         Assert.Multiple(() =>
@@ -2669,11 +2669,11 @@ public class RecurrenceTests
     {
         using (var sr = new StringReader("FREQ=WEEKLY;UNTIL=20251126T120000;INTERVAL=1;BYDAY=MO"))
         {
-            var start = DateTime.Parse("2010-11-27 9:00:00");
+            var start = new CalDateTime(2010, 11, 27, 9, 0, 0);
             var serializer = new RecurrencePatternSerializer();
             var rp = (RecurrencePattern)serializer.Deserialize(sr);
             var rpe = new RecurrencePatternEvaluator(rp);
-            var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, rp.Until, false).ToList();
+            var recurringPeriods = rpe.Evaluate(new CalDateTime(start), start, rp.Until?.AsCalDateTime(), false).ToList();
 
             var period = recurringPeriods.ElementAt(recurringPeriods.Count - 1);
 
@@ -2740,7 +2740,7 @@ public class RecurrenceTests
         };
         var vEvent = new CalendarEvent
         {
-            Start = new CalDateTime(DateTime.Parse("2019-01-04T08:00Z")),
+            Start = new CalDateTime(DateTime.Parse("2019-01-04T08:00Z").ToUniversalTime()),
         };
 
         vEvent.RecurrenceRules.Add(rrule);
@@ -2748,7 +2748,7 @@ public class RecurrenceTests
         //Testing on both the first day and the next, results used to be different
         for (var i = 0; i <= 1; i++)
         {
-            var checkTime = DateTime.Parse("2019-01-04T08:00Z");
+            var checkTime = DateTime.Parse("2019-01-04T08:00Z").ToUniversalTime();
             checkTime = checkTime.AddDays(i);
             //Valid asking for the exact moment
             var occurrences = vEvent.GetOccurrences(checkTime, checkTime).ToList();
@@ -2897,8 +2897,8 @@ public class RecurrenceTests
 
         var occurrences = evaluator.Evaluate(
             startDate,
-            SimpleDateTimeToMatch(fromDate, startDate),
-            SimpleDateTimeToMatch(toDate, startDate),
+            fromDate,
+            toDate,
             false)
             .OrderBy(o => o.StartTime)
             .ToList();
@@ -2930,8 +2930,8 @@ public class RecurrenceTests
 
         var occurrences = evaluator.Evaluate(
             startDate,
-            SimpleDateTimeToMatch(fromDate, startDate),
-            SimpleDateTimeToMatch(toDate, startDate),
+            fromDate,
+            toDate,
             false);
         Assert.That(occurrences.Count, Is.Not.EqualTo(0));
     }
@@ -3038,8 +3038,8 @@ public class RecurrenceTests
         // Add the exception dates
         var periods = evaluator.Evaluate(
             evtStart,
-            DateUtil.GetSimpleDateTimeData(evtStart),
-            SimpleDateTimeToMatch(evtEnd, evtStart),
+            evtStart,
+            evtEnd,
             false)
             .OrderBy(p => p.StartTime)
             .ToList();
@@ -3295,7 +3295,7 @@ END:VCALENDAR";
         Assert.That(occurrences, Has.Count.EqualTo(3));
     }
 
-    private static readonly DateTime _now = DateTime.Now;
+    private static readonly DateTime _now = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
     private static readonly DateTime _later = _now.AddHours(1);
     private static CalendarEvent GetEventWithRecurrenceRules()
     {
@@ -3830,23 +3830,6 @@ END:VCALENDAR";
         Assert.That(occurrences.Count, Is.EqualTo(27));
     }
 
-    private static DateTime SimpleDateTimeToMatch(IDateTime dt, IDateTime toMatch)
-    {
-        if (toMatch.IsUtc && dt.IsUtc)
-        {
-            return dt.Value;
-        }
-        if (toMatch.IsUtc)
-        {
-            return dt.Value.ToUniversalTime();
-        }
-        if (dt.IsUtc)
-        {
-            return dt.Value.ToLocalTime();
-        }
-        return dt.Value;
-    }
-
     [Test]
     public void GetOccurrenceShouldExcludeDtEndFloating()
     {
@@ -3896,5 +3879,39 @@ END:VCALENDAR";
         var instances = occurrences.Take(100).ToList();
 
         Assert.That(instances.Count(), Is.EqualTo(100));
+    }
+
+    [Test, Category("Recurrence")]
+    [TestCase(null)]
+    [TestCase("UTC")]
+    [TestCase("Europe/Vienna")]
+    [TestCase("America/New_York")]
+    public void TestDtStartTimezone(string tzId)
+    {
+        var icalText = """
+            BEGIN:VCALENDAR
+            BEGIN:VEVENT
+            UID:ignore
+            DTSTAMP:20180613T154237Z
+            DTSTART;TZID=Europe/Vienna:20180612T180000
+            DTEND;TZID=Europe/Vienna:20180612T181000
+            RRULE:FREQ=HOURLY
+            END:VEVENT
+            END:VCALENDAR
+            """;
+
+        var cal = Calendar.Load(icalText);
+        var evt = cal.Events.First();
+        var ev = new EventEvaluator(evt);
+        var occurrences = ev.Evaluate(evt.DtStart, evt.DtStart.ToTimeZone(tzId), evt.DtStart.AddMinutes(61).ToTimeZone(tzId), false);
+        var occurrencesStartTimes = occurrences.Select(x => x.StartTime).Take(2).ToList();
+
+        var expectedStartTimes = new[]
+        {
+            new CalDateTime(2018, 06, 12, 18, 0, 0, "Europe/Vienna"),
+            new CalDateTime(2018, 06, 12, 19, 0, 0, "Europe/Vienna"),
+        };
+
+        Assert.That(expectedStartTimes.SequenceEqual(occurrencesStartTimes), Is.True);
     }
 }

@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Ical.Net.DataTypes;
@@ -15,11 +16,6 @@ public interface IEvaluator
     /// The system calendar that governs the evaluation rules.
     /// </summary>
     System.Globalization.Calendar Calendar { get; }
-
-    /// <summary>
-    /// Gets the object associated with this evaluator.
-    /// </summary>
-    ICalendarObject AssociatedObject { get; }
 
     /// <summary>
     /// Evaluates this item to determine the dates and times for which it occurs/recurs.
@@ -46,5 +42,5 @@ public interface IEvaluator
     ///     A sequence of <see cref="Ical.Net.DataTypes.Period"/> objects for
     ///     each date/time when this item occurs/recurs.
     /// </returns>
-    IEnumerable<Period> Evaluate(IDateTime referenceDate, DateTime? periodStart, DateTime? periodEnd, bool includeReferenceDateInResults);
+    IEnumerable<Period> Evaluate(IDateTime referenceDate, IDateTime? periodStart, IDateTime? periodEnd, bool includeReferenceDateInResults);
 }

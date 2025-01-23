@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Ical.Net.CalendarComponents;
@@ -14,13 +15,13 @@ public class TimeZoneInfoEvaluator : RecurringEvaluator
 {
     protected VTimeZoneInfo TimeZoneInfo
     {
-        get => Recurrable as VTimeZoneInfo;
+        get => Recurrable as VTimeZoneInfo ?? throw new InvalidOperationException();
         set => Recurrable = value;
     }
 
     public TimeZoneInfoEvaluator(IRecurrable tzi) : base(tzi) { }
 
-    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, DateTime? periodStart, DateTime? periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, IDateTime? periodStart, IDateTime? periodEnd, bool includeReferenceDateInResults)
     {
         // Time zones must include an effective start date/time
         // and must provide an evaluator.

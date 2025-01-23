@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 //
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using Ical.Net.DataTypes;
@@ -18,7 +19,7 @@ internal class PeriodListEvaluator : Evaluator
         _mPeriodList = rdt;
     }
 
-    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, DateTime? periodStart, DateTime? periodEnd, bool includeReferenceDateInResults)
+    public override IEnumerable<Period> Evaluate(IDateTime referenceDate, IDateTime? periodStart, IDateTime? periodEnd, bool includeReferenceDateInResults)
     {
         var periods = new SortedSet<Period>();
 
@@ -28,7 +29,7 @@ internal class PeriodListEvaluator : Evaluator
             periods.Add(p);
         }
 
-        if (periodEnd < periodStart)
+        if ((periodStart is not null) && (periodEnd is not null) && periodEnd.LessThan(periodStart))
         {
             return periods;
         }

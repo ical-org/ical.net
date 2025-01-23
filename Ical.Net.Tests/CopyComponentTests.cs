@@ -53,7 +53,7 @@ public class CopyComponentTests
         yield return new TestCaseData(IcsFiles.XProperty2).SetName("XProperty2");
     }
 
-    private static readonly DateTime _now = DateTime.Now;
+    private static readonly DateTime _now = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
     private static readonly DateTime _later = _now.AddHours(1);
 
     private static CalendarEvent GetSimpleEvent() => new CalendarEvent
@@ -154,7 +154,7 @@ public class CopyComponentTests
         {
             Summary = "Test Todo",
             Description = "This is a test todo",
-            Due = new CalDateTime(DateTime.Now.AddDays(10)),
+            Due = new CalDateTime(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified).AddDays(10)),
             Priority = 1,
             Contacts = new[] { "John", "Paul" },
             Status = "NeedsAction"
@@ -180,7 +180,7 @@ public class CopyComponentTests
         {
             Summary = "Test Journal",
             Description = "This is a test journal",
-            DtStart = new CalDateTime(DateTime.Now),
+            DtStart = new CalDateTime(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified)),
             Categories = new List<string> { "Category1", "Category2" },
             Priority = 1,
             Status = "Draft"
